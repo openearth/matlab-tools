@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mkdspec</title>
+  <meta name="keywords" content="mkdspec">
+  <meta name="description" content=" Make a directional spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; mkdspec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mkdspec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Make a directional spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Snew=mkdspec(S,D,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="mkdspec.html" class="code" title=" Make a directional spectrum">MKDSPEC</a> Make a directional spectrum
+          frequency spectrum times <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> function
+ 
+  CALL:  Snew=<a href="mkdspec.html" class="code" title=" Make a directional spectrum">mkdspec</a>(S,D,plotflag)
+   
+        Snew = directional spectrum (spectrum struct)
+        S    = frequency spectrum (spectrum struct)
+                   (default <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>)  
+        D    = <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> function (special struct)
+                   (default <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>([],'cos2s'))
+        plotflag = 1: plot the spectrum, else: do not plot (default 0)   
+ 
+  Creates a directional spectrum through multiplication of a frequency
+  spectrum and a <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> function: S(w,theta)=S(w)*D(w,theta)
+   
+  The <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> structure must contain the following fields:
+    .S (size [np 1] or [np nf])  and  .theta (length np)  
+  optional fields: .w (length nf), .note (memo) .phi (rotation-azymuth)   
+   
+  NB! S.w and D.w (if any) must be identical.
+ 
+  Example: S=<a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>
+           D=<a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>(linspace(-pi,pi,51),'cos2s')
+           Snew=<a href="mkdspec.html" class="code" title=" Make a directional spectrum">mkdspec</a>(S,D,1) 
+   
+  See also  <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>, <a href="rotspec.html" class="code" title=" Rotate spectrum anti-clockwise around the origin. ">rotspec</a>, <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>, <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createspec.html" class="code" title=" S=createspec(stype,freqtype)">createspec</a></li></TD>
+<TD> Spectrum structure constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="demospec.html" class="code" title=" S=demospec(stype)">demospec</a></li></TD>
+<TD> Loads a precreated spectrum of chosen type</TD>
+</TR>
+<TR>
+<TD><li><a href="jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">jonswap</a></li></TD>
+<TD> Calculates (and plots) a JONSWAP spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="spreading.html" class="code" title=" D = spreading(th,type,th0,data,w,def)">spreading</a></li></TD>
+<TD> Directional spreading functions</TD>
+</TR>
+<TR>
+<TD><li><a href="wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\datestr.m">datestr</a></li></TD>
+<TD>       String representation of date.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\now.m">now</a></li></TD>
+<TD>           Current date and time as date number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="demospec.html" class="code" title=" S=demospec(stype)">demospec</a></li></TD>
+<TD> Loads a precreated spectrum of chosen type</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig4.html" class="code" title=" wafofig4">wafofig4</a></li></TD>
+<TD>  Directional spectra using Thorsethaugen and cos2s spreading</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> Snew=<a name="_sub0" href="#_subfunctions" class="code">mkdspec</a>(S,D,plotflag)
+002 <span class="comment">% MKDSPEC Make a directional spectrum</span>
+003 <span class="comment">%         frequency spectrum times spreading function</span>
+004 <span class="comment">%</span>
+005 <span class="comment">% CALL:  Snew=mkdspec(S,D,plotflag)</span>
+006 <span class="comment">%  </span>
+007 <span class="comment">%       Snew = directional spectrum (spectrum struct)</span>
+008 <span class="comment">%       S    = frequency spectrum (spectrum struct)</span>
+009 <span class="comment">%                  (default jonswap)  </span>
+010 <span class="comment">%       D    = spreading function (special struct)</span>
+011 <span class="comment">%                  (default spreading([],'cos2s'))</span>
+012 <span class="comment">%       plotflag = 1: plot the spectrum, else: do not plot (default 0)   </span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Creates a directional spectrum through multiplication of a frequency</span>
+015 <span class="comment">% spectrum and a spreading function: S(w,theta)=S(w)*D(w,theta)</span>
+016 <span class="comment">%  </span>
+017 <span class="comment">% The spreading structure must contain the following fields:</span>
+018 <span class="comment">%   .S (size [np 1] or [np nf])  and  .theta (length np)  </span>
+019 <span class="comment">% optional fields: .w (length nf), .note (memo) .phi (rotation-azymuth)   </span>
+020 <span class="comment">%  </span>
+021 <span class="comment">% NB! S.w and D.w (if any) must be identical.</span>
+022 <span class="comment">%</span>
+023 <span class="comment">% Example: S=jonswap</span>
+024 <span class="comment">%          D=spreading(linspace(-pi,pi,51),'cos2s')</span>
+025 <span class="comment">%          Snew=mkdspec(S,D,1) </span>
+026 <span class="comment">%  </span>
+027 <span class="comment">% See also  spreading, rotspec, jonswap, torsethaugen  </span>
+028   
+029 
+030 <span class="comment">% Tested on: Matlab 5.3</span>
+031 <span class="comment">% History:</span>
+032 <span class="comment">% revised by jr 31.03.2001 - Field added: norm. </span>
+033 <span class="comment">% by es 23.11.1999</span>
+034   
+035 <span class="keyword">if</span> nargin&lt;1
+036   Snew=<a href="demospec.html" class="code" title=" Loads a precreated spectrum of chosen type">demospec</a>;
+037   <span class="keyword">return</span>
+038 <span class="keyword">end</span>
+039 <span class="keyword">if</span> isempty(S)
+040   S=<a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>;
+041 <span class="keyword">end</span>
+042 <span class="keyword">if</span> nargin&lt;2|isempty(D)
+043   D=<a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>([],<span class="string">'cos2s'</span>);
+044 <span class="keyword">end</span>
+045 <span class="keyword">if</span> nargin&lt;3
+046   plotflag=0;
+047 <span class="keyword">end</span>
+048 
+049 Snew=<a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>(<span class="string">'dir'</span>);
+050 Snew.w=S.w;
+051 Snew.tr=S.tr;
+052 Snew.h=S.h;
+053 Snew.phi =D.phi;
+054 Snew.norm=S.norm;
+055 Snew.note=S.note;
+056 <span class="keyword">if</span> isfield(D,<span class="string">'note'</span>)
+057   Snew.note=[Snew.note,<span class="string">'; '</span>,D.note];
+058 <span class="keyword">end</span>
+059 Snew.date=datestr(now);
+060 Snew.theta=D.theta;
+061 S.S=S.S(:);
+062 <span class="keyword">if</span> ~isfield(D,<span class="string">'w'</span>)|isempty(D.w)|length(D.w)==1
+063   Snew.S=D.S(:)*S.S';
+064 <span class="keyword">else</span>
+065   <span class="keyword">if</span> length(S.w)~=length(D.w)
+066     error(<span class="string">'S.w and D.w must be identical!'</span>)
+067   <span class="keyword">elseif</span> any(abs(S.w-D.w)&gt;1e-10)
+068     error(<span class="string">'S.w and D.w must be identical!'</span>)
+069   <span class="keyword">end</span>    
+070   Snew.S=D.S.*S.S(:,ones(1,length(D.theta)))';
+071 <span class="keyword">end</span>
+072 
+073 <span class="keyword">if</span> plotflag==1
+074   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(Snew)
+075 <span class="keyword">end</span>
+076</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

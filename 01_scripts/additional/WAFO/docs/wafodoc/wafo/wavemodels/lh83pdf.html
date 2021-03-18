@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of lh83pdf</title>
+  <meta name="keywords" content="lh83pdf">
+  <meta name="description" content=" Longuet-Higgins (1983) approximation of the density (Tc,Ac)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; lh83pdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>lh83pdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Longuet-Higgins (1983) approximation of the density (Tc,Ac)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = lh83pdf(t,h,mom,g) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="lh83pdf.html" class="code" title=" Longuet-Higgins (1983) approximation of the density (Tc,Ac)">LH83PDF</a> Longuet-Higgins (1983) approximation of the density (Tc,Ac)
+          in a stationary Gaussian transform process X(t) where 
+          Y(t) = g(X(t)) (Y zero-mean Gaussian, X  non-Gaussian).
+          
+   CALL:  f   = <a href="lh83pdf.html" class="code" title=" Longuet-Higgins (1983) approximation of the density (Tc,Ac)">lh83pdf</a>(t,h,[m0,m1,m2],g);
+ 
+         f    = density of wave characteristics of half-wavelength
+                in a stationary Gaussian transformed process X(t),
+                where Y(t) = g(X(t)) (Y zero-mean Gaussian)
+        t,h   = vectors of periods and amplitudes, respectively.
+                default depending on the spectral moments
+     m0,m1,m2 = the 0'th,1'st and 2'nd moment of the spectral density
+                with angular  frequency.
+         g    = space transformation, Y(t)=g(X(t)), default: g is identity
+                transformation, i.e. X(t) = Y(t)  is Gaussian,
+                The transformation, g, can be estimated using <a href="../../wafo/trgauss/lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>
+                or <a href="../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a> or given apriori by ochi.
+        []    = default values are used.
+ 
+  Example:
+   even = 0; nr =2;
+   mom  = <a href="../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(<a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>,nr,[],even);
+   f    = <a href="lh83pdf.html" class="code" title=" Longuet-Higgins (1983) approximation of the density (Tc,Ac)">lh83pdf</a>([],[],mom);
+   <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f)
+ 
+  See also  <a href="cav76pdf.html" class="code" title=" Cavanie et al. (1976) approximation of the density  (Tc,Ac)">cav76pdf</a>,  <a href="../../wafo/trgauss/lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>, <a href="../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/gaus2dat.html" class="code" title=" x = gaus2dat(xx,g)">gaus2dat</a></li></TD>
+<TD> Transforms  xx  using the inverse of transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">lh83pdf</a>(t,h,mom,g)
+002 <span class="comment">%LH83PDF Longuet-Higgins (1983) approximation of the density (Tc,Ac)</span>
+003 <span class="comment">%         in a stationary Gaussian transform process X(t) where </span>
+004 <span class="comment">%         Y(t) = g(X(t)) (Y zero-mean Gaussian, X  non-Gaussian).</span>
+005 <span class="comment">%         </span>
+006 <span class="comment">%  CALL:  f   = lh83pdf(t,h,[m0,m1,m2],g);</span>
+007 <span class="comment">%</span>
+008 <span class="comment">%        f    = density of wave characteristics of half-wavelength</span>
+009 <span class="comment">%               in a stationary Gaussian transformed process X(t),</span>
+010 <span class="comment">%               where Y(t) = g(X(t)) (Y zero-mean Gaussian)</span>
+011 <span class="comment">%       t,h   = vectors of periods and amplitudes, respectively.</span>
+012 <span class="comment">%               default depending on the spectral moments</span>
+013 <span class="comment">%    m0,m1,m2 = the 0'th,1'st and 2'nd moment of the spectral density</span>
+014 <span class="comment">%               with angular  frequency.</span>
+015 <span class="comment">%        g    = space transformation, Y(t)=g(X(t)), default: g is identity</span>
+016 <span class="comment">%               transformation, i.e. X(t) = Y(t)  is Gaussian,</span>
+017 <span class="comment">%               The transformation, g, can be estimated using lc2tr</span>
+018 <span class="comment">%               or dat2tr or given apriori by ochi.</span>
+019 <span class="comment">%       []    = default values are used.</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% Example:</span>
+022 <span class="comment">%  even = 0; nr =2;</span>
+023 <span class="comment">%  mom  = spec2mom(jonswap,nr,[],even);</span>
+024 <span class="comment">%  f    = lh83pdf([],[],mom);</span>
+025 <span class="comment">%  pdfplot(f)</span>
+026 <span class="comment">%</span>
+027 <span class="comment">% See also  cav76pdf,  lc2tr, dat2tr</span>
+028 
+029 <span class="comment">% References</span>
+030 <span class="comment">% Longuet-Higgins,  M.S. (1983)</span>
+031 <span class="comment">%&quot;On the joint distribution wave periods and amplitudes in a </span>
+032 <span class="comment">% random wave field&quot;, Proc. R. Soc. A389, pp 24--258</span>
+033 <span class="comment">%</span>
+034 <span class="comment">% Longuet-Higgins,  M.S. (1975)</span>
+035 <span class="comment">%&quot;On the joint distribution wave periods and amplitudes of sea waves&quot;, </span>
+036 <span class="comment">% J. geophys. Res. 80, pp 2688--2694</span>
+037 
+038 <span class="comment">% tested on: matlab 5.3 </span>
+039 <span class="comment">% History: </span>
+040 <span class="comment">% Revised pab 01.04.2001</span>
+041 <span class="comment">% - Added example</span>
+042 <span class="comment">% - Better automatic scaling for h,t</span>
+043 <span class="comment">% revised by IR 18.06.2000, fixing transformation and transposing t and h to fit simpson req.</span>
+044 <span class="comment">% revised by pab 28.09.1999</span>
+045 <span class="comment">%   made more efficient calculation of f</span>
+046 <span class="comment">% by Igor Rychlik</span>
+047 
+048 
+049 <span class="keyword">if</span> nargin&lt;3|isempty(mom)
+050   error(<span class="string">'requires the moments'</span>)
+051 <span class="keyword">elseif</span> length(mom)~=3
+052   error(<span class="string">'not enough moments'</span>)
+053 <span class="keyword">else</span>
+054   m0=mom(1);
+055   m1=mom(2);
+056   m2=mom(3);
+057 <span class="keyword">end</span>
+058  
+059 <span class="keyword">if</span> nargin&lt;4|isempty(g)
+060    g=[(-5:0.02:5)' (-5:0.02:5)']; 
+061    g(:,1)=g(:,1)*sqrt(m0);
+062 <span class="keyword">end</span> 
+063 
+064 L0=m0;
+065 L1=m1/(2*pi);
+066 L2=m2/(2*pi)^2;
+067 
+068 
+069 <span class="keyword">if</span> nargin&lt;1|isempty(t)
+070     tt1=2*pi*sqrt(m0/m2);
+071     paramt=[0 1.7*tt1 51];
+072     t=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(paramt);
+073 <span class="keyword">end</span>
+074     
+075 
+076 <span class="keyword">if</span> nargin&lt;2|isempty(h) 
+077     px=<a href="../../wafo/trgauss/gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0. 0.;1 4.],g);
+078     px=abs(px(2,2)-px(1,2));
+079     paramh=[0 1.3*px 41];
+080     h=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(paramh);
+081 <span class="keyword">end</span>
+082 
+083 
+084 eps2 = sqrt((L2*L0)/(L1^2)-1);
+085 
+086 <span class="keyword">if</span> ~isreal(eps2)
+087   error(<span class="string">'input moments are not correct'</span>)
+088 <span class="keyword">end</span>
+089 const=4/sqrt(pi)/eps2/(1+1/sqrt(1+eps2^2));
+090 
+091 
+092 a   = length(h); 
+093 b   = length(t); 
+094 der = ones(a,1);
+095 
+096 h_lh = <a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([h' der],g);
+097 der  = abs(h_lh(:,2));
+098 h_lh = h_lh(:,1);
+099 
+100 <span class="comment">% Normalization + transformation of t and h ???????</span>
+101 <span class="comment">% Without any transformation</span>
+102 
+103 t_lh  = t/(L0/L1);
+104 <span class="comment">%h_lh = h_lh/sqrt(2*L0);</span>
+105 h_lh  = h_lh/sqrt(2);
+106 
+107 t_lh  = 2*t_lh;
+108 
+109 
+110 <span class="comment">% Computation of the distribution</span>
+111 <span class="keyword">if</span> 0, <span class="comment">%old call</span>
+112   <span class="keyword">for</span> i=1:a,
+113     <span class="keyword">for</span> j=2:b,
+114       f_th(i,j)=const*der(i)*(h_lh(i)/t_lh(j))^2*.<span class="keyword">...</span>
+115         exp(-h_lh(i)^2*(1+((1-1/t_lh(j))/eps2)^2))/((L0/L1)*sqrt(2)/2);
+116     <span class="keyword">end</span>
+117   <span class="keyword">end</span>  
+118 <span class="keyword">else</span> <span class="comment">%new call</span>
+119   [T,H] = meshgrid(t_lh(2:b),h_lh);
+120   f_th=zeros(a,b);
+121   der=der(:);
+122   f_th(:,2:b)=const*der(:,ones(1,b-1)).*(H./T).^2.*.<span class="keyword">...</span>
+123       exp(-H.^2.*(1+((1-1./T)/eps2).^2))/((L0/L1)*sqrt(2)/2);
+124 <span class="keyword">end</span>
+125 
+126 f      = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2);
+127 f.f    = f_th;
+128 f.x{1} = t(:);
+129 f.x{2} = h(:);
+130 f.labx = {<span class="string">'Tc'</span>,<span class="string">'Ac'</span>};
+131 f.title = <span class="string">'Joint density of (Tc,Ac) - Longuet-Higgins (1983)'</span>;
+132 f.pl   = [10:20:90 95 99];
+133 f.cl   = <a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(f.f,f.pl);
+134 <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f)
+135</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

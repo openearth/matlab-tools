@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wchi2cdf</title>
+  <meta name="keywords" content="wchi2cdf">
+  <meta name="description" content=" Chi squared cumulative distribution function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wchi2cdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wchi2cdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Chi squared cumulative distribution function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> F = wchi2cdf(x,p); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wchi2cdf.html" class="code" title=" Chi squared cumulative distribution function">WCHI2CDF</a> Chi squared cumulative distribution function
+ 
+  CALL:  F = <a href="wchi2cdf.html" class="code" title=" Chi squared cumulative distribution function">wchi2cdf</a>(x,p);
+ 
+         F = distribution function evaluated at x
+         p = degrees of freedom
+ 
+  The Chi squared distribution is defined by its pdf
+ 
+    f(x)=x^(p/2-1)*exp(-x/2)/gamma(p/2)/2^(p/2), x&gt;=0, p=1,2,3,...
+ 
+  Example: 
+    x = linspace(0,15,200);
+    p1 = <a href="wchi2cdf.html" class="code" title=" Chi squared cumulative distribution function">wchi2cdf</a>(x,2); p2 = <a href="wchi2cdf.html" class="code" title=" Chi squared cumulative distribution function">wchi2cdf</a>(x,3);
+    plot(x,p1,x,p2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gammainc.m">gammainc</a></li></TD>
+<TD>      Incomplete gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/kdetools/chi2gof.html" class="code" title=" [pvalue, test, v] = chi2gof(fs,ft)">chi2gof</a></li></TD>
+<TD> CHI Squared Goodness Of Fit test.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/chi2gof2.html" class="code" title=" [pvalue, test, v] = chi2gof2(fs,ft)">chi2gof2</a></li></TD>
+<TD> CHI Squared Goodness Of Fit test.</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2fit.html" class="code" title=" [phat, cov,pci]=wchi2fit(data1, plotflag);">wchi2fit</a></li></TD>
+<TD> Parameter estimates for Chi squared data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> F = <a name="_sub0" href="#_subfunctions" class="code">wchi2cdf</a>(x,p);
+002 <span class="comment">%WCHI2CDF Chi squared cumulative distribution function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  F = wchi2cdf(x,p);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        F = distribution function evaluated at x</span>
+007 <span class="comment">%        p = degrees of freedom</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% The Chi squared distribution is defined by its pdf</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%   f(x)=x^(p/2-1)*exp(-x/2)/gamma(p/2)/2^(p/2), x&gt;=0, p=1,2,3,...</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Example: </span>
+014 <span class="comment">%   x = linspace(0,15,200);</span>
+015 <span class="comment">%   p1 = wchi2cdf(x,2); p2 = wchi2cdf(x,3);</span>
+016 <span class="comment">%   plot(x,p1,x,p2)</span>
+017 
+018 <span class="comment">% Reference: Johnson, Kotz and Balakrishnan (1994)</span>
+019 <span class="comment">% &quot;Continuous Univariate Distributions, vol. 1&quot;, p. 415 ff</span>
+020 <span class="comment">% Wiley</span>
+021 
+022 <span class="comment">% Tested on; Matlab 5.3</span>
+023 <span class="comment">% History:</span>
+024 <span class="comment">% revised pab 25.10.2000</span>
+025 <span class="comment">%  - added comnsize, nargchk</span>
+026 <span class="comment">% added ms 26.06.2000</span>
+027 
+028 error(nargchk(2,2,nargin))
+029 [errorcode,x,p] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,p);
+030 <span class="keyword">if</span> errorcode &gt; 0
+031   error(<span class="string">'x and p must be of common size or scalar.'</span>);
+032 <span class="keyword">end</span>
+033 
+034 
+035 <span class="comment">% old call</span>
+036 <span class="comment">%F= gammainc(x/2,p/2).*(x&gt;=0);</span>
+037 F = zeros(size(x));
+038 ok= ((p &gt;0)&amp; p==round(p) );
+039 
+040 k=find(x &gt; 0 &amp; ok);
+041 <span class="keyword">if</span> any(k),
+042   F(k)= gammainc(x(k)/2,p(k)/2);
+043 <span class="keyword">end</span>
+044 
+045 <span class="comment">%   Return NaN if the arguments are outside their respective limits.</span>
+046 k3 = find(~ok);     
+047 <span class="keyword">if</span> any(k3)
+048   warning(<span class="string">'p should be a positive integer'</span>)
+049   tmp = NaN;
+050   F(k3) = tmp(ones(size(k3)));
+051 <span class="keyword">end</span>
+052 
+053</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

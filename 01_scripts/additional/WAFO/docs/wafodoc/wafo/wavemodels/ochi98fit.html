@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of ochi98fit</title>
+  <meta name="keywords" content="ochi98fit">
+  <meta name="description" content=" Parameter estimates and confidence intervals for Ochi data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; ochi98fit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>ochi98fit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates and confidence intervals for Ochi data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat, pci,pinit]=ochi98fit(data,alpha) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="ochi98fit.html" class="code" title=" Parameter estimates and confidence intervals for Ochi data.">OCHI98FIT</a> Parameter estimates and confidence intervals for Ochi data.
+ 
+  CALL: [phat pci] = <a href="ochi98fit.html" class="code" title=" Parameter estimates and confidence intervals for Ochi data.">ochi98fit</a>(data,alpha)
+ 
+    phat  = [a b] = maximum likelihood estimates of the parameters of the distribution
+    pci   = 100(1-alpha) percent confidense intervals
+    data  = data matrix
+    alpha = confidence level (default 0.05 corresponding to 95% CI)
+ 
+ 
+  See also  <a href="ochi98pdf.html" class="code" title=" Ochi's (1998) PDF of peaks and troughs of non-gaussian processes ">ochi98pdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/loglike.html" class="code" title=" [LL,C]=loglike(phat,varargin)">loglike</a></li></TD>
+<TD> Log-likelihood function.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wraylfit.html" class="code" title=" [phat, var,pci] = wraylfit(data,plotflag)">wraylfit</a></li></TD>
+<TD> Parameter estimates for Rayleigh data.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="">fmins</a></li></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\fminsearch.m">fminsearch</a></li></TD>
+<TD>    Multidimensional unconstrained nonlinear minimization (Nelder-Mead).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\helptools\info.m">info</a></li></TD>
+<TD>          Information about MATLAB and The MathWorks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2num.m">str2num</a></li></TD>
+<TD>       Convert string matrix to numeric array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\local\version.m">version</a></li></TD>
+<TD>       MATLAB version number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [phat, pci,pinit]=<a name="_sub0" href="#_subfunctions" class="code">ochi98fit</a>(data,alpha)
+002 <span class="comment">%OCHI98FIT Parameter estimates and confidence intervals for Ochi data.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: [phat pci] = ochi98fit(data,alpha)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   phat  = [a b] = maximum likelihood estimates of the parameters of the distribution</span>
+007 <span class="comment">%   pci   = 100(1-alpha) percent confidense intervals</span>
+008 <span class="comment">%   data  = data matrix</span>
+009 <span class="comment">%   alpha = confidence level (default 0.05 corresponding to 95<span class="comment">% CI)</span></span>
+010 <span class="comment">%</span>
+011 <span class="comment">%</span>
+012 <span class="comment">% See also  ochi98pdf </span>
+013 
+014 <span class="comment">%  Reference:</span>
+015 <span class="comment">%       [1]  Michel K. Ochi,</span>
+016 <span class="comment">%       &quot;Probability distributions of peaks and troughs of non-gaussian processes&quot;</span>
+017 <span class="comment">%        Probabilistic Engineering Mechanics Vol 13 No 4 (1998) </span>
+018 <span class="comment">%       pp  291-298</span>
+019 
+020 <span class="comment">% tested on: </span>
+021 <span class="comment">% history:</span>
+022 <span class="comment">% revised pab nov 2004</span>
+023 <span class="comment">% - replaced call to fmins with fminsearch  </span>
+024 <span class="comment">% revised pab 04.11.2000</span>
+025 <span class="comment">% - removed ochi98like with a call to loglike instead</span>
+026 <span class="comment">% revised pab 29.02.2000</span>
+027 <span class="comment">%  changed name to ochi98fit</span>
+028 <span class="comment">%  Per A. Brodtkorb 14.02.99</span>
+029 
+030 <span class="keyword">if</span> (nargin &lt; 2)|isempty(alpha)
+031     alpha = 0.05;
+032 <span class="keyword">end</span>
+033 p_int = [alpha/2; 1-alpha/2];
+034 
+035 data1=data(:)
+036 
+037 a = <a href="../../wafo/wstats/wraylfit.html" class="code" title=" Parameter estimates for Rayleigh data.">wraylfit</a>(data1)*sqrt(2);
+038 pinit=[a a];
+039 
+040 <span class="comment">%simultanous MLE</span>
+041 mvrs=version;ix=find(mvrs==<span class="string">'.'</span>);
+042 <span class="keyword">if</span> str2num(mvrs(1:ix(2)-1))&gt;5.2,
+043   phat = fminsearch(<span class="string">'loglike'</span>,pinit,[],data1,<span class="string">'ochi98pdf'</span>);
+044 <span class="keyword">else</span>
+045   phat = fmins(<span class="string">'loglike'</span>,pinit,[],[],data1,<span class="string">'ochi98pdf'</span>);
+046 <span class="keyword">end</span>
+047 
+048 <span class="keyword">if</span> nargout == 2
+049    [LL,cov]=<a href="../../wafo/wstats/loglike.html" class="code" title=" Log-likelihood function.">loglike</a>(phat,data1,<span class="string">'ochi98pdf'</span>);
+050    sa = diag(info).';
+051    pci = <a href="../../wafo/wstats/wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(repmat(p_int,1,2),[phat; phat],[sa;sa]);
+052  <span class="keyword">end</span>
+053  
+054</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

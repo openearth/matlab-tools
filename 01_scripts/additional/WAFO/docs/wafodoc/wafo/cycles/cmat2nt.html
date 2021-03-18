@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cmat2nt</title>
+  <meta name="keywords" content="cmat2nt">
+  <meta name="description" content=" Calculates a counting distribution from a cycle matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; cmat2nt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmat2nt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates a counting distribution from a cycle matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> NT = cmat2nt(F,def) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">CMAT2NT</a> Calculates a counting distribution from a cycle matrix.
+ 
+  CALL:  NT = <a href="cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">cmat2nt</a>(F,def);
+ 
+    NT       = Counting distribution. [nxn]
+ 
+    F        = Cycle matrix. [nxn]
+    def      =  1: causes peaks to be projected upwards and troughs 
+                   downwards to the closest discrete level (default).
+             =  0: causes peaks and troughs to be projected to
+                   the closest discrete level.
+             = -1: causes peaks to be projected downwards and the 
+                   troughs upwards to the closest discrete level.
+ 
+  Example: 
+    F = round(triu(rand(4),1)*10)
+    NT = <a href="cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">cmat2nt</a>(F)
+ 
+  See also  <a href="nt2cmat.html" class="code" title="  Calculates a cycle matrix from a counting distribution.">nt2cmat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cmat2lc.html" class="code" title=" lc = cmat2lc(param,F)">cmat2lc</a></li></TD>
+<TD> Calculates the level crossings from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="lc2rfmextreme.html" class="code" title=" [Frfc,u,Nrfc,Nrfc0]=lc2nt(lc,vect)">lc2rfmextreme</a></li></TD>
+<TD> Compute extreme RFM from level crossings.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/mctp2tc.html" class="code" title=" F=mctp2tc(freqPVR,utc,param,freqPVL)">mctp2tc</a></li></TD>
+<TD>  Frequencies of upcrossing troughs and crests using Markov chain of turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/smc2rfm.html" class="code" title=" [F_rfc,mu_rfc] = smc2rfc(P,Qc,def)">smc2rfm</a></li></TD>
+<TD> Calculates the rainflow matrix/intensity for a switching Markov chain.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/smctp2rfm.html" class="code" title=" [F_rfc,mu_rfc,T] = smctp2rfm(P,F,c_m)">smctp2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix for a SMCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> NT = <a name="_sub0" href="#_subfunctions" class="code">cmat2nt</a>(F,def)
+002 <span class="comment">% CMAT2NT Calculates a counting distribution from a cycle matrix.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  NT = cmat2nt(F,def);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   NT       = Counting distribution. [nxn]</span>
+007 <span class="comment">%</span>
+008 <span class="comment">%   F        = Cycle matrix. [nxn]</span>
+009 <span class="comment">%   def      =  1: causes peaks to be projected upwards and troughs </span>
+010 <span class="comment">%                  downwards to the closest discrete level (default).</span>
+011 <span class="comment">%            =  0: causes peaks and troughs to be projected to</span>
+012 <span class="comment">%                  the closest discrete level.</span>
+013 <span class="comment">%            = -1: causes peaks to be projected downwards and the </span>
+014 <span class="comment">%                  troughs upwards to the closest discrete level.</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% Example: </span>
+017 <span class="comment">%   F = round(triu(rand(4),1)*10)</span>
+018 <span class="comment">%   NT = cmat2nt(F)</span>
+019 <span class="comment">%</span>
+020 <span class="comment">% See also  nt2cmat</span>
+021 
+022 <span class="comment">% Tested on Matlab 6.0</span>
+023 <span class="comment">%</span>
+024 <span class="comment">% History:</span>
+025 <span class="comment">% Created by PJ (Pär Johannesson) 19-Nov-1999</span>
+026 <span class="comment">% Earlier version named 'nt2fr' in WAT</span>
+027 
+028 <span class="comment">% Check input arguments</span>
+029 
+030 ni = nargin;
+031 no = nargout;
+032 error(nargchk(1,2,ni));
+033 
+034 <span class="keyword">if</span> ni&lt;2
+035   def = 1;
+036 <span class="keyword">end</span>
+037 
+038 n=length(F); <span class="comment">% Number of discrete levels</span>
+039 
+040 <span class="keyword">if</span> def == 1
+041   
+042   NT = zeros(n);
+043   NT(2:n,1:n-1) = fliplr(cumsum(fliplr(cumsum(F(1:<span class="keyword">end</span>-1,2:<span class="keyword">end</span>))),2));
+044   
+045 <span class="keyword">elseif</span> def == 11 <span class="comment">% same as def=1 but using for-loop</span>
+046   
+047   NT = zeros(n);
+048   <span class="keyword">for</span> i = 2:n
+049     <span class="keyword">for</span> j= 1:n-1
+050       NT(i,j) = sum(sum(F(1:i-1,j+1:n)));
+051     <span class="keyword">end</span>
+052   <span class="keyword">end</span>
+053   
+054 <span class="keyword">elseif</span> def == 0
+055   
+056   disp([<span class="string">'def = '</span> num2str(def) <span class="string">' not yet implemented'</span>])
+057   
+058 <span class="keyword">elseif</span> def == -1
+059   
+060   disp([<span class="string">'def = '</span> num2str(def) <span class="string">' not yet implemented'</span>])
+061   
+062 <span class="keyword">else</span>
+063   
+064   disp([<span class="string">'def = '</span> num2str(def) <span class="string">': not a valid value of def'</span>])
+065   
+066 <span class="keyword">end</span>
+067 
+068 
+069   
+070</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

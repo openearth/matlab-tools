@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of load2ud</title>
+  <meta name="keywords" content="load2ud">
+  <meta name="description" content=" Calculates the number of up/downcrossings of a load.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wdemos</a> &gt; <a href="index.html">itmkurs</a> &gt; load2ud.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wdemos\itmkurs&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>load2ud
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Calculates the number of up/downcrossings of a load.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [Nup,Ndown,u] = load2ud(param,L) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">   <a href="load2ud.html" class="code" title=" Calculates the number of up/downcrossings of a load.">LOAD2UD</a> Calculates the number of up/downcrossings of a load.
+   
+   CALL: [Nup,Ndown,u] = udcross([a b n],L);
+ 
+   where
+    
+         Nup   = the number of upcrossings of level  u_i,
+         Ndown = the number of downcrossings of level  u_i,
+         u     = a one column matrix with <a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>  u_i,
+         a,b   = limits for  u,  a &lt;= u_i &lt;= b,
+         n     = the number of <a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>  u_i,
+         L     = a two column matrix with times in the first column and 
+                 load values in the second.
+ 
+   Note that the parameter matrix can be used as input.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [Nup,Ndown,u] = <a name="_sub0" href="#_subfunctions" class="code">load2ud</a>(param,L)
+002 <span class="comment">%  LOAD2UD Calculates the number of up/downcrossings of a load.</span>
+003 <span class="comment">%  </span>
+004 <span class="comment">%  CALL: [Nup,Ndown,u] = udcross([a b n],L);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%  where</span>
+007 <span class="comment">%   </span>
+008 <span class="comment">%        Nup   = the number of upcrossings of level  u_i,</span>
+009 <span class="comment">%        Ndown = the number of downcrossings of level  u_i,</span>
+010 <span class="comment">%        u     = a one column matrix with levels  u_i,</span>
+011 <span class="comment">%        a,b   = limits for  u,  a &lt;= u_i &lt;= b,</span>
+012 <span class="comment">%        n     = the number of levels  u_i,</span>
+013 <span class="comment">%        L     = a two column matrix with times in the first column and </span>
+014 <span class="comment">%                load values in the second.</span>
+015 <span class="comment">%</span>
+016 <span class="comment">%  Note that the parameter matrix can be used as input.</span>
+017 
+018 a=param(1); b=param(2); n=param(3);
+019 
+020 <span class="keyword">if</span> a&gt;b, disp(<span class="string">'   a&gt;b, program will terminate.'</span>), <span class="keyword">end</span>
+021 <span class="keyword">if</span> n&lt;1,  disp(<span class="string">'   n&lt;1, program will terminate.'</span>),  <span class="keyword">end</span>
+022 
+023 <span class="keyword">if</span> n == 1
+024   u = a;
+025 <span class="keyword">else</span>
+026   u=<a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+027 <span class="keyword">end</span>
+028 
+029 Nup=zeros(1,n);
+030 Ndown=zeros(1,n);
+031 
+032 N = size(L,1);
+033 
+034 <span class="keyword">for</span> i = 1:n
+035   index = (L(1:N-1,2)&lt;u(i)) &amp; (L(2:N,2)&gt;u(i));
+036   Nup(i) = sum(index);
+037 
+038   index = (L(1:N-1,2)&gt;u(i)) &amp; (L(2:N,2)&lt;u(i));
+039   Ndown(i) = sum(index);
+040 <span class="keyword">end</span>
+041</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

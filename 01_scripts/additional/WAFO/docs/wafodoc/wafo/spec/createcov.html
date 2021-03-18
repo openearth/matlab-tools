@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of createcov</title>
+  <meta name="keywords" content="createcov">
+  <meta name="description" content=" Covariance class constructor">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; createcov.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createcov
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Covariance class constructor</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> R=createcov(nr,vari,ctype) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="createcov.html" class="code" title=" Covariance class constructor ">CREATECOV</a> Covariance class constructor 
+  
+  CALL:  R=<a href="createcov.html" class="code" title=" Covariance class constructor ">createcov</a>(nr,variables,ctype) 
+   
+          nr = number of derivatives (default 0   ) 
+   variables = 'xyt'                 (default 't' ) 
+        ctype = 'enc', 'none'   (default none) 
+  
+  Example: R=<a href="createcov.html" class="code" title=" Covariance class constructor ">createcov</a>(1,'tx') create a structure with proper fieldnames for covariance 
+             
+        R: [] 
+        x: [] 
+        t: [] 
+        h: Inf 
+       tr: [] 
+     type: 'none' 
+     norm: [] 
+       Rx: [] 
+       Rt: [] 
+     note: [] 
+     date: '16-Sep-1999, 09:50:44' 
+  
+  See also  <a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>, <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\datestr.m">datestr</a></li></TD>
+<TD>       String representation of date.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\now.m">now</a></li></TD>
+<TD>           Current date and time as date number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\setfield.m">setfield</a></li></TD>
+<TD>      Set structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="struct is a built-in method">struct</a></li></TD>
+<TD>        Create or convert to structure array.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/onedim/dat2cor.html" class="code" title=" [corr,c0] = dat2cor(xn,varargin)">dat2cor</a></li></TD>
+<TD> Estimate auto correlation function from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/private/dspec2dcov.html" class="code" title=" R=dspec2dcov(S,nr,Nt,rate,Nx,Ny,dx,dy)">dspec2dcov</a></li></TD>
+<TD> Return covariance function given a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2cov.html" class="code" title=" R = spec2cov(S,nr,Nt,rate,Nx,Ny,dx,dy)">spec2cov</a></li></TD>
+<TD> Computes covariance function and its derivatives</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> R=<a name="_sub0" href="#_subfunctions" class="code">createcov</a>(nr,vari,ctype) 
+002 <span class="comment">% CREATECOV Covariance class constructor </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  R=createcov(nr,variables,ctype) </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%         nr = number of derivatives (default 0   ) </span>
+007 <span class="comment">%  variables = 'xyt'                 (default 't' ) </span>
+008 <span class="comment">%       ctype = 'enc', 'none'   (default none) </span>
+009 <span class="comment">% </span>
+010 <span class="comment">% Example: R=createcov(1,'tx') create a structure with proper fieldnames for covariance </span>
+011 <span class="comment">%            </span>
+012 <span class="comment">%       R: [] </span>
+013 <span class="comment">%       x: [] </span>
+014 <span class="comment">%       t: [] </span>
+015 <span class="comment">%       h: Inf </span>
+016 <span class="comment">%      tr: [] </span>
+017 <span class="comment">%    type: 'none' </span>
+018 <span class="comment">%    norm: [] </span>
+019 <span class="comment">%      Rx: [] </span>
+020 <span class="comment">%      Rt: [] </span>
+021 <span class="comment">%    note: [] </span>
+022 <span class="comment">%    date: '16-Sep-1999, 09:50:44' </span>
+023 <span class="comment">% </span>
+024 <span class="comment">% See also  createspec, datastructures </span>
+025  
+026 <span class="comment">%Tested on: Matlab 5.3 </span>
+027 <span class="comment">%History: </span>
+028 <span class="comment">% by pab 12.08.99 </span>
+029  
+030 <span class="keyword">if</span> nargin&lt;1|isempty(nr) 
+031   nr = 0; 
+032 <span class="keyword">end</span> 
+033 <span class="keyword">if</span> nargin&lt;2|isempty(vari) 
+034   vari = <span class="string">'t'</span>; 
+035   Nv   = 1; 
+036 <span class="keyword">else</span> 
+037   vari = sort(lower(vari)); 
+038   Nv   = length(vari); 
+039   <span class="keyword">if</span> ( (vari(1)==<span class="string">'t'</span>) &amp; (Nv&gt;1)), 
+040     vari = [vari(2:Nv), <span class="string">'t'</span>]; 
+041   <span class="keyword">end</span>  
+042 <span class="keyword">end</span> 
+043  
+044 <span class="keyword">if</span> nargin&lt;3|isempty(ctype) 
+045   ctype=<span class="string">'none'</span>; 
+046 <span class="keyword">end</span> 
+047  
+048 R=struct(<span class="string">'R'</span>,[]); 
+049 <span class="keyword">for</span> ix=1:Nv 
+050   R = setfield(R,vari(ix),[]); 
+051 <span class="keyword">end</span> 
+052 <span class="keyword">if</span> Nv==1, 
+053   R.stdev=[]; 
+054 <span class="keyword">end</span> 
+055 R.h=inf; 
+056 R.tr=[]; 
+057 R.phi=0; 
+058 <span class="keyword">if</span> strcmp(ctype(1:3),<span class="string">'enc'</span>) 
+059    R.v=0; 
+060 <span class="keyword">end</span> 
+061 R.type=ctype; 
+062 R.norm=[]; 
+063  
+064 <span class="comment">% initialize struct </span>
+065 <span class="keyword">switch</span> Nv 
+066  <span class="keyword">case</span> 1,  
+067   fieldname = vari(ones(1,nr));  
+068   <span class="keyword">for</span> ix=1:nr 
+069     R = setfield(R,fieldname(1:ix),[]); 
+070   <span class="keyword">end</span>    
+071 <span class="keyword">case</span> 2, 
+072   <span class="keyword">for</span> ix=1:nr 
+073     <span class="keyword">for</span> iy=0:nr-ix 
+074       tmp=[vari(ones(1,ix),1)' vari(ones(1,iy),2)']; 
+075       eval([<span class="string">'R.R'</span> tmp <span class="string">'=[];'</span>  ]) 
+076     <span class="keyword">end</span> 
+077   <span class="keyword">end</span>    
+078   <span class="keyword">for</span> ix=1:nr 
+079     tmp=vari(ones(1,ix),2)'; 
+080     eval([<span class="string">'R.R'</span> tmp <span class="string">'=[];'</span>]) 
+081   <span class="keyword">end</span>    
+082 <span class="keyword">case</span> 3, 
+083  <span class="keyword">for</span> ix=1:nr 
+084     <span class="keyword">for</span> iy=0:nr-ix 
+085       <span class="keyword">for</span> iz=0:nr-ix-iy 
+086         tmp=[vari(ones(1,ix),1)' vari(ones(1,iy),2)' vari(ones(1,iz),3)']; 
+087         eval([<span class="string">'R.R'</span> tmp <span class="string">'=[];'</span> ]) 
+088       <span class="keyword">end</span> 
+089     <span class="keyword">end</span> 
+090   <span class="keyword">end</span>    
+091   <span class="keyword">for</span> ix=1:nr 
+092     <span class="keyword">for</span> iy=0:nr-ix 
+093        tmp=[vari(ones(1,ix),2)' vari(ones(1,iy),3)']; 
+094       eval([<span class="string">'R.R'</span> tmp <span class="string">'=[];'</span> ]) 
+095     <span class="keyword">end</span> 
+096   <span class="keyword">end</span>    
+097   <span class="keyword">for</span> ix=1:nr 
+098     tmp=vari(ones(1,ix),3)'; 
+099     eval([<span class="string">'R.R'</span> tmp <span class="string">'=[];'</span>]) 
+100   <span class="keyword">end</span>    
+101  
+102 <span class="keyword">otherwise</span>, error(<span class="string">'unknown # variables'</span>) 
+103 <span class="keyword">end</span> 
+104  
+105 R.note=[]; 
+106 R.date=datestr(now); 
+107</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

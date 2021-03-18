@@ -1,0 +1,33 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "3.4641,3.4641";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../../wafo/wdemos/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../../wafo/wstats/graph.html";
+2;
+}
+ subgraph cluster3 {
+ label = "rfcdemo1";
+ URL = "index.html";
+3;
+4;
+5;
+6;
+}
+  1 -> 4;
+  1 -> 5;
+  6 -> 2;
+
+ 1 [URL="../../../wafo/wdemos/graph.html",label="wdemos"];
+ 2 [URL="../../../wafo/wstats/graph.html",label="wstats"];
+ 3 [URL="armacov.html",label="armacov"];
+ 4 [URL="armaspec.html",label="armaspec"];
+ 5 [URL="discar.html",label="discar"];
+ 6 [URL="f_ar.html",label="f_ar"];
+}

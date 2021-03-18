@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of recfig11</title>
+  <meta name="keywords" content="recfig11">
+  <meta name="description" content=" Probability of exceeding H: Model (dash); data (dots)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">rec</a> &gt; recfig11.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\rec&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>recfig11
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Probability of exceeding H: Model (dash); data (dots)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> recfig11 </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="recfig11.html" class="code" title=" Probability of exceeding H: Model (dash); data (dots)">RECFIG11</a> Probability of exceeding H: Model (dash); data (dots)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/wstats/dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a></li></TD>
+<TD> Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/wafostamp.html" class="code" title=" [H,ax]=wafostamp(varargin)">wafostamp</a></li></TD>
+<TD> Prints a caption "made by WAFO" in current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\semilogy.bi">semilogy</a></li></TD>
+<TD>      Semi-log scale plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\square.m">square</a></li></TD>
+<TD>        Square wave generation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">recfig11</a>
+02 <span class="comment">% RECFIG11 Probability of exceeding H: Model (dash); data (dots)</span>
+03 <span class="comment">% </span>
+04 
+05 <span class="comment">% Tested on: Matlab 5.x</span>
+06 <span class="comment">% History:</span>
+07 <span class="comment">% Revised pab 12.06.2001</span>
+08 <span class="comment">%  changed from empdistr(H/Hrms,0,[x F],2); to  empdistr(H/Hrms,[x F],2);</span>
+09 <span class="keyword">global</span> RECFIGNUM
+10 <span class="keyword">if</span> isempty(RECFIGNUM)
+11   disp(<span class="string">'You must start recdemo in order to run this script'</span>)
+12   <span class="keyword">return</span>
+13 <span class="keyword">end</span>
+14 <span class="keyword">global</span> H Hrms sphat 
+15 x=linspace(0,3.5)';
+16 F=<a href="../../../wafo/wstats/dist2dcdf.html" class="code" title=" Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2">dist2dcdf</a>(20,x,sphat,0);
+17 <a href="../../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(H/Hrms,[x F],2);
+18 xlabel(<span class="string">'h'</span>)
+19 ylabel(<span class="string">'1-F(h)'</span>)
+20 title(<span class="string">''</span>)
+21 hold on,
+22 semilogy(x(F&lt;1),1-F(F(:)&lt;1),<span class="string">'r--'</span>)
+23 hold off
+24 axis([0 3.5 1e-4 1])
+25 axis square
+26 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>(<span class="string">'Figure 11'</span>,<span class="string">'(NR)'</span>)
+27</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

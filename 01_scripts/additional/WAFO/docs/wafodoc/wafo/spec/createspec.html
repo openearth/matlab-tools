@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of createspec</title>
+  <meta name="keywords" content="createspec">
+  <meta name="description" content=" Spectrum structure constructor">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; createspec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createspec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Spectrum structure constructor</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> S=createspec(stype,freqtype) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="createspec.html" class="code" title=" Spectrum structure constructor">CREATESPEC</a> Spectrum structure constructor
+ 
+  CALL:  S=<a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>(stype,<a href="freqtype.html" class="code" title=" returns the frequency type of a Spectral density struct.">freqtype</a>)
+  
+       stype = 'freq'   Frequency spectrum (default)
+               'dir'    Directional spectrum
+               'k1D'    Wave number spectrum 1D
+               'k2D'    Wave number spectrum 2D
+               'encdir' Encounter directional spectrum
+               'enc'    Encounter frequency spectrum
+ 
+    <a href="freqtype.html" class="code" title=" returns the frequency type of a Spectral density struct.">freqtype</a> = 'w' angular frequency (rad/sec) (default)
+               'f' frequency         (Hz)
+ 
+  Example: Create a structure with proper fieldnames for directional spectrum
+            S=<a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>('dir') 
+ 
+  See also  <a href="createcov.html" class="code" title=" Covariance class constructor ">createcov</a>, <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\datestr.m">datestr</a></li></TD>
+<TD>       String representation of date.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\now.m">now</a></li></TD>
+<TD>           Current date and time as date number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="struct is a built-in method">struct</a></li></TD>
+<TD>        Create or convert to structure array.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cov2spec.html" class="code" title=" S = cov2spec(R,rate,nugget,trunc,fast);">cov2spec</a></li></TD>
+<TD> Computes spectral density given the auto covariance function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/dat2dspec.html" class="code" title=" [Sd,D,Sw,Fcof,Gwt,Sxy,Sxy1] = dat2dspec2(xn,pos,h,nfft,nt,method,varargin)">dat2dspec</a></li></TD>
+<TD> Estimates the directional wave spectrum from timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/dat2spec.html" class="code" title=" [S,fcut] = dat2spec(xn,varargin)">dat2spec</a></li></TD>
+<TD> Estimate one-sided spectral density from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/dat2spec2.html" class="code" title=" S = dat2spec2(xn,L,g,plotflag,wdef,dT,chopOffHighFreq)">dat2spec2</a></li></TD>
+<TD> Estimate one-sided spectral density, version 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/private/imlm.html" class="code" title=" DS = imlm(Sxy,Gwt,thetai,fi,k,opt)">imlm</a></li></TD>
+<TD>  Iterated maximum likelihood method for estimating the directional distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+<TR>
+<TD><li><a href="jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">jonswap</a></li></TD>
+<TD> Calculates (and plots) a JONSWAP spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="mccormick.html" class="code" title=" S1=mccormick(w1,sdata,plotflag)">mccormick</a></li></TD>
+<TD> Calculates (and plots) a McCormick spectral density.</TD>
+</TR>
+<TR>
+<TD><li><a href="mkdspec.html" class="code" title=" Snew=mkdspec(S,D,plotflag)">mkdspec</a></li></TD>
+<TD> Make a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/private/mlm.html" class="code" title=" DS = mlm(Sxy,Gwt,thetai,fi,k,opt)">mlm</a></li></TD>
+<TD>  maximum likelihood method for estimating the directional distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="ohspec.html" class="code" title=" S1=ohspec(w1,sdata,plotflag)">ohspec</a></li></TD>
+<TD> Calculates (and plots) a Ochi-Hubble spectral density.</TD>
+</TR>
+<TR>
+<TD><li><a href="oscspec.html" class="code" title=" S = oscspec(sdata,z,w,s)">oscspec</a></li></TD>
+<TD> Spectral density for a harmonic oscillator</TD>
+</TR>
+<TR>
+<TD><li><a href="pmspec.html" class="code" title=" S1=pmspec(w1,sdata,plotflag)">pmspec</a></li></TD>
+<TD> Calculates (and plots) a Pierson-Moskowitz spectral density.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/damage/roadspec.html" class="code" title=" S = roadspec(sdata,a,C)">roadspec</a></li></TD>
+<TD> Spectral density (frequency) for a road</TD>
+</TR>
+<TR>
+<TD><li><a href="torsethaugen.html" class="code" title=" [S, Sw, Ss]=torsethaugen(w1,sdata,plotflag)">torsethaugen</a></li></TD>
+<TD> Calculates a double peaked (swell + wind) spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="ttspec.html" class="code" title=" Snew = ttspec(S,varargin)">ttspec</a></li></TD>
+<TD> Toggle Transform between angular frequency and frequency spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="wallop.html" class="code" title=" S1=wallop(w1,sdata,plotflag)">wallop</a></li></TD>
+<TD>  Calculates (and plots) a Wallop spectral density.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> S=<a name="_sub0" href="#_subfunctions" class="code">createspec</a>(stype,freqtype)
+002 <span class="comment">% CREATESPEC Spectrum structure constructor</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  S=createspec(stype,freqtype)</span>
+005 <span class="comment">% </span>
+006 <span class="comment">%      stype = 'freq'   Frequency spectrum (default)</span>
+007 <span class="comment">%              'dir'    Directional spectrum</span>
+008 <span class="comment">%              'k1D'    Wave number spectrum 1D</span>
+009 <span class="comment">%              'k2D'    Wave number spectrum 2D</span>
+010 <span class="comment">%              'encdir' Encounter directional spectrum</span>
+011 <span class="comment">%              'enc'    Encounter frequency spectrum</span>
+012 <span class="comment">%</span>
+013 <span class="comment">%   freqtype = 'w' angular frequency (rad/sec) (default)</span>
+014 <span class="comment">%              'f' frequency         (Hz)</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% Example: Create a structure with proper fieldnames for directional spectrum</span>
+017 <span class="comment">%           S=createspec('dir') </span>
+018 <span class="comment">%</span>
+019 <span class="comment">% See also  createcov, datastructures</span>
+020 
+021 <span class="comment">% Tested on: Matlab 5.3</span>
+022 <span class="comment">% History:</span>
+023 <span class="comment">%  revised by IR 03.04.2001 - added S.phi=0.</span>
+024 <span class="comment">%  revised by jr 10.07.2000 - Line 47 and 49: semicolon added</span>
+025 <span class="comment">%  revised by es 25.05.2000 - help-text changes  </span>
+026 <span class="comment">%  revised by jr 14.01.2000 - Field added: norm: 0 </span>
+027 <span class="comment">%  revised by es 19.09.1999</span>
+028 <span class="comment">%  by pab 12.08.99</span>
+029 
+030 <span class="keyword">if</span> nargin&lt;1|isempty(stype)
+031   stype=<span class="string">'freq'</span>;
+032 <span class="keyword">else</span>
+033   stype=lower(stype);
+034 <span class="keyword">end</span>
+035 
+036 <span class="keyword">if</span> nargin&lt;2|isempty(freqtype)
+037   freqtype=<span class="string">'w'</span>;
+038 <span class="keyword">else</span>
+039   freqtype=lower(freqtype);
+040 <span class="keyword">end</span>
+041 
+042 n=length(stype);
+043 S=struct(<span class="string">'S'</span>,[]);
+044 <span class="keyword">if</span> strcmp(stype(1),<span class="string">'k'</span>) <span class="comment">% wavenumber spectrum</span>
+045   S.k=[];
+046   <span class="keyword">if</span> strcmp(stype(n-1),<span class="string">'2'</span>)
+047     S.k2=[];
+048   <span class="keyword">end</span>
+049 <span class="keyword">else</span> <span class="comment">% </span>
+050   <span class="keyword">if</span> strcmp(freqtype,<span class="string">'f'</span>)
+051     S.f=[];
+052   <span class="keyword">else</span>
+053     S.w=[];
+054   <span class="keyword">end</span>
+055   <span class="keyword">if</span> strcmp(stype(n-2:n),<span class="string">'dir'</span>)
+056    S.theta=[];
+057   <span class="keyword">end</span>
+058 <span class="keyword">end</span>
+059 
+060 S.tr=[];
+061 
+062 <span class="keyword">if</span> strcmp(stype(1:3),<span class="string">'enc'</span>)
+063    S.v=0;
+064    S.phi=0;
+065 <span class="keyword">elseif</span> strcmp(stype(1:3),<span class="string">'rot'</span>)
+066    S.phi=0;
+067 <span class="keyword">end</span>
+068 S.h=inf;
+069 S.type=stype;
+070 S.phi=0.;
+071 S.norm=0;
+072 S.note=[];
+073 S.date=datestr(now);
+074</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

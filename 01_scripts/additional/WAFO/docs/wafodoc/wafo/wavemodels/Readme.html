@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Readme</title>
+  <meta name="keywords" content="Readme">
+  <meta name="description" content=" Readme file for module WAVEMODELS in WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; Readme.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Readme
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Readme file for module WAVEMODELS in WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="Readme.html" class="code" title=" Readme file for module WAVEMODELS in WAFO Toolbox.">README</a> <a href="Readme.html" class="code" title=" Readme file for module WAVEMODELS in WAFO Toolbox.">Readme</a> file for module WAVEMODELS in WAFO Toolbox.
+  Version 2.1.1   07-Nov-2004
+ 
+   FIXES
+   ~~~~~
+   <a href="ochi98fit.html" class="code" title=" Parameter estimates and confidence intervals for Ochi data.">ochi98fit</a> -  replaced call to fmins with fminsearch  
+   <a href="Contents.html" class="code" title="  Module WAVEMODELS in WAFO Toolbox.  ">Contents</a>.m file missed reference to some functions
+   The distributions:
+     <a href="thsspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">thsspdf</a>, <a href="thspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra. ">thspdf</a>, <a href="thsnlpdf.html" class="code" title=" Joint (Scf,Hd) PDF for nonlinear waves with Torsethaugen spectra. ">thsnlpdf</a>, <a href="jhspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with JONSWAP spectra. ">jhspdf</a> and <a href="jhsnlpdf.html" class="code" title=" Joint (Scf,Hd) PDF for nonlinear waves with a JONSWAP spectra. ">jhsnlpdf</a>
+   are fitted to new simulations saved in:
+      jhsnlpar21-Jul-2004.mat, jhspar13-Jul-2004.mat 
+      thsnlpar06-Aug-2004.mat, thspar19-Jul-2004.mat
+      thsspar27-Jul-2004.mat.
+ 
+   NEW FUNCTIONS
+  ~~~~~~~~~~~~~~~~
+  <a href="b04jpdf.html" class="code" title=" Brodtkorb (2004) joint (Scf,Hd) PDF from Japan Sea. ">b04jpdf</a>    - Brodtkorb (2004) joint (Scf,Hd) PDF from Japan <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>.
+  <a href="b04jpdf2.html" class="code" title=" Brodtkorb  (2004) joint (Scf,Hd) PDF from Japan Sea. ">b04jpdf2</a>   - Brodtkorb (2004) joint (Scf,Hd) PDF from Japan <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>.
+  <a href="b04pdf.html" class="code" title=" Brodtkorb (2004) joint (Scf,Hd) PDF of laboratory data. ">b04pdf</a>     - Brodtkorb (2004) joint (Scf,Hd) PDF of laboratory data.
+  <a href="b04pdf2.html" class="code" title=" Brodtkorb  (2004) joint (Scf,Hd) PDF of laboratory data. ">b04pdf2</a>    - Brodtkorb (2004) joint (Scf,Hd) PDF of laboratory data.
+  <a href="bmr00pdf.html" class="code" title=" Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea. ">bmr00pdf</a>   - Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>.
+  <a href="bmr00pdf2.html" class="code" title=" Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea. ">bmr00pdf2</a>  - Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>.
+ 
+  <a href="b04cdf.html" class="code" title="  Brodtkorb (2004) joint (Scf,Hd) CDF of laboratory data. ">b04cdf</a>     - Brodtkorb (2004) joint (Scf,Hd) CDF of laboratory data.
+  <a href="b04jcdf.html" class="code" title="  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea. ">b04jcdf</a>    - Brodtkorb (2004) joint (Scf,Hd) CDF from Japan <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>.
+  <a href="bmr00cdf.html" class="code" title="  Brodtkorb et.al. (2000) joint (Scf,Hd) CDF from North Sea. ">bmr00cdf</a>   - Brodtkorb et.al (2000) joint (Scf,Hd) CDF from North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>.
+  
+  
+ ---------------------------------------------------
+  Version 2.1.0   07-Apr-2004
+ 
+   FIXES
+   ~~~~~
+   <a href="trraylpdf.html" class="code" title=" Calculates transformed Rayleigh approximation for amplitudes ">trraylpdf</a> - added example
+ 
+   For the following files the input is changed and the help header is
+   updated accordingly:
+ 
+   <a href="mk87cdf.html" class="code" title="  Myrhaug and Kjeldsen (1987) joint (Scf,Hd) CDF. ">mk87cdf</a> 
+   <a href="mk87pdf.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">mk87pdf</a> 
+   <a href="mk87pdf2.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">mk87pdf2</a>
+   <a href="ohhsspdf.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">ohhsspdf</a>
+   <a href="ohhspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with Ochi-Hubble spectra. ">ohhspdf</a>
+   <a href="thsspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">thsspdf</a> 
+   <a href="thspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra. ">thspdf</a>
+   thvdf
+ 
+   NEW FUNCTIONS
+  ~~~~~~~~~~~~~~~~
+ 
+    <a href="jhvnlpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. ">jhvnlpdf</a>
+    ohsspdf2
+    <a href="ohhspdf2.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with Ochi-Hubble spectra. ">ohhspdf2</a> 
+    <a href="thvpdf2.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra. ">thvpdf2</a>
+    <a href="thsspdf2.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">thsspdf2</a>
+    <a href="thspdf2.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra. ">thspdf2</a> 
+    <a href="ohhsscdf.html" class="code" title=" Joint (Scf,Hd) CDF for linear waves in space with Ochi-Hubble spectra. ">ohhsscdf</a>
+    <a href="ohhscdf.html" class="code" title=" Joint (Scf,Hd) CDF for linear waves with Ochi-Hubble spectra. ">ohhscdf</a>
+    <a href="thvcdf.html" class="code" title=" Joint (Vcf,Hd) CDF for linear waves with Torsethaugen spectra. ">thvcdf</a>
+    <a href="thsscdf.html" class="code" title=" Joint (Scf,Hd) CDF for linear waves in space with Torsethaugen spectra. ">thsscdf</a>
+    <a href="thscdf.html" class="code" title=" Joint (Scf,Hd) CDF for linear waves with Torsethaugen spectra. ">thscdf</a>
+    
+    
+ -------------------------------------------------------------------
+  Version 2.0.5   14-Jun-2003 
+  
+ --------------------------------------------------------------------
+  Version 2.0.4   11-Apr-2001
+  
+  This file describes new features, bug fixes, and changes in this version 
+  of the WAFO/wavemodels Toolbox.
+ 
+  List of changes:
+  
+  NOTE:
+  Items marked with:
+        (N)  : needs a new  name 
+         *   : not yet available
+         +   : needs more work
+         **  : have changed in a way which might affect your code!
+ 
+  
+   FIXES
+   ~~~~~
+    - <a href="cav76pdf.html" class="code" title=" Cavanie et al. (1976) approximation of the density  (Tc,Ac)">cav76pdf</a> : 1) fixed transform and normalisation using Lindgren &amp;
+                    Rychlik (1982) paper. 
+                 2)  fixed xlabels i.e. f.labx={'Tc','Ac'}
+ 
+ 
+   ENHANCEMENTS
+   ~~~~~~~~~~~~
+ 
+   The dependence on the MATLAB STATS toolbox is now removed. Only
+   functions from the WAFO/wstats directory is needed. All the loglikelihood 
+   functions are removed, due to the fact that they are no longer needed by 
+   the XXXXXfit.m functions.
+ 
+   NEW FUNCTIONS
+  ~~~~~~~~~~~~~~~~
+ 
+   <a href="ohhspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with Ochi-Hubble spectra. ">OHHSPDF</a>   - Joint (Scf,Hd) pdf in time for bimodal Ochi-Hubble spectra.
+   <a href="ohhpdf.html" class="code" title=" Marginal wave height, Hd, PDF for Bimodal Ochi-Hubble spectra. ">OHHPDF</a>    - Marginal wave height, Hd, pdf for Bimodal Ochi-Hubble spectra.
+   <a href="ohhvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for lineare waves with Ochi-Hubble spectra. ">OHHVPDF</a>   - Joint (Vcf,Hd) pdf for bimodal Ochi-Hubble spectra.
+   <a href="ohhsspdf.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">OHHSSPDF</a>  - Joint (Scf,Hd) pdf in space for bimodal Ochi-Hubble spectra.
+   <a href="ohhgparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Ochi-Hubble spectra. ">OHHGPARFUN</a> - Wave height, Hd, distribution parameters for Ochi-Hubble spectra.
+   <a href="ohhcdf.html" class="code" title=" Marginal wave height, Hd, CDF for Ochi-Hubble spectra. ">OHHCDF</a>    - Marginal wave height, Hd, cdf for Bimodal Ochi-Hubble spectra.
+   <a href="thsspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">THSSPDF</a>   - Joint (Scf,Hd) pdf in space for <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectra.
+   <a href="thspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra. ">THSPDF</a>    - Joint (Scf,Hd) pdf for <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectra.
+   <a href="thpdf.html" class="code" title=" Marginal wave height, Hd, PDF for Torsethaugen spectra. ">THPDF</a>     - Marginal wave height, Hd, pdf for <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectra.
+   <a href="thcdf.html" class="code" title=" Marginal wave height, Hd, CDF for Torsethaugen spectra. ">THCDF</a>     - Marginal wave height, Hd, cdf for <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectra.
+   <a href="thvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra. ">THVPDF</a>    - Joint (Vcf,Hd) pdf for <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectra.
+ 
+   NEEDS MORE WORK
+   ~~~~~~~~~~~~~~~~
+   
+   ochi98XXX     - (+) Need a explanation to the scaling.
+   <a href="tay81cdf.html" class="code" title=" Tayfun (1981) CDF of  breaking limited wave heights ">tay81cdf</a>      - (+) Needs testing.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

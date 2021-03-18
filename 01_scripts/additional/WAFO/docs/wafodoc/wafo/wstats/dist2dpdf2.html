@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dist2dpdf2</title>
+  <meta name="keywords" content="dist2dpdf2">
+  <meta name="description" content=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; dist2dpdf2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dist2dpdf2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> y = dist2dpdf2(v1,h1,phat) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dist2dpdf2.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2) ">DIST2DPDF2</a> Joint 2D PDF computed as f(x1|X2=x2)*f(x2) 
+  
+   CALL:  f = <a href="dist2dpdf2.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2) ">dist2dpdf2</a>(x1,x2,phat);  
+  
+       f  = PDF struct with the following fields: 
+            f = PDF evaluated at meshgrid(x1,x2) 
+         x = {x1,x2} (i.e., cellarray containing x1 and x2) 
+   x1,x2  = vectors of evaluation points 
+     phat = structure array containing 
+             x    = cellarray of distribution parameters 
+             dist = cellarray of strings defining the distributions of  
+                    X2 and X1 given X2, respectively. Options are: 
+                    'tgumbel', 'gumbel', 'lognormal','rayleigh','weibull', 
+                    and 'gamma'. 
+   
+   <a href="dist2dpdf2.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2) ">DIST2DPDF2</a> evaluates f{x1|X2=x2 }*f{x2}.  
+    The parameter(s) of the unconditional distribution of X2, 
+    f{x2}, must be in in phat.x{2}. The parameters of the conditional 
+    distribution of X1 given X2 must be in phat.x{1}. The first column 
+    in phat.x{1} contains the X2 values the parameters in column 2 and 3 are 
+    conditioned on.   
+  
+  Example: 2D Rayleigh 
+     x1=linspace(0,10)'; 
+     phat.x={[x1,2*ones(size(x1))] 2 }; 
+     phat.dist={'rayl','rayl'}; 
+     f = <a href="dist2dpdf2.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2) ">dist2dpdf2</a>(x1,x1,phat);  
+     <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f); 
+  
+  See also  <a href="dist2dfit.html" class="code" title=" Parameter estimates for DIST2D data. ">dist2dfit</a>, <a href="dist2dpdf.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2)">dist2dpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dpdf.html" class="code" title=" y = dist2dpdf(v1,h1,phat)">dist2dpdf</a></li></TD>
+<TD> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dsmfun2.html" class="code" title=" sphat=dist2dsmfun2(phat,h2,csm,lin,visual,f0)">dist2dsmfun2</a></li></TD>
+<TD> Smooths the conditional DIST2D distribution parameters.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recinit.html" class="code" title=" recinit">recinit</a></li></TD>
+<TD>  setup all global variables of the RECDEMO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> y = <a name="_sub0" href="#_subfunctions" class="code">dist2dpdf2</a>(v1,h1,phat) 
+002 <span class="comment">%DIST2DPDF2 Joint 2D PDF computed as f(x1|X2=x2)*f(x2) </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  f = dist2dpdf2(x1,x2,phat);  </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%      f  = PDF struct with the following fields: </span>
+007 <span class="comment">%           f = PDF evaluated at meshgrid(x1,x2) </span>
+008 <span class="comment">%        x = {x1,x2} (i.e., cellarray containing x1 and x2) </span>
+009 <span class="comment">%  x1,x2  = vectors of evaluation points </span>
+010 <span class="comment">%    phat = structure array containing </span>
+011 <span class="comment">%            x    = cellarray of distribution parameters </span>
+012 <span class="comment">%            dist = cellarray of strings defining the distributions of  </span>
+013 <span class="comment">%                   X2 and X1 given X2, respectively. Options are: </span>
+014 <span class="comment">%                   'tgumbel', 'gumbel', 'lognormal','rayleigh','weibull', </span>
+015 <span class="comment">%                   and 'gamma'. </span>
+016 <span class="comment">%  </span>
+017 <span class="comment">%  DIST2DPDF2 evaluates f{x1|X2=x2 }*f{x2}.  </span>
+018 <span class="comment">%   The parameter(s) of the unconditional distribution of X2, </span>
+019 <span class="comment">%   f{x2}, must be in in phat.x{2}. The parameters of the conditional </span>
+020 <span class="comment">%   distribution of X1 given X2 must be in phat.x{1}. The first column </span>
+021 <span class="comment">%   in phat.x{1} contains the X2 values the parameters in column 2 and 3 are </span>
+022 <span class="comment">%   conditioned on.   </span>
+023 <span class="comment">% </span>
+024 <span class="comment">% Example: 2D Rayleigh </span>
+025 <span class="comment">%    x1=linspace(0,10)'; </span>
+026 <span class="comment">%    phat.x={[x1,2*ones(size(x1))] 2 }; </span>
+027 <span class="comment">%    phat.dist={'rayl','rayl'}; </span>
+028 <span class="comment">%    f = dist2dpdf2(x1,x1,phat);  </span>
+029 <span class="comment">%    pdfplot(f); </span>
+030 <span class="comment">% </span>
+031 <span class="comment">% See also  dist2dfit, dist2dpdf  </span>
+032  
+033 <span class="comment">%tested on: matlab 5.2 </span>
+034 <span class="comment">% history: </span>
+035 <span class="comment">%  Per A. Brodtkorb 28.10.98 </span>
+036  
+037 error(nargchk(3,3,nargin)) 
+038  
+039 y=<a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2); 
+040 [X1 X2]=meshgrid(v1,h1); 
+041 y.f=  <a href="dist2dpdf.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2)">dist2dpdf</a>(X1,X2,phat); 
+042 y.x{1}=v1(:); 
+043 y.x{2}=h1(:); 
+044 <span class="comment">%contour(v1,h1,y.f) </span>
+045 <span class="comment">%y.f(isinf(y.f)|isnan(y.f))=0; </span>
+046 <span class="keyword">try</span> 
+047   [y.cl y.pl]=<a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(y.f); 
+048 <span class="keyword">catch</span> 
+049   y.cl=[]; 
+050   y.pl=[]; 
+051 <span class="keyword">end</span> 
+052 y.phat=phat; 
+053  
+054  
+055</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

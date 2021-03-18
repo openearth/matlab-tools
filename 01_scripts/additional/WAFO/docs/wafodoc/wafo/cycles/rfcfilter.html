@@ -1,0 +1,297 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of rfcfilter</title>
+  <meta name="keywords" content="rfcfilter">
+  <meta name="description" content=" Rainflow filter a signal.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; rfcfilter.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>rfcfilter
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Rainflow filter a signal.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [y] = rfcfilter(x,h,def) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">RFCFILTER</a> Rainflow filter a signal.
+ 
+  CALL:  [y] = <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(x,h,def);
+  
+  Input:
+    x   = Signal.   [nx1] OR [nx2]
+    h   = Threshold for rainflow filter.
+    def = 0: removes cycles with <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> &lt; h. (default)
+          1: removes cycles with <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> &lt;= h.
+  Output:
+    y   = Rainflow filtered signal.
+ 
+  Examples:  % 1. Filtered signal y is the turning points of x.
+       y = <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(x,0,1);
+             % 2. This removes all rainflow cycles with <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> less than 0.5.
+       y = <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(x,0.5);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dat2dtp.html" class="code" title=" [dtp,u,tp] = dat2dtp(param,x,h,ddef)">dat2dtp</a></li></TD>
+<TD> The sequence of discretized turning points from a signal.</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2rfm.html" class="code" title=" [RFM,u,param] = dat2rfm(x,h,n)">dat2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix from a time signal.</TD>
+</TR>
+<TR>
+<TD><li><a href="res2arfc.html" class="code" title=" [ARFC] = res2arfc(res,def,def_time)">res2arfc</a></li></TD>
+<TD> Calculates asymmetric rainflow cycles for a residual.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/test/test_markov.html" class="code" title="This is a script file.">test_markov</a></li></TD>
+<TD> Quick test of the routines in module 'markov'</TD>
+</TR>
+<TR>
+<TD><li><a href="tpextrapolate.html" class="code" title=" [tpe,Pout,I,tpe0] = tpextrapolate(tp,N,Pin,plotflag)">tpextrapolate</a></li></TD>
+<TD> Extrapolates a sequence of turning points.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> uu = fp(u,h)</a></li><li><a href="#_sub2" class="code"> uu = fm(u,h)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [y] = <a name="_sub0" href="#_subfunctions" class="code">rfcfilter</a>(x,h,def)  
+002 <span class="comment">% RFCFILTER Rainflow filter a signal.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [y] = rfcfilter(x,h,def);</span>
+005 <span class="comment">% </span>
+006 <span class="comment">% Input:</span>
+007 <span class="comment">%   x   = Signal.   [nx1] OR [nx2]</span>
+008 <span class="comment">%   h   = Threshold for rainflow filter.</span>
+009 <span class="comment">%   def = 0: removes cycles with range &lt; h. (default)</span>
+010 <span class="comment">%         1: removes cycles with range &lt;= h.</span>
+011 <span class="comment">% Output:</span>
+012 <span class="comment">%   y   = Rainflow filtered signal.</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Examples:  <span class="comment">% 1. Filtered signal y is the turning points of x.</span></span>
+015 <span class="comment">%      y = rfcfilter(x,0,1);</span>
+016 <span class="comment">%            <span class="comment">% 2. This removes all rainflow cycles with range less than 0.5.</span></span>
+017 <span class="comment">%      y = rfcfilter(x,0.5);</span>
+018 
+019 <span class="comment">% Tested on Matlab 6.0</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% History: </span>
+022 <span class="comment">% Updated by PJ 18-May-2000</span>
+023 <span class="comment">%   Help text.</span>
+024 <span class="comment">% Revised by PJ 12-Jan-2000</span>
+025 <span class="comment">%   updated for WAFO</span>
+026 <span class="comment">% Created by PJ (Pär Johannesson) 1999</span>
+027 
+028   
+029 <span class="comment">% Check input and output</span>
+030 
+031 ni = nargin;
+032 no = nargout;
+033 error(nargchk(2,3,ni));
+034 
+035 <span class="keyword">if</span> ni &lt; 3
+036   def=[];
+037 <span class="keyword">end</span>
+038 
+039 <span class="comment">% Set default values</span>
+040 
+041 <span class="keyword">if</span> isempty(def)
+042   def = 0;
+043 <span class="keyword">end</span>
+044 
+045 <span class="comment">% Initiation</span>
+046 
+047 [n,m] = size(x);
+048 y = zeros(n,m);
+049 
+050 y(1,:) = x(1,:);
+051 j = 1;
+052 <span class="keyword">if</span> m == 1
+053   t0 = 0;
+054   y0 = y(1);
+055 <span class="keyword">else</span>
+056   t0 = y(1,1);
+057   y0 = y(1,2);
+058 <span class="keyword">end</span>
+059 
+060 z0 = 0;
+061 
+062 <span class="comment">% The rainflow filter</span>
+063 
+064 <span class="keyword">for</span> i = 2:n
+065   fpi = y0+h; <span class="comment">%fp(y0,h);</span>
+066   fmi = y0-h; <span class="comment">%fm(y0,h);</span>
+067   <span class="keyword">if</span> m == 1
+068     ti = 0;
+069     xi = x(i);
+070   <span class="keyword">else</span>
+071     ti = x(i,1);
+072     xi = x(i,2);
+073   <span class="keyword">end</span>
+074   <span class="keyword">if</span> z0 == 0
+075     <span class="keyword">if</span> def == 0
+076       test1 = (xi &lt;= fmi);
+077       test2 = (xi &gt;= fpi);
+078     <span class="keyword">else</span> <span class="comment">% def == 1</span>
+079       test1 = (xi &lt; fmi);
+080       test2 = (xi &gt; fpi);
+081     <span class="keyword">end</span>
+082     <span class="keyword">if</span> test1
+083       z1 = -1;
+084     <span class="keyword">elseif</span> test2
+085       z1 = +1;
+086     <span class="keyword">else</span>
+087       z1 = 0;
+088     <span class="keyword">end</span>
+089     <span class="keyword">if</span> z1 == 0
+090       t1 = t0;
+091       y1 = y0;
+092     <span class="keyword">else</span>
+093       t1 = ti;
+094       y1 = xi;
+095     <span class="keyword">end</span>
+096   <span class="keyword">else</span>
+097     
+098     <span class="comment">% Which definition?</span>
+099     <span class="keyword">if</span> def == 0
+100       test1 = (((z0==+1) &amp; (xi&lt;=fmi))  | ((z0==-1) &amp; (xi&lt;fpi)));
+101       test2 = (((z0==+1) &amp; (xi&gt;fmi)) | ((z0==-1) &amp; (xi&gt;=fpi)));
+102     <span class="keyword">else</span> <span class="comment">% def == 1</span>
+103       test1 = (((z0==+1) &amp; (xi&lt;fmi))  | ((z0==-1) &amp; (xi&lt;=fpi)));
+104       test2 = (((z0==+1) &amp; (xi&gt;=fmi)) | ((z0==-1) &amp; (xi&gt;fpi)));
+105     <span class="keyword">end</span>
+106     
+107     <span class="comment">% Update z1</span>
+108     <span class="keyword">if</span>     test1
+109       z1 = -1;
+110     <span class="keyword">elseif</span> test2
+111       z1 = +1;
+112     <span class="keyword">else</span>
+113       warning([<span class="string">'Something wrong, i='</span> num2str(i)]);
+114     <span class="keyword">end</span>
+115     
+116     <span class="comment">% Update y1</span>
+117     <span class="keyword">if</span>     z1 ~= z0
+118       t1 = ti;
+119       y1 = xi;
+120     <span class="keyword">elseif</span> z1 == -1
+121       <span class="comment">% y1 = min([y0 xi]);</span>
+122       <span class="keyword">if</span> y0&lt;xi
+123     t1 = t0;
+124     y1 = y0;
+125       <span class="keyword">else</span>
+126     t1 = ti;
+127     y1 = xi;
+128       <span class="keyword">end</span>
+129     <span class="keyword">elseif</span> z1 == +1
+130       <span class="comment">% y1 = max([y0 xi]);</span>
+131       <span class="keyword">if</span> y0 &gt; xi
+132     t1 = t0;
+133     y1 = y0;
+134       <span class="keyword">else</span>
+135     t1 = ti;
+136     y1 = xi;
+137       <span class="keyword">end</span>
+138     <span class="keyword">end</span>
+139     
+140   <span class="keyword">end</span>
+141   
+142   <span class="comment">% Update y if y0 is a turning point</span>
+143   <span class="keyword">if</span> abs(z0-z1) == 2
+144     j=j+1;
+145     <span class="keyword">if</span> m ==1
+146       y(j) = y0;
+147     <span class="keyword">else</span>
+148       y(j,:) = [t0 y0];
+149     <span class="keyword">end</span>
+150   <span class="keyword">end</span>
+151   
+152   <span class="comment">% Update t0, y0, z0</span>
+153   t0=t1;
+154   y0=y1;
+155   z0=z1;
+156 <span class="keyword">end</span>
+157 
+158 <span class="comment">% Update y if last y0 is greater than (or equal) threshold</span>
+159 <span class="keyword">if</span> def == 0
+160   test = (abs(y0-y(j)) &gt; h);
+161 <span class="keyword">else</span> <span class="comment">% def == 1</span>
+162   test = (abs(y0-y(j)) &gt;= h);
+163 <span class="keyword">end</span>
+164 <span class="keyword">if</span> test
+165   j=j+1;
+166   <span class="keyword">if</span> m ==1
+167     y(j) = y0;
+168   <span class="keyword">else</span>
+169     y(j,:) = [t0 y0];
+170   <span class="keyword">end</span>
+171 <span class="keyword">end</span>
+172 
+173 <span class="comment">% Truncate y</span>
+174 y=y(1:j,:);
+175 
+176 <span class="keyword">function</span> uu = <a name="_sub1" href="#_subfunctions" class="code">fp</a>(u,h)
+177   uu = u+h;
+178   
+179 <span class="keyword">function</span> uu = <a name="_sub2" href="#_subfunctions" class="code">fm</a>(u,h)
+180   uu = u-h;
+181</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

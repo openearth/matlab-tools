@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of getulcc</title>
+  <meta name="keywords" content="getulcc">
+  <meta name="description" content=" Finds the upper left element > 0 in a matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wsim</a> &gt; <a href="index.html">private</a> &gt; getulcc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>getulcc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Finds the upper left element > 0 in a matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [row,col,num]=getulcc(M) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="getulcc.html" class="code" title=" Finds the upper left element > 0 in a matrix.">GETULCC</a> Finds the upper left element &gt; 0 in a matrix.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="fr2res.html" class="code" title=" r=fr2res(f)">fr2res</a></li></TD>
+<TD> Generates a stationary residual from the frequency matrix.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> [row,col,num]=<a name="_sub0" href="#_subfunctions" class="code">getulcc</a>(M)
+02 <span class="comment">%GETULCC Finds the upper left element &gt; 0 in a matrix.</span>
+03 
+04 <span class="comment">%  Does not work if several element lay on a diagonal line and the upper left</span>
+05 <span class="comment">%  element is not unique.</span>
+06 
+07 <span class="comment">%  Copyright 1993, Mats Frendahl, Dept. of Math. Stat., University of Lund.</span>
+08 
+09 n=length(M);
+10 <span class="keyword">for</span> i=n-1:-1:0
+11   index=find(diag(fliplr(M),i)&gt;0);
+12   <span class="keyword">if</span> ~isempty(index)
+13     row=index;
+14     col=(n-i)-(row-1);
+15     num=M(row,col);
+16     <span class="keyword">return</span>
+17   <span class="keyword">end</span>
+18 <span class="keyword">end</span>
+19 
+20</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

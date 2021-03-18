@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of empdistr</title>
+  <meta name="keywords" content="empdistr">
+  <meta name="description" content=" Computes and plots the empirical CDF">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; empdistr.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>empdistr
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Computes and plots the empirical CDF</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [Fz] = empdistr(z,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">EMPDISTR</a> Computes and plots the empirical CDF 
+           and optionally compares it with distribution G.
+ 
+   CALL:  F = <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(X,G,plotflag,sym);
+ 
+         F  = empirical distribution of X, two column matrix.
+         X  = data vector.
+         G  = cdf, two column matrix (optional).
+   plotflag = 0  no plotting
+              1 plot cdf F(x) (default)
+              2 plot 1-F(x) on a semilog y-scale
+              3 plot 1-F(x) on a log log scale
+        sym = {s1,s2} cell array or comma separated list of plot 
+              symbols for F and G, respectively.
+              (default {'b','r--'})
+  
+  NOTE:  SYM can be given anywhere after X
+ 
+  Example:
+    R = <a href="wgevrnd.html" class="code" title=" Random matrices from a Generalized Extreme Value distribution">wgevrnd</a>(.8,1,11,1,100);
+    x = linspace(5,15,200);
+    <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(R,[x;<a href="wgevcdf.html" class="code" title=" Generalized Extreme Value cumulative distribution function">wgevcdf</a>(x,.8,1,11)]','g')
+ 
+  See also  cumtrapz, <a href="cempdistr.html" class="code" title=" Computes and plots the conditional empirical CDF ">cempdistr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cempdistr.html" class="code" title=" [Fz1] = cempdistr(z,varargin)">cempdistr</a></li></TD>
+<TD> Computes and plots the conditional empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter5.html" class="code" title="This is a script file.">Chapter5</a></li></TD>
+<TD> % CHAPTER5 contains the commands used in Chapter 5 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/dat2tr.html" class="code" title=" [g, test, cmax, irr, g2]= dat2tr(x,def,varargin);">dat2tr</a></li></TD>
+<TD> Estimate transformation, g, from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig11.html" class="code" title=" recfig11">recfig11</a></li></TD>
+<TD> Probability of exceeding H: Model (dash); data (dots)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig12.html" class="code" title=" recfig12">recfig12</a></li></TD>
+<TD> Probability of exceeding V: Model (dash); data (dots)</TD>
+</TR>
+<TR>
+<TD><li><a href="wbetafit.html" class="code" title=" [phat, cov,pci]=wbetafit(data1, plotflag);">wbetafit</a></li></TD>
+<TD> Parameter estimates for Beta data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2fit.html" class="code" title=" [phat, cov,pci]=wchi2fit(data1, plotflag);">wchi2fit</a></li></TD>
+<TD> Parameter estimates for Chi squared data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wexpfit.html" class="code" title=" [phat, var,pCI] = wexpfit(data,plotflag)">wexpfit</a></li></TD>
+<TD> Parameter estimates for Exponential data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wexpplot.html" class="code" title=" phat = wexpplot(x)">wexpplot</a></li></TD>
+<TD> Plots data on a Exponential distribution paper</TD>
+</TR>
+<TR>
+<TD><li><a href="wgamfit.html" class="code" title=" [phat, cov,pci]=wgamfit(data1, plotflag);">wgamfit</a></li></TD>
+<TD> Parameter estimates for Gamma data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevfit.html" class="code" title=" [phat,cov,pci] = wgevfit(data,method,start,plotflag)">wgevfit</a></li></TD>
+<TD> Parameter estimates for GEV data</TD>
+</TR>
+<TR>
+<TD><li><a href="wggamfit.html" class="code" title=" [phat, cov,pci]=wggamfit(data1, plotflag,chat0);">wggamfit</a></li></TD>
+<TD> Parameter estimates for Generalized Gamma data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgpdfit.html" class="code" title=" [parms,cov] = wgpdfit(data,method,plotflag)">wgpdfit</a></li></TD>
+<TD> Parameter estimates for Generalized Pareto data</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbfit.html" class="code" title=" [phat, cov,pci] = wgumbfit(data1, plotflag)">wgumbfit</a></li></TD>
+<TD> Parameter estimates for Gumbel data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbplot.html" class="code" title=" phat = wgumbplot(x)">wgumbplot</a></li></TD>
+<TD> Plots data on a Gumbel distribution paper.</TD>
+</TR>
+<TR>
+<TD><li><a href="winvgfit.html" class="code" title=" [phat, var,ciL,ciU] = winvgfit(data,plotflag)">winvgfit</a></li></TD>
+<TD> Parameter estimates for Inverse Gaussian data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wlognfit.html" class="code" title=" [phat, var,ciL,ciU] = wlognfit(data,plotflag)">wlognfit</a></li></TD>
+<TD> Parameter estimates for Lognormal data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wnormfit.html" class="code" title=" [phat, var,ciL,ciU] = wnormfit(data,plotflag)">wnormfit</a></li></TD>
+<TD> Parameter estimates for Normal data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylfit.html" class="code" title=" [phat, var,pci] = wraylfit(data,plotflag)">wraylfit</a></li></TD>
+<TD> Parameter estimates for Rayleigh data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylplot.html" class="code" title=" bhat = wraylplot(x)">wraylplot</a></li></TD>
+<TD> Plots data on a Rayleigh distribution paper</TD>
+</TR>
+<TR>
+<TD><li><a href="wtfit.html" class="code" title=" [phat, cov,pci]=wtfit(data1, plotflag);">wtfit</a></li></TD>
+<TD> Parameter estimates for Student's T data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wtraylfit.html" class="code" title=" [phat,cov,pci] = wtraylfit(data,plotflag)">wtraylfit</a></li></TD>
+<TD> Parameter estimates for Truncated Rayleigh data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wtweibfit.html" class="code" title=" [phat, cov, pci]=wtweibfit(data1, plotflag);">wtweibfit</a></li></TD>
+<TD> Parameter estimates for truncated Weibull data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibfit.html" class="code" title=" [phat, cov, pci]=wweibfit(data1, plotflag);">wweibfit</a></li></TD>
+<TD> Parameter estimates for Weibull data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibplot.html" class="code" title=" phat = wweibplot(x)">wweibplot</a></li></TD>
+<TD> Plots data on a Weibull distribution paper</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [Fz] = <a name="_sub0" href="#_subfunctions" class="code">empdistr</a>(z,varargin)
+002 <span class="comment">%EMPDISTR Computes and plots the empirical CDF </span>
+003 <span class="comment">%          and optionally compares it with distribution G.</span>
+004 <span class="comment">%</span>
+005 <span class="comment">%  CALL:  F = empdistr(X,G,plotflag,sym);</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%        F  = empirical distribution of X, two column matrix.</span>
+008 <span class="comment">%        X  = data vector.</span>
+009 <span class="comment">%        G  = cdf, two column matrix (optional).</span>
+010 <span class="comment">%  plotflag = 0  no plotting</span>
+011 <span class="comment">%             1 plot cdf F(x) (default)</span>
+012 <span class="comment">%             2 plot 1-F(x) on a semilog y-scale</span>
+013 <span class="comment">%             3 plot 1-F(x) on a log log scale</span>
+014 <span class="comment">%       sym = {s1,s2} cell array or comma separated list of plot </span>
+015 <span class="comment">%             symbols for F and G, respectively.</span>
+016 <span class="comment">%             (default {'b','r--'})</span>
+017 <span class="comment">% </span>
+018 <span class="comment">% NOTE:  SYM can be given anywhere after X</span>
+019 <span class="comment">%</span>
+020 <span class="comment">% Example:</span>
+021 <span class="comment">%   R = wgevrnd(.8,1,11,1,100);</span>
+022 <span class="comment">%   x = linspace(5,15,200);</span>
+023 <span class="comment">%   empdistr(R,[x;wgevcdf(x,.8,1,11)]','g')</span>
+024 <span class="comment">%</span>
+025 <span class="comment">% See also  cumtrapz, cempdistr</span>
+026 
+027 <span class="comment">% Tested on: Matlab 5.3, 5.2, 5.1</span>
+028 <span class="comment">% History:</span>
+029 <span class="comment">% revised pab 25.10.2000</span>
+030 <span class="comment">%  - made call to cempdistr instead -&gt; making maintainence easier.</span>
+031 <span class="comment">% revised pab 07.03.2000</span>
+032 <span class="comment">% - enabled so that f may be empty while plotflag is given </span>
+033 <span class="comment">% modified by Per A. Brodtkorb 10.11.98</span>
+034 <span class="comment">% to accept both pdf and cdf's. Also enabled new plotting features,</span>
+035 <span class="comment">% plotting of  probability of exceedances on a semilogy paper ....</span>
+036 <span class="comment">% revised ms 13.06.2000</span>
+037 <span class="comment">% - pdf usage removed (can't distinguish between a cdf and an increasing pdf)</span>
+038 <span class="comment">% - changed axis labelling in figures</span>
+039 <span class="comment">% - changed to staircaseplot when plotflag=2,3</span>
+040 <span class="comment">% - revised header info</span>
+041 <span class="comment">% - moved the conditional version to cempdistr</span>
+042 
+043 
+044 error(nargchk(1,5,nargin))
+045 Fz1 = <a href="cempdistr.html" class="code" title=" Computes and plots the conditional empirical CDF ">cempdistr</a>(z,-inf,varargin{:});
+046 <span class="keyword">if</span> nargout&gt;0
+047   Fz=Fz1;
+048 <span class="keyword">end</span>
+049 <span class="keyword">return</span>
+050 
+051 
+052 
+053 
+054 
+055 
+056 
+057 
+058</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

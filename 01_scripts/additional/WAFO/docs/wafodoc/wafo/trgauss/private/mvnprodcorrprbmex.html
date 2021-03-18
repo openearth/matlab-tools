@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mvnprodcorrprbmex</title>
+  <meta name="keywords" content="mvnprodcorrprbmex">
+  <meta name="description" content=" Computes multivariate normal probability">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">trgauss</a> &gt; <a href="index.html">private</a> &gt; mvnprodcorrprbmex.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>mvnprodcorrprbmex
+&nbsp;&nbsp;<img src="../../../fortran.png" alt="Windows" border="0" title="Windows"></h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Computes multivariate normal probability</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="mvnprodcorrprbmex.html" class="code" title=" Computes multivariate normal probability  ">MVNPRODCORRPRBMEX</a> Computes multivariate normal probability  
+                 with product correlation structure. 
+  
+   CALL [value,error,inform]=<a href="mvnprodcorrprbmex.html" class="code" title=" Computes multivariate normal probability  ">mvnprodcorrprbmex</a>(rho,A,B,abseps,releps,useBreakPoints); 
+  
+      RHO    REAL, array of coefficients defining the correlation 
+             coefficient by: 
+                 correlation(I,J) =  RHO(I)%RHO(J) for J/=I 
+             where  
+                 1 &lt;= RHO(I) &lt;= 1 
+      A         REAL, array of lower integration limits. 
+      B         REAL, array of upper integration limits. 
+            NOTE: any values greater the 10, are considered as 
+                    infinite values. 
+      ABSEPS REAL absolute error tolerance. 
+      RELEPS REAL relative error tolerance. 
+      USEBREAKPOINTS = 1 If extra integration points should be used 
+                         around possible singularities 
+                       0 If no extra 
+    
+      ERROR  REAL estimated absolute error, with 99% confidence level. 
+      VALUE  REAL estimated value for the integral 
+      INFORM INTEGER, termination status parameter: 
+             if INFORM = 0, normal completion with ERROR &lt; EPS; 
+             if INFORM = 1, completion with ERROR &gt; EPS and MAXPTS  
+                            function vaules used; increase MAXPTS to  
+                            decrease ERROR; 
+  
+  
+  This file was successfully compiled for matlab 5.3 
+  using Compaq Visual Fortran 6.1, and Windows 2000. 
+  The example here uses Fortran77 source. 
+  First, you will need to modify your mexopts.bat file. 
+  To find it, issue the command prefdir(1) from the Matlab command line, 
+  the directory it answers with will contain your mexopts.bat file. 
+  Open it for editing. The first section will look like: 
+  
+ rem %%%%%%%%%*********************************************************** 
+ rem General parameters 
+ rem ******************************************************************** 
+ set MATLAB=%MATLAB% 
+ set DF_ROOT=C:\Program Files\Microsoft Visual Studio 
+ set VCDir=%DF_ROOT%\VC98 
+ set MSDevDir=%DF_ROOT%\Common\msdev98 
+ set DFDir=%DF_ROOT%\DF98 
+ set PATH=%MSDevDir%\bin;%DFDir%\BIN;%VCDir%\BIN;%PATH% 
+ set INCLUDE=%DFDir%\INCLUDE;%DFDir%\IMSL\INCLUDE;%INCLUDE% 
+ set LIB=%DFDir%\LIB;%VCDir%\LIB 
+  
+  then you are ready to compile this file at the matlab prompt using the 
+  following command: 
+   mex -O <a href="mvnprodcorrprbmex.html" class="code" title=" Computes multivariate normal probability  ">mvnprodcorrprbmex</a>.f</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/trgauss/mvnormpcprb.html" class="code" title=" [val, err,ier,extime]= mvnormpcprb(rho,a,b,tol,useSimpson,useBreakPoints)">mvnormpcprb</a></li></TD>
+<TD> Multivariate Normal probabilities with product correlation</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001  
+002 <span class="comment">%MVNPRODCORRPRBMEX Computes multivariate normal probability  </span>
+003 <span class="comment">%                with product correlation structure. </span>
+004 <span class="comment">% </span>
+005 <span class="comment">%  CALL [value,error,inform]=mvnprodcorrprbmex(rho,A,B,abseps,releps,useBreakPoints); </span>
+006 <span class="comment">% </span>
+007 <span class="comment">%     RHO    REAL, array of coefficients defining the correlation </span>
+008 <span class="comment">%            coefficient by: </span>
+009 <span class="comment">%                correlation(I,J) =  RHO(I)<span class="comment">%RHO(J) for J/=I </span></span>
+010 <span class="comment">%            where  </span>
+011 <span class="comment">%                1 &lt;= RHO(I) &lt;= 1 </span>
+012 <span class="comment">%     A         REAL, array of lower integration limits. </span>
+013 <span class="comment">%     B         REAL, array of upper integration limits. </span>
+014 <span class="comment">%           NOTE: any values greater the 10, are considered as </span>
+015 <span class="comment">%                   infinite values. </span>
+016 <span class="comment">%     ABSEPS REAL absolute error tolerance. </span>
+017 <span class="comment">%     RELEPS REAL relative error tolerance. </span>
+018 <span class="comment">%     USEBREAKPOINTS = 1 If extra integration points should be used </span>
+019 <span class="comment">%                        around possible singularities </span>
+020 <span class="comment">%                      0 If no extra </span>
+021 <span class="comment">%   </span>
+022 <span class="comment">%     ERROR  REAL estimated absolute error, with 99<span class="comment">% confidence level. </span></span>
+023 <span class="comment">%     VALUE  REAL estimated value for the integral </span>
+024 <span class="comment">%     INFORM INTEGER, termination status parameter: </span>
+025 <span class="comment">%            if INFORM = 0, normal completion with ERROR &lt; EPS; </span>
+026 <span class="comment">%            if INFORM = 1, completion with ERROR &gt; EPS and MAXPTS  </span>
+027 <span class="comment">%                           function vaules used; increase MAXPTS to  </span>
+028 <span class="comment">%                           decrease ERROR; </span>
+029 <span class="comment">% </span>
+030 <span class="comment">% </span>
+031 <span class="comment">% This file was successfully compiled for matlab 5.3 </span>
+032 <span class="comment">% using Compaq Visual Fortran 6.1, and Windows 2000. </span>
+033 <span class="comment">% The example here uses Fortran77 source. </span>
+034 <span class="comment">% First, you will need to modify your mexopts.bat file. </span>
+035 <span class="comment">% To find it, issue the command prefdir(1) from the Matlab command line, </span>
+036 <span class="comment">% the directory it answers with will contain your mexopts.bat file. </span>
+037 <span class="comment">% Open it for editing. The first section will look like: </span>
+038 <span class="comment">% </span>
+039 <span class="comment">%rem <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%*********************************************************** </span></span></span></span></span></span></span></span></span></span>
+040 <span class="comment">%rem General parameters </span>
+041 <span class="comment">%rem ******************************************************************** </span>
+042 <span class="comment">%set MATLAB=<span class="comment">%MATLAB<span class="comment">% </span></span></span>
+043 <span class="comment">%set DF_ROOT=C:\Program Files\Microsoft Visual Studio </span>
+044 <span class="comment">%set VCDir=<span class="comment">%DF_ROOT<span class="comment">%\VC98 </span></span></span>
+045 <span class="comment">%set MSDevDir=<span class="comment">%DF_ROOT<span class="comment">%\Common\msdev98 </span></span></span>
+046 <span class="comment">%set DFDir=<span class="comment">%DF_ROOT<span class="comment">%\DF98 </span></span></span>
+047 <span class="comment">%set PATH=<span class="comment">%MSDevDir<span class="comment">%\bin;<span class="comment">%DFDir<span class="comment">%\BIN;<span class="comment">%VCDir<span class="comment">%\BIN;<span class="comment">%PATH<span class="comment">% </span></span></span></span></span></span></span></span></span>
+048 <span class="comment">%set INCLUDE=<span class="comment">%DFDir<span class="comment">%\INCLUDE;<span class="comment">%DFDir<span class="comment">%\IMSL\INCLUDE;<span class="comment">%INCLUDE<span class="comment">% </span></span></span></span></span></span></span>
+049 <span class="comment">%set LIB=<span class="comment">%DFDir<span class="comment">%\LIB;<span class="comment">%VCDir<span class="comment">%\LIB </span></span></span></span></span>
+050 <span class="comment">% </span>
+051 <span class="comment">% then you are ready to compile this file at the matlab prompt using the </span>
+052 <span class="comment">% following command: </span>
+053 <span class="comment">%  mex -O mvnprodcorrprbmex.f </span>
+054</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

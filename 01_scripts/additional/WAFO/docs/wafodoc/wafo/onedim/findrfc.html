@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of findrfc</title>
+  <meta name="keywords" content="findrfc">
+  <meta name="description" content=" Finds indices to rainflow cycles of a sequence of TP.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; findrfc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>findrfc
+&nbsp;&nbsp;<img src="../../c.png" alt="SunOS, HP700, Alpha, Linux x86, Linux, Windows" border="0" title="SunOS, HP700, Alpha, Linux x86, Linux, Windows"></h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Finds indices to rainflow cycles of a sequence of TP.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> ind=findrfc(tp,h) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="findrfc.html" class="code" title=" Finds indices to rainflow cycles of a sequence of TP. ">FINDRFC</a> Finds indices to rainflow cycles of a sequence of TP. 
+  
+  CALL:  RFC_ind = <a href="findrfc.html" class="code" title=" Finds indices to rainflow cycles of a sequence of TP. ">findrfc</a>(TP,h); 
+  
+         TP  = vector of turningpoints (NB! Only values, not sampled times) 
+  
+     RFC_ind = indices to the rainflow cycles of the  
+         original sequence TP. 
+  
+          h  = a threshold, must be larger than zero.  
+               if h&gt;0, then all rainflow cycles with height  
+               smaller than  h  are removed. 
+  
+   This function is not implemented as a matlab function; instead, a  
+   mex file (originally written in C) is utilized. 
+   
+   Example: 
+    x = load('sea.dat');  
+    tp = <a href="dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(x);  
+    ind = <a href="findrfc.html" class="code" title=" Finds indices to rainflow cycles of a sequence of TP. ">findrfc</a>(tp(:,2),0.3);  
+    <a href="waveplot.html" class="code" title=" Plots the surface elevation of timeseries.">waveplot</a>(x,tp(ind,:),1,1)   
+   
+   See also  <a href="../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>, <a href="dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> ind=<a name="_sub0" href="#_subfunctions" class="code">findrfc</a>(tp,h) 
+002 <span class="comment">%FINDRFC Finds indices to rainflow cycles of a sequence of TP. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  RFC_ind = findrfc(TP,h); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%        TP  = vector of turningpoints (NB! Only values, not sampled times) </span>
+007 <span class="comment">% </span>
+008 <span class="comment">%    RFC_ind = indices to the rainflow cycles of the  </span>
+009 <span class="comment">%        original sequence TP. </span>
+010 <span class="comment">% </span>
+011 <span class="comment">%         h  = a threshold, must be larger than zero.  </span>
+012 <span class="comment">%              if h&gt;0, then all rainflow cycles with height  </span>
+013 <span class="comment">%              smaller than  h  are removed. </span>
+014 <span class="comment">% </span>
+015 <span class="comment">%  This function is not implemented as a matlab function; instead, a  </span>
+016 <span class="comment">%  mex file (originally written in C) is utilized. </span>
+017 <span class="comment">%  </span>
+018 <span class="comment">%  Example: </span>
+019 <span class="comment">%   x = load('sea.dat');  </span>
+020 <span class="comment">%   tp = dat2tp(x);  </span>
+021 <span class="comment">%   ind = findrfc(tp(:,2),0.3);  </span>
+022 <span class="comment">%   waveplot(x,tp(ind,:),1,1)   </span>
+023 <span class="comment">%  </span>
+024 <span class="comment">%  See also  tp2rfc, dat2tp.  </span>
+025    
+026 <span class="comment">% This is a modified version of rfcfilt (found in WAT), which is about 20  </span>
+027 <span class="comment">% to 30 times faster than rfcfilt (on a PentiumII 233 MHz   </span>
+028 <span class="comment">% with 32 MB ram and Matlab 5.0 under Linux). The reason is </span>
+029 <span class="comment">% that this version does not save TP to disk. Instead it passes  </span>
+030 <span class="comment">% the arguments directly to the executeable file.  </span>
+031 <span class="comment">% However, this solution requires different input and returns </span>
+032 <span class="comment">% indices to the rfc instead of the rfc itself. </span>
+033 <span class="comment">% It also ignores the first turningpoint if that is a maximum and  </span>
+034 <span class="comment">% starts on the first minimum when finding the sequence of rfc.  </span>
+035  
+036 <span class="comment">% Tested on Matlab 6.1,6.0, 5.2 </span>
+037 <span class="comment">% History: </span>
+038 <span class="comment">% revised pab 10.08.2003 </span>
+039 <span class="comment">% - fixed a bug in the example   </span>
+040 <span class="comment">% Revised by pab 24.07.1999 </span>
+041  
+042  
+043 ind=[]; 
+044 disp(<span class="string">'FINDRFC is not implemented as a m-function'</span>) 
+045 disp(<span class="string">'                   compile the mexfile findrfc.c before you try again.'</span>) 
+046 error(<span class="string">'findrfc error'</span>) 
+047 <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

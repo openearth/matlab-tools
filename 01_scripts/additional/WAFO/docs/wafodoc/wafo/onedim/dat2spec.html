@@ -1,0 +1,689 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dat2spec</title>
+  <meta name="keywords" content="dat2spec">
+  <meta name="description" content=" Estimate one-sided spectral density from data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; dat2spec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dat2spec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Estimate one-sided spectral density from data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [S,fcut] = dat2spec(xn,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dat2spec.html" class="code" title=" Estimate one-sided spectral density from data.">DAT2SPEC</a> Estimate one-sided spectral density from data.
+  
+  CALL:  S = <a href="dat2spec.html" class="code" title=" Estimate one-sided spectral density from data.">dat2spec</a>(x,L,g,plotflag,p,method,dflag,ftype)
+ 
+          S = A structure containing:
+              S    = spectral density
+              w    = angular frequency
+              tr   = transformation g
+              h    = water depth (default inf)
+              type = 'freq'
+              note = Memorandum string
+              date = Date and time of creation 
+              L    = maximum lag size of the window function. 
+              CI   = lower and upper confidence constant  
+              p    = confidence level. (Default 0.95).
+              Bw   = Bandwidth of the smoothing window which is used 
+                     in the estimated spectrum. (rad/sec or Hz)
+             
+          x =  m column data matrix with sampled times in the first column
+               and values the next columns.    
+ 
+          L = maximum lag size of the window function. 
+              If no value is given the lag size is set to
+              be the lag where the auto correlation is less than 
+              2 standard deviations. (maximum 300) 
+                          
+          g = the transformation assuming that x is a <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> of a 
+              transformed Gaussian process. If g is empty then
+              x  is a <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> of a Gaussian process (Default)
+ 
+   plotflag = 1 plots the spectrum, S, 
+              2 plot 10log10(S) and
+              3 plots both the above plots
+ 
+   Method   = 'cov'   Frequency smoothing using a <a href="../../wafo/onedim/private/parzen.html" class="code" title=" returns the N-point Parzen window in a column vector.">parzen</a> window function
+                      on the estimated autocovariance function.  (default)
+              'psd'   Welch's averaged periodogram method with no overlapping 
+                      batches
+              'psdo'  Welch's averaged periodogram method with overlapping 
+                      batches
+              'pmem'  Maximum Entropy Method (psd using the Yule-Walker 
+                      AR method)
+              'pburg' Burg's method.
+ 
+   dflag    = specifies a detrending performed on the signal before estimation.
+              'mean','linear' or 'ma' (= moving average)  (default 'mean')   
+   ftype    = frequency type, 'w' or 'f'  (default 'w')
+ 
+  Method == 'cov','psd':
+   As L decreases the estimate becomes smoother and Bw increases. If we
+   want to resolve peaks in S which is Bf (Hz or rad/sec) apart then Bw &lt; Bf. 
+  
+  Method == 'pmem','pburg':
+   L denotes the order of the AR (AutoRegressive) model. 
+ 
+   NOTE: The strings method,dflag and ftype may be given anywhere after x 
+         and in any order.
+ 
+  See also   <a href="../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>, <a href="dat2cov.html" class="code" title=" Estimate auto covariance function from data.">dat2cov</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/onedim/private/bingham.html" class="code" title=" w = bingham(n,p)">bingham</a></li></TD>
+<TD>  returns the N-point Bingham window in a column vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/createspec.html" class="code" title=" S=createspec(stype,freqtype)">createspec</a></li></TD>
+<TD> Spectrum structure constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2cov.html" class="code" title=" R = dat2cov(xn,varargin)">dat2cov</a></li></TD>
+<TD> Estimate auto covariance function from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/dat2tr.html" class="code" title=" [g, test, cmax, irr, g2]= dat2tr(x,def,varargin);">dat2tr</a></li></TD>
+<TD> Estimate transformation, g, from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="detrendma.html" class="code" title=" [y, trend] = detrendma(x,L)">detrendma</a></li></TD>
+<TD> Removes a trend from data using a moving average</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/private/hanning.html" class="code" title=" w = hanning(n,p)">hanning</a></li></TD>
+<TD> returns the N-point Hanning window in a column vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/private/parzen.html" class="code" title=" [w, be] = parzen(n,fs)">parzen</a></li></TD>
+<TD> returns the N-point Parzen window in a column vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wchi2inv.html" class="code" title=" x = wchi2inv(F,p)">wchi2inv</a></li></TD>
+<TD> Inverse of the Chi squared distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wnormspec.html" class="code" title=" [S,mn4,m0,m2,m4,m1]=wnormspec(spectrum,m0,m2,plotflag)">wnormspec</a></li></TD>
+<TD> Normalize a spectral density such that m0=m2=1</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\detrend.m">detrend</a></li></TD>
+<TD>       Remove a linear trend from a vector, usually for FFT processing.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\fft.bi">fft</a></li></TD>
+<TD>           Discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\inputname.m">inputname</a></li></TD>
+<TD>     Input argument name.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elfun\nextpow2.m">nextpow2</a></li></TD>
+<TD>      Next higher power of 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\pburg.m">pburg</a></li></TD>
+<TD>         Power Spectral Density (PSD) estimate via Burg's method.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\@dspdata\psd.m">psd</a></li></TD>
+<TD>           Power Spectral Density estimate.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\pyulear.m">pyulear</a></li></TD>
+<TD>       Power Spectral Density (PSD) estimate via Yule-Walker's method.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab1.html" class="code" title="This is a script file.">itmkurs_lab1</a></li></TD>
+<TD> Script to computer exercises 1</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recinit.html" class="code" title=" recinit">recinit</a></li></TD>
+<TD>  setup all global variables of the RECDEMO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2linspec.html" class="code" title=" [SL,SN]=spec2linspec(S,np,dt,iseed,fnLimit)">spec2linspec</a></li></TD>
+<TD>  Separates the linear component of the Spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig5.html" class="code" title=" wafofig5">wafofig5</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front velocity and wave height:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig6.html" class="code" title=" wafofig6">wafofig6</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front period, Tcf, and crest amplitude, Ac</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafoinit.html" class="code" title=" wafoinit">wafoinit</a></li></TD>
+<TD>  setup all global variables of the WAFODEMO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> [L,g,plotflag,p,method,dflag,ftype,chopOffHighFreq] = d2schk(P);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [S,fcut] = <a name="_sub0" href="#_subfunctions" class="code">dat2spec</a>(xn,varargin)
+0002 <span class="comment">%DAT2SPEC Estimate one-sided spectral density from data.</span>
+0003 <span class="comment">% </span>
+0004 <span class="comment">% CALL:  S = dat2spec(x,L,g,plotflag,p,method,dflag,ftype)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%         S = A structure containing:</span>
+0007 <span class="comment">%             S    = spectral density</span>
+0008 <span class="comment">%             w    = angular frequency</span>
+0009 <span class="comment">%             tr   = transformation g</span>
+0010 <span class="comment">%             h    = water depth (default inf)</span>
+0011 <span class="comment">%             type = 'freq'</span>
+0012 <span class="comment">%             note = Memorandum string</span>
+0013 <span class="comment">%             date = Date and time of creation </span>
+0014 <span class="comment">%             L    = maximum lag size of the window function. </span>
+0015 <span class="comment">%             CI   = lower and upper confidence constant  </span>
+0016 <span class="comment">%             p    = confidence level. (Default 0.95).</span>
+0017 <span class="comment">%             Bw   = Bandwidth of the smoothing window which is used </span>
+0018 <span class="comment">%                    in the estimated spectrum. (rad/sec or Hz)</span>
+0019 <span class="comment">%            </span>
+0020 <span class="comment">%         x =  m column data matrix with sampled times in the first column</span>
+0021 <span class="comment">%              and values the next columns.    </span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%         L = maximum lag size of the window function. </span>
+0024 <span class="comment">%             If no value is given the lag size is set to</span>
+0025 <span class="comment">%             be the lag where the auto correlation is less than </span>
+0026 <span class="comment">%             2 standard deviations. (maximum 300) </span>
+0027 <span class="comment">%                         </span>
+0028 <span class="comment">%         g = the transformation assuming that x is a sample of a </span>
+0029 <span class="comment">%             transformed Gaussian process. If g is empty then</span>
+0030 <span class="comment">%             x  is a sample of a Gaussian process (Default)</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%  plotflag = 1 plots the spectrum, S, </span>
+0033 <span class="comment">%             2 plot 10log10(S) and</span>
+0034 <span class="comment">%             3 plots both the above plots</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%  Method   = 'cov'   Frequency smoothing using a parzen window function</span>
+0037 <span class="comment">%                     on the estimated autocovariance function.  (default)</span>
+0038 <span class="comment">%             'psd'   Welch's averaged periodogram method with no overlapping </span>
+0039 <span class="comment">%                     batches</span>
+0040 <span class="comment">%             'psdo'  Welch's averaged periodogram method with overlapping </span>
+0041 <span class="comment">%                     batches</span>
+0042 <span class="comment">%             'pmem'  Maximum Entropy Method (psd using the Yule-Walker </span>
+0043 <span class="comment">%                     AR method)</span>
+0044 <span class="comment">%             'pburg' Burg's method.</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%  dflag    = specifies a detrending performed on the signal before estimation.</span>
+0047 <span class="comment">%             'mean','linear' or 'ma' (= moving average)  (default 'mean')   </span>
+0048 <span class="comment">%  ftype    = frequency type, 'w' or 'f'  (default 'w')</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">% Method == 'cov','psd':</span>
+0051 <span class="comment">%  As L decreases the estimate becomes smoother and Bw increases. If we</span>
+0052 <span class="comment">%  want to resolve peaks in S which is Bf (Hz or rad/sec) apart then Bw &lt; Bf. </span>
+0053 <span class="comment">% </span>
+0054 <span class="comment">% Method == 'pmem','pburg':</span>
+0055 <span class="comment">%  L denotes the order of the AR (AutoRegressive) model. </span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%  NOTE: The strings method,dflag and ftype may be given anywhere after x </span>
+0058 <span class="comment">%        and in any order.</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">% See also   dat2tr, dat2cov</span>
+0061 
+0062 <span class="comment">% Secret option: if chopOffHighFreq==1</span>
+0063 <span class="comment">%  Chop off high frequencies in order to </span>
+0064 <span class="comment">%  get the same irregularity factor in the spectrum as </span>
+0065 <span class="comment">%  in x.</span>
+0066 
+0067 
+0068 <span class="comment">% References:</span>
+0069 <span class="comment">% Georg Lindgren and Holger Rootzen (1986)</span>
+0070 <span class="comment">% &quot;Stationära stokastiska processer&quot;,  pp 173--176.</span>
+0071 <span class="comment">% </span>
+0072 <span class="comment">% Gareth Janacek and Louise Swift (1993)</span>
+0073 <span class="comment">% &quot;TIME SERIES forecasting, simulation, applications&quot;,</span>
+0074 <span class="comment">% pp 75--76 and 261--268</span>
+0075 <span class="comment">%</span>
+0076 <span class="comment">% Emanuel Parzen (1962),</span>
+0077 <span class="comment">% &quot;Stochastic Processes&quot;, HOLDEN-DAY,</span>
+0078 <span class="comment">% pp 66--103</span>
+0079 
+0080 <span class="comment">%</span>
+0081 
+0082 <span class="comment">% Tested on: Matlab 5.3</span>
+0083 <span class="comment">% history:</span>
+0084 <span class="comment">% revised pab 03.11.2000</span>
+0085 <span class="comment">% - changed call from chi2inv to wchi2inv </span>
+0086 <span class="comment">% revised pab 10.07.00</span>
+0087 <span class="comment">% - fixed a bug for m&gt;2 and g is given: replaced dat2gaus call with tranproc</span>
+0088 <span class="comment">% revised pab 12.06.2000</span>
+0089 <span class="comment">% - added method,dflag,ftype to input arguments </span>
+0090 <span class="comment">% - removed dT wdef from input arguments</span>
+0091 <span class="comment">% revised pab 14.02.2000</span>
+0092 <span class="comment">%  - added rate for interpolation in frequency domain</span>
+0093 <span class="comment">% revised pab 20.01.2000</span>
+0094 <span class="comment">%  - added detrending option linear, ma mean</span>
+0095 <span class="comment">%  - added tapering of data before estimation</span>
+0096 <span class="comment">% Modified by Per A. Brodtkorb 14.08.98,25.05.98</span>
+0097 <span class="comment">%  - add a nugget effect to ensure that round off errors</span>
+0098 <span class="comment">%    do not result in negative spectral estimates</span>
+0099 <span class="comment">% Modified by svi 29.09.99</span>
+0100 <span class="comment">%  - The program is not estimating transformation g any more.</span>
+0101 <span class="comment">% modified pab 22.10.1999</span>
+0102 <span class="comment">%  - fixed so that x in fact can be a m column matrix</span>
+0103 <span class="comment">%  - updated info put into the spectral structure.</span>
+0104 <span class="comment">%  - updated help header</span>
+0105 <span class="comment">% modified pab 03.11.1999</span>
+0106 <span class="comment">%  - fixed a bug: line 152 wrong array dim. when m&gt;2</span>
+0107 
+0108 
+0109 <span class="comment">% Initialize constants </span>
+0110 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~</span>
+0111 nugget   = 0; <span class="comment">%10^-12;</span>
+0112 rate     = 2; <span class="comment">% interpolationrate for frequency</span>
+0113 tapery   = 0; <span class="comment">% taper the data before the analysis</span>
+0114 wdef     = 1; <span class="comment">% 1=parzen window 2=hanning window</span>
+0115 
+0116 <span class="comment">% Default values:</span>
+0117 <span class="comment">%~~~~~~~~~~~~~~~~</span>
+0118 L        = []; 
+0119 g        = [];
+0120 plotflag = 0;
+0121 p        = [];<span class="comment">%0.95;</span>
+0122 chopOffHighFreq=0;   <span class="comment">% chop off high frequencies in order to get the same </span>
+0123                      <span class="comment">% irregularity factor in the spectrum as in the data</span>
+0124                      <span class="comment">% may not be a good idea =&gt; default is 0</span>
+0125              
+0126 method   = <span class="string">'cov'</span>;  <span class="comment">% cov. other options from signal toolbox: psd = welch's method, pyulear,pmem =</span>
+0127                    <span class="comment">% maximum entropy method </span>
+0128 dflag    = <span class="string">'mean'</span>; <span class="comment">%'ma','linear' 'mean','none' <span class="comment">% detrending option</span></span>
+0129 ftype    = <span class="string">'w'</span>  ;  <span class="comment">%options are 'f' and 'w'</span>
+0130 
+0131 
+0132 P  = varargin;
+0133 Np = length(P);
+0134 <span class="keyword">if</span> Np&gt;0
+0135   strix = zeros(1,Np);
+0136   <span class="keyword">for</span> ix=1:Np, <span class="comment">% finding symbol strings </span>
+0137     strix(ix)=ischar(P{ix});
+0138   <span class="keyword">end</span>
+0139   k = find(strix);
+0140   Nk = length(k);
+0141   <span class="keyword">if</span> Nk&gt;0
+0142     <span class="keyword">if</span> Nk&gt;3,      warning(<span class="string">'More than 3 strings are not allowed'</span>),    <span class="keyword">end</span>
+0143     <span class="keyword">for</span> ix = k
+0144       <span class="keyword">switch</span> lower(P{ix})
+0145     <span class="keyword">case</span> {<span class="string">'f'</span>,<span class="string">'w'</span>},                                 ftype  = P{ix};
+0146     <span class="keyword">case</span> {<span class="string">'cov'</span>,<span class="string">'pmem'</span>,<span class="string">'mem'</span>,<span class="string">'psd'</span>,<span class="string">'psdo'</span>,<span class="string">'pburg'</span>}, method = P{ix};
+0147     <span class="keyword">case</span> {<span class="string">'mean'</span>,<span class="string">'ma'</span>,<span class="string">'linear'</span>,<span class="string">'none'</span>},              dflag = P{ix};
+0148     <span class="keyword">otherwise</span>,                    warning([<span class="string">'Unknown option:'</span> P{ix}])
+0149       <span class="keyword">end</span>
+0150     <span class="keyword">end</span>
+0151     Np = Np-Nk;
+0152     P  = {P{find(~strix)}}; <span class="comment">% remove strings from input</span>
+0153   <span class="keyword">end</span>
+0154 
+0155   <span class="keyword">if</span> Np&gt;0 &amp; ~isempty(P{1}), L        = P{1};<span class="keyword">end</span>
+0156   <span class="keyword">if</span> Np&gt;1 &amp; ~isempty(P{2}), g        = P{2};<span class="keyword">end</span>
+0157   <span class="keyword">if</span> Np&gt;2 &amp; ~isempty(P{3}), plotflag = P{3};<span class="keyword">end</span>
+0158   <span class="keyword">if</span> Np&gt;3 &amp; ~isempty(P{4}), p        = P{4};<span class="keyword">end</span>
+0159   <span class="keyword">if</span> Np&gt;4 &amp; ~isempty(P{5}), chopOffHighFreq = P{5};<span class="keyword">end</span>
+0160 <span class="keyword">end</span>  
+0161   
+0162 
+0163 <span class="comment">%[L,g,plotflag,p,method,dflag,ftype,chopOffHighFreq] = d2schk(varargin);</span>
+0164 
+0165 
+0166 <span class="keyword">if</span> (nargout == 0) &amp; (plotflag==0)
+0167   plotflag = 1; 
+0168 <span class="keyword">end</span>
+0169 
+0170 xx     = xn;
+0171 [n m]  = size(xx);
+0172 
+0173 <span class="keyword">if</span> min(m,n)==1, 
+0174   xx = [ (1:n)' xx(:)];
+0175   n  = max(m,n);
+0176   m  = 2;
+0177   disp(<span class="string">'Warning: The sampling frequency is undetermined and set to 1 Hz.'</span>)
+0178 <span class="keyword">end</span>
+0179 dT = xx(2,1)-xx(1,1);
+0180 
+0181 
+0182 <span class="keyword">if</span>  (isempty(g)), 
+0183   yy = xx;
+0184 <span class="keyword">else</span>
+0185   yy = xx;
+0186   <span class="keyword">for</span> ix=2:m
+0187     yy(:,ix)= <a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(xx(:,ix),g);
+0188   <span class="keyword">end</span>
+0189   <span class="comment">%yy = dat2gaus(xx,g);</span>
+0190 <span class="keyword">end</span>
+0191 
+0192 <span class="comment">%display('****1');</span>
+0193 <span class="comment">%break;</span>
+0194 <span class="keyword">switch</span> lower(dflag)
+0195   <span class="keyword">case</span> <span class="string">'mean'</span>,
+0196     ma        = mean(yy(:,2:m));
+0197     yy(:,2:m) = (yy(:,2:m)-ma(ones(n,1),:) );
+0198   <span class="keyword">case</span> <span class="string">'linear'</span>,
+0199     yy(:,2:m) = detrend(yy(:,2:m),1); <span class="comment">% signal toolbox detrend</span>
+0200   <span class="keyword">case</span> <span class="string">'ma'</span>,
+0201     dL        = ceil(1200/2/dT); <span class="comment">% approximately 20 min. moving average    </span>
+0202     yy(:,2:m) = <a href="detrendma.html" class="code" title=" Removes a trend from data using a moving average">detrendma</a>(yy(:,2:m),dL);
+0203     dflag     =<span class="string">'mean'</span>;
+0204 <span class="keyword">end</span>
+0205 <span class="comment">% By using a tapered data window to smooth the data at each</span>
+0206 <span class="comment">% end of the record has the effect of sharpening</span>
+0207 <span class="comment">% the spectral window.</span>
+0208 <span class="comment">% NB! the resulting spectral estimate must be </span>
+0209 <span class="comment">% normalized in order to correct for the loss of</span>
+0210 <span class="comment">% amplitude (energy) caused by the data taper.</span>
+0211 sa = std(yy(:,2:m));
+0212 <span class="keyword">if</span> tapery
+0213  taper     = <a href="../../wafo/onedim/private/bingham.html" class="code" title="  returns the N-point Bingham window in a column vector.">bingham</a>(n);
+0214  yy(:,2:m) = taper(:,ones(1,m-1)).*yy(:,2:m);
+0215 <span class="keyword">end</span>
+0216 
+0217 max_L     = 300; <span class="comment">% maximum lag if L is undetermined</span>
+0218 changed_L = 0;
+0219 <span class="keyword">if</span> isempty(L)
+0220   L = min(n-2,ceil(4/3*max_L));
+0221   changed_L = 1;
+0222 <span class="keyword">end</span>
+0223 
+0224 <span class="keyword">if</span> strcmp(method,<span class="string">'cov'</span>) | changed_L, 
+0225   r=0;
+0226   stdev=0;
+0227   <span class="keyword">for</span> ix=2:m
+0228     R = <a href="dat2cov.html" class="code" title=" Estimate auto covariance function from data.">dat2cov</a>(yy(:,[1 ix]));
+0229     r = r+R.R(:);
+0230     stdev = stdev+R.stdev(:);
+0231   <span class="keyword">end</span>
+0232   r       = r/(m-1);
+0233   R.stdev = mean(sa.^2)/r(1)*stdev/(m-1);
+0234   r       = r*mean(sa.^2)/r(1);
+0235   R.R     = r;
+0236   <span class="comment">%covplot(R,150)</span>
+0237   <span class="keyword">if</span>   changed_L,
+0238     <span class="comment">%finding where ACF is less than 2 st. deviations.</span>
+0239     L = find(abs(r(1:max_L))&gt;2*R.stdev(1:max_L))+1; <span class="comment">% a better L value  </span>
+0240     L = min(L(<span class="keyword">end</span>),max_L);
+0241     
+0242     <span class="keyword">if</span> wdef==1   <span class="comment">% modify L so that hanning and Parzen give appr. the same result</span>
+0243       L = min(floor(4*L/3),n-2);
+0244     <span class="keyword">end</span>
+0245     disp([<span class="string">'The default L is set to '</span> num2str(L) ])
+0246   <span class="keyword">end</span>  
+0247 <span class="keyword">end</span>
+0248 
+0249 <span class="keyword">if</span> wdef==1             <span class="comment">% Parzen window</span>
+0250   v   = floor(3.71*n/L);   <span class="comment">% degrees of freedom used in chi^2 distribution</span>
+0251   win = <a href="../../wafo/onedim/private/parzen.html" class="code" title=" returns the N-point Parzen window in a column vector.">parzen</a>(2*L-1);     <span class="comment">% Does not give negative estimates of the spectral density</span>
+0252   Be  = 2*pi*1.33/(L*dT);  <span class="comment">% bandwidth (rad/sec)</span>
+0253   
+0254 <span class="keyword">elseif</span> wdef==2         <span class="comment">% Hanning window</span>
+0255   v   = floor(2.67*n/L);   <span class="comment">% degrees of freedom used in chi^2 distribution</span>
+0256   win = <a href="../../wafo/onedim/private/hanning.html" class="code" title=" returns the N-point Hanning window in a column vector.">hanning</a>(2*L-1);    <span class="comment">% May give negative estimates of the spectral density</span>
+0257   Be  = 2*pi/(L*dT);       <span class="comment">% bandwidth (rad/sec)</span>
+0258 <span class="keyword">end</span>
+0259 
+0260 nf   = rate*2^nextpow2(2*L-2);  <span class="comment">%  Interpolate the spectrum with rate </span>
+0261 nfft = 2*nf;
+0262 
+0263 S      = <a href="../../wafo/spec/createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>(<span class="string">'freq'</span>,ftype);
+0264 S.tr   = g;
+0265 S.note = [<span class="string">'dat2spec('</span>,inputname(1),<span class="string">'), Method = '</span> method ];
+0266 S.norm = 0; <span class="comment">% not normalized</span>
+0267 S.L    = L;
+0268 
+0269 
+0270 
+0271 S.S = zeros(nf+1,m-1);
+0272 
+0273 <span class="keyword">switch</span> lower(method)
+0274   <span class="keyword">case</span> {<span class="string">'psd'</span>,<span class="string">'psdo'</span>} <span class="comment">% from signal toolbox</span>
+0275     noverlap   = 0;
+0276     <span class="keyword">if</span> method(<span class="keyword">end</span>)==<span class="string">'o'</span>, noverlap   = floor(L/2);<span class="keyword">end</span>
+0277     S.noverlap = noverlap;
+0278     [Rper Sc f]=psd(yy(:,2),nfft,1/dT,win,noverlap,p,dflag);
+0279      <span class="keyword">for</span> ix=3:m
+0280        Rper = Rper + psd(yy(:,ix),nfft,1/dT,win,noverlap,p,dflag);
+0281      <span class="keyword">end</span>
+0282      Rper = Rper/(m-1);
+0283      <span class="keyword">if</span> (  ~isempty(p) ),       <span class="comment">% Confidence interval constants</span>
+0284        [maxS ind] = max(Rper);
+0285        S.CI = Sc(ind,:)/Rper(ind);
+0286        S.p  = p;
+0287      <span class="keyword">end</span>
+0288   <span class="keyword">case</span> {<span class="string">'pyulear'</span>,<span class="string">'pmem'</span>,<span class="string">'mem'</span>} <span class="comment">% from signal toolbox</span>
+0289     [Rper f] = pyulear(yy(:,2),L,nfft,1/dT);
+0290     <span class="keyword">for</span> ix=3:m
+0291       Rper = Rper + pyulear(yy(:,ix),L,nfft,1/dT);
+0292     <span class="keyword">end</span>
+0293     Rper = Rper/(m-1);
+0294   <span class="keyword">case</span> <span class="string">'pburg'</span>,  <span class="comment">% from signal toolbox</span>
+0295     [Rper f] = pburg(yy(:,2),L,nfft,1/dT);
+0296     <span class="keyword">for</span> ix=3:m
+0297       Rper = Rper + pburg(yy(:,ix),L,nfft,1/dT);
+0298     <span class="keyword">end</span>
+0299     Rper = Rper/(m-1);
+0300   <span class="keyword">otherwise</span>, <span class="comment">% cov method</span>
+0301   <span class="comment">% add a nugget effect to ensure that round off errors</span>
+0302   <span class="comment">% do not result in negative spectral estimates</span>
+0303   r    = r+nugget;
+0304   rwin = r(1:L).*win(L:(2*L-1)); 
+0305   Rper = real(fft([rwin; zeros(nfft-(2*L-1),1); rwin(L:-1:2)],nfft));
+0306   <span class="comment">%f    =  [0:(nf)]'/nf/(2*dT);</span>
+0307   <span class="keyword">if</span> (  ~isempty(p) ),
+0308     alpha = (1-p);
+0309     <span class="comment">% Confidence interval constants</span>
+0310     S.CI = [v/<a href="../../wafo/wstats/wchi2inv.html" class="code" title=" Inverse of the Chi squared distribution function ">wchi2inv</a>( 1-alpha/2 ,v) v/<a href="../../wafo/wstats/wchi2inv.html" class="code" title=" Inverse of the Chi squared distribution function ">wchi2inv</a>( alpha/2 ,v)];
+0311     S.p  = p;
+0312   <span class="keyword">end</span>
+0313 <span class="keyword">end</span>
+0314 
+0315 ind = find(Rper&lt;0);
+0316 <span class="keyword">if</span> any(ind)
+0317   Rper(ind) = 0; <span class="comment">% set negative values to zero</span>
+0318   warning(<span class="string">'negative spectral estimates'</span>)
+0319 <span class="keyword">end</span>
+0320 
+0321 <span class="keyword">if</span> strcmp(ftype,<span class="string">'w'</span>)
+0322   S.w  = [0:(nf)]'/nf*pi/dT;           <span class="comment">% (rad/s)</span>
+0323   S.S  = real(Rper(1:(nf+1),1))*dT/pi; <span class="comment">% (m^2*s/rad)one sided spectrum</span>
+0324   S.Bw = Be;
+0325 <span class="keyword">else</span> <span class="comment">% ftype == f</span>
+0326   S.f  = [0:(nf)]'/nf/2/dT;            <span class="comment">% frequency Hz if dT is in seconds</span>
+0327   S.S  = 2*real(Rper(1:(nf+1),1))*dT;  <span class="comment">% (m^2*s) one sided spectrum</span>
+0328   S.Bw = Be/(2*pi);                    <span class="comment">% bandwidth in Hz</span>
+0329 <span class="keyword">end</span>
+0330 
+0331  
+0332 
+0333 N = floor(nf/10);
+0334 <span class="comment">% cutting off high frequencies </span>
+0335 <span class="comment">% in this way may not be a very good idea.</span>
+0336 
+0337 <span class="keyword">if</span> ((N&gt;3) &amp; chopOffHighFreq), 
+0338   <span class="comment">% The data must be Gaussian in order for this proc to be correct.</span>
+0339   [g0 test cmax irr]  = <a href="../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>(xx,<span class="string">'nonlinear'</span>);
+0340   ind=(nf-4):(nf+1);
+0341   
+0342   [Sn,m4] = <a href="../../wafo/spec/wnormspec.html" class="code" title=" Normalize a spectral density such that m0=m2=1">wnormspec</a>(S,0);
+0343 
+0344   <span class="keyword">while</span> (sqrt(m4) &gt; irr) &amp; (ind(1)&gt;1) 
+0345     S.S(ind)   = 0;
+0346     [Sn,m4]    = <a href="../../wafo/spec/wnormspec.html" class="code" title=" Normalize a spectral density such that m0=m2=1">wnormspec</a>(S,0);
+0347     ind        = ind-5;
+0348   <span class="keyword">end</span>
+0349   fcut = S.w(min(ind(<span class="keyword">end</span>)+5,nf)); <span class="comment">% cut off frequency</span>
+0350   <span class="keyword">if</span> ind(1)&lt;1,
+0351     disp(<span class="string">'DAT2SPEC: Error in cutting off high frequencies, try other L-values'</span>)
+0352   <span class="keyword">end</span>
+0353 <span class="keyword">end</span>
+0354 
+0355 
+0356 
+0357 <span class="comment">%----------------------------------- </span>
+0358 <span class="comment">% </span>
+0359 <span class="comment">%     Plotting the Spectral Density </span>
+0360 <span class="comment">%</span>
+0361 <span class="comment">%-----------------------------------</span>
+0362 
+0363 <span class="keyword">if</span> plotflag&gt;0
+0364  <a href="../../wafo/spec/wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S,plotflag)
+0365 <span class="keyword">end</span>
+0366 
+0367 <span class="keyword">return</span>
+0368 
+0369 <span class="keyword">function</span> [L,g,plotflag,p,method,dflag,ftype,chopOffHighFreq] = <a name="_sub1" href="#_subfunctions" class="code">d2schk</a>(P);
+0370 <span class="comment">% D2SCHK Helper function for dat2spec.</span>
+0371 <span class="comment">%</span>
+0372 <span class="comment">% CALL  [L,g,plotflag,p,method,dflag,ftype,chopOffHighFreq]=d2schk(P) </span>
+0373 <span class="comment">%</span>
+0374 <span class="comment">%   P = the cell array P of input arguments (between 0 and 7 elements)</span>
+0375 <span class="comment">%  xx = must be a two column vector.</span>
+0376 <span class="comment">%</span>
+0377 
+0378 <span class="comment">% Default values:</span>
+0379 <span class="comment">%~~~~~~~~~~~~~~~~</span>
+0380 L        = []; 
+0381 g        = [];
+0382 plotflag = 0;
+0383 p        = 0.95;
+0384 chopOffHighFreq=0;   <span class="comment">% chop off high frequencies in order to get the same </span>
+0385                      <span class="comment">% irregularity factor in the spectrum as in the data</span>
+0386                      <span class="comment">% may not be a good idea =&gt; default is 0</span>
+0387              
+0388 method   = <span class="string">'cov'</span>;  <span class="comment">% cov. other options from signal toolbox: psd = welch's method, pyulear,pmem =</span>
+0389                    <span class="comment">% maximum entropy method </span>
+0390 dflag    = <span class="string">'mean'</span>; <span class="comment">%'ma','linear' 'mean','none' <span class="comment">% detrending option</span></span>
+0391 ftype    = <span class="string">'w'</span>  ;  <span class="comment">%options are 'f' and 'w'</span>
+0392 
+0393 
+0394 
+0395 Np=length(P);
+0396 strix=zeros(1,Np);
+0397 <span class="keyword">for</span> ix=1:Np, <span class="comment">% finding symbol strings </span>
+0398  strix(ix)=ischar(P{ix});
+0399 <span class="keyword">end</span>
+0400 k = find(strix);
+0401 <span class="keyword">if</span> any(k)
+0402   Nk=length(k);
+0403   <span class="keyword">if</span> Nk&gt;3
+0404     warning(<span class="string">'More than 3 strings are not allowed in '</span>)
+0405   <span class="keyword">end</span>
+0406   <span class="keyword">for</span> ix = k
+0407     <span class="keyword">switch</span> lower(P{ix})
+0408     <span class="keyword">case</span> {<span class="string">'f'</span>,<span class="string">'w'</span>},                                 ftype  = P{ix};
+0409     <span class="keyword">case</span> {<span class="string">'cov'</span>,<span class="string">'pmem'</span>,<span class="string">'mem'</span>,<span class="string">'psd'</span>,<span class="string">'psdo'</span>,<span class="string">'pburg'</span>}, method = P{ix};
+0410     <span class="keyword">case</span> {<span class="string">'mean'</span>,<span class="string">'ma'</span>,<span class="string">'linear'</span>,<span class="string">'none'</span>},              dflag = P{ix};
+0411     <span class="keyword">otherwise</span>,                    warning([<span class="string">'Unknown option:'</span> P{ix}])
+0412     <span class="keyword">end</span>
+0413   <span class="keyword">end</span>
+0414   Np=Np-Nk;
+0415   P={P{find(~strix)}}; <span class="comment">% remove strings from input</span>
+0416 <span class="keyword">end</span>
+0417 
+0418 <span class="keyword">if</span> Np&gt;0 &amp; ~isempty(P{1}), L        = P{1};<span class="keyword">end</span>
+0419 <span class="keyword">if</span> Np&gt;1 &amp; ~isempty(P{2}), g        = P{2};<span class="keyword">end</span>
+0420 <span class="keyword">if</span> Np&gt;2 &amp; ~isempty(P{3}), plotflag = P{3};<span class="keyword">end</span>
+0421 <span class="keyword">if</span> Np&gt;3 &amp; ~isempty(P{4}), p        = P{4};<span class="keyword">end</span>
+0422 <span class="keyword">if</span> Np&gt;4 &amp; ~isempty(P{5}), chopOffHighFreq = P{5};<span class="keyword">end</span>
+0423 
+0424 
+0425 <span class="keyword">return</span>
+0426</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

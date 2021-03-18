@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of disufq</title>
+  <meta name="keywords" content="disufq">
+  <meta name="description" content="  Return difference- and sum-frequency effects.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wsim</a> &gt; disufq.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>disufq
+&nbsp;&nbsp;<img src="../../c.png" alt="Windows" border="0" title="Windows"></h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Return difference- and sum-frequency effects.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [svec, dvec] = disufq(A,w,kw,h,g,nmin,nmax) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="disufq.html" class="code" title="  Return difference- and sum-frequency effects. ">DISUFQ</a>  Return difference- and sum-frequency effects. 
+  
+   CALL:  vec         = <a href="disufq.html" class="code" title="  Return difference- and sum-frequency effects. ">disufq</a>(A,w,kw,h,g,nmin,nmax) 
+          [svec,dvec] = <a href="disufq.html" class="code" title="  Return difference- and sum-frequency effects. ">disufq</a>(A,w,kw,h,g,nmin,nmax) 
+  
+  vec        = svec + dvec = 2nd order frequency component (size m X n). 
+  svec       = 2nd order sum frequency component           (size m X n). 
+  dvec       = 2nd order difference frequency component    (size m X n). 
+  A          = complex amplitudes (size m X n).  
+  w          = vector with angular frequencies (w&gt;=0) 
+  kw         = vector with wavenumbers (kw&gt;=0) 
+  h          = water depth             (h &gt;=0) 
+  g          = constant acceleration of <a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a> 
+  nmin       = minimum index where abs(A(:,nmin)) is  
+               greater than zero. 
+  nmax       = maximum index where abs(A(:,nmax)) is  
+               greater than zero. 
+  
+  <a href="disufq.html" class="code" title="  Return difference- and sum-frequency effects. ">DISUFQ</a> returns the summation of difference frequency and sum  
+  frequency effects in the vector vec = svec + dvec 
+  The 2'nd order contribution to the non-linear wave is then calculated by 
+  a simple 1D <a href="../../wafo/multidim/fourier.html" class="code" title=" Returns Fourier coefficients. ">Fourier</a> transform, real(FFT(vec)). 
+  
+  Examples: 
+   % Estimate non-linear component   
+  xn = load('sea.dat'); 
+  dT = xn(2,1)-xn(1,1); 
+  n  = length(xn); 
+  h  = 10000; 
+  aMax = max(abs(xn(:,2)));  
+  wMax = sqrt(2*<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>/aMax); 
+  A    = ifft(xn(:,2)); 
+  w    = linspace(0,pi/dT,n/2); 
+  kw   = <a href="../../wafo/spec/w2k.html" class="code" title=" Translates from frequency to wave number">w2k</a>(w);   
+  nmax = min(max(find(w&lt;=wMax))); 
+  nmin = 2;   
+  vec  = <a href="disufq.html" class="code" title="  Return difference- and sum-frequency effects. ">disufq</a>(A.',w,kw,h,<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>,nmin,nmax);   
+  x2   = real(fft(vec.')); 
+  plot(xn(:,1),xn(:,2),'b',xn(:,1),xn(:,2)-x2,'r',xn(:,1),x2,'g') 
+  legend('nonlinear','approx linear','approx 2nd order comp')   
+  
+  % Simulate non-linear waves 
+  S    = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(5); 
+  xs   = <a href="spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,n); 
+  A    = ifft(xs(:,2)); 
+  w    = linspace(0,S.w(end),n/2); 
+  kw   = <a href="../../wafo/spec/w2k.html" class="code" title=" Translates from frequency to wave number">w2k</a>(w);   
+  nmax = min(max(find(w&lt;=wMax))); 
+  nmin = 2;   
+  vec  = <a href="disufq.html" class="code" title="  Return difference- and sum-frequency effects. ">disufq</a>(A.',w,kw,h,<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>,nmin,nmax);   
+  x2s  = real(fft(vec.')); 
+  plot(xs(:,1),xs(:,2),'b',xs(:,1),xs(:,2)+x2s,'r',xs(:,1),x2s,'g') 
+  legend('linear','non-linear','2nd order comp')       
+   
+  See also  <a href="spec2nlsdat.html" class="code" title=" Simulates a Randomized 2nd order non-linear wave X(t)  ">spec2nlsdat</a>, <a href="spec2linspec.html" class="code" title="  Separates the linear component of the Spectrum  ">spec2linspec</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="spec2nlsdat.html" class="code" title=" [x2,x,svec,dvec,A]=spec2nlsdat(S,np,dt,iseed,method,truncationLimit)">spec2nlsdat</a></li></TD>
+<TD> Simulates a Randomized 2nd order non-linear wave X(t)</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [svec, dvec] = <a name="_sub0" href="#_subfunctions" class="code">disufq</a>(A,w,kw,h,g,nmin,nmax) 
+002 <span class="comment">%DISUFQ  Return difference- and sum-frequency effects. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  vec         = disufq(A,w,kw,h,g,nmin,nmax) </span>
+005 <span class="comment">%         [svec,dvec] = disufq(A,w,kw,h,g,nmin,nmax) </span>
+006 <span class="comment">% </span>
+007 <span class="comment">% vec        = svec + dvec = 2nd order frequency component (size m X n). </span>
+008 <span class="comment">% svec       = 2nd order sum frequency component           (size m X n). </span>
+009 <span class="comment">% dvec       = 2nd order difference frequency component    (size m X n). </span>
+010 <span class="comment">% A          = complex amplitudes (size m X n).  </span>
+011 <span class="comment">% w          = vector with angular frequencies (w&gt;=0) </span>
+012 <span class="comment">% kw         = vector with wavenumbers (kw&gt;=0) </span>
+013 <span class="comment">% h          = water depth             (h &gt;=0) </span>
+014 <span class="comment">% g          = constant acceleration of gravity </span>
+015 <span class="comment">% nmin       = minimum index where abs(A(:,nmin)) is  </span>
+016 <span class="comment">%              greater than zero. </span>
+017 <span class="comment">% nmax       = maximum index where abs(A(:,nmax)) is  </span>
+018 <span class="comment">%              greater than zero. </span>
+019 <span class="comment">% </span>
+020 <span class="comment">% DISUFQ returns the summation of difference frequency and sum  </span>
+021 <span class="comment">% frequency effects in the vector vec = svec + dvec </span>
+022 <span class="comment">% The 2'nd order contribution to the non-linear wave is then calculated by </span>
+023 <span class="comment">% a simple 1D Fourier transform, real(FFT(vec)). </span>
+024 <span class="comment">% </span>
+025 <span class="comment">% Examples: </span>
+026 <span class="comment">%  <span class="comment">% Estimate non-linear component   </span></span>
+027 <span class="comment">% xn = load('sea.dat'); </span>
+028 <span class="comment">% dT = xn(2,1)-xn(1,1); </span>
+029 <span class="comment">% n  = length(xn); </span>
+030 <span class="comment">% h  = 10000; </span>
+031 <span class="comment">% aMax = max(abs(xn(:,2)));  </span>
+032 <span class="comment">% wMax = sqrt(2*gravity/aMax); </span>
+033 <span class="comment">% A    = ifft(xn(:,2)); </span>
+034 <span class="comment">% w    = linspace(0,pi/dT,n/2); </span>
+035 <span class="comment">% kw   = w2k(w);   </span>
+036 <span class="comment">% nmax = min(max(find(w&lt;=wMax))); </span>
+037 <span class="comment">% nmin = 2;   </span>
+038 <span class="comment">% vec  = disufq(A.',w,kw,h,gravity,nmin,nmax);   </span>
+039 <span class="comment">% x2   = real(fft(vec.')); </span>
+040 <span class="comment">% plot(xn(:,1),xn(:,2),'b',xn(:,1),xn(:,2)-x2,'r',xn(:,1),x2,'g') </span>
+041 <span class="comment">% legend('nonlinear','approx linear','approx 2nd order comp')   </span>
+042 <span class="comment">% </span>
+043 <span class="comment">% <span class="comment">% Simulate non-linear waves </span></span>
+044 <span class="comment">% S    = jonswap(5); </span>
+045 <span class="comment">% xs   = spec2sdat(S,n); </span>
+046 <span class="comment">% A    = ifft(xs(:,2)); </span>
+047 <span class="comment">% w    = linspace(0,S.w(end),n/2); </span>
+048 <span class="comment">% kw   = w2k(w);   </span>
+049 <span class="comment">% nmax = min(max(find(w&lt;=wMax))); </span>
+050 <span class="comment">% nmin = 2;   </span>
+051 <span class="comment">% vec  = disufq(A.',w,kw,h,gravity,nmin,nmax);   </span>
+052 <span class="comment">% x2s  = real(fft(vec.')); </span>
+053 <span class="comment">% plot(xs(:,1),xs(:,2),'b',xs(:,1),xs(:,2)+x2s,'r',xs(:,1),x2s,'g') </span>
+054 <span class="comment">% legend('linear','non-linear','2nd order comp')       </span>
+055 <span class="comment">%  </span>
+056 <span class="comment">% See also  spec2nlsdat, spec2linspec   </span>
+057    
+058 <span class="comment">% Is an internal function to spec2nlsdat </span>
+059 <span class="comment">% History   </span>
+060 <span class="comment">% This is a MEX-file for MATLAB. </span>
+061 <span class="comment">% by Per Andreas Brodtkorb 15.08.2001 </span>
+062 <span class="comment">% revised pab 14.03.2002, 01.05.2002 22.07.2002 </span>
+063  
+064 error(nargchk(7,7,nargin)) 
+065 disp(<span class="string">'This function is only available as a mex-compiled function.'</span>) 
+066 error(<span class="string">'Compile disufq.c by using mex -O disufq.c and try again.'</span>) 
+067</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

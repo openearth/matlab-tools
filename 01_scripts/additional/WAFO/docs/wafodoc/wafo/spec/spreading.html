@@ -1,0 +1,722 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spreading</title>
+  <meta name="keywords" content="spreading">
+  <meta name="description" content=" Directional spreading functions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; spreading.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spreading
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Directional spreading functions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> D = spreading(th,type,th0,data,w,def) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="spreading.html" class="code" title=" Directional spreading functions">SPREADING</a> Directional <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> functions
+ 
+  CALL:  D = <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>(th,type,th0,data,w,def);
+         D = <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>(Nt,type,th0,data,w,def);
+ 
+       D    = <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> function, struct reminding of spectrum struct   
+       th   = vector of direction angles, (default linspace(-pi,pi,Nt))
+       Nt   = scalar defining the length of th. (default 101)
+       type = type of <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> function, see options below (default 'cos2s')
+       th0  = vector or a scalar defining average direction at every frequency.
+              (length 1 or length == length(w)) (default 0)
+       data = vector of <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> parameters, see options below.
+              (default [15   15   0.52 5    -2.5  0    1    inf])
+       w    = frequency vector, if frequency dependent <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> 
+              (default linspace(0,3,257))
+       def  = 0 No frequency dependence of <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> function                
+              1 Mitsuyasu et al., Hasselman et al (<a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> experiment)
+                frequency dependent parametrization (default)
+              
+  The different types of <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> functions implemented are:
+   type = 'cos2s'  : cos-2s <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>    N(S)*[cos((th-th0)/2)]^(2*S)  (0 &lt; S) 
+          'box'    : Box-car <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>   N(A)*I( -A &lt; th-th0 &lt; A)      (0 &lt; A &lt; pi)
+          'mises'  : von Mises <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> N(K)*exp(K*cos(th-th0))       (0 &lt; K)
+          'poisson': Poisson <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>   N(X)/(1-2*X*cos(th-th0)+X^2)  (0 &lt; X &lt; 1)
+          'sech2'  : sech-2 <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>    N(B)*0.5*B*sech(B*(th-th0))^2 (0 &lt; B)
+          'wnormal': Wrapped Normal      
+                   [1 + 2*sum exp(-(n*D)^2/2)*cos(n*(th-th0))]/(2*pi)  (0 &lt; D)
+          (N(.) = normalization factor)       
+          (the first letter is enough for unique identification)  
+ 
+  Here the S-parameter of the COS-2S <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> function is used as a
+  measure of spread. All the parameters of the other distributions are
+  related to this S-parameter throug the first <a href="../../wafo/multidim/fourier.html" class="code" title=" Returns Fourier coefficients. ">Fourier</a> coefficient, R1, of the
+  directional distribution as follows: 
+          R1 = S/(S+1) or S = R1/(1-R1).
+  where 
+          Box-car <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>  : R1 = sin(A)/A
+          Von Mises <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>: R1 = besseli(1,K)/besseli(0,K), 
+          Poisson <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>  : R1 = X
+          sech-2 <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>   : R1 = pi/(2*B*sinh(pi/(2*B))
+          Wrapped Normal     : R1 = exp(-D^2/2)
+ 
+  Use of data vector:
+    frequency dependent <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>:
+     data =  [spa spb wc ma mb wlim],
+            sp = maximum spread 
+            wc = cut over frequency (usually the peak frequency, wp or fp) 
+            m  = shape parameter defining the frequency dependent
+                 <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> parameter, S=S(w), where
+                 S(w) = sp *(w/wc)^m, with sp=spa, m=ma for wlim(1) &lt;= w/wc &lt; wlim(2)
+                                           sp=spb, m=mb for wlim(2) &lt;= w/wc &lt; wlim(3)
+                      = 0     otherwise 
+   frequency independent <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>:
+     data =  S,  default value: 15 which corresponds to 
+            'cos2s'  : S=15                      
+            'box'    : A=0.62   
+            'sech2'  : B=0.89      
+            'mises'  : K=8.3      
+            'poisson': X=0.94  
+            'wnormal': D=0.36
+ 
+  The 'cos2s' is the most frequently used <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> in engineering practice.
+  Apart from the current meter/pressure cell data in WADIC all
+  instruments seem to support the 'cos2s' distribution for heavier <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a>
+  states, (Krogstad and Barstow, 1999). For medium <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> states
+  a <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> function between 'cos2s' and 'poisson' seem appropriate,
+  while 'poisson' seems appropriate for swell.
+    For the 'cos2s' Mitsuyasu et al. parameterized SPa = SPb =
+  11.5*(U10/Cp) where Cp = g/wp is the deep water phase speed at wp and
+  U10 the wind speed at reference height 10m. Hasselman et al. (1980)
+  parameterized  mb = -2.33-1.45*(U10/Cp-1.17).
+  Mitsuyasu et al. (1975) showed that SP for wind waves varies from 
+  5 to 30 being a function of dimensionless wind speed.
+  However, Goda and Suzuki (1975) proposed SP = 10 for wind waves, SP = 25
+  for swell with short decay distance and SP = 75 for long decay distance.
+  Compared to experiments Krogstad et al. (1998) found that ma = 5 +/- eps and
+  that -1&lt; mb &lt; -3.5. 
+  Values given in the litterature:        [spa  spb  wc   ma   mb      wlim(1:3)  ]
+       (Mitsuyasu: spa == spb)  (cos-2s)  [15   15   0.52 5    -2.5  0    1    inf]
+       (Hasselman: spa ~= spb)  (cos-2s)  [6.97 9.77 0.52 4.06 -2.52 0    1    inf]
+   
+   NOTE: - by specifying NaN's in the data vector default values will be used.
+         - if length(data) is shorter than the parameters needed then the 
+           default values are used
+ 
+  Example:% Set  spa = 10,  wc = 0.43 and spb, ma, mb, wlim to their 
+          % default values, respectively: 
+  
+    data = [10, nan, .43]; 
+    D = <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>(51,'cos2s',0,data)
+         % Frequency dependent direction
+    th0 = linspace(0,pi/2,257)';
+    D = <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>(51,'cos2s',th0,data)
+ 
+  See also  <a href="mkdspec.html" class="code" title=" Make a directional spectrum">mkdspec</a>, <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>, <a href="spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/sinc.html" class="code" title=" y = sinc(x)">sinc</a></li></TD>
+<TD> Sin(pi*x)/(pi*x) function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\besseli.m">besseli</a></li></TD>
+<TD>       Modified Bessel function of the first kind.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\fft.bi">fft</a></li></TD>
+<TD>           Discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\fzero.m">fzero</a></li></TD>
+<TD>         Scalar nonlinear zero finding.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\optimset.m">optimset</a></li></TD>
+<TD>      Create/alter OPTIM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\sprintf.m">sprintf</a></li></TD>
+<TD>       Write formatted data to string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2num.m">str2num</a></li></TD>
+<TD>       Convert string matrix to numeric array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strncmp.bi">strncmp</a></li></TD>
+<TD>       Compare first N characters of strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="struct is a built-in method">struct</a></li></TD>
+<TD>        Create or convert to structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\local\version.m">version</a></li></TD>
+<TD>       MATLAB version number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="demospec.html" class="code" title=" S=demospec(stype)">demospec</a></li></TD>
+<TD> Loads a precreated spectrum of chosen type</TD>
+</TR>
+<TR>
+<TD><li><a href="mkdspec.html" class="code" title=" Snew=mkdspec(S,D,plotflag)">mkdspec</a></li></TD>
+<TD> Make a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig4.html" class="code" title=" wafofig4">wafofig4</a></li></TD>
+<TD>  Directional spectra using Thorsethaugen and cos2s spreading</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> x=fcof2par(r1,type)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> D = <a name="_sub0" href="#_subfunctions" class="code">spreading</a>(th,type,th0,data,w,def)
+0002 <span class="comment">%SPREADING Directional spreading functions</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% CALL:  D = spreading(th,type,th0,data,w,def);</span>
+0005 <span class="comment">%        D = spreading(Nt,type,th0,data,w,def);</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%      D    = spreading function, struct reminding of spectrum struct   </span>
+0008 <span class="comment">%      th   = vector of direction angles, (default linspace(-pi,pi,Nt))</span>
+0009 <span class="comment">%      Nt   = scalar defining the length of th. (default 101)</span>
+0010 <span class="comment">%      type = type of spreading function, see options below (default 'cos2s')</span>
+0011 <span class="comment">%      th0  = vector or a scalar defining average direction at every frequency.</span>
+0012 <span class="comment">%             (length 1 or length == length(w)) (default 0)</span>
+0013 <span class="comment">%      data = vector of spreading parameters, see options below.</span>
+0014 <span class="comment">%             (default [15   15   0.52 5    -2.5  0    1    inf])</span>
+0015 <span class="comment">%      w    = frequency vector, if frequency dependent spreading </span>
+0016 <span class="comment">%             (default linspace(0,3,257))</span>
+0017 <span class="comment">%      def  = 0 No frequency dependence of spreading function                </span>
+0018 <span class="comment">%             1 Mitsuyasu et al., Hasselman et al (JONSWAP experiment)</span>
+0019 <span class="comment">%               frequency dependent parametrization (default)</span>
+0020 <span class="comment">%             </span>
+0021 <span class="comment">% The different types of spreading functions implemented are:</span>
+0022 <span class="comment">%  type = 'cos2s'  : cos-2s spreading    N(S)*[cos((th-th0)/2)]^(2*S)  (0 &lt; S) </span>
+0023 <span class="comment">%         'box'    : Box-car spreading   N(A)*I( -A &lt; th-th0 &lt; A)      (0 &lt; A &lt; pi)</span>
+0024 <span class="comment">%         'mises'  : von Mises spreading N(K)*exp(K*cos(th-th0))       (0 &lt; K)</span>
+0025 <span class="comment">%         'poisson': Poisson spreading   N(X)/(1-2*X*cos(th-th0)+X^2)  (0 &lt; X &lt; 1)</span>
+0026 <span class="comment">%         'sech2'  : sech-2 spreading    N(B)*0.5*B*sech(B*(th-th0))^2 (0 &lt; B)</span>
+0027 <span class="comment">%         'wnormal': Wrapped Normal      </span>
+0028 <span class="comment">%                  [1 + 2*sum exp(-(n*D)^2/2)*cos(n*(th-th0))]/(2*pi)  (0 &lt; D)</span>
+0029 <span class="comment">%         (N(.) = normalization factor)       </span>
+0030 <span class="comment">%         (the first letter is enough for unique identification)  </span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% Here the S-parameter of the COS-2S spreading function is used as a</span>
+0033 <span class="comment">% measure of spread. All the parameters of the other distributions are</span>
+0034 <span class="comment">% related to this S-parameter throug the first Fourier coefficient, R1, of the</span>
+0035 <span class="comment">% directional distribution as follows: </span>
+0036 <span class="comment">%         R1 = S/(S+1) or S = R1/(1-R1).</span>
+0037 <span class="comment">% where </span>
+0038 <span class="comment">%         Box-car spreading  : R1 = sin(A)/A</span>
+0039 <span class="comment">%         Von Mises spreading: R1 = besseli(1,K)/besseli(0,K), </span>
+0040 <span class="comment">%         Poisson spreading  : R1 = X</span>
+0041 <span class="comment">%         sech-2 spreading   : R1 = pi/(2*B*sinh(pi/(2*B))</span>
+0042 <span class="comment">%         Wrapped Normal     : R1 = exp(-D^2/2)</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">% Use of data vector:</span>
+0045 <span class="comment">%   frequency dependent spreading:</span>
+0046 <span class="comment">%    data =  [spa spb wc ma mb wlim],</span>
+0047 <span class="comment">%           sp = maximum spread </span>
+0048 <span class="comment">%           wc = cut over frequency (usually the peak frequency, wp or fp) </span>
+0049 <span class="comment">%           m  = shape parameter defining the frequency dependent</span>
+0050 <span class="comment">%                spreading parameter, S=S(w), where</span>
+0051 <span class="comment">%                S(w) = sp *(w/wc)^m, with sp=spa, m=ma for wlim(1) &lt;= w/wc &lt; wlim(2)</span>
+0052 <span class="comment">%                                          sp=spb, m=mb for wlim(2) &lt;= w/wc &lt; wlim(3)</span>
+0053 <span class="comment">%                     = 0     otherwise </span>
+0054 <span class="comment">%  frequency independent spreading:</span>
+0055 <span class="comment">%    data =  S,  default value: 15 which corresponds to </span>
+0056 <span class="comment">%           'cos2s'  : S=15                      </span>
+0057 <span class="comment">%           'box'    : A=0.62   </span>
+0058 <span class="comment">%           'sech2'  : B=0.89      </span>
+0059 <span class="comment">%           'mises'  : K=8.3      </span>
+0060 <span class="comment">%           'poisson': X=0.94  </span>
+0061 <span class="comment">%           'wnormal': D=0.36</span>
+0062 <span class="comment">%</span>
+0063 <span class="comment">% The 'cos2s' is the most frequently used spreading in engineering practice.</span>
+0064 <span class="comment">% Apart from the current meter/pressure cell data in WADIC all</span>
+0065 <span class="comment">% instruments seem to support the 'cos2s' distribution for heavier sea</span>
+0066 <span class="comment">% states, (Krogstad and Barstow, 1999). For medium sea states</span>
+0067 <span class="comment">% a spreading function between 'cos2s' and 'poisson' seem appropriate,</span>
+0068 <span class="comment">% while 'poisson' seems appropriate for swell.</span>
+0069 <span class="comment">%   For the 'cos2s' Mitsuyasu et al. parameterized SPa = SPb =</span>
+0070 <span class="comment">% 11.5*(U10/Cp) where Cp = g/wp is the deep water phase speed at wp and</span>
+0071 <span class="comment">% U10 the wind speed at reference height 10m. Hasselman et al. (1980)</span>
+0072 <span class="comment">% parameterized  mb = -2.33-1.45*(U10/Cp-1.17).</span>
+0073 <span class="comment">% Mitsuyasu et al. (1975) showed that SP for wind waves varies from </span>
+0074 <span class="comment">% 5 to 30 being a function of dimensionless wind speed.</span>
+0075 <span class="comment">% However, Goda and Suzuki (1975) proposed SP = 10 for wind waves, SP = 25</span>
+0076 <span class="comment">% for swell with short decay distance and SP = 75 for long decay distance.</span>
+0077 <span class="comment">% Compared to experiments Krogstad et al. (1998) found that ma = 5 +/- eps and</span>
+0078 <span class="comment">% that -1&lt; mb &lt; -3.5. </span>
+0079 <span class="comment">% Values given in the litterature:        [spa  spb  wc   ma   mb      wlim(1:3)  ]</span>
+0080 <span class="comment">%      (Mitsuyasu: spa == spb)  (cos-2s)  [15   15   0.52 5    -2.5  0    1    inf]</span>
+0081 <span class="comment">%      (Hasselman: spa ~= spb)  (cos-2s)  [6.97 9.77 0.52 4.06 -2.52 0    1    inf]</span>
+0082 <span class="comment">%  </span>
+0083 <span class="comment">%  NOTE: - by specifying NaN's in the data vector default values will be used.</span>
+0084 <span class="comment">%        - if length(data) is shorter than the parameters needed then the </span>
+0085 <span class="comment">%          default values are used</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">% Example:<span class="comment">% Set  spa = 10,  wc = 0.43 and spb, ma, mb, wlim to their </span></span>
+0088 <span class="comment">%         <span class="comment">% default values, respectively: </span></span>
+0089 <span class="comment">% </span>
+0090 <span class="comment">%   data = [10, nan, .43]; </span>
+0091 <span class="comment">%   D = spreading(51,'cos2s',0,data)</span>
+0092 <span class="comment">%        <span class="comment">% Frequency dependent direction</span></span>
+0093 <span class="comment">%   th0 = linspace(0,pi/2,257)';</span>
+0094 <span class="comment">%   D = spreading(51,'cos2s',th0,data)</span>
+0095 <span class="comment">%</span>
+0096 <span class="comment">% See also  mkdspec, wspecplot, spec2spec</span>
+0097  
+0098 <span class="comment">% References</span>
+0099 <span class="comment">%  Krogstad, H.E. and Barstow, S.F. (1999)</span>
+0100 <span class="comment">%  &quot;Directional Distributions in Ocean Wave Spectra&quot;</span>
+0101 <span class="comment">%  Proceedings of the 9th ISOPE Conference, Vol III, pp. 79-86</span>
+0102 <span class="comment">%</span>
+0103 <span class="comment">%  Goda, Y. (1999)</span>
+0104 <span class="comment">%  &quot;Numerical simulation of ocean waves for statistical analysis&quot;</span>
+0105 <span class="comment">%  Marine Tech. Soc. Journal, Vol. 33, No. 3, pp 5--14 </span>
+0106 <span class="comment">%</span>
+0107 <span class="comment">%  Banner, M.L. (1990)</span>
+0108 <span class="comment">%  &quot;Equilibrium spectra of wind waves.&quot;</span>
+0109 <span class="comment">%  J. Phys. Ocean, Vol 20, pp 966--984</span>
+0110 <span class="comment">%</span>
+0111 <span class="comment">% Donelan M.A., Hamilton J, Hui W.H. (1985)</span>
+0112 <span class="comment">% &quot;Directional spectra of wind generated waves.&quot;</span>
+0113 <span class="comment">% Phil. Trans. Royal Soc. London, Vol A315, pp 387--407</span>
+0114 <span class="comment">%</span>
+0115 <span class="comment">% Hasselmann D, Dunckel M, Ewing JA (1980)</span>
+0116 <span class="comment">% &quot;Directional spectra observed during JONSWAP.&quot;</span>
+0117 <span class="comment">%  J. Phys. Ocean, Vol.10, pp 1264--1280</span>
+0118 <span class="comment">%</span>
+0119 <span class="comment">%  Mitsuyasu, H, et al. (1975)</span>
+0120 <span class="comment">%  &quot;Observation of the directional spectrum of ocean waves using a</span>
+0121 <span class="comment">%  coverleaf buoy.&quot;</span>
+0122 <span class="comment">%  J. Physical Oceanography, Vol.5, No.4, pp 750--760</span>
+0123 
+0124 <span class="comment">% Some of this might be included in help header:</span>
+0125 <span class="comment">% cos-2s:</span>
+0126 <span class="comment">% NB! The generally strong frequency dependence in directional spread</span>
+0127 <span class="comment">% makes it questionable to run load tests of ships and structures with a</span>
+0128 <span class="comment">% directional spread independent of frequency (Krogstad and Barstow, 1999).</span>
+0129 
+0130 <span class="comment">% Parameterization of B</span>
+0131 <span class="comment">%    def = 2 Donelan et al freq. parametrization for 'sech2'</span>
+0132 <span class="comment">%    def = 3 Banner freq. parametrization for 'sech2'</span>
+0133 <span class="comment">%    (spa ~= spb)  (sech-2)  [2.61 2.28 0.52 1.3  -1.3  0.56 0.95 1.6] </span>
+0134 
+0135 
+0136 <span class="comment">% Tested on: Matlab 5.3</span>
+0137 <span class="comment">% History:</span>
+0138 <span class="comment">% revisd pab 17.06.2001</span>
+0139 <span class="comment">% - added wrapped normal spreading</span>
+0140 <span class="comment">% revised pab 6 April 2001</span>
+0141 <span class="comment">%  - added fcof2par</span>
+0142 <span class="comment">%  - Fixed the normalization of sech2 spreading</span>
+0143 <span class="comment">% revised by PAB and IR 1 April 2001: Introducing the azymuth as a</span>
+0144 <span class="comment">% standard parameter in order to avoid rotations of the directions</span>
+0145 <span class="comment">% theta. The x-axis is always pointing into the principal direction</span>
+0146 <span class="comment">% as defined in the spreading function D(omega,theta). The actual</span>
+0147 <span class="comment">% principal direction is defined by means of field D.phi.</span>
+0148 <span class="comment">% revised es 06.06.2000, commented away: if ((ma==0) &amp; (mb==0)), ...,</span>
+0149 <span class="comment">%                    hoping that the check is unnecessary</span>
+0150 <span class="comment">% revised pab 13.06.2000</span>
+0151 <span class="comment">%  - fixed a serious bug: made sure -pi&lt;= th-th0 &lt;=pi</span>
+0152 <span class="comment">% revised pab 16.02.2000</span>
+0153 <span class="comment">%  -fixed default value for Hasselman parametrization </span>
+0154 <span class="comment">% revised pab 02.02.2000</span>
+0155 <span class="comment">%   - Nt or th may be specified + check on th</span>
+0156 <span class="comment">%   - added frequency dependence for sech-2</span>
+0157 <span class="comment">%   - th0 as separate input</span>
+0158 <span class="comment">%   - updated header info</span>
+0159 <span class="comment">%   - changed check for nargins</span>
+0160 <span class="comment">%   - added the possibility of nan's in data vector</span>
+0161 <span class="comment">% Revised by jr 2000.01.25</span>
+0162 <span class="comment">% - changed check of nargins</span>
+0163 <span class="comment">% - frequency dependence only for cos-2s</span>
+0164 <span class="comment">% - updated information</span>
+0165 <span class="comment">% By es, jr 1999.11.25</span>
+0166 
+0167 error(nargchk(0,6,nargin))
+0168 <span class="comment">% Default values</span>
+0169 <span class="comment">%~~~~~~~~~~~~~~~</span>
+0170 Nt=101;Nw = 257;
+0171 <span class="keyword">if</span> nargin&lt;1|length(th)&lt;2
+0172   <span class="keyword">if</span> (nargin&gt;0) &amp; (length(th)==1), Nt=abs(th);<span class="keyword">end</span>
+0173   th = linspace(-pi,pi,Nt).';
+0174 <span class="keyword">elseif</span> abs(th(<span class="keyword">end</span>)-th(1))&lt;2*pi-eps | abs(th(<span class="keyword">end</span>)-th(1))&gt;2*pi+eps 
+0175   error(<span class="string">'theta must cover all angles -pi -&gt; pi'</span>)
+0176 <span class="keyword">else</span>
+0177   Nt = length(th);
+0178 <span class="keyword">end</span>
+0179 <span class="keyword">if</span> Nt&lt;40, warning(<span class="string">'Number of angles is less than 40. Spreading too sparsely sampled!'</span>), <span class="keyword">end</span>
+0180 <span class="keyword">if</span> nargin&lt;2|isempty(type), type = <span class="string">'cos2s'</span>; <span class="keyword">end</span>
+0181 <span class="keyword">if</span> nargin&lt;3|isempty(th0),  th0  = 0; <span class="keyword">end</span>
+0182 <span class="keyword">if</span> nargin&lt;5|isempty(w),    w    = linspace(0,3,Nw).'; <span class="keyword">end</span>
+0183 <span class="keyword">if</span> nargin&lt;6|isempty(def),  def  = 1; <span class="keyword">end</span>
+0184 
+0185 <span class="comment">% Determine the default values</span>
+0186 
+0187 data2=[15   15   0.52 5    -2.5  0    1    inf];
+0188 spb=[];wc =[]; ma=[]; mb=[];wlim=[];
+0189 nd2 = length(data2);
+0190 <span class="keyword">if</span> (nargin&gt;3) &amp; ~isempty(data), 
+0191   nd  = length(data); 
+0192   ind = find(~isnan(data(1:min(nd,nd2))));
+0193   <span class="keyword">if</span> any(ind) <span class="comment">% replace default values with those from input data</span>
+0194     data2(ind)=data(ind);
+0195   <span class="keyword">end</span>
+0196   <span class="comment">%if ((def==1) &amp; strncmp(type,'cos2s',1) &amp; ((nd&lt;2)|isempty(ind)|~any(ind==2))), </span>
+0197   <span class="comment">%  data2(2)=data2(1); </span>
+0198   <span class="comment">%end</span>
+0199 <span class="keyword">end</span>
+0200 
+0201 <span class="keyword">if</span> (nd2&gt;0),  spa = data2(1); <span class="keyword">end</span>
+0202 <span class="keyword">if</span> (nd2&gt;1),  spb = data2(2); <span class="keyword">end</span>
+0203 <span class="keyword">if</span> def~=0
+0204   <span class="keyword">if</span> (nd2&gt;2),  wc  = data2(3); <span class="keyword">end</span>
+0205   <span class="keyword">if</span> (nd2&gt;3),  ma  = data2(4); <span class="keyword">end</span>
+0206   <span class="keyword">if</span> (nd2&gt;4),  mb  = data2(5); <span class="keyword">end</span>
+0207   <span class="keyword">if</span> (nd2&gt;5), wlim = data2(6:5+3); <span class="keyword">end</span>
+0208 <span class="keyword">end</span>
+0209 <span class="comment">%th = mod(th(:)+pi,2*pi)-pi;</span>
+0210 <span class="comment">% Make sure theta is from -pi to pi</span>
+0211 th      = th(:);
+0212 phi0    = th(1)+pi; 
+0213 th      = th-phi0;
+0214 th(<span class="keyword">end</span>) = pi;
+0215 phi0    = mod(phi0,2*pi);
+0216 
+0217 th0 = th0(:).';
+0218 Nt0 = length(th0);
+0219 w   = w(:);
+0220 Nw  = length(w);
+0221 
+0222 <span class="keyword">if</span> Nt0==Nw, 
+0223   <span class="comment">% frequency dependent spreading and/or</span>
+0224   <span class="comment">% frequency dependent direction</span>
+0225   TH = mod(th(:,ones(1,Nw))-th0(ones(Nt,1),:)+pi,2*pi)-pi; <span class="comment">% make sure -pi&lt;=TH&lt;pi</span>
+0226   <span class="keyword">if</span> def==0, def =1;<span class="keyword">end</span>
+0227 <span class="keyword">elseif</span> Nt0~=1,
+0228   error(<span class="string">'The length of th0 must equal to 1 or the length of w'</span>)
+0229 <span class="keyword">else</span>
+0230   <span class="comment">% If ma==0 and mb==0 then frequency independent spreading is wanted</span>
+0231   <span class="comment">%if ((nd2&gt;4) &amp; (ma==0) &amp; (mb==0)), def=0;spb=[];wc =[]; ma=[]; mb=[];wlim=[];end</span>
+0232   TH = mod(th-th0+pi,2*pi)-pi; <span class="comment">% make sure -pi&lt;=TH&lt;pi</span>
+0233   <span class="keyword">if</span> def~=0, <span class="comment">% frequency dependent spreading</span>
+0234     TH = TH(:,ones(1,Nw));
+0235   <span class="keyword">end</span>
+0236 <span class="keyword">end</span>
+0237   
+0238 <span class="comment">% Createspreading</span>
+0239 <span class="comment">%~~~~~~~~~~~~~~~~</span>
+0240 <span class="keyword">if</span> def&gt;0
+0241   D  = struct(<span class="string">'S'</span>,[],<span class="string">'w'</span>,w,<span class="string">'theta'</span>,th,<span class="string">'type'</span>,<span class="string">'dir'</span>,<span class="string">'phi'</span>,phi0,<span class="string">'note'</span>,[]); <span class="comment">% frequency dependent</span>
+0242   <span class="keyword">if</span> ~isempty(wc),wn = w./wc; <span class="keyword">end</span> <span class="comment">% normalized frequency</span>
+0243 <span class="keyword">else</span>
+0244   D  = struct(<span class="string">'S'</span>,[],<span class="string">'theta'</span>,th,<span class="string">'type'</span>,<span class="string">'dir'</span>,<span class="string">'phi'</span>,phi0,<span class="string">'note'</span>,[]); <span class="comment">% frequency independent</span>
+0245 <span class="keyword">end</span>
+0246 
+0247 
+0248 D.th0  = th0;
+0249 D.data = [spa spb wc ma mb wlim]; <span class="comment">% save the spreading parameters used</span>
+0250 <span class="keyword">if</span>  def==0|isempty(wc), 
+0251   <span class="comment">% no frequency dependent spreading, but possible frequency dependent</span>
+0252   <span class="comment">% direction  </span>
+0253   s = spa;
+0254 <span class="keyword">else</span>
+0255   k = find(wlim(3)&lt;wn);
+0256   <span class="comment">% Mitsuyasu et. al and Hasselman et. al parametrization   of</span>
+0257   <span class="comment">% frequency dependent spreading</span>
+0258   s=[ zeros(length(find(wn&lt;=wlim(1))),1) ; <span class="keyword">...</span>
+0259     spa*(wn((wlim(1)&lt;wn) &amp; (wn&lt;=wlim(2)))).^ma ;<span class="keyword">...</span> 
+0260     spb*(wn((wlim(2)&lt;wn) &amp; (wn&lt;=wlim(3)))).^mb ;<span class="keyword">...</span> 
+0261     zeros(length(k),1) ].';
+0262   <span class="keyword">if</span> def==2 &amp; any(k),
+0263      <span class="comment">% Donelan et. al. parametrization for B in SECH-2 </span>
+0264     s(k) =  s(max(find(s~=0)));
+0265   <span class="keyword">end</span>
+0266   <span class="keyword">if</span> def==3 &amp; any(k),
+0267      <span class="comment">% Banner parametrization  for B in SECH-2 </span>
+0268     s(k) =  10.^(-0.4+0.8393*exp(-0.567*log(wn(k).^2))); 
+0269   <span class="keyword">end</span>
+0270 <span class="keyword">end</span>
+0271 
+0272 <span class="keyword">if</span> any(s&lt;0), error(<span class="string">'Spreading: SP value must be larger than 0'</span>),<span class="keyword">end</span>
+0273 
+0274 <span class="keyword">if</span> strncmp(type,<span class="string">'cos2s'</span>,1),
+0275   <span class="keyword">if</span> isempty(wc),S=s;<span class="keyword">else</span>,S = s(ones(Nt,1),:);<span class="keyword">end</span>
+0276   D.S = gamma(S+1)/2/sqrt(pi)./gamma(S+1/2).*cos(TH/2).^(2*S);
+0277   D.note=<span class="string">'Spreading: cos2s'</span>; 
+0278   <span class="keyword">return</span>
+0279 <span class="keyword">end</span>
+0280 
+0281 r1 = abs(s./(s+1)); <span class="comment">% First Fourier coefficient of the directional spreading function.</span>
+0282 <span class="comment">%plot(s,r1)</span>
+0283 <span class="keyword">if</span> strncmp(type,<span class="string">'poisson'</span>,1),  
+0284   <span class="keyword">if</span> isempty(wc),X = r1; <span class="keyword">else</span>, X = r1(ones(Nt,1),:);<span class="keyword">end</span>
+0285   <span class="keyword">if</span> any(X&gt;=1), error(<span class="string">'POISSON spreading: X value must be less than 1'</span>),<span class="keyword">end</span> 
+0286   D.S    = (1-X.^2)./(1-(2*cos(TH)-X).*X)/(2*pi);
+0287   D.note = <span class="string">'Spreading: Poisson'</span>;
+0288   <span class="keyword">return</span>
+0289 <span class="keyword">end</span>
+0290 <span class="keyword">if</span> strncmp(type,<span class="string">'wnormal'</span>,1),
+0291   D1 = repmat(inf,size(r1));
+0292   ind = find(r1); <span class="comment">% avoid log of 0</span>
+0293   D1(ind) = sqrt(-2*log(r1(ind)));
+0294   <span class="comment">%D1 = sqrt(-2*log(r1));</span>
+0295   <span class="keyword">if</span> any(D1&lt;0|~isreal(D1)), 
+0296     error(<span class="string">'WRAPPED NORMAL spreading: D value must be greater than 0.'</span>),
+0297   <span class="keyword">end</span> 
+0298   D1 = D1.^2/2;
+0299   ix  = (1:Nt-1).';
+0300   ix2 = ix.^2; 
+0301   <span class="keyword">if</span> ~isempty(wc), 
+0302     D1 = D1(ones(Nt-1,1),:);
+0303   <span class="keyword">end</span>
+0304   Nd2 = size(D1,2);
+0305   Fcof = [ ones(1,Nd2)/2;<span class="keyword">...</span>
+0306     exp(-ix2(:,ones(1,Nd2)).*D1)     ]/pi;
+0307   Pcor = [ ones(1,Nd2 ); exp(sqrt(-1)*ix*TH(1,:))]; <span class="comment">% correction term to get</span>
+0308     <span class="comment">% the correct integration limits</span>
+0309   Fcof = Fcof(1:Nt,:).*conj(Pcor);
+0310   D.S = real(fft(Fcof));
+0311   D.S(D.S&lt;0)=0;         
+0312   D.note = <span class="string">'Spreading: Wrapped Normal'</span>;
+0313   <span class="keyword">return</span>
+0314 <span class="keyword">end</span>
+0315 <span class="comment">% Find distribution parameter from first Fourier coefficient.</span>
+0316 par = <a href="#_sub1" class="code" title="sub  x=fcof2par(r1,type)">fcof2par</a>(r1,type);
+0317 
+0318 
+0319 <span class="keyword">if</span> strncmp(type,<span class="string">'sech2'</span>,1), 
+0320   NB = tanh(pi*par); <span class="comment">% Normalization factor.</span>
+0321   NB(NB==0) = 1;     <span class="comment">% Avoid division by zero</span>
+0322   <span class="keyword">if</span> isempty(wc),B=par; <span class="keyword">else</span>,B = par(ones(Nt,1),:); NB = NB(ones(Nt,1),:); <span class="keyword">end</span>
+0323   D.S = 0.5*B.*sech(B.*TH).^2./NB;
+0324   D.note=<span class="string">'Spreading: sech2'</span>;
+0325   <span class="keyword">return</span>
+0326 <span class="keyword">end</span>
+0327 
+0328 <span class="keyword">if</span> strncmp(type,<span class="string">'mises'</span>,1),  
+0329   <span class="keyword">if</span> isempty(wc),K = par; <span class="keyword">else</span>,K = par(ones(Nt,1),:);<span class="keyword">end</span>
+0330   D.S=1./(2*pi*besseli(0,K,1)).*exp(K.*(cos(TH)-1));
+0331   D.note=<span class="string">'Spreading: von Mises'</span>;
+0332   <span class="keyword">return</span>
+0333 <span class="keyword">end</span>
+0334 
+0335 <span class="keyword">if</span> strncmp(type,<span class="string">'box'</span>,1),
+0336   <span class="keyword">if</span> any(par&gt;pi), error(<span class="string">'BOX-CAR spreading: The A value must be less than pi'</span>),<span class="keyword">end</span>
+0337   <span class="keyword">if</span> isempty(wc),A=par; <span class="keyword">else</span>, A = par(ones(Nt,1),:);<span class="keyword">end</span>
+0338   D.S=1./(2.*A).*(-A&lt;=TH &amp; TH&lt;=A); 
+0339   D.note=<span class="string">'Spreading: Box-car'</span>;
+0340   <span class="keyword">return</span>
+0341 <span class="keyword">end</span>
+0342 
+0343 error(<span class="string">'TYPE of spreading function unknown'</span>)
+0344 
+0345 <span class="keyword">return</span>
+0346 
+0347 <span class="keyword">function</span> x=<a name="_sub1" href="#_subfunctions" class="code">fcof2par</a>(r1,type)
+0348 <span class="comment">%FCOF2PAR Fourier coefficients to distribution parameter  </span>
+0349 
+0350 mvrs = version;ix=find(mvrs==<span class="string">'.'</span>);
+0351 mvnr = str2num(mvrs(1:ix(2)-1));
+0352 
+0353 x = zeros(size(r1));
+0354 
+0355 <span class="keyword">switch</span> type(1),
+0356   <span class="keyword">case</span> <span class="string">'s'</span> <span class="comment">% sech2</span>
+0357     x0 = [linspace(eps,5,513) linspace(5.0001,100)]';
+0358     x0 = interp1(0.5*pi./(x0.*sinh(.5*pi./x0)),x0,r1(:));
+0359     k1 = find(isnan(x0));
+0360     <span class="keyword">if</span> any(k1),
+0361       x0(k1)= 0;
+0362       x0(k1)=max(x0);
+0363     <span class="keyword">end</span>
+0364   
+0365     ix0 = find(r1~=0);
+0366     <span class="keyword">if</span> mvnr&gt;5.2,
+0367       <span class="keyword">for</span> ix=ix0,
+0368     x(ix) = abs(fzero(<span class="string">'(0.5*pi./(sinh(.5*pi./x)))-x.*(P1)'</span>,x0(ix),optimset,r1(ix)));
+0369       <span class="keyword">end</span>
+0370     <span class="keyword">else</span>
+0371       <span class="keyword">for</span> ix=ix0,
+0372     x(ix) = abs(fzero(<span class="string">'(0.5*pi./(sinh(.5*pi./x)))-x.*(P1)'</span>,x0(ix),[],[],r1(ix)));
+0373       <span class="keyword">end</span>
+0374     <span class="keyword">end</span>
+0375   <span class="keyword">case</span> <span class="string">'m'</span>, <span class="comment">% mises</span>
+0376     x0 = [linspace(0,10,513) linspace(10.00001,100)]';
+0377     x0 = interp1(besseli(1,x0,1)./besseli(0,x0,1),x0,r1(:));
+0378     k1 = find(isnan(x0));
+0379     <span class="keyword">if</span> any(k1),
+0380       x0(k1)= 0;
+0381       x0(k1)=max(x0);
+0382     <span class="keyword">end</span>
+0383   
+0384     <span class="keyword">if</span> mvnr&gt;5.2,
+0385       <span class="keyword">for</span> ix=1:length(r1),
+0386     x(ix) = fzero(<span class="string">'besseli(1,x,1)./besseli(0,x,1)-P1'</span>,x0(ix),optimset,r1(ix));
+0387       <span class="keyword">end</span>
+0388     <span class="keyword">else</span>
+0389       <span class="keyword">for</span> ix=1:length(r1),
+0390     x(ix) = fzero(<span class="string">'besseli(1,x,1)./besseli(0,x,1)-P1'</span>,x0(ix),[],[],r1(ix));
+0391       <span class="keyword">end</span>
+0392     <span class="keyword">end</span>
+0393   <span class="keyword">case</span> <span class="string">'b'</span>, <span class="comment">% Box-char</span>
+0394     <span class="comment">% Initial guess</span>
+0395     x0 = linspace(0,pi+0.1,1025).';
+0396     x0 = interp1(<a href="../../wafo/misc/sinc.html" class="code" title=" Sin(pi*x)/(pi*x) function. ">sinc</a>(x0/pi),x0,r1(:));
+0397     x  = x0.';
+0398     
+0399     <span class="comment">% Newton-Raphson </span>
+0400     dx = ones(size(r1));
+0401     iy=0;
+0402     max_count=100;
+0403     ix =find(x);
+0404     <span class="keyword">while</span> (any(ix) &amp; iy&lt;max_count)
+0405       xi=x(ix);
+0406       dx(ix) = (sin(xi) -xi.*r1(ix)) ./(cos(xi)-r1(ix));
+0407       xi = xi - dx(ix);
+0408       <span class="comment">% Make sure that the current guess is larger than zero and less than pi</span>
+0409       <span class="comment">%x(ix) = xi + 0.1*(dx(ix) - 9*xi).*(xi&lt;=0) +...</span>
+0410     <span class="comment">%  0.38*(dx(ix)-6.2*xi +6.2).*(xi&gt;pi) ;</span>
+0411       <span class="comment">% Make sure that the current guess is larger than zero.</span>
+0412       x(ix) = xi + 0.5*(dx(ix) - xi).* (xi&lt;=0);
+0413       
+0414       iy=iy+1;
+0415       ix=find((abs(dx) &gt; sqrt(eps)*abs(x))  &amp;  abs(dx) &gt; sqrt(eps)); 
+0416       <span class="comment">%disp(['Iteration ',num2str(iy),...</span>
+0417       <span class="comment">%'  Number of points left:  ' num2str(length(ix)) ]),</span>
+0418     <span class="keyword">end</span>
+0419     <span class="keyword">if</span> iy == max_count, 
+0420       disp(<span class="string">'Warning: fcof2par did not converge.'</span>);
+0421       str = <span class="string">'The last step was:  '</span>;
+0422       outstr = sprintf([str,<span class="string">'%13.8f'</span>],dx(ix));
+0423       fprintf(outstr);
+0424     <span class="keyword">end</span>
+0425     x(x==0)=eps; <span class="comment">% Avoid division by zero  </span>
+0426 <span class="keyword">end</span>
+0427   <span class="comment">%semilogy(x,abs(x(:)-x0))</span>
+0428   <span class="comment">%plot(x,x(:)-x0)</span>
+0429   
+0430   
+0431   
+0432 <span class="keyword">return</span>
+0433 
+0434 
+0435 
+0436 <span class="keyword">if</span> 0, <span class="comment">%old call kept just in case</span>
+0437 <span class="keyword">switch</span> lower(type(1))     
+0438   <span class="keyword">case</span> {<span class="string">'s'</span>}, <span class="comment">% sech-2</span>
+0439      <span class="keyword">if</span> def==0,
+0440        data2=2;
+0441      <span class="keyword">else</span>
+0442        def=1;data2=[2.61 2.28 0.52 1.3  -1.3  0.56 0.95 1.6]; 
+0443      <span class="keyword">end</span>
+0444    <span class="keyword">case</span> {<span class="string">'b'</span>}, <span class="comment">% box-car</span>
+0445      def=0;data2=pi/3;
+0446    <span class="keyword">case</span> {<span class="string">'p'</span>}, <span class="comment">% poisson</span>
+0447      def=0;data2=0.7;
+0448    <span class="keyword">case</span> {<span class="string">'m'</span>}, <span class="comment">% von mises</span>
+0449      def=0;data2=2;
+0450    <span class="keyword">otherwise</span>,  <span class="comment">% cos-2s </span>
+0451      type=<span class="string">'cos2s'</span>;
+0452      <span class="keyword">switch</span> def
+0453        <span class="keyword">case</span> 0, data2=15;
+0454        <span class="keyword">case</span> 2, data2=[6.97 9.77 0.52 4.06 -2.52 0    1    inf];
+0455        <span class="keyword">otherwise</span>, <span class="comment">%def =1</span>
+0456      def=1; data2=[15   15   0.52 5    -2.5  0    1    inf];
+0457      <span class="keyword">end</span>
+0458  <span class="keyword">end</span> 
+0459 <span class="keyword">end</span>
+0460 
+0461 <span class="comment">% box-char</span>
+0462     ix0 = find(r1&lt;1);
+0463     <span class="keyword">if</span> mvnr&gt;5.2,
+0464       <span class="keyword">for</span> ix=ix0,
+0465     x(ix) = abs(fzero(<span class="string">'sin(x)-x.*P1'</span>,x0(ix) ,optimset,r1(ix)));
+0466       <span class="keyword">end</span>
+0467     <span class="keyword">else</span>
+0468       <span class="keyword">for</span> ix=ix0,
+0469     x(ix) = abs(fzero(<span class="string">'sin(x)-x.*P1'</span>,x0(ix) ,[],[],r1(ix)));
+0470       <span class="keyword">end</span>
+0471     <span class="keyword">end</span>
+0472     
+0473 
+0474 
+0475</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

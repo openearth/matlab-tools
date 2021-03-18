@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of bvnormprb</title>
+  <meta name="keywords" content="bvnormprb">
+  <meta name="description" content=" Bivariate Normal probability">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; bvnormprb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>bvnormprb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Bivariate Normal probability</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> value = bvnormprb(lower,upper,correl) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="bvnormprb.html" class="code" title=" Bivariate Normal probability    ">BVNORMPRB</a> Bivariate Normal probability    
+  
+   CALL prb = <a href="bvnormprb.html" class="code" title=" Bivariate Normal probability    ">bvnormprb</a>(a,b,r) 
+  
+  prb = computed probability 
+  a   = vector with lower integration limits 
+  b   = vector with upper integration limits 
+  r   = correlation coefficient   
+  
+  <a href="bvnormprb.html" class="code" title=" Bivariate Normal probability    ">BVNORMPRB</a> computes bivariate normal probability, i.e., 
+   the probability Prob(A(1) &lt;= X1 &lt;= B(1) and A(2) &lt;= X2 &lt;= B(2))  
+   with an absolute error less than 1e-15. 
+  
+  Example 
+   a = [-1 -2]; 
+   b = [1 1];  
+   r = 0.3; 
+   <a href="bvnormprb.html" class="code" title=" Bivariate Normal probability    ">bvnormprb</a>(a,b,r) 
+  
+  See also  <a href="bvnormcdf.html" class="code" title=" Bivariate Normal cumulative distribution function ">bvnormcdf</a>, <a href="../../wafo/wstats/wnormcdf.html" class="code" title=" Normal cumulative distribution function ">wnormcdf</a>, <a href="mvnormpcprb.html" class="code" title=" Multivariate Normal probabilities with product correlation ">mvnormpcprb</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="bvnormcdf.html" class="code" title=" bvn = bvnormcdf( b1, b2, r )">bvnormcdf</a></li></TD>
+<TD> Bivariate Normal cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> val = bvd(lo,up,r)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> value = <a name="_sub0" href="#_subfunctions" class="code">bvnormprb</a>(lower,upper,correl) 
+002 <span class="comment">%BVNORMPRB Bivariate Normal probability    </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL prb = bvnormprb(a,b,r) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">% prb = computed probability </span>
+007 <span class="comment">% a   = vector with lower integration limits </span>
+008 <span class="comment">% b   = vector with upper integration limits </span>
+009 <span class="comment">% r   = correlation coefficient   </span>
+010 <span class="comment">% </span>
+011 <span class="comment">% BVNORMPRB computes bivariate normal probability, i.e., </span>
+012 <span class="comment">%  the probability Prob(A(1) &lt;= X1 &lt;= B(1) and A(2) &lt;= X2 &lt;= B(2))  </span>
+013 <span class="comment">%  with an absolute error less than 1e-15. </span>
+014 <span class="comment">% </span>
+015 <span class="comment">% Example </span>
+016 <span class="comment">%  a = [-1 -2]; </span>
+017 <span class="comment">%  b = [1 1];  </span>
+018 <span class="comment">%  r = 0.3; </span>
+019 <span class="comment">%  bvnormprb(a,b,r) </span>
+020 <span class="comment">% </span>
+021 <span class="comment">% See also  bvnormcdf, wnormcdf, mvnormpcprb </span>
+022    
+023 error(nargchk(3,3,nargin)) 
+024 value = 1; 
+025 infinity = 37; 
+026 <span class="keyword">if</span> all(lower &lt;= -infinity &amp; upper&gt;= infinity), 
+027   <span class="keyword">return</span>,  
+028 <span class="keyword">end</span>   
+029 <span class="keyword">if</span> any(lower&gt;=upper), 
+030   value=0;  
+031   <span class="keyword">return</span>, 
+032 <span class="keyword">end</span> 
+033  
+034 infin =[2; 2]-(upper(:)&gt;infinity)-2*(lower(:)&lt;-infinity); 
+035  
+036 <span class="keyword">if</span> all(infin==2) 
+037   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( lower(1), lower(2), correl )<span class="keyword">...</span> 
+038       - <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( upper(1), lower(2), correl )<span class="keyword">...</span> 
+039       - <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( lower(1), upper(2), correl )<span class="keyword">...</span> 
+040       + <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( upper(1), upper(2), correl ); 
+041 <span class="keyword">elseif</span> ( infin(1) == 2  &amp; infin(2) == 1 )  
+042   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( lower(1), lower(2), correl )<span class="keyword">...</span> 
+043       - <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( upper(1), lower(2), correl ); 
+044 <span class="keyword">elseif</span> ( infin(1) == 1  &amp; infin(2) == 2 )  
+045   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( lower(1), lower(2), correl ).<span class="keyword">...</span> 
+046       - <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( lower(1), upper(2), correl ); 
+047 <span class="keyword">elseif</span> ( infin(1) == 2  &amp; infin(2) == 0 )  
+048   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( -upper(1), -upper(2), correl )<span class="keyword">...</span> 
+049       - <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( -lower(1), -upper(2), correl ); 
+050 <span class="keyword">elseif</span> ( infin(1) == 0  &amp; infin(2) == 2 )  
+051   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( -upper(1), -upper(2), correl ).<span class="keyword">...</span> 
+052       - <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( -upper(1), -lower(2), correl ); 
+053 <span class="keyword">elseif</span> ( infin(1) == 1  &amp; infin(2) == 0 )  
+054   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( lower(1), -upper(2), -correl ); 
+055 <span class="keyword">elseif</span> ( infin(1) == 0  &amp; infin(2) == 1 )  
+056   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( -upper(1), lower(2), -correl ); 
+057 <span class="keyword">elseif</span> ( infin(1) == 1  &amp; infin(2) == 1 )  
+058   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( lower(1), lower(2), correl ); 
+059 <span class="keyword">elseif</span> ( infin(1) == 0  &amp; infin(2) == 0 )  
+060   value =  <a href="#_sub1" class="code" title="sub  val = bvd(lo,up,r)">bvd</a> ( -upper(1), -upper(2), correl ); 
+061 <span class="keyword">end</span>  
+062 <span class="keyword">return</span> 
+063  
+064 <span class="keyword">function</span> val = <a name="_sub1" href="#_subfunctions" class="code">bvd</a>(lo,up,r) 
+065   val = <a href="bvnormcdf.html" class="code" title=" Bivariate Normal cumulative distribution function ">bvnormcdf</a>(-lo,-up,r); 
+066 <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

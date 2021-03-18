@@ -1,0 +1,267 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dat2dtp</title>
+  <meta name="keywords" content="dat2dtp">
+  <meta name="description" content=" The sequence of discretized turning points from a signal.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; dat2dtp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dat2dtp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> The sequence of discretized turning points from a signal.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [dtp,u,tp] = dat2dtp(param,x,h,ddef) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">DAT2DTP</a> The sequence of discretized turning points from a signal.
+ 
+  CALL:  [dtp,u,tp] = <a href="dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>(param,x,h,ddef);
+                dtp = <a href="dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>(param,x);
+      
+  Input:
+  param = Parameter vector, [a b n], defines the discretization.
+  x     = Data, one column with values OR                   [N,1]
+                two columns with times and values.          [N,2]
+  h     = Threshold for hysteresis filter (see <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>). 
+            (Optional, Default='smallest discretization step')
+  ddef  = 1 causes peaks to be projected upwards and troughs 
+            downwards to the closest discrete level (default).
+        = 0 causes peaks and troughs to be projected
+            the closest discrete level.
+        =-1 causes peaks to be projected downwards and the 
+            troughs upwards to the closest discrete level.
+ 
+  Output:
+  dtp   = Discretized turning points taking values 1,2,...,n.  
+                                                    [N,1] or [N,2]
+  u     = Discretization <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>.                             [1,n]
+  tp    = Discretized turning points taking values u(1),u(2),...,u(n).
+                                                    [N,1] or [N,2]
+ 
+  Calculates the sequence of discretized turning points and optionally 
+  removes small oscillations from data x by rainflow filtering.
+ 
+  Example:
+    x = load('sea.dat'); x=x(1:200,:);     % Load data
+    [dtp,u,tp] = <a href="dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>([-2 2 32],x,0.5); % Discrete TP &amp; rainflow filter 0.5
+    plot(x(:,1),x(:,2),tp(:,1),tp(:,2))
+ 
+  See also  <a href="../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>, tp2cc, <a href="dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>, <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="rfcfilter.html" class="code" title=" [y] = rfcfilter(x,h,def)">rfcfilter</a></li></TD>
+<TD> Rainflow filter a signal.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2rfm.html" class="code" title=" [RFM,u,param] = dat2rfm(x,h,n)">dat2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix from a time signal.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab4.html" class="code" title="This is a script file.">itmkurs_lab4</a></li></TD>
+<TD> Script to computer exercises 4</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/test/test_markov.html" class="code" title="This is a script file.">test_markov</a></li></TD>
+<TD> Quick test of the routines in module 'markov'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [dtp,u,tp] = <a name="_sub0" href="#_subfunctions" class="code">dat2dtp</a>(param,x,h,ddef)
+002 <span class="comment">%DAT2DTP The sequence of discretized turning points from a signal.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [dtp,u,tp] = dat2dtp(param,x,h,ddef);</span>
+005 <span class="comment">%               dtp = dat2dtp(param,x);</span>
+006 <span class="comment">%     </span>
+007 <span class="comment">% Input:</span>
+008 <span class="comment">% param = Parameter vector, [a b n], defines the discretization.</span>
+009 <span class="comment">% x     = Data, one column with values OR                   [N,1]</span>
+010 <span class="comment">%               two columns with times and values.          [N,2]</span>
+011 <span class="comment">% h     = Threshold for hysteresis filter (see rfcfilter). </span>
+012 <span class="comment">%           (Optional, Default='smallest discretization step')</span>
+013 <span class="comment">% ddef  = 1 causes peaks to be projected upwards and troughs </span>
+014 <span class="comment">%           downwards to the closest discrete level (default).</span>
+015 <span class="comment">%       = 0 causes peaks and troughs to be projected</span>
+016 <span class="comment">%           the closest discrete level.</span>
+017 <span class="comment">%       =-1 causes peaks to be projected downwards and the </span>
+018 <span class="comment">%           troughs upwards to the closest discrete level.</span>
+019 <span class="comment">%</span>
+020 <span class="comment">% Output:</span>
+021 <span class="comment">% dtp   = Discretized turning points taking values 1,2,...,n.  </span>
+022 <span class="comment">%                                                   [N,1] or [N,2]</span>
+023 <span class="comment">% u     = Discretization levels.                             [1,n]</span>
+024 <span class="comment">% tp    = Discretized turning points taking values u(1),u(2),...,u(n).</span>
+025 <span class="comment">%                                                   [N,1] or [N,2]</span>
+026 <span class="comment">%</span>
+027 <span class="comment">% Calculates the sequence of discretized turning points and optionally </span>
+028 <span class="comment">% removes small oscillations from data x by rainflow filtering.</span>
+029 <span class="comment">%</span>
+030 <span class="comment">% Example:</span>
+031 <span class="comment">%   x = load('sea.dat'); x=x(1:200,:);     <span class="comment">% Load data</span></span>
+032 <span class="comment">%   [dtp,u,tp] = dat2dtp([-2 2 32],x,0.5); <span class="comment">% Discrete TP &amp; rainflow filter 0.5</span></span>
+033 <span class="comment">%   plot(x(:,1),x(:,2),tp(:,1),tp(:,2))</span>
+034 <span class="comment">%</span>
+035 <span class="comment">% See also  dat2tp, tp2cc, dtp2rfm, rfcfilter.</span>
+036 
+037 <span class="comment">% Copyright (c) 1999 by Pär Johannesson, 27-Apr-99</span>
+038 <span class="comment">% Toolbox: Rainflow Cycles for Switching Processes V.1.1, 27-Apr-99</span>
+039 
+040 <span class="comment">% Tested  on Matlab  5.3</span>
+041 <span class="comment">%</span>
+042 <span class="comment">% History:</span>
+043 <span class="comment">% Updated by PJ 28-Jul-2000</span>
+044 <span class="comment">%   New implementation of discretization.</span>
+045 <span class="comment">%   Implemented 'ddef' different methods for discretization.</span>
+046 <span class="comment">% Updated by PJ 18-May-2000</span>
+047 <span class="comment">%   Output 'tp' now works.</span>
+048 <span class="comment">% Updated by PJ (Pär Johannesson) 25-Feb-2000</span>
+049 <span class="comment">%   help</span>
+050 <span class="comment">% Revised by PJ (Pär Johannesson) 12-Jan-2000</span>
+051 <span class="comment">%   updated for WAFO</span>
+052 <span class="comment">% Created by PJ (Pär Johannesson) 1999</span>
+053 <span class="comment">%   Copyright (c) 1999 by Pär Johannesson, 27-Apr-99</span>
+054 <span class="comment">%   Toolbox: Rainflow Cycles for Switching Processes V.1.1, 27-Apr-99</span>
+055 
+056 <span class="comment">% Check input arguments</span>
+057 ni = nargin;
+058 no = nargout;
+059 error(nargchk(2,4,ni));
+060 
+061 <span class="keyword">if</span> ni &lt; 3
+062   h=[];
+063 <span class="keyword">end</span>
+064 <span class="keyword">if</span> ni &lt; 4
+065   ddef=[];
+066 <span class="keyword">end</span>
+067 
+068 
+069 u = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param); <span class="comment">% Discrete levels</span>
+070 delta = u(2)-u(1);
+071 
+072 <span class="keyword">if</span> isempty(h)
+073   h = delta;
+074 <span class="keyword">end</span>
+075 <span class="keyword">if</span> isempty(ddef)
+076   ddef = 1;
+077 <span class="keyword">end</span>
+078 
+079 <span class="comment">% Rainflow filter x, </span>
+080 <span class="comment">% Gives turning points with no rfc-ranges less than threshold h.</span>
+081 
+082 <span class="keyword">if</span> h&gt;0
+083   y = <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(x,h,0);  <span class="comment">% Get rainflow filtered turning points</span>
+084 <span class="keyword">else</span>
+085   y = <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(x,0,1);  <span class="comment">% Get turning points</span>
+086 <span class="keyword">end</span>
+087 
+088 <span class="comment">% Discretize turning points 'y'</span>
+089 <span class="comment">% From TP 'y' to discrete TP 'dtp'</span>
+090 
+091 <span class="comment">% Make discretization</span>
+092 
+093 [N,m] = size(y);
+094 dtp = zeros(N,m);
+095 
+096 a=param(1); b=param(2); n=param(3);
+097 delta = (b-a)/(n-1);        <span class="comment">% Discretization step</span>
+098 dtp = y;
+099 dtp(:,m) = (y(:,m)-a)/delta + 1;
+100 
+101 <span class="keyword">if</span> ddef == 0
+102   dtp(:,m) = min(max(round(dtp(:,m)),1),n);
+103 <span class="keyword">elseif</span> ddef == +1
+104   <span class="keyword">if</span> dtp(1,m)&lt;dtp(2,m)  <span class="comment">% First TP is a minimum</span>
+105     dtp(1:2:N,m) = min(max(floor(dtp(1:2:N,m)),1),n-1); <span class="comment">% Minumum</span>
+106     dtp(2:2:N,m) = min(max(ceil(dtp(2:2:N,m)),2),n);    <span class="comment">% Maximum</span>
+107   <span class="keyword">else</span>
+108     dtp(2:2:N,m) = min(max(floor(dtp(2:2:N,m)),1),n-1); <span class="comment">% Minumum</span>
+109     dtp(1:2:N,m) = min(max(ceil(dtp(1:2:N,m)),2),n);    <span class="comment">% Maximum</span>
+110   <span class="keyword">end</span>
+111 <span class="keyword">elseif</span> ddef == -1
+112   <span class="keyword">if</span> dtp(1,m)&lt;dtp(2,m)  <span class="comment">% First TP is a minimum</span>
+113     dtp(1:2:N,m) = min(max(ceil(dtp(1:2:N,m)),2),n);    <span class="comment">% Minumum</span>
+114     dtp(2:2:N,m) = min(max(floor(dtp(2:2:N,m)),1),n-1); <span class="comment">% Maximum</span>
+115   <span class="keyword">else</span>
+116     dtp(2:2:N,m) = min(max(ceil(dtp(2:2:N,m)),2),n);    <span class="comment">% Minumum</span>
+117     dtp(1:2:N,m) = min(max(floor(dtp(1:2:N,m)),1),n-1); <span class="comment">% Maximum</span>
+118   <span class="keyword">end</span>
+119 <span class="keyword">else</span>
+120   error([<span class="string">'Undefined discretization definition, ddef = '</span> num2str(ddef)]);
+121 <span class="keyword">end</span>
+122 
+123 dtp = <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(dtp,0,1);  <span class="comment">% Get turning points</span>
+124 
+125 <span class="keyword">if</span> no&gt;=2
+126   uu = u';
+127   <span class="keyword">if</span> m == 1
+128     tp = uu(dtp);
+129   <span class="keyword">else</span>
+130     tp = [dtp(:,1) uu(dtp(:,2))];
+131   <span class="keyword">end</span>
+132 <span class="keyword">end</span>
+133 
+134 
+135</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

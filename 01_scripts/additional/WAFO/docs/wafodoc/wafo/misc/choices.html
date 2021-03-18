@@ -1,0 +1,389 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of choices</title>
+  <meta name="keywords" content="choices">
+  <meta name="description" content=" Create a list of choices with uicontrols and callbacks.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; choices.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>choices
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Create a list of choices with uicontrols and callbacks.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> choices(name,header,labels,callbacks,inter) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">CHOICES</a> Create a list of <a href="choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">choices</a> with uicontrols and callbacks. 
+    <a href="choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">CHOICES</a>('NAME',HEADER,BUTTONLABELS,CALLBACKS) creates 
+    a window with registered name NAME.  The window contains 
+    the string HEADER and buttons labeled with BUTTONLABELS. 
+    These buttons register callback strings from CALLBACKS. 
+    An additional button, labeled 'Close', is added to each 
+    choicelist. 
+  
+    <a href="choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">CHOICES</a> is useful for constructing demo menus. 
+    Use <a href="choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">CHOICES</a> in conjunction with <a href="choicex.html" class="code" title=" Close a list of choices. ">CHOICEX</a>, as in 
+    this example. 
+        header = 'Easy Example'; 
+        labels = str2mat('Choice 1','Choice 2','Choice 3'); 
+        callbacks = str2mat('image(magic(1))','image(magic(2))', ... 
+            'image(magic(3))'); 
+        <a href="choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">choices</a>('EXAMPLE', header, labels, callbacks); 
+  
+    A final, optional, non-zero argument for <a href="choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">CHOICES</a> causes the 
+    buttons to have their interruptible property set to 'on'.  This 
+    is necessary for any demos requiring any mouse button presses, for 
+    selections of options or data, for example.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\axes.m">axes</a></li></TD>
+<TD>          Create axes in arbitrary positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="">ceval</a></li></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@serial\close.m">close</a></li></TD>
+<TD>         Close figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\computer.m">computer</a></li></TD>
+<TD>      Computer type.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="delete is a built-in method">delete</a></li></TD>
+<TD>        Delete file or graphics object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\figure.m">figure</a></li></TD>
+<TD>        Create figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gcf.m">gcf</a></li></TD>
+<TD>           Get handle to current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="get is a built-in method">get</a></li></TD>
+<TD>           Get object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\int2str.m">int2str</a></li></TD>
+<TD>       Convert integer to string (Fast version).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\isstr.m">isstr</a></li></TD>
+<TD>         True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\isunix.m">isunix</a></li></TD>
+<TD>        True for the UNIX version of MATLAB.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2mat.m">str2mat</a></li></TD>
+<TD>       Form blank padded character matrix from strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\text.m">text</a></li></TD>
+<TD>          Text annotation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\uicontrol.m">uicontrol</a></li></TD>
+<TD>     Create user interface control.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/papermenu.html" class="code" title=" papermenu(kind)">papermenu</a></li></TD>
+<TD> displays a user interface to the paper scripts of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recdemo.html" class="code" title=" recdemo">recdemo</a></li></TD>
+<TD>  Show Rec figures with point and click interface</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafodemo.html" class="code" title=" wafodemo">wafodemo</a></li></TD>
+<TD>  Show WAFO figures with point and click interface</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/docs/wafomenu.html" class="code" title=" wafomenu(kind)">wafomenu</a></li></TD>
+<TD> displays a user interface to the documentation files of WAFO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">choices</a>(name,header,labels,callbacks,inter) 
+002 <span class="comment">%CHOICES Create a list of choices with uicontrols and callbacks. </span>
+003 <span class="comment">%   CHOICES('NAME',HEADER,BUTTONLABELS,CALLBACKS) creates </span>
+004 <span class="comment">%   a window with registered name NAME.  The window contains </span>
+005 <span class="comment">%   the string HEADER and buttons labeled with BUTTONLABELS. </span>
+006 <span class="comment">%   These buttons register callback strings from CALLBACKS. </span>
+007 <span class="comment">%   An additional button, labeled 'Close', is added to each </span>
+008 <span class="comment">%   choicelist. </span>
+009 <span class="comment">% </span>
+010 <span class="comment">%   CHOICES is useful for constructing demo menus. </span>
+011 <span class="comment">%   Use CHOICES in conjunction with CHOICEX, as in </span>
+012 <span class="comment">%   this example. </span>
+013 <span class="comment">%       header = 'Easy Example'; </span>
+014 <span class="comment">%       labels = str2mat('Choice 1','Choice 2','Choice 3'); </span>
+015 <span class="comment">%       callbacks = str2mat('image(magic(1))','image(magic(2))', ... </span>
+016 <span class="comment">%           'image(magic(3))'); </span>
+017 <span class="comment">%       choices('EXAMPLE', header, labels, callbacks); </span>
+018 <span class="comment">% </span>
+019 <span class="comment">%   A final, optional, non-zero argument for CHOICES causes the </span>
+020 <span class="comment">%   buttons to have their interruptible property set to 'on'.  This </span>
+021 <span class="comment">%   is necessary for any demos requiring any mouse button presses, for </span>
+022 <span class="comment">%   selections of options or data, for example. </span>
+023  
+024 <span class="comment">%<span class="comment">%<span class="comment">%   Loren Shure, 8-14-92. </span></span></span>
+025 <span class="comment">%<span class="comment">%<span class="comment">%   Copyright 1984-2000 The MathWorks, Inc. </span></span></span>
+026 <span class="comment">%<span class="comment">%<span class="comment">%   $Revision: 5.16 $  $Date: 2000/06/01 03:46:32 $ </span></span></span>
+027  
+028 <span class="keyword">global</span> CHOICELIST 
+029 <span class="keyword">global</span> CHOICEHANDLES 
+030 c = computer; 
+031 <span class="keyword">if</span> ~isstr(name) | ~isstr(header) | ~isstr(labels) | ~isstr(callbacks) 
+032    error(<span class="string">'Requires string arguments.'</span>); 
+033 <span class="keyword">end</span> 
+034 <span class="keyword">if</span> nargin &lt; 4 
+035    error(<span class="string">'Not enough input arguments.'</span>) 
+036 <span class="keyword">end</span> 
+037 <span class="keyword">if</span> nargin == 4 
+038    inter = 0; 
+039 <span class="keyword">end</span> 
+040 <span class="keyword">if</span> inter 
+041    yn = <span class="string">'on'</span>; 
+042 <span class="keyword">else</span> 
+043    yn = <span class="string">'off'</span>; 
+044 <span class="keyword">end</span> 
+045 uicok = strcmp(c(1:2),<span class="string">'PC'</span>) | strcmp(c(1:2),<span class="string">'MA'</span>); 
+046 <span class="keyword">if</span> isunix | ~uicok 
+047    uicok = strcmp(lower(get(0,<span class="string">'TerminalProtocol'</span>)),<span class="string">'x'</span>); 
+048 <span class="keyword">end</span> 
+049 <span class="comment">%can't use uicontrols -use menu stuff instead- this is for terminals -UNIX &amp; VMS </span>
+050 <span class="keyword">if</span> ~uicok 
+051    labels = str2mat(labels,<span class="string">'Done'</span>); 
+052    nl = size(labels,1); 
+053    <span class="comment">% build up menu string for evaluation </span>
+054    <span class="comment">% fix quotes, if there are any </span>
+055    ss = deblank(labels(1,:)); 
+056    ss = ss(sort([1:length(ss) find(ss==<span class="string">''<span class="string"></span>''</span>)])); 
+057    args = [<span class="string">''<span class="string"></span>''</span>,ss,<span class="string">''<span class="string"></span>''</span>]; 
+058    header = header(sort([1:length(header) find(header==<span class="string">''<span class="string"></span>''</span>)])); 
+059    <span class="keyword">for</span> i = 2:nl 
+060       ss = deblank(labels(i,:)); 
+061       ss = ss(sort([1:length(ss) find(ss==<span class="string">''<span class="string"></span>''</span>)])); 
+062       args = [args, <span class="string">','<span class="string"></span>''</span>, ss,<span class="string">''<span class="string"></span>''</span>]; 
+063    <span class="keyword">end</span> 
+064    k = 1; 
+065    <span class="keyword">while</span> k &gt; 0 &amp; k &lt; nl 
+066       k = eval([<span class="string">'menu('<span class="string"></span>''</span>,header,<span class="string">''<span class="string"></span>','</span>, args,<span class="string">');'</span>]); 
+067       <span class="keyword">if</span> k == nl | k == 0 
+068          <span class="keyword">return</span> 
+069       <span class="keyword">else</span> 
+070          ceval(callbacks(k,:)); 
+071       <span class="keyword">end</span> 
+072    <span class="keyword">end</span> 
+073    <span class="keyword">return</span> 
+074 <span class="keyword">end</span> 
+075 <span class="comment">% can use uicontrols </span>
+076 name = deblank(name); 
+077 <span class="keyword">if</span> isempty(name) 
+078    error(<span class="string">'Requires non-blank string argument.'</span>) 
+079 <span class="keyword">end</span> 
+080 <span class="comment">% ensure list doesn't go into figure 1 </span>
+081 figs = sort(get(0,<span class="string">'Children'</span>)); 
+082 openfigs = size(figs); 
+083 <span class="keyword">if</span> ~isempty(figs) 
+084    cf = gcf; 
+085    <span class="keyword">if</span> cf == 1 
+086       cf = []; 
+087    <span class="keyword">end</span> 
+088 <span class="keyword">else</span> 
+089    cf = []; 
+090 <span class="keyword">end</span> 
+091 fig1 = 1; 
+092 <span class="keyword">if</span> isempty(figs) 
+093    CHOICELIST = []; 
+094    CHOICEHANDLES = []; 
+095    figs = figure(<span class="string">'visible'</span>,<span class="string">'off'</span>); 
+096    fig1 = 0; 
+097 <span class="keyword">end</span> 
+098 <span class="keyword">if</span> figs(1) ~= 1 
+099    figs = [figure(<span class="string">'visible'</span>,<span class="string">'off'</span>); figs]; 
+100    fig1 = 0; 
+101 <span class="keyword">end</span> 
+102 matchn = 0; 
+103 <span class="keyword">for</span> i = 1:size(CHOICELIST,1) 
+104    <span class="keyword">if</span> strcmp(name,deblank(CHOICELIST(i,:))) 
+105       matchn = i; 
+106       <span class="keyword">break</span>; 
+107    <span class="keyword">end</span> 
+108 <span class="keyword">end</span> 
+109 <span class="keyword">if</span> ~matchn 
+110    CHOICEHANDLES = [CHOICEHANDLES(:); 0]; 
+111    <span class="keyword">if</span> isempty(CHOICELIST) 
+112       CHOICELIST = name; 
+113    <span class="keyword">else</span> 
+114       CHOICELIST = str2mat(CHOICELIST, name); 
+115    <span class="keyword">end</span> 
+116    matchn = size(CHOICEHANDLES,1); 
+117 <span class="keyword">else</span> 
+118    matchh = 0; 
+119    <span class="keyword">for</span> i = 1:size(figs,1) 
+120        <span class="keyword">if</span> figs(i) == CHOICEHANDLES(matchn) 
+121           matchh = i; 
+122           <span class="keyword">break</span>; 
+123        <span class="keyword">end</span> 
+124    <span class="keyword">end</span> 
+125    <span class="keyword">if</span> matchh 
+126        figure(CHOICEHANDLES(matchn)); 
+127        <span class="keyword">return</span> 
+128    <span class="keyword">end</span> 
+129 <span class="keyword">end</span> 
+130 ss = get(0,<span class="string">'ScreenSize'</span>); 
+131 xedge = 30; 
+132 ybord = 30; 
+133 width = 30; 
+134 yedge = 35; 
+135  
+136 <span class="comment">% Determine size of text labels </span>
+137  
+138 ha = axes(<span class="string">'visible'</span>,<span class="string">'off'</span>); 
+139 <span class="comment">%hh = text(.1,.1,labels,'units','pixel') </span>
+140 hh = text(ones(size(labels,1)+1,1),ones(size(labels,1)+1,1),str2mat(labels,<span class="string">'Close'</span>),<span class="string">'units'</span>,<span class="string">'pixel'</span>); 
+141 maxwidth = 0; 
+142 height = 0; 
+143 <span class="keyword">for</span> i = 1:length(hh), 
+144     ext = get(hh(i),<span class="string">'extent'</span>); 
+145     maxwidth = max(maxwidth,ext(3)); 
+146     height = max(height,ext(4)); 
+147 <span class="keyword">end</span>       
+148 delete(hh);delete(ha); 
+149 yedge = 1.5*height; 
+150 height = 6*yedge/7; 
+151  
+152 imax = 1; 
+153  
+154 twidth = maxwidth; 
+155 <span class="comment">% now figure out total dimensions needed so things can get placed in pixels </span>
+156 mwwidth = twidth + width + 2*xedge; 
+157 mwheight = (size(labels,1)+2.5)*yedge; 
+158 swidth = ss(3); sheight = ss(4); 
+159 left = 20; 
+160 bottom = sheight-mwheight-ybord; 
+161 rect = [left bottom mwwidth mwheight]; 
+162 CHOICEHANDLES(matchn) = figure(<span class="string">'Position'</span>,rect,<span class="string">'number'</span>,<span class="string">'off'</span>, <span class="keyword">...</span> 
+163        <span class="string">'name'</span>,<span class="string">''</span>,<span class="string">'resize'</span>,<span class="string">'off'</span>,<span class="string">'colormap'</span>,[],<span class="keyword">...</span> 
+164        <span class="string">'Menubar'</span>,<span class="string">'none'</span>,<span class="string">'visible'</span>,<span class="string">'off'</span>); 
+165  
+166 fg = CHOICEHANDLES(matchn); 
+167 fgs = CHOICEHANDLES(CHOICEHANDLES ~= fg); 
+168 set(fgs,<span class="string">'visible'</span>,<span class="string">'off'</span>) 
+169 set(gca,<span class="string">'Position'</span>,[0 0 1 1]); axis off; 
+170  
+171 <span class="comment">% Place header </span>
+172  
+173 hdrpos = [.05 1-1/(size(labels,1)+1.6) .9 1/(size(labels,1)+1.6)]; 
+174  
+175 hh=uicontrol(fg,<span class="string">'style'</span>,<span class="string">'text'</span>,<span class="string">'units'</span>,<span class="string">'normal'</span>,<span class="keyword">...</span> 
+176            <span class="string">'position'</span>,hdrpos,<span class="string">'string'</span>,header,<span class="keyword">...</span> 
+177            <span class="string">'Horizontal'</span>,<span class="string">'center'</span>); 
+178 set(hh,<span class="string">'backg'</span>,get(gcf,<span class="string">'color'</span>),<span class="string">'foreg'</span>,[1 1 1]-get(gcf,<span class="string">'color'</span>)) 
+179 <span class="comment">% set up pre-amble so figure 1 is available for rendering in </span>
+180 sb = [<span class="string">'figure(1),set(1,'<span class="string"></span>'visible'<span class="string"></span>','<span class="string"></span>'on'<span class="string"></span>');set('</span>,int2str(fg),<span class="string">','<span class="string"></span>'visible'<span class="string"></span>','<span class="string"></span>'off'<span class="string"></span>');'</span>]; 
+181 se = [<span class="string">';global CHOICEHANDLES;set(CHOICEHANDLES(length(CHOICEHANDLES)),'<span class="string"></span>'visible'<span class="string"></span>','<span class="string"></span>'on'<span class="string"></span>'),clear CHOICEHANDLES'</span>]; 
+182 <span class="keyword">for</span> ii=size(labels,1):-1:1 
+183     i = size(labels,1) + 2 - ii; 
+184     h1 = uicontrol(fg,<span class="string">'position'</span>,[xedge  (i-.5)*yedge width+twidth height],<span class="keyword">...</span> 
+185          <span class="string">'callback'</span>,[sb callbacks(ii,:) se],<span class="keyword">...</span> 
+186          <span class="string">'string'</span>,[<span class="string">'  '</span>,deblank(labels(ii,:)), <span class="string">'  '</span>],<span class="keyword">...</span> 
+187          <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>,<span class="string">'interruptible'</span>,yn); 
+188 <span class="comment">% left justify string inside button </span>
+189 <span class="keyword">end</span> 
+190 <span class="comment">% Create Close button </span>
+191 uicontrol(fg,<span class="string">'position'</span>,[xedge .5*yedge width+twidth height],<span class="keyword">...</span> 
+192       <span class="string">'string'</span>,<span class="string">'  Close  '</span>,<span class="keyword">...</span> 
+193       <span class="string">'callback'</span>,[<span class="string">'choicex('<span class="string"></span>''</span>,name,<span class="string">''<span class="string"></span>')'</span>],<span class="keyword">...</span> 
+194       <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>); 
+195  
+196 set(fg,<span class="string">'HandleVisibility'</span>,<span class="string">'callback'</span>,<span class="string">'visible'</span>,<span class="string">'on'</span>) 
+197  
+198 <span class="keyword">if</span> ~isempty(cf) 
+199    figure(cf) 
+200 <span class="keyword">else</span> 
+201    <span class="keyword">if</span> ~fig1 
+202       close(1); 
+203    <span class="keyword">end</span> 
+204 <span class="keyword">end</span> 
+205  
+206</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

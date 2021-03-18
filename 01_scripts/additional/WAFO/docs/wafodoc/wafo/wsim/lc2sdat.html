@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of lc2sdat</title>
+  <meta name="keywords" content="lc2sdat">
+  <meta name="description" content=" Simulates process with given irregularity factor and crossing spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wsim</a> &gt; lc2sdat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>lc2sdat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Simulates process with given irregularity factor and crossing spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> process=lc2sdat(lc,N,alpha) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="lc2sdat.html" class="code" title=" Simulates process with given irregularity factor and crossing spectrum ">LC2SDAT</a> Simulates process with given irregularity factor and crossing spectrum 
+ 
+   CALL: L = <a href="lc2sdat.html" class="code" title=" Simulates process with given irregularity factor and crossing spectrum ">lc2sdat</a>(lc,N,alpha);
+ 
+         L     = two column matrix with times and values of the simulated
+                 process.
+         lc    = two column matrix with <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> and crossing intensities,
+                 i.e., level-crossing spectrum.. 
+         N     = number of <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> points.
+         alpha = irregularity factor, 0&lt;alpha&lt;1, small  alpha  gives 
+                 irregular process.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/onedim/dat2lc.html" class="code" title=" lc = dat2lc(x,h,def);">dat2lc</a></li></TD>
+<TD> Extracts level-crossing spectrum from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/lc2tr.html" class="code" title=" [g, test, g2] = lc2tr(cross,ma,sa,varargin);">lc2tr</a></li></TD>
+<TD> Estimate transformation, g, from observed crossing intensity.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\clf.m">clf</a></li></TD>
+<TD>           Clear current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\erf.m">erf</a></li></TD>
+<TD>           Error function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@single\filter.bi">filter</a></li></TD>
+<TD>        One-dimensional digital filter.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\trapz.m">trapz</a></li></TD>
+<TD>         Trapezoidal numerical integration.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> process=<a name="_sub0" href="#_subfunctions" class="code">lc2sdat</a>(lc,N,alpha)
+002 <span class="comment">%LC2SDAT Simulates process with given irregularity factor and crossing spectrum </span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL: L = lc2sdat(lc,N,alpha);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        L     = two column matrix with times and values of the simulated</span>
+007 <span class="comment">%                process.</span>
+008 <span class="comment">%        lc    = two column matrix with levels and crossing intensities,</span>
+009 <span class="comment">%                i.e., level-crossing spectrum.. </span>
+010 <span class="comment">%        N     = number of sample points.</span>
+011 <span class="comment">%        alpha = irregularity factor, 0&lt;alpha&lt;1, small  alpha  gives </span>
+012 <span class="comment">%                irregular process.</span>
+013 <span class="comment">%</span>
+014 
+015 <span class="comment">% Example</span>
+016 <span class="comment">%  n = 10000;  </span>
+017 <span class="comment">%  S = jonswap(7);</span>
+018 <span class="comment">%  alpha = spec2char(S,'alpha');</span>
+019 <span class="comment">%  xs  = spec2sdat(S,n);  </span>
+020 <span class="comment">%  lc  = dat2lc(xs);</span>
+021 <span class="comment">%  xs2 = lc2sdat(lc,n,alpha);</span>
+022 <span class="comment">%  Se  = dat2spec(xs2);  </span>
+023 <span class="comment">%  wspecplot(S),hold on</span>
+024 <span class="comment">%  wspecplot(Se,'r')  </span>
+025   
+026 <span class="comment">%History</span>
+027 <span class="comment">% revised pab Feb2004</span>
+028 <span class="comment">% -added example  </span>
+029 <span class="comment">% -changed order of input to conform with the other XXX2sdat routines  </span>
+030 <span class="comment">% Revised by GL, July 10, 2000:</span>
+031 <span class="comment">% Changed call, from  cross2tr  to  lc2tr</span>
+032 <span class="comment">% Changed &quot;Check the result&quot; by removing reference to getrfc</span>
+033 
+034 <span class="comment">% TODO <span class="comment">% add a good example</span></span>
+035   
+036 error(nargchk(1,3,nargin))
+037 
+038 f = linspace(0,0.49999,1000);
+039 rho_st = 2*sin(f*pi).^2-1;
+040 tmp    = alpha*asin(sqrt((1+rho_st)/2));
+041 tmp    = sin(tmp).^2;
+042 a2     = (tmp-rho_st)./(1-tmp);
+043 y      = min([a2+rho_st;1-a2]);
+044 [maximum,maxidx]=max(y);
+045 
+046 rho_st = rho_st(maxidx);
+047 a2     = a2(maxidx);
+048 a1     = 2*rho_st+a2-1;
+049 r0     = 1;
+050 r1     = -a1/(1+a2);
+051 r2     = (a1^2-a2-a2^2)/(1+a2);
+052 sigma2 = r0+a1*r1+a2*r2;
+053 
+054 e      = randn(N,1)*sqrt(sigma2);
+055 e(1:2) = [0;0];
+056 L0     = randn(1,1);
+057 L0     = [L0;r1*L0+sqrt(1-r2^2)*randn(1,1)];
+058 <span class="comment">%Simulate the process, starting in L0</span>
+059 L      = filter(1,[1 a1 a2],e,filter([1 a1 a2],1,L0));
+060 
+061 epsilon = 1.01;
+062 min_L   = min(L);
+063 max_L   = max(L);
+064 maxi    = max(abs([min_L max_L]))*epsilon;
+065 mini    = -maxi;
+066 
+067 u = linspace(mini,maxi,101)';
+068 G = (1+erf(u/sqrt(2)))/2;
+069 G = G.*(1-G);
+070 
+071 x = linspace(0,r1,100)';
+072 factor1  = 1./sqrt(1-x.^2);
+073 factor2  = 1./(1+x);
+074 integral = zeros(size(u));
+075 <span class="keyword">for</span> i=1:length(integral)
+076   y = factor1.*exp(-u(i)*u(i).*factor2);
+077   integral(i) = trapz(x,y);
+078 <span class="keyword">end</span>
+079 G = G-integral/(2*pi);
+080 G = G/max(G);
+081 
+082 Z = ((u&gt;=0)*2-1).*sqrt(-2*log(G));
+083 
+084 sumcr   = trapz(lc(:,1),lc(:,2));
+085 lc(:,2) = lc(:,2)/sumcr;
+086 mcr     = trapz(lc(:,1),lc(:,1).*lc(:,2));
+087 scr     = trapz(lc(:,1),lc(:,1).^2.*lc(:,2));
+088 scr     = sqrt(scr-mcr^2);
+089 g       = <a href="../../wafo/trgauss/lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>(lc,mcr,scr);
+090 
+091 f = [u u];
+092 f(:,2) = <a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(Z,fliplr(g));
+093 
+094 process = <a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(L,f);
+095 process = [(1:length(process))' process];
+096 
+097 <span class="comment">%Check the result:</span>
+098 <span class="comment">%save load.dat process -ascii</span>
+099 <span class="comment">%[RFC TP]=getrfc;</span>
+100 <span class="comment">%load rfc.dat</span>
+101 <span class="comment">%param=[min(process(:,2)) max(process(:,2)) 100];</span>
+102 <span class="comment">%fr=cc2fr(param,RFC);</span>
+103 <span class="comment">%NT=fr2nt(fr);</span>
+104 <span class="comment">%mu=pickdiag(NT);</span>
+105 
+106 <span class="comment">%Check the result without reference to getrfc:</span>
+107 LCe = <a href="../../wafo/onedim/dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">dat2lc</a>(process);
+108 max(lc(:,2))
+109 max(LCe(:,2))
+110 
+111 clf
+112 plot(lc(:,1),lc(:,2)/max(lc(:,2)))
+113 hold on
+114 plot(LCe(:,1),LCe(:,2)/max(LCe(:,2)),<span class="string">'-.'</span>)
+115 title(<span class="string">'Relative crossing intensity'</span>)
+116 
+117 <span class="comment">%<span class="comment">% Plot made by the function funplot_4, JE 970707</span></span>
+118 <span class="comment">%param = [min(process(:,2)) max(process(:,2)) 100];</span>
+119 <span class="comment">%plot(lc(:,1),lc(:,2)/max(lc(:,2)))</span>
+120 <span class="comment">%hold on</span>
+121 <span class="comment">%plot(levels(param),mu/max(mu),'--')</span>
+122 <span class="comment">%hold off</span>
+123 <span class="comment">%title('Crossing intensity')  </span>
+124 <span class="comment">%watstamp;</span>
+125 
+126 <span class="comment">% Temporarily</span>
+127 <span class="comment">%funplot_4(lc,param,mu);</span>
+128</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of gaussq</title>
+  <meta name="keywords" content="gaussq">
+  <meta name="description" content=" Numerically evaluates a integral using a Gauss quadrature.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; gaussq.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>gaussq
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Numerically evaluates a integral using a Gauss quadrature.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [int, tol1,ix]= gaussq(fun,xlow,xhigh,tol,trace,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">GAUSSQ</a> Numerically evaluates a integral using a Gauss quadrature. 
+        The Quadrature integrates a (2m-1)th order  polynomial exactly  
+        and the  integral is of the form 
+               b                               
+              Int (p(x)* Fun(x)) dx  
+               a                  
+  
+  CALL: 
+  [int, tol] = <a href="gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>('Fun',xlow,xhigh,[reltol wfun],[trace,gn],p1,p2,....) 
+  [int, tol] = <a href="gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>('Fun',xlow,xhigh,[reltol wfun],[trace,gn],alpha,p1,p2,....) 
+  [int, tol] = <a href="gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>('Fun',xlow,xhigh,[reltol wfun],[trace,gn],alpha,beta,p1,p2,....) 
+  
+        int = evaluated integral 
+        tol = absolute tolerance abs(int-intold) 
+        Fun = string containing the name of the function or a directly given  
+              expression enclosed in parenthesis. The function may depend on 
+              parameters alpha,beta, pi. 
+ xlow,xhigh = integration limits 
+     reltol = relative tolerance default=1e-3 
+       wfun = weight function 
+          1  p(x)=1                       a =-1,   b = 1 Legendre (default) 
+          2  p(x)=1/sqrt((x-a)*(b-x)),    a =-1,   b = 1 Chebyshev of the 
+                                                              first kind 
+          3  p(x)=sqrt((x-a)*(b-x)),      a =-1,   b = 1 Chebyshev of the  
+                                                             second kind 
+          4  p(x)=sqrt((x-a)/(b-x)),      a = 0,   b = 1 
+          5  p(x)=1/sqrt(b-x),            a = 0,   b = 1 
+          6  p(x)=sqrt(b-x),              a = 0,   b = 1 
+          7  p(x)=(x-a)^alpha*(b-x)^beta  a =-1,   b = 1 Jacobi  
+                                      alpha, beta &gt;-1 (default alpha=beta=0) 
+          8  p(x)=x^alpha*exp(-x)         a = 0,   b = inf generalized Laguerre 
+          9  p(x)=exp(-x^2)               a =-inf, b = inf Hermite 
+         10  p(x)=1                       a =-1,   b = 1 Legendre (slower than 1) 
+  
+    trace = for non-zero TRACE traces the function evaluations  
+               with a point plot of the integrand. 
+       gn = number of base points and weight points to start the  
+             integration with (default=2) 
+ p1,p2,...= coefficients to be passed directly to function Fun:    
+                   G = Fun(x,p1,p2,...). 
+  
+  Note that int is the common size of xlow, xhigh and p1,p2,.... 
+  Example:% a) integration of x.^2 from 0 to 2 and from 1 to 4 
+          % b) integration of x^2*exp(-x) from zero to infinity  
+  
+     <a href="gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>('(x.^2)',[0 1],[2 4])             % a) 
+     <a href="gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>('(1)',0,inf,[1e-3 8],[],2)        % b) 
+     <a href="gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>('(x.^2)',0,inf,[1e-3 8],[],0)     % b) 
+  
+  See also  <a href="qrule.html" class="code" title=" compute abscissas and weight factors for Gaussian quadratures">qrule</a>, <a href="gaussq2d.html" class="code" title=" Numerically evaluates a 2D integral using Gauss quadrature. ">gaussq2d</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\func2str.m">func2str</a></li></TD>
+<TD>      Construct a string from a function handle.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\int2str.m">int2str</a></li></TD>
+<TD>       Convert integer to string (Fast version).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@scribehandle\isa.m">isa</a></li></TD>
+<TD>           True if object is a given class.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\sprintf.m">sprintf</a></li></TD>
+<TD>       Write formatted data to string.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wavemodels/b04cdf.html" class="code" title=" [p, eps2, a, b] = b04cdf(Hd,Scf,Hs,Tz,tail)">b04cdf</a></li></TD>
+<TD>  Brodtkorb (2004) joint (Scf,Hd) CDF of laboratory data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/b04jcdf.html" class="code" title=" [p, eps2, a, b] = b04cdf(Hd,Scf,Hs,Tz,tail)">b04jcdf</a></li></TD>
+<TD>  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/bmr00cdf.html" class="code" title=" [p, eps2, a, b] = bmr00cdf(Hd,Scf,Hs,Tz,tail)">bmr00cdf</a></li></TD>
+<TD>  Brodtkorb et.al. (2000) joint (Scf,Hd) CDF from North Sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a></li></TD>
+<TD> Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhscdf.html" class="code" title=" f = jhscdf(Hd,Scf,Hm0,Tp,gam,tail)">jhscdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhsnlcdf.html" class="code" title=" f = jhsnlcdf(Hd,Scf,Hm0,Tp,gam,tail)">jhsnlcdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for non-linear waves with JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvcdf.html" class="code" title=" f = jhvcdf(Hd,Vcf,Hm0,Tp,gam,tail)">jhvcdf</a></li></TD>
+<TD> Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvnlcdf.html" class="code" title=" f = jhvnlcdf(Hd,Vcf,Hm0,Tp,gam,tail)">jhvnlcdf</a></li></TD>
+<TD> Joint (Vcf,Hd) CDF for non-linear waves with JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/mdist2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = mdist2dstat(phat,condon,cvar,tol)">mdist2dstat</a></li></TD>
+<TD>  Mean and variance for the MDIST2D distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/mk87cdf.html" class="code" title=" [p, eps2, a, b] = mk87cdf(Hd,Scf,Hs,Tz,tail)">mk87cdf</a></li></TD>
+<TD>  Myrhaug and Kjeldsen (1987) joint (Scf,Hd) CDF.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhscdf.html" class="code" title=" f = ohhscdf(Hd,Scf,Hm0,def,tail)">ohhscdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for linear waves with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhsscdf.html" class="code" title=" f = ohhsscdf(Hd,Scf,Hm0,def,tail)">ohhsscdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for linear waves in space with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/tay81cdf.html" class="code" title=" [y, tol1] = tay81cdf(x,a,b,tol)">tay81cdf</a></li></TD>
+<TD> Tayfun (1981) CDF of  breaking limited wave heights</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/tay81pdf.html" class="code" title=" [y, tol1] = tay81pdf(x,a,b,tol)">tay81pdf</a></li></TD>
+<TD>  Tayfun (1981) PDF of  breaking limited wave heights</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/tay90cdf.html" class="code" title=" [y, tol1] = tay90cdf(x,a,b,tol)">tay90cdf</a></li></TD>
+<TD> Tayfun (1990) CDF of large wave heights</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/tay90pdf.html" class="code" title=" [y, tol1] = tay90pdf(x,a,b,tol)">tay90pdf</a></li></TD>
+<TD> Tayfun (1990) PDF of large wave heights</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thscdf.html" class="code" title=" f = thscdf(Hd,Scf,Hm0,Tp,tail)">thscdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thsnlcdf.html" class="code" title=" f = thsnlcdf(Hd,Scf,Hm0,Tp,tail)">thsnlcdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thsscdf.html" class="code" title=" f = thsscdf(Hd,Scf,Hm0,Tp,tail)">thsscdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for linear waves in space with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thvcdf.html" class="code" title=" f = thvcdf(Hd,Vcf,Hm0,Tp,tail)">thvcdf</a></li></TD>
+<TD> Joint (Vcf,Hd) CDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/weib2dcdf.html" class="code" title=" [y ,tol1] = weib2dcdf(x1,x2,param,condon,tol)">weib2dcdf</a></li></TD>
+<TD> Joint 2D Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/weib2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = weib2dstat(a1,b1,a2,b2,c12,condon,cvar,tol)">weib2dstat</a></li></TD>
+<TD>  Mean and variance for the 2D Weibull distribution</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [int, tol1,ix]= <a name="_sub0" href="#_subfunctions" class="code">gaussq</a>(fun,xlow,xhigh,tol,trace,varargin) 
+002 <span class="comment">%GAUSSQ Numerically evaluates a integral using a Gauss quadrature. </span>
+003 <span class="comment">%       The Quadrature integrates a (2m-1)th order  polynomial exactly  </span>
+004 <span class="comment">%       and the  integral is of the form </span>
+005 <span class="comment">%              b                               </span>
+006 <span class="comment">%             Int (p(x)* Fun(x)) dx  </span>
+007 <span class="comment">%              a                  </span>
+008 <span class="comment">% </span>
+009 <span class="comment">% CALL: </span>
+010 <span class="comment">% [int, tol] = gaussq('Fun',xlow,xhigh,[reltol wfun],[trace,gn],p1,p2,....) </span>
+011 <span class="comment">% [int, tol] = gaussq('Fun',xlow,xhigh,[reltol wfun],[trace,gn],alpha,p1,p2,....) </span>
+012 <span class="comment">% [int, tol] = gaussq('Fun',xlow,xhigh,[reltol wfun],[trace,gn],alpha,beta,p1,p2,....) </span>
+013 <span class="comment">% </span>
+014 <span class="comment">%       int = evaluated integral </span>
+015 <span class="comment">%       tol = absolute tolerance abs(int-intold) </span>
+016 <span class="comment">%       Fun = string containing the name of the function or a directly given  </span>
+017 <span class="comment">%             expression enclosed in parenthesis. The function may depend on </span>
+018 <span class="comment">%             parameters alpha,beta, pi. </span>
+019 <span class="comment">%xlow,xhigh = integration limits </span>
+020 <span class="comment">%    reltol = relative tolerance default=1e-3 </span>
+021 <span class="comment">%      wfun = weight function </span>
+022 <span class="comment">%         1  p(x)=1                       a =-1,   b = 1 Legendre (default) </span>
+023 <span class="comment">%         2  p(x)=1/sqrt((x-a)*(b-x)),    a =-1,   b = 1 Chebyshev of the </span>
+024 <span class="comment">%                                                             first kind </span>
+025 <span class="comment">%         3  p(x)=sqrt((x-a)*(b-x)),      a =-1,   b = 1 Chebyshev of the  </span>
+026 <span class="comment">%                                                            second kind </span>
+027 <span class="comment">%         4  p(x)=sqrt((x-a)/(b-x)),      a = 0,   b = 1 </span>
+028 <span class="comment">%         5  p(x)=1/sqrt(b-x),            a = 0,   b = 1 </span>
+029 <span class="comment">%         6  p(x)=sqrt(b-x),              a = 0,   b = 1 </span>
+030 <span class="comment">%         7  p(x)=(x-a)^alpha*(b-x)^beta  a =-1,   b = 1 Jacobi  </span>
+031 <span class="comment">%                                     alpha, beta &gt;-1 (default alpha=beta=0) </span>
+032 <span class="comment">%         8  p(x)=x^alpha*exp(-x)         a = 0,   b = inf generalized Laguerre </span>
+033 <span class="comment">%         9  p(x)=exp(-x^2)               a =-inf, b = inf Hermite </span>
+034 <span class="comment">%        10  p(x)=1                       a =-1,   b = 1 Legendre (slower than 1) </span>
+035 <span class="comment">% </span>
+036 <span class="comment">%   trace = for non-zero TRACE traces the function evaluations  </span>
+037 <span class="comment">%              with a point plot of the integrand. </span>
+038 <span class="comment">%      gn = number of base points and weight points to start the  </span>
+039 <span class="comment">%            integration with (default=2) </span>
+040 <span class="comment">%p1,p2,...= coefficients to be passed directly to function Fun:    </span>
+041 <span class="comment">%                  G = Fun(x,p1,p2,...). </span>
+042 <span class="comment">% </span>
+043 <span class="comment">% Note that int is the common size of xlow, xhigh and p1,p2,.... </span>
+044 <span class="comment">% Example:<span class="comment">% a) integration of x.^2 from 0 to 2 and from 1 to 4 </span></span>
+045 <span class="comment">%         <span class="comment">% b) integration of x^2*exp(-x) from zero to infinity  </span></span>
+046 <span class="comment">% </span>
+047 <span class="comment">%    gaussq('(x.^2)',[0 1],[2 4])             <span class="comment">% a) </span></span>
+048 <span class="comment">%    gaussq('(1)',0,inf,[1e-3 8],[],2)        <span class="comment">% b) </span></span>
+049 <span class="comment">%    gaussq('(x.^2)',0,inf,[1e-3 8],[],0)     <span class="comment">% b) </span></span>
+050 <span class="comment">% </span>
+051 <span class="comment">% See also  qrule, gaussq2d </span>
+052  
+053  
+054 <span class="comment">% References  </span>
+055 <span class="comment">% </span>
+056 <span class="comment">% [1]  Golub, G. H. and Welsch, J. H. (1969) </span>
+057 <span class="comment">% 'Calculation of Gaussian Quadrature Rules' </span>
+058 <span class="comment">%  Mathematics of Computation, vol 23,page 221-230, </span>
+059 <span class="comment">% </span>
+060 <span class="comment">% [2] Davis and Rabinowitz (1975) 'Methods of Numerical Integration', page 365, </span>
+061 <span class="comment">%     Academic Press. </span>
+062 <span class="comment">% </span>
+063 <span class="comment">% [3]. Stroud and Secrest (1966), 'gaussian quadrature formulas',  </span>
+064 <span class="comment">%      prentice-hall, Englewood cliffs, n.j. </span>
+065 <span class="comment">%  </span>
+066 <span class="comment">% [4] Abromowitz and Stegun (1954) 'Handbook of mathematical functions' </span>
+067  
+068  
+069  
+070  
+071 <span class="comment">% tested on: Matlab 5.3 </span>
+072 <span class="comment">% history: </span>
+073 <span class="comment">% Revised pab 22Nov2004 </span>
+074 <span class="comment">% -Added the possibility of using a function handle.   </span>
+075 <span class="comment">% Revised pab 09.09.2002 </span>
+076 <span class="comment">% -added the possibility of using a inline function. </span>
+077 <span class="comment">% revised pab 27.03.2000 </span>
+078 <span class="comment">%  - fixed a bug for p1,p2,... changed to varargin in input </span>
+079 <span class="comment">% revised pab 19.09.1999 </span>
+080 <span class="comment">%   documentation </span>
+081 <span class="comment">%  by Per A. Brodtkorb 30.03.99, 17.02.99 : </span>
+082 <span class="comment">%   wfun 1: from grule.m in NIT toolbox, see ref [2]  </span>
+083 <span class="comment">%   wfun 2-6: see ref [4] </span>
+084 <span class="comment">%   wfun 7-10:  Adapted from Netlib routine gaussq.f see ref [1,3] </span>
+085 <span class="comment">%  -accept multiple integrationlimits, int is the common size of xlow and xhigh </span>
+086 <span class="comment">%  -optimized by only computing the integrals which did not converge. </span>
+087 <span class="comment">%  -enabled the integration of directly given functions enclosed in  </span>
+088 <span class="comment">%     parenthesis. Example: integration from 0 to 2 and from 2 to 4 for x is done by: </span>
+089 <span class="comment">%                        gaussq('(x.^2)',[0 2],[2 4]) </span>
+090  
+091 <span class="keyword">global</span> ALPHA1 BETA1 ALPHA2 
+092 wfun=1; 
+093 <span class="keyword">if</span> nargin&lt;4| isempty(tol), 
+094   tol=1e-3; 
+095 <span class="keyword">elseif</span> length(tol)==2, 
+096   wfun=tol(2); 
+097    tol=tol(1); 
+098 <span class="keyword">end</span> 
+099  
+100 P0=varargin; 
+101 NP=length(P0); 
+102  
+103 istart      = 0;  
+104 alpha1      = 0; 
+105 beta1       = 0; 
+106 FindWeights = 1; 
+107  
+108 x = []; 
+109 y = []; 
+110  
+111 <span class="keyword">switch</span> wfun 
+112   <span class="keyword">case</span> 7, 
+113     istart=2; 
+114     <span class="keyword">if</span> ((NP&gt;=1) &amp; (~isempty(P0{1}))), alpha1 = P0{1};    <span class="keyword">end</span> 
+115     <span class="keyword">if</span> ((NP&gt;=2) &amp; (~isempty(P0{1}))), beta1  = P0{2};    <span class="keyword">end</span> 
+116     <span class="keyword">if</span> isempty(ALPHA1)|isempty(BETA1), 
+117     <span class="keyword">elseif</span> ALPHA1==alpha1 &amp; BETA1==beta1, 
+118       FindWeights=0; 
+119     <span class="keyword">end</span> 
+120     ALPHA1=alpha1;BETA1=beta1; 
+121     <span class="comment">%remember what type of weights are saved as global constants </span>
+122   <span class="keyword">case</span> 8, 
+123     istart=1; 
+124     <span class="keyword">if</span> ((NP&gt;=1) &amp; (~isempty(P0{1}))), alpha1 = P0{1};    <span class="keyword">end</span> 
+125     <span class="keyword">if</span> isempty(ALPHA2), 
+126     <span class="keyword">elseif</span> ALPHA2==alpha1, 
+127       FindWeights=0; 
+128     <span class="keyword">end</span> 
+129     ALPHA2=alpha1; 
+130     <span class="comment">%remember what type of weights are saved as global constants </span>
+131   <span class="keyword">otherwise</span>,FindWeights=0; 
+132 <span class="keyword">end</span> 
+133  
+134 P0(1:istart)=[]; 
+135  
+136 gn=2; 
+137 <span class="keyword">if</span> nargin &lt;5|isempty(trace) , 
+138   trace = 0;  
+139 <span class="keyword">elseif</span> length(trace)==2, 
+140   gn    = trace(2); 
+141   trace = trace(1); 
+142 <span class="keyword">end</span> 
+143  
+144  
+145 <span class="keyword">if</span> prod(size(xlow))==1,<span class="comment">% make sure the integration limits have correct size </span>
+146   xlow=xlow(ones(size(xhigh)));; 
+147 <span class="keyword">elseif</span> prod(size(xhigh))==1, 
+148   xhigh=xhigh(ones(size(xlow)));; 
+149 <span class="keyword">elseif</span> any( size(xhigh)~=size(xlow) ) 
+150   error(<span class="string">'The input must have equal size!'</span>) 
+151 <span class="keyword">end</span> 
+152 [N M]=size(xlow);<span class="comment">%remember the size of input </span>
+153  
+154 num_parameters=NP-istart; 
+155 <span class="keyword">if</span> num_parameters&gt;0, 
+156   ptxt = sprintf(<span class="string">'p%d,'</span>,1:num_parameters); 
+157   ptxt(<span class="keyword">end</span>)=[]; <span class="comment">% remove ',' </span>
+158   eval(sprintf(<span class="string">'[%s]=deal(P0{:});'</span>,ptxt)); 
+159 <span class="keyword">end</span> 
+160 <span class="comment">%Old call </span>
+161 <span class="comment">%for ix=1:num_parameters, </span>
+162 <span class="comment">%  eval(['p' int2str(ix) '=P0{ix};']); <span class="comment">% variable # i </span></span>
+163 <span class="comment">%end </span>
+164  
+165 <span class="keyword">if</span> (isa(fun,<span class="string">'char'</span>) &amp;  any(fun==<span class="string">'('</span>)), <span class="comment">%  &amp; any(fun=='x'), </span>
+166   exec_string=[<span class="string">'y='</span>,fun <span class="string">';'</span>]; <span class="comment">%the call function is already setup </span>
+167 <span class="keyword">else</span> 
+168   <span class="comment">%setup string to call the function </span>
+169   <span class="keyword">if</span> isa(fun,<span class="string">'function_handle'</span>) 
+170     fun = func2str(fun); 
+171   <span class="keyword">end</span> 
+172   exec_string=[<span class="string">'y=feval(fun,x'</span>]; 
+173   <span class="keyword">for</span> ix=1:num_parameters, 
+174     xvar=[<span class="string">'p'</span> int2str(ix)]; <span class="comment">% variable # i </span>
+175     <span class="keyword">if</span> eval([<span class="string">'isnumeric('</span> ,xvar,<span class="string">')  &amp; length('</span>,xvar,<span class="string">'(:)) ~=1'</span> ]) , 
+176     <span class="keyword">if</span> N*M==1,      
+177       eval([<span class="string">'[N M]=size('</span>, xvar, <span class="string">');'</span>]);  
+178     <span class="keyword">elseif</span>  eval([<span class="string">'N*M~=prod(size('</span>, xvar, <span class="string">'))'</span>]), 
+179       error(<span class="string">'The input must have equal size!'</span>) 
+180     <span class="keyword">end</span>     
+181       eval([xvar, <span class="string">'='</span> ,xvar ,<span class="string">'(:);'</span>]); <span class="comment">%make sure it is a column  </span>
+182       exec_string=[exec_string,<span class="string">','</span> xvar <span class="string">'(k,ones(1,gn) )'</span>]; <span class="comment">%enable integration with multiple arguments </span>
+183     <span class="keyword">else</span> 
+184       exec_string=[exec_string,<span class="string">','</span> xvar]; 
+185     <span class="keyword">end</span> 
+186   <span class="keyword">end</span> 
+187   exec_string=[exec_string,<span class="string">');'</span>]; 
+188 <span class="keyword">end</span> 
+189  
+190  
+191 nk   = N*M;<span class="comment">% # of integrals we have to compute </span>
+192 k    = (1:nk)'; 
+193 int  = zeros(nk,1); 
+194 tol1 = int; 
+195  
+196 wtxt    = sprintf(<span class="string">'%d_%d'</span>,gn,wfun); <span class="comment">% number of weights and </span>
+197                                     <span class="comment">% weightfunction used </span>
+198 cbtxt = sprintf(<span class="string">'cb%s'</span>,wtxt); <span class="comment">%base points string </span>
+199 cwtxt = sprintf(<span class="string">'cw%s'</span>,wtxt); <span class="comment">%weights string </span>
+200 eval(sprintf(<span class="string">'global %s %s ;'</span>,cbtxt,cwtxt)); 
+201 <span class="keyword">if</span> isempty(eval([<span class="string">'cb'</span>,wtxt]))|FindWeights ,   
+202   <span class="comment">% calculate the weights if necessary </span>
+203   eval(sprintf(<span class="string">'[%s,%s]=qrule(gn,wfun,alpha1,beta1);'</span>,cbtxt,cwtxt)); 
+204 <span class="keyword">end</span> 
+205  
+206 <span class="comment">%setup mapping parameters and execution strings </span>
+207 xlow=xlow(:); 
+208 jacob=(xhigh(:)-xlow(:))/2; 
+209  
+210 <span class="keyword">switch</span> wfun,<span class="comment">% this is clumsy and can written more tidy </span>
+211   <span class="keyword">case</span> {1 ,10}, 
+212     calcx_string=[<span class="string">'(ones(nk,1),:)+1).*jacob(k,ones(1, gn ))+xlow(k,ones(1,gn ));'</span>]; 
+213     int_string=[<span class="string">'(ones(nk,1),:).*y,2).*jacob(k);'</span>]; 
+214   <span class="keyword">case</span> 2,   
+215     calcx_string=[<span class="string">'(ones(nk,1),:)+1).*jacob(k,ones(1, gn ))+xlow(k,ones(1,gn ));'</span>]; 
+216     int_string=[<span class="string">'(ones(nk,1),:).*y,2);'</span>]; 
+217   <span class="keyword">case</span> 3,  
+218     calcx_string=[<span class="string">'(ones(nk,1),:)+1).*jacob(k,ones(1, gn ))+xlow(k,ones(1,gn ));'</span>]; 
+219     int_string=[<span class="string">'(ones(nk,1),:).*y,2).*jacob(k).^2;'</span>]; 
+220   <span class="keyword">case</span> 4,   
+221     calcx_string=[<span class="string">'(ones(nk,1),:)).*jacob(k,ones(1, gn ))*2+xlow(k,ones(1,gn ));'</span>]; 
+222     int_string=[<span class="string">'(ones(nk,1),:).*y,2).*jacob(k)*2;'</span>]; 
+223   <span class="keyword">case</span> 5,   
+224     calcx_string=[<span class="string">'(ones(nk,1),:)).*jacob(k,ones(1, gn ))*2+xlow(k,ones(1,gn ));'</span>]; 
+225     int_string=[<span class="string">'(ones(nk,1),:).*y,2).*sqrt(jacob(k)*2);'</span>]; 
+226   <span class="keyword">case</span> 6,   
+227     calcx_string=[<span class="string">'(ones(nk,1),:)).*jacob(k,ones(1, gn ))*2+xlow(k,ones(1,gn ));'</span>]; 
+228     int_string=[<span class="string">'(ones(nk,1),:).*y,2).*sqrt(jacob(k)*2).^3;'</span>]; 
+229   <span class="keyword">case</span> 7,  
+230     calcx_string=[<span class="string">'(ones(nk,1),:)+1).*jacob(k,ones(1, gn ))+xlow(k,ones(1,gn ));'</span>]; 
+231     int_string=[<span class="string">'(ones(nk,1),:).*y,2).*jacob(k).^(alpha1+beta1+1);'</span>]; 
+232   <span class="keyword">case</span> {8,9} 
+233      calcx_string=[<span class="string">'(ones(nk,1),:));'</span>]; 
+234      int_string=[<span class="string">'(ones(nk,1),:).*y,2);'</span>]; 
+235 <span class="keyword">otherwise</span> error(<span class="string">'unknown option'</span>) 
+236 <span class="keyword">end</span> 
+237  
+238  
+239 eval([<span class="string">'x=('</span>,cbtxt, calcx_string]); <span class="comment">% calculate the x values             </span>
+240 eval(exec_string); <span class="comment">% calculate function values  y=fun(x)                         </span>
+241 eval([<span class="string">'int(k)=sum('</span>,cwtxt, int_string]);       <span class="comment">% do the integration </span>
+242 int_old=int; 
+243  
+244 <span class="keyword">if</span> trace==1, 
+245   x_trace=x(:); 
+246   y_trace=y(:); 
+247 <span class="keyword">end</span> 
+248  
+249 <span class="comment">% Break out of the iteration loop for three reasons: </span>
+250 <span class="comment">%  1) the last update is very small (compared to int  and  compared to tol) </span>
+251 <span class="comment">%  2) There are more than 11 iterations. This should NEVER happen.  </span>
+252  
+253 converge=<span class="string">'n'</span>; 
+254 <span class="keyword">for</span> i=1:10, 
+255   gn=gn*2;<span class="comment">% double the # of weights </span>
+256   wtxt = sprintf(<span class="string">'%d_%d'</span>,gn,wfun); <span class="comment">% # of weights and weight function used </span>
+257   <span class="comment">%eval(['global cb',wtxt,' cw',wtxt]); </span>
+258   cbtxt = sprintf(<span class="string">'cb%s'</span>,wtxt); <span class="comment">%base points string </span>
+259   cwtxt = sprintf(<span class="string">'cw%s'</span>,wtxt); <span class="comment">%weights string </span>
+260   eval(sprintf(<span class="string">'global %s %s ;'</span>,cbtxt,cwtxt)); 
+261   <span class="keyword">if</span> isempty(eval(cbtxt))|FindWeights ,   
+262     <span class="comment">% calculate the weights if necessary </span>
+263      eval(sprintf(<span class="string">'[%s,%s]=qrule(gn,wfun,alpha1,beta1);'</span>,cbtxt,cwtxt)); 
+264   <span class="keyword">end</span> 
+265   
+266   eval([<span class="string">'x=('</span>,cbtxt, calcx_string]); <span class="comment">% calculate the x values   </span>
+267   eval(exec_string);                 <span class="comment">% calculate function values  y=fun(x) </span>
+268   eval([<span class="string">'int(k)=sum('</span>,cwtxt, int_string]);<span class="comment">% do the integration </span>
+269    
+270   <span class="keyword">if</span> trace==1, 
+271     x_trace=[x_trace;x(:)]; 
+272     y_trace=[y_trace;y(:)]; 
+273   <span class="keyword">end</span> 
+274  
+275   tol1(k) = abs(int_old(k)-int(k)); <span class="comment">%absolute tolerance </span>
+276   k       = find(tol1 &gt; abs(tol*int)); <span class="comment">%| tol1 &gt; abs(tol));<span class="comment">%indices to integrals which did not converge </span></span>
+277     
+278   <span class="keyword">if</span> any(k),<span class="comment">% compute integrals again </span>
+279       nk=length(k);<span class="comment">%# of integrals we have to compute again </span>
+280   <span class="keyword">else</span> 
+281     converge=<span class="string">'y'</span>; 
+282     <span class="keyword">break</span>; 
+283   <span class="keyword">end</span> 
+284   int_old=int; 
+285 <span class="keyword">end</span> 
+286  
+287 int=reshape(int,N,M); <span class="comment">% make sure int is the same size as the integration  limits </span>
+288 <span class="keyword">if</span> nargout&gt;1, 
+289   tol1=reshape(tol1,N,M); 
+290 <span class="keyword">end</span> 
+291  
+292 <span class="keyword">if</span> converge==<span class="string">'n'</span> 
+293   <span class="keyword">if</span> nk&gt;1 
+294     <span class="keyword">if</span> (nk==N*M), 
+295       disp(<span class="string">'All integrals did not converge--singularities likely'</span>) 
+296     <span class="keyword">else</span> 
+297       disp(sprintf(<span class="string">'%d integrals did not converge--singularities likely'</span>, <span class="keyword">...</span> 
+298            nk)) 
+299     <span class="keyword">end</span> 
+300   <span class="keyword">else</span> 
+301     disp(<span class="string">'Integral did not converge--singularity likely'</span>) 
+302   <span class="keyword">end</span> 
+303 <span class="keyword">end</span> 
+304  
+305 <span class="keyword">if</span> trace==1, 
+306   plot(x_trace,y_trace,<span class="string">'+'</span>) 
+307 <span class="keyword">end</span> 
+308  
+309  
+310</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

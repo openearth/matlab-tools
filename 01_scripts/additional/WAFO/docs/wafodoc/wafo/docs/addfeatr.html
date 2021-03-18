@@ -1,0 +1,370 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of addfeatr</title>
+  <meta name="keywords" content="addfeatr">
+  <meta name="description" content="  How To Add New Features to WAFO">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">docs</a> &gt; addfeatr.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\docs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>addfeatr
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  How To Add New Features to WAFO</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="addfeatr.html" class="code" title="  How To Add New Features to WAFO">ADDFEATR</a>  How To Add New Features to WAFO
+ 
+  NEW Functions 
+ ~~~~~~~~~~~~~~~
+  General conventions:
+  Each line of code in the functions must not exceed 76 columns
+  to ease the readability of the code. Function names must be written in lower 
+  case letters without any underscores. Also local variable names should 
+  preferably be in lower case letters. Global variables should be written in 
+  upper case letters in order to avoid confusion with local variables. 
+ 
+  Help header:
+  Generally a function included in WAFO should be well commented and include 
+  the following information in the given order in the help header:
+ 
+  Header: (H1 line) Name of the function (in uppercase letters) followed by a
+          concise and definitive description appropriate for retrieval purposes by
+           the MATLAB \verb+lookfor+ command. Not to exceed one line.  
+  Call  : Specifying the calling prototype, i.e. output argument(s),
+          function name and input argument(s). Function name in lower case letters. 
+  Outputs/inputs: A list describing the output and input arguments in
+          the order they appear in the calling prototype. The description should
+          also indicate the data type of the argument. An optional input argument is
+          indicated by specifying the default value enclosed in parenthesis. Each
+          line should be aligned so that all the equal-signs are in the same column.
+  Description: Detailed explanation of what the function does, the
+          assumptions made, the <a href="limitations.html" class="code" title=" (+)  WAFO known limitations">limitations</a> and how the algorithm works.  This
+          should be as detailed as possible without exceeding one page.
+  Side effects: If any like changing/using global variables, 
+          changing properties of figure windows etc.
+          should also be notified in the help header
+  Example(s): An example of how to use the function in practice is desirable.
+  See also  Comma separated list of related functions or functions which this 
+            routine calls.
+  Secret help:
+  Immediately after the help header the following information should be given: 
+ 
+  References: A complete reference from which the user can obtain further information
+  Tested on : Specifies on which matlab version the function has been tested.
+  History   : Revision log of the function in chronological order. 
+ 
+  See <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a> for an example on how it looks like in the WAFO toolbox
+ 
+ 
+   NEW DATASETS:
+  ~~~~~~~~~~~~~~
+ 
+   Signals: 
+ 
+   [1] Choose a filename  (preferably with less than eight characters)  e.g. &quot;gullfaks&quot; 
+ 
+   [2] Create an ascii data file named  &quot;gullfaks.dat&quot;, which contains your
+       signal in vertical format with sampled values in columns.
+       The documentation m-file explains what each column is a measure of.
+       Sampling times if given should be in the first column.
+ 
+   [3] Create an documentation file named &quot;gullfaks.m&quot; with the 
+       following structure: (all in lower case letters if not explicitly stated otherwise)
+ 
+  Title         : name of the m file in upper case letters followed by a 
+                  descriptrive text. Not to exceed one line.
+  Call          : indicating how to access the data
+  Size          : The size of data.
+  Sampling rate :
+  Device        : Measuring device used to <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> the data.
+  Source        : Indication of the original source of the data
+  Format        : Specifying the format of the data
+  Description   : and other relevant facts of the data , \ie{} where and when the 
+                  data were measured. An indication of the quality of the data should 
+                  also be included.  Descriptive measures of the data like significant 
+                  wave height, Hm0 , and peak period, Tp, may also be given here.  
+                  Also restrictions on the use of the data if any should be given here.
+  See also      : a comma separated list of related files or functions
+ 
+   Example:
+ 
+  GULLFAKS  surface elevation measured at Gullfaks C 30.12.1990
+               
+   CALL:  xn = load('gullfaks.dat')
+   
+  Size             :    2560 X 2
+  Sampling Rate    :    2.5 Hz
+  Device           :    EMI laser
+  Source           :    STATOIL 
+  Format           :    ascii, c1: time c2: surface elevation
+  Description      :
+    The wave data was measured 24th December 1989 at the Gullfaks C platform  
+    in the North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a> from 17.00 to  21.20. The  water depth of  218 m is regarded 
+    as deep water  for the most  important wave components.
+    There are two EMI laser sensors named 219 and 220. This data  set  is obtained from
+    sensor 219, which is  located in the
+    Northwest corner  approximately two platform leg diameters away from   
+    the closest  leg.  
+    Thus the wave elevation is not expected  to be significantly 
+    affected by  diffraction effects for incoming waves in the western sector.   
+    The wind direction for this period is from the southwest.
+    Some  difficulties in calibration of the instruments have been reported
+    resulting in several consecutive measured values being equal or nearly equal 
+    in the observed data set.
+  
+    Hm0 = 6.8m, Tm02 = 8s, Tp = 10.5
+  
+  See also  gullfaks.jpg
+ 
+ 
+  NEW  DEMONSTRATIONS / PUBLISHED PAPERS:
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   To add new demonstration scripts to the DEMOS directory:
+ 
+   [1] Choose a name for your demo and a short prefix for files
+       implementing your demo. For example, &quot;isope99&quot; and &quot;is&quot;.
+ 
+   [2] Create the new subdirectory accordingly after the chosen name:
+ 
+          WAFO/DEMOS/isope99. 
+ 
+   [3] Create the m-files which implement your demo:
+       isdemo    - starts a user controlled demonstration with <a href="../../wafo/misc/choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">choices</a>
+       isinit    - sets up data structures, globals etc...
+       isfig1,2..- called from isdemo. 
+       isintro   - help file describing the purpose of the demo
+       iscleanup - clears all globals created by the demo and restores the 
+                   original workspace
+ 
+   [4]  Specialized tools/functions not available in the official 
+        release of WAFO needed for generating the figures should be put into 
+        WAFO/DEMOS/isope99/private subdirectory.
+ 
+       These are the rules for the scripts:
+ 
+       I.   One m-file creates one complete figure, not a series
+               of figures or a subplot of a figure.
+       II.  If some variables in one script is needed by another script
+               they  must be saved as global variables.
+       III. No pause or prints statements allowed.
+       IV.  As far as possible try to use the tools in WAFO
+ 
+       Inspection of existing demonstrations will help in following these rules.
+ 
+  
+  
+   To add new demonstration scripts to the PAPER directory is 
+   similar to the DEMOS except that the scripts must recreate figures 
+   in  published articles or technical reports.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="addfeatr.html" class="code" title="This is a script file.">addfeatr</a></li></TD>
+<TD>  How To Add New Features to WAFO</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="addfeatr.html" class="code" title="This is a script file.">addfeatr</a></li></TD>
+<TD>  How To Add New Features to WAFO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">% ADDFEATR  How To Add New Features to WAFO</span>
+002 <span class="comment">%</span>
+003 <span class="comment">% NEW Functions </span>
+004 <span class="comment">%~~~~~~~~~~~~~~~</span>
+005 <span class="comment">% General conventions:</span>
+006 <span class="comment">% Each line of code in the functions must not exceed 76 columns</span>
+007 <span class="comment">% to ease the readability of the code. Function names must be written in lower </span>
+008 <span class="comment">% case letters without any underscores. Also local variable names should </span>
+009 <span class="comment">% preferably be in lower case letters. Global variables should be written in </span>
+010 <span class="comment">% upper case letters in order to avoid confusion with local variables. </span>
+011 <span class="comment">%</span>
+012 <span class="comment">% Help header:</span>
+013 <span class="comment">% Generally a function included in WAFO should be well commented and include </span>
+014 <span class="comment">% the following information in the given order in the help header:</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% Header: (H1 line) Name of the function (in uppercase letters) followed by a</span>
+017 <span class="comment">%         concise and definitive description appropriate for retrieval purposes by</span>
+018 <span class="comment">%          the MATLAB \verb+lookfor+ command. Not to exceed one line.  </span>
+019 <span class="comment">% Call  : Specifying the calling prototype, i.e. output argument(s),</span>
+020 <span class="comment">%         function name and input argument(s). Function name in lower case letters. </span>
+021 <span class="comment">% Outputs/inputs: A list describing the output and input arguments in</span>
+022 <span class="comment">%         the order they appear in the calling prototype. The description should</span>
+023 <span class="comment">%         also indicate the data type of the argument. An optional input argument is</span>
+024 <span class="comment">%         indicated by specifying the default value enclosed in parenthesis. Each</span>
+025 <span class="comment">%         line should be aligned so that all the equal-signs are in the same column.</span>
+026 <span class="comment">% Description: Detailed explanation of what the function does, the</span>
+027 <span class="comment">%         assumptions made, the limitations and how the algorithm works.  This</span>
+028 <span class="comment">%         should be as detailed as possible without exceeding one page.</span>
+029 <span class="comment">% Side effects: If any like changing/using global variables, </span>
+030 <span class="comment">%         changing properties of figure windows etc.</span>
+031 <span class="comment">%         should also be notified in the help header</span>
+032 <span class="comment">% Example(s): An example of how to use the function in practice is desirable.</span>
+033 <span class="comment">% See also  Comma separated list of related functions or functions which this </span>
+034 <span class="comment">%           routine calls.</span>
+035 <span class="comment">% Secret help:</span>
+036 <span class="comment">% Immediately after the help header the following information should be given: </span>
+037 <span class="comment">%</span>
+038 <span class="comment">% References: A complete reference from which the user can obtain further information</span>
+039 <span class="comment">% Tested on : Specifies on which matlab version the function has been tested.</span>
+040 <span class="comment">% History   : Revision log of the function in chronological order. </span>
+041 <span class="comment">%</span>
+042 <span class="comment">% See jonswap for an example on how it looks like in the WAFO toolbox</span>
+043 <span class="comment">%</span>
+044 <span class="comment">%</span>
+045 <span class="comment">%  NEW DATASETS:</span>
+046 <span class="comment">% ~~~~~~~~~~~~~~</span>
+047 <span class="comment">%</span>
+048 <span class="comment">%  Signals: </span>
+049 <span class="comment">%</span>
+050 <span class="comment">%  [1] Choose a filename  (preferably with less than eight characters)  e.g. &quot;gullfaks&quot; </span>
+051 <span class="comment">%</span>
+052 <span class="comment">%  [2] Create an ascii data file named  &quot;gullfaks.dat&quot;, which contains your</span>
+053 <span class="comment">%      signal in vertical format with sampled values in columns.</span>
+054 <span class="comment">%      The documentation m-file explains what each column is a measure of.</span>
+055 <span class="comment">%      Sampling times if given should be in the first column.</span>
+056 <span class="comment">%</span>
+057 <span class="comment">%  [3] Create an documentation file named &quot;gullfaks.m&quot; with the </span>
+058 <span class="comment">%      following structure: (all in lower case letters if not explicitly stated otherwise)</span>
+059 <span class="comment">%</span>
+060 <span class="comment">% Title         : name of the m file in upper case letters followed by a </span>
+061 <span class="comment">%                 descriptrive text. Not to exceed one line.</span>
+062 <span class="comment">% Call          : indicating how to access the data</span>
+063 <span class="comment">% Size          : The size of data.</span>
+064 <span class="comment">% Sampling rate :</span>
+065 <span class="comment">% Device        : Measuring device used to sample the data.</span>
+066 <span class="comment">% Source        : Indication of the original source of the data</span>
+067 <span class="comment">% Format        : Specifying the format of the data</span>
+068 <span class="comment">% Description   : and other relevant facts of the data , \ie{} where and when the </span>
+069 <span class="comment">%                 data were measured. An indication of the quality of the data should </span>
+070 <span class="comment">%                 also be included.  Descriptive measures of the data like significant </span>
+071 <span class="comment">%                 wave height, Hm0 , and peak period, Tp, may also be given here.  </span>
+072 <span class="comment">%                 Also restrictions on the use of the data if any should be given here.</span>
+073 <span class="comment">% See also      : a comma separated list of related files or functions</span>
+074 <span class="comment">%</span>
+075 <span class="comment">%  Example:</span>
+076 <span class="comment">%</span>
+077 <span class="comment">% GULLFAKS  surface elevation measured at Gullfaks C 30.12.1990</span>
+078 <span class="comment">%              </span>
+079 <span class="comment">%  CALL:  xn = load('gullfaks.dat')</span>
+080 <span class="comment">%  </span>
+081 <span class="comment">% Size             :    2560 X 2</span>
+082 <span class="comment">% Sampling Rate    :    2.5 Hz</span>
+083 <span class="comment">% Device           :    EMI laser</span>
+084 <span class="comment">% Source           :    STATOIL </span>
+085 <span class="comment">% Format           :    ascii, c1: time c2: surface elevation</span>
+086 <span class="comment">% Description      :</span>
+087 <span class="comment">%   The wave data was measured 24th December 1989 at the Gullfaks C platform  </span>
+088 <span class="comment">%   in the North Sea from 17.00 to  21.20. The  water depth of  218 m is regarded </span>
+089 <span class="comment">%   as deep water  for the most  important wave components.</span>
+090 <span class="comment">%   There are two EMI laser sensors named 219 and 220. This data  set  is obtained from</span>
+091 <span class="comment">%   sensor 219, which is  located in the</span>
+092 <span class="comment">%   Northwest corner  approximately two platform leg diameters away from   </span>
+093 <span class="comment">%   the closest  leg.  </span>
+094 <span class="comment">%   Thus the wave elevation is not expected  to be significantly </span>
+095 <span class="comment">%   affected by  diffraction effects for incoming waves in the western sector.   </span>
+096 <span class="comment">%   The wind direction for this period is from the southwest.</span>
+097 <span class="comment">%   Some  difficulties in calibration of the instruments have been reported</span>
+098 <span class="comment">%   resulting in several consecutive measured values being equal or nearly equal </span>
+099 <span class="comment">%   in the observed data set.</span>
+100 <span class="comment">% </span>
+101 <span class="comment">%   Hm0 = 6.8m, Tm02 = 8s, Tp = 10.5</span>
+102 <span class="comment">% </span>
+103 <span class="comment">% See also  gullfaks.jpg</span>
+104 <span class="comment">%</span>
+105 <span class="comment">%</span>
+106 <span class="comment">% NEW  DEMONSTRATIONS / PUBLISHED PAPERS:</span>
+107 <span class="comment">% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+108 <span class="comment">%  To add new demonstration scripts to the DEMOS directory:</span>
+109 <span class="comment">%</span>
+110 <span class="comment">%  [1] Choose a name for your demo and a short prefix for files</span>
+111 <span class="comment">%      implementing your demo. For example, &quot;isope99&quot; and &quot;is&quot;.</span>
+112 <span class="comment">%</span>
+113 <span class="comment">%  [2] Create the new subdirectory accordingly after the chosen name:</span>
+114 <span class="comment">%</span>
+115 <span class="comment">%         WAFO/DEMOS/isope99. </span>
+116 <span class="comment">%</span>
+117 <span class="comment">%  [3] Create the m-files which implement your demo:</span>
+118 <span class="comment">%      isdemo    - starts a user controlled demonstration with choices</span>
+119 <span class="comment">%      isinit    - sets up data structures, globals etc...</span>
+120 <span class="comment">%      isfig1,2..- called from isdemo. </span>
+121 <span class="comment">%      isintro   - help file describing the purpose of the demo</span>
+122 <span class="comment">%      iscleanup - clears all globals created by the demo and restores the </span>
+123 <span class="comment">%                  original workspace</span>
+124 <span class="comment">%</span>
+125 <span class="comment">%  [4]  Specialized tools/functions not available in the official </span>
+126 <span class="comment">%       release of WAFO needed for generating the figures should be put into </span>
+127 <span class="comment">%       WAFO/DEMOS/isope99/private subdirectory.</span>
+128 <span class="comment">%</span>
+129 <span class="comment">%      These are the rules for the scripts:</span>
+130 <span class="comment">%</span>
+131 <span class="comment">%      I.   One m-file creates one complete figure, not a series</span>
+132 <span class="comment">%              of figures or a subplot of a figure.</span>
+133 <span class="comment">%      II.  If some variables in one script is needed by another script</span>
+134 <span class="comment">%              they  must be saved as global variables.</span>
+135 <span class="comment">%      III. No pause or prints statements allowed.</span>
+136 <span class="comment">%      IV.  As far as possible try to use the tools in WAFO</span>
+137 <span class="comment">%</span>
+138 <span class="comment">%      Inspection of existing demonstrations will help in following these rules.</span>
+139 <span class="comment">%</span>
+140 <span class="comment">% </span>
+141 <span class="comment">% </span>
+142 <span class="comment">%  To add new demonstration scripts to the PAPER directory is </span>
+143 <span class="comment">%  similar to the DEMOS except that the scripts must recreate figures </span>
+144 <span class="comment">%  in  published articles or technical reports.</span>
+145 <span class="comment">%</span>
+146 <span class="comment">% </span>
+147 
+148 
+149 <span class="comment">% history</span>
+150 <span class="comment">% by pab 14.12.1999</span>
+151 <span class="comment">% </span>
+152 
+153 more on
+154 help <a href="addfeatr.html" class="code" title="  How To Add New Features to WAFO">addfeatr</a>
+155 more off
+156</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

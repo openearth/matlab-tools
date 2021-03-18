@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cmatresamp</title>
+  <meta name="keywords" content="cmatresamp">
+  <meta name="description" content=" Resamples a cycle matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; cmatresamp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmatresamp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Resamples a cycle matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> FF = cmatresamp(F,Method) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cmatresamp.html" class="code" title=" Resamples a cycle matrix.">CMATRESAMP</a> Resamples a cycle matrix.
+ 
+  CALL: FF = <a href="cmatresamp.html" class="code" title=" Resamples a cycle matrix.">cmatresamp</a>(F)
+ 
+    F  = Cycle matrix.                [n,n]
+    FF = Resampled cycle matrix.      [n,n]
+ 
+  Resamles by picking the cycles at random with frequencies specified by F. 
+  The result FF contains the same number of cyles as in F.
+ 
+  Example:
+    F = round(5*triu(rand(4,4),1))
+    FF = <a href="cmatresamp.html" class="code" title=" Resamples a cycle matrix.">cmatresamp</a>(F)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\stats\binornd.m">binornd</a></li></TD>
+<TD>       Random arrays from the binomial distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\@double\full.bi">full</a></li></TD>
+<TD>          Convert sparse matrix to full matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\@double\sparse.bi">sparse</a></li></TD>
+<TD>        Create sparse matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\table1.m">table1</a></li></TD>
+<TD>        1-D Table look-up.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> FF = <a name="_sub0" href="#_subfunctions" class="code">cmatresamp</a>(F,Method)
+002 <span class="comment">%CMATRESAMP Resamples a cycle matrix.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: FF = cmatresamp(F)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   F  = Cycle matrix.                [n,n]</span>
+007 <span class="comment">%   FF = Resampled cycle matrix.      [n,n]</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% Resamles by picking the cycles at random with frequencies specified by F. </span>
+010 <span class="comment">% The result FF contains the same number of cyles as in F.</span>
+011 <span class="comment">%</span>
+012 <span class="comment">% Example:</span>
+013 <span class="comment">%   F = round(5*triu(rand(4,4),1))</span>
+014 <span class="comment">%   FF = cmatresamp(F)</span>
+015 
+016 <span class="comment">% See also  cmatplot</span>
+017 
+018 <span class="comment">% TODO <span class="comment">% Remove dependence on stats toolbox, i.e., remove call to binornd  </span></span>
+019 <span class="comment">% Check input arguments</span>
+020 ni = nargin;
+021 no = nargout;
+022 error(nargchk(1,2,ni));
+023 
+024 <span class="keyword">if</span> ni&lt;2, Method=[]; <span class="keyword">end</span>
+025 
+026 <span class="comment">% Default values, vectorized calculations</span>
+027 <span class="keyword">if</span> isempty(Method), Method=3; <span class="keyword">end</span> <span class="comment">% Vectorized calculations</span>
+028 
+029 
+030 [m,n]=size(F);
+031 N=sum(sum(F));
+032 R=rand(N,1);
+033 
+034 <span class="keyword">switch</span> Method
+035   <span class="comment">% Method 1: Binomial sampling</span>
+036 <span class="keyword">case</span> 1,
+037   F1=F(:);
+038   I=F1&gt;0;
+039   F2=F1(I);
+040   FF2 = zeros(size(F2));
+041   NN=N;
+042   <span class="keyword">for</span> i=1:length(F2)
+043     FF2(i) = binornd(NN,F2(i)/NN);
+044     NN=NN-FF2(i);
+045   <span class="keyword">end</span>
+046   FF1=zeros(size(F1));
+047   FF1(I)=FF2;
+048   FF=reshape(FF1,m,n);
+049   
+050   <span class="comment">% Method 2: sum of Multinomial I</span>
+051 <span class="keyword">case</span> 2
+052   
+053   F1=F(:);
+054   I=find(F1&gt;0);
+055   F2=F1(I);
+056   tab = [[0;cumsum(F2)/sum(F2)] (0:length(F2))'];
+057   R=rand(N,1);
+058   x=ceil(table1(tab,R));
+059   FF1=full(sparse(I(x),1,1,m*n,1));
+060   FF=reshape(FF1,size(F));
+061   
+062   <span class="comment">% Method 3: sum of Multinomial II</span>
+063 <span class="keyword">case</span> 3
+064   
+065   F1=F(:);
+066   I=find(F1&gt;0);
+067   F2=F1(I);
+068   Fn = cumsum(F2)/sum(F2);
+069   FF2 = zeros(size(F2));
+070   <span class="keyword">for</span> k = 1:N
+071     x=sum(rand&gt;Fn)+1;
+072     FF2(x)=FF2(x)+1;
+073   <span class="keyword">end</span>
+074   FF1=zeros(size(F1));
+075   FF1(I)=FF2;
+076   FF=reshape(FF1,m,n);
+077   
+078 <span class="keyword">end</span>
+079 
+080   
+081   
+082</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

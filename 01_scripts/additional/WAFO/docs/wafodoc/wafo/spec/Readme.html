@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Readme</title>
+  <meta name="keywords" content="Readme">
+  <meta name="description" content=" Readme file for module SPEC in WAFO Toolbox">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; Readme.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Readme
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Readme file for module SPEC in WAFO Toolbox</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="Readme.html" class="code" title=" Readme file for module SPEC in WAFO Toolbox  ">README</a> <a href="Readme.html" class="code" title=" Readme file for module SPEC in WAFO Toolbox  ">Readme</a> file for module SPEC in WAFO Toolbox  
+  Version 2.1.1   14-nov-2004 
+  
+   FIXES 
+   ~~~~~ 
+   <a href="spec2cov2.html" class="code" title=" Computes covariance function and its derivatives, alternative version ">spec2cov2</a> - rate is sometimes zero -&gt; <a href="spec2cov2.html" class="code" title=" Computes covariance function and its derivatives, alternative version ">spec2cov2</a> crash: made an ad-hoc 
+               solution. 
+   <a href="getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a> - Made sure gamma is 1 if Tp/sqrt(Hm0) &gt; 5.1429 
+   <a href="rotspec.html" class="code" title=" Rotate spectrum anti-clockwise around the origin. ">rotspec</a>   - moved from <a href="../../wafo/spec/private/index.html" class="code" title="directory">private</a> directory to wafo/spec 
+   <a href="spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a> - Moved code to <a href="rotspec.html" class="code" title=" Rotate spectrum anti-clockwise around the origin. ">rotspec</a> + small cosmetics fixes    
+               implemented freq -&gt; enc. 
+   <a href="../../wafo/spec/private/dir2enc.html" class="code" title=" Transform a dir. spectrum to an encountered. (Used in spec2spec)">dir2enc</a>   - BUG's removals plus major changes. 
+   <a href="mccormick.html" class="code" title=" Calculates (and plots) a McCormick spectral density.">mccormick</a> - replaced fmin with fminbnd    
+  
+ ----------------------------------------------------------- 
+  Version 2.1.0   14-sep-2004 
+  
+  This file describes new features, bug fixes, and changes in this version  
+  of the WAFO Toolbox. 
+  
+  List of changes: 
+  
+   FIXES 
+   ~~~~~ 
+   <a href="rotspec.html" class="code" title=" Rotate spectrum anti-clockwise around the origin. ">rotspec</a> -  -Removed old unused code and added example and rotateGrid to input    
+   <a href="spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a> - Moved code to <a href="rotspec.html" class="code" title=" Rotate spectrum anti-clockwise around the origin. ">rotspec</a> + small cosmetics fixes + some fixes 
+               in the <a href="../../wafo/spec/private/index.html" class="code" title="directory">private</a> functions <a href="../../wafo/spec/private/dir2enc.html" class="code" title=" Transform a dir. spectrum to an encountered. (Used in spec2spec)">dir2enc</a>, <a href="../../wafo/spec/private/spa2time.html" class="code" title=" Transform of spectrum from wave no. to frequency (used in spec2spec)">spa2time</a>, <a href="../../wafo/spec/private/time2spa.html" class="code" title=" Transform of spectrum from frequency to wave no. (used in spec2spec)">time2spa</a>.  
+   <a href="../../wafo/spec/private/dir2k1d.html" class="code" title=" Transforms directional spectrum to wavenumber spectrum.">dir2k1d</a>   - removed since it is no longer needed 
+  
+  Version 2.0.6   14-Jan-2004 
+  
+  This file describes new features, bug fixes, and changes in this version  
+  of the WAFO Toolbox. 
+  
+  List of changes: 
+  
+   FIXES 
+   ~~~~~ 
+   <a href="../../wafo/trgauss/specq2lc.html" class="code" title="  Saddlepoint approximation of the crossing intensity for the quadratic sea.">specq2lc</a> - eww, and kwaves added as subfunctions, moved it to trgauss 
+   eww      - is no longer needed in spec and hence is deleted 
+   kwaves   - is no longer needed in spec and hence is deleted 
+   <a href="cov2spec.html" class="code" title=" Computes spectral density given the auto covariance function  ">cov2spec</a> - Increased the precision in calculations and deleted L from input, added fast instead 
+   <a href="spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>  - streamlined some code, updated help header, fixed bug in example   
+   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a> - replaced call to colorbarf with <a href="../../wafo/misc/fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a> and  
+               replaced call to findzlevel with <a href="../../wafo/misc/clevels.html" class="code" title="  Extract the contour levels from the contour matrix">clevels</a>   
+   
+   NEW FUNCTIONS 
+   ~~~~~~~~~~~~~ 
+   <a href="spec2cov2.html" class="code" title=" Computes covariance function and its derivatives, alternative version ">spec2cov2</a> - based on code from spec2XXpdf programmes 
+  <a href="getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a> - Peakedness factor Gamma given Hm0 and Tp for <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

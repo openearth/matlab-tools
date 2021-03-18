@@ -1,0 +1,199 @@
+function covplot(rn,L,plotflag,sym)
+% COVPLOT Plots the auto covariance function (ACF), one- or two-dimensional. 
+%
+%  CALL:  covplot(r,L,plotflag,sym)
+%
+%         r =  covariance structure
+%       sym = plot symbol (default '-') 
+%  for one-dim:
+%         L = Maximum lag for which the ACF is plotted.
+%     plotflag = 1 then the ACF is plotted vs lag
+%	         2 then the ACF is plotted vs lag (sec or m)
+%	         3 then the ACF is plotted vs lag and vs lag (sec or m)
+%  for two-dim:
+%         L = [Lx Lt] Maximum lag for which the ACF is plotted.
+%     plotflag = 1 then contour plot
+%                2 then mesh plot
+%                3 one plot with R(x,0) and one with R(0,t)
+%
+% See also:  dat2cov, dat2cor
+
+% Tested on: matlab 5.3, 5.2, 5.1
+% History:
+% revised by pab 10.11.1999 (sym)
+% revised by es 30.09.1999 (two-dim)
+% by pab 11.08.98
+
+if ndims(rn.R)>2
+  error('Can only handle one- and two dimensional ACF')
+end
+if (nargin <3 | isempty(plotflag))
+  plotflag=1;
+end
+if (nargin <4 | isempty(sym))
+  sym='-';
+end
+if ~isfield(rn,'norm')
+  rn.norm=0;
+end
+
+n=length(rn.R);
+  
+if prod(size(rn.R))==n, % one-dim 
+
+  if n<2, 
+    error('The vector must have more than 2 elements!')
+  end
+  
+  if (nargin <2 | isempty(L)),
+    L=n-1;
+  else
+    L=min(L,n-1);
+  end
+  names=fieldnames(rn);
+  ind=find(strcmp(names,'x')+strcmp(names,'t')); %options are 't' and 'x'
+  vari=lower(names{ind});
+  t=getfield(rn,vari);  %t is either R.t or R.x
+  dT=t(2)-t(1);
+  if strcmpi(vari,'t')
+    unit=' (sec)';
+  else
+    unit=' (m)';
+  end
+  
+  
+  if isfield(rn,'stdev') & ~isempty(rn.stdev),
+    Stdev=rn.stdev(1:(L+1));
+    %size(Stdev)
+  else
+    Stdev=[];
+  end
+  
+  
+  if (dT==1 ), %sampling frequency 1 Hz
+    plotflag=1; % sufficient to make one plot
+  end  
+  
+  if (plotflag == 3), subplot(2,1,1),  end
+  
+  r = rn.R(1:(L+1));
+  tau =  (0:L) ; % # of lags
+  mx=max(abs(r));
+  if (plotflag == 1) |(plotflag == 3)
+    
+    plot(tau,r,sym) , hold on
+    plot([tau(1) tau(L+1)],[0 0],'k-')
+    if  ~isempty(Stdev),
+      plot(tau,2*Stdev,'r--')
+      plot(tau,-2*Stdev,'r--')
+    end , hold off
+    if dT==1,
+      xlabel(['Lag Lag',unit])
+    else
+      xlabel('Lag')
+    end
+    ylabel('ACF')
+    grid on
+    axis([0 tau(L+1) -1.01*mx 1.01*mx ])
+    if rn.norm,
+      title('Auto Correlation Function (ACF)' )
+    else
+      title('Auto Covariance Function (ACF)' )
+    end
+  end
+  
+  if (plotflag == 3) 
+    subplot(2,1,2)
+  end
+  
+  
+  if (plotflag == 2) |(plotflag == 3)
+    tau = tau*dT ;
+    plot(tau,r,sym),hold on
+    plot([tau(1) tau(L+1)],[0 0],'k-')
+    if  ~isempty(Stdev),	
+      plot(tau,2*Stdev,'r--')
+      plot(tau,-2*Stdev,'r--')
+    end, hold off
+    xlabel(['Lag',unit])
+    ylabel('ACF')
+    grid on
+    axis([0 tau(L+1) -1.01*mx 1.01*mx ])
+    if rn.norm,
+      title('Auto Correlation Function (ACF)' )
+    else
+      title('Auto Covariance Function (ACF)' )
+    end
+    
+  end
+  subplot(1,1,1)
+else % two-dim
+
+  [nx,nt]=size(rn.R);
+  if (nargin <2 | isempty(L)),
+    L=[nx-1, nt-1];
+  elseif length(L)==1
+    L=[min(L,nx-1) min(L,nt-1)];
+  else
+    L=[min(L(1),nx-1) min(L(2),nt-1)];
+  end
+  names=fieldnames(rn);
+  ind=find(strcmp(names,'x')+strcmp(names,'t')+strcmpi(names,'y'));
+  %options are 'x' and 't' and 'y'
+  vari1=names{ind(1)}; % always 'x' or 'y' 
+  vari2=names{ind(2)}; % always 'y' or 't'
+  if strcmpi(vari2,'t')
+    unit=' (sec)';
+  else
+    unit=' (m)';
+  end
+
+  x=eval(['rn.',vari1]);
+  t=eval(['rn.',vari2]);
+  if plotflag == 1
+    
+    contour(x,t,rn.R',sym)
+    if rn.norm,
+      title('Auto Correlation Function (ACF)' )
+    else
+      title('Auto Covariance Function (ACF)' )
+    end
+    xlabel([vari1 ' (m)'])
+    ylabel([vari2 unit])
+  elseif plotflag==2
+    surf(x,t,rn.R')
+    shading interp
+    if rn.norm,
+      title('Auto Correlation Function (ACF)' )
+    else
+      title('Auto Covariance Function (ACF)' )
+    end
+    xlabel([vari1 ' (m)'])
+    ylabel([vari2 unit])
+  else
+    subplot(2,1,1)
+    plot(x,rn.R(:,t==0),sym)
+    ih=ishold;
+    hold on
+    plot([x(1) x(end)],[0 0],':')
+    if ~ih, hold off, end
+    if rn.norm,
+      title('Auto Correlation Function (ACF)' )
+    else
+      title('Auto Covariance Function (ACF)' )
+    end
+    xlabel([vari1 ' (m)'])
+    subplot(2,1,2)
+    plot(t,rn.R(x==0,:),sym)
+    ih=ishold;
+    hold on
+    plot([t(1) t(end)],[0 0],':')
+    if ~ih, hold off, end
+    if rn.norm,
+      title('Auto Correlation Function (ACF)' )
+    else
+      title('Auto Covariance Function (ACF)' )
+    end
+    xlabel([vari2 unit])
+  end
+end

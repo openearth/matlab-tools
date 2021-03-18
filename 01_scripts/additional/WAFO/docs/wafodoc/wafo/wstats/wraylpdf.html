@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wraylpdf</title>
+  <meta name="keywords" content="wraylpdf">
+  <meta name="description" content=" Rayleigh probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wraylpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wraylpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Rayleigh probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wraylpdf(x,b); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wraylpdf.html" class="code" title=" Rayleigh probability density function">WRAYLPDF</a> Rayleigh probability density function
+ 
+  CALL:  f = <a href="wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(x,b);
+ 
+         f = density function evaluated at x
+         b = parameter
+  
+  The Rayleigh distribution is defined by its cdf
+ 
+   F(x;b) = 1 - exp(-x^2/(2b^2)), x&gt;=0, b&gt;0
+ 
+  Example: 
+    x = linspace(0,4,200);
+    p1 = <a href="wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(x,1); p2 = <a href="wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(x,0.5);
+    plot(x,p1,x,p2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wavemodels/b04jpdf.html" class="code" title=" f = b04jpdf(Hd,Scf,Hm0,Tm02, condon,normalizedInput)">b04jpdf</a></li></TD>
+<TD> Brodtkorb (2004) joint (Scf,Hd) PDF from Japan Sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/b04pdf.html" class="code" title=" f = b04pdf(Hd,Scf,Hm0,Tm02, condon,normalizedInput)">b04pdf</a></li></TD>
+<TD> Brodtkorb (2004) joint (Scf,Hd) PDF of laboratory data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/bmr00pdf.html" class="code" title=" f = bmr00pdf(Hd,Scf,Hm0,Tm02, condon,normalizedInput)">bmr00pdf</a></li></TD>
+<TD> Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dfun.html" class="code" title=" y=dist2dfun(H,V)">dist2dfun</a></li></TD>
+<TD> is an internal function to dist2dcdf dist2dprb.</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dpdf.html" class="code" title=" y = dist2dpdf(v1,h1,phat)">dist2dpdf</a></li></TD>
+<TD> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/kdedemo2.html" class="code" title="This is a script file.">kdedemo2</a></li></TD>
+<TD> Demonstrate the difference between transformation- and ordinary-KDE</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dpdf.html" class="code" title=" y = mdist2dpdf(V,H,phat,condon)">mdist2dpdf</a></li></TD>
+<TD> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ochi98pdf.html" class="code" title=" y = ochi98pdf(x,a,b)">ochi98pdf</a></li></TD>
+<TD> Ochi's (1998) PDF of peaks and troughs of non-gaussian processes</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/tay81pdf.html" class="code" title=" [y, tol1] = tay81pdf(x,a,b,tol)">tay81pdf</a></li></TD>
+<TD>  Tayfun (1981) PDF of  breaking limited wave heights</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/tay90pdf.html" class="code" title=" [y, tol1] = tay90pdf(x,a,b,tol)">tay90pdf</a></li></TD>
+<TD> Tayfun (1990) PDF of large wave heights</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wraylpdf</a>(x,b);
+002 <span class="comment">%WRAYLPDF Rayleigh probability density function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  f = wraylpdf(x,b);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        f = density function evaluated at x</span>
+007 <span class="comment">%        b = parameter</span>
+008 <span class="comment">% </span>
+009 <span class="comment">% The Rayleigh distribution is defined by its cdf</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%  F(x;b) = 1 - exp(-x^2/(2b^2)), x&gt;=0, b&gt;0</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Example: </span>
+014 <span class="comment">%   x = linspace(0,4,200);</span>
+015 <span class="comment">%   p1 = wraylpdf(x,1); p2 = wraylpdf(x,0.5);</span>
+016 <span class="comment">%   plot(x,p1,x,p2)</span>
+017 
+018 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+019 <span class="comment">% and Life Span Models&quot;, p. 181 ff, Marcel Dekker.</span>
+020 
+021 
+022 <span class="comment">% Tested on; Matlab 5.3</span>
+023 <span class="comment">% History: </span>
+024 <span class="comment">% revised pab 24.10.2000</span>
+025 <span class="comment">%  - added comnsize, nargchk</span>
+026 <span class="comment">% added ms 15.06.2000</span>
+027 
+028 
+029 error(nargchk(2,2,nargin))
+030 [errorcode, x, b] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a> (x,b);
+031 <span class="keyword">if</span> (errorcode &gt; 0)
+032   error (<span class="string">'x and b must be of common size or scalar'</span>);
+033 <span class="keyword">end</span>
+034 
+035 f=zeros(size(x));
+036 
+037 k = find ((x&gt;=0)&amp;(b&gt;0));
+038 <span class="keyword">if</span> any (k)  
+039   f(k)=x(k).*exp(-x(k).^2./(2*b(k).^2))./b(k).^2;
+040 <span class="keyword">end</span>
+041 
+042 k1 = find (b&lt;=0);
+043 <span class="keyword">if</span> any (k1)
+044   tmp=NaN;
+045   f(k1) = tmp(ones(size(k1)));
+046 <span class="keyword">end</span>
+047 
+048</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

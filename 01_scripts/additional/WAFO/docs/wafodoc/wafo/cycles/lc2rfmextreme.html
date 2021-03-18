@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of lc2rfmextreme</title>
+  <meta name="keywords" content="lc2rfmextreme">
+  <meta name="description" content=" Compute extreme RFM from level crossings.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; lc2rfmextreme.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>lc2rfmextreme
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Compute extreme RFM from level crossings.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [Frfc,u,Nrfc,Nrfc0]=lc2nt(lc,vect) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="lc2rfmextreme.html" class="code" title=" Compute extreme RFM from level crossings.">LC2RFMEXTREME</a> Compute extreme RFM from level crossings.
+ 
+  CALL: Frfc = lc2nt(lc)
+        [Frfc,u,Nrfc,Nrfc0] = lc2nt(lc)
+ 
+   lc     = Level upcrossing intensity.                    [nx2]
+ 
+   Frfc   = Extreme RFM.                                   [nxn]
+   u      = Discrete <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>.                               [1xn]
+   Nrfc   = Cumulative extreme RFM.                        [nxn]
+   Nrfc0  = Cumulative extreme RFM, before correction.     [nxn]
+ 
+  Computes the 'extreme RFM', an approximation of the RFM which 
+  is good for large cycles (low minima and high maxima). 
+  The approximation is based on the assumtion that level crossings
+  of high and low <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> are two independent Poisson processes. 
+  This results in a simple expression for the intensity of interval 
+  crossings, which is the same as the cumulative RFM.
+ 
+  Example: Gaussian process
+    u = (-5:0.2:5)'; lc = [u exp(-u.^2/2)];
+    [Frfc,u,Nrfc] = <a href="lc2rfmextreme.html" class="code" title=" Compute extreme RFM from level crossings.">lc2rfmextreme</a>(lc);
+    <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{Frfc Nrfc},3)
+ 
+  See also  <a href="cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>, <a href="rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>, <a href="tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>, <a href="cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>, <a href="dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cmat2nt.html" class="code" title=" NT = cmat2nt(F,def)">cmat2nt</a></li></TD>
+<TD> Calculates a counting distribution from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="nt2cmat.html" class="code" title=" F = nt2cmat(NT,def)">nt2cmat</a></li></TD>
+<TD>  Calculates a cycle matrix from a counting distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\triu.bi">triu</a></li></TD>
+<TD>          Extract upper triangular part.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="rfmextrapolate.html" class="code" title=" [Fest,Pout,Fextreme,Fsmooth,Fest0] = rfmextrapolate2(F,Pin,plotflag)">rfmextrapolate</a></li></TD>
+<TD> Extrapolates a rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [Frfc,u,Nrfc,Nrfc0]=lc2nt(lc,vect)
+002 <span class="comment">%LC2RFMEXTREME Compute extreme RFM from level crossings.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: Frfc = lc2nt(lc)</span>
+005 <span class="comment">%       [Frfc,u,Nrfc,Nrfc0] = lc2nt(lc)</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%  lc     = Level upcrossing intensity.                    [nx2]</span>
+008 <span class="comment">%</span>
+009 <span class="comment">%  Frfc   = Extreme RFM.                                   [nxn]</span>
+010 <span class="comment">%  u      = Discrete levels.                               [1xn]</span>
+011 <span class="comment">%  Nrfc   = Cumulative extreme RFM.                        [nxn]</span>
+012 <span class="comment">%  Nrfc0  = Cumulative extreme RFM, before correction.     [nxn]</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Computes the 'extreme RFM', an approximation of the RFM which </span>
+015 <span class="comment">% is good for large cycles (low minima and high maxima). </span>
+016 <span class="comment">% The approximation is based on the assumtion that level crossings</span>
+017 <span class="comment">% of high and low levels are two independent Poisson processes. </span>
+018 <span class="comment">% This results in a simple expression for the intensity of interval </span>
+019 <span class="comment">% crossings, which is the same as the cumulative RFM.</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% Example: Gaussian process</span>
+022 <span class="comment">%   u = (-5:0.2:5)'; lc = [u exp(-u.^2/2)];</span>
+023 <span class="comment">%   [Frfc,u,Nrfc] = lc2rfmextreme(lc);</span>
+024 <span class="comment">%   cmatplot(u,u,{Frfc Nrfc},3)</span>
+025 <span class="comment">%</span>
+026 <span class="comment">% See also  cmat2extralc, rfmextrapolate, tp2rfc, cc2cmat, dtp2rfm</span>
+027 
+028 <span class="comment">% References:</span>
+029 <span class="comment">%</span>
+030 <span class="comment">%   Johannesson, P., and Thomas, J-.J. (2000): </span>
+031 <span class="comment">%   Extrapolation of Rainflow Matrices. </span>
+032 <span class="comment">%   Preprint 2000:82, Mathematical statistics, Chalmers, pp. 18. </span>
+033 
+034 <span class="comment">% Tested  on Matlab  5.3</span>
+035 <span class="comment">%</span>
+036 <span class="comment">% History:</span>
+037 <span class="comment">% Created by PJ (Pär Johannesson) 14-Feb-2000</span>
+038 <span class="comment">% Revised by PJ 20-Jul-2000</span>
+039 <span class="comment">% Revised by PJ 03-Oct-2000</span>
+040 <span class="comment">%   Vectorized some calculations. Now much faster.</span>
+041 <span class="comment">%   vect = 0 : Not vectorized.</span>
+042 <span class="comment">%          1 : Vectorized.</span>
+043 
+044 <span class="comment">% Check input arguments</span>
+045 ni = nargin;
+046 no = nargout;
+047 error(nargchk(1,2,ni));
+048 
+049 <span class="keyword">if</span> ni&lt;2, vect = []; <span class="keyword">end</span>
+050 
+051 <span class="comment">% Default values, vectorized calculations</span>
+052 <span class="keyword">if</span> isempty(vect), vect=1; <span class="keyword">end</span> <span class="comment">% Vectorized calculations</span>
+053 
+054 <span class="comment">% Treat input data</span>
+055 n = size(lc,1); <span class="comment">% Number of rows = number of levels</span>
+056 u = lc(:,1);    <span class="comment">% Discrete levels</span>
+057 lc = lc(:,2);   <span class="comment">% intensity of level crossings</span>
+058 
+059 <span class="comment">% Compute the cumulative RFM</span>
+060 <span class="keyword">if</span> vect == 0 <span class="comment">% Not vectorized calculations</span>
+061   
+062   Nrfc0 = zeros(n,n);
+063   <span class="keyword">for</span> i = 2:n
+064     <span class="keyword">for</span> j = i-1:n-1
+065       <span class="keyword">if</span> (lc(i)+lc(j)) ~= 0
+066         Nrfc0(i,j) = lc(i)*lc(j)/(lc(i)+lc(j));
+067       <span class="keyword">end</span>
+068     <span class="keyword">end</span>
+069   <span class="keyword">end</span>
+070   
+071 <span class="keyword">else</span> <span class="comment">% Vectorized calculations</span>
+072 
+073   [LCi,LCj] = meshgrid(lc,lc);
+074   LCi=triu(LCi);
+075   LCj=triu(LCj);
+076   I = (LCi+LCj~=0);
+077   Nrfc0 = zeros(n,n);
+078   Nrfc0(I) = LCi(I).*LCj(I)./(LCi(I)+LCj(I));
+079   
+080 <span class="keyword">end</span>
+081 
+082 <span class="comment">% Convert: Nrfc0  --&gt;  Frfc</span>
+083 <span class="keyword">if</span> vect == 0 <span class="comment">% Not vectorized calculations</span>
+084   
+085   Frfc = zeros(n,n);
+086   <span class="keyword">for</span> i= 1:n-1
+087     <span class="keyword">for</span> j= i+1:n
+088       Frfc(i,j) = Nrfc0(i+1,j-1) - Nrfc0(i,j-1) - Nrfc0(i+1,j) + Nrfc0(i,j);
+089     <span class="keyword">end</span>
+090   <span class="keyword">end</span>
+091   
+092 <span class="keyword">else</span> <span class="comment">% Vectorized calculations</span>
+093   
+094   Frfc=<a href="nt2cmat.html" class="code" title="  Calculates a cycle matrix from a counting distribution.">nt2cmat</a>(Nrfc0);
+095   Frfc=triu(Frfc,1);
+096   
+097 <span class="keyword">end</span>
+098 
+099 <span class="comment">%keyboard</span>
+100 
+101 <span class="comment">% Set negative elements to zero.</span>
+102 I = Frfc&lt;0;
+103 <span class="keyword">if</span> any(I(:)) 
+104   <span class="comment">%warning(['Negative elements in calculated rainflow matrix Frfc. Setting to zero!']);</span>
+105   Frfc(I) = 0;
+106 <span class="keyword">end</span>
+107 
+108 <span class="comment">% Convert: Frfc  --&gt;  Nrfc</span>
+109 Nrfc = <a href="cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">cmat2nt</a>(Frfc); <span class="comment">% Calculate cumulative RFM (rainflow counting intensity)</span>
+110 
+111 
+112</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

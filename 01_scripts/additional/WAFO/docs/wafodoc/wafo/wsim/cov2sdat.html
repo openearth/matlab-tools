@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cov2sdat</title>
+  <meta name="keywords" content="cov2sdat">
+  <meta name="description" content=" Simulates a Gaussian process and its derivative">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wsim</a> &gt; cov2sdat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cov2sdat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Simulates a Gaussian process and its derivative</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [x, xder]=cov2sdat(R,np,iseed) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">COV2SDAT</a> Simulates a Gaussian process and its derivative
+          from covariance func.
+            
+    CALL: [xs, xsder ] = <a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>(R,[np cases],iseed);
+  
+          xs    = a cases+1 column matrix  ( t,X1(t) X2(t) ...).
+          xsder = a cases+1 column matrix  ( t,X1'(t) X2'(t) ...). 
+          R     = a covariance structure
+          np    = giving np load points.  (default length(S/R)-1=n-1).
+                  If np&gt;n-1 it is assummed that R(k)=0 for all k&gt;n-1
+          cases = number of cases, i.e. number of replicates (default=1) 
+          iseed = starting seed number for the random number generator 
+                  (default none is set)
+ 
+ 
+   <a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">COV2SDAT</a> performs a Fast and exact simulation of stationary zero mean 
+   Gaussian process through circulant embedding of the Covariance matrix.
+   
+   If the covariance structure  has a non-empty field .tr, then the
+   transformation is  applied to the simulated data, the result is a 
+   simulation of a transformed Gaussian process.
+ 
+  Example:
+   np = 100; 
+  [x1, x2] = <a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>(<a href="../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>(<a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>),np);
+  <a href="../../wafo/onedim/waveplot.html" class="code" title=" Plots the surface elevation of timeseries.">waveplot</a>(x1,'r',x2,'g',1,1)  
+ 
+  See also  <a href="spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>, <a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/spec/lagtype.html" class="code" title=" ltype = lagtype(R)">lagtype</a></li></TD>
+<TD> Returns the lag type of a Covariance struct.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\fft.bi">fft</a></li></TD>
+<TD>           Discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elfun\nextpow2.m">nextpow2</a></li></TD>
+<TD>      Next higher power of 2.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cov2csdat.html" class="code" title=" [sampl,mu1o, mu1oStd, inds] = cov2csdat(xo,R,cases,method,inds)">cov2csdat</a></li></TD>
+<TD> generates conditionally simulated values</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/mctrtest.html" class="code" title=" test2 = mctrtest(S,Np,test0,def,opt)">mctrtest</a></li></TD>
+<TD> Test if a stochastic process is Gaussian.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">reconstruct</a></li></TD>
+<TD> reconstruct the spurious/missing points of timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2sdat.html" class="code" title=" [x,xder]=spec2sdat(S,np,dt,iseed,method)">spec2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative from spectrum</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [x, xder]=<a name="_sub0" href="#_subfunctions" class="code">cov2sdat</a>(R,np,iseed)
+002 <span class="comment">%COV2SDAT Simulates a Gaussian process and its derivative</span>
+003 <span class="comment">%         from covariance func.</span>
+004 <span class="comment">%           </span>
+005 <span class="comment">%   CALL: [xs, xsder ] = cov2sdat(R,[np cases],iseed);</span>
+006 <span class="comment">% </span>
+007 <span class="comment">%         xs    = a cases+1 column matrix  ( t,X1(t) X2(t) ...).</span>
+008 <span class="comment">%         xsder = a cases+1 column matrix  ( t,X1'(t) X2'(t) ...). </span>
+009 <span class="comment">%         R     = a covariance structure</span>
+010 <span class="comment">%         np    = giving np load points.  (default length(S/R)-1=n-1).</span>
+011 <span class="comment">%                 If np&gt;n-1 it is assummed that R(k)=0 for all k&gt;n-1</span>
+012 <span class="comment">%         cases = number of cases, i.e. number of replicates (default=1) </span>
+013 <span class="comment">%         iseed = starting seed number for the random number generator </span>
+014 <span class="comment">%                 (default none is set)</span>
+015 <span class="comment">%</span>
+016 <span class="comment">%</span>
+017 <span class="comment">%  COV2SDAT performs a Fast and exact simulation of stationary zero mean </span>
+018 <span class="comment">%  Gaussian process through circulant embedding of the Covariance matrix.</span>
+019 <span class="comment">%  </span>
+020 <span class="comment">%  If the covariance structure  has a non-empty field .tr, then the</span>
+021 <span class="comment">%  transformation is  applied to the simulated data, the result is a </span>
+022 <span class="comment">%  simulation of a transformed Gaussian process.</span>
+023 <span class="comment">%</span>
+024 <span class="comment">% Example:</span>
+025 <span class="comment">%  np = 100; </span>
+026 <span class="comment">% [x1, x2] = cov2sdat(spec2cov(jonswap),np);</span>
+027 <span class="comment">% waveplot(x1,'r',x2,'g',1,1)  </span>
+028 <span class="comment">%</span>
+029 <span class="comment">% See also  spec2sdat, tranproc</span>
+030 
+031 <span class="comment">% Reference </span>
+032 <span class="comment">% C.R Dietrich and G. N. Newsam (1997)</span>
+033 <span class="comment">% &quot;Fast and exact simulation of  stationary </span>
+034 <span class="comment">%  Gaussian process through circulant embedding </span>
+035 <span class="comment">%  of the Covariance matrix&quot; </span>
+036 <span class="comment">%  SIAM J. SCI. COMPUT. Vol 18, No 4, pp. 1088-1107</span>
+037 
+038 
+039 <span class="comment">% tested on: Matlab 5.3</span>
+040 <span class="comment">% History:</span>
+041 <span class="comment">% Revised pab Feb2004</span>
+042 <span class="comment">% - changed seed to state   </span>
+043 <span class="comment">% revised pab 12.10.2001</span>
+044 <span class="comment">% - added example</span>
+045 <span class="comment">% - the derivative, xder, is now calculated correctly using fft.</span>
+046 <span class="comment">%   derivate.m is no longer needed!</span>
+047 <span class="comment">% revised pab 11.10.2001</span>
+048 <span class="comment">% - added call to lagtype.m</span>
+049 <span class="comment">% - added a new solution on removing high frequency noise due to the fact</span>
+050 <span class="comment">%  that the fix of 16.01.2000 was not sufficient.</span>
+051 <span class="comment">% revised by es 24.05.00 Some changes in help  </span>
+052 <span class="comment">% revised pab 13.03.2000</span>
+053 <span class="comment">% -commented out warning messages</span>
+054 <span class="comment">% revised pab 24.01.2000</span>
+055 <span class="comment">% -added iseed</span>
+056 <span class="comment">% revised pab 16.01.2000</span>
+057 <span class="comment">%  -added a fix in line 134: truncating the values of the spectral density to</span>
+058 <span class="comment">%     zero if S/max(S) &gt; trunc. This is to ensure that high frequency </span>
+059 <span class="comment">%     noise is not added to the simulated timeseries.</span>
+060 <span class="comment">%  -fixed transformation for the derivatives</span>
+061 <span class="comment">% revised pab 12.11.1999</span>
+062 <span class="comment">%  -fixed transformation</span>
+063 <span class="comment">% revised pab 12.10.1999</span>
+064 <span class="comment">%    last modified by Per A. Brodtkorb 19.08.98</span>
+065 
+066 <span class="comment">% add a nugget effect to ensure that round off errors</span>
+067 <span class="comment">% do not result in negative spectral estimates</span>
+068 nugget=0;<span class="comment">%10^-12;</span>
+069 
+070 ACF=R.R;
+071 [n,m]=size(ACF);
+072 
+073 <span class="keyword">if</span> n&lt;m
+074  b=m;m=n;n=b; 
+075  ACF=ACF';
+076 <span class="keyword">end</span>
+077 
+078 <span class="keyword">if</span> n&lt;2, 
+079   error(<span class="string">'The input vector must have more than 2 elements!'</span>)
+080 <span class="keyword">end</span>
+081 
+082 istime=1;
+083 <span class="keyword">switch</span> m
+084  <span class="keyword">case</span> 1, <span class="comment">% OK</span>
+085  <span class="keyword">otherwise</span>, error(<span class="string">'Only capable of 1D simulation'</span>)          
+086 <span class="keyword">end</span>
+087 
+088 [y I]=max(ACF);
+089 <span class="keyword">switch</span> I,
+090   <span class="keyword">case</span> 1,<span class="comment">% ACF starts with zero lag</span>
+091   <span class="keyword">otherwise</span>, error(<span class="string">'ACF does not have a maximum at zero lag'</span>)  
+092 <span class="keyword">end</span>
+093 <span class="comment">% new call pab 11.10.2001</span>
+094 ltype = <a href="../../wafo/spec/lagtype.html" class="code" title=" Returns the lag type of a Covariance struct.">lagtype</a>(R);
+095 <span class="comment">%names=fieldnames(R);</span>
+096 <span class="comment">%ind=find(strcmp(names,'x')+strcmp(names,'y')+strcmp(names,'t'));</span>
+097       <span class="comment">%options are 'f' and 'w' and 'k'      </span>
+098 <span class="comment">%ltype=lower(names{ind});</span>
+099 
+100 ti=getfield(R,ltype);
+101 <span class="keyword">if</span> isempty(ti)
+102   dT=1;
+103 <span class="keyword">else</span>
+104   dT=ti(2)-ti(1); <span class="comment">% ti </span>
+105 <span class="keyword">end</span>
+106 
+107 <span class="keyword">if</span> nargin&lt;2|isempty(np)
+108   np=n-1;
+109   cases=1;
+110 <span class="keyword">else</span>
+111   <span class="keyword">switch</span>  length(np) 
+112     <span class="keyword">case</span> 1, cases=1; 
+113     <span class="keyword">case</span> 2, cases=np(2); np=np(1);
+114     <span class="keyword">otherwise</span>, error(<span class="string">'Wrong input. Too many arguments'</span>)
+115   <span class="keyword">end</span>
+116 <span class="keyword">end</span>
+117 <span class="keyword">if</span> nargin&lt;3|isempty(iseed)
+118 <span class="keyword">else</span>
+119   <span class="keyword">try</span>
+120     randn(<span class="string">'state'</span>,iseed);
+121   <span class="keyword">catch</span>
+122     randn(<span class="string">'seed'</span>,iseed); <span class="comment">% set the the seed  </span>
+123   <span class="keyword">end</span>
+124 <span class="keyword">end</span>
+125 x=zeros(np,cases+1);
+126 
+127 
+128 <span class="keyword">if</span> nargout==2
+129   xder=x;
+130 <span class="keyword">end</span>
+131   
+132 <span class="comment">% add a nugget effect to ensure that round off errors</span>
+133 <span class="comment">% do not result in negative spectral estimates</span>
+134 ACF(1)=ACF(1)+nugget;
+135    
+136 <span class="comment">% Fast and exact simulation of simulation of stationary</span>
+137 <span class="comment">% Gaussian process throug circulant embedding of the</span>
+138 <span class="comment">% Covariance matrix</span>
+139 <span class="keyword">if</span> (abs(ACF(n))&gt;eps),<span class="comment">% assuming ACF(n+1)==0</span>
+140   m2=2*n-1;
+141   nfft=2^nextpow2(max(m2,2*np));
+142   ACF=[ACF(1:n);zeros(nfft-m2,1);ACF(n:-1:2)];
+143   <span class="keyword">if</span> 0, <span class="comment">%(n&lt;np),</span>
+144     disp(<span class="string">'Warning: I am now assuming that ACF(k)=0 '</span>)
+145     disp(<span class="string">'for k&gt;MAXLAG.'</span>)       
+146   <span class="keyword">end</span>
+147 <span class="keyword">else</span> <span class="comment">% ACF(n)==0</span>
+148   m2=2*n-2;
+149   nfft=2^nextpow2(max(m2,2*np));
+150   ACF=[ACF(1:n);zeros(nfft-m2,1);ACF(n-1:-1:2)];
+151 <span class="keyword">end</span>
+152 m2=2*n-2;
+153 
+154 S=real(fft(ACF,nfft));<span class="comment">% periodogram</span>
+155 
+156 
+157 [maxS I]=max(S(:));
+158 k=find(S&lt;0);
+159 <span class="keyword">if</span> any(k),<span class="comment">%</span>
+160   <span class="comment">%  disp('Warning: Not able to construct a nonnegative circulant ')</span>
+161   <span class="comment">%  disp('vector from the ACF. Apply the parzen windowfunction ') </span>
+162   <span class="comment">%  disp('to the ACF in order to avoid this.')</span>
+163   <span class="comment">%  disp('The returned result is now only an approximation.')</span>
+164   
+165   <span class="comment">% truncating negative values to zero to ensure that </span>
+166   <span class="comment">% that this noise is not added to the simulated timeseries</span>
+167  
+168   S(k)=0; 
+169   <span class="comment">% New call pab 11.10.2001        </span>
+170   ix = min(k(find(k&gt;2*I)));
+171   <span class="keyword">if</span> any(ix),
+172     <span class="comment">% truncating all oscillating values above 2 times the peak </span>
+173     <span class="comment">% frequency to zero to ensure that </span>
+174     <span class="comment">% that high frequency noise is not added to </span>
+175     <span class="comment">% the simulated timeseries.</span>
+176     S(ix:<span class="keyword">end</span>-ix) =0;
+177   <span class="keyword">end</span>
+178 <span class="keyword">end</span>
+179 
+180 
+181 trunc=1e-5;
+182 k=find(S(I:<span class="keyword">end</span>-I)/maxS&lt;trunc);
+183 <span class="keyword">if</span> any(k),<span class="comment">%</span>
+184  S(k+I-1)=0; 
+185  <span class="comment">% truncating small values to zero to ensure that </span>
+186  <span class="comment">% that high frequency noise is not added to </span>
+187  <span class="comment">% the simulated timeseries            </span>
+188 <span class="keyword">end</span>
+189 
+190 cases2=ceil(cases/2);
+191 <span class="comment">% Generate standard normal random numbers for the simulations</span>
+192 <span class="comment">% -----------------------------------------------------------</span>
+193 <span class="keyword">if</span> 1,
+194   epsi=randn(nfft,cases2)+sqrt(-1)*randn(nfft,cases2);
+195   Ssqr=sqrt(S/(nfft)); <span class="comment">%sqrt(S(wn)*dw )</span>
+196   ephat=epsi.*Ssqr(:,ones(1,cases2));
+197   y=fft(ephat,nfft);
+198   x(:,2:cases+1)=[real(y(3:np+2,1:cases2)) imag(y(3:np+2,1:floor(cases/2)))]; 
+199 <span class="keyword">else</span>
+200   epsi=randn(nfft/2+1,cases2)+sqrt(-1)*randn(nfft/2+1,cases2);
+201   epsi(1,:)=real(epsi(1,:));
+202   epsi(<span class="keyword">end</span>,:)=real(epsi(<span class="keyword">end</span>,:));
+203   epsi=[epsi; conj(epsi((<span class="keyword">end</span>-1):-1:2,:))];  
+204 <span class="keyword">end</span>
+205 
+206 
+207 x(:,1)=(0:dT:(dT*(np-1)))';
+208 
+209 <span class="keyword">if</span> nargout==2,
+210   
+211     <span class="comment">% xder(:,1:(cases+1))=derivate((-2*dT:dT:(dT*(np+1)))', ...</span>
+212     <span class="comment">%    [real(y(1:np+4,1:cases2)) imag(y(1:np+4,1:floor(cases/2)))]); </span>
+213   
+214     <span class="comment">% New call: pab 12.10.2001</span>
+215     Ssqr  = Ssqr.*[(0:(nfft/2))';-((nfft/2-1):-1:1)']*2*pi/nfft/dT;  
+216     ephat = epsi.*Ssqr(:,ones(1,cases2));
+217     y     = fft(ephat,nfft);    
+218     xder(:,2:(cases+1))=[imag(y(3:np+2,1:cases2)) -real(y(3:np+2,1:floor(cases/2)))];      
+219     xder(:,1)=x(:,1);
+220   
+221 <span class="keyword">end</span>
+222 
+223 <span class="keyword">if</span> isfield(R,<span class="string">'tr'</span>) &amp; ~isempty(R.tr)
+224   disp(<span class="string">'   Transforming data.'</span>)
+225   g=R.tr;
+226   G=fliplr(g); <span class="comment">% the invers of g</span>
+227   <span class="keyword">if</span> nargout==2, <span class="comment">% gaus2dat</span>
+228     <span class="keyword">for</span> ix=1:cases
+229       tmp=<a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([x(:,ix+1) xder(:,ix+1)],G); 
+230       x(:,ix+1)=tmp(:,1);
+231       xder(:,ix+1)=tmp(:,2);
+232     <span class="keyword">end</span>
+233   <span class="keyword">else</span>
+234     <span class="keyword">for</span> ix=1:cases <span class="comment">% gaus2dat</span>
+235       x(:,ix+1)=<a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(x(:,ix+1),G); 
+236     <span class="keyword">end</span>
+237   <span class="keyword">end</span>
+238 <span class="keyword">end</span>
+239</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

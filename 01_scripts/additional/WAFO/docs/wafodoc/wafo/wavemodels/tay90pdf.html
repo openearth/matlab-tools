@@ -1,0 +1,249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of tay90pdf</title>
+  <meta name="keywords" content="tay90pdf">
+  <meta name="description" content=" Tayfun (1990) PDF of large wave heights">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; tay90pdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>tay90pdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Tayfun (1990) PDF of large wave heights</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [y, tol1] = tay90pdf(x,a,b,tol) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="tay90pdf.html" class="code" title=" Tayfun (1990) PDF of large wave heights ">TAY90PDF</a> Tayfun (1990) PDF of large wave heights 
+                       /1 
+    f = .5*H^3/A^2 *  |  z/sqrt(1-z)* exp(-(H/A)^2*(2-z))*Io(  (H/A)^2*z*b/2) dz 
+                      /0 
+                      
+    where Io(.) is the modified bessel funcition of zero order  
+  
+   CALL:  [f tol]= <a href="tay90pdf.html" class="code" title=" Tayfun (1990) PDF of large wave heights ">tay90pdf</a>(H,A,B,reltol) 
+          
+             f = pdf 
+             H = wave height 
+             A = scale parameter (=sqrt(m0)) 
+             B = correlation between trough and crest amplitude squared 
+                 i.e. Cov(At^2, Ac^2) approx -R(T/2)  (B-&gt;1 =&gt; pdf-&gt;Rayleigh )       
+        reltol = relative tolerance default=1e-3 
+           tol = absolute tolerance abs(int-intold) 
+  
+  The size of f is the common size of X, A and B.  A scalar input    
+  functions as a constant matrix of the same size as the other input. 
+   
+   Tayfun calculates the correlation from the Spectral density as: 
+  
+   B = sqrt( [int S(w)*cos(w*T) dw]^2+[int S(w)*sin(w*T) dw]^2 )/m0 
+    
+   where T = Tm02, mean zero crossing period. 
+   Note that this is the same as the groupiness factor, Ka, found in 
+   <a href="../../wafo/spec/spec2char.html" class="code" title="  Evaluates spectral characteristics and their covariance">spec2char</a> 
+  
+  Example: 
+   S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>; 
+   a = sqrt(<a href="../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S,1)); 
+   b = <a href="../../wafo/spec/spec2char.html" class="code" title="  Evaluates spectral characteristics and their covariance">spec2char</a>(S,'Ka'); 
+   h = linspace(0,7*a)'; 
+   plot(h,<a href="tay90pdf.html" class="code" title=" Tayfun (1990) PDF of large wave heights ">tay90pdf</a>(h,a,b)) 
+  
+  See also  <a href="tay90cdf.html" class="code" title=" Tayfun (1990) CDF of large wave heights ">tay90cdf</a>, <a href="../../wafo/spec/spec2char.html" class="code" title="  Evaluates spectral characteristics and their covariance">spec2char</a>, <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/gaussq.html" class="code" title=" [int, tol1,ix]= gaussq(fun,xlow,xhigh,tol,trace,varargin)">gaussq</a></li></TD>
+<TD> Numerically evaluates a integral using a Gauss quadrature.</TD>
+</TR>
+<TR>
+<TD><li><a href="tay90fun.html" class="code" title=" y=tay90fun(u,x,b,pdfstr )">tay90fun</a></li></TD>
+<TD> is an internal integrand function to tay90pdf</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wraylpdf.html" class="code" title=" f = wraylpdf(x,b);">wraylpdf</a></li></TD>
+<TD> Rayleigh probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="tay90cdf.html" class="code" title=" [y, tol1] = tay90cdf(x,a,b,tol)">tay90cdf</a></li></TD>
+<TD> Tayfun (1990) CDF of large wave heights</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [y, tol1] = <a name="_sub0" href="#_subfunctions" class="code">tay90pdf</a>(x,a,b,tol) 
+002 <span class="comment">%TAY90PDF Tayfun (1990) PDF of large wave heights </span>
+003 <span class="comment">%                      /1 </span>
+004 <span class="comment">%   f = .5*H^3/A^2 *  |  z/sqrt(1-z)* exp(-(H/A)^2*(2-z))*Io(  (H/A)^2*z*b/2) dz </span>
+005 <span class="comment">%                     /0 </span>
+006 <span class="comment">%                     </span>
+007 <span class="comment">%   where Io(.) is the modified bessel funcition of zero order  </span>
+008 <span class="comment">% </span>
+009 <span class="comment">%  CALL:  [f tol]= tay90pdf(H,A,B,reltol) </span>
+010 <span class="comment">%         </span>
+011 <span class="comment">%            f = pdf </span>
+012 <span class="comment">%            H = wave height </span>
+013 <span class="comment">%            A = scale parameter (=sqrt(m0)) </span>
+014 <span class="comment">%            B = correlation between trough and crest amplitude squared </span>
+015 <span class="comment">%                i.e. Cov(At^2, Ac^2) approx -R(T/2)  (B-&gt;1 =&gt; pdf-&gt;Rayleigh )       </span>
+016 <span class="comment">%       reltol = relative tolerance default=1e-3 </span>
+017 <span class="comment">%          tol = absolute tolerance abs(int-intold) </span>
+018 <span class="comment">% </span>
+019 <span class="comment">% The size of f is the common size of X, A and B.  A scalar input    </span>
+020 <span class="comment">% functions as a constant matrix of the same size as the other input. </span>
+021 <span class="comment">%  </span>
+022 <span class="comment">%  Tayfun calculates the correlation from the Spectral density as: </span>
+023 <span class="comment">% </span>
+024 <span class="comment">%  B = sqrt( [int S(w)*cos(w*T) dw]^2+[int S(w)*sin(w*T) dw]^2 )/m0 </span>
+025 <span class="comment">%   </span>
+026 <span class="comment">%  where T = Tm02, mean zero crossing period. </span>
+027 <span class="comment">%  Note that this is the same as the groupiness factor, Ka, found in </span>
+028 <span class="comment">%  spec2char </span>
+029 <span class="comment">% </span>
+030 <span class="comment">% Example: </span>
+031 <span class="comment">%  S = jonswap; </span>
+032 <span class="comment">%  a = sqrt(spec2mom(S,1)); </span>
+033 <span class="comment">%  b = spec2char(S,'Ka'); </span>
+034 <span class="comment">%  h = linspace(0,7*a)'; </span>
+035 <span class="comment">%  plot(h,tay90pdf(h,a,b)) </span>
+036 <span class="comment">% </span>
+037 <span class="comment">% See also  tay90cdf, spec2char, gaussq </span>
+038  
+039  
+040  
+041 <span class="comment">%   Reference: </span>
+042 <span class="comment">% [1]  M. Aziz Tayfun (1990) &quot;Distribution of large waveheights&quot; </span>
+043 <span class="comment">% Journal of the Waterway, port and coastal and ocean division  </span>
+044 <span class="comment">%      vol 116 No.6 pp. 686-707 </span>
+045 <span class="comment">% [2]  M. Aziz Tayfun (1981) &quot;Distribution of crest-to-trough waveheights&quot; </span>
+046 <span class="comment">% Journal of the Waterway, port and coastal and ocean division  </span>
+047 <span class="comment">%      vol 107 No.3 pp. 149-158 </span>
+048  
+049 <span class="comment">%tested on:  </span>
+050 <span class="comment">%history: </span>
+051 <span class="comment">% revised pab 26.07.2001 </span>
+052 <span class="comment">% - added forgotten ) in error(nargchk(3,4,nargin)) </span>
+053 <span class="comment">% revised IR, JR, PAB </span>
+054 <span class="comment">%  raylpdf -&gt; wraylpdf </span>
+055 <span class="comment">% revised pab 07.03.2000 </span>
+056 <span class="comment">% - updated error in help header </span>
+057 <span class="comment">% revised pab 28.02.2000 </span>
+058 <span class="comment">%  - fixed some bugs </span>
+059 <span class="comment">%  Per A. Brodtkorb 21.02.99 </span>
+060  
+061  
+062 error(nargchk(3,4,nargin)) 
+063 <span class="keyword">if</span> (nargin &lt;4)| isempty(tol),  
+064   tol=1e-3; <span class="comment">%relative accuracy of the estimates <span class="comment">% sqrt(eps);<span class="comment">% </span></span></span>
+065 <span class="keyword">end</span> 
+066  
+067 [errorcode x a b] = comnsize(x,a,b); 
+068  
+069 <span class="keyword">if</span> errorcode &gt; 0 
+070   error(<span class="string">'h, a and b must be of common size or scalar.'</span>); 
+071 <span class="keyword">end</span> 
+072 xsz = size(x); 
+073 x=x(:); a=a(:);b=b(:); 
+074 <span class="comment">%a </span>
+075 <span class="comment">%b </span>
+076 <span class="comment">% Initialize Y to zero. </span>
+077 y=zeros(size(x)); 
+078 tol1=y; 
+079 <span class="comment">% Return NaN if A is not positive. </span>
+080 k1 = find(a &lt;= 0| abs(b)&gt;1); 
+081 <span class="keyword">if</span> any(k1)  
+082     tmp   = NaN; 
+083     y(k1) = tmp(ones(size(k1))); 
+084 <span class="keyword">end</span> 
+085  
+086 <span class="keyword">if</span> 0 
+087   <span class="comment">% This is a trick to get the html documentation correct. </span>
+088   k = <a href="tay90fun.html" class="code" title=" is an internal integrand function to tay90pdf">tay90fun</a>(1,1); 
+089 <span class="keyword">end</span> 
+090  
+091 gn=2;<span class="comment">% # of of base points to start the integration with </span>
+092 trace=0;<span class="comment">%used for debugging </span>
+093 <span class="comment">%size(x) </span>
+094 <span class="comment">%size(a) </span>
+095 <span class="comment">%size(y) </span>
+096 k=find(a &gt; 0 &amp; x &gt;0 &amp; abs(b)&lt;1); 
+097 <span class="comment">%size(k) </span>
+098 <span class="keyword">if</span> any(k), 
+099   yk=y(k);xk = x(k); ak = a(k); 
+100    
+101  [yk, tol1(k)]= <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'tay90fun'</span>,0,ones(size(yk)),  [tol 4],[trace gn],xk./ak,b(k)); 
+102   yk=yk./ak; 
+103    
+104   k2=find(yk&lt;0 ); 
+105    <span class="keyword">if</span> any(k2) 
+106      disp(<span class="string">'Some less than zero'</span>) 
+107      yk(k2)= zeros(size(k2)); 
+108   <span class="keyword">end</span> 
+109  y(k)=yk; 
+110 <span class="keyword">end</span> 
+111  
+112 k4=find(a &gt; 0 &amp; x &gt;= 0 &amp; abs(b)==1); 
+113 <span class="keyword">if</span> any(k4), <span class="comment">% special case b==1 -&gt; rayleigh distribution </span>
+114  y(k4) = <a href="../../wafo/wstats/wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(x(k4),2*a(k4)); 
+115 <span class="keyword">end</span>  
+116 y=reshape(y,xsz); 
+117  
+118  
+119  
+120  
+121  
+122  
+123</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

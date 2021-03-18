@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of smctp2joint</title>
+  <meta name="keywords" content="smctp2joint">
+  <meta name="description" content="  Calculates the joint MCTP for a SMCTP.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">markov</a> &gt; smctp2joint.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\markov&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>smctp2joint
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates the joint MCTP for a SMCTP.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [Q,QQ] = smctp2joint(P,F) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="smctp2joint.html" class="code" title="  Calculates the joint MCTP for a SMCTP. ">SMCTP2JOINT</a>  Calculates the joint MCTP for a SMCTP. 
+  
+  CALL: [Q,QQ] = <a href="smctp2joint.html" class="code" title="  Calculates the joint MCTP for a SMCTP. ">smctp2joint</a>(P,F) 
+  
+  Q      = Cell array of min-max and max-min transition  
+           matrices for joint MCTP.                   {1x2} 
+  QQ     = Cell array of min-max and max-min transition  
+           matrices matrices for SMCTP.               {rx2} 
+  
+  P      = Transition matrix for regime process.      [rxr] 
+  F      = Cell array of min-Max and Max-min matrices {rx2} 
+  F{i,1} = min-Max matrix, process i                  [nxn] 
+  F{i,2} = Max-min matrix, process i                  [nxn] 
+  
+  If a matrix F{i,2}=[], then the process will 
+  be assumed to be time-reversible. 
+  
+  See also  <a href="smctp2stat.html" class="code" title="  Stationary distributions for a switching MCTP. ">smctp2stat</a>, <a href="mctp2stat.html" class="code" title="  Calculates the stationary distribution for a MCTP. ">mctp2stat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mat2tmat.html" class="code" title=" P = mat2tmat(F,def,K)">mat2tmat</a></li></TD>
+<TD>  Converts a matrix to a transition matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\kron.m">kron</a></li></TD>
+<TD>          Kronecker tensor product.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="smctp2stat.html" class="code" title=" [ro,ro_min,ro_max,Ro_min,Ro_max,QQ] = mctp2stat(P,F)">smctp2stat</a></li></TD>
+<TD>  Stationary distributions for a switching MCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/smctpsim.html" class="code" title=" [x,z,TT] = smctpsim(P,F,T,init,whatOut)">smctpsim</a></li></TD>
+<TD>  Simulates a switching Markov chain of turning points,</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [Q,QQ] = <a name="_sub0" href="#_subfunctions" class="code">smctp2joint</a>(P,F) 
+002 <span class="comment">%SMCTP2JOINT  Calculates the joint MCTP for a SMCTP. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL: [Q,QQ] = smctp2joint(P,F) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">% Q      = Cell array of min-max and max-min transition  </span>
+007 <span class="comment">%          matrices for joint MCTP.                   {1x2} </span>
+008 <span class="comment">% QQ     = Cell array of min-max and max-min transition  </span>
+009 <span class="comment">%          matrices matrices for SMCTP.               {rx2} </span>
+010 <span class="comment">% </span>
+011 <span class="comment">% P      = Transition matrix for regime process.      [rxr] </span>
+012 <span class="comment">% F      = Cell array of min-Max and Max-min matrices {rx2} </span>
+013 <span class="comment">% F{i,1} = min-Max matrix, process i                  [nxn] </span>
+014 <span class="comment">% F{i,2} = Max-min matrix, process i                  [nxn] </span>
+015 <span class="comment">% </span>
+016 <span class="comment">% If a matrix F{i,2}=[], then the process will </span>
+017 <span class="comment">% be assumed to be time-reversible. </span>
+018 <span class="comment">% </span>
+019 <span class="comment">% See also  smctp2stat, mctp2stat </span>
+020  
+021 <span class="comment">% Tested  on Matlab  5.3 </span>
+022 <span class="comment">% </span>
+023 <span class="comment">% History: </span>
+024 <span class="comment">% Updated by PJ 18-May-2000 </span>
+025 <span class="comment">%   updated for WAFO </span>
+026 <span class="comment">% Created by PJ (Pär Johannesson) 1999 </span>
+027  
+028 <span class="comment">% Check input arguments </span>
+029  
+030 ni = nargin; 
+031 no = nargout; 
+032 error(nargchk(2,2,ni)); 
+033  
+034 <span class="comment">% Define  </span>
+035  
+036 r = length(P);   <span class="comment">% Number of regime states </span>
+037 n = length(F{1,1});  <span class="comment">% Number of levels </span>
+038  
+039 <span class="comment">% Check that the rowsums of P are equal to 1 </span>
+040  
+041 P = <a href="mat2tmat.html" class="code" title="  Converts a matrix to a transition matrix.">mat2tmat</a>(P); 
+042  
+043 <span class="comment">% Normalize the rowsums of F{1,1},...,F{r,1} to 1 </span>
+044 <span class="comment">%  ==&gt;  QQ{1,1},...,QQ{r,1} </span>
+045  
+046 <span class="keyword">for</span> i = 1:r 
+047   QQ{i,1} = F{i,1}; 
+048   QQ{i,1} = <a href="mat2tmat.html" class="code" title="  Converts a matrix to a transition matrix.">mat2tmat</a>(QQ{i,1},1); 
+049 <span class="keyword">end</span> 
+050  
+051 <span class="comment">% Normalize the rowsums of F{1,2},...,F{r,2} to 1 </span>
+052 <span class="comment">%  ==&gt;  QQ{1,2},...,QQ{r,2} </span>
+053  
+054 <span class="keyword">for</span> i = 1:r 
+055    
+056   <span class="keyword">if</span> isempty(F{i,2})        <span class="comment">% Time-reversible </span>
+057     QQ{i,2} = F{i,1}'; 
+058   <span class="keyword">else</span>                   <span class="comment">% F{i,2} is given </span>
+059     QQ{i,2} = F{i,2};  
+060   <span class="keyword">end</span> 
+061      
+062   QQ{i,2} = <a href="mat2tmat.html" class="code" title="  Converts a matrix to a transition matrix.">mat2tmat</a>(QQ{i,2},-1); 
+063  
+064 <span class="keyword">end</span> 
+065  
+066 Q = cell(1,2); 
+067  
+068 <span class="comment">% Make the transition matrix Q for the joint min-Max process </span>
+069  
+070 Q{1,1} = zeros(n*r,n*r); 
+071 I = 0:r:(n-1)*r; 
+072 <span class="keyword">for</span> z=1:r 
+073   Q0 = kron(QQ{z,1},P); 
+074   Q{1,1}(I+z,:) = Q0(I+z,:); 
+075 <span class="keyword">end</span> 
+076  
+077  
+078 <span class="comment">% Make the transition matrix Qh for the joint Max-min process </span>
+079  
+080 Q{1,2} = zeros(n*r,n*r); 
+081 I = 0:r:(n-1)*r; 
+082 <span class="keyword">for</span> z=1:r 
+083   Q0 = kron(QQ{z,2},P); 
+084   Q{1,2}(I+z,:) = Q0(I+z,:); 
+085 <span class="keyword">end</span> 
+086</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

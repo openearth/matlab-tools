@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cocc</title>
+  <meta name="keywords" content="cocc">
+  <meta name="description" content=" Plots cycles as points together with isolines of a cycle matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; cocc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cocc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Plots cycles as points together with isolines of a cycle matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> cocc(param,cc,matrix,clevels,fs) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cocc.html" class="code" title=" Plots cycles as points together with isolines of a cycle matrix. ">COCC</a> Plots cycles as points together with isolines of a cycle matrix. 
+  
+  CALL: <a href="cocc.html" class="code" title=" Plots cycles as points together with isolines of a cycle matrix. ">cocc</a>(param,cc,matrix) 
+        <a href="cocc.html" class="code" title=" Plots cycles as points together with isolines of a cycle matrix. ">cocc</a>(param,cc,matrix,<a href="../../wafo/misc/clevels.html" class="code" title="  Extract the contour levels from the contour matrix">clevels</a>,psize) 
+  
+         param   = the parameter matrix. 
+         cc      = a two column matrix with cycles. 
+         matrix  = an  nxn  matrix. 
+         <a href="../../wafo/misc/clevels.html" class="code" title="  Extract the contour levels from the contour matrix">clevels</a> = a vector with <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> of isolines. 
+         psize   = point size, (defult value is 12). 
+  
+  Plots cycles of min- and max-values as a point process in the plane 
+   together with isolines of an input matrix. 
+  
+  Example: 
+    x=load('sea.dat'); 
+    tp = <a href="../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(x); 
+    rfc = <a href="tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(tp,'CS');           % Rainflow cycles 
+    RFM = <a href="dat2rfm.html" class="code" title="  Calculates the rainflow matrix from a time signal. ">dat2rfm</a>(x,0,[-3 3 100]);  % Rainflow matrix 
+    ERFM = <a href="rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>(RFM);     % Extrapoalted RFM 
+    <a href="cocc.html" class="code" title=" Plots cycles as points together with isolines of a cycle matrix. ">cocc</a>([-3 3 100],rfc,RFM); 
+    <a href="cocc.html" class="code" title=" Plots cycles as points together with isolines of a cycle matrix. ">cocc</a>([-3 3 100],rfc,ERFM); 
+  
+  See also  <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>, <a href="ccplot.html" class="code" title=" Plots a cycle count as a point process in the plane.">ccplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/figtext.html" class="code" title=" H = figtext(x,y,T,x_unit,y_unit,x_justify,y_justify,varargin)">figtext</a></li></TD>
+<TD> Places text in figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\contour.m">contour</a></li></TD>
+<TD>       Contour plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab4.html" class="code" title="This is a script file.">itmkurs_lab4</a></li></TD>
+<TD> Script to computer exercises 4</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/rfcdemo1.html" class="code" title=" [F_RFC] = refdemo1(demoNr,P,A,m,s2,param)">rfcdemo1</a></li></TD>
+<TD>  Demo for switching AR(1)-processes.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig10.html" class="code" title=" wafofig10">wafofig10</a></li></TD>
+<TD> Intensity of trough-crest cycles computed from  St</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig9.html" class="code" title=" wafofig9">wafofig9</a></li></TD>
+<TD>  Intensity of rainflow cycles computed from St</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">cocc</a>(param,cc,matrix,clevels,fs) 
+002 <span class="comment">%COCC Plots cycles as points together with isolines of a cycle matrix. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL: cocc(param,cc,matrix) </span>
+005 <span class="comment">%       cocc(param,cc,matrix,clevels,psize) </span>
+006 <span class="comment">% </span>
+007 <span class="comment">%        param   = the parameter matrix. </span>
+008 <span class="comment">%        cc      = a two column matrix with cycles. </span>
+009 <span class="comment">%        matrix  = an  nxn  matrix. </span>
+010 <span class="comment">%        clevels = a vector with levels of isolines. </span>
+011 <span class="comment">%        psize   = point size, (defult value is 12). </span>
+012 <span class="comment">% </span>
+013 <span class="comment">% Plots cycles of min- and max-values as a point process in the plane </span>
+014 <span class="comment">%  together with isolines of an input matrix. </span>
+015 <span class="comment">% </span>
+016 <span class="comment">% Example: </span>
+017 <span class="comment">%   x=load('sea.dat'); </span>
+018 <span class="comment">%   tp = dat2tp(x); </span>
+019 <span class="comment">%   rfc = tp2rfc(tp,'CS');           <span class="comment">% Rainflow cycles </span></span>
+020 <span class="comment">%   RFM = dat2rfm(x,0,[-3 3 100]);  <span class="comment">% Rainflow matrix </span></span>
+021 <span class="comment">%   ERFM = rfmextrapolate(RFM);     <span class="comment">% Extrapoalted RFM </span></span>
+022 <span class="comment">%   cocc([-3 3 100],rfc,RFM); </span>
+023 <span class="comment">%   cocc([-3 3 100],rfc,ERFM); </span>
+024 <span class="comment">% </span>
+025 <span class="comment">% See also  cmatplot, ccplot </span>
+026  
+027  
+028 <span class="comment">% Copyright (c) 2003 by Pär Johannesson </span>
+029  
+030 <span class="comment">% Tested  on Matlab  6.5 </span>
+031 <span class="comment">% </span>
+032 <span class="comment">% History: </span>
+033 <span class="comment">% Created from old version of WAFO (Jan-2001) </span>
+034 <span class="comment">% Updated by PJ 03-Jun-2003 </span>
+035  
+036 <span class="comment">% Check input arguments </span>
+037  
+038 <span class="keyword">if</span> nargin&lt;5 
+039   fs=[]; 
+040 <span class="keyword">end</span> 
+041  
+042 <span class="keyword">if</span> nargin&lt;4   
+043   clevels=[]; 
+044 <span class="keyword">end</span> 
+045  
+046 <span class="keyword">if</span> isempty(fs) 
+047   fs=12; 
+048 <span class="keyword">end</span> 
+049  
+050 <span class="keyword">if</span> isempty(clevels) 
+051   fmax=max(max(matrix)); 
+052   clevels=fmax*[0.005 0.01 0.02 0.05 0.1 0.2 0.4 0.6 0.8]; 
+053 <span class="keyword">end</span> 
+054  
+055 F = matrix'; 
+056 u=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param); 
+057 contour(u,u,F,clevels,<span class="string">'r'</span>) 
+058 axis(<span class="string">'square'</span>)   
+059  
+060 hold on 
+061 <span class="keyword">if</span> ~isempty(cc) 
+062   plot(cc(:,1),cc(:,2),<span class="string">'.'</span>,<span class="string">'markersize'</span>,fs)  <span class="comment">% PJ 970415 </span>
+063 <span class="keyword">end</span> 
+064 plot(param(1:2),param(1:2),<span class="string">'k--'</span>) 
+065 hold off 
+066 xlabel(<span class="string">'min'</span>) 
+067 ylabel(<span class="string">'Max'</span>) 
+068  
+069  clevels=sort(clevels); 
+070  n_clevels=length(clevels); 
+071  <span class="keyword">if</span> n_clevels&gt;12 
+072    disp(<span class="string">'   Only the first 12 levels will be listed in table.'</span>) 
+073    n_clevels=12; 
+074  <span class="keyword">end</span> 
+075  
+076 textstart_x=0.65; 
+077 textstart_y=0.45; 
+078 delta_y=1/33; 
+079 h=<a href="../../wafo/misc/figtext.html" class="code" title=" Places text in figure window.">figtext</a>(textstart_x,textstart_y,<span class="string">'Level curves at:'</span>,<span class="string">'norm'</span>); 
+080 set(h,<span class="string">'FontWeight'</span>,<span class="string">'Bold'</span>) 
+081  
+082 textstart_y=textstart_y-delta_y; 
+083  
+084 <span class="keyword">for</span> i=1:n_clevels 
+085   textstart_y=textstart_y-delta_y; 
+086   <a href="../../wafo/misc/figtext.html" class="code" title=" Places text in figure window.">figtext</a>(textstart_x,textstart_y,num2str(clevels(i)),<span class="string">'norm'</span>) 
+087 <span class="keyword">end</span> 
+088  
+089</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

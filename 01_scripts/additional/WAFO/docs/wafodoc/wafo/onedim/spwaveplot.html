@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spwaveplot</title>
+  <meta name="keywords" content="spwaveplot">
+  <meta name="description" content=" Plots specified waves from a timeseries">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; spwaveplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spwaveplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Plots specified waves from a timeseries</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> spwaveplot(xx,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="spwaveplot.html" class="code" title=" Plots specified waves from a timeseries">SPWAVEPLOT</a> Plots specified waves from a timeseries
+ 
+  CALL:  <a href="spwaveplot.html" class="code" title=" Plots specified waves from a timeseries">spwaveplot</a>(x1,x2,w_ind,tz_ind,sym1,sym2)
+ 
+       x1,x2 =  two-column timeseries 
+                first column sampling times [sec]
+                second column surface elevation [m]
+ 
+       w_ind = vector of indices to waves we want to plot, i.e., wave numbers. 
+      tz_ind = vector of indices to the beginning, middle and end of 
+               defining wave, i.e. for zero-downcrossing waves, indices to 
+               zerocrossings (default trough2trough wave)
+  sym1, sym2 = plot symbol and color for x1 and x2, respectively 
+                (see PLOT)  (default 'k-' and 'k+') 
+ 
+   Note: - sym1 and sym2 can be given anywhere after x1.
+            if omitted default values are used.
+          - x2 can  be omitted, but if given it must appear 
+            before the vectors w_ind, tz_ind
+ 
+  Example: Plot waves nr. 6,7,8 and waves nr. 12,13,...,17
+   x = load('sea.dat'); x1 = x(1:500,:);
+   <a href="spwaveplot.html" class="code" title=" Plots specified waves from a timeseries">spwaveplot</a>(x1,[6:8 12:17])
+ 
+  See also  <a href="waveplot.html" class="code" title=" Plots the surface elevation of timeseries.">waveplot</a>, <a href="dat2tc.html" class="code" title=" Extracts troughs and crests from data.">dat2tc</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dat2tc.html" class="code" title=" [tc, ind, l_ind]=dat2tc(x,v,wdef)">dat2tc</a></li></TD>
+<TD> Extracts troughs and crests from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\figure.m">figure</a></li></TD>
+<TD>        Create figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gcf.m">gcf</a></li></TD>
+<TD>           Get handle to current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\int2str.m">int2str</a></li></TD>
+<TD>       Convert integer to string (Fast version).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> [x2,Nsub,Nfig,Nwp,w_ind,tz_ind,sym1,sym2] = wavechk(P,x1)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">spwaveplot</a>(xx,varargin)
+002 <span class="comment">%SPWAVEPLOT Plots specified waves from a timeseries</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  spwaveplot(x1,x2,w_ind,tz_ind,sym1,sym2)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%      x1,x2 =  two-column timeseries </span>
+007 <span class="comment">%               first column sampling times [sec]</span>
+008 <span class="comment">%               second column surface elevation [m]</span>
+009 <span class="comment">%</span>
+010 <span class="comment">%      w_ind = vector of indices to waves we want to plot, i.e., wave numbers. </span>
+011 <span class="comment">%     tz_ind = vector of indices to the beginning, middle and end of </span>
+012 <span class="comment">%              defining wave, i.e. for zero-downcrossing waves, indices to </span>
+013 <span class="comment">%              zerocrossings (default trough2trough wave)</span>
+014 <span class="comment">% sym1, sym2 = plot symbol and color for x1 and x2, respectively </span>
+015 <span class="comment">%               (see PLOT)  (default 'k-' and 'k+') </span>
+016 <span class="comment">%</span>
+017 <span class="comment">%  Note: - sym1 and sym2 can be given anywhere after x1.</span>
+018 <span class="comment">%           if omitted default values are used.</span>
+019 <span class="comment">%         - x2 can  be omitted, but if given it must appear </span>
+020 <span class="comment">%           before the vectors w_ind, tz_ind</span>
+021 <span class="comment">%</span>
+022 <span class="comment">% Example: Plot waves nr. 6,7,8 and waves nr. 12,13,...,17</span>
+023 <span class="comment">%  x = load('sea.dat'); x1 = x(1:500,:);</span>
+024 <span class="comment">%  spwaveplot(x1,[6:8 12:17])</span>
+025 <span class="comment">%</span>
+026 <span class="comment">% See also  waveplot, dat2tc</span>
+027 
+028 <span class="comment">% Tested on: Matlab 6.0, 5.3, 5.2, 5.1</span>
+029 <span class="comment">% History:</span>
+030 <span class="comment">% revised jr 02.04.2001</span>
+031 <span class="comment">%  - updated example, documentation</span>
+032 <span class="comment">% revised pab 24.05.2000</span>
+033 <span class="comment">%  - improved order of input arguments</span>
+034 <span class="comment">%  - improved w_ind and plotting</span>
+035 <span class="comment">% revised pab 03.12.1999</span>
+036 <span class="comment">%  - updated documentation</span>
+037 <span class="comment">% by pab 11.08.99</span>
+038 
+039 [xx2,Nsub,Nfig,Nwp,w_ind,tz_ind,sym1,sym2] = <a href="#_sub1" class="code" title="sub  [x2,Nsub,Nfig,Nwp,w_ind,tz_ind,sym1,sym2] = wavechk(P,x1)">wavechk</a>(varargin,xx);
+040 
+041 
+042 <span class="keyword">for</span> iy=1:Nfig
+043   <span class="keyword">for</span> ix=1:Nsub,
+044     subplot(Nsub,1,mod(ix-1,Nsub)+1)
+045     ind= tz_ind(2*w_ind(ix)-1):tz_ind(2*w_ind(ix)+2*Nwp(ix)); <span class="comment">% indices to wave</span>
+046     plot(xx(ind,1),xx(ind,2),sym1);hold on <span class="comment">%plot wave</span>
+047     plot(xx([ind(1) ind(<span class="keyword">end</span>)],1),[0 0]),  <span class="comment">% plot zero level</span>
+048     
+049     <span class="keyword">if</span> ~isempty(xx2)
+050       ax = axis;
+051       axis([xx([ind(1) ind(<span class="keyword">end</span>)],1)' ax(3:4)]) <span class="comment">%make sure the axis does not change</span>
+052       plot(xx2(:,1),xx2(:,2),sym2) <span class="comment">% before we plot xx2 on top</span>
+053     <span class="keyword">end</span>
+054     hold off
+055     <span class="keyword">if</span> Nwp(ix)==1,
+056       ylabel([<span class="string">'Wave '</span>, int2str(w_ind(ix))])
+057     <span class="keyword">else</span>
+058       ylabel([<span class="string">'Wave '</span>, int2str(w_ind(ix)) <span class="string">'-'</span> int2str(w_ind(ix)+Nwp(ix)-1)])
+059     <span class="keyword">end</span> 
+060     
+061   <span class="keyword">end</span> <span class="comment">% Nsub</span>
+062   xlabel(<span class="string">'Time (sec)'</span>);
+063   <span class="keyword">if</span> (mod(ix-1,Nsub)+1==Nsub)&amp; iy~=Nfig, figure(gcf+1);  <span class="keyword">end</span>
+064 <span class="keyword">end</span> <span class="comment">% Nfig</span>
+065 
+066 
+067 <span class="keyword">function</span> [x2,Nsub,Nfig,Nwp,w_ind,tz_ind,sym1,sym2] = <a name="_sub1" href="#_subfunctions" class="code">wavechk</a>(P,x1)
+068 <span class="comment">%WAVECHK Helper function for spwaveplot.</span>
+069 <span class="comment">%</span>
+070 <span class="comment">% CALL  [x2, Nsub,Nf,w_ind,tz_ind,sym1,sym2]=wavechk(P,x1) </span>
+071 <span class="comment">%</span>
+072 <span class="comment">%   P = the cell array P of input arguments (between 0 and 7 elements)</span>
+073 <span class="comment">%  x1 = must be a two column vector.</span>
+074 
+075 
+076 
+077 Np=length(P);
+078 strix=zeros(1,Np);
+079 <span class="keyword">for</span> ix=1:Np, <span class="comment">% finding symbol strings </span>
+080  strix(ix)=ischar(P{ix});
+081 <span class="keyword">end</span>
+082 sym1=<span class="string">'k-'</span>; <span class="comment">% Black line is default</span>
+083 sym2=<span class="string">'k+'</span>; <span class="comment">% Black plus is default</span>
+084 k=find(strix);
+085 <span class="keyword">if</span> any(k)
+086   sym1=P{k(1)};
+087   Np=Np-1;
+088   <span class="keyword">if</span> length(k)&gt;1
+089     sym2=P{k(2)};
+090     Np=Np-1;
+091   <span class="keyword">end</span>
+092   P={P{find(~strix)}};
+093 <span class="keyword">end</span>
+094 
+095 
+096 x2=[];
+097 
+098 <span class="keyword">if</span> (Np&gt;0) &amp; (all(size(P{1})&gt;1))
+099   x2=P{1};
+100   P={P{2:Np}};
+101   Np=Np-1;
+102 <span class="keyword">end</span>
+103 
+104 <span class="keyword">if</span> (Np &gt;= 1) &amp; ~isempty(P{1})
+105 <span class="comment">% waveplot(x1,x2,Nsub)</span>
+106   w_ind=P{1};
+107 <span class="keyword">else</span>
+108   error(<span class="string">'w_ind must be given'</span>)
+109 <span class="keyword">end</span>
+110 
+111 <span class="keyword">if</span> (Np &gt;= 2) &amp; ~isempty(P{2})
+112   tz_ind=P{2};
+113 <span class="keyword">else</span>
+114   <span class="comment">%indmiss=isnan(x1(:,2)); <span class="comment">% indices to missing points</span></span>
+115   [tc tc_ind,tz_ind]=<a href="dat2tc.html" class="code" title=" Extracts troughs and crests from data.">dat2tc</a>(x1,0,<span class="string">'tw'</span>); <span class="comment">% finding trough to trough waves</span>
+116 <span class="keyword">end</span>
+117 
+118 Nw = length(w_ind);<span class="comment">%# waves</span>
+119 dw = find([0;abs(diff(w_ind(:)))&gt;1]);
+120 Nsub =length(dw)+1;
+121 Nwp=zeros(1,Nsub);
+122 <span class="keyword">if</span> Nsub&gt;1
+123   Nwp(Nsub)= w_ind(<span class="keyword">end</span>)-w_ind(dw(<span class="keyword">end</span>))+1;
+124   w_ind(dw(<span class="keyword">end</span>)+1:<span class="keyword">end</span>)=[];
+125   <span class="keyword">for</span> ix=Nsub-2:-2:1
+126     Nwp(ix+1) = w_ind(dw(ix+1)-1)-w_ind(dw(ix))+1; <span class="comment">% # of waves pr subplot</span>
+127     w_ind(dw(ix)+1:dw(ix+1)-1)=[];
+128   <span class="keyword">end</span>
+129   Nwp(1)= w_ind(dw(1)-1)-w_ind(1)+1;
+130   w_ind(2:dw(1)-1)=[];
+131 <span class="keyword">else</span>
+132   Nwp(1)= w_ind(<span class="keyword">end</span>)-w_ind(1)+1;
+133 <span class="keyword">end</span>
+134 
+135 Nsub=min(6,Nsub);
+136 Nfig=ceil(Nsub/6); 
+137 Nsub=min(6,ceil(Nsub/Nfig));
+138 
+139</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

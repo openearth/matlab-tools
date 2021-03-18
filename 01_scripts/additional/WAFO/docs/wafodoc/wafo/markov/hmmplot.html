@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of hmmplot</title>
+  <meta name="keywords" content="hmmplot">
+  <meta name="description" content="  plots a Hidden Markov Model.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">markov</a> &gt; hmmplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\markov&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>hmmplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  plots a Hidden Markov Model.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> hmmplot(x,z,t,z_range,Title,Ylabel,colType,fontsize) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="hmmplot.html" class="code" title="  plots a Hidden Markov Model.">HMMPLOT</a>  plots a Hidden Markov Model.
+ 
+  CALL: <a href="hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(x,z)
+        <a href="hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(x,z,t,z_range,Title,Ylabel,colType,fontsize)
+ 
+    x       = Switching process.
+    z       = Regime process.
+    t       = Time.
+    z_range = <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">Range</a> of regime, e.g. [1 3] for 3 regime states.
+    Title   = Title of plot.
+    Ylabel  = Y-label of x-plot.
+    colType = 0: One colour (default), 1: Different colours for each regime
+    fontsize= Fontsize of text.
+ 
+  Examples: Switching AR(1)-process. (Example 3 in thesis)
+    P= [0.975 0.02 0.005; 0.01 0.98 0.01; 0.005 0.02 0.975];
+    C = [1 1 1]';
+    A = [1 -0.5; 1 -0.3; 1 0.5];
+    m = [-1 0 3]';
+    s2 = [1 1 1.44]';
+    [x,z] = <a href="../../wafo/wsim/sarmasim.html" class="code" title="   Simulates a switching ARMA-process. ">sarmasim</a>(C,A,m,s2,P,500);
+    <a href="hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(x,z)
+    <a href="hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(x,z,(0:499)/400,[1 3],'Switching AR(1)-process','X(t)')
+    <a href="hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(x,z,[],[1 3],'','',1,20)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="get is a built-in method">get</a></li></TD>
+<TD>           Get object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\stairs.m">stairs</a></li></TD>
+<TD>        Stairstep plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab2.html" class="code" title="This is a script file.">itmkurs_lab2</a></li></TD>
+<TD> Script to computer exercises 2</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab4.html" class="code" title="This is a script file.">itmkurs_lab4</a></li></TD>
+<TD> Script to computer exercises 4</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/rfcdemo1.html" class="code" title=" [F_RFC] = refdemo1(demoNr,P,A,m,s2,param)">rfcdemo1</a></li></TD>
+<TD>  Demo for switching AR(1)-processes.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/rfcdemo2.html" class="code" title=" [F_RFC] = refdemo2(demoNr,P,param,x0,s,lam)">rfcdemo2</a></li></TD>
+<TD> Rainflow matrix for Switching Markov Chains of Turning Points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/test/test_markov.html" class="code" title="This is a script file.">test_markov</a></li></TD>
+<TD> Quick test of the routines in module 'markov'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">hmmplot</a>(x,z,t,z_range,Title,Ylabel,colType,fontsize)
+002 <span class="comment">% HMMPLOT  plots a Hidden Markov Model.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: hmmplot(x,z)</span>
+005 <span class="comment">%       hmmplot(x,z,t,z_range,Title,Ylabel,colType,fontsize)</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%   x       = Switching process.</span>
+008 <span class="comment">%   z       = Regime process.</span>
+009 <span class="comment">%   t       = Time.</span>
+010 <span class="comment">%   z_range = Range of regime, e.g. [1 3] for 3 regime states.</span>
+011 <span class="comment">%   Title   = Title of plot.</span>
+012 <span class="comment">%   Ylabel  = Y-label of x-plot.</span>
+013 <span class="comment">%   colType = 0: One colour (default), 1: Different colours for each regime</span>
+014 <span class="comment">%   fontsize= Fontsize of text.</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% Examples: Switching AR(1)-process. (Example 3 in thesis)</span>
+017 <span class="comment">%   P= [0.975 0.02 0.005; 0.01 0.98 0.01; 0.005 0.02 0.975];</span>
+018 <span class="comment">%   C = [1 1 1]';</span>
+019 <span class="comment">%   A = [1 -0.5; 1 -0.3; 1 0.5];</span>
+020 <span class="comment">%   m = [-1 0 3]';</span>
+021 <span class="comment">%   s2 = [1 1 1.44]';</span>
+022 <span class="comment">%   [x,z] = sarmasim(C,A,m,s2,P,500);</span>
+023 <span class="comment">%   hmmplot(x,z)</span>
+024 <span class="comment">%   hmmplot(x,z,(0:499)/400,[1 3],'Switching AR(1)-process','X(t)')</span>
+025 <span class="comment">%   hmmplot(x,z,[],[1 3],'','',1,20)</span>
+026 
+027 <span class="comment">% Copyright (c) 1997 by Pär Johannesson</span>
+028 <span class="comment">% Toolbox: Rainflow Cycles for Switching Processes V.1.0, 2-Oct-1997</span>
+029 
+030 <span class="keyword">if</span> nargin&lt;3, t=[]; <span class="keyword">end</span>
+031 <span class="keyword">if</span> nargin&lt;4, z_range=[]; <span class="keyword">end</span>
+032 <span class="keyword">if</span> nargin&lt;5, Title = <span class="string">''</span>; <span class="keyword">end</span>
+033 <span class="keyword">if</span> nargin&lt;6, Ylabel=<span class="string">''</span>; <span class="keyword">end</span>
+034 <span class="keyword">if</span> nargin&lt;7, colType=0; <span class="keyword">end</span>
+035 <span class="keyword">if</span> nargin&lt;8, fontsize=[]; <span class="keyword">end</span>
+036 
+037 <span class="keyword">if</span> isempty(t)
+038   t = (1:length(x))';
+039 <span class="keyword">end</span>
+040 
+041 <span class="keyword">if</span> isempty(z_range)
+042   zmin = min(z); zmax = max(z);
+043 <span class="keyword">else</span>
+044   zmin = z_range(1); zmax = z_range(2);
+045 <span class="keyword">end</span>
+046 
+047 tmin = min(t);
+048 tmax = max(t);
+049 
+050 subplot(2,1,1)
+051 <span class="keyword">if</span> colType == 0
+052   plot(t,x)
+053 <span class="keyword">elseif</span> colType == 1
+054   col = get(gca,<span class="string">'ColorOrder'</span>);
+055   i0=1; n=length(x);
+056   slut=0;
+057   <span class="keyword">while</span> ~slut
+058     I=(find(z(i0:n)~=z(i0)));
+059     <span class="keyword">if</span> ~isempty(I)
+060       i1 = min(I) + i0-1;
+061     <span class="keyword">else</span>
+062       i1=n; slut = 1;
+063     <span class="keyword">end</span>
+064     plot(t(i0:i1),x(i0:i1),<span class="string">'Color'</span>,col(z(i0),:));
+065     i0=i1;
+066     hold on
+067   <span class="keyword">end</span>
+068 <span class="keyword">end</span>
+069 
+070 v=axis; axis([tmin tmax v(3:4)])
+071 h1=gca;
+072 <span class="keyword">if</span> ~isempty(fontsize), set(h1,<span class="string">'Fontsize'</span>,fontsize); <span class="keyword">end</span>
+073 pos1 = get(h1,<span class="string">'Position'</span>);
+074 title(Title); ylabel(Ylabel);
+075 
+076 subplot(2,1,2)
+077 <span class="keyword">if</span> colType == 0
+078   stairs(t,z)
+079 <span class="keyword">elseif</span> colType == 1
+080   i0=1; n=length(x);
+081   slut=0;
+082   <span class="keyword">while</span> ~slut
+083     I=(find(z(i0:n)~=z(i0)));
+084     <span class="keyword">if</span> ~isempty(I)
+085       i1 = min(I) + i0-1;
+086     <span class="keyword">else</span>
+087       i1=n; slut = 1;
+088     <span class="keyword">end</span>
+089     [XX,YY] = stairs(t(i0:i1),z(i0:i1));
+090     plot(XX,YY,<span class="string">'Color'</span>,col(z(i0),:));
+091     i0=i1;
+092     hold on
+093   <span class="keyword">end</span>
+094 <span class="keyword">end</span>
+095 
+096 axis([tmin tmax zmin-0.5 zmax+0.5]);
+097 h2=gca;
+098 <span class="keyword">if</span> ~isempty(fontsize), set(h2,<span class="string">'Fontsize'</span>,fontsize); <span class="keyword">end</span>
+099 
+100 pos2 = get(h2,<span class="string">'Position'</span>);
+101 
+102 Pos2 = pos2; Pos2(4)=.1;
+103 Pos1 = pos1; Pos1(2) = Pos2(2)+Pos2(4)+0.02; Pos1(4) = pos1(4)+pos1(2)-Pos1(2);
+104 
+105 set(h1,<span class="string">'Position'</span>,Pos1);
+106 set(h2,<span class="string">'Position'</span>,Pos2);
+107 
+108 set(h1,<span class="string">'XTickLabel'</span>,[]);
+109 set(h2,<span class="string">'YTick'</span>,zmin:zmax);
+110</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

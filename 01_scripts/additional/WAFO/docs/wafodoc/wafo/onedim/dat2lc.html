@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dat2lc</title>
+  <meta name="keywords" content="dat2lc">
+  <meta name="description" content=" Extracts level-crossing spectrum from data,">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; dat2lc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dat2lc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Extracts level-crossing spectrum from data,</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> lc = dat2lc(x,h,def); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">DAT2LC</a> Extracts level-crossing spectrum from data, 
+        optionally rainflowfiltered. 
+ 
+  CALL:  lc = <a href="dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">dat2lc</a>(x,h,def);
+ 
+   x  = two column data matrix with sampled times and values.
+   h  = a threshold; 
+        if  h&lt;=0, then a sequence of turning points is used (default); 
+        if  h&gt;0, then rainflow filtered cycles are used
+  def = 1, only upcrossings.
+        2, upcrossings and maxima (default).
+        3, upcrossings, minima, and maxima.
+        4, upcrossings and minima.
+ 
+   lc = two column matrix with <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> and number of upcrossings,
+         i.e., level-crossing spectrum.
+ 
+  Example: 
+   x = load('sea.dat'); 
+   lc = <a href="dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">dat2lc</a>(x,0.2,1);
+   <a href="lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a>(lc)  
+   plot(lc(:,1),lc(:,2))
+ 
+   See also  <a href="dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>, <a href="mm2lc.html" class="code" title=" Extracts level-crossing spectrum from min2Max cycles.   ">mm2lc</a>, <a href="dat2crossind.html" class="code" title=" Finds indices to level v down and/or upcrossings from data">dat2crossind</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="mm2lc.html" class="code" title=" [lc,alpha] = mm2lc(mm,def,plotflag,sa)">mm2lc</a></li></TD>
+<TD> Extracts level-crossing spectrum from min2Max cycles.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/lc2sdat.html" class="code" title=" process=lc2sdat(lc,N,alpha)">lc2sdat</a></li></TD>
+<TD> Simulates process with given irregularity factor and crossing spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> lc = <a name="_sub0" href="#_subfunctions" class="code">dat2lc</a>(x,h,def);
+002 <span class="comment">%DAT2LC Extracts level-crossing spectrum from data, </span>
+003 <span class="comment">%       optionally rainflowfiltered. </span>
+004 <span class="comment">%</span>
+005 <span class="comment">% CALL:  lc = dat2lc(x,h,def);</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%  x  = two column data matrix with sampled times and values.</span>
+008 <span class="comment">%  h  = a threshold; </span>
+009 <span class="comment">%       if  h&lt;=0, then a sequence of turning points is used (default); </span>
+010 <span class="comment">%       if  h&gt;0, then rainflow filtered cycles are used</span>
+011 <span class="comment">% def = 1, only upcrossings.</span>
+012 <span class="comment">%       2, upcrossings and maxima (default).</span>
+013 <span class="comment">%       3, upcrossings, minima, and maxima.</span>
+014 <span class="comment">%       4, upcrossings and minima.</span>
+015 <span class="comment">%</span>
+016 <span class="comment">%  lc = two column matrix with levels and number of upcrossings,</span>
+017 <span class="comment">%        i.e., level-crossing spectrum.</span>
+018 <span class="comment">%</span>
+019 <span class="comment">% Example: </span>
+020 <span class="comment">%  x = load('sea.dat'); </span>
+021 <span class="comment">%  lc = dat2lc(x,0.2,1);</span>
+022 <span class="comment">%  lcplot(lc)  </span>
+023 <span class="comment">%  plot(lc(:,1),lc(:,2))</span>
+024 <span class="comment">%</span>
+025 <span class="comment">%  See also  dat2tp, mm2lc, dat2crossind</span>
+026 
+027 <span class="comment">%</span>
+028 <span class="comment">% Tested on: matlab 6.0, 5.3, 5.2, 5.1</span>
+029 <span class="comment">% History:</span>
+030 <span class="comment">% revised jr 02.04.2001</span>
+031 <span class="comment">%  - added example, updated info</span>
+032 <span class="comment">% revised pab 30.12.2000</span>
+033 <span class="comment">%  - added internal plotflag</span>
+034 <span class="comment">% revised pab 24.11.2000</span>
+035 <span class="comment">% by  Per A. Brodtkorb 11.08.99</span>
+036 <span class="comment">%</span>
+037 
+038 error(nargchk(1,3,nargin))
+039 plotflag=0;
+040 <span class="keyword">if</span> nargin&lt;2|isempty(h),  h=0; <span class="keyword">end</span>
+041 <span class="keyword">if</span> nargin&lt;3|isempty(def),  def=2; <span class="keyword">end</span>
+042 
+043 tp=<a href="dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(x,max(h,0));
+044 [n m]= size(tp);
+045 mM = [tp(1:2:n-1,m) tp(2:2:n,m)];
+046 
+047 <span class="keyword">if</span> plotflag
+048    lc = <a href="mm2lc.html" class="code" title=" Extracts level-crossing spectrum from min2Max cycles.   ">mm2lc</a>(mM,def,1,std(x(:,2)));
+049 <span class="keyword">else</span>
+050   lc = <a href="mm2lc.html" class="code" title=" Extracts level-crossing spectrum from min2Max cycles.   ">mm2lc</a>(mM,def,0);
+051 <span class="keyword">end</span>
+052 
+053 
+054</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

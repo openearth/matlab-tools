@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of rmcmat2cmat</title>
+  <meta name="keywords" content="rmcmat2cmat">
+  <meta name="description" content=" Converts a cycle matrix from Range-Mean format to min-max format.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; rmcmat2cmat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>rmcmat2cmat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Converts a cycle matrix from Range-Mean format to min-max format.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F,param] = rmcmat2cmat(Frm,paramM,paramR) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="rmcmat2cmat.html" class="code" title=" Converts a cycle matrix from Range-Mean format to min-max format.">RMCMAT2CMAT</a> Converts a cycle matrix from <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">Range</a>-Mean format to min-max format.
+ 
+  CALL:  F = <a href="rmcmat2cmat.html" class="code" title=" Converts a cycle matrix from Range-Mean format to min-max format.">rmcmat2cmat</a>(Frm);
+        [F,param] = <a href="rmcmat2cmat.html" class="code" title=" Converts a cycle matrix from Range-Mean format to min-max format.">rmcmat2cmat</a>(Frm,paramM,paramR);
+  Output:
+    F      = Cycle matrix in min-max format.   [nxn]
+    param  = [a b n] ; defines discretization of <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>.
+  Input: 
+    Frm    = Cycle matrix in <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>-mean format.   [nxn]
+    paramM = [a b n] ; defines discretization of mean-values.
+    paramR = [a b n] ; defines discretization of ranges.
+ 
+  NB! Due to different discretizations for Frm and F,
+      the mean values will not be identical.
+ 
+  See also  <a href="cmat2rmcmat.html" class="code" title="  Converts a cycle matrix from Range-Mean format to min-max format.">cmat2rmcmat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [F,param] = <a name="_sub0" href="#_subfunctions" class="code">rmcmat2cmat</a>(Frm,paramM,paramR)
+002 <span class="comment">% RMCMAT2CMAT Converts a cycle matrix from Range-Mean format to min-max format.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  F = rmcmat2cmat(Frm);</span>
+005 <span class="comment">%       [F,param] = rmcmat2cmat(Frm,paramM,paramR);</span>
+006 <span class="comment">% Output:</span>
+007 <span class="comment">%   F      = Cycle matrix in min-max format.   [nxn]</span>
+008 <span class="comment">%   param  = [a b n] ; defines discretization of levels.</span>
+009 <span class="comment">% Input: </span>
+010 <span class="comment">%   Frm    = Cycle matrix in range-mean format.   [nxn]</span>
+011 <span class="comment">%   paramM = [a b n] ; defines discretization of mean-values.</span>
+012 <span class="comment">%   paramR = [a b n] ; defines discretization of ranges.</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% NB! Due to different discretizations for Frm and F,</span>
+015 <span class="comment">%     the mean values will not be identical.</span>
+016 <span class="comment">%</span>
+017 <span class="comment">% See also  cmat2rmcmat</span>
+018 
+019 <span class="comment">% Tested  on Matlab  5.3</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% History:</span>
+022 <span class="comment">% Revised by PJ 18-May-2000</span>
+023 <span class="comment">%   Updated help text.</span>
+024 <span class="comment">% Created by PJ (Pär Johannesson) 12-Apr-2000</span>
+025 
+026 <span class="comment">% Check input arguments</span>
+027 
+028 ni = nargin;
+029 no = nargout;
+030 error(nargchk(1,4,ni));
+031 
+032 <span class="comment">% Initiate matirces</span>
+033 n = length(Frm);
+034 F = zeros(n,n);
+035 
+036 <span class="comment">% Convert</span>
+037 
+038 <span class="keyword">for</span> r = 1:n
+039   <span class="keyword">for</span> m = 1:n
+040     <span class="keyword">if</span> Frm(r,m) ~= 0
+041       i = ceil(m-(r-1)/2);
+042       j = ceil(m+(r-1)/2);
+043       <span class="keyword">if</span> i&lt;1 | i&gt;n, 
+044         warning([<span class="string">'minimum out of range ('</span> num2str(i) <span class="string">'). Setting to boundary of [1,'</span> num2str(n) <span class="string">'].'</span>]);
+045         i = min(max(i,1),n);
+046       <span class="keyword">end</span>
+047       <span class="keyword">if</span> j&lt;1 | j&gt;n, 
+048         warning([<span class="string">'Maximum out of range ('</span> num2str(j) <span class="string">'). Setting to boundary [1,'</span> num2str(n) <span class="string">'].'</span>]);
+049         j = min(max(j,1),n);
+050       <span class="keyword">end</span>
+051       F(i,j) = Frm(r,m);
+052     <span class="keyword">end</span>
+053   <span class="keyword">end</span>
+054 <span class="keyword">end</span>
+055 
+056 <span class="keyword">if</span> ni&gt;1
+057   param = paramM;
+058 <span class="keyword">end</span>
+059</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

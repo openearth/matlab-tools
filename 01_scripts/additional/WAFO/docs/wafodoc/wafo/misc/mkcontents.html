@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mkcontents</title>
+  <meta name="keywords" content="mkcontents">
+  <meta name="description" content=" Makes Contents file in current working directory.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; mkcontents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mkcontents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Makes Contents file in current working directory.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> contstr = mkcontents(h1line,wver,srt, cfile) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="mkcontents.html" class="code" title=" Makes Contents file in current working directory. ">MKCONTENTS</a> Makes <a href="Contents.html" class="code" title="  Module MISC in WAFO Toolbox. ">Contents</a> file in current working directory. 
+  
+   CALL:  contstr = <a href="mkcontents.html" class="code" title=" Makes Contents file in current working directory. ">mkcontents</a>(H1line,version,sort,cfile); 
+  
+   contstr = character array containing the H1 lines of all the files in 
+             the directory. 
+   H1line  = string inserted as the first line of the file specified in 
+             cfile. (default: same as the old version of cfile if it 
+             exists otherwise the directory name is used)  
+   version = Version number (default: version number of old cfile 
+             incremented by one otherwise '1.0.0') 
+   sort    = 0 Do not sort by function name (default) 
+             1 Sort by H1 line 
+             2 Sort by function name 
+             3 Sort by the inverse function name 
+   cfile   = string containing the name of the file contstr  should be 
+             written to.  (Default 'Contents.m')  
+             If ischar(cfile)==0 then  no file is made. 
+  
+  It is worth noting that any editing done to a previous  
+  version of CFILE will be lost. Only the H1 line from the 
+  old version are copied to the new version. 
+  It is assumed that the 2 first lines of the old <a href="Contents.html" class="code" title="  Module MISC in WAFO Toolbox. ">Contents</a> file is of the 
+  form: 
+  
+      % Toolbox Description 
+      % Version &lt;Number&gt;  &lt;Release&gt;   dd-mm-yyyy 
+  
+   This form ensures that VER is able to read the version info from the 
+   <a href="Contents.html" class="code" title="  Module MISC in WAFO Toolbox. ">Contents</a>.m file. 
+  
+  Example 
+   <a href="mkcontents.html" class="code" title=" Makes Contents file in current working directory. ">mkcontents</a>('Test Toolbox',1.1,2) 
+   ver test 
+  
+  See also  <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">geth1line</a>, ver</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="geth1line.html" class="code" title=" H1 = geth1line(filename,format,N)">geth1line</a></li></TD>
+<TD> Extracts the first comment line (the H1 line) of a m-file</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\@inline\char.m">char</a></li></TD>
+<TD>          Create character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\computer.m">computer</a></li></TD>
+<TD>      Computer type.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\copyfile.m">copyfile</a></li></TD>
+<TD>      Copy file or directory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\date.m">date</a></li></TD>
+<TD>          Current date as date string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="delete is a built-in method">delete</a></li></TD>
+<TD>        Delete file or graphics object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\dos.m">dos</a></li></TD>
+<TD>           Execute DOS command and return result.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\@double\exist.bi">exist</a></li></TD>
+<TD>         Check if variables or functions are defined.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fclose.m">fclose</a></li></TD>
+<TD>        Close file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fgetl.m">fgetl</a></li></TD>
+<TD>         Read line from file, discard newline character.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\fileparts.m">fileparts</a></li></TD>
+<TD>     Filename parts.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\filesep.m">filesep</a></li></TD>
+<TD>       Directory separator for this platform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\findstr.bi">findstr</a></li></TD>
+<TD>       Find one string within another.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fopen.m">fopen</a></li></TD>
+<TD>         Open file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\fullfile.m">fullfile</a></li></TD>
+<TD>      Build full filename from parts.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isnumeric.m">isnumeric</a></li></TD>
+<TD>     True for numeric arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@double\isspace.bi">isspace</a></li></TD>
+<TD>       True for white space characters.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\pwd.m">pwd</a></li></TD>
+<TD>           Show (print) current working directory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2num.m">str2num</a></li></TD>
+<TD>       Convert string matrix to numeric array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@cell\strtok.m">strtok</a></li></TD>
+<TD>        Find token in string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="struct is a built-in method">struct</a></li></TD>
+<TD>        Create or convert to structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\upper.bi">upper</a></li></TD>
+<TD>         Convert string to uppercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\what.m">what</a></li></TD>
+<TD>          List MATLAB-specific files in directory.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> [tname, dirname] = gettbname;</a></li><li><a href="#_sub2" class="code"> s = getverinfo(cfile)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> contstr = <a name="_sub0" href="#_subfunctions" class="code">mkcontents</a>(h1line,wver,srt, cfile) 
+002 <span class="comment">%MKCONTENTS Makes Contents file in current working directory. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  contstr = mkcontents(H1line,version,sort,cfile); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%  contstr = character array containing the H1 lines of all the files in </span>
+007 <span class="comment">%            the directory. </span>
+008 <span class="comment">%  H1line  = string inserted as the first line of the file specified in </span>
+009 <span class="comment">%            cfile. (default: same as the old version of cfile if it </span>
+010 <span class="comment">%            exists otherwise the directory name is used)  </span>
+011 <span class="comment">%  version = Version number (default: version number of old cfile </span>
+012 <span class="comment">%            incremented by one otherwise '1.0.0') </span>
+013 <span class="comment">%  sort    = 0 Do not sort by function name (default) </span>
+014 <span class="comment">%            1 Sort by H1 line </span>
+015 <span class="comment">%            2 Sort by function name </span>
+016 <span class="comment">%            3 Sort by the inverse function name </span>
+017 <span class="comment">%  cfile   = string containing the name of the file contstr  should be </span>
+018 <span class="comment">%            written to.  (Default 'Contents.m')  </span>
+019 <span class="comment">%            If ischar(cfile)==0 then  no file is made. </span>
+020 <span class="comment">% </span>
+021 <span class="comment">% It is worth noting that any editing done to a previous  </span>
+022 <span class="comment">% version of CFILE will be lost. Only the H1 line from the </span>
+023 <span class="comment">% old version are copied to the new version. </span>
+024 <span class="comment">% It is assumed that the 2 first lines of the old Contents file is of the </span>
+025 <span class="comment">% form: </span>
+026 <span class="comment">% </span>
+027 <span class="comment">%     <span class="comment">% Toolbox Description </span></span>
+028 <span class="comment">%     <span class="comment">% Version &lt;Number&gt;  &lt;Release&gt;   dd-mm-yyyy </span></span>
+029 <span class="comment">% </span>
+030 <span class="comment">%  This form ensures that VER is able to read the version info from the </span>
+031 <span class="comment">%  Contents.m file. </span>
+032 <span class="comment">% </span>
+033 <span class="comment">% Example </span>
+034 <span class="comment">%  mkcontents('Test Toolbox',1.1,2) </span>
+035 <span class="comment">%  ver test </span>
+036 <span class="comment">% </span>
+037 <span class="comment">% See also  geth1line, ver </span>
+038  
+039 <span class="comment">% Tested on: Matlab 5.3 </span>
+040 <span class="comment">% History: </span>
+041 <span class="comment">% revised pab 30.10.2003  </span>
+042 <span class="comment">% renamed from mkcont to mkcontents   </span>
+043 <span class="comment">% revised pab 7.12.2000 </span>
+044 <span class="comment">%  - changed name to mkcontents </span>
+045 <span class="comment">%  - added H1txt, wver to input </span>
+046 <span class="comment">%  - more options for srt. </span>
+047 <span class="comment">% Revised by pab 08.10.1999 </span>
+048 <span class="comment">%  - added sorting </span>
+049 <span class="comment">%  - changed call to mkcont </span>
+050 <span class="comment">% by jr 27.09.1999 </span>
+051  
+052 <span class="keyword">if</span> (nargin&lt;3|isempty(srt)), 
+053   srt   = 0; 
+054 <span class="keyword">end</span> 
+055 <span class="keyword">if</span> (nargin&lt;4|isempty(cfile)), 
+056   cfile = <span class="string">'Contents.m'</span>;  
+057 <span class="keyword">elseif</span> ischar(cfile) 
+058   cfile = [strtok(cfile,<span class="string">'.'</span>),<span class="string">'.m'</span> ]; 
+059 <span class="keyword">end</span> 
+060  
+061  
+062 vinfo = []; 
+063 <span class="keyword">if</span> ischar(cfile) &amp; exist(fullfile(pwd,cfile)) ~= 0,  
+064   <span class="keyword">if</span> isempty(vinfo), 
+065     vinfo  = <a href="#_sub2" class="code" title="sub  s = getverinfo(cfile)">getverinfo</a>(fullfile(pwd,cfile)); 
+066   <span class="keyword">end</span> 
+067   disp([<span class="string">'There allready exist a '</span>, cfile , <span class="string">' in this directory'</span>]) 
+068   disp([<span class="string">'Copied this file to '</span>, cfile  <span class="string">'old'</span>]) 
+069   <span class="comment">%Make backup copy before overwriting cfile </span>
+070   copyfile(cfile,[cfile <span class="string">'old'</span>]); 
+071   delete(cfile) 
+072 <span class="keyword">end</span> 
+073 <span class="keyword">if</span> nargin&lt;1|isempty(h1line), 
+074   <span class="keyword">if</span> ~isempty(vinfo)&amp;~isempty(vinfo.Name) , <span class="comment">% Use old H1 line </span>
+075     h1line = vinfo.Name; 
+076   <span class="keyword">else</span> 
+077     [tname , dirname] = <a href="#_sub1" class="code" title="sub  [tname, dirname] = gettbname;">gettbname</a>; 
+078     <span class="comment">% Create new H1 line based on directory name </span>
+079     h1line = [ tname    <span class="string">' Toolbox '</span> dirname];  
+080   <span class="keyword">end</span> 
+081 <span class="keyword">end</span> 
+082  
+083 <span class="keyword">if</span> nargin&lt;2|isempty(wver),  
+084   <span class="keyword">if</span> isempty(vinfo),  
+085     wver = <span class="string">'1.0.0'</span>; 
+086   <span class="keyword">else</span> 
+087     wver = vinfo.Version; 
+088   <span class="keyword">end</span> 
+089   ind  = findstr(wver,<span class="string">'.'</span>); 
+090   <span class="keyword">if</span> isempty(ind), 
+091     wver = [wver <span class="string">'.1'</span>]; 
+092   <span class="keyword">else</span> 
+093     vr   = str2num(wver(ind(<span class="keyword">end</span>)+1:<span class="keyword">end</span>))+1; <span class="comment">% update version </span>
+094     wver = [wver(1:ind(<span class="keyword">end</span>)) num2str(vr)]; 
+095   <span class="keyword">end</span> 
+096 <span class="keyword">elseif</span> isnumeric(wver) 
+097   wver = num2str(wver); <span class="comment">% make sure it is a string </span>
+098 <span class="keyword">end</span> 
+099  
+100  
+101 contstr = <span class="string">''</span>; 
+102 file    = what; 
+103 Nff     = length(file.m); 
+104 <span class="keyword">if</span> (Nff==0), 
+105   warning(<span class="string">'No m-files found in this directory'</span>) 
+106   <span class="keyword">return</span> 
+107 <span class="keyword">end</span> 
+108 <span class="keyword">if</span> strcmpi(computer,<span class="string">'pcwin'</span>) 
+109   file.m = lower(file.m); 
+110 <span class="keyword">end</span> 
+111  
+112  
+113 Nf     = size(char(file.m),2)-1; <span class="comment">% Size of filenames </span>
+114 tmp    = cell(Nff,1); 
+115 fn     = tmp; 
+116 ind    = zeros(Nff,1); 
+117 <span class="keyword">for</span> ix=1:Nff     
+118   disp([<span class="string">'Processing file: '</span> file.m{ix}]) 
+119   tmp{ix} = <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">geth1line</a>(file.m{ix},1,Nf); <span class="comment">% Extract a formatted H1 line </span>
+120   <span class="keyword">if</span> ~isempty(tmp{ix})&amp;~strcmpi(file.m{ix},<span class="string">'contents.m'</span>) 
+121     ind(ix) = 1; 
+122     fn{ix}  = fliplr(file.m{ix}); 
+123   <span class="keyword">end</span> 
+124 <span class="keyword">end</span> 
+125 <span class="comment">%tmp </span>
+126 ind = find(ind); 
+127 <span class="keyword">switch</span> srt 
+128   <span class="keyword">case</span> 1, <span class="comment">% make a sorted character array </span>
+129     contstr1 = sort(tmp(ind));  
+130   <span class="keyword">case</span> 2, <span class="comment">% Sort by file name  </span>
+131     [t I] = sort(file.m(ind)); 
+132     contstr1 = tmp(ind(I)); 
+133   <span class="keyword">case</span> 3, <span class="comment">% Sort by the inverse filename </span>
+134     [t I] = sort(fn(ind)); 
+135     contstr1 = tmp(ind(I)); 
+136   <span class="keyword">otherwise</span> <span class="comment">% No sorting  </span>
+137     contstr1 = tmp(ind);       <span class="comment">% make character array </span>
+138 <span class="keyword">end</span> 
+139 contstr = char(contstr1); 
+140 <span class="keyword">if</span> ~ischar(cfile),  
+141   disp(h1line) 
+142   disp([<span class="string">'Version '</span>, wver,<span class="string">'   '</span>,date]) 
+143   disp(<span class="string">' '</span>) 
+144   disp(<span class="string">' '</span>) 
+145   disp(contstr), 
+146   <span class="keyword">return</span>,  
+147 <span class="keyword">end</span> 
+148  
+149 disp([<span class="string">'Creating '</span> cfile  <span class="string">' in '</span> pwd]) 
+150 fid = fopen(cfile,<span class="string">'wt'</span>); <span class="comment">% open a text file </span>
+151 <span class="comment">% Write Header lines </span>
+152 prstr=<span class="string">'%'</span>; 
+153 fprintf(fid,<span class="string">'%s \n'</span>,[<span class="string">'% '</span>, h1line]); 
+154 fprintf(fid,<span class="string">'%s \n'</span>,[<span class="string">'% Version '</span>, wver,<span class="string">'   '</span>,date]); 
+155 fprintf(fid,<span class="string">'%s \n'</span>,prstr); 
+156 fprintf(fid,<span class="string">'%s \n'</span>,prstr); 
+157  
+158 <span class="comment">% Write contents lines </span>
+159 <span class="keyword">if</span> 1, 
+160   fprintf(fid,[<span class="string">'%% %s \n'</span>],contstr1{:}); 
+161 <span class="keyword">else</span> 
+162   <span class="keyword">for</span> ix=1:size(contstr,1), 
+163     fprintf(fid,[<span class="string">'%s \n'</span>],[<span class="string">'% '</span>, deblank(contstr(ix,:)) ] ); 
+164   <span class="keyword">end</span> 
+165 <span class="keyword">end</span> 
+166 fclose(fid); 
+167 <span class="comment">% Change permissions on cfile  </span>
+168 <span class="comment">% only valid for Unix systems, no effect in Win32 systems </span>
+169 [s,msg] = dos([<span class="string">'chmod go+r '</span> cfile]); 
+170  
+171 <span class="keyword">return</span> 
+172  
+173    
+174  
+175 <span class="keyword">function</span> [tname, dirname] = <a name="_sub1" href="#_subfunctions" class="code">gettbname</a>; 
+176      
+177 wafop     = <a href="../../wafo/waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>; 
+178 ind       = find(wafop==filesep); 
+179 wafodname =  wafop(ind(<span class="keyword">end</span>)+1:<span class="keyword">end</span>);  
+180 pwdstr    = pwd; 
+181  
+182 ind = findstr(pwdstr,wafodname); 
+183   
+184 <span class="keyword">if</span> isempty(ind) 
+185   <span class="comment">% name of directory is the name of the toolbox </span>
+186   [parentDir,tname] = fileparts(pwdstr); 
+187   tname           = upper(tname); 
+188   dirname         = <span class="string">''</span>;                    
+189 <span class="keyword">else</span> 
+190   tname   = upper(wafodname); 
+191   Nwf     = length(wafodname);  
+192   dirname = pwdstr(ind(1)+Nwf:<span class="keyword">end</span>) ; <span class="comment">% name of sub directory of toolbox </span>
+193 <span class="keyword">end</span> 
+194 <span class="keyword">return</span> 
+195  
+196 <span class="keyword">function</span> s = <a name="_sub2" href="#_subfunctions" class="code">getverinfo</a>(cfile) 
+197 s =  struct(<span class="string">'Name'</span>,<span class="string">''</span>,<span class="string">'Version'</span>,{},<span class="string">'Release'</span>,{},<span class="string">'Date'</span>,{}); 
+198  
+199 fid = fopen([strtok(cfile,<span class="string">'.'</span>),<span class="string">'.m'</span>],<span class="string">'rt'</span>); 
+200 <span class="keyword">if</span> fid==-1, 
+201   disp([<span class="string">'Unable to open '</span> cfile  ]) 
+202   disp(<span class="string">'Version unknown'</span>) 
+203   <span class="keyword">return</span> 
+204 <span class="keyword">end</span> 
+205  
+206 h1line = deblank(fgetl(fid));       <span class="comment">% H1 line </span>
+207 vline  = deblank(fgetl(fid));       <span class="comment">% version line </span>
+208 fclose(fid); 
+209  
+210 [r,c] = find(h1line ~= <span class="string">'%'</span> &amp; ~isspace(h1line)); 
+211 <span class="keyword">if</span> ~isempty(c),  
+212   <span class="comment">% remove leading percent signs and trailing blanks </span>
+213   [r,c2] = find(~isspace(h1line)); 
+214   h1line = h1line(:,min(c):max(c2));  
+215 <span class="keyword">end</span>  
+216 s(1).Name = h1line; 
+217 <span class="comment">%h1line = geth1line(cfile); </span>
+218  
+219 <span class="comment">% Look for Version </span>
+220 k = findstr(<span class="string">'version'</span>,lower(vline)); 
+221 <span class="keyword">if</span> isempty(k), 
+222   disp([<span class="string">'Not correct format of '</span> cfile ]) 
+223   disp(<span class="string">'version number unknown'</span>) 
+224   <span class="keyword">return</span> 
+225 <span class="keyword">end</span> 
+226 ind          = diff(~isspace(vline)); 
+227 blancstrtstp = find([0 abs(ind)] &gt; 0.5);  
+228 indbl        = blancstrtstp( blancstrtstp &gt; k);  
+229  
+230 s.Version = vline(indbl(2):indbl(3)-1); 
+231  
+232 Nbl = length(indbl); 
+233 <span class="keyword">if</span> (Nbl&gt;=3), 
+234   s.Date = vline(indbl(Nbl):<span class="keyword">end</span>); 
+235 <span class="keyword">end</span> 
+236  
+237 <span class="keyword">if</span> (Nbl-1&gt;=3), 
+238   s.Release = vline(indbl(Nbl-1):indbl(Nbl)-1); 
+239 <span class="keyword">end</span> 
+240  
+241 <span class="keyword">return</span> 
+242  
+243</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

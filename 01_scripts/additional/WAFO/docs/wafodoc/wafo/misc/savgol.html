@@ -1,0 +1,263 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of savgol</title>
+  <meta name="keywords" content="savgol">
+  <meta name="description" content="  Savitzky-Golay filter coefficients.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; savgol.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>savgol
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Savitzky-Golay filter coefficients.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> c = savgol(nl,nr,m,ld,np) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="savgol.html" class="code" title="  Savitzky-Golay filter coefficients. ">SAVGOL</a>  Savitzky-Golay filter coefficients. 
+  
+  CALL:  c = <a href="savgol.html" class="code" title="  Savitzky-Golay filter coefficients. ">savgol</a>(nl,nr,m,ld,np); 
+  
+   c     = vector with Savitzky-Golay filter coefficients. 
+   nl,nr = number of leftward (past) and rightward (future) data points 
+           used, respectively, making the total number of data points 
+           used nl+nr+1. (nl+nr&gt;=m) 
+   m     = order of the smoothing polynomial, also equal to the highest 
+           conserved moment; usual values are m = 2 or m = 4. 
+   ld    = order of the derivative desired. (default ld=0 for smoothed 
+           function) (ld&lt;=m) 
+   np    = length of c  (np&gt;=nr+nl+1) (defalt 2*max(nr,nl)+1)  
+   
+  The idea of Savitzky-Golay filtering is to find filter coefficients Cn 
+  that preserves higher moments, i.e., to approximate the underlying 
+  function within the moving window not by a constant (whose estimate is 
+  the average), but by a polynomial of higher order, typically quadratic 
+  or quartic. For each point Y(i), we least-squares fit a polynomial of 
+  order M to all NL+NR+1 points in the moving window and then set YF(i) 
+  to the value of this polynomial at position I, i.e.,  
+  
+              nr 
+     YF(i) = sum Cn(n)*Y(i+n) 
+            n=-nl 
+   
+  <a href="savgol.html" class="code" title="  Savitzky-Golay filter coefficients. ">SAVGOL</a> Returns the filter coefficients C(1:np), in wrap-around order, 
+  i.e., C(1) = Cn(0), C(2)=Cn(-1),...C(Nl+1)=Cn(-Nl), and C(Np) = Cn(1), 
+  C(Np-1) = Cn(2),...C(Np-Nr) = Cn(Nr), which is consistent for use with 
+  fft to perform the convolution. 
+  
+  Note the restrictions:  np &gt;= nr+nl+1 &gt; m &gt;= ld 
+  
+  Example: 
+    x = linspace(0,1); 
+    y = exp(x)+1e-1*randn(size(x)); 
+    nl=2;nr=2;m=2;ld=0; 
+    c = <a href="savgol.html" class="code" title="  Savitzky-Golay filter coefficients. ">savgol</a>(nl,nr,m,ld,length(x)); 
+    yf = real(ifft(fft(y).*fft(c))); % convolution with pronounced end effects 
+    yf2 = <a href="convlv.html" class="code" title=" Convolves real data set with a response function.  ">convlv</a>(y,c);               % convolution with less end effects 
+    plot(x,y,x,yf,x,yf2) 
+    ld =1; m =4; 
+    c = <a href="savgol.html" class="code" title="  Savitzky-Golay filter coefficients. ">savgol</a>(nl,nr,m,ld);          % differentiation filter 
+    dyf = <a href="convlv.html" class="code" title=" Convolves real data set with a response function.  ">convlv</a>(y,c)*gamma(ld+1)/(x(2)-x(1))^ld; % Derivative 
+    ix = nl+1:length(x)-nr;                       % for all these ix 
+    semilogy(x(ix),abs(y(ix)-dyf(ix))) % Error of the derivative 
+  
+  See also  <a href="smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\lu.bi">lu</a></li></TD>
+<TD>            LU factorization.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\sprintf.m">sprintf</a></li></TD>
+<TD>       Write formatted data to string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\sub2ind.m">sub2ind</a></li></TD>
+<TD>       Linear index from multiple subscripts.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> c = <a name="_sub0" href="#_subfunctions" class="code">savgol</a>(nl,nr,m,ld,np) 
+002 <span class="comment">%SAVGOL  Savitzky-Golay filter coefficients. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  c = savgol(nl,nr,m,ld,np); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%  c     = vector with Savitzky-Golay filter coefficients. </span>
+007 <span class="comment">%  nl,nr = number of leftward (past) and rightward (future) data points </span>
+008 <span class="comment">%          used, respectively, making the total number of data points </span>
+009 <span class="comment">%          used nl+nr+1. (nl+nr&gt;=m) </span>
+010 <span class="comment">%  m     = order of the smoothing polynomial, also equal to the highest </span>
+011 <span class="comment">%          conserved moment; usual values are m = 2 or m = 4. </span>
+012 <span class="comment">%  ld    = order of the derivative desired. (default ld=0 for smoothed </span>
+013 <span class="comment">%          function) (ld&lt;=m) </span>
+014 <span class="comment">%  np    = length of c  (np&gt;=nr+nl+1) (defalt 2*max(nr,nl)+1)  </span>
+015 <span class="comment">%  </span>
+016 <span class="comment">% The idea of Savitzky-Golay filtering is to find filter coefficients Cn </span>
+017 <span class="comment">% that preserves higher moments, i.e., to approximate the underlying </span>
+018 <span class="comment">% function within the moving window not by a constant (whose estimate is </span>
+019 <span class="comment">% the average), but by a polynomial of higher order, typically quadratic </span>
+020 <span class="comment">% or quartic. For each point Y(i), we least-squares fit a polynomial of </span>
+021 <span class="comment">% order M to all NL+NR+1 points in the moving window and then set YF(i) </span>
+022 <span class="comment">% to the value of this polynomial at position I, i.e.,  </span>
+023 <span class="comment">% </span>
+024 <span class="comment">%             nr </span>
+025 <span class="comment">%    YF(i) = sum Cn(n)*Y(i+n) </span>
+026 <span class="comment">%           n=-nl </span>
+027 <span class="comment">%  </span>
+028 <span class="comment">% SAVGOL Returns the filter coefficients C(1:np), in wrap-around order, </span>
+029 <span class="comment">% i.e., C(1) = Cn(0), C(2)=Cn(-1),...C(Nl+1)=Cn(-Nl), and C(Np) = Cn(1), </span>
+030 <span class="comment">% C(Np-1) = Cn(2),...C(Np-Nr) = Cn(Nr), which is consistent for use with </span>
+031 <span class="comment">% fft to perform the convolution. </span>
+032 <span class="comment">% </span>
+033 <span class="comment">% Note the restrictions:  np &gt;= nr+nl+1 &gt; m &gt;= ld </span>
+034 <span class="comment">% </span>
+035 <span class="comment">% Example: </span>
+036 <span class="comment">%   x = linspace(0,1); </span>
+037 <span class="comment">%   y = exp(x)+1e-1*randn(size(x)); </span>
+038 <span class="comment">%   nl=2;nr=2;m=2;ld=0; </span>
+039 <span class="comment">%   c = savgol(nl,nr,m,ld,length(x)); </span>
+040 <span class="comment">%   yf = real(ifft(fft(y).*fft(c))); <span class="comment">% convolution with pronounced end effects </span></span>
+041 <span class="comment">%   yf2 = convlv(y,c);               <span class="comment">% convolution with less end effects </span></span>
+042 <span class="comment">%   plot(x,y,x,yf,x,yf2) </span>
+043 <span class="comment">%   ld =1; m =4; </span>
+044 <span class="comment">%   c = savgol(nl,nr,m,ld);          <span class="comment">% differentiation filter </span></span>
+045 <span class="comment">%   dyf = convlv(y,c)*gamma(ld+1)/(x(2)-x(1))^ld; <span class="comment">% Derivative </span></span>
+046 <span class="comment">%   ix = nl+1:length(x)-nr;                       <span class="comment">% for all these ix </span></span>
+047 <span class="comment">%   semilogy(x(ix),abs(y(ix)-dyf(ix))) <span class="comment">% Error of the derivative </span></span>
+048 <span class="comment">% </span>
+049 <span class="comment">% See also  smooth </span>
+050  
+051 <span class="comment">% Reference  </span>
+052 <span class="comment">% William H. Press, Saul Teukolsky,  </span>
+053 <span class="comment">% William T. Wetterling and Brian P. Flannery (1997) </span>
+054 <span class="comment">% &quot;Numerical recipes in Fortran 77&quot;, Vol. 1, pp 644-649 </span>
+055  
+056 <span class="comment">% History </span>
+057 <span class="comment">% by pab 2000 </span>
+058  
+059  
+060 error(nargchk(3,5,nargin)) 
+061 <span class="keyword">if</span> nargin&lt;5|isempty(np),np=2*max(nl,nr)+1;<span class="keyword">end</span> 
+062 <span class="keyword">if</span> nargin&lt;4|isempty(ld),ld=0;<span class="keyword">end</span> 
+063  
+064 <span class="keyword">if</span> (np&lt;nl+nr+1) 
+065   error(sprintf(<span class="string">'np must be larger than nl+nr = %d or nl+nr less than np = %d'</span>,nr+nl,np)) 
+066 <span class="keyword">end</span> 
+067 <span class="keyword">if</span> nl&lt;0,  
+068   warning(<span class="string">'nl must be positive or zero'</span>) 
+069   nl = max(nl,0); 
+070 <span class="keyword">end</span> 
+071 <span class="keyword">if</span> nr&lt;0,  
+072   warning(<span class="string">'nr must be positive or zero'</span>) 
+073   nr = max(nr,0); 
+074 <span class="keyword">end</span> 
+075 <span class="keyword">if</span> ld&gt;m  
+076   error(sprintf(<span class="string">'m must be larger than ld = %d '</span>,ld)) 
+077 <span class="keyword">end</span> 
+078 <span class="keyword">if</span> nl+nr&lt;m, 
+079   error(sprintf(<span class="string">'m must be smaller than nl+nr = %d'</span>,nl+nr)) 
+080 <span class="keyword">end</span> 
+081  
+082 asiz = [m+1,m+1]; 
+083 a    = zeros(asiz); 
+084 <span class="keyword">for</span> ipj=0:2*m   
+085   <span class="comment">%Set up the normal equations of the desired least-squares fit.    </span>
+086   tmp = sum([1:nr].^ipj) + (ipj==0) + sum([-1:-1:-nl].^ipj);  
+087    
+088   mm = min(ipj,2*m-ipj); 
+089   imj=-mm:2:mm; 
+090   ind = sub2ind(asiz, 1+(ipj+imj)/2,1+(ipj-imj)/2); 
+091   a(ind)=tmp; 
+092   <span class="comment">%for imj=-mm:2:mm  </span>
+093   <span class="comment">%  a(1+(ipj+imj)/2,1+(ipj-imj)/2)=tmp; </span>
+094   <span class="comment">%end  </span>
+095 <span class="keyword">end</span>  
+096  
+097 <span class="comment">% Solve them by LU decomposition. </span>
+098 [L,U] = lu(a); 
+099  
+100 <span class="comment">% Right-hand side vector is unit vector,  </span>
+101 <span class="comment">% depending on which derivative we want. </span>
+102 b       = zeros(m+1,1); 
+103 b(ld+1) = 1; 
+104  
+105 <span class="comment">% Backsubstitute, giving one row of the inverse matrix. </span>
+106  
+107 d = (U\(L\b)).'; 
+108  
+109  
+110 <span class="comment">%Zero the output array (it may be bigger than number of coefficients).  </span>
+111 c = zeros(1,np); 
+112  
+113 <span class="keyword">if</span> 0, 
+114   <span class="keyword">for</span> k=-nl:nr  
+115     <span class="comment">%Each Savitzky-Golay coefficient is the dot product </span>
+116     <span class="comment">%of powers of an integer with the inverse matrix row. </span>
+117     tmp = sum(d(1:m+1).*[1 k.^(1:m)]); 
+118     kk = mod(np-k,np)+1; <span class="comment">%Store in wrap-around order. </span>
+119     c(kk) = tmp; 
+120   <span class="keyword">end</span>  
+121 <span class="keyword">else</span> 
+122   <span class="comment">%Each Savitzky-Golay coefficient is the dot product </span>
+123   <span class="comment">%of powers of an integer with the inverse matrix row. </span>
+124   k    = (-nl:nr ).'; 
+125   Nk   = length(k); 
+126   tmp0 = repmat(k,1,m+1).^repmat(0:m,Nk,1); 
+127   tmp  = sum(d(ones(Nk,1),1:m+1).*tmp0,2)'; 
+128   kk   = mod(np-k,np)+1; <span class="comment">%Store in wrap-around order. </span>
+129   c(kk) = tmp; 
+130 <span class="keyword">end</span> 
+131 <span class="keyword">return</span> 
+132  
+133</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

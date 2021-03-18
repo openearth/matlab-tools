@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wlognstat</title>
+  <meta name="keywords" content="wlognstat">
+  <meta name="description" content=" Mean and variance for the Lognormal distribution.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wlognstat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wlognstat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Mean and variance for the Lognormal distribution.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [m,v]= wlognstat(m0,v0); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wlognstat.html" class="code" title=" Mean and variance for the Lognormal distribution.">WLOGNSTAT</a> Mean and variance for the Lognormal distribution.
+  
+  CALL:  [m,v] = <a href="wlognstat.html" class="code" title=" Mean and variance for the Lognormal distribution.">wlognstat</a>(m0,v0)
+ 
+    m, v = the mean and variance, respectively 
+  m0, v0 = parameters of the Lognormal distribution.
+ 
+   Mean (m) and variance (v) for the Lognormal distribution is
+ 
+   m=exp(m0+v0/2)  and  v=exp(2*m0+v0)*(exp(v0)-1);
+ 
+  Example:
+    [m,v] = <a href="wlognstat.html" class="code" title=" Mean and variance for the Lognormal distribution.">wlognstat</a>(0,1)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a></li></TD>
+<TD> Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dstat.html" class="code" title=" [M,V, eps2, a ,b] = dist2dstat(phat,condon,cvar,csm,lin)">dist2dstat</a></li></TD>
+<TD>  Mean and variance for the DIST2D distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = mdist2dstat(phat,condon,cvar,tol)">mdist2dstat</a></li></TD>
+<TD>  Mean and variance for the MDIST2D distribution.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [m,v]= <a name="_sub0" href="#_subfunctions" class="code">wlognstat</a>(m0,v0);
+002 <span class="comment">%WLOGNSTAT Mean and variance for the Lognormal distribution.</span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  [m,v] = wlognstat(m0,v0)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   m, v = the mean and variance, respectively </span>
+007 <span class="comment">% m0, v0 = parameters of the Lognormal distribution.</span>
+008 <span class="comment">%</span>
+009 <span class="comment">%  Mean (m) and variance (v) for the Lognormal distribution is</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%  m=exp(m0+v0/2)  and  v=exp(2*m0+v0)*(exp(v0)-1);</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Example:</span>
+014 <span class="comment">%   [m,v] = wlognstat(0,1)</span>
+015 
+016 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+017 <span class="comment">% and Life Span Models&quot;, p. 59 ff, Marcel Dekker.</span>
+018 
+019 
+020 
+021 <span class="comment">% Tested on; Matlab 5.3</span>
+022 <span class="comment">% History:</span>
+023 <span class="comment">% revised pab 24.10.2000</span>
+024 <span class="comment">%  - added comnsize, nargchk</span>
+025 <span class="comment">%  - added default values</span>
+026 <span class="comment">% added ms 10.08.2000</span>
+027 
+028 error(nargchk(0,2,nargin))
+029 <span class="keyword">if</span> nargin&lt;1|isempty(m0),  m0=0;  <span class="keyword">end</span>
+030 <span class="keyword">if</span> nargin&lt;2|isempty(v0),  v0=1;  <span class="keyword">end</span>
+031 
+032 [errorcode, m0, v0] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a> (m0, v0);
+033 <span class="keyword">if</span> (errorcode &gt; 0)
+034   error (<span class="string">'m and v must be of common size or scalar'</span>);
+035 <span class="keyword">end</span>
+036 
+037 m = zeros(size(m0));
+038 v = m;
+039 k = find(v0&gt;=0);
+040 <span class="keyword">if</span> any(k),
+041   m(k) = exp(m0(k)+v0(k)/2);
+042   v(k) = exp(2*m0(k)+v0(k)).*(exp(v0(k))-1);
+043 <span class="keyword">end</span>
+044 k1 = find(v0&lt;0);
+045 <span class="keyword">if</span> any(k1),
+046   tmp=NaN;
+047   m(k1) = tmp(ones(size(k1)));
+048   v(k1) = m(k1);
+049 <span class="keyword">end</span>
+050 
+051 
+052</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

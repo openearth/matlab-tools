@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wweibpdf</title>
+  <meta name="keywords" content="wweibpdf">
+  <meta name="description" content=" Weibull probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wweibpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wweibpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Weibull probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wweibpdf(x,a,c) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wweibpdf.html" class="code" title=" Weibull probability density function">WWEIBPDF</a> Weibull probability density function
+ 
+  CALL:  f = <a href="wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(x,a,c);
+ 
+         f = density function evaluated at x
+      a, c = parameters
+ 
+  The Weibull distribution is defined by its cdf
+ 
+   F(x;a,c) = 1 -  exp(-(x/a)^c), x&gt;=0, a,b&gt;0
+ 
+    Some references refer to the Weibull distribution with
+    a single parameter, this corresponds to <a href="wweibpdf.html" class="code" title=" Weibull probability density function">WWEIBPDF</a> with a = 1.
+ 
+  Example: 
+    x = linspace(0,6,200);
+    p1 = <a href="wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(x,1,1); p2 = <a href="wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(x,2,2); p3 = <a href="wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(x,2,5);
+    plot(x,p1,x,p2,x,p3)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dfun.html" class="code" title=" y=dist2dfun(H,V)">dist2dfun</a></li></TD>
+<TD> is an internal function to dist2dcdf dist2dprb.</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dpdf.html" class="code" title=" y = dist2dpdf(v1,h1,phat)">dist2dpdf</a></li></TD>
+<TD> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvnlpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvnlpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvnlpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ltwcpdf.html" class="code" title=" p = ltwcpdf(t,h,Pt1,Ph1, def,condon)">ltwcpdf</a></li></TD>
+<TD> Long Term Wave Climate PDF of significant wave height and wave period</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dpdf.html" class="code" title=" y = mdist2dpdf(V,H,phat,condon)">mdist2dpdf</a></li></TD>
+<TD> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/mk87pdf.html" class="code" title=" p = mk87pdf(Hd,Scf,Hs,Tz, condon,normalizedInput)">mk87pdf</a></li></TD>
+<TD> Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = ohhspdf(Hd,Scf,Hm0,def,normalizedInput, 				 condon)">ohhspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhsspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = ohhsspdf(Hd,Scf,Hm0,def,normalizedInput,condon)">ohhsspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhvpdf.html" class="code" title=" [f,fA,fB] = ohhvpdf(v,h,Hm0,def,norm)">ohhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for lineare waves with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = thvpdf(Hd,Vcf,Hm0,Tp,normalizedInput,condon)">thvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wweibpdf</a>(x,a,c)
+002 <span class="comment">%WWEIBPDF Weibull probability density function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  f = wweibpdf(x,a,c);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        f = density function evaluated at x</span>
+007 <span class="comment">%     a, c = parameters</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% The Weibull distribution is defined by its cdf</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%  F(x;a,c) = 1 -  exp(-(x/a)^c), x&gt;=0, a,b&gt;0</span>
+012 <span class="comment">%</span>
+013 <span class="comment">%   Some references refer to the Weibull distribution with</span>
+014 <span class="comment">%   a single parameter, this corresponds to WWEIBPDF with a = 1.</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% Example: </span>
+017 <span class="comment">%   x = linspace(0,6,200);</span>
+018 <span class="comment">%   p1 = wweibpdf(x,1,1); p2 = wweibpdf(x,2,2); p3 = wweibpdf(x,2,5);</span>
+019 <span class="comment">%   plot(x,p1,x,p2,x,p3)</span>
+020 
+021 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+022 <span class="comment">% and Life Span Models&quot;, p. 25 ff, Marcel Dekker.</span>
+023 
+024 
+025 <span class="comment">% Tested on; Matlab 5.3</span>
+026 <span class="comment">% History: </span>
+027 <span class="comment">% revised pab 24.10.2000</span>
+028 <span class="comment">%  - added comnsize, nargchk</span>
+029 <span class="comment">% rewritten ms 15.06.2000</span>
+030 
+031 
+032 error(nargchk(3,3,nargin))
+033 
+034 [errorcode, x, a, c] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a> (x,a, c);
+035 <span class="keyword">if</span> (errorcode &gt; 0)
+036   error (<span class="string">'x, a and c must be of common size or scalar'</span>);
+037 <span class="keyword">end</span>
+038 
+039 f=zeros(size(x));
+040 
+041 ok = ((c &gt; 0)  &amp; (a &gt; 0));
+042 
+043 k = find (x&gt;=0&amp;ok);
+044 <span class="keyword">if</span> any (k)  
+045   f(k)=(x(k)./a(k)).^(c(k)-1).*c(k)./a(k).*exp(-(x(k)./a(k)).^c(k));
+046 <span class="keyword">end</span>
+047 
+048 k1 = find (~ok);
+049 <span class="keyword">if</span> any (k1)
+050   tmp=NaN;
+051   f(k1) = tmp(ones(size(k1)));
+052 <span class="keyword">end</span>
+053 
+054 
+055 
+056 
+057 
+058 
+059</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

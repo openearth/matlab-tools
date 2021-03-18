@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="  WAFO Toolbox">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">wafo</a> &gt; Contents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>  WAFO Toolbox</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  WAFO Toolbox
+  Version 2.1.1   07-Sep-2005 
+  
+    Wave Analysis for <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">Fatigue</a> and Oceanography (WAFO) Toolbox
+  
+  The WAFO toolbox is mainly developed at 
+    Mathematical statistics, Lund University, Sweden
+    &lt;http://www.maths.lth.se/matstat/&gt;
+  see 'wafocredits' for further information.
+ 
+  WAFO consists of several modules (directories) with short descriptions below.
+  The modules <a href="../wafo/spec/index.html" class="code" title="directory">SPEC</a>, <a href="../wafo/trgauss/index.html" class="code" title="directory">TRGAUSS</a>, <a href="../wafo/wavemodels/index.html" class="code" title="directory">WAVEMODELS</a>, and <a href="../wafo/multidim/index.html" class="code" title="directory">MULTIDIM</a> are mainly for 
+  oceanographic applications.
+  The modules <a href="../wafo/cycles/index.html" class="code" title="directory">CYCLES</a>, <a href="../wafo/markov/index.html" class="code" title="directory">MARKOV</a>, and <a href="../wafo/damage/index.html" class="code" title="directory">DAMAGE</a> are mainly for <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">fatigue</a> problems. 
+  The <a href="Contents.html" class="code" title="  WAFO Toolbox">contents</a> file for each module is shown by typing 'help module-name' 
+  Type 'help fatigue' for a presentation of all routines related to <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">fatigue</a>.
+ 
+  The paths to the modules are initiated by the function 'initwafo'.
+ 
+  <a href="../wafo/onedim/index.html" class="code" title="directory">ONEDIM</a>     - <a href="../wafo/data/index.html" class="code" title="directory">Data</a> analysis of time series. Example: extraction of 
+               turning points, estimation of spectrum, covariance function.
+  <a href="../wafo/spec/index.html" class="code" title="directory">SPEC</a>       - Computation of spectral moments and covariance functions. 
+               Ex: common spectra implemented, directional spectra, 
+               bandwidth measures
+  <a href="../wafo/trgauss/index.html" class="code" title="directory">TRGAUSS</a>    - Modelling with linear, Gaussian waves. Ex: exact 
+               distributions for wave characteristics, transformed
+               Gaussian processes
+  <a href="../wafo/wavemodels/index.html" class="code" title="directory">WAVEMODELS</a> - Models for distributions of wave characteristics found in 
+               the literature. Ex: parametric models for breaking 
+               limited wave heights.
+  <a href="../wafo/multidim/index.html" class="code" title="directory">MULTIDIM</a>   - Multi-dimensional time series analysis.  (Under construction)
+  <a href="../wafo/cycles/index.html" class="code" title="directory">CYCLES</a>     - Cycle counting, discretization, and crossings. Ex: Rainflow 
+               <a href="../wafo/cycles/index.html" class="code" title="directory">cycles</a> and matrix, discretization of loads.
+  <a href="../wafo/markov/index.html" class="code" title="directory">MARKOV</a>     - Routines for <a href="../wafo/markov/index.html" class="code" title="directory">Markov</a> loads, switching <a href="../wafo/markov/index.html" class="code" title="directory">Markov</a> loads, and 
+               their connection to rainflow <a href="../wafo/cycles/index.html" class="code" title="directory">cycles</a>.
+  <a href="../wafo/damage/index.html" class="code" title="directory">DAMAGE</a>     - Calculation of <a href="../wafo/damage/index.html" class="code" title="directory">damage</a>. Ex: <a href="../wafo/damage/index.html" class="code" title="directory">Damage</a> of a rainflow count or 
+               matrix, <a href="../wafo/damage/index.html" class="code" title="directory">damage</a> matrix, S-N plot.
+  <a href="../wafo/wsim/index.html" class="code" title="directory">WSIM</a>       - Simulation of random processes. Ex: spectral simulation, 
+               simulation of discrete <a href="../wafo/markov/index.html" class="code" title="directory">Markov</a> chains, switching <a href="../wafo/markov/index.html" class="code" title="directory">Markov</a>
+               chains, harmonic oscillator
+  <a href="../wafo/wstats/index.html" class="code" title="directory">WSTATS</a>     - Statistical tools and extreme-value distributions.
+               Ex: generation of random numbers, estimation of parameters,
+               evaluation of pdf and cdf
+  <a href="../wafo/kdetools/index.html" class="code" title="directory">KDETOOLS</a>   - Kernel-density estimation.
+  <a href="../wafo/misc/index.html" class="code" title="directory">MISC</a>       - Miscellaneous routines. Ex: numerical integration, smoothing 
+               spline, binomial coefficient, water density.
+  <a href="../wafo/wdemos/index.html" class="code" title="directory">WDEMOS</a>     - WAFO demos. 
+  <a href="../wafo/docs/index.html" class="code" title="directory">DOCS</a>       - Documentation of toolbox, definitions. An overview is given 
+               in the routine <a href="../wafo/docs/wafomenu.html" class="code" title=" wafomenu(kind)">wafomenu</a>. 
+  <a href="../wafo/data/index.html" class="code" title="directory">DATA</a>       - Measurements from marine applications.
+  <a href="../wafo/papers/index.html" class="code" title="directory">PAPERS</a>     - Commands that generate figures in selected scientific 
+               publications.
+  SOURCE     - Fortran and C files. Information on compilation.
+  <a href="../wafo/exec/index.html" class="code" title="directory">EXEC</a>       - Executable files (cf. SOURCE), pre-compiled for Solaris, 
+               Alpha-Dec or Windows. 
+  
+  WAFO homepage: &lt;http://www.maths.lth.se/matstat/wafo/&gt;
+  On the WAFO home page you will find:
+   - The WAFO Tutorial
+   - New versions of WAFO to download.
+   - Reported bugs.
+   - List of publications related to WAFO.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

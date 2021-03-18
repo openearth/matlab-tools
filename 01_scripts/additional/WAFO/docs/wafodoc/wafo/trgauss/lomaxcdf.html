@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of lomaxcdf</title>
+  <meta name="keywords" content="lomaxcdf">
+  <meta name="description" content=" CDF for local maxima for a zero-mean Gaussian process">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; lomaxcdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>lomaxcdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> CDF for local maxima for a zero-mean Gaussian process</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> F = lomaxcdf(x,alpha,m0) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="lomaxcdf.html" class="code" title=" CDF for local maxima for a zero-mean Gaussian process">LOMAXCDF</a> CDF for local maxima for a zero-mean Gaussian process
+  
+  CALL:  F = <a href="lomaxcdf.html" class="code" title=" CDF for local maxima for a zero-mean Gaussian process">lomaxcdf</a>(x,alpha,m0)
+ 
+        F     = distribution function evaluated at x
+        alpha = irregularity factor 
+        m0    = zero-order spectral moment (variance of the process)
+ 
+ 
+  The cdf is calculated from an explicit expression involving the 
+  standard-normal cdf. This relation is sometimes written as a convolution
+ 
+        M = sqrt(m0)*( sqrt(1-a^2)*Z + a*R )
+ 
+  where  M  denotes local maximum, Z  is a standard normal r.v.,  
+  R  is a standard Rayleigh r.v., and &quot;=&quot; means equality in distribution.
+ 
+  Note that all local maxima of the process are considered, not
+  only crests of waves. 
+  
+  Example: 
+   S     = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(10);
+   xs    = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,10000);
+   mM    = <a href="../../wafo/cycles/tp2mm.html" class="code" title=" Calculates min2Max and Max2min cycles from a sequence of turning points">tp2mm</a>(<a href="../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(xs)); 
+   m0    = <a href="../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S,1);  
+   alpha = <a href="../../wafo/spec/spec2char.html" class="code" title="  Evaluates spectral characteristics and their covariance">spec2char</a>(S,'alpha');  
+   x     = linspace(-10,10,200).';
+   <a href="../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(mM(:,2),[x,<a href="lomaxcdf.html" class="code" title=" CDF for local maxima for a zero-mean Gaussian process">lomaxcdf</a>(x,alpha,m0)])
+  
+  See also  <a href="../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>, <a href="../../wafo/spec/spec2bw.html" class="code" title=" Evaluates some spectral bandwidth and irregularity factors">spec2bw</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/wnormcdf.html" class="code" title=" F = wnormcdf(x,m,v);">wnormcdf</a></li></TD>
+<TD> Normal cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> F = <a name="_sub0" href="#_subfunctions" class="code">lomaxcdf</a>(x,alpha,m0)
+002 <span class="comment">%LOMAXCDF CDF for local maxima for a zero-mean Gaussian process</span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  F = lomaxcdf(x,alpha,m0)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%       F     = distribution function evaluated at x</span>
+007 <span class="comment">%       alpha = irregularity factor </span>
+008 <span class="comment">%       m0    = zero-order spectral moment (variance of the process)</span>
+009 <span class="comment">%</span>
+010 <span class="comment">%</span>
+011 <span class="comment">% The cdf is calculated from an explicit expression involving the </span>
+012 <span class="comment">% standard-normal cdf. This relation is sometimes written as a convolution</span>
+013 <span class="comment">%</span>
+014 <span class="comment">%       M = sqrt(m0)*( sqrt(1-a^2)*Z + a*R )</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% where  M  denotes local maximum, Z  is a standard normal r.v.,  </span>
+017 <span class="comment">% R  is a standard Rayleigh r.v., and &quot;=&quot; means equality in distribution.</span>
+018 <span class="comment">%</span>
+019 <span class="comment">% Note that all local maxima of the process are considered, not</span>
+020 <span class="comment">% only crests of waves. </span>
+021 <span class="comment">% </span>
+022 <span class="comment">% Example: </span>
+023 <span class="comment">%  S     = jonswap(10);</span>
+024 <span class="comment">%  xs    = spec2sdat(S,10000);</span>
+025 <span class="comment">%  mM    = tp2mm(dat2tp(xs)); </span>
+026 <span class="comment">%  m0    = spec2mom(S,1);  </span>
+027 <span class="comment">%  alpha = spec2char(S,'alpha');  </span>
+028 <span class="comment">%  x     = linspace(-10,10,200).';</span>
+029 <span class="comment">%  empdistr(mM(:,2),[x,lomaxcdf(x,alpha,m0)])</span>
+030 <span class="comment">% </span>
+031 <span class="comment">% See also  spec2mom, spec2bw</span>
+032 
+033 <span class="comment">% Tested on Matlab 6.0</span>
+034 <span class="comment">% History: </span>
+035 <span class="comment">% Revised pab Feb2004  </span>
+036 <span class="comment">% -extended example  </span>
+037 <span class="comment">% By jr 31.03.2001</span>
+038   
+039   error(nargchk(3,3,nargin))
+040 c1 = 1/(sqrt(1-alpha^2))*x./sqrt(m0);
+041 c2 = alpha*c1;
+042 
+043 F = <a href="../../wafo/wstats/wnormcdf.html" class="code" title=" Normal cumulative distribution function ">wnormcdf</a>(c1,0,1)-alpha*exp(-x.^2/2/m0).*<a href="../../wafo/wstats/wnormcdf.html" class="code" title=" Normal cumulative distribution function ">wnormcdf</a>(c2,0,1);
+044</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

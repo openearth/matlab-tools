@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of braylpdf</title>
+  <meta name="keywords" content="braylpdf">
+  <meta name="description" content=" Beta Rayleigh PDF of wave heigth">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; braylpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>braylpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Beta Rayleigh PDF of wave heigth</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> y = braylpdf(x,a,b,c) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="braylpdf.html" class="code" title=" Beta Rayleigh PDF of wave heigth ">BRAYLPDF</a> Beta Rayleigh PDF of wave heigth 
+                       
+    f = 2*(a+b-1)!/((a-1)! * (b-1)!)*h^(2a-1)*(1-(h/c)^2)^(b-1)/c^(2a) 
+                         
+   CALL:   f = <a href="braylpdf.html" class="code" title=" Beta Rayleigh PDF of wave heigth ">braylpdf</a>(h,a,b,c);  
+  
+        f = pdf 
+        h = waveheigth (0 &lt;= h &lt;= c) 
+        a = abs(k1*(k2-k1)/(k1^2-k2))  
+        b = abs((1-k1)*(k2-k1)/(k1^2-k2))  
+        c = Hb, breaking wave height approximated by water depth, d. 
+  where 
+       k1 = E(H^2)/Hb^2 
+       k2 = E(H^4)/Hb^4 
+   E(H^2) = .5*exp(0.00272*(d/g*Tp^2)^(-0.834))*Hm0^2 
+   E(H^2) = .5*exp(0.00046*(d/g*Tp^2)^(-1.208))*Hm0^2 
+      Hm0 = significant waveheight 
+      Tp  = modal period of wave spectrum 
+  
+     The size of F is the common size of H, A, B and C.  A scalar input    
+     functions as a constant matrix of the same size as the other input. 
+  
+  Example: % Compare with Rayleigh distribution 
+   Hm0 = 7;Tp = 11;d = 50; g = <a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>; 
+   k1  = .5*exp(0.00272*(d/g*Tp^2)^(-0.834))*Hm0^2/d^2; 
+   k2  = .5*exp(0.00046*(d/g*Tp^2)^(-1.208))*Hm0^2/d^4; 
+   a   = abs(k1*(k2-k1)/(k1^2-k2));  
+   b   = abs((1-k1)*(k2-k1)/(k1^2-k2)); 
+   h   = linspace(0,2*Hm0)'; 
+   plot(h,<a href="braylpdf.html" class="code" title=" Beta Rayleigh PDF of wave heigth ">braylpdf</a>(h,a,b,d),'r',h,<a href="../../wafo/wstats/wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(h,Hm0/2)) 
+  
+  See also  <a href="../../wafo/wstats/wbetapdf.html" class="code" title="   Beta probability density function">wbetapdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/wbetapdf.html" class="code" title=" f = wbetapdf(x,a,b)">wbetapdf</a></li></TD>
+<TD>   Beta probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\betaln.m">betaln</a></li></TD>
+<TD>        Logarithm of beta function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\inf.m">inf</a></li></TD>
+<TD>           Infinity.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> y = <a name="_sub0" href="#_subfunctions" class="code">braylpdf</a>(x,a,b,c) 
+002 <span class="comment">%BRAYLPDF Beta Rayleigh PDF of wave heigth </span>
+003 <span class="comment">%                      </span>
+004 <span class="comment">%   f = 2*(a+b-1)!/((a-1)! * (b-1)!)*h^(2a-1)*(1-(h/c)^2)^(b-1)/c^(2a) </span>
+005 <span class="comment">%                        </span>
+006 <span class="comment">%  CALL:   f = braylpdf(h,a,b,c);  </span>
+007 <span class="comment">% </span>
+008 <span class="comment">%       f = pdf </span>
+009 <span class="comment">%       h = waveheigth (0 &lt;= h &lt;= c) </span>
+010 <span class="comment">%       a = abs(k1*(k2-k1)/(k1^2-k2))  </span>
+011 <span class="comment">%       b = abs((1-k1)*(k2-k1)/(k1^2-k2))  </span>
+012 <span class="comment">%       c = Hb, breaking wave height approximated by water depth, d. </span>
+013 <span class="comment">% where </span>
+014 <span class="comment">%      k1 = E(H^2)/Hb^2 </span>
+015 <span class="comment">%      k2 = E(H^4)/Hb^4 </span>
+016 <span class="comment">%  E(H^2) = .5*exp(0.00272*(d/g*Tp^2)^(-0.834))*Hm0^2 </span>
+017 <span class="comment">%  E(H^2) = .5*exp(0.00046*(d/g*Tp^2)^(-1.208))*Hm0^2 </span>
+018 <span class="comment">%     Hm0 = significant waveheight </span>
+019 <span class="comment">%     Tp  = modal period of wave spectrum </span>
+020 <span class="comment">% </span>
+021 <span class="comment">%    The size of F is the common size of H, A, B and C.  A scalar input    </span>
+022 <span class="comment">%    functions as a constant matrix of the same size as the other input. </span>
+023 <span class="comment">% </span>
+024 <span class="comment">% Example: <span class="comment">% Compare with Rayleigh distribution </span></span>
+025 <span class="comment">%  Hm0 = 7;Tp = 11;d = 50; g = gravity; </span>
+026 <span class="comment">%  k1  = .5*exp(0.00272*(d/g*Tp^2)^(-0.834))*Hm0^2/d^2; </span>
+027 <span class="comment">%  k2  = .5*exp(0.00046*(d/g*Tp^2)^(-1.208))*Hm0^2/d^4; </span>
+028 <span class="comment">%  a   = abs(k1*(k2-k1)/(k1^2-k2));  </span>
+029 <span class="comment">%  b   = abs((1-k1)*(k2-k1)/(k1^2-k2)); </span>
+030 <span class="comment">%  h   = linspace(0,2*Hm0)'; </span>
+031 <span class="comment">%  plot(h,braylpdf(h,a,b,d),'r',h,wraylpdf(h,Hm0/2)) </span>
+032 <span class="comment">% </span>
+033 <span class="comment">% See also  wbetapdf </span>
+034  
+035  
+036 <span class="comment">%  </span>
+037 <span class="comment">%   Reference: </span>
+038 <span class="comment">%       Michel K. Ochi (1998), </span>
+039 <span class="comment">%      &quot;OCEAN WAVES, The stochastic approach&quot;, </span>
+040 <span class="comment">%       OCEAN TECHNOLOGY series 6, Cambridge, pp 279. (pd of peaks to trough)  </span>
+041  
+042 <span class="comment">%tested on: matlab 5.2 </span>
+043 <span class="comment">%History: </span>
+044 <span class="comment">% revised pab 31.03.2001 </span>
+045 <span class="comment">% added example </span>
+046 <span class="comment">% revised pab 14.10.1999 </span>
+047 <span class="comment">% updated help header </span>
+048 <span class="comment">% by  Per A. Brodtkorb 21.02.99 </span>
+049  
+050 error(nargchk(4,4,nargin)) 
+051  
+052  
+053 [errorcode, x, a ,b, c] = comnsize(x,a,b,c); 
+054  
+055 <span class="keyword">if</span> errorcode &gt; 0 
+056     error(<span class="string">'h, a, b and c must be of common size or scalar.'</span>); 
+057 <span class="keyword">end</span> 
+058  
+059  
+060 <span class="comment">% Initialize Y to zero. </span>
+061 y=zeros(size(x)); 
+062  
+063  
+064 k=find(a &gt; 0 &amp; x &gt;=0 &amp; b&gt;0 &amp; c&gt;0 &amp; x&lt;=c &amp; ~((x == 0 &amp; a &lt; .5) | (x == c &amp; b &lt; 1))); 
+065 <span class="keyword">if</span> any(k), 
+066   xk = x(k); ak = a(k); bk = b(k);ck=c(k); 
+067  <span class="keyword">switch</span> 1, <span class="comment">% choose between different implementations </span>
+068   <span class="keyword">case</span> 1,  
+069          y(k)=2*(xk./ck).^(2*ak-1)./ck.*(1-(xk./ck).^2).^(bk-1).*exp(-betaln(ak,bk)); 
+070  <span class="keyword">case</span> 2, 
+071         tmp(k) = (2*ak - 1).*log(xk./ck)-log(ck) + (bk - 1).*log((1 - (xk./ck).^2)) - betaln(ak,bk); 
+072         y(k) = 2*exp(tmp(k)); 
+073  <span class="keyword">case</span> 3, 
+074       y(k)=2*<a href="../../wafo/wstats/wbetapdf.html" class="code" title="   Beta probability density function">wbetapdf</a>((xk./ck).^2,ak,bk).*xk./ck.^2; 
+075  <span class="keyword">end</span> 
+076 <span class="keyword">end</span> 
+077  
+078 <span class="comment">% Return Inf for x = 0 and a &lt; 1 or x = 1 and b &lt; 1. </span>
+079 <span class="comment">% Required for non-IEEE machines. </span>
+080 k2 = find((x == 0 &amp; a &lt; .5) | (x == c &amp; b &lt; 1)); 
+081 <span class="keyword">if</span> any(k2) 
+082     tmp = Inf; 
+083     y(k2) = tmp(ones(size(k2)));  
+084 <span class="keyword">end</span> 
+085  
+086 <span class="comment">% Return NaN if A,B or C  is not positive. </span>
+087 k1 = find(a &lt;= 0| b&lt;=0|c&lt;=0); 
+088 <span class="keyword">if</span> any(k1)  
+089     tmp   = NaN; 
+090     y(k1) = tmp(ones(size(k1))); 
+091 <span class="keyword">end</span> 
+092</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

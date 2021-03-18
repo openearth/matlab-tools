@@ -1,0 +1,286 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of alias</title>
+  <meta name="keywords" content="alias">
+  <meta name="description" content=" Alias structure of a fractional design.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; alias.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>alias
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Alias structure of a fractional design.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [I00,I11] = alias(I0,order) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="alias.html" class="code" title=" Alias structure of a fractional design.">ALIAS</a> <a href="alias.html" class="code" title=" Alias structure of a fractional design.">Alias</a> structure of a fractional design.
+ 
+  CALL:  str = <a href="alias.html" class="code" title=" Alias structure of a fractional design.">alias</a>(I0,n);
+ 
+  str = string containing the <a href="alias.html" class="code" title=" Alias structure of a fractional design.">alias</a> structure.
+  I0  = complete defining relation.
+  n   = maximum order of <a href="alias.html" class="code" title=" Alias structure of a fractional design.">alias</a> structure.
+  
+  Example
+    I = <a href="sudg.html" class="code" title=" Some Useful Design Generators">sudg</a>(6,2);  % Design generator
+    I0 = <a href="cdr.html" class="code" title=" Complete Defining Relation">cdr</a>(I);    % Complete defining relation
+    <a href="alias.html" class="code" title=" Alias structure of a fractional design.">alias</a>(I0)       % The complete <a href="alias.html" class="code" title=" Alias structure of a fractional design.">alias</a> structure
+    <a href="alias.html" class="code" title=" Alias structure of a fractional design.">alias</a>(I0,3)     % <a href="alias.html" class="code" title=" Alias structure of a fractional design.">Alias</a> structure neglecting interactions larger than  3
+ 
+  See also  <a href="cdr.html" class="code" title=" Complete Defining Relation">cdr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cdr.html" class="code" title=" [I0,R] = cdr(I,varargin)">cdr</a></li></TD>
+<TD> Complete Defining Relation</TD>
+</TR>
+<TR>
+<TD><li><a href="cl2cnr.html" class="code" title=" I1 = cl2cnr(I)">cl2cnr</a></li></TD>
+<TD> Column Label to Column Number</TD>
+</TR>
+<TR>
+<TD><li><a href="cnr2cl.html" class="code" title=" I1 = cnr2cl(I)">cnr2cl</a></li></TD>
+<TD> Column Number to Column Label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\control\control\@lti\cat.m">cat</a></li></TD>
+<TD>           Concatenate arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\cellstr.m">cellstr</a></li></TD>
+<TD>       Create cell array of strings from character array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\deal.m">deal</a></li></TD>
+<TD>          Deal inputs to outputs.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isnumeric.m">isnumeric</a></li></TD>
+<TD>     True for numeric arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\matlab\strutil\rstrrep.m">rstrrep</a></li></TD>
+<TD>       Recursive string replacement.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@opaque\setxor.m">setxor</a></li></TD>
+<TD>        Set exclusive-or.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\sortrows.m">sortrows</a></li></TD>
+<TD>      Sort rows in ascending order.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@opaque\strmatch.m">strmatch</a></li></TD>
+<TD>      Find possible matches for string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strvcat.m">strvcat</a></li></TD>
+<TD>       Vertically concatenate strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> str = rmwhite(str)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [I00,I11] = <a name="_sub0" href="#_subfunctions" class="code">alias</a>(I0,order)
+002 <span class="comment">%ALIAS Alias structure of a fractional design.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  str = alias(I0,n);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">% str = string containing the alias structure.</span>
+007 <span class="comment">% I0  = complete defining relation.</span>
+008 <span class="comment">% n   = maximum order of alias structure.</span>
+009 <span class="comment">% </span>
+010 <span class="comment">% Example</span>
+011 <span class="comment">%   I = sudg(6,2);  <span class="comment">% Design generator</span></span>
+012 <span class="comment">%   I0 = cdr(I);    <span class="comment">% Complete defining relation</span></span>
+013 <span class="comment">%   alias(I0)       <span class="comment">% The complete alias structure</span></span>
+014 <span class="comment">%   alias(I0,3)     <span class="comment">% Alias structure neglecting interactions larger than  3</span></span>
+015 <span class="comment">%</span>
+016 <span class="comment">% See also  cdr</span>
+017 
+018 
+019 <span class="comment">%Known Bugs:   1) Number of variables must be less than 51</span>
+020 <span class="comment">%              2) n&lt;inf produse</span>
+021 error(nargchk(1,2,nargin))
+022 <span class="keyword">if</span> nargin&lt;2|isempty(order),order = inf; <span class="keyword">else</span> order = abs(order);<span class="keyword">end</span>
+023 <span class="keyword">if</span> isempty(I0),
+024   str = <span class="string">'No alias structure'</span>;
+025   disp(str)
+026   <span class="keyword">return</span>
+027 <span class="keyword">end</span>
+028 
+029 
+030 <span class="keyword">if</span> isnumeric(I0)
+031   k = max(I0(:));         <span class="comment">% Number of variables.</span>
+032   I0 = <a href="cnr2cl.html" class="code" title=" Column Number to Column Label.">cnr2cl</a>(I0);
+033 <span class="keyword">else</span>
+034   k = max(<a href="cl2cnr.html" class="code" title=" Column Label to Column Number">cl2cnr</a>(I0(:))); <span class="comment">% Number of variables.</span>
+035 <span class="keyword">end</span>
+036 p0 = size(I0,1);
+037 
+038 p = log2(p0+1);   <span class="comment">% Number of generators.</span>
+039 <span class="keyword">if</span> p~=round(p),   <span class="comment">% May be it is a design generator</span>
+040   warning(<span class="string">'This is not a Complete Defining Relation'</span>)
+041   I0 = <a href="cdr.html" class="code" title=" Complete Defining Relation">cdr</a>(I0)
+042   p0 = size(I0,1);
+043   p = log2(p0+1);   <span class="comment">% Number of generators.</span>
+044 <span class="keyword">end</span>
+045 
+046 n = 2^(k-p);      <span class="comment">% Number  of aliases</span>
+047 
+048 <span class="comment">% Make a list of all possible main effects and interaction effects</span>
+049 <span class="comment">%------------------------------------------------------------------</span>
+050 id = zeros(2^k-1,k);
+051 iz = 0;
+052 <span class="keyword">for</span> ix = 1:k,
+053   iz       = iz+1;
+054   id(iz,1) = ix;
+055   iz0      = iz;
+056   <span class="keyword">for</span> iy = 1:iz0-1,
+057     iz = iz+1;
+058     id(iz,:)   = id(iy,:);
+059     ind        = min(find(id(iy,:)==0));
+060     id(iz,ind) = ix;    
+061   <span class="keyword">end</span>
+062 <span class="keyword">end</span>
+063 <span class="comment">% Make sure whitespace is at the end.</span>
+064 id = fliplr(sortrows(fliplr(<a href="cnr2cl.html" class="code" title=" Column Number to Column Label.">cnr2cl</a>(id))));
+065 
+066 <span class="keyword">if</span> 0, <span class="comment">% This is not needed</span>
+067   <span class="comment">% Remove the defining relation effects from the effects list</span>
+068   <span class="keyword">for</span> ix=1:p0
+069     k1 = strmatch(I0(ix,:),id,<span class="string">'exact'</span>);
+070     <span class="keyword">if</span> any(k1)
+071       id(k1,:)=[];
+072     <span class="keyword">end</span>
+073   <span class="keyword">end</span>
+074 <span class="keyword">end</span>
+075 
+076 id = cellstr(id);
+077 
+078 I0 = cellstr(I0);
+079 I11 = cell(n,p0+1);
+080 
+081 
+082 <span class="comment">% Find all aliases</span>
+083 <span class="comment">%------------------------------------------</span>
+084 [I11{<span class="keyword">end</span>,1:p0}] = deal(I0{:});
+085 I11{<span class="keyword">end</span>,p0+1}= <span class="string">' '</span>;
+086 wl = zeros(1,p0);    <span class="comment">% word length</span>
+087 <span class="keyword">for</span> ix =1:n-1
+088   I11(ix,1) = {id{ix}};
+089   <span class="keyword">for</span> iy = 1:p0
+090     <span class="comment">%disp([ix,iy])</span>
+091     tmp          = setxor(id{ix},I0{iy});
+092     wl(iy) = length(tmp)-any(tmp==<span class="string">'-'</span>);  <span class="comment">% Save the word length for later sorting.</span>
+093     I11(ix,iy+1) = {tmp};
+094     k1 = strmatch(tmp,id,<span class="string">'exact'</span>);
+095     <span class="keyword">if</span> any(k1),            <span class="comment">% Remove found aliases from the effects list.</span>
+096       ind     = ones(size(id));
+097       ind(k1) = 0;
+098       id      = id(logical(ind));
+099     <span class="keyword">end</span>
+100   <span class="keyword">end</span>
+101   <span class="comment">% Sort by word length</span>
+102   [wl,ind]=sort(wl);
+103   I11(ix,2:<span class="keyword">end</span>) = I11(ix,ind+1);
+104   k1 = find(wl&gt;order);
+105   <span class="keyword">if</span> any(k1), <span class="comment">% remove interactions of higher order than order.</span>
+106     [I11{ix,k1+1}]= deal(<span class="string">' '</span>);
+107   <span class="keyword">end</span>
+108   <span class="keyword">if</span> length(id)&lt;=ix,
+109     warning(<span class="string">'Something is wrong'</span>)
+110     <span class="keyword">break</span>,
+111   <span class="keyword">end</span>
+112 <span class="keyword">end</span>
+113 
+114 tmp = cell(2,p0+1);
+115 [tmp{2,1:p0}]=deal( <span class="string">' + '</span>);
+116 tmp{2,p0+1} = <span class="string">' '</span>;
+117 I00= [];
+118 <span class="keyword">for</span> ix = 1:n
+119   [tmp{1,:}] = deal(I11{ix,:});
+120   <span class="comment">% old call</span>
+121   <span class="comment">%tmp1 = char(tmp)';</span>
+122  
+123   <span class="comment">% New call</span>
+124   tmp1 = cat(2,tmp{:});
+125   <span class="comment">% Remove any multiple whitespaces.</span>
+126   tmp1 = rstrrep(tmp1(:).',<span class="string">'  '</span>, <span class="string">' '</span>); <span class="comment">% rstrrep from string utility toolbox</span>
+127   k1 = find(tmp1 == <span class="string">'-'</span>);
+128   <span class="keyword">if</span> any(k1),    
+129     tmp1(k1-2)=<span class="string">'-'</span>;  <span class="comment">% Change + to -</span>
+130     tmp1(k1)=<span class="string">''</span>;     <span class="comment">% Remove old - signs</span>
+131   <span class="keyword">end</span>
+132   I00 = strvcat(I00,tmp1);
+133 <span class="keyword">end</span>
+134 
+135 
+136 <span class="keyword">function</span> str = <a name="_sub1" href="#_subfunctions" class="code">rmwhite</a>(str)
+137   
+138   x = (str==<span class="string">' '</span>)
+139   dx =  diff(x)
+140   
+141   
+142 
+143</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

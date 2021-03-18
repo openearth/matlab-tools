@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafopath</title>
+  <meta name="keywords" content="wafopath">
+  <meta name="description" content=" Adds or removes WAFO subdirectories from the search path.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">wafo</a> &gt; wafopath.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>wafopath
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong> Adds or removes WAFO subdirectories from the search path.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong> p = wafopath(part,add,first) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">WAFOPATH</a> Adds or removes WAFO subdirectories from the search path.
+ 
+  CALL:  <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">wafopath</a>(part,add,first) 
+  
+    part  = 'tools'  : All necessary WAFO routines. (default)
+            'docs'   : Documentation.
+            'wdemos'  : Demos.
+            'data'   : Data sets.
+            'papers' : Papers.
+    add   = 1 : Add paths from MATLAB search path (default)
+            0 : Remove paths from MATLAB search path 
+    first = 1 : Add the paths first in the search path (default)
+            0 : Add the paths last in the search path
+ 
+  See also  <a href="initwafo.html" class="code" title="   Initiation of WAFO Toolbox.">initwafo</a>, <a href="waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>, <a href="wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\addpath.m">addpath</a></li></TD>
+<TD>       Add directory to search path.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\control\control\@lti\cat.m">cat</a></li></TD>
+<TD>           Concatenate arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\computer.m">computer</a></li></TD>
+<TD>      Computer type.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\dir.bi">dir</a></li></TD>
+<TD>           List directory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\filesep.m">filesep</a></li></TD>
+<TD>       Directory separator for this platform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\fullfile.m">fullfile</a></li></TD>
+<TD>      Build full filename from parts.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\rmpath.m">rmpath</a></li></TD>
+<TD>        Remove directory from search path.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@opaque\strmatch.m">strmatch</a></li></TD>
+<TD>      Find possible matches for string.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="initwafo.html" class="code" title=" initwafo(opt,add,first)">initwafo</a></li></TD>
+<TD>   Initiation of WAFO Toolbox.</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/docs/startup.html" class="code" title="This is a script file.">startup</a></li></TD>
+<TD> example startup file to put in your matlab path</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> p = <a name="_sub0" href="#_subfunctions" class="code">wafopath</a>(part,add,first)
+002 <span class="comment">% WAFOPATH Adds or removes WAFO subdirectories from the search path.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  wafopath(part,add,first) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   part  = 'tools'  : All necessary WAFO routines. (default)</span>
+007 <span class="comment">%           'docs'   : Documentation.</span>
+008 <span class="comment">%           'wdemos'  : Demos.</span>
+009 <span class="comment">%           'data'   : Data sets.</span>
+010 <span class="comment">%           'papers' : Papers.</span>
+011 <span class="comment">%   add   = 1 : Add paths from MATLAB search path (default)</span>
+012 <span class="comment">%           0 : Remove paths from MATLAB search path </span>
+013 <span class="comment">%   first = 1 : Add the paths first in the search path (default)</span>
+014 <span class="comment">%           0 : Add the paths last in the search path</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% See also  initwafo, waforoot, wafoexepath.</span>
+017 
+018 <span class="comment">%          NOTE: User no longer has to edit this file (since v1.1.14).</span>
+019 <span class="comment">%          It is now automatic.</span>
+020 
+021 <span class="comment">% Tested on: Matlab 5.3</span>
+022 <span class="comment">% History:</span>
+023 <span class="comment">% Revised ny PJ 10-Apr-2001</span>
+024 <span class="comment">% - Now adds wafo/papers to path, since Contents-file added to PAPERS</span>
+025 <span class="comment">% revised pab 09.12.2000</span>
+026 <span class="comment">% - made sure all paths are in lower case letters</span>
+027 <span class="comment">% revised jr 23.05.2000</span>
+028 <span class="comment">% - changed demos -&gt; wdemos, sim -&gt; wsim, </span>
+029 <span class="comment">% - removed lines related to fplot</span>
+030 <span class="comment">% revised pab 28.01.2000</span>
+031 <span class="comment">% - changed 'papers' option: to include the actual directory of the paperscripts</span>
+032 <span class="comment">% - changed 'tools'  option: only the tools which is actually installed on </span>
+033 <span class="comment">%                            the system is added to the matlab path</span>
+034 <span class="comment">% Changed by Pär Johannesson 12-Jan-2000</span>
+035 <span class="comment">%   Path 'exec/...' is now first in search path.</span>
+036 <span class="comment">%   Searches for mex-files first, then m-files.</span>
+037 <span class="comment">% Changed by Pär Johannesson 28-Sep-1999</span>
+038 <span class="comment">%   Added input argument 'part'  </span>
+039 <span class="comment">% by pab 11.08.99</span>
+040 <span class="comment">%   new routine </span>
+041 
+042 <span class="comment">% Check input and output</span>
+043 ni = nargin;
+044 no = nargout;
+045 error(nargchk(0,3,ni));
+046 
+047 <span class="comment">% Set default values</span>
+048 <span class="keyword">if</span> ni&lt;1|isempty(part),  part  = <span class="string">'tools'</span>; <span class="keyword">end</span>
+049 <span class="keyword">if</span> ni&lt;2|isempty(add),   add   = 1;       <span class="keyword">end</span>
+050 <span class="keyword">if</span> ni&lt;3|isempty(first), first = 1;       <span class="keyword">end</span>
+051 
+052 
+053 <span class="comment">%pref=[pathsep, waforoot];</span>
+054 <span class="comment">%p = [waforoot filesep];</span>
+055 proot = [<a href="waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a> filesep];
+056 
+057 
+058 <span class="keyword">if</span> strcmp(part,<span class="string">'tools'</span>)
+059   p = {[proot <span class="string">'exec'</span> filesep lower(computer)]}; <span class="comment">% Search for mex-files first</span>
+060                         
+061   <span class="keyword">if</span> 1, <span class="comment">% new call </span>
+062     w=dir(proot); inddir=find(cat(1,w.isdir));
+063     wdir={w(inddir).name};
+064     <span class="comment">% remove non-tools directories from dir list</span>
+065     wdir(1:2)=[]; <span class="comment">% remove '.' and '..' from dir list</span>
+066     ind=strmatch(<span class="string">'exec'</span>,wdir);   wdir(ind)=[];
+067     ind=strmatch(<span class="string">'docs'</span>,wdir);   wdir(ind)=[];
+068     ind=strmatch(<span class="string">'wdemos'</span>,wdir);  wdir(ind)=[];
+069     ind=strmatch(<span class="string">'papers'</span>,wdir); wdir(ind)=[];
+070     ind=strmatch(<span class="string">'data'</span>,wdir);   wdir(ind)=[];
+071     ind=strmatch(<span class="string">'source'</span>,wdir); wdir(ind)=[];
+072     N=length(wdir);
+073     <span class="comment">% adds only those directories which is actually installed on the</span>
+074     <span class="comment">% current system</span>
+075     <span class="keyword">for</span> ix=1:N
+076       p(ix+1,1) = {[proot lower(wdir{ix})]};
+077     <span class="keyword">end</span>
+078   <span class="keyword">else</span> <span class="comment">% old call</span>
+079     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'onedim'</span>]};
+080     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'multidim'</span>]};
+081     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'spec'</span>]};
+082     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'trgauss'</span>]};
+083     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'wavemodels'</span>]};
+084     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'wsim'</span>]};
+085     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'wstats'</span>]};
+086     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'kdetools'</span>]};
+087     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'misc'</span>]};
+088     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'cycles'</span>]};
+089     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'markov'</span>]};
+090     <span class="comment">%p(end+1,1) = {[proot 'smarkov']};</span>
+091     p(<span class="keyword">end</span>+1,1) = {[proot <span class="string">'damage'</span>]};
+092     <span class="comment">% p(end+1,1) = {[proot 'fplot']};</span>
+093   <span class="keyword">end</span>
+094 <span class="keyword">elseif</span> strcmp(part,<span class="string">'docs'</span>)
+095   p = {[proot <span class="string">'docs'</span>]};
+096 <span class="keyword">elseif</span> strcmp(part,<span class="string">'wdemos'</span>)
+097   p = {[proot <span class="string">'wdemos'</span>]};
+098 <span class="keyword">elseif</span> strcmp(part,<span class="string">'data'</span>)
+099   p = {[proot <span class="string">'data'</span>]};
+100 <span class="keyword">elseif</span> strcmp(part,<span class="string">'papers'</span>)
+101   w=dir(fullfile(proot,<span class="string">'papers'</span>));
+102   w=w(3:<span class="keyword">end</span>); <span class="comment">% remove '.' and '..' from dir list</span>
+103   N=length(w);
+104   <span class="keyword">if</span> N&lt;1
+105     disp(<span class="string">'No paper scripts are installed'</span>)
+106   <span class="keyword">else</span>
+107     p = {[proot <span class="string">'papers'</span>]}; <span class="comment">% PJ 10-Apr-2001</span>
+108     ix=0;
+109     iy=1;
+110     <span class="keyword">while</span> ix&lt;N
+111       ix=ix+1;
+112       <span class="keyword">if</span> w(ix).isdir
+113     iy=iy+1;
+114     p(iy,1) = {[proot <span class="string">'papers'</span> filesep lower(w(ix).name)]};
+115       <span class="keyword">else</span>
+116 <span class="comment">% Commented by PJ 10-Apr-2001</span>
+117 <span class="comment">%    disp(['There should be no m-files in:  ' proot 'papers'])</span>
+118 <span class="comment">%    disp('only directories')</span>
+119       <span class="keyword">end</span>
+120     <span class="keyword">end</span>
+121   <span class="keyword">end</span>
+122 <span class="keyword">end</span>
+123 
+124 <span class="keyword">if</span> no == 0
+125   <span class="keyword">if</span> add 
+126     <span class="keyword">if</span> first
+127       addpath(p{:},<span class="string">'-begin'</span>);
+128     <span class="keyword">else</span>
+129       addpath(p{:},<span class="string">'-end'</span>);
+130     <span class="keyword">end</span>
+131     disp(<span class="string">'Pathnames Successfully Set'</span>)
+132   <span class="keyword">else</span>
+133     rmpath(p{:})
+134     disp(<span class="string">'Pathnames Successfully Removed'</span>)
+135   <span class="keyword">end</span> 
+136 <span class="keyword">end</span>
+137   
+138</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

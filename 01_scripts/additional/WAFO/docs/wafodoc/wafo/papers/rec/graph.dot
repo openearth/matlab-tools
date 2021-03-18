@@ -1,0 +1,119 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "12.4023,12.4023";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../../wafo/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../../wafo/kdetools/graph.html";
+2;
+}
+ subgraph cluster3 {
+ URL = "../../../wafo/misc/graph.html";
+3;
+}
+ subgraph cluster4 {
+ URL = "../../../wafo/onedim/graph.html";
+4;
+}
+ subgraph cluster5 {
+ URL = "../../../wafo/spec/graph.html";
+5;
+}
+ subgraph cluster6 {
+ URL = "../../../wafo/trgauss/graph.html";
+6;
+}
+ subgraph cluster7 {
+ URL = "../../../wafo/wstats/graph.html";
+7;
+}
+ subgraph cluster8 {
+ label = "rec";
+ URL = "index.html";
+8;
+9;
+10;
+11;
+12;
+13;
+14;
+15;
+16;
+17;
+18;
+19;
+20;
+21;
+22;
+23;
+24;
+25;
+26;
+}
+  9 -> 3;
+  9 -> 25;
+  10 -> 24;
+  11 -> 3;
+  12 -> 3;
+  12 -> 6;
+  13 -> 3;
+  13 -> 7;
+  14 -> 3;
+  14 -> 7;
+  15 -> 3;
+  15 -> 7;
+  16 -> 3;
+  17 -> 3;
+  17 -> 4;
+  18 -> 3;
+  18 -> 5;
+  19 -> 3;
+  19 -> 6;
+  20 -> 3;
+  20 -> 6;
+  21 -> 3;
+  21 -> 7;
+  22 -> 3;
+  22 -> 7;
+  23 -> 3;
+  23 -> 7;
+  24 -> 1;
+  24 -> 2;
+  24 -> 3;
+  24 -> 4;
+  24 -> 6;
+  24 -> 7;
+  25 -> 25;
+
+ 1 [URL="../../../wafo/graph.html",label="wafo"];
+ 2 [URL="../../../wafo/kdetools/graph.html",label="kdetools"];
+ 3 [URL="../../../wafo/misc/graph.html",label="misc"];
+ 4 [URL="../../../wafo/onedim/graph.html",label="onedim"];
+ 5 [URL="../../../wafo/spec/graph.html",label="spec"];
+ 6 [URL="../../../wafo/trgauss/graph.html",label="trgauss"];
+ 7 [URL="../../../wafo/wstats/graph.html",label="wstats"];
+ 8 [URL="Contents.html",label="Contents"];
+ 9 [URL="recdemo.html",label="recdemo"];
+ 10 [URL="recfig.html",label="recfig"];
+ 11 [URL="recfig1.html",label="recfig1"];
+ 12 [URL="recfig10.html",label="recfig10"];
+ 13 [URL="recfig11.html",label="recfig11"];
+ 14 [URL="recfig12.html",label="recfig12"];
+ 15 [URL="recfig13.html",label="recfig13"];
+ 16 [URL="recfig2.html",label="recfig2"];
+ 17 [URL="recfig3.html",label="recfig3"];
+ 18 [URL="recfig4.html",label="recfig4"];
+ 19 [URL="recfig5.html",label="recfig5"];
+ 20 [URL="recfig6.html",label="recfig6"];
+ 21 [URL="recfig7.html",label="recfig7"];
+ 22 [URL="recfig8.html",label="recfig8"];
+ 23 [URL="recfig9.html",label="recfig9"];
+ 24 [URL="recinit.html",label="recinit"];
+ 25 [URL="recintro.html",label="recintro"];
+ 26 [URL="recleanup.html",label="recleanup"];
+}

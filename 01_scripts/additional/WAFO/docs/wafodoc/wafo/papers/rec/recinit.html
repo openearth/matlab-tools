@@ -1,0 +1,362 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of recinit</title>
+  <meta name="keywords" content="recinit">
+  <meta name="description" content="  setup all global variables of the RECDEMO">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">rec</a> &gt; recinit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\rec&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>recinit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>  setup all global variables of the RECDEMO</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> recinit </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="recinit.html" class="code" title="  setup all global variables of the RECDEMO">RECINIT</a>  setup all global variables of the <a href="recdemo.html" class="code" title="  Show Rec figures with point and click interface">RECDEMO</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2spec.html" class="code" title=" [S,fcut] = dat2spec(xn,varargin)">dat2spec</a></li></TD>
+<TD> Estimate one-sided spectral density from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2steep.html" class="code" title=" [S , H,AC1,AT1,TFRONT1,TREAR1,z_ind2,xn2]=dat2steep(xx,rate,method)">dat2steep</a></li></TD>
+<TD> Extracts waveheights and steepnesses from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/dist2dfit.html" class="code" title=" [phat] =dist2dfit(V,H,dist,res,method,monitor,chat0)">dist2dfit</a></li></TD>
+<TD> Parameter estimates for DIST2D data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/dist2dpdf2.html" class="code" title=" y = dist2dpdf2(v1,h1,phat)">dist2dpdf2</a></li></TD>
+<TD> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/dist2dsmfun2.html" class="code" title=" sphat=dist2dsmfun2(phat,h2,csm,lin,visual,f0)">dist2dsmfun2</a></li></TD>
+<TD> Smooths the conditional DIST2D distribution parameters.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/evalpdf.html" class="code" title=" fi = evalpdf(pdf,varargin)">evalpdf</a></li></TD>
+<TD> evaluates a PDF struct by interpolation</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/findoutliers.html" class="code" title=" [ind, indg]=findoutliers(xx,zcrit,dcrit,ddcrit,plotflag)">findoutliers</a></li></TD>
+<TD> Finds the indices to spurious points in a timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/geth1line.html" class="code" title=" H1 = geth1line(filename,format,N)">geth1line</a></li></TD>
+<TD> Extracts the first comment line (the H1 line) of a m-file</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/gravity.html" class="code" title=" g=gravity(phi)">gravity</a></li></TD>
+<TD>  returns the constant acceleration of gravity</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/kdebin.html" class="code" title=" f = kdebin(A,options,xlo,xup)">kdebin</a></li></TD>
+<TD> Binned Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/kdeoptset.html" class="code" title=" options = kdeoptset(varargin)">kdeoptset</a></li></TD>
+<TD> Create or alter KDE OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/qlevels2.html" class="code" title=" [q, p]=qlevels2(r,p,method)">qlevels2</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of data</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">reconstruct</a></li></TD>
+<TD> reconstruct the spurious/missing points of timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/troptset.html" class="code" title=" options = troptset(varargin)">troptset</a></li></TD>
+<TD> Create or alter TRANSFORM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\cd.bi">cd</a></li></TD>
+<TD>            Change current working directory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\fullfile.m">fullfile</a></li></TD>
+<TD>      Build full filename from parts.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\pwd.m">pwd</a></li></TD>
+<TD>           Show (print) current working directory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\trapz.m">trapz</a></li></TD>
+<TD>         Trapezoidal numerical integration.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="recfig.html" class="code" title=" recfig(ix)">recfig</a></li></TD>
+<TD>  callback implementing functions of RecDemo</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">recinit</a>
+002 <span class="comment">%RECINIT  setup all global variables of the RECDEMO</span>
+003 
+004 <span class="comment">% Since the calculations are very dependent on eachother,</span>
+005 <span class="comment">% all the time consuming calculations are located here.</span>
+006 <span class="comment">% Plotting and some minor calculations are left to the recfigXX.m</span>
+007 <span class="comment">% functions </span>
+008 <span class="comment">%</span>
+009 <span class="comment">% GLOBAL RECFIGNUM &lt;=2 : globals defined and datasets are loaded</span>
+010 <span class="comment">%                  &gt;=3 : reconstruction of xn, extraction of V and H and</span>
+011 <span class="comment">%                        distribution fitting to V and H</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Recinit only recalculates the values of empty </span>
+014 <span class="comment">% variables if RECFIGNUM&gt;=3 ==&gt; saves alot of computation time</span>
+015 
+016 <span class="comment">% revised pab feb2005</span>
+017 <span class="comment">% updated call to kdebin</span>
+018 <span class="comment">% revised pab feb2004</span>
+019 <span class="comment">% revised pab 18.04.2001</span>
+020 <span class="comment">% - updated call to reconstruct due to changes in all transformation</span>
+021 <span class="comment">%    estimation functions</span>
+022 <span class="comment">% - updated call to dat2steep</span>
+023 <span class="comment">% By pab 28.01.2000</span>
+024 
+025 <span class="comment">% Figure parameter:</span>
+026 <span class="comment">%~~~~~~~~~~~~~~~~~~</span>
+027 <span class="keyword">global</span> RECFIGNUM  
+028 <span class="keyword">if</span> isempty(RECFIGNUM)
+029   disp(<span class="string">'You must start recdemo in order to run this script'</span>)
+030   clear <span class="keyword">global</span> RECFIGNUM
+031   <span class="keyword">return</span>
+032 <span class="keyword">end</span>
+033 
+034 <span class="keyword">global</span> pwdstr  recmenulabels recfilename xn map wind 
+035 <span class="keyword">if</span> isempty(pwdstr)
+036   pwdstr=pwd; <span class="comment">% save path to where the demo was started</span>
+037 <span class="keyword">end</span>
+038 
+039 <span class="keyword">if</span> isempty(recmenulabels) <span class="comment">% automatic generation of menu labels</span>
+040   cd(fullfile(<a href="../../../wafo/waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>,<span class="string">'papers'</span>,<span class="string">'rec'</span>));  
+041   recmenulabels=cell(12,1);
+042   <span class="keyword">for</span> ix=1:13
+043     recmenulabels{ix} = <a href="../../../wafo/misc/geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">geth1line</a>([<span class="string">'recfig'</span> num2str(ix)],1);   
+044   <span class="keyword">end</span>
+045   cd(pwdstr)
+046 <span class="keyword">end</span>
+047 
+048 <span class="keyword">if</span> isempty(recfilename),
+049   recfilename=<span class="string">'gfaks89.dat'</span>;
+050 <span class="keyword">end</span>
+051 
+052 <span class="keyword">if</span> isempty(xn) <span class="comment">% load if not already loaded </span>
+053   xn=load(recfilename);
+054   <span class="comment">%xn=xn(1:10000,:); <span class="comment">% used for debugging </span></span>
+055 <span class="keyword">end</span>
+056 dT=xn(2,1)-xn(1,1); <span class="comment">% sampling</span>
+057 
+058 <span class="keyword">if</span> isempty(map)
+059   disp(<span class="string">'Loading map over the North Sea...'</span>)
+060   map = load(<span class="string">'northsea.dat'</span>);
+061 <span class="keyword">end</span>
+062 <span class="keyword">if</span> isempty(wind)
+063   disp(<span class="string">'Loading wind measurements from Statfjord A...'</span>)
+064   wind = load(<span class="string">'sfa89.dat'</span>);
+065 <span class="keyword">end</span>
+066 
+067 <span class="comment">% Define Globals used</span>
+068 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+069 <span class="keyword">global</span> inds zcrit dcrit ddcrit        <span class="comment">% findoutliers output, input</span>
+070 <span class="keyword">global</span> Nsim L csm1 csm2 param         <span class="comment">% reconstruct input</span>
+071 <span class="keyword">global</span> xr g g2 test0 tobs mu1o mu1oStd <span class="comment">% reconstruct output                </span>
+072 <span class="keyword">global</span> Sr m0 m2 Tm02 Hm0 Vrms Hrms    <span class="comment">% Spectral density, moments and Sea state parameters</span>
+073 <span class="keyword">global</span> V H rate                       <span class="comment">% dat2steep output, input</span>
+074 <span class="keyword">global</span> phat res noverlap              <span class="comment">% dist2dfit output, input</span>
+075 <span class="keyword">global</span> sphat CSMA CSMB                <span class="comment">% dist2dsmfun2 output, input</span>
+076 <span class="keyword">global</span> ft2 fkde                       <span class="comment">% dist2dpdf2 and kdebin outputs</span>
+077 <span class="keyword">global</span> kernel hs L2                   <span class="comment">% kdebin input: kernel, smoothing parameter and transformation, respectively</span>
+078 
+079 
+080 <span class="comment">% RECONSTRUCTION </span>
+081 <span class="comment">%~~~~~~~~~~~~~~~~</span>
+082 
+083 <span class="comment">% Set findoutliers default values:</span>
+084 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+085 <span class="keyword">if</span> isempty(zcrit),  zcrit  = 0.02;               <span class="keyword">end</span>
+086 <span class="comment">% set dcrit corresponding to 5m/s and ddcrit corresponding to g (maximum acceleration of Stokes wave is g/2) </span>
+087 <span class="keyword">if</span> isempty(dcrit),  dcrit  = 5*dT;               <span class="keyword">end</span> <span class="comment">% dcrit=1.23 used in  article</span>
+088 <span class="keyword">if</span> isempty(ddcrit), ddcrit = <a href="../../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>(61)*dT^2;   <span class="keyword">end</span> <span class="comment">% ddcrit=1.5*1.23 used in  article</span>
+089 
+090 <span class="comment">% Set reconstruct default values:</span>
+091 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+092 <span class="keyword">if</span> isempty(Nsim),   Nsim   = 6;                  <span class="keyword">end</span> 
+093 <span class="keyword">if</span> isempty(csm1),   csm1   = 0.95;               <span class="keyword">end</span>
+094 <span class="keyword">if</span> isempty(csm2),   csm2   = 0.05;               <span class="keyword">end</span>
+095 <span class="keyword">if</span> isempty(param),  param  = [-5 5 501];        <span class="keyword">end</span>
+096 
+097 
+098 <span class="comment">%  </span>
+099 
+100 <span class="comment">% DISTRIBUTION FITTING</span>
+101 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~</span>
+102 
+103 <span class="comment">% set dat2steep default value</span>
+104 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+105 <span class="keyword">if</span> isempty(rate),   rate   = 8;                  <span class="keyword">end</span> <span class="comment">% interpolation rate of data set</span>
+106                                                      <span class="comment">%  before extraction of parameters</span>
+107 <span class="comment">%</span>
+108 <span class="comment">%Set dist2dfit default values:</span>
+109 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+110 <span class="keyword">if</span> isempty(res),        res    = 0.2;  <span class="keyword">end</span>
+111 <span class="keyword">if</span> isempty(noverlap); noverlap = 0;    <span class="keyword">end</span>
+112 
+113 <span class="comment">%Set dist2dsmfun2 default values:</span>
+114 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+115 <span class="keyword">if</span> isempty(CSMA),         CSMA = 0.95; <span class="keyword">end</span>
+116 <span class="keyword">if</span> isempty(CSMB),         CSMB = 0.95; <span class="keyword">end</span>
+117                              
+118 <span class="comment">% Set kdebin default values: </span>
+119 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+120 <span class="keyword">if</span> isempty(kernel),     kernel = <span class="string">'epan'</span>;  <span class="keyword">end</span>
+121 <span class="keyword">if</span> isempty(L2),             L2 = [.5 .5]; <span class="keyword">end</span>
+122 <span class="comment">% if hs and L2 is empty then kdebin uses the </span>
+123 <span class="comment">% default values calculated  from the data (v,h)                             </span>
+124 
+125 
+126 
+127 <span class="comment">% RECONSTRUCTION </span>
+128 <span class="comment">%~~~~~~~~~~~~~~~~</span>
+129 
+130 <span class="keyword">if</span> RECFIGNUM&gt;2,
+131   <span class="keyword">if</span> isempty(inds)
+132     disp(<span class="string">'Finding spurious points'</span>)
+133     inds = <a href="../../../wafo/onedim/findoutliers.html" class="code" title=" Finds the indices to spurious points in a timeseries">findoutliers</a>(xn,zcrit,dcrit,ddcrit);
+134   <span class="keyword">end</span>
+135   <span class="keyword">if</span> isempty(xr)
+136     disp(<span class="string">'Reconstruction ...'</span>)
+137     disp(<span class="string">'This may take a while (20 min -&gt; 1 hour depending on machine, inputs etc...)'</span>)
+138     [xr,g,g2,test0,tobs,mu1o,mu1oStd]=<a href="../../../wafo/onedim/reconstruct.html" class="code" title=" reconstruct the spurious/missing points of timeseries">reconstruct</a>(xn,inds,Nsim,L,[],<span class="keyword">...</span>
+139     <a href="../../../wafo/trgauss/troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>(<span class="string">'csm'</span>,csm1,<span class="string">'gsm'</span>,csm2,<span class="string">'param'</span>,param));
+140   
+141     <span class="comment">% Estimate spectral density and moments</span>
+142     Sr=<a href="../../../wafo/onedim/dat2spec.html" class="code" title=" Estimate one-sided spectral density from data.">dat2spec</a>(xr,L);
+143     m0=trapz(Sr.w,Sr.S); <span class="comment">% or alternatively spec2mom</span>
+144     m2=trapz(Sr.w,Sr.S);
+145     Hm0=4*sqrt(m0);
+146     Tm02=2*pi*sqrt(m0/m2);
+147     Vrms=2*Hm0/Tm02;
+148     Hrms=Hm0/sqrt(2);
+149   <span class="keyword">end</span>
+150 <span class="keyword">end</span>
+151 
+152 
+153 <span class="comment">% DISTRIBUTION FITTING:</span>
+154 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~</span>
+155 
+156 
+157 <span class="keyword">if</span> RECFIGNUM&gt;6,                 
+158   <span class="keyword">if</span> isempty(V) | isempty(H)
+159     <span class="comment">% Not extracting the missing points   </span>
+160     Ns=min(find(isnan(xn(:,2)))) 
+161     <span class="keyword">if</span> ~isempty(Ns), [V , H]=<a href="../../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(xr(1:Ns-1,:),rate,0);<span class="keyword">end</span>
+162     Ne=max(find(isnan(xn(:,2)))); 
+163     <span class="keyword">if</span> isempty(Ne),Ne=0;<span class="keyword">end</span>
+164     [V2 , H2]=<a href="../../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(xr(Ne+1:<span class="keyword">end</span>,:),rate,0);
+165     V=[V(:);V2(:)];H=[H(:);H2(:)];
+166   <span class="keyword">end</span>
+167   <span class="keyword">if</span> isempty(phat)
+168     disp(<span class="string">'Fitting a 2D distribution to the data'</span>)
+169     phat=<a href="../../../wafo/wstats/dist2dfit.html" class="code" title=" Parameter estimates for DIST2D data. ">dist2dfit</a>(V/Vrms,H/Hrms,{<span class="string">'weibull'</span>,<span class="string">'rayleigh'</span>},[res,noverlap]);
+170   <span class="keyword">end</span>
+171   <span class="keyword">if</span> isempty(sphat)
+172     sphat=<a href="../../../wafo/wstats/dist2dsmfun2.html" class="code" title=" Smooths the conditional DIST2D distribution parameters.  ">dist2dsmfun2</a>(phat,linspace(0,3.5),[CSMA,CSMB ],[1 1 ]); <span class="comment">% smooth the estimated parameter values</span>
+173   <span class="keyword">end</span>
+174 
+175   <span class="comment">% Calculate the theoretical density of fitted model</span>
+176   <span class="keyword">if</span> isempty(ft2)                    
+177     ft2=<a href="../../../wafo/wstats/dist2dpdf2.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2) ">dist2dpdf2</a>(linspace(0,4),linspace(0,4),sphat);
+178     ft2.labx{1}=<span class="string">'v'</span>;
+179     ft2.labx{2}=<span class="string">'h'</span>;
+180   <span class="keyword">end</span>
+181 <span class="keyword">end</span>
+182 
+183 
+184 <span class="keyword">if</span> RECFIGNUM&gt;8, <span class="comment">% kernel density estimation</span>
+185   <span class="keyword">if</span> isempty(fkde)
+186     disp(<span class="string">'Estimating kernel density estimate'</span>)
+187     kopt = <a href="../../../wafo/kdetools/kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>(<span class="string">'kernel'</span>,kernel,<span class="string">'L2'</span>,L2,<span class="string">'inc'</span>,128);
+188     fkde = <a href="../../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>([V/Vrms,H/Hrms],kopt); <span class="comment">% kdebin is much</span>
+189                                                         <span class="comment">% faster than kde</span>
+190     k=find(fkde.f&gt;30);
+191     <span class="keyword">if</span> any(k)
+192       disp(<span class="string">'Removing the spurios spikes'</span>)
+193       fkde.f(k)=0;
+194     <span class="keyword">end</span>
+195     <span class="keyword">if</span> 1,
+196       r = <a href="../../../wafo/kdetools/evalpdf.html" class="code" title=" evaluates a PDF struct by interpolation">evalpdf</a>(fkde,V/Vrms,H/Hrms,<span class="string">'linear'</span>);
+197       fkde.cl = <a href="../../../wafo/kdetools/qlevels2.html" class="code" title=" Calculates quantile levels which encloses P% of data ">qlevels2</a>(r,fkde.pl); <span class="comment">% calculate the levels which encloses fkde.pl</span>
+198       <span class="comment">% percent of the data (v,h)</span>
+199     <span class="keyword">end</span>
+200     fkde.labx{1}=<span class="string">'v'</span>;
+201     fkde.labx{2}=<span class="string">'h'</span>;
+202   <span class="keyword">end</span>
+203 <span class="keyword">end</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

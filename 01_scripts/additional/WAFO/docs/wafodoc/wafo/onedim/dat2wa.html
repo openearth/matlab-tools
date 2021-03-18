@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dat2wa</title>
+  <meta name="keywords" content="dat2wa">
+  <meta name="description" content=" Extracts sequence of wavelengths from data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; dat2wa.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dat2wa
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Extracts sequence of wavelengths from data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [T, index,ind] = dat2wa(xn,h,pdef,wdef,rate) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dat2wa.html" class="code" title=" Extracts sequence of wavelengths from data.">DAT2WA</a> Extracts sequence of wavelengths from data.
+ 
+   CALL:  [T, index] = <a href="dat2wa.html" class="code" title=" Extracts sequence of wavelengths from data.">dat2wa</a>(x,v/h,pdef,wdef/index,rate);
+ 
+       T = sequence of waveperiods (or wavelengths).    
+       x = two column data matrix with sampled times and values.
+     v/h = reference level ( default v=mean(x(:,2)) ) or
+           rainflow filtering height (default h=0)     
+    pdef = defines the type of waveperiod (wavelength) returned:
+           Level v separated 't2c', 'c2t', 't2t' or 'c2c' -waveperiod.
+           Level v 'd2d', 'u2u', 'd2u' or 'u2d' -waveperiod.
+           Rain flow filtered (with height greater than h) 
+           'm2M', 'M2m', 'm2m' or 'M2M' -waveperiod.
+           Explanation to the abbreviations:
+           M=Max, m=min, d=down-crossing, u=up-crossing , 
+           t=trough and c=crest.
+           Thus 'd2d' means period between a down-crossing to the
+           next down-crossing and 'u2c' means period between a 
+           u-crossing to the following crest.
+           (Default is 'd2d')
+    wdef = defines the type of wave. Possible options are
+           'mw','Mw','dw', 'uw', 'tw', 'cw' or 'none'. Default is 'none'.
+           If wdef='none' all troughs and crests will be used,
+           otherwise only the troughs and crests which define a
+           wave according to the wavedefinition are used.
+ 
+   index = index sequence of one of the following : 
+        -level v-crossings (indices to &quot;du&quot; are required to 
+            calculate 'd2d', 'd2u', 'u2d' or 'u2u' waveperiods) 
+           -level v separated trough and crest turningpoints  
+         (indices to 'tc' are required to calculate 
+         't2t', 't2c', 'c2t' or 'c2c' waveperiods)
+        -level v crossings and level v separated trough and 
+            crest turningpoints (indices to &quot;dutc&quot; are
+            required to calculate t2u, u2c, c2d or d2t
+            waveperiods)  
+           -rainflow filtered turningpoints with minimum rfc height h 
+            (indices to &quot;mMtc&quot; are required to calculate
+            'm2m', 'm2M', 'M2m' or 'M2M' waveperiods)
+ 
+   rate = interpolation rate. If rate larger than one, then x is
+          interpolated before extrating T
+ 
+  Example:
+   x = load('sea.dat'); x1 = x(1:400,:); 
+   T = <a href="dat2wa.html" class="code" title=" Extracts sequence of wavelengths from data.">dat2wa</a>(x1,0,'c2c'); % Returns crest2crest waveperiods
+   subplot(121), <a href="waveplot.html" class="code" title=" Plots the surface elevation of timeseries.">waveplot</a>(x1,'-',1,1),subplot(122),<a href="../../wafo/wstats/whisto.html" class="code" title=" Plots a histogram">whisto</a>(T)
+ 
+  See also  <a href="dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>, <a href="dat2tc.html" class="code" title=" Extracts troughs and crests from data.">dat2tc</a>, <a href="dat2crossind.html" class="code" title=" Finds indices to level v down and/or upcrossings from data">dat2crossind</a>, <a href="../../wafo/docs/perioddef.html" class="code" title=" wave periods (lengths) definitions and nomenclature">perioddef</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dat2crossind.html" class="code" title=" [ind , Nc]= dat2crossind(x,v,wdef)">dat2crossind</a></li></TD>
+<TD> Finds indices to level v down and/or upcrossings from data</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2tc.html" class="code" title=" [tc, ind, l_ind]=dat2tc(x,v,wdef)">dat2tc</a></li></TD>
+<TD> Extracts troughs and crests from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="ecross.html" class="code" title=" t0 = ecross(t,f,ind,v)">ecross</a></li></TD>
+<TD> Extracts exact level v crossings</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@opaque\strmatch.m">strmatch</a></li></TD>
+<TD>      Find possible matches for string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strvcat.m">strvcat</a></li></TD>
+<TD>       Vertically concatenate strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig3.html" class="code" title=" wafofig3">wafofig3</a></li></TD>
+<TD>  Probability density distributions (pdf) of wave period, Tt,</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [T, index,ind] = <a name="_sub0" href="#_subfunctions" class="code">dat2wa</a>(xn,h,pdef,wdef,rate)
+002 <span class="comment">%DAT2WA Extracts sequence of wavelengths from data.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL:  [T, index] = dat2wa(x,v/h,pdef,wdef/index,rate);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%      T = sequence of waveperiods (or wavelengths).    </span>
+007 <span class="comment">%      x = two column data matrix with sampled times and values.</span>
+008 <span class="comment">%    v/h = reference level ( default v=mean(x(:,2)) ) or</span>
+009 <span class="comment">%          rainflow filtering height (default h=0)     </span>
+010 <span class="comment">%   pdef = defines the type of waveperiod (wavelength) returned:</span>
+011 <span class="comment">%          Level v separated 't2c', 'c2t', 't2t' or 'c2c' -waveperiod.</span>
+012 <span class="comment">%          Level v 'd2d', 'u2u', 'd2u' or 'u2d' -waveperiod.</span>
+013 <span class="comment">%          Rain flow filtered (with height greater than h) </span>
+014 <span class="comment">%          'm2M', 'M2m', 'm2m' or 'M2M' -waveperiod.</span>
+015 <span class="comment">%          Explanation to the abbreviations:</span>
+016 <span class="comment">%          M=Max, m=min, d=down-crossing, u=up-crossing , </span>
+017 <span class="comment">%          t=trough and c=crest.</span>
+018 <span class="comment">%          Thus 'd2d' means period between a down-crossing to the</span>
+019 <span class="comment">%          next down-crossing and 'u2c' means period between a </span>
+020 <span class="comment">%          u-crossing to the following crest.</span>
+021 <span class="comment">%          (Default is 'd2d')</span>
+022 <span class="comment">%   wdef = defines the type of wave. Possible options are</span>
+023 <span class="comment">%          'mw','Mw','dw', 'uw', 'tw', 'cw' or 'none'. Default is 'none'.</span>
+024 <span class="comment">%          If wdef='none' all troughs and crests will be used,</span>
+025 <span class="comment">%          otherwise only the troughs and crests which define a</span>
+026 <span class="comment">%          wave according to the wavedefinition are used.</span>
+027 <span class="comment">%</span>
+028 <span class="comment">%  index = index sequence of one of the following : </span>
+029 <span class="comment">%       -level v-crossings (indices to &quot;du&quot; are required to </span>
+030 <span class="comment">%           calculate 'd2d', 'd2u', 'u2d' or 'u2u' waveperiods) </span>
+031 <span class="comment">%          -level v separated trough and crest turningpoints  </span>
+032 <span class="comment">%        (indices to 'tc' are required to calculate </span>
+033 <span class="comment">%        't2t', 't2c', 'c2t' or 'c2c' waveperiods)</span>
+034 <span class="comment">%       -level v crossings and level v separated trough and </span>
+035 <span class="comment">%           crest turningpoints (indices to &quot;dutc&quot; are</span>
+036 <span class="comment">%           required to calculate t2u, u2c, c2d or d2t</span>
+037 <span class="comment">%           waveperiods)  </span>
+038 <span class="comment">%          -rainflow filtered turningpoints with minimum rfc height h </span>
+039 <span class="comment">%           (indices to &quot;mMtc&quot; are required to calculate</span>
+040 <span class="comment">%           'm2m', 'm2M', 'M2m' or 'M2M' waveperiods)</span>
+041 <span class="comment">%</span>
+042 <span class="comment">%  rate = interpolation rate. If rate larger than one, then x is</span>
+043 <span class="comment">%         interpolated before extrating T</span>
+044 <span class="comment">%</span>
+045 <span class="comment">% Example:</span>
+046 <span class="comment">%  x = load('sea.dat'); x1 = x(1:400,:); </span>
+047 <span class="comment">%  T = dat2wa(x1,0,'c2c'); <span class="comment">% Returns crest2crest waveperiods</span></span>
+048 <span class="comment">%  subplot(121), waveplot(x1,'-',1,1),subplot(122),whisto(T)</span>
+049 <span class="comment">%</span>
+050 <span class="comment">% See also  dat2tp, dat2tc, dat2crossind, perioddef</span>
+051 
+052 
+053 <span class="comment">% This is a more flexible version than the dat2hwa or tp2wa routines. </span>
+054 <span class="comment">% There is a secret option: if pdef='all' the function returns </span>
+055 <span class="comment">% all the waveperiods 'd2t', 't2u', 'u2c' and 'c2d' in sequence.</span>
+056 <span class="comment">% It is up to the user to extract the right waveperiods.</span>
+057 <span class="comment">% If the first is a down-crossing then the first is a 'd2t' waveperiod.</span>
+058 <span class="comment">% If the first is a up-crossing then the first is a 'u2c' waveperiod.</span>
+059 <span class="comment">%</span>
+060 <span class="comment">%    Example:</span>
+061 <span class="comment">%        [T ind]=dat2wa(x,0,'all'); <span class="comment">%returns all waveperiods</span></span>
+062 <span class="comment">%        nn = length(T)</span>
+063 <span class="comment">%        <span class="comment">% want to extract all t2u waveperiods</span></span>
+064 <span class="comment">%        if x(ind(1),2)&gt;0 <span class="comment">% if first is down-crossing</span></span>
+065 <span class="comment">%            Tt2u=T(2:4:nn);</span>
+066 <span class="comment">%        else         <span class="comment">% first is up-crossing</span></span>
+067 <span class="comment">%            Tt2u=T(4:4:nn);</span>
+068 <span class="comment">%        end</span>
+069 
+070 <span class="comment">% Tested on: Matlab 5.3, 5.2, 5.1</span>
+071 <span class="comment">% History:</span>
+072 <span class="comment">% revised pab Feb2004  </span>
+073 <span class="comment">% revised pab 28.06.2001</span>
+074 <span class="comment">% - added secret option ind = indices to actual points used in the</span>
+075 <span class="comment">%   calculations</span>
+076 <span class="comment">% - added call to ecross =&gt; improved accuracy in the level v-crossing</span>
+077 <span class="comment">%   period calculations</span>
+078 <span class="comment">% revised pab 03.12.1999</span>
+079 <span class="comment">%  - added interpolation before extracting the parameters</span>
+080 <span class="comment">% last modified by Per A. Brodtkorb 07.08.98</span>
+081 
+082   error(nargchk(1,5,nargin))
+083 x=xn;
+084 
+085 [n m]= size(x);
+086 <span class="keyword">if</span> n&lt;m
+087  b=m;m=n;n=b; 
+088  x=x';
+089 <span class="keyword">end</span>
+090 
+091 <span class="keyword">if</span> n&lt;2, 
+092   error(<span class="string">'The vector must have more than 2 elements!'</span>)
+093 <span class="keyword">end</span>
+094 
+095 <span class="keyword">switch</span> m
+096  <span class="keyword">case</span> 2, <span class="comment">% dimension OK!</span>
+097  <span class="keyword">otherwise</span>, error(<span class="string">'Wrong dimension of input! dim must be 2xN or Nx2 '</span>)
+098 <span class="keyword">end</span>
+099 
+100 <span class="keyword">if</span> ((nargin&lt;4) | isempty(wdef)),
+101  wdef=<span class="string">'none'</span>;
+102  index=[];
+103 <span class="keyword">else</span>
+104  <span class="keyword">if</span> ischar(wdef)
+105    index=[];
+106  <span class="keyword">else</span>
+107    index=wdef;
+108    wdef=<span class="string">'none'</span>;
+109  <span class="keyword">end</span>
+110 <span class="keyword">end</span>
+111 
+112 <span class="keyword">if</span> nargin&lt;5|isempty(rate)|(rate&lt;=1),  <span class="comment">% no interpolation</span>
+113   
+114 <span class="keyword">elseif</span> rate&gt;1 <span class="comment">% interpolate with spline</span>
+115   xx=x;
+116   dT=xx(2,1)-xx(1,1);
+117   dT=dT/rate;
+118   ti=(xx(1,1):dT:xx(<span class="keyword">end</span>,1))';
+119   interpolate=1;
+120   x=zeros(length(ti),2);
+121   x(:,1)=ti;
+122   x(:,2)=interp1(xx(:,1),xx(:,2),ti,<span class="string">'*spline'</span>); 
+123 <span class="keyword">end</span>
+124 
+125 <span class="keyword">if</span> ((nargin&lt;3) | isempty(pdef)),
+126  pdef = <span class="string">'d2d'</span>;
+127 <span class="keyword">end</span>
+128 
+129 <span class="keyword">if</span> ((nargin&lt;2) | isempty(h)) ,
+130   <span class="keyword">if</span> (pdef(1)==<span class="string">'m'</span>) | (pdef(1)==<span class="string">'M'</span>),
+131     h=0;
+132     disp([<span class="string">'   The minimum rfc height, h,  is set to: '</span>, num2str(h)])
+133   <span class="keyword">else</span>
+134     h=mean(x(:,2));
+135     disp([<span class="string">'   The level l is set to: '</span>, num2str(h)])
+136     <span class="comment">% l is h in order to save number of arguments in the </span>
+137     <span class="comment">% function call. Hopefully not too confusing!</span>
+138   <span class="keyword">end</span>
+139 <span class="keyword">end</span>
+140 
+141 <span class="keyword">if</span> ( isempty(index)),
+142   <span class="keyword">switch</span> pdef(1:3) <span class="comment">% comparing only the three first characters</span>
+143     
+144     <span class="keyword">case</span> {<span class="string">'m2m'</span>, <span class="string">'m2M'</span>, <span class="string">'M2m'</span>,<span class="string">'M2M'</span>} , <span class="comment">% </span>
+145       <span class="comment">%find rainflow filtered min and max turning points</span>
+146       [TP index]=<a href="dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(x,h,wdef);       
+147 
+148     <span class="keyword">case</span> {<span class="string">'u2u'</span>,<span class="string">'u2d'</span>,<span class="string">'d2u'</span>, <span class="string">'d2d'</span>},<span class="comment">%</span>
+149       <span class="comment">%find level v down-crossings and up-crossings</span>
+150       index=<a href="dat2crossind.html" class="code" title=" Finds indices to level v down and/or upcrossings from data">dat2crossind</a>(x,h,wdef);
+151 
+152     <span class="keyword">case</span> { <span class="string">'t2t'</span>,<span class="string">'t2c'</span>,<span class="string">'c2t'</span> <span class="string">'c2c'</span>}, <span class="comment">%</span>
+153       <span class="comment">%find level v trough and crest turningpoints</span>
+154       [TC, index]=<a href="dat2tc.html" class="code" title=" Extracts troughs and crests from data.">dat2tc</a>(x,h,wdef);
+155       
+156     <span class="keyword">case</span> { <span class="string">'d2t'</span>,<span class="string">'t2u'</span>, <span class="string">'u2c'</span>, <span class="string">'c2d'</span>,<span class="string">'all'</span>  }, 
+157       <span class="comment">%find level v down-crossings, up-crossings and trough and crest turningpoints</span>
+158       [TC index l_ind]=<a href="dat2tc.html" class="code" title=" Extracts troughs and crests from data.">dat2tc</a>(x,h,wdef);
+159       index=(sort([index ; l_ind])); <span class="comment">% sorting crossings and tp in sequence</span>
+160     
+161     <span class="keyword">otherwise</span>, error(<span class="string">'Unknown option!'</span>);
+162   <span class="keyword">end</span> 
+163 <span class="keyword">end</span> <span class="comment">% if nargin</span>
+164 
+165 <span class="keyword">if</span> (x(index(1),2)&gt;x(index(2),2)), <span class="comment">% if first is down-crossing or max </span>
+166   <span class="keyword">switch</span> pdef
+167     <span class="keyword">case</span> <span class="string">'all'</span>, start=1;    <span class="comment">% secret option!</span>
+168     <span class="keyword">case</span> {<span class="string">'d2t'</span>,<span class="string">'M2m'</span>,<span class="string">'c2t'</span>, <span class="string">'d2u'</span> , <span class="string">'M2M'</span>,<span class="string">'c2c'</span>,<span class="string">'d2d'</span>}, start=1;
+169     <span class="keyword">case</span> {<span class="string">'t2u'</span>,<span class="string">'m2M'</span>, <span class="string">'t2c'</span>, <span class="string">'u2d'</span> ,<span class="string">'m2m'</span>,<span class="string">'t2t'</span>,<span class="string">'u2u'</span>}, start=2;
+170     <span class="keyword">case</span> <span class="string">'u2c'</span>, start=3;
+171     <span class="keyword">case</span> <span class="string">'c2d'</span>, start=4;
+172     <span class="keyword">otherwise</span>, error(<span class="string">'Unknown option!'</span>);
+173   <span class="keyword">end</span> <span class="comment">%switch pdef</span>
+174 <span class="keyword">else</span>             <span class="comment">% first is up-crossing or min </span>
+175   <span class="keyword">switch</span> pdef 
+176     <span class="keyword">case</span> <span class="string">'all'</span>, start=1;    <span class="comment">% secret option!</span>
+177     <span class="keyword">case</span> {<span class="string">'u2c'</span>,<span class="string">'m2M'</span>, <span class="string">'t2c'</span>, <span class="string">'u2d'</span>,<span class="string">'m2m'</span>,<span class="string">'t2t'</span>,<span class="string">'u2u'</span>} , start=1;
+178     <span class="keyword">case</span> {<span class="string">'c2d'</span>,<span class="string">'M2m'</span>,<span class="string">'c2t'</span>, <span class="string">'d2u'</span> , <span class="string">'M2M'</span>,<span class="string">'c2c'</span>,<span class="string">'d2d'</span>}, start=2;
+179     <span class="keyword">case</span> <span class="string">'d2t'</span>, start=3;
+180     <span class="keyword">case</span> <span class="string">'t2u'</span>, start=4;
+181     <span class="keyword">otherwise</span>, error(<span class="string">'Unknown option!'</span>);
+182   <span class="keyword">end</span> <span class="comment">% switch pdef</span>
+183 <span class="keyword">end</span> <span class="comment">%if </span>
+184 
+185 <span class="comment">% determine the steps between wanted periods</span>
+186 <span class="keyword">switch</span> pdef
+187   <span class="keyword">case</span> {<span class="string">'d2t'</span>,<span class="string">'t2u'</span>,<span class="string">'u2c'</span>, <span class="string">'c2d'</span> }, step=4; 
+188   <span class="keyword">case</span> <span class="string">'all'</span>, step=1;;<span class="comment">% secret option!  </span>
+189   <span class="keyword">otherwise</span>, step=2; 
+190 <span class="keyword">end</span> <span class="comment">% switch pdef</span>
+191 
+192 <span class="comment">% determine the distance between min2min, t2t etc..</span>
+193 <span class="keyword">switch</span> pdef
+194   <span class="keyword">case</span> {<span class="string">'m2m'</span>,<span class="string">'t2t'</span>,<span class="string">'u2u'</span>,<span class="string">'M2M'</span>,<span class="string">'c2c'</span>,<span class="string">'d2d'</span>}, dist=2;
+195   <span class="keyword">case</span> <span class="string">'all'</span>, dist=1;<span class="comment">% secret option!</span>
+196   <span class="keyword">otherwise</span>,  dist=1;
+197 <span class="keyword">end</span> <span class="comment">% switch pdef</span>
+198 
+199 nn = length(index);
+200 <span class="comment">% New call: (pab 28.06.2001)</span>
+201 <span class="keyword">if</span> strmatch(pdef(1),strvcat(<span class="string">'u'</span>,<span class="string">'d'</span>)),
+202   t0 = <a href="ecross.html" class="code" title=" Extracts exact level v crossings ">ecross</a>(x(:,1),x(:,2),index(start:step:(nn-dist)),h);
+203 <span class="keyword">else</span> <span class="comment">% min, Max, trough, crest or all crossings wanted</span>
+204   t0 = x(index(start:step:(nn-dist)),1); 
+205 <span class="keyword">end</span>
+206 <span class="keyword">if</span> strmatch(pdef(3),strvcat(<span class="string">'u'</span>,<span class="string">'d'</span>)),
+207   t1 = <a href="ecross.html" class="code" title=" Extracts exact level v crossings ">ecross</a>(x(:,1),x(:,2),index((start+dist):step:nn),h);
+208 <span class="keyword">else</span> <span class="comment">% min, Max, trough, crest or all crossings wanted</span>
+209   t1 = x(index((start+dist):step:nn),1); 
+210 <span class="keyword">end</span>
+211 T = t1-t0;
+212 <span class="keyword">if</span> nargout&gt;2, <span class="comment">% Secret option: indices to the actual crossings used.</span>
+213   index=index(:);
+214   ind = [index(start:step:(nn-dist)) index((start+dist):step:nn)].';
+215   ind = ind(:);
+216 <span class="keyword">end</span>
+217 
+218 <span class="keyword">return</span>
+219 
+220 <span class="comment">% Old call: kept just in case</span>
+221 <span class="comment">%T  = x(index((start+dist):step:nn),1)-x(index(start:step:(nn-dist)),1);</span>
+222 
+223 
+224 
+225 
+226 
+227 
+228 
+229 
+230 
+231 
+232 
+233 
+234</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of trangood</title>
+  <meta name="keywords" content="trangood">
+  <meta name="description" content=" Makes a transformation that is suitable for efficient transforms.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; trangood.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>trangood
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Makes a transformation that is suitable for efficient transforms.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = trangood(ff,nmin,mini,maxi,nmax) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="trangood.html" class="code" title=" Makes a transformation that is suitable for efficient transforms.">TRANGOOD</a> Makes a transformation that is suitable for efficient transforms.
+ 
+   CALL:  f = <a href="trangood.html" class="code" title=" Makes a transformation that is suitable for efficient transforms.">trangood</a>(ff,nmin,mini,maxi,nmax);
+ 
+         f    = the good transform function, [X f(X)].
+         ff   = the input transform function, [X f(X)]. 
+         nmin = the minimum number of points in the good transform.
+                (Default  size(ff,1))
+         mini = the minimum data value to transform. 
+                (Default  min(ff(:,1)))
+         maxi = the maximum data value to transform.
+                (Default  max(ff(:,1)))
+         nmax = then maximum number of points in the good transform
+                (default inf)
+ 
+  <a href="trangood.html" class="code" title=" Makes a transformation that is suitable for efficient transforms.">TRANGOOD</a> interpolates ff linearly  and optionally
+   extrapolate ff linearly outside the <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> of ff(:,1)
+   with X uniformly spaced.
+ 
+  See also   <a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>, interp1q</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1q.m">interp1q</a></li></TD>
+<TD>      Quick 1-D linear interpolation.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/onedim/reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">reconstruct</a></li></TD>
+<TD> reconstruct the spurious/missing points of timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> y=donothing(x)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">trangood</a>(ff,nmin,mini,maxi,nmax)
+002 <span class="comment">%TRANGOOD Makes a transformation that is suitable for efficient transforms.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL:  f = trangood(ff,nmin,mini,maxi,nmax);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        f    = the good transform function, [X f(X)].</span>
+007 <span class="comment">%        ff   = the input transform function, [X f(X)]. </span>
+008 <span class="comment">%        nmin = the minimum number of points in the good transform.</span>
+009 <span class="comment">%               (Default  size(ff,1))</span>
+010 <span class="comment">%        mini = the minimum data value to transform. </span>
+011 <span class="comment">%               (Default  min(ff(:,1)))</span>
+012 <span class="comment">%        maxi = the maximum data value to transform.</span>
+013 <span class="comment">%               (Default  max(ff(:,1)))</span>
+014 <span class="comment">%        nmax = then maximum number of points in the good transform</span>
+015 <span class="comment">%               (default inf)</span>
+016 <span class="comment">%</span>
+017 <span class="comment">% TRANGOOD interpolates ff linearly  and optionally</span>
+018 <span class="comment">%  extrapolate ff linearly outside the range of ff(:,1)</span>
+019 <span class="comment">%  with X uniformly spaced.</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% See also   tranproc, interp1q</span>
+022 
+023 
+024 <span class="comment">% History:</span>
+025 <span class="comment">% revised pab 07.02.2001</span>
+026 <span class="comment">% - added nmax</span>
+027 <span class="comment">% - replaced x = linspace(f(1,1),f(nf,1),nmin)' with x = (f(1,1):df:f(nf,1))'</span>
+028 <span class="comment">% revised pab 07.01.2001</span>
+029 <span class="comment">%  -fixed a bug: x = linspace(f(1,1),f(nf,1),nmin)' is safer than using</span>
+030 <span class="comment">%    x=f(1,1)+(0:nmin-1)'/(nmin-1)*(f(nf,1)-f(1,1));  with interp1q</span>
+031 <span class="comment">% revised pab 12.11.2000</span>
+032 <span class="comment">%  - updated header info: A more detailed description of what TRANGOOD does.</span>
+033 <span class="comment">%  - changed interpolation with a call to interp1q which is much faster</span>
+034 <span class="comment">%  added nargchk and isempty(maxi),....isempty(nmin)</span>
+035 <span class="comment">% by ???</span>
+036 
+037 error(nargchk(1,5,nargin))
+038 <span class="keyword">if</span> (size(ff,2)~=2)
+039   error(<span class="string">'ff  must be a two column matrix.'</span>)
+040 <span class="keyword">end</span>
+041 <span class="keyword">if</span> (size(ff,1)&lt;2)
+042   error(<span class="string">'ff  must have at least two rows.'</span>)
+043 <span class="keyword">end</span>
+044 
+045 [f,i] = sort(ff(:,1));
+046 f     = [f ff(i,2)];
+047 clear i;
+048 df    = diff(f(:,1));
+049 <span class="keyword">if</span> ( any(df&lt;=0)), <span class="comment">%eps </span>
+050   error(<span class="string">'Duplicate x-values in  ff  not allowed.'</span>)
+051 <span class="keyword">end</span>
+052 
+053 nf = size(f,1);
+054 <span class="keyword">if</span> (nargin&lt;5)|isempty(nmax),  nmax = inf; <span class="keyword">end</span>
+055 <span class="keyword">if</span> (nargin&lt;4)|isempty(maxi),  maxi = f(nf,1); <span class="keyword">end</span>
+056 <span class="keyword">if</span> (nargin&lt;3)|isempty(mini),  mini = f(1,1);  <span class="keyword">end</span>
+057 <span class="keyword">if</span> (nargin&lt;2)|isempty(nmin),  nmin = nf;      <span class="keyword">end</span>
+058 <span class="keyword">if</span> (nmin&lt;2),    nmin = 2;  <span class="keyword">end</span>
+059 <span class="keyword">if</span> (nmax&lt;2),    nmax = 2;  <span class="keyword">end</span>
+060 
+061 <span class="keyword">if</span> ( (nf&lt;nmin) |(nmax&lt;nf) | any(abs(diff(df))&gt;10*eps*(f(nf,1)-f(1,1))) )
+062   <span class="comment">% pab 07.01.2001: Always choose the stepsize df so that </span>
+063   <span class="comment">% it is an exactly representable number.</span>
+064   <span class="comment">% This is important when calculating numerical derivatives and is </span>
+065   <span class="comment">% accomplished by the following.</span>
+066   df = (f(nf,1)-f(1,1))/(min(nmin,nmax)-1);
+067   df = <a href="#_sub1" class="code" title="sub  y=donothing(x)">donothing</a>(df+2)-2;
+068   x = (f(1,1):df:f(nf,1)).';
+069   <span class="comment">% New call pab 11.11.2000: This is much quicker</span>
+070   f = [ x interp1q(f(:,1),f(:,2),x)];     
+071   <span class="comment">%f = [ x interp1(f(:,1),f(:,2),x,'linear')];  </span>
+072 <span class="keyword">end</span>
+073 <span class="comment">% f(:,1) is now uniformly spaced</span>
+074 df = f(2,1)-f(1,1);
+075 
+076 <span class="comment">% Extrapolate linearly outside the range of ff</span>
+077 <span class="comment">%---------------------------------------------- </span>
+078 <span class="keyword">if</span> (mini&lt;f(1,1)),
+079   f1 = df*(floor((mini-f(1,1))/df):1:-1)';
+080   f2 = f(1,2)+f1*(f(2,2)-f(1,2))/(f(2,1)-f(1,1));
+081   f  = [f1+f(1,1) f2;f];
+082 <span class="keyword">end</span>
+083 n = size(f,1);
+084 <span class="keyword">if</span> (maxi&gt;f(n,1))
+085   f1 = df*(1:1:ceil((maxi-f(n,1))/df))';
+086   f2 = f(n,2)+f1*(f(n,2)-f(n-1,2))/(f(n,1)-f(n-1,1));
+087   f  = [f;f1+f(n,1) f2];
+088 <span class="keyword">end</span>
+089 
+090 <span class="keyword">return</span>
+091 <span class="keyword">function</span> y=<a name="_sub1" href="#_subfunctions" class="code">donothing</a>(x)
+092   y=x;
+093 <span class="keyword">return</span>
+094 
+095 <span class="comment">% Old call: (Saved it just in case...)</span>
+096  x=f(1,1)+(0:nmin-1)'/(nmin-1)*(f(nf,1)-f(1,1));
+097  <span class="comment">% &quot;y=interp1(f(:,1),f(:,2),x,'linear');&quot; is slow:</span>
+098  <span class="comment">% Use the fact that transforms often are &quot;continuous&quot; to </span>
+099  <span class="comment">% find y_k=f(x_k) incrementally.</span>
+100  y=zeros(nmin,1);
+101  i = 1;
+102  <span class="keyword">for</span> k=1:nmin
+103    xx=x(k);
+104    <span class="keyword">if</span> (xx&gt;f(i+1,1))
+105      <span class="keyword">while</span> (xx&gt;f(i+1,1))
+106        i=i+1;
+107        <span class="keyword">if</span> (i&gt;=nf), i=nf-1; <span class="keyword">break</span>;  <span class="keyword">end</span>;
+108      <span class="keyword">end</span>
+109    <span class="keyword">else</span> <span class="comment">% xx&lt;=f(i+1,1)</span>
+110      <span class="keyword">while</span> (xx&lt;=f(i,1))
+111        i=i-1;
+112        <span class="keyword">if</span> (i&lt;1),   i=1;    <span class="keyword">break</span>;  <span class="keyword">end</span>;
+113      <span class="keyword">end</span>
+114    <span class="keyword">end</span>
+115    x0 = f(i,1); x1 = f(i+1,1);
+116    y0 = f(i,2); y1 = f(i+1,2);
+117    y(k) = (xx-x0)*(y1-y0)/(x1-x0)+y0;
+118  <span class="keyword">end</span>
+119  f=[x y];
+120  clear x y;
+121 
+122 
+123</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

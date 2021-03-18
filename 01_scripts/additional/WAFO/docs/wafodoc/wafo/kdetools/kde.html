@@ -1,0 +1,424 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of kde</title>
+  <meta name="keywords" content="kde">
+  <meta name="description" content=" Kernel Density Estimator.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; kde.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>kde
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Kernel Density Estimator.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = kde(A,options,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> Kernel Density Estimator. 
+  
+  CALL:  f = <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(data,options,x1,x2,...,xd) 
+  
+    f      = kernel density estimate evaluated at meshgrid(x1,x2,..). 
+    data   = data matrix, size N x D (D = # dimensions) 
+   options = kdeoptions-structure or cellvector of named parameters with 
+             corresponding values, see <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a> for details.   
+    x1,x2..= vectors defining the points to evaluate the density  
+             (default depending on data) 
+    
+   <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> gives a slow, but exact kernel density estimate evaluated at meshgrid(x1,x2,..). 
+   Notice that densities close to normality appear to be the easiest for the kernel 
+   estimator to estimate and that the degree of estimation difficulty increases with  
+   skewness, kurtosis and multimodality. 
+  
+   If D &gt; 1 <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> calculates quantile <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> by integration. An 
+   alternative is to calculate them by ranking the kernel density 
+   estimate obtained at the DATA points i.e. use the commands   
+  
+       f    = <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(data); 
+       tmp  = num2cell(data,1); 
+       r    = <a href="kdefun.html" class="code" title="  Kernel Density Estimator. ">kdefun</a>(data,[],tmp{:}); 
+       f.cl = <a href="qlevels2.html" class="code" title=" Calculates quantile levels which encloses P% of data ">qlevels2</a>(r,f.pl);  
+  
+   The first is probably best when estimating the pdf and the latter is the 
+   easiest and most robust for multidimensional data when only a visualization 
+   of the data is needed. 
+  
+   For faster estimates try <a href="kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>. 
+  
+  Examples:  
+      data = <a href="../../wafo/wstats/wraylrnd.html" class="code" title=" Random matrices from a Rayleigh distribution">wraylrnd</a>(1,500,1); 
+      x = linspace(sqrt(eps),5,55); 
+      <a href="../../wafo/wstats/wnormplot.html" class="code" title=" Plots data on a Normal distribution paper">wnormplot</a>((data).^(.5)) % gives a straight line =&gt; L2 = 0.5 reasonable 
+      f = <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(data,{'L2',.5},x); 
+      <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f) 
+  
+  See also  <a href="kdefun.html" class="code" title="  Kernel Density Estimator. ">kdefun</a>, <a href="mkernel.html" class="code" title=" Multivariate Kernel Function. ">mkernel</a>, <a href="kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>, <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="kdefun.html" class="code" title=" [f, hs,lambda]= kdefun(A,options,varargin)">kdefun</a></li></TD>
+<TD>  Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="kdeoptset.html" class="code" title=" options = kdeoptset(varargin)">kdeoptset</a></li></TD>
+<TD> Create or alter KDE OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@scribehandle\class.m">class</a></li></TD>
+<TD>         Create object or return object class.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\deal.m">deal</a></li></TD>
+<TD>          Deal inputs to outputs.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp2.m">interp2</a></li></TD>
+<TD>       2-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp3.m">interp3</a></li></TD>
+<TD>       3-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interpn.m">interpn</a></li></TD>
+<TD>       N-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\iscell.m">iscell</a></li></TD>
+<TD>        True for cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\isequal.m">isequal</a></li></TD>
+<TD>       True if arrays are numerically equal.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\ndgrid.m">ndgrid</a></li></TD>
+<TD>        Generation of arrays for N-D functions and interpolation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\num2cell.m">num2cell</a></li></TD>
+<TD>      Convert numeric array into cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\sortrows.m">sortrows</a></li></TD>
+<TD>      Sort rows in ascending order.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@char\transpose.bi">transpose</a></li></TD>
+<TD>     .' Transpose.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="kde1dgui.html" class="code" title=" varargout = kde1dgui(varargin)">kde1dgui</a></li></TD>
+<TD> GUI to Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="kde2dgui.html" class="code" title=" varargout = kde2dgui(varargin)">kde2dgui</a></li></TD>
+<TD> GUI to Kernel Density Estimator in two dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="kdedemo1.html" class="code" title="This is a script file.">kdedemo1</a></li></TD>
+<TD> Demonstrate the smoothing parameter impact on KDE</TD>
+</TR>
+<TR>
+<TD><li><a href="kdedemo2.html" class="code" title="This is a script file.">kdedemo2</a></li></TD>
+<TD> Demonstrate the difference between transformation- and ordinary-KDE</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">kde</a>(A,options,varargin) 
+002 <span class="comment">%KDE Kernel Density Estimator. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  f = kde(data,options,x1,x2,...,xd) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   f      = kernel density estimate evaluated at meshgrid(x1,x2,..). </span>
+007 <span class="comment">%   data   = data matrix, size N x D (D = # dimensions) </span>
+008 <span class="comment">%  options = kdeoptions-structure or cellvector of named parameters with </span>
+009 <span class="comment">%            corresponding values, see kdeoptset for details.   </span>
+010 <span class="comment">%   x1,x2..= vectors defining the points to evaluate the density  </span>
+011 <span class="comment">%            (default depending on data) </span>
+012 <span class="comment">%   </span>
+013 <span class="comment">%  KDE gives a slow, but exact kernel density estimate evaluated at meshgrid(x1,x2,..). </span>
+014 <span class="comment">%  Notice that densities close to normality appear to be the easiest for the kernel </span>
+015 <span class="comment">%  estimator to estimate and that the degree of estimation difficulty increases with  </span>
+016 <span class="comment">%  skewness, kurtosis and multimodality. </span>
+017 <span class="comment">% </span>
+018 <span class="comment">%  If D &gt; 1 KDE calculates quantile levels by integration. An </span>
+019 <span class="comment">%  alternative is to calculate them by ranking the kernel density </span>
+020 <span class="comment">%  estimate obtained at the DATA points i.e. use the commands   </span>
+021 <span class="comment">% </span>
+022 <span class="comment">%      f    = kde(data); </span>
+023 <span class="comment">%      tmp  = num2cell(data,1); </span>
+024 <span class="comment">%      r    = kdefun(data,[],tmp{:}); </span>
+025 <span class="comment">%      f.cl = qlevels2(r,f.pl);  </span>
+026 <span class="comment">% </span>
+027 <span class="comment">%  The first is probably best when estimating the pdf and the latter is the </span>
+028 <span class="comment">%  easiest and most robust for multidimensional data when only a visualization </span>
+029 <span class="comment">%  of the data is needed. </span>
+030 <span class="comment">% </span>
+031 <span class="comment">%  For faster estimates try kdebin. </span>
+032 <span class="comment">% </span>
+033 <span class="comment">% Examples:  </span>
+034 <span class="comment">%     data = wraylrnd(1,500,1); </span>
+035 <span class="comment">%     x = linspace(sqrt(eps),5,55); </span>
+036 <span class="comment">%     wnormplot((data).^(.5)) <span class="comment">% gives a straight line =&gt; L2 = 0.5 reasonable </span></span>
+037 <span class="comment">%     f = kde(data,{'L2',.5},x); </span>
+038 <span class="comment">%     pdfplot(f) </span>
+039 <span class="comment">% </span>
+040 <span class="comment">% See also  kdefun, mkernel, kdebin, kdeoptset </span>
+041  
+042 <span class="comment">% Reference:   </span>
+043 <span class="comment">%  B. W. Silverman (1986)  </span>
+044 <span class="comment">% 'Density estimation for statistics and data analysis'   </span>
+045 <span class="comment">%  Chapman and Hall , pp 100-110 </span>
+046 <span class="comment">% </span>
+047 <span class="comment">%  Wand, M.P. and Jones, M.C. (1995)  </span>
+048 <span class="comment">% 'Kernel smoothing' </span>
+049 <span class="comment">%  Chapman and Hall, pp 43--45 </span>
+050  
+051  
+052  
+053  
+054 <span class="comment">%Tested on: matlab 5.2 </span>
+055 <span class="comment">% History: </span>
+056 <span class="comment">% revised pab Feb2005 </span>
+057 <span class="comment">% -changed input options into a struct.   </span>
+058 <span class="comment">% revised pab 01.01.2001 </span>
+059 <span class="comment">% - added the possibility that L2 is a cellarray of parametric </span>
+060 <span class="comment">%   or non-parametric transformations (secret option) </span>
+061 <span class="comment">% revised pab 12.12.1999 </span>
+062 <span class="comment">% - small modification of example in help header </span>
+063 <span class="comment">% revised pab 28.10.1999 </span>
+064 <span class="comment">%  - added L2 </span>
+065 <span class="comment">% revised pab 21.10.99  </span>
+066 <span class="comment">%  - added alpha to input arguments </span>
+067 <span class="comment">%  - made it fully general for d dimensions </span>
+068 <span class="comment">%  - HS may be a smoothing matrix </span>
+069 <span class="comment">% revised pab 21.09.99   </span>
+070 <span class="comment">% adapted from kdetools by Cristian Beardah </span>
+071  
+072    
+073 defaultoptions = <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>;   
+074 <span class="comment">% If just 'defaults' passed in, return the default options in g </span>
+075 <span class="keyword">if</span> ((nargin==1) &amp; (nargout &lt;= 1) &amp;  isequal(A,<span class="string">'defaults'</span>)), 
+076   f = defaultoptions; 
+077   <span class="keyword">return</span> 
+078 <span class="keyword">end</span>    
+079 error(nargchk(1,inf, nargin)) 
+080 [n d]=size(A); <span class="comment">% Find dimensions of A,  </span>
+081                <span class="comment">% n=number of data points, </span>
+082                <span class="comment">% d=dimension of the data.   </span>
+083  
+084 <span class="keyword">if</span> (nargin&lt;2 | isempty(options)) 
+085   options  = defaultoptions; 
+086 <span class="keyword">else</span> 
+087   <span class="keyword">switch</span> lower(class(options)) 
+088    <span class="keyword">case</span> {<span class="string">'char'</span>,<span class="string">'struct'</span>}, 
+089     options = <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>(defaultoptions,options); 
+090    <span class="keyword">case</span> {<span class="string">'cell'</span>} 
+091     
+092       options = <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>(defaultoptions,options{:}); 
+093    <span class="keyword">otherwise</span> 
+094     error(<span class="string">'Invalid options'</span>) 
+095   <span class="keyword">end</span> 
+096 <span class="keyword">end</span> 
+097 kernel   = options.kernel; 
+098 h        = options.hs; 
+099 alpha    = options.alpha; 
+100 L2       = options.L2; 
+101 <span class="comment">%hsMethod = options.hsMethod; </span>
+102  
+103 <span class="keyword">if</span> isempty(h)  
+104   h=zeros(1,d); 
+105 <span class="keyword">end</span> 
+106  
+107 L22 = cell(1,d); 
+108 k3=[]; 
+109 <span class="keyword">if</span> isempty(L2) 
+110   L2=ones(1,d); <span class="comment">% default no transformation </span>
+111 <span class="keyword">elseif</span> iscell(L2)   <span class="comment">% cellarray of non-parametric and parametric transformations </span>
+112   Nl2 = length(L2); 
+113   <span class="keyword">if</span> ~(Nl2==1|Nl2==d), error(<span class="string">'Wrong size of L2'</span>), <span class="keyword">end</span> 
+114   [L22{1:d}] = deal(L2{1:min(Nl2,d)}); 
+115   L2 = ones(1,d); <span class="comment">% default no transformation </span>
+116   <span class="keyword">for</span> ix=1:d, 
+117     <span class="keyword">if</span> length(L22{ix})&gt;1, 
+118       k3=[k3 ix];       <span class="comment">% Non-parametric transformation </span>
+119     <span class="keyword">else</span>  
+120      L2(ix) = L22{ix};  <span class="comment">% Parameter to the Box-Cox transformation </span>
+121     <span class="keyword">end</span> 
+122   <span class="keyword">end</span> 
+123 <span class="keyword">elseif</span> length(L2)==1 
+124   L2=L2(:,ones(1,d)); 
+125 <span class="keyword">end</span> 
+126  
+127 f=<a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(d); 
+128  
+129 nv=length(varargin); 
+130 <span class="keyword">for</span> ix=1:min(nv,d), 
+131   <span class="keyword">if</span> (any(varargin{ix}&lt;=0) &amp; (L2(ix)~=1)), 
+132      f=[]; 
+133     error(<span class="string">'xi cannot be negative or zero when L2~=1'</span>) 
+134   <span class="keyword">end</span> 
+135   f.x{ix}=varargin{ix}(:); <span class="comment">% make sure it is a column vector. </span>
+136 <span class="keyword">end</span> 
+137 amin=min(A); 
+138 <span class="keyword">if</span> any((amin(L2~=1)&lt;=0)), 
+139   f=[]; 
+140   error(<span class="string">'DATA cannot be negative or zero when L2~=1'</span>) 
+141 <span class="keyword">end</span> 
+142  
+143 <span class="keyword">if</span> nv&lt;d 
+144   amax=max(A); 
+145   xyzrange=amax-amin; 
+146   <span class="keyword">for</span> ix=nv+1:d 
+147     <span class="keyword">if</span> ~isempty(k3) &amp; any(k3==ix) 
+148       lo = max(<a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(1.25*<a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(amin(ix),L22{ix}).<span class="keyword">...</span> 
+149       -<a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(amax(ix),L22{ix})/4,fliplr(L22{ix})),sqrt(eps)); 
+150     <span class="keyword">else</span> 
+151       <span class="keyword">switch</span> L2(ix) 
+152     <span class="keyword">case</span> 1, lo=amin(ix)-xyzrange(ix)/4; 
+153     <span class="keyword">case</span> 0, lo=max(sqrt(eps),exp(1.25*log(amin(ix))-log(amax(ix))/4 ));       
+154     <span class="keyword">otherwise</span>, 
+155       lo=max(sqrt(eps),min(amin(ix)-eps,<span class="keyword">...</span> 
+156           sign(L2(ix))*(sign(L2(ix))*(1.25*amin(ix)^L2(ix)-amax(ix)^L2(ix)/4 )).^(1/L2(ix))));   
+157       <span class="keyword">end</span> 
+158     <span class="keyword">end</span> 
+159      f.x{ix}=transpose(linspace(min(lo,amin(ix)),amax(ix)+xyzrange(ix)/4,41)); 
+160   <span class="keyword">end</span> 
+161 <span class="keyword">end</span> 
+162  
+163  
+164 X=cell(d,1); 
+165 <span class="keyword">switch</span> d  
+166  <span class="keyword">case</span> 1,     [X{1}] = deal(f.x{1}); 
+167  <span class="keyword">case</span> {2 3} ,[X{:}] = meshgrid(f.x{:}); 
+168  <span class="keyword">otherwise</span> ,   
+169  disp(<span class="string">'Dimension of data large, this will take a while.'</span>) 
+170  [X{:}]    = ndgrid(f.x{:}); 
+171 <span class="keyword">end</span> 
+172  
+173 [f.f, hs, lambda]=<a href="kdefun.html" class="code" title="  Kernel Density Estimator. ">kdefun</a>(A,options,X{:});     
+174 options.hs = hs; 
+175 <span class="keyword">switch</span> lower(kernel(1:4)) 
+176   <span class="keyword">case</span> <span class="string">'epan'</span>, tstr = <span class="string">'Epanechnikov'</span>;<span class="comment">%  - Epanechnikov kernel. (default) </span>
+177   <span class="keyword">case</span> <span class="string">'biwe'</span>, tstr = <span class="string">'Biweight'</span>; <span class="comment">%     - Bi-weight kernel. </span>
+178   <span class="keyword">case</span> <span class="string">'triw'</span>, tstr = <span class="string">'Triweight'</span>;<span class="comment">%     - Tri-weight kernel.   </span>
+179   <span class="keyword">case</span> <span class="string">'tria'</span>, tstr = <span class="string">'Triangular'</span>;<span class="comment">%    - Triangular kernel. </span>
+180   <span class="keyword">case</span> <span class="string">'gaus'</span>, tstr = <span class="string">'Gaussian'</span>;<span class="comment">%      - Gaussian kernel </span>
+181   <span class="keyword">case</span> <span class="string">'rect'</span>, tstr = <span class="string">'Rectangular'</span>;<span class="comment">%   - Rectanguler kernel.  </span>
+182   <span class="keyword">case</span> <span class="string">'lapl'</span>, tstr = <span class="string">'Laplace'</span>;<span class="comment">%       - Laplace kernel. </span>
+183   <span class="keyword">case</span> <span class="string">'logi'</span>, tstr = <span class="string">'Logistic'</span>;<span class="comment">%      - Logistic kernel. </span>
+184   <span class="keyword">otherwise</span> , tstr=[]; 
+185 <span class="keyword">end</span> 
+186  
+187 <span class="keyword">if</span> alpha&gt;0, 
+188   f.title=[<span class="string">'Adaptive Kernel density estimate ( '</span>,tstr,<span class="string">' )'</span>]; 
+189   [As ,ind]=sortrows(A); 
+190   Ai=num2cell(As,1);method=<span class="string">'linear'</span>; 
+191    
+192   <span class="keyword">switch</span> d 
+193    <span class="keyword">case</span> 1, lambda=interp1(Ai{1},lambda(ind),X{:},method); 
+194    <span class="keyword">case</span> 2, lambda=interp2(Ai{:},lambda(ind),X{:},method); 
+195    <span class="keyword">case</span> 3, lambda=interp3(Ai{:},lambda(ind),X{:},method); 
+196    <span class="keyword">otherwise</span> ,   
+197      lambda =interpn(Ai{:},lambda(ind),X{:},method); 
+198   <span class="keyword">end</span> 
+199   f.lambda=lambda; 
+200 <span class="keyword">else</span> 
+201   f.title=[<span class="string">'Kernel density estimate ( '</span>,tstr,<span class="string">' )'</span>]; 
+202 <span class="keyword">end</span> 
+203 f.note   = f.title; 
+204 f.options = options; 
+205 <span class="comment">%f.kernel = tstr; </span>
+206 <span class="comment">%f.alpha  = alpha; </span>
+207 <span class="comment">%f.l2     = L2; </span>
+208 <span class="keyword">if</span>  d&gt;1 
+209  [ql PL] = <a href="qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(f.f); 
+210  f.cl    = ql; 
+211  f.pl    = PL; 
+212 <span class="keyword">end</span> 
+213  
+214  
+215</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

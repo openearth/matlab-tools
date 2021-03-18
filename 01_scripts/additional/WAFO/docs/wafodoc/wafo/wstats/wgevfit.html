@@ -1,0 +1,365 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wgevfit</title>
+  <meta name="keywords" content="wgevfit">
+  <meta name="description" content=" Parameter estimates for GEV data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wgevfit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wgevfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates for GEV data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat,cov,pci] = wgevfit(data,method,start,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data">WGEVFIT</a> Parameter estimates for GEV data
+ 
+  CALL:  [phat,cov] = <a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data">wgevfit</a>(data,method,start,plotflag)
+ 
+         phat  = Estimated parameters
+                 [k s m] = [shape scale location]   (see <a href="wgevcdf.html" class="code" title=" Generalized Extreme Value cumulative distribution function">wgevcdf</a>)
+         cov   = asymptotic covariance matrix of estimates
+         data  = an one-dimensional data set
+        method = a string, describing the method of estimation
+                 'PWM' = Probability Weighted Moments (default)
+                 'ML'  = Maximum Likelihood estimates
+         start = starting values for 'ML' method
+                 (default 'PWM' estimate) 
+      plotflag = 0, do not plot
+               &gt; 0, plot the empiricial distribution function and the
+                    estimated cdf (see <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a> for options)(default)
+                   
+  The variances of the ML estimates are usually smaller than those of
+  the PWM estimates. However, it is recommended to first use the PWM
+  method since it works for a wider <a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> of parameter values. 
+  If method = 'ml' and  start  is missing, then  pwm  is used to 
+  give the starting values  start.
+ 
+  Example:  
+    R = <a href="wgevrnd.html" class="code" title=" Random matrices from a Generalized Extreme Value distribution">wgevrnd</a>(0.2,2,7.5,200,1);
+    [phat,cov] = <a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data">wgevfit</a>(R,'pwm',[],0)
+    [phat,cov] = <a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data">wgevfit</a>(R,'ml',[],0)
+ 
+  See also  <a href="wgevcdf.html" class="code" title=" Generalized Extreme Value cumulative distribution function">wgevcdf</a>, <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>, <a href="wgevlike.html" class="code" title=" Is an internal routine for wgevfit">wgevlike</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevcdf.html" class="code" title=" F = wgevcdf(x,k,s,m);">wgevcdf</a></li></TD>
+<TD> Generalized Extreme Value cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevfit.html" class="code" title=" [phat,cov,pci] = wgevfit(data,method,start,plotflag)">wgevfit</a></li></TD>
+<TD> Parameter estimates for GEV data</TD>
+</TR>
+<TR>
+<TD><li><a href="wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\inv.bi">inv</a></li></TD>
+<TD>           Matrix inverse.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\optimset.m">optimset</a></li></TD>
+<TD>      Create/alter OPTIM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter5.html" class="code" title="This is a script file.">Chapter5</a></li></TD>
+<TD> % CHAPTER5 contains the commands used in Chapter 5 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevfit.html" class="code" title=" [phat,cov,pci] = wgevfit(data,method,start,plotflag)">wgevfit</a></li></TD>
+<TD> Parameter estimates for GEV data</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbtest.html" class="code" title=" p = wgumbtest(x,a)">wgumbtest</a></li></TD>
+<TD> Tests whether the shape parameter in a GEV is equal to zero</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [phat,cov,pci] = <a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data"><a name="_sub0" href="#_subfunctions" class="code">wgevfit</a>wgevfit</a>(data,method,start,plotflag) 
+002 <span class="comment">%WGEVFIT Parameter estimates for GEV data</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [phat,cov] = wgevfit(data,method,start,plotflag)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        phat  = Estimated parameters</span>
+007 <span class="comment">%                [k s m] = [shape scale location]   (see wgevcdf)</span>
+008 <span class="comment">%        cov   = asymptotic covariance matrix of estimates</span>
+009 <span class="comment">%        data  = an one-dimensional data set</span>
+010 <span class="comment">%       method = a string, describing the method of estimation</span>
+011 <span class="comment">%                'PWM' = Probability Weighted Moments (default)</span>
+012 <span class="comment">%                'ML'  = Maximum Likelihood estimates</span>
+013 <span class="comment">%        start = starting values for 'ML' method</span>
+014 <span class="comment">%                (default 'PWM' estimate) </span>
+015 <span class="comment">%     plotflag = 0, do not plot</span>
+016 <span class="comment">%              &gt; 0, plot the empiricial distribution function and the</span>
+017 <span class="comment">%                   estimated cdf (see empdistr for options)(default)</span>
+018 <span class="comment">%                  </span>
+019 <span class="comment">% The variances of the ML estimates are usually smaller than those of</span>
+020 <span class="comment">% the PWM estimates. However, it is recommended to first use the PWM</span>
+021 <span class="comment">% method since it works for a wider range of parameter values. </span>
+022 <span class="comment">% If method = 'ml' and  start  is missing, then  pwm  is used to </span>
+023 <span class="comment">% give the starting values  start.</span>
+024 <span class="comment">%</span>
+025 <span class="comment">% Example:  </span>
+026 <span class="comment">%   R = wgevrnd(0.2,2,7.5,200,1);</span>
+027 <span class="comment">%   [phat,cov] = wgevfit(R,'pwm',[],0)</span>
+028 <span class="comment">%   [phat,cov] = wgevfit(R,'ml',[],0)</span>
+029 <span class="comment">%</span>
+030 <span class="comment">% See also  wgevcdf, empdistr, wgevlike</span>
+031 
+032 <span class="comment">% References</span>
+033 <span class="comment">%</span>
+034 <span class="comment">%  Prescott, P. and Walden, A.T. (1980)</span>
+035 <span class="comment">%  Maximum likelihood estimation of the parameters of the generalized</span>
+036 <span class="comment">%  extreme-value distribution</span>
+037 <span class="comment">%  Biometrika (67), pp. 723-724</span>
+038 <span class="comment">%</span>
+039 <span class="comment">%  Hosking, J.R.M, Wallis, J.R. and Wood E.F. (1985)</span>
+040 <span class="comment">%  Estimation of the generalized extreme-value distribution by the</span>
+041 <span class="comment">%  method of probability-weighted moments</span>
+042 <span class="comment">%  Technometrics (27), pp. 251-261</span>
+043 <span class="comment">%</span>
+044 <span class="comment">%  Borg, S. (1992)</span>
+045 <span class="comment">%  XS - a statistical program package in Splus for extreme-value</span>
+046 <span class="comment">%  analysis. </span>
+047 <span class="comment">%  Dept. of Mathematical Statistics, Lund University, 1992:E2</span>
+048 
+049 <span class="comment">% Tested on: Matlab 5.3</span>
+050 <span class="comment">% History: </span>
+051 <span class="comment">% Revised by pab 13.06.2001</span>
+052 <span class="comment">% - Replaced </span>
+053 <span class="comment">% [phat,dummy,Converged] = fminsearch('wgevlike',mlstart,....);</span>
+054 <span class="comment">% with</span>
+055 <span class="comment">%  [phat,dummy,Converged] = feval('fminsearch','wgevlike',mlstart,...);</span>
+056 <span class="comment">% to avoid &quot;Unknown function referenced: fminsearch&quot; error on matlab 5.2</span>
+057 <span class="comment">% and below. </span>
+058 <span class="comment">%</span>
+059 <span class="comment">% Revised by PJ 02-Apr-2001</span>
+060 <span class="comment">%   Method 'ml' now works with new format of fminsearch.</span>
+061 <span class="comment">% Revised by jr 30.09.1999</span>
+062 <span class="comment">% Modified by PJ 08-Mar-2000</span>
+063 <span class="comment">%   Added 'hold off' in plotting.</span>
+064 <span class="comment">%   Added routine 'gevll'. Now method 'ml' works.</span>
+065 <span class="comment">% revised ms 14.06.2000</span>
+066 <span class="comment">% - updated header info</span>
+067 <span class="comment">% - changed name to wgevfit (from gevfit)</span>
+068 <span class="comment">% - added w* to used WAFO-files</span>
+069 <span class="comment">% - enabled consistent use of 3 and 4 arguments</span>
+070 <span class="comment">% - enabled use of empty start in ML</span>
+071 <span class="comment">% revised pab 29.10.2000</span>
+072 <span class="comment">%  - added nargchk</span>
+073 
+074 error(nargchk(1,4,nargin))
+075 <span class="keyword">if</span> (nargin &lt; 2)|isempty(method),     method = <span class="string">'pwm'</span>; <span class="keyword">end</span> 
+076 <span class="keyword">if</span> (nargin &lt; 4)|isempty(plotflag), plotflag = 1; <span class="keyword">end</span>
+077 
+078 data = data(:)'; <span class="comment">% make sure it is a vector</span>
+079 cov=[];
+080 pci=[];
+081 <span class="keyword">switch</span> lower(method),
+082   <span class="keyword">case</span> <span class="string">'pwm'</span>,
+083     w=[ -0.4, 1.6637,  1.3355, 1.1405, 1.8461, 1.1628, 2.9092;
+084       -0.3, 1.4153,  0.8912, 0.5640, 1.2574, 0.4442, 1.4090;
+085       -0.2, 1.3322,  0.6727, 0.3926, 1.0013, 0.2697, 0.9139;
+086       -0.1, 1.2915,  0.5104, 0.3245, 0.8440, 0.2240, 0.6815;
+087       0.0, 1.2686,  0.3704, 0.2992, 0.7390, 0.2247, 0.5633;
+088       0.1, 1.2551,  0.2411, 0.2966, 0.6708, 0.2447, 0.5103;
+089       0.2, 1.2474,  0.1177, 0.3081, 0.6330, 0.2728, 0.5021;
+090       0.3, 1.2438, -0.0023, 0.3297, 0.6223, 0.3033, 0.5294;
+091       0.4, 1.2433, -0.1205, 0.3592, 0.6368, 0.3329, 0.5880];
+092    
+093     n = length(data);
+094     sortdata = sort(data);
+095     koeff1 = ((1:n)-1)/(n-1);
+096     koeff2 = koeff1.*((1:n)-2)/(n-2);
+097     b2 = (koeff2*sortdata')/n;
+098     b1 = (koeff1*sortdata')/n;
+099     b0 = mean(sortdata);
+100     z = (2*b1-b0)/(3*b2-b0)-log(2)/log(3); 
+101     shape = 7.8590*z+2.9554*z^2;
+102     scale = (2*b1-b0)*shape/(gamma(1+shape)*(1-2^(-shape)));
+103     location = b0+scale*(gamma(1+shape)-1)/shape;
+104     
+105     phat=[shape scale location];
+106     <span class="comment">% if (abs(shape)&gt;=0.5) changed by ms to deal with shapes in (.4,.5)</span>
+107     <span class="keyword">if</span> (abs(shape)&gt;=0.4) 
+108       disp(<span class="string">' The estimate of shape is not within the range where '</span>)
+109       disp(<span class="string">' the PWM estimator is valid.'</span>)
+110       <span class="comment">% elseif (abs(shape)&lt;=0.5) changed by ms to deal with shapes in (.4,.5)</span>
+111     <span class="keyword">elseif</span> (abs(shape)&lt;=0.4) &amp; nargout&gt;1
+112       <span class="comment">% calculate covariance matrix of estimates with </span>
+113       <span class="comment">% linear interpolation between rows</span>
+114       i1 = sum((w(:,1)&lt;=shape));
+115       i2 = 10-sum((w(:,1)&gt;=shape));
+116       w_s = w(i1,:)+(shape-w(i1,1))*(w(i2,:)-w(i1,:))/(w(i2,1)-w(i1,1));
+117       W=[w_s(7),w_s(6),w_s(4);w_s(6),w_s(5),w_s(3);w_s(4),w_s(3),w_s(2)];
+118       Cov=[1,scale,scale;scale,scale^2,scale^2;scale,scale^2,scale^2];
+119       cov=1/n*W.*Cov; 
+120    <span class="keyword">end</span>
+121    
+122 <span class="keyword">case</span> <span class="string">'ml'</span>,
+123   <span class="comment">% ml.gev &lt;- function(data, shape=NA, scale=NA, location=NA) {</span>
+124   <span class="comment">% J. Statist. Comput. Simul. 16, 241-250</span>
+125   <span class="keyword">if</span> (nargin&lt;3)|isempty(start)   <span class="comment">% compute starting values by  pwm</span>
+126     mlstart=<a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data">wgevfit</a>(data,<span class="string">'pwm'</span>,[],0);<span class="comment">% Added ms</span>
+127   <span class="keyword">else</span>,
+128     mlstart=start;
+129   <span class="keyword">end</span>
+130 
+131   options(1) = 0;     <span class="comment">% Display off</span>
+132   options(2) = 1.e-5; <span class="comment">% Termination tolerance on the function value  1.e-5]; </span>
+133   options(3) = 1.e-5; <span class="comment">% Termination tolerance on X </span>
+134   options(14)= 500;   <span class="comment">% Maximum number of iterations allowed </span>
+135 
+136   <span class="comment">% Solve the ML-equation</span>
+137   
+138   <span class="keyword">try</span> 
+139   <span class="comment">% For Matlab 5.3 and higher ???</span>
+140     [options1] = optimset(<span class="string">'disp'</span>,<span class="string">'off'</span>,<span class="string">'TolX'</span>,options(2),<span class="string">'TolFun'</span>,options(3),<span class="string">'MaxIter'</span>,options(14));
+141     [phat,dummy,Converged] = feval(<span class="string">'fminsearch'</span>,<span class="string">'wgevlike'</span>,mlstart,options1,data);
+142   
+143   <span class="keyword">catch</span>
+144     <span class="comment">% For Matlab 5.2 and lower ???</span>
+145     [phat,option] = feval(<span class="string">'fmins'</span>,<span class="string">'wgevlike'</span>,mlstart,options,[],data);
+146     Converged = (option(14) &lt;= options(14));
+147   <span class="keyword">end</span>
+148   
+149 
+150   <span class="keyword">if</span> ~Converged <span class="comment">%(options(10)==500), </span>
+151      disp(<span class="string">' ML-routine did not converge in 500 steps.'</span>); cov=[];
+152   <span class="keyword">elseif</span> nargout&gt;1 
+153     <span class="comment">% Calculate the covariance matrix by inverting the observed information. </span>
+154     shape = phat(1);
+155     scale = phat(2);
+156     location = phat(3);
+157     y = -log(1-shape*(data-location)/scale)/shape;
+158     P = length(data)-sum(exp(-y));
+159     Q = sum(exp((shape-1)*y)+(shape-1)*exp(shape*y));
+160     R = length(data)-sum(y.*(1-exp(-y)));
+161     dLda = -(P+Q)/scale/shape;
+162     dLdb = -Q/scale;
+163     dLdk = -(R-(P+Q)/shape)/shape;
+164     dPdb = -sum(exp((shape-1)*y))/scale;
+165     dPda = sum(exp(-y))/scale/shape+dPdb/shape;
+166     dQdb = sum(exp((2*shape-1)*y));
+167     dQdb = (dQdb+shape*sum(exp(2*shape*y)))*(1-shape)/scale;
+168     dQda = sum(exp((shape-1)*y));
+169     dQda = -(dQda+shape*sum(shape*y))*(1-shape)/scale/shape + dQdb/shape;    
+170     dRda = length(data)-sum(exp(shape*y))+sum(y.*exp(-y))-sum(exp(-y));
+171     dRda = dRda+sum(exp((shape-1)*y))-sum(y.*exp((shape-1)*y));
+172     dRda = -dRda/scale/shape;
+173     dRdk = (sum(y)-sum(y.*exp(-y))+sum(y.*y.*exp(-y))-scale*dRda)/shape;
+174     dRdb = (sum(exp(shape*y).*(1-exp(-y)+y.*exp(-y))))/scale;
+175     d2Lda2 = -dLda/scale-(dPda+dQda)/scale/shape;
+176     d2Ldab = -(dPdb+dQdb)/scale/shape;
+177     d2Ldak = -(dRda+dLda+scale*d2Lda2)/shape;
+178     d2Ldb2 = -dQdb/scale;
+179     d2Ldbk = -(dRdb+scale*d2Ldab)/shape;
+180     d2Ldk2 = -(dRdk+dLdk+scale*d2Ldak)/shape;
+181     V = - [d2Ldk2, d2Ldak, d2Ldbk;
+182            d2Ldak, d2Lda2, d2Ldab;
+183            d2Ldbk, d2Ldab, d2Ldb2];
+184     cov = real(inv(V));
+185   <span class="keyword">end</span>
+186 <span class="keyword">end</span>
+187  
+188 
+189 <span class="keyword">if</span> (nargout&gt;2)&amp;~isempty(cov)
+190   alpha2 = ones(1,3)*0.05/2;
+191   var = diag(cov).';
+192   pci = <a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>([alpha2;1-alpha2], [phat;phat],[var;var]);
+193 <span class="keyword">end</span>
+194 
+195 <span class="comment">% Plotting,  JR 9909</span>
+196 <span class="keyword">if</span> plotflag
+197   sd=sort(data);
+198   <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:),[sd(:), <a href="wgevcdf.html" class="code" title=" Generalized Extreme Value cumulative distribution function">wgevcdf</a>(sd(:),shape,scale,location)],plotflag)
+199   <span class="keyword">if</span> strcmpi(method,<span class="string">'pwm'</span>),
+200     str = <span class="string">'PWM'</span>;
+201   <span class="keyword">else</span>
+202     str = <span class="string">'ML'</span>;
+203   <span class="keyword">end</span>
+204   title([deblank([<span class="string">'Empirical and GEV estimated cdf ('</span>,str,<span class="string">' method)'</span>])])
+205 <span class="keyword">end</span>
+206 
+207 
+208 
+209 
+210</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,72 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "8.85093,8.85093";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../wafo/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../wafo/misc/graph.html";
+2;
+}
+ subgraph cluster3 {
+ label = "docs";
+ URL = "index.html";
+3;
+4;
+5;
+6;
+7;
+8;
+9;
+10;
+11;
+12;
+13;
+14;
+15;
+16;
+17;
+18;
+19;
+}
+  3 -> 3;
+  4 -> 4;
+  5 -> 5;
+  6 -> 6;
+  8 -> 8;
+  9 -> 9;
+  10 -> 10;
+  11 -> 11;
+  12 -> 12;
+  13 -> 13;
+  14 -> 1;
+  15 -> 15;
+  16 -> 1;
+  17 -> 1;
+  17 -> 2;
+  19 -> 19;
+
+ 1 [URL="../../wafo/graph.html",label="wafo"];
+ 2 [URL="../../wafo/misc/graph.html",label="misc"];
+ 3 [URL="aboutwafo.html",label="aboutwafo"];
+ 4 [URL="addfeatr.html",label="addfeatr"];
+ 5 [URL="ampdef.html",label="ampdef"];
+ 6 [URL="bugreport.html",label="bugreport"];
+ 7 [URL="Contents.html",label="Contents"];
+ 8 [URL="crossdef.html",label="crossdef"];
+ 9 [URL="datastructures.html",label="datastructures"];
+ 10 [URL="getstart.html",label="getstart"];
+ 11 [URL="install.html",label="install"];
+ 12 [URL="limitations.html",label="limitations"];
+ 13 [URL="perioddef.html",label="perioddef"];
+ 14 [URL="startup.html",label="startup"];
+ 15 [URL="tpdef.html",label="tpdef"];
+ 16 [URL="wafohelp.html",label="wafohelp"];
+ 17 [URL="wafomenu.html",label="wafomenu"];
+ 18 [URL="wafoweb.html",label="wafoweb"];
+ 19 [URL="wavedef.html",label="wavedef"];
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wfrechstat</title>
+  <meta name="keywords" content="wfrechstat">
+  <meta name="description" content=" Mean and variance for the Frechet distribution.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wfrechstat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wfrechstat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Mean and variance for the Frechet distribution.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [m,v]= wfrechstat(a,c); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wfrechstat.html" class="code" title=" Mean and variance for the Frechet distribution.">WFRECHSTAT</a> Mean and variance for the Frechet distribution.
+  
+  CALL:  [m,v] = <a href="wfrechstat.html" class="code" title=" Mean and variance for the Frechet distribution.">wfrechstat</a>(a,c)
+ 
+    m, v = the mean and variance, respectively 
+    a, c = parameters of the Frechet distribution (see <a href="wfrechcdf.html" class="code" title=" Frechet cumulative distribution function">wfrechcdf</a>).
+ 
+   Mean (m) and variance (v) for the Frechet distribution is
+ 
+   m=a*gamma(1-1/c)  (if c&gt;1) and  v=a^2*(gamma(1-2/c))-m^2  (if c&gt;2)
+ 
+  Example:
+    [m,v] = <a href="wweibstat.html" class="code" title=" Mean and variance for the Weibull  distribution.">wweibstat</a>(4,0.5)
+ 
+  See also  <a href="wfrechcdf.html" class="code" title=" Frechet cumulative distribution function">wfrechcdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [m,v]= <a name="_sub0" href="#_subfunctions" class="code">wfrechstat</a>(a,c);
+002 <span class="comment">%WFRECHSTAT Mean and variance for the Frechet distribution.</span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  [m,v] = wfrechstat(a,c)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   m, v = the mean and variance, respectively </span>
+007 <span class="comment">%   a, c = parameters of the Frechet distribution (see wfrechcdf).</span>
+008 <span class="comment">%</span>
+009 <span class="comment">%  Mean (m) and variance (v) for the Frechet distribution is</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%  m=a*gamma(1-1/c)  (if c&gt;1) and  v=a^2*(gamma(1-2/c))-m^2  (if c&gt;2)</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Example:</span>
+014 <span class="comment">%   [m,v] = wweibstat(4,0.5)</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% See also  wfrechcdf</span>
+017 
+018 
+019 <span class="comment">% Reference: </span>
+020 
+021 
+022 <span class="comment">% Tested on; Matlab 5.3</span>
+023 <span class="comment">% History: </span>
+024 <span class="comment">% Added PJ 10-May-2001</span>
+025 
+026 error(nargchk(2,2,nargin))
+027 
+028 [errorcode, a, c] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(a,c);
+029 
+030 <span class="keyword">if</span> errorcode &gt; 0
+031     error(<span class="string">'a and c must be of common size or scalar.'</span>);
+032 <span class="keyword">end</span>
+033 
+034 <span class="comment">%   Initialize Mean and Variance to zero.</span>
+035 m = zeros(size(a));
+036 v = zeros(size(a));
+037 
+038 <span class="comment">%ok = (a &gt; 0 &amp; c &gt; 0);</span>
+039 ok1 = (a &gt; 0 &amp; c &gt; 1);
+040 ok2 = (a &gt; 0 &amp; c &gt; 2);
+041 
+042 k = find(ok1);
+043 <span class="keyword">if</span> any(k)
+044   m(k) =  a(k) .* gamma(1 - (1 ./ c(k)));
+045 <span class="keyword">end</span>
+046 
+047 k = find(ok2);
+048 <span class="keyword">if</span> any(k)
+049   v(k) = a(k) .^ 2 .* gamma(1 - (2 ./ c(k))) - m(k).^ 2;
+050 <span class="keyword">end</span>
+051 
+052 k1 = find(~ok1);
+053 <span class="keyword">if</span> any(k1)
+054     tmp = NaN;
+055     m(k1) = tmp(ones(size(k1)));
+056 <span class="keyword">end</span>
+057 
+058 k1 = find(~ok2);
+059 <span class="keyword">if</span> any(k1)
+060     tmp = NaN;
+061     v(k1) = tmp(ones(size(k1)));
+062 <span class="keyword">end</span>
+063</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

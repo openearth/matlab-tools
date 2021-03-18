@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wgpdpdf</title>
+  <meta name="keywords" content="wgpdpdf">
+  <meta name="description" content=" Generalized Pareto probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wgpdpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wgpdpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Generalized Pareto probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wgpdpdf(x,k,s,m); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wgpdpdf.html" class="code" title=" Generalized Pareto probability density function ">WGPDPDF</a> Generalized Pareto probability density function 
+  
+  CALL:  f = <a href="wgpdpdf.html" class="code" title=" Generalized Pareto probability density function ">wgpdpdf</a>(x,k,s,m); 
+   
+         f = density function evaluated at x 
+         k = shape parameter in the GPD 
+         s = scale parameter in the GPD    (default 1) 
+         m = location parameter in the GPD (default 0)   
+   
+  The Generalized Pareto distribution is defined by its cdf 
+  
+                 1 - (1-k(x-m)/s)^1/k,  k~=0 
+   F(x;k,s) = 
+                 1 - exp(-(x-m)/s),  k==0 
+  
+  for x&gt;=m (when k&lt;=0) and 0 &lt;= x-m &lt; s/k (when k&gt;0), s&gt;0. 
+  
+  Example:  
+    x = linspace(0,2,200); 
+    p1 = <a href="wgpdpdf.html" class="code" title=" Generalized Pareto probability density function ">wgpdpdf</a>(x,1.25,1); p2 = <a href="wgpdpdf.html" class="code" title=" Generalized Pareto probability density function ">wgpdpdf</a>(x,1,1); 
+    p3 = <a href="wgpdpdf.html" class="code" title=" Generalized Pareto probability density function ">wgpdpdf</a>(x,0.75,1); p4 = <a href="wgpdpdf.html" class="code" title=" Generalized Pareto probability density function ">wgpdpdf</a>(x,0.5,1); 
+    plot(x,p1,x,p2,x,p3,x,p4)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wgpdpdf</a>(x,k,s,m); 
+002 <span class="comment">%WGPDPDF Generalized Pareto probability density function </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  f = wgpdpdf(x,k,s,m); </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%        f = density function evaluated at x </span>
+007 <span class="comment">%        k = shape parameter in the GPD </span>
+008 <span class="comment">%        s = scale parameter in the GPD    (default 1) </span>
+009 <span class="comment">%        m = location parameter in the GPD (default 0)   </span>
+010 <span class="comment">%  </span>
+011 <span class="comment">% The Generalized Pareto distribution is defined by its cdf </span>
+012 <span class="comment">% </span>
+013 <span class="comment">%                1 - (1-k(x-m)/s)^1/k,  k~=0 </span>
+014 <span class="comment">%  F(x;k,s) = </span>
+015 <span class="comment">%                1 - exp(-(x-m)/s),  k==0 </span>
+016 <span class="comment">% </span>
+017 <span class="comment">% for x&gt;=m (when k&lt;=0) and 0 &lt;= x-m &lt; s/k (when k&gt;0), s&gt;0. </span>
+018 <span class="comment">% </span>
+019 <span class="comment">% Example:  </span>
+020 <span class="comment">%   x = linspace(0,2,200); </span>
+021 <span class="comment">%   p1 = wgpdpdf(x,1.25,1); p2 = wgpdpdf(x,1,1); </span>
+022 <span class="comment">%   p3 = wgpdpdf(x,0.75,1); p4 = wgpdpdf(x,0.5,1); </span>
+023 <span class="comment">%   plot(x,p1,x,p2,x,p3,x,p4) </span>
+024   
+025 <span class="comment">% References </span>
+026 <span class="comment">%  Johnson N.L., Kotz S. and Balakrishnan, N. (1994) </span>
+027 <span class="comment">%  Continuous Univariate Distributions, Volume 1. Wiley.  </span>
+028  
+029 <span class="comment">% Tested on: Matlab 5.3 </span>
+030 <span class="comment">% History:  </span>
+031 <span class="comment">% Revised pab oct 2005 </span>
+032 <span class="comment">% - limits m&lt;x&lt;s/k replaced with 0 &lt; x-m &lt; s/k in help header. </span>
+033 <span class="comment">% -fixed a bug for k&lt;0  </span>
+034 <span class="comment">% revised pab June 2005 </span>
+035 <span class="comment">% fixed bug for k==0 now fixed </span>
+036 <span class="comment">% revised jr 14.08.2001 </span>
+037 <span class="comment">%  - a bug in the last if-statement condition fixed </span>
+038 <span class="comment">%    (thanks to D Eddelbuettel &lt;edd@debian.org&gt;) </span>
+039 <span class="comment">% revised pab 24.10.2000 </span>
+040 <span class="comment">%  - added comnsize, nargchk </span>
+041 <span class="comment">%  - added extra check on the scale parameter s </span>
+042 <span class="comment">%  - added m + default values on m and s </span>
+043 <span class="comment">% added ms 14.06.2000 </span>
+044  
+045 error(nargchk(2,4,nargin)) 
+046  
+047 <span class="keyword">if</span> nargin&lt;4|isempty(m), m=0;<span class="keyword">end</span> 
+048 <span class="keyword">if</span> nargin&lt;3|isempty(s), s=1;<span class="keyword">end</span> 
+049  
+050 [errorcode x k s m] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,k,s,m); 
+051 <span class="keyword">if</span> errorcode &gt; 0 
+052     error(<span class="string">'x, k s and m must be of common size or scalar.'</span>); 
+053 <span class="keyword">end</span> 
+054 epsilon=1e-4; <span class="comment">% treshold defining k to zero </span>
+055  
+056 xm = x-m; 
+057 f = zeros(size(x)); 
+058  
+059 k0 = find((xm&gt;=0) &amp; (abs(k)&lt;=epsilon) &amp; (s&gt;0)); 
+060 <span class="keyword">if</span> any(k0),  
+061    f(k0) = exp(-xm(k0)./s(k0))./s(k0); 
+062 <span class="keyword">end</span> 
+063  
+064 k1=find((xm&gt;=0) &amp; (k.*xm &lt; s) &amp; (abs(k)&gt;epsilon) &amp; (s&gt;0)); 
+065 <span class="keyword">if</span> any(k1), 
+066   f(k1) = (1-k(k1).*xm(k1)./s(k1)).^(1./k(k1)-1)./s(k1); 
+067 <span class="keyword">end</span> 
+068  
+069    
+070 k3 = find(s&lt;=0); 
+071 <span class="keyword">if</span> any(k3), 
+072    tmp   = NaN; 
+073    f(k3) = tmp(ones(size(k3))); 
+074 <span class="keyword">end</span> 
+075  
+076  
+077  
+078  
+079  
+080  
+081  
+082  
+083  
+084  
+085  
+086  
+087</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

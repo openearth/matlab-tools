@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of braylfit</title>
+  <meta name="keywords" content="braylfit">
+  <meta name="description" content=" Parameter estimates for Beta-Rayleigh data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; braylfit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>braylfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates for Beta-Rayleigh data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat, cov,pci]=braylfit(data1,alpha) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="braylfit.html" class="code" title=" Parameter estimates for Beta-Rayleigh data.">BRAYLFIT</a> Parameter estimates for Beta-Rayleigh data.
+ 
+  CALL: [phat,cov, pci] = <a href="braylfit.html" class="code" title=" Parameter estimates for Beta-Rayleigh data.">braylfit</a>(data,alpha);
+ 
+    phat  = [a, b, c] = maximum likelihood estimates of the
+            parameters of the Beta-Rayleigh distribution (see
+            <a href="braylpdf.html" class="code" title=" Beta Rayleigh PDF of wave heigth ">braylpdf</a>) given the data.
+    cov   = asymptotic covariance matrix of estimates
+    pci   = 100*(1-alpha) percent confidense intervals
+    data  = data matrix
+    alpha = confidence level (default 0.05 corresponding to 95% CI)
+ 
+  Example:
+   a = .9; b = 105; sz = [100,1]
+   R = sort(<a href="../../wafo/wstats/wbetarnd.html" class="code" title="  Random matrices from a Beta distribution">wbetarnd</a>(a,b,sz));
+   phat = <a href="braylfit.html" class="code" title=" Parameter estimates for Beta-Rayleigh data.">braylfit</a>(R)
+   <a href="../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(R,[R <a href="braylpdf.html" class="code" title=" Beta Rayleigh PDF of wave heigth ">braylpdf</a>(R,p(1),p(2),p(3))])
+ 
+  See also  <a href="braylpdf.html" class="code" title=" Beta Rayleigh PDF of wave heigth ">braylpdf</a>, <a href="../../wafo/wstats/wbetafit.html" class="code" title=" Parameter estimates for Beta data.">wbetafit</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/loglike.html" class="code" title=" [LL,C]=loglike(phat,varargin)">loglike</a></li></TD>
+<TD> Log-likelihood function.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wbetafit.html" class="code" title=" [phat, cov,pci]=wbetafit(data1, plotflag);">wbetafit</a></li></TD>
+<TD> Parameter estimates for Beta data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="">fmins</a></li></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\fminsearch.m">fminsearch</a></li></TD>
+<TD>    Multidimensional unconstrained nonlinear minimization (Nelder-Mead).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2num.m">str2num</a></li></TD>
+<TD>       Convert string matrix to numeric array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\local\version.m">version</a></li></TD>
+<TD>       MATLAB version number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [phat, cov,pci]=<a name="_sub0" href="#_subfunctions" class="code">braylfit</a>(data1,alpha)
+002 <span class="comment">%BRAYLFIT Parameter estimates for Beta-Rayleigh data.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: [phat,cov, pci] = braylfit(data,alpha);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   phat  = [a, b, c] = maximum likelihood estimates of the</span>
+007 <span class="comment">%           parameters of the Beta-Rayleigh distribution (see</span>
+008 <span class="comment">%           braylpdf) given the data.</span>
+009 <span class="comment">%   cov   = asymptotic covariance matrix of estimates</span>
+010 <span class="comment">%   pci   = 100*(1-alpha) percent confidense intervals</span>
+011 <span class="comment">%   data  = data matrix</span>
+012 <span class="comment">%   alpha = confidence level (default 0.05 corresponding to 95<span class="comment">% CI)</span></span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Example:</span>
+015 <span class="comment">%  a = .9; b = 105; sz = [100,1]</span>
+016 <span class="comment">%  R = sort(wbetarnd(a,b,sz));</span>
+017 <span class="comment">%  phat = braylfit(R)</span>
+018 <span class="comment">%  empdistr(R,[R braylpdf(R,p(1),p(2),p(3))])</span>
+019 <span class="comment">%</span>
+020 <span class="comment">% See also  braylpdf, wbetafit</span>
+021 
+022 <span class="comment">% tested on: matlab 5.2</span>
+023 <span class="comment">%History:</span>
+024 
+025 <span class="comment">% revised pabnov 2004</span>
+026 <span class="comment">% -replaced fmins with fminsearch  </span>
+027 <span class="comment">% by Per A. Brodtkorb 14.02.99</span>
+028 <span class="comment">%   Reference:</span>
+029 
+030 error(nargchk(1,2,nargin))
+031 <span class="keyword">if</span> (nargin &lt; 2)|isempty(alpha)
+032     alpha = 0.05;
+033 <span class="keyword">end</span>
+034 p_int = [alpha/2; 1-alpha/2];
+035 
+036 data1=data1(:)
+037 
+038 c=sqrt(2)*max(data1);
+039 pinit=[<a href="../../wafo/wstats/wbetafit.html" class="code" title=" Parameter estimates for Beta data.">wbetafit</a>((data1./c).^2) c]
+040 
+041 <span class="comment">%simultanous MLE</span>
+042 mvrs=version;ix=find(mvrs==<span class="string">'.'</span>);
+043 <span class="keyword">if</span> str2num(mvrs(1:ix(2)-1))&gt;5.2,
+044   phat = fminsearch(<span class="string">'loglike'</span>,pinit,[],data1,<span class="string">'braylpdf'</span>);
+045 <span class="keyword">else</span>
+046   phat = fmins(<span class="string">'loglike'</span>,pinit,[],[],data1,<span class="string">'braylpdf'</span>);
+047 <span class="keyword">end</span>
+048 
+049 <span class="comment">% Old call</span>
+050 <span class="comment">%phat = fmins('brayllike',pinit,[],[],data1);</span>
+051 
+052 
+053 <span class="keyword">if</span> nargout &gt;1 
+054    [L, cov] = <a href="../../wafo/wstats/loglike.html" class="code" title=" Log-likelihood function.">loglike</a>(phat,data1,<span class="string">'braylpdf'</span>)
+055    <span class="comment">%[logL,cov]=brayllike(phat,data1); <span class="comment">% old call</span></span>
+056    sigma = diag(cov).';
+057    pci = <a href="../../wafo/wstats/wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(repmat(p_int,1,2),[phat; phat],[sigma;sigma]);
+058  <span class="keyword">end</span>
+059  
+060 
+061</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

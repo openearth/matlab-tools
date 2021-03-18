@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of figtext</title>
+  <meta name="keywords" content="figtext">
+  <meta name="description" content=" Places text in figure window.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; figtext.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>figtext
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Places text in figure window.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> H = figtext(x,y,T,x_unit,y_unit,x_justify,y_justify,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="figtext.html" class="code" title=" Places text in figure window.">FIGTEXT</a> Places text in figure window.
+          Writes  T  at the point by  (x,y). The default coordinate
+          system used is that of the current axis. Normalized coordinates
+          are optional. Different coordinate systems for the x- and y-axis
+          are also allowed.
+ 
+   CALL:  H = <a href="figtext.html" class="code" title=" Places text in figure window.">figtext</a>(x,y,T,x_unit,y_unit,x_justify,y_justify)
+ 
+         H = handle to the line of text.
+         x       = the x-coordinate of the text.
+         y       = the y-coordinate of the text.
+         T       = a string containing the text.
+         
+         x_unit,
+         y_unit  = 'data'   same coordinate system as the plotted data (default).
+                   'norm'   use 'normalized' coordinates in [0..1].
+       x_justify = 'left'   places left adjusted text (default).
+                   'center' places centered text.
+                   'right'  places right adjusted text.
+ 
+       y_justify = 'top'    places top adjusted text 
+                   'middle' places centered text. (default).
+                   'bottom' places bottom adjusted text.
+ 
+   Example: 
+        H =  <a href="figtext.html" class="code" title=" Places text in figure window.">figtext</a>(0,0,'test','norm',[],'left','top')
+ 
+   See also  text</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="get is a built-in method">get</a></li></TD>
+<TD>           Get object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\text.m">text</a></li></TD>
+<TD>          Text annotation.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/cempdistr.html" class="code" title=" [Fz1] = cempdistr(z,varargin)">cempdistr</a></li></TD>
+<TD> Computes and plots the conditional empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="cltext.html" class="code" title=" [H,nax] = cltext(clevels,PL)">cltext</a></li></TD>
+<TD> Places contour level text in the current window</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/cmatplot.html" class="code" title=" cmatplot(in1,in2,in3,in4,in5)">cmatplot</a></li></TD>
+<TD> Plots a cycle matrix, e.g. a rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/cocc.html" class="code" title=" cocc(param,cc,matrix,clevels,fs)">cocc</a></li></TD>
+<TD> Plots cycles as points together with isolines of a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/distplot.html" class="code" title=" h = wdistplot(x,dist)">distplot</a></li></TD>
+<TD> Displays a 1D distribution probability plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/pairs.html" class="code" title=" J = pairs(X,varargin)">pairs</a></li></TD>
+<TD>  Pairwise scatter plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="wafostamp.html" class="code" title=" [H,ax]=wafostamp(varargin)">wafostamp</a></li></TD>
+<TD> Prints a caption "made by WAFO" in current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/waveplot.html" class="code" title=" Nf1 = waveplot(x,varargin)">waveplot</a></li></TD>
+<TD> Plots the surface elevation of timeseries.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wnormplot.html" class="code" title=" wnormplot(x,nr1,nr2,df);">wnormplot</a></li></TD>
+<TD> Plots data on a Normal distribution paper</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> H = <a name="_sub0" href="#_subfunctions" class="code">figtext</a>(x,y,T,x_unit,y_unit,x_justify,y_justify,varargin)
+002 <span class="comment">% FIGTEXT Places text in figure window.</span>
+003 <span class="comment">%         Writes  T  at the point by  (x,y). The default coordinate</span>
+004 <span class="comment">%         system used is that of the current axis. Normalized coordinates</span>
+005 <span class="comment">%         are optional. Different coordinate systems for the x- and y-axis</span>
+006 <span class="comment">%         are also allowed.</span>
+007 <span class="comment">%</span>
+008 <span class="comment">%  CALL:  H = figtext(x,y,T,x_unit,y_unit,x_justify,y_justify)</span>
+009 <span class="comment">%</span>
+010 <span class="comment">%        H = handle to the line of text.</span>
+011 <span class="comment">%        x       = the x-coordinate of the text.</span>
+012 <span class="comment">%        y       = the y-coordinate of the text.</span>
+013 <span class="comment">%        T       = a string containing the text.</span>
+014 <span class="comment">%        </span>
+015 <span class="comment">%        x_unit,</span>
+016 <span class="comment">%        y_unit  = 'data'   same coordinate system as the plotted data (default).</span>
+017 <span class="comment">%                  'norm'   use 'normalized' coordinates in [0..1].</span>
+018 <span class="comment">%      x_justify = 'left'   places left adjusted text (default).</span>
+019 <span class="comment">%                  'center' places centered text.</span>
+020 <span class="comment">%                  'right'  places right adjusted text.</span>
+021 <span class="comment">%</span>
+022 <span class="comment">%      y_justify = 'top'    places top adjusted text </span>
+023 <span class="comment">%                  'middle' places centered text. (default).</span>
+024 <span class="comment">%                  'bottom' places bottom adjusted text.</span>
+025 <span class="comment">%</span>
+026 <span class="comment">%  Example: </span>
+027 <span class="comment">%       H =  figtext(0,0,'test','norm',[],'left','top')</span>
+028 <span class="comment">%</span>
+029 <span class="comment">%  See also  text</span>
+030 
+031 <span class="comment">% Tested on: Matlab 5.3, 5.2, 5.1</span>
+032 <span class="comment">% History;</span>
+033 <span class="comment">% revised by pab 06.02.2000</span>
+034 <span class="comment">%  added varargin</span>
+035 <span class="comment">% revised by pab 11.08.99</span>
+036 <span class="comment">% added y_justify</span>
+037 
+038 <span class="keyword">if</span> (nargin&lt;7)|isempty(y_justify),
+039   y_justify=<span class="string">'middle'</span>;
+040 <span class="keyword">end</span>
+041 
+042 <span class="keyword">if</span> (nargin&lt;6)|isempty(x_justify),
+043   x_justify=<span class="string">'left'</span>;
+044 <span class="keyword">end</span>
+045 <span class="keyword">if</span> (nargin&lt;4)|isempty(x_unit),
+046   x_unit=<span class="string">'data'</span>;
+047 <span class="keyword">end</span>
+048 
+049 <span class="keyword">if</span> (nargin&lt;5)|isempty(y_unit),
+050   y_unit=x_unit;
+051 <span class="keyword">end</span>
+052   
+053 h=text(<span class="string">'String'</span>,T);
+054 set(h,<span class="string">'HorizontalAlignment'</span>,x_justify,<span class="string">'VerticalAlignment'</span>,y_justify);
+055 unit=get(h,<span class="string">'Units'</span>);
+056 
+057 set(h,<span class="string">'Units'</span>,x_unit)
+058 xy=get(h,<span class="string">'Position'</span>);
+059 set(h,<span class="string">'Position'</span>,[x xy(2)])
+060 
+061 set(h,<span class="string">'Units'</span>,y_unit)
+062 xy=get(h,<span class="string">'Position'</span>);
+063 set(h,<span class="string">'Position'</span>,[xy(1) y])
+064 
+065 set(h,<span class="string">'Units'</span>,unit);
+066 
+067 nin=length(varargin);
+068 <span class="keyword">if</span> nin&gt;0
+069   set(h,varargin{:});
+070 <span class="keyword">end</span>
+071 
+072 <span class="keyword">if</span> nargout&gt;0
+073   H=h;
+074 <span class="keyword">end</span>
+075</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

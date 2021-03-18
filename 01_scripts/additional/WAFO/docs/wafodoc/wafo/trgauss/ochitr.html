@@ -1,0 +1,346 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of ochitr</title>
+  <meta name="keywords" content="ochitr">
+  <meta name="description" content="  Calculates transformation, g, proposed by Ochi et al.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; ochitr.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>ochitr
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates transformation, g, proposed by Ochi et al.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [g,t0]=ochitr(y,data) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">OCHITR</a>  Calculates transformation, g, proposed by Ochi et al.
+ 
+          Assumption: a Gaussian process, Y, is related to the
+                      non-Gaussian process, X, by Y = g(X). 
+ 
+   CALL:  [g, test]= <a href="ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">ochitr</a>(x,data);
+   
+      g    = [x g(x)] a two column matrix with the transformation g(x).  
+      test = int (g(x)-x)^2 dy  where int. limits is given by Y. This
+             is a measure of departure of the data from the Gaussian model.
+      x    = vector with x-values. 
+             (default linspace(-5*sigma,5*sigma,513)+mean)
+      data = the data vector [sigma skew mean]
+             is the  standard deviation, skewness and mean
+             of the process, respectively. skew=0 for a Gaussian process.
+             (abs(skew) &lt;=2.82)(default  [1 0.16 0])
+ 
+   This is a transformation model where the transformation is chosen to
+   be a monotonic exponential function, calibrated such that the first 
+   3 moments of the transformed model G(y)=g^-1(y) match the moments of
+   the true  process. However, the skewness is limited by ABS(SKEW)&lt;2.82.
+   Information about the moments of the process can be
+   obtained by site specific data, laboratory measurements or by resort
+   to theoretical models (see <a href="spec2skew.html" class="code" title=" Estimates the moments of 2'nd order non-linear waves ">spec2skew</a>). According to Ochi it is
+   appropriate for a process with very strong non-linear characteristics. 
+ 
+     g(x) = ((1-exp(-gamma*(x-mean)/sigma))/gamma-mean2)/sigma2
+   where
+     gamma  = 1.28*a  for x&gt;=mean
+              3*a     otherwise
+     mean, 
+     sigma  = standard deviation and mean, respectively, of the process.
+     mean2,
+     sigma2 = normalizing parameters in the transformed world, i.e., to
+              make the gaussian process in the transformed world is
+              N(0,1).
+ 
+  The unknown parameters a, mean2 and sigma2 are found by solving the
+  following non-linear equations:
+ 
+         a*(sigma2^2+mean2^2)+mean2 = 0
+            sigma2^2-2*a^2*sigma2^4 = 1
+    2*a*sigma2^4*(3-8*a^2*sigma2^2) = skew
+ 
+  NOTE: - by specifying NaN's in the data vector default values will be used.
+        - if length(data) is shorter than the parameters needed then the
+          default values are used for the parameters not specified. 
+        - The gaussian process in the transformed world is N(0,1)
+        - g does not have continous derivatives of 2'nd order or higher.
+ 
+  Example: Simulate a Transformed Gaussian process:
+   Hm0=7;Tp=11;
+   S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>([],[Hm0 Tp]); [sk ku ma]=<a href="spec2skew.html" class="code" title=" Estimates the moments of 2'nd order non-linear waves ">spec2skew</a>(S);
+   g = <a href="ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">ochitr</a>([],[Hm0/4,sk,ma]); g2=[g(:,1), g(:,2)*Hm0/4];
+   ys = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,15000);   % Simulated in the Gaussian world
+   xs = <a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>(ys,g2);      % Transformed to the real world
+ 
+  See also  <a href="spec2skew.html" class="code" title=" Estimates the moments of 2'nd order non-linear waves ">spec2skew</a>, <a href="hermitetr.html" class="code" title=" Calculate transformation, g, proposed by Winterstein ">hermitetr</a>, <a href="lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>, <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/private/ochifun.html" class="code" title=" [g,t0]=ochifun(y,data)">ochifun</a></li></TD>
+<TD> Calculates the transformation g proposed by Ochi et al.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="">fmins</a></li></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\fminsearch.m">fminsearch</a></li></TD>
+<TD>    Multidimensional unconstrained nonlinear minimization (Nelder-Mead).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\fzero.m">fzero</a></li></TD>
+<TD>         Scalar nonlinear zero finding.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2num.m">str2num</a></li></TD>
+<TD>       Convert string matrix to numeric array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\local\version.m">version</a></li></TD>
+<TD>       MATLAB version number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dat2tr.html" class="code" title=" [g, test, cmax, irr, g2]= dat2tr(x,def,varargin);">dat2tr</a></li></TD>
+<TD> Estimate transformation, g, from data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> phat=ochitrfit(sig1,skew,ma)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [g,t0]=<a name="_sub0" href="#_subfunctions" class="code">ochitr</a>(y,data)
+002 <span class="comment">%OCHITR  Calculates transformation, g, proposed by Ochi et al.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%         Assumption: a Gaussian process, Y, is related to the</span>
+005 <span class="comment">%                     non-Gaussian process, X, by Y = g(X). </span>
+006 <span class="comment">%</span>
+007 <span class="comment">%  CALL:  [g, test]= ochitr(x,data);</span>
+008 <span class="comment">%  </span>
+009 <span class="comment">%     g    = [x g(x)] a two column matrix with the transformation g(x).  </span>
+010 <span class="comment">%     test = int (g(x)-x)^2 dy  where int. limits is given by Y. This</span>
+011 <span class="comment">%            is a measure of departure of the data from the Gaussian model.</span>
+012 <span class="comment">%     x    = vector with x-values. </span>
+013 <span class="comment">%            (default linspace(-5*sigma,5*sigma,513)+mean)</span>
+014 <span class="comment">%     data = the data vector [sigma skew mean]</span>
+015 <span class="comment">%            is the  standard deviation, skewness and mean</span>
+016 <span class="comment">%            of the process, respectively. skew=0 for a Gaussian process.</span>
+017 <span class="comment">%            (abs(skew) &lt;=2.82)(default  [1 0.16 0])</span>
+018 <span class="comment">%</span>
+019 <span class="comment">%  This is a transformation model where the transformation is chosen to</span>
+020 <span class="comment">%  be a monotonic exponential function, calibrated such that the first </span>
+021 <span class="comment">%  3 moments of the transformed model G(y)=g^-1(y) match the moments of</span>
+022 <span class="comment">%  the true  process. However, the skewness is limited by ABS(SKEW)&lt;2.82.</span>
+023 <span class="comment">%  Information about the moments of the process can be</span>
+024 <span class="comment">%  obtained by site specific data, laboratory measurements or by resort</span>
+025 <span class="comment">%  to theoretical models (see spec2skew). According to Ochi it is</span>
+026 <span class="comment">%  appropriate for a process with very strong non-linear characteristics. </span>
+027 <span class="comment">%</span>
+028 <span class="comment">%    g(x) = ((1-exp(-gamma*(x-mean)/sigma))/gamma-mean2)/sigma2</span>
+029 <span class="comment">%  where</span>
+030 <span class="comment">%    gamma  = 1.28*a  for x&gt;=mean</span>
+031 <span class="comment">%             3*a     otherwise</span>
+032 <span class="comment">%    mean, </span>
+033 <span class="comment">%    sigma  = standard deviation and mean, respectively, of the process.</span>
+034 <span class="comment">%    mean2,</span>
+035 <span class="comment">%    sigma2 = normalizing parameters in the transformed world, i.e., to</span>
+036 <span class="comment">%             make the gaussian process in the transformed world is</span>
+037 <span class="comment">%             N(0,1).</span>
+038 <span class="comment">%</span>
+039 <span class="comment">% The unknown parameters a, mean2 and sigma2 are found by solving the</span>
+040 <span class="comment">% following non-linear equations:</span>
+041 <span class="comment">%</span>
+042 <span class="comment">%        a*(sigma2^2+mean2^2)+mean2 = 0</span>
+043 <span class="comment">%           sigma2^2-2*a^2*sigma2^4 = 1</span>
+044 <span class="comment">%   2*a*sigma2^4*(3-8*a^2*sigma2^2) = skew</span>
+045 <span class="comment">%</span>
+046 <span class="comment">% NOTE: - by specifying NaN's in the data vector default values will be used.</span>
+047 <span class="comment">%       - if length(data) is shorter than the parameters needed then the</span>
+048 <span class="comment">%         default values are used for the parameters not specified. </span>
+049 <span class="comment">%       - The gaussian process in the transformed world is N(0,1)</span>
+050 <span class="comment">%       - g does not have continous derivatives of 2'nd order or higher.</span>
+051 <span class="comment">%</span>
+052 <span class="comment">% Example: Simulate a Transformed Gaussian process:</span>
+053 <span class="comment">%  Hm0=7;Tp=11;</span>
+054 <span class="comment">%  S = jonswap([],[Hm0 Tp]); [sk ku ma]=spec2skew(S);</span>
+055 <span class="comment">%  g = ochitr([],[Hm0/4,sk,ma]); g2=[g(:,1), g(:,2)*Hm0/4];</span>
+056 <span class="comment">%  ys = spec2sdat(S,15000);   <span class="comment">% Simulated in the Gaussian world</span></span>
+057 <span class="comment">%  xs = gaus2dat(ys,g2);      <span class="comment">% Transformed to the real world</span></span>
+058 <span class="comment">%</span>
+059 <span class="comment">% See also  spec2skew, hermitetr, lc2tr, dat2tr</span>
+060 
+061 
+062 <span class="comment">% References:</span>
+063 <span class="comment">% Ochi, M.K. and Ahn, K. (1994)</span>
+064 <span class="comment">%  'Non-Gaussian probability distribution of coastal waves.'</span>
+065 <span class="comment">%  In Proc. 24th Conf. Coastal Engng, Vol. 1, pp 482-496</span>
+066 <span class="comment">%</span>
+067 <span class="comment">% Michel K. Ochi (1998),</span>
+068 <span class="comment">% &quot;OCEAN WAVES, The stochastic approach&quot;,</span>
+069 <span class="comment">%  OCEAN TECHNOLOGY series 6, Cambridge, pp 255-275.</span>
+070 
+071 
+072 <span class="comment">% tested on matlab 5.1</span>
+073 <span class="comment">% History:</span>
+074 <span class="comment">% revised pab 02.01.2001</span>
+075 <span class="comment">% - default x is now levels([-5 5 513])*sa+ma -&gt; better to have the discretization</span>
+076 <span class="comment">%  represented with exact numbers, especially when calculating</span>
+077 <span class="comment">%  derivatives of the transformation numerically.</span>
+078 <span class="comment">% - added fmins, fzero</span>
+079 <span class="comment">% - moved some code into ochifun.</span>
+080 <span class="comment">% revised pab 24.05.2000</span>
+081 <span class="comment">%  - removed inline object with string object</span>
+082 <span class="comment">% by pab 03.03.2000</span>
+083 
+084 data2=[1 0.16  0]; <span class="comment">% default values</span>
+085 <span class="keyword">if</span> nargin&gt;=2 &amp; any(~isnan(data))
+086   ind=find(~isnan(data(1:min(length(data),3))));
+087   data2(ind)=data(ind);
+088 <span class="keyword">end</span>
+089 sig1=data2(1); skew=data2(2);  ma=data2(3);
+090 
+091 <span class="keyword">if</span> abs(skew)&gt;2.82842712474619,
+092   error(<span class="string">'Skewness must be less than 2.82842'</span>)
+093 <span class="keyword">end</span>
+094 
+095 <span class="keyword">if</span> nargin&lt;1|isempty(y),  y=linspace(-5*sig1+ma,5*sig1+ma,513); <span class="keyword">end</span>
+096 
+097 <span class="comment">%disp('1')</span>
+098 phat = <a href="#_sub1" class="code" title="sub  phat=ochitrfit(sig1,skew,ma)">ochitrfit</a>(sig1,skew,ma);
+099 <span class="comment">%disp('2')</span>
+100 
+101 
+102 <span class="comment">%disp('3')</span>
+103 <span class="keyword">if</span> nargout&gt;1,
+104   [g,t0] = <a href="../../wafo/trgauss/private/ochifun.html" class="code" title=" Calculates the transformation g proposed by Ochi et al. ">ochifun</a>(y,phat);
+105 <span class="keyword">else</span>
+106   g = <a href="../../wafo/trgauss/private/ochifun.html" class="code" title=" Calculates the transformation g proposed by Ochi et al. ">ochifun</a>(y,phat);
+107 <span class="keyword">end</span>
+108 <span class="keyword">return</span>
+109 
+110 
+111 
+112 
+113 <span class="keyword">function</span> phat=<a name="_sub1" href="#_subfunctions" class="code">ochitrfit</a>(sig1,skew,ma)
+114 
+115 <span class="keyword">if</span> skew==0
+116   phat = [0, 0, sig1, ma,1 0];
+117   <span class="keyword">return</span>
+118 <span class="keyword">end</span>
+119 <span class="comment">% Solve the equations to obtain the gamma parameters:</span>
+120 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+121 <span class="comment">%          a*(sig2^2+ma2^2)+ma2 = 0</span>
+122 <span class="comment">%           sig2^2-2*a^2*sig2^4 = E(y^2) <span class="comment">% =1 </span></span>
+123 <span class="comment">%   2*a*sig2^4*(3-8*a^2*sig2^2) = E(y^3) <span class="comment">% = skew </span></span>
+124 
+125 <span class="comment">% Let x = [a sig2^2 ]</span>
+126 <span class="comment">% Set up the 2D non-linear equations for a and sig2^2:</span>
+127 eqstr=<span class="string">'[x(2)-2.*x(1).^2.*x(2).^2-P1, 2.*x(1).*x(2).^2.*(3-8.*x(1).^2.*x(2))-P2  ]'</span>;
+128 <span class="comment">% Or solve the following 1D non-linear equation for sig2^2:</span>
+129 eqstr2 = <span class="string">'-sqrt(abs(x-P1)*2).*(3.*x-4*abs(x-P1))+abs(P2)'</span>;
+130 <span class="comment">%g3 = inline(eqstr2,2);</span>
+131 
+132 g2 = eqstr2;
+133 g1 = eqstr;
+134 
+135 v = version;  ix = find(v==<span class="string">'.'</span>);
+136 vnr= str2num(v(1:ix(min(2,length(ix)))-1));
+137 
+138 <span class="comment">% start value for: a   sig2^2  </span>
+139 X0=[0.01 sig1^2];
+140 Xi =[1 2]; <span class="comment">% Start interval where sig2^2 is located.</span>
+141 <span class="keyword">if</span> vnr&gt;5.2
+142   <span class="comment">% sol = fsolve(g1,X0,[],1,skew);<span class="comment">%sig1.^2,skew*sig1^3);</span></span>
+143   opt = [];<span class="comment">%optimset('disp','iter');</span>
+144   <span class="keyword">if</span> 1,
+145     sig22 = fzero(g2,Xi,opt,1,skew); <span class="comment">% smallest solution for sig22</span>
+146     a  =   sign(skew)*sqrt(abs(sig22-1)/2/sig22^2);
+147     sol = [a sig22];
+148   <span class="keyword">else</span>
+149     <span class="comment">% find the solution by least squares</span>
+150     g1 = [ <span class="string">'sum('</span> g1 <span class="string">'.^2)'</span>];
+151     sol = fminsearch(g1,X0,opt,1,skew);<span class="comment">%sig1.^2,skew*sig1^3);</span>
+152   <span class="keyword">end</span>  
+153 <span class="keyword">else</span>
+154   <span class="comment">% sol = fsolve(g1,X0,[],[],1,skew);<span class="comment">%sig1.^2,skew*sig1^3);</span></span>
+155   trace1=[];
+156   <span class="keyword">if</span> 1,
+157     sig22 = fzero(g2,[1 2],[],trace1,1,skew);
+158     a  =   sign(skew)*sqrt(abs(sig22-1)/2/sig22^2);
+159     sol = [a sig22];
+160   <span class="keyword">else</span>
+161     <span class="comment">% find the solution by least squares</span>
+162     g1 = [ <span class="string">'sum('</span> g1 <span class="string">'.^2)'</span>];
+163     <span class="comment">%sol = fmins(g1,X0,[],1,sig1.^2,skew*sig1^3);</span>
+164     sol = fmins(g1,X0,[],trace1,1.^2,skew*1^3);
+165   <span class="keyword">end</span>
+166 <span class="keyword">end</span>
+167 
+168 a     = sol(1);
+169 sig22 = sol(2);
+170 sig2 = sqrt(sig22);
+171 
+172 <span class="comment">% Solve the following 2nd order equation to obtain ma2</span>
+173 <span class="comment">%        a*(sig2^2+ma2^2)+ma2 = 0</span>
+174 my2 =  (-1-sqrt(1-4*a^2*sig22))./a;  <span class="comment">% Largest mean</span>
+175 ma2 = a*sig22/my2 ;                  <span class="comment">% choose the smallest mean</span>
+176 gam_ab = [1.28 3]*a; <span class="comment">% this is valid for processes with very strong</span>
+177                       <span class="comment">% nonlinear characteristics</span>
+178 phat = [gam_ab sig1 ma sig2 ma2];
+179 
+180 
+181 <span class="keyword">return</span>
+182 
+183 
+184 
+185 
+186 
+187 
+188</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of gaussq2d</title>
+  <meta name="keywords" content="gaussq2d">
+  <meta name="description" content=" Numerically evaluates a 2D integral using Gauss quadrature.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; gaussq2d.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>gaussq2d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Numerically evaluates a 2D integral using Gauss quadrature.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [int, tol1,k] = gaussq2d(fun,xlow,xhigh,ylow,yhigh,tol,p1,p2,p3,p4,p5,p6,p7,p8,p9) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="gaussq2d.html" class="code" title=" Numerically evaluates a 2D integral using Gauss quadrature. ">GAUSSQ2D</a> Numerically evaluates a 2D integral using Gauss quadrature. 
+  
+  CALL:  [int tol] = <a href="gaussq2d.html" class="code" title=" Numerically evaluates a 2D integral using Gauss quadrature. ">gaussq2d</a>('Fun',xlow,xhigh,ylow,yhigh) 
+       or 
+         [int tol] = <a href="gaussq2d.html" class="code" title=" Numerically evaluates a 2D integral using Gauss quadrature. ">gaussq2d</a>('Fun',xlow,xhigh,ylow,yhigh,reltol,p1,p2,...) 
+  
+        int = evaluated integral 
+        tol = absolute tolerance abs(int-intold) 
+        Fun = Fun(x,y), string containing the name of the function or   
+              a directly given expression enclosed in parenthesis. 
+              The function may depend on parameters pi. 
+ xlow,xhigh = integration limits for x  
+ ylow,yhigh = integration limits for y (obs. integration limits can 
+                                              be vectors.) 
+     reltol = relative tolerance (default 1e-3) 
+  
+  Note that if there are discontinuities the region of integration  
+  should be broken up into separate pieces.  And if there are singularities, 
+  a more appropriate integration quadrature should be used  
+  (such as the Gauss-Chebyshev for a specific type of singularity). 
+  
+ Example:%  integration for (x,y) in [0,1]x[-1,3] and [2,4]x[1,2]: 
+  
+    p1=2.; p2=0.5; 
+    <a href="gaussq2d.html" class="code" title=" Numerically evaluates a 2D integral using Gauss quadrature. ">gaussq2d</a>('(p2*x.^2.*y+p1)',[0 2],[1 4],[-1 1],[3 2],[],p1,p2) 
+  
+  See also  <a href="gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>, <a href="qrule2d.html" class="code" title=" compute abscissas and weight factors for Gaussian quadratures ">qrule2d</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="qrule2d.html" class="code" title=" [bpx,bpy,wfxy] = qrule2d (nx,ny)">qrule2d</a></li></TD>
+<TD> compute abscissas and weight factors for Gaussian quadratures</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\@double\exist.bi">exist</a></li></TD>
+<TD>         Check if variables or functions are defined.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\func2str.m">func2str</a></li></TD>
+<TD>      Construct a string from a function handle.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\int2str.m">int2str</a></li></TD>
+<TD>       Convert integer to string (Fast version).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@scribehandle\isa.m">isa</a></li></TD>
+<TD>           True if object is a given class.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\permute.bi">permute</a></li></TD>
+<TD>       Permute array dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\robust\robust\@umat\squeeze.m">squeeze</a></li></TD>
+<TD>       Remove singleton dimensions.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/dist2dprb.html" class="code" title=" [y ,eps1] = dist2dprb(phat,x1lo,x1up,x2lo,x2up)">dist2dprb</a></li></TD>
+<TD> returns the probability for rectangular regions.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/weib2dprb.html" class="code" title=" [y ,eps1] = weib2dprb(phat,x1lo,x1up,x2lo,x2up)">weib2dprb</a></li></TD>
+<TD> returns the probability for rectangular regions.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [int, tol1,k] = <a name="_sub0" href="#_subfunctions" class="code">gaussq2d</a>(fun,xlow,xhigh,ylow,yhigh,tol,p1,p2,p3,p4,p5,p6,p7,p8,p9) 
+002 <span class="comment">%GAUSSQ2D Numerically evaluates a 2D integral using Gauss quadrature. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  [int tol] = gaussq2d('Fun',xlow,xhigh,ylow,yhigh) </span>
+005 <span class="comment">%      or </span>
+006 <span class="comment">%        [int tol] = gaussq2d('Fun',xlow,xhigh,ylow,yhigh,reltol,p1,p2,...) </span>
+007 <span class="comment">% </span>
+008 <span class="comment">%       int = evaluated integral </span>
+009 <span class="comment">%       tol = absolute tolerance abs(int-intold) </span>
+010 <span class="comment">%       Fun = Fun(x,y), string containing the name of the function or   </span>
+011 <span class="comment">%             a directly given expression enclosed in parenthesis. </span>
+012 <span class="comment">%             The function may depend on parameters pi. </span>
+013 <span class="comment">%xlow,xhigh = integration limits for x  </span>
+014 <span class="comment">%ylow,yhigh = integration limits for y (obs. integration limits can </span>
+015 <span class="comment">%                                             be vectors.) </span>
+016 <span class="comment">%    reltol = relative tolerance (default 1e-3) </span>
+017 <span class="comment">% </span>
+018 <span class="comment">% Note that if there are discontinuities the region of integration  </span>
+019 <span class="comment">% should be broken up into separate pieces.  And if there are singularities, </span>
+020 <span class="comment">% a more appropriate integration quadrature should be used  </span>
+021 <span class="comment">% (such as the Gauss-Chebyshev for a specific type of singularity). </span>
+022 <span class="comment">% </span>
+023 <span class="comment">%Example:<span class="comment">%  integration for (x,y) in [0,1]x[-1,3] and [2,4]x[1,2]: </span></span>
+024 <span class="comment">% </span>
+025 <span class="comment">%   p1=2.; p2=0.5; </span>
+026 <span class="comment">%   gaussq2d('(p2*x.^2.*y+p1)',[0 2],[1 4],[-1 1],[3 2],[],p1,p2) </span>
+027 <span class="comment">% </span>
+028 <span class="comment">% See also  gaussq, qrule2d </span>
+029  
+030 <span class="comment">% tested on: matlab 5.2 </span>
+031 <span class="comment">% history: </span>
+032 <span class="comment">% revised pab Nov2004 </span>
+033 <span class="comment">% -wrong input to comnsize fixed   </span>
+034 <span class="comment">% -enabled function handle as input   </span>
+035 <span class="comment">% revised pab 12Nov2003 </span>
+036 <span class="comment">% replaced call to distchk with comnsize </span>
+037 <span class="comment">%modified by Per A. Brodtkorb 17.11.98 :  </span>
+038 <span class="comment">% -accept multiple integrations limits </span>
+039 <span class="comment">% -optimized by saving the weights as global constants and only   </span>
+040 <span class="comment">%   computing the integrals which did not converge  </span>
+041 <span class="comment">% -enabled the integration of directly given functions enclosed in </span>
+042 <span class="comment">%   parenthesis  </span>
+043 <span class="comment">% -adopted from NIT toolbox changed name from quad2dg to gaussq2d   </span>
+044  
+045 <span class="keyword">global</span> bpx2 bpy2 wfxy2; 
+046 fv = []; 
+047 <span class="keyword">if</span> isempty(bpx2)| isempty(bpy2)| isempty(wfxy2) 
+048   [bpx2,bpy2,wfxy2] = <a href="qrule2d.html" class="code" title=" compute abscissas and weight factors for Gaussian quadratures ">qrule2d</a>(2,2); 
+049 <span class="keyword">end</span> 
+050  
+051 <span class="keyword">if</span> exist(<span class="string">'tol'</span>)~=1, 
+052   tol=1e-3; 
+053 <span class="keyword">elseif</span> isempty(tol), 
+054   tol=1e-3; 
+055 <span class="keyword">end</span> 
+056 [errorcode ,xlow,xhigh,ylow,yhigh]=<a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(xlow,xhigh,ylow,yhigh); 
+057 <span class="keyword">if</span> errorcode &gt; 0 
+058   error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+059 <span class="keyword">end</span> 
+060  
+061 [N M]=size(xlow); 
+062 <span class="comment">%setup mapping parameters &amp;  make sure they all are column vectors </span>
+063 xlow=xlow(:); xhigh=xhigh(:);ylow=ylow(:);yhigh=yhigh(:);  
+064 nk=N*M; 
+065  
+066 <span class="comment">%Map to x </span>
+067 qx=(xhigh-xlow)/2; 
+068 px=(xhigh+xlow)/2; 
+069 x=permute(qx(:,ones(1,2), ones(1,2) ),[ 2 3 1]).*bpx2(:,:,ones(1,nk)) <span class="keyword">...</span> 
+070     +permute(px(:,ones(1,2), ones(1,2) ),[2 3 1]); 
+071 <span class="comment">%Map to y </span>
+072 qy=(yhigh-ylow)/2; 
+073 py=(yhigh+ylow)/2; 
+074 y=permute(qy(:,ones(1,2), ones(1,2) ),[ 2 3 1]).*bpy2(:,:,ones(1,nk)) <span class="keyword">...</span> 
+075     +permute(py(:,ones(1,2), ones(1,2) ),[2 3 1]); 
+076  
+077 <span class="keyword">if</span> (isa(fun,<span class="string">'char'</span>) &amp; any(fun==<span class="string">'('</span>)), 
+078   exec_string=[<span class="string">'fv='</span>, fun, <span class="string">';'</span>]; <span class="comment">%the call function is already setup </span>
+079 <span class="keyword">else</span>  
+080   <span class="comment">%set up the call function   </span>
+081   <span class="keyword">if</span> isa(fun,<span class="string">'function_handle'</span>) 
+082     fun = func2str(fun); 
+083   <span class="keyword">end</span> 
+084   exec_string=[<span class="string">'fv='</span>, fun, <span class="string">' (x,y'</span>]; 
+085   num_parameters=nargin-6; 
+086   <span class="keyword">for</span> i=1:num_parameters, 
+087     exec_string=[exec_string,<span class="string">',p'</span>,int2str(i)]; 
+088   <span class="keyword">end</span> 
+089   exec_string=[exec_string,<span class="string">');'</span>]; 
+090 <span class="keyword">end</span> 
+091 eval(exec_string); 
+092 int_old = squeeze(sum(sum(wfxy2(:,:,ones(1,nk)).*fv))).*qx.*qy; 
+093 int=zeros(size(int_old));tol1=int; 
+094 k=1:nk; 
+095  
+096 <span class="comment">% Break out of the iteration loop for three reasons: </span>
+097 <span class="comment">%  1) the last update is very small (compared to int) </span>
+098 <span class="comment">%  2) the last update is very small (compared to tol) </span>
+099 <span class="comment">%  3) There are more than 8 iterations. This should NEVER happen.  </span>
+100  
+101 converge=<span class="string">'n'</span>; 
+102 <span class="keyword">for</span> i=1:8, 
+103   gnum=int2str(2^(i+1)); 
+104   eval([<span class="string">'global bpx'</span>,gnum,<span class="string">' wfxy'</span>,gnum,<span class="string">'  bpy'</span>,gnum,<span class="string">';'</span>]); 
+105   <span class="keyword">if</span> isempty(eval([<span class="string">'bpx'</span>,gnum]))| isempty(eval([<span class="string">'bpy'</span>,gnum])) ,   
+106     eval([<span class="string">'[bpx'</span>,gnum,<span class="string">',bpy'</span>,gnum,<span class="string">',wfxy'</span>,gnum,<span class="string">']=qrule2d('</span>,gnum,<span class="string">','</span>, gnum,<span class="string">');'</span>]); 
+107   <span class="keyword">end</span> 
+108   eval([<span class="string">'x=permute(qx(k,ones(1,'</span>,gnum,<span class="string">'), ones(1,'</span>,gnum,<span class="string">') ),[ 2 3 1]).*bpx'</span>,gnum,<span class="string">'(:,:,ones(1,nk)) +permute(px(k,ones(1,'</span>,gnum,<span class="string">'), ones(1,'</span>,gnum,<span class="string">') ),[2 3 1]);'</span>]); 
+109  
+110   eval([<span class="string">'y=permute(qy(k,ones(1,'</span>,gnum,<span class="string">'), ones(1,'</span>,gnum,<span class="string">') ),[ 2 3 1]).*bpy'</span>,gnum,<span class="string">'(:,:,ones(1,nk)) +permute(py(k,ones(1,'</span>,gnum,<span class="string">'), ones(1,'</span>,gnum,<span class="string">') ),[2 3 1]);'</span>]); 
+111     eval(exec_string); 
+112     eval([<span class="string">'int(k) = squeeze(sum(sum((wfxy'</span>,gnum,<span class="string">'(:,:,ones(1,nk)).*fv)))).*qx(k).*qy(k);'</span>]); 
+113     tol1(k)=abs(int_old(k)-int(k)); <span class="comment">% absolute tolerance </span>
+114     k=find(tol1 &gt; abs(tol*int)|tol1 &gt; abs(tol));<span class="comment">%indices to integrals which did not converge </span>
+115    
+116     <span class="keyword">if</span> any(k), <span class="comment">% compute integrals again </span>
+117       nk=length(k);<span class="comment">%# of integrals we have to compute again </span>
+118     <span class="keyword">else</span> 
+119       converge=<span class="string">'y'</span>; 
+120       <span class="keyword">break</span>; 
+121     <span class="keyword">end</span> 
+122      
+123      int_old(k)=int(k); 
+124 <span class="keyword">end</span> 
+125 int=reshape(int,[N M]); <span class="comment">% reshape int to the same size as input arguments </span>
+126 <span class="keyword">if</span> converge==<span class="string">'n'</span>, 
+127   disp(<span class="string">'Integral did not converge--singularity likely'</span>) 
+128 <span class="keyword">end</span> 
+129  
+130  
+131  
+132</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

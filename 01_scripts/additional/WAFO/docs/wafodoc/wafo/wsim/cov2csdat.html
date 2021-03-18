@@ -1,0 +1,500 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cov2csdat</title>
+  <meta name="keywords" content="cov2csdat">
+  <meta name="description" content=" generates conditionally simulated values">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wsim</a> &gt; cov2csdat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cov2csdat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> generates conditionally simulated values</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [sampl,mu1o, mu1oStd, inds] = cov2csdat(xo,R,cases,method,inds) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="cov2csdat.html" class="code" title=" generates conditionally simulated values ">COV2CSDAT</a> generates conditionally simulated values 
+  
+  CALL:  [<a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a>,mu1o, mu1oStd]  = <a href="cov2csdat.html" class="code" title=" generates conditionally simulated values ">cov2csdat</a>(x,R,cases,method,inds) 
+  
+    <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> = a random <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> of the missing values conditioned on the 
+             observed (known) data. 
+      mu1o = expected values of the missing values conditioned on the 
+             observed data. 
+   mu1oStd = Standard deviation of mu1o. 
+  
+        x  = datavector including missing data.  
+              (missing data must be NaN if inds is not given) 
+        R  = Auto Covariance Function structure  
+             (NB! must have the same spacing as x) 
+     cases = number of cases, i.e., number of columns of <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> (default=1) 
+    method = 'approximate': (default) condition only on the closest 
+                             points. Pros: quite fast 
+             'pseudo': Uses the pseudo inverse to calculate conditional 
+                       covariance matrix 
+             'exact' : doing the exact simulation. 
+                      Cons: Slow for large data sets, may not  
+                            return any result due to the covariance  
+                            matrix being singular or nearly singular. 
+      inds = indices to spurious or missing data (see x) 
+  
+   <a href="cov2csdat.html" class="code" title=" generates conditionally simulated values ">COV2CSDAT</a> generates the missing values from x conditioned on the observed 
+   values assuming x comes from a multivariate Gaussian distribution 
+   with zero expectation and Auto Covariance function R. 
+  
+  See also  <a href="../../wafo/wstats/wmnormrnd.html" class="code" title=" Random vectors from a multivariate Normal distribution ">wmnormrnd</a>, <a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cov2sdat.html" class="code" title=" [x, xder]=cov2sdat(R,np,iseed)">cov2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wmnormrnd.html" class="code" title=" r = wmnormrnd(mu,sa,cases,method,cutoff);">wmnormrnd</a></li></TD>
+<TD> Random vectors from a multivariate Normal distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\fft.bi">fft</a></li></TD>
+<TD>           Discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isstruct.m">isstruct</a></li></TD>
+<TD>      True for structures.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\scribe\legend.m">legend</a></li></TD>
+<TD>        Display legend.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elfun\nextpow2.m">nextpow2</a></li></TD>
+<TD>      Next higher power of 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\pinv.m">pinv</a></li></TD>
+<TD>          Pseudoinverse.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\spdiags.m">spdiags</a></li></TD>
+<TD>       Sparse matrix formed from diagonals.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\toeplitz.m">toeplitz</a></li></TD>
+<TD>      Toeplitz matrix.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/onedim/reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">reconstruct</a></li></TD>
+<TD> reconstruct the spurious/missing points of timeseries</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> y=sptoeplitz(x)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [sampl,mu1o, mu1oStd, inds]  = <a name="_sub0" href="#_subfunctions" class="code">cov2csdat</a>(xo,R,cases,method,inds) 
+0002 <span class="comment">% COV2CSDAT generates conditionally simulated values </span>
+0003 <span class="comment">% </span>
+0004 <span class="comment">% CALL:  [sample,mu1o, mu1oStd]  = cov2csdat(x,R,cases,method,inds) </span>
+0005 <span class="comment">% </span>
+0006 <span class="comment">%   sample = a random sample of the missing values conditioned on the </span>
+0007 <span class="comment">%            observed (known) data. </span>
+0008 <span class="comment">%     mu1o = expected values of the missing values conditioned on the </span>
+0009 <span class="comment">%            observed data. </span>
+0010 <span class="comment">%  mu1oStd = Standard deviation of mu1o. </span>
+0011 <span class="comment">% </span>
+0012 <span class="comment">%       x  = datavector including missing data.  </span>
+0013 <span class="comment">%             (missing data must be NaN if inds is not given) </span>
+0014 <span class="comment">%       R  = Auto Covariance Function structure  </span>
+0015 <span class="comment">%            (NB! must have the same spacing as x) </span>
+0016 <span class="comment">%    cases = number of cases, i.e., number of columns of sample (default=1) </span>
+0017 <span class="comment">%   method = 'approximate': (default) condition only on the closest </span>
+0018 <span class="comment">%                            points. Pros: quite fast </span>
+0019 <span class="comment">%            'pseudo': Uses the pseudo inverse to calculate conditional </span>
+0020 <span class="comment">%                      covariance matrix </span>
+0021 <span class="comment">%            'exact' : doing the exact simulation. </span>
+0022 <span class="comment">%                     Cons: Slow for large data sets, may not  </span>
+0023 <span class="comment">%                           return any result due to the covariance  </span>
+0024 <span class="comment">%                           matrix being singular or nearly singular. </span>
+0025 <span class="comment">%     inds = indices to spurious or missing data (see x) </span>
+0026 <span class="comment">% </span>
+0027 <span class="comment">%  COV2CSDAT generates the missing values from x conditioned on the observed </span>
+0028 <span class="comment">%  values assuming x comes from a multivariate Gaussian distribution </span>
+0029 <span class="comment">%  with zero expectation and Auto Covariance function R. </span>
+0030 <span class="comment">% </span>
+0031 <span class="comment">% See also  wmnormrnd, cov2sdat </span>
+0032  
+0033 <span class="comment">%Tested on : matlab 5.3, 5.1 </span>
+0034 <span class="comment">% History: </span>
+0035 <span class="comment">% revised jr 02.07.2000 </span>
+0036 <span class="comment">%  - mnormrnd -&gt; wmnormrnd </span>
+0037 <span class="comment">% revised pab 17.01.2000 </span>
+0038 <span class="comment">%  - updated documentation </span>
+0039 <span class="comment">% revised pab 12.10.1999 </span>
+0040 <span class="comment">%   </span>
+0041 <span class="comment">% last modified by Per A. Brodtkorb 17.09.98,31.08.98,27.08.98,16.08.98 </span>
+0042  
+0043 <span class="comment">% secret methods: </span>
+0044 <span class="comment">%         'dec1-3': different decomposing algorithm's  </span>
+0045 <span class="comment">%                   which is only correct for a variables </span>
+0046 <span class="comment">%                   having the Markov property  </span>
+0047 <span class="comment">%                   Cons:  3 is not correct at all, but seems to give </span>
+0048 <span class="comment">%                          a reasonable result  </span>
+0049 <span class="comment">%                   Pros: 1 is slow, 2 is quite fast and 3 is very fast </span>
+0050 <span class="comment">%                   Note: (mu1oStd is not given for method ='dec3') </span>
+0051  
+0052 x=xo(:); 
+0053 N=length(x); 
+0054 <span class="keyword">if</span> isstruct(R) 
+0055   ACF=R.R; 
+0056 <span class="keyword">else</span> 
+0057   error(<span class="string">'Covariance must be a struct'</span>) 
+0058 <span class="keyword">end</span> 
+0059 [n m]=size(ACF); 
+0060  
+0061 <span class="keyword">if</span> (n==m)&amp;(m~=1),<span class="comment">%No Auto Covariance Function is given </span>
+0062   error(<span class="string">'not an ACF'</span>) 
+0063 <span class="keyword">end</span> 
+0064 ACF=ACF(:);n=max(n,m); 
+0065 [y I]=max(ACF); 
+0066 <span class="keyword">switch</span> I, 
+0067   <span class="keyword">case</span> 1,<span class="comment">% ACF starts with zero lag     </span>
+0068   <span class="keyword">otherwise</span>,error(<span class="string">'This is not a valid ACF!!'</span>) 
+0069 <span class="keyword">end</span> 
+0070    
+0071 <span class="keyword">if</span> (nargin==5)&amp;~isempty(inds), 
+0072   x(inds)=NaN; 
+0073 <span class="keyword">end</span> 
+0074 inds=isnan(x);<span class="comment">%indices to the unknown observations </span>
+0075 Ns=sum(inds);<span class="comment">% # missing values </span>
+0076 <span class="keyword">if</span> Ns==0, 
+0077  disp(<span class="string">'Warning: No missing data, unable to continue.'</span>) 
+0078  sampel=[]; 
+0079  <span class="keyword">return</span> 
+0080 <span class="keyword">end</span> 
+0081 <span class="keyword">if</span> nargin&lt;3|isempty(cases), 
+0082   cases=1; 
+0083 <span class="keyword">end</span> 
+0084 <span class="keyword">if</span> nargin&lt;4|isempty(method), 
+0085   method=<span class="string">'approximate'</span>; <span class="comment">% default method </span>
+0086 <span class="keyword">end</span> 
+0087  
+0088 <span class="keyword">if</span> Ns==N,<span class="comment">% simulated surface from the apriori distribution </span>
+0089   sampel=<a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>(R,[N cases]); 
+0090   disp(<span class="string">'All data missing,  returning sample from the unconditional distribution.'</span>) 
+0091   <span class="keyword">return</span> 
+0092 <span class="keyword">end</span> 
+0093  
+0094 <span class="comment">%initializing variables </span>
+0095 mu1o=zeros(Ns,1); 
+0096 mu1oStd=mu1o; 
+0097 sampel=zeros(Ns,cases); 
+0098 <span class="keyword">if</span> method(1)==<span class="string">'d'</span>, 
+0099   xs=<a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>(R,[N cases]);<span class="comment">% simulated surface from the apriori distribution </span>
+0100   mu1os=sampel; 
+0101 <span class="keyword">end</span> 
+0102  
+0103  
+0104 <span class="keyword">switch</span> method(1:4), 
+0105   <span class="keyword">case</span> <span class="string">'dec1'</span> , <span class="comment">% only correct for variables having the Markov property </span>
+0106     <span class="comment">% but still seems to give a reasonable answer. Slow procedure. </span>
+0107     Sigma=<a href="#_sub1" class="code" title="sub  y=sptoeplitz(x)">sptoeplitz</a>([ACF;zeros(N-n,1)]); 
+0108   
+0109     <span class="comment">%Soo=Sigma(~inds,~inds); <span class="comment">% covariance between known observations </span></span>
+0110     <span class="comment">%S11=Sigma(inds,inds); <span class="comment">% covariance between unknown observations </span></span>
+0111     <span class="comment">%S1o=Sigma(inds,~inds);<span class="comment">% covariance between known and unknown observations </span></span>
+0112     <span class="comment">%tmp=S1o*pinv(full(Soo));  </span>
+0113     <span class="comment">%tmp=S1o/Soo; <span class="comment">% this is time consuming if Soo large </span></span>
+0114     tmp=2*Sigma(inds,~inds)/(Sigma(~inds,~inds) +Sigma(~inds,~inds)' ); 
+0115      
+0116     <span class="keyword">if</span> nargout==3, <span class="comment">%|nargout==0, </span>
+0117       <span class="comment">%standard deviation of the expected surface </span>
+0118       <span class="comment">%mu1oStd=sqrt(diag(S11-tmp*S1o')); </span>
+0119       mu1oStd=sqrt(diag(Sigma(inds,inds)-tmp*Sigma(~inds,inds))); 
+0120     <span class="keyword">end</span> 
+0121      
+0122     <span class="comment">%expected surface conditioned on the known observations from x </span>
+0123     mu1o=tmp*(x(~inds)); 
+0124     <span class="comment">%expected surface conditioned on the known observations from xs </span>
+0125     mu1os=tmp*(xs(~inds,:)); 
+0126     <span class="comment">% sampled surface conditioned on the known observations </span>
+0127     sampel=mu1o(:,ones(1,cases))+xs(inds,:)-mu1os;  
+0128      
+0129   <span class="keyword">case</span> <span class="string">'dec2'</span>,<span class="comment">% only correct for variables having the Markov property </span>
+0130     <span class="comment">% but still seems to give a reasonable answer </span>
+0131     <span class="comment">% approximating the expected surfaces conditioned on  </span>
+0132     <span class="comment">% the known observations from x and xs by only using the closest points </span>
+0133     Sigma=<a href="#_sub1" class="code" title="sub  y=sptoeplitz(x)">sptoeplitz</a>([ACF;zeros(n,1)]); 
+0134     n2=floor(n/2); 
+0135     inds2=find(inds); 
+0136     idx=(1:2*n)'+max(0,inds2(1)-n2);<span class="comment">% indices to the points used </span>
+0137     tmpinds=inds; <span class="comment">% temporary storage of indices to missing points </span>
+0138     tinds=tmpinds(idx);<span class="comment">% indices to the points used </span>
+0139     ns=sum(tinds); <span class="comment">% number of missing data in the interval </span>
+0140     nprev=0; <span class="comment">% number of previously simulated points </span>
+0141     xsinds=xs(inds,:); 
+0142     <span class="keyword">while</span> ns&gt;0, 
+0143       tmp=2*Sigma(tinds,~tinds)/(Sigma(~tinds,~tinds)+Sigma(~tinds,~tinds)'); 
+0144       <span class="keyword">if</span> nargout==3|nargout==0, 
+0145     <span class="comment">%standard deviation of the expected surface </span>
+0146     <span class="comment">%mu1oStd=sqrt(diag(S11-tmp*S1o')); </span>
+0147     mu1oStd((nprev+1):(nprev+ns))=<span class="keyword">...</span> 
+0148         max(mu1oStd((nprev+1):(nprev+ns)), <span class="keyword">...</span> 
+0149         sqrt(diag(Sigma(tinds,tinds)-tmp*Sigma(~tinds,tinds)))); 
+0150       <span class="keyword">end</span> 
+0151        
+0152       <span class="comment">%expected surface conditioned on the closest known observations </span>
+0153       <span class="comment">% from x and xs2 </span>
+0154       mu1o((nprev+1):(nprev+ns))=tmp*(x(idx(~tinds))); 
+0155       mu1os((nprev+1):(nprev+ns),:)=tmp*(xs(idx(~tinds),:));       
+0156         
+0157       <span class="keyword">if</span> idx(<span class="keyword">end</span>)==N,<span class="comment">%  </span>
+0158     ns=0; <span class="comment">% no more points to simulate </span>
+0159       <span class="keyword">else</span> 
+0160     <span class="comment">% updating by  putting expected surface into x      </span>
+0161     x(idx(tinds))=mu1o((nprev+1):(nprev+ns)); 
+0162     xs(idx(tinds))=mu1os((nprev+1):(nprev+ns)); 
+0163  
+0164     nw=sum(tinds((<span class="keyword">end</span>-n2):<span class="keyword">end</span>));<span class="comment">% # data which we want to simulate once  </span>
+0165     tmpinds(idx(1:(<span class="keyword">end</span>-n2-1)))=0; <span class="comment">% removing indices to data .. </span>
+0166                                   <span class="comment">% which has been simulated </span>
+0167     nprev=nprev+ns-nw;<span class="comment">% update # points simulated so far </span>
+0168                        
+0169     <span class="keyword">if</span> (nw==0)&amp;(nprev&lt;Ns),  
+0170       idx=(1:2*n)'+(inds2(nprev+1)-n2); <span class="comment">% move to the next missing data </span>
+0171     <span class="keyword">else</span> 
+0172       idx=idx+n; 
+0173     <span class="keyword">end</span> 
+0174     tmp=N-idx(<span class="keyword">end</span>); 
+0175     <span class="keyword">if</span> tmp&lt;0, <span class="comment">% checking if tmp exceeds the limits </span>
+0176       idx=idx+tmp; 
+0177     <span class="keyword">end</span> 
+0178     <span class="comment">% find new interval with missing data </span>
+0179     tinds=tmpinds(idx); 
+0180     ns= sum(tinds);<span class="comment">% # missing data </span>
+0181       <span class="keyword">end</span>   
+0182     <span class="keyword">end</span> 
+0183     <span class="comment">% sampled surface conditioned on the known observations </span>
+0184     sampel=mu1o(:,ones(1,cases))+xsinds-mu1os;  
+0185      
+0186   <span class="keyword">case</span> <span class="string">'dec3'</span>, <span class="comment">% this is not correct for even for variables having the  </span>
+0187     <span class="comment">% Markov property but still seems to give a reasonable answer </span>
+0188     <span class="comment">% a quasi approach approximating the expected surfaces conditioned on  </span>
+0189     <span class="comment">% the known observations from x and xs with a spline </span>
+0190     inds2=find(inds);indg=find(~inds); 
+0191     mu1o=interp1(indg, x(~inds),inds2,<span class="string">'spline'</span>); 
+0192     mu1os=interp1(indg, xs(~inds,:),inds2,<span class="string">'spline'</span>); 
+0193     <span class="comment">% sampled surface conditioned on the known observations </span>
+0194     sampel=mu1o(:,ones(1,cases))+xs(inds,:)-mu1os;  
+0195  
+0196   <span class="keyword">case</span> {<span class="string">'exac'</span>,<span class="string">'pseu'</span>}, <span class="comment">% exact but slow. It also may not return any result </span>
+0197     Sigma=<a href="#_sub1" class="code" title="sub  y=sptoeplitz(x)">sptoeplitz</a>([ACF;zeros(N-n,1)]); 
+0198     <span class="comment">%Soo=Sigma(~inds,~inds); <span class="comment">% covariance between known observations </span></span>
+0199     <span class="comment">%S11=Sigma(inds,inds); <span class="comment">% covariance between unknown observations </span></span>
+0200     <span class="comment">%S1o=Sigma(inds,~inds);<span class="comment">% covariance between known and unknown observations </span></span>
+0201     <span class="comment">%tmp=S1o/Soo; <span class="comment">% this is time consuming if Soo large </span></span>
+0202     <span class="keyword">if</span> method(1)==<span class="string">'e'</span>,<span class="comment">%exact </span>
+0203       tmp=2*Sigma(inds,~inds)/(Sigma(~inds,~inds)+Sigma(~inds,~inds)'); 
+0204     <span class="keyword">else</span> <span class="comment">% approximate the inverse with pseudo inverse </span>
+0205       tmp==Sigma(inds,~inds)*pinv(Sigma(~inds,~inds)); 
+0206     <span class="keyword">end</span> 
+0207     <span class="comment">%expected surface conditioned on the known observations from x </span>
+0208     mu1o=tmp*(x(~inds)); 
+0209     <span class="comment">% Covariance conditioned on the known observations </span>
+0210     Sigma1o=Sigma(inds,inds)-tmp*Sigma(~inds,inds); 
+0211     <span class="comment">%sampel conditioned on the known observations from x </span>
+0212     sampel=<a href="../../wafo/wstats/wmnormrnd.html" class="code" title=" Random vectors from a multivariate Normal distribution ">wmnormrnd</a>(mu1o,Sigma1o,cases ); 
+0213      
+0214     <span class="keyword">if</span> nargout==3, <span class="comment">%|nargout==0, </span>
+0215       <span class="comment">%standard deviation of the expected surface </span>
+0216       mu1oStd=sqrt(diag(Sigma1o)); 
+0217     <span class="keyword">end</span> 
+0218      <span class="keyword">case</span> <span class="string">'circ'</span>,<span class="comment">% approximating by embedding an circulant matrix </span>
+0219        <span class="comment">% using that the inverse of the circulant covariance matrix has  </span>
+0220        <span class="comment">% approximately the same bandstructure as the inverse of the </span>
+0221        <span class="comment">% covariance matrix </span>
+0222        xx2=[x ;zeros(2*n,1);x(<span class="keyword">end</span>-1:2)];    
+0223        inds=inds(:); 
+0224        inds2=[inds ;ones(2*n,1); inds(<span class="keyword">end</span>-2:2)];  
+0225        nfft=2^nextpow2(2*N+2*n-2); 
+0226        acfC=[ACF(1:n);zeros(nfft-2*n+2,1);ACF((n-1):-1:2)];<span class="comment">% circulant vector </span>
+0227        <span class="comment">% eigenvalues to the circulant covariance matrix </span>
+0228        lambda=real(fft(acfC,nfft)); 
+0229        <span class="comment">% eigenvalues to the inverse circulant covariance matrix </span>
+0230        lambdainv=1./lambda; 
+0231        k1=find(isinf(lambdainv)) 
+0232        <span class="keyword">if</span> any(k1), 
+0233      disp(<span class="string">'Warning procedure is not accurate'</span>) 
+0234      lambdainv(k)=0; 
+0235        <span class="keyword">end</span> 
+0236       acfCinv=real(fft(lambdainv,nfft)/nfft)'; <span class="comment">% circulant vector </span>
+0237        k=find(abs(acfCinv/acfCinv(1))&gt;0.2); 
+0238        sigmainv = spdiags( acfCinv(ones(nfft,1),k), k-1, nfft, nfft) 
+0239       <span class="comment">%not finished </span>
+0240   <span class="keyword">case</span> <span class="string">'appr'</span>,<span class="comment">% approximating by only  condition on  </span>
+0241     <span class="comment">% the closest points </span>
+0242     <span class="comment">% checking approximately how many lags we need in order to  </span>
+0243     <span class="comment">% ensure conditional independence </span>
+0244     <span class="comment">% using that the inverse of the circulant covariance matrix has  </span>
+0245     <span class="comment">% approximately the same bandstructure as the inverse of the </span>
+0246     <span class="comment">% covariance matrix </span>
+0247     <span class="keyword">if</span> 0, 
+0248       nfft=2^nextpow2(2*N-2); 
+0249       acfC=[ACF(1:n);zeros(nfft-2*n+2,1);ACF((n-1):-1:2)];<span class="comment">% circulant vector </span>
+0250       <span class="comment">% eigenvalues to the circulant covariance matrix </span>
+0251       lambda=real(fft(acfC,nfft)); 
+0252       <span class="comment">% eigenvalues to the inverse circulant covariance matrix </span>
+0253       lambda=1./lambda; 
+0254       lambda(isinf(lambda))=0; 
+0255       acfC=real(fft(lambda,nfft)/nfft); <span class="comment">% circulant vector </span>
+0256       acfC=acfC/acfC(1); <span class="comment">% relative significance of each lag </span>
+0257       <span class="comment">% minimum lag distance for which samples are conditionally  </span>
+0258       <span class="comment">% independent, Nsig is set to 4 times this value </span>
+0259       Nsig=find(abs(acfC(1:nfft/2))&gt;0.02);        
+0260       Nsig=min(max(2*n,4*Nsig(<span class="keyword">end</span>)+2),N);<span class="comment">% size of Sigma </span>
+0261     <span class="keyword">else</span> 
+0262       Nsig=2*n; 
+0263     <span class="keyword">end</span> 
+0264     Sigma=<a href="#_sub1" class="code" title="sub  y=sptoeplitz(x)">sptoeplitz</a>([ACF;zeros(Nsig-n,1)]); 
+0265     n2=floor(Nsig/4); 
+0266     inds2=find(inds); 
+0267     idx=(1:Nsig)'+max(0,inds2(1)-n2);<span class="comment">% indices to the points used </span>
+0268     tmpinds=inds; <span class="comment">% temporary storage of indices to missing points </span>
+0269     tinds=tmpinds(idx);<span class="comment">% indices to the points used </span>
+0270     ns=sum(tinds); <span class="comment">% number of missing data in the interval </span>
+0271     nprev=0; <span class="comment">% number of previously simulated points </span>
+0272     x2=x; 
+0273      
+0274     <span class="keyword">while</span> ns&gt;0, 
+0275       <span class="comment">%make sure MATLAB uses a symmetric matrix solver </span>
+0276       tmp=2*Sigma(tinds,~tinds)/(Sigma(~tinds,~tinds)+Sigma(~tinds,~tinds)'); 
+0277       Sigma1o=Sigma(tinds,tinds)-tmp*Sigma(~tinds,tinds); 
+0278       <span class="keyword">if</span> nargout==3|nargout==0, 
+0279     <span class="comment">%standard deviation of the expected surface </span>
+0280     <span class="comment">%mu1oStd=sqrt(diag(S11-tmp*S1o')); </span>
+0281     mu1oStd((nprev+1):(nprev+ns))=<span class="keyword">...</span> 
+0282         max( mu1oStd((nprev+1):(nprev+ns)) , sqrt(diag(Sigma1o))); 
+0283       <span class="keyword">end</span> 
+0284  
+0285       <span class="comment">%expected surface conditioned on the closest known observations from x </span>
+0286       mu1o((nprev+1):(nprev+ns))=tmp*(x2(idx(~tinds))); 
+0287       <span class="comment">%sample conditioned on the known observations from x </span>
+0288       sampel((nprev+1):(nprev+ns),:) =<span class="keyword">...</span> 
+0289       <a href="../../wafo/wstats/wmnormrnd.html" class="code" title=" Random vectors from a multivariate Normal distribution ">wmnormrnd</a>(tmp*(x(idx(~tinds))),Sigma1o,cases );      
+0290       <span class="keyword">if</span> idx(<span class="keyword">end</span>)==N,<span class="comment">%  </span>
+0291     ns=0; <span class="comment">% no more points to simulate </span>
+0292       <span class="keyword">else</span> 
+0293     <span class="comment">% updating </span>
+0294     x2(idx(tinds))= mu1o((nprev+1):(nprev+ns)); <span class="comment">%expected surface </span>
+0295     x(idx(tinds))=sampel((nprev+1):(nprev+ns),1);<span class="comment">%sampled surface  </span>
+0296     nw=sum(tinds((<span class="keyword">end</span>-n2):<span class="keyword">end</span>));<span class="comment">% # data we want to simulate once more </span>
+0297     tmpinds(idx(1:(<span class="keyword">end</span>-n2-1)))=0; <span class="comment">% removing indices to data .. </span>
+0298                                   <span class="comment">% which has been simulated </span>
+0299     nprev=nprev+ns-nw;<span class="comment">% update # points simulated so far </span>
+0300      
+0301     <span class="keyword">if</span> (nw==0)&amp;(nprev&lt;Ns),  
+0302       idx=(1:Nsig)'+(inds2(nprev+1)-n2); <span class="comment">% move to the next missing data </span>
+0303     <span class="keyword">else</span> 
+0304       idx=idx+n; 
+0305     <span class="keyword">end</span> 
+0306     tmp=N-idx(<span class="keyword">end</span>); 
+0307     <span class="keyword">if</span> tmp&lt;0, <span class="comment">% checking if tmp exceeds the limits </span>
+0308       idx=idx+tmp; 
+0309     <span class="keyword">end</span> 
+0310     <span class="comment">% find new interval with missing data </span>
+0311     tinds=tmpinds(idx); 
+0312     ns= sum(tinds);<span class="comment">% # missing data in the interval </span>
+0313       <span class="keyword">end</span> 
+0314     <span class="keyword">end</span> 
+0315 <span class="keyword">end</span> 
+0316  
+0317 <span class="comment">%size(mu1oStd) </span>
+0318 <span class="keyword">if</span> nargout==0 
+0319   plot(find(~inds),x(~inds),<span class="string">'.'</span>) 
+0320   hold on, 
+0321   ind=find(inds); 
+0322   plot(ind,mu1o   ,<span class="string">'*'</span>) 
+0323   plot(ind,sampel,<span class="string">'r+'</span>) 
+0324   <span class="comment">%mu1oStd </span>
+0325   plot(ind,[mu1o-2*mu1oStd mu1o+2*mu1oStd ] ,<span class="string">'d'</span>) 
+0326   <span class="comment">%plot(xs),plot(ind,mu1os,'r*') </span>
+0327   hold off 
+0328   legend(<span class="string">'observed values'</span>,<span class="string">'mu1o'</span>,<span class="string">'sampled values'</span>,<span class="string">'2 stdev'</span>) 
+0329   <span class="comment">%axis([770 850 -1 1]) </span>
+0330   <span class="comment">%axis([1300 1325 -1 1]) </span>
+0331 <span class="keyword">else</span> 
+0332   sampl=sampel; 
+0333 <span class="keyword">end</span> 
+0334  
+0335 <span class="keyword">function</span> y=<a name="_sub1" href="#_subfunctions" class="code">sptoeplitz</a>(x) 
+0336   k=find(x); 
+0337   x=x(:)'; 
+0338   n=length(x); 
+0339   <span class="keyword">if</span> length(k)&gt;0.3*n, 
+0340     y=toeplitz(x); 
+0341   <span class="keyword">else</span> 
+0342     y = spdiags( x(ones(n,1),k), k-1, n, n); 
+0343     k(k(1)==1)=[]; 
+0344     y=y+spdiags( x(ones(n,1),k), -k+1, n, n); 
+0345  <span class="keyword">end</span> 
+0346</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

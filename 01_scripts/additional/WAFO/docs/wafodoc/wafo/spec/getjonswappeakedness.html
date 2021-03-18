@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of getjonswappeakedness</title>
+  <meta name="keywords" content="getjonswappeakedness">
+  <meta name="description" content=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; getjonswappeakedness.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getjonswappeakedness
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Peakedness factor Gamma given Hm0 and Tp for JONSWAP</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> gam = getjonswappeakedness(Hm0,Tp) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">GETJONSWAPPEAKEDNESS</a> Peakedness factor Gamma given Hm0 and Tp for <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> 
+  
+   CALL: Gamma =  <a href="getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getJonswapPeakedness</a>(Hm0,Tp); 
+  
+  Hm0   = significant wave height [m]. 
+  Tp    = peak period [s] 
+  gamma = Peakedness parameter of the <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum 
+  
+   <a href="getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">GETJONSWAPPEAKEDNESS</a> relate GAMMA to Hm0 and Tp. 
+   A standard value for GAMMA is 3.3. However, a more correct approach is  
+   to relate GAMMA to Hm0 and Tp: 
+         D = 0.036-0.0056*Tp/sqrt(Hm0); 
+         gamma = exp(3.484*(1-0.1975*D*Tp^4/(Hm0^2))); 
+   This parameterization is based on qualitative considerations of deep water 
+   wave data from the North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>, see <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> et. al. (1984) 
+   Here GAMMA is limited to 1..7. 
+   
+   NOTE: The size of GAMMA is the common size of Hm0 and Tp. 
+    
+  Example 
+  Hm0 = linspace(1,20); 
+  Tp = Hm0; 
+  [T,H] = meshgrid(Tp,Hm0); 
+  gam = <a href="getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a>(H,T); 
+  contourf(Tp,Hm0,gam,1:7),<a href="../../wafo/misc/fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(1:7) 
+  
+  Hm0 = 1:10;   
+  Tp  = linspace(2,16); 
+  [T,H] = meshgrid(Tp,Hm0); 
+  gam =  <a href="getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a>(H,T);  
+  plot(Tp,gam) 
+  xlabel('Tp [s]')   
+  ylabel('Peakedness parameter') 
+    
+  See also <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhnlwparfun.html" class="code" title=" [A0,B0,C0]= jhnlwparfun(Hm0,Tp,gam,dim)">jhnlwparfun</a></li></TD>
+<TD> Wave height, Hd, distribution parameters for Stokes waves with Jonswap spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhscdf.html" class="code" title=" f = jhscdf(Hd,Scf,Hm0,Tp,gam,tail)">jhscdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhsnlcdf.html" class="code" title=" f = jhsnlcdf(Hd,Scf,Hm0,Tp,gam,tail)">jhsnlcdf</a></li></TD>
+<TD> Joint (Scf,Hd) CDF for non-linear waves with JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhsnlpdf.html" class="code" title=" [f,Hrms,Vrms] = jhsnlpdf(Hd,Scf,Hm0,Tp,gam,normalizedInput,condon)">jhsnlpdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for nonlinear waves with a JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhsnlpdf2.html" class="code" title=" [f,Hrms,Srms,fA,fB] = jhsnlpdf2(Hd,Scf,Hm0,Tp,gam, 					 normalizedInput)">jhsnlpdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for non-linear waves with a JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhspdf.html" class="code" title=" [f,Hrms,Vrms] = jhspdf(Hd,Scf,Hm0,Tp,gam,normalizedInput,condon)">jhspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhspdf2.html" class="code" title=" [f,Hrms,Srms,fA,fB] = jhspdf2(Hd,Scf,Hm0,Tp,gam,normalizedInput)">jhspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvcdf.html" class="code" title=" f = jhvcdf(Hd,Vcf,Hm0,Tp,gam,tail)">jhvcdf</a></li></TD>
+<TD> Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvnlcdf.html" class="code" title=" f = jhvnlcdf(Hd,Vcf,Hm0,Tp,gam,tail)">jhvnlcdf</a></li></TD>
+<TD> Joint (Vcf,Hd) CDF for non-linear waves with JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvnlpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvnlpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvnlpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvnlpdf2.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvnlpdf2(Hd,Vcf,Hm0,Tp,gam,normalizedInput)">jhvnlpdf2</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for non-linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvpdf2.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf2(Hd,Vcf,Hm0,Tp,gam,normalizedInput)">jhvpdf2</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhwparfun.html" class="code" title=" [A0,B0,C0]= jhwparfun(Hm0,Tp,gam,dim)">jhwparfun</a></li></TD>
+<TD> Wave height, Hd, distribution parameters for Jonswap spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">jonswap</a></li></TD>
+<TD> Calculates (and plots) a JONSWAP spectral density</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> gam = <a name="_sub0" href="#_subfunctions" class="code">getjonswappeakedness</a>(Hm0,Tp) 
+002 <span class="comment">%GETJONSWAPPEAKEDNESS Peakedness factor Gamma given Hm0 and Tp for JONSWAP </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: Gamma =  getJonswapPeakedness(Hm0,Tp); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">% Hm0   = significant wave height [m]. </span>
+007 <span class="comment">% Tp    = peak period [s] </span>
+008 <span class="comment">% gamma = Peakedness parameter of the JONSWAP spectrum </span>
+009 <span class="comment">% </span>
+010 <span class="comment">%  GETJONSWAPPEAKEDNESS relate GAMMA to Hm0 and Tp. </span>
+011 <span class="comment">%  A standard value for GAMMA is 3.3. However, a more correct approach is  </span>
+012 <span class="comment">%  to relate GAMMA to Hm0 and Tp: </span>
+013 <span class="comment">%        D = 0.036-0.0056*Tp/sqrt(Hm0); </span>
+014 <span class="comment">%        gamma = exp(3.484*(1-0.1975*D*Tp^4/(Hm0^2))); </span>
+015 <span class="comment">%  This parameterization is based on qualitative considerations of deep water </span>
+016 <span class="comment">%  wave data from the North Sea, see Torsethaugen et. al. (1984) </span>
+017 <span class="comment">%  Here GAMMA is limited to 1..7. </span>
+018 <span class="comment">%  </span>
+019 <span class="comment">%  NOTE: The size of GAMMA is the common size of Hm0 and Tp. </span>
+020 <span class="comment">%   </span>
+021 <span class="comment">% Example </span>
+022 <span class="comment">% Hm0 = linspace(1,20); </span>
+023 <span class="comment">% Tp = Hm0; </span>
+024 <span class="comment">% [T,H] = meshgrid(Tp,Hm0); </span>
+025 <span class="comment">% gam = getjonswappeakedness(H,T); </span>
+026 <span class="comment">% contourf(Tp,Hm0,gam,1:7),fcolorbar(1:7) </span>
+027 <span class="comment">% </span>
+028 <span class="comment">% Hm0 = 1:10;   </span>
+029 <span class="comment">% Tp  = linspace(2,16); </span>
+030 <span class="comment">% [T,H] = meshgrid(Tp,Hm0); </span>
+031 <span class="comment">% gam =  getjonswappeakedness(H,T);  </span>
+032 <span class="comment">% plot(Tp,gam) </span>
+033 <span class="comment">% xlabel('Tp [s]')   </span>
+034 <span class="comment">% ylabel('Peakedness parameter') </span>
+035 <span class="comment">%   </span>
+036 <span class="comment">% See also jonswap   </span>
+037    
+038 <span class="comment">% Tested on matlab 6.1 </span>
+039 <span class="comment">%History </span>
+040 <span class="comment">% revised pab 13april2004 </span>
+041 <span class="comment">% -made sure gamma is 1 if Tp/sqrt(Hm0) &gt; 5.1429 </span>
+042 <span class="comment">% by pab 11Jan2004   </span>
+043    
+044   error(nargchk(2,2,nargin)) 
+045   [errorcode,Hm0,Tp] = comnsize(Hm0,Tp); 
+046   <span class="keyword">if</span> errorcode &gt; 0 
+047     error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+048   <span class="keyword">end</span> 
+049   x   = Tp./sqrt(Hm0); 
+050    
+051   gam = ones(size(x)); 
+052    
+053   k1 = find(x&lt;=5.14285714285714); 
+054   <span class="keyword">if</span> any(k1), <span class="comment">%limiting gamma to [1 7] </span>
+055     D       = 0.036-0.0056*x(k1); <span class="comment">% approx 5.061*Hm0^2/Tp^4*(1-0.287*log(gam)); </span>
+056     gam(k1) = min(exp(3.484*( 1-0.1975*D.*x(k1).^4 ) ),7); <span class="comment">% gamma  </span>
+057   <span class="keyword">end</span> 
+058   <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

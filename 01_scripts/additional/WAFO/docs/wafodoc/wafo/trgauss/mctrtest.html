@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mctrtest</title>
+  <meta name="keywords" content="mctrtest">
+  <meta name="description" content=" Test if a stochastic process is Gaussian.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; mctrtest.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mctrtest
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Test if a stochastic process is Gaussian.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> test2 = mctrtest(S,Np,test0,def,opt) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="mctrtest.html" class="code" title=" Test if a stochastic process is Gaussian.">MCTRTEST</a> Test if a stochastic process is Gaussian.
+ 
+  CALL:  test1 = <a href="mctrtest.html" class="code" title=" Test if a stochastic process is Gaussian.">mctrtest</a>(S,[Np,Ns],test0,def,options);
+ 
+  test1,
+     test0 = simulated and observed value of e(g)=int (g(u)-u)^2 du,
+             respectively, where int limits is given by OPTIONS.PARAM. 
+          
+       S   = spectral density structure 
+ 
+        Np = # of points simulated
+        Ns = # of independent simulations (default  100)
+ 
+    def    = 'nonlinear' : transform based on smoothed crossing intensity (default)
+             'mnonlinear': transform based on smoothed marginal distribution
+   options = options structure defining how the estimation of the
+             transformation is done. (default <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>('dat2tr'))
+ 
+  <a href="mctrtest.html" class="code" title=" Test if a stochastic process is Gaussian.">MCTRTEST</a> simulates  e(g(u)-u) = int (g(u)-u)^2 du  for Gaussian processes 
+  given the spectral density, S. The result is plotted if test0 is given.
+  This is useful for testing if the process X(t) is Gaussian.
+  If 95% of TEST1 is less than TEST0 then X(t) is not Gaussian at a 5% level.
+ 
+  Example:
+  Hm0 = 7;
+  S0 = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>([],Hm0); g=<a href="ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">ochitr</a>([],[Hm0/4]); S=S0;
+  S.tr=g;S.tr(:,2)=g(:,2)*Hm0/4;
+  xs = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,2^13);
+  [g0 t0] = <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>(xs);
+  t1 = <a href="mctrtest.html" class="code" title=" Test if a stochastic process is Gaussian.">mctrtest</a>(S0,[2^13 50],t0); 
+ 
+  See also  <a href="../../wafo/wsim/cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>, <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>, <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wsim/cov2sdat.html" class="code" title=" [x, xder]=cov2sdat(R,np,iseed)">cov2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2tr.html" class="code" title=" [g, test, cmax, irr, g2]= dat2tr(x,def,varargin);">dat2tr</a></li></TD>
+<TD> Estimate transformation, g, from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/spec2cov.html" class="code" title=" R = spec2cov(S,nr,Nt,rate,Nx,Ny,dx,dy)">spec2cov</a></li></TD>
+<TD> Computes covariance function and its derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="troptset.html" class="code" title=" options = troptset(varargin)">troptset</a></li></TD>
+<TD> Create or alter TRANSFORM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig6.html" class="code" title=" recfig6">recfig6</a></li></TD>
+<TD> Variability of simulated e(g(u)-u) (circles)</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> test2 = <a name="_sub0" href="#_subfunctions" class="code">mctrtest</a>(S,Np,test0,def,opt)
+002 <span class="comment">%MCTRTEST Test if a stochastic process is Gaussian.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  test1 = mctrtest(S,[Np,Ns],test0,def,options);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">% test1,</span>
+007 <span class="comment">%    test0 = simulated and observed value of e(g)=int (g(u)-u)^2 du,</span>
+008 <span class="comment">%            respectively, where int limits is given by OPTIONS.PARAM. </span>
+009 <span class="comment">%         </span>
+010 <span class="comment">%      S   = spectral density structure </span>
+011 <span class="comment">%</span>
+012 <span class="comment">%       Np = # of points simulated</span>
+013 <span class="comment">%       Ns = # of independent simulations (default  100)</span>
+014 <span class="comment">%</span>
+015 <span class="comment">%   def    = 'nonlinear' : transform based on smoothed crossing intensity (default)</span>
+016 <span class="comment">%            'mnonlinear': transform based on smoothed marginal distribution</span>
+017 <span class="comment">%  options = options structure defining how the estimation of the</span>
+018 <span class="comment">%            transformation is done. (default troptset('dat2tr'))</span>
+019 <span class="comment">%</span>
+020 <span class="comment">% MCTRTEST simulates  e(g(u)-u) = int (g(u)-u)^2 du  for Gaussian processes </span>
+021 <span class="comment">% given the spectral density, S. The result is plotted if test0 is given.</span>
+022 <span class="comment">% This is useful for testing if the process X(t) is Gaussian.</span>
+023 <span class="comment">% If 95<span class="comment">% of TEST1 is less than TEST0 then X(t) is not Gaussian at a 5<span class="comment">% level.</span></span></span>
+024 <span class="comment">%</span>
+025 <span class="comment">% Example:</span>
+026 <span class="comment">% Hm0 = 7;</span>
+027 <span class="comment">% S0 = jonswap([],Hm0); g=ochitr([],[Hm0/4]); S=S0;</span>
+028 <span class="comment">% S.tr=g;S.tr(:,2)=g(:,2)*Hm0/4;</span>
+029 <span class="comment">% xs = spec2sdat(S,2^13);</span>
+030 <span class="comment">% [g0 t0] = dat2tr(xs);</span>
+031 <span class="comment">% t1 = mctrtest(S0,[2^13 50],t0); </span>
+032 <span class="comment">%</span>
+033 <span class="comment">% See also  cov2sdat, dat2tr, troptset</span>
+034 
+035 <span class="comment">%Tested on: Matlab 5.3, 5.2, 5.1</span>
+036 <span class="comment">% History:</span>
+037 <span class="comment">% revised pab jan2005</span>
+038 <span class="comment">% changed order of input so that chapter1.m works</span>
+039 <span class="comment">% revised pab Feb2004</span>
+040 <span class="comment">% -changed h1line  </span>
+041 <span class="comment">% revised pab 29.12.2000</span>
+042 <span class="comment">% - added options and def to input due to changed calling syntax for dat2tr.</span>
+043 <span class="comment">% - updated the help header</span>
+044 <span class="comment">% revised by pab 12.11.99</span>
+045 <span class="comment">%    fixed a bug, string input to dat2tr 'nonlinear' </span>
+046 <span class="comment">% revised by pab 12.10.99</span>
+047 <span class="comment">%    updated help header </span>
+048 <span class="comment">% revised by pab 11.08.99</span>
+049 <span class="comment">% changed name from mctest to mctrtest</span>
+050 <span class="comment">% by pab 11.11.98</span>
+051 
+052 maxsize = 200000; <span class="comment">% must divide the computations due to limited memory</span>
+053 
+054 
+055 error(nargchk(2,5,nargin))
+056 <span class="keyword">if</span> nargin&lt;4|isempty(def),
+057   def = <span class="string">'nonlinear'</span>;
+058 <span class="keyword">end</span>
+059 <span class="keyword">if</span> nargin&lt;5|isempty(opt),
+060   opt = <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>(<span class="string">'dat2tr'</span>);
+061 <span class="keyword">end</span>
+062 opt = <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>(opt,<span class="string">'multip'</span>,1);
+063 
+064 <span class="keyword">if</span> nargin&lt;3|isempty(test0)
+065   plotflag=0;
+066 <span class="keyword">else</span> 
+067   plotflag=1;
+068 <span class="keyword">end</span>
+069 
+070 Ns=100;
+071 nnp=length(Np);
+072 <span class="keyword">if</span> nnp&gt;=2 
+073   Ns=Np(2);
+074 <span class="keyword">end</span>
+075 Np=Np(1);
+076 <span class="keyword">if</span> Ns&gt;50
+077   disp(<span class="string">'  ... be patient this may take a while'</span>)
+078 <span class="keyword">end</span>
+079 
+080 test1 = [];
+081 rep = floor(Np*Ns/maxsize)+1;
+082 
+083 Nstep = floor(Ns/rep);
+084 
+085 R = <a href="../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>(S);
+086 
+087 <span class="keyword">for</span> ix=1:rep,
+088   xs = <a href="../../wafo/wsim/cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>(R,[Np Nstep]);
+089   [g, tmp] = <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>(xs,def,opt);
+090   test1 = [test1; tmp(:)];
+091   disp([<span class="string">'finished '</span> num2str(ix) <span class="string">' of '</span> num2str(rep)] )
+092 <span class="keyword">end</span>
+093 <span class="keyword">if</span> rep&gt;1,
+094   xs = <a href="../../wafo/wsim/cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>(R,[Np rem(Ns,rep)]);
+095   [g tmp] = <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>(xs,def,opt);
+096   test1 = [test1; tmp(:)];
+097 <span class="keyword">end</span>
+098 
+099 <span class="keyword">if</span> (nargout&gt;0 | plotflag==0),
+100   test2=test1;
+101 <span class="keyword">end</span>
+102 
+103 
+104 <span class="keyword">if</span> plotflag 
+105   plot(test1,<span class="string">'o'</span>),hold on
+106   <span class="keyword">if</span> 1 
+107     plot([1 Ns],test0*[1 1],<span class="string">'--'</span>),
+108   <span class="keyword">end</span>
+109   hold off
+110   ylabel(<span class="string">'e(g(u)-u)'</span>)
+111   xlabel(<span class="string">'Simulation number'</span>)
+112 <span class="keyword">end</span>
+113</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

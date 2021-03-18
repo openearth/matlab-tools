@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of ecross</title>
+  <meta name="keywords" content="ecross">
+  <meta name="description" content=" Extracts exact level v crossings">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; ecross.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>ecross
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Extracts exact level v crossings</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> t0 = ecross(t,f,ind,v) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="ecross.html" class="code" title=" Extracts exact level v crossings ">ECROSS</a> Extracts exact level v crossings 
+  
+   CALL t0 = <a href="ecross.html" class="code" title=" Extracts exact level v crossings ">ecross</a>(t,f,ind,v);
+ 
+   t0  = vector of  exact level v crossings.
+   t,f = vectors of arguments and functions values, respectively.
+   ind = indices to level v crossings as found by <a href="findcross.html" class="code" title=" Finds indices to level v up and downcrossings of a vector">findcross</a>.
+   v   = scalar or vector (of size(ind)) defining the level(s) to cross.
+ 
+  <a href="ecross.html" class="code" title=" Extracts exact level v crossings ">ECROSS</a> interpolates t and f linearly to find the exact level v
+  crossings, i.e., the points where f(t0) = v
+ 
+  Example
+   t = linspace(0,7*pi,250); x = sin(t);
+   ind = <a href="findcross.html" class="code" title=" Finds indices to level v up and downcrossings of a vector">findcross</a>(x,0.75)  
+   t0 = <a href="ecross.html" class="code" title=" Extracts exact level v crossings ">ecross</a>(t,x,ind,0.75);
+   plot(t,x,'.',t(ind),x(ind),'r.',...
+   t, ones(size(t))*.75, t0,ones(size(t0))*0.75,'g.')
+ 
+  See also  <a href="findcross.html" class="code" title=" Finds indices to level v up and downcrossings of a vector">findcross</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2steep.html" class="code" title=" [S , H,AC1,AT1,TFRONT1,TREAR1,z_ind2,xn2]=dat2steep(xx,rate,method)">dat2steep</a></li></TD>
+<TD> Extracts waveheights and steepnesses from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2wa.html" class="code" title=" [T, index,ind] = dat2wa(xn,h,pdef,wdef,rate)">dat2wa</a></li></TD>
+<TD> Extracts sequence of wavelengths from data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> t0 = <a name="_sub0" href="#_subfunctions" class="code">ecross</a>(t,f,ind,v)
+002 <span class="comment">%ECROSS Extracts exact level v crossings </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL t0 = ecross(t,f,ind,v);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%  t0  = vector of  exact level v crossings.</span>
+007 <span class="comment">%  t,f = vectors of arguments and functions values, respectively.</span>
+008 <span class="comment">%  ind = indices to level v crossings as found by findcross.</span>
+009 <span class="comment">%  v   = scalar or vector (of size(ind)) defining the level(s) to cross.</span>
+010 <span class="comment">%</span>
+011 <span class="comment">% ECROSS interpolates t and f linearly to find the exact level v</span>
+012 <span class="comment">% crossings, i.e., the points where f(t0) = v</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Example</span>
+015 <span class="comment">%  t = linspace(0,7*pi,250); x = sin(t);</span>
+016 <span class="comment">%  ind = findcross(x,0.75)  </span>
+017 <span class="comment">%  t0 = ecross(t,x,ind,0.75);</span>
+018 <span class="comment">%  plot(t,x,'.',t(ind),x(ind),'r.',...</span>
+019 <span class="comment">%  t, ones(size(t))*.75, t0,ones(size(t0))*0.75,'g.')</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% See also  findcross</span>
+022 
+023 <span class="comment">% Tested on: Matlab 6.0</span>
+024 <span class="comment">% revised pab Feb2004  </span>
+025 <span class="comment">% By pab 18.06.2001</span>
+026   
+027 error(nargchk(4,4,nargin))
+028 
+029 t0 = t(ind)+(v-f(ind)).*(t(ind+1)-t(ind))./(f(ind+1)-f(ind));
+030 <span class="keyword">return</span>
+031 
+032</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

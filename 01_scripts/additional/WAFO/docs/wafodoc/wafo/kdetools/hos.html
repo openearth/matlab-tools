@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of hos</title>
+  <meta name="keywords" content="hos">
+  <meta name="description" content=" Oversmoothing Parameter.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; hos.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>hos
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Oversmoothing Parameter.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> h=hos(A,kernel) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">HOS</a> Oversmoothing Parameter. 
+  
+  CALL:  h = <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>(data,kernel) 
+  
+    h      = one dimensional maximum smoothing value for smoothing parameter 
+             given the data and kernel.  size 1 x D 
+    data   = data matrix, size N x D (D = # dimensions ) 
+    kernel = 'epanechnikov'  - Epanechnikov kernel. 
+             'biweight'      - Bi-weight kernel. 
+             'triweight'     - Tri-weight kernel.   
+             'triangluar'    - Triangular kernel. 
+             'gaussian'      - Gaussian kernel 
+             'rectangular'   - Rectanguler kernel.  
+             'laplace'       - Laplace kernel. 
+             'logistic'      - Logistic kernel. 
+    
+   Note that only the first 4 letters of the kernel name is needed. 
+   
+  The oversmoothing or maximal smoothing principle relies on the fact 
+  that there is a simple upper bound for the AMISE-optimal bandwidth for 
+  estimation of densities with a fixed value of a particular scale 
+  measure. While <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">HOS</a> will give too large bandwidth for optimal estimation  
+  of a general density it provides an excellent starting point for 
+  subjective choice of bandwidth. A sensible strategy is to plot an 
+  estimate with bandwidth <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">HOS</a> and then sucessively look at plots based on  
+  convenient fractions of <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">HOS</a> to see what features are present in the 
+  data for various amount of smoothing. The relation to <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a> is given by: 
+   
+            <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">HOS</a> = <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a>/0.93 
+  
+   Example:  
+   data = <a href="../../wafo/wstats/wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(0, 1,20,1) 
+   h = <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>(data,'epan'); 
+    
+  See also  <a href="hste.html" class="code" title=" 2-Stage Solve the Equation estimate of smoothing parameter. ">hste</a>, <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">hbcv</a>, <a href="hboot.html" class="code" title="  Bootstrap cross-validation estimate of smoothing parameter. ">hboot</a>, <a href="hldpi.html" class="code" title=" L-stage Direct Plug-In estimate of smoothing parameter. ">hldpi</a>, <a href="hlscv.html" class="code" title="  Least Squares Cross-Validation estimate of smoothing parameter ">hlscv</a>, <a href="hscv.html" class="code" title=" Smoothed cross-validation estimate of smoothing parameter. ">hscv</a>, <a href="hstt.html" class="code" title=" Scott-Tapia-Thompson estimate of smoothing parameter. ">hstt</a>, <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>, <a href="kdefun.html" class="code" title="  Kernel Density Estimator. ">kdefun</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="hns.html" class="code" title=" h=hns(A,kernel)">hns</a></li></TD>
+<TD> Normal Scale Estimate of Smoothing Parameter.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="hbcv.html" class="code" title=" [h,hvec,score]=hbcv(A,kernel,hvec)">hbcv</a></li></TD>
+<TD>  Biased Cross-Validation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hboot.html" class="code" title=" [h,hvec,score]=hboot(A,kernel,hvec)">hboot</a></li></TD>
+<TD>  Bootstrap cross-validation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hlscv.html" class="code" title=" [h,hvec,score]=hlscv(A,kernel,hvec)">hlscv</a></li></TD>
+<TD>  Least Squares Cross-Validation estimate of smoothing parameter</TD>
+</TR>
+<TR>
+<TD><li><a href="hscv.html" class="code" title=" [h,hvec,score]=hscv(A,kernel,hvec)">hscv</a></li></TD>
+<TD> Smoothed cross-validation estimate of smoothing parameter.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> h=<a name="_sub0" href="#_subfunctions" class="code">hos</a>(A,kernel) 
+002 <span class="comment">%HOS Oversmoothing Parameter. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  h = hos(data,kernel) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   h      = one dimensional maximum smoothing value for smoothing parameter </span>
+007 <span class="comment">%            given the data and kernel.  size 1 x D </span>
+008 <span class="comment">%   data   = data matrix, size N x D (D = # dimensions ) </span>
+009 <span class="comment">%   kernel = 'epanechnikov'  - Epanechnikov kernel. </span>
+010 <span class="comment">%            'biweight'      - Bi-weight kernel. </span>
+011 <span class="comment">%            'triweight'     - Tri-weight kernel.   </span>
+012 <span class="comment">%            'triangluar'    - Triangular kernel. </span>
+013 <span class="comment">%            'gaussian'      - Gaussian kernel </span>
+014 <span class="comment">%            'rectangular'   - Rectanguler kernel.  </span>
+015 <span class="comment">%            'laplace'       - Laplace kernel. </span>
+016 <span class="comment">%            'logistic'      - Logistic kernel. </span>
+017 <span class="comment">%   </span>
+018 <span class="comment">%  Note that only the first 4 letters of the kernel name is needed. </span>
+019 <span class="comment">%  </span>
+020 <span class="comment">% The oversmoothing or maximal smoothing principle relies on the fact </span>
+021 <span class="comment">% that there is a simple upper bound for the AMISE-optimal bandwidth for </span>
+022 <span class="comment">% estimation of densities with a fixed value of a particular scale </span>
+023 <span class="comment">% measure. While HOS will give too large bandwidth for optimal estimation  </span>
+024 <span class="comment">% of a general density it provides an excellent starting point for </span>
+025 <span class="comment">% subjective choice of bandwidth. A sensible strategy is to plot an </span>
+026 <span class="comment">% estimate with bandwidth HOS and then sucessively look at plots based on  </span>
+027 <span class="comment">% convenient fractions of HOS to see what features are present in the </span>
+028 <span class="comment">% data for various amount of smoothing. The relation to HNS is given by: </span>
+029 <span class="comment">%  </span>
+030 <span class="comment">%           HOS = HNS/0.93 </span>
+031 <span class="comment">% </span>
+032 <span class="comment">%  Example:  </span>
+033 <span class="comment">%  data = wnormrnd(0, 1,20,1) </span>
+034 <span class="comment">%  h = hos(data,'epan'); </span>
+035 <span class="comment">%   </span>
+036 <span class="comment">% See also  hste, hbcv, hboot, hldpi, hlscv, hscv, hstt, kde, kdefun </span>
+037  
+038 <span class="comment">% Reference:   </span>
+039 <span class="comment">%  B. W. Silverman (1986)  </span>
+040 <span class="comment">% 'Density estimation for statistics and data analysis'   </span>
+041 <span class="comment">%  Chapman and Hall, pp 43-48  </span>
+042  
+043 <span class="comment">%  Wand,M.P. and Jones, M.C. (1986)  </span>
+044 <span class="comment">% 'Kernel smoothing' </span>
+045 <span class="comment">%  Chapman and Hall, pp 60--63 </span>
+046  
+047  
+048 <span class="comment">%Tested on: matlab 5.3 </span>
+049 <span class="comment">% History: </span>
+050 <span class="comment">% revised pab feb2005 </span>
+051 <span class="comment">% -updated example + see also line   </span>
+052 <span class="comment">% revised pab 21.09.99 </span>
+053 <span class="comment">%  </span>
+054 <span class="comment">% updated string comparisons </span>
+055 <span class="comment">% from kdetools </span>
+056  
+057 h=<a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">hns</a>(A,kernel)/0.93;</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

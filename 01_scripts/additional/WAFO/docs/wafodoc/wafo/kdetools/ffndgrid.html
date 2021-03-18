@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of ffndgrid</title>
+  <meta name="keywords" content="ffndgrid">
+  <meta name="description" content="  Fast 'n' Furious N-D data gridding.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; ffndgrid.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>ffndgrid
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Fast 'n' Furious N-D data gridding.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [zzgrid, xvec] = ffndgrid(x, f, delta,limits,aver); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="ffndgrid.html" class="code" title="  Fast 'n' Furious N-D data gridding.">FFNDGRID</a>  Fast 'n' Furious N-D data gridding.
+ 
+   CALL:  [fgrid, xvec] = <a href="ffndgrid.html" class="code" title="  Fast 'n' Furious N-D data gridding.">ffndgrid</a>(x,f, delta, limits, aver );
+ 
+   fgrid = Matrix of gridded data.
+   xvec  = cellarray of gridvectors 
+            xl1:dx1:xu1 or linspace(xl1,xu1,Nx1) depending on delta.
+   x     = [x1 x2,...xD] coordinate matrix for unevenly spaced data, f.
+           size NxD. 
+   f     = f(x), vector of function values length N.
+   delta = [dx1+i*pad, dx2 ,...,dxD] or [-Nx1+i*pad -Nx2,...,NxD], where 
+           dx1 to dxD and Nx1 to NxD defines the stepsize of grids and
+           number of bins, respectively, in the D dimesional space. Empty
+           gridpoints are padded with  IMAG(delta(1))=pad. (default -75) 
+  limits = [xl1 xu1 xl2 ...xuN fl fu n0], contain the limits in the
+           D-dimensional x1-x2...xN-f-plane of where to grid. The last
+           parameter, n0, removes outliers from the data set by ignoring
+           grid points with n0 or less observations. When n0 is negative
+           it is treated as the percentage of the total number of data points.
+           (default [min(x1),max(x1),min(x2),.... max(xN),min(f),max(f),0])
+   aver  = 0 If each value of fgrid is the sum of all points falling
+             within each cell.
+           1 If each value of fgrid is the average of all points falling
+             within each cell. (default)
+ 
+  <a href="ffndgrid.html" class="code" title="  Fast 'n' Furious N-D data gridding.">FFNDGRID</a> grids unevenly spaced data in vector f into a matrix fgrid.
+ 
+  NOTE: - The vector limits can be padded with NaNs if only
+          certain limits are desired, e g if xl1 and fl are wanted:
+ 
+             <a href="ffndgrid.html" class="code" title="  Fast 'n' Furious N-D data gridding.">ffndgrid</a>(x, f, [],[.5 nan nan nan 45])
+ 
+        - If no output arguments are given, FFGRID will plot the gridded
+          function with the prescribed axes using PCOLOR.
+ 
+  Examples:
+  N = 500;D=2; sz = [N ,D ];
+  x = <a href="../../wafo/wstats/wraylrnd.html" class="code" title=" Random matrices from a Rayleigh distribution">wraylrnd</a>(1,sz); z = ones(sz(1),1); 
+  [nc, xv] = <a href="ffndgrid.html" class="code" title="  Fast 'n' Furious N-D data gridding.">ffndgrid</a>(x,z,-15,[],0);  % Histogram
+  pcolor(xv{:},nc)     %
+  [XV,YV]=meshgrid(xv{:});
+  text(XV(:),YV(:),int2str(nc(:)))
+  dx = [diff(xv{1}(1:2)) diff(xv{2}(1:2))];
+  contourf(xv{:}, nc/(N*prod(dx))) % 2-D probability density plot.
+  colorbar
+  colormap jet
+ 
+  See also  griddata</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\scribe\colorbar.m">colorbar</a></li></TD>
+<TD>      Display color bar (color scale)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph3d\colormap.m">colormap</a></li></TD>
+<TD>      Color look-up table.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\@double\full.bi">full</a></li></TD>
+<TD>          Convert sparse matrix to full matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph3d\hot.m">hot</a></li></TD>
+<TD>           Black-red-yellow-white color map.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\imagesc.m">imagesc</a></li></TD>
+<TD>       Scale data and display as image.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\inputname.m">inputname</a></li></TD>
+<TD>     Input argument name.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\pcolor.m">pcolor</a></li></TD>
+<TD>        Pseudocolor (checkerboard) plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\permute.bi">permute</a></li></TD>
+<TD>       Permute array dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph3d\shading.m">shading</a></li></TD>
+<TD>       Color shading mode.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\@double\sparse.bi">sparse</a></li></TD>
+<TD>        Create sparse matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\sprintf.m">sprintf</a></li></TD>
+<TD>       Write formatted data to string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [zzgrid, xvec] = <a name="_sub0" href="#_subfunctions" class="code">ffndgrid</a>(x, f, delta,limits,aver);
+002 <span class="comment">%FFNDGRID  Fast 'n' Furious N-D data gridding.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL:  [fgrid, xvec] = ffndgrid(x,f, delta, limits, aver );</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%  fgrid = Matrix of gridded data.</span>
+007 <span class="comment">%  xvec  = cellarray of gridvectors </span>
+008 <span class="comment">%           xl1:dx1:xu1 or linspace(xl1,xu1,Nx1) depending on delta.</span>
+009 <span class="comment">%  x     = [x1 x2,...xD] coordinate matrix for unevenly spaced data, f.</span>
+010 <span class="comment">%          size NxD. </span>
+011 <span class="comment">%  f     = f(x), vector of function values length N.</span>
+012 <span class="comment">%  delta = [dx1+i*pad, dx2 ,...,dxD] or [-Nx1+i*pad -Nx2,...,NxD], where </span>
+013 <span class="comment">%          dx1 to dxD and Nx1 to NxD defines the stepsize of grids and</span>
+014 <span class="comment">%          number of bins, respectively, in the D dimesional space. Empty</span>
+015 <span class="comment">%          gridpoints are padded with  IMAG(delta(1))=pad. (default -75) </span>
+016 <span class="comment">% limits = [xl1 xu1 xl2 ...xuN fl fu n0], contain the limits in the</span>
+017 <span class="comment">%          D-dimensional x1-x2...xN-f-plane of where to grid. The last</span>
+018 <span class="comment">%          parameter, n0, removes outliers from the data set by ignoring</span>
+019 <span class="comment">%          grid points with n0 or less observations. When n0 is negative</span>
+020 <span class="comment">%          it is treated as the percentage of the total number of data points.</span>
+021 <span class="comment">%          (default [min(x1),max(x1),min(x2),.... max(xN),min(f),max(f),0])</span>
+022 <span class="comment">%  aver  = 0 If each value of fgrid is the sum of all points falling</span>
+023 <span class="comment">%            within each cell.</span>
+024 <span class="comment">%          1 If each value of fgrid is the average of all points falling</span>
+025 <span class="comment">%            within each cell. (default)</span>
+026 <span class="comment">%</span>
+027 <span class="comment">% FFNDGRID grids unevenly spaced data in vector f into a matrix fgrid.</span>
+028 <span class="comment">%</span>
+029 <span class="comment">% NOTE: - The vector limits can be padded with NaNs if only</span>
+030 <span class="comment">%         certain limits are desired, e g if xl1 and fl are wanted:</span>
+031 <span class="comment">%</span>
+032 <span class="comment">%            ffndgrid(x, f, [],[.5 nan nan nan 45])</span>
+033 <span class="comment">%</span>
+034 <span class="comment">%       - If no output arguments are given, FFGRID will plot the gridded</span>
+035 <span class="comment">%         function with the prescribed axes using PCOLOR.</span>
+036 <span class="comment">%</span>
+037 <span class="comment">% Examples:</span>
+038 <span class="comment">% N = 500;D=2; sz = [N ,D ];</span>
+039 <span class="comment">% x = wraylrnd(1,sz); z = ones(sz(1),1); </span>
+040 <span class="comment">% [nc, xv] = ffndgrid(x,z,-15,[],0);  <span class="comment">% Histogram</span></span>
+041 <span class="comment">% pcolor(xv{:},nc)     <span class="comment">%</span></span>
+042 <span class="comment">% [XV,YV]=meshgrid(xv{:});</span>
+043 <span class="comment">% text(XV(:),YV(:),int2str(nc(:)))</span>
+044 <span class="comment">% dx = [diff(xv{1}(1:2)) diff(xv{2}(1:2))];</span>
+045 <span class="comment">% contourf(xv{:}, nc/(N*prod(dx))) <span class="comment">% 2-D probability density plot.</span></span>
+046 <span class="comment">% colorbar</span>
+047 <span class="comment">% colormap jet</span>
+048 <span class="comment">%</span>
+049 <span class="comment">% See also  griddata</span>
+050 
+051 <span class="comment">% Tested on: MatLab 4.2, 5.0, 5.1, 5.2 and 5.3.</span>
+052 <span class="comment">% History:</span>
+053 <span class="comment">% revised pab 02.08.2001</span>
+054 <span class="comment">% - made it general for D dimensions + changed name from ffgrid to ffndgrid</span>
+055 <span class="comment">% -added nargchk + examples.</span>
+056 <span class="comment">% -updated help header to wafo-style</span>
+057 <span class="comment">% - moved dx and dy into delta =[dx,dy] </span>
+058 <span class="comment">% -removed call to bin</span>
+059 <span class="comment">% modified by Per A. Brodtkorb </span>
+060 <span class="comment">% 05.10.98 secret option: aver</span>
+061 <span class="comment">%          optionally do not take average of values for each point</span>
+062 <span class="comment">% 12.06-98</span>
+063 <span class="comment">% by</span>
+064 <span class="comment">% 28.7.97, Oyvind.Breivik@gfi.uib.no.</span>
+065 <span class="comment">%</span>
+066 <span class="comment">% Oyvind Breivik</span>
+067 <span class="comment">% Department of Geophysics</span>
+068 <span class="comment">% University of Bergen</span>
+069 <span class="comment">% NORWAY</span>
+070 
+071 
+072 
+073 
+074 error(nargchk(2,5,nargin))        
+075 
+076 [r, c] = size(x);
+077 <span class="keyword">if</span> r==1,<span class="comment">% Make sure x is a column vector.</span>
+078   x = x(:);
+079 <span class="keyword">end</span>
+080 
+081 [N,D]=size(x);
+082 f = f(:);
+083 <span class="keyword">if</span> length(f)==1, f = f(ones(N,1),:) ;
+084 <span class="keyword">elseif</span> length(f)~=N,error(<span class="string">'The length of f must equal size(x,1)!'</span>),<span class="keyword">end</span>
+085 
+086 <span class="comment">% Default values</span>
+087 dx  = repmat(-75,1,D);
+088 pad = 0; 
+089 xyz          = [zeros(1,2*D) min(f), max(f), 0];
+090 xyz(1:2:2*D) = min(x,[],1);
+091 xyz(2:2:2*D) = max(x,[],1);
+092 
+093 
+094 <span class="comment">% take average of values for each point (default)</span>
+095 <span class="keyword">if</span> (nargin &lt; 5)|isempty(aver),     aver = 1; <span class="keyword">end</span>
+096 <span class="keyword">if</span> (nargin &gt;= 4) &amp; ~isempty(limits), 
+097   nlim = length(limits);
+098   ind  = find(~isnan(limits(1:min(7,nlim))));
+099   <span class="keyword">if</span> any(ind), xyz(ind) = limits(ind);<span class="keyword">end</span>
+100 <span class="keyword">end</span>
+101 <span class="keyword">if</span> nargin&gt;=3&amp;~isempty(delta), 
+102   Nd  =length(delta);
+103   delta =  delta(1:min(Nd,D));
+104   <span class="keyword">if</span> Nd ==1, delta = repmat(delta,1,D);<span class="keyword">end</span>
+105   ind = find(~(isnan(delta)|delta==0));
+106   <span class="keyword">if</span> any(ind),
+107     dx(ind)  = real(delta(ind)); 
+108     pad = imag(delta(1));
+109   <span class="keyword">end</span>
+110 <span class="keyword">end</span>
+111 
+112 xL = xyz(1:2:2*D);
+113 xU = xyz(2:2:2*D);
+114 
+115 fL = xyz(<span class="keyword">end</span>-2);
+116 fU = xyz(<span class="keyword">end</span>-1);
+117 n0 = xyz(<span class="keyword">end</span>);
+118 
+119 ind = find(dx&lt;0);
+120 <span class="keyword">if</span> any(ind), 
+121   <span class="keyword">if</span> any(dx(ind)~=round(dx(ind))), 
+122     error(<span class="string">'Some of Nx1,...NxD in delta are not an integer!'</span>),
+123   <span class="keyword">end</span>
+124   dx(ind) = (xU(ind)-xL(ind))./(abs(dx(ind))-1);
+125 <span class="keyword">end</span>
+126 
+127 
+128 <span class="comment">% bin data in D-dimensional-space</span>
+129 binx = round((x - xL(ones(N,1),:))./dx(ones(N,1),:)) +1;
+130 
+131 fgsiz = ones(1,max(D,2));
+132 xvec  = cell(1,D);
+133 <span class="keyword">for</span> iy=1:D,
+134   xvec{iy} = xL(iy):dx(iy):xU(iy);
+135   fgsiz(iy) = length(xvec{iy});
+136 <span class="keyword">end</span>
+137 <span class="keyword">if</span> D&gt;1
+138   in = all((binx &gt;= 1) &amp; (binx &lt;= fgsiz(ones(N,1),:)),2) &amp; (fL &lt;= f) &amp; (f &lt;= fU);
+139 <span class="keyword">else</span>
+140   in = (binx &gt;= 1) &amp; (binx &lt;= fgsiz(1)) &amp; (fL &lt;= f) &amp; (f &lt;= fU);
+141 <span class="keyword">end</span>
+142 binx  = binx(in,:); 
+143 f    = f(in);
+144 N    = length(binx); <span class="comment">% how many datapoints are left now?</span>
+145 
+146 Nf = prod(fgsiz);
+147 
+148 <span class="keyword">if</span> D&gt;1,
+149   fact = [1 cumprod(fgsiz(1:D-1))];
+150   binx = sum((binx-1).*fact(ones(N,1),:),2)+1; <span class="comment">% linear index to fgrid</span>
+151 <span class="keyword">end</span>
+152 <span class="comment">% Fast gridding</span>
+153 fgrid = sparse(binx,1,f,Nf,1);<span class="comment">% z-coordinate</span>
+154 
+155 <span class="keyword">if</span> n0~=0 | aver,
+156   ngrid = sparse(binx,1,ones(N,1),Nf, 1); <span class="comment">% no. of obs per grid cell</span>
+157   <span class="keyword">if</span>(n0 &lt; 0),  n0 = -n0*N; <span class="keyword">end</span> <span class="comment">% n0 is given as  percentage</span>
+158   
+159   <span class="keyword">if</span> n0~=0,
+160     <span class="comment">% Remove outliers    </span>
+161     fgrid(ngrid &lt;= n0) = 0;
+162     ngrid(ngrid &lt;= n0) = 0;
+163     N = full(sum(ngrid(:))); <span class="comment">% how many datapoints are left now?</span>
+164   <span class="keyword">end</span>  
+165 <span class="keyword">end</span>
+166 
+167 ind = full(find(fgrid)); <span class="comment">% find nonzero values</span>
+168 
+169 <span class="keyword">if</span> aver,
+170   fgrid(ind) = fgrid(ind)./ngrid(ind); <span class="comment">% Make average of values for each point</span>
+171 <span class="keyword">end</span>
+172 
+173 <span class="keyword">if</span> pad~=0,
+174   Nil=find(fgrid==0);
+175   fgrid(Nil) = full(fgrid(Nil))+pad; <span class="comment">% Empty grid points are set to pad</span>
+176 <span class="keyword">end</span>
+177 
+178 rho = length(ind)/(Nf); <span class="comment">% density of nonzero values in the grid</span>
+179 <span class="keyword">if</span> rho&gt;0.4,
+180   fgrid = full(fgrid); 
+181 <span class="keyword">end</span>
+182 <span class="keyword">if</span> r==1,
+183   fgrid = fgrid.';
+184 <span class="keyword">else</span>
+185   fgrid = reshape(fgrid,fgsiz);
+186   <span class="keyword">switch</span> D <span class="comment">% make sure fgrid is stored in the same way as meshgrid</span>
+187     <span class="keyword">case</span> 2,  fgrid=fgrid.';
+188     <span class="keyword">case</span> 3,  fgrid=permute(fgrid,[2 1 3]);
+189   <span class="keyword">end</span>
+190 <span class="keyword">end</span>
+191 
+192 
+193 
+194 
+195 <span class="keyword">if</span> (nargout &gt; 0)
+196   zzgrid = fgrid;
+197 <span class="keyword">elseif</span> D==2,<span class="comment">% no output, then plot</span>
+198   colormap(flipud(hot)) <span class="comment">%colormap jet</span>
+199   <span class="keyword">if</span> 1,
+200     <span class="comment">%figure('Position', [100 100 size(fgrid)])    </span>
+201     imagesc(xvec{:}, fgrid)
+202     set(gca,<span class="string">'YDir'</span>,<span class="string">'normal'</span>)
+203   <span class="keyword">else</span>
+204     pcolor(xvec{:}, fgrid)
+205     shading flat <span class="comment">%interp</span>
+206   <span class="keyword">end</span>
+207   colorbar
+208   xlabel(inputname(1))
+209   ylabel(inputname(1))
+210   zstr=inputname(2);
+211   dum = full(size(fgrid'));
+212   <span class="keyword">if</span> (~isempty(zstr)) <span class="comment">% all this vital information ...</span>
+213     str = sprintf(<span class="string">'Color scale: %s, %d data points, grid: %dx%d, density: %4.2f'</span>, <span class="keyword">...</span>
+214     inputname(3), N, dum(1), dum(2), rho);
+215   <span class="keyword">else</span>
+216     str = sprintf(<span class="string">'%d data points, grid: %dx%d, density: %4.2f'</span>, <span class="keyword">...</span>
+217     N, dum(1), dum(2), rho);
+218  <span class="keyword">end</span>
+219  title(str);
+220 <span class="keyword">end</span>
+221 
+222 
+223 
+224</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

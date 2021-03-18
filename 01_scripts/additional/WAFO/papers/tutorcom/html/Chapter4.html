@@ -1,0 +1,1017 @@
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Chapter4</title>
+      <meta name="generator" content="MATLAB 7.0.1">
+      <meta name="date" content="2005-09-05">
+      <meta name="m-file" content="Chapter4"><style>
+body {
+  background-color: white;
+  margin:10px;
+}
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+pre.codeinput {
+  margin-left: 30px;
+}
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.showbuttons {
+  margin-left: 30px;
+  border: solid black 2px;
+  padding: 4px;
+  background: #EBEFF3;
+}
+
+pre.codeoutput {
+  color: gray;
+  font-style: italic;
+}
+pre.error {
+  color: red;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows.  On Gecko-based browsers, the shrink-to-fit doesn't work. */ 
+p,h1,h2,div {
+  /* for MATLAB's browser */
+  width: 600px;
+  /* for Mozilla, but the "width" tag overrides it anyway */
+  max-width: 600px;
+  /* for IE */
+  width:expression(document.body.clientWidth > 620 ? "600px": "auto" );
+}
+
+    </style></head>
+   <body>
+      <h2>Contents</h2>
+      <div>
+         <ul>
+            <li><a href="#1">CHAPTER4 contains the commands used in Chapter 4 of the tutorial</a></li>
+            <li><a href="#2">Chapter 4 Fatigue load analysis and rain-flow cycles</a></li>
+            <li><a href="#3">Section 4.3.1 Crossing intensity</a></li>
+            <li><a href="#4">Section 4.3.2 Extraction of rainflow cycles</a></li>
+            <li><a href="#5">Min-max and rainflow cycle plots</a></li>
+            <li><a href="#6">Min-max and rainflow cycle distributions</a></li>
+            <li><a href="#7">Section 4.3.3 Simulation of rainflow cycles</a></li>
+            <li><a href="#8">Simulation of cycles in a Markov model</a></li>
+            <li><a href="#9">Rainflow cycles in a transformed Gaussian model</a></li>
+            <li><a href="#10">Hermite transformed wave data and rainflow filtered turning points, h = 0.2.</a></li>
+            <li><a href="#11">Rainflow cycles and rainflow filtered rainflow cycles in the transformed Gaussian process.</a></li>
+            <li><a href="#12">Section 4.3.4 Calculating the rainflow matrix</a></li>
+            <li><a href="#14">Min-max-matrix and theoretical rainflow matrix for test Markov sequence.</a></li>
+            <li><a href="#15">Observed and theoretical rainflow matrix for test Markov sequence.</a></li>
+            <li><a href="#16">Smoothed observed and calculated rainflow matrix for test Markov sequence.</a></li>
+            <li><a href="#17">Rainflow matrix from spectrum</a></li>
+            <li><a href="#18">Min-max matrix and theoretical rainflow matrix for Hermite-transformed Gaussian waves.</a></li>
+            <li><a href="#20">Observed smoothed and theoretical min-max matrix,</a></li>
+            <li><a href="#21">(and observed smoothed and theoretical rainflow matrix for Hermite-transformed Gaussian waves).</a></li>
+            <li><a href="#22">Section 4.3.5 Simulation from crossings and rainflow structure</a></li>
+            <li><a href="#23">Crossing spectrum (smooth curve) and obtained spectrum (wiggled curve)</a></li>
+            <li><a href="#24">for simulated process with irregularity factor 0.25.</a></li>
+            <li><a href="#25">Crossing spectrum (smooth curve) and obtained spectrum (wiggled curve)</a></li>
+            <li><a href="#26">for simulated process with irregularity factor 0.75.</a></li>
+            <li><a href="#27">Section 4.4 Fatigue damage and fatigue life distribution</a></li>
+            <li><a href="#28">Section 4.4.1 Introduction</a></li>
+            <li><a href="#29">Section 4.4.2 Level crossings</a></li>
+            <li><a href="#30">Crossing intensity as calculated from the Markov matrix (solid curve) and from the observed rainflow matrix (dashed curve).</a></li>
+            <li><a href="#31">Section 4.4.3 Damage</a></li>
+            <li><a href="#32">Distribution of damage from different RFC cycles, from calculated theoretical and from observed rainflow matrix.</a></li>
+            <li><a href="#34">Section 4.4.4 Estimation of S-N curve</a></li>
+            <li><a href="#35">Load SN-data and plot in log-log scale.</a></li>
+            <li><a href="#36">Check of S-N-model on normal probability paper.</a></li>
+            <li><a href="#37">Estimation of S-N-model on linear  scale.</a></li>
+            <li><a href="#38">Estimation of S-N-model on log-log scale.</a></li>
+            <li><a href="#39">Section 4.4.5 From S-N curve to fatigue life distribution</a></li>
+            <li><a href="#40">Damage intensity as function of $\beta$</a></li>
+            <li><a href="#41">Fatigue life distribution with sea load.</a></li>
+         </ul>
+      </div>
+      <h2>CHAPTER4 contains the commands used in Chapter 4 of the tutorial<a name="1"></a></h2>
+      <p>CALL:  Chapter4</p>
+      <p>Some of the commands are edited for fast computation. Each set of commands is followed by a 'pause' command.</p>
+      <p>This routine also can print the figures; For printing the figures on directory ../bilder/ edit the file and put     printing=1;</p><pre class="codeinput"><span class="comment">% Tested on Matlab 5.3</span>
+<span class="comment">% History</span>
+<span class="comment">% Revised pab sept2005</span>
+<span class="comment">%  Added sections -&gt; easier to evaluate using cellmode evaluation.</span>
+<span class="comment">% revised pab Feb2004</span>
+<span class="comment">% updated call to lc2sdat</span>
+<span class="comment">% Created by GL July 13, 2000</span>
+<span class="comment">% from commands used in Chapter 4</span>
+<span class="comment">%</span>
+</pre><h2>Chapter 4 Fatigue load analysis and rain-flow cycles<a name="2"></a></h2><pre class="codeinput">pstate = <span class="string">'off'</span>;
+
+printing=0;
+<span class="comment">%set(0,'DefaultAxesFontSize',15')</span>
+</pre><h2>Section 4.3.1 Crossing intensity<a name="3"></a></h2><pre class="codeinput">load <span class="string">sea.dat</span>; xx_sea=sea;
+tp_sea = dat2tp(xx_sea);
+lc_sea = tp2lc(tp_sea);
+T_sea = xx_sea(end,1)-xx_sea(1,1);
+lc_sea(:,2) = lc_sea(:,2)/T_sea;
+clf
+subplot(221), plot(lc_sea(:,1),lc_sea(:,2))
+title(<span class="string">'Crossing intensity, (u, \mu(u))'</span>)
+subplot(222), semilogx(lc_sea(:,2),lc_sea(:,1))
+title(<span class="string">'Crossing intensity, (log \mu(u), u)'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_3.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+
+m_sea = mean(xx_sea(:,2));
+f0_sea = interp1(lc_sea(:,1),lc_sea(:,2),m_sea,<span class="string">'linear'</span>)
+extr_sea = length(tp_sea)/(2*T_sea);
+alfa_sea = f0_sea/extr_sea
+pause(pstate)
+</pre><pre class="codeoutput">
+f0_sea =
+
+    0.2263
+
+
+alfa_sea =
+
+    0.4961
+
+</pre><img vspace="5" hspace="5" src="Chapter4_01.png"> <h2>Section 4.3.2 Extraction of rainflow cycles<a name="4"></a></h2>
+      <h2>Min-max and rainflow cycle plots<a name="5"></a></h2><pre class="codeinput">RFC_sea=tp2rfc(tp_sea);
+mM_sea=tp2mm(tp_sea);
+clf
+subplot(122), ccplot(mM_sea);
+title(<span class="string">'min-max cycle count'</span>)
+subplot(121), ccplot(RFC_sea);
+title(<span class="string">'Rainflow cycle count'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_4.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_02.png"> <h2>Min-max and rainflow cycle distributions<a name="6"></a></h2><pre class="codeinput">ampmM_sea=cc2amp(mM_sea);
+ampRFC_sea=cc2amp(RFC_sea);
+clf
+subplot(221), hist(ampmM_sea,25);
+title(<span class="string">'min-max amplitude distribution'</span>)
+subplot(222), hist(ampRFC_sea,25);
+title(<span class="string">'Rainflow amplitude distribution'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_5.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_03.png"> <h2>Section 4.3.3 Simulation of rainflow cycles<a name="7"></a></h2>
+      <h2>Simulation of cycles in a Markov model<a name="8"></a></h2><pre class="codeinput">n=41; param_m=[-1 1 n]; param_D=[1 n n];
+u_markov=levels(param_m);
+G_markov=mktestmat(param_m,[-0.2 0.2],0.15,1);
+T_markov=5000;
+xxD_markov=mctpsim({G_markov []},T_markov);
+xx_markov=[(1:T_markov)' u_markov(xxD_markov)'];
+clf
+plot(xx_markov(1:50,1),xx_markov(1:50,2))
+title(<span class="string">'Markov chain of turning points'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_6.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_04.png"> <h2>Rainflow cycles in a transformed Gaussian model<a name="9"></a></h2>
+      <h2>Hermite transformed wave data and rainflow filtered turning points, h = 0.2.<a name="10"></a></h2><pre class="codeinput">me = mean(xx_sea(:,2));
+sa = std(xx_sea(:,2));
+Hm0_sea = 4*sa;
+Tp_sea = 1/max(lc_sea(:,2));
+spec = jonswap([],[Hm0_sea Tp_sea]);
+
+[sk, ku] = spec2skew(spec);
+spec.tr = hermitetr([],[sa sk ku me]);
+param_h = [-1.5 2 51];
+spec_norm = spec;
+spec_norm.S = spec_norm.S/sa^2;
+xx_herm = spec2sdat(spec_norm,[2^15 1],0.1);
+<span class="comment">% ????? PJ, JR 11-Apr-2001</span>
+<span class="comment">% NOTE, in the simulation program spec2sdat</span>
+<span class="comment">%the spectrum must be normalized to variance 1</span>
+<span class="comment">% ?????</span>
+h = 0.2;
+[dtp,u_herm,xx_herm_1]=dat2dtp(param_h,xx_herm,h);
+clf
+plot(xx_herm(:,1),xx_herm(:,2),<span class="string">'k'</span>,<span class="string">'LineWidth'</span>,2); hold <span class="string">on</span>;
+plot(xx_herm_1(:,1),xx_herm_1(:,2),<span class="string">'k--'</span>,<span class="string">'Linewidth'</span>,2);
+axis([0 50 -1 1]), hold <span class="string">off</span>;
+title(<span class="string">'Rainflow filtered wave data'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_7.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">Warning: Hm0,Tp is outside the JONSWAP range
+The validity of the spectral density is questionable
+   Transforming data.
+</pre><img vspace="5" hspace="5" src="Chapter4_05.png"> <h2>Rainflow cycles and rainflow filtered rainflow cycles in the transformed Gaussian process.<a name="11"></a></h2><pre class="codeinput">tp_herm=dat2tp(xx_herm);
+RFC_herm=tp2rfc(tp_herm);
+mM_herm=tp2mm(tp_herm);
+h=0.2;
+[dtp,u,tp_herm_1]=dat2dtp(param_h,xx_herm,h);
+RFC_herm_1 = tp2rfc(tp_herm_1);
+clf
+subplot(121), ccplot(RFC_herm)
+title(<span class="string">'h=0'</span>)
+subplot(122), ccplot(RFC_herm_1)
+title(<span class="string">'h=0.2'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_8.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_06.png"> <h2>Section 4.3.4 Calculating the rainflow matrix<a name="12"></a></h2><pre class="codeinput">Grfc_markov=mctp2rfm({G_markov []});
+clf
+subplot(121), cmatplot(u_markov,u_markov,G_markov), axis(<span class="string">'square'</span>)
+subplot(122), cmatplot(u_markov,u_markov,Grfc_markov), axis(<span class="string">'square'</span>)
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_07.png"> <pre class="codeinput">clf
+cmatplot(u_markov,u_markov,{G_markov Grfc_markov},3)
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_08.png"> <h2>Min-max-matrix and theoretical rainflow matrix for test Markov sequence.<a name="14"></a></h2><pre class="codeinput">cmatplot(u_markov,u_markov,{G_markov Grfc_markov},4)
+subplot(121), axis(<span class="string">'square'</span>), title(<span class="string">'min2max transition matrix'</span>)
+subplot(122), axis(<span class="string">'square'</span>), title(<span class="string">'Rainflow matrix'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_9.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_09.png"> <h2>Observed and theoretical rainflow matrix for test Markov sequence.<a name="15"></a></h2><pre class="codeinput">n=length(u_markov);
+Frfc_markov=dtp2rfm(xxD_markov,n);
+clf
+cmatplot(u_markov,u_markov,{Frfc_markov Grfc_markov*T_markov/2},3)
+subplot(121), axis(<span class="string">'square'</span>), title(<span class="string">'Observed rainflow matrix'</span>)
+subplot(122), axis(<span class="string">'square'</span>), title(<span class="string">'Theoretical rainflow matrix'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_10.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_10.png"> <h2>Smoothed observed and calculated rainflow matrix for test Markov sequence.<a name="16"></a></h2><pre class="codeinput">tp_markov=dat2tp(xx_markov);
+RFC_markov=tp2rfc(tp_markov);
+h=1;
+Frfc_markov_smooth=cc2cmat(param_m,RFC_markov,[],1,h);
+clf
+cmatplot(u_markov,u_markov,{Frfc_markov_smooth Grfc_markov*T_markov/2},4)
+subplot(121), axis(<span class="string">'square'</span>), title(<span class="string">'Smoothed observed rainflow matrix'</span>)
+subplot(122), axis(<span class="string">'square'</span>), title(<span class="string">'Theoretical rainflow matrix'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_11.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_11.png"> <h2>Rainflow matrix from spectrum<a name="17"></a></h2><pre class="codeinput">clf
+<span class="comment">%GmM3_herm=spec2mmtpdf(spec,[],'Mm',[],[],2);</span>
+GmM3_herm=spec2cmat(spec,[],<span class="string">'Mm'</span>,[],param_h,2);
+pdfplot(GmM3_herm)
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">The level u for Gaussian process = 3.0635e-006
+   Writing data.
+   Starting Fortran executable.
+   Laps to go: 40 
+   Laps to go: 39 
+   Laps to go: 38 
+   Laps to go: 37 
+   Laps to go: 36 
+   Laps to go: 35 
+   Laps to go: 34 
+   Laps to go: 33 
+   Laps to go: 32 
+   Laps to go: 31 
+   Laps to go: 30 
+   Laps to go: 29 
+   Laps to go: 28 
+   Laps to go: 27 
+   Laps to go: 26 
+   Laps to go: 25 
+   Laps to go: 24 
+   Laps to go: 23 
+   Laps to go: 22 
+   Laps to go: 21 
+   Laps to go: 20 
+   Laps to go: 19 
+   Laps to go: 18 
+   Laps to go: 17 
+   Laps to go: 16 
+   Laps to go: 15 
+   Laps to go: 14 
+   Laps to go: 13 
+   Laps to go: 12 
+   Laps to go: 11 
+   Laps to go: 10 
+   Laps to go: 9 
+   Laps to go: 8 
+   Laps to go: 7 
+   Laps to go: 6 
+   Laps to go: 5 
+   Laps to go: 4 
+   Laps to go: 3 
+   Laps to go: 2 
+   Laps to go: 1 
+   Loading data.
+</pre><img vspace="5" hspace="5" src="Chapter4_12.png"> <h2>Min-max matrix and theoretical rainflow matrix for Hermite-transformed Gaussian waves.<a name="18"></a></h2><pre class="codeinput">Grfc_herm=mctp2rfm({GmM3_herm.f []});
+u_herm=levels(param_h);
+clf
+cmatplot(u_herm,u_herm,{GmM3_herm.f Grfc_herm},4)
+subplot(121), axis(<span class="string">'square'</span>), title(<span class="string">'min-max matrix'</span>)
+subplot(122), axis(<span class="string">'square'</span>), title(<span class="string">'Theoretical rainflow matrix'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_12.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">Warning: Warning: Rowsums of P not equal to 1. Renormalizing!
+Warning: Warning: Rowsum 49 of P equals zero. Deleting state 49!
+Warning: Warning: Rowsum 50 of P equals zero. Deleting state 50!
+Warning: Warning: Rowsums of P not equal to 1. Renormalizing!
+Warning: Negative elements in calculated rainflow matrix F_rfc. Setting to zero!
+</pre><img vspace="5" hspace="5" src="Chapter4_13.png"> <pre class="codeinput">clf
+Grfc_direct_herm=spec2cmat(spec,[],<span class="string">'rfc'</span>,[],[],2);
+subplot(121), pdfplot(GmM3_herm), axis(<span class="string">'square'</span>), hold <span class="string">on</span>
+subplot(122), pdfplot(Grfc_direct_herm), axis(<span class="string">'square'</span>), hold <span class="string">off</span>
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fig_mmrfcjfr.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">The level u for Gaussian process = 3.0635e-006
+   Writing data.
+   Starting Fortran executable.
+   Laps to go: 40 
+   Laps to go: 39 
+   Laps to go: 38 
+   Laps to go: 37 
+   Laps to go: 36 
+   Laps to go: 35 
+   Laps to go: 34 
+   Laps to go: 33 
+   Laps to go: 32 
+   Laps to go: 31 
+   Laps to go: 30 
+   Laps to go: 29 
+   Laps to go: 28 
+   Laps to go: 27 
+   Laps to go: 26 
+   Laps to go: 25 
+   Laps to go: 24 
+   Laps to go: 23 
+   Laps to go: 22 
+   Laps to go: 21 
+   Laps to go: 20 
+   Laps to go: 19 
+   Laps to go: 18 
+   Laps to go: 17 
+   Laps to go: 16 
+   Laps to go: 15 
+   Laps to go: 14 
+   Laps to go: 13 
+   Laps to go: 12 
+   Laps to go: 11 
+   Laps to go: 10 
+   Laps to go: 9 
+   Laps to go: 8 
+   Laps to go: 7 
+   Laps to go: 6 
+   Laps to go: 5 
+   Laps to go: 4 
+   Laps to go: 3 
+   Laps to go: 2 
+   Laps to go: 1 
+   Loading data.
+Warning:  this is not a pdf since cdf&gt;1
+normalizing
+</pre><img vspace="5" hspace="5" src="Chapter4_14.png"> <h2>Observed smoothed and theoretical min-max matrix,<a name="20"></a></h2>
+      <h2>(and observed smoothed and theoretical rainflow matrix for Hermite-transformed Gaussian waves).<a name="21"></a></h2><pre class="codeinput">tp_herm=dat2tp(xx_herm);
+RFC_herm=tp2rfc(tp_herm);
+mM_herm=tp2mm(tp_herm);
+h=0.2;
+FmM_herm_smooth=cc2cmat(param_h,mM_herm,[],1,h);
+Frfc_herm_smooth=cc2cmat(param_h,RFC_herm,[],1,h);
+T_herm=xx_herm(end,1)-xx_herm(1,1);
+clf
+cmatplot(u_herm,u_herm,{FmM_herm_smooth GmM3_herm.f*length(mM_herm) ; <span class="keyword">...</span>
+      Frfc_herm_smooth Grfc_herm*length(RFC_herm)},4)
+subplot(221), axis(<span class="string">'square'</span>), title(<span class="string">'Observed smoothed min-max matrix'</span>)
+subplot(222), axis(<span class="string">'square'</span>), title(<span class="string">'Theoretical min-max matrix'</span>)
+subplot(223), axis(<span class="string">'square'</span>), title(<span class="string">'Observed smoothed rainflow matrix'</span>)
+subplot(224), axis(<span class="string">'square'</span>), title(<span class="string">'Theoretical rainflow matrix'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_13.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_15.png"> <h2>Section 4.3.5 Simulation from crossings and rainflow structure<a name="22"></a></h2>
+      <h2>Crossing spectrum (smooth curve) and obtained spectrum (wiggled curve)<a name="23"></a></h2>
+      <h2>for simulated process with irregularity factor 0.25.<a name="24"></a></h2><pre class="codeinput">clf
+cross_herm=dat2lc(xx_herm);
+alpha1=0.25;
+alpha2=0.75;
+xx_herm_sim1=lc2sdat(cross_herm,500,alpha1);
+cross_herm_sim1=dat2lc(xx_herm_sim1);
+subplot(211)
+plot(cross_herm(:,1),cross_herm(:,2)/max(cross_herm(:,2)))
+hold <span class="string">on</span>
+stairs(cross_herm_sim1(:,1),<span class="keyword">...</span>
+    cross_herm_sim1(:,2)/max(cross_herm_sim1(:,2)))
+hold <span class="string">off</span>
+title(<span class="string">'Crossing intensity, \alpha = 0.25'</span>)
+subplot(212)
+plot(xx_herm_sim1(:,1),xx_herm_sim1(:,2))
+title(<span class="string">'Simulated load, \alpha = 0.25'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_14_25.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+</pre><pre class="codeoutput">
+ans =
+
+    0.8935
+
+
+ans =
+
+    46
+
+</pre><img vspace="5" hspace="5" src="Chapter4_16.png"> <h2>Crossing spectrum (smooth curve) and obtained spectrum (wiggled curve)<a name="25"></a></h2>
+      <h2>for simulated process with irregularity factor 0.75.<a name="26"></a></h2><pre class="codeinput">xx_herm_sim2=lc2sdat(cross_herm,500,alpha2);
+cross_herm_sim2=dat2lc(xx_herm_sim2);
+subplot(211)
+plot(cross_herm(:,1),cross_herm(:,2)/max(cross_herm(:,2)))
+hold <span class="string">on</span>
+stairs(cross_herm_sim2(:,1),<span class="keyword">...</span>
+    cross_herm_sim2(:,2)/max(cross_herm_sim2(:,2)))
+hold <span class="string">off</span>
+title(<span class="string">'Crossing intensity, \alpha = 0.75'</span>)
+subplot(212)
+plot(xx_herm_sim2(:,1),xx_herm_sim2(:,2))
+title(<span class="string">'Simulated load, \alpha = 0.75'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_14_75.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">
+ans =
+
+    0.8935
+
+
+ans =
+
+   128
+
+</pre><img vspace="5" hspace="5" src="Chapter4_17.png"> <h2>Section 4.4 Fatigue damage and fatigue life distribution<a name="27"></a></h2>
+      <h2>Section 4.4.1 Introduction<a name="28"></a></h2><pre class="codeinput">beta=3.2; gam=5.5E-10; T_sea=xx_sea(end,1)-xx_sea(1,1);
+d_beta=cc2dam(RFC_sea,beta)/T_sea;
+time_fail=1/gam/d_beta/3600      <span class="comment">%in hours of the specific storm</span>
+pause(pstate)
+</pre><pre class="codeoutput">
+time_fail =
+
+  5.9693e+006
+
+</pre><h2>Section 4.4.2 Level crossings<a name="29"></a></h2>
+      <h2>Crossing intensity as calculated from the Markov matrix (solid curve) and from the observed rainflow matrix (dashed curve).<a name="30"></a></h2><pre class="codeinput">clf
+mu_markov=cmat2lc(param_m,Grfc_markov);
+muObs_markov=cmat2lc(param_m,Frfc_markov/(T_markov/2));
+clf
+plot(mu_markov(:,1),mu_markov(:,2),muObs_markov(:,1),muObs_markov(:,2),<span class="string">'--'</span>)
+title(<span class="string">'Theoretical and observed crossing intensity '</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_15.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_18.png"> <h2>Section 4.4.3 Damage<a name="31"></a></h2>
+      <h2>Distribution of damage from different RFC cycles, from calculated theoretical and from observed rainflow matrix.<a name="32"></a></h2><pre class="codeinput">beta = 4;
+Dam_markov = cmat2dam(param_m,Grfc_markov,beta)
+DamObs1_markov = cc2dam(RFC_markov,beta)/(T_markov/2)
+DamObs2_markov = cmat2dam(param_m,Frfc_markov,beta)/(T_markov/2)
+pause(pstate)
+
+Dmat_markov = cmat2dmat(param_m,Grfc_markov,beta);
+DmatObs_markov = cmat2dmat(param_m,Frfc_markov,beta)/(T_markov/2);
+clf
+subplot(121), cmatplot(u_markov,u_markov,Dmat_markov,4)
+title(<span class="string">'Theoretical damage matrix'</span>)
+subplot(122), cmatplot(u_markov,u_markov,DmatObs_markov,4)
+title(<span class="string">'Observed damage matrix'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_16.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">
+Dam_markov =
+
+    0.0073
+
+
+DamObs1_markov =
+
+    0.0073
+
+
+DamObs2_markov =
+
+    0.0073
+
+</pre><img vspace="5" hspace="5" src="Chapter4_19.png"> <pre class="codeinput"><span class="comment">%Damplus_markov = lc2dplus(mu_markov,beta)</span>
+pause(pstate)
+</pre><h2>Section 4.4.4 Estimation of S-N curve<a name="34"></a></h2>
+      <h2>Load SN-data and plot in log-log scale.<a name="35"></a></h2><pre class="codeinput">SN = load(<span class="string">'sn.dat'</span>);
+s = SN(:,1);
+N = SN(:,2);
+clf
+loglog(N,s,<span class="string">'o'</span>), axis([0 14e5 10 30])
+<span class="comment">%if (printing==1), print -deps ../bilder/fatigue_?.eps end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_20.png"> <h2>Check of S-N-model on normal probability paper.<a name="36"></a></h2><pre class="codeinput">wnormplot(reshape(log(N),8,5))
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_17.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_21.png"> <h2>Estimation of S-N-model on linear  scale.<a name="37"></a></h2><pre class="codeinput">[e0,beta0,s20] = snplot(s,N,12)
+title(<span class="string">'S-N-data with estimated N(s)'</span>,<span class="string">'FontSize'</span>,20)
+set(gca,<span class="string">'FontSize'</span>,20)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_18a.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">
+e0 =
+
+  5.5361e-010
+
+
+beta0 =
+
+    3.2286
+
+
+s20 =
+
+    0.0604
+
+</pre><img vspace="5" hspace="5" src="Chapter4_22.png"> <h2>Estimation of S-N-model on log-log scale.<a name="38"></a></h2><pre class="codeinput">[e0,beta0,s20] = snplot(s,N,14)
+title(<span class="string">'S-N-data with estimated N(s)'</span>,<span class="string">'FontSize'</span>,20)
+set(gca,<span class="string">'FontSize'</span>,20)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_18b.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">
+e0 =
+
+  5.5361e-010
+
+
+beta0 =
+
+    3.2286
+
+
+s20 =
+
+    0.0604
+
+</pre><img vspace="5" hspace="5" src="Chapter4_23.png"> <h2>Section 4.4.5 From S-N curve to fatigue life distribution<a name="39"></a></h2>
+      <h2>Damage intensity as function of $\beta$<a name="40"></a></h2><pre class="codeinput">beta = 3:0.1:8;
+DRFC = cc2dam(RFC_sea,beta);
+dRFC = DRFC/T_sea;
+plot(beta,dRFC), axis([3 8 0 0.25])
+title(<span class="string">'Damage intensity as function of \beta'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_19.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter4_24.png"> <h2>Fatigue life distribution with sea load.<a name="41"></a></h2><pre class="codeinput">dam0 = cc2dam(RFC_sea,beta0)/T_sea;
+[t0,F0] = ftf(e0,dam0,s20,0.5,1);
+[t1,F1] = ftf(e0,dam0,s20,0,1);
+[t2,F2] = ftf(e0,dam0,s20,5,1);
+plot(t0,F0,t1,F1,t2,F2)
+title(<span class="string">'Fatigue life distribution function'</span>)
+<span class="keyword">if</span> (printing==1), print <span class="string">-deps</span> <span class="string">../bilder/fatigue_20.eps</span>
+<span class="keyword">end</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+save <span class="string">Chap4</span>
+</pre><img vspace="5" hspace="5" src="Chapter4_25.png"> <p class="footer"><br>
+         Published with MATLAB&reg; 7.0.1<br></p>
+      <!--
+##### SOURCE BEGIN #####
+%% CHAPTER4 contains the commands used in Chapter 4 of the tutorial
+%
+% CALL:  Chapter4
+% 
+% Some of the commands are edited for fast computation. 
+% Each set of commands is followed by a 'pause' command.
+% 
+% This routine also can print the figures; 
+% For printing the figures on directory ../bilder/ edit the file and put  
+%     printing=1;
+
+% Tested on Matlab 5.3
+% History
+% Revised pab sept2005
+%  Added sections -> easier to evaluate using cellmode evaluation.
+% revised pab Feb2004
+% updated call to lc2sdat
+% Created by GL July 13, 2000
+% from commands used in Chapter 4
+%
+ 
+%% Chapter 4 Fatigue load analysis and rain-flow cycles
+
+pstate = 'off';
+
+printing=0;
+%set(0,'DefaultAxesFontSize',15')
+
+%% Section 4.3.1 Crossing intensity
+load sea.dat; xx_sea=sea;
+tp_sea = dat2tp(xx_sea);
+lc_sea = tp2lc(tp_sea);
+T_sea = xx_sea(end,1)-xx_sea(1,1);
+lc_sea(:,2) = lc_sea(:,2)/T_sea;
+clf
+subplot(221), plot(lc_sea(:,1),lc_sea(:,2)) 
+title('Crossing intensity, (u, \mu(u))')
+subplot(222), semilogx(lc_sea(:,2),lc_sea(:,1)) 
+title('Crossing intensity, (log \mu(u), u)')
+if (printing==1), print -deps ../bilder/fatigue_3.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+m_sea = mean(xx_sea(:,2));
+f0_sea = interp1(lc_sea(:,1),lc_sea(:,2),m_sea,'linear')
+extr_sea = length(tp_sea)/(2*T_sea);
+alfa_sea = f0_sea/extr_sea
+pause(pstate)
+
+%% Section 4.3.2 Extraction of rainflow cycles
+%% Min-max and rainflow cycle plots
+RFC_sea=tp2rfc(tp_sea);
+mM_sea=tp2mm(tp_sea);
+clf
+subplot(122), ccplot(mM_sea);
+title('min-max cycle count')
+subplot(121), ccplot(RFC_sea);
+title('Rainflow cycle count')
+if (printing==1), print -deps ../bilder/fatigue_4.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Min-max and rainflow cycle distributions
+ampmM_sea=cc2amp(mM_sea);
+ampRFC_sea=cc2amp(RFC_sea);
+clf
+subplot(221), hist(ampmM_sea,25);
+title('min-max amplitude distribution')
+subplot(222), hist(ampRFC_sea,25);
+title('Rainflow amplitude distribution')
+if (printing==1), print -deps ../bilder/fatigue_5.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Section 4.3.3 Simulation of rainflow cycles
+%% Simulation of cycles in a Markov model
+n=41; param_m=[-1 1 n]; param_D=[1 n n];
+u_markov=levels(param_m);
+G_markov=mktestmat(param_m,[-0.2 0.2],0.15,1);
+T_markov=5000;
+xxD_markov=mctpsim({G_markov []},T_markov);
+xx_markov=[(1:T_markov)' u_markov(xxD_markov)'];
+clf
+plot(xx_markov(1:50,1),xx_markov(1:50,2))
+title('Markov chain of turning points')
+if (printing==1), print -deps ../bilder/fatigue_6.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+
+%% Rainflow cycles in a transformed Gaussian model
+%% Hermite transformed wave data and rainflow filtered turning points, h = 0.2.
+me = mean(xx_sea(:,2));
+sa = std(xx_sea(:,2));
+Hm0_sea = 4*sa;
+Tp_sea = 1/max(lc_sea(:,2));
+spec = jonswap([],[Hm0_sea Tp_sea]);
+
+[sk, ku] = spec2skew(spec);
+spec.tr = hermitetr([],[sa sk ku me]);
+param_h = [-1.5 2 51];
+spec_norm = spec;
+spec_norm.S = spec_norm.S/sa^2;
+xx_herm = spec2sdat(spec_norm,[2^15 1],0.1);
+% ????? PJ, JR 11-Apr-2001
+% NOTE, in the simulation program spec2sdat
+%the spectrum must be normalized to variance 1 
+% ?????
+h = 0.2;
+[dtp,u_herm,xx_herm_1]=dat2dtp(param_h,xx_herm,h);
+clf
+plot(xx_herm(:,1),xx_herm(:,2),'k','LineWidth',2); hold on;
+plot(xx_herm_1(:,1),xx_herm_1(:,2),'kREPLACE_WITH_DASH_DASH','Linewidth',2);
+axis([0 50 -1 1]), hold off;
+title('Rainflow filtered wave data')
+if (printing==1), print -deps ../bilder/fatigue_7.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Rainflow cycles and rainflow filtered rainflow cycles in the transformed Gaussian process.
+tp_herm=dat2tp(xx_herm);
+RFC_herm=tp2rfc(tp_herm);
+mM_herm=tp2mm(tp_herm);
+h=0.2;
+[dtp,u,tp_herm_1]=dat2dtp(param_h,xx_herm,h);
+RFC_herm_1 = tp2rfc(tp_herm_1);
+clf
+subplot(121), ccplot(RFC_herm)
+title('h=0')
+subplot(122), ccplot(RFC_herm_1)
+title('h=0.2')
+if (printing==1), print -deps ../bilder/fatigue_8.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Section 4.3.4 Calculating the rainflow matrix
+
+
+Grfc_markov=mctp2rfm({G_markov []});
+clf
+subplot(121), cmatplot(u_markov,u_markov,G_markov), axis('square')
+subplot(122), cmatplot(u_markov,u_markov,Grfc_markov), axis('square')
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% 
+clf
+cmatplot(u_markov,u_markov,{G_markov Grfc_markov},3) 
+wafostamp([],'(ER)')
+pause(pstate)	
+
+%% Min-max-matrix and theoretical rainflow matrix for test Markov sequence.
+cmatplot(u_markov,u_markov,{G_markov Grfc_markov},4)
+subplot(121), axis('square'), title('min2max transition matrix')
+subplot(122), axis('square'), title('Rainflow matrix')
+if (printing==1), print -deps ../bilder/fatigue_9.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Observed and theoretical rainflow matrix for test Markov sequence.
+n=length(u_markov);
+Frfc_markov=dtp2rfm(xxD_markov,n);
+clf
+cmatplot(u_markov,u_markov,{Frfc_markov Grfc_markov*T_markov/2},3) 
+subplot(121), axis('square'), title('Observed rainflow matrix')
+subplot(122), axis('square'), title('Theoretical rainflow matrix')
+if (printing==1), print -deps ../bilder/fatigue_10.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Smoothed observed and calculated rainflow matrix for test Markov sequence.
+tp_markov=dat2tp(xx_markov);
+RFC_markov=tp2rfc(tp_markov);
+h=1;
+Frfc_markov_smooth=cc2cmat(param_m,RFC_markov,[],1,h);
+clf
+cmatplot(u_markov,u_markov,{Frfc_markov_smooth Grfc_markov*T_markov/2},4)
+subplot(121), axis('square'), title('Smoothed observed rainflow matrix')
+subplot(122), axis('square'), title('Theoretical rainflow matrix')
+if (printing==1), print -deps ../bilder/fatigue_11.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Rainflow matrix from spectrum
+clf
+%GmM3_herm=spec2mmtpdf(spec,[],'Mm',[],[],2);
+GmM3_herm=spec2cmat(spec,[],'Mm',[],param_h,2);
+pdfplot(GmM3_herm)
+wafostamp([],'(ER)')
+pause(pstate)
+
+
+%% Min-max matrix and theoretical rainflow matrix for Hermite-transformed Gaussian waves.
+Grfc_herm=mctp2rfm({GmM3_herm.f []});
+u_herm=levels(param_h);
+clf
+cmatplot(u_herm,u_herm,{GmM3_herm.f Grfc_herm},4)
+subplot(121), axis('square'), title('min-max matrix')
+subplot(122), axis('square'), title('Theoretical rainflow matrix')
+if (printing==1), print -deps ../bilder/fatigue_12.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%%
+clf
+Grfc_direct_herm=spec2cmat(spec,[],'rfc',[],[],2);
+subplot(121), pdfplot(GmM3_herm), axis('square'), hold on
+subplot(122), pdfplot(Grfc_direct_herm), axis('square'), hold off
+if (printing==1), print -deps ../bilder/fig_mmrfcjfr.eps
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+
+%% Observed smoothed and theoretical min-max matrix, 
+%% (and observed smoothed and theoretical rainflow matrix for Hermite-transformed Gaussian waves).
+tp_herm=dat2tp(xx_herm);
+RFC_herm=tp2rfc(tp_herm);
+mM_herm=tp2mm(tp_herm);
+h=0.2;
+FmM_herm_smooth=cc2cmat(param_h,mM_herm,[],1,h);
+Frfc_herm_smooth=cc2cmat(param_h,RFC_herm,[],1,h);
+T_herm=xx_herm(end,1)-xx_herm(1,1);
+clf
+cmatplot(u_herm,u_herm,{FmM_herm_smooth GmM3_herm.f*length(mM_herm) ; ...
+      Frfc_herm_smooth Grfc_herm*length(RFC_herm)},4)
+subplot(221), axis('square'), title('Observed smoothed min-max matrix')
+subplot(222), axis('square'), title('Theoretical min-max matrix')
+subplot(223), axis('square'), title('Observed smoothed rainflow matrix')
+subplot(224), axis('square'), title('Theoretical rainflow matrix')
+if (printing==1), print -deps ../bilder/fatigue_13.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+   
+%% Section 4.3.5 Simulation from crossings and rainflow structure
+
+%% Crossing spectrum (smooth curve) and obtained spectrum (wiggled curve)
+%% for simulated process with irregularity factor 0.25.
+clf
+cross_herm=dat2lc(xx_herm);
+alpha1=0.25;
+alpha2=0.75;
+xx_herm_sim1=lc2sdat(cross_herm,500,alpha1);
+cross_herm_sim1=dat2lc(xx_herm_sim1);
+subplot(211)
+plot(cross_herm(:,1),cross_herm(:,2)/max(cross_herm(:,2)))
+hold on
+stairs(cross_herm_sim1(:,1),...
+    cross_herm_sim1(:,2)/max(cross_herm_sim1(:,2)))
+hold off
+title('Crossing intensity, \alpha = 0.25')
+subplot(212)
+plot(xx_herm_sim1(:,1),xx_herm_sim1(:,2))
+title('Simulated load, \alpha = 0.25')
+if (printing==1), print -deps ../bilder/fatigue_14_25.eps 
+end
+wafostamp([],'(ER)')
+
+%% Crossing spectrum (smooth curve) and obtained spectrum (wiggled curve)
+%% for simulated process with irregularity factor 0.75.
+xx_herm_sim2=lc2sdat(cross_herm,500,alpha2);
+cross_herm_sim2=dat2lc(xx_herm_sim2);
+subplot(211)
+plot(cross_herm(:,1),cross_herm(:,2)/max(cross_herm(:,2)))
+hold on
+stairs(cross_herm_sim2(:,1),...
+    cross_herm_sim2(:,2)/max(cross_herm_sim2(:,2)))
+hold off
+title('Crossing intensity, \alpha = 0.75')
+subplot(212)
+plot(xx_herm_sim2(:,1),xx_herm_sim2(:,2))
+title('Simulated load, \alpha = 0.75')
+if (printing==1), print -deps ../bilder/fatigue_14_75.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Section 4.4 Fatigue damage and fatigue life distribution
+%% Section 4.4.1 Introduction
+beta=3.2; gam=5.5E-10; T_sea=xx_sea(end,1)-xx_sea(1,1);
+d_beta=cc2dam(RFC_sea,beta)/T_sea;
+time_fail=1/gam/d_beta/3600      %in hours of the specific storm
+pause(pstate)
+
+%% Section 4.4.2 Level crossings
+%% Crossing intensity as calculated from the Markov matrix (solid curve) and from the observed rainflow matrix (dashed curve).
+clf
+mu_markov=cmat2lc(param_m,Grfc_markov);
+muObs_markov=cmat2lc(param_m,Frfc_markov/(T_markov/2));
+clf
+plot(mu_markov(:,1),mu_markov(:,2),muObs_markov(:,1),muObs_markov(:,2),'REPLACE_WITH_DASH_DASH')
+title('Theoretical and observed crossing intensity ')
+if (printing==1), print -deps ../bilder/fatigue_15.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Section 4.4.3 Damage
+%% Distribution of damage from different RFC cycles, from calculated theoretical and from observed rainflow matrix.
+beta = 4;
+Dam_markov = cmat2dam(param_m,Grfc_markov,beta)
+DamObs1_markov = cc2dam(RFC_markov,beta)/(T_markov/2)
+DamObs2_markov = cmat2dam(param_m,Frfc_markov,beta)/(T_markov/2)
+pause(pstate)
+
+Dmat_markov = cmat2dmat(param_m,Grfc_markov,beta);
+DmatObs_markov = cmat2dmat(param_m,Frfc_markov,beta)/(T_markov/2); 
+clf
+subplot(121), cmatplot(u_markov,u_markov,Dmat_markov,4)
+title('Theoretical damage matrix') 
+subplot(122), cmatplot(u_markov,u_markov,DmatObs_markov,4)
+title('Observed damage matrix') 
+if (printing==1), print -deps ../bilder/fatigue_16.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+
+%%
+%Damplus_markov = lc2dplus(mu_markov,beta)
+pause(pstate)
+
+%% Section 4.4.4 Estimation of S-N curve
+
+%% Load SN-data and plot in log-log scale.
+SN = load('sn.dat');
+s = SN(:,1);
+N = SN(:,2);
+clf
+loglog(N,s,'o'), axis([0 14e5 10 30])
+%if (printing==1), print -deps ../bilder/fatigue_?.eps end
+wafostamp([],'(ER)')
+pause(pstate)
+
+
+%% Check of S-N-model on normal probability paper.
+
+wnormplot(reshape(log(N),8,5))
+if (printing==1), print -deps ../bilder/fatigue_17.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Estimation of S-N-model on linear  scale.
+
+[e0,beta0,s20] = snplot(s,N,12)
+title('S-N-data with estimated N(s)','FontSize',20)
+set(gca,'FontSize',20)
+if (printing==1), print -deps ../bilder/fatigue_18a.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Estimation of S-N-model on log-log scale.
+[e0,beta0,s20] = snplot(s,N,14)
+title('S-N-data with estimated N(s)','FontSize',20)
+set(gca,'FontSize',20)
+if (printing==1), print -deps ../bilder/fatigue_18b.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Section 4.4.5 From S-N curve to fatigue life distribution
+%% Damage intensity as function of $\beta$
+beta = 3:0.1:8;
+DRFC = cc2dam(RFC_sea,beta);
+dRFC = DRFC/T_sea;
+plot(beta,dRFC), axis([3 8 0 0.25])
+title('Damage intensity as function of \beta')
+if (printing==1), print -deps ../bilder/fatigue_19.eps 
+end
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Fatigue life distribution with sea load.
+dam0 = cc2dam(RFC_sea,beta0)/T_sea;
+[t0,F0] = ftf(e0,dam0,s20,0.5,1);
+[t1,F1] = ftf(e0,dam0,s20,0,1);
+[t2,F2] = ftf(e0,dam0,s20,5,1);
+plot(t0,F0,t1,F1,t2,F2)
+title('Fatigue life distribution function')
+if (printing==1), print -deps ../bilder/fatigue_20.eps 
+end
+wafostamp([],'(ER)')
+save Chap4
+ 
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

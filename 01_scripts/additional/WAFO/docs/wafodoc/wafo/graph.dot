@@ -1,0 +1,92 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "8.37214,8.37214";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../wafo/cycles/test/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../wafo/damage/graph.html";
+2;
+}
+ subgraph cluster3 {
+ URL = "../wafo/docs/graph.html";
+3;
+}
+ subgraph cluster4 {
+ URL = "../wafo/misc/graph.html";
+4;
+}
+ subgraph cluster5 {
+ URL = "../wafo/papers/rec/graph.html";
+5;
+}
+ subgraph cluster6 {
+ URL = "../wafo/papers/wafodemo/graph.html";
+6;
+}
+ subgraph cluster7 {
+ URL = "../wafo/trgauss/graph.html";
+7;
+}
+ subgraph cluster8 {
+ URL = "../wafo/trgauss/private/graph.html";
+8;
+}
+ subgraph cluster9 {
+ URL = "../wafo/wdemos/graph.html";
+9;
+}
+ subgraph cluster10 {
+ URL = "../wafo/wsim/graph.html";
+10;
+}
+ subgraph cluster11 {
+ label = "wafo";
+ URL = "index.html";
+11;
+12;
+13;
+14;
+15;
+16;
+17;
+}
+  1 -> 17;
+  2 -> 15;
+  3 -> 13;
+  3 -> 16;
+  3 -> 17;
+  4 -> 17;
+  5 -> 17;
+  6 -> 17;
+  7 -> 15;
+  8 -> 15;
+  9 -> 17;
+  10 -> 15;
+  13 -> 16;
+  13 -> 17;
+  15 -> 17;
+  16 -> 17;
+
+ 1 [URL="../wafo/cycles/test/graph.html",label="test"];
+ 2 [URL="../wafo/damage/graph.html",label="damage"];
+ 3 [URL="../wafo/docs/graph.html",label="docs"];
+ 4 [URL="../wafo/misc/graph.html",label="misc"];
+ 5 [URL="../wafo/papers/rec/graph.html",label="rec"];
+ 6 [URL="../wafo/papers/wafodemo/graph.html",label="wafodemo"];
+ 7 [URL="../wafo/trgauss/graph.html",label="trgauss"];
+ 8 [URL="../wafo/trgauss/private/graph.html",label="trgauss/private"];
+ 9 [URL="../wafo/wdemos/graph.html",label="wdemos"];
+ 10 [URL="../wafo/wsim/graph.html",label="wsim"];
+ 11 [URL="Contents.html",label="Contents"];
+ 12 [URL="fatigue.html",label="fatigue"];
+ 13 [URL="initwafo.html",label="initwafo"];
+ 14 [URL="Readme.html",label="Readme"];
+ 15 [URL="wafoexepath.html",label="wafoexepath"];
+ 16 [URL="wafopath.html",label="wafopath"];
+ 17 [URL="waforoot.html",label="waforoot"];
+}

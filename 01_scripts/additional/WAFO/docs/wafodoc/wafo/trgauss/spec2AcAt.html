@@ -1,0 +1,548 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spec2AcAt</title>
+  <meta name="keywords" content="spec2AcAt">
+  <meta name="description" content="   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; spec2AcAt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spec2AcAt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [f] = spec2AcAt(spec,utc,def,paramtc,paramtt,paramt,h1,h2,nit,speed,bound) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="spec2AcAt.html" class="code" title="   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2). ">SPEC2ACAT</a>   Evaluates survival function R(h1,h2)=P(Ac&gt;h1,At&gt;h2). 
+           
+   CALL: R = <a href="spec2AcAt.html" class="code" title="   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2). ">spec2AcAt</a>(S,u,def,paramtc,paramtt,paramtcc,h1,h2,nit,speed,bound); 
+  
+         R    =  survival function R=P(Ac&gt;h1,At&gt;h2) 
+         S    = spectral density structure 
+         u    = reference level (default the most frequently crossed level). 
+        def   =  'Tcc', P(Ac&gt;h1,At&gt;h2) for waves in time, (default) 
+                 'Lcc', P(Ac&gt;h1,At&gt;h2) for waves in space. 
+     paramtc  = [0 tc Ntc] defines discretization of Tc (or Lc): tc is 
+                the longest Tc considered while Ntc is the number of 
+                points, i.e. (Ntc-1)/tc is the sampling 
+                frequency. paramtc= [0 10 51] implies that the crest 
+                periods are considered at 51 linearly spaced points in 
+                the interval [0,10], i.e. sampling frequency is 5 Hz. 
+    paramtt   = [0 tt Ntt] defines discretization of Tt (or Lt): tt is 
+                the longest Tt considered while Ntt is the number of points. 
+   paramtcc   = [0 tcc Ntcc] defines discretization of a period Tcc (or 
+                Lcc): tcc is the longest period considered while Ntcc is 
+                the number of points. 
+           h1 = vector of heights of Ac crest; note  h1 &gt; 0, 
+           h2 = vector of heights of At trough; note  h2 &gt; 0. 
+         nit  =  0,...,9. Dimension of numerical integration  (default 2). 
+                -1,-2,-3,... different important sampling type integrations. 
+        speed = defines accuraccy of calculations, by choosing different  
+                parameters, possible values: 1,2...,9 (9 fastest, default 4). 
+        bound = 0 the distribution is approximated (default), and if  nit&lt;0 
+              = 1 the upper and lower bounds for the distribution are computed. 
+        []    = default values are used. 
+  
+  <a href="spec2AcAt.html" class="code" title="   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2). ">SPEC2ACAT</a> evaluates P(Ac&gt;h1,At&gt;h2), i.e. probability that crest is 
+  higher than h1 and trough lower than h2, for waves in time or in space 
+  in a stationary Gaussian transform process X(t) where Y(t) = g(X(t) (Y 
+  zero-mean Gaussian with spectrum given in S).  
+  
+  Example:%  Very accurate approx. of R=P(Ac&gt;h1,At&gt;h2) (waves in 
+          %  time with unidirectional <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum) is computed by: 
+  
+    Hm0=7;  Tp=11; 
+    S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(4*pi/Tp,[Hm0 Tp]);  
+    paramtt = [0 12 51];  
+    paramtc = paramtt;  
+    paramtcc=[0 18 81];  
+    h1=0.5:0.5:6; h2=h1;     
+    F = <a href="spec2AcAt.html" class="code" title="   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2). ">spec2AcAt</a>(S,[],'Tcc',paramtc,paramtc,paramtcc,h1,h2,-2); 
+  
+  See also  <a href="../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>, <a href="../../wafo/spec/wnormspec.html" class="code" title=" Normalize a spectral density such that m0=m2=1">wnormspec</a>, <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>, <a href="dat2gaus.html" class="code" title=" Transforms  x  using the transformation  g.">dat2gaus</a>, <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>, <a href="../../wafo/docs/wavedef.html" class="code" title=" Wave definitions and nomenclature ">wavedef</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2gaus.html" class="code" title=" xx = dat2gaus(x,g)">dat2gaus</a></li></TD>
+<TD> Transforms  x  using the transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="gaus2dat.html" class="code" title=" x = gaus2dat(xx,g)">gaus2dat</a></li></TD>
+<TD> Transforms  xx  using the inverse of transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/loaddata.html" class="code" title=" data=loaddata(filename)">loaddata</a></li></TD>
+<TD> Loads a matrix from a text file.</TD>
+</TR>
+<TR>
+<TD><li><a href="pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2Acdf.html" class="code" title=" [f] = spec2Acdf(spec,utc,def,paramt,h,nit,speed,bound)">spec2Acdf</a></li></TD>
+<TD>  Evaluates cdf of crests P(Ac<=h) or troughs P(At<=h).</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/spec2cov2.html" class="code" title=" R = spec2cov2(S,nr,Nt,dt)">spec2cov2</a></li></TD>
+<TD> Computes covariance function and its derivatives, alternative version</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wafoexepath.html" class="code" title=" p=wafoexepath;">wafoexepath</a></li></TD>
+<TD> Returns the path to executables for the WAFO Toolbox</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wnormspec.html" class="code" title=" [S,mn4,m0,m2,m4,m1]=wnormspec(spectrum,m0,m2,plotflag)">wnormspec</a></li></TD>
+<TD> Normalize a spectral density such that m0=m2=1</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\clf.m">clf</a></li></TD>
+<TD>           Clear current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\clock.m">clock</a></li></TD>
+<TD>         Current date and time as date vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\contour.m">contour</a></li></TD>
+<TD>       Contour plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="delete is a built-in method">delete</a></li></TD>
+<TD>        Delete file or graphics object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\dos.m">dos</a></li></TD>
+<TD>           Execute DOS command and return result.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\erf.m">erf</a></li></TD>
+<TD>           Error function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\etime.m">etime</a></li></TD>
+<TD>         Elapsed time.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\@double\exist.bi">exist</a></li></TD>
+<TD>         Check if variables or functions are defined.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fclose.m">fclose</a></li></TD>
+<TD>        Close file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\figure.m">figure</a></li></TD>
+<TD>        Create figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fopen.m">fopen</a></li></TD>
+<TD>         Open file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\int2str.m">int2str</a></li></TD>
+<TD>       Convert integer to string (Fast version).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [f] = <a name="_sub0" href="#_subfunctions" class="code">spec2AcAt</a>(spec,utc,def,paramtc,paramtt,paramt,h1,h2,nit,speed,bound) 
+002 <span class="comment">%SPEC2ACAT   Evaluates survival function R(h1,h2)=P(Ac&gt;h1,At&gt;h2). </span>
+003 <span class="comment">%          </span>
+004 <span class="comment">%  CALL: R = spec2AcAt(S,u,def,paramtc,paramtt,paramtcc,h1,h2,nit,speed,bound); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%        R    =  survival function R=P(Ac&gt;h1,At&gt;h2) </span>
+007 <span class="comment">%        S    = spectral density structure </span>
+008 <span class="comment">%        u    = reference level (default the most frequently crossed level). </span>
+009 <span class="comment">%       def   =  'Tcc', P(Ac&gt;h1,At&gt;h2) for waves in time, (default) </span>
+010 <span class="comment">%                'Lcc', P(Ac&gt;h1,At&gt;h2) for waves in space. </span>
+011 <span class="comment">%    paramtc  = [0 tc Ntc] defines discretization of Tc (or Lc): tc is </span>
+012 <span class="comment">%               the longest Tc considered while Ntc is the number of </span>
+013 <span class="comment">%               points, i.e. (Ntc-1)/tc is the sampling </span>
+014 <span class="comment">%               frequency. paramtc= [0 10 51] implies that the crest </span>
+015 <span class="comment">%               periods are considered at 51 linearly spaced points in </span>
+016 <span class="comment">%               the interval [0,10], i.e. sampling frequency is 5 Hz. </span>
+017 <span class="comment">%   paramtt   = [0 tt Ntt] defines discretization of Tt (or Lt): tt is </span>
+018 <span class="comment">%               the longest Tt considered while Ntt is the number of points. </span>
+019 <span class="comment">%  paramtcc   = [0 tcc Ntcc] defines discretization of a period Tcc (or </span>
+020 <span class="comment">%               Lcc): tcc is the longest period considered while Ntcc is </span>
+021 <span class="comment">%               the number of points. </span>
+022 <span class="comment">%          h1 = vector of heights of Ac crest; note  h1 &gt; 0, </span>
+023 <span class="comment">%          h2 = vector of heights of At trough; note  h2 &gt; 0. </span>
+024 <span class="comment">%        nit  =  0,...,9. Dimension of numerical integration  (default 2). </span>
+025 <span class="comment">%               -1,-2,-3,... different important sampling type integrations. </span>
+026 <span class="comment">%       speed = defines accuraccy of calculations, by choosing different  </span>
+027 <span class="comment">%               parameters, possible values: 1,2...,9 (9 fastest, default 4). </span>
+028 <span class="comment">%       bound = 0 the distribution is approximated (default), and if  nit&lt;0 </span>
+029 <span class="comment">%             = 1 the upper and lower bounds for the distribution are computed. </span>
+030 <span class="comment">%       []    = default values are used. </span>
+031 <span class="comment">% </span>
+032 <span class="comment">% SPEC2ACAT evaluates P(Ac&gt;h1,At&gt;h2), i.e. probability that crest is </span>
+033 <span class="comment">% higher than h1 and trough lower than h2, for waves in time or in space </span>
+034 <span class="comment">% in a stationary Gaussian transform process X(t) where Y(t) = g(X(t) (Y </span>
+035 <span class="comment">% zero-mean Gaussian with spectrum given in S).  </span>
+036 <span class="comment">% </span>
+037 <span class="comment">% Example:<span class="comment">%  Very accurate approx. of R=P(Ac&gt;h1,At&gt;h2) (waves in </span></span>
+038 <span class="comment">%         <span class="comment">%  time with unidirectional JONSWAP spectrum) is computed by: </span></span>
+039 <span class="comment">% </span>
+040 <span class="comment">%   Hm0=7;  Tp=11; </span>
+041 <span class="comment">%   S = jonswap(4*pi/Tp,[Hm0 Tp]);  </span>
+042 <span class="comment">%   paramtt = [0 12 51];  </span>
+043 <span class="comment">%   paramtc = paramtt;  </span>
+044 <span class="comment">%   paramtcc=[0 18 81];  </span>
+045 <span class="comment">%   h1=0.5:0.5:6; h2=h1;     </span>
+046 <span class="comment">%   F = spec2AcAt(S,[],'Tcc',paramtc,paramtc,paramtcc,h1,h2,-2); </span>
+047 <span class="comment">% </span>
+048 <span class="comment">% See also  spec2cov, wnormspec, dat2tr, dat2gaus, datastructures, wavedef </span>
+049  
+050 <span class="comment">% Tested on : matlab 5.3 </span>
+051 <span class="comment">% History: by I. Rychlik 01.10.1998 with name wave_t.m </span>
+052 <span class="comment">% Revised by I. R.   13.10.1999 </span>
+053 <span class="comment">% Revised by Sylvie van Iseghem 10.11.1999- adding levels of crests and troughs </span>
+054 <span class="comment">% Revised by I. R.   07.12.1999 The upper and lower bounds to  the </span>
+055 <span class="comment">%  density included. </span>
+056 <span class="comment">% Revised by I. R.   17.12.1999 The case def=-1,-2 are included. </span>
+057 <span class="comment">% Revised by es 000322. Made call with directional spectrum possible. </span>
+058 <span class="comment">% Revised by IR 29 VI 2000, introducing 'def' to consider also waves in space. </span>
+059 <span class="comment">%                           and removing bug from definition of transformation. </span>
+060 <span class="comment">% Revised IR 6 II 2001 adapted for MATLAB6 </span>
+061 <span class="comment">% REvised pab Dec 2003 </span>
+062 <span class="comment">% replace tic-toc statements with clock and etime   </span>
+063 startTime = clock; 
+064 <span class="keyword">if</span> nargin&lt;3|isempty(def) 
+065   def=<span class="string">'tcc'</span>; 
+066 <span class="keyword">end</span> 
+067 <span class="keyword">if</span> strcmp(<span class="string">'l'</span>,lower(def(1))) 
+068   spec=<a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(spec,<span class="string">'k1d'</span>); 
+069 <span class="keyword">elseif</span> strcmp(<span class="string">'t'</span>,lower(def(1))) 
+070   spec=<a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(spec,<span class="string">'freq'</span>); 
+071 <span class="keyword">else</span> 
+072   error(<span class="string">'Unknown def'</span>) 
+073 <span class="keyword">end</span> 
+074  
+075 <span class="keyword">if</span> nargin&lt;11|isempty(bound) 
+076    bound=0; 
+077 <span class="keyword">end</span> 
+078 [S, xl4, L0, L2, L4, L1]=<a href="../../wafo/spec/wnormspec.html" class="code" title=" Normalize a spectral density such that m0=m2=1">wnormspec</a>(spec); 
+079 A = sqrt(L0/L2); 
+080 SCIS=0; 
+081 <span class="keyword">if</span> nargin&lt;9|isempty(nit) 
+082   nit=2; 
+083 <span class="keyword">elseif</span> nit&lt;0 
+084  SCIS=min(abs(nit),2); 
+085  bound=0; 
+086 <span class="keyword">end</span> 
+087  
+088 <span class="keyword">if</span> isfield(spec,<span class="string">'tr'</span>) 
+089    g=spec.tr; 
+090 <span class="keyword">else</span> 
+091    g=[]; 
+092 <span class="keyword">end</span> 
+093 <span class="keyword">if</span> isempty(g) 
+094   g = [sqrt(L0)*(-5:0.02:5)', (-5:0.02:5)']; 
+095 <span class="keyword">end</span> 
+096  
+097 <span class="keyword">if</span> nargin&lt;2|isempty(utc) 
+098   utc_d = <a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0, 0],g); <span class="comment">% most frequent crossed level  </span>
+099   utc   = utc_d(1,2); 
+100 <span class="keyword">end</span> 
+101  
+102 <span class="comment">% transform reference level into Gaussian level </span>
+103 uu = <a href="dat2gaus.html" class="code" title=" Transforms  x  using the transformation  g.">dat2gaus</a>([0., utc],g); 
+104 u  = uu(2); 
+105 disp([<span class="string">'The level u for Gaussian process = '</span>, num2str(u)]) 
+106  
+107  
+108 <span class="keyword">if</span> nargin&lt;10|isempty(speed) 
+109   speed=4; 
+110 <span class="keyword">end</span>                 
+111    
+112 <span class="keyword">if</span> nargin&lt;4|isempty(paramtc) 
+113   defnr=1; 
+114   paramtc=[0., 2*ceil(2*pi*sqrt(L0/L2)*exp(u^2/2)*(0.5+erf(-sign(defnr)*u/sqrt(2))/2)), 51]; 
+115 <span class="keyword">end</span> 
+116 <span class="keyword">if</span> nargin&lt;5|isempty(paramtt) 
+117   defnr=-1; 
+118   paramtt=[0., 2*ceil(2*pi*sqrt(L0/L2)*exp(u^2/2)*(0.5+erf(-sign(defnr)*u/sqrt(2))/2)), 51]; 
+119 <span class="keyword">end</span> 
+120 <span class="keyword">if</span> nargin&lt;6|isempty(paramt) 
+121    Ntime = 51; 
+122    t0    = 0.; 
+123    tn    = 1.5*ceil(2*pi*sqrt(L0/L2)*exp(u^2/2)); 
+124   paramt=[t0,tn,Ntime]; 
+125   <span class="keyword">else</span> 
+126    t0     = paramt(1); 
+127    tn     = paramt(2); 
+128    Ntime  = paramt(3); 
+129 <span class="keyword">end</span> 
+130 t  = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>([0, tn/A, Ntime]); <span class="comment">% normalized times </span>
+131 N0 = 1+ceil(t0/tn*(Ntime-1)); <span class="comment">% the starting point to evaluate </span>
+132 <span class="keyword">if</span> Ntime&gt;101 
+133   disp(<span class="string">'Note: nr. of wavelengths (periods) exceeds 101 (slow).'</span>) 
+134 <span class="keyword">end</span> 
+135  
+136 nr = 2;  
+137  
+138 px1=<a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0., u;1, 4],g);  
+139 px1=abs(px1(2,2)-px1(1,2)); 
+140 px2=<a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0., u;1, 4],g);  
+141 px2=abs(px2(2,2)-px2(1,2)); 
+142  
+143 <span class="keyword">if</span> nargin&lt;7|isempty(h1) 
+144   Nx1 = 6; 
+145   h1=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>([0, px1, 6]); 
+146 <span class="keyword">else</span> 
+147   h1=sort(abs(h1(:))); <span class="comment">% make sure values are positive and in increasing order </span>
+148   Nx1=length(h1);  
+149 <span class="keyword">end</span> 
+150 figure(1) 
+151 clf 
+152 subplot(221) 
+153 nit0=nit; 
+154 <span class="keyword">if</span> nit0&gt;=0 
+155   nit0=nit0+3; 
+156 <span class="keyword">end</span> 
+157 <span class="keyword">if</span> strcmp(<span class="string">'l'</span>,lower(def(1))) 
+158   FAc=<a href="spec2Acdf.html" class="code" title="  Evaluates cdf of crests P(Ac<=h) or troughs P(At<=h). ">spec2Acdf</a>(spec,utc,<span class="string">'Lc'</span>,paramtc,h1,nit0,speed,bound);  
+159 <span class="keyword">elseif</span> strcmp(<span class="string">'t'</span>,lower(def(1))) 
+160   FAc=<a href="spec2Acdf.html" class="code" title="  Evaluates cdf of crests P(Ac<=h) or troughs P(At<=h). ">spec2Acdf</a>(spec,utc,<span class="string">'Tc'</span>,paramtc,h1,nit0,speed,bound); 
+161 <span class="keyword">else</span> 
+162   error(<span class="string">'Unknown def'</span>) 
+163 <span class="keyword">end</span> 
+164 <a href="pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(FAc); 
+165 hold on 
+166 <span class="keyword">if</span> nargin&lt;7|isempty(h2) 
+167   Nx2 = 6; 
+168   h2=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>([0, px2, 6]); 
+169 <span class="keyword">else</span> 
+170   h2=sort(abs(h2(:))); <span class="comment">% make sure values are positive and  increasing  </span>
+171   Nx2=length(h2); 
+172 <span class="keyword">end</span> 
+173 subplot(222) 
+174 <span class="keyword">if</span> strcmp(<span class="string">'l'</span>,lower(def(1))) 
+175   FAt=<a href="spec2Acdf.html" class="code" title="  Evaluates cdf of crests P(Ac<=h) or troughs P(At<=h). ">spec2Acdf</a>(spec,utc,<span class="string">'Lt'</span>,paramtc,h1,nit0,speed,bound);  
+176 <span class="keyword">elseif</span> strcmp(<span class="string">'t'</span>,lower(def(1))) 
+177   FAt=<a href="spec2Acdf.html" class="code" title="  Evaluates cdf of crests P(Ac<=h) or troughs P(At<=h). ">spec2Acdf</a>(spec,utc,<span class="string">'Tt'</span>,paramtc,h1,nit0,speed,bound); 
+178 <span class="keyword">else</span> 
+179   error(<span class="string">'Unknown def'</span>) 
+180 <span class="keyword">end</span> 
+181  
+182 <a href="pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(FAt); 
+183   
+184   
+185   
+186 Nx=Nx1*Nx2; 
+187  
+188 <span class="keyword">if</span> Nx&gt;101 
+189    disp(<span class="string">'Note: nr. of amplitudes exceeds 101, (slow).'</span>) 
+190 <span class="keyword">end</span> 
+191  
+192 <span class="comment">%Transform amplitudes to Gaussian levels:    </span>
+193 der1=ones(Nx1,1); <span class="comment">% dh/dh=1 </span>
+194 h1=reshape(h1,Nx1,1); 
+195 hg1=<a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([utc+h1, der1],g); 
+196 der1=abs(hg1(:,2)); 
+197 hg1=hg1(:,1); <span class="comment">% Gaussian level </span>
+198 der2=ones(Nx2,1); <span class="comment">% dh/dh=1 </span>
+199 h2=reshape(h2,Nx2,1);    
+200 hg2=<a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([utc-h2, der2],g); 
+201 der2=abs(hg2(:,2)); 
+202 hg2=hg2(:,1); <span class="comment">% Gaussian level </span>
+203  
+204 <span class="keyword">if</span> exist(<span class="string">'h.in'</span>), delete h.in, <span class="keyword">end</span> 
+205 fid=fopen(<span class="string">'h.in'</span>,<span class="string">'wt'</span>); 
+206 fprintf(fid,<span class="string">'%12.10f\n'</span>,hg1); 
+207 fprintf(fid,<span class="string">'%12.10f\n'</span>,hg2); 
+208 fclose(fid); 
+209  
+210 dt=t(2)-t(1); 
+211  <span class="comment">% Calculating covariances </span>
+212 R = <a href="../../wafo/spec/spec2cov2.html" class="code" title=" Computes covariance function and its derivatives, alternative version ">spec2cov2</a>(S,nr,Ntime-1,dt); 
+213 <span class="comment">%NB!!! the spec2thpdf.exe programme is very sensitive to how you interpolate  </span>
+214 <span class="comment">%      the covariances, especially where the process is very dependent </span>
+215 <span class="comment">%      and the covariance matrix is nearly singular. (i.e. for small t </span>
+216 <span class="comment">%      and high levels of u if Tc and low levels of u if Tt) </span>
+217 <span class="comment">%     The best is to first interpolate through FFT with a </span>
+218 <span class="comment">%     high rate and then interpolate with a spline to obtain the </span>
+219 <span class="comment">%     timepoints one want. However for large t </span>
+220 <span class="comment">%     it often suffices to interpolate linearly provided that </span>
+221 <span class="comment">%     FFT interpolation is good eneough. </span>
+222  
+223 <span class="keyword">for</span> k=0:nr 
+224   filename=[<span class="string">'Cd'</span>, int2str(k), <span class="string">'.in'</span>]; 
+225   <span class="keyword">if</span> exist(filename) 
+226     delete(filename) 
+227   <span class="keyword">end</span> 
+228   fid=fopen(filename,<span class="string">'wt'</span>); 
+229   fprintf(fid,<span class="string">'%12.10E \n'</span>,R(:,k+1)); 
+230   fclose(fid); 
+231 <span class="keyword">end</span> 
+232 <span class="comment">%SCIS=0; </span>
+233 <span class="keyword">if</span> exist(<span class="string">'reflev.in'</span>), delete reflev.in, <span class="keyword">end</span> 
+234 disp(<span class="string">'writing data'</span>) 
+235 fid=fopen(<span class="string">'reflev.in'</span>,<span class="string">'wt'</span>); 
+236 fprintf(fid,<span class="string">'%12.10E \n'</span>,u); 
+237 fprintf(fid,<span class="string">'%2.0f \n'</span>,Ntime); 
+238 fprintf(fid,<span class="string">'%2.0f \n'</span>,N0); 
+239 fprintf(fid,<span class="string">'%2.0f \n'</span>,nit); 
+240 fprintf(fid,<span class="string">'%2.0f \n'</span>,speed); 
+241 fprintf(fid,<span class="string">'%2.0f \n'</span>,SCIS); 
+242 fprintf(fid,<span class="string">'%2.0f \n'</span>,10^9*rand);  <span class="comment">% select a random seed for rind  </span>
+243 fprintf(fid,<span class="string">'%2.0f %2.0f\n'</span>,[Nx1, Nx2]); 
+244 fprintf(fid,<span class="string">'%12.10E \n'</span>,dt); 
+245 fclose(fid);  
+246 disp(<span class="string">'   Starting Fortran executable.'</span>) 
+247 <span class="keyword">if</span> bound==0 
+248   dos([ <a href="../../wafo/wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a>, <span class="string">'sp2tccpdf70.exe'</span>]);  
+249   <span class="comment">%compiled spec2tccpdf.f with rind60.f and intmodule.f </span>
+250   <span class="comment">%   dos([ wafoexepath, 'sp2tccpdf50.exe']); <span class="comment">%compiled spec2tccpdf.f with rind50.f </span></span>
+251 <span class="keyword">else</span> 
+252    dos([ <a href="../../wafo/wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a>, <span class="string">'sp2tccpdf51.exe'</span>]); <span class="comment">%compiled spec2tccpdf1.f with rind51.f </span>
+253 <span class="keyword">end</span> 
+254  
+255   
+256 f=<a href="createpdf.html" class="code" title=" PDF class constructor">createpdf</a>; 
+257 f.labx{1}=<span class="string">'amplitude [m]'</span>; 
+258 f.x{1}=h1'; 
+259 f.x{2}=h2'; 
+260 f.nit=nit; 
+261 f.speed=speed; 
+262 f.SCIS=SCIS; 
+263 f.u=utc; 
+264 tmp=<a href="../../wafo/misc/loaddata.html" class="code" title=" Loads a matrix from a text file.">loaddata</a>(<span class="string">'dens.out'</span>)/A;   
+265 t=t'*A; 
+266 dt=t(2)-t(1); 
+267 ff1=reshape(tmp(:,1),Nx1*Nx2,length(t)); 
+268 <span class="keyword">if</span> bound==1 
+269    gg1=reshape(tmp(:,2),Nx1*Nx2,length(t));  
+270    fff=zeros(Nx1,Nx2); 
+271    ggg=fff; 
+272    <span class="keyword">for</span> j=1:Nx1 
+273     <span class="keyword">for</span> i=1:Nx2 
+274      ii1=i+(j-1)*Nx2; 
+275      fff(j,i)=max(dt*sum(ff1(ii1,:))+1.-FAc.f(2,j)-FAt.f(2,i),0.); 
+276      fff(j,i)=min(fff(j,i),1.); 
+277     <span class="keyword">end</span> 
+278    <span class="keyword">end</span> 
+279    <span class="keyword">for</span> j=1:Nx1 
+280     <span class="keyword">for</span> i=1:Nx2 
+281      ii1=i+(j-1)*Nx2; 
+282      ggg(j,i)=max(dt*sum(gg1(ii1,:))+1.-FAc.f(1,j)-FAt.f(1,i),0.); 
+283      ggg(j,i)=min(ggg(j,i),1.); 
+284     <span class="keyword">end</span> 
+285    <span class="keyword">end</span> 
+286    subplot(223) 
+287    contour(h1,h2,fff',[1, 0.9, 0.75, 0.5, 0.25, 0.1, 0.05]) 
+288    subplot(224)  
+289    contour(h1,h2,ggg',[1, 0.9, 0.75, 0.5, 0.25, 0.1, 0.05]) 
+290    f.f{1}=fff'; 
+291    f.f{2}=ggg'; 
+292 <span class="keyword">else</span> 
+293    subplot(212)  
+294    fff=zeros(Nx1,Nx2); 
+295    <span class="keyword">for</span> j=1:Nx1 
+296     <span class="keyword">for</span> i=1:Nx2 
+297      ii1=i+(j-1)*Nx2; 
+298      fff(j,i)=max(dt*sum(ff1(ii1,:))+1.-FAc.f(j,1)-FAt.f(i,1),0.); 
+299      fff(j,i)=min(fff(j,i),1.); 
+300     <span class="keyword">end</span> 
+301    <span class="keyword">end</span> 
+302    f.f=fff'; 
+303    contour(h1,h2,fff',[1, 0.9, 0.75, 0.5, 0.25, 0.1, 0.05]) 
+304    axis(<span class="string">'square'</span>) 
+305 <span class="comment">%   pdfplot(f); </span>
+306 <span class="keyword">end</span>    
+307 f.elapsedTime = etime(clock,startTime); 
+308  
+309  
+310  
+311</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,218 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "19.3269,19.3269";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../wafo/cycles/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../wafo/cycles/test/graph.html";
+2;
+}
+ subgraph cluster3 {
+ URL = "../../wafo/misc/graph.html";
+3;
+}
+ subgraph cluster4 {
+ URL = "../../wafo/multidim/graph.html";
+4;
+}
+ subgraph cluster5 {
+ URL = "../../wafo/onedim/private/graph.html";
+5;
+}
+ subgraph cluster6 {
+ URL = "../../wafo/papers/rec/graph.html";
+6;
+}
+ subgraph cluster7 {
+ URL = "../../wafo/papers/tutorcom/graph.html";
+7;
+}
+ subgraph cluster8 {
+ URL = "../../wafo/papers/wafodemo/graph.html";
+8;
+}
+ subgraph cluster9 {
+ URL = "../../wafo/spec/graph.html";
+9;
+}
+ subgraph cluster10 {
+ URL = "../../wafo/trgauss/graph.html";
+10;
+}
+ subgraph cluster11 {
+ URL = "../../wafo/wdemos/graph.html";
+11;
+}
+ subgraph cluster12 {
+ URL = "../../wafo/wdemos/itmkurs/graph.html";
+12;
+}
+ subgraph cluster13 {
+ URL = "../../wafo/wsim/graph.html";
+13;
+}
+ subgraph cluster14 {
+ URL = "../../wafo/wstats/graph.html";
+14;
+}
+ subgraph cluster15 {
+ label = "onedim";
+ URL = "index.html";
+15;
+16;
+17;
+18;
+19;
+20;
+21;
+22;
+23;
+24;
+25;
+26;
+27;
+28;
+29;
+30;
+31;
+32;
+33;
+34;
+35;
+36;
+37;
+38;
+39;
+40;
+41;
+}
+  1 -> 35;
+  2 -> 20;
+  2 -> 26;
+  2 -> 35;
+  3 -> 26;
+  4 -> 28;
+  6 -> 22;
+  6 -> 24;
+  6 -> 32;
+  6 -> 38;
+  6 -> 41;
+  7 -> 16;
+  7 -> 18;
+  7 -> 20;
+  7 -> 22;
+  7 -> 23;
+  7 -> 24;
+  7 -> 25;
+  7 -> 26;
+  7 -> 27;
+  7 -> 29;
+  7 -> 32;
+  7 -> 38;
+  7 -> 39;
+  7 -> 41;
+  8 -> 22;
+  8 -> 24;
+  8 -> 25;
+  8 -> 26;
+  8 -> 27;
+  8 -> 28;
+  8 -> 41;
+  10 -> 26;
+  10 -> 30;
+  10 -> 36;
+  11 -> 26;
+  12 -> 22;
+  12 -> 26;
+  13 -> 20;
+  13 -> 22;
+  17 -> 9;
+  17 -> 16;
+  18 -> 16;
+  18 -> 17;
+  19 -> 30;
+  20 -> 26;
+  20 -> 36;
+  21 -> 26;
+  21 -> 30;
+  22 -> 5;
+  22 -> 9;
+  22 -> 10;
+  22 -> 14;
+  22 -> 18;
+  22 -> 28;
+  23 -> 5;
+  23 -> 9;
+  23 -> 10;
+  23 -> 18;
+  24 -> 3;
+  24 -> 25;
+  24 -> 29;
+  25 -> 19;
+  26 -> 31;
+  26 -> 33;
+  27 -> 19;
+  27 -> 25;
+  27 -> 26;
+  27 -> 29;
+  31 -> 30;
+  32 -> 41;
+  35 -> 14;
+  36 -> 35;
+  38 -> 5;
+  38 -> 10;
+  38 -> 13;
+  38 -> 18;
+  38 -> 28;
+  38 -> 41;
+  39 -> 25;
+  41 -> 3;
+  41 -> 25;
+
+ 1 [URL="../../wafo/cycles/graph.html",label="cycles"];
+ 2 [URL="../../wafo/cycles/test/graph.html",label="test"];
+ 3 [URL="../../wafo/misc/graph.html",label="misc"];
+ 4 [URL="../../wafo/multidim/graph.html",label="multidim"];
+ 5 [URL="../../wafo/onedim/private/graph.html",label="onedim/private"];
+ 6 [URL="../../wafo/papers/rec/graph.html",label="rec"];
+ 7 [URL="../../wafo/papers/tutorcom/graph.html",label="tutorcom"];
+ 8 [URL="../../wafo/papers/wafodemo/graph.html",label="wafodemo"];
+ 9 [URL="../../wafo/spec/graph.html",label="spec"];
+ 10 [URL="../../wafo/trgauss/graph.html",label="trgauss"];
+ 11 [URL="../../wafo/wdemos/graph.html",label="wdemos"];
+ 12 [URL="../../wafo/wdemos/itmkurs/graph.html",label="itmkurs"];
+ 13 [URL="../../wafo/wsim/graph.html",label="wsim"];
+ 14 [URL="../../wafo/wstats/graph.html",label="wstats"];
+ 15 [URL="Contents.html",label="Contents"];
+ 16 [URL="covplot.html",label="covplot"];
+ 17 [URL="dat2cor.html",label="dat2cor"];
+ 18 [URL="dat2cov.html",label="dat2cov"];
+ 19 [URL="dat2crossind.html",label="dat2crossind"];
+ 20 [URL="dat2lc.html",label="dat2lc"];
+ 21 [URL="dat2midind.html",label="dat2midind"];
+ 22 [URL="dat2spec.html",label="dat2spec"];
+ 23 [URL="dat2spec2.html",label="dat2spec2"];
+ 24 [URL="dat2steep.html",label="dat2steep"];
+ 25 [URL="dat2tc.html",label="dat2tc"];
+ 26 [URL="dat2tp.html",label="dat2tp"];
+ 27 [URL="dat2wa.html",label="dat2wa"];
+ 28 [URL="detrendma.html",label="detrendma"];
+ 29 [URL="ecross.html",label="ecross"];
+ 30 [URL="findcross.html",label="findcross"];
+ 31 [URL="findextrema.html",label="findextrema"];
+ 32 [URL="findoutliers.html",label="findoutliers"];
+ 33 [URL="findrfc.html",label="findrfc"];
+ 34 [URL="hs2sign.html",label="hs2sign"];
+ 35 [URL="lcplot.html",label="lcplot"];
+ 36 [URL="mm2lc.html",label="mm2lc"];
+ 37 [URL="Readme.html",label="Readme"];
+ 38 [URL="reconstruct.html",label="reconstruct"];
+ 39 [URL="spwaveplot.html",label="spwaveplot"];
+ 40 [URL="vc2sign.html",label="vc2sign"];
+ 41 [URL="waveplot.html",label="waveplot"];
+}

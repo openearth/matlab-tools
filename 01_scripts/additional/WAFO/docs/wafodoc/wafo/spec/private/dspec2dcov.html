@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dspec2dcov</title>
+  <meta name="keywords" content="dspec2dcov">
+  <meta name="description" content=" Return covariance function given a directional spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">spec</a> &gt; <a href="index.html">private</a> &gt; dspec2dcov.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>dspec2dcov
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Return covariance function given a directional spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> R=dspec2dcov(S,nr,Nt,rate,Nx,Ny,dx,dy) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dspec2dcov.html" class="code" title=" Return covariance function given a directional spectrum  ">DSPEC2DCOV</a> Return covariance function given a directional spectrum  
+             (used in <a href="../../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>.) 
+  
+   CALL: R=<a href="dspec2dcov.html" class="code" title=" Return covariance function given a directional spectrum  ">dspec2dcov</a>(S,nr,Nt,rate,Nx,Ny,dx,dy) 
+  
+    DCOV = covariance structure (see <a href="../../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>) 
+       S = spectrum struct, type 'dir' or 'freq' (see <a href="../../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>) 
+      nr = 0,1,2, number of derivatives  
+      Nt = number of time lags  
+    rate = 1,2,4,8...2^r, interpolation rate for R 
+   Nx,Ny = number of space lags, (default 10 resp. 0) 
+   dx,dy = space lag step  (default such that a wave length is covered)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/spec/createcov.html" class="code" title=" R=createcov(nr,vari,ctype)">createcov</a></li></TD>
+<TD> Covariance class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/gravity.html" class="code" title=" g=gravity(phi)">gravity</a></li></TD>
+<TD>  returns the constant acceleration of gravity</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/simpson.html" class="code" title=" [area,epsi,a,b] = simpson(x,f,dim)">simpson</a></li></TD>
+<TD> Numerical integration with the Simpson method</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/spec2mom.html" class="code" title=" [m,mtext] = spec2mom(S,nr,vari,even)">spec2mom</a></li></TD>
+<TD> Calculates spectral moments from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/w2k.html" class="code" title=" [k,k2,ind]=w2k(w,th,h,g),">w2k</a></li></TD>
+<TD> Translates from frequency to wave number</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\ifft.bi">ifft</a></li></TD>
+<TD>          Inverse discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elfun\nextpow2.m">nextpow2</a></li></TD>
+<TD>      Next higher power of 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strcat.m">strcat</a></li></TD>
+<TD>        Concatenate strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/spec/spec2cov.html" class="code" title=" R = spec2cov(S,nr,Nt,rate,Nx,Ny,dx,dy)">spec2cov</a></li></TD>
+<TD> Computes covariance function and its derivatives</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> cov=rshape(cov,Nt,Nx,Ny)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> R=<a name="_sub0" href="#_subfunctions" class="code">dspec2dcov</a>(S,nr,Nt,rate,Nx,Ny,dx,dy) 
+002 <span class="comment">%DSPEC2DCOV Return covariance function given a directional spectrum  </span>
+003 <span class="comment">%            (used in spec2cov.) </span>
+004 <span class="comment">% </span>
+005 <span class="comment">%  CALL: R=dspec2dcov(S,nr,Nt,rate,Nx,Ny,dx,dy) </span>
+006 <span class="comment">% </span>
+007 <span class="comment">%   DCOV = covariance structure (see datastructures) </span>
+008 <span class="comment">%      S = spectrum struct, type 'dir' or 'freq' (see datastructures) </span>
+009 <span class="comment">%     nr = 0,1,2, number of derivatives  </span>
+010 <span class="comment">%     Nt = number of time lags  </span>
+011 <span class="comment">%   rate = 1,2,4,8...2^r, interpolation rate for R </span>
+012 <span class="comment">%  Nx,Ny = number of space lags, (default 10 resp. 0) </span>
+013 <span class="comment">%  dx,dy = space lag step  (default such that a wave length is covered) </span>
+014 <span class="comment">% </span>
+015  
+016 <span class="comment">% NB! requires simpson </span>
+017  
+018 <span class="comment">% Tested on: Matlab 5.3 </span>
+019 <span class="comment">% History: </span>
+020 <span class="comment">% revised ir 05.04.01, theta modified by a rotation angle phi. </span>
+021 <span class="comment">% revised by es 24.05.00, fixing shape of output from w2k, since w2k changed   </span>
+022 <span class="comment">% revised by es 10.11.1999, nr&gt;2   </span>
+023 <span class="comment">% revised by es 13.10.1999 </span>
+024 <span class="comment">% by pab 16.04.1999 </span>
+025  
+026 <span class="comment">% TODO <span class="comment">% Needs more work   </span></span>
+027 <span class="comment">%initialize </span>
+028 <span class="keyword">if</span> strcmpi(S.type(<span class="keyword">end</span>-2:<span class="keyword">end</span>),<span class="string">'k2d'</span>) 
+029   S=<a href="../../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(S,<span class="string">'dir'</span>); 
+030 <span class="keyword">elseif</span> strcmpi(S.type(<span class="keyword">end</span>-2:<span class="keyword">end</span>),<span class="string">'k1d'</span>) 
+031   S=<a href="../../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(S,<span class="string">'freq'</span>); 
+032 <span class="keyword">end</span>   
+033 <span class="keyword">if</span> nargin&lt;5|isempty(Nx) 
+034   Nx=10; 
+035 <span class="keyword">end</span> 
+036 <span class="keyword">if</span> nargin&lt;6 |isempty(Ny) 
+037   Ny=0; 
+038 <span class="keyword">end</span> 
+039  
+040 g=<a href="../../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>; 
+041 <span class="keyword">if</span> isfield(S,<span class="string">'g'</span>) 
+042   g=S.g; 
+043 <span class="keyword">end</span> 
+044 m=<a href="../../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S,2,<span class="string">'xyt'</span>,1); 
+045 <span class="keyword">if</span> length(m)==2 <span class="comment">% result when S of type 'freq' </span>
+046   m=<a href="../../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S,4,<span class="string">'t'</span>,1);  <span class="comment">%m=[m0 m002 m004] </span>
+047   m=[m(1) m(3)/g^2 m(3)/g^2]; <span class="comment">%m=[m0 m200 m020]; </span>
+048 <span class="keyword">end</span> 
+049 <span class="keyword">if</span> nargin&lt;7|isempty(dx) 
+050   dx=4*pi*sqrt(m(1)/m(2))/Nx; <span class="comment">% divide the average wave into Nx/2  </span>
+051 <span class="keyword">end</span> 
+052  
+053 <span class="keyword">if</span> nargin&lt;8|isempty(dy), 
+054   <span class="keyword">if</span> Ny&gt;0 
+055     dy=dx; 
+056     <span class="keyword">if</span> isinf(dy) <span class="comment">% in case of Nx==0 </span>
+057       dy=4*pi*sqrt(m(1)/m(3))/Ny; 
+058       dx=dy; 
+059     <span class="keyword">end</span> 
+060     <span class="keyword">if</span> isinf(dy) <span class="comment">% in case of both Nx and Ny ==0 </span>
+061       dx=1;dy=1; <span class="comment">% just to get some value </span>
+062     <span class="keyword">end</span> 
+063   <span class="keyword">else</span> 
+064     dy=1; 
+065     <span class="keyword">if</span> isinf(dx) 
+066       dx=dy; 
+067     <span class="keyword">end</span> 
+068   <span class="keyword">end</span> 
+069 <span class="keyword">end</span> 
+070  
+071 vari=<span class="string">'t'</span>;  
+072 <span class="keyword">if</span> Nx&gt;0 
+073   vari=strcat(vari,<span class="string">'x'</span>); 
+074 <span class="keyword">end</span> 
+075 <span class="keyword">if</span> Ny&gt;0 
+076   vari=strcat(vari,<span class="string">'y'</span>); 
+077 <span class="keyword">end</span> 
+078 R=<a href="../../../wafo/spec/createcov.html" class="code" title=" Covariance class constructor ">createcov</a>(nr,vari); 
+079 R.tr=S.tr; 
+080 R.h=S.h; 
+081 R.norm=S.norm; 
+082 <span class="keyword">if</span> isfield(S,<span class="string">'note'</span>) 
+083   R.note=S.note; 
+084 <span class="keyword">end</span> 
+085  
+086 warning off 
+087 comment=1; 
+088 <span class="keyword">if</span> comment, 
+089   disp(<span class="string">'   Calculating covariances.'</span>) 
+090 <span class="keyword">end</span> 
+091 comment=0; 
+092 <span class="keyword">if</span> isfield(S,<span class="string">'f'</span>) 
+093   S.w=S.f*2*pi; 
+094   S.S=S.S/2/pi; 
+095 <span class="keyword">end</span> 
+096 <span class="keyword">if</span> ~isfield(S,<span class="string">'g'</span>) 
+097   S.g=<a href="../../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>; 
+098 <span class="keyword">end</span> 
+099 <span class="keyword">if</span> ~isfield(S,<span class="string">'theta'</span>) 
+100   S.theta=0; 
+101   S.S=S.S(:)'; 
+102 <span class="keyword">end</span> 
+103  
+104 nf= length(S.w); <span class="comment">%number of frequencies </span>
+105 np= length(S.theta); <span class="comment">% number of angles </span>
+106  
+107 <span class="keyword">if</span> Nx==Ny &amp; dx==dy, 
+108   symmetry=1;<span class="comment">%only able to exploit the symmetry S(x,y,w)=conj(S(y,x,w))  </span>
+109          <span class="comment">%if Nx=Ny,dx==dy </span>
+110 <span class="keyword">else</span> 
+111   symmetry=0;  
+112 <span class="keyword">end</span> 
+113 <span class="keyword">if</span> symmetry,  <span class="comment">% exploit the symmetry S(x,y,w)=conj(S(y,x,w))  </span>
+114   xi=((-Nx):0)'*dx;  
+115 <span class="keyword">else</span>      
+116   xi=((-Nx):Nx)'*dx;   
+117 <span class="keyword">end</span> 
+118 yi=((-Ny):Ny)'*dy; 
+119  
+120 [Xi Yi]=meshgrid(xi,yi); 
+121 NXYi=length(Xi(:)); 
+122  
+123 <span class="keyword">if</span> ~isfield(S,<span class="string">'phi'</span>) | isempty(S.phi), S.phi=0; <span class="keyword">end</span> 
+124  
+125 theta=S.theta(:)-S.phi;     <span class="comment">%make sure it is a column </span>
+126 S.theta=S.theta-S.phi; 
+127 Yi=Yi(:);Xi=Xi(:); 
+128  
+129 <span class="keyword">if</span> comment, 
+130   disp(<span class="string">'   ... initiate'</span>)  
+131 <span class="keyword">end</span> 
+132  
+133 DS2=(S.S)*S.w(<span class="keyword">end</span>); <span class="comment">% Normalizing </span>
+134 Sxy=zeros(nf,NXYi); 
+135 Sxyx=Sxy;Sxyxx=Sxy;Sxyxxx=Sxy;Sxyxxxx=Sxy; 
+136 <span class="keyword">if</span> np&gt;1 
+137   [kCtheta,kStheta]=<a href="../../../wafo/spec/w2k.html" class="code" title=" Translates from frequency to wave number">w2k</a>(S.w,S.theta,S.h,S.g); <span class="comment">%size np x nf </span>
+138   <span class="keyword">for</span> ix=1:NXYi, 
+139     Stheta=DS2.*exp(i*(Xi(ix).*kCtheta +Yi(ix).*kStheta)); 
+140     Sxy(:,ix)=<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(theta,Stheta).'; 
+141     <span class="keyword">if</span> nr&gt;0 
+142       Sxyx(:,ix)=<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(theta,i*kCtheta.*Stheta).'; 
+143       <span class="keyword">if</span> nr&gt;1 
+144     Sxyxx(:,ix)=<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(theta,-kCtheta.^2.*Stheta).'; 
+145     <span class="keyword">if</span> nr&gt;2 
+146       Sxyxxx(:,ix)=<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(theta,(-i*kCtheta.^3).*Stheta).'; 
+147       <span class="keyword">if</span> nr&gt;3 
+148         Sxyxxxx(:,ix)=<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(theta,(kCtheta.^4).*Stheta).'; 
+149       <span class="keyword">end</span> 
+150     <span class="keyword">end</span> 
+151       <span class="keyword">end</span> 
+152     <span class="keyword">end</span>   
+153   <span class="keyword">end</span> 
+154   clear kStheta 
+155 <span class="keyword">else</span> <span class="comment">%theta=0 </span>
+156   [kCtheta]=<a href="../../../wafo/spec/w2k.html" class="code" title=" Translates from frequency to wave number">w2k</a>(S.w,S.theta,S.h,S.g); 
+157   kCtheta=kCtheta(:)'; <span class="comment">%size 1 x nf </span>
+158   Stheta=(ones(size(Xi))*DS2).*exp(i*(Xi*kCtheta)); 
+159   Sxy=Stheta.'; 
+160   <span class="keyword">if</span> nr&gt;0 
+161     Sxyx=(i*(ones(NXYi,1)*kCtheta).*Stheta).'; 
+162     <span class="keyword">if</span> nr&gt;1 
+163       Sxyxx=(-(ones(NXYi,1)*kCtheta.^2).*Stheta).'; 
+164       <span class="keyword">if</span> nr&gt;2 
+165     Sxyxxx=(-i*(ones(NXYi,1)*kCtheta.^3).*Stheta).'; 
+166     <span class="keyword">if</span> nr&gt;3 
+167       Sxyxxxx=((ones(NXYi,1)*kCtheta.^4).*Stheta).'; 
+168     <span class="keyword">end</span> 
+169       <span class="keyword">end</span> 
+170     <span class="keyword">end</span> 
+171   <span class="keyword">end</span>   
+172 <span class="keyword">end</span> 
+173  
+174 clear DS2 kCtheta  Xi Yi theta Stheta  
+175 <span class="keyword">if</span> symmetry,   <span class="comment">% exploit the symmetry in calculating Sxy </span>
+176   Sxy=[Sxy conj(Sxy(1:nf,<span class="keyword">end</span>-2*Ny-1:-1:1))]; 
+177   <span class="keyword">if</span> nr&gt;0 
+178     Sxyx=[Sxyx -conj(Sxyx(1:nf,<span class="keyword">end</span>-2*Ny-1:-1:1))]; 
+179     <span class="keyword">if</span> nr&gt;1 
+180       Sxyxx=[Sxyxx conj(Sxyxx(1:nf,<span class="keyword">end</span>-2*Ny-1:-1:1))]; 
+181       <span class="keyword">if</span> nr&gt;2 
+182     Sxyxxx=[Sxyxxx -conj(Sxyxxx(1:nf,<span class="keyword">end</span>-2*Ny-1:-1:1))]; 
+183     <span class="keyword">if</span> nr&gt;3 
+184       Sxyxxxx=[Sxyxxxx conj(Sxyxxxx(1:nf,<span class="keyword">end</span>-2*Ny-1:-1:1))]; 
+185     <span class="keyword">end</span> 
+186       <span class="keyword">end</span> 
+187     <span class="keyword">end</span> 
+188   <span class="keyword">end</span> 
+189   xi=((-Nx):Nx)'*dx;  
+190   NXYi=length(xi)*length(yi); 
+191 <span class="keyword">end</span> 
+192 <span class="comment">% size(Sxy)=[nf NXYi] </span>
+193  
+194 <span class="keyword">if</span> comment, 
+195   disp(<span class="string">'   ... FFT'</span>) 
+196 <span class="keyword">end</span> 
+197 nfft=rate*2^nextpow2(2*nf-2); 
+198 rat=nfft/(2*nf-2); 
+199 Sxy=[Sxy; zeros(nfft-(2*nf)+2,NXYi); conj(Sxy(nf-1:-1:2,:))]; 
+200 cov=real(ifft(Sxy,nfft,1)).'*rat; <span class="comment">% size(cov) is NXYi  x nfft </span>
+201 <span class="comment">% size(cov) will now become 2*Ny+1 x 2*Nx+1 x Nt+1 </span>
+202 R.R=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);         <span class="comment">% for rshape: see end of this file </span>
+203  
+204 <span class="keyword">if</span> Nx&gt;0, R.x=xi; <span class="keyword">end</span>, <span class="keyword">if</span> Ny&gt;0, R.y=yi; <span class="keyword">end</span>, R.t=(0:Nt)'*pi/(S.w(nf))/rat; 
+205  
+206 <span class="keyword">if</span> nr&gt;0 
+207   w=S.w(:); 
+208   w=[w ; zeros(nfft-2*nf+2,1) ;-w(nf-1:-1:2) ]*ones(1,NXYi); 
+209   Sxy=i*w.*Sxy; 
+210   cov=real(ifft(Sxy,nfft,1)).'*rat; 
+211   R.Rt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                               <span class="comment">%r_t </span>
+212   <span class="keyword">if</span> Nx&gt;0 
+213     Sxyx=[Sxyx; zeros(nfft-(2*nf)+2,NXYi); conj(Sxyx(nf-1:-1:2,:))]; 
+214     cov=real(ifft(Sxyx,nfft,1)).'*rat; 
+215     R.Rx=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                             <span class="comment">%r_x </span>
+216   <span class="keyword">end</span> 
+217   <span class="keyword">if</span> nr&gt;1 
+218     Sxy=i*w.*Sxy; 
+219     cov=real(ifft(Sxy,nfft,1)).'*rat; 
+220     R.Rtt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                            <span class="comment">%r_tt </span>
+221     <span class="keyword">if</span> Nx&gt;0 
+222       Sxyxx=[Sxyxx; zeros(nfft-(2*nf)+2,NXYi); conj(Sxyxx(nf-1:-1:2,:))]; 
+223       cov=real(ifft(Sxyxx,nfft,1)).'*rat; 
+224       R.Rxx=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                          <span class="comment">%r_xx </span>
+225       cov=real(ifft(i*w.*Sxyx,nfft,1)).'*rat; 
+226       R.Rxt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                          <span class="comment">%r_xt </span>
+227     <span class="keyword">end</span> 
+228     <span class="keyword">if</span> nr&gt;2 
+229       Sxy=i*w.*Sxy; 
+230       cov=real(ifft(Sxy,nfft,1)).'*rat; 
+231       R.Rttt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                         <span class="comment">%r_ttt </span>
+232       <span class="keyword">if</span> Nx&gt;0 
+233     Sxyxxx=[Sxyxxx; zeros(nfft-(2*nf)+2,NXYi); conj(Sxyxxx(nf-1:-1:2,:))]; 
+234     cov=real(ifft(Sxyxxx,nfft,1)).'*rat; 
+235     R.Rxxx=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                       <span class="comment">%r_xxx </span>
+236     cov=real(ifft(i*w.*Sxyxx,nfft,1)).'*rat; 
+237     R.Rxxt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                       <span class="comment">%r_xxt </span>
+238     cov=real(ifft(-w.^2.*Sxyx,nfft,1)).'*rat; 
+239     R.Rxtt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                       <span class="comment">%r_xtt     </span>
+240       <span class="keyword">end</span> 
+241        <span class="keyword">if</span> nr&gt;3 
+242     Sxy=i*w.*Sxy; 
+243     cov=real(ifft(Sxy,nfft,1)).'*rat; 
+244     R.Rtttt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                      <span class="comment">%r_tttt </span>
+245     <span class="keyword">if</span> Nx&gt;0 
+246       cov=real(ifft([Sxyxxxx; zeros(nfft-(2*nf)+2,NXYi);<span class="keyword">...</span> 
+247            conj(Sxyxxxx(nf-1:-1:2,:))],nfft,1)).'*rat;   
+248       R.Rxxxx=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                    <span class="comment">%r_xxxx </span>
+249       cov=real(ifft(-i*w.^3.*Sxyx,nfft,1)).'*rat; 
+250       R.Rxttt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                    <span class="comment">%r_xttt </span>
+251       cov=real(ifft(-w.^2.*Sxyxx,nfft,1)).'*rat; 
+252       R.Rxxtt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                    <span class="comment">%r_xxtt </span>
+253       cov=real(ifft(i*w.*Sxyxxx,nfft,1)).'*rat; 
+254       R.Rxxxt=<a href="#_sub1" class="code" title="sub  cov=rshape(cov,Nt,Nx,Ny)">rshape</a>(cov,Nt,Nx,Ny);                    <span class="comment">%r_xxxt </span>
+255     <span class="keyword">end</span> 
+256       <span class="keyword">end</span> 
+257     <span class="keyword">end</span> 
+258   <span class="keyword">end</span> 
+259 <span class="keyword">end</span> 
+260 <span class="keyword">return</span> <span class="comment">%end dspec2dcov </span>
+261  
+262  
+263 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">% </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+264 <span class="keyword">function</span> cov=<a name="_sub1" href="#_subfunctions" class="code">rshape</a>(cov,Nt,Nx,Ny) 
+265 <span class="comment">% RSHAPE Change size of matrix, special for covariance function routine </span>
+266 <span class="comment">%   </span>
+267 <span class="comment">%  CALL:   Cout=rshape(Cin,Nt,Nx,Ny) </span>
+268 <span class="comment">% </span>
+269 <span class="comment">%     Cout = matrix, size [2*Nx+1 2*Ny+1 Nt+1], singleton dimensions removed </span>
+270 <span class="comment">%     Cin  = matrix, size=[m n] where m&gt;=(2*Nx+1)*(2*Ny+1), n&gt;=Nt+1 </span>
+271 <span class="comment">%           rows below (2*Nx+1)*(2*Ny+1) and columns beyond Nt+1 are neglected </span>
+272 <span class="comment">%     Nt,Nx,Ny = integers defining  size of output matrix   </span>
+273  
+274 <span class="keyword">if</span> Nx&gt;0 
+275   <span class="keyword">if</span> Ny&gt;0 
+276     cov=reshape(cov(1:(2*Nx+1)*(2*Ny+1),1:Nt+1),2*Ny+1,2*Nx+1,Nt+1); 
+277   <span class="keyword">else</span> 
+278     cov=reshape(cov(1:2*Nx+1,1:Nt+1),2*Nx+1,Nt+1); 
+279   <span class="keyword">end</span> 
+280 <span class="keyword">elseif</span> Ny&gt;0 
+281   cov=reshape(cov(1:2*Ny+1,1:Nt+1),2*Ny+1,Nt+1); 
+282 <span class="keyword">else</span> 
+283   cov=reshape(cov(1:Nt+1),Nt+1); 
+284 <span class="keyword">end</span> 
+285 <span class="keyword">return</span>  <span class="comment">%end rshape </span>
+286</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

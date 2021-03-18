@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of hboot</title>
+  <meta name="keywords" content="hboot">
+  <meta name="description" content="  Bootstrap cross-validation estimate of smoothing parameter.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; hboot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>hboot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Bootstrap cross-validation estimate of smoothing parameter.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [h,hvec,score]=hboot(A,kernel,hvec) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="hboot.html" class="code" title="  Bootstrap cross-validation estimate of smoothing parameter. ">HBOOT</a>  Bootstrap cross-validation estimate of smoothing parameter. 
+  
+  CALL: [hs,hvec,score] = <a href="hboot.html" class="code" title="  Bootstrap cross-validation estimate of smoothing parameter. ">hboot</a>(data,kernel,hvec);  
+   
+    hs     = smoothing parameter 
+    hvec   = vector defining possible values of hs 
+             (default linspace(0.25*h0,h0,100), h0=<a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>(data,kernel)) 
+    score  = score vector 
+    data   = data vector 
+    kernel = 'epanechnikov'  - Epanechnikov kernel.  
+             'biweight'      - Bi-weight kernel. 
+             'triweight'     - Tri-weight kernel.   
+             'triangluar'    - Triangular kernel. 
+             'gaussian'      - Gaussian kernel 
+             'rectangular'   - Rectanguler kernel.  
+             'laplace'       - Laplace kernel. 
+             'logistic'      - Logistic kernel. 
+  
+   Note that only the first 4 letters of the kernel name is needed. 
+    
+   Example: data = <a href="../../wafo/wstats/wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(0, 1,20,1) 
+           [hs hvec score] = <a href="hboot.html" class="code" title="  Bootstrap cross-validation estimate of smoothing parameter. ">hboot</a>(data,'epan'); 
+           plot(hvec,score)  
+  See also  <a href="hste.html" class="code" title=" 2-Stage Solve the Equation estimate of smoothing parameter. ">hste</a>, <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">hbcv</a>, <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>, <a href="hldpi.html" class="code" title=" L-stage Direct Plug-In estimate of smoothing parameter. ">hldpi</a>, <a href="hlscv.html" class="code" title="  Least Squares Cross-Validation estimate of smoothing parameter ">hlscv</a>, <a href="hscv.html" class="code" title=" Smoothed cross-validation estimate of smoothing parameter. ">hscv</a>, <a href="hstt.html" class="code" title=" Scott-Tapia-Thompson estimate of smoothing parameter. ">hstt</a>, <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>, <a href="kdefun.html" class="code" title="  Kernel Density Estimator. ">kdefun</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="hos.html" class="code" title=" h=hos(A,kernel)">hos</a></li></TD>
+<TD> Oversmoothing Parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="kernelstats.html" class="code" title=" [mu2, R, Rdd] = kernelstats(kernel)">kernelstats</a></li></TD>
+<TD> Return 2'nd order moment of kernel pdf</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [h,hvec,score]=<a name="_sub0" href="#_subfunctions" class="code">hboot</a>(A,kernel,hvec) 
+002 <span class="comment">%HBOOT  Bootstrap cross-validation estimate of smoothing parameter. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL: [hs,hvec,score] = hboot(data,kernel,hvec);  </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%   hs     = smoothing parameter </span>
+007 <span class="comment">%   hvec   = vector defining possible values of hs </span>
+008 <span class="comment">%            (default linspace(0.25*h0,h0,100), h0=hos(data,kernel)) </span>
+009 <span class="comment">%   score  = score vector </span>
+010 <span class="comment">%   data   = data vector </span>
+011 <span class="comment">%   kernel = 'epanechnikov'  - Epanechnikov kernel.  </span>
+012 <span class="comment">%            'biweight'      - Bi-weight kernel. </span>
+013 <span class="comment">%            'triweight'     - Tri-weight kernel.   </span>
+014 <span class="comment">%            'triangluar'    - Triangular kernel. </span>
+015 <span class="comment">%            'gaussian'      - Gaussian kernel </span>
+016 <span class="comment">%            'rectangular'   - Rectanguler kernel.  </span>
+017 <span class="comment">%            'laplace'       - Laplace kernel. </span>
+018 <span class="comment">%            'logistic'      - Logistic kernel. </span>
+019 <span class="comment">% </span>
+020 <span class="comment">%  Note that only the first 4 letters of the kernel name is needed. </span>
+021 <span class="comment">%   </span>
+022 <span class="comment">%  Example: data = wnormrnd(0, 1,20,1) </span>
+023 <span class="comment">%          [hs hvec score] = hboot(data,'epan'); </span>
+024 <span class="comment">%          plot(hvec,score)  </span>
+025 <span class="comment">% See also  hste, hbcv, hos, hldpi, hlscv, hscv, hstt, kde, kdefun  </span>
+026  
+027 <span class="comment">% tested on : matlab 5.2 </span>
+028 <span class="comment">% history: </span>
+029 <span class="comment">% revised pab dec2003 </span>
+030 <span class="comment">%  -fixed a bug in default value for hvec   </span>
+031 <span class="comment">% revised pab 20.10.1999 </span>
+032 <span class="comment">%   updated to matlab 5.2 </span>
+033 <span class="comment">% changed input arguments </span>
+034 <span class="comment">% taken from kdetools     Christian C. Beardah 1995  </span>
+035  
+036 A=A(:); 
+037 n=length(A); 
+038  
+039 <span class="keyword">if</span> nargin&lt;3|isempty(hvec), 
+040   H    = <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>(A,kernel); 
+041   hvec = linspace(0.25*H,H,100); 
+042 <span class="keyword">else</span> 
+043   hvec=abs(hvec); 
+044 <span class="keyword">end</span>; 
+045    
+046 steps=length(hvec); 
+047  
+048  
+049 M=A*ones(size(A')); 
+050  
+051 Y1=(M-M'); 
+052   
+053 [mu2,R] = <a href="kernelstats.html" class="code" title=" Return 2'nd order moment of kernel pdf ">kernelstats</a>(kernel); 
+054 STEconstant =  R /(mu2^(2)*n); 
+055  
+056 kernel2 = <span class="string">'gauss'</span>; 
+057 [mu2,R] = <a href="kernelstats.html" class="code" title=" Return 2'nd order moment of kernel pdf ">kernelstats</a>(kernel2); 
+058 STEconstant2 =  R /(mu2^(2)*n); 
+059  
+060 hvec = hvec*(STEconstant2/STEconstant)^(1/5); 
+061  
+062  
+063 <span class="keyword">for</span> i=1:steps, 
+064  
+065   Y=-Y1.^2/(4*hvec(i)^2); 
+066  
+067   T1=exp(Y/2); 
+068  
+069   T1=T1-diag(diag(T1)); 
+070  
+071   T2=-4*exp(Y/1.5)/sqrt(3); 
+072  
+073   T2=T2-diag(diag(T2)); 
+074  
+075   T3=sqrt(2)*exp(Y); 
+076  
+077   T3=T3-diag(diag(T3)); 
+078  
+079   T=T1+T2+T3; 
+080  
+081   T=sum(sum(T))+n*sqrt(2); 
+082  
+083   score(i)=T/(2*n^2*hvec(i)*sqrt(2*pi)); 
+084  
+085 <span class="keyword">end</span>; 
+086  
+087 [L,I]=min(score); 
+088  
+089 hvec = hvec*(STEconstant/STEconstant2)^(1/5); 
+090  
+091  
+092 h=hvec(I); 
+093</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

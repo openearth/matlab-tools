@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Chapter1</title>
+  <meta name="keywords" content="Chapter1">
+  <meta name="description" content=" % CHAPTER1 demonstrates some applications of WAFO">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">tutorcom</a> &gt; Chapter1.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\tutorcom&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>Chapter1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> % CHAPTER1 demonstrates some applications of WAFO</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> % <a href="Chapter1.html" class="code" title=" % CHAPTER1 demonstrates some applications of WAFO">CHAPTER1</a> demonstrates some applications of WAFO
+ 
+  <a href="Chapter1.html" class="code" title=" % CHAPTER1 demonstrates some applications of WAFO">CHAPTER1</a> gives an overview through examples some of the capabilities of
+  WAFO. WAFO is a toolbox of Matlab routines for statistical analysis and
+  simulation of random waves and loads.
+ 
+  The commands are edited for fast computation.
+  Each set of commands is followed by a 'pause' command.
+  Type 'pause off' to disable them.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2spec.html" class="code" title=" [S,fcut] = dat2spec(xn,varargin)">dat2spec</a></li></TD>
+<TD> Estimate one-sided spectral density from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2wa.html" class="code" title=" [T, index,ind] = dat2wa(xn,h,pdef,wdef,rate)">dat2wa</a></li></TD>
+<TD> Extracts sequence of wavelengths from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/mkdspec.html" class="code" title=" Snew=mkdspec(S,D,plotflag)">mkdspec</a></li></TD>
+<TD> Make a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wsim/seasim.html" class="code" title=" [Y,Mv]=seasim(spec,Nx,Ny,Nt,dx,dy,dt,fftdim,plotflag);">seasim</a></li></TD>
+<TD> Spectral simulation of a Gaussian sea, 2D (x,t) or 3D (x,y,t)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2cmat.html" class="code" title=" [f, fmm] = spec2cmat(spec,utc,def,paramt,paramu,nit)">spec2cmat</a></li></TD>
+<TD> Joint intensity matrix for cycles (max,min)-, rainflow- and (crest,trough)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wsim/spec2sdat.html" class="code" title=" [x,xder]=spec2sdat(S,np,dt,iseed,method)">spec2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" [f] = spec2tpdf(spec,utc,def,paramt,h,nit,speed,bound,plotflag)">spec2tpdf</a></li></TD>
+<TD> Evaluates densities for crest-,trough-period, length.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/spreading.html" class="code" title=" D = spreading(th,type,th0,data,w,def)">spreading</a></li></TD>
+<TD> Directional spreading functions</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/torsethaugen.html" class="code" title=" [S, Sw, Ss]=torsethaugen(w1,sdata,plotflag)">torsethaugen</a></li></TD>
+<TD> Calculates a double peaked (swell + wind) spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" [RFC,RFC1,res,def] = tp2rfc(x,def,RFC0,res0)">tp2rfc</a></li></TD>
+<TD> Finds the rainflow cycles from the sequence of turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/wafostamp.html" class="code" title=" [H,ax]=wafostamp(varargin)">wafostamp</a></li></TD>
+<TD> Prints a caption "made by WAFO" in current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/waveplot.html" class="code" title=" Nf1 = waveplot(x,varargin)">waveplot</a></li></TD>
+<TD> Plots the surface elevation of timeseries.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/whisto.html" class="code" title=" binwidth = whisto(x,N,odd,scale,lintype)">whisto</a></li></TD>
+<TD> Plots a histogram</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">%<span class="comment">% CHAPTER1 demonstrates some applications of WAFO</span></span>
+002 <span class="comment">%</span>
+003 <span class="comment">% CHAPTER1 gives an overview through examples some of the capabilities of</span>
+004 <span class="comment">% WAFO. WAFO is a toolbox of Matlab routines for statistical analysis and</span>
+005 <span class="comment">% simulation of random waves and loads.</span>
+006 <span class="comment">%</span>
+007 <span class="comment">% The commands are edited for fast computation.</span>
+008 <span class="comment">% Each set of commands is followed by a 'pause' command.</span>
+009 <span class="comment">% Type 'pause off' to disable them.</span>
+010 
+011 <span class="comment">% Tested on Matlab 5.3, 7.0</span>
+012 <span class="comment">% History</span>
+013 <span class="comment">% Revised pab sept2005</span>
+014 <span class="comment">%  Added sections -&gt; easier to evaluate using cellmode evaluation.</span>
+015 <span class="comment">% Revised pab Dec 2004</span>
+016 <span class="comment">% Added support for publish.m command in matlab R14</span>
+017 <span class="comment">% Created by GL July 13, 2000</span>
+018 <span class="comment">% from commands used in Chapter 1 of the tutorial</span>
+019 
+020 pstate = <span class="string">'off'</span>
+021 
+022 <span class="comment">%<span class="comment">% Section 1.4 Some applications of WAFO</span></span>
+023 
+024 <span class="comment">%<span class="comment">% Section 1.4.1 Simulation from spectrum, estimation of spectrum </span></span>
+025 <span class="comment">%<span class="comment">% Simulation of the sea surface from spectrum</span></span>
+026 <span class="comment">%The following code generates 200 seconds of data sampled with 10Hz from</span>
+027 <span class="comment">%the Torsethaugen spectrum</span>
+028 Hm0 = 6;
+029 Tp  = 8;
+030 S1=<a href="../../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>([],[Hm0 Tp],1);
+031 clf
+032 dt = 0.1;
+033 N = 2000;
+034 xs=<a href="../../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S1,N,dt);
+035 
+036 clf
+037 <a href="../../../wafo/onedim/waveplot.html" class="code" title=" Plots the surface elevation of timeseries.">waveplot</a>(xs,<span class="string">'-'</span>)
+038 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>)
+039 pause(pstate)
+040 
+041 <span class="comment">%<span class="comment">% Estimation of spectrum </span></span>
+042 <span class="comment">%A common situation is that one wants to estimate the spectrum for wave</span>
+043 <span class="comment">%measurements. The following code simulate 20 minutes signal sampled at 4Hz</span>
+044 <span class="comment">%and compare the spectral estimate with the original Torsethaugen spectum.</span>
+045 clf
+046 xs=<a href="../../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S1,[20*60*4 1],0.25);
+047 Sest = <a href="../../../wafo/onedim/dat2spec.html" class="code" title=" Estimate one-sided spectral density from data.">dat2spec</a>(xs,400)
+048 <a href="../../../wafo/spec/wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(Sest,1,<span class="string">'--'</span>), hold on
+049 <a href="../../../wafo/spec/wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S1,1), hold off
+050 axis([0 3 0 5])
+051 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>)
+052 pause(pstate)
+053 
+054 
+055 <span class="comment">%<span class="comment">% Section 1.4.2 Probability distributions of wave characteristics.</span></span>
+056 <span class="comment">%<span class="comment">% Probability distribution of wave trough period</span></span>
+057 <span class="comment">%WAFO gives the possibility of computing the exact probability</span>
+058 <span class="comment">%distributions for a number of characteristics given a spectral density.</span>
+059 <span class="comment">%In the following example we study the trough period extracted from the</span>
+060 <span class="comment">%time series and compared with the theoretical density computed with exact</span>
+061 <span class="comment">%spectrum, S1, and the estimated spectrum, Sest.</span>
+062 
+063 clf
+064 [T, index] = <a href="../../../wafo/onedim/dat2wa.html" class="code" title=" Extracts sequence of wavelengths from data.">dat2wa</a>(xs,0,<span class="string">'d2u'</span>);
+065 <a href="../../../wafo/wstats/whisto.html" class="code" title=" Plots a histogram">whisto</a>(T,25,1,1), hold on
+066 dtyex = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(S1,[],<span class="string">'Tt'</span>,[0 10 51],0,3);
+067 dtyest = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(Sest,[],<span class="string">'Tt'</span>,[0 10 51],0,3);
+068 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(dtyex)
+069 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(dtyest,<span class="string">'-.'</span>)
+070 axis([0 10 0 0.35]), hold off
+071 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>)
+072 pause(pstate)
+073 
+074 <span class="comment">%<span class="comment">% Section 1.4.3 Directional spectra</span></span>
+075 <span class="comment">%Here are a few lines of code, which produce directional spectra </span>
+076 <span class="comment">%with frequency independent and frequency dependent spreading.</span>
+077 clf
+078 D1 = <a href="../../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a>(101,<span class="string">'cos'</span>,pi/2,[15],[],0); <span class="comment">% frequency independent</span>
+079 D12 = <a href="../../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a>(101,<span class="string">'cos'</span>,0,[15],S1.w,1); <span class="comment">% frequency dependent</span>
+080 SD1 = <a href="../../../wafo/spec/mkdspec.html" class="code" title=" Make a directional spectrum">mkdspec</a>(S1,D1);
+081 SD12 = <a href="../../../wafo/spec/mkdspec.html" class="code" title=" Make a directional spectrum">mkdspec</a>(S1,D12);
+082 <a href="../../../wafo/spec/wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(SD1,1), hold on, <a href="../../../wafo/spec/wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(SD12,1,<span class="string">'-.'</span>); hold off
+083 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>)
+084 pause(pstate)
+085 
+086 
+087 <span class="comment">%<span class="comment">% 3D Simulation of the sea surface </span></span>
+088 <span class="comment">% The simulations show that frequency dependent spreading leads to</span>
+089 <span class="comment">% much more irregular surface so the orientation of waves is less</span>
+090 <span class="comment">% transparent compared to the frequency independent case.</span>
+091 
+092 <span class="comment">% Frequency independent spreading</span>
+093 Y1=<a href="../../../wafo/wsim/seasim.html" class="code" title=" Spectral simulation of a Gaussian sea, 2D (x,t) or 3D (x,y,t)">seasim</a>(SD1,2^8,2^8,1,0.5,0.5,0.25,2,1);
+094 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>)
+095 pause(pstate)
+096 <span class="comment">%<span class="comment">%</span></span>
+097 <span class="comment">% Frequency dependent spreading</span>
+098 Y12=<a href="../../../wafo/wsim/seasim.html" class="code" title=" Spectral simulation of a Gaussian sea, 2D (x,t) or 3D (x,y,t)">seasim</a>(SD12,2^8,2^8,1,0.5,0.5,0.25,2,1);
+099 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>)
+100 pause(pstate)
+101 
+102 <span class="comment">%<span class="comment">% Section 1.4.4 Fatigue, Load cycles and Markov models.</span></span>
+103 <span class="comment">%<span class="comment">% Switching Markow chain of turningpoints </span></span>
+104 <span class="comment">% Here the Markov approximation for computing the intensity of</span>
+105 <span class="comment">% rainflowcycles for the Gaussian model with spectrum S1</span>
+106 clf
+107 frfc=<a href="../../../wafo/trgauss/spec2cmat.html" class="code" title=" Joint intensity matrix for cycles (max,min)-, rainflow- and (crest,trough) ">spec2cmat</a>(S1,[],<span class="string">'rfc'</span>,[],[-6 6 61]);
+108 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(frfc);
+109 hold on
+110 tp=<a href="../../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(xs);
+111 rfc=<a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(tp);
+112 plot(rfc(:,2),rfc(:,1),<span class="string">'.'</span>)
+113 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>)
+114 hold off
+115</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

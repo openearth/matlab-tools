@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of hns</title>
+  <meta name="keywords" content="hns">
+  <meta name="description" content=" Normal Scale Estimate of Smoothing Parameter.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; hns.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>hns
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Normal Scale Estimate of Smoothing Parameter.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> h=hns(A,kernel) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a> Normal Scale Estimate of Smoothing Parameter. 
+  
+  CALL:  h = <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">hns</a>(data,kernel) 
+  
+    h      = one dimensional optimal value for smoothing parameter 
+             given the data and kernel.  size 1 x D 
+    data   = data matrix, size N x D (D = # dimensions ) 
+    kernel = 'epanechnikov'  - Epanechnikov kernel. 
+             'biweight'      - Bi-weight kernel. 
+             'triweight'     - Tri-weight kernel.   
+             'triangluar'    - Triangular kernel. 
+             'gaussian'      - Gaussian kernel 
+             'rectangular'   - Rectanguler kernel.  
+             'laplace'       - Laplace kernel. 
+             'logistic'      - Logistic kernel. 
+    
+   Note that only the first 4 letters of the kernel name is needed. 
+   
+  <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a> only gives an optimal value with respect to mean integrated  
+  square error, when the true underlying distribution  
+  is Gaussian. This works reasonably well if the data resembles a 
+  Gaussian distribution. However if the distribution is asymmetric, 
+  multimodal or have long tails then <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a> may  return a to large 
+  smoothing parameter, i.e., the <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> may be oversmoothed and mask 
+  important features of the data. (=&gt; large bias). 
+  One way to remedy this is to reduce H by multiplying with a constant  
+  factor, e.g., 0.85. Another is to try different values for H and make a  
+  visual check by eye. 
+  
+   Example: data = <a href="../../wafo/wstats/wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(0, 1,20,1) 
+            h = <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">hns</a>(data,'epan'); 
+    
+  See also  <a href="hste.html" class="code" title=" 2-Stage Solve the Equation estimate of smoothing parameter. ">hste</a>, <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">hbcv</a>, <a href="hboot.html" class="code" title="  Bootstrap cross-validation estimate of smoothing parameter. ">hboot</a>, <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>, <a href="hldpi.html" class="code" title=" L-stage Direct Plug-In estimate of smoothing parameter. ">hldpi</a>, <a href="hlscv.html" class="code" title="  Least Squares Cross-Validation estimate of smoothing parameter ">hlscv</a>, <a href="hscv.html" class="code" title=" Smoothed cross-validation estimate of smoothing parameter. ">hscv</a>, <a href="hstt.html" class="code" title=" Scott-Tapia-Thompson estimate of smoothing parameter. ">hstt</a>, <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="kernelstats.html" class="code" title=" [mu2, R, Rdd] = kernelstats(kernel)">kernelstats</a></li></TD>
+<TD> Return 2'nd order moment of kernel pdf</TD>
+</TR>
+<TR>
+<TD><li><a href="qlevels2.html" class="code" title=" [q, p]=qlevels2(r,p,method)">qlevels2</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of data</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="hmns.html" class="code" title=" h=hmns(A,kernel)">hmns</a></li></TD>
+<TD> Multivariate Normal Scale Estimate of Smoothing Parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hos.html" class="code" title=" h=hos(A,kernel)">hos</a></li></TD>
+<TD> Oversmoothing Parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hste.html" class="code" title=" h=hste(A,kernel,h,inc,maxit,releps,abseps)">hste</a></li></TD>
+<TD> 2-Stage Solve the Equation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hstt.html" class="code" title=" h=hstt(A,kernel,inc,maxit,releps,abseps)">hstt</a></li></TD>
+<TD> Scott-Tapia-Thompson estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="kdedemo1.html" class="code" title="This is a script file.">kdedemo1</a></li></TD>
+<TD> Demonstrate the smoothing parameter impact on KDE</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> h=<a name="_sub0" href="#_subfunctions" class="code">hns</a>(A,kernel) 
+002 <span class="comment">%HNS Normal Scale Estimate of Smoothing Parameter. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  h = hns(data,kernel) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   h      = one dimensional optimal value for smoothing parameter </span>
+007 <span class="comment">%            given the data and kernel.  size 1 x D </span>
+008 <span class="comment">%   data   = data matrix, size N x D (D = # dimensions ) </span>
+009 <span class="comment">%   kernel = 'epanechnikov'  - Epanechnikov kernel. </span>
+010 <span class="comment">%            'biweight'      - Bi-weight kernel. </span>
+011 <span class="comment">%            'triweight'     - Tri-weight kernel.   </span>
+012 <span class="comment">%            'triangluar'    - Triangular kernel. </span>
+013 <span class="comment">%            'gaussian'      - Gaussian kernel </span>
+014 <span class="comment">%            'rectangular'   - Rectanguler kernel.  </span>
+015 <span class="comment">%            'laplace'       - Laplace kernel. </span>
+016 <span class="comment">%            'logistic'      - Logistic kernel. </span>
+017 <span class="comment">%   </span>
+018 <span class="comment">%  Note that only the first 4 letters of the kernel name is needed. </span>
+019 <span class="comment">%  </span>
+020 <span class="comment">% HNS only gives an optimal value with respect to mean integrated  </span>
+021 <span class="comment">% square error, when the true underlying distribution  </span>
+022 <span class="comment">% is Gaussian. This works reasonably well if the data resembles a </span>
+023 <span class="comment">% Gaussian distribution. However if the distribution is asymmetric, </span>
+024 <span class="comment">% multimodal or have long tails then HNS may  return a to large </span>
+025 <span class="comment">% smoothing parameter, i.e., the KDE may be oversmoothed and mask </span>
+026 <span class="comment">% important features of the data. (=&gt; large bias). </span>
+027 <span class="comment">% One way to remedy this is to reduce H by multiplying with a constant  </span>
+028 <span class="comment">% factor, e.g., 0.85. Another is to try different values for H and make a  </span>
+029 <span class="comment">% visual check by eye. </span>
+030 <span class="comment">% </span>
+031 <span class="comment">%  Example: data = wnormrnd(0, 1,20,1) </span>
+032 <span class="comment">%           h = hns(data,'epan'); </span>
+033 <span class="comment">%   </span>
+034 <span class="comment">% See also  hste, hbcv, hboot, hos, hldpi, hlscv, hscv, hstt, kde </span>
+035  
+036 <span class="comment">% Reference:   </span>
+037 <span class="comment">%  B. W. Silverman (1986)  </span>
+038 <span class="comment">% 'Density estimation for statistics and data analysis'   </span>
+039 <span class="comment">%  Chapman and Hall, pp 43-48  </span>
+040  
+041 <span class="comment">%  Wand,M.P. and Jones, M.C. (1995)  </span>
+042 <span class="comment">% 'Kernel smoothing' </span>
+043 <span class="comment">%  Chapman and Hall, pp 60--63 </span>
+044  
+045  
+046 <span class="comment">%Tested on: matlab 5.3 </span>
+047 <span class="comment">% History: </span>
+048 <span class="comment">% revised pab dec2003 </span>
+049 <span class="comment">%  fixed a bug when D&gt;1   </span>
+050 <span class="comment">% revised pab 21.09.99 </span>
+051 <span class="comment">%  </span>
+052 <span class="comment">% updated string comparisons </span>
+053 <span class="comment">% from kdetools </span>
+054  
+055 <span class="keyword">if</span> nargin&lt;2|isempty(kernel) 
+056  kernel=<span class="string">'gauss'</span>; 
+057 <span class="keyword">end</span> 
+058 [n, d] = size(A); 
+059 <span class="keyword">if</span> (n==1) &amp; (d&gt;1), 
+060   A=A.'; 
+061   n=d; 
+062   d=1; 
+063 <span class="keyword">end</span> 
+064 <span class="comment">% R= int(mkernel(x)^2) </span>
+065 <span class="comment">% mu2= int(x^2*mkernel(x)) </span>
+066 [mu2,R] = <a href="kernelstats.html" class="code" title=" Return 2'nd order moment of kernel pdf ">kernelstats</a>(kernel); 
+067 AMISEconstant = (8*sqrt(pi)*R/(3*mu2^2*n))^(1/5); 
+068  
+069 iqr  = abs(diff(<a href="qlevels2.html" class="code" title=" Calculates quantile levels which encloses P% of data ">qlevels2</a>(A,[75 25]),1,1)); <span class="comment">% interquartile range </span>
+070 stdA = std(A); 
+071 h    = stdA*AMISEconstant; 
+072 k = find(iqr&gt;0); 
+073 <span class="keyword">if</span> any(k) 
+074   <span class="comment">% use of interquartile range guards against outliers. </span>
+075   <span class="comment">% the use of interquartile range is better if  </span>
+076   <span class="comment">% the distribution is skew or have heavy tails </span>
+077   <span class="comment">% This lessen the chance of oversmoothing. </span>
+078   h(k)=min(stdA(k),iqr(k)/1.349)*AMISEconstant; 
+079 <span class="keyword">end</span> 
+080  
+081 <span class="keyword">return</span> 
+082  
+083  
+084   
+085  
+086</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of hbcv2</title>
+  <meta name="keywords" content="hbcv2">
+  <meta name="description" content=" Biased Cross-Validation smoothing parameter for 2D data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; hbcv2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>hbcv2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Biased Cross-Validation smoothing parameter for 2D data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> h=hbcv2(A,kernel) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="hbcv2.html" class="code" title=" Biased Cross-Validation smoothing parameter for 2D data. ">HBCV2</a> Biased Cross-Validation smoothing parameter for 2D data. 
+            
+  CALL: [hs,hvec,score] = <a href="hbcv2.html" class="code" title=" Biased Cross-Validation smoothing parameter for 2D data. ">hbcv2</a>(data,kernel);  
+   
+    hs     = smoothing parameter 
+    data   = two column data matrix 
+    kernel = 'gaussian'      - Gaussian kernel 
+             'epanechnikov'  - Epanechnikov kernel. 
+             'biweight'      - Bi-weight kernel. 
+             'triweight'     - Tri-weight kernel.   
+             'triangluar'    - Triangular kernel.  
+             'rectangular'   - Rectanguler kernel.  
+             'laplace'       - Laplace kernel. 
+             'logistic'      - Logistic kernel. 
+  
+   Note that only the first 4 letters of the kernel name is needed. 
+    
+   <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a> is a hybrid of crossvalidation and direct plug-in estimates. 
+   The main attraction of <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a> is that it is more stable than <a href="hlscv.html" class="code" title="  Least Squares Cross-Validation estimate of smoothing parameter ">HLSCV</a> in 
+   the sense that its asymptotic variance is considerably lower. However, 
+   this reduction in variance comes at the expense of an increase in 
+   bias, with <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a> tending to be larger than the <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a> estimate. 
+   Asymptotically <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a> has a relative slow convergence rate. 
+  
+   Example: data = <a href="../../wafo/wstats/wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(0, 1,20,2) 
+           hs = <a href="hbcv2.html" class="code" title=" Biased Cross-Validation smoothing parameter for 2D data. ">hbcv2</a>(data,'gaus'); 
+  
+  See also  <a href="hste.html" class="code" title=" 2-Stage Solve the Equation estimate of smoothing parameter. ">hste</a>, <a href="hboot.html" class="code" title="  Bootstrap cross-validation estimate of smoothing parameter. ">hboot</a>, <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">hns</a>, <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>, <a href="hldpi.html" class="code" title=" L-stage Direct Plug-In estimate of smoothing parameter. ">hldpi</a>, <a href="hlscv.html" class="code" title="  Least Squares Cross-Validation estimate of smoothing parameter ">hlscv</a>, <a href="hscv.html" class="code" title=" Smoothed cross-validation estimate of smoothing parameter. ">hscv</a>, <a href="hstt.html" class="code" title=" Scott-Tapia-Thompson estimate of smoothing parameter. ">hstt</a>, <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>, <a href="kdefun.html" class="code" title="  Kernel Density Estimator. ">kdefun</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="hste.html" class="code" title=" h=hste(A,kernel,h,inc,maxit,releps,abseps)">hste</a></li></TD>
+<TD> 2-Stage Solve the Equation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="kernelstats.html" class="code" title=" [mu2, R, Rdd] = kernelstats(kernel)">kernelstats</a></li></TD>
+<TD> Return 2'nd order moment of kernel pdf</TD>
+</TR>
+<TR>
+<TD><li><a href="mkernel.html" class="code" title=" [z,c]=mkernel(varargin)">mkernel</a></li></TD>
+<TD> Multivariate Kernel Function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\norm.bi">norm</a></li></TD>
+<TD>          Matrix or vector norm.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> z=bcv2(A,h1,h2)</a></li><li><a href="#_sub2" class="code"> X=remzero(X)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> h=<a name="_sub0" href="#_subfunctions" class="code">hbcv2</a>(A,kernel) 
+002 <span class="comment">%HBCV2 Biased Cross-Validation smoothing parameter for 2D data. </span>
+003 <span class="comment">%           </span>
+004 <span class="comment">% CALL: [hs,hvec,score] = hbcv2(data,kernel);  </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%   hs     = smoothing parameter </span>
+007 <span class="comment">%   data   = two column data matrix </span>
+008 <span class="comment">%   kernel = 'gaussian'      - Gaussian kernel </span>
+009 <span class="comment">%            'epanechnikov'  - Epanechnikov kernel. </span>
+010 <span class="comment">%            'biweight'      - Bi-weight kernel. </span>
+011 <span class="comment">%            'triweight'     - Tri-weight kernel.   </span>
+012 <span class="comment">%            'triangluar'    - Triangular kernel.  </span>
+013 <span class="comment">%            'rectangular'   - Rectanguler kernel.  </span>
+014 <span class="comment">%            'laplace'       - Laplace kernel. </span>
+015 <span class="comment">%            'logistic'      - Logistic kernel. </span>
+016 <span class="comment">% </span>
+017 <span class="comment">%  Note that only the first 4 letters of the kernel name is needed. </span>
+018 <span class="comment">%   </span>
+019 <span class="comment">%  HBCV is a hybrid of crossvalidation and direct plug-in estimates. </span>
+020 <span class="comment">%  The main attraction of HBCV is that it is more stable than HLSCV in </span>
+021 <span class="comment">%  the sense that its asymptotic variance is considerably lower. However, </span>
+022 <span class="comment">%  this reduction in variance comes at the expense of an increase in </span>
+023 <span class="comment">%  bias, with HBCV tending to be larger than the HNS estimate. </span>
+024 <span class="comment">%  Asymptotically HBCV has a relative slow convergence rate. </span>
+025 <span class="comment">% </span>
+026 <span class="comment">%  Example: data = wnormrnd(0, 1,20,2) </span>
+027 <span class="comment">%          hs = hbcv2(data,'gaus'); </span>
+028 <span class="comment">% </span>
+029 <span class="comment">% See also  hste, hboot, hns, hos, hldpi, hlscv, hscv, hstt, kde, kdefun    </span>
+030  
+031  
+032 <span class="comment">% tested on : matlab 5.2 </span>
+033 <span class="comment">% history: </span>
+034 <span class="comment">% revised pab aug2005 </span>
+035 <span class="comment">% -added ad hoc support for other kernels than Gaussian </span>
+036 <span class="comment">% Revised pab dec 2003 </span>
+037 <span class="comment">%  -fixed some bugs   </span>
+038 <span class="comment">%  -added todo comments  </span>
+039 <span class="comment">% revised pab 20.10.1999 </span>
+040 <span class="comment">%   updated to matlab 5.2 </span>
+041 <span class="comment">% changed input arguments </span>
+042 <span class="comment">% taken from kdetools     Christian C. Beardah 1993-94 </span>
+043  
+044 <span class="comment">% TODO <span class="comment">% Add support for other kernels than Gaussian   </span></span>
+045  
+046  
+047 <span class="comment">% Transform A so rows have st. dev.=1: </span>
+048  
+049 [n d]=size(A); 
+050 <span class="keyword">if</span> d~=2, 
+051   error(<span class="string">'Wrong shape of data'</span>) 
+052 <span class="keyword">end</span> 
+053 oldA=A; 
+054 A=(oldA-ones(n,1)*mean(oldA))*diag([1./std(oldA)]); <span class="comment">% centre data about </span>
+055                                                     <span class="comment">% its mean </span>
+056 maxit=20; 
+057  
+058 tol=1e-2; 
+059  
+060 gradf=zeros(2,1); 
+061  
+062 delta=1e-6; 
+063  
+064 i=0; 
+065  
+066 vx(1)=<a href="hste.html" class="code" title=" 2-Stage Solve the Equation estimate of smoothing parameter. ">hste</a>(A(:,1),kernel); 
+067 vy(1)=<a href="hste.html" class="code" title=" 2-Stage Solve the Equation estimate of smoothing parameter. ">hste</a>(A(:,2),kernel); 
+068  
+069 x0=vx(1); 
+070 y0=vy(1); 
+071  
+072 fn(1)=<a href="#_sub1" class="code" title="sub  z=bcv2(A,h1,h2)">bcv2</a>(A,vx(1),vy(1)); 
+073  
+074  
+075  
+076 <span class="comment">% R= int(mkernel(x)^2) </span>
+077 <span class="comment">% mu2= int(x^2*mkernel(x)) </span>
+078 kernel2 = <span class="string">'gauss'</span>; 
+079 <span class="comment">% values for gaussian kernel </span>
+080 [mu2ns,Rns] = <a href="kernelstats.html" class="code" title=" Return 2'nd order moment of kernel pdf ">kernelstats</a>(kernel2); 
+081 Rns = Rns^d; 
+082 STEconstant2 = Rns /(mu2ns^(2)*n); 
+083  
+084 [mu2,R] = <a href="kernelstats.html" class="code" title=" Return 2'nd order moment of kernel pdf ">kernelstats</a>(kernel); 
+085 R = R^d; 
+086  
+087 STEconstant = R /(mu2^(2)*n); 
+088  
+089  
+090  
+091 i=1; <span class="comment">% i is the iteration counter. </span>
+092  
+093 <span class="keyword">while</span> i &lt;= maxit, 
+094  
+095   gradf(1)=(<a href="#_sub1" class="code" title="sub  z=bcv2(A,h1,h2)">bcv2</a>(A,x0+delta,y0)-<a href="#_sub1" class="code" title="sub  z=bcv2(A,h1,h2)">bcv2</a>(A,x0-delta,y0))/(2*delta); 
+096   gradf(2)=(<a href="#_sub1" class="code" title="sub  z=bcv2(A,h1,h2)">bcv2</a>(A,x0,y0+delta)-<a href="#_sub1" class="code" title="sub  z=bcv2(A,h1,h2)">bcv2</a>(A,x0,y0-delta))/(2*delta); 
+097  
+098   gradf=gradf/(i*norm(gradf)); 
+099  
+100   r0=[x0 y0]'; 
+101  
+102   <span class="keyword">for</span> j=1:31, 
+103     M(j,:)=(r0+(j-16)*gradf/15)'; 
+104   <span class="keyword">end</span>; 
+105  
+106   L=(M(:,1)&gt;0) &amp; (M(:,2)&gt;0); 
+107  
+108   L=<a href="#_sub2" class="code" title="sub  X=remzero(X)">remzero</a>([M,L]); <span class="comment">% check this wrong??? </span>
+109  
+110   M=L(:,1:2); 
+111  
+112   <span class="keyword">for</span> j=1:length(M), 
+113     t(j,1)=<a href="#_sub1" class="code" title="sub  z=bcv2(A,h1,h2)">bcv2</a>(A,M(j,1),M(j,2)); 
+114   <span class="keyword">end</span>; 
+115  
+116   [N,I]=min(t); 
+117  
+118   r=M(I,:)'; 
+119  
+120   vx(i+1)=r(1); <span class="comment">% Store iterate. </span>
+121   vy(i+1)=r(2);  
+122  
+123   fn(i+1)=N; 
+124  
+125   <span class="keyword">if</span> (abs(norm(r-r0)) &lt; tol), 
+126  
+127     h=r'; 
+128  
+129 <span class="comment">% Transform values of h back: </span>
+130  
+131     h=diag(std(oldA))*h'*(STEconstant/STEconstant2)^(1/6); 
+132  
+133     <span class="keyword">return</span>; 
+134   <span class="keyword">end</span>; 
+135  
+136   i=i+1; <span class="comment">% Update the iteration counter. </span>
+137  
+138   x0=r(1); 
+139   y0=r(2); 
+140  
+141   clear t 
+142   
+143 <span class="keyword">end</span>; <span class="comment">% of while statement. </span>
+144  
+145 disp(<span class="string">'Maximum number of iterations reached - terminating execution.'</span>); 
+146 <span class="keyword">return</span> 
+147  
+148 <span class="keyword">function</span> z=<a name="_sub1" href="#_subfunctions" class="code">bcv2</a>(A,h1,h2) 
+149 <span class="comment">% BCV2        Biased cross-validation criterion function. </span>
+150 <span class="comment">%           </span>
+151 <span class="comment">%             BCV2(A,H1,H2) </span>
+152 <span class="comment">%  </span>
+153 <span class="comment">%             Christian C. Beardah 1993-94  </span>
+154  
+155 n=length(A); 
+156  
+157 A1=A(:,1); 
+158  
+159 A2=A(:,2); 
+160  
+161 M1=A1*ones(size(A1')); 
+162  
+163 T1=(M1-M1')/h1; 
+164  
+165 M2=A2*ones(size(A2')); 
+166  
+167 T2=(M2-M2')/h2; 
+168  
+169 z=1/(4*pi*n*h1*h2); 
+170  
+171 T=T1.^2+T2.^2; 
+172  
+173 T=(T.^2-8*T+8).*<a href="mkernel.html" class="code" title=" Multivariate Kernel Function. ">mkernel</a>(T1,<span class="string">'gauss'</span>).*<a href="mkernel.html" class="code" title=" Multivariate Kernel Function. ">mkernel</a>(T2,<span class="string">'gauss'</span>); 
+174  
+175 T=T-diag(diag(T)); 
+176 z=z+sum(sum(T))/(4*n*(n-1)*h1*h2); 
+177  
+178 <span class="keyword">return</span> 
+179  
+180 <span class="keyword">function</span> X=<a name="_sub2" href="#_subfunctions" class="code">remzero</a>(X) 
+181 <span class="comment">%REMZERO Removes rows containing zeroes from a matrix or vector. </span>
+182 <span class="comment">% </span>
+183 <span class="comment">%  CALL Y = remzero(X) </span>
+184 <span class="comment">%   </span>
+185 <span class="comment">% Example:  </span>
+186 <span class="comment">%   x = [1 2 0 4 0 6].' </span>
+187 <span class="comment">%   x = remzero(x);  </span>
+188 <span class="comment">% </span>
+189  
+190 <span class="comment">%History </span>
+191 <span class="comment">%    </span>
+192 <span class="comment">% by            Christian C. Beardah 1993 </span>
+193  
+194 [r c]=size(X); 
+195  
+196 <span class="keyword">if</span> r&gt;1 &amp; c&gt;1, 
+197   [i j]=find(X==0); 
+198   X(i,:)=[]; 
+199 <span class="keyword">else</span>, 
+200   X=X(find(X)); 
+201 <span class="keyword">end</span>; 
+202  
+203  <span class="keyword">return</span> 
+204  
+205</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

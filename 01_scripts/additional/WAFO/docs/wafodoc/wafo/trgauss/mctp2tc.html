@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mctp2tc</title>
+  <meta name="keywords" content="mctp2tc">
+  <meta name="description" content="  Frequencies of upcrossing troughs and crests using Markov chain of turning points.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; mctp2tc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mctp2tc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Frequencies of upcrossing troughs and crests using Markov chain of turning points.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> F=mctp2tc(freqPVR,utc,param,freqPVL) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="mctp2tc.html" class="code" title="  Frequencies of upcrossing troughs and crests using Markov chain of turning points. ">MCTP2TC</a>  Frequencies of upcrossing troughs and crests using Markov chain of turning points. 
+  
+   CALL: f_tc = <a href="mctp2tc.html" class="code" title="  Frequencies of upcrossing troughs and crests using Markov chain of turning points. ">mctp2tc</a>(f_Mm,utc,param); 
+  
+   where 
+  
+         f_tc  = the matrix with frequences of upcrossing troughs and crests, 
+         f_Mm  = the frequency matrix for the Max2min cycles, 
+         utc   = the reference level, 
+         param = a vector defining the discretization used to compute f_Mm, 
+                 note that f_mM has to be computed on the same grid as f_mM.  
+  
+   optional call: f_tc = <a href="mctp2tc.html" class="code" title="  Frequencies of upcrossing troughs and crests using Markov chain of turning points. ">mctp2tc</a>(f_Mm,utc,param,f_mM); 
+  
+         f_mM  = the frequency matrix for the min2Max cycles.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/cmat2nt.html" class="code" title=" NT = cmat2nt(F,def)">cmat2nt</a></li></TD>
+<TD> Calculates a counting distribution from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/nt2cmat.html" class="code" title=" F = nt2cmat(NT,def)">nt2cmat</a></li></TD>
+<TD>  Calculates a cycle matrix from a counting distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\@cell\display.bi">display</a></li></TD>
+<TD>       Display array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\rot90.m">rot90</a></li></TD>
+<TD>         Rotate matrix 90 degrees.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="spec2cmat.html" class="code" title=" [f, fmm] = spec2cmat(spec,utc,def,paramt,paramu,nit)">spec2cmat</a></li></TD>
+<TD> Joint intensity matrix for cycles (max,min)-, rainflow- and (crest,trough)</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a></li></TD>
+<TD> Calculates joint density of Maximum, minimum and period.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig10.html" class="code" title=" wafofig10">wafofig10</a></li></TD>
+<TD> Intensity of trough-crest cycles computed from  St</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> F=<a name="_sub0" href="#_subfunctions" class="code">mctp2tc</a>(freqPVR,utc,param,freqPVL) 
+002 <span class="comment">%MCTP2TC  Frequencies of upcrossing troughs and crests using Markov chain of turning points. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: f_tc = mctp2tc(f_Mm,utc,param); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%  where </span>
+007 <span class="comment">% </span>
+008 <span class="comment">%        f_tc  = the matrix with frequences of upcrossing troughs and crests, </span>
+009 <span class="comment">%        f_Mm  = the frequency matrix for the Max2min cycles, </span>
+010 <span class="comment">%        utc   = the reference level, </span>
+011 <span class="comment">%        param = a vector defining the discretization used to compute f_Mm, </span>
+012 <span class="comment">%                note that f_mM has to be computed on the same grid as f_mM.  </span>
+013 <span class="comment">% </span>
+014 <span class="comment">%  optional call: f_tc = mctp2tc(f_Mm,utc,param,f_mM); </span>
+015 <span class="comment">% </span>
+016 <span class="comment">%        f_mM  = the frequency matrix for the min2Max cycles. </span>
+017 <span class="comment">% </span>
+018  
+019  
+020 <span class="keyword">if</span> nargin&lt;4 
+021   freqPVL=freqPVR; 
+022 <span class="keyword">end</span> 
+023 <span class="keyword">if</span> nargin&lt;3   
+024    display(<span class="string">'too few inputs parameters, stop'</span>) 
+025    <span class="keyword">break</span> 
+026 <span class="keyword">end</span> 
+027  
+028 u=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param); 
+029 udisc=fliplr(u); 
+030 ntc=sum(udisc&gt;=utc); 
+031 <span class="comment">%ntc1=sum(u&lt;=utc); </span>
+032  
+033 <span class="comment">%if udisc(ntc) &gt; utc </span>
+034 <span class="comment">%   ntc=ntc+1 </span>
+035 <span class="comment">%end </span>
+036  
+037 <span class="comment">%if u(ntc1) &gt;= utc </span>
+038 <span class="comment">%   ntc1=ntc1-1 </span>
+039 <span class="comment">%end </span>
+040  
+041  
+042 <span class="keyword">if</span> ntc &lt; 2 
+043   display(<span class="string">'the reference level out of range, stop'</span>) 
+044     <span class="keyword">break</span> 
+045     <span class="keyword">end</span> 
+046 <span class="keyword">if</span> ntc &gt; (param(3)-1) 
+047   display(<span class="string">'the reference level out of range, stop'</span>) 
+048     <span class="keyword">break</span> 
+049     <span class="keyword">end</span> 
+050  
+051 <span class="comment">% normalization of frequency matrices </span>
+052  
+053 nP=length(freqPVR); 
+054 <span class="keyword">for</span> i=1:nP, 
+055     rowsum=sum(freqPVR(i,:)); 
+056     <span class="keyword">if</span> rowsum~=0 
+057        freqPVR(i,:)=freqPVR(i,:)/rowsum; 
+058     <span class="keyword">end</span> 
+059 <span class="keyword">end</span> 
+060 P=fliplr(freqPVR);  
+061  
+062 Ph=rot90(fliplr(freqPVL),-1); 
+063 <span class="keyword">for</span> i=1:nP, 
+064     rowsum=sum(Ph(i,:)); 
+065     <span class="keyword">if</span> rowsum~=0 
+066        Ph(i,:)=Ph(i,:)/rowsum; 
+067     <span class="keyword">end</span> 
+068 <span class="keyword">end</span> 
+069 Ph=fliplr(Ph); 
+070  
+071  
+072 n=nP; F=zeros(n,n);  
+073  
+074 <span class="keyword">if</span> ntc &gt; n-1 
+075   display(<span class="string">'index for mean-level out of range, stop'</span>) 
+076     <span class="keyword">break</span> 
+077     <span class="keyword">end</span> 
+078  
+079   
+080 <span class="comment">%F(1:ntc,1:ntc1)=freqPVL(1:ntc,1:ntc1); </span>
+081 F(1:ntc-1,1:(n-ntc))=freqPVL(1:ntc-1,1:(n-ntc)); 
+082  
+083  
+084 F=<a href="../../wafo/cycles/cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">cmat2nt</a>(F); 
+085  
+086 <span class="keyword">for</span> i=2:ntc, 
+087     <span class="keyword">for</span> j=ntc:n-1, 
+088  
+089     <span class="keyword">if</span> i&lt;ntc 
+090    
+091        Ap=P(i:ntc-1,i+1:ntc); Bp=Ph(i+1:ntc,i:ntc-1); 
+092        dim_p=ntc-i; 
+093        tempp=zeros(dim_p,1); 
+094        I=eye(size(Ap)); 
+095        <span class="keyword">if</span> i==2 
+096            e=Ph(i+1:ntc,1); 
+097          <span class="keyword">else</span> 
+098            e=sum(Ph(i+1:ntc,1:i-1)')'; 
+099        <span class="keyword">end</span> 
+100        <span class="keyword">if</span> max(abs(e))&gt;1e-10 
+101           <span class="keyword">if</span> dim_p==1 
+102          tempp(1,1)=(Ap/(1-Bp*Ap)*e); 
+103           <span class="keyword">else</span> 
+104         tempp=Ap*((I-Bp*Ap)\e); 
+105           <span class="keyword">end</span> 
+106         <span class="keyword">end</span> 
+107      <span class="keyword">end</span> 
+108  
+109      <span class="keyword">if</span> j&gt;ntc 
+110  
+111        Am=P(ntc:j-1,ntc+1:j); Bm=Ph(ntc+1:j,ntc:j-1);   
+112        dim_m=j-ntc;  
+113        tempm=zeros(dim_m,1); 
+114        Im=eye(size(Am)); 
+115        <span class="keyword">if</span> j==n-1        
+116          em=P(ntc:j-1,n); 
+117        <span class="keyword">else</span> 
+118          em=sum(P(ntc:j-1,j+1:n)')'; 
+119        <span class="keyword">end</span> 
+120        <span class="keyword">if</span> max(abs(em))&gt;1e-10 
+121           <span class="keyword">if</span> dim_m==1 
+122         tempm(1,1)=(Bm/(1-Am*Bm)*em); 
+123           <span class="keyword">else</span> 
+124         tempm=Bm*((Im-Am*Bm)\em); 
+125           <span class="keyword">end</span> 
+126        <span class="keyword">end</span> 
+127     <span class="keyword">end</span> 
+128       
+129      <span class="keyword">if</span> (j&gt;ntc)*(i&lt;ntc) 
+130     F(i,n-j+1)=F(i,n-j+1)+tempp'*freqPVL(i:ntc-1,n-ntc:-1:n-j+1)*tempm; 
+131     F(i,n-j+1)=F(i,n-j+1)+tempp'*freqPVL(i:ntc-1,n-j:-1:1)*ones(n-j,1); 
+132     F(i,n-j+1)=F(i,n-j+1)+ones(1,i-1)*freqPVL(1:i-1,n-ntc:-1:n-j+1)*tempm; 
+133      <span class="keyword">end</span> 
+134      <span class="keyword">if</span> (j==ntc)*(i&lt;ntc) 
+135     F(i,n-j+1)=F(i,n-j+1)+tempp'*freqPVL(i:ntc-1,n-j:-1:1)*ones(n-j,1); 
+136     <span class="keyword">for</span> k=1:ntc  
+137         F(i,n-k+1)=F(i,n-ntc+1); 
+138     <span class="keyword">end</span> 
+139      <span class="keyword">end</span> 
+140      <span class="keyword">if</span> (j&gt;ntc)*(i==ntc) 
+141     F(i,n-j+1)=F(i,n-j+1)+ones(1,i-1)*freqPVL(1:i-1,n-ntc:-1:n-j+1)*tempm; 
+142     <span class="keyword">for</span> k=ntc:n 
+143     F(k,n-j+1)=F(ntc,n-j+1); 
+144     <span class="keyword">end</span> 
+145      <span class="keyword">end</span> 
+146  
+147   <span class="keyword">end</span> 
+148 <span class="keyword">end</span>  
+149 F;    
+150 F=<a href="../../wafo/cycles/nt2cmat.html" class="code" title="  Calculates a cycle matrix from a counting distribution.">nt2cmat</a>(F); 
+151  
+152  
+153 <span class="comment">%fmax=max(max(F)); </span>
+154  
+155 <span class="comment">%  contour (u,u,flipud(F),... </span>
+156 <span class="comment">%fmax*[0.005 0.01 0.02 0.05 0.1 0.2 0.4 0.6 0.8]) </span>
+157 <span class="comment">%  axis([param(1) param(2) param(1) param(2)]) </span>
+158  
+159 <span class="comment">%  title('Crest-trough density') </span>
+160 <span class="comment">%  ylabel('crest'), xlabel('trough')                     </span>
+161 <span class="comment">%  axis('square') </span>
+162 <span class="comment">%if mlver&gt;1, commers, end </span>
+163  
+164  
+165  
+166  
+167  
+168  
+169  
+170  
+171</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

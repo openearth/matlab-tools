@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wmnormrnd</title>
+  <meta name="keywords" content="wmnormrnd">
+  <meta name="description" content=" Random vectors from a multivariate Normal distribution">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wmnormrnd.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wmnormrnd
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Random vectors from a multivariate Normal distribution</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> r = wmnormrnd(mu,sa,cases,method,cutoff); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wmnormrnd.html" class="code" title=" Random vectors from a multivariate Normal distribution ">WMNORMRND</a> Random vectors from a multivariate Normal distribution 
+  
+  CALL:  r = <a href="wmnormrnd.html" class="code" title=" Random vectors from a multivariate Normal distribution ">wmnormrnd</a>(mu,S,n,method) 
+  
+        r = matrix of random numbers from the multivariate normal 
+            distribution with mean mu and covariance matrix S. 
+        n = number of <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> vectors 
+   method = 'svd'  Singular value decomp.  (stable, quite fast) (default) 
+            'chol'  Cholesky decomposition (fast, but unstable)  
+            'sqrtm'  sqrtm                 (stable and slow)  
+            'genchol' 
+    
+    S must be a symmetric, semi-positive definite matrix with size equal 
+    to the length of MU. METHOD used for calculating the square root of S  
+    is either svd, cholesky or sqrtm. (cholesky is fastest but least accurate.) 
+    When cholesky is chosen and S is not positive definite, the svd-method  
+    is used instead. 
+  
+  Example 
+    mu = [0 5]; S = [1 0.45; 0.45 0.25]; 
+    r = <a href="wmnormrnd.html" class="code" title=" Random vectors from a multivariate Normal distribution ">wmnormrnd</a>(mu,S,100)'; 
+    plot(r(:,1),r(:,2),'.') 
+  
+    d = 40; rho = 2*rand(1,d)-1; 
+    mu = zeros(0,d); 
+    S = (rho.'*rho-diag(rho.^2))+eye(d); 
+    r = <a href="wmnormrnd.html" class="code" title=" Random vectors from a multivariate Normal distribution ">wmnormrnd</a>(mu,S,100,'genchol')';  
+  
+  See also  chol, svd, sqrtm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/genchol.html" class="code" title=" [L,P,r] = genchol(A,tol)">genchol</a></li></TD>
+<TD> Generalized Cholesky factorization</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\chol.bi">chol</a></li></TD>
+<TD>          Cholesky factorization.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\@double\full.bi">full</a></li></TD>
+<TD>          Convert sparse matrix to full matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\issparse.m">issparse</a></li></TD>
+<TD>      True for sparse matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\nnz.m">nnz</a></li></TD>
+<TD>           Number of nonzero matrix elements.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\robust\robust\@lti\sqrtm.m">sqrtm</a></li></TD>
+<TD>         Matrix square root.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\svd.bi">svd</a></li></TD>
+<TD>           Singular value decomposition.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\svds.m">svds</a></li></TD>
+<TD>          Find a few singular values and vectors.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wsim/cov2csdat.html" class="code" title=" [sampl,mu1o, mu1oStd, inds] = cov2csdat(xo,R,cases,method,inds)">cov2csdat</a></li></TD>
+<TD> generates conditionally simulated values</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> r = <a name="_sub0" href="#_subfunctions" class="code">wmnormrnd</a>(mu,sa,cases,method,cutoff); 
+002 <span class="comment">%WMNORMRND Random vectors from a multivariate Normal distribution </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  r = wmnormrnd(mu,S,n,method) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%       r = matrix of random numbers from the multivariate normal </span>
+007 <span class="comment">%           distribution with mean mu and covariance matrix S. </span>
+008 <span class="comment">%       n = number of sample vectors </span>
+009 <span class="comment">%  method = 'svd'  Singular value decomp.  (stable, quite fast) (default) </span>
+010 <span class="comment">%           'chol'  Cholesky decomposition (fast, but unstable)  </span>
+011 <span class="comment">%           'sqrtm'  sqrtm                 (stable and slow)  </span>
+012 <span class="comment">%           'genchol' </span>
+013 <span class="comment">%   </span>
+014 <span class="comment">%   S must be a symmetric, semi-positive definite matrix with size equal </span>
+015 <span class="comment">%   to the length of MU. METHOD used for calculating the square root of S  </span>
+016 <span class="comment">%   is either svd, cholesky or sqrtm. (cholesky is fastest but least accurate.) </span>
+017 <span class="comment">%   When cholesky is chosen and S is not positive definite, the svd-method  </span>
+018 <span class="comment">%   is used instead. </span>
+019 <span class="comment">% </span>
+020 <span class="comment">% Example </span>
+021 <span class="comment">%   mu = [0 5]; S = [1 0.45; 0.45 0.25]; </span>
+022 <span class="comment">%   r = wmnormrnd(mu,S,100)'; </span>
+023 <span class="comment">%   plot(r(:,1),r(:,2),'.') </span>
+024 <span class="comment">% </span>
+025 <span class="comment">%   d = 40; rho = 2*rand(1,d)-1; </span>
+026 <span class="comment">%   mu = zeros(0,d); </span>
+027 <span class="comment">%   S = (rho.'*rho-diag(rho.^2))+eye(d); </span>
+028 <span class="comment">%   r = wmnormrnd(mu,S,100,'genchol')';  </span>
+029 <span class="comment">% </span>
+030 <span class="comment">% See also  chol, svd, sqrtm </span>
+031  
+032 <span class="comment">% cutoff = cut off value for eigenvalues </span>
+033  
+034 <span class="comment">% History </span>
+035 <span class="comment">% Revised pab 22.11.2003 </span>
+036 <span class="comment">% -added option genchol   </span>
+037 <span class="comment">% revised jr 19.09.2001 </span>
+038 <span class="comment">% - Changed *name* in function call.  </span>
+039 <span class="comment">% - Fixed a bug: the spurious default option 'swd' -&gt; 'svd' </span>
+040 <span class="comment">% revised jr 18.06.2001 </span>
+041 <span class="comment">% - Changed default from 'cholesky' to 'svd' </span>
+042 <span class="comment">% revised pab 17.01.2000  </span>
+043 <span class="comment">% - updated documentation </span>
+044 <span class="comment">%  by Per A. Brodtkorb 17.09.98,20.08.98 </span>
+045  
+046 [m n] = size(sa); 
+047 <span class="keyword">if</span> m ~= n 
+048   error(<span class="string">'S must be square'</span>); 
+049 <span class="keyword">end</span> 
+050 <span class="keyword">if</span>  nargin&lt;1 | isempty(mu); 
+051   mu=zeros(m,1); 
+052 <span class="keyword">end</span> 
+053  
+054 musiz = size(mu); 
+055 rows = max(musiz); 
+056 <span class="keyword">if</span> prod(musiz) ~= rows 
+057    error(<span class="string">'Mu must be a vector.'</span>); 
+058 <span class="keyword">end</span> 
+059 mu=mu(:); <span class="comment">% make sure it is a column vector </span>
+060  
+061  
+062 <span class="keyword">if</span> m ~= rows 
+063   error(<span class="string">'The length of mu must equal the number of rows in S.'</span>); 
+064 <span class="keyword">end</span> 
+065 <span class="keyword">if</span> nargin&lt;5|isempty(cutoff),  
+066   cutoff=0; 
+067 <span class="keyword">else</span> 
+068   cutoff=abs(cutoff); <span class="comment">% make sure cutoff is positive </span>
+069 <span class="keyword">end</span> 
+070  
+071 <span class="keyword">if</span> nargin&lt;4|isempty(method),  
+072   method=<span class="string">'svd'</span>; <span class="comment">% default method </span>
+073 <span class="keyword">end</span> 
+074  
+075 <span class="keyword">switch</span> lower(method(1:2)), <span class="comment">% </span>
+076   <span class="keyword">case</span> <span class="string">'sq'</span>, <span class="comment">% SQRTM slow but stable </span>
+077     T=sqrtm(full(sa));<span class="comment">%squareroot of S </span>
+078      
+079   <span class="keyword">case</span> <span class="string">'sv'</span>, <span class="comment">% SVD stable quite fast </span>
+080     <span class="keyword">if</span> issparse(sa) <span class="comment">% approximate method </span>
+081       nz=nnz(sa); 
+082       K=floor(min([10 3*sqrt(n) n/4 4*nz/n])); 
+083       <span class="comment">%[U S V]=svds(sa,floor(p/2)); </span>
+084       [U S V]=svds(sa,K,<span class="string">'L'</span>); 
+085     <span class="keyword">else</span> <span class="comment">% exact method </span>
+086       [U S V]=svd(full(sa),0); 
+087     <span class="keyword">end</span> 
+088     L = n; 
+089     <span class="keyword">if</span> cutoff&gt;0 
+090       L=sum((diag(S)&gt;=cutoff)); 
+091       disp([<span class="string">'cutting off '</span> num2str(L) <span class="string">' eigenvalues'</span>]) 
+092     <span class="keyword">end</span> 
+093      
+094     T=(U(:,1:L)*sqrt(S(1:L,1:L))*V(:,1:L)'); <span class="comment">%squareroot of S </span>
+095      
+096   <span class="keyword">case</span> <span class="string">'ch'</span>, <span class="comment">% CHOL not stable , but fast. </span>
+097     [T, p] = chol(sa); 
+098     <span class="keyword">if</span> p ~= 0 
+099       disp(<span class="string">'S is not a positive definite matrix.'</span>); 
+100       disp(<span class="string">'Cholesky factorization failed; trying svd instead.'</span>); 
+101       [U S V]=svd(full(sa),0); 
+102       T=(U*sqrt(S)*V'); <span class="comment">%squareroot of S </span>
+103     <span class="keyword">end</span> 
+104  <span class="keyword">case</span> <span class="string">'ge'</span>, <span class="comment">% GENCHOL stable </span>
+105   [T,p,rank1] = <a href="../../wafo/misc/genchol.html" class="code" title=" Generalized Cholesky factorization ">genchol</a>(sa,eps); 
+106   r = T*randn(rows,cases)  + mu(p,ones(1,cases)); 
+107   [tmp, ix] = sort(p); 
+108   r = r(ix,:); 
+109   <span class="keyword">return</span> 
+110  <span class="keyword">otherwise</span>, error(<span class="string">'unknown option'</span>) 
+111 <span class="keyword">end</span> 
+112  
+113  
+114 r = T*randn(rows,cases)  + mu(:,ones(1,cases)); 
+115  
+116</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

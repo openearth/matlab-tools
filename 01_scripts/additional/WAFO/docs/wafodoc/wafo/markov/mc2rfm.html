@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mc2rfm</title>
+  <meta name="keywords" content="mc2rfm">
+  <meta name="description" content="  Calculates the rainflow matrix/intensity for a Markov chain.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">markov</a> &gt; mc2rfm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\markov&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mc2rfm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates the rainflow matrix/intensity for a Markov chain.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F_rfc,mu_rfc] = mc2rfm(Q,def) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="mc2rfm.html" class="code" title="  Calculates the rainflow matrix/intensity for a Markov chain.">MC2RFM</a>  Calculates the rainflow matrix/intensity for a Markov chain.
+ 
+  CALL: [F_rfc,mu_rfc] = <a href="../../wafo/trgauss/mc2rfc.html" class="code" title="  Calculates a rainflow matrix given a Markov chain with kernel f_xy; ">mc2rfc</a>(Q,1);
+        [F_rfc,mu_rfc] = <a href="../../wafo/trgauss/mc2rfc.html" class="code" title="  Calculates a rainflow matrix given a Markov chain with kernel f_xy; ">mc2rfc</a>(Q,[2 h]);
+ 
+  F_rfc  = Rainflow matrix / Rainflow intensity     [NxN]
+  mu_rfc = Rainflow counting intensity              [NxN]
+ 
+  Q      = Transition matrix for Markov chain       [nxn]
+  def    = Definition 1: Markov chain  (default),    N=n
+                      2: Discretized Markov chain,   N=n+1
+  h      = Discretization step (ONLY Def 2!)
+ 
+  Calculates 
+    (1) the rainflow matrix for a Markov chain OR
+    (2) the rainflow intensity for a discretized Markov chain.
+ 
+  Example: 
+    F = magic(5)
+    Q = <a href="mat2tmat.html" class="code" title="  Converts a matrix to a transition matrix.">mat2tmat</a>(F)
+    Frfc = <a href="mc2rfm.html" class="code" title="  Calculates the rainflow matrix/intensity for a Markov chain.">mc2rfm</a>(Q)
+ 
+  See also  <a href="smc2rfm.html" class="code" title=" Calculates the rainflow matrix/intensity for a switching Markov chain. ">smc2rfm</a>, <a href="mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>, <a href="mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>, mc2reverse, <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="smc2rfm.html" class="code" title=" [F_rfc,mu_rfc] = smc2rfc(P,Qc,def)">smc2rfm</a></li></TD>
+<TD> Calculates the rainflow matrix/intensity for a switching Markov chain.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wdemos/rfcdemo1.html" class="code" title=" [F_RFC] = refdemo1(demoNr,P,A,m,s2,param)">rfcdemo1</a></li></TD>
+<TD>  Demo for switching AR(1)-processes.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/test/test_markov.html" class="code" title="This is a script file.">test_markov</a></li></TD>
+<TD> Quick test of the routines in module 'markov'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [F_rfc,mu_rfc] = <a name="_sub0" href="#_subfunctions" class="code">mc2rfm</a>(Q,def)
+002 <span class="comment">% MC2RFM  Calculates the rainflow matrix/intensity for a Markov chain.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: [F_rfc,mu_rfc] = mc2rfc(Q,1);</span>
+005 <span class="comment">%       [F_rfc,mu_rfc] = mc2rfc(Q,[2 h]);</span>
+006 <span class="comment">%</span>
+007 <span class="comment">% F_rfc  = Rainflow matrix / Rainflow intensity     [NxN]</span>
+008 <span class="comment">% mu_rfc = Rainflow counting intensity              [NxN]</span>
+009 <span class="comment">%</span>
+010 <span class="comment">% Q      = Transition matrix for Markov chain       [nxn]</span>
+011 <span class="comment">% def    = Definition 1: Markov chain  (default),    N=n</span>
+012 <span class="comment">%                     2: Discretized Markov chain,   N=n+1</span>
+013 <span class="comment">% h      = Discretization step (ONLY Def 2!)</span>
+014 <span class="comment">%</span>
+015 <span class="comment">% Calculates </span>
+016 <span class="comment">%   (1) the rainflow matrix for a Markov chain OR</span>
+017 <span class="comment">%   (2) the rainflow intensity for a discretized Markov chain.</span>
+018 <span class="comment">%</span>
+019 <span class="comment">% Example: </span>
+020 <span class="comment">%   F = magic(5)</span>
+021 <span class="comment">%   Q = mat2tmat(F)</span>
+022 <span class="comment">%   Frfc = mc2rfm(Q)</span>
+023 <span class="comment">%</span>
+024 <span class="comment">% See also  smc2rfm, mctp2rfm, mc2stat, mc2reverse, cmatplot</span>
+025 
+026 <span class="comment">% References</span>
+027 <span class="comment">%  </span>
+028 <span class="comment">%  P. Johannesson (1999):</span>
+029 <span class="comment">%  Rainflow Analysis of Switching Markov Loads.</span>
+030 <span class="comment">%  PhD thesis, Mathematical Statistics, Centre for Mathematical Sciences,</span>
+031 <span class="comment">%  Lund Institute of Technology.</span>
+032 <span class="comment">%  </span>
+033 <span class="comment">%  P. Johannesson (1998):</span>
+034 <span class="comment">%  Rainflow Cycles for Switching Processes with Markov Structure.</span>
+035 <span class="comment">%  Probability in the Engineering and Informational Sciences, </span>
+036 <span class="comment">%  Vol. 12, No. 2, pp. 143-175.</span>
+037   
+038 <span class="comment">% Tested  on Matlab  5.3</span>
+039 <span class="comment">%</span>
+040 <span class="comment">% History:</span>
+041 <span class="comment">% Revised by PJ  23-Nov-1999</span>
+042 <span class="comment">%   updated for WAFO</span>
+043 <span class="comment">% Created by PJ (Pär Johannesson) 1997</span>
+044 <span class="comment">%   Copyright (c) 1997 by Pär Johannesson</span>
+045 <span class="comment">%   Toolbox: Rainflow Cycles for Switching Processes V.1.0, 2-Oct-1997</span>
+046 
+047 <span class="comment">% Check input arguments</span>
+048 
+049 ni = nargin;
+050 no = nargout;
+051 error(nargchk(1,2,ni));
+052 
+053 <span class="keyword">if</span> ni&lt;2, def = []; <span class="keyword">end</span>
+054 <span class="keyword">if</span> isempty(def), def = 1; <span class="keyword">end</span>
+055 
+056 
+057 [F_rfc,mu_rfc] = <a href="smc2rfm.html" class="code" title=" Calculates the rainflow matrix/intensity for a switching Markov chain. ">smc2rfm</a>(1,{Q},def);
+058 
+059</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

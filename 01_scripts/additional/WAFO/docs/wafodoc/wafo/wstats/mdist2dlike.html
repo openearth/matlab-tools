@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mdist2dlike</title>
+  <meta name="keywords" content="mdist2dlike">
+  <meta name="description" content=" MDIST log-likelihood function.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; mdist2dlike.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mdist2dlike
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> MDIST log-likelihood function.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [LL, cov] = mdist2dlike(params,data1,data2,dist) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="mdist2dlike.html" class="code" title=" MDIST log-likelihood function.">MDIST2DLIKE</a> MDIST log-likelihood function.
+ 
+  CALL:  [L, cov] = <a href="mdist2dlike.html" class="code" title=" MDIST log-likelihood function.">mdist2dlike</a>(params,x1,x2,dist)
+ 
+       L = the MDIST log-likelihood 
+    cov  = Asymptotic covariance matrix of phat (if phat is estimated by
+                   a maximum likelihood method).
+  params = [phat.x{:}] is the distribution parameters 
+   x,x2  = data vector or matrices with common size.
+   dist  = list of marginal distributions of x1 and x2, respectively 
+           Options are: 'tgumbel', 'gumbel', 
+           'lognormal','rayleigh','weibull','gamma'.
+ 
+    <a href="mdist2dlike.html" class="code" title=" MDIST log-likelihood function.">MDIST2DLIKE</a> is a utility function for maximum likelihood estimation. 
+ 
+  Example: 
+   [L, C] = <a href="mdist2dlike.html" class="code" title=" MDIST log-likelihood function.">mdist2dlike</a>([1 2 2 10],x1,x2,{'weibull','rayleigh'})
+ 
+  See also   <a href="mdist2dfit.html" class="code" title=" Parameter estimates for MDIST2D data. ">mdist2dfit</a>, <a href="mdist2dpdf.html" class="code" title=" Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi). ">mdist2dpdf</a>, <a href="mdist2dcdf.html" class="code" title=" Joint 2D CDF due to Plackett ">mdist2dcdf</a>, <a href="mdist2drnd.html" class="code" title="  Random points from a bivariate MDIST2D distribution ">mdist2drnd</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mdist2dpdf.html" class="code" title=" y = mdist2dpdf(V,H,phat,condon)">mdist2dpdf</a></li></TD>
+<TD> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mdist2dfit.html" class="code" title=" phato=mdist2dfit(V,H,dist,alpha,method)">mdist2dfit</a></li></TD>
+<TD> Parameter estimates for MDIST2D data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [LL, cov] = <a name="_sub0" href="#_subfunctions" class="code">mdist2dlike</a>(params,data1,data2,dist)
+002 <span class="comment">%MDIST2DLIKE MDIST log-likelihood function.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [L, cov] = mdist2dlike(params,x1,x2,dist)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%      L = the MDIST log-likelihood </span>
+007 <span class="comment">%   cov  = Asymptotic covariance matrix of phat (if phat is estimated by</span>
+008 <span class="comment">%                  a maximum likelihood method).</span>
+009 <span class="comment">% params = [phat.x{:}] is the distribution parameters </span>
+010 <span class="comment">%  x,x2  = data vector or matrices with common size.</span>
+011 <span class="comment">%  dist  = list of marginal distributions of x1 and x2, respectively </span>
+012 <span class="comment">%          Options are: 'tgumbel', 'gumbel', </span>
+013 <span class="comment">%          'lognormal','rayleigh','weibull','gamma'.</span>
+014 <span class="comment">%</span>
+015 <span class="comment">%   MDIST2DLIKE is a utility function for maximum likelihood estimation. </span>
+016 <span class="comment">%</span>
+017 <span class="comment">% Example: </span>
+018 <span class="comment">%  [L, C] = mdist2dlike([1 2 2 10],x1,x2,{'weibull','rayleigh'})</span>
+019 <span class="comment">%</span>
+020 <span class="comment">% See also   mdist2dfit, mdist2dpdf, mdist2dcdf, mdist2drnd</span>
+021 <span class="comment">%</span>
+022 
+023 
+024 <span class="comment">%  tested on: matlab 5.2</span>
+025 <span class="comment">% history</span>
+026 <span class="comment">% revised  pab 03.11.2000</span>
+027 <span class="comment">% - improved the calculation of cov</span>
+028 <span class="comment">% revised pab 8.11.1999</span>
+029 <span class="comment">%  - updated header info</span>
+030 <span class="comment">%  by Per A. Brodtkorb 01.02.99 </span>
+031 
+032 
+033 <span class="keyword">if</span> nargin &lt; 3, 
+034     error(<span class="string">'Requires at least FOUR input arguments'</span>); 
+035 <span class="keyword">end</span>
+036 
+037 <span class="keyword">if</span> (nargin&lt; 4)|isempty(dist), 
+038   error(<span class="string">'Too few inputs'</span>)
+039 <span class="keyword">else</span>
+040   HDIST=lower(dist{2});
+041   VDIST=lower(dist{1});
+042 <span class="keyword">end</span>
+043 
+044 
+045 
+046 <span class="keyword">switch</span> VDIST(1:2),
+047   <span class="keyword">case</span> <span class="string">'ra'</span>, nv=1;
+048  <span class="keyword">otherwise</span>, nv=2;
+049 <span class="keyword">end</span>
+050 <span class="keyword">switch</span> HDIST(1:2),
+051   <span class="keyword">case</span> <span class="string">'ra'</span>, nh=1;
+052  <span class="keyword">otherwise</span>, nh=2;
+053 <span class="keyword">end</span>
+054 
+055 <span class="keyword">if</span> nv+nh+1~=length(params)
+056  error(<span class="string">'param is not the right size'</span>)
+057 <span class="keyword">end</span>
+058  
+059 data1=data1(:);
+060 data2=data2(:);
+061 [n, m] = size(data1);
+062 [n2, m2] = size(data2);
+063 <span class="keyword">if</span> n~=n2
+064   error(<span class="string">'data1 and data2  must have equal size'</span>)
+065 <span class="keyword">end</span>
+066 
+067 <span class="keyword">if</span> nargout == 2 &amp; max(m,n) == 1
+068   error(<span class="string">'To compute the 2nd output, the 2nd input must have at least two elements.'</span>);
+069 <span class="keyword">end</span>
+070 phat.x{1}=params(1:nv);phat.x{2}=params(nv+1:<span class="keyword">end</span>-1);phat.x{3}=params(<span class="keyword">end</span>);
+071 phat.dist=dist;
+072 
+073 x = <a href="mdist2dpdf.html" class="code" title=" Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi). ">mdist2dpdf</a>(data1,data2,phat,0)+eps;
+074 LL = -sum(log(x)); <span class="comment">% log likelihood function</span>
+075 
+076 <span class="keyword">if</span> nargout &gt; 1
+077   np=nv+nh+1; <span class="comment">% # of parameters we estimate</span>
+078   sparam=params;
+079   delta = eps^.4;
+080   delta2=delta^2;
+081 
+082   dist0 =<span class="string">'mdist2dpdf'</span>;
+083   <span class="comment">% Approximate 1/(nE( (d L(x|theta)/dtheta)^2)) with</span>
+084   <span class="comment">%             1/(d^2 L(theta|x)/dtheta^2) </span>
+085   <span class="comment">%  using central differences</span>
+086     
+087   H = zeros(np);             <span class="comment">% Hessian matrix</span>
+088   <span class="keyword">for</span> ix=1:np,
+089     sparam = params;
+090     sparam(ix)= params(ix)+delta;
+091     phat.x{1}=params(1:nv);phat.x{2}=params(nv+1:<span class="keyword">end</span>-1);phat.x{3}=params(<span class="keyword">end</span>);
+092     x  = feval(dist0,data1,data2,phat)+eps; 
+093     fp = sum(log(x));
+094     sparam(ix) = params(ix)-delta;
+095     phat.x{1}=params(1:nv);phat.x{2}=params(nv+1:<span class="keyword">end</span>-1);phat.x{3}=params(<span class="keyword">end</span>);
+096     x  = feval(dist0,data1,data2,phat)+eps; 
+097     fm = sum(log(x));
+098     H(ix,ix) = (fp+2*LL+fm)/delta2;
+099     <span class="keyword">for</span> iy=ix+1:np,
+100       sparam(ix) = params(ix)+delta;
+101       sparam(iy) = params(iy)+delta;
+102       phat.x{1}=params(1:nv);phat.x{2}=params(nv+1:<span class="keyword">end</span>-1);phat.x{3}=params(<span class="keyword">end</span>);
+103       
+104       x   = feval(dist0,data1,data2,phat)+eps; 
+105       fpp = sum(log(x));
+106       sparam(iy) = params(iy)-delta;
+107       phat.x{1}=params(1:nv);phat.x{2}=params(nv+1:<span class="keyword">end</span>-1);phat.x{3}=params(<span class="keyword">end</span>);
+108       x   = feval(dist0,data1,data2,phat)+eps; 
+109       fpm = sum(log(x));
+110       sparam(ix) = params(ix)-delta;
+111       phat.x{1}=params(1:nv);phat.x{2}=params(nv+1:<span class="keyword">end</span>-1);phat.x{3}=params(<span class="keyword">end</span>);
+112       x   = feval(dist0,data1,data2,phat)+eps; 
+113       fmm = sum(log(x));
+114       sparam(iy) = params(iy)+delta;
+115       phat.x{1}=params(1:nv);phat.x{2}=params(nv+1:<span class="keyword">end</span>-1);phat.x{3}=params(<span class="keyword">end</span>);
+116       x   = feval(dist0,data1,data2,phat)+eps; 
+117       fmp = sum(log(x));
+118       H(ix,iy) = (fpp-fmp-fpm+fmm)/(4*delta2);
+119       H(iy,ix) = H(ix,iy);
+120     <span class="keyword">end</span>
+121   <span class="keyword">end</span>
+122   <span class="comment">% invert the Hessian matrix (i.e. invert the observed information number)</span>
+123   cov = -H\eye(np); 
+124   
+125 <span class="keyword">end</span>
+126</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

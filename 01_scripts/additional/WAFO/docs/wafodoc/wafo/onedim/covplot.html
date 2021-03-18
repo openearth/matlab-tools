@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of covplot</title>
+  <meta name="keywords" content="covplot">
+  <meta name="description" content=" Plots the auto covariance function (ACF) 1D or 2D.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; covplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>covplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Plots the auto covariance function (ACF) 1D or 2D.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> covplot(rn,L,plotflag,lintype) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="covplot.html" class="code" title=" Plots the auto covariance function (ACF) 1D or 2D. ">COVPLOT</a> Plots the auto covariance function (ACF) 1D or 2D. 
+ 
+  CALL:  <a href="covplot.html" class="code" title=" Plots the auto covariance function (ACF) 1D or 2D. ">covplot</a>(r,L,plotflag,lintype)
+ 
+          r =  covariance structure
+   for one-dim:
+          L = Maximum lag for which the ACF is plotted.
+      plotflag = 1 then the ACF is plotted vs lag (sec or m) (default)
+              2 then the ACF is plotted vs lag
+              3 then the ACF is plotted vs lag and vs lag (sec or m)
+   for two-dim:
+          L = [Lx Lt] Maximum lag for which the ACF is plotted.
+          (Not implemented!)
+      plotflag = 1 then contour plot (default)
+                 2 then mesh plot
+                 3 one plot with R(x,0) and one with R(0,t)
+ 
+    lintype : specify color and lintype, see PLOT for possibilities.
+ 
+  Example:
+    S1 = <a href="../../wafo/spec/demospec.html" class="code" title=" Loads a precreated spectrum of chosen type">demospec</a>; S2 = <a href="../../wafo/spec/demospec.html" class="code" title=" Loads a precreated spectrum of chosen type">demospec</a>('dir');
+    R1 = <a href="../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>(S1); R2 = <a href="../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>(S2,0,30,2,100,[],2,[]);
+    subplot(211), L1 = 17; <a href="covplot.html" class="code" title=" Plots the auto covariance function (ACF) 1D or 2D. ">covplot</a>(R1,L1,1,'.-')
+    subplot(212), <a href="covplot.html" class="code" title=" Plots the auto covariance function (ACF) 1D or 2D. ">covplot</a>(R2)
+  
+  See also  <a href="dat2cov.html" class="code" title=" Estimate auto covariance function from data.">dat2cov</a>, <a href="dat2cor.html" class="code" title=" Estimate auto correlation function from data.">dat2cor</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\contour.m">contour</a></li></TD>
+<TD>       Contour plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\contours.m">contours</a></li></TD>
+<TD>      Contouring over non-rectangular surface.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\fieldnames.m">fieldnames</a></li></TD>
+<TD>    Get structure field names.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\grid.m">grid</a></li></TD>
+<TD>          Grid lines.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\@fdesign\interp.p">interp</a></li></TD>
+<TD>        Resample data at a higher rate using lowpass interpolation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\ishold.m">ishold</a></li></TD>
+<TD>        Return hold state.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\polar.m">polar</a></li></TD>
+<TD>         Polar coordinate plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph3d\shading.m">shading</a></li></TD>
+<TD>       Color shading mode.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph3d\surf.m">surf</a></li></TD>
+<TD>          3-D colored surface.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2cor.html" class="code" title=" [corr,c0] = dat2cor(xn,varargin)">dat2cor</a></li></TD>
+<TD> Estimate auto correlation function from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2cov.html" class="code" title=" R = dat2cov(xn,varargin)">dat2cov</a></li></TD>
+<TD> Estimate auto covariance function from data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">covplot</a>(rn,L,plotflag,lintype)
+002 <span class="comment">%COVPLOT Plots the auto covariance function (ACF) 1D or 2D. </span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  covplot(r,L,plotflag,lintype)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%         r =  covariance structure</span>
+007 <span class="comment">%  for one-dim:</span>
+008 <span class="comment">%         L = Maximum lag for which the ACF is plotted.</span>
+009 <span class="comment">%     plotflag = 1 then the ACF is plotted vs lag (sec or m) (default)</span>
+010 <span class="comment">%             2 then the ACF is plotted vs lag</span>
+011 <span class="comment">%             3 then the ACF is plotted vs lag and vs lag (sec or m)</span>
+012 <span class="comment">%  for two-dim:</span>
+013 <span class="comment">%         L = [Lx Lt] Maximum lag for which the ACF is plotted.</span>
+014 <span class="comment">%         (Not implemented!)</span>
+015 <span class="comment">%     plotflag = 1 then contour plot (default)</span>
+016 <span class="comment">%                2 then mesh plot</span>
+017 <span class="comment">%                3 one plot with R(x,0) and one with R(0,t)</span>
+018 <span class="comment">%</span>
+019 <span class="comment">%   lintype : specify color and lintype, see PLOT for possibilities.</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% Example:</span>
+022 <span class="comment">%   S1 = demospec; S2 = demospec('dir');</span>
+023 <span class="comment">%   R1 = spec2cov(S1); R2 = spec2cov(S2,0,30,2,100,[],2,[]);</span>
+024 <span class="comment">%   subplot(211), L1 = 17; covplot(R1,L1,1,'.-')</span>
+025 <span class="comment">%   subplot(212), covplot(R2)</span>
+026 <span class="comment">% </span>
+027 <span class="comment">% See also  dat2cov, dat2cor</span>
+028 
+029 <span class="comment">% Tested on: matlab 6.0, 5.3, 5.2, 5.1</span>
+030 <span class="comment">% History:</span>
+031 <span class="comment">% revised by jr 02.04.2000 </span>
+032 <span class="comment">% revised by es 24.01.2000 various small things for two-dim  </span>
+033 <span class="comment">% revised by es 30.09.1999 (two-dim), 13.10.1999 (ishold and linetype)</span>
+034 <span class="comment">% by pab 11.08.98</span>
+035 
+036 <span class="keyword">if</span> ndims(rn.R)&gt;2
+037   error(<span class="string">'Can only handle one- and two dimensional ACF'</span>)
+038 <span class="keyword">end</span>
+039 <span class="keyword">if</span> (nargin &lt;3 | isempty(plotflag))
+040   plotflag=1;
+041 <span class="keyword">end</span>
+042 <span class="keyword">if</span> nargin&lt;4|isempty(lintype)
+043   lintype=<span class="string">'b-'</span>;
+044 <span class="keyword">end</span>
+045 <span class="keyword">if</span> ~isfield(rn,<span class="string">'norm'</span>)
+046   rn.norm=0;
+047 <span class="keyword">end</span>
+048 
+049 n=length(rn.R);
+050 
+051 <span class="keyword">if</span> prod(size(rn.R))==n, <span class="comment">% one-dim ---------------------------------</span>
+052   ih=ishold;
+053 
+054   <span class="keyword">if</span> n&lt;2, 
+055     error(<span class="string">'The vector must have more than 2 elements!'</span>)
+056   <span class="keyword">end</span>
+057   
+058   <span class="keyword">if</span> (nargin &lt;2 | isempty(L)),
+059     L=n-1;
+060   <span class="keyword">else</span>
+061     L=min(L,n-1);
+062   <span class="keyword">end</span>
+063   names=fieldnames(rn);
+064   ind=find(strcmp(names,<span class="string">'x'</span>)+strcmp(names,<span class="string">'t'</span>)); <span class="comment">%options are 't' and 'x'</span>
+065   vari=lower(names{ind});
+066   t=getfield(rn,vari);  <span class="comment">%t is either R.t or R.x</span>
+067   dT=t(2)-t(1);
+068   <span class="keyword">if</span> strcmpi(vari,<span class="string">'t'</span>)
+069     unit=<span class="string">' (sec)'</span>;
+070   <span class="keyword">else</span>
+071     unit=<span class="string">' (m)'</span>;
+072   <span class="keyword">end</span>
+073   
+074   <span class="keyword">if</span> isfield(rn,<span class="string">'stdev'</span>) &amp; ~isempty(rn.stdev),
+075     Stdev=rn.stdev(1:(L+1));
+076     size(Stdev)
+077   <span class="keyword">else</span>
+078     Stdev=[];
+079   <span class="keyword">end</span>
+080   
+081   
+082   <span class="keyword">if</span> (dT==1 ), <span class="comment">% sampling frequency 1 Hz</span>
+083     plotflag=1; <span class="comment">% sufficient to make one plot</span>
+084   <span class="keyword">end</span>  
+085   
+086   <span class="keyword">if</span> (plotflag == 3), subplot(211),  <span class="keyword">end</span>
+087   
+088   r = rn.R(1:(L+1));
+089   tau =  (0:L) ; <span class="comment">% # of lags</span>
+090   mx=max(abs(r));
+091   <span class="keyword">if</span> (plotflag == 2) |(plotflag == 3)
+092     
+093     plot(tau,r,lintype) , hold on
+094     plot([tau(1) tau(L+1)],[0 0],<span class="string">'k-'</span>)
+095     <span class="keyword">if</span>  ~isempty(Stdev),
+096       plot(tau,2*Stdev,<span class="string">'r--'</span>)
+097       plot(tau,-2*Stdev,<span class="string">'r--'</span>)
+098     <span class="keyword">end</span> ,<span class="keyword">if</span> ~ih, hold off, <span class="keyword">end</span>
+099     <span class="keyword">if</span> dT==1,
+100       xlabel([<span class="string">'Lag Lag'</span>,unit])
+101     <span class="keyword">else</span>
+102       xlabel(<span class="string">'Lag'</span>)
+103     <span class="keyword">end</span>
+104     ylabel(<span class="string">'ACF'</span>)
+105     grid on
+106     <span class="keyword">if</span> ih, a=axis; <span class="keyword">else</span> a=zeros(1,4); <span class="keyword">end</span>
+107     axis([0 max(tau(L+1),a(2)) min(-1.01*mx,a(3)) max(1.01*mx,a(4)) ])
+108     <span class="keyword">if</span> rn.norm,
+109       title(<span class="string">'Auto Correlation Function (ACF)'</span> )
+110     <span class="keyword">else</span>
+111       title(<span class="string">'Auto Covariance Function (ACF)'</span> )
+112     <span class="keyword">end</span>
+113   <span class="keyword">end</span>
+114   
+115   <span class="keyword">if</span> (plotflag == 3) 
+116     subplot(212)
+117   <span class="keyword">end</span>
+118 
+119   <span class="keyword">if</span> (plotflag == 1) |(plotflag == 3)
+120     tau = tau*dT ;
+121     plot(tau,r,lintype),hold on
+122     plot([tau(1) tau(L+1)],[0 0],<span class="string">'k-'</span>)
+123     <span class="keyword">if</span>  ~isempty(Stdev),    
+124       plot(tau,2*Stdev,<span class="string">'r--'</span>)
+125       plot(tau,-2*Stdev,<span class="string">'r--'</span>)
+126     <span class="keyword">end</span>, <span class="keyword">if</span> ~ih,hold off,<span class="keyword">end</span>
+127     xlabel([<span class="string">'Lag'</span>,unit])
+128     ylabel(<span class="string">'ACF'</span>)
+129     grid on
+130     <span class="keyword">if</span> ih, a=axis; <span class="keyword">else</span> a=zeros(1,4); <span class="keyword">end</span>
+131     axis([0 max(tau(L+1),a(2)) min(-1.01*mx,a(3)) max(1.01*mx,a(4)) ])
+132     <span class="keyword">if</span> rn.norm,
+133       title(<span class="string">'Auto Correlation Function (ACF)'</span> )
+134     <span class="keyword">else</span>
+135       title(<span class="string">'Auto Covariance Function (ACF)'</span> )
+136     <span class="keyword">end</span>
+137   <span class="keyword">end</span>
+138   subplot(111)
+139   <span class="keyword">if</span> ih, hold on, <span class="keyword">end</span>
+140 <span class="keyword">else</span> <span class="comment">% two-dim ----------------------------------------------------</span>
+141 
+142   [nx,nt]=size(rn.R);
+143   <span class="keyword">if</span> (nargin &lt;2 | isempty(L)),
+144     L=[nx-1, nt-1];
+145   <span class="keyword">elseif</span> length(L)==1
+146     L=[min(L,nx-1) min(L,nt-1)];
+147   <span class="keyword">else</span>
+148     L=[min(L(1),nx-1) min(L(2),nt-1)];
+149   <span class="keyword">end</span>
+150   
+151   names=fieldnames(rn);
+152   ind=find(strcmp(names,<span class="string">'x'</span>)+strcmp(names,<span class="string">'t'</span>)+strcmpi(names,<span class="string">'y'</span>));
+153   <span class="comment">%options are 'x' and 't' and 'y'</span>
+154   vari1=names{ind(1)}; <span class="comment">% always 'x' or 'y' </span>
+155   vari2=names{ind(2)}; <span class="comment">% always 'y' or 't'</span>
+156   <span class="keyword">if</span> strcmpi(vari2,<span class="string">'t'</span>)
+157     unit=<span class="string">' [sec]'</span>;
+158   <span class="keyword">else</span>
+159     unit=<span class="string">' [m]'</span>;
+160   <span class="keyword">end</span>
+161   x=eval([<span class="string">'rn.'</span>,vari1]);
+162   t=eval([<span class="string">'rn.'</span>,vari2]);
+163   <span class="keyword">if</span> strcmp(vari2,<span class="string">'y'</span>)
+164     rn.R=rn.R'; <span class="comment">% otherwise sizes does not match</span>
+165   <span class="keyword">end</span>
+166   <span class="keyword">if</span> plotflag == 1
+167     <span class="keyword">if</span> strcmp(rn.type,<span class="string">'polar'</span>)
+168       <span class="keyword">if</span> rn.y(1)&gt;=0 <span class="comment">% exploit symmetry</span>
+169     c=contour([-rn.y(<span class="keyword">end</span>:-1:2);rn.y],rn.x,[rn.R(:,<span class="keyword">end</span>:-1:2) rn.R]);
+170       <span class="keyword">else</span>
+171     c=contours(rn.y,rn.x,rn.R);
+172       <span class="keyword">end</span>
+173       limit = size(c,2);
+174       ix = 1;
+175       <span class="keyword">while</span>(ix &lt; limit)
+176     z_level(ix) = c(1,ix);
+177     npoints = c(2,ix);
+178     nexti = ix+npoints+1;
+179     c(:,ix)=NaN;
+180     ix = nexti;
+181       <span class="keyword">end</span>
+182       polar(c(1,:),c(2,:),<span class="string">'b'</span>);
+183     <span class="keyword">else</span>     
+184       contour(x,t,rn.R',lintype)
+185       xlabel([vari1 <span class="string">' [m]'</span>])
+186       ylabel([vari2 unit])
+187     <span class="keyword">end</span>
+188     <span class="keyword">if</span> rn.norm,
+189       title(<span class="string">'Auto Correlation Function (ACF)'</span> )
+190     <span class="keyword">else</span>
+191       title(<span class="string">'Auto Covariance Function (ACF)'</span> )
+192     <span class="keyword">end</span>
+193   <span class="keyword">elseif</span> plotflag==2
+194     surf(x,t,rn.R')
+195     shading interp
+196     <span class="keyword">if</span> rn.norm,
+197       title(<span class="string">'Auto Correlation Function (ACF)'</span> )
+198     <span class="keyword">else</span>
+199       title(<span class="string">'Auto Covariance Function (ACF)'</span> )
+200     <span class="keyword">end</span>
+201     xlabel([vari1 <span class="string">' [m]'</span>])
+202     ylabel([vari2 unit])
+203   <span class="keyword">else</span>
+204     subplot(211)
+205     plot(x,rn.R(:,t==0),lintype)
+206     ih=ishold;
+207     hold on
+208     plot([x(1) x(<span class="keyword">end</span>)],[0 0],<span class="string">':'</span>)
+209     <span class="keyword">if</span> ~ih, hold off, <span class="keyword">end</span>
+210     <span class="keyword">if</span> rn.norm,
+211       title(<span class="string">'Auto Correlation Function (ACF)'</span> )
+212     <span class="keyword">else</span>
+213       title(<span class="string">'Auto Covariance Function (ACF)'</span> )
+214     <span class="keyword">end</span>
+215     xlabel([vari1 <span class="string">' (m)'</span>])
+216     subplot(212)
+217     plot(t,rn.R(x==0,:),lintype)
+218     ih=ishold;
+219     hold on
+220     plot([t(1) t(<span class="keyword">end</span>)],[0 0],<span class="string">':'</span>)
+221     <span class="keyword">if</span> ~ih, hold off, <span class="keyword">end</span>
+222     <span class="keyword">if</span> rn.norm,
+223       title(<span class="string">'Auto Correlation Function (ACF)'</span> )
+224     <span class="keyword">else</span>
+225       title(<span class="string">'Auto Covariance Function (ACF)'</span> )
+226     <span class="keyword">end</span>
+227     xlabel([vari2 unit])
+228   <span class="keyword">end</span>
+229 <span class="keyword">end</span>
+230</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

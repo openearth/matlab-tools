@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wgevlike</title>
+  <meta name="keywords" content="wgevlike">
+  <meta name="description" content=" Is an internal routine for wgevfit">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wgevlike.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wgevlike
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Is an internal routine for wgevfit</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [ll,cov] = wgevlike(p,sample) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wgevlike.html" class="code" title=" Is an internal routine for wgevfit">WGEVLIKE</a> Is an internal routine for <a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data">wgevfit</a>
+         
+  CALL:  [L,cov] = <a href="wgevlike.html" class="code" title=" Is an internal routine for wgevfit">wgevlike</a>(phat,<a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a>);
+ 
+     L    = -log(f(phat|<a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a>)), i.e., the log-likelihood function
+            with parameters phat given the data.
+     cov  = Asymptotic covariance matrix of phat (if phat is estimated by
+            a maximum likelihood method).
+   phat   = Parameters in distribution
+            [k s m] = [shape scale location].  (see <a href="wgevcdf.html" class="code" title=" Generalized Extreme Value cumulative distribution function">wgevcdf</a>)
+   <a href="../../wafo/kdetools/sample.html" class="code" title="  Random sampling of points from a data-set ">sample</a> = the vector of data points.
+ 
+  <a href="wgevlike.html" class="code" title=" Is an internal routine for wgevfit">WGEVLIKE</a> is a utility function for maximum likelihood estimation
+  and is used by routine <a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data">wgevfit</a>.
+ 
+  Example:
+    R = <a href="wgevrnd.html" class="code" title=" Random matrices from a Generalized Extreme Value distribution">wgevrnd</a>(-0.2,3,0,1,100);                      
+    phat0 = [-0.2 3 0];       % initial guess
+    phat = fminsearch('wgevlike',phat0,[],R)
+    [L, cov] = <a href="wgevlike.html" class="code" title=" Is an internal routine for wgevfit">wgevlike</a>(phat,R)
+ 
+  See also  <a href="wgevfit.html" class="code" title=" Parameter estimates for GEV data">wgevfit</a>, <a href="wgevcdf.html" class="code" title=" Generalized Extreme Value cumulative distribution function">wgevcdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\inv.bi">inv</a></li></TD>
+<TD>           Matrix inverse.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [ll,cov] = <a name="_sub0" href="#_subfunctions" class="code">wgevlike</a>(p,sample)  
+002 <span class="comment">%WGEVLIKE Is an internal routine for wgevfit</span>
+003 <span class="comment">%        </span>
+004 <span class="comment">% CALL:  [L,cov] = wgevlike(phat,sample);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%    L    = -log(f(phat|sample)), i.e., the log-likelihood function</span>
+007 <span class="comment">%           with parameters phat given the data.</span>
+008 <span class="comment">%    cov  = Asymptotic covariance matrix of phat (if phat is estimated by</span>
+009 <span class="comment">%           a maximum likelihood method).</span>
+010 <span class="comment">%  phat   = Parameters in distribution</span>
+011 <span class="comment">%           [k s m] = [shape scale location].  (see wgevcdf)</span>
+012 <span class="comment">%  sample = the vector of data points.</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% WGEVLIKE is a utility function for maximum likelihood estimation</span>
+015 <span class="comment">% and is used by routine wgevfit.</span>
+016 <span class="comment">%</span>
+017 <span class="comment">% Example:</span>
+018 <span class="comment">%   R = wgevrnd(-0.2,3,0,1,100);                      </span>
+019 <span class="comment">%   phat0 = [-0.2 3 0];       <span class="comment">% initial guess</span></span>
+020 <span class="comment">%   phat = fminsearch('wgevlike',phat0,[],R)</span>
+021 <span class="comment">%   [L, cov] = wgevlike(phat,R)</span>
+022 <span class="comment">%</span>
+023 <span class="comment">% See also  wgevfit, wgevcdf</span>
+024 
+025 <span class="comment">% Tested  on Matlab  5.3</span>
+026 <span class="comment">%</span>
+027 <span class="comment">% History:</span>
+028 <span class="comment">% Revised by PJ (Pär Johannesson) 08-Mar-2000</span>
+029 <span class="comment">%   updated for WAFO</span>
+030 <span class="comment">%   Needed by GEVFIT for method 'ml'.</span>
+031 <span class="comment">% Copied from WAT Ver. 1.1</span>
+032 <span class="comment">% revised ms 14.06.2000</span>
+033 <span class="comment">% - updated header info</span>
+034 <span class="comment">% - changed name to wgevlike (from gevll)</span>
+035 <span class="comment">% revised pab 01.11.2000</span>
+036 <span class="comment">% - added cov (from wgevfit)</span>
+037 
+038 error(nargchk(2,2,nargin))
+039 
+040 sample = sample(:); <span class="comment">% make sure it is a vector</span>
+041 N=length(sample);
+042 y = -log(1-p(1)*(sample-p(3))/p(2))/p(1);
+043 ll=N*log(p(2))+(1-p(1))*sum(y)+sum(exp(-y));
+044 
+045 <span class="keyword">if</span> nargout&gt;1,
+046   <span class="comment">% Calculate the covariance matrix by inverting the observed information. </span>
+047     shape = p(1);
+048     scale = p(2);
+049     location = p(3);
+050     y = -log(1-shape*(sample-location)/scale)/shape;
+051     P = N-sum(exp(-y));
+052     Q = sum(exp((shape-1)*y)+(shape-1)*exp(shape*y));
+053     R = N-sum(y.*(1-exp(-y)));
+054     dLda = -(P+Q)/scale/shape;
+055     dLdb = -Q/scale;
+056     dLdk = -(R-(P+Q)/shape)/shape;
+057     dPdb = -sum(exp((shape-1)*y))/scale;
+058     dPda = sum(exp(-y))/scale/shape+dPdb/shape;
+059     dQdb = sum(exp((2*shape-1)*y));
+060     dQdb = (dQdb+shape*sum(exp(2*shape*y)))*(1-shape)/scale;
+061     dQda = sum(exp((shape-1)*y));
+062     dQda = -(dQda+shape*sum(shape*y))*(1-shape)/scale/shape + dQdb/shape;    
+063     dRda = N-sum(exp(shape*y))+sum(y.*exp(-y))-sum(exp(-y));
+064     dRda = dRda+sum(exp((shape-1)*y))-sum(y.*exp((shape-1)*y));
+065     dRda = -dRda/scale/shape;
+066     dRdk = (sum(y)-sum(y.*exp(-y))+sum(y.*y.*exp(-y))-scale*dRda)/shape;
+067     dRdb = (sum(exp(shape*y).*(1-exp(-y)+y.*exp(-y))))/scale;
+068     d2Lda2 = -dLda/scale-(dPda+dQda)/scale/shape;
+069     d2Ldab = -(dPdb+dQdb)/scale/shape;
+070     d2Ldak = -(dRda+dLda+scale*d2Lda2)/shape;
+071     d2Ldb2 = -dQdb/scale;
+072     d2Ldbk = -(dRdb+scale*d2Ldab)/shape;
+073     d2Ldk2 = -(dRdk+dLdk+scale*d2Ldak)/shape;
+074     V = - [d2Ldk2, d2Ldak, d2Ldbk;
+075            d2Ldak, d2Lda2, d2Ldab;
+076            d2Ldbk, d2Ldab, d2Ldb2];
+077     cov = real(inv(V));
+078 <span class="keyword">end</span>
+079</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

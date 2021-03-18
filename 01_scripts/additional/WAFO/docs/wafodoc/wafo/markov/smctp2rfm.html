@@ -1,0 +1,392 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of smctp2rfm</title>
+  <meta name="keywords" content="smctp2rfm">
+  <meta name="description" content="  Calculates the rainflow matrix for a SMCTP.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">markov</a> &gt; smctp2rfm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\markov&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>smctp2rfm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates the rainflow matrix for a SMCTP.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F_rfc,mu_rfc,T] = smctp2rfm(P,F,c_m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">SMCTP2RFM</a>  Calculates the rainflow matrix for a SMCTP.
+ 
+  CALL: [Frfc,mu_rfc] = <a href="smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>(P,F,c_m);
+ 
+  Frfc   = Rainflow Matrix                            [n,n]
+  mu_rfc = Rainflow Counting intensity                [n,n]
+ 
+  P      = Transition matrix for regime process.      [r,r]
+  F      = Cell array of min-Max and Max-min matrices {r,2}
+  F{i,1} = min-Max matrix, process i                  [n,n]
+  F{i,2} = Max-min matrix, process i                  [n,n]
+  c_m    = Intensity of local minima, switching proc. [1,1]
+           (Default: 1)
+  If a matrix F{i,2}=[], then the process will
+  be assumed to be time-reversible.
+ 
+  Calculates the rainflow matrix for a switching process
+    with a Markov chain of turning points within each regime.
+ 
+  Example: (Example 4.1 in PhD thesis)
+    P = [0.9 0.1; 0.05 0.95];
+    param = [-1 1 32]; u = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+    F1 = <a href="mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.4 -0.3],0.15,1);
+    F2 = <a href="mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[0.3 0.4],0.15,1);
+    Frfc = <a href="smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>(P,{F1 F1'; F2 F2'});
+    <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,Frfc)
+ 
+  See also  <a href="mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>, <a href="smctp2arfm.html" class="code" title="  Calculates the asymmetric rainflow matrix for a SMCTP.">smctp2arfm</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/cmat2nt.html" class="code" title=" NT = cmat2nt(F,def)">cmat2nt</a></li></TD>
+<TD> Calculates a counting distribution from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="mc2stat.html" class="code" title=" [ro,PP]=mc2stat(P)">mc2stat</a></li></TD>
+<TD>  Calculates the stationary distribution for a Markov chain.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\clock.m">clock</a></li></TD>
+<TD>         Current date and time as date vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\inv.bi">inv</a></li></TD>
+<TD>           Matrix inverse.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\kron.m">kron</a></li></TD>
+<TD>          Kronecker tensor product.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\tril.bi">tril</a></li></TD>
+<TD>          Extract lower triangular part.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\triu.bi">triu</a></li></TD>
+<TD>          Extract upper triangular part.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="f_smctp.html" class="code" title=" [y,F,P,FF] = f_smctp(X,Fobs,whatEst,method,known,whatKnown,init)">f_smctp</a></li></TD>
+<TD>  Auxiliary function used by ESTSMCTP</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab2.html" class="code" title="This is a script file.">itmkurs_lab2</a></li></TD>
+<TD> Script to computer exercises 2</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab4.html" class="code" title="This is a script file.">itmkurs_lab4</a></li></TD>
+<TD> Script to computer exercises 4</TD>
+</TR>
+<TR>
+<TD><li><a href="mctp2rfm.html" class="code" title=" [F_rfc,mu_rfc] = mctp2rfm(F,c_m)">mctp2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix for a MCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/rfcdemo2.html" class="code" title=" [F_RFC] = refdemo2(demoNr,P,param,x0,s,lam)">rfcdemo2</a></li></TD>
+<TD> Rainflow matrix for Switching Markov Chains of Turning Points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/test/test_markov.html" class="code" title="This is a script file.">test_markov</a></li></TD>
+<TD> Quick test of the routines in module 'markov'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [F_rfc,mu_rfc,T] = <a name="_sub0" href="#_subfunctions" class="code">smctp2rfm</a>(P,F,c_m)
+002 <span class="comment">% SMCTP2RFM  Calculates the rainflow matrix for a SMCTP.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: [Frfc,mu_rfc] = smctp2rfm(P,F,c_m);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">% Frfc   = Rainflow Matrix                            [n,n]</span>
+007 <span class="comment">% mu_rfc = Rainflow Counting intensity                [n,n]</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% P      = Transition matrix for regime process.      [r,r]</span>
+010 <span class="comment">% F      = Cell array of min-Max and Max-min matrices {r,2}</span>
+011 <span class="comment">% F{i,1} = min-Max matrix, process i                  [n,n]</span>
+012 <span class="comment">% F{i,2} = Max-min matrix, process i                  [n,n]</span>
+013 <span class="comment">% c_m    = Intensity of local minima, switching proc. [1,1]</span>
+014 <span class="comment">%          (Default: 1)</span>
+015 <span class="comment">% If a matrix F{i,2}=[], then the process will</span>
+016 <span class="comment">% be assumed to be time-reversible.</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% Calculates the rainflow matrix for a switching process</span>
+019 <span class="comment">%   with a Markov chain of turning points within each regime.</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% Example: (Example 4.1 in PhD thesis)</span>
+022 <span class="comment">%   P = [0.9 0.1; 0.05 0.95];</span>
+023 <span class="comment">%   param = [-1 1 32]; u = levels(param);</span>
+024 <span class="comment">%   F1 = mktestmat(param,[-0.4 -0.3],0.15,1);</span>
+025 <span class="comment">%   F2 = mktestmat(param,[0.3 0.4],0.15,1);</span>
+026 <span class="comment">%   Frfc = smctp2rfm(P,{F1 F1'; F2 F2'});</span>
+027 <span class="comment">%   cmatplot(u,u,Frfc)</span>
+028 <span class="comment">%</span>
+029 <span class="comment">% See also  mctp2rfm, smctp2arfm</span>
+030   
+031 <span class="comment">% References</span>
+032 <span class="comment">%  </span>
+033 <span class="comment">%  P. Johannesson (1999):</span>
+034 <span class="comment">%  Rainflow Analysis of Switching Markov Loads.</span>
+035 <span class="comment">%  PhD thesis, Mathematical Statistics, Centre for Mathematical Sciences,</span>
+036 <span class="comment">%  Lund Institute of Technology.</span>
+037 <span class="comment">%  </span>
+038 <span class="comment">%  P. Johannesson (1998):</span>
+039 <span class="comment">%  Rainflow Cycles for Switching Processes with Markov Structure.</span>
+040 <span class="comment">%  Probability in the Engineering and Informational Sciences, </span>
+041 <span class="comment">%  Vol. 12, No. 2, pp. 143-175.</span>
+042   
+043 <span class="comment">% Tested  on Matlab  5.3</span>
+044 <span class="comment">%</span>
+045 <span class="comment">% History:</span>
+046 <span class="comment">% Revised by PJ  23-Nov-1999</span>
+047 <span class="comment">%   updated for WAFO</span>
+048 <span class="comment">% Created by PJ (Pär Johannesson) 1997</span>
+049 <span class="comment">%   Copyright (c) 1997-1998 by Pär Johannesson</span>
+050 <span class="comment">%   Toolbox: Rainflow Cycles for Switching Processes V.1.1, 22-Jan-1998</span>
+051 
+052 
+053 <span class="comment">% Check input arguments</span>
+054 
+055 ni = nargin;
+056 no = nargout;
+057 error(nargchk(2,3,ni));
+058 
+059 <span class="keyword">if</span> ni &lt; 3
+060   c_m=[];
+061 <span class="keyword">end</span>
+062 
+063 <span class="keyword">if</span> isempty(c_m)
+064   c_m=1;
+065 <span class="keyword">end</span>
+066 
+067 <span class="comment">% Define </span>
+068 
+069 Zstr = <span class="string">'123456789'</span>; Zstr=Zstr';
+070 
+071 T(1,:)=clock;
+072 
+073 r = length(P);   <span class="comment">% Number of regime states</span>
+074 
+075 n = length(F{1,1});  <span class="comment">% Number of levels</span>
+076 
+077 <span class="comment">% Check that the rowsums of P are equal to 1</span>
+078 
+079 sumP = sum(P');
+080 <span class="keyword">if</span> sum(sumP == 1) ~= r
+081   warning([<span class="string">'Rowsums of P not equal to 1. Renormalizing!'</span>]);
+082   <span class="keyword">for</span> i = 1:length(P)
+083     P(i,:) = P(i,:)/sumP(i);
+084   <span class="keyword">end</span>
+085 <span class="keyword">end</span>
+086 
+087 T(2,:)=clock;
+088 
+089 <span class="comment">% Normalize the rowsums of F{1,1},...,F{r,1} to 1</span>
+090 <span class="comment">%  ==&gt;  Q{1,1},...,Q{r,1}</span>
+091 
+092 <span class="keyword">for</span> i = 1:r
+093   QQ{i,1} = triu(F{i,1},1); <span class="comment">% Set zeros below diagonal and diagonal</span>
+094   <span class="comment">% Set negative elements to zero</span>
+095   [I,J] = find(QQ{i,1}&lt;0);
+096   <span class="keyword">if</span> length(I) ~= 0
+097     warning([<span class="string">'Negative elements in Q'</span> Zstr(i) <span class="string">'. Setting to zero!'</span>]);
+098     <span class="keyword">for</span> k = 1:length(I)
+099       QQ{i,1}(I(k),J(k)) = 0;
+100     <span class="keyword">end</span>
+101   <span class="keyword">end</span>
+102 
+103   sumQQi = sum(QQ{i,1}');
+104   <span class="comment">% Normalize rowsums</span>
+105   <span class="keyword">if</span> sum(sumQQi == 1) ~= length(QQ{i,1})
+106     <span class="comment">%disp(['Warning: Rowsums of Q' Zstr(i) ' not equal to 1. Renormalizing!']);</span>
+107     <span class="keyword">for</span> j = 1:n-1
+108       <span class="keyword">if</span> sumQQi(j)~=0, QQ{i,1}(j,:) = QQ{i,1}(j,:)/sumQQi(j); <span class="keyword">end</span>
+109     <span class="keyword">end</span>
+110   <span class="keyword">end</span>
+111 <span class="keyword">end</span>
+112 
+113 T(3,:)=clock;
+114 
+115 <span class="comment">% Normalize the rowsums of F{1,2},...,F{r,2} to 1</span>
+116 <span class="comment">%  ==&gt;  Q{1,2},...,Q{r,2}</span>
+117 
+118 <span class="comment">% Normalize the rowsums of Fh1,...,Fhr to 1  ==&gt;  Q1,...,Qr</span>
+119 
+120 <span class="keyword">for</span> i = 1:r
+121   <span class="keyword">if</span> isempty(F{i,2})        <span class="comment">% Time-reversible</span>
+122     QQ{i,2} = F{i,1}';
+123   <span class="keyword">else</span>                   <span class="comment">% Fhi is given</span>
+124     QQ{i,2} = F{i,2}; 
+125   <span class="keyword">end</span>
+126     
+127   QQ{i,2} = tril(QQ{i,2},-1); <span class="comment">% Set zeros above diagonal and diagonal</span>
+128   <span class="comment">% Set negative elements to zero</span>
+129   [I,J] = find(QQ{i,2}&lt;0);
+130   <span class="keyword">if</span> length(I) ~= 0
+131     warning([<span class="string">'Negative elements in Qh'</span> Zstr(i) <span class="string">'. Setting to zero!'</span>]);
+132     <span class="keyword">for</span> k = 1:length(I)
+133       QQ{i,2}(I(k),J(k)) = 0;
+134     <span class="keyword">end</span>
+135   <span class="keyword">end</span>
+136 
+137   sumQQi = sum(QQ{i,2}');
+138   <span class="keyword">if</span> sum(sumQQi == 1) ~= length(QQ{i,2})
+139     <span class="comment">%disp(['Warning: Rowsums of Qh' Zstr(i) ' not equal to 1. Renormalizing!']);</span>
+140     <span class="keyword">for</span> j = 2:n
+141       <span class="keyword">if</span> sumQQi(j)~=0, QQ{i,2}(j,:) = QQ{i,2}(j,:)/sumQQi(j); <span class="keyword">end</span>
+142     <span class="keyword">end</span>
+143   <span class="keyword">end</span>
+144 <span class="keyword">end</span>
+145 
+146 T(4,:)=clock;
+147 
+148 <span class="comment">% Make the transition matrix Q for the joint min-Max process</span>
+149 
+150 Q = zeros(n*r,n*r);
+151 I = 0:r:(n-1)*r;
+152 <span class="keyword">for</span> z=1:r
+153   Q0 = kron(QQ{z,1},P);
+154   Q(I+z,:) = Q0(I+z,:);
+155 <span class="keyword">end</span>
+156 
+157 T(5,:)=clock;
+158 
+159 <span class="comment">% Make the transition matrix Qh for the joint Max-min process</span>
+160 
+161 Qh = zeros(n*r,n*r);
+162 I = 0:r:(n-1)*r;
+163 <span class="keyword">for</span> z=1:r
+164   Q0 = kron(QQ{z,2},P);
+165   Qh(I+z,:) = Q0(I+z,:);
+166 <span class="keyword">end</span>
+167 
+168 T(6,:)=clock;
+169 
+170 <span class="comment">% Stationary distribution (=ro) of local minima with transition matrix</span>
+171 <span class="comment">% Qt = Q*Qh = &quot;Transition matrix for min-to-min&quot;</span>
+172 
+173 Qt = Q*Qh;
+174 ro = <a href="mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(Qt(1:r*(n-1),1:r*(n-1)));  <span class="comment">% Stationary distr., row vector  </span>
+175 ro = [ro zeros(1,r)];  <span class="comment">% Minimum can't reach the highest level</span>
+176 
+177 T(7,:)=clock;
+178 
+179 <span class="comment">% Calculate rainflow matrix </span>
+180 
+181 mu_rfc = zeros(n,n);
+182 EYE = eye(n*r,n*r);
+183 Qcumsum = fliplr(cumsum(fliplr(Q)')');
+184 
+185 <span class="comment">%fprintf(1,'Calculating row ');</span>
+186 <span class="keyword">for</span> i=2:n
+187   <span class="comment">%fprintf(1,'-%1d',i);</span>
+188   <span class="keyword">for</span> j=i-1:min([i n-1])
+189     q = Qcumsum(:,r*j+1);
+190 
+191     d = q(1:r*(i-1));                           <span class="comment">% 1:i-1</span>
+192     Ro = ro(1:r*(i-1));                         <span class="comment">% 1:i-1</span>
+193 
+194     mu_rfc(i,j) = Ro*d;
+195   <span class="keyword">end</span>
+196   <span class="keyword">for</span> j=i+1:n-1
+197     q = Qcumsum(:,r*j+1);
+198 
+199     A = Q(r*(i-1)+1:r*(j-1),r*(i+1-1)+1:r*j);   <span class="comment">% i:j-1, i+1:j</span>
+200     Ah = Qh(r*(i+1-1)+1:r*j,r*(i-1)+1:r*(j-1)); <span class="comment">% i+1:j, i:j-1</span>
+201     C = Q(1:r*(i-1),r*(i+1-1)+1:r*j);           <span class="comment">% 1:i-1, i+1:j</span>
+202     Eye = EYE(1:r*(j-i),1:r*(j-i));             <span class="comment">% eye (size of A*Ah)</span>
+203     d = q(1:r*(i-1));                           <span class="comment">% 1:i-1</span>
+204     e = q(r*(i-1)+1:r*(j-1));                   <span class="comment">% i:j-1</span>
+205     Ro = ro(1:r*(i-1));                         <span class="comment">% 1:i-1</span>
+206 
+207     mu_rfc(i,j) = Ro*(d+C*Ah*inv(Eye-A*Ah)*e);
+208   <span class="keyword">end</span>
+209 <span class="keyword">end</span>
+210 <span class="comment">%fprintf(1,'\n');</span>
+211 
+212 
+213 <span class="comment">% Calculation of the intensity of local minima for the swithching process</span>
+214 
+215 mu_rfc = c_m*mu_rfc;
+216 
+217 T(8,:)=clock;
+218 
+219 <span class="comment">% Convert: mu_rfc  --&gt;  F_rfc</span>
+220 
+221 F_rfc = zeros(n,n);
+222 <span class="keyword">for</span> i= 1:n-1
+223   <span class="keyword">for</span> j= i+1:n
+224     F_rfc(i,j) = mu_rfc(i+1,j-1) - mu_rfc(i,j-1) - mu_rfc(i+1,j) + mu_rfc(i,j);
+225   <span class="keyword">end</span>
+226 <span class="keyword">end</span>
+227 
+228 I = F_rfc&lt;0;
+229 <span class="keyword">if</span> sum(sum(I)) ~= 0
+230   warning([<span class="string">'Negative elements in calculated rainflow matrix F_rfc. Setting to zero!'</span>]);
+231   F_rfc(I) = 0;
+232 <span class="keyword">end</span>
+233 
+234 
+235 <span class="keyword">if</span> no&gt;1
+236   mu_rfc = <a href="../../wafo/cycles/cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">cmat2nt</a>(F_rfc); <span class="comment">% Calculate rainflow counting intensity</span>
+237 <span class="keyword">end</span>
+238 
+239 
+240 T(9,:)=clock;
+241 
+242</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

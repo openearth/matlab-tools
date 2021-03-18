@@ -1,0 +1,433 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of arfm2mctp</title>
+  <meta name="keywords" content="arfm2mctp">
+  <meta name="description" content="  Calculates the markov matrix given an asymmetric rainflow matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">markov</a> &gt; arfm2mctp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\markov&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>arfm2mctp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates the markov matrix given an asymmetric rainflow matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F,T] = arfm2mctp(Frfc) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="arfm2mctp.html" class="code" title="  Calculates the markov matrix given an asymmetric rainflow matrix. ">ARFM2MCTP</a>  Calculates the markov matrix given an asymmetric rainflow matrix. 
+ 
+  CALL:  F = <a href="arfm2mctp.html" class="code" title="  Calculates the markov matrix given an asymmetric rainflow matrix. ">arfm2mctp</a>(Frfc);
+ 
+  F      = Markov matrix (from-to-matrix)             [n,n]
+  Frfc   = Rainflow Matrix                            [n,n]
+ 
+  Example: 
+    param = [-1 1 32]; u = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+    F = <a href="mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.2 0.2],0.15,2);
+    F = F/sum(sum(F));
+    Farfc = <a href="mctp2arfm.html" class="code" title="  Calculates asymmetric rainflow matrix for a MCTP.">mctp2arfm</a>({F []});
+    F1 = <a href="arfm2mctp.html" class="code" title="  Calculates the markov matrix given an asymmetric rainflow matrix. ">arfm2mctp</a>(Farfc);
+    <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{F+F' F1},3);
+    sum(sum(abs(F1-(F+F')))) % should be zero
+ 
+  See also  rfm2mctp, <a href="mctp2arfm.html" class="code" title="  Calculates asymmetric rainflow matrix for a MCTP.">mctp2arfm</a>, <a href="smctp2arfm.html" class="code" title="  Calculates the asymmetric rainflow matrix for a SMCTP.">smctp2arfm</a>, <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\clock.m">clock</a></li></TD>
+<TD>         Current date and time as date vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\inv.bi">inv</a></li></TD>
+<TD>           Matrix inverse.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\tril.bi">tril</a></li></TD>
+<TD>          Extract lower triangular part.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\triu.bi">triu</a></li></TD>
+<TD>          Extract upper triangular part.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [F,T] = <a name="_sub0" href="#_subfunctions" class="code">arfm2mctp</a>(Frfc)
+0002 <span class="comment">%ARFM2MCTP  Calculates the markov matrix given an asymmetric rainflow matrix. </span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% CALL:  F = arfm2mctp(Frfc);</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% F      = Markov matrix (from-to-matrix)             [n,n]</span>
+0007 <span class="comment">% Frfc   = Rainflow Matrix                            [n,n]</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Example: </span>
+0010 <span class="comment">%   param = [-1 1 32]; u = levels(param);</span>
+0011 <span class="comment">%   F = mktestmat(param,[-0.2 0.2],0.15,2);</span>
+0012 <span class="comment">%   F = F/sum(sum(F));</span>
+0013 <span class="comment">%   Farfc = mctp2arfm({F []});</span>
+0014 <span class="comment">%   F1 = arfm2mctp(Farfc);</span>
+0015 <span class="comment">%   cmatplot(u,u,{F+F' F1},3);</span>
+0016 <span class="comment">%   sum(sum(abs(F1-(F+F')))) <span class="comment">% should be zero</span></span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% See also  rfm2mctp, mctp2arfm, smctp2arfm, cmatplot</span>
+0019 
+0020 <span class="comment">% References:</span>
+0021 <span class="comment">%  </span>
+0022 <span class="comment">%  P. Johannesson (1999):</span>
+0023 <span class="comment">%  Rainflow Analysis of Switching Markov Loads.</span>
+0024 <span class="comment">%  PhD thesis, Mathematical Statistics, Centre for Mathematical Sciences,</span>
+0025 <span class="comment">%  Lund Institute of Technology.</span>
+0026   
+0027 <span class="comment">% Tested  on Matlab  5.3</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% History:</span>
+0030 <span class="comment">% Revised by PJ  09-Apr-2001</span>
+0031 <span class="comment">%   updated for WAFO</span>
+0032 <span class="comment">% Created by PJ (Pär Johannesson) 1998</span>
+0033 <span class="comment">% Copyright (c) 1997-1998 by Pär Johannesson</span>
+0034 <span class="comment">% Toolbox: Rainflow Cycles for Switching Processes V.1.1, 22-Jan-1998</span>
+0035 
+0036 <span class="comment">% Recursive formulation a'la Igor</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% This program used the formulation where the probabilities</span>
+0039 <span class="comment">% of the events are calculated using &quot;elementary&quot; events for</span>
+0040 <span class="comment">% the MCTP.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">% Standing</span>
+0043 <span class="comment">%    pS = Max*pS1*pS2*pS3;</span>
+0044 <span class="comment">%    F_rfc(i,j) = pS;</span>
+0045 <span class="comment">% Hanging</span>
+0046 <span class="comment">%    pH = Min*pH1*pH2*pH3;</span>
+0047 <span class="comment">%    F_rfc(j,i) = pH;</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">% The cond. prob. pS1, pS2, pS3, pH1, pH2, pH3 are calculated using</span>
+0050 <span class="comment">% the elementary cond. prob. C, E, R, D, E3, Ch, Eh, Rh, Dh, E3h. </span>
+0051 
+0052 ni = nargin;
+0053 no = nargout;
+0054 error(nargchk(1,1,ni));
+0055 
+0056 T(1,:)=clock;
+0057 
+0058 N = sum(sum(Frfc));
+0059 Frfc = Frfc/N;
+0060 
+0061 n = length(Frfc);  <span class="comment">% Number of levels</span>
+0062 
+0063 T(7,:)=clock;
+0064 
+0065 <span class="comment">% Transition matrices for MC</span>
+0066 
+0067 Q = zeros(n,n);
+0068 Qh = zeros(n,n);
+0069 
+0070 <span class="comment">% Transition matrices for time-reversed MC</span>
+0071 
+0072 Qr = zeros(n,n);
+0073 Qrh = zeros(n,n);
+0074 
+0075 <span class="comment">% Probability of minimum and of maximun</span>
+0076 
+0077 MIN = sum(triu(Frfc)') + sum(tril(Frfc));
+0078 MAX = sum(triu(Frfc))  + sum(tril(Frfc)');
+0079 
+0080 <span class="comment">% Calculate rainflow matrix </span>
+0081 
+0082 F = zeros(n,n);
+0083 EYE = eye(n,n);
+0084 
+0085 <span class="comment">%fprintf(1,'Calculating row ');</span>
+0086 <span class="keyword">for</span> k=1:n-1  <span class="comment">% k = subdiagonal</span>
+0087 <span class="comment">%  fprintf(1,'-%1d',i);</span>
+0088 
+0089   <span class="keyword">for</span> i=1:n-k  <span class="comment">% i = minimum</span>
+0090 
+0091     j = i+k; <span class="comment">% maximum;</span>
+0092 
+0093     pS = Frfc(i,j);  <span class="comment">% Standing cycle</span>
+0094     pH = Frfc(j,i);  <span class="comment">% Hanging cycle</span>
+0095 
+0096     Min = MIN(i);
+0097     Max = MAX(j);
+0098 
+0099 <span class="comment">%   fprintf(1,'Min=%f, Max=%f\n',Min,Max);</span>
+0100 
+0101 
+0102     <span class="keyword">if</span> j-i == 2  <span class="comment">% Second subdiagonal</span>
+0103 
+0104       <span class="comment">% For Part 1 &amp; 2 of cycle</span>
+0105 
+0106       <span class="comment">%C   = y/Min;</span>
+0107       c0  = 0;
+0108       c1  = 1/Min;
+0109       <span class="comment">%Ch  = x/Max;</span>
+0110       c0h = 0;
+0111       c1h = 1/Max;
+0112       d1  = Qr(i,i+1)*(1-Qrh(i+1,i));
+0113       D   = d1;
+0114       d1h = Qrh(j,j-1)*(1-Qr(j-1,j));
+0115       Dh  = d1h;
+0116       d0  = sum(Qr(i,i+1:j-1));
+0117       <span class="comment">%E   = 1-d0-y/Min;</span>
+0118       e0  = 1-d0;
+0119       e1  = -1/Min;
+0120       d0h = sum(Qrh(j,i+1:j-1));
+0121       <span class="comment">%Eh  = 1-d0h-x/Max;</span>
+0122       e0h = 1-d0h;
+0123       e1h = -1/Max;
+0124       r1  = Qr(i,i+1)*Qrh(i+1,i);
+0125       R   = r1;
+0126       r1h = Qrh(j,j-1)*Qr(j-1,j);
+0127       Rh  = r1h;
+0128 
+0129       <span class="comment">% For Part 3 of cycle</span>
+0130 
+0131       d3h = sum(Qh(j,i+1:j-1));
+0132       E3h = 1-d3h;
+0133       d3  = sum(Q(i,i+1:j-1));
+0134       E3 = 1-d3;
+0135 
+0136       <span class="comment">% Define coeficients for equation system</span>
+0137       a0 = -pS+2*pS*Rh-pS*Rh^2+pS*R-2*pS*Rh*R+pS*Rh^2*R;
+0138       a1 = -E3h*Max*c1h*e0*Rh+E3h*Max*c1h*e0;
+0139       a3 = -E3h*Max*c1h*e1*Rh+E3h*Max*c1h*Dh*c1+E3h*Max*c1h*e1+pS*c1h*c1-pS*c1h*c1*Rh;
+0140 
+0141       b0 = -pH+2*pH*R+pH*Rh-2*pH*Rh*R-pH*R^2+pH*Rh*R^2;
+0142       b2 = -Min*E3*e0h*R*c1+Min*E3*e0h*c1;
+0143       b3 = Min*E3*e1h*c1+Min*E3*D*c1h*c1-pH*c1h*c1*R-Min*E3*e1h*R*c1+pH*c1h*c1;
+0144 
+0145       C2 = a3*b2;
+0146       C1 = (-a0*b3+a1*b2+a3*b0);
+0147       C0 = a1*b0;
+0148       <span class="comment">% Solve: C2*z^2 + C1*z + C0 = 0</span>
+0149       z1 = -C1/2/C2 + sqrt((C1/2/C2)^2-C0/C2);
+0150       z2 = -C1/2/C2 - sqrt((C1/2/C2)^2-C0/C2);
+0151 
+0152       <span class="comment">% Solution 1</span>
+0153       x1 = -(b0+b2*z1)/(b3*z1);
+0154       y1 = z1;
+0155       <span class="comment">% Solution 2</span>
+0156       x2 = -(b0+b2*z2)/(b3*z2);
+0157       y2 = z2;
+0158 
+0159       x = x2;
+0160       y = y2;
+0161 
+0162 <span class="comment">%      fprintf(1,'2nd: i=%d, j=%d: x1=%f, y1=%f, x2=%f, y2=%f\n',i,j,x1,y1,x2,y2);</span>
+0163 
+0164       <span class="comment">% Test Standing cycle: assume x=y</span>
+0165 
+0166       C0 = a0; C1 = a1; C2 = a3;
+0167       z1S = -C1/2/C2 + sqrt((C1/2/C2)^2-C0/C2);
+0168       z2S = -C1/2/C2 - sqrt((C1/2/C2)^2-C0/C2);
+0169 
+0170       <span class="comment">% Test Hanging cycle: assume x=y</span>
+0171 
+0172       C0 = b0; C1 = b2; C2 = b3;
+0173       z1H = -C1/2/C2 + sqrt((C1/2/C2)^2-C0/C2);
+0174       z2H = -C1/2/C2 - sqrt((C1/2/C2)^2-C0/C2);
+0175 
+0176 <span class="comment">%      fprintf(1,'2nd: i=%d, j=%d: z1S=%f,: z2S=%f, z1H=%f, z2H=%f\n',i,j,z1S,z2S,z1H,z2H);</span>
+0177 
+0178     <span class="keyword">else</span>
+0179 
+0180       Eye = EYE(1:j-i-2,1:j-i-2);
+0181 
+0182       <span class="comment">% For Part 1 &amp; 2 of cycle</span>
+0183 
+0184       I  = i+1:j-2;
+0185       J  = i+2:j-1;
+0186       A  = Qr(I,J);
+0187       Ah = Qrh(J,I);
+0188       a  = Qr(i,J);
+0189       ah = Qrh(j,I);
+0190       b  = Qr(I,j);
+0191       bh = Qrh(J,i);
+0192 
+0193       e  = 1 - sum(Qr(I,i+2:j),2);
+0194       eh = 1 - sum(Qrh(J,i:j-2),2);
+0195 
+0196       Inv = inv(Eye-A*Ah);
+0197       <span class="comment">%C   = y/Min + a*Ah*Inv*b;</span>
+0198       c0  = a*Ah*Inv*b;
+0199       c1  = 1/Min;
+0200       <span class="comment">%Ch  = x/Max + ah*Inv*A*bh;</span>
+0201       c0h = ah*Inv*A*bh;
+0202       c1h = 1/Max;
+0203       d1  = Qr(i,i+1)*(1-Qrh(i+1,i));
+0204       D   = d1+a*eh+a*Ah*Inv*A*eh;
+0205       d1h = Qrh(j,j-1)*(1-Qr(j-1,j));
+0206       Dh  = d1h+ah*Inv*e;
+0207       d0  = sum(Qr(i,i+1:j-1));
+0208       <span class="comment">%E   = 1-d0-y/Min+a*Ah*Inv*e;</span>
+0209       e0  = 1-d0+a*Ah*Inv*e;
+0210       e1  = -1/Min;
+0211       d0h = sum(Qrh(j,i+1:j-1));
+0212       <span class="comment">%Eh  = 1-d0h-x/Max+ah*Inv*A*eh;</span>
+0213       e0h = 1-d0h+ah*Inv*A*eh;
+0214       e1h = -1/Max;
+0215       r1  = Qr(i,i+1)*Qrh(i+1,i);
+0216       R   = r1+a*bh+a*Ah*Inv*A*bh;
+0217       r1h = Qrh(j,j-1)*Qr(j-1,j);
+0218       Rh  = r1h+ah*Inv*b;
+0219 
+0220       <span class="comment">% For Part 3 of cycle</span>
+0221 
+0222       A3  = Q(I,J);
+0223       A3h = Qh(J,I);
+0224       Inv3 = inv(Eye-A3*A3h);
+0225 
+0226       <span class="comment">% For Standing cycle</span>
+0227       d3h = sum(Qh(j,i+1:j-1));
+0228       c3h = Qh(j,I);
+0229       e3h = 1 - sum(Qh(J,i+1:j-2),2);
+0230       E3h = 1-d3h + c3h*Inv3*A3*e3h;
+0231 
+0232       <span class="comment">% For Hanging cycle</span>
+0233       d3  = sum(Q(i,i+1:j-1));
+0234       c3  = Q(i,J);
+0235       e3  = 1 - sum(Q(I,i+2:j-1),2);
+0236       E3  = 1-d3 + c3*A3h*Inv3*e3;
+0237 
+0238     <span class="keyword">end</span>
+0239 
+0240     <span class="keyword">if</span> j-i == 1  <span class="comment">% First subdiagonal</span>
+0241 
+0242         <span class="keyword">if</span> i == 1
+0243         x = Max;
+0244         y = Max;
+0245       <span class="keyword">elseif</span> j == n
+0246         x = Min;
+0247         y = Min;
+0248       <span class="keyword">else</span>
+0249         <span class="keyword">if</span> pS == 0
+0250           x = 0;
+0251           y = pH;
+0252         <span class="keyword">elseif</span> pH == 0
+0253           x = pS;
+0254           y = 0;
+0255         <span class="keyword">else</span>
+0256           x = Min*pS/(Min-pH);
+0257           y = Max*pH/(Max-pS);
+0258         <span class="keyword">end</span>
+0259       <span class="keyword">end</span>
+0260 
+0261     <span class="keyword">elseif</span> j-i &gt;= 2
+0262       <span class="keyword">if</span> i == 1
+0263         x = Max*(1-sum(Qh(j,2:j-1)));
+0264         y = Max*(1-sum(Qrh(j,2:j-1)));
+0265       <span class="keyword">elseif</span> j == n
+0266         x = Min*(1-sum(Q(i,i+1:n-1)));
+0267         y = Min*(1-sum(Qr(i,i+1:n-1)));
+0268       <span class="keyword">else</span>
+0269         <span class="keyword">if</span> pS == 0
+0270           x = 0;
+0271           y = pH;
+0272         <span class="keyword">elseif</span> pH == 0
+0273           x = pS;
+0274           y = 0;
+0275         <span class="keyword">else</span>
+0276           <span class="comment">% Define coeficients for equation system</span>
+0277           a0 = pS*c0h*c0+pS*Rh^2*R-2*pS*Rh*R-E3h*Max*c0h*e0*Rh+E3h*Max*c0h*e0+2*pS*Rh+pS*R-pS*c0h*c0*Rh-pS-pS*Rh^2+E3h*Max*c0h*Dh*c0;
+0278           a1 = pS*c1h*c0+E3h*Max*c1h*Dh*c0-E3h*Max*c1h*e0*Rh-pS*c1h*c0*Rh+E3h*Max*c1h*e0;
+0279           a2 = pS*c0h*c1+E3h*Max*c0h*e1-pS*c0h*c1*Rh+E3h*Max*c0h*Dh*c1-E3h*Max*c0h*e1*Rh;
+0280           a3 = -E3h*Max*c1h*e1*Rh+E3h*Max*c1h*Dh*c1+E3h*Max*c1h*e1+pS*c1h*c1-pS*c1h*c1*Rh;
+0281 
+0282           b0 = pH*c0h*c0+pH*Rh*R^2-pH+pH*Rh-2*pH*Rh*R-pH*c0h*c0*R+Min*E3*e0h*c0-Min*E3*e0h*R*c0+Min*E3*D*c0h*c0+2*pH*R-pH*R^2;
+0283           b1 = Min*E3*D*c1h*c0+Min*E3*e1h*c0+pH*c1h*c0-Min*E3*e1h*R*c0-pH*c1h*c0*R;
+0284           b2 = -pH*c0h*c1*R-Min*E3*e0h*R*c1+Min*E3*D*c0h*c1+Min*E3*e0h*c1+pH*c0h*c1;
+0285           b3 = Min*E3*e1h*c1+Min*E3*D*c1h*c1-pH*c1h*c1*R-Min*E3*e1h*R*c1+pH*c1h*c1;
+0286 
+0287           C2 = a2*b3-a3*b2;
+0288           C1 = a0*b3-a1*b2+a2*b1-a3*b0;
+0289           C0 = a0*b1-a1*b0;
+0290 <span class="comment">%fprintf(1,'i=%d, j=%d, C0/C2=%f,C1/C2=%f,C2=%f\n',i,j,C0/C2,C1/C2,C2);</span>
+0291           <span class="comment">% Solve: C2*z^2 + C1*z + C0 = 0</span>
+0292           z1 = -C1/2/C2 + sqrt((C1/2/C2)^2-C0/C2);
+0293           z2 = -C1/2/C2 - sqrt((C1/2/C2)^2-C0/C2);
+0294 
+0295           <span class="comment">% Solution 1</span>
+0296           x1 = -(b0+b2*z1)/(b1+b3*z1);
+0297           y1 = z1;
+0298           <span class="comment">% Solution 2</span>
+0299           x2 = -(b0+b2*z2)/(b1+b3*z2);
+0300           y2 = z2;
+0301 
+0302           x = x2;
+0303           y = y2;
+0304 
+0305 <span class="comment">%          fprintf(1,'End: i=%d, j=%d: x1=%f, y1=%f, x2=%f, y2=%f\n',i,j,x1,y1,x2,y2);</span>
+0306         <span class="keyword">end</span>
+0307       <span class="keyword">end</span>
+0308     <span class="keyword">end</span>
+0309 
+0310 <span class="comment">%    fprintf(1,'i=%d, j=%d: x=%f, y=%f\n',i,j,x,y);</span>
+0311 
+0312     <span class="comment">% min-max</span>
+0313     F(i,j) = x;
+0314 
+0315     <span class="comment">% max-min</span>
+0316     F(j,i) = y;
+0317 
+0318     <span class="comment">% Fill the transitions matrices</span>
+0319     Q(i,j)   = x/Min;
+0320     Qh(j,i)  = y/Max;
+0321     Qr(i,j)  = y/Min;
+0322     Qrh(j,i) = x/Max;
+0323  
+0324   <span class="keyword">end</span>
+0325 <span class="keyword">end</span>
+0326 <span class="comment">%fprintf(1,'\n');</span>
+0327 
+0328 
+0329 T(8,:)=clock;
+0330 
+0331 
+0332 
+0333 
+0334</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

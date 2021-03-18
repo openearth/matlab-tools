@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of winvgfit</title>
+  <meta name="keywords" content="winvgfit">
+  <meta name="description" content=" Parameter estimates for Inverse Gaussian data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; winvgfit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>winvgfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates for Inverse Gaussian data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat, var,ciL,ciU] = winvgfit(data,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="winvgfit.html" class="code" title=" Parameter estimates for Inverse Gaussian data.">WINVGFIT</a> Parameter estimates for Inverse Gaussian data.
+ 
+  CALL:  [phat <a href="var.html" class="code" title="  Variance ">var</a>] = <a href="winvgfit.html" class="code" title=" Parameter estimates for Inverse Gaussian data.">winvgfit</a>(data, plotflag)
+ 
+    phat  = [m, l] = maximum likelihood estimate of the parameters of
+            the distribution (see <a href="winvgpdf.html" class="code" title=" Inverse Gaussian probability density function">winvgpdf</a>)
+    <a href="var.html" class="code" title="  Variance ">var</a>   = estimated asymptotic variance of phat (cov(m,l)=0)
+    data  = data matrix
+  plotflag = 0, do not plot
+           &gt; 0, plot the empiricial distribution function and the
+                estimated cdf (see <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a> for options)(default)
+ 
+  Example:
+    R=<a href="winvgrnd.html" class="code" title=" Random matrices from a Inverse Gaussian distribution.">winvgrnd</a>(2,2,100,2);
+    [phat, <a href="var.html" class="code" title="  Variance ">var</a>]=<a href="winvgfit.html" class="code" title=" Parameter estimates for Inverse Gaussian data.">winvgfit</a>(R)
+ 
+  See also  <a href="winvgcdf.html" class="code" title=" Inverse Gaussian cumulative distribution function">winvgcdf</a>, <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="winvgcdf.html" class="code" title=" F = winvgcdf(x,m,l);">winvgcdf</a></li></TD>
+<TD> Inverse Gaussian cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\permute.bi">permute</a></li></TD>
+<TD>       Permute array dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [phat, var,ciL,ciU] = <a name="_sub0" href="#_subfunctions" class="code">winvgfit</a>(data,plotflag)
+002 <span class="comment">%WINVGFIT Parameter estimates for Inverse Gaussian data.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [phat var] = winvgfit(data, plotflag)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   phat  = [m, l] = maximum likelihood estimate of the parameters of</span>
+007 <span class="comment">%           the distribution (see winvgpdf)</span>
+008 <span class="comment">%   var   = estimated asymptotic variance of phat (cov(m,l)=0)</span>
+009 <span class="comment">%   data  = data matrix</span>
+010 <span class="comment">% plotflag = 0, do not plot</span>
+011 <span class="comment">%          &gt; 0, plot the empiricial distribution function and the</span>
+012 <span class="comment">%               estimated cdf (see empdistr for options)(default)</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Example:</span>
+015 <span class="comment">%   R=winvgrnd(2,2,100,2);</span>
+016 <span class="comment">%   [phat, var]=winvgfit(R)</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% See also  winvgcdf, empdistr</span>
+019 
+020 <span class="comment">% Reference: Chhikara &amp; Folks, &quot;The Inverse Gaussian Distribution&quot;, p. 53</span>
+021 
+022 
+023 <span class="comment">%tested on: matlab 5.x</span>
+024 <span class="comment">% History:</span>
+025 <span class="comment">% revised pab 24.10.2000</span>
+026 <span class="comment">% - added  nargchk</span>
+027 <span class="comment">% - fixed some bugs when data is a matrix </span>
+028 <span class="comment">% - cov changed to var = variance since cov(m,l)=0</span>
+029 <span class="comment">% added ciU, and ciL which is the 95<span class="comment">% confidence interval  upper &amp; lower</span></span>
+030 <span class="comment">%     limits, respectively, for phat.</span>
+031 <span class="comment">% added ms 14.08.2000</span>
+032 
+033 error(nargchk(1,2,nargin))
+034 <span class="keyword">if</span> nargin&lt;2|isempty(plotflag),  plotflag=1; <span class="keyword">end</span>
+035 sz = size(data);
+036 Nsz=length(sz);
+037 dim = min(find(sz~=1));  <span class="comment">%1st non-singleton dimension</span>
+038 <span class="comment">% make sure dim=1 is the first non-singleton dimension</span>
+039 <span class="keyword">if</span> isempty(dim) | dim ~= 1, 
+040   order = [dim 1:dim-1 dim+1:Nsz];
+041   data  = permute(data,order);
+042   sz    = size(data);
+043 <span class="keyword">end</span>
+044 m = prod(sz(2:<span class="keyword">end</span>));
+045 n0 =sz(1);
+046 
+047 mhat=mean(data);
+048 lhat=1./(mean(data(:,:).^(-1)-mhat(ones(n0,1),:).^(-1)));
+049 phat=[mhat(:),lhat(:)];
+050 
+051 
+052 <span class="keyword">if</span> nargout&gt;1
+053   <span class="comment">%nl/lhat is chi2(n-1)</span>
+054   n=max(6,n0);
+055   var=[mhat(:).^3./lhat(:), lhat(:).^2*(n^3/(n-3)/(n-5)-n^3/(n-3)^2)]/n; 
+056 <span class="keyword">end</span>
+057 
+058 <span class="keyword">if</span> nargout&gt;2, <span class="comment">% nl/lhat ~ chi2(n-1)</span>
+059   alpha2=ones(1,2)*0.05/2;
+060   ciL = <a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(alpha2(ones(m,1),:),phat,var);
+061   ciU = <a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(1-alpha2(ones(m,1),:),phat,var);
+062 <span class="keyword">end</span>
+063 
+064 <span class="keyword">if</span> plotflag 
+065   sd=sort(data);
+066   <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:,1),[sd(:,1) <a href="winvgcdf.html" class="code" title=" Inverse Gaussian cumulative distribution function">winvgcdf</a>(sd(:,1),mhat(1),lhat(1))],plotflag), hold on
+067   <span class="keyword">for</span> ix=2:m, <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:,ix),[sd(:,ix) <a href="winvgcdf.html" class="code" title=" Inverse Gaussian cumulative distribution function">winvgcdf</a>(sd(:,ix),mhat(ix),lhat(ix))],plotflag),<span class="keyword">end</span> 
+068   hold off
+069   title([deblank([<span class="string">'Empirical and Inverse Gaussian estimated cdf'</span>])])
+070 <span class="keyword">end</span>
+071 
+072 
+073 
+074 
+075 
+076 
+077 
+078</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wggamstat</title>
+  <meta name="keywords" content="wggamstat">
+  <meta name="description" content=" Mean and variance for the Generalized Gamma distribution.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wggamstat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wggamstat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Mean and variance for the Generalized Gamma distribution.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [m,v]= wggamstat(a,b,c); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wggamstat.html" class="code" title=" Mean and variance for the Generalized Gamma distribution. ">WGGAMSTAT</a> Mean and variance for the Generalized Gamma distribution. 
+   
+  CALL:  [m,v] = <a href="wggamstat.html" class="code" title=" Mean and variance for the Generalized Gamma distribution. ">wggamstat</a>(a,b,c) 
+  
+    m, v = the mean and variance, respectively  
+   a,b,c = parameters of the Generalized Gamma distribution. (see <a href="wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>) 
+  
+   Mean (m) and variance (v) for the Generalized Gamma distribution is 
+  
+   m=c*gamma(a+1/b)/gamma(a)  and 
+   v=c^2*(gamma(a+2/b)/gamma(a)-gamma(a+1/b)^2/gamma(a)^2); 
+  
+  Example: 
+    param = {1,2,4};N = 1000;   
+    x = <a href="wggamrnd.html" class="code" title=" Random matrices from a Generalized Gamma distribution.">wggamrnd</a>(param{:},N,1); 
+    [mean(x),<a href="var.html" class="code" title="  Variance ">var</a>(x)]   
+    [m,v] = <a href="wggamstat.html" class="code" title=" Mean and variance for the Generalized Gamma distribution. ">wggamstat</a>(param{:})</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [m,v]= <a name="_sub0" href="#_subfunctions" class="code">wggamstat</a>(a,b,c); 
+002 <span class="comment">%WGGAMSTAT Mean and variance for the Generalized Gamma distribution. </span>
+003 <span class="comment">%  </span>
+004 <span class="comment">% CALL:  [m,v] = wggamstat(a,b,c) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   m, v = the mean and variance, respectively  </span>
+007 <span class="comment">%  a,b,c = parameters of the Generalized Gamma distribution. (see wggampdf) </span>
+008 <span class="comment">% </span>
+009 <span class="comment">%  Mean (m) and variance (v) for the Generalized Gamma distribution is </span>
+010 <span class="comment">% </span>
+011 <span class="comment">%  m=c*gamma(a+1/b)/gamma(a)  and </span>
+012 <span class="comment">%  v=c^2*(gamma(a+2/b)/gamma(a)-gamma(a+1/b)^2/gamma(a)^2); </span>
+013 <span class="comment">% </span>
+014 <span class="comment">% Example: </span>
+015 <span class="comment">%   param = {1,2,4};N = 1000;   </span>
+016 <span class="comment">%   x = wggamrnd(param{:},N,1); </span>
+017 <span class="comment">%   [mean(x),var(x)]   </span>
+018 <span class="comment">%   [m,v] = wggamstat(param{:}) </span>
+019    
+020  
+021 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability </span>
+022 <span class="comment">% and Life Span Models&quot;, p. 220 ff, Marcel Dekker. </span>
+023  
+024 <span class="comment">% Tested on; Matlab 5.3 </span>
+025 <span class="comment">% History:  </span>
+026 <span class="comment">% revised pab Jul2004 </span>
+027 <span class="comment">% fixed a bug    </span>
+028 <span class="comment">% reviseed pab Dec2003 </span>
+029 <span class="comment">% fixed abug: k1 -&gt; k3 </span>
+030 <span class="comment">% revised pab 24.10.2000 </span>
+031 <span class="comment">%  - added comnsize, nargchk + default value for b and c </span>
+032 <span class="comment">% added ms 09.08.2000 </span>
+033 error(nargchk(1,3,nargin)) 
+034 <span class="keyword">if</span> nargin&lt;2,  b=1;<span class="keyword">end</span> 
+035 <span class="keyword">if</span> nargin&lt;3,  c=1;<span class="keyword">end</span> 
+036 [errorcode a b c] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(a,b,c); 
+037 <span class="keyword">if</span> errorcode &gt; 0 
+038     error(<span class="string">'a b and c must be of common size or scalar.'</span>); 
+039 <span class="keyword">end</span> 
+040  
+041 <span class="comment">% Initialize  m  and v to zero. </span>
+042 m = zeros(size(a)); 
+043 v=m; 
+044 ok = (a &gt; 0 &amp; b&gt;0 &amp; c&gt;0); 
+045 k=find(ok); 
+046 <span class="keyword">if</span> any(k), 
+047   m(k) = b(k).*gamma(a(k)+1./c(k))./gamma(a(k)); 
+048   v(k) = b(k).^2.*gamma(a(k)+2./c(k))./gamma(a(k))-m(k).^2; 
+049 <span class="keyword">end</span> 
+050  
+051 k3 = find(~ok);      
+052 <span class="keyword">if</span> any(k3) 
+053   tmp = NaN; 
+054   m(k3) = tmp(ones(size(k3))); 
+055   v(k3)=m(k3); 
+056 <span class="keyword">end</span> 
+057  
+058  
+059  
+060  
+061  
+062</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

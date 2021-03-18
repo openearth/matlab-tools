@@ -1,0 +1,316 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of weib2dpdf</title>
+  <meta name="keywords" content="weib2dpdf">
+  <meta name="description" content=" 2D Weibull probability density function (pdf).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; weib2dpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>weib2dpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> 2D Weibull probability density function (pdf).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> y = weib2dpdf(x1,x2,a1,b1,a2,b2,c12,condon) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="weib2dpdf.html" class="code" title=" 2D Weibull probability density function (pdf).">WEIB2DPDF</a> 2D Weibull probability density function (pdf).
+ 
+   CALL:  f = <a href="weib2dpdf.html" class="code" title=" 2D Weibull probability density function (pdf).">weib2dpdf</a>(x1,x2,param,condon)
+ 
+      f    = PDF evaluated at x1 and x2.
+     x1,x2 = coordinates
+     param = [ A1, B1,A2,B2,C12] the parameters of the distribution
+    condon = 0 it returns the the regular pdf of X1 and X2 (default)
+             1 it returns the conditional pdf given X1
+             2 it returns the conditional pdf given X2
+ 
+    The size of f is the common size of the input arguments X1 and X2. A scalar input
+    functions as a constant matrix of the same size as the other inputs.
+    The PDF is defined by:
+ 
+   f(X1,X2)=B1*B2*xn1^(B1-1)*xn2^(B2-1)/A1/B1/N*...
+            exp{-[xn1^B1 +xn2^B2 ]/N }*I0(2*C12*xn1^(B1/2)*xn2^(B2/2)/N) 
+    where 
+       N=1-C12^2, xn1=X1/A1,  xn2=X2/A2 and 
+       I0 is the modified  bessel function of zeroth order.
+ 
+   (The marginal distribution of X1 is weibull with parameters A1 and B1) 
+   (The marginal distribution of X2 is weibull with parameters A2 and B2) 
+   (C12 is the interaction parameter between X1 and X2)
+ 
+ Example: 
+   x = linspace(0,6,200); [X1 X2]=meshgrid(x);
+   f = <a href="weib2dpdf.html" class="code" title=" 2D Weibull probability density function (pdf).">weib2dpdf</a>(X1,X2,[2 2  3 2.5 .8]);
+   mesh(x,x,f),
+   figure(2), contour(x,x,f)
+ 
+  See also  <a href="weib2dcdf.html" class="code" title=" Joint 2D Weibull cumulative distribution function   ">weib2dcdf</a>, <a href="wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>, besseli</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\besseli.m">besseli</a></li></TD>
+<TD>       Modified Bessel function of the first kind.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\inf.m">inf</a></li></TD>
+<TD>           Infinity.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="weib2dcdf.html" class="code" title=" [y ,tol1] = weib2dcdf(x1,x2,param,condon,tol)">weib2dcdf</a></li></TD>
+<TD> Joint 2D Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dcinv.html" class="code" title=" [x, k2]= weib2dcinv(x1,p,a1,b1,a2,b2,c12,tol);">weib2dcinv</a></li></TD>
+<TD> Inverse of the conditional 2D weibull cdf of X2 given X1.</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dlike.html" class="code" title=" [LL, C] = weib2dlike(param1,data1,data2,given,gparam)">weib2dlike</a></li></TD>
+<TD> 2D Weibull log-likelihood function.</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dpdf2.html" class="code" title=" y = weib2dpdf2(v1,h1,phat)">weib2dpdf2</a></li></TD>
+<TD> Joint 2D Weibull probability density function</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> y = <a name="_sub0" href="#_subfunctions" class="code">weib2dpdf</a>(x1,x2,a1,b1,a2,b2,c12,condon)
+002 <span class="comment">%WEIB2DPDF 2D Weibull probability density function (pdf).</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL:  f = weib2dpdf(x1,x2,param,condon)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%     f    = PDF evaluated at x1 and x2.</span>
+007 <span class="comment">%    x1,x2 = coordinates</span>
+008 <span class="comment">%    param = [ A1, B1,A2,B2,C12] the parameters of the distribution</span>
+009 <span class="comment">%   condon = 0 it returns the the regular pdf of X1 and X2 (default)</span>
+010 <span class="comment">%            1 it returns the conditional pdf given X1</span>
+011 <span class="comment">%            2 it returns the conditional pdf given X2</span>
+012 <span class="comment">%</span>
+013 <span class="comment">%   The size of f is the common size of the input arguments X1 and X2. A scalar input</span>
+014 <span class="comment">%   functions as a constant matrix of the same size as the other inputs.</span>
+015 <span class="comment">%   The PDF is defined by:</span>
+016 <span class="comment">%</span>
+017 <span class="comment">%  f(X1,X2)=B1*B2*xn1^(B1-1)*xn2^(B2-1)/A1/B1/N*...</span>
+018 <span class="comment">%           exp{-[xn1^B1 +xn2^B2 ]/N }*I0(2*C12*xn1^(B1/2)*xn2^(B2/2)/N) </span>
+019 <span class="comment">%   where </span>
+020 <span class="comment">%      N=1-C12^2, xn1=X1/A1,  xn2=X2/A2 and </span>
+021 <span class="comment">%      I0 is the modified  bessel function of zeroth order.</span>
+022 <span class="comment">%</span>
+023 <span class="comment">%  (The marginal distribution of X1 is weibull with parameters A1 and B1) </span>
+024 <span class="comment">%  (The marginal distribution of X2 is weibull with parameters A2 and B2) </span>
+025 <span class="comment">%  (C12 is the interaction parameter between X1 and X2)</span>
+026 <span class="comment">%</span>
+027 <span class="comment">%Example: </span>
+028 <span class="comment">%  x = linspace(0,6,200); [X1 X2]=meshgrid(x);</span>
+029 <span class="comment">%  f = weib2dpdf(X1,X2,[2 2  3 2.5 .8]);</span>
+030 <span class="comment">%  mesh(x,x,f),</span>
+031 <span class="comment">%  figure(2), contour(x,x,f)</span>
+032 <span class="comment">%</span>
+033 <span class="comment">% See also  weib2dcdf, wweibpdf, besseli</span>
+034 
+035  
+036 
+037 <span class="comment">%   References:</span>
+038 <span class="comment">%     Dag Myrhaug &amp; Håvard Rue</span>
+039 <span class="comment">%  Journal of Ship Research, Vol 42, No3, Sept 1998, pp 199-205 </span>
+040 
+041 <span class="comment">%Tested on: matlab 5.2</span>
+042 <span class="comment">% History:</span>
+043 <span class="comment">%  by Per A. Brodtkorb 13.11.98</span>
+044 
+045 
+046 
+047 error(nargchk(3,8,nargin))
+048 <span class="keyword">if</span> nargin &lt; 3, 
+049   error(<span class="string">'Requires 3 input arguments.'</span>); 
+050 <span class="keyword">elseif</span> ((nargin &lt; 7) &amp;(prod(size((a1)))~=5)|isempty(a1)),
+051   error(<span class="string">'Requires either 7 input arguments or that input argument 3 must have 5 entries .'</span>); 
+052 <span class="keyword">elseif</span> (nargin &lt; 5) &amp;prod(size((a1)))==5,
+053   <span class="keyword">if</span> nargin&lt;4|isempty(b1),  condon=0;<span class="keyword">else</span>  condon=b1;  <span class="keyword">end</span>
+054   b1=a1(2);
+055   a2=a1(3);  b2=a1(4);    
+056   c12=a1(5); a1=a1(1); 
+057 <span class="keyword">elseif</span> (nargin &lt; 8)|isempty(condon), 
+058   condon=0; <span class="comment">%</span>
+059 <span class="keyword">end</span>
+060 
+061 
+062   
+063 [errorcode x1, x2, a1,b1,a2, b2, c12] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x1,x2,a1,b1,a2,b2,c12);
+064 <span class="keyword">if</span> errorcode &gt; 0
+065   error(<span class="string">'Requires non-scalar arguments to match in size.'</span>);
+066 <span class="keyword">end</span>
+067 xs=size(x1); 
+068 <span class="comment">%if ndims(x1)&gt;2, <span class="comment">% make sure they have the right shape</span></span>
+069 <span class="comment">%  a1=reshape(a1,xs);a2=reshape(a2,xs);b1=reshape(b1,xs);b2=reshape(b2,xs);</span>
+070 <span class="comment">%  c12=reshape(c12,xs);</span>
+071 <span class="comment">%end</span>
+072 
+073 y = zeros(xs);
+074 
+075 ok = ((a1 &gt; 0) .*(b1 &gt; 0).*(a2 &gt; 0).*(b2 &gt; 0).*(abs(c12)&lt;1));
+076   
+077 k1 = find(~ok);
+078 <span class="keyword">if</span> any(k1)
+079    tmp   = NaN;
+080    y(k1) = tmp(ones(size(k1)));
+081 <span class="keyword">end</span>
+082 
+083 k = find((x2 &gt; 0).*(x1 &gt; 0) &amp; ok);
+084 <span class="keyword">if</span> any(k),
+085   <span class="comment">%scales bessel with exp(-abs(x))  to avoid overflow </span>
+086   [y(k) ierr] =besseli(0,2*c12(k).*((x1(k)./a1(k)).^(b1(k)/2).*.<span class="keyword">...</span>
+087       (x2(k)./a2(k)).^(b2(k)/2))./(1-c12(k).^2),1 );
+088   
+089   <span class="keyword">switch</span> ierr(1),
+090     <span class="keyword">case</span> 0, <span class="comment">%computation OK</span>
+091     <span class="keyword">case</span> 1, error(<span class="string">'Illegal arguments.'</span>)
+092     <span class="keyword">case</span> 2, disp(<span class="string">'Overflow.  Return Inf.'</span>)
+093     <span class="keyword">case</span> 3, disp(<span class="string">'Some loss of accuracy in argument reduction.'</span>)
+094     <span class="keyword">case</span> 4, error(<span class="string">'Complete loss of accuracy, z or nu too large.'</span>)
+095     <span class="keyword">case</span> 5, error(<span class="string">'No convergence.  Return NaN.'</span>)
+096   <span class="keyword">end</span>
+097   y(k)=log(y(k));
+098   
+099   <span class="keyword">switch</span> condon
+100     <span class="keyword">case</span> 0,<span class="comment">%regular pdf</span>
+101       y(k)=exp(- ((x1(k)./a1(k)).^b1(k) +(x2(k)./a2(k)).^b2(k) <span class="keyword">...</span>
+102       -abs(2*c12(k).*((x1(k)./a1(k)).^(b1(k)/2).*<span class="keyword">...</span>
+103       (x2(k)./a2(k)).^(b2(k)/2))))./(1-c12(k).^2)  +y(k) ) <span class="keyword">...</span>
+104       .*b1(k).*(x1(k)./a1(k)).^(b1(k)-1)./a1(k).*b2(k).*<span class="keyword">...</span>
+105       (x2(k)./a2(k)).^(b2(k) - 1) ./a2(k)./(1-c12(k).^2);
+106     <span class="keyword">case</span> 1, <span class="comment">%pdf conditioned on x1 ie. p(x2|x1)     </span>
+107        y(k) =exp(- (c12(k).*(x1(k)./a1(k)).^(b1(k)/2) - <span class="keyword">...</span>
+108        (x2(k)./a2(k)).^(b2(k)/2)).^2./(1-c12(k).^2 ) +y(k)  )<span class="keyword">...</span>
+109        .*(b2(k)./(a2(k).*(1-c12(k).^2))).*(x2(k)./a2(k)).^(b2(k) - 1);
+110      <span class="keyword">case</span> 2,<span class="comment">%pdf conditioned on x2 ie. p(x1|x2)</span>
+111         y(k)=exp(- ((x1(k)./a1(k)).^(b1(k)/2) -c12(k).*<span class="keyword">...</span>
+112         (x2(k)./a2(k)).^(b2(k)/2)).^2./(1-c12(k).^2)  +y(k) )<span class="keyword">...</span>
+113       .*(b1(k)./(a1(k).*(1-c12(k).^2))).*(x1(k)./a1(k)).^(b1(k)-1);
+114     <span class="keyword">case</span> 3, <span class="comment">% secret option  used by weib2dstat: returns x1*p(x1|x2) </span>
+115       y(k)=x1(k).*exp(- ((x1(k)./a1(k)).^(b1(k)/2) -c12(k).*<span class="keyword">...</span>
+116       (x2(k)./a2(k)).^(b2(k)/2)).^2./(1-c12(k).^2)  +y(k) )<span class="keyword">...</span>
+117       .*(b1(k)./(a1(k).*(1-c12(k).^2))).*(x1(k)./a1(k)).^(b1(k)-1);
+118     <span class="keyword">case</span> 4, <span class="comment">% secret option  used by weib2dstat: returns x1^2*p(x1|x2) </span>
+119       y(k)=x1(k).^2.*exp(- ((x1(k)./a1(k)).^(b1(k)/2) -c12(k).*<span class="keyword">...</span>
+120       (x2(k)./a2(k)).^(b2(k)/2)).^2./(1-c12(k).^2)  +y(k) )<span class="keyword">...</span>
+121       .*(b1(k)./(a1(k).*(1-c12(k).^2))).*(x1(k)./a1(k)).^(b1(k)-1);
+122     <span class="keyword">otherwise</span> , error(<span class="string">'Illegal value for CONDON'</span>)
+123   <span class="keyword">end</span>
+124 
+125   kc=find(isinf(y(k)));
+126   <span class="keyword">if</span> any(kc), 
+127     disp(<span class="string">'Computational problem occured: returning NaNs'</span>) ;   
+128     y(k(kc))=NaN;
+129   <span class="keyword">end</span>
+130 <span class="keyword">end</span>
+131 
+132 <span class="comment">% Special case for asymptotes.</span>
+133 <span class="keyword">switch</span> condon
+134   <span class="keyword">case</span> 0,k1 = find( (x1 == 0 &amp; b1 &lt; 1&amp; x2&gt;0)|( x2 == 0 &amp; b2 &lt; 1&amp; x1&gt;0 )|  <span class="keyword">...</span>
+135     ( x1==0 &amp; x2 == 0 &amp; b1 &lt; 1&amp; b2+b1-2&lt;0)    );
+136   <span class="keyword">case</span> 1, k1 = find( x2 == 0 &amp; b2 &lt; 1 );
+137   <span class="keyword">case</span> {2},  k1 = find( x1 == 0 &amp; b1 &lt; 1 );
+138   <span class="keyword">case</span> {3,4}, k1=[]; <span class="comment">%do nothing</span>
+139 <span class="keyword">end</span>
+140 <span class="keyword">if</span> any(k1)
+141   tmp   = Inf;
+142   y(k1) = tmp(ones(size(k1)));
+143 <span class="keyword">end</span>
+144 
+145 <span class="comment">% Special case when the marginal Weibull is the same as exponential. </span>
+146 <span class="keyword">switch</span> condon,
+147   <span class="keyword">case</span> 0, 
+148     k2 = find((x1 == 0 &amp; b1 == 1&amp;x2&gt;0)  );
+149     <span class="keyword">if</span> any(k2),
+150       y(k2) =  b2(k2) .* (x2(k2)./a2(k2)).^ (b2(k2) - <span class="keyword">...</span>
+151       1)./a2(k2)./(1-c12(k2).^2)./a1(k2).*.<span class="keyword">...</span>
+152       exp(- (  (x2(k2)./a2(k2)) .^ b2(k2) )./(1-c12(k2).^2)   );
+153     <span class="keyword">end</span>
+154     k3 = find((x2 == 0 &amp; b2 == 1&amp;x1&gt;0)  );
+155     <span class="keyword">if</span> any(k3),
+156       y(k3) = b1(k3) .* (x1(k3)./a1(k3)).^ (b1(k3) - <span class="keyword">...</span>
+157       1)./a1(k3)./a2(k3)./(1-c12(k3).^2).*<span class="keyword">...</span>
+158       exp(- ((x1(k3)./a1(k3)) .^ b1(k3)  )./(1-c12(k3).^2)   );
+159     <span class="keyword">end</span>
+160     k4 = find( x1==0 &amp; x2==0 &amp; b1 == 1&amp; b2==1)   ;
+161     <span class="keyword">if</span> any(k4),
+162       y(k4) = 1./(a1(k4).*a2(k4).*(1-c12(k4).^2));
+163     <span class="keyword">end</span>
+164     
+165   <span class="keyword">case</span> 1, 
+166     k3 = find(x2 == 0 &amp; b2 == 1  ); 
+167     <span class="keyword">if</span> any(k3),
+168       y(k3) = exp(- (c12(k3).^2.*(x1(k3)./a1(k3)) .^ b1(k3) <span class="keyword">...</span>
+169       )./(1-c12(k3).^2)   )./a2(k3)./(1-c12(k3).^2) ;
+170     <span class="keyword">end</span>
+171     
+172   <span class="keyword">case</span> {2}, 
+173     k3 = find(x1 == 0 &amp; b1 == 1  ); 
+174     <span class="keyword">if</span> any(k3),
+175       y(k3) = exp(- (c12(k3).^2.*(x2(k3)./a2(k3)) .^ b2(k3) <span class="keyword">...</span>
+176       )./(1-c12(k3).^2)   )./a1(k3)./(1-c12(k3).^2) ;
+177     <span class="keyword">end</span>
+178   <span class="keyword">case</span> {3,4}, <span class="comment">%do nothing</span>
+179 <span class="keyword">end</span>
+180 
+181 
+182 
+183 
+184 
+185 
+186</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

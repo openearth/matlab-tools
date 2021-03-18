@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of fr2nt</title>
+  <meta name="keywords" content="fr2nt">
+  <meta name="description" content="  Calculates the counting distribution given the frequency matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wsim</a> &gt; <a href="index.html">private</a> &gt; fr2nt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>fr2nt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>  Calculates the counting distribution given the frequency matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> NT = fr2nt(f) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="fr2nt.html" class="code" title="  Calculates the counting distribution given the frequency matrix.">FR2NT</a>  Calculates the counting distribution given the frequency matrix.
+    
+   CALL: NT = <a href="fr2nt.html" class="code" title="  Calculates the counting distribution given the frequency matrix.">fr2nt</a>(fr);
+ 
+   where
+ 
+         NT = a square counting distribution matrix for a cycle count,
+         fr = a square frequency matrix for a cycle count.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\triu.bi">triu</a></li></TD>
+<TD>          Extract upper triangular part.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="fr2comb.html" class="code" title=" comb=fr2comb(f,r)">fr2comb</a></li></TD>
+<TD> Combination matrix for placing out cycles given the frequency matrix</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> NT = <a name="_sub0" href="#_subfunctions" class="code">fr2nt</a>(f)
+02 <span class="comment">%FR2NT  Calculates the counting distribution given the frequency matrix.</span>
+03 <span class="comment">%   </span>
+04 <span class="comment">%  CALL: NT = fr2nt(fr);</span>
+05 <span class="comment">%</span>
+06 <span class="comment">%  where</span>
+07 <span class="comment">%</span>
+08 <span class="comment">%        NT = a square counting distribution matrix for a cycle count,</span>
+09 <span class="comment">%        fr = a square frequency matrix for a cycle count.</span>
+10 
+11 <span class="comment">%  Copyright 1993, Mats Frendahl, Dept. of Math. Stat., University of Lund.</span>
+12 
+13 [n m]=size(f);
+14 <span class="keyword">if</span> (n==m) &amp; (n&gt;2)
+15    m1=cumsum(cumsum(f')'-f);
+16    m2=zeros(n,n);
+17    m2(2:n-1,2:n-1)=m1(1:n-2,2:n-1);
+18    NT=fliplr(triu(fliplr(m2),0));
+19 <span class="keyword">else</span>
+20    disp([<span class="string">'   The matrix is not square or dimension &lt; 3.'</span>])
+21    disp([<span class="string">'   Program will terminate.'</span>])
+22 <span class="keyword">end</span>
+23</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

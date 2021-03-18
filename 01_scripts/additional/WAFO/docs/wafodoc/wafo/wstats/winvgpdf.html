@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of winvgpdf</title>
+  <meta name="keywords" content="winvgpdf">
+  <meta name="description" content=" Inverse Gaussian probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; winvgpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>winvgpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Inverse Gaussian probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = winvgpdf(x,m,l); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="winvgpdf.html" class="code" title=" Inverse Gaussian probability density function">WINVGPDF</a> Inverse Gaussian probability density function
+ 
+  CALL:  f = <a href="winvgpdf.html" class="code" title=" Inverse Gaussian probability density function">winvgpdf</a>(x,m,l);
+ 
+         f = density function evaluated at x
+       m,l = parameters
+ 
+  The Inverse Gaussian distribution is defined by its pdf
+ 
+         f(x)=(l/(2*pi*x^3))^(1/2)*exp(-l*(x-m)^2/(2*m^2*x)), x&gt;0.
+ 
+  Example: 
+    x = linspace(0,3,200);
+    p1 = <a href="winvgpdf.html" class="code" title=" Inverse Gaussian probability density function">winvgpdf</a>(x,1,1); p2 = <a href="winvgpdf.html" class="code" title=" Inverse Gaussian probability density function">winvgpdf</a>(x,1,.25);
+    plot(x,p1,x,p2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="winvginv.html" class="code" title=" x = winvginv(F,m,l)">winvginv</a></li></TD>
+<TD> Inverse of the Inverse Gaussian distribution function</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">winvgpdf</a>(x,m,l);
+002 <span class="comment">%WINVGPDF Inverse Gaussian probability density function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  f = winvgpdf(x,m,l);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        f = density function evaluated at x</span>
+007 <span class="comment">%      m,l = parameters</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% The Inverse Gaussian distribution is defined by its pdf</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%        f(x)=(l/(2*pi*x^3))^(1/2)*exp(-l*(x-m)^2/(2*m^2*x)), x&gt;0.</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Example: </span>
+014 <span class="comment">%   x = linspace(0,3,200);</span>
+015 <span class="comment">%   p1 = winvgpdf(x,1,1); p2 = winvgpdf(x,1,.25);</span>
+016 <span class="comment">%   plot(x,p1,x,p2)</span>
+017 
+018 
+019 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+020 <span class="comment">% and Life Span Models&quot;, p. 259 ff, Marcel Dekker.</span>
+021 
+022 
+023 <span class="comment">% Tested on; Matlab 5.3</span>
+024 <span class="comment">% History:</span>
+025 <span class="comment">% revised pab 24.10.2000</span>
+026 <span class="comment">%  - added comnsize, nargchk</span>
+027 <span class="comment">% added ms 14.08.2000</span>
+028 
+029 
+030 error(nargchk(3,3,nargin))
+031 <span class="comment">%if nargin&lt;2|isempty(m),  m=0;  end</span>
+032 <span class="comment">%if nargin&lt;3|isempty(l),  l=1;  end</span>
+033 
+034 [errorcode, x, m, l] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a> (x,m, l);
+035 <span class="keyword">if</span> (errorcode &gt; 0)
+036   error (<span class="string">'x, m and l must be of common size or scalar'</span>);
+037 <span class="keyword">end</span>
+038 
+039 f=zeros(size(x));
+040 ok=((m&gt;0)&amp;(l&gt;0));
+041 k = find (x&gt;0&amp;ok);
+042 <span class="keyword">if</span> any(k)  
+043   f(k)=(l(k)./(2*pi*x(k).^3)).^(1/2).*exp(-l(k).*(x(k)-m(k)).^2./(2*m(k).^2.*x(k)));
+044 <span class="keyword">end</span>
+045 
+046 k1 = find (~ok);
+047 <span class="keyword">if</span> any (k1)
+048   tmp=NaN;
+049   f(k1) = tmp(ones(size(k1)));
+050 <span class="keyword">end</span>
+051 
+052 
+053</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

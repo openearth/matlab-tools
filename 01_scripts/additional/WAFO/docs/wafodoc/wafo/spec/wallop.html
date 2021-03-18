@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wallop</title>
+  <meta name="keywords" content="wallop">
+  <meta name="description" content="  Calculates (and plots) a Wallop spectral density.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; wallop.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wallop
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates (and plots) a Wallop spectral density.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> S1=wallop(w1,sdata,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wallop.html" class="code" title="  Calculates (and plots) a Wallop spectral density.">WALLOP</a>  Calculates (and plots) a <a href="wallop.html" class="code" title="  Calculates (and plots) a Wallop spectral density.">Wallop</a> spectral density.
+  
+  CALL:  S = <a href="wallop.html" class="code" title="  Calculates (and plots) a Wallop spectral density.">wallop</a>(w,data,plotflag); 
+         S = <a href="wallop.html" class="code" title="  Calculates (and plots) a Wallop spectral density.">wallop</a>(wc,data,plotflag);
+ 
+         S    = a struct containing the spectral density, see <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>.
+         w    = angular frequency (default linspace(0,3,257))
+         wc   = angular cutoff frequency (default 33/Tp)
+         data = [Hm0 Tp M]
+                Hm0 = significant wave height (default 7 (m))
+                Tp  = peak period (default 11 (sec))
+                M   = shape factor, i.e. slope for the high frequency
+                      part (default depending on Hm0 and Tp, see below)
+     plotflag = 0, do not plot the spectrum (default).
+                1, plot the spectrum.
+ 
+   The <a href="wallop.html" class="code" title="  Calculates (and plots) a Wallop spectral density.">WALLOP</a> spectrum parameterization used is 
+ 
+      S(w)=Bw*Hm0^2/wp*(wp./w).^M.*exp(-M/4*(wp./w).^4);
+  where
+      Bw = normalization factor
+      M  = abs((log(2*pi^2)+2*log(Hm0/4)-2*log(Lp))/log(2));
+      Lp = wave length corresponding to the peak frequency, wp.
+ 
+   If M=5 it becomes the same as the <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum with 
+   peak enhancement factor gamma=1 or the Pierson-Moskowitz spectrum. 
+ 
+  Example: 
+    S = <a href="wallop.html" class="code" title="  Calculates (and plots) a Wallop spectral density.">wallop</a>(1.1,[6.5 10]), <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S)
+   
+  See also  <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>, <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>, <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createspec.html" class="code" title=" S=createspec(stype,freqtype)">createspec</a></li></TD>
+<TD> Spectrum structure constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="w2k.html" class="code" title=" [k,k2,ind]=w2k(w,th,h,g),">w2k</a></li></TD>
+<TD> Translates from frequency to wave number</TD>
+</TR>
+<TR>
+<TD><li><a href="wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> S1=<a name="_sub0" href="#_subfunctions" class="code">wallop</a>(w1,sdata,plotflag)
+002 <span class="comment">%WALLOP  Calculates (and plots) a Wallop spectral density.</span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  S = wallop(w,data,plotflag); </span>
+005 <span class="comment">%        S = wallop(wc,data,plotflag);</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%        S    = a struct containing the spectral density, see datastructures.</span>
+008 <span class="comment">%        w    = angular frequency (default linspace(0,3,257))</span>
+009 <span class="comment">%        wc   = angular cutoff frequency (default 33/Tp)</span>
+010 <span class="comment">%        data = [Hm0 Tp M]</span>
+011 <span class="comment">%               Hm0 = significant wave height (default 7 (m))</span>
+012 <span class="comment">%               Tp  = peak period (default 11 (sec))</span>
+013 <span class="comment">%               M   = shape factor, i.e. slope for the high frequency</span>
+014 <span class="comment">%                     part (default depending on Hm0 and Tp, see below)</span>
+015 <span class="comment">%    plotflag = 0, do not plot the spectrum (default).</span>
+016 <span class="comment">%               1, plot the spectrum.</span>
+017 <span class="comment">%</span>
+018 <span class="comment">%  The WALLOP spectrum parameterization used is </span>
+019 <span class="comment">%</span>
+020 <span class="comment">%     S(w)=Bw*Hm0^2/wp*(wp./w).^M.*exp(-M/4*(wp./w).^4);</span>
+021 <span class="comment">% where</span>
+022 <span class="comment">%     Bw = normalization factor</span>
+023 <span class="comment">%     M  = abs((log(2*pi^2)+2*log(Hm0/4)-2*log(Lp))/log(2));</span>
+024 <span class="comment">%     Lp = wave length corresponding to the peak frequency, wp.</span>
+025 <span class="comment">%</span>
+026 <span class="comment">%  If M=5 it becomes the same as the JONSWAP spectrum with </span>
+027 <span class="comment">%  peak enhancement factor gamma=1 or the Pierson-Moskowitz spectrum. </span>
+028 <span class="comment">%</span>
+029 <span class="comment">% Example: </span>
+030 <span class="comment">%   S = wallop(1.1,[6.5 10]), wspecplot(S)</span>
+031 <span class="comment">%  </span>
+032 <span class="comment">% See also  jonswap, torsethaugen, simpson</span>
+033 
+034 <span class="comment">% References:</span>
+035 <span class="comment">% Huang, N.E., Long, S.R., Tung, C.C, Yuen, Y. and Bilven, L.F. (1981)</span>
+036 <span class="comment">% &quot;A unified two parameter wave spectral model for a generous sea state&quot;</span>
+037 <span class="comment">% J. Fluid Mechanics, Vol.112, pp 203-224</span>
+038 
+039 <span class="comment">% Tested on: matlab 6.0, 5.3</span>
+040 <span class="comment">% History:</span>
+041 <span class="comment">% revised jr 03.04.2001</span>
+042 <span class="comment">%  - added wc to input </span>
+043 <span class="comment">%  - updated information</span>
+044 <span class="comment">% revised pab 18.02.2000</span>
+045 <span class="comment">%  - normalization so that int S(w) dw = m0</span>
+046 <span class="comment">% revised pab 24.01.2000</span>
+047 <span class="comment">%  - updated note to 'Wallop Hm0='....</span>
+048 <span class="comment">% by pab 01.12.99</span>
+049 
+050 monitor=0;
+051 
+052 <span class="keyword">if</span> nargin&lt;3|isempty(plotflag)
+053   plotflag=0;
+054 <span class="keyword">end</span>
+055 
+056 <span class="comment">% Old call  </span>
+057 <span class="comment">%if nargin&lt;1|isempty(w1)</span>
+058 <span class="comment">%  w=linspace(0,3,257).';</span>
+059 <span class="comment">%end</span>
+060 
+061 M=[];
+062 <span class="keyword">if</span> nargin&lt;2|isempty(sdata)
+063   sdata=[7 11];
+064 <span class="keyword">else</span>
+065   <span class="keyword">switch</span> length(sdata)
+066     <span class="keyword">case</span> 1, sdata=[sdata 11];
+067     <span class="keyword">case</span> 3, M=sdata(3); sdata=sdata(1:2);
+068   <span class="keyword">end</span>
+069 <span class="keyword">end</span> <span class="comment">%</span>
+070 
+071 <span class="keyword">if</span> nargin&lt;1|isempty(w1), wc = 33/sdata(2)
+072 <span class="keyword">elseif</span> length(w1)==1,    wc = w1; 
+073 <span class="keyword">else</span> w = w1 ; <span class="keyword">end</span>
+074 nw = 257;
+075 <span class="keyword">if</span> isempty(w), w = linspace(0,wc,nw).'; <span class="keyword">end</span>
+076  
+077 n=length(w);
+078 
+079 S1=<a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>;
+080 S1.S=zeros(n,1);
+081 S1.w=w;
+082 S1.norm=0; <span class="comment">% The spectrum is not normalized</span>
+083 
+084 Hm0=sdata(1);
+085 Tp=sdata(2);
+086 S1.note=[<span class="string">'Wallop, Hm0 = '</span> num2str(Hm0)  <span class="string">', Tp = '</span> num2str(Tp)];
+087 wp=2*pi/Tp;
+088 
+089 <span class="keyword">if</span> monitor
+090   disp([<span class="string">'Hm0, Tp      = '</span> num2str([Hm0 Tp])])
+091 <span class="keyword">end</span>
+092 
+093 <span class="keyword">if</span> isempty(M),
+094   kp=<a href="w2k.html" class="code" title=" Translates from frequency to wave number">w2k</a>(wp,0,inf); <span class="comment">% wavenumber at peak frequency</span>
+095   Lp=2*pi/kp; <span class="comment">% wave length at the peak frequency</span>
+096   M=abs((log(2*pi^2)+2*log(Hm0/4)-2*log(Lp))/log(2));
+097 <span class="keyword">end</span>
+098 
+099 <span class="comment">%Bw=0.06238*M^((M-1)/4)/(4^((M-5)/4)*gamma((M-1)/4))*(1+0.7458*(M+2)^(-1.057));</span>
+100 
+101 Bw = M^((M-1)/4)/(4^((M-5)/4)*gamma((M-1)/4))/16;
+102 
+103 <span class="comment">% for w&gt;0 <span class="comment">% avoid division by zero</span></span>
+104 k=find(w&gt;0);
+105 S1.S(k)=Bw*Hm0^2/wp*(wp./w(k)).^M.*exp(-M/4*(wp./w(k)).^4);
+106 
+107 <span class="keyword">if</span> plotflag
+108   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S1,plotflag)
+109 <span class="keyword">end</span>
+110 
+111</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dat2midind</title>
+  <meta name="keywords" content="dat2midind">
+  <meta name="description" content=" Finds indices to midpoints between a min and Max and Max and min.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; dat2midind.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dat2midind
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Finds indices to midpoints between a min and Max and Max and min.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> ind2=dat2midind(x,p,ind,h) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="dat2midind.html" class="code" title=" Finds indices to midpoints between a min and Max and Max and min. ">DAT2MIDIND</a> Finds indices to midpoints between a min and Max and Max and min. 
+   
+    CALL: ind = <a href="dat2midind.html" class="code" title=" Finds indices to midpoints between a min and Max and Max and min. ">dat2midind</a>(x,p,TP_index/wdef,h); 
+      
+     ind = indices to midpoints. 
+          x = two column data matrix with sampled times and values. 
+          p = level between min and max. The default value p=0.5 
+         corresponds to midpoint. (0 &lt; p &lt; 1).     
+   TP_index = indices to turningpoints.         
+     wdef= defines the type of wave. Possible options are 
+         'mw' 'Mw' or 'none'. Default is 'mw'. 
+         If wdef='none' all rainflow filtered min and max  
+         will be used, otherwise only the rainflow filtered  
+         min and max  which define a wave according to the  
+         wave definition will be used. 
+      h  = a threshold 
+              if  h&lt;0, then  tp=x;  
+              if  h=0, then  tp  is a sequence of turning points (default);  
+              if  h&gt;0, then all rainflow cycles with height smaller than 
+                            h  are removed.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="findcross.html" class="code" title=" ind=findcross(x,v)">findcross</a></li></TD>
+<TD> Finds indices to level v up and downcrossings of a vector</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> ind2=<a name="_sub0" href="#_subfunctions" class="code">dat2midind</a>(x,p,ind,h) 
+002 <span class="comment">% DAT2MIDIND Finds indices to midpoints between a min and Max and Max and min. </span>
+003 <span class="comment">%  </span>
+004 <span class="comment">%   CALL: ind = dat2midind(x,p,TP_index/wdef,h); </span>
+005 <span class="comment">%     </span>
+006 <span class="comment">%    ind = indices to midpoints. </span>
+007 <span class="comment">%         x = two column data matrix with sampled times and values. </span>
+008 <span class="comment">%         p = level between min and max. The default value p=0.5 </span>
+009 <span class="comment">%        corresponds to midpoint. (0 &lt; p &lt; 1).     </span>
+010 <span class="comment">%  TP_index = indices to turningpoints.         </span>
+011 <span class="comment">%    wdef= defines the type of wave. Possible options are </span>
+012 <span class="comment">%        'mw' 'Mw' or 'none'. Default is 'mw'. </span>
+013 <span class="comment">%        If wdef='none' all rainflow filtered min and max  </span>
+014 <span class="comment">%        will be used, otherwise only the rainflow filtered  </span>
+015 <span class="comment">%        min and max  which define a wave according to the  </span>
+016 <span class="comment">%        wave definition will be used. </span>
+017 <span class="comment">%     h  = a threshold </span>
+018 <span class="comment">%             if  h&lt;0, then  tp=x;  </span>
+019 <span class="comment">%             if  h=0, then  tp  is a sequence of turning points (default);  </span>
+020 <span class="comment">%             if  h&gt;0, then all rainflow cycles with height smaller than </span>
+021 <span class="comment">%                           h  are removed. </span>
+022  
+023 <span class="comment">% last modified by Per A Brodtkorb 06.07.00 , 01.09.98 </span>
+024  
+025  
+026 xn=x; 
+027  
+028 [n m]= size(xn); 
+029 <span class="keyword">if</span> n&lt;m 
+030   b=m;m=n;n=b;  
+031   xn=xn'; 
+032 <span class="keyword">end</span> 
+033  
+034 <span class="keyword">if</span> n&lt;2,  
+035   error(<span class="string">'The vector must have more than 2 elements!'</span>) 
+036 <span class="keyword">end</span> 
+037  
+038 istime=1; 
+039  
+040 <span class="keyword">switch</span> m 
+041   <span class="keyword">case</span> 1, x2=xn; istime=0; 
+042   <span class="keyword">case</span> 2, x2=xn(:,2);<span class="comment">% dimension OK! </span>
+043   <span class="keyword">otherwise</span>, error(<span class="string">'Wrong dimension of input! dim must be 2xN, 1xN, Nx2 or Nx1 '</span>)   
+044 <span class="keyword">end</span> 
+045  
+046 <span class="keyword">if</span> (nargin&lt;4) | isempty(h) 
+047   h=0; 
+048 <span class="keyword">end</span> 
+049  
+050 <span class="keyword">if</span> (nargin&lt;3) | isempty(ind) 
+051   wdef=<span class="string">'mw'</span>; 
+052   [tp ind]=<a href="dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(xn,h,wdef); 
+053 <span class="keyword">else</span> 
+054   <span class="keyword">if</span> ischar(ind), 
+055     wdef=ind; 
+056     [tp ind]=<a href="dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(xn,h,wdef); 
+057   <span class="keyword">else</span> 
+058     wdef=[]; 
+059     <span class="keyword">if</span> (abs(diff(sign(diff(x2(ind)))))~=2), 
+060       error(<span class="string">'Wrong input! TP_index is not a sequence of turningpoints'</span>) 
+061     <span class="keyword">end</span> 
+062   <span class="keyword">end</span> 
+063 <span class="keyword">end</span> 
+064  
+065 <span class="keyword">if</span> ((nargin&lt;2) | isempty(p)), 
+066   p=0.5; 
+067 <span class="keyword">end</span> 
+068  
+069 <span class="keyword">if</span> (p&lt;=0) | (p&gt;=1), 
+070   error(<span class="string">'p must be between 0 and 1.'</span>) 
+071 <span class="keyword">end</span> 
+072  
+073 Ntp=length(ind); 
+074 Nw=floor((Ntp-1)/2); 
+075  
+076  
+077 ind2=zeros(2*Nw,1); 
+078  
+079 <span class="keyword">for</span> i=1:Nw, 
+080   tmp=<a href="findcross.html" class="code" title=" Finds indices to level v up and downcrossings of a vector">findcross</a>(x2((ind(2*i-1)):ind(2*i)), ((1-p)*x2(ind(2*i-1))+p*x2(ind(2*i)))); 
+081   ind2(2*i-1)=tmp(<span class="keyword">end</span>); <span class="comment">% choosing the one closest to the Max (or min) </span>
+082   tmp = <a href="findcross.html" class="code" title=" Finds indices to level v up and downcrossings of a vector">findcross</a>(x2((ind(2*i)):ind(2*i+1)), <span class="keyword">...</span> 
+083       (p*x2(ind(2*i))+(1-p)*x2(ind(2*i+1)))); 
+084   ind2(2*i)=tmp(1); <span class="comment">% choosing the one closest to the Max (or min) </span>
+085 <span class="keyword">end</span> 
+086  
+087 <span class="comment">%if 2*Nw+1&lt;Ntp, </span>
+088 <span class="comment">%  tmp = findcross(x2((ind(Ntp-1)+1):ind(Ntp)),((1-p)*x2(ind(Ntp-1))+ p*x2(ind(Ntp))) ); </span>
+089 <span class="comment">%  ind2(Ntp-1)=tmp(end); </span>
+090 <span class="comment">%end </span>
+091  
+092 ind2=ind(1:(2*Nw))+ind2;</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,38 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "3.3437,3.3437";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../../wafo/cycles/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../../wafo/markov/graph.html";
+2;
+}
+ subgraph cluster3 {
+ URL = "../../../wafo/misc/graph.html";
+3;
+}
+ subgraph cluster4 {
+ URL = "../../../wafo/wsim/graph.html";
+4;
+}
+ subgraph cluster5 {
+ label = "test";
+ URL = "index.html";
+5;
+}
+  5 -> 1;
+  5 -> 2;
+  5 -> 3;
+  5 -> 4;
+
+ 1 [URL="../../../wafo/cycles/graph.html",label="cycles"];
+ 2 [URL="../../../wafo/markov/graph.html",label="markov"];
+ 3 [URL="../../../wafo/misc/graph.html",label="misc"];
+ 4 [URL="../../../wafo/wsim/graph.html",label="wsim"];
+ 5 [URL="test_markov.html",label="test_markov"];
+}

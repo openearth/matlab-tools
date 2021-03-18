@@ -1,0 +1,482 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spec2tpdf</title>
+  <meta name="keywords" content="spec2tpdf">
+  <meta name="description" content=" Evaluates densities for crest-,trough-period, length.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; spec2tpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spec2tpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Evaluates densities for crest-,trough-period, length.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [f] = spec2tpdf(spec,utc,def,paramt,h,nit,speed,bound,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">SPEC2TPDF</a> Evaluates densities for crest-,trough-period, length.       
+    
+   CALL:  F   = <a href="spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(S,u,def,paramt,h,nit,speed,bound,plotflag); 
+  
+         F    = density structure. 
+         S    = spectral density structure 
+         u    = reference level (default the most frequently crossed level). 
+        def   = 'Tc',    gives half wave period, Tc (default). 
+                'Tt',    gives half wave period, Tt 
+                'Lc' and 'Lt' ditto for wave length. 
+      paramt  = [t0 tn Nt] where t0, tn and Nt is the first value, last value  
+                and the number of points, respectively, for which 
+                the density will be computed. paramt= [5 5 51] implies 
+                that the density is computed only for T=5 and 
+                using 51 equidistant points in the interval [0,5]. 
+           h  = amplitude condition: density for waves with crests above h. 
+                (note  h &gt;= 0), (default 0.)  
+                if abs(h) less 1% of standard deviation of process X then h=0. 
+         nit  =  0,...,9. Dimension of numerical integration  (default 2). 
+                -1,-2,-3,... different important sampling type integrations. 
+        speed = defines accuraccy of calculations by choosing different  
+                parameters, possible values: 1,2...,9 (9 fastest, default 5). 
+        bound = 0 the distribution is approximated (default) 
+              = 1 the upper and lower bounds for the distribution are computed. 
+      plotflag= if 0 then do not plot, else plot (default 0). 
+        []    = default values are used. 
+  
+  Calculates pdf of halfperiods  Tc, Tt, Lc or Lt  such that Ac&gt;h or At&gt;h, 
+  in a stationary Gaussian transform process X(t), where Y(t) = g(X(t)) 
+  (Y zero-mean Gaussian with spectrum given in S). The tr. g, can be estimated 
+  using <a href="lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>, <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>, <a href="hermitetr.html" class="code" title=" Calculate transformation, g, proposed by Winterstein ">hermitetr</a> or <a href="ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">ochitr</a>. 
+  
+  Example:% For the directional <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> compute density of encountered Tc in 
+          % the direction  pi/4 from the principal wave direction (0) at 
+          % points 0.,0.1,...,10. 
+           
+     Hm0=7; Tp=11;  S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(6*pi/Tp,[Hm0 Tp]);  
+     D=<a href="../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a>(linspace(-pi,pi,51),'cos2s',[],[],S.w);                
+     Sdir=<a href="../../wafo/spec/mkdspec.html" class="code" title=" Make a directional spectrum">mkdspec</a>(S,D,1);  
+     Senc=<a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(Sdir,'enc',pi/8,10); paramt=[0 10 101]; 
+     f = <a href="spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(Senc,[],'Tc',paramt,[],-1,[],[],1); 
+     hold on; f1 = <a href="spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(Sdir,[],'Tc',paramt,[],-1,[],[],1); 
+  
+  See also  <a href="../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>, <a href="../../wafo/spec/wnormspec.html" class="code" title=" Normalize a spectral density such that m0=m2=1">wnormspec</a>, <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>, <a href="../../wafo/docs/wavedef.html" class="code" title=" Wave definitions and nomenclature ">wavedef</a>, <a href="../../wafo/docs/wafomenu.html" class="code" title=" displays a user interface to the documentation files of WAFO">wafomenu</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2gaus.html" class="code" title=" xx = dat2gaus(x,g)">dat2gaus</a></li></TD>
+<TD> Transforms  x  using the transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="gaus2dat.html" class="code" title=" x = gaus2dat(xx,g)">gaus2dat</a></li></TD>
+<TD> Transforms  xx  using the inverse of transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/loaddata.html" class="code" title=" data=loaddata(filename)">loaddata</a></li></TD>
+<TD> Loads a matrix from a text file.</TD>
+</TR>
+<TR>
+<TD><li><a href="pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/spec2cov2.html" class="code" title=" R = spec2cov2(S,nr,Nt,dt)">spec2cov2</a></li></TD>
+<TD> Computes covariance function and its derivatives, alternative version</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wafoexepath.html" class="code" title=" p=wafoexepath;">wafoexepath</a></li></TD>
+<TD> Returns the path to executables for the WAFO Toolbox</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wnormspec.html" class="code" title=" [S,mn4,m0,m2,m4,m1]=wnormspec(spectrum,m0,m2,plotflag)">wnormspec</a></li></TD>
+<TD> Normalize a spectral density such that m0=m2=1</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="delete is a built-in method">delete</a></li></TD>
+<TD>        Delete file or graphics object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\dos.m">dos</a></li></TD>
+<TD>           Execute DOS command and return result.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\erf.m">erf</a></li></TD>
+<TD>           Error function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\@double\exist.bi">exist</a></li></TD>
+<TD>         Check if variables or functions are defined.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fclose.m">fclose</a></li></TD>
+<TD>        Close file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fopen.m">fopen</a></li></TD>
+<TD>         Open file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\int2str.m">int2str</a></li></TD>
+<TD>       Convert integer to string (Fast version).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\tic.m">tic</a></li></TD>
+<TD>           Start a stopwatch timer.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\toc.m">toc</a></li></TD>
+<TD>           Read the stopwatch timer.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [f] = <a name="_sub0" href="#_subfunctions" class="code">spec2tpdf</a>(spec,utc,def,paramt,h,nit,speed,bound,plotflag) 
+002 <span class="comment">%SPEC2TPDF Evaluates densities for crest-,trough-period, length.       </span>
+003 <span class="comment">%   </span>
+004 <span class="comment">%  CALL:  F   = spec2tpdf(S,u,def,paramt,h,nit,speed,bound,plotflag); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%        F    = density structure. </span>
+007 <span class="comment">%        S    = spectral density structure </span>
+008 <span class="comment">%        u    = reference level (default the most frequently crossed level). </span>
+009 <span class="comment">%       def   = 'Tc',    gives half wave period, Tc (default). </span>
+010 <span class="comment">%               'Tt',    gives half wave period, Tt </span>
+011 <span class="comment">%               'Lc' and 'Lt' ditto for wave length. </span>
+012 <span class="comment">%     paramt  = [t0 tn Nt] where t0, tn and Nt is the first value, last value  </span>
+013 <span class="comment">%               and the number of points, respectively, for which </span>
+014 <span class="comment">%               the density will be computed. paramt= [5 5 51] implies </span>
+015 <span class="comment">%               that the density is computed only for T=5 and </span>
+016 <span class="comment">%               using 51 equidistant points in the interval [0,5]. </span>
+017 <span class="comment">%          h  = amplitude condition: density for waves with crests above h. </span>
+018 <span class="comment">%               (note  h &gt;= 0), (default 0.)  </span>
+019 <span class="comment">%               if abs(h) less 1<span class="comment">% of standard deviation of process X then h=0. </span></span>
+020 <span class="comment">%        nit  =  0,...,9. Dimension of numerical integration  (default 2). </span>
+021 <span class="comment">%               -1,-2,-3,... different important sampling type integrations. </span>
+022 <span class="comment">%       speed = defines accuraccy of calculations by choosing different  </span>
+023 <span class="comment">%               parameters, possible values: 1,2...,9 (9 fastest, default 5). </span>
+024 <span class="comment">%       bound = 0 the distribution is approximated (default) </span>
+025 <span class="comment">%             = 1 the upper and lower bounds for the distribution are computed. </span>
+026 <span class="comment">%     plotflag= if 0 then do not plot, else plot (default 0). </span>
+027 <span class="comment">%       []    = default values are used. </span>
+028 <span class="comment">% </span>
+029 <span class="comment">% Calculates pdf of halfperiods  Tc, Tt, Lc or Lt  such that Ac&gt;h or At&gt;h, </span>
+030 <span class="comment">% in a stationary Gaussian transform process X(t), where Y(t) = g(X(t)) </span>
+031 <span class="comment">% (Y zero-mean Gaussian with spectrum given in S). The tr. g, can be estimated </span>
+032 <span class="comment">% using lc2tr, dat2tr, hermitetr or ochitr. </span>
+033 <span class="comment">% </span>
+034 <span class="comment">% Example:<span class="comment">% For the directional sea compute density of encountered Tc in </span></span>
+035 <span class="comment">%         <span class="comment">% the direction  pi/4 from the principal wave direction (0) at </span></span>
+036 <span class="comment">%         <span class="comment">% points 0.,0.1,...,10. </span></span>
+037 <span class="comment">%          </span>
+038 <span class="comment">%    Hm0=7; Tp=11;  S = jonswap(6*pi/Tp,[Hm0 Tp]);  </span>
+039 <span class="comment">%    D=spreading(linspace(-pi,pi,51),'cos2s',[],[],S.w);                </span>
+040 <span class="comment">%    Sdir=mkdspec(S,D,1);  </span>
+041 <span class="comment">%    Senc=spec2spec(Sdir,'enc',pi/8,10); paramt=[0 10 101]; </span>
+042 <span class="comment">%    f = spec2tpdf(Senc,[],'Tc',paramt,[],-1,[],[],1); </span>
+043 <span class="comment">%    hold on; f1 = spec2tpdf(Sdir,[],'Tc',paramt,[],-1,[],[],1); </span>
+044 <span class="comment">% </span>
+045 <span class="comment">% See also  spec2cov, wnormspec, datastructures, wavedef, wafomenu </span>
+046  
+047 <span class="comment">% Tested on : matlab 5.3 </span>
+048 <span class="comment">% History: by I. Rychlik 01.10.1998 with name wave_th1.m </span>
+049 <span class="comment">% revised by Per A. Brodtkorb 19.09.1999 </span>
+050 <span class="comment">% revised by I.R. 30.09.1999, bugs removing. </span>
+051 <span class="comment">% continued by s.v.i 10.11.1999 by adding crests level in the period densities </span>
+052 <span class="comment">% an then calculation of crests distribution. </span>
+053 <span class="comment">% changed name and introduced possibility of computation of upper and lower </span>
+054 <span class="comment">% bounds by I.R. 17.12.1999. </span>
+055 <span class="comment">% revised by es 28.01.2000  Adjusting for directional spectrum and wave length. </span>
+056 <span class="comment">% revised by es 28.01.2000 help text </span>
+057 <span class="comment">% revised by IR removing error in transformation 29 VI 2000 </span>
+058 <span class="comment">% revised by IR adopting to Matlab 6.0 -  6 II 2001  </span>
+059 <span class="comment">% revised pab 30nov2003 </span>
+060 tic 
+061 <span class="keyword">if</span> nargin&lt;3|isempty(def) 
+062   def=<span class="string">'tc'</span>; 
+063 <span class="keyword">end</span> 
+064 <span class="keyword">if</span> strcmp(<span class="string">'l'</span>,lower(def(1))) 
+065   spec=<a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(spec,<span class="string">'k1d'</span>); 
+066 <span class="keyword">elseif</span> strcmp(<span class="string">'t'</span>,lower(def(1))) 
+067   spec=<a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(spec,<span class="string">'freq'</span>); 
+068 <span class="keyword">else</span> 
+069   error(<span class="string">'Unknown def'</span>) 
+070 <span class="keyword">end</span> 
+071 <span class="keyword">switch</span> lower(def) 
+072    <span class="keyword">case</span>  {<span class="string">'tc'</span>,<span class="string">'lc'</span>},    defnr = 1; <span class="comment">% 'tc' or 'lc' </span>
+073    <span class="keyword">case</span>  {<span class="string">'tt'</span>,<span class="string">'lt'</span>},    defnr =-1; <span class="comment">% 'tt' or 'lt' </span>
+074    <span class="keyword">otherwise</span>, ,error(<span class="string">'Unknown def'</span>) 
+075 <span class="keyword">end</span>                 
+076 [S, xl4, L0, L2, L4, L1]=<a href="../../wafo/spec/wnormspec.html" class="code" title=" Normalize a spectral density such that m0=m2=1">wnormspec</a>(spec); 
+077  
+078 A=sqrt(L0/L2); 
+079 SCIS=0; 
+080 <span class="keyword">if</span> nargin&lt;6|isempty(nit) 
+081   nit=2; 
+082 <span class="keyword">elseif</span> nit&lt;0 
+083  SCIS=min(abs(nit),11); 
+084  nit=1; 
+085 <span class="keyword">end</span> 
+086  
+087 <span class="keyword">if</span> isfield(spec,<span class="string">'tr'</span>) 
+088   g=spec.tr; 
+089 <span class="keyword">else</span> 
+090   g=[]; 
+091 <span class="keyword">end</span> 
+092 <span class="keyword">if</span> isempty(g) 
+093   g=[(-5:0.02:5)', (-5:0.02:5)']; 
+094   g(:,1)=sqrt(L0)*g(:,1); 
+095 <span class="keyword">end</span> 
+096  
+097  
+098 <span class="keyword">if</span> nargin&lt;2|isempty(utc) 
+099   utc_d=<a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0, 0],g); <span class="comment">% most frequent crossed level  </span>
+100   utc=utc_d(1,2); 
+101 <span class="keyword">end</span> 
+102  
+103 <span class="comment">% transform reference level into Gaussian level </span>
+104 uu=<a href="dat2gaus.html" class="code" title=" Transforms  x  using the transformation  g.">dat2gaus</a>([0., utc],g); 
+105 u=uu(2); 
+106 disp([<span class="string">'The level u for Gaussian process = '</span> num2str(u)]) 
+107  
+108  
+109  
+110 <span class="keyword">if</span> nargin&lt;7|isempty(speed) 
+111   speed=5; 
+112 <span class="keyword">end</span>                 
+113  
+114 <span class="keyword">if</span> nargin&lt;8|isempty(bound) 
+115   bound=0; 
+116 <span class="keyword">end</span>                 
+117 <span class="keyword">if</span> nargin&lt;9|isempty(plotflag) 
+118   plotflag=0; 
+119 <span class="keyword">end</span>                 
+120  
+121 <span class="keyword">if</span> SCIS&gt;0 
+122   bound=0; 
+123 <span class="keyword">end</span> 
+124  
+125 <span class="keyword">if</span> nargin&lt;4|isempty(paramt) 
+126   Ntime = 51; 
+127   t0    = 0.; 
+128   tn    = 2*ceil(2*pi*sqrt(L0/L2)*exp(u^2/2)*(0.5+erf(-sign(defnr)*u/sqrt(2))/2)); 
+129 <span class="keyword">else</span> 
+130   t0     = paramt(1); 
+131   tn     = paramt(2); 
+132   Ntime  = paramt(3); 
+133 <span class="keyword">end</span> 
+134  
+135 t  = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>([0, tn/A, Ntime]); <span class="comment">% normalized times </span>
+136  
+137 N0 = 1+round(t0/tn*(Ntime-1)); <span class="comment">% the starting point to evaluate </span>
+138 <span class="comment">%if Ntime&gt;101 </span>
+139 <span class="comment">%  disp('nr. of wavelengths limited to 101.') </span>
+140 <span class="comment">%end </span>
+141   
+142  
+143 nr = 2; 
+144 px=<a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0., u;1, 5],g);  
+145 px=abs(px(2,2)-px(1,2)); 
+146 Nx = 1; 
+147 <span class="keyword">if</span> nargin&lt;5|isempty(h) 
+148   h=px; 
+149   h0=0.; 
+150 <span class="keyword">else</span> 
+151   h=abs(min(h)); 
+152   h0=h; 
+153   <span class="keyword">if</span> h0&gt;0.01*sqrt(L0) 
+154     Nx=2; 
+155     h=[h; px]; 
+156   <span class="keyword">else</span> 
+157     h=px; 
+158     h0=0.; 
+159   <span class="keyword">end</span> 
+160 <span class="keyword">end</span> 
+161  
+162 h=reshape(h,length(h),1); 
+163 hg=<a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([utc+sign(defnr)*h],g); 
+164  
+165  
+166  
+167 dt = t(2)-t(1); 
+168 R  = <a href="../../wafo/spec/spec2cov2.html" class="code" title=" Computes covariance function and its derivatives, alternative version ">spec2cov2</a>(S,nr,Ntime-1,dt); 
+169  
+170 <span class="keyword">for</span> k=0:nr 
+171   filename=[<span class="string">'Cd'</span>, int2str(k), <span class="string">'.in'</span>]; 
+172   <span class="keyword">if</span> exist(filename) 
+173     delete(filename) 
+174   <span class="keyword">end</span> 
+175   fid = fopen(filename,<span class="string">'wt'</span>); 
+176   fprintf(fid,<span class="string">'%12.10E \n'</span>,R(:,k+1)); 
+177   fclose(fid); 
+178 <span class="keyword">end</span> 
+179 <span class="comment">%SCIS=0; </span>
+180  
+181 <span class="keyword">if</span> exist(<span class="string">'h.in'</span>), delete(<span class="string">'h.in'</span>), <span class="keyword">end</span> 
+182  
+183 fid = fopen(<span class="string">'h.in'</span>,<span class="string">'wt'</span>); 
+184 fprintf(fid,<span class="string">'%12.10f\n'</span>,hg); 
+185 fclose(fid); 
+186  
+187  
+188 <span class="keyword">if</span> exist(<span class="string">'reflev.in'</span>), delete(<span class="string">'reflev.in'</span>), <span class="keyword">end</span> 
+189 disp(<span class="string">'writing data'</span>) 
+190 fid=fopen(<span class="string">'reflev.in'</span>,<span class="string">'wt'</span>); 
+191 fprintf(fid,<span class="string">'%12.10E \n'</span>,u); 
+192 defnr; 
+193  
+194 fprintf(fid,<span class="string">'%2.0f \n'</span>,defnr); 
+195 fprintf(fid,<span class="string">'%2.0f \n'</span>,Ntime); 
+196 fprintf(fid,<span class="string">'%2.0f \n'</span>,N0); 
+197 fprintf(fid,<span class="string">'%2.0f \n'</span>,nit); 
+198 fprintf(fid,<span class="string">'%2.0f \n'</span>,speed); 
+199 fprintf(fid,<span class="string">'%2.0f \n'</span>,SCIS); 
+200 fprintf(fid,<span class="string">'%2.0f \n'</span>,10^9*rand);  <span class="comment">% select a random seed for rind  </span>
+201 fprintf(fid,<span class="string">'%2.0f \n'</span>,Nx); 
+202 fprintf(fid,<span class="string">'%12.10E \n'</span>,dt); 
+203 fclose(fid);  
+204 disp(<span class="string">'   Starting Fortran executable.'</span>) 
+205 <span class="keyword">if</span> bound&lt;0.5 
+206   dos([ <a href="../../wafo/wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a>, <span class="string">'sp2Acdf70.exe'</span>]); <span class="comment">%compiled spec2Acdf.f with rind60.f and intmodule.f </span>
+207 <span class="keyword">else</span> 
+208   dos([ <a href="../../wafo/wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a>, <span class="string">'sp2Acdf51.exe'</span>]); <span class="comment">%compiled spec2Acdf1.f with rind51.f </span>
+209 <span class="keyword">end</span> 
+210  
+211 f=<a href="createpdf.html" class="code" title=" PDF class constructor">createpdf</a>; 
+212 <span class="keyword">switch</span> lower(def) 
+213  <span class="keyword">case</span>  <span class="string">'tc'</span> 
+214   Htxt = [<span class="string">'Density of Tc with Ac&gt;'</span>, num2str(h0), <span class="string">'  u='</span>,num2str(utc)]; 
+215   xtxt = [<span class="string">'T [s]'</span>]; 
+216  <span class="keyword">case</span>  <span class="string">'tt'</span> 
+217   Htxt = [<span class="string">'Density of Tt with At&gt;'</span>, num2str(h0), <span class="string">'  u='</span>,num2str(utc)]; 
+218   xtxt = [<span class="string">'T [s]'</span>]; 
+219  <span class="keyword">case</span>  <span class="string">'lc'</span> 
+220   Htxt = [<span class="string">'Density of Lc with Ac&gt;'</span>, num2str(h0), <span class="string">'  u='</span>,num2str(utc)]; 
+221   xtxt = [<span class="string">'L [m]'</span>]; 
+222  <span class="keyword">case</span>  <span class="string">'lt'</span> 
+223   Htxt = [<span class="string">'Density of Lt with At&gt;'</span>, num2str(h0), <span class="string">'  u='</span>,num2str(utc)]; 
+224   xtxt = [<span class="string">'L [m]'</span>]; 
+225 <span class="keyword">end</span>  
+226   
+227 f.title=Htxt; 
+228 f.labx{1}=xtxt; 
+229 ftmp=<a href="../../wafo/misc/loaddata.html" class="code" title=" Loads a matrix from a text file.">loaddata</a>(<span class="string">'dens.out'</span>)/A; 
+230 f.x{1}=t*A; 
+231 <span class="keyword">if</span> bound&lt;0.5 
+232   ftmp=reshape(ftmp,Nx,length(t)); 
+233   <span class="keyword">if</span> (length(t)&gt;2) 
+234     ftmp(:,2)=0.5*(ftmp(:,3)+ftmp(:,1)); 
+235   <span class="keyword">end</span> 
+236   <span class="keyword">if</span> (Nx&gt;1) 
+237     ft_up=ftmp(2,1:Ntime)-ftmp(1,1:Ntime);       
+238   <span class="keyword">else</span> 
+239     ft_up=ftmp(1,1:Ntime); 
+240   <span class="keyword">end</span> 
+241   f.f=ft_up;    
+242 <span class="keyword">else</span> 
+243   ftmp_up=reshape(ftmp(:,1),Nx,length(t));    
+244   ftmp_lo=reshape(ftmp(:,2),Nx,length(t)); 
+245   <span class="keyword">if</span> (length(t)&gt;2) 
+246     ftmp_up(:,2)=0.5*(ftmp_up(:,3)+ftmp_up(:,1)); 
+247     ftmp_lo(:,2)=0.5*(ftmp_lo(:,3)+ftmp_lo(:,1)); 
+248   <span class="keyword">end</span> 
+249   <span class="keyword">if</span> (Nx&gt;1) 
+250     ft_lo=max(ftmp_lo(2,1:Ntime)-ftmp_up(1,1:Ntime),0.); 
+251     ft_up=ftmp_up(2,1:Ntime)-ftmp_lo(1,1:Ntime); 
+252   <span class="keyword">else</span> 
+253     ft_up=ftmp_up(1,1:Ntime); 
+254     ft_lo=ftmp_lo(1,1:Ntime); 
+255   <span class="keyword">end</span> 
+256   f.f=[ft_up', ft_lo']; 
+257   f.x{1}=t*A;       
+258 <span class="keyword">end</span> 
+259 f.nit=nit; 
+260 f.speed=speed; 
+261 f.SCIS=SCIS; 
+262 f.u=utc; 
+263 toc 
+264 <span class="keyword">if</span> plotflag  
+265   <a href="pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f) 
+266 <span class="keyword">end</span> 
+267  
+268</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

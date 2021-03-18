@@ -1,0 +1,361 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of rindoptset</title>
+  <meta name="keywords" content="rindoptset">
+  <meta name="description" content=" Create or alter RIND OPTIONS structure.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; rindoptset.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>rindoptset
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Create or alter RIND OPTIONS structure.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> options = rindoptset(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">RINDOPTSET</a> Create or alter <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">RIND</a> OPTIONS structure. 
+  
+   CALL:  options = <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(funcname,opts1,opts2,..,par1,val1,par2,val2,..); 
+  
+    options    = transformation options structure in which the named  
+                 parameters have the specified values.   
+    funcname   = string giving the name of the function for which default 
+                 values for the options structure should be extracted. 
+                 Options are 'rind', 'spec2mmtpdf', 'spec2thpdf'. 
+    opts1, 
+    opts2..    = options structures 
+    par1,par2..= strings identifying the parameter to alter 
+    val1,val2..= corresponding values the parameters are altered to. 
+     
+    <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">RINDOPTSET</a> combines the default options for a function given by FUNCNAME 
+    with new options structures (OPTS1,OPTS2,...) and/or with the named 
+    parameters (PAR1,PAR2,...) with the corresponding values (VAL1, VAL2,...). 
+    The parameters are set in the same order as the input arguments. 
+    Any parameters with non-empty values of the options struct overwrite 
+    the corresponding old parameters.  
+    The input arguments can be given in any order with one exception: 
+    PARx and VALx must be given in <a href="../../wafo/wstats/pairs.html" class="code" title="  Pairwise scatter plots.">pairs</a> in that order. 
+    Any unspecified parameters for PARx are set to [].  
+    Parameters with value [] indicate to use the default value for that 
+    parameter when OPTIONS is passed to the function. It is sufficient to 
+    type only the 2 first characters to uniquely <a href="../../wafo/wstats/identify.html" class="code" title=" Identify points on a plot by clicking with the mouse.">identify</a> the parameter 
+    or function name.  Upper case letters for parameter names and values 
+    that are strings are ignored. If an invalid string is provided, the 
+    default is used. 
+     
+    <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">RINDOPTSET</a> with no input arguments and no output arguments displays all  
+    parameter names and their possible values. 
+  
+    <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">RINDOPTSET</a> with no input arguments creates an options structure 
+    OPTIONS where all the fields are set to their default values. 
+  
+     
+  <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">RINDOPTSET</a> PARAMETERS 
+   METHOD  = INTEGER defining the integration method 
+             0 Integrate by Gauss-Legendre quadrature  (Podgorski et al. 1999) 
+             1 Integrate by SADAPT for Ndim&lt;9 and by KRBVRC otherwise (default) 
+             2 Integrate by SADAPT by Genz (1992) (Fast) 
+             3 Integrate by KRBVRC by Genz (1993) (Fast) 
+             4 Integrate by KROBOV by Genz (1992) (Fast) 
+             5 Integrate by RCRUDE by Genz (1992) 
+   XCSCALE = REAL to scale the conditinal probability density, i.e., 
+             f_{Xc} = exp(-0.5*Xc*inv(Sxc)*Xc + XcScale) (default XcScale =0) 
+   ABSEPS  = REAL absolute error tolerance.       (default 0) 
+   RELEPS  = REAL relative error tolerance.       (default 1e-3) 
+   COVEPS  = REAL error tolerance in Cholesky factorization (default 1e-13) 
+   MAXPTS  = INTEGER, maximum number of function values allowed. This  
+             parameter can be used to limit the time. A sensible  
+             strategy is to start with MAXPTS = 1000*N, and then 
+             increase MAXPTS if ERROR is too large.     
+             (Only for METHOD~=0) (default 40000)  
+   MINPTS  = INTEGER, minimum number of function values allowed. 
+             (Only for METHOD~=0) (default 0) 
+   SEED    = INTEGER, seed to the random generator used in the integrations 
+             (Only for METHOD~=0)(default floor(rand*1e9)) 
+   NIT     = INTEGER, maximum number of Xt variables to integrate 
+             This parameter can be used to limit the time.  
+             If NIT is less than the rank of the covariance matrix, 
+             the returned result is a upper bound for the true value 
+             of the integral.  (default 1000) 
+   XCUTOFF = REAL cut off value where the marginal normal 
+             distribution is truncated. (Depends on requested 
+             accuracy. A value between 4 and 5 is reasonable.) 
+   XSPLIT  = parameters controlling performance of quadrature 
+              integration: 
+              if Hup&gt;=xCutOff AND Hlo&lt;-XSPLIT OR 
+                 Hup&gt;=XSPLIT AND Hlo&lt;=-xCutOff then 
+              do a different integration to increase speed 
+              in rind2 and rindnit. This give slightly different  
+             results 
+             if XSPILT&gt;=xCutOff =&gt; do the same integration allways 
+             (Only for METHOD==0)(default XSPLIT = 1.5)    
+   QUADNO  = Quadrature formulae number used in integration of Xd 
+             variables. This number implicitly determines number of nodes 
+             used.  (Only for METHOD==0) 
+   SPEED   = defines accuracy of calculations by choosing different  
+             parameters, possible values: 1,2...,9 (9 fastest,  default []). 
+             If ~isempty(SPEED) the parameters, ABSEPS, RELEPS, COVEPS, 
+             XCUTOFF, MAXPTS and QUADNO will be set according to <a href="initoptions.html" class="code" title=" Initializes RIND options according to speed. ">INITOPTIONS</a>. 
+    
+  Examples: 
+   <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>('rind') 
+  
+  See also  <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">rind</a>, <a href="initoptions.html" class="code" title=" Initializes RIND options according to speed. ">initoptions</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="initoptions.html" class="code" title=" options = initoptions(speed,options)">initoptions</a></li></TD>
+<TD> Initializes RIND options according to speed.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/parseoptions.html" class="code" title=" options = parseoptions(varargin)">parseoptions</a></li></TD>
+<TD> Create or alter a OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell2struct.m">cell2struct</a></li></TD>
+<TD>   Convert cell array to structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\simulink\simcoverage\@cvtest\help.m">help</a></li></TD>
+<TD>          Display help text in Command Window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strvcat.m">strvcat</a></li></TD>
+<TD>       Vertically concatenate strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="initoptions.html" class="code" title=" options = initoptions(speed,options)">initoptions</a></li></TD>
+<TD> Initializes RIND options according to speed.</TD>
+</TR>
+<TR>
+<TD><li><a href="rind.html" class="code" title=" [fxind, err,exTime,options] = rind(BIG,Ex,Blo,Bup,indI,xc,Nt,varargin)">rind</a></li></TD>
+<TD> Computes multivariate normal expectations</TD>
+</TR>
+<TR>
+<TD><li><a href="rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a></li></TD>
+<TD> Calculates joint density of Maximum, minimum and period.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2thpdf.html" class="code" title=" f = spec2thpdf(spec,utc,def,paramt,h,options,plotflag)">spec2thpdf</a></li></TD>
+<TD> Joint density of amplitude and period/wave-length characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2tpdf2.html" class="code" title=" [f] = spec2tpdf2(spec,utc,def,paramt,varargin)">spec2tpdf2</a></li></TD>
+<TD> Evaluates densities for various wave periods or wave lengths</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig10.html" class="code" title=" wafofig10">wafofig10</a></li></TD>
+<TD> Intensity of trough-crest cycles computed from  St</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig3.html" class="code" title=" wafofig3">wafofig3</a></li></TD>
+<TD>  Probability density distributions (pdf) of wave period, Tt,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig5.html" class="code" title=" wafofig5">wafofig5</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front velocity and wave height:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig6.html" class="code" title=" wafofig6">wafofig6</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front period, Tcf, and crest amplitude, Ac</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig7.html" class="code" title=" wafofig7">wafofig7</a></li></TD>
+<TD>  Joint distribution (pdf) of crest wavelength, Lc, and crest amplitude, Ac</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig8.html" class="code" title=" wafofig8">wafofig8</a></li></TD>
+<TD>  Joint distribution (pdf) of crest wavelength, Lc, and crest amplitude, Ac for extremal waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig9.html" class="code" title=" wafofig9">wafofig9</a></li></TD>
+<TD>  Intensity of rainflow cycles computed from St</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> options = <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. "><a name="_sub0" href="#_subfunctions" class="code">rindoptset</a>rindoptset</a>(varargin) 
+002 <span class="comment">%RINDOPTSET Create or alter RIND OPTIONS structure. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  options = rindoptset(funcname,opts1,opts2,..,par1,val1,par2,val2,..); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   options    = transformation options structure in which the named  </span>
+007 <span class="comment">%                parameters have the specified values.   </span>
+008 <span class="comment">%   funcname   = string giving the name of the function for which default </span>
+009 <span class="comment">%                values for the options structure should be extracted. </span>
+010 <span class="comment">%                Options are 'rind', 'spec2mmtpdf', 'spec2thpdf'. </span>
+011 <span class="comment">%   opts1, </span>
+012 <span class="comment">%   opts2..    = options structures </span>
+013 <span class="comment">%   par1,par2..= strings identifying the parameter to alter </span>
+014 <span class="comment">%   val1,val2..= corresponding values the parameters are altered to. </span>
+015 <span class="comment">%    </span>
+016 <span class="comment">%   RINDOPTSET combines the default options for a function given by FUNCNAME </span>
+017 <span class="comment">%   with new options structures (OPTS1,OPTS2,...) and/or with the named </span>
+018 <span class="comment">%   parameters (PAR1,PAR2,...) with the corresponding values (VAL1, VAL2,...). </span>
+019 <span class="comment">%   The parameters are set in the same order as the input arguments. </span>
+020 <span class="comment">%   Any parameters with non-empty values of the options struct overwrite </span>
+021 <span class="comment">%   the corresponding old parameters.  </span>
+022 <span class="comment">%   The input arguments can be given in any order with one exception: </span>
+023 <span class="comment">%   PARx and VALx must be given in pairs in that order. </span>
+024 <span class="comment">%   Any unspecified parameters for PARx are set to [].  </span>
+025 <span class="comment">%   Parameters with value [] indicate to use the default value for that </span>
+026 <span class="comment">%   parameter when OPTIONS is passed to the function. It is sufficient to </span>
+027 <span class="comment">%   type only the 2 first characters to uniquely identify the parameter </span>
+028 <span class="comment">%   or function name.  Upper case letters for parameter names and values </span>
+029 <span class="comment">%   that are strings are ignored. If an invalid string is provided, the </span>
+030 <span class="comment">%   default is used. </span>
+031 <span class="comment">%    </span>
+032 <span class="comment">%   RINDOPTSET with no input arguments and no output arguments displays all  </span>
+033 <span class="comment">%   parameter names and their possible values. </span>
+034 <span class="comment">% </span>
+035 <span class="comment">%   RINDOPTSET with no input arguments creates an options structure </span>
+036 <span class="comment">%   OPTIONS where all the fields are set to their default values. </span>
+037 <span class="comment">% </span>
+038 <span class="comment">%    </span>
+039 <span class="comment">% RINDOPTSET PARAMETERS </span>
+040 <span class="comment">%  METHOD  = INTEGER defining the integration method </span>
+041 <span class="comment">%            0 Integrate by Gauss-Legendre quadrature  (Podgorski et al. 1999) </span>
+042 <span class="comment">%            1 Integrate by SADAPT for Ndim&lt;9 and by KRBVRC otherwise (default) </span>
+043 <span class="comment">%            2 Integrate by SADAPT by Genz (1992) (Fast) </span>
+044 <span class="comment">%            3 Integrate by KRBVRC by Genz (1993) (Fast) </span>
+045 <span class="comment">%            4 Integrate by KROBOV by Genz (1992) (Fast) </span>
+046 <span class="comment">%            5 Integrate by RCRUDE by Genz (1992) </span>
+047 <span class="comment">%  XCSCALE = REAL to scale the conditinal probability density, i.e., </span>
+048 <span class="comment">%            f_{Xc} = exp(-0.5*Xc*inv(Sxc)*Xc + XcScale) (default XcScale =0) </span>
+049 <span class="comment">%  ABSEPS  = REAL absolute error tolerance.       (default 0) </span>
+050 <span class="comment">%  RELEPS  = REAL relative error tolerance.       (default 1e-3) </span>
+051 <span class="comment">%  COVEPS  = REAL error tolerance in Cholesky factorization (default 1e-13) </span>
+052 <span class="comment">%  MAXPTS  = INTEGER, maximum number of function values allowed. This  </span>
+053 <span class="comment">%            parameter can be used to limit the time. A sensible  </span>
+054 <span class="comment">%            strategy is to start with MAXPTS = 1000*N, and then </span>
+055 <span class="comment">%            increase MAXPTS if ERROR is too large.     </span>
+056 <span class="comment">%            (Only for METHOD~=0) (default 40000)  </span>
+057 <span class="comment">%  MINPTS  = INTEGER, minimum number of function values allowed. </span>
+058 <span class="comment">%            (Only for METHOD~=0) (default 0) </span>
+059 <span class="comment">%  SEED    = INTEGER, seed to the random generator used in the integrations </span>
+060 <span class="comment">%            (Only for METHOD~=0)(default floor(rand*1e9)) </span>
+061 <span class="comment">%  NIT     = INTEGER, maximum number of Xt variables to integrate </span>
+062 <span class="comment">%            This parameter can be used to limit the time.  </span>
+063 <span class="comment">%            If NIT is less than the rank of the covariance matrix, </span>
+064 <span class="comment">%            the returned result is a upper bound for the true value </span>
+065 <span class="comment">%            of the integral.  (default 1000) </span>
+066 <span class="comment">%  XCUTOFF = REAL cut off value where the marginal normal </span>
+067 <span class="comment">%            distribution is truncated. (Depends on requested </span>
+068 <span class="comment">%            accuracy. A value between 4 and 5 is reasonable.) </span>
+069 <span class="comment">%  XSPLIT  = parameters controlling performance of quadrature </span>
+070 <span class="comment">%             integration: </span>
+071 <span class="comment">%             if Hup&gt;=xCutOff AND Hlo&lt;-XSPLIT OR </span>
+072 <span class="comment">%                Hup&gt;=XSPLIT AND Hlo&lt;=-xCutOff then </span>
+073 <span class="comment">%             do a different integration to increase speed </span>
+074 <span class="comment">%             in rind2 and rindnit. This give slightly different  </span>
+075 <span class="comment">%            results </span>
+076 <span class="comment">%            if XSPILT&gt;=xCutOff =&gt; do the same integration allways </span>
+077 <span class="comment">%            (Only for METHOD==0)(default XSPLIT = 1.5)    </span>
+078 <span class="comment">%  QUADNO  = Quadrature formulae number used in integration of Xd </span>
+079 <span class="comment">%            variables. This number implicitly determines number of nodes </span>
+080 <span class="comment">%            used.  (Only for METHOD==0) </span>
+081 <span class="comment">%  SPEED   = defines accuracy of calculations by choosing different  </span>
+082 <span class="comment">%            parameters, possible values: 1,2...,9 (9 fastest,  default []). </span>
+083 <span class="comment">%            If ~isempty(SPEED) the parameters, ABSEPS, RELEPS, COVEPS, </span>
+084 <span class="comment">%            XCUTOFF, MAXPTS and QUADNO will be set according to INITOPTIONS. </span>
+085 <span class="comment">%   </span>
+086 <span class="comment">% Examples: </span>
+087 <span class="comment">%  rindoptset('rind') </span>
+088 <span class="comment">% </span>
+089 <span class="comment">% See also  rind, initoptions </span>
+090  
+091 <span class="comment">% History </span>
+092 <span class="comment">% by pab 20.05.2003<span class="comment">%  NEW FUNCTIONS </span></span>
+093 <span class="comment">%  ~~~~~~~~~~~~~ </span>
+094 <span class="comment">% based on MATLAB's optimset </span>
+095  
+096  
+097 <span class="comment">% Print out possible values of properties. </span>
+098 <span class="keyword">if</span> (nargin == 0) &amp; (nargout == 0) 
+099   help <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a> 
+100   <span class="keyword">return</span>; 
+101 <span class="keyword">end</span> 
+102  
+103 <span class="comment">% Initialization </span>
+104 <span class="comment">% Legal functions names </span>
+105 fnames = strvcat(<span class="string">'rind'</span>,<span class="string">'spec2mmtpdf'</span>,<span class="string">'spec2thpdf'</span>,<span class="string">'spec2tpdf2'</span>);  
+106 <span class="comment">% Legal parameter names </span>
+107 names  = {<span class="string">'method'</span>,<span class="string">'xcscale'</span>,<span class="keyword">...</span> 
+108       <span class="string">'abseps'</span>,<span class="string">'releps'</span>,<span class="string">'coveps'</span>,<span class="keyword">...</span> 
+109       <span class="string">'maxpts'</span>,<span class="string">'minpts'</span>,<span class="keyword">...</span> 
+110       <span class="string">'seed'</span>,<span class="string">'nit'</span>,<span class="string">'xcutoff'</span>,<span class="keyword">...</span> 
+111       <span class="string">'xsplit'</span>,<span class="string">'quadno'</span>, <span class="keyword">...</span> 
+112       <span class="string">'speed'</span>};      
+113 vals = {3,0,0,1e-3,1e-10,<span class="keyword">...</span> 
+114     40000,<span class="keyword">...</span> 
+115     0,<span class="keyword">...</span> 
+116     floor(rand*1e9),<span class="keyword">...</span> 
+117     1000,<span class="keyword">...</span> 
+118     [],<span class="keyword">...</span> 
+119     1.5,<span class="keyword">...</span> 
+120     [] ,<span class="keyword">...</span> 
+121     []}; 
+122  
+123 <span class="comment">% Initialize options with default values </span>
+124 options = cell2struct(vals,names,2); 
+125 options = <a href="../../wafo/misc/parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">parseoptions</a>(fnames,options,varargin{:}); 
+126  
+127 <span class="keyword">if</span> ~isempty(options.speed) 
+128   options = <a href="initoptions.html" class="code" title=" Initializes RIND options according to speed. ">initoptions</a>(options.speed,options); 
+129 <span class="keyword">end</span> 
+130 <span class="keyword">return</span> 
+131</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wraylstat</title>
+  <meta name="keywords" content="wraylstat">
+  <meta name="description" content=" Mean and variance for the Rayleigh distribution.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wraylstat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wraylstat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Mean and variance for the Rayleigh distribution.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [m,v]= wraylstat(b); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wraylstat.html" class="code" title=" Mean and variance for the Rayleigh distribution.">WRAYLSTAT</a> Mean and variance for the Rayleigh distribution.
+  
+  CALL:  [m,v] = <a href="wraylstat.html" class="code" title=" Mean and variance for the Rayleigh distribution.">wraylstat</a>(b)
+ 
+    m, v = the mean and variance, respectively 
+       b = parameter of the Rayleigh distribution (see <a href="wraylcdf.html" class="code" title=" Rayleigh cumulative distribution function">wraylcdf</a>)
+ 
+   Mean (m) and variance (v) for the Rayleigh distribution is
+ 
+   m=b*(pi/2)^(1/2)  and  v=(2-pi/2)*b^2;
+ 
+  Example:
+    [m,v] = <a href="wraylstat.html" class="code" title=" Mean and variance for the Rayleigh distribution.">wraylstat</a>(1/(pi/2)^(1/2))
+ 
+  See also  <a href="wraylcdf.html" class="code" title=" Rayleigh cumulative distribution function">wraylcdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a></li></TD>
+<TD> Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dstat.html" class="code" title=" [M,V, eps2, a ,b] = dist2dstat(phat,condon,cvar,csm,lin)">dist2dstat</a></li></TD>
+<TD>  Mean and variance for the DIST2D distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = mdist2dstat(phat,condon,cvar,tol)">mdist2dstat</a></li></TD>
+<TD>  Mean and variance for the MDIST2D distribution.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [m,v]= <a name="_sub0" href="#_subfunctions" class="code">wraylstat</a>(b);
+002 <span class="comment">%WRAYLSTAT Mean and variance for the Rayleigh distribution.</span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  [m,v] = wraylstat(b)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   m, v = the mean and variance, respectively </span>
+007 <span class="comment">%      b = parameter of the Rayleigh distribution (see wraylcdf)</span>
+008 <span class="comment">%</span>
+009 <span class="comment">%  Mean (m) and variance (v) for the Rayleigh distribution is</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%  m=b*(pi/2)^(1/2)  and  v=(2-pi/2)*b^2;</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Example:</span>
+014 <span class="comment">%   [m,v] = wraylstat(1/(pi/2)^(1/2))</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% See also  wraylcdf</span>
+017 
+018 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+019 <span class="comment">% and Life Span Models&quot;, p. 181 ff, Marcel Dekker.</span>
+020 
+021 <span class="comment">%tested on: matlab 5.3</span>
+022 <span class="comment">% history</span>
+023 <span class="comment">% revised pab 24.10.2000</span>
+024 <span class="comment">% Added checks on b</span>
+025 
+026 
+027 
+028 error(nargchk(1,1,nargin))
+029 
+030 <span class="comment">%   Initialize Mean and Variance to zero.</span>
+031 m = zeros(size(b));
+032 v = zeros(size(b));
+033 
+034 ok = (b &gt; 0);
+035 k = find(ok);
+036 <span class="keyword">if</span> any(k)
+037  m(k) = b(k) * sqrt(pi/2);
+038  v(k) = (2 - pi/2) * b(k) .^ 2;
+039 <span class="keyword">end</span>
+040 
+041 k1 = find(~ok);
+042 <span class="keyword">if</span> any(k1)
+043     tmp = NaN;
+044     m(k1) = tmp(ones(size(k1)));
+045     v(k1) = m(k1);   
+046 <span class="keyword">end</span>
+047 
+048 
+049 
+050 
+051 
+052</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

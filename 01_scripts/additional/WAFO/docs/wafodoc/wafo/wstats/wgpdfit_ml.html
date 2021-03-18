@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wgpdfit_ml</title>
+  <meta name="keywords" content="wgpdfit_ml">
+  <meta name="description" content=" Internal routine for wgpdfit (ML estimates for GPD data)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wgpdfit_ml.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wgpdfit_ml
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Internal routine for wgpdfit (ML estimates for GPD data)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [f,k,s] = wgpdfit_ml(x,data) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wgpdfit_ml.html" class="code" title=" Internal routine for wgpdfit (ML estimates for GPD data) ">WGPDFIT_ML</a> Internal routine for <a href="wgpdfit.html" class="code" title=" Parameter estimates for Generalized Pareto data">wgpdfit</a> (ML estimates for GPD data) 
+ 
+  CALL:  [f,k,s] = <a href="wgpdfit_ml.html" class="code" title=" Internal routine for wgpdfit (ML estimates for GPD data) ">wgpdfit_ml</a>(x,data)
+ 
+  f = function values.
+  k = shape parameter of GPD.
+  s = scale parameter of GPD.
+ 
+  This function is used by <a href="wgpdfit.html" class="code" title=" Parameter estimates for Generalized Pareto data">wgpdfit</a> for numerical solution of 
+  the ML estimate, i.e. solve f=0 for x.
+    data = <a href="wgpdrnd.html" class="code" title=" Random matrices from a Generalized Pareto Distribution">wgpdrnd</a>(0.3,1,0,200,1);
+    x_ML = fzero('wgpdfit_ml',0,[],data);
+    [f,k_ML,s_ML] = <a href="wgpdfit_ml.html" class="code" title=" Internal routine for wgpdfit (ML estimates for GPD data) ">wgpdfit_ml</a>(x_ML,data)  % Estimates k_ML and s_ML
+ 
+  See also  <a href="wgpdfit.html" class="code" title=" Parameter estimates for Generalized Pareto data">wgpdfit</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+<TR>
+<TD><li><a href="wgpdfit.html" class="code" title=" [parms,cov] = wgpdfit(data,method,plotflag)">wgpdfit</a></li></TD>
+<TD> Parameter estimates for Generalized Pareto data</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [f,k,s] = <a name="_sub0" href="#_subfunctions" class="code">wgpdfit_ml</a>(x,data)
+002 <span class="comment">%WGPDFIT_ML Internal routine for wgpdfit (ML estimates for GPD data) </span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [f,k,s] = wgpdfit_ml(x,data)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">% f = function values.</span>
+007 <span class="comment">% k = shape parameter of GPD.</span>
+008 <span class="comment">% s = scale parameter of GPD.</span>
+009 <span class="comment">%</span>
+010 <span class="comment">% This function is used by wgpdfit for numerical solution of </span>
+011 <span class="comment">% the ML estimate, i.e. solve f=0 for x.</span>
+012 <span class="comment">%   data = wgpdrnd(0.3,1,0,200,1);</span>
+013 <span class="comment">%   x_ML = fzero('wgpdfit_ml',0,[],data);</span>
+014 <span class="comment">%   [f,k_ML,s_ML] = wgpdfit_ml(x_ML,data)  <span class="comment">% Estimates k_ML and s_ML</span></span>
+015 <span class="comment">%</span>
+016 <span class="comment">% See also  wgpdfit</span>
+017 
+018 <span class="comment">% References</span>
+019 <span class="comment">%</span>
+020 <span class="comment">%  Davidson &amp; Smith (1990)</span>
+021 <span class="comment">%  Models for Exceedances over high Threholds.</span>
+022 <span class="comment">%  Journal of the Royal Statistical Society B,52, pp. 393-442.</span>
+023 
+024 <span class="comment">% Tested on; Matlab 5.3</span>
+025 <span class="comment">% History: </span>
+026 <span class="comment">% Created by PJ 22-Jun-2000</span>
+027 <span class="comment">% Revised by PJ 10-Oct-2000</span>
+028 <span class="comment">% - Help text added w*</span>
+029 
+030 <span class="comment">% In order to avoid boundary problems in numerical solution we use a transformation</span>
+031 <span class="comment">%   Transformation: x = log(1/max_data - t),   -Inf &lt; t &lt; 1/max_data</span>
+032 <span class="comment">%   Inverse Trans.: t = 1/max(data) - exp(x),  -Inf &lt; x &lt; Inf</span>
+033 
+034 t = 1/max(data) - exp(x); <span class="comment">% Inverse Transformation</span>
+035 
+036 N = length(data);
+037 
+038 k = -1/N*sum(log(1-t*data)); <span class="comment">% Shape parameter</span>
+039 s = k/t;                     <span class="comment">% Scale parameter</span>
+040 
+041 <span class="comment">% Evaluate function</span>
+042 f = (1/k-1)*sum(data./(1-t*data)) - N/t; 
+043</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

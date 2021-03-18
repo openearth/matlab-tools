@@ -1,0 +1,403 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of kdeoptset</title>
+  <meta name="keywords" content="kdeoptset">
+  <meta name="description" content=" Create or alter KDE OPTIONS structure.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; kdeoptset.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>kdeoptset
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Create or alter KDE OPTIONS structure.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> options = kdeoptset(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">KDEOPTSET</a> Create or alter <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> OPTIONS structure. 
+  
+   CALL:  options = <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>(funcname,opts1,opts2,..,par1,val1,par2,val2,..); 
+  
+    options    = transformation options structure in which the named  
+                 parameters have the specified values.   
+    funcname   = string giving the name of the function for which default 
+                 values for the options structure should be extracted. 
+                 Options are 'kdebin', 'kde', 'fftkde'. 
+    opts1, 
+    opts2..    = options structures 
+    par1,par2..= strings identifying the parameter to alter 
+    val1,val2..= corresponding values the parameters are altered to. 
+     
+    <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">KDEOPTSET</a> combines the default options for a function given by FUNCNAME 
+    with new options structures (OPTS1,OPTS2,...) and/or with the named 
+    parameters (PAR1,PAR2,...) with the corresponding values (VAL1, VAL2,...). 
+    The parameters are set in the same order as the input arguments. 
+    Any parameters with non-empty values of the options struct overwrite 
+    the corresponding old parameters.  
+    The input arguments can be given in any order with one exception: 
+    PARx and VALx must be given in <a href="../../wafo/wstats/pairs.html" class="code" title="  Pairwise scatter plots.">pairs</a> in that order. 
+    Any unspecified parameters for PARx are set to [].  
+    Parameters with value [] indicate to use the default value for that 
+    parameter when OPTIONS is passed to the function. It is sufficient to 
+    type only the 2 first characters to uniquely <a href="../../wafo/wstats/identify.html" class="code" title=" Identify points on a plot by clicking with the mouse.">identify</a> the parameter 
+    or function name.  Upper case letters for parameter names and values 
+    that are strings are ignored. If an invalid string is provided, the 
+    default is used. 
+     
+    <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">KDEOPTSET</a> with no input arguments and no output arguments displays all  
+    parameter names and their possible values. 
+  
+    <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">KDEOPTSET</a> with no input arguments creates an options structure 
+    OPTIONS where all the fields are set to their default values. 
+  
+     
+  <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">KDEOPTSET</a> PARAMETERS 
+    kernel = String defining the kernel function. Options are: 
+             'epanechnikov'  - Epanechnikov kernel. (default) 
+             'biweight'      - Bi-weight kernel. 
+             'triweight'     - Tri-weight kernel.   
+             'triangular'    - Triangular kernel. 
+             'gaussian'      - Gaussian kernel 
+             'rectangular'   - Rectangular kernel.  
+             'laplace'       - Laplace kernel. 
+             'logistic'      - Logistic kernel. 
+    hs     = smooting parameter vector/matrix. 
+             (default compute from data using hsMethod) 
+  hsMethod = string defining the method to compute the  smooting 
+             parameter vector/matrix, hs, if not explicitly given. 
+             Valid options are one of the methods: 
+             'hns', 'hos', 'hldpi', 'hbcv', 'hste', 'hboot', 'hlscv', 
+             'hscv', 'hstt' 
+             (default 'hns')   
+    alpha  = sensitivity parameter               (default 0 regular <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a>) 
+             A good choice might be alpha = 0.5 ( or 1/D) 
+             alpha = 0      Regular  <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> (hs is constant) 
+             0 &lt; alpha &lt;= 1 Adaptive <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> (Make hs change)   
+    L2     = vector of transformation parameters (default 1 no transformation) 
+             or a cellarray of transformations parameters 
+             or non-parametric transformations. 
+             t(xi;L2) = xi^L2*sign(L2)   for L2(i) ~= 0 
+             t(xi;L2) = log(xi)          for L2(i) == 0  
+             If single value of L2 is given then the transformation 
+             is the same in all directions. 
+    inc    = scalar defining the dimension of <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a> (default 128) 
+             (A value below 50 is very fast to compute but may give some 
+             inaccuracies.  Values between 100 and 500 give very accurate  
+             results)  (Only used in function <a href="kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>.) 
+    
+   Note that only the first 4 letters of the kernel name is needed.  
+   If L2~=1 <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> transforms the data before estimation. The final estimate 
+   is obtained by transforming back by a simple change of variables. 
+   Beaware of spurious spikes close to the edges when L2~=1. 
+   These spikes are due to numerical problems close to the edges. 
+  
+  (1) If a single non-zero value of hs is given then smoothing is the  
+      same in all directions. 
+  (2) If hs = [H1, H2] then smoothing is by H1 in the 1'st direction and H2 
+      in the 2'nd direction.  If hs = 0 or hs = [] is specified, automatic  
+      values are used computed with hsMethod.  
+  (3) If hs = [H1, H3;H3 ,H2] then the smoothing can be in orientations 
+      different from those of the co-ordinate directions.   
+      Example: HS=(.3*eye(D))*sqrtm(cov(data)) 
+      Note: det(HS)&gt;0 
+   
+   If hs is too large we over <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a> introducing a large bias 
+   in the estimated density. If hs is too small we under <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a> 
+   introducing spurious bumps. 
+  
+   Also note that <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a> only gives a optimal value when the distribution of  
+   the (transformed) DATA is Gaussian. If the distribution is asymmetric,  
+   multimodal or have long tails the <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a> may return a too large smoothing 
+   parameter  i.e. <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> may oversmooth and thus give a large bias.  To 
+   remedy this try: 
+  
+  (1) different values for HS and check by eye, i.e.  
+      for 2D data count the points lying within the contours to roughly 
+      check that the calculated contours approximately encloses the 
+      corresponding percentage of the data.   
+  (2) with alpha &gt; 0, i.e., adaptive <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a> (Good choice for skew distributions) 
+  (3) with L2~=1, i.e., transformation <a href="kde.html" class="code" title=" Kernel Density Estimator. ">KDE</a>. A reasonable value of L2 is 
+      found when a normal-plot of the transformed DATA is approximately 
+      linear. Beaware that due to numerical problems the back 
+      transformation may result in spurious spikes close to where Xi is 
+      zero. These spikes should be removed!   
+    
+  Examples: 
+   <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>('kdebin') 
+  
+  See also  <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>, <a href="kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="kdeoptset.html" class="code" title=" options = kdeoptset(varargin)">kdeoptset</a></li></TD>
+<TD> Create or alter KDE OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/parseoptions.html" class="code" title=" options = parseoptions(varargin)">parseoptions</a></li></TD>
+<TD> Create or alter a OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell2struct.m">cell2struct</a></li></TD>
+<TD>   Convert cell array to structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\simulink\simcoverage\@cvtest\help.m">help</a></li></TD>
+<TD>          Display help text in Command Window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strvcat.m">strvcat</a></li></TD>
+<TD>       Vertically concatenate strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="hlscv.html" class="code" title=" [h,hvec,score]=hlscv(A,kernel,hvec)">hlscv</a></li></TD>
+<TD>  Least Squares Cross-Validation estimate of smoothing parameter</TD>
+</TR>
+<TR>
+<TD><li><a href="hstt.html" class="code" title=" h=hstt(A,kernel,inc,maxit,releps,abseps)">hstt</a></li></TD>
+<TD> Scott-Tapia-Thompson estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="kde.html" class="code" title=" f = kde(A,options,varargin)">kde</a></li></TD>
+<TD> Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="kde1dgui.html" class="code" title=" varargout = kde1dgui(varargin)">kde1dgui</a></li></TD>
+<TD> GUI to Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="kde2dgui.html" class="code" title=" varargout = kde2dgui(varargin)">kde2dgui</a></li></TD>
+<TD> GUI to Kernel Density Estimator in two dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="kdebin.html" class="code" title=" f = kdebin(A,options,xlo,xup)">kdebin</a></li></TD>
+<TD> Binned Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="kdedemo1.html" class="code" title="This is a script file.">kdedemo1</a></li></TD>
+<TD> Demonstrate the smoothing parameter impact on KDE</TD>
+</TR>
+<TR>
+<TD><li><a href="kdedemo2.html" class="code" title="This is a script file.">kdedemo2</a></li></TD>
+<TD> Demonstrate the difference between transformation- and ordinary-KDE</TD>
+</TR>
+<TR>
+<TD><li><a href="kdefun.html" class="code" title=" [f, hs,lambda]= kdefun(A,options,varargin)">kdefun</a></li></TD>
+<TD>  Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="kdeoptset.html" class="code" title=" options = kdeoptset(varargin)">kdeoptset</a></li></TD>
+<TD> Create or alter KDE OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recinit.html" class="code" title=" recinit">recinit</a></li></TD>
+<TD>  setup all global variables of the RECDEMO</TD>
+</TR>
+<TR>
+<TD><li><a href="ssample.html" class="code" title=" s=ssample(A,m,varargin)">ssample</a></li></TD>
+<TD>  Random sampling from a smoothed empirical distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig3.html" class="code" title=" wafofig3">wafofig3</a></li></TD>
+<TD>  Probability density distributions (pdf) of wave period, Tt,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig5.html" class="code" title=" wafofig5">wafofig5</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front velocity and wave height:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig6.html" class="code" title=" wafofig6">wafofig6</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front period, Tcf, and crest amplitude, Ac</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> options = <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. "><a name="_sub0" href="#_subfunctions" class="code">kdeoptset</a>kdeoptset</a>(varargin) 
+002 <span class="comment">%KDEOPTSET Create or alter KDE OPTIONS structure. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  options = kdeoptset(funcname,opts1,opts2,..,par1,val1,par2,val2,..); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   options    = transformation options structure in which the named  </span>
+007 <span class="comment">%                parameters have the specified values.   </span>
+008 <span class="comment">%   funcname   = string giving the name of the function for which default </span>
+009 <span class="comment">%                values for the options structure should be extracted. </span>
+010 <span class="comment">%                Options are 'kdebin', 'kde', 'fftkde'. </span>
+011 <span class="comment">%   opts1, </span>
+012 <span class="comment">%   opts2..    = options structures </span>
+013 <span class="comment">%   par1,par2..= strings identifying the parameter to alter </span>
+014 <span class="comment">%   val1,val2..= corresponding values the parameters are altered to. </span>
+015 <span class="comment">%    </span>
+016 <span class="comment">%   KDEOPTSET combines the default options for a function given by FUNCNAME </span>
+017 <span class="comment">%   with new options structures (OPTS1,OPTS2,...) and/or with the named </span>
+018 <span class="comment">%   parameters (PAR1,PAR2,...) with the corresponding values (VAL1, VAL2,...). </span>
+019 <span class="comment">%   The parameters are set in the same order as the input arguments. </span>
+020 <span class="comment">%   Any parameters with non-empty values of the options struct overwrite </span>
+021 <span class="comment">%   the corresponding old parameters.  </span>
+022 <span class="comment">%   The input arguments can be given in any order with one exception: </span>
+023 <span class="comment">%   PARx and VALx must be given in pairs in that order. </span>
+024 <span class="comment">%   Any unspecified parameters for PARx are set to [].  </span>
+025 <span class="comment">%   Parameters with value [] indicate to use the default value for that </span>
+026 <span class="comment">%   parameter when OPTIONS is passed to the function. It is sufficient to </span>
+027 <span class="comment">%   type only the 2 first characters to uniquely identify the parameter </span>
+028 <span class="comment">%   or function name.  Upper case letters for parameter names and values </span>
+029 <span class="comment">%   that are strings are ignored. If an invalid string is provided, the </span>
+030 <span class="comment">%   default is used. </span>
+031 <span class="comment">%    </span>
+032 <span class="comment">%   KDEOPTSET with no input arguments and no output arguments displays all  </span>
+033 <span class="comment">%   parameter names and their possible values. </span>
+034 <span class="comment">% </span>
+035 <span class="comment">%   KDEOPTSET with no input arguments creates an options structure </span>
+036 <span class="comment">%   OPTIONS where all the fields are set to their default values. </span>
+037 <span class="comment">% </span>
+038 <span class="comment">%    </span>
+039 <span class="comment">% KDEOPTSET PARAMETERS </span>
+040 <span class="comment">%   kernel = String defining the kernel function. Options are: </span>
+041 <span class="comment">%            'epanechnikov'  - Epanechnikov kernel. (default) </span>
+042 <span class="comment">%            'biweight'      - Bi-weight kernel. </span>
+043 <span class="comment">%            'triweight'     - Tri-weight kernel.   </span>
+044 <span class="comment">%            'triangular'    - Triangular kernel. </span>
+045 <span class="comment">%            'gaussian'      - Gaussian kernel </span>
+046 <span class="comment">%            'rectangular'   - Rectangular kernel.  </span>
+047 <span class="comment">%            'laplace'       - Laplace kernel. </span>
+048 <span class="comment">%            'logistic'      - Logistic kernel. </span>
+049 <span class="comment">%   hs     = smooting parameter vector/matrix. </span>
+050 <span class="comment">%            (default compute from data using hsMethod) </span>
+051 <span class="comment">% hsMethod = string defining the method to compute the  smooting </span>
+052 <span class="comment">%            parameter vector/matrix, hs, if not explicitly given. </span>
+053 <span class="comment">%            Valid options are one of the methods: </span>
+054 <span class="comment">%            'hns', 'hos', 'hldpi', 'hbcv', 'hste', 'hboot', 'hlscv', </span>
+055 <span class="comment">%            'hscv', 'hstt' </span>
+056 <span class="comment">%            (default 'hns')   </span>
+057 <span class="comment">%   alpha  = sensitivity parameter               (default 0 regular KDE) </span>
+058 <span class="comment">%            A good choice might be alpha = 0.5 ( or 1/D) </span>
+059 <span class="comment">%            alpha = 0      Regular  KDE (hs is constant) </span>
+060 <span class="comment">%            0 &lt; alpha &lt;= 1 Adaptive KDE (Make hs change)   </span>
+061 <span class="comment">%   L2     = vector of transformation parameters (default 1 no transformation) </span>
+062 <span class="comment">%            or a cellarray of transformations parameters </span>
+063 <span class="comment">%            or non-parametric transformations. </span>
+064 <span class="comment">%            t(xi;L2) = xi^L2*sign(L2)   for L2(i) ~= 0 </span>
+065 <span class="comment">%            t(xi;L2) = log(xi)          for L2(i) == 0  </span>
+066 <span class="comment">%            If single value of L2 is given then the transformation </span>
+067 <span class="comment">%            is the same in all directions. </span>
+068 <span class="comment">%   inc    = scalar defining the dimension of kde (default 128) </span>
+069 <span class="comment">%            (A value below 50 is very fast to compute but may give some </span>
+070 <span class="comment">%            inaccuracies.  Values between 100 and 500 give very accurate  </span>
+071 <span class="comment">%            results)  (Only used in function kdebin.) </span>
+072 <span class="comment">%   </span>
+073 <span class="comment">%  Note that only the first 4 letters of the kernel name is needed.  </span>
+074 <span class="comment">%  If L2~=1 KDE transforms the data before estimation. The final estimate </span>
+075 <span class="comment">%  is obtained by transforming back by a simple change of variables. </span>
+076 <span class="comment">%  Beaware of spurious spikes close to the edges when L2~=1. </span>
+077 <span class="comment">%  These spikes are due to numerical problems close to the edges. </span>
+078 <span class="comment">% </span>
+079 <span class="comment">% (1) If a single non-zero value of hs is given then smoothing is the  </span>
+080 <span class="comment">%     same in all directions. </span>
+081 <span class="comment">% (2) If hs = [H1, H2] then smoothing is by H1 in the 1'st direction and H2 </span>
+082 <span class="comment">%     in the 2'nd direction.  If hs = 0 or hs = [] is specified, automatic  </span>
+083 <span class="comment">%     values are used computed with hsMethod.  </span>
+084 <span class="comment">% (3) If hs = [H1, H3;H3 ,H2] then the smoothing can be in orientations </span>
+085 <span class="comment">%     different from those of the co-ordinate directions.   </span>
+086 <span class="comment">%     Example: HS=(.3*eye(D))*sqrtm(cov(data)) </span>
+087 <span class="comment">%     Note: det(HS)&gt;0 </span>
+088 <span class="comment">%  </span>
+089 <span class="comment">%  If hs is too large we over smooth introducing a large bias </span>
+090 <span class="comment">%  in the estimated density. If hs is too small we under smooth </span>
+091 <span class="comment">%  introducing spurious bumps. </span>
+092 <span class="comment">% </span>
+093 <span class="comment">%  Also note that HNS only gives a optimal value when the distribution of  </span>
+094 <span class="comment">%  the (transformed) DATA is Gaussian. If the distribution is asymmetric,  </span>
+095 <span class="comment">%  multimodal or have long tails the HNS may return a too large smoothing </span>
+096 <span class="comment">%  parameter  i.e. KDE may oversmooth and thus give a large bias.  To </span>
+097 <span class="comment">%  remedy this try: </span>
+098 <span class="comment">% </span>
+099 <span class="comment">% (1) different values for HS and check by eye, i.e.  </span>
+100 <span class="comment">%     for 2D data count the points lying within the contours to roughly </span>
+101 <span class="comment">%     check that the calculated contours approximately encloses the </span>
+102 <span class="comment">%     corresponding percentage of the data.   </span>
+103 <span class="comment">% (2) with alpha &gt; 0, i.e., adaptive KDE (Good choice for skew distributions) </span>
+104 <span class="comment">% (3) with L2~=1, i.e., transformation KDE. A reasonable value of L2 is </span>
+105 <span class="comment">%     found when a normal-plot of the transformed DATA is approximately </span>
+106 <span class="comment">%     linear. Beaware that due to numerical problems the back </span>
+107 <span class="comment">%     transformation may result in spurious spikes close to where Xi is </span>
+108 <span class="comment">%     zero. These spikes should be removed!   </span>
+109 <span class="comment">%   </span>
+110 <span class="comment">% Examples: </span>
+111 <span class="comment">%  kdeoptset('kdebin') </span>
+112 <span class="comment">% </span>
+113 <span class="comment">% See also  kde, kdebin </span>
+114  
+115 <span class="comment">% History </span>
+116 <span class="comment">% by pab 04.02.2005<span class="comment">%  NEW FUNCTIONS </span></span>
+117 <span class="comment">%  ~~~~~~~~~~~~~ </span>
+118 <span class="comment">% based on MATLAB's optimset </span>
+119  
+120  
+121 <span class="comment">% Print out possible values of properties. </span>
+122 <span class="keyword">if</span> (nargin == 0) &amp; (nargout == 0) 
+123   help <a href="kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a> 
+124   <span class="keyword">return</span>; 
+125 <span class="keyword">end</span> 
+126  
+127 <span class="comment">% Initialization </span>
+128 <span class="comment">% Legal functions names </span>
+129 fnames = strvcat(<span class="string">'kde'</span>,<span class="string">'kdebin'</span>);  
+130 <span class="comment">% Legal parameter names </span>
+131 names  = {<span class="string">'kernel'</span>,<span class="string">'hs'</span>,<span class="string">'hsMethod'</span>,<span class="string">'alpha'</span>,<span class="string">'L2'</span>,<span class="string">'inc'</span>};      
+132 vals = {<span class="string">'epan'</span>,[],<span class="string">'hns'</span>,0,1,128}; 
+133  
+134 <span class="comment">% Initialize options with default values </span>
+135 options = cell2struct(vals,names,2); 
+136 options = <a href="../../wafo/misc/parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">parseoptions</a>(fnames,options,varargin{:}); 
+137 <span class="keyword">if</span> ~isempty(options.alpha) 
+138   options.alpha=min(abs(options.alpha),1); 
+139 <span class="keyword">end</span> 
+140 <span class="comment">%if isnumeric(options.hs) </span>
+141 <span class="comment">%  options.hsMethod = []; </span>
+142 <span class="comment">%end </span>
+143 <span class="keyword">return</span> 
+144   
+145</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

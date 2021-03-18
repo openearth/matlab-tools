@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of hermitefun</title>
+  <meta name="keywords" content="hermitefun">
+  <meta name="description" content=" Calculates the transformation by a Hermite polynomial.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">trgauss</a> &gt; <a href="index.html">private</a> &gt; hermitefun.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>hermitefun
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Calculates the transformation by a Hermite polynomial.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [g, t0] = hermitefun(coef,x,ma,sa,gdef) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="hermitefun.html" class="code" title=" Calculates the transformation by a Hermite polynomial.">HERMITEFUN</a> Calculates the transformation by a Hermite polynomial.
+             Assumption: a Gaussian process, Y, is related to the
+                       non-Gaussian process, X, by Y = g(X). 
+ 
+  CALL:  [g,test] = <a href="hermitefun.html" class="code" title=" Calculates the transformation by a Hermite polynomial.">hermitefun</a>(coef,x,ma,sa,gdef)
+ 
+     g     = [x g(x)] a two column matrix with the transformation g(x).
+     test  = int (g(x)-x)^2 dx  where int. limits is given by X. This
+            is a measure of departure of the data from the Gaussian model.
+    coef   = [c3 c4], vector with polynomial coefficients, see below.
+    x      =  vector of x values (default linspace(-5,5,513)'*sa+ma)
+    ma, sa = mean and standard deviation of the process, respectively.
+             (default ma=0,sa=1)
+    gdef   = integer defining the transformation (default 1)
+ 
+   If gdef&lt;0 hardening model (kurtosis &lt; 3)
+      g(x) =  xn - c3(xn^2-1) - c4*(xn^3-3*xn) 
+   where 
+     xn = (x-ma)/sa
+  
+   If gdef&gt;=0 softening model (kurtosis &gt;= 3)
+      G(y) = mean + K*sa*[ y + c3(y^2-1) + c4*(y^3-3*y) ]
+    where
+      y  = g(x) = G^-1(x)
+      K  = 1/sqrt(1+2*c3^2+6*c4^2)
+ 
+  See also  <a href="../../../wafo/trgauss/hermitetr.html" class="code" title=" Calculate transformation, g, proposed by Winterstein ">hermitetr</a>, <a href="../../../wafo/trgauss/ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">ochitr</a>, <a href="../../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/misc/smooth.html" class="code" title=" [yy,coefs]= smooth(x,y,p,xx,LinExtrap,d2)">smooth</a></li></TD>
+<TD> Calculates a smoothing spline.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\polyval.m">polyval</a></li></TD>
+<TD>       Evaluate polynomial.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\roots.m">roots</a></li></TD>
+<TD>         Find polynomial roots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\sprintf.m">sprintf</a></li></TD>
+<TD>       Write formatted data to string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\trapz.m">trapz</a></li></TD>
+<TD>         Trapezoidal numerical integration.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@double\xor.bi">xor</a></li></TD>
+<TD>           Logical EXCLUSIVE OR.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/trgauss/hermitetr.html" class="code" title=" [g ,t0]=hermitetr(x,data,def)">hermitetr</a></li></TD>
+<TD> Calculate transformation, g, proposed by Winterstein</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [g, t0] = <a name="_sub0" href="#_subfunctions" class="code">hermitefun</a>(coef,x,ma,sa,gdef)
+002 <span class="comment">%HERMITEFUN Calculates the transformation by a Hermite polynomial.</span>
+003 <span class="comment">%            Assumption: a Gaussian process, Y, is related to the</span>
+004 <span class="comment">%                      non-Gaussian process, X, by Y = g(X). </span>
+005 <span class="comment">%</span>
+006 <span class="comment">% CALL:  [g,test] = hermitefun(coef,x,ma,sa,gdef)</span>
+007 <span class="comment">%</span>
+008 <span class="comment">%    g     = [x g(x)] a two column matrix with the transformation g(x).</span>
+009 <span class="comment">%    test  = int (g(x)-x)^2 dx  where int. limits is given by X. This</span>
+010 <span class="comment">%           is a measure of departure of the data from the Gaussian model.</span>
+011 <span class="comment">%   coef   = [c3 c4], vector with polynomial coefficients, see below.</span>
+012 <span class="comment">%   x      =  vector of x values (default linspace(-5,5,513)'*sa+ma)</span>
+013 <span class="comment">%   ma, sa = mean and standard deviation of the process, respectively.</span>
+014 <span class="comment">%            (default ma=0,sa=1)</span>
+015 <span class="comment">%   gdef   = integer defining the transformation (default 1)</span>
+016 <span class="comment">%</span>
+017 <span class="comment">%  If gdef&lt;0 hardening model (kurtosis &lt; 3)</span>
+018 <span class="comment">%     g(x) =  xn - c3(xn^2-1) - c4*(xn^3-3*xn) </span>
+019 <span class="comment">%  where </span>
+020 <span class="comment">%    xn = (x-ma)/sa</span>
+021 <span class="comment">% </span>
+022 <span class="comment">%  If gdef&gt;=0 softening model (kurtosis &gt;= 3)</span>
+023 <span class="comment">%     G(y) = mean + K*sa*[ y + c3(y^2-1) + c4*(y^3-3*y) ]</span>
+024 <span class="comment">%   where</span>
+025 <span class="comment">%     y  = g(x) = G^-1(x)</span>
+026 <span class="comment">%     K  = 1/sqrt(1+2*c3^2+6*c4^2)</span>
+027 <span class="comment">%</span>
+028 <span class="comment">% See also  hermitetr, ochitr, dat2tr</span>
+029 
+030 
+031 <span class="comment">% Tested on: matlab 5.3</span>
+032 <span class="comment">% by pab </span>
+033 <span class="comment">% - default x is now levels([-5 5 513])*sa+ma -&gt; </span>
+034 <span class="comment">%  better to have the discretization</span>
+035 <span class="comment">%  represented with exact numbers, especially when calculating</span>
+036 <span class="comment">%  derivatives of the transformation numerically.</span>
+037 
+038 error(nargchk(1,5,nargin))
+039 <span class="keyword">if</span> nargin&lt;5|isempty(gdef), gdef =1 ; <span class="keyword">end</span>
+040 <span class="keyword">if</span> nargin&lt;4|isempty(sa), sa = 1;<span class="keyword">end</span>
+041 <span class="keyword">if</span> nargin&lt;3|isempty(ma), ma = 0; <span class="keyword">end</span>
+042 <span class="keyword">if</span> nargin&lt;2|isempty(x),  x  = linspace(-5*sa+ma,5*sa+ma,513)'; <span class="keyword">end</span>
+043 
+044 
+045 c3 = coef(1); c4 = coef(2);
+046 <span class="keyword">if</span> ~isreal(c4)|~isreal(c3)
+047  error(<span class="string">'Unable to calculate the polynomial'</span>)
+048 <span class="keyword">end</span>
+049 xn = (x-ma)/sa;
+050 
+051 <span class="keyword">if</span> gdef&lt;0
+052   p = [-c4 -c3 1+3*c4 c3];
+053   g = [x polyval(p,xn)];
+054 <span class="keyword">else</span>
+055   g = [x zeros(length(xn),1)];
+056   K = 1/sqrt(1+2*c3^2+6*c4^2);
+057   p = K*[c4 c3 1-3*c4 -c3];<span class="comment">%+[ 0 0 0 ma]; <span class="comment">% polynomial coefficients</span></span>
+058 <span class="keyword">end</span>
+059 
+060 
+061 
+062 <span class="comment">% Strip leading zeros and throw away.</span>
+063 inz= find(abs(p)&gt;eps);
+064 p = p(inz(1):<span class="keyword">end</span>);
+065 <span class="comment">% Check if it is a strictly increasing function.</span>
+066 k  = length(p);
+067 dp = [k-1:-1:1].*p(1:k-1);  <span class="comment">% Derivative</span>
+068 r  = roots(dp);             <span class="comment">% Find roots of the derivative</span>
+069 r(abs(imag(r))&gt;eps)=[]; <span class="comment">% Keep only real roots</span>
+070 
+071 <span class="keyword">if</span> any(r)
+072   <span class="comment">% Check if it is possible to invert the polynomial for the given</span>
+073   <span class="comment">% interval</span>
+074   <span class="keyword">if</span> gdef&lt;0
+075     x00 = r;
+076   <span class="keyword">else</span>
+077     x00 = sa*polyval(p,r)+ma;
+078   <span class="keyword">end</span>
+079   txt1 = <span class="string">'The polynomial is not a strictly increasing function.'</span>;
+080   txt2 = [<span class="string">'The derivative of g(x) is infinite at x = '</span> num2str(x00')];
+081   warning(sprintf(<span class="string">'%s \n %s '</span>,txt1,txt2))
+082   
+083   txt2 = [<span class="string">'for the given interval x = '</span> num2str(x([1 <span class="keyword">end</span>]).',3)];
+084   
+085   <span class="keyword">if</span> any(x(1)&lt;= x00 &amp; x00 &lt;= x(<span class="keyword">end</span>)), 
+086     cdef = 1; 
+087   <span class="keyword">else</span>
+088     cdef = sum( xor(x00 &lt;= x(1) , x00 &lt;= x(<span class="keyword">end</span>)));
+089   <span class="keyword">end</span>
+090   <span class="keyword">if</span> mod(cdef,2),
+091     txt1 = <span class="string">'Unable to invert the polynomial'</span>;
+092     error(sprintf(<span class="string">'%s \n %s '</span>,txt1,txt2))
+093   <span class="keyword">end</span>
+094   txt1=<span class="string">'However, successfully inverted the polynomial '</span>;
+095   disp(sprintf(<span class="string">'%s \n %s '</span>,txt1,txt2))
+096 <span class="keyword">end</span>
+097 
+098 
+099 <span class="comment">% Inverting the polynomial</span>
+100 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+101 <span class="keyword">switch</span> k*(gdef&gt;=0)
+102   <span class="keyword">case</span> 0, <span class="comment">% g(x) ready</span>
+103   <span class="keyword">case</span> 2, <span class="comment">% Linear</span>
+104     g(:,2) = xn;             <span class="comment">% (x-p(2))/p(1);</span>
+105   <span class="keyword">case</span> 3, <span class="comment">% Quadratic: Solve c3*u^2+u-c3 = (x-ma)/(K*sa) = xn/K</span>
+106     u =  .5*(-1-sqrt(1+4*c3*(c3+xn/K)))/c3;
+107     <span class="keyword">if</span> 0,<span class="comment">%y0&gt;y(1)</span>
+108       g(:,2) = u/c3;             <span class="comment">% choose the largest solution</span>
+109     <span class="keyword">else</span>
+110       g(:,2) = -(c3+xn/K)./u/c3; <span class="comment">% choose the smallest solution</span>
+111     <span class="keyword">end</span>
+112   <span class="keyword">case</span> 4, <span class="comment">% Cubic: solve u + c3*(u.^2-1) + c4*(u.^3-3*u)= (x-ma)/(K*sa)      </span>
+113     b = 1/(3*c4); 
+114     x0 = c3*b ;  
+115     <span class="comment">% substitue u = z-x0  and divide by c4 =&gt; z^3 + 3*c*z+2*q0  = 0</span>
+116     c  = b-1-x0^2;
+117     q0 = x0^3-1.5*b*(x0+xn/K); <span class="comment">% </span>
+118     <span class="keyword">if</span> any(r) &amp; cdef ==0 <span class="comment">% Three real roots</span>
+119       d        = sqrt(-c);
+120       theta1   = acos(-q0./d^3)/3;
+121       th2      = [0 -2*pi/3 2*pi/3];
+122       x1       = abs(2*d*cos(theta1(ceil(length(xn)/2)) + th2)-x0);
+123       [tmp ix] = min(x1);   <span class="comment">% choose the smallest solution</span>
+124       g(:,2)   = 2*d*cos(theta1 + th2(ix))-x0;
+125     <span class="keyword">else</span>                 <span class="comment">%Only one real root exist</span>
+126       q1 = sqrt((q0).^2+c^3);
+127       <span class="comment">% Find the real root of the monic polynomial</span>
+128       A0 = (q1-q0).^(1/3);
+129       B0 = -(q1+q0).^(1/3);
+130       g(:,2) = A0+B0-x0;   <span class="comment">% real root</span>
+131       <span class="comment">%<span class="comment">% The other complex roots are given by</span></span>
+132       <span class="comment">%x= -(A0+B0)/2+(A0-B0)*sqrt(3)/2-x0;</span>
+133       <span class="comment">%x=-(A0+B0)/2+(A0-B0)*sqrt(-3)/2-x0;</span>
+134     <span class="keyword">end</span>
+135  <span class="keyword">case</span> 6,
+136    <span class="comment">% old call</span>
+137    g(:,2) = xn;
+138    g(:,1) = sa*polyval(p,xn)+ma;
+139    <span class="comment">%g(:,1) = sa*K*(xn + c3*(xn.^2-1) + c4*(xn.^3-3*xn))+ma;</span>
+140    
+141    <span class="comment">% interpolate so that g(:,1) have equidistant spacing </span>
+142    g(:,2)=<a href="../../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(g(:,1),g(:,2),1,x,1);
+143    g(:,1)=x;
+144 <span class="keyword">end</span>
+145 
+146 <span class="keyword">if</span> nargout&gt;1,
+147   t0 = trapz(xn,(xn-g(:,2)).^2);
+148 <span class="keyword">end</span>
+149 
+150</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

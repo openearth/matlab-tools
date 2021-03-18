@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of deriv</title>
+  <meta name="keywords" content="deriv">
+  <meta name="description" content="  4th, 6th, 8th and 10th derivatives of the kernel function.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; deriv.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>deriv
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  4th, 6th, 8th and 10th derivatives of the kernel function.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [varargout]=deriv(t,k) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="deriv.html" class="code" title="  4th, 6th, 8th and 10th derivatives of the kernel function. ">DERIV</a>  4th, 6th, 8th and 10th derivatives of the kernel function. 
+  
+  CALL:  [y4,y6,y8,y10] = <a href="deriv.html" class="code" title="  4th, 6th, 8th and 10th derivatives of the kernel function. ">deriv</a>(t,kernel) 
+  
+    kernel = 'gaussian'      - Gaussian kernel (Currently the only 
+                               supported kernel) 
+  
+    <a href="deriv.html" class="code" title="  4th, 6th, 8th and 10th derivatives of the kernel function. ">DERIV</a>(T,K) finds the derivatives of the kernel K  
+               at the point T.  
+  
+  Example: [y4,y6,y8,y10]=<a href="deriv.html" class="code" title="  4th, 6th, 8th and 10th derivatives of the kernel function. ">deriv</a>(0:3);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\polyder.m">polyder</a></li></TD>
+<TD>       Differentiate polynomial.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\matlab\polyutil\polytrim.m">polytrim</a></li></TD>
+<TD>      Trim polynomial by stripping off leading zeros.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\polyval.m">polyval</a></li></TD>
+<TD>       Evaluate polynomial.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="hldpi.html" class="code" title=" h=hldpi(A,kernel,L,inc);">hldpi</a></li></TD>
+<TD> L-stage Direct Plug-In estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hscv.html" class="code" title=" [h,hvec,score]=hscv(A,kernel,hvec)">hscv</a></li></TD>
+<TD> Smoothed cross-validation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hste.html" class="code" title=" h=hste(A,kernel,h,inc,maxit,releps,abseps)">hste</a></li></TD>
+<TD> 2-Stage Solve the Equation estimate of smoothing parameter.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> r = polyadd(p, q)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [varargout]=<a name="_sub0" href="#_subfunctions" class="code">deriv</a>(t,k) 
+002 <span class="comment">%DERIV  4th, 6th, 8th and 10th derivatives of the kernel function. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  [y4,y6,y8,y10] = deriv(t,kernel) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   kernel = 'gaussian'      - Gaussian kernel (Currently the only </span>
+007 <span class="comment">%                              supported kernel) </span>
+008 <span class="comment">% </span>
+009 <span class="comment">%   DERIV(T,K) finds the derivatives of the kernel K  </span>
+010 <span class="comment">%              at the point T.  </span>
+011 <span class="comment">% </span>
+012 <span class="comment">% Example: [y4,y6,y8,y10]=deriv(0:3); </span>
+013  
+014 <span class="comment">%tested on: matlab 5.3 </span>
+015 <span class="comment">%History </span>
+016 <span class="comment">%revised pab Aug2005 </span>
+017 <span class="comment">% made it general for derivatives of any order </span>
+018 <span class="comment">%revised pab dec2003 </span>
+019 <span class="comment">% added todo   </span>
+020 <span class="comment">%revised pab 16.10.1999 </span>
+021 <span class="comment">%  updated to matlab 5.x + documentation </span>
+022 <span class="comment">% by             Christian C. Beardah 1995 </span>
+023  
+024    
+025 <span class="comment">% TODO <span class="comment">% Add support for other kernels than the Gaussian </span></span>
+026    
+027 <span class="keyword">if</span> nargin&lt;2|isempty(k) 
+028   k=<span class="string">'gauss'</span>; 
+029 <span class="keyword">end</span> 
+030  
+031 <span class="keyword">switch</span> lower(k(1:4)) 
+032   <span class="keyword">case</span> {<span class="string">'gaus'</span>}, 
+033     phi0 = exp(-0.5*t.^2)/sqrt(2*pi); 
+034     <span class="keyword">if</span> 1 
+035       <span class="comment">% New call by pab Aug 2005 </span>
+036       p4 = [1 0 -6 0 +3]; 
+037       varargout{1} = polyval(p4,t).*phi0; 
+038  
+039       pn = p4; 
+040       <span class="keyword">for</span> ix = 2:nargout 
+041         pnp1 = <a href="#_sub1" class="code" title="sub  r = polyadd(p, q)">polyadd</a>([-pn,0],polyder(pn)); 
+042         pnp2 = <a href="#_sub1" class="code" title="sub  r = polyadd(p, q)">polyadd</a>([-pnp1,0],polyder(pnp1)); 
+043         varargout{ix} = polyval(pnp2,t).*phi0; 
+044         pn = pnp2; 
+045       <span class="keyword">end</span> 
+046      
+047     <span class="keyword">else</span> <span class="comment">% old call kept just in case  </span>
+048       y4=(t.^4-6*t.^2+3).*phi0; 
+049       <span class="keyword">if</span> nargout&gt;1, 
+050         y6=(t.^6-15*t.^4+45*t.^2-15).*phi0; 
+051       <span class="keyword">end</span> 
+052       <span class="keyword">if</span> nargout&gt;2; 
+053         y8=(t.^8-28*t.^6+210*t.^4-420*t.^2+105).*phi0; 
+054       <span class="keyword">end</span>; 
+055       <span class="keyword">if</span> nargout&gt;3, 
+056         y10=(t.^10-45*t.^8+630*t.^6-3150*t.^4+4725*t.^2-945).*phi0; 
+057       <span class="keyword">end</span>; 
+058     <span class="keyword">end</span> 
+059 <span class="keyword">otherwise</span>, 
+060   disp(<span class="string">'Kernel not suported'</span>) 
+061   y4=[];y6=[];y8=[];y10=[]; 
+062 <span class="keyword">end</span>; 
+063  
+064  
+065  
+066 <span class="keyword">function</span> r = <a name="_sub1" href="#_subfunctions" class="code">polyadd</a>(p, q) 
+067 <span class="comment">%POLYADD Add polynomials. </span>
+068 <span class="comment">% </span>
+069 <span class="comment">%   R = POLYADD(P, Q) adds the polynomials whose coefficients are the </span>
+070 <span class="comment">%   elements of the vectors P and Q. </span>
+071 <span class="comment">% </span>
+072 <span class="comment">%   See also POLYADD, POLYSUB, POLYMUL, POLYDIV, POLYPOW. </span>
+073  
+074 <span class="comment">%   Author:      Peter J. Acklam </span>
+075 <span class="comment">%   Time-stamp:  1998-06-22 20:36:21 </span>
+076 <span class="comment">%   E-mail:      jacklam@math.uio.no </span>
+077 <span class="comment">%   WWW URL:     http://www.math.uio.no/~jacklam </span>
+078  
+079    error(nargchk(2, 2, nargin)); 
+080  
+081    m = length(p); 
+082    n = length(q); 
+083    l = max(m, n); 
+084  
+085    r = zeros(1, l);                     <span class="comment">% Initialize output. </span>
+086    r(l-m+1:l) = p;                      <span class="comment">% Insert first polynomial. </span>
+087    r(l-n+1:l) = r(l-n+1:l) + q;         <span class="comment">% Add second polynomial </span>
+088  
+089    r = polytrim(r);                     <span class="comment">% Trim the result.</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

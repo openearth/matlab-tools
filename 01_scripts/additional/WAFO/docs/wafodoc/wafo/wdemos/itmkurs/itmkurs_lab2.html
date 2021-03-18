@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of itmkurs_lab2</title>
+  <meta name="keywords" content="itmkurs_lab2">
+  <meta name="description" content=" Script to computer exercises 2">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wdemos</a> &gt; <a href="index.html">itmkurs</a> &gt; itmkurs_lab2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wdemos\itmkurs&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>itmkurs_lab2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Script to computer exercises 2</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="itmkurs_lab2.html" class="code" title=" Script to computer exercises 2 ">ITMKURS_LAB2</a> Script to computer exercises 2 
+  
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  lab2.m 
+  Switching Markov Loads and Rainflow Analysis
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" [F,h] = cc2cmat(param,cc,ddef,method,h,NOsubzero,alpha)">cc2cmat</a></li></TD>
+<TD> Calculates the cycle count matrix from a cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/damage/cc2dam.html" class="code" title=" D=cc2dam(cc,beta,K)">cc2dam</a></li></TD>
+<TD>   Calculates the total Palmgren-Miner damage of a cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/damage/cmat2dam.html" class="code" title=" D = cmat2dmat(param,F,beta,K)">cmat2dam</a></li></TD>
+<TD> Calculates the total Palmgren-Miner damage of a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/damage/cmat2dmat.html" class="code" title=" Dmat = cmat2dmat(param,F,beta,K)">cmat2dmat</a></li></TD>
+<TD> Computes the (Palmgren-Miner) damage matrix from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" lc = cmat2lc(param,F)">cmat2lc</a></li></TD>
+<TD> Calculates the level crossings from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmatplot.html" class="code" title=" cmatplot(in1,in2,in3,in4,in5)">cmatplot</a></li></TD>
+<TD> Plots a cycle matrix, e.g. a rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" [RFM,RFM1,res] = dtp2rfm(x,varargin)">dtp2rfm</a></li></TD>
+<TD> Calculates rainflow matrix from discrete turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/estmc.html" class="code" title=" [Pest,N,Ni] = estmc(z,r)">estmc</a></li></TD>
+<TD>  estimates transition matrix P from a time series of a Markov chain.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/estsmctp.html" class="code" title=" [Fest,Est,OPTIONS] = estsmctp(Fobs,whatEst,method,known,whatKnown,init,OPTIONS)">estsmctp</a></li></TD>
+<TD>  Estimate SMCTP model from an observed rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/hmmplot.html" class="code" title=" hmmplot(x,z,t,z_range,Title,Ylabel,colType,fontsize)">hmmplot</a></li></TD>
+<TD>  plots a Hidden Markov Model.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/mc2stat.html" class="code" title=" [ro,PP]=mc2stat(P)">mc2stat</a></li></TD>
+<TD>  Calculates the stationary distribution for a Markov chain.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/mctp2rfm.html" class="code" title=" [F_rfc,mu_rfc] = mctp2rfm(F,c_m)">mctp2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix for a MCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wsim/mctpsim.html" class="code" title=" [x,out2,out3] = mctpsim(varargin)">mctpsim</a></li></TD>
+<TD>  Simulates a Markov chain of turning points</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/mktestmat.html" class="code" title=" [F,Fh] = mktestmat(param,x0,s,lam,NOsubzero)">mktestmat</a></li></TD>
+<TD>   Makes test matrices for min-max (and max-min) matrices.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/smctp2rfm.html" class="code" title=" [F_rfc,mu_rfc,T] = smctp2rfm(P,F,c_m)">smctp2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix for a SMCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wsim/smctpsim.html" class="code" title=" [x,z,TT] = smctpsim(P,F,T,init,whatOut)">smctpsim</a></li></TD>
+<TD>  Simulates a switching Markov chain of turning points,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/smoothcmat.html" class="code" title=" [Fsmooth,h] = smthcmat(F,method,h,NOsubzero,alpha)">smoothcmat</a></li></TD>
+<TD> Smooth a cycle matrix using (adaptive) kernel smoothing</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" [RFC,RFC1,res,def] = tp2rfc(x,def,RFC0,res0)">tp2rfc</a></li></TD>
+<TD> Finds the rainflow cycles from the sequence of turning points.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">%ITMKURS_LAB2 Script to computer exercises 2 </span>
+002 <span class="comment">% </span>
+003 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+004 <span class="comment">% lab2.m </span>
+005 <span class="comment">% Switching Markov Loads and Rainflow Analysis</span>
+006 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+007 
+008 <span class="comment">% </span>
+009 <span class="comment">% Section: Markov Chains of Turning Points</span>
+010 <span class="comment">%</span>
+011 
+012 <span class="comment">% Model Definition</span>
+013 
+014 n = 32; param = [-1 1 n];                <span class="comment">% Define discretization</span>
+015 u = <a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);                       <span class="comment">% Discrete levels</span>
+016 G = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.2 0.2],0.15,1);  <span class="comment">% min-max matrix</span>
+017 
+018 <span class="comment">% Simulation</span>
+019 
+020 T = 5000;                <span class="comment">% Length of simulation (number of TP)</span>
+021 xD = <a href="../../../wafo/wsim/mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>({G []},T);  <span class="comment">% Simulate</span>
+022 x = u(xD)';              <span class="comment">% Change scale to levels -1,..,1</span>
+023 
+024 t=1:200; plot(t,x(t))  
+025 
+026 <span class="comment">% Calculating the Rainflow Matrix</span>
+027 
+028 Grfc=<a href="../../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({G,[]});
+029 
+030 subplot(1,2,1),<a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,G),axis(<span class="string">'square'</span>)
+031 subplot(1,2,2),<a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,Grfc),axis(<span class="string">'square'</span>)
+032 
+033 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{G Grfc},3)
+034 
+035 FrfcObs = <a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(xD,n);
+036 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{FrfcObs Grfc*T/2})
+037 
+038 <span class="comment">% Switching Markov Chains of Turning Points</span>
+039 
+040 <span class="comment">% Model Definition</span>
+041 
+042 n=32; param = [-1 1 n];                   <span class="comment">% Define discretization</span>
+043 u=<a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);                          <span class="comment">% Discrete levels</span>
+044 G1 = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.4 -0.3],0.15,1); <span class="comment">% regime 1</span>
+045 G2 = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[0.3 0.4],0.15,1);   <span class="comment">% regime 2</span>
+046 
+047 p1=0.10; p2=0.05;
+048 P=[1-p1 p1; p2 1-p2]  <span class="comment">% Transition matrix</span>
+049 statP=<a href="../../../wafo/markov/mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(P)      <span class="comment">% Stationary distribution</span>
+050 
+051 <span class="comment">% Simulation</span>
+052 
+053 T=5000;   <span class="comment">% Length of simulation (number of TP)</span>
+054 [xD,z] = <a href="../../../wafo/wsim/smctpsim.html" class="code" title="  Simulates a switching Markov chain of turning points,">smctpsim</a>(P,{G1 []; G2 []},T); <span class="comment">% Simulate</span>
+055 x=u(xD)'; <span class="comment">% Change scale to levels -1,..,1</span>
+056 
+057 t=1:400;
+058 <a href="../../../wafo/markov/hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(x(t),z(t),t,[1 2])         <span class="comment">% Same colour</span>
+059 <a href="../../../wafo/markov/hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(x(t),z(t),t,[1 2],<span class="string">''</span>,<span class="string">''</span>,1) <span class="comment">% Different colours</span>
+060 
+061 <span class="comment">% Calculating the Rainflow Matrix</span>
+062 
+063 Grfc=<a href="../../../wafo/markov/smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>(P,{G1,[];G2,[]});
+064 Grfc1=<a href="../../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({G1,[]});
+065 Grfc2=<a href="../../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({G2,[]});
+066 GrfcSum=statP(1)*Grfc1+statP(2)*Grfc2;
+067 
+068 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{Grfc1 Grfc2; GrfcSum Grfc})
+069 
+070 <span class="comment">% Model B (Optional)</span>
+071 
+072 G1B = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.1 -0.1],0.28,0.5);  <span class="comment">% regime 1</span>
+073 G2B = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[0 0],0.12,2);          <span class="comment">% regime 2</span>
+074 
+075 [xDB,zB] = <a href="../../../wafo/wsim/smctpsim.html" class="code" title="  Simulates a switching Markov chain of turning points,">smctpsim</a>(P,{G1B []; G2B []},T); <span class="comment">% Simulate</span>
+076 xB=u(xDB)'; <span class="comment">% Change scale to levels -1,..,1</span>
+077 <a href="../../../wafo/markov/hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(xB(t),zB(t),t,[1 2],<span class="string">''</span>,<span class="string">''</span>,1) <span class="comment">% Different colours</span>
+078 
+079 GrfcB=<a href="../../../wafo/markov/smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>(P,{G1B,[];G2B,[]});
+080 Grfc1B=<a href="../../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({G1B,[]});
+081 Grfc2B=<a href="../../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({G2B,[]});
+082 GrfcSumB=statP(1)*Grfc1B+statP(2)*Grfc2B;
+083 
+084 <span class="comment">% Observed Rainflow Matrix and Smoothing</span>
+085 
+086 TP = <a href="../../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>([(1:T)' xD]);      <span class="comment">% Turning points</span>
+087 RFC = <a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(TP);              <span class="comment">% Rainflow cycles</span>
+088 paramD = [1 n n];
+089 FrfcObs0 = <a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>(paramD,RFC); <span class="comment">% Observed rainflow matrix</span>
+090 
+091 FrfcObs = <a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(xD,n); <span class="comment">% Observed rainflow matrix</span>
+092 
+093 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{FrfcObs/(T/2) Grfc},1)
+094 
+095 h=0.8; FrfcSmooth = <a href="../../../wafo/cycles/smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>(FrfcObs,1,h);
+096 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{FrfcObs/(T/2) FrfcSmooth/(T/2) Grfc},1)
+097 
+098 <span class="comment">% Level Crossings</span>
+099 
+100 mu = <a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>(param,Grfc);
+101 muSum = <a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>(param,GrfcSum);
+102 muObs = <a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>(param,FrfcObs/(T/2));
+103 subplot(2,1,1), plot(mu(:,1),mu(:,2),muSum(:,1),muSum(:,2),<span class="string">'--'</span>)
+104 subplot(2,1,2), plot(mu(:,1),mu(:,2),muObs(:,1),muObs(:,2),<span class="string">'--'</span>)
+105 
+106 <span class="comment">% Damage</span>
+107 
+108 beta = 4;
+109 Dam = <a href="../../../wafo/damage/cmat2dam.html" class="code" title=" Calculates the total Palmgren-Miner damage of a cycle matrix.">cmat2dam</a>(param,Grfc,beta)
+110 DamSum = <a href="../../../wafo/damage/cmat2dam.html" class="code" title=" Calculates the total Palmgren-Miner damage of a cycle matrix.">cmat2dam</a>(param,GrfcSum,beta)
+111 DamObs = <a href="../../../wafo/damage/cc2dam.html" class="code" title="   Calculates the total Palmgren-Miner damage of a cycle count.">cc2dam</a>(u(RFC),beta)/(T/2)
+112 
+113 Dmat = <a href="../../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(param,Grfc,beta);
+114 DmatSum = <a href="../../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(param,GrfcSum,beta);
+115 subplot(1,2,1), <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,Dmat), axis(<span class="string">'square'</span>), v=axis;
+116 subplot(1,2,2), <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,DmatSum), axis(<span class="string">'square'</span>), axis(v)
+117 
+118 <span class="comment">% Decomposition of a Mixed rainflow matrix</span>
+119 
+120 <span class="comment">% Model and Estimation</span>
+121 
+122 n = 8; param = [-1 1 n];
+123 M1.x0=[-0.4 -0.3]; M1.s=0.15; M1.lam=1; 
+124 M2.x0=[0.3 0.4]; M2.s=0.15; M2.lam=1;
+125 G1 = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,M1.x0,M1.s,M1.lam);
+126 G2 = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,M2.x0,M2.s,M2.lam);
+127 P=[1-0.1 0.1; 0.05 1-0.05]                <span class="comment">% Transition matrix</span>
+128 [xD,z] = <a href="../../../wafo/wsim/smctpsim.html" class="code" title="  Simulates a switching Markov chain of turning points,">smctpsim</a>(P,{G1 []; G2 []},5000); <span class="comment">% Simulate</span>
+129 Fobs = <a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(xD,n);                     <span class="comment">% observed mixed rainflow matrix</span>
+130 
+131 known1.F = {G1 []; G2 []};   <span class="comment">% known min-max and max-min matrices</span>
+132 init1.P = P;                 <span class="comment">% initial guess of P-matrix</span>
+133 [Fest1,Est1] = <a href="../../../wafo/markov/estsmctp.html" class="code" title="  Estimate SMCTP model from an observed rainflow matrix. ">estsmctp</a>(Fobs,<span class="string">'P'</span>,<span class="string">'ML'</span>,known1,[],init1);
+134 Est1.P     <span class="comment">% Estimated P-matrix</span>
+135 
+136 known3.Ffun = <span class="string">'f_funm'</span>;      <span class="comment">% Function for calculating a submodel</span>
+137 known3.trModel2X = <span class="string">'tr_m2x'</span>; <span class="comment">% transform from Model to X-vector</span>
+138 known3.trX2Model = <span class="string">'tr_x2m'</span>; <span class="comment">% transform from X-vector to model</span>
+139 known3.param =param;
+140 init3.P = P;       <span class="comment">% initial guess of P-matrix</span>
+141 init3.M = {M1 M2}; <span class="comment">% initial guess of Models for min-max mat</span>
+142 [Fest3,Est3] = <a href="../../../wafo/markov/estsmctp.html" class="code" title="  Estimate SMCTP model from an observed rainflow matrix. ">estsmctp</a>(Fobs,<span class="string">'P,CalcF'</span>,<span class="string">'ML'</span>,known3,[],init3);
+143 Est3.P     <span class="comment">% Estimated P-matrix</span>
+144 Est3.M{:}  <span class="comment">% Estimated parameters in models</span>
+145 
+146 Pest_z = <a href="../../../wafo/markov/estmc.html" class="code" title="  estimates transition matrix P from a time series of a Markov chain.">estmc</a>(z,2)
+147 
+148 <a href="../../../wafo/markov/mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(Est1.P)
+149 <a href="../../../wafo/markov/mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(Est3.P)
+150 <a href="../../../wafo/markov/mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(Pest_z)
+151 <a href="../../../wafo/markov/mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(P)
+152 
+153 <span class="comment">% Methods for Estimation (Optional)</span>
+154 
+155 known.F = {G1 []; G2 []};   <span class="comment">% known min-max and max-min matrices</span>
+156 init.P = P;                 <span class="comment">% initial guess of P-matrix</span>
+157 [Fest,Est] = <a href="../../../wafo/markov/estsmctp.html" class="code" title="  Estimate SMCTP model from an observed rainflow matrix. ">estsmctp</a>(Fobs,<span class="string">'P'</span>,<span class="string">'ML'</span>,known,[],init); Est.P
+158 [Fest,Est] = <a href="../../../wafo/markov/estsmctp.html" class="code" title="  Estimate SMCTP model from an observed rainflow matrix. ">estsmctp</a>(Fobs,<span class="string">'P'</span>,<span class="string">'chi2'</span>,known,[],init); Est.P
+159 [Fest,Est] = <a href="../../../wafo/markov/estsmctp.html" class="code" title="  Estimate SMCTP model from an observed rainflow matrix. ">estsmctp</a>(Fobs,<span class="string">'P'</span>,<span class="string">'HD'</span>,known,[],init); Est.P
+160 [Fest,Est] = <a href="../../../wafo/markov/estsmctp.html" class="code" title="  Estimate SMCTP model from an observed rainflow matrix. ">estsmctp</a>(Fobs,<span class="string">'P'</span>,<span class="string">'KL'</span>,known,[],init); Est.P
+161</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

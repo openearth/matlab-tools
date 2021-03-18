@@ -1,0 +1,1387 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spec2mmtpdf</title>
+  <meta name="keywords" content="spec2mmtpdf">
+  <meta name="description" content=" Calculates joint density of Maximum, minimum and period.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; spec2mmtpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spec2mmtpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates joint density of Maximum, minimum and period.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">SPEC2MMTPDF</a> Calculates joint density of Maximum, minimum and period. 
+            
+   CALL:  f   = <a href="spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">spec2mmtpdf</a>(S,u,def,paramt,paramu,options);  
+   
+     f    = pdf (density structure) of crests (trough) heights  
+     S    = spectral density structure  
+     u    = reference level (default the most frequently crossed level). 
+    def   = string defining density returned 
+             'Mm'   : maximum and the following minimum. (M,m) (default) 
+            'rfc'   : maximum and the rainflow minimum height. 
+            'AcAt'  : (crest,trough) heights.  
+            'vMm'   : level v separated Maximum and minimum   (M,m)_v  
+            'MmTMm' : maximum, minimum and period between (M,m,TMm) 
+            'vMmTMm': level v separated Maximum, minimum and period 
+                      between (M,m,TMm)_v 
+            'MmTMd' : level v separated Maximum, minimum and the period 
+                      from Max to level v-down-crossing (M,m,TMd)_v. 
+            'MmTdm' : level v separated Maximum, minimum and the period from  
+                      level v-down-crossing to min. (M,m,Tdm)_v 
+            NB! All 'T' above can be replaced by 'L' to get wave length 
+            instead.    
+  paramt  = [0 tn Nt] defines discretization of half period: tn is the 
+            longest period considered while Nt is the number of points, 
+            i.e. (Nt-1)/tn is the sampling frequnecy. paramt= [0 10 51] 
+            implies that the halfperiods are considered at 51 linearly 
+            spaced points in the interval [0,10], i.e. sampling frequency 
+            is 5 Hz.   
+  paramu  = [u v N] defines discretization of maxima and minima ranges:  
+            u is the lowest minimum considered, v the highest maximum and N  
+            is the number of <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> (u,v) included.  
+  options = <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">rind</a>-options structure containing optional parameters 
+            controlling the performance of the integration.  
+            See <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a> for details. 
+    []    = default values are used.  
+  
+  <a href="spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">SPEC2MMTPDF</a> calculates densities of wave characteristics in a 
+  stationary Gaussian transform process X(t) where  
+   Y(t) = g(X(t)) (Y zero-mean Gaussian with spectrum given in input spec).  
+   The tr. g can be estimated using <a href="lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>, <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>, <a href="hermitetr.html" class="code" title=" Calculate transformation, g, proposed by Winterstein ">hermitetr</a> or <a href="ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">ochitr</a>. 
+   
+  Examples:% The joint density of zero separated Max2min cycles in time (a); 
+           % in space (b); AcAt in time for nonlinear <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> model (c):  
+  
+     Hm0=7;Tp=11; 
+     S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(4*pi/Tp,[Hm0 Tp]);  
+     Sk = <a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(S,'k1d');      
+     L0 = <a href="../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S,1);  
+     paramu = [sqrt(L0)*[-4 4] 41];  
+     ft = <a href="spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">spec2mmtpdf</a>(S,0,'vmm',[],paramu); <a href="pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(ft)         % a) 
+     fs = <a href="spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">spec2mmtpdf</a>(Sk,0,'vmm');  figure, <a href="pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fs)         % b) 
+     [sk, ku, me]=<a href="spec2skew.html" class="code" title=" Estimates the moments of 2'nd order non-linear waves ">spec2skew</a>(S);  
+     g = <a href="hermitetr.html" class="code" title=" Calculate transformation, g, proposed by Winterstein ">hermitetr</a>([],[sqrt(L0) sk ku me]); 
+     Snorm=S; Snorm.S=S.S/L0; Snorm.tr=g; 
+     ftg=<a href="spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">spec2mmtpdf</a>(Snorm,0,'AcAt',[],paramu); <a href="pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(ftg)    % c) 
+  
+  See also  <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>, <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>, <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>, <a href="../../wafo/docs/wavedef.html" class="code" title=" Wave definitions and nomenclature ">wavedef</a>, <a href="../../wafo/docs/perioddef.html" class="code" title=" wave periods (lengths) definitions and nomenclature">perioddef</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="dat2gaus.html" class="code" title=" xx = dat2gaus(x,g)">dat2gaus</a></li></TD>
+<TD> Transforms  x  using the transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/freqtype.html" class="code" title=" ftype=freqtype(S)">freqtype</a></li></TD>
+<TD> returns the frequency type of a Spectral density struct.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/fwaitbar.html" class="code" title=" fout = fwaitbar(x,name,msg)">fwaitbar</a></li></TD>
+<TD> Fast display of wait bar.</TD>
+</TR>
+<TR>
+<TD><li><a href="gaus2dat.html" class="code" title=" x = gaus2dat(xx,g)">gaus2dat</a></li></TD>
+<TD> Transforms  xx  using the inverse of transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="mctp2rfc.html" class="code" title=" f_rfc = mctp2rfc(f_mM,f_Mm,paramm,paramM)">mctp2rfc</a></li></TD>
+<TD>  Rainflow matrix given a Markov matrix of a Markov chain of turning points</TD>
+</TR>
+<TR>
+<TD><li><a href="mctp2tc.html" class="code" title=" F=mctp2tc(freqPVR,utc,param,freqPVL)">mctp2tc</a></li></TD>
+<TD>  Frequencies of upcrossing troughs and crests using Markov chain of turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="rind.html" class="code" title=" [fxind, err,exTime,options] = rind(BIG,Ex,Blo,Bup,indI,xc,Nt,varargin)">rind</a></li></TD>
+<TD> Computes multivariate normal expectations</TD>
+</TR>
+<TR>
+<TD><li><a href="rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/spec2cov2.html" class="code" title=" R = spec2cov2(S,nr,Nt,dt)">spec2cov2</a></li></TD>
+<TD> Computes covariance function and its derivatives, alternative version</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wafoexepath.html" class="code" title=" p=wafoexepath;">wafoexepath</a></li></TD>
+<TD> Returns the path to executables for the WAFO Toolbox</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wnormspec.html" class="code" title=" [S,mn4,m0,m2,m4,m1]=wnormspec(spectrum,m0,m2,plotflag)">wnormspec</a></li></TD>
+<TD> Normalize a spectral density such that m0=m2=1</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\clock.m">clock</a></li></TD>
+<TD>         Current date and time as date vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@serial\close.m">close</a></li></TD>
+<TD>         Close figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\datestr.m">datestr</a></li></TD>
+<TD>       String representation of date.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="delete is a built-in method">delete</a></li></TD>
+<TD>        Delete file or graphics object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\dos.m">dos</a></li></TD>
+<TD>           Execute DOS command and return result.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\etime.m">etime</a></li></TD>
+<TD>         Elapsed time.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\@double\exist.bi">exist</a></li></TD>
+<TD>         Check if variables or functions are defined.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fclose.m">fclose</a></li></TD>
+<TD>        Close file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fopen.m">fopen</a></li></TD>
+<TD>         Open file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\int2str.m">int2str</a></li></TD>
+<TD>       Convert integer to string (Fast version).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\isequal.m">isequal</a></li></TD>
+<TD>       True if arrays are numerically equal.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\now.m">now</a></li></TD>
+<TD>           Current date and time as date number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\setfield.m">setfield</a></li></TD>
+<TD>      Set structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\sprintf.m">sprintf</a></li></TD>
+<TD>       Write formatted data to string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\robust\robust\@umat\squeeze.m">squeeze</a></li></TD>
+<TD>       Remove singleton dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\struct2cell.m">struct2cell</a></li></TD>
+<TD>   Convert structure array to cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\toeplitz.m">toeplitz</a></li></TD>
+<TD>      Toeplitz matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\tril.bi">tril</a></li></TD>
+<TD>          Extract lower triangular part.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\upper.bi">upper</a></li></TD>
+<TD>         Convert string to uppercase.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig10.html" class="code" title=" wafofig10">wafofig10</a></li></TD>
+<TD> Intensity of trough-crest cycles computed from  St</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig9.html" class="code" title=" wafofig9">wafofig9</a></li></TD>
+<TD>  Intensity of rainflow cycles computed from St</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> dens = callSp2mmtpdfexe(R,dt,u,defnr,Nstart,hg,bound,options)</a></li><li><a href="#_sub2" class="code"> [pdf,err, options] = cov2mmtpdf(R,dt,u,def,Nstart,hg,options)</a></li><li><a href="#_sub3" class="code"> BIG = covinput(BIG,R0,R1,R2,R3,R4,tn,ts,tnold)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">spec2mmtpdf</a>(spec,utc,def,paramt,paramu,options,bound)  
+0002 <span class="comment">%SPEC2MMTPDF Calculates joint density of Maximum, minimum and period. </span>
+0003 <span class="comment">%           </span>
+0004 <span class="comment">%  CALL:  f   = spec2mmtpdf(S,u,def,paramt,paramu,options);  </span>
+0005 <span class="comment">%  </span>
+0006 <span class="comment">%    f    = pdf (density structure) of crests (trough) heights  </span>
+0007 <span class="comment">%    S    = spectral density structure  </span>
+0008 <span class="comment">%    u    = reference level (default the most frequently crossed level). </span>
+0009 <span class="comment">%   def   = string defining density returned </span>
+0010 <span class="comment">%            'Mm'   : maximum and the following minimum. (M,m) (default) </span>
+0011 <span class="comment">%           'rfc'   : maximum and the rainflow minimum height. </span>
+0012 <span class="comment">%           'AcAt'  : (crest,trough) heights.  </span>
+0013 <span class="comment">%           'vMm'   : level v separated Maximum and minimum   (M,m)_v  </span>
+0014 <span class="comment">%           'MmTMm' : maximum, minimum and period between (M,m,TMm) </span>
+0015 <span class="comment">%           'vMmTMm': level v separated Maximum, minimum and period </span>
+0016 <span class="comment">%                     between (M,m,TMm)_v </span>
+0017 <span class="comment">%           'MmTMd' : level v separated Maximum, minimum and the period </span>
+0018 <span class="comment">%                     from Max to level v-down-crossing (M,m,TMd)_v. </span>
+0019 <span class="comment">%           'MmTdm' : level v separated Maximum, minimum and the period from  </span>
+0020 <span class="comment">%                     level v-down-crossing to min. (M,m,Tdm)_v </span>
+0021 <span class="comment">%           NB! All 'T' above can be replaced by 'L' to get wave length </span>
+0022 <span class="comment">%           instead.    </span>
+0023 <span class="comment">% paramt  = [0 tn Nt] defines discretization of half period: tn is the </span>
+0024 <span class="comment">%           longest period considered while Nt is the number of points, </span>
+0025 <span class="comment">%           i.e. (Nt-1)/tn is the sampling frequnecy. paramt= [0 10 51] </span>
+0026 <span class="comment">%           implies that the halfperiods are considered at 51 linearly </span>
+0027 <span class="comment">%           spaced points in the interval [0,10], i.e. sampling frequency </span>
+0028 <span class="comment">%           is 5 Hz.   </span>
+0029 <span class="comment">% paramu  = [u v N] defines discretization of maxima and minima ranges:  </span>
+0030 <span class="comment">%           u is the lowest minimum considered, v the highest maximum and N  </span>
+0031 <span class="comment">%           is the number of levels (u,v) included.  </span>
+0032 <span class="comment">% options = rind-options structure containing optional parameters </span>
+0033 <span class="comment">%           controlling the performance of the integration.  </span>
+0034 <span class="comment">%           See rindoptset for details. </span>
+0035 <span class="comment">%   []    = default values are used.  </span>
+0036 <span class="comment">% </span>
+0037 <span class="comment">% SPEC2MMTPDF calculates densities of wave characteristics in a </span>
+0038 <span class="comment">% stationary Gaussian transform process X(t) where  </span>
+0039 <span class="comment">%  Y(t) = g(X(t)) (Y zero-mean Gaussian with spectrum given in input spec).  </span>
+0040 <span class="comment">%  The tr. g can be estimated using lc2tr, dat2tr, hermitetr or ochitr. </span>
+0041 <span class="comment">%  </span>
+0042 <span class="comment">% Examples:<span class="comment">% The joint density of zero separated Max2min cycles in time (a); </span></span>
+0043 <span class="comment">%          <span class="comment">% in space (b); AcAt in time for nonlinear sea model (c):  </span></span>
+0044 <span class="comment">% </span>
+0045 <span class="comment">%    Hm0=7;Tp=11; </span>
+0046 <span class="comment">%    S = jonswap(4*pi/Tp,[Hm0 Tp]);  </span>
+0047 <span class="comment">%    Sk = spec2spec(S,'k1d');      </span>
+0048 <span class="comment">%    L0 = spec2mom(S,1);  </span>
+0049 <span class="comment">%    paramu = [sqrt(L0)*[-4 4] 41];  </span>
+0050 <span class="comment">%    ft = spec2mmtpdf(S,0,'vmm',[],paramu); pdfplot(ft)         <span class="comment">% a) </span></span>
+0051 <span class="comment">%    fs = spec2mmtpdf(Sk,0,'vmm');  figure, pdfplot(fs)         <span class="comment">% b) </span></span>
+0052 <span class="comment">%    [sk, ku, me]=spec2skew(S);  </span>
+0053 <span class="comment">%    g = hermitetr([],[sqrt(L0) sk ku me]); </span>
+0054 <span class="comment">%    Snorm=S; Snorm.S=S.S/L0; Snorm.tr=g; </span>
+0055 <span class="comment">%    ftg=spec2mmtpdf(Snorm,0,'AcAt',[],paramu); pdfplot(ftg)    <span class="comment">% c) </span></span>
+0056 <span class="comment">% </span>
+0057 <span class="comment">% See also  rindoptset, dat2tr, datastructures, wavedef, perioddef </span>
+0058   
+0059  
+0060 <span class="comment">%       bound = 0 the distribution is approximated (default)  </span>
+0061 <span class="comment">%             = 1 the upper and lower bounds for the distribution are computed. </span>
+0062  
+0063  
+0064 <span class="comment">%               -1 Integrate all by SADAPT for Ndim&lt;9 and by KRBVRC otherwise  </span>
+0065 <span class="comment">%               -2 Integrate all by SADAPT by Genz (1992) (Fast) </span>
+0066 <span class="comment">%               -3 Integrate all by KRBVRC by Genz (1993) (Fast) </span>
+0067 <span class="comment">%               -4 Integrate all by KROBOV by Genz (1992) (Fast) </span>
+0068 <span class="comment">%               -5 Integrate all by RCRUDE by Genz (1992) </span>
+0069 <span class="comment">%               -6 Integrate all by RLHCRUDE using MLHD and center of cell  </span>
+0070 <span class="comment">%               -7 Integrate all by RLHCRUDE using  LHD and center of cell </span>
+0071 <span class="comment">%               -8 Integrate all by RLHCRUDE using MLHD and random point within the cell </span>
+0072 <span class="comment">%               -9 Integrate all by RLHCRUDE using LHD and random point within the cell </span>
+0073  
+0074 <span class="comment">% Tested on : matlab 5.3  </span>
+0075 <span class="comment">% History: by I. Rychlik 01.10.1998 with name minmax.m, new name: spec2cmat  </span>
+0076 <span class="comment">% bounds by I.R. 02.01.2000.  </span>
+0077 <span class="comment">% Revised by pab 09.05.2000  </span>
+0078 <span class="comment">%  - added level u separated Max and min + period distributions  </span>
+0079 <span class="comment">%  - new name: spec2cmat -&gt; spec2mmtpdf  </span>
+0080 <span class="comment">%  - also Made call with directional spectrum possible. </span>
+0081 <span class="comment">% revised by IR removing error in transformation 29 VI 2000 </span>
+0082 <span class="comment">% revised by IR  changed default value for paramt and some ch. of </span>
+0083 <span class="comment">% help 2 VII 2000 </span>
+0084 <span class="comment">% revised by IR, addopted for Matlab 6, 31 III 2001  </span>
+0085 <span class="comment">% revised pab 10 April 2003 </span>
+0086 <span class="comment">%  -added matlab version, i.e., a call to sp2mmtpdf   </span>
+0087 <span class="comment">%revised pab 22Nov 2003 </span>
+0088 <span class="comment">% removed  nit and speed from input and replaced it  </span>
+0089 <span class="comment">%  with a rindoptions structure   </span>
+0090 <span class="comment">%    nit  =  0,...,9. Dimension of numerical integration  (default 2). </span>
+0091 <span class="comment">%           -1,-2,... different important sampling type integrations. </span>
+0092 <span class="comment">%   speed = defines accuracy of calculations, by choosing different  </span>
+0093 <span class="comment">%               parameters, possible values: 1,2...,9 (9 fastest, default </span>
+0094 <span class="comment">%               4). </span>
+0095    
+0096 defaultSpeed   = 4; 
+0097 defaultoptions = <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(<span class="string">'speed'</span>,defaultSpeed,<span class="string">'nit'</span>,2,<span class="string">'method'</span>,0); 
+0098 defaultoptions.speed = []; 
+0099    
+0100 <span class="keyword">if</span> ((nargin==1) &amp; (nargout &lt;= 1) &amp;  isequal(spec,<span class="string">'defaults'</span>)), 
+0101   f = defaultoptions; 
+0102   <span class="keyword">return</span> 
+0103 <span class="keyword">end</span>  
+0104 error(nargchk(1,7,nargin)) 
+0105 startTime = clock;  
+0106  
+0107 ftype = <a href="../../wafo/spec/freqtype.html" class="code" title=" returns the frequency type of a Spectral density struct.">freqtype</a>(spec); 
+0108 <span class="keyword">if</span> nargin&lt;3|isempty(def)  
+0109   defnr=0;  
+0110   <span class="keyword">if</span> strcmp(ftype,<span class="string">'k'</span>) 
+0111     def=<span class="string">'L'</span>; <span class="comment">% distributions in space are default    </span>
+0112   <span class="keyword">else</span> 
+0113     def=<span class="string">'T'</span>; <span class="comment">% distributions in time are default    </span>
+0114   <span class="keyword">end</span> 
+0115 <span class="keyword">else</span> 
+0116   <span class="keyword">switch</span> lower(def)  
+0117    <span class="keyword">case</span> <span class="string">'acat'</span>,    
+0118     defnr =-2; <span class="comment">% (Ac,At) </span>
+0119    <span class="keyword">case</span> <span class="string">'rfc'</span>, 
+0120     defnr =-1; <span class="comment">% (M,m_rfc) </span>
+0121    <span class="keyword">case</span> <span class="string">'mm'</span>, 
+0122     defnr = 0; <span class="comment">% max2min. (M,m) (default) </span>
+0123    <span class="keyword">case</span> {<span class="string">'mmtmm'</span>,<span class="string">'mmlmm'</span>}, 
+0124     defnr = 1; <span class="comment">% max2min and period inbetween (M,m,TMm) </span>
+0125    <span class="keyword">case</span> {<span class="string">'vmm'</span>}, 
+0126     defnr = 2; <span class="comment">% level v separated Max2min   (Mv,mv) </span>
+0127    <span class="keyword">case</span> {<span class="string">'vmmtmm'</span>,  <span class="string">'vmmlmm'</span>}, 
+0128     defnr = 3; <span class="comment">% level v separated Max2min and period inbetween (Mu,mu,TMm) </span>
+0129    <span class="keyword">case</span> {<span class="string">'mmtmd'</span>,<span class="string">'vmmtmd'</span>,<span class="string">'mmlmd'</span>,<span class="string">'vmmlmd'</span>}, 
+0130     defnr = 4; <span class="comment">% level v separated Max2min and period from Max to level v-down-crossing. </span>
+0131    <span class="keyword">case</span> {<span class="string">'mmtdm'</span>,<span class="string">'vmmtdm'</span>,<span class="string">'mmldm'</span>,<span class="string">'vmmldm'</span>},  
+0132     defnr = 5; <span class="comment">% level v separated Max2min and period from level v-down-crossing to min. </span>
+0133     <span class="keyword">otherwise</span>, error(<span class="string">'Unknown def'</span>)  
+0134   <span class="keyword">end</span>  
+0135   <span class="keyword">if</span> defnr&gt;=3|defnr==1, 
+0136     def = upper(def(<span class="keyword">end</span>-2)); <span class="comment">% Store the kind of distribution that is </span>
+0137                              <span class="comment">% wanted: Period or wavelength </span>
+0138   <span class="keyword">elseif</span> strcmp(ftype,<span class="string">'k'</span>) 
+0139     def=<span class="string">'L'</span>; <span class="comment">% distributions in space are default    </span>
+0140   <span class="keyword">else</span> 
+0141     def=<span class="string">'T'</span>; <span class="comment">% distributions in time are default    </span>
+0142   <span class="keyword">end</span> 
+0143 <span class="keyword">end</span>                  
+0144  
+0145  
+0146 <span class="keyword">switch</span> upper(def(1)) 
+0147   <span class="keyword">case</span> {<span class="string">'L'</span>},  spec = <a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(spec,<span class="string">'k1d'</span>) ;  ptxt=<span class="string">'space'</span>;   
+0148   <span class="keyword">case</span> {<span class="string">'T'</span>},  spec = <a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(spec,<span class="string">'freq'</span>);  ptxt=<span class="string">'time'</span>;  
+0149   <span class="keyword">otherwise</span>,  error(<span class="string">'Unknown def'</span>) 
+0150 <span class="keyword">end</span> 
+0151  
+0152 [S, xl4, L0, L2, L4, L1] = <a href="../../wafo/spec/wnormspec.html" class="code" title=" Normalize a spectral density such that m0=m2=1">wnormspec</a>(spec);  
+0153 A    = sqrt(L0/L2);  
+0154   
+0155 <span class="keyword">if</span> isfield(spec,<span class="string">'tr'</span>)  
+0156    g=spec.tr;  
+0157 <span class="keyword">else</span>  
+0158    g=[];  
+0159 <span class="keyword">end</span>  
+0160 <span class="keyword">if</span> isempty(g)  
+0161   g  = [sqrt(L0)*(-5:0.02:5)', (-5:0.02:5)']; 
+0162 <span class="keyword">end</span> 
+0163  
+0164 <span class="keyword">if</span> nargin&lt;6|isempty(options) 
+0165   options = defaultoptions; 
+0166 <span class="keyword">else</span> 
+0167   options = <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(defaultoptions,options); 
+0168 <span class="keyword">end</span> 
+0169  
+0170 <span class="keyword">if</span> nargin&lt;7|isempty(bound)  
+0171     bound=0;  
+0172 <span class="keyword">end</span> 
+0173  
+0174 <span class="keyword">if</span> nargin&lt;2|isempty(utc) 
+0175   utc_d = <a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0 0],g); <span class="comment">% most frequent crossed level  </span>
+0176   utc   = utc_d(1,2); 
+0177 <span class="keyword">end</span> 
+0178  
+0179 <span class="comment">% transform reference level into Gaussian level </span>
+0180 uu = <a href="dat2gaus.html" class="code" title=" Transforms  x  using the transformation  g.">dat2gaus</a>([0. utc],g); 
+0181 u  = uu(2); 
+0182 disp([<span class="string">'The level u for Gaussian process = '</span> num2str(u)]) 
+0183           
+0184 <span class="keyword">if</span> options.method&gt;0  
+0185    bound=0;  
+0186 <span class="keyword">end</span>  
+0187 <span class="keyword">if</span> nargin&lt;4|isempty(paramt)  
+0188   paramt = [0 5*pi*sqrt(L2/L4), 41];   
+0189 <span class="keyword">end</span>  
+0190 <span class="keyword">if</span> nargin&lt;5|isempty(paramu)   
+0191   paramu=[-5*sqrt(L0) 5*sqrt(L0) 41];  
+0192 <span class="keyword">end</span>  
+0193  
+0194 t0     = paramt(1);  
+0195 tn     = paramt(2);  
+0196 Ntime  = paramt(3); 
+0197  
+0198 t      = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>([0 tn/A Ntime]); <span class="comment">% normalized times  </span>
+0199 Nstart = 1 + round(t0/tn*(Ntime-1)); <span class="comment">% the starting point to evaluate  </span>
+0200  
+0201  
+0202 Nx = paramu(3); 
+0203 <span class="keyword">if</span> (defnr&gt;1) 
+0204   paramu(1) = max(0,paramu(1)); 
+0205   <span class="keyword">if</span> (paramu(2)&lt;0),  
+0206     error(<span class="string">'Discretization levels must be larger than zero'</span>),  
+0207   <span class="keyword">end</span>   
+0208 <span class="keyword">end</span> 
+0209    
+0210 <span class="comment">%Transform amplitudes to Gaussian levels:     </span>
+0211 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ </span>
+0212 h   = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(paramu);  
+0213 h   = reshape(h,Nx,1);  
+0214 der = ones(Nx,1); 
+0215  
+0216 <span class="keyword">if</span> defnr&gt;1 <span class="comment">% level v separated Max2min densities </span>
+0217   der1 = der; 
+0218   hg   = <a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([utc+h der],g); 
+0219   der  = abs(hg(:,2));  
+0220   hg   = hg(:,1); <span class="comment">% Gaussian levels above u </span>
+0221   hg1  = <a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([utc-h der1],g); 
+0222   der1 = abs(hg1(:,2));  
+0223   hg   = [hg;hg1(:,1)]; <span class="comment">% Gaussian levels below u </span>
+0224 <span class="keyword">else</span>   <span class="comment">% Max2min densities </span>
+0225  
+0226   hg  = <a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([h der],g);  
+0227   der = abs(hg(:,2));  
+0228   der1= der; 
+0229   hg  = hg(:,1); <span class="comment">% Gaussian level  </span>
+0230 <span class="keyword">end</span> 
+0231  
+0232 dt      = t(2)-t(1) ; 
+0233  
+0234 <span class="comment">% Calculating covariances </span>
+0235 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~ </span>
+0236 nr = 4; <span class="comment">% number of derivatives </span>
+0237 R = <a href="../../wafo/spec/spec2cov2.html" class="code" title=" Computes covariance function and its derivatives, alternative version ">spec2cov2</a>(S,nr,Ntime-1,dt); 
+0238   
+0239 <span class="comment">%NB!!! the spec2XXpdf.exe programmes is very sensitive to how you interpolate   </span>
+0240 <span class="comment">%      the covariances, especially where the process is very dependent  </span>
+0241 <span class="comment">%      and the covariance matrix is nearly singular. (i.e. for small t  </span>
+0242 <span class="comment">%      and high levels of u if Tc and low levels of u if Tt)  </span>
+0243 <span class="comment">%     The best is to interpolate the spectrum linearly so that S.S&gt;=0 </span>
+0244 <span class="comment">%     This makes sure that the covariance matrix is positive </span>
+0245 <span class="comment">%     semi-definitt, since the circulant spectrum are the eigenvalues of </span>
+0246 <span class="comment">%     the circulant covariance matrix. </span>
+0247  
+0248  
+0249 callFortran = 0; <span class="comment">%options.method&lt;0;   </span>
+0250 <span class="keyword">if</span> callFortran, <span class="comment">% call fortran </span>
+0251    ftmp = <a href="#_sub1" class="code" title="sub  dens = callSp2mmtpdfexe(R,dt,u,defnr,Nstart,hg,bound,options)">callSp2mmtpdfexe</a>(R,dt,u,defnr,Nstart,hg,bound,options); 
+0252    err = repmat(nan,size(ftmp)); 
+0253 <span class="keyword">else</span> 
+0254   [ftmp,err,options] = <a href="#_sub2" class="code" title="sub  [pdf,err, options] = cov2mmtpdf(R,dt,u,def,Nstart,hg,options)">cov2mmtpdf</a>(R,dt,u,defnr,Nstart,hg,options);    
+0255 <span class="keyword">end</span> 
+0256  
+0257 f       = <a href="createpdf.html" class="code" title=" PDF class constructor">createpdf</a>;  
+0258 <span class="keyword">if</span> isfield(S,<span class="string">'note'</span>) 
+0259   f.note  = S.note; 
+0260 <span class="keyword">end</span> 
+0261 f.options = options; 
+0262 <span class="comment">%f.u     = utc; </span>
+0263  
+0264 f.elapsedTime = etime(clock,startTime); 
+0265  
+0266 <span class="keyword">if</span> Nx&gt;2 
+0267   f.labx{1}=<span class="string">'Max [m]'</span>;  
+0268   f.x{1}=h;  
+0269   <span class="keyword">switch</span> defnr  
+0270    <span class="keyword">case</span> -2, f.title = sprintf(<span class="string">'Joint density of (Ac,At) in %s'</span>, ptxt);  
+0271    <span class="keyword">case</span> -1, f.title = sprintf(<span class="string">'Joint density of (M,m_{rfc}) in %s'</span>, ptxt);  
+0272    <span class="keyword">case</span>  0, f.title = sprintf(<span class="string">'Joint density of (M,m) in %s'</span>, ptxt);   
+0273    <span class="keyword">case</span>  1,  
+0274     f.title = sprintf(<span class="string">'Joint density of (M,m,%sMm) in %s'</span>, def(1), ptxt); 
+0275    <span class="keyword">case</span>  2,  
+0276     f.title = sprintf(<span class="string">'Joint density of (M,m)_{v=%2.5g} in %s'</span>,utc, ptxt);    
+0277    <span class="keyword">case</span>  3,  
+0278     f.title = sprintf(<span class="string">'Joint density of (M,m,%sMm)_{v=%2.5g} in %s'</span>,<span class="keyword">...</span> 
+0279               def(1),utc, ptxt);  
+0280    <span class="keyword">case</span>  4,  
+0281     f.title = sprintf(<span class="string">'Joint density of (M,m,%sMd)_{v=%2.5g} in %s'</span>,<span class="keyword">...</span> 
+0282               def(1),utc, ptxt);  
+0283    <span class="keyword">case</span>  5,  
+0284     f.title = sprintf(<span class="string">'Joint density of (M,m,%sdm)_{v=%2.5g} in %s'</span>,<span class="keyword">...</span> 
+0285               def(1),utc, ptxt);  
+0286     <span class="keyword">otherwise</span>, error(<span class="string">'Unknown def'</span>)  
+0287   <span class="keyword">end</span>  
+0288 <span class="keyword">else</span>   
+0289   f.note = [f.note <span class="string">'Density is not scaled to unity'</span>]; 
+0290   <span class="keyword">switch</span> defnr  
+0291    <span class="keyword">case</span> {-2,-1,0,1},  
+0292     f.title = sprintf(<span class="string">'Density of (%sMm, M = %2.5g, m = %2.5g)'</span>,<span class="keyword">...</span> 
+0293               def(1),h(2),h(1));  
+0294    <span class="keyword">case</span> {2,3},  
+0295     f.title = sprintf(<span class="string">'Density of (%sMm, M = %2.5g, m = %2.5g)_{v=%2.5g}'</span>,<span class="keyword">...</span> 
+0296               def(1),h(2),-h(2),utc);  
+0297    <span class="keyword">case</span> 4,      
+0298     f.title = sprintf(<span class="string">'Density of (%sMd, %sMm, M = %2.5g, m = %2.5g)_{v=%2.5g}'</span>,<span class="keyword">...</span> 
+0299               def(1),def(1),h(2),-h(2),utc);  
+0300    <span class="keyword">case</span> 5,      
+0301     f.title = sprintf(<span class="string">'Density of (%sdm, %sMm, M = %2.5g, m = %2.5g)_{v=%2.5g}'</span>,<span class="keyword">...</span> 
+0302               def(1),def(1),h(2),-h(2),utc);  
+0303    <span class="keyword">otherwise</span>, error(<span class="string">'Unknown def'</span>)  
+0304   <span class="keyword">end</span> 
+0305 <span class="keyword">end</span> 
+0306  
+0307  
+0308  
+0309 dh = h(2)-h(1); 
+0310 <span class="keyword">if</span> bound&lt;0.5 
+0311  <span class="keyword">if</span> Nx&gt;2  <span class="comment">% amplitude distributions wanted </span>
+0312    f.x{2}    = h; 
+0313    f.labx{2} = <span class="string">'min [m]'</span>; 
+0314    <span class="keyword">if</span> defnr&gt;1|defnr==-2 ,f.u  = utc;<span class="keyword">end</span>   <span class="comment">% save level u </span>
+0315     
+0316    <span class="keyword">if</span> defnr&gt;2 | defnr==1 
+0317      ftmp = reshape(ftmp,Nx,Nx,Ntime); 
+0318      err  = reshape(err,Nx,Nx,Ntime); 
+0319      der0 = der1(:,ones(1,Nx)).*(der(:,ones(1,Nx)).'); 
+0320      <span class="keyword">for</span> ix =1:Ntime 
+0321        ftmp(:,:,ix) = ftmp(:,:,ix).*der0;<span class="comment">% dh*dh; </span>
+0322        err(:,:,ix)  = err(:,:,ix).*der0; 
+0323      <span class="keyword">end</span> 
+0324       
+0325      ftmp   = ftmp/A; 
+0326      err    = err/A; 
+0327      f.x{3} = t(:)*A; 
+0328      <span class="keyword">if</span> strcmpi(def(1),<span class="string">'t'</span>) 
+0329        f.labx{3} = <span class="string">'period [sec]'</span>; 
+0330      <span class="keyword">else</span> 
+0331        f.labx{3} = <span class="string">'wave length [m]'</span>; 
+0332      <span class="keyword">end</span> 
+0333    <span class="keyword">else</span> 
+0334      ftmp  = reshape(ftmp,Nx,Nx); 
+0335      err   = reshape(err,Nx,Nx); 
+0336      ftmp  = ftmp.*der(:,ones(1,Nx)).*(der(:,ones(1,Nx)).'); 
+0337      err   = err.*der(:,ones(1,Nx)).*(der(:,ones(1,Nx)).'); 
+0338      <span class="keyword">if</span> (defnr==-1) 
+0339        ftmp0 = fliplr(<a href="mctp2rfc.html" class="code" title="  Rainflow matrix given a Markov matrix of a Markov chain of turning points ">mctp2rfc</a>(fliplr(ftmp))); 
+0340        err  = abs(ftmp0-fliplr(<a href="mctp2rfc.html" class="code" title="  Rainflow matrix given a Markov matrix of a Markov chain of turning points ">mctp2rfc</a>(fliplr(ftmp+err)))); 
+0341        ftmp = ftmp0; 
+0342      <span class="keyword">elseif</span> (defnr==-2) 
+0343         ftmp0=fliplr(<a href="mctp2tc.html" class="code" title="  Frequencies of upcrossing troughs and crests using Markov chain of turning points. ">mctp2tc</a>(fliplr(ftmp),utc,paramu))*sqrt(L4*L0)/L2; 
+0344     err =abs(ftmp0-fliplr(<a href="mctp2tc.html" class="code" title="  Frequencies of upcrossing troughs and crests using Markov chain of turning points. ">mctp2tc</a>(fliplr(ftmp+err),utc,paramu))*sqrt(L4*L0)/L2); 
+0345         index1=find(f.x{1}&gt;0); 
+0346         index2=find(f.x{2}&lt;0); 
+0347         ftmp=flipud(ftmp0(index2,index1)); 
+0348     err =flipud(err(index2,index1)); 
+0349         f.x{1} = f.x{1}(index1); 
+0350         f.x{2} = abs(flipud(f.x{2}(index2))); 
+0351      <span class="keyword">end</span> 
+0352    <span class="keyword">end</span> 
+0353    f.f = ftmp; 
+0354    f.err = err; 
+0355  <span class="keyword">else</span> <span class="comment">% Only time or wave length distributions wanted </span>
+0356    f.f = ftmp/A; 
+0357    f.err = err/A 
+0358    f.x{1}=A*t'; 
+0359    <span class="keyword">if</span> strcmpi(def(1),<span class="string">'t'</span>) 
+0360      f.labx{1} = <span class="string">'period [sec]'</span>; 
+0361    <span class="keyword">else</span> 
+0362      f.labx{1} = <span class="string">'wave length [m]'</span>; 
+0363    <span class="keyword">end</span> 
+0364    <span class="keyword">if</span> defnr&gt;3, 
+0365      f.f   = reshape(f.f,[Ntime, Ntime]); 
+0366      f.err = reshape(f.err,[Ntime, Ntime]); 
+0367      f.x{2}= A*t'; 
+0368      <span class="keyword">if</span> strcmpi(def(1),<span class="string">'t'</span>) 
+0369        f.labx{2} = <span class="string">'period [sec]'</span>; 
+0370      <span class="keyword">else</span> 
+0371         f.labx{2} = <span class="string">'wave length [m]'</span>; 
+0372      <span class="keyword">end</span> 
+0373    <span class="keyword">end</span> 
+0374       
+0375  <span class="keyword">end</span> 
+0376   
+0377 <span class="keyword">else</span>    <span class="comment">% bound &gt;0.5 </span>
+0378   <span class="comment">% The lines below must be fixed: (it is not correct yet </span>
+0379   <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ </span>
+0380   <span class="keyword">if</span> Nx&gt;2 
+0381     ftmp_up=reshape(ftmp(:,1),Nx,Nx);  
+0382     ftmp_lo=reshape(ftmp(:,2),Nx,Nx);  
+0383     <span class="keyword">for</span> i=1:Nx  
+0384       ftmp_up(:,i)=dh*dh*der(i)*ftmp_up(:,i).*der;<span class="comment">%*sqrt(-R(1,6)/R(1,4))/2/pi;  </span>
+0385       ftmp_lo(:,i)=dh*dh*der(i)*ftmp_lo(:,i).*der;<span class="comment">%sqrt(-R(1,6)/R(1,4))/2/pi; </span>
+0386     <span class="keyword">end</span>  
+0387     <span class="keyword">if</span> (defnr==0) 
+0388       f.f{1}=fliplr(<a href="mctp2rfc.html" class="code" title="  Rainflow matrix given a Markov matrix of a Markov chain of turning points ">mctp2rfc</a>(fliplr(ftmp_up))); 
+0389       f.f{2}=fliplr(<a href="mctp2rfc.html" class="code" title="  Rainflow matrix given a Markov matrix of a Markov chain of turning points ">mctp2rfc</a>(fliplr(ftmp_lo))); 
+0390     <span class="keyword">end</span> 
+0391     <span class="keyword">if</span> (defnr==1) 
+0392       f.f{1}=ftmp_up;  
+0393       f.f{2}=ftmp_lo; 
+0394     <span class="keyword">end</span> 
+0395     <span class="keyword">if</span> (defnr==-1) 
+0396       f.f{1}=fliplr(<a href="mctp2tc.html" class="code" title="  Frequencies of upcrossing troughs and crests using Markov chain of turning points. ">mctp2tc</a>(fliplr(ftmp_up))); 
+0397       f.f{2}=fliplr(<a href="mctp2tc.html" class="code" title="  Frequencies of upcrossing troughs and crests using Markov chain of turning points. ">mctp2tc</a>(fliplr(ftmp_lo))); 
+0398     <span class="keyword">end</span> 
+0399     f.x{2}=h;  
+0400   <span class="keyword">else</span> 
+0401     size(ftmp) 
+0402     f.f=ftmp/A;    
+0403     f.x{1}=A*t.'; 
+0404   <span class="keyword">end</span> 
+0405 <span class="keyword">end</span>  
+0406  
+0407 <span class="comment">% [f.cl,f.pl]=qlevels(f.f,[10 30 50 70 90 95 99 99.9],f.x{1},f.x{2}); </span>
+0408  
+0409 <span class="comment">%pdfplot(f)  </span>
+0410  
+0411 <span class="comment">%Test of spec2mmtpdf </span>
+0412 <span class="comment">% cd  f:\matlab\matlab\wafo\source\sp2thpdfalan </span>
+0413 <span class="comment">% addpath f:\matlab\matlab\wafo ,initwafo, addpath f:\matlab\matlab\graphutil </span>
+0414 <span class="comment">% Hm0=7;Tp=11; S = jonswap(4*pi/Tp,[Hm0 Tp]); </span>
+0415 <span class="comment">% ft = spec2mmtpdf(S,0,'vMmTMm',[0.3,.4,11],[0 .00005 2]); </span>
+0416  
+0417 <span class="keyword">return</span> <span class="comment">% main </span>
+0418  
+0419 <span class="keyword">function</span> dens  = <a name="_sub1" href="#_subfunctions" class="code">callSp2mmtpdfexe</a>(R,dt,u,defnr,Nstart,hg,bound,options) 
+0420 <span class="comment">% Write parameters to file </span>
+0421 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ </span>
+0422   Nx    = max(1,length(hg)); 
+0423   <span class="keyword">if</span> (defnr&gt;1)  
+0424     Nx = Nx/2; <span class="comment">%level v separated max2min densities wanted      </span>
+0425   <span class="keyword">end</span> 
+0426   nr    = size(R,2)-1; 
+0427   Ntime = size(R,1); 
+0428    
+0429    
+0430   <span class="keyword">if</span> exist(<span class="string">'h.in'</span>), delete h.in, <span class="keyword">end</span>  
+0431   fid = fopen(<span class="string">'h.in'</span>,<span class="string">'wt'</span>);  
+0432   fprintf(fid,<span class="string">'%12.10f\n'</span>,hg);  
+0433    fclose(fid);  
+0434    <span class="keyword">for</span> k=0:nr  
+0435       filename=[<span class="string">'Cd'</span> int2str(k) <span class="string">'.in'</span>];  
+0436       <span class="keyword">if</span> exist(filename),   
+0437     delete(filename), 
+0438       <span class="keyword">end</span>  
+0439       fid = fopen(filename,<span class="string">'wt'</span>);  
+0440       fprintf(fid,<span class="string">'%12.10E \n'</span>,R(:,k+1));  
+0441       fclose(fid);  
+0442    <span class="keyword">end</span>  
+0443    <span class="comment">%SCIS=0;  </span>
+0444    XSPLT = options.xsplit; 
+0445    nit   = options.nit; 
+0446    speed = options.speed; 
+0447    seed  = options.seed; 
+0448    SCIS  = abs(options.method); <span class="comment">% method&lt;=0 </span>
+0449     
+0450   <span class="keyword">if</span> exist(<span class="string">'reflev.in'</span>),  
+0451     delete(<span class="string">'reflev.in'</span>), 
+0452   <span class="keyword">end</span>  
+0453   disp(<span class="string">'writing data'</span>)  
+0454   fid=fopen(<span class="string">'reflev.in'</span>,<span class="string">'wt'</span>);  
+0455   fprintf(fid,<span class="string">'%2.0f \n'</span>,Ntime);  
+0456   fprintf(fid,<span class="string">'%2.0f \n'</span>,Nstart);  
+0457   fprintf(fid,<span class="string">'%2.0f \n'</span>,nit);  
+0458   fprintf(fid,<span class="string">'%2.0f \n'</span>,speed);  
+0459   fprintf(fid,<span class="string">'%2.0f \n'</span>,SCIS);  
+0460   fprintf(fid,<span class="string">'%2.0f \n'</span>,seed);  <span class="comment">% select a random seed for rind   </span>
+0461   fprintf(fid,<span class="string">'%2.0f \n'</span>,Nx);  
+0462   fprintf(fid,<span class="string">'%12.10E \n'</span>,dt); 
+0463   fprintf(fid,<span class="string">'%12.10E \n'</span>,u); 
+0464   fprintf(fid,<span class="string">'%2.0f \n'</span>,defnr); <span class="comment">% def </span>
+0465   fclose(fid);   
+0466    
+0467   disp(<span class="string">'   Starting Fortran executable.'</span>)  
+0468   <span class="keyword">if</span> bound&lt;0.5  
+0469      dos([ <a href="../../wafo/wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a> <span class="string">'sp2mmt70.exe'</span>]); <span class="comment">%compiled sp2mmtpdf.f with rind70.f  </span>
+0470   <span class="keyword">else</span>  
+0471      dos([ <a href="../../wafo/wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a> <span class="string">'sp2mM51.exe'</span>]); <span class="comment">%compiled spec2tthpdf1.f with rind49.f  </span>
+0472   <span class="keyword">end</span>  
+0473   dens = load(<span class="string">'dens.out'</span>); 
+0474   <span class="keyword">return</span> 
+0475    
+0476    
+0477   <span class="keyword">function</span> [pdf,err, options] = <a name="_sub2" href="#_subfunctions" class="code">cov2mmtpdf</a>(R,dt,u,def,Nstart,hg,options) 
+0478 <span class="comment">%COV2MMTPDF Joint density of Maximum, minimum and period. </span>
+0479 <span class="comment">% </span>
+0480 <span class="comment">% CALL  [pdf, err, options] = cov2mmtpdf(R,dt,u,def,Nstart,hg,options) </span>
+0481 <span class="comment">% </span>
+0482 <span class="comment">% pdf     = calculated pdf size Nx x Ntime </span>
+0483 <span class="comment">% err     = error estimate    </span>
+0484 <span class="comment">% options = requested and actual rindoptions used in integration. </span>
+0485 <span class="comment">% R       = [R0,R1,R2,R3,R4] column vectors with autocovariance and its </span>
+0486 <span class="comment">%          derivatives, i.e., Ri (i=1:4) are vectors with the 1'st to 4'th </span>
+0487 <span class="comment">%          derivatives of R0.  size Ntime x Nr+1 </span>
+0488 <span class="comment">% dt      = time spacing between covariance samples, i.e.,  </span>
+0489 <span class="comment">%           between R0(1),R0(2). </span>
+0490 <span class="comment">% u       = crossing level </span>
+0491 <span class="comment">% def     = integer defining pdf calculated: </span>
+0492 <span class="comment">%           0 : maximum and the following minimum. (M,m) (default) </span>
+0493 <span class="comment">%           1 : level v separated Maximum and minimum   (M,m)_v  </span>
+0494 <span class="comment">%           2 : maximum, minimum and period between (M,m,TMm) </span>
+0495 <span class="comment">%           3 : level v separated Maximum, minimum and period </span>
+0496 <span class="comment">%               between (M,m,TMm)_v </span>
+0497 <span class="comment">%           4 : level v separated Maximum, minimum and the period </span>
+0498 <span class="comment">%               from Max to level v-down-crossing (M,m,TMd)_v. </span>
+0499 <span class="comment">%           5 : level v separated Maximum, minimum and the period from  </span>
+0500 <span class="comment">%               level v-down-crossing to min. (M,m,Tdm)_v  </span>
+0501 <span class="comment">% Nstart  = index to where to start calculation, i.e., t0 = t(Nstart) </span>
+0502 <span class="comment">% hg      = vector of amplitudes length Nx or 0 </span>
+0503 <span class="comment">% options = rind options structure defining the integration parameters  </span>
+0504 <span class="comment">%   </span>
+0505 <span class="comment">% COV2MMTPDF computes joint density of the  maximum and the following     </span>
+0506 <span class="comment">% minimum or level u separated maxima and minima + period/wavelength     </span>
+0507 <span class="comment">% </span>
+0508 <span class="comment">% For DEF = 0,1 : (Maxima, Minima and period/wavelength) </span>
+0509 <span class="comment">%         = 2,3 : (Level v separated Maxima and Minima and </span>
+0510 <span class="comment">%                  period/wavelength between them) </span>
+0511 <span class="comment">%   </span>
+0512 <span class="comment">% If Nx==1 then the conditional  density for  period/wavelength between </span>
+0513 <span class="comment">% Maxima and Minima given the Max and Min is returned </span>
+0514 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  </span>
+0515 <span class="comment">% Y=  X'(t2)..X'(ts)..X'(tn-1)||X''(t1) X''(tn)|| X'(t1) X'(tn)  X(t1) X(tn)  </span>
+0516 <span class="comment">% = [       Xt                   Xd                    Xc            ]   </span>
+0517 <span class="comment">%                                                                        </span>
+0518 <span class="comment">% Nt = tn-2, Nd = 2, Nc = 4 </span>
+0519 <span class="comment">%                                                                        </span>
+0520 <span class="comment">% Xt= contains Nt time points in the indicator function                  </span>
+0521 <span class="comment">% Xd=    &quot;     Nd    derivatives in Jacobian </span>
+0522 <span class="comment">% Xc=    &quot;     Nc    variables to condition on                           </span>
+0523 <span class="comment">%                                                                        </span>
+0524 <span class="comment">% There are 3 (NI=4) regions with constant barriers:                     </span>
+0525 <span class="comment">% (indI(1)=0);     for i\in (indI(1),indI(2)]    Y(i)&lt;0.                 </span>
+0526 <span class="comment">% (indI(2)=Nt)  ;  for i\in (indI(2)+1,indI(3)], Y(i)&lt;0 (deriv. X''(t1))  </span>
+0527 <span class="comment">% (indI(3)=Nt+1);  for i\in (indI(3)+1,indI(4)], Y(i)&gt;0 (deriv. X''(tn))   </span>
+0528 <span class="comment">%  </span>
+0529 <span class="comment">% </span>
+0530 <span class="comment">% For DEF = 4,5 (Level v separated Maxima and Minima and </span>
+0531 <span class="comment">%                period/wavelength from Max to crossing) </span>
+0532 <span class="comment">% </span>
+0533 <span class="comment">% If Nx==1 then the conditional joint density for  period/wavelength </span>
+0534 <span class="comment">% between Maxima, Minima and Max to level v crossing given the Max and </span>
+0535 <span class="comment">% the min is returned </span>
+0536 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ </span>
+0537 <span class="comment">% Y=  X'(t2)..X'(ts)..X'(tn-1)||X''(t1) X''(tn) X'(ts)|| X'(t1) X'(tn)  X(t1) X(tn) X(ts) </span>
+0538 <span class="comment">% = [       Xt                      Xd                     Xc            ] </span>
+0539 <span class="comment">%                                                                          </span>
+0540 <span class="comment">% Nt = tn-2, Nd = 3, Nc = 5 </span>
+0541 <span class="comment">%                                                                          </span>
+0542 <span class="comment">% Xt= contains Nt time points in the indicator function                       </span>
+0543 <span class="comment">% Xd=    &quot;     Nd    derivatives                                              </span>
+0544 <span class="comment">% Xc=    &quot;     Nc    variables to condition on                                </span>
+0545 <span class="comment">%                                                                             </span>
+0546 <span class="comment">% There are 4 (NI=5) regions with constant barriers:                         </span>
+0547 <span class="comment">% (indI(1)=0);     for i\in (indI(1),indI(2)]    Y(i)&lt;0.                     </span>
+0548 <span class="comment">% (indI(2)=Nt)  ;  for i\in (indI(2)+1,indI(3)], Y(i)&lt;0 (deriv. X''(t1))     </span>
+0549 <span class="comment">% (indI(3)=Nt+1);  for i\in (indI(3)+1,indI(4)], Y(i)&gt;0 (deriv. X''(tn)) </span>
+0550 <span class="comment">% (indI(4)=Nt+2);  for i\in (indI(4)+1,indI(5)], Y(i)&lt;0 (deriv. X'(ts))     </span>
+0551 <span class="comment">%  </span>
+0552 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">% </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+0553 <span class="comment">% </span>
+0554    
+0555 <span class="comment">% History </span>
+0556 <span class="comment">% Revised pab 22Nov2003 </span>
+0557 <span class="comment">%  -new inputarguments   </span>
+0558 <span class="comment">%  -added err to output   </span>
+0559 <span class="comment">%Revised pab 03.04.2003 </span>
+0560 <span class="comment">% -translated from f90 to matlab </span>
+0561 <span class="comment">%Revised pab 22.04.2000 </span>
+0562 <span class="comment">% - added mean separated min/max + (Tdm, TMd) period distributions </span>
+0563 <span class="comment">% - added scis  </span>
+0564  
+0565 R0 = R(:,1); 
+0566 R1 = R(:,2); 
+0567 R2 = R(:,3); 
+0568 R3 = R(:,4); 
+0569 R4 = R(:,5); 
+0570  
+0571 Ntime = length(R0); 
+0572  
+0573 Nx0  = max(1,length(hg)); 
+0574 Nx1  = Nx0; 
+0575 <span class="comment">%Nx0 = Nx1; <span class="comment">% just plain Mm </span></span>
+0576 <span class="keyword">if</span> (def&gt;1)  
+0577   Nx1 = Nx0/2; 
+0578  <span class="comment">%  Nx0 = 2*Nx1;   <span class="comment">% level v separated max2min densities wanted      </span></span>
+0579 <span class="keyword">end</span> 
+0580 <span class="comment">%disp(sprintf('def = %d',def)) </span>
+0581  
+0582 <span class="comment">% ***** The bound 'infinity' is set to 100*sigma ***** </span>
+0583 XdInf = 100.d0*sqrt(R4(1)); 
+0584 XtInf = 100.d0*sqrt(-R2(1)); 
+0585  
+0586 Nc = 4; 
+0587 NI = 4; 
+0588 Nd = 2;  
+0589 Mb = 1;  
+0590 Nj = 0; 
+0591  
+0592 Nstart = max(2,Nstart);  
+0593  
+0594 symmetry = 0; 
+0595 isOdd = mod(Nx1,2); 
+0596 <span class="keyword">if</span> (def&lt;=1) <span class="comment">%THEN <span class="comment">% just plain Mm  </span></span>
+0597    Nx = Nx1*(Nx1-1)/2; 
+0598    IJ = (Nx1+isOdd)/2;          
+0599    <span class="keyword">if</span> (hg(1)+hg(Nx1)==0 &amp;  (hg(IJ)==0 |hg(IJ)+hg(IJ+1)==0) )  
+0600      symmetry=0; 
+0601      disp(<span class="string">' Integration region symmetric'</span>) 
+0602      <span class="comment">% May save Nx1-isOdd integrations in each time step  </span>
+0603      <span class="comment">% This is not implemented yet. </span>
+0604      <span class="comment">%Nx = Nx1*(Nx1-1)/2-Nx1+isOdd </span>
+0605    <span class="keyword">end</span> 
+0606  
+0607    <span class="comment">% CC = normalizing constant = 1/ expected number of zero-up-crossings of X'  </span>
+0608    CC = 2*pi*sqrt(-R2(1)/R4(1));  
+0609    <span class="comment">%  XcScale = log(CC) </span>
+0610    XcScale = log(2*pi*sqrt(-R2(1)/R4(1))); 
+0611 <span class="keyword">else</span> 
+0612    <span class="comment">% level u separated Mm </span>
+0613    Nx = (Nx1-1)*(Nx1-1); 
+0614    <span class="keyword">if</span> ( abs(u)&lt;=eps &amp; hg(1)+hg(Nx1+1)==0 &amp; (hg(Nx1)+hg(2*Nx1)==0) ) 
+0615      symmetry=0; 
+0616      disp(<span class="string">' Integration region symmetric'</span>) 
+0617      <span class="comment">% Not implemented for DEF &lt;= 3 </span>
+0618      <span class="comment">%IF (DEF.LE.3) Nx = (Nx1-1)*(Nx1-2)/2  </span>
+0619    <span class="keyword">end</span> 
+0620  
+0621    <span class="keyword">if</span> (def&gt;3) <span class="comment">%THEN </span>
+0622       Nstart = max(Nstart,3); 
+0623       Nc = 5; 
+0624       NI = 5;  
+0625       Nd = 3; 
+0626    <span class="keyword">end</span> <span class="comment">%ENDIF </span>
+0627    <span class="comment">%CC= normalizing constant= 1/ expected number of u-up-crossings of X </span>
+0628    CC = 2*pi*sqrt(-R0(1)/R2(1))*exp(0.5D0*u*u/R0(1));  
+0629    XcScale = log(2*pi*sqrt(-R0(1)/R2(1))) + 0.5D0*u*u/R0(1); 
+0630 <span class="keyword">end</span> <span class="comment">%ENDIF </span>
+0631  
+0632 options = setfield(options,<span class="string">'xcscale'</span>,XcScale); 
+0633 opt0 = struct2cell(options); 
+0634 <span class="comment">%opt0 = opt0(1:10); </span>
+0635 <span class="comment">%seed = []; </span>
+0636 <span class="comment">%opt0 =  {SCIS,XcScale,ABSEPS,RELEPS,COVEPS,MAXPTS,MINPTS,seed,NIT1}; </span>
+0637  
+0638  
+0639  
+0640 <span class="keyword">if</span> (Nx&gt;1) 
+0641    <span class="keyword">if</span> ((def==0 | def==2)) <span class="comment">%  (M,m) or (M,m)v distribution wanted </span>
+0642       asize = [Nx1,Nx1]; 
+0643    <span class="keyword">else</span>            
+0644      <span class="comment">% (M,m,TMm), (M,m,TMm)v  (M,m,TMd)v or (M,M,Tdm)v distributions wanted  </span>
+0645       asize = [Nx1,Nx1,Ntime]; 
+0646    <span class="keyword">end</span>  
+0647 <span class="keyword">elseif</span> (def&gt;3) <span class="comment">% </span>
+0648    <span class="comment">% Conditional distribution for (TMd,TMm)v or (Tdm,TMm)v given (M,m)  wanted  </span>
+0649    asize = [1,Ntime,Ntime]; 
+0650 <span class="keyword">else</span> 
+0651   <span class="comment">% Conditional distribution for  (TMm) or (TMm)v given (M,m) wanted </span>
+0652    asize = [1,1,Ntime]; 
+0653 <span class="keyword">end</span> 
+0654     
+0655 <span class="comment">% Initialization </span>
+0656 <span class="comment">%~~~~~~~~~~~~~~~~~ </span>
+0657 pdf = zeros(asize); 
+0658 err = pdf; 
+0659 BIG  = zeros(Ntime+Nc+1,Ntime+Nc+1); 
+0660 ex   = zeros(1, Ntime + Nc + 1);           
+0661  
+0662 fxind = zeros(Nx,1); 
+0663 xc    = zeros(Nc,Nx); 
+0664     
+0665 indI  = zeros(1,NI); 
+0666 a_up  = zeros(1,NI-1); 
+0667 a_lo  = zeros(1,NI-1);  
+0668  
+0669  
+0670 <span class="comment">% INFIN =  INTEGER, array of integration limits flags:  size 1 x Nb   (in) </span>
+0671     <span class="comment">%            if INFIN(I) &lt; 0, Ith limits are (-infinity, infinity); </span>
+0672     <span class="comment">%            if INFIN(I) = 0, Ith limits are (-infinity, Hup(I)]; </span>
+0673     <span class="comment">%            if INFIN(I) = 1, Ith limits are [Hlo(I), infinity); </span>
+0674     <span class="comment">%            if INFIN(I) = 2, Ith limits are [Hlo(I), Hup(I)]. </span>
+0675 INFIN = repmat(0,1,NI-1); 
+0676 INFIN(3)  = 1; 
+0677 a_up(1,3) = +XdInf; 
+0678 a_lo(1,1:2) = [-XtInf -XdInf]; 
+0679 <span class="keyword">if</span> (def&gt;3) 
+0680    a_lo(1,4) = -XtInf;    
+0681 <span class="keyword">end</span> 
+0682  
+0683 IJ = 0 ; 
+0684 <span class="keyword">if</span> (def&lt;=1) <span class="comment">% THEN     <span class="comment">% Max2min and period/wavelength </span></span>
+0685    <span class="keyword">for</span> I=2:Nx1 
+0686       J = IJ+I-1; 
+0687       xc(3,IJ+1:J) =  hg(I); 
+0688       xc(4,IJ+1:J) =  hg(1:I-1).'; 
+0689       IJ = J; 
+0690    <span class="keyword">end</span> <span class="comment">%do </span>
+0691 <span class="keyword">else</span> 
+0692    <span class="comment">% Level u separated Max2min </span>
+0693    xc(Nc,:) = u; 
+0694    <span class="comment">% Hg(1) = Hg(Nx1+1)= u =&gt; start do loop at I=2 since by definition we must have:  minimum&lt;u-level&lt;Maximum </span>
+0695    <span class="keyword">for</span> i=2:Nx1                 
+0696       J = IJ+Nx1-1; 
+0697       xc(3,IJ+1:J) =  hg(i);              <span class="comment">% Max &gt; u </span>
+0698       xc(4,IJ+1:J) =  hg(Nx1+2:2*Nx1).';    <span class="comment">% Min &lt; u </span>
+0699       IJ = J; 
+0700    <span class="keyword">end</span> <span class="comment">%do    </span>
+0701 <span class="keyword">end</span> <span class="comment">%IF </span>
+0702 <span class="keyword">if</span> (def &lt;=3) 
+0703    h11 = <a href="../../wafo/misc/fwaitbar.html" class="code" title=" Fast display of wait bar. ">fwaitbar</a>(0,[],sprintf(<span class="string">'Please wait ...(start at: %s)'</span>,datestr(now))); 
+0704  
+0705    <span class="keyword">for</span> Ntd = Nstart:Ntime  
+0706       <span class="comment">%Ntd=tn </span>
+0707       Ntdc = Ntd+Nc; 
+0708       Nt   = Ntd-Nd; 
+0709       indI(2) = Nt; 
+0710       indI(3) = Nt+1; 
+0711       indI(4) = Ntd; 
+0712       <span class="comment">% positive wave period  </span>
+0713       BIG(1:Ntdc,1:Ntdc) = <a href="#_sub3" class="code" title="sub  BIG = covinput(BIG,R0,R1,R2,R3,R4,tn,ts,tnold)">covinput</a>(BIG(1:Ntdc,1:Ntdc),R0,R1,R2,R3,R4,Ntd,0); 
+0714       [fxind,err0] = <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">rind</a>(BIG(1:Ntdc,1:Ntdc),ex(1:Ntdc),a_lo,a_up,indI, <span class="keyword">...</span> 
+0715                 xc,Nt,opt0{:}); 
+0716        
+0717        
+0718       <span class="comment">%fxind  = CC*rind(BIG(1:Ntdc,1:Ntdc),ex(1:Ntdc),xc,Nt,NIT1,... </span>
+0719       <span class="comment">%speed1,indI,a_lo,a_up); </span>
+0720  
+0721        
+0722       <span class="keyword">if</span> (Nx&lt;2) <span class="comment">%THEN </span>
+0723          <span class="comment">% Density of TMm given the Max and the Min. Note that the </span>
+0724          <span class="comment">% density is not scaled to unity </span>
+0725          pdf(1,1,Ntd) = fxind(1); 
+0726      err(1,1,Ntd) = err0(1).^2; 
+0727          <span class="comment">%GOTO 100 </span>
+0728       <span class="keyword">else</span> 
+0729        
+0730          IJ = 0; 
+0731          <span class="keyword">switch</span> def 
+0732          <span class="keyword">case</span> {-2,-1,0},  <span class="comment">% joint density of (Ac,At),(M,m_rfc) or (M,m). </span>
+0733             <span class="keyword">for</span> i = 2:Nx1  
+0734                J = IJ+i-1; 
+0735                pdf(1:i-1,i,1) = pdf(1:i-1,i,1)+fxind(IJ+1:J).'*dt;<span class="comment">%*CC; </span>
+0736            err(1:i-1,i,1) = err(1:i-1,i,1)+(err0(IJ+1:J).'*dt).^2; 
+0737                IJ = J; 
+0738             <span class="keyword">end</span> <span class="comment">%do  </span>
+0739          <span class="keyword">case</span>  {1}  <span class="comment">% joint density of (M,m,TMm) </span>
+0740             <span class="keyword">for</span>  i = 2:Nx1 
+0741                J = IJ+i-1; 
+0742                pdf(1:i-1,i,Ntd) = fxind(IJ+1:J).';<span class="comment">%*CC </span>
+0743            err(1:i-1,i,Ntd) = (err0(IJ+1:J).').^2;<span class="comment">%*CC </span>
+0744                IJ = J; 
+0745             <span class="keyword">end</span> <span class="comment">%do </span>
+0746          <span class="keyword">case</span> {2},  <span class="comment">% joint density of level v separated (M,m)v </span>
+0747             <span class="keyword">for</span>  i = 2:Nx1 
+0748                J = IJ+Nx1-1; 
+0749                pdf(2:Nx1,i,1) = pdf(2:Nx1,i,1)+fxind(IJ+1:J).'*dt;<span class="comment">%*CC; </span>
+0750            err(2:Nx1,i,1) = err(2:Nx1,i,1)+(err0(IJ+1:J).'*dt).^2; 
+0751                IJ = J; 
+0752             <span class="keyword">end</span> <span class="comment">%do  </span>
+0753          <span class="keyword">case</span> {3}  
+0754             <span class="comment">% joint density of level v separated (M,m,TMm)v </span>
+0755             <span class="keyword">for</span>  i = 2:Nx1  
+0756                J = IJ+Nx1-1; 
+0757                pdf(2:Nx1,i,Ntd) = pdf(2:Nx1,i,Ntd)+fxind(IJ+1:J).';<span class="comment">%*CC; </span>
+0758            err(2:Nx1,i,Ntd) = err(2:Nx1,i,Ntd)+(err0(IJ+1:J).').^2; 
+0759                IJ = J; 
+0760             <span class="keyword">end</span> <span class="comment">%do  </span>
+0761          <span class="keyword">end</span> <span class="comment">% SELECT    </span>
+0762       <span class="keyword">end</span> <span class="comment">%ENDIF </span>
+0763       waitTxt = sprintf(<span class="string">'%s Ready: %d of %d'</span>,datestr(now),Ntd,Ntime); 
+0764       <a href="../../wafo/misc/fwaitbar.html" class="code" title=" Fast display of wait bar. ">fwaitbar</a>(Ntd/Ntime,h11,waitTxt); 
+0765        
+0766    <span class="keyword">end</span> <span class="comment">%do </span>
+0767    close(h11); 
+0768    err = sqrt(err); 
+0769    <span class="comment">%  goto 800 </span>
+0770 <span class="keyword">else</span> 
+0771    <span class="comment">%200 continue </span>
+0772    waitTxt = sprintf(<span class="string">'Please wait ...(start at: %s)'</span>,datestr(now)); 
+0773    h11 = <a href="../../wafo/misc/fwaitbar.html" class="code" title=" Fast display of wait bar. ">fwaitbar</a>(0,[],waitTxt); 
+0774    tnold= -1; 
+0775    <span class="keyword">for</span> tn = Nstart:Ntime, 
+0776       Ntd  = tn+1; 
+0777       Ntdc = Ntd + Nc; 
+0778       Nt   = Ntd - Nd; 
+0779       indI(2) = Nt; 
+0780       indI(3) = Nt + 1; 
+0781       indI(4) = Nt + 2; 
+0782       indI(5) = Ntd; 
+0783        
+0784       <span class="keyword">if</span> (~symmetry) <span class="comment">%IF (SYMMETRY) GOTO 300 </span>
+0785          
+0786     <span class="keyword">for</span> ts = 2:tn-1, 
+0787       <span class="comment">% positive wave period </span>
+0788       BIG(1:Ntdc,1:Ntdc) = <a href="#_sub3" class="code" title="sub  BIG = covinput(BIG,R0,R1,R2,R3,R4,tn,ts,tnold)">covinput</a>(BIG(1:Ntdc,1:Ntdc),R0,R1,R2,R3, <span class="keyword">...</span> 
+0789                     R4,tn,ts,tnold);  
+0790        
+0791       [fxind,err0] = <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">rind</a>(BIG(1:Ntdc,1:Ntdc),ex(1:Ntdc), <span class="keyword">...</span> 
+0792                   a_lo,a_up,indI,xc,Nt,opt0{:});  
+0793        
+0794       <span class="comment">%tnold = tn; </span>
+0795       <span class="keyword">switch</span> (def), 
+0796        <span class="keyword">case</span> {3,4}  
+0797         <span class="keyword">if</span> (Nx==1) <span class="comment">%THEN </span>
+0798                <span class="comment">% Joint density (TMd,TMm) given the Max and the min.  </span>
+0799                <span class="comment">% Note the density is not scaled to unity </span>
+0800                pdf(1,ts,tn) = fxind(1);<span class="comment">%*CC </span>
+0801                err(1,ts,tn) = err0(1).^2;<span class="comment">%*CC </span>
+0802         <span class="keyword">else</span> 
+0803           <span class="comment">% 4,  gives level u separated Max2min and wave period </span>
+0804           <span class="comment">% from Max to the crossing of level u (M,m,TMd). </span>
+0805           IJ = 0; 
+0806           <span class="keyword">for</span>  i = 2:Nx1, 
+0807         J = IJ+Nx1-1;  
+0808         pdf(2:Nx1,i,ts) = pdf(2:Nx1,i,ts)+ fxind(IJ+1:J).'*dt; 
+0809         err(2:Nx1,i,ts) = err(2:Nx1,i,ts)+ (err0(IJ+1:J).'*dt).^2; 
+0810         IJ = J; 
+0811           <span class="keyword">end</span> <span class="comment">%do  </span>
+0812         <span class="keyword">end</span> 
+0813        <span class="keyword">case</span>  {5} 
+0814         <span class="keyword">if</span> (Nx==1)  
+0815           <span class="comment">% Joint density (Tdm,TMm) given the Max and the min.  </span>
+0816           <span class="comment">% Note the density is not scaled to unity </span>
+0817           pdf(1,tn-ts+1,tn) = fxind(1); <span class="comment">%*CC </span>
+0818           err(1,tn-ts+1,tn) = err0(1).^2; 
+0819         <span class="keyword">else</span>   
+0820           <span class="comment">% 5,  gives level u separated Max2min and wave period from  </span>
+0821           <span class="comment">% the crossing of level u to the min (M,m,Tdm). </span>
+0822                    
+0823           IJ = 0; 
+0824           <span class="keyword">for</span>  i = 2:Nx1  
+0825         J = IJ+Nx1-1; 
+0826         pdf(2:Nx1,i,tn-ts+1)=pdf(2:Nx1,i,tn-ts+1) + fxind(IJ+1:J).'*dt;<span class="comment">%*CC; </span>
+0827         err(2:Nx1,i,tn-ts+1)=err(2:Nx1,i,tn-ts+1) + (err0(IJ+1:J).'*dt).^2; 
+0828         IJ = J; 
+0829           <span class="keyword">end</span> <span class="comment">%do  </span>
+0830         <span class="keyword">end</span> 
+0831       <span class="keyword">end</span> <span class="comment">% SELECT </span>
+0832     <span class="keyword">end<span class="comment"></span>%         enddo </span>
+0833       <span class="keyword">else</span> <span class="comment">% exploit symmetry </span>
+0834          <span class="comment">%300   Symmetry </span>
+0835          <span class="keyword">for</span> ts = 2:floor(Ntd/2)      
+0836        <span class="comment">% Using the symmetry since U = 0 and the transformation is </span>
+0837            <span class="comment">% linear. </span>
+0838        <span class="comment">% positive wave period </span>
+0839             BIG(1:Ntdc,1:Ntdc) = <a href="#_sub3" class="code" title="sub  BIG = covinput(BIG,R0,R1,R2,R3,R4,tn,ts,tnold)">covinput</a>(BIG(1:Ntdc,1:Ntdc),R0,R1,R2,R3, <span class="keyword">...</span> 
+0840                       R4,tn,ts,tnold);  
+0841          
+0842             [fxind,err0] = <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">rind</a>(BIG(1:Ntdc,1:Ntdc),ex,a_lo,a_up,indI, <span class="keyword">...</span> 
+0843                   xc,Nt,opt0{:});  
+0844          
+0845             <span class="comment">%tnold = tn; </span>
+0846             <span class="keyword">if</span> (Nx==1) <span class="comment">% THEN </span>
+0847                <span class="comment">% Joint density of (TMd,TMm),(Tdm,TMm) given the max and </span>
+0848                <span class="comment">% the min. </span>
+0849                <span class="comment">% Note that the density is not scaled to unity </span>
+0850                pdf(1,ts,tn) = fxind(1);<span class="comment">%*CC; </span>
+0851            err(1,ts,tn) = err0(1).^2; 
+0852                <span class="keyword">if</span> (ts&lt;tn-ts+1) <span class="comment">%THEN </span>
+0853                   pdf(1,tn-ts+1,tn) = fxind(1);<span class="comment">%*CC; </span>
+0854           err(1,tn-ts+1,tn) = err0(1).^2; 
+0855                <span class="keyword">end</span> 
+0856                <span class="comment">%GOTO 350 </span>
+0857             <span class="keyword">else</span> 
+0858           IJ = 0 ; 
+0859           <span class="keyword">switch</span> (def) 
+0860                <span class="keyword">case</span> {4}  
+0861          
+0862         <span class="comment">% 4,  gives level u separated Max2min and wave period from  </span>
+0863         <span class="comment">% Max to the crossing of level u (M,m,TMd). </span>
+0864         <span class="keyword">for</span>  i = 2:Nx1  
+0865           J = IJ+Nx1-1; 
+0866           pdf(2:Nx1,i,ts) = pdf(2:Nx1,i,ts) + fxind(IJ+1:J)*dt;<span class="comment">%*CC; </span>
+0867           err(2:Nx1,i,ts) = err(2:Nx1,i,ts) + (err0(IJ+1:J)*dt).^2; 
+0868           <span class="keyword">if</span> (ts.LT.tn-ts+1)  
+0869             <span class="comment">% exploiting the symmetry </span>
+0870             pdf(i,2:Nx1,tn-ts+1) = pdf(i,2:Nx1,tn-ts+1)+fxind(IJ+1:J)*dt;<span class="comment">%*CC  </span>
+0871             err(i,2:Nx1,tn-ts+1) = err(i,2:Nx1,tn-ts+1)+(err0(IJ+1:J)*dt).^2; 
+0872           <span class="keyword">end</span> 
+0873           IJ = J; 
+0874         <span class="keyword">end</span> <span class="comment">%do  </span>
+0875                <span class="keyword">case</span> {5} 
+0876                   <span class="comment">% 5,   gives level u separated Max2min and wave period </span>
+0877                   <span class="comment">% from the crossing of level u to min (M,m,Tdm). </span>
+0878                   <span class="keyword">for</span>  i = 2:Nx1,  
+0879                      J = IJ+Nx1-1; 
+0880                       
+0881                      pdf(2:Nx1,i,tn-ts+1)=pdf(2:Nx1,i,tn-ts+1)+fxind(IJ+1:J)*dt;  
+0882              err(2:Nx1,i,tn-ts+1)=err(2:Nx1,i,tn-ts+1)+(err0(IJ+1:J)*dt).^2;  
+0883                      <span class="keyword">if</span> (ts.LT.tn-ts+1)  
+0884                <span class="comment">%*CC; <span class="comment">% exploiting the symmetry </span></span>
+0885                         pdf(i,2:Nx1,ts) = pdf(i,2:Nx1,ts)+ fxind(IJ+1:J)*dt; 
+0886             err(i,2:Nx1,ts) = err(i,2:Nx1,ts)+ (err0(IJ+1:J)*dt).^2; 
+0887                      <span class="keyword">end</span> <span class="comment">%ENDIF </span>
+0888                      IJ = J; 
+0889                   <span class="keyword">end</span> <span class="comment">%do  </span>
+0890                <span class="keyword">end</span> <span class="comment">%END SELECT  </span>
+0891             <span class="keyword">end</span> 
+0892             <span class="comment">%350      </span>
+0893          <span class="keyword">end</span> <span class="comment">%do </span>
+0894       <span class="keyword">end</span> 
+0895       waitTxt = sprintf(<span class="string">'%s Ready: %d of %d'</span>,datestr(now),tn,Ntime); 
+0896       <a href="../../wafo/misc/fwaitbar.html" class="code" title=" Fast display of wait bar. ">fwaitbar</a>(tn/Ntime,h11,waitTxt); 
+0897        
+0898       <span class="comment">%400     print *,'Ready: ',tn,' of ',Ntime </span>
+0899    <span class="keyword">end</span> <span class="comment">%do </span>
+0900    close(h11); 
+0901    err = sqrt(err); 
+0902 <span class="keyword">end</span> <span class="comment">% if       </span>
+0903  
+0904 <span class="comment">%Nx1,size(pdf) def  Ntime </span>
+0905 <span class="keyword">if</span> (Nx&gt;1)<span class="comment">% THEN </span>
+0906    IJ = 1; 
+0907    <span class="keyword">if</span> (def&gt;2 | def ==1) 
+0908       IJ = Ntime; 
+0909    <span class="keyword">end</span> 
+0910    pdf = pdf(1:Nx1,1:Nx1,1:IJ); 
+0911    err = err(1:Nx1,1:Nx1,1:IJ); 
+0912 <span class="keyword">else</span> 
+0913    IJ = 1; 
+0914    <span class="keyword">if</span> (def&gt;3) 
+0915       IJ = Ntime; 
+0916    <span class="keyword">end</span> 
+0917    pdf = squeeze(pdf(1,1:IJ,1:Ntime)); 
+0918    err = squeeze(err(1,1:IJ,1:Ntime)); 
+0919 <span class="keyword">end</span> 
+0920 <span class="keyword">return</span> 
+0921        
+0922     
+0923 <span class="keyword">function</span> BIG = <a name="_sub3" href="#_subfunctions" class="code">covinput</a>(BIG,R0,R1,R2,R3,R4,tn,ts,tnold) 
+0924 <span class="comment">%COVINPUT Sets up the covariance matrix   </span>
+0925 <span class="comment">% </span>
+0926 <span class="comment">% CALL BIG = covinput(BIG, R0,R1,R2,R3,R4,tn,ts) </span>
+0927 <span class="comment">%    </span>
+0928 <span class="comment">%  BIG = covariance matrix for X = [Xt,Xd,Xc] in spec2mmtpdf problems. </span>
+0929 <span class="comment">%      </span>
+0930 <span class="comment">% The order of the variables in the covariance matrix </span>
+0931 <span class="comment">% are organized as follows:  </span>
+0932 <span class="comment">% for  ts &lt;= 1: </span>
+0933 <span class="comment">%    X'(t2)..X'(ts),...,X'(tn-1) X''(t1),X''(tn)  X'(t1),X'(tn),X(t1),X(tn)  </span>
+0934 <span class="comment">% = [          Xt               |      Xd       |          Xc             ] </span>
+0935 <span class="comment">% </span>
+0936 <span class="comment">% for ts &gt; =2: </span>
+0937 <span class="comment">%    X'(t2)..X'(ts),...,X'(tn-1) X''(t1),X''(tn) X'(ts)  X'(t1),X'(tn),X(t1),X(tn) X(ts)  </span>
+0938 <span class="comment">% = [          Xt               |      Xd               |          Xc             ] </span>
+0939 <span class="comment">% </span>
+0940 <span class="comment">% where  </span>
+0941 <span class="comment">% </span>
+0942 <span class="comment">% Xt= time points in the indicator function </span>
+0943 <span class="comment">% Xd= derivatives </span>
+0944 <span class="comment">% Xc=variables to condition on </span>
+0945   
+0946 <span class="comment">% Computations of all covariances follows simple rules: Cov(X(t),X(s)) = r(t,s), </span>
+0947 <span class="comment">% then  Cov(X'(t),X(s))=dr(t,s)/dt.  Now for stationary X(t) we have </span>
+0948 <span class="comment">% a function r(tau) such that Cov(X(t),X(s))=r(s-t) (or r(t-s) will give the same result). </span>
+0949 <span class="comment">% </span>
+0950 <span class="comment">% Consequently  Cov(X'(t),X(s))    = -r'(s-t)    = -sign(s-t)*r'(|s-t|) </span>
+0951 <span class="comment">%               Cov(X'(t),X'(s))   = -r''(s-t)   = -r''(|s-t|) </span>
+0952 <span class="comment">%               Cov(X''(t),X'(s))  =  r'''(s-t)  = sign(s-t)*r'''(|s-t|) </span>
+0953 <span class="comment">%               Cov(X''(t),X(s))   =  r''(s-t)   = r''(|s-t|) </span>
+0954 <span class="comment">% Cov(X''(t),X''(s)) =  r''''(s-t) = r''''(|s-t|) </span>
+0955  
+0956 <span class="keyword">if</span> nargin&lt;9|isempty(tnold) tnold = -1; <span class="keyword">end</span> 
+0957  
+0958      
+0959 <span class="keyword">if</span> (ts&gt;1) <span class="comment">% THEN </span>
+0960    shft = 1; 
+0961    N    = tn + 5 + shft; 
+0962    <span class="comment">%Cov(Xt,Xc) </span>
+0963    <span class="comment">%for </span>
+0964     i = 1:tn-2; 
+0965     <span class="comment">%j = abs(i+1-ts) </span>
+0966     <span class="comment">%BIG(i,N)  = -sign(R1(j+1),R1(j+1)*dble(ts-i-1)) <span class="comment">%cov(X'(ti+1),X(ts))  </span></span>
+0967     j = i+1-ts; 
+0968     tau = abs(j)+1; 
+0969     <span class="comment">%BIG(i,N)  = abs(R1(tau)).*sign(R1(tau).*j.'); </span>
+0970     BIG(i,N)  = R1(tau).*sign(j.'); 
+0971    <span class="comment">%end </span>
+0972    <span class="comment">%Cov(Xc) </span>
+0973    BIG(N         ,N) =  R0(1);       <span class="comment">% cov(X(ts),X(ts)) </span>
+0974    BIG(tn+shft+3 ,N) =  R0(ts);      <span class="comment">% cov(X(t1),X(ts)) </span>
+0975    BIG(tn+shft+4 ,N) =  R0(tn-ts+1); <span class="comment">% cov(X(tn),X(ts)) </span>
+0976    BIG(tn+shft+1 ,N) = -R1(ts);      <span class="comment">% cov(X'(t1),X(ts)) </span>
+0977    BIG(tn+shft+2 ,N) =  R1(tn-ts+1); <span class="comment">% cov(X'(tn),X(ts)) </span>
+0978    <span class="comment">%Cov(Xd,Xc) </span>
+0979    BIG(tn-1 ,N) =  R2(ts);      <span class="comment">%cov(X''(t1),X(ts))      </span>
+0980    BIG(tn   ,N) =  R2(tn-ts+1); <span class="comment">%cov(X''(tn),X(ts)) </span>
+0981     
+0982    <span class="comment">%ADD a level u crossing  at ts </span>
+0983     
+0984    <span class="comment">%Cov(Xt,Xd) </span>
+0985    <span class="comment">%for </span>
+0986       i = 1:tn-2; 
+0987       j = abs(i+1-ts); 
+0988       BIG(i,tn+shft)  = -R2(j+1); <span class="comment">%cov(X'(ti+1),X'(ts))  </span>
+0989    <span class="comment">%end </span>
+0990    <span class="comment">%Cov(Xd)   </span>
+0991    BIG(tn+shft,tn+shft) = -R2(1);  <span class="comment">%cov(X'(ts),X'(ts)) </span>
+0992    BIG(tn-1   ,tn+shft) =  R3(ts); <span class="comment">%cov(X''(t1),X'(ts)) </span>
+0993    BIG(tn     ,tn+shft) = -R3(tn-ts+1);  <span class="comment">%cov(X''(tn),X'(ts)) </span>
+0994  
+0995    <span class="comment">%Cov(Xd,Xc) </span>
+0996    BIG(tn+shft ,N       ) =  0.d0;        <span class="comment">%cov(X'(ts),X(ts))  </span>
+0997    BIG(tn+shft,tn+shft+1) = -R2(ts);      <span class="comment">% cov(X'(ts),X'(t1)) </span>
+0998    BIG(tn+shft,tn+shft+2) = -R2(tn-ts+1); <span class="comment">% cov(X'(ts),X'(tn)) </span>
+0999    BIG(tn+shft,tn+shft+3) =  R1(ts);      <span class="comment">% cov(X'(ts),X(t1)) </span>
+1000    BIG(tn+shft,tn+shft+4) = -R1(tn-ts+1); <span class="comment">% cov(X'(ts),X(tn)) </span>
+1001          
+1002   <span class="keyword">if</span> (tnold == tn) 
+1003      <span class="comment">% A previous call to covinput with tn==tnold has been made </span>
+1004      <span class="comment">% need only to update  row and column N and tn+1 of big: </span>
+1005      <span class="keyword">return</span> 
+1006      <span class="comment">% make lower triangular part equal to upper and then return </span>
+1007      <span class="keyword">for</span> j=1:tn+shft 
+1008         BIG(N,j)      = BIG(j,N) 
+1009         BIG(tn+shft,j) = BIG(j,tn+shft)    
+1010      <span class="keyword">end</span> 
+1011      <span class="keyword">for</span> j=tn+shft+1:N-1 
+1012         BIG(N,j) = BIG(j,N) 
+1013         BIG(j,tn+shft) = BIG(tn+shft,j)    
+1014      <span class="keyword">end</span> 
+1015      <span class="keyword">return</span> 
+1016   <span class="keyword">end</span> <span class="comment">%if </span>
+1017   tnold = tn; 
+1018 <span class="keyword">else</span> 
+1019    N = tn+4; 
+1020    shft = 0; 
+1021 <span class="keyword">end</span> <span class="comment">%if </span>
+1022            
+1023 <span class="keyword">if</span> (tn&gt;2)       
+1024    <span class="comment">%for </span>
+1025    i=1:tn-2; 
+1026    <span class="comment">%cov(Xt) </span>
+1027    <span class="comment">%   for j=i:tn-2 </span>
+1028    <span class="comment">%     BIG(i,j) = -R2(j-i+1)              <span class="comment">% cov(X'(ti+1),X'(tj+1)) </span></span>
+1029    <span class="comment">%  end <span class="comment">%do </span></span>
+1030     
+1031    BIG(i,i) = toeplitz(-R2(i));  <span class="comment">% cov(Xt) =   <span class="comment">% cov(X'(ti+1),X'(tj+1)) </span></span>
+1032  
+1033  
+1034    <span class="comment">%cov(Xt,Xc) </span>
+1035    BIG(i      ,tn+shft+1) = -R2(i+1);         <span class="comment">%cov(X'(ti+1),X'(t1))   </span>
+1036    BIG(tn-1-i ,tn+shft+2) = -R2(i+1);         <span class="comment">%cov(X'(ti+1),X'(tn))   </span>
+1037    BIG(i      ,tn+shft+3) =  R1(i+1);         <span class="comment">%cov(X'(ti+1),X(t1))   </span>
+1038    BIG(tn-1-i ,tn+shft+4) = -R1(i+1);         <span class="comment">%cov(X'(ti+1),X(tn))   </span>
+1039    
+1040   <span class="comment">%Cov(Xt,Xd) </span>
+1041   BIG(i,tn-1)       = R3(i+1);          <span class="comment">%cov(X'(ti+1),X''(t1))   </span>
+1042   BIG(tn-1-i,tn)    =-R3(i+1);          <span class="comment">%cov(X'(ti+1),X''(tn))  </span>
+1043   <span class="comment">%end <span class="comment">%do </span></span>
+1044 <span class="keyword">end</span>       
+1045 <span class="comment">%cov(Xd) </span>
+1046 BIG(tn-1  ,tn-1  ) = R4(1); 
+1047 BIG(tn-1  ,tn    ) = R4(tn);     <span class="comment">%cov(X''(t1),X''(tn)) </span>
+1048 BIG(tn    ,tn    ) = R4(1); 
+1049  
+1050 <span class="comment">%cov(Xc) </span>
+1051 BIG(tn+shft+3 ,tn+shft+3) = R0(1);        <span class="comment">% cov(X(t1),X(t1)) </span>
+1052 BIG(tn+shft+3 ,tn+shft+4) = R0(tn);       <span class="comment">% cov(X(t1),X(tn)) </span>
+1053 BIG(tn+shft+1 ,tn+shft+3) = 0.d0 ;        <span class="comment">% cov(X(t1),X'(t1)) </span>
+1054 BIG(tn+shft+2 ,tn+shft+3) = R1(tn);       <span class="comment">% cov(X(t1),X'(tn)) </span>
+1055 BIG(tn+shft+4 ,tn+shft+4) = R0(1) ;       <span class="comment">% cov(X(tn),X(tn)) </span>
+1056 BIG(tn+shft+1 ,tn+shft+4) =-R1(tn);       <span class="comment">% cov(X(tn),X'(t1)) </span>
+1057 BIG(tn+shft+2 ,tn+shft+4) = 0.d0;         <span class="comment">% cov(X(tn),X'(tn))  </span>
+1058 BIG(tn+shft+1 ,tn+shft+1) =-R2(1);        <span class="comment">% cov(X'(t1),X'(t1)) </span>
+1059 BIG(tn+shft+1 ,tn+shft+2) =-R2(tn);       <span class="comment">% cov(X'(t1),X'(tn)) </span>
+1060 BIG(tn+shft+2 ,tn+shft+2) =-R2(1);        <span class="comment">% cov(X'(tn),X'(tn)) </span>
+1061 <span class="comment">%Xc=X(t1),X(tn),X'(t1),X'(tn)  </span>
+1062 <span class="comment">%Xd=X''(t1),X''(tn) </span>
+1063 <span class="comment">%cov(Xd,Xc) </span>
+1064 BIG(tn-1  ,tn+shft+3) = R2(1);           <span class="comment">%cov(X''(t1),X(t1))      </span>
+1065 BIG(tn-1  ,tn+shft+4) = R2(tn);          <span class="comment">%cov(X''(t1),X(tn))      </span>
+1066 BIG(tn-1  ,tn+shft+1) = 0.d0  ;          <span class="comment">%cov(X''(t1),X'(t1))      </span>
+1067 BIG(tn-1  ,tn+shft+2) = R3(tn);          <span class="comment">%cov(X''(t1),X'(tn))      </span>
+1068 BIG(tn    ,tn+shft+3) = R2(tn);          <span class="comment">%cov(X''(tn),X(t1))      </span>
+1069 BIG(tn    ,tn+shft+4) = R2(1);           <span class="comment">%cov(X''(tn),X(tn))      </span>
+1070 BIG(tn    ,tn+shft+1) =-R3(tn);          <span class="comment">%cov(X''(tn),X'(t1))      </span>
+1071 BIG(tn    ,tn+shft+2) = 0.d0;            <span class="comment">%cov(X''(tn),X'(tn)) </span>
+1072        
+1073       
+1074 <span class="comment">% make lower triangular part equal to upper  </span>
+1075 <span class="comment">%for j=1:N-1 </span>
+1076 <span class="comment">%   for i=j+1:N </span>
+1077 <span class="comment">%      BIG(i,j) = BIG(j,i) </span>
+1078 <span class="comment">%   end <span class="comment">%do </span></span>
+1079 <span class="comment">%end <span class="comment">%do </span></span>
+1080 lp      = find(tril(ones(size(BIG)),-1)); <span class="comment">% indices to lower triangular part </span>
+1081 BIGT    = BIG.'; 
+1082 BIG(lp) = BIGT(lp); 
+1083 <span class="keyword">return</span> 
+1084 <span class="comment">% END  SUBROUTINE COV_INPUT </span>
+1085          
+1086  
+1087  
+1088  
+1089  
+1090  
+1091  
+1092  
+1093  
+1094  
+1095</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

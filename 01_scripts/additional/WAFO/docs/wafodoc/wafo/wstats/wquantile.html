@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wquantile</title>
+  <meta name="keywords" content="wquantile">
+  <meta name="description" content=" Empirical quantile (percentile).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wquantile.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wquantile
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Empirical quantile (percentile).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> q = wquantile(x,p,method) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wquantile.html" class="code" title=" Empirical quantile (percentile). ">WQUANTILE</a> Empirical quantile (percentile). 
+  
+   CALL:  q = <a href="wquantile.html" class="code" title=" Empirical quantile (percentile). ">wquantile</a>(x,p,method) 
+  
+       q = empirical quantile 
+       x = input vector or matrix 
+       p = probability 
+  method = 1 Interpolation so that F(X_(k)) == (k-0.5)/n. (default) 
+        2 Interpolation so that F(X_(k)) == k/(n+1). 
+        3 Based on the empirical distribution. 
+  
+   If input  x  is a matrix then the quantile is computed for  
+   every column. Input  p  may be vector also. It even  
+   accepts  x  being a vector and  p  a matrix!</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="iqr.html" class="code" title=" r = iqr(X,dim)">iqr</a></li></TD>
+<TD> Computes the Inter Quartile Range</TD>
+</TR>
+<TR>
+<TD><li><a href="wqqplot.html" class="code" title=" h=wqqplot(x,y,ps);">wqqplot</a></li></TD>
+<TD>   Plot empirical quantile of X vs empirical quantile of Y</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span>  q = <a name="_sub0" href="#_subfunctions" class="code">wquantile</a>(x,p,method) 
+002 <span class="comment">%WQUANTILE Empirical quantile (percentile). </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  q = wquantile(x,p,method) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%      q = empirical quantile </span>
+007 <span class="comment">%      x = input vector or matrix </span>
+008 <span class="comment">%      p = probability </span>
+009 <span class="comment">% method = 1 Interpolation so that F(X_(k)) == (k-0.5)/n. (default) </span>
+010 <span class="comment">%       2 Interpolation so that F(X_(k)) == k/(n+1). </span>
+011 <span class="comment">%       3 Based on the empirical distribution. </span>
+012 <span class="comment">% </span>
+013 <span class="comment">%  If input  x  is a matrix then the quantile is computed for  </span>
+014 <span class="comment">%  every column. Input  p  may be vector also. It even  </span>
+015 <span class="comment">%  accepts  x  being a vector and  p  a matrix! </span>
+016  
+017 <span class="comment">% References:  </span>
+018 <span class="comment">%  Holtsberg, Anders (1999) </span>
+019 <span class="comment">%  Stixbox. A statistics toolbox for Matlab and Octave.  </span>
+020 <span class="comment">%  Lund University </span>
+021 <span class="comment">%  http://www.maths.lth.se/matstat/stixbox </span>
+022  
+023 <span class="comment">% Tested on: Matlab 5.3 </span>
+024 <span class="comment">% History: </span>
+025 <span class="comment">% revised pab  </span>
+026 <span class="comment">% - added nargchk </span>
+027 <span class="comment">% - updated help header to conform to wafo style </span>
+028 <span class="comment">% by Anders Holtsberg 1994, 1998 </span>
+029  
+030  
+031 error(nargchk(2,3,nargin)) 
+032 <span class="keyword">if</span> nargin&lt;3|isempty(method), method=1; <span class="keyword">end</span> 
+033 <span class="keyword">if</span> min(size(x)) == 1 
+034    x = x(:); 
+035    q = zeros(size(p)); 
+036 <span class="keyword">else</span> 
+037    <span class="keyword">if</span> min(size(p)) &gt; 1  
+038       error(<span class="string">'Not both matrix x and matrix p input'</span>) 
+039    <span class="keyword">end</span> 
+040    q = zeros(length(p),size(x,2)); 
+041 <span class="keyword">end</span> 
+042 <span class="keyword">if</span> any(any((p&gt;1|p&lt;0))) 
+043    error(<span class="string">'Input p is not probability'</span>) 
+044 <span class="keyword">end</span> 
+045  
+046 x = sort(x);  
+047 p = p(:); 
+048 n = size(x,1); 
+049 <span class="keyword">if</span> method == 3 
+050    qq1 = x(ceil(max(1,p*n)),:);  
+051    qq2 = x(floor(min(p*n+1,n)),:); 
+052    qq = (qq1+qq2)/2; 
+053 <span class="keyword">else</span>                          
+054    x = [x(1,:); x; x(n,:)]; 
+055    <span class="keyword">if</span> method == 2 
+056       <span class="comment">% This method is from Hjort's &quot;Computer </span>
+057       <span class="comment">% intensive statistical methods&quot; page 102 </span>
+058       i = p*(n+1)+1; 
+059    <span class="keyword">else</span> <span class="comment">% Metod 1 </span>
+060       i = p*n+1.5; 
+061    <span class="keyword">end</span> 
+062    iu = ceil(i); 
+063    il = floor(i); 
+064    d = (i-il)*ones(1,size(x,2)); 
+065    qq = x(il,:).*(1-d)+x(iu,:).*d; 
+066 <span class="keyword">end</span> 
+067  
+068 q(:) = qq; 
+069  
+070  
+071  
+072  
+073  
+074  
+075  
+076</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

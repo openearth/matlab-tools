@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafoweb</title>
+  <meta name="keywords" content="wafoweb">
+  <meta name="description" content="  World Wide Web site of the WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">docs</a> &gt; wafoweb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\docs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wafoweb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  World Wide Web site of the WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> URLout = wafoweb(ButtonName) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wafoweb.html" class="code" title="  World Wide Web site of the WAFO Toolbox.">WAFOWEB</a>  World Wide Web site of the WAFO Toolbox.
+ 
+   CALL:  URL = <a href="wafoweb.html" class="code" title="  World Wide Web site of the WAFO Toolbox.">wafoweb</a>(BN)
+  
+    URL = string with the URL address of WAFO.
+    BN  = 'yes' If display URL site
+          'no'  If no display of URL site
+ 
+  <a href="wafoweb.html" class="code" title="  World Wide Web site of the WAFO Toolbox.">WAFOWEB</a> displays and/or returns the WWW
+    site for the WAFO Toolbox.  If no input argument 
+    is givendisplayed, a dialog asks whether to go there.
+ 
+  Examples
+   url = <a href="wafoweb.html" class="code" title="  World Wide Web site of the WAFO Toolbox.">wafoweb</a>('n'); web(url)
+   <a href="wafoweb.html" class="code" title="  World Wide Web site of the WAFO Toolbox.">wafoweb</a> 
+   <a href="wafoweb.html" class="code" title="  World Wide Web site of the WAFO Toolbox.">wafoweb</a>('yes')
+ 
+  See also  web</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\simulink\simcoverage\@cvtest\help.m">help</a></li></TD>
+<TD>          Display help text in Command Window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\uitools\questdlg.m">questdlg</a></li></TD>
+<TD>      Question dialog box.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strncmpi.bi">strncmpi</a></li></TD>
+<TD>      Compare first N characters of strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\helptools\web.m">web</a></li></TD>
+<TD>           Open Web browser on site or files.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> URLout = <a name="_sub0" href="#_subfunctions" class="code">wafoweb</a>(ButtonName)
+002 <span class="comment">%WAFOWEB  World Wide Web site of the WAFO Toolbox.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL:  URL = wafoweb(BN)</span>
+005 <span class="comment">% </span>
+006 <span class="comment">%   URL = string with the URL address of WAFO.</span>
+007 <span class="comment">%   BN  = 'yes' If display URL site</span>
+008 <span class="comment">%         'no'  If no display of URL site</span>
+009 <span class="comment">%</span>
+010 <span class="comment">% WAFOWEB displays and/or returns the WWW</span>
+011 <span class="comment">%   site for the WAFO Toolbox.  If no input argument </span>
+012 <span class="comment">%   is givendisplayed, a dialog asks whether to go there.</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Examples</span>
+015 <span class="comment">%  url = wafoweb('n'); web(url)</span>
+016 <span class="comment">%  wafoweb </span>
+017 <span class="comment">%  wafoweb('yes')</span>
+018 <span class="comment">%</span>
+019 <span class="comment">% See also  web</span>
+020  
+021 <span class="comment">% Tested on: Matlab 5.2</span>
+022 <span class="comment">% History:</span>
+023 <span class="comment">% by pab 19.06.2001</span>
+024 
+025 URL = <span class="string">'http://www.maths.lth.se/matstat/wafo/'</span>;
+026 
+027 <span class="keyword">if</span> nargin&lt;1|isempty(ButtonName),  
+028   <span class="comment">%if nargout&gt;0, ButtonName = 'No';  else,    ButtonName ='Yes';  end</span>
+029   ButtonName =  questdlg(<span class="string">'Go To WAFO Toolbox Home Page?'</span>, <span class="string">'WWW'</span>, <span class="string">'Yes'</span>, <span class="string">'No'</span>, <span class="string">'No'</span>); 
+030 <span class="keyword">end</span>
+031 
+032 
+033 
+034 <span class="keyword">if</span> nargout &gt; 0,
+035   URLout = URL;
+036 <span class="keyword">else</span>
+037   disp([<span class="string">'WAFO Toolbox Home Page:'</span>])
+038   disp(URL)
+039 <span class="keyword">end</span>  
+040  
+041 <span class="keyword">if</span> strncmpi(ButtonName, <span class="string">'y'</span>,1)
+042   
+043   Status = web(URL);
+044   
+045   <span class="keyword">switch</span> Status
+046     <span class="keyword">case</span> 1,
+047       disp(<span class="string">' Web Browser not found.'</span>)
+048       disp(<span class="string">' See &quot;help web&quot;.'</span>)
+049       help(web)    
+050     <span class="keyword">case</span> 2,
+051       disp(<span class="string">' Web Browser found, but could not be launched.'</span>)
+052       disp(<span class="string">' See &quot;help web&quot;.'</span>)
+053       help(web)
+054     <span class="keyword">otherwise</span>
+055   <span class="keyword">end</span>    
+056 <span class="keyword">end</span>
+057 <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

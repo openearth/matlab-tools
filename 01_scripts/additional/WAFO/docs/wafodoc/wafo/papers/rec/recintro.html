@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of recintro</title>
+  <meta name="keywords" content="recintro">
+  <meta name="description" content="  Info about RECDEMO: A statistical procedure for reconstruction of 1D signals.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">rec</a> &gt; recintro.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\rec&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>recintro
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>  Info about RECDEMO: A statistical procedure for reconstruction of 1D signals.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> recintro </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="recintro.html" class="code" title="  Info about RECDEMO: A statistical procedure for reconstruction of 1D signals. ">RECINTRO</a>  Info about <a href="recdemo.html" class="code" title="  Show Rec figures with point and click interface">RECDEMO</a>: A statistical procedure for reconstruction of 1D signals. 
+ 
+  The files in this directory can reproduce the figures in the 
+  article of 
+  
+  Brodtkorb, P.A., Myrhaug, D. and Rue, H (1999)
+  'Joint distribution of wave height and wave crest velocity
+   from reconstructed data.'
+   in Proceedings of 9th ISOPE Conference, Vol III, pp 66-73
+  
+  
+  The paper shows a method for reconstruction of missing and or spurious 
+  data points of a recorded time series by using a transformed Gaussian
+  process. The application of the result is illustrated by fitting a
+  joint distribution to the maximum of the crest front velocity and crest back velocity
+  (V = max(Vcf,Vcb)) and the corresponding wave height (H = Hd or Hu)
+  obtained from the reconstructed data set. The joint distribution seem to be physically 
+  sound and much better described using the reconstructed than the 
+  original time series. (Note that the extracted data are normalized with 
+  the rms values, i.e., v=V/Vrms and h=H/Hrms)
+  The joint probability distribution given as the product of the 
+  Rayleigh distribution of wave heights and the Weibull distribution 
+  for the conditional crest velocity (v) given wave height (h) seem to be
+  a reasonable model.
+ 
+   DATA: <a href="../../../wafo/data/gfaks89.html" class="code" title="  Surface elevation measured at Gullfaks C 24.12.1989">GFAKS89</a>.DAT 
+  ~~~~~~~~~~~~~~~~~~~
+  The wave data considered was measured 24th December 1989 at the Gullfaks C platform  
+  in the North <a href="../../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a> from 17.00 to 21.20. The period from 20.00 to 20.20
+  is missing and contains NaNs.  The  water depth of  218 m is  
+  regarded as deep water for the most  important wave components.
+  There are two EMI laser sensors named 219 and 220. This data set is 
+  obtained from sensor 219, which is  located in the Northwest
+  corner  approximately two platform leg diameters away from   
+  the closest leg.  
+    Thus the wave elevation is not expected  to be significantly 
+  affected by  diffraction effects for incoming waves in the western sector.   
+  The wind direction for this period is from the south.
+  Some  difficulties in calibration of the instruments have been reported
+  resulting in several consecutive measured values being equal or nearly equal 
+  in the observed data set.
+   
+  Hm0 = 6.8m, Tm02 = 8s, Tp = 10.5 Tp2=19
+ 
+  Wind data from Statfjord A, 1989 are also given to justify the
+  assumption that the data may be regarded as stationary.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="recintro.html" class="code" title=" recintro">recintro</a></li></TD>
+<TD>  Info about RECDEMO: A statistical procedure for reconstruction of 1D signals.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\simulink\simcoverage\@cvtest\help.m">help</a></li></TD>
+<TD>          Display help text in Command Window.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="recdemo.html" class="code" title=" recdemo">recdemo</a></li></TD>
+<TD>  Show Rec figures with point and click interface</TD>
+</TR>
+<TR>
+<TD><li><a href="recintro.html" class="code" title=" recintro">recintro</a></li></TD>
+<TD>  Info about RECDEMO: A statistical procedure for reconstruction of 1D signals.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a href="recintro.html" class="code" title="  Info about RECDEMO: A statistical procedure for reconstruction of 1D signals. "><a name="_sub0" href="#_subfunctions" class="code">recintro</a>recintro</a>
+002 <span class="comment">% RECINTRO  Info about RECDEMO: A statistical procedure for reconstruction of 1D signals. </span>
+003 <span class="comment">%</span>
+004 <span class="comment">% The files in this directory can reproduce the figures in the </span>
+005 <span class="comment">% article of </span>
+006 <span class="comment">% </span>
+007 <span class="comment">% Brodtkorb, P.A., Myrhaug, D. and Rue, H (1999)</span>
+008 <span class="comment">% 'Joint distribution of wave height and wave crest velocity</span>
+009 <span class="comment">%  from reconstructed data.'</span>
+010 <span class="comment">%  in Proceedings of 9th ISOPE Conference, Vol III, pp 66-73</span>
+011 <span class="comment">% </span>
+012 <span class="comment">% </span>
+013 <span class="comment">% The paper shows a method for reconstruction of missing and or spurious </span>
+014 <span class="comment">% data points of a recorded time series by using a transformed Gaussian</span>
+015 <span class="comment">% process. The application of the result is illustrated by fitting a</span>
+016 <span class="comment">% joint distribution to the maximum of the crest front velocity and crest back velocity</span>
+017 <span class="comment">% (V = max(Vcf,Vcb)) and the corresponding wave height (H = Hd or Hu)</span>
+018 <span class="comment">% obtained from the reconstructed data set. The joint distribution seem to be physically </span>
+019 <span class="comment">% sound and much better described using the reconstructed than the </span>
+020 <span class="comment">% original time series. (Note that the extracted data are normalized with </span>
+021 <span class="comment">% the rms values, i.e., v=V/Vrms and h=H/Hrms)</span>
+022 <span class="comment">% The joint probability distribution given as the product of the </span>
+023 <span class="comment">% Rayleigh distribution of wave heights and the Weibull distribution </span>
+024 <span class="comment">% for the conditional crest velocity (v) given wave height (h) seem to be</span>
+025 <span class="comment">% a reasonable model.</span>
+026 <span class="comment">%</span>
+027 <span class="comment">%  DATA: GFAKS89.DAT </span>
+028 <span class="comment">% ~~~~~~~~~~~~~~~~~~~</span>
+029 <span class="comment">% The wave data considered was measured 24th December 1989 at the Gullfaks C platform  </span>
+030 <span class="comment">% in the North Sea from 17.00 to 21.20. The period from 20.00 to 20.20</span>
+031 <span class="comment">% is missing and contains NaNs.  The  water depth of  218 m is  </span>
+032 <span class="comment">% regarded as deep water for the most  important wave components.</span>
+033 <span class="comment">% There are two EMI laser sensors named 219 and 220. This data set is </span>
+034 <span class="comment">% obtained from sensor 219, which is  located in the Northwest</span>
+035 <span class="comment">% corner  approximately two platform leg diameters away from   </span>
+036 <span class="comment">% the closest leg.  </span>
+037 <span class="comment">%   Thus the wave elevation is not expected  to be significantly </span>
+038 <span class="comment">% affected by  diffraction effects for incoming waves in the western sector.   </span>
+039 <span class="comment">% The wind direction for this period is from the south.</span>
+040 <span class="comment">% Some  difficulties in calibration of the instruments have been reported</span>
+041 <span class="comment">% resulting in several consecutive measured values being equal or nearly equal </span>
+042 <span class="comment">% in the observed data set.</span>
+043 <span class="comment">%  </span>
+044 <span class="comment">% Hm0 = 6.8m, Tm02 = 8s, Tp = 10.5 Tp2=19</span>
+045 <span class="comment">%</span>
+046 <span class="comment">% Wind data from Statfjord A, 1989 are also given to justify the</span>
+047 <span class="comment">% assumption that the data may be regarded as stationary.</span>
+048 
+049 
+050 
+051 
+052 <span class="comment">% By pab 28.01.2000</span>
+053 
+054 <span class="comment">%more on</span>
+055 help <a href="recintro.html" class="code" title="  Info about RECDEMO: A statistical procedure for reconstruction of 1D signals. ">recintro</a>
+056 <span class="comment">%more off</span>
+057</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

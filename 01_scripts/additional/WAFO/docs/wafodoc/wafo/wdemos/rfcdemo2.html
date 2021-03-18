@@ -1,0 +1,516 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of rfcdemo2</title>
+  <meta name="keywords" content="rfcdemo2">
+  <meta name="description" content=" Rainflow matrix for Switching Markov Chains of Turning Points.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wdemos</a> &gt; rfcdemo2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wdemos&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>rfcdemo2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Rainflow matrix for Switching Markov Chains of Turning Points.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F_RFC] = refdemo2(demoNr,P,param,x0,s,lam) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">RFCDEMO2</a> Rainflow matrix for Switching Markov Chains of Turning Points. 
+  
+  [F_RFC] = <a href="rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">rfcdemo2</a>; 
+  [F_RFC] = <a href="rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">rfcdemo2</a>(P); 
+  [F_RFC] = <a href="rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">rfcdemo2</a>(demoNr,P,param,x0,s,lam); 
+  
+  Input: 
+  demoNr = 1:  Example 4.1  (Default: 1) 
+           2:  Example 4.2 
+           11: Another example 
+  P      = Transition matrix for regime process.  [rxr] 
+  param  = Parameter vector, [a b n], defines discretization. 
+  x0     = Center of ellipse [min Max]            [rx2] 
+  s      = Standard deviation (0&lt;s&lt;infinity)      [rx1] 
+  lam    = Orientation of ellipse (0&lt;lam&lt;infinity)[rx1] 
+  
+  Output: 
+  F_RFC  = Calculated rainflow intensity          [nxn] 
+  
+    The demo presents calculation of the rainflow matrix for  
+    a Switching Markov Chains of Turning Points (SMCTP). 
+    See Examples 4.1 and 4.2 in PhD-thesis: 
+      P. Johannesson (1999): Rainflow Analysis of 
+      Switching Markov Loads. 
+      [http://www.maths.lth.se/matstat/staff/pj/PhD/] 
+  
+  Example: 
+    <a href="rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">rfcdemo2</a>; 
+    <a href="rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">rfcdemo2</a>(1); 
+    P=[0.98 0.02; 0.05 0.95];  
+    <a href="rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">rfcdemo2</a>(1,P); 
+    P=[0.98 0.02; 0.05 0.95]; x0=[-0.4 -0.3; 0.3 0.4]; param=[-1 1 32]; 
+    s=[0.1 0.15]'; lam=[0.7 1.5]';  
+    <a href="rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">rfcdemo2</a>(1,P,param,x0,s,lam); 
+  
+  See also  <a href="rfcdemo1.html" class="code" title="  Demo for switching AR(1)-processes.  ">rfcdemo1</a>, <a href="../../wafo/fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">fatigue</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/cc2cmat.html" class="code" title=" [F,h] = cc2cmat(param,cc,ddef,method,h,NOsubzero,alpha)">cc2cmat</a></li></TD>
+<TD> Calculates the cycle count matrix from a cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/cc2lc.html" class="code" title=" d = cc2lc(cc,def,plotflag,sa)">cc2lc</a></li></TD>
+<TD> Calculates the number of upcrossings from a cycle count</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/ccplot.html" class="code" title=" ccplot(cc,ps)">ccplot</a></li></TD>
+<TD> Plots a cycle count as a point process in the plane.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Dmat = cmat2dmat(param,F,beta,K)">cmat2dmat</a></li></TD>
+<TD> Computes the (Palmgren-Miner) damage matrix from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/cmatplot.html" class="code" title=" cmatplot(in1,in2,in3,in4,in5)">cmatplot</a></li></TD>
+<TD> Plots a cycle matrix, e.g. a rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/hmmplot.html" class="code" title=" hmmplot(x,z,t,z_range,Title,Ylabel,colType,fontsize)">hmmplot</a></li></TD>
+<TD>  plots a Hidden Markov Model.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/mc2stat.html" class="code" title=" [ro,PP]=mc2stat(P)">mc2stat</a></li></TD>
+<TD>  Calculates the stationary distribution for a Markov chain.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/mktestmat.html" class="code" title=" [F,Fh] = mktestmat(param,x0,s,lam,NOsubzero)">mktestmat</a></li></TD>
+<TD>   Makes test matrices for min-max (and max-min) matrices.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/smctp2rfm.html" class="code" title=" [F_rfc,mu_rfc,T] = smctp2rfm(P,F,c_m)">smctp2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix for a SMCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/smctpsim.html" class="code" title=" [x,z,TT] = smctpsim(P,F,T,init,whatOut)">smctpsim</a></li></TD>
+<TD>  Simulates a switching Markov chain of turning points,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/smoothcmat.html" class="code" title=" [Fsmooth,h] = smthcmat(F,method,h,NOsubzero,alpha)">smoothcmat</a></li></TD>
+<TD> Smooth a cycle matrix using (adaptive) kernel smoothing</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/tp2rfc.html" class="code" title=" [RFC,RFC1,res,def] = tp2rfc(x,def,RFC0,res0)">tp2rfc</a></li></TD>
+<TD> Finds the rainflow cycles from the sequence of turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="delete is a built-in method">delete</a></li></TD>
+<TD>        Delete file or graphics object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\drawnow.m">drawnow</a></li></TD>
+<TD>       Flush pending graphics events.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\figure.m">figure</a></li></TD>
+<TD>        Create figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gcf.m">gcf</a></li></TD>
+<TD>           Get handle to current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\grid.m">grid</a></li></TD>
+<TD>          Grid lines.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\audiovideo\@audiorecorder\pause.m">pause</a></li></TD>
+<TD>         Wait for user response.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [F_RFC] = refdemo2(demoNr,P,param,x0,s,lam) 
+002  
+003 <span class="comment">% RFCDEMO2 Rainflow matrix for Switching Markov Chains of Turning Points. </span>
+004 <span class="comment">% </span>
+005 <span class="comment">% [F_RFC] = rfcdemo2; </span>
+006 <span class="comment">% [F_RFC] = rfcdemo2(P); </span>
+007 <span class="comment">% [F_RFC] = rfcdemo2(demoNr,P,param,x0,s,lam); </span>
+008 <span class="comment">% </span>
+009 <span class="comment">% Input: </span>
+010 <span class="comment">% demoNr = 1:  Example 4.1  (Default: 1) </span>
+011 <span class="comment">%          2:  Example 4.2 </span>
+012 <span class="comment">%          11: Another example </span>
+013 <span class="comment">% P      = Transition matrix for regime process.  [rxr] </span>
+014 <span class="comment">% param  = Parameter vector, [a b n], defines discretization. </span>
+015 <span class="comment">% x0     = Center of ellipse [min Max]            [rx2] </span>
+016 <span class="comment">% s      = Standard deviation (0&lt;s&lt;infinity)      [rx1] </span>
+017 <span class="comment">% lam    = Orientation of ellipse (0&lt;lam&lt;infinity)[rx1] </span>
+018 <span class="comment">% </span>
+019 <span class="comment">% Output: </span>
+020 <span class="comment">% F_RFC  = Calculated rainflow intensity          [nxn] </span>
+021 <span class="comment">% </span>
+022 <span class="comment">%   The demo presents calculation of the rainflow matrix for  </span>
+023 <span class="comment">%   a Switching Markov Chains of Turning Points (SMCTP). </span>
+024 <span class="comment">%   See Examples 4.1 and 4.2 in PhD-thesis: </span>
+025 <span class="comment">%     P. Johannesson (1999): Rainflow Analysis of </span>
+026 <span class="comment">%     Switching Markov Loads. </span>
+027 <span class="comment">%     [http://www.maths.lth.se/matstat/staff/pj/PhD/] </span>
+028 <span class="comment">% </span>
+029 <span class="comment">% Example: </span>
+030 <span class="comment">%   rfcdemo2; </span>
+031 <span class="comment">%   rfcdemo2(1); </span>
+032 <span class="comment">%   P=[0.98 0.02; 0.05 0.95];  </span>
+033 <span class="comment">%   rfcdemo2(1,P); </span>
+034 <span class="comment">%   P=[0.98 0.02; 0.05 0.95]; x0=[-0.4 -0.3; 0.3 0.4]; param=[-1 1 32]; </span>
+035 <span class="comment">%   s=[0.1 0.15]'; lam=[0.7 1.5]';  </span>
+036 <span class="comment">%   rfcdemo2(1,P,param,x0,s,lam); </span>
+037 <span class="comment">% </span>
+038 <span class="comment">% See also  rfcdemo1, fatigue </span>
+039  
+040 <span class="comment">% Tested  on Matlab  5.3 </span>
+041 <span class="comment">% </span>
+042 <span class="comment">% History: </span>
+043 <span class="comment">% Updated by PJ 18-May-2000 </span>
+044 <span class="comment">%   updated for WAFO </span>
+045 <span class="comment">% Created by PJ (Pär Johannesson) 1997 </span>
+046 <span class="comment">% Updated by PJ 07-Jul-2005 </span>
+047 <span class="comment">%   warning off </span>
+048  
+049 warning_state=warning;  <span class="comment">% Get current warning-settings </span>
+050 warning off 
+051  
+052 <span class="comment">% Check input arguments </span>
+053  
+054 ni = nargin; 
+055 no = nargout; 
+056 error(nargchk(0,6,ni)); 
+057  
+058  
+059 fprintf(1,<span class="string">'Welcome to demo 2 for &quot;Rainflow Cycles for Switching Processes&quot;!\n'</span>); 
+060 fprintf(1,<span class="string">'It demonstrates calculation of the rainflow matrix\n'</span>); 
+061 fprintf(1,<span class="string">'for a Switching Markov Chain of Turning Points.\n'</span>); 
+062 fprintf(1,<span class="string">'Type &quot;help rfcdemo2&quot; for further information\n\n'</span>); 
+063  
+064 Zstr=<span class="string">'123456789'</span>; 
+065  
+066 <span class="comment">% Delete all figure windows </span>
+067  
+068 slut=0; 
+069 h=gcf; 
+070 <span class="keyword">while</span> ~slut 
+071   h_prev=h; 
+072   delete(h); 
+073   h=gcf; 
+074   <span class="keyword">if</span> h==h_prev, slut=1; <span class="keyword">end</span> 
+075 <span class="keyword">end</span> 
+076    
+077 <span class="comment">% Check input-arguments </span>
+078  
+079 <span class="keyword">if</span> ni&lt;1,        demoNr=1; <span class="keyword">end</span> 
+080 <span class="keyword">if</span> isempty(demoNr), demoNr=1; <span class="keyword">end</span> 
+081 <span class="keyword">if</span> ni&lt;2,        P=[];     <span class="keyword">end</span> 
+082 <span class="keyword">if</span> ni&lt;3,        param=[]; <span class="keyword">end</span> 
+083 <span class="keyword">if</span> ni&lt;4,        x0=[];    <span class="keyword">end</span> 
+084 <span class="keyword">if</span> ni&lt;5,        s=[];     <span class="keyword">end</span> 
+085 <span class="keyword">if</span> ni&lt;6,        lam=[];   <span class="keyword">end</span> 
+086  
+087 <span class="keyword">if</span> demoNr == 1 
+088   p1=0.10; p2=0.05; 
+089   P0=[1-p1 p1; p2 1-p2]; 
+090   param0 = [-1 1 32]; 
+091   x00 = [-0.4 -0.3; 0.3 0.4]; 
+092  
+093   s0 = [0.15 0.15]'; 
+094   lam0 = [1.0 1.0]'; 
+095 <span class="keyword">elseif</span> demoNr == 2 
+096   p1=0.10; p2=0.05; 
+097   P0=[1-p1 p1; p2 1-p2]; 
+098   param0 = [-1 1 32]; 
+099   x00 = [-0.1 0.1; 0.0 0.0]; 
+100  
+101   s0 = [0.28 0.12]'; 
+102   lam0 = [0.5 2]'; 
+103 <span class="keyword">elseif</span> demoNr == 11 
+104   p1=0.04; p2=0.01; 
+105   P0=[1-p1 p1; p2 1-p2]; 
+106   param0 = [-1 1 32]; 
+107   x00 = [0.2 0.3; -0.1 -0.1]; 
+108   s0 = [0.18 0.1]'; 
+109   lam0 = [.5 2]'; 
+110 <span class="keyword">end</span> 
+111  
+112 <span class="keyword">if</span> isempty(P),     P=P0;         <span class="keyword">end</span> 
+113 <span class="keyword">if</span> isempty(param), param=param0; <span class="keyword">end</span> 
+114 <span class="keyword">if</span> isempty(x0),    x0=x00;       <span class="keyword">end</span> 
+115 <span class="keyword">if</span> isempty(s),     s=s0;         <span class="keyword">end</span> 
+116 <span class="keyword">if</span> isempty(lam),   lam=lam0;     <span class="keyword">end</span> 
+117  
+118 <span class="comment">% Define min-Max and Max-min matrices </span>
+119  
+120 <span class="comment">% Initiation </span>
+121  
+122 u=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);    <span class="comment">% Discretization levels </span>
+123 r=length(P);        <span class="comment">% Number of regime states </span>
+124 n=param(3);         <span class="comment">% Number of discretization levels </span>
+125  
+126 paramD = [1 n n]; 
+127  
+128 F=cell(r,2); 
+129 <span class="keyword">for</span> i=1:r 
+130   [F{i,1},F{i,2}] = <a href="../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,x0(i,:),s(i),lam(i)); 
+131 <span class="keyword">end</span> 
+132  
+133  
+134 <span class="comment">% Calculate statistics: mean , std, proportion, mean time </span>
+135  
+136 <span class="comment">%mX = m./sum(A')'; </span>
+137 <span class="comment">%sX = sqrt(s2./(1-A(:,2).^2)); </span>
+138 statP = <a href="../../wafo/markov/mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(P); 
+139 tau = 1./(1-diag(P))'; 
+140  
+141  
+142 <span class="comment">% Parameters </span>
+143  
+144 fprintf(<span class="string">'Parameters\n'</span>); 
+145 <span class="comment">%fprintf(' z      a(z)      m(z)      s(z)\n'); </span>
+146 <span class="comment">%fprintf('%2d  %8g  %8g  %8g\n',[(1:r)' A(:,2) m sqrt(s2)]') </span>
+147 P 
+148  
+149 <span class="comment">% Statistics </span>
+150 fprintf(<span class="string">'Statistics\n'</span>); 
+151 fprintf(<span class="string">'\n z    ro(z)    tau(z)\n'</span>); 
+152 fprintf(<span class="string">'%2d  %8g  %8g\n'</span>,[(1:r)' statP' tau']') 
+153 fprintf(<span class="string">'\n'</span>) 
+154  
+155 <span class="comment">%fprintf('\n z    m_X(z)    s_X(z)     ro(z)    tau(z)\n'); </span>
+156 <span class="comment">%fprintf('%2d  %8g  %8g  %8g  %8g\n',[(1:r)' mX sX statP' tau']') </span>
+157  
+158 <span class="comment">% Simulate a load </span>
+159  
+160 fprintf(1,<span class="string">' -- Simulating.\n'</span>); 
+161  
+162 T = 5000;           <span class="comment">% Number of TP </span>
+163  
+164 [xD,z] = <a href="../../wafo/wsim/smctpsim.html" class="code" title="  Simulates a switching Markov chain of turning points,">smctpsim</a>(P,F,T); 
+165 x = u(xD)'; 
+166  
+167 I = 1:501; 
+168 <a href="../../wafo/markov/hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>(x(I),z(I),I-1,[1 r],<span class="string">''</span>,<span class="string">'Switching Process, X(k)'</span>,1); 
+169 ylabel(<span class="string">'regime, Z(k)'</span>),xlabel(<span class="string">'time, k'</span>) 
+170  
+171 set(gcf,<span class="string">'Name'</span>,<span class="string">'Switching MCTP'</span>) 
+172  
+173 drawnow, disp(<span class="string">'Hit any key to continue.'</span>); pause; 
+174  
+175 <span class="comment">% Calculate the rainflow matrix </span>
+176  
+177 fprintf(1,<span class="string">' -- Calculating rainflow matrix.\n'</span>); 
+178  
+179 F_RFCsum = zeros(n,n); 
+180 <span class="keyword">for</span> i=1:r 
+181   [F_RFC1{i},mu_RFC1{i}] = <a href="../../wafo/markov/smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>(1,F(i,1:2)); 
+182   F_RFCsum = F_RFCsum + statP(i)*F_RFC1{i}; 
+183 <span class="keyword">end</span> 
+184  
+185 figure 
+186 set(gcf,<span class="string">'Name'</span>,<span class="string">'Calculated Rainflow matrices'</span>) 
+187 v = [param(1:2) param(1:2) 0 max(max(F_RFCsum))]; 
+188 <span class="keyword">for</span> i=1:r 
+189   subplot(1,r,i), 
+190   <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,statP(i)*F_RFC1{i},1); 
+191   grid,axis(<span class="string">'square'</span>),axis(v) 
+192   title([<span class="string">'Regime '</span> Zstr(i)]) 
+193 <span class="keyword">end</span> 
+194  
+195 [F_RFC,mu_RFC] = <a href="../../wafo/markov/smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>(P,F); 
+196  
+197 figure 
+198 set(gcf,<span class="string">'Name'</span>,<span class="string">'Calculated Rainflow matrix'</span>) 
+199  
+200 v = [param(1:2) param(1:2) 0 max(max(F_RFCsum))]; 
+201 subplot(1,2,1) 
+202 <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,F_RFC,1),grid 
+203 axis(<span class="string">'square'</span>),axis(v) 
+204 title(<span class="string">'Mixed RFM'</span>) 
+205 subplot(1,2,2) 
+206 <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,F_RFCsum,1),grid 
+207 axis(<span class="string">'square'</span>),axis(v) 
+208 title(<span class="string">'Sum of RFMs'</span>) 
+209  
+210 drawnow, disp(<span class="string">'Hit any key to continue.'</span>); pause; 
+211  
+212 figure 
+213  
+214 <span class="comment">% Calculate Cycles and crossings </span>
+215  
+216 fprintf(1,<span class="string">' -- Cycles and crossings for simulated load.\n'</span>); 
+217  
+218 TP = <a href="../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>([(1:T)' x]); 
+219 RFC = <a href="../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(TP); 
+220 <a href="../../wafo/cycles/ccplot.html" class="code" title=" Plots a cycle count as a point process in the plane.">ccplot</a>(RFC) 
+221 cross = <a href="../../wafo/cycles/cc2lc.html" class="code" title=" Calculates the number of upcrossings from a cycle count  ">cc2lc</a>(RFC,1);   <span class="comment">% Only upcrossings </span>
+222  
+223 <span class="comment">% Observed Rainflow Matrix </span>
+224  
+225 TPD = <a href="../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>([(1:T)' xD]); 
+226 RFCD = <a href="../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(TPD); 
+227 fr = <a href="../../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>(paramD,RFCD); 
+228 F_RFCobs = fr; 
+229 <span class="comment">%[F_RFCobs_smooth,h] = smthcmat(F_RFCobs); </span>
+230 [F_RFCobs_smooth,h] = <a href="../../wafo/cycles/smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>(F_RFCobs,1,0.7); 
+231  
+232 set(gcf,<span class="string">'Name'</span>,<span class="string">'Observed Rainflow Matrix'</span>) 
+233 subplot(1,2,1), <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,F_RFCobs/T*2,1),grid 
+234 axis(<span class="string">'square'</span>),axis(v) 
+235 title(<span class="string">'Observed RFM'</span>) 
+236 subplot(1,2,2), <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,F_RFCobs_smooth/T*2,1), grid 
+237 axis(<span class="string">'square'</span>),axis(v) 
+238 title(<span class="string">'Smoothed observed RFM'</span>) 
+239  
+240 drawnow, disp(<span class="string">'Hit any key to continue.'</span>); pause; 
+241  
+242  
+243 <span class="comment">% Check crossing intensity </span>
+244  
+245 <span class="comment">% Check Damage matrix </span>
+246  
+247 figure 
+248 set(gcf,<span class="string">'Name'</span>,<span class="string">'Damage'</span>) 
+249 beta0 = 3; 
+250 Dmat = <a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(param,F_RFC,beta0); 
+251 Dmatsum = <a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(param,F_RFCsum,beta0); 
+252 subplot(1,2,1),<a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,Dmat),grid 
+253 axis(<span class="string">'square'</span>) 
+254  
+255 v=axis; 
+256 title(<span class="string">'Mixed RFM'</span>) 
+257 subplot(1,2,2),<a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,Dmatsum),grid 
+258 axis(<span class="string">'square'</span>) 
+259  
+260 axis(v); 
+261 title(<span class="string">'Sum of RFMs'</span>) 
+262  
+263  
+264 drawnow, disp(<span class="string">'Hit any key to continue.'</span>); pause; 
+265  
+266  
+267 <span class="comment">% Compare crossing spectrum with simulated  </span>
+268  
+269 figure 
+270 set(gcf,<span class="string">'Name'</span>,<span class="string">'Crossing Intensity'</span>) 
+271  
+272 subplot(1,2,1) 
+273 plot(u,diag(mu_RFC),<span class="string">'g--'</span>), hold on 
+274 <span class="comment">%[XX,YY]=stairs(u,diag(mu_RFC)); </span>
+275 <span class="comment">%plot(XX,YY,'g'),hold on </span>
+276 <span class="comment">%stairs(cross(:,1),cross(:,2)/T*2), hold off </span>
+277 plot(cross(:,1),cross(:,2)/T*2), hold off 
+278 xlabel(<span class="string">'level, u'</span>); ylabel(<span class="string">'mu(u)'</span>); 
+279 v = axis; axis([param(1:2) 0 v(4)]); 
+280  
+281 subplot(1,2,2) 
+282 plot(u,diag(mu_RFC),<span class="string">'g'</span>), hold on 
+283 plot(u,diag(mu_RFC1{1})*statP(1),<span class="string">'r-.'</span>) 
+284 plot(u,diag(mu_RFC1{2})*statP(2),<span class="string">'r-.'</span>) 
+285 plot(u,diag(mu_RFC1{1})*statP(1)+diag(mu_RFC1{2})*statP(2),<span class="string">'y--'</span>), hold off 
+286 xlabel(<span class="string">'level, u'</span>); ylabel(<span class="string">'mu(u)'</span>); 
+287 v = axis; axis([param(1:2) 0 v(4)]); 
+288  
+289 fprintf(1,<span class="string">'\nThank you for running this demo!\n'</span>); 
+290  
+291 warning(warning_state); 
+292  
+293  
+294</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

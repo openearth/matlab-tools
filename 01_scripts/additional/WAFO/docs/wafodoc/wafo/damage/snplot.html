@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of snplot</title>
+  <meta name="keywords" content="snplot">
+  <meta name="description" content=" Plots SN-data and estimates parameters">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">damage</a> &gt; snplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\damage&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>snplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Plots SN-data and estimates parameters</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [e,m,sigma2]= snplot(S,N,nr) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="snplot.html" class="code" title=" Plots SN-data and estimates parameters ">SNPLOT</a> Plots <a href="../../wafo/data/sn.html" class="code" title=" Fatigue experiment, constant-amplitude loading.">SN</a>-data and estimates parameters 
+  according to the least-squares method
+ 
+  CALL:  [e,beta,s2] = <a href="snplot.html" class="code" title=" Plots SN-data and estimates parameters ">snplot</a>(S,N,nr);
+ 
+   where
+ 
+         e,beta = the parameters in the model, 
+         s2     = the residual variance for linear regression 
+                  in logS/logN plane,
+         S      = a nx1 vector with S-data,
+         N      = a nx1 vector with N-data,
+         nr     = plot parameter (optional input argument);
+ 
+                  1 = only <a href="../../wafo/data/sn.html" class="code" title=" Fatigue experiment, constant-amplitude loading.">SN</a>-data will be plotted,
+                  2 = <a href="../../wafo/data/sn.html" class="code" title=" Fatigue experiment, constant-amplitude loading.">SN</a>-data and fitted line will be plotted,
+                  3 = only log(S)/log(N)-data will be plotted,
+                  4 = log(S)/log(N)-data and fitted line will be plotted,
+                 11-14 = Same as above but x-axis = N, y-axis = S . 
+   
+  Model:
+        N(s) = K/(e*s^beta)
+ 
+  Example:  
+    <a href="../../wafo/data/sn.html" class="code" title=" Fatigue experiment, constant-amplitude loading.">sn</a> = load('sn.dat'); s = <a href="../../wafo/data/sn.html" class="code" title=" Fatigue experiment, constant-amplitude loading.">sn</a>(:,1); N = <a href="../../wafo/data/sn.html" class="code" title=" Fatigue experiment, constant-amplitude loading.">sn</a>(:,2);
+    [e,beta,s2] = <a href="snplot.html" class="code" title=" Plots SN-data and estimates parameters ">snplot</a>(s,N,4)   % S-N, x-axis = S, y-axis = N
+    [e,beta,s2] = <a href="snplot.html" class="code" title=" Plots SN-data and estimates parameters ">snplot</a>(s,N,14)  % N-S, x-axis = N, y-axis = S</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\inv.bi">inv</a></li></TD>
+<TD>           Matrix inverse.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab1.html" class="code" title="This is a script file.">itmkurs_lab1</a></li></TD>
+<TD> Script to computer exercises 1</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [e,m,sigma2]= <a name="_sub0" href="#_subfunctions" class="code">snplot</a>(S,N,nr)
+002 <span class="comment">%SNPLOT Plots SN-data and estimates parameters </span>
+003 <span class="comment">% according to the least-squares method</span>
+004 <span class="comment">%</span>
+005 <span class="comment">% CALL:  [e,beta,s2] = snplot(S,N,nr);</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%  where</span>
+008 <span class="comment">%</span>
+009 <span class="comment">%        e,beta = the parameters in the model, </span>
+010 <span class="comment">%        s2     = the residual variance for linear regression </span>
+011 <span class="comment">%                 in logS/logN plane,</span>
+012 <span class="comment">%        S      = a nx1 vector with S-data,</span>
+013 <span class="comment">%        N      = a nx1 vector with N-data,</span>
+014 <span class="comment">%        nr     = plot parameter (optional input argument);</span>
+015 <span class="comment">%</span>
+016 <span class="comment">%                 1 = only SN-data will be plotted,</span>
+017 <span class="comment">%                 2 = SN-data and fitted line will be plotted,</span>
+018 <span class="comment">%                 3 = only log(S)/log(N)-data will be plotted,</span>
+019 <span class="comment">%                 4 = log(S)/log(N)-data and fitted line will be plotted,</span>
+020 <span class="comment">%                11-14 = Same as above but x-axis = N, y-axis = S . </span>
+021 <span class="comment">%  </span>
+022 <span class="comment">% Model:</span>
+023 <span class="comment">%       N(s) = K/(e*s^beta)</span>
+024 <span class="comment">%</span>
+025 <span class="comment">% Example:  </span>
+026 <span class="comment">%   sn = load('sn.dat'); s = sn(:,1); N = sn(:,2);</span>
+027 <span class="comment">%   [e,beta,s2] = snplot(s,N,4)   <span class="comment">% S-N, x-axis = S, y-axis = N</span></span>
+028 <span class="comment">%   [e,beta,s2] = snplot(s,N,14)  <span class="comment">% N-S, x-axis = N, y-axis = S</span></span>
+029 
+030   
+031 <span class="comment">% Tested on: Matlab 6.0</span>
+032 <span class="comment">% History:</span>
+033 <span class="comment">% Correction by PJ 07-Jul-2005</span>
+034 <span class="comment">%   Changed 'break' to 'return'</span>
+035 <span class="comment">% Revised by jr 01-Apr-2001</span>
+036 <span class="comment">% - example, help text</span>
+037 <span class="comment">% Revised by PJ 10-Jan-2000</span>
+038 <span class="comment">%   updated for WAFO</span>
+039 <span class="comment">% Original version from FAT by Mats Frendahl </span>
+040 <span class="comment">%   Copyright 1993, Mats Frendahl, Dept. of Math. Stat., University of Lund.</span>
+041 
+042 [n,m]=size(S);
+043 <span class="keyword">if</span> m&gt;n, S=S'; <span class="keyword">end</span>
+044 [n,m]=size(S);
+045 <span class="keyword">if</span> m~=1, disp(<span class="string">'   First argument must be  nx1, program will terminate.'</span>), <span class="keyword">end</span>
+046 
+047 [n,m]=size(N);
+048 <span class="keyword">if</span> m&gt;n, N=N'; <span class="keyword">end</span>
+049 [n,m]=size(N);
+050 <span class="keyword">if</span> m~=1, disp(<span class="string">'   Second argument must be  nx1, program will terminate.'</span>), <span class="keyword">end</span>
+051 
+052 A=[ones(length(S),1) log(S)];
+053 beta=inv(A'*A)*A'*log(N); m=-beta(2); e=exp(-beta(1));
+054 Q0=log(N)'*log(N)-beta'*A'*log(N);
+055 sigma2=Q0/(length(log(S))-2);
+056 k=exp(sigma2/2);
+057 borderS=[min(S) max(S)]; 
+058 borderN=[min(N) max(N)]; 
+059 
+060 number_of_s=99;
+061 
+062 <span class="keyword">if</span> nargin==3
+063   <span class="keyword">if</span> nr&lt;10
+064     <span class="keyword">if</span> nr==1 | nr==3
+065      plot(S,N,<span class="string">'.'</span>,<span class="string">'markersize'</span>,12)
+066      title(<span class="string">'SN-data'</span>)
+067     <span class="keyword">elseif</span> nr==2 | nr==4
+068       s=borderS(1):(borderS(2)-borderS(1))/number_of_s:borderS(2);
+069       n=k/e*s.^(-m);
+070       plot(s,n,<span class="string">'-'</span>,S,N,<span class="string">'.'</span>,<span class="string">'markersize'</span>,12)
+071       axis([[0.9 1.1].*borderS 0 1.1*borderN(2)]);
+072       title(<span class="string">'SN-data with estimated N(s)'</span>),xlabel(<span class="string">'s'</span>), ylabel(<span class="string">'N(s)'</span>)
+073     <span class="keyword">end</span>
+074     
+075     axis([[0.9 1.1].*borderS 0 1.1*borderN(2)]);
+076     xlabel(<span class="string">'s'</span>), ylabel(<span class="string">'N'</span>)
+077     
+078   <span class="keyword">else</span>
+079     <span class="keyword">if</span> nr==11 | nr==13
+080       plot(N,S,<span class="string">'.'</span>,<span class="string">'markersize'</span>,12)
+081       title(<span class="string">'SN-data'</span>)
+082     <span class="keyword">elseif</span> nr==12 | nr==14
+083       s=borderS(1):(borderS(2)-borderS(1))/number_of_s:borderS(2);
+084       n=k/e*s.^(-m);
+085       plot(n,s,<span class="string">'-'</span>,N,S,<span class="string">'.'</span>,<span class="string">'markersize'</span>,12)
+086       axis([[0.9 1.1].*borderS 0 1.1*borderN(2)]);
+087       title(<span class="string">'SN-data with estimated N(s)'</span>)
+088     <span class="keyword">end</span>
+089     
+090     axis([0 1.1*borderN(2) [0.9 1.1].*borderS ]);
+091     xlabel(<span class="string">'N'</span>), ylabel(<span class="string">'s'</span>)
+092   <span class="keyword">end</span>
+093   
+094   <span class="keyword">if</span> mod(nr,10) &gt; 2 <span class="comment">% if number == 3,4,13,14, then log-scale</span>
+095     h=gca;
+096     set(h,<span class="string">'YScale'</span>,<span class="string">'log'</span>,<span class="string">'XScale'</span>,<span class="string">'log'</span>);
+097   <span class="keyword">end</span>
+098   
+099 <span class="keyword">end</span>
+100 
+101 <span class="keyword">return</span>
+102 
+103 <span class="comment">%</span>
+104 <span class="comment">% Old plots</span>
+105 <span class="comment">%</span>
+106 <span class="keyword">if</span> nargin==3
+107    <span class="keyword">if</span> nr==1
+108      plot(S,N,<span class="string">'.'</span>,<span class="string">'markersize'</span>,12)
+109      axis([[0.9 1.1].*borderS 0 1.1*borderN(2)]);
+110      title(<span class="string">'SN-data'</span>),xlabel(<span class="string">'s'</span>), ylabel(<span class="string">'N'</span>)
+111    <span class="keyword">elseif</span> nr==2
+112      s=borderS(1):(borderS(2)-borderS(1))/number_of_s:borderS(2);
+113      n=k/e*s.^(-m);
+114      plot(s,n,<span class="string">'-'</span>,S,N,<span class="string">'.'</span>,<span class="string">'markersize'</span>,12)
+115      axis([[0.9 1.1].*borderS 0 1.1*borderN(2)]);
+116      title(<span class="string">'SN-data with estimated N(s)'</span>),xlabel(<span class="string">'s'</span>), ylabel(<span class="string">'N(s)'</span>)
+117    <span class="keyword">elseif</span> nr==3
+118      axis([[0.9 1.1].*log(borderS) 0 1.1*log(borderN(2))]);
+119      plot(log(S),log(N),<span class="string">'.'</span>,<span class="string">'markersize'</span>,12)
+120      title(<span class="string">'log(S)/log(N)-data'</span>),xlabel(<span class="string">'log(s)'</span>), ylabel(<span class="string">'log(N(s))'</span>)
+121    <span class="keyword">elseif</span> nr==4
+122      y=beta(1)+beta(2)*log(borderS);
+123      axis([[0.9 1.1].*log(borderS) 0 1.1*log(borderN(2))]);
+124      plot(log(borderS),y,<span class="string">'-'</span>,log(S),log(N),<span class="string">'.'</span>,<span class="string">'markersize'</span>,12)
+125      title(<span class="string">'log(S)/log(N)-data with estimated log(N(s))'</span>)
+126      xlabel(<span class="string">'log(s)'</span>), ylabel(<span class="string">'log(N(s))'</span>)
+127    <span class="keyword">end</span>
+128 <span class="keyword">end</span>
+129 
+130</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

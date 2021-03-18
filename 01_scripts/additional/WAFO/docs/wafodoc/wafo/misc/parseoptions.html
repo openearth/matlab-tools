@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of parseoptions</title>
+  <meta name="keywords" content="parseoptions">
+  <meta name="description" content=" Create or alter a OPTIONS structure.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; parseoptions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>parseoptions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Create or alter a OPTIONS structure.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> options = parseoptions(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">PARSEOPTIONS</a> Create or alter a OPTIONS structure. 
+  
+   CALL:  options = <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">parseoptions</a>(legalFnames,options,funcname,opts1,opts2,..., 
+                                 par1,val1,par2,val2,...); 
+          options = <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">parseoptions</a>(options,opts1,opts2,..., 
+                                 par1,val1,par2,val2,...);   
+  
+    options    = OUT: options structure in which the named  
+                      parameters have the specified values.   
+                 IN:  options structure giving the legal names and 
+                      default options   
+    legalFnames = character array giving the names of functions for 
+                  which default values for the options structure could be 
+                  extracted. 
+    funcname   = string giving the name of the function for which default 
+                 values for the options structure should be extracted. 
+                 (Must be equal to one of the names in LEGALFNAMES.)   
+    opts1, 
+    opts2..    = options structures 
+    par1,par2..= strings identifying the parameter to alter 
+    val1,val2..= corresponding values the parameters are altered to. 
+     
+    <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">PARSEOPTIONS</a> combines the default options for a function given by 
+    FUNCNAME with new options structures (OPTS1,OPTS2,...) and/or with 
+    the named parameters (PAR1,PAR2,...) with the corresponding values 
+    (VAL1, VAL2,...). 
+    The parameters are set in the same order as the input arguments. 
+    Any parameters with non-empty values of the options struct overwrite 
+    the corresponding old parameters.  
+    The input arguments can be given in any order with one exception: 
+    PARx and VALx must be given in <a href="../../wafo/wstats/pairs.html" class="code" title="  Pairwise scatter plots.">pairs</a> in that order. 
+    Any unspecified parameters for PARx are set to [].  
+    Parameters with value [] indicate to use the default value for that 
+    parameter when OPTIONS is passed to the function. It is sufficient to 
+    type only the first characters that uniquely <a href="../../wafo/wstats/identify.html" class="code" title=" Identify points on a plot by clicking with the mouse.">identify</a> the parameter 
+    or function name.  Upper case letters for parameter names and values 
+    that are strings are ignored. If an invalid string is provided, the 
+    default is used. 
+     
+    <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">PARSEOPTIONS</a> with no input and no output arguments displays this help  
+  
+  Examples: 
+   defaultoptions = struct('test',[],'integrate',[] ) 
+   <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">parseoptions</a>(defaultoptions,'int','yes') 
+   opt = defaultoptions; 
+   opt.test = 'yes';   
+   <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">parseoptions</a>(defaultoptions,'int','yes',opt)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="parseoptions.html" class="code" title=" options = parseoptions(varargin)">parseoptions</a></li></TD>
+<TD> Create or alter a OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell2struct.m">cell2struct</a></li></TD>
+<TD>   Convert cell array to structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cellfun.m">cellfun</a></li></TD>
+<TD>       Functions on cell array contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@scribehandle\class.m">class</a></li></TD>
+<TD>         Create object or return object class.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\@double\exist.bi">exist</a></li></TD>
+<TD>         Check if variables or functions are defined.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\fieldnames.m">fieldnames</a></li></TD>
+<TD>    Get structure field names.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\simulink\simcoverage\@cvtest\help.m">help</a></li></TD>
+<TD>          Display help text in Command Window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@opaque\intersect.m">intersect</a></li></TD>
+<TD>     Set intersection.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isstruct.m">isstruct</a></li></TD>
+<TD>      True for structures.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\setfield.m">setfield</a></li></TD>
+<TD>      Set structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\sprintf.m">sprintf</a></li></TD>
+<TD>       Write formatted data to string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@opaque\strmatch.m">strmatch</a></li></TD>
+<TD>      Find possible matches for string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@cell\strtok.m">strtok</a></li></TD>
+<TD>        Find token in string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\struct2cell.m">struct2cell</a></li></TD>
+<TD>   Convert structure array to cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strvcat.m">strvcat</a></li></TD>
+<TD>       Vertically concatenate strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/kdetools/kdeoptset.html" class="code" title=" options = kdeoptset(varargin)">kdeoptset</a></li></TD>
+<TD> Create or alter KDE OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="parseoptions.html" class="code" title=" options = parseoptions(varargin)">parseoptions</a></li></TD>
+<TD> Create or alter a OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/specoptset.html" class="code" title=" options = specoptset(varargin)">specoptset</a></li></TD>
+<TD> Create or alter SPECTRUM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/troptset.html" class="code" title=" options = troptset(varargin)">troptset</a></li></TD>
+<TD> Create or alter TRANSFORM OPTIONS structure.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> iy = findlname(arg,names,chkempty)</a></li><li><a href="#_sub2" class="code"> options = combineopt(options,newopts)</a></li><li><a href="#_sub3" class="code"> options = defaultopt(fname)</a></li><li><a href="#_sub4" class="code"> ind = findNonEmptyCells(carray)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> options = <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. "><a name="_sub0" href="#_subfunctions" class="code">parseoptions</a>parseoptions</a>(varargin) 
+002 <span class="comment">%PARSEOPTIONS Create or alter a OPTIONS structure. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  options = parseoptions(legalFnames,options,funcname,opts1,opts2,..., </span>
+005 <span class="comment">%                                par1,val1,par2,val2,...); </span>
+006 <span class="comment">%         options = parseoptions(options,opts1,opts2,..., </span>
+007 <span class="comment">%                                par1,val1,par2,val2,...);   </span>
+008 <span class="comment">% </span>
+009 <span class="comment">%   options    = OUT: options structure in which the named  </span>
+010 <span class="comment">%                     parameters have the specified values.   </span>
+011 <span class="comment">%                IN:  options structure giving the legal names and </span>
+012 <span class="comment">%                     default options   </span>
+013 <span class="comment">%   legalFnames = character array giving the names of functions for </span>
+014 <span class="comment">%                 which default values for the options structure could be </span>
+015 <span class="comment">%                 extracted. </span>
+016 <span class="comment">%   funcname   = string giving the name of the function for which default </span>
+017 <span class="comment">%                values for the options structure should be extracted. </span>
+018 <span class="comment">%                (Must be equal to one of the names in LEGALFNAMES.)   </span>
+019 <span class="comment">%   opts1, </span>
+020 <span class="comment">%   opts2..    = options structures </span>
+021 <span class="comment">%   par1,par2..= strings identifying the parameter to alter </span>
+022 <span class="comment">%   val1,val2..= corresponding values the parameters are altered to. </span>
+023 <span class="comment">%    </span>
+024 <span class="comment">%   PARSEOPTIONS combines the default options for a function given by </span>
+025 <span class="comment">%   FUNCNAME with new options structures (OPTS1,OPTS2,...) and/or with </span>
+026 <span class="comment">%   the named parameters (PAR1,PAR2,...) with the corresponding values </span>
+027 <span class="comment">%   (VAL1, VAL2,...). </span>
+028 <span class="comment">%   The parameters are set in the same order as the input arguments. </span>
+029 <span class="comment">%   Any parameters with non-empty values of the options struct overwrite </span>
+030 <span class="comment">%   the corresponding old parameters.  </span>
+031 <span class="comment">%   The input arguments can be given in any order with one exception: </span>
+032 <span class="comment">%   PARx and VALx must be given in pairs in that order. </span>
+033 <span class="comment">%   Any unspecified parameters for PARx are set to [].  </span>
+034 <span class="comment">%   Parameters with value [] indicate to use the default value for that </span>
+035 <span class="comment">%   parameter when OPTIONS is passed to the function. It is sufficient to </span>
+036 <span class="comment">%   type only the first characters that uniquely identify the parameter </span>
+037 <span class="comment">%   or function name.  Upper case letters for parameter names and values </span>
+038 <span class="comment">%   that are strings are ignored. If an invalid string is provided, the </span>
+039 <span class="comment">%   default is used. </span>
+040 <span class="comment">%    </span>
+041 <span class="comment">%   PARSEOPTIONS with no input and no output arguments displays this help  </span>
+042 <span class="comment">% </span>
+043 <span class="comment">% Examples: </span>
+044 <span class="comment">%  defaultoptions = struct('test',[],'integrate',[] ) </span>
+045 <span class="comment">%  parseoptions(defaultoptions,'int','yes') </span>
+046 <span class="comment">%  opt = defaultoptions; </span>
+047 <span class="comment">%  opt.test = 'yes';   </span>
+048 <span class="comment">%  parseoptions(defaultoptions,'int','yes',opt) </span>
+049    
+050 <span class="comment">% History </span>
+051 <span class="comment">% by pab 14.05.2003 </span>
+052 <span class="comment">% based on MATLAB's optimset </span>
+053  
+054 <span class="keyword">if</span> (nargin == 0)  
+055   <span class="comment">% Display help </span>
+056   help <a href="parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">parseoptions</a> 
+057   <span class="keyword">return</span>; 
+058 <span class="keyword">end</span> 
+059  
+060 <span class="comment">% Initialization </span>
+061 fnames = <span class="string">''</span>; 
+062  
+063 <span class="comment">% Legal functions names </span>
+064 ix = 1; 
+065 <span class="keyword">if</span> ((ix&lt;=nargin) &amp; (ischar(varargin{ix}))), 
+066   fnames = varargin{ix}; 
+067   ix = 2; 
+068 <span class="keyword">end</span> 
+069 <span class="keyword">if</span> ((ix&lt;=nargin) &amp; (isstruct(varargin{ix}))), 
+070   options = varargin{ix}; 
+071   ix = ix + 1; 
+072 <span class="keyword">else</span> 
+073   error(<span class="string">'Struct expected.'</span>) 
+074 <span class="keyword">end</span> 
+075  
+076 <span class="comment">% Legal parameter names </span>
+077 namesc = fieldnames(options); 
+078 names  = lower(strvcat(namesc{:})); 
+079  
+080 expectval = 0;         <span class="comment">% start expecting a name or stucture, not a value </span>
+081 <span class="keyword">while</span> ix &lt;= nargin 
+082   arg = varargin{ix}; 
+083   <span class="keyword">if</span> expectval 
+084     options   = setfield(options,namesc{iy},arg); 
+085     expectval = 0; 
+086   <span class="keyword">else</span> 
+087     <span class="keyword">switch</span> lower(class(arg)) 
+088       <span class="keyword">case</span> <span class="string">'char'</span>, 
+089     lowArg = strtok(lower(arg),<span class="string">'.'</span>);      <span class="comment">% Downcase and strip .m extensions </span>
+090     iy = <a href="#_sub1" class="code" title="sub  iy = findlname(arg,names,chkempty)">findlname</a>(lowArg,fnames,0);      <span class="comment">% Find legal function name </span>
+091     <span class="keyword">if</span> length(iy)==1, 
+092       opt1    = <a href="#_sub3" class="code" title="sub  options = defaultopt(fname)">defaultopt</a>(fnames(iy,:)); <span class="comment">% Get default options for function </span>
+093       options = <a href="#_sub2" class="code" title="sub  options = combineopt(options,newopts)">combineopt</a>(options,opt1); <span class="comment">% Combine with old options </span>
+094     <span class="keyword">else</span>,                                 
+095       iy = <a href="#_sub1" class="code" title="sub  iy = findlname(arg,names,chkempty)">findlname</a>(lowArg,names,1);     <span class="comment">% Find legal parameter name </span>
+096       <span class="keyword">if</span> isempty(iy),                     <span class="comment">% Illegal parameter name </span>
+097         ix = ix+1;                        <span class="comment">% Skip next input   </span>
+098       <span class="keyword">else</span> 
+099         expectval = 1;                    <span class="comment">% expect a value next </span>
+100       <span class="keyword">end</span> 
+101     <span class="keyword">end</span>   
+102       <span class="keyword">case</span> <span class="string">'struct'</span> 
+103     options = <a href="#_sub2" class="code" title="sub  options = combineopt(options,newopts)">combineopt</a>(options,arg); 
+104       <span class="keyword">otherwise</span> 
+105     error(sprintf(<span class="string">'Expected argument %d to be a string or a struct.'</span>, ix)); 
+106     <span class="keyword">end</span> 
+107   <span class="keyword">end</span> 
+108   ix=ix+1; 
+109 <span class="keyword">end</span> 
+110  
+111 <span class="keyword">if</span> expectval 
+112    error(sprintf(<span class="string">'Expected value for parameter '<span class="string"></span>'%s'<span class="string"></span>'.'</span>, arg)); 
+113 <span class="keyword">end</span> 
+114 <span class="keyword">return</span> 
+115  
+116 <span class="keyword">function</span> iy = <a name="_sub1" href="#_subfunctions" class="code">findlname</a>(arg,names,chkempty) 
+117 <span class="comment">% FINDLNAME find index to legal parameter name   </span>
+118  
+119 iy = strmatch(arg,names); 
+120 <span class="comment">%iy = find(strncmp(lowArg,fnames,2)); </span>
+121 Niy = length(iy); 
+122 <span class="keyword">if</span> Niy&lt;1 &amp; chkempty                      <span class="comment">% No matches </span>
+123   msg = [<span class="string">'Unrecognized parameter name '</span> arg <span class="string">'.'</span>]; 
+124   warning(msg); 
+125 <span class="keyword">elseif</span> Niy &gt; 1      <span class="comment">% More than one match </span>
+126   <span class="comment">% Find exact matches in case any names are subsets of others </span>
+127   k = strmatch(arg,names,<span class="string">'exact'</span>); 
+128   <span class="keyword">if</span> length(k) == 1 
+129     iy = k; 
+130   <span class="keyword">else</span> 
+131     msg = [<span class="string">'Ambiguous parameter name '</span> arg <span class="string">' ('</span>]; 
+132     <span class="keyword">for</span> k = iy' 
+133       msg = [msg <span class="string">', '</span> deblank(names(k,:))]; 
+134     <span class="keyword">end</span> 
+135     msg = [ msg <span class="string">').'</span>] 
+136     error(msg); 
+137   <span class="keyword">end</span> 
+138 <span class="keyword">end</span> 
+139 <span class="keyword">return</span> 
+140  
+141 <span class="keyword">function</span> options = <a name="_sub2" href="#_subfunctions" class="code">combineopt</a>(options,newopts) 
+142 <span class="comment">%COMBINEOPT combines an existing options structure </span>
+143 <span class="comment">%   OPTIONS with a new options structure NEWOPTS.  Any parameters in NEWOPTS </span>
+144 <span class="comment">%   with non-empty values overwrite the corresponding old parameters in </span>
+145 <span class="comment">%   OPTIONS.  </span>
+146  
+147 <span class="keyword">if</span> ~isempty(newopts)                      <span class="comment">% [] is a valid options argument </span>
+148   newNames    = fieldnames(newopts); 
+149   legalNames  = fieldnames(options); 
+150    
+151   [commonNames, ia, ib] = intersect(lower(newNames),lower(legalNames)); 
+152   <span class="keyword">if</span> isempty(ia), 
+153     <span class="keyword">return</span>; 
+154   <span class="keyword">end</span> 
+155   cval = struct2cell(newopts); 
+156   ind  = <a href="#_sub4" class="code" title="sub  ind = findNonEmptyCells(carray)">findNonEmptyCells</a>(cval(ia)); 
+157   <span class="keyword">if</span> any(ind) 
+158     val  = struct2cell(options); 
+159     val(ib(ind)) = cval(ia(ind)); 
+160     options = cell2struct(val,legalNames,1); 
+161   <span class="keyword">end</span> 
+162 <span class="keyword">end</span> 
+163 <span class="keyword">return</span> 
+164  
+165  
+166 <span class="keyword">function</span> options = <a name="_sub3" href="#_subfunctions" class="code">defaultopt</a>(fname) 
+167 <span class="comment">% DEFAULTOPT Get default OPTIONS structure from the function FNAME </span>
+168  
+169 fname = deblank(fname); 
+170  
+171 <span class="keyword">if</span> ~exist(fname) 
+172   msg = [<span class="string">'No default options available: the function '</span> fname <span class="string">' does not exist on the path.'</span>]; 
+173   error(msg) 
+174 <span class="keyword">end</span> 
+175 <span class="keyword">try</span>  
+176   options = feval(fname,<span class="string">'defaults'</span>); 
+177 <span class="keyword">catch</span> 
+178   msg = [<span class="string">'No default options available for the function '</span> fname <span class="string">'.'</span>]; 
+179   error(msg) 
+180 <span class="keyword">end</span> 
+181 <span class="keyword">return</span> 
+182  
+183 <span class="keyword">function</span> ind = <a name="_sub4" href="#_subfunctions" class="code">findNonEmptyCells</a>(carray) 
+184   <span class="keyword">try</span>, <span class="comment">% matlab 5.3 or higher </span>
+185     ind = find(~cellfun(<span class="string">'isempty'</span>,carray)).'; 
+186   <span class="keyword">catch</span> 
+187     <span class="comment">% Slow  </span>
+188     n = length(carray); 
+189     ind1 = zeros(1,n); 
+190     <span class="keyword">for</span> ix = 1:n 
+191       ind1(ix) = isempty(carray{ix}); 
+192     <span class="keyword">end</span> 
+193     ind = find(~ind1); 
+194   <span class="keyword">end</span> 
+195   <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

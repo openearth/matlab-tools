@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dtp2arfm_sid</title>
+  <meta name="keywords" content="dtp2arfm_sid">
+  <meta name="description" content="  Asymmetric RFM from discrete TP with side information.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; dtp2arfm_sid.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dtp2arfm_sid
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Asymmetric RFM from discrete TP with side information.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [RFM,RFM0,res,RFMsid,RFM0sid,res_y] = dtp2arfm_sid(x,y,n,ny,def) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dtp2arfm_sid.html" class="code" title="  Asymmetric RFM from discrete TP with side information.">DTP2ARFM_SID</a>  Asymmetric RFM from discrete TP with side information.
+ 
+  CALL:  [RFM,RFM0,res,RFMsid,RFM0sid,res_sid] = <a href="dtp2arfm_sid.html" class="code" title="  Asymmetric RFM from discrete TP with side information.">dtp2arfm_sid</a>(x,y,n,r,def)
+ 
+  RFM     = Rainflow Matrix (residual included).    [n,n]
+  RFM0    = Rainflow matrix (without resudual).     [n,n]
+  res     = Residual.                               [2*n,1]
+  RFMsid  = Rainflow Matrix with side information (residual included).    
+                                                    {r,r1}[n,n]
+  RFMsid  = Rainflow Matrix with side information (without resudual).
+                                                    {r,r1}[n,n]
+  res_sid = Residual for side information.         [2*n,1]
+ 
+  x     = Turning points (taking values 1,...,n).    [T,1]
+  y     = Side information (taking values 1,...,r).  [T,1]
+  n     = Number of <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>.
+  r     = Number of <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> in side information..
+  def   = Which type of side information
+           1: Mark min &amp; max, r1=r
+           2: Mark when counted, r1=1
+  RFM0  = Rainflow matrix (without resudual).     [n,n]
+  res   = Residual.                               [2*n,1]
+ 
+  Example: (Two processes as in Example 4.1 in PhD thesis)
+    P = [0.9 0.1; 0.05 0.95];
+    param = [-1 1 32]; u = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+    F1 = <a href="../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.4 -0.3],0.15,1);
+    F2 = <a href="../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[0.3 0.4],0.15,1);
+    [x,z] = <a href="../../wafo/wsim/smctpsim.html" class="code" title="  Simulates a switching Markov chain of turning points,">smctpsim</a>(P,{F1 F1'; F2 F2'},10000); % Two regime states
+    [RFM,RFM0,res,RFMsid,RFM0sid,res_sid] = <a href="dtp2arfm_sid.html" class="code" title="  Asymmetric RFM from discrete TP with side information.">dtp2arfm_sid</a>(x,z,32,2,1);
+    figure(1),<a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,RFMsid,3)
+    RFM1 = RFMsid{1,1}+RFMsid{1,2}+RFMsid{2,1}+RFMsid{2,2};
+    figure(2),<a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{RFM RFM1},3) % Shall be identical
+ 
+  See also  <a href="dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>, <a href="../../wafo/markov/smctp2arfm.html" class="code" title="  Calculates the asymmetric rainflow matrix for a SMCTP.">smctp2arfm</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dtp2rfm_sid.html" class="code" title=" [RFM,RFM0,res,RFMsid,RFM0sid,res_sid] = dtp2rfm_sid(x,y,n,ny,def)">dtp2rfm_sid</a></li></TD>
+<TD>  Rainflow matrix from discrete turning points with side information.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [RFM,RFM0,res,RFMsid,RFM0sid,res_y] = <a name="_sub0" href="#_subfunctions" class="code">dtp2arfm_sid</a>(x,y,n,ny,def)
+002 <span class="comment">%DTP2ARFM_SID  Asymmetric RFM from discrete TP with side information.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [RFM,RFM0,res,RFMsid,RFM0sid,res_sid] = dtp2arfm_sid(x,y,n,r,def)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">% RFM     = Rainflow Matrix (residual included).    [n,n]</span>
+007 <span class="comment">% RFM0    = Rainflow matrix (without resudual).     [n,n]</span>
+008 <span class="comment">% res     = Residual.                               [2*n,1]</span>
+009 <span class="comment">% RFMsid  = Rainflow Matrix with side information (residual included).    </span>
+010 <span class="comment">%                                                   {r,r1}[n,n]</span>
+011 <span class="comment">% RFMsid  = Rainflow Matrix with side information (without resudual).</span>
+012 <span class="comment">%                                                   {r,r1}[n,n]</span>
+013 <span class="comment">% res_sid = Residual for side information.         [2*n,1]</span>
+014 <span class="comment">%</span>
+015 <span class="comment">% x     = Turning points (taking values 1,...,n).    [T,1]</span>
+016 <span class="comment">% y     = Side information (taking values 1,...,r).  [T,1]</span>
+017 <span class="comment">% n     = Number of levels.</span>
+018 <span class="comment">% r     = Number of levels in side information..</span>
+019 <span class="comment">% def   = Which type of side information</span>
+020 <span class="comment">%          1: Mark min &amp; max, r1=r</span>
+021 <span class="comment">%          2: Mark when counted, r1=1</span>
+022 <span class="comment">% RFM0  = Rainflow matrix (without resudual).     [n,n]</span>
+023 <span class="comment">% res   = Residual.                               [2*n,1]</span>
+024 <span class="comment">%</span>
+025 <span class="comment">% Example: (Two processes as in Example 4.1 in PhD thesis)</span>
+026 <span class="comment">%   P = [0.9 0.1; 0.05 0.95];</span>
+027 <span class="comment">%   param = [-1 1 32]; u = levels(param);</span>
+028 <span class="comment">%   F1 = mktestmat(param,[-0.4 -0.3],0.15,1);</span>
+029 <span class="comment">%   F2 = mktestmat(param,[0.3 0.4],0.15,1);</span>
+030 <span class="comment">%   [x,z] = smctpsim(P,{F1 F1'; F2 F2'},10000); <span class="comment">% Two regime states</span></span>
+031 <span class="comment">%   [RFM,RFM0,res,RFMsid,RFM0sid,res_sid] = dtp2arfm_sid(x,z,32,2,1);</span>
+032 <span class="comment">%   figure(1),cmatplot(u,u,RFMsid,3)</span>
+033 <span class="comment">%   RFM1 = RFMsid{1,1}+RFMsid{1,2}+RFMsid{2,1}+RFMsid{2,2};</span>
+034 <span class="comment">%   figure(2),cmatplot(u,u,{RFM RFM1},3) <span class="comment">% Shall be identical</span></span>
+035 <span class="comment">%</span>
+036 <span class="comment">% See also  dtp2arfm, smctp2arfm</span>
+037 
+038 <span class="comment">% References:</span>
+039 <span class="comment">%  </span>
+040 <span class="comment">%  P. Johannesson (1999):</span>
+041 <span class="comment">%  Rainflow Analysis of Switching Markov Loads.</span>
+042 <span class="comment">%  PhD thesis, Mathematical Statistics, Centre for Mathematical Sciences,</span>
+043 <span class="comment">%  Lund Institute of Technology.</span>
+044   
+045 <span class="comment">% Tested  on Matlab  5.3</span>
+046 <span class="comment">%</span>
+047 <span class="comment">% History:</span>
+048 <span class="comment">% Revised by PJ  09-Apr-2001</span>
+049 <span class="comment">%   updated for WAFO</span>
+050 <span class="comment">% Created by PJ (Pär Johannesson) 1998</span>
+051 <span class="comment">% Copyright (c) 1997-1998 by Pär Johannesson</span>
+052 <span class="comment">% Toolbox: Rainflow Cycles for Switching Processes V.1.1, 22-Jan-1998</span>
+053 
+054 ni = nargin;
+055 no = nargout;
+056 error(nargchk(5,5,ni));
+057 
+058 RFM0 = zeros(n);
+059 res0 = [];
+060 <span class="keyword">if</span> def == 1
+061   RFM0sid = cell(ny,ny);
+062   <span class="keyword">for</span> iy=1:ny
+063     <span class="keyword">for</span> jy=1:ny
+064       RFM0sid{iy,jy} = RFM0;
+065     <span class="keyword">end</span>
+066   <span class="keyword">end</span>
+067   res0_y = [];
+068 <span class="keyword">end</span>
+069 <span class="keyword">if</span> def == 2
+070   RFM0sid = cell(ny,1);
+071   <span class="keyword">for</span> iy=1:ny
+072     RFM0sid{iy,1} = RFM0;
+073   <span class="keyword">end</span>
+074 <span class="keyword">end</span>
+075 
+076 
+077 nres = length(res0);
+078 res = zeros(2*n+1,1);
+079 res(1:nres) = res0;
+080 res_y = zeros(2*n+1,1);
+081 res_y(1:nres) = res0_y;
+082 
+083 <span class="comment">% Calculate RFM and res</span>
+084 
+085 <span class="keyword">for</span> k = 1:length(x)-1
+086   nres = nres+1;
+087   res(nres) = x(k);
+088   <span class="keyword">if</span> def == 1
+089     res_y(nres) = y(k+1);
+090   <span class="keyword">end</span>  
+091   cycleFound = 1;
+092   <span class="keyword">while</span> cycleFound==1 &amp; nres&gt;=4
+093     A = sort([res(nres-1) res(nres-2)]);
+094     B = sort([res(nres) res(nres-3)]);
+095     <span class="keyword">if</span> A(1) &gt;= B(1) &amp; A(2) &lt;= B(2)
+096       i = res(nres-2);
+097       j = res(nres-1);
+098       RFM0(i,j) = RFM0(i,j) + 1;
+099       <span class="keyword">if</span> def == 1
+100         s1 = res_y(nres-2);
+101         s2 = res_y(nres-1);
+102         RFM0sid{s1,s2}(i,j) = RFM0sid{s1,s2}(i,j) + 1;
+103         res_y(nres-2) = res_y(nres);
+104       <span class="keyword">end</span>
+105       <span class="keyword">if</span> def == 2
+106         s = y(k+1);
+107         RFM0sid{s,1}(i,j) = RFM0sid{s,1}(i,j) + 1;
+108       <span class="keyword">end</span>
+109 
+110       res(nres-2) = res(nres);
+111       nres = nres-2;
+112     <span class="keyword">else</span>
+113       cycleFound = 0;
+114     <span class="keyword">end</span>
+115   <span class="keyword">end</span>
+116 <span class="keyword">end</span>
+117 
+118 <span class="comment">% Residual</span>
+119 
+120 res = res(1:nres);
+121 <span class="keyword">if</span> def == 1
+122   res_y = res_y(1:nres);
+123 <span class="keyword">end</span>
+124 
+125 <span class="comment">% Calculate RFM = RFM0 + 'cycles in res'</span>
+126 
+127 RFM = RFM0;
+128 <span class="keyword">if</span> def == 1 | def == 2
+129   RFMsid = RFM0sid;
+130 <span class="keyword">end</span>
+131 
+132 <span class="keyword">for</span> k = 1:2:nres-1
+133   i = res(k);
+134   j = res(k+1);
+135   RFM(i,j) = RFM(i,j) + 1;
+136   <span class="keyword">if</span> def == 1
+137     s1 = res_y(k);
+138     s2 = res_y(k+1);
+139     RFM0sid{s1,s2}(i,j) = RFM0sid{s1,s2}(i,j) + 1;
+140   <span class="keyword">end</span>
+141   <span class="keyword">if</span> def == 2
+142     s = y(<span class="keyword">end</span>);
+143     RFM0sid{s,1}(i,j) = RFM0sid{s,1}(i,j) + 1;
+144   <span class="keyword">end</span>
+145 <span class="keyword">end</span>
+146 
+147 
+148</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

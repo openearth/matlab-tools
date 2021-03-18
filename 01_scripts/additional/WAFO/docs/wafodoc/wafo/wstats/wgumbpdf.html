@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wgumbpdf</title>
+  <meta name="keywords" content="wgumbpdf">
+  <meta name="description" content=" Gumbel probability density function.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wgumbpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wgumbpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Gumbel probability density function.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wgumbpdf(x,a,b,trunc) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wgumbpdf.html" class="code" title=" Gumbel probability density function.">WGUMBPDF</a> Gumbel probability density function.
+ 
+  CALL:  f = <a href="wgumbpdf.html" class="code" title=" Gumbel probability density function.">wgumbpdf</a>(x,a,b,trunc) 
+    
+    f    = Gumbel pdf evaluated at x
+   a, b  = parameters of the Gumbel distribution.
+   trunc = 0  regular gumbel distribution (default)
+           1  truncated gumbel distribution 
+ 
+   Gumbel PDF  is given by :                           
+       f(x) = exp(-(x-b)/a)*exp(-exp(-(x-b)/a))/a    -inf &lt; x &lt; inf, a&gt;0
+   or the truncated
+       f(x) = exp(-(x-b)/a)*exp(-exp(-(x-b)/a))/a/(1-exp(-exp(b/a)))
+           0 &lt; x &lt; inf, a&gt;0 
+ 
+  Example: 
+    x = linspace(-4,8,200);
+    p1 = <a href="wgumbpdf.html" class="code" title=" Gumbel probability density function.">wgumbpdf</a>(x,2,0); p2 = <a href="wgumbpdf.html" class="code" title=" Gumbel probability density function.">wgumbpdf</a>(x,1,1);
+    plot(x,p1,x,p2)
+ 
+  See also  <a href="wgumbfit.html" class="code" title=" Parameter estimates for Gumbel data.">wgumbfit</a>, <a href="wgumbrnd.html" class="code" title=" Random matrices from a Gumbel distribution.">wgumbrnd</a>, <a href="wgumbcdf.html" class="code" title=" Gumbel cumulative distribution function.">wgumbcdf</a>, <a href="wgumbinv.html" class="code" title=" Inverse of the Gumbel distribution function.">wgumbinv</a>, <a href="wgumbstat.html" class="code" title=" Mean and variance for the Gumbel distribution.">wgumbstat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dfun.html" class="code" title=" y=dist2dfun(H,V)">dist2dfun</a></li></TD>
+<TD> is an internal function to dist2dcdf dist2dprb.</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dpdf.html" class="code" title=" y = dist2dpdf(v1,h1,phat)">dist2dpdf</a></li></TD>
+<TD> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dpdf.html" class="code" title=" y = mdist2dpdf(V,H,phat,condon)">mdist2dpdf</a></li></TD>
+<TD> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wgumbpdf</a>(x,a,b,trunc)
+002 <span class="comment">%WGUMBPDF Gumbel probability density function.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  f = wgumbpdf(x,a,b,trunc) </span>
+005 <span class="comment">%   </span>
+006 <span class="comment">%   f    = Gumbel pdf evaluated at x</span>
+007 <span class="comment">%  a, b  = parameters of the Gumbel distribution.</span>
+008 <span class="comment">%  trunc = 0  regular gumbel distribution (default)</span>
+009 <span class="comment">%          1  truncated gumbel distribution </span>
+010 <span class="comment">%</span>
+011 <span class="comment">%  Gumbel PDF  is given by :                           </span>
+012 <span class="comment">%      f(x) = exp(-(x-b)/a)*exp(-exp(-(x-b)/a))/a    -inf &lt; x &lt; inf, a&gt;0</span>
+013 <span class="comment">%  or the truncated</span>
+014 <span class="comment">%      f(x) = exp(-(x-b)/a)*exp(-exp(-(x-b)/a))/a/(1-exp(-exp(b/a)))</span>
+015 <span class="comment">%          0 &lt; x &lt; inf, a&gt;0 </span>
+016 <span class="comment">%</span>
+017 <span class="comment">% Example: </span>
+018 <span class="comment">%   x = linspace(-4,8,200);</span>
+019 <span class="comment">%   p1 = wgumbpdf(x,2,0); p2 = wgumbpdf(x,1,1);</span>
+020 <span class="comment">%   plot(x,p1,x,p2)</span>
+021 <span class="comment">%</span>
+022 <span class="comment">% See also  wgumbfit, wgumbrnd, wgumbcdf, wgumbinv, wgumbstat</span>
+023 
+024 <span class="comment">% Reference: </span>
+025 <span class="comment">%  Johnson  N.L., Kotz S. and Balakrishnan, N. (1994)</span>
+026 <span class="comment">%  Continuous Univariate Distributions, Volume 2. Wiley. </span>
+027 
+028 
+029 <span class="comment">%  tested on: matlab 5.2</span>
+030 <span class="comment">% history</span>
+031 <span class="comment">% revised pab 24.10.2000</span>
+032 <span class="comment">% - reimplemented comnsize</span>
+033 <span class="comment">% revised pab 8.11.1999</span>
+034 <span class="comment">% updated header info</span>
+035 <span class="comment">%   Per A. Brodtkorb 17.10.98</span>
+036 
+037 error(nargchk(3,4,nargin))
+038 <span class="keyword">if</span> nargin &lt; 4 | isempty(trunc),
+039     trunc=0; <span class="comment">% default value is not truncated</span>
+040 <span class="keyword">end</span>
+041 
+042 [errorcode x a b] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,a,b);
+043 <span class="keyword">if</span> errorcode &gt; 0
+044     error(<span class="string">'x, a and b must be of common size or scalar.'</span>);
+045 <span class="keyword">end</span>
+046 
+047 f = zeros(size(x));
+048 
+049 
+050 <span class="keyword">if</span> trunc,
+051   k = find(x &gt; 0 &amp; a&gt;0);
+052 <span class="keyword">else</span> 
+053   k = find(a&gt;0);
+054 <span class="keyword">end</span>
+055 
+056 <span class="keyword">if</span> any(k),
+057   tmp=exp(-(x(k) -b(k))./a(k)  );
+058   f(k) =  tmp.* exp(-tmp)./a(k);
+059   <span class="keyword">if</span> trunc,
+060     f(k)=f(k)./(1-exp(-exp(b(k)./a(k)  )));
+061   <span class="keyword">end</span>
+062 <span class="keyword">end</span>
+063 
+064 k1 = find(a &lt;= 0 );
+065 <span class="keyword">if</span> any(k1)
+066    tmp   = NaN;
+067    f(k1) = tmp(ones(size(k1)));
+068 <span class="keyword">end</span>
+069</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

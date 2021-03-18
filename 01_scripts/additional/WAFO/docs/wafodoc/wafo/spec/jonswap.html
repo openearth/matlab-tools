@@ -1,0 +1,411 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of jonswap</title>
+  <meta name="keywords" content="jonswap">
+  <meta name="description" content=" Calculates (and plots) a JONSWAP spectral density">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; jonswap.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>jonswap
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates (and plots) a JONSWAP spectral density</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> S1 = jonswap(w1,sdata,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> Calculates (and plots) a <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectral density
+ 
+  CALL:  S = <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(w,sdata,plotflag); 
+         S = <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(wc,sdata,plotflag); 
+ 
+    S     = a struct containing the spectral density. See <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>
+    w     = angular frequency        (default linspace(0,wc,257))
+    wc    = angular cutoff frequency (default 33/Tp)
+    sdata = [Hm0 Tp gamma sa sb A], where
+           Hm0   = significant wave height (default 7 (m))
+           Tp    = peak period (default 11 (sec))
+           gamma = peakedness factor determines the concentraton
+                   of the spectrum on the peak frequency,  1 &lt;= gamma &lt;= 7. 
+                   (default depending on Hm0, Tp, see below)
+           sa,sb = spectral width parameters (default 0.07 0.09)
+           A     = alpha, normalization factor, (default -1)
+                   A&lt;0 : A calculated by integration so that int S dw =Hm0^2/16
+                   A==0 : A = 5.061*Hm0^2/Tp^4*(1-0.287*log(gamma))  
+                   A&gt;0  : A = A
+        plotflag = 0, do not plot the spectrum (default).
+                   1, plot the spectrum.       
+ 
+   For zero values, NaN's or parameters not specified in DATA the
+   default values are used. 
+ 
+ 
+          S(w) = A*g^2/w^5*exp(-5/4(wp/w)^4)*j^exp(-.5*((w/wp-1)/s)^2)
+     where 
+          s   = sa w&lt;=wp 
+                sb w&gt;wp (wp = angular peak frequency)
+          j   = gamma,  (j=1, =&gt; Bretschneider spectrum) 
+ 
+   This spectrum is assumed to be especially suitable for the North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>, 
+   and does not represent a fully developed <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a>. It is a reasonable model for
+   wind generated <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> when 3.6*sqrt(Hm0) &lt; Tp &lt; 5*sqrt(Hm0) 
+   A standard value for gamma is 3.3. However, a more correct approach is 
+   to relate gamma to Hm0:
+         D = 0.036-0.0056*Tp/sqrt(Hm0);
+         gamma = exp(3.484*(1-0.1975*D*Tp^4/(Hm0^2)));
+   This parameterization is based on qualitative considerations of deep water
+   wave data from the North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>, see <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> et. al. (1984)
+   Here gamma is limited to 1..7.
+ 
+   The relation between the peak period and mean zero-upcrossing period 
+   may be approximated by
+          Tz = Tp/(1.30301-0.01698*gamma+0.12102/gamma)
+ 
+  Example:  % Bretschneider spectrum Hm0=7, Tp=11
+       S = <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>([],[0 0 1])
+ 
+  See also  <a href="pmspec.html" class="code" title=" Calculates (and plots) a Pierson-Moskowitz spectral density.">pmspec</a>, <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>, <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createspec.html" class="code" title=" S=createspec(stype,freqtype)">createspec</a></li></TD>
+<TD> Spectrum structure constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="getjonswappeakedness.html" class="code" title=" gam = getjonswappeakedness(Hm0,Tp)">getjonswappeakedness</a></li></TD>
+<TD> Peakedness factor Gamma given Hm0 and Tp for JONSWAP</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/gravity.html" class="code" title=" g=gravity(phi)">gravity</a></li></TD>
+<TD>  returns the constant acceleration of gravity</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/simpson.html" class="code" title=" [area,epsi,a,b] = simpson(x,f,dim)">simpson</a></li></TD>
+<TD> Numerical integration with the Simpson method</TD>
+</TR>
+<TR>
+<TD><li><a href="wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="demospec.html" class="code" title=" S=demospec(stype)">demospec</a></li></TD>
+<TD> Loads a precreated spectrum of chosen type</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/dirsp2chitwo.html" class="code" title=" [gam,bet,S12,S22]= dirsp2chitwo(s,w,L0,L2,th,h,eps,dthdw)">dirsp2chitwo</a></li></TD>
+<TD>  gives parameters in non-central CHI-TWO process for directional Stokes waves.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="mkdspec.html" class="code" title=" Snew=mkdspec(S,D,plotflag)">mkdspec</a></li></TD>
+<TD> Make a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/specq2lc.html" class="code" title=" [mu,fu,Fu,muG,mu1,mu2]= specq2lc(Spec,ds0,nb)">specq2lc</a></li></TD>
+<TD>  Saddlepoint approximation of the crossing intensity for the quadratic sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+<TR>
+<TD><li><a href="tmaspec.html" class="code" title=" S1=tmaspec(w1,sdata,h,plotflag)">tmaspec</a></li></TD>
+<TD> Calculates a JONSWAP spectral density for finite water depth</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig7.html" class="code" title=" wafofig7">wafofig7</a></li></TD>
+<TD>  Joint distribution (pdf) of crest wavelength, Lc, and crest amplitude, Ac</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig8.html" class="code" title=" wafofig8">wafofig8</a></li></TD>
+<TD>  Joint distribution (pdf) of crest wavelength, Lc, and crest amplitude, Ac for extremal waves</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> S1 = <a name="_sub0" href="#_subfunctions" class="code">jonswap</a>(w1,sdata,plotflag)
+002 <span class="comment">%JONSWAP Calculates (and plots) a JONSWAP spectral density</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  S = jonswap(w,sdata,plotflag); </span>
+005 <span class="comment">%        S = jonswap(wc,sdata,plotflag); </span>
+006 <span class="comment">%</span>
+007 <span class="comment">%   S     = a struct containing the spectral density. See datastructures</span>
+008 <span class="comment">%   w     = angular frequency        (default linspace(0,wc,257))</span>
+009 <span class="comment">%   wc    = angular cutoff frequency (default 33/Tp)</span>
+010 <span class="comment">%   sdata = [Hm0 Tp gamma sa sb A], where</span>
+011 <span class="comment">%          Hm0   = significant wave height (default 7 (m))</span>
+012 <span class="comment">%          Tp    = peak period (default 11 (sec))</span>
+013 <span class="comment">%          gamma = peakedness factor determines the concentraton</span>
+014 <span class="comment">%                  of the spectrum on the peak frequency,  1 &lt;= gamma &lt;= 7. </span>
+015 <span class="comment">%                  (default depending on Hm0, Tp, see below)</span>
+016 <span class="comment">%          sa,sb = spectral width parameters (default 0.07 0.09)</span>
+017 <span class="comment">%          A     = alpha, normalization factor, (default -1)</span>
+018 <span class="comment">%                  A&lt;0 : A calculated by integration so that int S dw =Hm0^2/16</span>
+019 <span class="comment">%                  A==0 : A = 5.061*Hm0^2/Tp^4*(1-0.287*log(gamma))  </span>
+020 <span class="comment">%                  A&gt;0  : A = A</span>
+021 <span class="comment">%       plotflag = 0, do not plot the spectrum (default).</span>
+022 <span class="comment">%                  1, plot the spectrum.       </span>
+023 <span class="comment">%</span>
+024 <span class="comment">%  For zero values, NaN's or parameters not specified in DATA the</span>
+025 <span class="comment">%  default values are used. </span>
+026 <span class="comment">%</span>
+027 <span class="comment">%</span>
+028 <span class="comment">%         S(w) = A*g^2/w^5*exp(-5/4(wp/w)^4)*j^exp(-.5*((w/wp-1)/s)^2)</span>
+029 <span class="comment">%    where </span>
+030 <span class="comment">%         s   = sa w&lt;=wp </span>
+031 <span class="comment">%               sb w&gt;wp (wp = angular peak frequency)</span>
+032 <span class="comment">%         j   = gamma,  (j=1, =&gt; Bretschneider spectrum) </span>
+033 <span class="comment">%</span>
+034 <span class="comment">%  This spectrum is assumed to be especially suitable for the North Sea, </span>
+035 <span class="comment">%  and does not represent a fully developed sea. It is a reasonable model for</span>
+036 <span class="comment">%  wind generated sea when 3.6*sqrt(Hm0) &lt; Tp &lt; 5*sqrt(Hm0) </span>
+037 <span class="comment">%  A standard value for gamma is 3.3. However, a more correct approach is </span>
+038 <span class="comment">%  to relate gamma to Hm0:</span>
+039 <span class="comment">%        D = 0.036-0.0056*Tp/sqrt(Hm0);</span>
+040 <span class="comment">%        gamma = exp(3.484*(1-0.1975*D*Tp^4/(Hm0^2)));</span>
+041 <span class="comment">%  This parameterization is based on qualitative considerations of deep water</span>
+042 <span class="comment">%  wave data from the North Sea, see Torsethaugen et. al. (1984)</span>
+043 <span class="comment">%  Here gamma is limited to 1..7.</span>
+044 <span class="comment">%</span>
+045 <span class="comment">%  The relation between the peak period and mean zero-upcrossing period </span>
+046 <span class="comment">%  may be approximated by</span>
+047 <span class="comment">%         Tz = Tp/(1.30301-0.01698*gamma+0.12102/gamma)</span>
+048 <span class="comment">%</span>
+049 <span class="comment">% Example:  <span class="comment">% Bretschneider spectrum Hm0=7, Tp=11</span></span>
+050 <span class="comment">%      S = jonswap([],[0 0 1])</span>
+051 <span class="comment">%</span>
+052 <span class="comment">% See also  pmspec, torsethaugen, simpson</span>
+053 
+054 <span class="comment">% References:</span>
+055 <span class="comment">% Torsethaugen et al. (1984)</span>
+056 <span class="comment">% Characteristica for extreme Sea States on the Norwegian continental shelf. </span>
+057 <span class="comment">% Report No. STF60 A84123. Norwegian Hydrodyn. Lab., Trondheim</span>
+058 <span class="comment">%</span>
+059 <span class="comment">% Hasselman et al. (1973)</span>
+060 <span class="comment">% Measurements of Wind-Wave Growth and Swell Decay during the Joint</span>
+061 <span class="comment">% North Sea Project (JONSWAP). </span>
+062 <span class="comment">% Ergansungsheft, Reihe A(8), Nr. 12, Deutschen Hydrografischen Zeitschrift.</span>
+063 
+064 
+065 <span class="comment">% Tested on: matlab 6.0, 5.3</span>
+066 <span class="comment">% History:</span>
+067 <span class="comment">% revised pab June 2005</span>
+068 <span class="comment">% -fixed a bug in help header: the jonswap range is now correct</span>
+069 <span class="comment">% revised pab 11jan2004</span>
+070 <span class="comment">% - replaced code with call to getjonswappeakedness  </span>
+071 <span class="comment">% revised jr 22.08.2001</span>
+072 <span class="comment">% - correction in formula for S(w) in help: j^exp(-.5*((w-wp)/s*wp)^2) </span>
+073 <span class="comment">%   (the first minus sign added)</span>
+074 <span class="comment">% revised pab 01.04.2001 </span>
+075 <span class="comment">% - added wc to input</span>
+076 <span class="comment">% revised jr 30.10 2000</span>
+077 <span class="comment">%   - changed 'data' to 'sdata' in the function call</span>
+078 <span class="comment">% revised pab 20.09.2000 </span>
+079 <span class="comment">%   - changed default w: made it dependent on Tp</span>
+080 <span class="comment">% revised es 25.05.00 </span>
+081 <span class="comment">%   - revision of help text  </span>
+082 <span class="comment">% revised pab 16.02.2000</span>
+083 <span class="comment">%  - fixed a bug for sa,sb and the automatic calculation of gamma.</span>
+084 <span class="comment">%  - added sa, sb, A=alpha to data input </span>
+085 <span class="comment">%  - restricted values of gamma to 1..7</span>
+086 <span class="comment">% revised by pab 01.12.99</span>
+087 <span class="comment">%  added gamma to data input</span>
+088 <span class="comment">% revised by pab 11.08.99</span>
+089 <span class="comment">% changed so that parameters are only dependent on the </span>
+090 <span class="comment">% seastate parameters Hm0 and Tp.</span>
+091 <span class="comment">% also checks if Hm0 and Tp are reasonable.</span>
+092 
+093 
+094 <span class="comment">%NOTE: In order to calculate the short term statistics of the response,</span>
+095 <span class="comment">%      it is extremely important that the resolution of the transfer</span>
+096 <span class="comment">%      function is sufficiently good. In addition, the transfer function</span>
+097 <span class="comment">%      must cover a sufficietn range of wave periods, especially in the</span>
+098 <span class="comment">%      range where the wave spectrum contains most of its</span>
+099 <span class="comment">%      energy. VIOLATION OF THIS MAY LEAD TO MEANINGLESS RESULTS FROM THE </span>
+100 <span class="comment">%      CALCULATIONS OF SHORT TERM STATISTICS. The highest wave period</span>
+101 <span class="comment">%      should therefore be at least 2.5 to 3 times the highest peak</span>
+102 <span class="comment">%      period in the transfer function. The lowest period should be selected </span>
+103 <span class="comment">%      so that the transfer function value is low. This low range is </span>
+104 <span class="comment">%      especially important when studying velocities and accelerations.</span>
+105 
+106 monitor=0; 
+107 
+108 <span class="keyword">if</span> nargin&lt;3|isempty(plotflag),  plotflag=0;<span class="keyword">end</span>
+109 
+110 Hm0=7;Tp=11; gam=0; sa=0.07; sb=0.09; A=-1;<span class="comment">% default values</span>
+111 data2=[Hm0 Tp gam sa sb A];
+112 nd2=length(data2);
+113 <span class="keyword">if</span> (nargin&gt;1) &amp; ~isempty(sdata), 
+114   nd=length(sdata); 
+115   ind=find(~isnan(sdata(1:min(nd,nd2))));
+116   <span class="keyword">if</span> any(ind) <span class="comment">% replace default values with those from input data</span>
+117     data2(ind)=sdata(ind);
+118   <span class="keyword">end</span>
+119 <span class="keyword">end</span>
+120 <span class="keyword">if</span> (nd2&gt;0) &amp; (data2(1)&gt;0),
+121   Hm0 = data2(1);
+122 <span class="keyword">end</span>
+123 <span class="keyword">if</span> (nd2&gt;1) &amp; (data2(2)&gt;0),
+124   Tp = data2(2);
+125 <span class="keyword">end</span>
+126 <span class="keyword">if</span> (nd2&gt;2) &amp; (data2(3)&gt;=1) &amp; (data2(3)&lt;=7), 
+127   gam = data2(3);
+128 <span class="keyword">end</span>
+129 <span class="keyword">if</span> (nd2&gt;3) &amp; (data2(4)&gt;0),
+130   sa = data2(4);
+131 <span class="keyword">end</span>
+132 <span class="keyword">if</span> (nd2&gt;4) &amp; (data2(5)&gt;0), 
+133   sb = data2(5);
+134 <span class="keyword">end</span>
+135 <span class="keyword">if</span> (nd2&gt;5) ,
+136   A = data2(6);
+137 <span class="keyword">end</span>
+138 
+139 w = [];
+140 <span class="keyword">if</span> nargin&lt;1|isempty(w1), 
+141   wc = 33/Tp;
+142 <span class="keyword">elseif</span> length(w1)==1,
+143   wc = w1; 
+144 <span class="keyword">else</span>
+145   w = w1 ;
+146 <span class="keyword">end</span>
+147 nw = 257;
+148 <span class="keyword">if</span> isempty(w), 
+149   w = linspace(0,wc,nw).';
+150 <span class="keyword">end</span>
+151 
+152 
+153 n=length(w);
+154 S1=<a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>;
+155 S1.S=zeros(n,1);
+156 S1.w=w(:);
+157 S1.norm=0; <span class="comment">% The spectrum is not normalized</span>
+158 S1.note=[<span class="string">'JONSWAP, Hm0 = '</span> num2str(Hm0)  <span class="string">', Tp = '</span> num2str(Tp)];
+159 
+160 M=4;
+161 N=5;
+162 wp=2*pi/Tp;
+163 
+164 
+165 <span class="keyword">if</span> gam&lt;1
+166   gam = <a href="getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a>(Hm0,Tp);
+167 <span class="keyword">end</span>
+168 S1.note=[S1.note <span class="string">', gamma = '</span> num2str(gam)];
+169 <span class="comment">%end</span>
+170 
+171 
+172 
+173 <span class="keyword">if</span> Tp&gt;5*sqrt(Hm0) | Tp&lt;3.6*sqrt(Hm0)
+174   disp(<span class="string">'Warning: Hm0,Tp is outside the JONSWAP range'</span>)
+175   disp(<span class="string">'The validity of the spectral density is questionable'</span>)
+176 <span class="keyword">end</span>
+177 <span class="keyword">if</span> gam&gt;7|gam&lt;1
+178   disp(<span class="string">'Warning: gamma is outside the valid range'</span>)
+179   disp(<span class="string">'The validity of the spectral density is questionable'</span>)
+180 <span class="keyword">end</span>
+181 
+182 
+183 <span class="comment">% for w&gt;wp</span>
+184 k=(w&gt;wp);
+185 S1.S(k)=1./(w(k).^N).*(gam.^(exp(-(w(k)/wp-1).^2 <span class="keyword">...</span>
+186                 /(2*sb^2)))).*exp(-N/M*(wp./w(k)).^M);
+187 <span class="comment">% for 0&lt;w&lt;=wp</span>
+188 k=~k;
+189 k(1)=k(1)*(w(1)&gt;0); <span class="comment">% avoid division by zero</span>
+190 S1.S(k)=1./(w(k).^N).*(gam.^(exp(-(w(k)/wp-1).^2 <span class="keyword">...</span>
+191     /(2*sa^2)))).*exp(-N/M*(wp./w(k)).^M);
+192 
+193 
+194 g=<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>; <span class="comment">% acceleration of gravity        </span>
+195 
+196 <span class="keyword">if</span> A&lt;0, <span class="comment">% normalizing by integration</span>
+197   A=(Hm0/g)^2/16/<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(w,S1.S);<span class="comment">% make sure m0=Hm0^2/16=int S(w)dw</span>
+198 <span class="keyword">elseif</span> A==0,<span class="comment">% original normalization</span>
+199   <span class="comment">% NOTE: that  Hm0^2/16 generally is not equal to intS(w)dw</span>
+200   <span class="comment">%       with this definition of A if sa or sb are changed from the</span>
+201   <span class="comment">%       default values</span>
+202   A=5.061*Hm0^2/Tp^4*(1-0.287*log(gam)); <span class="comment">% approx D</span>
+203 <span class="keyword">end</span>
+204   
+205 S1.S=S1.S*A*g^2; <span class="comment">%normalization</span>
+206 
+207 <span class="keyword">if</span> monitor
+208   D=max(0,0.036-0.0056*Tp/sqrt(Hm0)); <span class="comment">% approx 5.061*Hm0^2/Tp^4*(1-0.287*log(gam));</span>
+209   disp([<span class="string">'sa, sb       = '</span> num2str([sa sb])])
+210   disp([<span class="string">'alpha, gamma = '</span> num2str([A gam])])
+211   disp([<span class="string">'Hm0, Tp      = '</span> num2str([Hm0 Tp])])
+212   disp([<span class="string">'D            = '</span> num2str(D)])
+213 <span class="keyword">end</span>
+214 
+215 <span class="keyword">if</span> plotflag
+216   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S1,plotflag)
+217 <span class="keyword">end</span>
+218</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

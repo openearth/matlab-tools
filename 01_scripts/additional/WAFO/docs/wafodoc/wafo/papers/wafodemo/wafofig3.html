@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafofig3</title>
+  <meta name="keywords" content="wafofig3">
+  <meta name="description" content="  Probability density distributions (pdf) of wave period, Tt,">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">wafodemo</a> &gt; wafofig3.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\wafodemo&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>wafofig3
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>  Probability density distributions (pdf) of wave period, Tt,</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> wafofig3 </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="wafofig3.html" class="code" title="  Probability density distributions (pdf) of wave period, Tt,">WAFOFIG3</a>  Probability density distributions (pdf) of wave period, Tt,
+            i.e., down-to-upcrossing:
+            Theoretical pdf given the theoretical spectral density, S (solid), 
+            theoretical pdf given the estimated spectral density from
+            the simulated data, Sest (green dash-dot), and
+            a kernel density estimate from the simulated data (red dash).
+            The histogram shows the wave periods extracted from simulated 
+            data.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2wa.html" class="code" title=" [T, index,ind] = dat2wa(xn,h,pdef,wdef,rate)">dat2wa</a></li></TD>
+<TD> Extracts sequence of wavelengths from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/kdebin.html" class="code" title=" f = kdebin(A,options,xlo,xup)">kdebin</a></li></TD>
+<TD> Binned Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/kdeoptset.html" class="code" title=" options = kdeoptset(varargin)">kdeoptset</a></li></TD>
+<TD> Create or alter KDE OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2thpdf.html" class="code" title=" f = spec2thpdf(spec,utc,def,paramt,h,options,plotflag)">spec2thpdf</a></li></TD>
+<TD> Joint density of amplitude and period/wave-length characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/wafostamp.html" class="code" title=" [H,ax]=wafostamp(varargin)">wafostamp</a></li></TD>
+<TD> Prints a caption "made by WAFO" in current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/whisto.html" class="code" title=" binwidth = whisto(x,N,odd,scale,lintype)">whisto</a></li></TD>
+<TD> Plots a histogram</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">wafofig3</a>
+002 <span class="comment">% WAFOFIG3  Probability density distributions (pdf) of wave period, Tt,</span>
+003 <span class="comment">%           i.e., down-to-upcrossing:</span>
+004 <span class="comment">%           Theoretical pdf given the theoretical spectral density, S (solid), </span>
+005 <span class="comment">%           theoretical pdf given the estimated spectral density from</span>
+006 <span class="comment">%           the simulated data, Sest (green dash-dot), and</span>
+007 <span class="comment">%           a kernel density estimate from the simulated data (red dash).</span>
+008 <span class="comment">%           The histogram shows the wave periods extracted from simulated </span>
+009 <span class="comment">%           data.</span>
+010 <span class="comment">%</span>
+011 
+012 <span class="comment">% Revised pab Feb2005</span>
+013 <span class="comment">% -updated call to kdebin and spec2thpdf</span>
+014 <span class="keyword">global</span>  WAFOFIGNUM
+015 
+016 <span class="keyword">if</span> isempty(WAFOFIGNUM)
+017   disp(<span class="string">'You must start wafodemo in order to run this script'</span>)
+018   clear <span class="keyword">global</span> WAFOFIGNUM
+019   <span class="keyword">return</span>
+020 <span class="keyword">end</span>
+021 
+022 <span class="keyword">global</span> xt u rate
+023 <span class="keyword">global</span> St Ste Tt fTt fTte Np nit speed  
+024 <span class="keyword">global</span> kdeTt kernel hs L2
+025 
+026 <span class="keyword">if</span> nit&lt;0
+027   opt = <a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(<span class="string">'method'</span>,abs(nit),<span class="string">'speed'</span>,speed);
+028 <span class="keyword">else</span>
+029   opt = <a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(<span class="string">'method'</span>,0,<span class="string">'nit'</span>,(nit),<span class="string">'speed'</span>,speed);
+030 <span class="keyword">end</span>
+031 
+032 <span class="comment">% Only need to calculate Globals which is not empty</span>
+033 <span class="keyword">if</span> isempty(Tt)
+034   Tt=<a href="../../../wafo/onedim/dat2wa.html" class="code" title=" Extracts sequence of wavelengths from data.">dat2wa</a>(xt,u,<span class="string">'d2u'</span>,<span class="string">'dw'</span>,rate);
+035 <span class="keyword">end</span>
+036 <span class="keyword">if</span> isempty(fTt)
+037   fTt = <a href="../../../wafo/trgauss/spec2thpdf.html" class="code" title=" Joint density of amplitude and period/wave-length characteristics ">spec2thpdf</a>(St,u,<span class="string">'Tt'</span>,[0 11 Np],[],opt);
+038 <span class="keyword">end</span>
+039 <span class="keyword">if</span> isempty(fTte)
+040   fTte = <a href="../../../wafo/trgauss/spec2thpdf.html" class="code" title=" Joint density of amplitude and period/wave-length characteristics ">spec2thpdf</a>(Ste,u,<span class="string">'Tt'</span>,[0 11 Np],[],opt);
+041 <span class="keyword">end</span>
+042 <span class="keyword">if</span> isempty(kdeTt)
+043   kopt = <a href="../../../wafo/kdetools/kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>(<span class="string">'kernel'</span>,kernel,<span class="string">'hs'</span>,hs,<span class="string">'L2'</span>,L2);
+044   kdeTt=<a href="../../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>(Tt,kopt);
+045 <span class="keyword">end</span>
+046 <a href="../../../wafo/wstats/whisto.html" class="code" title=" Plots a histogram">whisto</a>(Tt,max(22,2*sqrt(length(Tt))),[],1)
+047 hold on
+048 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(kdeTt,<span class="string">'r--'</span>)
+049 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fTt,<span class="string">'-'</span>)
+050 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fTte,<span class="string">'g-.'</span>)
+051 hold off
+052 axis([0 inf 0 inf])
+053 
+054 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>(<span class="string">'Figure 3'</span>,<span class="string">'(ER)'</span>)</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

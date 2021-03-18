@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of armacov</title>
+  <meta name="keywords" content="armacov">
+  <meta name="description" content="   Computes the covariance function for an AR- or ARMA-model.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wdemos</a> &gt; <a href="index.html">rfcdemo1</a> &gt; armacov.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wdemos\rfcdemo1&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>armacov
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>   Computes the covariance function for an AR- or ARMA-model.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [r]=armacov(C,A,s2,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="armacov.html" class="code" title="   Computes the covariance function for an AR- or ARMA-model. ">ARMACOV</a>   Computes the covariance function for an AR- or ARMA-model. 
+    The process is governed by the system equation 
+      A(q) * x(t) = C(q) * sqrt(s2) * e(t)  
+  
+  r = <a href="armacov.html" class="code" title="   Computes the covariance function for an AR- or ARMA-model. ">armacov</a>(C,A,s2,n) 
+  
+  r   = Covariance function 
+  
+  C   = Coefficients in C-polynomials. [1 c_1 ... c_nc] 
+  A   = Coefficients in A-polynomials. [1 a_1 ... a_na] 
+  s2  = Innovation variance. 
+  n+1 = Number of calculated values. 
+  
+  Example: AR(2)-process. 
+    r = <a href="armacov.html" class="code" title="   Computes the covariance function for an AR- or ARMA-model. ">armacov</a>(1,[1 1 0.9],1,50); 
+    plot(0:50,r) 
+  Example: ARMA(4,2)-process. 
+    r = <a href="armacov.html" class="code" title="   Computes the covariance function for an AR- or ARMA-model. ">armacov</a>([1 0.05 -0.88],[1 -2.06 1.64 -0.98 0.41],4.84e-6,150); 
+    plot(0:150,r)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\inv.bi">inv</a></li></TD>
+<TD>           Matrix inverse.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [r]=<a name="_sub0" href="#_subfunctions" class="code">armacov</a>(C,A,s2,m) 
+002  
+003 <span class="comment">% ARMACOV   Computes the covariance function for an AR- or ARMA-model. </span>
+004 <span class="comment">%   The process is governed by the system equation </span>
+005 <span class="comment">%     A(q) * x(t) = C(q) * sqrt(s2) * e(t)  </span>
+006 <span class="comment">% </span>
+007 <span class="comment">% r = armacov(C,A,s2,n) </span>
+008 <span class="comment">% </span>
+009 <span class="comment">% r   = Covariance function </span>
+010 <span class="comment">% </span>
+011 <span class="comment">% C   = Coefficients in C-polynomials. [1 c_1 ... c_nc] </span>
+012 <span class="comment">% A   = Coefficients in A-polynomials. [1 a_1 ... a_na] </span>
+013 <span class="comment">% s2  = Innovation variance. </span>
+014 <span class="comment">% n+1 = Number of calculated values. </span>
+015 <span class="comment">% </span>
+016 <span class="comment">% Example: AR(2)-process. </span>
+017 <span class="comment">%   r = armacov(1,[1 1 0.9],1,50); </span>
+018 <span class="comment">%   plot(0:50,r) </span>
+019 <span class="comment">% Example: ARMA(4,2)-process. </span>
+020 <span class="comment">%   r = armacov([1 0.05 -0.88],[1 -2.06 1.64 -0.98 0.41],4.84e-6,150); </span>
+021 <span class="comment">%   plot(0:150,r) </span>
+022  
+023 <span class="comment">% Copyright (c) 1997 by Pär Johannesson </span>
+024 <span class="comment">% Toolbox: Rainflow Cycles for Switching Processes V.1.0, 2-Oct-1997 </span>
+025  
+026 p=length(A)-1; 
+027 q=length(C)-1; 
+028 n=max([p q]); 
+029 A1temp=[A zeros(1,n-p)]'; 
+030 C1temp=[C zeros(1,n-q)]'; 
+031 A2temp=A1temp; 
+032 A1=A1temp; 
+033 A2=zeros(n+1,1); 
+034 <span class="keyword">for</span> i=2:n+1 
+035    A1temp=[0;A1temp]; 
+036    A2temp=[A2temp;0]; 
+037    A1=[A1 A1temp(1:n+1,1)]; 
+038    A2=[A2 A2temp(i:n+i,1)]; 
+039 <span class="keyword">end</span> 
+040 A3=A1(1:q+1,1:q+1); 
+041 C1=C1temp; 
+042 <span class="keyword">for</span> i=2:q+1 
+043    C1temp=[C1temp;0]; 
+044    C1=[C1 C1temp(i:n+i,1)]; 
+045 <span class="keyword">end</span> 
+046 r=(inv(A1+A2)*C1*inv(A3)*C')'; 
+047 <span class="keyword">if</span> p&gt;0 
+048    <span class="keyword">for</span> i=n+2:m+1 
+049       r=[r -r(1,i-1:-1:i-p)*A(1,2:p+1)']; 
+050    <span class="keyword">end</span> 
+051 <span class="keyword">else</span> 
+052    r=[r zeros(1,m-length(r)+1)]; 
+053 <span class="keyword">end</span> 
+054 r=s2*r(1,1:m+1); 
+055  
+056  
+057</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

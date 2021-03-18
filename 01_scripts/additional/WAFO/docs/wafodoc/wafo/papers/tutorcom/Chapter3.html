@@ -1,0 +1,776 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Chapter3</title>
+  <meta name="keywords" content="Chapter3">
+  <meta name="description" content=" % CHAPTER3  Demonstrates distributions of wave characteristics">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">tutorcom</a> &gt; Chapter3.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\tutorcom&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>Chapter3
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> % CHAPTER3  Demonstrates distributions of wave characteristics</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> % <a href="Chapter3.html" class="code" title=" % CHAPTER3  Demonstrates distributions of wave characteristics ">CHAPTER3</a>  Demonstrates distributions of wave characteristics 
+  
+  <a href="Chapter3.html" class="code" title=" % CHAPTER3  Demonstrates distributions of wave characteristics ">Chapter3</a> contains the commands used in <a href="Chapter3.html" class="code" title=" % CHAPTER3  Demonstrates distributions of wave characteristics ">Chapter3</a> in the tutorial. 
+   
+  Some of the commands are edited for fast computation.  
+  Each set of commands is followed by a 'pause' command.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/wavemodels/cav76pdf.html" class="code" title=" f = cav76pdf(t,h,mom,g)">cav76pdf</a></li></TD>
+<TD> Cavanie et al. (1976) approximation of the density  (Tc,Ac)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2spec.html" class="code" title=" [S,fcut] = dat2spec(xn,varargin)">dat2spec</a></li></TD>
+<TD> Estimate one-sided spectral density from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2spec2.html" class="code" title=" S = dat2spec2(xn,L,g,plotflag,wdef,dT,chopOffHighFreq)">dat2spec2</a></li></TD>
+<TD> Estimate one-sided spectral density, version 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2steep.html" class="code" title=" [S , H,AC1,AT1,TFRONT1,TREAR1,z_ind2,xn2]=dat2steep(xx,rate,method)">dat2steep</a></li></TD>
+<TD> Extracts waveheights and steepnesses from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2tc.html" class="code" title=" [tc, ind, l_ind]=dat2tc(x,v,wdef)">dat2tc</a></li></TD>
+<TD> Extracts troughs and crests from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/dat2tr.html" class="code" title=" [g, test, cmax, irr, g2]= dat2tr(x,def,varargin);">dat2tr</a></li></TD>
+<TD> Estimate transformation, g, from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2wa.html" class="code" title=" [T, index,ind] = dat2wa(xn,h,pdef,wdef,rate)">dat2wa</a></li></TD>
+<TD> Extracts sequence of wavelengths from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/ecross.html" class="code" title=" t0 = ecross(t,f,ind,v)">ecross</a></li></TD>
+<TD> Extracts exact level v crossings</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/gaus2dat.html" class="code" title=" x = gaus2dat(xx,g)">gaus2dat</a></li></TD>
+<TD> Transforms  xx  using the inverse of transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/hermitetr.html" class="code" title=" [g ,t0]=hermitetr(x,data,def)">hermitetr</a></li></TD>
+<TD> Calculate transformation, g, proposed by Winterstein</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">jonswap</a></li></TD>
+<TD> Calculates (and plots) a JONSWAP spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/kde.html" class="code" title=" f = kde(A,options,varargin)">kde</a></li></TD>
+<TD> Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/kdebin.html" class="code" title=" f = kdebin(A,options,xlo,xup)">kdebin</a></li></TD>
+<TD> Binned Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/kdeoptset.html" class="code" title=" options = kdeoptset(varargin)">kdeoptset</a></li></TD>
+<TD> Create or alter KDE OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wavemodels/lh83pdf.html" class="code" title=" f = lh83pdf(t,h,mom,g)">lh83pdf</a></li></TD>
+<TD> Longuet-Higgins (1983) approximation of the density (Tc,Ac)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/mkdspec.html" class="code" title=" Snew=mkdspec(S,D,plotflag)">mkdspec</a></li></TD>
+<TD> Make a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">reconstruct</a></li></TD>
+<TD> reconstruct the spurious/missing points of timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/rotspec.html" class="code" title=" Snew=rotspec(S,phi,rotateGrid)">rotspec</a></li></TD>
+<TD> Rotate spectrum anti-clockwise around the origin.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/simpson.html" class="code" title=" [area,epsi,a,b] = simpson(x,f,dim)">simpson</a></li></TD>
+<TD> Numerical integration with the Simpson method</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/spec2bw.html" class="code" title=" bw = spec2bw(S,fact)">spec2bw</a></li></TD>
+<TD> Evaluates some spectral bandwidth and irregularity factors</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/spec2char.html" class="code" title=" [ch,R1,chtext,R]=spec2char(S,fact,T)">spec2char</a></li></TD>
+<TD>  Evaluates spectral characteristics and their covariance</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a></li></TD>
+<TD> Calculates joint density of Maximum, minimum and period.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/spec2mom.html" class="code" title=" [m,mtext] = spec2mom(S,nr,vari,even)">spec2mom</a></li></TD>
+<TD> Calculates spectral moments from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2skew.html" class="code" title=" [skew, kurt, ma, sa, Hs ,Hd]=spec2skew(S,h,method)">spec2skew</a></li></TD>
+<TD> Estimates the moments of 2'nd order non-linear waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2tccpdf.html" class="code" title=" [f] = spec2tccpdf(spec,utc,def,paramt,h1,h2,nit,speed,bound,plotflag)">spec2tccpdf</a></li></TD>
+<TD> Evaluates densities of wave period Tcc, wave lenght Lcc.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2thpdf.html" class="code" title=" f = spec2thpdf(spec,utc,def,paramt,h,options,plotflag)">spec2thpdf</a></li></TD>
+<TD> Joint density of amplitude and period/wave-length characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" [f] = spec2tpdf(spec,utc,def,paramt,h,nit,speed,bound,plotflag)">spec2tpdf</a></li></TD>
+<TD> Evaluates densities for crest-,trough-period, length.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/spreading.html" class="code" title=" D = spreading(th,type,th0,data,w,def)">spreading</a></li></TD>
+<TD> Directional spreading functions</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/spwaveplot.html" class="code" title=" spwaveplot(xx,varargin)">spwaveplot</a></li></TD>
+<TD> Plots specified waves from a timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/torsethaugen.html" class="code" title=" [S, Sw, Ss]=torsethaugen(w1,sdata,plotflag)">torsethaugen</a></li></TD>
+<TD> Calculates a double peaked (swell + wind) spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tp2mm.html" class="code" title=" [mM,Mm] = tp2mm(tp)">tp2mm</a></li></TD>
+<TD> Calculates min2Max and Max2min cycles from a sequence of turning points</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wavemodels/trraylpdf.html" class="code" title=" f=trraylpdf(x,def,gn,utc)">trraylpdf</a></li></TD>
+<TD> Calculates transformed Rayleigh approximation for amplitudes</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/wafostamp.html" class="code" title=" [H,ax]=wafostamp(varargin)">wafostamp</a></li></TD>
+<TD> Prints a caption "made by WAFO" in current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/whisto.html" class="code" title=" binwidth = whisto(x,N,odd,scale,lintype)">whisto</a></li></TD>
+<TD> Plots a histogram</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/wnormplot.html" class="code" title=" wnormplot(x,nr1,nr2,df);">wnormplot</a></li></TD>
+<TD> Plots data on a Normal distribution paper</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%<span class="comment">% CHAPTER3  Demonstrates distributions of wave characteristics </span></span>
+0002 <span class="comment">% </span>
+0003 <span class="comment">% Chapter3 contains the commands used in Chapter3 in the tutorial. </span>
+0004 <span class="comment">%  </span>
+0005 <span class="comment">% Some of the commands are edited for fast computation.  </span>
+0006 <span class="comment">% Each set of commands is followed by a 'pause' command. </span>
+0007 <span class="comment">%  </span>
+0008  
+0009 <span class="comment">% Tested on Matlab 5.3 </span>
+0010 <span class="comment">% History </span>
+0011 <span class="comment">% Revised pab sept2005 </span>
+0012 <span class="comment">%  Added sections -&gt; easier to evaluate using cellmode evaluation. </span>
+0013 <span class="comment">% Revised by pab Feb 2005 </span>
+0014 <span class="comment">% -updated calls to kdetools+spec2XXpdf programs </span>
+0015 <span class="comment">% Created by GL July 12, 2000 </span>
+0016 <span class="comment">% from commands used in Chapter 3, written by IR </span>
+0017 <span class="comment">% </span>
+0018  
+0019  
+0020 <span class="comment">%<span class="comment">% Section 3.2 Estimation of wave characteristics from data </span></span>
+0021 <span class="comment">%<span class="comment">% Example 1 </span></span>
+0022 pstate = <span class="string">'off'</span>; 
+0023  
+0024 xx = load(<span class="string">'sea.dat'</span>); 
+0025 xx(:,2) = detrend(xx(:,2)); 
+0026 rate = 8; 
+0027 Tcrcr = <a href="../../../wafo/onedim/dat2wa.html" class="code" title=" Extracts sequence of wavelengths from data.">dat2wa</a>(xx,0,<span class="string">'c2c'</span>,<span class="string">'tw'</span>,rate); 
+0028 Tc = <a href="../../../wafo/onedim/dat2wa.html" class="code" title=" Extracts sequence of wavelengths from data.">dat2wa</a>(xx,0,<span class="string">'u2d'</span>,<span class="string">'tw'</span>,rate); 
+0029 disp(<span class="string">'Block = 1'</span>), pause(pstate) 
+0030  
+0031 <span class="comment">%<span class="comment">% Histogram of crestperiod compared to the kernel density estimate </span></span>
+0032 clf 
+0033 mean(Tc) 
+0034 max(Tc) 
+0035 t = linspace(0.01,8,200); 
+0036 L2 = 0; 
+0037 kopt = <a href="../../../wafo/kdetools/kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>(<span class="string">'L2'</span>,L2); 
+0038 ftc1 = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Tc,kopt,t); 
+0039 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(ftc1), hold on 
+0040 <a href="../../../wafo/wstats/whisto.html" class="code" title=" Plots a histogram">whisto</a>(Tc,[],[],1) 
+0041 axis([0 8 0 0.5]), hold off 
+0042 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0043 disp(<span class="string">'Block = 2'</span>), pause(pstate) 
+0044  
+0045 clf 
+0046 ftc2 = <a href="../../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>(Tc,kopt); 
+0047 disp(<span class="string">'Block = 3'</span>), pause(pstate) 
+0048  
+0049 <span class="comment">%<span class="comment">% Extreme waves - model check: the highest and steepest wave </span></span>
+0050 clf 
+0051 method = 0; 
+0052 rate = 8; 
+0053 [S, H, Ac, At, Tcf, Tcb, z_ind, yn] = <span class="keyword">...</span> 
+0054    <a href="../../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(xx,rate,method); 
+0055 disp(<span class="string">'Block = 4'</span>), pause(pstate) 
+0056  
+0057 clf 
+0058 [Smax indS]=max(S) 
+0059 [Amax indA]=max(Ac) 
+0060 <a href="../../../wafo/onedim/spwaveplot.html" class="code" title=" Plots specified waves from a timeseries">spwaveplot</a>(yn,[indA indS],<span class="string">'k.'</span>) 
+0061 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0062 disp(<span class="string">'Block = 5'</span>), pause(pstate) 
+0063  
+0064 <span class="comment">%<span class="comment">% Does the highest wave contradict a transformed Gaussian model? </span></span>
+0065 clf 
+0066 inds1 = (5965:5974)'; 
+0067 Nsim = 10; 
+0068 [y1, grec1, g2, test, tobs, mu1o, mu1oStd] = <span class="keyword">...</span> 
+0069    <a href="../../../wafo/onedim/reconstruct.html" class="code" title=" reconstruct the spurious/missing points of timeseries">reconstruct</a>(xx,inds1,Nsim); 
+0070 <a href="../../../wafo/onedim/spwaveplot.html" class="code" title=" Plots specified waves from a timeseries">spwaveplot</a>(y1,indA-10) 
+0071 hold on 
+0072 plot(xx(inds1,1),xx(inds1,2),<span class="string">'+'</span>) 
+0073 lamb = 2.; 
+0074 muLstd = <a href="../../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(mu1o-lamb*mu1oStd,fliplr(grec1)); 
+0075 muUstd = <a href="../../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(mu1o+lamb*mu1oStd,fliplr(grec1)); 
+0076 plot (y1(inds1,1), [muLstd muUstd],<span class="string">'b-'</span>) 
+0077 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0078 disp(<span class="string">'Block = 6'</span>),  
+0079 pause(pstate) 
+0080  
+0081 <span class="comment">%<span class="comment">% </span></span>
+0082 clf 
+0083 plot(xx(inds1,1),xx(inds1,2),<span class="string">'+'</span>), hold on 
+0084 mu = <a href="../../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(mu1o,fliplr(grec1)); 
+0085 plot(y1(inds1,1), mu) 
+0086 disp(<span class="string">'Block = 7'</span>), pause(pstate) 
+0087  
+0088 <span class="comment">%<span class="comment">% Crest height </span></span>
+0089 clf 
+0090 L2 = 0.6; 
+0091 <a href="../../../wafo/wstats/wnormplot.html" class="code" title=" Plots data on a Normal distribution paper">wnormplot</a>(Ac.^L2) 
+0092  
+0093 fac = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Ac,{<span class="string">'L2'</span>,L2},linspace(0.01,3,200)); 
+0094 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fac) 
+0095 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0096 <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(fac.x{1},fac.f) 
+0097 disp(<span class="string">'Block = 8'</span>), pause(pstate) 
+0098  
+0099 <span class="comment">%<span class="comment">% Empirical wave amplitude CDF </span></span>
+0100 clf 
+0101 Fac = flipud(cumtrapz(fac.x{1},flipud(fac.f))); 
+0102 Fac = [fac.x{1} 1-Fac]; 
+0103 Femp = <a href="../../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(Ac,Fac); 
+0104 axis([0 2 0 1]) 
+0105 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0106 disp(<span class="string">'Block = 9'</span>), pause(pstate) 
+0107  
+0108 <span class="comment">%<span class="comment">%  </span></span>
+0109 facr = <a href="../../../wafo/wavemodels/trraylpdf.html" class="code" title=" Calculates transformed Rayleigh approximation for amplitudes ">trraylpdf</a>(fac.x{1},<span class="string">'Ac'</span>,grec1); 
+0110 Facr = cumtrapz(facr.x{1},facr.f); 
+0111 hold on 
+0112 plot(facr.x{1},Facr,<span class="string">'.'</span>) 
+0113 axis([1.25 2.25 0.95 1]) 
+0114 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0115 disp(<span class="string">'Block = 10'</span>), pause(pstate) 
+0116  
+0117 <span class="comment">%<span class="comment">% Joint pdf of crest period and crest amplitude </span></span>
+0118 clf 
+0119 kopt2 = <a href="../../../wafo/kdetools/kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>(<span class="string">'L2'</span>,0.5,<span class="string">'inc'</span>,256); 
+0120 Tc = Tcf+Tcb; 
+0121 fTcAc = <a href="../../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>([Tc Ac],kopt2); 
+0122 fTcAc.labx={<span class="string">'Tc [s]'</span>  <span class="string">'Ac [m]'</span>} 
+0123 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fTcAc) 
+0124 hold on 
+0125 plot(Tc,Ac,<span class="string">'k.'</span>) 
+0126 hold off 
+0127 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0128 disp(<span class="string">'Block = 11'</span>), pause(pstate) 
+0129  
+0130 <span class="comment">%<span class="comment">% Example 4:  Simple wave characteristics obtained from Jonswap spectrum  </span></span>
+0131 clf 
+0132 S = <a href="../../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>([],[5 10]); 
+0133 [m,  mt]= <a href="../../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S,4,[],0); 
+0134 disp(<span class="string">'Block = 12'</span>), pause(pstate) 
+0135  
+0136 clf 
+0137 <a href="../../../wafo/spec/spec2bw.html" class="code" title=" Evaluates some spectral bandwidth and irregularity factors">spec2bw</a>(S) 
+0138 [ch Sa2] = <a href="../../../wafo/spec/spec2char.html" class="code" title="  Evaluates spectral characteristics and their covariance">spec2char</a>(S,[1  3]) 
+0139 disp(<span class="string">'Block = 13'</span>), pause(pstate) 
+0140  
+0141 <span class="comment">%<span class="comment">% Section 3.3.2 Explicit form approximations of wave characteristic densities </span></span>
+0142 <span class="comment">%<span class="comment">% Longuett-Higgins model for Tc and Ac </span></span>
+0143 clf 
+0144 t = linspace(0,15,100); 
+0145 h = linspace(0,6,100); 
+0146 flh = <a href="../../../wafo/wavemodels/lh83pdf.html" class="code" title=" Longuet-Higgins (1983) approximation of the density (Tc,Ac)">lh83pdf</a>(t,h,[m(1),m(2),m(3)]); 
+0147 disp(<span class="string">'Block = 14'</span>), pause(pstate) 
+0148  
+0149 <span class="comment">%<span class="comment">% Transformed Longuett-Higgins model for Tc and Ac </span></span>
+0150 clf 
+0151 [sk, ku ]=<a href="../../../wafo/trgauss/spec2skew.html" class="code" title=" Estimates the moments of 2'nd order non-linear waves ">spec2skew</a>(S); 
+0152 sa = sqrt(m(1)); 
+0153 gh = <a href="../../../wafo/trgauss/hermitetr.html" class="code" title=" Calculate transformation, g, proposed by Winterstein ">hermitetr</a>([],[sa sk ku 0]); 
+0154 flhg = <a href="../../../wafo/wavemodels/lh83pdf.html" class="code" title=" Longuet-Higgins (1983) approximation of the density (Tc,Ac)">lh83pdf</a>(t,h,[m(1),m(2),m(3)],gh); 
+0155 disp(<span class="string">'Block = 15'</span>), pause(pstate) 
+0156  
+0157 <span class="comment">%<span class="comment">% Cavanie model for Tc and Ac </span></span>
+0158 clf 
+0159 t = linspace(0,10,100); 
+0160 h = linspace(0,7,100); 
+0161 fcav = <a href="../../../wafo/wavemodels/cav76pdf.html" class="code" title=" Cavanie et al. (1976) approximation of the density  (Tc,Ac)">cav76pdf</a>(t,h,[m(1) m(2) m(3) m(5)],[]); 
+0162 disp(<span class="string">'Block = 16'</span>), pause(pstate) 
+0163  
+0164 <span class="comment">%<span class="comment">% Example 5 Transformed Rayleigh approximation of crest height </span></span>
+0165 clf 
+0166 xx = load(<span class="string">'sea.dat'</span>); 
+0167 x = xx; 
+0168 x(:,2) = detrend(x(:,2)); 
+0169 SS = <a href="../../../wafo/onedim/dat2spec2.html" class="code" title=" Estimate one-sided spectral density, version 2.  ">dat2spec2</a>(x); 
+0170 [sk, ku, me, si ] = <a href="../../../wafo/trgauss/spec2skew.html" class="code" title=" Estimates the moments of 2'nd order non-linear waves ">spec2skew</a>(SS); 
+0171 gh = <a href="../../../wafo/trgauss/hermitetr.html" class="code" title=" Calculate transformation, g, proposed by Winterstein ">hermitetr</a>([],[si sk ku me]); 
+0172 Hs = 4*si; 
+0173 r = (0:0.05:1.1*Hs)'; 
+0174 fac_h = <a href="../../../wafo/wavemodels/trraylpdf.html" class="code" title=" Calculates transformed Rayleigh approximation for amplitudes ">trraylpdf</a>(r,<span class="string">'Ac'</span>,gh); 
+0175 fat_h = <a href="../../../wafo/wavemodels/trraylpdf.html" class="code" title=" Calculates transformed Rayleigh approximation for amplitudes ">trraylpdf</a>(r,<span class="string">'At'</span>,gh); 
+0176 h = (0:0.05:1.7*Hs)'; 
+0177 facat_h = <a href="../../../wafo/wavemodels/trraylpdf.html" class="code" title=" Calculates transformed Rayleigh approximation for amplitudes ">trraylpdf</a>(h,<span class="string">'AcAt'</span>,gh); 
+0178 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fac_h) 
+0179 hold on 
+0180 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fat_h) 
+0181 hold off 
+0182 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0183 disp(<span class="string">'Block = 17'</span>), pause(pstate) 
+0184  
+0185 <span class="comment">%<span class="comment">% </span></span>
+0186 clf 
+0187 TC = <a href="../../../wafo/onedim/dat2tc.html" class="code" title=" Extracts troughs and crests from data.">dat2tc</a>(xx, me); 
+0188 tc = <a href="../../../wafo/cycles/tp2mm.html" class="code" title=" Calculates min2Max and Max2min cycles from a sequence of turning points">tp2mm</a>(TC); 
+0189 Ac = tc(:,2); 
+0190 At = -tc(:,1); 
+0191 AcAt = Ac+At; 
+0192 disp(<span class="string">'Block = 18'</span>), pause(pstate) 
+0193  
+0194 <span class="comment">%<span class="comment">% </span></span>
+0195 clf 
+0196 Fac_h = [fac_h.x{1} cumtrapz(fac_h.x{1},fac_h.f)]; 
+0197 subplot(3,1,1) 
+0198 Fac = <a href="../../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(Ac,Fac_h); 
+0199 hold on 
+0200 plot(r,1-exp(-8*r.^2/Hs^2),<span class="string">'.'</span>) 
+0201 axis([1. 2. 0.9 1]) 
+0202 Fat_h = [fat_h.x{1} cumtrapz(fat_h.x{1},fat_h.f)]; 
+0203 subplot(3,1,2) 
+0204 Fat = <a href="../../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(At,Fat_h); 
+0205 hold on 
+0206 plot(r,1-exp(-8*r.^2/Hs^2),<span class="string">'.'</span>) 
+0207 axis([1. 2. 0.9 1]) 
+0208 Facat_h = [facat_h.x{1} cumtrapz(facat_h.x{1},facat_h.f)]; 
+0209 subplot(3,1,3) 
+0210 Facat = <a href="../../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(AcAt,Facat_h); 
+0211 hold on 
+0212 plot(r,1-exp(-2*r.^2/Hs^2),<span class="string">'.'</span>) 
+0213 axis([1.5 3.5 0.9 1]) 
+0214 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0215 disp(<span class="string">'Block = 19'</span>), pause(pstate) 
+0216  
+0217 <span class="comment">%<span class="comment">% Section 3.4 Exact wave distributions in transformed Gaussian Sea </span></span>
+0218 <span class="comment">%<span class="comment">% Section 3.4.1 Density of crest period, crest length or encountered crest period </span></span>
+0219 clf 
+0220 S1 = <a href="../../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>([],[6 8],1); 
+0221 D1 = <a href="../../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a>(101,<span class="string">'cos'</span>,pi/2,[15],[],0); 
+0222 D12 = <a href="../../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a>(101,<span class="string">'cos'</span>,0,[15],S1.w,1); 
+0223 SD1 = <a href="../../../wafo/spec/mkdspec.html" class="code" title=" Make a directional spectrum">mkdspec</a>(S1,D1); 
+0224 SD12 = <a href="../../../wafo/spec/mkdspec.html" class="code" title=" Make a directional spectrum">mkdspec</a>(S1,D12); 
+0225 disp(<span class="string">'Block = 20'</span>), pause(pstate) 
+0226  
+0227 <span class="comment">%<span class="comment">% Crest period </span></span>
+0228 clf 
+0229 f_tc = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(S1,[],<span class="string">'Tc'</span>,[0 11 56],[],4); 
+0230 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_tc) 
+0231 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0232 <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_tc.x{1},f_tc.f) 
+0233 disp(<span class="string">'Block = 21'</span>), pause(pstate) 
+0234  
+0235 <span class="comment">%<span class="comment">% Crest length </span></span>
+0236       clf 
+0237 disp(<span class="string">'NIT=5 may take time, running with NIT=2 in the following'</span>) 
+0238 <span class="comment">%f_Lc = spec2tpdf2(S1,[],'Lc',[0 200 81],[],opt1); </span>
+0239      f_Lc = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(S1,[],<span class="string">'Lc'</span>,[0 200 81],[],2); 
+0240 <span class="comment">%     f_Lc = spec2tpdf(S1,[],'Lc',[0 200 81],[],5); </span>
+0241       <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_Lc,<span class="string">'-.'</span>) 
+0242       <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0243 disp(<span class="string">'Block = 22'</span>), pause(pstate) 
+0244  
+0245 <span class="comment">%      f_Lc_1 = spec2tpdf(S1,[],'Lc',[0 200 81],1.5,5); </span>
+0246       f_Lc_1 = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(S1,[],<span class="string">'Lc'</span>,[0 200 81],1.5,2); 
+0247 <span class="comment">%f_Lc_1 = spec2tpdf(S1,[],'Lc',[0 200 81],1.5,opt1); </span>
+0248  
+0249       hold on 
+0250       <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_Lc_1) 
+0251       <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0252 disp(<span class="string">'Block = 23'</span>), pause(pstate) 
+0253 <span class="comment">%<span class="comment">% </span></span>
+0254       clf 
+0255       <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_Lc.x{1},f_Lc.f) 
+0256       <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_Lc_1.x{1},f_Lc_1.f) 
+0257        
+0258 disp(<span class="string">'Block = 24'</span>), pause(pstate) 
+0259 <span class="comment">%<span class="comment">% </span></span>
+0260       clf 
+0261 <span class="comment">%      f_Lc_d1 = spec2tpdf(spec2spec(SD1,'rotdir',pi/2),[],... </span>
+0262 <span class="comment">%               'Lc',[0 300 121],[],5);  </span>
+0263       f_Lc_d1 = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(<a href="../../../wafo/spec/rotspec.html" class="code" title=" Rotate spectrum anti-clockwise around the origin. ">rotspec</a>(SD1,pi/2),[],<span class="keyword">...</span> 
+0264                 <span class="string">'Lc'</span>,[0 300 121],[],2);  
+0265 <span class="comment">%      f_Lc_d1 = spec2tpdf2(spec2spec(SD1,'rotdir',pi/2),[],... </span>
+0266 <span class="comment">%                'Lc',[0 300 121],[],opt1);         </span>
+0267       <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_Lc_d1,<span class="string">'-.'</span>) 
+0268       hold on 
+0269 <span class="comment">%      f_Lc_d12 = spec2tpdf(SD12,[],'Lc',[0 200 81],[],5); </span>
+0270       f_Lc_d12 = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(SD12,[],<span class="string">'Lc'</span>,[0 200 81],[],2); 
+0271 <span class="comment">%      f_Lc_d12 = spec2tpdf2(SD12,[],'Lc',[0 200 81],[],opt1); </span>
+0272       <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_Lc_d12) 
+0273       hold off 
+0274       <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0275 disp(<span class="string">'Block = 25'</span>), pause(pstate) 
+0276  
+0277 <span class="comment">%<span class="comment">% </span></span>
+0278 disp(<span class="string">'Run the following example only if you want a check on computing time'</span>) 
+0279 disp(<span class="string">'Edit the command file and remove %'</span>) 
+0280 <span class="comment">%      clf </span>
+0281 <span class="comment">%      f_Lc_d1_5 = spec2tpdf(spec2spec(SD1,'rotdir',pi/2),[],... </span>
+0282 <span class="comment">%                 'Lc',[0 300 121],[],5); </span>
+0283 <span class="comment">%      f_Lc_d1_3 = spec2tpdf(spec2spec(SD1,'rotdir',pi/2),[],... </span>
+0284 <span class="comment">%                  'Lc',[0 300 121],[],3); </span>
+0285 <span class="comment">%      f_Lc_d1_2 = spec2tpdf(spec2spec(SD1,'rotdir',pi/2),[],... </span>
+0286 <span class="comment">%                  'Lc',[0 300 121],[],2); </span>
+0287 <span class="comment">%      f_Lc_d1_0 = spec2tpdf(spec2spec(SD1,'rotdir',pi/2),[],... </span>
+0288 <span class="comment">%                  'Lc',[0 300 121],[],0); </span>
+0289 <span class="comment">%      f_Lc_d1_n4 = spec2tpdf2(spec2spec(SD1,'rotdir',pi/2),[],... </span>
+0290 <span class="comment">%                   'Lc',[0 400 161],-4);   </span>
+0291 <span class="comment">%      pdfplot(f_Lc_d1_5) </span>
+0292 <span class="comment">%      hold on </span>
+0293 <span class="comment">%      pdfplot(f_Lc_d1_2) </span>
+0294 <span class="comment">%      pdfplot(f_Lc_d1_0) </span>
+0295 <span class="comment">%      pdfplot(f_Lc_d1_n4) </span>
+0296 <span class="comment">%      simpson(f_Lc_d1_n4.x{1},f_Lc_d1_n4.f) </span>
+0297 disp(<span class="string">'Block = 26'</span>), pause(pstate) 
+0298  
+0299 <span class="comment">%<span class="comment">% Section 3.4.2 Density of wave period, wave length or encountered wave period </span></span>
+0300 <span class="comment">%<span class="comment">% Example 7: Crest period and high crest waves </span></span>
+0301 clf 
+0302 xx = load(<span class="string">'sea.dat'</span>); 
+0303 x = xx; 
+0304 x(:,2) = detrend(x(:,2)); 
+0305 SS = <a href="../../../wafo/onedim/dat2spec2.html" class="code" title=" Estimate one-sided spectral density, version 2.  ">dat2spec2</a>(x); 
+0306 si = sqrt(<a href="../../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(SS,1)); 
+0307 SS.tr = <a href="../../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>(x); 
+0308 Hs = 4*si 
+0309 method = 0; 
+0310 rate = 2; 
+0311 [S, H, Ac, At, Tcf, Tcb, z_ind, yn] = <a href="../../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(x,rate,method); 
+0312 t = linspace(0.01,8,200); 
+0313 ftc1 = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Tc,{<span class="string">'L2'</span>,0},t); 
+0314 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(ftc1) 
+0315 hold on 
+0316 <span class="comment">%      f_t = spec2tpdf(SS,[],'Tc',[0 8 81],0,4); </span>
+0317 f_t = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(SS,[],<span class="string">'Tc'</span>,[0 8 81],0,2); 
+0318 <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_t.x{1},f_t.f) 
+0319 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_t,<span class="string">'-.'</span>) 
+0320 hold off 
+0321 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0322 disp(<span class="string">'Block = 27'</span>), pause(pstate) 
+0323  
+0324 <span class="comment">%<span class="comment">% </span></span>
+0325 clf 
+0326 <span class="comment">%      f_t2 = spec2tpdf(SS,[],'Tc',[0 8 81],[Hs/2],4); </span>
+0327 f_t2 = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(SS,[],<span class="string">'Tc'</span>,[0 8 81],[Hs/2],2); 
+0328 Pemp = sum(Ac&gt;Hs/2)/sum(Ac&gt;0) 
+0329 <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_t2.x{1},f_t2.f) 
+0330 index = find(Ac&gt;Hs/2); 
+0331 ftc1 = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Tc(index),{<span class="string">'L2'</span>,0},t); 
+0332 ftc1.f = Pemp*ftc1.f; 
+0333 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(ftc1) 
+0334 hold on 
+0335 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_t2,<span class="string">'-.'</span>) 
+0336 hold off 
+0337 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0338 disp(<span class="string">'Block = 28'</span>), pause(pstate) 
+0339  
+0340  
+0341 <span class="comment">%      clf </span>
+0342 <span class="comment">%      f_tcc2 = spec2tccpdf(SS,[],'t&gt;',[0 12 61],[Hs/2],[0],-1); </span>
+0343 <span class="comment">%      simpson(f_tcc2.x{1},f_tcc2.f) </span>
+0344 <span class="comment">%      f_tcc3 = spec2tccpdf(SS,[],'t&gt;',[0 12 61],[Hs/2],[0],3,5); </span>
+0345 <span class="comment">%      f_tcc3 = spec2tccpdf(SS,[],'t&gt;',[0 12 61],[Hs/2],[0],1,5); </span>
+0346 <span class="comment">%      simpson(f_tcc3.x{1},f_tcc3.f) </span>
+0347 <span class="comment">%      pdfplot(f_tcc2,'-.') </span>
+0348 <span class="comment">%      hold on </span>
+0349 <span class="comment">%      pdfplot(f_tcc3) </span>
+0350 <span class="comment">%      hold off </span>
+0351 disp(<span class="string">'Block = 29'</span>), pause(pstate) 
+0352  
+0353 <span class="comment">%<span class="comment">% </span></span>
+0354 clf 
+0355 [TC tc_ind v_ind] = <a href="../../../wafo/onedim/dat2tc.html" class="code" title=" Extracts troughs and crests from data.">dat2tc</a>(yn,[],<span class="string">'dw'</span>); 
+0356 N = length(tc_ind); 
+0357 t_ind = tc_ind(1:2:N); 
+0358 c_ind = tc_ind(2:2:N); 
+0359 Pemp = sum(yn(t_ind,2)&lt;-Hs/2 &amp; yn(c_ind,2)&gt;Hs/2)/length(t_ind) 
+0360 ind = find(yn(t_ind,2)&lt;-Hs/2 &amp; yn(c_ind,2)&gt;Hs/2); 
+0361 <a href="../../../wafo/onedim/spwaveplot.html" class="code" title=" Plots specified waves from a timeseries">spwaveplot</a>(yn,ind(2:4)) 
+0362 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0363 disp(<span class="string">'Block = 30'</span>), pause(pstate) 
+0364  
+0365 <span class="comment">%<span class="comment">% </span></span>
+0366 clf 
+0367 Tcc = yn(v_ind(1+2*ind),1)-yn(v_ind(1+2*(ind-1)),1); 
+0368 t = linspace(0.01,14,200); 
+0369 L2 = 0; 
+0370 ftcc1 = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Tcc,{<span class="string">'kernel'</span> <span class="string">'epan'</span>,<span class="string">'L2'</span>,L2},t); 
+0371 ftcc1.f = Pemp*ftcc1.f; 
+0372 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(ftcc1,<span class="string">'-.'</span>) 
+0373 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0374 disp(<span class="string">'Block = 31'</span>), pause(pstate) 
+0375  
+0376 disp(<span class="string">'The rest of this chapter deals with joint densities.'</span>) 
+0377 disp(<span class="string">'Some calculations may take some time.'</span>)  
+0378 disp(<span class="string">'You could experiment with other NIT.'</span>) 
+0379 <span class="comment">%return </span>
+0380  
+0381 <span class="comment">%<span class="comment">% Example 8: Wave period for high crest waves  </span></span>
+0382 clf 
+0383 f_tcc22_1 = <a href="../../../wafo/trgauss/spec2tccpdf.html" class="code" title=" Evaluates densities of wave period Tcc, wave lenght Lcc.   ">spec2tccpdf</a>(SS,[],<span class="string">'t&gt;'</span>,[0 12 61],[Hs/2],[Hs/2],-1); 
+0384 <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_tcc22_1.x{1},f_tcc22_1.f) 
+0385 hold on 
+0386 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_tcc22_1) 
+0387 hold off 
+0388 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0389 disp(<span class="string">'Block = 32'</span>), pause(pstate) 
+0390  
+0391 <span class="comment">%<span class="comment">% Section 3.4.3 Joint density of crest period and crest height </span></span>
+0392 <span class="comment">%<span class="comment">% Example 9. Some preliminary analysis of the data </span></span>
+0393 clf 
+0394 yy = load(<span class="string">'gfaksr89.dat'</span>); 
+0395 SS = <a href="../../../wafo/onedim/dat2spec.html" class="code" title=" Estimate one-sided spectral density from data.">dat2spec</a>(yy); 
+0396 si = sqrt(<a href="../../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(SS,1)); 
+0397 SS.tr = <a href="../../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>(yy); 
+0398 Hs = 4*si 
+0399 v = <a href="../../../wafo/trgauss/gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0 0],SS.tr); 
+0400 v = v(2) 
+0401 disp(<span class="string">'Block = 33'</span>), pause(pstate) 
+0402  
+0403 <span class="comment">%<span class="comment">% </span></span>
+0404 clf 
+0405 [TC, tc_ind, v_ind] = <a href="../../../wafo/onedim/dat2tc.html" class="code" title=" Extracts troughs and crests from data.">dat2tc</a>(yy,v,<span class="string">'dw'</span>); 
+0406 N       = length(tc_ind); 
+0407 t_ind   = tc_ind(1:2:N); 
+0408 c_ind   = tc_ind(2:2:N); 
+0409 v_ind_d = v_ind(1:2:N+1); 
+0410 v_ind_u = v_ind(2:2:N+1); 
+0411 T_d     = <a href="../../../wafo/onedim/ecross.html" class="code" title=" Extracts exact level v crossings ">ecross</a>(yy(:,1),yy(:,2),v_ind_d,v); 
+0412 T_u     = <a href="../../../wafo/onedim/ecross.html" class="code" title=" Extracts exact level v crossings ">ecross</a>(yy(:,1),yy(:,2),v_ind_u,v); 
+0413  
+0414 <span class="comment">% Old call </span>
+0415 <span class="comment">%T_d = yy(v_ind_d,1)- yy(v_ind_d,2)* ... </span>
+0416 <span class="comment">%   (yy(2,1)-yy(1,1))./(yy(v_ind_d+1,2)-yy(v_ind_d,2)); </span>
+0417 <span class="comment">%T_u = yy(v_ind_u,1)- yy(v_ind_u,2)* ... </span>
+0418 <span class="comment">%   (yy(2,1)-yy(1,1))./(yy(v_ind_u+1,2)-yy(v_ind_u,2)); </span>
+0419 Tc = T_d(2:<span class="keyword">end</span>)-T_u(1:<span class="keyword">end</span>); 
+0420 Tt = T_u(1:<span class="keyword">end</span>)-T_d(1:<span class="keyword">end</span>-1); 
+0421 Tcf = yy(c_ind,1)-T_u; 
+0422 Ac = yy(c_ind,2)-v; 
+0423 At = v-yy(t_ind,2); 
+0424 disp(<span class="string">'Block = 34'</span>), pause(pstate) 
+0425  
+0426 <span class="comment">%<span class="comment">% </span></span>
+0427 clf 
+0428 t = linspace(0.01,15,200); 
+0429 kopt3 = <a href="../../../wafo/kdetools/kdeoptset.html" class="code" title=" Create or alter KDE OPTIONS structure. ">kdeoptset</a>(<span class="string">'hs'</span>,0.25,<span class="string">'L2'</span>,0);  
+0430 ftc1 = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Tc,kopt3,t); 
+0431 ftt1 = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Tt,kopt3,t); 
+0432 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(ftt1,<span class="string">'k'</span>) 
+0433 hold on 
+0434 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(ftc1,<span class="string">'k-.'</span>) 
+0435 f_tc4 = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(SS,[],<span class="string">'Tc'</span>,[0 12 81],0,4,5); 
+0436 f_tc2 = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(SS,[],<span class="string">'Tc'</span>,[0 12 81],0,2,5); 
+0437 f_tc = <a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(SS,[],<span class="string">'Tc'</span>,[0 12 81],0,-1); 
+0438 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_tc,<span class="string">'b'</span>) 
+0439 hold off 
+0440 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0441 disp(<span class="string">'Block = 35'</span>), pause(pstate) 
+0442  
+0443 <span class="comment">%<span class="comment">% Example 10: Joint characteristics of a half wave: </span></span>
+0444 <span class="comment">%<span class="comment">% position and height of a crest for a wave with given period </span></span>
+0445 clf 
+0446 ind = find(4.4&lt;Tc &amp; Tc&lt;4.6); 
+0447 f_AcTcf = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>([Tcf(ind) Ac(ind)],{<span class="string">'L2'</span>,[1 .5]}); 
+0448 plot(Tcf(ind), Ac(ind),<span class="string">'.'</span>); 
+0449 hold on 
+0450 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_AcTcf) 
+0451 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0452 disp(<span class="string">'Block = 36'</span>), pause(pstate) 
+0453  
+0454 <span class="comment">%<span class="comment">% </span></span>
+0455 clf 
+0456 <span class="comment">%opt1 = rindoptset('speed',5,'method',3); </span>
+0457 <span class="comment">%opt2 = rindoptset('speed',5,'nit',2,'method',0); </span>
+0458 opt1 = <a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(<span class="string">'speed'</span>,9,<span class="string">'method'</span>,3); 
+0459 opt2 = <a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(<span class="string">'speed'</span>,7,<span class="string">'nit'</span>,2,<span class="string">'method'</span>,0); 
+0460  
+0461  
+0462 f_tcfac1 = <a href="../../../wafo/trgauss/spec2thpdf.html" class="code" title=" Joint density of amplitude and period/wave-length characteristics ">spec2thpdf</a>(SS,[],<span class="string">'TcfAc'</span>,[4.5 4.5 46],[0:0.25:8],opt1); 
+0463 f_tcfac2=<a href="../../../wafo/trgauss/spec2thpdf.html" class="code" title=" Joint density of amplitude and period/wave-length characteristics ">spec2thpdf</a>(SS,[],<span class="string">'TcfAc'</span>,[4.5 4.5 46],[0:0.25:8],opt2); 
+0464  
+0465 plot(Tcf(ind), Ac(ind),<span class="string">'.'</span>); 
+0466 hold on 
+0467 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_tcfac1,<span class="string">'-.'</span>) 
+0468 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_tcfac2) 
+0469  
+0470 <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_tcfac1.x{1},<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_tcfac1.x{2},f_tcfac1.f,1)) 
+0471 <a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_tcfac2.x{1},<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f_tcfac2.x{2},f_tcfac2.f,1)) 
+0472 f_tcf4=<a href="../../../wafo/trgauss/spec2tpdf.html" class="code" title=" Evaluates densities for crest-,trough-period, length.       ">spec2tpdf</a>(SS,[],<span class="string">'Tc'</span>,[4.5 4.5 46],[0:0.25:8],6); 
+0473 f_tcf4.f(46) 
+0474 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0475 disp(<span class="string">'Block = 37'</span>), pause(pstate) 
+0476  
+0477  
+0478  
+0479 <span class="comment">%<span class="comment">% </span></span>
+0480 clf 
+0481 f_tcac_s = <a href="../../../wafo/trgauss/spec2thpdf.html" class="code" title=" Joint density of amplitude and period/wave-length characteristics ">spec2thpdf</a>(SS,[],<span class="string">'TcAc'</span>,[0 12 81],[Hs/2:0.1:2*Hs],opt1); 
+0482 disp(<span class="string">'Block = 38'</span>), pause(pstate) 
+0483  
+0484 clf 
+0485 mom = <a href="../../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(SS,4,[],0); 
+0486 t = f_tcac_s.x{1}; 
+0487 h = f_tcac_s.x{2}; 
+0488 flh_g = <a href="../../../wafo/wavemodels/lh83pdf.html" class="code" title=" Longuet-Higgins (1983) approximation of the density (Tc,Ac)">lh83pdf</a>(t',h',[mom(1),mom(2),mom(3)],SS.tr); 
+0489 clf 
+0490 ind=find(Ac&gt;Hs/2); 
+0491 plot(Tc(ind), Ac(ind),<span class="string">'.'</span>); 
+0492 hold on 
+0493 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(flh_g,<span class="string">'k-.'</span>) 
+0494 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_tcac_s) 
+0495 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0496 disp(<span class="string">'Block = 39'</span>), pause(pstate) 
+0497  
+0498 <span class="comment">%<span class="comment">% </span></span>
+0499 clf 
+0500 <span class="comment">%      f_tcac = spec2thpdf(SS,[],'TcAc',[0 12 81],[0:0.2:8],opt1); </span>
+0501 <span class="comment">%      pdfplot(f_tcac) </span>
+0502 disp(<span class="string">'Block = 40'</span>), pause(pstate) 
+0503  
+0504 <span class="comment">%<span class="comment">% Section 3.4.4 Joint density of crest and trough height </span></span>
+0505 <span class="comment">%<span class="comment">% Section 3.4.5 Min-to-max distributions  Markov method </span></span>
+0506 <span class="comment">%<span class="comment">% Example 11. (min-max problems with Gullfaks data) </span></span>
+0507 <span class="comment">%<span class="comment">% Joint density of maximum and the following minimum </span></span>
+0508 clf 
+0509 tp = <a href="../../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(yy); 
+0510 Mm = fliplr(<a href="../../../wafo/cycles/tp2mm.html" class="code" title=" Calculates min2Max and Max2min cycles from a sequence of turning points">tp2mm</a>(tp)); 
+0511 fmm = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Mm); 
+0512 f_mM = <a href="../../../wafo/trgauss/spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">spec2mmtpdf</a>(SS,[],<span class="string">'mm'</span>,[],[-7 7 51],opt2); 
+0513 clf 
+0514 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_mM,<span class="string">'-.'</span>) 
+0515 hold on 
+0516 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fmm,<span class="string">'k-'</span>) 
+0517 hold off 
+0518 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0519 disp(<span class="string">'Block = 41'</span>), pause(pstate) 
+0520  
+0521 <span class="comment">%<span class="comment">% The joint density of still water separated  maxima and minima. </span></span>
+0522 clf 
+0523 ind = find(Mm(:,1)&gt;v &amp; Mm(:,2)&lt;v); 
+0524 Mmv = abs(Mm(ind,:)-v); 
+0525 fmmv = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>(Mmv); 
+0526 f_vmm = <a href="../../../wafo/trgauss/spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">spec2mmtpdf</a>(SS,[],<span class="string">'vmm'</span>,[],[-7 7 51],opt2); 
+0527 clf 
+0528 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fmmv,<span class="string">'k-'</span>) 
+0529 hold on 
+0530 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_vmm,<span class="string">'-.'</span>) 
+0531 hold off 
+0532 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0533 disp(<span class="string">'Block = 42'</span>), pause(pstate) 
+0534  
+0535  
+0536 <span class="comment">%<span class="comment">% </span></span>
+0537 clf 
+0538 facat = <a href="../../../wafo/kdetools/kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>([Ac At]); 
+0539 f_acat = <a href="../../../wafo/trgauss/spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">spec2mmtpdf</a>(SS,[],<span class="string">'AcAt'</span>,[],[-7 7 51],opt2); 
+0540 clf 
+0541 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f_acat,<span class="string">'-.'</span>) 
+0542 hold on 
+0543 <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(facat,<span class="string">'k-'</span>) 
+0544 hold off 
+0545 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>([],<span class="string">'(ER)'</span>) 
+0546 disp(<span class="string">'Block = 43'</span>), pause(pstate) 
+0547  
+0548</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

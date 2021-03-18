@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of yura87</title>
+  <meta name="keywords" content="yura87">
+  <meta name="description" content="  Surface elevation measured off the coast of Yura.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">data</a> &gt; yura87.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\data&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>yura87
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Surface elevation measured off the coast of Yura.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="yura87.html" class="code" title="  Surface elevation measured off the coast of Yura.">YURA87</a>  Surface elevation measured off the coast of Yura.
+     
+    CALL:  xn = load('yura87.dat');
+    
+   Size             :    85547 X 4
+   Sampling Rate    :    1 Hz
+   Device           :    ultrasonic wave gauges
+   Source           :    SRI, Ministry of Transport, Japan 
+   Format           :    ascii, c1: time (sec) c2-4: surface elevation (m)
+   Description      :
+     The wave data was measured at the Poseidon platform  
+     in the Japan <a href="sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a> from 24th November 1987 08.12 hours to 25th November 
+     1987 07.57 hours. Poseidon was located 3 km off the coast of Yura 
+     in the Yamagata prefecture, in the Japan <a href="sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a> during the measurements. 
+     The most important wave components are to some extent influenced by the 
+     water depth of 42 m. The data are measured with three ultrasonic wave 
+     gauges located at the <a href="sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> floor and the relative coordinates of the 
+     gauges are as follows (x-axis points to the East, y-axis points to 
+     the North):
+              X (m)    Y (m)
+       c2:   -4.93,    25.02
+       c3:    5.80,    92.12
+       c4:    0.00,     0.00
+   
+     This dataset is for non-commercial use only.
+ 
+     Hm0 = 5.1m, Tm02 = 7.7s, Tp = 12.8s
+ 
+   Acknowledgement:
+     This dataset were prepared and made available by Dr. Sc. H. Tomita, 
+     Ship Research Institute, Ministry of Transport, Japan.
+   
+   See also  <a href="japansea.html" class="code" title="  coastline map of The Japan Sea">japansea</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">%YURA87  Surface elevation measured off the coast of Yura.</span>
+002 <span class="comment">%    </span>
+003 <span class="comment">%   CALL:  xn = load('yura87.dat');</span>
+004 <span class="comment">%   </span>
+005 <span class="comment">%  Size             :    85547 X 4</span>
+006 <span class="comment">%  Sampling Rate    :    1 Hz</span>
+007 <span class="comment">%  Device           :    ultrasonic wave gauges</span>
+008 <span class="comment">%  Source           :    SRI, Ministry of Transport, Japan </span>
+009 <span class="comment">%  Format           :    ascii, c1: time (sec) c2-4: surface elevation (m)</span>
+010 <span class="comment">%  Description      :</span>
+011 <span class="comment">%    The wave data was measured at the Poseidon platform  </span>
+012 <span class="comment">%    in the Japan Sea from 24th November 1987 08.12 hours to 25th November </span>
+013 <span class="comment">%    1987 07.57 hours. Poseidon was located 3 km off the coast of Yura </span>
+014 <span class="comment">%    in the Yamagata prefecture, in the Japan Sea during the measurements. </span>
+015 <span class="comment">%    The most important wave components are to some extent influenced by the </span>
+016 <span class="comment">%    water depth of 42 m. The data are measured with three ultrasonic wave </span>
+017 <span class="comment">%    gauges located at the sea floor and the relative coordinates of the </span>
+018 <span class="comment">%    gauges are as follows (x-axis points to the East, y-axis points to </span>
+019 <span class="comment">%    the North):</span>
+020 <span class="comment">%             X (m)    Y (m)</span>
+021 <span class="comment">%      c2:   -4.93,    25.02</span>
+022 <span class="comment">%      c3:    5.80,    92.12</span>
+023 <span class="comment">%      c4:    0.00,     0.00</span>
+024 <span class="comment">%  </span>
+025 <span class="comment">%    This dataset is for non-commercial use only.</span>
+026 <span class="comment">%</span>
+027 <span class="comment">%    Hm0 = 5.1m, Tm02 = 7.7s, Tp = 12.8s</span>
+028 <span class="comment">%</span>
+029 <span class="comment">%  Acknowledgement:</span>
+030 <span class="comment">%    This dataset were prepared and made available by Dr. Sc. H. Tomita, </span>
+031 <span class="comment">%    Ship Research Institute, Ministry of Transport, Japan.</span>
+032 <span class="comment">%  </span>
+033 <span class="comment">%  See also  japansea</span>
+034</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

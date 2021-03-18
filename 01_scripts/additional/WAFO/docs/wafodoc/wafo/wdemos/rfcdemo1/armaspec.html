@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of armaspec</title>
+  <meta name="keywords" content="armaspec">
+  <meta name="description" content="   Computes the spectral density for an AR- or ARMA-model.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wdemos</a> &gt; <a href="index.html">rfcdemo1</a> &gt; armaspec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wdemos\rfcdemo1&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>armaspec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>   Computes the spectral density for an AR- or ARMA-model.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [R]=armaspec(C,A,s2,n) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="armaspec.html" class="code" title="   Computes the spectral density for an AR- or ARMA-model. ">ARMASPEC</a>   Computes the spectral density for an AR- or ARMA-model. 
+    The process is governed by the system equation 
+      A(q) * x(t) = C(q) * sqrt(s2) * e(t)  
+  
+  S = <a href="armaspec.html" class="code" title="   Computes the spectral density for an AR- or ARMA-model. ">armaspec</a>(C,A,s2,n) 
+  
+  
+  S   = Spectral density. [f1 S1; f2 S2; ... fn <a href="../../../wafo/data/sn.html" class="code" title=" Fatigue experiment, constant-amplitude loading.">Sn</a>] 
+        (Frequencies in row 1 and spectral density in row 2.) 
+  
+  C   = Coefficients in C-polynomials. [1 c_1 ... c_nc] 
+  A   = Coefficients in A-polynomials. [1 a_1 ... a_na] 
+  s2  = Innovation variance. 
+  n   = Number of calculated values. 
+  
+  Example: AR(2)-process. 
+    S = <a href="armaspec.html" class="code" title="   Computes the spectral density for an AR- or ARMA-model. ">armaspec</a>(1,[1 1 0.9],1,500); 
+    plot(S(:,1),S(:,2)) 
+  Example: ARMA(4,2)-process. 
+    S = <a href="armaspec.html" class="code" title="   Computes the spectral density for an AR- or ARMA-model. ">armaspec</a>([1 0.05 -0.88],[1 -2.06 1.64 -0.98 0.41],4.84e-6,500); 
+    plot(S(:,1),S(:,2))</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\freqz.m">freqz</a></li></TD>
+<TD>         Digital filter frequency response.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/wdemos/rfcdemo1.html" class="code" title=" [F_RFC] = refdemo1(demoNr,P,A,m,s2,param)">rfcdemo1</a></li></TD>
+<TD>  Demo for switching AR(1)-processes.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [R]=<a name="_sub0" href="#_subfunctions" class="code">armaspec</a>(C,A,s2,n) 
+002  
+003 <span class="comment">% ARMASPEC   Computes the spectral density for an AR- or ARMA-model. </span>
+004 <span class="comment">%   The process is governed by the system equation </span>
+005 <span class="comment">%     A(q) * x(t) = C(q) * sqrt(s2) * e(t)  </span>
+006 <span class="comment">% </span>
+007 <span class="comment">% S = armaspec(C,A,s2,n) </span>
+008 <span class="comment">% </span>
+009 <span class="comment">% </span>
+010 <span class="comment">% S   = Spectral density. [f1 S1; f2 S2; ... fn Sn] </span>
+011 <span class="comment">%       (Frequencies in row 1 and spectral density in row 2.) </span>
+012 <span class="comment">% </span>
+013 <span class="comment">% C   = Coefficients in C-polynomials. [1 c_1 ... c_nc] </span>
+014 <span class="comment">% A   = Coefficients in A-polynomials. [1 a_1 ... a_na] </span>
+015 <span class="comment">% s2  = Innovation variance. </span>
+016 <span class="comment">% n   = Number of calculated values. </span>
+017 <span class="comment">% </span>
+018 <span class="comment">% Example: AR(2)-process. </span>
+019 <span class="comment">%   S = armaspec(1,[1 1 0.9],1,500); </span>
+020 <span class="comment">%   plot(S(:,1),S(:,2)) </span>
+021 <span class="comment">% Example: ARMA(4,2)-process. </span>
+022 <span class="comment">%   S = armaspec([1 0.05 -0.88],[1 -2.06 1.64 -0.98 0.41],4.84e-6,500); </span>
+023 <span class="comment">%   plot(S(:,1),S(:,2)) </span>
+024  
+025 <span class="comment">% Copyright (c) 1997 by Pär Johannesson </span>
+026 <span class="comment">% Toolbox: Rainflow Cycles for Switching Processes V.1.0, 2-Oct-1997 </span>
+027  
+028 [H,w]=freqz(C,A,n); 
+029 R=real(s2*H.*conj(H)); 
+030 f=w/(2*pi); 
+031  
+032 R = [f R]; 
+033</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

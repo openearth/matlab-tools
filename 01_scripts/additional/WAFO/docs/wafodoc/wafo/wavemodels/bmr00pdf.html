@@ -1,0 +1,337 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of bmr00pdf</title>
+  <meta name="keywords" content="bmr00pdf">
+  <meta name="description" content=" Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; bmr00pdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>bmr00pdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = bmr00pdf(Hd,Scf,Hm0,Tm02, condon,normalizedInput) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="bmr00pdf.html" class="code" title=" Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea. ">BMR00PDF</a> Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>. 
+     
+     CALL:  f = <a href="bmr00pdf.html" class="code" title=" Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea. ">bmr00pdf</a>(Hd,Scf,Hm0,Tm02) 
+     
+        f  = density  
+       Hd  = zero down crossing wave height 
+       Scf = crest front steepness 
+       Hm0 = significant wave height. 
+      Tm02 = average zero down crossing period.   
+     
+     <a href="bmr00pdf.html" class="code" title=" Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea. ">BMR00PDF</a> returns the joint PDF of (Scf, Hd) given Hm0 and Tm02, 
+     i.e., crest front steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, 
+     given the seastate. The root mean square values of Hd and Scf  
+     (Hrms,Erms) are related to the significant waveheight and the 
+     average zero down crossing period by: 
+                 Hrms = Hm0/sqrt(2); 
+                 Erms = 5/4*Hm0/(Tm02^2); 
+     This is a revised distribution of MK87 and is fitted to storm waves 
+     from 1995 obtained from the Draupner field in the North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>.  
+       The size of f is the common size of  the input arguments 
+     
+     Example: 
+      Hs = 7;Tz=10;   
+      h  = linspace(0,3*Hs)';  
+      s  = linspace(0,4*Hs/Tz^2)'; 
+      [S,H] = meshgrid(s,h); 
+      contour(s,h,<a href="bmr00pdf.html" class="code" title=" Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea. ">bmr00pdf</a>(H,S,Hs,Tz)) 
+  
+  See also <a href="mk87pdf.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">mk87pdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/wgamcdf.html" class="code" title=" F = wgamcdf(x,a,b);">wgamcdf</a></li></TD>
+<TD> Gamma cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wgampdf.html" class="code" title=" f = wgampdf(x,a,b);">wgampdf</a></li></TD>
+<TD> Gamma probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wraylpdf.html" class="code" title=" f = wraylpdf(x,b);">wraylpdf</a></li></TD>
+<TD> Rayleigh probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\polyval.m">polyval</a></li></TD>
+<TD>       Evaluate polynomial.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="bmr00cdf.html" class="code" title=" [p, eps2, a, b] = bmr00cdf(Hd,Scf,Hs,Tz,tail)">bmr00cdf</a></li></TD>
+<TD>  Brodtkorb et.al. (2000) joint (Scf,Hd) CDF from North Sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="bmr00pdf2.html" class="code" title=" p = bmr00pdf2(Hd,Scf,Hs,Tz,normalizedInput)">bmr00pdf2</a></li></TD>
+<TD> Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">bmr00pdf</a>(Hd,Scf,Hm0,Tm02, condon,normalizedInput) 
+002 <span class="comment">%BMR00PDF Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea. </span>
+003 <span class="comment">%    </span>
+004 <span class="comment">%    CALL:  f = bmr00pdf(Hd,Scf,Hm0,Tm02) </span>
+005 <span class="comment">%    </span>
+006 <span class="comment">%       f  = density  </span>
+007 <span class="comment">%      Hd  = zero down crossing wave height </span>
+008 <span class="comment">%      Scf = crest front steepness </span>
+009 <span class="comment">%      Hm0 = significant wave height. </span>
+010 <span class="comment">%     Tm02 = average zero down crossing period.   </span>
+011 <span class="comment">%    </span>
+012 <span class="comment">%    BMR00PDF returns the joint PDF of (Scf, Hd) given Hm0 and Tm02, </span>
+013 <span class="comment">%    i.e., crest front steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, </span>
+014 <span class="comment">%    given the seastate. The root mean square values of Hd and Scf  </span>
+015 <span class="comment">%    (Hrms,Erms) are related to the significant waveheight and the </span>
+016 <span class="comment">%    average zero down crossing period by: </span>
+017 <span class="comment">%                Hrms = Hm0/sqrt(2); </span>
+018 <span class="comment">%                Erms = 5/4*Hm0/(Tm02^2); </span>
+019 <span class="comment">%    This is a revised distribution of MK87 and is fitted to storm waves </span>
+020 <span class="comment">%    from 1995 obtained from the Draupner field in the North Sea.  </span>
+021 <span class="comment">%      The size of f is the common size of  the input arguments </span>
+022 <span class="comment">%    </span>
+023 <span class="comment">%    Example: </span>
+024 <span class="comment">%     Hs = 7;Tz=10;   </span>
+025 <span class="comment">%     h  = linspace(0,3*Hs)';  </span>
+026 <span class="comment">%     s  = linspace(0,4*Hs/Tz^2)'; </span>
+027 <span class="comment">%     [S,H] = meshgrid(s,h); </span>
+028 <span class="comment">%     contour(s,h,bmr00pdf(H,S,Hs,Tz)) </span>
+029 <span class="comment">% </span>
+030 <span class="comment">% See also mk87pdf </span>
+031  
+032 <span class="comment">% Reference  </span>
+033 <span class="comment">%  Brodtkorb, P.A. and Myrhaug, D. and Rue, H. (2000) </span>
+034 <span class="comment">%  &quot;Joint Distributions of Wave Height and Wave Steepness Parameters&quot;, </span>
+035 <span class="comment">% In Proc. 27'th Int. Conf. on Coastal Eng., ICCE, Sydney, Australia }, </span>
+036 <span class="comment">%  vol. 1, pp. 545--558, Paper No. 162 </span>
+037  
+038 <span class="comment">% By pab 15 July 2004 </span>
+039   
+040  
+041   
+042   
+043 error(nargchk(3,6,nargin)) 
+044    
+045 <span class="keyword">if</span> nargin &lt; 6|isempty(normalizedInput),  normalizedInput=0; <span class="keyword">end</span> 
+046 <span class="keyword">if</span> nargin &lt; 5|isempty(condon),  condon=0; <span class="keyword">end</span> <span class="comment">% regular pdf is returned </span>
+047 <span class="keyword">if</span> nargin &lt; 4|isempty(Tm02),  Tm02=8;<span class="keyword">end</span> 
+048 <span class="keyword">if</span> nargin &lt; 3|isempty(Hm0),  Hm0=6;<span class="keyword">end</span> 
+049  
+050 [errorcode, Scf,Hd,Tm02,Hm0] = comnsize(Scf,Hd,Tm02,Hm0); 
+051 <span class="keyword">if</span> errorcode &gt; 0 
+052     error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+053 <span class="keyword">end</span> 
+054 <span class="keyword">if</span> (normalizedInput&gt;0) 
+055   Hrms = 1; 
+056   Erms = 1; 
+057 <span class="keyword">else</span> 
+058   <span class="comment">%Hm00 = 6.7; </span>
+059   <span class="comment">%Tm020 = 8.3 </span>
+060   Hrms = Hm0/sqrt(2); 
+061   Erms = 5/4*Hm0./(Tm02.^2);  
+062   <span class="comment">%Erms = (0.0202 + 0.826*Hm0./(Tm02.^2))/2;  </span>
+063 <span class="keyword">end</span> 
+064 s = Scf./Erms; 
+065 h = Hd./Hrms; 
+066  
+067 <span class="comment">% Conditinal gamma dist.  parameters for steepness </span>
+068 <span class="keyword">if</span> 1, 
+069   <span class="comment">% Error 0.02 for cAx and 0.02 for cBx </span>
+070   cA1 = [ 4.19193631070257,<span class="keyword">...</span> 
+071       -12.03484717258579,<span class="keyword">...</span> 
+072       15.95695603911886,<span class="keyword">...</span> 
+073       -7.31618437661838,<span class="keyword">...</span> 
+074       3.03590705490789]; 
+075   cA2 = [  -0.02838644340635, 
+076        0.29409707273437, 
+077        -0.79138075176131, 
+078        1.20024905431293, 
+079        -0.58192823600509, 
+080        1.00000000000000]; 
+081   cB1 =[ -5.96970985003487,<span class="keyword">...</span> 
+082   23.24982082461128,<span class="keyword">...</span> 
+083  -37.69215199928053,<span class="keyword">...</span> 
+084    5.18520245368619,<span class="keyword">...</span> 
+085   -1.87015799594426]; 
+086   cB2 = [ -0.47236526233572, 
+087       5.71130418016660, 
+088       -17.45884089250511, 
+089       21.60781934904390, 
+090       0.11061694237412, 
+091       1.00000000000000]; 
+092 <span class="keyword">else</span> 
+093   <span class="comment">% Error 0.08 for cAx and 0.03 for cBx </span>
+094   cA1 = [3.39863744229230, 0.42853512533872,2.97401909675030]; 
+095   cA2 = [0.26749624884949, -1.47019799044842,2.17197357932780,1]; 
+096   cB1 = [-15.50443060097295, -0.21474910268201,  -1.87709428385351]; 
+097   cB2 = [-0.49720581030185, 6.35119691685354, 3.88968350685379, 1]; 
+098  <span class="keyword">end</span> 
+099 A1 = polyval(cA1,h)./polyval(cA2,h); 
+100 B1 = exp(polyval(cB1,h)./polyval(cB2,h)); 
+101 h0 = 3.79937912772197; 
+102 k = find(h&gt;h0); 
+103 <span class="keyword">if</span> any(k) 
+104   <span class="comment">% Linear extrapolation </span>
+105  slope1 = 14.03628528937437; 
+106  slope2 = -0.37497306844631; 
+107   A1(k) =  (h(k)-h0)*slope1 + 36.15168757587687; 
+108   B1(k) = exp((h(k)-h0)*slope2 + log(0.05673842727364)); 
+109   <span class="comment">%3.37291820522257  30.10141068490231   0.06979731246760 </span>
+110   <span class="comment">%3.41168737999524  30.65143585680909   0.06861014108633 </span>
+111 <span class="keyword">end</span> 
+112 <span class="comment">% Rayleigh parameter </span>
+113 B0 = 0.69233682309018; 
+114  
+115  
+116  
+117 f   = zeros(size(h)); 
+118  
+119 <span class="keyword">switch</span> condon, 
+120  <span class="keyword">case</span> 0, <span class="comment">% regular pdf is returned  </span>
+121   f = <a href="../../wafo/wstats/wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(h,B0).*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(s,A1,B1); 
+122  <span class="keyword">case</span> 1, <span class="comment">%pdf conditioned on x1 ie. p(x2|x1)  </span>
+123   f = <a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(s,A1,B1); 
+124  <span class="keyword">case</span> 3, <span class="comment">% secret option  used by mk87stat: returns x2*p(x2|x1)  </span>
+125   f = s.*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(s,A1,B1); 
+126  <span class="keyword">case</span> 4, <span class="comment">% secret option  used by mk87stat: returns x2.^2*p(x2|x1)  </span>
+127   f = s.^2.*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(s,A1,B1); 
+128  <span class="keyword">case</span> 5, <span class="comment">% p(h)*P(V|h) is returned special case used by bmr00cdf </span>
+129   f = <a href="../../wafo/wstats/wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(h,B0).*<a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(s,A1,B1); 
+130  <span class="keyword">case</span> 6, <span class="comment">% P(V|h) is returned special case used by bmr00cdf </span>
+131   f = <a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(s,A1,B1); 
+132  <span class="keyword">case</span> 7, <span class="comment">% p(h)*(1-P(V|h)) is returned special case used by bmr00cdf </span>
+133   f = <a href="../../wafo/wstats/wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(h,B0).*(1-<a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(s,A1,B1)); 
+134  <span class="keyword">otherwise</span> error(<span class="string">'unknown option'</span>) 
+135 <span class="keyword">end</span> 
+136 <span class="keyword">if</span> condon~=6 
+137   f = f./Hrms./Erms; 
+138 <span class="keyword">end</span> 
+139 <span class="keyword">return</span> 
+140   
+141  <span class="keyword">return</span>  
+142   
+143  <span class="comment">% Code used for finding the rational polynomials </span>
+144 <span class="comment">% $$$ NFAC=8; </span>
+145 <span class="comment">% $$$ BIG=1e30; </span>
+146 <span class="comment">% $$$ MAXIT=5; </span>
+147 <span class="comment">% $$$  </span>
+148 <span class="comment">% $$$ dev=BIG; </span>
+149 <span class="comment">% $$$  </span>
+150 <span class="comment">% $$$  </span>
+151 <span class="comment">% $$$  </span>
+152 <span class="comment">% $$$ m = 7; </span>
+153 <span class="comment">% $$$ k = 7; </span>
+154 <span class="comment">% $$$ ncof=m+k+1; </span>
+155 <span class="comment">% $$$ npt=NFAC*ncof;  </span>
+156 <span class="comment">% $$$ <span class="comment">% Number of points where function is avaluated, i.e. fineness of mesh </span></span>
+157 <span class="comment">% $$$  </span>
+158 <span class="comment">% $$$ a = 0; b = 2.5 </span>
+159 <span class="comment">% $$$  </span>
+160 <span class="comment">% $$$ x = zeros(npt,1); </span>
+161 <span class="comment">% $$$ ix1=1:floor(npt/2-1); </span>
+162 <span class="comment">% $$$ x(ix1)=a+(b-a).*sin(pi/2*(ix1-1)./(npt-1)).^2; </span>
+163 <span class="comment">% $$$ ix2=floor(npt/2):npt; </span>
+164 <span class="comment">% $$$ x(ix2)=b-(b-a).*sin(pi/2*(npt-ix2)./(npt-1)).^2; </span>
+165 <span class="comment">% $$$ [Av , Bv, Cv]=dist2dsmfun(sphat,x); </span>
+166 <span class="comment">% $$$  </span>
+167 <span class="comment">% $$$  </span>
+168 <span class="comment">% $$$ [cA1, cA2] = ratlsq([x,Av],m,k,a,b); </span>
+169 <span class="comment">% $$$  </span>
+170 <span class="comment">% $$$ [cB1, cB2] = ratlsq([x,log(Bv)],m,k,a,b); </span>
+171 <span class="comment">% $$$ <span class="comment">%[cA1, cA2] = ratlsq([x,Av],a,b,m,k); </span></span>
+172 <span class="comment">% $$$ subplot(2,1,1) </span>
+173 <span class="comment">% $$$  plot(x,polyval(cA1,x)./polyval(cA2,x),'g',x,Av,'r') </span>
+174 <span class="comment">% $$$  subplot(2,1,2) </span>
+175 <span class="comment">% $$$  plot(x,exp(polyval(cB1,x)./polyval(cB2,x)),'g',x,Bv,'r') </span>
+176 <span class="comment">% $$$   </span>
+177 <span class="comment">% $$$   </span>
+178 <span class="comment">% $$$   </span>
+179 <span class="comment">% $$$ m = 3; </span>
+180 <span class="comment">% $$$ k = m; </span>
+181 <span class="comment">% $$$ ncof=m+k+1; </span>
+182 <span class="comment">% $$$ npt=NFAC*ncof;  </span>
+183 <span class="comment">% $$$ <span class="comment">% Number of points where function is avaluated, i.e. fineness of mesh </span></span>
+184 <span class="comment">% $$$  </span>
+185 <span class="comment">% $$$ a = 0; b = 2 </span>
+186 <span class="comment">% $$$  </span>
+187 <span class="comment">% $$$ x = zeros(npt,1); </span>
+188 <span class="comment">% $$$ ix1=1:floor(npt/2-1); </span>
+189 <span class="comment">% $$$ x(ix1)=a+(b-a).*sin(pi/2*(ix1-1)./(npt-1)).^2; </span>
+190 <span class="comment">% $$$ ix2=floor(npt/2):npt; </span>
+191 <span class="comment">% $$$ x(ix2)=b-(b-a).*sin(pi/2*(npt-ix2)./(npt-1)).^2; </span>
+192 <span class="comment">% $$$ [Av , Bv, Cv]=dist2dsmfun(sphat,x); </span>
+193 <span class="comment">% $$$  </span>
+194 <span class="comment">% $$$  </span>
+195 <span class="comment">% $$$ [cA1, cA2] = ratlsq([x,Av],m,k,a,b); </span>
+196 <span class="comment">% $$$  </span>
+197 <span class="comment">% $$$ [cB1, cB2] = ratlsq([x,log(Bv)],m,k,a,b); </span>
+198 <span class="comment">% $$$ <span class="comment">%[cA1, cA2] = ratlsq([x,Av],a,b,m,k); </span></span>
+199 <span class="comment">% $$$ subplot(2,1,1) </span>
+200 <span class="comment">% $$$  plot(x,polyval(cA1,x)./polyval(cA2,x),'g',x,Av,'r') </span>
+201 <span class="comment">% $$$  subplot(2,1,2) </span>
+202 <span class="comment">% $$$  plot(x,exp(polyval(cB1,x)./polyval(cB2,x)),'g',x,Bv,'r') </span>
+203 <span class="comment">% $$$   </span>
+204 <span class="comment">% $$$  N = 12 </span>
+205 <span class="comment">% $$$  x1 = chebroot(N).'*(b-a)/2+(b+a)/2 ; </span>
+206 <span class="comment">% $$$  [Av , Bv, Cv]=dist2dsmfun(sphat,x1); </span>
+207 <span class="comment">% $$$  cA1 =chebfit([x1 Av],n,a,b); </span>
+208 <span class="comment">% $$$  cB1 =chebfit([x1 Bv],n,a,b); </span>
+209 <span class="comment">% $$$   </span>
+210 <span class="comment">% $$$  dist2dparamplot(phat,sphat) </span>
+211 <span class="comment">% $$$  subplot(2,1,1), hold on </span>
+212 <span class="comment">% $$$  plot(x,chebval(x,cA1,a,b),'g') </span>
+213 <span class="comment">% $$$  subplot(2,1,2), hold on </span>
+214 <span class="comment">% $$$  plot(x,chebval(x,cB1,a,b),'g')</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

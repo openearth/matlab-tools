@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="  Module ONEDIM in WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; Contents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Module ONEDIM in WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  Module ONEDIM in WAFO Toolbox.  
+  Version 2.1.1  07-Sep-2005  
+   
+   
+  <a href="Readme.html" class="code" title=" Readme file for module ONEDIM in WAFO Toolbox.">Readme</a>       - <a href="Readme.html" class="code" title=" Readme file for module ONEDIM in WAFO Toolbox.">Readme</a> file for module ONEDIM in WAFO Toolbox.  
+  
+  Misc 
+  <a href="detrendma.html" class="code" title=" [y, trend] = detrendma(x,L)">detrendma</a>    - Removes a trend from data using a moving average  
+  <a href="findoutliers.html" class="code" title=" [ind, indg]=findoutliers(xx,zcrit,dcrit,ddcrit,plotflag)">findoutliers</a> - Finds the indices to spurious points in a timeseries 
+  <a href="reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">reconstruct</a>  - <a href="reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">Reconstruct</a> the spurious/missing points of timeseries 
+  
+  Plotting 
+  <a href="covplot.html" class="code" title=" covplot(rn,L,plotflag,lintype)">covplot</a>      - Plots auto covariance function (ACF) 1D or 2D.  
+  <a href="lcplot.html" class="code" title=" h = lcplot(lc,plotflag,ma,sa);">lcplot</a>       - Plots level-crossing spectrum (lc)  
+  <a href="spwaveplot.html" class="code" title=" spwaveplot(xx,varargin)">spwaveplot</a>   - Plots specified waves from a timeseries   
+  <a href="waveplot.html" class="code" title=" Nf1 = waveplot(x,varargin)">waveplot</a>     - Plots surface elevation of timeseries.  
+  
+  Autocovariance and spectrum estimation 
+  <a href="dat2cor.html" class="code" title=" [corr,c0] = dat2cor(xn,varargin)">dat2cor</a>      - Estimate auto correlation function from data. 
+  <a href="dat2cov.html" class="code" title=" R = dat2cov(xn,varargin)">dat2cov</a>      - Estimate auto covariance function from data. 
+  <a href="dat2spec.html" class="code" title=" [S,fcut] = dat2spec(xn,varargin)">dat2spec</a>     - Estimate one-sided spectral density from data 
+  <a href="dat2spec2.html" class="code" title=" S = dat2spec2(xn,L,g,plotflag,wdef,dT,chopOffHighFreq)">dat2spec2</a>    - Estimate one-sided spectral density, version 2.  
+  
+  Data extraction 
+  <a href="dat2crossind.html" class="code" title=" [ind , Nc]= dat2crossind(x,v,wdef)">dat2crossind</a> - Finds indices of down and/or upcrossings from data. 
+  <a href="dat2lc.html" class="code" title=" lc = dat2lc(x,h,def);">dat2lc</a>       - Extracts level-crossing spectrum from data. 
+  <a href="dat2steep.html" class="code" title=" [S , H,AC1,AT1,TFRONT1,TREAR1,z_ind2,xn2]=dat2steep(xx,rate,method)">dat2steep</a>    - Extracts waveheights and steepnesses from data.  
+  <a href="dat2tc.html" class="code" title=" [tc, ind, l_ind]=dat2tc(x,v,wdef)">dat2tc</a>       - Extracts troughs and crests from data.  
+  <a href="dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a>       - Extracts turning points from data.  
+  <a href="dat2wa.html" class="code" title=" [T, index,ind] = dat2wa(xn,h,pdef,wdef,rate)">dat2wa</a>       - Extracts sequence of wavelengths from data.  
+  <a href="ecross.html" class="code" title=" t0 = ecross(t,f,ind,v)">ecross</a>       - Extracts exact level v crossings. 
+  <a href="findcross.html" class="code" title=" ind=findcross(x,v)">findcross</a>    - Finds indices to level v up and downcrossings of a vector  
+  <a href="findextrema.html" class="code" title=" ind = findextrema(x)">findextrema</a>  - Finds indices to minima and maxima of data. 
+  <a href="findrfc.html" class="code" title=" ind=findrfc(tp,h)">findrfc</a>      - Finds indices to rainflow cycles from sequence of TP.  
+  <a href="mm2lc.html" class="code" title=" [lc,alpha] = mm2lc(mm,def,plotflag,sa)">mm2lc</a>        - Extracts level-crossing spectrum from min2Max cycles.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

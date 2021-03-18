@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of parzen</title>
+  <meta name="keywords" content="parzen">
+  <meta name="description" content=" returns the N-point Parzen window in a column vector.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">onedim</a> &gt; <a href="index.html">private</a> &gt; parzen.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>parzen
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> returns the N-point Parzen window in a column vector.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [w, be] = parzen(n,fs) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="parzen.html" class="code" title=" returns the N-point Parzen window in a column vector.">PARZEN</a> returns the N-point <a href="parzen.html" class="code" title=" returns the N-point Parzen window in a column vector.">Parzen</a> window in a column vector.
+   
+   CALL:   [win Bw] = <a href="parzen.html" class="code" title=" returns the N-point Parzen window in a column vector.">parzen</a>(n,fs);
+   
+     win = <a href="parzen.html" class="code" title=" returns the N-point Parzen window in a column vector.">parzen</a> window
+      Bw = bandwidth of the window  
+       n = number of points
+      fs = sampling frequency (default 1)
+ 
+  See also <a href="bingham.html" class="code" title="  returns the N-point Bingham window in a column vector.">bingham</a>, <a href="hanning.html" class="code" title=" returns the N-point Hanning window in a column vector.">hanning</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2spec.html" class="code" title=" [S,fcut] = dat2spec(xn,varargin)">dat2spec</a></li></TD>
+<TD> Estimate one-sided spectral density from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2spec2.html" class="code" title=" S = dat2spec2(xn,L,g,plotflag,wdef,dT,chopOffHighFreq)">dat2spec2</a></li></TD>
+<TD> Estimate one-sided spectral density, version 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">reconstruct</a></li></TD>
+<TD> reconstruct the spurious/missing points of timeseries</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [w, be] = <a name="_sub0" href="#_subfunctions" class="code">parzen</a>(n,fs)
+002 <span class="comment">% PARZEN returns the N-point Parzen window in a column vector.</span>
+003 <span class="comment">%  </span>
+004 <span class="comment">%  CALL:   [win Bw] = parzen(n,fs);</span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%    win = parzen window</span>
+007 <span class="comment">%     Bw = bandwidth of the window  </span>
+008 <span class="comment">%      n = number of points</span>
+009 <span class="comment">%     fs = sampling frequency (default 1)</span>
+010 <span class="comment">%</span>
+011 <span class="comment">% See also bingham, hanning</span>
+012 
+013 <span class="comment">% tested on: Matlab 5.3</span>
+014 <span class="comment">% History:  </span>
+015 <span class="comment">%   by Per Andreas Brodtkorb 14.12.1997</span>
+016 <span class="keyword">if</span> nargin&lt;2|isempty(fs),
+017   fs=1;
+018 <span class="keyword">end</span>
+019   
+020 <span class="keyword">if</span> nargout &gt; 1
+021  be=1.33/(n+1)*fs; <span class="comment">%bandwidth in Hz if fs in Hz</span>
+022 <span class="keyword">end</span>  
+023 <span class="keyword">if</span> 1, <span class="comment">%old oversion</span>
+024   tau=2*abs((1:n)/(n+1)-0.5) ;
+025   tau1=tau(find(tau&lt;=0.5));
+026   tau2=tau((find(tau&gt;0.5)&lt;(n/2) ));
+027   tau3=fliplr(tau2);
+028   w=[2*(1-tau2).^3 1-6*tau1.^2+6*tau1.^3  2*(1-tau3).^3]';
+029 
+030 <span class="keyword">end</span>
+031 
+032   
+033</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

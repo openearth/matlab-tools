@@ -1,0 +1,624 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dat2dspec</title>
+  <meta name="keywords" content="dat2dspec">
+  <meta name="description" content=" Estimates the directional wave spectrum from timeseries">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">multidim</a> &gt; dat2dspec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\multidim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dat2dspec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Estimates the directional wave spectrum from timeseries</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [Sd,D,Sw,Fcof,Gwt,Sxy,Sxy1] = dat2dspec2(xn,pos,h,nfft,nt,method,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dat2dspec.html" class="code" title=" Estimates the directional wave spectrum from timeseries  ">DAT2DSPEC</a> Estimates the directional wave spectrum from timeseries  
+   
+   CALL: [S, D, Sw,Fcof] = <a href="dat2dspec.html" class="code" title=" Estimates the directional wave spectrum from timeseries  ">dat2dspec</a>(W,pos,h,Nfft,Nt,method,options); 
+     
+          S = a spectral density structure containing: 
+              S      = 2D array of the estimated directional spectrum, size Nt x Nf.  
+              w      = frequency vector  0..2*pi*Nyquistfrequency of length Nf 
+              theta  = angle vector -pi..pi of length Nt  
+                       (theta = 0 -&gt; + x-axis, theta = pi/2 -&gt; + y-axis)  
+              h      = water depth  
+                       ( S.S=D.S.*Sw.S(:,ones(:,Nt))' ) 
+         D  = estimate of <a href="../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a> function as function of theta and w 
+         Sw = angular frequency spectrum 
+       Fcof = <a href="fourier.html" class="code" title=" Returns Fourier coefficients. ">Fourier</a> coefficients of the <a href="../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a> function D(w,theta) 
+              defined as int D(w,theta)*exp(i*n*theta) dtheta. n=0:nharm 
+              size nharm+1 x Nf 
+  
+         W  = [t w1 w2 ... wM]  a M+1 column data matrix with sampled times  
+              and values in column 1 and column 2 to M+1, respectively. 
+        pos = [x y z def bfs], matrix characterizing instruments and postions, size M x 5 
+              x(j), y(j),z(j) = the coordinate positon of the j-th sensor (j=1:M) 
+              def(j) = identifying parameter (1,2,... or 18) for the j-th time series   
+                       (See <a href="tran.html" class="code" title=" Computes transfer functions based on linear wave theory">tran</a> for options) 
+              bfs(j) = 1, if j-th time series is to be used in final estimate of  
+                          &quot;Best&quot; Frequency Spectra. 
+                       0, if j-th is to be excluded. (At least one must be set to 1) 
+         h  = water depth (default is deep water,i.e., h = inf) 
+       Nfft = length of FFT  (determines the smoothing and number of 
+              frequencies, Nf = Nfft/2+1) (default 256) 
+         Nt = number of angles (default 101) 
+     method = 'MLM'  Maximum Likelihood Method (default) 
+              'IMLM' Iterative  Maximum Likelihood Method  
+              'MEM'  Maximum Entropy Method   (slow) 
+              'EMEM' Extended Maximum Entropy Method 
+    options = optional options, see <a href="specoptset.html" class="code" title=" Create or alter SPECTRUM OPTIONS structure. ">specoptset</a> for details. 
+  
+  NB! requires psd and csd from the signal toolbox 
+  
+  See also  <a href="specoptset.html" class="code" title=" Create or alter SPECTRUM OPTIONS structure. ">specoptset</a>, psd, csd, <a href="tran.html" class="code" title=" Computes transfer functions based on linear wave theory">tran</a>, <a href="../../wafo/spec/w2k.html" class="code" title=" Translates from frequency to wave number">w2k</a>, <a href="../../wafo/spec/wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/multidim/private/bfsspec.html" class="code" title=" SfBest = bfsSpec(Sf,Hw,pos,bfs);">bfsspec</a></li></TD>
+<TD> Estimate frequency spectrum for the surface elevation from the bfs timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/createspec.html" class="code" title=" S=createspec(stype,freqtype)">createspec</a></li></TD>
+<TD> Spectrum structure constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/detrendma.html" class="code" title=" [y, trend] = detrendma(x,L)">detrendma</a></li></TD>
+<TD> Removes a trend from data using a moving average</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/private/emem.html" class="code" title=" DS = emem(Sxyn,Gwt,theta,fi,k,opt)">emem</a></li></TD>
+<TD>  Extended Maximum Entropy Method</TD>
+</TR>
+<TR>
+<TD><li><a href="fourier.html" class="code" title=" [a,b]=fourier(t,x,T,M,N);">fourier</a></li></TD>
+<TD> Returns Fourier coefficients.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/private/getcrossspectra.html" class="code" title=" Sxy = getCrossSpectra(thetai,Gwt,DS)">getcrossspectra</a></li></TD>
+<TD> Compute the cross spectra by integration</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/private/hwestimate.html" class="code" title=" Hw = HwEstimate(Sf,SfBest,Hw,pos);">hwestimate</a></li></TD>
+<TD>  Estimate absolute value of transfer function H(w) from sensor spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/private/imlm.html" class="code" title=" DS = imlm(Sxy,Gwt,thetai,fi,k,opt)">imlm</a></li></TD>
+<TD>  Iterated maximum likelihood method for estimating the directional distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/private/mem.html" class="code" title=" DS = mem(Sxyn,Gwt,thetai,fi,k)">mem</a></li></TD>
+<TD>  maximum entropy method for estimating the directional distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/private/mlm.html" class="code" title=" DS = mlm(Sxy,Gwt,thetai,fi,k,opt)">mlm</a></li></TD>
+<TD>  maximum likelihood method for estimating the directional distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="specoptset.html" class="code" title=" options = specoptset(varargin)">specoptset</a></li></TD>
+<TD> Create or alter SPECTRUM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="tran.html" class="code" title=" [Hw, Gwt, kw,Hwt,ee]=tran(w,theta,pos,def,h,g,rho,bet,igam,thx,thy,kw);">tran</a></li></TD>
+<TD> Computes transfer functions based on linear wave theory</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/ttspec.html" class="code" title=" Snew = ttspec(S,varargin)">ttspec</a></li></TD>
+<TD> Toggle Transform between angular frequency and frequency spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="">bdm</a></li></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\csd.m">csd</a></li></TD>
+<TD>           Cross Spectral Density estimate.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\detrend.m">detrend</a></li></TD>
+<TD>       Remove a linear trend from a vector, usually for FFT processing.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\ifft.bi">ifft</a></li></TD>
+<TD>          Inverse discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\inputname.m">inputname</a></li></TD>
+<TD>     Input argument name.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\isequal.m">isequal</a></li></TD>
+<TD>       True if arrays are numerically equal.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\audiovideo\@audiorecorder\pause.m">pause</a></li></TD>
+<TD>         Wait for user response.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\@dspdata\psd.m">psd</a></li></TD>
+<TD>           Power Spectral Density estimate.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\semilogy.bi">semilogy</a></li></TD>
+<TD>      Semi-log scale plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\setfield.m">setfield</a></li></TD>
+<TD>      Set structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\robust\robust\@umat\squeeze.m">squeeze</a></li></TD>
+<TD>       Remove singleton dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@opaque\unique.m">unique</a></li></TD>
+<TD>        Set unique.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [Sd,D,Sw,Fcof,Gwt,Sxy,Sxy1] = dat2dspec2(xn,pos,h,nfft,nt,method,varargin) 
+0002 <span class="comment">%DAT2DSPEC Estimates the directional wave spectrum from timeseries  </span>
+0003 <span class="comment">%  </span>
+0004 <span class="comment">%  CALL: [S, D, Sw,Fcof] = dat2dspec(W,pos,h,Nfft,Nt,method,options); </span>
+0005 <span class="comment">%    </span>
+0006 <span class="comment">%         S = a spectral density structure containing: </span>
+0007 <span class="comment">%             S      = 2D array of the estimated directional spectrum, size Nt x Nf.  </span>
+0008 <span class="comment">%             w      = frequency vector  0..2*pi*Nyquistfrequency of length Nf </span>
+0009 <span class="comment">%             theta  = angle vector -pi..pi of length Nt  </span>
+0010 <span class="comment">%                      (theta = 0 -&gt; + x-axis, theta = pi/2 -&gt; + y-axis)  </span>
+0011 <span class="comment">%             h      = water depth  </span>
+0012 <span class="comment">%                      ( S.S=D.S.*Sw.S(:,ones(:,Nt))' ) </span>
+0013 <span class="comment">%        D  = estimate of spreading function as function of theta and w </span>
+0014 <span class="comment">%        Sw = angular frequency spectrum </span>
+0015 <span class="comment">%      Fcof = Fourier coefficients of the spreading function D(w,theta) </span>
+0016 <span class="comment">%             defined as int D(w,theta)*exp(i*n*theta) dtheta. n=0:nharm </span>
+0017 <span class="comment">%             size nharm+1 x Nf </span>
+0018 <span class="comment">% </span>
+0019 <span class="comment">%        W  = [t w1 w2 ... wM]  a M+1 column data matrix with sampled times  </span>
+0020 <span class="comment">%             and values in column 1 and column 2 to M+1, respectively. </span>
+0021 <span class="comment">%       pos = [x y z def bfs], matrix characterizing instruments and postions, size M x 5 </span>
+0022 <span class="comment">%             x(j), y(j),z(j) = the coordinate positon of the j-th sensor (j=1:M) </span>
+0023 <span class="comment">%             def(j) = identifying parameter (1,2,... or 18) for the j-th time series   </span>
+0024 <span class="comment">%                      (See tran for options) </span>
+0025 <span class="comment">%             bfs(j) = 1, if j-th time series is to be used in final estimate of  </span>
+0026 <span class="comment">%                         &quot;Best&quot; Frequency Spectra. </span>
+0027 <span class="comment">%                      0, if j-th is to be excluded. (At least one must be set to 1) </span>
+0028 <span class="comment">%        h  = water depth (default is deep water,i.e., h = inf) </span>
+0029 <span class="comment">%      Nfft = length of FFT  (determines the smoothing and number of </span>
+0030 <span class="comment">%             frequencies, Nf = Nfft/2+1) (default 256) </span>
+0031 <span class="comment">%        Nt = number of angles (default 101) </span>
+0032 <span class="comment">%    method = 'MLM'  Maximum Likelihood Method (default) </span>
+0033 <span class="comment">%             'IMLM' Iterative  Maximum Likelihood Method  </span>
+0034 <span class="comment">%             'MEM'  Maximum Entropy Method   (slow) </span>
+0035 <span class="comment">%             'EMEM' Extended Maximum Entropy Method </span>
+0036 <span class="comment">%   options = optional options, see specoptset for details. </span>
+0037 <span class="comment">% </span>
+0038 <span class="comment">% NB! requires psd and csd from the signal toolbox </span>
+0039 <span class="comment">% </span>
+0040 <span class="comment">% See also  specoptset, psd, csd, tran, w2k, wspecplot </span>
+0041  
+0042 <span class="comment">%             freq = frequency vector 0..Nyquistfrequency </span>
+0043  
+0044 <span class="comment">% References: </span>
+0045 <span class="comment">% Isobe M, Kondo K, Horikawa K. (1984) </span>
+0046 <span class="comment">% &quot;Extension of MLM for estimating directional wave spectrum&quot;, </span>
+0047 <span class="comment">% In Symposium on Description and modelling of Directional Seas, </span>
+0048 <span class="comment">% Copenhagen, pp 1-15 </span>
+0049 <span class="comment">% </span>
+0050 <span class="comment">% Young I.R. (1994) </span>
+0051 <span class="comment">% &quot;On the measurement of directional spectra&quot;, </span>
+0052 <span class="comment">% Applied Ocean Research, Vol 16, pp 283-294 </span>
+0053 <span class="comment">% </span>
+0054 <span class="comment">% Hashimoto,N. (1997)  </span>
+0055 <span class="comment">% &quot;Analysis of the directional wave spectra from field data.&quot;, Advances in  </span>
+0056 <span class="comment">% Coastal and Ocean Engineering, Vol.3., pp.103-143 </span>
+0057 <span class="comment">% </span>
+0058 <span class="comment">% Massel S.R. and Brinkman R. M. (1998) </span>
+0059 <span class="comment">% &quot;On the determination od directional wave spectra  </span>
+0060 <span class="comment">%   for practical applications&quot;, </span>
+0061 <span class="comment">%  Applied Ocean Research, Vol 20, pp 357-374 </span>
+0062 <span class="comment">% </span>
+0063 <span class="comment">% Michel K. Ochi (1998), </span>
+0064 <span class="comment">% &quot;OCEAN WAVES, The stochastic approach&quot;, </span>
+0065 <span class="comment">%  OCEAN TECHNOLOGY series 6, Cambridge, chapter 7. </span>
+0066  
+0067  
+0068 <span class="comment">% Tested on: Matlab 5.3, 5.2  </span>
+0069 <span class="comment">% History: </span>
+0070 <span class="comment">% revised pab dec2003   </span>
+0071 <span class="comment">% revised pab 08.11.2002 </span>
+0072 <span class="comment">% -changed name to dat2dspec2 in order to incorprate the specoptset option. </span>
+0073 <span class="comment">% revised pab 24.10.2002 </span>
+0074 <span class="comment">% -made it more robust by estimating Hw from data if possible. </span>
+0075 <span class="comment">% -added method EMEM and revised the MEM code </span>
+0076 <span class="comment">% revised pab 09.05.2001  </span>
+0077 <span class="comment">%   Due to Vengatesan Venugopal plotting is now handled correctly. </span>
+0078 <span class="comment">% revised pab 08.05.2001 </span>
+0079 <span class="comment">% - added optimset to fsolve for Matlab v 5.3 and higher. </span>
+0080 <span class="comment">% revised pab 21.06.2000 </span>
+0081 <span class="comment">%   - added 'MEM' </span>
+0082 <span class="comment">%   - added 'IMLM' and checked with testsurf and testbuoy </span>
+0083 <span class="comment">%   - replaced inv with pinv </span>
+0084 <span class="comment">%   - changed order of input arguments </span>
+0085 <span class="comment">%   - added dflag, ftype to input </span>
+0086 <span class="comment">% revised pab 06.01.2000  </span>
+0087 <span class="comment">%   - tested  narrowbanded cases generated with testsurf and testbuoy -&gt; OK </span>
+0088 <span class="comment">%   - changed size of S.S from Nf x Nt   to     Nt x Nf </span>
+0089 <span class="comment">%   - added the possibility that W contains timeseries of other  </span>
+0090 <span class="comment">%     quantities than a surface elevation </span>
+0091 <span class="comment">%   - added par </span>
+0092 <span class="comment">%   - extended pos with def and bfs  </span>
+0093 <span class="comment">% revised pab 28.08.99 </span>
+0094 <span class="comment">%  updated spectral structure </span>
+0095 <span class="comment">% By Per A. Brodtkorb 27.03.99 </span>
+0096  
+0097 <span class="comment">% TODO <span class="comment">% Add option 'fem'. It is not implemented </span></span>
+0098 <span class="comment">% TODO <span class="comment">% measurements should be scaled       </span></span>
+0099 <span class="comment">% TODO <span class="comment">% all options in specoptset should be implemented  </span></span>
+0100 <span class="comment">% TODO <span class="comment">% Remove dependence on psd and csd in signal toolbox. </span></span>
+0101    
+0102 opt = <a href="specoptset.html" class="code" title=" Create or alter SPECTRUM OPTIONS structure. ">specoptset</a>(<span class="string">'plotflag'</span>,<span class="string">'off'</span>,<span class="string">'dflag'</span>,<span class="string">'mean'</span>,<span class="string">'ftype'</span>,<span class="string">'w'</span>,.<span class="keyword">...</span> 
+0103          <span class="string">'thtype'</span>,<span class="string">'r'</span>,<span class="string">'nharm'</span>,2,<span class="string">'delay'</span>,0,<span class="string">'gravity'</span>,[],<span class="string">'wdensity'</span>,[],<span class="keyword">...</span> 
+0104          <span class="string">'bet'</span>,[],<span class="string">'igam'</span>,[],<span class="string">'x_axisdir'</span>,[],<span class="string">'y_axisdir'</span>,[],<span class="keyword">...</span> 
+0105          <span class="string">'maxIter'</span>,25,<span class="string">'coefAbsTol'</span>,0.01,<span class="string">'errorTol'</span>,[],<span class="keyword">...</span> 
+0106          <span class="string">'minModelOrder'</span>,1,<span class="string">'relax'</span>,[]); 
+0107           
+0108 <span class="comment">% If just 'defaults' passed in, return the default options in Sd </span>
+0109 <span class="keyword">if</span> nargin==1 &amp; nargout &lt;= 1 &amp; isequal(xn,<span class="string">'defaults'</span>) 
+0110   Sd = opt;  
+0111   <span class="keyword">return</span> 
+0112 <span class="keyword">end</span> 
+0113 error(nargchk(2,inf,nargin))  
+0114  
+0115  
+0116 <span class="keyword">if</span> nargin&gt;6,  opt  = <a href="specoptset.html" class="code" title=" Create or alter SPECTRUM OPTIONS structure. ">specoptset</a>(opt,varargin{:}); <span class="keyword">end</span> 
+0117  
+0118  
+0119 xx = xn; 
+0120 <span class="keyword">if</span> nargin&lt;2, 
+0121   error(<span class="string">'Must have 2 inputs arguments'</span>) 
+0122 <span class="keyword">end</span> 
+0123 [n m]= size(xx); 
+0124 <span class="keyword">if</span> n&lt;m, b=m;m=n;n=b; xx=xx'; <span class="keyword">end</span> 
+0125  
+0126 <span class="keyword">if</span> n&lt;4,   error(<span class="string">'The vector must have more than 4 elements!'</span>),<span class="keyword">end</span> 
+0127  
+0128 <span class="keyword">switch</span> m 
+0129   <span class="keyword">case</span> {1,2,3} , 
+0130     error(<span class="string">'Wrong dimension of input! Must at least have 4 columns! '</span>)    
+0131  <span class="keyword">otherwise</span>,   <span class="comment">% dimension OK!      </span>
+0132 <span class="keyword">end</span> 
+0133 <span class="keyword">if</span> any([m-1 5]~=size(pos)),   
+0134   error(<span class="string">'Wrong dimension of pos, must be of size MX5'</span>), 
+0135 <span class="keyword">end</span> 
+0136  
+0137 Fs = 1/(xx(2,1)-xx(1,1));<span class="comment">% sampling frequency </span>
+0138  
+0139 <span class="comment">% Default values </span>
+0140 <span class="comment">%~~~~~~~~~~~~~~~ </span>
+0141 <span class="keyword">if</span> nargin&lt;3|isempty(h),     h      = inf; <span class="keyword">end</span>                 <span class="comment">% deep water is default </span>
+0142 <span class="keyword">if</span> nargin&lt;4|isempty(nfft),  nfft   = min(256,n-mod(n,2)); <span class="keyword">end</span> <span class="comment">%make sure nfft&lt;=n and even </span>
+0143 <span class="keyword">if</span> nargin&lt;5|isempty(nt),    nt     = 101;<span class="keyword">end</span> 
+0144 <span class="keyword">if</span> nargin&lt;6|isempty(method),method = <span class="string">'mlm'</span>;<span class="keyword">end</span> 
+0145  
+0146 nfft = min(nfft+mod(nfft,2),n-mod(n,2)); 
+0147  
+0148 dflag  = <span class="string">'mean'</span>;   <span class="comment">%'linear'; <span class="comment">%detrending option 'none','mean','ma' </span></span>
+0149 ftype  = <span class="string">'w'</span>;    <span class="comment">% options are f=S(f,phi),w=S(w,phi) </span>
+0150 nharm  = 2;      <span class="comment">% number of harmonics </span>
+0151 par = [];g=[];rho=[];bet=[];igam=[];thx=[];thy=[]; <span class="comment">% use default values in tran </span>
+0152 <span class="keyword">if</span> nargout==0, plotflag = 1;  <span class="keyword">else</span>,    plotflag = 0;  <span class="keyword">end</span> 
+0153 noverlap = floor(nfft/2); 
+0154  
+0155 <span class="keyword">switch</span> opt.dflag; 
+0156   <span class="keyword">case</span> {<span class="string">'mean'</span>,<span class="string">'ma'</span>,<span class="string">'linear'</span>,<span class="string">'none'</span>}, dflag =opt.dflag; 
+0157 <span class="keyword">end</span> 
+0158 <span class="keyword">switch</span> opt.ftype; 
+0159   <span class="keyword">case</span> {<span class="string">'w'</span>,<span class="string">'f'</span>}, ftype = opt.ftype; 
+0160 <span class="keyword">end</span> 
+0161 <span class="keyword">switch</span> opt.thtype; 
+0162   <span class="keyword">case</span> {<span class="string">'r'</span>,<span class="string">'d'</span>}, thtype = opt.thtype; 
+0163 <span class="keyword">end</span> 
+0164 <span class="keyword">switch</span> opt.plotflag 
+0165   <span class="keyword">case</span> {<span class="string">'none'</span>,<span class="string">'off'</span>},   plotflag = 0; 
+0166   <span class="keyword">case</span> <span class="string">'final'</span>, plotflag = 1; 
+0167   <span class="keyword">case</span> <span class="string">'iter'</span>,  plotflag = 2; 
+0168     <span class="keyword">otherwise</span> plotflag = opt.plotflag; 
+0169 <span class="keyword">end</span> 
+0170 <span class="keyword">if</span> ~isempty(opt.noverlap),  noverlap = opt.noverlap;<span class="keyword">end</span> 
+0171 <span class="keyword">if</span> ~isempty(opt.window),    window   = opt.window; <span class="keyword">else</span> window = nfft; <span class="keyword">end</span> 
+0172 <span class="keyword">if</span> ~isempty(opt.message),   message  = opt.message; <span class="keyword">end</span> 
+0173 <span class="keyword">if</span> ~isempty(opt.delay),     delay    = opt.delay; <span class="keyword">end</span> 
+0174 <span class="keyword">if</span> ~isempty(opt.nharm),     nharm    = opt.nharm; <span class="keyword">end</span> 
+0175 <span class="keyword">if</span> ~isempty(opt.gravity),   g        = opt.gravity; <span class="keyword">end</span> 
+0176 <span class="keyword">if</span> ~isempty(opt.wdensity),  rho      = opt.wdensity; <span class="keyword">end</span> 
+0177 <span class="keyword">if</span> ~isempty(opt.bet),       bet      = opt.bet; <span class="keyword">end</span> 
+0178 <span class="keyword">if</span> ~isempty(opt.igam),      igam     = opt.igam; <span class="keyword">end</span> 
+0179 <span class="keyword">if</span> ~isempty(opt.x_axisdir), thx      = opt.x_axisdir;<span class="keyword">end</span> 
+0180 <span class="keyword">if</span> ~isempty(opt.y_axisdir), thy      = opt.y_axisdir; <span class="keyword">end</span> 
+0181  
+0182  
+0183 <span class="keyword">if</span> nt&lt;30,  warning(<span class="string">' # of angles are low =&gt;  spectral density may be inaccurate'</span>), <span class="keyword">end</span> 
+0184 <span class="keyword">if</span> nharm&gt;=nt,  
+0185   nharm = nt-1; 
+0186   disp(<span class="string">'Nharm must be less than Nt'</span>) 
+0187 <span class="keyword">end</span> 
+0188  
+0189 bfs = find(pos(:,5)&gt;.5); <span class="comment">% indicator if it should be used to estimate spectra </span>
+0190 <span class="keyword">if</span> isempty(bfs),  error(<span class="string">'Not all the elements of bfs can be zero'</span>),<span class="keyword">end</span> 
+0191  
+0192 <span class="comment">%thetai=(linspace(0,2*pi,nt)); </span>
+0193 thetai   = linspace(-pi,pi,nt)'; 
+0194 nf       = nfft/2+1; 
+0195  
+0196  
+0197 <span class="comment">%-------------------------------------------- </span>
+0198 <span class="comment">% Detrend the measurements before estimation </span>
+0199 <span class="comment">%-------------------------------------------- </span>
+0200 <span class="keyword">switch</span> lower(dflag) 
+0201 <span class="keyword">case</span> <span class="string">'none'</span>, <span class="comment">% do nothing </span>
+0202 <span class="keyword">case</span> <span class="string">'mean'</span>,   mn        = mean(xx(:,2:m)); 
+0203                xx(:,2:m) = (xx(:,2:m)-mn(ones(n,1),:));<span class="comment">% remove mean </span>
+0204 <span class="keyword">case</span> <span class="string">'linear'</span>, xx(:,2:m) = detrend(xx(:,2:m));         <span class="comment">% remove linear trend </span>
+0205 <span class="keyword">case</span> <span class="string">'ma'</span>,     xx(:,2:m) = <a href="../../wafo/onedim/detrendma.html" class="code" title=" Removes a trend from data using a moving average">detrendma</a>(xx(:,2:m),2*nfft);<span class="comment">% remove moving average </span>
+0206                dflag     = <span class="string">'linear'</span>; <span class="comment">% must change to a valid option for psd and csd </span>
+0207 <span class="keyword">end</span> 
+0208  
+0209  
+0210  
+0211 <span class="comment">% Scale measurements so that they have equal standard deviation </span>
+0212 <span class="comment">% and zero mean. </span>
+0213 <span class="comment">% This is done in order to overcome possible calibration errors </span>
+0214 <span class="comment">% between the different measuring devices. </span>
+0215  
+0216 stdev = std(xx(:,2:m));  
+0217 mn    = mean(xx(:,2:m)); 
+0218  
+0219 normfact = ones(1,m-1); 
+0220 def = unique(pos(:,4).'); 
+0221 <span class="keyword">for</span> ix=def 
+0222   k = find(pos(:,4)==ix); 
+0223   <span class="keyword">if</span> any(k) 
+0224     normfact(k) = stdev(k)/sqrt(mean(stdev(k).^2));  
+0225   <span class="keyword">end</span> 
+0226 <span class="keyword">end</span> 
+0227  
+0228 xx(:,2:m) = (xx(:,2:m)-mn(ones(n,1),:))./normfact(ones(n,1),:);<span class="comment">% remove mean </span>
+0229  
+0230  
+0231 <span class="comment">%---------------------------------------------------------------------- </span>
+0232 <span class="comment">% finding the spectra, matrix of cross-spectra and transfer functions </span>
+0233 <span class="comment">%---------------------------------------------------------------------- </span>
+0234 Hw  = zeros(m-1,nf);     <span class="comment">% a function of frequency only </span>
+0235 Gwt = zeros(m-1,nt,nf);  <span class="comment">% a function of frequency and direction combined. </span>
+0236 EE  = Gwt;              
+0237 Sf  = zeros(m-1,nf).'; 
+0238 Sxy = zeros(m-1,m-1,nf); 
+0239  
+0240 kw=[]; 
+0241 <span class="comment">%kw=w2k(2*pi*fi,0,h); </span>
+0242  
+0243 <span class="keyword">for</span> ix=1:m-1, 
+0244   [Sf(:,ix), fi] = psd(xx(:,ix+1),nfft,Fs,window,noverlap,dflag); 
+0245   [Hw(ix,:),Gwt(ix,:,:),kw]=<a href="tran.html" class="code" title=" Computes transfer functions based on linear wave theory">tran</a>(2*pi*fi,thetai,pos(ix,1:3),pos(ix,4),h,g,rho,bet,igam,thx,thy,kw); 
+0246   Sxy(ix,ix,:)  = Sf(:,ix).'; 
+0247   <span class="keyword">for</span> iy=(ix+1):m-1, 
+0248     Sxy(ix,iy,:) = csd(xx(:,ix+1),xx(:,iy+1),nfft,Fs,window,noverlap,dflag); 
+0249     Sxy(iy,ix,:) = conj(Sxy(ix,iy,:)); 
+0250   <span class="keyword">end</span> 
+0251 <span class="keyword">end</span> 
+0252 <span class="keyword">if</span> nargout&gt;6,  Sxy1 = Sxy;<span class="keyword">end</span> 
+0253  
+0254 Sf  = Sf*2/Fs;         <span class="comment">% make sure Sf and Sxy have the correct units </span>
+0255 Sxy = Sxy*2/Fs; 
+0256  
+0257 Sf = Sf.'; 
+0258 kw = kw(:)'; 
+0259  
+0260 <span class="comment">%------------------------------------------------------------------------------- </span>
+0261 <span class="comment">%Estimate frequency spectrum for the surface elevation from the bfs timeseries </span>
+0262 <span class="comment">%-------------------------------------------------------------------------------- </span>
+0263 SfBest = <a href="../../wafo/multidim/private/bfsspec.html" class="code" title=" Estimate frequency spectrum for the surface elevation from the bfs timeseries ">bfsspec</a>(Sf,Hw,pos,bfs); 
+0264 <span class="comment">%--------------------------------------------------------------------------------- </span>
+0265 <span class="comment">%Estimate the absolute value of the transfer function H(w) from the sensor spectra </span>
+0266 <span class="comment">%--------------------------------------------------------------------------------- </span>
+0267 Hw = <a href="../../wafo/multidim/private/hwestimate.html" class="code" title="  Estimate absolute value of transfer function H(w) from sensor spectra ">hwestimate</a>(Sf,SfBest,Hw,pos); 
+0268  
+0269  
+0270 <span class="comment">%------------------------------------------ </span>
+0271 <span class="comment">%  Normalizing the matrix of cross-spectra </span>
+0272 <span class="comment">%----------------------------------------- </span>
+0273  
+0274 k = find(SfBest); <span class="comment">% avoid division by zero </span>
+0275 Sxyn = Sxy; 
+0276 <span class="keyword">for</span> ix=1:m-1 
+0277  Sxyn(ix,ix,k) = squeeze(Sxy(ix,ix,k)).'./(SfBest(k).*Hw(ix,k).^2); <span class="comment">%1 </span>
+0278  <span class="comment">%Sxyn(ix,ix,k) = squeeze(Sxy(ix,ix,k)).'./(Hw(ix,k).^2); <span class="comment">%2 </span></span>
+0279  <span class="comment">%Sxyn(ix,ix,k) = 1; <span class="comment">%3 </span></span>
+0280  <span class="comment">%Sxx =  squeeze(Sxy(ix,ix,k)).'; <span class="comment">%3 </span></span>
+0281   <span class="keyword">for</span> iy=(ix+1):m-1, 
+0282     Sxyn(ix,iy,k) = squeeze(Sxy(ix,iy,k)).'./(SfBest(k).*Hw(ix,k).*Hw(iy,k)); <span class="comment">% 1 </span>
+0283     <span class="comment">%Sxyn(ix,iy,k) = squeeze(Sxy(ix,iy,k)).'./(Hw(ix,k).*Hw(iy,k)); <span class="comment">% 2 </span></span>
+0284     <span class="comment">%Syy =  squeeze(Sxy(iy,iy,k)).'; <span class="comment">%3 </span></span>
+0285     <span class="comment">%Sxyn(ix,iy,k) = squeeze(Sxy(ix,iy,k)).'./(sqrt(Sxx.*Syy)); <span class="comment">% 3 </span></span>
+0286     Sxyn(iy,ix,:) = conj(Sxyn(ix,iy,:)); 
+0287   <span class="keyword">end</span>   
+0288 <span class="keyword">end</span> 
+0289  
+0290 <span class="keyword">switch</span> lower(method) 
+0291   <span class="keyword">case</span> {<span class="string">'mlm'</span>} <span class="comment">% maximum likelihood method </span>
+0292    DS = <a href="../../wafo/multidim/private/mlm.html" class="code" title="  maximum likelihood method for estimating the directional distribution ">mlm</a>(Sxyn,Gwt,thetai,fi,k,opt); 
+0293  <span class="keyword">case</span> {<span class="string">'imlm'</span>} <span class="comment">% iterative maximum likelihood method </span>
+0294    DS = <a href="../../wafo/multidim/private/imlm.html" class="code" title="  Iterated maximum likelihood method for estimating the directional distribution ">imlm</a>(Sxyn,Gwt,thetai,fi,k,opt); 
+0295   <span class="keyword">case</span> <span class="string">'mem'</span> , <span class="comment">%Maximum entropy method </span>
+0296     DS = <a href="../../wafo/multidim/private/mem.html" class="code" title="  maximum entropy method for estimating the directional distribution ">mem</a>(Sxyn,Gwt,thetai,fi,k,opt); 
+0297   <span class="keyword">case</span> <span class="string">'emem'</span> , <span class="comment">%Extended Maximum entropy method       </span>
+0298     DS = <a href="../../wafo/multidim/private/emem.html" class="code" title="  Extended Maximum Entropy Method  ">emem</a>(Sxyn,Gwt,thetai,fi,k,opt); 
+0299   <span class="keyword">case</span> <span class="string">'bdm'</span>, <span class="comment">%    </span>
+0300     DS = bdm(Sxyn,Gwt,thetai,fi,k,opt);   
+0301   <span class="keyword">case</span> <span class="string">'fem'</span>, <span class="comment">% Fourier Expansion method </span>
+0302  
+0303   error(<span class="string">'FEM method not implemented yet'</span>) 
+0304 <span class="keyword">otherwise</span> , error(<span class="string">'Unknown method'</span>) 
+0305 <span class="keyword">end</span> 
+0306  
+0307 <span class="keyword">if</span> 0,<span class="comment">%used for debugging </span>
+0308   Sxy2 = <a href="../../wafo/multidim/private/getcrossspectra.html" class="code" title=" Compute the cross spectra by integration ">getcrossspectra</a>(thetai,Gwt,DS); 
+0309   <span class="keyword">for</span> ix = 1:m-1, 
+0310     <span class="keyword">for</span> iy=ix:m-1, 
+0311       <span class="comment">%subplot(2,1,1), plot(fi(k),squeeze(real(Sxy2(ix,iy,k))),'r',fi(k),squeeze(real(Sxyn(ix,iy,k))),'g') </span>
+0312       <span class="comment">%subplot(2,1,2), plot(fi(k),squeeze(real(Sxy2(ix,iy,k))),'r',fi(k),squeeze(real(Sxyn(ix,iy,k))),'g') </span>
+0313       subplot(2,1,1), semilogy(fi(k),eps+abs(squeeze(real(Sxy2(ix,iy,k)))-squeeze(real(Sxyn(ix,iy,k)))),<span class="string">'g'</span>) 
+0314       subplot(2,1,2), semilogy(fi(k),eps+abs(squeeze(real(Sxy2(ix,iy,k)))-squeeze(real(Sxyn(ix,iy,k)))),<span class="string">'g'</span>) 
+0315       disp(<span class="string">'hit any key'</span>),pause, disp(<span class="string">'hit any key'</span>) 
+0316     <span class="keyword">end</span> 
+0317   <span class="keyword">end</span> 
+0318 <span class="keyword">end</span> 
+0319  
+0320 Sd       = <a href="../../wafo/spec/createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>(<span class="string">'dir'</span>,ftype); 
+0321 Sd.theta = thetai(:); 
+0322 Sd.h     = h; 
+0323 Sd.norm  = 0; 
+0324 Sd.note  = [<span class="string">'dat2dspec('</span> inputname(1) <span class="string">')'</span>]; 
+0325  
+0326 <span class="keyword">if</span> strcmp(ftype,<span class="string">'w'</span>), 
+0327   fi   = fi*2*pi; 
+0328   SfBest   = SfBest/2/pi; 
+0329   Sd.w = fi(:); 
+0330 <span class="keyword">else</span> 
+0331   Sd.f = fi(:); 
+0332 <span class="keyword">end</span> 
+0333 Sd.S = (SfBest(ones(nt,1),:).*DS); 
+0334 Sd = <a href="../../wafo/spec/ttspec.html" class="code" title=" Toggle Transform between angular frequency and frequency spectrum">ttspec</a>(Sd,thtype); 
+0335  
+0336 <span class="keyword">if</span> nargout&gt;1 
+0337  D      = Sd; 
+0338  D.S    = DS; 
+0339  D.note = [D.note <span class="string">', D(theta,w)'</span>]; 
+0340  
+0341 <span class="keyword">end</span> 
+0342  
+0343 <span class="keyword">if</span> nargout&gt;2 
+0344  Sw      = <a href="../../wafo/spec/createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>(<span class="string">'freq'</span>,ftype); 
+0345  Sw.S    = SfBest(:); 
+0346  Sw.note = [D.note <span class="string">', S(w)'</span>]; 
+0347  Sw      = setfield(Sw,ftype,fi(:));  
+0348 <span class="keyword">end</span> 
+0349  
+0350 <span class="keyword">if</span> nargout&gt;3 
+0351   <span class="comment">%   int D(w,theta)*exp(i*n*theta) dtheta. </span>
+0352   <span class="keyword">if</span> 0, 
+0353     Fcof1 = 2*pi*ifft(DS,[],1); <span class="comment">% integration by FFT </span>
+0354     Pcor = [1; exp(sqrt(-1)*[1:nharm].'*thetai(1))]; <span class="comment">% correction term to get </span>
+0355                                                      <span class="comment">% the correct integration limits </span>
+0356     Fcof = Fcof1(1:1+nharm,:).*Pcor(:,ones(1,nf)); 
+0357   <span class="keyword">else</span> 
+0358     [a,b]=<a href="fourier.html" class="code" title=" Returns Fourier coefficients. ">fourier</a>(thetai,DS,2*pi,nharm); 
+0359     Fcof = (a+sqrt(-1)*b)*pi; 
+0360   <span class="keyword">end</span> 
+0361 <span class="keyword">end</span> 
+0362  
+0363 <span class="comment">%-----------------------------------  </span>
+0364 <span class="comment">%  </span>
+0365 <span class="comment">%     Plotting the Spectral Density  </span>
+0366 <span class="comment">% </span>
+0367 <span class="comment">%----------------------------------- </span>
+0368 <span class="keyword">if</span> plotflag&gt;0, 
+0369  <a href="../../wafo/spec/wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(Sd,plotflag)  
+0370 <span class="keyword">end</span> 
+0371 <span class="keyword">return</span>   
+0372  
+0373  
+0374  
+0375  
+0376  
+0377  
+0378  
+0379  
+0380  
+0381  
+0382  
+0383  
+0384  
+0385  
+0386  
+0387</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

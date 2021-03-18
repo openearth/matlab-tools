@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of jhspdf2</title>
+  <meta name="keywords" content="jhspdf2">
+  <meta name="description" content=" Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; jhspdf2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>jhspdf2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [f,Hrms,Srms,fA,fB] = jhspdf2(Hd,Scf,Hm0,Tp,gam,normalizedInput) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="jhspdf2.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum. ">JHSPDF2</a> Joint (Scf,Hd) PDF for linear waves with a <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum. 
+  
+   CALL: f = <a href="jhspdf2.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum. ">jhspdf2</a>(Hd,Scf,Hm0,Tp,gamma) 
+   
+   f     = pdf struct evaluated at meshgrid(Scf,Hd) 
+   Hd    = zero down crossing wave height 
+   Scf   = crest front steepness 
+   Hm0   = significant wave height 
+   Tp    = Spectral peak period  
+   Gamma = Peakedness parameter of the <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum 
+  
+  <a href="jhspdf2.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum. ">JHSPDF2</a> approximates the joint distribution of (Scf, Hd), i.e., crest 
+  front steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, for a Gaussian 
+  process with a <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectral density. The empirical parameters of 
+  the model is fitted by least squares to simulated (Scf,Hd) data for 13 
+  classes of GAMMA between 1 and 7. Between 47000 and 55000 
+  zero-downcrossing waves were simulated for each class. 
+  <a href="jhspdf2.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum. ">JHSPDF2</a> is restricted to the following <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> for GAMMA:  
+   1 &lt;= GAMMA &lt;= 7  
+  
+  Example: 
+  Hm0 = 6;Tp = 9; gam=3.5 
+  h = linspace(0,4*Hm0/sqrt(2))';  
+  s = linspace(0,6*1.25*Hm0/Tp^2)'; 
+  f = <a href="jhspdf2.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum. ">jhspdf2</a>(h,s,Hm0,Tp,gam); 
+  w = linspace(0,40,5*1024+1).'; 
+  S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(w,[Hm0, Tp, gam]); 
+  dt = .3; 
+  x = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,80000,dt); rate = 4; 
+  [si,hi] = <a href="../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(x,rate,2); 
+  fk = <a href="../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>([si,hi],'epan',[],[],.5,128);  
+  fk.title = f.title; fk.labx = f.labx;   
+  plot(si,hi,'.'), hold on 
+  <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f),<a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fk,'r'),hold off 
+  
+  See also  <a href="jhspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with JONSWAP spectra. ">jhspdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" gam = getjonswappeakedness(Hm0,Tp)">getjonswappeakedness</a></li></TD>
+<TD> Peakedness factor Gamma given Hm0 and Tp for JONSWAP</TD>
+</TR>
+<TR>
+<TD><li><a href="jhspdf.html" class="code" title=" [f,Hrms,Vrms] = jhspdf(Hd,Scf,Hm0,Tp,gam,normalizedInput,condon)">jhspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [f,Hrms,Srms,fA,fB] = <a name="_sub0" href="#_subfunctions" class="code">jhspdf2</a>(Hd,Scf,Hm0,Tp,gam,normalizedInput) 
+002 <span class="comment">%JHSPDF2 Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: f = jhspdf2(Hd,Scf,Hm0,Tp,gamma) </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%  f     = pdf struct evaluated at meshgrid(Scf,Hd) </span>
+007 <span class="comment">%  Hd    = zero down crossing wave height </span>
+008 <span class="comment">%  Scf   = crest front steepness </span>
+009 <span class="comment">%  Hm0   = significant wave height </span>
+010 <span class="comment">%  Tp    = Spectral peak period  </span>
+011 <span class="comment">%  Gamma = Peakedness parameter of the JONSWAP spectrum </span>
+012 <span class="comment">% </span>
+013 <span class="comment">% JHSPDF2 approximates the joint distribution of (Scf, Hd), i.e., crest </span>
+014 <span class="comment">% front steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, for a Gaussian </span>
+015 <span class="comment">% process with a JONSWAP spectral density. The empirical parameters of </span>
+016 <span class="comment">% the model is fitted by least squares to simulated (Scf,Hd) data for 13 </span>
+017 <span class="comment">% classes of GAMMA between 1 and 7. Between 47000 and 55000 </span>
+018 <span class="comment">% zero-downcrossing waves were simulated for each class. </span>
+019 <span class="comment">% JHSPDF2 is restricted to the following range for GAMMA:  </span>
+020 <span class="comment">%  1 &lt;= GAMMA &lt;= 7  </span>
+021 <span class="comment">% </span>
+022 <span class="comment">% Example: </span>
+023 <span class="comment">% Hm0 = 6;Tp = 9; gam=3.5 </span>
+024 <span class="comment">% h = linspace(0,4*Hm0/sqrt(2))';  </span>
+025 <span class="comment">% s = linspace(0,6*1.25*Hm0/Tp^2)'; </span>
+026 <span class="comment">% f = jhspdf2(h,s,Hm0,Tp,gam); </span>
+027 <span class="comment">% w = linspace(0,40,5*1024+1).'; </span>
+028 <span class="comment">% S = jonswap(w,[Hm0, Tp, gam]); </span>
+029 <span class="comment">% dt = .3; </span>
+030 <span class="comment">% x = spec2sdat(S,80000,dt); rate = 4; </span>
+031 <span class="comment">% [si,hi] = dat2steep(x,rate,2); </span>
+032 <span class="comment">% fk = kdebin([si,hi],'epan',[],[],.5,128);  </span>
+033 <span class="comment">% fk.title = f.title; fk.labx = f.labx;   </span>
+034 <span class="comment">% plot(si,hi,'.'), hold on </span>
+035 <span class="comment">% pdfplot(f),pdfplot(fk,'r'),hold off </span>
+036 <span class="comment">% </span>
+037 <span class="comment">% See also  jhspdf </span>
+038  
+039    
+040 <span class="comment">% Reference   </span>
+041 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+042 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+043 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+044 <span class="comment">% Trondheim, Norway.  </span>
+045    
+046 error(nargchk(3,6,nargin)) 
+047  
+048 <span class="keyword">if</span> (nargin &lt; 6|isempty(normalizedInput)),  normalizedInput  = 0;<span class="keyword">end</span> 
+049 <span class="keyword">if</span> (nargin &lt; 4|isempty(Tp)),  Tp  = 8;<span class="keyword">end</span> 
+050 <span class="keyword">if</span> (nargin &lt; 3|isempty(Hm0)), Hm0 = 6;<span class="keyword">end</span> 
+051 <span class="keyword">if</span> (nargin &lt; 5|isempty(gam)) 
+052    gam = <a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a>(Hm0,Tp); 
+053 <span class="keyword">end</span> 
+054 displayWarning = 1; 
+055 <span class="keyword">if</span> displayWarning 
+056   <span class="keyword">if</span> any(any(Tp&gt;5*sqrt(Hm0) | Tp&lt;3.6*sqrt(Hm0))) 
+057     disp(<span class="string">'Warning: Hm0,Tp is outside the JONSWAP range'</span>) 
+058     disp(<span class="string">'The validity of the parameters returned are questionable'</span>) 
+059   <span class="keyword">end</span> 
+060 <span class="keyword">end</span> 
+061  
+062 [V,H] = meshgrid(Scf,Hd); 
+063  
+064 f = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2); 
+065 [f.f,Hrms,Srms,varargout{1:nargout-1}]  = <a href="jhspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with JONSWAP spectra. ">jhspdf</a>(H,V,Hm0,Tp,gam,normalizedInput); 
+066 f.x = {Scf(:),Hd(:)}; 
+067   
+068 <span class="keyword">if</span> (normalizedInput) 
+069   f.labx = {<span class="string">'Scf'</span>, <span class="string">'Hd'</span>}; 
+070   f.norm = 1; 
+071 <span class="keyword">else</span> 
+072   f.norm = 0; 
+073   f.labx = {<span class="string">'Scf [m/s]'</span>, <span class="string">'Hd [m]'</span>}; 
+074 <span class="keyword">end</span> 
+075 f.title = <span class="string">'Joint distribution of (Hd,Scf) in time'</span>; 
+076 f.note = [<span class="string">'Jonswap Hm0='</span> num2str(Hm0) <span class="string">' Tp = '</span> num2str(Tp) <span class="string">' Gamma = '</span> num2str(gam)]; 
+077 [f.cl,f.pl] = <a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(f.f); 
+078 <span class="keyword">return</span> 
+079</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

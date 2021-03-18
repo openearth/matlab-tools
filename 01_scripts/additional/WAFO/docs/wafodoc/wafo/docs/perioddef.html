@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of perioddef</title>
+  <meta name="keywords" content="perioddef">
+  <meta name="description" content=" wave periods (lengths) definitions and nomenclature">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">docs</a> &gt; perioddef.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\docs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>perioddef
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> wave periods (lengths) definitions and nomenclature</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="perioddef.html" class="code" title=" wave periods (lengths) definitions and nomenclature">PERIODDEF</a> wave periods (lengths) definitions and nomenclature
+ 
+  Definition of wave periods (lengths):
+ ---------------------------------------
+ 
+ 
+            &lt;----- Direction of wave propagation 
+ 
+                &lt;-------Tu---------&gt;
+                :                  :
+                &lt;---Tc-----&gt;       :
+                :          :       : &lt;------Tcc----&gt;
+    M           :      c   :       : :             :
+   / \          : M   / \_ :       : c_            c
+  F   \         :/ \m/    \:       :/  \          / \  
+ ------d--------u----------d-------u----d--------u---d-------- level v
+        \      /            \     /     :\_    _/:   :\_   L
+         \_   /              \_t_/      :  \t_/  :   :  \m/
+           \t/                 :        :        :   :
+            :                  :        &lt;---Tt---&gt;   : 
+            &lt;--------Ttt-------&gt;        :            :
+                                        &lt;-----Td-----&gt;
+   Tu   = Up crossing period
+   Td   = Down crossing period
+   Tc   = Crest period, i.e., period between up crossing and 
+          the next down crossing 
+   Tt   = Trough period, i.e., period between down crossing and 
+          the next up crossing
+   Ttt  = Trough2trough period
+   Tcc  = Crest2crest period
+ 
+ 
+            &lt;----- Direction of wave propagation 
+ 
+                 &lt;--Tcf-&gt;                              Tuc
+                 :      :               &lt;-Tcb-&gt;        &lt;-&gt; 
+    M            :      c               :     :        : :
+   / \           : M   / \_             c_    :        : c
+  F   \          :/ \m/    \           /  \___:        :/ \  
+ ------d---------u----------d---------u-------d--------u---d-------- level v
+       :\_      /            \     __/:        \_    _/     \_   L
+       :  \_   /              \_t_/   :          \t_/         \m/
+       :    \t/                 :     :
+       :     :                  :     : 
+       &lt;-Ttf-&gt;                  &lt;-Ttb-&gt; 
+                 
+  
+   Tcf  = Crest front period, i.e., period between up crossing and crest
+   Tcb  = Crest back period, i.e., period between crest and down crossing 
+   Ttf  = Trough front period, i.e., period between down crossing and trough
+   Ttb  = Trough back period, i.e., period between trough and up crossing 
+ 
+  Also note that Tcf and Ttf can also be abbreviated by their crossing
+  marker, e.g. Tuc (u2c)  and Tdt (d2t), respectively. Similar applies to all the
+  other wave periods and wave lengths. 
+  (The nomenclature for wave length is similar, just substitute T and
+  period with L and length, respectively)
+ 
+              &lt;----- Direction of wave propagation 
+ 
+                       &lt;--TMm--&gt;
+            &lt;-TmM-&gt;    :       :
+    M       :     :    M       :
+   / \      :     M   /:\_     :     M_            M
+  F   \     :    / \m/ :  \    :    /: \          / \  
+       \    :   /      :   \   :   / :  \        /   \
+        \   :  /       :    \  :  /  :   \_    _/     \_   L
+         \_ : /        :     \_m_/   :     \m_/         \m/
+           \m/         :             :      :            :
+                       &lt;-----TMM-----&gt;      &lt;----Tmm-----&gt;
+ 
+ 
+   TmM = Period between minimum and the following Maximum
+   TMm = Period between Maximum and the following minimum
+   TMM = Period between Maximum and the following Maximum
+   Tmm = Period between minimum and the following minimum
+ 
+  See also  <a href="wavedef.html" class="code" title=" Wave definitions and nomenclature ">wavedef</a>, <a href="ampdef.html" class="code" title=" wave heights and amplitude definitions and nomenclature">ampdef</a>, <a href="crossdef.html" class="code" title=" level v crossing definitions and nomenclature ">crossdef</a>, <a href="tpdef.html" class="code" title=" turning points definitions and numenclature">tpdef</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="perioddef.html" class="code" title="This is a script file.">perioddef</a></li></TD>
+<TD> wave periods (lengths) definitions and nomenclature</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="perioddef.html" class="code" title="This is a script file.">perioddef</a></li></TD>
+<TD> wave periods (lengths) definitions and nomenclature</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">% PERIODDEF wave periods (lengths) definitions and nomenclature</span>
+002 <span class="comment">%</span>
+003 <span class="comment">% Definition of wave periods (lengths):</span>
+004 <span class="comment">%---------------------------------------</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%           &lt;----- Direction of wave propagation </span>
+008 <span class="comment">%</span>
+009 <span class="comment">%               &lt;-------Tu---------&gt;</span>
+010 <span class="comment">%               :                  :</span>
+011 <span class="comment">%               &lt;---Tc-----&gt;       :</span>
+012 <span class="comment">%               :          :       : &lt;------Tcc----&gt;</span>
+013 <span class="comment">%   M           :      c   :       : :             :</span>
+014 <span class="comment">%  / \          : M   / \_ :       : c_            c</span>
+015 <span class="comment">% F   \         :/ \m/    \:       :/  \          / \  </span>
+016 <span class="comment">%------d--------u----------d-------u----d--------u---d-------- level v</span>
+017 <span class="comment">%       \      /            \     /     :\_    _/:   :\_   L</span>
+018 <span class="comment">%        \_   /              \_t_/      :  \t_/  :   :  \m/</span>
+019 <span class="comment">%          \t/                 :        :        :   :</span>
+020 <span class="comment">%           :                  :        &lt;---Tt---&gt;   : </span>
+021 <span class="comment">%           &lt;--------Ttt-------&gt;        :            :</span>
+022 <span class="comment">%                                       &lt;-----Td-----&gt;</span>
+023 <span class="comment">%  Tu   = Up crossing period</span>
+024 <span class="comment">%  Td   = Down crossing period</span>
+025 <span class="comment">%  Tc   = Crest period, i.e., period between up crossing and </span>
+026 <span class="comment">%         the next down crossing </span>
+027 <span class="comment">%  Tt   = Trough period, i.e., period between down crossing and </span>
+028 <span class="comment">%         the next up crossing</span>
+029 <span class="comment">%  Ttt  = Trough2trough period</span>
+030 <span class="comment">%  Tcc  = Crest2crest period</span>
+031 <span class="comment">%</span>
+032 <span class="comment">%</span>
+033 <span class="comment">%           &lt;----- Direction of wave propagation </span>
+034 <span class="comment">%</span>
+035 <span class="comment">%                &lt;--Tcf-&gt;                              Tuc</span>
+036 <span class="comment">%                :      :               &lt;-Tcb-&gt;        &lt;-&gt; </span>
+037 <span class="comment">%   M            :      c               :     :        : :</span>
+038 <span class="comment">%  / \           : M   / \_             c_    :        : c</span>
+039 <span class="comment">% F   \          :/ \m/    \           /  \___:        :/ \  </span>
+040 <span class="comment">%------d---------u----------d---------u-------d--------u---d-------- level v</span>
+041 <span class="comment">%      :\_      /            \     __/:        \_    _/     \_   L</span>
+042 <span class="comment">%      :  \_   /              \_t_/   :          \t_/         \m/</span>
+043 <span class="comment">%      :    \t/                 :     :</span>
+044 <span class="comment">%      :     :                  :     : </span>
+045 <span class="comment">%      &lt;-Ttf-&gt;                  &lt;-Ttb-&gt; </span>
+046 <span class="comment">%                </span>
+047 <span class="comment">% </span>
+048 <span class="comment">%  Tcf  = Crest front period, i.e., period between up crossing and crest</span>
+049 <span class="comment">%  Tcb  = Crest back period, i.e., period between crest and down crossing </span>
+050 <span class="comment">%  Ttf  = Trough front period, i.e., period between down crossing and trough</span>
+051 <span class="comment">%  Ttb  = Trough back period, i.e., period between trough and up crossing </span>
+052 <span class="comment">%</span>
+053 <span class="comment">% Also note that Tcf and Ttf can also be abbreviated by their crossing</span>
+054 <span class="comment">% marker, e.g. Tuc (u2c)  and Tdt (d2t), respectively. Similar applies to all the</span>
+055 <span class="comment">% other wave periods and wave lengths. </span>
+056 <span class="comment">% (The nomenclature for wave length is similar, just substitute T and</span>
+057 <span class="comment">% period with L and length, respectively)</span>
+058 <span class="comment">%</span>
+059 <span class="comment">%             &lt;----- Direction of wave propagation </span>
+060 <span class="comment">%</span>
+061 <span class="comment">%                      &lt;--TMm--&gt;</span>
+062 <span class="comment">%           &lt;-TmM-&gt;    :       :</span>
+063 <span class="comment">%   M       :     :    M       :</span>
+064 <span class="comment">%  / \      :     M   /:\_     :     M_            M</span>
+065 <span class="comment">% F   \     :    / \m/ :  \    :    /: \          / \  </span>
+066 <span class="comment">%      \    :   /      :   \   :   / :  \        /   \</span>
+067 <span class="comment">%       \   :  /       :    \  :  /  :   \_    _/     \_   L</span>
+068 <span class="comment">%        \_ : /        :     \_m_/   :     \m_/         \m/</span>
+069 <span class="comment">%          \m/         :             :      :            :</span>
+070 <span class="comment">%                      &lt;-----TMM-----&gt;      &lt;----Tmm-----&gt;</span>
+071 <span class="comment">%</span>
+072 <span class="comment">%</span>
+073 <span class="comment">%  TmM = Period between minimum and the following Maximum</span>
+074 <span class="comment">%  TMm = Period between Maximum and the following minimum</span>
+075 <span class="comment">%  TMM = Period between Maximum and the following Maximum</span>
+076 <span class="comment">%  Tmm = Period between minimum and the following minimum</span>
+077 <span class="comment">%</span>
+078 <span class="comment">% See also  wavedef, ampdef, crossdef, tpdef</span>
+079 
+080 <span class="comment">% history:</span>
+081 <span class="comment">% revised pab 15.05.2000</span>
+082 <span class="comment">% - minor corrections for Tcb</span>
+083 <span class="comment">% - added Tmm, TMM, etc.....</span>
+084 <span class="comment">% revised pab 21.01.2000</span>
+085 <span class="comment">% - updated help header</span>
+086 <span class="comment">% -  changed from: Wave propagating direction </span>
+087 <span class="comment">%              to: Direction of wave propagation</span>
+088 <span class="comment">% by Per A. Brodtkorb 19.09.1999</span>
+089 
+090 
+091 more on
+092 help <a href="perioddef.html" class="code" title=" wave periods (lengths) definitions and nomenclature">perioddef</a>
+093 more off
+094</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

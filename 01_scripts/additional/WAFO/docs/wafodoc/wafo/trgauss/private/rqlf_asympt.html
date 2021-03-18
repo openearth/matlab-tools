@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of rqlf_asympt</title>
+  <meta name="keywords" content="rqlf_asympt">
+  <meta name="description" content=" Gives first two terms in an asymptotic expansion of the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">trgauss</a> &gt; <a href="index.html">private</a> &gt; rqlf_asympt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>rqlf_asympt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Gives first two terms in an asymptotic expansion of the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [Cb0,Cb1,a0,a1]=rqlf_asympt(u,g,b,S22,S21) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="rqlf_asympt.html" class="code" title=" Gives first two terms in an asymptotic expansion of the ">RQLF_ASYMPT</a> Gives first two terms in an asymptotic expansion of the 
+  crossing rate of a quadratic+linear 
+  
+    CALL:  [Cb0,Cb1,a0,a1] = <a href="rqlf_asympt.html" class="code" title=" Gives first two terms in an asymptotic expansion of the ">rqlf_asympt</a>(u,g,b,S22,S12); 
+  
+  A function that gives the two first terms 
+  in an asymptotic expansion of the rate of crossings of a 
+  quadratic+linear form according to Breitung's method</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="holmberg1.html" class="code" title=" E=holmberg1(S,a,b,Q1)">holmberg1</a></li></TD>
+<TD> Computes moments for higher order reliability methods.</TD>
+</TR>
+<TR>
+<TD><li><a href="holmberg2.html" class="code" title=" E=holmberg2(S,a,b,Q1,Q2)">holmberg2</a></li></TD>
+<TD> Computes moments for higher order reliability methods.</TD>
+</TR>
+<TR>
+<TD><li><a href="holmberg3.html" class="code" title=" E=holmberg3(S,a,b,Q1,Q2,Q3)">holmberg3</a></li></TD>
+<TD> Computes moments for higher order reliability methods.</TD>
+</TR>
+<TR>
+<TD><li><a href="holmquist1.html" class="code" title=" E=holmquist1(S,Q1)">holmquist1</a></li></TD>
+<TD> Computes moments for higher order reliability methods.</TD>
+</TR>
+<TR>
+<TD><li><a href="holmquist2.html" class="code" title=" E=holmquist2(S,Q1,Q2)">holmquist2</a></li></TD>
+<TD> Computes moments for higher order reliability methods.</TD>
+</TR>
+<TR>
+<TD><li><a href="holmquist3.html" class="code" title=" E=holmquist3(S,Q1,Q2,Q3)">holmquist3</a></li></TD>
+<TD> Computes moments for higher order reliability methods.</TD>
+</TR>
+<TR>
+<TD><li><a href="mindist.html" class="code" title=" xstar=mindist(g,b,u,n0,epsi)">mindist</a></li></TD>
+<TD> Finds minimal distance to the origin on the surface b'*x+x'*diag(g)*x=u</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\det.bi">det</a></li></TD>
+<TD>           Determinant.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\inv.bi">inv</a></li></TD>
+<TD>           Matrix inverse.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/trgauss/chitwo2lc_sorm.html" class="code" title=" mu=chitwo2lc_sorm(u,g,b,S22,S12,ass,n0,epsi)">chitwo2lc_sorm</a></li></TD>
+<TD>  SORM-approximation of the crossing intensity for the noncentral Chi^2 process</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [Cb0,Cb1,a0,a1]=<a name="_sub0" href="#_subfunctions" class="code">rqlf_asympt</a>(u,g,b,S22,S21) 
+002 <span class="comment">% RQLF_ASYMPT Gives first two terms in an asymptotic expansion of the </span>
+003 <span class="comment">% crossing rate of a quadratic+linear </span>
+004 <span class="comment">% </span>
+005 <span class="comment">%   CALL:  [Cb0,Cb1,a0,a1] = rqlf_asympt(u,g,b,S22,S12); </span>
+006 <span class="comment">% </span>
+007 <span class="comment">% A function that gives the two first terms </span>
+008 <span class="comment">% in an asymptotic expansion of the rate of crossings of a </span>
+009 <span class="comment">% quadratic+linear form according to Breitung's method </span>
+010  
+011  
+012 g=g(:); 
+013 b=b(:); 
+014  
+015 <span class="keyword">if</span> length(g)~=length(b) 
+016    error(<span class="string">'The lengths of b and g should be the same.'</span>) 
+017 <span class="keyword">end</span> 
+018 <span class="comment">%if u&lt;=0; </span>
+019 <span class="comment">%   error('u should be a positive number.') </span>
+020 <span class="comment">%end </span>
+021 n=size(S22,1); 
+022 xtp=<a href="mindist.html" class="code" title=" Finds minimal distance to the origin on the surface b'*x+x'*diag(g)*x=u ">mindist</a>(g,b,u,20); 
+023 xJ=xtp(:); 
+024 b0=sqrt(sum(xJ.^2)); 
+025 yJ=xJ/b0; 
+026 PJ=eye(n)-yJ*yJ'; 
+027 dg=-b0*(b+2*(g.*xJ)); 
+028 GJ=-2*b0^2*diag(g)/sqrt(sum(dg.^2)); 
+029 V=S22+S21*S21; 
+030 sJ2=yJ'*V*yJ; 
+031 sJ=sqrt(sJ2); 
+032 a0=sJ*sqrt(1-yJ'*S21*(eye(n)+GJ)*S21*yJ/sJ2)/sqrt(det(eye(n)+ <span class="keyword">...</span> 
+033                           PJ*GJ*PJ)); 
+034 aJ=-1/sJ*PJ*(eye(n)+GJ)*S21*yJ; 
+035 WJ1=inv(eye(n)+PJ*GJ*PJ+aJ*aJ'); 
+036 WJ2=inv(eye(n)+PJ*GJ*PJ); 
+037 vJ1=PJ*S21*PJ*GJ*yJ; 
+038 vJ2=PJ*GJ*yJ; 
+039 vJ3=PJ*GJ*S21*yJ; 
+040 vJ4=PJ*GJ*PJ*V*yJ; 
+041 KJ1=yJ'*S21*GJ*yJ; 
+042 KJ2=yJ'*GJ*yJ; 
+043 QJ1=PJ*GJ*PJ; 
+044 QJ2=PJ*S21*PJ*GJ*PJ; 
+045 QJ3=QJ2+.5*KJ1*QJ1-vJ2*vJ3'; 
+046 QJ4=-(yJ'*V*PJ*GJ*yJ)*PJ*GJ*PJ-2*PJ*GJ*PJ*V*yJ*yJ'*GJ*PJ+PJ*GJ* <span class="keyword">...</span> 
+047        PJ*V*PJ*GJ*PJ; 
+048 a11=1/2*<a href="holmquist1.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist1</a>(WJ1,QJ4)/sJ2-1/2*<a href="holmquist1.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist1</a>(WJ1,vJ4*vJ4')/sJ2^2+ <span class="keyword">...</span> 
+049     1/2*<a href="holmquist2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist2</a>(WJ1,QJ3,QJ3)/sJ2+<a href="holmquist2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist2</a>(WJ1,aJ*vJ4',QJ3)/ <span class="keyword">...</span> 
+050        sJ^3+1/2*<a href="holmquist2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist2</a>(WJ1,aJ*aJ',vJ4*vJ4')/sJ2^2+1/8* <span class="keyword">...</span> 
+051 <a href="holmquist3.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist3</a>(WJ1,vJ2*vJ2',QJ1,QJ1)-1/2*<a href="holmquist2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist2</a>(WJ1,vJ2*vJ2',QJ1)-1/8*(KJ2+1)*<a href="holmquist2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist2</a>(WJ1,QJ1,QJ1)+<span class="keyword">...</span> 
+052 1/2*<a href="holmquist2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmquist2</a>(WJ1,vJ2*vJ4',QJ1)/sJ2; 
+053 a12=(1/2*<a href="holmberg1.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg1</a>(WJ2,aJ,vJ1,QJ1)+<a href="holmberg1.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg1</a>(WJ2,aJ,vJ2,QJ2)-1/2*<a href="holmberg1.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg1</a>(WJ2,aJ,vJ3,QJ1)+<span class="keyword">...</span> 
+054     KJ1*<a href="holmberg1.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg1</a>(WJ2,aJ,vJ2,QJ1)-<a href="holmberg1.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg1</a>(WJ2,aJ,vJ3,vJ2*vJ2')-1/2*KJ2*<a href="holmberg1.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg1</a>(WJ2,aJ,vJ3,QJ1))/sJ-<span class="keyword">...</span> 
+055     1/2*<a href="holmberg2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg2</a>(WJ2,aJ,vJ2,QJ3,QJ1)/sJ-1/2*<a href="holmberg2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg2</a>(WJ2,aJ,aJ,vJ2*vJ2',QJ1)-<span class="keyword">...</span> 
+056     1/8*(KJ2+1)*<a href="holmberg2.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg2</a>(WJ2,aJ,aJ,QJ1,QJ1)+1/8*<a href="holmberg3.html" class="code" title=" Computes moments for higher order reliability methods. ">holmberg3</a>(WJ2,aJ,aJ,vJ2*vJ2',QJ1,QJ1); 
+057 [det(WJ1) det(WJ2) sJ a11 a12]; 
+058 a1=sJ*(sqrt(det(WJ1)*a11)+sqrt(det(WJ2))*a12); 
+059 Cb0=a0*exp(-b0^2/2)/pi; 
+060 Cb1=a1*exp(-b0^2/2)/pi/b0^2; 
+061  
+062  
+063  
+064  
+065  
+066  
+067  
+068</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

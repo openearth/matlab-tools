@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of weib2dstat</title>
+  <meta name="keywords" content="weib2dstat">
+  <meta name="description" content="  Mean and variance for the 2D Weibull distribution">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; weib2dstat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>weib2dstat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Mean and variance for the 2D Weibull distribution</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [M ,V ,Tm ,cvar, tolm, tolv] = weib2dstat(a1,b1,a2,b2,c12,condon,cvar,tol) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="weib2dstat.html" class="code" title="  Mean and variance for the 2D Weibull distribution  ">WEIB2DSTAT</a>  Mean and variance for the 2D Weibull distribution  
+  
+   CALL:  [M,V,Tm] = <a href="weib2dstat.html" class="code" title="  Mean and variance for the 2D Weibull distribution  ">weib2dstat</a>( a1,b1,a2,b2,c12,condon,cvar, tol )  
+          [M,V,Tm] = <a href="weib2dstat.html" class="code" title="  Mean and variance for the 2D Weibull distribution  ">weib2dstat</a>([ a1,b1,a2,b2,c12],condon,cvar,tol )  
+  
+     M , V, Tm  = mean, variance and modal value, respectively 
+    ai, bi, c12 = parameters of the distribution 
+  
+      condon    = 0 Return mean, covariance and modal value of X1 and X2 (default) 
+                  1 Return the conditional values given X1 (cvar) 
+                  2 Return the conditional values given X2 (cvar) 
+  
+           cvar = vector of conditional values  
+                  (default depending on marginal mean and variance) 
+           tol  = relative tolerance used in the integration. (default 1e-3) 
+  
+  The distribution is defined by its PDF: 
+     f(X1,X2)=B1*B2*xn1^(B1-1)*xn2^(B2-1)/A1/B1/N*... 
+              exp{-[xn1^B1 +xn2^B2 ]/N }*I0(2*C12*xn1^(B1/2)*xn2^(B2/2)/N)  
+   where  
+     N=1-C12^2, xn1=X1/A1,  xn2=X2/A2 and  
+     I0 is the modified bessel function of zeroth order. 
+  
+  (The marginal distribution of X1 is weibull with parameters A1 and B1)  
+  (The marginal distribution of X2 is weibull with parameters A2 and B2)  
+  
+  Examples: 
+    [m v] = <a href="weib2dstat.html" class="code" title="  Mean and variance for the 2D Weibull distribution  ">weib2dstat</a>([2 2  3 2.5 .8]) %  mean and covariance 
+    x = linspace(0,6)'; 
+    [m v] = <a href="weib2dstat.html" class="code" title="  Mean and variance for the 2D Weibull distribution  ">weib2dstat</a>([2 2  3 2.5 .8],2,x); 
+    plot(x,m,'r--', x,sqrt(v),'g-') % conditional mean and standard deviation. 
+  
+  See also  <a href="weib2dpdf.html" class="code" title=" 2D Weibull probability density function (pdf).">weib2dpdf</a>, ellipke, <a href="../../wafo/misc/hypgf.html" class="code" title="  Hypergeometric function F(a,b,c,x) ">hypgf</a>, gamma, <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/gaussq.html" class="code" title=" [int, tol1,ix]= gaussq(fun,xlow,xhigh,tol,trace,varargin)">gaussq</a></li></TD>
+<TD> Numerically evaluates a integral using a Gauss quadrature.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/hypgf.html" class="code" title=" [y ,abserr] = hypgf(a,b,c,x,varargin)">hypgf</a></li></TD>
+<TD>  Hypergeometric function F(a,b,c,x)</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibstat.html" class="code" title=" [m,v]= wweibstat(a,c);">wweibstat</a></li></TD>
+<TD> Mean and variance for the Weibull  distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\ellipke.m">ellipke</a></li></TD>
+<TD>       Complete elliptic integral.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="">fmin</a></li></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\fminbnd.m">fminbnd</a></li></TD>
+<TD>       Scalar bounded nonlinear function minimization.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2num.m">str2num</a></li></TD>
+<TD>       Convert string matrix to numeric array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\ver.m">ver</a></li></TD>
+<TD>           MATLAB, Simulink and toolbox version information.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="weib2dcinv.html" class="code" title=" [x, k2]= weib2dcinv(x1,p,a1,b1,a2,b2,c12,tol);">weib2dcinv</a></li></TD>
+<TD> Inverse of the conditional 2D weibull cdf of X2 given X1.</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dstatplot.html" class="code" title=" [ax11, h11, h22 ]=weib2dstatplot(V,H,phat,res,varargin)">weib2dstatplot</a></li></TD>
+<TD> Computes and plots the conditional mean and standard deviation</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [M ,V ,Tm ,cvar, tolm, tolv] = <a name="_sub0" href="#_subfunctions" class="code">weib2dstat</a>(a1,b1,a2,b2,c12,condon,cvar,tol) 
+002 <span class="comment">% WEIB2DSTAT  Mean and variance for the 2D Weibull distribution  </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  [M,V,Tm] = weib2dstat( a1,b1,a2,b2,c12,condon,cvar, tol )  </span>
+005 <span class="comment">%         [M,V,Tm] = weib2dstat([ a1,b1,a2,b2,c12],condon,cvar,tol )  </span>
+006 <span class="comment">% </span>
+007 <span class="comment">%    M , V, Tm  = mean, variance and modal value, respectively </span>
+008 <span class="comment">%   ai, bi, c12 = parameters of the distribution </span>
+009 <span class="comment">% </span>
+010 <span class="comment">%     condon    = 0 Return mean, covariance and modal value of X1 and X2 (default) </span>
+011 <span class="comment">%                 1 Return the conditional values given X1 (cvar) </span>
+012 <span class="comment">%                 2 Return the conditional values given X2 (cvar) </span>
+013 <span class="comment">% </span>
+014 <span class="comment">%          cvar = vector of conditional values  </span>
+015 <span class="comment">%                 (default depending on marginal mean and variance) </span>
+016 <span class="comment">%          tol  = relative tolerance used in the integration. (default 1e-3) </span>
+017 <span class="comment">% </span>
+018 <span class="comment">% The distribution is defined by its PDF: </span>
+019 <span class="comment">%    f(X1,X2)=B1*B2*xn1^(B1-1)*xn2^(B2-1)/A1/B1/N*... </span>
+020 <span class="comment">%             exp{-[xn1^B1 +xn2^B2 ]/N }*I0(2*C12*xn1^(B1/2)*xn2^(B2/2)/N)  </span>
+021 <span class="comment">%  where  </span>
+022 <span class="comment">%    N=1-C12^2, xn1=X1/A1,  xn2=X2/A2 and  </span>
+023 <span class="comment">%    I0 is the modified bessel function of zeroth order. </span>
+024 <span class="comment">% </span>
+025 <span class="comment">% (The marginal distribution of X1 is weibull with parameters A1 and B1)  </span>
+026 <span class="comment">% (The marginal distribution of X2 is weibull with parameters A2 and B2)  </span>
+027 <span class="comment">% </span>
+028 <span class="comment">% Examples: </span>
+029 <span class="comment">%   [m v] = weib2dstat([2 2  3 2.5 .8]) <span class="comment">%  mean and covariance </span></span>
+030 <span class="comment">%   x = linspace(0,6)'; </span>
+031 <span class="comment">%   [m v] = weib2dstat([2 2  3 2.5 .8],2,x); </span>
+032 <span class="comment">%   plot(x,m,'r--', x,sqrt(v),'g-') <span class="comment">% conditional mean and standard deviation. </span></span>
+033 <span class="comment">% </span>
+034 <span class="comment">% See also  weib2dpdf, ellipke, hypgf, gamma, gaussq </span>
+035  
+036  
+037 <span class="comment">%   References: </span>
+038 <span class="comment">%     Dag Myrhaug &amp; Håvard Rue </span>
+039 <span class="comment">%  Journal of Ship Research, Vol 42, No3, Sept 1998, pp 199-205  </span>
+040  
+041 <span class="comment">%tested on: matlab 5.1 </span>
+042 <span class="comment">% history: </span>
+043 <span class="comment">%  by Per A. Brodtkorb 13.11.98 </span>
+044  
+045  
+046  
+047 <span class="keyword">if</span> nargin &lt; 1,  
+048   error(<span class="string">'Requires 1 input argument.'</span>);  
+049 <span class="keyword">elseif</span> (nargin &lt; 5) &amp;prod(size((a1)))~=5|isempty(a1), 
+050   error(<span class="string">'Requires either 5 input arguments or that input argument 1 must have 5 entries .'</span>);  
+051 <span class="keyword">elseif</span> (nargin &lt; 5) &amp;prod(size((a1)))==5, 
+052   <span class="keyword">if</span> (nargin&lt;2)|isempty(b1), condon=0; <span class="keyword">else</span>   condon=b1;  <span class="keyword">end</span> 
+053   <span class="keyword">if</span> (nargin &lt;3)|isempty(a2),  cvar=[]; <span class="keyword">else</span> cvar=a2; <span class="keyword">end</span>; 
+054   <span class="keyword">if</span> (nargin &lt;4)|isempty(b2),  tol=1e-3; <span class="keyword">else</span> tol=b2; <span class="keyword">end</span>; 
+055    b1=a1(2); 
+056   a2=a1(3);  b2=a1(4);    c12=a1(5); a1=a1(1);  
+057 <span class="keyword">else</span> 
+058   <span class="keyword">if</span> (nargin &lt; 6)|isempty(condon),   condon=0;<span class="keyword">end</span> 
+059   <span class="keyword">if</span> (nargin &lt; 7)|isempty(cvar),     cvar=[]; <span class="keyword">end</span> 
+060    <span class="keyword">if</span> (nargin &lt;8)|isempty(tol),  tol=1e-3;  <span class="keyword">end</span>; 
+061 <span class="keyword">end</span> 
+062  
+063 [errorcode  a1 b1 a2 b2 c12] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(a1,b1,a2,b2,c12); 
+064 <span class="keyword">if</span> errorcode &gt; 0 
+065     error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+066 <span class="keyword">end</span> 
+067  
+068 [m1,v1]=<a href="wweibstat.html" class="code" title=" Mean and variance for the Weibull  distribution.">wweibstat</a>(a1,b1); <span class="comment">%  </span>
+069 [m2,v2]=<a href="wweibstat.html" class="code" title=" Mean and variance for the Weibull  distribution.">wweibstat</a>(a2,b2); 
+070 tm1=zeros(size(a1));tm2=zeros(size(a2)); 
+071  
+072  
+073 k=find(b1&gt;1); 
+074 <span class="keyword">if</span> any(k), 
+075   tm1(k)=a1(k).*(1-1./b1(k)).^(1./b1(k)); 
+076 <span class="keyword">end</span> 
+077 k2=find(b2&gt;1); 
+078 <span class="keyword">if</span> any(k2), 
+079   tm2(k2)=a2(k2).*(1-1./b2(k2)).^(1./b2(k2)); 
+080 <span class="keyword">end</span> 
+081   
+082 <span class="keyword">switch</span> condon 
+083   <span class="keyword">case</span> 0,    <span class="comment">% mean and covariance </span>
+084     covar=zeros(size(a2)); 
+085     ok = a1 &gt; 0 &amp; b1 &gt; 0 &amp;a2 &gt; 0 &amp; b2 &gt; 0 | abs(c12)&lt;1; 
+086     k = find(~ok); 
+087     <span class="keyword">if</span> any(k) 
+088       tmp   = NaN; 
+089       covar(k) = tmp(ones(size(k)));  
+090     <span class="keyword">end</span> 
+091     k = find(ok); 
+092     <span class="keyword">if</span> any(k), 
+093       <span class="keyword">if</span> 0, <span class="comment">% calculating covar correct for Rayleigh </span>
+094     [K,E] = ellipke(c12(k).^2); <span class="comment">%complete elliptic integral of first and </span>
+095     <span class="comment">%second kind </span>
+096     covar(k) =  sqrt(v1(k).*v2(k)).*(E-.5*(1-c12(k).^2).*K-pi/4)./(1-pi/4);     
+097       <span class="keyword">else</span> <span class="comment">% calculating covar correct for Weibull </span>
+098     qx=1./b1(k);qy=1./b2(k); 
+099     covar(k)=   sqrt(v1(k).*v2(k)).*(<a href="../../wafo/misc/hypgf.html" class="code" title="  Hypergeometric function F(a,b,c,x) ">hypgf</a>(-qx,-qy,1,c12(k).^2)-1).* gamma(qx).*gamma(qy)./ .<span class="keyword">...</span> 
+100               ( sqrt(2.*b1(k).*gamma(2*qx) - gamma(qx).^2) .* <span class="keyword">...</span> 
+101                 sqrt(2.*b2(k).*gamma(2*qy) - gamma(qy).^2) );     
+102       <span class="keyword">end</span> 
+103     <span class="keyword">end</span> 
+104     M=[m1 m2]; 
+105     V=[v1 covar;covar' v2 ]; 
+106     Tm=[tm1,tm2]; 
+107   <span class="keyword">case</span> {1,2},  
+108     sparam={a1 b1 a2 b2 c12}; 
+109     
+110     <span class="keyword">if</span> condon==1,<span class="comment">%conditional mean and variance given x1   </span>
+111       txt=<span class="string">'x2'</span>;      vr=v2;      mn=m2; vc=v1;mc=m1; 
+112       porder=[3:4 1:2 5]; 
+113    <span class="keyword">else<span class="comment"></span>%conditional mean and variance given x2   </span>
+114      txt=<span class="string">'x1'</span>; vr=v1;     mn=m1;  vc=v2;mc=m2; 
+115      porder=1:5; 
+116    <span class="keyword">end</span> 
+117      <span class="keyword">if</span> isempty(cvar),cvar=linspace(0 ,mn+3*sqrt(vr),30)'; <span class="keyword">end</span> 
+118     <span class="keyword">if</span> 1 
+119        
+120        xinf=mn+mn./mc.*cvar   +15*sqrt(vr); <span class="comment">% infinite value for x1 or x2 </span>
+121       <span class="comment">%tmp=input(['Enter an infinite value for ', txt, ':  (' , num2str(xinf), ')']); </span>
+122       <span class="comment">%if ~isempty(tmp), xinf=tmp;end </span>
+123       <span class="comment">%disp(['Infinite value for ' ,txt,' is set to ' num2str(xinf(:)')]) </span>
+124     <span class="keyword">end</span> 
+125      
+126     M=zeros(size(cvar));V=M;Tm=M;  tolm=M;tolv=V; 
+127     <span class="comment">%do the integration with a quadrature formulae </span>
+128      [M   tolm]=<a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'weib2dpdf'</span>,0,xinf,tol,[],cvar,sparam{porder},3);  <span class="comment">%E(x2|x1) or E(x1|x2) </span>
+129      [V  tolv]=<a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'weib2dpdf'</span>,0,xinf,tol,[],cvar,sparam{porder},4);<span class="comment">%E(x2^2|x1) or E(x1^2|x2)  </span>
+130      V=V-M.^2;<span class="comment">%var(x2|x1) or var(x1|x2) </span>
+131      k=find(xinf&lt;M+6*sqrt(V)); 
+132      <span class="keyword">if</span> any(k), 
+133        xinf(k)=M(k)+6*sqrt(V(k))+xinf(k); <span class="comment">% update the infinite value                                            </span>
+134        disp([<span class="string">'Changed Infinite value for '</span>, txt]);<span class="comment">%, ' to ',   num2str(xinf(k))]) </span>
+135      <span class="keyword">end</span> 
+136       
+137      <span class="keyword">if</span> sparam{porder(2)}&gt;1 &amp; nargout&gt;2 
+138        <span class="comment">%modalvalue </span>
+139        Nint=length(cvar(:)); 
+140        mvrs = ver; ix = find(mvrs==<span class="string">'.'</span>); 
+141        <span class="keyword">if</span> str2num(mvrs(1:ix(2)-1))&gt;5.2, 
+142       
+143      <span class="keyword">for</span> ix=1:Nint,        
+144        Tm(ix)=fminbnd(<span class="string">'-weib2dpdf(x,P1,P2,P3)'</span>,max(0,M(ix)-sqrt(V(ix))),<span class="keyword">...</span> 
+145               M(ix)+sqrt(V(ix)),[],cvar(ix),sparam{porder},2 );  
+146      <span class="keyword">end</span> 
+147        <span class="keyword">else</span> 
+148       
+149      <span class="keyword">for</span> ix=1:Nint,        
+150        Tm(ix)=fmin(<span class="string">'-weib2dpdf(x,P1,P2,P3)'</span>,max(0,M(ix)-sqrt(V(ix))),<span class="keyword">...</span> 
+151                M(ix)+sqrt(V(ix)),[],cvar(ix),sparam{porder},2 );  
+152      <span class="keyword">end</span> 
+153        <span class="keyword">end</span> 
+154      <span class="keyword">end</span>      
+155  <span class="keyword">end</span> 
+156   
+157   
+158  <span class="comment">% [M(ix)   tolm(ix)]=quadg('weib2dpdf',0,xinf(ix),tol,[],cvar(ix),sparam(porder),3);  <span class="comment">%E(x2|x1) or E(x1|x2) </span></span>
+159  <span class="comment">% [V(ix)  tolv(ix)]=quadg('weib2dpdf',0,xinf(ix),tol,[],cvar(ix),sparam(porder),4);<span class="comment">%E(x2^2|x1) or E(x1^2|x2)  </span></span>
+160  <span class="comment">%V(ix)=V(ix)-M(ix)^2; <span class="comment">%var(x2|x1) or var(x1|x2) </span></span>
+161  <span class="comment">%if Nint&gt;ix &amp; xinf(ix)&lt;M(ix)+6*sqrt(V(ix)), </span>
+162  <span class="comment">%  xinf(ix+1)=xinf(ix+1)+M(ix)+10*sqrt(V(ix))-xinf(ix); <span class="comment">% update the infinite value                                            </span></span>
+163  <span class="comment">%  disp(['Changed Infinite value for ', txt, ' to ',   num2str(xinf(ix))]) </span>
+164  <span class="comment">%end</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

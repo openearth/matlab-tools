@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of evalpdf</title>
+  <meta name="keywords" content="evalpdf">
+  <meta name="description" content=" evaluates a PDF struct by interpolation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; evalpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>evalpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> evaluates a PDF struct by interpolation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> fi = evalpdf(pdf,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="evalpdf.html" class="code" title=" evaluates a PDF struct by interpolation">EVALPDF</a> evaluates a PDF struct by interpolation
+ 
+  CALL: f = <a href="evalpdf.html" class="code" title=" evaluates a PDF struct by interpolation">evalpdf</a>(pdf,x1,x2,...,xd,method)
+  
+   f            = evaluated pdf at x1,x2,...,xd
+   pdf          =  PDF structure 
+   x1,x2,...,xd = vectors/matrices of points where the pdf is evaluated
+   method       = 'nearest' - nearest neighbor interpolation
+                  'linear'  - linear interpolation  (default)
+                  'spline'  - cubic spline interpolation
+                  'cubic'   - cubic interpolation
+ 
+   For faster interpolation when pdf.x{1},... pdf.x{d} are equally spaced and
+   monotonic, use the methods '*linear', '*cubic', or '*nearest'.
+   Out of <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> values are returned as NaN's.
+ 
+  See also  <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\deal.m">deal</a></li></TD>
+<TD>          Deal inputs to outputs.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp2.m">interp2</a></li></TD>
+<TD>       2-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp3.m">interp3</a></li></TD>
+<TD>       3-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interpn.m">interpn</a></li></TD>
+<TD>       N-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isstruct.m">isstruct</a></li></TD>
+<TD>      True for structures.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\ndgrid.m">ndgrid</a></li></TD>
+<TD>        Generation of arrays for N-D functions and interpolation.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="kdebin.html" class="code" title=" f = kdebin(A,options,xlo,xup)">kdebin</a></li></TD>
+<TD> Binned Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recinit.html" class="code" title=" recinit">recinit</a></li></TD>
+<TD>  setup all global variables of the RECDEMO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/th2vhpdf.html" class="code" title=" f2 = th2vhpdf(f,v)">th2vhpdf</a></li></TD>
+<TD> Transform joint T-H density to V-H density</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig5.html" class="code" title=" wafofig5">wafofig5</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front velocity and wave height:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig6.html" class="code" title=" wafofig6">wafofig6</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front period, Tcf, and crest amplitude, Ac</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> fi = <a name="_sub0" href="#_subfunctions" class="code">evalpdf</a>(pdf,varargin) 
+002 <span class="comment">% EVALPDF evaluates a PDF struct by interpolation</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: f = evalpdf(pdf,x1,x2,...,xd,method)</span>
+005 <span class="comment">% </span>
+006 <span class="comment">%  f            = evaluated pdf at x1,x2,...,xd</span>
+007 <span class="comment">%  pdf          =  PDF structure </span>
+008 <span class="comment">%  x1,x2,...,xd = vectors/matrices of points where the pdf is evaluated</span>
+009 <span class="comment">%  method       = 'nearest' - nearest neighbor interpolation</span>
+010 <span class="comment">%                 'linear'  - linear interpolation  (default)</span>
+011 <span class="comment">%                 'spline'  - cubic spline interpolation</span>
+012 <span class="comment">%                 'cubic'   - cubic interpolation</span>
+013 <span class="comment">%</span>
+014 <span class="comment">%  For faster interpolation when pdf.x{1},... pdf.x{d} are equally spaced and</span>
+015 <span class="comment">%  monotonic, use the methods '*linear', '*cubic', or '*nearest'.</span>
+016 <span class="comment">%  Out of range values are returned as NaN's.</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% See also  datastructures</span>
+019 <span class="keyword">if</span> isstruct(pdf)
+020  d=ndims(pdf.f);
+021 
+022  <span class="keyword">if</span> d==2
+023   fsiz=size(pdf.f);
+024   <span class="keyword">if</span> min(fsiz)==1
+025     d=1;
+026   <span class="keyword">end</span>
+027  <span class="keyword">end</span>
+028 <span class="keyword">else</span>
+029  error(<span class="string">'pdf must be a structure'</span>) 
+030 <span class="keyword">end</span>
+031 Xi=cell(d,1);
+032 [Xi{1:d}]=deal(varargin{1:d});
+033 nv=length(varargin);
+034 <span class="keyword">if</span> d&lt;nv,
+035   method=varargin{nv};
+036 <span class="keyword">else</span>
+037   method=<span class="string">'linear'</span>;
+038 <span class="keyword">end</span>
+039 <span class="keyword">switch</span> d
+040   <span class="keyword">case</span> 1, 
+041     fi = interp1(pdf.x{1},pdf.f,Xi{1},method);
+042   <span class="keyword">case</span> 2,  
+043     X=cell(d,1);
+044     [X{:}] = meshgrid(pdf.x{:});
+045     fi =interp2(X{:},pdf.f,Xi{:},method);
+046   <span class="keyword">case</span> 3,
+047     X=cell(d,1);
+048     [X{:}] = meshgrid(pdf.x{:});
+049     fi =interp3(X{:},pdf.f,Xi{:},method);
+050   <span class="keyword">otherwise</span> ,  
+051     disp(<span class="string">'Dimension of data large, this will take a while.'</span>)
+052     [X{:}]    = ndgrid(pdf.x{:});
+053     fi =interpn(X{:},pdf.f,Xi{:},method);
+054 <span class="keyword">end</span>
+055</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

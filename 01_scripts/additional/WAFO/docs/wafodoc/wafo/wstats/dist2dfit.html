@@ -1,0 +1,597 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dist2dfit</title>
+  <meta name="keywords" content="dist2dfit">
+  <meta name="description" content=" Parameter estimates for DIST2D data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; dist2dfit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dist2dfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates for DIST2D data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat] =dist2dfit(V,H,dist,res,method,monitor,chat0) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dist2dfit.html" class="code" title=" Parameter estimates for DIST2D data. ">DIST2DFIT</a> Parameter estimates for DIST2D data. 
+  
+  CALL:  phat = <a href="dist2dfit.html" class="code" title=" Parameter estimates for DIST2D data. ">dist2dfit</a>(x1,x2,dist,[res,noverlap C],method,monitor); 
+  
+         phat = structure array containing 
+                x      = cellarray of distribution parameters 
+                CI     = Confidence interval of distribution parameters 
+                dist   = as explained below 
+                method = ------||---------- 
+                note   = string 
+                date   = date and time of creation  
+        x1,x2 = input data 
+         dist = list of distributions used in the fitting of X1 given X2  
+                and X2, respectively. Options are 'tgumbel', 'gumbel',  
+                'lognormal','rayleigh','trayleigh','weibull','tweibull', 
+                'gamma','ggamma'. 
+          res = resolution in the conditional fitting  (default <a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(x2)/12) 
+     noverlap = 0,1,2,3..., nr. of groups above and below to overlap in 
+                the conditional fitting (default 0) 
+            C = defines the location parameter by the following: 
+                Cv = min({X1|X2=x}-C,0) 
+                if no value is given then Cv=0.  
+       method = list containing method used for fitting of  
+                X1 given X2 and X2, respectively. 
+                Options 'MLE' or 'MOM'  (default {'MLE',MLE'}) 
+      monitor = 1 if monitor the fitting  (default=0)  
+  
+   <a href="dist2dfit.html" class="code" title=" Parameter estimates for DIST2D data. ">DIST2DFIT</a> fits the following distribution: F{x1|X2=x2}*F{x2}.  
+   The parameter(s) of the unconditional distribution of X2, 
+   F{x2}, is  returned in phat.x{2}. The parameters of the conditional 
+   distribution of X1 given X2 are returned in phat.x{1}. The first column 
+   in PHAT.X{1} contains the X2 values the parameters in column 2 and 3 are 
+   conditioned on.  PHAT.CI{1} and PHAT.CI{2} gives 95% confidence 
+   interval if MLE are selected for METHOD{1} and METHOD{2}, respectively. 
+  
+  Example: 
+    R = <a href="wraylrnd.html" class="code" title=" Random matrices from a Rayleigh distribution">wraylrnd</a>(2,1000,2); x1 = linspace(0,10)'; 
+    phat0=struct('x',[]); phat0.x={[x1,2*ones(size(x1))] 2 }; 
+    phat0.dist={'rayl','rayl'}; 
+    phat = <a href="dist2dfit.html" class="code" title=" Parameter estimates for DIST2D data. ">dist2dfit</a>(R(:,1),R(:,2),{'rayl','rayl'});  
+    sphat = <a href="dist2dsmfun2.html" class="code" title=" Smooths the conditional DIST2D distribution parameters.  ">dist2dsmfun2</a>(phat,x1,0); % <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a> the parameters 
+    <a href="dist2dparamplot.html" class="code" title=" Plot parameters of the conditional distribution">dist2dparamplot</a>(phat,sphat);  
+    figure(2) % compare fitted model with theoretical 
+    f = <a href="dist2dpdf2.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2) ">dist2dpdf2</a>(x1,x1,phat);  
+    fs = <a href="dist2dpdf2.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2) ">dist2dpdf2</a>(x1,x1,sphat);  
+    fe = <a href="dist2dpdf2.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2) ">dist2dpdf2</a>(x1,x1,phat0);  
+    <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fs); hold on, 
+    <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fe,'k--') 
+    plot(R(:,1),R(:,2),'.'),hold off 
+  
+   See also    <a href="dist2drnd.html" class="code" title="  Random points from a bivariate DIST2D distribution ">dist2drnd</a>,  <a href="dist2dpdf.html" class="code" title=" Joint 2D PDF computed as f(x1|X2=x2)*f(x2)">dist2dpdf</a> <a href="dist2dcdf.html" class="code" title=" Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2">dist2dcdf</a> <a href="dist2dprb.html" class="code" title=" returns the probability for rectangular regions.">dist2dprb</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/kdetools/bincount.html" class="code" title=" [len,bin,val] = bincount(x,f)">bincount</a></li></TD>
+<TD> 1-dimensional Bin Count</TD>
+</TR>
+<TR>
+<TD><li><a href="distplot.html" class="code" title=" h = wdistplot(x,dist)">distplot</a></li></TD>
+<TD> Displays a 1D distribution probability plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="range.html" class="code" title=" y = range(x)">range</a></li></TD>
+<TD>  Calculates the difference between the maximum and minimum values.</TD>
+</TR>
+<TR>
+<TD><li><a href="var.html" class="code" title=" y = var(x, dim)">var</a></li></TD>
+<TD>  Variance</TD>
+</TR>
+<TR>
+<TD><li><a href="wgamfit.html" class="code" title=" [phat, cov,pci]=wgamfit(data1, plotflag);">wgamfit</a></li></TD>
+<TD> Parameter estimates for Gamma data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wggamfit.html" class="code" title=" [phat, cov,pci]=wggamfit(data1, plotflag,chat0);">wggamfit</a></li></TD>
+<TD> Parameter estimates for Generalized Gamma data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbfit.html" class="code" title=" [phat, cov,pci] = wgumbfit(data1, plotflag)">wgumbfit</a></li></TD>
+<TD> Parameter estimates for Gumbel data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbplot.html" class="code" title=" phat = wgumbplot(x)">wgumbplot</a></li></TD>
+<TD> Plots data on a Gumbel distribution paper.</TD>
+</TR>
+<TR>
+<TD><li><a href="wnormfit.html" class="code" title=" [phat, var,ciL,ciU] = wnormfit(data,plotflag)">wnormfit</a></li></TD>
+<TD> Parameter estimates for Normal data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wnormplot.html" class="code" title=" wnormplot(x,nr1,nr2,df);">wnormplot</a></li></TD>
+<TD> Plots data on a Normal distribution paper</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylfit.html" class="code" title=" [phat, var,pci] = wraylfit(data,plotflag)">wraylfit</a></li></TD>
+<TD> Parameter estimates for Rayleigh data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylplot.html" class="code" title=" bhat = wraylplot(x)">wraylplot</a></li></TD>
+<TD> Plots data on a Rayleigh distribution paper</TD>
+</TR>
+<TR>
+<TD><li><a href="wtraylfit.html" class="code" title=" [phat,cov,pci] = wtraylfit(data,plotflag)">wtraylfit</a></li></TD>
+<TD> Parameter estimates for Truncated Rayleigh data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wtweibfit.html" class="code" title=" [phat, cov, pci]=wtweibfit(data1, plotflag);">wtweibfit</a></li></TD>
+<TD> Parameter estimates for truncated Weibull data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibfit.html" class="code" title=" [phat, cov, pci]=wweibfit(data1, plotflag);">wweibfit</a></li></TD>
+<TD> Parameter estimates for Weibull data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibplot.html" class="code" title=" phat = wweibplot(x)">wweibplot</a></li></TD>
+<TD> Plots data on a Weibull distribution paper</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@scribehandle\class.m">class</a></li></TD>
+<TD>         Create object or return object class.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\datestr.m">datestr</a></li></TD>
+<TD>       String representation of date.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\inputname.m">inputname</a></li></TD>
+<TD>     Input argument name.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\now.m">now</a></li></TD>
+<TD>           Current date and time as date number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\audiovideo\@audiorecorder\pause.m">pause</a></li></TD>
+<TD>         Wait for user response.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\ppval.m">ppval</a></li></TD>
+<TD>         Evaluate piecewise polynomial.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\print.m">print</a></li></TD>
+<TD>         Print figure or model. Save to disk as image or M-file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strncmpi.bi">strncmpi</a></li></TD>
+<TD>      Compare first N characters of strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recinit.html" class="code" title=" recinit">recinit</a></li></TD>
+<TD>  setup all global variables of the RECDEMO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> [pvhat,pvci]=distfit(tmp,dist,method,monitor,chat)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span>  [phat] =<a name="_sub0" href="#_subfunctions" class="code">dist2dfit</a>(V,H,dist,res,method,monitor,chat0) 
+0002 <span class="comment">%DIST2DFIT Parameter estimates for DIST2D data. </span>
+0003 <span class="comment">% </span>
+0004 <span class="comment">% CALL:  phat = dist2dfit(x1,x2,dist,[res,noverlap C],method,monitor); </span>
+0005 <span class="comment">% </span>
+0006 <span class="comment">%        phat = structure array containing </span>
+0007 <span class="comment">%               x      = cellarray of distribution parameters </span>
+0008 <span class="comment">%               CI     = Confidence interval of distribution parameters </span>
+0009 <span class="comment">%               dist   = as explained below </span>
+0010 <span class="comment">%               method = ------||---------- </span>
+0011 <span class="comment">%               note   = string </span>
+0012 <span class="comment">%               date   = date and time of creation  </span>
+0013 <span class="comment">%       x1,x2 = input data </span>
+0014 <span class="comment">%        dist = list of distributions used in the fitting of X1 given X2  </span>
+0015 <span class="comment">%               and X2, respectively. Options are 'tgumbel', 'gumbel',  </span>
+0016 <span class="comment">%               'lognormal','rayleigh','trayleigh','weibull','tweibull', </span>
+0017 <span class="comment">%               'gamma','ggamma'. </span>
+0018 <span class="comment">%         res = resolution in the conditional fitting  (default range(x2)/12) </span>
+0019 <span class="comment">%    noverlap = 0,1,2,3..., nr. of groups above and below to overlap in </span>
+0020 <span class="comment">%               the conditional fitting (default 0) </span>
+0021 <span class="comment">%           C = defines the location parameter by the following: </span>
+0022 <span class="comment">%               Cv = min({X1|X2=x}-C,0) </span>
+0023 <span class="comment">%               if no value is given then Cv=0.  </span>
+0024 <span class="comment">%      method = list containing method used for fitting of  </span>
+0025 <span class="comment">%               X1 given X2 and X2, respectively. </span>
+0026 <span class="comment">%               Options 'MLE' or 'MOM'  (default {'MLE',MLE'}) </span>
+0027 <span class="comment">%     monitor = 1 if monitor the fitting  (default=0)  </span>
+0028 <span class="comment">% </span>
+0029 <span class="comment">%  DIST2DFIT fits the following distribution: F{x1|X2=x2}*F{x2}.  </span>
+0030 <span class="comment">%  The parameter(s) of the unconditional distribution of X2, </span>
+0031 <span class="comment">%  F{x2}, is  returned in phat.x{2}. The parameters of the conditional </span>
+0032 <span class="comment">%  distribution of X1 given X2 are returned in phat.x{1}. The first column </span>
+0033 <span class="comment">%  in PHAT.X{1} contains the X2 values the parameters in column 2 and 3 are </span>
+0034 <span class="comment">%  conditioned on.  PHAT.CI{1} and PHAT.CI{2} gives 95<span class="comment">% confidence </span></span>
+0035 <span class="comment">%  interval if MLE are selected for METHOD{1} and METHOD{2}, respectively. </span>
+0036 <span class="comment">% </span>
+0037 <span class="comment">% Example: </span>
+0038 <span class="comment">%   R = wraylrnd(2,1000,2); x1 = linspace(0,10)'; </span>
+0039 <span class="comment">%   phat0=struct('x',[]); phat0.x={[x1,2*ones(size(x1))] 2 }; </span>
+0040 <span class="comment">%   phat0.dist={'rayl','rayl'}; </span>
+0041 <span class="comment">%   phat = dist2dfit(R(:,1),R(:,2),{'rayl','rayl'});  </span>
+0042 <span class="comment">%   sphat = dist2dsmfun2(phat,x1,0); <span class="comment">% smooth the parameters </span></span>
+0043 <span class="comment">%   dist2dparamplot(phat,sphat);  </span>
+0044 <span class="comment">%   figure(2) <span class="comment">% compare fitted model with theoretical </span></span>
+0045 <span class="comment">%   f = dist2dpdf2(x1,x1,phat);  </span>
+0046 <span class="comment">%   fs = dist2dpdf2(x1,x1,sphat);  </span>
+0047 <span class="comment">%   fe = dist2dpdf2(x1,x1,phat0);  </span>
+0048 <span class="comment">%   pdfplot(fs); hold on, </span>
+0049 <span class="comment">%   pdfplot(fe,'k--') </span>
+0050 <span class="comment">%   plot(R(:,1),R(:,2),'.'),hold off </span>
+0051 <span class="comment">% </span>
+0052 <span class="comment">%  See also    dist2drnd,  dist2dpdf dist2dcdf dist2dprb </span>
+0053  
+0054  
+0055 <span class="comment">% tested on: matlab 5.2 </span>
+0056 <span class="comment">% history: </span>
+0057 <span class="comment">% revised pab Sept 2005 </span>
+0058 <span class="comment">% -fixed abug: [a{1}] = 1 is not allowed anymore!! replaced with a{1} = 1; </span>
+0059 <span class="comment">% revised pab Jul2004 </span>
+0060 <span class="comment">% Added secret option of C0 to wggamfit  </span>
+0061 <span class="comment">% revised pab 03.12.2000 </span>
+0062 <span class="comment">% -added truncated weibull and rayleigh </span>
+0063 <span class="comment">% revised pab 12.11.2000 </span>
+0064 <span class="comment">%  - added wggampdf option </span>
+0065 <span class="comment">%  - For monitor&gt; 0:  removed normplot ...etc and replaced it with a call </span>
+0066 <span class="comment">%     to empdistr instead </span>
+0067 <span class="comment">% Per A. Brodtkorb 20.10.1998 </span>
+0068  
+0069 error(nargchk(3,7,nargin)) 
+0070 ptime     = 1; <span class="comment">%pause length if monitor=1 </span>
+0071 printflag = 0;<span class="comment">%print if monitor=1 </span>
+0072  
+0073 [HI I] = sort(H(:));<span class="comment">%sorting H </span>
+0074 VI     = V(I); 
+0075  
+0076 <span class="keyword">if</span> (nargin&lt; 3)|isempty(dist), 
+0077   dist={<span class="string">'tgumbel'</span>,<span class="string">'rayleigh'</span>}; 
+0078 <span class="keyword">else</span> 
+0079   nd=length(dist); 
+0080   <span class="keyword">if</span> nd==1, 
+0081   dist={dist{1},<span class="string">'rayleigh'</span>}; 
+0082   <span class="keyword">end</span> 
+0083 <span class="keyword">end</span> 
+0084  
+0085 <span class="keyword">if</span> (nargin&lt;5)|isempty(method) 
+0086   method={<span class="string">'MLE'</span>,<span class="string">'MLE'</span>}; <span class="comment">% options MLE or MOM </span>
+0087 <span class="keyword">else</span> 
+0088   nd=length(method); 
+0089   <span class="keyword">if</span> nd==1, 
+0090     method={method{1}, <span class="string">'MLE'</span>}; 
+0091   <span class="keyword">end</span> 
+0092 <span class="keyword">end</span> 
+0093  
+0094 <span class="keyword">if</span> (nargin&lt;6)|isempty(monitor) 
+0095   monitor=0; <span class="comment">%if 1 monitor the fitting  </span>
+0096 <span class="keyword">end</span> 
+0097 <span class="comment">%monitor=1; </span>
+0098  
+0099  
+0100 noverlap=0;C=[]; 
+0101 <span class="keyword">if</span> nargin&lt;4|isempty(res) 
+0102   res=<a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(H(:))/12; <span class="comment">% resolution </span>
+0103 <span class="keyword">else</span> 
+0104   <span class="keyword">if</span> length(res)&gt;1 
+0105     noverlap=res(2); 
+0106   <span class="keyword">end</span> 
+0107   <span class="keyword">if</span> length(res)&gt;2 
+0108     C=res(3); 
+0109   <span class="keyword">end</span> 
+0110   res=res(1); 
+0111 <span class="keyword">end</span> 
+0112  
+0113 <span class="comment">%N=length(HI); </span>
+0114  
+0115 grp=floor(HI/res)+1; <span class="comment">% dividing the data into groups </span>
+0116  
+0117 <span class="keyword">if</span> monitor 
+0118   [len,bin] = <a href="../../wafo/kdetools/bincount.html" class="code" title=" 1-dimensional Bin Count ">bincount</a>(grp); 
+0119   utp = 1/(2*max(len)); 
+0120   ax = [0 max(VI),utp,1-utp]; 
+0121   name1=inputname(1); 
+0122   name2=inputname(2); 
+0123   <span class="keyword">if</span> isempty(name1), name1 = <span class="string">'x1'</span>; <span class="keyword">end</span> 
+0124   <span class="keyword">if</span> isempty(name2), name2 = <span class="string">'x2'</span>; <span class="keyword">end</span> 
+0125    
+0126 <span class="keyword">end</span> 
+0127 [ phhat, phci]=<a href="#_sub1" class="code" title="sub  [pvhat,pvci]=distfit(tmp,dist,method,monitor,chat)">distfit</a>(HI,dist{2},method{2},monitor);<span class="comment">%unconditional fitting </span>
+0128 <span class="keyword">if</span> monitor 
+0129   xlabel(name2) 
+0130   pause(ptime) 
+0131   <span class="keyword">if</span> printflag, print -Pmhlaser ; <span class="keyword">end</span>   
+0132 <span class="keyword">end</span> 
+0133  
+0134 Ngrp=grp(<span class="keyword">end</span>); <span class="comment">% # groups </span>
+0135  
+0136 <span class="keyword">if</span> strcmpi(dist{1}(1:2),<span class="string">'ra'</span>), 
+0137   npar=1; 
+0138 <span class="keyword">elseif</span> strcmpi(dist{1}(1:2),<span class="string">'gg'</span>)|strcmpi(dist{1}(1:2),<span class="string">'tw'</span>), 
+0139   npar = 3; 
+0140 <span class="keyword">else</span> 
+0141   npar=2;   
+0142 <span class="keyword">end</span> 
+0143 <span class="comment">%C = input('Specify location parameter (default none)');  </span>
+0144 <span class="keyword">if</span> isempty(C),   
+0145   pvhat=zeros(Ngrp,1+npar); 
+0146 <span class="keyword">else</span> 
+0147   Cvold=0; 
+0148   pvhat=zeros(Ngrp,2+npar); 
+0149 <span class="keyword">end</span> 
+0150  
+0151 pvci=zeros(Ngrp,2*npar); 
+0152  
+0153 pvhat(:,1)=linspace(res/2, (Ngrp-0.5)*res, Ngrp)'; 
+0154 <span class="keyword">if</span> nargin&lt;7 
+0155   chat0 = []; 
+0156 <span class="keyword">end</span> 
+0157  
+0158 Nmin = min(max(6,Ngrp),25); <span class="comment">% Minimum number of data in groups </span>
+0159 m = zeros(Ngrp,1); 
+0160 v = m; 
+0161 Ni = m; 
+0162 <span class="keyword">for</span> ix=1:Ngrp, 
+0163   ind  = (grp==ix);   
+0164   tmp  = VI(ind); 
+0165   Ni(ix) = length(tmp); 
+0166   <span class="keyword">if</span> length(tmp)&gt;max(4,0),<span class="comment">% if less than 4 observations in the group  </span>
+0167     m(ix)=mean(tmp); <span class="comment">% mean of data in group ix </span>
+0168     v(ix)=std(tmp).^2;  <span class="comment">% variance of data in group ix </span>
+0169   <span class="keyword">else</span>  
+0170     m(ix)=NaN; 
+0171     v(ix)=NaN; 
+0172   <span class="keyword">end</span> 
+0173   <span class="comment">%if 1 | ((ix-1)*res&gt;2) </span>
+0174   <span class="comment">%  chat0 = 1.5; </span>
+0175   <span class="comment">%end </span>
+0176   <span class="keyword">switch</span> class(chat0) 
+0177    <span class="keyword">case</span> <span class="string">'inline'</span> 
+0178     chat00 = chat0(pvhat(ix,1)); 
+0179    <span class="keyword">case</span> <span class="string">'struct'</span> 
+0180     chat00 = ppval(chat0,pvhat(ix,1)); 
+0181    <span class="keyword">otherwise</span> 
+0182     chat00 = chat0;  
+0183   <span class="keyword">end</span> 
+0184    
+0185   <span class="keyword">if</span> ix&gt;=Ngrp-noverlap+1 | ix&lt;=noverlap 
+0186     <span class="keyword">for</span> iy=1:min(min(noverlap,ix-1),Ngrp-ix) 
+0187       kup = (grp==ix+iy); 
+0188       <span class="keyword">if</span> any(kup) 
+0189     ind = (ind | (grp==ix-iy) | kup); 
+0190       <span class="keyword">end</span> 
+0191     <span class="keyword">end</span>  
+0192   <span class="keyword">end</span>              
+0193    
+0194   tmp=VI(ind);<span class="comment">%find data in group number ix </span>
+0195    
+0196   <span class="keyword">if</span> length(tmp)&lt;Nmin,<span class="comment">% if less than Nmin observations in the group  </span>
+0197     <span class="comment">%grp(grp==ix)=ix-1; <span class="comment">%merge the data with group below </span></span>
+0198     <span class="comment">%if (ix&gt;3)&amp;~isempty(tmp), grp(grp==ix-2)=ix-1;end <span class="comment">% also merge the </span></span>
+0199                                                      <span class="comment">% data in grp ix-2 with grp ix-1 </span>
+0200     pvhat(ix,:)=NaN; 
+0201     pvci(ix,:)=NaN; 
+0202   <span class="keyword">else</span> 
+0203      
+0204     <span class="keyword">if</span> ~isempty(C) 
+0205       <span class="comment">%disp('Cv') </span>
+0206       Cv=max(min(tmp)-C,0); 
+0207        
+0208       Cv=min(Cv,Cvold+C/30); 
+0209       tmp=tmp-Cv; 
+0210       Cvold=Cv; 
+0211       pvhat(ix,<span class="keyword">end</span>)=Cv; 
+0212     <span class="keyword">end</span> 
+0213     <span class="comment">% conditional fitting  </span>
+0214     [ pvhat(ix, 2:npar+1),<span class="keyword">...</span> 
+0215       pvci(ix,1:2*npar)]=<a href="#_sub1" class="code" title="sub  [pvhat,pvci]=distfit(tmp,dist,method,monitor,chat)">distfit</a>(tmp(:),dist{1},method{1},monitor,chat00); 
+0216     <span class="keyword">if</span> monitor 
+0217       axis(ax) 
+0218       xlabel([name1 <span class="string">' |  '</span>  name2 <span class="string">'='</span> num2str(pvhat(ix,1)) ]) 
+0219       pause(ptime) 
+0220       <span class="keyword">if</span> printflag, print -Pmhlaser ; <span class="keyword">end</span>   <span class="comment">%print -Pmhlaser </span>
+0221     <span class="keyword">end</span> 
+0222   <span class="keyword">end</span> 
+0223 <span class="keyword">end</span> 
+0224  
+0225 <span class="comment">%phat=struct('x',[],'CI',[],'dist',dist,'method',method); </span>
+0226 phat.x=cell(2,1); 
+0227 phat.CI=cell(2,1); 
+0228 phat.x{1}=pvhat; 
+0229 phat.x{2}=phhat; 
+0230 phat.CI{1}=pvci; 
+0231 phat.CI{2}=phci; 
+0232 phat.dist=dist; 
+0233 phat.method=method; 
+0234 phat.note=[]; 
+0235 phat.date=datestr(now); 
+0236 phat.res=res; 
+0237 phat.noverlap=noverlap; 
+0238 phat.C=C; 
+0239 phat.visual=[]; 
+0240 phat.csm=[]; 
+0241 phat.lin=[]; 
+0242 phat.stats1{1} = pvhat(:,1); <span class="comment">% x2 </span>
+0243 phat.stats1{2} = m; <span class="comment">%conditional mean given x2 </span>
+0244 phat.stats1{3} = v; <span class="comment">% conditional variance given x2 </span>
+0245 phat.stats1{4} = Ni;<span class="comment">% conditional number of samples given x2 </span>
+0246 <span class="comment">%pvhat(end,:)=[]; </span>
+0247 <span class="comment">%pvhat(1,:)=[]; </span>
+0248 <span class="comment">%pvci(end,:)=[]; </span>
+0249 <span class="comment">%pvci(1,:)=[]; </span>
+0250 <span class="keyword">function</span> [pvhat,pvci]=<a name="_sub1" href="#_subfunctions" class="code">distfit</a>(tmp,dist,method,monitor,chat) 
+0251   <span class="keyword">if</span> nargin&gt;4 &amp; ~isempty(chat) &amp; isfinite(chat) 
+0252     chat0 = chat; 
+0253   <span class="keyword">else</span> 
+0254     chat0 = []; 
+0255   <span class="keyword">end</span> 
+0256   <span class="keyword">if</span> strncmpi(method,<span class="string">'mle'</span>,3), 
+0257     <span class="keyword">switch</span> lower(dist(1:2)), 
+0258       <span class="keyword">case</span> <span class="string">'tr'</span>, [pvhat, tmp2] = <a href="wtraylfit.html" class="code" title=" Parameter estimates for Truncated Rayleigh data. ">wtraylfit</a>(tmp,monitor) ; 
+0259       <span class="keyword">case</span> <span class="string">'ra'</span>, [pvhat, tmp2] = <a href="wraylfit.html" class="code" title=" Parameter estimates for Rayleigh data.">wraylfit</a>(tmp,monitor) ; 
+0260       <span class="keyword">case</span> <span class="string">'tg'</span>, [pvhat, tmp2] = <a href="wgumbfit.html" class="code" title=" Parameter estimates for Gumbel data.">wgumbfit</a>(tmp,monitor); 
+0261       <span class="keyword">case</span> <span class="string">'gu'</span>, [pvhat, tmp2] = <a href="wgumbfit.html" class="code" title=" Parameter estimates for Gumbel data.">wgumbfit</a>(tmp,monitor); 
+0262       <span class="keyword">case</span> <span class="string">'lo'</span>, [pvhat, tmp2] = <a href="wnormfit.html" class="code" title=" Parameter estimates for Normal data.">wnormfit</a>(log(tmp),monitor); 
+0263       <span class="keyword">case</span> <span class="string">'ga'</span>, [pvhat, tmp2] = <a href="wgamfit.html" class="code" title=" Parameter estimates for Gamma data. ">wgamfit</a>(tmp,monitor); 
+0264      <span class="keyword">case</span> <span class="string">'gg'</span>,  [pvhat, tmp2] = <a href="wggamfit.html" class="code" title=" Parameter estimates for Generalized Gamma data. ">wggamfit</a>(tmp,monitor,chat0); 
+0265     <span class="comment">%if any(pvhat&lt;0),pvhat(1:3) =NaN; end </span>
+0266       <span class="keyword">case</span> <span class="string">'we'</span>, [pvhat, tmp2] = <a href="wweibfit.html" class="code" title=" Parameter estimates for Weibull data. ">wweibfit</a>(tmp,monitor); 
+0267       <span class="keyword">case</span> <span class="string">'tw'</span>, [pvhat, tmp2] = <a href="wtweibfit.html" class="code" title=" Parameter estimates for truncated Weibull data. ">wtweibfit</a>(tmp,monitor); 
+0268     <span class="comment">%[tmp tmp2]=gumbfit(log(tmp)); </span>
+0269     <span class="comment">%pvhat=[exp(tmp(2)) 1/tmp(1) ] </span>
+0270       <span class="keyword">otherwise</span>, error(<span class="string">'Unknown distribution'</span>) 
+0271     <span class="keyword">end</span> 
+0272     <span class="keyword">if</span> any(isnan(pvhat)) 
+0273       pvci=[pvhat pvhat]; 
+0274     <span class="keyword">else</span> 
+0275       tz=size(tmp2); 
+0276       alpha=0.05; <span class="comment">% 95<span class="comment">% confidense interval </span></span>
+0277       pint = [alpha/2; 1-alpha/2]; 
+0278       <span class="keyword">if</span> tz(1)==tz(2), 
+0279     sa = diag(tmp2)'; 
+0280       <span class="keyword">else</span> 
+0281     sa  = tmp2(:)'; 
+0282       <span class="keyword">end</span> 
+0283       nt=length(sa); 
+0284       <span class="comment">%pvhat </span>
+0285       pvci = <a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(repmat(pint,[1 nt]),[pvhat;pvhat],[sa;sa]); 
+0286       pvci=pvci(:).'; 
+0287     <span class="keyword">end</span> 
+0288     <span class="keyword">if</span> 0 <span class="comment">%monitor </span>
+0289       <span class="keyword">switch</span> lower(dist(1:2)), 
+0290     <span class="keyword">case</span> <span class="string">'ra'</span>,<a href="wraylplot.html" class="code" title=" Plots data on a Rayleigh distribution paper">wraylplot</a>(tmp); 
+0291     <span class="keyword">case</span> <span class="string">'gu'</span>,<a href="wgumbplot.html" class="code" title=" Plots data on a Gumbel distribution paper.">wgumbplot</a>(tmp); 
+0292     <span class="keyword">case</span> <span class="string">'tg'</span>,<a href="wgumbplot.html" class="code" title=" Plots data on a Gumbel distribution paper.">wgumbplot</a>(tmp); 
+0293     <span class="keyword">case</span> <span class="string">'lo'</span>,<a href="wnormplot.html" class="code" title=" Plots data on a Normal distribution paper">wnormplot</a>(log(tmp)); 
+0294     <span class="keyword">case</span> <span class="string">'ga'</span>,<a href="distplot.html" class="code" title=" Displays a 1D distribution probability plot.">distplot</a>(tmp,<span class="string">'wgampdf'</span>); 
+0295     <span class="keyword">case</span> <span class="string">'gg'</span>,<a href="distplot.html" class="code" title=" Displays a 1D distribution probability plot.">distplot</a>(tmp,<span class="string">'wggampdf'</span>); 
+0296     <span class="keyword">case</span> <span class="string">'we'</span>,<a href="wweibplot.html" class="code" title=" Plots data on a Weibull distribution paper">wweibplot</a>(tmp); 
+0297     <span class="keyword">otherwise</span>, error(<span class="string">'Unknown distribution'</span>) 
+0298       <span class="keyword">end</span>     
+0299     <span class="keyword">end</span> 
+0300      
+0301   <span class="keyword">else</span>  <span class="comment">% MOM fit </span>
+0302     pvci=NaN; 
+0303     <span class="keyword">switch</span> lower(dist(1:2)) 
+0304      <span class="keyword">case</span> {<span class="string">'tg'</span>,<span class="string">'gu'</span>} ,  pvhat =<a href="wgumbplot.html" class="code" title=" Plots data on a Gumbel distribution paper.">wgumbplot</a>(tmp); 
+0305        
+0306      <span class="keyword">case</span> <span class="string">'we'</span>, pvhat = <a href="wweibplot.html" class="code" title=" Plots data on a Weibull distribution paper">wweibplot</a>(tmp); 
+0307        
+0308      <span class="keyword">case</span> <span class="string">'lo'</span>, pvhat = <a href="wnormplot.html" class="code" title=" Plots data on a Normal distribution paper">wnormplot</a>(log(tmp)); 
+0309        
+0310      <span class="keyword">case</span> <span class="string">'ga'</span>, ma=mean(tmp);sa=<a href="var.html" class="code" title="  Variance ">var</a>(tmp); 
+0311        pvhat=[ma^2/sa sa/ma]; 
+0312        
+0313      <span class="keyword">case</span> <span class="string">'ra'</span>, error(<span class="string">'MOM is not implemented for Rayleigh distribution'</span>)      
+0314      <span class="keyword">otherwise</span> , error(<span class="string">'Unknown distribution'</span>) 
+0315     <span class="keyword">end</span> 
+0316     pvci = repmat(nan,1,2*length(pvhat)); 
+0317      
+0318     <span class="keyword">if</span> monitor 
+0319       <span class="keyword">switch</span> lower(dist(1:2)), 
+0320     <span class="keyword">case</span> {<span class="string">'gu'</span> <span class="string">'tg'</span>}, <a href="wgumbplot.html" class="code" title=" Plots data on a Gumbel distribution paper.">wgumbplot</a>(tmp); 
+0321     <span class="keyword">case</span> <span class="string">'lo'</span>,  <a href="wnormplot.html" class="code" title=" Plots data on a Normal distribution paper">wnormplot</a>(log(tmp)); 
+0322     <span class="keyword">case</span> <span class="string">'ga'</span>, <a href="distplot.html" class="code" title=" Displays a 1D distribution probability plot.">distplot</a>(tmp,<span class="string">'wgampdf'</span>); 
+0323     <span class="keyword">case</span> <span class="string">'we'</span>,  <a href="wweibplot.html" class="code" title=" Plots data on a Weibull distribution paper">wweibplot</a>(tmp); 
+0324     <span class="keyword">otherwise</span>, error(<span class="string">'Unknown distribution'</span>) 
+0325       <span class="keyword">end</span> 
+0326     <span class="keyword">end</span> 
+0327   <span class="keyword">end</span> 
+0328   <span class="keyword">return</span> 
+0329  
+0330  
+0331  
+0332  
+0333  
+0334</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

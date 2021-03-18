@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wtweibpdf</title>
+  <meta name="keywords" content="wtweibpdf">
+  <meta name="description" content=" Truncated Weibull probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wtweibpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wtweibpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Truncated Weibull probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wtweibpdf(x,a,b,c) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">WTWEIBPDF</a> Truncated Weibull probability density function
+ 
+  CALL:  f = <a href="wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(x,a,b,c);
+ 
+         f = density function evaluated at x
+     a,b,c = parameters
+ 
+ 
+  The Weibull distribution is defined by its cdf
+ 
+   F(x;a,c) = 1 -  exp(-((x+c)/a)^b+abs(c/a)^b), x&gt;=0
+ 
+    Some references refer to the Weibull distribution with
+    a single parameter, this corresponds to <a href="wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">WTWEIBPDF</a> with a = 1.
+ 
+  Example: 
+    x = linspace(0,6,200);
+    p1 = <a href="wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(x,1,1,2); p2 = <a href="wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(x,2,2,3);
+    plot(x,p1,x,p2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dpdf.html" class="code" title=" y = dist2dpdf(v1,h1,phat)">dist2dpdf</a></li></TD>
+<TD> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhsnlpdf.html" class="code" title=" [f,Hrms,Vrms] = jhsnlpdf(Hd,Scf,Hm0,Tp,gam,normalizedInput,condon)">jhsnlpdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for nonlinear waves with a JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhspdf.html" class="code" title=" [f,Hrms,Vrms] = jhspdf(Hd,Scf,Hm0,Tp,gam,normalizedInput,condon)">jhspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvnlpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvnlpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvnlpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thpdf.html" class="code" title=" f = thpdf(h,Hm0,Tp,dim)">thpdf</a></li></TD>
+<TD> Marginal wave height, Hd, PDF for Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thsnlpdf.html" class="code" title=" [f,Hrms,Vrms] = thsnlpdf(Hd,Scf,Hm0,Tp,normalizedInput,condon)">thsnlpdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for nonlinear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thspdf.html" class="code" title=" [f,Hrms,Vrms] = thspdf(Hd,Scf,Hm0,Tp,normalizedInput,condon)">thspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thspdf2.html" class="code" title=" [f,varargout] = thspdf2(Hd,Scf,Hm0,Tp,normalizedInput)">thspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thsspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = thsspdf(Hd,Scf,Hm0,Tp,normalizedInput,condon)">thsspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = thvpdf(Hd,Vcf,Hm0,Tp,normalizedInput,condon)">thvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wtweibpdf</a>(x,a,b,c)
+002 <span class="comment">%WTWEIBPDF Truncated Weibull probability density function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  f = wtweibpdf(x,a,b,c);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        f = density function evaluated at x</span>
+007 <span class="comment">%    a,b,c = parameters</span>
+008 <span class="comment">%</span>
+009 <span class="comment">%</span>
+010 <span class="comment">% The Weibull distribution is defined by its cdf</span>
+011 <span class="comment">%</span>
+012 <span class="comment">%  F(x;a,c) = 1 -  exp(-((x+c)/a)^b+abs(c/a)^b), x&gt;=0</span>
+013 <span class="comment">%</span>
+014 <span class="comment">%   Some references refer to the Weibull distribution with</span>
+015 <span class="comment">%   a single parameter, this corresponds to WTWEIBPDF with a = 1.</span>
+016 <span class="comment">%</span>
+017 <span class="comment">% Example: </span>
+018 <span class="comment">%   x = linspace(0,6,200);</span>
+019 <span class="comment">%   p1 = wtweibpdf(x,1,1,2); p2 = wtweibpdf(x,2,2,3);</span>
+020 <span class="comment">%   plot(x,p1,x,p2)</span>
+021 
+022 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+023 <span class="comment">% and Life Span Models&quot;, p. 25 ff, Marcel Dekker.</span>
+024 
+025 
+026 <span class="comment">% Tested on; Matlab 5.3</span>
+027 <span class="comment">% History: </span>
+028 <span class="comment">% revised pab 12.11.2000</span>
+029 <span class="comment">%  - added check on f(k): Replace NaN's with zero </span>
+030 <span class="comment">% revised pab 24.10.2000</span>
+031 <span class="comment">%  - added comnsize, nargchk</span>
+032 <span class="comment">% rewritten ms 15.06.2000</span>
+033 
+034 
+035 error(nargchk(3,4,nargin))
+036 <span class="keyword">if</span> nargin&lt;4|isempty(c),c=0;<span class="keyword">end</span>
+037 [errorcode, x, a,b, c] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a> (x,a,b, abs(c));
+038 <span class="keyword">if</span> (errorcode &gt; 0)
+039   error (<span class="string">'x, a, b and c must be of common size or scalar'</span>);
+040 <span class="keyword">end</span>
+041 
+042 f=zeros(size(x));
+043 
+044 ok = ((b &gt; 0)  &amp; (a &gt; 0));
+045 
+046 k = find (x&gt;=0&amp;ok);
+047 <span class="keyword">if</span> any (k)  
+048   f(k)=((x(k)+c(k))./a(k)).^(b(k)-1).*b(k)./a(k).*exp(-((x(k)+c(k))./a(k)).^b(k)+abs(c(k)./a(k)).^b(k));
+049   k0 = find(isnan(f(k)));
+050   <span class="keyword">if</span> any(k0), 
+051     f(k(k0))=0; 
+052   <span class="keyword">end</span>
+053 <span class="keyword">end</span>
+054 
+055 k1 = find (~ok);
+056 <span class="keyword">if</span> any (k1)
+057   tmp=NaN;
+058   f(k1) = tmp(ones(size(k1)));
+059 <span class="keyword">end</span>
+060 
+061 
+062 
+063 
+064 
+065 
+066</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

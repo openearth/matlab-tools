@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafoexepath</title>
+  <meta name="keywords" content="wafoexepath">
+  <meta name="description" content=" Returns the path to executables for the WAFO Toolbox">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">wafo</a> &gt; wafoexepath.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>wafoexepath
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong> Returns the path to executables for the WAFO Toolbox</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong> p=wafoexepath; </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">WAFOEXEPATH</a> Returns the path to executables for the WAFO Toolbox
+ 
+  CALL:  Str = <a href="wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a> 
+  
+    Str  =  a string with the path to the directory containing 
+            the executables for the WAFO Toolbox,
+            including a terminating slash or backslash, depending
+            on the system on wich Matlab is run.
+            The executable files must be located in a subdirectory to
+            the WAFO/exec directory, with the name given by
+            &quot;lower(computer)&quot;.
+ 
+  See also  <a href="waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>, <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">wafopath</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\computer.m">computer</a></li></TD>
+<TD>      Computer type.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\filesep.m">filesep</a></li></TD>
+<TD>       Directory separator for this platform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../wafo/damage/down2cc.html" class="code" title=" [cc,delta] = down2cc(mu,n)">down2cc</a></li></TD>
+<TD> Calculates the cycle count which has the highest damage</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/wsim/duffsim.html" class="code" title=" L = duffsim(T,dt,z,a,b,alf)">duffsim</a></li></TD>
+<TD> Generates a sample path of a harmonic oscillator</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/trgauss/rind.html" class="code" title=" [fxind, err,exTime,options] = rind(BIG,Ex,Blo,Bup,indI,xc,Nt,varargin)">rind</a></li></TD>
+<TD> Computes multivariate normal expectations</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/trgauss/spec2AcAt.html" class="code" title=" [f] = spec2AcAt(spec,utc,def,paramtc,paramtt,paramt,h1,h2,nit,speed,bound)">spec2AcAt</a></li></TD>
+<TD>   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2).</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/trgauss/spec2Acdf.html" class="code" title=" [f] = spec2Acdf(spec,utc,def,paramt,h,nit,speed,bound)">spec2Acdf</a></li></TD>
+<TD>  Evaluates cdf of crests P(Ac<=h) or troughs P(At<=h).</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/trgauss/spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a></li></TD>
+<TD> Calculates joint density of Maximum, minimum and period.</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/trgauss/spec2tccpdf.html" class="code" title=" [f] = spec2tccpdf(spec,utc,def,paramt,h1,h2,nit,speed,bound,plotflag)">spec2tccpdf</a></li></TD>
+<TD> Evaluates densities of wave period Tcc, wave lenght Lcc.</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/trgauss/spec2thpdf.html" class="code" title=" f = spec2thpdf(spec,utc,def,paramt,h,options,plotflag)">spec2thpdf</a></li></TD>
+<TD> Joint density of amplitude and period/wave-length characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/trgauss/spec2tpdf.html" class="code" title=" [f] = spec2tpdf(spec,utc,def,paramt,h,nit,speed,bound,plotflag)">spec2tpdf</a></li></TD>
+<TD> Evaluates densities for crest-,trough-period, length.</TD>
+</TR>
+<TR>
+<TD><li><a href="../wafo/trgauss/private/wminmax.html" class="code" title=" [f_mM, paramu] = wminmax(spec,nit,paramu,t)">wminmax</a></li></TD>
+<TD> Calculates joint density of minimum and following maximum</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> p=<a name="_sub0" href="#_subfunctions" class="code">wafoexepath</a>;
+02 <span class="comment">% WAFOEXEPATH Returns the path to executables for the WAFO Toolbox</span>
+03 <span class="comment">%</span>
+04 <span class="comment">% CALL:  Str = wafoexepath </span>
+05 <span class="comment">% </span>
+06 <span class="comment">%   Str  =  a string with the path to the directory containing </span>
+07 <span class="comment">%           the executables for the WAFO Toolbox,</span>
+08 <span class="comment">%           including a terminating slash or backslash, depending</span>
+09 <span class="comment">%           on the system on wich Matlab is run.</span>
+10 <span class="comment">%           The executable files must be located in a subdirectory to</span>
+11 <span class="comment">%           the WAFO/exec directory, with the name given by</span>
+12 <span class="comment">%           &quot;lower(computer)&quot;.</span>
+13 <span class="comment">%</span>
+14 <span class="comment">% See also  waforoot, wafopath.</span>
+15 
+16 
+17 <span class="comment">%          NOTE: User no longer has to edit this file </span>
+18 <span class="comment">%          It is  automatic.</span>
+19 
+20 <span class="comment">% Tested on: Matlab 5.3</span>
+21 <span class="comment">% History:</span>
+22 <span class="comment">% by by pab 11.08.99</span>
+23 <span class="comment">%   new routine </span>
+24 
+25 p = [ <a href="waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>, filesep, <span class="string">'exec'</span> filesep lower(computer) filesep]; 
+26</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

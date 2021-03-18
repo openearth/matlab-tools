@@ -1,0 +1,22 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "2.05977,2.05977";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../wafo/misc/graph.html";
+1;
+}
+ subgraph cluster2 {
+ label = "papers";
+ URL = "index.html";
+2;
+3;
+}
+  3 -> 1;
+
+ 1 [URL="../../wafo/misc/graph.html",label="misc"];
+ 2 [URL="Contents.html",label="Contents"];
+ 3 [URL="papermenu.html",label="papermenu"];
+}

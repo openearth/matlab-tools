@@ -1,0 +1,673 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of fcolorbar</title>
+  <meta name="keywords" content="fcolorbar">
+  <meta name="description" content="  Display colorbar with discrete color axis for filled contour plot">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; fcolorbar.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>fcolorbar
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Display colorbar with discrete color axis for filled contour plot</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [h00,h1]=fcolorbar(D,L,label,W,hand) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">FCOLORBAR</a>  Display colorbar with discrete color axis for filled contour plot 
+  
+  CALL:  [h0,h1] = <a href="fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(C,L,label,W,hand); 
+         [h0,h1] = <a href="fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(V,L,label,W,hand); 
+  
+  V     = The contour-level-specification vector used when making the  
+          CONTOURF-plot (the most robust method),  
+  C     = The contour-matrix as described in CONTOURC 
+  L     = String giving location of colorbar: 
+          't'op 
+          'b'ottom 
+          'r'ight   (default) 
+          'l'eft 
+          'o'utside (when rescaling of graph is undesireable) 
+          'a'lone   (in a subplot when it refers to several 
+                  graphs in a subplot-figure) 
+  label = string for the color-axis-label               (default= empty) 
+  W     = Relative width (<a href="../../wafo/multidim/ratio.html" class="code" title=" compute ratio of hyperbolic functions ">ratio</a> of graph width/height)  (default= 1/20) 
+  hand  = handles to axes which the colorbar refers to. Use this to 
+       ensure the right colorspan on all graphs and their colorbar. 
+  
+  [h0,h1] are handles to the graph and to the colorbar axes, respectively. 
+  
+  When contours (V) are given, the colorlimit ('Clim') property of 
+  both the plot and the colorbar is locked to the lower and upper 
+  contour level.  This should solve the problem of how to keep the same 
+  color-to-data relationship from plot to plot.  
+  
+  As a general rule, place the colorbar on a side of the graph that has 
+  no ticklabels or title (right is this function's default). 
+  
+  NOTE : CONTOURF scales CAXIS from the lowest input contourlevel to the 
+          highest given contourlevel or max(max(data)) whichever is 
+          greatest!!! :-( 
+          <a href="fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">FCOLORBAR</a> locks the coloraxis of both plot and colorbar between 
+          the first and last contourlevel, to ensure consistency. When 
+          several axes 'share' same colorbar, the 'clim' property of all 
+          axes should be set equal to the colorbar, by input of their 
+          handles in 'hand'!  
+  
+  Examples: % Difference from the ordinary colorbar-function: 
+  
+  [x,y,z]=peaks; v=-10:2:8;  
+  figure(1);  [cs,h]=contourf(x,y,z,v); clabel(cs,h); colorbar 
+  figure(2);  [cs,h]=contourf(x,y,z,v); clabel(cs,h); <a href="fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(v); 
+            % And not using contourspecification: 
+  figure(3);  [cs,h]=contourf(x,y,z); clabel(cs,h); <a href="fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(cs); 
+  
+            % Not equidistant contours. 
+  figure(4);  v=[-8 -4 -2 -1 0 1 2 4 8];  
+  [cs,h]=contourf(x,y,z,v); clabel(cs,h); <a href="fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(v); 
+  
+  See also  contourf, <a href="clevels.html" class="code" title="  Extract the contour levels from the contour matrix">clevels</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="clevels.html" class="code" title=" [CL,c]=clevels(c)">clevels</a></li></TD>
+<TD>  Extract the contour levels from the contour matrix</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\axes.m">axes</a></li></TD>
+<TD>          Create axes in arbitrary positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\contourf.m">contourf</a></li></TD>
+<TD>      Filled contour plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\datachildren.m">datachildren</a></li></TD>
+<TD>  Handles to figure children that contain data.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="delete is a built-in method">delete</a></li></TD>
+<TD>        Delete file or graphics object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\findobj.m">findobj</a></li></TD>
+<TD>       Find objects with specified property values.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\findstr.bi">findstr</a></li></TD>
+<TD>       Find one string within another.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gcbo.m">gcbo</a></li></TD>
+<TD>          Get handle to current callback object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gcf.m">gcf</a></li></TD>
+<TD>           Get handle to current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="get is a built-in method">get</a></li></TD>
+<TD>           Get object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\isequal.m">isequal</a></li></TD>
+<TD>       True if arrays are numerically equal.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\ishandle.bi">ishandle</a></li></TD>
+<TD>      True for graphics handles.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\scribe\legend.m">legend</a></li></TD>
+<TD>        Display legend.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\text.m">text</a></li></TD>
+<TD>          Text annotation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@opaque\unique.m">unique</a></li></TD>
+<TD>        Set unique.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> tick=maketick(lev)</a></li><li><a href="#_sub2" class="code"> cax = findColorbarAxes(dataAxes);</a></li><li><a href="#_sub3" class="code"> [cAxesPosition,gAxesPosition] = getNewAxesPositions(h0,a,L,outside,W);</a></li><li><a href="#_sub4" class="code"> h = gcda(hfig, haxes)</a></li><li><a href="#_sub5" class="code"> updateLegend(axesHandle)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [h00,h1]=<a name="_sub0" href="#_subfunctions" class="code">fcolorbar</a>(D,L,label,W,hand)  
+0002 <span class="comment">%FCOLORBAR  Display colorbar with discrete color axis for filled contour plot </span>
+0003 <span class="comment">% </span>
+0004 <span class="comment">% CALL:  [h0,h1] = fcolorbar(C,L,label,W,hand); </span>
+0005 <span class="comment">%        [h0,h1] = fcolorbar(V,L,label,W,hand); </span>
+0006 <span class="comment">% </span>
+0007 <span class="comment">% V     = The contour-level-specification vector used when making the  </span>
+0008 <span class="comment">%         CONTOURF-plot (the most robust method),  </span>
+0009 <span class="comment">% C     = The contour-matrix as described in CONTOURC </span>
+0010 <span class="comment">% L     = String giving location of colorbar: </span>
+0011 <span class="comment">%         't'op </span>
+0012 <span class="comment">%         'b'ottom </span>
+0013 <span class="comment">%         'r'ight   (default) </span>
+0014 <span class="comment">%         'l'eft </span>
+0015 <span class="comment">%         'o'utside (when rescaling of graph is undesireable) </span>
+0016 <span class="comment">%         'a'lone   (in a subplot when it refers to several </span>
+0017 <span class="comment">%                 graphs in a subplot-figure) </span>
+0018 <span class="comment">% label = string for the color-axis-label               (default= empty) </span>
+0019 <span class="comment">% W     = Relative width (ratio of graph width/height)  (default= 1/20) </span>
+0020 <span class="comment">% hand  = handles to axes which the colorbar refers to. Use this to </span>
+0021 <span class="comment">%      ensure the right colorspan on all graphs and their colorbar. </span>
+0022 <span class="comment">% </span>
+0023 <span class="comment">% [h0,h1] are handles to the graph and to the colorbar axes, respectively. </span>
+0024 <span class="comment">% </span>
+0025 <span class="comment">% When contours (V) are given, the colorlimit ('Clim') property of </span>
+0026 <span class="comment">% both the plot and the colorbar is locked to the lower and upper </span>
+0027 <span class="comment">% contour level.  This should solve the problem of how to keep the same </span>
+0028 <span class="comment">% color-to-data relationship from plot to plot.  </span>
+0029 <span class="comment">% </span>
+0030 <span class="comment">% As a general rule, place the colorbar on a side of the graph that has </span>
+0031 <span class="comment">% no ticklabels or title (right is this function's default). </span>
+0032 <span class="comment">% </span>
+0033 <span class="comment">% NOTE : CONTOURF scales CAXIS from the lowest input contourlevel to the </span>
+0034 <span class="comment">%         highest given contourlevel or max(max(data)) whichever is </span>
+0035 <span class="comment">%         greatest!!! :-( </span>
+0036 <span class="comment">%         FCOLORBAR locks the coloraxis of both plot and colorbar between </span>
+0037 <span class="comment">%         the first and last contourlevel, to ensure consistency. When </span>
+0038 <span class="comment">%         several axes 'share' same colorbar, the 'clim' property of all </span>
+0039 <span class="comment">%         axes should be set equal to the colorbar, by input of their </span>
+0040 <span class="comment">%         handles in 'hand'!  </span>
+0041 <span class="comment">% </span>
+0042 <span class="comment">% Examples: <span class="comment">% Difference from the ordinary colorbar-function: </span></span>
+0043 <span class="comment">% </span>
+0044 <span class="comment">% [x,y,z]=peaks; v=-10:2:8;  </span>
+0045 <span class="comment">% figure(1);  [cs,h]=contourf(x,y,z,v); clabel(cs,h); colorbar </span>
+0046 <span class="comment">% figure(2);  [cs,h]=contourf(x,y,z,v); clabel(cs,h); fcolorbar(v); </span>
+0047 <span class="comment">%           <span class="comment">% And not using contourspecification: </span></span>
+0048 <span class="comment">% figure(3);  [cs,h]=contourf(x,y,z); clabel(cs,h); fcolorbar(cs); </span>
+0049 <span class="comment">% </span>
+0050 <span class="comment">%           <span class="comment">% Not equidistant contours. </span></span>
+0051 <span class="comment">% figure(4);  v=[-8 -4 -2 -1 0 1 2 4 8];  </span>
+0052 <span class="comment">% [cs,h]=contourf(x,y,z,v); clabel(cs,h); fcolorbar(v); </span>
+0053 <span class="comment">% </span>
+0054 <span class="comment">% See also  contourf, clevels </span>
+0055  
+0056  
+0057 <span class="comment">% ### Updates: ### </span>
+0058 <span class="comment">% revised pab 31.12.2002 </span>
+0059 <span class="comment">% -possible to give a single contour-level specification </span>
+0060 <span class="comment">% -added deleteProxy object </span>
+0061 <span class="comment">% -renamed from ecolorbar to fcolorbar </span>
+0062 <span class="comment">% -moved some code into separate functions </span>
+0063 <span class="comment">% revised pab 20.08.2001 </span>
+0064 <span class="comment">% - streamlined some code. </span>
+0065 <span class="comment">% revised pab 03.07.2001 </span>
+0066 <span class="comment">% - changed help header to WAFO style. </span>
+0067 <span class="comment">% 00.10.17: Added options for &quot;outside&quot;- and &quot;alone&quot;-positioning  </span>
+0068 <span class="comment">% 99.11.19: I think I found the solution for the color-span problem. </span>
+0069 <span class="comment">% </span>
+0070 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">% </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+0071 <span class="comment">% modified from my_colorbar by Tore Furevik, Geophysical Institute, </span>
+0072 <span class="comment">% University of Bergen.  </span>
+0073 <span class="comment">% ECOLORBAR by Jan Even Nilsen: </span>
+0074 <span class="comment">%Time-stamp:&lt;Last updated on 01/01/30 at 12:04:59 by even@gfi.uib.no&gt; </span>
+0075 <span class="comment">%File:&lt;d:/home/matlab/ecolorbar.m&gt; </span>
+0076 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">% </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+0077  
+0078 error(nargchk(1,5,nargin)); 
+0079  
+0080 <span class="comment">% Catch fcolorbar('delete') special case -- must be called by the deleteFcn. </span>
+0081 <span class="keyword">if</span> nargin==1 &amp; strcmp(D,<span class="string">'delete'</span>), 
+0082   ax = gcbo; 
+0083   <span class="keyword">if</span> strcmp(get(ax,<span class="string">'tag'</span>),<span class="string">'ColorbarDeleteProxy'</span>) 
+0084      cbo = ax; 
+0085      ax = get(cbo,<span class="string">'userdata'</span>); 
+0086      <span class="keyword">if</span> ishandle(ax) 
+0087         ud = get(ax,<span class="string">'userdata'</span>); 
+0088          
+0089         <span class="comment">% Do a sanity check before deleting colorbar </span>
+0090         <span class="keyword">if</span> isfield(ud,<span class="string">'DeleteProxy'</span>) &amp; isequal(ud.DeleteProxy,cbo)  
+0091            <span class="keyword">try</span> 
+0092               delete(ax) 
+0093            <span class="keyword">end</span> 
+0094            <span class="keyword">if</span>   ishandle(ud.DeleteProxy) 
+0095               <span class="keyword">try</span> 
+0096                  delete(ud.DeleteProxy) 
+0097               <span class="keyword">end</span> 
+0098            <span class="keyword">end</span> 
+0099             
+0100            <span class="keyword">if</span> isfield(ud,<span class="string">'PlotHandle'</span>) &amp; ishandle(ud.PlotHandle) &amp; <span class="keyword">...</span> 
+0101                  isfield(ud,<span class="string">'originalPosition'</span>) &amp; ~isempty(ud.originalPosition) 
+0102               units = get(ud.PlotHandle,<span class="string">'units'</span>); 
+0103               set(ud.PlotHandle,<span class="string">'units'</span>,<span class="string">'normalized'</span>); 
+0104               set(ud.PlotHandle,<span class="string">'position'</span>,ud.originalPosition); 
+0105               set(ud.PlotHandle,<span class="string">'units'</span>,units); 
+0106                
+0107               <a href="#_sub5" class="code" title="sub  updateLegend(axesHandle)">updateLegend</a>(ud.PlotHandle);  
+0108            
+0109            <span class="keyword">end</span> 
+0110         <span class="keyword">end</span> 
+0111      <span class="keyword">end</span> 
+0112   <span class="keyword">elseif</span> isempty(ax), 
+0113         <span class="comment">%fcolorbar delete call </span>
+0114      ax = findobj(gcf,<span class="string">'type'</span>,<span class="string">'axes'</span>,<span class="string">'tag'</span>,<span class="string">'Colorbar'</span>); 
+0115      ud = get(ax,<span class="string">'userdata'</span>); 
+0116      <span class="keyword">if</span> isfield(ud,<span class="string">'PlotHandle'</span>) &amp; ishandle(ud.PlotHandle) &amp; <span class="keyword">...</span> 
+0117            isfield(ud,<span class="string">'originalPosition'</span>) &amp; ~isempty(ud.originalPosition) 
+0118         units = get(ud.PlotHandle,<span class="string">'units'</span>); 
+0119         set(ud.PlotHandle,<span class="string">'units'</span>,<span class="string">'normalized'</span>); 
+0120         set(ud.PlotHandle,<span class="string">'position'</span>,ud.originalPosition); 
+0121         set(ud.PlotHandle,<span class="string">'units'</span>,units); 
+0122          
+0123         <a href="#_sub5" class="code" title="sub  updateLegend(axesHandle)">updateLegend</a>(ud.PlotHandle);  
+0124      <span class="keyword">end</span> 
+0125      <span class="keyword">if</span> isfield(ud,<span class="string">'DeleteProxy'</span>) &amp; ishandle(ud.DeleteProxy) 
+0126         <span class="keyword">try</span> 
+0127            delete(ud.DeleteProxy) 
+0128         <span class="keyword">end</span> 
+0129      <span class="keyword">end</span> 
+0130      
+0131   <span class="keyword">end</span> 
+0132   <span class="keyword">return</span> 
+0133 <span class="keyword">end</span> 
+0134  
+0135 <span class="keyword">if</span> nargin &lt; 5 | isempty(hand),  hand = [];<span class="keyword">end</span> 
+0136 <span class="keyword">if</span> nargin &lt; 4 | isempty(W),     W    = 1/20;,<span class="keyword">end</span> 
+0137 <span class="keyword">if</span> nargin &lt; 3 | isempty(label) | ~ischar(label),  label=<span class="string">''</span>;<span class="keyword">end</span> 
+0138 <span class="keyword">if</span> nargin &lt; 2 | isempty(L),     L    = <span class="string">'r'</span>;,<span class="keyword">end</span>   
+0139  
+0140 outside=0; alone=0; 
+0141 L = lower(L); 
+0142 <span class="keyword">switch</span> L(1) 
+0143   <span class="keyword">case</span> <span class="string">'o'</span>, outside = 1; L(1) = []; 
+0144   <span class="keyword">case</span> <span class="string">'a'</span>, alone   = 1; L(1) = []; 
+0145 <span class="keyword">end</span> 
+0146 <span class="keyword">if</span> isempty(L), L = <span class="string">'r'</span>;<span class="keyword">end</span> 
+0147  
+0148  
+0149 <span class="comment">% What D is input... </span>
+0150 Dsiz = size(D); 
+0151 <span class="keyword">if</span> prod(Dsiz)==max(Dsiz) &amp; all(Dsiz&gt;0) <span class="comment">% D is a vector and therefore a contourspecification </span>
+0152   V = unique(D); 
+0153 <span class="keyword">elseif</span> Dsiz(1)==2, 
+0154   V = <a href="clevels.html" class="code" title="  Extract the contour levels from the contour matrix">clevels</a>(D);     <span class="comment">% contour matrix given </span>
+0155 <span class="keyword">else</span> 
+0156   error(<span class="string">'First input must be a vector of contour level specifications or a contour-matrix!'</span>); 
+0157 <span class="keyword">end</span>              
+0158  
+0159 <span class="comment">%moved tick and limits here to streamline the code. pab 20.08.2001 </span>
+0160 <span class="comment">%tick    = maketick(V); </span>
+0161 tick    = V; 
+0162 <span class="keyword">if</span> (length(V)&gt;1) 
+0163    mv      = mean(diff(V(:)))/2; <span class="comment">% average stepsize divided by 2 </span>
+0164    limits = [min(V)-mv max(V)+mv]; 
+0165 <span class="keyword">else</span> 
+0166    mv = max(abs(V),1); 
+0167    limits = V + [-mv  mv]; 
+0168 <span class="keyword">end</span> 
+0169 logScale = 0; 
+0170 <span class="keyword">if</span> logScale, 
+0171    <span class="keyword">if</span> min(V)&lt;=eps 
+0172       error(<span class="string">'log scale impossible'</span>) 
+0173    <span class="keyword">end</span> 
+0174    <span class="keyword">if</span> limits(1)&lt;0 
+0175       limits(1) = eps; 
+0176    <span class="keyword">end</span> 
+0177 <span class="keyword">end</span> 
+0178 V       = [limits(1) ;V(:); limits(2)]; 
+0179  
+0180 [x,VC]  = meshgrid(1:2,V);  <span class="comment">% using the given contour-range  </span>
+0181  
+0182 forceEqualSpacing = 1; 
+0183 <span class="keyword">if</span> forceEqualSpacing, 
+0184    [x,y] = meshgrid(1:2, 1:length(V)); 
+0185 <span class="keyword">else</span> 
+0186    y = VC; 
+0187 <span class="keyword">end</span> 
+0188  
+0189                           
+0190 <span class="comment">% h0 = handle to the graph's axes ;  </span>
+0191 <span class="comment">% h1 = handle to the colorbar's axes </span>
+0192 h0 = gca;  
+0193  
+0194  
+0195 <span class="keyword">if</span> alone, set(h0,<span class="string">'visible'</span>,<span class="string">'off'</span>); <span class="keyword">end</span> 
+0196  
+0197 h1 = <a href="#_sub2" class="code" title="sub  cax = findColorbarAxes(dataAxes);">findColorbarAxes</a>(h0); 
+0198  
+0199 <span class="keyword">if</span> isempty(h1), <span class="comment">% no colorbar present </span>
+0200     
+0201   <span class="comment">%legend('RestoreSize',h0); <span class="comment">%restore axes to pre-legend size </span></span>
+0202    
+0203   <span class="comment">% Make colorbarAxes and update graph axes position </span>
+0204   units = get(h0,<span class="string">'units'</span>);  
+0205   set(h0,<span class="string">'units'</span>,<span class="string">'normalized'</span>) 
+0206   originalPosition  = get(h0,<span class="string">'position'</span>); 
+0207   [cAxesPosition,gAxesPosition] = <a href="#_sub3" class="code" title="sub  [cAxesPosition,gAxesPosition] = getNewAxesPositions(h0,a,L,outside,W);">getNewAxesPositions</a>(h0,originalPosition,L,outside,W);    
+0208   set(h0,<span class="string">'Position'</span>,gAxesPosition); 
+0209   set(h0,<span class="string">'units'</span>,units) 
+0210   h1 = axes(<span class="string">'Position'</span>, cAxesPosition); 
+0211    
+0212   <span class="comment">%Create a userData object saving important info about the colorbar, graph axes and deleteProxy  </span>
+0213   ud.originalPosition = originalPosition; 
+0214   ud.PlotHandle       = h0; 
+0215   ud.Location         = L(1); 
+0216   ud.outside          = outside; 
+0217    
+0218   <span class="comment">% create DeleteProxy object (an invisible text object in </span>
+0219   <span class="comment">% the colorbar axes) so that the colorbar will be deleted </span>
+0220   <span class="comment">% properly. </span>
+0221   deleteProxyProperties = {<span class="string">'parent'</span>,h0,<span class="string">'visible'</span>,<span class="string">'off'</span>,<span class="string">'tag'</span>,<span class="string">'ColorbarDeleteProxy'</span>,<span class="keyword">...</span> 
+0222         <span class="string">'handlevisibility'</span>,<span class="string">'off'</span>,<span class="string">'deletefcn'</span>,<span class="string">'fcolorbar('<span class="string"></span>'delete'<span class="string"></span>')'</span>};<span class="comment">%'eval(''delete(get(gcbo,''''userdata''''))'','''')');<span class="comment">% </span></span>
+0223   ud.DeleteProxy = text(deleteProxyProperties{:}); 
+0224   
+0225   set(ud.DeleteProxy,<span class="string">'userdata'</span>,h1) 
+0226    
+0227 <span class="keyword">else</span>  <span class="comment">% colorbar axes already exist </span>
+0228    ud = get(h1,<span class="string">'UserData'</span>); 
+0229    <span class="comment">% Make sure contourf deletefcn doesn't trigger a fcolorbar('delete') </span>
+0230    <span class="comment">% for colorbar update </span>
+0231    <span class="comment">%set(get(h1,'children'),'deletefcn','') </span>
+0232      
+0233    sameColorbarLocation = strcmpi(ud.Location,L(1)); 
+0234    <span class="keyword">if</span> ~sameColorbarLocation | ud.outside ~=outside, 
+0235       <span class="comment">%update userData object </span>
+0236       ud.Location = L(1); 
+0237       ud.outside  = outside; 
+0238        
+0239       <span class="comment">% update colorbar Axes and graph axes positions </span>
+0240        
+0241       <span class="comment">%set(h0,'Position',ud.originalPosition); </span>
+0242       [cAxesPosition,gAxesPosition] = <a href="#_sub3" class="code" title="sub  [cAxesPosition,gAxesPosition] = getNewAxesPositions(h0,a,L,outside,W);">getNewAxesPositions</a>(h0,ud.originalPosition,L,outside,W); 
+0243       units = get(h0,<span class="string">'units'</span>);  
+0244       set(h0,<span class="string">'units'</span>,<span class="string">'normalized'</span>) 
+0245       set(h0,<span class="string">'Position'</span>,gAxesPosition); 
+0246       set(h0,<span class="string">'units'</span>,units) 
+0247       set(h1,<span class="string">'Position'</span>,cAxesPosition); 
+0248        
+0249    <span class="keyword">end</span> 
+0250    axes(h1);  
+0251 <span class="keyword">end</span> 
+0252  
+0253  
+0254  <span class="comment">% Plot the actual colorbar </span>
+0255 <span class="keyword">if</span> any(L(1)==<span class="string">'tb'</span>)  
+0256    <span class="comment">%[x,y] = deal(y,x); <span class="comment">% swap x and y </span></span>
+0257    contourf(y,x,VC,V); 
+0258    <span class="keyword">if</span> (L(1)==<span class="string">'t'</span>), set(h1,<span class="string">'XAxisLocation'</span>,<span class="string">'top'</span>);  <span class="keyword">end</span> 
+0259    set(h1,<span class="string">'XTick'</span>,tick,<span class="string">'Xlim'</span>,limits,<span class="string">'YTick'</span>,[]);  
+0260    set(h1,<span class="string">'XScale'</span>,<span class="string">'log'</span>) 
+0261     <span class="keyword">if</span> forceEqualSpacing 
+0262       set(h1,<span class="string">'YTick'</span>,[],<span class="string">'XTick'</span>,2:length(tick)+1,<span class="string">'Xlim'</span>,[1 length(V)]); 
+0263       set(h1,<span class="string">'Xticklabel'</span>,num2str(tick(:))); 
+0264    <span class="keyword">end</span> 
+0265    xlabel(label) 
+0266 <span class="keyword">else</span> 
+0267    contourf(x,y,VC,V);  
+0268    <span class="keyword">if</span> (L(1)==<span class="string">'r'</span>), set(h1,<span class="string">'YAxisLocation'</span>,<span class="string">'right'</span>); <span class="keyword">end</span> 
+0269  
+0270    set(h1,<span class="string">'XTick'</span>,[],<span class="string">'YTick'</span>,tick,<span class="string">'Ylim'</span>,limits); 
+0271    <span class="keyword">if</span> logScale, 
+0272       set(h1,<span class="string">'YScale'</span>,<span class="string">'log'</span>) 
+0273    <span class="keyword">end</span> 
+0274    <span class="keyword">if</span> forceEqualSpacing 
+0275       set(h1,<span class="string">'XTick'</span>,[],<span class="string">'YTick'</span>,2:length(tick)+1,<span class="string">'Ylim'</span>,[1 length(V)]); 
+0276       set(h1,<span class="string">'Yticklabel'</span>,num2str(tick(:))); 
+0277    <span class="keyword">end</span> 
+0278    ylabel(label) 
+0279 <span class="keyword">end</span> 
+0280  
+0281  
+0282 ud.PlotHandle = h0; 
+0283 set(h1,<span class="string">'userdata'</span>,ud,<span class="string">'Tag'</span>,<span class="string">'Colorbar'</span>); 
+0284 set(gcf,<span class="string">'CurrentAxes'</span>,h0); <span class="comment">% set current axis pointer back on the graph </span>
+0285  
+0286 <span class="comment">%set(ud.DeleteProxy,'deletefcn','fcolorbar(''delete'')'); </span>
+0287  
+0288 <a href="#_sub5" class="code" title="sub  updateLegend(axesHandle)">updateLegend</a>(h0); 
+0289  
+0290 <span class="comment">% lock the coloraxis onto the colorbar in both plot and bar: </span>
+0291 set([h0 h1 hand(:)'],<span class="string">'clim'</span>,limits); 
+0292  
+0293 <span class="keyword">if</span> nargout&gt;0,  h00 = h0; <span class="keyword">end</span> <span class="comment">% pab 20.08.2001 </span>
+0294  
+0295 <span class="keyword">return</span> 
+0296  
+0297  
+0298 <span class="comment">%------------------------------------------------------------- </span>
+0299 <span class="keyword">function</span> tick=<a name="_sub1" href="#_subfunctions" class="code">maketick</a>(lev) 
+0300 <span class="comment">%MAKETICK Make the number of ticklabels be less than 10 </span>
+0301 <span class="comment">% </span>
+0302 <span class="comment">% CALL: tick = maketick(levels) </span>
+0303 tick=lev; 
+0304 <span class="keyword">while</span> length(tick)&gt;10 
+0305   tick=tick(1:2:length(tick)); 
+0306 <span class="keyword">end</span> 
+0307  
+0308 <span class="comment">% no tick on the edges of colorbar </span>
+0309 <span class="comment">%if max(tick)==max(lev) </span>
+0310 <span class="comment">%  tick=tick(1:length(tick)-1); </span>
+0311 <span class="comment">%end </span>
+0312 <span class="keyword">return</span> 
+0313  
+0314  
+0315  
+0316  
+0317 <span class="keyword">function</span> cax = <a name="_sub2" href="#_subfunctions" class="code">findColorbarAxes</a>(dataAxes); 
+0318 <span class="comment">%FINDCOLORBARAXES Return the handle to the colorbar of dataAxes if it exists. </span>
+0319 <span class="comment">% </span>
+0320  
+0321 cfig = get(dataAxes,<span class="string">'parent'</span>); <span class="comment">% get figure handle </span>
+0322  
+0323 <span class="comment">% Search for existing colorbar if any </span>
+0324 ch = findobj(cfig,<span class="string">'type'</span>,<span class="string">'axes'</span>,<span class="string">'tag'</span>,<span class="string">'Colorbar'</span>); 
+0325 cax = []; 
+0326 <span class="keyword">for</span> i=1:length(ch), 
+0327    ud = get(ch(i),<span class="string">'UserData'</span>);  
+0328    d = ud.PlotHandle; 
+0329    <span class="keyword">if</span> prod(size(d))==1 &amp; isequal(d,dataAxes),  
+0330       cax = ch(i); 
+0331       <span class="keyword">break</span>;  
+0332    <span class="keyword">end</span> 
+0333 <span class="keyword">end</span> 
+0334 <span class="keyword">return</span> 
+0335  
+0336  
+0337 <span class="keyword">function</span> [cAxesPosition,gAxesPosition] = <a name="_sub3" href="#_subfunctions" class="code">getNewAxesPositions</a>(h0,a,L,outside,W);  
+0338 <span class="comment">%GETNEWAXESPOSITIONS Return the new normalized axes positions for the colorbar and the graph, respectively. </span>
+0339 <span class="comment">% </span>
+0340 <span class="comment">% CALL: [cAxesPosition,gAxesPosition] = getNewAxesPositions(gax,L,outside,W);  </span>
+0341 <span class="comment">% </span>
+0342 <span class="comment">% cAxesPosition </span>
+0343 <span class="comment">% ,gAxesPosition     = new normalized axes positions for the colorbar and the graph, respectively. </span>
+0344 <span class="comment">%  gax               = handle to the graph axes. </span>
+0345 <span class="comment">%  gAxesOrigPosition = original axes position for the graph (normalized) </span>
+0346 <span class="comment">%  L                 = String giving location of colorbar: </span>
+0347 <span class="comment">%                      't'op </span>
+0348 <span class="comment">%                      'b'ottom </span>
+0349 <span class="comment">%                      'r'ight </span>
+0350 <span class="comment">%                      'l'eft </span>
+0351 <span class="comment">% outside            = 0 when rescaling of graph is wanted </span>
+0352 <span class="comment">%                      1 when rescaling of graph is undesireable </span>
+0353 <span class="comment">% W                  = Relative width (ratio of graph width/height) </span>
+0354 <span class="comment">% </span>
+0355  
+0356  
+0357 <span class="comment">%a = get(h0,'Position'); </span>
+0358  
+0359 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">% </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+0360 <span class="keyword">switch</span> L(1) 
+0361 <span class="keyword">case</span> <span class="string">'t'</span>   
+0362    W=W*a(4); 
+0363    <span class="comment">% placement of the colorbar: </span>
+0364    <span class="keyword">if</span> findstr(get(h0,<span class="string">'XAxisLocation'</span>),<span class="string">'top'</span>),os=2*W; <span class="keyword">else</span> os=W; <span class="keyword">end</span>  
+0365    <span class="keyword">if</span> outside 
+0366       cAxesPosition = [a(1) a(2)+a(4)+os  a(3) W]; 
+0367       gAxesPosition = a; 
+0368    <span class="keyword">else</span> 
+0369       cAxesPosition = [a(1) a(2)+a(4)-W  a(3) W]; 
+0370       gAxesPosition = [a(1) a(2) a(3) a(4)-W-os]; 
+0371    <span class="keyword">end</span> 
+0372  
+0373 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">% </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+0374 <span class="keyword">case</span> <span class="string">'b'</span>      
+0375    W=W*a(4); 
+0376    <span class="comment">% placement of the colorbar: </span>
+0377    <span class="keyword">if</span> findstr(get(h0,<span class="string">'XAxisLocation'</span>),<span class="string">'bottom'</span>),os=W*2; <span class="keyword">else</span> os=W; <span class="keyword">end</span>  
+0378    <span class="keyword">if</span> outside 
+0379       cAxesPosition = [a(1) a(2)-os-W a(3) W]; 
+0380       gAxesPosition = a; 
+0381    <span class="keyword">else</span> 
+0382       cAxesPosition = [a(1) a(2) a(3) W]; 
+0383       gAxesPosition = [a(1) a(2)+os+W a(3) a(4)-os-W]; 
+0384    <span class="keyword">end</span> 
+0385 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">% </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+0386 <span class="keyword">case</span> <span class="string">'r'</span>  <span class="comment">%default </span>
+0387  W=W*a(3); 
+0388  <span class="comment">% placement of the colorbar: </span>
+0389  <span class="keyword">if</span> findstr(get(h0,<span class="string">'YAxisLocation'</span>),<span class="string">'right'</span>),os=W*2; <span class="keyword">else</span> os=W; <span class="keyword">end</span>  
+0390  <span class="keyword">if</span> outside 
+0391     cAxesPosition = [a(1)+a(3)+os a(2) W a(4)]; 
+0392     gAxesPosition = a; 
+0393  <span class="keyword">else</span> 
+0394     cAxesPosition = [a(1)+a(3)-W a(2) W a(4)]; 
+0395     gAxesPosition = [a(1) a(2) a(3)-os-W a(4)]; 
+0396  <span class="keyword">end</span> 
+0397   
+0398 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">% </span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+0399 <span class="keyword">case</span> <span class="string">'l'</span>    
+0400    W=W*a(3); 
+0401    <span class="comment">% placement of the colorbar: </span>
+0402    <span class="keyword">if</span> findstr(get(h0,<span class="string">'YAxisLocation'</span>),<span class="string">'left'</span>),os=W*2; <span class="keyword">else</span> os=W; <span class="keyword">end</span>  
+0403    <span class="keyword">if</span> outside 
+0404       cAxesPosition = [a(1) a(2)-os-W W a(4)]; 
+0405       gAxesPosition = a; 
+0406    <span class="keyword">else</span> 
+0407       cAxesPosition = [a(1) a(2) W a(4)]; 
+0408       gAxesPosition = [a(1)+os+W a(2) a(3)-os-W a(4)]; 
+0409    <span class="keyword">end</span> 
+0410 <span class="keyword">end</span>; 
+0411 <span class="keyword">return</span> 
+0412  
+0413 <span class="keyword">function</span> h = <a name="_sub4" href="#_subfunctions" class="code">gcda</a>(hfig, haxes) 
+0414 <span class="comment">%GCDA Get current data axes </span>
+0415  
+0416 h = datachildren(hfig); 
+0417 <span class="keyword">if</span> isempty(h) | any(h == haxes) 
+0418   h = haxes; 
+0419 <span class="keyword">else</span> 
+0420   h = h(1); 
+0421 <span class="keyword">end</span> 
+0422 <span class="keyword">return</span> 
+0423  
+0424 <span class="keyword">function</span> <a name="_sub5" href="#_subfunctions" class="code">updateLegend</a>(axesHandle) 
+0425 <span class="comment">%UPDATELEGEND Updates the legend if any, in the axes specified by axesHandle </span>
+0426  
+0427 legH = legend(axesHandle); 
+0428 <span class="keyword">if</span> ~isempty(legH) &amp; ishandle(legH) 
+0429    <span class="comment">%legend('RecordSize',axesHandle); </span>
+0430    legend(legH) <span class="comment">% Update legend </span>
+0431 <span class="keyword">end</span> 
+0432 <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

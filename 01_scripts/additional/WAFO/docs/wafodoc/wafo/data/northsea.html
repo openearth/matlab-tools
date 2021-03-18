@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of northsea</title>
+  <meta name="keywords" content="northsea">
+  <meta name="description" content="  coastline map of The Nortsea">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">data</a> &gt; northsea.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\data&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>northsea
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  coastline map of The Nortsea</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="northsea.html" class="code" title="  coastline map of The Nortsea">NORTHSEA</a>  coastline map of The Nortsea
+    
+   CALL:  map = load('northsea.dat');
+   
+  Size             :     60646 X 2
+  Sampling Rate    :    
+  Device           :    
+  Source           :    http://crusty.er.usgs.gov/coast/getcoast.html
+  Format           :    ascii, c1: longitude c2: latitude 
+  Description      :
+    <a href="northsea.html" class="code" title="  coastline map of The Nortsea">NORTHSEA</a>.DAT contains data for plotting a map of The <a href="northsea.html" class="code" title="  coastline map of The Nortsea">Northsea</a>.
+    The data is obtained from USGS coastline extractor.
+    
+   Example: the map is seen by
+ 
+    plot(map(:,1),map(:,2)), hold on
+    text( 1,62     ,'Statfjord A'), line([1.8, 1.8], [62  ,61.2 ])
+    plot(1.8,61.2,'x')  
+    text(1,60.5,'Gullfaks C'),      line([1.8, 2.3 ], [60.5 ,61.20 ])
+    plot(2.30,61.20,'x')
+    text(1,59.1,'Frigg'),           line([1.8, 2.0 ], [59.1 ,59.9 ])
+    plot(2.0,59.90,'x'),
+    text(1,57.6,'Sleipner'),        line([1.8, 1.9 ], [57.60 ,58.4 ])
+    plot(1.90,58.40,'x') 
+    text(1,56.9,'Draupner'),        line([1.8, 2.6 ], [56.90 ,57.7 ])
+    plot(2.6,57.7,'x'),
+    text(10.40,60.10,'Oslo'),      plot(10.80,59.85,'h')
+    text(10.00,63.05,'Trondheim'), plot(10.80,63.40,'h')
+    text(4.00,58.80,'Stavanger'),  plot(5.52,58.90,'h')
+    text(3.50,60.30,'Bergen'),     plot(5.20,60.30,'h') , hold off
+ 
+  % If you have the m_map toolbox (see http://www.ocgy.ubc.ca/~rich/):
+   m_proj('lambert','long',[-2 12],'lat',[56 64]);
+   m_line(map(:,1),map(:,2));
+   m_grid('box','fancy','tickdir','out');
+   m_text( 1,62     ,'Statfjord A') ;
+   m_line([1.8, 1.8], [62  ,61.2 ]);
+   m_text(1.7,61.2,'x') ;
+   m_text(1,59.5,'Gullfaks C') ;
+   m_line([1.8, 2.3 ], [59.50 ,61.20 ]);
+   m_text(2.20,61.20,'x') ;
+   m_text(10.10,60.05,'Oslo'); 
+   m_text(8.5,63.5,'Trondheim'); 
+   m_text(4.00,58.80,'Stavanger'); 
+   m_text(3.50,60.30,'Bergen') ;
+   m_text(8,61,'Norway');</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">% NORTHSEA  coastline map of The Nortsea</span>
+002 <span class="comment">%   </span>
+003 <span class="comment">%  CALL:  map = load('northsea.dat');</span>
+004 <span class="comment">%  </span>
+005 <span class="comment">% Size             :     60646 X 2</span>
+006 <span class="comment">% Sampling Rate    :    </span>
+007 <span class="comment">% Device           :    </span>
+008 <span class="comment">% Source           :    http://crusty.er.usgs.gov/coast/getcoast.html</span>
+009 <span class="comment">% Format           :    ascii, c1: longitude c2: latitude </span>
+010 <span class="comment">% Description      :</span>
+011 <span class="comment">%   NORTHSEA.DAT contains data for plotting a map of The Northsea.</span>
+012 <span class="comment">%   The data is obtained from USGS coastline extractor.</span>
+013 <span class="comment">%   </span>
+014 <span class="comment">%  Example: the map is seen by</span>
+015 <span class="comment">%</span>
+016 <span class="comment">%   plot(map(:,1),map(:,2)), hold on</span>
+017 <span class="comment">%   text( 1,62     ,'Statfjord A'), line([1.8, 1.8], [62  ,61.2 ])</span>
+018 <span class="comment">%   plot(1.8,61.2,'x')  </span>
+019 <span class="comment">%   text(1,60.5,'Gullfaks C'),      line([1.8, 2.3 ], [60.5 ,61.20 ])</span>
+020 <span class="comment">%   plot(2.30,61.20,'x')</span>
+021 <span class="comment">%   text(1,59.1,'Frigg'),           line([1.8, 2.0 ], [59.1 ,59.9 ])</span>
+022 <span class="comment">%   plot(2.0,59.90,'x'),</span>
+023 <span class="comment">%   text(1,57.6,'Sleipner'),        line([1.8, 1.9 ], [57.60 ,58.4 ])</span>
+024 <span class="comment">%   plot(1.90,58.40,'x') </span>
+025 <span class="comment">%   text(1,56.9,'Draupner'),        line([1.8, 2.6 ], [56.90 ,57.7 ])</span>
+026 <span class="comment">%   plot(2.6,57.7,'x'),</span>
+027 <span class="comment">%   text(10.40,60.10,'Oslo'),      plot(10.80,59.85,'h')</span>
+028 <span class="comment">%   text(10.00,63.05,'Trondheim'), plot(10.80,63.40,'h')</span>
+029 <span class="comment">%   text(4.00,58.80,'Stavanger'),  plot(5.52,58.90,'h')</span>
+030 <span class="comment">%   text(3.50,60.30,'Bergen'),     plot(5.20,60.30,'h') , hold off</span>
+031 <span class="comment">%</span>
+032 <span class="comment">% <span class="comment">% If you have the m_map toolbox (see http://www.ocgy.ubc.ca/~rich/):</span></span>
+033 <span class="comment">%  m_proj('lambert','long',[-2 12],'lat',[56 64]);</span>
+034 <span class="comment">%  m_line(map(:,1),map(:,2));</span>
+035 <span class="comment">%  m_grid('box','fancy','tickdir','out');</span>
+036 <span class="comment">%  m_text( 1,62     ,'Statfjord A') ;</span>
+037 <span class="comment">%  m_line([1.8, 1.8], [62  ,61.2 ]);</span>
+038 <span class="comment">%  m_text(1.7,61.2,'x') ;</span>
+039 <span class="comment">%  m_text(1,59.5,'Gullfaks C') ;</span>
+040 <span class="comment">%  m_line([1.8, 2.3 ], [59.50 ,61.20 ]);</span>
+041 <span class="comment">%  m_text(2.20,61.20,'x') ;</span>
+042 <span class="comment">%  m_text(10.10,60.05,'Oslo'); </span>
+043 <span class="comment">%  m_text(8.5,63.5,'Trondheim'); </span>
+044 <span class="comment">%  m_text(4.00,58.80,'Stavanger'); </span>
+045 <span class="comment">%  m_text(3.50,60.30,'Bergen') ;</span>
+046 <span class="comment">%  m_text(8,61,'Norway');</span>
+047 
+048 <span class="comment">%History</span>
+049 <span class="comment">% revised pab Nov 2004</span>
+050 <span class="comment">% -Enhanced the example with commands to the m_map toolbox</span>
+051 <span class="comment">% By pab 06.07.00</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

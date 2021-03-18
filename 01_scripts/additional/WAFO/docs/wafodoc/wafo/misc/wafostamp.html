@@ -1,0 +1,397 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafostamp</title>
+  <meta name="keywords" content="wafostamp">
+  <meta name="description" content=" Prints a caption "made by WAFO" in current figure.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; wafostamp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wafostamp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Prints a caption "made by WAFO" in current figure.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [H,ax]=wafostamp(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">WAFOSTAMP</a> Prints a caption &quot;made by WAFO&quot; in current figure.
+ 
+   CALL: [h,ax] = <a href="wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>(stamp);
+         [h,ax] = <a href="wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>(caption,flag);
+ 
+      h,ax  = handles to the lines of text and the axes, respectively.
+      stamp = 0, do not print the text, (Default if nargin==0) 
+              1, print the text         (Default if nargin &gt; 0)
+    caption = string caption before 'made by WAFO'  (default [])
+    flag    = string following 'made by WAFO'        (default [])
+              otherwise it is customary to give one of the following flags:
+              '(ER)' - figure is Easily Reproducible ( &lt; 10min to make)
+              '(CR)' - figure is Conditionally Reproducible ( &gt; 10min to make)
+              '(NR)' - figure is Non Reproducible 
+ 
+   <a href="wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">WAFOSTAMP</a> creates new axes and prints the following text near bottom of figure:
+   &quot;caption&quot;                        made by WAFO &quot;date&quot; &quot;flag&quot;
+   
+   NOTE: - <a href="wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a> also <a href="../../wafo/docs/install.html" class="code" title="  Installation description of WAFO Toolbox">install</a> point-and-click editing of
+           all the text objects (title, xlabel, ylabel, etc) of the current figure
+         - The handles to the lines of text and the axes may also be found by 
+            h  = findobj(gcf,'tag','wafostmptxt','type','text');
+            ax = findobj(gcf,'tag','wafostmptxt','type','axes');
+   Edit <a href="wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>.m to change default values.
+ 
+  Example:
+    plot(sin(0:.1:3)), <a href="wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>('Sinus plot','(ER)'), hold on
+    plot(sin((0:.1:3)+pi/2)),hold off
+ 
+  See also  <a href="figtext.html" class="code" title=" Places text in figure window.">figtext</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="figtext.html" class="code" title=" H = figtext(x,y,T,x_unit,y_unit,x_justify,y_justify,varargin)">figtext</a></li></TD>
+<TD> Places text in figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\axes.m">axes</a></li></TD>
+<TD>          Create axes in arbitrary positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\date.m">date</a></li></TD>
+<TD>          Current date as date string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="delete is a built-in method">delete</a></li></TD>
+<TD>        Delete file or graphics object.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\figure.m">figure</a></li></TD>
+<TD>        Create figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\uitools\findall.m">findall</a></li></TD>
+<TD>       find all objects.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\findobj.m">findobj</a></li></TD>
+<TD>       Find objects with specified property values.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gcf.m">gcf</a></li></TD>
+<TD>           Get handle to current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="get is a built-in method">get</a></li></TD>
+<TD>           Get object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isnumeric.m">isnumeric</a></li></TD>
+<TD>     True for numeric arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\text.m">text</a></li></TD>
+<TD>          Text annotation.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter5.html" class="code" title="This is a script file.">Chapter5</a></li></TD>
+<TD> % CHAPTER5 contains the commands used in Chapter 5 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig1.html" class="code" title=" recfig1">recfig1</a></li></TD>
+<TD>  Location of Gullfaks C and Statfjord A platforms in The North Sea</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig10.html" class="code" title=" recfig10">recfig10</a></li></TD>
+<TD> Joint distribution of  V and H:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig11.html" class="code" title=" recfig11">recfig11</a></li></TD>
+<TD> Probability of exceeding H: Model (dash); data (dots)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig12.html" class="code" title=" recfig12">recfig12</a></li></TD>
+<TD> Probability of exceeding V: Model (dash); data (dots)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig13.html" class="code" title=" recfig13">recfig13</a></li></TD>
+<TD> The conditional probability of exceeding V given H: Model (dash); data (dots)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig2.html" class="code" title=" recfig2">recfig2</a></li></TD>
+<TD> 10 minutes mean values of wind  (dash) and direction (solid)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig3.html" class="code" title=" recfig3">recfig3</a></li></TD>
+<TD> Example of the reconstructed (solid) and original data set (pluses)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig4.html" class="code" title=" recfig4">recfig4</a></li></TD>
+<TD> Estimated spectral density (solid) and 95% confidence intervals (dots)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig5.html" class="code" title=" recfig5">recfig5</a></li></TD>
+<TD> Transfer function, g, versus the crossing level u</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig6.html" class="code" title=" recfig6">recfig6</a></li></TD>
+<TD> Variability of simulated e(g(u)-u) (circles)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig7.html" class="code" title=" recfig7">recfig7</a></li></TD>
+<TD> Estimated Weibull scale parameter versus h=H/Hrms (circles)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig8.html" class="code" title=" recfig8">recfig8</a></li></TD>
+<TD> Estimated Weibull shape parameter versus h=H/Hrms (circles)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig9.html" class="code" title=" recfig9">recfig9</a></li></TD>
+<TD> Conditional mean (solid, circle) and standard deviation (dash,cross) of V given H:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig1.html" class="code" title=" wafofig1">wafofig1</a></li></TD>
+<TD>  Linear simulation from a Torsethaugen spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig10.html" class="code" title=" wafofig10">wafofig10</a></li></TD>
+<TD> Intensity of trough-crest cycles computed from  St</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig2.html" class="code" title=" wafofig2">wafofig2</a></li></TD>
+<TD>  Spectral densities:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig3.html" class="code" title=" wafofig3">wafofig3</a></li></TD>
+<TD>  Probability density distributions (pdf) of wave period, Tt,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig4.html" class="code" title=" wafofig4">wafofig4</a></li></TD>
+<TD>  Directional spectra using Thorsethaugen and cos2s spreading</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig5.html" class="code" title=" wafofig5">wafofig5</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front velocity and wave height:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig6.html" class="code" title=" wafofig6">wafofig6</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front period, Tcf, and crest amplitude, Ac</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig7.html" class="code" title=" wafofig7">wafofig7</a></li></TD>
+<TD>  Joint distribution (pdf) of crest wavelength, Lc, and crest amplitude, Ac</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig8.html" class="code" title=" wafofig8">wafofig8</a></li></TD>
+<TD>  Joint distribution (pdf) of crest wavelength, Lc, and crest amplitude, Ac for extremal waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig9.html" class="code" title=" wafofig9">wafofig9</a></li></TD>
+<TD>  Intensity of rainflow cycles computed from St</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> [stamp,caption,flag]=stmpchk(P);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [H,ax]=<a name="_sub0" href="#_subfunctions" class="code">wafostamp</a>(varargin)
+002 <span class="comment">%WAFOSTAMP Prints a caption &quot;made by WAFO&quot; in current figure.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL: [h,ax] = wafostamp(stamp);</span>
+005 <span class="comment">%        [h,ax] = wafostamp(caption,flag);</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%     h,ax  = handles to the lines of text and the axes, respectively.</span>
+008 <span class="comment">%     stamp = 0, do not print the text, (Default if nargin==0) </span>
+009 <span class="comment">%             1, print the text         (Default if nargin &gt; 0)</span>
+010 <span class="comment">%   caption = string caption before 'made by WAFO'  (default [])</span>
+011 <span class="comment">%   flag    = string following 'made by WAFO'        (default [])</span>
+012 <span class="comment">%             otherwise it is customary to give one of the following flags:</span>
+013 <span class="comment">%             '(ER)' - figure is Easily Reproducible ( &lt; 10min to make)</span>
+014 <span class="comment">%             '(CR)' - figure is Conditionally Reproducible ( &gt; 10min to make)</span>
+015 <span class="comment">%             '(NR)' - figure is Non Reproducible </span>
+016 <span class="comment">%</span>
+017 <span class="comment">%  WAFOSTAMP creates new axes and prints the following text near bottom of figure:</span>
+018 <span class="comment">%  &quot;caption&quot;                        made by WAFO &quot;date&quot; &quot;flag&quot;</span>
+019 <span class="comment">%  </span>
+020 <span class="comment">%  NOTE: - wafostamp also install point-and-click editing of</span>
+021 <span class="comment">%          all the text objects (title, xlabel, ylabel, etc) of the current figure</span>
+022 <span class="comment">%        - The handles to the lines of text and the axes may also be found by </span>
+023 <span class="comment">%           h  = findobj(gcf,'tag','wafostmptxt','type','text');</span>
+024 <span class="comment">%           ax = findobj(gcf,'tag','wafostmptxt','type','axes');</span>
+025 <span class="comment">%  Edit wafostamp.m to change default values.</span>
+026 <span class="comment">%</span>
+027 <span class="comment">% Example:</span>
+028 <span class="comment">%   plot(sin(0:.1:3)), wafostamp('Sinus plot','(ER)'), hold on</span>
+029 <span class="comment">%   plot(sin((0:.1:3)+pi/2)),hold off</span>
+030 <span class="comment">%</span>
+031 <span class="comment">% See also  figtext</span>
+032 
+033 <span class="comment">% TODO <span class="comment">% may be further improoved by making it work like legend without the box</span></span>
+034 
+035 <span class="comment">% Tested on matlab 5.2</span>
+036 <span class="comment">% history:</span>
+037 <span class="comment">% revised pab 22.05.2000 minor changes</span>
+038 <span class="comment">% revised pab 05.02.2000</span>
+039 <span class="comment">%  -added deleteproxy</span>
+040 <span class="comment">% revised pab 28.01.2000</span>
+041 <span class="comment">%  - updated help header</span>
+042 <span class="comment">%  - Now writes the text in a separate axes in order to make the printed</span>
+043 <span class="comment">%    text independent of the scaling of the figure etc.</span>
+044 <span class="comment">%  - added tag to the wafostamp axes</span>
+045 <span class="comment">%  - added  point-and-click editing of all the text objects (title, xlabel, ylabel) of the current figure:</span>
+046 <span class="comment">% revised pab 21.12.1999</span>
+047 <span class="comment">%  - added an extra plot(sin...) in example</span>
+048 <span class="comment">% revised pab 20.12.1999</span>
+049 <span class="comment">%   -added varargin (caption flag), axes, date</span>
+050 <span class="comment">%   -returns matlab to the same state as it was before wafostamp was called  </span>
+051 <span class="comment">% adopted from watstamp by ???</span>
+052 
+053 
+054 [stamp,caption,flag]=<a href="#_sub1" class="code" title="sub  [stamp,caption,flag]=stmpchk(P);">stmpchk</a>(varargin);
+055 
+056 
+057 <span class="keyword">if</span> stamp
+058  <span class="comment">% remember old axes and state</span>
+059  <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+060   <span class="comment">%hold_state=ishold;</span>
+061   cax=gca; <span class="comment">% get current axes</span>
+062   cfig=get(cax,<span class="string">'Parent'</span>); 
+063   figold=gcf;
+064   <span class="keyword">if</span> figold~=cfig, figure(cfig);  <span class="keyword">end</span>
+065   <span class="keyword">if</span> 1 
+066     <span class="comment">% create new axes for caption and  delete old caption if it exists </span>
+067     <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+068     ax = findobj(cfig,<span class="string">'tag'</span>,<span class="string">'wafostmptxt'</span>); 
+069     <span class="keyword">if</span> ~isempty(ax), delete(ax), <span class="keyword">end</span> <span class="comment">% delete old wafostamp if it exists</span>
+070     ax = axes(<span class="string">'Position'</span>,[.01 .01 .99 .05],<span class="string">'Visible'</span>,<span class="string">'off'</span>,<span class="string">'tag'</span>,<span class="string">'wafostmptxt'</span>);
+071   <span class="keyword">end</span>
+072   <span class="keyword">if</span> isempty(caption)
+073     h1=[];
+074   <span class="keyword">else</span>
+075     h1=<a href="figtext.html" class="code" title=" Places text in figure window.">figtext</a>(0,0,caption,<span class="string">'norm'</span>,<span class="string">'norm'</span>,<span class="string">'left'</span>,<span class="string">'bottom'</span>);
+076     set(h1,<span class="string">'FontSize'</span>,10,<span class="string">'Tag'</span>,<span class="string">'wafostmptxt'</span>)
+077   <span class="keyword">end</span>
+078   h2=<a href="figtext.html" class="code" title=" Places text in figure window.">figtext</a>(1,0,[<span class="string">'made by WAFO '</span> date,<span class="string">' '</span>,flag,<span class="string">' '</span>],<span class="string">'norm'</span>,<span class="string">'norm'</span>,<span class="string">'right'</span>,<span class="string">'bottom'</span>);
+079   <span class="comment">% old call</span>
+080   <span class="comment">%h=figtext(0,-0.1,'made by WAFO','norm','norm','left');</span>
+081   set(h2,<span class="string">'FontSize'</span>,10,<span class="string">'FontAngle'</span>,<span class="string">'Italic'</span>,<span class="string">'Tag'</span>,<span class="string">'wafostmptxt'</span>)
+082   
+083   
+084   <span class="comment">%  The following two commands install point-and-click editing of</span>
+085   <span class="comment">%   all the text objects (title, xlabel, ylabel) of the current figure:</span>
+086 
+087   set(findall(cfig,<span class="string">'type'</span>,<span class="string">'text'</span>),<span class="string">'buttondownfcn'</span>,<span class="string">'edtext'</span>)
+088   set(cfig,<span class="string">'windowbuttondownfcn'</span>,<span class="string">'edtext('<span class="string"></span>'hide'<span class="string"></span>')'</span>)
+089 
+090   <span class="comment">% create DeleteProxy objects (an invisible text object in</span>
+091   <span class="comment">% the first axes) so that the other axes will be deleted</span>
+092   <span class="comment">% properly.</span>
+093   <span class="comment">%'tag','wafostmptxt',...</span>
+094   DeleteProxy(1) = text(<span class="string">'parent'</span>,cax,<span class="string">'visible'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+095       <span class="string">'handlevisibility'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+096       <span class="string">'deletefcn'</span>,<span class="string">'eval('<span class="string"></span>'delete(get(gcbo,'<span class="string"></span>''<span class="string"></span>'userdata'<span class="string"></span>''<span class="string"></span>'))'<span class="string"></span>','<span class="string"></span>''<span class="string"></span>')'</span>);
+097   DeleteProxy(2) = text(<span class="string">'parent'</span>,ax,<span class="string">'visible'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+098       <span class="string">'tag'</span>,<span class="string">'wafostmptxt'</span>,<span class="keyword">...</span>
+099       <span class="string">'handlevisibility'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+100       <span class="string">'deletefcn'</span>,<span class="string">'eval('<span class="string"></span>'delete(get(gcbo,'<span class="string"></span>''<span class="string"></span>'userdata'<span class="string"></span>''<span class="string"></span>'))'<span class="string"></span>','<span class="string"></span>''<span class="string"></span>')'</span>);
+101   set(DeleteProxy(1),<span class="string">'userdata'</span>,ax);<span class="comment">%get(cfig,'children'));<span class="comment">%[ax);</span></span>
+102   set(DeleteProxy(2),<span class="string">'userdata'</span>,DeleteProxy(1));
+103 
+104   <span class="keyword">if</span> nargout&gt;0
+105     H=[h1 h2];
+106   <span class="keyword">end</span>
+107 
+108   <span class="comment">% reset to the old state</span>
+109   <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>
+110   <span class="comment">%set(cfig,'currentaxes',cax)  <span class="comment">% reset to old axes</span></span>
+111   axes(cax)
+112   <span class="keyword">if</span> (figold~=cfig), figure(figold); <span class="keyword">end</span>
+113   
+114 <span class="keyword">end</span>
+115 
+116 
+117 <span class="keyword">function</span> [stamp,caption,flag]=<a name="_sub1" href="#_subfunctions" class="code">stmpchk</a>(P);
+118 <span class="comment">% gives the correct input values  </span>
+119 N=length(P);
+120 
+121 caption=[];flag=[];
+122 <span class="keyword">if</span>  N==0
+123   stamp=0; <span class="comment">%EDIT HERE to change default value</span>
+124 <span class="keyword">elseif</span> (N == 1 &amp; isnumeric( P{1}))
+125   stamp=P{1};
+126 <span class="keyword">else</span>
+127   stamp=1;
+128   caption=P{1};
+129   <span class="keyword">if</span> N&gt;1
+130     flag=P{2}; 
+131   <span class="keyword">end</span>    
+132 <span class="keyword">end</span>
+133 
+134   
+135</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

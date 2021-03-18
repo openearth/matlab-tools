@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wchi2pdf</title>
+  <meta name="keywords" content="wchi2pdf">
+  <meta name="description" content=" Chi squared probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wchi2pdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wchi2pdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Chi squared probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wchi2pdf(x,p,disable); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wchi2pdf.html" class="code" title=" Chi squared probability density function">WCHI2PDF</a> Chi squared probability density function
+ 
+  CALL:  f = <a href="wchi2pdf.html" class="code" title=" Chi squared probability density function">wchi2pdf</a>(x,p);
+ 
+         f = density function evaluated at x
+         p = degrees of freedom
+  
+  The Chi squared distribution is defined by its pdf
+    f(x)=x^(p/2-1)*exp(-x/2)/gamma(p/2)/2^(p/2), x&gt;=0, p=1,2,3,...
+  The CHI^2 is a special case of the gamma distribution, i.e.:
+    <a href="wchi2pdf.html" class="code" title=" Chi squared probability density function">wchi2pdf</a>(x,p)=<a href="wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(x,p/2,2)
+ 
+  Example: 
+  x = linspace(0,7,200);
+  p1 = <a href="wchi2pdf.html" class="code" title=" Chi squared probability density function">wchi2pdf</a>(x,2); p2 = <a href="wchi2pdf.html" class="code" title=" Chi squared probability density function">wchi2pdf</a>(x,3);
+  plot(x,p1,x,p2)
+ 
+  See also <a href="wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="wggampdf.html" class="code" title=" f = wggampdf(x,a,b,c);">wggampdf</a></li></TD>
+<TD> Generalized Gamma probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wchi2pdf</a>(x,p,disable);
+002 <span class="comment">%WCHI2PDF Chi squared probability density function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  f = wchi2pdf(x,p);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        f = density function evaluated at x</span>
+007 <span class="comment">%        p = degrees of freedom</span>
+008 <span class="comment">% </span>
+009 <span class="comment">% The Chi squared distribution is defined by its pdf</span>
+010 <span class="comment">%   f(x)=x^(p/2-1)*exp(-x/2)/gamma(p/2)/2^(p/2), x&gt;=0, p=1,2,3,...</span>
+011 <span class="comment">% The CHI^2 is a special case of the gamma distribution, i.e.:</span>
+012 <span class="comment">%   wchi2pdf(x,p)=wgampdf(x,p/2,2)</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Example: </span>
+015 <span class="comment">% x = linspace(0,7,200);</span>
+016 <span class="comment">% p1 = wchi2pdf(x,2); p2 = wchi2pdf(x,3);</span>
+017 <span class="comment">% plot(x,p1,x,p2)</span>
+018 <span class="comment">%</span>
+019 <span class="comment">% See also wgampdf</span>
+020 
+021 <span class="comment">% Reference: Johnson, Kotz and Balakrishnan (1994)</span>
+022 <span class="comment">% &quot;Continuous Univariate Distributions, vol. 1&quot;, p. 415 ff</span>
+023 <span class="comment">% Wiley</span>
+024 
+025 
+026 <span class="comment">% Tested on: Matlab 5.3</span>
+027 <span class="comment">% History:</span>
+028 <span class="comment">% revised pab 25.10.2000</span>
+029 <span class="comment">%  - added comnsize, nargchk</span>
+030 <span class="comment">%  - replaced code with a call to wggampdf -&gt; made maintanence easier</span>
+031 <span class="comment">% added ms 15.06.2000</span>
+032 
+033 
+034 error(nargchk(2,3,nargin))
+035 <span class="comment">% secret option in order to make ML estimation work</span>
+036 <span class="keyword">if</span> nargin&lt;3|isempty(disable), disable=0;<span class="keyword">end</span> 
+037 
+038 [errorcode,x,p,b,c] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,p,2,1);
+039 <span class="keyword">if</span> errorcode &gt; 0
+040   error(<span class="string">'x and p must be of common size or scalar.'</span>);
+041 <span class="keyword">end</span>
+042 
+043 f=zeros(size(x));
+044 <span class="keyword">if</span> disable,
+045   ok = (p&gt;0);
+046 <span class="keyword">else</span>
+047   ok = (p==round(p) &amp; p&gt;0)
+048 <span class="keyword">end</span>
+049 k = find(ok);
+050 <span class="keyword">if</span> any(k),
+051   f(k) = <a href="wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>(x(k),p(k)/2,b(k),c(k));
+052   <span class="comment">%f=x.^(p/2-1).*exp(-x/2)/gamma(p/2)/2^(p/2).*(x&gt;=0);</span>
+053 <span class="keyword">end</span>
+054 
+055 k1=find(~ok);
+056 <span class="keyword">if</span> any(k1),
+057   warning(<span class="string">'p should be a positive integer'</span>)
+058   f(k1)=NaN;
+059 <span class="keyword">end</span>
+060 
+061 
+062 
+063 
+064 
+065 
+066</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

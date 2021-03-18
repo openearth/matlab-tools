@@ -1,0 +1,237 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafoversion</title>
+  <meta name="keywords" content="wafoversion">
+  <meta name="description" content=" Wave Analysis for Fatigue and Oceanography version.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; wafoversion.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wafoversion
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Wave Analysis for Fatigue and Oceanography version.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> wvers= wafoversion(dirnamein) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wafoversion.html" class="code" title=" Wave Analysis for Fatigue and Oceanography version.">WAFOVERSION</a> Wave Analysis for <a href="../../wafo/fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">Fatigue</a> and Oceanography version.
+ 
+   CALL:  verstr =  <a href="wafoversion.html" class="code" title=" Wave Analysis for Fatigue and Oceanography version.">wafoversion</a>(dirname);
+ 
+     verstr = string containing the WAFO version number.
+    dirname = string containing the name of the directory
+              If empty <a href="wafoversion.html" class="code" title=" Wave Analysis for Fatigue and Oceanography version.">WAFOVERSION</a>  displays the current WAFO version 
+ 
+   <a href="wafoversion.html" class="code" title=" Wave Analysis for Fatigue and Oceanography version.">WAFOVERSION</a> extracts the version number from  the <a href="Contents.html" class="code" title="  Module MISC in WAFO Toolbox. ">Contents</a>.m file.
+ 
+    Examples:
+       <a href="wafoversion.html" class="code" title=" Wave Analysis for Fatigue and Oceanography version.">wafoversion</a> onedim      % returns the version of the ONEDIM directory
+       <a href="wafoversion.html" class="code" title=" Wave Analysis for Fatigue and Oceanography version.">wafoversion</a>             % return current WAFO  version
+ 
+  See also   version, ver, whatsnew, info, help.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fclose.m">fclose</a></li></TD>
+<TD>        Close file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fgetl.m">fgetl</a></li></TD>
+<TD>         Read line from file, discard newline character.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\filesep.m">filesep</a></li></TD>
+<TD>       Directory separator for this platform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\findstr.bi">findstr</a></li></TD>
+<TD>       Find one string within another.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fopen.m">fopen</a></li></TD>
+<TD>         Open file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\fullfile.m">fullfile</a></li></TD>
+<TD>      Build full filename from parts.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@double\isspace.bi">isspace</a></li></TD>
+<TD>       True for white space characters.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\path.m">path</a></li></TD>
+<TD>          Get/set search path.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\pathsep.m">pathsep</a></li></TD>
+<TD>       Path separator for this platform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@opaque\strmatch.m">strmatch</a></li></TD>
+<TD>      Find possible matches for string.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> c = path2cell(p)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> wvers= <a name="_sub0" href="#_subfunctions" class="code">wafoversion</a>(dirnamein)
+002 <span class="comment">%WAFOVERSION Wave Analysis for Fatigue and Oceanography version.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL:  verstr =  wafoversion(dirname);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%    verstr = string containing the WAFO version number.</span>
+007 <span class="comment">%   dirname = string containing the name of the directory</span>
+008 <span class="comment">%             If empty WAFOVERSION  displays the current WAFO version </span>
+009 <span class="comment">%</span>
+010 <span class="comment">%  WAFOVERSION extracts the version number from  the Contents.m file.</span>
+011 <span class="comment">%</span>
+012 <span class="comment">%   Examples:</span>
+013 <span class="comment">%      wafoversion onedim      <span class="comment">% returns the version of the ONEDIM directory</span></span>
+014 <span class="comment">%      wafoversion             <span class="comment">% return current WAFO  version</span></span>
+015 <span class="comment">%</span>
+016 <span class="comment">% See also   version, ver, whatsnew, info, help.</span>
+017 
+018 <span class="comment">%tested on: Matlab 5.3</span>
+019 <span class="comment">%History:</span>
+020 <span class="comment">% revised pab 11.11.1999</span>
+021 <span class="comment">%  - made it more general</span>
+022 <span class="comment">% by pab 11.10.1999</span>
+023 
+024 <span class="keyword">if</span> nargin&lt;1 |isempty(dirnamein)
+025   dirname=<a href="../../wafo/waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>;
+026 <span class="keyword">else</span>
+027   ind=find(dirnamein== filesep);
+028   <span class="keyword">if</span> length(ind)&gt;0
+029     dirname=dirnamein; <span class="comment">% Assume that the complete path is given</span>
+030   <span class="keyword">else</span>
+031     <span class="keyword">if</span> length(ind)==0
+032       dirn=dirnamein;
+033     <span class="keyword">elseif</span> ind(<span class="keyword">end</span>)&lt; length(dirnamein)
+034       dirn=dirnamein(ind(<span class="keyword">end</span>)+1:<span class="keyword">end</span>);
+035     <span class="keyword">else</span>
+036       dirn=dirnamein(ind(<span class="keyword">end</span>-1)+1:<span class="keyword">end</span>-1);
+037     <span class="keyword">end</span>
+038     p=<a href="#_sub1" class="code" title="sub  c = path2cell(p)">path2cell</a>(path);
+039     <span class="keyword">for</span> ix=1:length(p)
+040       p{ix}=fliplr( p{ix});
+041     <span class="keyword">end</span>
+042     ind2=strmatch(fliplr(dirn),p); <span class="comment">% see if we can find directory in</span>
+043                                    <span class="comment">% search path</span>
+044     <span class="keyword">if</span> length(ind2)&gt;1
+045       disp([<span class="string">'There are two directories with the name: '</span> dirn])
+046     <span class="keyword">end</span>
+047     <span class="keyword">if</span> length(ind2)&gt;0
+048       dirname=fliplr(p{ind2(1)});
+049     <span class="keyword">else</span>
+050       disp([<span class="string">'There is no directory with the name: '</span> dirn])
+051       disp(<span class="string">'in the search path'</span>)
+052       disp(<span class="string">'WAFO version returned instead'</span>)
+053       dirname = <a href="../../wafo/waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>;
+054     <span class="keyword">end</span>    
+055   <span class="keyword">end</span>
+056 <span class="keyword">end</span>
+057 
+058 file=fullfile(dirname ,<span class="string">'Contents.m'</span>);
+059 fid=fopen(file,<span class="string">'rt'</span>);
+060 <span class="keyword">if</span> fid==-1,
+061   file=fullfile(dirname ,<span class="string">'contents.m'</span>);
+062   fid=fopen(file,<span class="string">'rt'</span>);
+063   <span class="keyword">if</span> fid==-1,
+064     disp([<span class="string">'No Contents.m file in '</span>  dirname])
+065     disp(<span class="string">'Version unknown'</span>)
+066     wvers=[];
+067     <span class="keyword">return</span>
+068   <span class="keyword">end</span>
+069 <span class="keyword">end</span>
+070 
+071 lin=fgetl(fid); <span class="comment">% H1 line</span>
+072 lin=fgetl(fid); <span class="comment">% version line</span>
+073 fclose(fid);
+074 <span class="comment">% Look for Version</span>
+075 k = findstr(<span class="string">'version'</span>,lower(lin));
+076 <span class="keyword">if</span> isempty(k),
+077   disp([<span class="string">'Not correct format of Contents.m file in '</span>, dirname])
+078   disp(<span class="string">'version number unknown'</span>)
+079   wvers=[]; 
+080   <span class="keyword">return</span>
+081 <span class="keyword">end</span>
+082 ind=diff(~isspace(lin));
+083 blancstrtstp = find([0 abs(ind)] &gt; 0.5); 
+084 indbl= blancstrtstp( blancstrtstp &gt; k); 
+085 wvers=lin(indbl(2):indbl(3)-1);
+086 
+087 <span class="keyword">function</span> c = <a name="_sub1" href="#_subfunctions" class="code">path2cell</a>(p)
+088 <span class="comment">%PATH2CELL Split path into cell array of strings.</span>
+089 <span class="comment">%   PATH2CELL(PATH) returns a cell array of strings containing the</span>
+090 <span class="comment">%   individual path elements.</span>
+091 
+092 seps = [0 find(p==pathsep) length(p)+1];
+093 
+094 c = cell(length(seps)-1,1);
+095 <span class="keyword">for</span> i=1:length(seps)-1,
+096   c{i} = p(seps(i)+1:seps(i+1)-1);
+097   <span class="keyword">if</span> c{i}(<span class="keyword">end</span>) == <span class="string">']'</span>,
+098     c{i}(<span class="keyword">end</span>) = [];
+099   <span class="keyword">end</span>
+100 <span class="keyword">end</span>
+101 <span class="keyword">return</span>
+102</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

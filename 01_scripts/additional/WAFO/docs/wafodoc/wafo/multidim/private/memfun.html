@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of memfun</title>
+  <meta name="keywords" content="memfun">
+  <meta name="description" content=" private function for MEM">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">multidim</a> &gt; <a href="index.html">private</a> &gt; memfun.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\multidim\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>memfun
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> private function for MEM</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> y = function(x,P1,P2,P3,P4) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="memfun.html" class="code" title=" private function for MEM  ">MEMFUN</a> private function for <a href="mem.html" class="code" title="  maximum entropy method for estimating the directional distribution ">MEM</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/misc/simpson.html" class="code" title=" [area,epsi,a,b] = simpson(x,f,dim)">simpson</a></li></TD>
+<TD> Numerical integration with the Simpson method</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@char\transpose.bi">transpose</a></li></TD>
+<TD>     .' Transpose.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">(x,P1,P2,P3,P4)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> y = <span class="keyword">function</span>(<a name="_sub1" href="#_subfunctions" class="code">x</a>,P1,P2,P3,P4)
+02 <span class="comment">% MEMFUN private function for MEM  </span>
+03 y = ((<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(P1,P2.*repmat(exp(P3*transpose(<a name="_sub1" href="#_subfunctions" class="code">x</a>)),1,P4))));
+04 
+05 <span class="comment">% comment out this if fmins,fminu, fminsearch fminunc is used</span>
+06 <span class="comment">%return</span>
+07 
+08 ind = isnan(y);
+09 <span class="keyword">if</span> any(ind)
+10   y(ind) = <a href="#_sub1" class="code" title="sub (x,P1,P2,P3,P4)">x</a>(ind)*100;
+11 <span class="keyword">end</span>
+12 <span class="comment">%(y)</span>
+13 <span class="comment">%y = log(1+y);</span>
+14 
+15 <span class="comment">%</span>
+16 y = sum((abs(y)));
+17 
+18 <span class="comment">%</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

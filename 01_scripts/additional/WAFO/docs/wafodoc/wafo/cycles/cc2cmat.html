@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cc2cmat</title>
+  <meta name="keywords" content="cc2cmat">
+  <meta name="description" content=" Calculates the cycle count matrix from a cycle count.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; cc2cmat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cc2cmat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates the cycle count matrix from a cycle count.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F,h] = cc2cmat(param,cc,ddef,method,h,NOsubzero,alpha) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">CC2CMAT</a> Calculates the cycle count matrix from a cycle count.
+  using (0) Histogram, (1) Kernel smoothing, (2) Kernel smoothing.
+ 
+  CALL:  [F,h] = <a href="cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>(param,cc,ddef,method,h,NOsubzero,alpha);
+ 
+  Input:
+    param     = Parameter vector, [a b n], defines the grid.
+    cc        = Cycle count with minima in column 1 and maxima in column 2. [nx2]
+    ddef      =  1: causes peaks to be projected upwards and troughs 
+                    downwards to the closest discrete level (default).
+              =  0: causes peaks and troughs to be projected
+                    the closest discrete level.
+              = -1: causes peaks to be projected downwards and the 
+                    troughs upwards to the closest discrete level.
+    method    =  0: Histogram. (Default)
+                 1: Kernel estimator (constant bandwidth). 
+                 2: Adaptiv kernel estimator (local bandwidth). 
+    h         = Bandwidth (Optional, Default='automatic choice')
+    NOsubzero = Number of subdiagonals that are set to zero
+                (Optional, Default = 0, only the diagonal is zero)
+    alpha     = Parameter for method (2) (Optional, Default=0.5).
+                A number between 0 and 1.
+                alpha=0 implies constant bandwidth (method 1).
+                alpha=1 implies most varying bandwidth.
+ 
+  Output:
+    F       = Estimated cycle matrix.
+    h       = Selected bandwidth.
+ 
+  See also  <a href="dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">dcc2cmat</a>, <a href="cc2dcc.html" class="code" title=" Discretize a cycle count.">cc2dcc</a>, <a href="smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cc2dcc.html" class="code" title=" dcc = cc2dcc(param,cc,ddef)">cc2dcc</a></li></TD>
+<TD> Discretize a cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="dcc2cmat.html" class="code" title=" F = dcc2cmat(dcc,n)">dcc2cmat</a></li></TD>
+<TD>  Calculates the cycle matrix for a discrete cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="smoothcmat.html" class="code" title=" [Fsmooth,h] = smthcmat(F,method,h,NOsubzero,alpha)">smoothcmat</a></li></TD>
+<TD> Smooth a cycle matrix using (adaptive) kernel smoothing</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab2.html" class="code" title="This is a script file.">itmkurs_lab2</a></li></TD>
+<TD> Script to computer exercises 2</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/rfcdemo2.html" class="code" title=" [F_RFC] = refdemo2(demoNr,P,param,x0,s,lam)">rfcdemo2</a></li></TD>
+<TD> Rainflow matrix for Switching Markov Chains of Turning Points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [F,h] = <a name="_sub0" href="#_subfunctions" class="code">cc2cmat</a>(param,cc,ddef,method,h,NOsubzero,alpha)
+002 <span class="comment">% CC2CMAT Calculates the cycle count matrix from a cycle count.</span>
+003 <span class="comment">% using (0) Histogram, (1) Kernel smoothing, (2) Kernel smoothing.</span>
+004 <span class="comment">%</span>
+005 <span class="comment">% CALL:  [F,h] = cc2cmat(param,cc,ddef,method,h,NOsubzero,alpha);</span>
+006 <span class="comment">%</span>
+007 <span class="comment">% Input:</span>
+008 <span class="comment">%   param     = Parameter vector, [a b n], defines the grid.</span>
+009 <span class="comment">%   cc        = Cycle count with minima in column 1 and maxima in column 2. [nx2]</span>
+010 <span class="comment">%   ddef      =  1: causes peaks to be projected upwards and troughs </span>
+011 <span class="comment">%                   downwards to the closest discrete level (default).</span>
+012 <span class="comment">%             =  0: causes peaks and troughs to be projected</span>
+013 <span class="comment">%                   the closest discrete level.</span>
+014 <span class="comment">%             = -1: causes peaks to be projected downwards and the </span>
+015 <span class="comment">%                   troughs upwards to the closest discrete level.</span>
+016 <span class="comment">%   method    =  0: Histogram. (Default)</span>
+017 <span class="comment">%                1: Kernel estimator (constant bandwidth). </span>
+018 <span class="comment">%                2: Adaptiv kernel estimator (local bandwidth). </span>
+019 <span class="comment">%   h         = Bandwidth (Optional, Default='automatic choice')</span>
+020 <span class="comment">%   NOsubzero = Number of subdiagonals that are set to zero</span>
+021 <span class="comment">%               (Optional, Default = 0, only the diagonal is zero)</span>
+022 <span class="comment">%   alpha     = Parameter for method (2) (Optional, Default=0.5).</span>
+023 <span class="comment">%               A number between 0 and 1.</span>
+024 <span class="comment">%               alpha=0 implies constant bandwidth (method 1).</span>
+025 <span class="comment">%               alpha=1 implies most varying bandwidth.</span>
+026 <span class="comment">%</span>
+027 <span class="comment">% Output:</span>
+028 <span class="comment">%   F       = Estimated cycle matrix.</span>
+029 <span class="comment">%   h       = Selected bandwidth.</span>
+030 <span class="comment">%</span>
+031 <span class="comment">% See also  dcc2cmat, cc2dcc, smoothcmat</span>
+032 
+033 <span class="comment">% Tested  on Matlab 5.3</span>
+034 <span class="comment">%</span>
+035 <span class="comment">% History:</span>
+036 <span class="comment">% Correction by PJ 14-Feb-2000</span>
+037 <span class="comment">%   Changed 'smthcmat' to 'smoothcmat'</span>
+038 <span class="comment">% Revised by PJ  01-Nov-1999</span>
+039 <span class="comment">%   updated for WAFO</span>
+040 <span class="comment">% Created by PJ (Pär Johannesson) 1997</span>
+041 <span class="comment">%   from 'Toolbox: Rainflow Cycles for Switching Processes V.1.0'</span>
+042 
+043 <span class="comment">% Check input arguments</span>
+044 
+045 ni = nargin;
+046 no = nargout;
+047 error(nargchk(2,7,ni));
+048 
+049 <span class="keyword">if</span> ni&lt;3, ddef=[]; <span class="keyword">end</span>
+050 <span class="keyword">if</span> ni&lt;4, method=0; <span class="keyword">end</span>
+051 <span class="keyword">if</span> ni&lt;5, h=[]; <span class="keyword">end</span>
+052 <span class="keyword">if</span> ni&lt;6, NOsubzero=[]; <span class="keyword">end</span>
+053 <span class="keyword">if</span> ni&lt;7, alpha=[]; <span class="keyword">end</span>
+054 
+055 <span class="keyword">if</span> method &lt; 0 | method &gt;2
+056   error(<span class="string">'Input argument &quot;method&quot; should be 0, 1 or 2'</span>);
+057 <span class="keyword">end</span>
+058 
+059 u = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param); <span class="comment">% Discretization levels</span>
+060 
+061 n = param(3);     <span class="comment">% Size of matrix</span>
+062 N = length(cc);   <span class="comment">% Total number of cycles</span>
+063 
+064 <span class="comment">% Compute Histogram</span>
+065 
+066 dcc = <a href="cc2dcc.html" class="code" title=" Discretize a cycle count.">cc2dcc</a>(param,cc,ddef);
+067 F = <a href="dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">dcc2cmat</a>(dcc,n);
+068 
+069 <span class="comment">% Smooth by using Kernel estimator ?</span>
+070 
+071 <span class="keyword">if</span> method &gt;= 1   
+072   [F,h] = <a href="smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>(F,method,h,NOsubzero,alpha);
+073 <span class="keyword">end</span>
+074</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

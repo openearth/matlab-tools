@@ -1,0 +1,525 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of comnsize</title>
+  <meta name="keywords" content="comnsize">
+  <meta name="description" content=" Check if all input arguments are either scalar or of common size.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; comnsize.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>comnsize
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Check if all input arguments are either scalar or of common size.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [errorcode,varargout] = comnsize(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">COMNSIZE</a> Check if all input arguments are either scalar or of common size.
+ 
+  CALL:  [errorcode,y1,y2,...,yN] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x1,x2,...,xN);
+ 
+   errorcode = 0 , if all xi are either scalar or of common size.
+               1 , if the non-scalar xi do not match in size.
+   y1,...,yN = Same as x1,...,xN, except that scalars are transformed to
+               a constant matrix with same size as the other inputs.
+   x1,...,xN = Input arguments.
+ 
+   <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">COMNSIZE</a> makes sure that the output arguments are of common size.
+   This is useful for implementing functions where arguments can either
+   be scalars or of common size. 
+ 
+   NOTE:  If the errorcode is 1, then yi = xi.
+ 
+  Examples: 
+    A = rand(4,5);B = 2;C = rand(4,5);
+    [ec,A1,B1,C1] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(A,B,C);
+    ec2 = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(A,1:2);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cplot.html" class="code" title=" h = cplot(y,D)">cplot</a></li></TD>
+<TD> Cubic plot of responses</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a></li></TD>
+<TD> Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dcdf.html" class="code" title=" y = mdist2dcdf(V,H,phat,condon)">mdist2dcdf</a></li></TD>
+<TD> Joint 2D CDF due to Plackett</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dcinv.html" class="code" title=" [x, ind]= mdist2dcinv(x1,p,phat);">mdist2dcinv</a></li></TD>
+<TD> Inverse of the conditional cdf of X2 given X1.</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dpdf.html" class="code" title=" y = mdist2dpdf(V,H,phat,condon)">mdist2dpdf</a></li></TD>
+<TD> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</TD>
+</TR>
+<TR>
+<TD><li><a href="walpharnd.html" class="code" title=" R = walpharnd(a,varargin);">walpharnd</a></li></TD>
+<TD> Random matrices from a symmetric alpha-stable distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wbetacdf.html" class="code" title=" F = wbetacdf(x,a,b)">wbetacdf</a></li></TD>
+<TD>   Beta cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wbetainv.html" class="code" title=" x = wbetainv(F,a,b)">wbetainv</a></li></TD>
+<TD>  Inverse of the Beta distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wbetapdf.html" class="code" title=" f = wbetapdf(x,a,b)">wbetapdf</a></li></TD>
+<TD>   Beta probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wbetarnd.html" class="code" title=" R = rbeta(a,b,varargin)">wbetarnd</a></li></TD>
+<TD>  Random matrices from a Beta distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wbetastat.html" class="code" title=" [m,v]= wbetastat(a,c);">wbetastat</a></li></TD>
+<TD> Mean and variance for the Beta distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2cdf.html" class="code" title=" F = wchi2cdf(x,p);">wchi2cdf</a></li></TD>
+<TD> Chi squared cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2inv.html" class="code" title=" x = wchi2inv(F,p)">wchi2inv</a></li></TD>
+<TD> Inverse of the Chi squared distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2pdf.html" class="code" title=" f = wchi2pdf(x,p,disable);">wchi2pdf</a></li></TD>
+<TD> Chi squared probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2rnd.html" class="code" title=" R = wchi2rnd(p,varargin);">wchi2rnd</a></li></TD>
+<TD> Random matrices from a Chi squared distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dcdf.html" class="code" title=" [y ,tol1] = weib2dcdf(x1,x2,param,condon,tol)">weib2dcdf</a></li></TD>
+<TD> Joint 2D Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dcinv.html" class="code" title=" [x, k2]= weib2dcinv(x1,p,a1,b1,a2,b2,c12,tol);">weib2dcinv</a></li></TD>
+<TD> Inverse of the conditional 2D weibull cdf of X2 given X1.</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dpdf.html" class="code" title=" y = weib2dpdf(x1,x2,a1,b1,a2,b2,c12,condon)">weib2dpdf</a></li></TD>
+<TD> 2D Weibull probability density function (pdf).</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = weib2dstat(a1,b1,a2,b2,c12,condon,cvar,tol)">weib2dstat</a></li></TD>
+<TD>  Mean and variance for the 2D Weibull distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wexpcdf.html" class="code" title=" F = wexpcdf(x,m);">wexpcdf</a></li></TD>
+<TD> Exponential cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wexpinv.html" class="code" title=" x = wexpinv(F,m)">wexpinv</a></li></TD>
+<TD> Inverse of the Exponential distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wexppdf.html" class="code" title=" f = wexppdf(x,m);">wexppdf</a></li></TD>
+<TD> Exponential probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wexprnd.html" class="code" title=" R = wexprnd(m0,varargin);">wexprnd</a></li></TD>
+<TD> Random matrices from an Exponential distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wfcdf.html" class="code" title=" F = wfcdf(x,a,b)">wfcdf</a></li></TD>
+<TD>  Snedecor's F cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wfinv.html" class="code" title=" x = wfinv(F,a,b)">wfinv</a></li></TD>
+<TD>  Inverse of the Snedecor's F distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wfpdf.html" class="code" title=" f = wfpdf(x,a,b)">wfpdf</a></li></TD>
+<TD> Snedecor's F probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wfrechcdf.html" class="code" title=" F = wfrechcdf(x,a,c)">wfrechcdf</a></li></TD>
+<TD> Frechet cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wfrechinv.html" class="code" title=" x = wfrechinv(F,a,c)">wfrechinv</a></li></TD>
+<TD> Inverse of the Frechet distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wfrechpdf.html" class="code" title=" f = wfrechpdf(x,a,c)">wfrechpdf</a></li></TD>
+<TD> Frechet probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wfrechstat.html" class="code" title=" [m,v]= wfrechstat(a,c);">wfrechstat</a></li></TD>
+<TD> Mean and variance for the Frechet distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wfrnd.html" class="code" title=" R = wfrnd(a,b,varargin)">wfrnd</a></li></TD>
+<TD> Random matrices from the Snedecor's F distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wfstat.html" class="code" title=" [m,v]= wfstat(a,c);">wfstat</a></li></TD>
+<TD> Mean and variance for the Snedecor's F distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgamcdf.html" class="code" title=" F = wgamcdf(x,a,b);">wgamcdf</a></li></TD>
+<TD> Gamma cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgaminv.html" class="code" title=" x = wgaminv(F,a,b)">wgaminv</a></li></TD>
+<TD> Inverse of the Gamma distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgampdf.html" class="code" title=" f = wgampdf(x,a,b);">wgampdf</a></li></TD>
+<TD> Gamma probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgamrnd.html" class="code" title=" R = wgamrnd(a,b,varargin);">wgamrnd</a></li></TD>
+<TD> Random matrices from a Gamma distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgamstat.html" class="code" title=" [m,v]= wgamstat(a,b);">wgamstat</a></li></TD>
+<TD> Mean and variance for the Gamma distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevcdf.html" class="code" title=" F = wgevcdf(x,k,s,m);">wgevcdf</a></li></TD>
+<TD> Generalized Extreme Value cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevinv.html" class="code" title=" x = wgevinv(F,k,s,m)">wgevinv</a></li></TD>
+<TD> Inverse of the Generalized Extreme Value distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevpdf.html" class="code" title=" f = wgevpdf(x,k,s,m);">wgevpdf</a></li></TD>
+<TD> Generalized Extreme Value probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevrnd.html" class="code" title=" r = wgevrnd(k,s,m0,varargin);">wgevrnd</a></li></TD>
+<TD> Random matrices from a Generalized Extreme Value distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wgevstat.html" class="code" title=" [m,v]= wgevstat(k,s,m0);">wgevstat</a></li></TD>
+<TD> Mean and variance for the GEV distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wggamcdf.html" class="code" title=" F = wggamcdf(x,a,b,c);">wggamcdf</a></li></TD>
+<TD> Generalized Gamma cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wggaminv.html" class="code" title=" x = wggaminv(F,a,b,c)">wggaminv</a></li></TD>
+<TD> Inverse of the Generalized Gamma distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wggampdf.html" class="code" title=" f = wggampdf(x,a,b,c);">wggampdf</a></li></TD>
+<TD> Generalized Gamma probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wggamrnd.html" class="code" title=" R = wggamrnd(a,b,c,varargin);">wggamrnd</a></li></TD>
+<TD> Random matrices from a Generalized Gamma distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wggamstat.html" class="code" title=" [m,v]= wggamstat(a,b,c);">wggamstat</a></li></TD>
+<TD> Mean and variance for the Generalized Gamma distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgpdcdf.html" class="code" title=" F = wgpdcdf(x,k,s,m);">wgpdcdf</a></li></TD>
+<TD> Generalized Pareto cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgpdinv.html" class="code" title=" x = wgpdinv(F,k,s,m)">wgpdinv</a></li></TD>
+<TD> Inverse of the Generalized Pareto distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgpdpdf.html" class="code" title=" f = wgpdpdf(x,k,s,m);">wgpdpdf</a></li></TD>
+<TD> Generalized Pareto probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgpdrnd.html" class="code" title=" r = wgpdrnd(k,s,m0,varargin);">wgpdrnd</a></li></TD>
+<TD> Random matrices from a Generalized Pareto Distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wgpdstat.html" class="code" title=" [m,v]= wgpdstat(k,s,m0);">wgpdstat</a></li></TD>
+<TD> Mean and variance for the Generalized Pareto distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbcdf.html" class="code" title=" F = wgumbcdf(x,a,b,trunc)">wgumbcdf</a></li></TD>
+<TD> Gumbel cumulative distribution function.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbinv.html" class="code" title=" x = wgumbinv(F,a,b,trunc)">wgumbinv</a></li></TD>
+<TD> Inverse of the Gumbel distribution function.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbpdf.html" class="code" title=" f = wgumbpdf(x,a,b,trunc)">wgumbpdf</a></li></TD>
+<TD> Gumbel probability density function.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbrnd.html" class="code" title=" R = wgumbrnd(a,b,trunc, varargin)">wgumbrnd</a></li></TD>
+<TD> Random matrices from a Gumbel distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbstat.html" class="code" title=" [m,v]= wgumbstat(a,b,trunc);">wgumbstat</a></li></TD>
+<TD> Mean and variance for the Gumbel distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="winvgcdf.html" class="code" title=" F = winvgcdf(x,m,l);">winvgcdf</a></li></TD>
+<TD> Inverse Gaussian cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="winvginv.html" class="code" title=" x = winvginv(F,m,l)">winvginv</a></li></TD>
+<TD> Inverse of the Inverse Gaussian distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="winvgpdf.html" class="code" title=" f = winvgpdf(x,m,l);">winvgpdf</a></li></TD>
+<TD> Inverse Gaussian probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="winvgrnd.html" class="code" title=" R = winvgrnd(m0,l,varargin);">winvgrnd</a></li></TD>
+<TD> Random matrices from a Inverse Gaussian distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="winvgstat.html" class="code" title=" [m,v]= winvgstat(m0,l0);">winvgstat</a></li></TD>
+<TD> Mean and variance for the Inverse Gaussian distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wlogncdf.html" class="code" title=" F = wlogncdf(x,m,v);">wlogncdf</a></li></TD>
+<TD> Lognormal cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wlogninv.html" class="code" title=" x = wlogninv(F,m,v)">wlogninv</a></li></TD>
+<TD> Inverse of the Lognormal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wlognpdf.html" class="code" title=" f = wlognpdf(x,m,v);">wlognpdf</a></li></TD>
+<TD> Lognormal probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wlognrnd.html" class="code" title=" R = wlognrnd(mu,v,varargin);">wlognrnd</a></li></TD>
+<TD> Random matrices from a Lognormal distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wlognstat.html" class="code" title=" [m,v]= wlognstat(m0,v0);">wlognstat</a></li></TD>
+<TD> Mean and variance for the Lognormal distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wnormcdf.html" class="code" title=" F = wnormcdf(x,m,v);">wnormcdf</a></li></TD>
+<TD> Normal cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wnormpdf.html" class="code" title=" f = wnormpdf(x,m,v);">wnormpdf</a></li></TD>
+<TD> Normal probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wnormrnd.html" class="code" title=" R = wnormrnd(mu,v,varargin);">wnormrnd</a></li></TD>
+<TD> Random matrices from a Normal distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylcdf.html" class="code" title=" F = wraylcdf(x,b);">wraylcdf</a></li></TD>
+<TD> Rayleigh cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylinv.html" class="code" title=" x = wraylinv(F,b)">wraylinv</a></li></TD>
+<TD> Inverse of the Rayleigh distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylpdf.html" class="code" title=" f = wraylpdf(x,b);">wraylpdf</a></li></TD>
+<TD> Rayleigh probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylrnd.html" class="code" title=" R = wraylrnd(b,varargin);">wraylrnd</a></li></TD>
+<TD> Random matrices from a Rayleigh distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wtcdf.html" class="code" title=" F = wtcdf(x,df)">wtcdf</a></li></TD>
+<TD>  Student's T  cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wtinv.html" class="code" title=" x = wtinv(F,df)">wtinv</a></li></TD>
+<TD> Inverse of the Student's T distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wtpdf.html" class="code" title=" f = wtpdf(x,df,disable)">wtpdf</a></li></TD>
+<TD>  Student's T probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wtraylcdf.html" class="code" title=" F = wraylcdf(x,b,c,a);">wtraylcdf</a></li></TD>
+<TD> Truncated Rayleigh cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wtraylpdf.html" class="code" title=" f = wraylpdf(x,b,c);">wtraylpdf</a></li></TD>
+<TD> Truncated Rayleigh probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wtrnd.html" class="code" title=" R = rt(df,varargin)">wtrnd</a></li></TD>
+<TD>  Random matrices from a Student's T distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="wtweibcdf.html" class="code" title=" F = wtweibcdf(x,a,b,c)">wtweibcdf</a></li></TD>
+<TD> Truncated Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wtweibpdf.html" class="code" title=" f = wtweibpdf(x,a,b,c)">wtweibpdf</a></li></TD>
+<TD> Truncated Weibull probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibcdf.html" class="code" title=" F = wweibcdf(x,a,c)">wweibcdf</a></li></TD>
+<TD> Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibinv.html" class="code" title=" x = wweibinv(F,a,c)">wweibinv</a></li></TD>
+<TD> Inverse of the Weibull distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibpdf.html" class="code" title=" f = wweibpdf(x,a,c)">wweibpdf</a></li></TD>
+<TD> Weibull probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibrnd.html" class="code" title=" R = wweibrnd(a,c,varargin)">wweibrnd</a></li></TD>
+<TD> Random matrices a the Weibull distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibstat.html" class="code" title=" [m,v]= wweibstat(a,c);">wweibstat</a></li></TD>
+<TD> Mean and variance for the Weibull  distribution.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [errorcode,varargout] = <a name="_sub0" href="#_subfunctions" class="code">comnsize</a>(varargin)
+002 <span class="comment">% COMNSIZE Check if all input arguments are either scalar or of common size.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [errorcode,y1,y2,...,yN] = comnsize(x1,x2,...,xN);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%  errorcode = 0 , if all xi are either scalar or of common size.</span>
+007 <span class="comment">%              1 , if the non-scalar xi do not match in size.</span>
+008 <span class="comment">%  y1,...,yN = Same as x1,...,xN, except that scalars are transformed to</span>
+009 <span class="comment">%              a constant matrix with same size as the other inputs.</span>
+010 <span class="comment">%  x1,...,xN = Input arguments.</span>
+011 <span class="comment">%</span>
+012 <span class="comment">%  COMNSIZE makes sure that the output arguments are of common size.</span>
+013 <span class="comment">%  This is useful for implementing functions where arguments can either</span>
+014 <span class="comment">%  be scalars or of common size. </span>
+015 <span class="comment">%</span>
+016 <span class="comment">%  NOTE:  If the errorcode is 1, then yi = xi.</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% Examples: </span>
+019 <span class="comment">%   A = rand(4,5);B = 2;C = rand(4,5);</span>
+020 <span class="comment">%   [ec,A1,B1,C1] = comnsize(A,B,C);</span>
+021 <span class="comment">%   ec2 = comnsize(A,1:2);</span>
+022 
+023 <span class="comment">% Tested on: matlab 5.3</span>
+024 <span class="comment">% History:</span>
+025 <span class="comment">% revised pab 23.10.2000</span>
+026 <span class="comment">%  - New name comnsize</span>
+027 <span class="comment">%  - the input arguments can have a any dimension.</span>
+028 <span class="comment">%  - Updated documentation</span>
+029 <span class="comment">%  - Vectorized the calculations a bit more.</span>
+030 <span class="comment">% Based on common_size.m by</span>
+031 <span class="comment">%  KH &lt;Kurt.Hornik@ci.tuwien.ac.at&gt; Created: 15 October 1994</span>
+032 
+033 
+034 Np   = nargin;
+035 Nout = max(nargout-1,0);
+036 <span class="keyword">if</span> Nout&gt;Np, 
+037   error(<span class="string">'The number of output arguments is too large.'</span>)
+038 <span class="keyword">end</span>
+039 
+040 Ns =2;
+041 sz = zeros(Np,Ns);
+042 <span class="keyword">for</span> ix = 1:Np,
+043   tmp = size (varargin{ix});
+044   Nt=length(tmp);
+045   <span class="keyword">if</span> Nt&gt;Ns,sz=[sz,ones(Np,Nt-Ns)];Ns=Nt; <span class="keyword">end</span> <span class="comment">% Add singleton dimensions</span>
+046   sz(ix,1:Nt)=tmp;
+047 <span class="keyword">end</span>
+048 
+049 csiz     = max(sz,[],1);        <span class="comment">% find common size</span>
+050 
+051 <span class="comment">% Check that non-scalar arguments match in size</span>
+052 <span class="comment">% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+053 errorcode = (any (any ((sz ~= 1)') &amp; any ((sz ~= csiz(ones(Np, 1),:))')));
+054 
+055 <span class="keyword">if</span> Nout==0,<span class="keyword">return</span>;<span class="keyword">end</span>
+056 
+057 isscalar = (prod(sz,2)==1)'; <span class="comment">% find  mask to scalars</span>
+058 isscalar2 = isscalar(1:Nout); <span class="comment">% Mask to those in output </span>
+059 ind  = find(isscalar2);  <span class="comment">% indices to scalar arguments</span>
+060 <span class="keyword">if</span> (errorcode|all(isscalar)|isempty(ind)),
+061   varargout(1:Nout) = varargin(1:Nout);
+062 <span class="keyword">else</span>  
+063   ind0 = find(~isscalar2); <span class="comment">% indices to non-scalar arguments</span>
+064   <span class="keyword">if</span> any(ind0),
+065     varargout(ind0) = varargin(ind0);
+066   <span class="keyword">end</span>
+067   <span class="comment">% Make sure the scalar arguments are of size csiz</span>
+068   <span class="keyword">for</span> ix = ind,
+069     varargout{ix} = varargin{ix}(ones(csiz));
+070   <span class="keyword">end</span>
+071 <span class="keyword">end</span>
+072 <span class="keyword">return</span>
+073 
+074 
+075 
+076 
+077 
+078 
+079 
+080 
+081 
+082 
+083 
+084 
+085 
+086 
+087</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

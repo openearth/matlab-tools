@@ -1,0 +1,461 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of thsspdf</title>
+  <meta name="keywords" content="thsspdf">
+  <meta name="description" content=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; thsspdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>thsspdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [f,Hrms,Vrms,fA,fB] = thsspdf(Hd,Scf,Hm0,Tp,normalizedInput,condon) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="thsspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">THSSPDF</a> Joint (Scf,Hd) PDF for linear waves in space with <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectra. 
+  
+   CALL: f = <a href="thsspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">thsspdf</a>(Hd,Scf,Hm0,Tp) 
+   
+   f   = pdf  
+   Hd  = zero down crossing wave height 
+   Scf = crest front steepness 
+   Hm0 = significant wave height [m] 
+   Tp  = Spectral peak period    [s] 
+  
+  <a href="thsspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">THSSPDF</a> approximates the joint distribution of (Scf, Hd), i.e., crest 
+  front steepness (Ac/Lcf) and wave height in space, for a Gaussian 
+  process with a <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectral density. The empirical parameters 
+  of the model is fitted by least squares to simulated (Scf,Hd) data for 
+  600 classes of Hm0 and Tp. Between 100000 and 1000000 zero-downcrossing 
+  waves were simulated for each class of Hm0 and Tp. 
+  <a href="thsspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">THSSPDF</a> is restricted to the following <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> for Hm0 and Tp:  
+   0.5 &lt; Hm0 [m] &lt; 12,  3.5 &lt; Tp [s] &lt; 20,  and  Hm0 &lt; (Tp-2)*12/11. 
+  
+  Example: 
+  Hm0 = 6;Tp = 8; 
+  h = linspace(0,4*Hm0/sqrt(2));  
+  v = linspace(0,6*1.25*Hm0/Tp^2); 
+  [V,H] = meshgrid(v,h);   
+  f = <a href="thsspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. ">thsspdf</a>(H,V,Hm0,Tp); 
+  contourf(v,h,f)   
+    
+  w = linspace(0,10,2*1024+1).';  
+  S = <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>(w,[Hm0 Tp]); 
+  Sk = <a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(<a href="../../wafo/spec/specinterp.html" class="code" title=" Interpolation and zero-padding of spectrum">specinterp</a>(S,.55),'k1d'); 
+  dk = 1; 
+  x = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(Sk,80000,dk); rate = 8; 
+  [vi,hi] = <a href="../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(x,rate,1); 
+  fk = <a href="../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>([vi,hi],'epan',[],[],.5,128); 
+  fk.title = f.title; fk.labx = f.labx;  
+  plot(vi,hi,'.'), hold on 
+  <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f) 
+  <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fk,'r'), hold off 
+  
+  See also  <a href="thvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra. ">thvpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/range.html" class="code" title=" y = range(x)">range</a></li></TD>
+<TD>  Calculates the difference between the maximum and minimum values.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/smooth.html" class="code" title=" [yy,coefs]= smooth(x,y,p,xx,LinExtrap,d2)">smooth</a></li></TD>
+<TD> Calculates a smoothing spline.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wgamcdf.html" class="code" title=" F = wgamcdf(x,a,b);">wgamcdf</a></li></TD>
+<TD> Gamma cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wgampdf.html" class="code" title=" f = wgampdf(x,a,b);">wgampdf</a></li></TD>
+<TD> Gamma probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wggampdf.html" class="code" title=" f = wggampdf(x,a,b,c);">wggampdf</a></li></TD>
+<TD> Generalized Gamma probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" f = wtweibpdf(x,a,b,c)">wtweibpdf</a></li></TD>
+<TD> Truncated Weibull probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp2.m">interp2</a></li></TD>
+<TD>       2-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp3.m">interp3</a></li></TD>
+<TD>       3-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@opaque\unique.m">unique</a></li></TD>
+<TD>        Set unique.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="thsspdf2.html" class="code" title=" [f,varargout] = thsspdf2(Hd,Scf,Hm0,Tp,normalizedInput)">thsspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [f,Hrms,Vrms,fA,fB] = <a name="_sub0" href="#_subfunctions" class="code">thsspdf</a>(Hd,Scf,Hm0,Tp,normalizedInput,condon) 
+002 <span class="comment">%THSSPDF Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: f = thsspdf(Hd,Scf,Hm0,Tp) </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%  f   = pdf  </span>
+007 <span class="comment">%  Hd  = zero down crossing wave height </span>
+008 <span class="comment">%  Scf = crest front steepness </span>
+009 <span class="comment">%  Hm0 = significant wave height [m] </span>
+010 <span class="comment">%  Tp  = Spectral peak period    [s] </span>
+011 <span class="comment">% </span>
+012 <span class="comment">% THSSPDF approximates the joint distribution of (Scf, Hd), i.e., crest </span>
+013 <span class="comment">% front steepness (Ac/Lcf) and wave height in space, for a Gaussian </span>
+014 <span class="comment">% process with a Torsethaugen spectral density. The empirical parameters </span>
+015 <span class="comment">% of the model is fitted by least squares to simulated (Scf,Hd) data for </span>
+016 <span class="comment">% 600 classes of Hm0 and Tp. Between 100000 and 1000000 zero-downcrossing </span>
+017 <span class="comment">% waves were simulated for each class of Hm0 and Tp. </span>
+018 <span class="comment">% THSSPDF is restricted to the following range for Hm0 and Tp:  </span>
+019 <span class="comment">%  0.5 &lt; Hm0 [m] &lt; 12,  3.5 &lt; Tp [s] &lt; 20,  and  Hm0 &lt; (Tp-2)*12/11. </span>
+020 <span class="comment">% </span>
+021 <span class="comment">% Example: </span>
+022 <span class="comment">% Hm0 = 6;Tp = 8; </span>
+023 <span class="comment">% h = linspace(0,4*Hm0/sqrt(2));  </span>
+024 <span class="comment">% v = linspace(0,6*1.25*Hm0/Tp^2); </span>
+025 <span class="comment">% [V,H] = meshgrid(v,h);   </span>
+026 <span class="comment">% f = thsspdf(H,V,Hm0,Tp); </span>
+027 <span class="comment">% contourf(v,h,f)   </span>
+028 <span class="comment">%   </span>
+029 <span class="comment">% w = linspace(0,10,2*1024+1).';  </span>
+030 <span class="comment">% S = torsethaugen(w,[Hm0 Tp]); </span>
+031 <span class="comment">% Sk = spec2spec(specinterp(S,.55),'k1d'); </span>
+032 <span class="comment">% dk = 1; </span>
+033 <span class="comment">% x = spec2sdat(Sk,80000,dk); rate = 8; </span>
+034 <span class="comment">% [vi,hi] = dat2steep(x,rate,1); </span>
+035 <span class="comment">% fk = kdebin([vi,hi],'epan',[],[],.5,128); </span>
+036 <span class="comment">% fk.title = f.title; fk.labx = f.labx;  </span>
+037 <span class="comment">% plot(vi,hi,'.'), hold on </span>
+038 <span class="comment">% pdfplot(f) </span>
+039 <span class="comment">% pdfplot(fk,'r'), hold off </span>
+040 <span class="comment">% </span>
+041 <span class="comment">% See also  thvpdf </span>
+042  
+043    
+044 <span class="comment">% Reference   </span>
+045 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+046 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+047 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+048 <span class="comment">% Trondheim, Norway.   </span>
+049    
+050 <span class="comment">% History </span>
+051 <span class="comment">% revised pab 09.08.2003   </span>
+052 <span class="comment">% By pab 20.12.2000 </span>
+053  
+054 error(nargchk(3,6,nargin)) 
+055 <span class="keyword">if</span> (nargin &lt; 6|isempty(condon)),  condon  = 0;<span class="keyword">end</span> 
+056 <span class="keyword">if</span> (nargin &lt; 5|isempty(normalizedInput)),  normalizedInput  = 0;<span class="keyword">end</span> 
+057 <span class="keyword">if</span> (nargin &lt; 4|isempty(Tp)),  Tp  = 8;<span class="keyword">end</span> 
+058 <span class="keyword">if</span> (nargin &lt; 3|isempty(Hm0)), Hm0 = 6;<span class="keyword">end</span> 
+059  
+060  
+061 multipleSeaStates = any(prod(size(Hm0))&gt;1|prod(size(Tp))&gt;1); 
+062 <span class="keyword">if</span> multipleSeaStates 
+063   [errorcode, Scf,Hd,Hm0,Tp] = comnsize(Scf,Hd,Hm0,Tp); 
+064 <span class="keyword">else</span> 
+065   [errorcode, Scf,Hd] = comnsize(Scf,Hd); 
+066 <span class="keyword">end</span> 
+067 <span class="keyword">if</span> errorcode &gt; 0, 
+068   error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+069 <span class="keyword">end</span> 
+070 displayWarning = 0; 
+071 <span class="keyword">if</span> displayWarning, 
+072   <span class="keyword">if</span> any(Hm0&gt;11| Hm0&gt;(Tp-2)*12/11)  
+073     disp(<span class="string">'Warning: Hm0 is outside the valid range'</span>) 
+074     disp(<span class="string">'The validity of the Joint (Hd,Scf) distribution in space is questionable'</span>) 
+075   <span class="keyword">end</span> 
+076   <span class="keyword">if</span> any(Tp&gt;20|Tp&lt;3 ) 
+077     disp(<span class="string">'Warning: Tp is outside the valid range'</span>) 
+078     disp(<span class="string">'The validity of the Joint (Hd,Scf) distribution in space is questionable'</span>) 
+079   <span class="keyword">end</span> 
+080 <span class="keyword">end</span> 
+081 useWeibull = 1; 
+082 <span class="keyword">if</span> useWeibull 
+083   <span class="keyword">global</span> THSSPARW 
+084   <span class="keyword">if</span> isempty(THSSPARW) 
+085     THSSPARW = load(<span class="string">'thsspar27-Jul-2004.mat'</span>); 
+086   <span class="keyword">end</span> 
+087  
+088   <span class="comment">% Gamma distribution parameters as a function of Tp Hm0 and h2 </span>
+089   A11 = THSSPARW.A11s; 
+090   B11 = THSSPARW.B11s; 
+091    
+092   <span class="comment">% Truncated weibull distribution parameters as a function of Tp and Hm0  </span>
+093   A00 = THSSPARW.A00s; 
+094   B00 = THSSPARW.B00s; 
+095   C00 = THSSPARW.C00s; 
+096  
+097   Tpp  = THSSPARW.Tp; 
+098   Hm00 = THSSPARW.Hm0; 
+099   h2   = THSSPARW.h2(:); 
+100   Tm020 = THSSPARW.Tm02; 
+101 <span class="keyword">else</span> 
+102   <span class="keyword">global</span> THSSPARG 
+103   <span class="keyword">if</span> isempty(THSSPARG) 
+104     THSSPARG = load(<span class="string">'thsspar.mat'</span>); 
+105   <span class="keyword">end</span> 
+106  
+107   <span class="comment">% Gamma distribution parameters as a function of Tp Hm0 and h2 </span>
+108   A11 = THSSPARG.A11s; 
+109   B11 = THSSPARG.B11s; 
+110    
+111   <span class="comment">% Generalized gamma  distribution parameters as a function of Tp and Hm0  </span>
+112   A00 = THSSPARG.A00s; 
+113   B00 = THSSPARG.B00s; 
+114   C00 = THSSPARG.C00s; 
+115  
+116   Tpp  = THSSPARG.Tp; 
+117   Hm00 = THSSPARG.Hm0; 
+118   h2   = THSSPARG.h2; 
+119   Tm020 = THSSPARG.Tm02; 
+120 <span class="keyword">end</span> 
+121 <span class="keyword">if</span> normalizedInput, 
+122   Hrms = 1; 
+123   Vrms = 1; 
+124 <span class="keyword">else</span> 
+125   method = <span class="string">'cubic'</span>; 
+126   [Tp1,Hs1] = meshgrid(Tpp,Hm00); 
+127   Tm02 = interp2(Tp1,Hs1,Tm020,Tp,Hm0,method); 
+128   <span class="comment">%w    = linspace(0,10,2*1024+1).';  </span>
+129   <span class="comment">%S = spec2spec(specinterp(torsethaugen(w,[Hm0,Tp]),.55),'k1d'); </span>
+130   <span class="comment">%ch   = spec2char(S,{'Tm02'}) </span>
+131   <span class="comment">%Tm02 = ch(1); </span>
+132   Hrms = Hm0/sqrt(2); 
+133   Vrms = 2*Hm0./Tm02; <span class="comment">% Srms </span>
+134 <span class="keyword">end</span> 
+135  
+136 <span class="comment">%Hrms = Hm0/sqrt(2); </span>
+137 <span class="comment">%<span class="comment">%w    = linspace(0,100,16*1024+1).'; <span class="comment">% torsethaugen original spacing </span></span></span>
+138 <span class="comment">%w    = linspace(0,10,2*1024+1).';  </span>
+139 <span class="comment">%S = spec2spec(specinterp(torsethaugen(w,[Hm0,Tp]),.55),'k1d'); </span>
+140  
+141 <span class="comment">%ch   = spec2char(S,{'Tm02'}); </span>
+142 <span class="comment">%Tm02 = ch(1); </span>
+143 <span class="comment">%Vrms = 2*Hm0/Tm02; <span class="comment">% Actually  Srms </span></span>
+144  
+145  
+146 h = Hd./Hrms; 
+147 v = Scf./Vrms; 
+148 cSize = size(h); <span class="comment">% common size </span>
+149  
+150 method = <span class="string">'*cubic'</span>;<span class="comment">% Faster interpolation </span>
+151 <span class="comment">%method ='spline'; </span>
+152  
+153 [E1, H1, H2] = meshgrid(Tpp,Hm00,h2); 
+154 Nh2 = length(h2); 
+155  
+156 <span class="keyword">if</span> multipleSeaStates 
+157   h   = h(:); 
+158   v   = v(:); 
+159   Tp  = Tp(:); 
+160   Hm0 = Hm0(:); 
+161   A1 = zeros(length(h),1); 
+162   B1 = A1; 
+163   [TpHm0,ix,jx] = unique([Tp,Hm0],<span class="string">'rows'</span>); 
+164   numSeaStates = length(ix); 
+165   Tpi = zeros(Nh2,1); 
+166   Hm0i = zeros(Nh2,1); 
+167   <span class="keyword">for</span> iz=1:numSeaStates 
+168     k = find(jx==iz); 
+169     Tpi(:)  = TpHm0(iz,1); 
+170     Hm0i(:) = TpHm0(iz,2); 
+171     A1(k) = exp(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp3(E1,H1,H2,log(A11),Tpi,Hm0i,h2,method),<span class="keyword">...</span> 
+172                1,h(k),1)); 
+173     B1(k) = exp(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp3(E1,H1,H2,log(B11),Tpi,Hm0i,h2,method),<span class="keyword">...</span> 
+174                1,h(k),1)); 
+175   <span class="keyword">end</span> 
+176 <span class="keyword">else</span> 
+177   Tpi  = repmat(Tp,[Nh2,1]); 
+178   Hm0i = repmat(Hm0,[Nh2,1]); 
+179   A1 = exp(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp3(E1,H1,H2,log(A11),Tpi,Hm0i,h2,method),1,h,1)); 
+180   B1 = exp(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp3(E1,H1,H2,log(B11),Tpi,Hm0i,h2,method),1,h,1)); 
+181 <span class="keyword">end</span> 
+182  
+183 [E1, H1] = meshgrid(Tpp,Hm00); 
+184 A0 = interp2(E1,H1,A00,Tp,Hm0,method); 
+185 B0 = interp2(E1,H1,B00,Tp,Hm0,method); 
+186 C0 = interp2(E1,H1,C00,Tp,Hm0,method); 
+187  
+188 <span class="keyword">if</span> useWeibull 
+189   <span class="keyword">switch</span> condon, 
+190    <span class="keyword">case</span> 0, <span class="comment">% regular pdf is returned  </span>
+191     f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h,A0,B0,C0).*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(v,A1,B1); 
+192    <span class="keyword">case</span> 1, <span class="comment">%pdf conditioned on x1 ie. p(x2|x1)  </span>
+193     f = <a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(v,A1,B1); 
+194    <span class="keyword">case</span> 3, <span class="comment">% secret option  used by XXstat: returns x2*p(x2|x1)  </span>
+195     f = v.*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(v,A1,B1); 
+196    <span class="keyword">case</span> 4, <span class="comment">% secret option  used by XXstat: returns x2.^2*p(x2|x1)  </span>
+197     f = v.^2.*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(v,A1,B1); 
+198    <span class="keyword">case</span> 5, <span class="comment">% p(h)*P(V|h) is returned special case used by thscdf </span>
+199     f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h,A0,B0,C0).*<a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(v,A1,B1); 
+200    <span class="keyword">case</span> 6, <span class="comment">% P(V|h) is returned special case used by thscdf </span>
+201     f = <a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(v,A1,B1); 
+202    <span class="keyword">case</span> 7,<span class="comment">% p(h)*(1-P(V|h)) is returned special case used by thscdf </span>
+203     f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h,A0,B0,C0).*(1-<a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(v,A1,B1)); 
+204    <span class="keyword">otherwise</span> error(<span class="string">'unknown option'</span>) 
+205   <span class="keyword">end</span> 
+206 <span class="keyword">else</span> 
+207    
+208   <span class="keyword">switch</span> condon, 
+209    <span class="keyword">case</span> 0, <span class="comment">% regular pdf is returned  </span>
+210     f = <a href="../../wafo/wstats/wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>(h,A0,B0,C0).*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(v,A1,B1); 
+211    <span class="keyword">case</span> 1, <span class="comment">%pdf conditioned on x1 ie. p(x2|x1)  </span>
+212     f = <a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(v,A1,B1); 
+213    <span class="keyword">case</span> 3, <span class="comment">% secret option  used by XXstat: returns x2*p(x2|x1)  </span>
+214     f = v.*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(v,A1,B1); 
+215    <span class="keyword">case</span> 4, <span class="comment">% secret option  used by XXstat: returns x2.^2*p(x2|x1)  </span>
+216     f = v.^2.*<a href="../../wafo/wstats/wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(v,A1,B1); 
+217    <span class="keyword">case</span> 5, <span class="comment">% p(h)*P(V|h) is returned special case used by thscdf </span>
+218     f = <a href="../../wafo/wstats/wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>(h,A0,B0,C0).*<a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(v,A1,B1); 
+219    <span class="keyword">case</span> 6, <span class="comment">% P(V|h) is returned special case used by thscdf </span>
+220     f = <a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(v,A1,B1); 
+221    <span class="keyword">case</span> 7,<span class="comment">% p(h)*(1-P(V|h)) is returned special case used by thscdf </span>
+222     f = <a href="../../wafo/wstats/wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>(h,A0,B0,C0).*(1-<a href="../../wafo/wstats/wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(v,A1,B1)); 
+223    <span class="keyword">otherwise</span> error(<span class="string">'unknown option'</span>) 
+224   <span class="keyword">end</span> 
+225 <span class="keyword">end</span> 
+226 <span class="keyword">if</span> multipleSeaStates 
+227   f = reshape(f,cSize); 
+228 <span class="keyword">end</span> 
+229  
+230 <span class="keyword">if</span> condon~=6 
+231   f = f./Hrms./Vrms; 
+232 <span class="keyword">end</span> 
+233 f(find(isnan(f)|isinf(f) ))=0; 
+234 <span class="keyword">if</span> any(size(f)~=cSize) 
+235   disp(<span class="string">'Wrong size'</span>) 
+236 <span class="keyword">end</span> 
+237  
+238 <span class="keyword">if</span> nargout&gt;3, 
+239   fA      = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2); 
+240   fA.x    = {Tpp,Hm00}; 
+241   fA.labx = {<span class="string">'Tp'</span>, <span class="string">'Hm0'</span>}; 
+242   fA(3)   = fA(1); 
+243   fA(2)   = fA(1); 
+244    
+245   fA(1).f    = A00; 
+246   fA(2).f    = B00; 
+247   fA(3).f    = C00; 
+248    
+249   fA(1).title = <span class="string">'wggampdf parameter A'</span>; 
+250   fA(2).title = <span class="string">'wggampdf parameter B'</span>; 
+251   fA(3).title = <span class="string">'wggampdf parameter C'</span>; 
+252    
+253   txt1 = [<span class="string">'The Wggampdf distribution Parameter '</span>]; 
+254   txt2=[<span class="string">' for wave heigth in space as a function of Tp and Hm0 for'</span> <span class="keyword">...</span> 
+255     <span class="string">' the Torsethaugen spectrum'</span>]; 
+256   fA(1).note =[txt1 <span class="string">'A'</span> txt2]; 
+257   fA(2).note =[txt1 <span class="string">'B'</span> txt2]; 
+258   fA(3).note =[txt1 <span class="string">'C'</span> txt2]; 
+259    
+260   tmp= [A00(:) B00(:) C00(:)]; 
+261   ra = <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(tmp); 
+262   st = round(min(tmp)*100)/100; 
+263   en = max(tmp); 
+264   <span class="keyword">for</span> ix=1:3 
+265     fA(ix).cl   = st(ix):ra(ix)/20:en(ix); 
+266   <span class="keyword">end</span> 
+267 <span class="keyword">end</span> 
+268 <span class="keyword">if</span> nargout&gt;4, 
+269   fB      = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(3); 
+270   fB.x    = {Tpp,Hm00,h2}; 
+271   fB.labx = {<span class="string">'Tp'</span>,<span class="string">'Hm0'</span>, <span class="string">'h'</span>}; 
+272   fB(2) = fB(1); 
+273    
+274   fB(1).f = A11; 
+275   fB(2).f = B11; 
+276    
+277   txt11 = <span class="string">'The conditonal Wgampdf distribution Parameter '</span>; 
+278   txt22 = [<span class="string">' for Scf given h=Hd/Hrms in space as function of Tp'</span> <span class="keyword">...</span> 
+279     <span class="string">' and Hm0 for the Torsethaugen spectrum'</span>]; 
+280   fB(1).title = <span class="string">'wgampdf parameter A'</span>; 
+281   fB(2).title = <span class="string">'wgampdf parameter B'</span>; 
+282    
+283   fB(1).note = [txt11,<span class="string">'A'</span>,txt22]; 
+284   fB(2).note = [txt11,<span class="string">'B'</span>,txt22]; 
+285   <span class="comment">%fB(2).note = ['The conditonal Wggampdf distribution Parameter B(h)/Hrms' ... </span>
+286 <span class="comment">%    'for wave heigth in space as a function of h=Hd/Hrms and eps2 for' ... </span>
+287 <span class="comment">%    'the Torsethaugen spectrum']; </span>
+288  tmp= [A11(:) B11(:)]; 
+289   ra = <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(tmp); 
+290   st = round(min(tmp)*100)/100; 
+291   en = max(tmp); 
+292   <span class="keyword">for</span> ix=1:2 
+293     fB(ix).cl   = st(ix):ra(ix)/20:en(ix); 
+294   <span class="keyword">end</span> 
+295 <span class="keyword">end</span> 
+296 <span class="keyword">return</span> 
+297  
+298  
+299  
+300  
+301  
+302  
+303</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

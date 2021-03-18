@@ -1,0 +1,117 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "10.2449,10.2449";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../../wafo/cycles/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../../wafo/damage/graph.html";
+2;
+}
+ subgraph cluster3 {
+ URL = "../../../wafo/data/graph.html";
+3;
+}
+ subgraph cluster4 {
+ URL = "../../../wafo/kdetools/graph.html";
+4;
+}
+ subgraph cluster5 {
+ URL = "../../../wafo/markov/graph.html";
+5;
+}
+ subgraph cluster6 {
+ URL = "../../../wafo/misc/graph.html";
+6;
+}
+ subgraph cluster7 {
+ URL = "../../../wafo/onedim/graph.html";
+7;
+}
+ subgraph cluster8 {
+ URL = "../../../wafo/spec/graph.html";
+8;
+}
+ subgraph cluster9 {
+ URL = "../../../wafo/trgauss/graph.html";
+9;
+}
+ subgraph cluster10 {
+ URL = "../../../wafo/wavemodels/graph.html";
+10;
+}
+ subgraph cluster11 {
+ URL = "../../../wafo/wsim/graph.html";
+11;
+}
+ subgraph cluster12 {
+ URL = "../../../wafo/wstats/graph.html";
+12;
+}
+ subgraph cluster13 {
+ label = "tutorcom";
+ URL = "index.html";
+13;
+14;
+15;
+16;
+17;
+18;
+}
+  13 -> 1;
+  13 -> 6;
+  13 -> 7;
+  13 -> 8;
+  13 -> 9;
+  13 -> 11;
+  13 -> 12;
+  14 -> 6;
+  14 -> 7;
+  14 -> 8;
+  14 -> 9;
+  14 -> 11;
+  14 -> 12;
+  15 -> 1;
+  15 -> 4;
+  15 -> 6;
+  15 -> 7;
+  15 -> 8;
+  15 -> 9;
+  15 -> 10;
+  15 -> 12;
+  16 -> 1;
+  16 -> 2;
+  16 -> 3;
+  16 -> 5;
+  16 -> 6;
+  16 -> 7;
+  16 -> 8;
+  16 -> 9;
+  16 -> 11;
+  16 -> 12;
+  17 -> 6;
+  17 -> 12;
+
+ 1 [URL="../../../wafo/cycles/graph.html",label="cycles"];
+ 2 [URL="../../../wafo/damage/graph.html",label="damage"];
+ 3 [URL="../../../wafo/data/graph.html",label="data"];
+ 4 [URL="../../../wafo/kdetools/graph.html",label="kdetools"];
+ 5 [URL="../../../wafo/markov/graph.html",label="markov"];
+ 6 [URL="../../../wafo/misc/graph.html",label="misc"];
+ 7 [URL="../../../wafo/onedim/graph.html",label="onedim"];
+ 8 [URL="../../../wafo/spec/graph.html",label="spec"];
+ 9 [URL="../../../wafo/trgauss/graph.html",label="trgauss"];
+ 10 [URL="../../../wafo/wavemodels/graph.html",label="wavemodels"];
+ 11 [URL="../../../wafo/wsim/graph.html",label="wsim"];
+ 12 [URL="../../../wafo/wstats/graph.html",label="wstats"];
+ 13 [URL="Chapter1.html",label="Chapter1"];
+ 14 [URL="Chapter2.html",label="Chapter2"];
+ 15 [URL="Chapter3.html",label="Chapter3"];
+ 16 [URL="Chapter4.html",label="Chapter4"];
+ 17 [URL="Chapter5.html",label="Chapter5"];
+ 18 [URL="Contents.html",label="Contents"];
+}

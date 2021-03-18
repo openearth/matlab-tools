@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of datastructures</title>
+  <meta name="keywords" content="datastructures">
+  <meta name="description" content=" of spectrum, covariance function and density (pdf) in WAFO">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">docs</a> &gt; datastructures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\docs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>datastructures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> of spectrum, covariance function and density (pdf) in WAFO</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">DATASTRUCTURES</a> of spectrum, covariance function and density (pdf) in WAFO
+ 
+  To represent spectra, covariance functions and probability density functions
+  in WAFO, the MATLAB datatype 'structured array' is used. Here follows a list
+  of the fields in the struct representing S, cvf and pdf, respectively.
+ 
+  Spectrum structure
+  ~~~~~~~~~~~~~~~~~~
+   Requisite fields:
+    .type  String: 'freq', 'dir', 'k2d', k1d', 'encdir' or 'enc'.
+    .S     Spectrum values (size=[nf 1] or [np nf]).
+    .w OR .f OR .k Frequency/wave number lag, length nf.
+    .tr    Transformation function (default [] (none)). 
+    .h     Water depth (default inf).
+    .norm  Normalization flag, Logical 1 if S is normalized, 0 if not
+    .note  Memorandum string.
+    .date  Date and time of creation or change.
+   Type-specific fields:
+    .k2    Second dim. wave number lag, if .type='k2d' or 'rotk2d', length np.
+    .theta Angular lags, if .type='dir', 'rotdir' or 'encdir', length np.
+    .v     Ship speed, if .type = 'enc' or 'encdir'.
+    .phi   angle of rotation of the coordinate system
+           (counter-clocwise) e.g. azymuth of a ship.
+ 
+  See also  <a href="../../wafo/spec/createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>, <a href="../../wafo/spec/wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>
+ 
+  Covariance function (cvf) structure
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    .R Covariance function values. Size [ny nx nt], all singleton dim. removed.
+    .x     Lag of first space dimension, length nx.
+    .y     Lag of second space dimension, length ny.
+    .t     Time lag, length nt.
+    .h     Water depth.
+    .tr    Transformation function.
+    .type  'enc', 'rot' or 'none'.
+    .v     Ship speed, if .type='enc'
+    .phi   Rotation of coordinate system, e.g.  direction of ship 
+    .norm  Normalization flag, Logical 1 if autocorrelation, 0 if covariance.
+    .Rx ... .Rtttt   Obvious derivatives of .R.
+    .note  Memorandum string.
+    .date  Date and time of creation or change.
+ 
+  See also  <a href="../../wafo/spec/createcov.html" class="code" title=" Covariance class constructor ">createcov</a>, <a href="../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>, <a href="../../wafo/spec/cov2spec.html" class="code" title=" Computes spectral density given the auto covariance function  ">cov2spec</a>, <a href="../../wafo/onedim/covplot.html" class="code" title=" Plots the auto covariance function (ACF) 1D or 2D. ">covplot</a>
+ 
+  Probability density function (pdf) structure
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Describing a density of n variables:
+    .f     Probability density function values (n-dimensional matrix)
+    .x     Cell array of vectors defining grid for variables (n cells)
+    .labx  Cell array of label strings for the variables (n cells)
+    .title Title string                           
+    .note  Memorandum string.
+ 
+  See also  <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>, <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="datastructures.html" class="code" title="This is a script file.">datastructures</a></li></TD>
+<TD> of spectrum, covariance function and density (pdf) in WAFO</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="datastructures.html" class="code" title="This is a script file.">datastructures</a></li></TD>
+<TD> of spectrum, covariance function and density (pdf) in WAFO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">%DATASTRUCTURES of spectrum, covariance function and density (pdf) in WAFO</span>
+002 <span class="comment">%</span>
+003 <span class="comment">% To represent spectra, covariance functions and probability density functions</span>
+004 <span class="comment">% in WAFO, the MATLAB datatype 'structured array' is used. Here follows a list</span>
+005 <span class="comment">% of the fields in the struct representing S, cvf and pdf, respectively.</span>
+006 <span class="comment">%</span>
+007 <span class="comment">% Spectrum structure</span>
+008 <span class="comment">% ~~~~~~~~~~~~~~~~~~</span>
+009 <span class="comment">%  Requisite fields:</span>
+010 <span class="comment">%   .type  String: 'freq', 'dir', 'k2d', k1d', 'encdir' or 'enc'.</span>
+011 <span class="comment">%   .S     Spectrum values (size=[nf 1] or [np nf]).</span>
+012 <span class="comment">%   .w OR .f OR .k Frequency/wave number lag, length nf.</span>
+013 <span class="comment">%   .tr    Transformation function (default [] (none)). </span>
+014 <span class="comment">%   .h     Water depth (default inf).</span>
+015 <span class="comment">%   .norm  Normalization flag, Logical 1 if S is normalized, 0 if not</span>
+016 <span class="comment">%   .note  Memorandum string.</span>
+017 <span class="comment">%   .date  Date and time of creation or change.</span>
+018 <span class="comment">%  Type-specific fields:</span>
+019 <span class="comment">%   .k2    Second dim. wave number lag, if .type='k2d' or 'rotk2d', length np.</span>
+020 <span class="comment">%   .theta Angular lags, if .type='dir', 'rotdir' or 'encdir', length np.</span>
+021 <span class="comment">%   .v     Ship speed, if .type = 'enc' or 'encdir'.</span>
+022 <span class="comment">%   .phi   angle of rotation of the coordinate system</span>
+023 <span class="comment">%          (counter-clocwise) e.g. azymuth of a ship.</span>
+024 <span class="comment">%</span>
+025 <span class="comment">% See also  createspec, wspecplot</span>
+026 <span class="comment">%</span>
+027 <span class="comment">% Covariance function (cvf) structure</span>
+028 <span class="comment">% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+029 <span class="comment">%   .R Covariance function values. Size [ny nx nt], all singleton dim. removed.</span>
+030 <span class="comment">%   .x     Lag of first space dimension, length nx.</span>
+031 <span class="comment">%   .y     Lag of second space dimension, length ny.</span>
+032 <span class="comment">%   .t     Time lag, length nt.</span>
+033 <span class="comment">%   .h     Water depth.</span>
+034 <span class="comment">%   .tr    Transformation function.</span>
+035 <span class="comment">%   .type  'enc', 'rot' or 'none'.</span>
+036 <span class="comment">%   .v     Ship speed, if .type='enc'</span>
+037 <span class="comment">%   .phi   Rotation of coordinate system, e.g.  direction of ship </span>
+038 <span class="comment">%   .norm  Normalization flag, Logical 1 if autocorrelation, 0 if covariance.</span>
+039 <span class="comment">%   .Rx ... .Rtttt   Obvious derivatives of .R.</span>
+040 <span class="comment">%   .note  Memorandum string.</span>
+041 <span class="comment">%   .date  Date and time of creation or change.</span>
+042 <span class="comment">%</span>
+043 <span class="comment">% See also  createcov, spec2cov, cov2spec, covplot</span>
+044 <span class="comment">%</span>
+045 <span class="comment">% Probability density function (pdf) structure</span>
+046 <span class="comment">% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+047 <span class="comment">% Describing a density of n variables:</span>
+048 <span class="comment">%   .f     Probability density function values (n-dimensional matrix)</span>
+049 <span class="comment">%   .x     Cell array of vectors defining grid for variables (n cells)</span>
+050 <span class="comment">%   .labx  Cell array of label strings for the variables (n cells)</span>
+051 <span class="comment">%   .title Title string                           </span>
+052 <span class="comment">%   .note  Memorandum string.</span>
+053 <span class="comment">%</span>
+054 <span class="comment">% See also  createpdf, pdfplot</span>
+055 
+056 <span class="comment">% History: </span>
+057 <span class="comment">% revised by IR 03.04.2001</span>
+058 <span class="comment">% revised pab 21.01.2000 </span>
+059 <span class="comment">%  - spellchecked the file </span>
+060 <span class="comment">%  - added norm to spec</span>
+061 <span class="comment">%  - changed reference to specplot to wspecplot</span>
+062 <span class="comment">% revised by es 20.10.1999 (cell arrays in pdf-struct)</span>
+063 <span class="comment">%          by es 13.10.1999</span>
+064 more on
+065 help <a href="datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>
+066 more off
+067 
+068</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

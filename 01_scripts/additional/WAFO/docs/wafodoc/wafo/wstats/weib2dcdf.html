@@ -1,0 +1,279 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of weib2dcdf</title>
+  <meta name="keywords" content="weib2dcdf">
+  <meta name="description" content=" Joint 2D Weibull cumulative distribution function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; weib2dcdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>weib2dcdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint 2D Weibull cumulative distribution function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [y ,tol1] = weib2dcdf(x1,x2,param,condon,tol) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="weib2dcdf.html" class="code" title=" Joint 2D Weibull cumulative distribution function   ">WEIB2DCDF</a> Joint 2D Weibull cumulative distribution function   
+  
+   CALL: [F tol]= <a href="weib2dcdf.html" class="code" title=" Joint 2D Weibull cumulative distribution function   ">weib2dcdf</a>(x1,x2,param,condon,rtol) 
+  
+      F    = joint CDF, i.e., Prob(X1&lt;x1 X2&lt;x2) 
+     tol   = estimated absolute tolerance 
+     x1,x2 = coordinates 
+     param = [ A1, B1,A2,B2,C12] the parameters of the distribution 
+    condon = 0 it returns the the regular cdf of X1 and X2 (default) 
+             1 it returns the conditional cdf given X1 
+             2 it returns the conditional cdf given X2 
+      rtol = specified relative tolerance (Default 1e-3)  
+  
+  The size of F is the common size of X1 and X2. 
+  The CDF is defined by its PDF: 
+  
+   f(X1,X2)=B1*B2*xn1^(B1-1)*xn2^(B2-1)/A1/B1/N*... 
+            exp{-[xn1^B1 +xn2^B2 ]/N }*I0(2*C12*xn1^(B1/2)*xn2^(B2/2)/N)  
+    where  
+       N=1-C12^2, xn1=X1/A1,  xn2=X2/A2 and  
+       I0 is the modified  bessel function of zeroth order. 
+  
+   (The marginal distribution of X1 is weibull with parameters A1 and B1)  
+   (The marginal distribution of X2 is weibull with parameters A2 and B2)  
+  
+  Example: 
+    x = linspace(0,6,200); [X1,X2] = meshgrid(x);  
+    phat = [2 2  3 2.5 .8]; 
+    f = <a href="weib2dpdf.html" class="code" title=" 2D Weibull probability density function (pdf).">weib2dpdf</a>(X1,X2,phat); 
+    contour(x,x,f), hold on, 
+    plot( [0  2  2 0 0], [0 0 1 1 0],'g-'), hold off % Mark the region 
+    <a href="weib2dcdf.html" class="code" title=" Joint 2D Weibull cumulative distribution function   ">weib2dcdf</a>(2,1,phat)  % Calculate the probability of marked region 
+   
+  See also  <a href="weib2dpdf.html" class="code" title=" 2D Weibull probability density function (pdf).">weib2dpdf</a>, <a href="wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>, quad2dg, <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/gaussq.html" class="code" title=" [int, tol1,ix]= gaussq(fun,xlow,xhigh,tol,trace,varargin)">gaussq</a></li></TD>
+<TD> Numerically evaluates a integral using a Gauss quadrature.</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dpdf.html" class="code" title=" y = weib2dpdf(x1,x2,a1,b1,a2,b2,c12,condon)">weib2dpdf</a></li></TD>
+<TD> 2D Weibull probability density function (pdf).</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibcdf.html" class="code" title=" F = wweibcdf(x,a,c)">wweibcdf</a></li></TD>
+<TD> Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibstat.html" class="code" title=" [m,v]= wweibstat(a,c);">wweibstat</a></li></TD>
+<TD> Mean and variance for the Weibull  distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\matlab\nit\quad2dg.m">quad2dg</a></li></TD>
+<TD>       usage:  [int tol] = quad2dg('Fun',xlow,xhigh,ylow,yhigh)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="weib2dcdfplot.html" class="code" title=" weib2dcdfplot(V,H,varargin)">weib2dcdfplot</a></li></TD>
+<TD> Plot conditional empirical CDF of X1 given X2=x2</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dcinv.html" class="code" title=" [x, k2]= weib2dcinv(x1,p,a1,b1,a2,b2,c12,tol);">weib2dcinv</a></li></TD>
+<TD> Inverse of the conditional 2D weibull cdf of X2 given X1.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [y ,tol1] = <a name="_sub0" href="#_subfunctions" class="code">weib2dcdf</a>(x1,x2,param,condon,tol) 
+002 <span class="comment">%WEIB2DCDF Joint 2D Weibull cumulative distribution function   </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: [F tol]= weib2dcdf(x1,x2,param,condon,rtol) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%     F    = joint CDF, i.e., Prob(X1&lt;x1 X2&lt;x2) </span>
+007 <span class="comment">%    tol   = estimated absolute tolerance </span>
+008 <span class="comment">%    x1,x2 = coordinates </span>
+009 <span class="comment">%    param = [ A1, B1,A2,B2,C12] the parameters of the distribution </span>
+010 <span class="comment">%   condon = 0 it returns the the regular cdf of X1 and X2 (default) </span>
+011 <span class="comment">%            1 it returns the conditional cdf given X1 </span>
+012 <span class="comment">%            2 it returns the conditional cdf given X2 </span>
+013 <span class="comment">%     rtol = specified relative tolerance (Default 1e-3)  </span>
+014 <span class="comment">% </span>
+015 <span class="comment">% The size of F is the common size of X1 and X2. </span>
+016 <span class="comment">% The CDF is defined by its PDF: </span>
+017 <span class="comment">% </span>
+018 <span class="comment">%  f(X1,X2)=B1*B2*xn1^(B1-1)*xn2^(B2-1)/A1/B1/N*... </span>
+019 <span class="comment">%           exp{-[xn1^B1 +xn2^B2 ]/N }*I0(2*C12*xn1^(B1/2)*xn2^(B2/2)/N)  </span>
+020 <span class="comment">%   where  </span>
+021 <span class="comment">%      N=1-C12^2, xn1=X1/A1,  xn2=X2/A2 and  </span>
+022 <span class="comment">%      I0 is the modified  bessel function of zeroth order. </span>
+023 <span class="comment">% </span>
+024 <span class="comment">%  (The marginal distribution of X1 is weibull with parameters A1 and B1)  </span>
+025 <span class="comment">%  (The marginal distribution of X2 is weibull with parameters A2 and B2)  </span>
+026 <span class="comment">% </span>
+027 <span class="comment">% Example: </span>
+028 <span class="comment">%   x = linspace(0,6,200); [X1,X2] = meshgrid(x);  </span>
+029 <span class="comment">%   phat = [2 2  3 2.5 .8]; </span>
+030 <span class="comment">%   f = weib2dpdf(X1,X2,phat); </span>
+031 <span class="comment">%   contour(x,x,f), hold on, </span>
+032 <span class="comment">%   plot( [0  2  2 0 0], [0 0 1 1 0],'g-'), hold off <span class="comment">% Mark the region </span></span>
+033 <span class="comment">%   weib2dcdf(2,1,phat)  <span class="comment">% Calculate the probability of marked region </span></span>
+034 <span class="comment">%  </span>
+035 <span class="comment">% See also  weib2dpdf, wweibpdf, quad2dg, gaussq </span>
+036  
+037 <span class="comment">% tested on: matlab5.1 </span>
+038 <span class="comment">%history: </span>
+039 <span class="comment">% revised pab Dec2003 </span>
+040 <span class="comment">%  call weibstat -&gt; wweibstat </span>
+041 <span class="comment">% revised pab 29.10.2000 </span>
+042 <span class="comment">% - updated to wstats </span>
+043 <span class="comment">% - added example </span>
+044 <span class="comment">%  Per A. Brodtkorb 17.11.98 </span>
+045  
+046 <span class="comment">% NB! weibpdf must be modified to correspond to </span>
+047 <span class="comment">% pdf=x^(b-1)/a^b*exp(-(x/a)^b)  </span>
+048  
+049  
+050 error(nargchk(3,5,nargin)) 
+051 <span class="keyword">if</span> (nargin &lt;5)| isempty(tol),   tol=1e-3; <span class="keyword">end</span> 
+052 <span class="keyword">if</span> (nargin &lt;4)| isempty(condon),  condon=0;<span class="keyword">end</span> 
+053 <span class="keyword">if</span> nargin &lt; 3,  
+054   error(<span class="string">'Requires 3 input arguments.'</span>);  
+055 <span class="keyword">elseif</span> prod(size((param)))~=5|isempty(param), 
+056    error(<span class="string">'input argument 3 must have 5 entries.'</span>);  
+057 <span class="keyword">else</span> 
+058   a1=param(1);  b1=param(2);  
+059   a2=param(3);  b2=param(4);    c12=param(5);  
+060 <span class="keyword">end</span> 
+061  
+062 [errorcode x1 x2 ] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x1,x2); 
+063 <span class="keyword">if</span>  errorcode &gt; 0 
+064   error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+065 <span class="keyword">end</span> 
+066 y = zeros(size(x1)); 
+067 tol1=y; 
+068  
+069 <span class="keyword">if</span> 0 
+070   <span class="comment">% This is a trick to get the html documentation correct. </span>
+071   k = <a href="weib2dpdf.html" class="code" title=" 2D Weibull probability density function (pdf).">weib2dpdf</a>(1,1,2,3); 
+072 <span class="keyword">end</span> 
+073  
+074 <span class="keyword">switch</span> condon 
+075   <span class="keyword">case</span> 0,<span class="comment">% regular cdf    </span>
+076     k = find( x1 &gt; 0 &amp; x2&gt;0); 
+077     <span class="keyword">if</span> 1,  
+078        <span class="keyword">if</span> any(k),  
+079      [y(k) tol1(k)]= quad2dg(<span class="string">'weib2dpdf'</span>,0,x1(k),0 , x2(k),  tol,a1,b1,a2,b2,c12,condon);   
+080        <span class="keyword">end</span> 
+081         
+082         
+083      <span class="keyword">else<span class="comment"></span>% divide the integral in to several parts this is not correct yet </span>
+084       [m1 v1]=<a href="wweibstat.html" class="code" title=" Mean and variance for the Weibull  distribution.">wweibstat</a>(a1,b1); [m2 v2]=<a href="wweibstat.html" class="code" title=" Mean and variance for the Weibull  distribution.">wweibstat</a>(a2,b2); 
+085        x1s=min(m1,x1); x2s=min(m2,x2); 
+086        <span class="keyword">if</span> any(k) 
+087      [y(k) tol1(k)]=quad2dg(<span class="string">'weib2dpdf'</span>,0,x1s(k),0 , x2s(k),tol/2,param,condon); 
+088        <span class="keyword">end</span> 
+089        k1=find( x1(k)&gt;m1&amp; x2(k)&lt;=m2); 
+090        <span class="keyword">if</span> any(k1), 
+091      [tmp1 tmp2]=quad2dg(<span class="string">'weib2dpdf'</span>,x1s(k(k1)),  x1(k(k1)),0,   x2s(k(k1)), tol/4,param,condon); 
+092      y(k(k1)) =y(k(k1))+tmp1;tol1(k(k1))=tol1(k(k1))+tmp2; 
+093        <span class="keyword">end</span> 
+094        k1=find( x1(k)&lt;=m1&amp; x2(k)&gt;m2); 
+095        <span class="keyword">if</span> any(k1), 
+096      [tmp1 tmp2]=quad2dg(<span class="string">'weib2dpdf'</span>,0,x1s(k(k1)), x2s(k(k1)),   x2(k(k1)),   tol/4,param,condon); 
+097      y(k(k1)) =y(k(k1)) +tmp1;tol1(k(k1))=tol1(k(k1))+tmp2; 
+098        <span class="keyword">end</span> 
+099        k1=find(m1&lt;x1(k)&amp; m2&lt;x2(k)); 
+100        <span class="keyword">if</span> any(k1), 
+101      [tmp1 tmp2]=quad2dg(<span class="string">'weib2dpdf'</span>,x1s(k(k1)),x1(k(k1)), x2s(k(k1)),   x2(k(k1)),   tol/4,param,condon); 
+102      y(k(k)) =y(k(k)) +tmp1;tol1(k(k))=tol1(k(k))+tmp2; 
+103        <span class="keyword">end</span> 
+104      <span class="keyword">end</span> 
+105    <span class="keyword">case</span> 1,<span class="comment">%conditional CDF given x1   </span>
+106      k = find( (x1 &gt; 0) &amp; (x2&gt;0) &amp; (c12(ones(size(x2))) ~=0 )); 
+107      <span class="keyword">if</span> any(k), 
+108        [y(k) tol1(k)]=<a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'weib2dpdf'</span>,0,x2(k),tol,[],x1(k),a2,b2,a1,b1,c12,2);<span class="comment">%param([3:4 1:2 5]),2);    </span>
+109      <span class="keyword">end</span> 
+110      k = find( (x1==0)| (c12(ones(size(x2))) ==0)); 
+111      <span class="keyword">if</span> any(k), 
+112        y(k) =<a href="wweibcdf.html" class="code" title=" Weibull cumulative distribution function">wweibcdf</a>(x2(k),param(3),param(4));  
+113      <span class="keyword">end</span> 
+114      <span class="comment">%for ix=1:length(x1(:)),       </span>
+115      <span class="comment">%[y(ix) tol1(ix)]=quadg('weib2dpdf',0,x2(ix),tol,[],x1(ix),param([3:4 1:2 5]),2);       </span>
+116      <span class="comment">%end </span>
+117    <span class="keyword">case</span> 2,<span class="comment">%conditional CDF given x2   </span>
+118      k = find( (x1 &gt; 0) &amp; (x2&gt;0) &amp; (c12(ones(size(x2))) ~=0)); 
+119      <span class="keyword">if</span> any(k), 
+120        [y(k) tol1(k)]=<a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'weib2dpdf'</span>,0,x1(k),tol,[],x2(k),a1,b1,a2,b2,c12,2);<span class="comment">%param,2);  </span>
+121      <span class="keyword">end</span> 
+122      k = find( (x2==0)| (c12(ones(size(x2))) ==0)); 
+123       <span class="keyword">if</span> any(k), 
+124        y(k) =<a href="wweibcdf.html" class="code" title=" Weibull cumulative distribution function">wweibcdf</a>(x1(k),param(1),param(2));  
+125      <span class="keyword">end</span> 
+126      <span class="comment">%for ix=1:length(x2(:)),  </span>
+127       <span class="comment">% [y(ix) tol1(ix)]=quadg('weib2dpdf',0,x1(ix),tol,[],x2(ix),param,2);       </span>
+128      <span class="comment">%end </span>
+129  <span class="keyword">end</span>     
+130   
+131 <span class="comment">% make sure 0 &lt;= y&lt;=1  </span>
+132 k2=find(y&lt;0); 
+133 <span class="keyword">if</span> any(k2) 
+134   y(k2)=zeros(size(k2)); 
+135 <span class="keyword">end</span> 
+136 k2=find(y&gt;1); 
+137 <span class="keyword">if</span> any(k2) 
+138   y(k2)=ones(size(k2)); 
+139 <span class="keyword">end</span> 
+140 <span class="keyword">if</span> any(isnan(y)), 
+141   disp([<span class="string">'Warning: there are : '</span>, num2str(sum(isnan(y))),<span class="string">' NaNs'</span>]); 
+142 <span class="keyword">end</span> 
+143</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

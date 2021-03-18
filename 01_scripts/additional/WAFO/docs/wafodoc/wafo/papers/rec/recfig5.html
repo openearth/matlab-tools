@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of recfig5</title>
+  <meta name="keywords" content="recfig5">
+  <meta name="description" content=" Transfer function, g, versus the crossing level u">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">rec</a> &gt; recfig5.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\rec&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>recfig5
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Transfer function, g, versus the crossing level u</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> recfig5 </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="recfig5.html" class="code" title=" Transfer function, g, versus the crossing level u">RECFIG5</a> Transfer function, g, versus the crossing level u
+      of the reconstructed time series estimated by smooting (solid)
+      compared with empirical estimate (irregular) and the theoretical 
+      one for a Gaussian process (dash).</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/trgauss/trplot.html" class="code" title=" h=trplot(g,g2,ma,sa)">trplot</a></li></TD>
+<TD> Plots transformation, g, eg. estimated with dat2tr.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/wafostamp.html" class="code" title=" [H,ax]=wafostamp(varargin)">wafostamp</a></li></TD>
+<TD> Prints a caption "made by WAFO" in current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">recfig5</a>
+02 <span class="comment">% RECFIG5 Transfer function, g, versus the crossing level u</span>
+03 <span class="comment">%     of the reconstructed time series estimated by smooting (solid)</span>
+04 <span class="comment">%     compared with empirical estimate (irregular) and the theoretical </span>
+05 <span class="comment">%     one for a Gaussian process (dash).</span>
+06 <span class="comment">% </span>
+07 
+08 <span class="keyword">global</span> RECFIGNUM
+09 <span class="keyword">if</span> isempty(RECFIGNUM)
+10   disp(<span class="string">'You must start recdemo in order to run this script'</span>)
+11   <span class="keyword">return</span>
+12 <span class="keyword">end</span>
+13 <span class="keyword">global</span> xr m0 g g2 
+14 <a href="../../../wafo/trgauss/trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>(g, g2,mean(xr(:,2)),sqrt(m0))
+15 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>(<span class="string">'Figure 5'</span>,<span class="string">'(NR)'</span>)
+16</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

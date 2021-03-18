@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of gaus2dat</title>
+  <meta name="keywords" content="gaus2dat">
+  <meta name="description" content=" Transforms  xx  using the inverse of transformation  g.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; gaus2dat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>gaus2dat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Transforms  xx  using the inverse of transformation  g.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> x = gaus2dat(xx,g) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">GAUS2DAT</a> Transforms  xx  using the inverse of transformation  g.
+ 
+   CALL: x = <a href="gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>(xx,g);
+ 
+         xx = input data with time in first column and values in second.
+         g  = transform function, xx=g(x).
+         x  = invers transformed data, x=G(xx), G=g^(-1).
+ 
+  See also  <a href="dat2gaus.html" class="code" title=" Transforms  x  using the transformation  g.">dat2gaus</a>  and  <a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wavemodels/cav76pdf.html" class="code" title=" f = cav76pdf(t,h,mom,g)">cav76pdf</a></li></TD>
+<TD> Cavanie et al. (1976) approximation of the density  (Tc,Ac)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/lh83pdf.html" class="code" title=" f = lh83pdf(t,h,mom,g)">lh83pdf</a></li></TD>
+<TD> Longuet-Higgins (1983) approximation of the density (Tc,Ac)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/reconstruct.html" class="code" title=" [y,g,g2,test,tobs,mu1o, mu1oStd]=reconstruct(x,inds,Nsim,L,def,varargin)">reconstruct</a></li></TD>
+<TD> reconstruct the spurious/missing points of timeseries</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2AcAt.html" class="code" title=" [f] = spec2AcAt(spec,utc,def,paramtc,paramtt,paramt,h1,h2,nit,speed,bound)">spec2AcAt</a></li></TD>
+<TD>   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2).</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2Acdf.html" class="code" title=" [f] = spec2Acdf(spec,utc,def,paramt,h,nit,speed,bound)">spec2Acdf</a></li></TD>
+<TD>  Evaluates cdf of crests P(Ac<=h) or troughs P(At<=h).</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2cmat.html" class="code" title=" [f, fmm] = spec2cmat(spec,utc,def,paramt,paramu,nit)">spec2cmat</a></li></TD>
+<TD> Joint intensity matrix for cycles (max,min)-, rainflow- and (crest,trough)</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a></li></TD>
+<TD> Calculates joint density of Maximum, minimum and period.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2tccpdf.html" class="code" title=" [f] = spec2tccpdf(spec,utc,def,paramt,h1,h2,nit,speed,bound,plotflag)">spec2tccpdf</a></li></TD>
+<TD> Evaluates densities of wave period Tcc, wave lenght Lcc.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2thpdf.html" class="code" title=" f = spec2thpdf(spec,utc,def,paramt,h,options,plotflag)">spec2thpdf</a></li></TD>
+<TD> Joint density of amplitude and period/wave-length characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2tpdf.html" class="code" title=" [f] = spec2tpdf(spec,utc,def,paramt,h,nit,speed,bound,plotflag)">spec2tpdf</a></li></TD>
+<TD> Evaluates densities for crest-,trough-period, length.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2tpdf2.html" class="code" title=" [f] = spec2tpdf2(spec,utc,def,paramt,varargin)">spec2tpdf2</a></li></TD>
+<TD> Evaluates densities for various wave periods or wave lengths</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/trraylpdf.html" class="code" title=" f=trraylpdf(x,def,gn,utc)">trraylpdf</a></li></TD>
+<TD> Calculates transformed Rayleigh approximation for amplitudes</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> x = <a name="_sub0" href="#_subfunctions" class="code">gaus2dat</a>(xx,g)
+02 <span class="comment">% GAUS2DAT Transforms  xx  using the inverse of transformation  g.</span>
+03 <span class="comment">%</span>
+04 <span class="comment">%  CALL: x = gaus2dat(xx,g);</span>
+05 <span class="comment">%</span>
+06 <span class="comment">%        xx = input data with time in first column and values in second.</span>
+07 <span class="comment">%        g  = transform function, xx=g(x).</span>
+08 <span class="comment">%        x  = invers transformed data, x=G(xx), G=g^(-1).</span>
+09 <span class="comment">%</span>
+10 <span class="comment">% See also  dat2gaus  and  tranproc.</span>
+11 
+12 x=[xx(:,1), <a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(xx(:,2:size(xx,2)),fliplr(g))];
+13</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

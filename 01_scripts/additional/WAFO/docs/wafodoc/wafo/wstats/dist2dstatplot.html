@@ -1,0 +1,348 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dist2dstatplot</title>
+  <meta name="keywords" content="dist2dstatplot">
+  <meta name="description" content=" Computes and plots the conditional mean and standard deviation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; dist2dstatplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dist2dstatplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Computes and plots the conditional mean and standard deviation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [ax11, h11, h22 ]=dist2dstatplot(V,H,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="dist2dstatplot.html" class="code" title=" Computes and plots the conditional mean and standard deviation">DIST2DSTATPLOT</a> Computes and plots the conditional mean and standard deviation
+  
+    CALL: <a href="dist2dstatplot.html" class="code" title=" Computes and plots the conditional mean and standard deviation">dist2dstatplot</a>(x1,x2,phat,condon,res,csm,lin,sym);
+ 
+       x1,x2 = data
+       phat  =  parameter structure array (see <a href="dist2dfit.html" class="code" title=" Parameter estimates for DIST2D data. ">dist2dfit</a>)
+     condon  = 1 mean and standard deviation of X2 given X1
+               2 mean and standard deviation of X1 given X2 (default)
+       res   = resolution (default <a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(x2)/12)
+       csm   = smoothing vector     (default [1 1 1])
+       lin   = extrapolation vector (default [1 1 1])
+       sym   = {s1,s2,s3,s4} cell array of plot symbols for 
+               plotting empirical mean and standard deviation and 
+               theoretical mean and standard deviation, respectively.
+               (default {'bo','rx','b-','r--'})
+ 
+  <a href="dist2dstatplot.html" class="code" title=" Computes and plots the conditional mean and standard deviation">DIST2DSTATPLOT</a> plots the  empirical conditional mean and standard
+  deviation of X1 given X2 or X2 given X1 and optionally compares it with
+  theoretical quantities.
+ 
+  NOTE:  SYM can be given anywhere after X1 and X2.
+ 
+  Example:
+   x1=linspace(0,10)';
+   phat.x={[x1,exp(-0.1*x1)] 2 };
+   phat.dist={'rayl','rayl'};
+   [y1,y2] = <a href="dist2drnd.html" class="code" title="  Random points from a bivariate DIST2D distribution ">dist2drnd</a>(1000,phat);
+   <a href="dist2dstatplot.html" class="code" title=" Computes and plots the conditional mean and standard deviation">dist2dstatplot</a>(y1,y2,phat,2);
+ 
+  See also  <a href="dist2dstat.html" class="code" title="  Mean and variance for the DIST2D distribution">dist2dstat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dstat.html" class="code" title=" [M,V, eps2, a ,b] = dist2dstat(phat,condon,cvar,csm,lin)">dist2dstat</a></li></TD>
+<TD>  Mean and variance for the DIST2D distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="range.html" class="code" title=" y = range(x)">range</a></li></TD>
+<TD>  Calculates the difference between the maximum and minimum values.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\axes.m">axes</a></li></TD>
+<TD>          Create axes in arbitrary positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\iscell.m">iscell</a></li></TD>
+<TD>        True for cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\ishold.m">ishold</a></li></TD>
+<TD>        Return hold state.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\plotyy.m">plotyy</a></li></TD>
+<TD>        Graphs with y tick labels on the left and right.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig9.html" class="code" title=" recfig9">recfig9</a></li></TD>
+<TD> Conditional mean (solid, circle) and standard deviation (dash,cross) of V given H:</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [ax11, h11, h22  ]=<a name="_sub0" href="#_subfunctions" class="code">dist2dstatplot</a>(V,H,varargin) 
+002 <span class="comment">% DIST2DSTATPLOT Computes and plots the conditional mean and standard deviation</span>
+003 <span class="comment">% </span>
+004 <span class="comment">%   CALL: dist2dstatplot(x1,x2,phat,condon,res,csm,lin,sym);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%      x1,x2 = data</span>
+007 <span class="comment">%      phat  =  parameter structure array (see dist2dfit)</span>
+008 <span class="comment">%    condon  = 1 mean and standard deviation of X2 given X1</span>
+009 <span class="comment">%              2 mean and standard deviation of X1 given X2 (default)</span>
+010 <span class="comment">%      res   = resolution (default range(x2)/12)</span>
+011 <span class="comment">%      csm   = smoothing vector     (default [1 1 1])</span>
+012 <span class="comment">%      lin   = extrapolation vector (default [1 1 1])</span>
+013 <span class="comment">%      sym   = {s1,s2,s3,s4} cell array of plot symbols for </span>
+014 <span class="comment">%              plotting empirical mean and standard deviation and </span>
+015 <span class="comment">%              theoretical mean and standard deviation, respectively.</span>
+016 <span class="comment">%              (default {'bo','rx','b-','r--'})</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% DIST2DSTATPLOT plots the  empirical conditional mean and standard</span>
+019 <span class="comment">% deviation of X1 given X2 or X2 given X1 and optionally compares it with</span>
+020 <span class="comment">% theoretical quantities.</span>
+021 <span class="comment">%</span>
+022 <span class="comment">% NOTE:  SYM can be given anywhere after X1 and X2.</span>
+023 <span class="comment">%</span>
+024 <span class="comment">% Example:</span>
+025 <span class="comment">%  x1=linspace(0,10)';</span>
+026 <span class="comment">%  phat.x={[x1,exp(-0.1*x1)] 2 };</span>
+027 <span class="comment">%  phat.dist={'rayl','rayl'};</span>
+028 <span class="comment">%  [y1,y2] = dist2drnd(1000,phat);</span>
+029 <span class="comment">%  dist2dstatplot(y1,y2,phat,2);</span>
+030 <span class="comment">%</span>
+031 <span class="comment">% See also  dist2dstat</span>
+032  
+033 <span class="comment">%tested on: matlab 5.2</span>
+034 <span class="comment">% history:</span>
+035 <span class="comment">% revised pab 03.11.2000</span>
+036 <span class="comment">% - replaced call to var with std(tmp)^2</span>
+037 <span class="comment">% revised pab 22.06.2000</span>
+038 <span class="comment">%  - added varargin</span>
+039 <span class="comment">%  - fixed some bugs for condon ==1</span>
+040 <span class="comment">%  - added sym </span>
+041 <span class="comment">%  - fixed a bug for res.</span>
+042 <span class="comment">%  - updated header for csm and lin</span>
+043 <span class="comment">% by Per A. Brodtkorb 23.11.98</span>
+044 
+045 
+046 <span class="keyword">if</span>  nargin&lt;2,  error(<span class="string">'Two input arguments required'</span>), <span class="keyword">end</span> 
+047 
+048 <span class="comment">% default values</span>
+049 <span class="comment">%~~~~~~~~~~~~~~~</span>
+050 sym = {<span class="string">'bo'</span>,<span class="string">'rx'</span>,<span class="string">'b-'</span>,<span class="string">'r--'</span>}; <span class="comment">% default plot symbols for the empirical</span>
+051                               <span class="comment">% mean and std, and theoretical mean and std,respectively</span>
+052 phat =[];
+053 lin    = [1 1 1]; 
+054 csm    = [1 1 1];
+055 res    = [];
+056 condon = 2; 
+057 
+058 
+059 <span class="keyword">if</span> 1,<span class="comment">%new call</span>
+060   P  = varargin;
+061   Np = length(P);
+062   <span class="keyword">if</span> Np&gt;0
+063     strix = zeros(1,Np);
+064     cellix = strix;
+065     <span class="keyword">for</span> ix=1:Np, <span class="comment">% finding symbol strings or cell array of symbol strings</span>
+066       strix(ix)  = ischar(P{ix});
+067       cellix(ix) = iscell(P{ix});
+068     <span class="keyword">end</span>
+069     k  = find(strix);
+070     k1 = find(cellix);
+071     <span class="keyword">if</span> any(k)
+072       Nk = length(k);
+073       <span class="keyword">if</span> Nk&gt;4,  warning(<span class="string">'More than 4 strings are not allowed'</span>),    <span class="keyword">end</span>
+074       iy = 1;
+075       <span class="keyword">for</span> ix=k      
+076     sym{iy} = P{ix};
+077     iy=iy+1;
+078       <span class="keyword">end</span>
+079       Np = Np-Nk;
+080       P  = {P{find(~strix)}}; <span class="comment">% remove strings from input</span>
+081     <span class="keyword">elseif</span> any(k1) <span class="comment">% cell array of strings</span>
+082       tmp = P{k1};
+083       Nk = length(tmp);
+084       <span class="keyword">if</span> Nk&gt;4,  warning(<span class="string">'More than 4 strings are not allowed'</span>),    <span class="keyword">end</span>
+085       iy = 1;
+086       <span class="keyword">for</span> ix=1:min(Nk,4)
+087     <span class="keyword">if</span> ~isempty(tmp{ix}) &amp; ischar(tmp{ix}), sym{ix}=tmp{ix};<span class="keyword">end</span>
+088       <span class="keyword">end</span>
+089       Np = Np-1;
+090       P  = {P{find(~cellix)}}; <span class="comment">% remove cell array of strings from input</span>
+091     <span class="keyword">end</span>
+092     <span class="keyword">if</span> Np&gt;0 &amp; ~isempty(P{1}), phat   = P{1};<span class="keyword">end</span>
+093     <span class="keyword">if</span> Np&gt;1 &amp; ~isempty(P{2}), condon = P{2};<span class="keyword">end</span>
+094     <span class="keyword">if</span> Np&gt;2 &amp; ~isempty(P{3}), res    = P{3};<span class="keyword">end</span>
+095     <span class="keyword">if</span> Np&gt;3 &amp; ~isempty(P{4}), csm    = P{4};<span class="keyword">end</span>
+096     <span class="keyword">if</span> Np&gt;4 &amp; ~isempty(P{5}), lin    = P{5};<span class="keyword">end</span>
+097   <span class="keyword">end</span>
+098 <span class="keyword">else</span> <span class="comment">% old call</span>
+099   <span class="comment">%function [ax11, h11, h22  ]=dist2dstatplot(V,H,phat,condon ,res,csm,lin)</span>
+100   <span class="keyword">if</span> (nargin&lt;7)|isempty(lin),    lin    = [1 1 1];  <span class="keyword">end</span>
+101   <span class="keyword">if</span> (nargin&lt;6)|isempty(csm),    csm    = [1 1 1];  <span class="keyword">end</span>
+102   <span class="keyword">if</span> (nargin&lt;5)|isempty(res),    res    = <a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(H(:))/12; <span class="keyword">end</span>
+103   <span class="keyword">if</span> (nargin&lt;4)|isempty(condon), condon = 2; <span class="keyword">end</span>
+104 <span class="keyword">end</span>
+105 
+106 <span class="keyword">if</span> isempty(res)
+107   <span class="keyword">if</span> condon==1,    res = <a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(V(:))/12;  <span class="keyword">else</span>    res = <a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(H(:))/12;  <span class="keyword">end</span>
+108 <span class="keyword">end</span>
+109 
+110 
+111 <span class="keyword">if</span> condon==2,
+112   grp=floor(H/res)+1; <span class="comment">% dividing the data into groups </span>
+113   xmax = max(H);
+114   Xc = V;         
+115 <span class="keyword">else</span>
+116   grp=floor(V/res)+1; <span class="comment">% dividing the data into groups </span>
+117   xmax = max(V)
+118   Xc = H;
+119 <span class="keyword">end</span>
+120 
+121 Ngrp  = max(grp);
+122 Nmesh = 40;
+123 h1    = linspace(res/2, (Ngrp-0.5)*res, Ngrp)';
+124 
+125 
+126 
+127 <span class="comment">%cvar=linspace(eps,max(V),Nmesh)';</span>
+128 <span class="keyword">if</span> ~isempty(phat), <span class="comment">% theoretical distribution not given</span>
+129   cvar  = linspace(0, xmax, Nmesh)';
+130   [M1 V1] = <a href="dist2dstat.html" class="code" title="  Mean and variance for the DIST2D distribution">dist2dstat</a>(phat,condon,cvar,csm,lin);
+131 <span class="keyword">end</span>
+132 
+133 m=h1;v=h1;
+134 <span class="keyword">for</span> ix=1:Ngrp,
+135   tmp = Xc(grp==ix);<span class="comment">%find data in group number ix</span>
+136   
+137   <span class="keyword">if</span> length(tmp)&gt;max(4,0),<span class="comment">% if less than 4 observations in the group </span>
+138     m(ix)=mean(tmp); <span class="comment">% mean of data in group ix</span>
+139     v(ix)=std(tmp).^2;  <span class="comment">% variance of data in group ix</span>
+140   <span class="keyword">else</span> 
+141     m(ix)=NaN;
+142     v(ix)=NaN;
+143   <span class="keyword">end</span>
+144 <span class="keyword">end</span>
+145 
+146 <span class="keyword">if</span> 0,
+147   [ax1 h11 h22]=plotyy(h1,m,h1,sqrt(v));
+148   set(ax1(1),<span class="string">'nextplot'</span>,<span class="string">'add'</span> );
+149   set(h11, <span class="string">'LineStyle'</span> , <span class="string">'x'</span>)
+150   axes(ax1(1));
+151   plot(cvar,M1,<span class="string">'-'</span>),
+152   set(ax1(1),<span class="string">'nextplot'</span>,<span class="string">'replace'</span> );
+153   
+154   set(ax1(2),<span class="string">'nextplot'</span>,<span class="string">'add'</span> );
+155   set(h22, <span class="string">'LineStyle'</span> , <span class="string">'o'</span>)
+156   axes(ax1(2));
+157   <span class="comment">%axis([0 inf 0 max(v)])</span>
+158   
+159   plot(cvar,sqrt(V1),<span class="string">'-'</span>), 
+160   set(ax1(2),<span class="string">'nextplot'</span>,<span class="string">'replace'</span> );
+161 <span class="keyword">else</span>
+162   ih = ishold;
+163   plot(h1,m,sym{1},h1,sqrt(v),sym{2});  hold on
+164   
+165   <span class="keyword">if</span> ~isempty(phat),    plot(cvar,M1,sym{3},cvar,sqrt(V1),sym{4}),  <span class="keyword">end</span>
+166   
+167   <span class="keyword">if</span> ~ih, hold off,<span class="keyword">end</span>
+168 <span class="keyword">end</span>
+169 
+170 xlabel([<span class="string">'x'</span> num2str(condon)])
+171 
+172 title(<span class="string">'Conditional mean and standard deviation'</span>)
+173 <span class="keyword">if</span> nargout&gt;0
+174   ax11=ax1;
+175 <span class="keyword">end</span>
+176</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

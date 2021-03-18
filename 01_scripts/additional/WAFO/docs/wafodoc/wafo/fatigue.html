@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of fatigue</title>
+  <meta name="keywords" content="fatigue">
+  <meta name="description" content=" in WAFO (Wave Analysis for Fatigue and Oceanography).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">wafo</a> &gt; fatigue.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>fatigue
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong> in WAFO (Wave Analysis for Fatigue and Oceanography).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">Fatigue</a> in WAFO (Wave Analysis for <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">Fatigue</a> and Oceanography).
+  Version 2.1.1   28-Sep-2005 
+ 
+  Routines for Markov models, cycle counting, damage, and <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">fatigue</a>.
+ 
+ 
+  Cycle counting (Rainflow, min-max cycles) &amp; Crossings. [WAFO/cycles]
+    <a href="../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>      - The turning points from data, optionally rainflowfiltered. [onedim]
+    <a href="../wafo/cycles/dat2rfm.html" class="code" title="  Calculates the rainflow matrix from a time signal. ">dat2rfm</a>     - Calculates the rainflow matrix from a time signal.
+    <a href="../wafo/cycles/rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>   - Rainflow filter turning points.
+    <a href="../wafo/cycles/tp2lc.html" class="code" title="  Calculates the number of upcrossings from the turning points. ">tp2lc</a>       - Level crossings from turning points.
+    <a href="../wafo/cycles/tp2mm.html" class="code" title=" Calculates min2Max and Max2min cycles from a sequence of turning points">tp2mm</a>       - min2Max (and Max2min) cycles from turning points.
+    <a href="../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>      - Rainflow cycles from turning points.
+    <a href="../wafo/cycles/tp2arfc.html" class="code" title=" Calculates asymmetric rainflow cycles from turning points.">tp2arfc</a>     - Asymmetric rainflow cycles from TP.
+    <a href="../wafo/cycles/tp2arfc4p.html" class="code" title=" Calculates asymmetric rainflow cycles from turning points (4-point).">tp2arfc4p</a>   - Asymmetric RFC and residual from TP (used by <a href="../wafo/cycles/tp2arfc.html" class="code" title=" Calculates asymmetric rainflow cycles from turning points.">tp2arfc</a>).
+    <a href="../wafo/cycles/res2arfc.html" class="code" title=" Calculates asymmetric rainflow cycles for a residual.">res2arfc</a>    - Asymmetric rainflow cycles for a residual.
+    <a href="../wafo/cycles/cc2lc.html" class="code" title=" Calculates the number of upcrossings from a cycle count  ">cc2lc</a>       - Level crossings from a cycle count.
+    <a href="../wafo/cycles/cc2amp.html" class="code" title=" Calculates the amplitudes from a cycle count.">cc2amp</a>      - Amplitude histogram from a cycle count.
+    <a href="../wafo/onedim/findrfc.html" class="code" title=" Finds indices to rainflow cycles of a sequence of TP. ">findrfc</a>     - Finds indices to rainflow cycles of a sequence of TP. [onedim]
+    <a href="../wafo/onedim/findcross.html" class="code" title=" Finds indices to level v up and downcrossings of a vector">findcross</a>   - Finds the indices of level v up- and down- crossings of a vector. [onedim]
+ 
+  Discrete loads &amp; Cycle matrices (Rainflow matrix). [WAFO/cycles]
+    <a href="../wafo/cycles/dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>     - Discrete TP from load.
+    <a href="../wafo/cycles/cc2dcc.html" class="code" title=" Discretize a cycle count.">cc2dcc</a>      - Discretization of a cycle count.
+    <a href="../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>     - Rainflow matrix from discrete TP.
+    <a href="../wafo/cycles/dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>    - Asymmetric rainflow matrix from discrete TP.
+    <a href="../wafo/cycles/dtp2arfm4p.html" class="code" title=" Calculates asymmetric RFM from discrete turning points (4-point).">dtp2arfm4p</a>  - Asymmetric RFM and residual from discrete TP (used by <a href="../wafo/cycles/dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>).
+    <a href="../wafo/cycles/dtp2rfm_sid.html" class="code" title="  Rainflow matrix from discrete turning points with side information.">dtp2rfm_sid</a> - RFM from discrete turning points with side information.
+    <a href="../wafo/cycles/dtp2arfm_sid.html" class="code" title="  Asymmetric RFM from discrete TP with side information.">dtp2arfm_sid</a>- Asymmetric RFM from discrete TP with side information.
+    <a href="../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>     - Estimates cycle matrix from a cycle count. 
+    <a href="../wafo/cycles/dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">dcc2cmat</a>    - Histogram matrix from discrete class indices.
+    <a href="../wafo/cycles/cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">cmat2nt</a>     - Counting distribution from cycle matrix.
+    <a href="../wafo/cycles/nt2cmat.html" class="code" title="  Calculates a cycle matrix from a counting distribution.">nt2cmat</a>     - Cycle matrix from counting distribution.
+    <a href="../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>     - Level crossings from cycle matrix.
+    <a href="../wafo/cycles/nt2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">nt2lc</a>       - Level crossings from counting distribution.
+    <a href="../wafo/cycles/cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">cmat2amp</a>    - Amplitude histogram from cycle matrix.
+    <a href="../wafo/cycles/cmat2rmcmat.html" class="code" title="  Converts a cycle matrix from Range-Mean format to min-max format.">cmat2rmcmat</a> - Convert cycle matrix from min-max to <a href="../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>-mean.
+    <a href="../wafo/cycles/rmcmat2cmat.html" class="code" title=" Converts a cycle matrix from Range-Mean format to min-max format.">rmcmat2cmat</a> - Convert cycle matrix from <a href="../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>-mean to min-max.
+    <a href="../wafo/cycles/cmatresamp.html" class="code" title=" Resamples a cycle matrix.">cmatresamp</a>  - Resamples a cycle matrix, random resampling.
+    <a href="../wafo/cycles/cmatcombine.html" class="code" title=" Combines two cycle matrices.">cmatcombine</a> - Combines two cycle matrices.
+ 
+  Extrapolation &amp; Smoothing of RFM/CMAT/LC. [WAFO/cycles]
+    <a href="../wafo/cycles/rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a> - Extrapolates a rainflow matrix.
+    <a href="../wafo/cycles/tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">tpextrapolate</a>  - Extrapolates a sequence of turning points.
+    <a href="../wafo/cycles/cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>   - Extrapolate level crossing spectrum from cycle matrix.
+    <a href="../wafo/cycles/wgpdfit_mld.html" class="code" title=" Parameter estimates for GPD data">wgpdfit_mld</a>    - Routine for ML estimation of GPD with discrete data.
+    <a href="../wafo/cycles/lc2rfmextreme.html" class="code" title=" Compute extreme RFM from level crossings.">lc2rfmextreme</a>  - Compute extreme RFM from level crossings.
+    <a href="../wafo/cycles/extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>        - Extrapolate a level crossing spectrum.
+    <a href="../wafo/cycles/smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>     - <a href="../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">Smooth</a> a cycle matrix.
+ 
+  Plotting. [WAFO/cycles]
+    <a href="../wafo/cycles/ccplot.html" class="code" title=" Plots a cycle count as a point process in the plane.">ccplot</a>      - Plot cycle count.
+    <a href="../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>    - Plot cycle matrix.
+    <a href="../wafo/cycles/cocc.html" class="code" title=" Plots cycles as points together with isolines of a cycle matrix. ">cocc</a>        - Plot a cycle count with cycle matrix isolines.
+    <a href="../wafo/onedim/lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a>      - Plot level crossing intensity/spectrum. [onedim]
+    <a href="../wafo/cycles/lsplot.html" class="code" title="  Plot load spectra. ">lsplot</a>      - Plot load spectra.
+ 
+  Markov model. [WAFO/markov]
+    <a href="../wafo/markov/mat2tmat.html" class="code" title="  Converts a matrix to a transition matrix.">mat2tmat</a>    - Convert matrix to transition matrix.
+    <a href="../wafo/markov/mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>     - Stationary distribution for a Markov chain.
+    <a href="../wafo/markov/mc2rfm.html" class="code" title="  Calculates the rainflow matrix/intensity for a Markov chain.">mc2rfm</a>      - RFM for a Markov chain.
+    <a href="../wafo/markov/mctp2stat.html" class="code" title="  Calculates the stationary distribution for a MCTP. ">mctp2stat</a>   - Stationary distribution for a MCTP.
+    <a href="../wafo/markov/mctp2reverse.html" class="code" title="  Calculates the time-reversed MCTP for a SMCTP.">mctp2reverse</a>- Calculate time-reversed MCTP.
+    <a href="../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>    - RFM for a Markov chain of turning points.
+    <a href="../wafo/markov/mctp2arfm.html" class="code" title="  Calculates asymmetric rainflow matrix for a MCTP.">mctp2arfm</a>   - Asymmetric rainflow matrix for a MCTP.
+    <a href="../wafo/markov/arfm2mctp.html" class="code" title="  Calculates the markov matrix given an asymmetric rainflow matrix. ">arfm2mctp</a>   - Markov matrix given an asymmetric rainflow matrix. 
+    <a href="../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>   - Makes test matrices for min-Max (and Max-min) matrices.
+ 
+  Switching Markov model. [WAFO/markov]
+    <a href="../wafo/markov/smc2rfm.html" class="code" title=" Calculates the rainflow matrix/intensity for a switching Markov chain. ">smc2rfm</a>     - RFM for a Switching Markov chain.
+    <a href="../wafo/markov/smctp2stat.html" class="code" title="  Stationary distributions for a switching MCTP. ">smctp2stat</a>  - Stationary distribution for a SMCTP.
+    <a href="../wafo/markov/smctp2joint.html" class="code" title="  Calculates the joint MCTP for a SMCTP. ">smctp2joint</a> - Calculate joint Markov chain for a SMCTP.
+    <a href="../wafo/markov/smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>   - RFM for a Switching Markov chain of turning points.
+    <a href="../wafo/markov/smctp2arfm.html" class="code" title="  Calculates the asymmetric rainflow matrix for a SMCTP.">smctp2arfm</a>  - Asymmetric rainflow matrix for a SMCTP.
+    <a href="../wafo/markov/hmmplot.html" class="code" title="  plots a Hidden Markov Model.">hmmplot</a>     - Plot Hidden Markov Model (HMM).
+ 
+  Estimate a Switching Markov model. [WAFO/markov]
+    <a href="../wafo/markov/estsmctp.html" class="code" title="  Estimate SMCTP model from an observed rainflow matrix. ">estsmctp</a>    - Estimate SMCTP model from an observed RFM.
+    <a href="../wafo/markov/f_smctp.html" class="code" title="  Auxiliary function used by ESTSMCTP">f_smctp</a>     - Help routine to estsmtp.
+    <a href="../wafo/markov/estmc.html" class="code" title="  estimates transition matrix P from a time series of a Markov chain.">estmc</a>       - Estimate Transition matrix of MC from signal.
+  
+    <a href="../wafo/markov/loglcmat.html" class="code" title="  log-Likelihood of cycle matrix.">loglcmat</a>    - log-Likelihood of cycle matrix.
+    <a href="../wafo/markov/chi2cmat.html" class="code" title="  Chi-square distance of cycle matrix.">chi2cmat</a>    - Chi-square distance of cycle matrix.
+    <a href="../wafo/markov/hdcmat.html" class="code" title="  Hellinger distance of cycle matrix.">hdcmat</a>      - Hellinger distance of cycle matrix.
+    <a href="../wafo/markov/klcmat.html" class="code" title="  Kullback-Leibler distance of cycle matrix.">klcmat</a>      - Kullback-Leibler distance of cycle matrix.
+ 
+    <a href="../wafo/markov/tr_p2x.html" class="code" title="  Transform P-matrix to X-vector">tr_p2x</a>      - Transform P-matrix to X-vector (Used by 'estsmctp')
+    <a href="../wafo/markov/tr_x2p.html" class="code" title="  Transforms a vector X to a transition matrix P.">tr_x2p</a>      - Transform X-vector to P-matrix. (Used by 'estsmctp')
+    <a href="../wafo/markov/tr_m2x.html" class="code" title=" Transform Model-structure to X-vector.">tr_m2x</a>      - Transform Model-structure to X-vector. (Used by 'estsmctp')
+    <a href="../wafo/markov/tr_x2m.html" class="code" title=" Transform X-vector to Model-structure.">tr_x2m</a>      - Transform X-vector to Model-structure. (Used by 'estsmctp')
+    <a href="../wafo/markov/scalemat.html" class="code" title=" Scale and translate a cycle matrix.">scalemat</a>    - Scale and translate a cycle matrix. (Used by 'estsmctp')
+    <a href="../wafo/markov/f_funm.html" class="code" title="  Calculate min-max matrix for Model-structure. ">f_funm</a>      - Calculate min-max matrix for Model-structure. (Used by 'estsmctp')
+ 
+  <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">Fatigue</a> &amp; damage. [WAFO/damage]
+    <a href="../wafo/damage/cc2dam.html" class="code" title="   Calculates the total Palmgren-Miner damage of a cycle count.">cc2dam</a>      - Calculate total damage from a cycle count.
+    <a href="../wafo/damage/cmat2dam.html" class="code" title=" Calculates the total Palmgren-Miner damage of a cycle matrix.">cmat2dam</a>    - Calculate total damage from a cycle matrix.
+    <a href="../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>   - Calculate damage matrix from cycle matrix.
+    <a href="../wafo/damage/lc2dplus.html" class="code" title=" Upper bound for total damage from level crossings.">lc2dplus</a>    - Upper bound for total damage from level crossings.
+    <a href="../wafo/damage/snplot.html" class="code" title=" Plots SN-data and estimates parameters ">snplot</a>      - Plots S-N data and estimates parameters.
+    <a href="../wafo/damage/sphdam.html" class="code" title=" Calculates spherical damage for a 3-D load.">sphdam</a>      - Calculates spherical damage for a 3-D load.
+    <a href="../wafo/damage/ftf.html" class="code" title="  Calculates the fatigue failure time distribution.">ftf</a>         - Calculates <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">fatigue</a> failure time distribution.
+    <a href="../wafo/damage/damint.html" class="code" title=" Calculates damage intensity from counting distribution.">damint</a>      - Calculates damage intensity from counting distribution.
+    <a href="../wafo/damage/down2cc.html" class="code" title=" Calculates the cycle count which has the highest damage ">down2cc</a>     - Calculates the most damaging cycle count given crossings.
+    <a href="../wafo/damage/roadspec.html" class="code" title=" Spectral density (frequency) for a road ">roadspec</a>    - Road spectrum.
+ 
+  Simulation of random loads [WAFO/wsim]
+    <a href="../wafo/wsim/lc2sdat.html" class="code" title=" Simulates process with given irregularity factor and crossing spectrum ">lc2sdat</a>     - Simulates a process with given irregularity factor and crossing spectrum.
+    <a href="../wafo/wsim/rfm2dtp.html" class="code" title="  Reconstructs a sequence of turning points from a rainflow matrix. ">rfm2dtp</a>     - Reconstructs a sequence of turning points from a rainflow matrix. 
+    <a href="../wafo/wsim/mcsim.html" class="code" title="   Simulates a Markov chain.">mcsim</a>       - Simulates a discrete Markov chain
+    <a href="../wafo/wsim/mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>     - Simulates a discrete Markov chain of turning points
+    <a href="../wafo/wsim/smcsim.html" class="code" title="  Simulates a Switching Markov chain with state space.">smcsim</a>      - Simulates a switching Markov chain
+    <a href="../wafo/wsim/smctpsim.html" class="code" title="  Simulates a switching Markov chain of turning points,">smctpsim</a>    - Simulates a switching Markov chain of turning points
+    <a href="../wafo/wsim/sarmasim.html" class="code" title="   Simulates a switching ARMA-process. ">sarmasim</a>    - Simulates a switching AR- or ARMA-process
+ 
+  Demos. [WAFO/wdemos]
+    <a href="../wafo/wdemos/rfcdemo1.html" class="code" title="  Demo for switching AR(1)-processes.  ">rfcdemo1</a>       - Demo for switching AR(1)-processes.
+    <a href="../wafo/wdemos/rfcdemo2.html" class="code" title=" Rainflow matrix for Switching Markov Chains of Turning Points. ">rfcdemo2</a>       - Demo for calculation of the RFM for a switching MCTP model.
+    <a href="../wafo/wdemos/itmkurs.html" class="code" title=" Initiate paths for Demo Load and Fatigue Analysis ">itmkurs</a>        - Initiate paths for Demo Load and <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">Fatigue</a> Analysis. 
+    <a href="../wafo/wdemos/democc.html" class="code" title=" A program for visualization of cycle counts in random ">democc</a>         - Demo of rainflow and min-max cycle definitions.
+    <a href="../wafo/wdemos/democc_markmax.html" class="code" title=" plots load and marks a maximum ">democc_markmax</a> - plots load and marks a maximum. (Used by <a href="../wafo/wdemos/democc.html" class="code" title=" A program for visualization of cycle counts in random ">democc</a>) 
+    <a href="../wafo/wdemos/democc_rfcdef.html" class="code" title=" illustrates the definition of rainflow cycles. ">democc_rfcdef</a>  - illustrates the definition of rainflow cycles. (Used by <a href="../wafo/wdemos/democc.html" class="code" title=" A program for visualization of cycle counts in random ">democc</a>) 
+    <a href="../wafo/wdemos/democc_mmdef.html" class="code" title=" illustrates the definition of min-max cycles. ">democc_mmdef</a>   - illustrates the definition of min-max cycles. (Used by <a href="../wafo/wdemos/democc.html" class="code" title=" A program for visualization of cycle counts in random ">democc</a>) 
+    <a href="../wafo/wdemos/democc_tpdef.html" class="code" title=" illustrates the definition of turning points. ">democc_tpdef</a>   - illustrates the definition of turning points. (Used by <a href="../wafo/wdemos/democc.html" class="code" title=" A program for visualization of cycle counts in random ">democc</a>) 
+    <a href="../wafo/wdemos/democc_plotmat.html" class="code" title=" plots RFC and min-max counts. ">democc_plotmat</a> - plots RFC and min-max counts. (Used by <a href="../wafo/wdemos/democc.html" class="code" title=" A program for visualization of cycle counts in random ">democc</a>)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">% Fatigue in WAFO (Wave Analysis for Fatigue and Oceanography).</span>
+002 <span class="comment">% Version 2.1.1   28-Sep-2005 </span>
+003 <span class="comment">%</span>
+004 <span class="comment">% Routines for Markov models, cycle counting, damage, and fatigue.</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%</span>
+007 <span class="comment">% Cycle counting (Rainflow, min-max cycles) &amp; Crossings. [WAFO/cycles]</span>
+008 <span class="comment">%   dat2tp      - The turning points from data, optionally rainflowfiltered. [onedim]</span>
+009 <span class="comment">%   dat2rfm     - Calculates the rainflow matrix from a time signal.</span>
+010 <span class="comment">%   rfcfilter   - Rainflow filter turning points.</span>
+011 <span class="comment">%   tp2lc       - Level crossings from turning points.</span>
+012 <span class="comment">%   tp2mm       - min2Max (and Max2min) cycles from turning points.</span>
+013 <span class="comment">%   tp2rfc      - Rainflow cycles from turning points.</span>
+014 <span class="comment">%   tp2arfc     - Asymmetric rainflow cycles from TP.</span>
+015 <span class="comment">%   tp2arfc4p   - Asymmetric RFC and residual from TP (used by tp2arfc).</span>
+016 <span class="comment">%   res2arfc    - Asymmetric rainflow cycles for a residual.</span>
+017 <span class="comment">%   cc2lc       - Level crossings from a cycle count.</span>
+018 <span class="comment">%   cc2amp      - Amplitude histogram from a cycle count.</span>
+019 <span class="comment">%   findrfc     - Finds indices to rainflow cycles of a sequence of TP. [onedim]</span>
+020 <span class="comment">%   findcross   - Finds the indices of level v up- and down- crossings of a vector. [onedim]</span>
+021 <span class="comment">%</span>
+022 <span class="comment">% Discrete loads &amp; Cycle matrices (Rainflow matrix). [WAFO/cycles]</span>
+023 <span class="comment">%   dat2dtp     - Discrete TP from load.</span>
+024 <span class="comment">%   cc2dcc      - Discretization of a cycle count.</span>
+025 <span class="comment">%   dtp2rfm     - Rainflow matrix from discrete TP.</span>
+026 <span class="comment">%   dtp2arfm    - Asymmetric rainflow matrix from discrete TP.</span>
+027 <span class="comment">%   dtp2arfm4p  - Asymmetric RFM and residual from discrete TP (used by dtp2arfm).</span>
+028 <span class="comment">%   dtp2rfm_sid - RFM from discrete turning points with side information.</span>
+029 <span class="comment">%   dtp2arfm_sid- Asymmetric RFM from discrete TP with side information.</span>
+030 <span class="comment">%   cc2cmat     - Estimates cycle matrix from a cycle count. </span>
+031 <span class="comment">%   dcc2cmat    - Histogram matrix from discrete class indices.</span>
+032 <span class="comment">%   cmat2nt     - Counting distribution from cycle matrix.</span>
+033 <span class="comment">%   nt2cmat     - Cycle matrix from counting distribution.</span>
+034 <span class="comment">%   cmat2lc     - Level crossings from cycle matrix.</span>
+035 <span class="comment">%   nt2lc       - Level crossings from counting distribution.</span>
+036 <span class="comment">%   cmat2amp    - Amplitude histogram from cycle matrix.</span>
+037 <span class="comment">%   cmat2rmcmat - Convert cycle matrix from min-max to range-mean.</span>
+038 <span class="comment">%   rmcmat2cmat - Convert cycle matrix from range-mean to min-max.</span>
+039 <span class="comment">%   cmatresamp  - Resamples a cycle matrix, random resampling.</span>
+040 <span class="comment">%   cmatcombine - Combines two cycle matrices.</span>
+041 <span class="comment">%</span>
+042 <span class="comment">% Extrapolation &amp; Smoothing of RFM/CMAT/LC. [WAFO/cycles]</span>
+043 <span class="comment">%   rfmextrapolate - Extrapolates a rainflow matrix.</span>
+044 <span class="comment">%   tpextrapolate  - Extrapolates a sequence of turning points.</span>
+045 <span class="comment">%   cmat2extralc   - Extrapolate level crossing spectrum from cycle matrix.</span>
+046 <span class="comment">%   wgpdfit_mld    - Routine for ML estimation of GPD with discrete data.</span>
+047 <span class="comment">%   lc2rfmextreme  - Compute extreme RFM from level crossings.</span>
+048 <span class="comment">%   extralc        - Extrapolate a level crossing spectrum.</span>
+049 <span class="comment">%   smoothcmat     - Smooth a cycle matrix.</span>
+050 <span class="comment">%</span>
+051 <span class="comment">% Plotting. [WAFO/cycles]</span>
+052 <span class="comment">%   ccplot      - Plot cycle count.</span>
+053 <span class="comment">%   cmatplot    - Plot cycle matrix.</span>
+054 <span class="comment">%   cocc        - Plot a cycle count with cycle matrix isolines.</span>
+055 <span class="comment">%   lcplot      - Plot level crossing intensity/spectrum. [onedim]</span>
+056 <span class="comment">%   lsplot      - Plot load spectra.</span>
+057 <span class="comment">%</span>
+058 <span class="comment">% Markov model. [WAFO/markov]</span>
+059 <span class="comment">%   mat2tmat    - Convert matrix to transition matrix.</span>
+060 <span class="comment">%   mc2stat     - Stationary distribution for a Markov chain.</span>
+061 <span class="comment">%   mc2rfm      - RFM for a Markov chain.</span>
+062 <span class="comment">%   mctp2stat   - Stationary distribution for a MCTP.</span>
+063 <span class="comment">%   mctp2reverse- Calculate time-reversed MCTP.</span>
+064 <span class="comment">%   mctp2rfm    - RFM for a Markov chain of turning points.</span>
+065 <span class="comment">%   mctp2arfm   - Asymmetric rainflow matrix for a MCTP.</span>
+066 <span class="comment">%   arfm2mctp   - Markov matrix given an asymmetric rainflow matrix. </span>
+067 <span class="comment">%   mktestmat   - Makes test matrices for min-Max (and Max-min) matrices.</span>
+068 <span class="comment">%</span>
+069 <span class="comment">% Switching Markov model. [WAFO/markov]</span>
+070 <span class="comment">%   smc2rfm     - RFM for a Switching Markov chain.</span>
+071 <span class="comment">%   smctp2stat  - Stationary distribution for a SMCTP.</span>
+072 <span class="comment">%   smctp2joint - Calculate joint Markov chain for a SMCTP.</span>
+073 <span class="comment">%   smctp2rfm   - RFM for a Switching Markov chain of turning points.</span>
+074 <span class="comment">%   smctp2arfm  - Asymmetric rainflow matrix for a SMCTP.</span>
+075 <span class="comment">%   hmmplot     - Plot Hidden Markov Model (HMM).</span>
+076 <span class="comment">%</span>
+077 <span class="comment">% Estimate a Switching Markov model. [WAFO/markov]</span>
+078 <span class="comment">%   estsmctp    - Estimate SMCTP model from an observed RFM.</span>
+079 <span class="comment">%   f_smctp     - Help routine to estsmtp.</span>
+080 <span class="comment">%   estmc       - Estimate Transition matrix of MC from signal.</span>
+081 <span class="comment">% </span>
+082 <span class="comment">%   loglcmat    - log-Likelihood of cycle matrix.</span>
+083 <span class="comment">%   chi2cmat    - Chi-square distance of cycle matrix.</span>
+084 <span class="comment">%   hdcmat      - Hellinger distance of cycle matrix.</span>
+085 <span class="comment">%   klcmat      - Kullback-Leibler distance of cycle matrix.</span>
+086 <span class="comment">%</span>
+087 <span class="comment">%   tr_p2x      - Transform P-matrix to X-vector (Used by 'estsmctp')</span>
+088 <span class="comment">%   tr_x2p      - Transform X-vector to P-matrix. (Used by 'estsmctp')</span>
+089 <span class="comment">%   tr_m2x      - Transform Model-structure to X-vector. (Used by 'estsmctp')</span>
+090 <span class="comment">%   tr_x2m      - Transform X-vector to Model-structure. (Used by 'estsmctp')</span>
+091 <span class="comment">%   scalemat    - Scale and translate a cycle matrix. (Used by 'estsmctp')</span>
+092 <span class="comment">%   f_funm      - Calculate min-max matrix for Model-structure. (Used by 'estsmctp')</span>
+093 <span class="comment">%</span>
+094 <span class="comment">% Fatigue &amp; damage. [WAFO/damage]</span>
+095 <span class="comment">%   cc2dam      - Calculate total damage from a cycle count.</span>
+096 <span class="comment">%   cmat2dam    - Calculate total damage from a cycle matrix.</span>
+097 <span class="comment">%   cmat2dmat   - Calculate damage matrix from cycle matrix.</span>
+098 <span class="comment">%   lc2dplus    - Upper bound for total damage from level crossings.</span>
+099 <span class="comment">%   snplot      - Plots S-N data and estimates parameters.</span>
+100 <span class="comment">%   sphdam      - Calculates spherical damage for a 3-D load.</span>
+101 <span class="comment">%   ftf         - Calculates fatigue failure time distribution.</span>
+102 <span class="comment">%   damint      - Calculates damage intensity from counting distribution.</span>
+103 <span class="comment">%   down2cc     - Calculates the most damaging cycle count given crossings.</span>
+104 <span class="comment">%   roadspec    - Road spectrum.</span>
+105 <span class="comment">%</span>
+106 <span class="comment">% Simulation of random loads [WAFO/wsim]</span>
+107 <span class="comment">%   lc2sdat     - Simulates a process with given irregularity factor and crossing spectrum.</span>
+108 <span class="comment">%   rfm2dtp     - Reconstructs a sequence of turning points from a rainflow matrix. </span>
+109 <span class="comment">%   mcsim       - Simulates a discrete Markov chain</span>
+110 <span class="comment">%   mctpsim     - Simulates a discrete Markov chain of turning points</span>
+111 <span class="comment">%   smcsim      - Simulates a switching Markov chain</span>
+112 <span class="comment">%   smctpsim    - Simulates a switching Markov chain of turning points</span>
+113 <span class="comment">%   sarmasim    - Simulates a switching AR- or ARMA-process</span>
+114 <span class="comment">%</span>
+115 <span class="comment">% Demos. [WAFO/wdemos]</span>
+116 <span class="comment">%   rfcdemo1       - Demo for switching AR(1)-processes.</span>
+117 <span class="comment">%   rfcdemo2       - Demo for calculation of the RFM for a switching MCTP model.</span>
+118 <span class="comment">%   itmkurs        - Initiate paths for Demo Load and Fatigue Analysis. </span>
+119 <span class="comment">%   democc         - Demo of rainflow and min-max cycle definitions.</span>
+120 <span class="comment">%   democc_markmax - plots load and marks a maximum. (Used by democc) </span>
+121 <span class="comment">%   democc_rfcdef  - illustrates the definition of rainflow cycles. (Used by democc) </span>
+122 <span class="comment">%   democc_mmdef   - illustrates the definition of min-max cycles. (Used by democc) </span>
+123 <span class="comment">%   democc_tpdef   - illustrates the definition of turning points. (Used by democc) </span>
+124 <span class="comment">%   democc_plotmat - plots RFC and min-max counts. (Used by democc) </span>
+125 
+126</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dist2dcdfplot</title>
+  <meta name="keywords" content="dist2dcdfplot">
+  <meta name="description" content=" Plot conditional empirical CDF of X1 given X2=x2">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; dist2dcdfplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dist2dcdfplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Plot conditional empirical CDF of X1 given X2=x2</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> dist2dcdfplot(V,H,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="dist2dcdfplot.html" class="code" title=" Plot conditional empirical CDF of X1 given X2=x2">DIST2DCDFPLOT</a> Plot conditional empirical CDF of X1 given X2=x2
+                and optionally compares it with distribution defined
+                by the parameter structure phat.
+   
+   CALL: <a href="dist2dcdfplot.html" class="code" title=" Plot conditional empirical CDF of X1 given X2=x2">dist2dcdfplot</a>(x1,x2,phat,condon,res,plotflag,figdata,sym);
+  
+        x1,x2 = data
+        phat  =  parameter structure array
+      condon  = 1 CDF of X2 given X1
+                2 CDF of X1 given X2 (default)
+        res   = resolution (default <a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(x2)/12)
+     plotflag = 0  no plotting
+                1 plot cdf F(z;z&gt;=c)                  (default)
+                2 plot 1-F(z;z&gt;=c) on a semilog y-scale 
+                3 plot F(z;z&gt;=c) on a log log scale
+      figdata = [rows cols Nfig], gives number of rows, columns of which
+                each figure is divided into and and the total number of figures.
+                (default [3 3 1])
+          sym = {s1,s2} cell array of plot symbols for 
+                plotting empirical and theoretical cdf, respectively.
+                (default {'b.','r--'})
+   
+   <a href="dist2dcdfplot.html" class="code" title=" Plot conditional empirical CDF of X1 given X2=x2">DIST2DCDFPLOT</a> plots the  empirical CDF of X1 given X2 or 
+   X2 given X1 and compares it with theoretical quantities.
+  
+  NOTE:  SYM can be given anywhere after X1 and X2
+  
+  Example:
+   R = <a href="wraylrnd.html" class="code" title=" Random matrices from a Rayleigh distribution">wraylrnd</a>(2,1000,2); x1 = linspace(0,10)';
+   phat.x={[x1,2*ones(size(x1))] 2 }; phat.dist={'rayl','rayl'};
+   <a href="dist2dcdfplot.html" class="code" title=" Plot conditional empirical CDF of X1 given X2=x2">dist2dcdfplot</a>(R(:,1),R(:,2),phat,[],[],2,[3 3 1],{'k-','g-'});
+ 
+   See also  <a href="dist2dcdf.html" class="code" title=" Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2">dist2dcdf</a>, <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cempdistr.html" class="code" title=" [Fz1] = cempdistr(z,varargin)">cempdistr</a></li></TD>
+<TD> Computes and plots the conditional empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a></li></TD>
+<TD> Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2</TD>
+</TR>
+<TR>
+<TD><li><a href="range.html" class="code" title=" y = range(x)">range</a></li></TD>
+<TD>  Calculates the difference between the maximum and minimum values.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\figure.m">figure</a></li></TD>
+<TD>        Create figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gcf.m">gcf</a></li></TD>
+<TD>           Get handle to current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\grid.m">grid</a></li></TD>
+<TD>          Grid lines.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\iscell.m">iscell</a></li></TD>
+<TD>        True for cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\ishold.m">ishold</a></li></TD>
+<TD>        Return hold state.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\square.m">square</a></li></TD>
+<TD>        Square wave generation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recfig13.html" class="code" title=" recfig13">recfig13</a></li></TD>
+<TD> The conditional probability of exceeding V given H: Model (dash); data (dots)</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">dist2dcdfplot</a>(V,H,varargin) 
+002 <span class="comment">% DIST2DCDFPLOT Plot conditional empirical CDF of X1 given X2=x2</span>
+003 <span class="comment">%               and optionally compares it with distribution defined</span>
+004 <span class="comment">%               by the parameter structure phat.</span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%  CALL: dist2dcdfplot(x1,x2,phat,condon,res,plotflag,figdata,sym);</span>
+007 <span class="comment">% </span>
+008 <span class="comment">%       x1,x2 = data</span>
+009 <span class="comment">%       phat  =  parameter structure array</span>
+010 <span class="comment">%     condon  = 1 CDF of X2 given X1</span>
+011 <span class="comment">%               2 CDF of X1 given X2 (default)</span>
+012 <span class="comment">%       res   = resolution (default range(x2)/12)</span>
+013 <span class="comment">%    plotflag = 0  no plotting</span>
+014 <span class="comment">%               1 plot cdf F(z;z&gt;=c)                  (default)</span>
+015 <span class="comment">%               2 plot 1-F(z;z&gt;=c) on a semilog y-scale </span>
+016 <span class="comment">%               3 plot F(z;z&gt;=c) on a log log scale</span>
+017 <span class="comment">%     figdata = [rows cols Nfig], gives number of rows, columns of which</span>
+018 <span class="comment">%               each figure is divided into and and the total number of figures.</span>
+019 <span class="comment">%               (default [3 3 1])</span>
+020 <span class="comment">%         sym = {s1,s2} cell array of plot symbols for </span>
+021 <span class="comment">%               plotting empirical and theoretical cdf, respectively.</span>
+022 <span class="comment">%               (default {'b.','r--'})</span>
+023 <span class="comment">%  </span>
+024 <span class="comment">%  DIST2DCDFPLOT plots the  empirical CDF of X1 given X2 or </span>
+025 <span class="comment">%  X2 given X1 and compares it with theoretical quantities.</span>
+026 <span class="comment">% </span>
+027 <span class="comment">% NOTE:  SYM can be given anywhere after X1 and X2</span>
+028 <span class="comment">% </span>
+029 <span class="comment">% Example:</span>
+030 <span class="comment">%  R = wraylrnd(2,1000,2); x1 = linspace(0,10)';</span>
+031 <span class="comment">%  phat.x={[x1,2*ones(size(x1))] 2 }; phat.dist={'rayl','rayl'};</span>
+032 <span class="comment">%  dist2dcdfplot(R(:,1),R(:,2),phat,[],[],2,[3 3 1],{'k-','g-'});</span>
+033 <span class="comment">%</span>
+034 <span class="comment">%  See also  dist2dcdf, empdistr</span>
+035 
+036 
+037 <span class="comment">%  tested on: matlab 5.2</span>
+038 <span class="comment">% history</span>
+039 <span class="comment">% revised pab 25.10.2000</span>
+040 <span class="comment">%  - updated help header</span>
+041 <span class="comment">% revised pab 23.06.2000</span>
+042 <span class="comment">%  - added sym and changed input to varargin</span>
+043 <span class="comment">% revised pab 08.02.2000</span>
+044 <span class="comment">% -added figdata</span>
+045 <span class="comment">% revised pab 8.11.1999</span>
+046 <span class="comment">%  - updated header info</span>
+047 <span class="comment">%  - changed phat from vector to structure</span>
+048 
+049 
+050 
+051 
+052 
+053 <span class="comment">% default values</span>
+054 <span class="comment">%~~~~~~~~~~~~~~~</span>
+055 sym = {[],[]}; <span class="comment">% default plot symbols for the empirical</span>
+056                               <span class="comment">%  theoretical pdf,respectively</span>
+057 phat =[];
+058 lin    = [1 1 1]; 
+059 csm    = [1 1 1];
+060 res    = [];
+061 condon = 2; 
+062 flag   = 1;
+063 row=3;col=3;Nfig=1;
+064 figdata = [];
+065 ih = ishold; <span class="comment">% save hold state</span>
+066 
+067 
+068 
+069 P  = varargin;
+070 Np = length(P);
+071 <span class="keyword">if</span> Np&gt;0
+072   strix = zeros(1,Np);
+073   cellix = strix;
+074   <span class="keyword">for</span> ix=1:Np, <span class="comment">% finding symbol strings or cell array of symbol strings</span>
+075     strix(ix)  = ischar(P{ix});
+076     cellix(ix) = iscell(P{ix});
+077   <span class="keyword">end</span>
+078   k  = find(strix);
+079   k1 = find(cellix);
+080   <span class="keyword">if</span> any(k)
+081     Nk = length(k);
+082     <span class="keyword">if</span> Nk&gt;2,  warning(<span class="string">'More than 2 strings are not allowed'</span>),    <span class="keyword">end</span>
+083     iy = 1;
+084     <span class="keyword">for</span> ix=k      
+085       sym{iy} = P{ix};
+086       iy=iy+1;
+087     <span class="keyword">end</span>
+088     Np = Np-Nk;
+089     P  = {P{find(~strix)}}; <span class="comment">% remove strings from input</span>
+090   <span class="keyword">elseif</span> any(k1) <span class="comment">% cell array of strings</span>
+091     tmp = P{k1};
+092     Nk = length(tmp);
+093     <span class="keyword">if</span> Nk&gt;2,  warning(<span class="string">'More than 2 strings are not allowed'</span>),    <span class="keyword">end</span>
+094     iy = 1;
+095     <span class="keyword">for</span> ix=1:min(Nk,2)
+096       <span class="keyword">if</span> ~isempty(tmp{ix}) &amp; ischar(tmp{ix}), sym{ix}=tmp{ix};<span class="keyword">end</span>
+097     <span class="keyword">end</span>
+098     Np = Np-1;
+099     P  = {P{find(~cellix)}}; <span class="comment">% remove cell array of strings from input</span>
+100   <span class="keyword">end</span>
+101   <span class="keyword">if</span> Np&gt;0 &amp; ~isempty(P{1}), phat   = P{1};<span class="keyword">end</span>
+102   <span class="keyword">if</span> Np&gt;1 &amp; ~isempty(P{2}), condon = P{2};<span class="keyword">end</span>
+103   <span class="keyword">if</span> Np&gt;2 &amp; ~isempty(P{3}), res    = P{3};<span class="keyword">end</span>
+104   <span class="keyword">if</span> Np&gt;3 &amp; ~isempty(P{4}), flag    = P{4};<span class="keyword">end</span>
+105   <span class="keyword">if</span> Np&gt;4 &amp; ~isempty(P{5}), figdata = P{5};<span class="keyword">end</span>
+106 <span class="keyword">end</span>
+107 
+108 <span class="keyword">if</span> isempty(res)
+109   <span class="keyword">if</span> condon==1,
+110     res=<a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(V(:))/12;
+111   <span class="keyword">else</span>
+112     res=<a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(H(:))/12;
+113   <span class="keyword">end</span>
+114 <span class="keyword">end</span>
+115 
+116 <span class="keyword">if</span> flag&lt;1,  <span class="keyword">return</span>,<span class="keyword">end</span>
+117 
+118 nf=length(figdata);
+119 <span class="keyword">if</span> (nf&gt;0) 
+120   <span class="keyword">if</span> ~isnan(figdata(1)),         row  = figdata(1);<span class="keyword">end</span>
+121   <span class="keyword">if</span> (nf&gt;1) &amp; ~isnan(figdata(2)),col  = figdata(2);<span class="keyword">end</span>
+122   <span class="keyword">if</span> (nf&gt;2) &amp; ~isnan(figdata(3)),Nfig = figdata(3);<span class="keyword">end</span>
+123 <span class="keyword">end</span>
+124 
+125 Nmesh=40;
+126 v1=[];cdfgH=[];
+127 <span class="keyword">if</span> condon==2,
+128   
+129   Xc      = V;
+130   grp     = floor(H/res)+1; <span class="comment">% dividing the data into groups </span>
+131   Ngrp    = max(grp);
+132   h1      = linspace(res/2, (Ngrp-0.5)*res, Ngrp)';
+133   <span class="keyword">if</span> ~isempty(phat)
+134     v1      =linspace(eps,max(V)+<a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(V)/4,Nmesh);
+135     [X1,X2] = meshgrid(v1,h1);
+136     cdfgH   = <a href="dist2dcdf.html" class="code" title=" Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2">dist2dcdf</a>(X1,X2,phat,condon);
+137   <span class="keyword">end</span>
+138   <span class="comment">%max(cdfgH')</span>
+139   <span class="comment">%min(cdfgH')</span>
+140   xmax    = max(V);
+141  
+142 <span class="keyword">else</span>
+143   Xc      = H;
+144   grp     = floor(V/res)+1; <span class="comment">% dividing the data into groups </span>
+145    Ngrp    = max(grp);
+146   h1      = linspace(res/2, (Ngrp-0.5)*res, Ngrp)';
+147   <span class="keyword">if</span> ~isempty(phat)
+148     v1      = linspace(eps,max(H)+<a href="range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(H)/4,Nmesh);
+149     [X1,X2] = meshgrid(v1,h1);
+150     cdfgH   = <a href="dist2dcdf.html" class="code" title=" Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2">dist2dcdf</a>(X2,X1,phat,condon);
+151   <span class="keyword">end</span>
+152   xmax    = max(H);
+153 <span class="keyword">end</span>
+154 
+155 
+156 <span class="comment">%xmax=min(xmax,4);</span>
+157 
+158 fignr    = gcf;
+159 fignrold = fignr;
+160 <span class="comment">%figure(fignr)</span>
+161 
+162 iy=0;
+163 <span class="keyword">for</span> ix=Ngrp:-1:min(grp),
+164   <span class="keyword">if</span> iy==row*col,iy=0; 
+165     fignr=fignr+1;
+166     <span class="keyword">if</span> Nfig&lt;=fignr-fignrold, <span class="keyword">break</span>, <span class="keyword">end</span>
+167     figure(fignr);
+168   <span class="keyword">end</span>
+169   tmp = Xc(grp==ix);<span class="comment">%find data in group number ix</span>
+170   <span class="keyword">if</span> length(tmp)&gt;max(3,0),<span class="comment">% if less than 6 observations in the group </span>
+171     iy=iy+1;
+172     subplot(row,col,iy)
+173     <span class="keyword">if</span> ih, hold on, <span class="keyword">end</span> <span class="comment">% make sure we have hold on for each subplot</span>
+174     <span class="keyword">if</span> ~isempty(phat)
+175       <a href="cempdistr.html" class="code" title=" Computes and plots the conditional empirical CDF ">cempdistr</a>(tmp,0,[v1; cdfgH(ix,:)]',flag,sym)
+176     <span class="keyword">else</span>
+177       <a href="cempdistr.html" class="code" title=" Computes and plots the conditional empirical CDF ">cempdistr</a>(tmp,0,[],flag,sym)
+178     <span class="keyword">end</span>
+179     <span class="comment">%grid on</span>
+180     
+181     axis square
+182     Ns = 2;
+183     <span class="keyword">switch</span>  flag,
+184       <span class="keyword">case</span> 1,
+185     ylabel([<span class="string">'F(x1|x2='</span> num2str(h1(ix),Ns) <span class="string">')'</span>])
+186     xlabel(<span class="string">'x1'</span>)
+187     title(<span class="string">''</span>)
+188     axis([0 ceil(xmax) 0 1])
+189     <span class="comment">% title(['Cumulative density function v given h=' num2str(h1(ix),3) ])</span>
+190       <span class="keyword">case</span> 2,
+191     <span class="comment">%figtext(0.1,0.1,['1-F(v| h=' num2str(h1(ix),Ns)  ')'],'norm');</span>
+192     ylabel([<span class="string">'1-F(x1|x2='</span> num2str(h1(ix),Ns)  <span class="string">')'</span>])
+193     xlabel(<span class="string">'x1'</span>)
+194     grid off
+195     title(<span class="string">''</span>)
+196     axis([0 ceil(xmax) 1e-4 1])
+197     <span class="comment">%  title(['The probability of exceeding v given h=' num2str(h1(ix),3)  ])</span>
+198       <span class="keyword">case</span> 3 ,
+199     ylabel([<span class="string">'-log(-log(F(x1|x2='</span> num2str(h1(ix),Ns)  <span class="string">')))'</span>])
+200     xlabel(<span class="string">'x1'</span>)
+201     title(<span class="string">''</span>)
+202       <span class="keyword">case</span> 4,
+203     ylabel([<span class="string">'(-log(F(x1|x2='</span> num2str(h1(ix),Ns)  <span class="string">')))'</span>])
+204     xlabel(<span class="string">'x1'</span>)
+205     title(<span class="string">''</span>)
+206     <span class="comment">%  title(['T</span>
+207     <span class="keyword">end</span>
+208     
+209     <span class="comment">%if printflag, print -Pmhlaser ; end   <span class="comment">%print -Pmhlaser</span></span>
+210   <span class="keyword">end</span>
+211 <span class="keyword">end</span>
+212 
+213 <span class="keyword">if</span> ~ih, hold off, <span class="keyword">end</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

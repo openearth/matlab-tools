@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mk87pdf2</title>
+  <meta name="keywords" content="mk87pdf2">
+  <meta name="description" content=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; mk87pdf2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mk87pdf2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> p = mk87pdf2(Hd,Scf,Hs,Tz) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="mk87pdf2.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">MK87PDF2</a> Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. 
+  
+  CALL:  f = <a href="mk87pdf2.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">mk87pdf2</a>(Hd,Scf,Hs,Tz) 
+  
+     f  = pdf structure evaluated at meshgrid(Scf,Hd)  
+    Hd  = zero down crossing wave height 
+    Scf = crest front steepness 
+    Hs  = significant wave height. 
+    Tz  = average zero down crossing period.   
+  
+  <a href="mk87pdf2.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">MK87PDF2</a> returns the joint PDF of (Scf, Hd) given Hs and Tz, 
+  i.e., crest front steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, given 
+  the seastate. The root mean square values of Hd and Scf (Hrms,Erms) are 
+  related to the significant waveheight and the average zero down 
+  crossing period by: 
+              Hrms = 0.715*Hs; 
+              Erms = 0.0202+0.826*Hs/(Tz^2); 
+  
+  Example: 
+   Hs = 7;Tz=10;   
+   h = linspace(0,3*Hs)';  
+   s = linspace(0,3*Hs/Tz^2)'; 
+   f = <a href="mk87pdf2.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">mk87pdf2</a>(h,s,Hs,Tz); 
+   <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f) 
+  
+  See also  <a href="mk87pdf.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">mk87pdf</a>, <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="mk87pdf.html" class="code" title=" p = mk87pdf(Hd,Scf,Hs,Tz, condon,normalizedInput)">mk87pdf</a></li></TD>
+<TD> Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> p = <a name="_sub0" href="#_subfunctions" class="code">mk87pdf2</a>(Hd,Scf,Hs,Tz) 
+002 <span class="comment">%MK87PDF2 Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  f = mk87pdf2(Hd,Scf,Hs,Tz) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%    f  = pdf structure evaluated at meshgrid(Scf,Hd)  </span>
+007 <span class="comment">%   Hd  = zero down crossing wave height </span>
+008 <span class="comment">%   Scf = crest front steepness </span>
+009 <span class="comment">%   Hs  = significant wave height. </span>
+010 <span class="comment">%   Tz  = average zero down crossing period.   </span>
+011 <span class="comment">% </span>
+012 <span class="comment">% MK87PDF2 returns the joint PDF of (Scf, Hd) given Hs and Tz, </span>
+013 <span class="comment">% i.e., crest front steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, given </span>
+014 <span class="comment">% the seastate. The root mean square values of Hd and Scf (Hrms,Erms) are </span>
+015 <span class="comment">% related to the significant waveheight and the average zero down </span>
+016 <span class="comment">% crossing period by: </span>
+017 <span class="comment">%             Hrms = 0.715*Hs; </span>
+018 <span class="comment">%             Erms = 0.0202+0.826*Hs/(Tz^2); </span>
+019 <span class="comment">% </span>
+020 <span class="comment">% Example: </span>
+021 <span class="comment">%  Hs = 7;Tz=10;   </span>
+022 <span class="comment">%  h = linspace(0,3*Hs)';  </span>
+023 <span class="comment">%  s = linspace(0,3*Hs/Tz^2)'; </span>
+024 <span class="comment">%  f = mk87pdf2(h,s,Hs,Tz); </span>
+025 <span class="comment">%  pdfplot(f) </span>
+026 <span class="comment">% </span>
+027 <span class="comment">% See also  mk87pdf, createpdf </span>
+028  
+029 <span class="comment">%   References: </span>
+030 <span class="comment">%   Myrhaug, D. and Kjelsen S.P. (1987)  </span>
+031 <span class="comment">%  'Prediction of occurences of steep and high waves in deep water'. </span>
+032 <span class="comment">%   Journal of waterway, Port, Coastal and Ocean Engineers, Vol. 113, pp 122--138 </span>
+033 <span class="comment">% </span>
+034 <span class="comment">%   Myrhaug &amp; Dahle (1984)  </span>
+035 <span class="comment">%   'Parametric modelling of joint probability density  </span>
+036 <span class="comment">%   distributions for steepness and asymmetry in deep water waves' </span>
+037 <span class="comment">% </span>
+038  
+039 <span class="comment">% tested on: matlab 5.1 </span>
+040 <span class="comment">% history: </span>
+041 <span class="comment">% revised pab 09.08.2003 </span>
+042 <span class="comment">% Changed input + updated help header   </span>
+043 <span class="comment">% revised pab 01.04.2001 </span>
+044 <span class="comment">% -added example </span>
+045 <span class="comment">% revised pab 08.02.2000 </span>
+046 <span class="comment">%  -  </span>
+047 <span class="comment">% by  Per A. Brodtkorb 1998 </span>
+048  
+049 error(nargchk(3,4,nargin)) 
+050  
+051 <span class="keyword">if</span> nargin &lt; 4|isempty(Tz),  Tz = 8; <span class="keyword">end</span> 
+052 <span class="keyword">if</span> nargin &lt; 3|isempty(Hs),  Hs = 6; <span class="keyword">end</span> 
+053  
+054 p     = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2); 
+055  
+056 [X,Y] = meshgrid(Scf,Hd); 
+057 p.f   = <a href="mk87pdf.html" class="code" title=" Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF. ">mk87pdf</a>(Y,X,Hs,Tz); 
+058 p.x{1}=Scf(:); 
+059 p.x{2}=Hd(:); 
+060 p.labx{1}=<span class="string">'Crest front steepness'</span>; 
+061 p.labx{2}=<span class="string">'Wave height [m]'</span>; 
+062  
+063 p.title=<span class="string">'Myrhaug and Kjeldsen (1987) density of crest front steepness and wave height.'</span>; 
+064    
+065 [p.cl p.pl]=<a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(p.f,[10:20:90 95 99 99.9]); 
+066</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

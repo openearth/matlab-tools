@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wweibstat</title>
+  <meta name="keywords" content="wweibstat">
+  <meta name="description" content=" Mean and variance for the Weibull  distribution.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wweibstat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wweibstat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Mean and variance for the Weibull  distribution.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [m,v]= wweibstat(a,c); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wweibstat.html" class="code" title=" Mean and variance for the Weibull  distribution.">WWEIBSTAT</a> Mean and variance for the Weibull  distribution.
+  
+  CALL:  [m,v] = <a href="wweibstat.html" class="code" title=" Mean and variance for the Weibull  distribution.">wweibstat</a>(a,c)
+ 
+    m, v = the mean and variance, respectively 
+    a, c = parameters of the Weibull distribution (see <a href="wweibcdf.html" class="code" title=" Weibull cumulative distribution function">wweibcdf</a>).
+ 
+   Mean (m) and variance (v) for the Weibull distribution is
+ 
+   m=a*gamma(1+1/c)  and  v=a^2*gamma(1+2/c)-m^2;
+ 
+  Example:
+    [m,v] = <a href="wweibstat.html" class="code" title=" Mean and variance for the Weibull  distribution.">wweibstat</a>(4,0.5)
+ 
+  See also  <a href="wweibcdf.html" class="code" title=" Weibull cumulative distribution function">wweibcdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a></li></TD>
+<TD> Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dstat.html" class="code" title=" [M,V, eps2, a ,b] = dist2dstat(phat,condon,cvar,csm,lin)">dist2dstat</a></li></TD>
+<TD>  Mean and variance for the DIST2D distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = mdist2dstat(phat,condon,cvar,tol)">mdist2dstat</a></li></TD>
+<TD>  Mean and variance for the MDIST2D distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dcdf.html" class="code" title=" [y ,tol1] = weib2dcdf(x1,x2,param,condon,tol)">weib2dcdf</a></li></TD>
+<TD> Joint 2D Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="weib2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = weib2dstat(a1,b1,a2,b2,c12,condon,cvar,tol)">weib2dstat</a></li></TD>
+<TD>  Mean and variance for the 2D Weibull distribution</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [m,v]= <a name="_sub0" href="#_subfunctions" class="code">wweibstat</a>(a,c);
+002 <span class="comment">%WWEIBSTAT Mean and variance for the Weibull  distribution.</span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  [m,v] = wweibstat(a,c)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   m, v = the mean and variance, respectively </span>
+007 <span class="comment">%   a, c = parameters of the Weibull distribution (see wweibcdf).</span>
+008 <span class="comment">%</span>
+009 <span class="comment">%  Mean (m) and variance (v) for the Weibull distribution is</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%  m=a*gamma(1+1/c)  and  v=a^2*gamma(1+2/c)-m^2;</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Example:</span>
+014 <span class="comment">%   [m,v] = wweibstat(4,0.5)</span>
+015 <span class="comment">%</span>
+016 <span class="comment">% See also  wweibcdf</span>
+017 
+018 
+019 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+020 <span class="comment">% and Life Span Models&quot;, p. 25 ff, Marcel Dekker.</span>
+021 
+022 
+023 <span class="comment">% Tested on; Matlab 5.3</span>
+024 <span class="comment">% History: </span>
+025 <span class="comment">% revised pab 23.10.2000</span>
+026 <span class="comment">%   - added comnsize</span>
+027 <span class="comment">% added ms 15.06.2000</span>
+028 
+029 error(nargchk(2,2,nargin))
+030 
+031 [errorcode, a, c] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(a,c);
+032 
+033 <span class="keyword">if</span> errorcode &gt; 0
+034     error(<span class="string">'a and c must be of common size or scalar.'</span>);
+035 <span class="keyword">end</span>
+036 
+037 <span class="comment">%   Initialize Mean and Variance to zero.</span>
+038 m = zeros(size(a));
+039 v = zeros(size(a));
+040 
+041 ok = (a &gt; 0 &amp; c &gt; 0);
+042 k = find(ok);
+043 <span class="keyword">if</span> any(k)
+044   m(k) =  a(k) .* gamma(1 + (1 ./ c(k)));
+045   v(k) = a(k) .^ 2 .* gamma(1 + (2 ./ c(k))) - m(k).^ 2;
+046 <span class="keyword">end</span>
+047 
+048 k1 = find(~ok);
+049 <span class="keyword">if</span> any(k1)
+050     tmp = NaN;
+051     m(k1) = tmp(ones(size(k1)));
+052     v(k1) = m(k1);   
+053 <span class="keyword">end</span>
+054</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

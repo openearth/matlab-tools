@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafofig9</title>
+  <meta name="keywords" content="wafofig9">
+  <meta name="description" content="  Intensity of rainflow cycles computed from St">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">wafodemo</a> &gt; wafofig9.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\wafodemo&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>wafofig9
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>  Intensity of rainflow cycles computed from St</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> wafofig9 </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="wafofig9.html" class="code" title="  Intensity of rainflow cycles computed from St">WAFOFIG9</a>  Intensity of rainflow cycles computed from St
+            through Markov approximation, compared with the 
+            cycles found in the simulation.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/cycles/ccplot.html" class="code" title=" ccplot(cc,ps)">ccplot</a></li></TD>
+<TD> Plots a cycle count as a point process in the plane.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cocc.html" class="code" title=" cocc(param,cc,matrix,clevels,fs)">cocc</a></li></TD>
+<TD> Plots cycles as points together with isolines of a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/mctp2rfm.html" class="code" title=" [F_rfc,mu_rfc] = mctp2rfm(F,c_m)">mctp2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix for a MCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/trgauss/spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a></li></TD>
+<TD> Calculates joint density of Maximum, minimum and period.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" [RFC,RFC1,res,def] = tp2rfc(x,def,RFC0,res0)">tp2rfc</a></li></TD>
+<TD> Finds the rainflow cycles from the sequence of turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/wafostamp.html" class="code" title=" [H,ax]=wafostamp(varargin)">wafostamp</a></li></TD>
+<TD> Prints a caption "made by WAFO" in current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">wafofig9</a>
+002 <span class="comment">% WAFOFIG9  Intensity of rainflow cycles computed from St</span>
+003 <span class="comment">%           through Markov approximation, compared with the </span>
+004 <span class="comment">%           cycles found in the simulation.</span>
+005 <span class="comment">%</span>
+006 
+007 <span class="keyword">global</span>  WAFOFIGNUM
+008 
+009 <span class="keyword">if</span> isempty(WAFOFIGNUM)
+010   disp(<span class="string">'You must start wafodemo in order to run this script'</span>)
+011   clear <span class="keyword">global</span> WAFOFIGNUM
+012   <span class="keyword">return</span>
+013 <span class="keyword">end</span>
+014 
+015 <span class="comment">% Use the speed and nit as for the North Sea data</span>
+016 <span class="keyword">global</span> St fmm xt NNp Nnit Nspeed
+017 
+018 paramu = [-6 6 20];
+019 <span class="comment">% Only need to calculate Globals which is not empty</span>
+020 <span class="comment">% Poseidon / Japan Sea data</span>
+021 <span class="keyword">if</span> isempty(fmm)
+022   disp(<span class="string">'This takes several  minutes to finish =&gt; several hours ... '</span>)
+023   disp(<span class="string">'depending on input arguments and your computer'</span>)
+024   <span class="comment">% Calculate the theoretical distribution</span>
+025   <span class="keyword">if</span> Nnit&lt;0
+026     opt = <a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(<span class="string">'method'</span>,abs(Nnit),<span class="string">'speed'</span>,Nspeed);
+027   <span class="keyword">else</span>
+028     opt = <a href="../../../wafo/trgauss/rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>(<span class="string">'method'</span>,0,<span class="string">'nit'</span>,(Nnit),<span class="string">'speed'</span>,Nspeed);
+029   <span class="keyword">end</span>
+030   fmm = <a href="../../../wafo/trgauss/spec2mmtpdf.html" class="code" title=" Calculates joint density of Maximum, minimum and period. ">spec2mmtpdf</a>(St,0,<span class="string">'mm'</span>,[0 7 NNp], paramu,opt);
+031 <span class="keyword">end</span>
+032 f=fmm;
+033 
+034 f.f= <a href="../../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({fmm.f , []});
+035 f.cl=<a href="../../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(f.f);
+036 tp = <a href="../../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(xt);
+037 rfc = <a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(tp);
+038 <span class="keyword">if</span> 0,
+039   <a href="../../../wafo/cycles/cocc.html" class="code" title=" Plots cycles as points together with isolines of a cycle matrix. ">cocc</a>(paramu,rfc,f.f)
+040 <span class="keyword">else</span>
+041   <a href="../../../wafo/cycles/ccplot.html" class="code" title=" Plots a cycle count as a point process in the plane.">ccplot</a>(fliplr(rfc));hold on
+042   <a href="../../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f,<span class="string">'k-'</span>),  hold off
+043 <span class="keyword">end</span>
+044 <a href="../../../wafo/misc/wafostamp.html" class="code" title=" Prints a caption "made by WAFO" in current figure.">wafostamp</a>(<span class="string">'Figure 9'</span>,<span class="string">'(NR)'</span>)    
+045 
+046 <span class="keyword">return</span>
+047</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

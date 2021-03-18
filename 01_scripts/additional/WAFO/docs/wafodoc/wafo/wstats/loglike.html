@@ -1,0 +1,329 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of loglike</title>
+  <meta name="keywords" content="loglike">
+  <meta name="description" content=" Log-likelihood function.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; loglike.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loglike
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Log-likelihood function.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [LL,C]=loglike(phat,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="loglike.html" class="code" title=" Log-likelihood function.">LOGLIKE</a> Log-likelihood function.
+  
+  CALL:  [L,cov] = <a href="loglike.html" class="code" title=" Log-likelihood function.">loglike</a>(phat,x1,x2,...,xN,dist);
+ 
+        L    = -log(f(phat|data)), i.e., the log-likelihood function
+               with parameters phat given the data.
+        cov  = Asymptotic covariance matrix of phat (if phat is estimated by
+               a maximum likelihood method).
+        phat = [A1,A2,...,Am], vector of distribution parameters.
+  x1,x2,..xN = vectors of data points.
+        dist = string containing the name of the PDF.
+            
+   <a href="loglike.html" class="code" title=" Log-likelihood function.">LOGLIKE</a> is a utility function for maximum likelihood estimation. 
+   This works on any PDF having the following calling syntax:
+ 
+        f = testpdf(x1,x2,..,xN,A1,A2,..,Am)
+ 
+  where x1,x2,...,xN contain the points to be evaluated and A1,A2... are
+  the distribution parameters. 
+ 
+  Example: MLE and asymptotic covariance of phat:
+    R = <a href="wweibrnd.html" class="code" title=" Random matrices a the Weibull distribution.">wweibrnd</a>(1,3,100,1);                      
+    phat0 = [1.3 2.5];                             %initial guess
+    phat = fminsearch('loglike',phat0,[],R,'wweibpdf')
+    [L, cov] = <a href="loglike.html" class="code" title=" Log-likelihood function.">loglike</a>(phat,R,'wweibpdf')
+    [phat2 cov2] = <a href="wweibfit.html" class="code" title=" Parameter estimates for Weibull data. ">wweibfit</a>(R)                     % compare with <a href="wweibfit.html" class="code" title=" Parameter estimates for Weibull data. ">wweibfit</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\kron.m">kron</a></li></TD>
+<TD>          Kronecker tensor product.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\num2cell.m">num2cell</a></li></TD>
+<TD>      Convert numeric array into cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\qr.bi">qr</a></li></TD>
+<TD>            Orthogonal-triangular decomposition.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wavemodels/braylfit.html" class="code" title=" [phat, cov,pci]=braylfit(data1,alpha)">braylfit</a></li></TD>
+<TD> Parameter estimates for Beta-Rayleigh data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ochi98fit.html" class="code" title=" [phat, pci,pinit]=ochi98fit(data,alpha)">ochi98fit</a></li></TD>
+<TD> Parameter estimates and confidence intervals for Ochi data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wbetafit.html" class="code" title=" [phat, cov,pci]=wbetafit(data1, plotflag);">wbetafit</a></li></TD>
+<TD> Parameter estimates for Beta data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2fit.html" class="code" title=" [phat, cov,pci]=wchi2fit(data1, plotflag);">wchi2fit</a></li></TD>
+<TD> Parameter estimates for Chi squared data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgamfit.html" class="code" title=" [phat, cov,pci]=wgamfit(data1, plotflag);">wgamfit</a></li></TD>
+<TD> Parameter estimates for Gamma data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wtfit.html" class="code" title=" [phat, cov,pci]=wtfit(data1, plotflag);">wtfit</a></li></TD>
+<TD> Parameter estimates for Student's T data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wtraylfit.html" class="code" title=" [phat,cov,pci] = wtraylfit(data,plotflag)">wtraylfit</a></li></TD>
+<TD> Parameter estimates for Truncated Rayleigh data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wtweibfit.html" class="code" title=" [phat, cov, pci]=wtweibfit(data1, plotflag);">wtweibfit</a></li></TD>
+<TD> Parameter estimates for truncated Weibull data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [LL,C]=<a name="_sub0" href="#_subfunctions" class="code">loglike</a>(phat,varargin)
+002 <span class="comment">%LOGLIKE Log-likelihood function.</span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  [L,cov] = loglike(phat,x1,x2,...,xN,dist);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%       L    = -log(f(phat|data)), i.e., the log-likelihood function</span>
+007 <span class="comment">%              with parameters phat given the data.</span>
+008 <span class="comment">%       cov  = Asymptotic covariance matrix of phat (if phat is estimated by</span>
+009 <span class="comment">%              a maximum likelihood method).</span>
+010 <span class="comment">%       phat = [A1,A2,...,Am], vector of distribution parameters.</span>
+011 <span class="comment">% x1,x2,..xN = vectors of data points.</span>
+012 <span class="comment">%       dist = string containing the name of the PDF.</span>
+013 <span class="comment">%           </span>
+014 <span class="comment">%  LOGLIKE is a utility function for maximum likelihood estimation. </span>
+015 <span class="comment">%  This works on any PDF having the following calling syntax:</span>
+016 <span class="comment">%</span>
+017 <span class="comment">%       f = testpdf(x1,x2,..,xN,A1,A2,..,Am)</span>
+018 <span class="comment">%</span>
+019 <span class="comment">% where x1,x2,...,xN contain the points to be evaluated and A1,A2... are</span>
+020 <span class="comment">% the distribution parameters. </span>
+021 <span class="comment">%</span>
+022 <span class="comment">% Example: MLE and asymptotic covariance of phat:</span>
+023 <span class="comment">%   R = wweibrnd(1,3,100,1);                      </span>
+024 <span class="comment">%   phat0 = [1.3 2.5];                             <span class="comment">%initial guess</span></span>
+025 <span class="comment">%   phat = fminsearch('loglike',phat0,[],R,'wweibpdf')</span>
+026 <span class="comment">%   [L, cov] = loglike(phat,R,'wweibpdf')</span>
+027 <span class="comment">%   [phat2 cov2] = wweibfit(R)                     <span class="comment">% compare with wweibfit  </span></span>
+028 
+029 
+030 <span class="comment">%Tested on: matlab 5.3</span>
+031 <span class="comment">% History:</span>
+032 <span class="comment">% by pab 31.10.2000</span>
+033 
+034 
+035 error(nargchk(3,inf,nargin))
+036 
+037 params = num2cell(phat(:).',1);
+038 data1  = varargin(1:<span class="keyword">end</span>-1); <span class="comment">% cell array of vectors with data points</span>
+039 dist   = varargin{<span class="keyword">end</span>};
+040 <span class="keyword">if</span> ~ischar(dist),error(<span class="string">'Distribution is unspecified'</span>),<span class="keyword">end</span>
+041 <span class="keyword">for</span> ix=1:length(data1),
+042   data1{ix}  = data1{ix}(:); <span class="comment">%<span class="comment">% make sure it is a vector.</span></span>
+043 <span class="keyword">end</span>
+044 
+045 
+046 x = feval(dist,data1{:},params{:})+eps; 
+047 <span class="comment">%x = x(:);  <span class="comment">% make sure it is a vector.</span></span>
+048 LL = - sum(log(x)); <span class="comment">% log likelihood function</span>
+049 
+050 <span class="keyword">if</span> nargout == 2
+051   Nd     = length(x);
+052   np     = length(params);
+053   delta  = eps^.4;
+054   delta2 = delta^2;
+055   
+056   <span class="keyword">switch</span>  2,
+057   <span class="keyword">case</span> 1,  
+058     <span class="comment">% Approximate 1/(nE( (d L(x|theta)/dtheta)^2)) with</span>
+059     <span class="comment">%             1/(d L(theta|x)/dtheta)^2  </span>
+060     <span class="comment">% This is a bad approximation especially for the off diagonal elements</span>
+061     xp     = zeros(Nd,np);
+062     sparam = params;
+063     <span class="keyword">for</span> ix = 1:np,
+064       sparam{ix}= params{ix}+delta;
+065       xp(:,ix) = feval(dist,data1{:},sparam{:})+eps;
+066       sparam{ix}= params{ix};
+067     <span class="keyword">end</span>
+068     J = (log(xp) - repmat(log(x),1,np))./delta;
+069     [Q,R]= qr(J,0);
+070     Rinv = R\eye(np);
+071     C = Rinv'*Rinv;
+072   <span class="keyword">case</span> 2,
+073     <span class="comment">% Approximate 1/(nE( (d L(x|theta)/dtheta)^2)) with</span>
+074     <span class="comment">%             1/(d^2 L(theta|x)/dtheta^2) </span>
+075     <span class="comment">%  using central differences</span>
+076     <span class="comment">% This is usually a much better estimate than case 1 and slightly</span>
+077     <span class="comment">% faster than case 3.</span>
+078     H = zeros(np);             <span class="comment">% Hessian matrix</span>
+079     <span class="keyword">for</span> ix=1:np,
+080       sparam = params;
+081       sparam{ix}= params{ix}+delta;
+082       x  = feval(dist,data1{:},sparam{:})+eps; 
+083       fp = sum(log(x));
+084       sparam{ix} = params{ix}-delta;
+085       x  = feval(dist,data1{:},sparam{:})+eps; 
+086       fm = sum(log(x));
+087       H(ix,ix) = (fp+2*LL+fm)/delta2;
+088       <span class="keyword">for</span> iy=ix+1:np,
+089     sparam{ix} = params{ix}+delta;
+090     sparam{iy} = params{iy}+delta;
+091     x   = feval(dist,data1{:},sparam{:})+eps; 
+092     fpp = sum(log(x));
+093     sparam{iy} = params{iy}-delta;
+094     x   = feval(dist,data1{:},sparam{:})+eps; 
+095     fpm = sum(log(x));
+096     sparam{ix} = params{ix}-delta;
+097     x   = feval(dist,data1{:},sparam{:})+eps; 
+098     fmm = sum(log(x));
+099     sparam{iy} = params{iy}+delta;
+100     x   = feval(dist,data1{:},sparam{:})+eps; 
+101     fmp = sum(log(x));
+102     H(ix,iy) = (fpp-fmp-fpm+fmm)/(4*delta2);
+103     H(iy,ix) = H(ix,iy);
+104       <span class="keyword">end</span>
+105     <span class="keyword">end</span>
+106     <span class="comment">% invert the Hessian matrix (i.e. invert the observed information number)</span>
+107     C = -H\eye(np); 
+108   <span class="keyword">case</span> 3,
+109     <span class="comment">% Approximate 1/(nE( (d L(x|theta)/dtheta)^2)) with</span>
+110     <span class="comment">%             1/(d^2 L(theta|x)/dtheta^2) </span>
+111     <span class="comment">% using differentiation matrices</span>
+112     <span class="comment">% This is the same as case 2 when N=3</span>
+113    
+114     <span class="keyword">if</span> 1, <span class="comment">% </span>
+115       xn =[     1;     0;    -1];
+116       D(:,:,1) =[<span class="keyword">...</span>
+117         1.5000   -2.0000    0.5000;<span class="keyword">...</span>
+118         0.5000    0.0000   -0.5000;<span class="keyword">...</span>
+119         -0.5000    2.0000   -1.5000];
+120       D(:,:,2) =[<span class="keyword">...</span>
+121         1.0000   -2.0000    1.0000;<span class="keyword">...</span>
+122         1.0000   -2.0000    1.0000;<span class="keyword">...</span>
+123         1.0000   -2.0000    1.0000];
+124     <span class="keyword">else</span> <span class="comment">% If you have the differentiation matrix suite toolbox you may </span>
+125       <span class="comment">%use this </span>
+126       <span class="comment">% By increasing N better accuracy might be expected</span>
+127       <span class="comment">%N=3; <span class="comment">% NB!: N must be odd</span></span>
+128       <span class="comment">%[xn D]=chebdif(N,2);  <span class="comment">% construct differentiation matrix</span></span>
+129     <span class="keyword">end</span>
+130     N=length(xn);
+131     xn=xn.';
+132     <span class="comment">% Construct differentiation matrices</span>
+133     D11 = kron(D(:,:,1),D(:,:,1));  
+134     <span class="comment">%D20 = kron(D(:,:,2),eye(N));</span>
+135     <span class="comment">%D02 = kron(eye(N),D(:,:,2));</span>
+136     H   = zeros(np);           <span class="comment">% Hessian matrix</span>
+137     LL2 = zeros(N,N);          <span class="comment">% Log likelihood evaluated at phat and in</span>
+138                                <span class="comment">% the vicinity of phat</span>
+139                    
+140     N2 = (N+1)/2;              <span class="comment">% The middle indices</span>
+141     LL2(N2,N2) = -LL; <span class="comment">% = sum(log(x))</span>
+142     <span class="keyword">for</span> ix=1:np,
+143       sparam = params;
+144       <span class="keyword">for</span> iy = [1:N2-1 N2+1:N];
+145     sparam{ix}= params{ix}+xn(iy)*delta;
+146     x = feval(dist,data1{:},sparam{:})+eps;
+147     <span class="comment">%sparam{ix} = params{ix}+xn(ones(Nd,1),iy)*delta;</span>
+148     <span class="comment">%x = feval(dist,repmat(data1,[1 length(iy)]),sparam{:})+eps; </span>
+149     LL2(iy,N2) = sum(log(x)).';
+150       <span class="keyword">end</span>
+151       <span class="comment">%sparam=params;</span>
+152       H(ix,ix) = (D(N2,:,2)*LL2(:,N2))/delta2;
+153       <span class="keyword">for</span> iy=ix+1:np,
+154     <span class="keyword">for</span> iz=[1:N],
+155       sparam{ix} = params{ix}+xn(iz)*delta;
+156       <span class="keyword">for</span> iw=[1:N2-1 N2+1:N];
+157         sparam{iy}= params{iy}+xn(iw)*delta;
+158         x = feval(dist,data1{:},sparam{:})+eps; 
+159         <span class="comment">%sparam{iy} = params{iy}+xn(ones(Nd,1),iw)*delta;</span>
+160         <span class="comment">%x = feval(dist,repmat(data1,[1,length(iw)]),sparam{:})+eps; </span>
+161         LL2(iz,iw) = sum(log(x));
+162       <span class="keyword">end</span>
+163     <span class="keyword">end</span>
+164     H(ix,iy) = D11((N^2+1)/2,:)*LL2(:)/delta2;
+165     H(iy,ix) = H(ix,iy);
+166       <span class="keyword">end</span>
+167     <span class="keyword">end</span>
+168     <span class="comment">% invert the Hessian matrix (i.e. invert the observed information number)</span>
+169     C = -H\eye(np); 
+170   <span class="keyword">end</span>
+171 <span class="keyword">end</span>
+172 
+173 
+174 
+175 
+176 
+177 
+178 
+179 
+180 
+181 
+182 
+183 
+184 
+185 
+186 
+187 
+188 
+189</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

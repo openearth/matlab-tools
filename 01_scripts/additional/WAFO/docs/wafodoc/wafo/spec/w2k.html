@@ -1,0 +1,289 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of w2k</title>
+  <meta name="keywords" content="w2k">
+  <meta name="description" content=" Translates from frequency to wave number">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; w2k.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>w2k
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Translates from frequency to wave number</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [k,k2,ind]=w2k(w,th,h,g), </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="w2k.html" class="code" title=" Translates from frequency to wave number">W2K</a> Translates from frequency to wave number
+      using the dispersion relation
+ 
+  CALL:  [k,k2,ind]=<a href="w2k.html" class="code" title=" Translates from frequency to wave number">w2k</a>(w,theta,h,g)
+ 
+     k,k2 = wave numbers
+      ind = index list of frequencies for which the routine failed (rare)
+      w   = angular frequency   
+    theta = direction           (default 0)
+      h   = water depth         (default Inf)
+      g   = constant of <a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a> (default see <a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>)
+ 
+  Uses Newton Raphson method to find the wave number k
+  in the dispersion relation w^2= g*k*tanh(k*h).
+  The solution k(w) =&gt; k = k(w)*cos(theta)
+                       k2= k(w)*sin(theta)
+  The size of k,k2 is the common size of w and theta if they are matrices
+  OR length(theta) x length(w) if they are vectors. If w or theta is scalar
+  it functions as a constant matrix of the same size as the other. 
+ 
+  See also  <a href="k2w.html" class="code" title=" Translates from wave number to frequency">k2w</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/gravity.html" class="code" title=" g=gravity(phi)">gravity</a></li></TD>
+<TD>  returns the constant acceleration of gravity</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\sprintf.m">sprintf</a></li></TD>
+<TD>       Write formatted data to string.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/spec/private/dspec2dcov.html" class="code" title=" R=dspec2dcov(S,nr,Nt,rate,Nx,Ny,dx,dy)">dspec2dcov</a></li></TD>
+<TD> Return covariance function given a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/private/ewwdir.html" class="code" title=" [out]=ewwdir(omega,theta,omegat,thetat,h);">ewwdir</a></li></TD>
+<TD> Computes values of the quadratic transfer function E, for quadratic sea</TD>
+</TR>
+<TR>
+<TD><li><a href="phi1.html" class="code" title=" ph=phi1(w,h)">phi1</a></li></TD>
+<TD> factor for transforming spectra to finite water depth spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/seasim.html" class="code" title=" [Y,Mv]=seasim(spec,Nx,Ny,Nt,dx,dy,dt,fftdim,plotflag);">seasim</a></li></TD>
+<TD> Spectral simulation of a Gaussian sea, 2D (x,t) or 3D (x,y,t)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/private/spa2time.html" class="code" title=" Sf=spa2time(S,w,theta,g),">spa2time</a></li></TD>
+<TD> Transform of spectrum from wave no. to frequency (used in spec2spec)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2linspec.html" class="code" title=" [SL,SN]=spec2linspec(S,np,dt,iseed,fnLimit)">spec2linspec</a></li></TD>
+<TD>  Separates the linear component of the Spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2nlsdat.html" class="code" title=" [x2,x,svec,dvec,A]=spec2nlsdat(S,np,dt,iseed,method,truncationLimit)">spec2nlsdat</a></li></TD>
+<TD> Simulates a Randomized 2nd order non-linear wave X(t)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/spec2skew.html" class="code" title=" [skew, kurt, ma, sa, Hs ,Hd]=spec2skew(S,h,method)">spec2skew</a></li></TD>
+<TD> Estimates the moments of 2'nd order non-linear waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/specq2lc.html" class="code" title=" [mu,fu,Fu,muG,mu1,mu2]= specq2lc(Spec,ds0,nb)">specq2lc</a></li></TD>
+<TD>  Saddlepoint approximation of the crossing intensity for the quadratic sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/testbuoy.html" class="code" title=" D=testbuoy(N,dt,amp,f0,thet0,x,y,d,g,thetx,thety);">testbuoy</a></li></TD>
+<TD> creates a test case for a buoy measurement</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/testmeasurements.html" class="code" title=" D = testsurf(pos,type,thet0,f0,N,dt,amp,d,g,thetx,thety);">testmeasurements</a></li></TD>
+<TD> Creates a test case for measurement time series</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/testsurf.html" class="code" title=" D = testsurf(N,dt,amp,f0,thet0,x,y,d,g,thetx,thety);">testsurf</a></li></TD>
+<TD> creates a test case for a surface elevation measurement</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/private/time2spa.html" class="code" title=" Sk=time2spa(S,k,k2,g,rate)">time2spa</a></li></TD>
+<TD> Transform of spectrum from frequency to wave no. (used in spec2spec)</TD>
+</TR>
+<TR>
+<TD><li><a href="tmaspec.html" class="code" title=" S1=tmaspec(w1,sdata,h,plotflag)">tmaspec</a></li></TD>
+<TD> Calculates a JONSWAP spectral density for finite water depth</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/tran.html" class="code" title=" [Hw, Gwt, kw,Hwt,ee]=tran(w,theta,pos,def,h,g,rho,bet,igam,thx,thy,kw);">tran</a></li></TD>
+<TD> Computes transfer functions based on linear wave theory</TD>
+</TR>
+<TR>
+<TD><li><a href="wallop.html" class="code" title=" S1=wallop(w1,sdata,plotflag)">wallop</a></li></TD>
+<TD>  Calculates (and plots) a Wallop spectral density.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [k,k2,ind]=<a name="_sub0" href="#_subfunctions" class="code">w2k</a>(w,th,h,g),
+002 <span class="comment">% W2K Translates from frequency to wave number</span>
+003 <span class="comment">%     using the dispersion relation</span>
+004 <span class="comment">%</span>
+005 <span class="comment">% CALL:  [k,k2,ind]=w2k(w,theta,h,g)</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%    k,k2 = wave numbers</span>
+008 <span class="comment">%     ind = index list of frequencies for which the routine failed (rare)</span>
+009 <span class="comment">%     w   = angular frequency   </span>
+010 <span class="comment">%   theta = direction           (default 0)</span>
+011 <span class="comment">%     h   = water depth         (default Inf)</span>
+012 <span class="comment">%     g   = constant of gravity (default see gravity)</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Uses Newton Raphson method to find the wave number k</span>
+015 <span class="comment">% in the dispersion relation w^2= g*k*tanh(k*h).</span>
+016 <span class="comment">% The solution k(w) =&gt; k = k(w)*cos(theta)</span>
+017 <span class="comment">%                      k2= k(w)*sin(theta)</span>
+018 <span class="comment">% The size of k,k2 is the common size of w and theta if they are matrices</span>
+019 <span class="comment">% OR length(theta) x length(w) if they are vectors. If w or theta is scalar</span>
+020 <span class="comment">% it functions as a constant matrix of the same size as the other. </span>
+021 <span class="comment">%</span>
+022 <span class="comment">% See also  k2w</span>
+023 
+024 <span class="comment">% Tested on: Matlab 5.3  </span>
+025 <span class="comment">% History: </span>
+026 <span class="comment">%  revised by es 23.05.00, made 'If w or theta...' in help really true  </span>
+027 <span class="comment">%  revised by es 21.01.2000  allow length(g)=2 for h=inf (3D normalization)</span>
+028 <span class="comment">%  by es, pab 13.08.99</span>
+029 
+030 <span class="keyword">if</span> nargin&lt;1|isempty(w)
+031   k=[];k2=[];
+032   <span class="keyword">return</span>
+033 <span class="keyword">end</span>
+034 <span class="keyword">if</span> nargin&lt;2|isempty(th)
+035   th=0;
+036 <span class="keyword">end</span>
+037 <span class="keyword">if</span> nargin&lt;3|isempty(h)
+038   h=inf;
+039 <span class="keyword">end</span>
+040 <span class="keyword">if</span> nargin&lt;4|isempty(g)
+041   g=<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>;
+042 <span class="keyword">end</span>
+043 
+044 <span class="comment">% Control of dimension of w and theta</span>
+045 thtype=0;
+046 <span class="keyword">if</span> prod(size(th))&gt;1 <span class="comment">% non-scalar</span>
+047   <span class="keyword">if</span> size(th,1)==1|size(th,2)==1 <span class="comment">% theta vector</span>
+048     th=th(:);
+049     thtype=1;
+050   <span class="keyword">end</span>
+051   <span class="keyword">if</span> size(w,1)==1|size(w,2)==1 <span class="comment">% w vector or scalar</span>
+052     <span class="keyword">if</span> thtype==1 <span class="comment">% theta also vector</span>
+053       th=th*ones(1,length(w));
+054 <span class="comment">%      w=ones(size(th,1),1)*w(:)';</span>
+055     <span class="keyword">else</span>
+056       error(<span class="string">'Input dimensions do not match'</span>)
+057     <span class="keyword">end</span>
+058   <span class="keyword">else</span> <span class="comment">% both matrices</span>
+059     <span class="keyword">if</span> any(size(w)~=size(th))
+060       error(<span class="string">'Input dimensions do not match'</span>)
+061     <span class="keyword">end</span>    
+062     thtype=2;
+063   <span class="keyword">end</span>
+064 <span class="keyword">end</span>
+065 
+066 k=sign(w).*w.^2;  <span class="comment">% deep water</span>
+067 <span class="keyword">if</span> h==inf,
+068   <span class="keyword">if</span> thtype==1 <span class="comment">% vector</span>
+069     k=ones(size(th,1),1)*k(:)';
+070   <span class="keyword">end</span>
+071   k2=k.*sin(th)/g(<span class="keyword">end</span>); <span class="comment">%size np x nf</span>
+072   k=k.*cos(th)/g(1);
+073   <span class="keyword">return</span>
+074 <span class="keyword">end</span>
+075 
+076 <span class="keyword">if</span> length(g)&gt;1
+077   error(<span class="string">'Finite depth in combination with 3D normalization (=&gt; length(g)=2) is not implemented yet.'</span>)
+078 <span class="keyword">end</span>
+079 <span class="comment">% Newton's Method</span>
+080 <span class="comment">% Permit no more than count_limit interations.</span>
+081 count_limit = 100;
+082 count = 0;
+083 <span class="comment">%disp('Finding the wave numbers')</span>
+084 
+085 <span class="comment">%k = find(w);</span>
+086 hn=zeros(size(k));
+087 ix=find(w&gt;0 | w&lt;0);
+088 
+089 <span class="comment">% Break out of the iteration loop for three reasons:</span>
+090 <span class="comment">%  1) the last update is very small (compared to x)</span>
+091 <span class="comment">%  2) the last update is very small (compared to sqrt(eps))</span>
+092 <span class="comment">%  3) There are more than 100 iterations. This should NEVER happen. </span>
+093 <span class="keyword">while</span>(any(ix) &amp; count &lt; count_limit), 
+094 
+095   count = count + 1;
+096   ki=k(ix);
+097   hn(ix)  = (ki.*tanh(ki.*h)-w(ix).^2/g)./(tanh(ki.*h)+ki.*h./(cosh(ki.*h).^2));
+098   knew = ki - hn(ix);
+099   <span class="comment">% Make sure that the current guess is not zero.</span>
+100   <span class="comment">% When Newton's Method suggests steps that lead to zero guesses</span>
+101   <span class="comment">% take a step 9/10ths of the way to zero:</span>
+102   ksmall = find(abs(knew) == 0);
+103   <span class="keyword">if</span> any(ksmall),
+104     knew(ksmall) = ki(ksmall) / 10;
+105     hn(ix(ksmall)) = ki(ksmall)-knew(ksmall);
+106   <span class="keyword">end</span>
+107   
+108   k(ix) = knew;
+109 <span class="comment">%   disp(['Iteration ',num2str(count),'  Number of points left:  ' num2str(length(ix)) ]),</span>
+110   
+111   ix=find((abs(hn) &gt; sqrt(eps)*abs(k))  &amp;  abs(hn) &gt; sqrt(eps));   
+112 <span class="keyword">end</span>
+113 
+114 <span class="keyword">if</span> count == count_limit, 
+115   fprintf(<span class="string">'\nWarning: w2k did not converge.\n'</span>);
+116   str = <span class="string">'The last step was:  '</span>;
+117   outstr = sprintf([str,<span class="string">'%13.8f'</span>],hn(ix));
+118   fprintf(outstr);
+119   ind=ix;
+120 <span class="keyword">else</span>
+121   ind=[];
+122   <span class="comment">%disp('All wave numbers found')</span>
+123 <span class="keyword">end</span>
+124 
+125 <span class="keyword">if</span> thtype==1
+126   k=ones(size(th,1),1)*k(:)';
+127 <span class="keyword">end</span>
+128 k2=k.*sin(th);
+129 k =k.*cos(th);
+130</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

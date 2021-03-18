@@ -1,0 +1,491 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spec2sdat</title>
+  <meta name="keywords" content="spec2sdat">
+  <meta name="description" content=" Simulates a Gaussian process and its derivative from spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wsim</a> &gt; spec2sdat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spec2sdat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Simulates a Gaussian process and its derivative from spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [x,xder]=spec2sdat(S,np,dt,iseed,method) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">SPEC2SDAT</a> Simulates a Gaussian process and its derivative from spectrum
+            
+    CALL: [xs, xsder] = <a href="spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,[np cases],dt,iseed,method);
+  
+          xs    = a cases+1 column matrix  ( t,X1(t) X2(t) ...).
+          xsder = a cases+1 column matrix  ( t,X1'(t) X2'(t) ...). 
+          S     = a spectral density structure
+          np    = giving np load points.  (default length(S)-1=n-1).
+                  If np&gt;n-1 it is assummed that R(k)=0 for all k&gt;n-1
+          cases = number of cases, i.e. number of replicates (default=1) 
+             dt = step in grid (default dt is defined by the Nyquist freq)
+          iseed = starting seed number for the random number generator 
+                  (default none is set)
+         method = 'exact'  : simulation using <a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a> 
+                  'random' : random phase and amplitude simulation (default)
+ 
+   <a href="spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">SPEC2SDAT</a> performs a fast and exact simulation of stationary zero mean 
+   Gaussian process through circulant embedding of the covariance matrix
+   or by summation of sinus functions with random amplitudes and random
+   phase angle.
+   
+   If the spectrum has a non-empty field .tr, then the transformation is 
+   applied to the simulated data, the result is a simulation of a transformed
+   Gaussian process.
+ 
+   NB! The method 'exact' simulation may give high frequency ripple when 
+   used with a small dt. In this case the method 'random' works better. 
+ 
+  Example:
+   np =100; dt = .2;
+  [x1 x2] = <a href="spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(<a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>,np,dt);
+  <a href="../../wafo/onedim/waveplot.html" class="code" title=" Plots the surface elevation of timeseries.">waveplot</a>(x1,'r',x2,'g',1,1)  
+   
+  See also  <a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>, <a href="../../wafo/trgauss/gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cov2sdat.html" class="code" title=" [x, xder]=cov2sdat(R,np,iseed)">cov2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/freqtype.html" class="code" title=" ftype=freqtype(S)">freqtype</a></li></TD>
+<TD> returns the frequency type of a Spectral density struct.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/lagtype.html" class="code" title=" ltype = lagtype(R)">lagtype</a></li></TD>
+<TD> Returns the lag type of a Covariance struct.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/spec2cov.html" class="code" title=" R = spec2cov(S,nr,Nt,rate,Nx,Ny,dx,dy)">spec2cov</a></li></TD>
+<TD> Computes covariance function and its derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/specinterp.html" class="code" title=" Snew = specinterp(S,dt)">specinterp</a></li></TD>
+<TD> Interpolation and zero-padding of spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/wnormspec.html" class="code" title=" [S,mn4,m0,m2,m4,m1]=wnormspec(spectrum,m0,m2,plotflag)">wnormspec</a></li></TD>
+<TD> Normalize a spectral density such that m0=m2=1</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\fft.bi">fft</a></li></TD>
+<TD>           Discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1q.m">interp1q</a></li></TD>
+<TD>      Quick 1-D linear interpolation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafoinit.html" class="code" title=" wafoinit">wafoinit</a></li></TD>
+<TD>  setup all global variables of the WAFODEMO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [x,xder]=<a name="_sub0" href="#_subfunctions" class="code">spec2sdat</a>(S,np,dt,iseed,method)
+002 <span class="comment">%SPEC2SDAT Simulates a Gaussian process and its derivative from spectrum</span>
+003 <span class="comment">%           </span>
+004 <span class="comment">%   CALL: [xs, xsder] = spec2sdat(S,[np cases],dt,iseed,method);</span>
+005 <span class="comment">% </span>
+006 <span class="comment">%         xs    = a cases+1 column matrix  ( t,X1(t) X2(t) ...).</span>
+007 <span class="comment">%         xsder = a cases+1 column matrix  ( t,X1'(t) X2'(t) ...). </span>
+008 <span class="comment">%         S     = a spectral density structure</span>
+009 <span class="comment">%         np    = giving np load points.  (default length(S)-1=n-1).</span>
+010 <span class="comment">%                 If np&gt;n-1 it is assummed that R(k)=0 for all k&gt;n-1</span>
+011 <span class="comment">%         cases = number of cases, i.e. number of replicates (default=1) </span>
+012 <span class="comment">%            dt = step in grid (default dt is defined by the Nyquist freq)</span>
+013 <span class="comment">%         iseed = starting seed number for the random number generator </span>
+014 <span class="comment">%                 (default none is set)</span>
+015 <span class="comment">%        method = 'exact'  : simulation using cov2sdat </span>
+016 <span class="comment">%                 'random' : random phase and amplitude simulation (default)</span>
+017 <span class="comment">%</span>
+018 <span class="comment">%  SPEC2SDAT performs a fast and exact simulation of stationary zero mean </span>
+019 <span class="comment">%  Gaussian process through circulant embedding of the covariance matrix</span>
+020 <span class="comment">%  or by summation of sinus functions with random amplitudes and random</span>
+021 <span class="comment">%  phase angle.</span>
+022 <span class="comment">%  </span>
+023 <span class="comment">%  If the spectrum has a non-empty field .tr, then the transformation is </span>
+024 <span class="comment">%  applied to the simulated data, the result is a simulation of a transformed</span>
+025 <span class="comment">%  Gaussian process.</span>
+026 <span class="comment">%</span>
+027 <span class="comment">%  NB! The method 'exact' simulation may give high frequency ripple when </span>
+028 <span class="comment">%  used with a small dt. In this case the method 'random' works better. </span>
+029 <span class="comment">%</span>
+030 <span class="comment">% Example:</span>
+031 <span class="comment">%  np =100; dt = .2;</span>
+032 <span class="comment">% [x1 x2] = spec2sdat(jonswap,np,dt);</span>
+033 <span class="comment">% waveplot(x1,'r',x2,'g',1,1)  </span>
+034 <span class="comment">%  </span>
+035 <span class="comment">% See also  cov2sdat, gaus2dat</span>
+036 
+037 <span class="comment">% Reference </span>
+038 <span class="comment">% C.R Dietrich and G. N. Newsam (1997)</span>
+039 <span class="comment">% &quot;Fast and exact simulation of stationary </span>
+040 <span class="comment">%  Gaussian process through circulant embedding </span>
+041 <span class="comment">%  of the Covariance matrix&quot; </span>
+042 <span class="comment">%  SIAM J. SCI. COMPT. Vol 18, No 4, pp. 1088-1107</span>
+043 <span class="comment">%</span>
+044 <span class="comment">% Hudspeth, R.T. and Borgman, L.E. (1979)</span>
+045 <span class="comment">% &quot;Efficient FFT simulation of Digital Time sequences&quot;</span>
+046 <span class="comment">% Journal of the Engineering Mechanics Division, ASCE, Vol. 105, No. EM2, </span>
+047 <span class="comment">% </span>
+048 
+049 <span class="comment">% Tested on: Matlab 5.3</span>
+050 <span class="comment">% History:</span>
+051 <span class="comment">% Revised pab Mar2005</span>
+052 <span class="comment">% </span>
+053 <span class="comment">% Revised pab Feb2004</span>
+054 <span class="comment">% - changed seed to state   </span>
+055 <span class="comment">% revised pab 21.07.2002</span>
+056 <span class="comment">% - </span>
+057 <span class="comment">% revised pab 12.10.2001</span>
+058 <span class="comment">% - added example</span>
+059 <span class="comment">% - the derivative, xder, is now calculated </span>
+060 <span class="comment">%   correctly using fft for method = 'random'.</span>
+061 <span class="comment">%   derivate.m is no longer needed!</span>
+062 <span class="comment">% revised pab 11.10.2001</span>
+063 <span class="comment">% - added a trick to avoid adding high frequency noise to spectrum when</span>
+064 <span class="comment">%   method = 'exact' </span>
+065 <span class="comment">% revised pab 21.01.2001</span>
+066 <span class="comment">% - random is now available for 1D wavenumber spectra as well</span>
+067 <span class="comment">% revised ir 11.06.00 - introducing dt</span>
+068 <span class="comment">% revised es 24.05.00 - fixed default value for np, and small changes to help</span>
+069 <span class="comment">% revised pab 13.03.2000</span>
+070 <span class="comment">% - fixed default value for np</span>
+071 <span class="comment">% revised pab 24.01.2000</span>
+072 <span class="comment">% - added method random from L. Borgman fwavsim (slightly faster and needs </span>
+073 <span class="comment">%   less memory)</span>
+074 <span class="comment">% - added iseed</span>
+075 <span class="comment">% revised es 12.01.2000:  enable dir. spectrum input (change of spec2cov call)</span>
+076 <span class="comment">% revised pab 12.10.1999</span>
+077 <span class="comment">%  simplified call by calling cov2sdat</span>
+078 <span class="comment">%    last modified by Per A. Brodtkorb 19.08.98</span>
+079 
+080 <span class="keyword">if</span> nargin&lt;5|isempty(method)
+081   method=<span class="string">'random'</span>;<span class="comment">% 'exact' is slightly slower than method=='random'</span>
+082 <span class="keyword">end</span>
+083 <span class="keyword">if</span> nargin&lt;4|isempty(iseed)
+084  iseed=[];
+085 <span class="keyword">else</span>
+086   <span class="keyword">try</span>
+087     randn(<span class="string">'state'</span>,iseed)
+088   <span class="keyword">catch</span>
+089     randn(<span class="string">'seed'</span>,iseed); <span class="comment">% set the the seed  </span>
+090   <span class="keyword">end</span>
+091 <span class="keyword">end</span>
+092 
+093 <span class="keyword">if</span> nargin&lt;3|isempty(dt)
+094  S1=S;
+095 <span class="keyword">else</span>
+096   S1=<a href="../../wafo/spec/specinterp.html" class="code" title=" Interpolation and zero-padding of spectrum">specinterp</a>(S,dt); <span class="comment">% interpolate spectrum  </span>
+097 <span class="keyword">end</span>
+098 
+099 ftype = <a href="../../wafo/spec/freqtype.html" class="code" title=" returns the frequency type of a Spectral density struct.">freqtype</a>(S);
+100 freq  = getfield(S,ftype);
+101 Nt = length(freq);
+102 
+103 S = S1;
+104 
+105 <span class="keyword">if</span> nargin&lt;2|isempty(np)
+106   np=Nt-1;
+107   cases=1;
+108 <span class="keyword">end</span>
+109 <span class="keyword">if</span> strcmpi(method,<span class="string">'exact'</span>) 
+110   R = <a href="../../wafo/spec/spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>(S,0,[],1,0,0);
+111   
+112   <span class="keyword">if</span> strcmpi(ftype,<span class="string">'f'</span>)
+113     T = Nt/freq(<span class="keyword">end</span>)/2;
+114   <span class="keyword">else</span>
+115     T = Nt*pi/freq(<span class="keyword">end</span>);
+116   <span class="keyword">end</span>
+117   ltype = <a href="../../wafo/spec/lagtype.html" class="code" title=" Returns the lag type of a Covariance struct.">lagtype</a>(R);
+118   ix = min(find(getfield(R,ltype)&gt;T));
+119   <span class="comment">% Trick to avoid adding high frequency noise to the spectrum</span>
+120   <span class="keyword">if</span> ~isempty(ix),R.R(ix:<span class="keyword">end</span>)=0; <span class="keyword">end</span>
+121   
+122   <span class="keyword">if</span> nargout&gt;1
+123     [x, xder]=<a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>(R,np,iseed);
+124   <span class="keyword">else</span>
+125     x=<a href="cov2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative">cov2sdat</a>(R,np,iseed);
+126   <span class="keyword">end</span>
+127   <span class="keyword">return</span>
+128 <span class="keyword">end</span>
+129    
+130 <span class="keyword">switch</span>  length(np) 
+131   <span class="keyword">case</span> 1, cases=1; 
+132   <span class="keyword">case</span> 2, cases=np(2); np=np(1);
+133   <span class="keyword">otherwise</span>, error(<span class="string">'Wrong input. Too many arguments'</span>)
+134 <span class="keyword">end</span>    
+135 <span class="keyword">if</span> mod(np,2),np=np+1;<span class="keyword">end</span> <span class="comment">% make sure it is even</span>
+136 
+137 <span class="comment">%ftype = freqtype(S); <span class="comment">%options are 'f' and 'w' and 'k'</span></span>
+138 
+139 
+140 
+141 <span class="keyword">if</span> 0
+142   <span class="comment">% Do the simulation with normalized spectrum</span>
+143   <span class="comment">% Normalize the spectrum</span>
+144   [Sn,mn4,m0,m2] = <a href="../../wafo/spec/wnormspec.html" class="code" title=" Normalize a spectral density such that m0=m2=1">wnormspec</a>(S);
+145   <span class="comment">% Normalization constants</span>
+146   tnorm = 2*pi*sqrt(m0/m2);
+147   xnorm = sqrt( tnorm*m0/(2*pi));
+148   fs    = getfield(Sn,ftype);
+149   Si    = Sn.S(2:<span class="keyword">end</span>-1);
+150 <span class="keyword">else</span>
+151   tnorm = 1;
+152   xnorm = 1;
+153   
+154   fs    = getfield(S,ftype);
+155   Si    = S.S(2:<span class="keyword">end</span>-1);
+156   
+157   <span class="keyword">switch</span> ftype
+158     <span class="keyword">case</span> <span class="string">'f'</span>   
+159     <span class="keyword">case</span> {<span class="string">'w'</span>,<span class="string">'k'</span>}
+160       Si=Si*2*pi;
+161       fs=fs/2/pi;
+162     <span class="keyword">otherwise</span>
+163       error(<span class="string">'Not implemented for wavenumber spectra'</span>)
+164   <span class="keyword">end</span>
+165 <span class="keyword">end</span>
+166 
+167 x=zeros(np,cases+1);
+168 <span class="keyword">if</span> nargout==2
+169   xder=x;
+170 <span class="keyword">end</span>
+171 
+172 
+173 dT = 1/(2*fs(<span class="keyword">end</span>)); <span class="comment">% dT</span>
+174 
+175 df = 1/(np*dT);
+176 
+177 
+178 <span class="comment">% interpolate for freq.  [1:(N/2)-1]*df and create 2-sided, uncentered spectra</span>
+179 <span class="comment">% ----------------------------------------------------------------------------</span>
+180 f = [1:(np/2)-1]'*df;
+181 
+182 fs(1)   = []; 
+183 fs(<span class="keyword">end</span>) = [];
+184 Fs      = [0; fs(:); (np/2)*df];
+185 Su      = [0; abs(Si(:))/2; 0];
+186 
+187 Smax = max(Su);
+188 <span class="comment">%Si = interp1(Fs,Su,f,'linear');</span>
+189 Si = interp1q(Fs,Su,f);
+190 
+191 tmp  = find(Si&gt;Smax*1e-3);
+192 nmax = max(tmp)+1;
+193 nmin = min(tmp)+1;
+194 <span class="keyword">if</span> isempty(nmax),nmax = np/2;<span class="keyword">end</span>
+195 <span class="keyword">if</span> isempty(nmin),nmin = 2;<span class="keyword">end</span> <span class="comment">% Must always be greater than 1</span>
+196 
+197 Su=[0; Si; 0; Si((np/2)-1:-1:1)];
+198 
+199 clear Si Fs
+200 
+201 <span class="comment">% Generate standard normal random numbers for the simulations</span>
+202 <span class="comment">% -----------------------------------------------------------</span>
+203 Zr = randn((np/2)+1,cases);
+204 Zi = [zeros(1,cases); randn((np/2)-1,cases); zeros(1,cases)];
+205 
+206 A                = zeros(np,cases);
+207 A(1:(np/2+1),:)  = Zr - sqrt(-1)*Zi; clear Zr Zi
+208 A((np/2+2):np,:) = conj(A(np/2:-1:2,:));
+209 A(1,:)           = A(1,:)*sqrt(2);
+210 A((np/2)+1,:)    = A((np/2)+1,:)*sqrt(2);
+211 
+212 
+213 <span class="comment">% Make simulated time series</span>
+214 <span class="comment">% --------------------------</span>
+215 
+216 T    = (np-1)*dT;
+217 Ssqr = sqrt(Su*df/2);
+218 <span class="comment">%max(Ssqr)</span>
+219 <span class="comment">% stochastic amplitude</span>
+220 A    = A.*Ssqr(:,ones(1,cases));
+221 <span class="comment">%max(abs(A))</span>
+222 
+223 <span class="comment">% Deterministic amplitude </span>
+224 <span class="comment">%A     =  sqrt(2)*Ssqr(:,ones(1,cases)).*exp(sqrt(-1)*atan2(imag(A),real(A)));</span>
+225 clear Su Ssqr
+226   
+227 
+228 x(:,2:<span class="keyword">end</span>) = xnorm*real(fft(A));
+229 
+230 x(:,1)     = linspace(0,T*tnorm,np)'; <span class="comment">%(0:dT:(np-1)*dT).';</span>
+231 
+232 
+233 
+234 
+235 <span class="keyword">if</span> nargout==2, 
+236   <span class="comment">%xder=derivate(x(:,1),x(:,2:end));</span>
+237   
+238   <span class="comment">% new call pab 12.10.2001</span>
+239   w = 2*pi*[0; f;0;-f(<span class="keyword">end</span>:-1:1)] ;
+240   A = -i*A.*w(:,ones(1,cases));  
+241   xder(:,2:(cases+1)) = real(fft(A))*xnorm/tnorm;
+242   xder(:,1)           = x(:,1);
+243 <span class="keyword">end</span>
+244 
+245 
+246 <span class="keyword">if</span> isfield(S,<span class="string">'tr'</span>) &amp; ~isempty(S.tr)
+247   disp(<span class="string">'   Transforming data.'</span>)
+248   g=S.tr;
+249   G=fliplr(g); <span class="comment">% the invers of g</span>
+250   <span class="keyword">if</span> nargout==2, <span class="comment">% gaus2dat</span>
+251     <span class="keyword">for</span> ix=1:cases
+252       tmp=<a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([x(:,ix+1) xder(:,ix+1)],G); 
+253       x(:,ix+1)=tmp(:,1);
+254       xder(:,ix+1)=tmp(:,2);
+255     <span class="keyword">end</span>
+256   <span class="keyword">else</span>
+257     <span class="keyword">for</span> ix=1:cases <span class="comment">% gaus2dat</span>
+258       x(:,ix+1)=<a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(x(:,ix+1),G); 
+259     <span class="keyword">end</span>
+260   <span class="keyword">end</span>
+261 <span class="keyword">end</span>
+262 
+263 
+264 
+265 <span class="keyword">return</span>
+266 
+267 <span class="comment">% Old call kept just in case</span>
+268 
+269 
+270 
+271 df=1/(np*dT);
+272 
+273 
+274 <span class="comment">% Interpolate for freq.  [1:(N/2)-1]*df and create 2-sided, uncentered spectra</span>
+275 <span class="comment">% ----------------------------------------------------------------------------</span>
+276 f=[1:(np/2)-1]'*df;
+277 
+278 fs(1)=[];fs(<span class="keyword">end</span>)=[];
+279 Fs=[0; fs(:); (np/2)*df];
+280 Su=[0; Si(:); 0];
+281 Si = interp1(Fs,Su,f,<span class="string">'linear'</span>)/2;
+282 
+283 Su=[0; Si; 0; Si((np/2)-1:-1:1)];
+284 clear Si
+285 
+286 <span class="comment">% Generate standard normal random numbers for the simulations</span>
+287 <span class="comment">% -----------------------------------------------------------</span>
+288 <span class="comment">%Zr=randn((np/2)+1,cases);</span>
+289 <span class="comment">%Zi=[zeros(1,cases); randn((np/2)-1,cases); zeros(1,cases)];</span>
+290 <span class="comment">%AA=Zr-sqrt(-1)*Zi;</span>
+291 
+292 AA = randn((np/2)+1,cases)-sqrt(-1)*[zeros(1,cases); randn((np/2)-1,cases); zeros(1,cases)];
+293 A=[AA;  conj(AA(np/2:-1:2,:))];
+294 clear AA 
+295 A(1,:)=A(1,:)*sqrt(2);
+296 A((np/2)+1,:)=A((np/2)+1,:)*sqrt(2);
+297 
+298 <span class="comment">% Make simulated time series</span>
+299 <span class="comment">% --------------------------</span>
+300 T    = np*dT;
+301 Ssqr = sqrt(Su*df/2);
+302 A    = A.*Ssqr(:,ones(1,cases));
+303 clear Su Ssqr
+304 
+305 x(:,2:<span class="keyword">end</span>)=real(fft(A));
+306 
+307 x(:,1)=(0:dT:(np-1)*dT).';</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

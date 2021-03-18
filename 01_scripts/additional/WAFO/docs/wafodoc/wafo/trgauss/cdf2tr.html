@@ -1,0 +1,295 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cdf2tr</title>
+  <meta name="keywords" content="cdf2tr">
+  <meta name="description" content=" Estimate transformation, g, from observed CDF.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; cdf2tr.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cdf2tr
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Estimate transformation, g, from observed CDF.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [g, test, g2] = cdf2tr(Fx1,ma ,sa,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cdf2tr.html" class="code" title=" Estimate transformation, g, from observed CDF. ">CDF2TR</a> Estimate transformation, g, from observed CDF. 
+  
+         Assumption: a Gaussian process, Y, is related to the 
+                     non-Gaussian process, X, by Y = g(X).  
+   
+   CALL [g,test,g2] = <a href="cdf2tr.html" class="code" title=" Estimate transformation, g, from observed CDF. ">cdf2tr</a>(F,ma,sa,options); 
+  
+      g,g2  = smoothed and empirical estimate of the transformation  g.      
+      test  = test observator int (g(u)-u)^2 du  where int limits is 
+              given by OPTIONS.PARAM. This is a measure of departure of the  
+              data from the Gaussian model. 
+      F     = empirical CDF of X(t), a 2 column matrix. 
+      ma,sa = mean and standard deviation of the process X(t). 
+    options = options structure defining how the smoothing is done. 
+              (See <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a> for default values) 
+  
+     The empirical CDF is usually very irregular. 
+   More than one local maximum of the empirical CDF 
+   may cause poor fit of the transformation. In such case one 
+   should use a smaller value of GSM or set a larger variance for GVAR.  
+     If X(t) is likely to cross <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> higher than 5 standard deviations   
+   then the vector param has to be modified.  For example if X(t) is  
+   unlikely to cross a level of 7 standard deviations one can use  
+   param = [-7 7 513]. 
+  
+  Example 
+  Hm0 = 7; 
+  S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>([],Hm0); g=<a href="ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">ochitr</a>([],[Hm0/4]);  
+  S.tr = g; S.tr(:,2)=g(:,2)*Hm0/4; 
+  xs = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,2^13); 
+  Fx = <a href="../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(xs(:,2)); 
+  g0 = <a href="cdf2tr.html" class="code" title=" Estimate transformation, g, from observed CDF. ">cdf2tr</a>(Fx,0,Hm0/4,<a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>('plot',1));   % Plot final estimate 
+  g1 = <a href="lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>(Fx,0,Hm0/4,<a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>('gvar', .5 )); % More weight on all points 
+  g2 = <a href="lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>(Fx,0,Hm0/4,'gvar', [3.5 .5 3.5]);  % Less weight on the ends 
+  hold on, <a href="trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>(g1,g)                                   % Check the fit 
+  <a href="trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>(g2) 
+  
+  See also  <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>, <a href="lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/smooth.html" class="code" title=" [yy,coefs]= smooth(x,y,p,xx,LinExtrap,d2)">smooth</a></li></TD>
+<TD> Calculates a smoothing spline.</TD>
+</TR>
+<TR>
+<TD><li><a href="troptset.html" class="code" title=" options = troptset(varargin)">troptset</a></li></TD>
+<TD> Create or alter TRANSFORM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="trplot.html" class="code" title=" h=trplot(g,g2,ma,sa)">trplot</a></li></TD>
+<TD> Plots transformation, g, eg. estimated with dat2tr.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1q.m">interp1q</a></li></TD>
+<TD>      Quick 1-D linear interpolation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\isequal.m">isequal</a></li></TD>
+<TD>       True if arrays are numerically equal.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\audiovideo\@audiorecorder\pause.m">pause</a></li></TD>
+<TD>         Wait for user response.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\trapz.m">trapz</a></li></TD>
+<TD>         Trapezoidal numerical integration.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dat2tr.html" class="code" title=" [g, test, cmax, irr, g2]= dat2tr(x,def,varargin);">dat2tr</a></li></TD>
+<TD> Estimate transformation, g, from data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [g, test, g2] = <a name="_sub0" href="#_subfunctions" class="code">cdf2tr</a>(Fx1,ma ,sa,varargin) 
+002 <span class="comment">%CDF2TR Estimate transformation, g, from observed CDF. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%        Assumption: a Gaussian process, Y, is related to the </span>
+005 <span class="comment">%                    non-Gaussian process, X, by Y = g(X).  </span>
+006 <span class="comment">%  </span>
+007 <span class="comment">%  CALL [g,test,g2] = cdf2tr(F,ma,sa,options); </span>
+008 <span class="comment">% </span>
+009 <span class="comment">%     g,g2  = smoothed and empirical estimate of the transformation  g.      </span>
+010 <span class="comment">%     test  = test observator int (g(u)-u)^2 du  where int limits is </span>
+011 <span class="comment">%             given by OPTIONS.PARAM. This is a measure of departure of the  </span>
+012 <span class="comment">%             data from the Gaussian model. </span>
+013 <span class="comment">%     F     = empirical CDF of X(t), a 2 column matrix. </span>
+014 <span class="comment">%     ma,sa = mean and standard deviation of the process X(t). </span>
+015 <span class="comment">%   options = options structure defining how the smoothing is done. </span>
+016 <span class="comment">%             (See troptset for default values) </span>
+017 <span class="comment">% </span>
+018 <span class="comment">%    The empirical CDF is usually very irregular. </span>
+019 <span class="comment">%  More than one local maximum of the empirical CDF </span>
+020 <span class="comment">%  may cause poor fit of the transformation. In such case one </span>
+021 <span class="comment">%  should use a smaller value of GSM or set a larger variance for GVAR.  </span>
+022 <span class="comment">%    If X(t) is likely to cross levels higher than 5 standard deviations   </span>
+023 <span class="comment">%  then the vector param has to be modified.  For example if X(t) is  </span>
+024 <span class="comment">%  unlikely to cross a level of 7 standard deviations one can use  </span>
+025 <span class="comment">%  param = [-7 7 513]. </span>
+026 <span class="comment">% </span>
+027 <span class="comment">% Example </span>
+028 <span class="comment">% Hm0 = 7; </span>
+029 <span class="comment">% S = jonswap([],Hm0); g=ochitr([],[Hm0/4]);  </span>
+030 <span class="comment">% S.tr = g; S.tr(:,2)=g(:,2)*Hm0/4; </span>
+031 <span class="comment">% xs = spec2sdat(S,2^13); </span>
+032 <span class="comment">% Fx = empdistr(xs(:,2)); </span>
+033 <span class="comment">% g0 = cdf2tr(Fx,0,Hm0/4,troptset('plot',1));   <span class="comment">% Plot final estimate </span></span>
+034 <span class="comment">% g1 = lc2tr(Fx,0,Hm0/4,troptset('gvar', .5 )); <span class="comment">% More weight on all points </span></span>
+035 <span class="comment">% g2 = lc2tr(Fx,0,Hm0/4,'gvar', [3.5 .5 3.5]);  <span class="comment">% Less weight on the ends </span></span>
+036 <span class="comment">% hold on, trplot(g1,g)                                   <span class="comment">% Check the fit </span></span>
+037 <span class="comment">% trplot(g2) </span>
+038 <span class="comment">% </span>
+039 <span class="comment">% See also  troptset, lc2tr </span>
+040  
+041 <span class="comment">% History </span>
+042 <span class="comment">% revised Feb2004   </span>
+043 <span class="comment">% Revised pab Dec2003 </span>
+044 <span class="comment">%  fixed a bug F -&gt; Fx1 </span>
+045 <span class="comment">% by pab 29.12.2000 </span>
+046 <span class="comment">% - default param is now [-5 5 513] -&gt; better to have the discretization </span>
+047 <span class="comment">%  represented with exact numbers, especially when calculating </span>
+048 <span class="comment">%  derivatives of the transformation numerically. </span>
+049  
+050 opt = <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>(<span class="string">'chkder'</span>,<span class="string">'on'</span>,<span class="string">'plotflag'</span>,<span class="string">'off'</span>,<span class="string">'gsm'</span>,.05,.<span class="keyword">...</span> 
+051     <span class="string">'param'</span>,[-5 5 513],<span class="string">'delay'</span>,2,<span class="string">'linextrap'</span>,<span class="string">'on'</span>,<span class="string">'ntr'</span>,1000,<span class="string">'ne'</span>,7,<span class="string">'gvar'</span>,1); 
+052 <span class="comment">% If just 'defaults' passed in, return the default options in g </span>
+053 <span class="keyword">if</span> nargin==1 &amp; nargout &lt;= 1 &amp; isequal(Fx1,<span class="string">'defaults'</span>) 
+054   g = opt;  
+055   <span class="keyword">return</span> 
+056 <span class="keyword">end</span> 
+057 error(nargchk(3,inf,nargin)) 
+058 <span class="keyword">if</span> nargin&gt;=4,  opt=<a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>(opt,varargin{:}); <span class="keyword">end</span> 
+059 <span class="keyword">switch</span> opt.chkder; 
+060   <span class="keyword">case</span> <span class="string">'off'</span>, chkder = 0; 
+061   <span class="keyword">case</span> <span class="string">'on'</span>,  chkder = 1; 
+062   <span class="keyword">otherwise</span>,  chkder = opt.chkder; 
+063 <span class="keyword">end</span> 
+064 <span class="keyword">switch</span> opt.linextrap; 
+065   <span class="keyword">case</span> <span class="string">'off'</span>, def = 0; 
+066   <span class="keyword">case</span> <span class="string">'on'</span>,  def = 1; 
+067   <span class="keyword">otherwise</span>,  def = opt.linextrap; 
+068 <span class="keyword">end</span> 
+069  
+070 <span class="keyword">switch</span> opt.plotflag 
+071   <span class="keyword">case</span> {<span class="string">'none'</span>,<span class="string">'off'</span>},   plotflag = 0; 
+072   <span class="keyword">case</span> <span class="string">'final'</span>, plotflag = 1; 
+073   <span class="keyword">case</span> <span class="string">'iter'</span>,  plotflag = 2; 
+074   <span class="keyword">otherwise</span>,    plotflag = opt.plotflag; 
+075 <span class="keyword">end</span> 
+076  
+077  
+078 Ne = opt.ne; 
+079 <span class="keyword">if</span> length(Fx1)&gt;opt.ntr &amp; opt.ntr&gt;0 
+080   x0 = linspace(Fx1(1+Ne,1),Fx1(<span class="keyword">end</span>-Ne,1),opt.ntr)'; 
+081   Fx = [ x0,interp1q(Fx1(:,1),Fx1(:,2),x0)]; 
+082   Ne=0; 
+083 <span class="keyword">else</span> 
+084   Fx = Fx1; 
+085 <span class="keyword">end</span> 
+086 uu = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(opt.param)'; 
+087 g = [sa*uu+ma zeros(opt.param(3),1)]; 
+088 ncr = length(Fx); 
+089  
+090  
+091 ng = length(opt.gvar); 
+092 <span class="keyword">if</span> ng==1 
+093   gvar = opt.gvar(ones(ncr,1)); 
+094 <span class="keyword">else</span> 
+095   gvar = interp1(linspace(0,1,ng)',opt.gvar(:),linspace(0,1,ncr)',<span class="string">'*linear'</span>);   
+096 <span class="keyword">end</span> 
+097   
+098  
+099 ind = find(diff(Fx(:,1))&gt;0); <span class="comment">% remove equal points </span>
+100 ind1 = ind(Ne+1:<span class="keyword">end</span>-Ne);   
+101 tmp = <a href="../../wafo/wstats/wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(Fx(ind,2)); 
+102  
+103 g(:,2) = <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(Fx(ind1,1),tmp(Ne+1:<span class="keyword">end</span>-Ne),opt.gsm,g(:,1),def,gvar); 
+104  
+105 <span class="keyword">if</span> chkder~=0 
+106   <span class="keyword">for</span> ix = 1:5 
+107     dy = diff(g(:,2)); 
+108     <span class="keyword">if</span> any(dy&lt;=0) 
+109       warning(<span class="string">'The empirical distribution is not sufficiently smoothed.'</span>) 
+110       disp(<span class="string">'        The estimated transfer function, g, is not '</span>) 
+111       disp(<span class="string">'        a strictly increasing function.'</span>) 
+112       dy(dy&gt;0)=eps; 
+113       gvar = -([dy;0]+[0;dy])/2+eps; 
+114       g(:,2) = <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(g(:,1),g(:,2),1,g(:,1),def,ix*gvar); 
+115     <span class="keyword">else</span>  
+116       <span class="keyword">break</span> 
+117     <span class="keyword">end</span> 
+118   <span class="keyword">end</span> 
+119 <span class="keyword">end</span> 
+120 <span class="keyword">if</span> nargout&gt;1 
+121   test = sqrt(trapz(uu,(uu-g(:,2)).^2));   
+122 <span class="keyword">end</span> 
+123 <span class="keyword">if</span> nargout&gt;2 
+124   g2 = [Fx(ind,1) tmp]; 
+125 <span class="keyword">end</span> 
+126 <span class="keyword">if</span> plotflag&gt;0 
+127   <a href="trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>(g,g2,ma,sa) 
+128   <span class="keyword">if</span> plotflag&gt;1 
+129     pause(opt.delay) 
+130   <span class="keyword">end</span> 
+131 <span class="keyword">end</span> 
+132  
+133  
+134  
+135</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

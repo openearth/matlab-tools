@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of gridcount</title>
+  <meta name="keywords" content="gridcount">
+  <meta name="description" content=" D-dimensional histogram using linear binning.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; gridcount.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>gridcount
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> D-dimensional histogram using linear binning.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> c = gridcount(data,X) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="gridcount.html" class="code" title=" D-dimensional histogram using linear binning. ">GRIDCOUNT</a> D-dimensional histogram using linear binning. 
+  
+  CALL  c = <a href="gridcount.html" class="code" title=" D-dimensional histogram using linear binning. ">gridcount</a>(data,X) 
+  
+  c    = <a href="gridcount.html" class="code" title=" D-dimensional histogram using linear binning. ">gridcount</a>, size N x 1           if D = 1  
+                    size N x N x ... x N if D &gt; 1   
+  data = row vectors with D-dimensional data, size Nd x D 
+  X    = column vectors defining discretization, size N x D 
+         Must include the <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> of the data. 
+  <a href="gridcount.html" class="code" title=" D-dimensional histogram using linear binning. ">GRIDCOUNT</a> obtains the grid counts using linear binning. 
+  There are 2 strategies: simple- or linear- binning. 
+  Suppose that an observation occurs at x and that the nearest point 
+  below and above is y and z, respectively. Then simple binning strategy 
+  assigns a unit weight to either y or z, whichever is closer. Linear 
+  binning, on the other hand, assigns the grid point at y with the weight 
+  of (z-x)/(z-y) and the gridpoint at z a weight of (y-x)/(z-y). 
+    
+  In terms of approximation error of using gridcounts as pdf-estimate, 
+  linear binning is significantly more accurate than simple binning.   
+  
+  NOTE: The interval [min(X);max(X)] must include the <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> of the data. 
+        The order of C is permuted in the same order as  
+        meshgrid for D==2 or D==3.   
+     
+  Example 
+   N     = 500; 
+   data  = <a href="../../wafo/wstats/wraylrnd.html" class="code" title=" Random matrices from a Rayleigh distribution">wraylrnd</a>(1,N,1); 
+   x = linspace(0,max(data)+1,50).';   
+   dx = x(2)-x(1);   
+   c = <a href="gridcount.html" class="code" title=" D-dimensional histogram using linear binning. ">gridcount</a>(data,x); 
+   plot(x,c,'.')   % 1D histogram 
+   plot(x,c/dx/N)  % 1D probability density plot 
+   trapz(x,c/dx/N)    
+  
+  See also  <a href="bincount.html" class="code" title=" 1-dimensional Bin Count ">bincount</a>, <a href="kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="bincount.html" class="code" title=" [len,bin,val] = bincount(x,f)">bincount</a></li></TD>
+<TD> 1-dimensional Bin Count</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@uint16\bitget.bi">bitget</a></li></TD>
+<TD>        Get bit.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\@double\full.bi">full</a></li></TD>
+<TD>          Convert sparse matrix to full matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\permute.bi">permute</a></li></TD>
+<TD>       Permute array dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\sparfun\@double\sparse.bi">sparse</a></li></TD>
+<TD>        Create sparse matrix.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="hldpi.html" class="code" title=" h=hldpi(A,kernel,L,inc);">hldpi</a></li></TD>
+<TD> L-stage Direct Plug-In estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hldpi2fft.html" class="code" title=" h=hldpi2fft(A,kernel,L)">hldpi2fft</a></li></TD>
+<TD> L-stage DPI estimate of smoothing parameter for 2D data</TD>
+</TR>
+<TR>
+<TD><li><a href="hscv.html" class="code" title=" [h,hvec,score]=hscv(A,kernel,hvec)">hscv</a></li></TD>
+<TD> Smoothed cross-validation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hste.html" class="code" title=" h=hste(A,kernel,h,inc,maxit,releps,abseps)">hste</a></li></TD>
+<TD> 2-Stage Solve the Equation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="kdebin.html" class="code" title=" f = kdebin(A,options,xlo,xup)">kdebin</a></li></TD>
+<TD> Binned Kernel Density Estimator.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> c = <a name="_sub0" href="#_subfunctions" class="code">gridcount</a>(data,X) 
+002 <span class="comment">%GRIDCOUNT D-dimensional histogram using linear binning. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL  c = gridcount(data,X) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">% c    = gridcount, size N x 1           if D = 1  </span>
+007 <span class="comment">%                   size N x N x ... x N if D &gt; 1   </span>
+008 <span class="comment">% data = row vectors with D-dimensional data, size Nd x D </span>
+009 <span class="comment">% X    = column vectors defining discretization, size N x D </span>
+010 <span class="comment">%        Must include the range of the data. </span>
+011 <span class="comment">% GRIDCOUNT obtains the grid counts using linear binning. </span>
+012 <span class="comment">% There are 2 strategies: simple- or linear- binning. </span>
+013 <span class="comment">% Suppose that an observation occurs at x and that the nearest point </span>
+014 <span class="comment">% below and above is y and z, respectively. Then simple binning strategy </span>
+015 <span class="comment">% assigns a unit weight to either y or z, whichever is closer. Linear </span>
+016 <span class="comment">% binning, on the other hand, assigns the grid point at y with the weight </span>
+017 <span class="comment">% of (z-x)/(z-y) and the gridpoint at z a weight of (y-x)/(z-y). </span>
+018 <span class="comment">%   </span>
+019 <span class="comment">% In terms of approximation error of using gridcounts as pdf-estimate, </span>
+020 <span class="comment">% linear binning is significantly more accurate than simple binning.   </span>
+021 <span class="comment">% </span>
+022 <span class="comment">% NOTE: The interval [min(X);max(X)] must include the range of the data. </span>
+023 <span class="comment">%       The order of C is permuted in the same order as  </span>
+024 <span class="comment">%       meshgrid for D==2 or D==3.   </span>
+025 <span class="comment">%    </span>
+026 <span class="comment">% Example </span>
+027 <span class="comment">%  N     = 500; </span>
+028 <span class="comment">%  data  = wraylrnd(1,N,1); </span>
+029 <span class="comment">%  x = linspace(0,max(data)+1,50).';   </span>
+030 <span class="comment">%  dx = x(2)-x(1);   </span>
+031 <span class="comment">%  c = gridcount(data,x); </span>
+032 <span class="comment">%  plot(x,c,'.')   <span class="comment">% 1D histogram </span></span>
+033 <span class="comment">%  plot(x,c/dx/N)  <span class="comment">% 1D probability density plot </span></span>
+034 <span class="comment">%  trapz(x,c/dx/N)    </span>
+035 <span class="comment">% </span>
+036 <span class="comment">% See also  bincount, kdebin </span>
+037    
+038 <span class="comment">%Reference </span>
+039 <span class="comment">%  Wand,M.P. and Jones, M.C. (1995)  </span>
+040 <span class="comment">% 'Kernel smoothing' </span>
+041 <span class="comment">%  Chapman and Hall, pp 182-192   </span>
+042    
+043 <span class="comment">%  History </span>
+044 <span class="comment">% revised pab Feb2005 </span>
+045 <span class="comment">% -fixed a bug for d&gt;2;   </span>
+046 <span class="comment">% by pab Dec2003   </span>
+047    
+048 error(nargchk(2,2,nargin)) 
+049  
+050 [n,d]    = size(data);   
+051 [inc,d1] = size(X); 
+052  
+053 <span class="keyword">if</span> d~=d1 
+054   error(<span class="string">'Dimension 2 of data and X do not match.'</span>) 
+055 <span class="keyword">end</span> 
+056  
+057 dx  = diff(X(1:2,:),1); 
+058 xlo = X(1,  :); 
+059 xup = X(<span class="keyword">end</span>,:); 
+060  
+061 <span class="keyword">if</span> any(min(data,[],1)&lt;xlo) | any(xup&lt;max(data,[],1)) 
+062   error(<span class="string">'X does not include whole range of the data!'</span>) 
+063 <span class="keyword">end</span> 
+064  
+065 <span class="keyword">if</span> d&gt;1 
+066   csiz = inc(:,ones(1,d)); 
+067   n1   = n; 
+068 <span class="keyword">else</span> 
+069   csiz = [inc,1]; 
+070   n1   = 1; 
+071 <span class="keyword">end</span> 
+072    
+073 binx = floor((data-xlo(ones(n1,1),:))./dx(ones(n1,1),:))+1; 
+074 w    = prod(dx); 
+075 <span class="keyword">if</span>  d==1, 
+076   <span class="keyword">try</span>, 
+077     <span class="comment">% binc is much faster than sparse for 1D data </span>
+078     <span class="comment">% However, for N-Dimensional data sparse is sometimes faster. </span>
+079     c = zeros(csiz); 
+080     [len,bin,val] = <a href="bincount.html" class="code" title=" 1-dimensional Bin Count ">bincount</a>(binx,(X(binx+1)-data)); 
+081     c(bin) = val; 
+082     [len,bin,val] = <a href="bincount.html" class="code" title=" 1-dimensional Bin Count ">bincount</a>(binx+1,(data-X(binx))); 
+083     c(bin) = c(bin)+val; 
+084     c = c/w; 
+085   <span class="keyword">catch</span> 
+086     c = full(sparse(binx,1,(X(binx+1)-data),inc,1)+<span class="keyword">...</span> 
+087          sparse(binx+1,1,(data-X(binx)),inc,1))/w; 
+088   <span class="keyword">end</span> 
+089 <span class="keyword">elseif</span> d==2 
+090   b2 = binx(:,2); 
+091   b1 = binx(:,1); 
+092   c = full(sparse(b1,b2 ,abs(prod(([X(b1+1,1) X(b2+1,2)]-data),2)),inc,inc)); 
+093   c = c + sparse(b1+1,b2  ,abs(prod(([X(b1,1) X(b2+1,2)]-data),2)),inc,inc); 
+094   c = c + sparse(b1  ,b2+1,abs(prod(([X(b1+1,1) X(b2,2)]-data),2)),inc,inc); 
+095   c = (c + sparse(b1+1,b2+1,abs(prod(([X(b1,1) X(b2,2)]-data),2)),inc,inc))/w; 
+096 <span class="keyword">else</span> <span class="comment">% d&gt;2 </span>
+097  useSparse = 1; 
+098   Nc = prod(csiz); 
+099   c  = zeros(Nc,1); 
+100   
+101   fact2 = [0 inc*(1:d-1)]; 
+102   fact1 = [1 cumprod(csiz(1:d-1))]; 
+103   fact1 = fact1(ones(n,1),:); 
+104   <span class="keyword">for</span> ir=0:2^(d-1)-1, 
+105       bt0 = bitget(ir,1:d); 
+106       bt1 = ~bt0; 
+107        
+108       <span class="comment">% Convert to linear index (faster than sub2ind) </span>
+109       b1  = sum((binx + bt0(ones(n,1),:)-1).*fact1,2)+1; <span class="comment">%linear index to c </span>
+110       bt2 = bt1 + fact2; 
+111       b2  = binx + bt2(ones(n,1),:);                     <span class="comment">% linear index to X </span>
+112       <span class="keyword">if</span> useSparse 
+113         <span class="comment">% Fast gridding using sparse </span>
+114         c = c + sparse(b1,1,abs(prod(X(b2)-data,2)),Nc,1); 
+115       <span class="keyword">else</span> 
+116         [len,bin,val] = <a href="bincount.html" class="code" title=" 1-dimensional Bin Count ">bincount</a>(b1,abs(prod(X(b2)-data,2))); 
+117         c(bin)        = c(bin)+val;        
+118       <span class="keyword">end</span> 
+119        
+120        <span class="comment">% Convert to linear index (faster than sub2ind) </span>
+121       b1  = sum((binx + bt1(ones(n,1),:)-1).*fact1,2)+1; <span class="comment">% linear index to c </span>
+122       bt2 = bt0 + fact2; 
+123       b2  = binx + bt2(ones(n,1),:);                     <span class="comment">% linear index to X </span>
+124        
+125       <span class="keyword">if</span> useSparse 
+126         <span class="comment">% Fast gridding using sparse </span>
+127         c = c + sparse(b1,1,abs(prod(X(b2)-data,2)),Nc,1); 
+128       <span class="keyword">else</span> 
+129         [len,bin,val] = <a href="bincount.html" class="code" title=" 1-dimensional Bin Count ">bincount</a>(b1,abs(prod(X(b2)-data,2))); 
+130         c(bin)        = c(bin)+val;    
+131       <span class="keyword">end</span> 
+132     <span class="keyword">end</span> 
+133     c = reshape(c/w,csiz); 
+134 <span class="keyword">end</span> 
+135 <span class="keyword">switch</span> d <span class="comment">% make sure c is stored in the same way as meshgrid </span>
+136  <span class="keyword">case</span> 2,  c = c.'; 
+137  <span class="keyword">case</span> 3,  c = permute(c,[2 1 3]); 
+138 <span class="keyword">end</span> 
+139 <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

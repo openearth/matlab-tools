@@ -1,0 +1,567 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of smctp2arfm</title>
+  <meta name="keywords" content="smctp2arfm">
+  <meta name="description" content="  Calculates the asymmetric rainflow matrix for a SMCTP.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">markov</a> &gt; smctp2arfm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\markov&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>smctp2arfm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates the asymmetric rainflow matrix for a SMCTP.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F_rfc,F_rfc_z,T] = smctp2arfm(P,F,c_m,SideInfo) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="smctp2arfm.html" class="code" title="  Calculates the asymmetric rainflow matrix for a SMCTP.">SMCTP2ARFM</a>  Calculates the asymmetric rainflow matrix for a SMCTP.
+ 
+  CALL:  [Frfc]        = <a href="smctp2arfm.html" class="code" title="  Calculates the asymmetric rainflow matrix for a SMCTP.">smctp2arfm</a>(P,F);
+         [Frfc,Frfc_z] = <a href="smctp2arfm.html" class="code" title="  Calculates the asymmetric rainflow matrix for a SMCTP.">smctp2arfm</a>(P,F,c_m,SideInfo);
+ 
+  Frfc    = Rainflow Matrix                            [n,n]
+  Frfc_z  = Rainflow Matrix, with side info z    {r,r1}[n,n]
+ 
+  P       = Transition matrix for regime process.      [r,r]
+  F       = Cell array of min-Max and Max-min matrices {r,2}
+  F{i,1}  = min-Max matrix, process i                  [n,n]
+  F{i,2}  = Max-min matrix, process i                  [n,n]
+  c_m     = Intensity of local minima, switching proc. [1,1]
+            (Default: 1)
+  SideInfo = Which type of side information
+           0: No side info
+           1: Mark min &amp; max, r1=r
+           2: Mark when counted, r1=1
+ 
+  Calculates the asymmetric rainflow matrix for a switching process
+  with a Markov chain of turning points within each regime.
+  If a matrix F{i,2}=[], then the process will be assumed to be 
+  time-reversible.
+ 
+  Example: (Two processes as in Example 4.1 in PhD thesis)
+    P = [0.9 0.1; 0.05 0.95];
+    param = [-1 1 32]; u = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+    F1 = <a href="mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.4 -0.3],0.15,1);
+    F2 = <a href="mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[0.3 0.4],0.15,1);
+    [Frfc,Frfc_z] = <a href="smctp2arfm.html" class="code" title="  Calculates the asymmetric rainflow matrix for a SMCTP.">smctp2arfm</a>(P,{F1 F1'; F2 F2'},1,1);
+    figure(1),<a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,Frfc_z,3)
+    Frfc1 = Frfc_z{1,1}+Frfc_z{1,2}+Frfc_z{2,1}+Frfc_z{2,2};
+    figure(2),<a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{Frfc Frfc1},3) % Shall be identical
+ 
+  See also  <a href="mctp2arfm.html" class="code" title="  Calculates asymmetric rainflow matrix for a MCTP.">mctp2arfm</a>, <a href="smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>, <a href="../../wafo/cycles/dtp2arfm_sid.html" class="code" title="  Asymmetric RFM from discrete TP with side information.">dtp2arfm_sid</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mat2tmat.html" class="code" title=" P = mat2tmat(F,def,K)">mat2tmat</a></li></TD>
+<TD>  Converts a matrix to a transition matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="mc2stat.html" class="code" title=" [ro,PP]=mc2stat(P)">mc2stat</a></li></TD>
+<TD>  Calculates the stationary distribution for a Markov chain.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\clock.m">clock</a></li></TD>
+<TD>         Current date and time as date vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\deal.m">deal</a></li></TD>
+<TD>          Deal inputs to outputs.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\inv.bi">inv</a></li></TD>
+<TD>           Matrix inverse.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\kron.m">kron</a></li></TD>
+<TD>          Kronecker tensor product.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="f_smctp.html" class="code" title=" [y,F,P,FF] = f_smctp(X,Fobs,whatEst,method,known,whatKnown,init)">f_smctp</a></li></TD>
+<TD>  Auxiliary function used by ESTSMCTP</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [F_rfc,F_rfc_z,T] = <a name="_sub0" href="#_subfunctions" class="code">smctp2arfm</a>(P,F,c_m,SideInfo)
+0002 <span class="comment">%SMCTP2ARFM  Calculates the asymmetric rainflow matrix for a SMCTP.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% CALL:  [Frfc]        = smctp2arfm(P,F);</span>
+0005 <span class="comment">%        [Frfc,Frfc_z] = smctp2arfm(P,F,c_m,SideInfo);</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Frfc    = Rainflow Matrix                            [n,n]</span>
+0008 <span class="comment">% Frfc_z  = Rainflow Matrix, with side info z    {r,r1}[n,n]</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% P       = Transition matrix for regime process.      [r,r]</span>
+0011 <span class="comment">% F       = Cell array of min-Max and Max-min matrices {r,2}</span>
+0012 <span class="comment">% F{i,1}  = min-Max matrix, process i                  [n,n]</span>
+0013 <span class="comment">% F{i,2}  = Max-min matrix, process i                  [n,n]</span>
+0014 <span class="comment">% c_m     = Intensity of local minima, switching proc. [1,1]</span>
+0015 <span class="comment">%           (Default: 1)</span>
+0016 <span class="comment">% SideInfo = Which type of side information</span>
+0017 <span class="comment">%          0: No side info</span>
+0018 <span class="comment">%          1: Mark min &amp; max, r1=r</span>
+0019 <span class="comment">%          2: Mark when counted, r1=1</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Calculates the asymmetric rainflow matrix for a switching process</span>
+0022 <span class="comment">% with a Markov chain of turning points within each regime.</span>
+0023 <span class="comment">% If a matrix F{i,2}=[], then the process will be assumed to be </span>
+0024 <span class="comment">% time-reversible.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Example: (Two processes as in Example 4.1 in PhD thesis)</span>
+0027 <span class="comment">%   P = [0.9 0.1; 0.05 0.95];</span>
+0028 <span class="comment">%   param = [-1 1 32]; u = levels(param);</span>
+0029 <span class="comment">%   F1 = mktestmat(param,[-0.4 -0.3],0.15,1);</span>
+0030 <span class="comment">%   F2 = mktestmat(param,[0.3 0.4],0.15,1);</span>
+0031 <span class="comment">%   [Frfc,Frfc_z] = smctp2arfm(P,{F1 F1'; F2 F2'},1,1);</span>
+0032 <span class="comment">%   figure(1),cmatplot(u,u,Frfc_z,3)</span>
+0033 <span class="comment">%   Frfc1 = Frfc_z{1,1}+Frfc_z{1,2}+Frfc_z{2,1}+Frfc_z{2,2};</span>
+0034 <span class="comment">%   figure(2),cmatplot(u,u,{Frfc Frfc1},3) <span class="comment">% Shall be identical</span></span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% See also  mctp2arfm, smctp2rfm, dtp2arfm_sid</span>
+0037 
+0038 <span class="comment">% References:</span>
+0039 <span class="comment">%  </span>
+0040 <span class="comment">%  P. Johannesson (1999):</span>
+0041 <span class="comment">%  Rainflow Analysis of Switching Markov Loads.</span>
+0042 <span class="comment">%  PhD thesis, Mathematical Statistics, Centre for Mathematical Sciences,</span>
+0043 <span class="comment">%  Lund Institute of Technology.</span>
+0044   
+0045 <span class="comment">% Tested  on Matlab  5.3</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">% History:</span>
+0048 <span class="comment">% Revised by PJ  09-Apr-2001</span>
+0049 <span class="comment">%   updated for WAFO</span>
+0050 <span class="comment">% Created by PJ (Pär Johannesson) 1998</span>
+0051 <span class="comment">% Copyright (c) 1997-1998 by Pär Johannesson</span>
+0052 <span class="comment">% Toolbox: Rainflow Cycles for Switching Processes V.1.1, 22-Jan-1998</span>
+0053 
+0054 
+0055 <span class="comment">% This program used the formulation where the probabilities</span>
+0056 <span class="comment">% of the events are calculated using &quot;elementary&quot; events for</span>
+0057 <span class="comment">% the MCTP.</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">% Standing</span>
+0060 <span class="comment">%    pS = Max*pS1*pS2*pS3;</span>
+0061 <span class="comment">%    F_rfc(i,j) = pS;</span>
+0062 <span class="comment">% Hanging</span>
+0063 <span class="comment">%    pH = Min*pH1*pH2*pH3;</span>
+0064 <span class="comment">%    F_rfc(j,i) = pH;</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">% The cond. prob. pS1, pS2, pS3, pH1, pH2, pH3 are calculated using</span>
+0067 <span class="comment">% the elementary cond. prob. C, E, R, D, E3, Ch, Eh, Rh, Dh, E3h. </span>
+0068 
+0069 T(1,:)=clock;
+0070 
+0071 <span class="comment">% Check input arguments</span>
+0072 
+0073 ni = nargin;
+0074 no = nargout;
+0075 error(nargchk(2,4,ni));
+0076 
+0077 <span class="keyword">if</span> ni &lt; 3
+0078   c_m=[];
+0079 <span class="keyword">end</span>
+0080 
+0081 <span class="keyword">if</span> ni &lt; 4
+0082   SideInfo = [];
+0083 <span class="keyword">end</span>
+0084 
+0085 <span class="keyword">if</span> isempty(c_m)
+0086   c_m=1;
+0087 <span class="keyword">end</span>
+0088 <span class="keyword">if</span> isempty(SideInfo)
+0089   SideInfo=0;
+0090 <span class="keyword">end</span>
+0091 
+0092 <span class="comment">% Define </span>
+0093 
+0094 Zstr = <span class="string">'123456789'</span>; Zstr=Zstr';
+0095 
+0096 r = length(P);   <span class="comment">% Number of regime states</span>
+0097 n = length(F{1,1});  <span class="comment">% Number of levels</span>
+0098 
+0099 <span class="comment">% Check that the rowsums of P are equal to 1</span>
+0100 
+0101 P = <a href="mat2tmat.html" class="code" title="  Converts a matrix to a transition matrix.">mat2tmat</a>(P);
+0102 
+0103 T(2,:)=clock;
+0104 
+0105 <span class="comment">% Normalize the rowsums of F{1,1},...,F{r,1} to 1</span>
+0106 <span class="comment">%  ==&gt;  Q{1,1},...,Q{r,1}</span>
+0107 
+0108 <span class="keyword">for</span> i = 1:r
+0109   QQ{i,1} = F{i,1};
+0110   QQ{i,1} = <a href="mat2tmat.html" class="code" title="  Converts a matrix to a transition matrix.">mat2tmat</a>(QQ{i,1},1);
+0111 <span class="keyword">end</span>
+0112 
+0113 T(3,:)=clock;
+0114 
+0115 <span class="comment">% Normalize the rowsums of F{1,2},...,F{r,2} to 1</span>
+0116 <span class="comment">%  ==&gt;  Q{1,2},...,Q{r,2}</span>
+0117 
+0118 <span class="keyword">for</span> i = 1:r
+0119   
+0120   <span class="keyword">if</span> isempty(F{i,2})        <span class="comment">% Time-reversible</span>
+0121     QQ{i,2} = F{i,1};
+0122     QQ{i,2} = QQ{i,2}';  
+0123   <span class="keyword">else</span>                   <span class="comment">% Fhi is given</span>
+0124     QQ{i,2} = F{i,2}; 
+0125   <span class="keyword">end</span>
+0126     
+0127   QQ{i,2} = <a href="mat2tmat.html" class="code" title="  Converts a matrix to a transition matrix.">mat2tmat</a>(QQ{i,2},-1);
+0128 
+0129 <span class="keyword">end</span>
+0130 
+0131 T(4,:)=clock;
+0132 
+0133 <span class="comment">% Make the transition matrix Q for the joint min-Max process</span>
+0134 
+0135 Q = zeros(n*r,n*r);
+0136 I = 0:r:(n-1)*r;
+0137 <span class="keyword">for</span> z=1:r
+0138   Q0 = kron(QQ{z,1},P);
+0139   Q(I+z,:) = Q0(I+z,:);
+0140 <span class="keyword">end</span>
+0141 
+0142 T(5,:)=clock;
+0143 
+0144 <span class="comment">% Make the transition matrix Qh for the joint Max-min process</span>
+0145 
+0146 Qh = zeros(n*r,n*r);
+0147 I = 0:r:(n-1)*r;
+0148 <span class="keyword">for</span> z=1:r
+0149   Q0 = kron(QQ{z,2},P);
+0150   Qh(I+z,:) = Q0(I+z,:);
+0151 <span class="keyword">end</span>
+0152 
+0153 T(6,:)=clock;
+0154 
+0155 <span class="comment">% Stationary distribution (=ro) of local minima with transition matrix</span>
+0156 <span class="comment">% Qt = Q*Qh = &quot;Transition matrix for min-to-min&quot;</span>
+0157 
+0158 Qt = Q*Qh;
+0159 ro = <a href="mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(Qt(1:r*(n-1),1:r*(n-1)));  <span class="comment">% Stationary distr., row vector  </span>
+0160 ro = [ro zeros(1,r)];  <span class="comment">% Minimum can't reach the highest level</span>
+0161 
+0162 <span class="comment">% Stationary distribution (=roh) of local maxima with transition matrix</span>
+0163 <span class="comment">% Qt = Qh*Q = &quot;Transition matrix for max-to-max&quot;</span>
+0164 
+0165 Qth = Qh*Q;
+0166 roh = <a href="mc2stat.html" class="code" title="  Calculates the stationary distribution for a Markov chain.">mc2stat</a>(Qth(r+1:r*(n),r+1:r*(n)));  <span class="comment">% Stationary distr., row vector  </span>
+0167 roh = [zeros(1,r) roh];  <span class="comment">% Maximum can't reach the highest level</span>
+0168 
+0169 T(7,:)=clock;
+0170 
+0171 <span class="comment">% Make the frequency matrix FF for the joint min-Max and Max-min</span>
+0172 <span class="comment">% distribution</span>
+0173 
+0174 FF = Q.*(ro'*ones(1,n*r)) + Qh.*(roh'*ones(1,n*r));
+0175 
+0176 <span class="comment">% Create Transition matrices for time-reversed MC</span>
+0177 
+0178 <span class="comment">% Backward min-to-max</span>
+0179 I1 = find(ro&gt;0); I2 = find(ro&lt;=0);
+0180 ro_inv = ro; ro_inv(I1) = 1./ro(I1); ro_inv(I2) = zeros(1,length(I2));
+0181 Qr = Qh' .* (ro_inv'*roh);
+0182 
+0183 <span class="comment">% Backward max-to-min</span>
+0184 I1 = find(roh&gt;0); I2 = find(roh&lt;=0);
+0185 roh_inv = roh; roh_inv(I1) = 1./roh(I1); roh_inv(I2) = zeros(1,length(I2));
+0186 Qrh = Q' .* (roh_inv'*ro);
+0187 
+0188 <span class="comment">% Make the frequency matrix FF for the joint min-Max and Max-min</span>
+0189 <span class="comment">% distribution</span>
+0190 
+0191 FF1 = Qr.*(ro'*ones(1,n*r)) + Qrh.*(roh'*ones(1,n*r));
+0192 
+0193 T(8,:)=clock;
+0194 
+0195 <span class="comment">% Initiation of matrices</span>
+0196 
+0197 F_rfc = zeros(n,n);
+0198 EYE = eye(n*r,n*r); Eye1  = eye(r,r);
+0199 Zero1 = zeros(r,1); Zero2 = zeros(r,r);
+0200 One1 = ones(r,1);   One2  = ones(r,r);
+0201 
+0202 <span class="keyword">if</span> SideInfo == 1  <span class="comment">% Rainflow matrix with side information</span>
+0203   [F_rfc_z{1:r,1:r}] = deal(zeros(n,n));
+0204 <span class="keyword">end</span> <span class="comment">% Rainflow matrix with side information</span>
+0205     
+0206 <span class="comment">% Calculate rainflow matrix </span>
+0207 
+0208 
+0209 <span class="comment">%fprintf(1,'Calculating row ');</span>
+0210 <span class="keyword">for</span> i=1:n-1
+0211 <span class="comment">%  fprintf(1,'-%1d',i);</span>
+0212 
+0213   <span class="keyword">for</span> j=i+1:n
+0214 
+0215     I = r*(i-1)+1:r*i;
+0216     J = r*(j-1)+1:r*j;
+0217     I1 = r*(i+1-1)+1:r*(i+1);
+0218     J1 = r*(j-1-1)+1:r*(j-1);
+0219     I1J1 = r*(i+1-1)+1:r*(j-1);
+0220 
+0221     x = FF(I,J);
+0222     y = FF(J,I);
+0223 
+0224     Min = sum(FF(I,:),2)';
+0225     Max = sum(FF(J,:),2)';
+0226 
+0227     Ro = ro(I);    <span class="comment">% Probability of &quot;min=i&quot;</span>
+0228     Roh = roh(J);  <span class="comment">% Probability of &quot;max=j&quot;</span>
+0229 <span class="comment">%    fprintf(1,'Min=%f, Max=%f, Ro=%f, Roh=%f\n',Min,Max,Ro,Roh);</span>
+0230 
+0231     Min = Ro; Max = Roh; <span class="comment">% Just to be sure</span>
+0232     
+0233     Min = Min'*One1';
+0234     Max = Max'*One1';
+0235     
+0236     <span class="comment">% For all subdiagonals</span>
+0237 
+0238     C = y'./Min; Ch = x'./Max;
+0239     E = 1-sum(y'./Min,2); Eh = 1-sum(x'./Max,2);
+0240 
+0241     
+0242     <span class="keyword">if</span> j-i &gt;= 2  <span class="comment">% Second and higher subdiagonals</span>
+0243 
+0244       <span class="comment">% For Part 1 &amp; 2 of cycle</span>
+0245 
+0246       d1  = Qr(I,I1)*(1-sum(Qrh(I1,I),2));
+0247       D   = d1;
+0248       d1h = Qrh(J,J1)*(1-sum(Qr(J1,J),2));
+0249       Dh  = d1h;
+0250       d0  = sum(Qr(I,I1J1),2); 
+0251       E   = E-d0; 
+0252       d0h = sum(Qrh(J,I1J1),2); <span class="comment">% ???</span>
+0253       Eh  = Eh-d0h;
+0254       r1  = Qr(I,I1)*Qrh(I1,I);
+0255       R   = r1;
+0256       r1h = Qrh(J,J1)*Qr(J1,J);
+0257       Rh  = r1h;
+0258 
+0259       <span class="comment">% For Part 3 of cycle</span>
+0260 
+0261       d3  = sum(Q(I,I1J1),2);
+0262       E3  = 1-d3;
+0263       d3h = sum(Qh(J,I1J1),2);
+0264       E3h = 1-d3h;
+0265 
+0266     <span class="keyword">else</span> <span class="comment">% First subdiagonal</span>
+0267       
+0268       D  = Zero1; Dh  = Zero1;
+0269       R  = Zero2; Rh  = Zero2;
+0270       E3 = One1;  E3h = One1;
+0271       
+0272     <span class="keyword">end</span>
+0273     
+0274       
+0275     <span class="keyword">if</span> j-i &gt;= 3  <span class="comment">% Third and higher subdiagonals</span>
+0276 
+0277       Eye = EYE(1:r*(j-i-2),1:r*(j-i-2));
+0278 
+0279       <span class="comment">% For Part 1 &amp; 2 of cycle</span>
+0280 
+0281       II  = r*(i+1-1)+1:r*(j-2);  <span class="comment">% i+1:j-2</span>
+0282       JJ  = r*(i+2-1)+1:r*(j-1);  <span class="comment">% i+2:j-1;</span>
+0283       
+0284       A  = Qr(II,JJ);
+0285       Ah = Qrh(JJ,II);
+0286       Inv = inv(Eye-A*Ah);
+0287       
+0288       a  = Qr(I,JJ);
+0289       ah = Qrh(J,II);
+0290       b  = Qr(II,J);
+0291       bh = Qrh(JJ,I);
+0292 
+0293       e  = 1 - sum(Qr(II,r*(i+2-1)+1:r*(j)),2);   <span class="comment">% i+2:j</span>
+0294       eh = 1 - sum(Qrh(JJ,r*(i-1)+1:r*(j-2)),2);  <span class="comment">% i:j-2</span>
+0295 
+0296       C   = C + a*Ah*Inv*b;
+0297       Ch  = Ch + ah*Inv*A*bh;
+0298       D   = D + a*eh+a*Ah*Inv*A*eh;
+0299       Dh  = Dh + ah*Inv*e;
+0300       E   = E + a*Ah*Inv*e;
+0301       Eh  = Eh + ah*Inv*A*eh;
+0302       R   = R + a*bh+a*Ah*Inv*A*bh;
+0303       Rh  = Rh + ah*Inv*b;
+0304 
+0305       <span class="comment">% For Part 3 of cycle</span>
+0306 
+0307       A3  = Q(II,JJ);
+0308       A3h = Qh(JJ,II);
+0309       Inv3 = inv(Eye-A3*A3h);
+0310       c3  = Q(I,JJ);
+0311       c3h = Qh(J,II);
+0312       e3  = 1 - sum(Q(II,r*(i+2-1)+1:r*(j-1)),2);   <span class="comment">% i+2:j-1</span>
+0313       e3h  = 1 - sum(Qh(JJ,r*(i+1-1)+1:r*(j-2)),2); <span class="comment">% i+1:j-2</span>
+0314 
+0315       E3  = E3  + c3*A3h*Inv3*e3;
+0316       E3h = E3h + c3h*Inv3*A3*e3h;
+0317 
+0318     <span class="keyword">end</span>
+0319 
+0320     <span class="keyword">if</span> ~(i == 1 &amp; j == n)
+0321 
+0322       <span class="comment">% Standing</span>
+0323       <span class="keyword">if</span> j == n
+0324         pS1 = Zero1; pS2=Zero2; pS3=Zero1;
+0325       <span class="keyword">else</span>
+0326 
+0327         <span class="comment">% Part 1 of cycle</span>
+0328     AS = (Eye1-Rh)\Dh;
+0329         ES = E + C*AS;
+0330     BS = (Eye1-Rh)\Ch;
+0331         RS = R + C*BS;
+0332         pS1 = (Eye1-RS)\ES;
+0333 
+0334         <span class="comment">% Part 2 of cycle</span>
+0335         pS2 = (Eye1-Rh)\Ch;
+0336 
+0337         <span class="comment">% Part 3 of cycle</span>
+0338         pS3 = E3h;
+0339     
+0340       <span class="keyword">end</span>
+0341 
+0342       <span class="comment">% Hanging</span>
+0343       <span class="keyword">if</span> i == 1
+0344         pH1 = Zero1; pH2=Zero2; pH3=Zero1;
+0345       <span class="keyword">else</span>
+0346 
+0347         <span class="comment">% Part 1 of cycle</span>
+0348     AH = (Eye1-R)\D;
+0349         EH = Eh + Ch*AH;
+0350     BH = (Eye1-R)\C;
+0351         RH = Rh + Ch*BH;
+0352         pH1 = (Eye1-RH)\EH;
+0353 
+0354         <span class="comment">% Part 2 of cycle</span>
+0355         pH2 = (Eye1-R)\C;
+0356 
+0357         <span class="comment">% Part 3 of cycle</span>
+0358         pH3 = E3;
+0359       <span class="keyword">end</span>
+0360 
+0361     <span class="keyword">else</span> <span class="comment">% i == 1 &amp; j == n</span>
+0362       
+0363       <span class="comment">% Standing</span>
+0364       pS1 = One1; 
+0365       pS2 = Eye1;
+0366       pS3 = E3h*sum(Roh)/sum(Ro+Roh);
+0367       
+0368       <span class="comment">% Hanging</span>
+0369       pH1 = One1; 
+0370       pH2 = Eye1;
+0371       pH3 = E3*sum(Ro)/sum(Ro+Roh);
+0372       
+0373     <span class="keyword">end</span>
+0374 
+0375     <span class="comment">% Standing RFC</span>
+0376     F_rfc(i,j) = Roh*diag(pS3)*pS2*pS1;
+0377     
+0378     <span class="comment">% Hanging RFC</span>
+0379     F_rfc(j,i) = Ro*diag(pH3)*pH2*pH1;
+0380     
+0381     <span class="keyword">if</span> SideInfo == 1  <span class="comment">% Rainflow matrix with side information</span>
+0382       <span class="keyword">if</span> (i==1) &amp; (j==n)
+0383     
+0384         b3  = Q(II,J);
+0385         EE  = Q(I,J) + c3*A3h*Inv3*b3;
+0386         <span class="keyword">for</span> z=1:r
+0387         <span class="keyword">for</span> w=1:r
+0388       
+0389             <span class="comment">% Standing RFC</span>
+0390         F_rfc_z{z,w}(i,j) = 1/2*Ro(z)*EE(z,w);
+0391       
+0392             <span class="comment">% Hanging RFC</span>
+0393         F_rfc_z{z,w}(j,i) = 1/2*Ro(z)*EE(z,w);
+0394       <span class="keyword">end</span>
+0395     <span class="keyword">end</span>
+0396     
+0397       <span class="keyword">else</span>
+0398     
+0399         <span class="keyword">for</span> z=1:r
+0400         <span class="keyword">for</span> w=1:r
+0401       
+0402             <span class="comment">% Standing RFC</span>
+0403         F_rfc_z{z,w}(i,j) = Roh(w)*pS3(w)*pS2(w,z)*pS1(z);
+0404       
+0405             <span class="comment">% Hanging RFC</span>
+0406         F_rfc_z{z,w}(j,i) = Ro(w)*pH3(w)*pH2(w,z)*pH1(z);
+0407       
+0408       <span class="keyword">end</span>
+0409     <span class="keyword">end</span>
+0410     
+0411       <span class="keyword">end</span>
+0412     <span class="keyword">elseif</span> SideInfo ~= 0
+0413       error([<span class="string">'SideInfo = '</span> num2str(SideInfo) <span class="string">' not implemented'</span>]);
+0414     <span class="keyword">end</span> <span class="comment">% Rainflow matrix with side information</span>
+0415     
+0416   <span class="keyword">end</span> 
+0417 <span class="keyword">end</span>
+0418 <span class="comment">%fprintf(1,'\n');</span>
+0419 
+0420 <span class="comment">% Multiply with the intensity of local minima for the swithching process</span>
+0421 
+0422 F_rfc = c_m*F_rfc;
+0423 
+0424 <span class="keyword">if</span> SideInfo == 1
+0425   <span class="keyword">for</span> z=1:r
+0426     <span class="keyword">for</span> w=1:r
+0427       F_rfc_z{z,w} = c_m*F_rfc_z{z,w}; 
+0428     <span class="keyword">end</span>
+0429   <span class="keyword">end</span>
+0430 <span class="keyword">end</span>
+0431 
+0432 T(9,:)=clock;
+0433 
+0434</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

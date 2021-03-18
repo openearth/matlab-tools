@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of tay81fun</title>
+  <meta name="keywords" content="tay81fun">
+  <meta name="description" content=" internal function to tay81pdf and tay81cdf.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; tay81fun.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>tay81fun
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> internal function to tay81pdf and tay81cdf.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> y=tay81fun(u,x,b,pdfstr ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="tay81fun.html" class="code" title=" internal function to tay81pdf and tay81cdf. ">TAY81FUN</a> internal function to <a href="tay81pdf.html" class="code" title="  Tayfun (1981) PDF of  breaking limited wave heights ">tay81pdf</a> and <a href="tay81cdf.html" class="code" title=" Tayfun (1981) CDF of  breaking limited wave heights ">tay81cdf</a>. 
+ 
+      Call:  y=<a href="tay81fun.html" class="code" title=" internal function to tay81pdf and tay81cdf. ">tay81fun</a>(u,x,b )
+ 
+ k=find(~isreal(u))
+ k=find(~isreal(x))
+ k=find(~isreal(a))
+ k=find(~isreal(b))</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\besselj.m">besselj</a></li></TD>
+<TD>       Bessel function of the first kind.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="tay81pdf.html" class="code" title=" [y, tol1] = tay81pdf(x,a,b,tol)">tay81pdf</a></li></TD>
+<TD>  Tayfun (1981) PDF of  breaking limited wave heights</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> y=<a name="_sub0" href="#_subfunctions" class="code">tay81fun</a>(u,x,b,pdfstr )
+002 <span class="comment">%TAY81FUN internal function to tay81pdf and tay81cdf. </span>
+003 <span class="comment">%</span>
+004 <span class="comment">%     Call:  y=tay81fun(u,x,b )</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%k=find(~isreal(u))</span>
+007 <span class="comment">%k=find(~isreal(x))</span>
+008 <span class="comment">%k=find(~isreal(a))</span>
+009 <span class="comment">%k=find(~isreal(b))</span>
+010 <span class="keyword">if</span> nargin&lt;4|isempty(pdfstr)
+011   pdfstr=<span class="string">'pdf'</span>;
+012 <span class="keyword">end</span>
+013 pdf=strcmp(lower(pdfstr),<span class="string">'pdf'</span>);
+014 y=zeros(size(u));
+015 [y ierr] =besselj(~pdf,u.*x);
+016 <span class="keyword">switch</span> ierr(1),
+017   <span class="keyword">case</span> 0, <span class="comment">%computation OK</span>
+018   <span class="keyword">case</span> 1, error(<span class="string">'Illegal arguments.'</span>)
+019   <span class="keyword">case</span> 2,   disp(<span class="string">'Overflow.  Return Inf.'</span>)
+020   <span class="keyword">case</span> 3,   disp(<span class="string">'Some loss of accuracy in argument reduction.'</span>)
+021   <span class="keyword">case</span> 4,   error(<span class="string">'Complete loss of accuracy, z or nu too large.'</span>)
+022   <span class="keyword">case</span> 5,  error(<span class="string">'No convergence.  Return NaN.'</span>)
+023 <span class="keyword">end</span>
+024 [tmp ierr] =besselj(0,u./sqrt(b));
+025 <span class="keyword">switch</span> ierr(1),
+026   <span class="keyword">case</span> 0, <span class="comment">%computation OK</span>
+027   <span class="keyword">case</span> 1, error(<span class="string">'Illegal arguments.'</span>)
+028   <span class="keyword">case</span> 2,   disp(<span class="string">'Overflow.  Return Inf.'</span>)
+029   <span class="keyword">case</span> 3,   disp(<span class="string">'Some loss of accuracy in argument reduction.'</span>)
+030   <span class="keyword">case</span> 4,   error(<span class="string">'Complete loss of accuracy, z or nu too large.'</span>)
+031   <span class="keyword">case</span> 5,  error(<span class="string">'No convergence.  Return NaN.'</span>)
+032 <span class="keyword">end</span>
+033 
+034 
+035 <span class="keyword">if</span> pdf, <span class="comment">% pdf</span>
+036    y=y.*u.*real(tmp.^b);
+037 <span class="keyword">else</span> <span class="comment">% cdf</span>
+038    y=y.*u.*x.*real(tmp.^b);
+039 <span class="keyword">end</span>
+040    <span class="keyword">return</span>
+041 
+042 
+043 
+044</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of sfa89</title>
+  <meta name="keywords" content="sfa89">
+  <meta name="description" content=" Wind measurements at Statfjord A 24.12.1989">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">data</a> &gt; sfa89.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\data&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>sfa89
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Wind measurements at Statfjord A 24.12.1989</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="sfa89.html" class="code" title=" Wind measurements at Statfjord A 24.12.1989">SFA89</a> Wind measurements at Statfjord A 24.12.1989
+    
+   CALL:  xn = load('sfa89.dat');
+   
+  Size             :    144 X 3
+  Sampling Rate    :     1/600 Hz
+  Device           :    
+  Source           :    DNMI (The Norwegian Meteorological Institute)
+  Format           :    ascii, c1: time     (hours) 
+                               c2: velocity (m/s) 
+                               c3: direction (degrees) 
+  Description      :
+    The registration of wind speeds at the Gullfaks field 
+    started up on Statfjord A in 1978 and continued until 1990.  
+    The dataregistration was transferred to Gullfaks C in Nov 1989. 
+    Due to some difficulties of the windregistration on Gullfaks C in 
+    the beginning, they continued to use the registered data from 
+    Statfjord A. 
+    The windspeed is measured in  (meter/second), 110 m above mean water 
+    level (MWL) and the wind direction is given in degrees for the data.
+    The data are a mean value of every 10 minutes.
+    Wind directions are defined in the meteorological convention, i.e., 
+    0 degrees = wind approaching from North, 90 degrees = wind from East, etc. 
+ 
+     This dataset is for non-commercial use only.
+ 
+   Acknowledgement:
+    These data are made available by Knut A. Iden, DNMI.
+ 
+  See also  <a href="northsea.html" class="code" title="  coastline map of The Nortsea">northsea</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="comment">%SFA89 Wind measurements at Statfjord A 24.12.1989</span>
+02 <span class="comment">%   </span>
+03 <span class="comment">%  CALL:  xn = load('sfa89.dat');</span>
+04 <span class="comment">%  </span>
+05 <span class="comment">% Size             :    144 X 3</span>
+06 <span class="comment">% Sampling Rate    :     1/600 Hz</span>
+07 <span class="comment">% Device           :    </span>
+08 <span class="comment">% Source           :    DNMI (The Norwegian Meteorological Institute)</span>
+09 <span class="comment">% Format           :    ascii, c1: time     (hours) </span>
+10 <span class="comment">%                              c2: velocity (m/s) </span>
+11 <span class="comment">%                              c3: direction (degrees) </span>
+12 <span class="comment">% Description      :</span>
+13 <span class="comment">%   The registration of wind speeds at the Gullfaks field </span>
+14 <span class="comment">%   started up on Statfjord A in 1978 and continued until 1990.  </span>
+15 <span class="comment">%   The dataregistration was transferred to Gullfaks C in Nov 1989. </span>
+16 <span class="comment">%   Due to some difficulties of the windregistration on Gullfaks C in </span>
+17 <span class="comment">%   the beginning, they continued to use the registered data from </span>
+18 <span class="comment">%   Statfjord A. </span>
+19 <span class="comment">%   The windspeed is measured in  (meter/second), 110 m above mean water </span>
+20 <span class="comment">%   level (MWL) and the wind direction is given in degrees for the data.</span>
+21 <span class="comment">%   The data are a mean value of every 10 minutes.</span>
+22 <span class="comment">%   Wind directions are defined in the meteorological convention, i.e., </span>
+23 <span class="comment">%   0 degrees = wind approaching from North, 90 degrees = wind from East, etc. </span>
+24 <span class="comment">%</span>
+25 <span class="comment">%    This dataset is for non-commercial use only.</span>
+26 <span class="comment">%</span>
+27 <span class="comment">%  Acknowledgement:</span>
+28 <span class="comment">%   These data are made available by Knut A. Iden, DNMI.</span>
+29 <span class="comment">%</span>
+30 <span class="comment">% See also  northsea</span>
+31</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

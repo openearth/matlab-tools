@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wraylfit</title>
+  <meta name="keywords" content="wraylfit">
+  <meta name="description" content=" Parameter estimates for Rayleigh data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wraylfit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wraylfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates for Rayleigh data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat, var,pci] = wraylfit(data,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wraylfit.html" class="code" title=" Parameter estimates for Rayleigh data.">WRAYLFIT</a> Parameter estimates for Rayleigh data.
+ 
+  CALL:  [bhat <a href="var.html" class="code" title="  Variance ">var</a>] = <a href="wraylfit.html" class="code" title=" Parameter estimates for Rayleigh data.">wraylfit</a>(data, plotflag)
+ 
+    bhat  = maximum likelihood estimate of the parameter of
+            the distribution (see <a href="wraylcdf.html" class="code" title=" Rayleigh cumulative distribution function">wraylcdf</a>)
+    <a href="var.html" class="code" title="  Variance ">var</a>   = estimated asymptotic variance of bhat
+    data  = data matrix
+ plotflag = 0, do not plot
+          &gt; 0, plot the empiricial distribution function and the
+               estimated cdf (see <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a> for options)(default)
+ 
+  Example:
+    R=<a href="wraylrnd.html" class="code" title=" Random matrices from a Rayleigh distribution">wraylrnd</a>(2,100,2);
+    [bhat <a href="var.html" class="code" title="  Variance ">var</a>]=<a href="wraylfit.html" class="code" title=" Parameter estimates for Rayleigh data.">wraylfit</a>(R)
+ 
+  See also  <a href="wraylcdf.html" class="code" title=" Rayleigh cumulative distribution function">wraylcdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylcdf.html" class="code" title=" F = wraylcdf(x,b);">wraylcdf</a></li></TD>
+<TD> Rayleigh cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gammaln.m">gammaln</a></li></TD>
+<TD>       Logarithm of gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\permute.bi">permute</a></li></TD>
+<TD>       Permute array dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dfit.html" class="code" title=" [phat] =dist2dfit(V,H,dist,res,method,monitor,chat0)">dist2dfit</a></li></TD>
+<TD> Parameter estimates for DIST2D data.</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dfit.html" class="code" title=" phato=mdist2dfit(V,H,dist,alpha,method)">mdist2dfit</a></li></TD>
+<TD> Parameter estimates for MDIST2D data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ochi98fit.html" class="code" title=" [phat, pci,pinit]=ochi98fit(data,alpha)">ochi98fit</a></li></TD>
+<TD> Parameter estimates and confidence intervals for Ochi data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [phat, var,pci] = <a name="_sub0" href="#_subfunctions" class="code">wraylfit</a>(data,plotflag)
+002 <span class="comment">%WRAYLFIT Parameter estimates for Rayleigh data.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [bhat var] = wraylfit(data, plotflag)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   bhat  = maximum likelihood estimate of the parameter of</span>
+007 <span class="comment">%           the distribution (see wraylcdf)</span>
+008 <span class="comment">%   var   = estimated asymptotic variance of bhat</span>
+009 <span class="comment">%   data  = data matrix</span>
+010 <span class="comment">%plotflag = 0, do not plot</span>
+011 <span class="comment">%         &gt; 0, plot the empiricial distribution function and the</span>
+012 <span class="comment">%              estimated cdf (see empdistr for options)(default)</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Example:</span>
+015 <span class="comment">%   R=wraylrnd(2,100,2);</span>
+016 <span class="comment">%   [bhat var]=wraylfit(R)</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% See also  wraylcdf</span>
+019 
+020 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+021 <span class="comment">% and Life Span Models&quot;, p. 181 ff, Marcel Dekker.</span>
+022 
+023 <span class="comment">%tested on: matlab 5.x</span>
+024 <span class="comment">% History:</span>
+025 <span class="comment">%  by Per A. Brodtkorb 17.10.98</span>
+026 <span class="comment">% revised ms 15.06.2000</span>
+027 <span class="comment">% - updated header info</span>
+028 <span class="comment">% - changed name to wraylfit (from raylfit)</span>
+029 <span class="comment">% revised ms 11.08.2000</span>
+030 <span class="comment">% - changed to standard *fit form</span>
+031 <span class="comment">% -revised pab 24.10.2000</span>
+032 <span class="comment">%  - replaced gamma with gammaln -&gt; more robust</span>
+033 <span class="comment">%  - added nargchk</span>
+034 
+035 error(nargchk(1,2,nargin))
+036 <span class="keyword">if</span> nargin&lt;2|isempty(plotflag),  plotflag=1; <span class="keyword">end</span>
+037 sz = size(data);
+038 Nsz=length(sz);
+039 dim = min(find(sz~=1));  <span class="comment">%1st non-singleton dimension</span>
+040 <span class="comment">% make sure dim=1 is the first non-singleton dimension</span>
+041 <span class="keyword">if</span> isempty(dim) | dim ~= 1, 
+042   order = [dim 1:dim-1 dim+1:Nsz];
+043   data  = permute(data,order);
+044   sz    = size(data);
+045 <span class="keyword">end</span>
+046 m = prod(sz(2:<span class="keyword">end</span>));
+047 n =sz(1);
+048 
+049 phat=sqrt(sum(data.^2)/n/2); <span class="comment">% MLE</span>
+050 
+051 <span class="keyword">if</span> nargout &gt; 1 
+052   <span class="keyword">if</span> (n&lt;200),
+053     var=phat.^2.*(n-(exp(gammaln(1/2+n)-gammaln(n))).^2)/n; 
+054   <span class="keyword">else</span>    <span class="comment">%n too large for evaluating gamma</span>
+055     var=phat.^2.*0.25/n; 
+056   <span class="keyword">end</span>
+057 <span class="keyword">end</span>
+058 
+059 
+060 <span class="keyword">if</span> nargout&gt;2,
+061   alpha2=0.05/2;
+062   pci = [<a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(alpha2,phat,var);<a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(1-alpha2,phat,var)];
+063 <span class="keyword">end</span>
+064 
+065 <span class="keyword">if</span> plotflag 
+066   sd=sort(data);
+067   <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:,1),[sd(:,1),<a href="wraylcdf.html" class="code" title=" Rayleigh cumulative distribution function">wraylcdf</a>(sd(:,1),phat(1))],plotflag ), hold on
+068   <span class="keyword">for</span> ix=2:m,<a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:,ix),[sd(:,ix),<a href="wraylcdf.html" class="code" title=" Rayleigh cumulative distribution function">wraylcdf</a>(sd(:,ix),phat(ix))],plotflag),<span class="keyword">end</span>
+069    hold off
+070   
+071   title([deblank([<span class="string">'Empirical and Rayleigh estimated cdf'</span>])])
+072 <span class="keyword">end</span>
+073 
+074 
+075 
+076</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

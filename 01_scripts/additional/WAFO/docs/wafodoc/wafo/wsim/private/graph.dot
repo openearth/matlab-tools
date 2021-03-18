@@ -1,0 +1,43 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "5.02973,5.02973";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../../wafo/cycles/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../../wafo/wsim/graph.html";
+2;
+}
+ subgraph cluster3 {
+ label = "wsim/private";
+ URL = "index.html";
+3;
+4;
+5;
+6;
+7;
+8;
+}
+  2 -> 8;
+  4 -> 5;
+  6 -> 3;
+  6 -> 4;
+  6 -> 7;
+  8 -> 1;
+  8 -> 3;
+  8 -> 4;
+  8 -> 6;
+
+ 1 [URL="../../../wafo/cycles/graph.html",label="cycles"];
+ 2 [URL="../../../wafo/wsim/graph.html",label="wsim"];
+ 3 [URL="comb2pro.html",label="comb2pro"];
+ 4 [URL="fr2comb.html",label="fr2comb"];
+ 5 [URL="fr2nt.html",label="fr2nt"];
+ 6 [URL="fr2res.html",label="fr2res"];
+ 7 [URL="getulcc.html",label="getulcc"];
+ 8 [URL="rfc2load_fat.html",label="rfc2load_fat"];
+}

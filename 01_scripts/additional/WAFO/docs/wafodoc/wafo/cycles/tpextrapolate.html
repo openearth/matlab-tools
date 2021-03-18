@@ -1,0 +1,516 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of tpextrapolate</title>
+  <meta name="keywords" content="tpextrapolate">
+  <meta name="description" content=" Extrapolates a sequence of turning points.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; tpextrapolate.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>tpextrapolate
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Extrapolates a sequence of turning points.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [tpe,Pout,I,tpe0] = tpextrapolate(tp,N,Pin,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">TPEXTRAPOLATE</a> Extrapolates a sequence of turning points. 
+  
+  CALL: tpe = <a href="tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">tpextrapolate</a>(tp,N); 
+        [tpe,Pout,I] = <a href="tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">tpextrapolate</a>(tp,N,Pin,plotflag) 
+  
+    tp          = A sequence of turning points.         [n,1] / [n,2] 
+    N           = Number of blocks to extrapolate. 
+    Pin         = Input parameters. (optional)          [struct array] 
+     .method    = Method for extrapolating.  
+                 'exp' : Exponential distribution  (default) 
+                 'gpd' : Generalized Pareto Distribution.  
+                         Note: Use 'gpd' only if 'exp' gives bad fit to data. 
+     .LCfrac    = Fraction of level crossings (LC) for automatic choice of <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>, u_lev.   
+                  The upper and lower <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> for extrapolation are chosen so that they are  
+                  crossed LCmax*LCfrac number of times.  LCmax is the maximum of LC. 
+                  Default: Pin.LCfrac=1/sqrt(LCmax)    
+     .u_lev     = Lower and upper <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> for extrapolation.  (manual choice of <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>) 
+                    Pin.u_lev=[u_min u_max] 
+     .lim       = Limits of signal,  Pin.lim=[minlim maxlim] . 
+                  Values outside the <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> is set to the limit.  
+                  Default: Pin.lim=[], no limits 
+  
+    plotflag    = 0: Don't plot diagnostic plots, (default) 
+                  1: Plot exponential probability plots, 
+                  2: Also plot mean excess plots. 
+  
+    tpe         = Extrapolated turning points           [N*n,1] / [N*n,2] 
+    Pout        = Output parameters. (see Pin)                   [struct array] 
+    I           = Indeces to the extrapolated points. 
+     
+  The highest maxima and the lowest minima of the turning points are extrapolated.   
+  The result is an N times as long signal consisting of N blocks.  Each block is  
+  generated from tp with randomly simulated maxima above u_max, and minima below u_min. 
+  The mean of the exceedances above u_max and below u_min are estimated from tp. 
+  
+  Example: 
+    x = load('sea.dat'); 
+    tp = <a href="../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(x,0.5); 
+    tpe = <a href="tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">tpextrapolate</a>(tp,1,[],1); 
+    clf, plot(tp(:,1),tp(:,2),'b',tpe(:,1),tpe(:,2),'r') 
+    [tpe,Pout,I] = <a href="tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">tpextrapolate</a>(tp,1,[],2); 
+    clf, plot(tpe(:,1),tpe(:,2),'b',tpe(I.min,1),tpe(I.min,2),'g*',tpe(I.max,1),tpe(I.max,2),'g*') 
+  
+  See also  rfmextrapoalte</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="rfcfilter.html" class="code" title=" [y] = rfcfilter(x,h,def)">rfcfilter</a></li></TD>
+<TD> Rainflow filter a signal.</TD>
+</TR>
+<TR>
+<TD><li><a href="tp2lc.html" class="code" title=" lc=tp2lc(tp,def,plotflag,sa)">tp2lc</a></li></TD>
+<TD>  Calculates the number of upcrossings from the turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wexpplot.html" class="code" title=" phat = wexpplot(x)">wexpplot</a></li></TD>
+<TD> Plots data on a Exponential distribution paper</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wexprnd.html" class="code" title=" R = wexprnd(m0,varargin);">wexprnd</a></li></TD>
+<TD> Random matrices from an Exponential distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wgpdfit.html" class="code" title=" [parms,cov] = wgpdfit(data,method,plotflag)">wgpdfit</a></li></TD>
+<TD> Parameter estimates for Generalized Pareto data</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wgpdrnd.html" class="code" title=" r = wgpdrnd(k,s,m0,varargin);">wgpdrnd</a></li></TD>
+<TD> Random matrices from a Generalized Pareto Distribution</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\drawnow.m">drawnow</a></li></TD>
+<TD>       Flush pending graphics events.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\fieldnames.m">fieldnames</a></li></TD>
+<TD>    Get structure field names.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\figure.m">figure</a></li></TD>
+<TD>        Create figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\grid.m">grid</a></li></TD>
+<TD>          Grid lines.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isnumeric.m">isnumeric</a></li></TD>
+<TD>     True for numeric arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\setfield.m">setfield</a></li></TD>
+<TD>      Set structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [tpe,Pout,I,tpe0] = <a name="_sub0" href="#_subfunctions" class="code">tpextrapolate</a>(tp,N,Pin,plotflag) 
+002  
+003 <span class="comment">%TPEXTRAPOLATE Extrapolates a sequence of turning points. </span>
+004 <span class="comment">% </span>
+005 <span class="comment">% CALL: tpe = tpextrapolate(tp,N); </span>
+006 <span class="comment">%       [tpe,Pout,I] = tpextrapolate(tp,N,Pin,plotflag) </span>
+007 <span class="comment">% </span>
+008 <span class="comment">%   tp          = A sequence of turning points.         [n,1] / [n,2] </span>
+009 <span class="comment">%   N           = Number of blocks to extrapolate. </span>
+010 <span class="comment">%   Pin         = Input parameters. (optional)          [struct array] </span>
+011 <span class="comment">%    .method    = Method for extrapolating.  </span>
+012 <span class="comment">%                'exp' : Exponential distribution  (default) </span>
+013 <span class="comment">%                'gpd' : Generalized Pareto Distribution.  </span>
+014 <span class="comment">%                        Note: Use 'gpd' only if 'exp' gives bad fit to data. </span>
+015 <span class="comment">%    .LCfrac    = Fraction of level crossings (LC) for automatic choice of levels, u_lev.   </span>
+016 <span class="comment">%                 The upper and lower levels for extrapolation are chosen so that they are  </span>
+017 <span class="comment">%                 crossed LCmax*LCfrac number of times.  LCmax is the maximum of LC. </span>
+018 <span class="comment">%                 Default: Pin.LCfrac=1/sqrt(LCmax)    </span>
+019 <span class="comment">%    .u_lev     = Lower and upper levels for extrapolation.  (manual choice of levels) </span>
+020 <span class="comment">%                   Pin.u_lev=[u_min u_max] </span>
+021 <span class="comment">%    .lim       = Limits of signal,  Pin.lim=[minlim maxlim] . </span>
+022 <span class="comment">%                 Values outside the range is set to the limit.  </span>
+023 <span class="comment">%                 Default: Pin.lim=[], no limits </span>
+024 <span class="comment">% </span>
+025 <span class="comment">%   plotflag    = 0: Don't plot diagnostic plots, (default) </span>
+026 <span class="comment">%                 1: Plot exponential probability plots, </span>
+027 <span class="comment">%                 2: Also plot mean excess plots. </span>
+028 <span class="comment">% </span>
+029 <span class="comment">%   tpe         = Extrapolated turning points           [N*n,1] / [N*n,2] </span>
+030 <span class="comment">%   Pout        = Output parameters. (see Pin)                   [struct array] </span>
+031 <span class="comment">%   I           = Indeces to the extrapolated points. </span>
+032 <span class="comment">%    </span>
+033 <span class="comment">% The highest maxima and the lowest minima of the turning points are extrapolated.   </span>
+034 <span class="comment">% The result is an N times as long signal consisting of N blocks.  Each block is  </span>
+035 <span class="comment">% generated from tp with randomly simulated maxima above u_max, and minima below u_min. </span>
+036 <span class="comment">% The mean of the exceedances above u_max and below u_min are estimated from tp. </span>
+037 <span class="comment">% </span>
+038 <span class="comment">% Example: </span>
+039 <span class="comment">%   x = load('sea.dat'); </span>
+040 <span class="comment">%   tp = dat2tp(x,0.5); </span>
+041 <span class="comment">%   tpe = tpextrapolate(tp,1,[],1); </span>
+042 <span class="comment">%   clf, plot(tp(:,1),tp(:,2),'b',tpe(:,1),tpe(:,2),'r') </span>
+043 <span class="comment">%   [tpe,Pout,I] = tpextrapolate(tp,1,[],2); </span>
+044 <span class="comment">%   clf, plot(tpe(:,1),tpe(:,2),'b',tpe(I.min,1),tpe(I.min,2),'g*',tpe(I.max,1),tpe(I.max,2),'g*') </span>
+045 <span class="comment">% </span>
+046 <span class="comment">% See also  rfmextrapoalte </span>
+047  
+048 <span class="comment">% Tested  on Matlab  6.5 </span>
+049 <span class="comment">% </span>
+050 <span class="comment">% History: </span>
+051 <span class="comment">% Created by PJ (Pär Johannesson) 16-Apr-2003 </span>
+052 <span class="comment">% Updated by PJ  11-Jun-2003 </span>
+053 <span class="comment">% Updated by PJ  24-Jun-2003 </span>
+054 <span class="comment">% Updated by PJ  05-Sep-2003 </span>
+055 <span class="comment">%   Added output I, and input Pin.lim. </span>
+056 <span class="comment">%   Now also handles zero number of exceedances. </span>
+057 <span class="comment">%   Added GPD. </span>
+058 <span class="comment">% Updated by PJ  29-Oct-2003 </span>
+059 <span class="comment">%   If N&lt;1, estimate parameters Pout, but set tpe=[]. </span>
+060 <span class="comment">% Updated by PJ  11-Mar-2005 </span>
+061 <span class="comment">%   Added &quot;Conservative&quot; extrapolation of load spectrum. </span>
+062  
+063  
+064 <span class="comment">% Check input arguments </span>
+065 ni = nargin; 
+066 no = nargout; 
+067 error(nargchk(2,4,ni)); 
+068  
+069 <span class="keyword">if</span> ni&lt;3, Pin=[]; <span class="keyword">end</span> 
+070 <span class="keyword">if</span> ni&lt;4, plotflag=[]; <span class="keyword">end</span> 
+071  
+072 <span class="keyword">if</span> isempty(plotflag) 
+073     plotflag=0; 
+074 <span class="keyword">end</span> 
+075  
+076 <span class="comment">% </span>
+077 <span class="comment">% Default Parameters </span>
+078 <span class="comment">% </span>
+079  
+080 Pout.method = <span class="string">'exp'</span>; 
+081 Pout.LCfrac = []; <span class="comment">%0.05; </span>
+082 Pout.u_lev = []; 
+083 Pout.lim = []; 
+084  
+085 <span class="comment">% Copy input parameters Pin to Pout </span>
+086 <span class="keyword">if</span> ~isempty(Pin) 
+087     Fname = fieldnames(Pin); 
+088     <span class="keyword">for</span> i = 1:length(Fname) 
+089         Pout = setfield(Pout,Fname{i},getfield(Pin,Fname{i})); 
+090     <span class="keyword">end</span> 
+091 <span class="keyword">end</span> 
+092  
+093 method = lower(Pout.method); 
+094 <span class="keyword">if</span> ~(strcmp(method,<span class="string">'exp'</span>) | strcmp(method,<span class="string">'gpd'</span>)) 
+095     error([<span class="string">'Undefined method: '</span> Pout.method]),  
+096 <span class="keyword">end</span> 
+097  
+098 <span class="keyword">if</span> isempty(Pout.u_lev) 
+099     lc = <a href="tp2lc.html" class="code" title="  Calculates the number of upcrossings from the turning points. ">tp2lc</a>(tp);  <span class="comment">% Level crossings </span>
+100      
+101     LCmax=max(lc(:,2)); 
+102     <span class="keyword">if</span> isempty(Pout.LCfrac) 
+103         Pout.LCfrac = 1/sqrt(LCmax); 
+104     <span class="keyword">end</span> 
+105      
+106     nLCfrac = LCmax*Pout.LCfrac; 
+107     imax = max(find(lc(:,2)&gt;nLCfrac)); 
+108     imin = min(find(lc(:,2)&gt;nLCfrac)); 
+109     umax = lc(imax,1); 
+110     umin = lc(imin,1); 
+111     Pout.u_lev = [umin umax]; 
+112 <span class="keyword">end</span> 
+113  
+114 u_min = Pout.u_lev(1); 
+115 u_max = Pout.u_lev(2); 
+116  
+117 <span class="keyword">if</span> tp(1,<span class="keyword">end</span>)&gt;tp(2,<span class="keyword">end</span>) 
+118     StartMax=1; StartMin=2; 
+119 <span class="keyword">else</span> 
+120     StartMax=2; StartMin=1; 
+121 <span class="keyword">end</span> 
+122  
+123 <span class="comment">% Estimate excedances </span>
+124  
+125 Imax = 2*(find(tp(StartMax:2:<span class="keyword">end</span>,<span class="keyword">end</span>)&gt;u_max)-1)+StartMax; 
+126 Imin = 2*(find(tp(StartMin:2:<span class="keyword">end</span>,<span class="keyword">end</span>)&lt;u_min)-1)+StartMin; 
+127  
+128 y_max = tp(Imax,<span class="keyword">end</span>)-u_max; 
+129 y_min = -(tp(Imin,<span class="keyword">end</span>)-u_min); 
+130  
+131 a_max = mean(y_max); 
+132 a_min = mean(y_min); 
+133 <span class="keyword">if</span> strcmp(method,<span class="string">'gpd'</span>) 
+134     [gpd_max,cov_max] = <a href="../../wafo/wstats/wgpdfit.html" class="code" title=" Parameter estimates for Generalized Pareto data">wgpdfit</a>(y_max,<span class="string">'ml'</span>,0); 
+135     [gpd_min,cov_min] = <a href="../../wafo/wstats/wgpdfit.html" class="code" title=" Parameter estimates for Generalized Pareto data">wgpdfit</a>(y_min,<span class="string">'ml'</span>,0); 
+136     ci_k_max = [gpd_max(1)-2*sqrt(cov_max(1)) gpd_max(1)+2*sqrt(cov_max(1))] 
+137     ci_k_min = [gpd_min(1)-2*sqrt(cov_min(1)) gpd_min(1)+2*sqrt(cov_min(1))] 
+138 <span class="keyword">end</span> 
+139  
+140 <span class="keyword">if</span> plotflag&gt;0 
+141     subplot(2,2,1),plot(1:length(y_max),y_max,<span class="string">'.'</span>),  
+142     title([<span class="string">'Exceedances of maxima above u_{max}='</span> num2str(u_max)]), ylabel(<span class="string">'Exceedances of maxima'</span>) 
+143     subplot(2,2,2), <span class="keyword">if</span> length(y_max)&gt;0, <a href="../../wafo/wstats/wexpplot.html" class="code" title=" Plots data on a Exponential distribution paper ">wexpplot</a>(y_max), <span class="keyword">end</span> 
+144     subplot(2,2,3),plot(1:length(y_min),y_min,<span class="string">'.'</span>),  
+145     title([<span class="string">'Exceedances of minima below u_{min}='</span> num2str(u_min)]), ylabel(<span class="string">'Exceedances of minima'</span>) 
+146     subplot(2,2,4), <span class="keyword">if</span> length(y_min)&gt;0, <a href="../../wafo/wstats/wexpplot.html" class="code" title=" Plots data on a Exponential distribution paper ">wexpplot</a>(y_min), <span class="keyword">end</span> 
+147     drawnow 
+148      
+149     Pout.Zmin = y_min; 
+150     Pout.Zmax = y_max; 
+151 <span class="keyword">end</span> 
+152  
+153 <span class="keyword">if</span> N&gt;0 
+154     meth=2;  <span class="comment">% Method 2 </span>
+155     conservarive = 1;  <span class="comment">% 1=Conservative extrapolation </span>
+156      
+157     <span class="keyword">if</span> meth==2 
+158         [yy_max,IImax] = sort(y_max); 
+159         [yy_min,IImin] = sort(y_min); 
+160     <span class="keyword">end</span> 
+161     tpe = []; 
+162     <span class="keyword">for</span> k = 1:N 
+163          
+164         <span class="comment">% Simulate independent Exp or GPD exceedances </span>
+165          
+166         <span class="keyword">if</span> length(y_max)&gt;0 
+167             <span class="keyword">if</span> strcmp(method,<span class="string">'exp'</span>) 
+168                 yr_max = <a href="../../wafo/wstats/wexprnd.html" class="code" title=" Random matrices from an Exponential distribution">wexprnd</a>(a_max,length(y_max),1); 
+169             <span class="keyword">else</span> 
+170                 yr_max = <a href="../../wafo/wstats/wgpdrnd.html" class="code" title=" Random matrices from a Generalized Pareto Distribution">wgpdrnd</a>(gpd_max(1),gpd_max(2),0,length(y_max),1); 
+171             <span class="keyword">end</span> 
+172         <span class="keyword">else</span> 
+173             yr_max=[]; 
+174         <span class="keyword">end</span> 
+175          
+176         <span class="keyword">if</span> length(y_min)&gt;0 
+177             <span class="keyword">if</span> strcmp(method,<span class="string">'exp'</span>) 
+178                 yr_min = <a href="../../wafo/wstats/wexprnd.html" class="code" title=" Random matrices from an Exponential distribution">wexprnd</a>(a_min,length(y_min),1);  
+179             <span class="keyword">else</span> 
+180                 yr_min = <a href="../../wafo/wstats/wgpdrnd.html" class="code" title=" Random matrices from a Generalized Pareto Distribution">wgpdrnd</a>(gpd_min(1),gpd_min(2),0,length(y_min),1); 
+181             <span class="keyword">end</span> 
+182         <span class="keyword">else</span> 
+183             yr_min=[]; 
+184         <span class="keyword">end</span> 
+185          
+186         <span class="keyword">if</span> meth ==1 
+187             <span class="comment">% Method 1 </span>
+188             <span class="comment">% Independent ordering of excedances </span>
+189             tpr = tp; 
+190             tpr(Imax,<span class="keyword">end</span>) = u_max + yr_max; 
+191             tpr(Imin,<span class="keyword">end</span>) = u_min - yr_min; 
+192         <span class="keyword">else</span> 
+193              
+194             <span class="comment">% Method 2 </span>
+195             <span class="comment">% Simulate independent Exp </span>
+196             <span class="comment">% Order the sample according to the order of the measurements. </span>
+197              
+198             yr_max = sort(yr_max); 
+199             yr_min = sort(yr_min); 
+200              
+201             tpr = tp; 
+202             tpr(Imax(IImax),<span class="keyword">end</span>) = u_max+yr_max; 
+203             tpr(Imin(IImin),<span class="keyword">end</span>) = u_min-yr_min; 
+204         <span class="keyword">end</span> 
+205          
+206         <span class="keyword">if</span> conservarive 
+207             I=find(tpr(Imin,<span class="keyword">end</span>)&gt;tp(Imin,<span class="keyword">end</span>)); 
+208             tpr(Imin(I),<span class="keyword">end</span>) = tp(Imin(I),<span class="keyword">end</span>); 
+209             I=find(tpr(Imax,<span class="keyword">end</span>)&lt;tp(Imax,<span class="keyword">end</span>)); 
+210             tpr(Imax(I),<span class="keyword">end</span>) = tp(Imax(I),<span class="keyword">end</span>); 
+211         <span class="keyword">end</span> 
+212          
+213         tpe = [tpe; tpr]; 
+214     <span class="keyword">end</span> 
+215      
+216     <span class="keyword">if</span> no&gt;3 
+217         tpe0=tpe; 
+218     <span class="keyword">end</span> 
+219      
+220     <span class="comment">% Apply limits </span>
+221     <span class="keyword">if</span> ~isempty(Pout.lim) 
+222         minlim=Pout.lim(1);  maxlim=Pout.lim(2); 
+223         <span class="keyword">if</span> isnumeric(maxlim) <span class="comment">% Don't apply if maxlim=Inf </span>
+224             I = find(tpe(:,<span class="keyword">end</span>)&gt;maxlim); 
+225             <span class="keyword">if</span> ~isempty(I) 
+226                 tpe(I,<span class="keyword">end</span>)=maxlim;  
+227             <span class="keyword">end</span> 
+228         <span class="keyword">end</span> 
+229         <span class="keyword">if</span> isnumeric(minlim) <span class="comment">% Don't apply if minlim=-Inf </span>
+230             I = find(tpe(:,<span class="keyword">end</span>)&lt;minlim); 
+231             <span class="keyword">if</span> ~isempty(I) 
+232                 tpe(I,<span class="keyword">end</span>)=minlim; 
+233             <span class="keyword">end</span> 
+234         <span class="keyword">end</span> 
+235     <span class="keyword">end</span> 
+236      
+237     <span class="comment">% Make sure that the output is a sequence of turning points </span>
+238     tpe = <a href="rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(tpe,0,1); 
+239     <span class="comment">%tpe = dat2tp(tpe);   </span>
+240      
+241 <span class="keyword">else</span> 
+242     tpe = []; 
+243 <span class="keyword">end</span> 
+244  
+245 <span class="comment">% Output parameters </span>
+246 Pout.a_min = a_min; 
+247 Pout.a_max = a_max; 
+248 Pout.n_min = length(y_min); 
+249 Pout.n_max = length(y_max); 
+250  
+251 <span class="keyword">if</span> strcmp(method,<span class="string">'gpd'</span>) 
+252     Pout.gpd_min = gpd_min; 
+253     Pout.gpd_max = gpd_max; 
+254     Pout.ci_k_min = ci_k_min; 
+255     Pout.ci_k_max = ci_k_max; 
+256 <span class="keyword">end</span> 
+257  
+258 <span class="keyword">if</span> N&gt;0 
+259     <span class="comment">% Indeces of extrapolated values </span>
+260     <span class="keyword">if</span> no&gt;2 
+261         <span class="keyword">if</span> tpe(1,<span class="keyword">end</span>)&gt;tpe(2,<span class="keyword">end</span>) 
+262             StartMax=1; StartMin=2; 
+263         <span class="keyword">else</span> 
+264             StartMax=2; StartMin=1; 
+265         <span class="keyword">end</span> 
+266          
+267         <span class="comment">% Estimate excedances </span>
+268         I=[]; 
+269         I.max = 2*(find(tpe(StartMax:2:<span class="keyword">end</span>,<span class="keyword">end</span>)&gt;u_max)-1)+StartMax; 
+270         I.min = 2*(find(tpe(StartMin:2:<span class="keyword">end</span>,<span class="keyword">end</span>)&lt;u_min)-1)+StartMin; 
+271     <span class="keyword">end</span> 
+272 <span class="keyword">end</span> 
+273  
+274 <span class="comment">% Diagnostic plots 2 </span>
+275 <span class="keyword">if</span> plotflag&gt;1 
+276      
+277     m = mean(tp(:,<span class="keyword">end</span>)); 
+278      
+279     n=500; 
+280     Umin = linspace(min(tp(:,<span class="keyword">end</span>)),m,n); 
+281     Umax = linspace(m,max(tp(:,<span class="keyword">end</span>)),n); 
+282     Amin=zeros(1,n); Amax=zeros(1,n); 
+283     dAmin=zeros(1,n); dAmax=zeros(1,n); 
+284     <span class="keyword">for</span> k=1:n 
+285         Imax = 2*(find(tp(StartMax:2:<span class="keyword">end</span>,<span class="keyword">end</span>)&gt;Umax(k))-1)+StartMax; 
+286         Imin = 2*(find(tp(StartMin:2:<span class="keyword">end</span>,<span class="keyword">end</span>)&lt;Umin(k))-1)+StartMin; 
+287          
+288         y_max = tp(Imax,<span class="keyword">end</span>)-Umax(k); 
+289         <span class="keyword">if</span> ~isempty(y_max), Amax(k) = mean(y_max); dAmax(k)=Amax(k)/sqrt(length(y_max)); <span class="keyword">end</span> 
+290         y_min = -(tp(Imin,<span class="keyword">end</span>)-Umin(k)); 
+291         <span class="keyword">if</span> ~isempty(y_min), Amin(k) = mean(y_min); dAmin(k)=Amin(k)/sqrt(length(y_min)); <span class="keyword">end</span> 
+292     <span class="keyword">end</span> 
+293      
+294     figure 
+295     subplot(2,1,1) 
+296     plot(Umax,Amax,<span class="string">'r'</span>,Umax,Amax-2*dAmax,<span class="string">'b:'</span>,Umax,Amax+2*dAmax,<span class="string">'b:'</span>), grid 
+297     title(<span class="string">'Maxima - Choose a level where the estimate is stable'</span>),  
+298     ylabel(<span class="string">'Estimated mean exceedance, m'</span>), xlabel(<span class="string">'Upper threshold level, u_{max}'</span>) 
+299     subplot(2,1,2) 
+300     plot(-Umin,Amin,<span class="string">'r'</span>,-Umin,Amin-2*dAmin,<span class="string">'b:'</span>,-Umin,Amin+2*dAmin,<span class="string">'b:'</span>), grid 
+301     title(<span class="string">'Minima - Choose a level where the estimate is stable'</span>),  
+302     ylabel(<span class="string">'Estimated mean exceedance, m'</span>), xlabel(<span class="string">'Lower threshold level, -u_{min}'</span>) 
+303      
+304     Pout.Umin = Umin; 
+305     Pout.Amin = Amin; 
+306     Pout.Umax = Umax; 
+307     Pout.Amax = Amax; 
+308 <span class="keyword">end</span> 
+309  
+310</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

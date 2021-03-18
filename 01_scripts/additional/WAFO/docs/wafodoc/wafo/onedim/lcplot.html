@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of lcplot</title>
+  <meta name="keywords" content="lcplot">
+  <meta name="description" content=" Plots level-crossing spectrum (lc)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; lcplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>lcplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Plots level-crossing spectrum (lc)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> h = lcplot(lc,plotflag,ma,sa); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">LCPLOT</a> Plots level-crossing spectrum (lc) 
+ 
+  CALL:  h = <a href="lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a>(lc,plotflag,ma,sa);
+ 
+         h = handle of the graphics object 
+        lc = two column matrix with <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> and number of upcrossings,
+             i.e., level-crossing spectrum (LCS).
+  plotflag = 1  plots LCS
+             2  plots LCS and the theoretical one for a Gaussian
+                process (default) 
+             11 plot level-crossing intensity
+             12 plot level-crossing intensity and the theoretical one for
+                a Gaussian process  
+   
+     ma,sa = mean and standard deviation of the process 
+             (default ma = 0, sa estimated from lc)
+ 
+  Example: 
+    x = load('sea.dat');
+   lc = <a href="dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">dat2lc</a>(x,0.2); 
+   <a href="lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a>(lc) 
+ 
+  See also  <a href="dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">dat2lc</a>, <a href="mm2lc.html" class="code" title=" Extracts level-crossing spectrum from min2Max cycles.   ">mm2lc</a>, <a href="../../wafo/wstats/wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>, polyfit</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/wnormpdf.html" class="code" title=" f = wnormpdf(x,m,v);">wnormpdf</a></li></TD>
+<TD> Normal probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="get is a built-in method">get</a></li></TD>
+<TD>           Get object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\polyfit.m">polyfit</a></li></TD>
+<TD>       Fit polynomial to data.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\stairs.m">stairs</a></li></TD>
+<TD>        Stairstep plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/cc2lc.html" class="code" title=" d = cc2lc(cc,def,plotflag,sa)">cc2lc</a></li></TD>
+<TD> Calculates the number of upcrossings from a cycle count</TD>
+</TR>
+<TR>
+<TD><li><a href="mm2lc.html" class="code" title=" [lc,alpha] = mm2lc(mm,def,plotflag,sa)">mm2lc</a></li></TD>
+<TD> Extracts level-crossing spectrum from min2Max cycles.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> h = <a name="_sub0" href="#_subfunctions" class="code">lcplot</a>(lc,plotflag,ma,sa);
+002 <span class="comment">%LCPLOT Plots level-crossing spectrum (lc) </span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  h = lcplot(lc,plotflag,ma,sa);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        h = handle of the graphics object </span>
+007 <span class="comment">%       lc = two column matrix with levels and number of upcrossings,</span>
+008 <span class="comment">%            i.e., level-crossing spectrum (LCS).</span>
+009 <span class="comment">% plotflag = 1  plots LCS</span>
+010 <span class="comment">%            2  plots LCS and the theoretical one for a Gaussian</span>
+011 <span class="comment">%               process (default) </span>
+012 <span class="comment">%            11 plot level-crossing intensity</span>
+013 <span class="comment">%            12 plot level-crossing intensity and the theoretical one for</span>
+014 <span class="comment">%               a Gaussian process  </span>
+015 <span class="comment">%  </span>
+016 <span class="comment">%    ma,sa = mean and standard deviation of the process </span>
+017 <span class="comment">%            (default ma = 0, sa estimated from lc)</span>
+018 <span class="comment">%</span>
+019 <span class="comment">% Example: </span>
+020 <span class="comment">%   x = load('sea.dat');</span>
+021 <span class="comment">%  lc = dat2lc(x,0.2); </span>
+022 <span class="comment">%  lcplot(lc) </span>
+023 <span class="comment">%</span>
+024 <span class="comment">% See also  dat2lc, mm2lc, wnormpdf, polyfit</span>
+025 
+026 <span class="comment">% Tested on: Matlab 6.0</span>
+027 <span class="comment">% History:</span>
+028 <span class="comment">% revised pab Feb2004  </span>
+029 <span class="comment">%  - added plotflag ==11, 12</span>
+030 <span class="comment">% revised by jr 06.07.00. </span>
+031 <span class="comment">% - Division by 2 from 05.07.00 removed (line 42). </span>
+032 <span class="comment">% - sa -&gt; sa^2 (line 66)</span>
+033 <span class="comment">% revised by jr 05.07.00. Line 39: division by 2</span>
+034 <span class="comment">% revised by pab 11.08.99</span>
+035 <span class="comment">% - removed the plot procedure from the old mm2cross function  </span>
+036 <span class="comment">% - added the option of overplotting of the theoretical one </span>
+037 <span class="comment">%    for a Gaussian process</span>
+038 
+039 error(nargchk(1,4,nargin))
+040 <span class="keyword">if</span> nargin&lt;2|isempty(plotflag)
+041  plotflag=2;
+042 <span class="keyword">end</span>
+043 [cmax icmax]=max(lc(:,2));<span class="comment">% maximum crossing</span>
+044 <span class="keyword">if</span> (nargin &lt;4|isempty(sa))&amp; mod(plotflag,10)==2, 
+045   <span class="comment">% if stdev of x unknown then estimate it</span>
+046   cros   = lc;
+047   indz   = (cros(:,2)==0);
+048   lncros = cros; 
+049   logcros(indz,2)  = inf; <span class="comment">% this is done to avoid a warning message</span>
+050   logcros(~indz,2) = -log(cros(~indz,2));
+051   logcmin      = logcros(icmax,2);
+052   logcros(:,2) = sqrt(2*abs(logcros(:,2)-logcmin)); <span class="comment">%sqrt(2*logcros)</span>
+053   logcros(1:icmax,2) = 2*logcros(icmax,2)-logcros(1:icmax,2); 
+054   p = polyfit(lc(10:<span class="keyword">end</span>-9,1),logcros(10:<span class="keyword">end</span>-9,2),1); <span class="comment">%least square fit</span>
+055   
+056   sa = 1/p(1);<span class="comment">% estimated standard deviation of x</span>
+057   
+058   <span class="comment">%plot(lc(:,1),logcros(:,2)),hold on</span>
+059   <span class="comment">%plot(lc(:,1),polyval(p,lc(:,1)),'r'),hold off, pause</span>
+060 <span class="keyword">end</span>
+061 
+062 <span class="keyword">if</span> (nargin&lt;3|isempty(ma))&amp; mod(plotflag,10)==2, 
+063   ma=0; <span class="comment">% the mean is apriori zero.</span>
+064   <span class="comment">%ma=p(2); <span class="comment">%, lc(icmax,1) <span class="comment">% new estimated mean</span></span></span>
+065   <span class="comment">%ma=lc(icmax,1); <span class="comment">% maximum cr intensity should be at the mean</span></span>
+066   <span class="comment">% but this not always the case</span>
+067 <span class="keyword">end</span>
+068 
+069 <span class="keyword">if</span> plotflag&gt;2
+070   lc(:,2) = lc(:,2)/cmax;
+071   cmax = 1;
+072   ylabtxt = <span class="string">'Relative crossing intensity'</span>;
+073 <span class="keyword">else</span>
+074   ylabtxt = <span class="string">'Number of upcrossings'</span>;
+075 <span class="keyword">end</span>
+076 
+077 <span class="comment">%  clf</span>
+078 hh = stairs(lc(:,1),lc(:,2));
+079 axis([-1.05*max(abs(lc(:,1))) 1.05*max(abs(lc(:,1))) 0 1.05*cmax])
+080 title(<span class="string">'Crossing spectrum'</span>)
+081 xlabel(<span class="string">'level u'</span>)
+082 ylabel(ylabtxt)
+083 
+084 <span class="comment">% Make a special graph box.</span>
+085 set(gca,<span class="string">'Box'</span>,<span class="string">'off'</span>,<span class="string">'TickLength'</span>,0.01*[1 1],<span class="string">'TickDir'</span>,<span class="string">'out'</span>)
+086 
+087 
+088 <span class="comment">% bar(d(:,1),d(:,2))</span>
+089 <span class="keyword">if</span> (mod(plotflag,10)==2)
+090   y = <a href="../../wafo/wstats/wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(lc(:,1),ma,sa.^2);  
+091   y = cmax*y/y(icmax);<span class="comment">%Normalization needed to overplot the crossingspectrum.</span>
+092   np = get(gca,<span class="string">'NextPlot'</span>);    
+093   set(gca,<span class="string">'NextPlot'</span>,<span class="string">'add'</span>)    
+094   hh1 = plot(lc(:,1),y,<span class="string">'r--'</span>,<span class="string">'LineWidth'</span>,1);<span class="comment">% Plots density line over histogram.</span>
+095   set(gca,<span class="string">'NextPlot'</span>,np) 
+096 <span class="keyword">end</span>
+097 
+098 <span class="keyword">if</span> nargout == 1 &amp; plotflag==2
+099   h = [hh; hh1];
+100 <span class="keyword">elseif</span> nargout==1
+101   h=hh;
+102 <span class="keyword">end</span>  
+103  
+104 <span class="keyword">return</span>
+105   
+106</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

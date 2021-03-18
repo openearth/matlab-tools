@@ -1,0 +1,328 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cov2spec</title>
+  <meta name="keywords" content="cov2spec">
+  <meta name="description" content=" Computes spectral density given the auto covariance function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; cov2spec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cov2spec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Computes spectral density given the auto covariance function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> S = cov2spec(R,rate,nugget,trunc,fast); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cov2spec.html" class="code" title=" Computes spectral density given the auto covariance function  ">COV2SPEC</a> Computes spectral density given the auto covariance function  
+  
+   CALL: S = <a href="cov2spec.html" class="code" title=" Computes spectral density given the auto covariance function  ">cov2spec</a>(R,rate,nugget,trunc,fast); 
+  
+        R    = a covariance structure  
+  
+        S    = a spectral density structure  
+  
+   Optional parameters: 
+  
+        rate = 1,2,4,8...2^r, interpolation rate for f 
+               (default = 1, no interpolation) 
+  
+      nugget = add a nugget effect to ensure that round off errors 
+               do not result in negative spectral estimates 
+               (default 0) Good choice might be 10^-12. 
+  
+      trunc  = truncates all spectral values where S/max(S) &lt; trunc 
+               0 &lt;= trunc &lt;1   This is to ensure that high frequency  
+               noise is not added to the spectrum.  (default 1e-5) 
+  
+      fast   = 1 if zero-pad to obtain power of 2 length R.R (default) 
+               0 if no zero-padding of R.R, slower but more accurate.   
+  
+  NB! This routine requires that the covariance is evenly spaced 
+      starting from zero lag. Currently only capable of 1D matrices. 
+  
+  Example: 
+   R = <a href="createcov.html" class="code" title=" Covariance class constructor ">createcov</a>; 
+   L = 129;   
+   R.t = linspace(0,75,L).'; 
+   R.R = zeros(L,1); 
+   win = <a href="../../wafo/onedim/private/parzen.html" class="code" title=" returns the N-point Parzen window in a column vector.">parzen</a>(40);   
+   R.R(1:20) = win(21:40); 
+   S = <a href="cov2spec.html" class="code" title=" Computes spectral density given the auto covariance function  ">cov2spec</a>(R); 
+    
+  See also  <a href="spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>, <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createspec.html" class="code" title=" S=createspec(stype,freqtype)">createspec</a></li></TD>
+<TD> Spectrum structure constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\fft.bi">fft</a></li></TD>
+<TD>           Discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\fieldnames.m">fieldnames</a></li></TD>
+<TD>    Get structure field names.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\@fdesign\interp.p">interp</a></li></TD>
+<TD>        Resample data at a higher rate using lowpass interpolation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isstruct.m">isstruct</a></li></TD>
+<TD>      True for structures.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elfun\nextpow2.m">nextpow2</a></li></TD>
+<TD>      Next higher power of 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\setfield.m">setfield</a></li></TD>
+<TD>      Set structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> S = <a name="_sub0" href="#_subfunctions" class="code">cov2spec</a>(R,rate,nugget,trunc,fast); 
+002 <span class="comment">%COV2SPEC Computes spectral density given the auto covariance function  </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: S = cov2spec(R,rate,nugget,trunc,fast); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%       R    = a covariance structure  </span>
+007 <span class="comment">% </span>
+008 <span class="comment">%       S    = a spectral density structure  </span>
+009 <span class="comment">% </span>
+010 <span class="comment">%  Optional parameters: </span>
+011 <span class="comment">% </span>
+012 <span class="comment">%       rate = 1,2,4,8...2^r, interpolation rate for f </span>
+013 <span class="comment">%              (default = 1, no interpolation) </span>
+014 <span class="comment">% </span>
+015 <span class="comment">%     nugget = add a nugget effect to ensure that round off errors </span>
+016 <span class="comment">%              do not result in negative spectral estimates </span>
+017 <span class="comment">%              (default 0) Good choice might be 10^-12. </span>
+018 <span class="comment">% </span>
+019 <span class="comment">%     trunc  = truncates all spectral values where S/max(S) &lt; trunc </span>
+020 <span class="comment">%              0 &lt;= trunc &lt;1   This is to ensure that high frequency  </span>
+021 <span class="comment">%              noise is not added to the spectrum.  (default 1e-5) </span>
+022 <span class="comment">% </span>
+023 <span class="comment">%     fast   = 1 if zero-pad to obtain power of 2 length R.R (default) </span>
+024 <span class="comment">%              0 if no zero-padding of R.R, slower but more accurate.   </span>
+025 <span class="comment">% </span>
+026 <span class="comment">% NB! This routine requires that the covariance is evenly spaced </span>
+027 <span class="comment">%     starting from zero lag. Currently only capable of 1D matrices. </span>
+028 <span class="comment">% </span>
+029 <span class="comment">% Example: </span>
+030 <span class="comment">%  R = createcov; </span>
+031 <span class="comment">%  L = 129;   </span>
+032 <span class="comment">%  R.t = linspace(0,75,L).'; </span>
+033 <span class="comment">%  R.R = zeros(L,1); </span>
+034 <span class="comment">%  win = parzen(40);   </span>
+035 <span class="comment">%  R.R(1:20) = win(21:40); </span>
+036 <span class="comment">%  S = cov2spec(R); </span>
+037 <span class="comment">%   </span>
+038 <span class="comment">% See also  spec2cov, datastructures </span>
+039    
+040 <span class="comment">% tested on: matlab 5.3 </span>
+041 <span class="comment">% history: </span>
+042 <span class="comment">% Revised pab    </span>
+043 <span class="comment">% -Increased the precision in calculations </span>
+044 <span class="comment">% - deleted L from input, added fast instead </span>
+045 <span class="comment">% revised jr 11.07.2000 </span>
+046 <span class="comment">%  - line 158. Changed  n  to  nf . </span>
+047 <span class="comment">% revised pab 13.03.2000 </span>
+048 <span class="comment">%  - commented out warning messages </span>
+049 <span class="comment">% revised pab 16.01.2000 </span>
+050 <span class="comment">%  - fixed a bug: truncate negative values of the spectral density to </span>
+051 <span class="comment">%     zero to make sure these spurious points are not added to the </span>
+052 <span class="comment">%     spectrum </span>
+053 <span class="comment">%  - added trunc: this is a fix: truncating the values of the spectral density to </span>
+054 <span class="comment">%     zero if S/max(S) &lt; trunc. This is to ensure that high frequency  </span>
+055 <span class="comment">%     noise is not added to the spectrum. </span>
+056 <span class="comment">% revised by pab 23.09.1999   </span>
+057    
+058 <span class="comment">%        dT   = time-step between data points.(default = T(2)-T1)). </span>
+059  
+060 <span class="comment">% add a nugget effect to ensure that round off errors </span>
+061 <span class="comment">% do not result in negative spectral estimates </span>
+062  
+063 <span class="keyword">if</span> ~isstruct(R) 
+064   error(<span class="string">'Incorrect input Covariance, see help datastructures'</span>) 
+065 <span class="keyword">end</span> 
+066 <span class="keyword">if</span> ndims(R.R)&gt;2|(min(size(R.R))&gt;1), 
+067   error(<span class="string">'This function is only capable of 1D covariances'</span>) 
+068 <span class="keyword">end</span> 
+069  
+070 <span class="keyword">if</span> nargin&lt;3|isempty(nugget) 
+071   nugget = 0;<span class="comment">%10^-12; </span>
+072 <span class="keyword">end</span> 
+073  
+074 <span class="keyword">if</span> nargin&lt;4|isempty(trunc) 
+075   trunc = 1e-5; 
+076 <span class="keyword">else</span> 
+077   trunc = min(abs(trunc),1); <span class="comment">% make sure it </span>
+078 <span class="keyword">end</span> 
+079 <span class="keyword">if</span> nargin&lt;5 | isempty(fast) 
+080   fast = 1; 
+081 <span class="keyword">end</span> 
+082  
+083 comment=0; 
+084  
+085  
+086  
+087 n     = length(R.R); 
+088 names = fieldnames(R); 
+089 ind   = find(strcmpi(names,<span class="string">'x'</span>)+strcmp(names,<span class="string">'y'</span>)+strcmp(names,<span class="string">'t'</span>));  
+090         <span class="comment">%options are 'x' and 'y' and 't' </span>
+091  
+092 lagtype = lower(names{ind}); 
+093 <span class="keyword">if</span> strcmpi(lagtype,<span class="string">'t'</span>) 
+094   spectype = <span class="string">'freq'</span>; 
+095   ftype     = <span class="string">'w'</span>; <span class="comment">%options f=S(f), w=S(w) </span>
+096 <span class="keyword">else</span> 
+097   spectype = <span class="string">'k1d'</span>; 
+098   ftype     = <span class="string">'k'</span>;  <span class="comment">%options f=S(f), w=S(w) </span>
+099 <span class="keyword">end</span> 
+100 ti = getfield(R,lagtype); 
+101 dT = ti(2)-ti(1); <span class="comment">% ti  </span>
+102  
+103  
+104  
+105 <span class="keyword">if</span> nargin&lt;2|isempty(rate) 
+106   rate = 1;<span class="comment">%interpolation rate </span>
+107 <span class="keyword">else</span> 
+108   rate = 2^nextpow2(rate);<span class="comment">%make sure rate is a power of 2 </span>
+109 <span class="keyword">end</span> 
+110  
+111 <span class="comment">% add a nugget effect to ensure that round off errors </span>
+112 <span class="comment">% do not result in negative spectral estimates </span>
+113 ACF    = R.R(:); 
+114 ACF(1) = R.R(1) +nugget; 
+115 <span class="comment">% embedding a circulant vector and Fourier transform </span>
+116 <span class="keyword">if</span> fast 
+117   nfft = 2^nextpow2(2*n-2); 
+118 <span class="keyword">else</span> 
+119   nfft = 2*n-2; 
+120 <span class="keyword">end</span> 
+121 nf   = nfft/2;<span class="comment">% number of frequencies </span>
+122  
+123 ACF  = [ACF;zeros(nfft-2*n+2,1);ACF(n-1:-1:2)]; 
+124  
+125 Rper = real(fft(ACF,nfft));<span class="comment">% periodogram </span>
+126  
+127 k = find(Rper&lt;0); 
+128 <span class="keyword">if</span> any(k) 
+129  <span class="comment">% disp('Warning: negative spectral estimates') </span>
+130  <span class="comment">% disp('Apply the parzen windowfunction ')  </span>
+131  <span class="comment">% disp('to the ACF in order to avoid this.') </span>
+132  <span class="comment">% disp('The returned result is now only an approximation.') </span>
+133   <span class="comment">%min(Rper(k)) </span>
+134   Rper(k)=0; <span class="comment">% truncating negative values to ensure that  </span>
+135             <span class="comment">% that high frequency noise is not added to  </span>
+136         <span class="comment">% the Spectrum </span>
+137 <span class="keyword">end</span> 
+138  
+139  
+140 k = find(Rper/max(Rper(:))&lt;trunc); 
+141 <span class="keyword">if</span> any(k) 
+142   Rper(k)=0; <span class="comment">% truncating small values to ensure that  </span>
+143             <span class="comment">% that high frequency noise is not added to  </span>
+144         <span class="comment">% the Spectrum </span>
+145 <span class="keyword">end</span> 
+146  
+147 <span class="comment">%size(nf),size(dT) </span>
+148 S      = <a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>(spectype,ftype); 
+149 S.tr   = R.tr; 
+150 S.h    = R.h; 
+151 S.norm = R.norm; 
+152 S.note = R.note; 
+153 <span class="comment">%fn = linspace(0,1, </span>
+154 <span class="keyword">switch</span> ftype 
+155 <span class="keyword">case</span> {<span class="string">'w'</span>} 
+156    S.w = [0:(nf)]'/nf*pi/dT;  <span class="comment">% (rad/s) </span>
+157   S.S  = abs(Rper(1:(nf+1)))*dT/pi; <span class="comment">% (m^2*s/rad) one-sided spectrum </span>
+158 <span class="keyword">case</span> {<span class="string">'f'</span>} <span class="comment">% spectype == sf </span>
+159   S.f =[0:(nf)]'/nf/2/dT;      <span class="comment">% frequency Hz if dT is in seconds </span>
+160   S.S =2*abs(Rper(1:(nf+1)))*dT; <span class="comment">% (m^2*s) one sided spectrum </span>
+161 <span class="keyword">case</span> {<span class="string">'k'</span>} 
+162   S.k =[0:(nf)]'/nf*pi/dT;<span class="comment">% (rad/m)  </span>
+163   S.S = abs(Rper(1:(nf+1)))*dT/pi; <span class="comment">% (m^3/rad) one-sided wavenumber spectrum </span>
+164 <span class="keyword">end</span> 
+165  
+166 <span class="keyword">if</span> rate&gt;1 
+167   w = getfield(S,ftype); 
+168   wi = linspace(w(1),w(<span class="keyword">end</span>),nf*rate).'; 
+169   S.S = interp(w,S.S,wi); 
+170   S = setfield(S,ftype,wi); 
+171 <span class="keyword">end</span> 
+172  
+173  
+174  
+175  
+176  
+177</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

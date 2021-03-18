@@ -1,0 +1,578 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dspec2char</title>
+  <meta name="keywords" content="dspec2char">
+  <meta name="description" content=" Evaluates directional spectral characteristics">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; dspec2char.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dspec2char
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Evaluates directional spectral characteristics</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [ch,chtext] = dspec2char(S,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics ">DSPEC2CHAR</a> Evaluates directional spectral characteristics 
+  
+   CALL:  [ch,chtext] = <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics ">dspec2char</a>(S,fact);
+  
+         ch = a cell vector of spectral characteristics
+     chtext = a cell vector of strings describing the elements of ch, see example.
+         S  = Directional spectral density struct with angular frequency
+       fact = vector of factor integers or a string or
+              a cellarray of strings, see below.(default [1])
+ 
+   <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics ">DSPEC2CHAR</a> assumes S is a directional spectrum S(w,theta)=
+   S(w)*D(theta,w). If input spectrum is of wave number type, it is
+   transformed into a directional spectrum before the calculations.
+   For many of the parameters the <a href="../../wafo/multidim/fourier.html" class="code" title=" Returns Fourier coefficients. ">Fourier</a> series expansion of D(theta,w) is used:
+                       M-1
+  D(theta(i)) = {1 + 2*sum [an*cos(n*theta(i)) + bn*sin(n*theta(i))]}/(2*pi)
+                       n=1
+  where C1 = sqrt(a1^2+b1^2)  and  C2 = sqrt(a2^2+b2^2)
+ 
+   Order of output is same as order in 'factors'.
+   Input vector 'factors' correspondence:
+ 
+  Factors calculated at every frequency (frequency dependent parameters):
+    1 FMdir  = atan2(b1,a1)                  Mean wave direction.
+    2 FPdir  = atan2(b2,a2)/2                Principal wave direction.
+    3 FSpr   = sqrt(2*(1-C1))                Directional Spread of Mdir
+    4 FSkew  = -C2*sin(2*(Pdir-Mdir))/Spr^3  Circular Skewness of Mdir
+    5 FMSpr  = atan2(sqrt((0.5*b1.^2*(1+a2))-(a1*b1*b2)+...
+                (0.5*a1.^2*(1-a2))),C1^2)    Mean <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> angle
+    6 FLcrst = sqrt((1-C2)/(1+C2))           Long-Crestedness parameter
+    7 FS1    = C1/(1-C1)         Cos^{2S} distribution dispersion parameter, S
+    8 FS2    = [1+3*C2+sqrt(1+(14+C2)*C2)]/(2*(1-C2)) Alternative estimate of S
+    9 FD1    = sqrt(-2*log(C1))  Wrapped Normal distribution parameter, D.
+   10 FD2    = sqrt(-log(C2)/2)  Alternative estimate of D, see <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>.m.
+ 
+  Factors calculated at the peak frequency, fp = 1/Tp: 
+   11 TpMdir =     Mean wave direction at the spectral peak
+   12 TpSpr  =     Directional Spread of TpMdir
+   13 TpSkew =     Skewness of TpMdir
+   14 Wdir   = {theta(i) | [y,i]=max(max(S.S,[],2))}   Main wave direction
+ 
+  Factors calculated from spectrally weighted averages of the
+    <a href="../../wafo/multidim/fourier.html" class="code" title=" Returns Fourier coefficients. ">Fourier</a> coefficients a and b (frequency independent parameters):
+   15 Wdir2  = {theta(i) | D(theta(i))==max(D(theta))}   Main wave direction
+   16 Mdir   = atan2(b1,a1)                  Mean wave direction.
+   17 Pdir   = atan2(b2,a2)/2                Principal wave direction.
+   18 Spr    = sqrt(2*(1-C1))                Directional Spread of Mdir
+   19 Skew   = -C2*sin(2*(Pdir-Mdir))/Spr^3  Circular Skewness of Mdir
+   20 MSpr   = atan2(sqrt((0.5*b1.^2*(1+a2))-(a1*b1*b2)+...
+                (0.5*a1.^2*(1-a2))),C1^2)    Mean <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a> angle
+   21 Lcrst  = sqrt((1-C2)/(1-C2))           Long-Crestedness parameter
+   22 S1     = C1/(1-C1)         Cos^{2s} distribution dispersion parameter, S
+   23 S2     = [1+3*C2+sqrt(1+(14+C2)*C2)]/(2*(1-C2)) Alternative estimate of S
+   24 D1     = sqrt(-2*log(C1))  Wrapped Normal distribution parameter, D.
+   25 D2     = sqrt(-log(C2)/2)  Alternative estimate of D, see <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a>.m.
+   26 TMdir  = atan2(b,a)        Mean wave direction Tucker's method.
+ 
+  Note: All angles are given in radians.
+    
+   Examples:
+     S      = <a href="demospec.html" class="code" title=" Loads a precreated spectrum of chosen type">demospec</a>('dir');
+     [ch,txt] = <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics ">dspec2char</a>(S,1:26);        % fact a vector of integers
+     ch0 = cell2struct(ch,txt,2);          % Make a structure 
+     [txt{2,:}]=deal(','); txt{2,end}=' '; 
+     eval(['[' txt{:} '] = deal(ch{:})'])  % Assign values to variables
+     plot(S.w,FMdir)
+     ch1 = <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics ">dspec2char</a>(S,'wdir');          % fact a string
+     ch2 = <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics ">dspec2char</a>(S,{'mdir','pdir'}); % fact a cellarray of strings
+     ch3 = <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics ">dspec2char</a>(S,'mdir','pdir');   % strings
+  
+   See also  <a href="spec2char.html" class="code" title="  Evaluates spectral characteristics and their covariance">spec2char</a>, <a href="spec2bw.html" class="code" title=" Evaluates some spectral bandwidth and irregularity factors">spec2bw</a>, <a href="spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>, <a href="spreading.html" class="code" title=" Directional spreading functions">spreading</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dspec2char.html" class="code" title=" [ch,chtext] = dspec2char(S,varargin)">dspec2char</a></li></TD>
+<TD> Evaluates directional spectral characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/multidim/fourier.html" class="code" title=" [a,b]=fourier(t,x,T,M,N);">fourier</a></li></TD>
+<TD> Returns Fourier coefficients.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/simpson.html" class="code" title=" [area,epsi,a,b] = simpson(x,f,dim)">simpson</a></li></TD>
+<TD> Numerical integration with the Simpson method</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="ttspec.html" class="code" title=" Snew = ttspec(S,varargin)">ttspec</a></li></TD>
+<TD> Toggle Transform between angular frequency and frequency spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\@inline\char.m">char</a></li></TD>
+<TD>          Create character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\simulink\simcoverage\@cvtest\help.m">help</a></li></TD>
+<TD>          Display help text in Command Window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\ifft.bi">ifft</a></li></TD>
+<TD>          Inverse discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\iscell.m">iscell</a></li></TD>
+<TD>        True for cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\scribe\legend.m">legend</a></li></TD>
+<TD>        Display legend.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\audiovideo\@audiorecorder\pause.m">pause</a></li></TD>
+<TD>         Wait for user response.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@opaque\strmatch.m">strmatch</a></li></TD>
+<TD>      Find possible matches for string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dspec2char.html" class="code" title=" [ch,chtext] = dspec2char(S,varargin)">dspec2char</a></li></TD>
+<TD> Evaluates directional spectral characteristics</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [ch,chtext] = <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics "><a name="_sub0" href="#_subfunctions" class="code">dspec2char</a>dspec2char</a>(S,varargin)
+0002 <span class="comment">%DSPEC2CHAR Evaluates directional spectral characteristics </span>
+0003 <span class="comment">% </span>
+0004 <span class="comment">%  CALL:  [ch,chtext] = dspec2char(S,fact);</span>
+0005 <span class="comment">% </span>
+0006 <span class="comment">%        ch = a cell vector of spectral characteristics</span>
+0007 <span class="comment">%    chtext = a cell vector of strings describing the elements of ch, see example.</span>
+0008 <span class="comment">%        S  = Directional spectral density struct with angular frequency</span>
+0009 <span class="comment">%      fact = vector of factor integers or a string or</span>
+0010 <span class="comment">%             a cellarray of strings, see below.(default [1])</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%  DSPEC2CHAR assumes S is a directional spectrum S(w,theta)=</span>
+0013 <span class="comment">%  S(w)*D(theta,w). If input spectrum is of wave number type, it is</span>
+0014 <span class="comment">%  transformed into a directional spectrum before the calculations.</span>
+0015 <span class="comment">%  For many of the parameters the Fourier series expansion of D(theta,w) is used:</span>
+0016 <span class="comment">%                      M-1</span>
+0017 <span class="comment">% D(theta(i)) = {1 + 2*sum [an*cos(n*theta(i)) + bn*sin(n*theta(i))]}/(2*pi)</span>
+0018 <span class="comment">%                      n=1</span>
+0019 <span class="comment">% where C1 = sqrt(a1^2+b1^2)  and  C2 = sqrt(a2^2+b2^2)</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">%  Order of output is same as order in 'factors'.</span>
+0022 <span class="comment">%  Input vector 'factors' correspondence:</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% Factors calculated at every frequency (frequency dependent parameters):</span>
+0025 <span class="comment">%   1 FMdir  = atan2(b1,a1)                  Mean wave direction.</span>
+0026 <span class="comment">%   2 FPdir  = atan2(b2,a2)/2                Principal wave direction.</span>
+0027 <span class="comment">%   3 FSpr   = sqrt(2*(1-C1))                Directional Spread of Mdir</span>
+0028 <span class="comment">%   4 FSkew  = -C2*sin(2*(Pdir-Mdir))/Spr^3  Circular Skewness of Mdir</span>
+0029 <span class="comment">%   5 FMSpr  = atan2(sqrt((0.5*b1.^2*(1+a2))-(a1*b1*b2)+...</span>
+0030 <span class="comment">%               (0.5*a1.^2*(1-a2))),C1^2)    Mean spreading angle</span>
+0031 <span class="comment">%   6 FLcrst = sqrt((1-C2)/(1+C2))           Long-Crestedness parameter</span>
+0032 <span class="comment">%   7 FS1    = C1/(1-C1)         Cos^{2S} distribution dispersion parameter, S</span>
+0033 <span class="comment">%   8 FS2    = [1+3*C2+sqrt(1+(14+C2)*C2)]/(2*(1-C2)) Alternative estimate of S</span>
+0034 <span class="comment">%   9 FD1    = sqrt(-2*log(C1))  Wrapped Normal distribution parameter, D.</span>
+0035 <span class="comment">%  10 FD2    = sqrt(-log(C2)/2)  Alternative estimate of D, see spreading.m.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">% Factors calculated at the peak frequency, fp = 1/Tp: </span>
+0038 <span class="comment">%  11 TpMdir =     Mean wave direction at the spectral peak</span>
+0039 <span class="comment">%  12 TpSpr  =     Directional Spread of TpMdir</span>
+0040 <span class="comment">%  13 TpSkew =     Skewness of TpMdir</span>
+0041 <span class="comment">%  14 Wdir   = {theta(i) | [y,i]=max(max(S.S,[],2))}   Main wave direction</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">% Factors calculated from spectrally weighted averages of the</span>
+0044 <span class="comment">%   Fourier coefficients a and b (frequency independent parameters):</span>
+0045 <span class="comment">%  15 Wdir2  = {theta(i) | D(theta(i))==max(D(theta))}   Main wave direction</span>
+0046 <span class="comment">%  16 Mdir   = atan2(b1,a1)                  Mean wave direction.</span>
+0047 <span class="comment">%  17 Pdir   = atan2(b2,a2)/2                Principal wave direction.</span>
+0048 <span class="comment">%  18 Spr    = sqrt(2*(1-C1))                Directional Spread of Mdir</span>
+0049 <span class="comment">%  19 Skew   = -C2*sin(2*(Pdir-Mdir))/Spr^3  Circular Skewness of Mdir</span>
+0050 <span class="comment">%  20 MSpr   = atan2(sqrt((0.5*b1.^2*(1+a2))-(a1*b1*b2)+...</span>
+0051 <span class="comment">%               (0.5*a1.^2*(1-a2))),C1^2)    Mean spreading angle</span>
+0052 <span class="comment">%  21 Lcrst  = sqrt((1-C2)/(1-C2))           Long-Crestedness parameter</span>
+0053 <span class="comment">%  22 S1     = C1/(1-C1)         Cos^{2s} distribution dispersion parameter, S</span>
+0054 <span class="comment">%  23 S2     = [1+3*C2+sqrt(1+(14+C2)*C2)]/(2*(1-C2)) Alternative estimate of S</span>
+0055 <span class="comment">%  24 D1     = sqrt(-2*log(C1))  Wrapped Normal distribution parameter, D.</span>
+0056 <span class="comment">%  25 D2     = sqrt(-log(C2)/2)  Alternative estimate of D, see spreading.m.</span>
+0057 <span class="comment">%  26 TMdir  = atan2(b,a)        Mean wave direction Tucker's method.</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">% Note: All angles are given in radians.</span>
+0060 <span class="comment">%   </span>
+0061 <span class="comment">%  Examples:</span>
+0062 <span class="comment">%    S      = demospec('dir');</span>
+0063 <span class="comment">%    [ch,txt] = dspec2char(S,1:26);        <span class="comment">% fact a vector of integers</span></span>
+0064 <span class="comment">%    ch0 = cell2struct(ch,txt,2);          <span class="comment">% Make a structure </span></span>
+0065 <span class="comment">%    [txt{2,:}]=deal(','); txt{2,end}=' '; </span>
+0066 <span class="comment">%    eval(['[' txt{:} '] = deal(ch{:})'])  <span class="comment">% Assign values to variables</span></span>
+0067 <span class="comment">%    plot(S.w,FMdir)</span>
+0068 <span class="comment">%    ch1 = dspec2char(S,'wdir');          <span class="comment">% fact a string</span></span>
+0069 <span class="comment">%    ch2 = dspec2char(S,{'mdir','pdir'}); <span class="comment">% fact a cellarray of strings</span></span>
+0070 <span class="comment">%    ch3 = dspec2char(S,'mdir','pdir');   <span class="comment">% strings</span></span>
+0071 <span class="comment">% </span>
+0072 <span class="comment">%  See also  spec2char, spec2bw, spec2mom, spreading  </span>
+0073 
+0074 <span class="comment">% References:</span>
+0075 <span class="comment">% Krogstad, H.E., Wolf, J., Thompson, S.P., and Wyatt, L.R. (1999)</span>
+0076 <span class="comment">% 'Methods for intercomparison of wave measurements'</span>
+0077 <span class="comment">% Coastal Enginering, Vol. 37, pp. 235--257</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">% Krogstad, H.E. (1982)</span>
+0080 <span class="comment">% 'On the covariance of the periodogram'</span>
+0081 <span class="comment">% Journal of time series analysis, Vol. 3, No. 3, pp. 195--207</span>
+0082 <span class="comment">%</span>
+0083 <span class="comment">% Tucker, M.J. (1993)</span>
+0084 <span class="comment">% 'Recommended standard for wave data sampling and near-real-time processing'</span>
+0085 <span class="comment">% Ocean Engineering, Vol.20, No.5, pp. 459--474</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">% Young, I.R. (1999)</span>
+0088 <span class="comment">% &quot;Wind generated ocean waves&quot;</span>
+0089 <span class="comment">% Elsevier Ocean Engineering Book Series, Vol. 2, pp 239</span>
+0090 <span class="comment">%</span>
+0091 <span class="comment">% Benoit, M. and Goasguen, G. (1999)</span>
+0092 <span class="comment">% &quot;Comparative evalutation of directional wave analysis techniques applied</span>
+0093 <span class="comment">% to field measurements&quot;, In Proc. 9'th ISOPE conference, Vol III, pp 87-94.</span>
+0094 
+0095 <span class="comment">% Tested on: Matlab 5.2</span>
+0096 
+0097 <span class="comment">% History: </span>
+0098 <span class="comment">%revised pab 29.06.2001</span>
+0099 <span class="comment">% - factors 15:25 are now calculated from the scaled Fourier coefficients of</span>
+0100 <span class="comment">% D(theta) = int S(w,theta) dw instead of  D(theta) = int D(w,theta) dw </span>
+0101 <span class="comment">%revised pab 22.06.2001</span>
+0102 <span class="comment">% - moved code from wspecplottest into dspec2char</span>
+0103 <span class="comment">% - Fixed bugs: The parameters are now calculated from the correct</span>
+0104 <span class="comment">%     Scaled Fourier coefficients. S.phi is now taken into account.</span>
+0105 <span class="comment">% - Added frequency dependent parameters, skewness and kurtosis</span>
+0106 <span class="comment">%   parameters and dispersion parameter for the wrapped normal spreading function.</span>
+0107 <span class="comment">%by Vengatesan Venugopal [V.Venugopal@hw.ac.uk] 19.06.2001</span>
+0108 
+0109 <span class="comment">% Options not implemented</span>
+0110 <span class="comment">%  FKurt  = 2*(C2*cos(2*(Pdir-Mdir))-4*C1+3)/Spr^4 Circular kurtosis of FMdir</span>
+0111 <span class="comment">%  TpKurt =     Kurtosis of TpMdir</span>
+0112 <span class="comment">%  Kurt   = 2*(C2*cos(2*(Pdir-Mdir))-4*C1+3)/Spr^4 Circular kurtosis of Mdir</span>
+0113 <span class="comment">%  TSpr   = sqrt(2*(1-C1))    Directional Spread of TMdir  (Wrong?)</span>
+0114 
+0115 transform2degrees = 0;
+0116 
+0117 <span class="keyword">switch</span> nargin
+0118   <span class="keyword">case</span> 0, help <a href="dspec2char.html" class="code" title=" Evaluates directional spectral characteristics ">dspec2char</a>, <span class="keyword">return</span>
+0119   <span class="keyword">case</span> 1, nfact = 1; 
+0120   <span class="keyword">case</span> 2,
+0121     fact = varargin{1};
+0122     <span class="keyword">if</span> ischar(fact), fact = {fact}; <span class="keyword">end</span>
+0123   <span class="keyword">otherwise</span>
+0124     fact = varargin;
+0125 <span class="keyword">end</span>
+0126 
+0127 tfact ={<span class="string">'FMdir'</span>,<span class="string">'FPdir'</span>,<span class="string">'FSpr'</span>,<span class="string">'FSkew'</span>,<span class="string">'FMSpr'</span>,<span class="string">'FLcrst'</span>,<span class="string">'FS1'</span>,<span class="string">'FS2'</span>,<span class="string">'FD1'</span>,<span class="string">'FD2'</span>,<span class="keyword">...</span>
+0128     <span class="string">'TpMdir'</span>,<span class="string">'TpSpr'</span>,<span class="string">'TpSkew'</span>,<span class="string">'Wdir'</span>,<span class="string">'Wdir2'</span>, <span class="keyword">...</span>
+0129 <span class="string">'Mdir'</span>,<span class="string">'Pdir'</span>,<span class="string">'Spr'</span>,<span class="string">'Skew'</span>,<span class="string">'MSpr'</span>,<span class="string">'Lcrst'</span>,<span class="string">'S1'</span>,<span class="string">'S2'</span>,<span class="string">'D1'</span>,<span class="string">'D2'</span>,<span class="string">'TMdir'</span>,<span class="string">'TSpr'</span>};  
+0130 
+0131 
+0132 
+0133 <span class="keyword">if</span> iscell(fact)
+0134   N     = length(fact(:));
+0135   nfact = zeros(1,N);
+0136   ltfact = char(lower(tfact));
+0137   <span class="keyword">for</span> ix=1:N,
+0138     ind = strmatch(lower(fact(ix)),ltfact,<span class="string">'exact'</span>);
+0139     <span class="keyword">if</span> length(ind)==1,
+0140       nfact(ix)=ind;
+0141     <span class="keyword">else</span>
+0142       error([<span class="string">'Not a valid factor: '</span> fact{ix}])
+0143     <span class="keyword">end</span>
+0144   <span class="keyword">end</span> 
+0145 <span class="keyword">else</span>
+0146   nfact = fact;
+0147 <span class="keyword">end</span>
+0148 <span class="keyword">if</span> any(nfact&gt;26 | nfact&lt;1)
+0149   error(<span class="string">'Factor outside range (1,...,26)'</span>)
+0150 <span class="keyword">end</span>
+0151 
+0152 vari = <span class="string">'w'</span>;
+0153 <span class="keyword">if</span> isfield(S,<span class="string">'k2d'</span>)
+0154   S = <a href="spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(S,<span class="string">'dir'</span>);
+0155 <span class="keyword">elseif</span> isfield(S,<span class="string">'theta'</span>) 
+0156   S = <a href="ttspec.html" class="code" title=" Toggle Transform between angular frequency and frequency spectrum">ttspec</a>(S,<span class="string">'w'</span>,<span class="string">'r'</span>); <span class="comment">% Make sure it is directional spectrum given in radians</span>
+0157 <span class="keyword">else</span>
+0158   error(<span class="string">'Directional spectra required!'</span>)
+0159 <span class="keyword">end</span>
+0160 
+0161 phi = 0;
+0162 <span class="keyword">if</span> isfield(S,<span class="string">'phi'</span>) &amp; ~isempty(S.phi)
+0163   phi = S.phi;
+0164 <span class="keyword">end</span>
+0165 
+0166 
+0167 
+0168 w       = getfield(S,vari);
+0169 w       = w(:);
+0170 theta   = S.theta(:)-phi;
+0171 Dtf     = S.S;
+0172 [Nt Nf] = size(Dtf);
+0173 
+0174 <span class="keyword">if</span> length(w)~=Nf, 
+0175   error(<span class="string">'Length of frequency vector S.f or S.w must equal size(S.S,2)'</span>),
+0176 <span class="keyword">end</span>
+0177 <span class="keyword">if</span> length(theta)~=Nt, 
+0178   error(<span class="string">'Length of angular vector S.theta must equal size(S.S,1)'</span>),
+0179 <span class="keyword">end</span>
+0180 
+0181 Sf      = <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(S.theta,Dtf,1);
+0182 ind     = find(Sf);
+0183 
+0184 <span class="comment">%Directional distribution  D(theta,w) = S(theta,w)/S(w)</span>
+0185 Dtf(:,ind) = Dtf(:,ind)./Sf(ones(Nt,1),ind); 
+0186 
+0187 <span class="keyword">if</span> 0,
+0188   Dtheta   = <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(w,Dtf,2); <span class="comment">%Directional spreading, D(theta) = int D(w,theta) dw</span>
+0189 <span class="keyword">else</span>
+0190   Dtheta   = <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(w,S.S,2); <span class="comment">%Directional spreading, D(theta) = int S(w,theta) dw</span>
+0191 <span class="keyword">end</span>
+0192 Dtheta     = Dtheta/<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(S.theta,Dtheta);
+0193 
+0194 [y,ind] = max(Dtheta);
+0195 Wdir    = theta(ind); <span class="comment">% main wave direction</span>
+0196 
+0197 
+0198 
+0199 <span class="comment">% Find Fourier Coefficients of Dtheta and Dtf</span>
+0200 M = 3; <span class="comment">% No of harmonics-1</span>
+0201 [a,b]   = <a href="../../wafo/multidim/fourier.html" class="code" title=" Returns Fourier coefficients. ">fourier</a>(theta,Dtheta,2*pi,10);
+0202 [aa,bb] = <a href="../../wafo/multidim/fourier.html" class="code" title=" Returns Fourier coefficients. ">fourier</a>(theta,Dtf,2*pi,10);
+0203 <span class="keyword">if</span> 0, <span class="comment">% Alternatively</span>
+0204   Fcof = 2*ifft(Dtheta);
+0205   Pcor = [1; exp(sqrt(-1)*[1:M-1].'*theta(1))]; <span class="comment">% correction term to get</span>
+0206   <span class="comment">% the correct integration limits</span>
+0207   Fcof = Fcof(1:M,:).*Pcor;
+0208   a = real(Fcof(1:M));
+0209   b = imag(Fcof(1:M));
+0210   Fcof = 2*ifft(Dtf);
+0211   Fcof = Fcof(1:M,:).*Pcor(:,ones(1,Nf));
+0212   aa = real(Fcof(1:M,:));
+0213   bb = imag(Fcof(1:M,:));
+0214 <span class="keyword">end</span>
+0215 
+0216 <span class="keyword">if</span> 0,
+0217   <span class="comment">% Checking the components</span>
+0218   P1toM = zeros(Nt,M);
+0219   P1toM(:,1) =  a(1)/2; <span class="comment">% mean level</span>
+0220   
+0221   <span class="keyword">for</span> ix=2:M,
+0222     <span class="comment">% M-1 1st harmonic</span>
+0223     P1toM(:,ix) = a(ix)*cos((ix-1)*theta)+b(ix)*sin((ix-1)*theta);
+0224   <span class="keyword">end</span>
+0225   Psum = sum(P1toM,2);
+0226   subplot(2,1,1)
+0227   plot(theta,Dtheta-Psum,<span class="string">'o'</span>,<span class="string">'MarkerSize'</span>,2), legend(<span class="string">'Dteta-Psum'</span>)
+0228   subplot(2,1,2)
+0229   plot(theta,Dtheta,<span class="string">'o'</span>,<span class="string">'MarkerSize'</span>,2), hold on
+0230   plot(theta,Psum,<span class="string">'m'</span>), hold off,legend(<span class="string">'Dteta'</span>,<span class="string">'Psum'</span>)
+0231   pause 
+0232 <span class="keyword">end</span>   
+0233 
+0234 <span class="comment">% The parameters below are calculated for </span>
+0235 a  = pi*a;  b  = pi*b;
+0236 aa = pi*aa; bb = pi*bb;
+0237 
+0238 
+0239 <span class="comment">%Fourier coefficients for D(theta)  </span>
+0240 a0=a(1); a1=a(2);a2=a(3);
+0241 b1=b(2); b2=b(3);
+0242 
+0243 <span class="comment">%Fourier coefficients for D(theta,w)</span>
+0244 aa0 = aa(1,:); aa1 = a(2,:);aa2 = aa(3,:);
+0245 bb1 = bb(2,:); bb2 = bb(3,:);
+0246 
+0247 FC1 = sqrt(aa1.^2+bb1.^2);
+0248 FC2 = sqrt(aa2.^2+bb2.^2);
+0249 
+0250 <span class="comment">%plot(w,FC1,w,FC2),legend('FC1','FC2')</span>
+0251 
+0252 
+0253 FMdir = atan2(bb1,aa1);                          <span class="comment">% Mean wave direction</span>
+0254 FPdir = 0.5*atan2(bb2,aa2);                      <span class="comment">% Principal wave direction</span>
+0255 FSpr  = sqrt(2*abs(1-FC1));                      <span class="comment">% Directional spread</span>
+0256 FSkew = -FC2.*sin(2*(FPdir-FMdir))./(FSpr.^3);   <span class="comment">% Skewness of Mdir</span>
+0257 FKurt = 2*(FC2.*cos(2*(FPdir-FMdir))-4.*FC1+3)./(FSpr.^4); <span class="comment">% Kurtosis of Mdir</span>
+0258 
+0259  
+0260 <span class="comment">% Mean spreading angle </span>
+0261 FMSpr = atan2(sqrt(0.5*bb1.^2.*(1+aa2)-aa1.*bb1.*bb2+0.5.*aa1.^2.*(1-aa2)),FC1.^2);
+0262 
+0263 <span class="comment">% Long-Crestedness parameter</span>
+0264 FLcrst  = sqrt((1-FC2)./(1+FC2));
+0265 
+0266 <span class="comment">%Estimates of Cos^{2s} distribution dispersion parameter, S </span>
+0267 FS1 = FC1./(1-FC1);
+0268 FS2 = (1+3*FC2+sqrt(1+(14+FC2).*FC2))./(2*(1-FC2));
+0269 <span class="comment">%Estimates of Wrapped Normal distribution parameter, D.</span>
+0270 FD1     = repmat(-inf,size(FC1));
+0271 ind     = find(FC1); <span class="comment">% avoid log(0)</span>
+0272 FD1(ind)= sqrt(-2*log(FC1(ind)));  
+0273 
+0274 FD2     = repmat(-inf,size(FC2));
+0275 ind     = find(FC2); <span class="comment">% avoid log(0)</span>
+0276 FD2(ind)= sqrt(-log(FC2(ind))/2); 
+0277 
+0278 [y,ind] = max(max(S.S,[],1)); <span class="comment">% Index to spectral peak.</span>
+0279 
+0280 TpMdir = FMdir(ind); <span class="comment">% Mean wave direction at the spectral peak</span>
+0281 TpSpr  = FSpr(ind);  <span class="comment">% Directional Spread of TpMdir</span>
+0282 TpSkew = FSkew(ind); <span class="comment">% Skewness of TpMdir</span>
+0283 TpKurt = FKurt(ind); <span class="comment">% Kurtosis of TpMdir</span>
+0284 
+0285 
+0286 [y,ind] = max(max(S.S,[],2)); <span class="comment">% Index to spectral peak.</span>
+0287 Wdir    = mod(theta(ind)+pi,2*pi)-pi; <span class="comment">% main wave direction</span>
+0288 [y,ind] = max(Dtheta);
+0289 Wdir2   = mod(theta(ind)+pi,2*pi)-pi; <span class="comment">% main wave direction</span>
+0290 
+0291 
+0292 
+0293 C1 = sqrt(a1.^2+b1.^2);
+0294 C2 = sqrt(a2.^2+b2.^2);
+0295 
+0296      
+0297 
+0298 Mdir = atan2(b1,a1);                               <span class="comment">% Mean wave direction</span>
+0299 Pdir = 0.5*atan2(b2,a2);                           <span class="comment">% Principal wave direction</span>
+0300 Spr  = sqrt(2*abs(1-C1));                          <span class="comment">% Directional spread</span>
+0301 Skew = -C2.*sin(2*(Pdir-Mdir))./(Spr.^3);          <span class="comment">% Skewness of Mdir</span>
+0302 Kurt = 2*(C2.*cos(2*(Pdir-Mdir))-4.*C1+3)./(Spr.^4); <span class="comment">% Kurtosis of Mdir</span>
+0303   
+0304 <span class="comment">% Mean spreading angle </span>
+0305 MSpr = atan2(sqrt(0.5*b1.^2.*(1+a2)-a1.*b1.*b2+0.5.*a1.^2.*(1-a2)),C1.^2);
+0306 
+0307 <span class="comment">% Long-Crestedness parameter</span>
+0308 Lcrst  = sqrt((1-C2)./(1+C2));
+0309 
+0310 <span class="comment">%Estimates of Cos^{2s} distribution dispersion parameter, S </span>
+0311 S1 = C1./(1-C1);
+0312 S2 = (1+3*C2+sqrt(1+(14+C2).*C2))./(2*(1-C2));
+0313 <span class="comment">%Estimates of Wrapped Normal distribution parameter, D.</span>
+0314 D1     = sqrt(abs(2*log(C1)));  
+0315 D2     = sqrt(abs(log(C2)/2)); 
+0316 
+0317 
+0318 <span class="comment">% ---------------------------------------------------------------------------   </span>
+0319 <span class="comment">% TUCKER PROCEDURE for MDIR and UI (pp202)</span>
+0320          
+0321 
+0322 [Sff,ind] = max(S.S(:,:));
+0323 Wwdir     = theta(ind); <span class="comment">% main wave direction</span>
+0324 
+0325 <span class="comment">%thetam = (ind-1).'*2*pi/(Nt-1)-pi;</span>
+0326 thetam = theta(ind);
+0327 Sff = Sff';
+0328 bot = sum(Sff);
+0329 a   = sum(Sff.*cos(thetam))/bot;
+0330 b   = sum(Sff.*sin(thetam))/bot;
+0331 
+0332 TMdir = atan2(b,a);
+0333 UI   = sqrt(a.^2+b.^2);
+0334 TSpr = sqrt(2*(1-UI));  <span class="comment">%This is not correct  </span>
+0335 
+0336 ch ={FMdir,FPdir,FSpr,FSkew,FMSpr,FLcrst,FS1,FS2,FD1,FD2,<span class="keyword">...</span>
+0337     TpMdir,TpSpr,TpSkew,Wdir,Wdir2,Mdir,Pdir,Spr,Skew,.<span class="keyword">...</span>
+0338     MSpr,Lcrst,S1,S2,D1,D2,TMdir}; 
+0339 
+0340 <span class="comment">% Make sure the angles are between -pi&lt;= theta &lt; pi</span>
+0341 ind = [1:3 5 11:12 14:18 20 26];
+0342 <span class="keyword">for</span> ix = ind,
+0343   ch{ix} = mod(ch{ix}+pi,2*pi)-pi;
+0344 <span class="keyword">end</span> 
+0345 <span class="keyword">if</span> transform2degrees, <span class="comment">% Change from radians to degrees  </span>
+0346   <span class="keyword">for</span> ix = ind,
+0347     ch{ix} = ch{ix}*180/pi;
+0348   <span class="keyword">end</span> 
+0349   <span class="comment">% Old call:</span>
+0350   <span class="comment">%r2d = ones(1,11);</span>
+0351   <span class="comment">%r2d([1:3 5 7 ]) = 180/pi;</span>
+0352   <span class="comment">%ch = ch.*r2d;</span>
+0353 <span class="keyword">end</span>
+0354 
+0355 <span class="comment">% select the appropriate values</span>
+0356 ch     = ch(nfact);
+0357 chtext = tfact(nfact);
+0358 
+0359 <span class="keyword">return</span>
+0360 
+0361</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

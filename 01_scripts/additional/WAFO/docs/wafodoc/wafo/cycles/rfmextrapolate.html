@@ -1,0 +1,732 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of rfmextrapolate</title>
+  <meta name="keywords" content="rfmextrapolate">
+  <meta name="description" content=" Extrapolates a rainflow matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; rfmextrapolate.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>rfmextrapolate
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Extrapolates a rainflow matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [Fest,Pout,Fextreme,Fsmooth,Fest0] = rfmextrapolate2(F,Pin,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">RFMEXTRAPOLATE</a> Extrapolates a rainflow matrix.
+ 
+  CALL: Fest = <a href="rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>(F);
+        [Fest,Pout] = <a href="rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>(F,Pin,plotflag);
+        [Fest,Pout,Fextreme,Fsmooth,Fest0] = <a href="rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>(F,Pin,plotflag)
+ 
+    F           = Observed rainflow matrix                        [n,n]
+    Pin         = Input parameters. (optional)           [struct array]
+     .method    = Method for extrapolating the LC.  (see <a href="cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a> for options)
+                  'gpd,ml'  : Generalized Pareto distribution. (default)
+                  'exp,mld' : Exponential distribution.  (Linear in lin-log)
+     .u_lev     = Lower and upper <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> for extrapolation of levelcrossings. 
+                  (manual choice of <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>)          u_lev=[i_min i_max]
+     .LCfrac    = Fraction of LC for choosing thresholds for extraoplation.
+                  (automatic choice of u_lev)       (default 0.05)
+     .h         = Bandwidth for smoothing, h=-1 gives automatic choice.
+     .beta      = Damage exponent.
+     .Lim       = Limits where to use extreme RFM.  (manual choice)
+                  Settings:  Lim.<a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>  Lim.min  Lim.max  (see <a href="cmatcombine.html" class="code" title=" Combines two cycle matrices.">cmatcombine</a>)
+     .LimRelDam = Threshold for relative damage. 
+                  (automatic choice of Lim)         (default 0.95)
+     .param     = Defines discretization.
+     .PL        = Values of countour lines.
+    plotflag    = 0: Don't plot diagnostic plots, (default)
+                  1: Plot final result of estimated limiting RFM,
+                  2: Plot results of each step in the extrapolation.
+ 
+    Fest        = Extrapolated RFM.                               [n,n]
+    Pout        = Output parameters.                     [struct array]
+    Fextreme    = Extreme RFM.                                    [n,n]
+    Fsmooth     = Smoothed RFM.  (Kernel smoothing)               [n,n]
+    Fest0       = Extrapolated RFM, before applying limits.       [n,n]
+    
+  Extrapolates the level crossing spectrum for high and for low <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>. 
+  Computes the 'extreme RFM', an approximation of the RFM which 
+  is good for large cycles (i.e. for low minima and high maxima). 
+  Computes the 'smoothed RFM' by using kernel smoothing.
+  The final estimate of the 'extrapolated RFM' (or 'limiting RFM')
+  is a combination of Fextreme and Fsmooth.
+ 
+  Example:
+    [G,Gh] = <a href="../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>([-1 1 64],[-0.2 0.2], 0.15,1);
+    xD = <a href="../../wafo/wsim/mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>({G Gh},2000);
+    Frfc = <a href="dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(xD,64,'CS');
+    Fest = <a href="rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>(Frfc,[],1);
+    Grfc = <a href="../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({G Gh});
+    <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>({Frfc Fest; Grfc G},4)
+ 
+  See also  <a href="cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>, <a href="lc2rfmextreme.html" class="code" title=" Compute extreme RFM from level crossings.">lc2rfmextreme</a>, <a href="smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>, <a href="cmatcombine.html" class="code" title=" Combines two cycle matrices.">cmatcombine</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cmat2amp.html" class="code" title=" amp_hist = cmat2amp(param,F)">cmat2amp</a></li></TD>
+<TD> Calculates a histogram of amplitudes from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/damage/cmat2dam.html" class="code" title=" D = cmat2dmat(param,F,beta,K)">cmat2dam</a></li></TD>
+<TD> Calculates the total Palmgren-Miner damage of a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Dmat = cmat2dmat(param,F,beta,K)">cmat2dmat</a></li></TD>
+<TD> Computes the (Palmgren-Miner) damage matrix from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="cmat2extralc.html" class="code" title=" [lcEst,Est,R,MSE] = cmat2extralc(param,F,u,method,plotflag)">cmat2extralc</a></li></TD>
+<TD>  Extrapolate level crossing spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="cmat2lc.html" class="code" title=" lc = cmat2lc(param,F)">cmat2lc</a></li></TD>
+<TD> Calculates the level crossings from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="cmatcombine.html" class="code" title=" [F,Lim,FF1,FF2] = cmatcombine(F1,F2,in3)">cmatcombine</a></li></TD>
+<TD> Combines two cycle matrices.</TD>
+</TR>
+<TR>
+<TD><li><a href="cmatplot.html" class="code" title=" cmatplot(in1,in2,in3,in4,in5)">cmatplot</a></li></TD>
+<TD> Plots a cycle matrix, e.g. a rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="lc2rfmextreme.html" class="code" title=" [Frfc,u,Nrfc,Nrfc0]=lc2nt(lc,vect)">lc2rfmextreme</a></li></TD>
+<TD> Compute extreme RFM from level crossings.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="smoothcmat.html" class="code" title=" [Fsmooth,h] = smthcmat(F,method,h,NOsubzero,alpha)">smoothcmat</a></li></TD>
+<TD> Smooth a cycle matrix using (adaptive) kernel smoothing</TD>
+</TR>
+<TR>
+<TD><li><a href="smoothcmat_hnorm.html" class="code" title=" h_norm = smoothcmat_hnorm(F,NOsubzero)">smoothcmat_hnorm</a></li></TD>
+<TD>  Bandwidth selection for kernel smoothing of a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\contour.m">contour</a></li></TD>
+<TD>       Contour plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\fieldnames.m">fieldnames</a></li></TD>
+<TD>    Get structure field names.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\figure.m">figure</a></li></TD>
+<TD>        Create figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\grid.m">grid</a></li></TD>
+<TD>          Grid lines.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\setfield.m">setfield</a></li></TD>
+<TD>      Set structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\stairs.m">stairs</a></li></TD>
+<TD>        Stairstep plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\subplot.m">subplot</a></li></TD>
+<TD>       Create axes in tiled positions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [Fest,Pout,Fextreme,Fsmooth,Fest0] = rfmextrapolate2(F,Pin,plotflag)
+0002 
+0003 <span class="comment">%RFMEXTRAPOLATE Extrapolates a rainflow matrix.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% CALL: Fest = rfmextrapolate(F);</span>
+0006 <span class="comment">%       [Fest,Pout] = rfmextrapolate(F,Pin,plotflag);</span>
+0007 <span class="comment">%       [Fest,Pout,Fextreme,Fsmooth,Fest0] = rfmextrapolate(F,Pin,plotflag)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%   F           = Observed rainflow matrix                        [n,n]</span>
+0010 <span class="comment">%   Pin         = Input parameters. (optional)           [struct array]</span>
+0011 <span class="comment">%    .method    = Method for extrapolating the LC.  (see cmat2extralc for options)</span>
+0012 <span class="comment">%                 'gpd,ml'  : Generalized Pareto distribution. (default)</span>
+0013 <span class="comment">%                 'exp,mld' : Exponential distribution.  (Linear in lin-log)</span>
+0014 <span class="comment">%    .u_lev     = Lower and upper levels for extrapolation of levelcrossings. </span>
+0015 <span class="comment">%                 (manual choice of levels)          u_lev=[i_min i_max]</span>
+0016 <span class="comment">%    .LCfrac    = Fraction of LC for choosing thresholds for extraoplation.</span>
+0017 <span class="comment">%                 (automatic choice of u_lev)       (default 0.05)</span>
+0018 <span class="comment">%    .h         = Bandwidth for smoothing, h=-1 gives automatic choice.</span>
+0019 <span class="comment">%    .beta      = Damage exponent.</span>
+0020 <span class="comment">%    .Lim       = Limits where to use extreme RFM.  (manual choice)</span>
+0021 <span class="comment">%                 Settings:  Lim.range  Lim.min  Lim.max  (see cmatcombine)</span>
+0022 <span class="comment">%    .LimRelDam = Threshold for relative damage. </span>
+0023 <span class="comment">%                 (automatic choice of Lim)         (default 0.95)</span>
+0024 <span class="comment">%    .param     = Defines discretization.</span>
+0025 <span class="comment">%    .PL        = Values of countour lines.</span>
+0026 <span class="comment">%   plotflag    = 0: Don't plot diagnostic plots, (default)</span>
+0027 <span class="comment">%                 1: Plot final result of estimated limiting RFM,</span>
+0028 <span class="comment">%                 2: Plot results of each step in the extrapolation.</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%   Fest        = Extrapolated RFM.                               [n,n]</span>
+0031 <span class="comment">%   Pout        = Output parameters.                     [struct array]</span>
+0032 <span class="comment">%   Fextreme    = Extreme RFM.                                    [n,n]</span>
+0033 <span class="comment">%   Fsmooth     = Smoothed RFM.  (Kernel smoothing)               [n,n]</span>
+0034 <span class="comment">%   Fest0       = Extrapolated RFM, before applying limits.       [n,n]</span>
+0035 <span class="comment">%   </span>
+0036 <span class="comment">% Extrapolates the level crossing spectrum for high and for low levels. </span>
+0037 <span class="comment">% Computes the 'extreme RFM', an approximation of the RFM which </span>
+0038 <span class="comment">% is good for large cycles (i.e. for low minima and high maxima). </span>
+0039 <span class="comment">% Computes the 'smoothed RFM' by using kernel smoothing.</span>
+0040 <span class="comment">% The final estimate of the 'extrapolated RFM' (or 'limiting RFM')</span>
+0041 <span class="comment">% is a combination of Fextreme and Fsmooth.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">% Example:</span>
+0044 <span class="comment">%   [G,Gh] = mktestmat([-1 1 64],[-0.2 0.2], 0.15,1);</span>
+0045 <span class="comment">%   xD = mctpsim({G Gh},2000);</span>
+0046 <span class="comment">%   Frfc = dtp2rfm(xD,64,'CS');</span>
+0047 <span class="comment">%   Fest = rfmextrapolate(Frfc,[],1);</span>
+0048 <span class="comment">%   Grfc = mctp2rfm({G Gh});</span>
+0049 <span class="comment">%   cmatplot({Frfc Fest; Grfc G},4)</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">% See also  cmat2extralc, lc2rfmextreme, smoothcmat, cmatcombine</span>
+0052 
+0053 <span class="comment">% References:</span>
+0054 <span class="comment">%</span>
+0055 <span class="comment">%   Johannesson, P., and Thomas, J-.J. (2001): </span>
+0056 <span class="comment">%   Extrapolation of Rainflow Matrices. </span>
+0057 <span class="comment">%   Extremes, Vol. 4, pp. 241-262.</span>
+0058 
+0059 <span class="comment">% Tested  on Matlab  5.3, 6.5</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">% History:</span>
+0062 <span class="comment">% Created by PJ (Pär Johannesson) 24-Jul-2000</span>
+0063 <span class="comment">% Updated by PJ 25-Apr-2003</span>
+0064 <span class="comment">%   Added input parameter Pin.Lim</span>
+0065 
+0066 <span class="comment">% Check input arguments</span>
+0067 ni = nargin;
+0068 no = nargout;
+0069 error(nargchk(1,3,ni));
+0070 
+0071 <span class="keyword">if</span> ni&lt;2, Pin=[]; <span class="keyword">end</span>
+0072 <span class="keyword">if</span> ni&lt;3, plotflag=[]; <span class="keyword">end</span>
+0073 
+0074 <span class="keyword">if</span> isempty(plotflag)
+0075   plotflag=0;
+0076 <span class="keyword">end</span>
+0077 
+0078 n = length(F);
+0079 
+0080 <span class="comment">%</span>
+0081 <span class="comment">% Default Parameters</span>
+0082 <span class="comment">%</span>
+0083 
+0084 <span class="comment">%Pout.paramD = [1 n n];</span>
+0085 Pout.param = [1 n n];
+0086 
+0087 Pout.method = <span class="string">'gpd,ml'</span>;
+0088 Pout.u_lev = [];
+0089 Pout.LCfrac = [];
+0090 
+0091 Pout.h = -1;   <span class="comment">% Automatic choice of bandwidth for Kernel smoothing</span>
+0092 
+0093 Pout.Lim = [];
+0094 Pout.LimRelDam = [];
+0095 Pout.beta = 7;
+0096 
+0097 <span class="comment">% Plot-parameters</span>
+0098 Pout.PL = [10:20:90 99 99.9 99.99 99.999];
+0099 
+0100 <span class="comment">% Copy input parameters Pin to Pout</span>
+0101 <span class="keyword">if</span> ~isempty(Pin)
+0102   Fname = fieldnames(Pin);
+0103   <span class="keyword">for</span> i = 1:length(Fname)
+0104     Pout = setfield(Pout,Fname{i},getfield(Pin,Fname{i}));
+0105   <span class="keyword">end</span>
+0106 <span class="keyword">end</span>
+0107 
+0108 <span class="comment">%</span>
+0109 <span class="comment">% Default Parameters for extrapolatin of LC &amp; where to use extreme RFM</span>
+0110 <span class="comment">%</span>
+0111 
+0112 <span class="keyword">if</span> isempty(Pout.u_lev) &amp; isempty(Pout.LCfrac)
+0113     Pout.LCfrac = 0.05;
+0114 <span class="keyword">end</span>
+0115 <span class="keyword">if</span> isempty(Pout.Lim) &amp; isempty(Pout.LimRelDam)
+0116     Pout.LimRelDam = 0.95;
+0117 <span class="keyword">end</span>
+0118 
+0119 
+0120 <span class="comment">% </span>
+0121 param = Pout.param;
+0122 paramD = [1 n n];
+0123 beta = Pout.beta;
+0124 PL = Pout.PL;
+0125 
+0126 uD = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(paramD);
+0127 u = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+0128 du=u(2)-u(1);
+0129 
+0130 <span class="comment">%</span>
+0131 <span class="comment">% Extrapolate LC</span>
+0132 <span class="comment">%</span>
+0133 
+0134 <span class="comment">% Find levels for extrapolation</span>
+0135 LCfrac = Pout.LCfrac;
+0136 u_lev = Pout.u_lev;
+0137 
+0138 <span class="keyword">if</span> plotflag &gt;=2, figure, <span class="keyword">end</span>
+0139 
+0140 <span class="keyword">if</span> isempty(u_lev)
+0141   slut=0;
+0142   F1=F; i_lowPrev=0; i_highPrev=0;
+0143   <span class="keyword">while</span> ~slut
+0144     lc = <a href="cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>(paramD,F1);
+0145     
+0146     methodFindLev=3;
+0147     <span class="keyword">if</span> methodFindLev == 1
+0148       [M,Mi] = max(lc(:,2)); Mi = Mi(1);
+0149       dlc = [diff([0; lc(1:Mi-1,2)]); 0; flipud(diff([0; flipud(lc(Mi+1:<span class="keyword">end</span>,2))]))];
+0150       
+0151       Nlc = sum(dlc~=0); <span class="comment">% Number of non-zero in dlc = Number of jumps in lc</span>
+0152       Nextr = floor(0.2*Nlc); <span class="comment">% Number of values in the tail of the distribution</span>
+0153       <span class="keyword">if</span> Nextr&lt;3, Nextr=3; <span class="keyword">end</span> <span class="comment">% At least 3 values in the tail of the distribution</span>
+0154       
+0155       I = find(dlc~=0);
+0156       i_low0 = I(Nextr+1);      <span class="comment">% Low level</span>
+0157       i_high0 = I(<span class="keyword">end</span>-Nextr);   <span class="comment">% High level</span>
+0158       
+0159     <span class="keyword">elseif</span> methodFindLev == 2
+0160       
+0161       [M,Mi] = max(lc(:,2)); Mi = Mi(1);
+0162       dlc1 = diff([0; lc(1:Mi-1,2)]);
+0163       dlc2 = diff([0; flipud(lc(Mi+1:<span class="keyword">end</span>,2))]);
+0164       
+0165       Nlc1 = sum(dlc1~=0); <span class="comment">% Number of non-zero in dlc = Number of jumps in lc</span>
+0166       Nlc2 = sum(dlc2~=0); <span class="comment">% Number of non-zero in dlc = Number of jumps in lc</span>
+0167       Nextr1 = max(ceil(0.4*Nlc1),3); <span class="comment">% Number of values in the tail of the distribution</span>
+0168       Nextr2 = max(ceil(0.4*Nlc2),3); <span class="comment">% Number of values in the tail of the distribution</span>
+0169       <span class="comment">% At least 3 values in the tail of the distribution</span>
+0170       
+0171       I1 = find(dlc1~=0);
+0172       I2 = find(dlc2~=0);
+0173       i_low0 = I1(Nextr1+1);      <span class="comment">% Low level</span>
+0174       i_high0 = n-I2(Nextr2+1)+1;   <span class="comment">% High level</span>
+0175       
+0176       I = [I1; n-flipud(I2)+1];
+0177       
+0178     <span class="keyword">elseif</span> methodFindLev == 3
+0179       
+0180       [M,Mi] = max(lc(:,2)); M = M(1); Mi=Mi(1);
+0181       
+0182       I = find(lc(:,2)&gt;LCfrac*M);
+0183       i_low0 = I(1);      <span class="comment">% Low level</span>
+0184       i_high0 = I(<span class="keyword">end</span>);   <span class="comment">% High level</span>
+0185       
+0186     <span class="keyword">end</span>
+0187     
+0188     [M,Mi] = max(lc(:,2)); M = M(1); Mi=Mi(1);
+0189     dlc = [diff([0; lc(1:Mi-1,2)]); 0; flipud(diff([0; flipud(lc(Mi+1:<span class="keyword">end</span>,2))]))];
+0190     Nlc = sum(dlc~=0); <span class="comment">% Number of non-zero in dlc = Number of jumps in lc</span>
+0191     Nextr = 3; <span class="comment">% Minimum number of values in the tail of the distribution</span>
+0192     I = find(dlc~=0);
+0193     i_low = max(i_low0,I(Nextr+1));      <span class="comment">% Low level</span>
+0194     i_high = min(i_high0,I(<span class="keyword">end</span>-Nextr));   <span class="comment">% High level</span>
+0195     
+0196     <span class="comment">% Remove cycles with  min&gt;i_high  and  max&lt;i_low</span>
+0197     F1 = F;
+0198     <span class="keyword">for</span> i = i_high+1:n
+0199       F1(i,:) = 0;
+0200     <span class="keyword">end</span>
+0201     <span class="keyword">for</span> j = 1:i_low-1
+0202       F1(:,j) = 0;
+0203     <span class="keyword">end</span>
+0204     
+0205     slut = (i_high==i_highPrev) &amp; (i_low==i_lowPrev);
+0206     i_highPrev=i_high; i_lowPrev=i_low;
+0207     
+0208   <span class="keyword">end</span>
+0209 <span class="keyword">else</span>
+0210   i_low = u_lev(1); i_high = u_lev(2);
+0211   <span class="comment">% Remove cycles with  min&gt;i_high  and  max&lt;i_low</span>
+0212   F1 = F;
+0213   <span class="keyword">for</span> i = i_high+1:n
+0214     F1(i,:) = 0;
+0215   <span class="keyword">end</span>
+0216   <span class="keyword">for</span> j = 1:i_low-1
+0217     F1(:,j) = 0;
+0218   <span class="keyword">end</span>
+0219   lc = <a href="cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>(paramD,F);
+0220 <span class="keyword">end</span>
+0221 
+0222 <span class="keyword">if</span> plotflag &gt;=2 <span class="comment">% Diagnostic plot</span>
+0223   [M,Mi] = max(lc(:,2)); M = M(1); Mi=Mi(1);
+0224   lc1 =lc; lc1(lc(:,2)==0,2) = 0.1;
+0225   stairs(u(lc1(1:Mi,1)),lc1(1:Mi,2)), hold on
+0226   stairs(u(lc1(Mi+1:<span class="keyword">end</span>,1)-1),lc1(Mi+1:<span class="keyword">end</span>,2)), hold on
+0227   <span class="comment">%stairs(lc(:,1),lc(:,2)+1), hold on</span>
+0228   <span class="comment">%plot(lc(:,1),lc(:,2)+1), hold on</span>
+0229   <span class="comment">%lc_min = min(lc(:,2));</span>
+0230   <span class="comment">%I = find(dlc~=0);</span>
+0231   v = axis; axis([u([1 n]) 0.9 v(4)]);
+0232   <span class="comment">%plot(u(I),0.9*ones(1,length(I)),'*')</span>
+0233   plot(u([i_low i_high]),0.9*ones(1,2),<span class="string">'r.'</span>), 
+0234   plot(u([i_low i_low]),[0.9 v(4)],<span class="string">'r'</span>),
+0235   plot(u([i_high i_high]),[0.9 v(4)],<span class="string">'r'</span>),
+0236   <span class="keyword">if</span> ~isempty(LCfrac), plot(u([1 n]),LCfrac*[M M],<span class="string">'r'</span>), <span class="keyword">end</span>
+0237   hold off
+0238   set(gca,<span class="string">'Yscale'</span>,<span class="string">'log'</span>)
+0239   title(<span class="string">'Choice of threshold for extrapolation'</span>)
+0240   xlabel(<span class="string">'level'</span>), ylabel(<span class="string">'Number of crossings'</span>)
+0241 <span class="keyword">end</span>
+0242 
+0243 
+0244 <span class="comment">% Extrapolate LC</span>
+0245 
+0246 u_lev = [i_low i_high];
+0247 <span class="keyword">if</span> plotflag&gt;=2
+0248   plotflag2 = 1; figure
+0249 <span class="keyword">else</span>
+0250   plotflag2 = 0;
+0251 <span class="keyword">end</span>
+0252 
+0253 method = Pout.method;
+0254 [lcEst,Est] = <a href="cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>(paramD,F,u_lev,method,plotflag2);
+0255 
+0256 <span class="keyword">if</span> plotflag &gt;= 2
+0257   figure
+0258   lcH =lcEst.High; lcH(lcH(:,2)==0,2) = 1e-100;
+0259   lcL =lcEst.Low; lcL(lcL(:,2)==0,2) = 1e-100;
+0260   plot(u(lc(:,1)),lc(:,2),<span class="string">'-'</span>), hold on
+0261   plot(u(lcH(:,1)),lcH(:,2),<span class="string">'r'</span>)
+0262   plot(u(lcL(:,1)),lcL(:,2),<span class="string">'r'</span>) 
+0263   hold off, grid on  
+0264   set(gca,<span class="string">'YScale'</span>,<span class="string">'log'</span>)
+0265   Mlc = 10^(ceil(log10(max(lc(:,2))))); 
+0266   v=axis; axis([u([1 n]) Mlc/1e8 Mlc])  
+0267   title(<span class="string">'Extrapolated level crossings'</span>)
+0268   xlabel(<span class="string">'level, u'</span>)
+0269   ylabel(<span class="string">'Level crossing intensity, \mu(u)'</span>)
+0270 <span class="keyword">end</span>
+0271 Pout.u_lev = u_lev;
+0272 
+0273 <span class="comment">%</span>
+0274 <span class="comment">% Compute extreme RFM</span>
+0275 <span class="comment">%</span>
+0276 
+0277 lc1 = [0 0; lcEst.lc; n+1 0];
+0278 
+0279 Ga1 = <a href="lc2rfmextreme.html" class="code" title=" Compute extreme RFM from level crossings.">lc2rfmextreme</a>(lc1);
+0280 Ga=Ga1(2:n+1,2:n+1);
+0281 Ga(isnan(Ga)) = 0;
+0282   
+0283 <span class="keyword">if</span> plotflag &gt;= 2
+0284   figure
+0285   [qlGa PL] = <a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(F,PL,u,u);
+0286 
+0287   contour(u,fliplr(u),flipud(F'),qlGa,<span class="string">'b'</span>), hold on
+0288   contour(u,fliplr(u),flipud(Ga'),qlGa,<span class="string">'r'</span>), hold off
+0289   title(<span class="string">'Extreme RFM (red), compared with observed RFM (blue)'</span>)
+0290   xlabel(<span class="string">'min'</span>)
+0291   ylabel(<span class="string">'Max'</span>)
+0292   v = axis; axis([min(u) max(u) min(u) max(u)]);
+0293   axis(<span class="string">'square'</span>)
+0294 <span class="keyword">end</span>
+0295 
+0296 <span class="comment">%</span>
+0297 <span class="comment">% Smooth the RFM</span>
+0298 <span class="comment">%</span>
+0299 
+0300 h=Pout.h;
+0301 
+0302 <span class="keyword">if</span> h~=0
+0303   <span class="comment">% Find NOsubzero = Number of subdiagonals equal to zero</span>
+0304   i=0;
+0305   <span class="keyword">while</span> sum(diag(F,i)) == 0
+0306     i=i+1;
+0307   <span class="keyword">end</span>
+0308   NOsubzero = i-1;
+0309   
+0310   <span class="keyword">if</span> h==-1 <span class="comment">% Automatic choice of bandwidth</span>
+0311     h_norm = <a href="smoothcmat_hnorm.html" class="code" title="  Bandwidth selection for kernel smoothing of a cycle matrix.  ">smoothcmat_hnorm</a>(F,NOsubzero);
+0312     <span class="comment">% This choice is optimal if the sample is from a normal distribution</span>
+0313     <span class="comment">% It usualy oversmooths, therefore one should choose a smaller bandwidth.</span>
+0314     
+0315     h=0.5*h_norm; <span class="comment">% Don't oversmooth !!!</span>
+0316   <span class="keyword">end</span>
+0317   
+0318   [Gs] = <a href="smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>(F,1,h,NOsubzero);
+0319   
+0320 <span class="keyword">else</span>
+0321   Gs=F;
+0322 <span class="keyword">end</span>
+0323 
+0324 Pout.h = h;
+0325 
+0326 <span class="keyword">if</span> plotflag &gt;= 2
+0327   figure
+0328   [qlGs PL] = <a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(Gs,PL,u,u);
+0329 
+0330   contour(u,fliplr(u),flipud(Ga'),qlGs,<span class="string">'r'</span>), hold on
+0331   contour(u,fliplr(u),flipud(Gs'),qlGs,<span class="string">'b'</span>), hold off
+0332   title(<span class="string">'Smooth RFM (blue), compared with Extreme RFM (red)'</span>)
+0333   xlabel(<span class="string">'min'</span>)
+0334   ylabel(<span class="string">'Max'</span>)
+0335   v = axis; axis([min(u) max(u) min(u) max(u)]);
+0336   axis(<span class="string">'square'</span>)
+0337 <span class="keyword">end</span>
+0338 
+0339 <span class="comment">% </span>
+0340 <span class="comment">% Combine 'Extreme RFM' and  RFMkernel</span>
+0341 <span class="comment">%</span>
+0342 
+0343 Dnorm = <a href="../../wafo/damage/cmat2dam.html" class="code" title=" Calculates the total Palmgren-Miner damage of a cycle matrix.">cmat2dam</a>(paramD,F,beta)*100; <span class="comment">% Suppose the measurement is 1/100 of the total lifetime</span>
+0344 ampF = <a href="cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">cmat2amp</a>(paramD,<a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(paramD,F/Dnorm,beta));
+0345 ampGa = <a href="cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">cmat2amp</a>(paramD,<a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(paramD,Ga/Dnorm,beta));
+0346 
+0347 ptyp=2;
+0348 Drel = zeros(n,1);
+0349 IampF = (ampF(:,2)==0);
+0350 IampGa = (ampGa(:,2)==0);
+0351 I = ~IampF &amp; ~IampGa;
+0352 <span class="keyword">if</span> ptyp &lt; 3
+0353   Drel(I)=ampGa(I,2)./ampF(I,2);
+0354   Drel(IampF)=1e10;
+0355 <span class="keyword">else</span>
+0356   Drel(I)=ampF(I,2)./ampGa(I,2);
+0357   Drel(IampGa)=1e10;
+0358 <span class="keyword">end</span>
+0359 
+0360 Drel(IampF &amp; IampGa)=0; 
+0361 <span class="comment">%Drel(isnan(Drel))=0; Drel(isinf(Drel))=1e10;</span>
+0362 
+0363 <span class="keyword">if</span> plotflag &gt;= 2
+0364   figure
+0365   subplot(2,1,1),plot(ampF(:,1)*du,ampF(:,2)),hold on
+0366   plot(ampGa(:,1)*du,ampGa(:,2),<span class="string">'r'</span>),hold off
+0367   v = axis; axis([0 n/2*du v(3:4)])
+0368   title(<span class="string">'Damage per amplitude'</span>), xlabel(<span class="string">'amplitude'</span>), ylabel(<span class="string">'D0, Dextreme'</span>)
+0369   subplot(2,1,2),plot(ampF(:,1)*du,Drel), hold on
+0370   <span class="keyword">if</span> ptyp&lt;3
+0371     plot([0 n/2*du],0.95*[1 1],<span class="string">'r--'</span>), hold off
+0372     <span class="comment">%v = axis; axis([0 n/2*du v(3:4)])</span>
+0373     v = axis; axis([0 n/2*du 0 5])
+0374     title(<span class="string">'Relative damage per amplitude'</span>), xlabel(<span class="string">'amplitude'</span>), ylabel(<span class="string">'Drel = Dextreme / D0'</span>)
+0375     <span class="keyword">if</span> ptyp==2, set(gca,<span class="string">'YDir'</span>,<span class="string">'reverse'</span>), <span class="keyword">end</span>
+0376   <span class="keyword">elseif</span> ptyp==3
+0377     plot([0 n/2*du],1/0.95*[1 1],<span class="string">'r--'</span>), hold off
+0378     v = axis; axis([0 n/2*du 0 5])
+0379     title(<span class="string">'Relative damage per amplitude'</span>), xlabel(<span class="string">'amplitude'</span>), ylabel(<span class="string">'Drel = D0 / Dextreme'</span>)
+0380   <span class="keyword">end</span>
+0381   
+0382 <span class="keyword">end</span>
+0383 
+0384 Lim = Pout.Lim;
+0385 
+0386 <span class="keyword">if</span> ~isfield(Lim,<span class="string">'range'</span>)
+0387     <span class="comment">% Where is the extreme RFM valid?</span>
+0388     <span class="comment">% Choose limits according to damage.</span>
+0389     <span class="comment">% At which amplitude does the extreme RFM give at least 95<span class="comment">% of damage of F.</span></span>
+0390     LimRelDam = Pout.LimRelDam;
+0391     I = find((ampF(:,2)~=0) &amp; (ampGa(:,2)~=0));
+0392     k = min(find(Drel(I)&gt;LimRelDam));
+0393     <span class="keyword">if</span> ~isempty(k)
+0394         Lim.range = I(k); <span class="comment">% Valid fo amplitudes &gt;= Lim.range</span>
+0395     <span class="keyword">else</span>
+0396         Lim.range=n; <span class="comment">% Not valid, don't use Ga !!!</span>
+0397     <span class="keyword">end</span>
+0398 <span class="keyword">end</span>
+0399 
+0400 [dummy,imax] = max(lcEst.lc(:,2));
+0401 maxLC = imax(1);
+0402 gap=floor(0.02*n)+1;
+0403 <span class="keyword">if</span> ~isfield(Lim,<span class="string">'min'</span>)
+0404     Lim.min = maxLC-gap;
+0405 <span class="keyword">end</span>
+0406 <span class="keyword">if</span> ~isfield(Lim,<span class="string">'max'</span>)
+0407     Lim.max = maxLC+gap;
+0408 <span class="keyword">end</span>
+0409 
+0410 [GaC0,LimOut] = <a href="cmatcombine.html" class="code" title=" Combines two cycle matrices.">cmatcombine</a>(Ga,Gs,Lim);
+0411 
+0412 Pout.Lim = Lim;
+0413 
+0414 <span class="comment">% Upper and lower bound of load values,</span>
+0415 <span class="comment">% due to possible finite endpoints of the LC and hence of the RFM Ga</span>
+0416 
+0417 f_max = sum(Ga);                   <span class="comment">% distribution of maxima</span>
+0418 jj=min(find([0 fliplr(f_max)]&gt;0)); <span class="comment">% Find upper endpoint</span>
+0419 jmax = n-jj+2;                     <span class="comment">% Largest possible maximum</span>
+0420 
+0421 f_min = sum(Ga');          <span class="comment">% distribution of minima</span>
+0422 ii=min(find([0 f_min]&gt;0)); <span class="comment">% Find lower endpoint</span>
+0423 imin = ii-1;               <span class="comment">% Smallest possible minimum</span>
+0424 
+0425 J=meshgrid(1:n);  <span class="comment">% Columns = maximum</span>
+0426 I=J';             <span class="comment">% Rows    = minimum</span>
+0427 K1 =  (I &lt; imin) | (J &gt; jmax); <span class="comment">% Where shall the RFM be zero?</span>
+0428 GaC = GaC0;
+0429 GaC(K1) = 0;
+0430 
+0431 Pout.imin = imin;
+0432 Pout.jmax = jmax;
+0433 
+0434 <span class="keyword">if</span> plotflag &gt;= 1
+0435   <span class="keyword">if</span> plotflag&gt;=2, figure, <span class="keyword">end</span>
+0436   [qlGaC PL] = <a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(GaC,PL,u,u);
+0437 
+0438   contour(u,fliplr(u),flipud(F'),qlGaC,<span class="string">'b'</span>), hold on
+0439   contour(u,fliplr(u),flipud(GaC'),qlGaC,<span class="string">'r'</span>), 
+0440   <span class="comment">%plot(u([1 n-LimOut.range]),u([LimOut.range n]),'g')</span>
+0441   plot(u([1 n-LimOut.range+1]),u([LimOut.range n]),<span class="string">'g'</span>)  <span class="comment">% Mod PJ</span>
+0442   plot(u([1 n]),u([LimOut.max LimOut.max]),<span class="string">'g'</span>)
+0443   plot(u([LimOut.min LimOut.min]),u([1 n]),<span class="string">'g'</span>),hold off
+0444   title(<span class="string">'Limiting RFM (red), compared with observed RFM (blue)'</span>)
+0445   xlabel(<span class="string">'min'</span>)
+0446   ylabel(<span class="string">'Max'</span>)
+0447   v = axis; axis([min(u) max(u) min(u) max(u)]);
+0448   axis(<span class="string">'square'</span>)
+0449 <span class="keyword">end</span>
+0450 
+0451 
+0452 <span class="comment">% Compare damage matrices</span>
+0453 <span class="keyword">if</span> plotflag &gt;= 2
+0454   figure
+0455   
+0456   DmatGs = <a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(paramD,Gs,beta);
+0457   DmatGa = <a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(paramD,Ga,beta);
+0458   DmatGaC = <a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(paramD,GaC,beta);
+0459   DmatF = <a href="../../wafo/damage/cmat2dmat.html" class="code" title=" Computes the (Palmgren-Miner) damage matrix from a cycle matrix.">cmat2dmat</a>(paramD,F,beta);
+0460   
+0461   DamF = sum(sum(DmatF));
+0462   DrelGa = sum(sum(DmatGa))/DamF;
+0463   DrelGs = sum(sum(DmatGs))/DamF;
+0464   DrelGaC = sum(sum(DmatGaC))/DamF;
+0465 
+0466   subplot(2,2,1), <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,DmatF,13), title([<span class="string">'RFM, Drel = 1'</span>])
+0467   subplot(2,2,2), <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,DmatGa,13), title([<span class="string">'Extreme RFM, Drel = '</span> num2str(DrelGa)])
+0468   subplot(2,2,3), <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,DmatGs,13), title([<span class="string">'Smoothed RFM, Drel = '</span> num2str(DrelGs)])
+0469   subplot(2,2,4), <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,DmatGaC,13), title([<span class="string">'Extrapolated RFM, Drel = '</span> num2str(DrelGaC)])
+0470 
+0471 <span class="keyword">end</span>
+0472 
+0473 <span class="comment">%</span>
+0474 <span class="comment">% The Result!!!</span>
+0475 <span class="comment">%</span>
+0476 
+0477 Fest = GaC;
+0478 
+0479 <span class="keyword">if</span> no&gt;2
+0480   Fest0 = GaC0;
+0481   Fextreme = Ga;
+0482   Fsmooth = Gs;
+0483 <span class="keyword">end</span>
+0484 
+0485</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

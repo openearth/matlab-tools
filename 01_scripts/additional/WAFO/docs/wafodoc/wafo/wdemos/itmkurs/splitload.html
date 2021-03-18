@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of splitload</title>
+  <meta name="keywords" content="splitload">
+  <meta name="description" content=" Split a switching load (e.g. switchingload.mat)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wdemos</a> &gt; <a href="index.html">itmkurs</a> &gt; splitload.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wdemos\itmkurs&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>splitload
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Split a switching load (e.g. switchingload.mat)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [xx,x,z] = splitload(x0,tz) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="splitload.html" class="code" title=" Split a switching load (e.g. switchingload.mat)  ">SPLITLOAD</a> Split a switching load (e.g. switchingload.mat)  
+  [xx,x,z] = <a href="splitload.html" class="code" title=" Split a switching load (e.g. switchingload.mat)  ">splitload</a>(x0,tz)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="itmkurs_lab4.html" class="code" title="This is a script file.">itmkurs_lab4</a></li></TD>
+<TD> Script to computer exercises 4</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> [xx,x,z] = <a name="_sub0" href="#_subfunctions" class="code">splitload</a>(x0,tz)
+02 <span class="comment">% SPLITLOAD Split a switching load (e.g. switchingload.mat)  </span>
+03 <span class="comment">% [xx,x,z] = splitload(x0,tz)</span>
+04   
+05 j0 = min(find(x0(:,1)&gt;=tz(1,1)));
+06 j = max(find(x0(:,1)&lt;tz(<span class="keyword">end</span>,1)));
+07 x = x0(j0:j,:);
+08 z = 3*ones(length(x),1);
+09 
+10 j0 = 1;
+11 <span class="keyword">for</span> i = 1:length(tz)-1
+12   j1 = max(find(x(:,1)&lt;tz(i+1,1)));
+13   z(j0:j1) = tz(i,2)*ones(j1-j0+1,1) ; 
+14   j0 = j1+1;
+15 <span class="keyword">end</span>
+16 <span class="keyword">for</span> k = min(z):max(z)
+17   xx{k} = x(z==k,:);
+18 <span class="keyword">end</span>
+19 
+20</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wlogninv</title>
+  <meta name="keywords" content="wlogninv">
+  <meta name="description" content=" Inverse of the Lognormal distribution function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wlogninv.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wlogninv
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Inverse of the Lognormal distribution function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> x = wlogninv(F,m,v) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wlogninv.html" class="code" title=" Inverse of the Lognormal distribution function">WLOGNINV</a> Inverse of the Lognormal distribution function
+ 
+  CALL:  x = <a href="wlogninv.html" class="code" title=" Inverse of the Lognormal distribution function">wlogninv</a>(F,m,v)
+ 
+         x = inverse cdf for the Lognormal distribution evaluated at F
+       m,v = parameters     (default 0 and 1, respectively)
+ 
+  Example:
+    F = linspace(0,1,100);
+    x = <a href="wlogninv.html" class="code" title=" Inverse of the Lognormal distribution function">wlogninv</a>(F,0,1);
+    plot(F,x)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mdist2dcinv.html" class="code" title=" [x, ind]= mdist2dcinv(x1,p,phat);">mdist2dcinv</a></li></TD>
+<TD> Inverse of the conditional cdf of X2 given X1.</TD>
+</TR>
+<TR>
+<TD><li><a href="winvginv.html" class="code" title=" x = winvginv(F,m,l)">winvginv</a></li></TD>
+<TD> Inverse of the Inverse Gaussian distribution function</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> x = <a name="_sub0" href="#_subfunctions" class="code">wlogninv</a>(F,m,v)
+002 <span class="comment">%WLOGNINV Inverse of the Lognormal distribution function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  x = wlogninv(F,m,v)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        x = inverse cdf for the Lognormal distribution evaluated at F</span>
+007 <span class="comment">%      m,v = parameters     (default 0 and 1, respectively)</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% Example:</span>
+010 <span class="comment">%   F = linspace(0,1,100);</span>
+011 <span class="comment">%   x = wlogninv(F,0,1);</span>
+012 <span class="comment">%   plot(F,x)</span>
+013 
+014 
+015 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+016 <span class="comment">% and Life Span Models&quot;, p. 59 ff, Marcel Dekker.</span>
+017 
+018 
+019 <span class="comment">% Tested on; Matlab 5.3</span>
+020 <span class="comment">% History: </span>
+021 <span class="comment">% revised pab 24.10.2000</span>
+022 <span class="comment">%  - added comnsize, nargchk</span>
+023 <span class="comment">%  - added default values</span>
+024 <span class="comment">%  - fixed a bug: the inversion was not correct </span>
+025 <span class="comment">% added ms 10.08.2000</span>
+026 
+027 error(nargchk(1,3,nargin))
+028 <span class="keyword">if</span> nargin&lt;2|isempty(m),  m=0;  <span class="keyword">end</span>
+029 <span class="keyword">if</span> nargin&lt;3|isempty(v),  v=1;  <span class="keyword">end</span>
+030 
+031 [errorcode, F, m, v] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a> (F,m, v);
+032 <span class="keyword">if</span> (errorcode &gt; 0)
+033   error (<span class="string">'F, m and v must be of common size or scalar'</span>);
+034 <span class="keyword">end</span>
+035 x=exp(<a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(F,m,v));
+036 
+037</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,62 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "5.19615,5.19615";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../../wafo/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../../wafo/cycles/graph.html";
+2;
+}
+ subgraph cluster3 {
+ URL = "../../../wafo/markov/graph.html";
+3;
+}
+ subgraph cluster4 {
+ URL = "../../../wafo/misc/graph.html";
+4;
+}
+ subgraph cluster5 {
+ URL = "../../../wafo/onedim/graph.html";
+5;
+}
+ subgraph cluster6 {
+ URL = "../../../wafo/spec/graph.html";
+6;
+}
+ subgraph cluster7 {
+ URL = "../../../wafo/wsim/graph.html";
+7;
+}
+ subgraph cluster8 {
+ URL = "../../../wafo/wstats/graph.html";
+8;
+}
+ subgraph cluster9 {
+ label = "test";
+ URL = "index.html";
+9;
+}
+  9 -> 1;
+  9 -> 2;
+  9 -> 3;
+  9 -> 4;
+  9 -> 5;
+  9 -> 6;
+  9 -> 7;
+  9 -> 8;
+
+ 1 [URL="../../../wafo/graph.html",label="wafo"];
+ 2 [URL="../../../wafo/cycles/graph.html",label="cycles"];
+ 3 [URL="../../../wafo/markov/graph.html",label="markov"];
+ 4 [URL="../../../wafo/misc/graph.html",label="misc"];
+ 5 [URL="../../../wafo/onedim/graph.html",label="onedim"];
+ 6 [URL="../../../wafo/spec/graph.html",label="spec"];
+ 7 [URL="../../../wafo/wsim/graph.html",label="wsim"];
+ 8 [URL="../../../wafo/wstats/graph.html",label="wstats"];
+ 9 [URL="test_cycles.html",label="test_cycles"];
+}

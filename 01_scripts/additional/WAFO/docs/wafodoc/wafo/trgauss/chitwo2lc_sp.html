@@ -1,0 +1,425 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of chitwo2lc_sp</title>
+  <meta name="keywords" content="chitwo2lc_sp">
+  <meta name="description" content="  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; chitwo2lc_sp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>chitwo2lc_sp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [mu,mu2,mu1,muG,beta,cc,fu,Fu]= chitwo2lc_sp(gamma,beta,S12,S22,ds0) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="chitwo2lc_sp.html" class="code" title="  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process ">CHITWO2LC_SP</a>  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process 
+ 
+  The noncentral Chi^2 process is defined in IR-(27).
+            X(t)=sum beta_j Z_j(t) + gamma_j Z_j(t)^2 
+ 
+   CALL:  [mu,fu,Fu]= <a href="chitwo2lc_sp.html" class="code" title="  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process ">chitwo2lc_sp</a>(gamma,beta,S12,S22,ds);
+   
+        mu   = three column vector containing: <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> in the first column, 
+               the saddlepoint approximation of crossing intensitity for quadratic <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a>  
+               in the second column and for Gaussian <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> in the third column.
+               Note that the <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> $u$ are not equally spaced. If the spacing 
+               in the grid is not fine enough, choose smaller value of parameter ds0. 
+        fu   = the pdf structure: f.x contains <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> u, f.f is a two column matrix containing
+               the Danniel's-saddlepoint approximation of the density (pdf) of the quadratic 
+               <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> in the first column and pdf of the Gaussian <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> in the second.  
+  gamma,beta = the vector containing constants defining the process
+               approximation of the cdf of the quadratic <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a>.  
+      S12    = covariance between vector Z(t) and Z'(t), where Z(t)=(Z_1(t),...,Z_n(t)).
+      S22    = covariance between vector Z'(t) and Z'(t)., where Z(t)=(Z_1(t),...,Z_n(t)).
+      ds0    = parameter defining the <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>: default value is ds0=0.1.
+ 
+    Example: S=<a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>; [gamma beta S12 S22]=<a href="dirsp2chitwo.html" class="code" title="  gives parameters in non-central CHI-TWO process for directional Stokes waves. ">dirsp2chitwo</a>(S.S,S.w);
+             [mu, fu, Fu]=<a href="chitwo2lc_sp.html" class="code" title="  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process ">chitwo2lc_sp</a>(gamma,beta,S12,S22); 
+             semilogy(mu(:,1),mu(:,2)); figure; <a href="pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fu)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" [K]=kchitwo(s,t,gam,bet,S12,S22);">kchitwo</a></li></TD>
+<TD> Computes the cumulant generating function formula for noncentral Chi2-process.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wnormcdf.html" class="code" title=" F = wnormcdf(x,m,v);">wnormcdf</a></li></TD>
+<TD> Normal cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wnormpdf.html" class="code" title=" f = wnormpdf(x,m,v);">wnormpdf</a></li></TD>
+<TD> Normal probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\trapz.m">trapz</a></li></TD>
+<TD>         Trapezoidal numerical integration.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [mu,mu2,mu1,muG,beta,cc,fu,Fu]= <a name="_sub0" href="#_subfunctions" class="code">chitwo2lc_sp</a>(gamma,beta,S12,S22,ds0)
+002 <span class="comment">% CHITWO2LC_SP  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process </span>
+003 <span class="comment">%</span>
+004 <span class="comment">% The noncentral Chi^2 process is defined in IR-(27).</span>
+005 <span class="comment">%           X(t)=sum beta_j Z_j(t) + gamma_j Z_j(t)^2 </span>
+006 <span class="comment">%</span>
+007 <span class="comment">%  CALL:  [mu,fu,Fu]= chitwo2lc_sp(gamma,beta,S12,S22,ds);</span>
+008 <span class="comment">%  </span>
+009 <span class="comment">%       mu   = three column vector containing: levels in the first column, </span>
+010 <span class="comment">%              the saddlepoint approximation of crossing intensitity for quadratic sea  </span>
+011 <span class="comment">%              in the second column and for Gaussian sea in the third column.</span>
+012 <span class="comment">%              Note that the levels $u$ are not equally spaced. If the spacing </span>
+013 <span class="comment">%              in the grid is not fine enough, choose smaller value of parameter ds0. </span>
+014 <span class="comment">%       fu   = the pdf structure: f.x contains levels u, f.f is a two column matrix containing</span>
+015 <span class="comment">%              the Danniel's-saddlepoint approximation of the density (pdf) of the quadratic </span>
+016 <span class="comment">%              sea in the first column and pdf of the Gaussian sea in the second.  </span>
+017 <span class="comment">% gamma,beta = the vector containing constants defining the process</span>
+018 <span class="comment">%              approximation of the cdf of the quadratic sea.  </span>
+019 <span class="comment">%     S12    = covariance between vector Z(t) and Z'(t), where Z(t)=(Z_1(t),...,Z_n(t)).</span>
+020 <span class="comment">%     S22    = covariance between vector Z'(t) and Z'(t)., where Z(t)=(Z_1(t),...,Z_n(t)).</span>
+021 <span class="comment">%     ds0    = parameter defining the levels: default value is ds0=0.1.</span>
+022 <span class="comment">%</span>
+023 <span class="comment">%   Example: S=jonswap; [gamma beta S12 S22]=dirsp2chitwo(S.S,S.w);</span>
+024 <span class="comment">%            [mu, fu, Fu]=chitwo2lc_sp(gamma,beta,S12,S22); </span>
+025 <span class="comment">%            semilogy(mu(:,1),mu(:,2)); figure; pdfplot(fu)</span>
+026 <span class="comment">%</span>
+027 
+028 
+029 <span class="comment">% References: U. Machado, I. Rychlik (2003) &quot;Wave statistics in nonlinear</span>
+030 <span class="comment">%                                                 sea&quot;, Extremes, 6, pp. 125--146.           </span>
+031 <span class="comment">%             Butler, R., Machado, U. Rychlik, I. (2003) &quot;Distribution of wave crests in non-</span>
+032 <span class="comment">%             linear random sea - application of saddlepoint methods&quot;, presented at ISOPE 2003.</span>
+033 <span class="comment">%             Hagberg, O. (2005) PhD - thesis, Dept. of Math. Statistics, Univ. of Lund. </span>
+034 <span class="comment">%   Calls: kchitwo</span>
+035 <span class="comment">% Revised by I.R 14.04.05</span>
+036 <span class="comment">% Revised by I.R 24.11.03</span>
+037 <span class="comment">%</span>
+038 <span class="comment">%------------------------------------------------------------------------------------</span>
+039 
+040 
+041 
+042 <span class="keyword">if</span> nargin&lt;1 
+043   error(<span class="string">'problem is not defined'</span>);
+044 <span class="keyword">end</span>
+045 
+046 n=length(gamma);
+047 <span class="keyword">if</span> nargin&lt;2 
+048   beta=zeros(size(gamma));
+049 <span class="keyword">end</span>
+050 variance=2*(sum(gamma.^2));
+051 <span class="keyword">if</span> nargin&lt;3 
+052   S12=zeros(n);
+053 <span class="keyword">end</span>
+054 <span class="keyword">if</span> nargin&lt;4 
+055   S22=eye(n);
+056 <span class="keyword">end</span>
+057 <span class="keyword">if</span> nargin&lt;5 | ds0&lt;=0
+058   ds0=0.1;
+059 <span class="keyword">end</span>
+060 
+061   ucrt=5*sqrt(sum(beta.^2)+2*variance);
+062  
+063 
+064 <span class="comment">% ====================================================================================</span>
+065 
+066 
+067 K=[];
+068 DK=[];
+069 DDK=[];
+070 DK111=[];
+071 
+072 DK1122=[];
+073 DK122=[];
+074 
+075 DDKt=[];
+076 
+077 DK2222=[];
+078 R0=[];
+079 S=[];
+080 
+081 s=0;
+082 j=0;
+083 flag=0;
+084 
+085 ds1=ds0;
+086 
+087 <span class="comment">% In these formulas dt must be equal to ds</span>
+088 
+089 <span class="comment">%==&gt;positive side</span>
+090 K10old=0;
+091 <span class="keyword">while</span> flag~=1
+092  
+093   j=j+1;
+094   
+095   <span class="keyword">if</span> (j&gt;400)
+096       flag=1;
+097       disp(<span class="string">'step dt is too small '</span>)
+098 <span class="comment">%      error('step dt is too small - stop')</span>
+099   <span class="keyword">end</span> 
+100 <span class="comment">% ds=0.2*ds1;</span>
+101  ds=0.05*ds1;
+102  dt=ds;
+103      
+104  [K0]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,0,gamma,beta,S12,S22);
+105  [K1]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s-ds,0,gamma,beta,S12,S22);
+106  [K2]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s+ds,0,gamma,beta,S12,S22);   
+107  [K3]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s-2*ds,0,gamma,beta,S12,S22);
+108  [K4]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s+2*ds,0,gamma,beta,S12,S22);
+109  
+110  [K1t]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,-dt,gamma,beta,S12,S22);
+111  [K2t]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,dt,gamma,beta,S12,S22);
+112  
+113  [K11]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s-ds,-dt,gamma,beta,S12,S22);
+114  [K22]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s+ds,dt,gamma,beta,S12,S22);
+115  
+116  [K12t]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s-ds,dt,gamma,beta,S12,S22);
+117  [K21t]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s+ds,-dt,gamma,beta,S12,S22);
+118  
+119  [K2tt]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,2*dt,gamma,beta,S12,S22);
+120  [K1tt]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,-2*dt,gamma,beta,S12,S22);
+121 
+122  K10=(K2-K1)/(2*ds);
+123  K20=(K1+K2-2*K0)/(ds*ds);
+124  
+125  K30=(K4-2*K2+2*K1-K3)/(2*ds*ds*ds);
+126  K40=(K4-4*K2+6*K0-4*K1+K3)/(ds*ds*ds*ds);
+127 
+128  K12=(K22-2*K2+K21t-K12t+2*K1-K11)/(2*ds*ds*ds);
+129  
+130  K02=(K1t+K2t-2*K0)/(dt*dt);
+131  K04=(K2tt-4*K2t+6*K0-4*K1t+K1tt)/(dt*dt*dt*dt);
+132  K22=(K22-2*K2t+K12t-2*K2+4*K0-2*K1+K21t-2*K1t+K11)/(ds*ds*ds*ds);  
+133 [j K10];
+134 dds=abs(K10-K10old);
+135 K10old=K10;
+136 <span class="keyword">if</span> abs(dds)&gt;0.075
+137     ds1=ds1/2;
+138 <span class="keyword">end</span>
+139  <span class="keyword">if</span> (j~=1) &amp; ((s*K10-K0)&gt;25 | 0&gt;(s*K10-K0) | abs(K10)&gt;ucrt | K20&lt;0)
+140 
+141 <span class="comment">%if (j~=1) &amp; (abs(K0-s*K10)&gt;20)</span>
+142 <span class="comment">%    if (j~=1) &amp; (abs(K0-s*K10)&gt;10) </span>
+143   flag=1;
+144 <span class="keyword">else</span>
+145 
+146  S=[S; s]; 
+147  s=s+ds1/2; 
+148  
+149  K=[K; K0];  
+150  R0=[R0; (K40/K20^2/8-5*K30*K30/K20^3/24)];
+151  DK=[DK; K10];
+152  DDK=[DDK; K20];
+153  
+154  DK111=[DK111; K30];
+155  DDKt=[DDKt; K02];
+156  DK1122=[DK1122; K22]; 
+157  DK122=[DK122; K12]; 
+158  DK2222=[DK2222; K04];
+159  <span class="keyword">end</span>    
+160 <span class="keyword">end</span>     
+161 
+162 <span class="comment">%=======================================================</span>
+163 
+164 s=-ds0/2;
+165 j=0;
+166 flag=0;
+167 ds1=ds0;
+168 K10old=DK(1);
+169 <span class="comment">%==&gt;negative side</span>
+170 ds=0.25*ds1;
+171 dt=ds;
+172 
+173 <span class="keyword">while</span> flag~=1
+174  j=j+1;
+175 
+176  
+177   <span class="keyword">if</span> (j&gt;400)
+178       flag=1;
+179       disp(<span class="string">'step dt is too small '</span>)
+180 <span class="comment">%      error('step dt is too small - stop')</span>
+181   <span class="keyword">end</span> 
+182  [K0]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,0,gamma,beta,S12,S22);
+183  [K1]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s-ds,0,gamma,beta,S12,S22);
+184  [K2]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s+ds,0,gamma,beta,S12,S22);
+185  [K3]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s-2*ds,0,gamma,beta,S12,S22);
+186  [K4]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s+2*ds,0,gamma,beta,S12,S22);
+187   
+188  [K1t]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,-dt,gamma,beta,S12,S22);
+189  [K2t]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,dt,gamma,beta,S12,S22); 
+190  
+191  [K11]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s-ds,-dt,gamma,beta,S12,S22);
+192  [K22]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s+ds,dt,gamma,beta,S12,S22);
+193 
+194  [K12t]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s-ds,dt,gamma,beta,S12,S22);
+195  [K21t]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s+ds,-dt,gamma,beta,S12,S22);
+196  
+197  [K2tt]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,2*dt,gamma,beta,S12,S22);
+198  [K1tt]=<a href="../../wafo/trgauss/private/kchitwo.html" class="code" title=" Computes the cumulant generating function formula for noncentral Chi2-process. ">kchitwo</a>(s,-2*dt,gamma,beta,S12,S22);
+199  
+200  K10=(K2-K1)/(2*ds);
+201  K20=(K1+K2-2*K0)/(ds*ds);
+202  
+203  K30=(K4-2*K2+2*K1-K3)/(2*ds*ds*ds); 
+204  K40=(K4-4*K2+6*K0-4*K1+K3)/(ds*ds*ds*ds);
+205 
+206  K12=(K22-2*K2+K21t-K12t+2*K1-K11)/(2*ds*ds*ds);
+207  
+208  K02=(K1t+K2t-2*K0)/(dt*dt);
+209  K04=(K2tt-4*K2t+6*K0-4*K1t+K1tt)/(dt*dt*dt*dt);
+210  K22=(K22-2*K2t+K12t-2*K2+4*K0-2*K1+K21t-2*K1t+K11)/(ds*ds*ds*ds); 
+211  [j K10];
+212  <span class="keyword">if</span> (j~=1) &amp; ((s*K10-K0)&gt;25 | 0&gt;(s*K10-K0) | abs(K10)&gt;ucrt | K20&lt;0)
+213 <span class="comment">%     ((s*K10-K0)&gt;25 | 0&gt;(s*K10-K0) )  &amp; abs(K10)&gt;ucrt  &amp; K20&lt;0</span>
+214 <span class="comment">%         if (j~=1) &amp; (abs(K0-s*K10)&gt;10) </span>
+215     flag=1;
+216 <span class="keyword">else</span>
+217 dds=abs(K10-K10old);
+218 K10old=K10;
+219 <span class="keyword">if</span> dds&gt;0.1
+220     ds1=ds1/2;
+221 <span class="keyword">end</span>
+222  
+223  S=[s;S];
+224  s=s-ds1/2;
+225  ds=0.25*ds1;
+226  dt=ds;
+227  K=[K0;K];
+228  R0=[(K40/K20^2/8-5*K30*K30/K20^3/24); R0];
+229 
+230  DK=[K10;DK];
+231  DDK=[K20;DDK];
+232  
+233  DK111=[K30;DK111];
+234  DDKt=[K02; DDKt];
+235  DK1122=[K22; DK1122]; 
+236  DK122=[K12; DK122]; 
+237  DK2222=[K04; DK2222];
+238  
+239 <span class="keyword">end</span>
+240 <span class="keyword">end</span>     
+241 
+242 <span class="comment">% ====================================================================================</span>
+243 <span class="comment">% ====================================================================================</span>
+244 <span class="comment">% marginal density</span>
+245 
+246 f=1/sqrt(2*pi)*exp(K-S.*DK)./sqrt(DDK);
+247 wh=sign(S).*sqrt(2*(S.*DK-K));
+248 f1=<a href="../../wafo/wstats/wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(wh)./sqrt(DDK);
+249 
+250 [area]=trapz(DK,f);
+251 beta=sqrt(2*abs(S.*DK-K)-2*log(area));
+252 <span class="comment">%area=1;</span>
+253 fu=[DK f/area]; 
+254 fu=<a href="createpdf.html" class="code" title=" PDF class constructor">createpdf</a>;
+255   Htxt = [<span class="string">'Density of X(0) non-central Chi^2 process'</span>];
+256   xtxt = [<span class="string">'X(0)'</span>];
+257 fu.title=Htxt;
+258 fu.labx{1}=xtxt;
+259 fu.x{1}=DK;
+260 fu.f=[f/area];   
+261 
+262 <span class="comment">%fu1=[DK f1/area];</span>
+263 F1=<a href="../../wafo/wstats/wnormcdf.html" class="code" title=" Normal cumulative distribution function ">wnormcdf</a>(wh)-<a href="../../wafo/wstats/wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(wh).*((1./S)./sqrt(DDK)-1./wh);
+264 Fu=[DK F1];
+265 
+266 <span class="comment">% ====================================================================================</span>
+267 <span class="comment">% 1-TERM SADDLEPONT APRROXIMATION (GAUSSIAN APPR)</span>
+268 <span class="comment">% ====================================================================================</span>
+269 
+270 muG=(f/area).*sqrt(DDKt)/sqrt(2*pi);
+271 cc=sqrt(DDKt)/sqrt(2*pi);
+272 <span class="comment">%figure(3)</span>
+273 <span class="comment">%plot(DK,muG,'k:o')</span>
+274 
+275 <span class="comment">% ====================================================================================</span>
+276 <span class="comment">% 2-TERMS SADDLEPONT APRROXIMATION (GAUSSIAN APPR)</span>
+277 <span class="comment">% ====================================================================================</span>
+278 
+279 <span class="comment">% equation 22</span>
+280 eq22=-1/4*(DK1122.*DDK-DK111.*DK122)./((DDK.^2).*DDKt);
+281 
+282 <span class="comment">%mu_2=muG.*(1+eq22);</span>
+283 
+284 <span class="comment">%figure(3)</span>
+285 <span class="comment">%hold on</span>
+286 <span class="comment">%plot(DK,mu_2,'k:*')</span>
+287 
+288 <span class="comment">% ====================================================================================</span>
+289 <span class="comment">% 3-TERMS SADDLEPONT APRROXIMATION (GAUSSIAN APPR)</span>
+290 <span class="comment">% ====================================================================================</span>
+291 
+292 <span class="comment">% equation 23</span>
+293 eq23=(DK2222.*DDK-3*DK122.^2)./(DDK.*(DDKt.^2));
+294 
+295 mu1=muG.*(1+eq22);
+296 mu=muG.*(1+R0).*(1+eq22-(1/24)*eq23);
+297 mu2=muG.*(1+eq22-(1/24)*eq23.*(1-eq22));
+298 <span class="comment">%figure(3)</span>
+299 <span class="comment">%hold on</span>
+300 <span class="comment">%plot(DK,mu,'k:d')</span>
+301 
+302 <span class="comment">%mu1=DDKt;</span>
+303 <span class="comment">%mu2=(DK2222.*DDK-3*DK122.^2)./DDK;</span>
+304 
+305 mu=[DK mu];
+306 muG=[DK muG];
+307 mu1=[DK mu1];
+308 mu2=[DK mu2];
+309 
+310 
+311 
+312 
+313 
+314 <span class="comment">% ====================================================================================</span>
+315</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

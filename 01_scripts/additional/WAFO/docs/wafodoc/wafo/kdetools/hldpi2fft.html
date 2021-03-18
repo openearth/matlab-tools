@@ -1,0 +1,432 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of hldpi2fft</title>
+  <meta name="keywords" content="hldpi2fft">
+  <meta name="description" content=" L-stage DPI estimate of smoothing parameter for 2D data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; hldpi2fft.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>hldpi2fft
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> L-stage DPI estimate of smoothing parameter for 2D data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> h=hldpi2fft(A,kernel,L) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="hldpi2fft.html" class="code" title=" L-stage DPI estimate of smoothing parameter for 2D data ">HLDPI2FFT</a> L-stage DPI estimate of smoothing parameter for 2D data 
+            (DPI=Direct Plug-In) 
+  
+  CALL  h=<a href="hldpi2fft.html" class="code" title=" L-stage DPI estimate of smoothing parameter for 2D data ">hldpi2fft</a>(A,kernel,L)  
+    
+        hs = smoothing parameter 
+    data   = data matrix, size N x D (D = # dimensions ==2) 
+    kernel = 'gaussian'      - Gaussian kernel 
+             'epanechnikov'  - Epanechnikov kernel. 
+             'biweight'      - Bi-weight kernel. 
+             'triweight'     - Tri-weight kernel.   
+             'triangluar'    - Triangular kernel. 
+             'rectangular'   - Rectanguler kernel.  
+             'laplace'       - Laplace kernel. 
+             'logistic'      - Logistic kernel.   
+         L = 0,1,2,3   (default 2) 
+    
+   Note that only the first 4 letters of the kernel name is needed. 
+  
+   Example:  
+    x  = <a href="../../wafo/wstats/wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(0,1,50,2); 
+    hs = <a href="hldpi2fft.html" class="code" title=" L-stage DPI estimate of smoothing parameter for 2D data ">hldpi2fft</a>(x,'gauss',1); 
+  
+  See also  <a href="hste.html" class="code" title=" 2-Stage Solve the Equation estimate of smoothing parameter. ">hste</a>, <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">hbcv</a>, <a href="hboot.html" class="code" title="  Bootstrap cross-validation estimate of smoothing parameter. ">hboot</a>, <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>, <a href="hlscv.html" class="code" title="  Least Squares Cross-Validation estimate of smoothing parameter ">hlscv</a>, <a href="hscv.html" class="code" title=" Smoothed cross-validation estimate of smoothing parameter. ">hscv</a>, <a href="hstt.html" class="code" title=" Scott-Tapia-Thompson estimate of smoothing parameter. ">hstt</a>, <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>, <a href="kdefun.html" class="code" title="  Kernel Density Estimator. ">kdefun</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="deriv2.html" class="code" title=" k=deriv2(x,y,d)">deriv2</a></li></TD>
+<TD>  High order partial derivatives of the Gaussian kernel.</TD>
+</TR>
+<TR>
+<TD><li><a href="gridcount.html" class="code" title=" c = gridcount(data,X)">gridcount</a></li></TD>
+<TD> D-dimensional histogram using linear binning.</TD>
+</TR>
+<TR>
+<TD><li><a href="kernelstats.html" class="code" title=" [mu2, R, Rdd] = kernelstats(kernel)">kernelstats</a></li></TD>
+<TD> Return 2'nd order moment of kernel pdf</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\corrcoef.m">corrcoef</a></li></TD>
+<TD>      Correlation coefficients.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\fft2.m">fft2</a></li></TD>
+<TD>          Two-dimensional discrete Fourier Transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\fftshift.m">fftshift</a></li></TD>
+<TD>      Shift zero-frequency component to center of spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\ifft2.m">ifft2</a></li></TD>
+<TD>         Two-dimensional inverse discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> p=psim(m,A,h)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> h=<a name="_sub0" href="#_subfunctions" class="code">hldpi2fft</a>(A,kernel,L) 
+002 <span class="comment">%HLDPI2FFT L-stage DPI estimate of smoothing parameter for 2D data </span>
+003 <span class="comment">%           (DPI=Direct Plug-In) </span>
+004 <span class="comment">% </span>
+005 <span class="comment">% CALL  h=hldpi2fft(A,kernel,L)  </span>
+006 <span class="comment">%   </span>
+007 <span class="comment">%       hs = smoothing parameter </span>
+008 <span class="comment">%   data   = data matrix, size N x D (D = # dimensions ==2) </span>
+009 <span class="comment">%   kernel = 'gaussian'      - Gaussian kernel </span>
+010 <span class="comment">%            'epanechnikov'  - Epanechnikov kernel. </span>
+011 <span class="comment">%            'biweight'      - Bi-weight kernel. </span>
+012 <span class="comment">%            'triweight'     - Tri-weight kernel.   </span>
+013 <span class="comment">%            'triangluar'    - Triangular kernel. </span>
+014 <span class="comment">%            'rectangular'   - Rectanguler kernel.  </span>
+015 <span class="comment">%            'laplace'       - Laplace kernel. </span>
+016 <span class="comment">%            'logistic'      - Logistic kernel.   </span>
+017 <span class="comment">%        L = 0,1,2,3   (default 2) </span>
+018 <span class="comment">%   </span>
+019 <span class="comment">%  Note that only the first 4 letters of the kernel name is needed. </span>
+020 <span class="comment">% </span>
+021 <span class="comment">%  Example:  </span>
+022 <span class="comment">%   x  = wnormrnd(0,1,50,2); </span>
+023 <span class="comment">%   hs = hldpi2fft(x,'gauss',1); </span>
+024 <span class="comment">% </span>
+025 <span class="comment">% See also  hste, hbcv, hboot, hos, hlscv, hscv, hstt, kde, kdefun </span>
+026  
+027 <span class="comment">%  Wand, M.P. and Jones, M.C. (1994)  </span>
+028 <span class="comment">%  &quot;Multivariate Plug-In Bandwidth Selection&quot;,  </span>
+029 <span class="comment">%  Computational statistics </span>
+030  
+031 <span class="comment">% tested on: matlab 5.2 </span>
+032 <span class="comment">% history: </span>
+033 <span class="comment">% revised pab aug2005 </span>
+034 <span class="comment">% -added ad hoc support for other kernels than Gaussian </span>
+035 <span class="comment">% revised pab dec2003 </span>
+036 <span class="comment">%  -fixed some bugs   </span>
+037 <span class="comment">%  -added todo comments  </span>
+038 <span class="comment">%  -added call to gridcount   </span>
+039 <span class="comment">% -updated example   </span>
+040 <span class="comment">% -fixed a bug   </span>
+041 <span class="comment">% revised pab 3.11.1999 </span>
+042 <span class="comment">% from kdetools  by  Christian C. Beardah 1996 </span>
+043  
+044  
+045  
+046  
+047 [n,d]=size(A); 
+048  
+049 <span class="keyword">if</span> d~=2, 
+050   error(<span class="string">'Wrong size of data'</span>) 
+051 <span class="keyword">end</span> 
+052 <span class="keyword">if</span> nargin&lt;2 |isempty(kernel) 
+053   kernel = <span class="string">'gauss'</span>; 
+054 <span class="keyword">end</span> 
+055  
+056 <span class="keyword">if</span> nargin&lt;3|isempty(L), 
+057   L=2; 
+058 <span class="keyword">else</span> 
+059   L=min(abs(L),3); 
+060 <span class="keyword">end</span>; 
+061  
+062 <span class="keyword">if</span> any(strcmpi(kernel(1:4),{<span class="string">'gaus'</span>,<span class="string">'norm'</span>})), 
+063   r = 4; 
+064 <span class="keyword">else</span>, 
+065     r=1; 
+066 <span class="keyword">end</span>; 
+067  
+068 inc=128; 
+069  
+070 P=2*inc; 
+071  
+072 xmin = min(A,[],1);      <span class="comment">% Find the minimum value of x. </span>
+073 xmax = max(A,[],1);      <span class="comment">% Find the maximum value of x. </span>
+074 xrange=xmax-xmin; <span class="comment">% Find the range of x. </span>
+075  
+076 <span class="comment">% xa holds the x 'axis' vector, defining a grid of x values where  </span>
+077 <span class="comment">% the k.d. function will be evaluated and plotted. </span>
+078  
+079 ax=xmin-xrange/4; 
+080 bx=xmax+xrange/4; 
+081  
+082 deltax = (bx-ax)/(inc-1); 
+083  
+084 X =[linspace(ax(1),bx(1),inc).' , linspace(ax(2),bx(2),inc).']; 
+085  
+086 <span class="comment">% Find the binned kernel weights, c. </span>
+087 c = <a href="gridcount.html" class="code" title=" D-dimensional histogram using linear binning. ">gridcount</a>(A,X); 
+088  
+089 <span class="comment">% R= int(mkernel(x)^2) </span>
+090 <span class="comment">% mu2= int(x^2*mkernel(x)) </span>
+091 kernel2 = <span class="string">'gauss'</span>; 
+092 <span class="comment">% values for gaussian kernel </span>
+093 [mu2ns,Rns] = <a href="kernelstats.html" class="code" title=" Return 2'nd order moment of kernel pdf ">kernelstats</a>(kernel2); 
+094 Rns = Rns^d; 
+095 STEconstant2 = Rns /(mu2ns^(2)*n); 
+096  
+097 [mu2,R] = <a href="kernelstats.html" class="code" title=" Return 2'nd order moment of kernel pdf ">kernelstats</a>(kernel); 
+098 R = R^d; 
+099 STEconstant = R /(mu2^(2)*n); 
+100  
+101  
+102  
+103  
+104   K22=1/(2*pi); 
+105   K40=3/(2*pi); 
+106   K04=3/(2*pi); 
+107    
+108   K42=-3/(2*pi); 
+109   K24=-3/(2*pi); 
+110   K60=-15/(2*pi); 
+111   K06=-15/(2*pi); 
+112  
+113   K44=9/(2*pi); 
+114   K62=15/(2*pi); 
+115   K26=15/(2*pi); 
+116   K80=105/(2*pi); 
+117   K08=105/(2*pi); 
+118  
+119 sigma1=std(A(:,1)); 
+120 sigma2=std(A(:,2)); 
+121  
+122 rho = corrcoef(A); 
+123 rho = rho(1,2); 
+124  
+125 <span class="keyword">if</span> L==3, 
+126  
+127   lam100=945; 
+128   lam010=945; 
+129   lam82=105+840*rho^2; 
+130   lam28=105+840*rho^2; 
+131   lam64=45+540*rho^2+360*rho^4; 
+132   lam46=45+540*rho^2+360*rho^4; 
+133  
+134   psi100=lam100/(128*pi*sigma1^11*sigma2*(1-rho^2)^5.5); 
+135   psi010=lam010/(128*pi*sigma1*sigma2^11*(1-rho^2)^5.5); 
+136   psi82=lam82/(128*pi*sigma1^9*sigma2^3*(1-rho^2)^5.5); 
+137   psi28=lam28/(128*pi*sigma1^3*sigma2^9*(1-rho^2)^5.5); 
+138   psi64=lam64/(128*pi*sigma1^7*sigma2^5*(1-rho^2)^5.5); 
+139   psi46=lam46/(128*pi*sigma1^5*sigma2^7*(1-rho^2)^5.5); 
+140  
+141 <span class="comment">% The following are the smoothing parameters for  </span>
+142 <span class="comment">% estimation of psi80, psi08, psi62, psi26 and psi44: </span>
+143  
+144   a80=(-2*K80/(mu2ns*(psi100+psi82)*n))^(1/12); 
+145   a08=(-2*K08/(mu2ns*(psi28+psi010)*n))^(1/12); 
+146   a62=(-2*K62/(mu2ns*(psi82+psi64)*n))^(1/12); 
+147   a26=(-2*K26/(mu2ns*(psi46+psi28)*n))^(1/12); 
+148   a44=(-2*K44/(mu2ns*(psi64+psi46)*n))^(1/12); 
+149  
+150   psi80=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'80'</span>,A,a80); 
+151   psi08=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'08'</span>,A,a08); 
+152   psi62=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'62'</span>,A,a62); 
+153   psi26=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'26'</span>,A,a26); 
+154   psi44=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'44'</span>,A,a44); 
+155  
+156 <span class="keyword">end</span>; 
+157  
+158 <span class="keyword">if</span> L==2 | L==3, 
+159  
+160   <span class="keyword">if</span> L==2, 
+161     lam80=105; 
+162     lam08=105; 
+163     lam62=15+90*rho^2; 
+164     lam26=15+90*rho^2; 
+165     lam44=9+72*rho^2+24*rho^4; 
+166  
+167     psi80=lam80/(64*pi*sigma1^9*sigma2*(1-rho^2)^4.5); 
+168     psi08=lam08/(64*pi*sigma1*sigma2^9*(1-rho^2)^4.5); 
+169     psi62=lam62/(64*pi*sigma1^7*sigma2^3*(1-rho^2)^4.5); 
+170     psi26=lam26/(64*pi*sigma1^3*sigma2^7*(1-rho^2)^4.5); 
+171     psi44=lam44/(64*pi*sigma1^5*sigma2^5*(1-rho^2)^4.5); 
+172   <span class="keyword">end</span>; 
+173  
+174 <span class="comment">% The following are the smoothing parameters for  </span>
+175 <span class="comment">% estimation of psi60, psi06, psi42 and psi24: </span>
+176  
+177   a60=(-2*K60/(mu2ns*(psi80+psi62)*n))^0.1; 
+178   a06=(-2*K06/(mu2ns*(psi26+psi08)*n))^0.1; 
+179   a42=(-2*K42/(mu2ns*(psi62+psi44)*n))^0.1; 
+180   a24=(-2*K24/(mu2ns*(psi44+psi26)*n))^0.1; 
+181  
+182   psi60=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'60'</span>,A,a60); 
+183   psi06=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'06'</span>,A,a06); 
+184   psi42=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'42'</span>,A,a42); 
+185   psi24=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'24'</span>,A,a24); 
+186  
+187 <span class="keyword">end</span>; 
+188  
+189 <span class="keyword">if</span> L==1 | L==2 | L==3, 
+190  
+191   <span class="keyword">if</span> L==1, 
+192     lam06=15; 
+193     lam60=15; 
+194     lam24=3+12*rho^2; 
+195     lam42=3+12*rho^2; 
+196  
+197     psi60=-lam60/(32*pi*sigma1^7*sigma2*(1-rho^2)^3.5); 
+198     psi06=-lam06/(32*pi*sigma1*sigma2^7*(1-rho^2)^3.5); 
+199     psi42=-lam42/(32*pi*sigma1^5*sigma2^3*(1-rho^2)^3.5); 
+200     psi24=-lam24/(32*pi*sigma1^3*sigma2^5*(1-rho^2)^3.5); 
+201   <span class="keyword">end</span>; 
+202  
+203 <span class="comment">% The following are the smoothing parameters for  </span>
+204 <span class="comment">% estimation of psi40, psi04 and psi22: </span>
+205  
+206   a40=(-2*K40/(mu2ns*(psi60+psi42)*n))^0.125; 
+207   a04=(-2*K04/(mu2ns*(psi24+psi06)*n))^0.125; 
+208   a22=(-2*K22/(mu2ns*(psi42+psi24)*n))^0.125; 
+209  
+210 <span class="comment">% Brute force technique: </span>
+211  
+212   psi40=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'40'</span>,A,a40); 
+213   psi04=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'04'</span>,A,a04); 
+214   psi22=<a href="#_sub1" class="code" title="sub  p=psim(m,A,h)">psim</a>(<span class="string">'22'</span>,A,a22); 
+215  
+216 <span class="comment">% Fourier technique: </span>
+217  
+218 <span class="comment">% Psi40: </span>
+219  
+220   h=real(a40); 
+221  
+222 <span class="comment">% Obtain the kernel weights. </span>
+223  
+224   L1=max(floor(r*h./deltax)); 
+225  
+226   L2=min(L1,inc-1); 
+227  
+228   kw=zeros(2*inc,2*inc); 
+229  
+230   [X1,Y1]=meshgrid(deltax(1)*[-L2:L2]/h,deltax(2)*[-L2:L2]/h); 
+231   idx(1:d) = {(inc-L2+1):(inc+L2+1)}; 
+232    
+233   kw(idx{:}) = <a href="deriv2.html" class="code" title="  High order partial derivatives of the Gaussian kernel. ">deriv2</a>(X1,Y1,<span class="string">'40'</span>)/(n*h^2); 
+234  
+235 <span class="comment">% Apply 'fftshift' to kw. </span>
+236  
+237   kw = fftshift(kw); 
+238  
+239 <span class="comment">% Perform the convolution. </span>
+240  
+241   z = real(ifft2(fft2(c,P,P).*fft2(kw))); 
+242  
+243   z=z(1:inc,1:inc).*(z(1:inc,1:inc)&gt;0); 
+244  
+245   psi40=sum(sum(c.*z(1:inc,1:inc)))/(n^2*h^5); 
+246  
+247 <span class="keyword">end</span>; 
+248  
+249 <span class="keyword">if</span> L==0, 
+250  
+251   lam04=3; 
+252   lam40=3; 
+253   lam22=3/2; 
+254  
+255   psi40=-lam40/(16*pi*sigma1^5*sigma2*(1-rho^2)^2.5); 
+256   psi04=-lam04/(16*pi*sigma1*sigma2^5*(1-rho^2)^2.5); 
+257   psi22=-lam22/(16*pi*sigma1^3*sigma2^3*(1-rho^2)^2.5); 
+258  
+259 <span class="keyword">end</span>; 
+260  
+261  
+262  
+263 h1=(psi04^0.75*R/(n*mu2^2*psi40^0.75*(sqrt(psi40*psi04)+psi22)))^(1/6); 
+264 h2=h1*(psi40/psi04)^0.25; 
+265  
+266 h=real([h1, h2]); 
+267  
+268  
+269 <span class="keyword">return</span> 
+270  
+271  
+272 <span class="keyword">function</span> p=<a name="_sub1" href="#_subfunctions" class="code">psim</a>(m,A,h) 
+273  
+274 <span class="comment">% PSIM        Calculate psi_m by brute force. </span>
+275 <span class="comment">% </span>
+276 <span class="comment">%             PSIM(M,A,H) </span>
+277 <span class="comment">% </span>
+278 <span class="comment">%             Christian C. Beardah 1996 </span>
+279  
+280 n=length(A); 
+281  
+282 Xi=zeros(n,n); 
+283 Xj=Xi; 
+284 Yi=Xi; 
+285 Yj=Xi; 
+286  
+287 o=ones(1,n); 
+288  
+289 Xj=A(:,1)*o; 
+290 Xi=Xj'; 
+291 Yj=A(:,2)*o; 
+292 Yi=Yj'; 
+293  
+294 p=sum(sum(<a href="deriv2.html" class="code" title="  High order partial derivatives of the Gaussian kernel. ">deriv2</a>((Xi-Xj)/h,(Yi-Yj)/h,m) ))/(h*n^2); 
+295 <span class="keyword">return</span> 
+296</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Readme</title>
+  <meta name="keywords" content="Readme">
+  <meta name="description" content=" Readme file for module ONEDIM in WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">onedim</a> &gt; Readme.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\onedim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Readme
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Readme file for module ONEDIM in WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="Readme.html" class="code" title=" Readme file for module ONEDIM in WAFO Toolbox.">README</a> <a href="Readme.html" class="code" title=" Readme file for module ONEDIM in WAFO Toolbox.">Readme</a> file for module ONEDIM in WAFO Toolbox.
+  
+   Version 2.1.1   07-Nov-2004 
+  
+    NEW FUNCTIONS
+    ~~~~~~~~~~~~~ 
+    <a href="findextrema.html" class="code" title=" Finds indices to minima and maxima of data ">findextrema</a> - Finds indices to minima and maxima of data 
+ 
+ ------------------------------------------------------------------
+  Version 2.1.0   07-Apr-2004
+ 
+  FIXES
+  ~~~~~ 
+   <a href="../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>, <a href="../../wafo/trgauss/lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>, <a href="../../wafo/trgauss/lc2tr2.html" class="code" title=" Estimate transformation, g, from observed crossing intensity, version2.">lc2tr2</a>, <a href="../../wafo/trgauss/cdf2tr.html" class="code" title=" Estimate transformation, g, from observed CDF. ">cdf2tr</a>, <a href="../../wafo/trgauss/mctrtest.html" class="code" title=" Test if a stochastic process is Gaussian.">mctrtest</a>, <a href="../../wafo/trgauss/troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>, <a href="../../wafo/trgauss/trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>, <a href="../../wafo/trgauss/lomaxcdf.html" class="code" title=" CDF for local maxima for a zero-mean Gaussian process">lomaxcdf</a> - is moved
+              to trgauss from onedim.
+ 
+ -------------------------------------------------------------------
+  Version 2.0.5   14-Jun-2003
+ 
+    FIXES
+    ~~~~~
+ 
+  <a href="dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a> - removed disp statement and replaced with call to waitbar. 
+  <a href="findrfc.html" class="code" title=" Finds indices to rainflow cycles of a sequence of TP. ">findrfc</a>   - fixed a bug in the example  
+  <a href="../../wafo/trgauss/troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>  - moved some code into <a href="../../wafo/misc/parseoptions.html" class="code" title=" Create or alter a OPTIONS structure. ">parseoptions</a> for easier maintainence  
+ 
+  
+ --------------------------------------------------------------------
+  Version 2.0.4   11-Apr-2001
+  
+  This file describes new features, bug fixes, and changes in this version 
+  of the WAFO/onedim Toolbox.
+ 
+   List of changes:
+   
+   NOTE:
+   Items marked with:
+         (N)  : needs a new  name 
+          *   : not yet available
+          +   : needs more work
+          **  : have changed in a way which might affect your code!
+  
+   
+    FIXES
+    ~~~~~
+     Some but too small to mention.
+  
+  
+    ENHANCEMENTS
+    ~~~~~~~~~~~~
+ 
+  - (**) All the options governing the estimation of the transformations are
+  now moved into a TRANSFORM OPTIONS structure for easier transfering the
+  options to subfunctions. The following functions are affected by this:
+     <a href="../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">DAT2TR</a>, <a href="../../wafo/trgauss/lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">LC2TR</a>, <a href="../../wafo/trgauss/mctrtest.html" class="code" title=" Test if a stochastic process is Gaussian.">MCTRTEST</a>, <a href="reconstruct.html" class="code" title=" reconstruct the spurious/missing points of timeseries">RECONSTRUCT</a>
+ 
+  - <a href="mm2lc.html" class="code" title=" Extracts level-crossing spectrum from min2Max cycles.   ">MM2LC</a> is vectorized even further  speed up things
+  
+    NEW FUNCTIONS
+    ~~~~~~~~~~~~~
+ 
+   <a href="../../wafo/trgauss/lc2tr2.html" class="code" title=" Estimate transformation, g, from observed crossing intensity, version2.">LC2TR2</a>   - Estimate transformation from observed crossing intensity, alternativ inversion.
+   <a href="../../wafo/trgauss/cdf2tr.html" class="code" title=" Estimate transformation, g, from observed CDF. ">CDF2TR</a>   - Estimate transformation from observed Cumulative Distributions Function
+   <a href="../../wafo/trgauss/troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">TROPTSET</a> - Create or alter TRANSFORM OPTIONS structure.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

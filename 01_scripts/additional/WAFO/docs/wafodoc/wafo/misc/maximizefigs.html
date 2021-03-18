@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of maximizefigs</title>
+  <meta name="keywords" content="maximizefigs">
+  <meta name="description" content="  Maximize figure(s) window size">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; maximizefigs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>maximizefigs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Maximize figure(s) window size</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> maximizefigs(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">MAXIMIZEFIGS</a>  Maximize figure(s) window size 
+  
+  CALL:   <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">maximizefigs</a>(hfigs, taskbar_position) 
+  
+   hfigs            = handle(s) of figure(s) you wish to resize (Default = 'all') 
+   taskbar_position = Position of the Windows taskbar 
+                      Allowed values: 'bottom',  'left' 
+                      (Default = 'bottom') 
+  
+  Note: Inputs may be given in any order.   
+    
+ Examples: % Windows taskbar at bottom of screen 
+  
+   <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">maximizefigs</a>('all')   %Maximizes all unhidden figures 
+   <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">maximizefigs</a>          %same as maxwindow('all') 
+   <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">maximizefigs</a>(gcf)     %Maximizes the current figure  
+   <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">maximizefigs</a>(3)       %Maximizes figure 3 
+   <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">maximizefigs</a>([2 4])   %Maximizes figures 2 and 4 
+   <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">maximizefigs</a>(gcf,'left')  %Windows taskbar at left of screen  
+  %or alternatively 
+   <a href="maximizefigs.html" class="code" title="  Maximize figure(s) window size ">maximizefigs</a> 2 4   
+  
+  See also  restorefigs</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\rtw\rtw\@tlchandle\double.m">double</a></li></TD>
+<TD>        Convert to double precision.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\findobj.m">findobj</a></li></TD>
+<TD>       Find objects with specified property values.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="get is a built-in method">get</a></li></TD>
+<TD>           Get object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isnumeric.m">isnumeric</a></li></TD>
+<TD>     True for numeric arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">maximizefigs</a>(varargin) 
+002 <span class="comment">%MAXIMIZEFIGS  Maximize figure(s) window size </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:   maximizefigs(hfigs, taskbar_position) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%  hfigs            = handle(s) of figure(s) you wish to resize (Default = 'all') </span>
+007 <span class="comment">%  taskbar_position = Position of the Windows taskbar </span>
+008 <span class="comment">%                     Allowed values: 'bottom',  'left' </span>
+009 <span class="comment">%                     (Default = 'bottom') </span>
+010 <span class="comment">% </span>
+011 <span class="comment">% Note: Inputs may be given in any order.   </span>
+012 <span class="comment">%   </span>
+013 <span class="comment">%Examples: <span class="comment">% Windows taskbar at bottom of screen </span></span>
+014 <span class="comment">% </span>
+015 <span class="comment">%  maximizefigs('all')   <span class="comment">%Maximizes all unhidden figures </span></span>
+016 <span class="comment">%  maximizefigs          <span class="comment">%same as maxwindow('all') </span></span>
+017 <span class="comment">%  maximizefigs(gcf)     <span class="comment">%Maximizes the current figure  </span></span>
+018 <span class="comment">%  maximizefigs(3)       <span class="comment">%Maximizes figure 3 </span></span>
+019 <span class="comment">%  maximizefigs([2 4])   <span class="comment">%Maximizes figures 2 and 4 </span></span>
+020 <span class="comment">%  maximizefigs(gcf,'left')  <span class="comment">%Windows taskbar at left of screen  </span></span>
+021 <span class="comment">% <span class="comment">%or alternatively </span></span>
+022 <span class="comment">%  maximizefigs 2 4   </span>
+023 <span class="comment">% </span>
+024 <span class="comment">% See also  restorefigs   </span>
+025  
+026  
+027 <span class="comment">% revised pab 05.03.2003 </span>
+028 <span class="comment">% renamed from maxwindow to maximizefigs </span>
+029 <span class="comment">% changed default from gcf to 'all'   </span>
+030    
+031 <span class="comment">%Author: Denis Gilbert, Ph.D., physical oceanography </span>
+032 <span class="comment">%Maurice Lamontagne Institute, Dept. of Fisheries and Oceans Canada </span>
+033 <span class="comment">%email: gilbertd@dfo-mpo.gc.ca  Web: http://www.qc.dfo-mpo.gc.ca/iml/ </span>
+034 <span class="comment">%October 1998; Last revision: 18-Feb-2002 </span>
+035    
+036 taskbar_position = <span class="string">'bottom'</span>; <span class="comment">% default </span>
+037  
+038 figs = []; 
+039 <span class="keyword">for</span> ix=1:nargin 
+040   currArg = varargin{ix}; 
+041   <span class="keyword">if</span> isnumeric(currArg)  
+042     figs = [figs,currArg]; 
+043   <span class="keyword">else</span> 
+044     tmp = double(currArg); 
+045     <span class="keyword">try</span>, 
+046       <span class="keyword">if</span> any( double(<span class="string">'0'</span>)&lt;= tmp &amp; tmp&lt;= double(<span class="string">'9'</span>) ) | strcmpi(currArg,<span class="string">'gcf'</span>) 
+047     figs = [figs, eval(currArg)]; 
+048       <span class="keyword">else</span>  
+049     <span class="keyword">switch</span> lower(currArg(1)) 
+050      <span class="keyword">case</span> <span class="string">'b'</span>, taskbar_position = <span class="string">'bottom'</span>; 
+051      <span class="keyword">case</span> <span class="string">'l'</span>, taskbar_position = <span class="string">'left'</span>; 
+052     <span class="keyword">end</span> 
+053       <span class="keyword">end</span> 
+054     <span class="keyword">end</span> 
+055   <span class="keyword">end</span> 
+056 <span class="keyword">end</span> 
+057 <span class="keyword">if</span> isempty(figs) 
+058   <span class="comment">% Find all figure handles, sort them and count them. </span>
+059   <span class="comment">%figs = get(0,'children'); </span>
+060   figs = findobj(<span class="string">'Type'</span>, <span class="string">'figure'</span>); 
+061   figs = sort(figs); 
+062 <span class="keyword">end</span> 
+063  
+064 <span class="keyword">if</span> isempty(figs) 
+065    disp(<span class="string">'No open figures or no figures specified.'</span>); 
+066    <span class="keyword">return</span> 
+067 <span class="keyword">end</span>  
+068  
+069  
+070 rootUnits = get(0, <span class="string">'Units'</span>); 
+071 set(0, <span class="string">'Units'</span>, <span class="string">'pixels'</span>);              <span class="comment">% Set root units. </span>
+072 screensize=get(0,<span class="string">'screensize'</span>); 
+073  
+074 <span class="keyword">switch</span> lower(taskbar_position) 
+075    <span class="comment">%Other cases could easily be added for other positions of the Windows </span>
+076    <span class="comment">%taskbar or in cases where one also chooses to display the Microsoft </span>
+077    <span class="comment">%Office taskbar </span>
+078     
+079 <span class="keyword">case</span> <span class="string">'bottom'</span> 
+080     offset1 = 34; 
+081     offset2 = 111; 
+082     newPosition =[1 offset1 screensize(3) screensize(4)-offset2]; 
+083 <span class="keyword">case</span> <span class="string">'left'</span> 
+084     offset1 = 84; 
+085     offset2 = 78; 
+086     newPosition = [1+offset1  1  screensize(3)-offset1  screensize(4)-offset2]; 
+087 <span class="keyword">end</span> 
+088 set(figs,<span class="string">'units'</span>,<span class="string">'pixels'</span>,<span class="string">'Position'</span>,newPosition ) 
+089 set(0, <span class="string">'Units'</span>, rootUnits);  <span class="comment">% reset root units  </span>
+090 <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

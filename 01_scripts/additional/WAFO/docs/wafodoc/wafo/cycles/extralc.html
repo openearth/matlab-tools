@@ -1,0 +1,384 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of extralc</title>
+  <meta name="keywords" content="extralc">
+  <meta name="description" content="  Extrapolate level crossing spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; extralc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>extralc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Extrapolate level crossing spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [lcEst,Est] = extralc(lc,u,method,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="extralc.html" class="code" title="  Extrapolate level crossing spectrum">EXTRALC</a>  Extrapolate level crossing spectrum
+ 
+  CALL: [lcEst,Est] = <a href="extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>(lc,u,method,plotflag)
+ 
+    lc     = Level crossing spectrum.                       [n,2]
+    u      = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">Levels</a> [u_min u_max], extrapolate below u_min and above u_max. 
+    method = A string, describing the method of estimation.
+             Generalized Pareto distribution (GPD):
+              'gpd,ml'   = Maximum likelihood estimator. (default)
+              'gpd,mom'  = Moment method.
+              'gpd,pwm'  = Probability Weighted Moments.
+              'gpd,pkd'  = Pickands' estimator.
+             Exponential distribution (GPD with k=0)
+              'exp,ml'   = Maximum likelihood estimator.
+             Rayleigh distribution 
+              'ray,ml'   = Maximum likelihood estimator.
+    plotflag = 1: Diagnostic plots. (default)
+               0: Don't plot diagnostic plots.
+ 
+    lcEst    = The estimated LC.     [struct array]
+    Est      = Estimated parameters. [struct array]
+ 
+  Extrapolates the level crossing spectrum for high and for low <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>. 
+  The tails of the LC is fited to a survival function of a GPD. 
+    H(x) = (1-k*x/s)^(1/k)               (GPD)
+  The use of GPD is motivated by POT methods in extreme value theory. 
+  For k=0 the GPD is the exponential distribution
+    H(x) = exp(-x/s),  k=0               (Exp)
+  The tails with the survival function of a Rayleigh distribution.
+    H(x) = exp(-((x+x0).^2-x0^2)/s^2)    (Ray)
+  where x0 is the value where the LC has its maximum.
+  The methods 'gpd,...' uses the GPD. We recommend the use of 'gpd,ml'.
+  The method 'exp,ml' uses the Exp. 
+  The method 'ray,ml' uses Ray, and should be used if the load is a Gaussian process.
+ 
+  Example: 
+    S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>;
+    x = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,100000,0.1,[],'random');
+    lc = <a href="../../wafo/onedim/dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">dat2lc</a>(x); s = std(x(:,2));
+    [lcEst,Est] = <a href="extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>(lc,s*[-2 2]);
+    [lcEst,Est] = <a href="extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>(lc,s*[-2 2],'exp,ml');
+    [lcEst,Est] = <a href="extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>(lc,s*[-2 2],'ray,ml');
+ 
+  See also  <a href="cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>, <a href="rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>, <a href="lc2rfmextreme.html" class="code" title=" Compute extreme RFM from level crossings.">lc2rfmextreme</a>, <a href="extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>, <a href="../../wafo/wstats/wgpdfit.html" class="code" title=" Parameter estimates for Generalized Pareto data">wgpdfit</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/wgpdcdf.html" class="code" title=" F = wgpdcdf(x,k,s,m);">wgpdcdf</a></li></TD>
+<TD> Generalized Pareto cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wgpdfit.html" class="code" title=" [parms,cov] = wgpdfit(data,method,plotflag)">wgpdfit</a></li></TD>
+<TD> Parameter estimates for Generalized Pareto data</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\@single\eig.bi">eig</a></li></TD>
+<TD>           Eigenvalues and eigenvectors.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\semilogx.bi">semilogx</a></li></TD>
+<TD>      Semi-log scale plot.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> [lcEst,Est] = extrapolate(lc,u,method,offset)</a></li><li><a href="#_sub2" class="code"> y=make_increasing(x);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [lcEst,Est] = <a name="_sub0" href="#_subfunctions" class="code">extralc</a>(lc,u,method,plotflag)
+002 <span class="comment">%EXTRALC  Extrapolate level crossing spectrum</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: [lcEst,Est] = extralc(lc,u,method,plotflag)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   lc     = Level crossing spectrum.                       [n,2]</span>
+007 <span class="comment">%   u      = Levels [u_min u_max], extrapolate below u_min and above u_max. </span>
+008 <span class="comment">%   method = A string, describing the method of estimation.</span>
+009 <span class="comment">%            Generalized Pareto distribution (GPD):</span>
+010 <span class="comment">%             'gpd,ml'   = Maximum likelihood estimator. (default)</span>
+011 <span class="comment">%             'gpd,mom'  = Moment method.</span>
+012 <span class="comment">%             'gpd,pwm'  = Probability Weighted Moments.</span>
+013 <span class="comment">%             'gpd,pkd'  = Pickands' estimator.</span>
+014 <span class="comment">%            Exponential distribution (GPD with k=0)</span>
+015 <span class="comment">%             'exp,ml'   = Maximum likelihood estimator.</span>
+016 <span class="comment">%            Rayleigh distribution </span>
+017 <span class="comment">%             'ray,ml'   = Maximum likelihood estimator.</span>
+018 <span class="comment">%   plotflag = 1: Diagnostic plots. (default)</span>
+019 <span class="comment">%              0: Don't plot diagnostic plots.</span>
+020 <span class="comment">%</span>
+021 <span class="comment">%   lcEst    = The estimated LC.     [struct array]</span>
+022 <span class="comment">%   Est      = Estimated parameters. [struct array]</span>
+023 <span class="comment">%</span>
+024 <span class="comment">% Extrapolates the level crossing spectrum for high and for low levels. </span>
+025 <span class="comment">% The tails of the LC is fited to a survival function of a GPD. </span>
+026 <span class="comment">%   H(x) = (1-k*x/s)^(1/k)               (GPD)</span>
+027 <span class="comment">% The use of GPD is motivated by POT methods in extreme value theory. </span>
+028 <span class="comment">% For k=0 the GPD is the exponential distribution</span>
+029 <span class="comment">%   H(x) = exp(-x/s),  k=0               (Exp)</span>
+030 <span class="comment">% The tails with the survival function of a Rayleigh distribution.</span>
+031 <span class="comment">%   H(x) = exp(-((x+x0).^2-x0^2)/s^2)    (Ray)</span>
+032 <span class="comment">% where x0 is the value where the LC has its maximum.</span>
+033 <span class="comment">% The methods 'gpd,...' uses the GPD. We recommend the use of 'gpd,ml'.</span>
+034 <span class="comment">% The method 'exp,ml' uses the Exp. </span>
+035 <span class="comment">% The method 'ray,ml' uses Ray, and should be used if the load is a Gaussian process.</span>
+036 <span class="comment">%</span>
+037 <span class="comment">% Example: </span>
+038 <span class="comment">%   S = jonswap;</span>
+039 <span class="comment">%   x = spec2sdat(S,100000,0.1,[],'random');</span>
+040 <span class="comment">%   lc = dat2lc(x); s = std(x(:,2));</span>
+041 <span class="comment">%   [lcEst,Est] = extralc(lc,s*[-2 2]);</span>
+042 <span class="comment">%   [lcEst,Est] = extralc(lc,s*[-2 2],'exp,ml');</span>
+043 <span class="comment">%   [lcEst,Est] = extralc(lc,s*[-2 2],'ray,ml');</span>
+044 <span class="comment">%</span>
+045 <span class="comment">% See also  cmat2extralc, rfmextrapolate, lc2rfmextreme, extralc, wgpdfit</span>
+046 
+047 <span class="comment">% References:</span>
+048 <span class="comment">%</span>
+049 <span class="comment">%   Johannesson, P., and Thomas, J-.J. (2000): </span>
+050 <span class="comment">%   Extrapolation of Rainflow Matrices. </span>
+051 <span class="comment">%   Preprint 2000:82, Mathematical statistics, Chalmers, pp. 18. </span>
+052 
+053 <span class="comment">% Tested  on Matlab  5.3</span>
+054 <span class="comment">%</span>
+055 <span class="comment">% History:</span>
+056 <span class="comment">% Created by PJ (Pär Johannesson) 10-Mar-2000</span>
+057 <span class="comment">% Changed by PJ 14-Mar-2000</span>
+058 <span class="comment">%   Added sub-function 'make_increasing'</span>
+059 <span class="comment">% Changed by PJ 15-Mar-2000</span>
+060 <span class="comment">%   Added sub-function 'make_increasing'</span>
+061 <span class="comment">% Updated by PJ 07-Dec-2000</span>
+062 <span class="comment">%   Added 'exp,ml' and 'ray,ml'</span>
+063 <span class="comment">%   Help text</span>
+064 <span class="comment">% Corrected by PJ 17-Feb-2004</span>
+065 
+066 <span class="comment">% Check input</span>
+067 
+068 ni = nargin;
+069 no = nargout;
+070 error(nargchk(1,4,ni));
+071 
+072 <span class="keyword">if</span> ni &lt; 3, method = []; <span class="keyword">end</span>
+073 <span class="keyword">if</span> ni &lt; 4, plotflag = []; <span class="keyword">end</span>
+074 
+075 <span class="comment">% Default values</span>
+076 <span class="keyword">if</span> isempty(method), method = <span class="string">'gpd,ml'</span>; <span class="keyword">end</span>
+077 <span class="keyword">if</span> isempty(plotflag), plotflag = 1; <span class="keyword">end</span>
+078 
+079 <span class="comment">% Maximum of lc</span>
+080 [M,I] = max(lc(:,2));  <span class="comment">% Corrected by PJ 17-Feb-2004</span>
+081 lc_max = lc(I(1),1);
+082 
+083 <span class="comment">% Extrapolate LC for high levels</span>
+084 [lcEst.High,Est.High] = <a href="#_sub1" class="code" title="sub  [lcEst,Est] = extrapolate(lc,u,method,offset)">extrapolate</a>(lc,u(2),method,u(2)-lc_max);
+085 
+086 <span class="comment">% Extrapolate LC for low levels</span>
+087 
+088 lc1 = [-flipud(lc(:,1)) flipud(lc(:,2))];
+089 
+090 [lcEst1,Est1] = <a href="#_sub1" class="code" title="sub  [lcEst,Est] = extrapolate(lc,u,method,offset)">extrapolate</a>(lc1,-u(1),method,lc_max-u(1));
+091 lcEst.Low = [-flipud(lcEst1(:,1)) flipud(lcEst1(:,2:<span class="keyword">end</span>))];
+092 Est.Low = Est1;
+093 
+094 <span class="keyword">if</span> plotflag
+095   semilogx(lc(:,2),lc(:,1),lcEst.High(:,2),lcEst.High(:,1),lcEst.Low(:,2),lcEst.Low(:,1))
+096 <span class="keyword">end</span>
+097 
+098 <span class="comment">%<span class="comment">%<span class="comment">%</span></span></span>
+099 <span class="keyword">function</span> [lcEst,Est] = <a name="_sub1" href="#_subfunctions" class="code">extrapolate</a>(lc,u,method,offset)
+100   <span class="comment">% Extrapolate the level crossing specrta for high levels</span>
+101   
+102   method = lower(method);
+103   methodShape = method(1:3);
+104   methodEst = method(5:<span class="keyword">end</span>);
+105   
+106   <span class="comment">% Excedences over level u</span>
+107   Iu = lc(:,1)&gt;u;
+108   lc1 = lc(Iu,:);
+109   lc2 = flipud(lc1);
+110   lc3 = <a href="#_sub2" class="code" title="sub  y=make_increasing(x);">make_increasing</a>(lc2);
+111   
+112   <span class="comment">% Corrected by PJ 17-Feb-2004</span>
+113   lc3=[0 0; lc3]; x=[];
+114   <span class="keyword">for</span> k=2:length(lc3(:,1))
+115       nk = lc3(k,2)-lc3(k-1,2);
+116       x = [x; ones(nk,1)*lc3(k,1)];
+117   <span class="keyword">end</span>
+118   x = x-u;   
+119   
+120   <span class="comment">% Estimate tail</span>
+121   <span class="keyword">switch</span> methodShape
+122     
+123   <span class="keyword">case</span> <span class="string">'gpd'</span>
+124     
+125     [parms,cov] = <a href="../../wafo/wstats/wgpdfit.html" class="code" title=" Parameter estimates for Generalized Pareto data">wgpdfit</a>(x,methodEst,0);
+126     
+127     Est.k = parms(1);
+128     Est.s = parms(2);
+129     Est.cov = cov;
+130     <span class="keyword">if</span> Est.k&gt;0,
+131       Est.UpperLimit = u+Est.s/Est.k;
+132     <span class="keyword">end</span>
+133     
+134     xF = (0.0:0.01:4)';
+135     F = <a href="../../wafo/wstats/wgpdcdf.html" class="code" title=" Generalized Pareto cumulative distribution function ">wgpdcdf</a>(xF,Est.k,Est.s);
+136     Est.lcu = interp1(lc(:,1),lc(:,2),u)+1;
+137     
+138     <span class="comment">% Calculate 90 <span class="comment">% confidence region, an ellipse, for (k,s)</span></span>
+139     [B,D] =eig(cov);
+140     b = [Est.k; Est.s];
+141     
+142     r = sqrt(-2*log(1-90/100)); <span class="comment">% 90 <span class="comment">% confidence sphere</span></span>
+143     Nc = 16+1;
+144     ang = linspace(0,2*pi,Nc);
+145     c0 = [r*sqrt(D(1,1))*sin(ang); r*sqrt(D(2,2))*cos(ang)]; <span class="comment">% 90<span class="comment">% Circle</span></span>
+146 <span class="comment">%    plot(c0(1,:),c0(2,:))</span>
+147     
+148     c1 = B*c0+b*ones(1,length(c0)); <span class="comment">% Transform to ellipse for (k,s)</span>
+149 <span class="comment">%    plot(c1(1,:),c1(2,:)), hold on</span>
+150     
+151     <span class="comment">% Calculate conf.int for lcu</span>
+152     <span class="comment">% Assumtion: lcu is Poisson distributed</span>
+153     <span class="comment">% Poissin distr. approximated by normal when calculating conf. int.</span>
+154     dXX = 1.64*sqrt(Est.lcu); <span class="comment">% 90 <span class="comment">% quantile for lcu</span></span>
+155     
+156     lcEstCu = zeros(length(xF),Nc); lcEstCl = lcEstCu;
+157     <span class="keyword">for</span> i=1:Nc
+158       k=c1(1,i);
+159       s=c1(2,i);
+160       F2 = <a href="../../wafo/wstats/wgpdcdf.html" class="code" title=" Generalized Pareto cumulative distribution function ">wgpdcdf</a>(xF,k,s);
+161       lcEstCu(:,i) = (Est.lcu+dXX)*(1-F2);
+162       lcEstCl(:,i) = (Est.lcu-dXX)*(1-F2);
+163     <span class="keyword">end</span>
+164     
+165     lcEstCI = [min(lcEstCl')' max(lcEstCu')'];
+166     
+167     lcEst = [xF+u Est.lcu*(1-F) lcEstCI];
+168     
+169   <span class="keyword">case</span> <span class="string">'exp'</span>
+170     
+171     n = length(x);
+172     s = mean(x);
+173     cov = s/n;
+174     Est.s = s;
+175     Est.cov = cov;
+176     
+177     xF = (0.0:0.01:4)';
+178     F = 1-exp(-xF/s);
+179     Est.lcu = interp1(lc(:,1),lc(:,2),u)+1;
+180     
+181     lcEst = [xF+u Est.lcu*(1-F)];
+182     
+183   <span class="keyword">case</span> <span class="string">'ray'</span>
+184     
+185     n = length(x);
+186     Sx = sum((x+offset).^2-offset^2);
+187     s=sqrt(Sx/n);  <span class="comment">% Shape parameter</span>
+188     
+189     Est.s = s;
+190     Est.cov = NaN;
+191     
+192     xF = (0.0:0.01:4)';
+193     F = 1 - exp(-((xF+offset).^2-offset^2)/s^2);
+194     Est.lcu = interp1(lc(:,1),lc(:,2),u)+1;
+195     
+196     lcEst = [xF+u Est.lcu*(1-F)];
+197     
+198   <span class="keyword">otherwise</span>
+199     
+200     error([<span class="string">'Unknown method: '</span> method]);
+201     
+202   <span class="keyword">end</span>
+203   
+204     
+205 <span class="comment">%<span class="comment">% End extrapolate</span></span>
+206   
+207 <span class="keyword">function</span> y=<a name="_sub2" href="#_subfunctions" class="code">make_increasing</a>(x);
+208   <span class="comment">% Makes the signal x strictly increasing. </span>
+209   <span class="comment">%</span>
+210   <span class="comment">% x = two column matrix with times in first column and values in the second.</span>
+211   
+212   n = length(x);
+213   
+214   i=1;
+215   y = x;
+216   y(1,:) = x(1,:); j=1;
+217   
+218   <span class="keyword">while</span> i&lt;n
+219     <span class="keyword">while</span> x(i,2)&lt;=y(j,2) &amp; i&lt;n
+220       i = i+1;
+221     <span class="keyword">end</span>
+222     <span class="keyword">if</span> x(i,2)&gt;y(j,2)
+223       j = j+1;
+224       y(j,:) = x(i,:);
+225     <span class="keyword">end</span>
+226   <span class="keyword">end</span>
+227   
+228   y = y(1:j,:);
+229   
+230 <span class="comment">%<span class="comment">% End make_increasing</span></span>
+231 
+232</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

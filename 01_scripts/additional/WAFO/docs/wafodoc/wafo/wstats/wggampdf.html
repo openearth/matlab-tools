@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wggampdf</title>
+  <meta name="keywords" content="wggampdf">
+  <meta name="description" content=" Generalized Gamma probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wggampdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wggampdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Generalized Gamma probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wggampdf(x,a,b,c); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wggampdf.html" class="code" title=" Generalized Gamma probability density function">WGGAMPDF</a> Generalized Gamma probability density function
+ 
+  CALL:  f = <a href="wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>(x,a,b,c);
+ 
+         f = density function evaluated at x
+     a,b,c = parameters   (default b=1,c=1)
+ 
+  The generalized Gamma distribution is defined by its pdf
+ 
+  f(x;a,b,c)=c*x^(a*c-1)/b^(a*c)*exp(-(x/b)^c)/gamma(a), x&gt;=0, a,b,c&gt;0
+  
+  Example: 
+    x = linspace(0,7,200);
+    p1 = <a href="wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>(x,1,2,1); p2 = <a href="wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>(x,3,1,1);
+    plot(x,p1,x,p2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gammaln.m">gammaln</a></li></TD>
+<TD>       Logarithm of gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\inf.m">inf</a></li></TD>
+<TD>           Infinity.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dfun.html" class="code" title=" y=dist2dfun(H,V)">dist2dfun</a></li></TD>
+<TD> is an internal function to dist2dcdf dist2dprb.</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dpdf.html" class="code" title=" y = dist2dpdf(v1,h1,phat)">dist2dpdf</a></li></TD>
+<TD> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhsnlpdf.html" class="code" title=" [f,Hrms,Vrms] = jhsnlpdf(Hd,Scf,Hm0,Tp,gam,normalizedInput,condon)">jhsnlpdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for nonlinear waves with a JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhspdf.html" class="code" title=" [f,Hrms,Vrms] = jhspdf(Hd,Scf,Hm0,Tp,gam,normalizedInput,condon)">jhspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ltwcpdf.html" class="code" title=" p = ltwcpdf(t,h,Pt1,Ph1, def,condon)">ltwcpdf</a></li></TD>
+<TD> Long Term Wave Climate PDF of significant wave height and wave period</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhpdf.html" class="code" title=" f = ohhpdf(h,Hm0,def,dim)">ohhpdf</a></li></TD>
+<TD> Marginal wave height, Hd, PDF for Bimodal Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = ohhspdf(Hd,Scf,Hm0,def,normalizedInput, 				 condon)">ohhspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhsspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = ohhsspdf(Hd,Scf,Hm0,def,normalizedInput,condon)">ohhsspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhvpdf.html" class="code" title=" [f,fA,fB] = ohhvpdf(v,h,Hm0,def,norm)">ohhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for lineare waves with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thpdf.html" class="code" title=" f = thpdf(h,Hm0,Tp,dim)">thpdf</a></li></TD>
+<TD> Marginal wave height, Hd, PDF for Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thsspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = thsspdf(Hd,Scf,Hm0,Tp,normalizedInput,condon)">thsspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2pdf.html" class="code" title=" f = wchi2pdf(x,p,disable);">wchi2pdf</a></li></TD>
+<TD> Chi squared probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgampdf.html" class="code" title=" f = wgampdf(x,a,b);">wgampdf</a></li></TD>
+<TD> Gamma probability density function</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wggampdf</a>(x,a,b,c);
+002 <span class="comment">%WGGAMPDF Generalized Gamma probability density function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  f = wggampdf(x,a,b,c);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        f = density function evaluated at x</span>
+007 <span class="comment">%    a,b,c = parameters   (default b=1,c=1)</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% The generalized Gamma distribution is defined by its pdf</span>
+010 <span class="comment">%</span>
+011 <span class="comment">% f(x;a,b,c)=c*x^(a*c-1)/b^(a*c)*exp(-(x/b)^c)/gamma(a), x&gt;=0, a,b,c&gt;0</span>
+012 <span class="comment">% </span>
+013 <span class="comment">% Example: </span>
+014 <span class="comment">%   x = linspace(0,7,200);</span>
+015 <span class="comment">%   p1 = wggampdf(x,1,2,1); p2 = wggampdf(x,3,1,1);</span>
+016 <span class="comment">%   plot(x,p1,x,p2)</span>
+017 
+018 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability</span>
+019 <span class="comment">% and Life Span Models&quot;, p. 220 ff, Marcel Dekker.</span>
+020 
+021 <span class="comment">% Tested on; Matlab 5.3</span>
+022 <span class="comment">% History:</span>
+023 <span class="comment">% revised pab 24.10.2000</span>
+024 <span class="comment">%  - added comnsize, nargchk</span>
+025 <span class="comment">% added ms 09.08.2000</span>
+026 
+027 error(nargchk(2,4,nargin))
+028 
+029 <span class="keyword">if</span> nargin&lt;3|isempty(b),  b=1; <span class="keyword">end</span>
+030 <span class="keyword">if</span> nargin&lt;4|isempty(c),  c=1; <span class="keyword">end</span>
+031 
+032 [errorcode x a b c] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,a,b,c);
+033 
+034 <span class="keyword">if</span> errorcode &gt; 0
+035     error(<span class="string">'x, a, b and c must be of common size or scalar.'</span>);
+036 <span class="keyword">end</span>
+037 
+038 <span class="comment">% Initialize f to zero.</span>
+039 f = zeros(size(x));
+040 
+041 ok= ((a &gt;0) &amp; (b&gt; 0) &amp; (c&gt;0));
+042 
+043 k=find(x &gt; 0 &amp; ok);
+044 <span class="keyword">if</span> any(k),
+045   <span class="comment">% old call</span>
+046   <span class="comment">%  f(k)=c(k).*x(k).^(a(k).*c(k)-1)./b(k).^(a(k).*c(k))....</span>
+047   <span class="comment">%      .*exp(-(x(k)./b(k)).^c(k))./gamma(a(k));</span>
+048   
+049   <span class="comment">% new call: more stable for large a</span>
+050   tmp = (a(k).*c(k) - 1) .* log(x(k)) - (x(k) ./ <span class="keyword">...</span>
+051       b(k)).^c(k) - gammaln(a(k)) - a(k).*c(k) .* log(b(k));
+052   f(k) = c(k).*exp(tmp);
+053 <span class="keyword">end</span>
+054  
+055 <span class="comment">% Special cases for x==0: (this avoids warning messages)</span>
+056 k1 = find(x == 0 &amp; a.*c &lt; 1 &amp; ok);
+057 <span class="keyword">if</span> any(k1),
+058   tmp = Inf;
+059   f(k1) = tmp(ones(size(k1)));
+060 <span class="keyword">end</span>
+061 k2 = find(x == 0 &amp; a.*c == 1 &amp; ok);
+062 <span class="keyword">if</span> any(k2)
+063   f(k2) = (c(k2)./b(k2)./gamma(a(k2)));
+064 <span class="keyword">end</span>
+065 
+066 <span class="comment">%   Return NaN if the arguments are outside their respective limits.</span>
+067 k3 = find(~ok);     
+068 <span class="keyword">if</span> any(k3)
+069   tmp = NaN;
+070   f(k3) = tmp(ones(size(k3)));
+071 <span class="keyword">end</span>
+072 
+073 
+074 
+075</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

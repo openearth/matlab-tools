@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wnormrnd</title>
+  <meta name="keywords" content="wnormrnd">
+  <meta name="description" content=" Random matrices from a Normal distribution.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wnormrnd.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wnormrnd
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Random matrices from a Normal distribution.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> R = wnormrnd(mu,v,varargin); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">WNORMRND</a> Random matrices from a Normal distribution.
+ 
+  CALL:  R = <a href="wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(mu,v,sz);
+ 
+         mu = mean       (Default 0)
+          v = variance   (Default 1)
+         sz = size(R)    (Default common size of mu and v)
+              sz can be a comma separated list or a vector 
+              giving the size of R (see zeros for options). 
+ 
+  Examples:
+    R  = <a href="wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(1,2,100,2,2);
+    R2 = <a href="wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(1,2,[100,3,2]);
+    <a href="wnormplot.html" class="code" title=" Plots data on a Normal distribution paper">wnormplot</a>([R(:,:,1) R2(:,:,2)])
+ 
+  See also  <a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/kdetools/kdedemo1.html" class="code" title="This is a script file.">kdedemo1</a></li></TD>
+<TD> Demonstrate the smoothing parameter impact on KDE</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/mkernelrnd.html" class="code" title=" R=mkernelrnd(kernel,N,D)">mkernelrnd</a></li></TD>
+<TD> Random numbers from the Multivariate Kernel Function.</TD>
+</TR>
+<TR>
+<TD><li><a href="wlognrnd.html" class="code" title=" R = wlognrnd(mu,v,varargin);">wlognrnd</a></li></TD>
+<TD> Random matrices from a Lognormal distribution.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> R = <a name="_sub0" href="#_subfunctions" class="code">wnormrnd</a>(mu,v,varargin);
+002 <span class="comment">%WNORMRND Random matrices from a Normal distribution.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  R = wnormrnd(mu,v,sz);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        mu = mean       (Default 0)</span>
+007 <span class="comment">%         v = variance   (Default 1)</span>
+008 <span class="comment">%        sz = size(R)    (Default common size of mu and v)</span>
+009 <span class="comment">%             sz can be a comma separated list or a vector </span>
+010 <span class="comment">%             giving the size of R (see zeros for options). </span>
+011 <span class="comment">%</span>
+012 <span class="comment">% Examples:</span>
+013 <span class="comment">%   R  = wnormrnd(1,2,100,2,2);</span>
+014 <span class="comment">%   R2 = wnormrnd(1,2,[100,3,2]);</span>
+015 <span class="comment">%   wnormplot([R(:,:,1) R2(:,:,2)])</span>
+016 <span class="comment">%</span>
+017 <span class="comment">% See also  wnorminv</span>
+018 
+019 <span class="comment">% tested on: matlab 5.3</span>
+020 <span class="comment">% History:</span>
+021 <span class="comment">% revised pab 23.10.2000</span>
+022 <span class="comment">%  - added default mu,v</span>
+023 <span class="comment">%  - added comnsize, nargchk</span>
+024 <span class="comment">%  - added greater flexibility on the sizing of R</span>
+025 <span class="comment">% by ??</span>
+026 
+027 error(nargchk(0,inf,nargin))
+028 <span class="keyword">if</span> nargin&lt;1|isempty(mu),mu=0;<span class="keyword">end</span>
+029 <span class="keyword">if</span> nargin&lt;2|isempty(v), v=1;<span class="keyword">end</span>
+030 
+031 <span class="keyword">if</span> nargin&lt;3,
+032   [errorcode mu v] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(mu,v);
+033 <span class="keyword">else</span>
+034   [errorcode mu v] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(mu,v,zeros(varargin{:}));
+035 <span class="keyword">end</span>
+036 <span class="keyword">if</span> errorcode &gt; 0
+037     error(<span class="string">'mu and v must be of common size or scalar.'</span>);
+038 <span class="keyword">end</span>
+039 R=zeros(size(mu));
+040 k=find(v&gt;=0);
+041 <span class="keyword">if</span> any(k)
+042   R(k)=randn(size(k)).*sqrt(v(k))+mu(k);
+043 <span class="keyword">end</span>
+044 k1=find(v&lt;0);
+045 <span class="keyword">if</span> any(k1)
+046   tmp=NaN;
+047   R(k1)=tmp(ones(size(k1)));
+048 <span class="keyword">end</span>
+049</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

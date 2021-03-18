@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content=" Module SPEC in WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; Contents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Module SPEC in WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Module SPEC in WAFO Toolbox.  
+ Version 2.1.1   07-Sep-2005  
+   
+    <a href="Readme.html" class="code" title=" Readme file for module SPEC in WAFO Toolbox  ">readme</a> - <a href="Readme.html" class="code" title=" Readme file for module SPEC in WAFO Toolbox  ">Readme</a> file for module SPEC in WAFO Toolbox  
+  
+ Model spectra 
+  <a href="demospec.html" class="code" title=" S=demospec(stype)">demospec</a>     - Loads a precreated spectrum of chosen type  
+  <a href="getjonswappeakedness.html" class="code" title=" gam = getjonswappeakedness(Hm0,Tp)">getjonswappeakedness</a> - Peakedness factor Gamma given Hm0 and Tp for <a href="jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">JONSWAP</a> 
+  <a href="jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">jonswap</a>      - Calculates (and plots) a <a href="jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">JONSWAP</a> spectral density  
+  <a href="mccormick.html" class="code" title=" S1=mccormick(w1,sdata,plotflag)">mccormick</a>    - Calculates (and plots) a <a href="mccormick.html" class="code" title=" S1=mccormick(w1,sdata,plotflag)">McCormick</a> spectral density.  
+  <a href="ohspec.html" class="code" title=" S1=ohspec(w1,sdata,plotflag)">ohspec</a>       - Calculates (and plots) a Ochi-Hubble spectral density.  
+  <a href="ohspec2.html" class="code" title=" [S, S1] = ohspec2(w,sdata,plotflag)">ohspec2</a>      - Calculates and plots a bimodal Ochi-Hubble spectral density  
+  <a href="ohspec3.html" class="code" title=" [S, S1] = ohspec3(w,def,plotflag)">ohspec3</a>      - Calculates Bimodal Ochi-Hubble spectral densities  
+  <a href="oscspec.html" class="code" title=" S = oscspec(sdata,z,w,s)">oscspec</a>      - Spectral density for a harmonic oscillator  
+  <a href="phi1.html" class="code" title=" ph=phi1(w,h)">phi1</a>         - Factor for transforming spectra to finite water depth spectra  
+  <a href="pmspec.html" class="code" title=" S1=pmspec(w1,sdata,plotflag)">pmspec</a>       - Calculates (and plots) a Pierson-Moskowitz spectral density.  
+  <a href="tmaspec.html" class="code" title=" S1=tmaspec(w1,sdata,h,plotflag)">tmaspec</a>      - Calculates a <a href="jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">JONSWAP</a> spectral density for finite water depth  
+  <a href="torsethaugen.html" class="code" title=" [S, Sw, Ss]=torsethaugen(w1,sdata,plotflag)">torsethaugen</a> - Calculates a double peaked (swell + wind) spectrum  
+  <a href="wallop.html" class="code" title=" S1=wallop(w1,sdata,plotflag)">wallop</a>       - Calculates (and plots) a <a href="wallop.html" class="code" title=" S1=wallop(w1,sdata,plotflag)">Wallop</a> spectral density.  
+  
+ Directional spectra and <a href="spreading.html" class="code" title=" D = spreading(th,type,th0,data,w,def)">spreading</a> functions 
+  <a href="mkdspec.html" class="code" title=" Snew=mkdspec(S,D,plotflag)">mkdspec</a>      - Make a directional spectrum  
+  <a href="spreading.html" class="code" title=" D = spreading(th,type,th0,data,w,def)">spreading</a>    - Directional <a href="spreading.html" class="code" title=" D = spreading(th,type,th0,data,w,def)">spreading</a> functions  
+  
+ Spectral characteristics 
+  <a href="dspec2char.html" class="code" title=" [ch,chtext] = dspec2char(S,varargin)">dspec2char</a>   - Evaluates directional spectral characteristics  
+  <a href="spec2bw.html" class="code" title=" bw = spec2bw(S,fact)">spec2bw</a>      - Evaluates some spectral bandwidth and irregularity factors  
+  <a href="spec2char.html" class="code" title=" [ch,R1,chtext,R]=spec2char(S,fact,T)">spec2char</a>    - Evaluates spectral characteristics and their covariance  
+  <a href="spec2mom.html" class="code" title=" [m,mtext] = spec2mom(S,nr,vari,even)">spec2mom</a>     - Calculates spectral moments from spectrum  
+  
+ Spectrum and covariance functions 
+  <a href="cov2spec.html" class="code" title=" S = cov2spec(R,rate,nugget,trunc,fast);">cov2spec</a>     - Computes spectral density given the auto covariance function  
+  <a href="covinterp.html" class="code" title=" Rout=covinterp(R,t,vari)">covinterp</a>    - Interpolation of covariance function and derivatives  
+  <a href="createcov.html" class="code" title=" R=createcov(nr,vari,ctype)">createcov</a>    - Covariance class constructor  
+  <a href="createspec.html" class="code" title=" S=createspec(stype,freqtype)">createspec</a>   - Spectrum structure constructor  
+  <a href="freqtype.html" class="code" title=" ftype=freqtype(S)">freqtype</a>     - Returns the frequency type of a Spectral density struct.  
+  <a href="lagtype.html" class="code" title=" ltype = lagtype(R)">lagtype</a>      - Returns the lag type of a Covariance struct. 
+  <a href="rotspec.html" class="code" title=" Snew=rotspec(S,phi,rotateGrid)">rotspec</a>      - Rotate spectrum anti-clockwise around the origin.  
+  <a href="scalespec.html" class="code" title=" [Sn,mn,mom]=scalespec(So,m0n,m2n,plotflag)">scalespec</a>    - Scale spectral density so that the moments equals m0,m2.  
+  <a href="spec2cov.html" class="code" title=" R = spec2cov(S,nr,Nt,rate,Nx,Ny,dx,dy)">spec2cov</a>     - Computes covariance function and its derivatives  
+  <a href="spec2cov2.html" class="code" title=" R = spec2cov2(S,nr,Nt,dt)">spec2cov2</a>    - Computes covariance function and its derivatives, alternative version 
+  <a href="spec2dt.html" class="code" title=" dT = spec2dt(S);">spec2dt</a>      - Computes sampling interval from Nyquist frequency in spectrum  
+  <a href="spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a>    - Transforms between different types of spectra  
+  <a href="specinterp.html" class="code" title=" Snew = specinterp(S,dt)">specinterp</a>   - Interpolaton and zero-padding of spectrum  
+  <a href="ttspec.html" class="code" title=" Snew = ttspec(S,varargin)">ttspec</a>       - Toggle Transform between angular frequency and frequency spectrum  
+  <a href="wnormspec.html" class="code" title=" [S,mn4,m0,m2,m4,m1]=wnormspec(spectrum,m0,m2,plotflag)">wnormspec</a>    - Normalize a spectral density such that m0=m2=1 (<a href="../../wafo/spec/private/index.html" class="code" title="directory">private</a>)  
+  <a href="wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a>    - Plot a spectral density  
+  
+ Dispersion relation 
+  <a href="k2w.html" class="code" title=" [w,th]=k2w(k,k2,h,g,u,u2)">k2w</a>          - Translates from wave number to frequency  
+  <a href="w2k.html" class="code" title=" [k,k2,ind]=w2k(w,th,h,g),">w2k</a>          - Translates from frequency to wave number</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

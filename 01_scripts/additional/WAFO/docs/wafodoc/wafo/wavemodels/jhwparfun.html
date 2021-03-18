@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of jhwparfun</title>
+  <meta name="keywords" content="jhwparfun">
+  <meta name="description" content=" Wave height, Hd, distribution parameters for Jonswap spectrum.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; jhwparfun.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>jhwparfun
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Wave height, Hd, distribution parameters for Jonswap spectrum.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [A0,B0,C0]= jhwparfun(Hm0,Tp,gam,dim) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="jhwparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Jonswap spectrum. ">JHWPARFUN</a> Wave height, Hd, distribution parameters for <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">Jonswap</a> spectrum. 
+  
+  CALL [a b c] = <a href="jhwparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Jonswap spectrum. ">jhwparfun</a>(Hm0,Tp,gamma,dim) 
+  
+  Hm0   = significant wave height [m]. 
+  Tp    = peak period [s] 
+  gamma = Peakedness parameter of the <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum 
+  dim   = 'time'  : Hd distribution parameters in time (default) 
+  
+   <a href="jhwparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Jonswap spectrum. ">JHWPARFUN</a> returns the truncated Weibull distribution parameters which 
+   approximates the marginal PDF of Hd/Hrms, i.e., 
+   zero-downcrossing wave height, for a Gaussian process with a  
+   <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">Jonswap</a> spectral density.   
+  
+   The empirical parameters of the model is 
+   fitted by least squares to simulated Hd data for 13 classes of 
+   GAMMA between 1 and 7. 
+   About 50000 zero-downcrossing waves were simulated for 
+   each class of GAMMA for DIM=='time'. 
+   <a href="jhwparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Jonswap spectrum. ">JHWPARFUN</a> is restricted to the following <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> for GAMMA and Tp:  
+   1 &lt;= GAMMA &lt;= 7, and 3.6*sqrt(Hm0) &lt; Tp &lt; 5*sqrt(Hm0) 
+   
+   Example: 
+   Hm0 = 6;Tp = 9;Hrms = Hm0/sqrt(2); 
+   gam = <a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a>(Hm0,Tp); 
+   [a b c] = <a href="jhwparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Jonswap spectrum. ">jhwparfun</a>(Hm0,Tp,gam); 
+   h = linspace(0,4*Hrms)';  
+   F = <a href="../../wafo/wstats/wtweibcdf.html" class="code" title=" Truncated Weibull cumulative distribution function">wtweibcdf</a>(h/Hrms,a,b,c); 
+   f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h/Hrms,a,b,c)/Hrms; 
+   dt = 0.4; w = linspace(0,2*pi/dt,256)'; 
+   S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>(w,[Hm0 Tp,gam]); 
+   xs = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,80000,dt); rate=8; method=1; 
+   [S,H] = <a href="../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(xs,rate,method); 
+   fk = <a href="../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>(H,'epan',[],[],.5,128); 
+   subplot(2,1,1) 
+   <a href="../../wafo/wstats/empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(H,[h,F],1) 
+   subplot(2,1,2) 
+   plot(h,f), hold on, <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fk,'r'), hold off 
+   
+   See also  <a href="jhvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. ">jhvpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" gam = getjonswappeakedness(Hm0,Tp)">getjonswappeakedness</a></li></TD>
+<TD> Peakedness factor Gamma given Hm0 and Tp for JONSWAP</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strncmpi.bi">strncmpi</a></li></TD>
+<TD>      Compare first N characters of strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="jhspdf.html" class="code" title=" [f,Hrms,Vrms] = jhspdf(Hd,Scf,Hm0,Tp,gam,normalizedInput,condon)">jhspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="jhvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [A0,B0,C0]= <a name="_sub0" href="#_subfunctions" class="code">jhwparfun</a>(Hm0,Tp,gam,dim) 
+002 <span class="comment">%JHWPARFUN Wave height, Hd, distribution parameters for Jonswap spectrum. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL [a b c] = jhwparfun(Hm0,Tp,gamma,dim) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">% Hm0   = significant wave height [m]. </span>
+007 <span class="comment">% Tp    = peak period [s] </span>
+008 <span class="comment">% gamma = Peakedness parameter of the JONSWAP spectrum </span>
+009 <span class="comment">% dim   = 'time'  : Hd distribution parameters in time (default) </span>
+010 <span class="comment">% </span>
+011 <span class="comment">%  JHWPARFUN returns the truncated Weibull distribution parameters which </span>
+012 <span class="comment">%  approximates the marginal PDF of Hd/Hrms, i.e., </span>
+013 <span class="comment">%  zero-downcrossing wave height, for a Gaussian process with a  </span>
+014 <span class="comment">%  Jonswap spectral density.   </span>
+015 <span class="comment">% </span>
+016 <span class="comment">%  The empirical parameters of the model is </span>
+017 <span class="comment">%  fitted by least squares to simulated Hd data for 13 classes of </span>
+018 <span class="comment">%  GAMMA between 1 and 7. </span>
+019 <span class="comment">%  About 50000 zero-downcrossing waves were simulated for </span>
+020 <span class="comment">%  each class of GAMMA for DIM=='time'. </span>
+021 <span class="comment">%  JHWPARFUN is restricted to the following range for GAMMA and Tp:  </span>
+022 <span class="comment">%  1 &lt;= GAMMA &lt;= 7, and 3.6*sqrt(Hm0) &lt; Tp &lt; 5*sqrt(Hm0) </span>
+023 <span class="comment">%  </span>
+024 <span class="comment">%  Example: </span>
+025 <span class="comment">%  Hm0 = 6;Tp = 9;Hrms = Hm0/sqrt(2); </span>
+026 <span class="comment">%  gam = getjonswappeakedness(Hm0,Tp); </span>
+027 <span class="comment">%  [a b c] = jhwparfun(Hm0,Tp,gam); </span>
+028 <span class="comment">%  h = linspace(0,4*Hrms)';  </span>
+029 <span class="comment">%  F = wtweibcdf(h/Hrms,a,b,c); </span>
+030 <span class="comment">%  f = wtweibpdf(h/Hrms,a,b,c)/Hrms; </span>
+031 <span class="comment">%  dt = 0.4; w = linspace(0,2*pi/dt,256)'; </span>
+032 <span class="comment">%  S = jonswap(w,[Hm0 Tp,gam]); </span>
+033 <span class="comment">%  xs = spec2sdat(S,80000,dt); rate=8; method=1; </span>
+034 <span class="comment">%  [S,H] = dat2steep(xs,rate,method); </span>
+035 <span class="comment">%  fk = kdebin(H,'epan',[],[],.5,128); </span>
+036 <span class="comment">%  subplot(2,1,1) </span>
+037 <span class="comment">%  empdistr(H,[h,F],1) </span>
+038 <span class="comment">%  subplot(2,1,2) </span>
+039 <span class="comment">%  plot(h,f), hold on, pdfplot(fk,'r'), hold off </span>
+040 <span class="comment">%  </span>
+041 <span class="comment">%  See also  jhvpdf  </span>
+042  
+043 <span class="comment">% Reference   </span>
+044 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+045 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+046 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+047 <span class="comment">% Trondheim, Norway. </span>
+048    
+049 <span class="comment">% History: </span>
+050 <span class="comment">% revised pab 10 jan 2004   </span>
+051 <span class="comment">% by pab 29.11.2002 </span>
+052  
+053 error(nargchk(2,4,nargin)) 
+054 <span class="keyword">if</span> nargin&lt;3|isempty(gam), 
+055   gam = <a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a>(Hm0,Tp) 
+056 <span class="keyword">end</span> 
+057 <span class="keyword">if</span> nargin&lt;4|isempty(dim), dim = <span class="string">'time'</span>;<span class="keyword">end</span> 
+058  
+059 displayWarning = 0; 
+060 <span class="keyword">if</span> displayWarning 
+061   <span class="keyword">if</span> any(any(Tp&gt;5*sqrt(Hm0) | Tp&lt;3.6*sqrt(Hm0))) 
+062     disp(<span class="string">'Warning: Hm0,Tp is outside the JONSWAP range'</span>) 
+063     disp(<span class="string">'The validity of the parameters returned are questionable'</span>) 
+064   <span class="keyword">end</span> 
+065   <span class="keyword">if</span> any(any(gam&gt;7|gam&lt;1)) 
+066     disp(<span class="string">'Warning: gamma is outside the valid range'</span>) 
+067     disp(<span class="string">'The validity of the parameters returned are questionable'</span>) 
+068   <span class="keyword">end</span> 
+069 <span class="keyword">end</span> 
+070  
+071 <span class="keyword">if</span> strncmpi(dim,<span class="string">'t'</span>,1)     
+072   <span class="comment">% LS fit to data </span>
+073   <span class="comment">% best fit to jonswap for gamma = 1:.5:7 </span>
+074   A0 =-0.00768035933493*gam +  1.12723230522407; 
+075   B0 =-0.02261969635571*gam +  2.31625911055348; 
+076   C0 = -0.00808703761189*gam +  0.14438532196018;  
+077 <span class="keyword">else</span> <span class="comment">% not implemented yet </span>
+078    
+079   A0 = []; 
+080   B0 = []; 
+081   C0 = []; 
+082 <span class="keyword">end</span> 
+083  
+084 <span class="keyword">return</span> 
+085  
+086 A0 = -0.01243795213128.*gam + 1.08025514722235; 
+087 B0 = -0.03043834819688.*gam + 2.27161821064622; 
+088 C0 = -0.01342959276544.*gam + 0.10353423379696;</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

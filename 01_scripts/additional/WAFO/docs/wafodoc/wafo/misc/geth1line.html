@@ -1,0 +1,349 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of geth1line</title>
+  <meta name="keywords" content="geth1line">
+  <meta name="description" content=" Extracts the first comment line (the H1 line) of a m-file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; geth1line.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>geth1line
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Extracts the first comment line (the H1 line) of a m-file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> H1 = geth1line(filename,format,N) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">GETH1LINE</a> Extracts the first comment line (the H1 line) of a m-file 
+   
+    CALL:  H1 = <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">geth1line</a>(filename,format,N); 
+   
+       H1       = string containing the H1 line of the file 
+       filename = string containing the name of the file 
+       format   = 0 No formatting of H1 (default) 
+                  1 Format H1  
+       N        = Number of characters for filename (default 14) 
+   
+   <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">GETH1LINE</a> assumes the H1LINE is formatted as: 
+    
+   &lt;Filename&gt; &lt;One line comment&gt; 
+    
+   <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">GETH1LINE</a> is used by <a href="mkcontents.html" class="code" title=" Makes Contents file in current working directory. ">MKCONTENTS</a> to simply generate a formatted 
+   <a href="Contents.html" class="code" title="  Module MISC in WAFO Toolbox. ">contents</a> file for a directory with m-files. 
+    
+   Examples: 
+      <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">geth1line</a>('geth1line',1) 
+      <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">geth1line</a>('geth1line',0) 
+      <a href="geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">geth1line</a>('geth1line',1,7) 
+   
+  See also  <a href="mkcontents.html" class="code" title=" Makes Contents file in current working directory. ">mkcontents</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\blanks.m">blanks</a></li></TD>
+<TD>        String of blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fclose.m">fclose</a></li></TD>
+<TD>        Close file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\feof.m">feof</a></li></TD>
+<TD>          Test for end-of-file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fgetl.m">fgetl</a></li></TD>
+<TD>         Read line from file, discard newline character.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\findstr.bi">findstr</a></li></TD>
+<TD>       Find one string within another.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\instrument\instrument\@icinterface\fopen.m">fopen</a></li></TD>
+<TD>         Open file.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\iscell.m">iscell</a></li></TD>
+<TD>        True for cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@double\isletter.bi">isletter</a></li></TD>
+<TD>      True for letters of the alphabet.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@double\isspace.bi">isspace</a></li></TD>
+<TD>       True for white space characters.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@cell\strtok.m">strtok</a></li></TD>
+<TD>        Find token in string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\upper.bi">upper</a></li></TD>
+<TD>         Convert string to uppercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mkcontents.html" class="code" title=" contstr = mkcontents(h1line,wver,srt, cfile)">mkcontents</a></li></TD>
+<TD> Makes Contents file in current working directory.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recinit.html" class="code" title=" recinit">recinit</a></li></TD>
+<TD>  setup all global variables of the RECDEMO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafoinit.html" class="code" title=" wafoinit">wafoinit</a></li></TD>
+<TD>  setup all global variables of the WAFODEMO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> s1 = ddeblank(s)</a></li><li><a href="#_sub2" class="code"> s1 = strim1(s);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> H1 = <a name="_sub0" href="#_subfunctions" class="code">geth1line</a>(filename,format,N) 
+002 <span class="comment">%GETH1LINE Extracts the first comment line (the H1 line) of a m-file </span>
+003 <span class="comment">%  </span>
+004 <span class="comment">%   CALL:  H1 = geth1line(filename,format,N); </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%      H1       = string containing the H1 line of the file </span>
+007 <span class="comment">%      filename = string containing the name of the file </span>
+008 <span class="comment">%      format   = 0 No formatting of H1 (default) </span>
+009 <span class="comment">%                 1 Format H1  </span>
+010 <span class="comment">%      N        = Number of characters for filename (default 14) </span>
+011 <span class="comment">%  </span>
+012 <span class="comment">%  GETH1LINE assumes the H1LINE is formatted as: </span>
+013 <span class="comment">%   </span>
+014 <span class="comment">%  &lt;Filename&gt; &lt;One line comment&gt; </span>
+015 <span class="comment">%   </span>
+016 <span class="comment">%  GETH1LINE is used by MKCONTENTS to simply generate a formatted </span>
+017 <span class="comment">%  contents file for a directory with m-files. </span>
+018 <span class="comment">%   </span>
+019 <span class="comment">%  Examples: </span>
+020 <span class="comment">%     geth1line('geth1line',1) </span>
+021 <span class="comment">%     geth1line('geth1line',0) </span>
+022 <span class="comment">%     geth1line('geth1line',1,7) </span>
+023 <span class="comment">%  </span>
+024 <span class="comment">% See also  mkcontents </span>
+025    
+026    
+027   <span class="comment">% Tested on: Matlab 5.3 </span>
+028 <span class="comment">% History:  </span>
+029 <span class="comment">% revised pab 30.10.2003 </span>
+030 <span class="comment">% changed name from h1line to geth1line  </span>
+031 <span class="comment">% -improved the robustness of the code   </span>
+032 <span class="comment">% - added ddeblank   </span>
+033 <span class="comment">% revised pab 07.12.2000 </span>
+034 <span class="comment">%  - added examples </span>
+035 <span class="comment">%  - added N to input </span>
+036 <span class="comment">%  - cleaned up some code by using strtok </span>
+037 <span class="comment">%  - removed newline characters from H1 </span>
+038 <span class="comment">% Revised pab 27.01.2000 </span>
+039 <span class="comment">%  - improved while loop for searching percent signs   </span>
+040 <span class="comment">% Revised by pab 08.11.1999 </span>
+041 <span class="comment">%   - added frmt </span>
+042 <span class="comment">% Revised by pab 08.10.1999 </span>
+043 <span class="comment">%   - updated documentation,  </span>
+044 <span class="comment">%   - changed name from findline to h1line </span>
+045 <span class="comment">%   - added the possibility to specify the complete file name </span>
+046 <span class="comment">%   - improved formatting </span>
+047 <span class="comment">% by jr 27.09.1999 </span>
+048  
+049 <span class="comment">%filename </span>
+050 <span class="keyword">if</span> (nargin&lt;2|isempty(format)),  
+051   format = 0;  
+052 <span class="keyword">end</span> 
+053 <span class="keyword">if</span> (nargin&lt;3|isempty(N)),     
+054   N    = 14;  
+055 <span class="keyword">end</span> 
+056  
+057 <span class="comment">%filename </span>
+058 H1 = <span class="string">''</span>; 
+059 filename = strtok(filename,<span class="string">'.'</span>); <span class="comment">% strip the .m extension </span>
+060  
+061 fid      = fopen([filename, <span class="string">'.m'</span>],<span class="string">'r'</span>); 
+062 <span class="keyword">if</span> fid==-1, 
+063   disp([ <span class="string">'Unable to open file '</span>, filename ]) 
+064   <span class="keyword">return</span> 
+065 <span class="keyword">end</span> 
+066  
+067 foundSourceCode = 0; 
+068 <span class="keyword">while</span> ((~foundSourceCode) &amp; (feof(fid)==0)),  
+069   tline = <a href="#_sub1" class="code" title="sub  s1 = ddeblank(s)">ddeblank</a>(fgetl(fid)); 
+070   <span class="keyword">if</span> (length(tline) &gt; 1), <span class="comment">% Allow that some lines may be empty or only  </span>
+071               <span class="comment">% contain a percent sign </span>
+072     k = findstr(tline,<span class="string">'%'</span>); <span class="comment">%LOOK for percent sign anywhere in the line </span>
+073     foundSourceCode = ~isempty(k); 
+074   <span class="keyword">end</span>   
+075 <span class="keyword">end</span> 
+076 fclose(fid); 
+077  
+078 <span class="keyword">if</span> (~any(isletter(tline)) | length(tline)&lt;2|<span class="keyword">...</span> 
+079     isempty(k) |~strcmp(tline(k(1)),<span class="string">'%'</span>)),  
+080   warning([<span class="string">'No help header is found in '</span>  filename]) 
+081   <span class="keyword">return</span> 
+082 <span class="keyword">end</span> 
+083 [fn,rr] = strtok(tline(k(1)+1:<span class="keyword">end</span>)); 
+084 <span class="keyword">if</span> strcmpi(fn,filename) 
+085   rr  = <a href="#_sub1" class="code" title="sub  s1 = ddeblank(s)">ddeblank</a>(rr);  <span class="comment">% strip leading &amp; trailing blanks  </span>
+086 <span class="keyword">else</span> 
+087   warning([<span class="string">'Wrong H1LINE-style: Filename differ from first token in'</span> <span class="keyword">...</span> 
+088        <span class="string">' H1LINE.'</span>]) 
+089   fn = filename; 
+090   rr = <a href="#_sub1" class="code" title="sub  s1 = ddeblank(s)">ddeblank</a>(tline(k(1)+1:<span class="keyword">end</span>)); 
+091 <span class="keyword">end</span> 
+092 Nbl     = max(N - length(filename) ,1); <span class="comment">% # of blanks </span>
+093 <span class="keyword">if</span> isempty(rr) 
+094    rr =  <span class="string">' '</span>; 
+095 <span class="keyword">end</span> 
+096 <span class="keyword">switch</span> format 
+097   <span class="keyword">case</span> 0, <span class="comment">% No formatting of H1 line </span>
+098     H1 = [ fn blanks(Nbl)  rr]; <span class="comment">% alternative </span>
+099   <span class="keyword">otherwise</span>      <span class="comment">%  Format H1 line   </span>
+100     <span class="comment">% make sure func. name  is in lower case letters </span>
+101     H1 = [ lower(fn), blanks(Nbl) , <span class="string">'- '</span>, upper(rr(1)), rr(2:<span class="keyword">end</span>) ]; 
+102 <span class="keyword">end</span> 
+103 <span class="keyword">return</span> 
+104  
+105 <span class="keyword">function</span> s1 = <a name="_sub1" href="#_subfunctions" class="code">ddeblank</a>(s) 
+106 <span class="comment">%DDEBLANK Double deblank. Removes both leading and trailing blanks of string. </span>
+107 <span class="comment">% </span>
+108 <span class="comment">%  CALL: s1 = ddeblank(s); </span>
+109 <span class="comment">% </span>
+110 <span class="comment">%   s1,s = strings or cellarray of strings </span>
+111 <span class="comment">% </span>
+112 <span class="comment">% DDEBLANK removes leading and trailing blanks and null characters from </span>
+113 <span class="comment">% the string S.  A null character is one that has an absolute value of 0. </span>
+114  
+115 <span class="comment">% If S is a cellarray of strings it works on every element of S. </span>
+116 <span class="comment">% </span>
+117 <span class="comment">% Example: </span>
+118 <span class="comment">%  s  = '    Testing testing 1-2-3   ' </span>
+119 <span class="comment">%  s1 = ddeblank(s) </span>
+120 <span class="comment">% </span>
+121 <span class="comment">% See also  deblank, dewhite, ddwhite </span>
+122  
+123 <span class="comment">% History: </span>
+124 <span class="comment">% revised pab 30.10.2003 </span>
+125 <span class="comment">%  -   </span>
+126 <span class="comment">% revised pab, 07.12.2000 </span>
+127 <span class="comment">% - renamed from strim to ddeblank </span>
+128 <span class="comment">% - made it faster. </span>
+129 <span class="comment">% - added the possibility that s is a cellarray </span>
+130 <span class="comment">% - updated the documentation </span>
+131 <span class="comment">% - added example </span>
+132 <span class="comment">% </span>
+133 <span class="comment">%   Author:      Peter J. Acklam </span>
+134 <span class="comment">%   Time-stamp:  2000-07-17 02:05:04 </span>
+135 <span class="comment">%   E-mail:      jacklam@math.uio.no </span>
+136 <span class="comment">%   WWW URL:     http://www.math.uio.no/~jacklam </span>
+137 <span class="comment">% Date 11-08-98 </span>
+138 <span class="comment">% Written by Stefan Baunack. Please send any bug </span>
+139 <span class="comment">% reports or other comments to: s.baunack@ifw-dresden.de. </span>
+140  
+141 error(nargchk(1,1,nargin)); 
+142  
+143 <span class="keyword">if</span> isempty(s),  
+144   s1=s;  
+145   <span class="keyword">return</span>;  
+146 <span class="keyword">end</span> 
+147 <span class="keyword">if</span> ~(ischar(s)|iscell(s)) 
+148   error(<span class="string">'Input must be a string or cellarray of strings.'</span>) 
+149 <span class="keyword">end</span> 
+150  
+151 <span class="keyword">if</span> iscell(s), 
+152   s1=cell(size(s)); 
+153   <span class="keyword">for</span> ix=1:prod(size(s)), 
+154     s1{ix} = <a href="#_sub2" class="code" title="sub  s1 = strim1(s);">strim1</a>(s{ix}); 
+155   <span class="keyword">end</span> 
+156 <span class="keyword">else</span>, <span class="comment">% ischar </span>
+157   s1  = <a href="#_sub2" class="code" title="sub  s1 = strim1(s);">strim1</a>(s); 
+158 <span class="keyword">end</span> 
+159  
+160 <span class="keyword">return</span> 
+161  
+162 <span class="keyword">function</span> s1 = <a name="_sub2" href="#_subfunctions" class="code">strim1</a>(s); 
+163 <span class="comment">% STRIM1 Core implementation of strim </span>
+164  
+165 <span class="keyword">if</span> ~(ischar(s)), 
+166   error(<span class="string">'Input must be a string.'</span>) 
+167 <span class="keyword">end</span> 
+168 [r,c] = find(~isspace(s) &amp; s ~= 0); 
+169  
+170 <span class="keyword">if</span> isempty(c)  
+171   s1 = <span class="string">''</span>; 
+172 <span class="keyword">elseif</span> size(s, 1) == 1 
+173   s1 = s(min(c):max(c)); 
+174 <span class="keyword">else</span> 
+175   s1 = s(:,min(c):max(c)); 
+176 <span class="keyword">end</span> 
+177 <span class="keyword">return</span> 
+178</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

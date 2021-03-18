@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafomenu</title>
+  <meta name="keywords" content="wafomenu">
+  <meta name="description" content=" displays a user interface to the documentation files of WAFO">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">docs</a> &gt; wafomenu.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\docs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wafomenu
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> displays a user interface to the documentation files of WAFO</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> wafomenu(kind) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="wafomenu.html" class="code" title=" displays a user interface to the documentation files of WAFO">WAFOMENU</a> displays a user interface to the documentation files of WAFO
+ 
+  CALL:  <a href="wafomenu.html" class="code" title=" displays a user interface to the documentation files of WAFO">wafomenu</a>(kind)
+ 
+     kind = 0, displays a point and click menu (default)
+            1, displays a text driven menu</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/choices.html" class="code" title=" choices(name,header,labels,callbacks,inter)">choices</a></li></TD>
+<TD> Create a list of choices with uicontrols and callbacks.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\clc.m">clc</a></li></TD>
+<TD>           Clear command window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\fullfile.m">fullfile</a></li></TD>
+<TD>      Build full filename from parts.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\simulink\simcoverage\@cvtest\help.m">help</a></li></TD>
+<TD>          Display help text in Command Window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\input.m">input</a></li></TD>
+<TD>         Prompt for user input.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\more.m">more</a></li></TD>
+<TD>          Control paged output in command window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\audiovideo\@audiorecorder\pause.m">pause</a></li></TD>
+<TD>         Wait for user response.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2mat.m">str2mat</a></li></TD>
+<TD>       Form blank padded character matrix from strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">wafomenu</a>(kind)
+002 <span class="comment">% WAFOMENU displays a user interface to the documentation files of WAFO</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  wafomenu(kind)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%    kind = 0, displays a point and click menu (default)</span>
+007 <span class="comment">%           1, displays a text driven menu</span>
+008 <span class="comment">%</span>
+009 
+010 <span class="comment">% See also  docs</span>
+011 
+012 <span class="comment">%history</span>
+013 <span class="comment">% revised pab 21.01.2000</span>
+014 <span class="comment">% - added kind</span>
+015 <span class="comment">% - changed h1 line and ordering of menu</span>
+016 <span class="comment">% - added aboutwafo</span>
+017 <span class="comment">% By pab 17.12.1999</span>
+018 
+019 <span class="keyword">if</span> nargin&lt;1|isempty(kind)
+020   kind=0;
+021 <span class="keyword">end</span>
+022 
+023 header = <span class="string">'WAFO Documentation files'</span>;
+024 labels =str2mat(<span class="keyword">...</span>
+025     <span class="string">' 1)  Installation description of WAFO Toolbox'</span>, <span class="keyword">...</span>
+026     <span class="string">' 2)  About WAFO'</span>,<span class="keyword">...</span>
+027     <span class="string">' 3)  What is new'</span>,<span class="keyword">...</span>
+028     <span class="string">' 4)  Ideas for getting started with WAFO'</span>,<span class="keyword">...</span>
+029     <span class="string">' 5)  How To Add New Features to WAFO'</span>,<span class="keyword">...</span>
+030     <span class="string">' 6)  WAFO known limitations'</span>,<span class="keyword">...</span>
+031     <span class="string">' 7)  Bug Report Form for WAFO'</span>,<span class="keyword">...</span>
+032     <span class="string">' 8)  Spectrum, covariance function and density (pdf) structures'</span>,<span class="keyword">...</span> 
+033     <span class="string">' 9)  Level v crossing definitions and nomenclature'</span>,<span class="keyword">...</span>
+034     <span class="string">'10)  Turning points definitions and numenclature'</span>,<span class="keyword">...</span>
+035     <span class="string">'11)  Wave definitions and nomenclature'</span>,<span class="keyword">...</span>
+036     <span class="string">'12)  Wave heights and amplitude definitions and nomenclature'</span>,<span class="keyword">...</span>
+037     <span class="string">'13)  Wave periods (lengths) definitions and nomenclature'</span> ) ;
+038 filenames = str2mat(<span class="keyword">...</span>
+039     <span class="string">'install'</span>, <span class="keyword">...</span>
+040       <span class="string">'aboutwafo'</span>, <span class="keyword">...</span>
+041       fullfile(<a href="../../wafo/waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>,<span class="string">'Readme'</span>),<span class="keyword">...</span>
+042       <span class="string">'getstart'</span>,.<span class="keyword">...</span>
+043       <span class="string">'addfeatr'</span>,.<span class="keyword">...</span>
+044       <span class="string">'limitations'</span>,.<span class="keyword">...</span>
+045       <span class="string">'bugreport'</span>,.<span class="keyword">...</span>
+046       <span class="string">'datastructures'</span>,.<span class="keyword">...</span>
+047       <span class="string">'crossdef'</span>,.<span class="keyword">...</span>
+048       <span class="string">'tpdef'</span>,.<span class="keyword">...</span>
+049       <span class="string">'wavedef'</span>,<span class="keyword">...</span>
+050       <span class="string">'ampdef'</span>,.<span class="keyword">...</span>
+051       <span class="string">'perioddef'</span>);
+052 
+053 Noptions=size(filenames,1);
+054 <span class="keyword">if</span> kind==1, <span class="comment">% text driven menu</span>
+055   r=1;
+056   <span class="keyword">while</span> ~isempty(r) &amp; ~strcmpi(r,<span class="string">'q'</span>)
+057     clc
+058     disp(header)
+059     disp(<span class="string">'  '</span>)
+060     disp(labels)
+061     disp(<span class="string">'  '</span>)
+062     r=input([<span class="string">'Enter your choice 1,2,...,'</span> num2str(Noptions-1),<span class="string">' or '</span> <span class="keyword">...</span>
+063       num2str(Noptions) <span class="string">'.  '</span>]);
+064     <span class="keyword">if</span> ~isempty(r)
+065       clc
+066       r=round(r);
+067       <span class="keyword">if</span> ((1&lt;=r) &amp; (r&lt;=Noptions))
+068     more on,
+069     help(filenames(r,:))
+070     more off,
+071     pause
+072       <span class="keyword">end</span>  
+073     <span class="keyword">end</span> <span class="comment">% if r</span>
+074   <span class="keyword">end</span> <span class="comment">% while</span>
+075   
+076 <span class="keyword">else</span> <span class="comment">% point and click menu</span>
+077   callbacks = [ repmat(<span class="string">'helpwin '</span>,Noptions,1) filenames]; 
+078   <a href="../../wafo/misc/choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">choices</a>(<span class="string">'DOCS'</span>,header,labels,callbacks);
+079 <span class="keyword">end</span> <span class="comment">% kind</span>
+080 
+081 <span class="keyword">return</span>
+082 
+083</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

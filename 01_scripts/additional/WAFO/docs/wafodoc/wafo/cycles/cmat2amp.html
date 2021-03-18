@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cmat2amp</title>
+  <meta name="keywords" content="cmat2amp">
+  <meta name="description" content=" Calculates a histogram of amplitudes from a cycle matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; cmat2amp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmat2amp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates a histogram of amplitudes from a cycle matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> amp_hist = cmat2amp(param,F) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">CMAT2AMP</a> Calculates a histogram of amplitudes from a cycle matrix.
+ 
+  CALL:  amp_hist = <a href="cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">cmat2amp</a>(param,F);
+ 
+    amp_hist = a two column matrix with amplitudes (defined by  param)
+               in the first column and frequencies in the second.
+    param    = the parameter matrix.
+    F        = the  nxn  frequency matrix for the cycle count.
+ 
+  Example:
+    x = load('sea.dat');                   % Load data
+    [dtp,u,tp] = <a href="dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>([-2 2 32],x,0.2); % Discrete TP &amp; rainflow filter 0.2
+    RFM = <a href="dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(dtp,32);                 % Calculate rainflow matrix
+    amp_hist = <a href="cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">cmat2amp</a>([-2 2 32],RFM);    % Get amplitude histigram
+    bar(amp_hist(:,1),amp_hist(:,2))       % Plot histogram
+ 
+  See also  <a href="cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/damage/cmat2dam.html" class="code" title=" D = cmat2dmat(param,F,beta,K)">cmat2dam</a></li></TD>
+<TD> Calculates the total Palmgren-Miner damage of a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="rfmextrapolate.html" class="code" title=" [Fest,Pout,Fextreme,Fsmooth,Fest0] = rfmextrapolate2(F,Pin,plotflag)">rfmextrapolate</a></li></TD>
+<TD> Extrapolates a rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> amp_hist = <a name="_sub0" href="#_subfunctions" class="code">cmat2amp</a>(param,F)
+002 <span class="comment">%CMAT2AMP Calculates a histogram of amplitudes from a cycle matrix.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  amp_hist = cmat2amp(param,F);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   amp_hist = a two column matrix with amplitudes (defined by  param)</span>
+007 <span class="comment">%              in the first column and frequencies in the second.</span>
+008 <span class="comment">%   param    = the parameter matrix.</span>
+009 <span class="comment">%   F        = the  nxn  frequency matrix for the cycle count.</span>
+010 <span class="comment">%</span>
+011 <span class="comment">% Example:</span>
+012 <span class="comment">%   x = load('sea.dat');                   <span class="comment">% Load data</span></span>
+013 <span class="comment">%   [dtp,u,tp] = dat2dtp([-2 2 32],x,0.2); <span class="comment">% Discrete TP &amp; rainflow filter 0.2</span></span>
+014 <span class="comment">%   RFM = dtp2rfm(dtp,32);                 <span class="comment">% Calculate rainflow matrix</span></span>
+015 <span class="comment">%   amp_hist = cmat2amp([-2 2 32],RFM);    <span class="comment">% Get amplitude histigram</span></span>
+016 <span class="comment">%   bar(amp_hist(:,1),amp_hist(:,2))       <span class="comment">% Plot histogram</span></span>
+017 <span class="comment">%</span>
+018 <span class="comment">% See also  cc2cmat </span>
+019 
+020 <span class="comment">% Tested  on Matlab  5.3</span>
+021 <span class="comment">%</span>
+022 <span class="comment">% History:</span>
+023 <span class="comment">% Created by PJ (Pär Johannesson) 03-Nov-1999</span>
+024 
+025 <span class="comment">% Check input arguments</span>
+026 
+027 ni = nargin;
+028 no = nargout;
+029 error(nargchk(2,2,ni));
+030 
+031 n=param(3); <span class="comment">% Number of discrete levels</span>
+032 
+033 amp_hist=zeros(n,2);
+034 
+035 
+036 <span class="comment">% First column: The values of the amplitudes</span>
+037 amp_hist(:,1) = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>([0 param(2)-param(1) n])'/2;
+038 
+039 <span class="comment">% Second  column: The number of amplitudes</span>
+040 <span class="keyword">for</span> i=0:n-1
+041   amp_hist(i+1,2)=sum(diag(F,i));
+042 <span class="keyword">end</span>
+043</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

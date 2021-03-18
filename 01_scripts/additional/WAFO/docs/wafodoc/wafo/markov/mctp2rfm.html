@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mctp2rfm</title>
+  <meta name="keywords" content="mctp2rfm">
+  <meta name="description" content="  Calculates the rainflow matrix for a MCTP.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">markov</a> &gt; mctp2rfm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\markov&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mctp2rfm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates the rainflow matrix for a MCTP.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F_rfc,mu_rfc] = mctp2rfm(F,c_m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">MCTP2RFM</a>  Calculates the rainflow matrix for a MCTP.
+ 
+  CALL:  [Frfc,mu_rfc] = mtp2rfc(F);
+         [Frfc,mu_rfc] = mtp2rfc(F,c_m);
+ 
+  Frfc   = Rainflow Matrix (Rainflow Intensity)       [n,n]
+  mu_rfc = Rainflow Counting Intensity                [n,n]
+ 
+  F      = Cell array of min-Max and Max-min matrices {1,2}
+  F{1,1} = min-Max matrix                             [n,n]
+  F{1,2} = Max-min matrix                             [n,n]
+  c_m    = Intensity of local minima
+ 
+  If the matrix F{1,2} (F{1,2}=[]) is not given, then the process will
+  be assumed to be time-reversible.
+ 
+  Calculates the rainflow matrix for a Markov chain of
+    turning points.
+ 
+  Example: 
+    param = [-1 1 32]; u = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+    F = <a href="mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.2 0.2],0.15,2);
+    Frfc = <a href="mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({F []});
+    <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,Frfc)
+ 
+  See also  rfm2mctp, <a href="smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>, <a href="mctp2arfm.html" class="code" title="  Calculates asymmetric rainflow matrix for a MCTP.">mctp2arfm</a>, <a href="../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>, <a href="mc2rfm.html" class="code" title="  Calculates the rainflow matrix/intensity for a Markov chain.">mc2rfm</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="smctp2rfm.html" class="code" title=" [F_rfc,mu_rfc,T] = smctp2rfm(P,F,c_m)">smctp2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix for a SMCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab2.html" class="code" title="This is a script file.">itmkurs_lab2</a></li></TD>
+<TD> Script to computer exercises 2</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/test/test_markov.html" class="code" title="This is a script file.">test_markov</a></li></TD>
+<TD> Quick test of the routines in module 'markov'</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig9.html" class="code" title=" wafofig9">wafofig9</a></li></TD>
+<TD>  Intensity of rainflow cycles computed from St</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [F_rfc,mu_rfc] = <a name="_sub0" href="#_subfunctions" class="code">mctp2rfm</a>(F,c_m)
+002 <span class="comment">% MCTP2RFM  Calculates the rainflow matrix for a MCTP.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [Frfc,mu_rfc] = mtp2rfc(F);</span>
+005 <span class="comment">%        [Frfc,mu_rfc] = mtp2rfc(F,c_m);</span>
+006 <span class="comment">%</span>
+007 <span class="comment">% Frfc   = Rainflow Matrix (Rainflow Intensity)       [n,n]</span>
+008 <span class="comment">% mu_rfc = Rainflow Counting Intensity                [n,n]</span>
+009 <span class="comment">%</span>
+010 <span class="comment">% F      = Cell array of min-Max and Max-min matrices {1,2}</span>
+011 <span class="comment">% F{1,1} = min-Max matrix                             [n,n]</span>
+012 <span class="comment">% F{1,2} = Max-min matrix                             [n,n]</span>
+013 <span class="comment">% c_m    = Intensity of local minima</span>
+014 <span class="comment">%</span>
+015 <span class="comment">% If the matrix F{1,2} (F{1,2}=[]) is not given, then the process will</span>
+016 <span class="comment">% be assumed to be time-reversible.</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% Calculates the rainflow matrix for a Markov chain of</span>
+019 <span class="comment">%   turning points.</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% Example: </span>
+022 <span class="comment">%   param = [-1 1 32]; u = levels(param);</span>
+023 <span class="comment">%   F = mktestmat(param,[-0.2 0.2],0.15,2);</span>
+024 <span class="comment">%   Frfc = mctp2rfm({F []});</span>
+025 <span class="comment">%   cmatplot(u,u,Frfc)</span>
+026 <span class="comment">%</span>
+027 <span class="comment">% See also  rfm2mctp, smctp2rfm, mctp2arfm, cmatplot, mc2rfm</span>
+028 
+029 <span class="comment">% References</span>
+030 <span class="comment">%  </span>
+031 <span class="comment">%  P. Johannesson (1999):</span>
+032 <span class="comment">%  Rainflow Analysis of Switching Markov Loads.</span>
+033 <span class="comment">%  PhD thesis, Mathematical Statistics, Centre for Mathematical Sciences,</span>
+034 <span class="comment">%  Lund Institute of Technology.</span>
+035 <span class="comment">%  </span>
+036 <span class="comment">%  P. Johannesson (1998):</span>
+037 <span class="comment">%  Rainflow Cycles for Switching Processes with Markov Structure.</span>
+038 <span class="comment">%  Probability in the Engineering and Informational Sciences, </span>
+039 <span class="comment">%  Vol. 12, No. 2, pp. 143-175.</span>
+040   
+041 <span class="comment">% Tested  on Matlab  5.3</span>
+042 <span class="comment">%</span>
+043 <span class="comment">% History:</span>
+044 <span class="comment">% Revised by PJ  23-Nov-1999</span>
+045 <span class="comment">%   updated for WAFO</span>
+046 <span class="comment">% Created by PJ (Pär Johannesson) 1997</span>
+047 <span class="comment">%   Copyright (c) 1997 by Pär Johannesson</span>
+048 <span class="comment">%   Toolbox: Rainflow Cycles for Switching Processes V.1.0, 2-Oct-1997</span>
+049 
+050 <span class="comment">% Check input arguments</span>
+051 
+052 ni = nargin;
+053 no = nargout;
+054 error(nargchk(1,2,ni));
+055 
+056 <span class="keyword">if</span> ni &lt; 2
+057   c_m=[];
+058 <span class="keyword">end</span>
+059 
+060 [F_rfc,mu_rfc] = <a href="smctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a SMCTP.">smctp2rfm</a>(1,F,c_m);
+061 
+062</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

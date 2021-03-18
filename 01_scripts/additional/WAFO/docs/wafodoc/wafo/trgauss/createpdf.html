@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of createpdf</title>
+  <meta name="keywords" content="createpdf">
+  <meta name="description" content=" PDF class constructor">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; createpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> PDF class constructor</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f=createpdf(ndim) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="createpdf.html" class="code" title=" PDF class constructor">CREATEPDF</a> PDF class constructor
+ 
+  CALL:  f=<a href="createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(ndim)
+ 
+   creates a struct with the following fields
+       
+       f.f      = pdf (ndim-dimensional matrix)
+       f.x      = cellarray of vectors of lags in ndim dimensions (ndim cells)
+       f.labx   = cellarray of strings of label strings (ndim cells)           
+       f.title  = title string
+       f.note   = note string
+       f.date   = creation date and time
+ 
+       ndim     = # dimensions (default 1)
+ 
+   Examples:   f = <a href="createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2) gives the structure
+         f: []
+         x: {2x1 cell}
+      labx: {2x1 cell}
+     title: []
+      note: []
+      date: '16-Oct-1999 16:56:54'
+ 
+  See also  <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>, <a href="pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>, <a href="../../wafo/spec/createcov.html" class="code" title=" Covariance class constructor ">createcov</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\datestr.m">datestr</a></li></TD>
+<TD>       String representation of date.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\now.m">now</a></li></TD>
+<TD>           Current date and time as date number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="struct is a built-in method">struct</a></li></TD>
+<TD>        Create or convert to structure array.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wavemodels/b04jpdf2.html" class="code" title=" p = b04jpdf2(Hd,Scf,Hs,Tz,normalizedInput)">b04jpdf2</a></li></TD>
+<TD> Brodtkorb  (2004) joint (Scf,Hd) PDF from Japan Sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/b04pdf2.html" class="code" title=" p = b04pdf2(Hd,Scf,Hs,Tz,normalizedInput)">b04pdf2</a></li></TD>
+<TD> Brodtkorb  (2004) joint (Scf,Hd) PDF of laboratory data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/bmr00pdf2.html" class="code" title=" p = bmr00pdf2(Hd,Scf,Hs,Tz,normalizedInput)">bmr00pdf2</a></li></TD>
+<TD> Brodtkorb et.al (2000) joint (Scf,Hd) PDF from North Sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/cav76pdf.html" class="code" title=" f = cav76pdf(t,h,mom,g)">cav76pdf</a></li></TD>
+<TD> Cavanie et al. (1976) approximation of the density  (Tc,Ac)</TD>
+</TR>
+<TR>
+<TD><li><a href="chitwo2lc_sp.html" class="code" title=" [mu,mu2,mu1,muG,beta,cc,fu,Fu]= chitwo2lc_sp(gamma,beta,S12,S22,ds0)">chitwo2lc_sp</a></li></TD>
+<TD>  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/dist2dpdf2.html" class="code" title=" y = dist2dpdf2(v1,h1,phat)">dist2dpdf2</a></li></TD>
+<TD> Joint 2D PDF computed as f(x1|X2=x2)*f(x2)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhsnlpdf2.html" class="code" title=" [f,Hrms,Srms,fA,fB] = jhsnlpdf2(Hd,Scf,Hm0,Tp,gam, 					 normalizedInput)">jhsnlpdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for non-linear waves with a JONSWAP spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhspdf2.html" class="code" title=" [f,Hrms,Srms,fA,fB] = jhspdf2(Hd,Scf,Hm0,Tp,gam,normalizedInput)">jhspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvnlpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvnlpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvnlpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvnlpdf2.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvnlpdf2(Hd,Vcf,Hm0,Tp,gam,normalizedInput)">jhvnlpdf2</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for non-linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/jhvpdf2.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf2(Hd,Vcf,Hm0,Tp,gam,normalizedInput)">jhvpdf2</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/kde.html" class="code" title=" f = kde(A,options,varargin)">kde</a></li></TD>
+<TD> Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/kdebin.html" class="code" title=" f = kdebin(A,options,xlo,xup)">kdebin</a></li></TD>
+<TD> Binned Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/lh83pdf.html" class="code" title=" f = lh83pdf(t,h,mom,g)">lh83pdf</a></li></TD>
+<TD> Longuet-Higgins (1983) approximation of the density (Tc,Ac)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/mdist2dpdf2.html" class="code" title=" y = dist2dpdf2(v1,h1,phat)">mdist2dpdf2</a></li></TD>
+<TD> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/mk87pdf2.html" class="code" title=" p = mk87pdf2(Hd,Scf,Hs,Tz)">mk87pdf2</a></li></TD>
+<TD> Myrhaug and Kjeldsen (1987) joint (Scf,Hd) PDF.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = ohhspdf(Hd,Scf,Hm0,def,normalizedInput, 				 condon)">ohhspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhspdf2.html" class="code" title=" [f,varargout] = ohhspdf2(Hd,Scf,Hm0,def,normalizedInput)">ohhspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhsspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = ohhsspdf(Hd,Scf,Hm0,def,normalizedInput,condon)">ohhsspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhsspdf2.html" class="code" title=" [f,varargout] = ohhsspdf(Hd,Scf,Hm0,def,normalizedInput,condon)">ohhsspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/ohhvpdf.html" class="code" title=" [f,fA,fB] = ohhvpdf(v,h,Hm0,def,norm)">ohhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for lineare waves with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2AcAt.html" class="code" title=" [f] = spec2AcAt(spec,utc,def,paramtc,paramtt,paramt,h1,h2,nit,speed,bound)">spec2AcAt</a></li></TD>
+<TD>   Evaluates survival function R(h1,h2)=P(Ac>h1,At>h2).</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2Acdf.html" class="code" title=" [f] = spec2Acdf(spec,utc,def,paramt,h,nit,speed,bound)">spec2Acdf</a></li></TD>
+<TD>  Evaluates cdf of crests P(Ac<=h) or troughs P(At<=h).</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2cmat.html" class="code" title=" [f, fmm] = spec2cmat(spec,utc,def,paramt,paramu,nit)">spec2cmat</a></li></TD>
+<TD> Joint intensity matrix for cycles (max,min)-, rainflow- and (crest,trough)</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a></li></TD>
+<TD> Calculates joint density of Maximum, minimum and period.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2tccpdf.html" class="code" title=" [f] = spec2tccpdf(spec,utc,def,paramt,h1,h2,nit,speed,bound,plotflag)">spec2tccpdf</a></li></TD>
+<TD> Evaluates densities of wave period Tcc, wave lenght Lcc.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2thpdf.html" class="code" title=" f = spec2thpdf(spec,utc,def,paramt,h,options,plotflag)">spec2thpdf</a></li></TD>
+<TD> Joint density of amplitude and period/wave-length characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2tpdf.html" class="code" title=" [f] = spec2tpdf(spec,utc,def,paramt,h,nit,speed,bound,plotflag)">spec2tpdf</a></li></TD>
+<TD> Evaluates densities for crest-,trough-period, length.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2tpdf2.html" class="code" title=" [f] = spec2tpdf2(spec,utc,def,paramt,varargin)">spec2tpdf2</a></li></TD>
+<TD> Evaluates densities for various wave periods or wave lengths</TD>
+</TR>
+<TR>
+<TD><li><a href="specq2lc.html" class="code" title=" [mu,fu,Fu,muG,mu1,mu2]= specq2lc(Spec,ds0,nb)">specq2lc</a></li></TD>
+<TD>  Saddlepoint approximation of the crossing intensity for the quadratic sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thsnlpdf2.html" class="code" title=" [f,varargout] = thsnlpdf2(Hd,Scf,Hm0,Tp,normalizedInput)">thsnlpdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for nonlinear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thspdf.html" class="code" title=" [f,Hrms,Vrms] = thspdf(Hd,Scf,Hm0,Tp,normalizedInput,condon)">thspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thspdf2.html" class="code" title=" [f,varargout] = thspdf2(Hd,Scf,Hm0,Tp,normalizedInput)">thspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thsspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = thsspdf(Hd,Scf,Hm0,Tp,normalizedInput,condon)">thsspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thsspdf2.html" class="code" title=" [f,varargout] = thsspdf2(Hd,Scf,Hm0,Tp,normalizedInput)">thsspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves in space with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = thvpdf(Hd,Vcf,Hm0,Tp,normalizedInput,condon)">thvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thvpdf2.html" class="code" title=" [f,varargout] = thvpdf2(Hd,Vcf,Hm0,Tp,normalizedInput)">thvpdf2</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/trraylpdf.html" class="code" title=" f=trraylpdf(x,def,gn,utc)">trraylpdf</a></li></TD>
+<TD> Calculates transformed Rayleigh approximation for amplitudes</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/weib2dpdf2.html" class="code" title=" y = weib2dpdf2(v1,h1,phat)">weib2dpdf2</a></li></TD>
+<TD> Joint 2D Weibull probability density function</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f=<a name="_sub0" href="#_subfunctions" class="code">createpdf</a>(ndim)
+002 <span class="comment">% CREATEPDF PDF class constructor</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  f=createpdf(ndim)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%  creates a struct with the following fields</span>
+007 <span class="comment">%      </span>
+008 <span class="comment">%      f.f      = pdf (ndim-dimensional matrix)</span>
+009 <span class="comment">%      f.x      = cellarray of vectors of lags in ndim dimensions (ndim cells)</span>
+010 <span class="comment">%      f.labx   = cellarray of strings of label strings (ndim cells)           </span>
+011 <span class="comment">%      f.title  = title string</span>
+012 <span class="comment">%      f.note   = note string</span>
+013 <span class="comment">%      f.date   = creation date and time</span>
+014 <span class="comment">%</span>
+015 <span class="comment">%      ndim     = # dimensions (default 1)</span>
+016 <span class="comment">%</span>
+017 <span class="comment">%  Examples:   f = createpdf(2) gives the structure</span>
+018 <span class="comment">%        f: []</span>
+019 <span class="comment">%        x: {2x1 cell}</span>
+020 <span class="comment">%     labx: {2x1 cell}</span>
+021 <span class="comment">%    title: []</span>
+022 <span class="comment">%     note: []</span>
+023 <span class="comment">%     date: '16-Oct-1999 16:56:54'</span>
+024 <span class="comment">%</span>
+025 <span class="comment">% See also  datastructures, pdfplot, createcov</span>
+026 
+027 <span class="comment">%Tested on: Matlab 5.3</span>
+028 <span class="comment">%History:</span>
+029 <span class="comment">% revised es 25.10.1999 help and cosmetics </span>
+030 <span class="comment">% revised pab 16.10.1999</span>
+031 <span class="comment">% changed .xi and .labxi to .x and .labx cellarrays for </span>
+032 <span class="comment">%      faster computation and easier access</span>
+033 <span class="comment">% by pab 16.09.99</span>
+034 
+035 
+036 <span class="keyword">if</span> nargin&lt;1|isempty(ndim)
+037  ndim=1;
+038 <span class="keyword">end</span>
+039 
+040 f=struct(<span class="string">'f'</span>,[]);
+041 f.x=cell(ndim,1);
+042 f.labx=cell(ndim,1);
+043 f.title=[];
+044 f.note=[];
+045 f.date=datestr(now);
+046 
+047</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

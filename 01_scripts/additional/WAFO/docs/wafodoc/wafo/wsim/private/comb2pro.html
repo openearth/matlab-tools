@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of comb2pro</title>
+  <meta name="keywords" content="comb2pro">
+  <meta name="description" content=" Probability vector of placing a cycle on a specific place given all combinations">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wsim</a> &gt; <a href="index.html">private</a> &gt; comb2pro.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>comb2pro
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Probability vector of placing a cycle on a specific place given all combinations</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> prob=comb2pro(combinations,freq) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="comb2pro.html" class="code" title=" Probability vector of placing a cycle on a specific place given all combinations">COMB2PRO</a> Probability vector of placing a cycle on a specific place given all combinations
+  
+   Calculates the probability vector of placing a cycle on a specific place 
+   given the number of possible places (combinations).</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="fr2res.html" class="code" title=" r=fr2res(f)">fr2res</a></li></TD>
+<TD> Generates a stationary residual from the frequency matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="rfc2load_fat.html" class="code" title=" [X,res,comb,f]=rfc2load_fat(f,res,num_cc)">rfc2load_fat</a></li></TD>
+<TD>  Recontructs a load process given the frequency matrix (and residual).</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> prob=<a name="_sub0" href="#_subfunctions" class="code">comb2pro</a>(combinations,freq)
+02 <span class="comment">% COMB2PRO Probability vector of placing a cycle on a specific place given all combinations</span>
+03 <span class="comment">% </span>
+04 <span class="comment">%  Calculates the probability vector of placing a cycle on a specific place </span>
+05 <span class="comment">%  given the number of possible places (combinations).</span>
+06 
+07 <span class="comment">%  Copyright 1993, Mats Frendahl &amp; Igor Rychlik, </span>
+08 <span class="comment">%  Dept. of Math. Stat., University of Lund.</span>
+09 
+10 denominator=combinations+freq-1;
+11 add=(denominator==0);
+12 denominator=denominator+add;
+13 nominator=combinations+add-1;
+14 addcomb=(combinations==0);
+15 lambda=freq./(combinations+addcomb);
+16 <span class="comment">%pp=nominator./denominator;</span>
+17 <span class="comment">%pp=1./(1+lambda);</span>
+18 pp=(1-ones(length(combinations+add),1)./(combinations+add)).^freq;
+19 <span class="comment">%pp=exp(-lambda);</span>
+20 pp=pp';
+21 
+22 tmp=zeros(length(pp),1); prob=zeros(length(pp),1);
+23 tmp(1)=1;
+24 <span class="keyword">for</span> i=2:length(pp), tmp(i)=tmp(i-1)*pp(i-1); <span class="keyword">end</span>
+25 prob=[tmp(length(tmp))*pp(length(pp)) (1-pp).*tmp'];
+26 
+27 
+28</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

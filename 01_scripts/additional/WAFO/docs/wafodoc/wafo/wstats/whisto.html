@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of whisto</title>
+  <meta name="keywords" content="whisto">
+  <meta name="description" content=" Plots a histogram">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; whisto.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>whisto
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Plots a histogram</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> binwidth = whisto(x,N,odd,scale,lintype) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="whisto.html" class="code" title=" Plots a histogram">WHISTO</a> Plots a histogram
+  
+  CALL:  binwidth = <a href="whisto.html" class="code" title=" Plots a histogram">whisto</a>(x,N,odd,scale)
+ 
+         binwidth = the width of each bin
+                x = the data
+                N = approximate number of bins wanted 
+                    (default depending on length(x))  
+              odd = placement of bins (0 or 1) (default 0)
+            scale = argument for scaling (default 0)
+                    scale = 1 yields the area 1 under the histogram
+          lintype : specify color and lintype, see PLOT for possibilities.
+ 
+  Example:
+    R=<a href="wgumbrnd.html" class="code" title=" Random matrices from a Gumbel distribution.">wgumbrnd</a>(2,2,[],1,100);
+    <a href="whisto.html" class="code" title=" Plots a histogram">whisto</a>(R,20,0,1)
+    hold on
+    x=linspace(-3,16,200);
+    plot(x,<a href="wgumbpdf.html" class="code" title=" Gumbel probability density function.">wgumbpdf</a>(x,2,2),'r')
+    hold off</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\ishold.m">ishold</a></li></TD>
+<TD>        Return hold state.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="">off</a></li></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/kde1dgui.html" class="code" title=" varargout = kde1dgui(varargin)">kde1dgui</a></li></TD>
+<TD> GUI to Kernel Density Estimator.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig3.html" class="code" title=" wafofig3">wafofig3</a></li></TD>
+<TD>  Probability density distributions (pdf) of wave period, Tt,</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> binwidth = <a name="_sub0" href="#_subfunctions" class="code">whisto</a>(x,N,odd,scale,lintype)
+002 <span class="comment">%WHISTO Plots a histogram</span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  binwidth = whisto(x,N,odd,scale)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        binwidth = the width of each bin</span>
+007 <span class="comment">%               x = the data</span>
+008 <span class="comment">%               N = approximate number of bins wanted </span>
+009 <span class="comment">%                   (default depending on length(x))  </span>
+010 <span class="comment">%             odd = placement of bins (0 or 1) (default 0)</span>
+011 <span class="comment">%           scale = argument for scaling (default 0)</span>
+012 <span class="comment">%                   scale = 1 yields the area 1 under the histogram</span>
+013 <span class="comment">%         lintype : specify color and lintype, see PLOT for possibilities.</span>
+014 <span class="comment">%</span>
+015 <span class="comment">% Example:</span>
+016 <span class="comment">%   R=wgumbrnd(2,2,[],1,100);</span>
+017 <span class="comment">%   whisto(R,20,0,1)</span>
+018 <span class="comment">%   hold on</span>
+019 <span class="comment">%   x=linspace(-3,16,200);</span>
+020 <span class="comment">%   plot(x,wgumbpdf(x,2,2),'r')</span>
+021 <span class="comment">%   hold off</span>
+022 <span class="comment">%   </span>
+023 
+024 
+025 
+026 <span class="comment">% References: </span>
+027 <span class="comment">%  Holtsberg, Anders (1999)</span>
+028 <span class="comment">%  Stixbox. A statistics toolbox for Matlab and Octave. </span>
+029 <span class="comment">%  Lund University</span>
+030 <span class="comment">%  http://www.maths.lth.se/matstat/stixbox</span>
+031 
+032 <span class="comment">% Tested on: Matlab 5.3</span>
+033 <span class="comment">% History: </span>
+034 <span class="comment">% Revised by es 31.03.2000 Added default in help + lintype  </span>
+035 <span class="comment">% Revised by jr 22.12.1999</span>
+036 
+037 <span class="keyword">if</span> nargin &lt; 2, N = []; <span class="keyword">end</span>
+038 <span class="keyword">if</span> nargin &lt; 3, odd = []; <span class="keyword">end</span>
+039 <span class="keyword">if</span> nargin &lt; 4, scale = []; <span class="keyword">end</span>
+040 <span class="keyword">if</span> nargin &lt; 5, lintype = []; <span class="keyword">end</span>
+041 
+042 <span class="keyword">if</span> isempty(N),       N = ceil(4*sqrt(sqrt(length(x))));<span class="keyword">end</span>
+043 <span class="keyword">if</span> isempty(odd),     odd = 0;<span class="keyword">end</span>
+044 <span class="keyword">if</span> isempty(scale),   scale = 0;<span class="keyword">end</span>
+045 <span class="keyword">if</span> isempty(lintype), lintype = <span class="string">'b-'</span>;<span class="keyword">end</span>
+046 
+047 
+048 mn = min(x);
+049 mx = max(x);
+050 d = (mx - mn)/N*2;
+051 e = floor(log(d)/log(10));
+052 m = floor(d/10^e);
+053 <span class="keyword">if</span> m &gt; 5
+054    m = 5;
+055 <span class="keyword">elseif</span> m &gt; 2
+056    m = 2;
+057 <span class="keyword">end</span>
+058 d = m * 10^e;
+059 mn = (floor(mn/d)-1)*d - odd*d/2;
+060 mx = (ceil(mx/d)+1)*d + odd*d/2;
+061 limits = mn:d:mx;
+062 
+063 f = zeros(1,length(limits)-1);
+064 <span class="keyword">for</span> i = 1:length(limits)-1
+065    f(i) = sum(x&gt;=limits(i) &amp; x&lt;limits(i+1));
+066 <span class="keyword">end</span>
+067 
+068 xx = [limits; limits; limits];
+069 xx = xx(:);
+070 xx = xx(2:length(xx)-1);
+071 yy = [f*0; f; f];
+072 yy = [yy(:); 0];
+073 <span class="keyword">if</span> scale, yy = yy/length(x)/d; <span class="keyword">end</span>
+074 
+075 H = ishold;
+076 plot(xx,yy,lintype)
+077 hold on
+078 plot(limits,limits*0)
+079 <span class="keyword">if</span> ~H hold off, <span class="keyword">end</span>
+080 
+081 <span class="keyword">if</span> nargout &gt; 0
+082    binwidth = d;
+083 <span class="keyword">end</span>
+084 
+085 
+086</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

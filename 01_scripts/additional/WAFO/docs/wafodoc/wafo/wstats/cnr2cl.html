@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cnr2cl</title>
+  <meta name="keywords" content="cnr2cl">
+  <meta name="description" content=" Column Number to Column Label.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; cnr2cl.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cnr2cl
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Column Number to Column Label.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> I1 = cnr2cl(I) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cnr2cl.html" class="code" title=" Column Number to Column Label.">CNR2CL</a> Column Number to Column Label.
+ 
+  CALL:  I1 = <a href="cnr2cl.html" class="code" title=" Column Number to Column Label.">cnr2cl</a>(I)
+ 
+  I1 = character array of column labels.
+  I  = matrix of column numbers
+ 
+  <a href="cnr2cl.html" class="code" title=" Column Number to Column Label.">CNR2CL</a> transforms a column number into a column label, i.e., 
+  convert 'A'-'Z' to 1-25, 'a'-'z' to 26-50 and ' ' to 0.
+ 
+  <a href="cnr2cl.html" class="code" title=" Column Number to Column Label.">CNR2CL</a> is useful in conjuction with <a href="sudg.html" class="code" title=" Some Useful Design Generators">SUDG</a> and <a href="cdr.html" class="code" title=" Complete Defining Relation">CDR</a>
+  
+  See also  <a href="cl2cnr.html" class="code" title=" Column Label to Column Number">cl2cnr</a>, <a href="sudg.html" class="code" title=" Some Useful Design Generators">sudg</a>, <a href="cdr.html" class="code" title=" Complete Defining Relation">cdr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\@inline\char.m">char</a></li></TD>
+<TD>          Create character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isnumeric.m">isnumeric</a></li></TD>
+<TD>     True for numeric arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="alias.html" class="code" title=" [I00,I11] = alias(I0,order)">alias</a></li></TD>
+<TD> Alias structure of a fractional design.</TD>
+</TR>
+<TR>
+<TD><li><a href="cdr.html" class="code" title=" [I0,R] = cdr(I,varargin)">cdr</a></li></TD>
+<TD> Complete Defining Relation</TD>
+</TR>
+<TR>
+<TD><li><a href="ffd.html" class="code" title=" [D,I] = ffd(n,I)">ffd</a></li></TD>
+<TD> Two-level Fractional Factorial Design</TD>
+</TR>
+<TR>
+<TD><li><a href="fitmodel.html" class="code" title=" [fit,res,sd,dof] = fitmodel(y,model)">fitmodel</a></li></TD>
+<TD>  Fits response by polynomial</TD>
+</TR>
+<TR>
+<TD><li><a href="sudg.html" class="code" title=" [I,R] = sudg(n,p,varargin)">sudg</a></li></TD>
+<TD> Some Useful Design Generators</TD>
+</TR>
+<TR>
+<TD><li><a href="yates.html" class="code" title=" [ef, id]=yates(y,varargin)">yates</a></li></TD>
+<TD> Calculates main and interaction effects using Yates' algorithm.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> I1 = <a name="_sub0" href="#_subfunctions" class="code">cnr2cl</a>(I)
+002 <span class="comment">%CNR2CL Column Number to Column Label.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  I1 = cnr2cl(I)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">% I1 = character array of column labels.</span>
+007 <span class="comment">% I  = matrix of column numbers</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% CNR2CL transforms a column number into a column label, i.e., </span>
+010 <span class="comment">% convert 'A'-'Z' to 1-25, 'a'-'z' to 26-50 and ' ' to 0.</span>
+011 <span class="comment">%</span>
+012 <span class="comment">% CNR2CL is useful in conjuction with SUDG and CDR</span>
+013 <span class="comment">% </span>
+014 <span class="comment">% See also  cl2cnr, sudg, cdr</span>
+015 
+016 
+017 <span class="comment">% Tested on: Matlab 5.3</span>
+018 <span class="comment">% History:</span>
+019 <span class="comment">% By Per A. Brodtkorb 16.03.2001</span>
+020 
+021 <span class="keyword">if</span> isnumeric(I)
+022   <span class="keyword">if</span> any(I(:)&gt;50),
+023     warning(<span class="string">'Column numbers must be less than 51!'</span>)
+024     I1 = I;
+025   <span class="keyword">else</span>
+026     
+027     <span class="comment">% characters ' ','A' - 'Z' 'a'-'z'</span>
+028     str1=[<span class="string">' '</span>,char(65:90) char(97:122)];
+029     I1  = str1(abs(I)+1);
+030     sgn         = sign(I);
+031     sgn(sgn==0) = 1; <span class="comment">% define sign(0) to 1.</span>
+032     sgn         = prod(sgn,2);
+033     k = find(sgn&lt;0);
+034     <span class="keyword">if</span> any(k),  <span class="comment">% add '-' sign to strings</span>
+035       sgn(k) = 2;             <span class="comment">% Define negative values to 2.</span>
+036       str0 = [<span class="string">' -'</span>]; <span class="comment">% '+' and '-'</span>
+037       I1   = [str0(sgn).' I1];
+038     <span class="keyword">end</span>
+039   <span class="keyword">end</span>
+040 <span class="keyword">else</span>
+041   I1 = I
+042 <span class="keyword">end</span>
+043 
+044 <span class="keyword">return</span>
+045</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

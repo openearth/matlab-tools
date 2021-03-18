@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mctpsim</title>
+  <meta name="keywords" content="mctpsim">
+  <meta name="description" content="  Simulates a Markov chain of turning points">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wsim</a> &gt; mctpsim.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wsim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mctpsim
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Simulates a Markov chain of turning points</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [x,out2,out3] = mctpsim(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">MCTPSIM</a>  Simulates a Markov chain of turning points 
+   The process x has the state space {1,2,...,n}. 
+  
+  CALL: [x] = <a href="mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>(F,T); 
+        [x] = <a href="mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>(F,T,init); 
+        [x] = <a href="mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>(F,T,init,'x'); 
+        [RFM,RFM0,res] = <a href="mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>(F,T,init,'RFM'); 
+        [x,RFM] = <a href="mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>(F,T,init,'x,RFM'); 
+  
+  x       = Simulated switching Markov turning points. 
+  RFM     = Rainflow matrix for x.                        [nxn] 
+  RFM0    = Rainflow matrix for x (without the residual). [nxn] 
+  res     = Residual from rainflow count.                 [nx2] 
+  
+  F       = Cell array of min-Max and Max-min matrices {1,2} 
+  F{1,1}  = min-Max matrix, process 1                  [nxn] 
+  F{1,2}  = Max-min matrix, process 1                  [nxn] 
+  T       = Length of simulation. 
+  init.x0 = Initial state of process x. If not given, it will start from 
+            the stationary distribution of minima. 
+  
+  Simulates a Markov chain of turning points, 
+  The process x has the state space {1,2,...,n}. 
+  
+  If a matrix F{1,2}=[], then the process will 
+  be assumed to be time-reversible. 
+  
+  Examples:  
+    FF = <a href="../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>([-1 1 32],[-0.2 0.2],0.15,1); 
+    x = <a href="mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>({FF []},1000);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="smctpsim.html" class="code" title=" [x,z,TT] = smctpsim(P,F,T,init,whatOut)">smctpsim</a></li></TD>
+<TD>  Simulates a switching Markov chain of turning points,</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter4.html" class="code" title="This is a script file.">Chapter4</a></li></TD>
+<TD> % CHAPTER4 contains the commands used in Chapter 4 of the tutorial</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab2.html" class="code" title="This is a script file.">itmkurs_lab2</a></li></TD>
+<TD> Script to computer exercises 2</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/test/test_markov.html" class="code" title="This is a script file.">test_markov</a></li></TD>
+<TD> Quick test of the routines in module 'markov'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [x,out2,out3] = <a name="_sub0" href="#_subfunctions" class="code">mctpsim</a>(varargin) 
+002 <span class="comment">%MCTPSIM  Simulates a Markov chain of turning points </span>
+003 <span class="comment">%  The process x has the state space {1,2,...,n}. </span>
+004 <span class="comment">% </span>
+005 <span class="comment">% CALL: [x] = mctpsim(F,T); </span>
+006 <span class="comment">%       [x] = mctpsim(F,T,init); </span>
+007 <span class="comment">%       [x] = mctpsim(F,T,init,'x'); </span>
+008 <span class="comment">%       [RFM,RFM0,res] = mctpsim(F,T,init,'RFM'); </span>
+009 <span class="comment">%       [x,RFM] = mctpsim(F,T,init,'x,RFM'); </span>
+010 <span class="comment">% </span>
+011 <span class="comment">% x       = Simulated switching Markov turning points. </span>
+012 <span class="comment">% RFM     = Rainflow matrix for x.                        [nxn] </span>
+013 <span class="comment">% RFM0    = Rainflow matrix for x (without the residual). [nxn] </span>
+014 <span class="comment">% res     = Residual from rainflow count.                 [nx2] </span>
+015 <span class="comment">% </span>
+016 <span class="comment">% F       = Cell array of min-Max and Max-min matrices {1,2} </span>
+017 <span class="comment">% F{1,1}  = min-Max matrix, process 1                  [nxn] </span>
+018 <span class="comment">% F{1,2}  = Max-min matrix, process 1                  [nxn] </span>
+019 <span class="comment">% T       = Length of simulation. </span>
+020 <span class="comment">% init.x0 = Initial state of process x. If not given, it will start from </span>
+021 <span class="comment">%           the stationary distribution of minima. </span>
+022 <span class="comment">% </span>
+023 <span class="comment">% Simulates a Markov chain of turning points, </span>
+024 <span class="comment">% The process x has the state space {1,2,...,n}. </span>
+025 <span class="comment">% </span>
+026 <span class="comment">% If a matrix F{1,2}=[], then the process will </span>
+027 <span class="comment">% be assumed to be time-reversible. </span>
+028 <span class="comment">% </span>
+029 <span class="comment">% Examples:  </span>
+030 <span class="comment">%   FF = mktestmat([-1 1 32],[-0.2 0.2],0.15,1); </span>
+031 <span class="comment">%   x = mctpsim({FF []},1000);  </span>
+032  
+033 init.z0=1; 
+034  
+035 [x,out2,out3] = <a href="smctpsim.html" class="code" title="  Simulates a switching Markov chain of turning points,">smctpsim</a>(1,varargin{:}); 
+036 <span class="comment">%switch whatOut </span>
+037  
+038 <span class="comment">%case {'x'} </span>
+039    
+040 <span class="comment">%  x = smctpsim(1,vargin{:}); </span>
+041  
+042 <span class="comment">%case {'RFM'} </span>
+043    
+044 <span class="comment">%  [x,out2,out3] = smctpsim(1,vargin{:}); </span>
+045  
+046 <span class="comment">%case {'x','x,RFM'} </span>
+047  
+048 <span class="comment">%  [x,out2] = smctpsim(1,vargin{:}); </span>
+049  
+050 <span class="comment">%end </span>
+051</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

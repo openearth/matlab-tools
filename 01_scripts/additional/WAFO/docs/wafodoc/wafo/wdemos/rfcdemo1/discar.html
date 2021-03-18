@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of discar</title>
+  <meta name="keywords" content="discar">
+  <meta name="description" content="   Discretizes an AR(1) process.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">wdemos</a> &gt; <a href="index.html">rfcdemo1</a> &gt; discar.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wdemos\rfcdemo1&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>discar
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>   Discretizes an AR(1) process.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> [P,uu] = discar(u,a1,m,s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="discar.html" class="code" title="   Discretizes an AR(1) process. ">DISCAR</a>   Discretizes an AR(1) process. 
+      System equation: X(k) = -a1*X(k-1) + e(k),  e(k) = N(m,s^2) 
+  
+  P = <a href="discar.html" class="code" title="   Discretizes an AR(1) process. ">discar</a>(u,a1,s,m) 
+  
+  P = Transition matrix, 
+      P(i,j) = P ( u(j)&lt;X(k)&lt;u(j+1) |  u(i)&lt;X(k-1)&lt;u(i+1) ) 
+  
+  u  = Discretization <a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>. 
+  a1 = System parameter. 
+  m  = Innovation mean. 
+  s  = Innovation std.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\quad8.m">quad8</a></li></TD>
+<TD>         Numerically evaluate integral, higher order method.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/wdemos/rfcdemo1.html" class="code" title=" [F_RFC] = refdemo1(demoNr,P,A,m,s2,param)">rfcdemo1</a></li></TD>
+<TD>  Demo for switching AR(1)-processes.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [P,uu] = <a name="_sub0" href="#_subfunctions" class="code">discar</a>(u,a1,m,s) 
+002  
+003 <span class="comment">% DISCAR   Discretizes an AR(1) process. </span>
+004 <span class="comment">%     System equation: X(k) = -a1*X(k-1) + e(k),  e(k) = N(m,s^2) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">% P = discar(u,a1,s,m) </span>
+007 <span class="comment">% </span>
+008 <span class="comment">% P = Transition matrix, </span>
+009 <span class="comment">%     P(i,j) = P ( u(j)&lt;X(k)&lt;u(j+1) |  u(i)&lt;X(k-1)&lt;u(i+1) ) </span>
+010 <span class="comment">% </span>
+011 <span class="comment">% u  = Discretization levels. </span>
+012 <span class="comment">% a1 = System parameter. </span>
+013 <span class="comment">% m  = Innovation mean. </span>
+014 <span class="comment">% s  = Innovation std. </span>
+015  
+016 <span class="comment">% Copyright (c) 1997 by Pär Johannesson </span>
+017 <span class="comment">% Toolbox: Rainflow Cycles for Switching Processes V.1.0, 2-Oct-1997 </span>
+018  
+019 n = length(u); 
+020 PP = zeros(n-1,n-1); 
+021 tol =2e-1; 
+022  
+023 <span class="keyword">for</span> i = 1:n-1 
+024   fprintf(1,<span class="string">'   i = %d\n'</span>,i); 
+025  
+026   <span class="comment">% P(i,j) = P ( u(j)&lt;X(k)&lt;u(j+1) ,  u(i)&lt;X(k-1)&lt;u(i+1) ) </span>
+027   <span class="keyword">for</span> j = 1:n-1 
+028     PP(i,j) = quad8(<span class="string">'f_ar'</span>,u(i),u(i+1),tol,[],u(j),u(j+1),a1,m,s); 
+029   <span class="keyword">end</span> 
+030  
+031   <span class="comment">% Pi = P ( u(i)&lt;X(k)&lt;u(i+1) ) </span>
+032 <span class="comment">%  Pi = normcdf((u(i+1)-m)*sqrt(1-a1^2)/s)-normcdf((u(i)-m)*sqrt(1-a1^2)/s); </span>
+033  
+034   <span class="comment">% P(i,j) = P ( u(j)&lt;X(k)&lt;u(j+1) |  u(i)&lt;X(k-1)&lt;u(i+1) ) </span>
+035 <span class="comment">%  if Pi == 0  <span class="comment">% Prob. outside working precision </span></span>
+036 <span class="comment">%    PP(i,:) = PP(i,:)/sum(PP(i,:)); </span>
+037 <span class="comment">%  else </span>
+038 <span class="comment">%    PP(i,:) = PP(i,:)/Pi; </span>
+039 <span class="comment">%  end </span>
+040 <span class="keyword">end</span> 
+041  
+042 P = PP; 
+043 uu = (u(1:n-1)+u(2:n))/2; 
+044</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of thsnlcdf</title>
+  <meta name="keywords" content="thsnlcdf">
+  <meta name="description" content=" Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; thsnlcdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>thsnlcdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = thsnlcdf(Hd,Scf,Hm0,Tp,tail) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="thsnlcdf.html" class="code" title=" Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra. ">THSNLCDF</a> Joint (Scf,Hd) CDF for nonlinear waves with <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectra. 
+  
+   CALL: f = <a href="thsnlcdf.html" class="code" title=" Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra. ">thsnlcdf</a>(Hd,Scf,Hm0,Tp,tail) 
+   
+    f   = CDF evaluated at (Scf,Hd) 
+    Hd  = zero down crossing wave height (vector) 
+    Scf = crest front steepness (vector)  
+    Hm0 = significant wave height [m] 
+    Tp  = Spectral peak period    [s] 
+   tail = 1 if upper tail is calculated    
+          0 if lower tail is calulated (default) 
+    
+  <a href="thsnlcdf.html" class="code" title=" Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra. ">THSNLCDF</a> approximates the joint CDF of (Scf, Hd), i.e., crest front 
+  steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, for 2nd order 
+  nonlinear waves with a <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectral density. 
+   The empirical parameters of the 
+  model is fitted by least squares to simulated (Scf,Hd) data for 600 
+  classes of Hm0 and Tp. Between 40000 and 200000 zero-downcrossing waves 
+  were simulated for each class of Hm0 and Tp. 
+  <a href="thsnlcdf.html" class="code" title=" Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra. ">THSNLCDF</a> is restricted to the following <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> for Hm0 and Tp:  
+   0.5 &lt; Hm0 [m] &lt; 12,  3.5 &lt; Tp [s] &lt; 20,  and  Hm0 &lt; (Tp-2)*12/11. 
+  
+  Example: 
+  Hm0 = 6;Tp = 8; 
+  sc = 0.25; 
+  hc = 3; 
+  lowerTail = 0; 
+  upperTail = ~lowerTail   
+  <a href="thsnlcdf.html" class="code" title=" Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra. ">thsnlcdf</a>(hc,sc,Hm0,Tp)           % Prob(Hd&lt;hc,Scf&lt;sc) 
+  <a href="thsnlcdf.html" class="code" title=" Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra. ">thsnlcdf</a>(hc,sc,Hm0,Tp,upperTail) % Prob(Hd&gt;hc,Scf&gt;sc)   
+  
+   % Conditional probability of steep and high waves given seastates 
+   % i.e., Prob(Hd&gt;hc,Scf&gt;sc|Hs,Tz)   
+   upperTail = 1; 
+   Hs = linspace(2.5,11.5,10); 
+   Tp = linspace(4.5,19.5,16); 
+   [T,H] = meshgrid(Tp,Hs);  
+   p = <a href="thsnlcdf.html" class="code" title=" Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra. ">thsnlcdf</a>(hc,sc,H,T,upperTail); 
+   v = 10.^(-6:-1);   
+   contourf(Tp,Hs,log10(p),log10(v)) 
+   xlabel('Tp') 
+   ylabel('Hs')   
+   <a href="../../wafo/misc/fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(log10(v))   
+    
+  See also  <a href="thsnlpdf.html" class="code" title=" Joint (Scf,Hd) PDF for nonlinear waves with Torsethaugen spectra. ">thsnlpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/gaussq.html" class="code" title=" [int, tol1,ix]= gaussq(fun,xlow,xhigh,tol,trace,varargin)">gaussq</a></li></TD>
+<TD> Numerically evaluates a integral using a Gauss quadrature.</TD>
+</TR>
+<TR>
+<TD><li><a href="thsnlpdf.html" class="code" title=" [f,Hrms,Vrms] = thsnlpdf(Hd,Scf,Hm0,Tp,normalizedInput,condon)">thsnlpdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for nonlinear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp2.m">interp2</a></li></TD>
+<TD>       2-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">thsnlcdf</a>(Hd,Scf,Hm0,Tp,tail) 
+002 <span class="comment">%THSNLCDF Joint (Scf,Hd) CDF for nonlinear waves with Torsethaugen spectra. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: f = thsnlcdf(Hd,Scf,Hm0,Tp,tail) </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%   f   = CDF evaluated at (Scf,Hd) </span>
+007 <span class="comment">%   Hd  = zero down crossing wave height (vector) </span>
+008 <span class="comment">%   Scf = crest front steepness (vector)  </span>
+009 <span class="comment">%   Hm0 = significant wave height [m] </span>
+010 <span class="comment">%   Tp  = Spectral peak period    [s] </span>
+011 <span class="comment">%  tail = 1 if upper tail is calculated    </span>
+012 <span class="comment">%         0 if lower tail is calulated (default) </span>
+013 <span class="comment">%   </span>
+014 <span class="comment">% THSNLCDF approximates the joint CDF of (Scf, Hd), i.e., crest front </span>
+015 <span class="comment">% steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, for 2nd order </span>
+016 <span class="comment">% nonlinear waves with a Torsethaugen spectral density. </span>
+017 <span class="comment">%  The empirical parameters of the </span>
+018 <span class="comment">% model is fitted by least squares to simulated (Scf,Hd) data for 600 </span>
+019 <span class="comment">% classes of Hm0 and Tp. Between 40000 and 200000 zero-downcrossing waves </span>
+020 <span class="comment">% were simulated for each class of Hm0 and Tp. </span>
+021 <span class="comment">% THSNLCDF is restricted to the following range for Hm0 and Tp:  </span>
+022 <span class="comment">%  0.5 &lt; Hm0 [m] &lt; 12,  3.5 &lt; Tp [s] &lt; 20,  and  Hm0 &lt; (Tp-2)*12/11. </span>
+023 <span class="comment">% </span>
+024 <span class="comment">% Example: </span>
+025 <span class="comment">% Hm0 = 6;Tp = 8; </span>
+026 <span class="comment">% sc = 0.25; </span>
+027 <span class="comment">% hc = 3; </span>
+028 <span class="comment">% lowerTail = 0; </span>
+029 <span class="comment">% upperTail = ~lowerTail   </span>
+030 <span class="comment">% thsnlcdf(hc,sc,Hm0,Tp)           <span class="comment">% Prob(Hd&lt;hc,Scf&lt;sc) </span></span>
+031 <span class="comment">% thsnlcdf(hc,sc,Hm0,Tp,upperTail) <span class="comment">% Prob(Hd&gt;hc,Scf&gt;sc)   </span></span>
+032 <span class="comment">% </span>
+033 <span class="comment">%  <span class="comment">% Conditional probability of steep and high waves given seastates </span></span>
+034 <span class="comment">%  <span class="comment">% i.e., Prob(Hd&gt;hc,Scf&gt;sc|Hs,Tz)   </span></span>
+035 <span class="comment">%  upperTail = 1; </span>
+036 <span class="comment">%  Hs = linspace(2.5,11.5,10); </span>
+037 <span class="comment">%  Tp = linspace(4.5,19.5,16); </span>
+038 <span class="comment">%  [T,H] = meshgrid(Tp,Hs);  </span>
+039 <span class="comment">%  p = thsnlcdf(hc,sc,H,T,upperTail); </span>
+040 <span class="comment">%  v = 10.^(-6:-1);   </span>
+041 <span class="comment">%  contourf(Tp,Hs,log10(p),log10(v)) </span>
+042 <span class="comment">%  xlabel('Tp') </span>
+043 <span class="comment">%  ylabel('Hs')   </span>
+044 <span class="comment">%  fcolorbar(log10(v))   </span>
+045 <span class="comment">%   </span>
+046 <span class="comment">% See also  thsnlpdf </span>
+047  
+048 <span class="comment">% Reference  </span>
+049 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+050 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+051 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+052 <span class="comment">% Trondheim, Norway.   </span>
+053    
+054 <span class="comment">% History </span>
+055 <span class="comment">% revised pab 09.08.2003 </span>
+056 <span class="comment">% changed input   </span>
+057 <span class="comment">% validated 20.11.2002 </span>
+058 <span class="comment">% By pab 20.12.2000 </span>
+059  
+060  
+061 error(nargchk(3,5,nargin))   
+062  
+063 <span class="keyword">if</span> (nargin &lt; 5|isempty(tail)),tail = 0; <span class="keyword">end</span> 
+064 <span class="keyword">if</span> (nargin &lt; 4|isempty(Tp)),Tp = 8; <span class="keyword">end</span> 
+065 <span class="keyword">if</span> (nargin &lt; 3|isempty(Hm0)), Hm0 = 6; <span class="keyword">end</span> 
+066  
+067 multipleSeaStates = any(prod(size(Hm0))&gt;1|prod(size(Tp))&gt;1); 
+068 <span class="keyword">if</span> multipleSeaStates 
+069   [errorcode, Scf,Hd,Hm0,Tp] = comnsize(Scf,Hd,Hm0,Tp); 
+070 <span class="keyword">else</span> 
+071   [errorcode, Scf,Hd] = comnsize(Scf,Hd); 
+072 <span class="keyword">end</span> 
+073 <span class="keyword">if</span> errorcode &gt; 0 
+074   error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+075 <span class="keyword">end</span> 
+076  
+077 <span class="keyword">global</span> THSNLPAR 
+078 <span class="keyword">if</span> isempty(THSNLPAR) 
+079   <span class="comment">%THSNLPAR = load('thsnlpar.mat'); </span>
+080   THSNLPAR = load(<span class="string">'thsnlpar06-Aug-2004.mat'</span>)   
+081 <span class="keyword">end</span> 
+082  
+083 Tpp  = THSNLPAR.Tp; 
+084 Hm00 = THSNLPAR.Hm0; 
+085 Tm020 = THSNLPAR.Tm02; 
+086 <span class="comment">% Interpolation method </span>
+087 method = <span class="string">'*cubic'</span>;<span class="comment">% Faster interpolation </span>
+088  
+089 [Tp1,Hs1] = meshgrid(Tpp,Hm00); 
+090 <span class="keyword">if</span> 1, 
+091   Tm02 = interp2(Tp1,Hs1,Tm020,Tp,Hm0,method); 
+092 <span class="keyword">else</span> 
+093      
+094   Tm02 = Tp; 
+095   <span class="keyword">for</span> ix= 1:100 
+096     dTp = (Tm02-interp2(Tp1,Hs1,Tm020,Tp,Hm0,method)); 
+097     Tp = Tp+dTp; 
+098     <span class="keyword">if</span> all(abs(dTp)&lt;0.01) 
+099       <span class="comment">%dTp </span>
+100       ix 
+101       <span class="keyword">break</span> 
+102     <span class="keyword">end</span> 
+103   <span class="keyword">end</span> 
+104 <span class="keyword">end</span> 
+105  
+106  
+107 <span class="comment">%  w    = linspace(0,100,16*1024+1).'; <span class="comment">% torsethaugen original spacing </span></span>
+108   <span class="comment">%w    = linspace(0,10,2*1024+1).';  </span>
+109 <span class="comment">%  St = torsethaugen(w,[Hm0,Tp]); </span>
+110 <span class="comment">%  ch   = spec2char(St,{'Tm02','eps2'}); </span>
+111 <span class="comment">%  Tm02 = ch(1); </span>
+112 <span class="comment">%  eps2 = ch(2); </span>
+113 Hrms = Hm0/sqrt(2); 
+114 Erms = 1.25*Hm0./(Tm02.^2); <span class="comment">% Erms </span>
+115  
+116 s = Scf./Erms; 
+117 hMax = 5; 
+118 h = min(Hd./Hrms,hMax); 
+119  
+120 eps2 = 1e-6; 
+121  
+122 f = zeros(size(Hd)); 
+123  
+124 <span class="comment">% Only compute within valid range </span>
+125 <span class="comment">%k0 = find((2&lt;=Tp) &amp; (Tp&lt;=21) &amp; (Hm0&lt;=(Tp-2)*12/11) &amp; (Hm0&lt;=12)); </span>
+126 upLimit = 6.5; 
+127 loLimit = 2.5; 
+128 k0 = find((2&lt;=Tp) &amp; (Tp&lt;=21) &amp; (loLimit*sqrt(Hm0)&lt;Tp) &amp; (Hm0&lt;=12)); 
+129 <span class="keyword">if</span> any(k0) 
+130   <span class="keyword">if</span> multipleSeaStates 
+131     h = h(k0); 
+132     s = s(k0); 
+133     Hm0 = Hm0(k0); 
+134     Tp = Tp(k0); 
+135   <span class="keyword">else</span> 
+136     k0 = 1:prod(size(Hd)); 
+137   <span class="keyword">end</span> 
+138  
+139   hlim    = h; 
+140  
+141   normalizedInput = 1; 
+142   lowerTail = 0; 
+143    
+144   <span class="keyword">if</span> 0 
+145     <span class="comment">% This is a trick to get the html documentation correct. </span>
+146     k = <a href="thsnlpdf.html" class="code" title=" Joint (Scf,Hd) PDF for nonlinear waves with Torsethaugen spectra. ">thsnlpdf</a>(1,1,2,3); 
+147   <span class="keyword">end</span> 
+148    
+149   <span class="keyword">if</span> tail==lowerTail 
+150     k       = find(h&gt;2.5); 
+151     hlim(k) = 2.5; 
+152     f(k0) = <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'thsnlpdf'</span>,0,hlim,eps2/2,[],s,Hm0,Tp,normalizedInput,5)<span class="keyword">...</span> 
+153     + <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'thsnlpdf'</span>,hlim,h,eps2/2,[],s,Hm0,Tp,normalizedInput,5);  
+154   <span class="keyword">else</span> <span class="comment">% upper tail </span>
+155     k       = find(h&lt;2.5); 
+156     hlim(k) = 2.5; 
+157     f(k0) = <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'thsnlpdf'</span>,h,hlim,eps2/2,[],s,Hm0,Tp,normalizedInput,7)<span class="keyword">...</span> 
+158     + <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'thsnlpdf'</span>,hlim,hMax,eps2/2,[],s,Hm0,Tp,normalizedInput,7);  
+159   <span class="keyword">end</span> 
+160 <span class="keyword">end</span> 
+161 <span class="keyword">return</span> 
+162  
+163</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

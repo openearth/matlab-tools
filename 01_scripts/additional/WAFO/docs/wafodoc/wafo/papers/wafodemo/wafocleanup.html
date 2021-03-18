@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafocleanup</title>
+  <meta name="keywords" content="wafocleanup">
+  <meta name="description" content=" Clears global variables defined and used by the WAFODEMO">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">wafodemo</a> &gt; wafocleanup.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\wafodemo&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>wafocleanup
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Clears global variables defined and used by the WAFODEMO</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="wafocleanup.html" class="code" title=" Clears global variables defined and used by the WAFODEMO">WAFOCLEANUP</a> Clears global variables defined and used by the <a href="wafodemo.html" class="code" title="  Show WAFO figures with point and click interface">WAFODEMO</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="comment">% WAFOCLEANUP Clears global variables defined and used by the WAFODEMO</span>
+002 <span class="comment">%</span>
+003 
+004 <span class="keyword">global</span> pwdstr WAFOFIGNUM
+005 
+006 <span class="keyword">if</span> isempty(WAFOFIGNUM)
+007   disp(<span class="string">'You must start wafodemo in order to run this script'</span>)
+008   <span class="keyword">return</span>
+009 <span class="keyword">end</span>
+010 <span class="keyword">if</span> ~isempty(pwdstr)
+011   cd(pwdstr) <span class="comment">% cd to the directory where wafodemo was started</span>
+012 <span class="keyword">end</span>  
+013 <span class="comment">% clear Defined Globals </span>
+014 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+015 clear <span class="keyword">global</span> pwdstr wafomenulabels xn Jxn Nxr map wind 
+016 clear <span class="keyword">global</span> Fs                          <span class="comment">% sampling frequency for torsethaugen</span>
+017 clear <span class="keyword">global</span> St Hm0 Tp                   <span class="comment">% torsethaugen output, input Fig 2</span>
+018 clear <span class="keyword">global</span> xt Nsim Iseed               <span class="comment">% spec2sdat output , input    Fig1</span>
+019 clear <span class="keyword">global</span> Ste L                       <span class="comment">% dat2spec output, input      Fig2</span>
+020 clear <span class="keyword">global</span> fTt fTte u Np nit speed     <span class="comment">% spec2thpdf output, input    Fig3  </span>
+021 clear <span class="keyword">global</span> Tt rate                     <span class="comment">% dat2wa output, input        Fig3</span>
+022 clear <span class="keyword">global</span> ma mb sp                    <span class="comment">% spreading input             Fig4</span>
+023 
+024 clear <span class="keyword">global</span> fTcfAc NNp Nh Nnit Nspeed   <span class="comment">% spec2thpdf output, input    Fig5  </span>
+025 clear <span class="keyword">global</span> NVcf NHd Nrate              <span class="comment">% dat2steep output, input     Fig5</span>
+026 
+027 clear <span class="keyword">global</span> fTcfAcTc JNp Jh Jnit Jspeed <span class="comment">% spec2thpdf output, input    Fig6  </span>
+028 clear <span class="keyword">global</span> JTcf JAc Jind Jrate         <span class="comment">% dat2steep output, input     Fig6</span>
+029 
+030 clear <span class="keyword">global</span> kdeTt kernel hs L2          <span class="comment">% kdebin input: kernel, smoothing  (Fig3)</span>
+031 clear <span class="keyword">global</span> kdeVcfHd Nkernel Nhs NL2    <span class="comment">% and transformation  parameter,   (Fig5)</span>
+032 clear <span class="keyword">global</span> kdeTcfAcTc Jkernel Jhs JL2  <span class="comment">% respectively                     (Fig6)</span>
+033 
+034 WAFOFIGNUM=0;
+035 <span class="comment">%end</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

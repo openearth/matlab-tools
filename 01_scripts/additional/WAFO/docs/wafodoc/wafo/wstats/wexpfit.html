@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wexpfit</title>
+  <meta name="keywords" content="wexpfit">
+  <meta name="description" content=" Parameter estimates for Exponential data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wexpfit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wexpfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates for Exponential data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat, var,pCI] = wexpfit(data,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wexpfit.html" class="code" title=" Parameter estimates for Exponential data.">WEXPFIT</a> Parameter estimates for Exponential data.
+ 
+  CALL: [bhat <a href="var.html" class="code" title="  Variance ">var</a>] = <a href="wexpfit.html" class="code" title=" Parameter estimates for Exponential data.">wexpfit</a>(data, plotflag)
+ 
+     mhat  = maximum likelihood estimate of the parameter of
+             the distribution (see <a href="wexppdf.html" class="code" title=" Exponential probability density function ">wexppdf</a>)
+     <a href="var.html" class="code" title="  Variance ">var</a>   = estimated asymptotic variance of mhat
+     data  = data matrix
+  plotflag = 0, do not plot
+           &gt; 0, plot the empiricial distribution function and the
+                estimated cdf (see <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a> for options)(default)
+ 
+  Example:
+    R=<a href="wexprnd.html" class="code" title=" Random matrices from an Exponential distribution">wexprnd</a>(2,100,1);
+    [mhat <a href="var.html" class="code" title="  Variance ">var</a>]=<a href="wexpfit.html" class="code" title=" Parameter estimates for Exponential data.">wexpfit</a>(R,1)
+    R=<a href="wexprnd.html" class="code" title=" Random matrices from an Exponential distribution">wexprnd</a>(2,100,3);
+    [mhat <a href="var.html" class="code" title="  Variance ">var</a>]=<a href="wexpfit.html" class="code" title=" Parameter estimates for Exponential data.">wexpfit</a>(R,3)
+ 
+  See also  <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="wexpcdf.html" class="code" title=" F = wexpcdf(x,m);">wexpcdf</a></li></TD>
+<TD> Exponential cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgaminv.html" class="code" title=" x = wgaminv(F,a,b)">wgaminv</a></li></TD>
+<TD> Inverse of the Gamma distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\permute.bi">permute</a></li></TD>
+<TD>       Permute array dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [phat, var,pCI] = <a name="_sub0" href="#_subfunctions" class="code">wexpfit</a>(data,plotflag)
+002 <span class="comment">%WEXPFIT Parameter estimates for Exponential data.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL: [bhat var] = wexpfit(data, plotflag)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%    mhat  = maximum likelihood estimate of the parameter of</span>
+007 <span class="comment">%            the distribution (see wexppdf)</span>
+008 <span class="comment">%    var   = estimated asymptotic variance of mhat</span>
+009 <span class="comment">%    data  = data matrix</span>
+010 <span class="comment">% plotflag = 0, do not plot</span>
+011 <span class="comment">%          &gt; 0, plot the empiricial distribution function and the</span>
+012 <span class="comment">%               estimated cdf (see empdistr for options)(default)</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Example:</span>
+015 <span class="comment">%   R=wexprnd(2,100,1);</span>
+016 <span class="comment">%   [mhat var]=wexpfit(R,1)</span>
+017 <span class="comment">%   R=wexprnd(2,100,3);</span>
+018 <span class="comment">%   [mhat var]=wexpfit(R,3)</span>
+019 <span class="comment">%</span>
+020 <span class="comment">% See also  empdistr</span>
+021 
+022 <span class="comment">% Reference: Johnson, Kotz and Balakrishnan (1994)</span>
+023 <span class="comment">% &quot;Continuous Univariate Distributions, vol. 1&quot;, p. 494 ff</span>
+024 <span class="comment">% Wiley</span>
+025 
+026 
+027 <span class="comment">%tested on: matlab 5.x</span>
+028 <span class="comment">% History:</span>
+029 <span class="comment">% revised pab 24.10.2000</span>
+030 <span class="comment">% - added  nargchk + 95<span class="comment">% CI for phat</span></span>
+031 <span class="comment">% - fixed some bugs when data is a matrix </span>
+032 <span class="comment">% added ms 16.08.2000</span>
+033 
+034 error(nargchk(1,2,nargin))
+035 <span class="keyword">if</span> nargin&lt;2|isempty(plotflag),  plotflag=1; <span class="keyword">end</span>
+036 sz = size(data);
+037 Nsz=length(sz);
+038 dim = min(find(sz~=1));  <span class="comment">%1st non-singleton dimension</span>
+039 <span class="comment">% make sure dim=1 is the first non-singleton dimension</span>
+040 <span class="keyword">if</span> isempty(dim) | dim ~= 1, 
+041   order = [dim 1:dim-1 dim+1:Nsz];
+042   data  = permute(data,order);
+043   sz    = size(data);
+044 <span class="keyword">end</span>
+045 m = prod(sz(2:<span class="keyword">end</span>));
+046 n =sz(1);
+047 
+048 phat=mean(data);
+049 
+050 var=phat.^2/n;
+051 <span class="keyword">if</span> nargout&gt;2, <span class="comment">% phat ~ gamma(n,phat/n)</span>
+052   alpha2=0.05/2;
+053   pCI = [<a href="wgaminv.html" class="code" title=" Inverse of the Gamma distribution function">wgaminv</a>(alpha2,n,phat/n);<a href="wgaminv.html" class="code" title=" Inverse of the Gamma distribution function">wgaminv</a>(1 - alpha2,n,phat/n)];
+054 <span class="keyword">end</span>
+055 <span class="keyword">if</span>  plotflag
+056   sd=sort(data);
+057   <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:,1),[sd(:,1) <a href="wexpcdf.html" class="code" title=" Exponential cumulative distribution function ">wexpcdf</a>(sd(:,1),phat(1))],plotflag), hold on
+058   <span class="keyword">for</span> ix=2:m,<a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:,ix),[sd(:,ix) <a href="wexpcdf.html" class="code" title=" Exponential cumulative distribution function ">wexpcdf</a>(sd(:,ix),phat(ix))],plotflag),<span class="keyword">end</span>
+059   hold off
+060   title([deblank([<span class="string">'Empirical and Exponential estimated cdf'</span>])])
+061 <span class="keyword">end</span>
+062 
+063 
+064 
+065 
+066 
+067 
+068</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

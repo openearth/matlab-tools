@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of pairs</title>
+  <meta name="keywords" content="pairs">
+  <meta name="description" content="  Pairwise scatter plots.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; pairs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>pairs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Pairwise scatter plots.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> J = pairs(X,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="pairs.html" class="code" title="  Pairwise scatter plots.">PAIRS</a>  Pairwise scatter plots.
+ 
+  CALL:  <a href="pairs.html" class="code" title="  Pairwise scatter plots.">pairs</a>(X,label,sym)
+ 
+     X     = data
+     label = character array or a cellarray of strings to label the plot
+     sym   = plotsymbol    (default '.')
+ 
+       The columns of X are plotted versus each other.  On the diagonal there is
+       a normal probability plot for every variable.
+ 
+   Note: the order of label and sym is arbitrary
+ 
+  Example
+    X = rand(30,3);
+    <a href="pairs.html" class="code" title="  Pairwise scatter plots.">pairs</a>(X,'*',{'wood','ply','none'})</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/figtext.html" class="code" title=" H = figtext(x,y,T,x_unit,y_unit,x_justify,y_justify,varargin)">figtext</a></li></TD>
+<TD> Places text in figure window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\@inline\char.m">char</a></li></TD>
+<TD>          Create character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\clf.m">clf</a></li></TD>
+<TD>           Clear current figure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\corrcoef.m">corrcoef</a></li></TD>
+<TD>      Correlation coefficients.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\erfinv.m">erfinv</a></li></TD>
+<TD>        Inverse error function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\iscell.m">iscell</a></li></TD>
+<TD>        True for cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> J = <a name="_sub0" href="#_subfunctions" class="code">pairs</a>(X,varargin)
+002 <span class="comment">%PAIRS  Pairwise scatter plots.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  pairs(X,label,sym)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%    X     = data</span>
+007 <span class="comment">%    label = character array or a cellarray of strings to label the plot</span>
+008 <span class="comment">%    sym   = plotsymbol    (default '.')</span>
+009 <span class="comment">%</span>
+010 <span class="comment">%      The columns of X are plotted versus each other.  On the diagonal there is</span>
+011 <span class="comment">%      a normal probability plot for every variable.</span>
+012 <span class="comment">%</span>
+013 <span class="comment">%  Note: the order of label and sym is arbitrary</span>
+014 <span class="comment">%</span>
+015 <span class="comment">% Example</span>
+016 <span class="comment">%   X = rand(30,3);</span>
+017 <span class="comment">%   pairs(X,'*',{'wood','ply','none'})</span>
+018 
+019 <span class="comment">% Tested on matlab 5.x</span>
+020 <span class="comment">% History</span>
+021 <span class="comment">% revised pab 01.11.2000</span>
+022 <span class="comment">%  - updated help header to WAFO style</span>
+023 <span class="comment">%  - added N and correlation coefficient to the plot</span>
+024 <span class="comment">%  - added label</span>
+025 <span class="comment">%  - removed xtick and ytick from the axis</span>
+026 <span class="comment">%       Copyright (c) Anders Holtsberg</span>
+027 
+028 error(nargchk(1,3,nargin))
+029 
+030 plotsymbol = <span class="string">'.'</span>; <span class="comment">% default</span>
+031 labl =[];
+032 [n,p] = size(X);
+033 
+034 <span class="keyword">for</span> ix=1:nargin-1,
+035    A = varargin{ix};
+036    <span class="keyword">if</span> iscell(A),
+037       labl = char(A); <span class="comment">% transform to a character array</span>
+038    <span class="keyword">elseif</span> size(A,1) == n 
+039       labl = A;
+040    <span class="keyword">else</span>
+041       plotsymbol = A;
+042    <span class="keyword">end</span>
+043 <span class="keyword">end</span>
+044 
+045 clf
+046 X = X - ones(n,1)*min(X);
+047 X = X ./ (ones(n,1)*max(X));
+048 X = X*0.8 + 0.1;
+049 
+050 
+051 Z = zeros(p*p*n,2);
+052 <span class="keyword">for</span> i = 1:p
+053    <span class="keyword">for</span> j = 1:p
+054       k = ((i-1)+(j-1)*p)*n+1;
+055       <span class="keyword">if</span> i~=j,         
+056          Z(k:k+n-1, 1) = X(:,i) + i-1;
+057          Z(k:k+n-1, 2) = X(:,j) + p-j;
+058       <span class="keyword">else</span>
+059          Z(k:k+n-1, 1) = sort(X(:,i)) + i-1;
+060          xx = ((1:n)-1/2)'/n;
+061          Z(k:k+n-1, 2) = erfinv(2*xx-1)/7 + 0.5 + p-j;
+062       <span class="keyword">end</span>
+063    <span class="keyword">end</span>
+064 <span class="keyword">end</span>
+065 
+066 hold off
+067 plot(Z(:,1), Z(:,2), plotsymbol)
+068 axis([0 p 0 p])
+069 hold on
+070 <span class="keyword">for</span> i = 0:p
+071    plot([0,p],[i,i],<span class="string">'-'</span>)
+072    plot([i,i],[0,p],<span class="string">'-'</span>)
+073 <span class="keyword">end</span>
+074 
+075 rho = corrcoef(X);<span class="comment">% Put correlation coefficient in the plot</span>
+076 <span class="keyword">for</span> i=1:p-1, 
+077    <span class="keyword">for</span> j=i+1:p     
+078      <a href="../../wafo/misc/figtext.html" class="code" title=" Places text in figure window.">figtext</a>(i-1+0.01,p-j+0.01,[<span class="string">'\rho = '</span> num2str(rho(i,j),2)],<span class="string">'data'</span>,<span class="string">'data'</span>,<span class="string">'left'</span>,<span class="string">'bottom'</span>)
+079      <a href="../../wafo/misc/figtext.html" class="code" title=" Places text in figure window.">figtext</a>(j-0.01,p-i+0.01,[<span class="string">'\rho = '</span> num2str(rho(i,j),2 )],<span class="string">'data'</span>,<span class="string">'data'</span>,<span class="string">'right'</span>,<span class="string">'bottom'</span>)
+080   <span class="keyword">end</span>
+081 <span class="keyword">end</span>
+082 <span class="keyword">if</span> ~isempty(labl)
+083    <span class="keyword">for</span> j=1:p,
+084      set(gca,<span class="string">'DefaultTextRotation'</span>,90)
+085      <a href="../../wafo/misc/figtext.html" class="code" title=" Places text in figure window.">figtext</a>(-.3,p-j+0.5,labl(j,:),<span class="string">'data'</span>,<span class="string">'data'</span>,<span class="string">'left'</span>,<span class="string">'middle'</span>)
+086      set(gca,<span class="string">'DefaultTextRotation'</span>,0)
+087      <a href="../../wafo/misc/figtext.html" class="code" title=" Places text in figure window.">figtext</a>(j-0.5,-.3,labl(j,:),<span class="string">'data'</span>,<span class="string">'data'</span>,<span class="string">'center'</span>,<span class="string">'bottom'</span>)
+088    <span class="keyword">end</span>    
+089 <span class="keyword">end</span>    
+090 
+091 <span class="comment">% Remove xtick and ytick</span>
+092 set(gca,<span class="string">'xtick'</span>,[],<span class="string">'ytick'</span>,[])
+093 hold off
+094 title([<span class="string">'N = '</span> num2str(n)])
+095</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

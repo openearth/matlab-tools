@@ -1,0 +1,241 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of th2vhpdf</title>
+  <meta name="keywords" content="th2vhpdf">
+  <meta name="description" content=" Transform joint T-H density to V-H density">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; th2vhpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>th2vhpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Transform joint T-H density to V-H density</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f2 = th2vhpdf(f,v) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="th2vhpdf.html" class="code" title=" Transform joint T-H density to V-H density ">TH2VHPDF</a> Transform joint T-H density to V-H density 
+           
+   CALL:  fvh = <a href="th2vhpdf.html" class="code" title=" Transform joint T-H density to V-H density ">th2vhpdf</a>(fth,v); 
+  
+         fth  = (T Ac) pdf structure  
+         fvh  = (V Ac)=(Ac/T Ac) pdf structure 
+           v  = vector of  velocities; note  v &gt;= 0, 
+  
+  Example: 
+     opt = <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>('speed',5,'nit',1,'method',0); 
+     S   = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>;   
+     fth = <a href="spec2thpdf.html" class="code" title=" Joint density of amplitude and period/wave-length characteristics ">spec2thpdf</a>(S,4,'TcfAc',[0 5 51],[],opt); 
+     fvh = <a href="th2vhpdf.html" class="code" title=" Transform joint T-H density to V-H density ">th2vhpdf</a>(fth);   
+  
+  See also  <a href="spec2thpdf.html" class="code" title=" Joint density of amplitude and period/wave-length characteristics ">spec2thpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/kdetools/evalpdf.html" class="code" title=" fi = evalpdf(pdf,varargin)">evalpdf</a></li></TD>
+<TD> evaluates a PDF struct by interpolation</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/smooth.html" class="code" title=" [yy,coefs]= smooth(x,y,p,xx,LinExtrap,d2)">smooth</a></li></TD>
+<TD> Calculates a smoothing spline.</TD>
+</TR>
+<TR>
+<TD><li><a href="tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\datestr.m">datestr</a></li></TD>
+<TD>       String representation of date.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\findstr.bi">findstr</a></li></TD>
+<TD>       Find one string within another.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\timefun\now.m">now</a></li></TD>
+<TD>           Current date and time as date number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f2 = <a name="_sub0" href="#_subfunctions" class="code">th2vhpdf</a>(f,v) 
+002 <span class="comment">%TH2VHPDF Transform joint T-H density to V-H density </span>
+003 <span class="comment">%          </span>
+004 <span class="comment">%  CALL:  fvh = th2vhpdf(fth,v); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%        fth  = (T Ac) pdf structure  </span>
+007 <span class="comment">%        fvh  = (V Ac)=(Ac/T Ac) pdf structure </span>
+008 <span class="comment">%          v  = vector of  velocities; note  v &gt;= 0, </span>
+009 <span class="comment">% </span>
+010 <span class="comment">% Example: </span>
+011 <span class="comment">%    opt = rindoptset('speed',5,'nit',1,'method',0); </span>
+012 <span class="comment">%    S   = jonswap;   </span>
+013 <span class="comment">%    fth = spec2thpdf(S,4,'TcfAc',[0 5 51],[],opt); </span>
+014 <span class="comment">%    fvh = th2vhpdf(fth);   </span>
+015 <span class="comment">% </span>
+016 <span class="comment">% See also  spec2thpdf </span>
+017  
+018 <span class="comment">% Tested on : matlab 5.3 </span>
+019 <span class="comment">% History:  </span>
+020 <span class="comment">% revised pab 3Dec2003   </span>
+021 <span class="comment">% revised by Per A. Brodtkorb 19.09.1999 </span>
+022  
+023 <span class="comment">%tic </span>
+024  
+025 f2=f; 
+026 f2.date=datestr(now); 
+027 f2.labx{1}=<span class="string">'Velocity (m/s)'</span>; 
+028 f2.title(find(f2.title==<span class="string">'T'</span>))=<span class="string">'V'</span>; 
+029 k=findstr(f2.title,<span class="string">'min'</span>); 
+030 <span class="keyword">if</span> any(k) 
+031  f2.title=[f2.title(1:k(1)) <span class="string">'ax'</span> f2.title(k(1)+3:<span class="keyword">end</span>)] ; 
+032 <span class="keyword">end</span> 
+033 t=f.x{1}(:); 
+034 h=f.x{2}(:); 
+035 <span class="keyword">if</span> nargin&lt;2|isempty(v) 
+036   v=linspace(0,4,length(t))'; 
+037 <span class="keyword">else</span> 
+038   v=v(:); 
+039 <span class="keyword">end</span> 
+040 f2.x{1}=v; 
+041 f2.f = zeros(length(f2.x{2}),length(v)); 
+042 k0 = find(v); 
+043 k  = find(t); 
+044 k3 = find(h(:)).'; 
+045 method = <span class="string">'linear'</span>  
+046 <span class="keyword">for</span> ix=k3 
+047   <span class="keyword">if</span> 0 
+048     <span class="comment">% the extrapolation done here does not work well if f.f si sparsely </span>
+049     <span class="comment">% sampled =&gt; f2.f values corrupted </span>
+050      
+051      v1 = h(ix)./t(k) ; 
+052     ind = find(f.f(ix,k)&gt;0); 
+053     f2.f(ix,k0)=exp(min(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(v1(ind), log(f.f(ix,k(ind)).'.*t(k(ind)).^2/h(ix)) ,.99,v(k0) ,1),0)); 
+054   <span class="keyword">else</span> 
+055     <span class="comment">% no extrapolation =&gt; more robust </span>
+056      v1 =[ h(ix)./t(k) ]; 
+057     f2.f(ix,k0)=interp1(v1,f.f(ix,k).'.*t(k)./v1 ,v(k0) ,method); 
+058   <span class="keyword">end</span> 
+059 <span class="keyword">end</span> 
+060 f2.f(isnan(f2.f))=0; 
+061 k=find(f2.f&gt;1000); 
+062 <span class="keyword">if</span> any(k) 
+063   disp(<span class="string">'Spurios spikes due to transformation'</span>) 
+064   <span class="comment">%disp('set them to zero') </span>
+065   <span class="comment">%f2.f(k)=0; </span>
+066 <span class="keyword">end</span> 
+067  
+068  
+069  
+070 <span class="keyword">switch</span> 0 
+071   <span class="keyword">case</span> 0, <span class="comment">%do nothing </span>
+072   <span class="keyword">case</span> 2,<span class="comment">% transform Amplitude </span>
+073     rate=1.9 
+074     f2.f=f2.f/rate; 
+075     f2.x{2}=f2.x{2}*rate; 
+076    k=findstr(f2.title,<span class="string">'A'</span>); 
+077    <span class="keyword">if</span> any(k) 
+078      f2.title=[f2.title(1:k(1)-1) num2str(rate) f2.title(k(1):<span class="keyword">end</span>)] ; 
+079    <span class="keyword">end</span>  
+080  <span class="keyword">case</span> 3 
+081    g=f.tr; 
+082    utc=f.u; 
+083     
+084    Ac=f2.x{2}(:); 
+085    Nx=length(Ac); 
+086    Nv=length(f2.x{1}(:)); 
+087    der=ones(Nx,1); <span class="comment">% dh/dh=1 </span>
+088    hg=<a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([utc+Ac der],g); 
+089    der1=hg(:,2); 
+090    Acg=hg(:,1); <span class="comment">% Gaussian level </span>
+091    hg=<a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([-Acg der],fliplr(g)); 
+092    der2=hg(:,2); 
+093    der=1+abs(der1.*der2); 
+094    <span class="comment">% transform amplitude to wave height H=Ac-G(-g(Ac+utc)); </span>
+095    f2.x{2}=Ac-<a href="tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>(-Acg,fliplr(g));  
+096    f2.f=f2.f.*der(:,ones(1,size(f2.f,2))); 
+097    x1=linspace(f2.x{1}(1),f2.x{1}(Nv),Nv)'; 
+098    x2=linspace(f2.x{2}(1),f2.x{2}(Nx),Nx)'; 
+099    [X1 X2]=meshgrid(x1,x2); 
+100    f2.f = <a href="../../wafo/kdetools/evalpdf.html" class="code" title=" evaluates a PDF struct by interpolation">evalpdf</a>(f2,X1,X2,<span class="string">'linear'</span>); 
+101    f2.x{2}=x2; 
+102    f2.x{1}=x1; 
+103     
+104    k=findstr(f2.title,<span class="string">'Ac'</span>); 
+105    <span class="keyword">if</span> any(k) 
+106      f2.title=[f2.title(1:k(1)-1) <span class="string">'Ac-G(-g(Ac+utc))'</span> f2.title(k(1)+2:<span class="keyword">end</span>)] ; 
+107    <span class="keyword">end</span>  
+108 <span class="keyword">end</span> 
+109  
+110 <span class="keyword">if</span> isfield(f,<span class="string">'pl'</span>) 
+111   f2.cl=<a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(f2.f,f.pl); 
+112 <span class="keyword">else</span> 
+113   f2.pl=[10:20:90 95 99 99.9]; 
+114   f2.cl=<a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(f2.f,f2.pl); 
+115 <span class="keyword">end</span> 
+116 <span class="comment">%toc</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

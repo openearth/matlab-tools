@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cav76pdf</title>
+  <meta name="keywords" content="cav76pdf">
+  <meta name="description" content=" Cavanie et al. (1976) approximation of the density  (Tc,Ac)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; cav76pdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cav76pdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Cavanie et al. (1976) approximation of the density  (Tc,Ac)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = cav76pdf(t,h,mom,g) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cav76pdf.html" class="code" title=" Cavanie et al. (1976) approximation of the density  (Tc,Ac)">CAV76PDF</a> Cavanie et al. (1976) approximation of the density  (Tc,Ac)
+          in a stationary Gaussian transform process X(t) where 
+          Y(t) = g(X(t)) (Y zero-mean Gaussian, X  non-Gaussian).
+           
+  CALL:  f = <a href="cav76pdf.html" class="code" title=" Cavanie et al. (1976) approximation of the density  (Tc,Ac)">cav76pdf</a>(t,h,[m0,m2,m4],g);
+ 
+         f    = density of wave characteristics of half-wavelength
+                in a stationary Gaussian transformed process X(t),
+                where Y(t) = g(X(t)) (Y zero-mean Gaussian)
+        t,h   = vectors of periods and amplitudes, respectively.
+                default depending on the spectral moments
+  m0,m2,m4    = the 0'th, 2'nd and 4'th moment of the spectral density
+                with angular frequency.
+         g    = space transformation, Y(t)=g(X(t)), default: g is identity
+                transformation, i.e. X(t) = Y(t)  is Gaussian,
+                The transformation, g, can be estimated using <a href="../../wafo/trgauss/lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>
+                or <a href="../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a> or given a priori by ochi.
+        []    = default values are used.
+ 
+  Example: 
+   mom = <a href="../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(<a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>,4); 
+   f   = <a href="cav76pdf.html" class="code" title=" Cavanie et al. (1976) approximation of the density  (Tc,Ac)">cav76pdf</a>([],[],mom);
+ 
+  See also  <a href="lh83pdf.html" class="code" title=" Longuet-Higgins (1983) approximation of the density (Tc,Ac)">lh83pdf</a>, <a href="../../wafo/trgauss/lc2tr.html" class="code" title=" Estimate transformation, g, from observed crossing intensity.">lc2tr</a>, <a href="../../wafo/trgauss/dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/gaus2dat.html" class="code" title=" x = gaus2dat(xx,g)">gaus2dat</a></li></TD>
+<TD> Transforms  xx  using the inverse of transformation  g.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a></li></TD>
+<TD> Plot contents of pdf structures</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a></li></TD>
+<TD> Transforms process X and up to four derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">cav76pdf</a>(t,h,mom,g)
+002 <span class="comment">%CAV76PDF Cavanie et al. (1976) approximation of the density  (Tc,Ac)</span>
+003 <span class="comment">%         in a stationary Gaussian transform process X(t) where </span>
+004 <span class="comment">%         Y(t) = g(X(t)) (Y zero-mean Gaussian, X  non-Gaussian).</span>
+005 <span class="comment">%          </span>
+006 <span class="comment">% CALL:  f = cav76pdf(t,h,[m0,m2,m4],g);</span>
+007 <span class="comment">%</span>
+008 <span class="comment">%        f    = density of wave characteristics of half-wavelength</span>
+009 <span class="comment">%               in a stationary Gaussian transformed process X(t),</span>
+010 <span class="comment">%               where Y(t) = g(X(t)) (Y zero-mean Gaussian)</span>
+011 <span class="comment">%       t,h   = vectors of periods and amplitudes, respectively.</span>
+012 <span class="comment">%               default depending on the spectral moments</span>
+013 <span class="comment">% m0,m2,m4    = the 0'th, 2'nd and 4'th moment of the spectral density</span>
+014 <span class="comment">%               with angular frequency.</span>
+015 <span class="comment">%        g    = space transformation, Y(t)=g(X(t)), default: g is identity</span>
+016 <span class="comment">%               transformation, i.e. X(t) = Y(t)  is Gaussian,</span>
+017 <span class="comment">%               The transformation, g, can be estimated using lc2tr</span>
+018 <span class="comment">%               or dat2tr or given a priori by ochi.</span>
+019 <span class="comment">%       []    = default values are used.</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% Example: </span>
+022 <span class="comment">%  mom = spec2mom(jonswap,4); </span>
+023 <span class="comment">%  f   = cav76pdf([],[],mom);</span>
+024 <span class="comment">%</span>
+025 <span class="comment">% See also  lh83pdf, lc2tr, dat2tr</span>
+026 
+027 <span class="comment">% References:</span>
+028 <span class="comment">% Cavanie, A., Arhan, M. and Ezraty, R. (1976)</span>
+029 <span class="comment">% &quot;A statistical relationship between individual heights and periods of</span>
+030 <span class="comment">%  storm waves&quot;.</span>
+031 <span class="comment">% In Proceedings Conference on Behaviour of Offshore Structures,</span>
+032 <span class="comment">% Trondheim, pp. 354--360</span>
+033 <span class="comment">% Norwegian Institute of Technology, Trondheim, Norway</span>
+034 <span class="comment">%</span>
+035 <span class="comment">% Lindgren, G. and Rychlik, I. (1982)</span>
+036 <span class="comment">% Wave Characteristics Distributions for Gaussian Waves --</span>
+037 <span class="comment">% Wave-lenght, Amplitude and Steepness, Ocean Engng vol 9, pp. 411-432.</span>
+038 
+039 <span class="comment">% tested on: matlab 5.3 NB! note</span>
+040 <span class="comment">% History:</span>
+041 <span class="comment">% revised pab 04.11.2000</span>
+042 <span class="comment">% - fixed xlabels i.e. f.labx={'Tc','Ac'}</span>
+043 <span class="comment">% revised by IR 4 X 2000. fixed transform and normalisation</span>
+044 <span class="comment">% using Lindgren &amp; Rychlik (1982) paper.</span>
+045 <span class="comment">% At the end of the function there is a text with derivation of the density.</span>
+046 <span class="comment">%</span>
+047 <span class="comment">% revised by jr 21.02.2000</span>
+048 <span class="comment">% - Introduced cell array for f.x for use with pdfplot </span>
+049 <span class="comment">% by pab 28.09.1999</span>
+050 
+051 <span class="keyword">if</span> nargin&lt;3|isempty(mom)
+052   error(<span class="string">'requires the moments'</span>)
+053 <span class="keyword">elseif</span> length(mom)&lt;3
+054   error(<span class="string">'not enough moments'</span>)
+055 <span class="keyword">else</span>
+056   m0=mom(1);
+057   m2=mom(2);
+058   m4=mom(3);
+059 <span class="keyword">end</span>
+060  
+061 <span class="keyword">if</span> nargin&lt;4|isempty(g)
+062   g=[(-5:0.02:5)' (-5:0.02:5)'];
+063   g(:,1)=sqrt(m0)*g(:,1);
+064 <span class="keyword">end</span>
+065 
+066 <span class="keyword">if</span> nargin&lt;1|isempty(t)
+067     tt1=2*pi*sqrt(m0/m2);
+068     paramt=[0 1.7*tt1 51];
+069     t=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(paramt);
+070 <span class="keyword">end</span>
+071     
+072 
+073 <span class="keyword">if</span> nargin&lt;2|isempty(h) 
+074     px=<a href="../../wafo/trgauss/gaus2dat.html" class="code" title=" Transforms  xx  using the inverse of transformation  g.">gaus2dat</a>([0. 0.;1 4.],g);
+075     px=abs(px(2,2)-px(1,2));
+076     paramh=[0 1.3*px 41];
+077     h=<a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(paramh);
+078 <span class="keyword">end</span>
+079 
+080 eps4 = 1-m2^2/(m0*m4);
+081 alfa = m2/sqrt(m0*m4);
+082 <span class="keyword">if</span> ~isreal(sqrt(eps4)) 
+083   error(<span class="string">'input moments are not correct'</span>)
+084 <span class="keyword">end</span>
+085 
+086 
+087 
+088 a   = length(h); 
+089 b   = length(t); 
+090 der = ones(a,1);
+091 
+092 h_lh = <a href="../../wafo/trgauss/tranproc.html" class="code" title=" Transforms process X and up to four derivatives  ">tranproc</a>([h' der],g);
+093 der  = abs(h_lh(:,2));
+094 h_lh = h_lh(:,1);
+095 
+096 <span class="comment">% Normalization + transformation of t and h </span>
+097 
+098 pos  = 2/(1+alfa);    <span class="comment">% inverse of a fraction of positive maxima</span>
+099 cons = 2*pi^4*pos/sqrt(2*pi)/m4/sqrt((1-alfa^2));
+100                                         <span class="comment">%Tm=2*pi*sqrt(m0/m2)/alpha; <span class="comment">%mean period between positive maxima</span></span>
+101 
+102 t_lh = t;
+103 h_lh = sqrt(m0)*h_lh;
+104 
+105 
+106 <span class="comment">% Computation of the distribution</span>
+107 [T,H] = meshgrid(t_lh(2:b),h_lh);
+108 f_th  = zeros(a,b);
+109 der   = der(:);
+110 <span class="comment">%f_th(:,2:b)=const*der(:,ones(1,b-1)).*(H.^2./(T.^5)).*....</span>
+111 <span class="comment">%    exp(-(H./(eps4*T.^2)).^2/8.*((T.^2-alpha^2).^2+....</span>
+112 <span class="comment">%    alpha^4*beta^2 ))/(Tm/4*sqrt(m0));</span>
+113 f_th(:,2:b)=cons*der(:,ones(1,b-1)).*(H.^2./(T.^5)).*.<span class="keyword">...</span>
+114     exp(-0.5*(H./T.^2).^2.*((T.^2-pi^2*m2/m4).^2/(m0*(1-alfa^2))+.<span class="keyword">...</span>
+115     pi^4/m4));
+116 
+117 <span class="comment">%pdfplot</span>
+118 f   = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2);
+119 f.f = f_th;
+120 
+121 f.x{1} = t;
+122 f.x{2} = h;
+123 f.labx = {<span class="string">'Tc'</span>,<span class="string">'Ac'</span>};
+124 f.title=<span class="string">'Joint density of (Tc,Ac) - Cavanie et al. (1976)'</span>;
+125 <span class="comment">%f.eps2=eps2;</span>
+126 f.eps4=eps4;
+127 f.pl = [10:20:90 95 99 99.9];
+128 f.cl = <a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(f.f,f.pl);
+129 <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f)
+130 
+131 <span class="comment">% Let U,Z be the hight and second deivative (curvature) at a local maximum in a Gaussian proces</span>
+132 <span class="comment">% with spectral moments m0,m2,m4. The conditional density ($U&gt;0$) has the following form</span>
+133 <span class="comment">%$$</span>
+134 <span class="comment">% f(z,u)=c \frac{1}{\sqrt{2\pi}}\frac{1}{\sqrt{m0(1-\alpha^2)}}\exp(-0.5\left(\frac{u-z(m2/m4)}</span>
+135 <span class="comment">% {\sqrt{m0(1-\alpha^2)}}\right)^2)\frac{|z|}{m4}\exp(-0.5z^2/m4), \quad z&lt;0, </span>
+136 <span class="comment">%$$</span>
+137 <span class="comment">% where $c=2/(1+\alpha)$, $\alpha=m2/\sqrt{m0\cdot m4}$. </span>
+138 <span class="comment">%</span>
+139 <span class="comment">% The cavanie approximation is based on the model $X(t)=U \cos(\pi t/T)$, consequently</span>
+140 <span class="comment">% we have $U=H$ and by twice differentiation $Z=-U(\pi^2/T)^2\cos(0)$. The variable change has Jacobian</span>
+141 <span class="comment">% $2\pi^2 H/T^3$ giving the final formula for the density of $T,H$</span>
+142 <span class="comment">%$$</span>
+143 <span class="comment">% f(t,h)=c \frac{2\pi^4}{\sqrt{2\pi}}\frac{1}{m4\sqrt{m0(1-\alpha^2)}}\frac{h^2}{t^5}</span>
+144 <span class="comment">%       \exp(-0.5\frac{h^2}{t^4}\left(\left(\frac{t^2-\pi^2(m2/m4)}</span>
+145 <span class="comment">% {\sqrt{m0(1-\alpha^2)}}\right)^2+\frac{\pi^4}{m4}\right)). </span>
+146 <span class="comment">%$$</span>
+147 <span class="comment">%</span>
+148 <span class="comment">%</span>
+149</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

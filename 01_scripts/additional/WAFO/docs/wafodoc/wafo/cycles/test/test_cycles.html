@@ -1,0 +1,634 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of test_cycles</title>
+  <meta name="keywords" content="test_cycles">
+  <meta name="description" content=" Quick test of the routines in module 'cycles'">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">cycles</a> &gt; <a href="index.html">test</a> &gt; test_cycles.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles\test&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>test_cycles
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Quick test of the routines in module 'cycles'</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="test_cycles.html" class="code" title=" Quick test of the routines in module 'cycles'">TEST_CYCLES</a> Quick test of the routines in module 'cycles'
+ 
+ This script is used for a quick test of the routines in
+  Modul 'cycles':
+ 
+  The following routines are tested:
+ 
+  Cycle counting
+  - <a href="../../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>
+  - <a href="../../../wafo/cycles/rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>
+  - <a href="../../../wafo/cycles/tp2mm.html" class="code" title=" Calculates min2Max and Max2min cycles from a sequence of turning points">tp2mm</a>
+  - <a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>
+  - <a href="../../../wafo/cycles/tp2arfc.html" class="code" title=" Calculates asymmetric rainflow cycles from turning points.">tp2arfc</a>
+  
+  Cycle matrix
+  - <a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>
+  - <a href="../../../wafo/cycles/cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">cmat2nt</a>
+  - <a href="../../../wafo/cycles/nt2cmat.html" class="code" title="  Calculates a cycle matrix from a counting distribution.">nt2cmat</a>
+  - <a href="../../../wafo/cycles/cmat2rmcmat.html" class="code" title="  Converts a cycle matrix from Range-Mean format to min-max format.">cmat2rmcmat</a>
+  - <a href="../../../wafo/cycles/rmcmat2cmat.html" class="code" title=" Converts a cycle matrix from Range-Mean format to min-max format.">rmcmat2cmat</a>
+  - <a href="../../../wafo/cycles/smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>
+  - <a href="../../../wafo/cycles/tp2lc.html" class="code" title="  Calculates the number of upcrossings from the turning points. ">tp2lc</a>
+  - <a href="../../../wafo/cycles/cc2lc.html" class="code" title=" Calculates the number of upcrossings from a cycle count  ">cc2lc</a>
+  - <a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>
+  - <a href="../../../wafo/cycles/nt2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">nt2lc</a>
+  - <a href="../../../wafo/cycles/cc2amp.html" class="code" title=" Calculates the amplitudes from a cycle count.">cc2amp</a>
+  - <a href="../../../wafo/cycles/cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">cmat2amp</a>
+ 
+  Discrete loads
+  - <a href="../../../wafo/cycles/dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>
+  - <a href="../../../wafo/cycles/cc2dcc.html" class="code" title=" Discretize a cycle count.">cc2dcc</a>
+  - <a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>
+  - <a href="../../../wafo/cycles/dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>
+  - <a href="../../../wafo/cycles/dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">dcc2cmat</a>
+ 
+  Extrapolation &amp; Smoothing of RFM/CMAT/LC. 
+  - <a href="../../../wafo/cycles/rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>
+  - <a href="../../../wafo/cycles/tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">tpextrapolate</a>
+  - <a href="../../../wafo/cycles/cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>  
+  - <a href="../../../wafo/cycles/wgpdfit_mld.html" class="code" title=" Parameter estimates for GPD data">wgpdfit_mld</a>  
+  - <a href="../../../wafo/cycles/lc2rfmextreme.html" class="code" title=" Compute extreme RFM from level crossings.">lc2rfmextreme</a>
+  - <a href="../../../wafo/cycles/extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>     
+  - <a href="../../../wafo/cycles/smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/cycles/cc2amp.html" class="code" title=" [amp]=cc2amp(cc)">cc2amp</a></li></TD>
+<TD> Calculates the amplitudes from a cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" [F,h] = cc2cmat(param,cc,ddef,method,h,NOsubzero,alpha)">cc2cmat</a></li></TD>
+<TD> Calculates the cycle count matrix from a cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cc2dcc.html" class="code" title=" dcc = cc2dcc(param,cc,ddef)">cc2dcc</a></li></TD>
+<TD> Discretize a cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cc2lc.html" class="code" title=" d = cc2lc(cc,def,plotflag,sa)">cc2lc</a></li></TD>
+<TD> Calculates the number of upcrossings from a cycle count</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/ccplot.html" class="code" title=" ccplot(cc,ps)">ccplot</a></li></TD>
+<TD> Plots a cycle count as a point process in the plane.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmat2amp.html" class="code" title=" amp_hist = cmat2amp(param,F)">cmat2amp</a></li></TD>
+<TD> Calculates a histogram of amplitudes from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmat2extralc.html" class="code" title=" [lcEst,Est,R,MSE] = cmat2extralc(param,F,u,method,plotflag)">cmat2extralc</a></li></TD>
+<TD>  Extrapolate level crossing spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" lc = cmat2lc(param,F)">cmat2lc</a></li></TD>
+<TD> Calculates the level crossings from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmat2nt.html" class="code" title=" NT = cmat2nt(F,def)">cmat2nt</a></li></TD>
+<TD> Calculates a counting distribution from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmat2rmcmat.html" class="code" title=" [Frm,paramM,paramR,paramA] = cmat2rmcmat(F,param)">cmat2rmcmat</a></li></TD>
+<TD>  Converts a cycle matrix from Range-Mean format to min-max format.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmatcombine.html" class="code" title=" [F,Lim,FF1,FF2] = cmatcombine(F1,F2,in3)">cmatcombine</a></li></TD>
+<TD> Combines two cycle matrices.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmatplot.html" class="code" title=" cmatplot(in1,in2,in3,in4,in5)">cmatplot</a></li></TD>
+<TD> Plots a cycle matrix, e.g. a rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/cmatresamp.html" class="code" title=" FF = cmatresamp(F,Method)">cmatresamp</a></li></TD>
+<TD> Resamples a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/dat2dtp.html" class="code" title=" [dtp,u,tp] = dat2dtp(param,x,h,ddef)">dat2dtp</a></li></TD>
+<TD> The sequence of discretized turning points from a signal.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2lc.html" class="code" title=" lc = dat2lc(x,h,def);">dat2lc</a></li></TD>
+<TD> Extracts level-crossing spectrum from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/dat2rfm.html" class="code" title=" [RFM,u,param] = dat2rfm(x,h,n)">dat2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix from a time signal.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2tp.html" class="code" title=" [tp, ind] = data2tp(x,h,wdef);">dat2tp</a></li></TD>
+<TD> Extracts turning points from data,</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/dcc2cmat.html" class="code" title=" F = dcc2cmat(dcc,n)">dcc2cmat</a></li></TD>
+<TD>  Calculates the cycle matrix for a discrete cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/dtp2arfm.html" class="code" title=" [RFM,RFM1,res] = dtp2arfm(x,in2,in3,res0)">dtp2arfm</a></li></TD>
+<TD> Calculates asymmetric RFM from discrete turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" [RFM,RFM1,res] = dtp2rfm(x,varargin)">dtp2rfm</a></li></TD>
+<TD> Calculates rainflow matrix from discrete turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/extralc.html" class="code" title=" [lcEst,Est] = extralc(lc,u,method,plotflag)">extralc</a></li></TD>
+<TD>  Extrapolate level crossing spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/jonswap.html" class="code" title=" S1 = jonswap(w1,sdata,plotflag)">jonswap</a></li></TD>
+<TD> Calculates (and plots) a JONSWAP spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/lc2rfmextreme.html" class="code" title=" [Frfc,u,Nrfc,Nrfc0]=lc2nt(lc,vect)">lc2rfmextreme</a></li></TD>
+<TD> Compute extreme RFM from level crossings.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/lcplot.html" class="code" title=" h = lcplot(lc,plotflag,ma,sa);">lcplot</a></li></TD>
+<TD> Plots level-crossing spectrum (lc)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/lsplot.html" class="code" title=" h=lsplot(LS,cum,norm,beta,plottype)">lsplot</a></li></TD>
+<TD>  Plot load spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/mctp2rfm.html" class="code" title=" [F_rfc,mu_rfc] = mctp2rfm(F,c_m)">mctp2rfm</a></li></TD>
+<TD>  Calculates the rainflow matrix for a MCTP.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wsim/mctpsim.html" class="code" title=" [x,out2,out3] = mctpsim(varargin)">mctpsim</a></li></TD>
+<TD>  Simulates a Markov chain of turning points</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/markov/mktestmat.html" class="code" title=" [F,Fh] = mktestmat(param,x0,s,lam,NOsubzero)">mktestmat</a></li></TD>
+<TD>   Makes test matrices for min-max (and max-min) matrices.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/nt2cmat.html" class="code" title=" F = nt2cmat(NT,def)">nt2cmat</a></li></TD>
+<TD>  Calculates a cycle matrix from a counting distribution.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/nt2lc.html" class="code" title=" lc = nt2lc(param,NT)">nt2lc</a></li></TD>
+<TD> Calculates the level crossings from a cycle matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/rfcfilter.html" class="code" title=" [y] = rfcfilter(x,h,def)">rfcfilter</a></li></TD>
+<TD> Rainflow filter a signal.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/rfmextrapolate.html" class="code" title=" [Fest,Pout,Fextreme,Fsmooth,Fest0] = rfmextrapolate2(F,Pin,plotflag)">rfmextrapolate</a></li></TD>
+<TD> Extrapolates a rainflow matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/rmcmat2cmat.html" class="code" title=" [F,param] = rmcmat2cmat(Frm,paramM,paramR)">rmcmat2cmat</a></li></TD>
+<TD> Converts a cycle matrix from Range-Mean format to min-max format.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/smoothcmat.html" class="code" title=" [Fsmooth,h] = smthcmat(F,method,h,NOsubzero,alpha)">smoothcmat</a></li></TD>
+<TD> Smooth a cycle matrix using (adaptive) kernel smoothing</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wsim/spec2sdat.html" class="code" title=" [x,xder]=spec2sdat(S,np,dt,iseed,method)">spec2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tp2arfc.html" class="code" title=" [ARFC,ARFC1,res,def] = tp2arfc(x,def,ARFC0,res0)">tp2arfc</a></li></TD>
+<TD> Calculates asymmetric rainflow cycles from turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tp2lc.html" class="code" title=" lc=tp2lc(tp,def,plotflag,sa)">tp2lc</a></li></TD>
+<TD>  Calculates the number of upcrossings from the turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tp2mm.html" class="code" title=" [mM,Mm] = tp2mm(tp)">tp2mm</a></li></TD>
+<TD> Calculates min2Max and Max2min cycles from a sequence of turning points</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" [RFC,RFC1,res,def] = tp2rfc(x,def,RFC0,res0)">tp2rfc</a></li></TD>
+<TD> Finds the rainflow cycles from the sequence of turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/tpextrapolate.html" class="code" title=" [tpe,Pout,I,tpe0] = tpextrapolate(tp,N,Pin,plotflag)">tpextrapolate</a></li></TD>
+<TD> Extrapolates a sequence of turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/wgpdfit_ml.html" class="code" title=" [f,k,s] = wgpdfit_ml(x,data)">wgpdfit_ml</a></li></TD>
+<TD> Internal routine for wgpdfit (ML estimates for GPD data)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/cycles/wgpdfit_mld.html" class="code" title=" [f,k,s] = wgpdfit_mld(x,data)">wgpdfit_mld</a></li></TD>
+<TD> Parameter estimates for GPD data</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wstats/wgpdrnd.html" class="code" title=" r = wgpdrnd(k,s,m0,varargin);">wgpdrnd</a></li></TD>
+<TD> Random matrices from a Generalized Pareto Distribution</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%TEST_CYCLES Quick test of the routines in module 'cycles'</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">%This script is used for a quick test of the routines in</span>
+0004 <span class="comment">% Modul 'cycles':</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% The following routines are tested:</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Cycle counting</span>
+0009 <span class="comment">% - dat2tp</span>
+0010 <span class="comment">% - rfcfilter</span>
+0011 <span class="comment">% - tp2mm</span>
+0012 <span class="comment">% - tp2rfc</span>
+0013 <span class="comment">% - tp2arfc</span>
+0014 <span class="comment">% </span>
+0015 <span class="comment">% Cycle matrix</span>
+0016 <span class="comment">% - cc2cmat</span>
+0017 <span class="comment">% - cmat2nt</span>
+0018 <span class="comment">% - nt2cmat</span>
+0019 <span class="comment">% - cmat2rmcmat</span>
+0020 <span class="comment">% - rmcmat2cmat</span>
+0021 <span class="comment">% - smoothcmat</span>
+0022 <span class="comment">% - tp2lc</span>
+0023 <span class="comment">% - cc2lc</span>
+0024 <span class="comment">% - cmat2lc</span>
+0025 <span class="comment">% - nt2lc</span>
+0026 <span class="comment">% - cc2amp</span>
+0027 <span class="comment">% - cmat2amp</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% Discrete loads</span>
+0030 <span class="comment">% - dat2dtp</span>
+0031 <span class="comment">% - cc2dcc</span>
+0032 <span class="comment">% - dtp2rfm</span>
+0033 <span class="comment">% - dtp2arfm</span>
+0034 <span class="comment">% - dcc2cmat</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% Extrapolation &amp; Smoothing of RFM/CMAT/LC. </span>
+0037 <span class="comment">% - rfmextrapolate</span>
+0038 <span class="comment">% - tpextrapolate</span>
+0039 <span class="comment">% - cmat2extralc  </span>
+0040 <span class="comment">% - wgpdfit_mld  </span>
+0041 <span class="comment">% - lc2rfmextreme</span>
+0042 <span class="comment">% - extralc     </span>
+0043 <span class="comment">% - smoothcmat   </span>
+0044 
+0045 <span class="comment">% History:</span>
+0046 <span class="comment">% Created by PJ (Pär Johannesson) 18-May-2000</span>
+0047 <span class="comment">% Updated by PJ (Pär Johannesson) 07-Jul-2005</span>
+0048 
+0049 figure(1), clf
+0050 
+0051 echo on
+0052 
+0053 <span class="comment">% Load test-signal: deep.dat</span>
+0054 load([<a href="../../../wafo/waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a> filesep <span class="string">'wdemos'</span> filesep <span class="string">'itmkurs'</span> filesep <span class="string">'deep.dat'</span>])
+0055 x = deep;
+0056 plot(x(:,1),x(:,2))
+0057 
+0058 pause
+0059 
+0060 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span>
+0061 <span class="comment">% Cycle counting</span>
+0062 <span class="comment">%</span>
+0063 
+0064 <span class="comment">%DAT2TP - Turning points from a signal.</span>
+0065 
+0066 tp = <a href="../../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(x);    <span class="comment">% Calculate turing points</span>
+0067 tp5 = <a href="../../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(x,5); <span class="comment">% TP, rainflow filter with threshold 5. Needs FINDRFC!</span>
+0068 
+0069 plot(x(:,1),x(:,2),tp(:,1),tp(:,2),tp5(:,1),tp5(:,2))
+0070 
+0071 pause
+0072 
+0073 <span class="comment">%DAT2TP - Turning points from a signal.</span>
+0074 
+0075 [RFM0,u0] = <a href="../../../wafo/cycles/dat2rfm.html" class="code" title="  Calculates the rainflow matrix from a time signal. ">dat2rfm</a>(x);    <span class="comment">% Default parameters</span>
+0076 [RFM,u] = <a href="../../../wafo/cycles/dat2rfm.html" class="code" title="  Calculates the rainflow matrix from a time signal. ">dat2rfm</a>(x,0.5,[-25 25 50]);
+0077 subplot(1,2,1), <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u0,u0,RFM0,3)
+0078 subplot(1,2,2), <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,RFM,3)
+0079 
+0080 pause
+0081 
+0082 <span class="comment">%RFCFILTER - Rainflow filter a signal.</span>
+0083 y = <a href="../../../wafo/cycles/rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(x,0,1); <span class="comment">% Filtered signal y is the turning points of x.</span>
+0084 y5 = <a href="../../../wafo/cycles/rfcfilter.html" class="code" title=" Rainflow filter a signal.">rfcfilter</a>(x,5);  <span class="comment">% This removes all rainflow cycles with range less than 5.</span>
+0085 
+0086 plot(x(:,1),x(:,2),y(:,1),y(:,2),y5(:,1),y5(:,2))
+0087 
+0088 pause
+0089 
+0090 <span class="comment">%TP2MM - min-max cycles from TP.</span>
+0091 [mM,Mm] = <a href="../../../wafo/cycles/tp2mm.html" class="code" title=" Calculates min2Max and Max2min cycles from a sequence of turning points">tp2mm</a>(tp);
+0092 <a href="../../../wafo/cycles/ccplot.html" class="code" title=" Plots a cycle count as a point process in the plane.">ccplot</a>({mM Mm})
+0093 
+0094 pause
+0095 
+0096 <span class="comment">%TP2RFC - Rainflow cycles from TP.</span>
+0097 [rfc] = <a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(tp);
+0098 [rfc2] = <a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(tp,1);
+0099 def=[]; def.res=<span class="string">'cs'</span>; def.time=1;
+0100 [rfc3] = <a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(tp,def);
+0101 def.asymmetric=1;
+0102 [rfc4] = <a href="../../../wafo/cycles/tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>(tp,def);
+0103 <a href="../../../wafo/cycles/ccplot.html" class="code" title=" Plots a cycle count as a point process in the plane.">ccplot</a>({rfc rfc2; rfc3 rfc4})
+0104 
+0105 pause
+0106 
+0107 <span class="comment">%TP2ARFC - Asymmetric rainflow cycles from TP.</span>
+0108 [arfc,arfc0,res] = <a href="../../../wafo/cycles/tp2arfc.html" class="code" title=" Calculates asymmetric rainflow cycles from turning points.">tp2arfc</a>(tp);
+0109 <a href="../../../wafo/cycles/ccplot.html" class="code" title=" Plots a cycle count as a point process in the plane.">ccplot</a>({arfc arfc0; [] []})
+0110 subplot(2,2,3), <a href="../../../wafo/cycles/ccplot.html" class="code" title=" Plots a cycle count as a point process in the plane.">ccplot</a>(arfc), hold on, plot(arfc0(:,1),arfc0(:,2),<span class="string">'r.'</span>), hold off
+0111 subplot(2,2,4), plot(res)
+0112 
+0113 pause
+0114 
+0115 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span>
+0116 <span class="comment">% Cycle matrix</span>
+0117 <span class="comment">%</span>
+0118 
+0119 <span class="comment">%CC2CMAT - Cycle matrix from cycle count.</span>
+0120 param = [-20 20 41]; u=<a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+0121 Frfc = <a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>(param,rfc);
+0122 Farfc = <a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>(param,arfc);
+0123 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{Frfc Farfc},13)
+0124 
+0125 pause
+0126 
+0127 <span class="comment">% Smoothing, fixed bandwidth</span>
+0128 Frfc1 = <a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>(param,rfc,[],1);
+0129 Farfc1 = <a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>(param,arfc,[],1); <span class="comment">% Don't work for ARFC</span>
+0130 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{Frfc1 Farfc1},13)
+0131 
+0132 pause
+0133 
+0134 <span class="comment">% Smoothing, varying bandwidth</span>
+0135 Frfc2 = <a href="../../../wafo/cycles/cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>(param,rfc,[],2);
+0136 <span class="comment">%Farfc2 = cc2cmat(param,arfc,[],2); <span class="comment">% Don't work for ARFC</span></span>
+0137 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{Frfc2},13)
+0138 
+0139 pause
+0140 
+0141 <span class="comment">%CMAT2NT - Counting distribution from cycle matrix.</span>
+0142 F=Frfc;
+0143 NT = <a href="../../../wafo/cycles/cmat2nt.html" class="code" title=" Calculates a counting distribution from a cycle matrix.">cmat2nt</a>(F);
+0144  
+0145 <span class="comment">%NT2CMAT - Cycle matrix from counting distribution.</span>
+0146 FF = <a href="../../../wafo/cycles/nt2cmat.html" class="code" title="  Calculates a cycle matrix from a counting distribution.">nt2cmat</a>(NT);
+0147 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>({F NT FF},13)
+0148 sum(sum(abs(FF-F))) <span class="comment">% Shall be zero</span>
+0149 
+0150 pause
+0151 
+0152 <span class="comment">%CMAT2RMCMAT - Convert cycle matrix from min-max to range-mean (PJ)</span>
+0153 Frm = <a href="../../../wafo/cycles/cmat2rmcmat.html" class="code" title="  Converts a cycle matrix from Range-Mean format to min-max format.">cmat2rmcmat</a>(F);
+0154 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>({F Frm},13)
+0155 
+0156 pause
+0157 
+0158 <span class="comment">%RMCMAT2CMAT - Convert cycle matrix from range-mean to min-max (PJ)</span>
+0159 F1 = <a href="../../../wafo/cycles/rmcmat2cmat.html" class="code" title=" Converts a cycle matrix from Range-Mean format to min-max format.">rmcmat2cmat</a>(Frm);
+0160 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>({F Frm F1},13)
+0161 sum(sum(abs(F1-F))) <span class="comment">% Shall be zero</span>
+0162 
+0163 pause
+0164 
+0165 <span class="comment">%SMOOTHCMAT - Smooth a cycle matrix. (PJ)</span>
+0166 Frfc1 = <a href="../../../wafo/cycles/smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>(Frfc,1); <span class="comment">% Smoothing, fixed bandwidth</span>
+0167 Frfc2 = <a href="../../../wafo/cycles/smoothcmat.html" class="code" title=" Smooth a cycle matrix using (adaptive) kernel smoothing">smoothcmat</a>(Frfc,2); <span class="comment">% Smoothing, varying bandwidth</span>
+0168 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{Frfc1 Frfc2},13)
+0169 
+0170 pause
+0171 
+0172 <span class="comment">%TP2LC - Level crossings from a cycle count. (WAT/PJ)</span>
+0173 lc1 = <a href="../../../wafo/cycles/tp2lc.html" class="code" title="  Calculates the number of upcrossings from the turning points. ">tp2lc</a>(tp);
+0174 subplot(2,2,1), <a href="../../../wafo/onedim/lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a>(lc1)
+0175 
+0176 <span class="comment">%CC2LC - Level crossings from a cycle count. (WAT/PJ)</span>
+0177 lc2 = <a href="../../../wafo/cycles/cc2lc.html" class="code" title=" Calculates the number of upcrossings from a cycle count  ">cc2lc</a>(rfc);
+0178 subplot(2,2,2), <a href="../../../wafo/onedim/lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a>(lc2)
+0179 
+0180 sum(abs(lc1-lc2)) <span class="comment">% Shall be zero</span>
+0181 
+0182 <span class="comment">%CMAT2LC - Level crossings from cycle matrix. (PJ)</span>
+0183 lc3 = <a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>(param,Frfc);
+0184 subplot(2,2,3), <a href="../../../wafo/onedim/lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a>(lc3)
+0185 
+0186 <span class="comment">%NT2LC - Level crossings from counting distribution. (FAT/PJ)</span>
+0187 lc4 = <a href="../../../wafo/cycles/nt2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">nt2lc</a>(param,NT);
+0188 subplot(2,2,4), <a href="../../../wafo/onedim/lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a>(lc4)
+0189 
+0190 sum(abs(lc3-lc4)) <span class="comment">% Shall be zero</span>
+0191 
+0192 pause
+0193 
+0194 <span class="comment">%CC2AMP - Amplitude histogram from a cycle count. (WAT/PJ)</span>
+0195 amp = <a href="../../../wafo/cycles/cc2amp.html" class="code" title=" Calculates the amplitudes from a cycle count.">cc2amp</a>(rfc);
+0196 [N,X] = hist(amp,((u-u(1))+(u(2)-u(1))/2)/2);
+0197 amp_hist1=[X' N'];
+0198 
+0199 <span class="comment">%CMAT2AMP - Amplitude histogram from cycle matrix. (PJ)</span>
+0200 amp_hist2 = <a href="../../../wafo/cycles/cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">cmat2amp</a>(param,F);
+0201 
+0202 subplot(2,1,1), bar(amp_hist1(:,1),amp_hist1(:,2))
+0203 subplot(2,1,2), bar(amp_hist2(:,1)+0.25,amp_hist2(:,2))
+0204 
+0205 <a href="../../../wafo/cycles/lsplot.html" class="code" title="  Plot load spectra. ">lsplot</a>({amp_hist2})
+0206 pause
+0207 
+0208 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span>
+0209 <span class="comment">% Discrete loads</span>
+0210 <span class="comment">%</span>
+0211 
+0212 clf
+0213 
+0214 <span class="comment">%DAT2DTP - Discrete TP from load. (PJ)</span>
+0215 param = [-20 20 41];  u=<a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+0216 [dtp1,u1,tp1] = <a href="../../../wafo/cycles/dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>(param,x);
+0217 [dtp2,u2,tp2] = <a href="../../../wafo/cycles/dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>(param,x,5);
+0218 plot(x(:,1),x(:,2),tp1(:,1),tp1(:,2),tp2(:,1),tp2(:,2)), grid
+0219 
+0220 pause
+0221 
+0222 <span class="comment">%CC2DCC - Discretization of a cycle count. (WAT)</span>
+0223 dcc = <a href="../../../wafo/cycles/cc2dcc.html" class="code" title=" Discretize a cycle count.">cc2dcc</a>(param,rfc);
+0224 Adcc = <a href="../../../wafo/cycles/cc2dcc.html" class="code" title=" Discretize a cycle count.">cc2dcc</a>(param,arfc);
+0225 
+0226 <span class="comment">%DTP2RFM - Rainflow matrix from discrete TP. (PJ)</span>
+0227 n=param(3);
+0228 [RFM,RFM0,res] = <a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(dtp1(:,2),n);
+0229 
+0230 <span class="comment">%DTP2ARFM - Asymmetric rainflow matrix from discrete TP. (PJ)</span>
+0231 [ARFM,ARFM0,Ares] = <a href="../../../wafo/cycles/dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>(dtp1(:,2),n);
+0232 
+0233 <span class="comment">%DCC2CMAT - Histogram matrix from discrete class indices. (WAT)</span>
+0234 Frfc = <a href="../../../wafo/cycles/dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">dcc2cmat</a>(dcc,n);
+0235 Farfc = <a href="../../../wafo/cycles/dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">dcc2cmat</a>(Adcc,n);
+0236 
+0237 <span class="comment">% Different methods for discretization, results should be different</span>
+0238 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{RFM ARFM; Frfc Farfc},13)
+0239 
+0240 pause
+0241 
+0242 
+0243 
+0244 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span>
+0245 <span class="comment">% Extrapolation &amp; Smoothing</span>
+0246 <span class="comment">%</span>
+0247 
+0248 <span class="comment">%Create a MCTP model</span>
+0249 
+0250 n = 64;
+0251 param = [-1 1 n]; uu=<a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+0252 paramD = [1 n n];
+0253 [G,Gh] = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>(param,[-0.2 0.2], 0.15,1);
+0254 lcG = <a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>(paramD,G);
+0255 
+0256 <span class="comment">% Simulate a sample path</span>
+0257 N = 1000;
+0258 xD = <a href="../../../wafo/wsim/mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>({G Gh},2*N);
+0259 
+0260 <span class="comment">% Calculate RFM</span>
+0261 Frfc = <a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(xD,n);
+0262 
+0263 <span class="comment">% Test rfmextrapolate</span>
+0264 
+0265 [G,Gh] = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>([-1 1 64],[-0.2 0.2], 0.15,1);
+0266 xD = <a href="../../../wafo/wsim/mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>({G Gh},2000);
+0267 Frfc = <a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(xD,64,<span class="string">'CS'</span>);
+0268 Fest = <a href="../../../wafo/cycles/rfmextrapolate.html" class="code" title=" Extrapolates a rainflow matrix.">rfmextrapolate</a>(Frfc,[],1);
+0269 Grfc = <a href="../../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>({G Gh});
+0270 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>({Frfc Fest; Grfc G},4)
+0271 
+0272 pause
+0273 
+0274 <span class="comment">% Test tpextrapolate</span>
+0275 
+0276 x = load(<span class="string">'sea.dat'</span>);
+0277 tp = <a href="../../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a>(x,0.5);
+0278 tpe = <a href="../../../wafo/cycles/tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">tpextrapolate</a>(tp,1,[],1);
+0279 clf, plot(tp(:,1),tp(:,2),<span class="string">'b'</span>,tpe(:,1),tpe(:,2),<span class="string">'r'</span>)
+0280 [tpe,Pout,I] = <a href="../../../wafo/cycles/tpextrapolate.html" class="code" title=" Extrapolates a sequence of turning points. ">tpextrapolate</a>(tp,1,[],2);
+0281 clf, plot(tpe(:,1),tpe(:,2),<span class="string">'b'</span>,tpe(I.min,1),tpe(I.min,2),<span class="string">'g*'</span>,tpe(I.max,1),tpe(I.max,2),<span class="string">'g*'</span>)
+0282 
+0283 <span class="comment">% Test cmat2extralc</span>
+0284 
+0285 [G,Gh] = <a href="../../../wafo/markov/mktestmat.html" class="code" title="   Makes test matrices for min-max (and max-min) matrices. ">mktestmat</a>([-1 1 64],[-0.2 0.2], 0.15,1);
+0286 xD = <a href="../../../wafo/wsim/mctpsim.html" class="code" title="  Simulates a Markov chain of turning points ">mctpsim</a>({G Gh},2000);
+0287 Frfc = <a href="../../../wafo/cycles/dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>(xD,64,<span class="string">'CS'</span>);
+0288 [lcEst,Est] = <a href="../../../wafo/cycles/cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>([-1 1 64],Frfc,[-0.4 0.4]);
+0289 lcG = <a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>([-1 1 64],G/sum(sum(G)));
+0290 lcF = <a href="../../../wafo/cycles/cmat2lc.html" class="code" title=" Calculates the level crossings from a cycle matrix.">cmat2lc</a>([-1 1 64],Frfc);
+0291 clf, semilogx(1000*lcG(:,2),lcG(:,1),lcF(:,2),lcF(:,1),lcEst.lc(:,2),lcEst.lc(:,1))
+0292 
+0293 param=[-1 1 64]; u=0.4;
+0294 [lcEst,Est] = <a href="../../../wafo/cycles/cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>(param,Frfc,[-u u]); <span class="comment">%,method,plotflag)</span>
+0295 lcEst = <a href="../../../wafo/cycles/cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>(param,Frfc,[-u u],[],0); <span class="comment">%,method,plotflag)</span>
+0296 [lcEst,Est,R,MSE] = <a href="../../../wafo/cycles/cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>(param,Frfc,[-u u],<span class="string">'exp,ls1'</span>,1); <span class="comment">%,method,plotflag)</span>
+0297 [lcEst,Est,R,MSE] = <a href="../../../wafo/cycles/cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>(param,Frfc,[-u u],<span class="string">'exp,wls4'</span>,1); <span class="comment">%,method,plotflag)</span>
+0298 [lcEst,Est,R,MSE] = <a href="../../../wafo/cycles/cmat2extralc.html" class="code" title="  Extrapolate level crossing spectrum">cmat2extralc</a>(param,Frfc,[-u u],<span class="string">'ray,ml'</span>,1); <span class="comment">%,method,plotflag)</span>
+0299 
+0300 pause
+0301 
+0302 <span class="comment">%Test wgpdfit_mld</span>
+0303 
+0304 data0 = <a href="../../../wafo/wstats/wgpdrnd.html" class="code" title=" Random matrices from a Generalized Pareto Distribution">wgpdrnd</a>(0.3,1,0,200,1);
+0305 x_ML = fzero(<span class="string">'wgpdfit_ml'</span>,0,[],data0);
+0306 [f,k_ML,s_ML] = <a href="../../../wafo/wstats/wgpdfit_ml.html" class="code" title=" Internal routine for wgpdfit (ML estimates for GPD data) ">wgpdfit_ml</a>(x_ML,data0) <span class="comment">% Estimates k_ML and s_ML</span>
+0307 data1 = floor(data0*10)/10;
+0308 x=(0:0.1:(max(data1)+0.1))';
+0309 N = histc(data1+0.05,x);
+0310 x_MLD = fzero(<span class="string">'wgpdfit_mld'</span>,0,[],[x N]);
+0311 [f,k_MLD,s_MLD] = <a href="../../../wafo/cycles/wgpdfit_mld.html" class="code" title=" Parameter estimates for GPD data">wgpdfit_mld</a>(x_MLD,[x N]) <span class="comment">% Estimates k_ML and s_ML</span>
+0312 
+0313 <span class="comment">%Test lc2rfmextreme</span>
+0314 
+0315 u = (-5:0.2:5)'; lc = [u exp(-u.^2/2)];
+0316 [Frfc,u,Nrfc] = <a href="../../../wafo/cycles/lc2rfmextreme.html" class="code" title=" Compute extreme RFM from level crossings.">lc2rfmextreme</a>(lc);
+0317 <a href="../../../wafo/cycles/cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,{Frfc Nrfc},3)
+0318 
+0319 pause
+0320 
+0321 <span class="comment">%Test cmatcombine</span>
+0322 
+0323 F1 = triu(ones(8),0)
+0324 F2 = 2*F1
+0325 [F,Lim,FF1,FF2]=<a href="../../../wafo/cycles/cmatcombine.html" class="code" title=" Combines two cycle matrices.">cmatcombine</a>(F1,F2,2)
+0326 Lim=[]; Lim.range=2; Lim.min=4; Lim.max=4;
+0327 [F,Lim,FF1,FF2]=<a href="../../../wafo/cycles/cmatcombine.html" class="code" title=" Combines two cycle matrices.">cmatcombine</a>(F1,F2,Lim)
+0328 
+0329 <span class="comment">%Test extralc</span>
+0330 
+0331 S = <a href="../../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>;
+0332 x = <a href="../../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,100000,0.1,[],<span class="string">'random'</span>);
+0333 lc = <a href="../../../wafo/onedim/dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">dat2lc</a>(x); s = std(x(:,2));
+0334 [lcEst,Est] = <a href="../../../wafo/cycles/extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>(lc,s*[-2 2]);
+0335 [lcEst,Est] = <a href="../../../wafo/cycles/extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>(lc,s*[-2 2],<span class="string">'exp,ml'</span>);
+0336 [lcEst,Est] = <a href="../../../wafo/cycles/extralc.html" class="code" title="  Extrapolate level crossing spectrum">extralc</a>(lc,s*[-2 2],<span class="string">'ray,ml'</span>);
+0337 
+0338 pause
+0339 
+0340 <span class="comment">%Test cmatresamp</span>
+0341 
+0342 F = round(5*triu(rand(4,4),1))
+0343 FF = <a href="../../../wafo/cycles/cmatresamp.html" class="code" title=" Resamples a cycle matrix.">cmatresamp</a>(F)
+0344 
+0345 <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span></span>
+0346 <span class="comment">% End of test</span>
+0347 
+0348 echo off
+0349</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of ohhsspdf2</title>
+  <meta name="keywords" content="ohhsspdf2">
+  <meta name="description" content=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; ohhsspdf2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>ohhsspdf2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [f,varargout] = ohhsspdf(Hd,Scf,Hm0,def,normalizedInput,condon) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="ohhsspdf2.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">OHHSSPDF2</a> Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. 
+  
+   CALL: f = <a href="ohhsspdf2.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">ohhsspdf2</a>(Hd,Scf,Hm0,Tp) 
+   
+   f   = pdf struct evaluated at meshgrid(Scf,Hd). 
+   Hd  = zero down crossing wave height 
+   Scf = crest front steepness 
+   Hm0 = significant wave height [m]. 
+   def = defines the parametrization of the spectral density (default 1) 
+         1 : The most probable spectrum  (default) 
+         2,3,...11 : gives 95% Confidence spectra 
+  
+  <a href="ohhsspdf2.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">OHHSSPDF2</a> approximates the joint distribution of (Scf, Hd), i.e., crest 
+  front steepness (Ac/Lcf) and wave height in space, for a Gaussian 
+  process with a bimodal Ochi-Hubble spectral density. The empirical 
+  parameters of the model is fitted by least squares to simulated 
+  (Scf,Hd) data for 24 classes of Hm0. 
+  Between 50000 and 300000 zero-downcrossing waves were simulated for 
+  each class of Hm0. 
+  <a href="ohhsspdf2.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">OHHSSPDF2</a> is restricted to the following <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> for Hm0:  
+   0.5 &lt; Hm0 [m] &lt; 12 
+  
+  Example: 
+  Hm0 = 6;Tp = 8;def= 2; 
+  h = linspace(0,4*Hm0/sqrt(2))';  
+  v = linspace(0,Hm0/Tp)'; 
+  f = <a href="ohhsspdf2.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">ohhsspdf2</a>(h,v,Hm0,def); 
+  w = linspace(0,10,2*1024+1).'; 
+  S = <a href="../../wafo/spec/ohspec2.html" class="code" title=" Calculates and plots a bimodal Ochi-Hubble spectral density">ohspec2</a>(w,[Hm0 def]); 
+  Sk = <a href="../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(<a href="../../wafo/spec/specinterp.html" class="code" title=" Interpolation and zero-padding of spectrum">specinterp</a>(S,.55),'k1d'); 
+  dk = 1; 
+  x = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(Sk,80000,dk); rate = 8; 
+  [vi,hi] = <a href="../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(x,rate,1); 
+  fk = <a href="../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>([vi,hi],'epan',[],[],.5,128); 
+  fk.title = f.title; fk.labx = f.labx;  
+  plot(vi,hi,'.'), hold on 
+  <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(f), 
+  <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fk,'r'), hold off 
+  
+  See also  <a href="ohhspdf.html" class="code" title=" Joint (Scf,Hd) PDF for linear waves with Ochi-Hubble spectra. ">ohhspdf</a>, <a href="thvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra. ">thvpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="ohhsspdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = ohhsspdf(Hd,Scf,Hm0,def,normalizedInput,condon)">ohhsspdf</a></li></TD>
+<TD> Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [f,varargout] = <a href="ohhsspdf.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">ohhsspdf</a>(Hd,Scf,Hm0,def,normalizedInput,condon) 
+002 <span class="comment">%OHHSSPDF2 Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: f = ohhsspdf2(Hd,Scf,Hm0,Tp) </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%  f   = pdf struct evaluated at meshgrid(Scf,Hd). </span>
+007 <span class="comment">%  Hd  = zero down crossing wave height </span>
+008 <span class="comment">%  Scf = crest front steepness </span>
+009 <span class="comment">%  Hm0 = significant wave height [m]. </span>
+010 <span class="comment">%  def = defines the parametrization of the spectral density (default 1) </span>
+011 <span class="comment">%        1 : The most probable spectrum  (default) </span>
+012 <span class="comment">%        2,3,...11 : gives 95<span class="comment">% Confidence spectra </span></span>
+013 <span class="comment">% </span>
+014 <span class="comment">% OHHSSPDF2 approximates the joint distribution of (Scf, Hd), i.e., crest </span>
+015 <span class="comment">% front steepness (Ac/Lcf) and wave height in space, for a Gaussian </span>
+016 <span class="comment">% process with a bimodal Ochi-Hubble spectral density. The empirical </span>
+017 <span class="comment">% parameters of the model is fitted by least squares to simulated </span>
+018 <span class="comment">% (Scf,Hd) data for 24 classes of Hm0. </span>
+019 <span class="comment">% Between 50000 and 300000 zero-downcrossing waves were simulated for </span>
+020 <span class="comment">% each class of Hm0. </span>
+021 <span class="comment">% OHHSSPDF2 is restricted to the following range for Hm0:  </span>
+022 <span class="comment">%  0.5 &lt; Hm0 [m] &lt; 12 </span>
+023 <span class="comment">% </span>
+024 <span class="comment">% Example: </span>
+025 <span class="comment">% Hm0 = 6;Tp = 8;def= 2; </span>
+026 <span class="comment">% h = linspace(0,4*Hm0/sqrt(2))';  </span>
+027 <span class="comment">% v = linspace(0,Hm0/Tp)'; </span>
+028 <span class="comment">% f = ohhsspdf2(h,v,Hm0,def); </span>
+029 <span class="comment">% w = linspace(0,10,2*1024+1).'; </span>
+030 <span class="comment">% S = ohspec2(w,[Hm0 def]); </span>
+031 <span class="comment">% Sk = spec2spec(specinterp(S,.55),'k1d'); </span>
+032 <span class="comment">% dk = 1; </span>
+033 <span class="comment">% x = spec2sdat(Sk,80000,dk); rate = 8; </span>
+034 <span class="comment">% [vi,hi] = dat2steep(x,rate,1); </span>
+035 <span class="comment">% fk = kdebin([vi,hi],'epan',[],[],.5,128); </span>
+036 <span class="comment">% fk.title = f.title; fk.labx = f.labx;  </span>
+037 <span class="comment">% plot(vi,hi,'.'), hold on </span>
+038 <span class="comment">% pdfplot(f), </span>
+039 <span class="comment">% pdfplot(fk,'r'), hold off </span>
+040 <span class="comment">% </span>
+041 <span class="comment">% See also  ohhspdf, thvpdf </span>
+042  
+043    
+044 <span class="comment">% Reference   </span>
+045 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+046 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+047 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+048 <span class="comment">% Trondheim, Norway.    </span>
+049    
+050 <span class="comment">% History </span>
+051 <span class="comment">% revised pab 09.09.2003 </span>
+052 <span class="comment">% By pab 20.12.2000 </span>
+053  
+054  
+055 error(nargchk(4,5,nargin)) 
+056  
+057 <span class="keyword">if</span> (nargin &lt; 5|isempty(normalizedInput)),  normalizedInput  = 0;<span class="keyword">end</span> 
+058 <span class="keyword">if</span> (nargin &lt; 4|isempty(def)),  def  = 1;<span class="keyword">end</span> 
+059 <span class="keyword">if</span> (nargin &lt; 3|isempty(Hm0)), Hm0 = 6;<span class="keyword">end</span> 
+060  
+061  
+062 [V,H] = meshgrid(Scf,Hd); 
+063  
+064 f = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2); 
+065 [f.f,Hrms,Vrms,varargout{1:nargout-1}]  = <a href="ohhsspdf.html" class="code" title=" Joint (Scf,Hd) PDF linear waves in space with Ochi-Hubble spectra. ">ohhsspdf</a>(H,V,Hm0,def,normalizedInput); 
+066  
+067  f.x = {Scf(:),Hd(:)}; 
+068   
+069 <span class="keyword">if</span> (normalizedInput) 
+070   f.labx={<span class="string">'Scf'</span>, <span class="string">'Hd'</span>}; 
+071   f.norm = 1; 
+072 <span class="keyword">else</span> 
+073   f.norm=0; 
+074   f.labx={<span class="string">'Scf'</span>, <span class="string">'Hd [m]'</span>}; 
+075 <span class="keyword">end</span> 
+076 f.title = <span class="string">'Joint distribution of (Hd,Scf) in space'</span>; 
+077 f.note = [<span class="string">'ohhspec2 Hm0='</span> num2str(Hm0) <span class="string">' def = '</span> num2str(def)]; 
+078 [f.cl,f.pl] = <a href="../../wafo/kdetools/qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(f.f); 
+079  
+080 <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

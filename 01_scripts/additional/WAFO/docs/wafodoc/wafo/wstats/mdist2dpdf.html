@@ -1,0 +1,289 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mdist2dpdf</title>
+  <meta name="keywords" content="mdist2dpdf">
+  <meta name="description" content=" Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; mdist2dpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mdist2dpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> y = mdist2dpdf(V,H,phat,condon) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="mdist2dpdf.html" class="code" title=" Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi). ">MDIST2DPDF</a> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi). 
+ 
+   CALL:  f = <a href="mdist2dpdf.html" class="code" title=" Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi). ">mdist2dpdf</a>(x1,x2,phat,condon) 
+ 
+      f  = PDF evalutated at points (x1 , x2) 
+    phat = parameter structure containing
+           x{1} = Phat1 marginal parameters of X1
+           x{2} = Phat2 marginal parameters of X2
+           x{3} = Psi the interaction parameter between x1 and x2.
+           dist = list of marginal distributions of x1 and x2, respectively 
+                  Options are: 'tgumbel', 'gumbel', 
+                 'lognormal','rayleigh','weibull','gamma'.
+  condon = 0 regular pdf is returned (default)
+           1 conditional pdf of H given V is returned
+           2 conditional pdf of V given H is returned
+ 
+  Example: 2D Weibull Rayleigh with parameters [2 3] and 3,
+  respectively for the marginal distributions, and a interaction 
+  parameter of 10:
+ 
+    phat.x={[2 3],3,10};
+    phat.dist={'weibull','rayleigh'};
+    f = <a href="mdist2dpdf.html" class="code" title=" Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi). ">mdist2dpdf</a>(3,4,phat);
+  
+  See also   <a href="mdist2dcdf.html" class="code" title=" Joint 2D CDF due to Plackett ">mdist2dcdf</a>, <a href="mdist2dfit.html" class="code" title=" Parameter estimates for MDIST2D data. ">mdist2dfit</a>, <a href="mdist2drnd.html" class="code" title="  Random points from a bivariate MDIST2D distribution ">mdist2drnd</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgamcdf.html" class="code" title=" F = wgamcdf(x,a,b);">wgamcdf</a></li></TD>
+<TD> Gamma cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgampdf.html" class="code" title=" f = wgampdf(x,a,b);">wgampdf</a></li></TD>
+<TD> Gamma probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbcdf.html" class="code" title=" F = wgumbcdf(x,a,b,trunc)">wgumbcdf</a></li></TD>
+<TD> Gumbel cumulative distribution function.</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbpdf.html" class="code" title=" f = wgumbpdf(x,a,b,trunc)">wgumbpdf</a></li></TD>
+<TD> Gumbel probability density function.</TD>
+</TR>
+<TR>
+<TD><li><a href="wlogncdf.html" class="code" title=" F = wlogncdf(x,m,v);">wlogncdf</a></li></TD>
+<TD> Lognormal cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wlognpdf.html" class="code" title=" f = wlognpdf(x,m,v);">wlognpdf</a></li></TD>
+<TD> Lognormal probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylcdf.html" class="code" title=" F = wraylcdf(x,b);">wraylcdf</a></li></TD>
+<TD> Rayleigh cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wraylpdf.html" class="code" title=" f = wraylpdf(x,b);">wraylpdf</a></li></TD>
+<TD> Rayleigh probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibcdf.html" class="code" title=" F = wweibcdf(x,a,c)">wweibcdf</a></li></TD>
+<TD> Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wweibpdf.html" class="code" title=" f = wweibpdf(x,a,c)">wweibpdf</a></li></TD>
+<TD> Weibull probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mdist2dcinv.html" class="code" title=" [x, ind]= mdist2dcinv(x1,p,phat);">mdist2dcinv</a></li></TD>
+<TD> Inverse of the conditional cdf of X2 given X1.</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dlike.html" class="code" title=" [LL, cov] = mdist2dlike(params,data1,data2,dist)">mdist2dlike</a></li></TD>
+<TD> MDIST log-likelihood function.</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dpdf2.html" class="code" title=" y = dist2dpdf2(v1,h1,phat)">mdist2dpdf2</a></li></TD>
+<TD> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = mdist2dstat(phat,condon,cvar,tol)">mdist2dstat</a></li></TD>
+<TD>  Mean and variance for the MDIST2D distribution.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> cdf1=dist1dcdffun(H,Ah,dist2 )</a></li><li><a href="#_sub2" class="code"> pdf1=dist1dpdffun(H,Ah,dist2 )</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> y = <a name="_sub0" href="#_subfunctions" class="code">mdist2dpdf</a>(V,H,phat,condon)
+002 <span class="comment">%MDIST2DPDF Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi). </span>
+003 <span class="comment">%</span>
+004 <span class="comment">%  CALL:  f = mdist2dpdf(x1,x2,phat,condon) </span>
+005 <span class="comment">%</span>
+006 <span class="comment">%     f  = PDF evalutated at points (x1 , x2) </span>
+007 <span class="comment">%   phat = parameter structure containing</span>
+008 <span class="comment">%          x{1} = Phat1 marginal parameters of X1</span>
+009 <span class="comment">%          x{2} = Phat2 marginal parameters of X2</span>
+010 <span class="comment">%          x{3} = Psi the interaction parameter between x1 and x2.</span>
+011 <span class="comment">%          dist = list of marginal distributions of x1 and x2, respectively </span>
+012 <span class="comment">%                 Options are: 'tgumbel', 'gumbel', </span>
+013 <span class="comment">%                'lognormal','rayleigh','weibull','gamma'.</span>
+014 <span class="comment">% condon = 0 regular pdf is returned (default)</span>
+015 <span class="comment">%          1 conditional pdf of H given V is returned</span>
+016 <span class="comment">%          2 conditional pdf of V given H is returned</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% Example: 2D Weibull Rayleigh with parameters [2 3] and 3,</span>
+019 <span class="comment">% respectively for the marginal distributions, and a interaction </span>
+020 <span class="comment">% parameter of 10:</span>
+021 <span class="comment">%</span>
+022 <span class="comment">%   phat.x={[2 3],3,10};</span>
+023 <span class="comment">%   phat.dist={'weibull','rayleigh'};</span>
+024 <span class="comment">%   f = mdist2dpdf(3,4,phat);</span>
+025 <span class="comment">% </span>
+026 <span class="comment">% See also   mdist2dcdf, mdist2dfit, mdist2drnd</span>
+027 
+028 
+029 <span class="comment">%   References:</span>
+030 <span class="comment">%      Plackett, R. L. (1965) &quot;A class of bivariate distributions.&quot;</span>
+031 <span class="comment">%                                J. Am. Stat. Assoc. 60. 516-22</span>
+032 <span class="comment">%      [1]  Michel K. Ochi,</span>
+033 <span class="comment">%       OCEAN TECHNOLOGY series 6</span>
+034 <span class="comment">%      &quot;OCEAN WAVES, The stochastic approach&quot;, Cambridge</span>
+035 <span class="comment">%      1998 pp. 133-134.</span>
+036 
+037 
+038 <span class="comment">%  tested on: matlab 5.2</span>
+039 <span class="comment">% history</span>
+040 <span class="comment">% revised pab 20.10.2000</span>
+041 <span class="comment">% - updated to new wstats toolbox</span>
+042 <span class="comment">% revised pab 8.11.1999</span>
+043 <span class="comment">%  - updated header info</span>
+044 <span class="comment">%  - changed phat from vectro to structure</span>
+045 <span class="comment">%  Per A. Brodtkorb 28.01.99</span>
+046 
+047 
+048 error(nargchk(3,4,nargin))
+049 <span class="keyword">if</span> nargin &lt;4 |isempty(condon), condon =0;<span class="keyword">end</span>
+050 [errorcode V H ] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(V,H);
+051 <span class="keyword">if</span>  errorcode &gt; 0
+052   error (<span class="string">'x1 and x2 must be of common size or scalar'</span>);
+053 <span class="keyword">end</span>
+054 
+055 VDIST=lower(phat.dist{1});
+056 HDIST=lower(phat.dist{2});
+057 
+058 
+059 psi=phat.x{3}; <span class="comment">% interaction parameter</span>
+060 PV=phat.x{1};
+061 PH=phat.x{2};
+062 
+063 
+064 
+065 y = zeros(size(V));
+066 
+067 
+068 <span class="keyword">if</span> strcmp(<span class="string">'gu'</span>, VDIST(1:2)),
+069   <span class="keyword">if</span> strcmp(<span class="string">'gu'</span>,HDIST(1:2)),
+070     k=find(H&gt;-inf&amp;V&gt;-inf);
+071   <span class="keyword">else</span>
+072    k=find(H&gt;0&amp;V&gt;-inf);
+073   <span class="keyword">end</span>
+074 <span class="keyword">elseif</span> strcmp(<span class="string">'gu'</span>,HDIST(1:2)),
+075   k = find(H&gt;-inf &amp; V &gt; 0 );
+076 <span class="keyword">else</span>
+077   k = find( H&gt;0 &amp;V &gt; 0);
+078 <span class="keyword">end</span>
+079 
+080 <span class="keyword">if</span> any(k), 
+081  Fv=<a href="#_sub1" class="code" title="sub  cdf1=dist1dcdffun(H,Ah,dist2 )">dist1dcdffun</a>(V(k),PV, VDIST(1:2));
+082  fv=<a href="#_sub2" class="code" title="sub  pdf1=dist1dpdffun(H,Ah,dist2 )">dist1dpdffun</a>(V(k),PV, VDIST(1:2));
+083  Fh=<a href="#_sub1" class="code" title="sub  cdf1=dist1dcdffun(H,Ah,dist2 )">dist1dcdffun</a>(H(k),PH, HDIST(1:2));
+084  fh=<a href="#_sub2" class="code" title="sub  pdf1=dist1dpdffun(H,Ah,dist2 )">dist1dpdffun</a>(H(k),PH, HDIST(1:2));
+085  
+086   tmp=1+(Fv+Fh).*(psi-1);
+087   y(k)=psi.*((psi-1).*(Fv+Fh-2.*Fv.*Fh)+1)./(sqrt(tmp.^2-4.*psi.*(psi-1).*Fv.*Fh).^3);
+088    <span class="keyword">switch</span> condon
+089    <span class="keyword">case</span> 0, y(k)=y(k).*fv.*fh;
+090    <span class="keyword">case</span> 1, y(k)=y(k).*fh;
+091    <span class="keyword">case</span> 2, y(k)=y(k).*fv;
+092    <span class="keyword">case</span> 3, <span class="comment">% secret option  used by mdist2dstat: returns v*f(v|h) </span>
+093            y(k)=V(k).*y(k).*fv;  
+094    <span class="keyword">case</span> 4, <span class="comment">% secret option  used by weib2dstat: returns v^2*f(v|h) </span>
+095            y(k)=V(k).^2.*y(k).*fv; 
+096   <span class="keyword">end</span>
+097 <span class="comment">%plot(V(k),y(k),'.') </span>
+098 <span class="keyword">end</span>
+099 
+100 <span class="keyword">function</span> cdf1=<a name="_sub1" href="#_subfunctions" class="code">dist1dcdffun</a>(H,Ah,dist2 )  
+101    <span class="keyword">switch</span> dist2(1:2)
+102       <span class="keyword">case</span> <span class="string">'ra'</span>,   cdf1=<a href="wraylcdf.html" class="code" title=" Rayleigh cumulative distribution function">wraylcdf</a>(H,Ah);
+103       <span class="keyword">case</span> <span class="string">'we'</span> ,  cdf1=<a href="wweibcdf.html" class="code" title=" Weibull cumulative distribution function">wweibcdf</a>(H,Ah(1),Ah(2));
+104       <span class="keyword">case</span> <span class="string">'gu'</span> ,  cdf1=<a href="wgumbcdf.html" class="code" title=" Gumbel cumulative distribution function.">wgumbcdf</a>(H,Ah(1),Ah(2),0);
+105       <span class="keyword">case</span> <span class="string">'tg'</span> ,  cdf1=<a href="wgumbcdf.html" class="code" title=" Gumbel cumulative distribution function.">wgumbcdf</a>(H,Ah(1),Ah(2),1);
+106       <span class="keyword">case</span> <span class="string">'ga'</span> ,  cdf1=<a href="wgamcdf.html" class="code" title=" Gamma cumulative distribution function">wgamcdf</a>(H,Ah(1),Ah(2));
+107       <span class="keyword">case</span> <span class="string">'lo'</span> ,  cdf1=<a href="wlogncdf.html" class="code" title=" Lognormal cumulative distribution function">wlogncdf</a>(H,Ah(1),Ah(2));
+108       <span class="keyword">otherwise</span>, error(<span class="string">'unknown distribution'</span>)
+109     <span class="keyword">end</span> 
+110 <span class="keyword">return</span>
+111 <span class="keyword">function</span> pdf1=<a name="_sub2" href="#_subfunctions" class="code">dist1dpdffun</a>(H,Ah,dist2 )  
+112    <span class="keyword">switch</span> dist2(1:2)
+113       <span class="keyword">case</span> <span class="string">'ra'</span>,   pdf1=<a href="wraylpdf.html" class="code" title=" Rayleigh probability density function">wraylpdf</a>(H,Ah);
+114       <span class="keyword">case</span> <span class="string">'we'</span> ,  pdf1=<a href="wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(H,Ah(1),Ah(2));
+115       <span class="keyword">case</span> <span class="string">'gu'</span> ,  pdf1=<a href="wgumbpdf.html" class="code" title=" Gumbel probability density function.">wgumbpdf</a>(H,Ah(1),Ah(2),0);
+116       <span class="keyword">case</span> <span class="string">'tg'</span> ,  pdf1=<a href="wgumbpdf.html" class="code" title=" Gumbel probability density function.">wgumbpdf</a>(H,Ah(1),Ah(2),1);
+117       <span class="keyword">case</span> <span class="string">'ga'</span> ,  pdf1=<a href="wgampdf.html" class="code" title=" Gamma probability density function">wgampdf</a>(H,Ah(1),Ah(2));
+118       <span class="keyword">case</span> <span class="string">'lo'</span> ,  pdf1=<a href="wlognpdf.html" class="code" title=" Lognormal probability density function">wlognpdf</a>(H,Ah(1),Ah(2));
+119       <span class="keyword">otherwise</span>, error(<span class="string">'unknown distribution'</span>)
+120     <span class="keyword">end</span> 
+121 <span class="keyword">return</span>
+122 
+123 
+124 
+125 
+126 
+127 
+128</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

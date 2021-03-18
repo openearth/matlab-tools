@@ -1,0 +1,355 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wggamfit</title>
+  <meta name="keywords" content="wggamfit">
+  <meta name="description" content=" Parameter estimates for Generalized Gamma data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wggamfit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wggamfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates for Generalized Gamma data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat, cov,pci]=wggamfit(data1, plotflag,chat0); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wggamfit.html" class="code" title=" Parameter estimates for Generalized Gamma data. ">WGGAMFIT</a> Parameter estimates for Generalized Gamma data. 
+  
+  CALL:  [phat, cov] = <a href="wggamfit.html" class="code" title=" Parameter estimates for Generalized Gamma data. ">wggamfit</a>(data, plotflag) 
+  
+      phat = [a,b,c] = the maximum likelihood estimates of the   
+             parameters of the Generalized Gamma distribution 
+             (see <a href="wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>) given the data. 
+      cov  = estimated asymptotic covariance matrix of estimates 
+      data = data vector 
+  plotflag = 0, do not plot 
+           &gt; 0, plot the empiricial distribution function and the 
+                estimated cdf (see <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a> for options)(default) 
+   
+  Example: 
+    R = <a href="wggamrnd.html" class="code" title=" Random matrices from a Generalized Gamma distribution.">wggamrnd</a>(2,2,2,1,100); 
+    [phat, cov] = <a href="wggamfit.html" class="code" title=" Parameter estimates for Generalized Gamma data. ">wggamfit</a>(R,2) 
+  
+  See also   <a href="wggamcdf.html" class="code" title=" Generalized Gamma cumulative distribution function">wggamcdf</a>, <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="wgamfit.html" class="code" title=" [phat, cov,pci]=wgamfit(data1, plotflag);">wgamfit</a></li></TD>
+<TD> Parameter estimates for Gamma data.</TD>
+</TR>
+<TR>
+<TD><li><a href="wggambfit.html" class="code" title=" l=wggambfit(b,data,F,def)">wggambfit</a></li></TD>
+<TD> Is an internal routine for wggamfit</TD>
+</TR>
+<TR>
+<TD><li><a href="wggamcdf.html" class="code" title=" F = wggamcdf(x,a,b,c);">wggamcdf</a></li></TD>
+<TD> Generalized Gamma cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="">fmins</a></li></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\fminsearch.m">fminsearch</a></li></TD>
+<TD>    Multidimensional unconstrained nonlinear minimization (Nelder-Mead).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\fzero.m">fzero</a></li></TD>
+<TD>         Scalar nonlinear zero finding.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gammaln.m">gammaln</a></li></TD>
+<TD>       Logarithm of gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\funfun\optimset.m">optimset</a></li></TD>
+<TD>      Create/alter OPTIM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2num.m">str2num</a></li></TD>
+<TD>       Convert string matrix to numeric array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\local\version.m">version</a></li></TD>
+<TD>       MATLAB version number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dfit.html" class="code" title=" [phat] =dist2dfit(V,H,dist,res,method,monitor,chat0)">dist2dfit</a></li></TD>
+<TD> Parameter estimates for DIST2D data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [phat, cov,pci]=<a name="_sub0" href="#_subfunctions" class="code">wggamfit</a>(data1, plotflag,chat0); 
+002 <span class="comment">%WGGAMFIT Parameter estimates for Generalized Gamma data. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  [phat, cov] = wggamfit(data, plotflag) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%     phat = [a,b,c] = the maximum likelihood estimates of the   </span>
+007 <span class="comment">%            parameters of the Generalized Gamma distribution </span>
+008 <span class="comment">%            (see wggampdf) given the data. </span>
+009 <span class="comment">%     cov  = estimated asymptotic covariance matrix of estimates </span>
+010 <span class="comment">%     data = data vector </span>
+011 <span class="comment">% plotflag = 0, do not plot </span>
+012 <span class="comment">%          &gt; 0, plot the empiricial distribution function and the </span>
+013 <span class="comment">%               estimated cdf (see empdistr for options)(default) </span>
+014 <span class="comment">%  </span>
+015 <span class="comment">% Example: </span>
+016 <span class="comment">%   R = wggamrnd(2,2,2,1,100); </span>
+017 <span class="comment">%   [phat, cov] = wggamfit(R,2) </span>
+018 <span class="comment">% </span>
+019 <span class="comment">% See also   wggamcdf, empdistr </span>
+020  
+021 <span class="comment">% Reference: Cohen &amp; Whittle, (1988) &quot;Parameter Estimation in Reliability </span>
+022 <span class="comment">% and Life Span Models&quot;, p. 220 ff, Marcel Dekker. </span>
+023  
+024 <span class="comment">% Tested on: Matlab 5.3 </span>
+025 <span class="comment">% History: </span>
+026 <span class="comment">% revised pab 23.01.2004 </span>
+027 <span class="comment">%  - added chat0  </span>
+028 <span class="comment">% revised pab 27.01.2001 </span>
+029 <span class="comment">%  - Improved the stability of estimation by adding a linear search to </span>
+030 <span class="comment">%    find the largest sign change with positive derivative. </span>
+031 <span class="comment">% revised pab 13.11.2000 </span>
+032 <span class="comment">%  - added check on estimated parameters -&gt; return NaN when any is less </span>
+033 <span class="comment">%    than zero </span>
+034 <span class="comment">% revised pab  </span>
+035 <span class="comment">%  -changed the order of a,b,c </span>
+036 <span class="comment">%  -safer call to fzero  </span>
+037 <span class="comment">% rewritten ms 10.08.2000 </span>
+038  
+039  
+040 error(nargchk(1,3,nargin)) 
+041 <span class="keyword">if</span> nargin &lt; 2 | isempty(plotflag), plotflag=1;<span class="keyword">end</span>  
+042  
+043 cov   = []; pci=[]; 
+044 data  = sort(data1(:)); <span class="comment">% make sure it is a vector </span>
+045 chatDeterministic = 0; 
+046 <span class="comment">% Use Weibull start for c (assuming a=1) </span>
+047 ld   = log(data); 
+048 <span class="keyword">if</span> nargin&gt;2 &amp; ~isempty(chat0) &amp; isfinite(chat0) 
+049   chat = chat0; 
+050   chatDeterministic = 1; 
+051 <span class="keyword">else</span> 
+052   start = 1./(6^(1/2)/pi*std(ld)); <span class="comment">% approx sqrt(a)*c </span>
+053  
+054   <span class="keyword">if</span> 1,  
+055     <span class="comment">% Do linear search to find a sign change pab 28.01.2001 </span>
+056     <span class="comment">% -&gt; more stable estimation </span>
+057     x  = [linspace(max(eps,start/100),start,25) <span class="keyword">...</span> 
+058       linspace(start+1,10*start+20,15)];  
+059     <span class="comment">%x  = [linspace(eps,start,50) linspace(start+1,start+20,10)];  </span>
+060     ll = zeros(size(x)); 
+061     ll(1) = <a href="wggambfit.html" class="code" title=" Is an internal routine for wggamfit ">wggambfit</a>(x(1),data,ld); 
+062     <span class="keyword">for</span> ix=2:length(x), 
+063       ll(ix) = <a href="wggambfit.html" class="code" title=" Is an internal routine for wggamfit ">wggambfit</a>(x(ix),data,ld); 
+064       <span class="keyword">if</span> ll(ix-1)&lt;ll(ix)&amp;ll(ix)&gt;0 ,x(ix+1:<span class="keyword">end</span>)=[];ll(ix+1:<span class="keyword">end</span>)=[];<span class="keyword">break</span>,<span class="keyword">end</span> 
+065     <span class="keyword">end</span> 
+066      
+067     ind = find(isnan(ll)); 
+068     ll(ind) = []; 
+069     x(ind)  = []; 
+070     dll=diff(ll)./diff(x); 
+071      <span class="comment">%figure(1),  plot(x,ll,(x(1:end-1)+x(2:end))/2 ,dll,'r');axis([0 inf -0.1 0.1]),figure(2) </span>
+072     sl = sign(ll); 
+073     <span class="comment">%choose the largest sign change with positive derivative </span>
+074     ind = max(find(sl(1:<span class="keyword">end</span>-1)&lt;sl(2:<span class="keyword">end</span>) ) );  
+075     <span class="keyword">if</span> ~isempty(ind) 
+076       start = x(ind:ind+1); 
+077     <span class="keyword">elseif</span> any(dll&gt;0) 
+078       start = x(min(find(dll&gt;0))); 
+079     <span class="keyword">end</span> 
+080   <span class="keyword">end</span> 
+081   <span class="comment">%start </span>
+082   mvrs = version; 
+083   ix   = find(mvrs==<span class="string">'.'</span>); 
+084   mvrs = str2num(mvrs(1:ix(2)-1)); 
+085   def=1; <span class="comment">% What is def? See 'wggambfun'  </span>
+086   <span class="keyword">if</span> (def==1) 
+087     <span class="keyword">if</span> (mvrs &gt; 5.2), 
+088       chat = fzero(<span class="string">'wggambfit'</span>,start,optimset,data,ld); 
+089     <span class="keyword">else</span> 
+090       chat = fzero(<span class="string">'wggambfit'</span>,start,sqrt(eps),[],data,ld); 
+091     <span class="keyword">end</span>     
+092   <span class="keyword">else</span> 
+093     N = length(data); 
+094     F = [0.5./N:1./N:(N - 0.5)./N]'; 
+095     size(F) 
+096     size(data) 
+097     chat = mean(start) 
+098     dc   = data.^chat; 
+099     ahat = -(chat*(mean(ld)-sum(dc.*ld)/sum(dc)))^(-1); 
+100     bhat = (mean(dc)/ahat).^(1/chat); 
+101     start = [ahat,bhat,chat] 
+102     <span class="keyword">if</span>  (mvrs  &gt;  5.2) 
+103       phat = fminsearch(<span class="string">'wggambfit'</span>,start,optimset,data,F,def); 
+104     <span class="keyword">else</span> 
+105       phat = fmins(<span class="string">'wggambfit'</span>,start,sqrt(eps),[],data,F,def); 
+106     <span class="keyword">end</span> 
+107     chat = phat(3); 
+108   <span class="keyword">end</span> 
+109 <span class="keyword">end</span> 
+110 <span class="keyword">if</span> 0, 
+111   phatAB = <a href="wgamfit.html" class="code" title=" Parameter estimates for Gamma data. ">wgamfit</a>(data.^chat,0); 
+112   ahat = phatAB(1); 
+113   bhat = phatAB(2).^(1/chat); 
+114 <span class="keyword">else</span> 
+115   dc   = data.^chat; 
+116   ahat = -(chat*(mean(ld)-sum(dc.*ld)/sum(dc)))^(-1); 
+117   bhat = (mean(dc)/ahat).^(1/chat); 
+118 <span class="keyword">end</span> 
+119 phat0 = [ahat, bhat, chat]; 
+120 <span class="keyword">if</span> 0, 
+121   phat = fminsearch(<span class="string">'loglike'</span>,phat0,[],data,<span class="string">'wggampdf'</span>); 
+122 <span class="keyword">else</span> 
+123   phat = phat0; 
+124 <span class="keyword">end</span> 
+125 <span class="keyword">if</span> any(phat&lt;=0|isnan(phat)),  
+126   phat(1:3)=NaN;cov=phat;pci=cov; 
+127   <span class="keyword">return</span>, 
+128   chat = start(<span class="keyword">end</span>)+10; <span class="comment">%1./(6^(1/2)/pi*std(log(data))); </span>
+129   ahat =-(chat*(mean(ld)-sum(data.^chat.*ld)/sum(data.^chat)))^(-1); 
+130   bhat = (mean(data.^chat)/ahat).^(1/chat); 
+131   phat0 = max([ahat, bhat, chat],sqrt(eps)) 
+132   <span class="keyword">if</span> 1, <span class="comment">% Moments fit </span>
+133     Ex = mean(data); 
+134     Ex2 = mean(data.^2); 
+135     Ex3 = mean(data.^3); 
+136     Ex4 = mean(data.^4); 
+137     phat1 = fmins(<span class="string">'wggambfit'</span>,phat0(1:2:3),[],[],Ex2/Ex^2,Ex3/Ex2^1.5,3) 
+138     phat1 = fmins(<span class="string">'wggambfit'</span>,phat0(1:2:3),[],[],Ex3/Ex2^1.5,Ex4/Ex2^2,4) 
+139     <span class="comment">%phat0  = [mean(data.^start).^(1./start) start]; </span>
+140   <span class="keyword">end</span> 
+141   <span class="keyword">if</span> mvrs&gt;5.2 
+142     phat = fminsearch(<span class="string">'loglike'</span>,phat0,[],data,<span class="string">'wggampdf'</span>); 
+143    <span class="comment">% N =length(data); </span>
+144    <span class="comment">% phat = fminsearch('wggambfit',phat0,[],data,(.5:N)'/N,2) </span>
+145   <span class="keyword">else</span> 
+146     phat = fmins(<span class="string">'loglike'</span>,phat0,[],[],data,<span class="string">'wggampdf'</span>); 
+147   <span class="keyword">end</span> 
+148   ahat = phat(1); 
+149   bhat = phat(2); 
+150   chat = phat(3); 
+151   <span class="keyword">if</span> any(phat&lt;=0|isnan(phat)),  
+152     phat(1:3)=NaN;cov=phat;pci=cov;<span class="keyword">return</span>, 
+153   <span class="keyword">end</span> 
+154 <span class="keyword">end</span> 
+155  
+156 <span class="keyword">if</span> nargout&gt;1, 
+157   h=10^(-5); 
+158  
+159   c1=(gammaln(ahat+h)-gammaln(ahat))/h; 
+160   c2=(gammaln(ahat+1+h)-gammaln(ahat+1))/h; 
+161   c3=(gammaln(ahat+2*h)-2*gammaln(ahat+h)+gammaln(ahat))/h^2; 
+162   c4=(gammaln(ahat+1+2*h)-2*gammaln(ahat+1+h)+gammaln(ahat+1))/h^2; 
+163  
+164   cov=[c3, -c1/chat, chat/bhat; 
+165     -c1/chat, (1+ahat*c4+ahat*c2^2)/chat^2, -(1+ahat*c1)/bhat; 
+166     chat/bhat, -(1+ahat*c1)/bhat, ahat*chat^2/bhat^2]/length(data); 
+167     
+168   <span class="keyword">if</span> (chatDeterministic) 
+169     cov(3,:) = 0; 
+170     cov(:,3) = 0; 
+171   <span class="keyword">end</span> 
+172   <span class="comment">%[LL, cov] = loglike(phat,data,'wggampdf'); </span>
+173 <span class="keyword">end</span> 
+174 <span class="keyword">if</span> nargout&gt;2 
+175   alpha2 = ones(1,3)*0.05/2; 
+176   var = diag(cov).'; 
+177   pci = <a href="wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>([alpha2;1-alpha2], [phat;phat],[var;var]); 
+178 <span class="keyword">end</span> 
+179 <span class="keyword">if</span> plotflag 
+180 <span class="comment">%  sd=sort(data); </span>
+181   sd = data; 
+182   <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd,[sd, <a href="wggamcdf.html" class="code" title=" Generalized Gamma cumulative distribution function">wggamcdf</a>(sd,ahat,bhat,chat)],plotflag) 
+183   title([deblank([<span class="string">'Empirical and Generalized Gamma estimated cdf'</span>])]) 
+184 <span class="keyword">end</span> 
+185  
+186  
+187  
+188  
+189  
+190  
+191</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

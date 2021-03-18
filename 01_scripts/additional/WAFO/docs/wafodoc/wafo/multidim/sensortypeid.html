@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of sensortypeid</title>
+  <meta name="keywords" content="sensortypeid">
+  <meta name="description" content=" Return ID for sensortype name">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">multidim</a> &gt; sensortypeid.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\multidim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>sensortypeid
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Return ID for sensortype name</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> sensorid = sensortypeid(sensortype) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="sensortypeid.html" class="code" title=" Return ID for sensortype name ">SENSORTYPEID</a> Return ID for <a href="sensortype.html" class="code" title=" Return sensortype name ">sensortype</a> name 
+  
+   CALL:   sensorid = <a href="sensortypeid.html" class="code" title=" Return ID for sensortype name ">sensortypeid</a>(<a href="sensortype.html" class="code" title=" Return sensortype name ">sensortype</a>) 
+  
+   sensorid   = integer defining the <a href="sensortype.html" class="code" title=" Return sensortype name ">sensortype</a> 
+   <a href="sensortype.html" class="code" title=" Return sensortype name ">sensortype</a> = string defining the <a href="sensortype.html" class="code" title=" Return sensortype name ">sensortype</a> 
+                valid options are: 
+    'n'    : Surface elevation              (n=Eta)  (default) 
+    'n_t'  : Vertical surface velocity 
+    'n_tt' : Vertical surface acceleration 
+    'n_x'  : Surface slope in x-direction  
+    'n_y'  : Surface slope in y-direction 
+    'n_xx' : Surface curvature in x-direction 
+    'n_yy' : Surface curvature in y-direction 
+    'n_xy' : Surface curvature in xy-direction 
+    'P'    : Pressure fluctuation about static MWL pressure  
+    'U'    : Water particle velocity in x-direction 
+    'V'    : Water particle velocity in y-direction 
+    'W'    : Water particle velocity in z-direction 
+    'U_t'  : Water particle acceleration in x-direction 
+    'V_t'  : Water particle acceleration in y-direction 
+    'W_t'  : Water particle acceleration in z-direction 
+    'X_p'  : Water particle displacement in x-direction from its mean position 
+    'Y_p'  : Water particle displacement in y-direction from its mean position 
+    'Z_p'  : Water particle displacement in z-direction from its mean position 
+  
+  Example: 
+  <a href="sensortypeid.html" class="code" title=" Return ID for sensortype name ">sensortypeid</a>(strvcat('W','v')) 
+  <a href="sensortypeid.html" class="code" title=" Return ID for sensortype name ">sensortypeid</a>('rubbish')   
+  
+  See also <a href="sensortype.html" class="code" title=" Return sensortype name ">sensortype</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\ischar.m">ischar</a></li></TD>
+<TD>        True for character array (string).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isnumeric.m">isnumeric</a></li></TD>
+<TD>     True for numeric arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@opaque\strmatch.m">strmatch</a></li></TD>
+<TD>      Find possible matches for string.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strvcat.m">strvcat</a></li></TD>
+<TD>       Vertically concatenate strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="tran.html" class="code" title=" [Hw, Gwt, kw,Hwt,ee]=tran(w,theta,pos,def,h,g,rho,bet,igam,thx,thy,kw);">tran</a></li></TD>
+<TD> Computes transfer functions based on linear wave theory</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> sensorid = <a name="_sub0" href="#_subfunctions" class="code">sensortypeid</a>(sensortype) 
+002 <span class="comment">%SENSORTYPEID Return ID for sensortype name </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:   sensorid = sensortypeid(sensortype) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%  sensorid   = integer defining the sensortype </span>
+007 <span class="comment">%  sensortype = string defining the sensortype </span>
+008 <span class="comment">%               valid options are: </span>
+009 <span class="comment">%   'n'    : Surface elevation              (n=Eta)  (default) </span>
+010 <span class="comment">%   'n_t'  : Vertical surface velocity </span>
+011 <span class="comment">%   'n_tt' : Vertical surface acceleration </span>
+012 <span class="comment">%   'n_x'  : Surface slope in x-direction  </span>
+013 <span class="comment">%   'n_y'  : Surface slope in y-direction </span>
+014 <span class="comment">%   'n_xx' : Surface curvature in x-direction </span>
+015 <span class="comment">%   'n_yy' : Surface curvature in y-direction </span>
+016 <span class="comment">%   'n_xy' : Surface curvature in xy-direction </span>
+017 <span class="comment">%   'P'    : Pressure fluctuation about static MWL pressure  </span>
+018 <span class="comment">%   'U'    : Water particle velocity in x-direction </span>
+019 <span class="comment">%   'V'    : Water particle velocity in y-direction </span>
+020 <span class="comment">%   'W'    : Water particle velocity in z-direction </span>
+021 <span class="comment">%   'U_t'  : Water particle acceleration in x-direction </span>
+022 <span class="comment">%   'V_t'  : Water particle acceleration in y-direction </span>
+023 <span class="comment">%   'W_t'  : Water particle acceleration in z-direction </span>
+024 <span class="comment">%   'X_p'  : Water particle displacement in x-direction from its mean position </span>
+025 <span class="comment">%   'Y_p'  : Water particle displacement in y-direction from its mean position </span>
+026 <span class="comment">%   'Z_p'  : Water particle displacement in z-direction from its mean position </span>
+027 <span class="comment">% </span>
+028 <span class="comment">% Example: </span>
+029 <span class="comment">% sensortypeid(strvcat('W','v')) </span>
+030 <span class="comment">% sensortypeid('rubbish')   </span>
+031 <span class="comment">% </span>
+032 <span class="comment">% See also sensortype   </span>
+033    
+034  
+035  
+036 <span class="comment">%History </span>
+037 <span class="comment">% by pab 2005 </span>
+038  
+039   <span class="comment">% Note the ordering of validnames can not be changed without changing </span>
+040   <span class="comment">% the order in functions dependent on this function </span>
+041   validNames = strvcat(<span class="string">'n'</span>,<span class="string">'n_t'</span>,<span class="string">'n_tt'</span>,<span class="string">'n_x'</span>,<span class="string">'n_y'</span>,<span class="string">'n_xx'</span>,<span class="keyword">...</span> 
+042                        <span class="string">'n_yy'</span>,<span class="string">'n_xy'</span>,<span class="string">'p'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'u_t'</span>,.<span class="keyword">...</span> 
+043                        <span class="string">'v_t'</span>,<span class="string">'w_t'</span>,<span class="string">'x_p'</span>,<span class="string">'y_p'</span>,<span class="string">'z_p'</span>); 
+044   <span class="keyword">if</span> nargin&lt;1|isempty(sensortype) 
+045     sensortype = <span class="string">'n'</span>; 
+046   <span class="keyword">end</span> 
+047   <span class="keyword">if</span> ischar(sensortype) 
+048     <span class="comment">%[C,ia,ib] = intersect(validNames,lower(sensortype),'rows'); </span>
+049     N1 = size(sensortype,1); 
+050     sensorid = repmat(nan,N1,1); 
+051      
+052     <span class="keyword">for</span> ix = 1:N1 
+053       tmp =    strmatch(lower(deblank(sensortype(ix,:))),validNames,<span class="string">'exact'</span>); 
+054       <span class="keyword">if</span> ~isempty(tmp) 
+055         sensorid(ix) = tmp; 
+056       <span class="keyword">end</span> 
+057     <span class="keyword">end</span> 
+058   <span class="keyword">elseif</span> isnumeric(sensortype) 
+059     N = size(validNames,1); 
+060     sensorid = sensortype; 
+061     sensorid(sensorid&gt;N) = nan; 
+062   <span class="keyword">else</span>  
+063     error(<span class="string">'Input must be character arrays!'</span>) 
+064   <span class="keyword">end</span> 
+065   <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dcc2cmat</title>
+  <meta name="keywords" content="dcc2cmat">
+  <meta name="description" content="  Calculates the cycle matrix for a discrete cycle count.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; dcc2cmat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dcc2cmat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates the cycle matrix for a discrete cycle count.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> F = dcc2cmat(dcc,n) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">DCC2CMAT</a>  Calculates the cycle matrix for a discrete cycle count.
+ 
+  CALL:  F = <a href="dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">dcc2cmat</a>(dcc,n);
+ 
+    F      = Cycle matrix
+    dcc    = a two column matrix with a discrete cycle count.
+    n      = Number of discrete <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>.
+ 
+  The discrete cycle count takes values from 1 to n.
+  
+  A cycle count is transformed into a discrete cycle count by
+  using the function <a href="cc2dcc.html" class="code" title=" Discretize a cycle count.">CC2DCC</a>.
+ 
+  See also  <a href="cc2cmat.html" class="code" title=" Calculates the cycle count matrix from a cycle count.">cc2cmat</a>, <a href="cc2dcc.html" class="code" title=" Discretize a cycle count.">cc2dcc</a>, <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="cc2cmat.html" class="code" title=" [F,h] = cc2cmat(param,cc,ddef,method,h,NOsubzero,alpha)">cc2cmat</a></li></TD>
+<TD> Calculates the cycle count matrix from a cycle count.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab4.html" class="code" title="This is a script file.">itmkurs_lab4</a></li></TD>
+<TD> Script to computer exercises 4</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> F = <a name="_sub0" href="#_subfunctions" class="code">dcc2cmat</a>(dcc,n)
+002 <span class="comment">% DCC2CMAT  Calculates the cycle matrix for a discrete cycle count.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  F = dcc2cmat(dcc,n);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   F      = Cycle matrix</span>
+007 <span class="comment">%   dcc    = a two column matrix with a discrete cycle count.</span>
+008 <span class="comment">%   n      = Number of discrete levels.</span>
+009 <span class="comment">%</span>
+010 <span class="comment">% The discrete cycle count takes values from 1 to n.</span>
+011 <span class="comment">% </span>
+012 <span class="comment">% A cycle count is transformed into a discrete cycle count by</span>
+013 <span class="comment">% using the function CC2DCC.</span>
+014 <span class="comment">%</span>
+015 <span class="comment">% See also  cc2cmat, cc2dcc, cmatplot</span>
+016 
+017 <span class="comment">% Tested on Matlab 5.3</span>
+018 <span class="comment">%</span>
+019 <span class="comment">% History:</span>
+020 <span class="comment">% Revised by PJ 12-Jan-2000</span>
+021 <span class="comment">%   Corrected help text</span>
+022 <span class="comment">% Revised by PJ (Pär Johannesson) 01-Nov-1999</span>
+023 <span class="comment">%   updated for WAFO</span>
+024 <span class="comment">% Copied from WAT Ver. 1.2</span>
+025 
+026 F=zeros(n);
+027 k=length(dcc);
+028 <span class="keyword">for</span> i=1:k,
+029   F(dcc(i,1),dcc(i,2)) = F(dcc(i,1),dcc(i,2))+1;
+030 <span class="keyword">end</span>
+031 
+032</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Chapter1</title>
+      <meta name="generator" content="MATLAB 7.0.1">
+      <meta name="date" content="2005-09-03">
+      <meta name="m-file" content="Chapter1"><style>
+body {
+  background-color: white;
+  margin:10px;
+}
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+pre.codeinput {
+  margin-left: 30px;
+}
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.showbuttons {
+  margin-left: 30px;
+  border: solid black 2px;
+  padding: 4px;
+  background: #EBEFF3;
+}
+
+pre.codeoutput {
+  color: gray;
+  font-style: italic;
+}
+pre.error {
+  color: red;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows.  On Gecko-based browsers, the shrink-to-fit doesn't work. */ 
+p,h1,h2,div {
+  /* for MATLAB's browser */
+  width: 600px;
+  /* for Mozilla, but the "width" tag overrides it anyway */
+  max-width: 600px;
+  /* for IE */
+  width:expression(document.body.clientWidth > 620 ? "600px": "auto" );
+}
+
+    </style></head>
+   <body>
+      <h2>Contents</h2>
+      <div>
+         <ul>
+            <li><a href="#1">CHAPTER1 demonstrates some applications of WAFO</a></li>
+            <li><a href="#2">Section 1.4 Some applications of WAFO</a></li>
+            <li><a href="#3">Section 1.4.1 Simulation from spectrum, estimation of spectrum</a></li>
+            <li><a href="#4">Simulation of the sea surface from spectrum</a></li>
+            <li><a href="#5">Estimation of spectrum</a></li>
+            <li><a href="#6">Section 1.4.2 Probability distributions of wave characteristics.</a></li>
+            <li><a href="#7">Probability distribution of wave trough period</a></li>
+            <li><a href="#8">Section 1.4.3 Directional spectra</a></li>
+            <li><a href="#9">3D Simulation of the sea surface</a></li>
+            <li><a href="#11">Section 1.4.4 Fatigue, Load cycles and Markov models.</a></li>
+            <li><a href="#12">Switching Markow chain of turningpoints</a></li>
+         </ul>
+      </div>
+      <h2>CHAPTER1 demonstrates some applications of WAFO<a name="1"></a></h2>
+      <p>CHAPTER1 gives an overview through examples some of the capabilities of WAFO. WAFO is a toolbox of Matlab routines for statistical
+         analysis and simulation of random waves and loads.
+      </p>
+      <p>The commands are edited for fast computation. Each set of commands is followed by a 'pause' command. Type 'pause off' to disable
+         them.
+      </p><pre class="codeinput"><span class="comment">% Tested on Matlab 5.3, 7.0</span>
+<span class="comment">% History</span>
+<span class="comment">% Revised pab sept2005</span>
+<span class="comment">%  Added sections -&gt; easier to evaluate using cellmode evaluation.</span>
+<span class="comment">% Revised pab Dec 2004</span>
+<span class="comment">% Added support for publish.m command in matlab R14</span>
+<span class="comment">% Created by GL July 13, 2000</span>
+<span class="comment">% from commands used in Chapter 1 of the tutorial</span>
+
+pstate = <span class="string">'off'</span>
+</pre><pre class="codeoutput">
+pstate =
+
+off
+
+</pre><h2>Section 1.4 Some applications of WAFO<a name="2"></a></h2>
+      <h2>Section 1.4.1 Simulation from spectrum, estimation of spectrum<a name="3"></a></h2>
+      <h2>Simulation of the sea surface from spectrum<a name="4"></a></h2><pre class="codeinput"><span class="comment">%The following code generates 200 seconds of data sampled with 10Hz from</span>
+<span class="comment">%the Torsethaugen spectrum</span>
+Hm0 = 6;
+Tp  = 8;
+S1=torsethaugen([],[Hm0 Tp],1);
+clf
+dt = 0.1;
+N = 2000;
+xs=spec2sdat(S1,N,dt);
+
+clf
+waveplot(xs,<span class="string">'-'</span>)
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">     Spectrum for Wind dominated sea
+</pre><img vspace="5" hspace="5" src="Chapter1_01.png"> <h2>Estimation of spectrum<a name="5"></a></h2><pre class="codeinput"><span class="comment">%A common situation is that one wants to estimate the spectrum for wave</span>
+<span class="comment">%measurements. The following code simulate 20 minutes signal sampled at 4Hz</span>
+<span class="comment">%and compare the spectral estimate with the original Torsethaugen spectum.</span>
+clf
+xs=spec2sdat(S1,[20*60*4 1],0.25);
+Sest = dat2spec(xs,400)
+wspecplot(Sest,1,<span class="string">'--'</span>), hold <span class="string">on</span>
+wspecplot(S1,1), hold <span class="string">off</span>
+axis([0 3 0 5])
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">
+Sest = 
+
+       S: [2049x1 double]
+       w: [2049x1 double]
+      tr: []
+       h: Inf
+    type: 'freq'
+     phi: 0
+    norm: 0
+    note: 'dat2spec(xs), Method = cov'
+    date: '03-Sep-2005 04:01:23'
+       L: 400
+      Bw: 0.0836
+
+</pre><img vspace="5" hspace="5" src="Chapter1_02.png"> <h2>Section 1.4.2 Probability distributions of wave characteristics.<a name="6"></a></h2>
+      <h2>Probability distribution of wave trough period<a name="7"></a></h2><pre class="codeinput"><span class="comment">%WAFO gives the possibility of computing the exact probability</span>
+<span class="comment">%distributions for a number of characteristics given a spectral density.</span>
+<span class="comment">%In the following example we study the trough period extracted from the</span>
+<span class="comment">%time series and compared with the theoretical density computed with exact</span>
+<span class="comment">%spectrum, S1, and the estimated spectrum, Sest.</span>
+
+clf
+[T, index] = dat2wa(xs,0,<span class="string">'d2u'</span>);
+whisto(T,25,1,1), hold <span class="string">on</span>
+dtyex = spec2tpdf(S1,[],<span class="string">'Tt'</span>,[0 10 51],0,3);
+dtyest = spec2tpdf(Sest,[],<span class="string">'Tt'</span>,[0 10 51],0,3);
+pdfplot(dtyex)
+pdfplot(dtyest,<span class="string">'-.'</span>)
+axis([0 10 0 0.35]), hold <span class="string">off</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput">The level u for Gaussian process = 0
+writing data
+   Starting Fortran executable.
+Requested parameters : 
+NIT =  3  integration by quadrature 
+EPSS =  1.000000000000000E-05  RELEPS =  1.000000000000000E-05 
+EPS2 =  1.000000000000000E-04  xCutOff =  4.264890793922826 
+NsimMax =  5000 
+Elapsed time is 2.043000 seconds.
+The level u for Gaussian process = 0
+writing data
+   Starting Fortran executable.
+Requested parameters : 
+NIT =  3  integration by quadrature 
+EPSS =  1.000000000000000E-05  RELEPS =  1.000000000000000E-05 
+EPS2 =  1.000000000000000E-04  xCutOff =  4.264890793922826 
+NsimMax =  5000 
+Elapsed time is 2.353000 seconds.
+</pre><img vspace="5" hspace="5" src="Chapter1_03.png"> <h2>Section 1.4.3 Directional spectra<a name="8"></a></h2><pre class="codeinput"><span class="comment">%Here are a few lines of code, which produce directional spectra</span>
+<span class="comment">%with frequency independent and frequency dependent spreading.</span>
+clf
+D1 = spreading(101,<span class="string">'cos'</span>,pi/2,[15],[],0); <span class="comment">% frequency independent</span>
+D12 = spreading(101,<span class="string">'cos'</span>,0,[15],S1.w,1); <span class="comment">% frequency dependent</span>
+SD1 = mkdspec(S1,D1);
+SD12 = mkdspec(S1,D12);
+wspecplot(SD1,1), hold <span class="string">on</span>, wspecplot(SD12,1,<span class="string">'-.'</span>); hold <span class="string">off</span>
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><img vspace="5" hspace="5" src="Chapter1_04.png"> <h2>3D Simulation of the sea surface<a name="9"></a></h2>
+      <p>The simulations show that frequency dependent spreading leads to much more irregular surface so the orientation of waves is
+         less transparent compared to the frequency independent case.
+      </p><pre class="codeinput"><span class="comment">% Frequency independent spreading</span>
+Y1=seasim(SD1,2^8,2^8,1,0.5,0.5,0.25,2,1);
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput"> Interpolating in spectrum
+</pre><img vspace="5" hspace="5" src="Chapter1_05.png"> <p>Frequency dependent spreading</p><pre class="codeinput">Y12=seasim(SD12,2^8,2^8,1,0.5,0.5,0.25,2,1);
+wafostamp([],<span class="string">'(ER)'</span>)
+pause(pstate)
+</pre><pre class="codeoutput"> Interpolating in spectrum
+</pre><img vspace="5" hspace="5" src="Chapter1_06.png"> <h2>Section 1.4.4 Fatigue, Load cycles and Markov models.<a name="11"></a></h2>
+      <h2>Switching Markow chain of turningpoints<a name="12"></a></h2>
+      <p>Here the Markov approximation for computing the intensity of rainflowcycles for the Gaussian model with spectrum S1</p><pre class="codeinput">clf
+frfc=spec2cmat(S1,[],<span class="string">'rfc'</span>,[],[-6 6 61]);
+pdfplot(frfc);
+hold <span class="string">on</span>
+tp=dat2tp(xs);
+rfc=tp2rfc(tp);
+plot(rfc(:,2),rfc(:,1),<span class="string">'.'</span>)
+wafostamp([],<span class="string">'(ER)'</span>)
+hold <span class="string">off</span>
+</pre><pre class="codeoutput">The level u for Gaussian process = 0
+   Writing data.
+   Starting Fortran executable.
+   Laps to go: 40 
+   Laps to go: 39 
+   Laps to go: 38 
+   Laps to go: 37 
+   Laps to go: 36 
+   Laps to go: 35 
+   Laps to go: 34 
+   Laps to go: 33 
+   Laps to go: 32 
+   Laps to go: 31 
+   Laps to go: 30 
+   Laps to go: 29 
+   Laps to go: 28 
+   Laps to go: 27 
+   Laps to go: 26 
+   Laps to go: 25 
+   Laps to go: 24 
+   Laps to go: 23 
+   Laps to go: 22 
+   Laps to go: 21 
+   Laps to go: 20 
+   Laps to go: 19 
+   Laps to go: 18 
+   Laps to go: 17 
+   Laps to go: 16 
+   Laps to go: 15 
+   Laps to go: 14 
+   Laps to go: 13 
+   Laps to go: 12 
+   Laps to go: 11 
+   Laps to go: 10 
+   Laps to go: 9 
+   Laps to go: 8 
+   Laps to go: 7 
+   Laps to go: 6 
+   Laps to go: 5 
+   Laps to go: 4 
+   Laps to go: 3 
+   Laps to go: 2 
+   Loading data.
+Warning:  this is not a pdf since cdf&gt;1
+normalizing
+</pre><img vspace="5" hspace="5" src="Chapter1_07.png"> <p class="footer"><br>
+         Published with MATLAB&reg; 7.0.1<br></p>
+      <!--
+##### SOURCE BEGIN #####
+%% CHAPTER1 demonstrates some applications of WAFO
+%
+% CHAPTER1 gives an overview through examples some of the capabilities of
+% WAFO. WAFO is a toolbox of Matlab routines for statistical analysis and
+% simulation of random waves and loads.
+%
+% The commands are edited for fast computation.
+% Each set of commands is followed by a 'pause' command.
+% Type 'pause off' to disable them.
+
+% Tested on Matlab 5.3, 7.0
+% History
+% Revised pab sept2005
+%  Added sections -> easier to evaluate using cellmode evaluation.
+% Revised pab Dec 2004
+% Added support for publish.m command in matlab R14
+% Created by GL July 13, 2000
+% from commands used in Chapter 1 of the tutorial
+
+pstate = 'off'
+
+%% Section 1.4 Some applications of WAFO
+
+%% Section 1.4.1 Simulation from spectrum, estimation of spectrum 
+%% Simulation of the sea surface from spectrum
+%The following code generates 200 seconds of data sampled with 10Hz from
+%the Torsethaugen spectrum
+Hm0 = 6;
+Tp  = 8;
+S1=torsethaugen([],[Hm0 Tp],1);
+clf
+dt = 0.1;
+N = 2000;
+xs=spec2sdat(S1,N,dt);
+
+clf
+waveplot(xs,'-')
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Estimation of spectrum 
+%A common situation is that one wants to estimate the spectrum for wave
+%measurements. The following code simulate 20 minutes signal sampled at 4Hz
+%and compare the spectral estimate with the original Torsethaugen spectum.
+clf
+xs=spec2sdat(S1,[20*60*4 1],0.25);
+Sest = dat2spec(xs,400)
+wspecplot(Sest,1,'REPLACE_WITH_DASH_DASH'), hold on
+wspecplot(S1,1), hold off
+axis([0 3 0 5])
+wafostamp([],'(ER)')
+pause(pstate)
+
+
+%% Section 1.4.2 Probability distributions of wave characteristics.
+%% Probability distribution of wave trough period
+%WAFO gives the possibility of computing the exact probability
+%distributions for a number of characteristics given a spectral density.
+%In the following example we study the trough period extracted from the
+%time series and compared with the theoretical density computed with exact
+%spectrum, S1, and the estimated spectrum, Sest.
+
+clf
+[T, index] = dat2wa(xs,0,'d2u');
+whisto(T,25,1,1), hold on
+dtyex = spec2tpdf(S1,[],'Tt',[0 10 51],0,3);
+dtyest = spec2tpdf(Sest,[],'Tt',[0 10 51],0,3);
+pdfplot(dtyex)
+pdfplot(dtyest,'-.')
+axis([0 10 0 0.35]), hold off
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Section 1.4.3 Directional spectra
+%Here are a few lines of code, which produce directional spectra 
+%with frequency independent and frequency dependent spreading.
+clf
+D1 = spreading(101,'cos',pi/2,[15],[],0); % frequency independent
+D12 = spreading(101,'cos',0,[15],S1.w,1); % frequency dependent
+SD1 = mkdspec(S1,D1);
+SD12 = mkdspec(S1,D12);
+wspecplot(SD1,1), hold on, wspecplot(SD12,1,'-.'); hold off
+wafostamp([],'(ER)')
+pause(pstate)
+
+
+%% 3D Simulation of the sea surface 
+% The simulations show that frequency dependent spreading leads to
+% much more irregular surface so the orientation of waves is less
+% transparent compared to the frequency independent case.
+
+% Frequency independent spreading
+Y1=seasim(SD1,2^8,2^8,1,0.5,0.5,0.25,2,1);
+wafostamp([],'(ER)')
+pause(pstate)
+%%
+% Frequency dependent spreading
+Y12=seasim(SD12,2^8,2^8,1,0.5,0.5,0.25,2,1);
+wafostamp([],'(ER)')
+pause(pstate)
+
+%% Section 1.4.4 Fatigue, Load cycles and Markov models.
+%% Switching Markow chain of turningpoints 
+% Here the Markov approximation for computing the intensity of
+% rainflowcycles for the Gaussian model with spectrum S1
+clf
+frfc=spec2cmat(S1,[],'rfc',[],[-6 6 61]);
+pdfplot(frfc);
+hold on
+tp=dat2tp(xs);
+rfc=tp2rfc(tp);
+plot(rfc(:,2),rfc(:,1),'.')
+wafostamp([],'(ER)')
+hold off
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

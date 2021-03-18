@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of initwafo</title>
+  <meta name="keywords" content="initwafo">
+  <meta name="description" content="   Initiation of WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">wafo</a> &gt; initwafo.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>initwafo
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>   Initiation of WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong> initwafo(opt,add,first) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="initwafo.html" class="code" title="   Initiation of WAFO Toolbox.">INITWAFO</a>   Initiation of WAFO Toolbox.
+    WAFO = &quot;Wave Analysis for <a href="fatigue.html" class="code" title=" in WAFO (Wave Analysis for Fatigue and Oceanography).">Fatigue</a> and Oceanography&quot;
+ 
+  CALL:  <a href="initwafo.html" class="code" title="   Initiation of WAFO Toolbox.">initwafo</a>(opt,add,first)
+ 
+  Set MATLAB-paths to WAFO toolbox.
+ 
+  The following options may be used.
+    opt   = 'minimum' : Minimum initiation, only paths to the 
+                        necessary m-files are added.
+            'normal'  : Normal initiation, also paths to demos, data and
+                        documentation are added. (default)
+            'full'    : Full initiation, all paths are added.
+    add   = 1 : Add paths from MATLAB search path (default)
+            0 : Remove paths from MATLAB search path
+    first = 1 : Add the paths first in the search path (default)
+            0 : Add the paths last in the search path
+    
+  Example:
+    <a href="initwafo.html" class="code" title="   Initiation of WAFO Toolbox.">initwafo</a>;             % Initiate WAFO toolbox paths
+    <a href="initwafo.html" class="code" title="   Initiation of WAFO Toolbox.">initwafo</a>([],0);       % Remove WAFO toolbox paths
+    <a href="initwafo.html" class="code" title="   Initiation of WAFO Toolbox.">initwafo</a>('full',1,0); % Full init., put WAFO paths last in search path
+ 
+  See also  <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">wafopath</a>, <a href="waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>, <a href="wafoexepath.html" class="code" title=" Returns the path to executables for the WAFO Toolbox">wafoexepath</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="wafopath.html" class="code" title=" p = wafopath(part,add,first)">wafopath</a></li></TD>
+<TD> Adds or removes WAFO subdirectories from the search path.</TD>
+</TR>
+<TR>
+<TD><li><a href="waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\addpath.m">addpath</a></li></TD>
+<TD>       Add directory to search path.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\path.m">path</a></li></TD>
+<TD>          Get/set search path.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\rmpath.m">rmpath</a></li></TD>
+<TD>        Remove directory from search path.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../wafo/docs/startup.html" class="code" title="This is a script file.">startup</a></li></TD>
+<TD> example startup file to put in your matlab path</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">initwafo</a>(opt,add,first)
+002 <span class="comment">%INITWAFO   Initiation of WAFO Toolbox.</span>
+003 <span class="comment">%   WAFO = &quot;Wave Analysis for Fatigue and Oceanography&quot;</span>
+004 <span class="comment">%</span>
+005 <span class="comment">% CALL:  initwafo(opt,add,first)</span>
+006 <span class="comment">%</span>
+007 <span class="comment">% Set MATLAB-paths to WAFO toolbox.</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% The following options may be used.</span>
+010 <span class="comment">%   opt   = 'minimum' : Minimum initiation, only paths to the </span>
+011 <span class="comment">%                       necessary m-files are added.</span>
+012 <span class="comment">%           'normal'  : Normal initiation, also paths to demos, data and</span>
+013 <span class="comment">%                       documentation are added. (default)</span>
+014 <span class="comment">%           'full'    : Full initiation, all paths are added.</span>
+015 <span class="comment">%   add   = 1 : Add paths from MATLAB search path (default)</span>
+016 <span class="comment">%           0 : Remove paths from MATLAB search path</span>
+017 <span class="comment">%   first = 1 : Add the paths first in the search path (default)</span>
+018 <span class="comment">%           0 : Add the paths last in the search path</span>
+019 <span class="comment">%   </span>
+020 <span class="comment">% Example:</span>
+021 <span class="comment">%   initwafo;             <span class="comment">% Initiate WAFO toolbox paths</span></span>
+022 <span class="comment">%   initwafo([],0);       <span class="comment">% Remove WAFO toolbox paths</span></span>
+023 <span class="comment">%   initwafo('full',1,0); <span class="comment">% Full init., put WAFO paths last in search path</span></span>
+024 <span class="comment">%</span>
+025 <span class="comment">% See also  wafopath, waforoot, wafoexepath.</span>
+026 
+027 <span class="comment">% Tested on: Matlab 5.3</span>
+028 <span class="comment">% History:</span>
+029 <span class="comment">% Revised jr 01.01.30</span>
+030 <span class="comment">%   Changed 'initiation' to 'removal' (line 108)</span>
+031 <span class="comment">% Revised jr 00.05.23</span>
+032 <span class="comment">%   Changed demos to wdemos</span>
+033 <span class="comment">% Updated by PJ 25-Feb-2000</span>
+034 <span class="comment">%   Removed input option: opt='root'</span>
+035 <span class="comment">%   Now keeps WAFO root-directory in search path when removing WAFO paths.</span>
+036 <span class="comment">% Revised pab feb 2000</span>
+037 <span class="comment">%   Enabled several subdirectories in the papers directory</span>
+038 <span class="comment">% Updated by PJ 19-Jan-2000</span>
+039 <span class="comment">%   Now you need to set the path to WAFO root directory </span>
+040 <span class="comment">%   before using initwafo.</span>
+041 <span class="comment">% by Pär Johannesson 29-Sep-1999</span>
+042 <span class="comment">%   new routine </span>
+043 
+044 <span class="comment">% Check input and output</span>
+045 ni = nargin;
+046 no = nargout;
+047 error(nargchk(0,3,ni));
+048 
+049 <span class="keyword">if</span> ni == 0, opt = []; <span class="keyword">end</span>
+050 <span class="keyword">if</span> ni&lt;2, add = []; <span class="keyword">end</span>
+051 <span class="keyword">if</span> ni&lt;3, first = []; <span class="keyword">end</span>
+052 
+053 <span class="comment">% Set default value</span>
+054 <span class="keyword">if</span> isempty(opt)
+055   opt = <span class="string">'normal'</span>;
+056 <span class="keyword">end</span>
+057 
+058 <span class="keyword">if</span> isempty(add)
+059   add = 1;
+060 <span class="keyword">end</span>
+061 
+062 <span class="keyword">if</span> isempty(first)
+063   first=1;
+064 <span class="keyword">end</span>
+065 
+066 <span class="comment">% Add root-path to WAFO toolbox</span>
+067 wafop = <a href="waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>;
+068 
+069 path(wafop,path); <span class="comment">% Add WAFO path first in search path</span>
+070 
+071 opt = lower(opt);  <span class="comment">% To lower case</span>
+072 optNr = 1*strcmp(opt,<span class="string">'minimum'</span>) + 2*strcmp(opt,<span class="string">'normal'</span>) + <span class="keyword">...</span>
+073     3*strcmp(opt,<span class="string">'full'</span>);
+074 
+075 p = {wafop};
+076 <span class="keyword">if</span> optNr &gt;= 1 <span class="comment">% Add paths to WAFO routines</span>
+077   p1 = <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">wafopath</a>(<span class="string">'tools'</span>);
+078   p(<span class="keyword">end</span>+1:<span class="keyword">end</span>+length(p1),1) = p1;
+079 <span class="keyword">end</span>
+080 <span class="keyword">if</span> optNr &gt;= 2 <span class="comment">% Add paths to WAFO demos, data and documentation</span>
+081   p(<span class="keyword">end</span>+1,1) = <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">wafopath</a>(<span class="string">'docs'</span>); 
+082   p(<span class="keyword">end</span>+1,1) = <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">wafopath</a>(<span class="string">'wdemos'</span>); 
+083   p(<span class="keyword">end</span>+1,1) = <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">wafopath</a>(<span class="string">'data'</span>);
+084 <span class="keyword">end</span>
+085 <span class="keyword">if</span> optNr &gt;= 3 <span class="comment">% Add paths to WAFO papers</span>
+086   tmp = <a href="wafopath.html" class="code" title=" Adds or removes WAFO subdirectories from the search path.">wafopath</a>(<span class="string">'papers'</span>);
+087   Np = length(tmp(:,1));
+088   <span class="keyword">for</span> ix=1:Np,
+089     p(<span class="keyword">end</span>+1,1) = tmp(ix,:);
+090   <span class="keyword">end</span>
+091 <span class="keyword">end</span>
+092     
+093 <span class="keyword">if</span> add <span class="comment">% Add paths</span>
+094   
+095   rmpath(wafop) 
+096   <span class="keyword">if</span> first <span class="comment">% Add WAFO paths first in search path</span>
+097     p(<span class="keyword">end</span>+1) = {<span class="string">'-begin'</span>};
+098    <span class="keyword">else</span> <span class="comment">% Add WAFO paths last in search path (first == 0)</span>
+099     p(<span class="keyword">end</span>+1) = {<span class="string">'-end'</span>};
+100   <span class="keyword">end</span>
+101   addpath(p{:});
+102   disp([<span class="string">'WAFO toolbox paths set: '</span> opt <span class="string">' initiation'</span>]);
+103   
+104 <span class="keyword">else</span> <span class="comment">% Remove paths (add == 0) </span>
+105 
+106   <span class="comment">% Remove all paths ecxept the path to wafo root-directory</span>
+107   rmpath(p{2:<span class="keyword">end</span>});
+108   disp([<span class="string">'WAFO toolbox paths removed: '</span> opt <span class="string">' removal'</span>]);
+109   
+110 <span class="keyword">end</span>
+111</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

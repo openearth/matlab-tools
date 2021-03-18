@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of iter_mc</title>
+  <meta name="keywords" content="iter_mc">
+  <meta name="description" content="  Calculates a kernel of a MC given a rainflow matrix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; iter_mc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>iter_mc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Calculates a kernel of a MC given a rainflow matrix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [F, rfc]=iter_mc(f0,f,k,epsilon) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="iter_mc.html" class="code" title="  Calculates a kernel of a MC given a rainflow matrix">ITER_MC</a>  Calculates a kernel of a MC given a rainflow matrix
+ 
+     Solves  f_rfc = f_xy + F_mc(f_xy) for f_xy.
+ 
+   Call: [fmM_k frfc_k]=<a href="iter_mc.html" class="code" title="  Calculates a kernel of a MC given a rainflow matrix">iter_mc</a>(frfc,fmM_0,k,eps)
+ 
+    fmM_k  = the solution to the equation frfc = fmM + F(fmM),
+    frfc_k = the rainflow matrix; frfc_k = fmM_k + F(fmM_k).
+             
+ 
+    frfc   = the rainflow matrix to be inverted,
+    fmM_0  = the first approximation to the Markov matrix, if not
+             specified  fmM_0=frfc,
+    k      = number of iterations, if not specified, k=1.
+    eps    = a convergence treshold, default value; eps=0.00001
+ 
+  See also  <a href="iter.html" class="code" title="  Calculates a Markov matrix given a rainflow matrix">iter</a>, <a href="spec2cmat.html" class="code" title=" Joint intensity matrix for cycles (max,min)-, rainflow- and (crest,trough) ">spec2cmat</a>, <a href="../../wafo/markov/mctp2rfm.html" class="code" title="  Calculates the rainflow matrix for a MCTP.">mctp2rfm</a>, <a href="../../wafo/markov/mc2rfm.html" class="code" title="  Calculates the rainflow matrix/intensity for a Markov chain.">mc2rfm</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mc2rfc.html" class="code" title=" f_rfc = mc2rfc(f_xy,paramv,paramu)">mc2rfc</a></li></TD>
+<TD>  Calculates a rainflow matrix given a Markov chain with kernel f_xy;</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [F, rfc]=<a name="_sub0" href="#_subfunctions" class="code">iter_mc</a>(f0,f,k,epsilon)
+002 <span class="comment">% ITER_MC  Calculates a kernel of a MC given a rainflow matrix</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%    Solves  f_rfc = f_xy + F_mc(f_xy) for f_xy.</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%  Call: [fmM_k frfc_k]=iter_mc(frfc,fmM_0,k,eps)</span>
+007 <span class="comment">%</span>
+008 <span class="comment">%   fmM_k  = the solution to the equation frfc = fmM + F(fmM),</span>
+009 <span class="comment">%   frfc_k = the rainflow matrix; frfc_k = fmM_k + F(fmM_k).</span>
+010 <span class="comment">%            </span>
+011 <span class="comment">%</span>
+012 <span class="comment">%   frfc   = the rainflow matrix to be inverted,</span>
+013 <span class="comment">%   fmM_0  = the first approximation to the Markov matrix, if not</span>
+014 <span class="comment">%            specified  fmM_0=frfc,</span>
+015 <span class="comment">%   k      = number of iterations, if not specified, k=1.</span>
+016 <span class="comment">%   eps    = a convergence treshold, default value; eps=0.00001</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% See also  iter, spec2cmat, mctp2rfm, mc2rfm</span>
+019 
+020 <span class="comment">% References:</span>
+021 <span class="comment">% Rychlik, I. (1996)</span>
+022 <span class="comment">% 'Simulation of load sequences from Rainflow matrices: Markov method'</span>
+023 <span class="comment">% Int. J. Fatigue, Vol 18, pp 429-438</span>
+024 <span class="comment">%</span>
+025 
+026 <span class="comment">% tested on matlab 5.2</span>
+027 <span class="comment">% History:</span>
+028 <span class="comment">% by ir 1995</span>
+029 
+030 
+031 <span class="keyword">if</span> nargin &lt; 2
+032    f=f0;
+033 <span class="keyword">end</span>
+034 <span class="keyword">if</span> nargin &lt;3
+035    k=1;
+036 <span class="keyword">end</span>
+037 <span class="keyword">if</span> nargin &lt;4
+038    epsilon=0.00001;
+039 <span class="keyword">end</span>
+040 check0=1;
+041 f0=fliplr(f0);
+042 f=fliplr(f);
+043 
+044 <span class="keyword">for</span> i=1:k
+045   <span class="keyword">if</span> check0
+046    f1=f;
+047    rfc=<a href="mc2rfc.html" class="code" title="  Calculates a rainflow matrix given a Markov chain with kernel f_xy; ">mc2rfc</a>(f);
+048    f=f1+(f0-rfc);
+049    f=max(0,f);
+050    check0=sum(sum(abs(f1-f)))&gt;epsilon;
+051    check=[k-i+1, sum(sum(abs(f1-f)))]
+052  <span class="keyword">end</span>
+053 <span class="keyword">end</span>
+054 
+055 F=fliplr(f);
+056 rfc=fliplr(<a href="mc2rfc.html" class="code" title="  Calculates a rainflow matrix given a Markov chain with kernel f_xy; ">mc2rfc</a>(f));
+057 
+058</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

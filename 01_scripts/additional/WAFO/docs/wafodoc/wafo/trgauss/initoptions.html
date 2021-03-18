@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of initoptions</title>
+  <meta name="keywords" content="initoptions">
+  <meta name="description" content=" Initializes RIND options according to speed.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; initoptions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>initoptions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Initializes RIND options according to speed.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> options = initoptions(speed,options) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="initoptions.html" class="code" title=" Initializes RIND options according to speed. ">INITOPTIONS</a> Initializes <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">RIND</a> options according to speed. 
+                                     
+  CALL options = <a href="initoptions.html" class="code" title=" Initializes RIND options according to speed. ">initoptions</a>(speed,options)     
+  
+      speed = integer defining accuracy of calculations.  
+              Valid numbers:  1,2,...,10  
+             (1=slowest and most accurate,10=fastest, but less accuracy) 
+    options = <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">rind</a>-options structure, see <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">RINDOPTSET</a> fort details. 
+  
+  <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">RIND</a> OPTIONS parameters initialized according to speed: 
+  SPEED    = Integer defining accuracy of calculations.  
+  ABSEPS   = Absolute error tolerance. 
+  RELEPS   = Relative error tolerance. 
+  COVEPS   = Error tolerance in Cholesky factorization. 
+  XCUTOFF  = Truncation limit of the normal CDF  
+  MAXPTS   = Maximum number of function values allowed. 
+  QUADNO   = Quadrature formulae used in integration of Xd(i) 
+             implicitly determining # nodes  
+  
+  Example: 
+   opt = <a href="initoptions.html" class="code" title=" Initializes RIND options according to speed. ">initoptions</a>(3);  
+      
+  See also  <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>, <a href="rind.html" class="code" title=" Computes multivariate normal expectations ">rind</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="rind.html" class="code" title=" [fxind, err,exTime,options] = rind(BIG,Ex,Blo,Bup,indI,xc,Nt,varargin)">rind</a></li></TD>
+<TD> Computes multivariate normal expectations</TD>
+</TR>
+<TR>
+<TD><li><a href="rindoptset.html" class="code" title=" options = rindoptset(varargin)">rindoptset</a></li></TD>
+<TD> Create or alter RIND OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2thpdf.html" class="code" title=" f = spec2thpdf(spec,utc,def,paramt,h,options,plotflag)">spec2thpdf</a></li></TD>
+<TD> Joint density of amplitude and period/wave-length characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2tpdf2.html" class="code" title=" [f] = spec2tpdf2(spec,utc,def,paramt,varargin)">spec2tpdf2</a></li></TD>
+<TD> Evaluates densities for various wave periods or wave lengths</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> options = <a name="_sub0" href="#_subfunctions" class="code">initoptions</a>(speed,options) 
+002 <span class="comment">%INITOPTIONS Initializes RIND options according to speed. </span>
+003 <span class="comment">%                                    </span>
+004 <span class="comment">% CALL options = initoptions(speed,options)     </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%     speed = integer defining accuracy of calculations.  </span>
+007 <span class="comment">%             Valid numbers:  1,2,...,10  </span>
+008 <span class="comment">%            (1=slowest and most accurate,10=fastest, but less accuracy) </span>
+009 <span class="comment">%   options = rind-options structure, see RINDOPTSET fort details. </span>
+010 <span class="comment">% </span>
+011 <span class="comment">% RIND OPTIONS parameters initialized according to speed: </span>
+012 <span class="comment">% SPEED    = Integer defining accuracy of calculations.  </span>
+013 <span class="comment">% ABSEPS   = Absolute error tolerance. </span>
+014 <span class="comment">% RELEPS   = Relative error tolerance. </span>
+015 <span class="comment">% COVEPS   = Error tolerance in Cholesky factorization. </span>
+016 <span class="comment">% XCUTOFF  = Truncation limit of the normal CDF  </span>
+017 <span class="comment">% MAXPTS   = Maximum number of function values allowed. </span>
+018 <span class="comment">% QUADNO   = Quadrature formulae used in integration of Xd(i) </span>
+019 <span class="comment">%            implicitly determining # nodes  </span>
+020 <span class="comment">% </span>
+021 <span class="comment">% Example: </span>
+022 <span class="comment">%  opt = initoptions(3);  </span>
+023 <span class="comment">%     </span>
+024 <span class="comment">% See also  rindoptset, rind </span>
+025    
+026   error(nargchk(1,2,nargin)) 
+027   <span class="keyword">if</span> nargin&lt;2|isempty(options) 
+028     options = <a href="rindoptset.html" class="code" title=" Create or alter RIND OPTIONS structure. ">rindoptset</a>; 
+029   <span class="keyword">end</span> 
+030   options.speed =  min(max(speed,1),11); 
+031   <span class="keyword">if</span> isempty(speed) 
+032     <span class="keyword">return</span> 
+033   <span class="keyword">end</span> 
+034   
+035   MAXPTS = 10000; 
+036   options.quadno = (1:3)+ (10-min(options.speed,9)) + (options.speed==1); 
+037   <span class="keyword">switch</span> options.speed 
+038    <span class="keyword">case</span> 11, 
+039     abseps = 1d-1; 
+040    <span class="keyword">case</span> (10) 
+041     abseps = 1d-2; 
+042    <span class="keyword">case</span> {7,8,9}  
+043     abseps = 1d-2; 
+044    <span class="keyword">case</span> {4,5,6} 
+045     MAXPTS = 20000; 
+046     abseps = 1d-3; 
+047    <span class="keyword">case</span> {1,2,3} 
+048     MAXPTS = 30000; 
+049     abseps = 1d-4; 
+050   <span class="keyword">end</span>   
+051   TMP = max(11-abs(options.speed),1); 
+052   TMP = mod(TMP+1,3)+1; 
+053         
+054   options.releps = min(abseps ,1.d-2); 
+055   options.coveps = abseps*((1.d-1)^TMP); 
+056   options.maxpts = MAXPTS;     
+057    
+058   <span class="keyword">if</span> (options.method==0)  
+059      <span class="comment">% This gives approximately the same accuracy as when using  </span>
+060      <span class="comment">% RINDDND and RINDNIT     </span>
+061       
+062      <span class="comment">%    xCutOff= MIN(MAX(xCutOff+0.5d0,4.d0),5.d0) </span>
+063      abseps = abseps*1.d-1; 
+064   <span class="keyword">end</span> 
+065   options.abseps  = abseps; 
+066   truncError      = 0.05 * max(0,options.abseps); 
+067   options.xcutoff = max(min(abs(<a href="../../wafo/wstats/wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(truncError)),7),1.2); 
+068   options.abseps  = max(options.abseps - truncError,0); 
+069    
+070  <span class="keyword">return</span>  
+071</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

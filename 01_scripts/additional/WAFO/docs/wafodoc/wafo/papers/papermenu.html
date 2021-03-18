@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of papermenu</title>
+  <meta name="keywords" content="papermenu">
+  <meta name="description" content=" displays a user interface to the paper scripts of WAFO">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">papers</a> &gt; papermenu.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>papermenu
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> displays a user interface to the paper scripts of WAFO</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> papermenu(kind) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="papermenu.html" class="code" title=" displays a user interface to the paper scripts of WAFO">PAPERMENU</a> displays a user interface to the paper scripts of WAFO
+ 
+  CALL:  <a href="papermenu.html" class="code" title=" displays a user interface to the paper scripts of WAFO">papermenu</a>(kind)
+ 
+     kind = 0, displays a point and click menu (default)
+            1, displays a text driven menu
+ 
+  See also  <a href="../../wafo/docs/wafomenu.html" class="code" title=" displays a user interface to the documentation files of WAFO">wafomenu</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/choices.html" class="code" title=" choices(name,header,labels,callbacks,inter)">choices</a></li></TD>
+<TD> Create a list of choices with uicontrols and callbacks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\clc.m">clc</a></li></TD>
+<TD>           Clear command window.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\input.m">input</a></li></TD>
+<TD>         Prompt for user input.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\str2mat.m">str2mat</a></li></TD>
+<TD>       Form blank padded character matrix from strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">papermenu</a>(kind)
+002 <span class="comment">% PAPERMENU displays a user interface to the paper scripts of WAFO</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  papermenu(kind)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%    kind = 0, displays a point and click menu (default)</span>
+007 <span class="comment">%           1, displays a text driven menu</span>
+008 <span class="comment">%</span>
+009 <span class="comment">% See also  wafomenu</span>
+010 
+011 <span class="comment">%history</span>
+012 <span class="comment">% by pab 20.05.2000</span>
+013 
+014 <span class="keyword">if</span> nargin&lt;1|isempty(kind)
+015   kind=0;
+016 <span class="keyword">end</span>
+017 
+018 header = <span class="string">'WAFO PAPER scripts'</span>;
+019 labels =str2mat(<span class="keyword">...</span>
+020     <span class="string">' 1)  RECDEMO: A statistical procedure for reconstruction of 1D signals.'</span>, <span class="keyword">...</span>
+021     <span class="string">' 2)  WAFODEMO: WAFO - a Matlab toolbox for analysis of random waves and loads.'</span>) ;
+022 filenames = str2mat(<span class="keyword">...</span>
+023     <span class="string">'recdemo'</span>, <span class="keyword">...</span>
+024     <span class="string">'wafodemo'</span>);
+025 
+026 Noptions=size(filenames,1);
+027 <span class="keyword">if</span> kind==1, <span class="comment">% text driven menu</span>
+028   r=1;
+029   <span class="keyword">while</span> ~isempty(r) &amp; ~strcmpi(r,<span class="string">'q'</span>)
+030     clc
+031     disp(header)
+032     disp(<span class="string">'  '</span>)
+033     disp(labels)
+034     disp(<span class="string">'  '</span>)
+035     r=input([<span class="string">'Enter your choice 1,2,...,'</span> num2str(Noptions-1),<span class="string">' or '</span> <span class="keyword">...</span>
+036       num2str(Noptions) <span class="string">'.  '</span>]);
+037     <span class="keyword">if</span> ~isempty(r)
+038       clc
+039       r=round(r);
+040       <span class="keyword">if</span> ((1&lt;=r) &amp; (r&lt;=Noptions))
+041     eval(filenames(r,:))
+042     <span class="comment">%pause</span>
+043       <span class="keyword">end</span>  
+044     <span class="keyword">end</span> <span class="comment">% if r</span>
+045   <span class="keyword">end</span> <span class="comment">% while  </span>
+046 <span class="keyword">else</span> <span class="comment">% point and click menu</span>
+047   callbacks = [filenames]; 
+048   <a href="../../wafo/misc/choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">choices</a>(<span class="string">'PAPER'</span>,header,labels,callbacks);
+049 <span class="keyword">end</span> <span class="comment">% kind</span>
+050 
+051 <span class="keyword">return</span>
+052 
+053</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

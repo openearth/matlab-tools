@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of lsplot</title>
+  <meta name="keywords" content="lsplot">
+  <meta name="description" content="  Plot load spectra.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; lsplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>lsplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Plot load spectra.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> h=lsplot(LS,cum,norm,beta,plottype) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="lsplot.html" class="code" title="  Plot load spectra. ">LSPLOT</a>  Plot load spectra. 
+  
+  CALL:  <a href="lsplot.html" class="code" title="  Plot load spectra. ">lsplot</a>(LS) 
+         h = <a href="lsplot.html" class="code" title="  Plot load spectra. ">lsplot</a>(LS,cum,norm,beta,plottype) 
+  
+  Input: 
+    LS     = Load spectra.                            [N,2] OR {n}[N,2] 
+    cum    = 0: Plot frequencies,  
+             1: Plot cumulative frequencies. (default) 
+    norm   = 0: Use given frequencies, (default) 
+             1: Normalize to relative frequencies.    
+    beta   = Plot damage spectrum with damage exponent beta. (default beta=0) 
+    plottype = Plot load spectrum using commands:  
+               Cumulative plot: 'stairs' (default), or 'plot', 
+               Frequency plot: 'bar' (default), 'stem', 'stairs', or 'plot'. 
+  
+  Output: 
+    h      = Handles to ploted lines.                        [n,1] 
+  
+  The variable LS contains either one load spectrum stored in a matrix, or 
+  a cell-array of load spectra.  Each spectrum is a two collumn matrix with 
+  the amplitudes in the first column, and the frequencies in the second.  
+  
+  See also  <a href="cmat2amp.html" class="code" title=" Calculates a histogram of amplitudes from a cycle matrix.">cmat2amp</a>, <a href="../../wafo/onedim/lcplot.html" class="code" title=" Plots level-crossing spectrum (lc) ">lcplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\bar.m">bar</a></li></TD>
+<TD>           Bar graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\ishold.m">ishold</a></li></TD>
+<TD>        Return hold state.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isnumeric.m">isnumeric</a></li></TD>
+<TD>     True for numeric arrays.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\stairs.m">stairs</a></li></TD>
+<TD>        Stairstep plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specgraph\stem.m">stem</a></li></TD>
+<TD>          Discrete sequence or "stem" plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> h=<a name="_sub0" href="#_subfunctions" class="code">lsplot</a>(LS,cum,norm,beta,plottype) 
+002 <span class="comment">%LSPLOT  Plot load spectra. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  lsplot(LS) </span>
+005 <span class="comment">%        h = lsplot(LS,cum,norm,beta,plottype) </span>
+006 <span class="comment">% </span>
+007 <span class="comment">% Input: </span>
+008 <span class="comment">%   LS     = Load spectra.                            [N,2] OR {n}[N,2] </span>
+009 <span class="comment">%   cum    = 0: Plot frequencies,  </span>
+010 <span class="comment">%            1: Plot cumulative frequencies. (default) </span>
+011 <span class="comment">%   norm   = 0: Use given frequencies, (default) </span>
+012 <span class="comment">%            1: Normalize to relative frequencies.    </span>
+013 <span class="comment">%   beta   = Plot damage spectrum with damage exponent beta. (default beta=0) </span>
+014 <span class="comment">%   plottype = Plot load spectrum using commands:  </span>
+015 <span class="comment">%              Cumulative plot: 'stairs' (default), or 'plot', </span>
+016 <span class="comment">%              Frequency plot: 'bar' (default), 'stem', 'stairs', or 'plot'. </span>
+017 <span class="comment">% </span>
+018 <span class="comment">% Output: </span>
+019 <span class="comment">%   h      = Handles to ploted lines.                        [n,1] </span>
+020 <span class="comment">% </span>
+021 <span class="comment">% The variable LS contains either one load spectrum stored in a matrix, or </span>
+022 <span class="comment">% a cell-array of load spectra.  Each spectrum is a two collumn matrix with </span>
+023 <span class="comment">% the amplitudes in the first column, and the frequencies in the second.  </span>
+024 <span class="comment">% </span>
+025 <span class="comment">% See also  cmat2amp, lcplot </span>
+026  
+027 <span class="comment">% Copyright (c) 2003 by Pär Johannesson </span>
+028  
+029 <span class="comment">% Tested  on Matlab  6.1, 6.5 </span>
+030 <span class="comment">% </span>
+031 <span class="comment">% History: </span>
+032 <span class="comment">% Created by TS (Thomas Svensson) 04-May-2002 </span>
+033 <span class="comment">% Updated by PJ 26-Jan-2003 </span>
+034 <span class="comment">% Updated by PJ 27-Jan-2003 </span>
+035 <span class="comment">%   Changed name from RFCPLOT to LSPLOT </span>
+036 <span class="comment">%   Added plot of damage spectrum. </span>
+037 <span class="comment">% Updated by PJ 03-Jun-2003 </span>
+038 <span class="comment">%   Added input argument 'plottype' </span>
+039 <span class="comment">%   Changed name from PLOTLS to LSPLOT </span>
+040 <span class="comment">% Updated by PJ 05-Jun-2003 </span>
+041 <span class="comment">%   Now correct cumulative plot. </span>
+042 <span class="comment">%   Changed to 'stem' instead of 'plot' </span>
+043 <span class="comment">% Updated by PJ 31-Oct-2003 </span>
+044 <span class="comment">%   Now cumulative plot starts from 1 (or minimal frequency). </span>
+045 <span class="comment">%   Added 'bar' and 'stem' for frequency plot. </span>
+046  
+047 <span class="comment">% Check input arguments </span>
+048 ni = nargin; 
+049 no = nargout; 
+050 error(nargchk(1,5,ni)); 
+051  
+052 <span class="keyword">if</span> ni &lt; 2 
+053     cum=[]; 
+054 <span class="keyword">end</span> 
+055 <span class="keyword">if</span> ni &lt; 3 
+056     norm=[]; 
+057 <span class="keyword">end</span> 
+058 <span class="keyword">if</span> ni &lt; 4 
+059     beta=[]; 
+060 <span class="keyword">end</span> 
+061 <span class="keyword">if</span> ni &lt; 5 
+062     plottype=[]; 
+063 <span class="keyword">end</span> 
+064  
+065 <span class="comment">% Default settings </span>
+066 <span class="keyword">if</span> isempty(cum) 
+067     cum=1; 
+068 <span class="keyword">end</span> 
+069 <span class="keyword">if</span> isempty(norm) 
+070     norm=0; 
+071 <span class="keyword">end</span> 
+072 <span class="keyword">if</span> isempty(beta) 
+073     beta=0; 
+074 <span class="keyword">end</span> 
+075 <span class="keyword">if</span> isempty(plottype) 
+076     <span class="keyword">if</span> cum 
+077         plottype=<span class="string">'stairs'</span>; 
+078     <span class="keyword">else</span> 
+079         plottype=<span class="string">'bar'</span>; 
+080     <span class="keyword">end</span> 
+081 <span class="keyword">end</span> 
+082  
+083 <span class="keyword">if</span> isnumeric(LS), LS={LS}; <span class="keyword">end</span> 
+084 n = length(LS);  <span class="comment">% Number of spectra </span>
+085 h = zeros(n,1);  <span class="comment">% Line handles </span>
+086  
+087 ih = ishold; 
+088 <span class="keyword">for</span> k = 1:n 
+089     LS{k}(:,2) = LS{k}(:,1).^beta.*LS{k}(:,2); <span class="comment">% Damage spectrum if beta&gt;0 </span>
+090     <span class="keyword">if</span> beta &gt; 0  
+091         <span class="keyword">if</span> k==1, <span class="comment">% Normalize damage to 1 for first spectrum </span>
+092             norm_beta =sum(LS{k}(:,2)); <span class="comment">%  </span>
+093         <span class="keyword">end</span> 
+094         LS{k}(:,2) = LS{k}(:,2)/norm_beta; 
+095     <span class="keyword">end</span> 
+096     <span class="keyword">if</span> norm 
+097         LS{k}(:,2) = LS{k}(:,2)/sum(LS{k}(:,2)); 
+098     <span class="keyword">end</span> 
+099     <span class="keyword">if</span> cum 
+100         I = (LS{k}(:,2)&gt;0); LS1 = LS{k}(I,:);  
+101         <span class="keyword">if</span> strcmp(plottype,<span class="string">'stairs'</span>) 
+102             min_x = min(1,min(LS1(:,2))); 
+103             x = [sum(LS1(:,2))-[0; cumsum(LS1(1:<span class="keyword">end</span>-1,2))]; min_x; 0]; 
+104             y = [0; LS1(:,1); LS1(<span class="keyword">end</span>,1)]; 
+105              
+106             <span class="comment">%LS1=[[0; LS1(:,1)] [LS1(:,2); 0] ]; </span>
+107             <span class="comment">%LS1 = LS1(size(LS1,1):-1:1,:); </span>
+108             <span class="comment">%h(k) = stairs(cumsum(LS1(:,2)),LS1(:,1)); </span>
+109             h(k) = stairs(flipud(x),flipud(y)); 
+110         <span class="keyword">elseif</span> strcmp(plottype,<span class="string">'plot'</span>) 
+111             LS1=[[0; LS1(:,1); LS1(<span class="keyword">end</span>,1)] [0; LS1(:,2); 0] ]; 
+112             LS1 = LS1(size(LS1,1):-1:1,:); 
+113             h(k) = plot(cumsum(LS1(:,2)),LS1(:,1)); 
+114         <span class="keyword">else</span> 
+115             error([<span class="string">'Invalid plottype: '</span> plottype]) 
+116         <span class="keyword">end</span> 
+117     <span class="keyword">else</span> 
+118         <span class="keyword">if</span> strcmp(plottype,<span class="string">'bar'</span>) 
+119             h(k) = bar(LS{k}(:,1),LS{k}(:,2),1); 
+120         <span class="keyword">elseif</span> strcmp(plottype,<span class="string">'stem'</span>) 
+121             stem(LS{k}(:,1),LS{k}(:,2)); 
+122         <span class="keyword">elseif</span> strcmp(plottype,<span class="string">'plot'</span>) 
+123             h(k) = plot(LS{k}(:,1),LS{k}(:,2)); 
+124         <span class="keyword">elseif</span> strcmp(plottype,<span class="string">'stairs'</span>) 
+125             h(k) = stairs(LS{k}(:,1),LS{k}(:,2)); 
+126         <span class="keyword">else</span> 
+127             error([<span class="string">'Invalid plottype: '</span> plottype]) 
+128         <span class="keyword">end</span> 
+129     <span class="keyword">end</span> 
+130     hold on, 
+131 <span class="keyword">end</span> 
+132  
+133 <span class="keyword">if</span> ~ih, hold off, <span class="keyword">end</span> 
+134  
+135 <span class="keyword">if</span> cum 
+136     set(gca,<span class="string">'xscale'</span>,<span class="string">'log'</span>); 
+137 <span class="keyword">end</span> 
+138  
+139  
+140 <span class="keyword">if</span> beta == 0 
+141     <span class="keyword">if</span> cum == 0 
+142         ylabel(<span class="string">'Frequency of cycles'</span>); 
+143         xlabel(<span class="string">'Amplitude'</span>); 
+144     <span class="keyword">else</span> 
+145         xlabel(<span class="string">'Cumulative frequency of cycles'</span>); 
+146         ylabel(<span class="string">'Amplitude'</span>); 
+147     <span class="keyword">end</span> 
+148 <span class="keyword">else</span> 
+149     <span class="keyword">if</span> cum == 0 
+150         ylabel([<span class="string">'Damage per cycle, beta='</span> num2str(beta)]); 
+151         xlabel(<span class="string">'Amplitude'</span>); 
+152     <span class="keyword">else</span> 
+153         xlabel([<span class="string">'Cumulative damage per cycle, beta='</span> num2str(beta)]); 
+154         ylabel(<span class="string">'Amplitude'</span>); 
+155     <span class="keyword">end</span> 
+156 <span class="keyword">end</span> 
+157  
+158 <span class="keyword">if</span> no==0, clear h; <span class="keyword">end</span> 
+159</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

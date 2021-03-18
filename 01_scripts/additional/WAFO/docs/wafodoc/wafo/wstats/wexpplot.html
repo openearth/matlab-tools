@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wexpplot</title>
+  <meta name="keywords" content="wexpplot">
+  <meta name="description" content=" Plots data on a Exponential distribution paper">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wexpplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wexpplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Plots data on a Exponential distribution paper</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> phat = wexpplot(x) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wexpplot.html" class="code" title=" Plots data on a Exponential distribution paper ">WEXPPLOT</a> Plots data on a Exponential distribution paper 
+  
+  CALL:  phat = <a href="wexpplot.html" class="code" title=" Plots data on a Exponential distribution paper ">wexpplot</a>(X) 
+  
+        phat = [m] Parameter (see <a href="wexpcdf.html" class="code" title=" Exponential cumulative distribution function ">wexpcdf</a>) estimated from  
+               the plot by least squares method 
+           X = data vector or matrix 
+  
+  Example: 
+    R=<a href="wexprnd.html" class="code" title=" Random matrices from an Exponential distribution">wexprnd</a>(2,1,100); 
+    phat=<a href="wexpplot.html" class="code" title=" Plots data on a Exponential distribution paper ">wexpplot</a>(R) 
+  
+  See also  <a href="wexpcdf.html" class="code" title=" Exponential cumulative distribution function ">wexpcdf</a>, <a href="wweibplot.html" class="code" title=" Plots data on a Weibull distribution paper">wweibplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/cycles/tpextrapolate.html" class="code" title=" [tpe,Pout,I,tpe0] = tpextrapolate(tp,N,Pin,plotflag)">tpextrapolate</a></li></TD>
+<TD> Extrapolates a sequence of turning points.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> phat = <a name="_sub0" href="#_subfunctions" class="code">wexpplot</a>(x) 
+02 <span class="comment">%WEXPPLOT Plots data on a Exponential distribution paper </span>
+03 <span class="comment">% </span>
+04 <span class="comment">% CALL:  phat = wexpplot(X) </span>
+05 <span class="comment">% </span>
+06 <span class="comment">%       phat = [m] Parameter (see wexpcdf) estimated from  </span>
+07 <span class="comment">%              the plot by least squares method </span>
+08 <span class="comment">%          X = data vector or matrix </span>
+09 <span class="comment">% </span>
+10 <span class="comment">% Example: </span>
+11 <span class="comment">%   R=wexprnd(2,1,100); </span>
+12 <span class="comment">%   phat=wexpplot(R) </span>
+13 <span class="comment">% </span>
+14 <span class="comment">% See also  wexpcdf, wweibplot </span>
+15  
+16 x = x(:); 
+17 F=<a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(x,[],0); 
+18 plot(F(:,1),-log(1-F(:,2)),<span class="string">'b.'</span>,<span class="string">'markersize'</span>,12); 
+19  
+20 m = mean(x); 
+21 hold on 
+22 plot(F(:,1),1/m*F(:,1),<span class="string">'r--'</span>) 
+23 hold off 
+24 title([<span class="string">'Exponential Probability Plot, m='</span> num2str(m)]) 
+25 xlabel(<span class="string">'x'</span>) 
+26 ylabel(<span class="string">'-log(1-F)'</span>) 
+27 <span class="keyword">if</span> nargout &gt; 0, 
+28   phat=[m]; 
+29 <span class="keyword">end</span> 
+30</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

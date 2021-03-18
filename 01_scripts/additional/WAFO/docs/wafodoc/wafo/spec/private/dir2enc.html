@@ -1,0 +1,330 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dir2enc</title>
+  <meta name="keywords" content="dir2enc">
+  <meta name="description" content=" Transform a dir. spectrum to an encountered. (Used in spec2spec)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">spec</a> &gt; <a href="index.html">private</a> &gt; dir2enc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>dir2enc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Transform a dir. spectrum to an encountered. (Used in spec2spec)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Snew=dir2enc(S,d,v) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dir2enc.html" class="code" title=" Transform a dir. spectrum to an encountered. (Used in spec2spec)">DIR2ENC</a> Transform a dir. spectrum to an encountered. (Used in <a href="../../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>)
+ 
+  CALL:  Snew=<a href="dir2enc.html" class="code" title=" Transform a dir. spectrum to an encountered. (Used in spec2spec)">dir2enc</a>(S,d,v)
+ 
+       Snew = encountered spectrum, directional or frequency type
+       S    = directional spectrum
+       d    = dimension of result, 1=frequency type, 2=directional type
+                                                  (default 1)
+       v    = speed of ship     (default 0)
+ 
+  Evaluates the spectrum of the seaway encountered by a ship travelling 
+  along the x-axis (rotated by in a constant angle (S.phi)) 
+  with constant speed (v) from the directional spectrum of the
+  seaway.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/misc/gravity.html" class="code" title=" g=gravity(phi)">gravity</a></li></TD>
+<TD>  returns the constant acceleration of gravity</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/simpson.html" class="code" title=" [area,epsi,a,b] = simpson(x,f,dim)">simpson</a></li></TD>
+<TD> Numerical integration with the Simpson method</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp2.m">interp2</a></li></TD>
+<TD>       2-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\rmfield.m">rmfield</a></li></TD>
+<TD>       Remove fields from a structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/spec/spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> Snew=<a name="_sub0" href="#_subfunctions" class="code">dir2enc</a>(S,d,v)
+002 <span class="comment">%DIR2ENC Transform a dir. spectrum to an encountered. (Used in spec2spec)</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  Snew=dir2enc(S,d,v)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%      Snew = encountered spectrum, directional or frequency type</span>
+007 <span class="comment">%      S    = directional spectrum</span>
+008 <span class="comment">%      d    = dimension of result, 1=frequency type, 2=directional type</span>
+009 <span class="comment">%                                                 (default 1)</span>
+010 <span class="comment">%      v    = speed of ship     (default 0)</span>
+011 <span class="comment">%</span>
+012 <span class="comment">% Evaluates the spectrum of the seaway encountered by a ship travelling </span>
+013 <span class="comment">% along the x-axis (rotated by in a constant angle (S.phi)) </span>
+014 <span class="comment">% with constant speed (v) from the directional spectrum of the</span>
+015 <span class="comment">% seaway.</span>
+016 <span class="comment">%</span>
+017 
+018 <span class="comment">% References: Podgorski et al. (2000)</span>
+019 <span class="comment">%             Exact distributions for apparent waves in irregular seas</span>
+020 <span class="comment">%             Ocean Engng. 27, p. 979-1016.</span>
+021 
+022 <span class="comment">% Tested on MATLAB 5.3  </span>
+023 <span class="comment">% History: </span>
+024 <span class="comment">% revised:</span>
+025 <span class="comment">% pab 21.09.2004: Added todo statements  </span>
+026 <span class="comment">%  ir 26.06.04 BUG's removals plus major changes.</span>
+027 <span class="comment">%  ir 04.04.01 BUG's removals plus major changes.</span>
+028 <span class="comment">%  es 05.06.00 simpson in stead of trapz, clean up </span>
+029 <span class="comment">%  by es 18.08.1999</span>
+030 
+031 <span class="comment">% TODO <span class="comment">% The numerical accuracy of the method is pure. </span></span>
+032 <span class="comment">% TODO <span class="comment">% Should remove singularity by e.g. splitting the integral.</span></span>
+033 
+034 error(nargchk(1,3,nargin))  
+035 <span class="keyword">if</span> nargin&lt;0|isempty(S)
+036   error(<span class="string">'Needs an input spectrum'</span>)
+037 <span class="keyword">end</span>
+038 
+039 <span class="keyword">if</span> ~any(strcmpi(S.type,{<span class="string">'dir'</span>,<span class="string">'freq'</span>}))
+040   error(<span class="string">'Spectrum must be of type dir or freq '</span>)
+041 <span class="keyword">end</span>
+042 
+043 <span class="keyword">if</span> (nargin&lt;2|isempty(d))
+044   d=1;
+045 <span class="keyword">end</span>
+046 <span class="keyword">if</span> ( nargin&lt;3|isempty(v))
+047   v=0;
+048 <span class="keyword">end</span>
+049 
+050 Snew=S;
+051 <span class="keyword">if</span> isfield(Snew,<span class="string">'phi'</span>)
+052   phi=Snew.phi;
+053 <span class="keyword">else</span>
+054   phi=0;
+055   Snew.phi=phi;
+056 <span class="keyword">end</span>
+057 
+058 <span class="keyword">if</span> ~isfield(Snew,<span class="string">'theta'</span>)
+059   Snew.theta=0;
+060 <span class="keyword">end</span>
+061 
+062 Snew.v=v;
+063 <span class="keyword">if</span> v&lt;0
+064   disp(<span class="string">'Message: Negative speed, interpreted as opposite direction'</span>)
+065   v=abs(v);
+066   phi=phi+pi;
+067 <span class="keyword">end</span>
+068 
+069 
+070 <span class="keyword">if</span> (v==0)
+071   <span class="keyword">if</span> d==1
+072     Snew=<a href="../../../wafo/spec/spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(Snew,<span class="string">'freq'</span>);
+073     Snew.type=<span class="string">'enc'</span>;
+074   <span class="keyword">else</span>
+075     Snew.type=<span class="string">'encdir'</span>;
+076   <span class="keyword">end</span>
+077   <span class="keyword">return</span>
+078 <span class="keyword">end</span>
+079 
+080 
+081 th=Snew.theta;
+082 <span class="keyword">if</span> isfield(Snew,<span class="string">'f'</span>)
+083   w=2*pi*Snew.f(:);
+084   Sf=Snew.S/2/pi;
+085 <span class="keyword">else</span>
+086   w=Snew.w(:);
+087   Sf=Snew.S;
+088 <span class="keyword">end</span>
+089 
+090 <span class="keyword">if</span> length(th)&gt;1
+091   <span class="comment">% IR changes 26 june 2004, formula (6) in Podgorski et al. </span>
+092   [w1,th1] = meshgrid(w,th);
+093   Sfneg    = interp2(w,S.theta,Sf,w1,mod(th1+2*pi,2*pi)-pi);
+094   Sf       = [fliplr(Sfneg(:,2:<span class="keyword">end</span>)) Sf]/2; <span class="comment">% unitary spectum - symmetric in w</span>
+095   w2       = [-flipud(w(2:<span class="keyword">end</span>));w];
+096 
+097   <span class="comment">% Now we need to make the transformation that </span>
+098   <span class="comment">%        Sf1(theta,omega)&lt;= Sf(theta+phi,omega).</span>
+099 
+100   [w1,th1] = meshgrid(w2,th);
+101   
+102   Sf1      = interp2(w2,S.theta,Sf,w1,mod(th1+phi+pi,2*pi)-pi);
+103 
+104   Snew.S = Sf1;
+105   g      = <a href="../../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>;
+106   <span class="comment">% Since the encountered spectrum has usually higher frequencies we</span>
+107   <span class="comment">% need to use longer vector of frequencies omega.</span>
+108 
+109   w        = linspace(0,2*max(w),2*length(w));
+110   thw      = pi*ones(size(w));
+111   thw(w&gt;0) = acos(max(-1,-g/4/v./w(w&gt;0))); <span class="comment">% This computes integration </span>
+112   <span class="comment">% limits in  theta</span>
+113   <span class="comment">%plot(w,thw)</span>
+114 
+115   in=zeros(length(th),length(thw));
+116   <span class="keyword">for</span> j=1:length(w)                     
+117     <span class="comment">% The limits depends on omega</span>
+118     <span class="comment">% and hence for each omega we</span>
+119     <span class="comment">% check which theta satisfies</span>
+120     <span class="comment">% the integration limits.</span>
+121     in(abs(th)&lt;thw(j),j)=1;
+122   <span class="keyword">end</span>
+123 
+124   in = logical(in);
+125   s1 = zeros(length(th),length(w2));
+126   s2 = s1;
+127   <span class="keyword">for</span> j=1:length(th)
+128     ix = find(in(j,:));
+129     <span class="keyword">if</span> any(ix)
+130       h = g/(2*v*cos(th(j)));
+131       a = sqrt(1+2*w(ix)/h);
+132       s1(j,ix) = (interp1(w2,Sf1(j,:),h*(-1+a)))./a;
+133       s2(j,ix) = (interp1(w2,Sf1(j,:),h*(-1-a)))./a;
+134     <span class="keyword">end</span>
+135   <span class="keyword">end</span>
+136   s1(isnan(s1)) = 0;
+137   s2(isnan(s2)) = 0;
+138   Snew.S        = 2*(s1+s2);
+139   Snew.w        = w;
+140   Snew.type     = <span class="string">'encdir'</span>;
+141   Snew.phi      = 0.;
+142 
+143   <span class="keyword">if</span> d==1
+144     Snew.S=<a href="../../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(Snew.theta,Snew.S,1); <span class="comment">%integrate out angle</span>
+145   <span class="keyword">end</span>
+146 
+147 <span class="keyword">else</span> 
+148   <span class="keyword">if</span> abs(phi-pi/2)&gt;0.00001
+149 
+150     g  = <a href="../../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>;
+151     c  = 4*v/g;
+152     w  = linspace(0,2*max(S.w),2*length(S.w));
+153     Dpl   = zeros(size(w));
+154     Dmin  = Dpl;
+155     kapa  = phi;      
+156     h1    = 2./c./cos(phi);
+157     delta = 1+c*w*cos(phi);
+158     ind   = find(delta&gt;=0);
+159     y1    = sqrt(delta(ind));
+160     lambda1 = h1.*(-1+y1);
+161     lambda2 = h1.*(-1-y1);
+162     D_1   = interp1(S.w,S.S,lambda1,<span class="string">'spline'</span>,0)./y1;
+163     D_2   = interp1(S.w,S.S,lambda2,<span class="string">'spline'</span>,0)./y1; 
+164     Dpl(ind) = D_1+D_2; 
+165     
+166     h1    = 2./c./cos(phi);
+167     delta = 1-c*w*cos(phi);
+168     ind   = find(delta&gt;=0);
+169     y1    = sqrt(delta(ind));
+170     lambda1 = h1.*(-1+y1);
+171     lambda2 = h1.*(-1-y1);
+172     D_1 = interp1(S.w,S.S,lambda1,<span class="string">'spline'</span>,0)./y1;
+173     D_2 = interp1(S.w,S.S,lambda2,<span class="string">'spline'</span>,0)./y1; 
+174     <span class="comment">%</span>
+175     <span class="comment">% Note that actually the encountered spectrum is always a directional</span>
+176     <span class="comment">% spectrum. </span>
+177     <span class="comment">%</span>
+178     Dmin(ind) = D_1+D_2;
+179     Snew.w    = [fliplr(-w) w];
+180     Snew.S    = [fliplr(Dmin) Dpl];
+181     Snew.type = <span class="string">'encdir'</span>;
+182     <span class="keyword">if</span> d==1
+183        Snew.type = <span class="string">'enc'</span>;
+184        Snew.S    = (Dmin+Dpl)';
+185        Snew.w    = w';
+186        <span class="keyword">if</span> abs(phi)&gt;pi/4
+187           [mm,im] = max(Snew.S);
+188           dw0     = abs(S.w(<span class="keyword">end</span>)-S.w(<span class="keyword">end</span>-1));
+189           dw      = abs(w(<span class="keyword">end</span>)-w(<span class="keyword">end</span>-1));
+190           L0      = dw0*sum(S.S);
+191           <span class="comment">%L1=dw*sum(Snew.S)-0.5*mm*dw</span>
+192           Snew.S(im) = 0.;
+193           L2         = dw*sum(Snew.S);
+194           <span class="comment">%[L0 L1 2*(L0-L2)/dw]</span>
+195           Snew.S(im)=max(0,2*(L0-L2)/dw);
+196        <span class="keyword">end</span>
+197     <span class="keyword">end</span>
+198   <span class="keyword">end</span>
+199   
+200 <span class="keyword">end</span>
+201 
+202 <span class="keyword">if</span> d==1
+203   Snew = rmfield(Snew,<span class="string">'theta'</span>);
+204   Snew.type = <span class="string">'enc'</span>;
+205 <span class="keyword">end</span>
+206</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

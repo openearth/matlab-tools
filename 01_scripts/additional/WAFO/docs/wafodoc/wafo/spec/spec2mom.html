@@ -1,0 +1,442 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spec2mom</title>
+  <meta name="keywords" content="spec2mom">
+  <meta name="description" content=" Calculates spectral moments from spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; spec2mom.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spec2mom
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates spectral moments from spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [m,mtext] = spec2mom(S,nr,vari,even) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">SPEC2MOM</a> Calculates spectral moments from spectrum
+ 
+  CALL:  [m,mtext] = <a href="spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S,nr,variables,even)
+ 
+    m    = vector of moments
+    mtext= a cell array of strings describing the elements of m, see below
+    S    = spectrum (struct)
+    nr   = order of moments (default 2, maximum 4)
+    variables = variables in model, optional when two-dim.spectrum,
+                string with x and/or y and/or t  (default 'xt')
+    even = 0 for all moments, 1 for only even orders (default 1)
+ 
+  Calculates spectral moments of up to order four by use of
+  <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">Simpson</a>-integration.
+ 
+        //
+  m_jkl=|| k1^j*k2^k*w^l S(w,th) dw dth 
+        //
+ 
+  where k1=w^2/<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>*cos(th-phi),  k2=w^2/<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>*sin(th-phi)
+  and phi is the angle of the rotation in S.phi. If the spectrum 
+  has field .g, <a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a> is replaced by S.g.
+   
+  The strings in output mtext have the same position in the cell array
+  as the corresponding numerical value has in output m
+  Notation in mtext: 'm0' is the variance,
+                     'mx' is the first-order moment in x,
+                    'mxx' is the second-order moment in x,
+                    'mxt' is the second-order cross moment between x and t,
+                  'myyyy' is the fourth-order moment in y
+                          etc.
+  For the calculation of moments see Baxevani et al.
+  Example:
+       S=<a href="demospec.html" class="code" title=" Loads a precreated spectrum of chosen type">demospec</a>('dir')
+       [m,mtext]=<a href="spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S,2,'xyt')</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/gravity.html" class="code" title=" g=gravity(phi)">gravity</a></li></TD>
+<TD>  returns the constant acceleration of gravity</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/simpson.html" class="code" title=" [area,epsi,a,b] = simpson(x,f,dim)">simpson</a></li></TD>
+<TD> Numerical integration with the Simpson method</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strcat.m">strcat</a></li></TD>
+<TD>        Concatenate strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/private/dir2k1d.html" class="code" title=" Snew=dir2k1d(S);">dir2k1d</a></li></TD>
+<TD> Transforms directional spectrum to wavenumber spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/private/dspec2dcov.html" class="code" title=" R=dspec2dcov(S,nr,Nt,rate,Nx,Ny,dx,dy)">dspec2dcov</a></li></TD>
+<TD> Return covariance function given a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab1.html" class="code" title="This is a script file.">itmkurs_lab1</a></li></TD>
+<TD> Script to computer exercises 1</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/seasim.html" class="code" title=" [Y,Mv]=seasim(spec,Nx,Ny,Nt,dx,dy,dt,fftdim,plotflag);">seasim</a></li></TD>
+<TD> Spectral simulation of a Gaussian sea, 2D (x,t) or 3D (x,y,t)</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2bw.html" class="code" title=" bw = spec2bw(S,fact)">spec2bw</a></li></TD>
+<TD> Evaluates some spectral bandwidth and irregularity factors</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/damage/spec2dplus.html" class="code" title=" d = spec2dplus(S,bet)">spec2dplus</a></li></TD>
+<TD> Calculates an upper bound of the damage intensity explicitly</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/specq2lc.html" class="code" title=" [mu,fu,Fu,muG,mu1,mu2]= specq2lc(Spec,ds0,nb)">specq2lc</a></li></TD>
+<TD>  Saddlepoint approximation of the crossing intensity for the quadratic sea.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [m,mtext] = <a name="_sub0" href="#_subfunctions" class="code">spec2mom</a>(S,nr,vari,even)
+002 <span class="comment">%SPEC2MOM Calculates spectral moments from spectrum</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [m,mtext] = spec2mom(S,nr,variables,even)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   m    = vector of moments</span>
+007 <span class="comment">%   mtext= a cell array of strings describing the elements of m, see below</span>
+008 <span class="comment">%   S    = spectrum (struct)</span>
+009 <span class="comment">%   nr   = order of moments (default 2, maximum 4)</span>
+010 <span class="comment">%   variables = variables in model, optional when two-dim.spectrum,</span>
+011 <span class="comment">%               string with x and/or y and/or t  (default 'xt')</span>
+012 <span class="comment">%   even = 0 for all moments, 1 for only even orders (default 1)</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Calculates spectral moments of up to order four by use of</span>
+015 <span class="comment">% Simpson-integration.</span>
+016 <span class="comment">%</span>
+017 <span class="comment">%       //</span>
+018 <span class="comment">% m_jkl=|| k1^j*k2^k*w^l S(w,th) dw dth </span>
+019 <span class="comment">%       //</span>
+020 <span class="comment">%</span>
+021 <span class="comment">% where k1=w^2/gravity*cos(th-phi),  k2=w^2/gravity*sin(th-phi)</span>
+022 <span class="comment">% and phi is the angle of the rotation in S.phi. If the spectrum </span>
+023 <span class="comment">% has field .g, gravity is replaced by S.g.</span>
+024 <span class="comment">%  </span>
+025 <span class="comment">% The strings in output mtext have the same position in the cell array</span>
+026 <span class="comment">% as the corresponding numerical value has in output m</span>
+027 <span class="comment">% Notation in mtext: 'm0' is the variance,</span>
+028 <span class="comment">%                    'mx' is the first-order moment in x,</span>
+029 <span class="comment">%                   'mxx' is the second-order moment in x,</span>
+030 <span class="comment">%                   'mxt' is the second-order cross moment between x and t,</span>
+031 <span class="comment">%                 'myyyy' is the fourth-order moment in y</span>
+032 <span class="comment">%                         etc.</span>
+033 <span class="comment">% For the calculation of moments see Baxevani et al.</span>
+034 <span class="comment">% Example:</span>
+035 <span class="comment">%      S=demospec('dir')</span>
+036 <span class="comment">%      [m,mtext]=spec2mom(S,2,'xyt')</span>
+037 
+038 <span class="comment">% References</span>
+039 <span class="comment">%  Baxevani A. et al. (2001) </span>
+040 <span class="comment">%  Velocities for Random Surfaces </span>
+041 <span class="comment">%</span>
+042 <span class="comment">%</span>
+043 <span class="comment">% Tested on: Matlab 6.0</span>
+044 <span class="comment">% Tested on: Matlab 5.3</span>
+045 <span class="comment">% History:</span>
+046 <span class="comment">% Revised by I.R. 04.04.2001: Introducing the rotation angle phi.</span>
+047 <span class="comment">% Revised by A.B. 23.05.2001: Correcting 'mxxyy' and introducing</span>
+048 <span class="comment">% 'mxxyt','mxyyt' and 'mxytt'.</span>
+049 <span class="comment">% Revised by A.B. 21.10.2001: Correcting 'mxxyt'.</span>
+050 <span class="comment">% Revised by A.B. 21.10.2001: Adding odd-order moments.</span>
+051 <span class="comment">% By es 27.08.1999</span>
+052 
+053 
+054 <span class="keyword">if</span> nargin&lt;2|isempty(nr)
+055   nr=2;
+056 <span class="keyword">end</span>
+057 <span class="keyword">if</span> nargin&lt;4|isempty(even)
+058   even=1;
+059 <span class="keyword">end</span>
+060 even=logical(even);
+061 
+062 <span class="keyword">if</span> strcmpi(S.type,<span class="string">'freq'</span>)| strcmpi(S.type,<span class="string">'enc'</span>)|<span class="keyword">...</span>
+063       strcmpi(S.type,<span class="string">'k1d'</span>) <span class="comment">%i.e. one-dim spectrum</span>
+064   <span class="keyword">if</span> isfield(S,<span class="string">'w'</span>)
+065     f=S.w(:);
+066     vari=<span class="string">'t'</span>;
+067   <span class="keyword">elseif</span> isfield(S,<span class="string">'k'</span>)
+068     f=S.k(:);
+069     vari=<span class="string">'x'</span>;
+070   <span class="keyword">else</span>
+071     f=2*pi*S.f(:);
+072     S.S=S.S/2/pi;
+073     vari=<span class="string">'t'</span>;
+074   <span class="keyword">end</span>
+075   S1=abs(S.S(:));
+076   m=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f,S1);
+077   mtext={<span class="string">'m0'</span>};
+078   <span class="keyword">if</span> nr&gt;0
+079     <span class="keyword">if</span> ~even
+080       m=[m <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f, f.*S1)];
+081       mtext(<span class="keyword">end</span>+1)={<span class="string">'mi'</span>};
+082     <span class="keyword">end</span>
+083     <span class="keyword">if</span> nr&gt;1
+084       m=[m <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f,f.^2.*S1)];
+085       mtext(<span class="keyword">end</span>+1)={<span class="string">'mii'</span>};
+086       <span class="keyword">if</span> nr&gt;2
+087         <span class="keyword">if</span> ~even
+088           m=[m <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f,f.^3.*S1)];
+089           mtext(<span class="keyword">end</span>+1)={<span class="string">'miii'</span>};
+090         <span class="keyword">end</span>
+091         <span class="keyword">if</span> nr&gt;3
+092           m=[m <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(f,f.^4.*S1)];
+093           mtext(<span class="keyword">end</span>+1)={<span class="string">'miiii'</span>};
+094         <span class="keyword">end</span>
+095       <span class="keyword">end</span>
+096     <span class="keyword">end</span>
+097     mtext(<span class="keyword">end</span>+1)={strcat(<span class="string">' where i='</span>,vari)};
+098   <span class="keyword">end</span>
+099 
+100 
+101 
+102 
+103 
+104 
+105 <span class="keyword">else</span> <span class="comment">%two-dim spectrum</span>
+106   <span class="keyword">if</span> (nargin&lt;3|isempty(vari))&amp;nr&lt;=1;
+107     vari=<span class="string">'x'</span>;<span class="comment">% set default value</span>
+108     Nv=1;
+109     <span class="keyword">elseif</span> nargin&lt;3|isempty(vari);
+110     vari=<span class="string">'xt'</span>;
+111     Nv=2;
+112     <span class="keyword">else<span class="comment"></span>% secure the mutual order ('xyt')</span>
+113     vari=sort(lower(vari));
+114     Nv=length(vari);
+115     
+116     <span class="keyword">if</span> ( (vari(1)==<span class="string">'t'</span>) &amp; (Nv&gt;1)),
+117       vari=[vari(2:Nv), <span class="string">'t'</span>];
+118     <span class="keyword">end</span> 
+119   <span class="keyword">end</span>
+120   S1=S;
+121   <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%to be removed</span></span></span></span>
+122   <span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%<span class="comment">%</span></span></span></span></span></span></span>
+123   <span class="comment">%if Nv==1</span>
+124    <span class="comment">% switch vari</span>
+125     <span class="comment">%  case 'x'</span>
+126         <span class="comment">%S1=spec2spec(S,'k1d');</span>
+127      <span class="comment">% case 'y'</span>
+128 <span class="comment">%       S1=spec2spec(S,'k1d',-pi/2); <span class="comment">% funkar detta??? -pi/2 ???</span></span>
+129     <span class="comment">%  case 't'</span>
+130 <span class="comment">%       S1=spec2spec(S,'freq');</span>
+131 
+132 <span class="comment">%end</span>
+133  <span class="comment">%   [m,mtext]=spec2mom(S1,nr,vari,even);</span>
+134  <span class="comment">% else <span class="comment">% Nv&gt;1</span></span>
+135    
+136     <span class="comment">%<span class="comment">%to be removed</span></span>
+137     <span class="keyword">if</span> ~strcmpi(S.type(<span class="keyword">end</span>-2:<span class="keyword">end</span>),<span class="string">'dir'</span>) 
+138       S1=<a href="spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(S,strcat(S.type(1:<span class="keyword">end</span>-3),<span class="string">'dir'</span>));
+139     <span class="keyword">end</span>
+140     <span class="keyword">if</span> ~isfield(S,<span class="string">'phi'</span>) | isempty(S.phi), S1.phi=0;
+141       
+142     <span class="keyword">end</span>
+143     th=S1.theta(:)-S1.phi;
+144     Sw=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S).'; <span class="comment">% integral S(w,th) dth</span>
+145     m=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(S1.w,Sw);    <span class="comment">% the variance</span>
+146     mtext={<span class="string">'m0'</span>};
+147     
+148     <span class="keyword">if</span> nr&gt;0
+149       w=S1.w(:);
+150       nw=length(w);
+151       <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'x'</span>)
+152         Sc=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(cos(th)*ones(1,nw))).';
+153         <span class="comment">% integral S*cos(th) dth</span>
+154       <span class="keyword">end</span>
+155       <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'y'</span>)
+156         Ss=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(sin(th)*ones(1,nw))).';
+157         <span class="comment">% integral S*sin(th) dth</span>
+158         <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'x'</span>)
+159         Sc=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(cos(th)*ones(1,nw))).';
+160         <span class="keyword">end</span>
+161       <span class="keyword">end</span>
+162       <span class="keyword">if</span> ~isfield(S1,<span class="string">'g'</span>)
+163         S1.g=<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>;
+164       <span class="keyword">end</span>
+165       kx=w.^2/S1.g(1); <span class="comment">% maybe different normalization in x and y =&gt; diff. g</span>
+166       ky=w.^2/S1.g(<span class="keyword">end</span>);
+167       
+168       <span class="keyword">if</span> Nv&gt;=1
+169         <span class="keyword">switch</span> vari
+170           <span class="keyword">case</span> <span class="string">'x'</span>
+171             vec=[kx.*Sc];
+172             mtext(<span class="keyword">end</span>+1)={<span class="string">'mx'</span>};
+173           <span class="keyword">case</span> <span class="string">'y'</span>
+174             vec=[ky.*Ss];
+175             mtext(<span class="keyword">end</span>+1)={<span class="string">'my'</span>};
+176           <span class="keyword">case</span> <span class="string">'t'</span>
+177             vec=[w.*Sw];
+178            mtext(<span class="keyword">end</span>+1)={<span class="string">'mt'</span>}; 
+179         <span class="keyword">end</span> 
+180       <span class="keyword">else</span>
+181         vec=[kx.*Sc ky.*Ss w*Sw];
+182         mtext(<span class="keyword">end</span>+(1:3))={<span class="string">'mx'</span>, <span class="string">'my'</span>, <span class="string">'mt'</span>};
+183       <span class="keyword">end</span>
+184       <span class="keyword">if</span> nr&gt;1
+185       <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'x'</span>)
+186         Sc=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(cos(th)*ones(1,nw))).';
+187         <span class="comment">% integral S*cos(th) dth</span>
+188         Sc2=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(cos(th).^2*ones(1,nw))).';
+189         <span class="comment">% integral S*cos(th)^2 dth</span>
+190       <span class="keyword">end</span>
+191       <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'y'</span>)|strcmpi(vari(2),<span class="string">'y'</span>)
+192         Ss=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(sin(th)*ones(1,nw))).';
+193         <span class="comment">% integral S*sin(th) dth</span>
+194         Ss2=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(sin(th).^2*ones(1,nw))).';
+195         <span class="comment">% integral S*sin(th)^2 dth</span>
+196         <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'x'</span>)
+197           Scs=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*((cos(th).*sin(th))*ones(1,nw))).';
+198           <span class="comment">% integral S*cos(th)*sin(th) dth</span>
+199         <span class="keyword">end</span>
+200       <span class="keyword">end</span>
+201       <span class="keyword">if</span> ~isfield(S1,<span class="string">'g'</span>)
+202         S1.g=<a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>;
+203       <span class="keyword">end</span>
+204         
+205       <span class="keyword">if</span> Nv==2
+206         <span class="keyword">switch</span> vari
+207           <span class="keyword">case</span> <span class="string">'xy'</span>
+208             vec=[kx.*Sc ky.*Ss kx.^2.*Sc2 ky.^2.*Ss2 kx.*ky.*Scs];
+209             mtext(<span class="keyword">end</span>+(1:5))={<span class="string">'mx'</span>,<span class="string">'my'</span>,<span class="string">'mxx'</span>, <span class="string">'myy'</span>, <span class="string">'mxy'</span>};
+210           <span class="keyword">case</span> <span class="string">'xt'</span>
+211             vec=[kx.*Sc w.*Sw kx.^2.*Sc2 w.^2.*Sw kx.*w.*Sc];
+212             mtext(<span class="keyword">end</span>+(1:5))={<span class="string">'mx'</span>,<span class="string">'mt'</span>,<span class="string">'mxx'</span>, <span class="string">'mtt'</span>, <span class="string">'mxt'</span>};
+213           <span class="keyword">case</span> <span class="string">'yt'</span>
+214             vec=[ky.*Ss w.*Sw ky.^2.*Ss2 w.^2.*Sw ky.*w.*Ss];
+215             mtext(<span class="keyword">end</span>+(1:5))={<span class="string">'my'</span>,<span class="string">'mt'</span>,<span class="string">'myy'</span>, <span class="string">'mtt'</span>, <span class="string">'myt'</span>};
+216         <span class="keyword">end</span>
+217       <span class="keyword">else</span>
+218         vec=[kx.*Sc ky.*Ss w.*Sw kx.^2.*Sc2 ky.^2.*Ss2  w.^2.*Sw kx.*ky.*Scs kx.*w.*Sc ky.*w.*Ss];
+219         mtext(<span class="keyword">end</span>+(1:9))={<span class="string">'mx'</span>,<span class="string">'my'</span>,<span class="string">'mt'</span>,<span class="string">'mxx'</span>, <span class="string">'myy'</span>, <span class="string">'mtt'</span>, <span class="string">'mxy'</span>, <span class="string">'mxt'</span>, <span class="string">'myt'</span>};
+220       <span class="keyword">end</span>
+221       <span class="keyword">if</span> nr&gt;3
+222         <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'x'</span>)
+223           Sc3=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(cos(th).^3*ones(1,nw))).';
+224           <span class="comment">% integral S*cos(th)^3 dth</span>
+225           Sc4=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(cos(th).^4*ones(1,nw))).';
+226           <span class="comment">% integral S*cos(th)^4 dth</span>
+227         <span class="keyword">end</span>
+228         <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'y'</span>)|strcmpi(vari(2),<span class="string">'y'</span>)
+229           Ss3=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(sin(th).^3*ones(1,nw))).';
+230           <span class="comment">% integral S*sin(th)^3 dth</span>
+231           Ss4=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*(sin(th).^4*ones(1,nw))).';
+232           <span class="comment">% integral S*sin(th)^4 dth</span>
+233           <span class="keyword">if</span> strcmpi(vari(1),<span class="string">'x'</span>)  <span class="comment">%both x and y</span>
+234             Sc2s=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*((cos(th).^2.*sin(th))*ones(1,nw))).';
+235             <span class="comment">% integral S*cos(th)^2*sin(th) dth</span>
+236             Sc3s=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*((cos(th).^3.*sin(th))*ones(1,nw))).';
+237             <span class="comment">% integral S*cos(th)^3*sin(th) dth</span>
+238             Scs2=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*((cos(th).*sin(th).^2)*ones(1,nw))).';
+239             <span class="comment">% integral S*cos(th)*sin(th)^2 dth</span>
+240             Scs3=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*((cos(th).*sin(th).^3)*ones(1,nw))).';
+241             <span class="comment">% integral S*cos(th)*sin(th)^3 dth</span>
+242             Sc2s2=<a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(th,S1.S.*((cos(th).^2.*sin(th).^2)*ones(1,nw))).';
+243             <span class="comment">% integral S*cos(th)^2*sin(th)^2 dth</span>
+244           <span class="keyword">end</span>
+245         <span class="keyword">end</span>
+246         <span class="keyword">if</span> Nv==2
+247           <span class="keyword">switch</span> vari
+248             <span class="keyword">case</span> <span class="string">'xy'</span>
+249               vec=[vec kx.^4.*Sc4 ky.^4.*Ss4 kx.^3.*ky.*Sc3s <span class="keyword">...</span>
+250                     kx.^2.*ky.^2.*Sc2s2 kx.*ky.^3.*Scs3];
+251               mtext(<span class="keyword">end</span>+(1:5))={<span class="string">'mxxxx'</span>,<span class="string">'myyyy'</span>,<span class="string">'mxxxy'</span>,<span class="string">'mxxyy'</span>,<span class="string">'mxyyy'</span>};
+252             <span class="keyword">case</span> <span class="string">'xt'</span>
+253               vec=[vec kx.^4.*Sc4 w.^4.*Sw kx.^3.*w.*Sc3 <span class="keyword">...</span>
+254                     kx.^2.*w.^2.*Sc2 kx.*w.^3.*Sc];
+255               mtext(<span class="keyword">end</span>+(1:5))={<span class="string">'mxxxx'</span>,<span class="string">'mtttt'</span>,<span class="string">'mxxxt'</span>,<span class="string">'mxxtt'</span>,<span class="string">'mxttt'</span>};
+256             <span class="keyword">case</span> <span class="string">'yt'</span>
+257               vec=[vec ky.^4.*Ss4 w.^4.*Sw ky.^3.*w.*Ss3 <span class="keyword">...</span>
+258                     ky.^2.*w.^2.*Ss2 ky.*w.^3.*Ss];
+259               mtext(<span class="keyword">end</span>+(1:5))={<span class="string">'myyyy'</span>,<span class="string">'mtttt'</span>,<span class="string">'myyyt'</span>,<span class="string">'myytt'</span>,<span class="string">'myttt'</span>};
+260           <span class="keyword">end</span>
+261         <span class="keyword">else</span>
+262           vec=[vec kx.^4.*Sc4 ky.^4.*Ss4 w.^4.*Sw kx.^3.*ky.*Sc3s <span class="keyword">...</span>
+263                kx.^2.*ky.^2.*Sc2s2 kx.*ky.^3.*Scs3 kx.^3.*w.*Sc3 <span class="keyword">...</span>
+264                kx.^2.*w.^2.*Sc2 kx.*w.^3.*Sc ky.^3.*w.*Ss3 <span class="keyword">...</span>
+265                ky.^2.*w.^2.*Ss2 ky.*w.^3.*Ss kx.^2.*ky.*w.*Sc2s <span class="keyword">...</span>
+266                kx.*ky.^2.*w.*Scs2 kx.*ky.*w.^2.*Scs];
+267           mtext(<span class="keyword">end</span>+(1:15))={<span class="string">'mxxxx'</span>,<span class="string">'myyyy'</span>,<span class="string">'mtttt'</span>,<span class="string">'mxxxy'</span>,<span class="string">'mxxyy'</span>,<span class="keyword">...</span>
+268           <span class="string">'mxyyy'</span>,<span class="string">'mxxxt'</span>,<span class="string">'mxxtt'</span>,<span class="string">'mxttt'</span>,<span class="string">'myyyt'</span>,<span class="string">'myytt'</span>,<span class="string">'myttt'</span>,<span class="string">'mxxyt'</span>,<span class="string">'mxyyt'</span>,<span class="string">'mxytt'</span>};  
+269 
+270         <span class="keyword">end</span> <span class="comment">% if Nv==2 ... else ...</span>
+271       <span class="keyword">end</span> <span class="comment">% if nr&gt;3      </span>
+272       <span class="keyword">end</span> <span class="comment">% if nr&gt;1</span>
+273       m=[m <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(w,vec)];
+274     <span class="keyword">end</span> <span class="comment">% if nr&gt;0</span>
+275   <span class="comment">%  end; <span class="comment">%<span class="comment">%if Nv==1... else...    to be removed</span></span></span>
+276 <span class="keyword">end</span> <span class="comment">% ... else two-dim spectrum </span>
+277</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

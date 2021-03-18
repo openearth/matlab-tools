@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spec2dplus</title>
+  <meta name="keywords" content="spec2dplus">
+  <meta name="description" content=" Calculates an upper bound of the damage intensity explicitly">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">damage</a> &gt; spec2dplus.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\damage&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spec2dplus
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates an upper bound of the damage intensity explicitly</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> d = spec2dplus(S,bet) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="spec2dplus.html" class="code" title=" Calculates an upper bound of the damage intensity explicitly">SPEC2DPLUS</a> Calculates an upper bound of the damage intensity explicitly
+ 
+  CALL:  d = <a href="spec2dplus.html" class="code" title=" Calculates an upper bound of the damage intensity explicitly">spec2dplus</a>(S,bet)
+ 
+         d = an upper bound of the damage intensity
+       
+         S = a spectral density (structure array)
+       bet = the parameter beta
+ 
+  The upper bound of the damage intensity can be calculated explicitly and is
+  given by 
+  
+        d^+ = 2^{3*beta/2}*sqrt(lam2)*(lam0)^{(beta-1)/2}*gamma(1+beta/2)/(2*pi)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/spec/spec2mom.html" class="code" title=" [m,mtext] = spec2mom(S,nr,vari,even)">spec2mom</a></li></TD>
+<TD> Calculates spectral moments from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> d = <a name="_sub0" href="#_subfunctions" class="code">spec2dplus</a>(S,bet)
+02 <span class="comment">% SPEC2DPLUS Calculates an upper bound of the damage intensity explicitly</span>
+03 <span class="comment">%</span>
+04 <span class="comment">% CALL:  d = spec2dplus(S,bet)</span>
+05 <span class="comment">%</span>
+06 <span class="comment">%        d = an upper bound of the damage intensity</span>
+07 <span class="comment">%      </span>
+08 <span class="comment">%        S = a spectral density (structure array)</span>
+09 <span class="comment">%      bet = the parameter beta</span>
+10 <span class="comment">%</span>
+11 <span class="comment">% The upper bound of the damage intensity can be calculated explicitly and is</span>
+12 <span class="comment">% given by </span>
+13 <span class="comment">% </span>
+14 <span class="comment">%       d^+ = 2^{3*beta/2}*sqrt(lam2)*(lam0)^{(beta-1)/2}*gamma(1+beta/2)/(2*pi)</span>
+15 <span class="comment">%</span>
+16 
+17 <span class="comment">% Example</span>
+18 <span class="comment">%  S = oscspec; bet = 3:0.2:5;</span>
+19 <span class="comment">%  dplus = spec2dplus(S,bet)</span>
+20 
+21 <span class="comment">% Tested on: Matlab 5.3</span>
+22 <span class="comment">% History: </span>
+23 <span class="comment">% By jr 12.01.2000</span>
+24   
+25 lam = <a href="../../wafo/spec/spec2mom.html" class="code" title=" Calculates spectral moments from spectrum">spec2mom</a>(S); l0 = sqrt(lam(1));, l2 = sqrt(lam(2));
+26 
+27 d = (2.^(bet/2)).*(l0.^(bet-1)).*gamma(bet/2+1)*l2/2/pi;
+28</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

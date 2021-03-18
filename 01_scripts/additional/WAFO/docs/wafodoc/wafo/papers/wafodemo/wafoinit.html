@@ -1,0 +1,295 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wafoinit</title>
+  <meta name="keywords" content="wafoinit">
+  <meta name="description" content="  setup all global variables of the WAFODEMO">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">papers</a> &gt; <a href="index.html">wafodemo</a> &gt; wafoinit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\papers\wafodemo&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>wafoinit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>  setup all global variables of the WAFODEMO</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> wafoinit </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wafoinit.html" class="code" title="  setup all global variables of the WAFODEMO">WAFOINIT</a>  setup all global variables of the <a href="wafodemo.html" class="code" title="  Show WAFO figures with point and click interface">WAFODEMO</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/onedim/dat2spec.html" class="code" title=" [S,fcut] = dat2spec(xn,varargin)">dat2spec</a></li></TD>
+<TD> Estimate one-sided spectral density from data.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/onedim/detrendma.html" class="code" title=" [y, trend] = detrendma(x,L)">detrendma</a></li></TD>
+<TD> Removes a trend from data using a moving average</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/misc/geth1line.html" class="code" title=" H1 = geth1line(filename,format,N)">geth1line</a></li></TD>
+<TD> Extracts the first comment line (the H1 line) of a m-file</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/wsim/spec2sdat.html" class="code" title=" [x,xder]=spec2sdat(S,np,dt,iseed,method)">spec2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/spec/torsethaugen.html" class="code" title=" [S, Sw, Ss]=torsethaugen(w1,sdata,plotflag)">torsethaugen</a></li></TD>
+<TD> Calculates a double peaked (swell + wind) spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../../wafo/waforoot.html" class="code" title=" exedir=watroot;">waforoot</a></li></TD>
+<TD> Root directory of WAFO installation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\cd.bi">cd</a></li></TD>
+<TD>            Change current working directory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\cell.m">cell</a></li></TD>
+<TD>          Create cell array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\imaq\imaq\private\clear.m">clear</a></li></TD>
+<TD>         Clear variables and functions from memory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\fullfile.m">fullfile</a></li></TD>
+<TD>      Build full filename from parts.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\general\pwd.m">pwd</a></li></TD>
+<TD>           Show (print) current working directory.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="wafofig.html" class="code" title=" wafofig(ix)">wafofig</a></li></TD>
+<TD>  callback implementing functions of WAFODEMO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> <a name="_sub0" href="#_subfunctions" class="code">wafoinit</a>
+002 <span class="comment">%WAFOINIT  setup all global variables of the WAFODEMO</span>
+003 
+004 <span class="comment">% Since the calculations are in a very small extent dependent on eachother,</span>
+005 <span class="comment">% most of the calculations are located in the wafofigXX.m files.</span>
+006 <span class="comment">% Some minor calculations and all the initializations of variables are</span>
+007 <span class="comment">% are done here.</span>
+008 
+009 <span class="comment">% GLOBAL WAFOFIGNUM </span>
+010 <span class="comment">%</span>
+011 <span class="comment">% wafoXXXX functions only recalculates the values of empty </span>
+012 <span class="comment">% variables ==&gt; saves alot of computation time</span>
+013 
+014 <span class="comment">% TODO <span class="comment">% needs to complete the fatigue , cycles and Markov models figures</span></span>
+015 
+016 <span class="comment">%revised pab april2004  </span>
+017 <span class="comment">% fixed a bug: options to spec2sdat changed.  </span>
+018 <span class="comment">%revised pab Feb2004</span>
+019 <span class="comment">% By pab 28.01.2000</span>
+020 
+021 <span class="comment">% Figure parameter:</span>
+022 <span class="comment">%~~~~~~~~~~~~~~~~~~</span>
+023 <span class="keyword">global</span> WAFOFIGNUM  
+024 <span class="keyword">if</span> isempty(WAFOFIGNUM)
+025   disp(<span class="string">'You must start wafodemo in order to run this script'</span>)
+026   clear <span class="keyword">global</span> WAFOFIGNUM
+027   <span class="keyword">return</span>
+028 <span class="keyword">end</span>
+029 
+030 <span class="keyword">global</span> pwdstr  wafomenulabels Jxn Nxr 
+031 
+032 <span class="keyword">if</span> isempty(pwdstr)
+033   pwdstr=pwd; <span class="comment">% save path to where the demo was started</span>
+034 <span class="keyword">end</span>
+035 Nfigs=10;
+036 <span class="keyword">if</span> isempty(wafomenulabels) <span class="comment">% automatic generation of menu labels</span>
+037   cd(fullfile(<a href="../../../wafo/waforoot.html" class="code" title=" Root directory of WAFO installation.">waforoot</a>,<span class="string">'papers'</span>,<span class="string">'wafodemo'</span>));  
+038   wafomenulabels=cell(Nfigs,1);
+039   <span class="keyword">for</span> ix=1:Nfigs
+040     wafomenulabels{ix} = <a href="../../../wafo/misc/geth1line.html" class="code" title=" Extracts the first comment line (the H1 line) of a m-file ">geth1line</a>([<span class="string">'wafofig'</span> num2str(ix)],1);   
+041   <span class="keyword">end</span>
+042   cd(pwdstr)
+043 <span class="keyword">end</span>
+044 
+045 <span class="keyword">if</span> isempty(Nxr) <span class="comment">% load if not already loaded </span>
+046   Nxr=load(<span class="string">'gfaksr89.dat'</span>);
+047   <span class="comment">%xn=xn(1:10000,:); <span class="comment">% used for debugging </span></span>
+048 <span class="keyword">end</span>
+049 
+050 <span class="keyword">if</span> isempty(Jxn) <span class="comment">% load if not already loaded </span>
+051   jfile=<span class="string">'yura87.dat'</span>;
+052   Jxn=load(jfile);
+053   <span class="keyword">if</span> strcmp(jfile,<span class="string">'yura87.dat'</span>), <span class="comment">%Selecting only a part of the data</span>
+054     Jxn=Jxn(5000:55000,[1 3]);
+055     Jxn(:,2)=<a href="../../../wafo/onedim/detrendma.html" class="code" title=" Removes a trend from data using a moving average">detrendma</a>(Jxn(:,2),1500); <span class="comment">% remove the trend</span>
+056  <span class="comment">%   Jxn=Jxn(5000:55000,:);</span>
+057   <span class="keyword">end</span>
+058   <span class="comment">%xn=xn(1:10000,:); <span class="comment">% used for debugging </span></span>
+059 <span class="keyword">end</span>
+060 
+061 
+062 
+063 <span class="keyword">if</span> 0 <span class="comment">% this is not in paper but could be included</span>
+064   <span class="keyword">if</span> isempty(Jmap)
+065     disp(<span class="string">'Loading map over the Japan Sea...'</span>)
+066     Jmap = load(<span class="string">'japansea.dat'</span>);
+067   <span class="keyword">end</span>
+068   <span class="keyword">if</span> isempty(Nmap)
+069     disp(<span class="string">'Loading map over the North Sea...'</span>)
+070     Nmap = load(<span class="string">'northsea.dat'</span>);
+071   <span class="keyword">end</span>
+072 <span class="keyword">end</span>
+073 
+074 
+075 <span class="comment">% Define Globals used (that the user also  might change)</span>
+076 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+077 <span class="keyword">global</span> Fs                          <span class="comment">% sampling frequency for torsethaugen</span>
+078 <span class="keyword">global</span> St Hm0 Tp                   <span class="comment">% torsethaugen output, input Fig 2</span>
+079 <span class="keyword">global</span> xt Nsim Iseed               <span class="comment">% spec2sdat output , input    Fig1</span>
+080 <span class="keyword">global</span> Ste L                       <span class="comment">% dat2spec output, input      Fig2</span>
+081 <span class="keyword">global</span> fTt fTte u Np nit speed     <span class="comment">% spec2thpdf output, input    Fig3  </span>
+082 <span class="keyword">global</span> Tt rate                     <span class="comment">% dat2wa output, input        Fig3</span>
+083 <span class="keyword">global</span> ma mb sp                    <span class="comment">% spreading input             Fig4</span>
+084 
+085 <span class="keyword">global</span> fTcfAc NNp Nh Nnit Nspeed   <span class="comment">% spec2thpdf output, input    Fig5  </span>
+086 <span class="keyword">global</span> NVcf NHd Nrate              <span class="comment">% dat2steep output, input     Fig5</span>
+087 
+088 <span class="keyword">global</span> fTcfAcTc JNp Jh Jnit Jspeed <span class="comment">% spec2thpdf output, input    Fig6  </span>
+089 <span class="keyword">global</span> JTcf JAc Jind Jrate         <span class="comment">% dat2steep output, input     Fig6</span>
+090 
+091 <span class="keyword">global</span> kdeTt kernel hs L2          <span class="comment">% kdebin input: kernel, smoothing  (Fig3)</span>
+092 <span class="keyword">global</span> kdeVcfHd Nkernel Nhs NL2    <span class="comment">% and transformation  parameter,   (Fig5)</span>
+093 <span class="keyword">global</span> kdeTcfAcTc Jkernel Jhs JL2  <span class="comment">% respectively                     (Fig6)</span>
+094 
+095 <span class="comment">% Set torsethaugen default values: </span>
+096 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+097 <span class="keyword">if</span> isempty(Hm0),     Hm0 = 6;                <span class="keyword">end</span>
+098 <span class="keyword">if</span> isempty(Tp),       Tp = 8;                <span class="keyword">end</span>
+099 <span class="keyword">if</span> isempty(Fs),       Fs = 0.95238095238095; <span class="keyword">end</span> <span class="comment">% sampling frequency</span>
+100 w = linspace(0,pi*Fs,257).';
+101 <span class="comment">% fig4</span>
+102 <span class="keyword">if</span> isempty(sp),       sp = 15;               <span class="keyword">end</span>
+103 <span class="keyword">if</span> isempty(ma),       ma = 5;                <span class="keyword">end</span>
+104 <span class="keyword">if</span> isempty(mb),       mb = -2.5;             <span class="keyword">end</span>
+105 
+106 
+107 <span class="comment">% Set spec2sdat and dat2spec default values: </span>
+108 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+109 <span class="keyword">if</span> isempty(Nsim),   Nsim = 1000;             <span class="keyword">end</span> <span class="comment">% </span>
+110 <span class="keyword">if</span> isempty(Iseed), Iseed = 1000;             <span class="keyword">end</span> <span class="comment">% seed for simulation</span>
+111 <span class="keyword">if</span> isempty(L),         L = 80;               <span class="keyword">end</span>
+112 
+113 <span class="comment">% Set dat2wa and dat2steep default values: </span>
+114 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+115 <span class="keyword">if</span> isempty(rate),   rate = 8;<span class="keyword">end</span> <span class="comment">%fig3</span>
+116 <span class="keyword">if</span> isempty(Nrate), Nrate = 8;<span class="keyword">end</span> <span class="comment">%fig5</span>
+117 <span class="keyword">if</span> isempty(Jrate), Jrate = 8;<span class="keyword">end</span> <span class="comment">%fig6</span>
+118 
+119 <span class="comment">% Set spec2thpdf default values: </span>
+120 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+121 <span class="comment">%Fig3</span>
+122 <span class="keyword">if</span> isempty(u),           u = 0;   <span class="keyword">end</span>
+123 <span class="keyword">if</span> isempty(Np),         Np = 33;  <span class="keyword">end</span>
+124 <span class="keyword">if</span> isempty(nit),       nit = 4;   <span class="keyword">end</span>
+125 <span class="keyword">if</span> isempty(speed),   speed = 5;   <span class="keyword">end</span>
+126 <span class="comment">% fig5</span>
+127 <span class="keyword">if</span> isempty(NNp),        NNp = 33;  <span class="keyword">end</span>
+128 <span class="keyword">if</span> isempty(Nnit),     Nnit = -1;  <span class="keyword">end</span>
+129 <span class="keyword">if</span> isempty(Nspeed), Nspeed = 7;   <span class="keyword">end</span>
+130 <span class="keyword">if</span> isempty(Nh),         Nh = linspace(0,8,31);;<span class="keyword">end</span>
+131 <span class="comment">% fig6</span>
+132 <span class="keyword">if</span> isempty(JNp),        JNp = 33;  <span class="keyword">end</span>
+133 <span class="keyword">if</span> isempty(Jnit),     Jnit = 4;   <span class="keyword">end</span>
+134 <span class="keyword">if</span> isempty(Jspeed), Jspeed = 5;   <span class="keyword">end</span>
+135 <span class="keyword">if</span> isempty(Jh),         Jh = linspace(0,6,31);<span class="keyword">end</span>
+136 
+137 
+138 <span class="comment">% Set kdebin default values: </span>
+139 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+140 <span class="comment">%Fig3</span>
+141 <span class="keyword">if</span> isempty(kernel),     kernel = <span class="string">'epan'</span>;  <span class="keyword">end</span>
+142 <span class="keyword">if</span> isempty(L2),             L2 = .5;      <span class="keyword">end</span>
+143 <span class="comment">%Fig5</span>
+144 <span class="keyword">if</span> isempty(Nkernel),   Nkernel = <span class="string">'epan'</span>;  <span class="keyword">end</span>
+145 <span class="keyword">if</span> isempty(NL2),           NL2 = [.5 .5]; <span class="keyword">end</span>
+146 <span class="comment">%Fig6</span>
+147 <span class="keyword">if</span> isempty(Jkernel),   Jkernel = <span class="string">'epan'</span>;  <span class="keyword">end</span>
+148 <span class="keyword">if</span> isempty(JL2),           JL2 = [1 .5];  <span class="keyword">end</span> <span class="comment">% used</span>
+149 <span class="comment">% if hs, Nhs Jhs is empty then kdebin uses the </span>
+150 <span class="comment">% default values calculated  from the data (this is default)</span>
+151 
+152 
+153 
+154 <span class="comment">% Initialization:</span>
+155 <span class="comment">%~~~~~~~~~~~~~~~~</span>
+156 
+157 <span class="keyword">if</span> isempty(St),
+158   St=<a href="../../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>(w,[Hm0 ,Tp]);
+159 <span class="keyword">end</span>
+160 <span class="keyword">if</span> isempty(xt)
+161   xt=<a href="../../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(St,[Nsim,1],[],Iseed);
+162 <span class="keyword">end</span>
+163 <span class="keyword">if</span> isempty(Ste)
+164   Ste=<a href="../../../wafo/onedim/dat2spec.html" class="code" title=" Estimate one-sided spectral density from data.">dat2spec</a>(xt,L,[],[],0.95);  <span class="comment">% estimated Spectrum</span>
+165 <span class="keyword">end</span>
+166 
+167 
+168 
+169 
+170 
+171 
+172</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

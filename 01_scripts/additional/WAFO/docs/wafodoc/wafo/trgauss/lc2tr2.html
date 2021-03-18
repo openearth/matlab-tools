@@ -1,0 +1,407 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of lc2tr2</title>
+  <meta name="keywords" content="lc2tr2">
+  <meta name="description" content=" Estimate transformation, g, from observed crossing intensity, version2.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; lc2tr2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>lc2tr2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Estimate transformation, g, from observed crossing intensity, version2.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [g, test, g2] = lc2tr(cross,ma,sa,varargin); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="lc2tr2.html" class="code" title=" Estimate transformation, g, from observed crossing intensity, version2.">LC2TR2</a> Estimate transformation, g, from observed crossing intensity, version2.
+ 
+         Assumption: a Gaussian process, Y, is related to the
+                     non-Gaussian process, X, by Y = g(X). 
+ 
+   CALL:  [g, test,g2] = <a href="lc2tr2.html" class="code" title=" Estimate transformation, g, from observed crossing intensity, version2.">lc2tr2</a>(lc,ma,sa,options);
+ 
+      g,g2  = smoothed and empirical estimate of the transformation  g.     
+      test  = test observator int (g(u)-u)^2 du  where int limits is
+              given by param. This is a measure of departure of the 
+              data from the Gaussian model.
+      lc    = a two column matrix with <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> in the first column
+              and number of upcrossings in the second.
+      ma,sa = mean and standard deviation of the process
+ 
+    options = structure with the fields:
+   csm,gsm  - defines the smoothing of the crossing intensity and the
+              transformation g. Valid values must be
+              0&lt;=csm,gsm&lt;=1. (default csm = 0.9 gsm=0.05)
+              Smaller values gives smoother functions.
+      param - vector which defines the region of variation of the data X.
+              (default [-5 5 513]). 
+   plotflag - 0 no plotting (Default)
+              1 plots empirical and smoothed g(u) and theoretical for a Gaussian model. 
+              2 monitor development of estimation
+  linextrap - 0 use a regular smoothing spline 
+              1 use a smoothing spline with a constraint on the ends to 
+                ensure linear extrapolation outside the <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> of the data.
+                (default)
+  cvar      - Variances for the crossing intensity. (default 1)
+  gvar      - Variances for the empirical transformation, g. (default  1) 
+  ne        - Number of extremes (maxima &amp; minima) to remove from the
+               estimation of the transformation. This makes the
+               estimation more robust against outliers. (default 7)
+  Ntr        - Maximum length of empirical crossing intensity.
+               The empirical crossing intensity is interpolated
+               linearly  before smoothing if the length exceeds Ntr.
+               A reasonable NTR will significantly speed up the
+               estimation for long time series without loosing any
+               accuracy. NTR should be chosen greater than
+               PARAM(3). (default 1000)
+ 
+     The empirical crossing intensity is usually very irregular.
+   More than one local maximum of the empirical crossing intensity
+   may cause poor fit of the transformation. In such case one
+   should use a smaller value of GSM or set a larger variance for GVAR. 
+     If X(t) is likely to cross <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> higher than 5 standard deviations  
+   then the vector param has to be modified.  For example if X(t) is 
+   unlikely to cross a level of 7 standard deviations one can use 
+   param = [-7 7 513].
+ 
+  Example:
+  Hm0 = 7;
+  S = <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>([],Hm0); g=<a href="ochitr.html" class="code" title="  Calculates transformation, g, proposed by Ochi et al.">ochitr</a>([],[Hm0/4]); 
+  S.tr=g;S.tr(:,2)=g(:,2)*Hm0/4;
+  xs = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,2^13);
+  lc = <a href="../../wafo/onedim/dat2lc.html" class="code" title=" Extracts level-crossing spectrum from data, ">dat2lc</a>(xs);
+  g0 = <a href="lc2tr2.html" class="code" title=" Estimate transformation, g, from observed crossing intensity, version2.">lc2tr2</a>(lc,0,Hm0/4,'plot','iter');         % Monitor the development
+  g1 = <a href="lc2tr2.html" class="code" title=" Estimate transformation, g, from observed crossing intensity, version2.">lc2tr2</a>(lc,0,Hm0/4,<a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>('gvar', .5 )); % Equal weight on all points
+  g2 = <a href="lc2tr2.html" class="code" title=" Estimate transformation, g, from observed crossing intensity, version2.">lc2tr2</a>(lc,0,Hm0/4,'gvar', [3.5 .5 3.5]);  % Less weight on the ends
+  hold on, <a href="trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>(g1,g)                          % Check the fit
+  <a href="trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>(g2)
+ 
+  See also  <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>, <a href="dat2tr.html" class="code" title=" Estimate transformation, g, from data.">dat2tr</a>, <a href="trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>, <a href="../../wafo/onedim/findcross.html" class="code" title=" Finds indices to level v up and downcrossings of a vector">findcross</a>, <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a></li></TD>
+<TD> Calculates discrete levels given the parameter matrix.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/smooth.html" class="code" title=" [yy,coefs]= smooth(x,y,p,xx,LinExtrap,d2)">smooth</a></li></TD>
+<TD> Calculates a smoothing spline.</TD>
+</TR>
+<TR>
+<TD><li><a href="troptset.html" class="code" title=" options = troptset(varargin)">troptset</a></li></TD>
+<TD> Create or alter TRANSFORM OPTIONS structure.</TD>
+</TR>
+<TR>
+<TD><li><a href="trplot.html" class="code" title=" h=trplot(g,g2,ma,sa)">trplot</a></li></TD>
+<TD> Plots transformation, g, eg. estimated with dat2tr.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a></li></TD>
+<TD> Inverse of the Normal distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\cumtrapz.m">cumtrapz</a></li></TD>
+<TD>      Cumulative trapezoidal numerical integration.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1.m">interp1</a></li></TD>
+<TD>       1-D interpolation (table lookup)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1q.m">interp1q</a></li></TD>
+<TD>      Quick 1-D linear interpolation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\isequal.m">isequal</a></li></TD>
+<TD>       True if arrays are numerically equal.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\audiovideo\@audiorecorder\pause.m">pause</a></li></TD>
+<TD>         Wait for user response.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\trapz.m">trapz</a></li></TD>
+<TD>         Trapezoidal numerical integration.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [g, test, g2] = lc2tr(cross,ma,sa,varargin);
+002 <span class="comment">%LC2TR2 Estimate transformation, g, from observed crossing intensity, version2.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">%        Assumption: a Gaussian process, Y, is related to the</span>
+005 <span class="comment">%                    non-Gaussian process, X, by Y = g(X). </span>
+006 <span class="comment">%</span>
+007 <span class="comment">%  CALL:  [g, test,g2] = lc2tr2(lc,ma,sa,options);</span>
+008 <span class="comment">%</span>
+009 <span class="comment">%     g,g2  = smoothed and empirical estimate of the transformation  g.     </span>
+010 <span class="comment">%     test  = test observator int (g(u)-u)^2 du  where int limits is</span>
+011 <span class="comment">%             given by param. This is a measure of departure of the </span>
+012 <span class="comment">%             data from the Gaussian model.</span>
+013 <span class="comment">%     lc    = a two column matrix with levels in the first column</span>
+014 <span class="comment">%             and number of upcrossings in the second.</span>
+015 <span class="comment">%     ma,sa = mean and standard deviation of the process</span>
+016 <span class="comment">%</span>
+017 <span class="comment">%   options = structure with the fields:</span>
+018 <span class="comment">%  csm,gsm  - defines the smoothing of the crossing intensity and the</span>
+019 <span class="comment">%             transformation g. Valid values must be</span>
+020 <span class="comment">%             0&lt;=csm,gsm&lt;=1. (default csm = 0.9 gsm=0.05)</span>
+021 <span class="comment">%             Smaller values gives smoother functions.</span>
+022 <span class="comment">%     param - vector which defines the region of variation of the data X.</span>
+023 <span class="comment">%             (default [-5 5 513]). </span>
+024 <span class="comment">%  plotflag - 0 no plotting (Default)</span>
+025 <span class="comment">%             1 plots empirical and smoothed g(u) and theoretical for a Gaussian model. </span>
+026 <span class="comment">%             2 monitor development of estimation</span>
+027 <span class="comment">% linextrap - 0 use a regular smoothing spline </span>
+028 <span class="comment">%             1 use a smoothing spline with a constraint on the ends to </span>
+029 <span class="comment">%               ensure linear extrapolation outside the range of the data.</span>
+030 <span class="comment">%               (default)</span>
+031 <span class="comment">% cvar      - Variances for the crossing intensity. (default 1)</span>
+032 <span class="comment">% gvar      - Variances for the empirical transformation, g. (default  1) </span>
+033 <span class="comment">% ne        - Number of extremes (maxima &amp; minima) to remove from the</span>
+034 <span class="comment">%              estimation of the transformation. This makes the</span>
+035 <span class="comment">%              estimation more robust against outliers. (default 7)</span>
+036 <span class="comment">% Ntr        - Maximum length of empirical crossing intensity.</span>
+037 <span class="comment">%              The empirical crossing intensity is interpolated</span>
+038 <span class="comment">%              linearly  before smoothing if the length exceeds Ntr.</span>
+039 <span class="comment">%              A reasonable NTR will significantly speed up the</span>
+040 <span class="comment">%              estimation for long time series without loosing any</span>
+041 <span class="comment">%              accuracy. NTR should be chosen greater than</span>
+042 <span class="comment">%              PARAM(3). (default 1000)</span>
+043 <span class="comment">%</span>
+044 <span class="comment">%    The empirical crossing intensity is usually very irregular.</span>
+045 <span class="comment">%  More than one local maximum of the empirical crossing intensity</span>
+046 <span class="comment">%  may cause poor fit of the transformation. In such case one</span>
+047 <span class="comment">%  should use a smaller value of GSM or set a larger variance for GVAR. </span>
+048 <span class="comment">%    If X(t) is likely to cross levels higher than 5 standard deviations  </span>
+049 <span class="comment">%  then the vector param has to be modified.  For example if X(t) is </span>
+050 <span class="comment">%  unlikely to cross a level of 7 standard deviations one can use </span>
+051 <span class="comment">%  param = [-7 7 513].</span>
+052 <span class="comment">%</span>
+053 <span class="comment">% Example:</span>
+054 <span class="comment">% Hm0 = 7;</span>
+055 <span class="comment">% S = jonswap([],Hm0); g=ochitr([],[Hm0/4]); </span>
+056 <span class="comment">% S.tr=g;S.tr(:,2)=g(:,2)*Hm0/4;</span>
+057 <span class="comment">% xs = spec2sdat(S,2^13);</span>
+058 <span class="comment">% lc = dat2lc(xs);</span>
+059 <span class="comment">% g0 = lc2tr2(lc,0,Hm0/4,'plot','iter');         <span class="comment">% Monitor the development</span></span>
+060 <span class="comment">% g1 = lc2tr2(lc,0,Hm0/4,troptset('gvar', .5 )); <span class="comment">% Equal weight on all points</span></span>
+061 <span class="comment">% g2 = lc2tr2(lc,0,Hm0/4,'gvar', [3.5 .5 3.5]);  <span class="comment">% Less weight on the ends</span></span>
+062 <span class="comment">% hold on, trplot(g1,g)                          <span class="comment">% Check the fit</span></span>
+063 <span class="comment">% trplot(g2)</span>
+064 <span class="comment">%</span>
+065 <span class="comment">% See also  troptset, dat2tr, trplot, findcross, smooth</span>
+066 
+067 <span class="comment">% NB! the transformated data will be N(0,1)</span>
+068 
+069 <span class="comment">% Reference</span>
+070 <span class="comment">% Rychlik , I., Johannesson, P., and Leadbetter, M.R. (1997)</span>
+071 <span class="comment">% &quot;Modelling and statistical analysis of ocean wavedata </span>
+072 <span class="comment">% using a transformed Gaussian process&quot;,</span>
+073 <span class="comment">% Marine structures, Design, Construction and Safety, </span>
+074 <span class="comment">% Vol 10, pp 13--47</span>
+075 <span class="comment">% </span>
+076 
+077 
+078 <span class="comment">% Tested on: Matlab 5.3, 5.2, 5.1</span>
+079 <span class="comment">% History:</span>
+080 <span class="comment">% by pab 29.12.2000</span>
+081 <span class="comment">% based on lc2tr, but the inversion is faster.</span>
+082 <span class="comment">% by IR and PJ</span>
+083 
+084 
+085 opt = <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>(<span class="string">'chkder'</span>,<span class="string">'on'</span>,<span class="string">'plotflag'</span>,<span class="string">'off'</span>,<span class="string">'csm'</span>,.9,<span class="string">'gsm'</span>,.05,.<span class="keyword">...</span>
+086     <span class="string">'param'</span>,[-5 5 513],<span class="string">'delay'</span>,2,<span class="string">'linextrap'</span>,<span class="string">'on'</span>,<span class="string">'ntr'</span>,1000,<span class="string">'ne'</span>,7,<span class="string">'cvar'</span>,1,<span class="string">'gvar'</span>,1);
+087 <span class="comment">% If just 'defaults' passed in, return the default options in g</span>
+088 <span class="keyword">if</span> nargin==1 &amp; nargout &lt;= 1 &amp; isequal(cross,<span class="string">'defaults'</span>)
+089   g = opt; 
+090   <span class="keyword">return</span>
+091 <span class="keyword">end</span>
+092 error(nargchk(3,inf,nargin)) 
+093 <span class="keyword">if</span> nargin&gt;=4 ,  opt  = <a href="troptset.html" class="code" title=" Create or alter TRANSFORM OPTIONS structure.">troptset</a>(opt,varargin{:}); <span class="keyword">end</span>
+094 csm2 = opt.gsm;
+095 param = opt.param;
+096 ptime = opt.delay;
+097 Ne  = opt.ne;
+098 <span class="keyword">switch</span> opt.chkder;
+099   <span class="keyword">case</span> <span class="string">'off'</span>, chkder = 0;
+100   <span class="keyword">case</span> <span class="string">'on'</span>,  chkder = 1;
+101   <span class="keyword">otherwise</span>,  chkder = opt.chkder;
+102 <span class="keyword">end</span>
+103 <span class="keyword">switch</span> opt.linextrap;
+104   <span class="keyword">case</span> <span class="string">'off'</span>, def = 0;
+105   <span class="keyword">case</span> <span class="string">'on'</span>,  def = 1;
+106   <span class="keyword">otherwise</span>,  def = opt.linextrap;
+107 <span class="keyword">end</span>
+108 <span class="keyword">switch</span> opt.plotflag
+109   <span class="keyword">case</span> {<span class="string">'none'</span>,<span class="string">'off'</span>},   plotflag = 0;
+110   <span class="keyword">case</span> <span class="string">'final'</span>, plotflag = 1;
+111   <span class="keyword">case</span> <span class="string">'iter'</span>,  plotflag = 2;
+112   <span class="keyword">otherwise</span>,    plotflag = opt.plotflag;
+113 <span class="keyword">end</span>
+114 ncr = length(cross);
+115 <span class="keyword">if</span> ncr&gt;opt.ntr &amp; opt.ntr&gt;0,
+116    x0 = linspace(cross(1+Ne,1),cross(<span class="keyword">end</span>-Ne,1),opt.ntr)';
+117    cros = [ x0,interp1q(cross(:,1),cross(:,2),x0)];
+118    Ne = 0;
+119    Ner = opt.ne;
+120    ncr = opt.ntr;
+121  <span class="keyword">else</span>
+122    Ner = 0;
+123   cros=cross;
+124 <span class="keyword">end</span>
+125 
+126 ng = length(opt.gvar);
+127 <span class="keyword">if</span> ng==1
+128   gvar = opt.gvar(ones(ncr,1));
+129 <span class="keyword">else</span>
+130   gvar = interp1(linspace(0,1,ng)',opt.gvar(:),linspace(0,1,ncr)',<span class="string">'*linear'</span>);  
+131 <span class="keyword">end</span>
+132 ng = length(opt.cvar);
+133 <span class="keyword">if</span> ng==1
+134   cvar = opt.cvar(ones(ncr,1));
+135 <span class="keyword">else</span>
+136   cvar = interp1(linspace(0,1,ng)',opt.cvar(:),linspace(0,1,ncr)',<span class="string">'*linear'</span>);  
+137 <span class="keyword">end</span>
+138 
+139 g = zeros(param(3),2);
+140 
+141 uu = <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>(param);
+142 
+143 g(:,1) = sa*uu' + ma;
+144 
+145 g2   = cros;
+146 
+147 <span class="keyword">if</span> Ner&gt;0, <span class="comment">% Compute correction factors</span>
+148  cor1 = trapz(cross(1:Ner+1,1),cross(1:Ner+1,2));
+149  cor2 = trapz(cross(<span class="keyword">end</span>-Ner-1:<span class="keyword">end</span>,1),cross(<span class="keyword">end</span>-Ner-1:<span class="keyword">end</span>,2));
+150 <span class="keyword">else</span>
+151   cor1 = 0;
+152   cor2 = 0;
+153 <span class="keyword">end</span>
+154 cros(:,2) = cumtrapz(cros(:,1),cros(:,2))+cor1;
+155 cros(:,2) = (cros(:,2)+.5)/(cros(<span class="keyword">end</span>,2) + cor2 +1);
+156 cros(:,1) = (cros(:,1)-ma)/sa;
+157 
+158 <span class="comment">% find the mode</span>
+159 [tmp,imin]= min(abs(cros(:,2)-.15));
+160 [tmp,imax]= min(abs(cros(:,2)-.85));
+161 inde = imin:imax;
+162 tmp =  <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(cros(inde,1),g2(inde,2),opt.csm,cros(inde,1),def,cvar(inde));
+163 
+164 [tmp imax] = max(tmp);
+165 u0 = cros(inde(imax),1);
+166 <span class="comment">%u0 = interp1q(cros(:,2),cros(:,1),.5)</span>
+167 
+168 
+169 cros(:,2) = <a href="../../wafo/wstats/wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>(cros(:,2),-u0,1);
+170 
+171 g2(:,2)   = cros(:,2);
+172 <span class="comment">% NB! the smooth function does not always extrapolate well outside the edges</span>
+173 <span class="comment">% causing poor estimate of g  </span>
+174 <span class="comment">% We may alleviate this problem by: forcing the extrapolation</span>
+175 <span class="comment">% to be linear outside the edges or choosing a lower value for csm2.</span>
+176 
+177 inds = 1+Ne:ncr-Ne;<span class="comment">% indices to points we are smoothing over</span>
+178 scros2 = <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(cros(inds,1),cros(inds,2),csm2,uu,def,gvar(inds));
+179 
+180 g(:,2) = scros2';<span class="comment">%*sa; <span class="comment">%multiply with stdev </span></span>
+181 
+182 <span class="keyword">if</span> chkder~=0
+183    <span class="keyword">for</span> ix = 1:5
+184     dy = diff(g(:,2));
+185     <span class="keyword">if</span> any(dy&lt;=0)
+186       warning(<span class="string">'The empirical crossing spectrum is not sufficiently smoothed.'</span>)
+187       disp(<span class="string">'        The estimated transfer function, g, is not '</span>)
+188       disp(<span class="string">'        a strictly increasing function.'</span>)
+189       dy(dy&gt;0)=eps;
+190       gvar = -([dy;0]+[0;dy])/2+eps;
+191       g(:,2) = <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(g(:,1),g(:,2),1,g(:,1),def,ix*gvar);
+192     <span class="keyword">else</span> 
+193       <span class="keyword">break</span>
+194     <span class="keyword">end</span>
+195   <span class="keyword">end</span>
+196 <span class="keyword">end</span>
+197 <span class="keyword">if</span> 0,  <span class="comment">%either</span>
+198   test = sqrt((param(2)-param(1))/(param(3)-1)*sum((uu-scros2).^2));
+199 <span class="keyword">else</span> <span class="comment">% or</span>
+200   <span class="comment">%test=sqrt(simpson(uu,(uu-scros2).^2));</span>
+201 <span class="comment">% or</span>
+202   test=sqrt(trapz(uu,(uu-scros2).^2));
+203 <span class="keyword">end</span> 
+204 
+205 
+206 <span class="keyword">if</span> plotflag&gt;0, 
+207   <a href="trplot.html" class="code" title=" Plots transformation, g, eg. estimated with dat2tr.">trplot</a>(g ,g2,ma,sa)
+208   <span class="comment">%legend(['Smoothed (T='  num2str(test) ')'],'g(u)=u','Not smoothed',0)</span>
+209   <span class="comment">%ylabel('Transfer function g(u)')</span>
+210   <span class="comment">%xlabel('Crossing level u')</span>
+211   
+212   <span class="keyword">if</span> plotflag&gt;1,pause(ptime),<span class="keyword">end</span>
+213 <span class="keyword">end</span>
+214 
+215 
+216 
+217 
+218 
+219 
+220 
+221</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

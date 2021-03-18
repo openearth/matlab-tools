@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of freqtype</title>
+  <meta name="keywords" content="freqtype">
+  <meta name="description" content=" returns the frequency type of a Spectral density struct.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; freqtype.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>freqtype
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> returns the frequency type of a Spectral density struct.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> ftype=freqtype(S) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="freqtype.html" class="code" title=" returns the frequency type of a Spectral density struct.">FREQTYPE</a> returns the frequency type of a Spectral density struct.
+ 
+  CALL: ftype = <a href="freqtype.html" class="code" title=" returns the frequency type of a Spectral density struct.">freqtype</a>(S)
+ 
+   ftype = 'f' if frequency is given in Hz
+           'w' if frequency is given in rad/s
+           'k' if a wave number spectrum is given
+       S = spectral density struct
+ 
+  See also  <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\iofun\@timer\fieldnames.m">fieldnames</a></li></TD>
+<TD>    Get structure field names.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="scalespec.html" class="code" title=" [Sn,mn,mom]=scalespec(So,m0n,m2n,plotflag)">scalespec</a></li></TD>
+<TD>  Scale spectral density so that the moments equals m0,m2.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2cov.html" class="code" title=" R = spec2cov(S,nr,Nt,rate,Nx,Ny,dx,dy)">spec2cov</a></li></TD>
+<TD> Computes covariance function and its derivatives</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2cov2.html" class="code" title=" R = spec2cov2(S,nr,Nt,dt)">spec2cov2</a></li></TD>
+<TD> Computes covariance function and its derivatives, alternative version</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2dt.html" class="code" title=" dT = spec2dt(S);">spec2dt</a></li></TD>
+<TD>  Computes sampling interval from Nyquist frequency in spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2linspec.html" class="code" title=" [SL,SN]=spec2linspec(S,np,dt,iseed,fnLimit)">spec2linspec</a></li></TD>
+<TD>  Separates the linear component of the Spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a></li></TD>
+<TD> Calculates joint density of Maximum, minimum and period.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2nlsdat.html" class="code" title=" [x2,x,svec,dvec,A]=spec2nlsdat(S,np,dt,iseed,method,truncationLimit)">spec2nlsdat</a></li></TD>
+<TD> Simulates a Randomized 2nd order non-linear wave X(t)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2sdat.html" class="code" title=" [x,xder]=spec2sdat(S,np,dt,iseed,method)">spec2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="specinterp.html" class="code" title=" Snew = specinterp(S,dt)">specinterp</a></li></TD>
+<TD> Interpolation and zero-padding of spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> ftype=<a name="_sub0" href="#_subfunctions" class="code">freqtype</a>(S)
+02 <span class="comment">% FREQTYPE returns the frequency type of a Spectral density struct.</span>
+03 <span class="comment">%</span>
+04 <span class="comment">% CALL: ftype = freqtype(S)</span>
+05 <span class="comment">%</span>
+06 <span class="comment">%  ftype = 'f' if frequency is given in Hz</span>
+07 <span class="comment">%          'w' if frequency is given in rad/s</span>
+08 <span class="comment">%          'k' if a wave number spectrum is given</span>
+09 <span class="comment">%      S = spectral density struct</span>
+10 <span class="comment">%</span>
+11 <span class="comment">% See also  datastructures</span>
+12 
+13 <span class="comment">% History:</span>
+14 <span class="comment">%  revised pab 17.02.2000</span>
+15 <span class="comment">% - updated header</span>
+16 <span class="comment">% revised pab 24.01.2000</span>
+17 <span class="comment">%  - added check if field exist</span>
+18 <span class="comment">% by pab </span>
+19 
+20 names=fieldnames(S); 
+21 ind=find(strcmp(names,<span class="string">'f'</span>)+strcmp(names,<span class="string">'w'</span>)+strcmp(names,<span class="string">'k'</span>)); <span class="comment">%options are 'f' and 'w' and 'k' </span>
+22 <span class="keyword">if</span> isempty(ind)
+23   warning(<span class="string">'This is not a spectral density structure'</span>)
+24   ftype=[];
+25 <span class="keyword">else</span>
+26   ftype=lower(names{ind}); 
+27 <span class="keyword">end</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

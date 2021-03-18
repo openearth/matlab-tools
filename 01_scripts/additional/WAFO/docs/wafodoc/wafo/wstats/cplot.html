@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of cplot</title>
+  <meta name="keywords" content="cplot">
+  <meta name="description" content=" Cubic plot of responses">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; cplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Cubic plot of responses</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> h = cplot(y,D) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="cplot.html" class="code" title=" Cubic plot of responses">CPLOT</a> Cubic plot of responses
+ 
+  CALL:  h = <a href="cplot.html" class="code" title=" Cubic plot of responses">cplot</a>(y,D);
+ 
+   y = responses 
+   D = Design matrix 
+ 
+  Example
+    D = <a href="ffd.html" class="code" title=" Two-level Fractional Factorial Design">ffd</a>(3);
+    y = [60 72 54 68 52 83 45 80]; % Responses to design D.
+    <a href="cplot.html" class="code" title=" Cubic plot of responses">cplot</a>(y,D)
+ 
+  See also  <a href="ffd.html" class="code" title=" Two-level Fractional Factorial Design">ffd</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="ffd.html" class="code" title=" [D,I] = ffd(n,I)">ffd</a></li></TD>
+<TD> Two-level Fractional Factorial Design</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\axis.m">axis</a></li></TD>
+<TD>          Control axis scaling and appearance.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\gca.m">gca</a></li></TD>
+<TD>           Get handle to current axis.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph3d\plot3.m">plot3</a></li></TD>
+<TD>         Plot lines and points in 3-D space.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="set is a built-in method">set</a></li></TD>
+<TD>           Set object properties.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\signal\signal\square.m">square</a></li></TD>
+<TD>        Square wave generation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\text.m">text</a></li></TD>
+<TD>          Text annotation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\xlabel.m">xlabel</a></li></TD>
+<TD>        X-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\ylabel.m">ylabel</a></li></TD>
+<TD>        Y-axis label.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph3d\zlabel.m">zlabel</a></li></TD>
+<TD>        Z-axis label.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> h = circle2d(x,y,r,varargin);</a></li><li><a href="#_sub2" class="code"> h = circle3d(x,y,z,r,varargin);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> h = <a name="_sub0" href="#_subfunctions" class="code">cplot</a>(y,D)
+002 <span class="comment">%CPLOT Cubic plot of responses</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  h = cplot(y,D);</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%  y = responses </span>
+007 <span class="comment">%  D = Design matrix </span>
+008 <span class="comment">%</span>
+009 <span class="comment">% Example</span>
+010 <span class="comment">%   D = ffd(3);</span>
+011 <span class="comment">%   y = [60 72 54 68 52 83 45 80]; <span class="comment">% Responses to design D.</span></span>
+012 <span class="comment">%   cplot(y,D)</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% See also  ffd</span>
+015 
+016 error(nargchk(1,2,nargin))
+017 sz = size(y);
+018 
+019 n = length(y);
+020 
+021 <span class="keyword">if</span> n == prod(sz),
+022   y = y(:);
+023   n = length(y);
+024 <span class="keyword">else</span>
+025   n = sz(1);
+026 <span class="keyword">end</span>
+027 
+028 kmp = log2(n);
+029 <span class="keyword">if</span> nargin&lt;2, D = <a href="ffd.html" class="code" title=" Two-level Fractional Factorial Design">ffd</a>(kmp); <span class="keyword">end</span>
+030 
+031 
+032 
+033 [n1, k] = size(D);
+034 
+035 <span class="keyword">if</span> n~=n1, error(<span class="string">'Something wrong'</span>), <span class="keyword">end</span>
+036 
+037 p = k-kmp;
+038 
+039 
+040 D(D&lt;1)=-1;
+041 r = 0.4;  <span class="comment">% radius of circle</span>
+042 x2 = [-1+r 1-r ];
+043 x1 = [-1 -1 ]; 
+044 <span class="keyword">switch</span> kmp
+045   <span class="keyword">case</span> 2, <span class="comment">% 2D square plot</span>
+046       h1 = plot( x1,x2,<span class="string">'b'</span>,-x1,x2,<span class="string">'b'</span>,x2,x1,<span class="string">'b'</span>,x2,-x1,<span class="string">'b'</span>);
+047       axis([-1 1 -1 1]*1.5)
+048       set(gca,<span class="string">'xtick'</span>,-1:2:1,<span class="string">'ytick'</span>,-1:2:1,<span class="string">'Box'</span>,<span class="string">'off'</span>)
+049       
+050       h2 = text(D(:,1),D(:,2),num2str(y(:)),<span class="keyword">...</span>
+051       <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'VerticalAlignment'</span>,<span class="string">'middle'</span>);
+052       hold on,h3=<a href="#_sub1" class="code" title="sub  h = circle2d(x,y,r,varargin);">circle2d</a>(D(:,1),D(:,2),r,<span class="string">'b'</span>);,hold off
+053      
+054   <span class="keyword">case</span> 3, <span class="comment">% 3D cubeplot</span>
+055     h1 = plot3( x1,x1,x2,<span class="string">'b'</span>,x1,-x1,x2,<span class="string">'b'</span>,-x1,x1,x2,<span class="string">'b'</span>,-x1,-x1,x2,<span class="string">'b'</span>);
+056     hold on,
+057     h11 = plot3(x1,x2,x1,<span class="string">'b'</span>,x1,x2,-x1,<span class="string">'b'</span>,-x1,x2,x1,<span class="string">'b'</span>,-x1,x2,-x1,<span class="string">'b'</span>);
+058     h111 = plot3(x2,x1,x1,<span class="string">'b'</span>,x2,x1,-x1,<span class="string">'b'</span>,x2,-x1,x1,<span class="string">'b'</span>,x2,-x1,-x1,<span class="string">'b'</span>);
+059     h1 = [h1;h11;h111];
+060     axis([-1 1 -1 1 -1 1]*1.5)
+061     set(gca,<span class="string">'xtick'</span>,-1:2:1,<span class="string">'ytick'</span>,-1:2:1,<span class="string">'ztick'</span>,-1:2:1,<span class="string">'Box'</span>,<span class="string">'off'</span>)
+062     
+063     h2 = text(D(:,1),D(:,2),D(:,3),num2str(y(:)),<span class="keyword">...</span>
+064     <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'VerticalAlignment'</span>,<span class="string">'middle'</span>);
+065     <span class="keyword">if</span> 1,
+066       h3=<a href="#_sub2" class="code" title="sub  h = circle3d(x,y,z,r,varargin);">circle3d</a>(D(:,1),D(:,2),D(:,3),r,<span class="string">'b'</span>);
+067     <span class="keyword">else</span>
+068       h3 =[];
+069     <span class="keyword">end</span>
+070     hold off
+071     zlabel(<span class="string">'C'</span>)  
+072   <span class="keyword">case</span> 4, <span class="comment">% 2D  cubeplot</span>
+073      h1 = plot( x1,x2,<span class="string">'b'</span>,-x1,x2,<span class="string">'b'</span>,x2,x1,<span class="string">'b'</span>,x2,-x1,<span class="string">'b'</span>);
+074      x0 = 1; hold on
+075      h1 = plot(x1+x0,x2+x0,<span class="string">'b'</span>,-x1+x0,x2+x0,<span class="string">'b'</span>,x2+x0,x1+x0,<span class="string">'b'</span>,x2+x0,-x1+x0,<span class="string">'b'</span>);
+076      x3 = [-1+ r/sqrt(2)  -r/sqrt(2) ];
+077      h1 = plot(x3,x3,<span class="string">'b'</span>,2*x0+x3,x3,<span class="string">'b'</span>,x3,2*x0+x3,<span class="string">'b'</span>,2*x0+x3,2*x0+x3,<span class="string">'b'</span>);
+078      
+079       axis([-1 2 -1 2]*1.5)
+080       set(gca,<span class="string">'xtick'</span>,-1:2:1,<span class="string">'ytick'</span>,-1:2:1,<span class="string">'Box'</span>,<span class="string">'off'</span>)
+081       ind1 = 1:4;
+082       ind2 = 5:8;
+083      
+084       h2 = text(D(ind1,1),D(ind1,2),num2str(y(ind1)),<span class="keyword">...</span>
+085       <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'VerticalAlignment'</span>,<span class="string">'middle'</span>);
+086       h2 = text(D(ind2,1)+x0,D(ind2,2)+x0,num2str(y(ind2)),<span class="keyword">...</span>
+087       <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="string">'VerticalAlignment'</span>,<span class="string">'middle'</span>);
+088       h3=<a href="#_sub1" class="code" title="sub  h = circle2d(x,y,r,varargin);">circle2d</a>(D(ind1,1),D(ind1,2),r,<span class="string">'b'</span>);
+089       h3=<a href="#_sub1" class="code" title="sub  h = circle2d(x,y,r,varargin);">circle2d</a>(x0+D(ind2,1),x0+D(ind2,2),r,<span class="string">'b'</span>);
+090       hold off
+091 <span class="keyword">end</span>
+092 xlabel(<span class="string">'A'</span>) 
+093 ylabel(<span class="string">'B'</span>)
+094 axis square
+095 <span class="keyword">if</span> nargout&gt;1,
+096   h=[h1(:);h2(:);h3(:)];
+097 <span class="keyword">end</span>
+098 
+099 <span class="keyword">function</span> h = <a name="_sub1" href="#_subfunctions" class="code">circle2d</a>(x,y,r,varargin);
+100   error(nargchk(2,inf,nargin))
+101   <span class="keyword">if</span> nargin&lt;3,r=1;<span class="keyword">end</span>
+102   [ec, x,y,r]=<a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,y,r);
+103   
+104   n = length(x(:));
+105   h = zeros(n,1);
+106   th = linspace(0,2*pi,50)';
+107   <span class="keyword">for</span> ix=1:n,
+108     h(ix) = plot(r(ix)*cos(th)+x(ix),r(ix)*sin(th)+y(ix),varargin{:});
+109   <span class="keyword">end</span>
+110   
+111 <span class="keyword">return</span>
+112 
+113 
+114 
+115 <span class="keyword">function</span> h = <a name="_sub2" href="#_subfunctions" class="code">circle3d</a>(x,y,z,r,varargin);
+116   error(nargchk(3,inf,nargin))
+117   <span class="keyword">if</span> nargin&lt;4,r=1;<span class="keyword">end</span>
+118   [ec, x,y,z,r]=<a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,y,z,r);
+119   
+120   n = length(x(:));
+121   h = zeros(n,1);
+122   m = 50;
+123   th = linspace(0,2*pi,m)';
+124   <span class="keyword">for</span> ix=1:n,
+125     h(ix) = plot3(r(ix)*cos(th)+x(ix),r(ix)*sin(th)+y(ix),repmat(z(ix),m,1));
+126   <span class="keyword">end</span>
+127 <span class="keyword">return</span>
+128 
+129 
+130 
+131</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="  Module TRGAUSS in WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; Contents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Module TRGAUSS in WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  Module TRGAUSS in WAFO Toolbox.  
+  Version 2.1.1   07-Sep-2005 
+   
+   
+  <a href="Readme.html" class="code" title=" Readme file for module TRGAUSS in WAFO Toolbox.">Readme</a>        - <a href="Readme.html" class="code" title=" Readme file for module TRGAUSS in WAFO Toolbox.">Readme</a> file for module TRGAUSS in WAFO Toolbox.  
+  
+  Misc 
+  <a href="createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a>     - PDF class constructor  
+  <a href="pdfplot.html" class="code" title=" H1=pdfplot(f,varargin)">pdfplot</a>       - Plot <a href="Contents.html" class="code" title="  Module TRGAUSS in WAFO Toolbox.  ">contents</a> of pdf structures  
+  <a href="trplot.html" class="code" title=" h=trplot(g,g2,ma,sa)">trplot</a>        - Plot transformation, g, eg.  estimated with <a href="dat2tr.html" class="code" title=" [g, test, cmax, irr, g2]= dat2tr(x,def,varargin);">dat2tr</a>. 
+  
+ Transforms and non-linearities 
+  <a href="dat2gaus.html" class="code" title=" xx = dat2gaus(x,g)">dat2gaus</a>      - Transforms  x  using the transformation  g.  
+  <a href="gaus2dat.html" class="code" title=" x = gaus2dat(xx,g)">gaus2dat</a>      - Transforms  xx  using the inverse of transformation  g.  
+  <a href="mctrtest.html" class="code" title=" test2 = mctrtest(S,Np,test0,def,opt)">mctrtest</a>      - Test if stochastic process is Gaussian. 
+  <a href="spec2skew.html" class="code" title=" [skew, kurt, ma, sa, Hs ,Hd]=spec2skew(S,h,method)">spec2skew</a>     - Estimate moments of 2'nd order waves due to Marthinsen and Winterstein  
+  <a href="trangood.html" class="code" title=" f = trangood(ff,nmin,mini,maxi,nmax)">trangood</a>      - Make transformation suitable for efficient transforms.  
+  <a href="tranproc.html" class="code" title=" y = tranproc(x,ff)">tranproc</a>      - Transforms process X and up to four derivatives  
+  <a href="trmak.html" class="code" title=" tro = trmak(tr,ma,sa,note)">trmak</a>         - Put together a transformation object.  
+  <a href="troptset.html" class="code" title=" options = troptset(varargin)">troptset</a>      - Create or alter TRANSFORM OPTIONS structure.  
+  <a href="trunmak.html" class="code" title=" [tr,ma,sa, form,not,dat] = trunmak(tro)">trunmak</a>       - Split a transformation object into its pieces. 
+  
+  Transformed Gaussian model estimation 
+  <a href="cdf2tr.html" class="code" title=" [g, test, g2] = cdf2tr(Fx1,ma ,sa,varargin)">cdf2tr</a>        - Estimate transformation, g, from observed CDF.  
+  <a href="dat2tr.html" class="code" title=" [g, test, cmax, irr, g2]= dat2tr(x,def,varargin);">dat2tr</a>        - Estimate transformation, g, from data.  
+  <a href="hermitetr.html" class="code" title=" [g ,t0]=hermitetr(x,data,def)">hermitetr</a>     - Calculate transformation, g, proposed by Winterstein  
+  <a href="ochitr.html" class="code" title=" [g,t0]=ochitr(y,data)">ochitr</a>        - Calculate transformation, g, proposed by Ochi et al.  
+  <a href="lc2tr.html" class="code" title=" [g, test, g2] = lc2tr(cross,ma,sa,varargin);">lc2tr</a>         - Estimate transformation, g, from observed crossing intensity.  
+  <a href="lc2tr2.html" class="code" title=" [g, test, g2] = lc2tr(cross,ma,sa,varargin);">lc2tr2</a>        - Estimate transformation, g, from observed crossing intensity, version 2.  
+  
+ Gaussian probabilities and expectations 
+  <a href="bvnormcdf.html" class="code" title=" bvn = bvnormcdf( b1, b2, r )">bvnormcdf</a>     - Bivariate Normal cumulative distribution function 
+  <a href="bvnormprb.html" class="code" title=" value = bvnormprb(lower,upper,correl)">bvnormprb</a>     - Bivariate Normal probability   
+  <a href="mvnormpcprb.html" class="code" title=" [val, err,ier,extime]= mvnormpcprb(rho,a,b,tol,useSimpson,useBreakPoints)">mvnormpcprb</a>   - Multivariate Normal probability with product correlation 
+  <a href="mvnormprb.html" class="code" title=" [value,err,inform,exTime] = mvnormprb(correl,A,B,abseps,releps,maxpts,method);">mvnormprb</a>     - Multivariate Normal probability by Genz' algorithm. 
+  <a href="mvnortpcprb.html" class="code" title=" [value,bound,inform] = mvnortpcprb(RHO,A,B,D,NDF,abseps,IERC,HNC);">mvnortpcprb</a>   - Multivariate Normal or student T probability with product correlation. 
+  <a href="rind.html" class="code" title=" [fxind, err,exTime,options] = rind(BIG,Ex,Blo,Bup,indI,xc,Nt,varargin)">rind</a>          - Multivariate normal expectations 
+  
+ Probability density functions (pdf) or intensity matrices 
+  <a href="chitwo2lc_sorm.html" class="code" title=" mu=chitwo2lc_sorm(u,g,b,S22,S12,ass,n0,epsi)">chitwo2lc_sorm</a>- SORM-approximation of crossing intensity for noncentral Chi^2 process 
+  <a href="chitwo2lc_sp.html" class="code" title=" [mu,mu2,mu1,muG,beta,cc,fu,Fu]= chitwo2lc_sp(gamma,beta,S12,S22,ds0)">chitwo2lc_sp</a>  - Saddlepoint approximation of crossing intensity for noncentral Chi^2 process  
+  <a href="dirsp2chitwo.html" class="code" title=" [gam,bet,S12,S22]= dirsp2chitwo(s,w,L0,L2,th,h,eps,dthdw)">dirsp2chitwo</a>  - Parameters in non-central CHI-TWO process for directional Stokes waves. 
+  <a href="iter.html" class="code" title=" [F, rfc]=iter(f0,f,k,epsilon)">iter</a>          - Calculates a Markov matrix fmM  given a rainflow matrix frfc;  
+  <a href="iter_mc.html" class="code" title=" [F, rfc]=iter_mc(f0,f,k,epsilon)">iter_mc</a>       - Calculates a kernel f_xy of a MC given a rainflow matrix  
+  <a href="mc2rfc.html" class="code" title=" f_rfc = mc2rfc(f_xy,paramv,paramu)">mc2rfc</a>        - Calculates a rainflow matrix given a Markov chain with kernel f_xy;  
+  <a href="mctp2rfc.html" class="code" title=" f_rfc = mctp2rfc(f_mM,f_Mm,paramm,paramM)">mctp2rfc</a>      - Calculates a rainflow matrix given a Markov matrix f_mM of a Markov chain  
+  <a href="mctp2tc.html" class="code" title=" F=mctp2tc(freqPVR,utc,param,freqPVL)">mctp2tc</a>       - Calculates frequencies for the upcrossing troughs and crests  
+  <a href="../../wafo/trgauss/private/nt2fr.html" class="code" title=" F=nt2fr(M,def)">nt2fr</a>         - Calculates the frequency matrix given the counting distribution matrix.  
+  <a href="spec2cmat.html" class="code" title=" [f, fmm] = spec2cmat(spec,utc,def,paramt,paramu,nit)">spec2cmat</a>     - Joint intensity matrix for cycles  
+  <a href="spec2mmtpdf.html" class="code" title=" f = spec2mmtpdf(spec,utc,def,paramt,paramu,options,bound)">spec2mmtpdf</a>   - Calculates joint density of Maximum, minimum and period.  
+  <a href="spec2tccpdf.html" class="code" title=" [f] = spec2tccpdf(spec,utc,def,paramt,h1,h2,nit,speed,bound,plotflag)">spec2tccpdf</a>   - Evaluates densities of wave period Tcc, wave lenght Lcc.  
+  <a href="spec2thpdf.html" class="code" title=" f = spec2thpdf(spec,utc,def,paramt,h,options,plotflag)">spec2thpdf</a>    - Joint density of amplitude and period/wave-length characteristics  
+  <a href="spec2tpdf.html" class="code" title=" [f] = spec2tpdf(spec,utc,def,paramt,h,nit,speed,bound,plotflag)">spec2tpdf</a>     - Evaluates densities for crest-,trough-period, length.  
+  <a href="spec2tpdf2.html" class="code" title=" [f] = spec2tpdf2(spec,utc,def,paramt,varargin)">spec2tpdf2</a>    - Evaluates densities for various wave periods or wave lengths  
+  <a href="specq2lc.html" class="code" title=" [mu,fu,Fu,muG,mu1,mu2]= specq2lc(Spec,ds0,nb)">specq2lc</a>      - Saddlepoint approximation of crossing intensity for quadratic <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a>.  
+  <a href="th2vhpdf.html" class="code" title=" f2 = th2vhpdf(f,v)">th2vhpdf</a>      - Transform joint T-H density to V-H density  
+  
+ Cumulative distribution functions (cdf) 
+  <a href="lomaxcdf.html" class="code" title=" F = lomaxcdf(x,alpha,m0)">lomaxcdf</a>      - CDF for local maxima for a zero-mean Gaussian process  
+  <a href="spec2AcAt.html" class="code" title=" [f] = spec2AcAt(spec,utc,def,paramtc,paramtt,paramt,h1,h2,nit,speed,bound)">spec2acat</a>     - Evaluates survival function R(h1,h2)=P(Ac&gt;h1,At&gt;h2).  
+  <a href="spec2Acdf.html" class="code" title=" [f] = spec2Acdf(spec,utc,def,paramt,h,nit,speed,bound)">spec2acdf</a>     - Evaluates cdf of crests P(Ac&lt;=h) or troughs P(At&lt;=h).</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

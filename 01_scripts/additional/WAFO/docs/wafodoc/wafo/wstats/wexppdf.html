@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wexppdf</title>
+  <meta name="keywords" content="wexppdf">
+  <meta name="description" content=" Exponential probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wexppdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wexppdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Exponential probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wexppdf(x,m); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wexppdf.html" class="code" title=" Exponential probability density function ">WEXPPDF</a> Exponential probability density function 
+  
+  CALL:  f = <a href="wexppdf.html" class="code" title=" Exponential probability density function ">wexppdf</a>(x,m); 
+  
+         f = density function evaluated at x 
+         m = mean 
+  
+  The Exponential distribution is defined by its pdf 
+  
+         f(x)=exp(-x/m)/m, x&gt;=0, m&gt;0. 
+   
+  Example:  
+    x = linspace(0,6,200); 
+    p1 = <a href="wexppdf.html" class="code" title=" Exponential probability density function ">wexppdf</a>(x,1); p2 = <a href="wexppdf.html" class="code" title=" Exponential probability density function ">wexppdf</a>(x,2); 
+    plot(x,p1,x,p2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wexppdf</a>(x,m); 
+002 <span class="comment">%WEXPPDF Exponential probability density function </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  f = wexppdf(x,m); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%        f = density function evaluated at x </span>
+007 <span class="comment">%        m = mean </span>
+008 <span class="comment">% </span>
+009 <span class="comment">% The Exponential distribution is defined by its pdf </span>
+010 <span class="comment">% </span>
+011 <span class="comment">%        f(x)=exp(-x/m)/m, x&gt;=0, m&gt;0. </span>
+012 <span class="comment">%  </span>
+013 <span class="comment">% Example:  </span>
+014 <span class="comment">%   x = linspace(0,6,200); </span>
+015 <span class="comment">%   p1 = wexppdf(x,1); p2 = wexppdf(x,2); </span>
+016 <span class="comment">%   plot(x,p1,x,p2) </span>
+017  
+018 <span class="comment">% Reference: Johnson, Kotz and Balakrishnan (1994) </span>
+019 <span class="comment">% &quot;Continuous Univariate Distributions, vol. 1&quot;, p. 494 ff </span>
+020 <span class="comment">% Wiley </span>
+021  
+022 <span class="comment">% Tested on; Matlab 5.3 </span>
+023 <span class="comment">% History: </span>
+024 <span class="comment">%  Revised pab Dec2003 </span>
+025 <span class="comment">% fixed abug k1-&gt;k3 </span>
+026 <span class="comment">% revised pab 24.10.2000 </span>
+027 <span class="comment">%  - added comnsize, nargchk </span>
+028 <span class="comment">% added ms 15.06.2000 </span>
+029  
+030 error(nargchk(2,2,nargin)) 
+031  
+032 [errorcode x m] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,m); 
+033 <span class="keyword">if</span> errorcode &gt; 0 
+034     error(<span class="string">'x and m must be of common size or scalar.'</span>); 
+035 <span class="keyword">end</span> 
+036  
+037 <span class="comment">% Initialize f to zero. </span>
+038 f = zeros(size(x)); 
+039  
+040 k=find(x &gt;= 0 &amp; m&gt;0); 
+041 <span class="keyword">if</span> any(k), 
+042   f(k)=exp(-x(k)./m(k))./m(k); 
+043 <span class="keyword">end</span> 
+044  
+045 k3 = find(m&lt;=0);      
+046 <span class="keyword">if</span> any(k3) 
+047   tmp = NaN; 
+048   f(k3) = tmp(ones(size(k3))); 
+049 <span class="keyword">end</span> 
+050  
+051  
+052</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

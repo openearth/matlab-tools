@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of hbcv</title>
+  <meta name="keywords" content="hbcv">
+  <meta name="description" content="  Biased Cross-Validation estimate of smoothing parameter.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; hbcv.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>hbcv
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Biased Cross-Validation estimate of smoothing parameter.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [h,hvec,score]=hbcv(A,kernel,hvec) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a>  Biased Cross-Validation estimate of smoothing parameter. 
+  
+  CALL: [hs,hvec,score] = <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">hbcv</a>(data,kernel,hvec);  
+   
+    hs     = smoothing parameter 
+    hvec   = vector defining possible values of hs 
+             (default linspace(0.25*h0,h0),100), h0=<a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>(data,kernel)) 
+    score  = score vector 
+    data   = data vector 
+    kernel = 'epanechnikov'  - Epanechnikov kernel. 
+             'biweight'      - Bi-weight kernel. 
+             'triweight'     - Tri-weight kernel.   
+             'triangluar'    - Triangular kernel. 
+             'gaussian'      - Gaussian kernel 
+             'rectangular'   - Rectanguler kernel.  
+             'laplace'       - Laplace kernel. 
+             'logistic'      - Logistic kernel. 
+  
+   Note that only the first 4 letters of the kernel name is needed. 
+    
+   <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a> is a hybrid of crossvalidation and direct plug-in estimates. 
+   The main attraction of <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a> is that it is more stable than <a href="hlscv.html" class="code" title="  Least Squares Cross-Validation estimate of smoothing parameter ">HLSCV</a> in 
+   the sense that its asymptotic variance is considerably lower. However, 
+   this reduction in variance comes at the expense of an increase in 
+   bias, with <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a> tending to be larger than the <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">HNS</a> estimate. 
+   Asymptotically <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">HBCV</a> has a relative slow convergence rate. 
+  
+   Example: data = <a href="../../wafo/wstats/wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(0, 1,20,1) 
+           [hs hvec score] = <a href="hbcv.html" class="code" title="  Biased Cross-Validation estimate of smoothing parameter. ">hbcv</a>(data,'epan'); 
+           plot(hvec,score)  
+  See also  <a href="hste.html" class="code" title=" 2-Stage Solve the Equation estimate of smoothing parameter. ">hste</a>, <a href="hboot.html" class="code" title="  Bootstrap cross-validation estimate of smoothing parameter. ">hboot</a>, <a href="hns.html" class="code" title=" Normal Scale Estimate of Smoothing Parameter. ">hns</a>, <a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>, <a href="hldpi.html" class="code" title=" L-stage Direct Plug-In estimate of smoothing parameter. ">hldpi</a>, <a href="hlscv.html" class="code" title="  Least Squares Cross-Validation estimate of smoothing parameter ">hlscv</a>, <a href="hscv.html" class="code" title=" Smoothed cross-validation estimate of smoothing parameter. ">hscv</a>, <a href="hstt.html" class="code" title=" Scott-Tapia-Thompson estimate of smoothing parameter. ">hstt</a>, <a href="kde.html" class="code" title=" Kernel Density Estimator. ">kde</a>, <a href="kdefun.html" class="code" title="  Kernel Density Estimator. ">kdefun</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="hos.html" class="code" title=" h=hos(A,kernel)">hos</a></li></TD>
+<TD> Oversmoothing Parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="kernelstats.html" class="code" title=" [mu2, R, Rdd] = kernelstats(kernel)">kernelstats</a></li></TD>
+<TD> Return 2'nd order moment of kernel pdf</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [h,hvec,score]=<a name="_sub0" href="#_subfunctions" class="code">hbcv</a>(A,kernel,hvec) 
+002 <span class="comment">%HBCV  Biased Cross-Validation estimate of smoothing parameter. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL: [hs,hvec,score] = hbcv(data,kernel,hvec);  </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%   hs     = smoothing parameter </span>
+007 <span class="comment">%   hvec   = vector defining possible values of hs </span>
+008 <span class="comment">%            (default linspace(0.25*h0,h0),100), h0=hos(data,kernel)) </span>
+009 <span class="comment">%   score  = score vector </span>
+010 <span class="comment">%   data   = data vector </span>
+011 <span class="comment">%   kernel = 'epanechnikov'  - Epanechnikov kernel. </span>
+012 <span class="comment">%            'biweight'      - Bi-weight kernel. </span>
+013 <span class="comment">%            'triweight'     - Tri-weight kernel.   </span>
+014 <span class="comment">%            'triangluar'    - Triangular kernel. </span>
+015 <span class="comment">%            'gaussian'      - Gaussian kernel </span>
+016 <span class="comment">%            'rectangular'   - Rectanguler kernel.  </span>
+017 <span class="comment">%            'laplace'       - Laplace kernel. </span>
+018 <span class="comment">%            'logistic'      - Logistic kernel. </span>
+019 <span class="comment">% </span>
+020 <span class="comment">%  Note that only the first 4 letters of the kernel name is needed. </span>
+021 <span class="comment">%   </span>
+022 <span class="comment">%  HBCV is a hybrid of crossvalidation and direct plug-in estimates. </span>
+023 <span class="comment">%  The main attraction of HBCV is that it is more stable than HLSCV in </span>
+024 <span class="comment">%  the sense that its asymptotic variance is considerably lower. However, </span>
+025 <span class="comment">%  this reduction in variance comes at the expense of an increase in </span>
+026 <span class="comment">%  bias, with HBCV tending to be larger than the HNS estimate. </span>
+027 <span class="comment">%  Asymptotically HBCV has a relative slow convergence rate. </span>
+028 <span class="comment">% </span>
+029 <span class="comment">%  Example: data = wnormrnd(0, 1,20,1) </span>
+030 <span class="comment">%          [hs hvec score] = hbcv(data,'epan'); </span>
+031 <span class="comment">%          plot(hvec,score)  </span>
+032 <span class="comment">% See also  hste, hboot, hns, hos, hldpi, hlscv, hscv, hstt, kde, kdefun   </span>
+033  
+034  
+035 <span class="comment">% tested on : matlab 5.2 </span>
+036 <span class="comment">% history: </span>
+037 <span class="comment">% revised pab aug2005 </span>
+038 <span class="comment">% -bug fix for kernels other than Gaussian </span>
+039 <span class="comment">% revised pab dec2003   </span>
+040 <span class="comment">% revised pab 20.10.1999 </span>
+041 <span class="comment">%   updated to matlab 5.2 </span>
+042 <span class="comment">% changed input arguments </span>
+043 <span class="comment">% taken from kdetools     Christian C. Beardah 1995  </span>
+044  
+045 A=A(:); 
+046 n=length(A); 
+047  
+048 <span class="keyword">if</span> nargin&lt;3|isempty(hvec), 
+049   H=<a href="hos.html" class="code" title=" Oversmoothing Parameter. ">hos</a>(A,kernel); 
+050   hvec=linspace(0.25*H,H,100); 
+051 <span class="keyword">else</span> 
+052   hvec=abs(hvec); 
+053 <span class="keyword">end</span>; 
+054 steps=length(hvec); 
+055  
+056 M=A*ones(size(A')); 
+057  
+058 Y1=(M-M'); 
+059   
+060  
+061 <span class="comment">% R   = int(mkernel(x)^2) </span>
+062 <span class="comment">% mu2 = int(x^2*mkernel(x)) </span>
+063 [mu2,R] = <a href="kernelstats.html" class="code" title=" Return 2'nd order moment of kernel pdf ">kernelstats</a>(kernel); 
+064  
+065 <span class="keyword">for</span> i=1:steps, 
+066  
+067   <span class="comment">%sig = sqrt(2)*hvec(i); </span>
+068   sig=hvec(i); 
+069   
+070   Y=Y1/sig; 
+071  
+072   term2=(Y.^4-6*Y.^2+3).*exp(-0.5*Y.^2)/sqrt(2*pi); 
+073  
+074   Rf = sum(sum(term2-diag(diag(term2))))/(n^2*sig^5); 
+075    
+076  
+077   score(i)=R/(n*hvec(i))+mu2^2*hvec(i)^4*Rf/4; 
+078  
+079 <span class="keyword">end</span>; 
+080  
+081 [L,I]=min(score); 
+082  
+083 h=hvec(I); 
+084</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

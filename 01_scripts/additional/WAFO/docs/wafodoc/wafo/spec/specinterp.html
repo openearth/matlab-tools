@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of specinterp</title>
+  <meta name="keywords" content="specinterp">
+  <meta name="description" content=" Interpolation and zero-padding of spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; specinterp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>specinterp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Interpolation and zero-padding of spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Snew = specinterp(S,dt) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="specinterp.html" class="code" title=" Interpolation and zero-padding of spectrum">SPECINTERP</a> Interpolation and zero-padding of spectrum
+             to change Nyquist freq.
+ 
+  CALL:  Snew = <a href="specinterp.html" class="code" title=" Interpolation and zero-padding of spectrum">specinterp</a>(S,dt)
+ 
+     Snew, S = spectrum structs (any type)
+          dt = wanted sampling interval (default as given by S, see <a href="spec2dt.html" class="code" title="  Computes sampling interval from Nyquist frequency in spectrum">spec2dt</a>)
+               unit: [s] if frequency-spectrum, [m] if wave number spectrum  
+               
+  To be used before simulation (e.g. <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>) or evaluation of covariance
+  function (<a href="spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>) to directly get wanted sampling interval.
+  The input spectrum is interpolated and padded with zeros to reach
+  the right max-frequency, w(end)=pi/dt, f(end)=1/2/dt, or k(end)=pi/dt.
+  The objective is that output frequency grid should be at least as dense as
+  the input grid, but the number of points in the spectrum is maximized to
+  2^13+1. 
+  NB! Also zero-padding down to zero freq, if S does not start there. 
+      If empty input dt, this is the only effect.
+   
+  See also  <a href="spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>, <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>, <a href="covinterp.html" class="code" title=" Interpolation of covariance function and derivatives">covinterp</a>, <a href="spec2dt.html" class="code" title="  Computes sampling interval from Nyquist frequency in spectrum">spec2dt</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="freqtype.html" class="code" title=" ftype=freqtype(S)">freqtype</a></li></TD>
+<TD> returns the frequency type of a Spectral density struct.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp1q.m">interp1q</a></li></TD>
+<TD>      Quick 1-D linear interpolation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elfun\nextpow2.m">nextpow2</a></li></TD>
+<TD>      Next higher power of 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmp.bi">strcmp</a></li></TD>
+<TD>        Compare strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/seasim.html" class="code" title=" [Y,Mv]=seasim(spec,Nx,Ny,Nt,dx,dy,dt,fftdim,plotflag);">seasim</a></li></TD>
+<TD> Spectral simulation of a Gaussian sea, 2D (x,t) or 3D (x,y,t)</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2cov2.html" class="code" title=" R = spec2cov2(S,nr,Nt,dt)">spec2cov2</a></li></TD>
+<TD> Computes covariance function and its derivatives, alternative version</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2linspec.html" class="code" title=" [SL,SN]=spec2linspec(S,np,dt,iseed,fnLimit)">spec2linspec</a></li></TD>
+<TD>  Separates the linear component of the Spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2nlsdat.html" class="code" title=" [x2,x,svec,dvec,A]=spec2nlsdat(S,np,dt,iseed,method,truncationLimit)">spec2nlsdat</a></li></TD>
+<TD> Simulates a Randomized 2nd order non-linear wave X(t)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2sdat.html" class="code" title=" [x,xder]=spec2sdat(S,np,dt,iseed,method)">spec2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/private/wminmax.html" class="code" title=" [f_mM, paramu] = wminmax(spec,nit,paramu,t)">wminmax</a></li></TD>
+<TD> Calculates joint density of minimum and following maximum</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> Snew = <a name="_sub0" href="#_subfunctions" class="code">specinterp</a>(S,dt)
+002 <span class="comment">%SPECINTERP Interpolation and zero-padding of spectrum</span>
+003 <span class="comment">%            to change Nyquist freq.</span>
+004 <span class="comment">%</span>
+005 <span class="comment">% CALL:  Snew = specinterp(S,dt)</span>
+006 <span class="comment">%</span>
+007 <span class="comment">%    Snew, S = spectrum structs (any type)</span>
+008 <span class="comment">%         dt = wanted sampling interval (default as given by S, see spec2dt)</span>
+009 <span class="comment">%              unit: [s] if frequency-spectrum, [m] if wave number spectrum  </span>
+010 <span class="comment">%              </span>
+011 <span class="comment">% To be used before simulation (e.g. spec2sdat) or evaluation of covariance</span>
+012 <span class="comment">% function (spec2cov) to directly get wanted sampling interval.</span>
+013 <span class="comment">% The input spectrum is interpolated and padded with zeros to reach</span>
+014 <span class="comment">% the right max-frequency, w(end)=pi/dt, f(end)=1/2/dt, or k(end)=pi/dt.</span>
+015 <span class="comment">% The objective is that output frequency grid should be at least as dense as</span>
+016 <span class="comment">% the input grid, but the number of points in the spectrum is maximized to</span>
+017 <span class="comment">% 2^13+1. </span>
+018 <span class="comment">% NB! Also zero-padding down to zero freq, if S does not start there. </span>
+019 <span class="comment">%     If empty input dt, this is the only effect.</span>
+020 <span class="comment">%  </span>
+021 <span class="comment">% See also  spec2cov, spec2sdat, covinterp, spec2dt</span>
+022 
+023 <span class="comment">% Tested on:</span>
+024 <span class="comment">% History:</span>
+025 <span class="comment">% revised pab 12.10.2001</span>
+026 <span class="comment">% -fixed a bug created 11.10.2001: ftype='k' now works OK</span>
+027 <span class="comment">% revised pab 11.10.2001</span>
+028 <span class="comment">% - added call to freqtype.m</span>
+029 <span class="comment">% - fixed a bug: ftype=='f' now works correctly</span>
+030 <span class="comment">% revised es 080600, revision of last revision, output matrix now OK</span>
+031 <span class="comment">%  revised by es 22.05.00, output vectors columns, not rows</span>
+032 <span class="comment">%  by es 13.01.2000, original ideas by sylvie, ir</span>
+033   
+034 Snew  = S;  
+035 ftype = <a href="freqtype.html" class="code" title=" returns the frequency type of a Spectral density struct.">freqtype</a>(S);
+036 w     = getfield(S,ftype);
+037 n     = length(w);
+038 
+039 <span class="keyword">if</span> strcmp(ftype,<span class="string">'f'</span>) <span class="comment">%ftype==f</span>
+040   dT=1/(2*w(n));<span class="comment">% sampling interval=1/Fs</span>
+041 <span class="keyword">else</span> <span class="comment">% ftype == w og ftype == k</span>
+042   dT=pi/w(n);
+043 <span class="keyword">end</span>
+044 <span class="keyword">if</span> nargin&lt;2|isempty(dt),  dt=dT; <span class="keyword">end</span>
+045 
+046 <span class="comment">% Find how many points that is needed</span>
+047 nfft   = 2^nextpow2(n-1);
+048 dttest = dT*(n-1)/nfft;
+049 <span class="keyword">while</span> (dttest&gt;dt) &amp; (nfft&lt;2^13)
+050  nfft=nfft*2;
+051  dttest=dT*(n-1)/nfft;
+052 <span class="keyword">end</span>;
+053 nfft=nfft+1;
+054 
+055 <span class="keyword">if</span> strcmp(ftype,<span class="string">'w'</span>)
+056   Snew.w=linspace(0,pi/dt,nfft)';
+057 <span class="keyword">elseif</span> strcmp(ftype,<span class="string">'f'</span>) <span class="comment">%freqtype==f</span>
+058   Snew.f=linspace(0,1/2/dt,nfft)';
+059 <span class="keyword">else</span>
+060   Snew.k=linspace(0,pi/dt,nfft)';
+061 <span class="keyword">end</span>
+062 
+063 <span class="keyword">if</span> size(S.S,2)&lt;2
+064   S.S=S.S'; <span class="comment">% if vector, make it a row to match matrix (np x nf)</span>
+065 <span class="keyword">end</span>
+066 w=w(:);
+067 dw=w(<span class="keyword">end</span>)-w(<span class="keyword">end</span>-1);
+068 
+069 fmax = max(getfield(Snew,ftype));
+070 <span class="keyword">if</span> fmax&gt;w(<span class="keyword">end</span>)
+071   <span class="comment">% add a zero just above old max-freq, and a zero at new max-freq</span>
+072   <span class="comment">% to get correct interpolation there</span>
+073   w=[w;w(<span class="keyword">end</span>)+dw; fmax ];
+074   S.S=[S.S zeros(size(S.S,1),2)];
+075 <span class="keyword">end</span>
+076 <span class="keyword">if</span> w(1)&gt;0
+077   <span class="comment">% add a zero at freq 0, and, if there is space, a zero just below min-freq</span>
+078   <span class="keyword">if</span> w(1)&gt;dw
+079     w=[w(1)-dw;w];
+080     S.S=[zeros(size(S.S,1),1) S.S];
+081   <span class="keyword">end</span>
+082   size(w)
+083   w=[0;w];
+084   S.S=[zeros(size(S.S,1),1) S.S];
+085 <span class="keyword">end</span>  
+086 
+087 Snew.S=interp1q(w,S.S',getfield(Snew,ftype))';
+088 
+089 <span class="keyword">if</span> size(Snew.S,1)&lt;2
+090   Snew.S=Snew.S.'; <span class="comment">% if vector, make it a column</span>
+091 <span class="keyword">end</span>
+092 
+093 
+094 
+095 
+096</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

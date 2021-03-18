@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dtp2arfm</title>
+  <meta name="keywords" content="dtp2arfm">
+  <meta name="description" content=" Calculates asymmetric RFM from discrete turning points.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">cycles</a> &gt; dtp2arfm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\cycles&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dtp2arfm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates asymmetric RFM from discrete turning points.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [RFM,RFM1,res] = dtp2arfm(x,in2,in3,res0) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">DTP2ARFM</a> Calculates asymmetric RFM from discrete turning points.
+ 
+  CALL:            RFM = <a href="dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>(x,n)
+        [RFM,RFM1,res] = <a href="dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>(x,n,def)
+        [RFM,RFM1,res] = <a href="dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>(x,def,RFM0,res0)
+ 
+  Output:
+    RFM   = Asymmetric rainflow matrix (residual included).      [n,n]
+    RFM1  = Asymmetric rainflow matrix (without resudual).       [n,n]
+    res   = Residual.                                [nres,1]/[nres,2]
+ 
+  Input:
+    x     = Turning points (taking values 1,...,n). [T,1]/[T,2]
+    n     = Number of <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>.
+    def   = Treatment of residual.
+            'up':   Count min-to-Max cycles,    (default)
+                    gives correct number of upcrossings.
+            'down': Count Max-to-min cycles, 
+                    gives correct number of downcrossings.
+            'CS':   Cloormann/Seeger method, 
+                    gives all closed hysterisis loops.
+                    This method is identical to the French AFNOR recommendation,
+                    and the ASTM standard (variant called simplified version).
+    RFM0  = Asymmetric rainflow matrix (without resudual).     [n,n]
+    res0  = Residual (taking values 1,...,n).       [nres0,1]/[nres0,2]
+ 
+  Calculates the Asymmetric RainFlow Matrix (ARFM) for the sequence of 
+  discrete turning points,  by using the so-called 4-point algorithm.
+ 
+  It is possible to calculate ARFM for 'dtp' and continue the counting 
+  from previously counted 'ARFM0' with residual 'res0'
+    [ARFM,ARFM1,res] = <a href="dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>(dtp,def,ARFM0,res0)
+ 
+  Example:
+    x = load('sea.dat');                   % Load data
+    [dtp,u,tp] = <a href="dat2dtp.html" class="code" title=" The sequence of discretized turning points from a signal.">dat2dtp</a>([-2 2 32],x,0.2); % Discrete TP &amp; rainflow filter 0.2
+    ARFM = <a href="dtp2arfm.html" class="code" title=" Calculates asymmetric RFM from discrete turning points.">dtp2arfm</a>(dtp,32);            % Calculate asymmetric rainflow matrix
+    <a href="cmatplot.html" class="code" title=" Plots a cycle matrix, e.g. a rainflow matrix.">cmatplot</a>(u,u,ARFM,3), colorbar      % Plot rainflow matrix
+  
+  See also  <a href="dtp2arfm4p.html" class="code" title=" Calculates asymmetric RFM from discrete turning points (4-point).">dtp2arfm4p</a>, <a href="dtp2rfm.html" class="code" title=" Calculates rainflow matrix from discrete turning points.">dtp2rfm</a>, <a href="dcc2cmat.html" class="code" title="  Calculates the cycle matrix for a discrete cycle count.">dcc2cmat</a>, <a href="tp2rfc.html" class="code" title=" Finds the rainflow cycles from the sequence of turning points.">tp2rfc</a>, <a href="../../wafo/onedim/dat2tp.html" class="code" title=" Extracts turning points from data,">dat2tp</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dtp2arfm4p.html" class="code" title=" [RFM,res] = dtp2arfm4p(x,n,res0)">dtp2arfm4p</a></li></TD>
+<TD> Calculates asymmetric RFM from discrete turning points (4-point).</TD>
+</TR>
+<TR>
+<TD><li><a href="res2arfc.html" class="code" title=" [ARFC] = res2arfc(res,def,def_time)">res2arfc</a></li></TD>
+<TD> Calculates asymmetric rainflow cycles for a residual.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dtp2rfm.html" class="code" title=" [RFM,RFM1,res] = dtp2rfm(x,varargin)">dtp2rfm</a></li></TD>
+<TD> Calculates rainflow matrix from discrete turning points.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/cycles/test/test_cycles.html" class="code" title="This is a script file.">test_cycles</a></li></TD>
+<TD> Quick test of the routines in module 'cycles'</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/markov/test/test_markov.html" class="code" title="This is a script file.">test_markov</a></li></TD>
+<TD> Quick test of the routines in module 'markov'</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [RFM,RFM1,res] = <a name="_sub0" href="#_subfunctions" class="code">dtp2arfm</a>(x,in2,in3,res0)
+002 <span class="comment">%DTP2ARFM Calculates asymmetric RFM from discrete turning points.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:            RFM = dtp2arfm(x,n)</span>
+005 <span class="comment">%       [RFM,RFM1,res] = dtp2arfm(x,n,def)</span>
+006 <span class="comment">%       [RFM,RFM1,res] = dtp2arfm(x,def,RFM0,res0)</span>
+007 <span class="comment">%</span>
+008 <span class="comment">% Output:</span>
+009 <span class="comment">%   RFM   = Asymmetric rainflow matrix (residual included).      [n,n]</span>
+010 <span class="comment">%   RFM1  = Asymmetric rainflow matrix (without resudual).       [n,n]</span>
+011 <span class="comment">%   res   = Residual.                                [nres,1]/[nres,2]</span>
+012 <span class="comment">%</span>
+013 <span class="comment">% Input:</span>
+014 <span class="comment">%   x     = Turning points (taking values 1,...,n). [T,1]/[T,2]</span>
+015 <span class="comment">%   n     = Number of levels.</span>
+016 <span class="comment">%   def   = Treatment of residual.</span>
+017 <span class="comment">%           'up':   Count min-to-Max cycles,    (default)</span>
+018 <span class="comment">%                   gives correct number of upcrossings.</span>
+019 <span class="comment">%           'down': Count Max-to-min cycles, </span>
+020 <span class="comment">%                   gives correct number of downcrossings.</span>
+021 <span class="comment">%           'CS':   Cloormann/Seeger method, </span>
+022 <span class="comment">%                   gives all closed hysterisis loops.</span>
+023 <span class="comment">%                   This method is identical to the French AFNOR recommendation,</span>
+024 <span class="comment">%                   and the ASTM standard (variant called simplified version).</span>
+025 <span class="comment">%   RFM0  = Asymmetric rainflow matrix (without resudual).     [n,n]</span>
+026 <span class="comment">%   res0  = Residual (taking values 1,...,n).       [nres0,1]/[nres0,2]</span>
+027 <span class="comment">%</span>
+028 <span class="comment">% Calculates the Asymmetric RainFlow Matrix (ARFM) for the sequence of </span>
+029 <span class="comment">% discrete turning points,  by using the so-called 4-point algorithm.</span>
+030 <span class="comment">%</span>
+031 <span class="comment">% It is possible to calculate ARFM for 'dtp' and continue the counting </span>
+032 <span class="comment">% from previously counted 'ARFM0' with residual 'res0'</span>
+033 <span class="comment">%   [ARFM,ARFM1,res] = dtp2arfm(dtp,def,ARFM0,res0)</span>
+034 <span class="comment">%</span>
+035 <span class="comment">% Example:</span>
+036 <span class="comment">%   x = load('sea.dat');                   <span class="comment">% Load data</span></span>
+037 <span class="comment">%   [dtp,u,tp] = dat2dtp([-2 2 32],x,0.2); <span class="comment">% Discrete TP &amp; rainflow filter 0.2</span></span>
+038 <span class="comment">%   ARFM = dtp2arfm(dtp,32);            <span class="comment">% Calculate asymmetric rainflow matrix</span></span>
+039 <span class="comment">%   cmatplot(u,u,ARFM,3), colorbar      <span class="comment">% Plot rainflow matrix</span></span>
+040 <span class="comment">% </span>
+041 <span class="comment">% See also  dtp2arfm4p, dtp2rfm, dcc2cmat, tp2rfc, dat2tp</span>
+042 
+043 <span class="comment">% Tested on Matlab 5.3</span>
+044 <span class="comment">%</span>
+045 <span class="comment">% History:</span>
+046 <span class="comment">% Revised by PJ 26-Jul-2000</span>
+047 <span class="comment">%   New input 'def'. </span>
+048 <span class="comment">%   Now supports ANFOR and ASTM standards for rainflow counting.</span>
+049 <span class="comment">% Revised by PJ (Pär Johannesson) 12-Jan-2000</span>
+050 <span class="comment">%   updated for WAFO</span>
+051 <span class="comment">% Created by PJ (Pär Johannesson) 1999</span>
+052 
+053 <span class="comment">% Check input arguments</span>
+054 
+055 ni = nargin;
+056 no = nargout;
+057 error(nargchk(2,4,ni));
+058 
+059 <span class="keyword">if</span> ni == 2
+060   n = in2; <span class="comment">% Number of levels</span>
+061   def = [];
+062   RFM = zeros(n);
+063   res0 = [];
+064 <span class="keyword">elseif</span> ni == 3
+065   n = in2; <span class="comment">% Number of levels</span>
+066   def = in3;
+067   RFM = zeros(n);
+068   res0 = [];
+069 <span class="keyword">else</span>
+070   def = in2;
+071   RFM0 = in3;
+072   n = length(RFM0);
+073   RFM = zeros(n);
+074 <span class="keyword">end</span>
+075 
+076 <span class="comment">% Default value</span>
+077 <span class="keyword">if</span> isempty(def), def_res=<span class="string">'up'</span>; <span class="keyword">end</span>
+078 
+079 <span class="comment">% Calculate RFM and res</span>
+080 [RFM,res] = <a href="dtp2arfm4p.html" class="code" title=" Calculates asymmetric RFM from discrete turning points (4-point).">dtp2arfm4p</a>(x,n,res0);
+081 
+082 <span class="comment">% Add previously counted cycles (if any)</span>
+083 <span class="keyword">if</span> ni == 4
+084   RFM = RFM+RFM0;
+085 <span class="keyword">end</span>
+086 
+087 <span class="comment">% Two or more outputs ?</span>
+088 <span class="keyword">if</span> no &gt;= 2
+089   RFM1 = RFM;
+090 <span class="keyword">end</span>
+091 
+092 <span class="comment">% Treat residual</span>
+093 <span class="comment">% Calculate RFM = RFM0 + 'cycles in res'</span>
+094 ARFC_res = <a href="res2arfc.html" class="code" title=" Calculates asymmetric rainflow cycles for a residual.">res2arfc</a>(res(:,<span class="keyword">end</span>),def);
+095 <span class="keyword">for</span> i=1:size(ARFC_res,1)
+096   RFM(ARFC_res(i,1),ARFC_res(i,2)) = RFM(ARFC_res(i,1),ARFC_res(i,2)) + 1;
+097 <span class="keyword">end</span>
+098 
+099</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

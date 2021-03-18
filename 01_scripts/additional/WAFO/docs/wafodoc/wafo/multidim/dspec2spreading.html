@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of dspec2spreading</title>
+  <meta name="keywords" content="dspec2spreading">
+  <meta name="description" content=" Returns the directional spreading function D of S">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">multidim</a> &gt; dspec2spreading.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\multidim&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>dspec2spreading
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Returns the directional spreading function D of S</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> D = dspec2spreading(S) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="dspec2spreading.html" class="code" title=" Returns the directional spreading function D of S ">DSPEC2SPREADING</a> Returns the directional <a href="../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a> function D of S 
+  
+   CALL: D = <a href="dspec2spreading.html" class="code" title=" Returns the directional spreading function D of S ">dspec2spreading</a>(S); 
+  
+   S = Directional spectrum structure with at least the fields: 
+       .S     Spectrum values (size= [nt nf]). 
+       .w OR .f  Frequency, length nf. 
+       .theta Angular lags, length nt. 
+  D  = Directional <a href="../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a> structure with the same fields as S. 
+  
+  Let S(w,theta) = S(w)*D(w,theta), then D(w,theta) is the  
+  directional <a href="../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a> function of S, if int D(w,theta) dtheta = 1 for 
+  each w. 
+  
+  See also  <a href="../../wafo/spec/spreading.html" class="code" title=" Directional spreading functions">spreading</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\@fighandle\isfield.m">isfield</a></li></TD>
+<TD>       True if field is in structure array.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\trapz.m">trapz</a></li></TD>
+<TD>         Trapezoidal numerical integration.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> D = <a name="_sub0" href="#_subfunctions" class="code">dspec2spreading</a>(S) 
+002 <span class="comment">%DSPEC2SPREADING Returns the directional spreading function D of S </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: D = dspec2spreading(S); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%  S = Directional spectrum structure with at least the fields: </span>
+007 <span class="comment">%      .S     Spectrum values (size= [nt nf]). </span>
+008 <span class="comment">%      .w OR .f  Frequency, length nf. </span>
+009 <span class="comment">%      .theta Angular lags, length nt. </span>
+010 <span class="comment">% D  = Directional spreading structure with the same fields as S. </span>
+011 <span class="comment">% </span>
+012 <span class="comment">% Let S(w,theta) = S(w)*D(w,theta), then D(w,theta) is the  </span>
+013 <span class="comment">% directional spreading function of S, if int D(w,theta) dtheta = 1 for </span>
+014 <span class="comment">% each w. </span>
+015 <span class="comment">% </span>
+016 <span class="comment">% See also  spreading </span>
+017  
+018  
+019 <span class="comment">% Tested on: Matlab 6 </span>
+020 <span class="comment">% History </span>
+021 <span class="comment">% by pab 13.10.2002 </span>
+022 error(nargchk(1,1,nargin)) 
+023  
+024 <span class="keyword">if</span> (~isfield(S,<span class="string">'S'</span>)) 
+025   error(<span class="string">'S is missing from the spectrum structure!'</span>) 
+026 <span class="keyword">end</span> 
+027  
+028 <span class="keyword">if</span> (~isfield(S,<span class="string">'theta'</span>)) 
+029   error(<span class="string">'theta is missing from the spectrum structure!'</span>) 
+030 <span class="keyword">end</span> 
+031  
+032 D   = S; 
+033 nt  = length(D.theta); 
+034 ind = find(D.S&lt;0 | isnan(D.S)); 
+035 <span class="keyword">if</span> any(ind), 
+036 <span class="comment">%  disp(['Negative directional distribution. Setting negative values to zero. min(DS) = '  num2str(min(DS(ind)))]) </span>
+037   D.S(ind) = 0; 
+038 <span class="keyword">end</span> 
+039  
+040 <span class="comment">%Normalize so that int D(theta,f) dtheta = 1 for each f  </span>
+041 <span class="comment">%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ </span>
+042  
+043 <span class="comment">%Sf2      = simpson(D.theta,D.S); </span>
+044 Sf2       = trapz(D.theta,D.S); 
+045 k         = find(Sf2); 
+046 D.S(:,k)  = S.S(:,k)./Sf2(ones(nt,1),k); 
+047 <span class="comment">%plot(Sf2) </span>
+048 <span class="comment">%pause </span>
+049 <span class="keyword">return</span> 
+050</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

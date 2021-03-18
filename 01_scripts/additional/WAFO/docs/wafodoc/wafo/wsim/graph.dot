@@ -1,0 +1,173 @@
+/* Created by dotwrite for Matlab */
+digraph dotwrite2 {
+ size = "15.3515,15.3515";
+ ratio = fill;
+ concentrate = true;
+ edge [constraint = true];
+ subgraph cluster1 {
+ URL = "../../wafo/graph.html";
+1;
+}
+ subgraph cluster2 {
+ URL = "../../wafo/cycles/graph.html";
+2;
+}
+ subgraph cluster3 {
+ URL = "../../wafo/cycles/test/graph.html";
+3;
+}
+ subgraph cluster4 {
+ URL = "../../wafo/markov/graph.html";
+4;
+}
+ subgraph cluster5 {
+ URL = "../../wafo/markov/test/graph.html";
+5;
+}
+ subgraph cluster6 {
+ URL = "../../wafo/misc/graph.html";
+6;
+}
+ subgraph cluster7 {
+ URL = "../../wafo/onedim/graph.html";
+7;
+}
+ subgraph cluster8 {
+ URL = "../../wafo/papers/tutorcom/graph.html";
+8;
+}
+ subgraph cluster9 {
+ URL = "../../wafo/papers/wafodemo/graph.html";
+9;
+}
+ subgraph cluster10 {
+ URL = "../../wafo/spec/graph.html";
+10;
+}
+ subgraph cluster11 {
+ URL = "../../wafo/trgauss/graph.html";
+11;
+}
+ subgraph cluster12 {
+ URL = "../../wafo/wdemos/graph.html";
+12;
+}
+ subgraph cluster13 {
+ URL = "../../wafo/wdemos/itmkurs/graph.html";
+13;
+}
+ subgraph cluster14 {
+ URL = "../../wafo/wsim/private/graph.html";
+14;
+}
+ subgraph cluster15 {
+ URL = "../../wafo/wstats/graph.html";
+15;
+}
+ subgraph cluster16 {
+ label = "wsim";
+ URL = "index.html";
+16;
+17;
+18;
+19;
+20;
+21;
+22;
+23;
+24;
+25;
+26;
+27;
+28;
+29;
+30;
+31;
+32;
+33;
+}
+  3 -> 23;
+  3 -> 33;
+  5 -> 22;
+  5 -> 23;
+  5 -> 25;
+  5 -> 29;
+  5 -> 30;
+  7 -> 17;
+  7 -> 18;
+  8 -> 21;
+  8 -> 23;
+  8 -> 28;
+  8 -> 33;
+  9 -> 33;
+  11 -> 18;
+  12 -> 26;
+  12 -> 30;
+  13 -> 23;
+  13 -> 30;
+  13 -> 33;
+  17 -> 15;
+  17 -> 18;
+  18 -> 10;
+  18 -> 11;
+  20 -> 1;
+  21 -> 7;
+  21 -> 11;
+  22 -> 4;
+  23 -> 30;
+  25 -> 14;
+  26 -> 22;
+  28 -> 6;
+  28 -> 10;
+  28 -> 11;
+  28 -> 27;
+  29 -> 4;
+  29 -> 22;
+  30 -> 2;
+  30 -> 4;
+  30 -> 22;
+  31 -> 6;
+  31 -> 7;
+  31 -> 10;
+  31 -> 32;
+  32 -> 6;
+  32 -> 10;
+  32 -> 19;
+  33 -> 10;
+  33 -> 11;
+  33 -> 18;
+
+ 1 [URL="../../wafo/graph.html",label="wafo"];
+ 2 [URL="../../wafo/cycles/graph.html",label="cycles"];
+ 3 [URL="../../wafo/cycles/test/graph.html",label="test"];
+ 4 [URL="../../wafo/markov/graph.html",label="markov"];
+ 5 [URL="../../wafo/markov/test/graph.html",label="test"];
+ 6 [URL="../../wafo/misc/graph.html",label="misc"];
+ 7 [URL="../../wafo/onedim/graph.html",label="onedim"];
+ 8 [URL="../../wafo/papers/tutorcom/graph.html",label="tutorcom"];
+ 9 [URL="../../wafo/papers/wafodemo/graph.html",label="wafodemo"];
+ 10 [URL="../../wafo/spec/graph.html",label="spec"];
+ 11 [URL="../../wafo/trgauss/graph.html",label="trgauss"];
+ 12 [URL="../../wafo/wdemos/graph.html",label="wdemos"];
+ 13 [URL="../../wafo/wdemos/itmkurs/graph.html",label="itmkurs"];
+ 14 [URL="../../wafo/wsim/private/graph.html",label="wsim/private"];
+ 15 [URL="../../wafo/wstats/graph.html",label="wstats"];
+ 16 [URL="Contents.html",label="Contents"];
+ 17 [URL="cov2csdat.html",label="cov2csdat"];
+ 18 [URL="cov2sdat.html",label="cov2sdat"];
+ 19 [URL="disufq.html",label="disufq"];
+ 20 [URL="duffsim.html",label="duffsim"];
+ 21 [URL="lc2sdat.html",label="lc2sdat"];
+ 22 [URL="mcsim.html",label="mcsim"];
+ 23 [URL="mctpsim.html",label="mctpsim"];
+ 24 [URL="readme.html",label="readme"];
+ 25 [URL="rfm2dtp.html",label="rfm2dtp"];
+ 26 [URL="sarmasim.html",label="sarmasim"];
+ 27 [URL="seamovie.html",label="seamovie"];
+ 28 [URL="seasim.html",label="seasim"];
+ 29 [URL="smcsim.html",label="smcsim"];
+ 30 [URL="smctpsim.html",label="smctpsim"];
+ 31 [URL="spec2linspec.html",label="spec2linspec"];
+ 32 [URL="spec2nlsdat.html",label="spec2nlsdat"];
+ 33 [URL="spec2sdat.html",label="spec2sdat"];
+}

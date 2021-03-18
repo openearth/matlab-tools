@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of bfsspec</title>
+  <meta name="keywords" content="bfsspec">
+  <meta name="description" content=" Estimate frequency spectrum for the surface elevation from the bfs timeseries">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">multidim</a> &gt; <a href="index.html">private</a> &gt; bfsspec.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\multidim\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>bfsspec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Estimate frequency spectrum for the surface elevation from the bfs timeseries</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> SfBest = bfsSpec(Sf,Hw,pos,bfs); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="bfsspec.html" class="code" title=" Estimate frequency spectrum for the surface elevation from the bfs timeseries ">BFSSPEC</a> Estimate frequency spectrum for the surface elevation from the bfs timeseries 
+  
+   CALL:  SfBest = <a href="bfsspec.html" class="code" title=" Estimate frequency spectrum for the surface elevation from the bfs timeseries ">bfsSpec</a>(Sf,Hw,pos,bfs);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@opaque\unique.m">unique</a></li></TD>
+<TD>        Set unique.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/multidim/dat2dspec.html" class="code" title=" [Sd,D,Sw,Fcof,Gwt,Sxy,Sxy1] = dat2dspec2(xn,pos,h,nfft,nt,method,varargin)">dat2dspec</a></li></TD>
+<TD> Estimates the directional wave spectrum from timeseries</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> SfBest = <a name="_sub0" href="#_subfunctions" class="code">bfsSpec</a>(Sf,Hw,pos,bfs); 
+002 <span class="comment">%BFSSPEC Estimate frequency spectrum for the surface elevation from the bfs timeseries </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  SfBest = bfsSpec(Sf,Hw,pos,bfs); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">% </span>
+007 def  = unique(pos(bfs,4)).'; 
+008  
+009 k0   = find(def==5|def==7|def==11|def==14|def==17); 
+010 <span class="keyword">if</span> any(k0), def(k0) = def(k0)-1;<span class="keyword">end</span> 
+011  
+012 k0  = find(def==8); 
+013 <span class="keyword">if</span> any(k0), def(k0) = def(k0)-2;<span class="keyword">end</span> 
+014  
+015 def    = unique(def); 
+016 SfBest = Sf; 
+017  
+018 <span class="keyword">for</span> sensorType1 = def 
+019   <span class="keyword">if</span> (sensorType1==6)  <span class="comment">% surface curvatures          : n_xx, n_yy, n_xy </span>
+020     sensorType2 = 7; sensorType3 = 8; 
+021      
+022     <span class="comment">%Find the indices to sensorTypes 1,2 and 3: </span>
+023     ix1 = find(pos(:,4)==sensorType1); Nx1 = length(Nx1); 
+024     ix2 = find(pos(:,4)==sensorType2); Nx2 = length(Nx2); 
+025     ix3 = find(pos(:,4)==sensorType3); Nx3 = length(Nx3); 
+026      
+027     Nx  = min([Nx1,Nx2,Nx3]); <span class="comment">% need at least one pair of observations </span>
+028     <span class="keyword">if</span> (Nx&gt;0) 
+029       k0 = find(Hw(ix1(1),:)==0); 
+030       <span class="keyword">if</span> any(k0),SfBest([ix1;ix2;ix3],k0)=0 ;<span class="keyword">end</span> 
+031        
+032       k   = find(Hw(ix1(1),:)~=0); 
+033       Sf0 = mean(Sf(ix1(1:Nx),k)+Sf(ix2(1:Nx),k)+2*Sf(ix3(1:Nx),k),1)./(Hw(ix1(1),k).^2); 
+034       SfBest([ix1;ix2;ix3],k) = Sf0(ones(Nx1+Nx2+Nx3,1),k); 
+035     <span class="keyword">else</span>  
+036       error(<span class="string">'Unable to estimate the sea surface spectrum from the surface curvature!'</span>) 
+037     <span class="keyword">end</span> 
+038      
+039   <span class="keyword">elseif</span> any(sensorType1==[2:3 9 12 15 18]) 
+040      
+041     <span class="comment">% Find indices to sensorType1 </span>
+042     ix1 = find(pos(:,4)==sensorType1); 
+043     Nx  = length(ix1); 
+044     <span class="keyword">if</span> Nx&gt;0 
+045       k0 = find(Hw(ix1(1),:)==0); 
+046       <span class="keyword">if</span> any(k0),SfBest(ix1,k0)=0 ;<span class="keyword">end</span> 
+047        
+048       k = find(Hw(ix1(1),:)~=0); 
+049       Sf0           = mean(Sf(ix1,k),1)./(Hw(ix1(1),k).^2); 
+050       SfBest(ix1,k) = Sf0(ones(Nx,1),:); 
+051     <span class="keyword">else</span> 
+052        error(<span class="string">'Unable to estimate the sea surface spectrum'</span>) 
+053     <span class="keyword">end</span> 
+054   <span class="keyword">elseif</span> any(sensorType1==[4 10 14 16])  
+055     <span class="comment">% surface slopes,water particle velocity, water particle acceleration </span>
+056     <span class="comment">% or water particle displacement  </span>
+057     sensorType2 = sensorType1+1; 
+058      
+059     <span class="comment">% Find indices to sensorType1 and sensorType2 </span>
+060     ix1 = find(pos(:,4)==sensorType1); Nx1 = length(ix1); 
+061     ix2 = find(pos(:,4)==sensorType2); Nx2 = length(ix2); 
+062     Nx  = min(Nx1,Nx2); <span class="comment">% need at least one pair of observations </span>
+063     <span class="keyword">if</span> (Nx&gt;0) 
+064       k0 = find(Hw(ix1(1),:)==0); 
+065       <span class="keyword">if</span> any(k0),SfBest([ix1;ix2],k0)=0 ;<span class="keyword">end</span> 
+066        
+067       k   = find(Hw(ix1(1),:)~=0); 
+068       Sf0 = mean(Sf(ix1(1:Nx),k)+Sf(ix2(1:Nx),k),1)./(Hw(ix1(1),k).^2); 
+069       SfBest([ix1;ix2],k) = Sf0(ones(Nx1+Nx2,1),:); 
+070     <span class="keyword">else</span> <span class="comment">%if (any() </span>
+071       error(<span class="string">'Unable to estimate the sea surface spectrum'</span>) 
+072     <span class="keyword">end</span> 
+073   <span class="keyword">end</span> 
+074 <span class="keyword">end</span> 
+075  
+076 <span class="comment">%Keep only the best frequency spectra </span>
+077 SfBest  = SfBest(bfs,:); 
+078 mmx = max(SfBest(:))*1e-5; <span class="comment">% Minimum value which is not considered as noise! </span>
+079 k   = find(SfBest &lt; mmx);  <span class="comment">% This is most probably noise </span>
+080 <span class="keyword">if</span> 0, <span class="comment">% Geometric mean  </span>
+081   <span class="keyword">if</span> any(k) 
+082     SfBest(k) = abs(SfBest(k)+mmx*1e-10); 
+083   <span class="keyword">end</span> 
+084   <span class="keyword">if</span> length(bfs) &gt; 1, 
+085     SfBest = exp(mean(log(SfBest))); <span class="comment">% geometric mean </span>
+086   <span class="keyword">end</span> 
+087 <span class="keyword">else</span>  <span class="comment">% Ordinary mean </span>
+088   <span class="keyword">if</span> any(k),   <span class="comment">% Set the noise to zero.  </span>
+089     SfBest(k) = 0; 
+090   <span class="keyword">end</span> 
+091   <span class="keyword">if</span> length(bfs) &gt; 1, 
+092     SfBest = mean(SfBest);           <span class="comment">% ordinary mean </span>
+093   <span class="keyword">end</span> 
+094 <span class="keyword">end</span> 
+095 <span class="keyword">return</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

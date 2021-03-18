@@ -1,0 +1,263 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of genchol</title>
+  <meta name="keywords" content="genchol">
+  <meta name="description" content=" Generalized Cholesky factorization">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">misc</a> &gt; genchol.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\misc&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>genchol
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Generalized Cholesky factorization</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [L,P,r] = genchol(A,tol) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="genchol.html" class="code" title=" Generalized Cholesky factorization ">GENCHOL</a> Generalized Cholesky factorization 
+   
+  CALL: [L,P,r] = <a href="genchol.html" class="code" title=" Generalized Cholesky factorization ">genchol</a>(A,tol); 
+   
+   L  = lower triangular matrix, Cholesky factor 
+   P  = permutation vector 
+   r  = matrix rank, i.e., the number of eigenvalues larger than tol. 
+        This is an estimate of the number of linearly 
+        independent rows or columns of a matrix A. 
+   A  = symmetric and semi-positive definite matrix 
+  tol = tolerance used in factorization, i.e., norm(A(P,P)- L*L.') &lt;= tol   
+  
+  <a href="genchol.html" class="code" title=" Generalized Cholesky factorization ">GENCHOL</a> computes the generalized Cholesky decomposition, 
+            
+    A(P,P) = L*L.'  
+   
+  where L is lower triangular and P is a permutation vector. 
+  
+  Example 
+   H = hilb(10); 
+   tol   = 1e-6; 
+   [L,P] = <a href="genchol.html" class="code" title=" Generalized Cholesky factorization ">genchol</a>(H,tol); 
+   spy(L*L.'-H(P,P)) 
+  
+  See also  chol</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\deal.m">deal</a></li></TD>
+<TD>          Deal inputs to outputs.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\tril.bi">tril</a></li></TD>
+<TD>          Extract lower triangular part.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/wstats/wmnormrnd.html" class="code" title=" r = wmnormrnd(mu,sa,cases,method,cutoff);">wmnormrnd</a></li></TD>
+<TD> Random vectors from a multivariate Normal distribution</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> L = rowcolChange(L,i,j,n,nullity)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [L,P,r] = <a name="_sub0" href="#_subfunctions" class="code">genchol</a>(A,tol) 
+002 <span class="comment">%GENCHOL Generalized Cholesky factorization </span>
+003 <span class="comment">%  </span>
+004 <span class="comment">% CALL: [L,P,r] = genchol(A,tol); </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%  L  = lower triangular matrix, Cholesky factor </span>
+007 <span class="comment">%  P  = permutation vector </span>
+008 <span class="comment">%  r  = matrix rank, i.e., the number of eigenvalues larger than tol. </span>
+009 <span class="comment">%       This is an estimate of the number of linearly </span>
+010 <span class="comment">%       independent rows or columns of a matrix A. </span>
+011 <span class="comment">%  A  = symmetric and semi-positive definite matrix </span>
+012 <span class="comment">% tol = tolerance used in factorization, i.e., norm(A(P,P)- L*L.') &lt;= tol   </span>
+013 <span class="comment">% </span>
+014 <span class="comment">% GENCHOL computes the generalized Cholesky decomposition, </span>
+015 <span class="comment">%           </span>
+016 <span class="comment">%   A(P,P) = L*L.'  </span>
+017 <span class="comment">%  </span>
+018 <span class="comment">% where L is lower triangular and P is a permutation vector. </span>
+019 <span class="comment">% </span>
+020 <span class="comment">% Example </span>
+021 <span class="comment">%  H = hilb(10); </span>
+022 <span class="comment">%  tol   = 1e-6; </span>
+023 <span class="comment">%  [L,P] = genchol(H,tol); </span>
+024 <span class="comment">%  spy(L*L.'-H(P,P)) </span>
+025 <span class="comment">% </span>
+026 <span class="comment">% See also  chol   </span>
+027    
+028 <span class="comment">%error(nargoutchk(2,2,,nargout)) </span>
+029  
+030 [m,n] = size(A);  
+031 <span class="keyword">if</span> (m ~= n),   error(<span class="string">'input matrix must be square'</span>); <span class="keyword">end</span> 
+032 <span class="keyword">if</span> nargin&lt;2|isempty(tol),   tol = 1e-12; <span class="keyword">end</span> 
+033 <span class="comment">%tol = tol/(100*n*n);<span class="comment">%(4*sqrt(n)); </span></span>
+034  
+035  
+036  
+037 L = tril(A);  
+038 <span class="comment">%D = diag(A);  </span>
+039 <span class="comment">%Dmax = max(D); </span>
+040 <span class="comment">%tol = Dmax*tol; </span>
+041 <span class="comment">%localTolerance = max(eps*Dmax,tol*1e-3); </span>
+042 localTolerance = 0;<span class="comment">%tol/(20*n^2); </span>
+043  
+044 P = 1:n; <span class="comment">% permuation vector </span>
+045 <span class="comment">%x = P; </span>
+046  
+047 k = 1; 
+048 nullity = 0; 
+049 <span class="keyword">while</span> (k&lt;=n) 
+050    <span class="comment">% Find next pivot </span>
+051    D = diag(L,-nullity); 
+052    k0 = k-nullity; 
+053     n0 = n-nullity; 
+054    [big,imax] = max(D(k0:n0)); 
+055     
+056    <span class="keyword">if</span> (big&gt;tol), <span class="comment">%D(imax)&gt;tol) </span>
+057       imax = imax+k-1; 
+058       <span class="keyword">if</span> imax~=k 
+059          <span class="comment">% Swap the new pivot at imax with k </span>
+060          P([imax,k]) = P([k,imax]);<span class="comment">% [P(imax),P(k)] = deal(P(k),P(imax)); </span>
+061          L = <a href="#_sub1" class="code" title="sub  L = rowcolChange(L,i,j,n,nullity)">rowcolChange</a>(L,k,imax,n,nullity);      
+062       <span class="keyword">end</span> 
+063       L(k,k0) = sqrt(L(k,k0)); <span class="comment">% STD(Xk|X1,X2,...,Xk-1) </span>
+064       k1 = k; 
+065       <span class="keyword">for</span> i = k+1:n, 
+066          <span class="comment">%disp(i) </span>
+067          <span class="comment">%tmp = 0; </span>
+068          <span class="comment">%for j = 1:k-1,  </span>
+069          <span class="comment">%Cov(Xi,Xj|X1,X2,...Xk-2)*Cov(Xj,Xk|X1,X2,...Xk-2)/Cov() </span>
+070          <span class="comment">%tmp = tmp + L(i,j) * L(k,j);  </span>
+071          <span class="comment">%end </span>
+072          <span class="comment">%L(i,k) = L(i,k)-tmp; <span class="comment">% Cov(Xi,Xk|X1,X2,...Xk-1) </span></span>
+073          <span class="comment">%L(i,k) = L(i,k) / L(k,k);             </span>
+074           
+075          j =  1:k0-1; 
+076          <span class="comment">% Cov(Xi,Xk|X1,X2,...Xk-1)/STD(Xk|X1,X2,...Xk-1) </span>
+077          L(i,k0) = (L(i,k0)-sum(L(i,j).*L(k1,j)))/L(k1,k0); 
+078          <span class="comment">% Var(Xi|X1,X2,...Xk) </span>
+079          i0 = i-nullity; 
+080          L(i,i0) = L(i,i0) - L(i,k0)*L(i,k0);         
+081           
+082          <span class="keyword">if</span> (L(i,i0)&lt;=localTolerance) <span class="comment">% &amp; norm(L(nnDet,k+1:nnDet),'inf')&lt;=tol)) </span>
+083             <span class="comment">%if (D(i)&lt;=-sqrt(tol)) <span class="comment">% make sure we are not too restrictive </span></span>
+084             <span class="comment">%   warning('Matrix is not positive semi-definite!') </span>
+085             <span class="comment">%end </span>
+086       
+087             <span class="keyword">if</span> (k+1&lt;i) 
+088                <span class="comment">% Swap the singular pivot at i with k+1 </span>
+089                P([i,k+1]) = P([k+1,i]); 
+090                L = <a href="#_sub1" class="code" title="sub  L = rowcolChange(L,i,j,n,nullity)">rowcolChange</a>(L,k+1,i,n,nullity);   
+091             <span class="keyword">end</span> 
+092             <span class="comment">% shift </span>
+093             <span class="keyword">if</span> nullity&gt;0 
+094                n0 = n-nullity; 
+095                L(k+1:n,k0+1:n0) = L(k+1:n,k0+2:n0+1);  
+096             <span class="keyword">else</span> 
+097                L(k+1:n,k+1:n-1) = L(k+1:n,k+2:n); 
+098                L(n,n) = 0; 
+099             <span class="keyword">end</span> 
+100             nullity = nullity+1; 
+101             k = k+1; 
+102          <span class="keyword">end</span> 
+103      
+104       <span class="keyword">end</span>       
+105    <span class="keyword">else</span> 
+106       <span class="keyword">if</span> (big&lt;=-sqrt(tol)) 
+107          warning(<span class="string">'Matrix is not positive semi-definite!'</span>) 
+108       <span class="keyword">end</span> 
+109       k0 = k-nullity; 
+110       L(k:<span class="keyword">end</span>,k0:<span class="keyword">end</span>) = 0; 
+111       nullity = n-k0+1; 
+112       <span class="keyword">break</span>; 
+113    <span class="keyword">end</span> 
+114    k = k+1; 
+115 <span class="keyword">end</span>  <span class="comment">%while k </span>
+116 r = n-nullity; 
+117 <span class="comment">%flop </span>
+118 <span class="comment">%nDet </span>
+119 <span class="keyword">return</span> 
+120  
+121  
+122  
+123 <span class="keyword">function</span> L = <a name="_sub1" href="#_subfunctions" class="code">rowcolChange</a>(L,i,j,n,nullity) 
+124 <span class="comment">%rowcolChange exchange column and rows of i and j, </span>
+125 <span class="comment">%but only the lower triangular part </span>
+126  
+127 <span class="keyword">if</span> (i&lt;j) 
+128    k = i; 
+129    imax = j; 
+130 <span class="keyword">else</span> 
+131    k = j; 
+132    imax = i; 
+133 <span class="keyword">end</span>     
+134     
+135    <span class="comment">%for  </span>
+136    k0 = k-nullity; 
+137    <span class="keyword">if</span> 1&lt;k0 
+138        iz=1:k0-1; 
+139       [L(k,iz),L(imax,iz)] = deal(L(imax,iz),L(k,iz)); 
+140    <span class="keyword">end</span>     
+141     
+142    imax0 = imax-nullity; 
+143    [L(k,k0),L(imax,imax0)] = deal(L(imax,imax0),L(k,k0)); 
+144    <span class="comment">%for </span>
+145    iz=k+1:imax-1; 
+146    iz0= k0+1:imax0-1; 
+147    <span class="keyword">if</span> any(iz) 
+148       [L(iz,k0),L(imax,iz0)] = deal(L(imax,iz0).',L(iz,k0).'); 
+149    <span class="keyword">end</span> 
+150 <span class="comment">%   for  </span>
+151 iz=imax+1:n; 
+152 <span class="keyword">if</span> any(iz) 
+153       [L(iz,k0),L(iz,imax0)] = deal(L(iz,imax0),L(iz,k0)); 
+154   <span class="keyword">end</span></pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

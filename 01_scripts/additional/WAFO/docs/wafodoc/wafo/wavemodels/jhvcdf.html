@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of jhvcdf</title>
+  <meta name="keywords" content="jhvcdf">
+  <meta name="description" content=" Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; jhvcdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>jhvcdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = jhvcdf(Hd,Vcf,Hm0,Tp,gam,tail) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="jhvcdf.html" class="code" title=" Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum. ">JHVCDF</a> Joint (Vcf,Hd) CDF for linear waves with <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum. 
+  
+   CALL: f = <a href="jhvcdf.html" class="code" title=" Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum. ">jhvcdf</a>(Hd,Vcf,Hm0,Tp,Gamma,tail) 
+   
+    f   = CDF evaluated at (Vcf,Hd) 
+    Hd  = zero down crossing wave height [m]  
+    Vcf = crest front velocity    [m/s] 
+    Hm0 = significant wave height [m] 
+    Tp  = Spectral peak period    [s] 
+  Gamma = Peakedness parameter of the <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum   
+   tail = 1 if upper tail is calculated    
+          0 if lower tail is calulated (default) 
+    
+  <a href="jhvcdf.html" class="code" title=" Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum. ">JHVCDF</a> approximates the joint CDF of (Vcf, Hd), i.e., crest front 
+  velocity (Ac/Tcf) and wave height, for a Gaussian process with a 
+  <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectral density. The empirical parameters of the model is 
+  fitted by least squares to simulated (Vcf,Hd) data for 13 classes of 
+  GAMMA between 1 and 7. About 100000 zero-downcrossing waves were 
+  simulated for each class of GAMMA. 
+  <a href="jhvcdf.html" class="code" title=" Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum. ">JHVCDF</a> is restricted to the following <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> for GAMMA:  
+   1 &lt;= GAMMA &lt;= 7  
+  
+  Example: 
+  Hm0 = 6;Tp = 8; gam = 3.5; 
+  vc = 3; 
+  hc = 3; 
+  lowerTail = 0; 
+  upperTail = ~lowerTail   
+  <a href="jhvcdf.html" class="code" title=" Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum. ">jhvcdf</a>(hc,vc,Hm0,Tp,gam)           % Prob(Hd&lt;Hc,Vcf&lt;Vc) 
+  <a href="jhvcdf.html" class="code" title=" Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum. ">jhvcdf</a>(hc,vc,Hm0,Tp,gam,upperTail) % Prob(Hd&gt;Hc,Vcf&gt;Vc)   
+    
+   % Conditional probability of steep and high waves given seastates 
+   % i.e., Prob(Hd&gt;hc,Vcf&gt;vc|Hs,Tp)   
+   upperTail = 1; 
+   Hs = linspace(2.5,11.5,10); 
+   Tp = linspace(4.5,19.5,16); 
+   [T,H] = meshgrid(Tp,Hs);  
+   p = <a href="jhvcdf.html" class="code" title=" Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum. ">jhvcdf</a>(hc,vc,H,T,gam,upperTail); 
+   v = 10.^(-6:-1);   
+   contourf(Tp,Hs,log10(p),log10(v)) 
+   xlabel('Tp') 
+   ylabel('Hs')   
+   <a href="../../wafo/misc/fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(log10(v))   
+    
+  See also  <a href="thvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra. ">thvpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/misc/gaussq.html" class="code" title=" [int, tol1,ix]= gaussq(fun,xlow,xhigh,tol,trace,varargin)">gaussq</a></li></TD>
+<TD> Numerically evaluates a integral using a Gauss quadrature.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" gam = getjonswappeakedness(Hm0,Tp)">getjonswappeakedness</a></li></TD>
+<TD> Peakedness factor Gamma given Hm0 and Tp for JONSWAP</TD>
+</TR>
+<TR>
+<TD><li><a href="jhvpdf.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon)">jhvpdf</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\polyval.m">polyval</a></li></TD>
+<TD>       Evaluate polynomial.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">jhvcdf</a>(Hd,Vcf,Hm0,Tp,gam,tail) 
+002 <span class="comment">%JHVCDF Joint (Vcf,Hd) CDF for linear waves with JONSWAP spectrum. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: f = jhvcdf(Hd,Vcf,Hm0,Tp,Gamma,tail) </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%   f   = CDF evaluated at (Vcf,Hd) </span>
+007 <span class="comment">%   Hd  = zero down crossing wave height [m]  </span>
+008 <span class="comment">%   Vcf = crest front velocity    [m/s] </span>
+009 <span class="comment">%   Hm0 = significant wave height [m] </span>
+010 <span class="comment">%   Tp  = Spectral peak period    [s] </span>
+011 <span class="comment">% Gamma = Peakedness parameter of the JONSWAP spectrum   </span>
+012 <span class="comment">%  tail = 1 if upper tail is calculated    </span>
+013 <span class="comment">%         0 if lower tail is calulated (default) </span>
+014 <span class="comment">%   </span>
+015 <span class="comment">% JHVCDF approximates the joint CDF of (Vcf, Hd), i.e., crest front </span>
+016 <span class="comment">% velocity (Ac/Tcf) and wave height, for a Gaussian process with a </span>
+017 <span class="comment">% JONSWAP spectral density. The empirical parameters of the model is </span>
+018 <span class="comment">% fitted by least squares to simulated (Vcf,Hd) data for 13 classes of </span>
+019 <span class="comment">% GAMMA between 1 and 7. About 100000 zero-downcrossing waves were </span>
+020 <span class="comment">% simulated for each class of GAMMA. </span>
+021 <span class="comment">% JHVCDF is restricted to the following range for GAMMA:  </span>
+022 <span class="comment">%  1 &lt;= GAMMA &lt;= 7  </span>
+023 <span class="comment">% </span>
+024 <span class="comment">% Example: </span>
+025 <span class="comment">% Hm0 = 6;Tp = 8; gam = 3.5; </span>
+026 <span class="comment">% vc = 3; </span>
+027 <span class="comment">% hc = 3; </span>
+028 <span class="comment">% lowerTail = 0; </span>
+029 <span class="comment">% upperTail = ~lowerTail   </span>
+030 <span class="comment">% jhvcdf(hc,vc,Hm0,Tp,gam)           <span class="comment">% Prob(Hd&lt;Hc,Vcf&lt;Vc) </span></span>
+031 <span class="comment">% jhvcdf(hc,vc,Hm0,Tp,gam,upperTail) <span class="comment">% Prob(Hd&gt;Hc,Vcf&gt;Vc)   </span></span>
+032 <span class="comment">%   </span>
+033 <span class="comment">%  <span class="comment">% Conditional probability of steep and high waves given seastates </span></span>
+034 <span class="comment">%  <span class="comment">% i.e., Prob(Hd&gt;hc,Vcf&gt;vc|Hs,Tp)   </span></span>
+035 <span class="comment">%  upperTail = 1; </span>
+036 <span class="comment">%  Hs = linspace(2.5,11.5,10); </span>
+037 <span class="comment">%  Tp = linspace(4.5,19.5,16); </span>
+038 <span class="comment">%  [T,H] = meshgrid(Tp,Hs);  </span>
+039 <span class="comment">%  p = jhvcdf(hc,vc,H,T,gam,upperTail); </span>
+040 <span class="comment">%  v = 10.^(-6:-1);   </span>
+041 <span class="comment">%  contourf(Tp,Hs,log10(p),log10(v)) </span>
+042 <span class="comment">%  xlabel('Tp') </span>
+043 <span class="comment">%  ylabel('Hs')   </span>
+044 <span class="comment">%  fcolorbar(log10(v))   </span>
+045 <span class="comment">%   </span>
+046 <span class="comment">% See also  thvpdf </span>
+047  
+048    
+049 <span class="comment">% Reference  </span>
+050 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+051 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+052 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+053 <span class="comment">% Trondheim, Norway.   </span>
+054    
+055 <span class="comment">% History </span>
+056 <span class="comment">% revised pab 09.08.2003 </span>
+057 <span class="comment">% changed input   </span>
+058 <span class="comment">% validated 20.11.2002 </span>
+059 <span class="comment">% By pab 20.12.2000 </span>
+060  
+061  
+062 error(nargchk(2,6,nargin))   
+063  
+064 <span class="keyword">if</span> (nargin &lt; 6|isempty(tail)),tail = 0; <span class="keyword">end</span> 
+065 <span class="keyword">if</span> (nargin &lt; 4|isempty(Tp)),Tp = 8; <span class="keyword">end</span> 
+066 <span class="keyword">if</span> (nargin &lt; 3|isempty(Hm0)), Hm0 = 6; <span class="keyword">end</span> 
+067 <span class="keyword">if</span> (nargin &lt; 5|isempty(gam)), 
+068    gam = <a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a>(Hm0,Tp); 
+069 <span class="keyword">end</span> 
+070  
+071 multipleSeaStates = any(prod(size(Hm0))&gt;1|prod(size(Tp))&gt;1); 
+072 <span class="keyword">if</span> multipleSeaStates 
+073   [errorcode, Vcf,Hd,Hm0,Tp,gam] = comnsize(Vcf,Hd,Hm0,Tp,gam); 
+074 <span class="keyword">else</span> 
+075   [errorcode, Vcf,Hd] = comnsize(Vcf,Hd); 
+076 <span class="keyword">end</span> 
+077 <span class="keyword">if</span> errorcode &gt; 0 
+078   error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+079 <span class="keyword">end</span> 
+080 displayWarning = 0; 
+081 <span class="keyword">if</span> displayWarning 
+082   <span class="keyword">if</span> any(any(Tp&gt;5*sqrt(Hm0) | Tp&lt;3.6*sqrt(Hm0))) 
+083     disp(<span class="string">'Warning: Hm0,Tp is outside the JONSWAP range'</span>) 
+084     disp(<span class="string">'The validity of the parameters returned are questionable'</span>) 
+085   <span class="keyword">end</span> 
+086 <span class="keyword">end</span> 
+087 <span class="comment">%dev = 2e-5; </span>
+088 c1 =[ 0.16183666835624   1.53691936441548   1.55852759524555]; 
+089 c2 =[ 0.15659478203944   1.15736959972513   1]; 
+090 Tm02 = Tp.*(polyval(c2,gam)./polyval(c1,gam)); 
+091  
+092 Hrms = Hm0/sqrt(2); 
+093 Vrms = 2*Hm0./Tm02; <span class="comment">% Erms </span>
+094  
+095 v = Vcf./Vrms; 
+096  
+097 hMax = 6; 
+098 eps2 = 1e-6; 
+099 normalizedInput = 1; 
+100  
+101  
+102 h = min(Hd./Hrms,hMax); 
+103 f = zeros(size(Hd)); 
+104 <span class="comment">% Only compute </span>
+105 k0 = find((Tp&lt;5*sqrt(Hm0)) &amp; (3.6*sqrt(Hm0)&lt;Tp)); 
+106 <span class="keyword">if</span> any(k0) 
+107   <span class="keyword">if</span> multipleSeaStates 
+108     h = h(k0); 
+109     v = v(k0); 
+110     Hm0 = Hm0(k0); 
+111     Tp = Tp(k0); 
+112     gam = gam(k0);     
+113   <span class="keyword">else</span> 
+114     k0 = 1:prod(size(Hd)); 
+115   <span class="keyword">end</span> 
+116   utprb = <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'jhvpdf'</span>,hMax,2*hMax,eps2/2,[],mean(v(:)),mean(Hm0(:)),mean(Tp(:)),mean(gam(:)),normalizedInput,7); 
+117   <span class="keyword">if</span> eps2&lt;utprb 
+118     warning(<span class="string">'Check the accuracy of integration!'</span>) 
+119   <span class="keyword">end</span> 
+120    
+121   <span class="keyword">if</span> 0 
+122     <span class="comment">% This is a trick to get the html documentation correct. </span>
+123     k = <a href="jhvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. ">jhvpdf</a>(1,1,2,3); 
+124   <span class="keyword">end</span> 
+125    
+126   hlim  = h; 
+127  
+128  
+129   lowerTail = 0; 
+130   <span class="keyword">if</span> tail==lowerTail, 
+131     k       = find(h&gt;2*v); 
+132     hlim(k) = 2*v(k); 
+133     f(k0) = <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'jhvpdf'</span>,0,hlim,eps2/2,[],v,Hm0,Tp,gam,normalizedInput,5)<span class="keyword">...</span> 
+134         + <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'jhvpdf'</span>,hlim,h,eps2/2,[],v,Hm0,Tp,gam,normalizedInput,5);  
+135   <span class="keyword">else</span> <span class="comment">% upper tail </span>
+136     k       = find(h&lt;2*v); 
+137     hlim(k) = 2*v(k); 
+138     f(k0) = <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'jhvpdf'</span>,h,hlim,eps2/2,[],v,Hm0,Tp,gam,normalizedInput,7)<span class="keyword">...</span> 
+139         + <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'jhvpdf'</span>,hlim,hMax,eps2/2,[],v,Hm0,Tp,gam,normalizedInput,7);  
+140   <span class="keyword">end</span> 
+141 <span class="keyword">end</span> 
+142 <span class="keyword">return</span> 
+143  
+144</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

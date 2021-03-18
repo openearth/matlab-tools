@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of ohspec3</title>
+  <meta name="keywords" content="ohspec3">
+  <meta name="description" content=" Calculates Bimodal Ochi-Hubble spectral densities">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; ohspec3.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>ohspec3
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates Bimodal Ochi-Hubble spectral densities</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [S, S1] = ohspec3(w,def,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="ohspec3.html" class="code" title=" Calculates Bimodal Ochi-Hubble spectral densities">OHSPEC3</a> Calculates Bimodal Ochi-Hubble spectral densities
+          from mixed <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> states
+  
+   CALL:  [S S1] = <a href="ohspec3.html" class="code" title=" Calculates Bimodal Ochi-Hubble spectral densities">ohspec3</a>(w,def,plotflag); 
+ 
+         S    = a struct containing the total spectral density
+         S1   = a 2D struct array containing the swell and wind generated 
+                part of the spectral density
+         w    = angular frequency (default linspace(0,3,257))
+         def  = vector or a scalar containing numbers between 1 and 9. 
+                1,2,3 : Swell dominated <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a> state
+                4,5,6 : Wind <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> dominated  <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a> state
+                7,8,9 : Mixed wind-<a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> and swell systems with comparable energy.
+     plotflag = 0, do not plot the spectrum (default).
+                1, plot the  spectrum.
+ 
+   The OH spectrum is a six parameter spectrum.
+   Here 9 different parameterizations are defined representing
+   3 different type of <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> states. Each of the of the 3 <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> states are 
+   parameterized with 3 different inter-modal distances. The exact parameters
+   are given below where the subscripts w = wind <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a>,  s = swell and
+   Hm0 = significant wave height, Tp = peak period,  L = spectral shape parameter
+ 
+              Target spectra parameters:
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    def     Hm0s    Hm0w     Tps     Tpw     Ls     Lw
+   ¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
+     1      5.5     3.5     14.3     9.1     3.0    6.5
+     2      6.5     2.0     14.3     6.7     3.5    4.0
+     3      5.5     3.5     22.2     6.5     3.0    6.0
+     4      2.0     6.5     14.3     9.1     3.0    6.5
+     5      2.0     6.5     14.3     6.7     4.0    3.5
+     6      2.0     6.5     22.2     6.5     2.0    7.0
+     7      4.1     5.0     14.3     9.1     2.1    2.5
+     8      4.1     5.0     14.3     6.7     2.1    2.5
+     9      4.1     5.0     22.2     6.5     2.1    2.5 
+ 
+  Example: Create an array struct with all the parameterizations
+     
+      S = <a href="ohspec3.html" class="code" title=" Calculates Bimodal Ochi-Hubble spectral densities">ohspec3</a>([],1:9);
+   
+  See also  <a href="ohspec.html" class="code" title=" Calculates (and plots) a Ochi-Hubble spectral density.">ohspec</a>, <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>, <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="ohspec.html" class="code" title=" S1=ohspec(w1,sdata,plotflag)">ohspec</a></li></TD>
+<TD> Calculates (and plots) a Ochi-Hubble spectral density.</TD>
+</TR>
+<TR>
+<TD><li><a href="ohspec3.html" class="code" title=" [S, S1] = ohspec3(w,def,plotflag)">ohspec3</a></li></TD>
+<TD> Calculates Bimodal Ochi-Hubble spectral densities</TD>
+</TR>
+<TR>
+<TD><li><a href="wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\ishold.m">ishold</a></li></TD>
+<TD>        Return hold state.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="ohspec3.html" class="code" title=" [S, S1] = ohspec3(w,def,plotflag)">ohspec3</a></li></TD>
+<TD> Calculates Bimodal Ochi-Hubble spectral densities</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [S, S1] = <a href="ohspec3.html" class="code" title=" Calculates Bimodal Ochi-Hubble spectral densities"><a name="_sub0" href="#_subfunctions" class="code">ohspec3</a>ohspec3</a>(w,def,plotflag)
+002 <span class="comment">% OHSPEC3 Calculates Bimodal Ochi-Hubble spectral densities</span>
+003 <span class="comment">%         from mixed sea states</span>
+004 <span class="comment">% </span>
+005 <span class="comment">%  CALL:  [S S1] = ohspec3(w,def,plotflag); </span>
+006 <span class="comment">%</span>
+007 <span class="comment">%        S    = a struct containing the total spectral density</span>
+008 <span class="comment">%        S1   = a 2D struct array containing the swell and wind generated </span>
+009 <span class="comment">%               part of the spectral density</span>
+010 <span class="comment">%        w    = angular frequency (default linspace(0,3,257))</span>
+011 <span class="comment">%        def  = vector or a scalar containing numbers between 1 and 9. </span>
+012 <span class="comment">%               1,2,3 : Swell dominated Sea state</span>
+013 <span class="comment">%               4,5,6 : Wind sea dominated  Sea state</span>
+014 <span class="comment">%               7,8,9 : Mixed wind-sea and swell systems with comparable energy.</span>
+015 <span class="comment">%    plotflag = 0, do not plot the spectrum (default).</span>
+016 <span class="comment">%               1, plot the  spectrum.</span>
+017 <span class="comment">%</span>
+018 <span class="comment">%  The OH spectrum is a six parameter spectrum.</span>
+019 <span class="comment">%  Here 9 different parameterizations are defined representing</span>
+020 <span class="comment">%  3 different type of sea states. Each of the of the 3 sea states are </span>
+021 <span class="comment">%  parameterized with 3 different inter-modal distances. The exact parameters</span>
+022 <span class="comment">%  are given below where the subscripts w = wind sea,  s = swell and</span>
+023 <span class="comment">%  Hm0 = significant wave height, Tp = peak period,  L = spectral shape parameter</span>
+024 <span class="comment">%</span>
+025 <span class="comment">%             Target spectra parameters:</span>
+026 <span class="comment">%    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+027 <span class="comment">%   def     Hm0s    Hm0w     Tps     Tpw     Ls     Lw</span>
+028 <span class="comment">%  ¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨</span>
+029 <span class="comment">%    1      5.5     3.5     14.3     9.1     3.0    6.5</span>
+030 <span class="comment">%    2      6.5     2.0     14.3     6.7     3.5    4.0</span>
+031 <span class="comment">%    3      5.5     3.5     22.2     6.5     3.0    6.0</span>
+032 <span class="comment">%    4      2.0     6.5     14.3     9.1     3.0    6.5</span>
+033 <span class="comment">%    5      2.0     6.5     14.3     6.7     4.0    3.5</span>
+034 <span class="comment">%    6      2.0     6.5     22.2     6.5     2.0    7.0</span>
+035 <span class="comment">%    7      4.1     5.0     14.3     9.1     2.1    2.5</span>
+036 <span class="comment">%    8      4.1     5.0     14.3     6.7     2.1    2.5</span>
+037 <span class="comment">%    9      4.1     5.0     22.2     6.5     2.1    2.5 </span>
+038 <span class="comment">%</span>
+039 <span class="comment">% Example: Create an array struct with all the parameterizations</span>
+040 <span class="comment">%    </span>
+041 <span class="comment">%     S = ohspec3([],1:9);</span>
+042 <span class="comment">%  </span>
+043 <span class="comment">% See also  ohspec, jonswap, torsethaugen</span>
+044 
+045 <span class="comment">% References:</span>
+046 <span class="comment">% Ochi, M.K. and Hubble, E.N. (1976)</span>
+047 <span class="comment">% 'On six-parameter wave spectra.'</span>
+048 <span class="comment">% In proc. 15th Conf. Coastal Engng.,1,pp301-328</span>
+049 <span class="comment">%</span>
+050 <span class="comment">% Rodriguez, G.R. and Soares, C.G. (2000)</span>
+051 <span class="comment">% &quot;Wave period distribution in mixed sea states&quot;</span>
+052 <span class="comment">% In proc. ETCE/OMAE2000 Joint Conference Energy for the new millenium.</span>
+053 
+054 <span class="comment">% Tested on: matlab 5.2</span>
+055 <span class="comment">% History:</span>
+056 <span class="comment">% revised pab Apr2005</span>
+057 <span class="comment">% fixed a bug: ohspec([],1:9,1) works correctly</span>
+058 <span class="comment">% by pab 16.02.2000</span>
+059 
+060 monitor=0;
+061 
+062 <span class="keyword">if</span> nargin&lt;3|isempty(plotflag)
+063   plotflag=0;
+064 <span class="keyword">end</span>
+065 <span class="keyword">if</span> nargin&lt;1|isempty(w)
+066   w=linspace(0,3,257).';
+067 <span class="keyword">end</span>
+068 <span class="keyword">if</span> nargin&lt;2|isempty(def)
+069  def =1;
+070 <span class="keyword">elseif</span> length(def)&gt;1
+071   <span class="keyword">for</span> ix=1:length(def),
+072     [S(ix) S1(ix,1:2)]=<a href="ohspec3.html" class="code" title=" Calculates Bimodal Ochi-Hubble spectral densities">ohspec3</a>(w,def(ix));
+073   <span class="keyword">end</span> <span class="comment">%</span>
+074   <span class="keyword">if</span> plotflag
+075      <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S,plotflag)
+076   <span class="keyword">end</span>
+077   <span class="keyword">return</span>
+078 <span class="keyword">end</span>
+079 
+080 <span class="keyword">switch</span> def
+081   <span class="comment">% Swell dominated sea states</span>
+082   <span class="keyword">case</span> 1, Hm0i=[5.5 3.5]; Tpi=1./[0.07 0.11];Li=[3   6.5];
+083   <span class="keyword">case</span> 2, Hm0i=[6.5 2.0]; Tpi=1./[0.07 0.15];Li=[3.5 4];
+084   <span class="keyword">case</span> 3, Hm0i=[5.5 3.5]; Tpi=1./[0.045 0.155];Li=[3 6];
+085     <span class="comment">% Wind dominated sea states</span>
+086   <span class="keyword">case</span> 4, Hm0i=[2 6.5]; Tpi=1./[0.07 0.11];Li=[3 6.5];
+087   <span class="keyword">case</span> 5, Hm0i=[2 6.5]; Tpi=1./[0.07 0.15];Li=[4 3.5];
+088   <span class="keyword">case</span> 6, Hm0i=[2 6.5]; Tpi=1./[0.045 0.155];Li=[2 7];
+089     <span class="comment">% Mixed Wind sea and swell systems with comparable energy</span>
+090   <span class="keyword">case</span> 7, Hm0i=[4.1 5]; Tpi=1./[0.07 0.11];Li=[2.1 2.5];
+091   <span class="keyword">case</span> 8, Hm0i=[4.1 5]; Tpi=1./[0.07 0.15];Li=[2.1 2.5];
+092   <span class="keyword">case</span> 9, Hm0i=[4.1 5]; Tpi=1./[0.045 0.155];Li=[2.1 2.5]; 
+093   <span class="keyword">otherwise</span>
+094     Hm0i=[5.5 3.5]; Tpi=1./[0.07 0.11];Li=[3   6.5];
+095     def=1;
+096 <span class="keyword">end</span>
+097 
+098 <span class="keyword">if</span> 0, <span class="comment">% the following make Hm0 the same for all the cases</span>
+099   
+100   <span class="keyword">switch</span> def
+101     <span class="comment">% Swell dominated sea states</span>
+102   <span class="keyword">case</span> 1, Hm0i=[5.5 3.5]*0.99184053150473; Tpi=1./[0.07 0.11];Li=[3   6.5];
+103   <span class="keyword">case</span> 2, Hm0i=[6.5 2.0]*0.95078090199753; Tpi=1./[0.07 0.15];Li=[3.5 4];
+104   <span class="keyword">case</span> 3, Hm0i=[5.5 3.5]*0.99184046072521; Tpi=1./[0.045 0.155];Li=[3 6];
+105     <span class="comment">% Wind dominated sea states</span>
+106   <span class="keyword">case</span> 4, Hm0i=[2 6.5]*0.95078087556934; Tpi=1./[0.07 0.11];Li=[3 6.5];
+107   <span class="keyword">case</span> 5, Hm0i=[2 6.5]*0.95078087556934; Tpi=1./[0.07 0.15];Li=[4 3.5];
+108   <span class="keyword">case</span> 6, Hm0i=[2 6.5]*0.95078087556934; Tpi=1./[0.045 0.155];Li=[2 7];
+109   <span class="keyword">end</span>
+110 <span class="keyword">end</span>
+111 
+112 
+113 <span class="keyword">for</span> ix=1:2,
+114   S1(ix)=<a href="ohspec.html" class="code" title=" Calculates (and plots) a Ochi-Hubble spectral density.">ohspec</a>(w,[Hm0i(ix), Tpi(ix),Li(ix)]);
+115 <span class="keyword">end</span>
+116 S=S1(1);
+117 S.S=S1(1).S+S1(2).S;
+118 
+119 <span class="comment">%S.note=['Ochi-Hubble3, Hm0 = ' num2str(Hm0i)  ', Tp = ' num2str(Tpi) , ' L = ' num2str(Li)];</span>
+120 S.note=[<span class="string">'Ochi-Hubble3, def = '</span> num2str(def) ];
+121 <span class="keyword">if</span> monitor
+122   disp([<span class="string">'Hm0, Tp      = '</span> num2str([Hm0i Tpi])])
+123 <span class="keyword">end</span>
+124 
+125 <span class="keyword">if</span> plotflag
+126   ih=ishold;
+127   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S,plotflag)
+128   hold on
+129   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S1,plotflag,<span class="string">'k--'</span>)
+130   <span class="keyword">if</span> ~ih,hold off,<span class="keyword">end</span>
+131 <span class="keyword">end</span>
+132</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

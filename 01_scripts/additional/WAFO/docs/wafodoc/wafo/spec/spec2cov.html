@@ -1,0 +1,354 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of spec2cov</title>
+  <meta name="keywords" content="spec2cov">
+  <meta name="description" content=" Computes covariance function and its derivatives">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; spec2cov.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spec2cov
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Computes covariance function and its derivatives</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> R = spec2cov(S,nr,Nt,rate,Nx,Ny,dx,dy) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">SPEC2COV</a> Computes covariance function and its derivatives  
+  
+   CALL:  R = <a href="spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>(S,nr,Nt,rate,Nx,Ny,dx,dy); 
+  
+        R    = a covariance structure (See <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>) 
+        S    = a spectral density structure (See <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a>) 
+        nr   = number of derivatives in output, nr&lt;=4 (default = 0). 
+        Nt   = number in time grid, i.e., number of time-lags 
+               (default rate*(length(S.S)-1)). 
+        rate = 1,2,4,8...2^r, interpolation rate for R 
+                (default = 1, no interpolation)  
+      Nx,Ny   = number in space grid (default = ) 
+      dx,dy   = space grid step (default: depending on S) 
+  
+  The input 'rate' gives together with the spectrum 
+  the t-grid-spacing: dt=pi/(S.w(end)*rate), S.w(end) is the Nyquist freq. 
+  This results in the t-grid: 0:dt:Nt*dt. 
+  
+  What output is achieved with different S and <a href="../../wafo/misc/choices.html" class="code" title=" Create a list of choices with uicontrols and callbacks. ">choices</a> of Nt,Nx and Ny:  
+  1) S.type='freq' or 'dir', Nt set, Nx,Ny not set: then result R(t) (one-dim) 
+  2) S.type='k1d' or 'k2d', Nt set, Nx,Ny not set: then result R(x) (one-dim) 
+  3) Any type, Nt and Nx set =&gt;R(x,t); Nt and Ny set =&gt;R(y,t) 
+  4) Any type, Nt, Nx and Ny set =&gt; R(x,y,t) 
+  5) Any type, Nt not set, Nx and/or Ny set =&gt; Nt set to default, goto 3) or 4) 
+  
+  NB! This routine requires that the spectrum grid is equidistant 
+      starting from zero frequency. 
+  NB! If you are using a model spectrum, S, with sharp edges  
+      to calculate covariances then you should probably do like this: 
+  Example:     
+     S   = <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>;  
+     S.S([1:40 100:end]) = 0;    
+     Nt  = length(S.S)-1;   
+     R   = <a href="spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>(S,0,Nt); 
+     win = <a href="../../wafo/onedim/private/parzen.html" class="code" title=" returns the N-point Parzen window in a column vector.">parzen</a>(2*Nt+1); 
+     R.R = R.R.*win(Nt+1:end); 
+     S1  = <a href="cov2spec.html" class="code" title=" Computes spectral density given the auto covariance function  ">cov2spec</a>(R); 
+     R2  = <a href="spec2cov.html" class="code" title=" Computes covariance function and its derivatives  ">spec2cov</a>(S1); 
+     plot(R2.R-R.R) 
+     plot(S1.S-S.S)   
+    
+  See also  <a href="cov2spec.html" class="code" title=" Computes spectral density given the auto covariance function  ">cov2spec</a>, <a href="../../wafo/docs/datastructures.html" class="code" title=" of spectrum, covariance function and density (pdf) in WAFO">datastructures</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createcov.html" class="code" title=" R=createcov(nr,vari,ctype)">createcov</a></li></TD>
+<TD> Covariance class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/private/dspec2dcov.html" class="code" title=" R=dspec2dcov(S,nr,Nt,rate,Nx,Ny,dx,dy)">dspec2dcov</a></li></TD>
+<TD> Return covariance function given a directional spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="freqtype.html" class="code" title=" ftype=freqtype(S)">freqtype</a></li></TD>
+<TD> returns the frequency type of a Spectral density struct.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2spec.html" class="code" title=" [Snew]=spec2spec(S,newtype,phi,v)">spec2spec</a></li></TD>
+<TD> Transforms between different types of spectra</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@int16\diff.bi">diff</a></li></TD>
+<TD>          Difference and approximate derivative.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\@logical\fft.bi">fft</a></li></TD>
+<TD>           Discrete Fourier transform.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\getfield.m">getfield</a></li></TD>
+<TD>      Get structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isstruct.m">isstruct</a></li></TD>
+<TD>      True for structures.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\lower.bi">lower</a></li></TD>
+<TD>         Convert string to lowercase.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elfun\nextpow2.m">nextpow2</a></li></TD>
+<TD>      Next higher power of 2.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\setfield.m">setfield</a></li></TD>
+<TD>      Set structure field contents.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strcmpi.bi">strcmpi</a></li></TD>
+<TD>       Compare strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/mctrtest.html" class="code" title=" test2 = mctrtest(S,Np,test0,def,opt)">mctrtest</a></li></TD>
+<TD> Test if a stochastic process is Gaussian.</TD>
+</TR>
+<TR>
+<TD><li><a href="spec2cov2.html" class="code" title=" R = spec2cov2(S,nr,Nt,dt)">spec2cov2</a></li></TD>
+<TD> Computes covariance function and its derivatives, alternative version</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wsim/spec2sdat.html" class="code" title=" [x,xder]=spec2sdat(S,np,dt,iseed,method)">spec2sdat</a></li></TD>
+<TD> Simulates a Gaussian process and its derivative from spectrum</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/private/wminmax.html" class="code" title=" [f_mM, paramu] = wminmax(spec,nit,paramu,t)">wminmax</a></li></TD>
+<TD> Calculates joint density of minimum and following maximum</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span>  R = <a name="_sub0" href="#_subfunctions" class="code">spec2cov</a>(S,nr,Nt,rate,Nx,Ny,dx,dy) 
+002 <span class="comment">%SPEC2COV Computes covariance function and its derivatives  </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  R = spec2cov(S,nr,Nt,rate,Nx,Ny,dx,dy); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%       R    = a covariance structure (See datastructures) </span>
+007 <span class="comment">%       S    = a spectral density structure (See datastructures) </span>
+008 <span class="comment">%       nr   = number of derivatives in output, nr&lt;=4 (default = 0). </span>
+009 <span class="comment">%       Nt   = number in time grid, i.e., number of time-lags </span>
+010 <span class="comment">%              (default rate*(length(S.S)-1)). </span>
+011 <span class="comment">%       rate = 1,2,4,8...2^r, interpolation rate for R </span>
+012 <span class="comment">%               (default = 1, no interpolation)  </span>
+013 <span class="comment">%     Nx,Ny   = number in space grid (default = ) </span>
+014 <span class="comment">%     dx,dy   = space grid step (default: depending on S) </span>
+015 <span class="comment">% </span>
+016 <span class="comment">% The input 'rate' gives together with the spectrum </span>
+017 <span class="comment">% the t-grid-spacing: dt=pi/(S.w(end)*rate), S.w(end) is the Nyquist freq. </span>
+018 <span class="comment">% This results in the t-grid: 0:dt:Nt*dt. </span>
+019 <span class="comment">% </span>
+020 <span class="comment">% What output is achieved with different S and choices of Nt,Nx and Ny:  </span>
+021 <span class="comment">% 1) S.type='freq' or 'dir', Nt set, Nx,Ny not set: then result R(t) (one-dim) </span>
+022 <span class="comment">% 2) S.type='k1d' or 'k2d', Nt set, Nx,Ny not set: then result R(x) (one-dim) </span>
+023 <span class="comment">% 3) Any type, Nt and Nx set =&gt;R(x,t); Nt and Ny set =&gt;R(y,t) </span>
+024 <span class="comment">% 4) Any type, Nt, Nx and Ny set =&gt; R(x,y,t) </span>
+025 <span class="comment">% 5) Any type, Nt not set, Nx and/or Ny set =&gt; Nt set to default, goto 3) or 4) </span>
+026 <span class="comment">% </span>
+027 <span class="comment">% NB! This routine requires that the spectrum grid is equidistant </span>
+028 <span class="comment">%     starting from zero frequency. </span>
+029 <span class="comment">% NB! If you are using a model spectrum, S, with sharp edges  </span>
+030 <span class="comment">%     to calculate covariances then you should probably do like this: </span>
+031 <span class="comment">% Example:     </span>
+032 <span class="comment">%    S   = jonswap;  </span>
+033 <span class="comment">%    S.S([1:40 100:end]) = 0;    </span>
+034 <span class="comment">%    Nt  = length(S.S)-1;   </span>
+035 <span class="comment">%    R   = spec2cov(S,0,Nt); </span>
+036 <span class="comment">%    win = parzen(2*Nt+1); </span>
+037 <span class="comment">%    R.R = R.R.*win(Nt+1:end); </span>
+038 <span class="comment">%    S1  = cov2spec(R); </span>
+039 <span class="comment">%    R2  = spec2cov(S1); </span>
+040 <span class="comment">%    plot(R2.R-R.R) </span>
+041 <span class="comment">%    plot(S1.S-S.S)   </span>
+042 <span class="comment">%   </span>
+043 <span class="comment">% See also  cov2spec, datastructures </span>
+044  
+045 <span class="comment">% NB! requires simpson </span>
+046  
+047 <span class="comment">% tested on: matlab 5.3 </span>
+048 <span class="comment">% history: </span>
+049 <span class="comment">% revised pab 21.11.2003 </span>
+050 <span class="comment">% - streamlined some code </span>
+051 <span class="comment">% - updated help header </span>
+052 <span class="comment">% - fixed bug in example   </span>
+053 <span class="comment">% revised by es 25.05.00, error if frequencies are not equidistant or  do not </span>
+054 <span class="comment">%                         start from zero  </span>
+055 <span class="comment">% revised by es 23.05.00, call of freqtype, R.norm=S.norm   </span>
+056 <span class="comment">% revised by pab 18.11.1999 </span>
+057 <span class="comment">%   - fixed a bug when S=S(f) </span>
+058 <span class="comment">% revised by es 13.10.1999  </span>
+059 <span class="comment">% revised by pab 23.08.1999 </span>
+060  
+061 <span class="keyword">if</span> ~isstruct(S) 
+062   error(<span class="string">'Incorrect input spectrum, see help datastructures'</span>) 
+063 <span class="keyword">end</span> 
+064    
+065 <span class="keyword">if</span> nargin&lt;2|isempty(nr) 
+066   nr=0; <span class="comment">% number of derivatives </span>
+067 <span class="keyword">end</span> 
+068  
+069 ftype = <a href="freqtype.html" class="code" title=" returns the frequency type of a Spectral density struct.">freqtype</a>(S); 
+070 freq  = getfield(S,ftype); 
+071 n     = length(freq); 
+072  
+073 <span class="keyword">if</span> all(freq&gt;0) <span class="comment">% for .type='k2d', negative frequencies are allowed </span>
+074   disp(<span class="string">'Spectrum does not start at zero frequency/wave number.'</span>) 
+075   error(<span class="string">'Correct it with specinterp, for example.'</span>) 
+076 <span class="comment">%   disp('trying to fix it, but numerical problems may occur') </span>
+077 <span class="comment">%   wfix=(0:dw:(ws-dw)).'; </span>
+078 <span class="comment">%   nfix=length(wfix); </span>
+079 <span class="comment">%   specn=[zeros(nfix,1);specn]; </span>
+080 <span class="comment">%   w=[wfix;w]; </span>
+081 <span class="comment">%   n=n+nfix; </span>
+082 <span class="keyword">end</span> 
+083 <span class="keyword">if</span> any(abs(diff(diff(freq)))&gt;1.0e-8) 
+084   disp(<span class="string">'Not equidistant frequencies/wave numbers in spectrum.'</span>) 
+085   error(<span class="string">'Correct it with specinterp, for example.'</span>) 
+086 <span class="keyword">end</span> 
+087  
+088 <span class="keyword">if</span> nargin&lt;4|isempty(rate), 
+089   rate=1; <span class="comment">%interpolation rate </span>
+090 <span class="keyword">else</span> 
+091   <span class="keyword">if</span> rate&gt;16 
+092     rate=16; 
+093   <span class="keyword">end</span> 
+094   rate=2^nextpow2(rate);<span class="comment">%make sure rate is a power of 2 </span>
+095 <span class="keyword">end</span> 
+096 <span class="keyword">if</span> nargin&lt;3|isempty(Nt), 
+097   Nt = rate*(n-1); 
+098 <span class="keyword">else</span> <span class="comment">%check if Nt is ok </span>
+099   Nt = min(Nt,rate*(n-1));  
+100 <span class="keyword">end</span> 
+101  
+102 <span class="keyword">if</span> prod(size(S.S))~=length(S.S)&amp;(nargin&gt;4 &amp; Nx==0)&amp;(nargin&gt;5 &amp; Ny==0) 
+103   S = <a href="spec2spec.html" class="code" title=" Transforms between different types of spectra">spec2spec</a>(S,<span class="string">'freq'</span>); 
+104   <span class="comment">% If Nx=Ny=0 then a twodimensional spectrum gives no extra information </span>
+105   <span class="comment">% transform to type 'freq', and you do not have to call dspec2dcov </span>
+106 <span class="keyword">end</span> 
+107 <span class="keyword">if</span> prod(size(S.S))~=length(S.S)|(nargin&gt;4 &amp; Nx&gt;0)|(nargin&gt;5 &amp; Ny&gt;0) 
+108   <span class="keyword">if</span> nargin &lt; 5 
+109     Nx=[];Ny=[];dx=[];dy=[]; 
+110   <span class="keyword">end</span> 
+111   <span class="keyword">if</span> nargin &lt; 6 
+112     Ny=[]; 
+113   <span class="keyword">end</span> 
+114   <span class="keyword">if</span> nargin &lt; 7 
+115     dx=[]; 
+116   <span class="keyword">end</span> 
+117   <span class="keyword">if</span> nargin &lt; 8 
+118     dy=[]; 
+119   <span class="keyword">end</span> 
+120    
+121   R = <a href="../../wafo/spec/private/dspec2dcov.html" class="code" title=" Return covariance function given a directional spectrum  ">dspec2dcov</a>(S,nr,Nt,rate,Nx,Ny,dx,dy); 
+122   <span class="keyword">return</span> <span class="comment">% !!!! </span>
+123 <span class="keyword">end</span> 
+124  
+125 <span class="keyword">if</span> strcmpi(ftype,<span class="string">'k'</span>) 
+126   vari=<span class="string">'x'</span>; 
+127 <span class="keyword">else</span> 
+128   vari=<span class="string">'t'</span>; 
+129 <span class="keyword">end</span> 
+130  
+131 R      = <a href="createcov.html" class="code" title=" Covariance class constructor ">createcov</a>(nr,vari); 
+132 <span class="comment">%R.R    = zeros(Nt+1,1); </span>
+133 R.tr   = S.tr; 
+134 R.h    = S.h; 
+135 R.norm = S.norm; 
+136 R.note = S.note; 
+137  
+138  
+139 <span class="comment">%normalize spec so that sum(specn)/(n-1)=R(0)=var(X) </span>
+140 <span class="keyword">switch</span> lower(ftype) 
+141  <span class="keyword">case</span> {<span class="string">'w'</span>,<span class="string">'k'</span>}, 
+142   w     = freq(:); 
+143   dT    = pi/w(n); 
+144   specn = S.S(:)*freq(n); <span class="comment">%S.S(:)*pi/dT; </span>
+145  <span class="keyword">case</span> <span class="string">'f'</span>, 
+146   w     = 2*pi*freq(:); 
+147   dT    = 1/(2*freq(n));  <span class="comment">% sampling interval=1/Fs </span>
+148   specn = S.S(:)*freq(n); <span class="comment">%S.S(:)/(2*dT); </span>
+149  <span class="keyword">otherwise</span> 
+150   error(<span class="string">'unknown frequency type'</span>) 
+151 <span class="keyword">end</span> 
+152  
+153 nfft = rate*2^nextpow2(2*n-2); 
+154  
+155 Rper = [specn; zeros(nfft-(2*n)+2,1) ; conj(specn(n-1:-1:2))]; <span class="comment">% periodogram </span>
+156 t    = (0:Nt)'*dT*((2*n-2)/nfft); 
+157 <span class="comment">%eval(['R.', vari,'=t;']); </span>
+158 R   = setfield(R,vari,t); 
+159 r   = real(fft(Rper,nfft))/(2*n-2); 
+160 <span class="comment">%r   = real(fft(Rper/(2*n-2),nfft)); </span>
+161 R.R = r(1:Nt+1);  
+162 <span class="keyword">if</span> nr&gt;0 
+163   w         = [w ; zeros(nfft-2*n+2,1) ;-w(n-1:-1:2) ]; 
+164   fieldname = [<span class="string">'R'</span> vari(ones(1,nr)) ]; 
+165   <span class="keyword">for</span> ix=1:nr,  
+166     Rper = (-i*w.*Rper); 
+167     r    = real(fft(Rper,nfft))/(2*n-2); 
+168     R    = setfield(R,fieldname(1:ix+1),r(1:Nt+1)); 
+169     <span class="comment">%eval(['R.R' vari(ones(1,ix)) '=r(1:(Nt+1));']);    </span>
+170   <span class="keyword">end</span>   
+171 <span class="keyword">end</span> 
+172  
+173  
+174  
+175  
+176  
+177  
+178</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

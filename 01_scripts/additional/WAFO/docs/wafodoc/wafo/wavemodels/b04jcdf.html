@@ -1,0 +1,246 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of b04jcdf</title>
+  <meta name="keywords" content="b04jcdf">
+  <meta name="description" content="  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; b04jcdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>b04jcdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [p, eps2, a, b] = b04cdf(Hd,Scf,Hs,Tz,tail) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="b04jcdf.html" class="code" title="  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea. ">B04JCDF</a>  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a>. 
+  
+  CALL: F = <a href="b04jcdf.html" class="code" title="  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea. ">b04jcdf</a>(Hd,Scf,Hs,Tz,tail) 
+  
+     F  = CDF 
+    Hd  = zero down crossing wave height. 
+    Scf = crest front steepness. 
+    Hs  = significant wave height. 
+    Tz  = average zero down crossing period. 
+   tail = 1 if upper tail is calculated    
+          0 if lower tail is calulated (default) 
+  
+  <a href="b04cdf.html" class="code" title="  Brodtkorb (2004) joint (Scf,Hd) CDF of laboratory data. ">B04CDF</a> returns the joint CDF of (Scf, Hd) given Hs and Tz, 
+  i.e., crest front steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, given 
+  the seastate. The root mean square values of Hd and Scf (Hrms,Erms) are 
+  related to the significant waveheight and the average zero down 
+  crossing period by: 
+              Hrms = Hs/sqrt(2); 
+              Erms = 5/4*Hs/(Tz^2); 
+    
+    The size of F is the common size of  the input arguments 
+  
+  Examples:  
+   Hs = 5.5; 
+   Tz = 8.5; 
+   sc = 0.25; 
+   hc = 4; 
+   p = <a href="b04jcdf.html" class="code" title="  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea. ">b04jcdf</a>(hc,sc,Hs,Tz) % Prob(Hd&lt;=hc,Scf&lt;=sc|Hs,Tz) = 0.66 
+    
+   % Conditional probability of steep and high waves given seastates 
+   % i.e., Prob(Hd&gt;hc,Scf&gt;sc|Hs,Tz)   
+   upperTail = 1; 
+   Hs = linspace(2.5,11.5,17); 
+   Tz = linspace(4.5,11,16); 
+   [T,H] = meshgrid(Tz,Hs);  
+   p = <a href="b04jcdf.html" class="code" title="  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea. ">b04jcdf</a>(hc,sc,H,T,upperTail); 
+   v = 10.^(-6:-1);   
+   contourf(Tz,Hs,log10(p),log10(v)) 
+   xlabel('Tz') 
+   ylabel('Hs')   
+   <a href="../../wafo/misc/fcolorbar.html" class="code" title="  Display colorbar with discrete color axis for filled contour plot ">fcolorbar</a>(log10(v))   
+    
+  See also  <a href="mk87cdf.html" class="code" title="  Myrhaug and Kjeldsen (1987) joint (Scf,Hd) CDF. ">mk87cdf</a>, <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="b04jpdf.html" class="code" title=" f = b04jpdf(Hd,Scf,Hm0,Tm02, condon,normalizedInput)">b04jpdf</a></li></TD>
+<TD> Brodtkorb (2004) joint (Scf,Hd) PDF from Japan Sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/gaussq.html" class="code" title=" [int, tol1,ix]= gaussq(fun,xlow,xhigh,tol,trace,varargin)">gaussq</a></li></TD>
+<TD> Numerically evaluates a integral using a Gauss quadrature.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [p, eps2, a, b] = b04cdf(Hd,Scf,Hs,Tz,tail) 
+002 <span class="comment">%B04JCDF  Brodtkorb (2004) joint (Scf,Hd) CDF from Japan Sea. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL: F = b04jcdf(Hd,Scf,Hs,Tz,tail) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%    F  = CDF </span>
+007 <span class="comment">%   Hd  = zero down crossing wave height. </span>
+008 <span class="comment">%   Scf = crest front steepness. </span>
+009 <span class="comment">%   Hs  = significant wave height. </span>
+010 <span class="comment">%   Tz  = average zero down crossing period. </span>
+011 <span class="comment">%  tail = 1 if upper tail is calculated    </span>
+012 <span class="comment">%         0 if lower tail is calulated (default) </span>
+013 <span class="comment">% </span>
+014 <span class="comment">% B04CDF returns the joint CDF of (Scf, Hd) given Hs and Tz, </span>
+015 <span class="comment">% i.e., crest front steepness (2*pi*Ac/(g*Td*Tcf)) and wave height, given </span>
+016 <span class="comment">% the seastate. The root mean square values of Hd and Scf (Hrms,Erms) are </span>
+017 <span class="comment">% related to the significant waveheight and the average zero down </span>
+018 <span class="comment">% crossing period by: </span>
+019 <span class="comment">%             Hrms = Hs/sqrt(2); </span>
+020 <span class="comment">%             Erms = 5/4*Hs/(Tz^2); </span>
+021 <span class="comment">%   </span>
+022 <span class="comment">%   The size of F is the common size of  the input arguments </span>
+023 <span class="comment">% </span>
+024 <span class="comment">% Examples:  </span>
+025 <span class="comment">%  Hs = 5.5; </span>
+026 <span class="comment">%  Tz = 8.5; </span>
+027 <span class="comment">%  sc = 0.25; </span>
+028 <span class="comment">%  hc = 4; </span>
+029 <span class="comment">%  p = b04jcdf(hc,sc,Hs,Tz) <span class="comment">% Prob(Hd&lt;=hc,Scf&lt;=sc|Hs,Tz) = 0.66 </span></span>
+030 <span class="comment">%   </span>
+031 <span class="comment">%  <span class="comment">% Conditional probability of steep and high waves given seastates </span></span>
+032 <span class="comment">%  <span class="comment">% i.e., Prob(Hd&gt;hc,Scf&gt;sc|Hs,Tz)   </span></span>
+033 <span class="comment">%  upperTail = 1; </span>
+034 <span class="comment">%  Hs = linspace(2.5,11.5,17); </span>
+035 <span class="comment">%  Tz = linspace(4.5,11,16); </span>
+036 <span class="comment">%  [T,H] = meshgrid(Tz,Hs);  </span>
+037 <span class="comment">%  p = b04jcdf(hc,sc,H,T,upperTail); </span>
+038 <span class="comment">%  v = 10.^(-6:-1);   </span>
+039 <span class="comment">%  contourf(Tz,Hs,log10(p),log10(v)) </span>
+040 <span class="comment">%  xlabel('Tz') </span>
+041 <span class="comment">%  ylabel('Hs')   </span>
+042 <span class="comment">%  fcolorbar(log10(v))   </span>
+043 <span class="comment">%   </span>
+044 <span class="comment">% See also  mk87cdf, gaussq </span>
+045  
+046 <span class="comment">% Reference  </span>
+047 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+048 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+049 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+050 <span class="comment">% Trondheim, Norway.      </span>
+051  
+052  
+053 <span class="comment">%tested on matlab 5.2 </span>
+054 <span class="comment">%history: </span>
+055 <span class="comment">% by  Per A. brodtkorb July 2004 </span>
+056  
+057    
+058 error(nargchk(3,5,nargin))   
+059  
+060 <span class="keyword">if</span> (nargin &lt; 5|isempty(tail)),tail = 0; <span class="keyword">end</span> 
+061 <span class="keyword">if</span> (nargin &lt; 4|isempty(Tz)),Tz = 8; <span class="keyword">end</span> 
+062 <span class="keyword">if</span> (nargin &lt; 3|isempty(Hs)), Hs = 6; <span class="keyword">end</span> 
+063  
+064 multipleSeaStates = any(prod(size(Hs))&gt;1|prod(size(Tz))&gt;1); 
+065 <span class="keyword">if</span> multipleSeaStates 
+066 [errorcode, Scf,Hd,Tz,Hs] = comnsize(Scf,Hd,Tz,Hs); 
+067 <span class="keyword">else</span> 
+068   [errorcode, Scf,Hd] = comnsize(Scf,Hd); 
+069 <span class="keyword">end</span> 
+070 <span class="keyword">if</span> errorcode &gt; 0 
+071   error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+072 <span class="keyword">end</span> 
+073    
+074 Hrms = Hs/sqrt(2); 
+075 Erms = 5/4*Hs./(Tz.^2);  
+076 <span class="comment">%Erms = (0.0202 + 0.826*Hs./(Tz.^2)); </span>
+077  
+078 s = Scf./Erms; 
+079 hMax = 20; 
+080 h = min(Hd./Hrms,hMax); 
+081  
+082 eps2 = 1e-6; 
+083  
+084  
+085 p = zeros(size(Hd)); 
+086 <span class="comment">%k0 = find((Hs&lt;=(Tz-4)*13/6+4)); </span>
+087 upLimit = 6.5/1.4; 
+088 loLimit = 2.5/1.26;; 
+089 k0 = find((loLimit*sqrt(Hs)&lt;Tz)); 
+090 <span class="keyword">if</span> any(k0) 
+091   <span class="keyword">if</span> multipleSeaStates 
+092     h = h(k0); 
+093     s = s(k0); 
+094     Hs = Hs(k0); 
+095     Tz = Tz(k0); 
+096   <span class="keyword">else</span> 
+097     k0 = 1:prod(size(Hd)); 
+098   <span class="keyword">end</span> 
+099   hlim    = h; 
+100    
+101   
+102   h0 = 2.50704530736889; 
+103   normalizedInput = 1; 
+104   lowerTail = 0; 
+105    
+106   <span class="keyword">if</span> 0 
+107     <span class="comment">% This is a trick to get the html documentation correct. </span>
+108     k = <a href="b04jpdf.html" class="code" title=" Brodtkorb (2004) joint (Scf,Hd) PDF from Japan Sea. ">b04jpdf</a>(1,1,2,3); 
+109   <span class="keyword">end</span> 
+110      
+111   <span class="keyword">if</span> (tail == lowerTail) 
+112     k       = find(h&gt;h0); 
+113     hlim(k) = h0; 
+114     p(k0) = <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'b04jpdf'</span>,0,hlim,eps2/2,[],s,Hs,Tz,5,normalizedInput)<span class="keyword">...</span> 
+115     + <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'b04jpdf'</span>,hlim,h,eps2/2,[],s,Hs,Tz,5,normalizedInput);  
+116   <span class="keyword">else</span> 
+117     k       = find(h&lt;h0); 
+118     hlim(k) = h0; 
+119     p(k0) = <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'b04jpdf'</span>,h,hlim,eps2/2,[],s,Hs,Tz,7,normalizedInput)<span class="keyword">...</span> 
+120     + <a href="../../wafo/misc/gaussq.html" class="code" title=" Numerically evaluates a integral using a Gauss quadrature. ">gaussq</a>(<span class="string">'b04jpdf'</span>,hlim,hMax,eps2/2,[],s,Hs,Tz,7,normalizedInput);  
+121   <span class="keyword">end</span> 
+122 <span class="keyword">end</span> 
+123 <span class="keyword">return</span> 
+124  
+125</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

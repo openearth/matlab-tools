@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wgevinv</title>
+  <meta name="keywords" content="wgevinv">
+  <meta name="description" content=" Inverse of the Generalized Extreme Value distribution function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wgevinv.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wgevinv
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Inverse of the Generalized Extreme Value distribution function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> x = wgevinv(F,k,s,m) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wgevinv.html" class="code" title=" Inverse of the Generalized Extreme Value distribution function">WGEVINV</a> Inverse of the Generalized Extreme Value distribution function
+ 
+  CALL:  x = <a href="wgevinv.html" class="code" title=" Inverse of the Generalized Extreme Value distribution function">wgevinv</a>(F,k,s,m)
+ 
+         x = inverse cdf for the GEV distribution evaluated at F
+         k = shape parameter in the GEV 
+         s = scale parameter in the GEV, s&gt;0  (default 1)
+         m = location parameter in the GEV    (default 0)
+ 
+ 
+  The Generalized Extreme Value distribution is defined by its cdf
+ 
+                 exp( - (1 - k(x-m)/s)^1/k) ),  k~=0
+   F(x;k,s,m) =
+                 exp( -exp(-(x-m)/s) ),  k==0
+ 
+   for x&gt;s/k+m (when k&lt;=0) and x&lt;m+s/k (when k&gt;0).
+ 
+  Example:
+    F = linspace(0,1,100);
+    x = <a href="wgevinv.html" class="code" title=" Inverse of the Generalized Extreme Value distribution function">wgevinv</a>(F,0.8,2,11);
+    plot(F,x)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\inf.m">inf</a></li></TD>
+<TD>           Infinity.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="wgevrnd.html" class="code" title=" r = wgevrnd(k,s,m0,varargin);">wgevrnd</a></li></TD>
+<TD> Random matrices from a Generalized Extreme Value distribution</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> x = <a name="_sub0" href="#_subfunctions" class="code">wgevinv</a>(F,k,s,m)
+002 <span class="comment">%WGEVINV Inverse of the Generalized Extreme Value distribution function</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  x = wgevinv(F,k,s,m)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%        x = inverse cdf for the GEV distribution evaluated at F</span>
+007 <span class="comment">%        k = shape parameter in the GEV </span>
+008 <span class="comment">%        s = scale parameter in the GEV, s&gt;0  (default 1)</span>
+009 <span class="comment">%        m = location parameter in the GEV    (default 0)</span>
+010 <span class="comment">%</span>
+011 <span class="comment">%</span>
+012 <span class="comment">% The Generalized Extreme Value distribution is defined by its cdf</span>
+013 <span class="comment">%</span>
+014 <span class="comment">%                exp( - (1 - k(x-m)/s)^1/k) ),  k~=0</span>
+015 <span class="comment">%  F(x;k,s,m) =</span>
+016 <span class="comment">%                exp( -exp(-(x-m)/s) ),  k==0</span>
+017 <span class="comment">%</span>
+018 <span class="comment">%  for x&gt;s/k+m (when k&lt;=0) and x&lt;m+s/k (when k&gt;0).</span>
+019 <span class="comment">%</span>
+020 <span class="comment">% Example:</span>
+021 <span class="comment">%   F = linspace(0,1,100);</span>
+022 <span class="comment">%   x = wgevinv(F,0.8,2,11);</span>
+023 <span class="comment">%   plot(F,x)</span>
+024 
+025 <span class="comment">% References </span>
+026 <span class="comment">%  Johnson  N.L., Kotz S. and Balakrishnan, N. (1994)</span>
+027 <span class="comment">%  Continuous Univariate Distributions, Volume 1. Wiley. </span>
+028 
+029 <span class="comment">% Tested on: Matlab 5.3</span>
+030 <span class="comment">% History: </span>
+031 <span class="comment">% Revised by jr 22.12.1999</span>
+032 <span class="comment">% revised ms 14.06.2000</span>
+033 <span class="comment">% - updated header info</span>
+034 <span class="comment">% - changed name to wgevinv (from gevinv)</span>
+035 <span class="comment">% revised pab 24.10.2000</span>
+036 <span class="comment">% - added  nargchk, comnsize and default values for m, s</span>
+037 
+038 error(nargchk(2,4,nargin))
+039 <span class="keyword">if</span> nargin&lt;3,  s=1;<span class="keyword">end</span>
+040 <span class="keyword">if</span> nargin&lt;4,  m=0;<span class="keyword">end</span>
+041 [errorcode F k,s,m] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(F,k,s,m);
+042 <span class="keyword">if</span> errorcode &gt; 0
+043     error(<span class="string">'k s and m must be of common size or scalar.'</span>);
+044 <span class="keyword">end</span>
+045 
+046 <span class="comment">% Initialize  x to zero.</span>
+047 x = zeros(size(k));
+048 
+049 epsilon=1e-4;
+050 
+051 ok = (F&gt;=0 &amp; F&lt;=1 &amp; s&gt;0);
+052 
+053 k1 = find(abs(k)&lt; epsilon &amp; ok);
+054 <span class="keyword">if</span> any(k1)
+055   x(k1) = m(k1) - s(k1).*log(-log(F(k1)));
+056 <span class="keyword">end</span>
+057 
+058 k2 = find(abs(k)&gt;= epsilon &amp; ok);
+059 <span class="keyword">if</span> any(k2)
+060   x(k2) = m(k2) + s(k2).*(1-(-log(F(k2))).^k(k2))./k(k2);
+061 <span class="keyword">end</span>
+062 
+063 
+064 tmp=Inf;
+065 k3 = find(abs(k) &lt; epsilon &amp; F==1&amp;ok);
+066 <span class="keyword">if</span> any(k3)
+067   x(k3)=tmp(ones(size(k3)));
+068 <span class="keyword">end</span>
+069 k4 = find(abs(k) &gt;= epsilon &amp; F==1&amp;ok);
+070 <span class="keyword">if</span> any(k4)
+071   x(k4)=m(k4)+s(k4)./k(k4);
+072 <span class="keyword">end</span>
+073 
+074 k5=find(F==0&amp;ok);
+075 <span class="keyword">if</span> any(k5),
+076   x(k5)=-tmp(ones(size(k5)));
+077 <span class="keyword">end</span>
+078 
+079 k6=find(~ok);
+080 <span class="keyword">if</span> any(k6),
+081   tmp=NaN;
+082   x(k6)=tmp(ones(size(k6)));
+083 <span class="keyword">end</span>
+084 
+085 
+086 
+087</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

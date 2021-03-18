@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of holmquist1</title>
+  <meta name="keywords" content="holmquist1">
+  <meta name="description" content=" Computes moments for higher order reliability methods.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">trgauss</a> &gt; <a href="index.html">private</a> &gt; holmquist1.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>holmquist1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Computes moments for higher order reliability methods.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> E=holmquist1(S,Q1) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="holmquist1.html" class="code" title=" Computes moments for higher order reliability methods. ">HOLMQUIST1</a> Computes moments for higher order reliability methods.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\matfun\trace.m">trace</a></li></TD>
+<TD>         Sum of diagonal elements.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="holmberg2.html" class="code" title=" E=holmberg2(S,a,b,Q1,Q2)">holmberg2</a></li></TD>
+<TD> Computes moments for higher order reliability methods.</TD>
+</TR>
+<TR>
+<TD><li><a href="holmberg3.html" class="code" title=" E=holmberg3(S,a,b,Q1,Q2,Q3)">holmberg3</a></li></TD>
+<TD> Computes moments for higher order reliability methods.</TD>
+</TR>
+<TR>
+<TD><li><a href="rqlf_asympt.html" class="code" title=" [Cb0,Cb1,a0,a1]=rqlf_asympt(u,g,b,S22,S21)">rqlf_asympt</a></li></TD>
+<TD> Gives first two terms in an asymptotic expansion of the</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>01 <span class="keyword">function</span> E=<a name="_sub0" href="#_subfunctions" class="code">holmquist1</a>(S,Q1) 
+02 <span class="comment">% HOLMQUIST1 Computes moments for higher order reliability methods. </span>
+03  
+04 S=.5*(S+S'); 
+05 Q1=.5*(Q1+Q1'); 
+06 E=trace(Q1*S); 
+07</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of jhvnlpdf</title>
+  <meta name="keywords" content="jhvnlpdf">
+  <meta name="description" content=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; jhvnlpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>jhvnlpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [f,Hrms,Vrms,fA,fB] = jhvnlpdf(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="jhvnlpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. ">JHVNLPDF</a> Joint (Vcf,Hd) PDF for linear waves with a <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum. 
+  
+   CALL: f = <a href="jhvnlpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. ">jhvnlpdf</a>(Hd,Vcf,Hm0,Tp,gamma) 
+   
+   f     = pdf evaluated at (Vcf,Hd) 
+   Hd    = zero down crossing wave height [m] 
+   Vcf   = crest front velocity    [m/s] 
+   Hm0   = significant wave height [m] 
+   Tp    = Spectral peak period    [s] 
+   Gamma = Peakedness parameter of the <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrum 
+  
+  <a href="jhvnlpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. ">JHVNLPDF</a> approximates the joint distribution of (Vcf, Hd), i.e., crest 
+  front velocity (Ac/Tcf) and wave height, for 2nd order Stokes waves with a 
+  <a href="../../wafo/spec/jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectral density. The empirical parameters of the model is 
+  fitted by least squares to simulated (Vcf,Hd) data for 13 classes of 
+  GAMMA between 1 and 7. Between 140000 and 150000 zero-downcrossing waves 
+  were simulated for each class. 
+  <a href="jhvnlpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. ">JHVNLPDF</a> is restricted to the following <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> for GAMMA:  
+   1 &lt;= GAMMA &lt;= 7  
+  
+  Example: 
+  Hm0 = 6;Tp = 9; gam=3.5 
+  h = linspace(0,4*Hm0/sqrt(2))';  
+  v = linspace(0,4*2*Hm0/Tp)'; 
+  [V,H] = meshgrid(v,h);  
+  f = <a href="jhvnlpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. ">jhvnlpdf</a>(H,V,Hm0,Tp,gam); 
+  contourf(v,h,f)     
+  
+  See also  <a href="thvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra. ">thvpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/createpdf.html" class="code" title=" f=createpdf(ndim)">createpdf</a></li></TD>
+<TD> PDF class constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" gam = getjonswappeakedness(Hm0,Tp)">getjonswappeakedness</a></li></TD>
+<TD> Peakedness factor Gamma given Hm0 and Tp for JONSWAP</TD>
+</TR>
+<TR>
+<TD><li><a href="jhnlwparfun.html" class="code" title=" [A0,B0,C0]= jhnlwparfun(Hm0,Tp,gam,dim)">jhnlwparfun</a></li></TD>
+<TD> Wave height, Hd, distribution parameters for Stokes waves with Jonswap spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/range.html" class="code" title=" y = range(x)">range</a></li></TD>
+<TD>  Calculates the difference between the maximum and minimum values.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/smooth.html" class="code" title=" [yy,coefs]= smooth(x,y,p,xx,LinExtrap,d2)">smooth</a></li></TD>
+<TD> Calculates a smoothing spline.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" f = wtweibpdf(x,a,b,c)">wtweibpdf</a></li></TD>
+<TD> Truncated Weibull probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wweibcdf.html" class="code" title=" F = wweibcdf(x,a,c)">wweibcdf</a></li></TD>
+<TD> Weibull cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wweibpdf.html" class="code" title=" f = wweibpdf(x,a,c)">wweibpdf</a></li></TD>
+<TD> Weibull probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp2.m">interp2</a></li></TD>
+<TD>       2-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\interp3.m">interp3</a></li></TD>
+<TD>       3-D interpolation (table lookup).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\meshgrid.m">meshgrid</a></li></TD>
+<TD>      X and Y arrays for 3-D plots.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\polyfun\polyval.m">polyval</a></li></TD>
+<TD>       Evaluate polynomial.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\ops\@opaque\unique.m">unique</a></li></TD>
+<TD>        Set unique.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="jhvnlcdf.html" class="code" title=" f = jhvnlcdf(Hd,Vcf,Hm0,Tp,gam,tail)">jhvnlcdf</a></li></TD>
+<TD> Joint (Vcf,Hd) CDF for non-linear waves with JONSWAP spectrum.</TD>
+</TR>
+<TR>
+<TD><li><a href="jhvnlpdf2.html" class="code" title=" [f,Hrms,Vrms,fA,fB] = jhvnlpdf2(Hd,Vcf,Hm0,Tp,gam,normalizedInput)">jhvnlpdf2</a></li></TD>
+<TD> Joint (Vcf,Hd) PDF for non-linear waves with a JONSWAP spectrum.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [f,Hrms,Vrms,fA,fB] = <a name="_sub0" href="#_subfunctions" class="code">jhvnlpdf</a>(Hd,Vcf,Hm0,Tp,gam,normalizedInput,condon) 
+002 <span class="comment">%JHVNLPDF Joint (Vcf,Hd) PDF for linear waves with a JONSWAP spectrum. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: f = jhvnlpdf(Hd,Vcf,Hm0,Tp,gamma) </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%  f     = pdf evaluated at (Vcf,Hd) </span>
+007 <span class="comment">%  Hd    = zero down crossing wave height [m] </span>
+008 <span class="comment">%  Vcf   = crest front velocity    [m/s] </span>
+009 <span class="comment">%  Hm0   = significant wave height [m] </span>
+010 <span class="comment">%  Tp    = Spectral peak period    [s] </span>
+011 <span class="comment">%  Gamma = Peakedness parameter of the JONSWAP spectrum </span>
+012 <span class="comment">% </span>
+013 <span class="comment">% JHVNLPDF approximates the joint distribution of (Vcf, Hd), i.e., crest </span>
+014 <span class="comment">% front velocity (Ac/Tcf) and wave height, for 2nd order Stokes waves with a </span>
+015 <span class="comment">% JONSWAP spectral density. The empirical parameters of the model is </span>
+016 <span class="comment">% fitted by least squares to simulated (Vcf,Hd) data for 13 classes of </span>
+017 <span class="comment">% GAMMA between 1 and 7. Between 140000 and 150000 zero-downcrossing waves </span>
+018 <span class="comment">% were simulated for each class. </span>
+019 <span class="comment">% JHVNLPDF is restricted to the following range for GAMMA:  </span>
+020 <span class="comment">%  1 &lt;= GAMMA &lt;= 7  </span>
+021 <span class="comment">% </span>
+022 <span class="comment">% Example: </span>
+023 <span class="comment">% Hm0 = 6;Tp = 9; gam=3.5 </span>
+024 <span class="comment">% h = linspace(0,4*Hm0/sqrt(2))';  </span>
+025 <span class="comment">% v = linspace(0,4*2*Hm0/Tp)'; </span>
+026 <span class="comment">% [V,H] = meshgrid(v,h);  </span>
+027 <span class="comment">% f = jhvnlpdf(H,V,Hm0,Tp,gam); </span>
+028 <span class="comment">% contourf(v,h,f)     </span>
+029 <span class="comment">% </span>
+030 <span class="comment">% See also  thvpdf </span>
+031  
+032 <span class="comment">% Reference   </span>
+033 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+034 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+035 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+036 <span class="comment">% Trondheim, Norway.  </span>
+037    
+038 <span class="comment">% History </span>
+039 <span class="comment">% By pab 20.12.2000 </span>
+040  
+041 error(nargchk(4,7,nargin)) 
+042 <span class="keyword">if</span> (nargin &lt; 7|isempty(condon)),  condon  = 0; <span class="keyword">end</span> 
+043 <span class="keyword">if</span> (nargin &lt; 6|isempty(normalizedInput)),  normalizedInput  = 0;<span class="keyword">end</span> 
+044 <span class="keyword">if</span> (nargin &lt; 5|isempty(gam)) 
+045    gam = <a href="../../wafo/spec/getjonswappeakedness.html" class="code" title=" Peakedness factor Gamma given Hm0 and Tp for JONSWAP ">getjonswappeakedness</a>(Hm0,Tp); 
+046 <span class="keyword">end</span> 
+047  
+048 multipleSeaStates = any(prod(size(Hm0))&gt;1|<span class="keyword">...</span> 
+049             prod(size(Tp)) &gt;1|<span class="keyword">...</span> 
+050             prod(size(gam))&gt;1); 
+051 <span class="keyword">if</span> multipleSeaStates 
+052   [errorcode, Vcf,Hd,Hm0,Tp,gam] = comnsize(Vcf,Hd,Hm0,Tp,gam); 
+053 <span class="keyword">else</span> 
+054   [errorcode, Vcf,Hd] = comnsize(Vcf,Hd); 
+055 <span class="keyword">end</span> 
+056 <span class="keyword">if</span> errorcode &gt; 0 
+057   error(<span class="string">'Requires non-scalar arguments to match in size.'</span>); 
+058 <span class="keyword">end</span> 
+059  
+060 displayWarning = 0; 
+061 <span class="keyword">if</span> displayWarning 
+062   <span class="keyword">if</span> any(any(Tp&gt;5*sqrt(Hm0) | Tp&lt;3.6*sqrt(Hm0))) 
+063     disp(<span class="string">'Warning: Hm0,Tp is outside the JONSWAP range'</span>) 
+064     disp(<span class="string">'The validity of the parameters returned are questionable'</span>) 
+065   <span class="keyword">end</span> 
+066 <span class="keyword">end</span> 
+067 k = find(gam&lt;1); 
+068 <span class="keyword">if</span> any(k)  
+069   <span class="keyword">if</span> displayWarning, 
+070     warning(<span class="string">'Peakedness parameter less than 1. Must be larger than 1.'</span>) 
+071   <span class="keyword">end</span> 
+072   gam(k)=1; 
+073 <span class="keyword">end</span> 
+074 k1 = find(7&lt;gam); 
+075 <span class="keyword">if</span> any(k1) 
+076   <span class="keyword">if</span> displayWarning 
+077   warning(<span class="string">'Peakedness parameter larger than 7. The pdf returned is questionable'</span>) 
+078   <span class="keyword">end</span> 
+079   gam(k1) = 7; 
+080 <span class="keyword">end</span> 
+081  
+082 <span class="keyword">global</span> JHVNLPAR 
+083 <span class="keyword">if</span> isempty(JHVNLPAR) 
+084   JHVNLPAR = load(<span class="string">'jhvnlpar.mat'</span>); 
+085 <span class="keyword">end</span> 
+086 <span class="comment">% Weibull distribution parameters as a function of e2 and h2 </span>
+087 A11 = JHVNLPAR.A11s; 
+088 B11 = JHVNLPAR.B11s; 
+089  
+090  
+091  
+092  
+093 <span class="comment">%dev = 2e-5; </span>
+094 c1 =[ 0.16183666835624   1.53691936441548   1.55852759524555]; 
+095 c2 =[ 0.15659478203944   1.15736959972513   1]; 
+096 Tm02 = Tp.*(polyval(c2,gam)./polyval(c1,gam)); 
+097  
+098 <span class="comment">%w    = linspace(0,10.5,16*1024+1).'; <span class="comment">% jonswap original spacing </span></span>
+099 <span class="comment">%ch   = spec2char(jonswap(w,[Hm0,Tp gam]),{'Tm02','eps2'}); </span>
+100 <span class="comment">%Tm02 = ch(1); </span>
+101 <span class="comment">%eps2 = ch(2); </span>
+102  
+103  
+104 <span class="keyword">if</span> normalizedInput 
+105   Hrms = 1; 
+106   Vrms = 1; 
+107 <span class="keyword">else</span> 
+108   Hrms = Hm0/sqrt(2); 
+109   Vrms = 2*Hm0./Tm02; <span class="comment">% Erms </span>
+110 <span class="keyword">end</span> 
+111  
+112 v = Vcf./Vrms; 
+113 h = Hd./Hrms; 
+114 cSize = size(h);  
+115   
+116 <span class="keyword">if</span> gam&lt;1  
+117   disp(<span class="string">'Warning: Peakedness parameter less than 1. Must be larger than 1.'</span>) 
+118     gam=1; 
+119 <span class="keyword">elseif</span> gam&gt;7 
+120   disp(<span class="string">'Warning: Peakedness parameter larger than 7. The pdf returned is questionable'</span>) 
+121 <span class="keyword">end</span>  
+122  
+123  
+124 h2  = JHVNLPAR.h2(:);  <span class="comment">% Hd/Hrms </span>
+125 method =<span class="string">'*cubic'</span>; 
+126 Nh2 = length(h2); 
+127 <span class="keyword">if</span> 1, 
+128    
+129   Tpp  = JHVNLPAR.Tp; <span class="comment">% gamma </span>
+130   Hm00 = JHVNLPAR.Hm0; 
+131   [E1, H1, H2] = meshgrid(Tpp,Hm00,h2); 
+132   Nh2 = length(h2); 
+133   <span class="keyword">if</span> multipleSeaStates 
+134     h   = h(:); 
+135     v   = v(:); 
+136     Tp  = Tp(:); 
+137     Hm0 = Hm0(:); 
+138     gam = gam(:); 
+139     A1 = zeros(length(h),1); 
+140     B1 = A1; 
+141     [TpHm0,ix,jx] = unique([Tp,Hm0],<span class="string">'rows'</span>); 
+142     numSeaStates = length(ix); 
+143     Tpi = zeros(Nh2,1); 
+144     Hm0i = zeros(Nh2,1); 
+145     <span class="keyword">for</span> iz=1:numSeaStates 
+146       k = find(jx==iz); 
+147       Tpi(:)  = TpHm0(iz,1); 
+148       Hm0i(:) = TpHm0(iz,2); 
+149       A1(k) = exp(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp3(E1,H1,H2,log(A11),Tpi,Hm0i,h2,method),<span class="keyword">...</span> 
+150              1,h(k),1)); 
+151       B1(k) = exp(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp3(E1,H1,H2,log(B11),Tpi,Hm0i,h2,method),<span class="keyword">...</span> 
+152              1,h(k),1)); 
+153     <span class="keyword">end</span> 
+154   <span class="keyword">else</span> 
+155     Tpi  = repmat(Tp,[Nh2,1]); 
+156     Hm0i = repmat(Hm0,[Nh2,1]); 
+157     A1 = exp(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp3(E1,H1,H2,log(A11),Tpi,Hm0i,h2,method),1,h,1)); 
+158     B1 = exp(<a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp3(E1,H1,H2,log(B11),Tpi,Hm0i,h2,method),1,h,1)); 
+159   <span class="keyword">end</span> 
+160 <span class="keyword">else</span> 
+161   e2  = JHVNLPAR.gam; <span class="comment">% gamma </span>
+162    
+163   [E2 H2] = meshgrid(e2,h2); 
+164 <span class="keyword">if</span> multipleSeaStates 
+165   h   = h(:); 
+166   v   = v(:); 
+167   Tp  = Tp(:); 
+168   Hm0 = Hm0(:); 
+169   gam = gam(:); 
+170 <span class="comment">%  eps2 = eps2(:); </span>
+171   A1 = zeros(length(h),1); 
+172   B1 = A1; 
+173   [gamu,ix,jx] = unique(gam); 
+174   numSeaStates = length(gamu); 
+175   gami = zeros(Nh2,1); 
+176   <span class="keyword">for</span> iz=1:numSeaStates 
+177     k = find(jx==iz); 
+178     gami(:) = gamu(iz); 
+179     A1(k) = <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp2(E2,H2,A11,gami,h2,method),1,h(k),1); 
+180     B1(k) = <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp2(E2,H2,B11,gami,h2,method),1,h(k),1); 
+181   <span class="keyword">end</span> 
+182 <span class="keyword">else</span> 
+183   A1 = <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp2(E2,H2,A11,gam(ones(size(h2))),h2,method),1,h,1); 
+184   B1 = <a href="../../wafo/misc/smooth.html" class="code" title=" Calculates a smoothing spline.">smooth</a>(h2,interp2(E2,H2,B11,gam(ones(size(h2))),h2,method),1,h,1); 
+185 <span class="keyword">end</span> 
+186 <span class="keyword">end</span> 
+187 [A0,B0,C0] = <a href="jhnlwparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Stokes waves with Jonswap spectrum. ">jhnlwparfun</a>(Hm0,Tp,gam); 
+188  
+189 <span class="keyword">switch</span> condon, 
+190  <span class="keyword">case</span> 0, <span class="comment">% regular pdf is returned  </span>
+191   f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h,A0,B0,C0).*<a href="../../wafo/wstats/wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(v,A1,B1); 
+192  <span class="keyword">case</span> 1, <span class="comment">%pdf conditioned on x1 ie. p(x2|x1)  </span>
+193   f = <a href="../../wafo/wstats/wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(v,A1,B1); 
+194  <span class="keyword">case</span> 3, <span class="comment">% secret option  used by XXstat: returns x2*p(x2|x1)  </span>
+195   f = v.*<a href="../../wafo/wstats/wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(v,A1,B1); 
+196  <span class="keyword">case</span> 4, <span class="comment">% secret option  used by XXstat: returns x2.^2*p(x2|x1)  </span>
+197   f = v.^2.*<a href="../../wafo/wstats/wweibpdf.html" class="code" title=" Weibull probability density function">wweibpdf</a>(v,A1,B1); 
+198  <span class="keyword">case</span> 5, <span class="comment">% p(h)*P(V|h) is returned special case used by jhvnlcdf2 </span>
+199   f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h,A0,B0,C0).*<a href="../../wafo/wstats/wweibcdf.html" class="code" title=" Weibull cumulative distribution function">wweibcdf</a>(v,A1,B1); 
+200  <span class="keyword">case</span> 6, <span class="comment">% P(V|h) is returned special case used by jhvnlcdf </span>
+201   f = <a href="../../wafo/wstats/wweibcdf.html" class="code" title=" Weibull cumulative distribution function">wweibcdf</a>(v,A1,B1); 
+202  <span class="keyword">case</span> 7,<span class="comment">% p(h)*(1-P(V|h)) is returned special case used by jhvnlcdf </span>
+203   f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h,A0,B0,C0).*(1-<a href="../../wafo/wstats/wweibcdf.html" class="code" title=" Weibull cumulative distribution function">wweibcdf</a>(v,A1,B1)); 
+204  <span class="keyword">otherwise</span> error(<span class="string">'unknown option'</span>) 
+205 <span class="keyword">end</span> 
+206 <span class="keyword">if</span> multipleSeaStates 
+207   f = reshape(f,cSize); 
+208 <span class="keyword">end</span> 
+209  
+210 <span class="keyword">if</span> condon~=6 
+211   f = f./Hrms./Vrms; 
+212 <span class="keyword">end</span> 
+213 f(find(isnan(f)|isinf(f) ))=0; 
+214 <span class="keyword">if</span> any(size(f)~=cSize) 
+215   disp(<span class="string">'Wrong size'</span>) 
+216 <span class="keyword">end</span> 
+217  
+218 <span class="keyword">if</span> nargout&gt;3, 
+219   fA      = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2); 
+220   fA.f    = A11; 
+221   fA.x    = {e2,h2}; 
+222   fA.labx = {<span class="string">'Gamma'</span>, <span class="string">'h'</span>}; 
+223   fA.note = [<span class="string">'The conditonal Weibull distribution Parameter A(h,gamma)/Hrms'</span> <span class="keyword">...</span> 
+224     <span class="string">'for wave heigth as a function of h=Hd/Hrms and gamma for'</span> <span class="keyword">...</span> 
+225     <span class="string">'the Jonswap spectrum'</span>]; 
+226      
+227   ra = <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(A11(:)); 
+228   st = round(min(A11(:))*100)/100; 
+229   en = max(A11(:)); 
+230   fA.cl   = st:ra/20:en; 
+231 <span class="keyword">end</span> 
+232 <span class="keyword">if</span> nargout&gt;4, 
+233   fB      = <a href="../../wafo/trgauss/createpdf.html" class="code" title=" PDF class constructor">createpdf</a>(2); 
+234   fB.f    = B11; 
+235   fB.x    = {e2,h2}; 
+236   fB.labx = {<span class="string">'Gamma'</span>, <span class="string">'h'</span>}; 
+237   fB.note = [<span class="string">'The conditonal Weibull distribution Parameter B(h,gamma)/Hrms'</span> <span class="keyword">...</span> 
+238     <span class="string">'for wave heigth as a function of h=Hd/Hrms and gamma for'</span> <span class="keyword">...</span> 
+239     <span class="string">'the Jonswap spectrum'</span>]; 
+240   ra = <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a>(B11(:)); 
+241   st = round(min(B11(:))*100)/100; 
+242   en = max(B11(:)); 
+243   fB.cl   = st:ra/20:en; 
+244 <span class="keyword">end</span> 
+245 <span class="keyword">return</span> 
+246  
+247  
+248  
+249  
+250  
+251  
+252</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

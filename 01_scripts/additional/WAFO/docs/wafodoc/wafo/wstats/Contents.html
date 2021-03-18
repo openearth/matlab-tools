@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="  Module WSTATS in WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; Contents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Module WSTATS in WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  Module WSTATS in WAFO Toolbox. 
+  Version 2.1.1  07-Sep-2005
+ 
+  What's new
+    <a href="Readme.html" class="code" title=" Readme file for module WSTATS in WAFO Toolbox.">Readme</a>     - New features, bug fixes, and changes in WSTATS. 
+ 
+  Parameter estimation
+    <a href="loglike.html" class="code" title=" [LL,C]=loglike(phat,varargin)">loglike</a>    - Log-likelihood function
+    <a href="wbetafit.html" class="code" title=" [phat, cov,pci]=wbetafit(data1, plotflag);">wbetafit</a>   - Parameter estimates for Beta data
+    <a href="wchi2fit.html" class="code" title=" [phat, cov,pci]=wchi2fit(data1, plotflag);">wchi2fit</a>   - Parameter estimates for Chi squared data
+    <a href="wexpfit.html" class="code" title=" [phat, var,pCI] = wexpfit(data,plotflag)">wexpfit</a>    - Parameter estimates for Exponential data
+    <a href="wgamfit.html" class="code" title=" [phat, cov,pci]=wgamfit(data1, plotflag);">wgamfit</a>    - Parameter estimates for Gamma data
+    <a href="wgamafit.html" class="code" title=" l=wgamafit(a,A,G)">wgamafit</a>   - Is an internal routine for <a href="wgamfit.html" class="code" title=" [phat, cov,pci]=wgamfit(data1, plotflag);">wgamfit</a>
+    <a href="wgevfit.html" class="code" title=" [phat,cov,pci] = wgevfit(data,method,start,plotflag)">wgevfit</a>    - Parameter estimates for GEV data
+    <a href="wgevlike.html" class="code" title=" [ll,cov] = wgevlike(p,sample)">wgevlike</a>   - Is an internal routine for <a href="wgevfit.html" class="code" title=" [phat,cov,pci] = wgevfit(data,method,start,plotflag)">wgevfit</a>
+    <a href="wggamfit.html" class="code" title=" [phat, cov,pci]=wggamfit(data1, plotflag,chat0);">wggamfit</a>   - Parameter estimates for Generalized Gamma data
+    <a href="wggambfit.html" class="code" title=" l=wggambfit(b,data,F,def)">wggambfit</a>  - Is an internal routine for <a href="wggamfit.html" class="code" title=" [phat, cov,pci]=wggamfit(data1, plotflag,chat0);">wggamfit</a>
+    <a href="wgpdfit.html" class="code" title=" [parms,cov] = wgpdfit(data,method,plotflag)">wgpdfit</a>    - Parameter estimates for GPD data
+    <a href="wgpdfit_ml.html" class="code" title=" [f,k,s] = wgpdfit_ml(x,data)">wgpdfit_ml</a> - Internal routine for <a href="wgpdfit.html" class="code" title=" [parms,cov] = wgpdfit(data,method,plotflag)">wgpdfit</a> (ML estimates for GPD data)
+    <a href="wgumbfit.html" class="code" title=" [phat, cov,pci] = wgumbfit(data1, plotflag)">wgumbfit</a>   - Parameter estimates for Gumbel data
+    <a href="wgumbafit.html" class="code" title=" l=wgumbafit(a,data)">wgumbafit</a>  - Is an internal routine for <a href="wgumbfit.html" class="code" title=" [phat, cov,pci] = wgumbfit(data1, plotflag)">wgumbfit</a>
+    <a href="winvgfit.html" class="code" title=" [phat, var,ciL,ciU] = winvgfit(data,plotflag)">winvgfit</a>   - Parameter estimates for Inverse Gaussian data
+    <a href="wlognfit.html" class="code" title=" [phat, var,ciL,ciU] = wlognfit(data,plotflag)">wlognfit</a>   - Parameter estimates for Lognormal data
+    <a href="wnormfit.html" class="code" title=" [phat, var,ciL,ciU] = wnormfit(data,plotflag)">wnormfit</a>   - Parameter estimates for Normal data
+    <a href="wraylfit.html" class="code" title=" [phat, var,pci] = wraylfit(data,plotflag)">wraylfit</a>   - Parameter estimates for Rayleigh data
+    <a href="wtraylfit.html" class="code" title=" [phat,cov,pci] = wtraylfit(data,plotflag)">wtraylfit</a>  - Parameter estimates for Truncated Rayleigh data
+    <a href="wtfit.html" class="code" title=" [phat, cov,pci]=wtfit(data1, plotflag);">wtfit</a>      - Parameter estimates for Student's T data
+    <a href="wweibfit.html" class="code" title=" [phat, cov, pci]=wweibfit(data1, plotflag);">wweibfit</a>   - Parameter estimates for Weibull data
+    <a href="wweibcfit.html" class="code" title=" l=wweibcfit(c,data)">wweibcfit</a>  - Is an internal routine for <a href="wweibfit.html" class="code" title=" [phat, cov, pci]=wweibfit(data1, plotflag);">wweibfit</a>
+    <a href="wtweibfit.html" class="code" title=" [phat, cov, pci]=wtweibfit(data1, plotflag);">wtweibfit</a>  - Parameter estimates for Truncated Weibull data
+    <a href="wtweibfun.html" class="code" title=" y=wtweibfun(phat,x,F,def,monitor)">wtweibfun</a>  - Is an internal routine for <a href="wtweibfit.html" class="code" title=" [phat, cov, pci]=wtweibfit(data1, plotflag);">wtweibfit</a>
+    <a href="weib2dfit.html" class="code" title=" [phat, cov,pci]=weib2dfit(data1,data2,method,given,gparam,alpha)">weib2dfit</a>  - Parameter estimates for 2D Weibull data
+    <a href="weib2dlike.html" class="code" title=" [LL, C] = weib2dlike(param1,data1,data2,given,gparam)">weib2dlike</a> - 2D Weibull log-likelihood function
+    <a href="dist2dfit.html" class="code" title=" [phat] =dist2dfit(V,H,dist,res,method,monitor,chat0)">dist2dfit</a>  - Parameter estimates for DIST2D data
+    <a href="dist2dsmfun.html" class="code" title=" [Av , Bv , Cv ]=dist2dsmfun(phat,h2,CSMA,lin_extrap)">dist2dsmfun</a>  - Smooths the conditional DIST2D distribution parameters
+    <a href="dist2dsmfun2.html" class="code" title=" sphat=dist2dsmfun2(phat,h2,csm,lin,visual,f0)">dist2dsmfun2</a> - Smooths the conditional DIST2D distribution parameters
+    <a href="mdist2dfit.html" class="code" title=" phato=mdist2dfit(V,H,dist,alpha,method)">mdist2dfit</a>   - Parameter estimates for MDIST2D data
+    <a href="mdist2dlike.html" class="code" title=" [LL, cov] = mdist2dlike(params,data1,data2,dist)">mdist2dlike</a>  - MDIST log-likelihood function
+ 
+  Probability density functions (pdf)
+    <a href="wbetapdf.html" class="code" title=" f = wbetapdf(x,a,b)">wbetapdf</a>   - Beta probability density function 
+    <a href="wchi2pdf.html" class="code" title=" f = wchi2pdf(x,p,disable);">wchi2pdf</a>   - Chi squared probability density function
+    <a href="wexppdf.html" class="code" title=" f = wexppdf(x,m);">wexppdf</a>    - Exponential probability density function
+    <a href="wfpdf.html" class="code" title=" f = wfpdf(x,a,b)">wfpdf</a>      - Snedecor's F probability density function 
+    <a href="wfrechpdf.html" class="code" title=" f = wfrechpdf(x,a,c)">wfrechpdf</a>  - Frechet probability density function
+    <a href="wgampdf.html" class="code" title=" f = wgampdf(x,a,b);">wgampdf</a>    - Gamma probability density function
+    <a href="wggampdf.html" class="code" title=" f = wggampdf(x,a,b,c);">wggampdf</a>   - Generalized Gamma probability density function
+    <a href="wgevpdf.html" class="code" title=" f = wgevpdf(x,k,s,m);">wgevpdf</a>    - Generalized Extreme Value probability density function
+    <a href="wgpdpdf.html" class="code" title=" f = wgpdpdf(x,k,s,m);">wgpdpdf</a>    - Generalized Pareto probability density function
+    <a href="wgumbpdf.html" class="code" title=" f = wgumbpdf(x,a,b,trunc)">wgumbpdf</a>   - Gumbel probability density function
+    <a href="winvgpdf.html" class="code" title=" f = winvgpdf(x,m,l);">winvgpdf</a>   - Inverse Gaussian probability density function
+    <a href="wlognpdf.html" class="code" title=" f = wlognpdf(x,m,v);">wlognpdf</a>   - Lognormal probability density function
+    <a href="wnormpdf.html" class="code" title=" f = wnormpdf(x,m,v);">wnormpdf</a>   - Normal probability density function
+    <a href="mvnormpdf.html" class="code" title=" pdf = mvnormpdf(X,m,S)">mvnormpdf</a>  - Multivariate Normal probability density function
+    <a href="wraylpdf.html" class="code" title=" f = wraylpdf(x,b);">wraylpdf</a>   - Rayleigh probability density function
+    <a href="wtraylpdf.html" class="code" title=" f = wraylpdf(x,b,c);">wtraylpdf</a>  - Truncated Rayleigh probability density function
+    <a href="wtpdf.html" class="code" title=" f = wtpdf(x,df,disable)">wtpdf</a>      - Student's T probability density function 
+    <a href="wweibpdf.html" class="code" title=" f = wweibpdf(x,a,c)">wweibpdf</a>   - Weibull probability density function
+    <a href="wtweibpdf.html" class="code" title=" f = wtweibpdf(x,a,b,c)">wtweibpdf</a>  - Truncated Weibull probability density function
+    <a href="weib2dpdf.html" class="code" title=" y = weib2dpdf(x1,x2,a1,b1,a2,b2,c12,condon)">weib2dpdf</a>  - 2D Weibull probability density function (pdf)
+    <a href="weib2dpdf2.html" class="code" title=" y = weib2dpdf2(v1,h1,phat)">weib2dpdf2</a> - Joint 2D Weibull probability density function 
+    <a href="dist2dpdf.html" class="code" title=" y = dist2dpdf(v1,h1,phat)">dist2dpdf</a>  - Joint 2D PDF computed as f(x1|X2=x2)*f(x2) 
+    <a href="dist2dpdf2.html" class="code" title=" y = dist2dpdf2(v1,h1,phat)">dist2dpdf2</a> - Joint 2D PDF computed as f(x1|X2=x2)*f(x2)
+    <a href="mdist2dpdf.html" class="code" title=" y = mdist2dpdf(V,H,phat,condon)">mdist2dpdf</a> - Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi)
+    <a href="mdist2dpdf2.html" class="code" title=" y = dist2dpdf2(v1,h1,phat)">mdist2dpdf2</a> - Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi)
+ 
+  Cumulative distribution functions (cdf)
+    <a href="wbetacdf.html" class="code" title=" F = wbetacdf(x,a,b)">wbetacdf</a>   - Beta cumulative distribution function 
+    <a href="wchi2cdf.html" class="code" title=" F = wchi2cdf(x,p);">wchi2cdf</a>   - Chi squared cumulative distribution function
+    <a href="wexpcdf.html" class="code" title=" F = wexpcdf(x,m);">wexpcdf</a>    - Exponential cumulative distribution function
+    <a href="wfcdf.html" class="code" title=" F = wfcdf(x,a,b)">wfcdf</a>      - Snedecor's F cumulative distribution function 
+    <a href="wfrechcdf.html" class="code" title=" F = wfrechcdf(x,a,c)">wfrechcdf</a>  - Frechet cumulative distribution function
+    <a href="wgamcdf.html" class="code" title=" F = wgamcdf(x,a,b);">wgamcdf</a>    - Gamma cumulative distribution function
+    <a href="wggamcdf.html" class="code" title=" F = wggamcdf(x,a,b,c);">wggamcdf</a>   - Generalized Gamma cumulative distribution function
+    <a href="wgevcdf.html" class="code" title=" F = wgevcdf(x,k,s,m);">wgevcdf</a>    - Generalized Extreme Value cumulative distribution function
+    <a href="wgpdcdf.html" class="code" title=" F = wgpdcdf(x,k,s,m);">wgpdcdf</a>    - Generalized Pareto cumulative distribution function
+    <a href="wgumbcdf.html" class="code" title=" F = wgumbcdf(x,a,b,trunc)">wgumbcdf</a>   - Gumbel cumulative distribution function
+    <a href="winvgcdf.html" class="code" title=" F = winvgcdf(x,m,l);">winvgcdf</a>   - Inverse Gaussian cumulative distribution function
+    <a href="wlogncdf.html" class="code" title=" F = wlogncdf(x,m,v);">wlogncdf</a>   - Lognormal cumulative distribution function
+    <a href="wnormcdf.html" class="code" title=" F = wnormcdf(x,m,v);">wnormcdf</a>   - Normal cumulative distribution function
+    <a href="wraylcdf.html" class="code" title=" F = wraylcdf(x,b);">wraylcdf</a>   - Rayleigh cumulative distribution function
+    <a href="wtraylcdf.html" class="code" title=" F = wraylcdf(x,b,c,a);">wtraylcdf</a>  - Truncated Rayleigh cumulative distribution function
+    <a href="wtcdf.html" class="code" title=" F = wtcdf(x,df)">wtcdf</a>      - Student's T  cumulative distribution function 
+    <a href="wweibcdf.html" class="code" title=" F = wweibcdf(x,a,c)">wweibcdf</a>   - Weibull cumulative distribution function
+    <a href="wtweibcdf.html" class="code" title=" F = wtweibcdf(x,a,b,c)">wtweibcdf</a>  - Truncated Weibull cumulative distribution function
+    <a href="weib2dcdf.html" class="code" title=" [y ,tol1] = weib2dcdf(x1,x2,param,condon,tol)">weib2dcdf</a>  - Joint 2D Weibull cumulative distribution function 
+    <a href="weib2dprb.html" class="code" title=" [y ,eps1] = weib2dprb(phat,x1lo,x1up,x2lo,x2up)">weib2dprb</a>  - Returns the probability for rectangular regions. 
+    <a href="dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a>  - Joint 2D CDF computed as int F(X1&lt;v|X2=x2).*f(x2)dx2 
+    <a href="dist2dfun.html" class="code" title=" y=dist2dfun(H,V)">dist2dfun</a>  - Is an internal function to <a href="dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a> <a href="dist2dprb.html" class="code" title=" [y ,eps1] = dist2dprb(phat,x1lo,x1up,x2lo,x2up)">dist2dprb</a>.
+    <a href="dist2dprb.html" class="code" title=" [y ,eps1] = dist2dprb(phat,x1lo,x1up,x2lo,x2up)">dist2dprb</a>  - Returns the probability for rectangular regions.
+    <a href="mdist2dcdf.html" class="code" title=" y = mdist2dcdf(V,H,phat,condon)">mdist2dcdf</a> - Joint 2D CDF due to Plackett
+ 
+  Inverse cumulative distribution functions
+    <a href="wbetainv.html" class="code" title=" x = wbetainv(F,a,b)">wbetainv</a>   - Inverse of the Beta distribution function 
+    <a href="wchi2inv.html" class="code" title=" x = wchi2inv(F,p)">wchi2inv</a>   - Inverse of the Chi squared distribution function
+    <a href="wexpinv.html" class="code" title=" x = wexpinv(F,m)">wexpinv</a>    - Inverse of the Exponential distribution function
+    <a href="wfinv.html" class="code" title=" x = wfinv(F,a,b)">wfinv</a>      - Inverse of the Snedecor's F distribution function
+    <a href="wgaminv.html" class="code" title=" x = wgaminv(F,a,b)">wgaminv</a>    - Inverse of the Gamma distribution function
+    <a href="wggaminv.html" class="code" title=" x = wggaminv(F,a,b,c)">wggaminv</a>   - Inverse of the Generalized Gamma distribution function
+    <a href="wgevinv.html" class="code" title=" x = wgevinv(F,k,s,m)">wgevinv</a>    - Inverse of the Generalized Extreme Value distribution function
+    <a href="wgpdinv.html" class="code" title=" x = wgpdinv(F,k,s,m)">wgpdinv</a>    - Inverse of the Generalized Pareto distribution function
+    <a href="wgumbinv.html" class="code" title=" x = wgumbinv(F,a,b,trunc)">wgumbinv</a>   - Inverse of the Gumbel distribution function
+    <a href="winvginv.html" class="code" title=" x = winvginv(F,m,l)">winvginv</a>   - Inverse of the Inverse Gaussian distribution function
+    <a href="wlogninv.html" class="code" title=" x = wlogninv(F,m,v)">wlogninv</a>   - Inverse of the Lognormal distribution function
+    <a href="wnorminv.html" class="code" title=" x = wnorminv(F,m,v)">wnorminv</a>   - Inverse of the Normal distribution function
+    <a href="wraylinv.html" class="code" title=" x = wraylinv(F,b)">wraylinv</a>   - Inverse of the Rayleigh distribution function
+    <a href="wtinv.html" class="code" title=" x = wtinv(F,df)">wtinv</a>      - Inverse of the Student's T distribution function
+    <a href="wweibinv.html" class="code" title=" x = wweibinv(F,a,c)">wweibinv</a>   - Inverse of the Weibull distribution function
+    <a href="weib2dcinv.html" class="code" title=" [x, k2]= weib2dcinv(x1,p,a1,b1,a2,b2,c12,tol);">weib2dcinv</a> - Inverse of the conditional 2D weibull cdf of X2 given X1.
+    <a href="mdist2dcinv.html" class="code" title=" [x, ind]= mdist2dcinv(x1,p,phat);">mdist2dcinv</a> - Inverse of the conditional cdf of X2 given X1.
+ 
+  Random number generators
+    <a href="walpharnd.html" class="code" title=" R = walpharnd(a,varargin);">walpharnd</a>  - Random matrices from a symmetric alpha-stable distribution
+    <a href="wbetarnd.html" class="code" title=" R = rbeta(a,b,varargin)">wbetarnd</a>   - Random matrices from an Beta distribution 
+    <a href="wchi2rnd.html" class="code" title=" R = wchi2rnd(p,varargin);">wchi2rnd</a>   - Random matrices from a Chi squared distribution
+    <a href="wexprnd.html" class="code" title=" R = wexprnd(m0,varargin);">wexprnd</a>    - Random matrices from an Exponential distribution
+    <a href="wfrnd.html" class="code" title=" R = wfrnd(a,b,varargin)">wfrnd</a>      - Random matrices from a Snedecor's F distribution
+    <a href="wfrechinv.html" class="code" title=" x = wfrechinv(F,a,c)">wfrechinv</a>  - Inverse of the Frechet distribution function
+    <a href="wgamrnd.html" class="code" title=" R = wgamrnd(a,b,varargin);">wgamrnd</a>    - Random matrices from a Gamma distribution
+    <a href="wggamrnd.html" class="code" title=" R = wggamrnd(a,b,c,varargin);">wggamrnd</a>   - Random matrices from a Generalized Gamma distribution
+    <a href="wgevrnd.html" class="code" title=" r = wgevrnd(k,s,m0,varargin);">wgevrnd</a>    - Random matrices from a Generalized Extreme-Value distribution
+    <a href="wgpdrnd.html" class="code" title=" r = wgpdrnd(k,s,m0,varargin);">wgpdrnd</a>    - Random matrices from a Generalized Pareto Distribution
+    <a href="wgumbrnd.html" class="code" title=" R = wgumbrnd(a,b,trunc, varargin)">wgumbrnd</a>   - Random matrices from a Gumbel distribution
+    <a href="winvgrnd.html" class="code" title=" R = winvgrnd(m0,l,varargin);">winvgrnd</a>   - Random matrices from an Inverse Gaussian distribution
+    <a href="wlognrnd.html" class="code" title=" R = wlognrnd(mu,v,varargin);">wlognrnd</a>   - Random matrices from a Lognormal distribution
+    <a href="wmnormrnd.html" class="code" title=" r = wmnormrnd(mu,sa,cases,method,cutoff);">wmnormrnd</a>  - Random vectors from a multivariate Normal distribution
+    <a href="wnormrnd.html" class="code" title=" R = wnormrnd(mu,v,varargin);">wnormrnd</a>   - Random matrices from a Normal distribution
+    <a href="wraylrnd.html" class="code" title=" R = wraylrnd(b,varargin);">wraylrnd</a>   - Random matrices from a Rayleigh distribution
+    <a href="wtrnd.html" class="code" title=" R = rt(df,varargin)">wtrnd</a>      - Random matrices from a Student's T distribution
+    <a href="wweibrnd.html" class="code" title=" R = wweibrnd(a,c,varargin)">wweibrnd</a>   - Random matrices from a Weibull distribution
+    <a href="weib2drnd.html" class="code" title=" [r1, r2, ind]= weib2drnd(parm,m,n,tol)">weib2drnd</a>  - Random numbers from the 2D Weibull distribution.
+    <a href="dist2drnd.html" class="code" title=" [V,H] = dist2drnd(N,phat,csm,lin)">dist2drnd</a>  - Random points from a bivariate DIST2D distribution
+    <a href="mdist2drnd.html" class="code" title=" [V,H,ind] = mdist2drnd(N,phat)">mdist2drnd</a> - Random points from a bivariate MDIST2D distribution 
+ 
+  Statistics
+    <a href="wbetastat.html" class="code" title=" [m,v]= wbetastat(a,c);">wbetastat</a>  - Mean and variance for the Beta distribution.
+    <a href="wchi2stat.html" class="code" title=" [m,v]= wchi2stat(p);">wchi2stat</a>  - Mean and variance for the Chi squared distribution
+    <a href="wexpstat.html" class="code" title=" [m,v]= wexpstat(m0);">wexpstat</a>   - Mean and variance for the Exponential distribution
+    <a href="wfstat.html" class="code" title=" [m,v]= wfstat(a,c);">wfstat</a>     - Mean and variance for the Snedecor's F distribution
+    <a href="wfrechstat.html" class="code" title=" [m,v]= wfrechstat(a,c);">wfrechstat</a> - Mean and variance for the Frechet distribution
+    <a href="wgamstat.html" class="code" title=" [m,v]= wgamstat(a,b);">wgamstat</a>   - Mean and variance for the Gamma distribution
+    <a href="wggamstat.html" class="code" title=" [m,v]= wggamstat(a,b,c);">wggamstat</a>  - Mean and variance for the Generalized Gamma distribution
+    <a href="wgevstat.html" class="code" title=" [m,v]= wgevstat(k,s,m0);">wgevstat</a>   - Mean and variance for the GEV distribution
+    <a href="wgpdstat.html" class="code" title=" [m,v]= wgpdstat(k,s,m0);">wgpdstat</a>   - Mean and variance for the Generalized Pareto distribution
+    <a href="wgumbstat.html" class="code" title=" [m,v]= wgumbstat(a,b,trunc);">wgumbstat</a>  - Mean and variance for the Gumbel distribution
+    <a href="winvgstat.html" class="code" title=" [m,v]= winvgstat(m0,l0);">winvgstat</a>  - Mean and variance for the Inverse Gaussian distribution
+    <a href="wlognstat.html" class="code" title=" [m,v]= wlognstat(m0,v0);">wlognstat</a>  - Mean and variance for the Lognormal distribution
+    <a href="wnormstat.html" class="code" title=" [m,v]= wnormstat(m0,v0);">wnormstat</a>  - Mean and variance for the Normal distribution
+    <a href="wraylstat.html" class="code" title=" [m,v]= wraylstat(b);">wraylstat</a>  - Mean and variance for the Rayleigh
+    <a href="wtstat.html" class="code" title=" [m,v]= wtstat(a);">wtstat</a>     - Mean and variance for the Student's T  distribution
+    <a href="wweibstat.html" class="code" title=" [m,v]= wweibstat(a,c);">wweibstat</a>  - Mean and variance for the Weibull distribution
+    <a href="weib2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = weib2dstat(a1,b1,a2,b2,c12,condon,cvar,tol)">weib2dstat</a> - Mean and variance for the 2D Weibull distribution 
+    <a href="dist2dstat.html" class="code" title=" [M,V, eps2, a ,b] = dist2dstat(phat,condon,cvar,csm,lin)">dist2dstat</a> - Mean and variance for the DIST2D distribution 
+    <a href="mdist2dstat.html" class="code" title=" [M ,V ,Tm ,cvar, tolm, tolv] = mdist2dstat(phat,condon,cvar,tol)">mdist2dstat</a> - Mean and variance for the MDIST2D distribution 
+ 
+  Descriptive Statistics
+    mean       - Computes <a href="../../wafo/kdetools/sample.html" class="code" title=" s=sample(A,m,r)">sample</a> mean (in matlab toolbox)
+    median     - Computes <a href="../../wafo/kdetools/sample.html" class="code" title=" s=sample(A,m,r)">sample</a> median value (in matlab toolbox)
+    std        - Computes standard deviation (in matlab toolbox)
+    <a href="var.html" class="code" title=" y = var(x, dim)">var</a>        - Computes <a href="../../wafo/kdetools/sample.html" class="code" title=" s=sample(A,m,r)">sample</a> variance (in matlab toolbox)
+    cov        - Computes <a href="../../wafo/kdetools/sample.html" class="code" title=" s=sample(A,m,r)">sample</a> covariance matrix (in matlab toolbox)
+    corrcoef   - Computes <a href="../../wafo/kdetools/sample.html" class="code" title=" s=sample(A,m,r)">sample</a> correlation coefficients (in matlab toolbox)
+    <a href="wkurtosis.html" class="code" title=" k = wkurtosis(X,dim)">wkurtosis</a>  - Computes <a href="../../wafo/kdetools/sample.html" class="code" title=" s=sample(A,m,r)">sample</a> kurtosis
+    <a href="wskewness.html" class="code" title=" s = wskewness(X,dim)">wskewness</a>  - Computes <a href="../../wafo/kdetools/sample.html" class="code" title=" s=sample(A,m,r)">sample</a> skewness
+    <a href="iqr.html" class="code" title=" r = iqr(X,dim)">iqr</a>        - Computes the Inter Quartile <a href="range.html" class="code" title=" y = range(x)">Range</a> 
+    <a href="range.html" class="code" title=" y = range(x)">range</a>      - Calculates the difference between maximum and minimum values
+ 
+  Statistical plotting
+    <a href="wgumbplot.html" class="code" title=" phat = wgumbplot(x)">wgumbplot</a>  - Plots data on a Gumbel distribution paper
+    <a href="wnormplot.html" class="code" title=" wnormplot(x,nr1,nr2,df);">wnormplot</a>  - Plots data on a Normal distribution paper
+    <a href="wweibplot.html" class="code" title=" phat = wweibplot(x)">wweibplot</a>  - Plots data on a Weibull distribution paper
+    <a href="wexpplot.html" class="code" title=" phat = wexpplot(x)">wexpplot</a>   - Plots data on a Exponential distribution paper
+    <a href="wraylplot.html" class="code" title=" bhat = wraylplot(x)">wraylplot</a>  - Plots data on a Rayleigh distribution paper
+    <a href="wqqplot.html" class="code" title=" h=wqqplot(x,y,ps);">wqqplot</a>    - Plots empirical quantile vs empirical quantile 
+    <a href="distplot.html" class="code" title=" h = wdistplot(x,dist)">distplot</a>   - Displays a 1D distribution probability plot
+    <a href="empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a>   - Computes and plots the empirical CDF
+    <a href="cempdistr.html" class="code" title=" [Fz1] = cempdistr(z,varargin)">cempdistr</a>  - Computes and plots the conditional empirical CDF
+    <a href="whisto.html" class="code" title=" binwidth = whisto(x,N,odd,scale,lintype)">whisto</a>     - Plots a histogram
+    <a href="kdeplot.html" class="code" title=" [fx] = kdeplot(data,g,plotflag,h)">kdeplot</a>    - Computes and plots a kernel estimate of PDF
+    <a href="identify.html" class="code" title=" v = identify(x,y,arg3,arg4)">identify</a>   - <a href="identify.html" class="code" title=" v = identify(x,y,arg3,arg4)">Identify</a> points on a plot by clicking with the mouse. 
+    <a href="pairs.html" class="code" title=" J = pairs(X,varargin)">pairs</a>      - Pairwise scatter plots.
+    <a href="weib2dcdfplot.html" class="code" title=" weib2dcdfplot(V,H,varargin)">weib2dcdfplot</a>   - Plot conditional empirical CDF of X1 given X2=x2 
+    <a href="weib2dstatplot.html" class="code" title=" [ax11, h11, h22 ]=weib2dstatplot(V,H,phat,res,varargin)">weib2dstatplot</a>  - Computes and plots the conditional mean and standard deviation
+    <a href="dist2dcdfplot.html" class="code" title=" dist2dcdfplot(V,H,varargin)">dist2dcdfplot</a>   - Plot conditional empirical CDF of X1 given X2=x2 
+    <a href="dist2dparamplot.html" class="code" title=" dist2dparamplot(PV1,sPV1,plotflag),">dist2dparamplot</a> - Plot parameters of the conditional distribution 
+    <a href="dist2dstatplot.html" class="code" title=" [ax11, h11, h22 ]=dist2dstatplot(V,H,varargin)">dist2dstatplot</a>  - Computes and plots the conditional mean and standard deviation 
+    <a href="mdist2dcdfplot.html" class="code" title=" mdist2dcdfplot(V,H,varargin)">mdist2dcdfplot</a>  - Plot conditional empirical CDF of X1 given X2=x2 
+    <a href="mdist2dstatplot.html" class="code" title=" [ax11, h11, h22 ]=mdist2dstatplot(V,H,phat,condon ,res)">mdist2dstatplot</a> - Computes and plots the conditional mean and standard deviation 
+ 
+  Hypothesis Tests
+    <a href="wgumbtest.html" class="code" title=" p = wgumbtest(x,a)">wgumbtest</a>  - Tests whether the shape parameter in a GEV is equal to zero
+ 
+  Design of Experiments
+    <a href="yates.html" class="code" title=" [ef, id]=yates(y,varargin)">yates</a>      - Calculates main and interaction effects using <a href="yates.html" class="code" title=" [ef, id]=yates(y,varargin)">Yates</a>' algorithm.
+    <a href="ryates.html" class="code" title=" [y, id]=ryates(ef)">ryates</a>     - Reverse <a href="yates.html" class="code" title=" [ef, id]=yates(y,varargin)">Yates</a>' algorithm to give estimated responses
+    <a href="fitmodel.html" class="code" title=" [fit,res,sd,dof] = fitmodel(y,model)">fitmodel</a>   - Fits response by polynomial
+    <a href="alias.html" class="code" title=" [I00,I11] = alias(I0,order)">alias</a>      - <a href="alias.html" class="code" title=" [I00,I11] = alias(I0,order)">Alias</a> structure of a fractional design
+    <a href="cdr.html" class="code" title=" [I0,R] = cdr(I,varargin)">cdr</a>        - Complete Defining Relation
+    <a href="cl2cnr.html" class="code" title=" I1 = cl2cnr(I)">cl2cnr</a>     - Column Label to Column Number
+    <a href="cnr2cl.html" class="code" title=" I1 = cnr2cl(I)">cnr2cl</a>     - Column Number to Column Label
+    <a href="ffd.html" class="code" title=" [D,I] = ffd(n,I)">ffd</a>        - Two-level Fractional Factorial Design 
+    <a href="getmodel.html" class="code" title=" [model, ind] = getmodel(ef,id,treshLow,treshUp)">getmodel</a>   - Return the model parameters
+    <a href="sudg.html" class="code" title=" [I,R] = sudg(n,p,varargin)">sudg</a>       - Some Useful Design Generators
+    <a href="cplot.html" class="code" title=" h = cplot(y,D)">cplot</a>      - Cubic plot of responses
+    <a href="nplot.html" class="code" title=" h= nplot(ef,id,offset)">nplot</a>      - Normal probability plot of effects
+ 
+  Misc
+    <a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a>   - Check if all input arguments are either scalar or of common size.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

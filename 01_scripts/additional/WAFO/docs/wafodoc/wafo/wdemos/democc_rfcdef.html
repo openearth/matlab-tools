@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of democc_rfcdef</title>
+  <meta name="keywords" content="democc_rfcdef">
+  <meta name="description" content=" illustrates the definition of rainflow cycles.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wdemos</a> &gt; democc_rfcdef.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wdemos&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>democc_rfcdef
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> illustrates the definition of rainflow cycles.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> ccrfc=democc_rfcdef(proc,tp,point,ccrfc) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="democc_rfcdef.html" class="code" title=" illustrates the definition of rainflow cycles. ">DEMOCC_RFCDEF</a> illustrates the definition of rainflow cycles. 
+  
+  CALL: ccrfc=<a href="democc_rfcdef.html" class="code" title=" illustrates the definition of rainflow cycles. ">democc_rfcdef</a>(proc,tp,point,ccrfc) 
+  
+  Used by <a href="democc.html" class="code" title=" A program for visualization of cycle counts in random ">democc</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="democc_markmax.html" class="code" title=" k=democc_markmax(proc,tp,k,diff)">democc_markmax</a></li></TD>
+<TD> plots load and marks a maximum</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\inf.m">inf</a></li></TD>
+<TD>           Infinity.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\audiovideo\@audiorecorder\pause.m">pause</a></li></TD>
+<TD>         Wait for user response.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\ident\ident\@iddata\plot.m">plot</a></li></TD>
+<TD>          Linear plot.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> ccrfc=<a name="_sub0" href="#_subfunctions" class="code">democc_rfcdef</a>(proc,tp,point,ccrfc) 
+002 <span class="comment">%DEMOCC_RFCDEF illustrates the definition of rainflow cycles. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL: ccrfc=democc_rfcdef(proc,tp,point,ccrfc) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">% Used by democc  </span>
+007    
+008 <span class="comment">% Tested on: matlab 5.3 </span>
+009 <span class="comment">% History: </span>
+010 <span class="comment">% Revised by PJ 10-Jan-2000 </span>
+011 <span class="comment">%   updated for WAFO </span>
+012 <span class="comment">% Original version by Mats Frendahl </span>
+013    
+014 ms = 20; <span class="comment">% markersize </span>
+015    
+016 <a href="democc_markmax.html" class="code" title=" plots load and marks a maximum ">democc_markmax</a>(proc,tp,point,0); 
+017  
+018 proc=[(1:length(proc))' proc(:,2)]; 
+019 time=proc(:,1); L=proc(:,2); n=length(L); 
+020  
+021 level=tp(point,2); refpoint=tp(point,1); 
+022 hold on, title(<span class="string">'Definition of rainflow count'</span>) 
+023 crossleft=max(find(L(1:tp(point,1))&gt;tp(point,2))); 
+024 <span class="keyword">if</span> isempty(crossleft), 
+025    crossleft=1; 
+026    noleft=1; 
+027 <span class="keyword">else</span> 
+028    noleft=0; 
+029 <span class="keyword">end</span> 
+030 leftdepth=min(L(crossleft:refpoint)); 
+031 c1=[crossleft refpoint]; c2=[level level]; 
+032 plot(c1,c2,<span class="string">'--'</span>),  
+033  
+034 pause(1) 
+035  
+036 leftindex=find(L(crossleft:refpoint)==leftdepth)+crossleft-1; 
+037 plot(leftindex,leftdepth,<span class="string">'k.'</span>,<span class="string">'markersize'</span>,ms) 
+038 plot([leftindex leftindex],[leftdepth level],<span class="string">'--'</span>); 
+039  
+040 pause(1) 
+041  
+042 list=find(L&gt;=level); 
+043 <span class="keyword">if</span> ( (length(list)&gt;1) &amp; ( refpoint&lt;max(list))) 
+044    index=find(list==refpoint); 
+045    crossright=list(index+1); 
+046    noright=0; 
+047 <span class="keyword">else</span> 
+048    crossright=n; 
+049    noright=1; 
+050 <span class="keyword">end</span> 
+051  
+052 plot([tp(point,1) crossright],[level level],<span class="string">'--'</span>),  
+053  
+054 pause(1) 
+055  
+056 <span class="keyword">if</span> noright == 1 
+057    rightdepth = -Inf; 
+058 <span class="keyword">else</span> 
+059    rightdepth=min(L(refpoint:crossright)); 
+060    rightindex=find(L(refpoint:crossright)==rightdepth)+refpoint-1; 
+061    plot(rightindex,rightdepth,<span class="string">'k.'</span>,<span class="string">'markersize'</span>,ms) 
+062    plot([rightindex rightindex],[rightdepth level],<span class="string">'--'</span>); 
+063 <span class="keyword">end</span> 
+064  
+065 pause(1) 
+066  
+067 <span class="keyword">if</span> leftdepth&gt;rightdepth 
+068    plot([leftindex leftindex],[leftdepth level]); 
+069    rfcmin=leftdepth; 
+070    <span class="keyword">if</span> noright~=1, 
+071       plot(rightindex,rightdepth,<span class="string">'k.'</span>,<span class="string">'erase'</span>,<span class="string">'xor'</span>,<span class="string">'markersize'</span>,ms) 
+072    <span class="keyword">end</span> 
+073 <span class="keyword">else</span> 
+074    plot([rightindex rightindex],[rightdepth level]); 
+075    rfcmin=rightdepth; 
+076 <span class="comment">%   if noleft~=1 </span>
+077       plot(leftindex,leftdepth,<span class="string">'k.'</span>,<span class="string">'erase'</span>,<span class="string">'xor'</span>,<span class="string">'markersize'</span>,ms) 
+078 <span class="comment">%   end </span>
+079 <span class="keyword">end</span> 
+080  
+081 hold off 
+082  
+083 <span class="keyword">if</span> isempty(ccrfc) 
+084    ccrfc=[rfcmin level]; 
+085 <span class="keyword">else</span> 
+086    ccrfc=[ccrfc; rfcmin level]; 
+087 <span class="keyword">end</span> 
+088  
+089</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

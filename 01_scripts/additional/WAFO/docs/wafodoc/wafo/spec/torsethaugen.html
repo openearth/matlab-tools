@@ -1,0 +1,512 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of torsethaugen</title>
+  <meta name="keywords" content="torsethaugen">
+  <meta name="description" content=" Calculates a double peaked (swell + wind) spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">spec</a> &gt; torsethaugen.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\spec&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>torsethaugen
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates a double peaked (swell + wind) spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [S, Sw, Ss]=torsethaugen(w1,sdata,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">TORSETHAUGEN</a> Calculates a double peaked (swell + wind) spectrum 
+ 
+   CALL: [S, Ss, Sw] = <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>(w,data,plotflag); 
+         [S, Ss, Sw] = <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>(wc,data,plotflag); 
+ 
+    S, Ss, Sw = spectrum struct for total, swell and wind, respectively.  
+         w    = angular frequency (default linspace(0,wc,257))
+         wc   = angular cutoff frequency (default 33/Tp)
+         data = [Hm0 Tp A]
+                Hm0 = Significant wave height      (default 7)
+                Tp  = 2*pi/wp, primary peak period (deafult 11)
+                A   = alpha, normalization factor, (default -1)
+                    A&lt;0  : A calculated by integration so that int S dw =Hm0^2/16
+                    A==0 : A = (1+f1(N,M)*log(gammai)^f2(N,M))/gammai, original 
+                          parametric normalization  
+     plotflag = 0, do not plot the spectrum (default).
+                1, plot the spectrum.
+ 
+  For zero values, NaN's or parameters not specified in DATA the
+  default values are used. 
+ 
+  Model:  S(w)=Ss(w)+Sw(w) 
+  where Ss and Sw are modified <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">JONSWAP</a> spectrums for 
+  swell and wind peak, respectively.
+  The energy is divided between the two peaks according
+  to empirical parameters, which peak that is primary depends on parameters.   
+  The empirical parameters are found for classes of Hm0 and Tp,
+  originating from a dataset consisting of 20 000 spectra divided
+  into 146 different classes of Hm0 and Tp. (Data measured at the
+  Statfjord field in the North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a> in a period from 1980 to 1989.)
+  The <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> of the measured  Hm0 and Tp for the dataset
+  are from 0.5 to 11 meters and from 3.5 to 19 sec, respectively.
+  See <a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> (1996).
+ 
+  Preliminary comparisons with spectra from other areas indicate that 
+  some of the empirical parameters are dependent on geographical location.
+  Thus the model must be used with care for other areas than the
+  North <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">Sea</a> and <a href="../../wafo/data/sea.html" class="code" title=" Surface elevation dataset used in WAT version 1.1.">sea</a> states outside the area where measured data 
+  are available.
+ 
+  Example: [S,Sw,Ss]=<a href="torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>([],[6 8],1)
+ 
+  See also  <a href="jonswap.html" class="code" title=" Calculates (and plots) a JONSWAP spectral density">jonswap</a>, <a href="pmspec.html" class="code" title=" Calculates (and plots) a Pierson-Moskowitz spectral density.">pmspec</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="createspec.html" class="code" title=" S=createspec(stype,freqtype)">createspec</a></li></TD>
+<TD> Spectrum structure constructor</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/gravity.html" class="code" title=" g=gravity(phi)">gravity</a></li></TD>
+<TD>  returns the constant acceleration of gravity</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/misc/simpson.html" class="code" title=" [area,epsi,a,b] = simpson(x,f,dim)">simpson</a></li></TD>
+<TD> Numerical integration with the Simpson method</TD>
+</TR>
+<TR>
+<TD><li><a href="wspecplot.html" class="code" title=" wspecplot(S,varargin)">wspecplot</a></li></TD>
+<TD> Plot a spectral density</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\gamma.dll">gamma</a></li></TD>
+<TD>         Gamma function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\ishold.m">ishold</a></li></TD>
+<TD>        Return hold state.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\linspace.m">linspace</a></li></TD>
+<TD>      Linearly spaced vector.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\num2str.m">num2str</a></li></TD>
+<TD>       Convert number to string. (Fast version)</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\strcat.m">strcat</a></li></TD>
+<TD>        Concatenate strings.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter1.html" class="code" title="This is a script file.">Chapter1</a></li></TD>
+<TD> % CHAPTER1 demonstrates some applications of WAFO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter2.html" class="code" title="This is a script file.">Chapter2</a></li></TD>
+<TD> % CHAPTER2 Modelling random loads and stochastic waves</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/tutorcom/Chapter3.html" class="code" title="This is a script file.">Chapter3</a></li></TD>
+<TD> % CHAPTER3  Demonstrates distributions of wave characteristics</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/itmkurs/itmkurs_lab3.html" class="code" title="This is a script file.">itmkurs_lab3</a></li></TD>
+<TD> Script to computer exercises 3</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wavemodels/thspdf2.html" class="code" title=" [f,varargout] = thspdf2(Hd,Scf,Hm0,Tp,normalizedInput)">thspdf2</a></li></TD>
+<TD> Joint (Scf,Hd) PDF for linear waves with Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafoinit.html" class="code" title=" wafoinit">wafoinit</a></li></TD>
+<TD>  setup all global variables of the WAFODEMO</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> S = localJonswap(w,Hm0,Tp,gammai,N,M,A)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="keyword">function</span> [S, Sw, Ss]=<a name="_sub0" href="#_subfunctions" class="code">torsethaugen</a>(w1,sdata,plotflag)
+0002 <span class="comment">% TORSETHAUGEN Calculates a double peaked (swell + wind) spectrum </span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%  CALL: [S, Ss, Sw] = torsethaugen(w,data,plotflag); </span>
+0005 <span class="comment">%        [S, Ss, Sw] = torsethaugen(wc,data,plotflag); </span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   S, Ss, Sw = spectrum struct for total, swell and wind, respectively.  </span>
+0008 <span class="comment">%        w    = angular frequency (default linspace(0,wc,257))</span>
+0009 <span class="comment">%        wc   = angular cutoff frequency (default 33/Tp)</span>
+0010 <span class="comment">%        data = [Hm0 Tp A]</span>
+0011 <span class="comment">%               Hm0 = Significant wave height      (default 7)</span>
+0012 <span class="comment">%               Tp  = 2*pi/wp, primary peak period (deafult 11)</span>
+0013 <span class="comment">%               A   = alpha, normalization factor, (default -1)</span>
+0014 <span class="comment">%                   A&lt;0  : A calculated by integration so that int S dw =Hm0^2/16</span>
+0015 <span class="comment">%                   A==0 : A = (1+f1(N,M)*log(gammai)^f2(N,M))/gammai, original </span>
+0016 <span class="comment">%                         parametric normalization  </span>
+0017 <span class="comment">%    plotflag = 0, do not plot the spectrum (default).</span>
+0018 <span class="comment">%               1, plot the spectrum.</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% For zero values, NaN's or parameters not specified in DATA the</span>
+0021 <span class="comment">% default values are used. </span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Model:  S(w)=Ss(w)+Sw(w) </span>
+0024 <span class="comment">% where Ss and Sw are modified JONSWAP spectrums for </span>
+0025 <span class="comment">% swell and wind peak, respectively.</span>
+0026 <span class="comment">% The energy is divided between the two peaks according</span>
+0027 <span class="comment">% to empirical parameters, which peak that is primary depends on parameters.   </span>
+0028 <span class="comment">% The empirical parameters are found for classes of Hm0 and Tp,</span>
+0029 <span class="comment">% originating from a dataset consisting of 20 000 spectra divided</span>
+0030 <span class="comment">% into 146 different classes of Hm0 and Tp. (Data measured at the</span>
+0031 <span class="comment">% Statfjord field in the North Sea in a period from 1980 to 1989.)</span>
+0032 <span class="comment">% The range of the measured  Hm0 and Tp for the dataset</span>
+0033 <span class="comment">% are from 0.5 to 11 meters and from 3.5 to 19 sec, respectively.</span>
+0034 <span class="comment">% See Torsethaugen (1996).</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% Preliminary comparisons with spectra from other areas indicate that </span>
+0037 <span class="comment">% some of the empirical parameters are dependent on geographical location.</span>
+0038 <span class="comment">% Thus the model must be used with care for other areas than the</span>
+0039 <span class="comment">% North Sea and sea states outside the area where measured data </span>
+0040 <span class="comment">% are available.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">% Example: [S,Sw,Ss]=torsethaugen([],[6 8],1)</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">% See also  jonswap, pmspec.</span>
+0045 
+0046 <span class="comment">% References </span>
+0047 <span class="comment">%  Torsethaugen, K. (1996)</span>
+0048 <span class="comment">%  Model for a doubly peaked wave spectrum </span>
+0049 <span class="comment">%  Report No. STF22 A96204. SINTEF Civil and Environm. Engineering, Trondheim</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%  Torsethaugen, K. (1994)</span>
+0052 <span class="comment">%  'Model for a doubly peaked spectrum. Lifetime and fatigue strength</span>
+0053 <span class="comment">%  estimation implications.' </span>
+0054 <span class="comment">%  International Workshop on Floating Structures in Coastal zone,</span>
+0055 <span class="comment">%  Hiroshima, November 1994.</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%  Torsethaugen, K. (1993)</span>
+0058 <span class="comment">%  'A two peak wave spectral model.'</span>
+0059 <span class="comment">%  In proceedings OMAE, Glasgow</span>
+0060 
+0061 
+0062 <span class="comment">% Tested on Matlab 5.3 </span>
+0063 <span class="comment">% History: </span>
+0064 <span class="comment">% Revised pab april 2005</span>
+0065 <span class="comment">% revised pab 12.12.2000</span>
+0066 <span class="comment">% - fixed a bug: Hpw = 0 or Hps = 0 is now handled properly</span>
+0067 <span class="comment">% - sdata may now contain NaN's </span>
+0068 <span class="comment">% revised pab 16.02.2000</span>
+0069 <span class="comment">%  -added ih, see at the end</span>
+0070 <span class="comment">% revised pab 20.12.1999</span>
+0071 <span class="comment">%  -added norm</span>
+0072 <span class="comment">%  -changed default value of Hm0 to 7 (equal to jonswap)</span>
+0073 <span class="comment">% revised pab 01.12.1999</span>
+0074 <span class="comment">%  - updated the reference</span>
+0075 <span class="comment">% revised  es 23.09.1999</span>
+0076 <span class="comment">%  - updated documentation</span>
+0077 <span class="comment">%  - added note</span>
+0078 <span class="comment">% by pab 23.06.1999</span>
+0079 
+0080 monitor=0;
+0081 <span class="comment">% default values</span>
+0082 Hm0   = 7;
+0083 Tp    = 11; 
+0084 Aj    = -1;
+0085 data2 = [Hm0, Tp, Aj];
+0086 nd2   = length(data2);
+0087 <span class="keyword">if</span> nargin&lt;3|isempty(plotflag),  plotflag = 0;       <span class="keyword">end</span>
+0088 <span class="keyword">if</span> (nargin&gt;1) &amp; ~isempty(sdata), 
+0089   nd = length(sdata); 
+0090   ind = find(~isnan(sdata(1:min(nd,nd2))));
+0091   <span class="keyword">if</span> any(ind), <span class="comment">% replace default values with those from input data</span>
+0092     data2(ind) = sdata(ind);
+0093   <span class="keyword">end</span>
+0094 <span class="keyword">end</span>
+0095 <span class="keyword">if</span> (nd2&gt;0) &amp; (data2(1)&gt;0), Hm0 = data2(1);<span class="keyword">end</span>
+0096 <span class="keyword">if</span> (nd2&gt;1) &amp; (data2(2)&gt;0),  Tp = data2(2);<span class="keyword">end</span>
+0097 <span class="keyword">if</span> (nd2&gt;2) &amp; (data2(3)==0),  Aj = data2(3);<span class="keyword">end</span>
+0098 
+0099 w = [];
+0100 <span class="keyword">if</span> nargin&lt;1|isempty(w1), 
+0101    wc = 33/Tp;
+0102 <span class="keyword">elseif</span> length(w1)==1,
+0103    wc = w1; 
+0104 <span class="keyword">else</span>
+0105    w = w1 ;
+0106 <span class="keyword">end</span>
+0107 nw = 257;
+0108 
+0109 <span class="keyword">if</span> isempty(w),      w = linspace(0,wc,nw).'; <span class="keyword">end</span>
+0110 
+0111 w=w(:);
+0112 
+0113 n      = length(w);
+0114 S      = <a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>(<span class="string">'freq'</span>);
+0115 S.S    = zeros(n,1);
+0116 S.w    = w;
+0117 S.norm = 0; <span class="comment">% not normalized spectra</span>
+0118 Sw = S;
+0119 Ss = S;
+0120 
+0121 <span class="keyword">if</span> Hm0&gt;11| Hm0&gt;max((Tp/3.6).^2, (Tp-2)*12/11)
+0122   disp(<span class="string">'Warning: Hm0 is outside the valid range'</span>)
+0123   disp(<span class="string">'The validity of the spectral density is questionable'</span>)
+0124 <span class="keyword">end</span>
+0125 <span class="keyword">if</span> Tp&gt;20|Tp&lt;3 
+0126   disp(<span class="string">'Warning: Tp is outside the valid range'</span>)
+0127   disp(<span class="string">'The validity of the spectral density is questionable'</span>)
+0128 <span class="keyword">end</span>
+0129 wp = 2*pi/Tp;
+0130 
+0131 
+0132 <span class="comment">%initializing</span>
+0133 
+0134 <span class="comment">%sigma used in the peak enhancement factor</span>
+0135 sa  = 0.07; <span class="comment">% sigma_a for w/wp&lt;1</span>
+0136 sb  = 0.09; <span class="comment">% sigma_b for w/wp&gt;1</span>
+0137 
+0138 g = <a href="../../wafo/misc/gravity.html" class="code" title="  returns the constant acceleration of gravity ">gravity</a>; <span class="comment">% m/s^2</span>
+0139 
+0140 <span class="comment">% The parameter values below are found comparing the </span>
+0141 <span class="comment">% model to average measured spectra for the Statfjord Field</span>
+0142 <span class="comment">% in the Northern North Sea.</span>
+0143 Af  = 6.6;   <span class="comment">%m^(-1/3)*sec</span>
+0144 AL  = 2;     <span class="comment">%sec/sqrt(m)</span>
+0145 Au  = 25;    <span class="comment">%sec</span>
+0146 KG  = 35; 
+0147 KG0 = 3.5;
+0148 KG1 = 1;     <span class="comment">% m</span>
+0149 r   = 0.857; <span class="comment">% 6/7</span>
+0150 K0  = 0.5;   <span class="comment">%1/sqrt(m)</span>
+0151 K00 = 3.2;
+0152 
+0153 M0  = 4;
+0154 B1  = 2;    <span class="comment">%sec</span>
+0155 B2  = 0.7;
+0156 B3  = 3.0;  <span class="comment">%m</span>
+0157 S0  = 0.08; <span class="comment">%m^2*s</span>
+0158 S1  = 3;    <span class="comment">%m</span>
+0159 
+0160 <span class="comment">% Preliminary comparisons with spectra from other areas indicate that </span>
+0161 <span class="comment">% the parameters on the line below can be dependent on geographical location</span>
+0162 A10 = 0.7; A1 = 0.5; A20 = 0.6; A2 = 0.3; A3 = 6;
+0163 
+0164 Tf = Af*(Hm0)^(1/3);
+0165 Tl = AL*sqrt(Hm0);   <span class="comment">% lower limit</span>
+0166 Tu = Au;             <span class="comment">% upper limit</span>
+0167 
+0168 <span class="comment">%Non-dimensional scales</span>
+0169 <span class="comment">% New call pab April 2005</span>
+0170 El = min(max((Tf-Tp)/(Tf-Tl),0),1); <span class="comment">%wind sea</span>
+0171 Eu = min(max((Tp-Tf)/(Tu-Tf),0),1); <span class="comment">%Swell</span>
+0172 
+0173 <span class="comment">%El = ((Tf-Tp)/(Tf-Tl)), <span class="comment">%wind sea</span></span>
+0174 <span class="comment">%Eu = ((Tp-Tf)/(Tu-Tf)), <span class="comment">%Swell</span></span>
+0175 
+0176 
+0177 <span class="keyword">if</span> Tp&lt;Tf, <span class="comment">% Wind dominated seas  </span>
+0178   <span class="comment">% Primary peak (wind dominated)</span>
+0179   Nw  = K0*sqrt(Hm0)+K00;             <span class="comment">% high frequency exponent</span>
+0180   Mw  = M0;                           <span class="comment">% spectral width exponent</span>
+0181   Rpw = min((1-A10)*exp(-(El/A1)^2)+A10,1);
+0182   Hpw = Rpw*Hm0;                      <span class="comment">% significant waveheight wind</span>
+0183   Tpw = Tp;                           <span class="comment">% primary peak period</span>
+0184   <span class="comment">% peak enhancement factor</span>
+0185   gammaw = KG*(1+KG0*exp(-Hm0/KG1))*(2*pi/g*Rpw*Hm0/(Tp^2))^r;
+0186   gammaw = max(gammaw,1);
+0187   <span class="comment">% Secondary peak (swell)</span>
+0188   Ns  = Nw;                <span class="comment">% high frequency exponent</span>
+0189   Ms  = Mw;                <span class="comment">% spectral width exponent</span>
+0190   Rps = sqrt(1-Rpw^2);
+0191   Hps = Rps*Hm0;           <span class="comment">% significant waveheight swell</span>
+0192   Tps = Tf+B1;
+0193   gammas = 1;
+0194   
+0195  
+0196   <span class="keyword">if</span> Rps &gt; 0.1
+0197     disp(<span class="string">'     Spectrum for Wind dominated sea'</span>)
+0198   <span class="keyword">else</span> 
+0199     disp(<span class="string">'     Spectrum for pure wind sea'</span>)
+0200   <span class="keyword">end</span>
+0201 <span class="keyword">else</span> <span class="comment">%swell dominated seas</span>
+0202    
+0203   <span class="comment">% Primary peak (swell)</span>
+0204   Ns  = K0*sqrt(Hm0)+K00;             <span class="comment">%high frequency exponent</span>
+0205   Ms  = M0;                           <span class="comment">%spectral width exponent</span>
+0206   Rps = min((1-A20)*exp(-(Eu/A2)^2)+A20,1);
+0207   Hps = Rps*Hm0;                      <span class="comment">% significant waveheight swell</span>
+0208   Tps = Tp;                           <span class="comment">% primary peak period</span>
+0209   <span class="comment">% peak enhancement factor</span>
+0210   gammas = KG*(1+KG0*exp(-Hm0/KG1))*(2*pi/g*Hm0/(Tf^2))^r*(1+A3*Eu);
+0211   gammas = max(gammas,1); 
+0212   
+0213   <span class="comment">% Secondary peak (wind)</span>
+0214   Nw   = Ns;                       <span class="comment">% high frequency exponent</span>
+0215   Mw   = M0*(1-B2*exp(-Hm0/B3));   <span class="comment">% spectral width exponent</span>
+0216   Rpw  = sqrt(1-Rps^2);
+0217   Hpw  = Rpw*Hm0;                  <span class="comment">% significant waveheight wind</span>
+0218   G0w  = Mw/((Nw/Mw)^(-(Nw-1)/Mw)*gamma((Nw-1)/Mw )); <span class="comment">%normalizing factor</span>
+0219   <span class="keyword">if</span> Hpw&gt;0,
+0220     Tpw  = (16*S0*(1-exp(-Hm0/S1))*(0.4)^Nw/( G0w*Hpw^2))^(-1/(Nw-1));
+0221   <span class="keyword">else</span>
+0222     Tpw = inf;
+0223   <span class="keyword">end</span>
+0224   <span class="comment">%Tpw  = max(Tpw,2.5)</span>
+0225   gammaw = 1;
+0226  
+0227   <span class="keyword">if</span> Rpw &gt; 0.1
+0228     disp(<span class="string">'     Spectrum for swell dominated sea'</span>)
+0229   <span class="keyword">else</span> 
+0230     disp(<span class="string">'     Spectrum for pure swell sea'</span>)
+0231   <span class="keyword">end</span>    
+0232 <span class="keyword">end</span>
+0233 <span class="keyword">if</span> (3.6*sqrt(Hm0)&lt;= Tp &amp; Tp&lt;=5*sqrt(Hm0))
+0234    disp(<span class="string">'     Jonswap range'</span>)
+0235 <span class="keyword">end</span>
+0236 <span class="keyword">if</span> monitor,
+0237   disp([<span class="string">'Hm0 = '</span> num2str(Hm0)])
+0238   disp([<span class="string">'Ns, Ms = '</span> num2str([Ns Ms]) <span class="string">'  Nw, Mw = '</span> num2str([Nw Mw])]) 
+0239   disp([<span class="string">'gammas = '</span> num2str(gammas) <span class="string">' gammaw = '</span> num2str(gammaw)])
+0240   disp([<span class="string">'Rps = '</span> num2str(Rps) <span class="string">' Rpw = '</span> num2str(Rpw)]) 
+0241   disp([<span class="string">'Hps = '</span> num2str(Hps) <span class="string">' Hpw = '</span> num2str(Hpw)])   
+0242   disp([<span class="string">'Tps = '</span> num2str(Tps) <span class="string">' Tpw = '</span> num2str(Tpw)]) 
+0243 <span class="keyword">end</span>
+0244 
+0245 <span class="comment">%G0s=Ms/((Ns/Ms)^(-(Ns-1)/Ms)*gamma((Ns-1)/Ms )); <span class="comment">%normalizing factor </span></span>
+0246 
+0247 <span class="comment">% Wind part</span>
+0248 
+0249 Sw = <a href="#_sub1" class="code" title="sub  S = localJonswap(w,Hm0,Tp,gammai,N,M,A)">localJonswap</a>(w,Hpw,Tpw,gammaw,Nw,Mw,Aj);
+0250 <span class="comment">% Swell part</span>
+0251 Ss = <a href="#_sub1" class="code" title="sub  S = localJonswap(w,Hm0,Tp,gammai,N,M,A)">localJonswap</a>(w,Hps,Tps,gammas,Ns,Ms,Aj);
+0252 
+0253  
+0254 
+0255 S.S = Ss.S+Sw.S; <span class="comment">% total spectrum</span>
+0256 S.note=strcat(<span class="string">'Torsethaugen, Hm0='</span>,num2str(Hm0),<span class="string">', Tp='</span>,num2str(Tp));
+0257 <span class="keyword">if</span> max(Ss.S)&lt;max(Sw.S)
+0258    Ss.note=strcat(<span class="string">'Swell, secondary peak of Torsethaugen, Hm0='</span>,num2str(Hm0),<span class="string">', Tp='</span>,num2str(Tp));
+0259    Sw.note=strcat(<span class="string">'Wind, primary peak of Torsethaugen, Hm0='</span>,num2str(Hm0),<span class="string">', Tp='</span>,num2str(Tp));
+0260 <span class="keyword">else</span>
+0261    Ss.note=strcat(<span class="string">'Swell, primary peak of Torsethaugen, Hm0='</span>,num2str(Hm0),<span class="string">', Tp='</span>,num2str(Tp));
+0262    Sw.note=strcat(<span class="string">'Wind, secondary peak of Torsethaugen, Hm0='</span>,num2str(Hm0),<span class="string">', Tp='</span>,num2str(Tp));
+0263 <span class="keyword">end</span>
+0264 <span class="keyword">if</span> plotflag
+0265   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(S,plotflag,<span class="string">'b'</span>)
+0266   ih = ishold;
+0267   hold on
+0268   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(Ss,plotflag,<span class="string">'b--'</span>)
+0269   <a href="wspecplot.html" class="code" title=" Plot a spectral density  ">wspecplot</a>(Sw,plotflag,<span class="string">'b--'</span>)
+0270   <span class="keyword">if</span> ~ih, hold off, <span class="keyword">end</span>
+0271 <span class="keyword">end</span>
+0272 
+0273 <span class="keyword">function</span>  S = <a name="_sub1" href="#_subfunctions" class="code">localJonswap</a>(w,Hm0,Tp,gammai,N,M,A)
+0274 <span class="comment">%local JONSWAP formulation</span>
+0275 
+0276 n1      = length(w);
+0277 S      = <a href="createspec.html" class="code" title=" Spectrum structure constructor">createspec</a>(<span class="string">'freq'</span>);
+0278 S.S    = zeros(n1,1);
+0279 S.w    = w;
+0280 
+0281 <span class="keyword">if</span> (Hm0&lt;=0)
+0282    <span class="keyword">return</span>
+0283 <span class="keyword">end</span>
+0284 
+0285 <span class="comment">%sigma used in the peak enhancement factor</span>
+0286 sa  = 0.07; <span class="comment">% sigma_a for wn&lt;1</span>
+0287 sb  = 0.09; <span class="comment">% sigma_b for wn&gt;1</span>
+0288 
+0289 wp  = 2*pi/Tp;
+0290 wn  = w/wp;
+0291 
+0292 B  = (N-1)/M;
+0293 G0 = (N/M).^(B)*(M/gamma(B)); <span class="comment">% Normalizing factor related to Pierson-Moskovitz form</span>
+0294 G1 = (Hm0/4)^2/wp*G0;
+0295 
+0296 <span class="comment">% for w&gt;wp</span>
+0297 k = find(wn&gt;1);
+0298 <span class="keyword">if</span> any(k)
+0299    S.S(k)=G1./(wn(k).^N).*(gammai.^(exp(-(wn(k)-1).^2 <span class="keyword">...</span>
+0300                 /(2*sb^2)))).*exp(-N/M*(wn(k)).^(-M));
+0301 <span class="keyword">end</span>
+0302 <span class="comment">% for 0&lt;w&lt;=wp</span>
+0303 k = find(0&lt;wn &amp; wn&lt;=1);
+0304 <span class="keyword">if</span> any(k)
+0305    S.S(k)=G1./(wn(k).^N).*(gammai.^(exp(-(wn(k)-1).^2 <span class="keyword">...</span>
+0306       /(2*sa^2)))).*exp(-N/M*(wn(k)).^(-M));
+0307 <span class="keyword">end</span>
+0308 
+0309 <span class="keyword">if</span> (gammai==1)
+0310    A = 1;
+0311 <span class="keyword">end</span>
+0312 <span class="keyword">if</span> A&lt;0, <span class="comment">% normalizing by integration</span>
+0313    area = <a href="../../wafo/misc/simpson.html" class="code" title=" Numerical integration with the Simpson method">simpson</a>(w,S.S);
+0314    <span class="keyword">if</span> area&gt;0
+0315       A = (Hm0/4)^2./area;<span class="comment">% make sure m0=Hm0^2/16=int S(w)dw</span>
+0316    <span class="keyword">else</span>
+0317       A = 0;
+0318    <span class="keyword">end</span>
+0319 <span class="keyword">elseif</span> A==0,<span class="comment">% original normalization</span>
+0320    <span class="comment">% NOTE: that  Hm0^2/16 generally is not equal to intS(w)dw</span>
+0321    <span class="comment">%       with this definition of A if sa or sb are changed from the</span>
+0322    <span class="comment">%       default values</span>
+0323    <span class="keyword">if</span> 3&lt;=N &amp; N&lt;=50 &amp; 2&lt;=M &amp; M &lt;=9.5 &amp; 1&lt;= gammai &amp; gammai&lt;=20
+0324      f1NM = 4.1*(N-2*M^0.28+5.3)^(-1.45*M^0.1+0.96);
+0325      f2NM = (2.2*M^(-3.3) + 0.57)*N^(-0.58*M^0.37+0.53)-1.04*M^(-1.9)+0.94;
+0326      A = (1+ f1NM*log(gammai)^f2NM)/gammai;
+0327    <span class="keyword">elseif</span> N == 5 &amp; M == 4,
+0328      A = (1-0.287*log(gammai));
+0329    <span class="keyword">else</span>
+0330       error(<span class="string">'Not knowing the normalization because N, M or peakedness parameter was out of bounds!'</span>)
+0331    <span class="keyword">end</span>
+0332 <span class="keyword">end</span>
+0333 
+0334 S.S = S.S*A;
+0335 
+0336 
+0337</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

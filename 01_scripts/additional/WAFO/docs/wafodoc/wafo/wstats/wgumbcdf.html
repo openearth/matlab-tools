@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wgumbcdf</title>
+  <meta name="keywords" content="wgumbcdf">
+  <meta name="description" content=" Gumbel cumulative distribution function.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wgumbcdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wgumbcdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Gumbel cumulative distribution function.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> F = wgumbcdf(x,a,b,trunc) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wgumbcdf.html" class="code" title=" Gumbel cumulative distribution function.">WGUMBCDF</a> Gumbel cumulative distribution function.
+ 
+  CALL:  F = <a href="wgumbcdf.html" class="code" title=" Gumbel cumulative distribution function.">wgumbcdf</a>(x,a,b,trunc) 
+    
+    F    = Gumbel cdf evaluated at x
+   a, b  = parameters of the Gumbel distribution.
+   trunc = 0  regular gumbel distribution (default)
+           1  truncated gumbel distribution 
+ 
+   Gumbel CDF  is given by :                           
+        F(x) = exp(-exp(-(x-b)/a))    -inf &lt; x &lt; inf, a&gt;0
+   or the truncated 
+        F(x) = [exp(-exp(-(x-b)/a))-exp(-exp(b/a))]/(1-exp(-exp(b/a))) 
+            0 &lt; x &lt; inf,  a&gt;0
+ 
+ 
+  Example: 
+    x = linspace(-4,6,200);
+    p1 = <a href="wgumbcdf.html" class="code" title=" Gumbel cumulative distribution function.">wgumbcdf</a>(x,2,0); p2 = <a href="wgumbcdf.html" class="code" title=" Gumbel cumulative distribution function.">wgumbcdf</a>(x,1,1);
+    plot(x,p1,x,p2)
+ 
+  See also  <a href="wgumbfit.html" class="code" title=" Parameter estimates for Gumbel data.">wgumbfit</a>, <a href="wgumbrnd.html" class="code" title=" Random matrices from a Gumbel distribution.">wgumbrnd</a>, <a href="wgumbpdf.html" class="code" title=" Gumbel probability density function.">wgumbpdf</a>, <a href="wgumbinv.html" class="code" title=" Inverse of the Gumbel distribution function.">wgumbinv</a>, <a href="wgumbstat.html" class="code" title=" Mean and variance for the Gumbel distribution.">wgumbstat</a>, <a href="wgumbplot.html" class="code" title=" Plots data on a Gumbel distribution paper.">wgumbplot</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dcdf.html" class="code" title=" [y ,eps2] = dist2dcdf(V,H,phat,condon)">dist2dcdf</a></li></TD>
+<TD> Joint 2D CDF computed as int F(X1<v|X2=x2).*f(x2)dx2</TD>
+</TR>
+<TR>
+<TD><li><a href="dist2dfun.html" class="code" title=" y=dist2dfun(H,V)">dist2dfun</a></li></TD>
+<TD> is an internal function to dist2dcdf dist2dprb.</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dcdf.html" class="code" title=" y = mdist2dcdf(V,H,phat,condon)">mdist2dcdf</a></li></TD>
+<TD> Joint 2D CDF due to Plackett</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dpdf.html" class="code" title=" y = mdist2dpdf(V,H,phat,condon)">mdist2dpdf</a></li></TD>
+<TD> Joint 2D PDF due to Plackett given as  f{x1}*f{x2}*G(x1,x2;Psi).</TD>
+</TR>
+<TR>
+<TD><li><a href="wgumbfit.html" class="code" title=" [phat, cov,pci] = wgumbfit(data1, plotflag)">wgumbfit</a></li></TD>
+<TD> Parameter estimates for Gumbel data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> F = <a name="_sub0" href="#_subfunctions" class="code">wgumbcdf</a>(x,a,b,trunc)
+002 <span class="comment">%WGUMBCDF Gumbel cumulative distribution function.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  F = wgumbcdf(x,a,b,trunc) </span>
+005 <span class="comment">%   </span>
+006 <span class="comment">%   F    = Gumbel cdf evaluated at x</span>
+007 <span class="comment">%  a, b  = parameters of the Gumbel distribution.</span>
+008 <span class="comment">%  trunc = 0  regular gumbel distribution (default)</span>
+009 <span class="comment">%          1  truncated gumbel distribution </span>
+010 <span class="comment">%</span>
+011 <span class="comment">%  Gumbel CDF  is given by :                           </span>
+012 <span class="comment">%       F(x) = exp(-exp(-(x-b)/a))    -inf &lt; x &lt; inf, a&gt;0</span>
+013 <span class="comment">%  or the truncated </span>
+014 <span class="comment">%       F(x) = [exp(-exp(-(x-b)/a))-exp(-exp(b/a))]/(1-exp(-exp(b/a))) </span>
+015 <span class="comment">%           0 &lt; x &lt; inf,  a&gt;0</span>
+016 <span class="comment">%</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% Example: </span>
+019 <span class="comment">%   x = linspace(-4,6,200);</span>
+020 <span class="comment">%   p1 = wgumbcdf(x,2,0); p2 = wgumbcdf(x,1,1);</span>
+021 <span class="comment">%   plot(x,p1,x,p2)</span>
+022 <span class="comment">%</span>
+023 <span class="comment">% See also  wgumbfit, wgumbrnd, wgumbpdf, wgumbinv, wgumbstat, wgumbplot</span>
+024 
+025 
+026 
+027 <span class="comment">%  tested on: matlab 5.2</span>
+028 <span class="comment">% history</span>
+029 <span class="comment">% revised pab 8.11.1999</span>
+030 <span class="comment">% updated header info</span>
+031 <span class="comment">%   Per A. Brodtkorb 17.10.98</span>
+032 <span class="comment">% rewritten ms 19.06.2000</span>
+033 <span class="comment">% revised pab 25.10.2000</span>
+034 <span class="comment">% - added nargchk+comnsize</span>
+035 
+036 <span class="comment">% Reference: </span>
+037 <span class="comment">%  Johnson  N.L., Kotz S. and Balakrishnan, N. (1994)</span>
+038 <span class="comment">%  Continuous Univariate Distributions, Volume 2. Wiley. </span>
+039 
+040 
+041 error(nargchk(3,4,nargin))
+042 <span class="keyword">if</span> nargin&lt;4|isempty(trunc), trunc=0;<span class="keyword">end</span>
+043 
+044 [errorcode x a b] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a>(x,a,b);
+045 <span class="keyword">if</span> errorcode &gt; 0
+046     error(<span class="string">'x, a and b must be of common size or scalar.'</span>);
+047 <span class="keyword">end</span>
+048 F=zeros(size(x));
+049 k1 = find(a&gt;0);
+050 <span class="keyword">if</span> any(k1),
+051   F(k1)=exp(-exp(-(x(k1) -b(k1))./a(k1)) );
+052   <span class="keyword">if</span> trunc,
+053     tmp=exp(-exp(b(k1)./a(k1)));
+054     F(k1)=(F(k1)-tmp)./(1-tmp).*(x(k1)&gt;0);
+055   <span class="keyword">end</span>
+056 <span class="keyword">end</span>
+057 
+058 k2=find(a&lt;=0);
+059 <span class="keyword">if</span> any(k2)
+060   F(k2)=NaN;
+061 <span class="keyword">end</span>
+062 
+063 
+064 
+065</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

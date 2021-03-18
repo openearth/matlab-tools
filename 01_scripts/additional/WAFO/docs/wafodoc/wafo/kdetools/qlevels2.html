@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of qlevels2</title>
+  <meta name="keywords" content="qlevels2">
+  <meta name="description" content=" Calculates quantile levels which encloses P% of data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; qlevels2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>qlevels2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Calculates quantile levels which encloses P% of data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [q, p]=qlevels2(r,p,method) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="qlevels2.html" class="code" title=" Calculates quantile levels which encloses P% of data ">QLEVELS2</a> Calculates quantile <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> which encloses P% of data 
+  
+   CALL: [ql PL] = <a href="qlevels2.html" class="code" title=" Calculates quantile levels which encloses P% of data ">qlevels2</a>(data,PL,method); 
+  
+     ql   = the discrete quantile <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a>, size Np x D 
+     data = data matrix, size N x D (D = # of dimensions) 
+     PL   = percent level vector, length Np (default [10:20:90 95 99 99.9]) 
+   method = 1 Interpolation so that F(X_(k)) == (k-0.5)/n. (default) 
+          2 Interpolation so that F(X_(k)) == k/(n+1). 
+          3 Based on the empirical distribution. 
+  
+  <a href="qlevels2.html" class="code" title=" Calculates quantile levels which encloses P% of data ">QLEVELS2</a> sort the columns of data in ascending order and find the   
+           quantile <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> for each column which encloses  P% of the data.   
+    
+  Examples : % Finding quantile <a href="../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> enclosing P% of data:  
+    xs  = <a href="../../wafo/wstats/wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(0,1,100000,1); 
+    qls = <a href="qlevels2.html" class="code" title=" Calculates quantile levels which encloses P% of data ">qlevels2</a>(<a href="../../wafo/wstats/wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(xs),[10:20:90 95 99 99.9]); 
+             % compared with the exact values 
+    ql  = <a href="../../wafo/wstats/wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(<a href="../../wafo/wstats/wnorminv.html" class="code" title=" Inverse of the Normal distribution function ">wnorminv</a>((100-[10:20:90 95 99 99.9])/200)); 
+  
+  Finding the median of xs: 
+    ql  = <a href="qlevels2.html" class="code" title=" Calculates quantile levels which encloses P% of data ">qlevels2</a>(xs,50);  
+  
+  See also  <a href="qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="chi2gof2.html" class="code" title=" [pvalue, test, v] = chi2gof2(fs,ft)">chi2gof2</a></li></TD>
+<TD> CHI Squared Goodness Of Fit test.</TD>
+</TR>
+<TR>
+<TD><li><a href="hldpi.html" class="code" title=" h=hldpi(A,kernel,L,inc);">hldpi</a></li></TD>
+<TD> L-stage Direct Plug-In estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hns.html" class="code" title=" h=hns(A,kernel)">hns</a></li></TD>
+<TD> Normal Scale Estimate of Smoothing Parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hscv.html" class="code" title=" [h,hvec,score]=hscv(A,kernel,hvec)">hscv</a></li></TD>
+<TD> Smoothed cross-validation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="hste.html" class="code" title=" h=hste(A,kernel,h,inc,maxit,releps,abseps)">hste</a></li></TD>
+<TD> 2-Stage Solve the Equation estimate of smoothing parameter.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/rec/recinit.html" class="code" title=" recinit">recinit</a></li></TD>
+<TD>  setup all global variables of the RECDEMO</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig5.html" class="code" title=" wafofig5">wafofig5</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front velocity and wave height:</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/papers/wafodemo/wafofig6.html" class="code" title=" wafofig6">wafofig6</a></li></TD>
+<TD>  Joint distribution (pdf) of crest front period, Tcf, and crest amplitude, Ac</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [q, p]=<a name="_sub0" href="#_subfunctions" class="code">qlevels2</a>(r,p,method) 
+002 <span class="comment">%QLEVELS2 Calculates quantile levels which encloses P<span class="comment">% of data </span></span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: [ql PL] = qlevels2(data,PL,method); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%    ql   = the discrete quantile levels, size Np x D </span>
+007 <span class="comment">%    data = data matrix, size N x D (D = # of dimensions) </span>
+008 <span class="comment">%    PL   = percent level vector, length Np (default [10:20:90 95 99 99.9]) </span>
+009 <span class="comment">%  method = 1 Interpolation so that F(X_(k)) == (k-0.5)/n. (default) </span>
+010 <span class="comment">%         2 Interpolation so that F(X_(k)) == k/(n+1). </span>
+011 <span class="comment">%         3 Based on the empirical distribution. </span>
+012 <span class="comment">% </span>
+013 <span class="comment">% QLEVELS2 sort the columns of data in ascending order and find the   </span>
+014 <span class="comment">%          quantile levels for each column which encloses  P<span class="comment">% of the data.   </span></span>
+015 <span class="comment">%   </span>
+016 <span class="comment">% Examples : <span class="comment">% Finding quantile levels enclosing P<span class="comment">% of data:  </span></span></span>
+017 <span class="comment">%   xs  = wnormrnd(0,1,100000,1); </span>
+018 <span class="comment">%   qls = qlevels2(wnormpdf(xs),[10:20:90 95 99 99.9]); </span>
+019 <span class="comment">%            <span class="comment">% compared with the exact values </span></span>
+020 <span class="comment">%   ql  = wnormpdf(wnorminv((100-[10:20:90 95 99 99.9])/200)); </span>
+021 <span class="comment">% </span>
+022 <span class="comment">% Finding the median of xs: </span>
+023 <span class="comment">%   ql  = qlevels2(xs,50);  </span>
+024 <span class="comment">% </span>
+025 <span class="comment">% See also  qlevels </span>
+026  
+027 <span class="comment">%tested on: matlab 5.3 </span>
+028 <span class="comment">% History: </span>
+029 <span class="comment">% revised pab  </span>
+030 <span class="comment">%  -fixed a bug for D&gt;=3 </span>
+031 <span class="comment">%  -added different methods from wquantile </span>
+032 <span class="comment">%  -updated example   </span>
+033 <span class="comment">% by pab 25.09.1999 </span>
+034 <span class="comment">%  </span>
+035  
+036 [n, d]=size(r); 
+037 <span class="keyword">if</span> nargin&lt;2|isempty(p) 
+038   p = [10:20:90 95 99 99.9]; 
+039 <span class="keyword">elseif</span> p&lt;0 | 100&lt;p, 
+040   error(<span class="string">'PL must satisfy 0 &lt;= PL &lt;= 100'</span>) 
+041 <span class="keyword">end</span> 
+042 <span class="keyword">if</span> nargin&lt;3|isempty(method), method=1; <span class="keyword">end</span> 
+043  
+044 <span class="keyword">if</span> (n==1) &amp; (d&gt;1) 
+045   r=r(:); 
+046   n=d; 
+047   d=1; 
+048 <span class="keyword">end</span> 
+049 <span class="keyword">if</span> d&gt;1 
+050   <span class="keyword">if</span> min(size(p)) &gt; 1  
+051     error(<span class="string">'Not both matrix r and matrix p input'</span>) 
+052   <span class="keyword">end</span> 
+053   q = zeros(length(p),d); 
+054 <span class="keyword">else</span> 
+055   q = zeros(size(p)); 
+056 <span class="keyword">end</span> 
+057 p = 1-p(:)/100; 
+058 x = sort(r); 
+059  
+060  
+061 <span class="keyword">if</span> method == 3 
+062    qq1 = x(ceil(max(1,p*n)),:);  
+063    qq2 = x(floor(min(p*n+1,n)),:); 
+064    qq = (qq1+qq2)/2; 
+065 <span class="keyword">else</span>                          
+066    x = [x(1,:); x; x(n,:)]; 
+067    <span class="keyword">if</span> method == 2 
+068       <span class="comment">% This method is from Hjort's &quot;Computer </span>
+069       <span class="comment">% intensive statistical methods&quot; page 102 </span>
+070       i = p*(n+1)+1; 
+071    <span class="keyword">else</span> <span class="comment">% Metod 1 </span>
+072       i = p*n+1.5; 
+073    <span class="keyword">end</span> 
+074    iu = ceil(i); 
+075    il = floor(i); 
+076    d1 = (i-il)*ones(1,d); 
+077    qq = x(il,:).*(1-d1)+x(iu,:).*d1; 
+078 <span class="keyword">end</span> 
+079  
+080 q(:) = qq; 
+081  
+082 <span class="keyword">return</span> 
+083  
+084  
+085</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

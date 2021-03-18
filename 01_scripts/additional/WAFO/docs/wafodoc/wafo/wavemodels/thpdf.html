@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of thpdf</title>
+  <meta name="keywords" content="thpdf">
+  <meta name="description" content=" Marginal wave height, Hd, PDF for Torsethaugen spectra.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wavemodels</a> &gt; thpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wavemodels&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>thpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Marginal wave height, Hd, PDF for Torsethaugen spectra.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = thpdf(h,Hm0,Tp,dim) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="thpdf.html" class="code" title=" Marginal wave height, Hd, PDF for Torsethaugen spectra. ">THPDF</a> Marginal wave height, Hd, PDF for <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> spectra. 
+  
+   CALL: f = <a href="thpdf.html" class="code" title=" Marginal wave height, Hd, PDF for Torsethaugen spectra. ">thpdf</a>(h,Hm0,Tp,dim) 
+   
+   f   = pdf evaluated at h. 
+   h   = vectors of evaluation points. 
+   Hm0 = significant wave height [m]. 
+   Tp  = Spectral peak period    [s]. 
+   dim = 'time'  : Hd distribution in time (default) 
+         'space' : Hd distribution in space 
+  
+  <a href="thpdf.html" class="code" title=" Marginal wave height, Hd, PDF for Torsethaugen spectra. ">THPDF</a> approximates the marginal distribution of Hd, i.e., 
+  zero-downcrossing wave height, for a Gaussian process with a <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">Torsethaugen</a> 
+  spectral density. The empirical parameters of the model is fitted by 
+  least squares to simulated Hd data for 600 classes of Hm0 and 
+  Tp. Between 50000 and 150000 zero-downcrossing waves were simulated for 
+  each class of Hm0 and Tp. 
+  <a href="thpdf.html" class="code" title=" Marginal wave height, Hd, PDF for Torsethaugen spectra. ">THPDF</a> is restricted to the following <a href="../../wafo/wstats/range.html" class="code" title="  Calculates the difference between the maximum and minimum values. ">range</a> for Hm0 and Tp:  
+   0.5 &lt; Hm0 [m] &lt; 12,  3.5 &lt; Tp [s] &lt; 20,  and  Hm0 &lt; (Tp-2)*12/11. 
+  
+  Example: 
+  Hm0 = 6;Tp = 8; 
+  h = linspace(0,4*Hm0/sqrt(2))';  
+  f = <a href="thpdf.html" class="code" title=" Marginal wave height, Hd, PDF for Torsethaugen spectra. ">thpdf</a>(h,Hm0,Tp); 
+  dt = 0.4; w = linspace(0,2*pi/dt,256)'; 
+  S = <a href="../../wafo/spec/torsethaugen.html" class="code" title=" Calculates a double peaked (swell + wind) spectrum ">torsethaugen</a>(w,[Hm0 Tp]); 
+  xs = <a href="../../wafo/wsim/spec2sdat.html" class="code" title=" Simulates a Gaussian process and its derivative from spectrum">spec2sdat</a>(S,20000,dt); rate=8; method=1; 
+  [S,H] = <a href="../../wafo/onedim/dat2steep.html" class="code" title=" Extracts waveheights and steepnesses from data. ">dat2steep</a>(xs,rate,method); 
+  fk = <a href="../../wafo/kdetools/kdebin.html" class="code" title=" Binned Kernel Density Estimator. ">kdebin</a>(H,'epan',[],[],.5,128); 
+  plot(h,f), hold on, <a href="../../wafo/trgauss/pdfplot.html" class="code" title=" Plot contents of pdf structures">pdfplot</a>(fk,'r'), hold off 
+  
+  See also  <a href="thvpdf.html" class="code" title=" Joint (Vcf,Hd) PDF for linear waves with Torsethaugen spectra. ">thvpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="thgparfun.html" class="code" title=" [A0,B0,C0]= thgparfun(Hm0,Tp,dim)">thgparfun</a></li></TD>
+<TD> Wave height, Hd, distribution parameters for Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="thwparfun.html" class="code" title=" [A0,B0,C0]= thwparfun(Hm0,Tp,dim)">thwparfun</a></li></TD>
+<TD> Wave height, Hd, distribution parameters for Torsethaugen spectra.</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wggampdf.html" class="code" title=" f = wggampdf(x,a,b,c);">wggampdf</a></li></TD>
+<TD> Generalized Gamma probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" f = wtweibpdf(x,a,b,c)">wtweibpdf</a></li></TD>
+<TD> Truncated Weibull probability density function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\@char\strncmpi.bi">strncmpi</a></li></TD>
+<TD>      Compare first N characters of strings ignoring case.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">thpdf</a>(h,Hm0,Tp,dim) 
+002 <span class="comment">%THPDF Marginal wave height, Hd, PDF for Torsethaugen spectra. </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL: f = thpdf(h,Hm0,Tp,dim) </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%  f   = pdf evaluated at h. </span>
+007 <span class="comment">%  h   = vectors of evaluation points. </span>
+008 <span class="comment">%  Hm0 = significant wave height [m]. </span>
+009 <span class="comment">%  Tp  = Spectral peak period    [s]. </span>
+010 <span class="comment">%  dim = 'time'  : Hd distribution in time (default) </span>
+011 <span class="comment">%        'space' : Hd distribution in space </span>
+012 <span class="comment">% </span>
+013 <span class="comment">% THPDF approximates the marginal distribution of Hd, i.e., </span>
+014 <span class="comment">% zero-downcrossing wave height, for a Gaussian process with a Torsethaugen </span>
+015 <span class="comment">% spectral density. The empirical parameters of the model is fitted by </span>
+016 <span class="comment">% least squares to simulated Hd data for 600 classes of Hm0 and </span>
+017 <span class="comment">% Tp. Between 50000 and 150000 zero-downcrossing waves were simulated for </span>
+018 <span class="comment">% each class of Hm0 and Tp. </span>
+019 <span class="comment">% THPDF is restricted to the following range for Hm0 and Tp:  </span>
+020 <span class="comment">%  0.5 &lt; Hm0 [m] &lt; 12,  3.5 &lt; Tp [s] &lt; 20,  and  Hm0 &lt; (Tp-2)*12/11. </span>
+021 <span class="comment">% </span>
+022 <span class="comment">% Example: </span>
+023 <span class="comment">% Hm0 = 6;Tp = 8; </span>
+024 <span class="comment">% h = linspace(0,4*Hm0/sqrt(2))';  </span>
+025 <span class="comment">% f = thpdf(h,Hm0,Tp); </span>
+026 <span class="comment">% dt = 0.4; w = linspace(0,2*pi/dt,256)'; </span>
+027 <span class="comment">% S = torsethaugen(w,[Hm0 Tp]); </span>
+028 <span class="comment">% xs = spec2sdat(S,20000,dt); rate=8; method=1; </span>
+029 <span class="comment">% [S,H] = dat2steep(xs,rate,method); </span>
+030 <span class="comment">% fk = kdebin(H,'epan',[],[],.5,128); </span>
+031 <span class="comment">% plot(h,f), hold on, pdfplot(fk,'r'), hold off </span>
+032 <span class="comment">% </span>
+033 <span class="comment">% See also  thvpdf </span>
+034  
+035  
+036 <span class="comment">% Reference   </span>
+037 <span class="comment">% P. A. Brodtkorb (2004),   </span>
+038 <span class="comment">% The Probability of Occurrence of Dangerous Wave Situations at Sea. </span>
+039 <span class="comment">% Dr.Ing thesis, Norwegian University of Science and Technolgy, NTNU, </span>
+040 <span class="comment">% Trondheim, Norway.   </span>
+041    
+042 <span class="comment">% History </span>
+043 <span class="comment">% revised pab jan2004   </span>
+044 <span class="comment">% By pab 20.12.2000 </span>
+045  
+046  
+047  
+048 error(nargchk(3,4,nargin)) 
+049  
+050 <span class="keyword">if</span> nargin&lt;4|isempty(dim), 
+051   dim = <span class="string">'time'</span>;<span class="comment">% dim='time'-&gt;wtweibpdf, dim='space'-&gt;wggampdf </span>
+052 <span class="keyword">end</span> 
+053  
+054 <span class="keyword">if</span> Hm0&gt;12| Hm0&gt;(Tp-2)*12/11  
+055   disp(<span class="string">'Warning: Hm0 is outside the valid range'</span>) 
+056   disp(<span class="string">'The validity of the Hd distribution is questionable'</span>) 
+057 <span class="keyword">end</span> 
+058 <span class="keyword">if</span> Tp&gt;20|Tp&lt;3  
+059   disp(<span class="string">'Warning: Tp is outside the valid range'</span>) 
+060   disp(<span class="string">'The validity of the Hd distribution is questionable'</span>) 
+061 <span class="keyword">end</span> 
+062 Hrms = Hm0/sqrt(2); 
+063  
+064 [a b c] = <a href="thwparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Torsethaugen spectra. ">thwparfun</a>(Hm0,Tp,dim); 
+065   f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h/Hrms,a,b,c)/Hrms; 
+066    
+067   <span class="keyword">return</span> 
+068   <span class="comment">% old code kept just in case </span>
+069 <span class="keyword">if</span> strncmpi(dim,<span class="string">'t'</span>,1)     
+070   [a b c] = <a href="thwparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Torsethaugen spectra. ">thwparfun</a>(Hm0,Tp,dim); 
+071   f = <a href="../../wafo/wstats/wtweibpdf.html" class="code" title=" Truncated Weibull probability density function">wtweibpdf</a>(h/Hrms,a,b,c)/Hrms; 
+072 <span class="keyword">else</span>  
+073   [a b c] = <a href="thgparfun.html" class="code" title=" Wave height, Hd, distribution parameters for Torsethaugen spectra. ">thgparfun</a>(Hm0,Tp,dim); 
+074   f = <a href="../../wafo/wstats/wggampdf.html" class="code" title=" Generalized Gamma probability density function">wggampdf</a>(h/Hrms,a,b,c)/Hrms; 
+075 <span class="keyword">end</span> 
+076  
+077 <span class="keyword">return</span> 
+078  
+079 <span class="comment">% old code: saved just in case </span>
+080 <span class="comment">% Weibull distribution parameters as a function of e2 and h2 </span>
+081 <span class="comment">% Hrms = Hm0/sqrt(2); </span>
+082 <span class="comment">% if nargin&lt;1 |isempty(h), h=linspace(0,4*Hrms).'; end </span>
+083 <span class="comment">% if nargin&gt;4, </span>
+084 <span class="comment">%   h = h*Hrms; </span>
+085 <span class="comment">%   if pdef==1 </span>
+086 <span class="comment">%     f = hggam(h,Hm0,Tp,eps2,1); </span>
+087 <span class="comment">%   else </span>
+088 <span class="comment">%     f = htweib(h,Hm0,Tp,eps2,1); </span>
+089 <span class="comment">%   end </span>
+090 <span class="comment">% elseif pdef==1 </span>
+091 <span class="comment">%   f = hggam(h,Hm0,Tp,eps2); </span>
+092 <span class="comment">% else </span>
+093 <span class="comment">%   f = htweib(h,Hm0,Tp,eps2);  </span>
+094 <span class="comment">% end </span>
+095  
+096 <span class="comment">% f=f.f; </span>
+097 <span class="comment">% return </span>
+098  
+099 <span class="comment">% function f = hggam(h,Hm0,Tp,eps2,norm) </span>
+100 <span class="comment">%   pardef =2; </span>
+101 <span class="comment">%   if pardef == 1, </span>
+102 <span class="comment">%     if nargin&lt;4|isempty(eps2), </span>
+103 <span class="comment">%       w    = linspace(0,100,16*1024+1).'; <span class="comment">% torsethaugen original spacing </span></span>
+104 <span class="comment">%       <span class="comment">%w    = linspace(0,1000/Tp,8*1024+1).'; <span class="comment">% adaptiv spacing </span></span></span>
+105 <span class="comment">%       eps2   = spec2char(torsethaugen(w,[Hm0,Tp]),{'eps2'}); </span>
+106 <span class="comment">%     end </span>
+107 <span class="comment">%     if eps2&lt;0.4  </span>
+108 <span class="comment">%       disp('Warning: eps2 is less than 0.4. The pdf returned is questionable') </span>
+109 <span class="comment">%     elseif eps2&gt;1.3 </span>
+110 <span class="comment">%       disp('Warning: eps2 is larger than 1.3. The pdf returned is questionable') </span>
+111 <span class="comment">%     end  </span>
+112 <span class="comment">%   end </span>
+113  
+114 <span class="comment">% switch pardef </span>
+115 <span class="comment">%   case 1,<span class="comment">% Wggampdf distribution parameters as a function of eps2 </span></span>
+116 <span class="comment">%     <span class="comment">% Best fit by smoothing spline forcing a=1, b=1 and c=2 for eps2=0.  </span></span>
+117 <span class="comment">%     <span class="comment">% Then approximate the spline with a rational polynomial </span></span>
+118      
+119 <span class="comment">%     da1 = [0.3579    0.9601   -1.8152    1.0009]; </span>
+120 <span class="comment">%     da2 = [1.5625   -0.1537   -1.1390    1.0000]; </span>
+121 <span class="comment">%     db1 = [-1.8555   3.5375   -3.4056    1.0026];  </span>
+122 <span class="comment">%     db2 = [-2.0855   4.1624   -3.6399    1.0000]; </span>
+123 <span class="comment">%     dc1 = [6.9572   -6.7932    2.1760    1.9974]; </span>
+124 <span class="comment">%     dc2 = [3.0979   -3.0781    0.5369    1.0000]; </span>
+125 <span class="comment">%     A0 = polyval(da1,eps2)./polyval(da2,eps2); </span>
+126 <span class="comment">%     B0 = polyval(db1,eps2)./polyval(db2,eps2); </span>
+127 <span class="comment">%     C0 = polyval(dc1,eps2)./polyval(dc2,eps2); </span>
+128 <span class="comment">%   case 2, <span class="comment">% wave height distribution in time </span></span>
+129 <span class="comment">%     global THGPAR </span>
+130 <span class="comment">%     if isempty(THGPAR) </span>
+131 <span class="comment">%       THGPAR = load('thgpar.mat'); </span>
+132 <span class="comment">%     end </span>
+133 <span class="comment">%     <span class="comment">% Generalized Gamma  distribution parameters as a function of Tp, Hm0  </span></span>
+134 <span class="comment">%     A00 = THGPAR.A00s; </span>
+135 <span class="comment">%     B00 = THGPAR.B00s; </span>
+136 <span class="comment">%     C00 = THGPAR.C00s; </span>
+137  
+138 <span class="comment">%     Tpp  = THGPAR.Tp; </span>
+139 <span class="comment">%     Hm00 = THGPAR.Hm0; </span>
+140 <span class="comment">%     [E1, H1] = meshgrid(Tpp,Hm00); </span>
+141 <span class="comment">%     method = '*cubic'; </span>
+142 <span class="comment">%     A0 = interp2(E1,H1,A00,Tp,Hm0,method); </span>
+143 <span class="comment">%     B0 = interp2(E1,H1,B00,Tp,Hm0,method); </span>
+144 <span class="comment">%     C0 = interp2(E1,H1,C00,Tp,Hm0,method); </span>
+145 <span class="comment">%   case 3,<span class="comment">% Waveheight distribution in space </span></span>
+146 <span class="comment">%      global THSSPAR </span>
+147 <span class="comment">%     if isempty(THSSPAR) </span>
+148 <span class="comment">%       THSSPAR = load('thsspar.mat'); </span>
+149 <span class="comment">%     end </span>
+150 <span class="comment">%     <span class="comment">% Generalized Gamma  distribution parameters as a function of Tp, Hm0  </span></span>
+151 <span class="comment">%     A00 = THSSPAR.A00s; </span>
+152 <span class="comment">%     B00 = THSSPAR.B00s; </span>
+153 <span class="comment">%     C00 = THSSPAR.C00s; </span>
+154  
+155 <span class="comment">%     Tpp  = THSSPAR.Tp; </span>
+156 <span class="comment">%     Hm00 = THSSPAR.Hm0; </span>
+157 <span class="comment">%     [E1, H1] = meshgrid(Tpp,Hm00); </span>
+158 <span class="comment">%     method = '*cubic'; </span>
+159 <span class="comment">%     A0 = interp2(E1,H1,A00,Tp,Hm0,method); </span>
+160 <span class="comment">%     B0 = interp2(E1,H1,B00,Tp,Hm0,method); </span>
+161 <span class="comment">%     C0 = interp2(E1,H1,C00,Tp,Hm0,method); </span>
+162 <span class="comment">% end </span>
+163 <span class="comment">% Hrms = Hm0/sqrt(2); </span>
+164 <span class="comment">% f.f    = wggampdf(h/Hrms,A0,B0,C0)/Hrms; </span>
+165 <span class="comment">% return </span>
+166  
+167 <span class="comment">% function f = htweib(h,Hm0,Tp,eps2,norm) </span>
+168 <span class="comment">%  pardef =7; </span>
+169 <span class="comment">%   if pardef &lt; 7, </span>
+170 <span class="comment">%     if nargin&lt;4|isempty(eps2), </span>
+171 <span class="comment">%       w    = linspace(0,100,16*1024+1).'; <span class="comment">% torsethaugen original spacing </span></span>
+172 <span class="comment">%       <span class="comment">%w    = linspace(0,1000/Tp,8*1024+1).'; <span class="comment">% adaptiv spacing </span></span></span>
+173 <span class="comment">%       S = torsethaugen(w,[Hm0,Tp]); </span>
+174 <span class="comment">%       eps2   = spec2char(S,{'eps2'}); </span>
+175 <span class="comment">%     end </span>
+176 <span class="comment">%     if eps2&lt;0.4  </span>
+177 <span class="comment">%       disp('Warning: eps2 is less than 0.4. The pdf returned is questionable') </span>
+178 <span class="comment">%     elseif eps2&gt;1.3 </span>
+179 <span class="comment">%       disp('Warning: eps2 is larger than 1.3. The pdf returned is questionable') </span>
+180 <span class="comment">%     end  </span>
+181 <span class="comment">%   end </span>
+182 <span class="comment">% switch pardef, </span>
+183 <span class="comment">%   case 1,<span class="comment">% Wtweibpdf distribution parameters as a function of eps2 </span></span>
+184 <span class="comment">%     <span class="comment">% Best fit by smoothing spline forcing a=1, b=2 and c=0 for eps2=0.  </span></span>
+185 <span class="comment">%     brks = [0 .1 .2 .4 ,.6, .8, 1, 1.1 1.2]'; </span>
+186 <span class="comment">%     coefa = [0                  0   0.02260415153596   0.99807186986167; ... </span>
+187 <span class="comment">%    2.19065400617385                  0   0.02260415153596  1.00033228501527; ... </span>
+188 <span class="comment">%    4.34015195156053   0.65719620185215   0.03709199393185    1.00478335417504; ... </span>
+189 <span class="comment">%   -1.59533089716870   3.26128737278847   0.80983543882910   1.07321081664798; ... </span>
+190 <span class="comment">%   -6.81273221810880   2.30408883448726   1.92291068028425   1.35286675214799; ... </span>
+191 <span class="comment">%   -3.69498826658975  -1.78355049637802   2.09369407217829   1.77511058383946; ... </span>
+192 <span class="comment">%   13.33514485443956  -4.00054345633187   0.94471547491809   2.09294747228728; ... </span>
+193 <span class="comment">%                   0                  0   0.54466112928490   2.16074873007021]; </span>
+194          
+195 <span class="comment">%   coefb = [ 0                  0   0.32503235228616   1.99054481866418; ... </span>
+196 <span class="comment">%    3.28321899128157                  0   0.32503235228616    2.02304805389280; ... </span>
+197 <span class="comment">%    5.67672309005450   0.98496569738447   0.37964649056830    2.05883450811270; ... </span>
+198 <span class="comment">%   -5.29907238080822   4.39099955141717   1.43842344537222   2.21957621884217; .... </span>
+199 <span class="comment">%   -5.89663569823287   1.21155612293224   2.55893458024211   2.64050831092684; ... </span>
+200 <span class="comment">%   -6.21824739906323  -2.32642529600749   2.43691697455115   3.15358438630669; ... </span>
+201 <span class="comment">%   20.19124578481806  -6.05737373544542   0.77134599291113   3.49816479018411; ... </span>
+202 <span class="comment">%                   0                  0   0.16560861936659   3.53491689790559]; </span>
+203 <span class="comment">% coefc =[                0                  0   0.04818579357214       -0.00817761487085; ... </span>
+204 <span class="comment">%    2.94432030165157                  0   0.04818579357214    -0.00335903551363; ... </span>
+205 <span class="comment">%    4.77660844045250   0.88329609049547   0.09917317190900    0.00440386414523; ... </span>
+206 <span class="comment">%   -1.24578770271258   3.74926115476697   1.01096301945323   0.09778320967047; ... </span>
+207 <span class="comment">%   -7.70868155645400   3.00178853313943   2.36117295703451   0.43997995813009; ... </span>
+208 <span class="comment">%   -3.98346578867600  -1.62342040073298   2.70373824808144   0.97061663841094; ... </span>
+209 <span class="comment">%   13.37833291312857  -4.01349987393858   1.57933014446810   1.41455974568850; ... </span>
+210 <span class="comment">%                   0                  0   1.17798015707424   1.54573609430905]; </span>
+211 <span class="comment">%   pa = mkpp(brks,coefa); </span>
+212 <span class="comment">%   pb = mkpp(brks,coefb); </span>
+213 <span class="comment">%   pc = mkpp(brks,coefc); </span>
+214 <span class="comment">%   A0 = ppval(pa,eps2);         </span>
+215 <span class="comment">%   B0 = ppval(pb,eps2);        </span>
+216 <span class="comment">%   C0 = ppval(pc,eps2);        </span>
+217 <span class="comment">%   case 2,<span class="comment">% Wtweibpdf distribution parameters as a function of eps2 </span></span>
+218 <span class="comment">%     <span class="comment">% Best fit by smoothing spline forcing a=1, b=2 and c=0 for eps2=0.  </span></span>
+219 <span class="comment">%     <span class="comment">% Then approximate the spline with a rational polynomial. </span></span>
+220      
+221 <span class="comment">%     da1 = [1.8262  -2.1141   1.0034]; </span>
+222 <span class="comment">%     da2 = [-0.1371  0.1626   1.3189  -2.0016   1.0000]; </span>
+223 <span class="comment">%     db1 = [2.4360  -1.6331   1.9932]; </span>
+224 <span class="comment">%     db2 = [-1.3266  4.3755  -4.6795   2.4763  -1.0450  1.0000]; </span>
+225 <span class="comment">%     dc1 = [0.3162  -0.1647   0.0803  -0.0104]; </span>
+226 <span class="comment">%     dc2 = [-1.4325  6.3773 -11.1967  10.1490  -4.7401  1.0000]; </span>
+227 <span class="comment">%     A0 = polyval(da1,eps2)./polyval(da2,eps2); </span>
+228 <span class="comment">%     B0 = polyval(db1,eps2)./polyval(db2,eps2); </span>
+229 <span class="comment">%     C0 = polyval(dc1,eps2)./polyval(dc2,eps2); </span>
+230 <span class="comment">%   case 3, <span class="comment">% Wtweibpdf distribution parameters as a function of eps2  </span></span>
+231 <span class="comment">%     <span class="comment">% LS fit to data </span></span>
+232 <span class="comment">%     <span class="comment">% best fit to torsethaugen for eps2 = 0.4 to 1.2; </span></span>
+233 <span class="comment">%     <span class="comment">% and forcing through A0=1 B0=2 C0=0 for eps2==0)  </span></span>
+234 <span class="comment">%     A0 = sqrt(1+2.0094*eps2.^1.8492); </span>
+235 <span class="comment">%     B0 = 1+sqrt(1+3.4117*eps2.^1.4972); </span>
+236 <span class="comment">%     C0 = 0.9994*eps2.^1.6728;  </span>
+237 <span class="comment">%   case 4,<span class="comment">% Wtweibpdf distribution parameters as a function of eps2 </span></span>
+238 <span class="comment">%     <span class="comment">% best fit to torsethaugen eps2 = 0.4 to 1.2; </span></span>
+239 <span class="comment">%     A0 = 0.7315+eps2.^0.9916; </span>
+240 <span class="comment">%     B0 = 2.0628+eps2.^1.1927; </span>
+241 <span class="comment">%     C0 = 0.9994*eps2.^1.6728; </span>
+242 <span class="comment">%   case 5,<span class="comment">% Naess (1985) </span></span>
+243 <span class="comment">%     R  = spec2cov(S); </span>
+244 <span class="comment">% <span class="comment">%    A0 = sqrt((1-min(R.R)/R.R(1))/2);<span class="comment">% Naess (1985) </span></span></span>
+245 <span class="comment">%     A0 = sqrt((1-min(R.R)/R.R(1))/2)+0.03;<span class="comment">% Modified approach broadbanded time </span></span>
+246 <span class="comment">% <span class="comment">%    A0 = sqrt((1-min(R.R)/R.R(1))/2)+0.1;<span class="comment">% Modified approach broadbanded space                                  </span></span></span>
+247                        
+248 <span class="comment">%     B0 = 2; </span>
+249 <span class="comment">%     C0 = 0; </span>
+250 <span class="comment">%   case 6,<span class="comment">% Naess (1985) wave height in space </span></span>
+251 <span class="comment">%     R  = spec2cov(spec2spec(specinterp(S,0.55),'k1d')); </span>
+252 <span class="comment">%     <span class="comment">%A0 = sqrt((1-min(R.R)/R.R(1))/2); <span class="comment">% Naess (1985) </span></span></span>
+253 <span class="comment">%     A0 = sqrt((1-min(R.R)/R.R(1))/2)+0.03; <span class="comment">% modified approach     </span></span>
+254 <span class="comment">%     B0 = 2; </span>
+255 <span class="comment">%     C0 = 0;  </span>
+256 <span class="comment">%   case 7,<span class="comment">% wave height distribution in time </span></span>
+257 <span class="comment">%     global THWPAR </span>
+258 <span class="comment">%     if isempty(THWPAR) </span>
+259 <span class="comment">%       THWPAR = load('thwpar.mat'); </span>
+260 <span class="comment">%     end </span>
+261 <span class="comment">%     <span class="comment">% Truncated Weibull  distribution parameters as a function of Tp, Hm0  </span></span>
+262 <span class="comment">%     A00 = THWPAR.A00s; </span>
+263 <span class="comment">%     B00 = THWPAR.B00s; </span>
+264 <span class="comment">%     C00 = THWPAR.C00s; </span>
+265  
+266 <span class="comment">%     Tpp  = THWPAR.Tp; </span>
+267 <span class="comment">%     Hm00 = THWPAR.Hm0; </span>
+268 <span class="comment">%     [E1, H1] = meshgrid(Tpp,Hm00); </span>
+269 <span class="comment">%     method = '*cubic'; </span>
+270 <span class="comment">%     A0 = interp2(E1,H1,A00,Tp,Hm0,method); </span>
+271 <span class="comment">%     B0 = interp2(E1,H1,B00,Tp,Hm0,method); </span>
+272 <span class="comment">%     C0 = interp2(E1,H1,C00,Tp,Hm0,method); </span>
+273   
+274 <span class="comment">% end </span>
+275  
+276 <span class="comment">% Hrms = Hm0/sqrt(2); </span>
+277 <span class="comment">% f = wtweibpdf(h/Hrms,A0,B0,C0)/Hrms; </span>
+278  
+279 <span class="comment">% return </span>
+280</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

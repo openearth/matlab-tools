@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of mindist</title>
+  <meta name="keywords" content="mindist">
+  <meta name="description" content=" Finds minimal distance to the origin on the surface b'*x+x'*diag(g)*x=u">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">wafo</a> &gt; <a href="../index.html">trgauss</a> &gt; <a href="index.html">private</a> &gt; mindist.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss\private&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>mindist
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> Finds minimal distance to the origin on the surface b'*x+x'*diag(g)*x=u</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong> xstar=mindist(g,b,u,n0,epsi) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="mindist.html" class="code" title=" Finds minimal distance to the origin on the surface b'*x+x'*diag(g)*x=u ">MINDIST</a> Finds minimal distance to the origin on the surface b'*x+x'*diag(g)*x=u 
+   
+    CALL: xstar=<a href="mindist.html" class="code" title=" Finds minimal distance to the origin on the surface b'*x+x'*diag(g)*x=u ">mindist</a>(g,b,u,n0,eps); 
+   
+        u  = <a href="../../../wafo/misc/levels.html" class="code" title=" Calculates discrete levels given the parameter matrix.">levels</a> 
+        n0 = number of non zero elements in the starting point 
+        eps = accuracy in the iteration 
+  
+  Iterative solution to the problem om finding the point of minimal 
+  distance to origin on the surface b'*x+x'*diag(g)*x=u, where x0 
+  is the starting value.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="mindist3.html" class="code" title=" [x0,pmx]=mindist3(g,b,u)">mindist3</a></li></TD>
+<TD> Finds point of minimal distance to the origin on the surface b'*x+g'*x.^2=u.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\int2str.m">int2str</a></li></TD>
+<TD>       Convert integer to string (Fast version).</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\warning.m">warning</a></li></TD>
+<TD>       Display warning message; disable or enable warning messages.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../../wafo/trgauss/chitwo2lc_sorm.html" class="code" title=" mu=chitwo2lc_sorm(u,g,b,S22,S12,ass,n0,epsi)">chitwo2lc_sorm</a></li></TD>
+<TD>  SORM-approximation of the crossing intensity for the noncentral Chi^2 process</TD>
+</TR>
+<TR>
+<TD><li><a href="rqlf_asympt.html" class="code" title=" [Cb0,Cb1,a0,a1]=rqlf_asympt(u,g,b,S22,S21)">rqlf_asympt</a></li></TD>
+<TD> Gives first two terms in an asymptotic expansion of the</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> xstar=<a name="_sub0" href="#_subfunctions" class="code">mindist</a>(g,b,u,n0,epsi) 
+002 <span class="comment">% MINDIST Finds minimal distance to the origin on the surface b'*x+x'*diag(g)*x=u </span>
+003 <span class="comment">%  </span>
+004 <span class="comment">%   CALL: xstar=mindist(g,b,u,n0,eps); </span>
+005 <span class="comment">%  </span>
+006 <span class="comment">%       u  = levels </span>
+007 <span class="comment">%       n0 = number of non zero elements in the starting point </span>
+008 <span class="comment">%       eps = accuracy in the iteration </span>
+009 <span class="comment">% </span>
+010 <span class="comment">% Iterative solution to the problem om finding the point of minimal </span>
+011 <span class="comment">% distance to origin on the surface b'*x+x'*diag(g)*x=u, where x0 </span>
+012 <span class="comment">% is the starting value. </span>
+013  
+014  
+015 <span class="keyword">if</span> nargin&lt;5 
+016    epsi=1e-12; 
+017 <span class="keyword">end</span> 
+018 niter=1000; 
+019 iter=1; 
+020 n1=length(g); 
+021 n0=min(n1,n0); 
+022 xstar=<a href="mindist3.html" class="code" title=" Finds point of minimal distance to the origin on the surface b'*x+g'*x.^2=u. ">mindist3</a>(g(<span class="keyword">end</span>-n0+1:<span class="keyword">end</span>),b(<span class="keyword">end</span>-n0+1:<span class="keyword">end</span>),u); 
+023 <span class="keyword">if</span> n0&lt;n1 
+024     xn=[zeros(n1-n0,1);xstar]; 
+025 b=b(:); 
+026 g=g(:); 
+027 xnold=xn+1; 
+028 <span class="keyword">while</span> iter&lt;niter&amp;sum(abs(xn-xnold))&gt;epsi 
+029    a=1-b'*xn/u-g'*xn.^2/u; 
+030    A=-b/u-2*g.*xn/u; 
+031    xnold=xn; 
+032    xn=(A'*xn-a)/(A'*A)*A; 
+033    iter=iter+1; 
+034 <span class="keyword">end</span> 
+035 xstar=xn; 
+036 <span class="keyword">if</span> iter==niter 
+037    warning([<span class="string">'The algorithm didn'<span class="string"></span>'t converged after '</span> int2str(niter) <span class="string">'times for level u='</span> int2str(u)]) 
+038 <span class="keyword">end</span> 
+039 <span class="keyword">end</span> 
+040  
+041  
+042  
+043</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

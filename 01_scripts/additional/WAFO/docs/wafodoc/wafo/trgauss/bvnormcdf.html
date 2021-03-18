@@ -1,0 +1,297 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of bvnormcdf</title>
+  <meta name="keywords" content="bvnormcdf">
+  <meta name="description" content=" Bivariate Normal cumulative distribution function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">trgauss</a> &gt; bvnormcdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\trgauss&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>bvnormcdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Bivariate Normal cumulative distribution function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> bvn = bvnormcdf( b1, b2, r ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="bvnormcdf.html" class="code" title=" Bivariate Normal cumulative distribution function ">BVNORMCDF</a> Bivariate Normal cumulative distribution function 
+  
+   CALL:  val = <a href="bvnormcdf.html" class="code" title=" Bivariate Normal cumulative distribution function ">bvnormcdf</a>( b1, b2, r ) 
+  
+     bvn   = distribution function evaluated at b1, b2.   
+     b1,b2 = upper integration limits 
+     r     = correlation coefficient  (-1 &lt;= r &lt;= 1). 
+  
+   <a href="bvnormcdf.html" class="code" title=" Bivariate Normal cumulative distribution function ">BVNORMCDF</a> computes bivariate normal probabilities, i.e., 
+   the probability Prob(X1 &lt;= B1 and X2 &lt;= B2) with an absolute error 
+   less than 1e-15. 
+       
+   This function is based on the method described by 
+   drezner, z and g.o. wesolowsky, (1989), 
+   on the computation of the bivariate normal integral, 
+   journal of statist. comput. simul. 35, pp. 101-107, 
+   with major modifications for double precision, and for |r| close to 1. 
+  
+  Example  
+   x = linspace(-5,5,20);   
+   [B1,B2] = meshgrid(x); 
+   r  = 0.3; 
+   F = <a href="bvnormcdf.html" class="code" title=" Bivariate Normal cumulative distribution function ">bvnormcdf</a>(B1,B2,r);   
+   surf(x,x,F) 
+  
+  See also  <a href="../../wafo/wstats/wnormcdf.html" class="code" title=" Normal cumulative distribution function ">wnormcdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="" class="code" title="c:\pab\tmp\wafo_update_pj-2.1.1_beta\pab\wafo2.1.1\wafo-2.1.1\wafo\wstats\comnsize.m">comnsize</a></li></TD>
+<TD>      Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\specfun\erfc.m">erfc</a></li></TD>
+<TD>          Complementary error function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="bvnormprb.html" class="code" title=" value = bvnormprb(lower,upper,correl)">bvnormprb</a></li></TD>
+<TD> Bivariate Normal probability</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code"> F = fi(x)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> bvn = <a name="_sub0" href="#_subfunctions" class="code">bvnormcdf</a>( b1, b2, r )  
+002 <span class="comment">%BVNORMCDF Bivariate Normal cumulative distribution function </span>
+003 <span class="comment">% </span>
+004 <span class="comment">%  CALL:  val = bvnormcdf( b1, b2, r ) </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%    bvn   = distribution function evaluated at b1, b2.   </span>
+007 <span class="comment">%    b1,b2 = upper integration limits </span>
+008 <span class="comment">%    r     = correlation coefficient  (-1 &lt;= r &lt;= 1). </span>
+009 <span class="comment">% </span>
+010 <span class="comment">%  BVNORMCDF computes bivariate normal probabilities, i.e., </span>
+011 <span class="comment">%  the probability Prob(X1 &lt;= B1 and X2 &lt;= B2) with an absolute error </span>
+012 <span class="comment">%  less than 1e-15. </span>
+013 <span class="comment">%      </span>
+014 <span class="comment">%  This function is based on the method described by </span>
+015 <span class="comment">%  drezner, z and g.o. wesolowsky, (1989), </span>
+016 <span class="comment">%  on the computation of the bivariate normal integral, </span>
+017 <span class="comment">%  journal of statist. comput. simul. 35, pp. 101-107, </span>
+018 <span class="comment">%  with major modifications for double precision, and for |r| close to 1. </span>
+019 <span class="comment">% </span>
+020 <span class="comment">% Example  </span>
+021 <span class="comment">%  x = linspace(-5,5,20);   </span>
+022 <span class="comment">%  [B1,B2] = meshgrid(x); </span>
+023 <span class="comment">%  r  = 0.3; </span>
+024 <span class="comment">%  F = bvnormcdf(B1,B2,r);   </span>
+025 <span class="comment">%  surf(x,x,F) </span>
+026 <span class="comment">% </span>
+027 <span class="comment">% See also  wnormcdf </span>
+028    
+029 <span class="comment">% Reference </span>
+030 <span class="comment">%  Drezner, z and g.o. Wesolowsky, (1989), </span>
+031 <span class="comment">%  &quot;on the computation of the bivariate normal integral&quot;, </span>
+032 <span class="comment">%  journal of statist. comput. simul. 35, pp. 101-107, </span>
+033    
+034 <span class="comment">%History   </span>
+035 <span class="comment">% revised pab 19.01.2001 </span>
+036 <span class="comment">%  -vectorized the code to handle multiple integration limits   </span>
+037 <span class="comment">%  -renamed from bvnd to bvnormcdf   </span>
+038 <span class="comment">%  -replaced call to erf with erfc   </span>
+039 <span class="comment">%    </span>
+040 <span class="comment">% by  alan genz </span>
+041 <span class="comment">%     department of mathematics </span>
+042 <span class="comment">%     washington state university </span>
+043 <span class="comment">%     pullman, wa 99164-3113 </span>
+044 <span class="comment">%     email : alangenz@wsu.edu </span>
+045 error(nargchk(3,3,nargin)) 
+046 [errorcode,h,k,r] = comnsize(-b1,-b2,r); 
+047 <span class="keyword">if</span> (errorcode &gt; 0) 
+048   error (<span class="string">'b1, b2 and r must be of common size or scalar'</span>); 
+049 <span class="keyword">end</span> 
+050  
+051 bvn  = zeros(size(h)); 
+052  
+053 zero = 0.d0; 
+054 one  = 1.d0; 
+055 two  = 2.d0; 
+056 twopi = 6.283185307179586d0; 
+057 <span class="comment">%     gauss legendre points and weights, n = 6 </span>
+058 w6 = [ 0.1713244923791705D+00, 0.3607615730481384D+00, 0.4679139345726904D+00]; 
+059 x6 = [-0.9324695142031522D+00,-0.6612093864662647D+00,-0.2386191860831970D+00]; 
+060 <span class="comment">%     gauss legendre points and weights, n = 12 </span>
+061 w12 = [ 0.4717533638651177d-01, 0.1069393259953183d+00, 0.1600783285433464d+00,<span class="keyword">...</span> 
+062        0.2031674267230659d+00, 0.2334925365383547d+00, 0.2491470458134029d+00]; 
+063 x12=[ -0.9815606342467191d+00,-0.9041172563704750d+00,-0.7699026741943050d+00, <span class="keyword">...</span> 
+064     -0.5873179542866171d+00,-0.3678314989981802d+00,-0.1252334085114692d+00]; 
+065 <span class="comment">%     gauss legendre points and weights, n = 20 </span>
+066 w20 = [ 0.1761400713915212d-01, 0.4060142980038694d-01, <span class="keyword">...</span> 
+067       0.6267204833410906d-01,  0.8327674157670475d-01, <span class="keyword">...</span> 
+068       0.1019301198172404d+00, 0.1181945319615184d+00,<span class="keyword">...</span> 
+069       0.1316886384491766d+00, 0.1420961093183821d+00,<span class="keyword">...</span> 
+070       0.1491729864726037d+00, 0.1527533871307259d+00]; 
+071 x20=[ -0.9931285991850949d+00, -0.9639719272779138d+00, <span class="keyword">...</span> 
+072       -0.9122344282513259d+00, -0.8391169718222188d+00, <span class="keyword">...</span> 
+073        -0.7463319064601508d+00,-0.6360536807265150d+00,<span class="keyword">...</span> 
+074        -0.5108670019508271d+00,-0.3737060887154196d+00, <span class="keyword">...</span> 
+075    -0.2277858511416451d+00, -0.7652652113349733d-01]; 
+076  
+077 hk  = h.*k; 
+078  
+079 k0 = find(abs(r) &lt; 0.925d0 ); 
+080 <span class="keyword">if</span> (k0)  
+081   hs = ( h(k0).^2 + k(k0).^2 )/two; 
+082   asr = asin(r(k0)); 
+083   k1 = find(r(k0)&gt;0.75); 
+084   <span class="keyword">if</span> any(k1) 
+085     k01 = k0(k1); 
+086     <span class="keyword">for</span> i = 1:10 
+087       <span class="keyword">for</span> is = -1:2:1,  
+088     sn = sin( asr(k1).*(is.*x20(i) +1 )/2 ); 
+089     bvn(k01) = bvn(k01) + w20(i)*exp( ( sn.*hk(k01) - hs(k1) )./(1 - sn.*sn ) ); 
+090       <span class="keyword">end</span>  
+091     <span class="keyword">end</span>  
+092   <span class="keyword">end</span> 
+093    k1 = find(0.3 &lt;= r(k0) &amp; r(k0)&lt;0.75); 
+094   <span class="keyword">if</span> any(k1) 
+095     k01 = k0(k1); 
+096     <span class="keyword">for</span> i = 1:6 
+097       <span class="keyword">for</span> is = -1:2:1,  
+098     sn = sin( asr(k1).*(is.*x12(i) +1 )/2 ); 
+099     bvn(k01) = bvn(k01) + w12(i)*exp( ( sn.*hk(k01) - hs(k1) )./(1 - sn.*sn ) ); 
+100       <span class="keyword">end</span>  
+101     <span class="keyword">end</span>  
+102   <span class="keyword">end</span> 
+103    k1 = find( r(k0)&lt;0.3); 
+104   <span class="keyword">if</span> any(k1) 
+105     k01 = k0(k1); 
+106     <span class="keyword">for</span> i = 1:3 
+107       <span class="keyword">for</span> is = -1:2:1,  
+108     sn = sin( asr(k1).*(is.*x6(i) +1 )/2 ); 
+109     bvn(k01) = bvn(k01) + w6(i)*exp( ( sn.*hk(k01) - hs(k1) )./(1 - sn.*sn ) ); 
+110       <span class="keyword">end</span>  
+111     <span class="keyword">end</span>  
+112   <span class="keyword">end</span> 
+113   bvn(k0) = bvn(k0).*asr/( two*twopi ) + <a href="#_sub1" class="code" title="sub  F = fi(x)">fi</a>(-h(k0)).*<a href="#_sub1" class="code" title="sub  F = fi(x)">fi</a>(-k(k0)); 
+114 <span class="keyword">end</span> 
+115  
+116 k1 = find(0.925&lt;=abs(r) &amp; abs(r)&lt;=1 ); 
+117 <span class="keyword">if</span> any(k1) 
+118   k2 = find(r(k1) &lt; 0); 
+119   <span class="keyword">if</span> any(k2 )  
+120     k12 = k1(k2); 
+121     k(k12)  = -k(k12); 
+122     hk(k12) = -hk(k12); 
+123   <span class="keyword">end</span> 
+124   k3 = find( abs(r(k1)) &lt; 1); 
+125   <span class="keyword">if</span> (k3) 
+126     k13 = k1(k3); 
+127     as = (1 - r(k13) ).*(1 + r(k13) ); 
+128     a  = sqrt(as); 
+129     b  = abs( h(k13) - k(k13) ); 
+130     bs = b.*b; 
+131     c  = ( 4.d0 - hk(k13) )/8.d0; 
+132     d  = ( 12.d0 - hk(k13) )/16.d0; 
+133     asr = -( bs./as + hk(k13) )/2.d0; 
+134     k4 = find(asr &gt; -100.d0); 
+135     <span class="keyword">if</span> (k4)  
+136       bvn(k13(k4)) = a(k4).*exp(asr(k4)).*(1 - c(k4).* .<span class="keyword">...</span> 
+137       ( bs(k4) - as(k4)).*(1 - d(k4).*bs(k4)/5 )/3 <span class="keyword">...</span> 
+138       + c(k4).*d(k4).*as(k4).^2/5 ); 
+139     <span class="keyword">end</span> 
+140     k5 = find(hk(k13) &lt; 100.d0); 
+141     <span class="keyword">if</span> ( k5 ) 
+142       <span class="comment">%               b = sqrt(bs); </span>
+143       k135 = k13(k5); 
+144       bvn(k135) = bvn(k135) - exp( -hk(k135)/2 ).*sqrt(twopi).*<a href="#_sub1" class="code" title="sub  F = fi(x)">fi</a>(-b(k5)./a(k5)).*b(k5)<span class="keyword">...</span> 
+145       .*(1- c(k5).*bs(k5).*(1 - d(k5).*bs(k5)/5 )/3 ); 
+146     <span class="keyword">end</span> 
+147     a = a/two; 
+148     <span class="keyword">for</span> i = 1:10 
+149       <span class="keyword">for</span> is = -1:2:1, 
+150     xs  = ( a.*( is*x20(i) + 1 ) ).^2; 
+151     rs  = sqrt(1 - xs ); 
+152     asr = -( bs./xs + hk(k13) )/2; 
+153     k6 = find( asr &gt; -100.d0 ) ; 
+154     <span class="keyword">if</span> any(k6)  
+155       k136 = k13(k6); 
+156       bvn(k136) = bvn(k136) + a(k6).*w20(i).*exp( asr(k6) )<span class="keyword">...</span> 
+157           .*( exp(-hk(k136).*(1-rs(k6))./(2*(1+rs(k6))))./rs(k6)<span class="keyword">...</span> 
+158           - (1 + c(k6).*xs(k6).*(1 + d(k6).*xs(k6) ) ) ); 
+159     <span class="keyword">end</span>  
+160       <span class="keyword">end</span>  
+161     <span class="keyword">end</span>  
+162     bvn(k3) = -bvn(k3)/twopi; 
+163     <span class="comment">%bvn = -bvn/twopi; </span>
+164   <span class="keyword">end</span> 
+165   k7 = find(r(k1)&gt;0); 
+166   <span class="keyword">if</span> any(k7 ), 
+167     k17 = k1(k7);  
+168     bvn(k17) = bvn(k17) + <a href="#_sub1" class="code" title="sub  F = fi(x)">fi</a>( -max( h(k17), k(k17)) ); 
+169   <span class="keyword">end</span> 
+170   k8 = find(r(k1)&lt;0); 
+171   <span class="keyword">if</span> any(k8),  
+172     k18 = k1(k8); 
+173     bvn(k18) = -bvn(k18) + max(0, <a href="#_sub1" class="code" title="sub  F = fi(x)">fi</a>(-h(k18)) - <a href="#_sub1" class="code" title="sub  F = fi(x)">fi</a>(-k(k18)) ); 
+174   <span class="keyword">end</span> 
+175 <span class="keyword">end</span> 
+176  
+177 k9 = find(abs(r)&gt;1); 
+178 <span class="keyword">if</span> any(k9) 
+179   bvn(k9) = NaN; 
+180 <span class="keyword">end</span> 
+181 val = bvn; 
+182 <span class="keyword">return</span> 
+183  
+184 <span class="keyword">function</span> F = <a name="_sub1" href="#_subfunctions" class="code">fi</a>(x) 
+185 F = 0.5.*(erfc((-x)./sqrt(2))); 
+186    
+187</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

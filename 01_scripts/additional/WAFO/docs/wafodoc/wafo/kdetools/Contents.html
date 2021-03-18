@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="  Module KDETOOLS in WAFO Toolbox.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; Contents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>  Module KDETOOLS in WAFO Toolbox.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  Module KDETOOLS in WAFO Toolbox.  
+  Version 2.1.1   15-sep-2005  
+   
+  <a href="Readme.html" class="code" title=" Readme file for module KDETOOLS in WAFO Toolbox. ">readme</a>     - <a href="Readme.html" class="code" title=" Readme file for module KDETOOLS in WAFO Toolbox. ">Readme</a> file for module KDETOOLS in WAFO Toolbox. 
+   
+  Misc 
+    <a href="chi2gof.html" class="code" title=" [pvalue, test, v] = chi2gof(fs,ft)">chi2gof</a>    - CHI Squared Goodness Of Fit test.  
+    <a href="chi2gof2.html" class="code" title=" [pvalue, test, v] = chi2gof2(fs,ft)">chi2gof2</a>   - CHI Squared Goodness Of Fit test.  
+    <a href="evalpdf.html" class="code" title=" fi = evalpdf(pdf,varargin)">evalpdf</a>    - Evaluates a PDF struct by interpolation.  
+    <a href="fftce.html" class="code" title=" y = fftce(x)">fftce</a>      - Circulant Embedding of a vector or matrix.  
+    <a href="kdedemo1.html" class="code" title=" Demonstrate the smoothing parameter impact on KDE ">kdedemo1</a>   - Demonstrate smoothing parameter impact on <a href="kde.html" class="code" title=" f = kde(A,options,varargin)">KDE</a>. 
+    <a href="kdedemo2.html" class="code" title=" Demonstrate the difference between transformation- and ordinary-KDE ">kdedemo2</a>   - Demonstrate difference between transformation- and ordinary-<a href="kde.html" class="code" title=" f = kde(A,options,varargin)">KDE</a>. 
+    <a href="kdeoptset.html" class="code" title=" options = kdeoptset(varargin)">kdeoptset</a>  - Create or alter <a href="kde.html" class="code" title=" f = kde(A,options,varargin)">KDE</a> OPTIONS structure. 
+    <a href="qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a>    - Calculates quantile <a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a> which encloses P% of PDF.  
+    <a href="qlevels2.html" class="code" title=" [q, p]=qlevels2(r,p,method)">qlevels2</a>   - Calculates quantile <a href="../../wafo/misc/levels.html" class="code" title=" l=levels(param)">levels</a> which encloses P% of data.  
+    <a href="vsph.html" class="code" title=" c=vsph(d,r0)">vsph</a>       - Calculates volume of d-dimensional sphere with radius r0.  
+  
+  Bandwidth Selectors 
+    <a href="hbcv.html" class="code" title=" [h,hvec,score]=hbcv(A,kernel,hvec)">hbcv</a>       - Biased Cross-Validation estimate of smoothing parameter.  
+    <a href="hbcv2.html" class="code" title=" h=hbcv2(A,kernel)">hbcv2</a>      - Biased Cross-Validation smoothing parameter for 2D data.  
+    <a href="hboot.html" class="code" title=" [h,hvec,score]=hboot(A,kernel,hvec)">hboot</a>      - Bootstrap cross-validation estimate of smoothing parameter.  
+    <a href="hldpi.html" class="code" title=" h=hldpi(A,kernel,L,inc);">hldpi</a>      - L-stage Direct Plug-In estimate of smoothing parameter.  
+    <a href="hldpi2.html" class="code" title=" h=hldpi2(A,kernel,L)">hldpi2</a>     - L-stage DPI estimate of smoothing parameter for 2D data.  
+    <a href="hldpi2fft.html" class="code" title=" h=hldpi2fft(A,kernel,L)">hldpi2fft</a>  - L-stage DPI estimate of smoothing parameter for 2D data.  
+    <a href="hlscv.html" class="code" title=" [h,hvec,score]=hlscv(A,kernel,hvec)">hlscv</a>      - LSCV estimate of smoothing parameter.  
+    <a href="hmns.html" class="code" title=" h=hmns(A,kernel)">hmns</a>       - Multivariate Normal Scale Estimate of Smoothing Parameter.  
+    <a href="hns.html" class="code" title=" h=hns(A,kernel)">hns</a>        - Normal Scale Estimate of Smoothing Parameter.  
+    <a href="hos.html" class="code" title=" h=hos(A,kernel)">hos</a>        - Oversmoothing Parameter.  
+    <a href="hscv.html" class="code" title=" [h,hvec,score]=hscv(A,kernel,hvec)">hscv</a>       - Smoothed cross-validation estimate of smoothing parameter.  
+    <a href="hste.html" class="code" title=" h=hste(A,kernel,h,inc,maxit,releps,abseps)">hste</a>       - 2-Stage Solve the Equation estimate of smoothing parameter.  
+    <a href="hstt.html" class="code" title=" h=hstt(A,kernel,inc,maxit,releps,abseps)">hstt</a>       - Scott-Tapia-Thompson estimate of smoothing parameter.  
+  
+  Kernel density estimators and data-gridders 
+    <a href="bincount.html" class="code" title=" [len,bin,val] = bincount(x,f)">bincount</a>   - 1-dimensional Bin count. 
+    <a href="ffndgrid.html" class="code" title=" [zzgrid, xvec] = ffndgrid(x, f, delta,limits,aver);">ffndgrid</a>   - Fast 'n' Furious N-D data gridding. 
+    <a href="gridcount.html" class="code" title=" c = gridcount(data,X)">gridcount</a>  - D-dimensional histogram using linear binning. 
+    <a href="kde.html" class="code" title=" f = kde(A,options,varargin)">kde</a>        - Kernel Density Estimator.  
+    <a href="kdebin.html" class="code" title=" f = kdebin(A,options,xlo,xup)">kdebin</a>     - Binned Kernel Density Estimator.  
+    <a href="kdefun.html" class="code" title=" [f, hs,lambda]= kdefun(A,options,varargin)">kdefun</a>     - Kernel Density Estimator.  
+    <a href="kde1dgui.html" class="code" title=" varargout = kde1dgui(varargin)">kde1dgui</a>   - GUI to Kernel Density Estimator 
+    <a href="kde2dgui.html" class="code" title=" varargout = kde2dgui(varargin)">kde2dgui</a>   - GUI to Kernel Density Estimator in two dimensions. 
+  
+  Kernel functions 
+    <a href="deriv.html" class="code" title=" [varargout]=deriv(t,k)">deriv</a>      - 4th, 6th, 8th and 10th derivatives of the kernel function.  
+    <a href="deriv2.html" class="code" title=" k=deriv2(x,y,d)">deriv2</a>     - High order partial derivatives of the Gaussian kernel.  
+    <a href="kernelstats.html" class="code" title=" [mu2, R, Rdd] = kernelstats(kernel)">kernelstats</a>- Return 2'nd order moment of kernel pdf. 
+    <a href="mkernel.html" class="code" title=" [z,c]=mkernel(varargin)">mkernel</a>    - Multivariate Kernel Function.  
+    <a href="mkernel2.html" class="code" title=" [z,c]=mkernel(X,kstr)">mkernel2</a>   - Multivariate Kernel Function, alternative version.  
+  
+  Random number generators 
+    <a href="mkernelrnd.html" class="code" title=" R=mkernelrnd(kernel,N,D)">mkernelrnd</a> - Random numbers from the Multivariate Kernel Function.  
+    <a href="sample.html" class="code" title=" s=sample(A,m,r)">sample</a>     - Random sampling of points from a data-set.  
+    <a href="ssample.html" class="code" title=" s=ssample(A,m,varargin)">ssample</a>    - Random sampling from a smoothed empirical distribution.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

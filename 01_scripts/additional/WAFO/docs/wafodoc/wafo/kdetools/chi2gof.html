@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of chi2gof</title>
+  <meta name="keywords" content="chi2gof">
+  <meta name="description" content=" CHI Squared Goodness Of Fit test.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">kdetools</a> &gt; chi2gof.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\kdetools&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>chi2gof
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> CHI Squared Goodness Of Fit test.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [pvalue, test, v] = chi2gof(fs,ft) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">  <a href="chi2gof.html" class="code" title=" CHI Squared Goodness Of Fit test.">CHI2GOF</a> CHI Squared Goodness Of Fit test.
+ 
+  CALL:  P = <a href="chi2gof.html" class="code" title=" CHI Squared Goodness Of Fit test.">chi2gof</a>(fs, ft)
+ 
+    P      = P - value  
+    fs     = fitted PDF structure/matrix
+             evaluated at observed points.
+    ft     = theoretical PDF structure/matrix
+             evaluated on a equidistant grid 
+ 
+   Large P value -&gt; good fit
+   Small P value -&gt; lesser fit
+ 
+   Example : Check how well rayleigh data can be described by N(0,1)
+    xs = <a href="../../wafo/wstats/wraylrnd.html" class="code" title=" Random matrices from a Rayleigh distribution">wraylrnd</a>(1,500,1);
+    x  = linspace(-7,7,201); 
+    p  = <a href="chi2gof.html" class="code" title=" CHI Squared Goodness Of Fit test.">chi2gof</a>(<a href="../../wafo/wstats/wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(xs),<a href="../../wafo/wstats/wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(x));
+            
+  See also  <a href="../../wafo/wstats/wchi2cdf.html" class="code" title=" Chi squared cumulative distribution function">wchi2cdf</a>, <a href="qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="qlevels.html" class="code" title=" [ui, p]=qlevels(pdf,p,x1,x2)">qlevels</a></li></TD>
+<TD> Calculates quantile levels which encloses P% of PDF</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wstats/wchi2cdf.html" class="code" title=" F = wchi2cdf(x,p);">wchi2cdf</a></li></TD>
+<TD> Chi squared cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datatypes\isstruct.m">isstruct</a></li></TD>
+<TD>      True for structures.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [pvalue, test, v] = <a name="_sub0" href="#_subfunctions" class="code">chi2gof</a>(fs,ft)
+002 <span class="comment">% CHI2GOF CHI Squared Goodness Of Fit test.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  P = chi2gof(fs, ft)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   P      = P - value  </span>
+007 <span class="comment">%   fs     = fitted PDF structure/matrix</span>
+008 <span class="comment">%            evaluated at observed points.</span>
+009 <span class="comment">%   ft     = theoretical PDF structure/matrix</span>
+010 <span class="comment">%            evaluated on a equidistant grid </span>
+011 <span class="comment">%</span>
+012 <span class="comment">%  Large P value -&gt; good fit</span>
+013 <span class="comment">%  Small P value -&gt; lesser fit</span>
+014 <span class="comment">%</span>
+015 <span class="comment">%  Example : Check how well rayleigh data can be described by N(0,1)</span>
+016 <span class="comment">%   xs = wraylrnd(1,500,1);</span>
+017 <span class="comment">%   x  = linspace(-7,7,201); </span>
+018 <span class="comment">%   p  = chi2gof(wnormpdf(xs),wnormpdf(x));</span>
+019 <span class="comment">%           </span>
+020 <span class="comment">% See also  wchi2cdf, qlevels</span>
+021 
+022 
+023 <span class="comment">%Tested on: matlab 5.3</span>
+024 <span class="comment">% History:</span>
+025 <span class="comment">% revised pab 11.11.2000</span>
+026 <span class="comment">% - made it independent of stats toolbox only dependent on wstats</span>
+027 <span class="comment">% by pab 21.09.99  </span>
+028   
+029 
+030 
+031 <span class="comment">% CHI^2 goodness of fit (GOF)   test</span>
+032 
+033  <span class="keyword">if</span> isstruct(fs) <span class="comment">% structure</span>
+034      r2=fs.f(:);
+035    <span class="keyword">else</span>
+036     r2 = fs(:);
+037   <span class="keyword">end</span>
+038 ntresh=length(r2);
+039 <span class="keyword">if</span> ntresh&gt;120 <span class="comment">% only valid for samples larger than 120</span>
+040    <span class="keyword">if</span> isstruct(ft)
+041      r=ft.f;
+042    <span class="keyword">else</span>
+043     r = ft;
+044   <span class="keyword">end</span>
+045   k=max([ceil(sqrt(ntresh)),8]);<span class="comment">%divide the data into k subsets (greater than 8)</span>
+046   pk=100/k;                     <span class="comment">% with equal probabilty</span>
+047   np=ntresh/k; <span class="comment">%the expected number of points in each group (must be greater than 5)</span>
+048   
+049   grpdiv=<a href="qlevels.html" class="code" title=" Calculates quantile levels which encloses P% of PDF ">qlevels</a>(r,(100-pk):-pk:pk); <span class="comment">% find dividing levels </span>
+050   <span class="comment">%grpdiv=normpdf(norminv( (pk:pk:(100-pk))/200))' </span>
+051  
+052 
+053   test=(sum(grpdiv(1 )&gt;=r2)-np)^2/np +(sum(grpdiv(k-1)&lt;r2)-np)^2/np; 
+054   <span class="keyword">for</span> ix=2:k-1,
+055     test=test+(sum((grpdiv(ix-1 )&lt;r2).*(grpdiv(ix )&gt;=r2))-np)^2/np;
+056   <span class="keyword">end</span>
+057   test <span class="comment">%test statistic</span>
+058   pvalue=1-<a href="../../wafo/wstats/wchi2cdf.html" class="code" title=" Chi squared cumulative distribution function">wchi2cdf</a>(test,k-1); <span class="comment">% pvalue</span>
+059   v=k-1;
+060 <span class="keyword">else</span>  
+061   pvalue=[]
+062   disp(<span class="string">'to few data'</span>)
+063   ntresh
+064 <span class="keyword">end</span>
+065 <span class="keyword">return</span>
+066 
+067 
+068</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

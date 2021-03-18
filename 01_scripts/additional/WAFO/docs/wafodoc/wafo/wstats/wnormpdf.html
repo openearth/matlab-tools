@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wnormpdf</title>
+  <meta name="keywords" content="wnormpdf">
+  <meta name="description" content=" Normal probability density function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wnormpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wnormpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Normal probability density function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> f = wnormpdf(x,m,v); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wnormpdf.html" class="code" title=" Normal probability density function ">WNORMPDF</a> Normal probability density function 
+  
+  CALL:  f = <a href="wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(x,m,v); 
+  
+         f = density function evaluated at x 
+         m = mean     (default 0) 
+         v = variance (default 1) 
+   
+  Example:  
+    x = linspace(-3,3,200); 
+    p1 = <a href="wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(x,0,1); p2 = <a href="wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>(x,.5,0.25); 
+    plot(x,p1,x,p2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="comnsize.html" class="code" title=" [errorcode,varargout] = comnsize(varargin)">comnsize</a></li></TD>
+<TD> Check if all input arguments are either scalar or of common size.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\nan.m">nan</a></li></TD>
+<TD>           Not-a-Number.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="../../wafo/trgauss/chitwo2lc_sp.html" class="code" title=" [mu,mu2,mu1,muG,beta,cc,fu,Fu]= chitwo2lc_sp(gamma,beta,S12,S22,ds0)">chitwo2lc_sp</a></li></TD>
+<TD>  Saddlepoint approximation of the crossing intensity for the noncentral Chi^2 process</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/wdemos/rfcdemo1/f_ar.html" class="code" title=" f = f_ar(y,u0,u1,a1,m,s)">f_ar</a></li></TD>
+<TD>  Auxiliary function used by RFCDEMO1</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/kdetools/kdedemo1.html" class="code" title="This is a script file.">kdedemo1</a></li></TD>
+<TD> Demonstrate the smoothing parameter impact on KDE</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/onedim/lcplot.html" class="code" title=" h = lcplot(lc,plotflag,ma,sa);">lcplot</a></li></TD>
+<TD> Plots level-crossing spectrum (lc)</TD>
+</TR>
+<TR>
+<TD><li><a href="../../wafo/trgauss/specq2lc.html" class="code" title=" [mu,fu,Fu,muG,mu1,mu2]= specq2lc(Spec,ds0,nb)">specq2lc</a></li></TD>
+<TD>  Saddlepoint approximation of the crossing intensity for the quadratic sea.</TD>
+</TR>
+<TR>
+<TD><li><a href="wtpdf.html" class="code" title=" f = wtpdf(x,df,disable)">wtpdf</a></li></TD>
+<TD>  Student's T probability density function</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> f = <a name="_sub0" href="#_subfunctions" class="code">wnormpdf</a>(x,m,v); 
+002 <span class="comment">%WNORMPDF Normal probability density function </span>
+003 <span class="comment">% </span>
+004 <span class="comment">% CALL:  f = wnormpdf(x,m,v); </span>
+005 <span class="comment">% </span>
+006 <span class="comment">%        f = density function evaluated at x </span>
+007 <span class="comment">%        m = mean     (default 0) </span>
+008 <span class="comment">%        v = variance (default 1) </span>
+009 <span class="comment">%  </span>
+010 <span class="comment">% Example:  </span>
+011 <span class="comment">%   x = linspace(-3,3,200); </span>
+012 <span class="comment">%   p1 = wnormpdf(x,0,1); p2 = wnormpdf(x,.5,0.25); </span>
+013 <span class="comment">%   plot(x,p1,x,p2) </span>
+014  
+015  
+016 <span class="comment">% Tested on; Matlab 5.3 </span>
+017 <span class="comment">% History: </span>
+018 <span class="comment">% revised pab 9Aug2003 </span>
+019 <span class="comment">%  fixed a bug:  </span>
+020 <span class="comment">% revised pab 24.10.2000 </span>
+021 <span class="comment">%  - added comnsize, nargchk </span>
+022 <span class="comment">%  - added default values </span>
+023 <span class="comment">% added ms 15.06.2000 </span>
+024  
+025 error(nargchk(1,3,nargin)) 
+026 <span class="keyword">if</span> nargin&lt;2|isempty(m),  m=0;  <span class="keyword">end</span> 
+027 <span class="keyword">if</span> nargin&lt;3|isempty(v),  v=1;  <span class="keyword">end</span> 
+028  
+029 [errorcode, x, m, v] = <a href="comnsize.html" class="code" title=" Check if all input arguments are either scalar or of common size.">comnsize</a> (x,m, v); 
+030 <span class="keyword">if</span> (errorcode &gt; 0) 
+031   error (<span class="string">'x, m and v must be of common size or scalar'</span>); 
+032 <span class="keyword">end</span> 
+033  
+034 f=zeros(size(x)); 
+035  
+036 k = find (v&gt;0); 
+037 <span class="keyword">if</span> any(k)     
+038   f(k)=1./sqrt(2*pi*v(k)).*exp(-0.5*(x(k)-m(k)).^2./v(k)); 
+039 <span class="keyword">end</span> 
+040  
+041 k1 = find (v&lt;=0); 
+042 <span class="keyword">if</span> any (k1) 
+043   tmp=NaN; 
+044   f(k1) = tmp(ones(size(k1))); 
+045 <span class="keyword">end</span> 
+046  
+047</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

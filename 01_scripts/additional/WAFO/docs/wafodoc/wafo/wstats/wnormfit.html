@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>WAFO. Description of wnormfit</title>
+  <meta name="keywords" content="wnormfit">
+  <meta name="description" content=" Parameter estimates for Normal data.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">wafo</a> &gt; <a href="index.html">wstats</a> &gt; wnormfit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for wafo\wstats&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>wnormfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> Parameter estimates for Normal data.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong> [phat, var,ciL,ciU] = wnormfit(data,plotflag) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> <a href="wnormfit.html" class="code" title=" Parameter estimates for Normal data.">WNORMFIT</a> Parameter estimates for Normal data.
+ 
+  CALL:  [phat <a href="var.html" class="code" title="  Variance ">var</a>] = <a href="wnormfit.html" class="code" title=" Parameter estimates for Normal data.">wnormfit</a>(data, plotflag)
+ 
+    phat  = [m, v] = maximum likelihood estimate of the parameters of
+            the distribution (see <a href="wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a>)
+    <a href="var.html" class="code" title="  Variance ">var</a>   = estimated asymptotic variance of phat (cov(m,v)=0)
+    data  = data matrix
+ plotflag = 0, do not plot
+          &gt; 0, plot the empiricial distribution function and the
+               estimated cdf (see <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a> for options)(default)
+ 
+  Example:
+    R=<a href="wnormrnd.html" class="code" title=" Random matrices from a Normal distribution.">wnormrnd</a>(12,2,100,2);
+    [phat, <a href="var.html" class="code" title="  Variance ">var</a>]=<a href="wnormfit.html" class="code" title=" Parameter estimates for Normal data.">wnormfit</a>(R)
+ 
+  See also  <a href="wnormpdf.html" class="code" title=" Normal probability density function ">wnormpdf</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="empdistr.html" class="code" title=" [Fz] = empdistr(z,varargin)">empdistr</a></li></TD>
+<TD> Computes and plots the empirical CDF</TD>
+</TR>
+<TR>
+<TD><li><a href="wchi2inv.html" class="code" title=" x = wchi2inv(F,p)">wchi2inv</a></li></TD>
+<TD> Inverse of the Chi squared distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wnormcdf.html" class="code" title=" F = wnormcdf(x,m,v);">wnormcdf</a></li></TD>
+<TD> Normal cumulative distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="wtinv.html" class="code" title=" x = wtinv(F,df)">wtinv</a></li></TD>
+<TD> Inverse of the Student's T distribution function</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\strfun\deblank.m">deblank</a></li></TD>
+<TD>       Remove trailing blanks.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\lang\error.m">error</a></li></TD>
+<TD>         Display message and abort function.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graphics\hold.m">hold</a></li></TD>
+<TD>          Hold current graph.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\mean.m">mean</a></li></TD>
+<TD>          Average or mean value.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\elmat\@char\permute.bi">permute</a></li></TD>
+<TD>       Permute array dimensions.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\datafun\std.m">std</a></li></TD>
+<TD>           Standard deviation.</TD>
+</TR>
+<TR>
+<TD><li><a href="" class="code" title="C:\programs\matlab71\toolbox\matlab\graph2d\title.m">title</a></li></TD>
+<TD>         Graph title.</TD>
+</TR>
+</TABLE>
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<TABLE BORDER=0>
+
+<TR>
+<TD><li><a href="dist2dfit.html" class="code" title=" [phat] =dist2dfit(V,H,dist,res,method,monitor,chat0)">dist2dfit</a></li></TD>
+<TD> Parameter estimates for DIST2D data.</TD>
+</TR>
+<TR>
+<TD><li><a href="mdist2dfit.html" class="code" title=" phato=mdist2dfit(V,H,dist,alpha,method)">mdist2dfit</a></li></TD>
+<TD> Parameter estimates for MDIST2D data.</TD>
+</TR>
+</TABLE>
+
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>001 <span class="keyword">function</span> [phat, var,ciL,ciU] = <a name="_sub0" href="#_subfunctions" class="code">wnormfit</a>(data,plotflag)
+002 <span class="comment">%WNORMFIT Parameter estimates for Normal data.</span>
+003 <span class="comment">%</span>
+004 <span class="comment">% CALL:  [phat var] = wnormfit(data, plotflag)</span>
+005 <span class="comment">%</span>
+006 <span class="comment">%   phat  = [m, v] = maximum likelihood estimate of the parameters of</span>
+007 <span class="comment">%           the distribution (see wnormpdf)</span>
+008 <span class="comment">%   var   = estimated asymptotic variance of phat (cov(m,v)=0)</span>
+009 <span class="comment">%   data  = data matrix</span>
+010 <span class="comment">%plotflag = 0, do not plot</span>
+011 <span class="comment">%         &gt; 0, plot the empiricial distribution function and the</span>
+012 <span class="comment">%              estimated cdf (see empdistr for options)(default)</span>
+013 <span class="comment">%</span>
+014 <span class="comment">% Example:</span>
+015 <span class="comment">%   R=wnormrnd(12,2,100,2);</span>
+016 <span class="comment">%   [phat, var]=wnormfit(R)</span>
+017 <span class="comment">%</span>
+018 <span class="comment">% See also  wnormpdf</span>
+019 
+020 <span class="comment">%tested on: matlab 5.x</span>
+021 <span class="comment">% History:</span>
+022 <span class="comment">% revised pab 24.10.2000</span>
+023 <span class="comment">% - added  nargchk</span>
+024 <span class="comment">% - cov changed to var = variance since cov(m,v)=0</span>
+025 <span class="comment">% - fixed some bugs when data is a matrix </span>
+026 <span class="comment">% added ms 15.08.2000</span>
+027 
+028 error(nargchk(1,2,nargin))
+029 <span class="keyword">if</span> nargin&lt;2|isempty(plotflag),  plotflag=1; <span class="keyword">end</span>
+030 sz = size(data);
+031 Nsz=length(sz);
+032 dim = min(find(sz~=1));  <span class="comment">%1st non-singleton dimension</span>
+033 <span class="comment">% make sure dim=1 is the first non-singleton dimension</span>
+034 <span class="keyword">if</span> isempty(dim) | dim ~= 1, 
+035   order = [dim 1:dim-1 dim+1:Nsz];
+036   data  = permute(data,order);
+037   sz    = size(data);
+038 <span class="keyword">end</span>
+039 m = prod(sz(2:<span class="keyword">end</span>));
+040 n =sz(1);
+041 
+042 mhat=mean(data);
+043 vhat=std(data).^2;
+044 phat=[mhat(:),vhat(:)];
+045 
+046 var=[vhat(:), 2*vhat(:).^2]/n;
+047 <span class="keyword">if</span> nargout&gt;2, 
+048   alpha2=ones(1,2)*0.05/2;
+049   tcrit = <a href="wtinv.html" class="code" title=" Inverse of the Student's T distribution function ">wtinv</a>([alpha2 1-alpha2],n-1);
+050   chi2crit = <a href="wchi2inv.html" class="code" title=" Inverse of the Chi squared distribution function ">wchi2inv</a>([alpha2 1-alpha2],n-1);
+051   ciL = [(mhat + tcrit(1)*sqrt(vhat/n)), sqrt(vhat*(n-1)./chi2crit(2))];
+052   ciU = [(mhat + tcrit(2)*sqrt(vhat/n)), sqrt(vhat*(n-1)./chi2crit(1))];
+053   <span class="comment">%ciL = wnorminv(alpha2(ones(m,1),:),phat,var);</span>
+054   <span class="comment">%ciU = wnorminv(1-alpha2(ones(m,1),:),phat,var);</span>
+055 <span class="keyword">end</span>
+056 
+057 <span class="keyword">if</span> plotflag 
+058   sd=sort(data);
+059   <a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:,1),[sd(:,1),<a href="wnormcdf.html" class="code" title=" Normal cumulative distribution function ">wnormcdf</a>(sd(:,1),mhat(1),vhat(1))],plotflag ), hold on
+060   <span class="keyword">for</span> ix=2:m,<a href="empdistr.html" class="code" title=" Computes and plots the empirical CDF ">empdistr</a>(sd(:,ix),[sd(:,ix),<a href="wnormcdf.html" class="code" title=" Normal cumulative distribution function ">wnormcdf</a>(sd(:,ix),mhat(ix),vhat(ix))],plotflag),<span class="keyword">end</span>
+061    hold off
+062  
+063   title([deblank([<span class="string">'Empirical and Normal estimated cdf'</span>])])
+064 <span class="keyword">end</span>
+065 
+066 
+067 
+068 
+069</pre></div>
+<HR noShade>
+<SMALL><A href="http://www.maths.lth.se/matstat/">Mathematical 
+Statistics</A><BR><A href="http://www.maths.lth.se/">Centre for Mathematical 
+Sciences</A><BR><A href="http://www.lu.se/">Lund University</A> with <A 
+href="http://www.lth.se/">Lund Institute of Technology</A> </SMALL>
+<P><SMALL>Comments or corrections to the <A
+href="mailto:wafo@maths.lth.se">WAFO group</A>  </P>
+
+<hr><address>Generated on Thu 06-Oct-2005 02:21:16
+ for <strong><A href="http://www.maths.lth.se/matstat/wafo/">WAFO</A></strong>
+ by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
