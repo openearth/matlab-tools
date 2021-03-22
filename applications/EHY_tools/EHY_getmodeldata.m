@@ -141,9 +141,10 @@ switch modelType
                 X = EHY_getmodeldata(inputFile,Data.requestedStations(Data.exist_stat),'dfm',OPT,'varName',xVarName);
                 Y = EHY_getmodeldata(inputFile,Data.requestedStations(Data.exist_stat),'dfm',OPT,'varName',yVarName);
                 
-                if strncmp('cross_',yVarName,6) || sum(size(X.val)>1) > 2 % moving stations or cross-section
-                    Data.locationX(Data.exist_stat,:) = X.val;
-                    Data.locationY(Data.exist_stat,:) = Y.val;
+                infonc = ncinfo(inputFile,xVarName);
+                if strncmp('cross_',yVarName,6) || ismember('time',{infonc.Dimensions.Name}) % moving stations or cross-section
+                    Data.locationX(:,Data.exist_stat) = X.val;
+                    Data.locationY(:,Data.exist_stat) = Y.val;
                 else
                     Data.location(Data.exist_stat,:) = [reshape(X.val,[],1) reshape(Y.val,[],1)];
                 end
@@ -287,7 +288,7 @@ switch modelType
                         data = cell2mat(data);
                     end
                     Data.val(dims(:).indexOut) = data;
-                    
+                    Data.val(Data.val == -999) = NaN;
             end
         end
         
