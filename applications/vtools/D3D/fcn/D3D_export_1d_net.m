@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17077 $
-%$Date: 2021-02-19 06:31:11 +0100 (Fri, 19 Feb 2021) $
-%$Author: chavarri $
-%$Id: D3D_comp.m 17077 2021-02-19 05:31:11Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_comp.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %export kml of 1d network
 
