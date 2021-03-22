@@ -94,47 +94,6 @@ function D3D_plot_testbench(case_name,path_sim_test,path_sim_ref,fig_prnt)
                 end %kb
             end %kv
         %%
-        case 'c31_shoal_ds_IBedCond0_us_IBedCond1'
-            
-            node_x_test=ncread(simdef_test.file.map,'mesh1d_node_x');
-            node_y_test=ncread(simdef_test.file.map,'mesh1d_node_y');
-            tim_test=ncread(simdef_test.file.map,'time');
-
-            var_v={'mesh1d_waterdepth', 'mesh1d_mor_bl'};
-
-            nb=4;
-            branch_id=NaN(size(node_x_test));
-            branch_id(1 :10)=1;
-            branch_id(11:20)=2;
-            branch_id(21:30)=3;
-            branch_id(31:40)=4;
-
-            nt=numel(tim_test);
-            cmap=jet(nt);
-
-            nv=numel(var_v);
-            for kv=1:nv
-                var_loc_test=ncread(simdef_test.file.map,var_v{kv});
-
-                figure('visible',~fig_prnt)
-                subplot(2,1,1)
-                hold on
-                scatter(node_x_test,node_y_test,10,'k')
-                xlabel('x-coordinate [m]')
-                ylabel('y-coordinate [m]')
-
-                subplot(2,1,2)
-                hold on
-                for kt=1:nt
-                    plot(node_x_test,var_loc_test(:,kt),'color',cmap(kt,:))
-                end
-                xlabel('x-coordinate [m]')
-                ylabel(strrep(var_v{kv},'_','\_'))
-                colorbar('location','northoutside')
-                clim([tim_test(1),tim_test(end)])
-                colormap(cmap)
-            end %kv
-        %%
         case 'c11_sediment_transport_bifurcation'
             node_x_test=ncread(simdef_test.file.map,'mesh1d_node_x');
             node_y_test=ncread(simdef_test.file.map,'mesh1d_node_y');
@@ -213,7 +172,59 @@ function D3D_plot_testbench(case_name,path_sim_test,path_sim_ref,fig_prnt)
                     
                 end %kb
             end %kv
+        %
+        case {'c31_shoal_ds_IBedCond0_us_IBedCond1','c32_shoal_ds_IBedCond0_us_IBedCond1_toe','c33_shoal_ds_IBedCond0_us_IBedCond1_toe_sd_low'}
+            node_x_test=ncread(simdef_test.file.map,'mesh1d_node_x');
+            node_x_ref=ncread(simdef_ref.file.map,'mesh1d_node_x');
+            tim_test=ncread(simdef_test.file.map,'time');
+            
+            var_v={'mesh1d_waterdepth','mesh1d_mor_bl','mesh1d_s1'};
+            
+            nt=numel(tim_test);
+            cmap=jet(nt);
 
+            nv=numel(var_v);
+            for kv=1:nv
+                var_loc_test=squeeze(ncread(simdef_test.file.map,var_v{kv}));
+                var_loc_ref=squeeze(ncread(simdef_ref.file.map,var_v{kv}));
+
+                    %% var
+                    figure('visible',~fig_prnt)
+                    hold on
+                    for kt=1:nt
+                        han_test=plot(node_x_test,var_loc_test(:,kt),'color',cmap(kt,:),'linestyle','-','marker','o');
+                        han_ref=plot(node_x_ref,var_loc_ref(:,kt),'color',cmap(kt,:),'linestyle','--','marker','*');
+                    end
+                    xlabel('x-coordinate [m]')
+                    ylabel(strrep(var_v{kv},'_','\_'))
+                    colorbar('location','northoutside')
+                    clim([tim_test(1),tim_test(end)])
+                    legend([han_test,han_ref],{'test','ref'})
+                    colormap(cmap)
+                    
+                    if fig_prnt
+                        print(gcf,fullfile(path_figs,sprintf('var_%02d.png',kv)),'-dpng','-r300')
+                    end
+                    
+                    %% diff
+                    figure('visible',~fig_prnt)
+                    hold on
+                    for kt=1:nt
+                        han_diff=plot(node_x_test(:),var_loc_test(:,kt)-var_loc_ref(:,kt),'color',cmap(kt,:),'linestyle','-');
+                    end
+                    xlabel('x-coordinate [m]')
+                    ylabel(strrep(var_v{kv},'_','\_'))
+                    colorbar('location','northoutside')
+                    clim([tim_test(1),tim_test(end)])
+                    legend([han_test],{'difference'})
+                    colormap(cmap)
+                    
+                    if fig_prnt
+                        print(gcf,fullfile(path_figs,sprintf('var_%02d_diff.png',kv)),'-dpng','-r300')
+                    end
+                    
+            end %kv
+            
         otherwise
             messageOut(NaN,'no plotting function available')
     end

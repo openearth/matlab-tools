@@ -97,6 +97,12 @@ for kf1=1:nf
             file.mor=fullfile(dire(kf).folder,dire(kf).name);
         case '.nc'
             file.grd=char(fullfile(dire(kf).folder,dire(kf).name));
+        case '.pol'
+            tok=regexp(dire(kf).name,'_','split');
+            str_name=strrep(tok{1,end},'.pol','');
+            if strcmp(str_name,'part')
+                file.(str_name)=fullfile(dire(kf).folder,dire(kf).name);
+            end
     end
     else %it is results directory
         dire_res=dir(fullfile(dire(kf).folder,dire(kf).name));
