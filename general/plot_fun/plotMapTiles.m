@@ -220,16 +220,20 @@ end
 
 %% PLOT
 [nx,ny,~]=size(tiles);
-if ~isaxes(OPT.han_ax)
-figure;
-hold on
-OPT.han_ax=gca;
-axis equal
-ax=OPT.han_ax;
+if isnan(OPT.han_ax) || ~isaxes(OPT.han_ax)
+    %If axis handle is invalid, create a new figure
+    figure;
+    hold on;
+    ax=gca;
+    axis equal;
+else
+    %Plot to axis handle
+    ax=OPT.han_ax;
 end
+
 for kx=1:nx
     for ky=1:ny
-         surf(OPT.han_ax,tiles{kx,ky,1},tiles{kx,ky,2},zeros(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none');
+         surf(ax,tiles{kx,ky,1},tiles{kx,ky,2},zeros(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none');
     end
 end
 % switch logs.CS2.type
