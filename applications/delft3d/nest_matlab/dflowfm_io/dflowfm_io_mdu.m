@@ -45,12 +45,18 @@ case 'read'
             parnam = simona2mdu_replacechar(parnam,' ','_');
 
             % Fill mdu structure
-
-            if ~isempty(str2num(tmp.Data{igroup,2}{ipar,2}))
-                val = str2num(tmp.Data{igroup,2}{ipar,2}); %it was called var. Don't use function names! V
-            else
-                val = tmp.Data{igroup,2}{ipar,2};
+            val_raw=tmp.Data{igroup,2}{ipar,2};
+            val_num=str2double(val_raw);
+            if isnan(val_num) %it is a character
+                val=val_raw;
+            else %it is a number
+                if strcmp(parnam,'FileVersion') %treat as string
+                    val=val_raw;
+                else %treat as number
+                    val = str2double(val_raw);
+                end
             end
+
             if isempty(parnam) %input to previous parameter is in several lines
                 %                 e.g.
                 % ObsFile = file1.xyn   \

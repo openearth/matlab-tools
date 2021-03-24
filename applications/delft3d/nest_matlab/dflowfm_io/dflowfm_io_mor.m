@@ -14,6 +14,8 @@ function varargout=dflowfm_io_mor(cmd,varargin)
 %
 % See also: dflowfm_io_mdu
 
+warning('use dflowfm_io_mdu')
+
 fname   = varargin{1};
 
 
