@@ -1,3 +1,9 @@
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+
 function varargout=dflowfm_io_mdu(cmd,varargin)
 
 %DFLOWFM_IO_MDU  x read/write D-Dlow FM ASCII Master Definition File (*.mdu) <<beta version!>>
