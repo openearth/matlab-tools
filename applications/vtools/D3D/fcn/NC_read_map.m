@@ -99,7 +99,9 @@ if flg.which_p~=-1
 %     time_r=ITMAPC; %results time vector [s]
     
     time_r=ncread(file.map,'time',kt(1),kt(2)); %results time vector [seconds since start date]
-    
+    if ismor
+        time_r_mor=ncread(file.map,'morft',kt(1),kt(2)); %results time vector [seconds since start date]
+    end
         %outdated
 %     TUNIT=vs_let(NFStruct,'map-const','TUNIT','quiet'); %dt unit
 %     DT=vs_let(NFStruct,'map-const','DT','quiet'); %dt
@@ -1348,9 +1350,13 @@ end
 %% OUTPUT FOR ALL
 
 if exist('time_dnum','var')
-out.time_dnum=time_dnum;
+    out.time_dnum=time_dnum;
+end
+if exist('morft','var')
+    out.morft=morft(kt(1));
 end
 out.time_r=time_r;
+
 out.kf=kf;
 
 end %main function
