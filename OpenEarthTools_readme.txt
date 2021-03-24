@@ -1,0 +1,3 @@
+Victor Chavarrias (victor.chavarrias@deltares.nl)
+
+The content in folder OpenEarthTools.zip is duplicated in <\applications\delft3d>. Do not ask me why that is the case. I have zipped the folder to prevent branching of the functions and unexpected behaviour as one function is taken by Matlab rather than the one you would expect. If you changed something in a function that is now in the zipped folder, please take that function out and update the one in <\applications\delft3d>. 
