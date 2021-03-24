@@ -27,6 +27,8 @@
 %201106
 %   -V. Created for the first time.
 %
+%210315
+%   -V. New implementation at edges.
 
 function bed_flux=bed_flux_general(input,Qb_edg,B_edg,c_edg,etab,dt)
 

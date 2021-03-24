@@ -102,7 +102,13 @@ for kloc=1:nloc
 
     %convert time format 
     if isnan(idx_time)
-        time_mea=datetime(vardata{kloc,1}(:,idx_datum),'inputFormat',fmt_datum)+duration(vardata{kloc,1}(:,idx_tijd),'inputFormat',lower(fmt_tijd));
+        tim_str=vardata{kloc,1}(:,idx_tijd);
+        switch lower(fmt_tijd)
+            case 'hh'
+                tim_str=cellfun(@(x)sprintf('%s:00',x),tim_str,'UniformOutput',false);
+                fmt_tijd='hh:mm';
+        end
+        time_mea=datetime(vardata{kloc,1}(:,idx_datum),'inputFormat',fmt_datum)+duration(tim_str,'inputFormat',lower(fmt_tijd));
     else
         if contains(fmt_time,{'z','x'})%there is a time zone in the input
             time_mea=datetime(vardata{kloc,1}(:,idx_time),'InputFormat',fmt_time,'TimeZone',tzone);
@@ -241,6 +247,9 @@ for kloc=1:nloc
         case 'cm'
             mea=mea./100;
             eenheid='m';
+        case 'dm/s'
+            mea=mea*0.1;
+            eenheid='m/s';
     end
 
     %quantity
@@ -407,17 +416,20 @@ flg_debug=parin.Results.flg_debug;
 file_structure=parin.Results.file_structure;
 v2struct(file_structure) %output from get_file_data and file_type=0 or file_type=-1
 
-%% header
-fid=fopen(fpath,'r');
-fline=fgetl(fid); %first line
-
 %% file type data
 
 if file_type~=0 
 [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=get_file_data(file_type,fpath);
 end
 
+%cycle header
+fid=fopen(fpath,'r');
+for kl=1:headerlines
+    fline=fgetl(fid); 
+end
+
 tok_header=regexp(fline,fdelim,'split');
+tok_header=strtrim(tok_header);
 if isempty(var_once)
     idx_var_once=NaN;
 else
@@ -429,11 +441,6 @@ end
 idx_var_loc =find_str_in_cell(tok_header,var_loc );
 
 nv=numel(idx_var_time);
-
-%cycle header
-for kl=1:headerlines-1
-    fgetl(fid);
-end
 
 %% read
 
@@ -852,7 +859,7 @@ keep_searching=true;
 %% check for header with several lines of info
 %very ad-hoc. This is not the nicest.
 
-if strcmp(fline(1:9),'Parameter')
+if numel(fline)>8 && strcmp(fline(1:9),'Parameter')
     file_type=7;
     keep_searching=false;
 end
@@ -891,14 +898,22 @@ end %get_file_type
 
 function tok=get_clean_line(fid,fdelim)
 
+tok{1,1}='';
+kc=1;
+klim=10; %number of emtpy lines to allow
+while isempty(tok{1,1})
 fline=fgetl(fid); 
 tok=regexp(fline,fdelim,'split');
 if strcmp(fdelim,' ') %this is only an issue if separator is space, although it could be passed to all cases
     bol_val=~cellfun(@(X)isempty(X),(tok(:)));
     tok=tok(bol_val);
-end
-
-end
+end %strcmp
+kc=kc+1;
+if kc==klim
+    error('too many empty lines.')
+end %kc
+end %while
+end %function
 
 %%
 
