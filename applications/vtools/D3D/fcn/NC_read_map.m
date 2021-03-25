@@ -49,7 +49,7 @@ end
 
 %mdu
 %quite expensive. Only if necessary.
-if any(flg.which_v==[1,2])
+% if any(flg.which_v==[-1,1,2])
     
     %sometimes does not work
 %     mdu=dflowfm_io_mdu('read',file.mdf);
@@ -68,7 +68,7 @@ if any(isnan(idx))
     ismor=0;
 end
 
-end %if 1,2
+% end %if 1,2
 
     %secondary flow
 % if isempty(strfind(mdf.keywords.sub1,'I'))
@@ -170,7 +170,11 @@ switch simdef.D3D.structure
                 x_face=ncread(file.map,'mesh2d_face_x',kF(1),kF(2));
                 y_face=ncread(file.map,'mesh2d_face_y',kF(1),kF(2));
                 faces=ncread(file.map,'mesh2d_face_nodes',[1,kF(1)],[Inf,kF(2)]);
-                time_dnum=map_info.times(kt(1));
+                if kt(2)==Inf
+                    time_dnum=map_info.times;
+                else
+                    time_dnum=map_info.times(kt(1));
+                end
 %             end
         end
     case 3 %SOBEK3
