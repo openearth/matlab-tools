@@ -48,7 +48,9 @@ switch modelType
             'qsun'                         , 'qeva'                              , 'qcon'                     , 'qlong'                                     ,  ...
             'qfreva'                       , 'qfrcon'                            , 'qtot'                     , 'patm'                                      } ;
         
-        more_param_hyd={'flowelem_xcc','flowelem_ycc','flowelem_zcc','flowelem_bac','flowelem_xzw','flowelem_yzw','flowelemcontour_x','flowelemcontour_y','flowelem_bl','elemlink','flowlink','flowlinktype','flowlink_xu','flowlink_yu','wgs84','flowelemdomain','flowlinkdomain','flowelemglobalnr','station_geom','station_geom_node_count','station_geom_node_coordx','station_geom_node_coordy','depth-averaged_x_velocity','depth-averaged_y_velocity'};
+        more_param_hyd={'flowelem_xcc','flowelem_ycc','flowelem_zcc','flowelem_bac','flowelem_xzw','flowelem_yzw','flowelemcontour_x','flowelemcontour_y','flowelem_bl','elemlink',...
+            'flowlink','flowlinktype','flowlink_xu','flowlink_yu','wgs84','flowelemdomain','flowlinkdomain','flowelemglobalnr','station_geom','station_geom_node_count',...
+            'station_geom_node_coordx','station_geom_node_coordy','depth-averaged_x_velocity','depth-averaged_y_velocity','projected_coordinate_system','flowlink_lonu','flowlink_latu','taus','rich'};
         param_hyd=cat(2,param_hyd,more_param_hyd);
          
         
