@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17110 $
-%$Date: 2021-03-10 12:59:30 +0100 (Wed, 10 Mar 2021) $
-%$Author: chavarri $
-%$Id: figure_layout.m 17110 2021-03-10 11:59:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/figure_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function varargout=D3D_io_input(what_do,fname,varargin)
