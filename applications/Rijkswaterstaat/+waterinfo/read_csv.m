@@ -87,9 +87,16 @@ header      = textscan(fid,frmt,1,...
     'Delimiter',delimiter);
 fclose(fid);
 header      = vertcat(header{:});
-ncols       = find(contains(header,'TAXON_NAME'));
-header(ncols+1:end) = [];
+% ncols       = find(contains(header,'TAXON_NAME'));
+% header(ncols+1:end) = [];
+id = cellfun(@isempty,header);
+header(id) = [];
 header      = strrep(header,' ',''); % Remove whitespaces in header fields
+% Change header charcters not valid from fieldnames
+chars = {'(',')','/','\','.',';'};
+for i = 1:length(chars)
+    header = strrep(header,chars{i},'_');
+end
 
 %% 2) Read data
 clear OUT;
@@ -99,9 +106,11 @@ OUT        = cell2struct(num2cell(NaN(size(header))),header',1);
 % Format specification
 frmt        = cellstr(repmat('%s',length(header),1));
 
-
 id1       = find(strcmp(header,'WAARNEMINGDATUM'));
-id2       = find(strcmp(header,'WAARNEMINGTIJD'));
+id2       = find(contains(header,'WAARNEMINGTIJD'));
+if contains(header(id2),'MET')
+    id2       = find(strcmp(header,'REFERENTIE'));
+end
 id3       = find(strcmp(header,'NUMERIEKEWAARDE'));
 frmt{id1} = '%{dd-MM-yyyy}D';
 frmt{id2} = '%{HH:mm:ss}D';
@@ -118,7 +127,6 @@ data = textscan(fid,frmt,...
     'ReturnOnError',false);
 fclose(fid);
 
-
 flds = fieldnames(OUT);
 for i = 1:length(flds)
     f = flds{i};
@@ -133,7 +141,7 @@ for i = 1:length(flds)
     elseif length(unique(tmp)) > 1
         
         
-        if strcmp(f,'WAARNEMINGDATUM') || strcmp(f,'WAARNEMINGTIJD') % Time array
+        if strcmp(f,'WAARNEMINGDATUM') || strcmp(f,'WAARNEMINGTIJD') || strcmp(f,'REFERENTIE') % Time array
             OUT = rmfield(OUT,f);
             if ~isfield(OUT,'datenum')
                 OUT.datenum = datenum([year(data{id1}),month(data{id1}),day(data{id1}),...
