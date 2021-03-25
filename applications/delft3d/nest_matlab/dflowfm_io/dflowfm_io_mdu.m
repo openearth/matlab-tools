@@ -95,26 +95,46 @@ case 'write'
    %
    names  = fieldnames(mdu);
    maxlen = 0;
-
-   for igroup= 1: length(names)
-       tmp.Data{igroup,1} = simona2mdu_replacechar(names{igroup},'_',' ');
-       pars = fieldnames(mdu.(names{igroup}));
+    
+   %when writing a file read with delft3d_io_sed, the block names have a number. 
+   %Here we remove it
+    ngroup=numel(names);
+    names_clean=cell(ngroup,1);
+    for kb=1:ngroup
+        tok=regexp(names{kb,1},'\d','split');
+        names_clean{kb,1}=tok{1,1};
+    end %kb
+                
+   for igroup=1:ngroup
+%        tmp.Data{igroup,1} = simona2mdu_replacechar(names{igroup},'_',' ');
+        tmp.Data{igroup,1} = simona2mdu_replacechar(names_clean{igroup},'_',' ');
+        pars = fieldnames(mdu.(names{igroup}));
        for ipar = 1: length(pars)
            tmp2{ipar,1}=pars{ipar};
 %            tmp2{ipar,1} = simona2mdu_replacechar(pars{ipar},'_',' '); %why is this? not only wall_ks has underscore V
 %            if  strcmpi(tmp2{ipar,1},'wall ks') tmp2{ipar,1} = simona2mdu_replacechar(tmp2{ipar,1},' ','_'); end
            val=mdu.(names{igroup}).(pars{ipar});
-           if iscell(val)
-               line=sprintf('%s ',val{:});
-               line=strrep(line,' \ ',''); %a bar may have been used to seprate input in several lines
-           elseif ~isempty(num2str(val))
-               line = num2str(val);
+           if strcmp(class(val),'Delft3D')
+               
            else
-               line = val;
+               if iscell(val)
+                   line=sprintf('%s ',val{:});
+                   line=strrep(line,' \ ',''); %a bar may have been used to seprate input in several lines
+               elseif isa(val,'double')
+                   line = num2str(val);
+               else
+                    if strcmp(tmp2{ipar,1},'Name') && strcmp(names_clean{igroup},'Sediment')
+                        line=sprintf('#%s#',val);
+                    else
+                        line = val;
+                    end
+                
+                   
+               end
+               maxlen = max(maxlen,length(line) + 1);
+    %            line(40:c = ['# ' mdu_Comments.(names{igroup}).(pars{ipar})];
+                tmp2{ipar,2} = line;
            end
-           maxlen = max(maxlen,length(line) + 1);
-%            line(40:c = ['# ' mdu_Comments.(names{igroup}).(pars{ipar})];
-            tmp2{ipar,2} = line;
        end
        tmp.Data{igroup,2} = tmp2;
        clear tmp2

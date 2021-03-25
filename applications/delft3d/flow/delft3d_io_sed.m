@@ -89,7 +89,7 @@ for iChapter = 1:nChapter
       ValueLine    = strtrim(ValueLine);
       end
       
-      if strcmpi(Chapter,'SedimentFileInformation');
+      if any(strcmpi(Chapter,{'SedimentFileInformation','MorphologyFileInformation'}))
          Value   = ValueLine;
          Comment = '';
       else
@@ -98,7 +98,12 @@ for iChapter = 1:nChapter
             Value = tmp{2};
             Comment = tmp{3};
         else
-        [Value,Comment] = strtok(ValueLine);
+            if strcmp(Keyword,'Percentiles')
+                Value=ValueLine;
+            else
+                [Value,Comment] = strtok(ValueLine);
+            end
+                
         end
          Value = strtrim(Value);
          
@@ -110,8 +115,19 @@ for iChapter = 1:nChapter
              error('string contains not two #')
             end
          else
-            if ~isempty(str2num(Value))
-              Value = str2num(Value);
+%             if ~isempty(str2num(Value))
+%               Value = str2num(Value);
+%             end
+%             val_raw=Value;
+            val_num=str2double(Value);
+            if isnan(val_num) %it is a character
+%                 Value=val_raw;
+            else %it is a number
+                if any(strcmp(Keyword,{'FileVersion','Percentile'})) %treat as string
+%                     Value=val_raw;
+                else %treat as number
+                    Value=val_num;
+                end
             end
          end
       end
