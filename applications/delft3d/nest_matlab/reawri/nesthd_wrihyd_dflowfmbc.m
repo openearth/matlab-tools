@@ -18,6 +18,8 @@ itdate        = datestr(nfs_inf.itdate,'yyyy-mm-dd HH:MM:SS');
 [path,~,~]    = fileparts(fileOut);
 if isempty(path) path = '.'; end
 
+if ~isfield(add_inf,'timeZone'); add_inf.timeZone = 0; end
+
 %% Switch orientation if overall model is delft3D or Waqua
 if ~strcmpi(nfs_inf.from,'dfm')
     [bndval,thick] = nesthd_flipori(bndval,thick);

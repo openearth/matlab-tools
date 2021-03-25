@@ -36,6 +36,8 @@ gen_inf.to   = EHY_getModelType(files{4});
 gen_inf.from = EHY_getModelType(files{3});
 
 %% Reduce time frame for generation of boundaary conditions
+if ~isfield(add_inf,'t_start'); add_inf.t_start = gen_inf.times(1);   end
+if ~isfield(add_inf,'t_stop');  add_inf.t_stop  = gen_inf.times(end); end
 if ~isnan(add_inf.t_start)
     index          = find(gen_inf.times >= add_inf.t_start & gen_inf.times <= add_inf.t_stop);
     gen_inf.times  = gen_inf.times(index);
