@@ -63,7 +63,7 @@ for i_sub = 1:OPT.no_sub
             height = fig_pos(4) - (OPT.upper + OPT.lower);
             width  = (fig_pos(3) - (OPT.no_sub * (OPT.left  + OPT.right))) / OPT.no_sub;
             bottom = OPT.lower;
-            left   = (OPT.no_sub - i_sub) * (OPT.left + OPT.right + width) + OPT.left;
+            left   = (i_sub - 1) * (OPT.left + OPT.right + width) + OPT.left;
     end
     
     a_aspect = width / height;

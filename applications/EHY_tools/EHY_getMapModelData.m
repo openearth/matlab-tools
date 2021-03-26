@@ -388,13 +388,16 @@ if ~exist('Data','var')
                         
                         if exist('layersInd','var') && ~isempty(layersInd)
                             layer_ind = dims(layersInd).index;
+                            for iL = 1:length(layer_ind)
+                                segm_ind = ((layer_ind(iL) - 1) * no_segm_perlayer + 1):(layer_ind(iL) * no_segm_perlayer);
+                                [~, data] = delwaq('read', dw, subs_ind, segm_ind, dims(timeInd).index);
+                                Data.val(dims(timeInd).indexOut,dims(facesInd).indexOut,dims(layersInd).indexOut(iL)) = permute(data,[3 2 1]);
+                            end
                         else
-                            layer_ind = 1;
+                            [~, data] = delwaq('read', dw, subs_ind, dims(facesInd).index, dims(timeInd).index);
+                            Data.val(dims(timeInd).indexOut,dims(facesInd).indexOut) = permute(data,[3 2 1]);
                         end
                         
-                        segm_ind = ((layer_ind - 1) * no_segm_perlayer + 1):(layer_ind * no_segm_perlayer);
-                        [~, data] = delwaq('read', dw, subs_ind, segm_ind, dims(timeInd).index);
-                        Data.val = permute(data,[3 2 1]);
                     end
                 end
                 

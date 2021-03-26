@@ -893,7 +893,7 @@ switch modelType
                         E.Ycor = dw.Y;
                     end
                     if ismember('XYcen',wantedOutput)
-                        [E.Xcen,E.Ycen] = corner2center(dw.X,dw.Y);
+                        [E.Xcen,E.Ycen] = corner2centernan(dw.X,dw.Y);
                     end
                     if ismember('area',wantedOutput)
                         E.area = NaN(size(dw.X)-1);

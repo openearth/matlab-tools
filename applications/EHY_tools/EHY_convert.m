@@ -255,39 +255,39 @@ end
         end
     end
 % cco2grd
-   function [output,OPT] = EHY_convert_cco2grd(inputFile,outputFile,OPT)
+    function [output,OPT] = EHY_convert_cco2grd(inputFile,outputFile,OPT)
         dw = delwaq('open',inputFile);
         grd.X = dw.X;
         grd.Y = dw.Y;
         if OPT.saveOutputFile
             wlgrid('write',outputFile,grd);
         end
-       output = grd;
-   end
+        output = grd;
+    end
 % cco2kml
-   function [output,OPT] = EHY_convert_cco2kml(inputFile,outputFile,OPT)
-       if OPT.saveOutputFile
-           [~,name] = fileparts(outputFile);
-           tempFileGrd = [tempdir name '.grd'];
-           tempFileKml = [tempdir name '.kml'];
-           copyfile(inputFile,tempFileGrd);
-           dw = delwaq('open',inputFile);
-           grd.X = dw.X; grd.Y = dw.Y; 
-           [x,y,OPT] = EHY_convert_coorCheck(grd.X,grd.Y,OPT);
-           if ~any(any(grd.X==x)) % coordinates have been converted
-               grd.X=x; grd.Y=y; grd.CoordinateSystem='Spherical';
-               wlgrid('write',tempFileGrd,grd);
-           end
-           grid2kml(tempFileGrd,OPT.lineColor*255);
-           copyfile(tempFileKml,outputFile);
-           delete(tempFileGrd)
-           if exist(strrep(tempFileGrd,'.grd','.enc'))
-               delete(strrep(tempFileGrd,'.grd','.enc'))
-           end
-           delete(tempFileKml)
-       end
-       output = [];
-   end
+    function [output,OPT] = EHY_convert_cco2kml(inputFile,outputFile,OPT)
+        if OPT.saveOutputFile
+            [~,name] = fileparts(outputFile);
+            tempFileGrd = [tempdir name '.grd'];
+            tempFileKml = [tempdir name '.kml'];
+            copyfile(inputFile,tempFileGrd);
+            dw = delwaq('open',inputFile);
+            grd.X = dw.X; grd.Y = dw.Y;
+            [x,y,OPT] = EHY_convert_coorCheck(grd.X,grd.Y,OPT);
+            if ~any(any(grd.X==x)) % coordinates have been converted
+                grd.X=x; grd.Y=y; grd.CoordinateSystem='Spherical';
+                wlgrid('write',tempFileGrd,grd);
+            end
+            grid2kml(tempFileGrd,OPT.lineColor*255);
+            copyfile(tempFileKml,outputFile);
+            delete(tempFileGrd)
+            if exist(strrep(tempFileGrd,'.grd','.enc'))
+                delete(strrep(tempFileGrd,'.grd','.enc'))
+            end
+            delete(tempFileKml)
+        end
+        output = [];
+    end
 % crs2kml
     function [output,OPT] = EHY_convert_crs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
@@ -626,7 +626,7 @@ end
         end
     end
 % kml2ldb
-    function [output,OPT] = EHY_convert_kml2ldb(inputFile,outputFile,OPT)      
+    function [output,OPT] = EHY_convert_kml2ldb(inputFile,outputFile,OPT)
         copyfile(inputFile,[tempdir 'kmlpath.kml'])
         output = kml2ldb(0,[tempdir 'kmlpath.kml']);
         if OPT.saveOutputFile
@@ -1199,23 +1199,34 @@ end
         end
         OPT = EHY_convert_ccoCheck(OPT,inputFile);
         GI = EHY_getGridInfo(OPT.grdFile,{'XYcen','no_layers'});
-        dw = delwaq('open',OPT.grdFile);
+        [~,~,ext] = fileparts(OPT.grdFile);
         [k,dist] = dsearchn([GI.Xcen(:) GI.Ycen(:)],[reshape(xyn.x,[],1) reshape(xyn.y,[],1)]);
         [m,n] = ind2sub(size(GI.Xcen),k);
+        if ismember(ext,{'.lga','.cco'})
+            dw = delwaq('open',OPT.grdFile);
+            m = m+1;
+            n = n+1;
+        elseif strcmp(ext,'.nc')
+            dw.Index(:,1) = 1:length(GI.Xcen);
+            dw.NoSegPerLayer = length(GI.Xcen);
+            GI.no_layers = 36;
+        end
         for i = 1:length(m)
-            output.segmnr(i,1) = dw.Index(m(i)+1,n(i)+1,1);
+            output.segmnr(i,1) = dw.Index(m(i),n(i),1);
         end
         output.name = reshape(xyn.name,[],1);
         no_stat = length(output.name);
+        for iS = 1:no_stat
         for k = 1:GI.no_layers
-            output.name = [output.name; strcat(output.name(1:no_stat),[' (' num2str(k) ')']) ];
-            output.segmnr = [output.segmnr; output.segmnr(1:no_stat) + (k-1)*dw.NoSegPerLayer ];
+            output.name{end+1} = [output.name{iS} ' (' num2str(k) ')' ];
+            output.segmnr(end+1) = output.segmnr(iS) + (k-1)*dw.NoSegPerLayer;
+        end
         end
         
         if OPT.saveOutputFile
             fid = fopen(outputFile,'w');
             for i = 1:length(output.segmnr)
-                fprintf(fid,'%-s\t%d \n',output.name{i},output.segmnr(i));
+                fprintf(fid,'%-s\t1\t%d \n',['''' output.name{i} ''''],output.segmnr(i));
             end
             fclose(fid);
         end
@@ -1263,7 +1274,7 @@ end
                 lat(skipIndex) = [];lon(skipIndex) = [];
             end
             KMLscatter(lat,lon,xyz(:,3),'fileName',tempFile)
-%             KMLPlaceMark(lat,lon,tempFile,'icon',OPT.iconFile);
+            %             KMLPlaceMark(lat,lon,tempFile,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -1486,7 +1497,7 @@ if OPT.fromEPSG~=OPT.toEPSG
                 end
                 T.Field.Data(:,1)=T.Field.Data(:,1)-342212;
                 T.Field.Data(:,2)=T.Field.Data(:,2)-112342;
-              
+                
             else
                 for iT=1:length(T.Field)
                     [T.Field(iT).Data(:,1),T.Field(iT).Data(:,2)]=convertCoordinates(T.Field(iT).Data(:,1),T.Field(iT).Data(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
@@ -1518,13 +1529,13 @@ if OPT.fromEPSG~=OPT.toEPSG
             varNameX = EHY_nameOnFile(inputFile,'NetNode_x');
             varNameY = EHY_nameOnFile(inputFile,'NetNode_y');
             output = [ncread(inputFile,varNameX) ncread(inputFile,varNameY)];
-             
+            
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
             if OPT.saveOutputFile
                 copyfile(inputFile,outputFile)
                 nc_varput(outputFile,varNameX,output(:,1));
                 nc_varput(outputFile,varNameY,output(:,2));
-            
+                
                 % to do: fix setting the right EPSG code in the .nc file,
                 % not properply working yet
                 %                 if OPT.toEPSG==4326

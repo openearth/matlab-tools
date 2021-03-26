@@ -36,6 +36,8 @@ functions{end+1,1}='EHY_convert';
 functions{end  ,2}='Conversion from and to model input files. Including coordinate conversion';
 functions{end+1,1}='EHY_getmodeldata';
 functions{end  ,2}='Interactive retrieval of model data in stations using EHY_getmodeldata';
+functions{end+1,1}='EHY_plotmodeldata';
+functions{end  ,2}='Interactive plotting of model data in stations using EHY_getmodeldata';
 functions{end+1,1}='EHY_getMapModelData';
 functions{end  ,2}='Interactive retrieval of top-view model data using EHY_getMapModelData';
 functions{end+1,1}='EHY_plotMapModelData';
@@ -52,8 +54,6 @@ functions{end+1,1}='EHY_findLimitingCells';
 functions{end  ,2}='Get the time step limiting cells and max. flow velocities from a Delft3D-FM run';
 functions{end+1,1}='EHY_movieMaker';
 functions{end  ,2}='Create animations out of multiple PNG''s or JPG''s';
-functions{end+1,1}='EHY_opendap';
-functions{end  ,2}='Retrieve data from Rijkswaterstaats waterbase';
 functions{end+1,1}='EHY_simulationInputTimes';
 functions{end  ,2}='A tool to help using the correct model input times';
 functions{end+1,1}='EHY_crop';
@@ -86,7 +86,7 @@ for iF=1:length(functions)
         'String',functions{iF,2},'horizontalalignment','left');
 end
 
-EHY_infoFile='n:\Deltabox\Bulletin\groenenb\EHY_INFO\EHY_INFO.pdf';
+EHY_infoFile = 'n:\Deltabox\Bulletin\groenenb\EHY_INFO\EHY_INFO.pdf';
 if exist(EHY_infoFile,'file')
     % EHY_info
     button=uicontrol('Style', 'pushbutton', 'String','EHY_info',...

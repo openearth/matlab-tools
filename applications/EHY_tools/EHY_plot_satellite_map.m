@@ -115,7 +115,6 @@ if OPT.plot_map
         [curAxis(1:2), curAxis(3:4)] = convertCoordinates(curAxis(1:2), curAxis(3:4),'CS1.code',OPT.localEPSG,'CS2.code',4326);
     end
     
-    addpath([tempdir 'EHY_wms']);
     no_tries = 0;
     success = 0;
     while no_tries < 5 && ~success

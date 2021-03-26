@@ -55,6 +55,7 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
         if strcmpi(varName,'Zcen_cen'   ) newName = 'zcoordinate_c'; end
         if strcmpi(varName,'Zcen_int'   ) newName = 'zcoordinate_w'; end
+        if strcmpi(varName,'vicoww'     ) newName = 'vicww'        ; end
         
     case {'map_nc','fou_nc'} % dfm
         % Get the name of varName as specified on the map file of a simulation
@@ -86,6 +87,7 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'bedlevel'   ) newName = 'DPS'        ; end
         if strcmpi(varName,'uv'         ) newName = 'ZCURU'      ; end
         if strcmpi(varName,'density'    ) newName = 'zrho'       ; end
+        if strcmpi(varName,'vicoww'     ) newName = 'ZVICWW'     ; end
     case 'sds' % simona
         if strcmpi(varName,'x_velocity' ) newName = 'uv'         ; end
     case 'his' % DELWAQ .his-file
@@ -186,6 +188,9 @@ fmNames{end+1,1}={'mesh2d_node_z','NetNode_z'}; % z-coordinate of nodes
 
 fmNames{end+1,1}={'FlowElem_xcc','mesh2d_face_x'}; % x-coordinate of faces
 fmNames{end+1,1}={'FlowElem_ycc','mesh2d_face_y'}; % y-coordinate of faces
+
+fmNames{end+1,1}={'NetLink_xu','mesh2d_edge_x'}; % x-coordinate of edge
+fmNames{end+1,1}={'NetLink_yu','mesh2d_edge_y'}; % y-coordinate of edge
 
 fmNames{end+1,1}={'NetLink','mesh2d_edge_nodes'}; % 'link between two netnodes' / 'Mapping from every edge to the two nodes that it connects'
 fmNames{end+1,1}={'NetElemNode','mesh2d_face_nodes'}; % 'mapping from net cell to net nodes' 
