@@ -23,7 +23,7 @@ end
 semimajorAxis   = 6378137.0;
 east            = xLon * 0.017453292519943295;
 north           = yLat * 0.017453292519943295;
-yLat            = 3189068.5 * log((1.0 + sin(north)) / (1.0 - sin(north)));
+yLat            = 3189068.5 .* log((1.0 + sin(north)) ./ (1.0 - sin(north)));
 xLon            = semimajorAxis * east;
 
 end
