@@ -28,14 +28,14 @@ if strcmp(modelType,'nc')
 end
 
 %% Change variable name (for usage in EHY_getmodeldata) for Delft3D 4, IMPLIC and SOBEK3
-varName = strrep(varName, ' ', '');
-
 if strcmpi(varName,'vel'                  ) varName = 'uv'         ; end
 if strcmpi(varName,'sal'                  ) varName = 'salinity'   ; end
 if strcmpi(varName,'chl'                  ) varName = 'salinity'   ; end
 if strcmpi(varName,'tem'                  ) varName = 'temperature'; end
 if strcmpi(varName,'waterlevel'           ) varName = 'wl'         ; end
+if strcmpi(varName,'water level'          ) varName = 'wl'         ; end
 if strcmpi(varName,'waterdepth'           ) varName = 'wd'         ; end
+if strcmpi(varName,'water depth'          ) varName = 'wd'         ; end
 if strcmpi(varName,'bed'                  ) varName = 'bedlevel'   ; end
 if strcmpi(varName,'bl'                   ) varName = 'bedlevel'   ; end
 if strcmpi(varName,'suspendedload'        ) varName = 'suspload'   ; end
