@@ -92,15 +92,15 @@ if ischar(str2D)
    if strcmpi(OS(1),'w') || ...
       strcmpi(OS(1),'d')
       % add a CR (first) and a LF (second)
-      str2D = pad(str2D,LF,size(str2D,2)+2);
+      str2D = pad_char(str2D,LF,size(str2D,2)+2);
       str2D(:,end-1) = CR; % first 0D (carriage return), then 0A (line feed)
    elseif strcmpi(OS(1),'m')
       % add a CR (only)
-      str2D = pad(str2D,CR,size(str2D,2)+1);
+      str2D = pad_char(str2D,CR,size(str2D,2)+1);
    elseif strcmpi(OS(1),'u') || ...
           strcmpi(OS(1),'l')
       % add a LF (only)
-      str2D = pad(str2D,LF,size(str2D,2)+1);
+      str2D = pad_char(str2D,LF,size(str2D,2)+1);
    elseif strcmpi(OS(1),'s')
       % add symbol
       str2D = addrowcol(str2D,0,1,varargin{2});
