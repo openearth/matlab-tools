@@ -215,7 +215,9 @@ cnst=handles.toolbox.tidedatabase.constituentList{iac};
 lon1 = []; lat1 = []; ampz1 = []; phasez1 = [];
 lon2 = []; lat2 = []; ampz2 = []; phasez2 = [];
 
-[lon,lat, gt, depth, conList] =  readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent',upper(cnst));
+[gt, conList] =  read_tide_model(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent',upper(cnst));
+lon = gt.lon;
+lat = gt.lat;
 ampz = squeeze(gt(1).amp);  phasez = squeeze(gt(1).phi);
 
 % Figures
@@ -228,10 +230,10 @@ ampm=sort(ampm);
 i98=round(0.98*length(ampm));
 cmax=ampm(i98);
 pcolor(lon,lat,ampz);shading flat;axis equal;caxis([0 cmax]);colorbar;
-set(gca,'xlim',[lon(1) lon(end)],'ylim',[lat(1) lat(end)]);
+set(gca,'xlim',[gt.lon(1) gt.lon(end)],'ylim',[gt.lat(1) gt.lat(end)]);
 subplot(2,1,2)
-pcolor(lon,lat,phasez);shading flat;axis equal;caxis([0 360]);colorbar;
-set(gca,'xlim',[lon(1) lon(end)],'ylim',[lat(1) lat(end)]);
+pcolor(gt.lon,gt.lat,phasez);shading flat;axis equal;caxis([0 360]);colorbar;
+set(gca,'xlim',[gt.lon(1) gt.lon(end)],'ylim',[gt.lat(1) gt.lat(end)]);
 
     
 %%
@@ -265,7 +267,7 @@ try
     filename=filename(1:end-4);
     ii=handles.toolbox.tidedatabase.activeModel;
     name=handles.tideModels.model(ii).name;
-    if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+    if strcmpi(handles.tideModels.model(ii).URL(1:5),'https')
         tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
     else
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
@@ -286,7 +288,10 @@ try
     end
     
     % Get data
-    [lon,lat,gt, depth, conList] = readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent','all');    
+    [gt, conList] =  read_tide_model(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent','all');
+    lon = gt.lon;
+    lat = gt.lat;
+        
     ampz = gt.amp; phasez = gt.phi;
 
     for i=1:length(conList)
@@ -298,12 +303,12 @@ try
             [xg,yg]=meshgrid(xg,yg);
             [xglo,ygla]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
             [lo,la]=meshgrid(lon,lat);
-            amp{i}=interp2(lo,la,squeeze(ampz(:,:,i)),xglo,ygla);
-            phi{i}=interp2(lo,la,squeeze(phasez(:,:,i)),xglo,ygla);            
+            amp{i}=interp2(lo,la,gt(i).amp,xglo,ygla);
+            phi{i}=interp2(lo,la,gt(i).phi,xglo,ygla);            
         else
             [xg,yg]=meshgrid(lon,lat);
-            amp{i}=squeeze(ampz(:,:,i));
-            phi{i}=squeeze(phasez(:,:,i));
+            amp{i}=gt(i).amp;
+            phi{i}=gt(i).phi;
         end
     end
 
@@ -350,7 +355,9 @@ try
         yy(2)=max(max(yg))+1;
     end
         
-    [lon,lat,gt, depth, conList] = readTideModel(tidefile,'type','u','xlim',xx,'ylim',yy,'constituent','all');
+    [gt, conList] =  read_tide_model(tidefile,'type','u','xlim',xx,'ylim',yy,'constituent','all');
+    lon = gt.lon;
+    lat = gt.lat;    
     ampz = gt.amp; phasez = gt.phi;
     
     for i=1:length(conList)
@@ -362,12 +369,12 @@ try
             [xg,yg]=meshgrid(xg,yg);
             [xglo,ygla]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
             [lo,la]=meshgrid(lon,lat);
-            amp{i}=interp2(lo,la,squeeze(ampz(:,:,i)),xglo,ygla);
-            phi{i}=interp2(lo,la,squeeze(phasez(:,:,i)),xglo,ygla);            
+            amp{i}=interp2(lo,la,gt(i).amp,xglo,ygla);
+            phi{i}=interp2(lo,la,gt(i).phi,xglo,ygla);              
         else
             [xg,yg]=meshgrid(lon,lat);
-            amp{i}=squeeze(ampz(:,:,i));
-            phi{i}=squeeze(phasez(:,:,i));
+            amp{i}=gt(i).amp;
+            phi{i}=gt(i).phi;
         end
     end
     
@@ -394,7 +401,9 @@ try
         yy(2)=max(max(yg))+1;
     end
     
-    [lon,lat,gt, depth, conList]  = readTideModel(tidefile,'type','v','xlim',xx,'ylim',yy,'constituent','all');
+    [gt, conList] =  read_tide_model(tidefile,'type','v','xlim',xx,'ylim',yy,'constituent','all');
+    lon = gt.lon;
+    lat = gt.lat;
     ampz = gt.amp; phasez = gt.phi;
     
     for i=1:length(conList)
@@ -406,12 +415,12 @@ try
             [xg,yg]=meshgrid(xg,yg);
             [xglo,ygla]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
             [lo,la]=meshgrid(lon,lat);
-            amp{i}=interp2(lo,la,squeeze(ampz(:,:,i)),xglo,ygla);
-            phi{i}=interp2(lo,la,squeeze(phasez(:,:,i)),xglo,ygla);            
+            amp{i}=interp2(lo,la,gt(i).amp,xglo,ygla);
+            phi{i}=interp2(lo,la,gt(i).phi,xglo,ygla);           
         else
             [xg,yg]=meshgrid(lon,lat);
-            amp{i}=squeeze(ampz(:,:,i));
-            phi{i}=squeeze(phasez(:,:,i));
+            amp{i}=gt(i).amp;
+            phi{i}=gt(i).phi;
         end
     end
     
@@ -496,8 +505,7 @@ cs.name='WGS 84';
 cs.type='geographic';
 [x,y]=ddb_coordConvert(x,y,handles.screenParameters.coordinateSystem,cs);
 
-
-[lon,lat, gt, depth, conList] =  readTideModel(tidefile,'type','h','x',x,'y',y,'constituent','all');
+[gt, conList] =  read_tide_model(tidefile,'type','h','x',x,'y',y,'constituent','all');
 
 t0=handles.toolbox.tidestations.startTime;
 t1=handles.toolbox.tidestations.stopTime;
