@@ -22,17 +22,22 @@ if nargin==0 % no input was given
     if isnumeric(filename); disp('EHY_getMdFile stopped by user.'); return; end
     filename = [pathname filename];
 end
- 
+
 %%
 loop = 3;
 while loop>0
-    loop = loop-1;
+    if exist('mdFile','var') % mdFile was found :-)
+        break
+    else
+        loop = loop-1;
+    end
+    
     %% determine mdFile
     % try to get runid based on filename
     if ~exist('runid','var') || isempty(runid) % maybe it was found in previous loop
         runid = EHY_getRunid(filename);
     end
-        
+    
     % the mdFile itself was given
     [pathstr, name, ext] = fileparts(filename);
     if isempty(pathstr)
@@ -50,12 +55,11 @@ while loop>0
     end
     
     % the run directory was given // a (partitioned) .mdu was given
-    if ~exist('mdFile','var')
+    if ~exist('mdFile','var') % mdFile not yet found
         mdFiles = [dir([filename filesep '*.mdu']); dir([filename filesep '*.mdf']); dir([filename filesep '*siminp*'])];
-       
+        
         % remove partitioned .mdu-files
-        ind = find(~cellfun(@isempty,strfind({mdFiles.name},'.mdu')));
-        if ~isempty(ind)
+        if any(~cellfun(@isempty,strfind({mdFiles.name},'.mdu')))
             deleteInd = [];
             for iF = 1:length(mdFiles)
                 if length(mdFiles(iF).name)>9 && all(ismember(mdFiles(iF).name(end-7:end-4),'0123456789')) && strcmp(mdFiles(iF).name(end-8),'_')
@@ -74,26 +78,29 @@ while loop>0
         end
     end
     
-    % output file was given, try to get runid and mdFile
-    if ~exist('mdFile','var') % dflowfm
-        if ~isempty(runid)
-            mdFiles = dir([fileparts(fileparts(filename)) filesep '*' runid '.mdu']);
-            if length(mdFiles)==1
+    % output file was given, try to get mdFile based on runid
+    if ~isempty(runid)
+        if ~exist('mdFile','var') % mdFile not yet found | .mdu ?
+            if exist([fileparts(fileparts(filename)) filesep runid '.mdu'],'file')
                 mdFile = [fileparts(fileparts(filename)) filesep runid '.mdu'];
             end
         end
-    end
-    if ~exist('mdFile','var') % delft3d4
-        if ~isempty(runid)
-            mdFiles = dir([fileparts(filename) filesep '*' runid '.mdf']);
-            if length(mdFiles)==1
+        if ~exist('mdFile','var') % mdFile not yet found | Delta Shell structure ?
+            % Delta Shell folder structure with ./input/<runid>.mdu  and ./output/
+            [~,name2] = fileparts(fileparts(filename));
+            if strcmp(name2,'output') && exist([fileparts(fileparts(filename)) filesep 'input' filesep runid '.mdu'],'file')
+                mdFile = [fileparts(fileparts(filename)) filesep 'input' filesep runid '.mdu'];
+            end
+        end
+        if ~exist('mdFile','var') % mdFile not yet found | .mdf ?
+            if exist([fileparts(filename) filesep runid '.mdf'],'file')
                 mdFile = [fileparts(filename) filesep runid '.mdf'];
             end
         end
     end
     
     % file in the run directory was given
-    if ~exist('mdFile','var')
+    if ~exist('mdFile','var') % mdFile not yet found
         filename = fileparts(filename);
     end
 end
@@ -102,4 +109,3 @@ if ~exist('mdFile','var') && OPT.disp
     disp('<strong>Could not determine mdFile</strong>')
     mdFile = '';
 end
-
