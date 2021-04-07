@@ -4,6 +4,10 @@ function TF = EHY_isSpherical(X,Y)
 
 TF = false;
 
-if all(all(X>=-180)) && all(all(X<=180)) && all(all(Y>=-90)) && all(all(Y<=90))
+% only use no-nan values (and turn X and Y into 1D-arrays)
+X = X(~isnan(X));
+Y = Y(~isnan(Y));
+
+if all(X>=-180) && all(X<=180) && all(Y>=-90) && all(Y<=90)
     TF = true;
 end

@@ -11,19 +11,19 @@ function EHY_movieMaker(imageDir,varargin)
 
 % created by Julien Groenenboom, June 2018
 %% OPT
-if nargin==0
+if nargin == 0
     EHY_movieMaker_interactive;
     return
 else
-    OPT.outputFile=[imageDir filesep 'EHY_movieMaker_OUTPUT' filesep 'movie.avi'];
-    OPT.frameRate=4;
-    OPT.quality=[]; % see https://nl.mathworks.com/help/matlab/ref/videowriter.html
-    OPT.profile='Motion JPEG AVI';
-    OPT=setproperty(OPT,varargin);
+    OPT.outputFile = [imageDir filesep 'EHY_movieMaker_OUTPUT' filesep 'movie.avi'];
+    OPT.frameRate  = 4;
+    OPT.quality    = []; % see https://nl.mathworks.com/help/matlab/ref/videowriter.html
+    OPT.profile    = 'Motion JPEG AVI'; % see options in VideoWriter.m
+    OPT            = setproperty(OPT,varargin);
 end
 
 %% images 2 movie
-imageFiles=[dir([imageDir filesep '*.png']),...
+imageFiles = [dir([imageDir filesep '*.png']),...
     dir([imageDir filesep '*.jpg'])];
 
 if isempty(imageFiles)
@@ -32,9 +32,9 @@ end
 % str2num
 if ischar(OPT.frameRate); OPT.frameRate=str2num(OPT.frameRate); end
 if ischar(OPT.quality); OPT.quality=str2num(OPT.quality); end
-   
+
 %create output directory
-if ~exist(fileparts(OPT.outputFile))
+if ~exist(fileparts(OPT.outputFile),'dir')
     mkdir(fileparts(OPT.outputFile))
 end
 
@@ -45,13 +45,13 @@ if ~isempty(OPT.quality)
 end
 open(writerObj);
 
-for iF=1:length(imageFiles)
+for iF = 1:length(imageFiles)
     disp(['progress: ' num2str(iF) '/' num2str(length(imageFiles))]);
-    thisimage=imread([imageDir filesep imageFiles(iF).name]);
+    thisimage = imread([imageDir filesep imageFiles(iF).name]);
     writeVideo(writerObj, thisimage);
 end
 close(writerObj);
-disp(['EHY_movieMaker created:' char(10) OPT.outputFile])
+disp(['EHY_movieMaker created:' newline OPT.outputFile])
 disp('If the resolution of the images is too large, you might not be able to play the video.')
 
 end
@@ -78,6 +78,6 @@ disp('start writing the screenplay')
 disp('start making the movie')
 EHY_movieMaker(imageDir,OPT);
 
-disp([char(10) 'Note that next time you want to make this movie, you can also use:'])
+disp([newline 'Note that next time you want to make this movie, you can also use:'])
 disp(['<strong>EHY_movieMaker(''' imageDir ''',''frameRate'',' num2str(OPT.frameRate) ''',''quality'',' num2str(OPT.quality) ');</strong>'])
 end

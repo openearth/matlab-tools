@@ -90,9 +90,9 @@ switch gridInfo.layer_model
             
             logi = ZKlocal >= bl; % ZKlocal <= wl(iT,:)'
             int_field(logi) = ZKlocal2(logi);
-            logi = [-10^8 ZKlocal(1:end-1)] > wl(iT,:)'; 
+            logi = [-10^8 ZKlocal(1:end-1)] > wl(iT,:)';
             int_field(logi) = NaN;
-
+            
             % water level
             [~,cellIndMax] = max(int_field,[],2);
             cellIndMaxUni = unique(cellIndMax);
@@ -240,51 +240,85 @@ OPT.layer = 0;
 [dims,~,~,OPT] = EHY_getDimsInfo(inputFile,OPT,modelType);
 
 dw = delwaq('open',inputFile);
-dwGrid = delwaq('open',OPT.gridFile);
 
-m_ind = dims(mInd).index;
-n_ind = dims(nInd).index;
-k_ind = 1:dwGrid.MNK(3);
+[~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
 
-for iT = 1:length(dims(timeInd).index)
-    time_ind  = dims(timeInd).index(iT);
+if ismember(typeOfModelFileDetail,{'lga','cco'})
+    dwGrid = delwaq('open',OPT.gridFile);
     
-    % bed level
-    if ~exist('bl','var')
-        subs_ind   = strmatch('TotalDepth',dw.SubsName);
-        [~,data]  = delwaq('read',dw,subs_ind,0,1); % first time_ind to combine with OPT.dw_iniWL
+    m_ind = dims(mInd).index;
+    n_ind = dims(nInd).index;
+    k_ind = 1:dwGrid.MNK(3);
+    
+    for iT = 1:length(dims(timeInd).index)
+        time_ind  = dims(timeInd).index(iT);
+        
+        % bed level
+        if ~exist('bl','var')
+            subs_ind   = strmatch('TotalDepth',dw.SubsName);
+            [~,data]  = delwaq('read',dw,subs_ind,0,1); % first time_ind to combine with OPT.dw_iniWL
+            data      = waq2flow3d(data,dwGrid.Index);
+            data(data == -999) = NaN;
+            TotalDepth = data(m_ind,n_ind,k_ind);
+            TotalDepth = max(TotalDepth,[],3);
+            bl = OPT.dw_iniWL - TotalDepth;
+        end
+        
+        % Zcen_int / Zcen_cen
+        subs_ind   = strmatch('Depth',dw.SubsName);
+        [~,data]  = delwaq('read',dw,subs_ind,0,time_ind);
         data      = waq2flow3d(data,dwGrid.Index);
-        data(data == -999) = NaN;
-        TotalDepth = data(m_ind,n_ind,k_ind);
-        TotalDepth = max(TotalDepth,[],3);
-        bl = OPT.dw_iniWL - TotalDepth;
+        data(data == -999) = 0;
+        Depth = data(m_ind,n_ind,k_ind);
+        Depth(:,:,end+1) = 0; % add bottom interface
+        Zcen_int(iT,:,:,:) = bl + flip(cumsum(flip(Depth,3),3),3);
+        Zcen_cen(iT,:,:,:) = (Zcen_int(iT,:,:,1:end-1) + Zcen_int(iT,:,:,2:end))/2;
     end
     
-    % Zcen_int / Zcen_cen
-    subs_ind   = strmatch('Depth',dw.SubsName);
-    [~,data]  = delwaq('read',dw,subs_ind,0,time_ind);
-    data      = waq2flow3d(data,dwGrid.Index);
-    data(data == -999) = 0;
-    Depth = data(m_ind,n_ind,k_ind);
-    Depth(:,:,end+1) = 0; % add bottom interface
-    Zcen_int(iT,:,:,:) = bl + flip(cumsum(flip(Depth,3),3),3);
-    Zcen_cen(iT,:,:,:) = (Zcen_int(iT,:,:,1:end-1) + Zcen_int(iT,:,:,2:end))/2;
+    % water level
+    wl = Zcen_int(:,:,:,1);
+    
+    % delete ghost cells
+    if n_ind(1) == 1
+        bl = bl(2:end,:);
+        wl = wl(:,2:end,:);
+        Zcen_int = Zcen_int(:,2:end,:,:);
+        Zcen_cen = Zcen_cen(:,2:end,:,:);
+    end
+    if m_ind(1)==1
+        bl = bl(:,2:end);
+        wl = wl(:,:,2:end);
+        Zcen_int = Zcen_int(:,:,2:end,:);
+        Zcen_cen = Zcen_cen(:,:,2:end,:);
+    end
+    
+elseif strcmp(typeOfModelFileDetail, 'nc')
+    
+    GI = EHY_getGridInfo(inputFile,{'no_layers','dimensions'},'gridFile',OPT.gridFile);
+    
+    for iT = 1:length(dims(timeInd).index)
+        time_ind  = dims(timeInd).index(iT);
+        
+        % bed level
+        if ~exist('bl','var')
+            subs_ind   = strmatch('TotalDepth',dw.SubsName);
+            segm_ind = 1:GI.no_NetElem;
+            [~, TotalDepth] = delwaq('read', dw, subs_ind, segm_ind, 1); % first time_ind to combine with OPT.dw_iniWL
+            bl = OPT.dw_iniWL - TotalDepth';
+        end
+        
+        % Zcen_int / Zcen_cen
+        subs_ind  = strmatch('Depth',dw.SubsName);
+        [~,Depth] = delwaq('read',dw,subs_ind,0,time_ind);
+        Depth     = reshape(Depth,GI.no_NetElem,GI.no_layers);
+        Depth(:,end+1) = 0; % add bottom interface
+        Zcen_int(iT,:,:) = bl + flip(cumsum(flip(Depth,2),2),2);
+        Zcen_cen(iT,:,:) = (Zcen_int(iT,:,1:end-1) + Zcen_int(iT,:,2:end))/2;
+    end
+    
+    % water level
+    wl = Zcen_int(:,:,1);
+    
 end
 
-% water level
-wl = Zcen_int(:,:,:,1);
-
-% delete ghost cells
-if n_ind(1) == 1
-    bl = bl(2:end,:);
-    wl = wl(:,2:end,:);
-    Zcen_int = Zcen_int(:,2:end,:,:);
-    Zcen_cen = Zcen_cen(:,2:end,:,:);
-end
-if m_ind(1)==1
-    bl = bl(:,2:end);
-    wl = wl(:,:,2:end);
-    Zcen_int = Zcen_int(:,:,2:end,:);
-    Zcen_cen = Zcen_cen(:,:,2:end,:);
-end
 end

@@ -56,7 +56,7 @@ if OPT.disp
 end
 
 warning off
-if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
+if strcmp(Data.modelType,'dfm') || isfield(Data,'face_nodes')
     arb = arbcross(Data.face_nodes',Data.Xcor,Data.Ycor,pli(:,1),pli(:,2));
 elseif ismember(Data.modelType,{'d3d','delwaq'}) || isfield(Data,'Xcor')
     arb = arbcross(Data.Xcor,Data.Ycor,pli(:,1),pli(:,2));
@@ -84,7 +84,7 @@ else
     Data.val   = permute(Data.val,[3 1 2]);
 end
 
-if strcmp(Data.modelType,'dfm') && isfield(Data,'face_nodes')
+if isfield(Data,'face_nodes')
     if isfield(Data,'val')
         val = arbcross(arb,{'FACE' permute(Data.val,[2 3 1])});
     elseif isfield(Data,'vel_x')
@@ -123,10 +123,9 @@ for iT = 1:no_times
             Data_xy.vel_dir(iT,iC,:) = vel_dir(iC,startBlock:endBlock);
         end
         
-        startBlock = (iT-1)*(no_layers+1)+1;
-        endBlock = startBlock + (no_layers+1) - 1;
-        
         if no_layers > 1
+            startBlock = (iT-1)*(no_layers+1)+1;
+            endBlock = startBlock + (no_layers+1) - 1;
             Data_xy.Zint(iT,iC,:) = Zint(iC,startBlock:endBlock);
         end
     end

@@ -40,9 +40,9 @@ elseif isempty(strfind(DataAll.dimensions(2:dimTextInd(1)-1),'time'))
     error('First dimension is not the time-dimension and that is what this script uses. Please contact Julien.Groenenboom@deltares.nl')
 end
 
-%% from [m,n] to cells (like FM)
-if ismember(modelType,{'d3d','delwaq'})
-    modelSize = size(DataAll.val);
+%% from [m,n] (like d3d4) to cells (like dfm)
+modelSize = size(DataAll.val);
+if length(modelSize) == 4
     DataAll.val    = reshape(DataAll.val,   [modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 
     DataZ.Zcen_cen = reshape(DataZ.Zcen_cen,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 
     DataZ.Zcen_int = reshape(DataZ.Zcen_int,[modelSize(1) prod(modelSize(2:3)) modelSize(4)+1]); 
@@ -114,7 +114,7 @@ for iZ = 1:length(OPT0.z)
     end
 end
 
-%% cells (like FM) back to [m,n]
-if ismember(modelType,{'d3d','delwaq'})
+%% cells (like dfm) back to [m,n] (like d3d)
+if length(modelSize) == 4
     Data.val = reshape(Data.val,modelSize(1:3));
 end

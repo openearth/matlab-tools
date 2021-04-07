@@ -363,10 +363,11 @@ if ~exist('Data','var')
                     end
                 else
                     dw       = delwaq('open',inputFile);
-                    subs_ind   = strmatch(OPT.varName,strrep(dw.SubsName,' ',''));
+                    subs_ind = strmatch(OPT.varName,strrep(dw.SubsName,' ',''));
+                    if isempty(subs_ind); error(['Variable ''' OPT.varName ''' not available on file: ' inputFile]); end
                     [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(OPT.gridFile);
                     if ismember(typeOfModelFileDetail,{'lga','cco'})
-                        dwGrid      = delwaq('open',OPT.gridFile);
+                        dwGrid   = delwaq('open',OPT.gridFile);
                         Data.val = NaN([dims.sizeOut]); % allocate
                         
                         m_ind = dims(mInd).index;

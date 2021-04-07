@@ -911,18 +911,12 @@ switch modelType
                     end
                 end
             case 'outputfile'
-                if strcmpi(ext,'.map') && isempty(OPT.gridFile) && length(wantedOutput) > 1
+                if strcmpi(ext,'.map') && isempty(OPT.gridFile) && length(setdiff(wantedOutput,'layer_model')) > 0
                     warning('DELWAQ map output may need a grid (.lga/.cco) file so determine this info');
                 end
                 
-                [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
-                if ismember(typeOfModelFileDetailGrid,'.nc')
-                    dw = delwaq('open', inputFile);
-                    if ismember('no_layers',wantedOutput)
-                        tmp = EHY_getGridInfo(OPT.gridFile,'dimensions');
-                        E.no_layers = dw.NumSegm/tmp.no_NetElem;
-                    end
-                elseif ismember(typeOfModelFileDetailGrid,{'lga','cco'})
+                if ~isempty(OPT.gridFile)
+                    % First, get wantedOutput from gridFile
                     tmp = EHY_getGridInfo(OPT.gridFile,wantedOutput);
                     fns = fieldnames(tmp);
                     for i = 1:length(fns)
@@ -930,12 +924,21 @@ switch modelType
                     end
                 end
                 
+                [~, typeOfModelFileDetailGrid] = EHY_getTypeOfModelFile(OPT.gridFile);
+                if ismember(typeOfModelFileDetailGrid,'.nc')
+                    if ismember('no_layers',wantedOutput)
+                        dw = delwaq('open', inputFile);
+                        tmp = EHY_getGridInfo(OPT.gridFile,'dimensions');
+                        E.no_layers = dw.NumSegm/tmp.no_NetElem;
+                    end
+                end
                 if ismember('layer_model',wantedOutput)
                     E.layer_model = 'z-model';
                     if OPT.disp
                         disp(['Assuming this DELWAQ-file is from a z-model: ' inputFile])
                     end
                 end
+                
         end % typeOfModelFile
         
     case 'SFINCS'
