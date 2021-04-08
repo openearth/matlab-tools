@@ -10,12 +10,21 @@
 %$Id$
 %$HeadURL$
 %
-%INPUT
-%   -tim: time series [datetime(nt,1)]
-%   -val: values [double(nt,1)]
+%Applies low pass filter with passing frequency 'fpass' and
+%steepness 'steepness' to time series consisting of 'nt' points 
+%with values 'val' at times 'tim'. Data is output at a constant
+%time step 'TimeStep' such that it has 'ntf' points.
+%
+%INPUT:
+%   -tim: time of series [datetime(nt,1)]
+%   -val: values of series [double(nt,1)]
 %   -fpass: passing frequency [double(1,1)] e.g. fpass=1/(2*24*3600)
 %   -steepness: filter steepness [double(1,1)] e.g. 0.99999 (i.e., very step filter)
 %   -TimeStep: resampling time of the series [duration(1,1)] e.g. minutes(2) (i.e., 2 minutes)
+%
+%OUTPUT:
+%   tim_f: time of filtered series [datetime(ntf,1)];
+%   val_f: values of filtered series [double(ntf,1)];
 
 function [tim_f,val_f]=lowpassfilter(tim,val,fpass,steepness,TimeStep)
  
