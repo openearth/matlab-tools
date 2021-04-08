@@ -120,8 +120,10 @@ if isfield(opt,'cs')
     end
 end
 
-switch flow.cs
-    case{'projected'}
+%switch flow.cs
+switch lower(flow.coordSysType(1:3))
+%    case{'projected'}
+    case{'pro','car'}
         % Take value from flow input
         opt.latitude=flow.latitude;
     otherwise

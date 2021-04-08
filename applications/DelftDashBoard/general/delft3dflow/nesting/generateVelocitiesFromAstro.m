@@ -75,7 +75,9 @@ runid = '';
 if isfield(opt,'runid')
     runid=opt.runid;
 end
-
+if isempty(runid)
+    runid='.';
+end
 
 openBoundaries=delft3dflow_readBndFile([runid filesep opt.current.BC.bndAstroFile]);
 astronomicComponentSets=delft3dflow_readBcaFile([runid filesep opt.current.BC.astroFile]);
