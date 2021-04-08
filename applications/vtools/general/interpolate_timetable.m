@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 16592 $
-%$Date: 2020-09-16 19:32:43 +0200 (Wed, 16 Sep 2020) $
-%$Author: chavarri $
-%$Id: function_layout.m 16592 2020-09-16 17:32:43Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/trunk/auxiliary/function_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Interpolates several time series into a common time vector.
 %
