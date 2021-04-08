@@ -35,6 +35,11 @@
 %       -'Q'        : water discharge
 %
 %       -'t'        : time
+%       -'tshift'   : time shift
+%
+%       -'corr'     : correlation coefficient
+%
+%       -
 %
 %   -un: factor for unit conversion from SI
 %
@@ -247,6 +252,7 @@ switch lower(var)
                 str_var='caudal';
          end
          un_type='L3/T';
+%%
      case 't'
          switch lan
             case 'en'
@@ -257,6 +263,27 @@ switch lower(var)
                 str_var='tiempo';
          end
          un_type='T';
+    case 'tshift'
+         switch lan
+            case 'en'
+                str_var='time shift';
+            case 'nl'
+                str_var='tijdsverschuiving';
+            case 'es'
+                str_var='diferencia de tiempo';
+         end
+         un_type='-';
+%%
+    case 'corr'
+         switch lan
+            case 'en'
+                str_var='correlation coefficient';
+            case 'nl'
+                str_var='correlatiecoëfficiënt';
+            case 'es'
+                str_var='coeficiente de correlación';
+         end
+         un_type='-';
     otherwise
          error('this is missing')
 end %var

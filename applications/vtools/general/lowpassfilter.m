@@ -10,21 +10,27 @@
 %$Id$
 %$HeadURL$
 %
-function [tim_f,val_f]=lowpassfilter(tim,val,fpass,steepness)
-                    
+%INPUT
+%   -tim: time series [datetime(nt,1)]
+%   -val: values [double(nt,1)]
+%   -fpass: passing frequency [double(1,1)] e.g. fpass=1/(2*24*3600)
+%   -steepness: filter steepness [double(1,1)] e.g. 0.99999 (i.e., very step filter)
+%   -TimeStep: resampling time of the series [duration(1,1)] e.g. minutes(2) (i.e., 2 minutes)
+
+function [tim_f,val_f]=lowpassfilter(tim,val,fpass,steepness,TimeStep)
+ 
 %uniform, unique
 data_r=timetable(tim,val);
 data_r=rmmissing(data_r);
 data_r=sortrows(data_r);
 tim_u=unique(data_r.tim);
 data_r=retime(data_r,tim_u,'mean'); 
-data_r=retime(data_r,'regular','linear','TimeStep',minutes(1));
+data_r=retime(data_r,'regular','linear','TimeStep',TimeStep);
 t1=data_r.tim(1);
 data_r.tim=data_r.tim-t1;
 data_r.tim.Format='s';
 
 %check
-
 if isregular(data_r)==0
     unique(diff(data_r.tim))
     error('it must be regular')
@@ -32,9 +38,6 @@ end
 if any(isnan(data_r.val))
     error('it must not contain NaN')
 end
-
-% fpass=1/(2*24*3600);
-% steepness=0.99999;
 
 %filter
 data_f=lowpass(data_r,fpass,'Steepness',steepness,'ImpulseResponse','iir');

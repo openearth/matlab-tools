@@ -122,6 +122,8 @@ for kf1=1:nf
                     if strcmp(dire_res(kf).name(end-5:end-3),'his')
                         file.his=fullfile(dire_res(kf).folder,dire_res(kf).name);
                     end
+                case '.dia'
+                    file.dia=fullfile(dire_res(kf).folder,dire_res(kf).name);
 %                 case '.shp'
 %                     tok=regexp(dire_res(kf).name,'_','split');
 %                     file.shp.(tok{1,1}{end})=fullfile(dire_res(kf).folder,dire_res(kf).name);

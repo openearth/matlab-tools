@@ -14,7 +14,9 @@
 %
 %NOTES:
 %   -for plotting patch:
-%   patch('faces',nodes','vertices',[x_m(:),y_m(:)],'FaceVertexCData',vmag_cen,'FaceColor','flat');
+%   patch('faces',nodes','vertices',[x_m(:),y_m(:)],'FaceVertexCData',val_cen,'FaceColor','flat');
+%   patch('faces',nodes','vertices',[x_m(:),y_m(:)],'FaceVertexCData',reshape(val_cen_m(:,:,2),[],1),'FaceColor','flat');
+
 
 function [x_m,y_m,nodes]=meshgridNodes(x_v,y_v)
 

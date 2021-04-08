@@ -281,11 +281,13 @@ for kloc=1:nloc
 
     %filter
     %It may be possible to do this for at least waterinfo data (type 6) by making use of flag 'KWALITEITSOORDEEL_CODE' (Normale waarde vs. nothing)
-    switch grootheid        
-        case {'Q','WATHTE'}
-            limsf=[-1e6,1e6];
-        otherwise
-            limsf=[-inf,inf];
+    if exist('limsf','var')==0
+        switch grootheid        
+            case {'Q','WATHTE'}
+                limsf=[-1e6,1e6];
+            otherwise
+                limsf=[-inf,inf];
+        end
     end
     mea(mea<limsf(1)|mea>limsf(2))=NaN;
 
@@ -901,7 +903,7 @@ function tok=get_clean_line(fid,fdelim)
 tok{1,1}='';
 kc=1;
 klim=10; %number of emtpy lines to allow
-while isempty(tok{1,1})
+while all(cellfun(@(X)isempty(X),tok))
 fline=fgetl(fid); 
 tok=regexp(fline,fdelim,'split');
 if strcmp(fdelim,' ') %this is only an issue if separator is space, although it could be passed to all cases

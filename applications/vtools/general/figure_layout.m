@@ -23,15 +23,34 @@
 %   -FontName if interpreter LaTeX: check post 114116
 %	-When adding text in duration axis, scatter interprets days while surf interprets hours
 
-% function fig_whatever(in_p)
-% 
-% v2struct(in_p)
+% in_p.fig_print=; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+% in_p.fname=;
+% in_p.fig_visible=;
 
-fig_prnt=1;
+function fig_whatever(in_p)
+
+%% DEFAULTS
+
+if isfield(in_p,'fig_visible')==0
+    in_p.fig_visible=1;
+end
+if isfield(in_p,'fig_print')==0
+    in_p.fig_print=0;
+end
+if isfield(in_p,'fname')==0
+    in_p.fname='fig';
+end
+if isfield(in_p,'fig_size')==0
+    in_p.fig_size=[0,0,14,14];
+end
+
+v2struct(in_p)
+
+%% SIZE
 
 %figure input
-prnt.filename='name';
-prnt.size=[0,0,14,9]; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
+prnt.filename=fname;
+prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
 npr=1; %number of plot rows
 npc=2; %number of plot columns
 marg.mt=1.0; %top margin [cm]
@@ -40,6 +59,8 @@ marg.mr=0.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
 marg.sv=0.0; %vertical spacing [cm]
+
+%% PLOT PROPERTIES 
 
 prop.ms1=10; 
 prop.mf1='g'; 
@@ -57,14 +78,14 @@ prop.color=[... %>= matlab 2014b default
  0.4660    0.6740    0.1880;... %green
  0.3010    0.7450    0.9330;... %cyan
  0.6350    0.0780    0.1840];   %brown
-prop.color=[... %<  matlab 2014b default
- 0.0000    0.0000    1.0000;... %blue
- 0.0000    0.5000    0.0000;... %green
- 1.0000    0.0000    0.0000;... %red
- 0.0000    0.7500    0.7500;... %cyan
- 0.7500    0.0000    0.7500;... %purple
- 0.7500    0.7500    0.0000;... %ocre
- 0.2500    0.2500    0.2500];   %grey
+% prop.color=[... %<  matlab 2014b default
+%  0.0000    0.0000    1.0000;... %blue
+%  0.0000    0.5000    0.0000;... %green
+%  1.0000    0.0000    0.0000;... %red
+%  0.0000    0.7500    0.7500;... %cyan
+%  0.7500    0.0000    0.7500;... %purple
+%  0.7500    0.7500    0.0000;... %ocre
+%  0.2500    0.2500    0.2500];   %grey
 set(groot,'defaultAxesColorOrder',prop.color)
 % set(groot,'defaultAxesColorOrder','default') %reset the color order to the default value
 
@@ -76,63 +97,11 @@ set(groot,'defaultTextInterpreter','tex');
 set(groot,'defaultAxesTickLabelInterpreter','tex'); 
 set(groot,'defaultLegendInterpreter','tex');
 
-%colorbar
+%% COLORBAR AND COLORMAP
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
 cbar(kr,kc).label='surface fraction content of fine sediment [-]';
-
-%text
-%     %irregulra
-% kr=1; kc=1;
-% texti.sfig(kr,kc).pos=[0.015,0.5e-3;0.03,-0.5e-3;0.005,-1e-3];
-% texti.sfig(kr,kc).tex={'1','2','a'};
-% texti.sfig(kr,kc).clr={prop.color(1,:),prop.color(2,:),'k'};
-% texti.sfig(kr,kc).ref={'ul'};
-% texti.sfig(kr,kc).fwe={'bold','normal'};
-% texti.sfig(kr,kc).rot=[0,90];
-% 
-%     %regular
-% text_str={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o'};
-% text_str={'a','b';'c','d';'e','f';'g','h'};
-% for kr=1:npr
-%     for kc=1:npc
-% % kr=1; kc=1;
-% texti.sfig(kr,kc).pos=[0.5,0.5];
-% texti.sfig(kr,kc).tex={text_str{kr,kc}}; %#ok
-% texti.sfig(kr,kc).clr={'k'};
-% texti.sfig(kr,kc).ref={'lr'};
-% texti.sfig(kr,kc).fwe={'bold'};
-% texti.sfig(kr,kc).rot=[0,90];
-%     end
-% end
-%     %regular more than one
-% text_str={'Hir.','Hir.','Hir.';'Ia','Ia','Ia';'Ib','Ib','Ib';'IIa','IIa','IIa';'IIb','IIb','IIb';'IIc','IIc','IIc';'IId','IId','IId'};
-% text_str2={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o';'p','q','r';'s','t','u'};
-% for kr=1:npr
-%     for kc=1:npc
-% % kr=1; kc=1;
-% texti.sfig(kr,kc).pos=[0.5,0.5;0.5,0.5];
-% texti.sfig(kr,kc).tex={text_str{kr,kc},text_str2{kr,kc}}; %#ok
-% texti.sfig(kr,kc).clr={'k','k'};
-% texti.sfig(kr,kc).ref={'ll','lr'};
-% texti.sfig(kr,kc).fwe={'bold','normal'};
-% texti.sfig(kr,kc).rot=[0,90];
-%     end
-% end
-
-%data rework
-
-%axes and limits
-kr=1; kc=1;
-lims.y(kr,kc,1:2)=[-2e-3,2e-3];
-lims.x(kr,kc,1:2)=lim_A;
-lims.c(kr,kc,1:2)=clims;
-xlabels{kr,kc}='L_a [m]';
-ylabels{kr,kc}='\lambda^* [-]';
-
-% lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
-% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
 % brewermap('demo')
 cmap=brewermap(3,'set1');
@@ -181,9 +150,63 @@ cmap=brewermap(3,'set1');
 % cmap2=brewermap(aux_cmap2_n,'Greens');
 % cmap=[cmap1;cmap2];
 
-%figure initialize
+%% TEXT
+
+%     %irregulra
+% kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.015,0.5e-3;0.03,-0.5e-3;0.005,-1e-3];
+% texti.sfig(kr,kc).tex={'1','2','a'};
+% texti.sfig(kr,kc).clr={prop.color(1,:),prop.color(2,:),'k'};
+% texti.sfig(kr,kc).ref={'ul'};
+% texti.sfig(kr,kc).fwe={'bold','normal'};
+% texti.sfig(kr,kc).rot=[0,90];
+% 
+%     %regular
+% text_str={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o'};
+% text_str={'a','b';'c','d';'e','f';'g','h'};
+% for kr=1:npr
+%     for kc=1:npc
+% % kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.5,0.5];
+% texti.sfig(kr,kc).tex={text_str{kr,kc}}; %#ok
+% texti.sfig(kr,kc).clr={'k'};
+% texti.sfig(kr,kc).ref={'lr'};
+% texti.sfig(kr,kc).fwe={'bold'};
+% texti.sfig(kr,kc).rot=[0,90];
+%     end
+% end
+%     %regular more than one
+% text_str={'Hir.','Hir.','Hir.';'Ia','Ia','Ia';'Ib','Ib','Ib';'IIa','IIa','IIa';'IIb','IIb','IIb';'IIc','IIc','IIc';'IId','IId','IId'};
+% text_str2={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o';'p','q','r';'s','t','u'};
+% for kr=1:npr
+%     for kc=1:npc
+% % kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.5,0.5;0.5,0.5];
+% texti.sfig(kr,kc).tex={text_str{kr,kc},text_str2{kr,kc}}; %#ok
+% texti.sfig(kr,kc).clr={'k','k'};
+% texti.sfig(kr,kc).ref={'ll','lr'};
+% texti.sfig(kr,kc).fwe={'bold','normal'};
+% texti.sfig(kr,kc).rot=[0,90];
+%     end
+% end
+
+%% LABELS AND LIMITS
+
+kr=1; kc=1;
+lims.y(kr,kc,1:2)=[-2e-3,2e-3];
+lims.x(kr,kc,1:2)=lim_A;
+lims.c(kr,kc,1:2)=clims;
+xlabels{kr,kc}='L_a [m]';
+ylabels{kr,kc}='\lambda^* [-]';
+% ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
+% lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
+% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
+
+
+%% FIGURE INITIALIZATION
+
 han.fig=figure('name',prnt.filename);
-set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',~fig_prnt)
+set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',fig_visible)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 % set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
 [mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
@@ -204,7 +227,41 @@ end
 % pos.sfig=han.sfig(1,1).Position; % position of first axes    
 % han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right','Color','none');
 
-%properties
+%% MAP TILES
+
+% kr=1; kc=1;
+% OPT.xlim=x_lims;
+% OPT.ylim=y_lims;
+% OPT.epsg_in=28992; %WGS'84 / google earth
+% OPT.epsg_out=28992; %Amersfoort
+% OPT.tzl=tzl; %zoom
+% OPT.save_tiles=false;
+% OPT.path_save='C:\Users\chavarri\checkouts\riv\earth_tiles\';
+% % OPT.path_tiles=fullfile(pwd,'earth_tiles'); 
+% OPT.map_type=3;%map type
+% OPT.han_ax=han.sfig(kr,kc);
+% 
+% plotMapTiles(OPT);
+
+%% EHY
+
+% kr=1; kc=1;
+% set(han.fig,'CurrentAxes',han.sfig(kr,kc))
+% %data_map.grid=EHY_getGridInfo(filename,{'face_nodes_xy'});
+% EHY_plotMapModelData(data_map.grid,data_map.val,'t',1); 
+
+%% PLOT
+
+kr=1; kc=1;    
+han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
+han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
+han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
+han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
+surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+
+%% PROPERTIES
+
     %sub11
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
@@ -225,34 +282,6 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
-%plots
-kr=1; kc=1;    
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
-han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
-han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
-surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
-
-% OPT.xlim=x_lims;
-% OPT.ylim=y_lims;
-% OPT.epsg_in=28992; %WGS'84 / google earth
-% OPT.epsg_out=28992; %Amersfoort
-% OPT.tzl=tzl; %zoom
-% OPT.save_tiles=false;
-% OPT.path_save='C:\Users\chavarri\checkouts\riv\earth_tiles\';
-% % OPT.path_tiles=fullfile(pwd,'earth_tiles'); 
-% OPT.map_type=3;%map type
-% OPT.han_ax=han.sfig(kr,kc);
-% 
-% plotMapTiles(OPT);
-
-
-% kr=2; kc=1;
-% set(han.fig,'CurrentAxes',han.sfig(kr,kc))
-% %data_map.grid=EHY_getGridInfo(filename,{'face_nodes_xy'});
-% EHY_plotMapModelData(data_map.grid,data_map.val,'t',1); 
-
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
 % han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
@@ -262,9 +291,12 @@ surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
 % kr=1; kc=2;
 % view(han.sfig(kr,kc),[0,90]);
 % colormap(han.sfig(kr,kc),cmap);
+% if ~isnan(lims.c(kr,kc,1:1))
 % caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+% end
 
-%text
+%% ADD TEXT
+
     %if irregular
 % which_pos_text=[1,1;2,1;3,1;3,2];
 % nsf=size(which_pos_text);
@@ -292,7 +324,8 @@ surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
 %     end
 % end
 
-%legend
+%% LEGEND
+
 % kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
@@ -302,7 +335,8 @@ surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
 % han.leg.Position=pos.leg(kr,kc)+[0,0,0,0];
 % han.sfig(kr,kc).Position=pos.sfig;
 
-%colorbar
+%% COLORBAR
+
 % kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
@@ -321,19 +355,33 @@ surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
 % end
 % han.cbar.TickLabels=aux_str;
 
-%general
+%% GENERAL
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
 set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
-han.fig.Renderer='painters';
+% han.fig.Renderer='painters';
 
-%print
-if fig_prnt
-print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
-messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
-print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600')
-messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
-print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
-messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+%% PRINT
 
-close(han.fig)
+if any(fig_print==1)
+    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
+    close(han.fig);
 end
+if any(fig_print==2)
+    savefig(han.fig,strcat(prnt.filename,'.fig'))
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.fig'))) 
+    close(han.fig);
+end
+if any(fig_print==3)
+    print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
+    close(han.fig);
+end
+if any(fig_print==3)
+    print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+    close(han.fig);
+end
+ 
+end %function
+
