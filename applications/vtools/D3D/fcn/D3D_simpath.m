@@ -83,13 +83,15 @@ end
     %% unstructure
     case 2
 
+kmdf=1;
 for kf1=1:nf
     kf=kf1+2; %. and ..
     if dire(kf).isdir==0 %it is not a directory
     [~,~,ext]=fileparts(dire(kf).name); %file extension
     switch ext
         case '.mdu'
-            file.mdf=fullfile(dire(kf).folder,dire(kf).name);
+            mdf_aux{kmdf}=fullfile(dire(kf).folder,dire(kf).name);
+            kmdf=kmdf+1;
 %         case '.sed'
 %             file.sed=fullfile(dire(kf).folder,dire(kf).name);
 %         case '.mor'
@@ -151,6 +153,9 @@ for kf1=1:nf
     end %isdir
 end
 
+nstring=cellfun(@(X)numel(X),mdf_aux);
+[~,idx]=min(nstring);
+file.mdf=mdf_aux{idx};
 simdef_aux=D3D_simpath_mdu(file.mdf);
 file=simdef_aux.file;
 
