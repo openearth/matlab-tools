@@ -87,69 +87,12 @@ kmdf=1;
 for kf1=1:nf
     kf=kf1+2; %. and ..
     if dire(kf).isdir==0 %it is not a directory
-    [~,~,ext]=fileparts(dire(kf).name); %file extension
-    switch ext
-        case '.mdu'
-            mdf_aux{kmdf}=fullfile(dire(kf).folder,dire(kf).name);
-            kmdf=kmdf+1;
-%         case '.sed'
-%             file.sed=fullfile(dire(kf).folder,dire(kf).name);
-%         case '.mor'
-%             file.mor=fullfile(dire(kf).folder,dire(kf).name);
-%         case '.nc'
-%             file.grd=char(fullfile(dire(kf).folder,dire(kf).name));
-%         case '.pol'
-%             tok=regexp(dire(kf).name,'_','split');
-%             str_name=strrep(tok{1,end},'.pol','');
-%             if strcmp(str_name,'part')
-%                 file.(str_name)=fullfile(dire(kf).folder,dire(kf).name);
-%             end
-    end
-
-%     else %it is results directory
-%         path_results=fullfile(dire(kf).folder,dire(kf).name);
-%         file=D3D_simpath_output(path_results); 
-%         partitions=0;
-%         dire_res=dir(path_results);
-%         nfr=numel(dire_res)-2;
-%         for kflr=1:nfr
-%             kf=kflr+2; %. and ..
-%             if dire_res(kf).isdir==0 %it is not a directory
-%             [~,~,ext]=fileparts(dire_res(kf).name); %file extension
-%             switch ext
-%                 case '.nc'
-%                     if strcmp(dire_res(kf).name(end-5:end-3),'map')
-%                         if ~contains(dire_res(kf).name,'merge')
-%                             file.map=fullfile(dire_res(kf).folder,dire_res(kf).name);
-%                             partitions=partitions+1;
-%                         end
-%                     end
-%                     if strcmp(dire_res(kf).name(end-5:end-3),'his')
-%                         file.his=fullfile(dire_res(kf).folder,dire_res(kf).name);
-%                     end
-%                 case '.dia'
-%                     file.dia=fullfile(dire_res(kf).folder,dire_res(kf).name);
-% %                 case '.shp'
-% %                     tok=regexp(dire_res(kf).name,'_','split');
-% %                     file.shp.(tok{1,1}{end})=fullfile(dire_res(kf).folder,dire_res(kf).name);
-%             end
-%             else %directory in results directory
-%                 dire_res2=dir(fullfile(dire_res(kf).folder,dire_res(kf).name));
-%                 nfr2=numel(dire_res2)-2;
-%                 for kflr2=1:nfr2
-%                     kf=kflr2+2; %. and ..
-%                     if dire_res2(kf).isdir==0 %it is not a directory
-%                         [~,~,ext]=fileparts(dire_res2(kf).name); %file extension
-%                         switch ext
-%                             case '.shp'
-%                                 tok=regexp(dire_res2(kf).name,'_','split');
-%                                 str_name=strrep(tok{1,end},'.shp','');
-%                                 file.shp.(str_name)=fullfile(dire_res2(kf).folder,dire_res2(kf).name);
-%                         end
-%                     end
-%                 end %kflr2
-%             end
-%         end
+        [~,~,ext]=fileparts(dire(kf).name); %file extension
+        switch ext
+            case '.mdu'
+                mdf_aux{kmdf}=fullfile(dire(kf).folder,dire(kf).name);
+                kmdf=kmdf+1;
+        end
     end %isdir
 end
 
@@ -204,7 +147,6 @@ end
 end
 
 if exist('file','var')>0
-%     file.partitions=partitions;
     simdef.file=file;
 else
     fprintf('simulation folder: \n %s \n',simdef.D3D.dire_sim)
