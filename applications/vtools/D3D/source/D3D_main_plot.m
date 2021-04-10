@@ -22,7 +22,7 @@ addOET
 
 %% INPUT
 
-path_input='input_D3D_fig_patch_1D.m'; 
+path_input="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210305_parallel_sequential\input_fig_cfl_01.m"; 
 
 %% CALL
 

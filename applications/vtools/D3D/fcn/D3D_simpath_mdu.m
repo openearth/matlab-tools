@@ -1,0 +1,81 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 17162 $
+%$Date: 2021-04-08 11:02:29 +0200 (Thu, 08 Apr 2021) $
+%$Author: chavarri $
+%$Id: D3D_simpath.m 17162 2021-04-08 09:02:29Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_simpath.m $
+%
+%Gets as output the path to each file type
+%
+%INPUT
+%   -
+%
+
+function simdef=D3D_simpath_mdu(path_mdu)
+
+simdef.D3D.structure=2;
+
+mdu=D3D_io_input('read',path_mdu);
+
+%% loop on sim folder
+
+path_sim=fileparts(path_mdu);
+simdef.D3D.dire_sim=path_sim;
+
+dire=dir(simdef.D3D.dire_sim);
+nf=numel(dire)-2;
+
+for kf1=1:nf
+    kf=kf1+2; %. and ..
+    if dire(kf).isdir==0 %it is not a directory
+        [~,~,ext]=fileparts(dire(kf).name); %file extension
+        switch ext
+            case '.pol'
+                tok=regexp(dire(kf).name,'_','split');
+                str_name=strrep(tok{1,end},'.pol','');
+                if strcmp(str_name,'part')
+                    simdef.file.(str_name)=fullfile(dire(kf).folder,dire(kf).name);
+                end
+        end
+    end
+end
+
+%% mdu paths
+
+simdef.file.mdf=path_mdu;
+
+%geometry
+simdef.file.grd=fullfile(path_sim,mdu.geometry.NetFile);
+if isfield(mdu.geometry,'CrossDefFile')
+    simdef.file.csdef=fullfile(path_sim,mdu.geometry.CrossDefFile);
+end
+if isfield(mdu.geometry,'CrossLocFile')
+    simdef.file.csloc=fullfile(path_sim,mdu.geometry.CrossLocFile);
+end
+
+%sediment
+if isfield(mdu,'sediment')
+    simdef.file.mor=mdu.sediment.MorFile;
+    simdef.file.sed=mdu.sediment.SedFile;
+end
+
+%output
+if isfield(mdu.output,'OutputDir')
+    path_output_loc=mdu.output.OutputDir;
+    if ~isempty(path_output_loc)
+        path_output=fullfile(path_sim,path_output_loc);
+        file_aux=D3D_simpath_output(path_output);
+        fnames=fieldnames(file_aux);
+        nfields=numel(fnames);
+        for kfields=1:nfields
+            simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
+        end
+    end
+end
+
+end %function

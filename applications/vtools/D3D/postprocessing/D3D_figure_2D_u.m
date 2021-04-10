@@ -163,7 +163,7 @@ end
 cmap=brewermap(flg.ncmap,'RdYlBu');
 
 %figure initialize
-han.fig=figure('name',prnt.filename);
+han.fig=figure('name',prnt.filename,'visible',flg.fig_visible);
 set(han.fig,'paperunits','centimeters','paperposition',prnt.size)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1])
 [mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);

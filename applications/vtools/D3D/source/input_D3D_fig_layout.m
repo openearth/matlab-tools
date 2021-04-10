@@ -28,12 +28,13 @@ def.sim_in=2;
 % def.series={'P','P','P','P'}; %series to analyze
 % def.paths_runs='n:\My Documents\runs\D3D\';
     %2) (for 1 simulation)
-simdef.D3D.dire_sim='p:\11203682-kpp-vow-2019\2020_016\02_runs\r_008\';
+% simdef.D3D.dire_sim='p:\dflowfm\projects\2020_d-morphology\modellen\3655-sequential-parallel\maas\sims\r017\';
+simdef.D3D.dire_sim='C:\Users\chavarri\temporal\210310_parallel_sequential\02_simulations\sims\r017\';
     %3) (from script)
 % def.script='input_plot_FM_3Dflow_validation_u';
 % def.script='input_plot_groynes_lab_groyne_field';
 
-simdef.file.checkouts='c:\Users\chavarri\checkouts\openearthtools_matlab\oetsettings.m';
+% simdef.file.checkouts='c:\Users\chavarri\checkouts\openearthtools_matlab\oetsettings.m';
 
     %% variable
 simdef.flg.which_p=2; %which kind of plot: 
@@ -94,9 +95,11 @@ simdef.flg.which_v=17; %which variable:
 %   31=morphodynamic width [m]
 %   32=Chezy 
 %   33=cell area [m^2]
-%   34=space step (only 1D)
+%   34=space step [m]
 %   35=cumulative dredged volume of sediment [m^3]
 %   36=Froude number [-]
+%   37=CFL [-]
+%   38=time step [s]
 
     %% domain
     

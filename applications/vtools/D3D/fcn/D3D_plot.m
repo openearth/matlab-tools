@@ -4,14 +4,21 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17102 $
+%$Date: 2021-03-02 22:30:16 +0100 (Tue, 02 Mar 2021) $
+%$Author: chavarri $
+%$Id: D3D_plot.m 17102 2021-03-02 21:30:16Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D_plot.m $
 %
 function out_read=D3D_plot(simdef,in_read,def)
 
+%% defaults
+
+if isfield(simdef.flg,'save_data')==0
+    simdef.flg.save_data=0;
+end
+
+%%
 if def.sim_in==3
     run(def.script)
 end
@@ -27,10 +34,13 @@ switch def.sim_in
           ns=numel(allinput);
 end
 
+%variables to plot
+which_v=simdef.flg.which_v;
+nv=numel(which_v);
+
 %% loop on simulations
 for ks=1:ns
 % ks=1
-       
     if def.sim_in==3
 %         script2in
         v2struct(allinput(ks));
@@ -122,52 +132,59 @@ for ks=1:ns
         case {1,2,3,4,9,10}
         %% loop on time
             for kt=aux.rsl_v
-%                 in_read.kt=kt; %old
-                in_read.kt=[kt,1]; %new 
-                out_read=D3D_read(simdef,in_read);
-                if simdef.flg.save_data
-                    D3D_save(simdef,out_read)
-                end
-                switch simdef.flg.which_p
-                    case 1 % 3D of bed elevation and gs
-                        if simdef.D3D.structure==1
-                            D3D_figure_3D(simdef,out_read);   
-                        else
-                            D3D_figure_3D_u(simdef,out_read);   
-                        end
-                    case 2 % 2DH
-                        if simdef.D3D.structure==1
-                            D3D_figure_2D(simdef,out_read); 
-                        else
-                            D3D_figure_2D_u(simdef,out_read); 
-                        end
-                        %kml
-                        
-                        %
-                    case 3 % 1D
-                        if simdef.D3D.structure==1
-                            D3D_figure_1D(simdef,out_read);   
-                        else
-                            D3D_figure_1D_u(simdef,out_read);  
-                        end
-                    case 4 % patch
-                        D3D_figure_patch(simdef,out_read); 
-                    case 9
-%                         if simdef.D3D.structure==1
-%                         else    
-%                             D3D_figure_2DV_u(simdef,out_read);
-%                             D3D_figure_2DV_x_u(simdef,out_read);
-%                             D3D_figure_2DV_y_u(simdef,out_read);
-                            D3D_figure_2DV_z_u(simdef,out_read);
-%                             D3D_figure_2DV_yz_u(simdef,out_read);
-%                         end
-                    case 10 %cross-sections
-                        D3D_figure_crosssection(simdef,out_read);
+            %% loop on variable
+                for kv=1:nv
 
-                end
-                        %display
-                aux.strdisp=sprintf('kt=%d %4.2f %%',kt,kt/aux.rsl_v(end)*100);
-                disp(aux.strdisp)
+                    simdef.flg.which_v=which_v(kv);
+
+
+    %                 in_read.kt=kt; %old
+                    in_read.kt=[kt,1]; %new 
+                    out_read=D3D_read(simdef,in_read);
+                    if simdef.flg.save_data
+                        D3D_save(simdef,out_read)
+                    end
+                    switch simdef.flg.which_p
+                        case 1 % 3D of bed elevation and gs
+                            if simdef.D3D.structure==1
+                                D3D_figure_3D(simdef,out_read);   
+                            else
+                                D3D_figure_3D_u(simdef,out_read);   
+                            end
+                        case 2 % 2DH
+                            if simdef.D3D.structure==1
+                                D3D_figure_2D(simdef,out_read); 
+                            else
+                                D3D_figure_2D_u(simdef,out_read); 
+                            end
+                            %kml
+
+                            %
+                        case 3 % 1D
+                            if simdef.D3D.structure==1
+                                D3D_figure_1D(simdef,out_read);   
+                            else
+                                D3D_figure_1D_u(simdef,out_read);  
+                            end
+                        case 4 % patch
+                            D3D_figure_patch(simdef,out_read); 
+                        case 9
+    %                         if simdef.D3D.structure==1
+    %                         else    
+    %                             D3D_figure_2DV_u(simdef,out_read);
+    %                             D3D_figure_2DV_x_u(simdef,out_read);
+    %                             D3D_figure_2DV_y_u(simdef,out_read);
+                                D3D_figure_2DV_z_u(simdef,out_read);
+    %                             D3D_figure_2DV_yz_u(simdef,out_read);
+    %                         end
+                        case 10 %cross-sections
+                            D3D_figure_crosssection(simdef,out_read);
+
+                    end
+                            %display
+                    aux.strdisp=sprintf('kt=%d %4.2f %%',kt,kt/aux.rsl_v(end)*100);
+                    disp(aux.strdisp)
+                end %kv
             end %kt
         case 5
         %% xtz
