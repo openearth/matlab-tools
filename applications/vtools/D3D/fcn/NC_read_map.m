@@ -23,25 +23,24 @@ if isfield(simdef,'flg')
     flg=simdef.flg;
 end
 
-kt=in.kt;    
-if kt==0 %only give domain size as output
-    warning('do we reach this point?')
-    flg.which_p=-1;
-else
-    kf=in.kf; %fractions to plot
-    kF=in.kF; %faces to plot
-    kcs=in.kcs; %cross-sections to plot
+kt=in.kt; %times to plot
+kf=in.kf; %fractions to plot
+kF=in.kF; %faces to plot
+kcs=in.kcs; %cross-sections to plot
+
+if isfield(flg,'get_cord')==0
+    flg.get_cord=1;
+end
+if isfield(flg,'get_EHY')==0
+    flg.get_EHY=0;
 end
 
-if isfield(flg,'mean_type')==0
-    mean_type=1; %log2
-else
-    mean_type=flg.mean_type; 
-end
 %overwritten by input variable
 if flg.which_v==3
     mean_type=2;
 elseif flg.which_v==26
+    mean_type=1;
+else
     mean_type=1;
 end
 
@@ -49,20 +48,7 @@ if isfield(flg,'elliptic')==0
     flg.elliptic=0;
 end
 
-%mdu
-%quite expensive. Only if necessary.
-% if any(flg.which_v==[-1,1,2])
-    
-    %sometimes does not work
-%     mdu=dflowfm_io_mdu('read',file.mdf);
-% 
-%     ismor=1;
-%     if isfield(mdu,'sediment')==0
-%         ismor=0;
-%     elseif isempty(mdu.sediment.MorFile)
-%         ismor=0;
-%     end
-
+%is morphodynamic
 nci=ncinfo(file.map);
 idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_mor_bl','mesh1d_mor_bl'});
 ismor=1;
@@ -70,14 +56,18 @@ if any(isnan(idx))
     ismor=0;
 end
 
-% end %if 1,2
-
-    %secondary flow
-% if isempty(strfind(mdf.keywords.sub1,'I'))
-%     secflow=0;
-% else
-%     secflow=1;
-% end
+%is 1D simulation
+idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_node_x'});
+is1d=1;
+if any(isnan(idx))
+    is1d=0;
+end
+idx=find_str_in_cell({nci.Variables.Name},{'network1d_geom_x'});
+if isnan(idx)
+    str_network='network';
+else
+    str_network='network1d';
+end
 
 %% CONSTANST
 
@@ -95,29 +85,26 @@ cnt.g=9.81; %readable from mdu
 
     %% time, space, fractions
 if flg.which_p~=-1
-    %time
-        %read the whole time vector is quite time consuming. better to only
-        %read the times we need. It changes quite a lot the structure of
-        %the code thought. 
-        
-%     ITMAPC=ncread(file.map,'time'); %results time vector
-%     time_r=ITMAPC; %results time vector [s]
-    
-    time_r=ncread(file.map,'time',kt(1),kt(2)); %results time vector [seconds since start date]
-    if ismor
-        time_mor_r=ncread(file.map,'morft',kt(1),kt(2)); %results time vector [seconds since start date]
-    end
-        %outdated
-%     TUNIT=vs_let(NFStruct,'map-const','TUNIT','quiet'); %dt unit
-%     DT=vs_let(NFStruct,'map-const','DT','quiet'); %dt
-%     time_r=ITMAPC*DT*TUNIT; %results time vector [s]
+%time
+    %read the whole time vector is quite time consuming. better to only
+    %read the times we need. It changes quite a lot the structure of
+    %the code thought. 
 
-%1D or not
-is1d=0;
-try 
-    ncread(file.map,'mesh2d_node_x');
-catch
-	is1d=1;
+time_r=ncread(file.map,'time',kt(1),kt(2)); %results time vector [seconds since start date]
+if ismor
+    time_mor_r=ncread(file.map,'morft',kt(1),kt(2)); %results time vector [seconds since start date]
+end
+idx=find_str_in_cell({nci.Variables.Name},{'time'});
+str_time=nci.Variables(idx).Attributes(2).Value;
+tok=regexp(str_time,' ','split');
+t0=datenum(datetime(sprintf('%s %s',tok{1,3},tok{1,4}),'InputFormat','yyyy-MM-dd HH:mm:ss','TimeZone',tok{1,5}));
+switch tok{1,1}
+    case 'seconds'
+        time_dnum=t0+seconds(time_r);
+    case 'minutes'
+        time_dnum=t0+seconds(time_r);
+    otherwise
+        error('add')
 end
 
 switch simdef.D3D.structure
@@ -147,40 +134,31 @@ switch simdef.D3D.structure
 
             offset=ncread(file.map,'mesh1d_node_offset');
             branch=ncread(file.map,'mesh1d_node_branch');
-            try
-                branch_length=ncread(file.map,'network1d_edge_length'); 
-            catch
-                branch_length=ncread(file.map,'network_edge_length');
-            end
-            try
-                branch_id=ncread(file.map,'network1d_branch_id')';
-            catch
-                branch_id=ncread(file.map,'network_branch_id')';
-            end
+            branch_length=ncread(file.map,sprintf('%s_edge_length',str_network)); 
+            branch_id=ncread(file.map,sprintf('%s_branch_id',str_network))';
         else
-%             if file.partitions>1
-                map_info=EHY_getMapModelData(file.map);
-                gridInfo=EHY_getGridInfo(file.map,{'face_nodes_xy','XYcen','face_nodes','XYcor'});
-                                
-%                 x_node=gridInfo.Xcor;
-%                 y_node=gridInfo.Ycor;
-                face_nodes_x=gridInfo.face_nodes_x;
-                face_nodes_y=gridInfo.face_nodes_y;
-%                 faces=gridInfo.face_nodes;
-                
-%             else
-                x_node=ncread(file.map,'mesh2d_node_x'); 
-                y_node=ncread(file.map,'mesh2d_node_y');
-
-                x_face=ncread(file.map,'mesh2d_face_x',kF(1),kF(2));
-                y_face=ncread(file.map,'mesh2d_face_y',kF(1),kF(2));
-                faces=ncread(file.map,'mesh2d_face_nodes',[1,kF(1)],[Inf,kF(2)]);
-                if kt(2)==Inf
-                    time_dnum=map_info.times;
+            %preallocate for always passing to functions
+            face_nodes_x=NaN;
+            face_nodes_y=NaN;
+            x_node=NaN;
+            y_node=NaN;
+            x_face=NaN;
+            y_face=NaN;
+            faces=NaN;
+            if flg.get_cord
+                if file.partitions>1 || flg.get_EHY
+                    gridInfo=EHY_getGridInfo(file.map,{'face_nodes_xy','XYcen','face_nodes','XYcor'});
+                    face_nodes_x=gridInfo.face_nodes_x;
+                    face_nodes_y=gridInfo.face_nodes_y;
                 else
-                    time_dnum=map_info.times(kt(1));
+                    x_node=ncread(file.map,'mesh2d_node_x'); 
+                    y_node=ncread(file.map,'mesh2d_node_y');
+
+                    x_face=ncread(file.map,'mesh2d_face_x',kF(1),kF(2));
+                    y_face=ncread(file.map,'mesh2d_face_y',kF(1),kF(2));
+                    faces=ncread(file.map,'mesh2d_face_nodes',[1,kF(1)],[Inf,kF(2)]);
                 end
-%             end
+            end
         end
     case 3 %SOBEK3
         x_node=ncread(file.map,'x_coordinate'); 
@@ -244,11 +222,6 @@ switch flg.which_p
         %%
         bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]);
         LYRFRAC=ncread(file.map,'mesh2d_lyrfrac',[1,1,1,kt(1)],[Inf,Inf,Inf,kt(2)]);
-%         DPS=vs_let(NFStruct,'map-sed-series',{kt},'DPS',{ky,kx},'quiet'); %depth at z point [m]
-%         LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,1,1:nf},'quiet'); %fractions at layers [-] (t,y,x,l,f)
-        
-        %bed level at z point
-%         bl=-DPS; %(because positive is downward for D3D depth)
         
         %mean grain size
         dm=mean_grain_size(LYRFRAC,dchar,mean_type);
@@ -258,8 +231,6 @@ switch flg.which_p
         out.y_node=y_node;
         out.x_face=x_face;
         out.y_face=y_face;
-%         out.x_node_edge=mesh2d_face_x_bnd;
-%         out.y_node_edge=mesh2d_face_x_bnd;
         out.faces=faces;
 
         out.cvar=dm;   
@@ -281,27 +252,13 @@ switch flg.which_p
                                 out=get_fm1d_data('mesh1d_flowelem_bl',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             end
                         else
-%                             if file.partitions==1
-%                                 bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),1]);
-%                             else
-                                OPT.varName='mesh2d_mor_bl';
-                                OPT.t0=map_info.times(kt(1));
-                                OPT.tend=map_info.times(kt(1));
-                                OPT.disp=0;
-
-                                map_data=EHY_getMapModelData(file.map,OPT);
-                                bl=map_data.val';
-%                             end
-
-                            %output
-                            out.z=bl;
-%                             out.x_node=x_node;
-%                             out.y_node=y_node;
-%                             out.x_face=x_face;
-%                             out.y_face=y_face;
-                            out.face_nodes_x=face_nodes_x;
-                            out.face_nodes_y=face_nodes_y;
-                            out.faces=faces;
+                            if get_EHY
+                               z=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
+                               out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                               z=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]); 
+                               out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
                         end
                     case 3 %SOBEK3
                         out_wl=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
@@ -311,36 +268,6 @@ switch flg.which_p
                         out.z=out_wl.z-out_h.z;
                 end
                 out.zlabel='bed elevation [m]';
-                
-%                 if is1d
-%                     h=ncread(file.map,'mesh1d_mor_bl',[1,kt(1)],[Inf,1]);
-%                                                             
-%                     [h_br,o_br]=get_data_from_branches(h,in,branch,offset,x_node,y_node,branch_length);
-%                                 
-%                     %output                
-%                     out.z=h_br;
-%                     out.XZ=x_node;
-%                     out.YZ=y_node;
-% %                     out.SZ=sqrt(x_node.^2+y_node.^2);
-%                     out.SZ=o_br;
-%                     
-%                 else
-%     %                 bl=ncread(file.map,'mesh2d_mor_bl',[1,kt(1)],[Inf,kt(end)]);
-%                     bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),1]);
-% 
-%                     %output
-%                     out.x_node=x_node;
-%                     out.y_node=y_node;
-%                     out.x_face=x_face;
-%                     out.y_face=y_face;
-%     %                 out.x_node_edge=x_node_edge;
-%     %                 out.y_node_edge=y_node_edge;
-%                     out.faces=faces;
-% 
-%                     out.z=bl;
-%                      
-%                 end
-%                 out.zlabel='bed elevation [m]';
             case 2 %h
                 switch simdef.D3D.structure
                     case 2 %FM
@@ -398,21 +325,25 @@ switch flg.which_p
                 %                         out.z (end,:)=NaN;                     
                             end
                             if flg.which_p==2
-                                if ismor==0
-                                    h=ncread(file.map,'mesh2d_waterdepth',[1,kt(1)],[Inf,kt(2)]);
+                                if get_EHY
+                                    if ismor==0
+                                        h=get_EHY(file.map,'mesh2d_waterdepth',time_dnum);
+                                    else
+                                        bl=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
+                                        wl=get_EHY(file.map,'mesh2d_s1',time_dnum);
+                                        h=wl-bl;
+                                    end 
+                                   out=v2struct(h,face_nodes_x,face_nodes_y);
                                 else
-                                    bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]);
-                                    wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),kt(2)]);
-                                    h=wl-bl;
-                                end
-
-                                out.z=h;
-                                out.x_node=x_node;
-                                out.y_node=y_node;
-                                out.x_face=x_face;
-                                out.y_face=y_face;
-                                out.faces=faces;
-                                 
+                                    if ismor==0
+                                        h=ncread(file.map,'mesh2d_waterdepth',[1,kt(1)],[Inf,kt(2)]);
+                                    else
+                                        bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]);
+                                        wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),kt(2)]);
+                                        h=wl-bl;
+                                    end 
+                                   out=v2struct(h,x_node,y_node,x_face,y_face,faces);
+                                end                                 
                             end  
                         end   
                     case 3 %SOBEK3
@@ -1772,59 +1703,16 @@ out.SZ=o_o;
 
 end %function
 
-
-
 %%
 
-        % %bed level at z point
-        % bl=-DPS; %(because positive is downward for D3D depth)
-        % 
-        % %flow depth at z point
-        % dp=S1+DPS;
-        % 
-        % %substrate elevation
-        % lay_abspos=repmat(bl,1,1,1,nl)-cumsum(THLYR,4);
-        % sub=NaN(nt,ny,nx,nl);
-        % sub(:,:,:,1   )=bl; 
-        % sub(:,:,:,2:nl+1)=lay_abspos(:,:,:,1:end);
-        % 
-        % %mean grain size
-        % aux.m=NaN(nt,ny,nx,nl,nf);
-        % for kf=1:nf
-        %     aux.m(:,:,:,:,kf)=dchar(kf).*ones(nt,ny,nx,nl);
-        % end
-        % dm=2.^(sum(LYRFRAC.*log2(aux.m),5));  
-        
-            
-        %         SED=delft3d_io_sed(file.sed); %sediment information BUG!! my own function later
-        %         MOR=delft3d_io_mor(file.mor); %morphology information
-        % 
-        %         XZ=vs_let(NFStruct,'map-const','XZ','quiet'); %x coordinate at z point [m]
-        %         YZ=vs_let(NFStruct,'map-const','YZ','quiet'); %y coordinate at z point [m]
-        % 
-        %         XCOR=vs_let(NFStruct,'map-const','XCOR','quiet'); %x coordinate at cell borders [m]
-        %         YCOR=vs_let(NFStruct,'map-const','YCOR','quiet'); %y coordinate at cell borders [m]
-        % 
-        %         DPS=vs_let(NFStruct,'map-sed-series',{kt},'DPS','quiet'); %depth at z point [m]
-        %         S1=vs_let(NFStruct,'map-series',{kt},'S1','quiet'); %water level at z point [m]
-        % 
-        %         THLYR=vs_let(NFStruct,'map-sed-series',{kt},'THLYR','quiet'); %thickness of layers [m]
-        %         LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC','quiet'); %fractions at layers [-] (t,y,x,l,f)
-        % 
-        %         U1=vs_get(NFStruct,'map-series','U1','quiet'); %velocity in x direction at u point [m/s]
-        %         V1=vs_get(NFStruct,'map-series','V1','quiet'); %velocity in y direction at v point [m/s]
-        %         
-        %         SBUU=vs_get(NFStruct,'map-sed-series','SBUU','quiet'); %bed load transport excluding pores per fraction in x direction at u point [m3/s]
-        %         SBVV=vs_get(NFStruct,'map-sed-series','SBVV','quiet'); %bed load transport excluding pores per fraction in y direction at v point [m3/s]
-        %         
-        %         KFU=vs_get(NFStruct,'map-series','KFU','quiet'); %active points in x direction
-        %         KFV=vs_get(NFStruct,'map-series','KFV','quiet'); %active points in y direction
-        %         
-        %         TAUKSI=vs_get(NFStruct,'map-series','TAUKSI','quiet'); %bottom stress in u point
-        %         TAUETA=vs_get(NFStruct,'map-series','TAUETA','quiet'); %bottom stress in v point
-        %         TAUMAX=vs_get(NFStruct,'map-series','TAUMAX','quiet'); %max bottom stress in z point
-        
-%%
+function val=get_EHY(file_map,vartok,time_dnum)
 
+OPT.varName=vartok;
+OPT.t0=time_dnum(1);
+OPT.tend=time_dnum(end);
+OPT.disp=0;
 
-        
+map_data=EHY_getMapModelData(file_map,OPT);
+val=map_data.val';
+
+end
