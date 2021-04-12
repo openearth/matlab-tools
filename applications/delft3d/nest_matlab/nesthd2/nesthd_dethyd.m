@@ -97,8 +97,9 @@
 
           %% Get the needed data
           if ismember(type,{'z' 'r' 'x' 'n'})
-              ipnt
-              data          = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','wl','t0',t0,'tend',tend);
+              logi          = ~cellfun(@isempty,mnnes); % avoid "Station :  does not exist"-message
+              data          = EHY_getmodeldata(fileInp,mnnes(logi),modelType,'varName','wl','t0',t0,'tend',tend);
+              data.val(:,~logi) = NaN;
               wl            = data.val;
               wl(isnan(wl)) = 0.;
 
@@ -113,7 +114,9 @@
               end
           end
           if ismember(type,{'c' 'p' 'r' 'x'})
-              data_uv   = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','uv','t0',t0,'tend',tend);
+              logi      = ~cellfun(@isempty,mnnes); % avoid "Station :  does not exist"-message
+              data_uv   = EHY_getmodeldata(fileInp,mnnes(logi),modelType,'varName','uv','t0',t0,'tend',tend);
+              data_uv.vel_x(:,~logi,:) = NaN; data_uv.vel_y(:,~logi,:) = NaN; % this works for 2D and 3D models
               uu        = data_uv.vel_x; uu(isnan(uu)) = 0.;
               vv        = data_uv.vel_y; vv(isnan(vv)) = 0.;
               [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);
@@ -223,8 +226,10 @@
                           mnnes{i_stat} = [mnnes{i_stat}(1:i_start(2)) mnnes{i_stat}(i_start(2) + 2:i_com(2))  mnnes{i_stat}(i_com(2) + 2:end)];
                       end
                   end
-
-                  data_uv   = EHY_getmodeldata(fileInp,mnnes,modelType,'varName','uv','t0',t0,'tend',tend);
+                  
+                  logi      = ~cellfun(@isempty,mnnes); % avoid "Station :  does not exist"-message
+                  data_uv   = EHY_getmodeldata(fileInp,mnnes(logi),modelType,'varName','uv','t0',t0,'tend',tend);
+                  data_uv.vel_x(:,~logi,:) = NaN; data_uv.vel_y(:,~logi,:) = NaN; % this works for 2D and 3D models
                   uu        = data_uv.vel_x; uu(isnan(uu)) = 0.;
                   vv        = data_uv.vel_y; vv(isnan(vv)) = 0.;
                   [uu,vv]   = nesthd_rotate_vector(uu,vv,pi/2. - angle);

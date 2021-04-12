@@ -35,10 +35,10 @@ for itim = 1: notims
 end
 
 %% Determine time series of the boundary conditions
-for l = 1:lstci
+for i_conc = 1:lstci
     
     %% If bc for this constituent are requested
-    if add_inf.genconc(l)
+    if add_inf.genconc(i_conc)
         
         %% Cycle over all boundary support points
         for i_pnt = 1: no_pnt
@@ -72,7 +72,9 @@ for l = 1:lstci
             end
             
             %% Retrieve the data
-            data      = EHY_getmodeldata(fileInp,mnnes,modelType,'varName',lower(nfs_inf.namcon{l}),'t0',t0,'tend',tend);
+            logi      = ~cellfun(@isempty,mnnes); % avoid "Station :  does not exist"-message
+            data      = EHY_getmodeldata(fileInp,mnnes(logi),modelType,'varName',lower(nfs_inf.namcon{i_conc}),'t0',t0,'tend',tend);
+            data.val(:,~logi,:) = NaN; % this works for 2D and 3D models
             
             %%  Fill conc array with concentrations for the requested stations
             conc              = data.val;
@@ -81,7 +83,7 @@ for l = 1:lstci
             %% Exclude permanently dry points
             for i_stat = 1: 4
                 exist_stat(i_stat) = true;
-                index = find(conc(:,i_stat,1) == conc(1,i_stat,1));
+                index = find(conc(:,i_stat,:) == conc(1,i_stat,:));
                 if length(index) == notims
                     exist_stat(i_stat) = false;
                     weight    (i_stat) = 0.;
@@ -113,45 +115,40 @@ for l = 1:lstci
                 if exist_stat(iwght)
                     for itim = 1: notims
                         for k = 1: kmax
-                            bndval(itim).value(i_pnt,k,l) = bndval(itim).value(i_pnt,k,l) +  ...
+                            bndval(itim).value(i_pnt,k,i_conc) = bndval(itim).value(i_pnt,k,i_conc) +  ...
                                 conc(itim,iwght,k)*weight(iwght);
                         end
                     end
                 end
             end
             
-            %% JV: for 3D dfm z-layer models, the z should also be coupled. The constituent value is overwritten and no weighing applied because z values are not correctly written to his file (should be tetrissed)
+            %% JV: for 3D dfm z-layer models, the z should also be coupled. No weighing applied 
             if strcmpi(nfs_inf.layer_model,'z-model') && strcmpi(nfs_inf.from,'dfm') %JV
-                [weight_max,weight_maxid] = max(weight);
-                warning('z-layer model nesting currently only supports nearest neighbour, so make sure your support points are close to cell centers.\nThe used weight should be close to 1.000, it is %.3f',weight_max)
-                data_selpoint    = conc(:,weight_maxid,:);
-                data_zcoord      = EHY_getmodeldata(fileInp,mnnes(weight_maxid),modelType,'varName','Zcen_int','t0',t0,'tend',t0);%+1 if nans should be created
-                data_zcoord_val  = squeeze(data_zcoord.Zcen_cen(1,:,:));
-                data_zcoord_nonan= ~isnan(data_zcoord_val);
+                if i_conc == 1 && i_pnt == 1; warning('z-layer model nesting currently only supports nearest neighbour'); end
+                [~,weight_maxid] = max(weight);
+                data_zcen_cen    = EHY_getmodeldata(fileInp,mnnes(weight_maxid),modelType,'varName','Zcen_cen','t0',t0,'tend',t0);
+                bndval(1).zcen_cen(i_pnt,:) = squeeze(data_zcen_cen.val); % Use z values from first timestep only
                 for itim = 1: notims
-                    %temp_zvals(i_pnt,:,l) = nansum(squeeze(data_zcoord_val(itim,:,:)).*weight',1);%STILL CORRECT THIS STILL FOR TETRIS THING, should be close to squeezed values
-                    %bndval(itim).value(i_pnt,:,iL) = nansum(squeeze(conc(itim,:,:)).*weight',1); %STILL CORRECT THIS STILL FOR TETRIS THING
-                    bndval(itim).value(i_pnt,:,l) = conc(itim,weight_maxid,:);
+                    bndval(itim).value(i_pnt,:,i_conc) = conc(itim,weight_maxid,:);
                 end
-                bndval(1).zvals(i_pnt,:) = data_zcoord_val(data_zcoord_nonan); %write z values on first timestep only
             end
         end
     end
 end
     
 %% Adjust boundary conditions
-for l = 1: lstci
-    if add_inf.genconc(l)
+for i_conc = 1: lstci
+    if add_inf.genconc(i_conc)
         for i_pnt = 1: no_pnt
             for itim = 1 : notims
-                bndval(itim).value(i_pnt,:,l) =  bndval(itim).value(i_pnt,:,l) + add_inf.add(l);
-                bndval(itim).value(i_pnt,:,l) =  min(bndval(itim).value(i_pnt,:,l),add_inf.max(l));
-                bndval(itim).value(i_pnt,:,l) =  max(bndval(itim).value(i_pnt,:,l),add_inf.min(l));
+                bndval(itim).value(i_pnt,:,i_conc) =  bndval(itim).value(i_pnt,:,i_conc) + add_inf.add(i_conc);
+                bndval(itim).value(i_pnt,:,i_conc) =  min(bndval(itim).value(i_pnt,:,i_conc),add_inf.max(i_conc));
+                bndval(itim).value(i_pnt,:,i_conc) =  max(bndval(itim).value(i_pnt,:,i_conc),add_inf.min(i_conc));
             end
         end
     end
 end
 
 if add_inf.display==1
-close(h);
+    close(h);
 end

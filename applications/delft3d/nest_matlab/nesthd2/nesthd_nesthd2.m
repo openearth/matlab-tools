@@ -82,7 +82,7 @@ if add_inf.do_hydro
     clear bndval
 end
 
-%% Generate transport bc if avaialble on history file
+%% Generate transport bc if available on history file
 if lstci > 0
     
     %% Needed?
@@ -92,7 +92,7 @@ if lstci > 0
         %% Determine (nested) concentrations
         bndval      = nesthd_detcon(fid_adm,bnd,gen_inf,add_inf,files{3});
         
-        %% Vertical interpolation, temporary, not correct place, shoud be don inside detcon
+        %% Vertical interpolation, temporary, not correct place, should be done inside detcon
         if isfield(add_inf,'interpolate_z')
             bndtype(1:nobnd)= {'c'};
             det_inf         = nesthd_get_general  (add_inf.interpolate_z);

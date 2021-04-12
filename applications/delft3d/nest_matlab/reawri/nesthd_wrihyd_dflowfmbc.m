@@ -11,12 +11,16 @@ no_times      = length(bndval);
 no_layers     = nfs_inf.nolay;
 thick         = nfs_inf.thick;
 
-lstci         = -1;                                                        % Use lstci = -1 to incicate hydrodynamic bc (not very elegant)
-if length(size(bndval(1).value)) == 3 lstci = nfs_inf.lstci; end
+st = dbstack;
+if length(st) >= 2 && strcmp(st(2).name,'nesthd_wricon') % caller is nesthd_wricon
+    lstci = nfs_inf.lstci;
+else
+    lstci = -1; % Use lstci = -1 to indicate hydrodynamic bc
+end
 
 itdate        = datestr(nfs_inf.itdate,'yyyy-mm-dd HH:MM:SS');
 [path,~,~]    = fileparts(fileOut);
-if isempty(path) path = '.'; end
+if isempty(path); path = '.'; end
 
 if ~isfield(add_inf,'timeZone'); add_inf.timeZone = 0; end
 
@@ -35,12 +39,12 @@ end
 for i_pnt = 1: no_pnt
     ext_force = [];
     l_act     =  0;
-    for l = 1:max(1,lstci)
+    for i_conc = 1:max(1,lstci)
         if lstci >= 1
-            if add_inf.genconc(l)
+            if add_inf.genconc(i_conc)
                 
                 %% Name of the constituent
-                quantity = nfs_inf.namcon{l};
+                quantity = nfs_inf.namcon{i_conc};
                 l_act    = l_act + 1;
             end
         elseif lstci == -1
@@ -51,7 +55,7 @@ for i_pnt = 1: no_pnt
             l_act = 1;
         end
         
-        if lstci == -1 || (lstci >=1 && add_inf.genconc(l))
+        if lstci == -1 || (lstci >=1 && add_inf.genconc(i_conc))
             %% Header information
             ext_force(l_act).Chapter                  = 'forcing';
             ext_force(l_act).Keyword.Name {1}         = 'Name';
@@ -82,18 +86,22 @@ for i_pnt = 1: no_pnt
                 if strcmpi(nfs_inf.layer_model,'sigma-model')
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position type         ';
                     ext_force(l_act).Keyword.Value{end+1} = 'percentage from bed';
+                    nonan                                 = true(no_layers,1);
                     format                                = repmat('%6.3f ',1,no_layers);
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position specification';
                     ext_force(l_act).Keyword.Value{end+1} = sprintf(format,pos);
-                else %JV
-                    disp('Warning: Fixed or mixed layers (z and z-sigma) not properly checked yet')
+                else % z-(sigma-)layer model
+                    if i_pnt == 1 && i_conc == 1; warning('Fixed or mixed layers (z and z-sigma) not properly checked yet'); end
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position type         ';
                     ext_force(l_act).Keyword.Value{end+1} = 'zdatum';
-                    format                                = repmat('%6.3f ',1,no_layers);
+                    zcen_cen                              = bndval(1).zcen_cen(i_pnt,:); % take z-(sigma-)layer coordinates from first timestep
+                    nonan                                 = ~isnan(zcen_cen);
+                    
+                    format                                = repmat('%6.3f ',1,sum(nonan));
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position specification';
-                    pos_z = bndval(1).zvals(i_pnt,:); %take z layers on first timestep, all are equal
-                    ext_force(l_act).Keyword.Value{end+1} = sprintf(format,pos_z);
+                    ext_force(l_act).Keyword.Value{end+1} = sprintf(format,zcen_cen(nonan));
                 end
+                nr_active_layer = cumsum(nonan);
             end
             
             ext_force(l_act).Keyword.Name {end+1} = 'Quantity';
@@ -121,6 +129,9 @@ for i_pnt = 1: no_pnt
                 end
             else
                 for i_lay = 1: no_layers
+                    if ~nonan(i_lay)
+                        continue
+                    end
                     for i_xy = 1: no_xy
                         ext_force(l_act).Keyword.Name {end+1} = 'Quantity';
                         ext_force(l_act).Keyword.Value{end+1} = [quantity 'bnd'];
@@ -135,7 +146,7 @@ for i_pnt = 1: no_pnt
                         if strcmpi(quantity,'salinity'             ) ext_force(l_act).Keyword.Value{end} = 'psu'; end
                         if strcmpi(quantity,'temperature'          ) ext_force(l_act).Keyword.Value{end} = 'oC' ; end
                         ext_force(l_act).Keyword.Name {end+1} = 'Vertical position';
-                        ext_force(l_act).Keyword.Value{end+1} = num2str(i_lay,'%3i');
+                        ext_force(l_act).Keyword.Value{end+1} = num2str(nr_active_layer(i_lay),'%3i');
                     end
                 end
             end
@@ -144,18 +155,20 @@ for i_pnt = 1: no_pnt
             for i_time = 1: no_times
                 ext_force(l_act).values{i_time,1} = (nfs_inf.times(i_time) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;    % minutes!
                 if dav
-                    ext_force(l_act).values(i_time,2) = {bndval(i_time).value(i_pnt,1,l)};
+                    ext_force(l_act).values(i_time,2) = {bndval(i_time).value(i_pnt,1,i_conc)};
                     if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
-                        ext_force(l).values(i_time,3) = {bndval(i_time).value(i_pnt,2,1)};
+                        ext_force(i_conc).values(i_time,3) = {bndval(i_time).value(i_pnt,2,1)};
                     end
                 else
                     for i_lay = 1: no_layers
                         if no_xy == 2
                             for i_xy = 1: no_xy
-                                ext_force(l_act).values(i_time,i_lay*2 + i_xy - 1) = {bndval(i_time).value(i_pnt,i_lay +  (i_xy - 1)*no_layers,l)};
+                                ext_force(l_act).values(i_time,i_lay*2 + i_xy - 1) = {bndval(i_time).value(i_pnt,i_lay +  (i_xy - 1)*no_layers,i_conc)};
                             end
                         else
-                            ext_force(l_act).values(i_time,i_lay + 1) = {bndval(i_time).value(i_pnt,i_lay,l)};
+                            if nonan(i_lay)
+                                ext_force(l_act).values(i_time,nr_active_layer(i_lay) + 1) = {bndval(i_time).value(i_pnt,i_lay,i_conc)};
+                            end
                         end
                     end
                 end

@@ -19,7 +19,7 @@ switch lower(cmd)
                 switch fileType
                     case 'mdu'
                         mdu = dflowfm_io_mdu(fname);
-                        if isfield(mdu.external_forcing,'ExtForceFileNew') & ~isempty(mdu.external_forcing.ExtForceFileNew)
+                        if isfield(mdu.external_forcing,'ExtForceFileNew') && ~isempty(mdu.external_forcing.ExtForceFileNew)
                             fname = [path filesep mdu.external_forcing.ExtForceFileNew];
                         else
                             fname = [path filesep mdu.external_forcing.ExtForceFile];
@@ -35,9 +35,9 @@ switch lower(cmd)
                         ext(i_ext).locationfile = 'notExisting';
                         names                   = ext(i_ext).Keyword.Name;
                         i_val                   = get_nr(lower(names),'quantity');
-                        if ~isempty (i_val) ext(i_ext).quantity     = ext(i_ext).Keyword.Value{i_val}; end
+                        if ~isempty (i_val); ext(i_ext).quantity     = ext(i_ext).Keyword.Value{i_val}; end
                         i_val                   = get_nr(lower(names),'locationfile');
-                        if ~isempty (i_val) ext(i_ext).locationfile = ext(i_ext).Keyword.Value{i_val}; end
+                        if ~isempty (i_val); ext(i_ext).locationfile = ext(i_ext).Keyword.Value{i_val}; end
                     end
                 end
                 
@@ -45,18 +45,18 @@ switch lower(cmd)
                 allowedVars = {'waterlevel','normalvelocity','velocity','neumann','uxuyadvectionvelocitybnd'};
                 i_file  = 0;
                 for i_ext = 1: length(ext)
-                    if ~isfield(ext(i_ext),'Chapter') || (isfield(ext(i_ext),'Chapter') && strcmp(lower(ext(i_ext).Chapter),'boundary'))
+                    if ~isfield(ext(i_ext),'Chapter') || (isfield(ext(i_ext),'Chapter') && strcmpi(ext(i_ext).Chapter,'boundary'))
                         if ~isempty(strfind(ext(i_ext).quantity,'bnd'        )) && ~isempty(find(~cellfun('isempty',regexp(ext(i_ext).quantity,allowedVars))))
                             
                             i_file = i_file + 1;
                             if ~isempty(path)
-                                try
+                                if isfield(ext(i_ext),'filename')
                                     if ~isabsolutepath(ext(i_ext).filename)
                                         filelist{i_file} = [path filesep ext(i_ext).filename];
                                     else
                                         filelist{i_file} = ext(i_ext).filename;
                                     end
-                                catch
+                                elseif isfield(ext(i_ext),'locationfile')
                                     if ~isabsolutepath(ext(i_ext).locationfile)
                                         filelist{i_file} = [path filesep ext(i_ext).locationfile];
                                     else
@@ -64,9 +64,9 @@ switch lower(cmd)
                                     end
                                 end
                             else
-                                try
+                                if isfield(ext(i_ext),'filename')
                                     filelist{i_file} = [ext(i_ext).filename];
-                                catch
+                                elseif isfield(ext(i_ext),'locationfile')
                                     filelist{i_file} = [ext(i_ext).locationfile];
                                 end
                             end
@@ -117,11 +117,9 @@ end
 
 function trueorfalse = isabsolutepath(fname)
 
-%% returns true if fname contains absloutepath, false if it is a relative path
+%% returns true if fname contains absolute path, false if it is a relative path
 
-trueorfalse = true;
-if strcmp(fname(1) ,'.') || strcmp(fname(1),filesep)
-    trueorfalse = false;
+trueorfalse = false; % relative path
+if strcmp(fname(2),':') || strcmp(fname([1 3]),[filesep filesep]) % e.g. Windows: C:\.. or Unix: /p/..
+    trueorfalse = true; % absolute path
 end
-
-
