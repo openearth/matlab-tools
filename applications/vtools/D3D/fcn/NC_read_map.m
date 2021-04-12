@@ -335,22 +335,22 @@ switch flg.which_p
                             if flg.which_p==2
                                 if flg.get_EHY
                                     if ismor==0
-                                        h=get_EHY(file.map,'mesh2d_waterdepth',time_dnum);
+                                        z=get_EHY(file.map,'mesh2d_waterdepth',time_dnum);
                                     else
                                         bl=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
                                         wl=get_EHY(file.map,'mesh2d_s1',time_dnum);
-                                        h=wl-bl;
+                                        z=wl-bl;
                                     end 
-                                   out=v2struct(h,face_nodes_x,face_nodes_y);
+                                   out=v2struct(z,face_nodes_x,face_nodes_y);
                                 else
                                     if ismor==0
-                                        h=ncread(file.map,'mesh2d_waterdepth',[1,kt(1)],[Inf,kt(2)]);
+                                        z=ncread(file.map,'mesh2d_waterdepth',[1,kt(1)],[Inf,kt(2)]);
                                     else
                                         bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]);
                                         wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),kt(2)]);
-                                        h=wl-bl;
+                                        z=wl-bl;
                                     end 
-                                   out=v2struct(h,x_node,y_node,x_face,y_face,faces);
+                                   out=v2struct(z,x_node,y_node,x_face,y_face,faces);
                                 end                                 
                             end  
                         end   
