@@ -97,15 +97,16 @@ end
 idx=find_str_in_cell({nci.Variables.Name},{'time'});
 str_time=nci.Variables(idx).Attributes(2).Value;
 tok=regexp(str_time,' ','split');
-t0=datenum(datetime(sprintf('%s %s',tok{1,3},tok{1,4}),'InputFormat','yyyy-MM-dd HH:mm:ss','TimeZone',tok{1,5}));
+t0_dtime=datetime(sprintf('%s %s',tok{1,3},tok{1,4}),'InputFormat','yyyy-MM-dd HH:mm:ss','TimeZone',tok{1,5});
 switch tok{1,1}
     case 'seconds'
-        time_dnum=t0+seconds(time_r);
+        time_dtime=t0_dtime+seconds(time_r);
     case 'minutes'
-        time_dnum=t0+seconds(time_r);
+        time_dtime=t0_dtime+minutes(time_r);
     otherwise
         error('add')
 end
+time_dnum=datenum(time_dtime);
 
 switch simdef.D3D.structure
     case 2 %FM
