@@ -71,6 +71,13 @@ cs_loc_upd=cs_loc_ori(1);
 cs_def_ref=cs_def_ori(1); %save it to 
 relative_levels=[0,diff(cs_def_ref.levels)];
 
+%interpolation objects minimum elevation for all branches
+
+%interpolation objects maximum elevation for all branches
+
+%interpolation objects x-z-w for all branches
+
+
 for kn=1:nn
     
     %local names
@@ -78,6 +85,12 @@ for kn=1:nn
     ch_l=mesh1d_node_offset(kn);
     cs_id_l=sprintf('br_%s_ch_%7.7f',br_l,ch_l);
     
+    %interpolate minimum elevation
+
+    %interpolate maximum elevation
+
+    %interpolate x-z-w
+
     %definition
     cs_def_upd(kn)=cs_def_ref; %copy original
     cs_def_upd(kn).id=cs_id_l; %modify name    

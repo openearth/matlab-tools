@@ -242,8 +242,8 @@ switch flg.which_p
         
     case 1 %3D bed elevation and gsd
         %%
-        bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt],[kF(2),kt(2)]);
-        LYRFRAC=ncread(file.map,'mesh2d_lyrfrac',[1,1,1,kt],[Inf,Inf,Inf,kt(2)]);
+        bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]);
+        LYRFRAC=ncread(file.map,'mesh2d_lyrfrac',[1,1,1,kt(1)],[Inf,Inf,Inf,kt(2)]);
 %         DPS=vs_let(NFStruct,'map-sed-series',{kt},'DPS',{ky,kx},'quiet'); %depth at z point [m]
 %         LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,1,1:nf},'quiet'); %fractions at layers [-] (t,y,x,l,f)
         
@@ -367,10 +367,10 @@ switch flg.which_p
 
                             %% my interplation
                                 if ismor==0
-                                    h=ncread(file.map,'mesh2d_waterdepth',[1,kt],[Inf,kt(2)]);
+                                    h=ncread(file.map,'mesh2d_waterdepth',[1,kt(1)],[Inf,kt(2)]);
                                 else
-                                    bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt],[kF(2),kt(2)]);
-                                    wl=ncread(file.map,'mesh2d_s1',[kF(1),kt],[kF(2),kt(2)]);
+                                    bl=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]);
+                                    wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),kt(2)]);
                                     h=wl-bl;
                                 end
 

@@ -17,6 +17,7 @@
 %
 %TODO:
 %   -change to dirwalk
+%   -read mdf file structured as when unstructured
 
 function simdef=D3D_simpath(simdef)
 
