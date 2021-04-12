@@ -58,9 +58,9 @@ end
 
 %is 1D simulation
 idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_node_x'});
-is1d=1;
+is1d=0;
 if any(isnan(idx))
-    is1d=0;
+    is1d=1;
 end
 idx=find_str_in_cell({nci.Variables.Name},{'network1d_geom_x'});
 if isnan(idx)
