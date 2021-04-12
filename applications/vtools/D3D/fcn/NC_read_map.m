@@ -252,11 +252,19 @@ switch flg.which_p
                                 out=get_fm1d_data('mesh1d_flowelem_bl',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             end
                         else
-                            if get_EHY
-                               z=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
+                            if flg.get_EHY
+                               if ismor==0
+                                   z=get_EHY(file.map,'mesh2d_flowelem_bl',time_dnum);
+                               else
+                                   z=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
+                               end 
                                out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
-                               z=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]); 
+                               if ismor==0
+                                   z=ncread(file.map,'mesh2d_flowelem_bl',kF(1),kF(2)); 
+                               else
+                                   z=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]); 
+                               end 
                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
                             end
                         end
@@ -325,7 +333,7 @@ switch flg.which_p
                 %                         out.z (end,:)=NaN;                     
                             end
                             if flg.which_p==2
-                                if get_EHY
+                                if flg.get_EHY
                                     if ismor==0
                                         h=get_EHY(file.map,'mesh2d_waterdepth',time_dnum);
                                     else
