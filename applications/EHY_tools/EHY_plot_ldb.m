@@ -31,6 +31,7 @@ OPT.type      = {'shorelines','borders'}; % choose from: 'borders','rivers','sho
 OPT.color     = 'k';
 OPT.linewidth = 0.5;
 OPT.localEPSG = []; % specify local EPSG (e.g. 28992)
+OPT.localUnit = 'km';
 OPT           = setproperty(OPT,varargin);
 
 %% structure to cell array
@@ -52,6 +53,10 @@ rootfolder = [fileparts(which('EHY')) filesep 'support_functions' filesep 'GSHHG
 if ~isempty(OPT.localEPSG)
     x_lim = get(gca,'xlim');
     y_lim = get(gca,'ylim');
+    if strcmpi(OPT.localUnit,'km')
+        x_lim = x_lim*1000;
+        y_lim = y_lim*1000;
+    end
     hFig = figure('visible','off'); % dummy figure with [lat,lon]-axis
     [x_lim, y_lim] = convertCoordinates(x_lim, y_lim,'CS1.code',OPT.localEPSG,'CS2.code',4326);
     set(gca,'xlim',x_lim,'ylim',y_lim)
@@ -71,6 +76,10 @@ if ~isempty(OPT.localEPSG)
     end
     delete(hFig); % close dummy fig
     [X, Y] = convertCoordinates(X, Y,'CS1.code',4326,'CS2.code',OPT.localEPSG);
+    if strcmpi(OPT.localUnit,'km')
+        X = X/1000;
+        Y = Y/1000;
+    end    
     hLdb = plot(X,Y,'color',OPT.color,'linewidth',OPT.linewidth);
 else
     for iT = 1:length(OPT.type) % loop over types
