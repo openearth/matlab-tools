@@ -12,7 +12,7 @@
 %
 %get data from 1 time step in D3D, output name as in D3D
 
-function [time_r,time_mor_r,time_dnum]=D3D_results_time(nc_map,ismor)
+function [time_r,time_mor_r,time_dnum]=D3D_results_time(nc_map,ismor,kt)
 
 nci=ncinfo(nc_map);
 time_r=ncread(nc_map,'time',kt(1),kt(2)); %results time vector [seconds since start date]
