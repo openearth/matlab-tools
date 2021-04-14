@@ -82,13 +82,15 @@ for i_conc = 1:lstci
             
             %% Exclude permanently dry points
             for i_stat = 1: 4
-                exist_stat(i_stat) = true;
-                index = find(conc(:,i_stat,:) == conc(1,i_stat,:));
-                if length(index) == notims
-                    exist_stat(i_stat) = false;
-                    weight    (i_stat) = 0.;
+                exist_stat(i_stat) = false;
+                for k = 1: kmax
+                    index = find(conc(:,i_stat,k) == conc(1,i_stat,k));
+                    if length(index) ~= notims
+                        exist_stat(i_stat) = true;
+                    end
                 end
             end
+            weight(~exist_stat) = 0;
             
             %% Normalise weights
             wghttot = sum(exist_stat.*weight);
