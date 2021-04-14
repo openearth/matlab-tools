@@ -26,6 +26,10 @@ switch what_do
                 stru_out=dflowfm_io_mdu('read',fname);
             case {'.sed','.mor'}
                 stru_out=delft3d_io_sed(fname);
+            case '.pli'
+                tek=tekal('read',fname,'loaddata');
+                stru_out.name=tek.Field.Name;
+                stru_out.val=tek.Field.Data;
             otherwise
                 error('Extension not available')
         end %ext

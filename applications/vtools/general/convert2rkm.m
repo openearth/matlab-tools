@@ -140,11 +140,19 @@ for kp=1:np
         bol_branch=strcmp(branch,branch_in{kp});
     end
     var_out_branch=var_out(bol_branch,:);
+    var_compare_branch=var_compare(bol_branch,:);
 
     %search for closest point
-    dist=sqrt(sum((var_compare(bol_branch,:)-var_in(kp,:)).^2,2));
-    [min_dist,min_idx]=min(dist);
-    var_get(kp,:)=var_out_branch(min_idx,:);
+%     dist=sqrt(sum((var_compare_branch-var_in(kp,:)).^2,2));
+%     [min_dist,min_idx]=min(dist);
+%     var_get(kp,:)=var_out_branch(min_idx,:);
+
+    %interpolating
+    [min_dist,x_d_min,y_d_min,~,xc,~,~,~,~]=p_poly_dist(var_in(kp,1),var_in(kp,2),var_compare_branch(:,1),var_compare_branch(:,2));
+    dist_p2o=sqrt((x_d_min                   -var_compare_branch(xc,1))^2+(y_d_min                   -var_compare_branch(xc,2))^2);
+    dist_p2p=sqrt((var_compare_branch(xc+1,1)-var_compare_branch(xc,1))^2+(var_compare_branch(xc+1,2)-var_compare_branch(xc,2))^2);
+    frac=dist_p2o/dist_p2p;
+    var_get(kp,:)=var_out_branch(xc,:)+frac*(var_out_branch(xc+1,:)-var_out_branch(xc,:));
 
     if min_dist>TolMinDist
         figure 
