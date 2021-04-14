@@ -148,7 +148,15 @@ for kp=1:np
 %     var_get(kp,:)=var_out_branch(min_idx,:);
 
     %interpolating
+%     %% begin debug
+%     figure
+%     hold on
+%     plot(var_in(kp,1),var_in(kp,2),'*r');
+%     plot(var_compare_branch(:,1),var_compare_branch(:,2),'ob')
+%     
+%     %% end debug
     [min_dist,x_d_min,y_d_min,~,xc,~,~,~,~]=p_poly_dist(var_in(kp,1),var_in(kp,2),var_compare_branch(:,1),var_compare_branch(:,2));
+    xc=max([1,xc]);
     dist_p2o=sqrt((x_d_min                   -var_compare_branch(xc,1))^2+(y_d_min                   -var_compare_branch(xc,2))^2);
     dist_p2p=sqrt((var_compare_branch(xc+1,1)-var_compare_branch(xc,1))^2+(var_compare_branch(xc+1,2)-var_compare_branch(xc,2))^2);
     frac=dist_p2o/dist_p2p;
