@@ -36,4 +36,5 @@ for kl=1:numel(data)
     fprintf(fileID_out,'%s\r\n',data{kl,1});
 end
 
+messageOut(NaN,sprintf('file written %s',file_name));
 fclose(fileID_out);

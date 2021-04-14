@@ -10,6 +10,10 @@
 %$Id$
 %$HeadURL$
 %
+%write:
+%   pli:
+%       -pli.name: name of the polyline (char) or number of the polyline (double)
+%       -pli.xy: coordinates
 
 function varargout=D3D_io_input(what_do,fname,varargin)
 
@@ -28,7 +32,12 @@ switch what_do
         varargout{1}=stru_out;
     case 'write'
         stru_in=varargin{1};
-        dflowfm_io_mdu('write',fname,stru_in);
+        switch ext
+            case {'.mdu','.mor','.sed'}
+                dflowfm_io_mdu('write',fname,stru_in);
+            case '.pli'
+                D3D_write_poly(stru_in.name,stru_in.xy,fname);
+        end
 end
 
 end %function

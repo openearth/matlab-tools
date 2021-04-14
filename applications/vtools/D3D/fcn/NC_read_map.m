@@ -48,26 +48,8 @@ if isfield(flg,'elliptic')==0
     flg.elliptic=0;
 end
 
-%is morphodynamic
-nci=ncinfo(file.map);
-idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_mor_bl','mesh1d_mor_bl'});
-ismor=1;
-if any(isnan(idx))
-    ismor=0;
-end
-
-%is 1D simulation
-idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_node_x'});
-is1d=0;
-if any(isnan(idx))
-    is1d=1;
-end
-idx=find_str_in_cell({nci.Variables.Name},{'network1d_geom_x'});
-if isnan(idx)
-    str_network='network';
-else
-    str_network='network1d';
-end
+%is 
+[ismor,is1d,str_network]=D3D_is(file.map);
 
 %% CONSTANST
 
@@ -77,36 +59,12 @@ cnt.g=9.81; %readable from mdu
 
 %HELP
 % file.map='c:\Users\chavarri\temporal\D3D\runs\P\035\DFM_OUTPUT_sim_P035\sim_P035_map.nc';
-% ncdisp(file.map)
-
-    %% domain size
-% out_dim=NC_read_dimensions(simdef);
-% v2struct(out_dim)
+% ncinfo(file.map)
 
     %% time, space, fractions
 if flg.which_p~=-1
-%time
-    %read the whole time vector is quite time consuming. better to only
-    %read the times we need. It changes quite a lot the structure of
-    %the code thought. 
 
-time_r=ncread(file.map,'time',kt(1),kt(2)); %results time vector [seconds since start date]
-if ismor
-    time_mor_r=ncread(file.map,'morft',kt(1),kt(2)); %results time vector [seconds since start date]
-end
-idx=find_str_in_cell({nci.Variables.Name},{'time'});
-str_time=nci.Variables(idx).Attributes(2).Value;
-tok=regexp(str_time,' ','split');
-t0_dtime=datetime(sprintf('%s %s',tok{1,3},tok{1,4}),'InputFormat','yyyy-MM-dd HH:mm:ss','TimeZone',tok{1,5});
-switch tok{1,1}
-    case 'seconds'
-        time_dtime=t0_dtime+seconds(time_r);
-    case 'minutes'
-        time_dtime=t0_dtime+minutes(time_r);
-    otherwise
-        error('add')
-end
-time_dnum=datenum(time_dtime);
+[time_r,time_mor_r,time_dnum]=D3D_time(file.map,ismor);
 
 switch simdef.D3D.structure
     case 2 %FM
@@ -198,20 +156,6 @@ if isfield(file,'sed')
     dchar=D3D_read_sed(file.sed);
 end
 end
-
-% if isfield(file,'mor')
-% mor_in=delft3d_io_mor(file.mor);
-% end
-
-%some interesting output...
-% if exist('mor_in','var')
-% if isfield(mor_in.Morphology0,'MorFac')
-% out.MorFac=mor_in.Morphology0.MorFac;
-% end
-% if isfield(mor_in.Morphology0,'MorStt')
-% out.MorStt=mor_in.Morphology0.MorStt;
-% end
-% end
 
 end %which_p
     %% vars
