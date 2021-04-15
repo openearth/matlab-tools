@@ -24,9 +24,8 @@ flg.profile=0;
     %3=from script
 def.sim_in=2; 
     %1) (for more than one simulation, structured results)
-% def.simulations={'051','043','057','061'}; %simulations to run the loop
-% def.series={'P','P','P','P'}; %series to analyze
-% def.paths_runs='n:\My Documents\runs\D3D\';
+%def.simulations={'r003','r004'}; %simulations to run the loop
+%def.paths_runs='C:\Users\chavarri\temporal\210414_struiksma83\01_simulations';
     %2) (for 1 simulation)
 % simdef.D3D.dire_sim='p:\dflowfm\projects\2020_d-morphology\modellen\3655-sequential-parallel\maas\sims\r017\';
 simdef.D3D.dire_sim='C:\Users\chavarri\temporal\210310_parallel_sequential\02_simulations\sims\r017\';

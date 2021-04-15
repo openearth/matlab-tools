@@ -97,6 +97,9 @@ for kf1=1:nf
     end %isdir
 end
 
+if exist('mdf_aux','var')~=1
+    error('This folder has no mdu file.')
+end
 nstring=cellfun(@(X)numel(X),mdf_aux);
 [~,idx]=min(nstring);
 file.mdf=mdf_aux{idx};

@@ -14,6 +14,8 @@
 
 function out=NC_read_his(simdef,in)
 
+messageOut(NaN,'start reading his data')
+
 %% RENAME in
 
 file=simdef.file;
@@ -21,34 +23,33 @@ if isfield(simdef,'flg')
     flg=simdef.flg;
 end
 
-kt=in.kt;    
-if kt==0 %only give domain size as output
-    error('do we get here?')
-%     flg.which_v=-1;
-    flg.which_p=-1;
-else
-%     ky=in.ky;
-%     kx=in.kx; 
-    if isfield(in,'kf')
-        kf=in.kf;
-    else
-        kf=NaN;
-    end
-    
-    nF=numel(kf);
-    out.nF=nF;
-    
+kt=in.kt; %times to plot
+kf=in.kf; %fractions to plot
+kF=in.kF; %faces to plot
+kcs=in.kcs; %cross-sections to plot
+
+if isfield(flg,'get_cord')==0
+    flg.get_cord=1;
+end
+if isfield(flg,'get_EHY')==0
+    flg.get_EHY=0;
 end
 
-if isfield(flg,'mean_type')==0
-    mean_type=2; %log2
+%overwritten by input variable
+if flg.which_v==3
+    mean_type=2;
+elseif flg.which_v==26
+    mean_type=1;
 else
-    mean_type=flg.mean_type; 
+    mean_type=1;
 end
 
 if isfield(flg,'elliptic')==0
     flg.elliptic=0;
 end
+
+%is 
+[ismor,is1d,str_network]=D3D_is(file.map);
 
 if numel(kt)==2 && kt(2)==1
     warning('you want to plot one single time for a history file. that is weird')
@@ -63,12 +64,8 @@ end
     %% time, space, fractions
 if flg.which_p~=-1
     %time
-    ITMAPC=ncread(file.his,'time'); %results time vector
-    time_r=ITMAPC; %results time vector [s]
-%     TUNIT=vs_let(NFStruct,'map-const','TUNIT','quiet'); %dt unit
-%     DT=vs_let(NFStruct,'map-const','DT','quiet'); %dt
-%     time_r=ITMAPC*DT*TUNIT; %results time vector [s]
-    
+[time_r,time_mor_r,time_dnum]=D3D_results_time(file.his,ismor,kt);
+
     %space
 switch simdef.D3D.structure
     case 2 %FM
@@ -106,38 +103,32 @@ switch simdef.D3D.structure
         
         sdc_name=ncread(file.his,'observation_id')';
 end
-    
-% switch where_is_var
-%     case 1
-        sdc_2p_idx=get_branch_idx(in.station,sdc_name);    
-%     case 2
-%         sdc_2p_idx=get_branch_idx(in.dump_area,sdc_name);
-%     case 3
-%         sdc_2p_idx=get_branch_idx(in.crs,sdc_name);
-% end
+
+sdc_2p_idx=get_branch_idx(in.station,sdc_name);    
 
 if numel(sdc_2p_idx)>1
     error('You cannot read information from more than one station at the same time')
 end
 
     %sediment
-if isfield(file,'sed')
-    dchar=D3D_read_sed(simdef.file.sed);
-end
+% if isfield(file,'sed')
+%     sed=D3D_io_input('read',simdef.file.sed);
+%     dchar=D3D_read_sed(simdef.file.sed);
+% end
 
-if isfield(file,'mor')
-mor_in=delft3d_io_mor(file.mor);
-end
+% if isfield(file,'mor')
+% mor_in=delft3d_io_mor(file.mor);
+% end
 
 %some interesting output...
-if exist('mor_in','var')
-if isfield(mor_in.Morphology0,'MorFac')
-out.MorFac=mor_in.Morphology0.MorFac;
-end
-if isfield(mor_in.Morphology0,'MorStt')
-out.MorStt=mor_in.Morphology0.MorStt;
-end
-end
+% if exist('mor_in','var')
+% if isfield(mor_in.Morphology0,'MorFac')
+% out.MorFac=mor_in.Morphology0.MorFac;
+% end
+% if isfield(mor_in.Morphology0,'MorStt')
+% out.MorStt=mor_in.Morphology0.MorStt;
+% end
+% end
 
 end
     %% vars
@@ -166,7 +157,10 @@ end
 switch flg.which_p
     case {'a','b'}
         %common output
-        out.time_r=time_r(kt(1):kt(2)); 
+        out.time_r=time_r; 
+        out.time_mor_r=time_mor_r; 
+        out.time_dnum=time_dnum; 
+        
         switch flg.which_v
                             
             case 1 %bed level

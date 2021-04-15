@@ -20,29 +20,34 @@ simdef=D3D_figure_defaults(simdef);
 
 flg=simdef.flg;
 
-%% defaults
-
-
 %%
 x_node=in.x_node;
 y_node=in.y_node;
-% x_face=in.x_face;
-% y_face=in.y_face;
 
 faces=in.faces;
 z_var=in.z.*flg.plot_unitz;
-% cvar=in.cvar;
 time_r=in.time_r.*flg.plot_unitt;
-% switch flg.elliptic
-%     case 1
-%         ell=in.eigen_ell_p;
-%     case 2
-%         ell=in.HIRCHK;
-% end
 
-% if isfield(in,'a')
-%     lims=in.lims;
-% end
+%% defaults
+
+switch flg.plot_unitt
+    case 1 %conversion from s 
+        aux_t='s';
+    case 1/3600 %conversion from s
+        aux_t='h';
+    case 1/3600/24
+        aux_t='days';
+end
+
+if flg.addtitle
+    if isfield(flg,'tit_str')
+        tit_str=flg.tit_str;
+    else
+        tit_str=sprintf('time = %5.2f %s',time_r,aux_t);
+    end
+else
+    tit_str='';
+end
 
 %% data rework
 
@@ -210,59 +215,15 @@ switch flg.plot_unity
     otherwise
         error('Hard-code the label')
 end
-% ylabel(han.sfig(kpr,kpc),sprintf('crosswise position %s',aux_s));
 ylabel(han.sfig(kpr,kpc),sprintf('y coordinate %s',aux_s));
 zlabel(han.sfig(kpr,kpc),'elevation [m]');
 % xlim(han.sfig(kpr,kpc),lims.x)
 % ylim(han.sfig(kpr,kpc),lims.y)
 % zlim(han.sfig(kpr,kpc),lims.y)
-switch flg.plot_unitt
-    case 1 %conversion from s 
-        aux_t='s';
-    case 1/3600 %conversion from s
-        aux_t='h';
-    case 1/3600/24
-        aux_t='days';
-end
-% title(han.sfig(kpr,kpc),sprintf('%s time = %5.2f %s',aux_s,time_r,aux_t))
-% title(han.sfig(kpr,kpc),sprintf('%s time = %5.2f %s',aux_s,time_r,aux_t))
-% if flg.which_p~=8
-if flg.addtitle
-title(han.sfig(kpr,kpc),sprintf('time = %5.2f %s',time_r,aux_t))
-end
-% end
-    
+title(han.sfig(kpr,kpc),tit_str)
+
 %plots
 patch('Faces',faces','Vertices',[x_node,y_node],'FaceVertexCData',z_var,'FaceColor','flat','EdgeColor',flg.prop.edgecolor,'parent',han.sfig(1,1))
-
-
-% switch flg.elliptic
-%     case 1
-%         han.el=scatter(XZ(2:end),repmat(lims.y(1),1,ncx),20,ell,'fill');
-%             %for legend
-%         han.leg(1)=scatter(-1000,-1000,20,'k','fill');
-%         han.leg(2)=scatter(-1000,-1000,20,'m','fill');
-%     case 2
-% %         patch('Faces',faces','Vertices',[x_node,y_node,lims.z(1)*ones(size(y_node))],'FaceVertexCData',ell,'FaceColor','flat','EdgeColor','none')
-%         idx_p=ell==0;
-%         cmap_ell=repmat([1,0,0],size(faces,2),1); %all red
-%         cmap_ell(idx_p,:)=repmat([0,1,0],sum(idx_p),1);
-%         patch('Faces',faces','Vertices',[x_node,y_node,lims.z(1)*ones(size(y_node))],'FaceVertexCData',cmap_ell,'FaceColor','flat','EdgeColor','none')
-% %         idx_p=ell==1;
-% %         han.p1=scatter3(XZ(idx_p),YZ(idx_p),lims.z(1)*ones(size(XZ(idx_p))),10,'r');
-%                     %for legend
-%         han.leg(1)=scatter(-1000,-1000,20,'g','fill');
-%         han.leg(2)=scatter(-1000,-1000,20,'r','fill');
-% end
-
-% han.surf1.EdgeColor='none';
-% 
-% light
-% material dull
-% han.surf1.FaceLighting='gouraud';
-
-%water level
-% han.wl=plot(XZ(2:end),S1,'color','b','linewidth',2);
 
 %colormap
 colormap(han.sfig(1,1),cmap);

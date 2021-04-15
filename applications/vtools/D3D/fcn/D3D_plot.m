@@ -49,13 +49,14 @@ for ks=1:ns
     %computer paths
     switch def.sim_in
         case 1
-            if isfield(simdef,'D3D') && isfield(simdef.D3D,'dire_sim')
-                D3D=rmfield(simdef.D3D,'dire_sim');
-                simdef.D3D=D3D;
-            end
-            simdef.runid.number=def.simulations{ks};
-            simdef.runid.serie=def.series{ks};
-            simdef.D3D.paths_runs=def.paths_runs;
+%             if isfield(simdef,'D3D') && isfield(simdef.D3D,'dire_sim')
+%                 D3D=rmfield(simdef.D3D,'dire_sim');
+%                 simdef.D3D=D3D;
+%             end
+%             simdef.runid.number=def.simulations{ks};
+%             simdef.runid.serie=def.series{ks};
+%             simdef.D3D.paths_runs=def.paths_runs;
+            simdef.D3D.dire_sim=fullfile(def.paths_runs,def.simulations{ks});
         case {2,3}
             def.folder=simdef.D3D.dire_sim;
             aux.strspl=strsplit(def.folder,'\');

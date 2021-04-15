@@ -24,7 +24,7 @@ mdu=D3D_io_input('read',path_mdu);
 
 %% loop on sim folder
 
-path_sim=fileparts(path_mdu);
+[path_sim,runid,~]=fileparts(path_mdu);
 simdef.D3D.dire_sim=path_sim;
 
 dire=dir(simdef.D3D.dire_sim);
@@ -60,14 +60,16 @@ end
 
 %sediment
 if isfield(mdu,'sediment')
-    simdef.file.mor=mdu.sediment.MorFile;
-    simdef.file.sed=mdu.sediment.SedFile;
+    simdef.file.mor=fullfile(path_sim,mdu.sediment.MorFile);
+    simdef.file.sed=fullfile(path_sim,mdu.sediment.SedFile);
 end
 
 %output
 if isfield(mdu.output,'OutputDir')
     path_output_loc=mdu.output.OutputDir;
-    if ~isempty(path_output_loc)
+    if isempty(path_output_loc)
+        path_output_loc=sprintf('DFM_OUTPUT_%s',runid);
+    end
         path_output=fullfile(path_sim,path_output_loc);
         file_aux=D3D_simpath_output(path_output);
         fnames=fieldnames(file_aux);
@@ -75,7 +77,6 @@ if isfield(mdu.output,'OutputDir')
         for kfields=1:nfields
             simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
         end
-    end
 end
 
 end %function

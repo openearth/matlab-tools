@@ -64,7 +64,7 @@ cnt.g=9.81; %readable from mdu
     %% time, space, fractions
 if flg.which_p~=-1
 
-[time_r,time_mor_r,time_dnum]=D3D_time(file.map,ismor,kt);
+[time_r,time_mor_r,time_dnum]=D3D_results_time(file.map,ismor,kt);
 
 switch simdef.D3D.structure
     case 2 %FM

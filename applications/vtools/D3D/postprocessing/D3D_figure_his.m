@@ -16,72 +16,15 @@ function D3D_figure_his(simdef,in)
 
 %% RENAME in
 
+simdef=D3D_figure_defaults(simdef);
+
 flg=simdef.flg;
-% prop=flg.prop;
-
-%% defaults
-
-if isfield(flg.prop,'edgecolor')==0
-    flg.prop.edgecolor='k'; %edge color in surf plot
-end
-
-if isfield(flg,'cbar')==0
-        flg.cbar.displacement=[0,0,0,0];
-else
-    if isfield(flg.cbar,'displacement')==0
-        
-    end
-end
-
-if isfield(flg,'marg')==0
-    flg.marg.mt=1.5; %top margin [cm]
-    flg.marg.mb=1.5; %bottom margin [cm]
-    flg.marg.mr=0.5; %right margin [cm]
-    flg.marg.ml=2.5; %left margin [cm]
-    flg.marg.sh=1.0; %horizontal spacing [cm]
-    flg.marg.sv=0.0; %vertical spacing [cm]
-end
-
-if isfield(flg.prop,'fs')==0
-    flg.prop.fs=12;
-end
-
-if isfield(flg,'prnt_size')==0
-    flg.prnt_size=[0,0,25.4,19.05];
-end
 
 %%
-% zcoordinate_c=in.zcoordinate_c;
-% y_node=in.y_node;
-% x_face=in.x_face;
-% y_face=in.y_face;
 
 % faces=in.faces;
 z_var=in.z.*flg.plot_unitz;
 time_p=in.time_r.*flg.plot_unitt;
-
-% switch flg.elliptic
-%     case 1
-%         ell=in.eigen_ell_p;
-%     case 2
-%         ell=in.HIRCHK;
-% end
-
-% %limits
-% if isfield(flg,'lims')
-%     if isfield(flg.lims,'x')
-%         lims.x=flg.lims.x;
-%     end
-%     if isfield(flg.lims,'y')
-%         lims.y=flg.lims.y;
-%     end 
-%     if isfield(flg.lims,'z')
-%         lims.z=flg.lims.z;
-%     end
-%     if isfield(flg.lims,'f')
-%         lims.f=flg.lims.f;
-%     end
-% end
 
 %station or area
 where_is_var=1;
@@ -111,12 +54,6 @@ if isfield(flg,'lims')
 %         lims.f=flg.lims.f;
 %     end
 end
-
-%% REWORK
-
-%interpolate bed level data from cell center to vertices
-% F=scatteredInterpolant(x_face,y_face,bl);
-% bl_nodes=F(x_node,y_node);
 
 %% FIGURE
 
@@ -155,56 +92,13 @@ prop.color=[... %>= matlab 2014b default
 %  0.2500    0.2500    0.2500];   %grey
 % set(groot,'defaultAxesColorOrder',prop.color)
 
-%colorbar
-%colorbar
-% cbar.sfig=[1,1]; 
-% cbar.displacement=flg.cbar.displacement; 
-% cbar.location='northoutside';
-% switch flg.which_v
-%     case 1
-%         cbar.label='bed elevation [m]';
-%     case 2
-%         cbar.label='flow depth [m]';
-%     case 3
-%         switch flg.plot_unitz
-%             case 1
-%                 cbar.label='mean grain size at the bed surface [m]';
-%             case 1000
-%                 cbar.label='mean grain size at the bed surface [mm]';
-%             otherwise
-%                 error('ehem...')
-%         end
-%     case 4
-%         switch flg.plot_unitz
-%             case 1
-%                 cbar.label='mean grain size at the top substrate [m]';
-%             case 1000
-%                 cbar.label='mean grain size at the top substrate [mm]';
-%             otherwise
-%                 error('ehem...')
-%         end
-%     case 6
-%         cbar.label='secondary flow intensity [m/s]';
-%     case 8
-% 
-% end
-
-% cbar.label=in.zlabel;
-%text
-% aux.sfig=11;
-% texti.(sprintf('sfig%d',aux.sfig)).pos=[0.015,0.5e-3;0.03,-0.5e-3;0.005,-1e-3];
-% texti.(sprintf('sfig%d',aux.sfig)).tex={'1','2','a'};
-% texti.(sprintf('sfig%d',aux.sfig)).clr={prop.color(1,:),prop.color(2,:),'k'};
-
-%limits
-
 
 % brewermap('demo')
 % cmap=brewermap(3,'set1');
 % cmap=brewermap(100,'RdYlBu');
 
 %figure initialize
-han.fig=figure('name',prnt.filename);
+han.fig=figure('name',prnt.filename,'visible',flg.fig_visible);
 set(han.fig,'paperunits','centimeters','paperposition',prnt.size)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1])
 [mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
@@ -234,10 +128,10 @@ han.sfig(kpr,kpc).YLim=lims.y;
 % % han.sfig(kpr,kpc).XTick=[];  
 % % han.sfig(kpr,kpc).YTick=[];  
 % % han.sfig(kpr,kpc).XScale='log';
-% % han.sfig(kpr,kpc).YScale='log';
+han.sfig(kpr,kpc).YScale=flg.YScale;
 switch where_is_var
     case 1
-        han.sfig(kpr,kpc).Title.String=sprintf('%s',strrep(in.station,'_','\_'));
+        han.sfig(kpr,kpc).Title.String=strtrim(sprintf('%s',strrep(in.station,'_','\_')));
     case 2
 %         han.sfig(kpr,kpc).Title.String=sprintf('%s',strrep(in.dump_area,'_','\_'));
 end

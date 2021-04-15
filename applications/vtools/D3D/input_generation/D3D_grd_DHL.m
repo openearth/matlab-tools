@@ -21,8 +21,8 @@ dire_sim=simdef.D3D.dire_sim;
 % L1 = 7;
 % L2 = 11;
 % R = 12;
-% dx = 1.00;
-% dy = 0.50;
+% dx = 0.05;
+% dy = 0.15;
 % angle = 140;
 % file='C:\Users\chavarri\surfdrive\projects\00_codes\D3D\grid\3_1p5_1_3.grd';
 

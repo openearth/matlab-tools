@@ -44,7 +44,7 @@ if isfield(flg,'marg')==0
     flg.marg.mt=2.5; %top margin [cm]
     flg.marg.mb=1.5; %bottom margin [cm]
     flg.marg.mr=2.5; %right margin [cm]
-    flg.marg.ml=2.0; %left margin [cm]
+    flg.marg.ml=2.5; %left margin [cm]
     flg.marg.sh=1.0; %horizontal spacing [cm]
     flg.marg.sv=0.0; %vertical spacing [cm]
 end
@@ -99,6 +99,10 @@ end
 
 if isfield(flg,'fig_faceindices')==0
    flg.fig_faceindices=0;
+end
+
+if isfield(flg,'YScale')==0
+   flg.YScale='linear';
 end
 
 %% OUT
