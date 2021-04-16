@@ -10,10 +10,15 @@
 %$Id: D3D_plot.m 17190 2021-04-15 08:24:15Z chavarri $
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_plot.m $
 %
+%Runs the plotting routine reading the input from a matlab script
+%
+%INPUT:
+%   -path_input: path to the matlab script (char)
+
 function out_read=D3D_plot_from_file(path_input)
 
 messageOut(NaN,'start plotting')
-run(path_input)
+[def,simdef,in_read]=D3D_read_input_m(path_input);
 out_read=D3D_plot(simdef,in_read,def);
 messageOut(NaN,'finished plotting')
 

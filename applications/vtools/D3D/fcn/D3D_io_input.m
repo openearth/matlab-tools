@@ -31,7 +31,7 @@ switch what_do
                 stru_out.name=tek.Field.Name;
                 stru_out.val=tek.Field.Data;
             otherwise
-                error('Extension not available')
+                error('Extension %s in file %s not available',ext,fname)
         end %ext
         varargout{1}=stru_out;
     case 'write'

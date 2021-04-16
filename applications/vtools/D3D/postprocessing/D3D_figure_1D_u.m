@@ -16,24 +16,16 @@ function D3D_figure_1D_u(simdef,in)
 
 %% RENAME in
 
-% file=simdef.file;
+simdef=D3D_figure_defaults(simdef);
+
 flg=simdef.flg;
 
-XZ=in.XZ.*flg.plot_unitx;
-YZ=in.YZ.*flg.plot_unity;
+%% RENAME in
+
 SZ=in.SZ.*flg.plot_unitx;
 z=in.z.*flg.plot_unitz;
-% sub=in.sub;
-% cvar=in.cvar;
+
 time_r=in.time_r.*flg.plot_unitt;
-% nx=in.nx;
-% nl=in.nl;
-switch flg.elliptic
-    case 1
-        ell=in.eigen_ell_p;
-    case 2
-        ell=in.HIRCHK;
-end
 
 if isfield(in,'a')
     lims=in.lims;
@@ -63,15 +55,6 @@ if isfield(flg,'lims')
 %     if isfield(flg.lims,'f')
 %         lims.f=flg.lims.f;
 %     end
-end
-
-
-if isfield(flg,'prnt_size')==0
-    flg.prnt_size=[0,0,25.4,19.05];
-end
-
-if isfield(flg,'addtitle')==0
-    flg.addtitle=1;
 end
 
 %% FIGURE
@@ -214,22 +197,6 @@ if isvector(z)
     han.p=plot(SZ,z,'color','k');
 else
     han.p=plot(SZ,z);
-end
-
-switch flg.elliptic
-    case 1
-        han.el=scatter(XZ(2:end),repmat(lims.y(1),1,ncx),20,ell,'fill');
-            %for legend
-        han.leg(1)=scatter(-1000,-1000,20,'k','fill');
-        han.leg(2)=scatter(-1000,-1000,20,'m','fill');
-    case 2
-        idx_p=ell==0;
-        han.p1=scatter3(XZ(idx_p),YZ(idx_p),lims.z(1)*ones(size(XZ(idx_p))),10,'g');
-        idx_p=ell==1;
-        han.p1=scatter3(XZ(idx_p),YZ(idx_p),lims.z(1)*ones(size(XZ(idx_p))),10,'r');
-                    %for legend
-        han.leg(1)=scatter(-1000,-1000,20,'g','fill');
-        han.leg(2)=scatter(-1000,-1000,20,'r','fill');
 end
 
 % han.surf1.EdgeColor='none';
