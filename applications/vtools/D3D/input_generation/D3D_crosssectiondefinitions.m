@@ -31,9 +31,13 @@ parin=inputParser;
 inp.check_existing.default=true;
 addOptional(parin,'check_existing',inp.check_existing.default)
 
+inp.fname.default='CrossSectionDefinitions.ini';
+addOptional(parin,'fname',inp.check_existing.default)
+
 parse(parin,varargin{:})
 
 check_existing=parin.Results.check_existing;
+fname=parin.Results.fname;
 
 %% RENAME
 
@@ -84,5 +88,5 @@ end
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'CrossSectionDefinitions.ini');
+file_name=fullfile(dire_sim,fname);
 writetxt(file_name,data,'check_existing',check_existing)

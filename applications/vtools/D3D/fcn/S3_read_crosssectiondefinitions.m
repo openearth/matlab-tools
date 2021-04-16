@@ -79,7 +79,8 @@ for kl=1:nlcsin
             if ~isempty(str_aux_r)
                 tag_loc2=str_aux_r{1,1};
                 for ktags=1:ntags
-                    if strcmp(tag_loc2,tags{1,ktags})
+%                     if strcmp(tag_loc2,tags{1,ktags})
+                    if strcmpi(tag_loc2,tags{1,ktags})
                         str_aux_l3=regexp(str_loc2,exprs{1,ktags},'match');
                         strconv=rework_str(str_aux_l3,fcnts(ktags));
                         cs(kcs).(tags{ktags})=strconv;

@@ -14,7 +14,7 @@
 
 function out=NC_read_map(simdef,in)
 
-messageOut(NaN,'start reading map data')
+% messageOut(NaN,'start reading map data')
 
 %% RENAME in
 
