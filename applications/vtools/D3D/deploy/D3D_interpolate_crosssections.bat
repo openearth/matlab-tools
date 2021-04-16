@@ -6,11 +6,11 @@ rem %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 rem % 
 rem %Victor Chavarrias (victor.chavarrias@deltares.nl)
 rem %
-rem %$Revision: 17195 $
-rem %$Date: 2021-04-16 11:16:42 +0200 (Fri, 16 Apr 2021) $
-rem %$Author: chavarri $
-rem %$Id: D3D_interpolate_crosssections.m 17195 2021-04-16 09:16:42Z chavarri $
-rem %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_interpolate_crosssections.m $
+rem %$Revision$
+rem %$Date$
+rem %$Author$
+rem %$Id$
+rem %$HeadURL$
 rem %
 rem %Interpolates cross-sections at each computational node. 
 rem %

@@ -6,11 +6,11 @@ rem %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 rem % 
 rem %Victor Chavarrias (victor.chavarrias@deltares.nl)
 rem %
-rem %$Revision: 17190 $
-rem %$Date: 2021-04-15 10:24:15 +0200 (Thu, 15 Apr 2021) $
-rem %$Author: chavarri $
-rem %$Id: D3D_plot.m 17190 2021-04-15 08:24:15Z chavarri $
-rem %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_plot.m $
+rem %$Revision$
+rem %$Date$
+rem %$Author$
+rem %$Id$
+rem %$HeadURL$
 rem %
 rem %Runs the plotting routine reading the input from a matlab script
 rem %
