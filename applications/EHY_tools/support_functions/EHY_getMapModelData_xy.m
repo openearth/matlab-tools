@@ -22,17 +22,19 @@ if size(pli,1) == 2 && size(pli,2) > 2
 end
 
 %% Determine which partitions to load data from
-if OPT.mergePartitions == 1
-    partitionNrs = EHY_findPartitionNumbers(inputFile,'pli',pli,'disp',OPT.disp);
-else
-    partitionNrs = str2num(inputFile(end-10:end-7));
+if isempty(OPT.mergePartitionNrs)
+    if OPT.mergePartitions == 1
+        partitionNrs = EHY_findPartitionNumbers(inputFile,'pli',pli,'disp',OPT.disp);
+    else
+        partitionNrs = str2num(inputFile(end-10:end-7));
+    end
+    % continue with relevant partition numbers
+    OPT.mergePartitionNrs = partitionNrs;
 end
-% continue with relevant partition numbers
-OPT.mergePartitionNrs = partitionNrs;
 
 %% Horizontal (x,y) coordinates
 if ~isfield(OPT,'gridFile'); OPT.gridFile = ''; end
-tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','edge_nodes','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs,'disp',OPT.disp,'gridFile',OPT.gridFile);
+tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs,'disp',OPT.disp,'gridFile',OPT.gridFile);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
 
 %% get "z-data"

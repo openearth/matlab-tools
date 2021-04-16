@@ -67,7 +67,11 @@ for iPI = 1:max([1 length(plotInd)])
         end
         title(datestr(Data.times(plotInd(iPI)),'dd-mmm-yyyy HH:MM:SS'))
     else
-        EHY_plotMapModelData(gridInfo,Data.val)
+        if isfield(OPT,'facecolor') && strcmp(OPT.facecolor,'interp')
+            EHY_plotMapModelData(gridInfo,Data.val,'facecolor','interp')
+        else
+            EHY_plotMapModelData(gridInfo,Data.val)
+        end
     end
     pause(1)
 end

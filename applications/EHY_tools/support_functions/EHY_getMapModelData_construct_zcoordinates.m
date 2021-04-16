@@ -166,8 +166,8 @@ switch gridInfo.layer_model
                     if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
                         sigma_bottom = max([int_field(:,end-numtopsig) bl],[],2) ;
                         sigma_top    = wl(iT,:)';
-                        dz = sigma_top - sigma_bottom;
-                        int_field(:,(end-numtopsig):end) = sigma_bottom+linspace(0,1,numtopsig+1).*dz;
+                        dh = sigma_top - sigma_bottom;
+                        int_field(:,(end-numtopsig):end) = sigma_bottom+linspace(0,1,numtopsig+1).*dh;
                     elseif numtopsig > 0
                         for ii = 1:size(int_field,1)
                             logi = ~isnan(int_field(ii,:));
@@ -176,7 +176,15 @@ switch gridInfo.layer_model
                             ind2 = find(logi,1,'last');
                             if ~isempty(ind1) && ~isempty(ind2)
                                 no_active_layers =  ind2-ind1+1;
-                                int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers);
+                                if 1 % current implementation
+                                    int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers);
+                                else % Base sigma-%-distribution on initial z-layer-distribution
+                                    dz = diff(int_field(ii,ind1:ind2));
+                                    dz(end) = 5; % how to deal with ini wl ?
+                                    perc = [0 dz/sum(dz)];
+                                    dh = int_field(ii,ind2) - int_field(ii,ind1);
+                                    int_field(ii,logi) = int_field(ii,ind1) + cumsum(perc) * dh;
+                                end
                             end
                         end
                     end

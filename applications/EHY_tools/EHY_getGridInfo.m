@@ -141,23 +141,32 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
     end
     
     % update administration > connect cells that are separated because of partitioned domains
-    fns = fieldnames(gridInfo);
-    if all(ismember({'Xcor','Ycor'},fns)) && sum(ismember({'face_nodes','edge_nodes'},fns)) > 0
-        XY = [reshape(gridInfo.Xcor,[],1) reshape(gridInfo.Ycor,[],1)];
-        [~,uniqInd] = unique(XY,'rows');
-        nonUnique = setdiff(1:size(XY,1),uniqInd);
-        for i = 1:length(nonUnique)
-            ind = find(ismember(XY,XY(nonUnique(i),:),'rows'));
-            for ii = 2:length(ind)
-                if isfield(gridInfo,'face_nodes')
-                    logi = gridInfo.face_nodes == ind(ii);
-                    gridInfo.face_nodes(logi) = ind(1);
-                end
-                if isfield(gridInfo,'edge_nodes')
-                    logi = gridInfo.edge_nodes == ind(ii);
-                    gridInfo.edge_nodes(logi) = ind(1);
-                end
-            end
+    if all(isfield(gridInfo,{'Xcor','Ycor'}))
+        if isfield(gridInfo,'face_nodes') % update face_nodes
+            XY = [reshape(gridInfo.Xcor,[],1) reshape(gridInfo.Ycor,[],1)];
+            nonan = ~isnan(gridInfo.face_nodes);
+            nonan = nonan(:);
+            face_nodes_x = NaN(length(nonan),1);
+            face_nodes_y = NaN(length(nonan),1);
+            face_nodes_x(nonan) = XY(gridInfo.face_nodes(nonan),1);
+            face_nodes_y(nonan) = XY(gridInfo.face_nodes(nonan),2);
+            [~,locb] = ismember([face_nodes_x face_nodes_y],XY,'rows');
+            face_nodes = reshape(locb,size(gridInfo.face_nodes));
+            face_nodes(face_nodes == 0) = NaN;
+            gridInfo.face_nodes = face_nodes;
+        end
+        
+        if isfield(gridInfo,'edge_nodes') % update edge_nodes
+            nonan = ~isnan(gridInfo.edge_nodes);
+            nonan = nonan(:);
+            edge_nodes_x = NaN(length(nonan),1);
+            edge_nodes_y = NaN(length(nonan),1);
+            edge_nodes_x(nonan) = gridInfo.Xcor(gridInfo.edge_nodes(nonan));
+            edge_nodes_y(nonan) = gridInfo.Ycor(gridInfo.edge_nodes(nonan));
+            [~,locb] = ismember([edge_nodes_x edge_nodes_y],XY,'rows');
+            edge_nodes = reshape(locb,size(gridInfo.edge_nodes));
+            edge_nodes(edge_nodes == 0) = NaN;
+            gridInfo.edge_nodes = edge_nodes;
         end
     end
     

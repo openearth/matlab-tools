@@ -166,6 +166,9 @@ switch modelType
                 end
                 
             case {'interp','continuous shades'}
+                if strcmpi(OPT.linestyle,'none')
+                    OPT.edgecolor = 'none';
+                end
                 
                 % use QUICKPLOT functionality to create dual grid
                 data.FaceNodeConnect = gridInfo.face_nodes';

@@ -22,6 +22,10 @@ else
     OPT            = setproperty(OPT,varargin);
 end
 
+%% Let the extension be determined by profile / VideoWriter (to avoid *.avi.mp4)
+[pathstr, name] = fileparts(OPT.outputFile);
+OPT.outputFile = [pathstr filesep name];
+
 %% images 2 movie
 imageFiles = [dir([imageDir filesep '*.png']),...
     dir([imageDir filesep '*.jpg'])];
