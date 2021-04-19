@@ -470,6 +470,7 @@ switch modelType
                 S = regexp(Data.stationNames, regexptranslate('wildcard',[stat_name{i_stat} '*']));
                 stat_ind = find(~cellfun(@isempty,S));
                 dims(end+1).name = 'layers';
+                Data.requestedStations{i_stat} = stat_name{i_stat};
             else
                 stat_ind = dims(stationsInd).index(i_stat);
             end
