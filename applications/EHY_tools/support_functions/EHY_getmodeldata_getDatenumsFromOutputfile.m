@@ -14,14 +14,19 @@ switch modelType
     case {'dfm','SFINCS','nc'}
         
         % First, reconstruct the time series
-        infonc = ncinfo(inputFile,'time');
+        if nc_isvar(inputFile,'time')
+            timeVar = 'time';
+        elseif nc_isvar(inputFile,'nmesh2d_dlwq_time')
+            timeVar = 'nmesh2d_dlwq_time';
+        end
+        infonc = ncinfo(inputFile, timeVar);
         no_times = infonc.Size;
         
         if no_times < 4 
-            time = ncread(inputFile, 'time'); 
+            time = ncread(inputFile, timeVar); 
         else % - to enhance speed, reconstruct time array from start time, numel and interval
-            time_begin = ncread(inputFile, 'time', 1, 3);
-            time_end = ncread(inputFile, 'time', no_times-2, 3);
+            time_begin = ncread(inputFile, timeVar, 1, 3);
+            time_end = ncread(inputFile, timeVar, no_times-2, 3);
             
             interval = diff(time_begin(2:3));
             if ~strcmp(infonc.Datatype,'double')
@@ -45,6 +50,7 @@ switch modelType
         end
         
         % read time unit and reference date (itdate) from netCDF
+        time = double(time);
         AttrInd       = strmatch('units',{infonc.Attributes.Name},'exact');
         [tUnit,since] = strtok(infonc.Attributes(AttrInd).Value,' ');
         days          = time * timeFactor(tUnit,'days'); % from tUnit to days

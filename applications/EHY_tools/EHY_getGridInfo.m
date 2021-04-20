@@ -387,6 +387,8 @@ switch modelType
                                 E.layer_model = 'z-model';
                             elseif nc_isvar(inputFile,'mesh2d_layer_sigma') % _map.nc
                                 E.layer_model = 'sigma-model';
+                            elseif nc_isvar(inputFile,'mesh2d_sigma_dlwq') % _map.nc
+                                E.layer_model = 'sigma-model';
                             else
                                 % work-around1: try to get this info from mdFile
                                 mdFile = EHY_getMdFile(inputFile);

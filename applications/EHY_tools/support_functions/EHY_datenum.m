@@ -43,6 +43,9 @@ elseif length(date) == 26 && all(ismember(date([5 8]),'-')) && all(ismember(date
         && ismember(date(21),'+-')
     date = date(1:19);
     format = 'yyyy-mm-dd HH:MM:SS'; % '1970-01-01 00:00:00 +01:00'
+elseif length(date) == 25 && all(ismember(date([5 8]),'-')) && all(ismember(date([14 17 23]),':'))
+    date = date(1:19);
+    format = 'yyyy-mm-dd HH:MM:SS'; % '1970-01-01 00:00:00 01:00'
 end
 
 %% Determine daten

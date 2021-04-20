@@ -167,9 +167,9 @@ end
 %% dimsInd
 if nargout > 1
     dimsInd.stations = find(ismember({dims(:).name},{'stations','cross_section','general_structures'}));
-    dimsInd.time = find(ismember({dims(:).name},'time'));
-    dimsInd.layers = find(ismember({dims(:).name},{'layers','laydim','nmesh2d_layer','mesh2d_nLayers','depth'})); % depth is needed for cmems
-    dimsInd.interfaces = find(ismember({dims(:).name},'interfaces')); % depth is needed for cmems
+    dimsInd.time = find(ismember({dims(:).name},{'time','nmesh2d_dlwq_time'}));
+    dimsInd.layers = find(ismember({dims(:).name},{'layers','laydim','nmesh2d_layer','mesh2d_nLayers','depth','nmesh2d_layer_dlwq'})); % depth is needed for CMEMS
+    dimsInd.interfaces = find(ismember({dims(:).name},'interfaces')); % depth is needed for CMEMS
     dimsInd.faces = find(ismember({dims(:).name},{'faces','nmesh2d_face','mesh2d_nFaces','nFlowElem','nNetElem'}));
     dimsInd.m = find(ismember({dims(:).name},{'m','edge_m'})); % structured grid
     dimsInd.n = find(ismember({dims(:).name},{'n','edge_n'}));
