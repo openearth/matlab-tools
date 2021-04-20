@@ -70,6 +70,16 @@ OPT = setproperty(OPT, varargin{:});
 
 switch OPT.version
     % Define seperate cases for all different available versions
+    case {1.23, 'xb_trunk_c7'}
+        % XBeach v1.23 XBeachX BETA release
+        fprintf(FileID,'module purge\n');
+        fprintf(FileID,'export MODULEPATH=$MODULEPATH:/opt/apps/modules\n')
+        fprintf(FileID,'module load gcc/7.3.0\n');
+        fprintf(FileID,'module load hdf5/1.12.0_gcc7.3.0\n');
+        fprintf(FileID,'module load netcdf/v4.7.4_v4.5.3_gcc7.3.0\n');
+        fprintf(FileID,'module load openmpi/4.0.4_gcc7.3.0\n');
+        fprintf(FileID,'module load /opt/apps/modules/xbeach/xbeach-trunk_gcc_7.3.0_openmpi_4.0.4_HEAD\n\n');
+        fprintf(FileID,'module list\n');
     case {1.23, 'xbx'}
         % XBeach v1.23 XBeachX BETA release
         fprintf(FileID,'module purge\n');
