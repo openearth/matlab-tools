@@ -41,7 +41,20 @@ names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tm
 [dims,dimsInd,tmp] = EHY_getDimsInfo(inputFile,OPT,Data.modelType);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
 if ~isempty(dimsInd.layers) && dims(dimsInd.layers).sizeOut > 1
-    [Data.Zint,Data.Zcen,Data.wl,Data.bed] = EHY_getMapModelData_construct_zcoordinates(inputFile,Data.modelType,OPT);
+    if strcmp(Data.modelType,'dfm') && nc_isvar(inputFile,'mesh2d_flowelem_zcc')
+        Zint = EHY_getMapModelData(inputFile,OPT(:),'varName','mesh2d_flowelem_zw');
+        Data.Zint = Zint.val;
+        Zcen = EHY_getMapModelData(inputFile,OPT(:),'varName','mesh2d_flowelem_zcc');
+        Data.Zcen = Zcen.val;
+    else
+        try
+            GI = EHY_getGridInfo(inputFile,'layer_model','mergePartitions',0,'disp',0);
+            if strcmpi(Data.modelType,'dfm') && strcmpi(GI.layer_model,'z-model')
+                disp('Reconstruction of z-layer-coordinates for map-files is not needed anymore when moving to FM version >= 70827 (Mar, 2021) by specifying "fullGridOutput = 1"')
+            end
+        end
+        [Data.Zint,Data.Zcen,Data.wl,Data.bed] = EHY_getMapModelData_construct_zcoordinates(inputFile,Data.modelType,OPT);
+    end
     dmy = size(Data.Zcen);
     no_layers = dmy(end);
 else

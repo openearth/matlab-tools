@@ -168,7 +168,7 @@ end
 disp([newline 'Note that next time you want to get this data, you can also use:'])
 if isfield(OPT,'pliFile')
     disp(['<strong>[Data,gridInfo] = EHY_getMapModelData(''' outputfile '''' extraText ');</strong>' ])
-    disp('   or:   (note that you''ll have to the the pli-trajectory yourself)')
+    disp('   or:   (note that you''ll have to add the pli-trajectory yourself)')
     extraText2 = [extraText(1:strfind(extraText,'pliFile')-2) '''pli'',[pli_x pli_y]'];
     disp(['<strong>[Data,gridInfo] = EHY_getMapModelData(''' outputfile '''' extraText2 ');</strong>' ])
 else

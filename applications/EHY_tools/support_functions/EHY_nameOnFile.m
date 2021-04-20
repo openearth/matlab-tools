@@ -66,7 +66,9 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'uv'         ) newName = 'ucx'        ; end
         if strcmpi(varName,'wd'         ) newName = 'waterdepth' ; end
         if strcmpi(varName,'bedlevel'   ) newName = 'FlowElem_bl'; end
-        
+        if strcmpi(varName,'Zcen_cen'   ) newName = 'flowelem_zcc'; end
+        if strcmpi(varName,'Zcen_int'   ) newName = 'flowelem_zw'; end
+
     case 'trim' % d3d
         % Get the name of varName as specified on the map file of a simulation
         if strcmpi(varName,'wl'         ) newName = 'S1'         ; end

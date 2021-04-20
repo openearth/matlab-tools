@@ -88,15 +88,16 @@ switch gridInfo.layer_model
         for iT = 1:no_times
             int_field = NaN(no_cells,no_lay+1);
             
-            logi = ZKlocal >= bl; % ZKlocal <= wl(iT,:)'
+            logi = ZKlocal > bl; % ZKlocal <= wl(iT,:)'
             int_field(logi) = ZKlocal2(logi);
             logi = [-10^8 ZKlocal(1:end-1)] > wl(iT,:)';
             int_field(logi) = NaN;
             
             % water level
             [~,cellIndMax] = max(int_field,[],2);
-            cellIndMaxUni = unique(cellIndMax);
-            cellIndMaxUni(cellIndMaxUni == 1) = [];
+            nonan = ~all(isnan(int_field),2);
+            cellIndMax(~nonan) = NaN;
+            cellIndMaxUni = unique(cellIndMax(nonan));
             for ii = 1:length(cellIndMaxUni)
                 logi = cellIndMax == cellIndMaxUni(ii);
                 if cellIndMaxUni(ii) == no_lay+1 % top layer
@@ -104,6 +105,16 @@ switch gridInfo.layer_model
                 else
                     int_field(logi,cellIndMaxUni(ii)+1) = wl(iT,logi);
                 end
+            end
+            
+            % bed level (initialize as keepzlayeringatbed = 0)
+            [~,cellIndMin] = min(int_field,[],2);
+            nonan = ~all(isnan(int_field),2);
+            cellIndMin(~nonan) = NaN;
+            cellIndMinUni = unique(cellIndMin(nonan));
+            for ii = 1:length(cellIndMinUni)
+                logi = cellIndMin == cellIndMinUni(ii);
+                int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
             end
             
             %% mdu
@@ -121,34 +132,7 @@ switch gridInfo.layer_model
                     end
                 end
             end
-            
-            %% Keepzlayeringatbed
-            if ~exist('keepzlayeringatbed','var') % only needed to determine this value once
-                keepzlayeringatbed = 0; % Delft3D 4 default
-                try
-                    fns = fieldnames(mdu.numerics);
-                    ind = strmatch('keepzlayeringatbed',lower(fns),'exact');
-                    keepzlayeringatbed = mdu.numerics.(fns{ind});
-                end
-            end
-            
-            [~,cellIndMin] = min(int_field,[],2);
-            cellIndMinUni = unique(cellIndMin);
-            for ii = 1:length(cellIndMinUni)
-                if cellIndMinUni(ii) == 1; continue; end
-                logi = cellIndMin == cellIndMinUni(ii);
-                if keepzlayeringatbed == 0
-                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
-                elseif keepzlayeringatbed == 1
-                    int_field(logi,cellIndMinUni(ii)-1) = ZKlocal(cellIndMinUni(ii)-1);
-                elseif keepzlayeringatbed == 2
-                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
-                    if cellIndMinUni(ii) < length(ZKlocal)
-                        int_field(logi,cellIndMinUni(ii)) = mean([bl(logi) int_field(logi,cellIndMinUni(ii)+1)],2);
-                    end
-                end
-            end
-            
+                        
             %% z-sigma-layer model? Add sigma-layers at the top
             if strcmp(modelType,'dfm')
                 try
@@ -171,13 +155,13 @@ switch gridInfo.layer_model
                     elseif numtopsig > 0
                         for ii = 1:size(int_field,1)
                             logi = ~isnan(int_field(ii,:));
-                            logi(1:end-numtopsig) = false; % only top numtopsig are changed into sigma-layers
+                            logi(1:end-1-numtopsig) = false; % only top numtopsig are changed into sigma-layers
                             ind1 = find(logi,1,'first');
                             ind2 = find(logi,1,'last');
                             if ~isempty(ind1) && ~isempty(ind2)
-                                no_active_layers =  ind2-ind1+1;
+                                no_active_layers =  ind2-ind1;
                                 if 1 % current implementation
-                                    int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers);
+                                    int_field(ii,logi) = linspace(int_field(ii,ind1),int_field(ii,ind2),no_active_layers+1);
                                 else % Base sigma-%-distribution on initial z-layer-distribution
                                     dz = diff(int_field(ii,ind1:ind2));
                                     dz(end) = 5; % how to deal with ini wl ?
@@ -190,6 +174,39 @@ switch gridInfo.layer_model
                     end
                 catch
                     disp('Could not correct vertical coordinates for possible usage of numtopsig and numtopsiguniform')
+                end
+            end
+            
+            %% Keepzlayeringatbed
+            if ~exist('keepzlayeringatbed','var') % only needed to determine this value once
+                keepzlayeringatbed = 0; % Delft3D 4 default
+                try
+                    fns = fieldnames(mdu.numerics);
+                    ind = strmatch('keepzlayeringatbed',lower(fns),'exact');
+                    if ~isempty(ind)
+                        keepzlayeringatbed = mdu.numerics.(fns{ind(1)});
+                    else
+                        fns = fieldnames(mdu.geometry);
+                        ind = strmatch('keepzlayeringatbed',lower(fns),'exact');
+                        keepzlayeringatbed = mdu.geometry.(fns{ind(1)});
+                    end
+                end
+            end
+            
+            [~,cellIndMin] = min(int_field,[],2);
+            cellIndMinUni = unique(cellIndMin);
+            for ii = 1:length(cellIndMinUni)
+                logi = cellIndMin == cellIndMinUni(ii);
+                if keepzlayeringatbed == 0
+                    % this should already be the case
+                    int_field(logi,cellIndMinUni(ii)) = bl(logi);
+                elseif keepzlayeringatbed == 1
+                    int_field(logi,cellIndMinUni(ii)) = ZKlocal(cellIndMinUni(ii));
+                elseif keepzlayeringatbed == 2
+                    int_field(logi,cellIndMinUni(ii)) = bl(logi);
+                    if cellIndMinUni(ii)+1 < length(ZKlocal)
+                        int_field(logi,cellIndMinUni(ii)+1) = mean([bl(logi) int_field(logi,cellIndMinUni(ii)+2)],2);
+                    end
                 end
             end
             
