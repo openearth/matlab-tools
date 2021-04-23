@@ -28,7 +28,6 @@ else
     time_mor_r=NaN;
 end
 idx=find_str_in_cell({nci.Variables.Name},{'time'});
-% idx_units=find(strcmp({nci.Variables(idx).Attributes.Name},'units'));
 idx_units=strcmp({nci.Variables(idx).Attributes.Name},'units');
 str_time=nci.Variables(idx).Attributes(idx_units).Value;
 tok=regexp(str_time,' ','split');

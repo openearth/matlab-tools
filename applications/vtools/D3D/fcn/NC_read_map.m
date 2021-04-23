@@ -310,17 +310,22 @@ switch flg.which_p
                         if is1d
                             out=get_fm1d_data('mesh1d_dm',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
-                            error('check')
-                            wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
-
-                            %output
-                            out.z=wl;
-                            out.x_node=x_node;
-                            out.y_node=y_node;
-                            out.x_face=x_face;
-                            out.y_face=y_face;
-                            out.faces=faces;
-                                 
+                            error('adapt')
+                            if flg.get_EHY
+                               if ismor==0
+                                   z=get_EHY(file.map,'mesh2d_flowelem_bl',time_dnum);
+                               else
+                                   z=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
+                               end 
+                               out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                               if ismor==0
+                                   z=ncread(file.map,'mesh2d_flowelem_bl',kF(1),kF(2)); 
+                               else
+                                   z=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]); 
+                               end 
+                               out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
                         end
                     case 3 %SOBEK3
                         error('check')
@@ -412,16 +417,15 @@ switch flg.which_p
                             out=get_fm1d_data('mesh1d_lyrfrac',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out.z=squeeze(out.z(:,1,kf,:)); %get first layer and fractions we ask for
                         else
-                            LYRFRAC=ncread(file.map,'mesh2d_lyrfrac',[kF(1),1,1,kt],[kF(2),Inf,Inf,1]);  %!! I am not sure the dimension we take are correct in case we take more than one fraction or at more than one time                
+                            if flg.get_EHY
+                               z=get_EHY(file.map,'mesh2d_lyrfrac',time_dnum);
 
-                            %output                
-                            out.z=LYRFRAC;
-                            out.x_node=x_node;
-                            out.y_node=y_node;
-                            out.x_face=x_face;
-                            out.y_face=y_face;
-                            out.faces=faces;
-                            
+                               out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                               z=ncread(file.map,'mesh2d_lyrfrac',[kF(1),kl(1),kf(1),kt(1)],[kF(2),kl(2),kf(2),kt(2)]);  %!! I am not sure the dimension we take are correct in case we take more than one fraction or at more than one time                
+                    
+                               out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end                            
                         end
                     case 3 %SOBEK3
                         error('No fractions in SOBEK 3')

@@ -26,12 +26,14 @@ switch what_do
                 stru_out=dflowfm_io_mdu('read',fname);
             case {'.sed','.mor'}
                 stru_out=delft3d_io_sed(fname);
-            case '.pli'
+            case {'.pli','.pliz'}
                 tek=tekal('read',fname,'loaddata');
-                stru_out.name=tek.Field.Name;
-                stru_out.val=tek.Field.Data;
+                stru_out.name={tek.Field.Name};
+                stru_out.val={tek.Field.Data};
+            case '.ini'
+                stru_out=delft3d_io_sed(fname);
             otherwise
-                error('Extension %s in file %s not available',ext,fname)
+                error('Extension %s in file %s not available for readinf',ext,fname)
         end %ext
         varargout{1}=stru_out;
     case 'write'
@@ -41,6 +43,8 @@ switch what_do
                 dflowfm_io_mdu('write',fname,stru_in);
             case '.pli'
                 D3D_write_poly(stru_in.name,stru_in.xy,fname);
+            otherwise
+                error('Extension %s in file %s not available for writing',ext,fname)
         end
 end
 

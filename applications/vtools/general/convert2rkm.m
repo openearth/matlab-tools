@@ -54,6 +54,9 @@ function varargout=convert2rkm(path_rkm,varargin)
 %% PARSE
 
 ni=numel(varargin);
+var_in=varargin{1}; %xy
+np=size(var_in,1);
+
 %if no input it is wrong
 if ni==0
     error('Not enough input.');
@@ -62,6 +65,7 @@ end
 if mod(ni,2)==0 %convert from rkm to xy
     rkm2xy=true;
     var_in=varargin{1}; %rkm
+    var_in=[var_in,zeros(np,1)];
     branch_in=varargin{2};
     idx_varargin=3;
     
@@ -75,7 +79,7 @@ if mod(ni,2)==0 %convert from rkm to xy
     
 else
     rkm2xy=false;
-    var_in=varargin{1}; %xy
+    
     idx_varargin=2;
     
     if size(var_in,2)~=2
@@ -115,7 +119,7 @@ fclose(fid);
 nvc=numel(rkm_file{1,XCol});
 
 if rkm2xy
-    var_compare=rkm_file{1,rkmCol};
+    var_compare=[rkm_file{1,rkmCol},zeros(nvc,1)];
     var_out=[rkm_file{1,XCol},rkm_file{1,YCol}];
 
     %branch
@@ -131,7 +135,6 @@ else
 end
 
 %loop on points
-np=size(var_in,1);
 var_get=NaN(np,size(var_out,2));
 
 for kp=1:np
