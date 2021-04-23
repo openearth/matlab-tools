@@ -1,38 +1,42 @@
-function catalog = mvbCatalog(varargin)
-%MVBCATALOG Retreives catalog of parameters from Meetnet Vlaamse Banken API.
+function catalog = mvbMap(varargin)
+%MVBMAP  Shows a map with stations from Meetnet Vlaamse Banken.
 %
-%   This script retreives the catalog from the API of Meetnet Vlaamse
-%   Banken (Flemish Banks Monitoring Network API). The catalog is returned
-%   in a struct. The catalog contains an inventory of all measurement
-%   locations and parameters with meta-data.
+%   This script shows a map with the locations of stations from Meetnet
+%   Vlaamse Banken (Flemish Banks Monitoring Network API). The catalog is
+%   optionally returned in a struct.
 %
 %   A login token is required, which can be obtained with MVBLOGIN. A login
 %   can be requested freely from https://meetnetvlaamsebanken.be/
 %
 %   Syntax:
-%   Catalog = mvbCatalog(token);
-%   Catalog = mvbCatalog('token',token);
+%   varargout = mvbMap(varargin);
 %
-%   Input: For <keyword,value> pairs call mvbCatalog() without arguments.
+%   Input: For <keyword,value> pairs call mvbMap() without arguments.
 %   varargin  =
 %       token: <weboptions object>
 %           Weboptions object containing the accesstoken. Generate this
 %           token via mvbLogin.
+%       language: 
 %       apiurl: url to Meetnet Vlaamse Banken API.
+%       epsg_out: EPSG code for the map's coordinate system. E.g.:
+%           4326 (WGS'84)
+%           25831 (ETRS89 / UTM zone 31N)
+%           31370 (Belge Lambert'72, default)
+%           28992 (Rijksdriehoek/Amersfoort)
 %
 %   Output:
+%   varargout =
 %       catalog: struct
 %           Contains overview of locations, parameters and meta-data.
 %
-%   Example:
-%   Catalog = mvbCatalog('token',token);
-%   var2evalstr(Catalog);
+%   Example
+%   mvbMap('token',token);
 %
-%   See also: MVBLOGIN, MVBMAP, MVBTABLE, MVBGETDATA.
+%   See also: MVBLOGIN, MVBCATALOG, MVBTABLE, MVBGETDATA.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2019 KU Leuven
+%   Copyright (C) 2021 KU Leuven
 %       Bart Roest
 %
 %       bart.roest@kuleuven.be 
@@ -64,19 +68,21 @@ function catalog = mvbCatalog(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 02 May 2019
-% Created with Matlab version: 9.5.0.1067069 (R2018b) Update 4
+% Created: 18 Jan 2021
+% Created with Matlab version: 9.9.0.1538559 (R2020b) Update 3
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 %% Input arguments
 OPT.apiurl='https://api.meetnetvlaamsebanken.be/V2/';
 OPT.token=weboptions;
+OPT.epsg_map=31370;
+OPT.language=3;
 
 % return defaults (aka introspection)
 if nargin==0;
@@ -89,6 +95,24 @@ else
     OPT = setproperty(OPT, varargin);
 end
 
+% if ischar(OPT.language);
+%     if strncmpi(OPT.language,'NL',1);
+%         OPT.language=1;
+%     elseif strncmpi(OPT.language,'FR',1);
+%         OPT.language=2;
+%     elseif strncmpi(OPT.language,'EN',1);
+%         OPT.language=3;
+%     else
+%         fprintf(1,'Unknown language option "%s", using EN-GB instead. \n',OPT.language);
+%         OPT.language=3;
+%     end
+% elseif isscalar(OPT.language) && OPT.language >=1 && OPT.language <=3;
+%     %Use number
+% else
+%     fprintf(1,'Unknown language option "%s", using EN-GB instead. \n',OPT.language);
+%     OPT.language=3;
+% end
+
 %% Login Check
 % Check if login is still valid!
 response=webread([OPT.apiurl,'ping'],OPT.token);
@@ -98,10 +122,28 @@ if isempty(response.Customer) %Check if login has expired.
     catalog=cell(nargout);
     return
 end
-
-%% GET catalog
-% GET catalog from API
-catalog=webread([OPT.apiurl,'catalog'],OPT.token);
-
+%% Get Catalog
+catalog = mvbCatalog(OPT.token);
+%% Create a Map figure
+if ~exist('plotMapTiles.m','file')==2
+    error('Map plot function not found, sign up to or update OpenEarthTools');
 end
-%EOF
+[~,ax,~]=plotMapTiles('xlim',[ 2.2934, 3.3673],'ylim',[51.0880,51.5950],'epsg_out',OPT.epsg_map);
+if OPT.epsg_map==31370;
+    xlim([1e4 9e4]);
+end
+xlabel(ax,'Easting [m]');
+ylabel(ax,'Northing [m]');
+title(ax,'Locations of Measurement Stations');
+
+%% Plot stations
+for n = 1:length(catalog.Locations);
+    ll=str2num(catalog.Locations(n).PositionWKT(8:end-1)); %#ok<ST2NM>
+    [x,y]=convertCoordinates(ll(1),ll(2),'CS1.code',4326,'CS2.code',OPT.epsg_map);
+    plot(x,y,'xk');
+    %text(x,y,{ctl.Locations(n).ID;ctl.Locations(n).Name(OPT.language).Message});
+    text(x,y,{catalog.Locations(n).ID})
+end
+
+% %% Print
+% print(fullfile(fileparts(mfilename('fullpath')),['map_',OPT.epsg_map]),'-dpng')

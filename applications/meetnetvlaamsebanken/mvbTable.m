@@ -29,7 +29,7 @@ function varargout = mvbTable(varargin)
 %   Example
 %   mvbTable(token);
 %
-%   See also: MVBLOGIN, MVBCATALOG, MVBGETDATA.
+%   See also: MVBLOGIN, MVBCATALOG, MVBMAP, MVBGETDATA.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -85,7 +85,7 @@ OPT.language=3;
 if nargin==0;
     varargout = {OPT};
     return
-elseif nargin==1;%odd(nargin);
+elseif odd(nargin);
     OPT.token = varargin{end}; %Assume token is the last input argument.
 %     varargin = varargin(1:end-1);
 else

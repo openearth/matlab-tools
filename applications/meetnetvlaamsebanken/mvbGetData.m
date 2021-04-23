@@ -13,9 +13,9 @@ function [varargout] = mvbGetData(varargin)
 %   can be requested freely from https://meetnetvlaamsebanken.be/
 %
 %   Syntax:
-%   [time, value] = mvbGetLongData(<keyword>, <value>, token);
+%   [time, value] = mvbGetData(<keyword>, <value>, token);
 %
-%   Input: For <keyword,value> pairs call mvbGetLongData() without arguments.
+%   Input: For <keyword,value> pairs call mvbGetData() without arguments.
 %   varargin =
 %       id: 'string'
 %           MeasurementID string, choose one from the catalog list:
@@ -42,7 +42,7 @@ function [varargout] = mvbGetData(varargin)
 %   Example
 %   [t,v]=mvbGetData('id','BVHGH1','start','2010-01-01','end','2017-03-05','vector',true,'token',token);
 %
-%   See also: MVBLOGIN, MVBCATALOG, MVBTABLE.
+%   See also: MVBLOGIN, MVBCATALOG, MVBMAP, MVBTABLE.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -106,14 +106,36 @@ elseif odd(nargin);
 end
 % overwrite defaults with user arguments
 OPT = setproperty(OPT, varargin);
-%% code
+%% Login check
 % Check if login is still valid!
 response=webread([OPT.apiurl,'ping'],OPT.token);
 if isempty(response.Customer) %If login has expired.
-    fprintf(1,['Your login token is invalid, please login using mvbLogin \n'...
+    fprintf(1,['Your login token has expired or is invalid, please login using mvbLogin \n'...
         'Use the obtained token from mvbLogin in this function. \n']);
-    varargout=cell(nargout);
-    return
+    fprintf(1,'Trying auto-login using mvbLogin_private.m...');
+    OPT.token = mvbLogin_private;
+    response=webread([OPT.apiurl,'ping'],OPT.token);
+    if isempty(response.Customer) %If login is invalid
+        fprintf(1,' Failed.\n');
+        
+        un=input('username: ','s'); 
+        fprintf(1,[repmat('\b',1,length(un)+12),'\n']);
+        pw=input('password: ','s'); 
+        fprintf(1,[repmat('\b',1,length(pw)+12),'\n']);
+        warning('Remove your password from the command history!')
+        
+        OPT.token = mvbLogin('username',un,'password',pw);
+        clear un pw
+        response=webread([OPT.apiurl,'ping'],OPT.token);
+        if isempty(response.Customer) %If login is invalid
+            fprintf(1,['Your login token is invalid, please login using mvbLogin \n'...
+                'Use the obtained token from mvbLogin in this function. \n']);
+            varargout=cell(nargout);
+            return
+        end
+    else
+        fprintf(1,' Success.\n');
+    end
 end
 
 %% Input check
@@ -138,7 +160,8 @@ else
 
 end
 
-%Vector of start timestamps
+%Vector of start timestamps. Maximum timespan per request is 365 days (not
+%1 year!).
 t_start=datenum(OPT.start):365:datenum(OPT.end);
 
 for t=1:length(t_start);
@@ -152,10 +175,12 @@ for t=1:length(t_start);
     tempdata(t)=webwrite([OPT.apiurl,'getData'],...
         'StartTime',datestr(t_start(t),'yyyy-mm-dd HH:MM:SS'),...
         'EndTime',  datestr(t_end     ,'yyyy-mm-dd HH:MM:SS'),...
-        'IDs',OPT.id,OPT.token);
+        'IDs',OPT.id,OPT.token); %#ok<AGROW>
     
     if isempty(tempdata(t).Values) % When ID is not found, data.Values will be empty
-        warning('Warning: empty result, ID %s not found! \n',OPT.id);
+        warning('Warning: empty result, ID %s not found! \nPlease consult the Catalog.\n',OPT.id);
+        varargout={[],[]};
+        return
     elseif isempty(tempdata(t).Values.Values); %When ID is found, but no data is available in the time interval, the values are empty.
         fprintf(1,'ID %s was found, but there is no data in the time interval.\n',OPT.id);
     end
@@ -175,8 +200,8 @@ if nargout==2 || OPT.vector %Output only time and value vectors!
             %Do nothing...
         else
             %When there is data.
-            t=[t;datenum({tempdata(n).Values.Values.Timestamp}','yyyy-mm-ddTHH:MM:SS')];
-            v=[v;[tempdata(n).Values.Values.Value]'];
+            t=[t;datenum({tempdata(n).Values.Values.Timestamp}','yyyy-mm-ddTHH:MM:SS')]; %#ok<AGROW>
+            v=[v;[tempdata(n).Values.Values.Value]']; %#ok<AGROW>
         end
     end
     varargout={t,v};
@@ -203,9 +228,4 @@ else
     varargout={data};
 end
 end
-
-% function data=getData(OPT,t_start,t_end);
-%     data=webwrite([OPT.apiurl,'getData'],'StartTime',t_start,'EndTime',t_end,'IDs',OPT.id,OPT.token);
-% 
-% end
 %EOF

@@ -1,5 +1,9 @@
-function varargout = mvbLogin(varargin);
-%MVBLOGIN Login script for Meetnet Vlaamse Banken API.
+function [token, cred] = mvbLogin_private(varargin);
+%MVBLOGIN_PRIVATE Adapt for easy login to Meetnet Vlaamse Banken API.
+%
+%   Adapt this function with your own username and password for easy login
+%   to the API (Line 90+91). DO NOT COMMIT TO SVN/GIT after adaptation or 
+%   you will leak your credentials! Obviously current settings are invalid.
 %
 %   This script logs in into the API of Meetnet Vlaamse Banken (Flemish
 %   Banks Monitoring Network API). The login returns a token, which must be
@@ -16,7 +20,7 @@ function varargout = mvbLogin(varargin);
 %   Syntax:
 %   token = mvbLogin(varargin);
 %
-%   Input: For <keyword,value> pairs call mvbLogin() without arguments.
+%   Input: For <keyword,value> pairs call Untitled() without arguments.
 %   varargin  =
 %       username: 'string'
 %           Username for meetnetvlaamsebanken.be.
@@ -29,13 +33,13 @@ function varargout = mvbLogin(varargin);
 %   varargout =
 %       token: <weboptions object>
 %           Weboptions object containing the accesstoken. 
-%       response: struct
-%           Server response to PING.
+%       cred: struct
+%           Overview of login parameters.
 %
 %   Example:
 %   token = mvbLogin('username','name@company.org','password','P4ssw0rd');
 %
-%   See also: MVBCATALOG, MVBMAP, MVBTABLE, MVBGETDATA.
+%   See also: MVBCATALOG, MVBGETDATA, MVBTABLE.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -74,55 +78,36 @@ function varargout = mvbLogin(varargin);
 % Created: 02 May 2019
 % Created with Matlab version: 9.5.0.1067069 (R2018b) Update 4
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 %% Input arguments
-OPT.apiurl='https://api.meetnetvlaamsebanken.be';
-OPT.username='user@company.org';
-OPT.password='password';
+OPT.apiurl='https://api.meetnetvlaamsebanken.be/';
+OPT.username='user@company.org'; % <--Provide your username here.
+OPT.password='P4ssW0rd';         % <--Provide your password here.
+%DO NOT COMMIT THIS FILE IN SVN/GIT!
 
-% return defaults (aka introspection)
-if nargin==0;
-    varargout = {OPT};
-    return
-end
-% overwrite defaults with user arguments
 OPT = setproperty(OPT, varargin);
 
-%% Remove password from command window
-fprintf(1,[repmat('\b',1,1+11+length(OPT.username)+3+11+length(OPT.password)+3),'\n']);
-warning('Remove your password from the command history!')
-
 %% Login to API
-% Login to API, returns struct with token (valid for 3600 s.)
+% Login to API, returns struct with token (valid for 3600 s).
 cred=webwrite([OPT.apiurl,'/Token/'],...
     'grant_type','password',...
     'username',OPT.username,...
     'password',OPT.password);
 
-% Put token into weboptions object for further use.
 token=weboptions('HeaderFields',{'Authorization',[cred.token_type,' ',cred.access_token]});
 clear cred
-
 % Ping the API to test login success.
 response=webread([OPT.apiurl,'/V2/ping/'],token);
-
 if isempty(response.Customer);
-    %If the response is a struct with empty fields, login has failed.
     fprintf(2,'Login failed, try again \n');
-elseif response.Customer.Login==OPT.username;
+elseif response.Customer.Login==OPT.username
     fprintf(1,'Login successful! \n');
-end
-
-if nargout==2;
-    varargout={token, response};
-else
-    varargout={token};
 end
 
 end
