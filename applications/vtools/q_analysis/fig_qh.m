@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 1072 $
+%$Date: 2020-03-09 18:55:05 +0100 (Mon, 09 Mar 2020) $
+%$Author: chavarri $
+%$Id: figure_layout.m 1072 2020-03-09 17:55:05Z chavarri $
+%$HeadURL: https://repos.deltares.nl/repos/RIVmodels/rivtools/trunk/matlab/scripts/vtools/general/figure_layout.m $
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
@@ -23,28 +23,30 @@
 %   -FontName if interpreter LaTeX: check post 114116
 %	-When adding text in duration axis, scatter interprets days while surf interprets hours
 
-function fig_qt(in)
+function fig_qh(in)
 
 v2struct(in)
 
+nt=size(qh_sep,2);
+
 %figure input
-prnt.filename=sprintf('qt_%s_%s_%d',station,station_q,numb);
+prnt.filename=fname;
 prnt.size=[0,0,14.5,9]; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
 npr=1; %number of plot rows
 npc=1; %number of plot columns
 marg.mt=1.0; %top margin [cm]
-marg.mb=1.0; %bottom margin [cm]
-marg.mr=2.5; %right margin [cm]
+marg.mb=1.5; %bottom margin [cm]
+marg.mr=0.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
 marg.sv=0.0; %vertical spacing [cm]
 
-prop.ms1=0.5; 
-prop.mt1='.'; 
+prop.ms1=2; 
+prop.mt1='o'; 
 prop.mfa=[1.0,1.0];
 
 prop.lw1=1;
-prop.ls1='-'; %'-','--',':','-.'
+prop.ls1={'-','--'}; %'-','--',':','-.'
 prop.m1='none'; % 'o', '+', '*', ...
 prop.fs=10;
 prop.fn='Helvetica';
@@ -73,7 +75,7 @@ prop.color2=[... %<  matlab 2014b default
 %  0.7500    0.0000    0.7500;... %purple
 %  0.7500    0.7500    0.0000;... %ocre
 %  0.2500    0.2500    0.2500];   %grey
-% set(groot,'defaultAxesColorOrder',prop.color)
+set(groot,'defaultAxesColorOrder',prop.color)
 % set(groot,'defaultAxesColorOrder','default') %reset the color order to the default value
 
 %set interpreter to Latex (to have bold text use \bfseries{})
@@ -134,21 +136,13 @@ set(groot,'defaultLegendInterpreter','tex');
 %axes and limits
 kr=1; kc=1;
 % lims.y(kr,kc,1:2)=[-2e-3,2e-3];
-% lims.x(kr,kc,1:2)=lim_x;
+lims.x(kr,kc,1:2)=lim_x;
 % lims.c(kr,kc,1:2)=clims;
-% xlabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
-ylabels{kr,kc}=sprintf('water elevation at %s [m]',station);
-lims_d.x(kr,kc,1:2)=lim_x_qt; %time
-
-kr=1; kc=2;
-% lims.y(kr,kc,1:2)=[-2e-3,2e-3];
-% lims.x(kr,kc,1:2)=lim_x;
-% lims.c(kr,kc,1:2)=clims;
-ylabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
-% xlabels{kr,kc}=sprintf('water elevation at %s [m]',station);
-lims_d.x(kr,kc,1:2)=lim_x_qt; %time
+ylabels{kr,kc}=sprintf('water elevation at %s [m+NAP]',station_etaw);
+xlabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
 
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
+% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
 % brewermap('demo')
 % cmap=brewermap(3,'set1');
@@ -198,7 +192,7 @@ lims_d.x(kr,kc,1:2)=lim_x_qt; %time
 % cmap=[cmap1;cmap2];
 
 %figure initialize
-han.fig=figure('name',prnt.filename);
+han.fig=figure('name',prnt.filename,'visible',fig_visible);
 set(han.fig,'paperunits','centimeters','paperposition',prnt.size)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 % set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
@@ -215,19 +209,15 @@ end
 % han.sfig(1,1)=subaxis(npr,npc,1,1,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
 
     %add axis to sub1
-kr=1; kc=2;
+% kr=1; kc=2;
 % pos.sfig=[0.25,0.6,0.25,0.25]; % position of first axes    
-pos.sfig=han.sfig(1,1).Position; % position of first axes    
-han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right');
-han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-hold(han.sfig(kr,kc),'on')
-grid(han.sfig(kr,kc),'on')
-han.sfig(kr,kc).Box='on';
+% han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right');
+% % han.sfig(kr,kc).YLabel.String='sediment transport rate (coarse) [g/min]';
+% hold(han.sfig(kr,kc),'on')
+% grid(han.sfig(kr,kc),'on')
+% han.sfig(kr,kc).Box='on';
 % han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XColor='none';
-han.sfig(kr,kc).YColor=prop.color(2,:);
-han.sfig(kr,kc).Color='none';
 
 %properties
     %sub11
@@ -236,9 +226,9 @@ hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
@@ -248,37 +238,29 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YScale='log';
 % han.sfig(kr,kc).Title.String=station;
 % han.sfig(kr,kc).XColor='r';
-han.sfig(kr,kc).YColor=prop.color(1,:);
+% han.sfig(kr,kc).YColor='k';
 
 %plots
 kr=1; kc=1;    
-han.p(kr,kc,1)=plot(time_d,qh(:,1)./100,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-
-kr=1; kc=2;    
-han.p(kr,kc,1)=plot(time_d,qh(:,2),'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-
-
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
-% for kd=1:2
-% han.p(kr,kc,kd)=scatter(qh_sep{1,kd}(:,2),qh_sep{1,kd}(:,1)./100,prop.ms1,prop.color(kd,:),'marker',prop.mt1,'parent',han.sfig(kr,kc),'MarkerFaceAlpha',prop.mfa(kd),'MarkerEdgeAlpha',prop.mfa(kd));
-% end
-% if plot_envelope
-%     for kd=1:2
-%     han.p3(kr,kc,kd)=fill([q_env{1,kd};flipud(q_env{1,kd})],[yupper{1,kd};flipud(ylower{1,kd})]./100,prop.color(kd,:),'parent',han.sfig(kr,kc),'facealpha',0.5,'edgecolor',prop.color(kd,:));
-%     end
-% end
-% for kd=1:2
-% % han.p2(kr,kc,kd)=errorbar(q_u_mean{1,kd}(:,1),q_u_mean{1,kd}(:,2)./100,q_u_mean{1,kd}(:,3)./100,'parent',han.sfig(kr,kc),'color',prop.color2(kd,:),'linewidth',prop.lw1,'linestyle',prop.ls1{kd},'marker',prop.m1);
-% han.p2(kr,kc,kd)=plot(q_u_mean{1,kd}(:,1),q_u_mean{1,kd}(:,2)./100,'parent',han.sfig(kr,kc),'color',prop.color2(kd,:),'linewidth',prop.lw1,'linestyle',prop.ls1{kd},'marker',prop.m1);
-% % pause
-% end
+for kt=1:nt
+han.p(kr,kc,kt)=scatter(qh_sep{1,kt}(:,1),qh_sep{1,kt}(:,2),prop.ms1,prop.color(kt,:),'marker',prop.mt1,'parent',han.sfig(kr,kc),'MarkerFaceAlpha',prop.mfa(kt),'MarkerEdgeAlpha',prop.mfa(kt));
+end
+if plot_envelope
+    for kt=1:nt
+        han.p3(kr,kc,kt)=fill([q_env{1,kt};flipud(q_env{1,kt})],[yupper{1,kt};flipud(ylower{1,kt})],prop.color(kt,:),'parent',han.sfig(kr,kc),'facealpha',0.5,'edgecolor',prop.color(kt,:));
+    end
+end
+for kt=1:nt
+% han.p2(kr,kc,kd)=errorbar(q_u_mean{1,kd}(:,1),q_u_mean{1,kd}(:,2)./100,q_u_mean{1,kd}(:,3)./100,'parent',han.sfig(kr,kc),'color',prop.color2(kd,:),'linewidth',prop.lw1,'linestyle',prop.ls1{kd},'marker',prop.m1);
+han.p2(kr,kc,kt)=plot(qh_cen{1,kt},qh_mean{1,kt},'parent',han.sfig(kr,kc),'color',prop.color2(kt,:),'linewidth',prop.lw1,'linestyle',prop.ls1{kt},'marker',prop.m1);
+% pause
+end
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
-for kc=1:2
-han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
-end
+% han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
@@ -316,11 +298,13 @@ end
 % end
 % 
 %legend
-% kr=1; kc=1;
-% pos.sfig=han.sfig(kr,kc).Position;
+kr=1; kc=1;
+pos.sfig=han.sfig(kr,kc).Position;
 %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
-% han.leg(kr,kc)=legend(han.sfig(kr,kc),[reshape(han.p3(kr,kc,:),1,numel(han.p3(kr,kc,:))),reshape(han.p2(kr,kc,:),1,numel(han.p2(kr,kc,:)))],{'before','after','mean before','mean after'},'location','southeast');
+
+labels_all=cat(2,tim_labels,cellfun(@(X)sprintf('mean %s',X),tim_labels,'UniformOutput',false));
+han.leg(kr,kc)=legend(han.sfig(kr,kc),[reshape(han.p3(kr,kc,:),1,numel(han.p3(kr,kc,:))),reshape(han.p2(kr,kc,:),1,numel(han.p2(kr,kc,:)))],labels_all,'location','southeast');
 % pos.leg=han.leg.Position;
 % han.leg.Position=pos.leg+[0,0,0,0];
 % han.sfig(kr,kc).Position=pos.sfig;
@@ -349,12 +333,27 @@ set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
 set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
 han.fig.Renderer='painters';
 
-%print
-simdef.flg.print=flg.print;
-prnt.res='-r600';
-D3D_print_fig(simdef,prnt,han)
-% print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
-% print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600')
-% print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
+%% PRINT
+
+if any(fig_print==1)
+    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
+    close(han.fig);
+end
+if any(fig_print==2)
+    savefig(han.fig,strcat(prnt.filename,'.fig'))
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.fig'))) 
+    close(han.fig);
+end
+if any(fig_print==3)
+    print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
+    close(han.fig);
+end
+if any(fig_print==3)
+    print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+    close(han.fig);
+end
 
 end

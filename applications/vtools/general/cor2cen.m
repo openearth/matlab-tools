@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 16608 $
-%$Date: 2020-09-30 10:28:54 +0200 (Wed, 30 Sep 2020) $
-%$Author: chavarri $
-%$Id: cen2cor.m 16608 2020-09-30 08:28:54Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/cen2cor.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %corners to centers in a vector
 
