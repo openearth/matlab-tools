@@ -12,11 +12,14 @@ function [tiles,ax,logs]=plotMapTiles(varargin)
 %   Input: For <keyword,value> pairs call plotMapTiles() without arguments.
 %   varargin  =
 %       map_type: 1=satellite MapBox,
-%           2=OpenStreetMap,
+%           2=OpenStreetMap (map),
 %           3=Google Earth (satellite)
 %           4=Google Earth (maps), 
 %           5=Google Earth (hybrid), 
-%           6=Google Earth (terrain); 
+%           6=Google Earth (terrain only);
+%           7=Google Earth (roads only);
+%           8=Google Earth (terrain map);
+%           9=Google Earth (alternative road map);
 %       xlim: map limits in longitude or E-W direction [min max]
 %       ylim: map limits in latitude or N-S direction [min max]
 %       epsg_in: input (xlim and ylim) coordinate system EPSG code. Default
@@ -78,11 +81,11 @@ function [tiles,ax,logs]=plotMapTiles(varargin)
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Id: $
-%$Revision: 16973 $
-%$Date: 2020-12-17 11:20:54 +0100 (do, 17 dec 2020) $
-%$Author: chavarri $
-%$Id: main_get_tiles.m 16973 2020-12-17 10:20:54Z chavarri $
+%$Id$
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/GE2Mat/main_get_tiles.m $
 
 %% INPUT
@@ -103,6 +106,9 @@ OPT.han_ax=NaN;
 %4=google earth (maps); 
 %5=google earth (hybrid); 
 %6=google earth (terrain); 
+%7=Google Earth (roads only);
+%8=Google Earth (terrain map);
+%9=Google Earth (alternative road map);
 
 if nargin==0
     tiles = {OPT};
@@ -136,9 +142,9 @@ for kx=1:nx
         switch OPT.map_type
             case 1 %MapBox
                 ti = 1/512;
-            case {2,3} %openstreetmap & Google Maps
+            otherwise
+            %case {2,3,4,5,6,7,8,9} %openstreetmap & Google Maps
                 ti=1/255;
-%             case 3
         end
         
         [tx, ty] = ndgrid([txl:ti:txl+1],[tyl:ti:tyl+1]); %#ok<NBRAK>
@@ -160,19 +166,32 @@ for kx=1:nx
                 source = sprintf([baseserver,'/%i/%i'],OPT.tzl,txl);
                 sourcecache = sprintf(['%s/%s/%i.',baseformat],OPT.path_tiles,source,tyl);
                 httptilename = sprintf(['http://%s/%i.',baseformat],source,tyl);
-            case {3,4,5,6}
+            case {3,4,5,6,7,8,9}
+                %For Google Maps have a look here: https://stackoverflow.com/questions/23017766/google-maps-tile-url-for-hybrid-maptype-tiles
                 switch OPT.map_type
                     case 3
-                        str_type='s';
+                        str_type='s'; %s = satellite only
+                        baseformat = 'jpg';
                     case 4
-                        str_type='m';
+                        str_type='m'; %m = standard roadmap
+                        baseformat = 'png';
                     case 5
-                        str_type='y';
+                        str_type='y'; %y = hybrid
+                        baseformat = 'jpg';
                     case 6
-                        str_type='t';
+                        str_type='t'; %t = terrain only
+                        baseformat = 'jpg';
+                    case 7
+                        str_type='h'; %h = roads only
+                        baseformat = 'png';
+                    case 8
+                        str_type='p'; %p = terrain
+                        baseformat = 'jpg';
+                    case 9
+                        str_type='r'; %r = altered roadmap
+                        baseformat = 'png';
                 end
                 baseserver = sprintf('mt1.google.com/vt/lyrs=%s',str_type); 
-                baseformat = 'jpg';
                 source = sprintf([baseserver,'&x=%d&y=%d&z=%d'],txl,tyl,OPT.tzl); %http://mt1.google.com/vt/lyrs=m&x=1325&y=3143&z=13
                 sourcecache = sprintf('%s/%s/%i/%i/%i.%s',OPT.path_tiles,baseserver,OPT.tzl,txl,tyl,baseformat);
                 httptilename = sprintf('http://%s',source);
@@ -182,25 +201,26 @@ for kx=1:nx
             [A,map]=imread(sourcecache);  
         else
             disp([ 'Downloading tile: ' ,httptilename])
-            [A,map]=imread(httptilename);
+            [A,map,alpha]=imread(httptilename);
             sourcecachedir = fileparts(sourcecache);
 %             fprintf(1,'%s\n',sourcecachedir);
             if exist(sourcecachedir,'dir') ~= 7
                 mkdir(sourcecachedir);
             end
             
-            switch OPT.map_type
-                case {1,3,4,5,6}
+            %TODO: Fix alpha channel on png images to make them transparent.
+            switch OPT.map_type %True colour or map
+                case {1,3,5,6,8} %True colour sattellite image
                     imwrite(A,sprintf('%s',sourcecache));
-                case 2
+                case {2,4,7,9} %Map
                     imwrite(A,map,sprintf('%s',sourcecache));
             end
         end
         
         switch OPT.map_type
-            case {1,3,4,5,6}
+            case {1,3,5,6,8}
                 
-            case 2
+            case {2,4,7,9}
                 A = ind2rgb(A,map);                
         end
             
