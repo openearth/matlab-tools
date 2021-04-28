@@ -52,7 +52,7 @@
 %201102
 %   -V. Restructuring
 
-function etab_new=bed_level_update(etab,qbk,Dk,Ek,bc,input,fid_log,kt,time_l,pmm,celerities,u,u_edh,qbk_edg)
+function etab_new=bed_level_update(etab,qbk,Dk,Ek,bc,input,fid_log,kt,time_l,pmm,celerities,u,u_edg,qbk_edg,pmm_edg,celerities_edg)
 
 %%
 %% RENAME
@@ -67,7 +67,9 @@ nf=input.mdv.nf;
 % UpwFac=input.mdv.UpwFac;
 bc_interp_type=input.mdv.bc_interp_type;
 B=input.grd.B;
+B_edg=input.grd.B_edg;
 beta=pmm(2,:); 
+beta_edg=pmm_edg(2,:);
 
 %%
 %% EXNER
@@ -116,6 +118,7 @@ end %bc_interp_type
 
 %total load
 Qb=B.*sum(qbk,1); %[1,nx] double
+Qb_edg=B_edg.*sum(qbk_edg,1); 
 
 %upwind factor
 UpwFac_loc = 1-(Qb<0); %sets the UpwFac to 1 if flow comes from left, and to 0 if flow comes from right [1,nx] double
@@ -132,7 +135,7 @@ switch input.mor.bedupdate
             case 0
                 etab_new=bed_FTBS(input,etab,Qb0,Qb,beta);
             otherwise
-                etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta,celerities,u);
+                etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta,celerities,u,u_edg,Qb_edg,celerities_edg,beta_edg);
         end
         
     otherwise

@@ -28,7 +28,7 @@
 %   -V. Created for the first time.
 %
 
-function etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta,celerities,u,u_edg,Qb_edg)
+function etab_new=bed_level_update_combined(input,etab,Qb0,Qb,beta,celerities,u,u_edg,Qb_edg,celerities_edg,beta_edg)
 
 %%
 %% RENAME
@@ -69,9 +69,9 @@ switch input.mor.scheme
 %         etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb /beta(1,2)/(dx) * flux_bed;
         
         %rest is Borsboom
-        pmm(2,:)=beta;
-        c_edg=celerities4CFL(u_edg,NaN,celerities,pmm,NaN,input,NaN,NaN); %dimensional and scaled with MF/cb
-        
+        pmm(2,:)=beta_edg;
+        c_edg=celerities4CFL(u_edg,NaN,celerities_edg,pmm,NaN,input,NaN,NaN); %dimensional and scaled with MF/cb
+                            
         flux_bed=bed_flux_general(input,Qb_edg,B_edg,c_edg,etab,dt);
         etab_new(1,2:nx-1)=etab(1,2:nx-1)-MorFac*dt./cb./beta(1,2:nx-1)./(dx).* flux_bed(1,2:nx-1);
 %         etab_new(1,3:nx-1)=etab(1,3:nx-1)-MorFac*dt./cb./beta(1,3:nx-1)./(dx).* flux_bed;

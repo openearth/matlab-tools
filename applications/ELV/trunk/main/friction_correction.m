@@ -74,7 +74,7 @@ switch input.frc.Cfb_model %skin friction model
         Dm=mean_grain_size(Fak,input,fid_log);
         Cf_b=1./(5.75*log10(12*h./(nk*Dm))).^2;
     case 3 %3=imposed bed friction coefficient
-        Cf_b=repmat(input.frc.Cfb,nx,1); 
+        Cf_b=repmat(input.frc.Cfb,1,nx); 
     case 4 %function of the active layer thickness
         Cf_b=input.frc.Cfb_param(1)*La+input.frc.Cfb_param(2);
     case 5 %Engelund-Hansen (1967)

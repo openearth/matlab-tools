@@ -28,7 +28,7 @@
 %   -V. Created for the first time.
 %
 
-function [u_edg,h_edg,Cf_b_edg,La_edg,Mak_edg,qbk_edg]=interpolate_at_edges(input,u,h,Cf_b,La,Mak,fid_log)
+function [u_edg,h_edg,Cf_b_edg,La_edg,Mak_edg,qbk_edg,celerities_edg,pmm_edg]=interpolate_at_edges(input,u,h,Cf_b,La,Mak,celerities,pmm,fid_log)
 
 %%
 %% RENAME
@@ -42,12 +42,14 @@ end
 
 xedg=input.mdv.xedg;
 xcen=input.mdv.xcen;
+nef=input.mdv.nef;
 
 %% INTERPOLATE
 
 % scatteredInterpolant ?
 % manual ?
-val_mat=[u',h',Cf_b',La',Mak'];
+val_mat=[u',h',Cf_b',La',Mak',celerities.lb',celerities.ls',pmm'];
+
 val_mat_edg=interp1(xcen,val_mat,xedg,'linear','extrap');
 
 u_edg=val_mat_edg(:,1)';
@@ -55,11 +57,21 @@ h_edg=val_mat_edg(:,2)';
 Cf_b_edg=val_mat_edg(:,3)';
 La_edg=val_mat_edg(:,4)';
 
-Mak_edg=val_mat_edg(:,5:end)';
+Mak_edg=val_mat_edg(:,5:5+nef-1)';
 Fak_edg=Mak_edg./La_edg;
 Fak_edg(Fak_edg>1)=1;
 Fak_edg(Fak_edg<0)=0;
 Mak_edg=Fak_edg.*La_edg;
+
+celerities_edg.lb=val_mat_edg(:,5+nef)';
+celerities_edg.ls=val_mat_edg(:,5+nef+1:5+2*nef)';
+celerities_edg.gamma=[];
+celerities_edg.mu=[];
+celerities_edg.A=[];
+celerities_edg.eigen=[];
+celerities_edg.eigen_pmm=[];
+
+pmm_edg=val_mat_edg(:,5+2*nef+1:end)';
 
 % u_edg=interp1(xcen,u,xedg,'linear','extrap');
 % h_edg=interp1(xcen,h,xedg,'linear','extrap');

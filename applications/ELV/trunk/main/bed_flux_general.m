@@ -38,7 +38,7 @@ function bed_flux=bed_flux_general(input,Qb_edg,B_edg,c_edg,etab,dt)
 
 nx=input.mdv.nx;
 ne=nx+1;
-dx=input.mdv.dx;
+dx=input.grd.dx;
 input.mdv.fluxtype=input.mor.fluxtype; %we use the same function as for flow
 
 %% CALC
@@ -55,11 +55,11 @@ switch input.mor.scheme
         %
         r=NaN(1,nx); %nodes
         r(2:nx-1)=(etab(2:nx-1)-etab(1:nx-2))./(etab(3:nx)-etab(2:nx-1)+1e-10); %useful double(1,nx-2) for cell centres 2:nx-1. epsilon to prevent NaN when flat
-        sigma_b=c_edg.*dt./dx; %double(1,nx+1) for cell edges 1:nx+1. c_edg must account for MorFac/cb
+        sigma_b=c_edg.*dt./dx; %useful double(1,nx+1) for cell edges 1:nx+1. c_edg must account for MorFac/cb
         phi_val=NaN(1,nx);
-        phi_val(2:nx-1)=phi_func(r(2:nx-1),input); %useful double(1,nx) for cell centres 2:nx-1.
+        phi_val(2:nx-1)=phi_func(r(2:nx-1),input); %useful double(1,nx-2) for cell centres 2:nx-1.
         flux_edg=NaN(1,ne);
-        flux_edg(2:ne-1)=Qb_edg(2:ne-1)./B_edg(2:ne-1)+c_edg(2:ne-1).*0.5.*((1-sigma_b(2:ne-1)).*phi_val(2:nx-1)-1).*(etab(3:nx)-etab(2:nx-1)); %useful double(1,nx-1) for cell edges 2:nx
+        flux_edg(2:ne-2)=Qb_edg(2:ne-2)./B_edg(2:ne-2)+c_edg(2:ne-2).*0.5.*((1-sigma_b(2:ne-2)).*phi_val(2:nx-1)-1).*(etab(3:nx)-etab(2:nx-1)); %useful double(1,nx-1) for cell edges 2:nx
         bed_flux=NaN(1,nx);
         bed_flux(2:nx-1)=flux_edg(3:ne-1)-flux_edg(2:ne-2);
 end
