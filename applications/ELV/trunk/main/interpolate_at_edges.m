@@ -36,6 +36,25 @@ function [u_edg,h_edg,Cf_b_edg,La_edg,Mak_edg,qbk_edg,celerities_edg,pmm_edg]=in
 
 %escape
 if input.mdv.interp_edges==0
+    nx=input.mdv.nx;
+    nef=input.mdv.nef;
+    
+    u_edg=NaN(1,nx+1);
+    h_edg=NaN(1,nx+1);
+    Cf_b_edg=NaN(1,nx+1);
+    La_edg=NaN(1,nx+1);
+    Mak_edg=NaN(1,nx+1);
+    qbk_edg=NaN(nef,nx+1);
+    
+    celerities_edg.lb=NaN(1,nx+1);
+    celerities_edg.ls=NaN(1,nx+1);
+    celerities_edg.gamma=[];
+    celerities_edg.mu=[];
+    celerities_edg.A=[];
+    celerities_edg.eigen=[];
+    celerities_edg.eigen_pmm=[];
+    
+    pmm_edg=NaN(2,nx+1);
     return
 end
 %in the future check if interpolating with griddedInterpolant is too expensive and use the flag for a different interpolation
@@ -72,12 +91,6 @@ celerities_edg.eigen=[];
 celerities_edg.eigen_pmm=[];
 
 pmm_edg=val_mat_edg(:,5+2*nef+1:end)';
-
-% u_edg=interp1(xcen,u,xedg,'linear','extrap');
-% h_edg=interp1(xcen,h,xedg,'linear','extrap');
-% Cf_b_edg=interp1(xcen,Cf_b,xedg,'linear','extrap');
-% La_edg=interp1(xcen,La,xedg,'linear','extrap');
-% Mak_edg=interp1(xcen,Mak,xedg,'linear','extrap');
 
 %% SEDIMENT TRANSPORT
 
