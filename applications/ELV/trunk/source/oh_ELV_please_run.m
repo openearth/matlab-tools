@@ -1,6 +1,37 @@
-%%  %%  %%
-  %%  %%       DO NOT TOUCH FROM HERE ON
-%%  %%  %%    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                       ELV                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%This awesome model has been created by Liselot and Victor.
+%Please use it with a lot of care and love. If you have any
+%problem send us an email:
+%v.chavarriasborras@tudelft.nl
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+
+function oh_ELV_please_run(ELV)
+
+%% RENAME
+
+if isfield(ELV,'OET')==0
+    ELV.OET=1;
+end
+
+OET=ELV.OET;
+paths_source=ELV.paths_source;
+paths_runs=ELV.paths_runs;
+input_filename=ELV.input_filename;
+runid_serie=ELV.runid_serie;
+runid_number=ELV.runid_number;
+erase_previous=ELV.erase_previous;
+do_profile=ELV.do_profile;
+do_postprocessing=ELV.do_postprocessing;
+debug_mode=ELV.debug_mode;
 
 %% DEBUG
 
@@ -12,11 +43,15 @@ end
 
 %% PATH DEFINITIONS
 
-source_path = pwd; 
-paths_main              = fullfile(source_path,'..',filesep,'main');
-paths_auxiliary         = fullfile(source_path,'..',filesep,'auxiliary');
-paths_postprocessing    = fullfile(source_path,'..',filesep,'postprocessing');
-paths_input_script      = fullfile(source_path,input_filename);
+% path_source = pwd; 
+paths_main              = fullfile(paths_source,'..',filesep,'main');
+paths_auxiliary         = fullfile(paths_source,'..',filesep,'auxiliary');
+paths_postprocessing    = fullfile(paths_source,'..',filesep,'postprocessing');
+if contains(input_filename,{':','/','\'}) %crude way of determining if full path. For backward compatibility
+    paths_input_script=input_filename;
+else
+    paths_input_script= fullfile(paths_source,input_filename);
+end
 paths_run_folder        = fullfile(paths_runs,runid_serie,runid_number);
 paths_input_mat         = fullfile(paths_run_folder,'input.mat');
 
@@ -58,6 +93,15 @@ end
 
 %% ADD PATHS
 
+if OET    
+    path_add_fcn=fullfile(paths_source,'../','../','../','vtools','general'); 
+    addpath(path_add_fcn);
+    addOET(path_add_fcn) 
+else
+    %it is self-contained. This is for the compiled option, which does not exist yet.
+    
+end
+
 %paths to add if they are not already added
 paths2add{1,1}=paths_main;
 paths2add{2,1}=paths_run_folder;       
@@ -75,6 +119,13 @@ for kp=1:numel(paths2add)
         addpath(paths2add{kp,1});
     end
 end
+
+%check that OET functions are available. They are zipped in <auxiliary>
+if exist('v2struct.m','file')~=2
+    error('OET functions are not in path. Add them.')
+end
+
+% v2struct(ELV);
 
 %% CREATE INPUT
 

@@ -59,9 +59,10 @@ switch input.mor.scheme
         phi_val=NaN(1,nx);
         phi_val(2:nx-1)=phi_func(r(2:nx-1),input); %useful double(1,nx-2) for cell centres 2:nx-1.
         flux_edg=NaN(1,ne);
-        flux_edg(2:ne-2)=Qb_edg(2:ne-2)./B_edg(2:ne-2)+c_edg(2:ne-2).*0.5.*((1-sigma_b(2:ne-2)).*phi_val(2:nx-1)-1).*(etab(3:nx)-etab(2:nx-1)); %useful double(1,nx-1) for cell edges 2:nx
+        flux_edg(3:ne-1)=Qb_edg(3:ne-1)./B_edg(3:ne-1)+c_edg(3:ne-1).*0.5.*((1-sigma_b(3:ne-1)).*phi_val(2:nx-1)-1).*(etab(3:nx)-etab(2:nx-1)); %useful double(1,nx-2) for cell edges 2:nx-1
+%         flux_edg(2:ne-2)=Qb_edg(2:ne-2)./B_edg(2:ne-2); %useful double(1,nx-2) for cell edges 2:nx-1
         bed_flux=NaN(1,nx);
-        bed_flux(2:nx-1)=flux_edg(3:ne-1)-flux_edg(2:ne-2);
+        bed_flux(3:nx-1)=flux_edg(4:ne-1)-flux_edg(3:ne-2);
 end
 
 end %function

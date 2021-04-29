@@ -186,7 +186,7 @@ if time_l>=input(1,1).mor.Tstart
         Cf_bra{kb,1}=friction(h_bra{kb,1},Mak_bra{kb,1},Cf_bra{kb,1},La_bra{kb,1},input(kb,1),fid_log,kt);
         
         %% CHECK SIMULATION
-        check_simulation(u_bra{kb,1},h_bra{kb,1},Mak_bra{kb,1},Mak_old,msk_bra{kb,1},msk_old,La_bra{kb,1},La_old,Ls_bra{kb,1},Ls_old,etab_bra{kb,1},etab_old,qbk_bra{kb,1},bc(kb,1),ell_idx_bra{kb,1},celerities(kb,1),pmm_bra{kb,1},vpk,input(kb,1),fid_log,kt,time_l);
+        check_simulation(u_bra{kb,1},u_edg_bra{kb,1},h_bra{kb,1},h_edg_bra{kb,1},Mak_bra{kb,1},Mak_old,msk_bra{kb,1},msk_old,La_bra{kb,1},La_old,Ls_bra{kb,1},Ls_old,etab_bra{kb,1},etab_old,qbk_bra{kb,1},qbk_edg_bra{kb,1},bc(kb,1),ell_idx_bra{kb,1},celerities(kb,1),pmm_bra{kb,1},vpk,input(kb,1),fid_log,kt,time_l);
 
     end %kb
 end %if time_l>input.mor.Tstart

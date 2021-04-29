@@ -6,26 +6,25 @@ fclose all;
 clear;
 close all;
 clc;
-
-%Call from the folder where this function is located i.e., <source>.
-%Consider either restoring the default paths and exectuting or adding the
-%OET tools and cd to the <source> folder.
-
-% restoredefaultpath
-% run('c:\Users\chavarri\checkouts\openearthtools_matlab\oetsettings.m')
-cd('c:\Users\chavarri\checkouts\openearthtools_matlab\applications\ELV\trunk\source\') 
+restoredefaultpath
 
 %% INPUT 
 
-runid_serie='Q';
-runid_number='022';
-input_filename='input_ELV_Q022.m';
-% input_filename='input_ELV.m';
-paths_runs='C:\Users\chavarri\temporal\ELV\';
-erase_previous=1; %it is dangerous, use with care and attention
-do_profile=0; %0=NO; 1=YES
-do_postprocessing=0; %0=NO; 1=YES
-debug_mode=1; %0=NO; 1=YES
+ELV.paths_source='C:\Users\chavarri\checkouts\openearthtools_matlab\applications\ELV\trunk\source\';
+ELV.input_filename='c:\Users\chavarri\temporal\ELV\01_input\input_ELV_Q024.m';
+ELV.paths_runs='C:\Users\chavarri\temporal\ELV\';
+
+% ELV.paths_source='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\ELV\trunk\source\';
+% ELV.input_filename='p:\dflowfm\projects\2020_d-morphology\modellen\01_newscheme\01_input\input_ELV_Q024.m';
+% ELV.paths_runs='p:\dflowfm\projects\2020_d-morphology\modellen\01_newscheme\02_simulations'; 
+
+ELV.OET=1;
+ELV.runid_serie='Q';
+ELV.runid_number='024';
+ELV.erase_previous=1; %it is dangerous, use with care and attention
+ELV.do_profile=0; %0=NO; 1=YES
+ELV.do_postprocessing=0; %0=NO; 1=YES
+ELV.debug_mode=0; %0=NO; 1=YES
 
 %% DEBUG COMMANDS
 
@@ -33,4 +32,5 @@ debug_mode=1; %0=NO; 1=YES
 
 %% Please run!
 
-oh_ELV_please_run
+addpath(ELV.paths_source)
+oh_ELV_please_run(ELV)

@@ -44,7 +44,7 @@
 %200709
 %   -V. Added debug figure
 
-function check_simulation(u,h,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l)
+function check_simulation(u,u_edg,h,h_edg,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,qbk_edg,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l)
          
 %%
 %% RENAME
@@ -80,7 +80,7 @@ end
 %% DEBUG FIGURE
 % dtstop=1;
 % if ~(rem(kt,dtstop))
-% hanfig=debug_figure(u,h,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l);
+% hanfig=debug_figure(u,u_edg,h,h_edg,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,qbk_edg,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l);
 % close(hanfig)
 % end
 

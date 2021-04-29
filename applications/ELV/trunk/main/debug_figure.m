@@ -30,11 +30,13 @@
 %200709
 %   -V. Created for the first time.
 
-function hanfig=debug_figure(u,h,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l)
+function hanfig=debug_figure(u,u_edg,h,h_edg,Mak,Mak_old,msk,msk_old,La,La_old,Ls,Ls_old,etab,etab_old,qbk,qbk_edg,bc,ell_idx,celerities,pmm,vpk,input,fid_log,kt,time_l);
+                
 
 %% RENAME
 
 xcen=input.mdv.xcen;
+xedg=input.mdv.xedg;
 nef=input.mdv.nef;
 nf=input.mdv.nf;
 
@@ -60,12 +62,14 @@ prop.mt1='s';
 
 prop.lw1=1;
 prop.ls1='-'; %'-','--',':','-.'
-prop.m1='*'; % 'o', '+', '*', ...
+prop.m1='o'; % 'o', '+', '*', ...
 
 prop.lw2=1;
 prop.ls2='--'; %'-','--',':','-.'
 prop.m2='o'; % 'o', '+', '*', ...
 
+prop.m3='*';
+prop.ls3='none';
 
 prop.fs=10;
 prop.fn='Helvetica';
@@ -340,13 +344,16 @@ end
 %plots
 kr=1; kc=1;    
 han.p(kr,kc,1)=plot(xcen,h,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.p(kr,kc,1)=plot(xedg,h_edg,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls3,'marker',prop.m3);
 
 kr=2; kc=1;    
 han.p(kr,kc,1)=plot(xcen,u,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.p(kr,kc,1)=plot(xedg,u_edg,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m3);
 
 kr=3; kc=1;  
 for kf=1:nf
 han.p(kr,kc,kf)=plot(xcen,qbk(kf,:),'parent',han.sfig(kr,kc),'color',cmap(kf,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.p(kr,kc,kf)=plot(xedg,qbk_edg(kf,:),'parent',han.sfig(kr,kc),'color',cmap(kf,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m3);
 end
 
 kr=4; kc=1;
