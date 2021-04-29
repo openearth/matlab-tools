@@ -20,18 +20,14 @@ end
 switch lower(opt)
     
     case{'plot'}
-        
-        
+
+        try
+            h=findobj(gca,'tag','shorelines_channel')
+            delete(h);
+        end
+                
         if handles.model.shorelines.nrchannels>0
             for as=1:handles.model.shorelines.nrchannels
-                % First delete old shoreline
-                try
-                    delete(handles.model.shorelines.channels(as).handle);                    
-                end
-                try
-                    h=findobj(gca,'tag','shorelines_channel')
-                    delete(h);
-                end
                 handles.model.shorelines.channels(as).handle=[];
                 xp=handles.model.shorelines.channels(as).x;
                 yp=handles.model.shorelines.channels(as).y;
@@ -58,23 +54,24 @@ switch lower(opt)
         
         % First delete old channel
         try
-            delete(handles.model.shorelines.channel.handle);
+            h=findobj(gca,'tag','shorelines_channel')
+            delete(h);
         end
-        handles.model.shorelines.channel.handle=[];
         
     case{'update'}
         
+        try
+            h=findobj(gca,'tag','shorelines_channel')
+            delete(h);
+        end
+        
         if handles.model.shorelines.nrchannels>0
             for as=1:handles.model.shorelines.nrchannels
-                % First delete old shoreline
-                try
-                    delete(handles.model.shorelines.channels(as).handle);
-                end
                 handles.model.shorelines.channels(as).handle=[];
                 xp=handles.model.shorelines.channels(as).x;
                 yp=handles.model.shorelines.channels(as).y;
                 
-                h=plot(xp,yp,'b--','linewidth',1.5)
+                h=plot(xp,yp,'b--','linewidth',1.5,'tag','shorelines_channel')
                 handles.model.shorelines.channels(as).handle=h;
                 
                 if vis

@@ -204,11 +204,14 @@ gui_updateActiveTab;
 
 %%
 function handles=update_shoreline_xy_mc(handles)
-handles.model.shorelines.domain.x_mc=handles.model.shorelines.shorelines(1).x;
-handles.model.shorelines.domain.y_mc=handles.model.shorelines.shorelines(1).y;
-for as=2:handles.model.shorelines.nrshorelines
-    handles.model.shorelines.domain.x_mc=[handles.model.shorelines.domain.x_mc,NaN,handles.model.shorelines.shorelines(as).x];
-    handles.model.shorelines.domain.y_mc=[handles.model.shorelines.domain.y_mc,NaN,handles.model.shorelines.shorelines(as).y];
+
+if handles.model.shorelines.nrshorelines>0
+    handles.model.shorelines.domain.x_mc=handles.model.shorelines.shorelines(1).x;
+    handles.model.shorelines.domain.y_mc=handles.model.shorelines.shorelines(1).y;
+    for as=2:handles.model.shorelines.nrshorelines
+        handles.model.shorelines.domain.x_mc=[handles.model.shorelines.domain.x_mc,NaN,handles.model.shorelines.shorelines(as).x];
+        handles.model.shorelines.domain.y_mc=[handles.model.shorelines.domain.y_mc,NaN,handles.model.shorelines.shorelines(as).y];
+    end
 end
 
 gui_updateActiveTab;

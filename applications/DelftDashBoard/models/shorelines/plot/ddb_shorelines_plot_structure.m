@@ -28,10 +28,6 @@ switch lower(opt)
         
         if handles.model.shorelines.nrstructures>0
             for as=1:handles.model.shorelines.nrstructures
-                % First delete old shoreline
-                try
-                    delete(handles.model.shorelines.structures(as).handle);
-                end
                 handles.model.shorelines.structures(as).handle=[];
                 xp=handles.model.shorelines.structures(as).x;
                 yp=handles.model.shorelines.structures(as).y;
@@ -58,27 +54,25 @@ switch lower(opt)
         
         % First delete old structure
         try
-            delete(handles.model.shorelines.structure.handle);
+            h=findobj(gca,'tag','shorelines_structure');
+            delete(h);
         end
+        
+    case{'update'}
+
+        % First delete old structure
         try
             h=findobj(gca,'tag','shorelines_structure');
             delete(h);
         end
-        handles.model.shorelines.structure.handle=[];
-        
-    case{'update'}
-        
+
         if handles.model.shorelines.nrstructures>0
             for as=1:handles.model.shorelines.nrstructures
-                % First delete old shoreline
-                try
-                    delete(handles.model.shorelines.structures(as).handle);
-                end
-                handles.model.shorelines.structures(as).handle=[];
+               handles.model.shorelines.structures(as).handle=[];
                 xp=handles.model.shorelines.structures(as).x;
                 yp=handles.model.shorelines.structures(as).y;
                 
-                h=plot(xp,yp,'k','linewidth',1.5)
+                h=plot(xp,yp,'k','linewidth',1.5,'tag','shorelines_structure')
                 handles.model.shorelines.structures(as).handle=h;
                 
                 if vis

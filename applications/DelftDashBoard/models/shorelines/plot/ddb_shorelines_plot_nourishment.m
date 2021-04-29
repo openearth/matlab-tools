@@ -20,8 +20,12 @@ end
 switch lower(opt)
     
     case{'plot'}
-        
-        
+ 
+        try
+            h=findobj(gca,'tag','shorelines_nourishment');
+            delete(h);
+        end
+            
         if handles.model.shorelines.nrnourishments>0
             for as=1:handles.model.shorelines.nrnourishments
                 % First delete old shoreline
@@ -37,7 +41,7 @@ switch lower(opt)
                     %h=plot(xp,yp,'r','linewidth',2)
                     h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_nourishment,'tag','shorelines_nourishment','color','k','linestyle',':','marker','o');
                 else
-                    h=plot(xp,yp,'k:','linewidth',1.5)
+                    h=plot(xp,yp,'k:','linewidth',1.5,'tag','shorelines_nourishment')
                 end
                 handles.model.shorelines.nourishments(as).handle=h;
                 
@@ -54,23 +58,25 @@ switch lower(opt)
         
         % First delete old nourishment
         try
-            delete(handles.model.shorelines.nourishment.handle);
+            h=findobj(gca,'tag','shorelines_nourishment');
+            delete(h);
         end
-        handles.model.shorelines.nourishment.handle=[];
         
     case{'update'}
         
+        % First delete old nourishment
+        try
+            h=findobj(gca,'tag','shorelines_nourishment');
+            delete(h);
+        end
+        
         if handles.model.shorelines.nrnourishments>0
             for as=1:handles.model.shorelines.nrnourishments
-                % First delete old shoreline
-                try
-                    delete(handles.model.shorelines.nourishments(as).handle);
-                end
                 handles.model.shorelines.nourishments(as).handle=[];
                 xp=handles.model.shorelines.nourishments(as).x;
                 yp=handles.model.shorelines.nourishments(as).y;
                 
-                h=plot(xp,yp,'k:','linewidth',1.5)
+                h=plot(xp,yp,'k:','linewidth',1.5,'tag','shorelines_nourishment')
                 handles.model.shorelines.nourishments(as).handle=h;
                 
                 if vis

@@ -10,6 +10,12 @@ handles.model.shorelines.domain.y_mc=[];
 handles.model.shorelines.domain.ds0=100;
 handles.model.shorelines.domain.d=10;
 
+yearnow=datevec(now);
+yearnow(2:6)=[1,1,0,0,0];
+handles.model.shorelines.domain.tref=datenum(yearnow);
+handles.model.shorelines.domain.timenum0=now; 
+handles.model.shorelines.domain.tend=now+365;
+
 handles.model.shorelines.wave_opt='mean_and_spreading';
 handles.model.shorelines.domain.Hso=1.;
 handles.model.shorelines.domain.tper=7;

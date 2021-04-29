@@ -21,6 +21,10 @@ switch lower(opt)
     
     case{'plot'}
         
+        try
+            h=findobj(gca,'tag','shorelines_shoreline');
+            delete(h);
+        end
         
         if handles.model.shorelines.nrshorelines>0
             for as=1:handles.model.shorelines.nrshorelines
@@ -34,10 +38,10 @@ switch lower(opt)
                 
                 % h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@change_shoreline,'tag','shorelines_shoreline','marker','o');
                 if as==handles.model.shorelines.activeshoreline
-                    h=plot(xp,yp,'r',xp(1),yp(1),'o','linewidth',1.5)
+                    h=plot(xp,yp,'r',xp(1),yp(1),'o','linewidth',1.5,'tag','shorelines_shoreline')
                     %h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_shoreline,'tag','shorelines_shoreline','color','k','marker','o');
                 else
-                    h=plot(xp,yp,'k','linewidth',1.5)
+                    h=plot(xp,yp,'k','linewidth',1.5,'tag','shorelines_shoreline')
                 end
                 handles.model.shorelines.shorelines(as).handle=h;
                 
@@ -52,25 +56,25 @@ switch lower(opt)
         
     case{'delete'}
         
-        % First delete old shoreline
         try
-            delete(handles.model.shorelines.shoreline.handle);
+            h=findobj(gca,'tag','shorelines_shoreline')
+            delete(h);
         end
-        handles.model.shorelines.shoreline.handle=[];
         
     case{'update'}
-        
+ 
+        try
+            h=findobj(gca,'tag','shorelines_shoreline')
+            delete(h);
+        end
+
         if handles.model.shorelines.nrshorelines>0
             for as=1:handles.model.shorelines.nrshorelines
-                % First delete old shoreline
-                try
-                    delete(handles.model.shorelines.shorelines(as).handle);
-                end
                 handles.model.shorelines.shorelines(as).handle=[];
                 xp=handles.model.shorelines.shorelines(as).x;
                 yp=handles.model.shorelines.shorelines(as).y;
                 
-                h=plot(xp,yp,'k','linewidth',1.5)
+                h=plot(xp,yp,'k','linewidth',1.5,'tag','shorelines_shoreline')
                 handles.model.shorelines.shorelines(as).handle=h;
                 
                 if vis

@@ -8,7 +8,7 @@
   <element>
     <style>edit</style>
     <position>130 130 110 20</position>
-    <text>Reference Time</text>
+    <text>Reference Date</text>
     <variable>handles.model.shorelines.domain.tref</variable>
     <callback>ddb_shorelines_timeframe</callback>
     <option1>edittime</option1>
@@ -17,7 +17,7 @@
   <element>
     <style>edit</style>
     <position>130 105 110 20</position>
-    <text>Start Time</text>
+    <text>Start Date</text>
     <variable>handles.model.shorelines.domain.timenum0</variable>
     <callback>ddb_shorelines_timeframe</callback>
     <option1>edittime</option1>
@@ -26,7 +26,7 @@
   <element>
     <style>edit</style>
     <position>130 80 110 20</position>
-    <text>Stop Time</text>
+    <text>Stop Date</text>
     <variable>handles.model.shorelines.domain.tend</variable>
     <callback>ddb_shorelines_timeframe</callback>
     <option1>edittime</option1>
