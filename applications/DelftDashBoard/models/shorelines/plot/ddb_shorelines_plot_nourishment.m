@@ -41,7 +41,7 @@ switch lower(opt)
                     %h=plot(xp,yp,'r','linewidth',2)
                     h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_nourishment,'tag','shorelines_nourishment','color','k','linestyle',':','marker','o');
                 else
-                    h=plot(xp,yp,'k:','linewidth',1.5,'tag','shorelines_nourishment')
+                    h=plot(xp,yp,'k:','linewidth',1.5,'tag','shorelines_nourishment');
                 end
                 handles.model.shorelines.nourishments(as).handle=h;
                 
@@ -76,7 +76,7 @@ switch lower(opt)
                 xp=handles.model.shorelines.nourishments(as).x;
                 yp=handles.model.shorelines.nourishments(as).y;
                 
-                h=plot(xp,yp,'k:','linewidth',1.5,'tag','shorelines_nourishment')
+                h=plot(xp,yp,'k:','linewidth',1.5,'tag','shorelines_nourishment');
                 handles.model.shorelines.nourishments(as).handle=h;
                 
                 if vis

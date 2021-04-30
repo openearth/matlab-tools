@@ -22,7 +22,7 @@ switch lower(opt)
     case{'plot'}
 
         try
-            h=findobj(gca,'tag','shorelines_channel')
+            h=findobj(gca,'tag','shorelines_channel');
             delete(h);
         end
                 
@@ -37,7 +37,7 @@ switch lower(opt)
                     %h=plot(xp,yp,'r','linewidth',2)
                     h=gui_polyline('plot','x',xp,'y',yp,'changecallback',@modify_channel,'tag','shorelines_channel','color','b','linestyle','--','marker','o');
                 else
-                    h=plot(xp,yp,'b--','linewidth',1.5,'tag','shorelines_channel')
+                    h=plot(xp,yp,'b--','linewidth',1.5,'tag','shorelines_channel');
                 end
                 handles.model.shorelines.channels(as).handle=h;
                 
@@ -54,14 +54,14 @@ switch lower(opt)
         
         % First delete old channel
         try
-            h=findobj(gca,'tag','shorelines_channel')
+            h=findobj(gca,'tag','shorelines_channel');
             delete(h);
         end
         
     case{'update'}
         
         try
-            h=findobj(gca,'tag','shorelines_channel')
+            h=findobj(gca,'tag','shorelines_channel');
             delete(h);
         end
         
@@ -71,7 +71,7 @@ switch lower(opt)
                 xp=handles.model.shorelines.channels(as).x;
                 yp=handles.model.shorelines.channels(as).y;
                 
-                h=plot(xp,yp,'b--','linewidth',1.5,'tag','shorelines_channel')
+                h=plot(xp,yp,'b--','linewidth',1.5,'tag','shorelines_channel');
                 handles.model.shorelines.channels(as).handle=h;
                 
                 if vis

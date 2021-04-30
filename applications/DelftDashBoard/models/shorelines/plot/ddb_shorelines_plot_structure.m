@@ -72,7 +72,7 @@ switch lower(opt)
                 xp=handles.model.shorelines.structures(as).x;
                 yp=handles.model.shorelines.structures(as).y;
                 
-                h=plot(xp,yp,'k','linewidth',1.5,'tag','shorelines_structure')
+                h=plot(xp,yp,'k','linewidth',1.5,'tag','shorelines_structure');
                 handles.model.shorelines.structures(as).handle=h;
                 
                 if vis
