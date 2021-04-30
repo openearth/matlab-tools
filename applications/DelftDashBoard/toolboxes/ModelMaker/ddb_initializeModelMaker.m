@@ -178,8 +178,8 @@ handles.toolbox.modelmaker.Hs = 5;
 handles.toolbox.modelmaker.Tp = 10;
 handles.toolbox.modelmaker.waveangle = 180;
 handles.toolbox.modelmaker.domain1d = 0;
-handles.model.xbeach.domain.thetamin = 90;
-handles.model.xbeach.domain.thetamax = 270;
+% handles.model.xbeach.domain.thetamin = 90;
+% handles.model.xbeach.domain.thetamax = 270;
 
 %% Boundary options for Delft3D
 handles.toolbox.modelmaker.delft3d.boundary_type='Z';
