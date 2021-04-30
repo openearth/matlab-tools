@@ -60,7 +60,6 @@ end
 if isfield(mdu.geometry,'StructureFile')
     simdef.file.struct=fullfile(path_sim,mdu.geometry.StructureFile);
 end
-mdu.geometry.StructureFile
 
 %sediment
 if isfield(mdu,'sediment')

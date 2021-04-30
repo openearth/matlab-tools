@@ -227,6 +227,12 @@ end
 % pos.sfig=han.sfig(1,1).Position; % position of first axes    
 % han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right','Color','none');
 
+%% HOLD
+for kr=1:npr
+    for kc=1:npc
+        hold(han.sfig(kr,kc),'on')
+    end
+end
 %% MAP TILES
 
 % kr=1; kc=1;
@@ -365,23 +371,22 @@ set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, 
 if any(fig_print==1)
     print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
-    close(han.fig);
 end
 if any(fig_print==2)
     savefig(han.fig,strcat(prnt.filename,'.fig'))
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.fig'))) 
-    close(han.fig);
 end
 if any(fig_print==3)
     print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
-    close(han.fig);
 end
-if any(fig_print==3)
+if any(fig_print==4)
     print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
-    close(han.fig);
 end
- 
+if any(ismember(fig_print,[1,2,3,4]))
+close(han.fig);
+end
+
 end %function
 

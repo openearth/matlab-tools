@@ -153,6 +153,6 @@ end
 if exist('file','var')>0
     simdef.file=file;
 else
-    fprintf('simulation folder: \n %s \n',simdef.D3D.dire_sim)
+    fprintf('simulation folder: \n %s \n',simdef.D3D.dire_sim);
     error('It seems that the folder you have specified has no simulation results')
 end
