@@ -29,13 +29,29 @@ switch lower(opt)
             end
 %% Some options not specified in input file
             if ~isempty(handles.model.shorelines.domain.Waveclimfile)
-                handles.model.shorelines.domain.wave_opt='wave_climate';
+                handles.model.shorelines.wave_opt='wave_climate';
             elseif ~isempty(handles.model.shorelines.domain.WVCfile)
-                handles.model.shorelines.domain.wave_opt='wave_timeseries';
+                handles.model.shorelines.wave_opt='wave_timeseries';
             else
-                handles.model.shorelines.domain.wave_opt='mean_and_spreading';
+                handles.model.shorelines.wave_opt='mean_and_spreading';
             end
-            handles.model.shorelines.domain.transport_opt=lower(handles.model.shorelines.domain.trform);
+            handles.model.shorelines.domain.transport_opt=handles.model.shorelines.domain.trform;
+
+            if ~isempty(handles.model.shorelines.domain.wavefile)
+                handles.model.shorelines.wavetrans_opt='lookup_table';
+                handles.model.shorelines.domain.wave_interaction=1;
+            elseif ~isempty(handles.model.shorelines.domain.phif)
+                handles.model.shorelines.wavetrans_opt='dynamic profile';
+            else
+                handles.model.shorelines.wavetrans_opt='none'
+            end
+            
+            if handles.model.shorelines.domain.spit_width>0
+                handles.model.shorelines.spit_opt='on';
+            else
+                handles.model.shorelines.spit_opt='off';
+            end
+            
             setHandles(handles);
 
             if ~isempty(handles.model.shorelines.domain.LDBcoastline)
@@ -59,7 +75,7 @@ switch lower(opt)
                 %handles.model.shorelines.domain.y_mc=y;
             end
                           
-            if ~isempty(handles.model.shorelines.domain.LDBchannels)
+            if ~isempty(handles.model.shorelines.domain.LDBchannel)
                 load_channels
                 %[x,y]=read_xy_columns(handles.model.shorelines.domain.LDBcoastline);
                 %handles.model.shorelines.domain.x_mc=x;
@@ -191,8 +207,8 @@ function load_channels
 handles=getHandles;
 
 %[x,y]=landboundary('read',handles.model.shorelines.channel.filename);
-[x,y]=read_xy_columns(handles.model.shorelines.domain.LDBchannels);
-matname=handles.model.shorelines.domain.LDBchannels;
+[x,y]=read_xy_columns(handles.model.shorelines.domain.LDBchannel);
+matname=handles.model.shorelines.domain.LDBchannel;
 matname(end-2:end)='mat';
 load(matname);
 handles.model.shorelines.channels=channels;

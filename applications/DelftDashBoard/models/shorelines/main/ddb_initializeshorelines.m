@@ -13,7 +13,7 @@ handles.model.shorelines.wavetrans_opts_long ={'None','Dynamic profile','Wave lo
 handles.model.shorelines.wavetrans_opts_short={'none','dynamic_profile','lookup_table'};
 
 handles.model.shorelines.transport_opts_long ={'CERC','CERC 3','Kamphuis','Mil-Homens','van Rijn 2014'};
-handles.model.shorelines.transport_opts_short={'cerc','cerc3','kamp','milh','vr14'};
+handles.model.shorelines.transport_opts_short={'CERC','CERC3','KAMP','MILH','VR14'};
 
 handles.model.shorelines.spit_opts_long ={'Off','On'};
 handles.model.shorelines.spit_opts_short={'off','on'};
