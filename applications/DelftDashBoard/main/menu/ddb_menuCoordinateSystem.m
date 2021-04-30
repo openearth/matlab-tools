@@ -104,6 +104,8 @@ if ok
         handles.screenParameters.coordinateSystem.type='Geographic';
         setHandles(handles);
         ddb_changeCoordinateSystem;
+        ddb_updateDataInScreen;
+        ddb_resetAll;        
     end
 end
 
@@ -124,6 +126,8 @@ if ok
         handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);
         ddb_changeCoordinateSystem;
+        ddb_updateDataInScreen;
+        ddb_resetAll;        
     end
 end
 
@@ -164,6 +168,8 @@ if ok
             handles.screenParameters.coordinateSystem.type='Cartesian';
             setHandles(handles);
             ddb_changeCoordinateSystem;
+            ddb_updateDataInScreen;
+            ddb_resetAll;            
         end
     end
 end
@@ -186,6 +192,8 @@ if ok
         handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);
         ddb_changeCoordinateSystem;
+        ddb_updateDataInScreen;
+        ddb_resetAll;        
     end
 end
 
@@ -207,6 +215,8 @@ if ok
         handles.screenParameters.coordinateSystem.type='Geographic';
         setHandles(handles);
         ddb_changeCoordinateSystem;
+        ddb_updateDataInScreen;
+        ddb_resetAll;        
     end
 end
 
@@ -228,6 +238,8 @@ if ok
         handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);
         ddb_changeCoordinateSystem;
+        ddb_updateDataInScreen;
+        ddb_resetAll;        
     end
 end
 

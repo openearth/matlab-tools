@@ -114,11 +114,44 @@ handles=ddb_addModelViewMenu(handles);
 
 %% Coordinate System
 uimenu('Label','Coordinate System','Tag','menuCoordinateSystem');
-handles=ddb_addMenuItem(handles,'CoordinateSystem','WGS 84',               'Callback',{@ddb_menuCoordinateSystem},'Checked','on','HandleName','Geographic');
+
+% Determine what type of coordinate system
+name=handles.screenParameters.coordinateSystem.name;
+type=handles.screenParameters.coordinateSystem.type;
+
+geoname='WGS 84';
+prjname='Amersfoort / RD New';
+utmname='WGS 84 / UTM zone 31N';
+
+geocheck='off';
+prjcheck='off';
+utmcheck='off';
+
+if strcmpi(type,'geographic')
+    geocheck='on';
+    if ~strcmpi(name,'wgs 84')
+        geoname=name;
+    end
+else
+    if strcmpi(name(1:12),'WGS 84 / UTM')
+        utmname=name;
+        utmcheck='on';
+    else
+        prjname=name;
+        prjcheck='on';    
+    end
+end
+
+handles=ddb_addMenuItem(handles,'CoordinateSystem',geoname,               'Callback',{@ddb_menuCoordinateSystem},'Checked',geocheck,'HandleName','Geographic');
+
 handles=ddb_addMenuItem(handles,'CoordinateSystem','Other Geographic ...',     'Callback',{@ddb_menuCoordinateSystem});
-handles=ddb_addMenuItem(handles,'CoordinateSystem','Amersfoort / RD New',  'Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','Cartesian');
+
+handles=ddb_addMenuItem(handles,'CoordinateSystem',prjname,  'Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','Cartesian','Checked',prjcheck);
+
 handles=ddb_addMenuItem(handles,'CoordinateSystem','Other Cartesian ...',      'Callback',{@ddb_menuCoordinateSystem});
-handles=ddb_addMenuItem(handles,'CoordinateSystem','WGS 84 / UTM zone 31N','Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','UTM');
+
+handles=ddb_addMenuItem(handles,'CoordinateSystem',utmname,'Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','UTM','Checked',utmcheck);
+
 handles=ddb_addMenuItem(handles,'CoordinateSystem','Select UTM Zone ...',  'Callback',{@ddb_menuCoordinateSystem});
 
 %% Options

@@ -1,4 +1,4 @@
-function DelftDashBoard
+function DelftDashBoard(varargin)
 %DELFTDASHBOARD.
 %
 %   Compile with ddcompile
@@ -60,6 +60,12 @@ handles.delftDashBoardVersion=['2.03.' num2str(Revision)];
 handles.matlabVersion=version;
 handles.debugMode=0;
 
+if isempty(varargin)
+    handles.xml_config_file='delftdashboard';
+else
+    handles.xml_config_file=varargin{1};
+end
+
 % Add java paths for snc tools
 if isdeployed
     setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
@@ -118,6 +124,14 @@ try
 
     drawnow;
     
+    ddb_changeCoordinateSystem; % This will also update data in the map panel
+    
+    if ~isempty(handles.configuration.xlim) && ~isempty(handles.configuration.ylim)
+        % Zoom to predefined area
+        handles=getHandles;
+        handles=ddb_zoomTo(handles,handles.configuration.xlim,handles.configuration.ylim,0.1);    
+        setHandles(handles);
+    end
     ddb_updateDataInScreen;
     
     % Maximize Figure

@@ -60,46 +60,80 @@ function ddb_initialize(varargin)
 % $Keywords: $
 
 %%
-switch lower(varargin{1}),
+switch lower(varargin{1})
     
     case{'startup'}
         
+        % Read in delftdashboard xml file to determine which models,
+        % toolboxes etc. to include. Store data in handles.configuration        
+        ddb_read_configuration_xml;
+        
+        tic
         disp('Finding coordinate systems ...');
         ddb_getCoordinateSystems;
+        toc
         
-        disp('Finding tide models ...');
-        ddb_findTideModels;
+        handles=getHandles;
+
+        if handles.configuration.include_tide_models
+            tic
+            disp('Finding tide models ...');
+            ddb_findTideModels;
+            toc
+        else
+            disp('Skipping tide models ...');
+            handles=getHandles;
+            handles.tideModels.longNames = {''};
+            handles.tideModels.names     = {''};
+            handles.tideModels.nrModels  = 0;
+            setHandles(handles);
+        end
         
+        tic
         disp('Finding bathymetry datasets ...');
         handles=getHandles;
         handles.bathymetry=ddb_findBathymetryDatabases(handles.bathymetry);
         setHandles(handles);
+        toc
         
+        tic
         disp('Finding shorelines ...');
         ddb_findShorelines;
+        toc
         
+        tic
         disp('Finding toolboxes ...');
         ddb_findToolboxes;
+        toc
         
+        tic
         disp('Finding models ...');
         ddb_findModels;
+        toc
         
         ddb_setModelSettings('initialize');
         ddb_setProxySettings('initialize');
         ddb_setSNCSettings('initialize');
                 
+        tic
         disp('Initializing screen parameters ...');
         ddb_initializeScreenParameters;
+        toc
  
+        tic
         disp('Initializing figure ...');
         ddb_initializeFigure;
+        toc
 
+        tic
         disp('Initializing models ...');
         ddb_initializeModels;
+        toc
 
-
+        tic
         disp('Initializing toolboxes ...');
         ddb_initializeToolboxes;
+        toc
 
 %        set(handles.GUIHandles.mainWindow,'visible','off');
         disp('Adding model tabpanels ...');
@@ -112,7 +146,8 @@ switch lower(varargin{1}),
         ddb_makeMapPanel;
         
         % Toolbox is selected in ddb_selectModel
-        ddb_selectModel('delft3dflow');
+        handles=getHandles;
+        ddb_selectModel(handles.activeModel.name);
         
         % Refresh domains in menu
         ddb_refreshDomainMenu;
@@ -130,7 +165,7 @@ switch lower(varargin{1}),
         handles=getHandles;
         handles.GUIHandles.anchorhandle=[];
         setHandles(handles);
-
+       
     case{'all'}
         ddb_initializeModels;
         ddb_initializeToolboxes;

@@ -73,33 +73,31 @@ for k=1:length(models)
     handles.activeModel.nr=1;
     handles.model.(model).nrDomains=1;
 end
-handles.toolbox.nesting.timestep = 10;
-handles.toolbox.nesting.flowwave = 0;
-handles.toolbox.nesting.distance = 2000;
-handles.toolbox.nesting.sequence = 1;
-handles.toolbox.modelmaker.D50 = 250;
-handles.toolbox.modelmaker.depth = 20;
-handles.toolbox.modelmaker.dean = 0;
-handles.toolbox.modelmaker.transects = 0;
-handles.toolbox.modelmaker.average_z = 0;
-handles.toolbox.modelmaker.average_dx = 0;
-handles.toolbox.modelmaker.average_z = 0;
-handles.toolbox.modelmaker.bathymetry.intertidalbathy = 0;
-handles.modelmaker.activeinterpolationtype = 3;
-handles.modelmaker.interpolationtypes = {'spline', 'linear', 'pchip'};
 setHandles(handles);
 
-s.toolbox.nesting.activebox = 1;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).startTime = now;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).stopTime = now-3;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).timestep = 1;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).xOri = 0;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).nX = 1;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).dX = 1;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).rotation = 0;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).yOri = 0; 
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).nY = 1;
-s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).dY = 1;
-
-s.toolbox.xbeachvegetation.listname = '';
-s.toolbox.xbeachvegetation.polyLength = 0;
+% handles.toolbox.modelmaker.D50 = 250;
+% handles.toolbox.modelmaker.depth = 20;
+% handles.toolbox.modelmaker.dean = 0;
+% handles.toolbox.modelmaker.transects = 0;
+% handles.toolbox.modelmaker.average_z = 0;
+% handles.toolbox.modelmaker.average_dx = 0;
+% handles.toolbox.modelmaker.average_z = 0;
+% handles.toolbox.modelmaker.bathymetry.intertidalbathy = 0;
+% handles.modelmaker.activeinterpolationtype = 3;
+% handles.modelmaker.interpolationtypes = {'spline', 'linear', 'pchip'};
+% setHandles(handles);
+% 
+% s.toolbox.nesting.activebox = 1;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).startTime = now;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).stopTime = now-3;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).timestep = 1;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).xOri = 0;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).nX = 1;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).dX = 1;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).rotation = 0;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).yOri = 0; 
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).nY = 1;
+% s.toolbox.nesting.drawboxes(s.toolbox.nesting.activebox).dY = 1;
+% 
+% s.toolbox.xbeachvegetation.listname = '';
+% s.toolbox.xbeachvegetation.polyLength = 0;

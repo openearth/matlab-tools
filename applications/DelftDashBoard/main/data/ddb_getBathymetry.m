@@ -189,6 +189,7 @@ switch lower(tp)
         for i=1:nLevels
             cellsizex(i)=bathymetry.dataset(iac).zoomLevel(i).dx;
             cellsizey(i)=bathymetry.dataset(iac).zoomLevel(i).dy;
+            % Should multiply with unit here...
         end
         
         if zoomlev==0

@@ -67,16 +67,17 @@ if isempty(varargin)
 
     % Fill menu on initialization
 
-    toolboxes0=fieldnames(handles.toolbox);
-    % First sort toolboxes, ModelMaker toolbox must be the first one
-    toolboxes{1}='modelmaker';
-    n=1;
-    for k=1:length(toolboxes0)
-        if ~strcmpi(toolboxes0{k},'modelmaker')
-            n=n+1;
-            toolboxes{n}=toolboxes0{k};
-        end
-    end
+    toolboxes=fieldnames(handles.toolbox);
+%     toolboxes0=fieldnames(handles.toolbox);
+%     % First sort toolboxes, ModelMaker toolbox must be the first one
+%     toolboxes{1}='modelmaker';
+%     n=1;
+%     for k=1:length(toolboxes0)
+%         if ~strcmpi(toolboxes0{k},'modelmaker')
+%             n=n+1;
+%             toolboxes{n}=toolboxes0{k};
+%         end
+%     end
     
     p=findobj(gcf,'Tag','menutoolbox');
 
@@ -101,7 +102,8 @@ if isempty(varargin)
             sep='off';
         end
         
-        if k==1
+%        if k==1
+        if strcmpi(handles.activeToolbox.name,name)
             checked='on';
         else
             checked='off';

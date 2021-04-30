@@ -65,68 +65,73 @@ handles=getHandles;
 NewSystem=handles.screenParameters.coordinateSystem;
 OldSystem=handles.screenParameters.oldCoordinateSystem;
 
-xl=get(gca,'XLim');
-yl=get(gca,'YLim');
-
-[xl1,yl1]=ddb_coordConvert(xl,yl,OldSystem,NewSystem);
-
-lngth=length(NewSystem.name);
-nsys=lower(NewSystem.name(1:min(lngth,12)));
-
-if strcmpi(NewSystem.type,'Cartesian')
-    set(handles.GUIHandles.textCoordinateSystem,'String',[NewSystem.name ' - Projected']);
-else
-    set(handles.GUIHandles.textCoordinateSystem,'String',[NewSystem.name ' - Geographic']);
+if ~strcmpi(NewSystem.name,OldSystem.name) || ~strcmpi(NewSystem.type,OldSystem.type)
+    
+    % This should only happen upon initialization
+    
+    xl=get(gca,'XLim');
+    yl=get(gca,'YLim');
+    
+    [xl1,yl1]=ddb_coordConvert(xl,yl,OldSystem,NewSystem);
+    
+    lngth=length(NewSystem.name);
+    nsys=lower(NewSystem.name(1:min(lngth,12)));
+    
+    if strcmpi(NewSystem.type,'Cartesian')
+        set(handles.GUIHandles.textCoordinateSystem,'String',[NewSystem.name ' - Projected']);
+    else
+        set(handles.GUIHandles.textCoordinateSystem,'String',[NewSystem.name ' - Geographic']);
+    end
+    
+    switch nsys,
+        case{'wgs 84'}
+            handles.screenParameters.xMaxRange=[-360 360];
+            handles.screenParameters.yMaxRange=[-90 90];
+        case{'wgs 84 / utm'}
+            utmzone1=handles.screenParameters.UTMZone{1};
+            utmzone2=handles.screenParameters.UTMZone{2};
+            zn={'C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X'};
+            ii=strmatch(utmzone2,zn,'exact');
+            dy=10000000*8/90;
+            if ii>10
+                % Northern Hemispere
+                yutm1=(ii-11)*dy;
+                yutm2=yutm1+dy;
+            else
+                % Southern Hemispere
+                yutm1=(ii-11)*dy+10000000;
+                yutm2=(ii-10)*dy+10000000;
+            end
+            xutm1=-200000;
+            xutm2=1000000;
+            handles.screenParameters.xMaxRange=[-2000000 3000000];
+            handles.screenParameters.yMaxRange=[-2000000 10000000];
+            if yl1(1)<yutm1 || yl1(1)>yutm2 || yl1(2)<yutm1 || yl1(2)>yutm2
+                yl1(1)=yutm1;
+                yl1(2)=yutm2;
+            end
+            if xl1(1)<xutm1 || xl1(1)>xutm2 || xl1(2)<xutm1 || xl1(2)>xutm2
+                xl1(1)=xutm1;
+                xl1(2)=xutm2;
+            end
+        otherwise
+            handles.screenParameters.xMaxRange=[-5000000 5000000];
+            handles.screenParameters.yMaxRange=[0 8000000];
+    end
+    
+    [xl,yl]=CompXYLim(xl1,yl1,handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
+    
+    handles.screenParameters.xLim=xl;
+    handles.screenParameters.yLim=yl;
+    
+    set(gca,'XLim',xl,'YLim',yl);
+    
+    setHandles(handles);
+    
 end
-
-switch nsys,
-    case{'wgs 84'}
-        handles.screenParameters.xMaxRange=[-360 360];
-        handles.screenParameters.yMaxRange=[-90 90];
-    case{'wgs 84 / utm'}
-        utmzone1=handles.screenParameters.UTMZone{1};
-        utmzone2=handles.screenParameters.UTMZone{2};
-        zn={'C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X'};
-        ii=strmatch(utmzone2,zn,'exact');
-        dy=10000000*8/90;
-        if ii>10
-            % Northern Hemispere
-            yutm1=(ii-11)*dy;
-            yutm2=yutm1+dy;
-        else
-            % Southern Hemispere
-            yutm1=(ii-11)*dy+10000000;
-            yutm2=(ii-10)*dy+10000000;
-        end
-        xutm1=-200000;
-        xutm2=1000000;
-        handles.screenParameters.xMaxRange=[-2000000 3000000];
-        handles.screenParameters.yMaxRange=[-2000000 10000000];
-        if yl1(1)<yutm1 || yl1(1)>yutm2 || yl1(2)<yutm1 || yl1(2)>yutm2
-            yl1(1)=yutm1;
-            yl1(2)=yutm2;
-        end
-        if xl1(1)<xutm1 || xl1(1)>xutm2 || xl1(2)<xutm1 || xl1(2)>xutm2
-            xl1(1)=xutm1;
-            xl1(2)=xutm2;
-        end
-    otherwise
-        handles.screenParameters.xMaxRange=[-5000000 5000000];
-        handles.screenParameters.yMaxRange=[0 8000000];
-end
-
-[xl,yl]=CompXYLim(xl1,yl1,handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
-
-handles.screenParameters.xLim=xl;
-handles.screenParameters.yLim=yl;
-
-set(gca,'XLim',xl,'YLim',yl);
-
-setHandles(handles);
-
 
 %% Bathymetry and shoreline are taken care of in ddb_updateDataInScreen
-ddb_updateDataInScreen;
+%ddb_updateDataInScreen;
 
 handles=getHandles;
 
@@ -144,7 +149,7 @@ set(handles.mapHandles.cities,'XData',xc,'YData',yc);
 
 setHandles(handles);
 
-ddb_resetAll;
+%ddb_resetAll;
 
 % % Models
 % for i=1:length(handles.Model)

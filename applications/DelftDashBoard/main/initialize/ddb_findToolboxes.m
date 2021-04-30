@@ -152,12 +152,45 @@ end
 % If toolbox "CSIPS" exists, move it to the end since it uses components
 % from the other toolboxes
 index=find(ismember(lower(name),'csips'));
-if ~isempty(index),
+if ~isempty(index)
    name = [name(1:index-1) name(index+1:end) name(index)];
 end
 
+% Only use toolboxes included in xml file
+if ~strcmpi(handles.configuration.include_toolboxes{1},'all')
+    name0=name;
+    tp0=tp;
+    name=[];
+    tp=[];
+    k=0;
+    names=handles.configuration.include_toolboxes;
+    for j=1:length(name0)
+        if ~isempty(strmatch(lower(name0{j}),lower(names)))
+            k=k+1;
+            name{k}=name0{j};
+            tp{k}  =tp0{j};
+        end
+    end
+else
+    % All toolboxes included, set ModelMaker as the first toolbox
+    name0=name;
+    tp0=tp;
+    name=[];
+    tp=[];
+    name{1}='ModelMaker';
+    tp{1}='standard';
+    n=1;
+    for k=1:length(name0)
+        if ~strcmpi(name0{k},'modelmaker')
+            n=n+1;
+            name{n}=name0{k};
+            tp{n}  =tp0{k};
+        end        
+    end
+end
+
 % Set names and functions
-nt=k;
+nt=length(name);
 for it=1:nt
     nm=lower(name{it});
     handles.toolbox.(nm).name=nm;
@@ -196,8 +229,16 @@ for it=1:length(toolboxes)
     handles=ddb_readToolboxXML(handles,toolboxes{it});
 end
 
-handles.activeToolbox.name='modelmaker';
+handles.activeToolbox.name=lower(name{1});
 handles.activeToolbox.nr=1;
+
+% if ~strcmpi(handles.configuration.include_toolboxes{1},'all')
+%     handles.activeToolbox.name=handles.configuration.include_toolboxes{1};
+%     handles.activeToolbox.nr=1;
+% else
+%     handles.activeToolbox.name='modelmaker';
+%     handles.activeToolbox.nr=1;
+% end
 
 setHandles(handles);
 

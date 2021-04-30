@@ -134,8 +134,40 @@ if ~isempty(dr2)
     end
 end
 
-nt=k;
+if ~strcmpi(handles.configuration.include_models{1},'all')
+    % Only use toolboxes included in xml file
+    name0=name;
+    tp0=tp;
+    name=[];
+    tp=[];
+    k=0;
+    names=handles.configuration.include_models;
+    for j=1:length(name0)
+        if ~isempty(strmatch(lower(name0{j}),lower(names)))
+            k=k+1;
+            name{k}=name0{j};
+            tp{k}  =tp0{j};
+        end
+    end
+else
+    % All models included, set Delft3D-FLOW as the first model
+    name0=name;
+    tp0=tp;
+    name=[];
+    tp=[];
+    name{1}='Delft3DFLOW';
+    tp{1}='standard';
+    n=1;
+    for k=1:length(name0)
+        if ~strcmpi(name0{k},'delft3dflow')
+            n=n+1;
+            name{n}=name0{k};
+            tp{n}  =tp0{k};
+        end        
+    end
+end
 
+nt=length(name);
 for i=1:nt
     nm=lower(name{i});
     handles.model.(nm).name=nm;
@@ -169,8 +201,13 @@ for i=1:length(models)
     handles=ddb_readModelXML(handles,models{i});
 end
 
-handles.activeModel.name='delft3dflow';
-handles.activeModel.nr=1;
+%if ~strcmpi(handles.configuration.include_models{1},'all')
+    handles.activeModel.name=lower(name{1});
+    handles.activeModel.nr=1;
+% else
+%     handles.activeModel.name='delft3dflow';
+%     handles.activeModel.nr=1;
+% end
 
 setHandles(handles);
 

@@ -67,10 +67,16 @@ handles.screenParameters.yMaxRange=[-90 90];
 
 handles.GUIData.backgroundImageType='bathymetry';
 
-for i=1:handles.bathymetry.nrDatasets
-    if handles.bathymetry.dataset(i).isAvailable
-        handles.screenParameters.backgroundBathymetry=handles.bathymetry.dataset(i).name;
-        break
+if ~isempty(handles.configuration.bathymetry)
+    % Use bathymetry defined in xml file
+    handles.screenParameters.backgroundBathymetry=handles.configuration.bathymetry;
+else
+    % Use first available dataset
+    for i=1:handles.bathymetry.nrDatasets
+        if handles.bathymetry.dataset(i).isAvailable
+            handles.screenParameters.backgroundBathymetry=handles.bathymetry.dataset(i).name;
+            break
+        end
     end
 end
 
@@ -86,10 +92,15 @@ handles.screenParameters.hillShading=10;
 
 handles.screenParameters.satelliteImageType='aerial';
 
-handles.screenParameters.coordinateSystem.name='WGS 84';
-handles.screenParameters.coordinateSystem.type='Geographic';
+handles.screenParameters.coordinateSystem.name=handles.configuration.cs.name;
+handles.screenParameters.coordinateSystem.type=handles.configuration.cs.type;
 handles.screenParameters.oldCoordinateSystem.name='WGS 84';
 handles.screenParameters.oldCoordinateSystem.type='Geographic';
+% handles.screenParameters.coordinateSystem.name='WGS 84';
+% handles.screenParameters.coordinateSystem.type='Geographic';
+% handles.screenParameters.oldCoordinateSystem.name='WGS 84';
+% handles.screenParameters.oldCoordinateSystem.type='Geographic';
+
 handles.screenParameters.UTMZone={31,'U'};
 
 handles.screenParameters.cMin=-10000;
@@ -102,8 +113,13 @@ handles.screenParameters.xLim=[-180 180];
 handles.screenParameters.yLim=[-90 90];
 
 handles.screenParameters.activeTab='Toolbox';
-handles.activeToolbox.name='modelmaker';
-handles.activeToolbox.nr=1;
+
+% if ~strcmpi(handles.configuration.include_toolboxes{1},'all')
+%     handles.activeToolbox.name=handles.configuration.include_toolboxes{1};    
+% else
+%     handles.activeToolbox.name='modelmaker';
+% end
+% handles.activeToolbox.nr=1;
 
 setHandles(handles);
 

@@ -1,4 +1,4 @@
-function ddb
+function ddb(varargin)
 %DDB  One line description goes here.
 %
 %   More detailed description goes here.
@@ -60,5 +60,11 @@ function ddb
 % $Keywords: $
 
 %%
-DelftDashBoard;
+if ~isempty(varargin)
+    xml_config_file = varargin{1};
+else
+    xml_config_file = 'delftdashboard.xml';    
+end
+
+DelftDashBoard(xml_config_file);
 

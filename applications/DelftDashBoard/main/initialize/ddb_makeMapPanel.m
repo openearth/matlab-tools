@@ -67,10 +67,11 @@ handles=getHandles;
 
 % First make large panel to contain map axis, colorbar etc.
 % The large panel will be a child of the active model gui
+mdl = handles.activeModel.name;
 if verLessThan('matlab', '8.4')
-    handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor','none');
+    handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.(mdl).GUI.element(1).element.handle,'BorderType','none','BackgroundColor','none');
 else
-    handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor',handles.backgroundColor);
+    handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.(mdl).GUI.element(1).element.handle,'BorderType','none','BackgroundColor',handles.backgroundColor);
 end
 
 % Add map axis
@@ -108,10 +109,14 @@ handles.GUIHandles.textYCoordinate = uicontrol(gcf,'Units','pixels','Parent',han
     'String',['Y : ' num2str(0)],'Position',[380 655 100 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 handles.GUIHandles.textZCoordinate = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
     'String',['Z : ' num2str(0)],'Position',[460 655 100 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
+csstr = [handles.screenParameters.coordinateSystem.name ' - ' handles.screenParameters.coordinateSystem.type];
 handles.GUIHandles.textCoordinateSystem = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
-    'String','WGS 84 - Geographic','Position',[100 655 200 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
+    'String',csstr,'Position',[100 655 200 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
+
+iac=strmatch(handles.screenParameters.backgroundBathymetry,handles.bathymetry.datasets,'exact');
+bathystr=[handles.bathymetry.longNames{iac} '   -   Datum : ' handles.bathymetry.dataset(iac).verticalCoordinateSystem.name];
 handles.GUIHandles.textBathymetry = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
-    'String',['Bathymetry : ' handles.bathymetry.dataset(1).name],'Position',[620 655 400 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
+    'String',['Bathymetry : ' bathystr],'Position',[620 655 400 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 handles.GUIHandles.textAnchor = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
     'String','','Position',[800 655 100 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 

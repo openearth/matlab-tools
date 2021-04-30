@@ -98,7 +98,7 @@ else
 
     % Read ddb config xml
     xmldir=handles.xmlConfigDir;
-    xmlfile='delftdashboard.xml';
+    xmlfile=handles.xml_config_file;
     filename=[xmldir xmlfile];
 
     % File always exists

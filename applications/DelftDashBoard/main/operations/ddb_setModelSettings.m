@@ -100,7 +100,7 @@ switch varargin{1}
         
         % And now read the config file
         xmldir=handles.xmlConfigDir;
-        xmlfile='delftdashboard.xml';
+        xmlfile=handles.xml_config_file;
         filename=[xmldir xmlfile];
         
         models=fieldnames(handles.model);

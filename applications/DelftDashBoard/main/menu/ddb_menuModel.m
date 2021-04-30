@@ -64,21 +64,21 @@ function ddb_menuModel(hObject, eventdata, varargin)
 
 handles=getHandles;
    
-models0=fieldnames(handles.model);
+models=fieldnames(handles.model);
 
 if isempty(varargin)
 
     % Fill menu on initialization
 
-    % First sort models, Delft3D-FLOW must be the first one
-    models{1}='delft3dflow';
-    n=1;
-    for k=1:length(models0)
-        if ~strcmpi(models0{k},'delft3dflow')
-            n=n+1;
-            models{n}=models0{k};
-        end
-    end
+%     % First sort models, Delft3D-FLOW must be the first one
+%     models{1}='delft3dflow';
+%     n=1;
+%     for k=1:length(models0)
+%         if ~strcmpi(models0{k},'delft3dflow')
+%             n=n+1;
+%             models{n}=models0{k};
+%         end
+%     end
     
     p=findobj(gcf,'Tag','menumodel');
 
@@ -88,7 +88,8 @@ if isempty(varargin)
         
         if handles.model.(name).enable
             sep='off';
-            if k==1
+            if strcmpi(handles.activeModel.name,name)
+%            if k==1
                 checked='on';
             else
                 checked='off';
