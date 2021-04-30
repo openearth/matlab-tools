@@ -27,6 +27,14 @@ if isfield(xml,'include_toolboxes')
     end
 end
 
+% First check which toolboxes to include
+handles.configuration.include_bathymetry={'all'};
+if isfield(xml,'include_bathymetry')
+    for j=1:length(xml.include_bathymetry.include_bathymetry.bathymetry)
+        handles.configuration.include_bathymetry{j}=xml.include_bathymetry.include_bathymetry.bathymetry(j).bathymetry.value;
+    end
+end
+
 % Default coordinate system
 handles.configuration.cs.name='WGS 84';
 handles.configuration.cs.type='geographic';

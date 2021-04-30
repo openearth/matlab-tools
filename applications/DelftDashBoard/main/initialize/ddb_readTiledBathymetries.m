@@ -1,4 +1,4 @@
-function bathymetry = ddb_readTiledBathymetries(bathydir)
+function bathymetry = ddb_readTiledBathymetries(bathydir,varargin)
 %DDB_READTILEDBATHYMETRIES  One line description goes here.
 %
 %   More detailed description goes here.
@@ -59,6 +59,12 @@ function bathymetry = ddb_readTiledBathymetries(bathydir)
 % $HeadURL$
 % $Keywords: $
 
+if isempty(varargin)
+    requested_datasets={'all'};
+else
+    requested_datasets=varargin{1};
+end
+
 %% When enabled on OpenDAP
 % Check for updates on OpenDAP and add data to structure
 localdir = bathydir;
@@ -67,9 +73,23 @@ xmlfile = 'bathymetry.xml';
 bathymetry = ddb_getXmlData(localdir,url,xmlfile);
 bathymetry.dir=bathydir;
 
+if ~strcmpi(requested_datasets{1},'all')
+    % First filter datasets
+    n=0;
+    for j=1:length(bathymetry.dataset)
+        if ~isempty(strmatch(lower(bathymetry.dataset(j).name),lower(requested_datasets),'exact'))
+            n=n+1;
+            bathy0.dataset(n)=bathymetry.dataset(j);
+        end
+    end
+    bathy0.dir=bathymetry.dir;
+    bathymetry=bathy0;
+end
+
 % Add specific fields to structure
 fld = fieldnames(bathymetry);
-names = '';longNames = '';
+names = '';
+longNames = '';
 for ii=1:length(bathymetry.(fld{1}))
     bathymetry.(fld{1})(ii).useCache = str2double(bathymetry.(fld{1})(ii).useCache);
     bathymetry.(fld{1})(ii).edit = str2double(bathymetry.(fld{1})(ii).edit);

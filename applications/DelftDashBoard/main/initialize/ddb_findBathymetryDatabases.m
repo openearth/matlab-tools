@@ -1,4 +1,4 @@
-function bathymetry=ddb_findBathymetryDatabases(bathymetry)
+function bathymetry=ddb_findBathymetryDatabases(bathymetry,varargin)
 %DDB_FINDBATHYMETRYDATABASES  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,7 +61,13 @@ function bathymetry=ddb_findBathymetryDatabases(bathymetry)
 
 %%
 
-bathymetry=ddb_readTiledBathymetries(bathymetry.dir);
+if isempty(varargin)
+   requested_datasets={'all'};
+else
+    requested_datasets=varargin{1};
+end
+
+bathymetry=ddb_readTiledBathymetries(bathymetry.dir,requested_datasets);
 
 for i=1:bathymetry.nrDatasets
     % Set this dataset to available (for now)

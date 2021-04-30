@@ -92,7 +92,7 @@ switch lower(varargin{1})
         tic
         disp('Finding bathymetry datasets ...');
         handles=getHandles;
-        handles.bathymetry=ddb_findBathymetryDatabases(handles.bathymetry);
+        handles.bathymetry=ddb_findBathymetryDatabases(handles.bathymetry,handles.configuration.include_bathymetry);
         setHandles(handles);
         toc
         
