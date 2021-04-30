@@ -156,3 +156,9 @@ handles.toolbox.nesting.nestHydro     = 1;
 handles.toolbox.nesting.nestTransport = 1;
 
 handles.toolbox.nesting.singleSP2file='';
+
+
+handles.toolbox.nesting.timestep = 10;
+handles.toolbox.nesting.flowwave = 0;
+handles.toolbox.nesting.distance = 2000;
+handles.toolbox.nesting.sequence = 1;
