@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17209 $
-%$Date: 2021-04-23 08:57:29 +0200 (Fri, 23 Apr 2021) $
-%$Author: chavarri $
-%$Id: addOET.m 17209 2021-04-23 06:57:29Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/addOET.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %This does A and B
 %
