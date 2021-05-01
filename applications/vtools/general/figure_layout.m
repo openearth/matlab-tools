@@ -228,6 +228,13 @@ end
 % han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right','Color','none');
 
 %% HOLD
+
+% axis_m=[1,2;2,1;2,2;2,3];
+% na=size(axis_m,1);
+% for ka=1:na
+%     hold(han.sfig(axis_m(ka,1),axis_m(ka,2)),'on')
+% end
+
 for kr=1:npr
     for kc=1:npc
         hold(han.sfig(kr,kc),'on')
