@@ -235,10 +235,8 @@ function [eigen_all,elliptic,A,cp,Ribb,out,pmm,...
           A_ED,K_ED,B_ED,...
           eigen_all_Dm,elliptic_Dm,A_Dm,...
           eigen_all_2Dx_d,eigen_all_2Dy_d,elliptic_2D_d,Ax_d,Ay_d,Dx_d,Dy_d,B_d,C_d...
-          ]=ECT_190227(flg,varargin)
+          ]=ECT(flg,varargin)
       
-
-
 
 %% INPUT
 
@@ -398,6 +396,12 @@ diff_hir=parin.Results.diff_hir;
 
 %assign constants
 cnt=parin.Results.cnt; 
+
+%% flg
+
+if isfield(flg,'compute_eigenvalues')==0
+    flg.compute_eigenvalues=0;
+end
 
 %% sizes of matrix
 
@@ -1146,16 +1150,21 @@ A(3+1:3+nf-1,3+1:3+nf-1)=(dqbk_dMal(1:nf-1,1:nf-1)-dqb_dMal(1:nf-1,1)*Fik(1:nf-1
 % A(3+nf-1+1:end,3+nf-1+1:end)=zeros(nf-1,nf-1);
 
 %% Eigenvalues (fully coupled)
-eig_l_all=eig(A);
+if flg.compute_eigenvalues
+    eig_l_all=eig(A);
 
-elliptic=0;
-if isreal(eig_l_all)==0
-    elliptic=1;
-end
+    elliptic=0;
+    if isreal(eig_l_all)==0
+        elliptic=1;
+    end
 
-eigen_all_f=eig_l_all(abs(eig_l_all)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0=length(eigen_all_f); %number of eigenvalues above threshold
-eigen_all=[eigen_all_f;zeros(ne-ne_d0,1)]; %assign 0 to the very small eigenvalues
+    eigen_all_f=eig_l_all(abs(eig_l_all)>1e-14); %all eigenvalues above threshold (filtered)
+    ne_d0=length(eigen_all_f); %number of eigenvalues above threshold
+    eigen_all=[eigen_all_f;zeros(ne-ne_d0,1)]; %assign 0 to the very small eigenvalues
+else
+    eigen_all=NaN;
+    elliptic=NaN;
+end 
 
 else 
     A=NaN;
@@ -1189,16 +1198,21 @@ D_qs=zeros(nA_qs,nA_qs);
 D_qs(2:end,2:end)=diag(repmat(diff_hir(1),nef,1),0);
 
 %% Eigenvalues (quasi-steady)
-eig_l_all_qs=eig(A_qs);
+if flg.compute_eigenvalues
+    eig_l_all_qs=eig(A_qs);
 
-elliptic_qs=0;
-if isreal(eig_l_all_qs)==0
-    elliptic_qs=1;
+    elliptic_qs=0;
+    if isreal(eig_l_all_qs)==0
+        elliptic_qs=1;
+    end
+
+    eigen_all_f_qs=eig_l_all_qs(abs(eig_l_all_qs)>1e-14); %all eigenvalues above threshold (filtered)
+    ne_d0_qs=length(eigen_all_f_qs); %number of eigenvalues above threshold
+    eigen_all_qs=[eigen_all_f_qs;zeros(ne_qs-ne_d0_qs,1)]; %assign 0 to the very small eigenvalues
+else
+    eigen_all_qs=NaN;
+    elliptic_qs=NaN;
 end
-
-eigen_all_f_qs=eig_l_all_qs(abs(eig_l_all_qs)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_qs=length(eigen_all_f_qs); %number of eigenvalues above threshold
-eigen_all_qs=[eigen_all_f_qs;zeros(ne_qs-ne_d0_qs,1)]; %assign 0 to the very small eigenvalues
 
 else
     A_qs=NaN;
@@ -1257,17 +1271,21 @@ A_dLa(4+1:4+nf-1,4+1:4+nf-1)=(dqbk_dMal(1:nf-1,1:nf-1)-dqb_dMal(1:nf-1,1)*Fik(1:
 % A_dLa(4+nf-1+1:end,4+nf-1+1:end)=zeros(nf-1,nf-1);
 
 %% Eigenvalues (variable active layer thickness)
-eig_l_all_dLa=eig(A_dLa);
+if flg.compute_eigenvalues
+    eig_l_all_dLa=eig(A_dLa);
 
-elliptic_dLa=0;
-if isreal(eig_l_all_dLa)==0
-    elliptic_dLa=1;
+    elliptic_dLa=0;
+    if isreal(eig_l_all_dLa)==0
+        elliptic_dLa=1;
+    end
+
+    eigen_all_f_dLa=eig_l_all_dLa(abs(eig_l_all_dLa)>1e-14); %all eigenvalues above threshold (filtered)
+    ne_d0_dLa=length(eigen_all_f_dLa); %number of eigenvalues above threshold
+    eigen_all_dLa=[eigen_all_f_dLa;zeros(ne_dLa-ne_d0_dLa,1)]; %assign 0 to the very small eigenvalues
+else
+    eigen_all_dLa=NaN;
+    elliptic_dLa=NaN;
 end
-
-eigen_all_f_dLa=eig_l_all_dLa(abs(eig_l_all_dLa)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_dLa=length(eigen_all_f_dLa); %number of eigenvalues above threshold
-eigen_all_dLa=[eigen_all_f_dLa;zeros(ne_dLa-ne_d0_dLa,1)]; %assign 0 to the very small eigenvalues
-
 else
     A_dLa=NaN;
     eigen_all_dLa=NaN;
@@ -1376,17 +1394,21 @@ A_ad(2+nef+1:2+2*nef,2+nef)=-sum(repmat(Fik(1:nef),nef,1).*dqbk_dMal(1:nef,1:nef
 A_ad(2+nef+1:2+2*nef,2+nef+1:2+2*nef)=u_b.*eye(nef)+dqbk_dMal(1:nef,1:nef)';
 
 %% Eigenvalues (advection decay)
-eig_l_all_ad=eig(A_ad);
+if flg.compute_eigenvalues    
+    eig_l_all_ad=eig(A_ad);
 
-elliptic_ad=0;
-if isreal(eig_l_all_ad)==0
-    elliptic_ad=1;
+    elliptic_ad=0;
+    if isreal(eig_l_all_ad)==0
+        elliptic_ad=1;
+    end
+
+    eigen_all_f_ad=eig_l_all_ad(abs(eig_l_all_ad)>1e-14); %all eigenvalues above threshold (filtered)
+    ne_d0_ad=length(eigen_all_f_ad); %number of eigenvalues above threshold
+    eigen_all_ad=[eigen_all_f_ad;zeros(ne_ad-ne_d0_ad,1)]; %assign 0 to the very small eigenvalues
+else
+    eigen_all_ad=NaN;
+    elliptic_ad=NaN;
 end
-
-eigen_all_f_ad=eig_l_all_ad(abs(eig_l_all_ad)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_ad=length(eigen_all_f_ad); %number of eigenvalues above threshold
-eigen_all_ad=[eigen_all_f_ad;zeros(ne_ad-ne_d0_ad,1)]; %assign 0 to the very small eigenvalues
-
 else
     A_ad=NaN;
     eigen_all_ad=NaN;
@@ -1478,22 +1500,27 @@ B(2,1:3)=[         -(2*Q*cf*q(1))/h^3-cnt.g*sx,                  (Q*cf)/h^2 + (c
 B(3,1:3)=[         -(2*Q*cf*q(2))/h^3-cnt.g*sy,                            (cf*q(1)*q(2))/(Q*h^2),                  (Q*cf)/h^2 + (cf*q(2)^2)/(Q*h^2)];
 
 %% Eigenvalues (2D)
-eig_l_all_2Dx=eig(Ax);
-eig_l_all_2Dy=eig(Ay);
+if flg.compute_eigenvalues
+    eig_l_all_2Dx=eig(Ax);
+    eig_l_all_2Dy=eig(Ay);
 
-elliptic_2D=0;
-if isreal(eig_l_all_2Dx)==0 || isreal(eig_l_all_2Dy)==0
-    elliptic_2D=1;
+    elliptic_2D=0;
+    if isreal(eig_l_all_2Dx)==0 || isreal(eig_l_all_2Dy)==0
+        elliptic_2D=1;
+    end
+
+    eigen_all_f_2Dx=eig_l_all_2Dx(abs(eig_l_all_2Dx)>1e-14); %all eigenvalues above threshold (filtered)
+    ne_d0_2Dx=length(eigen_all_f_2Dx); %number of eigenvalues above threshold
+    eigen_all_2Dx=[eigen_all_f_2Dx;zeros(ne_2D-ne_d0_2Dx,1)]; %assign 0 to the very small eigenvalues
+
+    eigen_all_f_2Dy=eig_l_all_2Dy(abs(eig_l_all_2Dy)>1e-14); %all eigenvalues above threshold (filtered)
+    ne_d0_2Dy=length(eigen_all_f_2Dy); %number of eigenvalues above threshold
+    eigen_all_2Dy=[eigen_all_f_2Dy;zeros(ne_2D-ne_d0_2Dy,1)]; %assign 0 to the very small eigenvalues
+else
+    eigen_all_2Dx=NaN;
+    eigen_all_2Dy=NaN;
+    elliptic_2D=NaN;
 end
-
-eigen_all_f_2Dx=eig_l_all_2Dx(abs(eig_l_all_2Dx)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_2Dx=length(eigen_all_f_2Dx); %number of eigenvalues above threshold
-eigen_all_2Dx=[eigen_all_f_2Dx;zeros(ne_2D-ne_d0_2Dx,1)]; %assign 0 to the very small eigenvalues
-
-eigen_all_f_2Dy=eig_l_all_2Dy(abs(eig_l_all_2Dy)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_2Dy=length(eigen_all_f_2Dy); %number of eigenvalues above threshold
-eigen_all_2Dy=[eigen_all_f_2Dy;zeros(ne_2D-ne_d0_2Dy,1)]; %assign 0 to the very small eigenvalues
-
 else
     Ax=NaN;
     Ay=NaN;
@@ -1600,22 +1627,27 @@ B_sf(3,1:4)=[-(2*Q*cf*q(2))/h^3-cnt.g*sy,           (cf*q(1)*q(2))/(Q*h^2), (Q*c
 B_sf(4,1:4)=[          -(2*I*Q)/(LI*h^3),              (I*q(1))/(LI*Q*h^2),              (I*q(2))/(LI*Q*h^2),  Q/(LI*h^2)];
     
 %% Eigenvalues (2D secondary flow)
-eig_l_all_2Dx_sf=eig(Ax_sf);
-eig_l_all_2Dy_sf=eig(Ay_sf);
+if flg.compute_eigenvalues
+    eig_l_all_2Dx_sf=eig(Ax_sf);
+    eig_l_all_2Dy_sf=eig(Ay_sf);
 
-elliptic_2D_sf=0;
-if isreal(eig_l_all_2Dx_sf)==0 || isreal(eig_l_all_2Dy_sf)==0
-    elliptic_2D_sf=1;
+    elliptic_2D_sf=0;
+    if isreal(eig_l_all_2Dx_sf)==0 || isreal(eig_l_all_2Dy_sf)==0
+        elliptic_2D_sf=1;
+    end
+
+    eigen_all_f_2Dx_sf=eig_l_all_2Dx_sf(abs(eig_l_all_2Dx_sf)>1e-14); %all eigenvalues above threshold (filtered)
+    ne_d0_2Dx_sf=length(eigen_all_f_2Dx_sf); %number of eigenvalues above threshold
+    eigen_all_2Dx_sf=[eigen_all_f_2Dx_sf;zeros(ne_2D_sf-ne_d0_2Dx_sf,1)]; %assign 0 to the very small eigenvalues
+
+    eigen_all_f_2Dy_sf=eig_l_all_2Dy_sf(abs(eig_l_all_2Dy_sf)>1e-14); %all eigenvalues above threshold (filtered)
+    ne_d0_2Dy_sf=length(eigen_all_f_2Dy_sf); %number of eigenvalues above threshold
+    eigen_all_2Dy_sf=[eigen_all_f_2Dy_sf;zeros(ne_2D_sf-ne_d0_2Dy_sf,1)]; %assign 0 to the very small eigenvalues
+else
+    eigen_all_2Dx_sf=NaN;
+    eigen_all_2Dy_sf=NaN;
+    elliptic_2D_sf=NaN; 
 end
-
-eigen_all_f_2Dx_sf=eig_l_all_2Dx_sf(abs(eig_l_all_2Dx_sf)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_2Dx_sf=length(eigen_all_f_2Dx_sf); %number of eigenvalues above threshold
-eigen_all_2Dx_sf=[eigen_all_f_2Dx_sf;zeros(ne_2D_sf-ne_d0_2Dx_sf,1)]; %assign 0 to the very small eigenvalues
-
-eigen_all_f_2Dy_sf=eig_l_all_2Dy_sf(abs(eig_l_all_2Dy_sf)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_2Dy_sf=length(eigen_all_f_2Dy_sf); %number of eigenvalues above threshold
-eigen_all_2Dy_sf=[eigen_all_f_2Dy_sf;zeros(ne_2D_sf-ne_d0_2Dy_sf,1)]; %assign 0 to the very small eigenvalues
-
 else
     Ax_sf=NaN;
     Ay_sf=NaN;
@@ -1668,6 +1700,7 @@ B_SW(2,1:3)=[         -(2*Q*cf*q(1))/h^3-cnt.g*sx,                  (Q*cf)/h^2 +
 B_SW(3,1:3)=[         -(2*Q*cf*q(2))/h^3-cnt.g*sy,                            (cf*q(1)*q(2))/(Q*h^2),                  (Q*cf)/h^2 + (cf*q(2)^2)/(Q*h^2)];
 
 %% Eigenvalues (SW no secondary flow)
+if flg.compute_eigenvalues
 eig_l_all_SWx=eig(Ax_SW);
 eig_l_all_SWy=eig(Ay_SW);
 
@@ -1687,6 +1720,11 @@ eigen_all_SWy=eig_l_all_SWy;
 % ne_d0_2Dy_sf=length(eigen_all_f_2Dy_sf); %number of eigenvalues above threshold
 % eigen_all_2Dy_sf=[eigen_all_f_2Dy_sf;zeros(ne_2D_sf-ne_d0_2Dy_sf,1)]; %assign 0 to the very small eigenvalues
 
+else
+    eigen_all_SWx=NaN;
+    eigen_all_SWy=NaN;
+    elliptic_SW=NaN; 
+end
 
 else
     Ax_SW=NaN;
@@ -1749,7 +1787,8 @@ B_SW_sf(4,1:4)=[          -(2*I*Q)/(LI*h^3),              (I*q(1))/(LI*Q*h^2),  
 
 %% Eigenvalues (2D secondary flow)
 
-[elliptic_SW_sf]=ellipticity_2D(param_twoD,Ax_SW_sf,Ay_SW_sf);
+% [elliptic_SW_sf]=ellipticity_2D(param_twoD,Ax_SW_sf,Ay_SW_sf);
+elliptic_SW_sf=NaN;
 
 % eigen_all_SWx_sf=eig(Ax_SW_sf);
 % eigen_all_SWy_sf=eig(Ax_SW_sf);
@@ -1816,12 +1855,13 @@ B_SWE(3,1:3)=[         -(2*Q*cf*q(2))/h^3-cnt.g*sy,                            (
 
 %% Eigenvalues (2D SWE secondary flow)
 
-[elliptic_SWE]=ellipticity_2D(param_twoD,Ax_SWE,Ay_SWE);
+% [elliptic_SWE]=ellipticity_2D(param_twoD,Ax_SWE,Ay_SWE);
 
 % eigen_all_SWEx=eig(Ax_SWE);
 % eigen_all_SWEy=eig(Ay_SWE);
 eigen_all_SWEx=NaN;
 eigen_all_SWEy=NaN;
+elliptic_SWE=NaN;
 
 else
     Ax_SWE=NaN;
@@ -1889,8 +1929,8 @@ B_SWE_sf(4,1:4)=[          -(2*I*Q)/(LI*h^3),              (I*q(1))/(LI*Q*h^2), 
 
 %% Eigenvalues (2D secondary flow)
 
-[elliptic_SWE_sf]=ellipticity_2D(param_twoD,Ax_SWE_sf,Ay_SWE_sf);
-
+% [elliptic_SWE_sf]=ellipticity_2D(param_twoD,Ax_SWE_sf,Ay_SWE_sf);
+elliptic_SWE_sf=NaN;
 % eigen_all_SWEx_sf=eig(Ax_SWE_sf);
 % eigen_all_SWEy_sf=eig(Ax_SWE_sf);
 eigen_all_SWEx_sf=NaN;
@@ -1990,15 +2030,17 @@ A_Dm(2,2)=-1/La*(DmI*dqb_dDm-sum(dk.*dqbk_dDm));
                   
 %% Eigenvalues (quasi-steady)
 eig_l_all_Dm=eig(A_Dm);
-
-elliptic_Dm=0;
-if isreal(eig_l_all_Dm)==0
-    elliptic_Dm=1;
-end
-
-eigen_all_f_Dm=eig_l_all_Dm(abs(eig_l_all_Dm)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_Dm=length(eigen_all_f_Dm); %number of eigenvalues above threshold
-eigen_all_Dm=[eigen_all_f_Dm;zeros(2-ne_d0_Dm,1)]; %assign 0 to the very small eigenvalues
+    eigen_all_Dm=NaN;
+    elliptic_Dm=NaN;
+    
+% elliptic_Dm=0;
+% if isreal(eig_l_all_Dm)==0
+%     elliptic_Dm=1;
+% end
+% 
+% eigen_all_f_Dm=eig_l_all_Dm(abs(eig_l_all_Dm)>1e-14); %all eigenvalues above threshold (filtered)
+% ne_d0_Dm=length(eigen_all_f_Dm); %number of eigenvalues above threshold
+% eigen_all_Dm=[eigen_all_f_Dm;zeros(2-ne_d0_Dm,1)]; %assign 0 to the very small eigenvalues
 
 else
     A_Dm=NaN;
@@ -2096,22 +2138,24 @@ B_d(2,1:3)=[         -(2*Q*cf*q(1))/h^3-cnt.g*sx,                  (Q*cf)/h^2 + 
 B_d(3,1:3)=[         -(2*Q*cf*q(2))/h^3-cnt.g*sy,                            (cf*q(1)*q(2))/(Q*h^2),                  (Q*cf)/h^2 + (cf*q(2)^2)/(Q*h^2)];
 
 %% Eigenvalues (2D)
-eig_l_all_2Dx_d=eig(Ax_d);
-eig_l_all_2Dy_d=eig(Ay_d);
-
-elliptic_2D_d=0;
-if isreal(eig_l_all_2Dx_d)==0 || isreal(eig_l_all_2Dy_d)==0
-    elliptic_2D_d=1;
-end
-
-eigen_all_f_2Dx_d=eig_l_all_2Dx_d(abs(eig_l_all_2Dx_d)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_2Dx_d=length(eigen_all_f_2Dx_d); %number of eigenvalues above threshold
-eigen_all_2Dx_d=[eigen_all_f_2Dx_d;zeros(ne_2D-ne_d0_2Dx_d,1)]; %assign 0 to the very small eigenvalues
-
-eigen_all_f_2Dy_d=eig_l_all_2Dy_d(abs(eig_l_all_2Dy_d)>1e-14); %all eigenvalues above threshold (filtered)
-ne_d0_2Dy_d=length(eigen_all_f_2Dy_d); %number of eigenvalues above threshold
-eigen_all_2Dy_d=[eigen_all_f_2Dy_d;zeros(ne_2D-ne_d0_2Dy_d,1)]; %assign 0 to the very small eigenvalues
-
+% eig_l_all_2Dx_d=eig(Ax_d);
+% eig_l_all_2Dy_d=eig(Ay_d);
+% 
+% elliptic_2D_d=0;
+% if isreal(eig_l_all_2Dx_d)==0 || isreal(eig_l_all_2Dy_d)==0
+%     elliptic_2D_d=1;
+% end
+% 
+% eigen_all_f_2Dx_d=eig_l_all_2Dx_d(abs(eig_l_all_2Dx_d)>1e-14); %all eigenvalues above threshold (filtered)
+% ne_d0_2Dx_d=length(eigen_all_f_2Dx_d); %number of eigenvalues above threshold
+% eigen_all_2Dx_d=[eigen_all_f_2Dx_d;zeros(ne_2D-ne_d0_2Dx_d,1)]; %assign 0 to the very small eigenvalues
+% 
+% eigen_all_f_2Dy_d=eig_l_all_2Dy_d(abs(eig_l_all_2Dy_d)>1e-14); %all eigenvalues above threshold (filtered)
+% ne_d0_2Dy_d=length(eigen_all_f_2Dy_d); %number of eigenvalues above threshold
+% eigen_all_2Dy_d=[eigen_all_f_2Dy_d;zeros(ne_2D-ne_d0_2Dy_d,1)]; %assign 0 to the very small eigenvalues
+    eigen_all_2Dx_d=NaN;
+    eigen_all_2Dy_d=NaN;
+    elliptic_2D_d=NaN;
 else
     Ax_d=NaN;
     Ay_d=NaN;
@@ -2701,6 +2745,10 @@ end %function ECT_~
 
 function [elliptic]=ellipticity_2D(param_twoD,Ax,Ay)
 
+% This is not correct, as one should check as a function of wavenumber. Better to do in 2D analysis
+elliptic=NaN;
+
+if 0
 %% RENAME
 
 np=param_twoD.nr;
@@ -2731,8 +2779,10 @@ while kp<np && elliptic==0
         kp=kp+1;
     end
 end    
-   
+  
 end
+
+end %ellipticity_2D
 
 function alpha_o=pmm_general(A,nf)
 
