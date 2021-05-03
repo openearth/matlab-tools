@@ -70,34 +70,17 @@ hold on
 %% get figure limits
 
 if flg.debug
-    
     x0_px=144;
     y0_px=733;
-%     xf_px=1058;
-%     yf_px=54;
-    
 else
-    
     fprintf('Click on lower-left end of the figure \n');
     [x0_px,y0_px,~]=ginput(1);
     scatter(x0_px,y0_px,20,'sg')
-%     fprintf('Click on upper-right end of the figure \n');
-%     [xf_px,yf_px,~]=ginput(1);
-%     scatter(xf_px,yf_px,20,'sg')
-    
 end
 
 %% get input for scale
 
-%general
-% x_px_tot=xf_px-x0_px;
-% y_px_tot=y0_px-yf_px; %y pixels measured from top to bottom
-
-
 if flg.debug
-
-%     x_px_tot=918;
-%     y_px_tot=721;
     x_px_low=543;
     x_ax_low=1;
     x_px_high=942;
@@ -106,7 +89,6 @@ if flg.debug
     y_ax_low=25;
     y_px_high=235;
     y_ax_high=75;
-
 else
     
     fprintf('Click on low x value \n');
@@ -141,13 +123,6 @@ end
 
 x_s=(x_px_high-x_px_low)/(x_ax_high-x_ax_low); %px/ax
 x0_ax=x_ax_low+(x0_px-x_px_low)/x_s;
-% xf_ax=x_ax_low+(xf_px-x_px_low)/x_s;
-% x_lims=[x0_ax,xf_ax];
-%      
-% switch XScale
-%     case 'log'
-%         x_lims=10.^x_lims;
-% end
 
 switch YScale
     case 'log'
@@ -157,17 +132,6 @@ end
 
 y_s=abs((y_px_high-y_px_low)/(y_ax_high-y_ax_low)); %px/ax pixels in y axis go from top to bottom.
 y0_ax=y_ax_low-(y0_px-y_px_low)/y_s;
-% yf_ax=y_ax_low-(yf_px-y_px_low)/y_s;
-% y_lims=[y0_ax,yf_ax];
-%      
-% switch YScale
-%     case 'log'
-%         y_lims=10.^y_lims;
-% end
-
-%output
-% im_data.XLim=x_lims;
-% im_data.YLim=y_lims;
 
 %% get data from figure
 
@@ -177,8 +141,8 @@ c=1;
 class=[];
 while any(class==32)~=1 %escape with bar
 [x_px(c),y_px(c),class(c)]=ginput(1);
-if class(c)~=1
-scatter(x_px(c),y_px(c),10,'r')
+if class(c)~=32
+scatter(x_px(c),y_px(c),20,'xr')
 fprintf('Finish pressing bar. Points taken = %d \n',c)
 end
 c=c+1;
@@ -235,7 +199,7 @@ print(han.fout,fname_save_fig,'-dpng','-r300')
 
 data=[x_ax',y_ax',class_f];
 save(fname_save_mat,'data')
-fprintf('Data saved: %s \n',fname)
+fprintf('Data saved: %s \n',fname_save_mat)
 
 end %function
 
