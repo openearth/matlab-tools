@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17248 $
-%$Date: 2021-05-01 08:15:23 +0200 (Sat, 01 May 2021) $
-%$Author: chavarri $
-%$Id: ECT.m 17248 2021-05-01 06:15:23Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/ECT/ECT.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %call to Ellipticity Check Tool
 %

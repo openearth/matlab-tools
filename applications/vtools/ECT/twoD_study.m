@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17247 $
-%$Date: 2021-05-01 08:13:53 +0200 (Sat, 01 May 2021) $
-%$Author: chavarri $
-%$Id: figure_layout.m 17247 2021-05-01 06:13:53Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/figure_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [eig_r,eig_i,kwx_v,kwy_v]=twoD_study(ECT_matrices,in_2D)

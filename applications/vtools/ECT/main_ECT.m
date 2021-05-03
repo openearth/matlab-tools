@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 7 $
-%$Date: 2021-04-16 23:44:32 +0200 (Fri, 16 Apr 2021) $
-%$Author: chavarri $
-%$Id: main_create_RL_polylines.m 7 2021-04-16 21:44:32Z chavarri $
-%$HeadURL: file:///P:/11206792-kpp-rivierkunde-2021/003_maas/09_scrips/svn/main_create_RL_polylines.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 %% PREAMBLE
