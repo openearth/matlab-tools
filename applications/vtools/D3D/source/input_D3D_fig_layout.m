@@ -85,9 +85,9 @@ simdef.flg.which_v=17; %which variable:
 %   22=cumulative nourished volume of sediment
 %   23=suspended transport in streamwise direction
 %   24=cumulative bed load transport
-%   25=total sediment mass (summation of all substrate layers)
+%   25=total sediment mass (summation of all substrate layers, including active layer)
 %   26=dg Fak
-%   27=total sediment thickness (summation of all substrate layers)
+%   27=total sediment thickness (summation of all substrate layers, including active layer)
 %   28=main channel averaged bed level
 %   29=sediment transport magnitude at edges m^2/s
 %   30=sediment transport magnitude at edges m^3/s
@@ -99,6 +99,8 @@ simdef.flg.which_v=17; %which variable:
 %   36=Froude number [-]
 %   37=CFL [-]
 %   38=time step [s]
+%	39=sediment thickness per layer (including active layer) [m]
+%	40=volume fraction content per layer (including active layer) [-]
 
     %% domain
     

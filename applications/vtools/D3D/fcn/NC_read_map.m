@@ -28,11 +28,17 @@ kf=in.kf; %fractions to plot
 kF=in.kF; %faces to plot
 kcs=in.kcs; %cross-sections to plot
 
+if isfield(file,'partitions')==0
+    file.partitions=1;
+end
 if isfield(flg,'get_cord')==0
     flg.get_cord=1;
 end
 if isfield(flg,'get_EHY')==0
     flg.get_EHY=0;
+end
+if file.partitions>1
+    flg.get_EHY=1;
 end
 
 %overwritten by input variable
@@ -899,30 +905,28 @@ switch flg.which_p
                 end
                 out.zlabel='geometric mean grain size [m]';
 %%
-            case 27 %sediment thickness
-                switch simdef.D3D.structure
-                    case 2 %FM
-                        if is1d
-                            out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            out.z=sum(out.z,1)';
-                        else
-                            error('check')
-                            wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
-
-                            %output
-                            out.z=wl;
-                            out.x_node=x_node;
-                            out.y_node=y_node;
-                            out.x_face=x_face;
-                            out.y_face=y_face;
-                            out.faces=faces;
-                                 
-                        end
-                    case 3 %SOBEK3
-                        error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                end
-                out.zlabel='total sediment thickness [m]';
+%             case 27 %sediment thickness
+%                 switch simdef.D3D.structure
+%                     case 2 %FM
+%                         if is1d
+%                             out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+%                             out.z=sum(out.z,1)';
+%                         else
+%                             if flg.get_EHY
+%                                z=get_EHY(file.map,'mesh2d_thlyr',time_dnum);
+%                                z=sum(z,2);
+%                                out=v2struct(z,face_nodes_x,face_nodes_y);
+%                             else
+%                                z=ncread(file.map,'mesh2d_thlyr',[kl(1),kF(1),kt(1)],[kl(2),kF(2),kt(2)]);  
+%                     
+%                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+%                             end        
+%                         end
+%                     case 3 %SOBEK3
+%                         error('check')
+%                         out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+%                 end
+%                 out.zlabel='total sediment thickness [m]';
 %%
             case 28 %Main channel averaged bed level
                 switch simdef.D3D.structure
@@ -1217,10 +1221,69 @@ switch flg.which_p
                         out=get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
                 end
                 out.zlabel='time step [s]';  
+%%
+            case {27,39} %sediment thickness
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            if flg.which_v==27
+                                out.z=sum(out.z,1)';
+                            end
+                        else
+                            if flg.get_EHY
+                               z=get_EHY(file.map,'mesh2d_thlyr',time_dnum);
+                               if flg.which_v==27
+                                   z=sum(z,2);
+                               end
+                               out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                               z=ncread(file.map,'mesh2d_thlyr',[1,kF(1),kt(1)],[Inf,kF(2),kt(2)]);  
+                               if flg.which_v==27
+                                   z=sum(z,1);
+                               end                
+                               out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end   
+                        end
+                    case 3 %SOBEK3
+                        error('check')
+                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                end
+                if flg.which_v==27
+                    out.zlabel='total sediment thickness [m]';
+                elseif flg.which_v==39
+                    out.zlabel='sediment thickness [m]';
+                end
+%%
+            case 40 %volume fraction content
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            error('check')
+                            out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out.z=sum(out.z,1)';
+                        else
+                            if flg.get_EHY
+                               z=get_EHY(file.map,'mesh2d_lyrfrac',time_dnum);
+
+                               out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                               z=ncread(file.map,'mesh2d_lyrfrac',[kF(1),1,kf(1),kt(1)],[kF(2),Inf,kf(2),kt(2)]);  
+                    
+                               out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end   
+                        end
+                    case 3 %SOBEK3
+                        error('check')
+                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                end
+                out.zlabel='total sediment thickness [m]';
+%%
             otherwise
                 error('ups...')
 
         end %flg.which_v
+        
 %%
 %% PATCH 
 %%
@@ -1670,6 +1733,10 @@ OPT.tend=time_dnum(end);
 OPT.disp=0;
 
 map_data=EHY_getMapModelData(file_map,OPT);
-val=map_data.val';
+if numel(size(map_data.val))==2
+    val=map_data.val';
+else
+    val=map_data.val;
+end
 
 end

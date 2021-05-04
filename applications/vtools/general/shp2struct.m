@@ -1,12 +1,39 @@
-function [outputvar] = shp2struct(fullfile)
-%SHP2STRUCT  convert a shape file to a struct
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+%I do not know who made this function first but I guess Bert Jaggers. I have
+%adapted it a bit. 
+%
+%convert a shape file to a struct. 
 
-  % addpath('c:\Program Files (x86)\Deltares\Delft3D 4.00.12\win32\delft3d_matlab\')
-  SHP=qpfopen(fullfile);
-  Q=qpread(SHP);
-  objstr = {Q.Name};
-  outputvar.xy=qpread(SHP,objstr{1},'griddata');
-  for i=2:length(objstr)
-    outputvar.val{i-1}=qpread(SHP,objstr{i},'data');
-  end
+function [outputvar] = shp2struct(fullfile,varargin)
 
+%% PARSE
+
+parin=inputParser;
+addOptional(parin,'read_val',false);
+parse(parin,varargin{:});
+read_val=parin.Results.read_val;
+
+%% CALC
+
+SHP=qpfopen(fullfile);
+Q=qpread(SHP);
+objstr = {Q.Name};
+outputvar.xy=qpread(SHP,objstr{1},'griddata');
+if read_val
+    for i=2:length(objstr)
+      outputvar.val{i-1}=qpread(SHP,objstr{i},'data');
+    end
+end
+
+end %function

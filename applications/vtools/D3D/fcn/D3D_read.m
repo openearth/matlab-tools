@@ -13,7 +13,15 @@
 %get data from 1 time step in D3D, output name as in D3D
 %
 %INPUT
-%   -in.kt: results times to plot [first position, counter]
+%open input_D3D_fig_layout
+%e.g.
+%
+% simdef.flg.which_p=2; 
+% simdef.flg.which_v=39;
+% in_read.kt=0;
+% out_read=D3D_read(simdef,in_read);
+% in_read.kt=out_read.nTt;
+% out_read=D3D_read(simdef,in_read);
 
 function out=D3D_read(simdef,in)
 

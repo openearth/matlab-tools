@@ -13,7 +13,11 @@
 %morphological initial file creation
 
 %INPUT:
+%   either:
 %   -simdef.D3D.dire_sim = full path to the output folder [string] e.g. 'd:\victorchavarri\SURFdrive\projects\ellipticity\D3D\runs\1D\998'
+%   or:
+%   -simdef.file.mini = full path to the morpho ini-file  [string] e.g. 'd:\victorchavarri\SURFdrive\projects\ellipticity\D3D\runs\1D\998\mini.ini'
+%
 %   -simdef.mor.ThTrLyr = active layer thickness [m] [double(1,1)] e.g. [0.05]
 %   -simdef.mor.ThUnLyr = thickness of each underlayer [m] [double(1,1)] e.g. [0.05]
 %   -simdef.mor.total_ThUnLyr = thickness of the entire bed [m] [double(1,1)] e.g. [1.5]
@@ -28,7 +32,11 @@
 function D3D_mini_const(simdef)
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
+if isfield(simdef.file,'mini')==0
+    dire_sim=simdef.D3D.dire_sim;
+    simdef.file.mini=fullfile(dire_sim,'mini.ini');
+end
+file_name=simdef.file.mini;
 
 ThTrLyr=simdef.mor.ThTrLyr;
 ThUnLyr=simdef.mor.ThUnLyr;
@@ -48,9 +56,9 @@ stf=stu+(MxNULyr-1)*nlb+MxNULyr+2+nf+1; %start line of final layer
 %preamble
 data{1  ,1}='[BedCompositionFileInformation]';
 data{2  ,1}='FileVersion     = 01.00';
-data{3  ,1}='FileCreatedBy   = chavobsky';
+data{3  ,1}='FileCreatedBy   = V';
 data{4  ,1}=        'SubVersionInfo  = $Id$';
-data{5  ,1}=        'FileCreationDate= today :D';
+data{5  ,1}=sprintf('FileCreationDate= %s',datestr(datetime('now')));
 
 %active layer
 data{6  ,1}=        '[Layer]';
@@ -83,16 +91,4 @@ data{stf+3+nf+1,1}=sprintf('Fraction%d       = %0.7E',nf+1,1-sum(subs_frac));
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'mini.ini');
-
-%check if the file already exists
-if exist(file_name,'file')
-    error('You are trying to overwrite a file!')
-end
-
-fileID_out=fopen(file_name,'w');
-for kl=1:numel(data)
-    fprintf(fileID_out,'%s \n',data{kl,1});
-end
-
-fclose(fileID_out);
+writetxt(file_name,data)

@@ -13,8 +13,13 @@
 %generate depths in rectangular grid 
 
 %INPUT:
+%   either:
 %   -simdef.D3D.dire_sim = full path to the output folder [string] e.g. 'd:\victorchavarri\SURFdrive\projects\ellipticity\D3D\runs\1D\998'
-%   -simdef.grd.M = number of nodes in the domain [-] [integer(1,1)] e.g. [1002]
+%   or:
+%   -simdef.file.dep = full path to the dep-file [string] e.g. 'C:\Users\chavarri\temporal\210503_VOW\03_simulations\02_flume\01_input\dep\dep.dep'
+%
+%   -simdef.file.grd = full path to the grid file [string] e.g. 'c:\Users\chavarri\temporal\210503_VOW\03_simulations\02_flume\02_runs\r001\grd.grd'
+%   -simdef.ini.etab0_type = type of initial bed elevation: 1=constant sloping bed in M-direction; 2=constant bed elevation
 %   -simdef.grd.dx = horizontal discretization [m] [integer(1,1)]; e.g. [0.02] 
 %   -simdef.ini.s = bed slope [-] [integer(1,1)] or [integer(nx-1,1)] from upstream to downstream; e.g. [3e-4] or linspace(0.005,0.003,101)
 %   -simdef.grd.L = domain length [m] [integer(1,1)] [100]
@@ -36,30 +41,66 @@
 %   -Introduction of a varying slope
 
 function D3D_dep_s(simdef)
+
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim; 
-path_grd=fullfile(dire_sim,'grd.grd');
+if isfield(simdef.file,'dep')==0
+%     dire_sim=simdef.D3D.dire_sim; 
+    simdef.file.dep=fullfile(simdef.D3D.dire_sim,'dep.dep');
+end
+path_dep=simdef.file.dep;
+
+if isfield(simdef.file,'grd')==0
+    error('provide grid file');
+end
+path_grd=simdef.file.grd;
+% path_grd=fullfile(dire_sim,'grd.grd');
+
+if isfield(simdef.ini,'etab_noise')==0
+    simdef.ini.etab_noise=0;
+end
+etab_noise=simdef.ini.etab_noise;
+
+if isfield(simdef.ini,'etab0_type')==0
+    simdef.ini.etab0_type=2;
+end
+etab0_type=simdef.ini.etab0_type;
+
+switch etab0_type
+    case 1
+        if isfield(simdef.ini,'s')==0
+            error('you need to input the slope')
+        end
+end
 
 %only straight flume!
 % M=simdef.grd.M;
 % N=simdef.grd.N;
 
-%read grid
+%% read grid
 grd=wlgrid('read',path_grd);
 M=size(grd.X,1)+1;
 N=size(grd.X,2)+1;
 
 slope=simdef.ini.s; %slope (defined positive downwards)
-dx=simdef.grd.dx;
+% dx=simdef.grd.dx;
+dx_m=diff(grd.X);
+dx=dx_m(1,1);
+if ~all(dx_m==dx,'all')
+    error('sorry, this is made for a constant dx. Adjust the code!')
+end
+if simdef.ini.etab_noise==2
 dy=simdef.grd.dy;
+warning('read from grid?')
+B=simdef.grd.B;
+end
 % nx=simdef.grd.M;
 % N=simdef.grd.N;
 nx=M;
 L=simdef.grd.L;
-B=simdef.grd.B;
+
 etab=simdef.ini.etab;
-etab0_type=simdef.ini.etab0_type;
+
 
 %other
 ncy=N-2; %number of cells in y direction (N in RFGRID) [-]
@@ -70,7 +111,7 @@ d0=etab; %depth (in D3D) at the downstream end (at x=L, where the water level is
 %% CALCULATIONS
 
 switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation
-    case 1
+    case 1 %sloping bed
         ny=ncy+2; %number of depths points in y direction
 
         depths=-9.99e2*ones(ny,nx); %initial depths with dummy values
@@ -88,7 +129,7 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
         end
 
         depths(1:ny-1,1:nx-1)=repmat(vd,length(1:ny-1),1);
-    case 2
+    case 2 %constant bed elevation
         ny=ncy+2; %number of depths points in y direction
 
         depths=-etab*ones(ny,nx); 
@@ -101,7 +142,7 @@ end
 %add noise
 noise=zeros(ny,nx);
 rng(0)
-switch simdef.ini.etab_noise
+switch etab_noise
     case 0
 %         noise=zeros(ny,nx);
     case 1 %random noise
@@ -140,8 +181,8 @@ depths=depths+noise;
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'dep.dep');  
-write_2DMatrix(file_name,depths);
+write_2DMatrix(path_dep,depths);
+messageOut(NaN,sprintf('dep-file created: %s',path_dep))
 
 % file_name=fullfile(dire_sim,'dep.dep');  
 % 
