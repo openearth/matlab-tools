@@ -223,8 +223,12 @@ if ~exist('Data','var')
                         Data.val(FlowElemDomain ~= domainNr,:,:) = [];
                     elseif facesInd == 2
                         Data.val(:,FlowElemDomain ~= domainNr,:) = [];
+                    elseif facesInd == 3
+                        Data.val(:,:,FlowElemDomain ~= domainNr,:) = [];
                     elseif facesInd == 4
                         Data.val(:,:,:,FlowElemDomain ~= domainNr) = [];
+                    else
+                        error('We never thought that facesInd could be given in index %d',facesInd)
                     end
                 elseif isfield(Data,'vel_x')
                     if facesInd == 1
