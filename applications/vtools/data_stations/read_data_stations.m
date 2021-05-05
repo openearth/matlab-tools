@@ -10,8 +10,11 @@
 %$Id$
 %$HeadURL$
 %
+%INPUT:
+%   paths.main_folder = path to the main folder of the stations; e.g. paths.main_folder='d:\temporal\data_stations';
+%   varargin = pair-input with token-name and token; e.g. 'location_clear','Rood-9'
 
-function data_stations=read_data_stations(paths,varargin)
+function [data_stations,idx]=read_data_stations(paths,varargin)
 
 % parin=inputParser;
 % 
@@ -46,10 +49,14 @@ end
 idx=find(bol);
 
 nget=numel(idx);
-for kget=1:nget
-    fname=fullfile(paths.separate,sprintf('%06d.mat',idx(kget)));
-    load(fname,'data_one_station')
-    data_stations(kget)=data_one_station;
+if nget~=0
+    for kget=1:nget
+        fname=fullfile(paths.separate,sprintf('%06d.mat',idx(kget)));
+        load(fname,'data_one_station')
+        data_stations(kget)=data_one_station;
+    end
+else
+    data_stations=[];
 end
 
 end %function
