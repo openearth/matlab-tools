@@ -101,9 +101,9 @@ for ii=1:length(REVdata)
             case 3
                 xy=[MDAdata.Xi,MDAdata.Yi];
         end
-        [xyNew0{ii}, y_offset{ii}] = relativeoffset(xy,[REVdata(ii).Xw',REVdata(ii).Yw'],dx);
+        [xyNew0{ii}, y_offset{ii}] = relativeoffset(xy,[REVdata(ii).Xw(:),REVdata(ii).Yw(:)],dx);
     else
-        xyNew0{ii} = [REVdata(ii).Xw',REVdata(ii).Yw'];
+        xyNew0{ii} = [REVdata(ii).Xw(:),REVdata(ii).Yw(:)];
         y_offset{ii} = REVdata(ii).Top;
     end
 end

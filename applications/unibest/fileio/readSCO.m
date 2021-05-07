@@ -123,22 +123,25 @@ SCOdata.isTideoffset = 0;
 SCOdata.isTimeseries = 0;
 numFields = 5;
 readheader = true;
+ff=1;
 while readheader
    lin=fgetl(fid);
-   if ~isempty(findstr(lower(lin),'wave-current'))
-       SCOdata.isWavecurrent=str2num(strtok(lin));
+   if ff==8 || ~isempty(findstr(lower(lin),'hsig')) || ~isempty(findstr(lower(lin),'tper')) || ~isempty(findstr(lower(lin),'alf')) || ~isempty(findstr(lower(lin),'duration'))
+       readheader = false;
+   elseif ~isempty(findstr(lower(lin),'wave-current'))
+       SCOdata.isWavecurrent=str2num(strtok(lin));ff=ff+1;
    elseif ~isempty(findstr(lower(lin),'dynamic boundary'))
-       [SCOdata.isDynamicBND,SCOdata.prctDynamicBND]=str2num(strtok(lin));
+       %id=findstr(lin,'(');id=[id-1,length(lin)];
+       [a,id2]=setdiff(lin,char([48:57,32]));id=[min(id2)-1,length(lin)];
+       [SCOdata.isDynamicBND,SCOdata.prctDynamicBND]=strread(lin(1:id(1)),'%f%f');ff=ff+1;
    elseif ~isempty(findstr(lower(lin),'wind'))
-       SCOdata.isWind=str2num(strtok(lin));
+       SCOdata.isWind=str2num(strtok(lin));ff=ff+1;
        if SCOdata.isWind==1;numFields = numFields+3;end
    elseif ~isempty(findstr(lower(lin),'tide offset'))
-       SCOdata.isTideoffset=str2num(strtok(lin));
+       SCOdata.isTideoffset=str2num(strtok(lin));ff=ff+1;
    elseif ~isempty(findstr(lower(lin),'timeseries'))
-       SCOdata.isTimeseries=str2num(strtok(lin));
+       SCOdata.isTimeseries=str2num(strtok(lin));ff=ff+1;
        if SCOdata.isTimeseries==1;numFields = numFields+3;end
-   elseif ~isempty(findstr(lower(lin),'hsig')) || ~isempty(findstr(lower(lin),'tper')) || ~isempty(findstr(lower(lin),'alf')) || ~isempty(findstr(lower(lin),'duration'))
-       readheader = false;
    end
 end
    

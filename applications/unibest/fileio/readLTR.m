@@ -1,21 +1,20 @@
-function [GKLdata]=readGKL(GKLfilename)
-%read GKL : Reads a UNIBEST gkl-file
+function [LTRdata]=readLTR(LTRfilename)
+%read LTR : Reads a UNIBEST LTR-file
 %   
 %   Syntax:
-%     function  [GKLdata]=readGKL(GKLfilename)
-%          or : [x,y,rayfiles]=readGKL(GKLfilename)
+%     function  [LTRdata]=readLTR(LTRfilename)
 %   
 %   Input:
-%     GKLfilename         String with filename of gkl-file
+%     LTRfilename         String with filename of LTR-file
 %   
 %   Output:
-%     GKLdata
-%             .x          X-coordinate of ray in CL-model
-%             .y          Y-coordinate of ray in CL-model
-%             .ray_file   String with reference to a ray file
+%     LTRdata
+%             .angle      
+%             .       
+%             .   
 %   
 %   Example:
-%     [GKLdata]=readGKL('test.gkl')
+%     [LTRdata]=readLTR('test.LTR')
 %   
 %   See also 
 
@@ -56,45 +55,64 @@ function [GKLdata]=readGKL(GKLfilename)
 % Created: 14 Apr 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: readLTR.m 14962 2018-12-13 15:29:34Z huism_b $
+% $Date: 2018-12-13 16:29:34 +0100 (Thu, 13 Dec 2018) $
+% $Author: huism_b $
+% $Revision: 14962 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/unibest/fileio/readLTR.m $
 % $Keywords: $
 
-fid=fopen(GKLfilename);
+
+%% CREATE DEFAULT OUTPUT STRUCTURE
+[pathnm,filenm,extnm]=fileparts(LTRfilename);
+LTRdata = struct;
+LTRdata.filenm = [filenm,extnm];
+LTRdata.pathnm = pathnm;
+LTRdata.no = 0;
+LTRdata.angle = [];
+LTRdata.h0 = [];
+LTRdata.pro_file = {};
+LTRdata.cfs_file = {};
+LTRdata.cfe_file = {};
+LTRdata.sco_file = {};
+LTRdata.ray_file = {};
+
+
+%% READ DATA
+fid=fopen(LTRfilename);
 
 %Read comment line
 lin=fgetl(fid);
+
 % Read number of locations
 lin=fgetl(fid);
 nloc=strread(lin,'%d');
-%Read comment line
-lin=fgetl(fid);
 if isempty(nloc)
-    error('Error reading 2nd line of LOC, number of locations. Reserve at least 10 characters for this number!');
+    fprintf(['Warning empty LTR file! (',LTRdata.filenm,')\n']);
     return
 end
 
-
-x=[];
-y=[];
-ray_file={};
+%Read comment line
+lin=fgetl(fid);
 
 %Read data
-for i=1:nloc
-   lin = fgetl(fid);
-   [x(i) y(i) ray_file(i) ]=strread(lin,'%f%f%s');
-   ray_file{i}=regexprep(ray_file{i},'''','');
+for ii=1:nloc
+    lin = fgetl(fid);
+    try
+        % read a line with LTR data
+        [f1, f2, s1, s2, s3, s4, s5 ]=strread(lin,'%f%f%s%s%s%s%s');
+        
+        LTRdata.no           = nloc;
+        LTRdata.angle(ii)    = f1;
+        LTRdata.h0(ii)       = f2;
+        LTRdata.pro_file{ii} = regexprep(s1{1},'''','');
+        LTRdata.cfs_file{ii} = regexprep(s2{1},'''','');
+        LTRdata.cfe_file{ii} = regexprep(s3{1},'''','');
+        LTRdata.sco_file{ii} = regexprep(s4{1},'''','');
+        LTRdata.ray_file{ii} = regexprep(s5{1},'''','');
+    catch    
+        fprintf(['Warning line could not be read in LTR file! (',LTRdata.filenm,', line no. ',num2str(ii),')\n']);
+    end
 end
 fclose(fid);
 
-[pathnm,filenm,extnm]=fileparts(GKLfilename);
-
-GKLdata = struct;
-GKLdata.filenm = [filenm,extnm];
-GKLdata.pathnm = pathnm;
-GKLdata.x = x;
-GKLdata.y = y;
-GKLdata.ray_file = ray_file;

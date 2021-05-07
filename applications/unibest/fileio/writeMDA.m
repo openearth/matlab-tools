@@ -389,7 +389,7 @@ function writeMDA(mda_filename_tmp, baseline_ldb, varargin)
                         fig = figure; set(fig,'tag','writeMDA'); hold on; grid on; box on; axis equal;
                         set(fig,'outerPosition',get(0,'ScreenSize').*[0 0 1 1],'color','w');
                         xlabel('X-coordinate'); ylabel('Y-coordinate');
-                        title(['Overview of actions undertaken by writeMDA for ' mda_filename]);
+                        ht=title(['Overview of actions undertaken by writeMDA for ' mda_filename]);set(ht,'interpreter','none');
                         if ~isempty(baseline_ori)
                             leg_tel = leg_tel + 1;
                             leg_text{leg_tel} = ['Original baseline points'];

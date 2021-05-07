@@ -62,9 +62,9 @@ function writeMDA1(mda_filename, MDAdata)
     fprintf(fid,'%4.0f\n',N);
     fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
     for ii=1:N
-        fprintf(fid,'%13.1f   %13.1f %11.2f %11.0f %11.0f\n',[MDAdata.X(ii), MDAdata.Y(ii), MDAdata.Y1(ii),  MDAdata.nrgridcells(ii) MDAdata.nr(ii)]');
+        fprintf(fid,'%13.2f   %13.2f %11.3f %11.0f %11.0f\n',[MDAdata.X(ii), MDAdata.Y(ii), MDAdata.Y1(ii),  MDAdata.nrgridcells(ii) MDAdata.nr(ii)]');
         if ~isnan(MDAdata.Y2(ii))
-            fprintf(fid,'%13s   %13s %11.2f\n','','',MDAdata.Y2(ii));
+            fprintf(fid,'%13s   %13s %11.3f\n','','',MDAdata.Y2(ii));
         end
     end
     fclose(fid);

@@ -96,18 +96,21 @@ for ii=1:number_of_groynes
     line5 = fgetl(fid);
     while isempty(strfind(lower(line5),'end'));
         if ~isempty(strfind(lower(line5),'between')) || ~isempty(strfind(lower(line5),'left')) || ~isempty(strfind(lower(line5),'right'))
+            id = findstr(line5,'''');
+            SIDEstr = lower(line5(id(1)+1:id(2)-1));
             if ~isempty(strfind(lower(line5),'between')) || ~isempty(strfind(lower(line5),'left'))
                 fieldnmXY = 'xyl';
                 fieldnmRAY='ray_file1';
+                GROdata(ii).SIDES{1}=upper(SIDEstr);
             else
                 fieldnmXY = 'xyr';
                 fieldnmRAY='ray_file2';
+                GROdata(ii).SIDES{2}=upper(SIDEstr);
             end
-            id = findstr(line5,'''');
             if isempty(GROdata(ii).option)
-                GROdata(ii).option=lower(line5(id(1)+1:id(2)-1));
+                GROdata(ii).option=SIDEstr;
             else
-                GROdata(ii).option=[GROdata(ii).option,'&',lower(line5(id(1)+1:id(2)-1))];
+                GROdata(ii).option=[GROdata(ii).option,'&',SIDEstr];
             end
             line6 = fgetl(fid);
             line7 = fgetl(fid); number_of_rays1 = str2double(line7);

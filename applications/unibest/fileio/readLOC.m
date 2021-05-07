@@ -3,6 +3,8 @@ function [x,y,angle,rayfiles]=readLOC(LOCfilename)
 %
 %   Syntax:
 %     function [x,y,angle,rayfiles]=readLOC(LOCfilename)
+%        or:
+%     function [LOCdata]=readLOC(LOCfilename)
 % 
 %   Input:
 %     LOCfilename          string with .loc filename
@@ -12,6 +14,12 @@ function [x,y,angle,rayfiles]=readLOC(LOCfilename)
 %     y                    y-coordinate of output location
 %     angle                coast angle (often not specified, then angle=nan)
 %     rayfiles             string with name of output location
+%         or alternatively (if only 1 output argument is specified) :
+%     LOCdata              structure with LOC data with fields
+%                          .x       
+%                          .y        
+%                          .angle    
+%                          .ray_file  
 %
 %   Example
 %     writeLOC('test.loc', [33203,423000;33845,425500;32393,465023], 'zeeland');
@@ -21,11 +29,9 @@ function [x,y,angle,rayfiles]=readLOC(LOCfilename)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Deltares
-%       Robin Morelissen, Cilia Swinkels, DJR Walstra 2006-2008
-%       robin.morelissen@deltares.nl
-% 
-%       updated and submitted by BJA Huisman 2010
+%   Copyright (C) 2019 Deltares
+%       Bas Huisman, Robin Morelissen, Cilia Swinkels, DJR Walstra 2006-2008
+%       updated and submitted by BJA Huisman 2019
 %       bas.huisman@deltares.nl
 %
 %       Deltares
@@ -83,13 +89,13 @@ end
 % check type of loc-file
 loctype=0;
 try
-    [x(1) y(1) angle(1)]=strread(lin,'%f%f%f');
+    [x(1), y(1), angle(1)]=strread(lin,'%f%f%f');
 catch loctype=1;
     try
-        [x(1) y(1) rayfiles(1)]=strread(lin,'%f%f%s');
+        [x(1), y(1), rayfiles(1)]=strread(lin,'%f%f%s');
     catch
         lin=fgetl(fid);
-        [x(1) y(1) rayfiles(1)]=strread(lin,'%f%f%s');
+        [x(1), y(1), rayfiles(1)]=strread(lin,'%f%f%s');
     end
     angle(1,1)=nan;    
 end
@@ -100,15 +106,25 @@ if loctype==0
     rayfiles{1} = strread(lin,'%s');
     for i=2:nloc
        lin = fgetl(fid);
-       [x(ii,1) y(ii,1) angle(ii,1)]=strread(lin,'%f%f%f');
+       [x(ii,1), y(ii,1), angle(ii,1)]=strread(lin,'%f%f%f');
        lin = fgetl(fid);
        rayfiles(ii) = strread(lin,'%s');
     end
 elseif loctype==1
     for ii=2:nloc
        lin = fgetl(fid);
-       [x(ii,1) y(ii,1) rayfiles(ii)]=strread(lin,'%f%f%s');
+       [x(ii,1), y(ii,1), rayfiles(ii)]=strread(lin,'%f%f%s');
        angle(ii,1)=nan;
     end
 end
 fclose(fid);
+
+if nargout==1
+    LOCdata=struct;
+    LOCdata.x=x;
+    LOCdata.y=y;
+    LOCdata.angle=angle;
+    LOCdata.ray_file=rayfiles;
+    
+    x=LOCdata;
+end
