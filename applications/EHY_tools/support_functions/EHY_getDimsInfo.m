@@ -26,6 +26,12 @@ switch modelType
             dims(ind).indexOut   = 1:dimsSizes(iD);
         end
         
+        % sediment fractions
+        if any(ismember({dims(:).name},{'nSedTot'}))
+            NAMSED = ncread(inputFile,'sedfrac_name')';
+%             dims(end+1).name = 'sedimentFraction';
+        end
+        
     case 'd3d'
         d3d = vs_use(inputFile,'quiet');
         data_group = char(vs_find(d3d,OPT.varName));
@@ -174,8 +180,9 @@ if nargout > 1
     dimsInd.m = find(ismember({dims(:).name},{'m','edge_m'})); % structured grid
     dimsInd.n = find(ismember({dims(:).name},{'n','edge_n'}));
     dimsInd.constit = find(ismember({dims(:).name},'constit'));
-    dimsInd.sedfrac = find(ismember({dims(:).name},'sedimentFraction'));
+    dimsInd.sedfrac = find(ismember({dims(:).name},{'sedimentFraction','nSedTot'}));
     dimsInd.turbulence = find(ismember({dims(:).name},'turbulence'));
+    dimsInd.bed_layers = find(ismember({dims(:).name},{'nBedLayers'})); 
 end
 
 %% Data

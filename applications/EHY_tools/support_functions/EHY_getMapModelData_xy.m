@@ -61,6 +61,23 @@ else
     no_layers = 1;
 end
 
+%% get underlayers elevation
+
+if ~isempty(dimsInd.bed_layers) && dims(dimsInd.bed_layers).sizeOut > 1
+    if strcmp(Data.modelType,'dfm')
+        [Data.Zint,no_bed_layers]=EHY_getMapModelData_construct_Zint_bed(inputFile,Data.modelType,OPT);
+    else
+        error('sorry, not yet implemented.')
+    end
+else
+    no_bed_layers = 1;
+end
+
+%% check if layers are to be computed
+%wether they are flow layers or sediment layers, the way to deal with them is the same
+%and it is either one or the other one that it is required.
+no_layers=max([no_layers,no_bed_layers]);
+
 %% get wanted "varName"-data for all relevant partitions
 tmp   = EHY_getMapModelData(inputFile,OPT);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
@@ -101,7 +118,14 @@ end
 
 if isfield(Data,'face_nodes')
     if isfield(Data,'val')
-        val = arbcross(arb,{'FACE' permute(Data.val,[2 3 1])});
+        switch numel(size(Data.val))
+            case {2,3}
+                val = arbcross(arb,{'FACE' permute(Data.val,[2 3 1])});
+            case 4
+                val = arbcross(arb,{'FACE' permute(Data.val,[dimsInd.faces dimsInd.bed_layers dimsInd.sedfrac dimsInd.time])});
+            otherwise
+                error('Add this case')
+        end
     elseif isfield(Data,'vel_x')
         vel_x = arbcross(arb,{'FACE' permute(Data.vel_x,[2 3 1])});
         vel_y = arbcross(arb,{'FACE' permute(Data.vel_y,[2 3 1])});
@@ -119,30 +143,42 @@ elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
 end
 
 no_XYcenTrajectory = length(arb.dxt);
-Data_xy.val  = zeros(no_times, no_XYcenTrajectory, no_layers);
+
+%number of sediment or constituents
+if ~isempty(dimsInd.sedfrac) 
+    no_frac=dims(dimsInd.sedfrac).sizeOut;
+else
+    no_frac=1;
+end
+
+Data_xy.val  = zeros(no_times, no_XYcenTrajectory, no_layers, no_frac);
 if no_layers > 1
     Data_xy.Zint = zeros(no_times, no_XYcenTrajectory, no_layers+1);
 end
+
 for iT = 1:no_times
     for iC = 1:no_XYcenTrajectory
-        
-        startBlock = (iT-1)*no_layers+1;
-        endBlock = startBlock + no_layers - 1;
-        
-        if isfield(Data,'val')
-            Data_xy.val(iT,iC,:) = val(iC,startBlock:endBlock);
-        elseif isfield(Data,'vel_x')
-            Data_xy.vel_x(iT,iC,:) = vel_x(iC,startBlock:endBlock);
-            Data_xy.vel_y(iT,iC,:) = vel_y(iC,startBlock:endBlock);
-            Data_xy.vel_mag(iT,iC,:) = vel_mag(iC,startBlock:endBlock);
-            Data_xy.vel_dir(iT,iC,:) = vel_dir(iC,startBlock:endBlock);
-        end
-        
-        if no_layers > 1
-            startBlock = (iT-1)*(no_layers+1)+1;
-            endBlock = startBlock + (no_layers+1) - 1;
-            Data_xy.Zint(iT,iC,:) = Zint(iC,startBlock:endBlock);
-        end
+        for iF=1:no_frac
+
+            startBlock = (iT-1)*no_layers*no_frac+(iF-1)*no_layers+1;
+            endBlock = startBlock + no_layers - 1;
+            
+            if isfield(Data,'val')
+                Data_xy.val(iT,iC,:,iF) = val(iC,startBlock:endBlock);
+            elseif isfield(Data,'vel_x')
+                Data_xy.vel_x(iT,iC,:) = vel_x(iC,startBlock:endBlock);
+                Data_xy.vel_y(iT,iC,:) = vel_y(iC,startBlock:endBlock);
+                Data_xy.vel_mag(iT,iC,:) = vel_mag(iC,startBlock:endBlock);
+                Data_xy.vel_dir(iT,iC,:) = vel_dir(iC,startBlock:endBlock);
+            end
+
+            if no_layers > 1
+                startBlock = (iT-1)*(no_layers+1)+1;
+                endBlock = startBlock + (no_layers+1) - 1;
+                Data_xy.Zint(iT,iC,:) = Zint(iC,startBlock:endBlock);
+            end
+            
+        end %iF
     end
 end
 if no_layers > 1
@@ -170,7 +206,7 @@ end
 
 %% make gridInfo for plotting using EHY_plotMapModelData
 if nargout > 1
-    if no_layers > 1
+    if no_layers > 1 
         gridInfo.Xcor = Data_xy.Scor;
         gridInfo.Ycor = Data_xy.Zint; % [times,cells,layers]
     else
