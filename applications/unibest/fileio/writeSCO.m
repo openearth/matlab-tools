@@ -112,6 +112,7 @@ else
     if ~isfield(SCOdata,'isTimeseries')
         SCOdata.isTimeseries=0;
     end
+    
     if ~isfield(SCOdata,'time') && isfield(SCOdata,'timenum')
         SCOdata.time = (SCOdata.timenum-SCOdata.timenum(1))*24;
     end
@@ -121,8 +122,35 @@ else
         SCOdata.Htide  = repmat(SCOdata.Htide,size(SCOdata.time));
         SCOdata.Vtide  = repmat(SCOdata.Vtide,size(SCOdata.time));
         SCOdata.RefDep = repmat(SCOdata.RefDep,size(SCOdata.time));
+        try
         SCOdata.Ptide  = repmat(SCOdata.Ptide,size(SCOdata.time));
+        end
     end
+end
+DEFwdrag=0.001;
+if isfield(SCOdata,'windspeed')
+    SCOdata.WS=SCOdata.windspeed;
+end
+if isfield(SCOdata,'ws')
+    SCOdata.WS=SCOdata.ws;
+end
+if isfield(SCOdata,'winddir')
+    SCOdata.Wdir=SCOdata.winddir;
+end
+if isfield(SCOdata,'wd')
+    SCOdata.Wdir=SCOdata.wd;
+end
+if isfield(SCOdata,'winddrag')
+    SCOdata.Wdrag=SCOdata.winddrag;
+end
+% if ~isfield(SCOdata,'isWind')
+%     if isfield(SCOdata,'WS') || isfield(SCOdata,'Wdir')
+%         SCOdata.isWind=1;
+%     end
+% end
+if isfield(SCOdata,'WS') && ~isfield(SCOdata,'Wdrag')
+    WScrit=100; % 100 m/s wind
+    SCOdata.Wdrag=0.00063 + 0.0066*min(SCOdata.WS,WScrit)/WScrit;
 end
 
 %% INITIALISE NON-SPECIFIED FIELDS
@@ -140,7 +168,7 @@ end
 fldnms = {'Htide','Vtide','Ptide','RefDep'};  % 'WS','Wdir','Wdrag'
 defval = [0, 0, 100, 5];
 for kk=1:length(fldnms)
-    if ~isfield(SCOdata,fldnms{kk}) && SCOdata.isTimeseries==0; 
+    if ~isfield(SCOdata,fldnms{kk}) && SCOdata.isTimeseries==0
         SCOdata.(fldnms{kk}) = defval(kk);
     elseif ~isfield(SCOdata,fldnms{kk}) && SCOdata.isTimeseries==1; 
         SCOdata.(fldnms{kk}) = repmat(defval(kk),size(SCOdata.hs));
@@ -148,6 +176,7 @@ for kk=1:length(fldnms)
         SCOdata.(fldnms{kk}) = repmat(SCOdata.(fldnms{kk}),size(SCOdata.hs));
     end
 end
+
 
 %% WRITE REGULAR SCO FILE (CLIMATE CONDITIONS)
 fid = fopen(SCOfilename,'wt');
@@ -170,8 +199,14 @@ if SCOdata.isTimeseries~=1
     fprintf(fid,'%2.0f       (Use timeseries)\n',SCOdata.isTimeseries);
     fprintf(fid,'%2.0f       (Use tide conditions that are 1 on 1 synced with wave conditions\n',SCOdata.matchtidewaves);
     end
-    fprintf(fid,'WAVM      H0            wave height   period   direction   Duration\n');
-    fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:)]');
+    
+    if SCOdata.isWind~=1
+        fprintf(fid,'            H0         Hsig         Tper         Wdir           Duration \n');
+        fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:)]');
+    else
+        fprintf(fid,'            H0         Hsig         Tper         Wdir           Duration        Vwind          DIRwind        Wdrag\n');
+        fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f %10.2f %10.2f %10.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:),SCOdata.WS(:),SCOdata.Wdir(:),SCOdata.Wdrag(:)]');       
+    end
     if writedummyTIDE==1
         fprintf(fid,'  1    (Number of Tide condition)\n');
         fprintf(fid,'          DH            Vgety         Ref.depth   Perc\n');
@@ -179,7 +214,7 @@ if SCOdata.isTimeseries~=1
     elseif writedummyTIDE==0
         fprintf(fid,' %2.0f    (Number of Tide condition)\n',length(SCOdata.Htide));
         fprintf(fid,'     %9s %9s %9s %9s\n','DH','Vgety','Ref.depth','Perc');
-        fprintf(fid,'     %9.3f %9.3f %9.3f  %10.6f\n',[SCOdata.Vtide(:),SCOdata.Htide(:), SCOdata.RefDep(:), SCOdata.Ptide(:)]');
+        fprintf(fid,'     %9.3f %9.3f %9.3f  %10.6f\n',[SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:), SCOdata.Ptide(:)]');
     end
     fclose(fid);
    
@@ -195,13 +230,13 @@ elseif SCOdata.isTimeseries==1
     fprintf(fid,'%2.0f       (Use tide conditions that are 1 on 1 synced with wave conditions\n',SCOdata.matchtidewaves);
 
     if SCOdata.isWind~=1
-        fprintf(fid,'      Time         H0       Hsig       Tper       Alf        Tide       Vtide     RefDep\n');
+        fprintf(fid,'       Time       H0         Hsig       Tper       Alf        Tide       Vtide      RefDep\n');
         fprintf(fid,'%10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f\n',...
         [SCOdata.time(:), SCOdata.h0(:), SCOdata.hs(:), SCOdata.tp(:), SCOdata.xdir(:), SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:)]');
     else
-        SCOdata.WS
-        SCOdata.Wdir
-        SCOdata.Wdrag
+        fprintf(fid,'       Time       H0         Hsig       Tper       Alf        WS         WD         Wdrag      Tide       Vtide      RefDep\n');
+        fprintf(fid,'%10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.5f %10.2f %10.2f %10.2f\n',...
+        [SCOdata.time(:), SCOdata.h0(:), SCOdata.hs(:), SCOdata.tp(:), SCOdata.xdir(:), SCOdata.WS(:), SCOdata.Wdir(:), SCOdata.Wdrag(:), SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:)]');
     end
     fclose(fid);
 end
