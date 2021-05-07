@@ -11,8 +11,9 @@
 %$HeadURL$
 %
 
-function paths=paths_data_stations(paths)
+function paths=paths_data_stations(paths_main_folder)
 
+paths.main_folder=paths_main_folder;
 paths.data_stations=fullfile(paths.main_folder,'data_stations.mat');
 paths.data_stations_index=fullfile(paths.main_folder,'data_stations_index.mat');
 paths.separate=fullfile(paths.main_folder,'separate');

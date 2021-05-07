@@ -1234,7 +1234,7 @@ switch flg.which_p
                             if flg.get_EHY
                                z=get_EHY(file.map,'mesh2d_thlyr',time_dnum);
                                if flg.which_v==27
-                                   z=sum(z,2);
+                                   z=sum(z,3);
                                end
                                out=v2struct(z,face_nodes_x,face_nodes_y);
                             else

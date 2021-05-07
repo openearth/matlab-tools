@@ -13,6 +13,12 @@
 %get absolute limits
 
 function clim=absolute_limits(vperp)
+
 aux1=max(abs(min(vperp(:))),abs(max(vperp(:))));
-clim=[-aux1,aux1];
+if isnan(aux1)
+    clim=[-1,1];
+else
+    clim=[-aux1,aux1];
 end
+
+end %function

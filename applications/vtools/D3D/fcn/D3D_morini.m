@@ -14,7 +14,11 @@
 function D3D_morini(simdef)
 
 frac=simdef.mor.frac;
-folder_out=simdef.mor.folder_out;
+if isfield(simdef.mor,'path_dir_gsd_rel2mdu')
+    folder_out=simdef.mor.path_dir_gsd_rel2mdu;
+else
+    folder_out=simdef.mor.folder_out;
+end
 dire_sim=simdef.D3D.dire_sim;
 
 nf=size(frac,3);

@@ -11,10 +11,10 @@
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/data_stations/separate_data.m $
 %
 
-function add_data_stations(paths,tim_add,val_add,tok_add)
+function add_data_stations(paths_main_folder,tim_add,val_add,tok_add)
 
 %get available data
-[data_one_station,idx]=read_data_stations(paths,tok_add{:});
+[data_one_station,idx]=read_data_stations(paths_main_folder,tok_add{:});
 
 if ~isempty(data_one_station)
     

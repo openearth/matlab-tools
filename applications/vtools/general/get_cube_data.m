@@ -10,7 +10,14 @@
 %$Id$
 %$HeadURL$
 %
-%get data in a 3D array
+%Imagina a 3D cartesian system x-y-z. For a point kp with coordinates (x,y,z) the value of a
+%function is X. This is stored in tt_val(kp,idx_z), where, idx_z identifies the column with the value
+%of the function. idx_1, idx_2, and idx_3 identify the columns with the values of the coordinates. 
+%The function find which data points are within the cubes defined by the edges of axis x, y, and z 
+%defined by edg_1, edg_2, and edg_3. 
+%
+%This function should be improved giving as output a 4-D array with bolleans of whether the data in tt_val(kp,idx_z)
+%is in a certain cube.
 
 function [z_m,m_1,m_2,m_3,nodes]=get_cube_data(edg_1,edg_2,edg_3,tt_val,idx_z,idx_1,idx_2,idx_3)
 

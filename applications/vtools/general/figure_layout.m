@@ -48,11 +48,19 @@ v2struct(in_p)
 
 %% SIZE
 
+%square option
+npr=2; %number of plot rows
+npc=4; %number of plot columns
+axis_m=allcomb(1:1:npr,1:1:npc);
+
+%some of them
+% axis_m=[1,1;2,1;2,2];
+
+na=size(axis_m,1);
+
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-npr=1; %number of plot rows
-npc=2; %number of plot columns
 marg.mt=1.0; %top margin [cm]
 marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
@@ -98,10 +106,10 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
-kr=1; kc=1;
-cbar(kr,kc).displacement=[0.0,0,0,0]; 
-cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label='surface fraction content of fine sediment [-]';
+% kr=1; kc=1;
+% cbar(kr,kc).displacement=[0.0,0,0,0]; 
+% cbar(kr,kc).location='northoutside';
+% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
 
 % brewermap('demo')
 cmap=brewermap(3,'set1');
@@ -192,6 +200,10 @@ cmap=brewermap(3,'set1');
 
 %% LABELS AND LIMITS
 
+% ka=1;
+% kr=axis_m(ka,1);
+% kc=axis_m(ka,2);
+
 kr=1; kc=1;
 lims.y(kr,kc,1:2)=[-2e-3,2e-3];
 lims.x(kr,kc,1:2)=lim_A;
@@ -213,10 +225,10 @@ set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 
 %subplots initialize
     %if regular
-for kr=1:npr
-    for kc=1:npc
-        han.sfig(kr,kc)=subaxis(npr,npc,kc,kr,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
-    end
+for ka=1:na
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+    han.sfig(kr,kc)=subaxis(npr,npc,kc,kr,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
 end
     %if irregular
 % han.sfig(1,1)=subaxis(npr,npc,1,1,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
@@ -229,17 +241,10 @@ end
 
 %% HOLD
 
-% axis_m=[1,2;2,1;2,2;2,3];
-% na=size(axis_m,1);
-% for ka=1:na
-%     hold(han.sfig(axis_m(ka,1),axis_m(ka,2)),'on')
-% end
-
-for kr=1:npr
-    for kc=1:npc
-        hold(han.sfig(kr,kc),'on')
-    end
+for ka=1:na
+    hold(han.sfig(axis_m(ka,1),axis_m(ka,2)),'on')
 end
+
 %% MAP TILES
 
 % kr=1; kc=1;
