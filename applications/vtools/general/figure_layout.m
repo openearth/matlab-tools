@@ -263,10 +263,35 @@ end
 
 %% EHY
 
+%get time vecto
+% simdef.D3D.dire_sim=sim_path;
+% simdef=D3D_simpath(simdef);
+% path_map=simdef.file.map;
+% 
+% ismor=D3D_is(path_map);
+% [~,~,time_dnum]=D3D_results_time(path_map,ismor,[192,2]);
+
+%read map data
+%data_map.grid=EHY_getGridInfo(filename,{'face_nodes_xy'});
+%grid_info=EHY_getGridInfo(path_map,{'face_nodes_xy','XYcen'});
+
+%read data long longitudinal section
+%[data_lp,data_lp.grid]=EHY_getMapModelData(path_map,'varName','mesh2d_lyrfrac','t0',time_dnum(1),'tend',time_dnum(end),'disp',1,'pliFile',path_lp);
+
 % kr=1; kc=1;
 % set(han.fig,'CurrentAxes',han.sfig(kr,kc))
-% %data_map.grid=EHY_getGridInfo(filename,{'face_nodes_xy'});
+
+%plot map data
 % EHY_plotMapModelData(data_map.grid,data_map.val,'t',1); 
+
+%plot 1D data along longitudinal section
+% plot(data_bl.Scen,data_bl.val)
+
+%plot 2D data (layers) along longitudinal sections
+% data_p=data_lp;
+% data_p.val=squeeze(data_lp.val(kt,:,:,kf));
+% data_p.grid.Ycor=data_lp.grid.Ycor(kt,:,:);
+% EHY_plotMapModelData(data_p.grid,data_p.val,'t',1); 
 
 %% PLOT
 
