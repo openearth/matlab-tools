@@ -1,5 +1,10 @@
-function [datenums,varargout] = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile,displ)
+function [datenums,varargout] = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile,displ,varargin)
 
+%%
+OPT.SDS_his_or_map = 'his'; % When requesting times from a SIMONA SDS, we need to take format (his/map) into account
+OPT = setproperty(OPT,varargin);
+
+%%
 modelType = EHY_getModelType(inputFile);
 
 if ~exist('displ','var')
@@ -83,14 +88,18 @@ switch modelType
         end
         
     case 'simona'
-        sds=qpfopen(inputFile);
-        datenums_wl   = qpread(sds,1,'water level (station)','times');
-        datenums_vel  = []; 
-        try datenums_vel  = qpread(sds,1,'velocity (station)','times'); end
-        if length(datenums_wl)<length(datenums_vel)
-            datenums  = datenums_vel;
+        sds = qpfopen(inputFile);
+        if strcmpi(OPT.SDS_his_or_map,'his')
+            datenums_wl = qpread(sds,1,'water level (station)','times');
+            datenums_vel = [];
+            try datenums_vel = qpread(sds,1,'velocity (station)','times'); end
+            if length(datenums_wl) < length(datenums_vel)
+                datenums = datenums_vel;
+            else
+                datenums = datenums_wl;
+            end
         else
-            datenums  = datenums_wl;
+            datenums = qpread(sds,1,'water level','times');
         end
         varargout{1} = waquaio(sds,'','refdate');
         

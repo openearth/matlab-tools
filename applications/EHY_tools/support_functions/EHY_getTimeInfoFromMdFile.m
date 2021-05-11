@@ -1,4 +1,4 @@
-function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,mapint]=EHY_getTimeInfoFromMdFile(fileInp,modelType)
+function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,mapint] = EHY_getTimeInfoFromMdFile(fileInp,modelType)
 %% EHY_getTimeInfoFromMdFile(mdFile,modelType)
 % refdate       : Reference date in MATLAB's datenum
 % tunit         : Time unit of tstart and tstop (e.g. 'S' , 'M')
@@ -16,12 +16,12 @@ function [refdate,tunit,tstart,tstop,hisstart,hisstop,mapstart,mapstop,hisint,ma
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
 
-fileInp=EHY_getMdFile(fileInp);
+fileInp = EHY_getMdFile(fileInp);
 if isempty(fileInp)
     error('No .mdu, .mdf or siminp found in this folder')
 end
 if ~exist('modelType','var')
-    modelType=EHY_getModelType(fileInp);
+    modelType = EHY_getModelType(fileInp);
     if isempty(modelType)
         error('Could not determine model type')
     end
@@ -29,73 +29,80 @@ end
 
 switch modelType
     case 'dfm'
-        mdu=dflowfm_io_mdu('read',fileInp);
-        refdate=datenum(num2str(mdu.time.RefDate),'yyyymmdd');
-        tunit=mdu.time.Tunit;
-        tstart=mdu.time.TStart;
-        tstop=mdu.time.TStop;
-        if length(mdu.output.HisInterval)==0 % no his output
-        
-        elseif length(mdu.output.HisInterval)==1 % only interval of his file
-            hisint=mdu.output.HisInterval*timeFactor('S','M');
-            hisstart=tstart;
-            hisstop=tstop;
-        else % his start stop, all in seconds
-            hisint=mdu.output.HisInterval(1)*timeFactor('S','M');
-            hisstart=mdu.output.HisInterval(2)*timeFactor('S','M');
-            hisstop=mdu.output.HisInterval(3)*timeFactor('S','M');
+        mdu = dflowfm_io_mdu('read',fileInp);
+        refdate = datenum(num2str(mdu.time.RefDate),'yyyymmdd');
+        tunit = mdu.time.Tunit;
+        if isfield(mdu.time,'TStart')
+            tstart = mdu.time.TStart;
+            tstop = mdu.time.TStop;
+        elseif isfield(mdu.time,'Startdatetime') % yyyymmddHHMMSS
+            tstart = (datenum(num2str(round(mdu.time.Startdatetime)),'yyyymmddHHMMSS') - refdate) * timeFactor('d',tunit); % Tunit from refDate
+            tstop  = (datenum(num2str(round(mdu.time.Stopdatetime )),'yyyymmddHHMMSS') - refdate) * timeFactor('d',tunit); % Tunit from refDate
+        else
+            error('Could not find TStart/TStop or Startdatetime/Stopdatetime in .mdu')
         end
-        if length(mdu.output.MapInterval)==0 % no map output
+        if length(mdu.output.HisInterval) == 0 % no his output
         
-        elseif length(mdu.output.MapInterval)==1 % only interval of map file
-            mapint=mdu.output.MapInterval*timeFactor('S','M');
-            mapstart=tstart;
-            mapstop=tstop;
+        elseif length(mdu.output.HisInterval) == 1 % only interval of his file
+            hisint = mdu.output.HisInterval*timeFactor('S','M');
+            hisstart = tstart;
+            hisstop = tstop;
         else % his start stop, all in seconds
-            mapint=mdu.output.MapInterval(1)*timeFactor('S','M');
-            mapstart=mdu.output.MapInterval(2)*timeFactor('S','M');
-            mapstop=mdu.output.MapInterval(3)*timeFactor('S','M');
+            hisint = mdu.output.HisInterval(1)*timeFactor('S','M');
+            hisstart = mdu.output.HisInterval(2)*timeFactor('S','M');
+            hisstop = mdu.output.HisInterval(3)*timeFactor('S','M');
+        end
+        if length(mdu.output.MapInterval) == 0 % no map output
+        
+        elseif length(mdu.output.MapInterval) == 1 % only interval of map file
+            mapint = mdu.output.MapInterval*timeFactor('S','M');
+            mapstart = tstart;
+            mapstop = tstop;
+        else % his start stop, all in seconds
+            mapint = mdu.output.MapInterval(1)*timeFactor('S','M');
+            mapstart = mdu.output.MapInterval(2)*timeFactor('S','M');
+            mapstop = mdu.output.MapInterval(3)*timeFactor('S','M');
         end
     case 'd3d'
-        mdf=delft3d_io_mdf('read',fileInp);
-        refdate=datenum(mdf.keywords.itdate,'yyyy-mm-dd');
-        tunit=mdf.keywords.tunit;
-        tstart=mdf.keywords.tstart;
-        tstop=mdf.keywords.tstop;
-        hisstart=mdf.keywords.flhis(1);
-        hisint=mdf.keywords.flhis(2);
-        hisstop=mdf.keywords.flhis(3);
-        mapstart=mdf.keywords.flmap(1);
-        mapint=mdf.keywords.flmap(2);
-        mapstop=mdf.keywords.flmap(3);
+        mdf = delft3d_io_mdf('read',fileInp);
+        refdate = datenum(mdf.keywords.itdate,'yyyy-mm-dd');
+        tunit = mdf.keywords.tunit;
+        tstart = mdf.keywords.tstart;
+        tstop = mdf.keywords.tstop;
+        hisstart = mdf.keywords.flhis(1);
+        hisint = mdf.keywords.flhis(2);
+        hisstop = mdf.keywords.flhis(3);
+        mapstart = mdf.keywords.flmap(1);
+        mapint = mdf.keywords.flmap(2);
+        mapstop = mdf.keywords.flmap(3);
     case 'simona'
-        [pathstr,name,ext]=fileparts(fileInp);
-        siminp=readsiminp(pathstr,[name ext]);
+        [pathstr,name,ext] = fileparts(fileInp);
+        siminp = readsiminp(pathstr,[name ext]);
         
-        tunit='M';
+        tunit = 'M';
         
-        for var={'date','tstart','tstop'}
-            ind1=find(~cellfun(@isempty,strfind(lower(siminp.File),var{1})));
-            if length(ind1)>1; ind1=ind1(1); end
-            ind2=regexp(lower(siminp.File{ind1}),var{1})+length(var{1});
-            dmy=regexp(siminp.File{ind1}(ind2:end),'\s+','split');
+        for var = {'date','tstart','tstop'}
+            ind1 = find(~cellfun(@isempty,strfind(lower(siminp.File),var{1})));
+            if length(ind1)>1; ind1 = ind1(1); end
+            ind2 = regexp(lower(siminp.File{ind1}),var{1})+length(var{1});
+            dmy = regexp(siminp.File{ind1}(ind2:end),'\s+','split');
             if strcmp(var{1},'date')
-                refdate=datenum(strtrim(sprintf('%s ',dmy{2:4})));
+                refdate = datenum(strtrim(sprintf('%s ',dmy{2:4})));
             else
-                eval([var{1} '=str2double(dmy(2));'])
+                eval([var{1} ' = str2double(dmy(2));'])
             end
         end
         
-        vars={'tfhis'   ,'tlhis'  ,'tfmap'   ,'tlmap';,...
+        vars = {'tfhis'   ,'tlhis'  ,'tfmap'   ,'tlmap'; ...
             'hisstart','hisstop','mapstart','mapstop'};
-        for iVar=1:length(vars)
-            ind1=find(~cellfun(@isempty,strfind(lower(siminp.File),vars{1,iVar})));
+        for iVar = 1:length(vars)
+            ind1 = find(~cellfun(@isempty,strfind(lower(siminp.File),vars{1,iVar})));
             if ~isempty(ind1)
-                ind2=regexp(lower(siminp.File{ind1}),vars{1,iVar})+length(vars{1,iVar});
-                dmy=regexp(siminp.File{ind1}(ind2:end),'\s+','split');
-                eval([vars{2,iVar} '=str2double(dmy(2));'])
+                ind2 = regexp(lower(siminp.File{ind1}),vars{1,iVar})+length(vars{1,iVar});
+                dmy = regexp(siminp.File{ind1}(ind2:end),'\s+','split');
+                eval([vars{2,iVar} ' = str2double(dmy(2));'])
             else
-                eval([vars{2,iVar} '=t' vars{2,iVar}(4:end) ';'])
+                eval([vars{2,iVar} ' = t' vars{2,iVar}(4:end) ';'])
             end
         end
 end

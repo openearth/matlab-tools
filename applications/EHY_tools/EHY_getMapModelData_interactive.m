@@ -200,7 +200,7 @@ end
 % (forward this example line to EHY_plotMapModelData if needed)
 if ~(exist('OPT','var') && isfield(OPT,'pliFile'))
     typeOfModelFile = EHY_getTypeOfModelFile(outputfile);
-    if EHY_isSFINCS(outputfile) || strcmp(modelType,'d3d')
+    if EHY_isSFINCS(outputfile) || ismember(modelType,{'d3d','simona'})
         wantedVars = '''XYcor''';
     elseif strcmp(typeOfModelFile,'nc_griddata')
           wantedVars = '''XYcen''';

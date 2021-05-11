@@ -12,7 +12,7 @@ end
 
 %% determine "dims" - Get info about available dimensions on file (and their sizes)
 [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(inputFile);
-switch modelType
+switch lower(modelType)
     case {'dfm','nc'}
         infonc    = ncinfo(inputFile,OPT.varName);
         dimsNames = {infonc.Dimensions.Name};
@@ -151,8 +151,31 @@ switch modelType
             dims = [];
             dims.name = '';
         end
+    
+    case 'simona'
+        % time
+        dims(1).name = 'time';
         
-    otherwise % SOBEK / SIMONA
+        db = dbstack;
+        if strcmp(db(2).name,'EHY_getmodeldata') % his
+            % stations
+            stationNames = EHY_getStationNames(inputFile,modelType,'varName',OPT.varName);
+            if ~isempty(stationNames)
+                dims(end+1).name = 'stations';
+            end
+        elseif strcmp(db(2).name,'EHY_getMapModelData') % map
+            % m and n
+            dims(end+1).name = 'm';
+            dims(end+1).name = 'n';
+        end
+        
+        % layers
+        gridInfo = EHY_getGridInfo(inputFile,{'no_layers'});
+        if isfield(gridInfo,'no_layers') && gridInfo.no_layers > 1 && ~ismember(OPT.varName,{'wl','wd','dps'})
+            dims(end+1).name = 'layers';
+        end
+        
+    otherwise % SOBEK / .. 
         % time // always ask for time
         dims(1).name = 'time';
         
@@ -199,7 +222,11 @@ if nargout > 2
     
     %% Get time information from simulation and determine index of required times
     if ~isempty(dimsInd.time)
-        Data.times = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
+        if strcmpi(modelType,'simona') && ~isempty(dimsInd.m)
+            Data.times = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile,0,'SDS_his_or_map','map');
+        else
+            Data.times = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile);
+        end
         if EHY_isCMEMS(inputFile) && nc_isvar(inputFile,'latitude') && OPT.mergeCMEMSdata
             % handling of time indices is done within EHY_getMapCMEMSData
         else  

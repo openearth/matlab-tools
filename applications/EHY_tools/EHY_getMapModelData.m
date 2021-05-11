@@ -432,7 +432,31 @@ if ~exist('Data','var')
             
         case 'simona'
             %% SIMONA (WAQUA/TRIWAQ)
-            % to be implemented
+            % open data file
+            sds = qpfopen(inputFile);
+            
+            m_ind = dims(mInd).index;
+            n_ind = dims(nInd).index;
+            
+            switch OPT.varName
+                case 'wl' % ref to wl
+                    for iT = 1:length(dims(timeInd).index)
+                        Data.val(dims(timeInd).indexOut(iT),:,:) = waquaio(sds,[],'waterlevel',dims(timeInd).index(iT),n_ind,m_ind);
+                    end
+            end
+            
+            % swap m,n-indices (from vs_let) from [n,m] to [time,m,n(,layers)]
+            Data.val = permute(Data.val,[1 3 2]);
+            dmy = dims(2); dims(2) = dims(3); dims(3) = dmy; % swap [n,m] to [m,n]
+            dmy = mInd; mInd = nInd; nInd = dmy;
+            
+            % delete ghost cells // aim: get same result as 'loaddata' from d3d_qp
+            % delete
+            if m_ind(1)==1; Data.val = Data.val(:,2:end,:,:,:); end
+            if n_ind(1)==1; Data.val = Data.val(:,:,2:end,:,:); end
+            % set to NaN
+            if m_ind(end)==dims(mInd).size; Data.val(:,end,:,:,:) = NaN; end
+            if n_ind(end)==dims(nInd).size; Data.val(:,:,end,:,:) = NaN; end
             
     end
     

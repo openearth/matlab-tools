@@ -20,7 +20,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %               boundary                E.boundary (model domain surrounding polygon)
 %         Zcen (top-view info/depth)    E.Zcen (& E.Zcor)
 %         Z    (side-view info/profile) E.Zcen (& E.Zcor), E.Zcen_cen & E.Zcen_int(in NetElem/faces)
-%               layer_perc              E.layer_perc (bed to surface), sum=100
+%               layer_perc              E.layer_perc (bed to surface), sum = 1 = 100%
 %               spherical               E.spherical (0=cartesian,1=spherical)
 %               grid                    E.grid [plot grid with plot(E.grid(:,1),E.grid(:,2)) ]
 %
@@ -419,12 +419,13 @@ switch modelType
                             if nc_isvar(inputFile,'mesh2d_layer_sigma')
                                 E.layer_perc = diff(ncread(inputFile,'mesh2d_interface_sigma'));
                             elseif nc_isvar(inputFile,'zcoordinate_w') && strcmp(layer_model,'sigma-model')
-                                % reconstruct thickness based upon z-coordinates first station, first timestep
+                                % reconstruct thickness based upon z-coordinates of a active station and first timestep
                                 % for sigma-models only
-                                tmp = ncread(inputFile,'zcoordinate_w',[1 1 1],[inf 1 1]);
-                                for i_lay = 1: no_layers
-                                    E.layer_perc(i_lay) = (tmp(i_lay + 1) - tmp(i_lay))/(tmp(end) - tmp(1));
-                                end
+                                tmp = ncread(inputFile,'zcoordinate_w',[1 1 1],[inf inf 1]);
+                                i_stat = find(~isnan(tmp(1,:)),1,'first');
+                                waterdepth = max(tmp(:,i_stat)) - min(tmp(:,i_stat));
+                                E.layer_perc = diff(tmp(:,i_stat)) ./ waterdepth;
+                                E.layer_perc = reshape(E.layer_perc,1,[]);
                             elseif nc_isvar(inputFile,'zcoordinate_c') && strcmp(layer_model,'sigma-model') && nc_isvar(inputFile,'waterlevel')
                                 
                                 % Reconstruct interfaces
@@ -880,6 +881,12 @@ switch modelType
                         E.layer_perc = E.layer_perc;
                     end
                 end
+                if ismember('XYcor', wantedOutput)
+                    [E.Xcor,E.Ycor] = waquaio(sds,'','dgrid');
+                    E.Xcor = E.Xcor';
+                    E.Ycor = E.Ycor';
+                end
+                
         end % typeOfModelFile
         
     case {'sobek3' 'sobek3_new' 'implic'}
@@ -997,7 +1004,8 @@ if ~exist('E','var') && OPT.disp
 end
 
 %% If [m,n]-selection is specified for structured grid, reduce output to specified grid cells only
-if ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim','lga','cco'})
+if (ismember(modelType,{'d3d','delwaq'}) && ismember(typeOfModelFileDetail,{'trim','lga','cco'})) || ...
+        strcmpi(modelType,'simona')
     % deal with ghost-cells start of grid
     if ~ismember(OPT.m(1),[0 1]); OPT.m = [OPT.m(1)-1 OPT.m]; end
     if ~ismember(OPT.n(1),[0 1]); OPT.n = [OPT.n(1)-1 OPT.n]; end

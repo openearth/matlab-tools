@@ -39,13 +39,9 @@ elseif length(date) == 20 && all(ismember(date([5 8]),'-')) && all(ismember(date
         && strcmp(date(19),'.') % mistake in creation of ERA5-meteo-files
     date = date(1:16);
     format = 'yyyy-mm-dd HH:MM';
-elseif length(date) == 26 && all(ismember(date([5 8]),'-')) && all(ismember(date([14 17 24]),':')) ...
-        && ismember(date(21),'+-')
+elseif all(ismember(date([5 8]),'-')) && all(ismember(date([14 17]),':'))
     date = date(1:19);
-    format = 'yyyy-mm-dd HH:MM:SS'; % '1970-01-01 00:00:00 +01:00'
-elseif length(date) == 25 && all(ismember(date([5 8]),'-')) && all(ismember(date([14 17 23]),':'))
-    date = date(1:19);
-    format = 'yyyy-mm-dd HH:MM:SS'; % '1970-01-01 00:00:00 01:00'
+    format = 'yyyy-mm-dd HH:MM:SS'; % '1970-01-01 00:00:00.......'
 end
 
 %% Determine daten
