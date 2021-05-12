@@ -352,6 +352,8 @@ switch modelType
                     else
                         Data.val(:,indexOut,:) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind,layer_ind);
                     end
+                case 'cross_section_discharge'
+                    Data.val(:,indexOut) = waquaio(sds,[],'mq-stat',time_ind,stat_ind);
             end
         end
         
