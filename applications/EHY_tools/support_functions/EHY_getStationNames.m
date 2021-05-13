@@ -55,6 +55,8 @@ switch modelType
             stationNames  = strtrim(waquaio(sds,[],'flowstat-uv'));
         elseif strcmpi(OPT.varName,'salinity') || strcmpi(OPT.varName,'temperature')
             stationNames  = strtrim(waquaio(sds,[],'transtat'));
+        elseif strcmpi(OPT.varName,'cross_section_discharge')
+            stationNames  = [strtrim(waquaio(sds,[],'flowcrs-u'))' strtrim(waquaio(sds,[],'flowcrs-v'))'];
         else % 'wl','wd','dps'
             stationNames  = strtrim(waquaio(sds,[],'flowstat-wl'));
         end
