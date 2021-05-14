@@ -200,70 +200,77 @@ cols=find((x>=xlim(1))&(x<=xlim(2)));
 
 
 %% Display messages if region of interest is partly or wholly outside the image region:
-
+% but also keep track of variable nodata so this script can be used in functions
+nodata = 0;
 if xlim(1)<min(x)||xlim(2)>max(x)
     disp('geoimread limits extend beyond the available image output in the x direction.')
 end
-
 if ylim(1)<min(y)||ylim(2)>max(y)
     disp('geoimread limits extend beyond the available image output in the y direction.')
 end
-
 if isempty(rows)||isempty(cols)
-    error('No image coordinates can be found inside the specified limits.')
+    disp('No image coordinates can be found inside the specified limits.')
+    nodata =1;
 end
 
-%% Load region of interest: 
-reductionlevel=0;
-if reductionlevel==0
-    rows=sort(rows([1 end]));
-    cols=sort(cols([1 end]));
-else
-    %% Load region of interest:
-    dpx=2^reductionlevel;
-    rows=round(rows/dpx);cols=round(cols/dpx);
+if nodata ~= 1
+
+    %% Load region of interest: 
+    reductionlevel=0;
+    if reductionlevel==0
+        rows=sort(rows([1 end]));
+        cols=sort(cols([1 end]));
+    else
+        %% Load region of interest:
+        dpx=2^reductionlevel;
+        rows=round(rows/dpx);cols=round(cols/dpx);
+
+        rows=sort(rows([1 end]));
+        cols=sort(cols([1 end]));
+    end
+    x=x(cols(1):cols(end));
+    y=y(rows(1):rows(end));
+
+    A=imread(filename,'PixelRegion',{rows cols});
+    A = double(A); %id = A > 100; A(id) = NaN;
+
+    %% Update info structure to more accurately reflect the new image: 
+
+    if nargout == 4
+        I.FileSize = numel(A); 
+        I.Height = size(A,1); 
+        I.Width = size(A,2); 
+    %     try
+    %         I.TiePoints.WorldPoints.X = x(1);
+    %         I.TiePoints.WorldPoints.Y = y(1);
+    %         I.SpatialRef.RasterSize = [size(A,1),size(A,2)];
+    %         I.RefMatrix(3,1) = x(1);
+    %         I.RefMatrix(3,2) = y(1);
+    %         I.BoundingBox = [min(x) min(y); max(x) max(y)];
+    %         I.CornerCoords.X = [min(x) max(x) max(x) min(x)];
+    %         I.CornerCoords.Y = [max(y) max(y) min(y) min(y)];
+    %         %TODO: check whether GTRasterTypeGeoKey is RasterPixelIsArea or RasterPixelIsPoint
+    %         I.CornerCoords.Row = .5 + [0 0 size(A,1) size(A,1)]; %TODO: is this .5 always true?  
+    %         I.CornerCoords.Col = .5 + [0 size(A,2) size(A,2) 0];
+    %         [I.CornerCoords.Lat,I.CornerCoords.Lon] = projinv(I,I.CornerCoords.X,I.CornerCoords.Y);
+    %         I.GeoTIFFTags.ModelTiepointTag(4) = x(1);
+    %         I.GeoTIFFTags.ModelTiepointTag(5) = y(1);
+    %         I.SpatialRef.XLimWorld = [min(x),max(x)];
+    %         I.SpatialRef.YLimWorld = [min(y),max(y)];
+    %     catch,end
+    end
+
+    %% Clean up: 
+    if nargout==0
+        imshow(A,'XData',x,'YData',y)
+        axis xy
+        clear A x y I
+    end
     
-    rows=sort(rows([1 end]));
-    cols=sort(cols([1 end]));
-end
-x=x(cols(1):cols(end));
-y=y(rows(1):rows(end));
-
-A=imread(filename,'PixelRegion',{rows cols});
-A = double(A); id = A > 100; A(id) = NaN;
-
-%% Update info structure to more accurately reflect the new image: 
-
-if nargout == 4
-    I.FileSize = numel(A); 
-    I.Height = size(A,1); 
-    I.Width = size(A,2); 
-%     try
-%         I.TiePoints.WorldPoints.X = x(1);
-%         I.TiePoints.WorldPoints.Y = y(1);
-%         I.SpatialRef.RasterSize = [size(A,1),size(A,2)];
-%         I.RefMatrix(3,1) = x(1);
-%         I.RefMatrix(3,2) = y(1);
-%         I.BoundingBox = [min(x) min(y); max(x) max(y)];
-%         I.CornerCoords.X = [min(x) max(x) max(x) min(x)];
-%         I.CornerCoords.Y = [max(y) max(y) min(y) min(y)];
-%         %TODO: check whether GTRasterTypeGeoKey is RasterPixelIsArea or RasterPixelIsPoint
-%         I.CornerCoords.Row = .5 + [0 0 size(A,1) size(A,1)]; %TODO: is this .5 always true?  
-%         I.CornerCoords.Col = .5 + [0 size(A,2) size(A,2) 0];
-%         [I.CornerCoords.Lat,I.CornerCoords.Lon] = projinv(I,I.CornerCoords.X,I.CornerCoords.Y);
-%         I.GeoTIFFTags.ModelTiepointTag(4) = x(1);
-%         I.GeoTIFFTags.ModelTiepointTag(5) = y(1);
-%         I.SpatialRef.XLimWorld = [min(x),max(x)];
-%         I.SpatialRef.YLimWorld = [min(y),max(y)];
-%     catch,end
-end
-
-%% Clean up: 
-
-if nargout==0
-    imshow(A,'XData',x,'YData',y)
-    axis xy
-    clear A x y I
+else
+    A = [];
+    x = [];
+    y = [];
 end
 
 
