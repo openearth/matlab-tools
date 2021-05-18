@@ -1,6 +1,7 @@
-function sfincs_write_netcdf_bndbzsbzifile(filename, x, y, EPSGcode, UTMname, refdate, time, bzs, bzi)
+function sfincs_write_netcdf_bndbzsbzifile2(filename, x, y, EPSGcode, UTMname, refdate, time, bzs, bzi)
 %
 % v1.0  Leijnse     12-08-2019      Initial commit
+% v1.1 	Nederhoff   18-05-2021 	    Compressed netCDF type 4
 %
 % Input specification:
 % - x and y expected as arrays with values per station in same projected coordinate system as in SFINCS.
@@ -32,9 +33,9 @@ function sfincs_write_netcdf_bndbzsbzifile(filename, x, y, EPSGcode, UTMname, re
 % bzi = -1 * randi([0 10],length(time),length(x));
 %
 % sfincs_write_netcdf_bndbzsbzifile(filename, x, y, EPSGcode, UTMname, refdate, time, bzs, bzi)
-%
+
 %% General info
-ncid                = netcdf.create(filename,'NC_WRITE');
+ncid                = netcdf.create(filename,'NETCDF4');
 globalID            = netcdf.getConstant('NC_GLOBAL');
 
 % Add attributes global to the dataset
@@ -79,7 +80,7 @@ netcdf.putAtt(ncid,crs_ID,'epsg_code', ['EPSG:',num2str(EPSGcode)]);
 time_ID     = netcdf.defVar(ncid,'time','double',timedimid);
 netcdf.putAtt(ncid,time_ID,'standard_name', 'time');
 netcdf.putAtt(ncid,time_ID,'long_name', 'time in minutes');
-netcdf.putAtt(ncid,time_ID,'units', ['minutes since ',refdate]);
+netcdf.putAtt(ncid,time_ID,'units', ['seconds since ',refdate]);
 
 % Standard names - 5 = bzs
 bzs_ID      = netcdf.defVar(ncid,'zs','double',[pointsdimid timedimid]); 
@@ -99,6 +100,11 @@ netcdf.putAtt(ncid,bzi_ID,'_FillValue',-999);
 netcdf.putAtt(ncid,bzi_ID,'coordinates','x y time');
 netcdf.putAtt(ncid,bzi_ID,'grid_mapping','crs');
 
+% Make smaller
+netcdf.defVarDeflate(ncid,time_ID,true,true,1);
+netcdf.defVarDeflate(ncid,bzs_ID,true,true,1);
+netcdf.defVarDeflate(ncid,bzi_ID,true,true,1);
+
 %% Close defining the NetCdf and write data
 netcdf.endDef(ncid);
 
@@ -110,14 +116,15 @@ netcdf.putVar(ncid,time_ID,time);
 
 % Store real data, correct dimensions data
 bzsnew      = permute(squeeze(bzs), [2,1]); %set input to right dimensions
-bzsnew      = single(bzsnew); %needed to specify as single?
+bzsnew      = single(bzsnew);
 netcdf.putVar(ncid,bzs_ID,bzsnew);
 
 bzinew      = permute(squeeze(bzi), [2,1]); %set input to right dimensions
-bzinew      = single(bzinew); %needed to specify as single?
+bzinew      = single(bzinew);
 netcdf.putVar(ncid,bzi_ID,bzinew);
 
 % We're done, close the netcdf input file
 netcdf.close(ncid)
 fclose('all'); 
+
 end
