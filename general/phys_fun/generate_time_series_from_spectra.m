@@ -151,13 +151,27 @@ if ~strcmpi(waveDirectionType,'none')
 end
 
 %% interpolate spectra to standard space
-
 switch waveDirectionType
     case 'none'
         for i=1:nspec
+                  
+            % Interpolate
             spec(i).vfi = interp1(spec(i).f,spec(i).vf,f,'linear');
-            spec(i).vfi(isnan(spec(i).vfi)) = 0;
+            spec(i).vfi(isnan(spec(i).vfi)) = 0;     
+            
+            % Check variance density
+            spec(i).Hs1 = swan_hs(spec(i).f, spec(i).v);
+            spec(i).Hs2  = swan_hs(f, spec(i).vfi);
+            
+            % Factor on vfi to get same Hs
+            factor      = spec(i).Hs1./spec(i).Hs2;
+            if factor > 1.01 & factor < 0.99
+                spec(i).vfi = spec(i).vfi*factor^2;
+                spec(i).Hs2 = swan_hs(f, spec(i).vfi);
+                factor      = spec(i).Hs1./spec(i).Hs2;
+            end
         end
+
     otherwise
         F = repmat(f,1,nd);
         DIR = repmat(dir,nf,1);
@@ -220,6 +234,7 @@ switch waveDirectionType
                     % variance density
                     vspec = spec(i).v;
             end
+            
             % now copy all but for angles between -360 and 0 and 360-720
             dirspec = [dirspec+360 dirspec dirspec-360];
             fspec = [fspec fspec fspec];
@@ -229,14 +244,13 @@ switch waveDirectionType
             Ispec = scatteredInterpolant(fspec(:),dirspec(:),vspec(:),'linear','none');
             
             % project onto regular grid
-            
             spec(i).vi = Ispec(F,DIR);
             spec(i).vi = max(spec(i).vi,0);
+            
         end
 end
 
 %% generate random wave trains
-
 switch waveDirectionType
     case 'none'
         nWaveTrains = nf;
@@ -253,7 +267,6 @@ switch waveDirectionType
         kx = k.*cosd(DIR);
         ky = k.*sind(DIR);
 end
-
 
 
 %% get time series per component per output point
