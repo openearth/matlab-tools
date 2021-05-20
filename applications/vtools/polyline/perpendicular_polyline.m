@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17185 $
+%$Date: 2021-04-14 14:53:56 +0200 (Wed, 14 Apr 2021) $
+%$Author: chavarri $
+%$Id: perpendicular_polyline.m 17185 2021-04-14 12:53:56Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/perpendicular_polyline.m $
 %
 
 function [xyL,xyR]=perpendicular_polyline(xy,np_average,ds)

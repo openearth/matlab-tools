@@ -42,9 +42,9 @@ for k1=1:n1
 
             if nel>0
                 z_m(k2,k1,k3,1)=nel;
-                z_m(k2,k1,k3,2)=mean(val_z);
-                z_m(k2,k1,k3,3)=max(val_z);
-                z_m(k2,k1,k3,4)=std(val_z);
+                z_m(k2,k1,k3,2)=mean(val_z,'omitnan');
+                z_m(k2,k1,k3,3)=max(val_z,[],'all','omitnan');
+                z_m(k2,k1,k3,4)=std(val_z,'omitnan');
             end
 
         end %kchagq

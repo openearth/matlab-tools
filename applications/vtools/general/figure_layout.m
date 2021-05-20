@@ -124,7 +124,8 @@ cmap=brewermap(3,'set1');
 % cmap=flipud(brewermap(ncmap,'RdBu'));
 % fact=0.1; %percentage of values to remove from the center
 % cmap=[cmap(1:(ncmap-round(fact*ncmap))/2,:);cmap((ncmap+round(fact*ncmap))/2:end,:)];
-% %compressed colormap
+
+%compressed colormap
 % ncmap=100;
 % cmap=flipud(brewermap(ncmap,'RdYlBu'));
 % p1=0.5; %fraction of cmap compressed in p2
@@ -141,7 +142,8 @@ cmap=brewermap(3,'set1');
 % vq1=interp1(x1,y1,xq1);
 % vq2=interp1(x2,y2,xq2);
 % cmap=[vq1;vq2];
-% %gauss colormap
+
+%gauss colormap
 % ncmap=100;
 % cmap=flipud(brewermap(ncmap,'RdYlBu'));
 % x=linspace(0,1,ncmap);
@@ -157,6 +159,37 @@ cmap=brewermap(3,'set1');
 % cmap1=flipud(brewermap(aux_cmap1_n,'Reds'));
 % cmap2=brewermap(aux_cmap2_n,'Greens');
 % cmap=[cmap1;cmap2];
+
+%interpolate depending on values
+% c=[200e-6,210e-6,300e-6,420e-6,2e-3,5.6e-3,16e-3,20e-3]*1e3;
+% nc=numel(c);
+% cmap=brewermap(nc-1,'Reds');
+% 
+% F1=griddedInterpolant(c(1:end-1)',cmap(:,1),'linear','nearest');
+% F2=griddedInterpolant(c(1:end-1)',cmap(:,2),'linear','nearest');
+% F3=griddedInterpolant(c(1:end-1)',cmap(:,3),'linear','nearest');
+% 
+% %e.g.
+% ct=[0.1e-3:0.1e-3:24e-3]*1e3; %color-dependent value
+% nct=numel(ct);
+% y=zeros(1,nct); %e.g.
+% x=1:1:nct; %e.g.
+% for kct=1:nct
+% scatter(x(kct),y(kct),20,[F1(ct(kct)),F2(ct(kct)),F3(ct(kct))],'filled')
+% end
+% han.cbar=colorbar;
+% colormap(cmap)
+% clim([1,nc])
+% han.cbar.Ticks=1:1:nc;
+% aux_str=cell(nc,1);
+% for kc=1:nc
+%     if c(kc)<1
+%         aux_str{kc,1}=sprintf('%3.0fe-3',c(kc)*1000);
+%     else
+%         aux_str{kc,1}=sprintf('%3.1f',c(kc));
+%     end
+% end
+% han.cbar.TickLabels=aux_str;
 
 %% TEXT
 
@@ -372,8 +405,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
-% %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
-% han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),{'flat bed','sloped bed'},'location','best');
+% han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
 % pos.leg=han.leg(kr,kc).Position;
 % han.leg.Position=pos.leg(kr,kc)+[0,0,0,0];
 % han.sfig(kr,kc).Position=pos.sfig;

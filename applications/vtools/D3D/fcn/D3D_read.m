@@ -16,6 +16,8 @@
 %open input_D3D_fig_layout
 %e.g.
 %
+% simdef.D3D.dire_sim=path_sim;
+% simdef=D3D_simpath(simdef);
 % simdef.flg.which_p=2; 
 % simdef.flg.which_v=39;
 % in_read.kt=0;

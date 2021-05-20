@@ -26,10 +26,14 @@ kx=in.kx;
 kf=in.kf;
 nl=in.nl;
 
-%%
+%% DEFAULT
 
 if isfield(flg,'zerosarenan')==0
     flg.zerosarenan=0;
+end
+
+if isfield(flg,'mean_type')==0
+    flg.mean_type=1;
 end
 
 %% results structure
@@ -188,7 +192,7 @@ switch flg.which_p
         out.cvar=reshape(dm(1,:,:,1),ny,nx);   
         out.time_r=time_r(kt); 
         
-    case {2,3,5,6,8,9} %2DH & 1D
+    case {2,3,5,6,8,9,19} %2DH & 1D
         %%
         switch flg.which_v
             case 1 %etab
@@ -685,10 +689,17 @@ zcordvel_mat=NaN(npint,KMAX);
                 out.zlabel='bed elevation change [m]';
                 out.zlabel_code='detab';
                 out.time_r=time_r_morpho(kt);
+            case 19 %bed load transport
+                SBUU=vs_get(NFStruct,'map-sed-series',{kt},'SBUU',{ky,kx,1:nf},'quiet'); %bed load transport excluding pores per fraction in x direction at u point [m^2/s]
+                SBVV=vs_get(NFStruct,'map-sed-series',{kt},'SBVV',{ky,kx,1:nf},'quiet'); %bed load transport excluding pores per fraction in y direction at v point [m^2/s]
+                z=sqrt(SBUU.^2+SBVV.^2);
+                out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
+                out.zlabel='bedload transport magnitude [m^2/s]';
             case 33 %cell area
                 z=vs_let(NFStruct,'map-const',{1},'GSQS',{ky,kx},'quiet'); 
                 out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
                 out.zlabel='cell area [m^2]';
+                
             otherwise
                 error('You are asking for plotting an unexisting variable')
         end %flg.which_v
@@ -919,7 +930,7 @@ switch flg.which_p
     case 2
         switch flg.which_s
             case 1
-        out.z=reshape(z,ny,nx);
+        out.z=reshape(z,ny,nx,[]);
         out.XZ=reshape(XZ,ny,nx);
         out.YZ=reshape(YZ,ny,nx);
         out.time_r=time_r(kt);

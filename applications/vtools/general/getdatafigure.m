@@ -109,7 +109,7 @@ else
     fprintf('Click on high y value \n');
     [x_aux,y_px_high,~]=ginput(1);
     scatter(x_aux,y_px_high,20,'sg')
-    y_ax_high=input('High x value = ');
+    y_ax_high=input('High y value = ');
 
 end
 

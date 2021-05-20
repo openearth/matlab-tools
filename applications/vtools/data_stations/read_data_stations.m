@@ -12,7 +12,9 @@
 %
 %INPUT:
 %   paths.main_folder = path to the main folder of the stations; e.g. paths.main_folder='d:\temporal\data_stations';
-%   varargin = pair-input with token-name and token; e.g. 'location_clear','Rood-9'
+%   varargin = pair-input with token-name and token; e.g.:
+%           -'location_clear','Rood-9'
+%           -'grootheid','CONCTTE'
 %       for loading all data: 'loadall'
 
 function [data_stations,idx]=read_data_stations(paths_main_folder,varargin)
@@ -46,8 +48,13 @@ ns=numel(data_stations_index);
 bol=true(1,ns);
 if ~loadall
     for ki=1:ni
-    [~,bol_loc]=find_str_in_cell({data_stations_index.(var_name{ki})},var_loc(ki));
-    bol=bol & bol_loc;
+        bol_loc=true(1,ns);
+        if ischar(var_loc{ki}) && ~isempty(var_loc{ki})
+            [~,bol_loc]=find_str_in_cell({data_stations_index.(var_name{ki})},var_loc(ki));
+        elseif isa(var_loc{ki},'double') && ~isnan(var_loc{ki})
+            bol_loc=[data_stations_index.(var_name{ki})]==var_loc{ki};
+        end
+        bol=bol & bol_loc;
     end
 end
 
