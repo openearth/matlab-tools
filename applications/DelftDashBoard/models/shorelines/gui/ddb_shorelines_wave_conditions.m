@@ -82,7 +82,11 @@ function load_wvcfile
 
 handles=getHandles;
 [tHTD]=load(handles.model.shorelines.domain.WVCfile);
-time=datenum(num2str(tHTD(:,1)),'yyyymmddhhMM');
+try
+    time=datenum(num2str(tHTD(:,1)),'yyyymmddhhMM');
+catch
+    time=datenum(num2str(tHTD(:,1)),'yyyymmdd');
+end
 handles.model.shorelines.time_ts=time;
 Hs=tHTD(:,2);
 Tp=tHTD(:,3);
@@ -107,7 +111,7 @@ handles.model.shorelines.domain.wave_table=wave_table;
 %% Make plot to check wave table is ok?
 wave_table.zb(wave_table.zb==-999)=nan;
 figure;
-pcolor(wave_table.xg,wave_table.yg,wave_table.zb);
+scatter(wave_table.xg,wave_table.yg,20,wave_table.zb);
 shading flat;
 colorbar;
 axis equal;

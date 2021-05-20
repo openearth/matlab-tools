@@ -8,12 +8,21 @@
   <element>
     <style>edit</style>
     <position>150 130 80 20</position>
-    <tooltipstring>Edit map output interval (in seconds)</tooltipstring>
-    <text>Output interval</text>
+    <tooltipstring>Edit plot interval</tooltipstring>
+    <text>Plot interval</text>
     <textposition>left</textposition>
     <type>real</type>
-    <variable>handles.model.shorelines.domain.output_timestep</variable>
+    <variable>handles.model.shorelines.domain.plotinterval</variable>
     <callback>ddb_shorelines_output</callback>
-    <option1>selectoutputinterval</option1>
+  </element>  
+  <element>
+    <style>edit</style>
+    <position>150 105 80 20</position>
+    <tooltipstring>Edit storage interval</tooltipstring>
+    <text>Storage interval</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.model.shorelines.domain.storageinterval</variable>
+    <callback>ddb_shorelines_output</callback>
   </element>  
 </root>

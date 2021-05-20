@@ -66,20 +66,20 @@ switch lower(opt)
         end
         
         if handles.model.shorelines.nrchannels>0
-            for as=1:handles.model.shorelines.nrchannels
-                handles.model.shorelines.channels(as).handle=[];
-                xp=handles.model.shorelines.channels(as).x;
-                yp=handles.model.shorelines.channels(as).y;
+%             for as=1:handles.model.shorelines.nrchannels
+%                 handles.model.shorelines.channels(as).handle=[];
+                xp=handles.model.shorelines.domain.xr_mc;
+                yp=handles.model.shorelines.domain.yr_mc;
                 
                 h=plot(xp,yp,'b--','linewidth',1.5,'tag','shorelines_channel');
-                handles.model.shorelines.channels(as).handle=h;
+                handles.model.shorelines.channels.handle=h;
                 
                 if vis
                     set(h,'Visible','on');
                 else
                     set(h,'Visible','off');
                 end
-            end
+%             end
         end
 end
 

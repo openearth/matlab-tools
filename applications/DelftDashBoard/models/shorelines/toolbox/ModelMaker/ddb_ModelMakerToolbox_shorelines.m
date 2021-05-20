@@ -91,6 +91,9 @@ switch handles.model.shorelines.status
                set(handles.model.shorelines.newshoreline.handle,'xdata',x,'ydata',y);
             end
 
+            handles = ddb_shorelines_plot_channel(handles, 'delete');
+            handles = ddb_shorelines_plot_channel(handles, 'update');
+
             setHandles(handles);
             
             drawnow; % this is where the event queue
@@ -142,6 +145,9 @@ switch handles.model.shorelines.status
         inp=handles.model.shorelines.domain;
         
         S=inp;
+        if S.automatic
+            S.dt=0;
+        end
         O=handles.model.shorelines.O;
         
         S.yesplot=0;

@@ -4,7 +4,7 @@ function [data] = readkeys(filename)
 number=0
 fid=fopen(filename);
 while 1
-    s=fgetl(fid);
+    s=fgetl(fid)
     if ~isempty(s)
         if ~ischar(s), break, end
         s = strip(s);
@@ -14,7 +14,8 @@ while 1
                 number=number+1;
                 keywords{number}=strip(s(1:k-1));
                 val=strip(s(k+1:end))
-                m=find(val==' '|val==';'|val=='%'|val=='/',1);
+               % m=find(val==' '|val==';'|val=='%'|val=='/',1);
+                m=find(val==';'|val=='%'|val=='/',1);
                 if isempty(m)
                     values{number}=val
                 else
@@ -28,7 +29,7 @@ fclose(fid);
 for i=1:length(keywords);
     keyword=keywords{i};
     value=values{i};
-    eval(['data.',keyword,'=',value]);
+    eval(['data.',keyword,'=',value])
 end
 end
 

@@ -53,6 +53,8 @@ handles.model.shorelines.domain.Bheight=2;
 handles.model.shorelines.channel_opt='off';
 handles.model.shorelines.domain.channel_width=500;
 handles.model.shorelines.domain.channel_fac=0.08;
+handles.model.shorelines.domain.tc=0.9;
+handles.model.shorelines.domain.smoothfac=0.01;
 
 handles.model.shorelines.nrshorelines=0;
 handles.model.shorelines.activeshoreline=1;
@@ -95,7 +97,7 @@ handles.model.shorelines.nourishments(1).nourlength=[];
 handles.model.shorelines.nrchannels=0;
 handles.model.shorelines.activechannel=1;
 handles.model.shorelines.channelnames={''};
-handles.model.shorelines.domain.LDBchannels='';
+handles.model.shorelines.domain.LDBchannel='';
 handles.model.shorelines.channels=[];
 handles.model.shorelines.channels(1).name='';
 handles.model.shorelines.channels(1).x=[];

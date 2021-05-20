@@ -126,8 +126,10 @@ handles=getHandles;
 [x,y]=read_xy_columns(handles.model.shorelines.domain.LDBstructures);
 matname=handles.model.shorelines.domain.LDBstructures;
 matname(end-2:end)='mat';
-load(matname);
-handles.model.shorelines.structures=structures;
+try
+    load(matname);
+    handles.model.shorelines.structures=structures;
+end
 
 [xi,yi,nrstructures,i1,i2]= get_one_polygon(x,y,1);
 for as=1:nrstructures

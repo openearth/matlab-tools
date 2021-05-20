@@ -41,7 +41,7 @@ switch lower(opt)
                 handles.model.shorelines.wavetrans_opt='lookup_table';
                 handles.model.shorelines.domain.wave_interaction=1;
             elseif ~isempty(handles.model.shorelines.domain.phif)
-                handles.model.shorelines.wavetrans_opt='dynamic profile';
+                handles.model.shorelines.wavetrans_opt='dynamic_profile';
             else
                 handles.model.shorelines.wavetrans_opt='none'
             end
