@@ -212,7 +212,7 @@ for ii=1:ni
                 %             [bboxx,bboxy]=convertCoordinates(bboxx,bboxy,'persistent','CS1.name',model.cs.name,'CS1.type',model.cs.type,'CS2.name',model.bathymetry(ibat).csname,'CS2.type',model.bathymetry(ibat).cstype);
                 [xg,yg]=convertCoordinates(xg0,yg0,'persistent','CS1.name',model.cs.name,'CS1.type',model.cs.type,'CS2.name',model.bathymetry(ibat).csname,'CS2.type',model.bathymetry(ibat).cstype);
                 
-                if strcmp(model_manning.bathymetry(ibat).cstype, 'Geographic') == 1
+                if strcmp(model.bathymetry(ibat).cstype, 'Geographic') == 1
                     factor = 100000; %wgs
                 else
                     factor = 1; %utm
