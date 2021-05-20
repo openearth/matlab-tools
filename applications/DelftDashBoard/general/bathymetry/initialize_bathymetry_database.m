@@ -9,10 +9,10 @@ else
 end
 
 % Get metadata from bathymetry databases
-if isempty(bathymetry)
+% if isempty(bathymetry)
     bathymetry.dir=dr;
     if ~exist(bathymetry.dir,'dir')
         error(['Bathymetry database folder ' bathymetry.dir ' does not exist !']);
     end
     bathymetry=ddb_findBathymetryDatabases(bathymetry);
-end
+% end
