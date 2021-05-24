@@ -1,4 +1,4 @@
-function sfincs_write_netcdf_bndbzsbzifile2(filename, x, y, EPSGcode, UTMname, refdate, time, bzs, bzi)
+function sfincs_write_netcdf_bndbzsbzifile(filename, x, y, EPSGcode, UTMname, refdate, time, bzs, bzi)
 %
 % v1.0  Leijnse     12-08-2019      Initial commit
 % v1.1 	Nederhoff   18-05-2021 	    Compressed netCDF type 4
@@ -80,7 +80,7 @@ netcdf.putAtt(ncid,crs_ID,'epsg_code', ['EPSG:',num2str(EPSGcode)]);
 time_ID     = netcdf.defVar(ncid,'time','double',timedimid);
 netcdf.putAtt(ncid,time_ID,'standard_name', 'time');
 netcdf.putAtt(ncid,time_ID,'long_name', 'time in minutes');
-netcdf.putAtt(ncid,time_ID,'units', ['seconds since ',refdate]);
+netcdf.putAtt(ncid,time_ID,'units', ['minutes since ',refdate]);
 
 % Standard names - 5 = bzs
 bzs_ID      = netcdf.defVar(ncid,'zs','double',[pointsdimid timedimid]); 
