@@ -313,48 +313,43 @@ switch modelType
             mn                        = waquaio(sds,[],'wl-mn');
             [x,y]                     = waquaio(sds,[],'wl-xy');
         end
+        Data.locationMN(dims(stationsInd).indexOut,:) = mn(dims(stationsInd).index,:);
+        Data.locationXY(dims(stationsInd).indexOut,:) = [x(dims(stationsInd).index) y(dims(stationsInd).index)];
         
         time_ind  = dims(timeInd).index;
-        % loop over stations
-        for i_stat = 1:length(dims(stationsInd).index)
-            stat_ind = dims(stationsInd).index(i_stat);
-            indexOut = dims(stationsInd).indexOut(i_stat);
-            
-            Data.locationMN(indexOut,:) = mn(stat_ind,:);
-            Data.locationXY(indexOut,:) = [x(stat_ind) y(stat_ind)];
-            
-            switch OPT.varName
-                case 'wl' % ref to wl
-                    Data.val(:,indexOut)        = waquaio(sds,[],'wlstat',time_ind,stat_ind);
-                case 'dps' % bed to ref
-                    [~,~,z_int]        = waquaio(sds,[],'z-stat',1,stat_ind);
-                    Data.val(indexOut)   = -1.*z_int(end);
-                case 'wd'
-                    wl                 = waquaio(sds,[],'wlstat',time_ind,stat_ind);
-                    [~,~,z_int]        = waquaio(sds,[],'z-stat',1,stat_ind);
-                    dps                = -1.*z_int(end);
-                    Data.val(:,indexOut) = wl+dps;
-                case 'uv'
-                    if no_layers==1
-                        [uu,vv] = waquaio(sds,[],'uv-stat',time_ind,stat_ind);
-                        Data.vel_x(:,indexOut) = uu;
-                        Data.vel_y(:,indexOut) = vv;
-                    else
-                        Data.vel_x(:,indexOut,:) = waquaio(sds,[],'u-stat',time_ind,stat_ind,layer_ind);
-                        Data.vel_y(:,indexOut,:) = waquaio(sds,[],'v-stat',time_ind,stat_ind,layer_ind);
-                    end
-                    Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
-                    Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
-                    Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
-                case 'salinity'
-                    if no_layers==1
-                        Data.val(:,indexOut) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind);
-                    else
-                        Data.val(:,indexOut,:) = waquaio(sds,[],'stsubst:            salinity',time_ind,stat_ind,layer_ind);
-                    end
-                case 'cross_section_discharge'
-                    Data.val(:,indexOut) = waquaio(sds,[],'mq-stat',time_ind,stat_ind);
-            end
+        switch OPT.varName
+            case 'wl' % ref to wl
+                Data.val(:,dims(stationsInd).indexOut)        = waquaio(sds,[],'wlstat',time_ind,dims(stationsInd).index);
+            case 'dps' % bed to ref
+                [~,~,z_int]        = waquaio(sds,[],'z-stat',1,dims(stationsInd).index);
+                Data.val(dims(stationInd).indexOut)   = -1.*z_int(no_layers + 1:no_layers+1:end);
+            case 'wd'
+                wl(:,dims(stationsInd).indexOut)  = waquaio(sds,[],'wlstat',time_ind,dims(stationsInd).index);
+                [~,~,z_int]                       = waquaio(sds,[],'z-stat',1,dims(stationsInd).index);
+                dps(dims(stationsInd).indexOut)   =  -1.*z_int(no_layers + 1:no_layers+1:end);
+                for i_stat = 1: size(wl,2)
+                    Data.val(:,i_stat) = wl(:,i_stat)+dps(i_stat);
+                end
+            case 'uv'
+                if no_layers==1
+                    [uu,vv] = waquaio(sds,[],'uv-stat',time_ind,dims(stationsInd).index);
+                    Data.vel_x(:,dims(stationsInd).indexOut) = uu;
+                    Data.vel_y(:,dims(stationsInd).indexOut) = vv;
+                else
+                    Data.vel_x(:,dims(stationsInd).indexOut,:) = waquaio(sds,[],'u-stat',time_ind,dims(stationsInd).index,layer_ind);
+                    Data.vel_y(:,dims(stationsInd).indexOut,:) = waquaio(sds,[],'v-stat',time_ind,dims(stationsInd).index,layer_ind);
+                end
+                Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+                Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
+                Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
+            case 'salinity'
+                if no_layers==1
+                    Data.val(:,dims(stationsInd).indexOut)   = waquaio(sds,[],'stsubst:            salinity',time_ind,dims(stationsInd).index);
+                else
+                    Data.val(:,dims(stationsInd).indexOut,:) = waquaio(sds,[],'stsubst:            salinity',time_ind,dims(stationsInd).index,layer_ind);
+                end
+            case 'cross_section_discharge'
+                Data.val(:,dims(stationsInd).indexOut) = waquaio(sds,[],'mq-stat',time_ind,dims(stationsInd).index);
         end
         
     case 'sobek3'
@@ -483,7 +478,7 @@ switch modelType
                     % bed level
                     subInd = strmatch('TotalDepth',dw.SubsName);
                     [~,TotalDepth] = delwaq('read',dw,subInd,stat_ind,1);
-                    TotalDepth(TotalDepth==0) = []; TotalDepth = unique(TotalDepth); 
+                    TotalDepth(TotalDepth==0) = []; TotalDepth = unique(TotalDepth);
                     if numel(TotalDepth)>1; error('debug me'); end
                     bl = OPT.dw_iniWL - TotalDepth;
                     
