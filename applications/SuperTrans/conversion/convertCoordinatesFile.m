@@ -7,6 +7,10 @@ switch fileExt
         ldb = landboundary('read',filePath);
         [ldbNew(:,1) ldbNew(:,2)] = convertCoordinates(ldb(:,1),ldb(:,2),'CS1.code',epsgIn,'CS2.code',epsgOut);
         landboundary('write',[fileDir,filesep,fileName,'_conv_',num2str(epsgOut),'.ldb'],ldbNew);
+    case '.pol'
+        ldb = landboundary('read',filePath);
+        [ldbNew(:,1) ldbNew(:,2)] = convertCoordinates(ldb(:,1),ldb(:,2),'CS1.code',epsgIn,'CS2.code',epsgOut);
+        landboundary('write',[fileDir,filesep,fileName,'_conv_',num2str(epsgOut),'.pol'],ldbNew);
     case '.grd'
         grd = wlgrid('read',filePath);
         [grd.X,grd.Y] = convertCoordinates(grd.X,grd.Y,'CS1.code',epsgIn,'CS2.code',epsgOut);

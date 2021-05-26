@@ -128,6 +128,9 @@ for cc = 1:length(s.plot.const)
     
     if ~isfield(s.plot,'A_ratio_limits') || length(s.plot.A_ratio_limits)~=2
         colorbarLims = [max(1-max(abs(A_ratio-1)),0):max(abs(A_ratio-1))/10:1+max(abs(A_ratio-1))];
+        if isempty(colorbarLims)
+           colorbarLims = [0.95 1.05]; 
+        end
     else
         colorbarLims  = linspace(s.plot.A_ratio_limits(1),s.plot.A_ratio_limits(2),20);
     end
@@ -170,6 +173,9 @@ for cc = 1:length(s.plot.const)
     
     if ~isfield(s.plot,'G_diff_limits') || length(s.plot.G_diff_limits)~=2
         colorbarLims  = [max(abs(G_diff))*-1:max(abs(G_diff))/10:max(abs(G_diff))];
+        if isempty(colorbarLims)
+           colorbarLims = [-5 5]; 
+        end
     else
         colorbarLims  = linspace(s.plot.G_diff_limits(1),s.plot.G_diff_limits(2),20);
         
