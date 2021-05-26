@@ -98,8 +98,8 @@ else
     %   S.mn2  ,...
     %   S.mn3  ,...
     %   S.mn4  ]=textread(S.filename,'%20c%d%d%d%d');
-    %   TK: fscanf does not work when cross section names contain integers  
-    %   S.DATA(i).name         = fscanf(fid,'%20c',1); 
+    %   TK: fscanf does not work when cross section names contain integers
+    %   S.DATA(i).name         = fscanf(fid,'%20c',1);
     %   S.DATA(i).mn           = fscanf(fid,'%i'  ,4);
     %   ==> read the line and scan the line; use str2num because 001 is not
     %                                        read properly using sscanf
@@ -122,10 +122,10 @@ else
        S.DATA(i).m(2) = S.DATA(i).mn(3);
        S.DATA(i).n(1) = S.DATA(i).mn(2);
        S.DATA(i).n(2) = S.DATA(i).mn(4);
-                              
+
 %      fgetl(fid); % read rest of line
     end
-   
+
     S.iostat   = 1;
     S.NTables  = i;
     for i=1:S.NTables
@@ -160,15 +160,15 @@ else
         end
         S.X = cell2mat(S.x);
         S.Y = cell2mat(S.y);
-    end   
-   
-end   
+    end
+
+end
 
 
 if nargout==1
-   varargout = {S};   
+   varargout = {S};
 else
-   varargout = {S,S.iostat};   
+   varargout = {S,S.iostat};
 end
 
 % ------------------------------------
@@ -180,8 +180,8 @@ fid          = fopen(filename,'w');
 OS           = 'windows'; % or 'unix'
 
 % edit - 9June'17 - Julien Groenenboom
-    S.m=S.m';
-    S.n=S.n';
+%   S.m=S.m';
+%   S.n=S.n';
 
 for i=1:size(S.m,1)
 
@@ -191,7 +191,7 @@ for i=1:size(S.m,1)
    elseif strcmpi(OS(1),'w')
       fprintf(fid,'\r\n');
    end
-   
+
 end
 
 
