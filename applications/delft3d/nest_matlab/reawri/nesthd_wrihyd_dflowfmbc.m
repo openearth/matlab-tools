@@ -49,9 +49,14 @@ for i_pnt = 1: no_pnt
             end
         elseif lstci == -1
             
-            %% Type of hydrodynnamic boundary
-            if strcmpi(bnd.DATA(i_pnt).bndtype,'z')  quantity = 'waterlevel'; end
-            if strcmpi(bnd.DATA(i_pnt).bndtype,'p')  quantity = 'uxuyadvectionvelocity'; end
+            %% Type of hydrodynamic boundary
+            if strcmpi(bnd.DATA(i_pnt).bndtype,'z')
+                quantity = 'waterlevel';
+            elseif strcmpi(bnd.DATA(i_pnt).bndtype,'p')  
+                quantity = 'uxuyadvectionvelocity';
+            else
+                quantity = ''; % initialise to avoid errors or checks like if exist('quantity','var') && ...
+            end
             l_act = 1;
         end
         

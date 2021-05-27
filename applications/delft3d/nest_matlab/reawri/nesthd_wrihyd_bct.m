@@ -10,12 +10,16 @@ function wrihyd_bct(filename,bnd,nfs_inf,bndval,add_inf)
 
 no_bnd        = length(bnd.DATA)/2;
 notims        = length(bndval);
-kmax          = size(bndval(1).value,2)/2;
+if size(bndval(1).value,2) == 1
+    kmax = 1;
+else
+    kmax = size(bndval(1).value,2)/2;
+end
 thick         = nfs_inf.thick;
 
 %% Switch orientation if overall model is dflowfm
 if strcmpi(nfs_inf.from,'dfm')
-    [bndval,thick] = nesthd_flipori(bndval,thick);
+    [bndval,thick] = nesthd_flipori(bndval,thick,bnd);
 end
 
 %

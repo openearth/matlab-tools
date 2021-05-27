@@ -25,7 +25,7 @@
       gen_inf.layer_model               = gridInfo.layer_model;
       if strcmpi (gridInfo.layer_model,'sigma-model')
           gridInfo                      = EHY_getGridInfo(fileInp,{'layer_perc'});
-          gen_inf.thick                 = gridInfo.layer_perc;                   % follow either d3d sigma or dhydro convention
+          gen_inf.thick                 = reshape(gridInfo.layer_perc,1,[]); % follow either d3d sigma or dhydro convention
       else
           gen_inf.thick(1:gen_inf.kmax) = NaN;
       end
