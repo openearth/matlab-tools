@@ -19,7 +19,9 @@ function [newName,varNameInput] = EHY_nameOnFile(fName,varName)
 %% get modelType and typeOfModelFileDetail
 modelType                  = EHY_getModelType(fName);
 [~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(fName);
-
+if EHY_isCMEMS(fName)
+    modelType = 'CMEMS';
+end
 %% return if regular netCDF file
 varNameInput = varName;
 if strcmp(modelType,'nc')
@@ -98,6 +100,13 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'temperature') newName = 'Temp'       ; end
 end
 
+if strcmpi(modelType,'CMEMS')
+    if strcmpi(varName,'salinity');    newName = 'so'; end
+    if strcmpi(varName,'temperature'); newName = 'thetao'; end
+    % set modelType back to 'nc' for further processing
+    modelType = 'nc';
+end
+
 %% for FM output (netCDF files)
 if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
     
@@ -129,7 +138,7 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
     %%% Change Variable or Dimension name to deal with old/new variable names like tem1 (older) vs. mesh2d_tem1 (newer)
     if ~nc_isvar(fName,newName) && ~nc_isdim(fName,newName)
         if size(newName,1)>1
-            ind = find(ismember({infonc.Dimensions.Name},newName));
+            ind = find(ismember({infonc.Dimensions.Name},newName),1);
             if numel(unique([infonc.Dimensions(ind).Length]))
                 newName = newName(1,:);
             else

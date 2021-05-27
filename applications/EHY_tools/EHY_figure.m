@@ -53,13 +53,13 @@ set(fh,'Position',[Left Bottom OPT.width OPT.height]);
 for i_sub = 1:OPT.no_sub
     fig_pos = get(fh,'Position');
     
-    switch OPT.subOrientation
-        case 'vert'
+    switch lower(OPT.subOrientation(1))
+        case 'v' % vertical
             height = (fig_pos(4) - (OPT.no_sub * (OPT.upper + OPT.lower))) / OPT.no_sub;
             width  = fig_pos(3) - (OPT.left + OPT.right);
             bottom = (OPT.no_sub - i_sub) * (OPT.lower + OPT.upper + height) + OPT.lower;
             left   = OPT.left;
-        case 'hor'
+        case 'h' % horizontal
             height = fig_pos(4) - (OPT.upper + OPT.lower);
             width  = (fig_pos(3) - (OPT.no_sub * (OPT.left  + OPT.right))) / OPT.no_sub;
             bottom = OPT.lower;
