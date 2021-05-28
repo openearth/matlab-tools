@@ -29,7 +29,7 @@ for kfs=1:nfs
 
     [~,~,ext]=fileparts(path_file_in);
     switch ext
-        case '.mdf'
+        case {'.mdf','.mdu'}
             D3D_io_input('write',path_file_out,mdf);
         otherwise
             copyfile(path_file_in,path_file_out);

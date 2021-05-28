@@ -14,6 +14,9 @@
 %   pli:
 %       -pli.name: name of the polyline (char) or number of the polyline (double)
 %       -pli.xy: coordinates
+%e.g.
+% dep=D3D_io_input('read',fdep,fgrd,'location','cor');
+% D3D_io_input('write','c:\Users\chavarri\Downloads\trial.dep',dep,'location','cor','dummy',false,'format','%15.13e');
 
 function varargout=D3D_io_input(what_do,fname,varargin)
 
@@ -34,6 +37,13 @@ switch what_do
                 stru_out.val={tek.Field.Data};
             case '.ini'
                 stru_out=delft3d_io_sed(fname);
+            case '.grd'
+                stru_out=delft3d_io_grd('read',fname);
+            case '.dep'
+                G=delft3d_io_grd('read',varargin{1});
+                stru_out=delft3d_io_dep('read',fname,G,varargin(2:3));
+%                 G=wlgrid('read',varargin{1});
+%                 stru_out=wldep('read',fname,G);
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
@@ -47,6 +57,8 @@ switch what_do
                 delft3d_io_mdf('write',fname,stru_in.keywords);
             case '.pli'
                 D3D_write_poly(stru_in.name,stru_in.xy,fname);
+            case '.dep'
+                delft3d_io_dep('write',fname,stru_in,varargin(2:end));
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end

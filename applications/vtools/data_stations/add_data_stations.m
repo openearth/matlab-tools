@@ -37,7 +37,14 @@ end
 [data_one_station,idx]=read_data_stations(paths_main_folder,tok_add{:});
 
 if ~isempty(data_one_station)
+    fprintf('Data already available:\n')
+    fprintf('Location clear: %s\n',data_one_station.location_clear)
+    fprintf('Grootheid: %s\n',data_one_station.grootheid)
     
+    in=input('Merge? (0=NO, 1=YES): ');
+    if in==0
+        return
+    end
     if numel(data_one_station)>1
         error('Be more specific, there are several data sets for these tokens.')
     end
@@ -52,9 +59,18 @@ if ~isempty(data_one_station)
     tim_tot=cat(1,tim_ex,reshape(tim_add,[],1));
     val_tot=cat(1,val_ex,reshape(val_add,[],1));
     
-    [tim_tot,idx_s]=sort(tim_tot);
-    val_tot=val_tot(idx_s);
+    data_r=timetable(tim_tot,val_tot);
+    data_r=rmmissing(data_r);
+    data_r=sortrows(data_r);
+    tim_u=unique(data_r.tim_tot);
+    data_r=retime(data_r,tim_u,'mean'); 
     
+    tim_tot=data_r.tim_tot;
+    val_tot=data_r.val_tot;
+    
+%     [tim_tot,idx_s]=sort(tim_tot);
+%     val_tot=val_tot(idx_s);
+     
     %write
     data_one_station.time=tim_tot;
     data_one_station.waarde=val_tot;
@@ -63,6 +79,10 @@ if ~isempty(data_one_station)
     save(fname,'data_one_station')
     messageOut(NaN,sprintf('data added to file %s',fname));
 else
+    in=input('New data. Proceed? (0=NO, 1=YES): ');
+    if in==0
+        return
+    end
     load(paths.data_stations_index,'data_stations_index');
     ns=numel(data_stations_index);
     fnames_index=fieldnames(data_stations_index);

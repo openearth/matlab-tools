@@ -117,7 +117,7 @@ if strcmpi(cmd,'read')
     OPT.dummy        = 0;
     OPT.nodatavalue  = -999;
     OPT.missingvalue = NaN;
-    OPT.location     = '';
+    OPT.location     = '   ';
     OPT.dpsopt       = '';    
     
     %% File info
@@ -139,7 +139,7 @@ if strcmpi(cmd,'read')
     
     OPT = setproperty(OPT,varargin{4:end});
     
-    OPT.location     = pad(OPT.location,' ',3);
+%     OPT.location     = pad(OPT.location,' ',3);
     G.location       = OPT.location;
     G.dpsopt         = OPT.dpsopt  ;
     
@@ -245,7 +245,7 @@ else strcmpi(cmd,'write');
     
     %% Keywords
     
-    OPT.location    = '';
+    OPT.location    = '   ';
     OPT.nodatavalue = -999;
     OPT.name        = 'depth';
     OPT.unit        = '[m]';
@@ -253,8 +253,11 @@ else strcmpi(cmd,'write');
     OPT.mfilename   = 'unknown mfilename';
     OPT.meta        = 0;
     OPT.dummy       = 1;
+    OPT.format      = '%15.8f';
     
+%     if numel(varargin)>3
     OPT = setproperty(OPT,varargin{4:end});
+%     end
     
     tmp         = fileparts(fname);
         
@@ -311,7 +314,7 @@ else strcmpi(cmd,'write');
     end
     
     if ~OPT.meta % meta does not load in GUI
-       wldep('write',fname,D3Dmatrix);
+       wldep('write',fname,D3Dmatrix,'format','%15.14e');
     else
        metainfo = {['File type                       = Delft3d FLOW depth file (*.dep) (http://www.wldelft.nl/soft/d3d/intro/index.html)'],...
            ['variable                        = ',OPT.name],...

@@ -36,9 +36,21 @@ if isfield(flg,'mean_type')==0
     flg.mean_type=1;
 end
 
+if isfield(flg,'get_EHY')==0
+    flg.get_EHY=0;
+end
+if file.partitions>1
+    flg.get_EHY=1;
+end
+if flg.get_EHY
+    flg.which_s=0;
+end
+
 %% results structure
 
 NFStruct=vs_use(file.map,'quiet');
+
+ismor=D3D_is(file.map);
 
 %HELP
 % vs_let(NFStruct,'-cmdhelp') %map file
@@ -47,7 +59,9 @@ NFStruct=vs_use(file.map,'quiet');
 
 %% domain size and input
     %time
-ITMAPC=vs_let(NFStruct,'map-info-series','ITMAPC','quiet'); %results time vector
+[time_r,time_mor_r,time_dnum]=D3D_results_time(file.map,ismor,kt);
+
+% ITMAPC=vs_let(NFStruct,'map-info-series','ITMAPC','quiet'); %results time vector
 % out.nTt=numel(ITMAPC);
 %     %x
 % MMAX=vs_let(NFStruct,'map-const','MMAX','quiet'); 
@@ -83,11 +97,11 @@ end
 secflow=0;
 
 
-morpho=1;
-% if isfield(file,'mor')==0
-if isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'map-infsed-serie'}))
-    morpho=0;
-end
+% morpho=1;
+% % if isfield(file,'mor')==0
+% if isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'map-infsed-serie'}))
+%     morpho=0;
+% end
 
 %done after
 % if isfield(flg,'zerosarenan')==0
@@ -126,44 +140,55 @@ end
 
     %% time and space
 if flg.which_p~=-1 
-TUNIT=vs_let(NFStruct,'map-const','TUNIT','quiet'); %dt unit
-DT=vs_let(NFStruct,'map-const','DT','quiet'); %dt
-time_r=ITMAPC*DT*TUNIT; %results time vector [s]
-if morpho==1
-    MORFT=vs_let(NFStruct,'map-infsed-serie','MORFT','quiet'); %morphological time (days since start)
-    time_r_morpho=MORFT*24*3600; %seconds
+% TUNIT=vs_let(NFStruct,'map-const','TUNIT','quiet'); %dt unit
+% DT=vs_let(NFStruct,'map-const','DT','quiet'); %dt
+% time_r=ITMAPC*DT*TUNIT; %results time vector [s]
+% if morpho==1
+%     MORFT=vs_let(NFStruct,'map-infsed-serie','MORFT','quiet'); %morphological time (days since start)
+%     time_r_morpho=MORFT*24*3600; %seconds
+% end
+
+
+
+if flg.get_EHY
+    gridInfo=EHY_getGridInfo(file.map,{'face_nodes_xy','XYcen','face_nodes','XYcor'});
+    Xcen=gridInfo.Xcen;
+    Ycen=gridInfo.Ycen;
+    Xcor=gridInfo.Xcor;
+    Ycor=gridInfo.Ycor;
+else
+    XZ=vs_let(NFStruct,'map-const','XZ',{ky,kx},'quiet'); %x coordinate at z point [m]
+    YZ=vs_let(NFStruct,'map-const','YZ',{ky,kx},'quiet'); %y coordinate at z point [m]
+
+    % KCS=vs_let(NFStruct,'map-const','KCS',{ky,kx},'quiet'); 
+
+    XCOR=vs_let(NFStruct,'map-const','XCOR','quiet'); %x coordinate at cell borders [m]
+    % XCOR=reshape(XCOR,in.NMAX,in.MMAX)';
+    XCOR=squeeze(XCOR);
+    YCOR=vs_let(NFStruct,'map-const','YCOR','quiet'); %y coordinate at cell borders [m]
+    YCOR=squeeze(YCOR);
+    % YCOR=reshape(YCOR,in.NMAX,in.MMAX)';
+
+    out.XCOR=XCOR;
+    out.YCOR=YCOR;
+
+    %coordinates of velocity points
+%     XU=XCOR(:,1:end-1)+(XCOR(:,2:end)-XCOR(:,1:end-1))/2;
+%     YU=YCOR(:,1:end-1)+(YCOR(:,2:end)-YCOR(:,1:end-1))/2;
+%     XV=XCOR(1:end-1,:)+(XCOR(2:end,:)-XCOR(1:end-1,:))/2;
+%     YV=YCOR(1:end-1,:)+(YCOR(2:end,:)-YCOR(1:end-1,:))/2;
+% 
+%     THICK=vs_let(NFStruct,'map-const','THICK','quiet'); %Fraction part of layer thickness of total water-height [ .01*% ]
+
+    if flg.zerosarenan
+        XZ(XZ==0)=NaN;
+        YZ(YZ==0)=NaN;
+        XCOR(XCOR==0)=NaN;
+        YCOR(YCOR==0)=NaN;
+    end
 end
 
-XZ=vs_let(NFStruct,'map-const','XZ',{ky,kx},'quiet'); %x coordinate at z point [m]
-YZ=vs_let(NFStruct,'map-const','YZ',{ky,kx},'quiet'); %y coordinate at z point [m]
 
-% KCS=vs_let(NFStruct,'map-const','KCS',{ky,kx},'quiet'); 
-
-XCOR=vs_let(NFStruct,'map-const','XCOR','quiet'); %x coordinate at cell borders [m]
-% XCOR=reshape(XCOR,in.NMAX,in.MMAX)';
-XCOR=squeeze(XCOR);
-YCOR=vs_let(NFStruct,'map-const','YCOR','quiet'); %y coordinate at cell borders [m]
-YCOR=squeeze(YCOR);
-% YCOR=reshape(YCOR,in.NMAX,in.MMAX)';
-
-out.XCOR=XCOR;
-out.YCOR=YCOR;
-
-%coordinates of velocity points
-XU=XCOR(:,1:end-1)+(XCOR(:,2:end)-XCOR(:,1:end-1))/2;
-YU=YCOR(:,1:end-1)+(YCOR(:,2:end)-YCOR(:,1:end-1))/2;
-XV=XCOR(1:end-1,:)+(XCOR(2:end,:)-XCOR(1:end-1,:))/2;
-YV=YCOR(1:end-1,:)+(YCOR(2:end,:)-YCOR(1:end-1,:))/2;
-                
-THICK=vs_let(NFStruct,'map-const','THICK','quiet'); %Fraction part of layer thickness of total water-height [ .01*% ]
-     
-
-if flg.zerosarenan
-XZ(XZ==0)=NaN;
-YZ(YZ==0)=NaN;
-XCOR(XCOR==0)=NaN;
-YCOR(YCOR==0)=NaN;
-end
 end
 
 
@@ -195,15 +220,21 @@ switch flg.which_p
     case {2,3,5,6,8,9,19} %2DH & 1D
         %%
         switch flg.which_v
+            case 0 
             case 1 %etab
                 %%
-                DPS=vs_let(NFStruct,'map-sed-series',{kt},'DPS',{ky,kx},'quiet'); %depth at z point [m]
-                z=-DPS;
-                out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
+                if flg.get_EHY
+                    z=get_EHY(file.map,'dps',time_dnum);
+                    out=v2struct(z,Xcor,Ycor,time_r,Xcen,Ycen,nT,nx,ny,flg,kt);
+                else
+                    DPS=vs_let(NFStruct,'map-sed-series',{kt},'DPS',{ky,kx},'quiet'); %depth at z point [m]
+                    z=-DPS;
+                    out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
+                end
                 out.zlabel='bed elevation [m]';
             case 2 %h (flow depth at z point)
                 %%
-                switch morpho
+                switch ismor
                     case 0
                         DPS=vs_let(NFStruct,'map-const','DP0',{ky,kx},'quiet');
                     case 1
@@ -345,7 +376,7 @@ switch flg.which_p
                   data = qpread(NFStruct,1,'depth averaged velocity','data',kt,kx,ky);
                   u=sqrt(data.XComp.^2+data.YComp.^2);
 
-                switch morpho
+                switch ismor
                     case 0
                         DPS=vs_let(NFStruct,'map-const','DP0',{ky,kx},'quiet');
                     case 1
@@ -607,7 +638,7 @@ zcordvel_mat=NaN(npint,KMAX);
 %         view([0,90])
 %         colormap('jet')
             case 12 %water level
-                switch morpho
+                switch ismor
                     case 0
                         DPS=vs_let(NFStruct,'map-const','DP0',{ky,kx},'quiet');
                     case 1
@@ -658,7 +689,7 @@ zcordvel_mat=NaN(npint,KMAX);
                   data = qpread(NFStruct,1,'depth averaged velocity','data',kt,kx,ky);
                   u=sqrt(data.XComp.^2+data.YComp.^2);
 
-                switch morpho
+                switch ismor
                     case 0
                         DPS=vs_let(NFStruct,'map-const','DP0',{ky,kx},'quiet');
                     case 1
@@ -820,6 +851,15 @@ if flg.which_p~=-1 && flg.elliptic==2
     out.HIRCHK=HIRCHK;
 end
 
+%% OUTPUT FOR ALL
+
+if exist('time_dnum','var')
+    out.time_dnum=time_dnum;
+end
+if exist('time_mor_r','var')
+    out.time_mor=time_mor_r;
+end
+out.time_r=time_r;
 
 end %main function
 
@@ -929,6 +969,10 @@ end
 switch flg.which_p
     case 2
         switch flg.which_s
+            case 0
+        z=squeeze(permute(z(1,1:end-1,1:end-1),[1,3,2]));
+        out=v2struct(z,XZ,YZ,XCOR,YCOR);
+        out.time_r=time_r(kt);
             case 1
         out.z=reshape(z,ny,nx,[]);
         out.XZ=reshape(XZ,ny,nx);
@@ -953,16 +997,42 @@ switch flg.which_p
         out.XZ=reshape(XZ,ny,nx); %this is useful for plot limits
         out.YZ=reshape(YZ,ny,nx); %this is useful for plot limits
         out.faces=faces;
-        out.time_r=time_r(kt);    
+        out.time_r=time_r(kt);   
+            case 5
+                z=squeeze(permute(z(1,1:end-1,1:end-1),[1,3,2]));
+                z_size=size(z);
+                z=reshape(z,[],1);
+%                 valr=reshape(val1,vals);
+                out=v2struct(z,XZ,YZ,XCOR,YCOR,z_size);
+                out.time_r=time_r(kt);
         end
     case 6
         ndim=max(nx,ny);
         out.z=reshape(z,nT,ndim);
         out.XZ=reshape(XZ,ny,nx);
         out.YZ=reshape(YZ,ny,nx);
-        out.time_r=time_r(kt);                   
+        out.time_r=time_r(kt);           
+
 end
 
+
+end
+
+%%
+
+function val=get_EHY(file_map,vartok,time_dnum)
+
+OPT.varName=vartok;
+OPT.t0=time_dnum(1);
+OPT.tend=time_dnum(end);
+OPT.disp=0;
+
+map_data=EHY_getMapModelData(file_map,OPT);
+% if numel(size(map_data.val))==2
+%     val=map_data.val';
+% else
+    val=map_data.val;
+% end
 
 end
         % %bed level at z point
