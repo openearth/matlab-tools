@@ -144,14 +144,24 @@ fprintf(1,'Request %s data from %s to %s\n',OPT.id,OPT.start,OPT.end);
 
 %Verify datestrings
 try 
-    tstart=datenum(OPT.start); 
+    tstart=datenum(OPT.start,'yyyy-mm-dd HH:MM:SS');
 catch 
-    tstart=datenum(OPT.start,'yyyy-mm-dd HH:MM:SS'); 
+    try
+        tstart=datenum(OPT.start,'yyyy-mm-dd');
+    catch
+        tstart=datenum(OPT.start);
+        fprintf(1,'WARNING: start interpreted as: %s\n',datestr(tstart,'yyyy-mmm-dd HH:MM:SS'));
+    end
 end
 try
-    tend=datenum(OPT.end);   
-catch
     tend=datenum(OPT.end,'yyyy-mm-dd HH:MM:SS');
+catch
+    try
+        tend=datenum(OPT.end,'yyyy-mm-dd');
+    catch
+        tend=datenum(OPT.end);
+        fprintf(1,'WARNING: end interpreted as: %s\n',datestr(tend,'yyyy-mmm-dd HH:MM:SS'));
+    end
 end
 
 if tend < tstart
@@ -162,16 +172,18 @@ end
 
 %Vector of start timestamps. Maximum timespan per request is 365 days (not
 %1 year!).
-t_start=datenum(OPT.start):365:datenum(OPT.end);
+%t_start=datenum(OPT.start):365:datenum(OPT.end);
+t_start=tstart:365:tend;
 
 for t=1:length(t_start);
-    if (t_start(t)+365) <= datenum(OPT.end);
+    if (t_start(t)+365) <= tend; %datenum(OPT.end);
         t_end=t_start(t)+365;
-    else%if (t_start+365) > datenum(OPT.end);
-        t_end=datenum(OPT.end);
+    else%if (t_start+365) > tend; %datenum(OPT.end);
+        t_end=tend;%datenum(OPT.end);
     end
     %data=getData(OPT,t_start,t_end);
-    fprintf(1,'Retreiving data for ID: %s from %s to %s\n',OPT.id,datestr(t_start(t)),datestr(t_end));
+    fprintf(1,'Retreiving data for ID: %s from %s to %s\n',OPT.id,...
+        datestr(t_start(t),'yyyy-mmm-dd'),datestr(t_end,'yyyy-mmm-dd'));
     tempdata(t)=webwrite([OPT.apiurl,'getData'],...
         'StartTime',datestr(t_start(t),'yyyy-mm-dd HH:MM:SS'),...
         'EndTime',  datestr(t_end     ,'yyyy-mm-dd HH:MM:SS'),...
@@ -204,16 +216,29 @@ if nargout==2 || OPT.vector %Output only time and value vectors!
             v=[v;[tempdata(n).Values.Values.Value]']; %#ok<AGROW>
         end
     end
+    %Data is not always sorted on the server. But no-one likes unsorted
+    %timeseries! Therefore they will be sorted here for you! While we're at
+    %it, let's filter out double occurences as well.
+    [t,idx]=unique(t,'first');
+    v=v(idx);
     varargout={t,v};
 else
     % Combine data into single struct
-    data.StartTime=datestr(min(datenum([tempdata.StartTime],'yyyy-mm-ddTHH:MM:SS')),'yyyy-mm-ddTHH:MM:SS+00:00');
-    data.EndTime=datestr(max(datenum([tempdata.EndTime],'yyyy-mm-ddTHH:MM:SS')),'yyyy-mm-ddTHH:MM:SS+00:00');
+    st=[];
+    et=[];
+    for n=1:length(tempdata)
+        if ~isempty(tempdata(n).StartTime); 
+            st=[st;datenum(tempdata(n).StartTime,'yyyy-mm-ddTHH:MM:SS')];  %#ok<AGROW>
+            et=[et;datenum(tempdata(n).EndTime,  'yyyy-mm-ddTHH:MM:SS')];  %#ok<AGROW>
+        end
+    end
+    data.StartTime=datestr(datestr(min(st)),'yyyy-mm-ddTHH:MM:SS+00:00');
+    data.EndTime=  datestr(datestr(max(et)),'yyyy-mm-ddTHH:MM:SS+00:00');
     data.Intervals=nanmean([tempdata.Intervals]);
 
     data.Values.ID=tempdata(end).Values.ID;
     data.Values.StartTime=data.StartTime;
-    data.Values.EndTime=data.EndTime;
+    data.Values.EndTime=  data.EndTime;
     temp=[tempdata.Values];
     data.Values.Minvalue=min([temp.MinValue]);
     data.Values.Maxvalue=max([temp.MaxValue]);
