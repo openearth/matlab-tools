@@ -66,6 +66,10 @@ elseif strcmp(ext,'.dat') %D3D4
         time_mor_r=MORFT*24*3600; %seconds
     end
     time_dtime=t0_dtime+seconds(time_r);
+    
+%     %we output only the one we request. It would be better to only read the one we want...
+%     time_r=time_r(kt(1));
+%     time_dtime=time_dtime(kt(1));
 end
 
 time_dnum=datenum(time_dtime);

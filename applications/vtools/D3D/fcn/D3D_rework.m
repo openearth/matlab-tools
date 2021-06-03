@@ -57,12 +57,19 @@ vkappa=0.41; %von Karman
 %% GRID
 %%
 
+simdef.grd.dummy=NaN;
+
 if isfield(simdef.grd,'cell_type')==0
     simdef.grd.cell_type=1;
 end
 
 %grid variables
+if isfield(simdef.grd,'type')==0
+    simdef.grd.type=0;
+end
+
 switch simdef.grd.type
+    case 0
     case 1
         simdef.grd.node_number_x=simdef.grd.L/simdef.grd.dx; %number of nodes 
         simdef.grd.node_number_y=simdef.grd.B/simdef.grd.dy; %number of nodes 
@@ -104,6 +111,8 @@ end
 %% MDF
 %%
 
+simdef.mdf.dummy=NaN;
+
 %secondary flow
 if isfield(simdef.mdf,'secflow')
     
@@ -120,6 +129,16 @@ end
 %start time
 if isfield(simdef.mdf,'Tstart')==0
     simdef.mdf.Tstart=0;
+end
+
+%stop time
+if isfield(simdef.mdf,'Tstop')==0
+    simdef.mdf.Tstop=NaN;
+end
+
+%dt
+if isfield(simdef.mdf,'Dt')==0
+    simdef.mdf.Dt=NaN;
 end
 
 %restart
@@ -169,7 +188,8 @@ end
 
 %friction
 if isfield(simdef.mdf,'C')==0
-    error('specify friction coefficient, even though it is not used')
+    simdef.mdf.C=NaN;
+%     error('specify friction coefficient, even though it is not used') %why?
 end
 if simdef.mdf.C==0
     warning('You may not want to specify friction (i.e., friction type = 10), then, set the coefficient to 1, but not zero!')
@@ -198,6 +218,9 @@ if simdef.mdf.wall_rough==1 && isfield(simdef.mdf,'wall_ks')==0
 end
 
 %2D/3D
+if isfield(simdef.D3D,'structure')==0
+    simdef.D3D.structure=0;
+end
 switch simdef.D3D.structure
     case 1
         if isfield(simdef.grd,'K')==0
@@ -228,11 +251,11 @@ if isfield(simdef.mdf,'filter')==0
 end
 
 
-
-
 %%
 %% INI 
 %%
+
+simdef.ini.dummy=NaN;
 
 if isfield(simdef.ini,'etab0_type')==0
     simdef.ini.etab0_type=1;
@@ -253,8 +276,20 @@ if isfield(simdef.ini,'h')==0
 end
 
 %%
+%% SED
+%%
+
+simdef.sed.dummy=NaN;
+
+if isfield(simdef.sed,'dk')==0
+    simdef.sed.dk=[];
+end
+
+%%
 %% MOR
 %%
+
+simdef.mor.dummy=NaN;
 
 nf=numel(simdef.sed.dk);
 if nf==1
@@ -277,6 +312,43 @@ switch simdef.mor.CondPerNode
         
 end
 
+if isfield(simdef.mor,'IBedCond')==0
+    simdef.mor.IBedCond=NaN;
+end
+
+%% 
+%% BCM
+%%
+
+if isfield(simdef.bcm,'fname')==0
+    simdef.bcm.fname=fullfile(simdef.D3D.dire_sim,'bcm.bcm');
+end
+
+switch simdef.mor.IBedCond
+    case 3
+%         deta_dt=simdef.bcm.deta_dt;
+    case 5
+        time=simdef.bcm.time;
+        nt=length(time);
+        transport=simdef.bcm.transport;
+        [nt_a,nf_a]=size(transport);
+        if nf>0
+            if nf_a~=nf
+                error('Inconsistent input in simdef.bcm.transport')
+            end
+        end
+        if nt_a~=nt
+            error('Time does not match transport')
+        end
+end
+
+if isfield(simdef.bcm,'location')==0
+    simdef.bcm.location=cell(simdef.mor.upstream_nodes,1);
+    for kn=1:simdef.mor.upstream_nodes
+        simdef.bcm.location{kn,1}=sprintf('Upstream_%02d',kn); kl=kl+1;
+    end
+end
+        
 %% ILL-POSEDNESS
 
 if isfield(simdef.mor,'HiranoCheck')==0
@@ -299,9 +371,12 @@ end
 %% RUNID
 %%
 
-if isa(simdef.runid.number,'double')
-    error('specify runid as string')
+if isfield(simdef,'runid')
+    if isa(simdef.runid.number,'double')
+        error('specify runid as string')
+    end
 end
+
 %% RENAME OUT
 
 % simdef.grd.M=M;

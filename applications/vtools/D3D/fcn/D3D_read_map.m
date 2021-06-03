@@ -799,7 +799,7 @@ zcordvel_mat=NaN(npint,KMAX);
 
 
         out.kf=kf;
-        out.time_r=time_r(kt);
+%         out.time_r=time_r(kt);
     case 7 % 0D
         LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,1:nl,1:nf},'quiet'); %fractions at layers [-] (t,y,x,l,f)
         DP_BEDLYR=vs_let(NFStruct,'map-sed-series',{kt},'DP_BEDLYR',{ky,kx,1:nl+1},'quiet'); %fractions at layers [-] (t,y,x,l)
@@ -854,12 +854,12 @@ end
 %% OUTPUT FOR ALL
 
 if exist('time_dnum','var')
-    out.time_dnum=time_dnum;
+    out.time_dnum=time_dnum(kt);
 end
 if exist('time_mor_r','var')
-    out.time_mor=time_mor_r;
+    out.time_mor=time_mor_r(kt);
 end
-out.time_r=time_r;
+out.time_r=time_r(kt);
 
 end %main function
 

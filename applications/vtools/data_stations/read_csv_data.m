@@ -838,7 +838,7 @@ switch file_type
         
         fdelim=';';
         headerlines=1;
-    case 10 %same as 6 but timezone is actually specified
+    case 10 %same as 6 but timezone is actually specified but data is in referentie!
         %MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING     ;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                              ;WAARDEBEPALINGSMETHODE_CODE    ;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;WAARNEMINGTIJD;LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE   ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME
 %                             ;Lobith                ;                     ;             ;Debiet                ;Q              ;                      ;               ;m3/s        ;                              ;                 ;Oppervlaktewater         ;OW               ;                                    ;                            ;Debiet uit Q-f relatie                                           ;other:F216                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;3072,2         ;                   ;Normale waarde        ;Ongecontroleerd;ONXXREG_AFVOER           ;                         ;                 ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;713748,798641064;5748949,04523234;                   ;           ;           
 %                             ;Krimpen a/d IJssel    ;                     ;             ;Waterhoogte           ;WATHTE         ;                      ;               ;cm          ;t.o.v. Normaal Amsterdams Peil;NAP              ;Oppervlaktewater         ;OW               ;                                    ;                            ;Rekenkundig gemiddelde waarde over vorige 5 en volgende 5 minuten;other:F007                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;-4             ;                   ;Normale waarde        ;Ongecontroleerd;RIKZMON_WAT              ;Vlotter                  ;127              ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;608561,131040599;5752923,14544908;;;
@@ -854,7 +854,8 @@ switch file_type
         idx_hoedanigheid=8;
         
         %variables to save with time
-        var_time={'WAARNEMINGDATUM','WAARNEMINGTIJD (MET/CET)','NUMERIEKEWAARDE'};
+%         var_time={'WAARNEMINGDATUM','WAARNEMINGTIJD (MET/CET)','NUMERIEKEWAARDE'};
+        var_time={'WAARNEMINGDATUM','REFERENTIE','NUMERIEKEWAARDE'};
         idx_datum=1;
         fmt_datum='dd-MM-yyy';
         idx_tijd=2;

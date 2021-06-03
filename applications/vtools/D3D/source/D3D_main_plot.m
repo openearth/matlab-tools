@@ -18,7 +18,7 @@ fclose all;
 
 path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
 addpath(path_add_fcn)
-addOET
+addOET(path_add_fcn)
 
 %% INPUT
 
