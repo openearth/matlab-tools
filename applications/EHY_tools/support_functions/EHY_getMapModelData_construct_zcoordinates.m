@@ -114,7 +114,11 @@ switch gridInfo.layer_model
             cellIndMinUni = unique(cellIndMin(nonan));
             for ii = 1:length(cellIndMinUni)
                 logi = cellIndMin == cellIndMinUni(ii);
-                int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
+                if cellIndMinUni(ii) == 1 % bottom layer
+                    int_field(logi,1) = bl(logi);
+                else
+                    int_field(logi,cellIndMinUni(ii)-1) = bl(logi);
+                end
             end
             
             %% mdu
