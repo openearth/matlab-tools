@@ -98,6 +98,7 @@ addOptional(parin,'XCol',1);
 addOptional(parin,'YCol',2);
 addOptional(parin,'branchCol',3);
 addOptional(parin,'rkmCol',4);
+addOptional(parin,'disp_progress',false);
 
 parse(parin,varargin{idx_varargin:end});
 
@@ -109,6 +110,7 @@ XCol=parin.Results.XCol;
 YCol=parin.Results.YCol;
 branchCol=parin.Results.branchCol;
 rkmCol=parin.Results.rkmCol;
+disp_progress=parin.Results.disp_progress;
 
 %% READ FILE
 
@@ -177,6 +179,9 @@ for kp=1:np
         axis equal
 
         error('The distance between point and the associated rkm is larger than %f m',TolMinDist)
+    end
+    if disp_progress
+        fprintf('finding river km %4.2f %% \n',kp/np*100);
     end
 
 end %kp

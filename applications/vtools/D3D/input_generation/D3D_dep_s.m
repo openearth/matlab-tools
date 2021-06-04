@@ -97,7 +97,10 @@ end
 % nx=simdef.grd.M;
 % N=simdef.grd.N;
 nx=M;
-L=simdef.grd.L;
+
+%L from grid
+% L=simdef.grd.L;
+L=grd.X(end)-grd.X(1);
 
 etab=simdef.ini.etab;
 
