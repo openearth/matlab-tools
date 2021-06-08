@@ -1,4 +1,4 @@
-function [output,status] = ddb_urlwrite(urlChar,location,method,params)
+function [output,status] = ddb_urlwrite(urlChar,location,method,params,varargin)
 %URLWRITE Save the contents of a URL to a file.
 %   URLWRITE(URL,FILENAME) saves the contents of a URL to a file.  FILENAME
 %   can specify the complete path to a file.  If it is just the name, it will
@@ -28,6 +28,15 @@ function [output,status] = ddb_urlwrite(urlChar,location,method,params)
 
 mv = version('-release');
 T = 2000; %Timeout in ms
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'timeout'}
+                T=varargin{ii+1}*1000;
+        end
+    end
+end
 
 switch ( mv )
     case { '11', '12', '13' };
