@@ -101,7 +101,7 @@
     <style>listbox</style>
     <position>300 40 150 105</position>
     <tooltipstring>Select shoreline</tooltipstring>
-    <text>Structures</text>
+    <text>Shorelines</text>
     <textposition>above-center</textposition>
     <variable>handles.model.shorelines.activeshoreline</variable>
     <type>integer</type>
