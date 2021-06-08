@@ -1,40 +1,31 @@
 <?xml version="1.0"?>
-<!-- Written on 07-Dec-2011 13:16:40 using the XML Toolbox for Matlab -->
 <root>
-  <model>
-    <name>tpxo80</name>
-    <longName>TPXO 8.0 Global Inverse Tide Model</longName>
-    <version>1</version>
-    <type>netCDF</type>
-    <URL>http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels/tpxo80</URL>
-    <useCache>1</useCache>
-    <update>0</update>
-  </model>
   <model>
     <name>tpxo62</name>
     <longName>TPXO 6.2 Global Inverse Tide Model</longName>
     <version>1</version>
     <type>netCDF</type>
-    <URL>http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
-    <useCache>1</useCache>
-    <update>0</update>
-  </model>
+    <URL>https://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
+    </model>
   <model>
     <name>tpxo72</name>
     <longName>TPXO 7.2 Global Inverse Tide Model</longName>
     <version>1</version>
     <type>netCDF</type>
-    <URL>http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
-    <useCache>1</useCache>
-    <update>0</update>
+    <URL>https://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
   </model>
   <model>
     <name>es2008</name>
     <longName>European Shelf 2008</longName>
     <version>1</version>
     <type>netCDF</type>
-    <URL>http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
-    <useCache>1</useCache>
-    <update>0</update>
+    <URL>https://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
+  </model>
+  <model>
+    <name>tpxo80</name>
+    <longName>TPXO 8.0 Global Inverse Tide Model</longName>
+    <version>1</version>
+    <type>netCDF</type>
+    <URL>https://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/tpxo80</URL>
   </model>
 </root>
