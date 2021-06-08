@@ -77,9 +77,11 @@ if ~strcmpi(requested_datasets{1},'all')
     % First filter datasets
     n=0;
     for j=1:length(bathymetry.dataset)
-        if ~isempty(strmatch(lower(bathymetry.dataset(j).name),lower(requested_datasets),'exact'))
-            n=n+1;
-            bathy0.dataset(n)=bathymetry.dataset(j);
+        for kk=1:length(requested_datasets)
+            if ~isempty(strmatch(lower(bathymetry.dataset(j).name),lower(requested_datasets{kk}),'exact'))
+                n=n+1;
+                bathy0.dataset(n)=bathymetry.dataset(j);
+            end
         end
     end
     bathy0.dir=bathymetry.dir;
@@ -87,15 +89,24 @@ if ~strcmpi(requested_datasets{1},'all')
 end
 
 % Add specific fields to structure
-fld = fieldnames(bathymetry);
+%fld = fieldnames(bathymetry);
 names = '';
 longNames = '';
-for ii=1:length(bathymetry.(fld{1}))
-    bathymetry.(fld{1})(ii).useCache = str2double(bathymetry.(fld{1})(ii).useCache);
-    bathymetry.(fld{1})(ii).edit = str2double(bathymetry.(fld{1})(ii).edit);
-    names{ii}= bathymetry.(fld{1})(ii).name;
-    longNames{ii} = bathymetry.(fld{1})(ii).longName;
+%for ii=1:length(bathymetry.(fld{1}))
+for ii=1:length(bathymetry.dataset)
+%     bathymetry.(fld{1})(ii).useCache = str2double(bathymetry.(fld{1})(ii).useCache);
+%     bathymetry.(fld{1})(ii).edit = str2double(bathymetry.(fld{1})(ii).edit);
+%     names{ii}= bathymetry.(fld{1})(ii).name;
+%     longNames{ii} = bathymetry.(fld{1})(ii).longName;
+
+    bathymetry.dataset(ii).useCache = str2double(bathymetry.dataset(ii).useCache);
+    bathymetry.dataset(ii).edit = str2double(bathymetry.dataset(ii).edit);
+    names{ii}= bathymetry.dataset(ii).name;
+    longNames{ii} = bathymetry.dataset(ii).longName;
+
+
 end
 bathymetry.datasets = names;
 bathymetry.longNames = longNames;
-bathymetry.nrDatasets = length(bathymetry.(fld{1}));
+%bathymetry.nrDatasets = length(bathymetry.(fld{1}));
+bathymetry.nrDatasets = length(bathymetry.dataset);

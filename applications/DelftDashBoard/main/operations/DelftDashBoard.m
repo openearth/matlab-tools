@@ -61,7 +61,7 @@ handles.matlabVersion=version;
 handles.debugMode=0;
 
 if isempty(varargin)
-    handles.xml_config_file='delftdashboard';
+    handles.xml_config_file='delftdashboard.xml';
 else
     handles.xml_config_file=varargin{1};
 end

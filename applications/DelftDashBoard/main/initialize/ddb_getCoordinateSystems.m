@@ -71,7 +71,8 @@ if ~isempty(supertransdata)
     for ii=1:length(supertransdata.file)
         % Download file is update is required of if it does not yet exist
         if supertransdata.file(ii).update == 1 || ~exist([handles.superTransDir filesep supertransdata.file(ii).name],'file')
-            ddb_urlwrite(supertransdata.file(ii).URL,[handles.superTransDir filesep supertransdata.file(ii).name]);
+            disp(['Download EPSG file ' supertransdata.file(ii).name '. This can take a while ...']);
+            ddb_urlwrite(supertransdata.file(ii).URL,[handles.superTransDir filesep supertransdata.file(ii).name],[],[],'timeout',120);
         end
     end
 end
