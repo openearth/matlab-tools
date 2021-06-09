@@ -42,9 +42,9 @@ icount = 1;
 while lfrt == 1 & icount < 6
     [u,v,lfrt] = ginput(1);
     uo=[uo;u]; vo=[vo;v]; button=[button;lfrt];
-    try
-      impixelinfo()
-    end
+%     try
+%       impixelinfo()
+%     end
     if (lfrt ~= 27)
        hp = plot(uo,vo,'r','LineWidth',3);
        flinepatch=[flinepatch;hp];
