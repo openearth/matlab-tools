@@ -674,7 +674,9 @@ fclose(fid);
 
 if handles.model.delft3dflow.domain(id).waves && handles.model.delft3dflow.domain(id).onlineWave
     ddb_writeBatchFile(runid,'mdwfile',handles.model.delft3dwave.domain.mdwfile);
+    try
     ddb_writeDioConfig('.\');
+    end
 else
     ddb_writeBatchFile(runid);
 end
