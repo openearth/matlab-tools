@@ -3,7 +3,7 @@
   <element>
     <style>panel</style>
     <position>40 10 900 160</position>
-    <text>Boundary Conditions</text>
+    <text>Sediment Transport</text>
   </element>
   <element>
     <style>popupmenu</style>

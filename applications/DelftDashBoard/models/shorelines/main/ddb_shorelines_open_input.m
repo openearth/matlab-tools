@@ -43,7 +43,7 @@ switch lower(opt)
             elseif ~isempty(handles.model.shorelines.domain.phif)
                 handles.model.shorelines.wavetrans_opt='dynamic_profile';
             else
-                handles.model.shorelines.wavetrans_opt='none'
+                handles.model.shorelines.wavetrans_opt='none';
             end
             
             if handles.model.shorelines.domain.spit_width>0
