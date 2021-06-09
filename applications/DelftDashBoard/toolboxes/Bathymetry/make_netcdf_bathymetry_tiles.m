@@ -138,7 +138,7 @@ switch lower(rawdataformat)
     case{'geotiff'}
         if ~iscell(fname1)
             % just one file
-            [z,x,y,I] = ddb_geoimread(fname1,'info');
+            [z,x,y,I] = ddb_geoimread(fname1);
             z=flipud(z);
             z(z<-15000)=NaN; % Get rid of no data values
             x00=min(x);
@@ -164,7 +164,7 @@ switch lower(rawdataformat)
             ymax=-1e9;
             for ii=1:length(fname1)
                 filename=fname1{ii};
-                [A,x,y,I]=ddb_geoimread(filename,'info');
+                [A,x,y,I]=geoimread(filename,'info'); %faster because elevation data of every tile is not read in
                 xx=[x(1) x(end) x(end) x(1) x(1)];
                 yy=[y(end) y(end) y(1) y(1) y(end)];
                 dx=(x(end)-x(1))/(length(x)-1);

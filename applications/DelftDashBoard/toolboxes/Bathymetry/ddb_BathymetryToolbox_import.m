@@ -164,7 +164,7 @@ try
             dy=yg(2)-yg(1);
         case{'geotiff'}
             wb = waitbox('Reading data file ...');
-            [A,x,y,I] = ddb_geoimread(handles.toolbox.bathymetry.import.dataFile,'info');
+            [A,x,y,I] = ddb_geoimread(handles.toolbox.bathymetry.import.dataFile);
             x0=min(x);
             y0=min(y);
             dx=abs(x(2)-x(1));
@@ -334,3 +334,4 @@ ddb_updateBathymetryMenu(handles);
 setHandles(handles);
 
 ddb_updateDataInScreen;
+qgis
