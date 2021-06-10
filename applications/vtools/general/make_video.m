@@ -23,6 +23,7 @@ parse(parin,varargin{:});
 
 frame_rate=parin.Results.frame_rate;
 quality=parin.Results.quality;
+path_video=parin.Results.path_video;
 
 %% MAKE VIDEO
 
