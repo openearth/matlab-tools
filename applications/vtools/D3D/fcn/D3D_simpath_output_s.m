@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17174 $
-%$Date: 2021-04-10 22:01:48 +0200 (Sat, 10 Apr 2021) $
-%$Author: chavarri $
-%$Id: D3D_simpath_output.m 17174 2021-04-10 20:01:48Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_simpath_output.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Gets as output the path to each file type
 %

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17257 $
-%$Date: 2021-05-05 12:42:27 +0200 (Wed, 05 May 2021) $
-%$Author: chavarri $
-%$Id: separate_data_stations.m 17257 2021-05-05 10:42:27Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/data_stations/separate_data_stations.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 %% PREAMBLE

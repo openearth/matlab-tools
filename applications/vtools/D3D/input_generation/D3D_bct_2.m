@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17316 $
-%$Date: 2021-06-03 12:01:47 +0200 (Thu, 03 Jun 2021) $
-%$Author: chavarri $
-%$Id: D3D_bcm_s.m 17316 2021-06-03 10:01:47Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_bcm_s.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %general and direct writing
 %
