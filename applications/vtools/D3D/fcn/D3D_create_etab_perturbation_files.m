@@ -10,7 +10,7 @@
 %$Id$
 %$HeadURL$
 %
-%based on a bed level file (or an mdu/mdf file) and a structure with varitation input,
+%based on a bed level file (or an mdu/mdf file),
 %it creates a set of depth files and a structure with its data.
 %
 %INPUT:
