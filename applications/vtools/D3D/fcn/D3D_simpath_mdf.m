@@ -49,8 +49,13 @@ mdu=D3D_io_input('read',path_mdu);
 
 simdef.file.mdf=path_mdu;
 
-%geometry
-simdef.file.grd=fullfile(path_sim,mdu.keywords.filgrd);
+%grid
+if isfield(mdu.keywords,'filcco') && ~isempty(mdu.keywords.filcco)
+    simdef.file.grd=fullfile(path_sim,mdu.keywords.filcco);
+end
+if isfield(mdu.keywords,'filgrd') && ~isempty(mdu.keywords.filgrd)
+    simdef.file.enc=fullfile(path_sim,mdu.keywords.filgrd);
+end
 
 %sediment
 if isfield(mdu.keywords,'filsed') && ~isempty(mdu.keywords.filsed)
@@ -63,6 +68,11 @@ end
 %bc
 if isfield(mdu.keywords,'filbct') && ~isempty(mdu.keywords.filbct)
     simdef.file.bct=fullfile(path_sim,mdu.keywords.filbct);
+end
+
+%dep
+if isfield(mdu.keywords,'fildep') && ~isempty(mdu.keywords.fildep)
+    simdef.file.dep=fullfile(path_sim,mdu.keywords.fildep);
 end
 
 %output

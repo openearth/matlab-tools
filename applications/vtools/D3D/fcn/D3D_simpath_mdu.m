@@ -61,6 +61,11 @@ if isfield(mdu.geometry,'StructureFile')
     simdef.file.struct=fullfile(path_sim,mdu.geometry.StructureFile);
 end
 
+%dep
+if isfield(mdu.geometry,'BedlevelFile')
+    simdef.file.dep=fullfile(path_sim,mdu.geometry.BedlevelFile);
+end
+
 %sediment
 if isfield(mdu,'sediment')
     simdef.file.mor=fullfile(path_sim,mdu.sediment.MorFile);

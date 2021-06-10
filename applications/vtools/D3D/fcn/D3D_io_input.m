@@ -46,6 +46,9 @@ switch what_do
 %                 stru_out=wldep('read',fname,G);
             case '.bct'
                 stru_out=bct_io('read',fname);
+            case '.xyz'
+%                 stru_out=dflowfm_io_xydata('read',fname); %extremely slow
+                stru_out=readmatrix(fname,'FileType','text');
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
@@ -64,6 +67,13 @@ switch what_do
             case '.bct'
                 stru_in.file.bct=fname;
                 D3D_bct(stru_in);
+            case '.xyz'
+                fid=fopen(fname,'w');
+                ndep=size(stru_in,1);
+                for kl=1:ndep
+                    fprintf(fid,' %14.7f %14.7f %14.13f \n',stru_in(kl,1),stru_in(kl,2),stru_in(kl,3));
+                end
+                fclose(fid);
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end
