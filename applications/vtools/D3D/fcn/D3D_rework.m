@@ -54,10 +54,27 @@ function [simdef]=D3D_rework(simdef)
 vkappa=0.41; %von Karman
 
 %%
+%% D3D
+%%
+
+simdef.D3D.dummy=NaN;
+
+if isfield(simdef.D3D,'dire_sim')==0
+    simdef.D3D.dire_sim='';
+end
+if isfield(simdef.D3D,'structure')==0
+    simdef.D3D.structure=0;
+end
+
+%%
 %% GRID
 %%
 
 simdef.grd.dummy=NaN;
+
+if isfield(simdef.file,'grd')==0
+    simdef.file.grd=fullfile(simdef.D3D.dire_sim,'grd.grd');
+end
 
 if isfield(simdef.grd,'cell_type')==0
     simdef.grd.cell_type=1;
@@ -218,9 +235,7 @@ if simdef.mdf.wall_rough==1 && isfield(simdef.mdf,'wall_ks')==0
 end
 
 %2D/3D
-if isfield(simdef.D3D,'structure')==0
-    simdef.D3D.structure=0;
-end
+
 switch simdef.D3D.structure
     case 1
         if isfield(simdef.grd,'K')==0
@@ -320,6 +335,8 @@ end
 %% BCM
 %%
 
+simdef.bcm.dummy=NaN;
+
 if isfield(simdef.bcm,'fname')==0
     simdef.bcm.fname=fullfile(simdef.D3D.dire_sim,'bcm.bcm');
 end
@@ -345,7 +362,7 @@ end
 if isfield(simdef.bcm,'location')==0
     simdef.bcm.location=cell(simdef.mor.upstream_nodes,1);
     for kn=1:simdef.mor.upstream_nodes
-        simdef.bcm.location{kn,1}=sprintf('Upstream_%02d',kn); kl=kl+1;
+        simdef.bcm.location{kn,1}=sprintf('Upstream_%02d',kn); 
     end
 end
         
@@ -367,6 +384,17 @@ if simdef.mor.HiranoRegularize==1 && simdef.mdf.Dicouv==0
     error('You want to regularize the active layer model but the diffusion coefficient of trachitops (simdef.mdf.Dicouv) is set to 0. This should not be a problem, but in the way it is implemented simdef.mdf.Dicouv needs to be different than 0 to work')
 end
 
+%%
+%% FINI
+%%
+
+if isfield(simdef.file,'fini')==0
+    simdef.file.fini=fullfile(simdef.D3D.dire_sim,'fini.ini');
+end
+if isfield(simdef.ini,'I0')==0
+    simdef.ini.I0=0;
+end
+    
 %%
 %% RUNID
 %%

@@ -59,6 +59,9 @@ switch what_do
                 D3D_write_poly(stru_in.name,stru_in.xy,fname);
             case '.dep'
                 delft3d_io_dep('write',fname,stru_in,varargin(2:end));
+            case '.bct'
+                stru_in.file.bct=fname;
+                D3D_bct(stru_in);
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end

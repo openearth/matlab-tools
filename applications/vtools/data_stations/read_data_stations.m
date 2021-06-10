@@ -43,8 +43,6 @@ paths=paths_data_stations(paths_main_folder);
 
 load(paths.data_stations_index,'data_stations_index');
 
-
-
 %% stations to load
 ns=numel(data_stations_index);
 bol=true(1,ns);

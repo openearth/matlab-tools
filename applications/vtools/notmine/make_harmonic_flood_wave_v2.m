@@ -62,6 +62,7 @@ end
 
 dlmwrite('floodwave_deg_hour_via_DS.csv',[omega(1:L).'*180/pi, amplitude(1:L).',phase(1:L).'*180/pi],'delimiter',' ','precision',7)
 dlmwrite('floodwave_minutes.csv',[(omega(1:L).'*180/pi).^(-1)*360*60, amplitude(1:L).',phase(1:L).'*180/pi],'delimiter',' ','precision',7)
+figure
 plot(t,f,t,fapprox,'b-', t(1:20:end),fapprox2(1:20:end),'r.');
 
 % Used sources: 

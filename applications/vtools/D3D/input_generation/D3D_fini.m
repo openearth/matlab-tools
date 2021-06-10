@@ -13,14 +13,12 @@
 %generate water level and velocity in rectangular grid 
 
 %INPUT:
-%   -simdef.D3D.dire_sim = full path to the output folder [string] e.g. 'd:\victorchavarri\SURFdrive\projects\ellipticity\D3D\runs\1D\998'
-%   -simdef.grd.M = number of nodes in the domain [-] [integer(1,1)] e.g. [1002]
-%   -simdef.grd.dx = horizontal discretization [m] [integer(1,1)]; e.g. [0.02] 
-%   -simdef.ini.s = bed slope [-] [integer(1,1)]; e.g. [3e-4] 
-%   -simdef.ini.h = uniform flow depth [m] [double(1,1)]; e.g. [0.19]
-%   -simdef.ini.u = uniform flow velocity [m/s] [double(1,1)]; e.g. [0.6452] 
-%   -simdef.grd.L = domain length [m] [integer(1,1)] [100]
-%   -simdef.ini.etab = initial downstream bed level [m] [double(1,1)] e.g. [0]
+%   -simdef.file.grd
+%   -simdef.ini.s
+%   -simdef.grd.K
+%   -simdef.ini.h
+%   -simdef.ini.etab
+%   -simdef.mdf.secflow
 %
 %OUTPUT:
 %   -a .ini compatible with D3D is created in file_name
@@ -34,31 +32,27 @@
 %
 %151118->151125
 %   -Introduction of a varying slope
-
+%
 function D3D_fini(simdef)
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
-path_grd=fullfile(dire_sim,'grd.grd');
-
-%only straight flume!
-% M=simdef.grd.M;
-% N=simdef.grd.N;
-
 %read grid
-grd=wlgrid('read',path_grd);
+grd=wlgrid('read',simdef.file.grd);
 M=size(grd.X,1)+1;
 N=size(grd.X,2)+1;
 
 slope=simdef.ini.s;
-dx=simdef.grd.dx;
-nx=M;
-ny=N;
-nk=simdef.grd.K;
+dx_m=diff(grd.X);
+dx=dx_m(1,1);
+if ~all(dx_m==dx,'all')
+    error('sorry, this is made for a constant dx. Adjust the code!')
+end
+K=simdef.grd.K;
 h=simdef.ini.h;
 % u=simdef.ini.u;
 etab=simdef.ini.etab;
-L=simdef.grd.L;
+% L=simdef.grd.L;
+L=grd.X(end)-grd.X(1);
 I=simdef.ini.I0;
 secflow=simdef.mdf.secflow;
 etab0_type=simdef.ini.etab0_type;
@@ -73,10 +67,10 @@ v=0; %v velocity
 
 %% CALCULATIONS
 
-water_levels=-9.99e2*ones(ny,nx); %initial water levels with dummy values
-u_mat=-9.99e2*ones(ny,nx); %initial u velocity with dummy values
-v_mat=-9.99e2*ones(ny,nx); %initial v velocity with dummy values
-I_mat=-9.99e2*ones(ny,nx); %initial secondary flow velocity with dummy values
+water_levels=-9.99e2*ones(N,M); %initial water levels with dummy values
+u_mat=-9.99e2*ones(N,M); %initial u velocity with dummy values
+v_mat=-9.99e2*ones(N,M); %initial v velocity with dummy values
+I_mat=-9.99e2*ones(N,M); %initial secondary flow velocity with dummy values
 
 switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation
     case 1
@@ -85,40 +79,40 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
             d0=h+etab; 
             %water level
             vd=d0+slope*L:-dx*slope:d0+dx*slope;
-        elseif numel(slope)==nx-1
+        elseif numel(slope)==M-1
             d0=etab;
             %water level
                %bed level 
-            bl(nx-1)=d0+slope(nx-1)*dx/2;
-            for kx=nx-2:-1:1
+            bl(M-1)=d0+slope(M-1)*dx/2;
+            for kx=M-2:-1:1
                 bl(kx)=bl(kx+1)+dx*slope(kx);
             end
                 %bed level+water depth
-            vd=NaN(nx-2,1);    
-            for kx=1:nx-2
+            vd=NaN(M-2,1);    
+            for kx=1:M-2
                 vd(kx)=(h(kx)+bl(kx)+h(kx+1)+bl(kx+1))/2;
             end   
         else
             error('The input SLOPE can be a single value or a vector with nx+1 components')
         end
-        water_levels(2:ny-1,2:nx-1)=repmat(vd,length(2:ny-1),1);
+        water_levels(2:N-1,2:M-1)=repmat(vd,length(2:N-1),1);
     case 2
-        water_levels(2:ny-1,2:nx-1)=h+etab;
+        water_levels(2:N-1,2:M-1)=h+etab;
     otherwise
         error('..')
 end
 %u velocity
-u_mat(2:ny-1,1:nx-1)=u;
+u_mat(2:N-1,1:M-1)=u;
 
 %v velocity
-v_mat(2:ny-1,1:nx-1)=v;
+v_mat(2:N-1,1:M-1)=v;
 
 %seconday flow intensity 
-I_mat(2:ny-1,1:nx-1)=I;
+I_mat(2:N-1,1:M-1)=I;
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'fini.ini');
+file_name=fullfile(simdef.file.fini);
 
 %check if the file already exists
 if exist(file_name,'file')
@@ -126,27 +120,27 @@ if exist(file_name,'file')
 end
 
 fileID_out=fopen(file_name,'w');
-write_str_x=strcat(repmat('%0.7E ',1,nx),'\n'); %string to write in x
+write_str_x=strcat(repmat('%0.7E ',1,M),'\n'); %string to write in x
 
 %water level
-for ky=1:ny
+for ky=1:N
     fprintf(fileID_out,write_str_x,water_levels(ky,:));
 end
 %u velocity
-for kk=1:nk
-    for ky=1:ny
+for kk=1:K
+    for ky=1:N
         fprintf(fileID_out,write_str_x,u_mat(ky,:));
     end
 end
 %v velocity
-for kk=1:nk
-    for ky=1:ny
+for kk=1:K
+    for ky=1:N
         fprintf(fileID_out,write_str_x,v_mat(ky,:));
     end
 end
 %secondary flow intensity
 if secflow==1
-    for ky=1:ny
+    for ky=1:N
         fprintf(fileID_out,write_str_x,I_mat(ky,:));
     end
 end

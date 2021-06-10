@@ -11,18 +11,18 @@
 %$HeadURL$
 %
 
-%% PREAMBLE
+function make_video(path_folder,varargin)
 
-close all
-fclose all;
-clear
+parin=inputParser;
 
-%% INPUT
+addOptional(parin,'frame_rate',20);
+addOptional(parin,'quality',50);
+addOptional(parin,'path_video',fullfile(path_folder,'movie'));
 
-path_folder='C:\Users\chavarri\temporal\201030_groynes_lab_exp\r004\figures\'; %path to the folder including the figures (and only the figures)
-path_video=fullfile(path_folder,'m1'); %path including filename of the video
-frame_rate=20; %25
-quality=50; %[0,100]
+parse(parin,varargin{:});
+
+frame_rate=parin.Results.frame_rate;
+quality=parin.Results.quality;
 
 %% MAKE VIDEO
 
