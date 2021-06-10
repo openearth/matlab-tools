@@ -66,6 +66,8 @@ function ddcompile3
 
 compilefolder='d:/delftdashboardsetup/'; % Folder where executable and data will be created
 
+addpath(genpath('d:\checkouts\ShorelineS\trunk\'));
+
 include_additional_toolboxes=0;
 include_additional_models=0;
 revisionnumber='16824';
