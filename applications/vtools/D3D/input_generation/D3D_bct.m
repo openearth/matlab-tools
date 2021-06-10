@@ -26,6 +26,9 @@ D3D_structure=simdef.D3D.structure;
 if isfield(simdef.bct,'version_V')==0
     if isfield(simdef.bct,'sec')
         simdef.bct.version_V=1;
+        warning('call bct_io')
+    elseif isfield(simdef.bct,'Table')
+        simdef.bct.version_V=2;
     else
         simdef.bct.version_V=0;
     end
@@ -40,6 +43,8 @@ if D3D_structure==1
         case 1
             simdef.bct.fname=simdef.file.bct;
             D3D_bct_2(simdef)
+        case 2
+            bct_io('write',simdef.file.bct,simdef.bct);
     end
 else
     D3D_bc_wL(simdef);

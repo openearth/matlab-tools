@@ -60,6 +60,11 @@ if isfield(mdu.keywords,'filmor') && ~isempty(mdu.keywords.filmor)
     simdef.file.mor=fullfile(path_sim,mdu.keywords.filmor);
 end
 
+%bc
+if isfield(mdu.keywords,'filbct') && ~isempty(mdu.keywords.filbct)
+    simdef.file.bct=fullfile(path_sim,mdu.keywords.filbct);
+end
+
 %output
 % if isfield(mdu.output,'OutputDir')
 %     path_output_loc=mdu.output.OutputDir;

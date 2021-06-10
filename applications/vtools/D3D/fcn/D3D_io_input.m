@@ -44,6 +44,8 @@ switch what_do
                 stru_out=delft3d_io_dep('read',fname,G,varargin(2:3));
 %                 G=wlgrid('read',varargin{1});
 %                 stru_out=wldep('read',fname,G);
+            case '.bct'
+                stru_out=bct_io('read',fname);
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
