@@ -12,17 +12,17 @@ switch lower(opt)
 end
 
 function shorelines_save_input(filename,data)
-fid=fopen(filename,'w')
+fid=fopen(filename,'w');
 fieldnms=fields(data);
 for ii=1:length(fieldnms)
-    key=fieldnms{ii}
-    val=data.(fieldnms{ii})
+    key=fieldnms{ii};
+    val=data.(fieldnms{ii});
     
     if ischar(val)
-        str=[key,'=','''',val,'''']
+        str=[key,'=','''',val,''''];
     elseif isnumeric(val)
         if length(val)==1
-           str=[key,'=',num2str(val)]
+           str=[key,'=',num2str(val)];
         end
     end
     
@@ -30,6 +30,6 @@ for ii=1:length(fieldnms)
     fprintf(fid,'%s \n',str);
     end
 end
-fclose(fid)
+fclose(fid);
 
 
