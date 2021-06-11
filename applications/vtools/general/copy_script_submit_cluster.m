@@ -16,16 +16,7 @@
 %   -
 %
 
-% function copy_script_submit_cluster(path_script,line_num,new_line)
-
-%% DEBUG
-path_script="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210503_vow21\03_schematized_1d\main_plot.m";
-line_num=27;
-sim_num=20:1:32;
-ns=numel(sim_num);
-for ks=1:ns
-    new_line{ks,1}=sprintf('sim_num_v=%d',sim_num(ks));
-end
+function copy_script_submit_cluster(path_script,line_num,new_line)
 
 %% 
 
