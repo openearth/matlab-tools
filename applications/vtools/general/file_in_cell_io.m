@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17184 $
-%$Date: 2021-04-14 14:53:36 +0200 (Wed, 14 Apr 2021) $
-%$Author: chavarri $
-%$Id: writetxt.m 17184 2021-04-14 12:53:36Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/writetxt.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Wrapper around functions I always forger the name. It reads or 
 %writes a file in a cell array for easy modification. Don't
