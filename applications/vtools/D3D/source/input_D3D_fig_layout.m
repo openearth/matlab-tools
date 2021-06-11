@@ -237,6 +237,7 @@ simdef.flg.plot_nodes=0;
 
 %plot style
 simdef.flg.which_s=4; %which plot style: 
+%  -1=squeeze
 %   1=surf
 %   2=contourf
 %   3=scatter

@@ -1,18 +1,18 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17345 $
+%$Date: 2021-06-11 11:16:16 +0200 (Fri, 11 Jun 2021) $
+%$Author: chavarri $
+%$Id: input_variation_01.m 17345 2021-06-11 09:16:16Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/source/input_variation_01.m $
 %
 %This function has the input of the variation
 
 function [input_m,vari_tag]=input_variation_01(paths_input_folder,path_input_folder_refmdf)%,path_ref_mor,path_ref_sed)
 
 path_input_folder_refmdf=strrep(path_input_folder_refmdf,'\','/');
-if path_input_folder_refmdf(end)~='/'
+if ~isempty(path_input_folder_refmdf) && path_input_folder_refmdf(end)~='/'
     path_input_folder_refmdf(end+1)='/';
 end
 
@@ -74,7 +74,6 @@ for kmor=1:nmor
     input_m.mor(kmor).fpath=path_mor;
 
     %sim
-    input_m.sim(nsim+kmor).num=nsim+kmor;
     input_m.sim(nsim+kmor).TTLAlpha=TTLAlpha;
     input_m.sim(nsim+kmor).ThCLyr=ThCLyr;
     input_m.sim(nsim+kmor).nf=nf;

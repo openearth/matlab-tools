@@ -253,16 +253,19 @@ switch flg.which_p
                 
                 dm=mean_grain_size(LYRFRAC,dchar,mean_type);
                 dm(dm==1)=NaN;
+                
                 %output                
-                out.z=reshape(dm,ny,nx);
-                out.XZ=reshape(XZ,ny,nx);
-                out.YZ=reshape(YZ,ny,nx);
-                out.time_r=time_r(kt);
-                switch flg.which_p
-                    case 2
-                        out.z (1,:)=NaN;
-                        out.z (end,:)=NaN;                     
-                end
+                out=out_var_2DH(dm,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
+                
+%                 out.z=reshape(dm,ny,nx);
+%                 out.XZ=reshape(XZ,ny,nx);
+%                 out.YZ=reshape(YZ,ny,nx);
+%                 out.time_r=time_r(kt);
+%                 switch flg.which_p
+%                     case 2
+%                         out.z (1,:)=NaN;
+%                         out.z (end,:)=NaN;                     
+%                 end
             case 4 %dm fIk
                 LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,1:nl,1:nf},'quiet'); %fractions at layers [-] (t,y,x,l,f)
                 DP_BEDLYR=vs_let(NFStruct,'map-sed-series',{kt},'DP_BEDLYR',{ky,kx,1:nl+1},'quiet'); %fractions at layers [-] (t,y,x,l)
@@ -969,6 +972,12 @@ end
 switch flg.which_p
     case 2
         switch flg.which_s
+            case -1
+        z=squeeze(z);
+        XZ=squeeze(XZ);
+        YZ=squeeze(YZ);
+        out=v2struct(z,XZ,YZ,XCOR,YCOR);
+        out.time_r=time_r(kt);        
             case 0
         z=squeeze(permute(z(1,1:end-1,1:end-1),[1,3,2]));
         out=v2struct(z,XZ,YZ,XCOR,YCOR);
