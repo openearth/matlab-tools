@@ -10,7 +10,7 @@
 %$Id$
 %$HeadURL$
 %
-%reads files from a reference folder
+%writes files from a reference folder
 %
 %INPUT:
 %   -
