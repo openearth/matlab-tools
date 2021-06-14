@@ -62,6 +62,7 @@ addOptional(parin,'path_grd','');
 addOptional(parin,'amp',[1e-12,1e-10,1e-8,1e-6]);
 addOptional(parin,'num_test',3);
 addOptional(parin,'path_folder_out',fullfile(pwd,'output'));
+addOptional(parin,'location','cor');
 
 parse(parin,varargin{:});
 
@@ -69,6 +70,7 @@ path_grd=parin.Results.path_grd;
 amp_v=parin.Results.amp;
 num_test=parin.Results.num_test;
 path_folder_out=parin.Results.path_folder_out;
+location=parin.Results.location;
 
 %% READ DEP
 
@@ -94,7 +96,7 @@ switch ext_dep
         elseif isempty(path_grd)
             error('I need a grid file to read a dep file in D3D4. Provide the mdf-file or the path to the grid file as pair input ''path_grd'',<path_grd>')
         end
-        dep=D3D_io_input('read',path_dep,path_grd,'location','cor'); %this should also be made input
+        dep=D3D_io_input('read',path_dep,path_grd,'location',location); 
         dep_ref=dep.cor.dep;
     case '.xyz'
         dep=D3D_io_input('read',path_dep);
@@ -143,7 +145,7 @@ for ks=1:ns
     switch simdef.D3D.structure
         case 1
             dep.cor.dep=dep_loc;
-            D3D_io_input('write',fpath_dep,dep,'location','cor','dummy',false,'format','%15.13e'); %some of this input may need to be varargin
+            D3D_io_input('write',fpath_dep,dep,'location',location,'dummy',false,'format','%15.13e'); %some of this input may need to be varargin
         case 2
             dep(:,3)=dep_loc;
             D3D_io_input('write',fpath_dep,dep);
