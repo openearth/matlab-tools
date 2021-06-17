@@ -32,17 +32,26 @@ switch modelType
         mdu = dflowfm_io_mdu('read',fileInp);
         refdate = datenum(num2str(mdu.time.RefDate),'yyyymmdd');
         tunit = mdu.time.Tunit;
+        % tstart
         if isfield(mdu.time,'TStart')
             tstart = mdu.time.TStart;
-            tstop = mdu.time.TStop;
         elseif isfield(mdu.time,'Startdatetime') % yyyymmddHHMMSS
-            tstart = (datenum(num2str(round(mdu.time.Startdatetime)),'yyyymmddHHMMSS') - refdate) * timeFactor('d',tunit); % Tunit from refDate
-            tstop  = (datenum(num2str(round(mdu.time.Stopdatetime )),'yyyymmddHHMMSS') - refdate) * timeFactor('d',tunit); % Tunit from refDate
+            tstart = (EHY_datenum(num2str(round(mdu.time.Startdatetime))) - refdate) * timeFactor('d',tunit); % Tunit from refDate
         else
-            error('Could not find TStart/TStop or Startdatetime/Stopdatetime in .mdu')
+            error('Could not find TStart or Startdatetime in .mdu')
         end
-        if length(mdu.output.HisInterval) == 0 % no his output
         
+        % tstop
+        if isfield(mdu.time,'TStop')
+            tstop = mdu.time.TStop;
+        elseif isfield(mdu.time,'Stopdatetime') % yyyymmddHHMMSS
+            tstop  = (EHY_datenum(num2str(round(mdu.time.Stopdatetime ))) - refdate) * timeFactor('d',tunit); % Tunit from refDate
+        else
+            error('Could not find TStop or Stopdatetime in .mdu')
+        end
+        
+        if length(mdu.output.HisInterval) == 0 % no his output
+            
         elseif length(mdu.output.HisInterval) == 1 % only interval of his file
             hisint = mdu.output.HisInterval*timeFactor('S','M');
             hisstart = tstart;

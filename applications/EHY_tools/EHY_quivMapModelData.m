@@ -30,7 +30,8 @@ OPT.thinningStyle = 'uniform'; % 'uniform' or 'distance' (in model coordinates)
 OPT.thinning      = 1;         % thinning factor, if thinningStyle is 'uniform', than this should be integer
 OPT.vectorStyle   = 'quiver';  % straight 'quiver' vectors or curved 'curvec' vectors
 OPT.domain        = [];        % plot domain [Xmin,Xmax,Ymin,Ymax] for curvec grid interpolation
-OPT.filter        = [];        % file path of polygon encircling area to exclude
+OPT.filter        = [];        % (file path [*.pol] of) polygon [m x 2] encircling area to exclude
+OPT.flipfilter    = 0;         % 0 = exclude curved vectors IN polygon, 1 =  exclude curved vectors OUTSIDE polygon
 
 % if pairs were given as input OPT
 if ~isempty(varargin)
@@ -137,8 +138,15 @@ switch OPT.vectorStyle
         Fy        = scatteredInterpolant(gridInfo.Xcen',gridInfo.Ycen',vel_y','linear');
         ux        = Fx(X, Y); uy = Fy(X, Y);
         if ~isempty(OPT.filter)
-            landPol   = io_polygon('read',OPT.filter);
+            if ~isnumeric(OPT.filter)
+                landPol = io_polygon('read',OPT.filter);
+            else
+                landPol = OPT.filter;
+            end
             landArea  = inpolygon(X,Y,landPol(:,1),landPol(:,2));
+            if OPT.flipfilter 
+                landArea = ~landArea;
+            end
             ux(landArea) = NaN; uy(landArea) = NaN;
         end
         [polx,poly] = curvec(X,Y,ux,uy,'length',vecLength,'position',pos);

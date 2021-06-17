@@ -24,24 +24,39 @@ if isempty(mdFile)
 end
 modelType = EHY_getModelType(mdFile);
 
-[refdate,tunit,tstart,tstop] = EHY_getTimeInfoFromMdFile(mdFile);
+[refdate,tunit,tstart,tstop] = EHY_getTimeInfoFromMdFile(mdFile,modelType);
 simPeriod_S = (tstop-tstart)*timeFactor(tunit,'S');
 simPeriod_D = (tstop-tstart)*timeFactor(tunit,'D');
 
 switch modelType
     case 'dfm'
         [pathstr, name, ext] = fileparts(mdFile);
+        outputDir = EHY_getOutputDirFM(mdFile);
         mdu = dflowfm_io_mdu('read',mdFile);
-        if ~isempty(mdu.output.OutputDir)
-            folder = [pathstr filesep mdu.output.OutputDir filesep];
-        else
-            [~,name] = fileparts(mdFile);
-            folder = [pathstr filesep 'DFM_OUTPUT_' name filesep];
-        end
-
-        D = dir([folder '*_timings.txt']);
-        if ~isempty(D) % try to get the runPeriod from the timings file
-            timingsFile = [folder filesep D(1).name];
+        
+        if isfield(mdu.output,'StatsInterval') && mdu.output.StatsInterval > 0
+            if exist([outputDir name '_0001.dia'],'file')
+                diaFile = [outputDir name '_0001.dia'];
+            else
+                error('to be implemented')
+            end
+            
+            fid = fopen(diaFile,'r');
+            out = textscan(fid,'%s','delimiter','\n','CommentStyle','** INFO   :  Solver converged in');
+            out = out{1,1};
+            fclose(fid);
+            
+            % Sim. time done   Sim. time left   Real time used   Real time left Steps left Complete% Interval-averaged time step
+            wantedLine2 = regexptranslate('wildcard','** INFO   :*d*:*:*d*:*:*d*:*:*d*:*:*%');
+            ind = find(~cellfun(@isempty,regexp(out,wantedLine2)),1,'last');
+            StatsIntervalLine = out{ind};
+            
+            d_ind = strfind(StatsIntervalLine,'d');
+            runPeriod_S = str2num(StatsIntervalLine(d_ind(1)-4:d_ind-1)) * timeFactor('d','s');
+            
+        elseif ~isempty(dir([outputDir '*_timings.txt'])) % try to get the runPeriod from the timings file
+            D = dir([outputDir '*_timings.txt']);
+            timingsFile = [outputDir filesep D(1).name];
             fid = fopen(timingsFile,'r');
             while feof(fid) ~= 1
                 line = fgetl(fid);
@@ -50,35 +65,31 @@ switch modelType
             line = regexp(line,'\s+','split');
             runPeriod_S = str2num(line{2})-tstart*timeFactor(tunit,'S');
             
-            if mod((mdu.time.TStop-mdu.time.TStart)*timeFactor(tunit,'S'),mdu.output.TimingsInterval) ~= 0
-                diaFile0001 = [pathstr name '_0001.dia'];
-                if exist(diaFile0001,'file')
-                    fid = fopen(diaFile0001,'r');
-                    l = fgetl(fid);
-                    while feof(fid) ~= 1 & isempty(strfind(l,'Computation finished at'))
-                        l = fgetl(fid);
-                        DONE = 1;
-                    end
-                    fclose(fid);
-                else
+            if mod((tstop-tstart)*timeFactor(tunit,'S'),mdu.output.TimingsInterval) ~= 0
+                if exist([outputDir name '_0001.dia'],'file')
+                    fid = fopen([outputDir name '_0001.dia'],'r');
+                elseif exist([pathstr 'out.txt'],'file')
                     fid = fopen([pathstr 'out.txt'],'r');
-                    l = fgetl(fid);
-                    while feof(fid) ~= 1 & isempty(strfind(l,'Computation finished at'))
+                else
+                    error('debug needed')
+                end
+                l = fgetl(fid);
+                while feof(fid) ~= 1
+                    if isempty(strfind(l,'Computation finished at'))
                         l = fgetl(fid);
-                        DONE = 1;
+                    else
+                        runPeriod_S = simPeriod_S; % 100% completed!
+                        break
                     end
-                    fclose(fid);
                 end
-                
-                if exist('DONE','var')
-                    runPeriod_S = simPeriod_S;
-                end
+                fclose(fid);
                 
             end
         else % get the runPeriod from the his nc file
-            hisncfiles = dir([folder '*his*.nc']);
+            disp('Simulation status can be determined (much) faster when specifying StatsInterval > 0 and/or TimingsInterval > 0 in the .mdu')
+            hisncfiles = dir([outputDir '*his*.nc']);
             if ~isempty(hisncfiles)
-                hisncfile = [folder hisncfiles(1).name];
+                hisncfile = [outputDir hisncfiles(1).name];
             else
                 disp('No output (*_his.nc) file available yet, model has not started or not finished initializing yet')
                 return
@@ -136,7 +147,11 @@ disp(['Status of ' name ext ': ' num2str(round(runPeriod_D)) '/' num2str(round(s
 if percentage < 100 && strcmp(modelType,'dfm')
     ETAline = '';
     try
-        ETAline = ETA(mdFile,percentage);
+        if exist('StatsIntervalLine','var')
+            ETAline = ETA(mdFile,percentage,StatsIntervalLine);
+        else
+            ETAline = ETA(mdFile,percentage);
+        end
         disp(ETAline)
     end
 end
@@ -150,45 +165,57 @@ end
 
 end
 
-function ETAline = ETA(mdFile,percentage)
+%% ETA
+function ETAline = ETA(mdFile,percentage,StatsIntervalLine)
 % Estimated time of arrival (when is simulation expected to be done?)
 
-outFile = [fileparts(mdFile) filesep 'out.txt'];
-
-% datenumStart is in out.txt
-str2find = '* File creation date:';
-fID = fopen(outFile,'r');
-found = false;
-while ~feof(fID) && ~found
-    line = fgetl(fID);
-    if length(line)>22 && strcmp(line(1:22),'* File creation date: ')
-        found = true;
-        datenumStart = datenum(line(23:end),'HH:MM:ss, dd-mm-yyyy');
-    end
-end
-fclose(fID);
-
-% datenumStart is not in out.txt but in *.o*-file
-if ~exist('datenumStart','var')
-    oFile = dir([fileparts(mdFile) filesep '*.o*']);
-    if length(oFile) ~= 1
-        error
-    else
-        oFile = [fileparts(mdFile) filesep oFile.name];
-        fID = fopen(oFile,'r');
-        found = false;
-        while ~feof(fID) && ~found
-            line = fgetl(fID);
-            if length(line)>26 && strcmp(line(1:6),'Dimr [')
-                found = true;
-                datenumStart = datenum(line(7:25),'yyyy-mm-dd HH:MM:ss');
-            end
+if exist('StatsIntervalLine','var')
+    % Sim. time done   Sim. time left   Real time used   Real time left Steps left Complete% Interval-averaged time step
+    d_ind = strfind(StatsIntervalLine,'d');
+    line = StatsIntervalLine(d_ind(4)-3:d_ind(4)+9);
+    days = str2num(StatsIntervalLine(d_ind(4)-3:d_ind(4)-1));
+    time = str2num(StatsIntervalLine(d_ind(4)+2:d_ind(4)+3))/24 + str2num(StatsIntervalLine(d_ind(4)+5:d_ind(4)+6))/1440;
+    
+    timeNeededToFinish = days + time;
+else
+    outFile = [fileparts(mdFile) filesep 'out.txt'];
+    
+    % datenumStart is in out.txt
+    str2find = '* File creation date:';
+    fID = fopen(outFile,'r');
+    found = false;
+    while ~feof(fID) && ~found
+        line = fgetl(fID);
+        if length(line)>22 && strcmp(line(1:22),'* File creation date: ')
+            found = true;
+            datenumStart = datenum(line(23:end),'HH:MM:ss, dd-mm-yyyy');
         end
-        fclose(fID);
     end
+    fclose(fID);
+    
+    % datenumStart is not in out.txt but in *.o*-file
+    if ~exist('datenumStart','var')
+        oFile = dir([fileparts(mdFile) filesep '*.o*']);
+        if length(oFile) ~= 1
+            error
+        else
+            oFile = [fileparts(mdFile) filesep oFile.name];
+            fID = fopen(oFile,'r');
+            found = false;
+            while ~feof(fID) && ~found
+                line = fgetl(fID);
+                if length(line)>26 && strcmp(line(1:6),'Dimr [')
+                    found = true;
+                    datenumStart = datenum(line(7:25),'yyyy-mm-dd HH:MM:ss');
+                end
+            end
+            fclose(fID);
+        end
+    end
+    
+    timeNeededToFinish = (now-datenumStart)/percentage*(100-percentage);
 end
 
-timeNeededToFinish = (now-datenumStart)/percentage*(100-percentage);
 datenumEnd = datestr(now + timeNeededToFinish);
 if timeNeededToFinish > 1
     ETAline = ['Simulation is expected to be finished in ' sprintf('%.2f',timeNeededToFinish) ' days at ' datenumEnd];
