@@ -25,8 +25,9 @@ frame_rate=parin.Results.frame_rate;
 quality=parin.Results.quality;
 path_video=parin.Results.path_video;
 
-if exist(path_video,'file')==2
-    delete(path_video)
+path_video_ext=sprintf('%s.mp4',path_video);
+if exist(path_video_ext,'file')==2
+    delete(path_video_ext)
 end
 
 %% MAKE VIDEO
