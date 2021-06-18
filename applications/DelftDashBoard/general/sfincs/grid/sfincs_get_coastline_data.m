@@ -80,11 +80,7 @@ switch iopt
             i1=find(z>=-zdean,1,'first');
             i2=find(z>=0,1,'first');
             dst=sqrt((x(i2)-x(i1)).^2+(y(i2)-y(i1)).^2);
-            try
             s.slope(ip)=zdean/dst;
-            catch
-                shite=1
-            end
             s.dean(ip)=zdean/dst^(2/3);
             s.type(ip)=iopt;
 %             x=x(i1:i2);

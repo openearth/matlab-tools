@@ -49,6 +49,7 @@ c     Pointers input
       integer*8 :: z_zmax_pr
       integer*8 :: z_dhdz_pr
       integer*8 :: z_hrep_pr
+      integer*8 :: z_navg_pr
       integer*8 :: ioptr_pr  
       
 c     Pointers output      
@@ -56,26 +57,31 @@ c     Pointers output
       integer*8 :: u_zmax_pr
       integer*8 :: u_dhdz_pr
       integer*8 :: u_hrep_pr
+      integer*8 :: u_navg_pr
       integer*8 :: v_zmin_pr
       integer*8 :: v_zmax_pr
       integer*8 :: v_dhdz_pr
       integer*8 :: v_hrep_pr
+      integer*8 :: v_navg_pr
       
 c     Arrays input
       double precision, dimension(:,:  ), allocatable :: z_zmin
       double precision, dimension(:,:  ), allocatable :: z_zmax
       double precision, dimension(:,:  ), allocatable :: z_dhdz
       double precision, dimension(:,:,:), allocatable :: z_hrep
+      double precision, dimension(:,:,:), allocatable :: z_navg
 
 c     Arrays output
       double precision, dimension(:,:  ), allocatable :: u_zmin
       double precision, dimension(:,:  ), allocatable :: u_zmax
       double precision, dimension(:,:  ), allocatable :: u_dhdz
       double precision, dimension(:,:,:), allocatable :: u_hrep
+      double precision, dimension(:,:,:), allocatable :: u_navg
       double precision, dimension(:,:  ), allocatable :: v_zmin
       double precision, dimension(:,:  ), allocatable :: v_zmax
       double precision, dimension(:,:  ), allocatable :: v_dhdz
       double precision, dimension(:,:,:), allocatable :: v_hrep
+      double precision, dimension(:,:,:), allocatable :: v_navg
 
       double precision                                :: ioptr
 
@@ -109,7 +115,7 @@ c     Dimensions
       dims3out(3) = nbin
       
 c     Numbers of bins 
-      iopt_pr    = mxGetPr(prhs(5))
+      iopt_pr    = mxGetPr(prhs(6))
       call mxCopyPtrToReal8(iopt_pr,ioptr,1)
       iopt = int(ioptr)
       
@@ -118,16 +124,19 @@ c     Allocate output
       allocate(u_zmax(1:nmax,1:mmax       ))
       allocate(u_dhdz(1:nmax,1:mmax       ))
       allocate(u_hrep(1:nmax,1:mmax,1:nbin))
+      allocate(u_navg(1:nmax,1:mmax,1:nbin))
       allocate(v_zmin(1:nmax,1:mmax       ))
       allocate(v_zmax(1:nmax,1:mmax       ))
       allocate(v_dhdz(1:nmax,1:mmax       ))
       allocate(v_hrep(1:nmax,1:mmax,1:nbin))
+      allocate(v_navg(1:nmax,1:mmax,1:nbin))
 
 c     Allocate input
       allocate(z_zmin(1:nmax+1,1:mmax+1       ))
       allocate(z_zmax(1:nmax+1,1:mmax+1       ))
       allocate(z_dhdz(1:nmax+1,1:mmax+1       ))
       allocate(z_hrep(1:nmax+1,1:mmax+1,1:nbin))
+      allocate(z_navg(1:nmax+1,1:mmax+1,1:nbin))
 
 C     Create matrix for the return argument.
       classid=mxClassIDFromClassName('double')
@@ -135,60 +144,71 @@ C     Create matrix for the return argument.
       plhs(2) = mxCreateNumericArray(2, dims2out, classid, 0)
       plhs(3) = mxCreateNumericArray(2, dims2out, classid, 0)
       plhs(4) = mxCreateNumericArray(3, dims3out, classid, 0)
-      plhs(5) = mxCreateNumericArray(2, dims2out, classid, 0)
+      plhs(5) = mxCreateNumericArray(3, dims3out, classid, 0)
       plhs(6) = mxCreateNumericArray(2, dims2out, classid, 0)
       plhs(7) = mxCreateNumericArray(2, dims2out, classid, 0)
-      plhs(8) = mxCreateNumericArray(3, dims3out, classid, 0)
+      plhs(8) = mxCreateNumericArray(2, dims2out, classid, 0)
+      plhs(9) = mxCreateNumericArray(3, dims3out, classid, 0)
+      plhs(10) = mxCreateNumericArray(3,dims3out, classid, 0)
 
       u_zmin_pr = mxGetPr(plhs(1))
       u_zmax_pr = mxGetPr(plhs(2))
       u_dhdz_pr = mxGetPr(plhs(3))
       u_hrep_pr = mxGetPr(plhs(4))
-      v_zmin_pr = mxGetPr(plhs(5))
-      v_zmax_pr = mxGetPr(plhs(6))
-      v_dhdz_pr = mxGetPr(plhs(7))
-      v_hrep_pr = mxGetPr(plhs(8))
+      u_navg_pr = mxGetPr(plhs(5))
+      v_zmin_pr = mxGetPr(plhs(6))
+      v_zmax_pr = mxGetPr(plhs(7))
+      v_dhdz_pr = mxGetPr(plhs(8))
+      v_hrep_pr = mxGetPr(plhs(9))
+      v_navg_pr = mxGetPr(plhs(10))
 
       z_zmin_pr       = mxGetPr(prhs(1))
       z_zmax_pr       = mxGetPr(prhs(2))
       z_dhdz_pr       = mxGetPr(prhs(3))
       z_hrep_pr       = mxGetPr(prhs(4))
+      z_navg_pr       = mxGetPr(prhs(5))
 
 C     Load the data into Fortran arrays.
       call mxCopyPtrToReal8(z_zmin_pr,z_zmin,(nmax+1)*(mmax+1))
       call mxCopyPtrToReal8(z_zmax_pr,z_zmax,(nmax+1)*(mmax+1))
       call mxCopyPtrToReal8(z_dhdz_pr,z_dhdz,(nmax+1)*(mmax+1))
       call mxCopyPtrToReal8(z_hrep_pr,z_hrep,(nmax+1)*(mmax+1)*nbin)
+      call mxCopyPtrToReal8(z_navg_pr,z_navg,(nmax+1)*(mmax+1)*nbin)
 
 C     Call the computational subroutine
 
       call subgrid_uv(nmax,mmax,nbin,z_zmin,z_zmax,z_dhdz,z_hrep,
-     &                               u_zmin,u_zmax,u_dhdz,u_hrep, 
-     &                               v_zmin,v_zmax,v_dhdz,v_hrep,
-     &                iopt) 
+     &                        z_navg,u_zmin,u_zmax,u_dhdz,u_hrep, 
+     &                 u_navg,v_zmin,v_zmax,v_dhdz,v_hrep,v_navg,
+     &                 iopt) 
            
 c     Load the output into a MATLAB array.
       call mxCopyReal8ToPtr(u_zmin,u_zmin_pr,nmax*mmax)
       call mxCopyReal8ToPtr(u_zmax,u_zmax_pr,nmax*mmax)
       call mxCopyReal8ToPtr(u_dhdz,u_dhdz_pr,nmax*mmax)
       call mxCopyReal8ToPtr(u_hrep,u_hrep_pr,nmax*mmax*nbin)
+      call mxCopyReal8ToPtr(u_navg,u_navg_pr,nmax*mmax*nbin)
       call mxCopyReal8ToPtr(v_zmin,v_zmin_pr,nmax*mmax)
       call mxCopyReal8ToPtr(v_zmax,v_zmax_pr,nmax*mmax)
       call mxCopyReal8ToPtr(v_dhdz,v_dhdz_pr,nmax*mmax)
       call mxCopyReal8ToPtr(v_hrep,v_hrep_pr,nmax*mmax*nbin)
+      call mxCopyReal8ToPtr(v_navg,v_navg_pr,nmax*mmax*nbin)
 
       deallocate(z_zmin)
       deallocate(z_zmax)
       deallocate(z_hrep)
       deallocate(z_dhdz)
+      deallocate(z_navg)
       deallocate(u_zmin)
       deallocate(u_zmax)
       deallocate(u_dhdz)
       deallocate(u_hrep)
+      deallocate(u_navg)
       deallocate(v_zmin)
       deallocate(v_zmax)
       deallocate(v_dhdz)
       deallocate(v_hrep)
+      deallocate(v_navg)
 
       close(800)
       
@@ -196,9 +216,9 @@ c     Load the output into a MATLAB array.
       end
 
       subroutine subgrid_uv(nmax,mmax,nbin,z_zmin,z_zmax,z_dhdz,z_hrep,
-     &                                     u_zmin,u_zmax,u_dhdz,u_hrep, 
-     &                                     v_zmin,v_zmax,v_dhdz,v_hrep,
-     &                      iopt) 
+     &                              z_navg,u_zmin,u_zmax,u_dhdz,u_hrep, 
+     &                       u_navg,v_zmin,v_zmax,v_dhdz,v_hrep,v_navg,
+     &                       iopt)
 
       integer nmax
       integer mmax
@@ -206,20 +226,25 @@ c     Load the output into a MATLAB array.
       double precision z_zmin(nmax + 1, mmax + 1)
       double precision z_zmax(nmax + 1, mmax + 1)
       double precision z_dhdz(nmax + 1, mmax + 1)
-      double precision z_hrep(nmax + 1, mmax +1, nbin)
+      double precision z_hrep(nmax + 1, mmax + 1, nbin)
+      double precision z_navg(nmax + 1, mmax + 1, nbin)
       double precision u_zmin(nmax, mmax)
       double precision u_zmax(nmax, mmax)
       double precision u_dhdz(nmax, mmax)
       double precision u_hrep(nmax, mmax, nbin)
+      double precision u_navg(nmax, mmax, nbin)
       double precision v_zmin(nmax, mmax)
       double precision v_zmax(nmax, mmax)
       double precision v_dhdz(nmax, mmax)
       double precision v_hrep(nmax, mmax, nbin)
+      double precision v_navg(nmax, mmax, nbin)
       double precision zu(nbin)
       double precision z_left(nbin + 2)
       double precision h_left(nbin + 2)
+      double precision n_left(nbin + 2)
       double precision z_right(nbin + 2)
       double precision h_right(nbin + 2)
+      double precision n_right(nbin + 2)
 
       double precision zadd
       double precision hadd
@@ -227,6 +252,8 @@ c     Load the output into a MATLAB array.
       double precision f
       double precision h1
       double precision h2
+      double precision n1
+      double precision n2
       integer iopt
 
       integer n
@@ -234,12 +261,12 @@ c     Load the output into a MATLAB array.
       integer ibin
       integer ibin2
 
-      open(801,file='out05.txt')
-                  write(801,*)iopt
+c      open(801,file='out05.txt')
+c      write(801,*)iopt
 
       do n = 1, nmax
          do m = 1, mmax
-        
+         
 c           U points
 
             if (iopt==0) then
@@ -270,15 +297,18 @@ c           Left
             hadd = zadd - z_zmax(n, m)
             zmaxmin = max(z_zmax(n, m) - z_zmin(n, m), 1.0e-4)
             do ibin = 1, nbin + 1
-               z_left(ibin) = z_zmin(n, m) + (ibin-1)*zmaxmin/nbin
+               z_left(ibin) = z_zmin(n, m) + (ibin - 1)*zmaxmin/nbin
             enddo
             h_left(1) = 0.0
+            n_left(1) = z_navg(n, m, 1)
             do ibin = 1, nbin
                h_left(ibin + 1) = z_hrep(n, m, ibin)
+               n_left(ibin + 1) = z_navg(n, m, ibin)
             enddo
 c           Add extra point
             z_left(nbin + 2) = zadd
             h_left(nbin + 2) = h_left(nbin + 1) + hadd*z_dhdz(n, m)
+            n_left(nbin + 2) = z_navg(n, m, nbin)
             
 c           Right
             hadd = zadd - z_zmax(n, m + 1)
@@ -287,86 +317,54 @@ c           Right
                z_right(ibin) = z_zmin(n, m + 1) + (ibin-1)*zmaxmin/nbin
             enddo
             h_right(1) = 0.0
+            n_right(1) = z_navg(n, m + 1, 1)
             do ibin = 1, nbin
                h_right(ibin + 1) = z_hrep(n, m + 1, ibin)
+               n_right(ibin + 1) = z_navg(n, m + 1, ibin)
             enddo            
 c           Add extra point
             z_right(nbin + 2) = zadd
             h_right(nbin + 2) = h_right(nbin+1) + hadd*z_dhdz(n,m+1)
-
+            n_right(nbin + 2) = z_navg(n, m + 1, nbin)
 
             do ibin = 1, nbin
-               
+            
                call interp1(z_left,  h_left,  zu(ibin), h1, nbin + 2)
                call interp1(z_right, h_right, zu(ibin), h2, nbin + 2)
+               call interp1(z_left,  n_left,  zu(ibin), n1, nbin + 2)
+               call interp1(z_right, n_right, zu(ibin), n2, nbin + 2)
                
                if (iopt==0) then
 
 c                 MEAN 
                 
-c                  if (h1<0.0) then
-c                  do ibin2=1,nbin+2
-c                     write(801,'(a,3i5,20e14.4)')'WTF?!',n,m,ibin2,
-c     &                h1,z_left(ibin2),h_left(ibin2),zu(ibin),
-c     &                z_zmin(n, m)
-c                  
-c                  enddo
-c                  endif
-
-c                  if (h1<0.0 .or. h2<0.0) then
-c                     write(801,*)'WTF?!',h1,h2
-c                  endif
-c                  u_hrep(n, m, ibin) = 0.5*h1 + 0.5*h2
-c                  if (u_hrep(n, m, ibin)<0.0) then
-c                     write(801,'(a,3i5,20e14.4)')'WTF?!',n,m,ibin,
-c     &                h1,h2,u_hrep(n, m, ibin)
-c                  endif
-
                   u_hrep(n, m, ibin) = 0.5*h_left(ibin + 1) + 
      &                           0.5*h_right(ibin + 1)
 
+                  u_navg(n, m, ibin) = 0.5*(n1 + n2)
 
                elseif (iopt==1) then
                
 c                 MIN 
                
-c                  if (h1<0.0 .or. h2<0.0) then
-c                     write(801,*)'WTF?!'
-c                  endif
                   u_hrep(n, m, ibin) = min(h1, h2)
-c                  if (u_hrep(n, m, ibin)<0.0) then
-c                     write(801,'(a,3i5,20e14.4)')'WTF?!',n,m,ibin,
-c     &                h1,h2,u_hrep(n, m, ibin)
-c                  endif
-                  
+                  u_navg(n, m, ibin) = 0.5*(n1 + n2)
                  
                else
 
 c                 MINMEAN 
-
-c                  f = 0.5*(ibin*1.0/nbin)
-               
-c                  if (z_left(1)>z_right(1)) then
-c                     f = 1.0 - f
-c                  endif
-               
-c                  u_hrep(n, m, ibin) = f*h1 + (1.0 - f)*h2
                   
                   u_hrep(n, m, ibin) = 0.5*h1 + 0.5*h2
                   u_hrep(n, m, ibin) = min( u_hrep(n, m, ibin), 
      &                 u_dhdz(n, m)*(zu(ibin) - u_zmin(n, m)) )
                   
+                  u_navg(n, m, ibin) = 0.5*(n1 + n2)
                               
                endif
 
             enddo   
 
-
 c           V points
-
-c            v_zmin(n, m) = max(z_zmin(n, m), z_zmin(n + 1, m))
-c            v_zmax(n, m) = max(z_zmax(n, m), z_zmax(n + 1, m))
-c            v_dhdz(n, m) = 0.5*(z_dhdz(n,m) + z_dhdz(n + 1, m))            
 
             if (iopt==0) then
                ! MEAN
@@ -390,6 +388,7 @@ c            v_dhdz(n, m) = 0.5*(z_dhdz(n,m) + z_dhdz(n + 1, m))
             do ibin = 1, nbin
                zu(ibin) = v_zmin(n, m) + ibin*(v_zmax(n, m) - 
      &                    v_zmin(n, m))/nbin
+
             enddo
         
 c           Left
@@ -399,12 +398,15 @@ c           Left
                z_left(ibin) = z_zmin(n, m) + (ibin-1)*zmaxmin/nbin
             enddo
             h_left(1) = 0.0
+            n_left(1) = z_navg(n, m, 1)
             do ibin = 1, nbin
                h_left(ibin + 1) = z_hrep(n, m, ibin)
+               n_left(ibin + 1) = z_navg(n, m, ibin)
             enddo            
 c           Add extra point
             z_left(nbin + 2) = zadd
             h_left(nbin + 2) = h_left(nbin + 1) + hadd*z_dhdz(n, m)
+            n_left(ibin + 2) = z_navg(n, m, nbin)
             
 c           Right
             hadd = zadd - z_zmax(n + 1, m)
@@ -413,18 +415,23 @@ c           Right
                z_right(ibin) = z_zmin(n + 1, m) + (ibin-1)*zmaxmin/nbin
             enddo
             h_right(1) = 0.0
+            n_right(1) = z_navg(n + 1, m, 1)
             do ibin = 1, nbin
                h_right(ibin + 1) = z_hrep(n + 1, m, ibin)
+               n_right(ibin + 1) = z_navg(n + 1, m, ibin)
             enddo            
 c           Add extra point
             z_right(nbin + 2) = zadd
             h_right(nbin + 2) = h_right(nbin + 1) + 
      &                          hadd*z_dhdz(n + 1, m)
+            n_right(nbin + 2) = z_navg(n + 1, m, nbin)
 
             do ibin = 1, nbin
                
                call interp1(z_left,  h_left,  zu(ibin), h1, nbin + 2)
                call interp1(z_right, h_right, zu(ibin), h2, nbin + 2)
+               call interp1(z_left,  n_left,  zu(ibin), n1, nbin + 2)
+               call interp1(z_right, n_right, zu(ibin), n2, nbin + 2)
 
                if (iopt==0) then
 
@@ -433,29 +440,24 @@ c                 MEAN
 c                  v_hrep(n, m, ibin) = 0.5*h1 + 0.5*h2
                   v_hrep(n, m, ibin) = 0.5*h_left(ibin + 1) + 
      &                           0.5*h_right(ibin + 1)
+                  v_navg(n, m, ibin) = 0.5*(n1 + n2)
 
                elseif (iopt==1) then
                
 c                 MIN 
-               
                   v_hrep(n, m, ibin) = min(h1, h2)
+                  v_navg(n, m, ibin) = 0.5*(n1 + n2)
                  
                else
 
 c                 MINMEAN 
-
-c                  f = 0.5*(ibin*1.0/nbin)
                
-c                  if (z_left(1)>z_right(1)) then
-c                     f = 1.0 - f
-c                  endif
-               
-c                  v_hrep(n, m, ibin) = f*h1 + (1.0 - f)*h2                  
-                  
                   v_hrep(n, m, ibin) = 0.5*h1 + 0.5*h2
                   
                   v_hrep(n, m, ibin) = min(v_hrep(n, m, ibin), 
      &                v_dhdz(n, m)*(zu(ibin) - v_zmin(n, m)) )
+
+                  v_navg(n, m, ibin) = 0.5*(n1 + n2)
                               
                endif
 
@@ -464,7 +466,7 @@ c                  v_hrep(n, m, ibin) = f*h1 + (1.0 - f)*h2
          enddo
       enddo
       
-      close(801)
+c      close(801)
 
       return
 

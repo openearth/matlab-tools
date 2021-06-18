@@ -17,6 +17,7 @@ function sfincs_make_subgrid_file_v7(dr,subgridfile,bathy,cs,nbin,refi,refj,uopt
 % sfincs_make_subgrid_file(dr,subgridfile,bathy,cs,nbin,refi,refj)
 %%
 
+smanning=[];
 
 if ~isempty(cs)
     
@@ -197,6 +198,7 @@ for ii=1:ni
         %             shite=5;
         %         end
         if ~isempty(cs)
+            
             % Loop through bathymetry datasets
             for ibat=1:length(model.bathymetry)
                 
@@ -232,7 +234,8 @@ for ii=1:ni
                     
                     %                [xx,yy,zz,ok]=ddb_getBathymetry(bathymetry,[xmin xmax],[ymin ymax],'bathymetry',model.bathymetry(ibat).name,'maxcellsize',min(dif,djf),'quiet');
                     [xx,yy,zz,ok]=ddb_getBathymetry(bathymetry,bboxx,bboxy,'bathymetry',model.bathymetry(ibat).name,'maxcellsize',min(dif,djf),'quiet');
-                    
+                    zz(zz<bathy(ibat).zmin)=NaN;
+                    zz(zz>bathy(ibat).zmax)=NaN;
                     if ~isempty(find(~isnan(zz)))
                         zg1=interp2(xx,yy,zz,xg,yg);
                         zg(isnan(zg))=zg1(isnan(zg));
@@ -251,7 +254,7 @@ for ii=1:ni
             
         end
         
-        
+        zg(isnan(zg))=0;
         if ~isempty(find(isnan(zg)))
             zg(isnan(zg)) = 0;
             warning(['NaNs found in bathymetry!!! Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
@@ -281,7 +284,8 @@ for ii=1:ni
         %         jf2=(jc2  )*refj  ;
         %         sout.zgf(if1:if2,jf1:jf2)=zg(1:end-refi,1:end-refj); % Don't need the row for velocity points here
         
-        clear xg yg zg1 xx yy zz
+%        clear xg yg zg1 xx yy zz
+        clear zg1 xx yy zz
         
         %% Now compute subgrid properties
         
@@ -312,11 +316,35 @@ for ii=1:ni
         subgrd.z_volmax(ic1:ic2,jc1:jc2)=volmax;
         subgrd.z_depth(ic1:ic2,jc1:jc2,:)=ddd;
          
-
         if usemex
-            manning=zeros(size(d));
-            manning(d<manning_level)=manning_deep;
-            manning(d>=manning_level)=manning_shallow;
+
+            if ~isempty(smanning)
+                try
+                    manningg=interp2(smanning.x,smanning.y,smanning.val,xg0,yg0);
+                catch
+                    shite=1;
+                end
+                manningg(isnan(manningg))=0.024;
+                np=0;
+                manningv=zeros(nib1,njb1,refi*refj); % First create 3D matrix (nmax,mmax,refi*refj)
+                manningv(manningv==0)=NaN;
+                for iref=1:refi
+                    for jref=1:refj
+                        np=np+1;
+                        i1=iref;
+                        i2=i1+(nib1-1)*refi;
+                        j1=jref;
+                        j2=j1+(njb1-1)*refj;
+                        manningg1=manningg(i1:refi:i2,j1:refj:j2);
+                        manningv(:,:,np)=manningg1;
+                    end
+                end
+                manning=manningv;
+            else
+                manning=zeros(size(d));
+                manning(d<manning_level)=manning_deep;
+                manning(d>=manning_level)=manning_shallow;
+            end
             [zmin,zmax,ddd,dhdz]=mx_subgrid_depth(d,manning,nbin,dx);
         else
             % Should get rid of this option

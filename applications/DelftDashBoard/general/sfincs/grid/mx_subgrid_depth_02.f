@@ -38,7 +38,7 @@ C
  
       integer*8 nmax, mmax, np, nbin
 
-      integer*8 d_pr,zmin_pr,zmax_pr,hrep_pr,dhdz_pr
+      integer*8 d_pr,zmin_pr,zmax_pr,hrep_pr,manning_avg_pr,dhdz_pr
 
       double precision, dimension(:,:,:), allocatable :: d
       double precision, dimension(:,:,:), allocatable :: manning
@@ -48,6 +48,7 @@ C
       double precision, dimension(:,:),     allocatable :: zmin
       double precision, dimension(:,:),     allocatable :: zmax
       double precision, dimension(:,:,:),   allocatable :: hrep
+      double precision, dimension(:,:,:),   allocatable :: manning_avg
       double precision, dimension(:,:),     allocatable :: dhdz
 
       integer*8                        :: dims_pr
@@ -93,6 +94,7 @@ c     Allocate
       allocate(zmax(1:nmax,1:mmax))
       allocate(hrep(1:nmax,1:mmax,1:nbin))      
       allocate(dhdz(1:nmax,1:mmax))      
+      allocate(manning_avg(1:nmax,1:mmax,1:nbin))      
 
 C     Create matrix for the return argument.
       classid=mxClassIDFromClassName('double')
@@ -100,6 +102,7 @@ C     Create matrix for the return argument.
       plhs(2) = mxCreateNumericArray(2, dims2, classid, 0)
       plhs(3) = mxCreateNumericArray(3, dims3out, classid, 0)
       plhs(4) = mxCreateNumericArray(2, dims2, classid, 0)
+      plhs(5) = mxCreateNumericArray(3, dims3out, classid, 0)
 
       d_pr       = mxGetPr(prhs(1))
       manning_pr = mxGetPr(prhs(2))
@@ -108,6 +111,7 @@ C     Create matrix for the return argument.
       zmax_pr = mxGetPr(plhs(2))
       hrep_pr = mxGetPr(plhs(3))
       dhdz_pr = mxGetPr(plhs(4))
+      manning_avg_pr = mxGetPr(plhs(5))
 
 
 C     Load the data into Fortran arrays.
@@ -117,19 +121,20 @@ C     Load the data into Fortran arrays.
 C     Call the computational subroutine
 
       call subgrid_depths(nmax,mmax,np,nbin,dx,d,
-     &                    manning,zmin,zmax,hrep,dhdz)
-     
-      
+     &                    manning,zmin,zmax,hrep,dhdz,manning_avg)
+          
 c     Load the output into a MATLAB array.
       call mxCopyReal8ToPtr(zmin,zmin_pr,nmax*mmax)
       call mxCopyReal8ToPtr(zmax,zmax_pr,nmax*mmax)
       call mxCopyReal8ToPtr(hrep,hrep_pr,nmax*mmax*nbin)
       call mxCopyReal8ToPtr(dhdz,dhdz_pr,nmax*mmax)
+      call mxCopyReal8ToPtr(manning_avg,manning_avg_pr,nmax*mmax*nbin)
 
       deallocate(zmin)
       deallocate(zmax)
       deallocate(d)
       deallocate(hrep)
+      deallocate(manning_avg)
       deallocate(manning)
       deallocate(dhdz)
 
@@ -140,7 +145,7 @@ c      close(800)
 
 
       subroutine subgrid_depths(nmax,mmax,np,nbin,dx,d,
-     &                    manning,zmin,zmax,hrep,dhdz)
+     &                    manning,zmin,zmax,hrep,dhdz,manning_avg)
 
       integer nmax
       integer mmax
@@ -149,6 +154,7 @@ c      close(800)
       double precision dx
       double precision d(nmax,mmax,np)
       double precision manning(nmax,mmax,np)
+      double precision manning_avg(nmax,mmax,nbin)
       double precision zmin(nmax,mmax)
       double precision zmax(nmax,mmax)
       double precision hrep(nmax,mmax,nbin)
@@ -167,6 +173,7 @@ c      close(800)
       double precision dsum
       double precision dsum2
       double precision hrepsum
+      double precision manning_sum
 
       double precision zz(nbin+1)
       double precision hh(nbin+1)
@@ -177,6 +184,7 @@ c      close(800)
       integer ibin
       integer j1
       integer j2
+      integer nsum
 
       integer mmx
       
@@ -190,7 +198,7 @@ c      open(801,file='out200.txt')
 c      mmx=2
 c      endif
 
-c      open(801,file='out02.txt')
+c      open(801,file='mx_subgrid_depth.txt')
 
 c     write(801,*)nmax,mmax,nbin,np
       
@@ -204,6 +212,7 @@ c               write(801,*)n,m
 
             do ip=1,np
                dd0(ip)=d(n,m,ip)
+c               write(801,*)n,m,ip,manning(n,m,ip)
             enddo
             
             call sort(np,dd0,dd,indx)
@@ -224,14 +233,28 @@ c           Next bins
             zz(1) = zmin(n,m)
             hh(1) = 0.0
             do ibin = 1, nbin    
+               manning_sum = 0.0
+               nsum        = 0
                zb = zmin(n,m) + ibin*dbin
                q = 0.0
                do j1 = 1, np
                   h = max(zb - d(n,m,j1), 0.0)
                   q = q + h**(5.0/3.0)/manning(n,m,j1)
-               enddo   
+c                  write(801,'(4i8,20e14.4)')n,m,ibin,j1,zb,d(n,m,j1)
+                  if (zb>d(n,m,j1)) then
+                     nsum = nsum + 1
+                     manning_sum = manning_sum + manning(n,m,j1)
+c      write(801,'(3i5,20e14.4)')ibin,j1,nsum,manning_sum,manning(n,m,j1)
+                  endif   
+               enddo
+
+               manning_avg(n,m,ibin) = manning_sum/nsum
+c               write(801,'(4i8,20e14.4)')n,m,ibin,nsum,manning_sum,manning_avg(n,m,ibin)
+
                q = dx*q/np
-               hrep(n,m,ibin) = (q*manning0/dx)**(3.0/5.0)               
+
+c               hrep(n,m,ibin) = (q*manning0/dx)**(3.0/5.0)
+               hrep(n,m,ibin) = (q*manning_avg(n,m,ibin)/dx)**(3.0/5.0)
                
                zz(ibin+1)=zb
                hh(ibin+1)=hrep(n,m,ibin)
@@ -246,8 +269,9 @@ c           Now compute slope above zmax
                h = max(zb - d(n,m,j1), 0.0)
                q = q + h**(5.0/3.0)/manning(n,m,j1)
             enddo
-            q = dx*q/np
-            h10       = (q*manning0/dx)**(3.0/5.0)
+            q         = dx*q/np
+c            h10       = (q*manning0/dx)**(3.0/5.0)
+            h10       = (q*manning_avg(n,m,nbin)/dx)**(3.0/5.0)
             dhdz(n,m) = (h10 - hrep(n,m,nbin)) / zadd
                         
          enddo

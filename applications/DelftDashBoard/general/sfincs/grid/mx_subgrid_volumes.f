@@ -38,9 +38,10 @@ C
  
       integer*8 nmax, mmax, np, nbin
 
-      integer*8 d_pr,zmin_pr,zmax_pr,volmax_pr,depth_pr
+      integer*8 d_pr,area_pr,zmin_pr,zmax_pr,volmax_pr,depth_pr
 
       double precision, dimension(:,:,:),   allocatable :: d
+      double precision, dimension(:,:),     allocatable :: area
       double precision                                  :: dx
       double precision                                  :: dy
       double precision                                  :: mxsteep
@@ -76,10 +77,10 @@ c     Dimensions
       dims2(2) = mmax
       
 c     Numbers of bins 
-      nbin_pr    = mxGetPr(prhs(2))
-      dx_pr      = mxGetPr(prhs(3))
-      dy_pr      = mxGetPr(prhs(4))
-      mxsteep_pr = mxGetPr(prhs(5))
+      nbin_pr    = mxGetPr(prhs(3))
+      dx_pr      = mxGetPr(prhs(4))
+      dy_pr      = mxGetPr(prhs(5))
+      mxsteep_pr = mxGetPr(prhs(6))
       
       call mxCopyPtrToReal8(nbin_pr,nbinr,1)
       call mxCopyPtrToReal8(dx_pr,dx,1)
@@ -94,6 +95,7 @@ c     Numbers of bins
       
 c     Allocate
       allocate(d(1:nmax,1:mmax,1:np))
+      allocate(area(1:nmax,1:mmax))
       allocate(zmin(1:nmax,1:mmax))
       allocate(zmax(1:nmax,1:mmax))
       allocate(depth(1:nmax,1:mmax,1:nbin))
@@ -108,20 +110,23 @@ C     Create matrix for the return argument.
       plhs(4) = mxCreateNumericArray(3, dims3out, classid, 0)
 
       d_pr     = mxGetPr(prhs(1))
+      area_pr  = mxGetPr(prhs(2))
 
-      zmin_pr = mxGetPr(plhs(1))
-      zmax_pr = mxGetPr(plhs(2))
+      zmin_pr   = mxGetPr(plhs(1))
+      zmax_pr   = mxGetPr(plhs(2))
       volmax_pr = mxGetPr(plhs(3))
-      depth_pr = mxGetPr(plhs(4))
+      depth_pr  = mxGetPr(plhs(4))
 
 
 C     Load the data into Fortran arrays.
       call mxCopyPtrToReal8(d_pr,d,nmax*mmax*np)
+      call mxCopyPtrToReal8(area_pr,area,nmax*mmax)
 
 C     Call the computational subroutine
 
       call subgrid_volumes(nmax,mmax,np,nbin,dx,dy,d,
-     &                     zmin,zmax,volmax,depth,mxsteep)
+     &                     zmin,zmax,volmax,depth,
+     &                     area,mxsteep)
      
       
 c     Load the output into a MATLAB array.
@@ -135,6 +140,7 @@ c     Load the output into a MATLAB array.
       deallocate(volmax)
       deallocate(d)
       deallocate(depth)
+      deallocate(area)
 
 c      close(800)
       
@@ -143,7 +149,7 @@ c      close(800)
 
 
       subroutine subgrid_volumes(nmax,mmax,np,nbin,dx,dy,d,
-     &                           zmin,zmax,volmax,depth,mxsteep)
+     &                           zmin,zmax,volmax,depth,area,mxsteep)
 
       integer nmax
       integer mmax
@@ -154,6 +160,7 @@ c      close(800)
       double precision d(nmax,mmax,np)
       double precision zmin(nmax,mmax)
       double precision zmax(nmax,mmax)
+      double precision area(nmax,mmax)
       double precision volmax(nmax,mmax)
       double precision depth(nmax,mmax,nbin)
       double precision dd0(np)
@@ -196,7 +203,8 @@ c      open(801,file='out02.txt')
 
             zmin(n,m) = dd(1)
             zmax(n,m) = dd(np)
-            a=dx*dy/np
+            a=area(n,m)/np
+c            a=dx*dy/np
 
 c           Loop through depths
             vol(1) = 0.0
