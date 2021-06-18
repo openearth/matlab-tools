@@ -350,7 +350,7 @@ subgrd1.v_hrep   = v_hrep;
 subgrd1.v_navg   = v_navg;
 
 
-sfincs_write_binary_subgrid_tables_v7(subgrd1,msk,nbin,subgridfile,uopt);
+sfincs_write_binary_subgrid_tables_v8(subgrd1,msk,nbin,subgridfile,uopt);
 
 %%
 function [dmin,dmax,volmax,ddd]=sfincs_subgrid_volumes_ddd(d,nbin,dx,dy)
