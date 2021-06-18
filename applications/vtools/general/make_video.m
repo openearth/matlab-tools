@@ -25,6 +25,10 @@ frame_rate=parin.Results.frame_rate;
 quality=parin.Results.quality;
 path_video=parin.Results.path_video;
 
+if exist(path_video,'file')==2
+    delete(path_video)
+end
+
 %% MAKE VIDEO
 
 dire=dir(path_folder);
