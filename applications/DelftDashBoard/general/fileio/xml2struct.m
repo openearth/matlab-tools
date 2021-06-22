@@ -165,7 +165,12 @@ for ii=1:length(iopen)
             for j=1:length(a{1})
                 ieq=find(a{1}{j}=='=');
                 attributes(j).Name  = a{1}{j}(1:ieq-1);
-                attributes(j).Value = a{1}{j}(ieq+2:end);
+                val=a{1}{j}(ieq+1:end);
+                if strcmpi(val(1),'"') || strcmpi(val(1),'''')
+                    attributes(j).Value = a{1}{j}(ieq+2:end-1);
+                else
+                    attributes(j).Value = a{1}{j}(ieq+1:end);
+                end
             end
         end
         % Set some values for this node        

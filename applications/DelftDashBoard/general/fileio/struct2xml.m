@@ -307,19 +307,19 @@ attstr='';
 if ~isempty(attributes)
     fldnames=fieldnames(attributes);
     for j=1:length(fldnames)
-%         switch lower(fldnames{j})
-%             % Don't write format and value to xml file
-%             case{'value','format'}
-%             otherwise
-                prefix='';
-                if isfield(attributes.(fldnames{j}),'PREFIX')
-                    prefix=attributes.(fldnames{j}).PREFIX;
-                end
-                name=[prefix fldnames{j}];
-                value=attributes.(fldnames{j}).value;
-%         end
+        %         switch lower(fldnames{j})
+        %             % Don't write format and value to xml file
+        %             case{'value','format'}
+        %             otherwise
+        prefix='';
+        if isfield(attributes.(fldnames{j}),'PREFIX')
+            prefix=attributes.(fldnames{j}).PREFIX;
+        end
+        name=[prefix fldnames{j}];
+        value=attributes.(fldnames{j}).value;
+        %         end
         try
-        attstr=[attstr ' ' name '="' value '"'];
+            attstr=[attstr ' ' name '="' value '"'];
         catch
             shite=1
         end
