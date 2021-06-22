@@ -64,16 +64,18 @@ handles=getHandles;
 toolboxnames=fieldnames(handles.toolbox);
 for k=1:length(toolboxnames)
     name=toolboxnames{k};
-    longname=handles.toolbox.(name).longName;
-    try
-        disp(['Initializing ' longname ' ...']);
-        f=handles.toolbox.(name).iniFcn;
-        handles=f(handles);
-    catch
-        disp(['An error occured while initializing ' longname ' toolbox. Toolbox will be made inactive!']);
-        p=findobj(gcf,'Tag','menutoolbox');
-        ch=findobj(p,'Tag',name);
-        set(ch,'Enable','off');
+    if isfield(handles.toolbox.(name),'longName')
+        longname=handles.toolbox.(name).longName;
+        try
+            disp(['Initializing ' longname ' ...']);
+            f=handles.toolbox.(name).iniFcn;
+            handles=f(handles);
+        catch
+            disp(['An error occured while initializing ' longname ' toolbox. Toolbox will be made inactive!']);
+            p=findobj(gcf,'Tag','menutoolbox');
+            ch=findobj(p,'Tag',name);
+            set(ch,'Enable','off');
+        end
     end
 end
 
