@@ -643,16 +643,20 @@ switch flg.which_p
                         if is1d
                             out=get_fm1d_data('mesh1d_s1',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
-                            wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
-                            
-                            %output
-                            out.z=wl;
-                            out.x_node=x_node;
-                            out.y_node=y_node;
-                            out.x_face=x_face;
-                            out.y_face=y_face;
-                            out.faces=faces;
-                            
+                            if flg.get_EHY
+                                z=get_EHY(file.map,'mesh2d_s1',time_dnum);
+                                out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                                wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
+
+                                %output
+                                out.z=wl;
+                                out.x_node=x_node;
+                                out.y_node=y_node;
+                                out.x_face=x_face;
+                                out.y_face=y_face;
+                                out.faces=faces;
+                            end                            
                         end
                     case 3 %SOBEK3
                         out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
