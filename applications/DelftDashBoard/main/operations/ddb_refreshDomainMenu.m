@@ -64,20 +64,24 @@ handles=getHandles;
 
 h=findobj(gcf,'Tag','menuDomain');
 
-hc=get(h,'Children');
-delete(hc);
-
-model=handles.activeModel.name;
-
-for i=1:handles.model.(model).nrDomains
-    str{i}=handles.model.(model).domain(i).runid;
-    ui=uimenu(h,'Label',str{i},'Callback',{@selectDomain,i},'Checked','off','UserData',i);
-    if i==ad
-        set(ui,'Checked','on');
+if ~isempty(h)
+    
+    hc=get(h,'Children');
+    delete(hc);
+    
+    model=handles.activeModel.name;
+    
+    for i=1:handles.model.(model).nrDomains
+        str{i}=handles.model.(model).domain(i).runid;
+        ui=uimenu(h,'Label',str{i},'Callback',{@selectDomain,i},'Checked','off','UserData',i);
+        if i==ad
+            set(ui,'Checked','on');
+        end
     end
+    uimenu(h,'Label','Add Domain','Callback',{@selectDomain,0},'Checked','off','UserData',0,'separator','on');
+    uimenu(h,'Label','Delete Domain','Callback',@deleteDomain,'Checked','off','UserData',0);
+    
 end
-uimenu(h,'Label','Add Domain','Callback',{@selectDomain,0},'Checked','off','UserData',0,'separator','on');
-uimenu(h,'Label','Delete Domain','Callback',@deleteDomain,'Checked','off','UserData',0);
 
 %%
 function selectDomain(hObject, eventdata, nr)

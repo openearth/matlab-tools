@@ -68,13 +68,17 @@ uimenu('Label','Toolbox','Tag','menutoolbox');
 ddb_menuToolbox;
 
 %% Models
-uimenu('Label','Model','Tag','menumodel');
-ddb_menuModel;
-
-%% Domain
-uimenu('Label','Domain','Tag','menuDomain');
-handles=ddb_addMenuItem(handles,'Domain','Add Domain ...',      'Callback',{@ddb_menuDomain});
-handles=ddb_addMenuItem(handles,'Domain','tst',                 'Callback',{@ddb_menuDomain},'Separator','on','HandleName','FirstDomain');
+model_names=fieldnames(handles.model);
+if ~strcmpi(model_names{1},'none')
+    uimenu('Label','Model','Tag','menumodel');
+    ddb_menuModel;
+    
+    %% Domain
+    uimenu('Label','Domain','Tag','menuDomain');
+    handles=ddb_addMenuItem(handles,'Domain','Add Domain ...',      'Callback',{@ddb_menuDomain});
+    handles=ddb_addMenuItem(handles,'Domain','tst',                 'Callback',{@ddb_menuDomain},'Separator','on','HandleName','FirstDomain');
+    
+end
 
 %% Bathymetry
 uimenu('Label','Bathymetry','Tag','menuBathymetry');

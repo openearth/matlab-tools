@@ -82,7 +82,9 @@ ddb_menuFile;
 if handles.model.(mdl).supportsMultipleDomains
     set(handles.GUIHandles.Menu.Domain.Main,'Enable','on');
 else
-    set(handles.GUIHandles.Menu.Domain.Main,'Enable','off');
+    if isfield(handles.GUIHandles.Menu,'Domain')
+        set(handles.GUIHandles.Menu.Domain.Main,'Enable','off');
+    end
 end
 
 % Make the map panel a child of the present model tab panel

@@ -22,6 +22,13 @@ if isfield(xml,'include_toolboxes')
     end
 end
 
+configuration.include_toolboxes_no_gui=[];
+if isfield(xml,'include_toolboxes')
+    for j=1:length(xml.include_toolboxes_no_gui.include_toolboxes_no_gui.toolbox)
+        configuration.include_toolboxes_no_gui{j}=xml.include_toolboxes_no_gui.include_toolboxes_no_gui.toolbox(j).toolbox.value;
+    end
+end
+
 % First check which toolboxes to include
 configuration.include_bathymetry={'all'};
 if isfield(xml,'include_bathymetry')

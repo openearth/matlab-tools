@@ -76,5 +76,38 @@ for k=1:length(toolboxnames)
         set(ch,'Enable','off');
     end
 end
-setHandles(handles);
 
+if isdeployed
+    dr=[ctfroot filesep 'DelftDashBoa' filesep 'ddbsettings' filesep 'toolboxes']; % Changed back MvO (2017-4-20)
+else
+    ddb_root = fileparts(which('delftdashboard.ini'));
+    dr=[ddb_root filesep 'toolboxes'];
+end
+
+% Initialize requested toolboxes that will not be in the GUI
+for k=1:length(handles.configuration.include_toolboxes_no_gui)
+
+    name = handles.configuration.include_toolboxes_no_gui{k};
+    nm   = lower(name);
+
+    disp(['Initializing ' name ' ...']);
+
+    handles.toolbox.(nm).iniFcn=str2func(['ddb_initialize' name]);
+    if isdeployed
+        % Executable
+        handles.toolbox.(nm).dir=[dr filesep nm filesep];
+        handles.toolbox.(nm).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep nm filesep 'xml' filesep];
+        handles.toolbox.(nm).dataDir=[handles.toolBoxDir nm filesep];
+    else
+        % From Matlab
+        handles.toolbox.(nm).dir=[dr filesep nm filesep];
+        handles.toolbox.(nm).xmlDir=[handles.toolbox.(nm).dir 'xml' filesep];
+        handles.toolbox.(nm).dataDir=[handles.toolBoxDir nm filesep];
+    end
+    
+    f=handles.toolbox.(nm).iniFcn;
+    handles=f(handles);
+    
+end
+
+setHandles(handles);
