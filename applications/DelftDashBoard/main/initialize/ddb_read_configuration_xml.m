@@ -72,3 +72,15 @@ if isfield(xml,'include_tide_models')
         configuration.include_tide_models=0;
     end
 end
+
+% Title
+configuration.title='Delft Dashboard';
+if isfield(xml,'title')
+    configuration.title = xml.title.title.value;
+end
+
+% Splash screen
+configuration.splash_screen='delftdashboard.jpg';
+if isfield(xml,'splashscreen')
+    configuration.splash_screen = xml.splashscreen.splashscreen.value;
+end

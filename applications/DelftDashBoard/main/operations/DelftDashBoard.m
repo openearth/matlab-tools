@@ -88,12 +88,16 @@ if ~ok
     return
 end
 
+% Read in delftdashboard xml file to determine which models,
+% toolboxes etc. to include. Store data in handles.configuration
+handles.configuration=ddb_read_configuration_xml([handles.xmlConfigDir handles.xml_config_file]);
+
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
         
 figureiconfile=[handles.settingsDir 'icons' filesep 'deltares.gif'];
 
 % Open Splash Screen
-frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],10);
+frame=splash([handles.settingsDir 'icons' filesep handles.configuration.splash_screen],10);
 
 try
     

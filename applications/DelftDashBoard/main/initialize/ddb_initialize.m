@@ -64,14 +64,6 @@ switch lower(varargin{1})
     
     case{'startup'}
         
-        % Read in delftdashboard xml file to determine which models,
-        % toolboxes etc. to include. Store data in handles.configuration
-        handles=getHandles;        
-        config_file=[handles.xmlConfigDir handles.xml_config_file];
-        config=ddb_read_configuration_xml(config_file);
-        handles.configuration=config;
-        setHandles(handles);
-
         tic
         disp('Finding coordinate systems ...');
         ddb_getCoordinateSystems;
