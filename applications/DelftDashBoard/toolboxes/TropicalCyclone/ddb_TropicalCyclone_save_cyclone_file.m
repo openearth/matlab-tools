@@ -1,4 +1,4 @@
-function ddb_saveCycloneFile(filename,storm,varargin)
+function [t0,t1]=ddb_saveCycloneFile(filename,storm,varargin)
 %DDB_SAVECYCLONEFILE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -122,10 +122,16 @@ txt='#   Date   Time       Lat      Lon   Vmax (kts)   Pc (hPa)  Rmax (NM)  R35(
 fprintf(fid,'%s \n',txt);
 fprintf(fid,'%s\n','#');
 
+t0=1e9;
+t1=-1e9;
 for it=1:storm.nrTrackPoints
     datetxt=datestr(storm.track.time(it),'yyyymmdd HHMMSS');
     fmt=['%s  %8.3f %8.3f %12.1f %10.1f %10.1f ' repmat('%8.1f ',1,16) '\n'];
-    fprintf(fid,fmt,datetxt,storm.track.y(it),storm.track.x(it),storm.track.vmax(it),storm.track.pc(it),storm.track.rmax(it),storm.track.r35ne(it),storm.track.r35se(it),storm.track.r35sw(it),storm.track.r35nw(it),storm.track.r50ne(it),storm.track.r50se(it),storm.track.r50sw(it),storm.track.r50nw(it),storm.track.r65ne(it),storm.track.r65se(it),storm.track.r65sw(it),storm.track.r65nw(it),storm.track.r100ne(it),storm.track.r100se(it),storm.track.r100sw(it),storm.track.r100nw(it));
+    if storm.track.vmax(it)>0.0
+        t0=min(t0,storm.track.time(it));
+        t1=min(t1,storm.track.time(it));
+        fprintf(fid,fmt,datetxt,storm.track.y(it),storm.track.x(it),storm.track.vmax(it),storm.track.pc(it),storm.track.rmax(it),storm.track.r35ne(it),storm.track.r35se(it),storm.track.r35sw(it),storm.track.r35nw(it),storm.track.r50ne(it),storm.track.r50se(it),storm.track.r50sw(it),storm.track.r50nw(it),storm.track.r65ne(it),storm.track.r65se(it),storm.track.r65sw(it),storm.track.r65nw(it),storm.track.r100ne(it),storm.track.r100se(it),storm.track.r100sw(it),storm.track.r100nw(it));
+    end
 end
 
 fclose(fid);
