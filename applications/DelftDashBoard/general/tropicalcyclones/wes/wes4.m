@@ -161,6 +161,7 @@ for it=1:length(tc.track)
             % are available
             [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);            
     end
+    
     pd=pn-pr;
     
     % F) Some standard stuff
@@ -272,7 +273,7 @@ if ~isempty(outputfile)
     
     % Rainfall
     include_precip=0;
-    if spw.rainfall>-1
+    if spw.rainfall>0
         
         % Rainfall is included
         include_precip=1;
@@ -322,7 +323,49 @@ if ~isempty(outputfile)
                 end
                     
             end
+          
+        elseif strcmpi(spw.rain_relation(1:4), 'ipet') %IPET parametric rainfall model
+            if strcmpi(spw.rain_relation, 'ipet_symmetrical_mode')
+                asymmetrical = 0;            random       = 0;
+            elseif strcmpi(spw.rain_relation, 'ipet_asymmetrical_mode')
+                asymmetrical = 1;            random       = 0;
+            end
             
+            for it=1:length(tc.track)
+                rmaxtmp = tc.track(it).rmax;
+                pdeftmp = spw.pn - tc.track(it).pc;
+                pr_choosen = NaN(size(r));
+                
+                for ip = 1:length(r)
+                    if r(ip) <= rmaxtmp
+                        pr_choosen(ip) = 1.14 + (0.12*pdeftmp);
+                    elseif r(ip) > rmaxtmp
+                        pr_choosen(ip) = (1.14 + (0.12*pdeftmp)) * exp(-0.3*((r(ip)-rmaxtmp)/rmaxtmp));
+                    end                
+                end            
+
+                if spw.cut_off_rain > 0 % mm/hr            
+                    ids = pr_choosen < spw.cut_off_rain;
+                    pr_choosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+                end            
+
+                % Symmetrical or asymmetrical pr?
+                if asymmetrical == 0
+                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1);
+                else
+                    factor = 1.5; % NE and SE for northern hemisphere, NW and SW for southern hemisphere
+
+                    if mean(nanmean([tc.track.y])) >= 0 %northern hemisphere % Quadrant 1 = NE, 2 = SE, 3 = SW, 4 = NW
+                        idquadrant = 1:(ceil(spw.nr_directional_bins / 4) * 2);
+                    else
+                        idquadrant = ((ceil(spw.nr_directional_bins / 4) * 2)+1):spw.nr_directional_bins;
+
+                    end
+                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1);
+                    tc.track(it).precipitation(idquadrant,:) = tc.track(it).precipitation(idquadrant,:) .* factor;
+                end
+            end
+
         else
             rs=repmat(r,[spw.nr_directional_bins 1]);
             R0=spw.rainfall; % mm/h
