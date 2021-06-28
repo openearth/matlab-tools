@@ -53,5 +53,5 @@ end
 try
     val=eval(varstring);
 catch
-    disp(varstring)
+    disp(['Could not determine value of ' varstring]);
 end

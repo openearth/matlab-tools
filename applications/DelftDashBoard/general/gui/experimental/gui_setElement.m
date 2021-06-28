@@ -266,8 +266,18 @@ switch lower(el.style)
                 set(el.handle,'Position',pos);
             end
         end
+
+    case{'panel'}
+
+        if ~isempty(el.text)
+            if isfield(el.text,'text')
+                val=gui_getValue(el,el.text.text.variable);
+                % Text
+                set(el.handle,'Title',val);
+            end
+        end
         
-        %% Custom elements
+    %% Custom elements
         
     case{'pushselectfile'}
         if el.showfilename

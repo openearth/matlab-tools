@@ -79,8 +79,15 @@ for i=1:length(element)
                 
                 % Panel
                 
-                element(i).element.handle=uipanel('Title',element(i).element.title,'Units','pixels','Position',pos,'BackgroundColor',bgc);
-                set(element(i).element.handle,'Title',element(i).element.text,'BorderType',element(i).element.bordertype);
+                str='';
+                if ~isempty(element(i).element.text)
+                    if ischar(element(i).element.text)
+                        str=element(i).element.text;
+                    end
+                end
+                
+                element(i).element.handle=uipanel('Title',str,'Units','pixels','Position',pos,'BackgroundColor',bgc);
+                set(element(i).element.handle,'BorderType',element(i).element.bordertype);
                 
             case{'radiobutton'}
                 
@@ -538,9 +545,17 @@ for i=1:length(element)
     end
     
     %drawnow;
-    set(element(i).element.handle,'Tag',element(i).element.tag);
-
+%    try
+        set(element(i).element.handle,'Tag',element(i).element.tag);
+%    catch
+%        shite=1
+%element(i).element.handle
+%    end
+%    try
     setappdata(element(i).element.handle,'getFcn',getFcn);
+%    catch
+%        shite=2;
+%    end
     setappdata(element(i).element.handle,'setFcn',setFcn);
     setappdata(element(i).element.handle,'element',element(i).element);
 
@@ -1187,7 +1202,11 @@ setFcn=getappdata(el.handle,'setFcn');
 s=feval(getFcn);
 
 if ~isempty(el.callback)
-    ok=feval(el.callback,s);
+    if ~isempty(el.option1)
+        ok=feval(el.callback,{s,el.option1});
+    else    
+        ok=feval(el.callback,s);
+    end    
     if ~ok
         return
     end
