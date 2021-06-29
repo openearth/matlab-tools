@@ -891,6 +891,10 @@ switch mean_type
         dm=sum(LYRFRAC.*aux.m,5); 
 end
 
+% make safe for ill defined lyrfrac
+idx = find(abs(sum(LYRFRAC,5) - 1) > 1e-14);
+dm(idx) = NaN;  
+
 end %function mean_grain_size
 
 %%
