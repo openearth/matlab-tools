@@ -54,13 +54,27 @@ function [simdef]=D3D_rework(simdef)
 vkappa=0.41; %von Karman
 
 %%
+%% FILE
+%%
+
+simdef.file.dummy=NaN;
+
+%%
 %% D3D
 %%
 
 simdef.D3D.dummy=NaN;
 
 if isfield(simdef.D3D,'dire_sim')==0
-    simdef.D3D.dire_sim='';
+    if isfield(simdef.runid,'serie')
+        if strcmp(simdef.runid.serie,'Rhine')
+            simdef.D3D.dire_sim=fullfile(file.main_folder,sprintf('%02d',runid.number));
+        else
+            simdef.D3D.dire_sim=fullfile(simdef.D3D.paths_runs,simdef.runid.serie,simdef.runid.number);
+        end
+    else
+        simdef.D3D.dire_sim='';
+    end
 end
 if isfield(simdef.D3D,'structure')==0
     simdef.D3D.structure=0;
@@ -265,6 +279,12 @@ if isfield(simdef.mdf,'filter')==0
     simdef.mdf.filter=0;
 end
 
+if isfield(simdef.mdf,'Dpsopt')==0
+    simdef.mdf.Dpsopt='MEAN';
+end
+if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
+    error('adjust flow depth file accordingly')
+end
 
 %%
 %% INI 

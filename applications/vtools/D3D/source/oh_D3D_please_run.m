@@ -77,7 +77,7 @@ run(simdef.runid.input_filename)
 
 simdef=D3D_rework(simdef);
 %create computer paths
-simdef=D3D_comp(simdef);
+% simdef=D3D_comp(simdef);
 
 D3D_checkInput(simdef)
 

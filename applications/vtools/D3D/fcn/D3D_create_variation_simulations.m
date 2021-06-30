@@ -65,6 +65,9 @@ for ksim=1:nsim
     path_sim_loc=input_m.sim(ksim).path_sim;
 %     path_mdf_loc=fullfile(path_sim_loc,sprintf('%s.mdf',runid));
     
+    if exist(path_sim_loc,'dir')==7
+        error('Directory already exist: %s',path_sim_loc)
+    end
     mkdir(path_sim_loc)
     
     mdf_loc=mdf;

@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 
-function [eig_r,eig_i,kwx_v,kwy_v]=twoD_study(ECT_matrices,in_2D)
+function [eig_r,eig_i,kwx_v,kwy_v,m_in]=twoD_study(ECT_matrices,in_2D)
 
 v2struct(ECT_matrices);
 
@@ -26,6 +26,12 @@ if isfield(in_2D,'kwx_v')==0
 end
 if isfield(in_2D,'kwy_v')==0
     in_2D.kwy_v=in_2D.kwx_v;
+end
+if isfield(in_2D,'qs_anl')==0
+    in_2D.qs_anl=0;
+end
+if isfield(in_2D,'pert_anl')==0
+    in_2D.pert_anl=1; %0=NO; 1=full; 2=no friction; 3=no friction & no diffusion; 
 end
 
 v2struct(in_2D)

@@ -78,28 +78,30 @@ ycord=repmat(vy',1,M-1);
 
 %% FILE
 
+kl=1;
 %preamble
-data{1  ,1}='*';
-data{2  ,1}='* chavobsky';
-data{3  ,1}='* FileCreationDate = today :D         ';
-data{4  ,1}='*';
-data{5  ,1}='Coordinate System = Cartesian';
-data{6  ,1}=sprintf('\t %d \t %d',M-1,N-1);
-data{7  ,1}=' 0 0 0';
+data{kl  ,1}='*';kl=kl+1;
+data{kl  ,1}='* chavobsky';kl=kl+1;
+data{kl  ,1}='* FileCreationDate = today :D         ';kl=kl+1;
+data{kl  ,1}='*';kl=kl+1;
+data{kl  ,1}='Coordinate System = Cartesian';kl=kl+1;
+data{kl  ,1}='Missing Value     =   -9.99999000000000024E+02';kl=kl+1;
+data{kl  ,1}=sprintf('\t %d \t %d',M-1,N-1);kl=kl+1;
+data{kl  ,1}=' 0 0 0';kl=kl+1;
 
 % kk=7+1;
 % for kc=1:2
     for ky=1:N-1
 %         for kr=1:nr
             aux=strcat('ETA=   %d',repmat(' %11.10E',1,M-1));
-            data{7+ky,1}=sprintf(aux,ky,vx);
+            data{kl,1}=sprintf(aux,ky,vx);kl=kl+1;
 %             kk=kk+1;
 %         end
     end
     for ky=1:N-1
 %         for kr=1:nr
             aux=strcat('ETA=   %d',repmat(' %11.10E',1,M-1));
-            data{7+N-1+ky,1}=sprintf(aux,ky,ycord(ky,:));
+            data{kl,1}=sprintf(aux,ky,ycord(ky,:));kl=kl+1;
 %             kk=kk+1;
 %         end
     end

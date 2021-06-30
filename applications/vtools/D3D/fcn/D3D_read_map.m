@@ -245,7 +245,7 @@ switch flg.which_p
                 
                 dp=S1+DPS;
                 dp(dp==0)=NaN;
-                out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
+                out=out_var_2DH(dp,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
                 out.zlabel='flow depth [m]';    
             case {3,26} %dm,dg
                 %%
@@ -334,16 +334,18 @@ switch flg.which_p
                 LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,1,kf},'quiet'); %fractions at top layer [-] (t,y,x,l,f)
                 
                 %output                
-                out.z=reshape(LYRFRAC,ny,nx,nF);
-                out.XZ=reshape(XZ,ny,nx);
-                out.YZ=reshape(YZ,ny,nx);
-                out.time_r=time_r(kt);
-                switch flg.which_p
-                    case 2
-                        out.z (1,:)=NaN;
-                        out.z (end,:)=NaN;                     
-                end
-                out.zlabel=sprintf('volume fraction content at the active layer of fraction %d [-]',kf);
+                out=out_var_2DH(LYRFRAC,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
+                
+%                 out.z=reshape(LYRFRAC,ny,nx,nF);
+%                 out.XZ=reshape(XZ,ny,nx);
+%                 out.YZ=reshape(YZ,ny,nx);
+%                 out.time_r=time_r(kt);
+%                 switch flg.which_p
+%                     case 2
+%                         out.z (1,:)=NaN;
+%                         out.z (end,:)=NaN;                     
+%                 end
+                out.zlabel=sprintf('volume fraction content in the active layer of fraction %d [-]',kf);
             case 9 %detrended etab based on etab_0
                 DPS_0=vs_let(NFStruct,'map-sed-series',{1} ,'DPS',{ky,kx},'quiet'); %depth at z point [m]
                 DPS  =vs_let(NFStruct,'map-sed-series',{kt},'DPS',{ky,kx},'quiet'); %depth at z point [m]
@@ -724,8 +726,8 @@ zcordvel_mat=NaN(npint,KMAX);
                 out.zlabel_code='detab';
                 out.time_r=time_r_morpho(kt);
             case 19 %bed load transport
-                SBUU=vs_get(NFStruct,'map-sed-series',{kt},'SBUU',{ky,kx,1:nf},'quiet'); %bed load transport excluding pores per fraction in x direction at u point [m^2/s]
-                SBVV=vs_get(NFStruct,'map-sed-series',{kt},'SBVV',{ky,kx,1:nf},'quiet'); %bed load transport excluding pores per fraction in y direction at v point [m^2/s]
+                SBUU=vs_get(NFStruct,'map-sed-series',{kt},'SBUU',{ky,kx,kf},'quiet'); %bed load transport excluding pores per fraction in x direction at u point [m^2/s]
+                SBVV=vs_get(NFStruct,'map-sed-series',{kt},'SBVV',{ky,kx,kf},'quiet'); %bed load transport excluding pores per fraction in y direction at v point [m^2/s]
                 z=sqrt(SBUU.^2+SBVV.^2);
                 out=out_var_2DH(z,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
                 out.zlabel='bedload transport magnitude [m^2/s]';

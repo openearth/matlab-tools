@@ -20,9 +20,9 @@ warning on
 
 %% INPUT
 
-simdef.runid.serie='struiksma';
-simdef.runid.number='006'; %character, but numeric
-simdef.runid.input_filename="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210212_fixed_layers_paper\input_D3D_struiksma_coarse_formation_hirano.m";
+simdef.runid.serie='trial';
+simdef.runid.number='003'; %character, but numeric
+simdef.runid.input_filename="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210503_vow21\04_schematized_2d\input_D3D_schematized_2d.m";
 
 % simdef.D3D.home='C:\Users\chavarri\checkouts\20190405_Hirano_regularisation\src\bin\'; %D3D location (string) if inexistent the default is 4278; e.g. 'd:\victorchavarri\SURFdrive\programas\Delft3D\6.01.09.4278\'
 % simdef.D3D.home='C:\Program Files (x86)\Deltares\Delft3D FM Suite 2019.02 HMWQ (1.5.2.44357)\plugins\DeltaShell.Dimr\kernels\'; 

@@ -94,19 +94,19 @@ warning('deprecated')
 % end
 
 %% DIRE SIM
-if isfield(simdef.D3D,'dire_sim')==0
-    if strcmp(simdef.runid.serie,'Rhine')
-        simdef.D3D.dire_sim=fullfile(file.main_folder,sprintf('%02d',runid.number));
-    else
-        simdef.D3D.dire_sim=fullfile(simdef.D3D.paths_runs,simdef.runid.serie,simdef.runid.number);
-    end
-end
+% if isfield(simdef.D3D,'dire_sim')==0 || isempty(simdef.D3D.dire_sim)
+%     if strcmp(simdef.runid.serie,'Rhine')
+%         simdef.D3D.dire_sim=fullfile(file.main_folder,sprintf('%02d',runid.number));
+%     else
+%         simdef.D3D.dire_sim=fullfile(simdef.D3D.paths_runs,simdef.runid.serie,simdef.runid.number);
+%     end
+% end
 
 %% GRID
 
-if isfield(simdef.D3D,'dire_grid')==0
-    source_path=pwd; 
-    simdef.D3D.dire_grid=fullfile(source_path,'..',filesep,'grid');    
-else
-    
-end
+% if isfield(simdef.D3D,'dire_grid')==0
+%     source_path=pwd; 
+%     simdef.D3D.dire_grid=fullfile(source_path,'..',filesep,'grid');    
+% else
+%     
+% end
