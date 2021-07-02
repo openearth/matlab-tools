@@ -15,7 +15,7 @@ for i=1:length(element)
             try
                 gui_setElement(element(i).element.handle);
             catch
-                disp(['Something went wrong when setting UI element ' element(i).element.tag]);
+%                disp(['Something went wrong when setting UI element ' element(i).element.tag]);
             end
         else
             disp(['Warning : no handle for ' element(i).element.tag ' !']);

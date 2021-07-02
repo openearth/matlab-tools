@@ -53,5 +53,14 @@ end
 try
     val=eval(varstring);
 catch
-    disp(['Could not determine value of ' varstring]);
+    switch el.type
+        case{'string'}
+            val='';
+        case{'int','integer'}
+            val=NaN;
+        case{'real'}
+            val=NaN;
+        otherwise
+            disp(['Could not determine value of ' varstring]);
+    end
 end
