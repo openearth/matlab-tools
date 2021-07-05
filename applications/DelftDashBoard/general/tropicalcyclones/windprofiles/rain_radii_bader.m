@@ -1,4 +1,4 @@
-function [pmax_out,pr] = rain_radii_bader(meas_vmax, rmax, radius, probability)
+function [pmax_out,pr] = rain_radii_bader(meas_vmax, rmax, radius, probability, rain_info)
 % Function to calculate pmax (maximum rainfall intensity)
 % and the radial distribution of the rain (pr)
 % Input meas_vmax in m/s and 10 minute averaged (Daan to check)
@@ -6,6 +6,9 @@ function [pmax_out,pr] = rain_radii_bader(meas_vmax, rmax, radius, probability)
 % Probability is 0, means you will get the most probably pmax and pr
 % Probability is 1, means you will get a 10,000 random realisations
 % v1.0  Nederhoff   Jul-19
+if ~isfield(rain_info,'perc') && probability == 2
+   rain_info.perc = 50; %if not provided
+end
 
 %% 0. Coefficients of copula's (needed for pmax)
 % maximum wind speed (vmax) - generalized extreme value distribution
@@ -27,14 +30,13 @@ pmax_samples    = frankcopula(meas_vmax, theta, n, vmax, pmax);
 
 % assess samples
 values      = sort(pmax_samples);
-lowest5     = values(round(length(values)*0.05));
-low25       = values(round(length(values)*0.25));
 median50    = values(round(length(values)*0.50));
-high75      = values(round(length(values)*0.75));
-highest95   = values(round(length(values)*0.95));
+perc   = values(round(length(values) * rain_info.perc / 100));
 
 if probability == 1
     pmax_out = pmax_samples;
+elseif probability == 2
+    pmax_out = perc;    
 else
     pmax_out = median50;            % or should we do mode?
 end
