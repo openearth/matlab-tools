@@ -34,233 +34,19 @@ tc=wes_estimate_missing_values(tc,spw);
 tc=wes_compute_relative_wind_speeds(tc,spw);
     
 %% 9) Create (finally) the spiderweb winds
-dx=spw.radius/spw.nr_radial_bins;
-r=dx:dx:spw.radius;
-r=r/1000; % km
-dphi=360.0/spw.nr_directional_bins;
-phi=90:-dphi:-270+dphi;
+tc=wes_compute_spiderweb_winds_and_pressure(tc,spw);
 
-errs=[];
+%% 10. Determine rainfall if requested
+[tc,include_precip]=wes_compute_rainfall(tc,spw);
 
-for it=1:length(tc.track)
-    
-    % A) Get values from tc and spw
-    dp   = spw.pn - tc.track(it).pc;
-    vrel = tc.track(it).vmax_rel;
-    pc   = tc.track(it).pc;
-    rmax = tc.track(it).rmax;
-    pn	 = spw.pn;
-    rhoa = spw.rhoa;
-    xn   = 0.5;
-    rn   = 150;
-    lat  = abs(tc.track(it).y);
-    vt   = (tc.track(it).vtx.^2 + tc.track(it).vty.^2).^0.5;
-    
-    % Initialize arrays
-    wind_speed=zeros(length(phi),length(r));
-    wind_to_direction_cart=zeros(length(phi),length(r));
-    pressure_drop=zeros(length(phi),length(r));
-    
-    % First compute wind speeds relative to forward motion of the cyclone
-    % Two options: either directionally uniform, or using R34, R50, R64, R100 
-    unidir=0;
-    for iq=1:length(tc.track(it).quadrant)
-        n=0;
-        for j=1:length(tc.track(it).quadrant(iq).radius)
-            if ~isnan(tc.track(it).quadrant(iq).radius(j))
-                n=n+1;
-            end
-        end
-        if n==0
-            unidir=1;
-        end
-    end
-    
-    % B) Pressure change in time
-    try
-        dpdt = (tc.track(it+1).pc -tc.track(it).pc) / ((tc.track(it+1).time - tc.track(it).time)*24);
-    catch
-        dpdt = (tc.track(it).pc -tc.track(it-1).pc) / ((tc.track(it).time - tc.track(it-1).time)*24);
-    end     
-    
-    % C) Holland (2008) related
-    % If not known than we assume NOT Holland (2008) values
-    if isfield(spwinput, 'holland2008')
-        spw.holland2008 = spwinput.holland2008;
-    else
-        spw.holland2008 = 0;
-    end
-
-    % If Holland, 2008 we determine xn
-    if spw.holland2008 == 1;
-        xn  = 0.6*(1-dp/215);
-    end
-    
-    % D) Holland 2010 related: find xn fit
-    if ~unidir && strcmpi(spw.wind_profile,'holland2010')
-        % Try to compute average Xn from the four quadrants
-        xn_fit=[NaN NaN NaN NaN];
-        iok=0;
-        for iq=1:length(tc.track(it).quadrant)
-            robs=[];
-            vobs=[];
-            n=0;
-            for j=1:2 % Only use R34 and R50
-                if ~isnan(tc.track(it).quadrant(iq).radius(j))
-                    n=n+1;
-                    robs(n)=tc.track(it).quadrant(iq).radius(j);
-                    vobs(n)=tc.track(it).quadrant(iq).relative_speed(j);
-                end
-            end
-            if ~isempty(robs)
-                [vr,pr,rn,xn,rmf]=holland2010(robs,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'robs',robs,'vobs',vobs, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
-                xn_fit(iq)=xn;
-                iok=1;
-            end
-        end
-        if iok
-            xn=nanmean(xn_fit); % Let's fix this later to more properly take the information in the quadrants into account
-        end
-    end
-    
-    % E). Modified rankine
-    xopt=[];
-    aopt=[];
-    theta0opt=[];
-    if ~unidir && strcmpi(spw.wind_profile,'modifiedrankinevortex')
-        robs=[];
-        vobs=[];
-        tobs=[];
-        n=0;
-        theta0=[45 135 225 315];
-        for iq=1:length(tc.track(it).quadrant)
-            for j=1:4 % Only use R34 and R50
-                if ~isnan(tc.track(it).quadrant(iq).radius(j))
-                    n=n+1;
-                    robs(n)=tc.track(it).quadrant(iq).radius(j);
-                    vobs(n)=tc.track(it).quadrant(iq).relative_speed(j);
-                    tobs(n)=theta0(iq);
-                end
-            end
-        end
-        [xopt,aopt,theta0opt]=fit_modified_rankine_vortex(tc.track(it).vmax,rmax,robs,tobs,vobs);
-    end
-        
-    % F) Different wind profiles
-    switch spw.wind_profile
-        case{'holland1980'}
-            [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);
-        case{'holland2010'}
-            [vr,pr]=holland2010(r,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'xn',xn,'rn',rn, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
-        case{'fujita1952'}
-            r0=rmax; % Should adjust here to r0!!!
-            c1=0.7;
-            [vr,pr]=fujita(r,pn,pc,r0,abs(lat),c1,'rhoa',rhoa);
-        case{'modifiedrankinevortex'}
-            % Pr from Holland (1980), Vr ma be overwritten if observations
-            % are available
-            [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);            
-    end
-    
-    pd=pn-pr;
-    
-    % F) Some standard stuff
-    for iphi=1:length(phi)
-         
-        switch spw.wind_profile
-            case{'modifiedrankinevortex'}
-                if ~isempty(xopt)
-                    vr=modified_rankine_vortex(r,phi(iphi)*pi/180,tc.track(it).vmax,rmax,xopt,aopt,theta0opt);            
-                end
-        end
-        
-        wind_speed(iphi,:) = vr;
-        if strcmpi(spw.cs.type,'geographic')
-            lat=tc.track(it).y;
-        else
-            if isfield(tc,'latitude')
-                lat=tc.latitude;
-            else
-                lat=20;
-            end
-        end
-        
-        if lat>=0.0
-            % Northern hemisphere
-            dr=90+phi(iphi)+spw.phi_spiral;
-        else
-            % Southern hemisphere
-            dr=-90+phi(iphi)-spw.phi_spiral;
-        end
-        wind_to_direction_cart(iphi,:)=dr;
-        pressure_drop(iphi,:) = pd*100;     % convert from hPa to Pa
-    end
-
-    % G. Asymmetry
-    ux=tc.track(it).vtx;
-    uy=tc.track(it).vty;    
-    switch lower(spw.asymmetry_option)
-        case{'schwerdt1979'}
-            % Use Schwerdt (1979) to compute u_prop and v_prop
-            uabs=sqrt(ux^2+uy^2);
-            c=uabs*1.944;   % Convert to kts
-            a=1.5*c^0.63;   % Schwerdt (1979)
-            a=a/1.944;      % Convert to m/s
-            ux=a*ux/uabs;
-            uy=a*uy/uabs;
-        case{'jma'}
-            % Decrease with e-folding scale from eye
-            c2=0.57143;
-            efold=exp(-pi*r/500.0);
-            efold=repmat(efold,[spw.nr_directional_bins 1]);
-            ux=c2*ux*efold;
-            uy=c2*uy*efold;
-        case{'mvo'}
-            % Let factor increase from 0 to rmax, and then keep it constant
-            c2=0.6;
-            ff=[0 0.6 0.6];
-            rr=[0 rmax 5000];
-            f=interp1(rr,ff,r);
-            f=repmat(f,[spw.nr_directional_bins 1]);
-            ux=c2*ux*f;
-            uy=c2*uy*f;
-        case{'none'}
-            ux=0.0;
-            uy=0.0;
-    end
-    vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+ux;
-    vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+uy;
-
-    % H. Save all values
-    dr=atan2(vy,vx);
-    dr=1.5*pi-dr;
-    wind_speed=sqrt(vx.^2 + vy.^2);
-    wind_from_direction=180*dr/pi;
-    wind_from_direction=mod(wind_from_direction,360);
-       
-    tc.track(it).wind_speed=wind_speed;
-    tc.track(it).wind_from_direction=wind_from_direction;
-    if isfield(spw,'include_pdrop')
-        if ~spw.include_pdrop
-            pressure_drop=zeros(size(pressure_drop));
-        end
-    end
-    tc.track(it).pressure_drop  	= pressure_drop;
-    tc.track(it).pressure           = spw.pn-pressure_drop/100;
-    tc.track(it).wind_speed_plain   = wind_speed(1,:);
-
-end
-
-%% 10. Write spiderweb
+%% 11. Write spiderweb
 if ~isfield(spw,'merge_frac')
     spw.merge_frac=[];
 end
 if ~isfield(spw,'tdummy')
     spw.tdummy=[];
 end
-if ~isfield(spw,'cut_off_rain')
-    spw.cut_off_rain = 0; % mm/hr
-end
+
 if ~isempty(outputfile)
     
     % Coordinate system
@@ -269,194 +55,7 @@ if ~isempty(outputfile)
             gridunit='degree';
         otherwise
             gridunit='m';
-    end
-    
-    % Rainfall
-    include_precip=0;
-    if spw.rainfall>0
-        
-        % Rainfall is included
-        include_precip=1;
-        
-        %TODO: code this in a more generic way with less overlap and as separate module
-        
-        % Use Daan Bader (MSc thesis 2019 copula's)
-        if strcmpi(spw.rain_relation(1:5), 'bader')
-            
-            if strcmpi(spw.rain_relation, 'bader_symmetrical_mode')
-                asymmetrical = 0;            random       = 0;
-            elseif strcmpi(spw.rain_relation, 'bader_symmetrical_stochastic')
-                asymmetrical = 0;            random       = 1;
-            elseif strcmpi(spw.rain_relation, 'bader_asymmetrical_mode')
-                asymmetrical = 1;            random       = 0;
-            elseif strcmpi(spw.rain_relation, 'bader_asymmetrical_stochastic')
-                asymmetrical = 1;            random       = 1;
-            end
-            
-            % Loop over track
-            randomID = [];
-            for it=1:length(tc.track)
-
-                % Bader (2019) for pmax and pr
-                [pmax_out,pr]               = rain_radii_bader(tc.track(it).vmax, tc.track(it).rmax, r, random);
-
-                % Random pmax?
-                if random == 1
-                    if isempty(randomID)
-                        randomID            = randi([1,length(pmax_out)], 1,1); % random ID for length of pmax (10,000)
-                    end
-                    pr_chosen              = pr(:,randomID)';
-                elseif random == 0
-                    pr_chosen              = pr';
-                end
-
-                % Do cut-off of low precipitation rates (e.g. <10 mm/hr) in whole profile
-                if spw.cut_off_rain > 0 % mm/hr            
-                    ids = pr_chosen < spw.cut_off_rain;
-                    pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
-                end
-                
-                % Symmetrical or asymmetrical pr?
-                if asymmetrical == 0
-                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
-                else
-                    factor                      = tc.track(it).wind_speed./tc.track(it).wind_speed_plain;
-                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1).* factor;
-                end
-                    
-            end
-          
-        % Use Judith Claassen (MSc thesis 2021 copula's)
-        elseif strcmpi(spw.rain_relation(1:5), 'bacla')
-            
-            if strcmpi(spw.rain_relation, 'bacla_symmetrical_mode')
-                asymmetrical = 0;            random       = 0;
-            elseif strcmpi(spw.rain_relation, 'bacla_symmetrical_stochastic')
-                asymmetrical = 0;            random       = 1;
-            elseif strcmpi(spw.rain_relation, 'bacla_symmetrical_percentile')
-                asymmetrical = 0;            random       = 2;                    
-            elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_mode') % not tested yet!            
-                asymmetrical = 1;            random       = 0;
-            elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_stochastic') % not tested yet!
-                asymmetrical = 1;            random       = 1;
-            elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_percentile') % not tested yet!
-                asymmetrical = 1;            random       = 2;                  
-            end
-            
-            % check for additional needed settings, otherwise use defaults: (for more info see rain_radii_bacla.m)
-            rain_info.data = 2;     % Stage IV blend data trained model
-            rain_info.split = 4;    % xn forced to get pmax fit, bs based on area under graph
-            rain_info.type = 1;     % vmax based model
-            rain_info.loc = 2;      % land fit (constant pmax till rmax as in IPET, after rmax classic holland fit)
-            rain_info.perc = 50;    % default percentile value requested for rain_relation '..._percentile'
-
-            if isfield(spw,'rain_info') 
-                rain_info = [];
-                rain_info = spw.rain_info; % use when provided
-            end
-
-            % Loop over track
-            randomID = [];
-            for it=1:length(tc.track)
-
-                % BaCla (2021) for pmax and pr, either vmax or pressure deficit based
-                
-                if rain_info.type == 1 %vmax
-                    [pmax_out,pr]               = rain_radii_bacla(tc.track(it).vmax, tc.track(it).rmax, r, random, rain_info);
-                elseif rain_info.type == 2 %pressure deficit
-                    pdeftmp                     = spw.pn - tc.track(it).pc; %determine pdef first
-                    [pmax_out,pr]               = rain_radii_bacla(pdeftmp, tc.track(it).rmax, r, random, rain_info);                   
-                end
-                
-                % Random pmax?
-                if random == 1
-                    if isempty(randomID)
-                        randomID            = randi([1,length(pmax_out)], 1,1); % random ID for length of pmax (10,000)
-                    end
-                    pr_chosen              = pr(:,randomID)';
-                elseif random == 0 && random == 2
-                    pr_chosen              = pr';
-                end
-
-                % fix NaNs and negative values if occuring
-                pr_chosen(pr_chosen < 0) = 0;
-                pr_chosen(isnan(pr_chosen)) = 0;
-                
-                % Do cut-off of low precipitation rates (e.g. <10 mm/hr) in whole profile
-                if spw.cut_off_rain > 0 % mm/hr            
-                    ids = pr_chosen < spw.cut_off_rain;
-                    pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
-                end
-                
-                % Symmetrical or asymmetrical pr?
-                if asymmetrical == 0
-                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
-                else
-                    factor                      = tc.track(it).wind_speed./tc.track(it).wind_speed_plain;
-                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1).* factor;
-                end
-                    
-            end
-            
-        elseif strcmpi(spw.rain_relation(1:4), 'ipet') %IPET parametric rainfall model
-            if strcmpi(spw.rain_relation, 'ipet_symmetrical_mode')
-                asymmetrical = 0;            random       = 0;
-            elseif strcmpi(spw.rain_relation, 'ipet_asymmetrical_mode')
-                asymmetrical = 1;            random       = 0;
-            end
-            
-            for it=1:length(tc.track) %TODO: make as separate function script
-                rmaxtmp = tc.track(it).rmax;
-                pdeftmp = spw.pn - tc.track(it).pc;
-                 
-                [pr_chosen] = rain_radii_ipet(pdeftmp, rmax, r);
-                
-                if spw.cut_off_rain > 0 % mm/hr            
-                    ids = pr_chosen < spw.cut_off_rain;
-                    pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
-                end            
-
-                % Symmetrical or asymmetrical pr?
-                if asymmetrical == 0
-                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
-                else
-                    factor = 1.5; % NE and SE for northern hemisphere, NW and SW for southern hemisphere
-
-                    if mean(nanmean([tc.track.y])) >= 0 %northern hemisphere % Quadrant 1 = NE, 2 = SE, 3 = SW, 4 = NW
-                        idquadrant = 1:(ceil(spw.nr_directional_bins / 4) * 2);
-                    else
-                        idquadrant = ((ceil(spw.nr_directional_bins / 4) * 2)+1):spw.nr_directional_bins;
-
-                    end
-                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
-                    tc.track(it).precipitation(idquadrant,:) = tc.track(it).precipitation(idquadrant,:) .* factor;
-                end
-            end
-
-        else
-            rs=repmat(r,[spw.nr_directional_bins 1]);
-            R0=spw.rainfall; % mm/h
-            Rm=spw.rainfall; % mm/h
-            rm=50;  % km
-            re=250;
-            val0=R0+(Rm-R0).*(rs/rm);
-            val1=Rm*exp(-(rs-rm)/re);
-            val=val0;
-            val(rs>rm)=val1(rs>rm);
-                for it=1:length(tc.track)
-                    tc.track(it).precipitation=val;
-                    csold.name='WGS 84';
-                    csold.type='geographic';
-                    csnew.name='WGS 84 / UTM zone 17N';
-                    csnew.type='projected';
-                    x0=tc.track(it).x;
-                    y0=tc.track(it).y;
-                    [x1,y1]=ddb_coordConvert(x0,y0,csold,csnew);
-                    tc.track(it).x=x1;
-                    tc.track(it).y=y1;
-                end
-        end
-    end
+    end      
     
     % Write spiderweb
     write_spiderweb_file_delft3d(outputfile, tc, gridunit, spw.reference_time, spw.radius, 'merge_frac',spw.merge_frac,'tdummy',spw.tdummy,'include_precipitation',include_precip);
@@ -1030,3 +629,416 @@ for it2=2:length(tc.track)-1
 end
 tc.track(1).dpcdt=tc.track(2).dpcdt;
 tc.track(end).dpcdt=tc.track(end-1).dpcdt;
+
+%% 9) Create (finally) the spiderweb winds
+function tc=wes_compute_spiderweb_winds_and_pressure(tc,spw)
+
+dx=spw.radius/spw.nr_radial_bins;
+r=dx:dx:spw.radius;
+r=r/1000; % km
+dphi=360.0/spw.nr_directional_bins;
+phi=90:-dphi:-270+dphi;
+
+errs=[];
+
+for it=1:length(tc.track)
+    
+    % A) Get values from tc and spw
+    dp   = spw.pn - tc.track(it).pc;
+    vrel = tc.track(it).vmax_rel;
+    pc   = tc.track(it).pc;
+    rmax = tc.track(it).rmax;
+    pn	 = spw.pn;
+    rhoa = spw.rhoa;
+    xn   = 0.5;
+    rn   = 150;
+    lat  = abs(tc.track(it).y);
+    vt   = (tc.track(it).vtx.^2 + tc.track(it).vty.^2).^0.5;
+    
+    % Initialize arrays
+    wind_speed=zeros(length(phi),length(r));
+    wind_to_direction_cart=zeros(length(phi),length(r));
+    pressure_drop=zeros(length(phi),length(r));
+    
+    % First compute wind speeds relative to forward motion of the cyclone
+    % Two options: either directionally uniform, or using R34, R50, R64, R100 
+    unidir=0;
+    for iq=1:length(tc.track(it).quadrant)
+        n=0;
+        for j=1:length(tc.track(it).quadrant(iq).radius)
+            if ~isnan(tc.track(it).quadrant(iq).radius(j))
+                n=n+1;
+            end
+        end
+        if n==0
+            unidir=1;
+        end
+    end
+    
+    % B) Pressure change in time
+    try
+        dpdt = (tc.track(it+1).pc -tc.track(it).pc) / ((tc.track(it+1).time - tc.track(it).time)*24);
+    catch
+        dpdt = (tc.track(it).pc -tc.track(it-1).pc) / ((tc.track(it).time - tc.track(it-1).time)*24);
+    end     
+    
+    % C) Holland (2008) related
+    % If not known than we assume NOT Holland (2008) values
+    if isfield(spwinput, 'holland2008')
+        spw.holland2008 = spwinput.holland2008;
+    else
+        spw.holland2008 = 0;
+    end
+
+    % If Holland, 2008 we determine xn
+    if spw.holland2008 == 1;
+        xn  = 0.6*(1-dp/215);
+    end
+    
+    % D) Holland 2010 related: find xn fit
+    if ~unidir && strcmpi(spw.wind_profile,'holland2010')
+        % Try to compute average Xn from the four quadrants
+        xn_fit=[NaN NaN NaN NaN];
+        iok=0;
+        for iq=1:length(tc.track(it).quadrant)
+            robs=[];
+            vobs=[];
+            n=0;
+            for j=1:2 % Only use R34 and R50
+                if ~isnan(tc.track(it).quadrant(iq).radius(j))
+                    n=n+1;
+                    robs(n)=tc.track(it).quadrant(iq).radius(j);
+                    vobs(n)=tc.track(it).quadrant(iq).relative_speed(j);
+                end
+            end
+            if ~isempty(robs)
+                [vr,pr,rn,xn,rmf]=holland2010(robs,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'robs',robs,'vobs',vobs, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
+                xn_fit(iq)=xn;
+                iok=1;
+            end
+        end
+        if iok
+            xn=nanmean(xn_fit); % Let's fix this later to more properly take the information in the quadrants into account
+        end
+    end
+    
+    % E). Modified rankine
+    xopt=[];
+    aopt=[];
+    theta0opt=[];
+    if ~unidir && strcmpi(spw.wind_profile,'modifiedrankinevortex')
+        robs=[];
+        vobs=[];
+        tobs=[];
+        n=0;
+        theta0=[45 135 225 315];
+        for iq=1:length(tc.track(it).quadrant)
+            for j=1:4 % Only use R34 and R50
+                if ~isnan(tc.track(it).quadrant(iq).radius(j))
+                    n=n+1;
+                    robs(n)=tc.track(it).quadrant(iq).radius(j);
+                    vobs(n)=tc.track(it).quadrant(iq).relative_speed(j);
+                    tobs(n)=theta0(iq);
+                end
+            end
+        end
+        [xopt,aopt,theta0opt]=fit_modified_rankine_vortex(tc.track(it).vmax,rmax,robs,tobs,vobs);
+    end
+        
+    % F) Different wind profiles
+    switch spw.wind_profile
+        case{'holland1980'}
+            [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);
+        case{'holland2010'}
+            [vr,pr]=holland2010(r,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'xn',xn,'rn',rn, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
+        case{'fujita1952'}
+            r0=rmax; % Should adjust here to r0!!!
+            c1=0.7;
+            [vr,pr]=fujita(r,pn,pc,r0,abs(lat),c1,'rhoa',rhoa);
+        case{'modifiedrankinevortex'}
+            % Pr from Holland (1980), Vr ma be overwritten if observations
+            % are available
+            [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);            
+    end
+    
+    pd=pn-pr;
+    
+    % F) Some standard stuff
+    for iphi=1:length(phi)
+         
+        switch spw.wind_profile
+            case{'modifiedrankinevortex'}
+                if ~isempty(xopt)
+                    vr=modified_rankine_vortex(r,phi(iphi)*pi/180,tc.track(it).vmax,rmax,xopt,aopt,theta0opt);            
+                end
+        end
+        
+        wind_speed(iphi,:) = vr;
+        if strcmpi(spw.cs.type,'geographic')
+            lat=tc.track(it).y;
+        else
+            if isfield(tc,'latitude')
+                lat=tc.latitude;
+            else
+                lat=20;
+            end
+        end
+        
+        if lat>=0.0
+            % Northern hemisphere
+            dr=90+phi(iphi)+spw.phi_spiral;
+        else
+            % Southern hemisphere
+            dr=-90+phi(iphi)-spw.phi_spiral;
+        end
+        wind_to_direction_cart(iphi,:)=dr;
+        pressure_drop(iphi,:) = pd*100;     % convert from hPa to Pa
+    end
+
+    % G. Asymmetry
+    ux=tc.track(it).vtx;
+    uy=tc.track(it).vty;    
+    switch lower(spw.asymmetry_option)
+        case{'schwerdt1979'}
+            % Use Schwerdt (1979) to compute u_prop and v_prop
+            uabs=sqrt(ux^2+uy^2);
+            c=uabs*1.944;   % Convert to kts
+            a=1.5*c^0.63;   % Schwerdt (1979)
+            a=a/1.944;      % Convert to m/s
+            ux=a*ux/uabs;
+            uy=a*uy/uabs;
+        case{'jma'}
+            % Decrease with e-folding scale from eye
+            c2=0.57143;
+            efold=exp(-pi*r/500.0);
+            efold=repmat(efold,[spw.nr_directional_bins 1]);
+            ux=c2*ux*efold;
+            uy=c2*uy*efold;
+        case{'mvo'}
+            % Let factor increase from 0 to rmax, and then keep it constant
+            c2=0.6;
+            ff=[0 0.6 0.6];
+            rr=[0 rmax 5000];
+            f=interp1(rr,ff,r);
+            f=repmat(f,[spw.nr_directional_bins 1]);
+            ux=c2*ux*f;
+            uy=c2*uy*f;
+        case{'none'}
+            ux=0.0;
+            uy=0.0;
+    end
+    vx=wind_speed.*cos(wind_to_direction_cart*pi/180)+ux;
+    vy=wind_speed.*sin(wind_to_direction_cart*pi/180)+uy;
+
+    % H. Save all values
+    dr=atan2(vy,vx);
+    dr=1.5*pi-dr;
+    wind_speed=sqrt(vx.^2 + vy.^2);
+    wind_from_direction=180*dr/pi;
+    wind_from_direction=mod(wind_from_direction,360);
+       
+    tc.track(it).wind_speed=wind_speed;
+    tc.track(it).wind_from_direction=wind_from_direction;
+    if isfield(spw,'include_pdrop')
+        if ~spw.include_pdrop
+            pressure_drop=zeros(size(pressure_drop));
+        end
+    end
+    tc.track(it).pressure_drop  	= pressure_drop;
+    tc.track(it).pressure           = spw.pn-pressure_drop/100;
+    tc.track(it).wind_speed_plain   = wind_speed(1,:);
+
+end
+
+%% 10) Compute rainfall rate when requested
+function [tc,include_precip]=wes_compute_rainfall(tc,spw)
+if ~isfield(spw,'cut_off_rain')
+    spw.cut_off_rain = 0; % mm/hr
+end
+
+% Rainfall
+include_precip=0;
+if spw.rainfall>0
+
+    % Rainfall is included
+    include_precip=1;
+
+    %TODO: code this in a more generic way with less overlap and as separate module
+
+    % Use Daan Bader (MSc thesis 2019 copula's)
+    if strcmpi(spw.rain_relation(1:5), 'bader')
+
+        if strcmpi(spw.rain_relation, 'bader_symmetrical_mode')
+            asymmetrical = 0;            random       = 0;
+        elseif strcmpi(spw.rain_relation, 'bader_symmetrical_stochastic')
+            asymmetrical = 0;            random       = 1;
+        elseif strcmpi(spw.rain_relation, 'bader_asymmetrical_mode')
+            asymmetrical = 1;            random       = 0;
+        elseif strcmpi(spw.rain_relation, 'bader_asymmetrical_stochastic')
+            asymmetrical = 1;            random       = 1;
+        end
+
+        % Loop over track
+        randomID = [];
+        for it=1:length(tc.track)
+
+            % Bader (2019) for pmax and pr
+            [pmax_out,pr]               = rain_radii_bader(tc.track(it).vmax, tc.track(it).rmax, r, random);
+
+            % Random pmax?
+            if random == 1
+                if isempty(randomID)
+                    randomID            = randi([1,length(pmax_out)], 1,1); % random ID for length of pmax (10,000)
+                end
+                pr_chosen              = pr(:,randomID)';
+            elseif random == 0
+                pr_chosen              = pr';
+            end
+
+            % Do cut-off of low precipitation rates (e.g. <10 mm/hr) in whole profile
+            if spw.cut_off_rain > 0 % mm/hr            
+                ids = pr_chosen < spw.cut_off_rain;
+                pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+            end
+
+            % Symmetrical or asymmetrical pr?
+            if asymmetrical == 0
+                tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
+            else
+                factor                      = tc.track(it).wind_speed./tc.track(it).wind_speed_plain;
+                tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1).* factor;
+            end
+
+        end
+
+    % Use Judith Claassen (MSc thesis 2021 copula's)
+    elseif strcmpi(spw.rain_relation(1:5), 'bacla')
+
+        if strcmpi(spw.rain_relation, 'bacla_symmetrical_mode')
+            asymmetrical = 0;            random       = 0;
+        elseif strcmpi(spw.rain_relation, 'bacla_symmetrical_stochastic')
+            asymmetrical = 0;            random       = 1;
+        elseif strcmpi(spw.rain_relation, 'bacla_symmetrical_percentile')
+            asymmetrical = 0;            random       = 2;                    
+        elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_mode') % not tested yet!            
+            asymmetrical = 1;            random       = 0;
+        elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_stochastic') % not tested yet!
+            asymmetrical = 1;            random       = 1;
+        elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_percentile') % not tested yet!
+            asymmetrical = 1;            random       = 2;                  
+        end
+
+        % check for additional needed settings, otherwise use defaults: (for more info see rain_radii_bacla.m)
+        rain_info.data = 2;     % Stage IV blend data trained model
+        rain_info.split = 4;    % xn forced to get pmax fit, bs based on area under graph
+        rain_info.type = 1;     % vmax based model
+        rain_info.loc = 2;      % land fit (constant pmax till rmax as in IPET, after rmax classic holland fit)
+        rain_info.perc = 50;    % default percentile value requested for rain_relation '..._percentile'
+
+        if isfield(spw,'rain_info') 
+            rain_info = [];
+            rain_info = spw.rain_info; % use when provided
+        end
+
+        % Loop over track
+        randomID = [];
+        for it=1:length(tc.track)
+
+            % BaCla (2021) for pmax and pr, either vmax or pressure deficit based
+
+            if rain_info.type == 1 %vmax
+                [pmax_out,pr]               = rain_radii_bacla(tc.track(it).vmax, tc.track(it).rmax, r, random, rain_info);
+            elseif rain_info.type == 2 %pressure deficit
+                pdeftmp                     = spw.pn - tc.track(it).pc; %determine pdef first
+                [pmax_out,pr]               = rain_radii_bacla(pdeftmp, tc.track(it).rmax, r, random, rain_info);                   
+            end
+
+            % Random pmax?
+            if random == 1
+                if isempty(randomID)
+                    randomID            = randi([1,length(pmax_out)], 1,1); % random ID for length of pmax (10,000)
+                end
+                pr_chosen              = pr(:,randomID)';
+            elseif random == 0 && random == 2
+                pr_chosen              = pr';
+            end
+
+            % fix NaNs and negative values if occuring
+            pr_chosen(pr_chosen < 0) = 0;
+            pr_chosen(isnan(pr_chosen)) = 0;
+
+            % Do cut-off of low precipitation rates (e.g. <10 mm/hr) in whole profile
+            if spw.cut_off_rain > 0 % mm/hr            
+                ids = pr_chosen < spw.cut_off_rain;
+                pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+            end
+
+            % Symmetrical or asymmetrical pr?
+            if asymmetrical == 0
+                tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
+            else
+                factor                      = tc.track(it).wind_speed./tc.track(it).wind_speed_plain;
+                tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1).* factor;
+            end
+
+        end
+
+    elseif strcmpi(spw.rain_relation(1:4), 'ipet') %IPET parametric rainfall model
+        if strcmpi(spw.rain_relation, 'ipet_symmetrical_mode')
+            asymmetrical = 0;            random       = 0;
+        elseif strcmpi(spw.rain_relation, 'ipet_asymmetrical_mode')
+            asymmetrical = 1;            random       = 0;
+        end
+
+        for it=1:length(tc.track) 
+            rmaxtmp = tc.track(it).rmax;
+            pdeftmp = spw.pn - tc.track(it).pc;
+
+            [pr_chosen] = rain_radii_ipet(pdeftmp, rmax, r);
+
+            if spw.cut_off_rain > 0 % mm/hr            
+                ids = pr_chosen < spw.cut_off_rain;
+                pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+            end            
+
+            % Symmetrical or asymmetrical pr?
+            if asymmetrical == 0
+                tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
+            else
+                factor = 1.5; % NE and SE for northern hemisphere, NW and SW for southern hemisphere
+
+                if mean(nanmean([tc.track.y])) >= 0 %northern hemisphere % Quadrant 1 = NE, 2 = SE, 3 = SW, 4 = NW
+                    idquadrant = 1:(ceil(spw.nr_directional_bins / 4) * 2);
+                else
+                    idquadrant = ((ceil(spw.nr_directional_bins / 4) * 2)+1):spw.nr_directional_bins;
+
+                end
+                tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
+                tc.track(it).precipitation(idquadrant,:) = tc.track(it).precipitation(idquadrant,:) .* factor;
+            end
+        end
+
+    else
+        rs=repmat(r,[spw.nr_directional_bins 1]);
+        R0=spw.rainfall; % mm/h
+        Rm=spw.rainfall; % mm/h
+        rm=50;  % km
+        re=250;
+        val0=R0+(Rm-R0).*(rs/rm);
+        val1=Rm*exp(-(rs-rm)/re);
+        val=val0;
+        val(rs>rm)=val1(rs>rm);
+            for it=1:length(tc.track)
+                tc.track(it).precipitation=val;
+                csold.name='WGS 84';
+                csold.type='geographic';
+                csnew.name='WGS 84 / UTM zone 17N';
+                csnew.type='projected';
+                x0=tc.track(it).x;
+                y0=tc.track(it).y;
+                [x1,y1]=ddb_coordConvert(x0,y0,csold,csnew);
+                tc.track(it).x=x1;
+                tc.track(it).y=y1;
+            end
+    end
+end
