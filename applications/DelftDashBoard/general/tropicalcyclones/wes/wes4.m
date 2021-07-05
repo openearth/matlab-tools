@@ -305,23 +305,23 @@ if ~isempty(outputfile)
                     if isempty(randomID)
                         randomID            = randi([1,length(pmax_out)], 1,1); % random ID for length of pmax (10,000)
                     end
-                    pr_choosen              = pr(:,randomID)';
+                    pr_chosen              = pr(:,randomID)';
                 elseif random == 0
-                    pr_choosen              = pr';
+                    pr_chosen              = pr';
                 end
 
                 % Do cut-off of low precipitation rates (e.g. <10 mm/hr) in whole profile
                 if spw.cut_off_rain > 0 % mm/hr            
-                    ids = pr_choosen < spw.cut_off_rain;
-                    pr_choosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+                    ids = pr_chosen < spw.cut_off_rain;
+                    pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
                 end
                 
                 % Symmetrical or asymmetrical pr?
                 if asymmetrical == 0
-                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1);
+                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
                 else
                     factor                      = tc.track(it).wind_speed./tc.track(it).wind_speed_plain;
-                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1).* factor;
+                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1).* factor;
                 end
                     
             end
@@ -373,23 +373,27 @@ if ~isempty(outputfile)
                     if isempty(randomID)
                         randomID            = randi([1,length(pmax_out)], 1,1); % random ID for length of pmax (10,000)
                     end
-                    pr_choosen              = pr(:,randomID)';
+                    pr_chosen              = pr(:,randomID)';
                 elseif random == 0 && random == 2
-                    pr_choosen              = pr';
+                    pr_chosen              = pr';
                 end
 
+                % fix NaNs and negative values if occuring
+                pr_chosen(pr_chosen < 0) = 0;
+                pr_chosen(isnan(pr_chosen)) = 0;
+                
                 % Do cut-off of low precipitation rates (e.g. <10 mm/hr) in whole profile
                 if spw.cut_off_rain > 0 % mm/hr            
-                    ids = pr_choosen < spw.cut_off_rain;
-                    pr_choosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+                    ids = pr_chosen < spw.cut_off_rain;
+                    pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
                 end
                 
                 % Symmetrical or asymmetrical pr?
                 if asymmetrical == 0
-                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1);
+                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
                 else
                     factor                      = tc.track(it).wind_speed./tc.track(it).wind_speed_plain;
-                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1).* factor;
+                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1).* factor;
                 end
                     
             end
@@ -404,24 +408,24 @@ if ~isempty(outputfile)
             for it=1:length(tc.track) %TODO: make as separate function script
                 rmaxtmp = tc.track(it).rmax;
                 pdeftmp = spw.pn - tc.track(it).pc;
-                pr_choosen = NaN(size(r));
+                pr_chosen = NaN(size(r));
                 
                 for ip = 1:length(r)
                     if r(ip) <= rmaxtmp
-                        pr_choosen(ip) = 1.14 + (0.12*pdeftmp);
+                        pr_chosen(ip) = 1.14 + (0.12*pdeftmp);
                     elseif r(ip) > rmaxtmp
-                        pr_choosen(ip) = (1.14 + (0.12*pdeftmp)) * exp(-0.3*((r(ip)-rmaxtmp)/rmaxtmp));
+                        pr_chosen(ip) = (1.14 + (0.12*pdeftmp)) * exp(-0.3*((r(ip)-rmaxtmp)/rmaxtmp));
                     end                
                 end            
 
                 if spw.cut_off_rain > 0 % mm/hr            
-                    ids = pr_choosen < spw.cut_off_rain;
-                    pr_choosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+                    ids = pr_chosen < spw.cut_off_rain;
+                    pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
                 end            
 
                 % Symmetrical or asymmetrical pr?
                 if asymmetrical == 0
-                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1);
+                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
                 else
                     factor = 1.5; % NE and SE for northern hemisphere, NW and SW for southern hemisphere
 
@@ -431,7 +435,7 @@ if ~isempty(outputfile)
                         idquadrant = ((ceil(spw.nr_directional_bins / 4) * 2)+1):spw.nr_directional_bins;
 
                     end
-                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1);
+                    tc.track(it).precipitation  = repmat(pr_chosen,spw.nr_directional_bins,1);
                     tc.track(it).precipitation(idquadrant,:) = tc.track(it).precipitation(idquadrant,:) .* factor;
                 end
             end
