@@ -408,16 +408,9 @@ if ~isempty(outputfile)
             for it=1:length(tc.track) %TODO: make as separate function script
                 rmaxtmp = tc.track(it).rmax;
                 pdeftmp = spw.pn - tc.track(it).pc;
-                pr_chosen = NaN(size(r));
+                 
+                [pr_chosen] = rain_radii_ipet(pdeftmp, rmax, r);
                 
-                for ip = 1:length(r)
-                    if r(ip) <= rmaxtmp
-                        pr_chosen(ip) = 1.14 + (0.12*pdeftmp);
-                    elseif r(ip) > rmaxtmp
-                        pr_chosen(ip) = (1.14 + (0.12*pdeftmp)) * exp(-0.3*((r(ip)-rmaxtmp)/rmaxtmp));
-                    end                
-                end            
-
                 if spw.cut_off_rain > 0 % mm/hr            
                     ids = pr_chosen < spw.cut_off_rain;
                     pr_chosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
