@@ -278,6 +278,8 @@ if ~isempty(outputfile)
         % Rainfall is included
         include_precip=1;
         
+        %TODO: code this in a more generic way with less overlap and as separate module
+        
         % Use Daan Bader (MSc thesis 2019 copula's)
         if strcmpi(spw.rain_relation(1:5), 'bader')
             
@@ -324,6 +326,74 @@ if ~isempty(outputfile)
                     
             end
           
+        % Use Judith Claassen (MSc thesis 2021 copula's)
+        elseif strcmpi(spw.rain_relation(1:5), 'bacla')
+            
+            if strcmpi(spw.rain_relation, 'bacla_symmetrical_mode')
+                asymmetrical = 0;            random       = 0;
+            elseif strcmpi(spw.rain_relation, 'bacla_symmetrical_stochastic')
+                asymmetrical = 0;            random       = 1;
+            elseif strcmpi(spw.rain_relation, 'bacla_symmetrical_percentile')
+                asymmetrical = 0;            random       = 2;                    
+            elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_mode') % not tested yet!            
+                asymmetrical = 1;            random       = 0;
+            elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_stochastic') % not tested yet!
+                asymmetrical = 1;            random       = 1;
+            elseif strcmpi(spw.rain_relation, 'bacla_asymmetrical_percentile') % not tested yet!
+                asymmetrical = 1;            random       = 2;                  
+            end
+            
+            % check for additional needed settings, otherwise use defaults: (for more info see rain_radii_bacla.m)
+            rain_info.data = 2;     % Stage IV blend data trained model
+            rain_info.split = 4;    % xn forced to get pmax fit, bs based on area under graph
+            rain_info.type = 1;     % vmax based model
+            rain_info.loc = 2;      % land fit (constant pmax till rmax as in IPET, after rmax classic holland fit)
+            rain_info.perc = 50;    % default percentile value requested for rain_relation '..._percentile'
+
+            if isfield(spw,'rain_info') 
+                rain_info = [];
+                rain_info = spw.rain_info; % use when provided
+            end
+
+            % Loop over track
+            randomID = [];
+            for it=1:length(tc.track)
+
+                % BaCla (2021) for pmax and pr, either vmax or pressure deficit based
+                
+                if rain_info.type == 1 %vmax
+                    [pmax_out,pr]               = rain_radii_bacla(tc.track(it).vmax, tc.track(it).rmax, r, random, rain_info);
+                elseif rain_info.type == 2 %pressure deficit
+                    pdeftmp                     = spw.pn - tc.track(it).pc; %determine pdef first
+                    [pmax_out,pr]               = rain_radii_bacla(pdeftmp, tc.track(it).rmax, r, random, rain_info);                   
+                end
+                
+                % Random pmax?
+                if random == 1
+                    if isempty(randomID)
+                        randomID            = randi([1,length(pmax_out)], 1,1); % random ID for length of pmax (10,000)
+                    end
+                    pr_choosen              = pr(:,randomID)';
+                elseif random == 0 && random == 2
+                    pr_choosen              = pr';
+                end
+
+                % Do cut-off of low precipitation rates (e.g. <10 mm/hr) in whole profile
+                if spw.cut_off_rain > 0 % mm/hr            
+                    ids = pr_choosen < spw.cut_off_rain;
+                    pr_choosen(ids) = 0; % also possible do reduce with a certain factor like: pr_choosen(ids)/5;
+                end
+                
+                % Symmetrical or asymmetrical pr?
+                if asymmetrical == 0
+                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1);
+                else
+                    factor                      = tc.track(it).wind_speed./tc.track(it).wind_speed_plain;
+                    tc.track(it).precipitation  = repmat(pr_choosen,spw.nr_directional_bins,1).* factor;
+                end
+                    
+            end
+            
         elseif strcmpi(spw.rain_relation(1:4), 'ipet') %IPET parametric rainfall model
             if strcmpi(spw.rain_relation, 'ipet_symmetrical_mode')
                 asymmetrical = 0;            random       = 0;
@@ -331,7 +401,7 @@ if ~isempty(outputfile)
                 asymmetrical = 1;            random       = 0;
             end
             
-            for it=1:length(tc.track)
+            for it=1:length(tc.track) %TODO: make as separate function script
                 rmaxtmp = tc.track(it).rmax;
                 pdeftmp = spw.pn - tc.track(it).pc;
                 pr_choosen = NaN(size(r));

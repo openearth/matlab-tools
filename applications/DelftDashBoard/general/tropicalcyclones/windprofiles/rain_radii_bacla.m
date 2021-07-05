@@ -1,4 +1,4 @@
-function [pmax_out,pr] = rain_radii_bacla2(meas_vmax, rmax, radius, probability, tp)
+function [pmax_out,pr] = rain_radii_bacla(meas_vmax, rmax, radius, probability, tp)
 % Function to calculate pmax (maximum rainfall intensity)
 % and the radial distribution of the rain (pr)
 % Input meas_vmax in m/s and 10 minute averaged or the pressure deficit in
@@ -8,15 +8,19 @@ function [pmax_out,pr] = rain_radii_bacla2(meas_vmax, rmax, radius, probability,
 % Probability is 1, means you will get a 10,000 random realisations
 % tp.data = 1 : GPM/TRMM data trained model
 % tp.data = 2 : Stage IV blend data trained model
-% tp.split =1: no split
-% tp.split =2 : simple split
+% tp.split = 1: no split
+% tp.split = 2 : simple split
 % tp.split = 3: xn forced to get pmax, bsfit
 % tp.split = 4: xn forced to get pmax fit, bs based on area under graph
 % tp.type = 1 : vmax based model
 % tp.type = 2 : pdef based model
 % tp.loc = 1 : ocean fit (classic Holland)
-% tp.loc = 2 : land fit (constant pmax till rmax, after rmax classic
-% holland fit)
+% tp.loc = 2 : land fit (constant pmax till rmax as in IPET, after rmax classic holland fit)
+% tp.perc = 50: requested specific percentile
+
+if ~isfield(tp,'perc') && probability == 2
+   tp.perc = 50; %if not provided
+end
 
 
 %% 0. Coefficients of copula's (needed for pmax)
@@ -61,15 +65,13 @@ end
 
 % assess samples
 values      = sort(pmax_samples);
-lowest5     = values(round(length(values)*0.05));
-low25       = values(round(length(values)*0.25));
-median50    = values(round(length(values)*0.50));
-high75      = values(round(length(values)*0.75));
-highest95   = values(round(length(values)*0.95));
+median50    = values(round(length(values) * 0.50));
+perc   = values(round(length(values) * tp.perc / 100));
 
 if probability == 1
     pmax_out = pmax_samples;
-    %pmax_out = [lowest5 low25 median50 high75 highest95];
+elseif probability == 2
+    pmax_out = perc;
 else
     pmax_out = median50;          
 end
