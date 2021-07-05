@@ -9,7 +9,7 @@ function [pr] = rain_radii_ipet(pdef, rmax, radius)
 for ip = 1:length(radius)
     if radius(ip) <= rmax
         pr(ip) = 1.14 + (0.12*pdef);
-    elseif r(ip) > rmax
+    elseif radius(ip) > rmax
         pr(ip) = (1.14 + (0.12*pdef)) * exp(-0.3*((radius(ip)-rmax)/rmax));
     end                
 end          
