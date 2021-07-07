@@ -5,7 +5,7 @@ function [pmax_out,pr] = rain_radii_bacla(meas_vmax, rmax, radius, probability, 
 % hPa
 % Input rmax and radius in km
 % Probability is 0, means you will get the most probably pmax and pr
-% Probability is 1, means you will get a 10,000 random realisations
+% Probability is 1, means you will get a 1,000 random realisations
 % tp.data = 1 : GPM/TRMM data trained model
 % tp.data = 2 : Stage IV blend data trained model
 % tp.split = 1: no split
@@ -24,11 +24,11 @@ end
 
 
 %% 0. Coefficients of copula's (needed for pmax)
-n  = 10000;            % number of samples
+n  = 1000;            % number of samples
 
 if tp.data == 1 %GPM/TRMM data trained model
     pmax.sigma =  0.8736;
-    pmax.mu = 1.6635;
+    pmax.mu= 1.6635;
     if tp.type == 1 %vmax based model
         frank_theta =  6.7551;
         vmax.labda = 147.8526;
@@ -45,7 +45,7 @@ if tp.data == 1 %GPM/TRMM data trained model
     
 elseif tp.data == 2 %Stage IV blend data trained model
     pmax.sigma =  0.8672;
-    pmax.mu =  1.6754;
+    pmax.mu=  1.6754;
     if tp.type == 1 %vmax based model
         frank_theta =   6.7452;
         vmax.labda = 146.6439;
@@ -104,17 +104,20 @@ function pmax_samples = copula3(vmax_input, theta, n, vmax, pmax, tp)
 
 
 if vmax.type == 1 %Frank Copula
-    pdIG = makedist('InverseGaussian',vmax.mu,vmax.labda);
-    u(1,1:n) =  cdf(pdIG, vmax_input);
+    %pdIG = makedist('InverseGaussian',vmax.mu,vmax.labda);
+    %u(1,1:n) =  cdf(pdIG, vmax_input);
+    u(1,1:n) = invgaudist_cdf(vmax_input, vmax);
 elseif vmax.type == 2
-    pdIG = makedist('BirnbaumSaunders',vmax.beta,vmax.gamma);
-    u(1,1:n) =  cdf(pdIG, vmax_input);
+    %pdIG = makedist('BirnbaumSaunders',vmax.beta,vmax.gamma);
+    %u(1,1:n) =  cdf(pdIG, vmax_input);
+      u(1,1:n) = birnsdist_cdf(vmax_input, vmax);
 end
 
 if vmax.type == 2 &  tp.data == 2 %Gaussian Copula 
-    x1=norminv(u);
-    x2=norminv(rand(1,n));
-
+    %x1=norminv(u);
+    %x2=norminv(rand(1,n));
+    x1=invnorm(u);
+    x2=invnorm(rand(1,n));
 
     X = [x1; x2];
 
@@ -126,7 +129,8 @@ if vmax.type == 2 &  tp.data == 2 %Gaussian Copula
 
     
     v = Copsims(2,:);
-    v = normcdf(v);
+    %v = normcdf(v);
+    v = cdfnorm(v);
 else
     y = rand(1,n);
 
@@ -136,8 +140,8 @@ else
 end
 % convert the acquired samples back to its original dataspace with the
 % given marginal distribution parameters for pmax. 
-pmax_samples = icdf('Lognormal', v, pmax.mu, pmax.sigma);
-
+%pmax_samples = icdf('Lognormal', v, pmax.mu, pmax.sigma);
+pmax_samples = icdf_logn(v, pmax);
 end
 
 
@@ -145,6 +149,7 @@ end
 
 function pr_save = fitsample(tp, inp, pmax_sample)
  for ii = 1:length(pmax_sample)
+     disp(['fit ',num2str(ii) ,' of: ', length(pmax_sample)])
      inp.pmax    = pmax_sample(ii);
      
      if tp.data == 1 %GPM/TRMM data trained model
@@ -267,4 +272,39 @@ b   = beta(2);  % similar to the Holland B parameter
 % Rainfall in which we assume maximum rainfall
 % occurs at the location of the maximum winds speed. Correct?
 pr = ((inp.pmax*(inp.rmax./inp.radius).^b)./(exp((inp.rmax./inp.radius).^b))).^a;
+end
+
+%%
+function phicdf = cdfnorm(vmax_input) % cdf for standard normal
+
+phicdf = 0.5 * (1 + erf((vmax_input)/(sqrt(2))));
+end
+
+%%
+function ino =  invnorm(y) %  inverse cdf for standard normal
+
+ino = (erfinv((2*y) -1 ) * (sqrt(2))) ;
+end
+
+%%
+function v_sample = invgaudist_cdf(vmax_input, vmax) % cdf of inverse gaussian
+x1 = (sqrt(vmax.labda/vmax_input)*((vmax_input/vmax.mu)-1));
+x2 = (-sqrt(vmax.labda/vmax_input)*((vmax_input/vmax.mu)+1));
+v_sample = 0.5 * (1 + erf((x1)/(sqrt(2)))) + (exp((2*vmax.labda)/vmax.mu) * 0.5 * (1 + erf((x2)/(sqrt(2)))) );
+end
+
+%%
+function pdef_sample = birnsdist_cdf(pdef_input, pdef) % cdf of BirnbaumSaunders
+
+x1 = ((1/pdef.gamma)*(sqrt(pdef_input/pdef.beta) - sqrt(pdef.beta/pdef_input)));
+
+pdef_sample = 0.5 * (1 + erf((x1)/(sqrt(2))));
+end
+
+%%
+
+function pmax_sample = icdf_logn(v, pmax) % inverse cdf of lognormal
+
+pmax_sample = exp((((sqrt(2)*pmax.sigma))*erfinv(2*(v-0.5)))+pmax.mu);
+
 end
