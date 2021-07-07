@@ -33,7 +33,9 @@ for kbc=1:nbc
     nt=size(bc(kbc).val,1);
     
     fprintf(fid,'[forcing] \n');
-    fprintf(fid,'Name                            = %s_0001 \n',bc(kbc).name);
+%     fprintf(fid,'Name                            = %s_0001 \n',bc(kbc).name);
+    fprintf(fid,'Name                            = %s \n',bc(kbc).name);
+    error('check the two lines above. depending on whether the input is a pli or a single coordinate, the 0001 is needed or not')
     fprintf(fid,'Function                        = %s \n',bc(kbc).function);
     fprintf(fid,'Time-interpolation              = %s \n',bc(kbc).time_interpolation);
     for kq=1:nq
