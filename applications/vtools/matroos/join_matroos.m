@@ -46,28 +46,20 @@ nci=ncinfo(path_loc);
 var_names_all={nci.Variables.Name};
 idx_all=1:1:numel(var_names_all);
 [~,bol]=find_str_in_cell(var_names_all,{'x','y','time'});
-% idx_tim=find_str_in_cell(var_names_all,{'time'});
 var_names_join=var_names_all(~bol);
 idx_join=idx_all(~bol);
 
 %location of time dimension
 nvars=numel(var_names_join);
 dim_tim=NaN(nvars,1);
-% dim_x=NaN(nvars,1);
-% dim_y=NaN(nvars,1);
 inds=cell(nvars,1);
-% read_start=cell(nvars,1);
 for kvar=1:nvars
-%     dim_x(kvar)=find_str_in_cell({nci.Variables(idx_join(kvar)).Dimensions.Name},{'x'});
-%     dim_y(kvar)=find_str_in_cell({nci.Variables(idx_join(kvar)).Dimensions.Name},{'y'});
     dim_tim(kvar)=find_str_in_cell({nci.Variables(idx_join(kvar)).Dimensions.Name},{'time'});
     dim_num=numel(nci.Variables(idx_join(kvar)).Dimensions);
     inds{kvar}=cell(dim_num,1);
     for kdim=1:dim_num
         inds{kvar}{kdim}=1:1:nci.Variables(idx_join(kvar)).Dimensions(kdim).Length;
     end
-%     read_start{kvar}=ones(dim_num,1);
-%     read_start{kvar}(dim_tim(kvar))=2; %there are 25 values for day
 end
 
 %create vars
@@ -85,6 +77,7 @@ for kt=2:nt-1
         var_loc=ncread(path_loc,var_names_join{kvar});
         var_all{kvar}=cat(dim_tim(kvar),var_all{kvar},var_loc);
     end
+    fprintf('joining data %4.2f %% \n',kt/(nt-1)*100)
 end
 
 %cut time
@@ -94,13 +87,6 @@ for kvar=1:nvars
     inds_u=inds{kvar};
     inds_u{dim_tim(kvar)}=idx_u;
     var_all_u{kvar}=var_all{kvar}(inds_u{:});
-    
-% dim = 4;
-% sz = size(A);
-% inds = repmat({1},1,ndims(A));
-% inds{dim} = 1:sz(dim);
-% A(inds{:})
-   
 end
 
 %write
@@ -116,6 +102,7 @@ for kvar=1:nvars
     var_original=ncread(path_all,var_names_join{kvar});
     ncwrite_class(path_all,var_names_join{kvar},var_original,var_all_u{kvar})
 end
+messageOut(NaN,sprintf('File created: %s',path_all))
 
 end %join_matroos
 

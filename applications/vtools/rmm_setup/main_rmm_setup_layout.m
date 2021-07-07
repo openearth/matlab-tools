@@ -13,11 +13,9 @@ clc
 %% ADD OET
 
 %add the OET in the way you usually do. You can use this:
-path_oet='c:\Users\chavarri\checkouts\openearthtools_matlab'; %input
-
-path_add_fcn=fullfile(path_oet,'\applications\vtools\general\'); 
+path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
 addpath(path_add_fcn)
-addOET('path_oet_c',fullfile(path_oet,'oetsettings.m'))
+addOET(path_add_fcn)
 
 %% INPUT
 
