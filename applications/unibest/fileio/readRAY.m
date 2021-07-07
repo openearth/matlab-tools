@@ -231,6 +231,7 @@ function [Cequi]=computeEQUI(equi,c1,c2,hoek,QSoffset)
         id        = find(QS==min(QS));
     end
     Cequi     = Cangle(id(1));
+    Cequi     = Cequi(:);
 end
 
 %% Subfunction make empty structure

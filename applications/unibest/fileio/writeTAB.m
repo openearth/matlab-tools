@@ -65,17 +65,17 @@ function writeTAB(filename, TABdata)
 
 %% Write header of file
 fid = fopen(filename,'wt');
-fprintf(fid,'%1.0f\n',size(TABdata.qsblock,2));
-fprintf(fid,'%1.0f\n',size(TABdata.qsblock,1));
+fprintf(fid,'%1.0f \n',size(TABdata.qsblock,2));
+fprintf(fid,'%1.0f \n',size(TABdata.qsblock,1));
 fprintf(fid,'TIME');
 for ii=1:size(TABdata.qsblock,2)
-    fprintf(fid,['COL_',num2str(ii)]);
+    fprintf(fid,['  COL_',num2str(ii),'    ']);
 end
 fprintf(fid,['\n']);
 
 %% Write sources and sinks
 for ii=1:size(TABdata.qsblock,1)
-    fprintf(fid,'%8.2f ',TABdata.time(ii));
+    fprintf(fid,'%8.3f ',TABdata.time(ii));
     for jj=1:size(TABdata.qsblock,2)
         fprintf(fid,'%10.0f ',TABdata.qsblock(ii,jj));
     end
