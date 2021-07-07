@@ -6,6 +6,7 @@ function [pmax_out,pr] = rain_radii_bacla(meas_vmax, rmax, radius, probability, 
 % Input rmax and radius in km
 % Probability is 0, means you will get the most probably pmax and pr
 % Probability is 1, means you will get a 1,000 random realisations
+% Probability is 2, means you will get the pmax and pr based on user defined percentile
 % tp.data = 1 : GPM/TRMM data trained model
 % tp.data = 2 : Stage IV blend data trained model
 % tp.split = 1: no split
@@ -70,6 +71,7 @@ perc   = values(round(length(values) * tp.perc / 100));
 
 if probability == 1
     pmax_out = pmax_samples;
+    disp('NOTE: using the BaCla rainfall model with random = 1 might be relatively slow to generate all fits')    
 elseif probability == 2
     pmax_out = perc;
 else
@@ -149,7 +151,7 @@ end
 
 function pr_save = fitsample(tp, inp, pmax_sample)
  for ii = 1:length(pmax_sample)
-     disp(['fit ',num2str(ii) ,' of: ', length(pmax_sample)])
+     %disp(['fit ',num2str(ii) ,' of: ', num2str(length(pmax_sample))])
      inp.pmax    = pmax_sample(ii);
      
      if tp.data == 1 %GPM/TRMM data trained model
@@ -253,12 +255,10 @@ function pr_save = fitsample(tp, inp, pmax_sample)
          pr_computed(1:id) = max(pr_computed);
      end
      
-     pr_save{ii} = pr_computed;
+     pr_save(:,ii) = pr_computed;
      
  end
  
-pr_save =  pr_save;
-
 end
 
 %%
