@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17339 $
-%$Date: 2021-06-10 15:23:34 +0200 (Thu, 10 Jun 2021) $
-%$Author: chavarri $
-%$Id: D3D_io_input.m 17339 2021-06-10 13:23:34Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_io_input.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [names,names_clean]=D3D_clean_group_names(mdu)
