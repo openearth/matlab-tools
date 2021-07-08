@@ -91,4 +91,4 @@ end
 %% WRITE
 
 file_name=fullfile(dire_sim,'dep.xyz');  
-write_2DMatrix(file_name,depths,size(depths,2),size(depths,1));
+write_2DMatrix(file_name,depths);

@@ -45,10 +45,16 @@ for kf1=1:nf
     end
 end
 
+simdef.err=0;
 if sum(whatis)==0
-    error('I cannot find the main file in this folder: %s',simdef.D3D.dire_sim)
+%     error('I cannot find the main file in this folder: %s',simdef.D3D.dire_sim)
+    fprintf('I cannot find the main file in this folder: %s \n',simdef.D3D.dire_sim);
+    simdef.err=1;
+    return
 elseif sum(whatis)>1
-    error('In this folder there are main files of several software systems: %s',simdef.D3D.dire_sim)
+    fprintf('In this folder there are main files of several software systems: %s \n',simdef.D3D.dire_sim);
+    simdef.err=2;
+    return
 end
 
 %% load

@@ -32,6 +32,7 @@ path_out_xyz=fullfile(dire_sim,'sample.xyz');
 
 %% dep from file
 
+error('conversion is not correct, format has changed')
 EHY_convert(path_grd,'nc','outputFile',path_out);
 %actual file has the appendix _net, we rename it
 movefile(path_out_net,path_out,'f')
