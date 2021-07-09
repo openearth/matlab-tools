@@ -63,6 +63,7 @@ addOptional(parin,'amp',[1e-12,1e-10,1e-8,1e-6]);
 addOptional(parin,'num_test',3);
 addOptional(parin,'path_folder_out',fullfile(pwd,'output'));
 addOptional(parin,'location','cor');
+addOptional(parin,'write_files',true);
 
 parse(parin,varargin{:});
 
@@ -71,6 +72,7 @@ amp_v=parin.Results.amp;
 num_test=parin.Results.num_test;
 path_folder_out=parin.Results.path_folder_out;
 location=parin.Results.location;
+write_files=parin.Results.write_files;
 
 %% READ DEP
 
@@ -131,6 +133,7 @@ end
 
 %% create files
 
+if write_files
 ns=numel(input_m.dep);
 
 for ks=1:ns
@@ -151,6 +154,8 @@ for ks=1:ns
             D3D_io_input('write',fpath_dep,dep);
     end
     messageOut(NaN,sprintf('File written %4.2f %%',ks/ns*100));
+end
+
 end
 
 end %function

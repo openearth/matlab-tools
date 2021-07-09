@@ -865,6 +865,7 @@ if exist('time_mor_r','var')
     out.time_mor=time_mor_r(kt);
 end
 out.time_r=time_r(kt);
+out.time_r_all=time_r;
 
 end %main function
 
