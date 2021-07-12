@@ -733,7 +733,7 @@ end
         ldb = landboundary('read',inputFile);
         nanInd = find(isnan(ldb(:,1)));
         if nanInd(1)~=1; nanInd = [0; nanInd]; end
-        if nanInd(end)~=size(ldb,1); nanInd(end+1) = NaN; end
+        if nanInd(end)~=size(ldb,1); nanInd(end+1) = size(ldb,1)+1; end
         for ii = 1:length(nanInd)-1
             ldb2{ii} = ldb(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
         end
