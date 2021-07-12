@@ -555,6 +555,13 @@ if strcmp(varNameInput,'chl')
     Data.val = 1000.*saco_convert(Data.val,27); % 1000: from g/kg to mg/l
 end
 
+%% Remove 0 time at end of file (sometimes written after crash)
+if isfield(Data,'times')
+    idDel = find(diff(Data.times)<0)+1;
+    Data.times(idDel:end) = [];
+    Data.val(idDel:end,:,:) = [];
+end
+
 %% Fill output struct
 Data.OPT               = OPT;
 Data.OPT.inputFile     = inputFile;
