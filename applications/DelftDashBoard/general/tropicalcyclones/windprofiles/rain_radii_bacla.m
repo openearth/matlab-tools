@@ -185,19 +185,26 @@ function pr_save = fitsample(tp, inp, pmax_sample)
              end
              
          elseif tp.split ==4 % xn forced to get pmax fit, bs based on area under graph
-             bsi = 2 .* rand(1000,1);
-             xn = log(inp.pmax)/log(inp.pmax/exp(1));
-             area = 13.208 + (19.101 * log(inp.pmax)) +  (19.101 * (log(inp.pmax)^2));
-             Ai = [];
-             for i = 1:length(bsi)
-                 betaA       = [xn bsi(i)];
-                 pr_computed = aafit(betaA,inp);
-                 areai = trapz(pr_computed);
-                 Ai = [Ai;areai];
-             end
-             dif = abs(Ai - area);
-             [I, D] = min(dif);
-             betaA       = [xn bsi(D)];
+             if pmax_sample(ii) >= 2.8
+                bsi = 2 .* rand(1000,1);
+                xn = log(inp.pmax)/log(inp.pmax/exp(1));
+                area = 13.208 + (19.101 * log(inp.pmax)) +  (19.101 * (log(inp.pmax)^2));
+                Ai = [];
+                for i = 1:length(bsi)
+                     betaA       = [xn bsi(i)];
+                     pr_computed = aafit(betaA,inp);
+                     areai = trapz(pr_computed);
+                     Ai = [Ai;areai];
+                end
+                dif = abs(Ai - area);
+                [I, D] = min(dif);
+                betaA       = [xn bsi(D)];
+                else
+                    bs          = 0; 
+                    t = pmax_sample(ii)/exp(1);
+                    xn = log(pmax_sample(ii))/log(t);
+                    betaA       = [xn bs];
+                end
          end
          
      elseif tp.data == 2 % Stage IV data trained model
@@ -231,19 +238,26 @@ function pr_save = fitsample(tp, inp, pmax_sample)
              end
              
          elseif tp.split == 4 %xn forced to get pmax fit, bs based on area under graph
-             bsi = 2 .* rand(1000,1);
-             xn = log(inp.pmax)/log(inp.pmax/exp(1));
-             area = 13.414 + (18.452 * log(inp.pmax)) +  (11.083* (log(inp.pmax)^2));
-             Ai = [];
-             for i = 1:length(bsi)
-                 betaA       = [xn bsi(i)];
-                 pr_computed = aafit(betaA,inp);
-                 areai = trapz(pr_computed);
-                 Ai = [Ai;areai];
-             end
-             dif = abs(Ai - area);
-             [I, D] = min(dif);
-              betaA       = [xn bsi(D)];
+             if pmax_sample(ii) >= 2.8
+                bsi = 2 .* rand(1000,1);
+                xn = log(inp.pmax)/log(inp.pmax/exp(1));
+                area = 13.414 + (18.452 * log(inp.pmax)) +  (11.083* (log(inp.pmax)^2));
+                Ai = [];
+                for i = 1:length(bsi)
+                    betaA       = [xn bsi(i)];
+                    pr_computed = aafit(betaA,inp);
+                    areai = trapz(pr_computed);
+                    Ai = [Ai;areai];
+                end
+                dif = abs(Ai - area);
+                [I, D] = min(dif);
+                betaA       = [xn bsi(D)];
+                else
+                    bs          = 0; 
+                    t = pmax_sample(ii)/exp(1);
+                    xn = log(pmax_sample(ii))/log(t);
+                    betaA       = [xn bs];
+                end
          end
      end
      
