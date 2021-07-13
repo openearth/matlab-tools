@@ -1,4 +1,4 @@
-function ddb_getToolboxData(localdir, name, varargin)
+function ddb_getToolboxData(handles, localdir, name, varargin)
 %DDB_GETTOOLBOXDATA  Download toolbox related files (data, exe, mat) from
 %   OpenDAP server
 %
@@ -60,7 +60,6 @@ function ddb_getToolboxData(localdir, name, varargin)
 % $Keywords: $
 
 %%
-handles = getHandles;
 
 % Try to download data from server
 
