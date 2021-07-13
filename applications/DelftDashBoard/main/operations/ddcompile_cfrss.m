@@ -87,8 +87,11 @@ mkdir([compilefolder 'bin']);
 inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
 
 % %% Remove statistics toolbox paths
-% statspath=[matlabfolder 'toolbox' filesep 'stats'];
-% rmpath(statspath);
+matlabfolder='c:\Program Files\Matlab\Matlab2020a_64\';
+imgpath=[matlabfolder 'toolbox' filesep 'images'];
+rmpath(imgpath);
+imgpath=[matlabfolder 'toolbox' filesep 'images' filesep 'images'];
+rmpath(imgpath);
 % statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'stats'];
 % rmpath(statspath);
 % statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'classreg'];
@@ -186,6 +189,10 @@ for j=1:length(flist)
     end
 end
 
+addbad=which('ddb_aboutDelftDashBoard');
+[path,name,ext]=fileparts(addbad);
+fprintf(fid,'%s\n',[name ext]);
+
 % And the additional toolboxes
 if include_additional_toolboxes
     % Add additional toolboxes
@@ -203,34 +210,41 @@ if include_additional_toolboxes
         for j=1:length(flist)
             if flist(j).isdir
                 toolbox=flist(j).name;
-                % Check if xml file exists and whether toolbox is enabled
-                xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' toolbox '.xml'];
-                if exist(xmlfile,'file')>0
-                    xml=xml2struct(xmlfile);
-                    switch lower(xml.enable)
-                        case{'1','y','yes'}
-                            % Model is enabled
-                            files=ddb_findAllFiles([additionalToolboxDir toolbox],'*.m');
-                            for i=1:length(files)
-                                fprintf(fid,'%s\n',files{i});
-                            end
-                            % Copy xml files and misc files
-                            try
-                                mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
-                                copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
-                            end
-                            %                         try
-                            %                             if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
-                            %                                 mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-                            %                                 copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-                            %                             end
-                            %                         end
+                if ~strcmpi(toolbox,'csips')
+                    % Check if xml file exists and whether toolbox is enabled
+                    xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' toolbox '.xml'];
+                    if exist(xmlfile,'file')>0
+                        xml=xml2struct(xmlfile);
+                        switch lower(xml.enable)
+                            case{'1','y','yes'}
+                                % Model is enabled
+                                files=ddb_findAllFiles([additionalToolboxDir toolbox],'*.m');
+                                for i=1:length(files)
+                                    fprintf(fid,'%s\n',files{i});
+                                end
+                                % Copy xml files and misc files
+                                try
+                                    mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                                    copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                                end
+                                %                         try
+                                %                             if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
+                                %                                 mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+                                %                                 copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+                                %                             end
+                                %                         end
+                        end
                     end
                 end
             end
         end
     end
 end
+
+% % Add tropical cyclone selector
+% mkdir([inipath 'ddbsettings' filesep 'tropical_cyclone_selector' filesep]);
+% copyfile('d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\general\tropicalcyclones\tropical_cyclone_selector\*.pli',[inipath 'ddbsettings' filesep 'tropical_cyclone_selector' filesep]);
+% copyfile('d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\general\tropicalcyclones\tropical_cyclone_selector\*.xml',[inipath 'ddbsettings' filesep 'tropical_cyclone_selector' filesep]);
 
 fclose(fid);
 
@@ -256,7 +270,8 @@ if ~exist(['exe' filesep 'bin'],'dir')
 end
 
 % And now do the actual compiling
-mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar -M earthicon.res
+%mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar -r d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\settings\icons\deltares.gif
+mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar
 
 % Change the revision number text
 Revision = ['$Revision: ' revisionnumber ' $'];

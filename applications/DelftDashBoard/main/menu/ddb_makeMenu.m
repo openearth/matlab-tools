@@ -84,20 +84,22 @@ end
 uimenu('Label','Bathymetry','Tag','menuBathymetry');
 ddb_updateBathymetryMenu(handles);
 
-%% Shoreline
-uimenu('Label','Shoreline','Tag','menuShoreline');
-for i=1:handles.shorelines.nrShorelines
-    if strcmpi(handles.shorelines.longName{i},handles.screenParameters.shoreline)
-        if handles.shorelines.shoreline(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','on');
+if handles.configuration.include_menu_shoreline
+    %% Shoreline
+    uimenu('Label','Shoreline','Tag','menuShoreline');
+    for i=1:handles.shorelines.nrShorelines
+        if strcmpi(handles.shorelines.longName{i},handles.screenParameters.shoreline)
+            if handles.shorelines.shoreline(i).isAvailable
+                handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','on');
+            else
+                handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','off');
+            end
         else
-            handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','off');
-        end
-    else
-        if handles.shorelines.shoreline(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','on');
-        else
-            handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','off');
+            if handles.shorelines.shoreline(i).isAvailable
+                handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','on');
+            else
+                handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','off');
+            end
         end
     end
 end
@@ -117,58 +119,78 @@ handles=ddb_addMenuItem(handles,'View','Settings',             'Callback',{@ddb_
 handles=ddb_addModelViewMenu(handles);
 
 %% Coordinate System
-uimenu('Label','Coordinate System','Tag','menuCoordinateSystem');
 
-% Determine what type of coordinate system
-name=handles.screenParameters.coordinateSystem.name;
-type=handles.screenParameters.coordinateSystem.type;
-
-geoname='WGS 84';
-prjname='Amersfoort / RD New';
-utmname='WGS 84 / UTM zone 31N';
-
-geocheck='off';
-prjcheck='off';
-utmcheck='off';
-
-if strcmpi(type,'geographic')
-    geocheck='on';
-    if ~strcmpi(name,'wgs 84')
-        geoname=name;
-    end
-else
-    if strcmpi(name(1:12),'WGS 84 / UTM')
-        utmname=name;
-        utmcheck='on';
+if handles.configuration.include_menu_coordinate_system
+    
+    uimenu('Label','Coordinate System','Tag','menuCoordinateSystem');
+    
+    % Determine what type of coordinate system
+    name=handles.screenParameters.coordinateSystem.name;
+    type=handles.screenParameters.coordinateSystem.type;
+    
+    geoname='WGS 84';
+    prjname='Amersfoort / RD New';
+    utmname='WGS 84 / UTM zone 31N';
+    
+    geocheck='off';
+    prjcheck='off';
+    utmcheck='off';
+    
+    if strcmpi(type,'geographic')
+        geocheck='on';
+        if ~strcmpi(name,'wgs 84')
+            geoname=name;
+        end
     else
-        prjname=name;
-        prjcheck='on';    
+        if strcmpi(name(1:12),'WGS 84 / UTM')
+            utmname=name;
+            utmcheck='on';
+        else
+            prjname=name;
+            prjcheck='on';
+        end
     end
+    
+    handles=ddb_addMenuItem(handles,'CoordinateSystem',geoname,               'Callback',{@ddb_menuCoordinateSystem},'Checked',geocheck,'HandleName','Geographic');
+    
+    handles=ddb_addMenuItem(handles,'CoordinateSystem','Other Geographic ...',     'Callback',{@ddb_menuCoordinateSystem});
+    
+    handles=ddb_addMenuItem(handles,'CoordinateSystem',prjname,  'Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','Cartesian','Checked',prjcheck);
+    
+    handles=ddb_addMenuItem(handles,'CoordinateSystem','Other Cartesian ...',      'Callback',{@ddb_menuCoordinateSystem});
+    
+    handles=ddb_addMenuItem(handles,'CoordinateSystem',utmname,'Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','UTM','Checked',utmcheck);
+    
+    handles=ddb_addMenuItem(handles,'CoordinateSystem','Select UTM Zone ...',  'Callback',{@ddb_menuCoordinateSystem});
+    
 end
 
-handles=ddb_addMenuItem(handles,'CoordinateSystem',geoname,               'Callback',{@ddb_menuCoordinateSystem},'Checked',geocheck,'HandleName','Geographic');
-
-handles=ddb_addMenuItem(handles,'CoordinateSystem','Other Geographic ...',     'Callback',{@ddb_menuCoordinateSystem});
-
-handles=ddb_addMenuItem(handles,'CoordinateSystem',prjname,  'Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','Cartesian','Checked',prjcheck);
-
-handles=ddb_addMenuItem(handles,'CoordinateSystem','Other Cartesian ...',      'Callback',{@ddb_menuCoordinateSystem});
-
-handles=ddb_addMenuItem(handles,'CoordinateSystem',utmname,'Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','UTM','Checked',utmcheck);
-
-handles=ddb_addMenuItem(handles,'CoordinateSystem','Select UTM Zone ...',  'Callback',{@ddb_menuCoordinateSystem});
-
 %% Options
-ddb_menuOptions;
+if handles.configuration.include_menu_options
+    ddb_menuOptions;
+end
 
 %% Help
-uimenu('Label','Help','Tag','menuHelp');
-handles=ddb_addMenuItem(handles,'Help','Deltares Online',        'Callback',{@ddb_menuHelp});
-handles=ddb_addMenuItem(handles,'Help','Delft Dashboard Online', 'Callback',{@ddb_menuHelp});
-handles=ddb_addMenuItem(handles,'Help','About Delft Dashboard',  'Callback',{@ddb_menuHelp});
+hhelp=uimenu('Label','Help','Tag','menuHelp');
+for j=1:length(handles.configuration.menu_help)
+    if isfield(handles.configuration.menu_help(j).menu_help,'url')
+        url = handles.configuration.menu_help(j).menu_help.url;
+        h1=uimenu(hhelp,'Label',handles.configuration.menu_help(j).menu_help.text,'Callback',{@menu_help_web,url});
+    else
+        callback = handles.configuration.menu_help(j).menu_help.callback;
+        h1=uimenu(hhelp,'Label',handles.configuration.menu_help(j).menu_help.text,'Callback',callback);
+    end
+end
+%handles=ddb_addMenuItem(handles,'Help','Deltares Online',        'Callback',{@ddb_menuHelp});
+%handles=ddb_addMenuItem(handles,'Help','Delft Dashboard Online', 'Callback',{@ddb_menuHelp});
+%handles=ddb_addMenuItem(handles,'Help','About Delft Dashboard',  'Callback',{@ddb_menuHelp});
 
 %% Debug
 if ~isdeployed
     uimenu('Label','Debug','Tag','menuDebug');
     handles=ddb_addMenuItem(handles,'Debug','Reload XML','Callback',{@ddb_menuDebug},'Checked','off');
 end
+
+function menu_help_web(hObject, eventdata, url)
+
+web(url,'-browser');

@@ -77,22 +77,28 @@ dy0=(yl(2)-yl(1))*(pgcf(2)-posax(2))/posax(4);
 x0=xl(1)+dx0;
 y0=yl(1)+dy0;
 
-if evnt.VerticalScrollCount<0
-    p1(1)=x0-zm*dx0;
-    p1(2)=y0-zm*dy0;
-    offset(1)=((xl(2)-xl(1))*zm);
-    offset(2)=((yl(2)-yl(1))*zm);
-else
-    p1(1)=x0-dx0/zm;
-    p1(2)=y0-dy0/zm;
-    offset(1)=((xl(2)-xl(1))/zm);
-    offset(2)=((yl(2)-yl(1))/zm);
+point = get(handles.GUIHandles.mapAxis,'CurrentPoint');
+
+if point(1,1)>xl(1) && point(1,1)<xl(2) && point(1,2)>yl(1) && point(1,2)<yl(2)
+    
+    if evnt.VerticalScrollCount<0
+        p1(1)=x0-zm*dx0;
+        p1(2)=y0-zm*dy0;
+        offset(1)=((xl(2)-xl(1))*zm);
+        offset(2)=((yl(2)-yl(1))*zm);
+    else
+        p1(1)=x0-dx0/zm;
+        p1(2)=y0-dy0/zm;
+        offset(1)=((xl(2)-xl(1))/zm);
+        offset(2)=((yl(2)-yl(1))/zm);
+    end
+    
+    [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
+    
+    set(handles.GUIHandles.mapAxis,'xlim',xl,'ylim',yl);
+    handles.screenParameters.xLim=xl;
+    handles.screenParameters.yLim=yl;
+    setHandles(handles);
+    
 end
-
-[xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
-
-set(handles.GUIHandles.mapAxis,'xlim',xl,'ylim',yl);
-handles.screenParameters.xLim=xl;
-handles.screenParameters.yLim=yl;
-setHandles(handles);
 

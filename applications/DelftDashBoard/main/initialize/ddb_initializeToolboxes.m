@@ -61,6 +61,7 @@ function ddb_initializeToolboxes
 
 %%
 handles=getHandles;
+
 toolboxnames=fieldnames(handles.toolbox);
 for k=1:length(toolboxnames)
     name=toolboxnames{k};

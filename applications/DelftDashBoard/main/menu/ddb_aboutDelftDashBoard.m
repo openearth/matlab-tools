@@ -1,4 +1,4 @@
-function ddb_aboutDelftDashBoard(handles)
+function ddb_aboutDelftDashBoard(hObject, eventdata)
 %DDB_ABOUTDELFTDASHBOARD  One line description goes here.
 %
 %   More detailed description goes here.
@@ -58,6 +58,8 @@ function ddb_aboutDelftDashBoard(handles)
 % $Revision: $
 % $HeadURL: $
 % $Keywords: $
+
+handles=getHandles;
 
 %%
 MakeNewWindow('About Delft Dashboard',[400 400],'modal',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);

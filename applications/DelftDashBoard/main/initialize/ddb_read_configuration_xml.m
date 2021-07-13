@@ -84,3 +84,44 @@ configuration.splash_screen='delftdashboard.jpg';
 if isfield(xml,'splashscreen')
     configuration.splash_screen = xml.splashscreen.splashscreen.value;
 end
+
+configuration.include_menu_shoreline=1;
+configuration.include_menu_coordinate_system=1;
+configuration.include_menu_options=1;
+
+if isfield(xml,'include_menu_coordinate_system')
+    if strcmpi(xml.include_menu_coordinate_system.include_menu_coordinate_system.value(1),'n')
+        configuration.include_menu_coordinate_system=0;
+    end    
+end
+
+if isfield(xml,'include_menu_options')
+    if strcmpi(xml.include_menu_options.include_menu_options.value(1),'n')
+        configuration.include_menu_options=0;
+    end    
+end
+
+if isfield(xml,'include_menu_shoreline')
+    if strcmpi(xml.include_menu_shoreline.include_menu_shoreline.value(1),'n')
+        configuration.include_menu_shoreline=0;
+    end    
+end
+
+% Help menu
+if isfield(xml,'menu_help')
+    for j=1:length(xml.menu_help)
+        configuration.menu_help(j).menu_help.text      = xml.menu_help(j).menu_help.text.text.value;
+        if isfield(xml.menu_help(j).menu_help,'url')
+            configuration.menu_help(j).menu_help.url      = xml.menu_help(j).menu_help.url.url.value;
+        else
+            configuration.menu_help(j).menu_help.callback = str2func(xml.menu_help(j).menu_help.callback.callback.value);
+        end
+    end
+else
+    configuration.menu_help(1).menu_help.text      = 'Deltares Online';
+    configuration.menu_help(1).menu_help.url       = 'https://www.deltares.nl/en/';
+    configuration.menu_help(2).menu_help.text      = 'Delft Dashboard Online';
+    configuration.menu_help(2).menu_help.url       = 'http://public.deltares.nl/display/OET/DelftDashboard';
+    configuration.menu_help(3).menu_help.text      = 'About Delft Dashboard';
+    configuration.menu_help(3).menu_help.callback  = str2func('ddb_aboutDelftDashBoard');
+end
