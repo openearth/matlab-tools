@@ -62,7 +62,7 @@ function handles = ddb_initializeObservationStations(handles, varargin)
 
 %%
 
-ddb_getToolboxData(handles.toolbox.observationstations.dataDir,'observationstations','ObservationStations');
+ddb_getToolboxData(handles,handles.toolbox.observationstations.dataDir,'observationstations','ObservationStations');
 
 dr=handles.toolbox.observationstations.dataDir;
 

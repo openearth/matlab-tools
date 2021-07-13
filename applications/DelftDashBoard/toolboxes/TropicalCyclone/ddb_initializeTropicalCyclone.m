@@ -61,12 +61,13 @@ function handles = ddb_initializeTropicalCyclone(handles, varargin)
 % $Keywords: $
 
 %%
+disp(['TC toolbox data directory ' handles.toolbox.tropicalcyclone.dataDir]);
 
-ddb_getToolboxData(handles.toolbox.tropicalcyclone.dataDir,'tropicalcyclone','TropicalCyclone');
-
-if ~isdir(handles.toolbox.tropicalcyclone.dataDir)
+if ~isfolder(handles.toolbox.tropicalcyclone.dataDir)
     mkdir(handles.toolbox.tropicalcyclone.dataDir);
 end
+
+ddb_getToolboxData(handles,handles.toolbox.tropicalcyclone.dataDir,'tropicalcyclone','TropicalCyclone');
 
 handles.toolbox.tropicalcyclone.drawingtrack=0;
 

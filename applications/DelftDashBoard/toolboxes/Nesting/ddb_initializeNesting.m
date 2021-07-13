@@ -62,7 +62,7 @@ function handles = ddb_initializeNesting(handles, varargin)
 
 %%
 
-ddb_getToolboxData(handles.toolbox.nesting.dataDir,'nesting','Nesting');
+ddb_getToolboxData(handles,handles.toolbox.nesting.dataDir,'nesting','Nesting');
 
 if nargin>1
     switch varargin{1}

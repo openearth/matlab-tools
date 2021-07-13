@@ -62,7 +62,7 @@ function handles = ddb_initializeNavigationCharts(handles, varargin)
 
 %%
 
-ddb_getToolboxData(handles.toolbox.navigationcharts.dataDir,'navigationcharts','NavigationCharts');
+ddb_getToolboxData(handles,handles.toolbox.navigationcharts.dataDir,'navigationcharts','NavigationCharts');
 
 handles.toolbox.navigationcharts.longName='Navigation Charts';
 handles.toolbox.navigationcharts.databases=[];

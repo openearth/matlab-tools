@@ -725,7 +725,6 @@ else
                 spw.reference_time=reftime;
                 spw.cs.name='WGS 84';
                 spw.cs.type='geographic';
-                spw.cut_off_speed=35;
                 spw.phi_spiral=inp.phi_spiral;
                 spw.rhoa=1.05;
                 spw.wind_conversion_factor=inp.windconversionfactor;
@@ -733,6 +732,7 @@ else
                 spw.wind_pressure_relation=inp.wind_pressure_relation;
                 spw.rmax_relation=inp.rmax_relation;
                 spw.cut_off_speed=30/1.85;  
+                spw.cut_off_speed=0/1.85;  
                 spw.pn=inp.pn;
                 
                 spw.asymmetry_magnitude='schwerdt1979';

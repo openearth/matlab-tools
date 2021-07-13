@@ -60,6 +60,10 @@ zg(zg==0)=NaN;
 if strcmpi(gridtype,'structured')
     % Find minimum grid resolution (in metres!) for this dataset
     [dmin,dmax]=findMinMaxGridSize(xg,yg,'cstype',coord.type);
+    if size(xg,1)==1 & size(xg,2)==1
+        dmin=10000;
+    end
+        
 % else
 %     % TODO determine minimum and maximum grid spacing fro unstructured
 %     % grids
@@ -108,6 +112,7 @@ for id=1:length(datasets)
     yl(1)=min(min(yg));
     yl(2)=max(max(yg));
     dbuf=(xl(2)-xl(1))/10;
+    dbuf=max(dbuf,0.1);
     xl(1)=xl(1)-dbuf;
     xl(2)=xl(2)+dbuf;
     yl(1)=yl(1)-dbuf;

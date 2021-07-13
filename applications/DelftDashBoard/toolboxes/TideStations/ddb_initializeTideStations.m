@@ -81,7 +81,7 @@ function handles = ddb_initializeTideStations(handles, varargin)
 
 %% For the time being...
 
-ddb_getToolboxData(handles.toolbox.tidestations.dataDir,'tidestations','TideStations');
+ddb_getToolboxData(handles,handles.toolbox.tidestations.dataDir,'tidestations','TideStations');
 
 dr=handles.toolbox.tidestations.dataDir;
 lst=dir([dr '*.nc']);
