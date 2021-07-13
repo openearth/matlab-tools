@@ -64,6 +64,20 @@ function fout = waitbox(name,varargin)
 
 global figureiconfile
 
+tag='';
+closefcn=[];
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'tag'}
+                tag=varargin{ii+1};
+            case{'closefcn'}
+                closefcn=varargin{ii+1};
+        end
+    end
+end
+
 % Current axis
 % hax=gca;
 
@@ -92,6 +106,11 @@ f = figure(...
     'IntegerHandle','off', ...
     'MenuBar', 'none', ...
     'Visible','off');
+
+set(f,'tag',tag);
+if ~isempty(closefcn)
+    set(f,'CloseRequestFcn',closefcn);
+end
 
 axNorm=[.05 .3 .9 .1];
 axPos=axNorm.*[pos(3:4),pos(3:4)] + [0 vertMargin 0 0];
