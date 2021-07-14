@@ -91,23 +91,23 @@ mkdir([datadir 'toolboxes']);
 mkdir([datadir 'supertrans']);
 
 % Bathymetry
-copyfile([repodatadir 'bathymetry\bathymetry.xml'],[datadir 'bathymetry']);
+copyfile([repodatadir 'bathymetry', filesep, 'bathymetry.xml'],[datadir 'bathymetry']);
 % And now copy zoomlevel 6 of GEBCO08
-mkdir([datadir 'bathymetry\gebco08']);
-mkdir([datadir 'bathymetry\gebco08\zl06']);
-copyfile([repodatadir 'bathymetry\gebco08\gebco08.nc'],[datadir 'bathymetry\gebco08']);
-copyfiles([repodatadir 'bathymetry\gebco08\zl06'],[datadir 'bathymetry\gebco08\zl06']);
+mkdir([datadir 'bathymetry', filesep, 'gebco08']);
+mkdir([datadir 'bathymetry', filesep, 'gebco08', filesep, 'zl06']);
+copyfile([repodatadir 'bathymetry', filesep, 'gebco08', filesep, 'gebco08.nc'],[datadir 'bathymetry', filesep, 'gebco08']);
+copyfiles([repodatadir 'bathymetry', filesep, 'gebco08', filesep, 'zl06'],[datadir 'bathymetry', filesep, 'gebco08', filesep, 'zl06']);
 
 % Shorelines
-copyfile([repodatadir 'shorelines\shorelines.xml'],[datadir 'shorelines']);
+copyfile([repodatadir 'shorelines', filesep, 'shorelines.xml'],[datadir 'shorelines']);
 % And now copy coarse shore line from wvs
-mkdir([datadir 'shorelines\wvs']);
-mkdir([datadir 'shorelines\wvs\c']);
-copyfile([repodatadir 'shorelines\wvs\wvs.nc'],[datadir 'shorelines\wvs']);
-copyfiles([repodatadir 'shorelines\wvs\c'],[datadir 'shorelines\wvs\c']);
+mkdir([datadir 'shorelines', filesep, 'wvs']);
+mkdir([datadir 'shorelines', filesep, 'wvs', filesep, 'c']);
+copyfile([repodatadir 'shorelines', filesep, 'wvs', filesep, 'wvs.nc'],[datadir 'shorelines', filesep, 'wvs']);
+copyfiles([repodatadir 'shorelines', filesep, 'wvs', filesep, 'c'],[datadir 'shorelines', filesep, 'wvs', filesep, 'c']);
 
 % Tide models
-copyfile([repodatadir 'tidemodels\tidemodels.xml'],[datadir 'tidemodels']);
+copyfile([repodatadir 'tidemodels', filesep, 'tidemodels.xml'],[datadir 'tidemodels']);
 
 % SuperTrans
 % Copy EPSG.mat file from SuperTrans data folder to DDB data folder
@@ -115,7 +115,7 @@ dr=fileparts(which('EPSG.mat'));
 copyfile([dr filesep 'EPSG.mat'],[datadir 'supertrans']);
 copyfile([dr filesep 'EPSG_ud.mat'],[datadir 'supertrans']);
 % Copy supertrans.xml from repo data folder to DDB data folder
-copyfile([repodatadir 'supertrans\SuperTrans.xml'],[datadir 'supertrans']);
+copyfile([repodatadir 'supertrans', filesep, 'SuperTrans.xml'],[datadir 'supertrans']);
 
 % Find toolboxes and copy xml files to data folders
 flist=dir([inipath 'toolboxes']);
