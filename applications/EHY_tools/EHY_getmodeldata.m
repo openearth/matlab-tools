@@ -559,7 +559,14 @@ end
 if isfield(Data,'times')
     idDel = find(diff(Data.times)<0)+1;
     Data.times(idDel:end) = [];
-    Data.val(idDel:end,:,:) = [];
+    if isfield(Data,'val')
+        Data.val(idDel:end,:,:) = [];
+    else
+        Data.vel_x(idDel:end,:,:) = [];
+        Data.vel_y(idDel:end,:,:) = [];
+        Data.vel_mag(idDel:end,:,:) = [];
+        Data.vel_dir(idDel:end,:,:) = [];
+    end
 end
 
 %% Fill output struct
