@@ -12,12 +12,27 @@
 %
 %cut initialization part of dia-file
 
-function D3D_cut_dia(sim_path)
+function D3D_cut_dia(sim_path,varargin)
 
-simdef.D3D.dire_sim=sim_path;
-simdef=D3D_simpath(simdef);
-dia_r=simdef.file.dia;
-dia_w=strrep(dia_r,'.dia','.dia_ini');
+%% parse
+
+parin=inputParser;
+
+addOptional(parin,'file',0)
+
+parse(parin,varargin{:})
+
+file_opt=parin.Results.file;
+
+if file_opt
+    dia_r=sim_path;
+    dia_w=strcat(dia_r,'.ini');
+else
+    simdef.D3D.dire_sim=sim_path;
+    simdef=D3D_simpath(simdef);
+    dia_r=simdef.file.dia;
+    dia_w=strrep(dia_r,'.dia','.dia_ini');
+end
 
 fid_r=fopen(dia_r,'r');
 fid_w=fopen(dia_w,'w');

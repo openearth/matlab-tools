@@ -1,3 +1,17 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+%Get path of one folder up from a given one
+
 function [folder2sendup_win,folder_last]=folderUp(folder2send_win)
 
 pathsplit=regexp(folder2send_win,'\','split');

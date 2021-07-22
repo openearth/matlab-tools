@@ -64,6 +64,7 @@ addOptional(parin,'num_test',3);
 addOptional(parin,'path_folder_out',fullfile(pwd,'output'));
 addOptional(parin,'location','cor');
 addOptional(parin,'write_files',true);
+addOptional(parin,'local',true);
 
 parse(parin,varargin{:});
 
@@ -73,6 +74,7 @@ num_test=parin.Results.num_test;
 path_folder_out=parin.Results.path_folder_out;
 location=parin.Results.location;
 write_files=parin.Results.write_files;
+write_local=parin.Results.local;
 
 %% READ DEP
 
@@ -134,28 +136,46 @@ end
 %% create files
 
 if write_files
-ns=numel(input_m.dep);
+    ns=numel(input_m.dep);
+    
+    messageOut(NaN,sprintf('Creating %d files...',ns));
+    for ks=1:ns
+        dep_loc=dep_ref;
+        fpath_dep=input_m.dep(ks).fpath;
+        amp=input_m.dep(ks).amp;
+        rng(input_m.dep(ks).num);
 
-for ks=1:ns
-    dep_loc=dep_ref;
-    fpath_dep=input_m.dep(ks).fpath;
-    amp=input_m.dep(ks).amp;
-    rng(input_m.dep(ks).num);
+        dep_noise=amp.*rand(size(dep_loc))-amp/2;
+        dep_loc=dep_loc+dep_noise;
+    
+        if write_local
+            [~,dep_fname,ext]=fileparts(fpath_dep);
+            fpath_dep_write=fullfile(pwd,sprintf('%s%s',dep_fname,ext));
+        else
+            fpath_dep_write=fpath_dep;
+        end
 
-    dep_noise=amp.*rand(size(dep_loc))-amp/2;
-    dep_loc=dep_loc+dep_noise;
-
-    switch simdef.D3D.structure
-        case 1
-            dep.cor.dep=dep_loc;
-            D3D_io_input('write',fpath_dep,dep,'location',location,'dummy',false,'format','%15.13e'); %some of this input may need to be varargin
-        case 2
-            dep(:,3)=dep_loc;
-            D3D_io_input('write',fpath_dep,dep);
-    end
-    messageOut(NaN,sprintf('File written %4.2f %%',ks/ns*100));
-end
-
-end
+        switch simdef.D3D.structure
+            case 1
+                dep.cor.dep=dep_loc;
+                D3D_io_input('write',fpath_dep_write,dep,'location',location,'dummy',false,'format','%15.13e'); %some of this input may need to be varargin
+            case 2
+                dep(:,3)=dep_loc;
+                D3D_io_input('write',fpath_dep_write,dep);
+        end
+        
+        %copy
+        if write_local
+            [sts,msg]=copyfile(fpath_dep_write,fpath_dep);
+            if ~sts
+                error(msg);
+            end
+        end
+        
+        %disp
+        messageOut(NaN,sprintf('File written %4.2f %%',ks/ns*100));
+    end %ks
+    messageOut(NaN,sprintf('Finished writing files: %s',path_folder_out));
+end %write files
 
 end %function
