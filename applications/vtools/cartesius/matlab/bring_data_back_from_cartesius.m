@@ -46,7 +46,7 @@
 %
 % bring_data_back_from_Cartesius(surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands,path_bring_back)
 
-function bring_data_back_from_Cartesius(surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands,varargin)
+function bring_data_back_from_cartesius(surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands,varargin)
 
 %% PARSE
 
@@ -88,6 +88,10 @@ fid_ca=fopen(path_ca,'w');
 switch flg.opt
     %% 1,2
     case {1,2}
+        %% send file with commands to cartesius
+
+    cmd_send_commands_ca=sprintf('scp %s %s@cartesius.surfsara.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+
         %% compress
 
 %         fname_compressed='move_data';
@@ -124,22 +128,20 @@ switch flg.opt
         cmd_cd_C_sim=sprintf('cd %s',output_folder_h6); 
         cmd_uncomp=sprintf('tar -zxvf %s',compressed_path_h6);
         cmd_del_tar=sprintf('rm -rf %s',compressed_path_h6); %delete tar
-
+        
         %% display
 
-%         fprintf('In Cartesius: \n\n')
-%         fprintf('Start if necessary: \n')
-        fprintf(fid_ca,'ssh %s@cartesius.surfsara.nl \n\n',surf_userid);
+        %cartesius commands
         fprintf(fid_ca,'%s \n',cmd_go_cartesius_folder);
         fprintf(fid_ca,'%s \n',cmd_comp);
-%         fprintf('\n')
         
-%         fprintf('In H6: \n\n')
+        %h6
+        fprintf(fid_h6,'%s \n',cmd_send_commands_ca);
+        fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
         fprintf(fid_h6,'%s \n',cmd_transport);
         fprintf(fid_h6,'%s \n',cmd_cd_C_sim);
         fprintf(fid_h6,'%s \n',cmd_uncomp);
         fprintf(fid_h6,'%s \n',cmd_del_tar);
-%         fprintf('\n')
 
         case 3
             nf=numel(path_bring_back);
@@ -166,7 +168,8 @@ fclose(fid_ca);
 
 %% disp
 
-fprintf('Run file for compressing data in Cartesius: %s \n',path_ca);
-fprintf('Run file for bringing data back to H6: %s \n',path_h6);
+% fprintf('Run file for compressing data in Cartesius: %s \n',path_ca);
+% fprintf('Run file for bringing data back to H6: %s \n',path_h6);
+fprintf('%s\n',linuxify(path_h6))
 
 end %function

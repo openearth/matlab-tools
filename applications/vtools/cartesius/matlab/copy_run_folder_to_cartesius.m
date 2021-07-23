@@ -103,7 +103,7 @@ fprintf(fid_h6,'%s \n',cmd_send_commands_ca);
 % fprintf('In Cartesius: \n\n');
 % fprintf('Start if necessary: \n');
 % fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl \n',surf_userid);
-fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(path_ca));
+fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
 
 fprintf(fid_ca,'%s \n',cmd_cd_C_sim);
 fprintf(fid_ca,'%s \n',cmd_uncomp);

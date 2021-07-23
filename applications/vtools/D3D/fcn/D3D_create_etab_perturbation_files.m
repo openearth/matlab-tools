@@ -77,7 +77,7 @@ write_files=parin.Results.write_files;
 write_local=parin.Results.local;
 
 %% READ DEP
-
+    
 [dir_in,~,ext_in]=fileparts(path_in);
 if isfolder(path_in) 
     simdef.D3D.dire_sim=path_in;
@@ -92,22 +92,25 @@ else
 end
 
 [~,fname_dep,ext_dep]=fileparts(path_dep);
-switch ext_dep
-    case '.dep'
-        simdef.D3D.structure=1;
-        if isfield(simdef.file,'grd')
-            path_grd=simdef.file.grd;
-        elseif isempty(path_grd)
-            error('I need a grid file to read a dep file in D3D4. Provide the mdf-file or the path to the grid file as pair input ''path_grd'',<path_grd>')
-        end
-        dep=D3D_io_input('read',path_dep,path_grd,'location',location); 
-        dep_ref=dep.cor.dep;
-    case '.xyz'
-        dep=D3D_io_input('read',path_dep);
-        simdef.D3D.structure=2;
-        dep_ref=dep(:,3);
-    otherwise 
-        error('not sure what to do')
+    
+if write_files
+    switch ext_dep
+        case '.dep'
+            simdef.D3D.structure=1;
+            if isfield(simdef.file,'grd')
+                path_grd=simdef.file.grd;
+            elseif isempty(path_grd)
+                error('I need a grid file to read a dep file in D3D4. Provide the mdf-file or the path to the grid file as pair input ''path_grd'',<path_grd>')
+            end
+            dep=D3D_io_input('read',path_dep,path_grd,'location',location); 
+            dep_ref=dep.cor.dep;
+        case '.xyz'
+            dep=D3D_io_input('read',path_dep);
+            simdef.D3D.structure=2;
+            dep_ref=dep(:,3);
+        otherwise 
+            error('not sure what to do')
+    end
 end
 
 %% variation depth
