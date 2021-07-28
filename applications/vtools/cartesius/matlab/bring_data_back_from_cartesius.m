@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 16663 $
-%$Date: 2020-10-21 10:32:44 +0200 (Wed, 21 Oct 2020) $
-%$Author: chavarri $
-%$Id: main_bring_data_back.m 16663 2020-10-21 08:32:44Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/cartesius/matlab/main_bring_data_back.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Get paths for bringing data from Cartesius to the p-drive
 %

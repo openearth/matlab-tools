@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 16663 $
-%$Date: 2020-10-21 10:32:44 +0200 (Wed, 21 Oct 2020) $
-%$Author: chavarri $
-%$Id: main_copy2cartesius.m 16663 2020-10-21 08:32:44Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/cartesius/matlab/main_copy2cartesius.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Creates the paths for transferring and running a simulation in Cartesius
 
