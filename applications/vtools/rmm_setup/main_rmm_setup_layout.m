@@ -28,11 +28,11 @@ simdef.paths.s3_out='C:\Users\chavarri\temporal\210212_jaarsom_toolbox\03_simula
 simdef.paths.sre_in='c:\Users\chavarri\temporal\200531_bc_rmm\models\16'; 
 simdef.paths.sre_out='c:\Users\chavarri\temporal\200531_bc_rmm\models_out\16';
 
-simdef.start_time=datetime(2018,01,07,01,59,00); %year,day,month,hour,minute,second
-simdef.stop_time=datetime(2018,02,03,15,24,00); %year,day,month,hour,minute,second
+simdef.start_time=datetime(2018,01,07,01,59,00); %year,momth,day,hour,minute,second
+simdef.stop_time=datetime(2018,02,03,15,24,00); %year,month,day,hour,minute,second
 
 %% CALC
 
 update_boundary_conditions_rmm_s3(simdef)
-% update_boundary_conditions_rmm_sre(simdef)
+update_boundary_conditions_rmm_sre(simdef)
 
