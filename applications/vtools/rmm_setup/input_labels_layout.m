@@ -64,7 +64,7 @@
 kl=0;
 
 kl=kl+1;
-var{kl,1}='H';
+val{kl,1}='H';
 labels_data{kl,1}='HOEKVHLD';
 labels_s3{kl,1}='Maasmond';
 function_s3(kl,1)=1;
@@ -74,7 +74,7 @@ function_sre(kl,1)=1;
 function_param_sre(kl,1)=-20;
 
 kl=kl+1;
-var{kl,1}='-';
+val{kl,1}='-';
 labels_data{kl,1}='HARVT10';
 labels_s3{kl,1}='HARVT10';
 function_s3(kl,1)=0;
@@ -84,7 +84,7 @@ function_sre(kl,1)=0;
 function_param_sre(kl,1)=0;
 
 kl=kl+1;
-var{kl,1}='-';
+val{kl,1}='-';
 labels_data{kl,1}='HARVT10';
 labels_s3{kl,1}='Bokkegat_buiten';
 function_s3(kl,1)=0;
@@ -94,7 +94,7 @@ function_sre(kl,1)=1;
 function_param_sre(kl,1)=+20;
 
 kl=kl+1;
-var{kl,1}='-';
+val{kl,1}='-';
 labels_data{kl,1}='HAGSBVN';
 labels_s3{kl,1}='Hagestein';
 function_s3(kl,1)=0;
@@ -104,7 +104,7 @@ function_sre(kl,1)=0;
 function_param_sre(kl,1)=0;
 
 kl=kl+1;
-var{kl,1}='H';
+val{kl,1}='H';
 labels_data{kl,1}='MEGDP';
 labels_s3{kl,1}='BovenLith';
 function_s3(kl,1)=0;
@@ -114,7 +114,7 @@ function_sre(kl,1)=0;
 function_param_sre(kl,1)=0;
 
 kl=kl+1;
-var{kl,1}='Q';
+val{kl,1}='Q';
 labels_data{kl,1}='TIELWL';
 labels_s3{kl,1}='BovenTiel';
 function_s3(kl,1)=0;
@@ -124,7 +124,7 @@ function_sre(kl,1)=0;
 function_param_sre(kl,1)=0;
 
 kl=kl+1;
-var{kl,1}='Cl';
+val{kl,1}='Cl';
 labels_data{kl,1}='EIJSDPTN';
 labels_s3{kl,1}='BovenLith';
 function_s3(kl,1)=0;
@@ -134,7 +134,7 @@ function_sre(kl,1)=0;
 function_param_sre(kl,1)=0;
 
 kl=kl+1;
-var{kl,1}='Cl';
+val{kl,1}='Cl';
 labels_data{kl,1}='LOBPTN';
 labels_s3{kl,1}='BovenTiel';
 function_s3(kl,1)=0;
@@ -144,7 +144,7 @@ function_sre(kl,1)=0;
 function_param_sre(kl,1)=0;
 
 kl=kl+1;
-var{kl,1}='Cl';
+val{kl,1}='Cl';
 labels_data{kl,1}='MAASMD'; %{'HOEKVHLRTOVR'}
 labels_s3{kl,1}='Maasmond';
 function_s3(kl,1)=0;
@@ -154,7 +154,7 @@ function_sre(kl,1)=0;
 function_param_sre(kl,1)=0;
 
 kl=kl+1;
-var{kl,1}='-';
+val{kl,1}='-';
 labels_data{kl,1}='RAKZ';
 labels_s3{kl,1}='ModelVolkerakLateraal';
 function_s3(kl,1)=0;
@@ -164,7 +164,7 @@ function_sre(kl,1)=0;
 function_param_sre(kl,1)=0;
 
 kl=kl+1;
-var{kl,1}='-';
+val{kl,1}='-';
 labels_data{kl,1}='BGGouda';
 labels_s3{kl,1}='Gouda';
 function_s3(kl,1)=0;

@@ -30,7 +30,7 @@ end
 %construct structure
 loclabels=struct();
 for kl=1:nl    
-    loclabels(kl).var=var{kl,1};
+    loclabels(kl).var=val{kl,1}; %problem calling it <var>
     loclabels(kl).data=labels_data{kl,1};
     
     loclabels(kl).s3=labels_s3{kl,1};

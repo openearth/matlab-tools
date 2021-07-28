@@ -69,6 +69,9 @@ for kseries=1:nseries
 %     name_block=name_rtc; %modify if the name of the block with the time series is different than the name of the rtc control group
     name_block=loclabels(kseries).s3_block;
     idx_bcn=find(strcmp({bcn.tsc.Locatiecode},loclabels(kseries).data));
+    if isempty(idx_bcn)
+        error('There is no label match between model and input data')
+    end
     search4block=true;
     kl=1;
     while search4block
