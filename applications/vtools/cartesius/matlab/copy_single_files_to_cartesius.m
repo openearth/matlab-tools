@@ -24,6 +24,7 @@ for kf=1:nf
 end
 
 fclose(fid);
-messageOut(NaN,sprintf('file with commands for H6: %s',path_commands))
+messageOut(NaN,'Run in H6: ');
+fprintf('%s \n',linuxify(path_commands))
 
 end %function

@@ -69,6 +69,7 @@ if nget~=0
     end
 else
     data_stations=[];
+    fprintf('No station found \n')
 end
 
 end %function

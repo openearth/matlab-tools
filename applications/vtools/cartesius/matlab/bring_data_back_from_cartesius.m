@@ -78,9 +78,9 @@ end
 
 %% FILES
 
-path_h6=fullfile(path_commands,'commands_2.sh');
+path_h6=fullfile(path_commands,'bring_data_back.sh');
 fid_h6=fopen(path_h6,'w');
-path_ca=fullfile(path_commands,'commands_1.sh');
+path_ca=fullfile(path_commands,'tmp_bring_data_back.sh');
 fid_ca=fopen(path_ca,'w');
 
 %% CALC
