@@ -67,8 +67,8 @@ switch input.mor.scheme
         etab_new(1,2:nx)=etab(1,2:nx)-MorFac*dt./cb./beta(1,2:nx)./(dx).* flux_bed;
     case 2 %Borsboom
         %second cell is BS
-        flux_bed=bed_flux_BS(Qb(1:3),B(1:3));
-        etab_new(1,1:2)      = etab(1,1:2)      - MorFac * dt /cb ./beta(1,1:2)./(dx) .* flux_bed;
+        flux_bed=bed_flux_BS(Qb(2:3),B(2:3));
+        etab_new(1,2)      = etab(1,2)      - MorFac * dt /cb ./beta(1,2)./(dx) .* flux_bed;
         
         %rest is Borsboom
         pmm(2,:)=beta_edg;

@@ -53,12 +53,16 @@ switch input.mor.scheme
         input.mdv.interp_edges=1;
         if isfield(input.mor,'fluxtype')==0
             input.mor.fluxtype=8;
-            warningprint('This morphodynamic scheme requires a flux type limiter which you are not specifying, I am using Koren.')
+            warningprint(fid_log,'This morphodynamic scheme requires a flux type limiter which you are not specifying, I am using Koren.')
         else 
             if input.mor.fluxtype>8
                 error('The automagic flux limiter for morphodynamics has not been implemented.')
             end
         end
+        if input.mor.ellcheck==0
+            warningprint(fid_log,'I am setting input.mor.ellcheck=1 because it is needed for computing the fluxes using this morphodynamic scheme')
+        end
+        input.mor.ellcheck=1;
     otherwise
         error('The automagic morphodynamic scheme has not been implemented.')
 end
