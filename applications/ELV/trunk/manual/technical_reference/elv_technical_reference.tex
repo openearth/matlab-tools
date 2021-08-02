@@ -6,9 +6,9 @@
 %$Id$
 %$HeadURL$
 %
-\documentclass{deltares_manual}
-
-\svnid{$Id$}
+%\documentclass{deltares_manual}
+\documentclass{deltares_report_elv}
+\renewcommand{\FrontCover}{\includegraphics[height=182mm,width=182mm]{figures/cover.jpg}}
 
 %---------references
 \usepackage{natbib} %references
@@ -110,7 +110,7 @@
 %\EURO{EUR}{#1}}
 %}
 
-
+\usepackage{svn}
 \usepackage{siunitx} %SI units
 
 \usepackage{alphalph} %after \appendix add \renewcommand\thesection{\AlphAlph{\value{section}}} 
@@ -156,9 +156,33 @@
 
 \begin{document}
 \title{\ELV}
-\subtitle{one-dimensional research modelling}
-\manualtype{Technical Reference Manual}
-\version{\$Revision}
+\subtitle{One-dimensional morphodynamic research modelling}
+\version{\SVN{$Revision$}}
+
+\author{Victor Chavarrias
+}
+\partner{}
+\coverPhoto{Frontpage: Laboratory experiment at the TU Delft modelled using \ELV.}
+\date{\today}
+\references{}
+
+
+%authors
+\authorboxi{Victor Chavarrias}
+\organisationi{Deltares}
+
+\authori{Victor Chavarrias}
+
+\client{}
+\contact{}
+\keywords{}
+\reference{}
+\classification{}
+\status{concept}
+\disclaimer{}
+\projectnumber{}
+\documentid{}
+\summary{}
 %\memoTo{ELV users}
 %\memoConfidentialUntil{}
 %\memoDate{\today~\currenttime}
@@ -182,7 +206,14 @@
 
 \deltarestitle
 
+\newpage
+
+\chapter{Introduction}
+
+\chapter{}
 \section{Introduction}
+
+\SVN{$Revision$}
 
 This memo describes the implementation of the Preissmann scheme \citep{Preissmann61_2,Preissman61_3,Lyn87_2} in \ELV{} for implicitly solving the \citet{SaintVenant71} equations. 
 
