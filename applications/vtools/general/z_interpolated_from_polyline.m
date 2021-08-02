@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17318 $
-%$Date: 2021-06-04 16:48:51 +0200 (Fri, 04 Jun 2021) $
-%$Author: chavarri $
-%$Id: convert2rkm.m 17318 2021-06-04 14:48:51Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/convert2rkm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Given a polyline <[x_s,y_s]> with values <[z_s]>, it finds
 %the value <z> associated to the point <[x,p]>.
