@@ -8,6 +8,7 @@
 %
 %\documentclass{deltares_manual}
 \documentclass{deltares_report_elv}
+\svnid{$Id$}
 \renewcommand{\FrontCover}{\includegraphics[height=182mm,width=182mm]{figures/cover.jpg}}
 
 %---------references
@@ -156,7 +157,7 @@
 
 \begin{document}
 \title{\ELV}
-\subtitle{One-dimensional morphodynamic research modelling}
+\subtitle{Technical reference manual}
 \version{\SVN{$Revision$}}
 
 \author{Victor Chavarrias
@@ -178,7 +179,7 @@
 \keywords{}
 \reference{}
 \classification{}
-\status{concept}
+\status{technical reference manual}
 \disclaimer{}
 \projectnumber{}
 \documentid{}
@@ -210,10 +211,62 @@
 
 \chapter{Introduction}
 
-\chapter{}
+\ELV is a open-source software written in Matlab for modelling one-dimensional river morphodynamic processes ideal for research purposes.
+
+Victor Chavarrias started it on the 23$^{\text{rd}}$ of February of 2016. Liselot Arkesteijn has implemented several features as well inestimable support and ideas. Pepijn van Denderen implemented the possibility of modelling several branches. The first backwater solver is thanks to Guglielmo Stecca. 
+
+\chapter{Code structure}
+
+\newcommand{\codeInit}{Initialization}
+\newcommand{\codeTimeLoop}{Time loop}
+	\newcommand{\codeFlowUpdate}{Flow update}
+	\newcommand{\codeFriction}{Friction correction}
+	\newcommand{\codeSedTrans}{Sediment transport}
+	\newcommand{\codeInterpolate}{Interpolation}
+	\newcommand{\codeStruiksma}{Struiksma reduction}
+	\newcommand{\codeParticleActivity}{Particle activity}
+	\newcommand{\codeNodalPoint}{Nodal point relation}
+	\newcommand{\codeBedLevelUpdate}{Bed level update}
+	\newcommand{\codeLaUpdate}{Active layer thickness update}
+	\newcommand{\codeGSDUpdate}{Grain size distribution update}
+	\newcommand{\codeFrictionUpdate}{Friction update}
+	\newcommand{\codeResultsWriting}{Results writing}
+	\newcommand{\codeTimeStep}{Time step computation}
+\newcommand{\codeFinal}{Finalization}
+
+The code structure is:
+\begin{enumerate}
+\item \codeInit{} (Section \ref{sec:codeInit}})
+%\item \codeTimeLoop (Section \ref{sec:codeTimeLoop}})
+\item Time loop
+\begin{enumerate}
+\item \codeFlowUpdate{} (Section \ref{sec:codeFlowUpdate})
+\item \codeFriction{} (Section \ref{sec:codeFriction})
+\item \codeSedtrans{} (Section \ref{sec:codeSedTrans})
+\item \codeInterpolate{} (Section \ref{sec:codeInterpolate})
+\item \codeStruiksma{} (Section \ref{sec:codeStruiksma})
+\item \codeParticleActivity{} (Section \ref{sec:codeParticleActivity})
+\item \codeNodalPoint{} (Section \ref{sec:codeNodalPoint})
+\item \codeBedLevelUpdate{} (Section \ref{sec:codeBedLevelUpdate})
+\item \codeLaUpdate{} (Section \ref{sec:codeLaUpdate})
+\item \codeGSDUpdate{} (Section \ref{sec:codeGSDUpdate})
+\item \codeFrictionUpdate{} (Section \ref{sec:codeFrictionUpdate})
+\item \codeResultsWriting{} (Section \ref{sec:codeResultsWriting})
+\item \codeTimeStep{} (Section \ref{sec:codeTimeStep})
+\end{enumerate}
+\item{\codeFinal{}}
+\end{enumerate}
+
+\section{\codeInit{}}
+\label{sec:codeInit}
+
+\section{\codeFinal{}}
+\label{sec:codeFinal}
+
+
 \section{Introduction}
 
-\SVN{$Revision$}
+%\SVN{$Revision$}
 
 This memo describes the implementation of the Preissmann scheme \citep{Preissmann61_2,Preissman61_3,Lyn87_2} in \ELV{} for implicitly solving the \citet{SaintVenant71} equations. 
 
