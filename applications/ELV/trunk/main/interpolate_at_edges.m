@@ -7,11 +7,11 @@
 %problem send us an email:
 %v.chavarriasborras@tudelft.nl
 %
-%$Revision: 16814 $
-%$Date: 2020-11-19 05:33:47 +0100 (Thu, 19 Nov 2020) $
-%$Author: chavarri $
-%$Id: bed_level_update.m 16814 2020-11-19 04:33:47Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/ELV/trunk/main/bed_level_update.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %bed_level_update updates the bed elevation
 %
