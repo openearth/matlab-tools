@@ -112,6 +112,8 @@
 %}
 
 \usepackage{svn}
+\usepackage{enumitem}
+
 \usepackage{siunitx} %SI units
 
 \usepackage{alphalph} %after \appendix add \renewcommand\thesection{\AlphAlph{\value{section}}} 
@@ -154,11 +156,12 @@
 %math
 \newcommand{\La}{L_{\mathrm{a}}}
 \newcommand{\mathsub}[2]{#1_{\mathrm{#2}}}
+\newcommand{\Fr}{\mathrm{Fr}}
 
 \begin{document}
 \title{\ELV}
 \subtitle{Technical reference manual}
-\version{\SVN{$Revision$}}
+\version{\svnrev}
 
 \author{Victor Chavarrias
 }
@@ -211,7 +214,7 @@
 
 \chapter{Introduction}
 
-\ELV is a open-source software written in Matlab for modelling one-dimensional river morphodynamic processes ideal for research purposes.
+\ELV{} is a open-source software written in Matlab for modelling one-dimensional river morphodynamic processes ideal for research purposes.
 
 Victor Chavarrias started it on the 23$^{\text{rd}}$ of February of 2016. Liselot Arkesteijn has implemented several features as well inestimable support and ideas. Pepijn van Denderen implemented the possibility of modelling several branches. The first backwater solver is thanks to Guglielmo Stecca. 
 
@@ -235,14 +238,14 @@ Victor Chavarrias started it on the 23$^{\text{rd}}$ of February of 2016. Liselo
 \newcommand{\codeFinal}{Finalization}
 
 The code structure is:
-\begin{enumerate}
-\item \codeInit{} (Section \ref{sec:codeInit}})
+\begin{enumerate}[label*=\arabic*.]
+\item \codeInit{} (Section \ref{sec:codeInit})
 %\item \codeTimeLoop (Section \ref{sec:codeTimeLoop}})
-\item Time loop
-\begin{enumerate}
+\item \codeTimeLoop{} 
+\begin{enumerate}[label*=\arabic*.]
 \item \codeFlowUpdate{} (Section \ref{sec:codeFlowUpdate})
 \item \codeFriction{} (Section \ref{sec:codeFriction})
-\item \codeSedtrans{} (Section \ref{sec:codeSedTrans})
+\item \codeSedTrans{} (Section \ref{sec:codeSedTrans})
 \item \codeInterpolate{} (Section \ref{sec:codeInterpolate})
 \item \codeStruiksma{} (Section \ref{sec:codeStruiksma})
 \item \codeParticleActivity{} (Section \ref{sec:codeParticleActivity})
@@ -260,21 +263,14 @@ The code structure is:
 \section{\codeInit{}}
 \label{sec:codeInit}
 
-\section{\codeFinal{}}
-\label{sec:codeFinal}
+The space domain $x$ is discretized into $N$ cells of equal length $\Delta x$ [\si{m}]. The equations are solved in a one-dimensional domain of length $L$ [\si{m}] extending from $x=\mathsub{x}{o}$ until $x=\mathsub{x}{f}$ over time $T$ [\si{s}] between $t=\mathsub{t}{1}$ and $t=\mathsub{t}{2}$. 
 
+\section{\codeFlowUpdate{}}
+\label{sec:codeFlowUpdate}
 
-\section{Introduction}
+\subsection{Physical system of equations}
 
-%\SVN{$Revision$}
-
-This memo describes the implementation of the Preissmann scheme \citep{Preissmann61_2,Preissman61_3,Lyn87_2} in \ELV{} for implicitly solving the \citet{SaintVenant71} equations. 
-
-Liselot Arkesteijn first implemented the scheme. Performance was later improved by Victor Chavarrias. 
-
-\section{Physical system of equations}
-
-\subsection{Set of equations}
+%\subsection{Set of equations}
 
 The \citet{SaintVenant71} equations in conservative form read:
 \begin{equation}
@@ -286,73 +282,53 @@ The \citet{SaintVenant71} equations in conservative form read:
 \frac{\partial q}{\partial t}+\frac{\partial q^2/h}{\partial x}+\frac{1}{2}g\frac{\partial h^2}{\partial x}+gh\frac{\partial \eta}{\partial x}=-C_f\frac{q^2}{h^2} \;.
 \end{equation}
 
-The independent variables are:
-\begin{itemize}
-\item $x$ [\si{m}] the streamwise coordinate,
-\item $t$ [\si{s}] the time coordinate.
-\end{itemize}
+In solving the flow equations, $g$ and $\mathsub{C}{f}$ are assumed constant and $\eta$ constant in time.
 
-The dependent variables are:
-\begin{itemize}
-\item $h$ [\si{m}] the flow depth,
-\item $q$ [\si{m^2/s}] the specific discharge.
-\end{itemize}
 
-The constants are:
-\begin{itemize}
-\item $g$ [\si{m/s^2}] the acceleration due to gravity,
-\item $\mathsub{C}{f}$ [-] the non-dimensional friction coefficient.
-\end{itemize}
+%\subsection{Linearization of the system of equations}
+%
+%We consider a reference state that is a solution to the system of equations. The reference state is a steady uniform straight flow in the $x$ direction over an inclined plane bed. Mathematically: $h_0=\text{ct.}$, $q_0=\text{ct.}$, $\frac{\partial \eta}{\partial x}=\text{ct.}=\frac{-\mathsub{C}{f}{q_0}^2}{gh_0^3}$, where ct.\ denotes a constant different from 0 and subscript $0$ indicates the reference solution. 
+%
+%We add a small perturbation to the reference solution denoted by $'$ and we linearise the resulting system of equations. After substituting the reference solution we obtain a system of equations of the perturbed variables:
+%\begin{equation}
+%\label{eq:matrixf_sf}
+	%\frac{\partial \mathbf{G'}}{\partial t}+\mathbf{C_{0}}\frac{\partial \mathbf{G'}}{\partial x}+\mathbf{B_0}\mathbf{G'}=0 \;,
+%\end{equation}
+%where the vector of dependent variables is:
+%\begin{equation}
+%\label{eq:Q_l}
+	%\mathbf{G'}=\left[h',q'\right]^{\intercal} \;,
+%\end{equation}
+%
+%The advective matrix in $x$ direction is:
+%\begin{equation}
+%\label{eq:Ax_sf}
+%\makebox[\textwidth][c]{$
+		%\mathbf{C_{0}}=\left[
+ %\begin{array}{cc}
+%%wmass 
+  %0 & 1  \\
+%%water mom x
+	%gh_0-\left(\frac{q_{\mathrm{x}0}}{h_0}\right)^2 & 2\frac{q_{\mathrm{x}0}}{h_0} \\
+ %\end{array}\right] \;.
+%$}
+%\end{equation}
+%
+%The matrix of linear terms is:
+%\begin{equation}
+%\label{eq:B}
+%\makebox[\textwidth][c]{$
+		%\mathbf{B_0}=\left[
+		%\begin{array}{cc}
+  %0 & 0 \\
+	%\frac{-3C_{\mathrm{f}}q_{\mathrm{x}0}^2}{h_0^3} & \frac{2C_{\mathrm{f}}q_{\mathrm{x}0}}{h_0^2} \\
+ %\end{array}\right] \;.
+%$}
+%\end{equation}
 
-The constant functions of $x$ are:
-\begin{itemize}
-\item $\eta$ [\si{m}] the bed elevation. 
-\end{itemize}
+%\subsection{Boundary conditions}
 
-\section{Linearization of the system of equations}
 
-We consider a reference state that is a solution to the system of equations. The reference state is a steady uniform straight flow in the $x$ direction over an inclined plane bed. Mathematically: $h_0=\text{ct.}$, $q_0=\text{ct.}$, $\frac{\partial \eta}{\partial x}=\text{ct.}=\frac{-\mathsub{C}{f}{q_0}^2}{gh_0^3}$, where ct.\ denotes a constant different from 0 and subscript $0$ indicates the reference solution. 
-
-We add a small perturbation to the reference solution denoted by $'$ and we linearise the resulting system of equations. After substituting the reference solution we obtain a system of equations of the perturbed variables:
-\begin{equation}
-\label{eq:matrixf_sf}
-	\frac{\partial \mathbf{G'}}{\partial t}+\mathbf{C_{0}}\frac{\partial \mathbf{G'}}{\partial x}+\mathbf{B_0}\mathbf{G'}=0 \;,
-\end{equation}
-where the vector of dependent variables is:
-\begin{equation}
-\label{eq:Q_l}
-	\mathbf{G'}=\left[h',q'\right]^{\intercal} \;,
-\end{equation}
-
-The advective matrix in $x$ direction is:
-\begin{equation}
-\label{eq:Ax_sf}
-\makebox[\textwidth][c]{$
-		\mathbf{C_{0}}=\left[
- \begin{array}{cc}
-%wmass 
-  0 & 1  \\
-%water mom x
-	gh_0-\left(\frac{q_{\mathrm{x}0}}{h_0}\right)^2 & 2\frac{q_{\mathrm{x}0}}{h_0} \\
- \end{array}\right] \;.
-$}
-\end{equation}
-
-The matrix of linear terms is:
-\begin{equation}
-\label{eq:B}
-\makebox[\textwidth][c]{$
-		\mathbf{B_0}=\left[
-		\begin{array}{cc}
-  0 & 0 \\
-	\frac{-3C_{\mathrm{f}}q_{\mathrm{x}0}^2}{h_0^3} & \frac{2C_{\mathrm{f}}q_{\mathrm{x}0}}{h_0^2} \\
- \end{array}\right] \;.
-$}
-\end{equation}
-
-\subsection{Boundary conditions}
-
-The equations are solved in a one-dimensional domain of length $L$ [\si{m}] extending from $x=\mathsub{x}{o}$ until $x=\mathsub{x}{f}$ over time $T$ [\si{s}] between $t=\mathsub{t}{1}$ and $t=\mathsub{t}{2}$.
 
 At $t=\mathsub{t}{1}$, $h=\mathsub{H}{1}(x)$ and $q=\mathsub{Q}{1}(x)$ for $\mathsub{x}{o}\leq x \leq\mathsub{x}{f}$.
 
@@ -360,15 +336,9 @@ At $x=\mathsub{x}{o}$, $q=\mathsub{Q}{o}(x)$ for $\mathsub{t}{1}\leq t \leq\math
 
 At $x=\mathsub{x}{f}$, $h=\mathsub{H}{f}(x)$ for $\mathsub{t}{1}\leq t \leq\mathsub{t}{2}$.
 
-\section{Numerical discretization}
+\subsection{Numerical discretization}
 
-\subsection{Domain}
-
-The space domain $x$ is discretized into $N$ cells of equal length $\Delta x$ [\si{m}]. The equations are solved at the cell centre. 
-
-\subsection{Scheme}
-
-The non-linear set of equations (\ref{eq:sv_mass})-(\ref{eq:sv_mom}) is discretized by means of the $\theta$-box scheme:
+The non-linear set of equations (\ref{eq:sv_mass})-(\ref{eq:sv_mom}) is discretized at the cell centres by means of the $\theta$-box scheme:
 \begin{equation}
 \frac{\partial f}{\partial t}=\frac{1}{2}\left(\frac{f_{m+1}^{n+1}-f_{m+1}^{n}}{\Delta t}+\frac{f_{m}^{n+1}-f_{m}^{n}}{\Delta t}\right) \;,
 \end{equation}
@@ -379,10 +349,11 @@ where $\theta\in[0.5,1]$ is a parameter, $m\in[1,N]$ is an index indicating cell
 
 For $\theta=0.5$ one obtains the Preissmann scheme \citep{Preissmann61_2,Preissmann61_3,Lyn87_2}.
 
-The first term in Equation (\ref{eq:sv_mass}) is:
-\begin{equation}
 
-\end{equation}
+The first term in Equation (\ref{eq:sv_mass}) is:
+%\begin{equation}
+
+%\end{equation}
 
 The slope is approximated as:
 \begin{equation}
@@ -391,9 +362,9 @@ The slope is approximated as:
 
 
 
-\errmessage{Jacobian terms}
+%\errmessage{Jacobian terms}
 
-\section{Solution of the algebraic system of equations}
+\subsection{Solution of the algebraic system of equations}
 
 The discretized set of equations form a system of algebraic equations:
 \begin{equation}
@@ -441,7 +412,109 @@ where $j$ is the iteration index. The operation to the right of equation (\ref{e
 r=\max{\left|\left(\mathbf{A}^{j}\mathbf{Q}^{j}-\mathbf{B}^{j}\right)\right|} \;.
 \end{equation}
 
+\section{\codeFriction{}}
+\label{sec:codeFriction}
 
+\section{\codeSedTrans{}}
+\label{sec:codeSedTrans}
+
+\section{\codeInterpolate{}}
+\label{sec:codeInterpolate}
+
+Some functions require information at cell edges ($m-1/2$ and $m+1/2$). This is done by linear interpolation. Extrapolation is applied at the first and last cells.
+
+\section{\codeStruiksma{}}
+\label{sec:codeStruiksma}
+
+\section{\codeParticleActivity{}}
+\label{sec:codeParticleActivity}
+
+\section{\codeNodalPoint{}}
+\label{sec:codeNodalPoint}
+
+\section{\codeBedLevelUpdate{}}
+\label{sec:codeBedLevelUpdate}
+
+\subsection{Physical system of equations}
+
+Mass conservation of sediment is solved in its flux form (Section \ref{sec:exner_flux}):
+\begin{equation}
+\label{eq:exner_flux}
+\frac{\partial \eta}{\partial t}+\frac{\mathsub{M}{f}}{\mathsub{c}{b}\beta}\frac{\partial \mathsub{q}{b}}{\partial x}=0 \;,
+\end{equation}
+or in entrainment-deposition form (Section \ref{sec:exner_ed}):
+\begin{equation}
+\frac{\partial \eta}{\partial t}=\frac{\mathsub{M}{f}}{\mathsub{c}{b}}\left(D-E\right)=0 \;.
+\end{equation}
+
+\subsection{Numerical discretization of the flux form}
+\label{sec:exner_ed}
+
+\newcommand{\BorsboomScheme}{Borsboom scheme}
+
+The flux version (Equation \ref{eq:exner_flux}) can be solved using a FTBS (Forward in Time and Backward in Space) scheme (Section \ref{sec:exner_ftbs}) or the \BorsboomScheme{} (Section \ref{sec:BorsboomScheme}). 
+
+\subsubsection{FTBS}
+\label{sec:exner_FTBS}
+
+\begin{equation}
+\eta_{m}^{n+1}=\eta_{m}^{n}-\frac{\mathsub{M}{f}\Delta t}{\mathsub{c}{b}\beta_{m}\Delta x}\left(\left.\mathsub{q}{b}\right._{m-1}^{n}-\left.\mathsub{q}{b}\right._{m}^{n}\right)
+\end{equation}
+
+\subsubsection{\BorsboomScheme{}}
+
+The bed elevation at the cell centre of the first and last two cells is found applying FTBS (Section \ref{sec:exner_FTBS}). 
+
+The remaining cell centre bed elevation is updated as:
+\begin{equation}
+\label{eq:exner_borsboom}
+\eta_{m}^{n+1}=\eta_{m}^{n}-\frac{\mathsub{M}{f}\Delta t}{\mathsub{c}{b}\beta_{m}\Delta x}\left(\varphi_{m-1/2}^{n}-\varphi_{m+1/2}^{n}\right) \;,
+\end{equation}
+%
+\begin{equation}
+\label{eq:phi_borsboom}
+\varphi_{m-1/2}=\left.\mathsub{q}{b}\right._{m-1/2}+\frac{1}{2}c_{m-1/2}\left[\left(1-\left.\mathsub{\sigma}{b}\right._{m-1/2}\right)\Phi_{m-1}-1\right]\left(\eta_{m}-\eta_{m-1}\right) \;,
+\end{equation}
+%
+\begin{equation}
+\label{eq:sigma_borsboom}
+\left.\mathsub{\sigma}{b}\right._{m-1/2}=c_{m-1/2}\frac{\Delta t}{\Delta x} \;,
+\end{equation}
+%
+\begin{equation}
+\label{eq:sigma_borsboom}
+\left.\mathsub{\sigma}{b}\right._{m-1/2}=c_{m-1/2}\frac{\Delta t}{\Delta x} \;,
+\end{equation}
+%
+$\phi_{m}$ is a flux limiter (Appendix \ref{app:flux_lim}) based on $r_{m}$:
+\begin{equation}
+\label{eq:r_borsboom}
+r_{m}=\frac{\eta_m-\eta_{m-1}}{\eta_{m+1}-\eta_m+\epsilon} \;,
+\end{equation}
+where $\epsilon=\num{1e-10}$ is a tolerance. 
+%
+$c$ is the bed celerity (Appendix \ref{sec:celerities})
+
+\subsection{Numerical discretization of the entrainment-deposition form}
+\label{sec:exner_ed}
+
+\section{\codeLaUpdate{}}
+\label{sec:codeLaUpdate}
+
+\section{\codeGSDUpdate{}}
+\label{sec:codeGSDUpdate}
+
+\section{\codeFrictionUpdate{}}
+\label{sec:codeFrictionUpdate}
+
+\section{\codeResultsWriting{}}
+\label{sec:codeResultsWriting}
+
+\section{\codeTimeStep{}}
+\label{sec:codeTimeStep}
+
+\section{\codeFinal{}}
+\label{sec:codeFinal}
 
 %\begin{figure}[ht]
     %\centering
@@ -477,9 +550,84 @@ r=\max{\left|\left(\mathbf{A}^{j}\mathbf{Q}^{j}-\mathbf{B}^{j}\right)\right|} \;
 %
 %\section{Discussion}
 
-%\newpage
-%\appendix
-%\renewcommand\thesection{\AlphAlph{\value{section}}}
+\newpage
+\appendix
+\renewcommand\thesection{\AlphAlph{\value{section}}}
+
+\chapter{Variables}
+
+\begin{longtable}{|p{1.5cm}|p{1.5cm}|p{10cm}|}
+\caption{Variables in \ELV{}}\\
+\hline
+\textbf{Symbol} & \textbf{Unit} & \textbf{Meaning} \\
+\hline
+\endfirsthead
+\multicolumn{3}{c}%
+{\tablename\ \thetable\ -- \textit{Continued from previous page}} \\
+\hline
+%\textbf{First entry} & \textbf{Second entry} & \textbf{Third entry} & \textbf{Fourth entry} \\
+\hline
+\endhead
+\hline \multicolumn{3}{r}{\textit{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+$c$ & \si{m/s} & bed celerity \\
+$c^{*}$ & \si{m/s} & non-dimensional bed celerity \\
+$\mathsub{c}{b}$ & - & 1-porosity \\
+$\mathsub{C}{f}$ & - & non-dimensional friction coefficient \\
+$D$ & \si{m/s} & Deposition rate \\
+$E$ & \si{m/s} & Entrainment rate \\
+$\Fr{}$ & - & Froude number \\
+$g$ & \si{m/s^2} & acceleration due to gravity \\
+$h$ & \si{m} & flow depth \\
+$m$ & - & index of the cell centre \\
+$n$ & - & index of time \\
+$\mathsub{M}{f}$ & - & morphodynamic acceleration factor \\
+$q$ & \si{m^2/s} & discharge per unit width \\
+$\mathsub{q}{b}$ & \si{m^2/s} & sediment discharge per unit width \\
+$t$ & \si{s} & time coordinate \\
+$x$ & \si{m} & streamwise coordinate \\
+$\alpha$ & - & preconditioning variable for volume fraction content\\
+$\beta$ & - & preconditioning variable for bed elevation\\
+$\Delta t$ & \si{s} & time step \\
+$\Delta x$ & \si{m} & space step \\
+$\Phi$ & - & flux limiter \\
+$\eta$ & \si{m} & bed elevation \\ 
+$\mathsub{\sigma}{b}$ & - & CFL number of the bed \\
+\end{longtable}
+
+\chapter{Flux limiters}
+\label{app:flux_lim}
+
+\section{Koren}
+
+\begin{equation}
+\Phi=\max\left(0,\min\left(2,\min\left(2+\frac{r}{3},2r\right)\right)\right)
+\end{equation}
+
+\chapter{Celerities}
+\label{sec:celerities}
+
+The bed celerity is computed as:
+\begin{equation}
+\label{eq:c_bed}
+c=\frac{\mathsub{M}{f}u}{\mathsub{c}{b}\beta}c^{*}\;,
+MorFac*u.*celerities.lb./(1-porosity)./beta
+\end{equation}
+%
+where the non-dimensional bed celerity $c*$ [-] is computed as:
+\begin{equation}
+\label{eq:c_bed_nondim}
+c^{*}=\frac{\psi}{1-\Fr{}^2}\;,
+\end{equation}
+\begin{equation}
+\label{eq:psi}
+\psi=\frac{\partial \mathsub{q}{b}}{\partial u} \;,
+\end{equation}
+where the derivative is computed with finite differences. 
+
+\end{document}
 
 %
 %
@@ -492,7 +640,7 @@ r=\max{\left|\left(\mathbf{A}^{j}\mathbf{Q}^{j}-\mathbf{B}^{j}\right)\right|} \;
 \section*{References}
 \DeclareRobustCommand{\van}[3]{#3}
 %\bibliographystyle{agufull08_mod}
-\bibliography{references}
+\bibliography{../references/references}
 
 %\includepdf[pages=-]{include/timeline.pdf} 
 
