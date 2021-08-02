@@ -85,13 +85,15 @@ coords=parin.Results.coords;
 
 tim_v=tim_0:dt:tim_f;
 nt=numel(tim_v)-1;
-path_all_p=fullfile(path_dir_out,'download_matroos_all.sh');
-path_all_c=fullfile(pwd,'download_matroos_all.sh');
+fname_sh='download_matroos_all.sh';
+path_all_p=fullfile(path_dir_out,fname_sh);
+path_all_c=fullfile(pwd,fname_sh);
 fid_all=fopen(path_all_c,'w');
 
 %local file
 fprintf(fid_all,'!/bin/bash \n');
 fprintf(fid_all,' \n');
+fprintf(fid_all,'cd %s \n',linuxify(path_dir_out));
 
 for kt=1:nt
     t0_str=datestr(tim_v(kt  ),'yyyymmddHHMM');
@@ -120,5 +122,7 @@ fclose(fid_all);
 copyfile(path_all_c,path_all_p)
 delete(path_all_c)
 messageOut(NaN,sprintf('file created: %s',path_all_p));
+fprintf('In H6: \n')
+fprintf('qsub %s &> read.txt \n',linuxify(path_all_p))
 
 end %functions

@@ -29,8 +29,10 @@ str_file=parin.Results.str_file;
 
 %% CALC
 
+% path_all=matroos_file_name(str_file,kt,tim_v,path_dir_out);
 fname_all=sprintf(str_file,datestr(tim_0,'yyyymmddHHMM'),datestr(tim_f,'yyyymmddHHMM'));
-path_all=fullfile(path_dir_out,fname_all);
+fname_all_ext=sprintf('%s.nc',fname_all);
+path_all=fullfile(path_dir_out,fname_all_ext);
 
 tim_v=tim_0:dt:tim_f;
 nt=numel(tim_v)-1;
@@ -113,7 +115,8 @@ end %join_matroos
 function path_loc=matroos_file_name(str_file,kt,tim_v,path_dir_out)
 
 fname_loc=sprintf(str_file,datestr(tim_v(kt),'yyyymmddHHMM'),datestr(tim_v(kt+1),'yyyymmddHHMM'));
-path_loc=fullfile(path_dir_out,fname_loc);
+fname_loc_ext=sprintf('%s.nc',fname_loc);
+path_loc=fullfile(path_dir_out,fname_loc_ext);
 if exist(path_loc,'file')~=2
     error('file does not exist: %s',path_loc)
 end

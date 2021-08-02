@@ -116,10 +116,15 @@ switch flg.opt
 
         cmd_go_cartesius_folder=sprintf('cd %s',folder2work_cartesius);
         cmd_comp=sprintf('tar -zcvf %s %s',compressed_path_cartesius,fname_compress);
-
+        
+        %% mkdir
+        
+        compressed_path_h6=strrep(compressed_path_cartesius,cartesius_project_folder_lin,'/p/');
+        [path_dir,~,~]=fileparts(compressed_path_h6);
+        cmd_mkdir=sprintf('mkdir %s',linuxify(path_dir));
+        
         %% transport
 
-        compressed_path_h6=strrep(compressed_path_cartesius,cartesius_project_folder_lin,'/p/');
         cmd_transport=sprintf('rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:%s %s',surf_userid,compressed_path_cartesius,compressed_path_h6);
 
         %% uncompress
@@ -138,21 +143,27 @@ switch flg.opt
         %h6
         fprintf(fid_h6,'%s \n',cmd_send_commands_ca);
         fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        fprintf(fid_h6,'%s \n',cmd_mkdir);
         fprintf(fid_h6,'%s \n',cmd_transport);
         fprintf(fid_h6,'%s \n',cmd_cd_C_sim);
         fprintf(fid_h6,'%s \n',cmd_uncomp);
         fprintf(fid_h6,'%s \n',cmd_del_tar);
 
         case 3
+            %% transport
             nf=numel(path_bring_back);
             cmd_transport=cell(nf,1);
+            cmd_mkdir=cell(nf,1);
             for kf=1:nf
+                [path_dir,~,~]=fileparts(path_bring_back{kf});
+                cmd_mkdir{kf}=sprintf('mkdir %s',linuxify(path_dir));
                 cmd_transport{kf,1}=sprintf('rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:%s %s',surf_userid,cartesify(cartesius_project_folder_lin,path_bring_back{kf}),linuxify(path_bring_back{kf}));
             end %kf
             
             %% display
 %             fprintf('In H6: \n\n')
             for kf=1:nf
+                fprintf(fid_h6,'%s \n',cmd_mkdir{kf,1});
                 fprintf(fid_h6,'%s \n',cmd_transport{kf,1});
             end %kf
 %             fprintf('\n')
