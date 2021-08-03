@@ -108,6 +108,12 @@ function [outLDB ori_ldb_inds]=add_equidist_points(dx,ldb,varargin)
 % freek.scheel@deltares.nl
 %
 
+%
+% Small additions 2021 by Freek Scheel:
+%
+%  - Completely re-written with pre-allocation, may be orders of magnitude
+%  faster, particularly for large vectors (>100.000 points)
+
 %% Some initial handling:
 %
 
@@ -192,15 +198,33 @@ end
 %% Actual ldb scripting:
 %
 
-ori_ldb_inds = []; cur_ori_ind = 0;
+ori_ldb_inds = NaN(size(cell2mat(ldbCell),1),1); cur_ori_ind = 1; cur_ori_tel = 0;
 for cc=1:length(ldbCell)
-    cur_ori_ind = cur_ori_ind+2;
+    cur_ori_ind = cur_ori_ind+1;
     in=ldbCell{cc};
-    out=[];
+    out=NaN(sum(ceil(diff(pathdistance(in(:,1),in(:,2))) ./ dx))+1,2);
+    tel = 1;
     for ii=1:size(in,1)-1
+        cur_ori_tel = cur_ori_tel+1;
         %Determine distance between two points 
         dist=sqrt((in(ii+1,1)-in(ii,1)).^2 + (in(ii+1,2)-in(ii,2)).^2);
-        if dist~=0
+        if dist == 0
+            continue
+        elseif dist <= dx
+            ox=in(ii,1);
+            oy=in(ii,2);
+            out(tel:tel+length(ox)-1,:)=[ox oy];
+            ori_ldb_inds(cur_ori_tel) = cur_ori_ind; cur_ori_ind = cur_ori_ind+1;
+            tel = tel+1;
+            if ii==(size(in,1)-1)
+                ox=in(ii+1,1);
+                oy=in(ii+1,2);
+                out(tel,:)=[ox oy];
+                tel = tel+1;
+                cur_ori_tel = cur_ori_tel+1;
+                ori_ldb_inds(cur_ori_tel) = cur_ori_ind;
+            end
+        elseif dist~=0
             if strcmp(dx_opt,'exact')
                 ox=interp1([0 dist],in(ii:ii+1,1),0:dx:dist)';
                 oy=interp1([0 dist],in(ii:ii+1,2),0:dx:dist)';
@@ -212,29 +236,44 @@ for cc=1:length(ldbCell)
             else
                 error(['Unknown dx_opt option: ''' dx_opt '''']);
             end
-
-            if ii>1
-                if (out(end,1) == ox(1,1)) & (out(end,2) == oy(1,1))
-                    out=[out ; [ox(2:end,1) oy(2:end,1)]];
-                    ori_ldb_inds = [ori_ldb_inds; cur_ori_ind+length(ox)-1];
-                else
-                    out=[out ; [ox oy]];
-                    cur_ori_ind  = cur_ori_ind + 1;
-                    ori_ldb_inds = [ori_ldb_inds(1:end-1); cur_ori_ind; cur_ori_ind+length(ox)-1];
-                end
+            
+            if (in(ii+1,1) == ox(end,1)) & (in(ii+1,2) == oy(end,1)) && ii~=(size(in,1)-1)
+                out(tel:tel+length(ox)-2,:)=[ox(1:end-1,1) oy(1:end-1,1)];
+                ori_ldb_inds(cur_ori_tel) = cur_ori_ind; cur_ori_ind = cur_ori_ind+length(ox)-1;
+                tel = tel+length(ox)-1;
             else
-                out=[out ; [ox oy]];
-                ori_ldb_inds = [ori_ldb_inds; cur_ori_ind; cur_ori_ind+length(ox)-1];
+                out(tel:tel+length(ox)-1,:)=[ox oy];
+                ori_ldb_inds(cur_ori_tel) = cur_ori_ind; cur_ori_ind = cur_ori_ind+length(ox);
+                tel = tel+length(ox);
+                if ii==(size(in,1)-1)
+                    if ((in(ii+1,1) == ox(end,1)) && (in(ii+1,2) == oy(end,1))) == 0
+                        out(tel,:)=[in(ii+1,1) in(ii+1,2)];
+                    end
+                    cur_ori_tel = cur_ori_tel+1;
+                    ori_ldb_inds(cur_ori_tel) = cur_ori_ind-1;
+                end
             end
-            cur_ori_ind  = ori_ldb_inds(end);
+            
         end
+        
+        
+        
+%         if ii>1
+%             if (out(tel-1,1) == ox(1,1)) & (out(tel-1,2) == oy(1,1))
+%                 out(tel:tel+length(ox)-2,:)=[ox(2:end,1) oy(2:end,1)];
+%                 ori_ldb_inds = [ori_ldb_inds; cur_ori_ind+length(ox)-1];
+%             else
+%                 out(tel:tel+length(ox)-1,:)=[ox oy];
+%                 cur_ori_ind  = cur_ori_ind + 1;
+%                 ori_ldb_inds = [ori_ldb_inds(1:end-1); cur_ori_ind; cur_ori_ind+length(ox)-1];
+%             end
+%         else
+%             DONE out(tel:tel+length(ox)-1,:)=[ox oy];
+%             ori_ldb_inds = [ori_ldb_inds; cur_ori_ind; cur_ori_ind+length(ox)-1];
+%         end
+%         cur_ori_ind  = ori_ldb_inds(end);
     end
     outCell{cc}=out;
-    if (outCell{cc}(end,1) ~= ldbEnd(cc,1)) | (outCell{cc}(end,2) ~= ldbEnd(cc,2))
-        outCell{cc}(end+1,1:2) = ldbEnd(cc,:);
-        ori_ldb_inds(end) = ori_ldb_inds(end)+1;
-        cur_ori_ind       = cur_ori_ind + 1;
-    end
 end
 
 %% Output:
