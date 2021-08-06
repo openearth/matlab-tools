@@ -14,6 +14,8 @@
 
 function D3D_write_tim(data_loc,path_dir_out,fname_tim_v,val_str_v,ref_date)
 
+warning('deprecated, use D3D_io_input')
+
 %make varargin
 fig_print=1;
 tim_u='minutes';

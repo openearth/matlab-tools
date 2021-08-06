@@ -61,12 +61,22 @@ switch what_do
             case {'.mdf'}
                 delft3d_io_mdf('write',fname,stru_in.keywords);
             case '.pli'
+%                 stru_in.name: double or string
+%                 stru_in.xy: [np,2] array with x-coordinate (:,1) and y-coordinate (:,2)
                 D3D_write_poly(stru_in.name,stru_in.xy,fname);
             case '.dep'
                 delft3d_io_dep('write',fname,stru_in,varargin(2:end));
             case '.bct'
                 stru_in.file.bct=fname;
                 D3D_bct(stru_in);
+            case '.bc'
+% stru_in.name
+% stru_in.function
+% stru_in.time_interpolation
+% stru_in.quantity
+% stru_in.unit
+% stru_in.val
+                D3D_write_bc(fname,stru_in)
             case '.xyz'
                 fid=fopen(fname,'w');
                 ndep=size(stru_in,1);
@@ -74,6 +84,33 @@ switch what_do
                     fprintf(fid,' %14.7f %14.7f %14.13f \n',stru_in(kl,1),stru_in(kl,2),stru_in(kl,3));
                 end
                 fclose(fid);
+            case '' %writing a series of tim files
+%                 D3D_io_input('write',dire_out,stru_in,reftime);
+%                 dire_out: folder to write  
+%                 stru_in: same structure as for bc
+%                 reftime: datetime of the mdu file
+                ref_date=varargin{2}; %all time series must have the reference date of the mdu
+                ns=numel(stru_in);
+                for ks=1:ns
+                    idx_all=1:1:numel(stru_in(ks).quantity);
+                    [idx_tim,bol_tim]=find_str_in_cell(stru_in(ks).quantity,{'time'});
+                    idx_val=idx_all(~bol_tim);
+                    str_tim=stru_in(ks).unit{idx_tim};
+                    [t0,unit]=read_str_time(str_tim);
+                    tim_val=stru_in(ks).val(:,idx_tim);
+                    switch unit
+                        case 'seconds'
+                            data_loc(ks).tim=t0+seconds(tim_val);
+                        case 'minutes'
+                            data_loc(ks).tim=t0+minutes(tim_val);
+                        otherwise
+                            error('add')
+                    end
+                    data_loc(ks).val=stru_in(ks).val(:,idx_val);
+                    data_loc(ks).quantity=stru_in(ks).quantity;
+                end
+                fname_tim_v={stru_in.name};
+                D3D_write_tim_2(data_loc,fname,fname_tim_v,ref_date)
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end
