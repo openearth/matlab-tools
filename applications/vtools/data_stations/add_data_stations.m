@@ -88,7 +88,13 @@ else
     fnames_index=fieldnames(data_stations_index);
     nfnamesindex=numel(fnames_index);
     for kfnames=1:nfnamesindex
-        data_stations_index(ns+1).(fnames_index{kfnames})=[];
+        %check type one above
+        data_exist=data_stations_index(ns).(fnames_index{kfnames});
+        if ischar(data_exist)
+            data_stations_index(ns+1).(fnames_index{kfnames})='';
+        elseif isa(data_exist,'double')
+            data_stations_index(ns+1).(fnames_index{kfnames})=NaN;
+        end
     end
     for kadd2i=1:nadd2i
         data_stations_index(ns+1).(fields_add2index{kadd2i})=data_add.(fields_add2index{kadd2i});

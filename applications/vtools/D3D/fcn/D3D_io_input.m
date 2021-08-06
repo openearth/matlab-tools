@@ -44,7 +44,7 @@ switch what_do
                 stru_out=delft3d_io_dep('read',fname,G,varargin(2:3));
 %                 G=wlgrid('read',varargin{1});
 %                 stru_out=wldep('read',fname,G);
-            case '.bct'
+            case {'.bct','.bc'}
                 stru_out=bct_io('read',fname);
             case '.xyz'
 %                 stru_out=dflowfm_io_xydata('read',fname); %extremely slow

@@ -19,6 +19,25 @@
 %OUTPUT:
 %   -
 %
+%e.g.: reading with given input
+%
+% file_structure.file_type=0;
+% file_structure.fdelim=';';
+% file_structure.headerlines=1;
+% file_structure.var_time={'Fecha','Valor'};
+% file_structure.idx_time=1;
+% file_structure.fmt_time='dd/MM/yyyy hh:mm';
+% file_structure.idx_waarheid=2;
+% file_structure.var_once={'NombreEstacion','Latitud','Longitud'};
+% file_structure.idx_location=1;
+% file_structure.idx_y=2;
+% file_structure.idx_x=3;
+% file_structure.epsg=4326;
+% file_structure.grootheid='Q';
+% file_structure.eenheid='m^3/s';
+% file_structure.tzone='-05:00';
+% 
+% data_station=read_csv_data(fpath_q,'file_structure',file_structure)
 
 function rws_data=read_csv_data(fpath,varargin)
 
@@ -30,11 +49,18 @@ flg_debug=0;
 
 addOptional(parin,'flg_debug',flg_debug);
 addOptional(parin,'file_structure',NaN);
+addOptional(parin,'convert_coordinates',0);
+addOptional(parin,'epsg_convert',28992);
 
 parse(parin,varargin{:});
 
 flg_debug=parin.Results.flg_debug;
 file_structure=parin.Results.file_structure;
+convert_coordinates=parin.Results.convert_coordinates;
+epsg_convert=parin.Results.epsg_convert;
+
+%% 
+
 if ~isstruct(file_structure) %there is no file structure as input
     input_file_structure=false;
 else
@@ -175,7 +201,7 @@ for kloc=1:nloc
             elseif strcmp(eenheid,'mg/l')
                 grootheid='CONCTTE';
             else
-                error('A parameter must be given')
+                error('A parameter (grootheid) must be given')
             end
         else
             grootheid=vardata{kloc,2}{idx_grootheid};
@@ -224,7 +250,7 @@ for kloc=1:nloc
         if isnan(idx_bemonsteringshoogte)
             bemonsteringshoogte=NaN;
         else
-            bemonsteringshoogte=undutchify(vardata{kloc,2}{idx_bemonsteringshoogte})./1000;
+            bemonsteringshoogte=undutchify(vardata{kloc,2}{idx_bemonsteringshoogte})./100;
         end
     end
 
@@ -232,14 +258,15 @@ for kloc=1:nloc
     %% convert output
 
     %convert all coordinates to RD New
-    epsg_rd=28992;
-    if ~isnan(epsg)
-        if abs(epsg-epsg_rd)>0.5 
-            [x,y]=convertCoordinates(x,y,'CS1.code',epsg,'CS2.code',epsg_rd);
-            epsg=epsg_rd;   
+    if convert_coordinates
+        if ~isnan(epsg)
+            if abs(epsg-epsg_convert)>0.5 
+                [x,y]=convertCoordinates(x,y,'CS1.code',epsg,'CS2.code',epsg_convert);
+                epsg=epsg_convert;   
+            end
         end
     end
-
+    
     %units
     switch eenheid
         case 'm'

@@ -152,21 +152,26 @@ switch flg.opt
         case 3
             %% transport
             nf=numel(path_bring_back);
-            cmd_transport=cell(nf,1);
             cmd_mkdir=cell(nf,1);
+            cmd_transport=cell(nf,1);
+            kf=1;
+            [path_dir,~,~]=fileparts(path_bring_back{kf});
+            cmd_mkdir{kf}=sprintf('mkdir %s',linuxify(path_dir));
+            cmd_cd=sprintf('cd %s',linuxify(path_dir));
             for kf=1:nf
                 [path_dir,~,~]=fileparts(path_bring_back{kf});
                 cmd_mkdir{kf}=sprintf('mkdir %s',linuxify(path_dir));
-                cmd_transport{kf,1}=sprintf('rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:%s %s',surf_userid,cartesify(cartesius_project_folder_lin,path_bring_back{kf}),linuxify(path_bring_back{kf}));
+                cmd_transport{kf,1}=sprintf('rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:%s %s &>log.txt',surf_userid,cartesify(cartesius_project_folder_lin,path_bring_back{kf}),linuxify(path_bring_back{kf}));
             end %kf
             
             %% display
-%             fprintf('In H6: \n\n')
+            fprintf(fid_h6,'#!/bin/bash \n');
+            fprintf(fid_h6,'%s \n',cmd_mkdir{1,1});
+            fprintf(fid_h6,'%s \n',cmd_cd);
             for kf=1:nf
                 fprintf(fid_h6,'%s \n',cmd_mkdir{kf,1});
                 fprintf(fid_h6,'%s \n',cmd_transport{kf,1});
             end %kf
-%             fprintf('\n')
 
     otherwise
         error ('this option does not exist')
@@ -181,6 +186,7 @@ fclose(fid_ca);
 
 % fprintf('Run file for compressing data in Cartesius: %s \n',path_ca);
 % fprintf('Run file for bringing data back to H6: %s \n',path_h6);
-fprintf('%s\n',linuxify(path_h6))
+fprintf('For an unknown reason, sometimes it crashes because \n rsync is not found. Simply submit again. \n')
+fprintf('qsub %s \n',linuxify(path_h6))
 
 end %function

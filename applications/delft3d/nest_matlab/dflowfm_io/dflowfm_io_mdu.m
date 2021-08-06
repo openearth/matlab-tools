@@ -98,6 +98,9 @@ case 'write'
     
    %when writing a file read with delft3d_io_sed, the block names have a number. 
    %Here we remove it
+   
+%    [names,names_clean]=D3D_clean_group_names(mdu) -> call this!
+   
     ngroup=numel(names);
     names_clean=cell(ngroup,1);
     for kb=1:ngroup

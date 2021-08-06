@@ -263,7 +263,7 @@ The code structure is:
 \section{\codeInit{}}
 \label{sec:codeInit}
 
-The space domain $x$ is discretized into $N$ cells of equal length $\Delta x$ [\si{m}]. The equations are solved in a one-dimensional domain of length $L$ [\si{m}] extending from $x=\mathsub{x}{o}$ until $x=\mathsub{x}{f}$ over time $T$ [\si{s}] between $t=\mathsub{t}{1}$ and $t=\mathsub{t}{2}$. 
+The space domain $x$ is discretized into $M$ cells of equal length $\Delta x$ [\si{m}]. The equations are solved in a one-dimensional domain of length $L$ [\si{m}] extending from $x=\mathsub{x}{o}$ until $x=\mathsub{x}{f}$ over time $T$ [\si{s}] between $t=\mathsub{t}{1}$ and $t=\mathsub{t}{2}$. 
 
 \section{\codeFlowUpdate{}}
 \label{sec:codeFlowUpdate}
@@ -369,34 +369,34 @@ The slope is approximated as:
 The discretized set of equations form a system of algebraic equations:
 \begin{equation}
 \label{eq:alg}
-\mathbf{A}\mathbf{Q}=\mathbf{B}\;.
+\mathbf{A}\left(\mathbf{Q}^{n+1}\right)\mathbf{Q}^{n+1}=\mathbf{B}\left(\mathbf{Q}^{n}\right)\;.
 \end{equation}
 
 Vector:
 \begin{equation}
-\mathbf{Q}=[h_1, h_2, \cdots, h_{N-1}, h_N, q_1, q_2, \cdots, q_{N-1}, q_N]^{\intercal} \;,
+\mathbf{Q}^{n+1}=[h_1^{n+1}, h_2^{n+1}, \cdots, h_{M-1}^{n+1}, h_M^{n+1}, q_1^{n+1}, q_2^{n+1}, \cdots, q_{M-1}^{n+1}, q_M^{n+1}]^{\intercal} \;,
 \end{equation}
 is the $2N$x1 vector of unknowns. 
 
 Matrix:
 \begin{equation}
 \makebox[\textwidth][c]{$
-		\mathbf{A}=\left[
+		\mathbf{A}\left(\mathbf{Q}^{n+1}\right)=\left[
 		\begin{array}{cc}
-  \mathbf{A}_{1} & \mathbf{A}_{2} \\
-	\mathbf{A}_{3} & \mathbf{A}_{4} \\
+  \mathbf{A}_{1}(\mathbf{Q}^{n+1}\right) & \mathbf{A}_{2}(\mathbf{Q}^{n+1}\right) \\
+	\mathbf{A}_{3}(\mathbf{Q}^{n+1}\right) & \mathbf{A}_{4}(\mathbf{Q}^{n+1}\right) \\
  \end{array}\right] \;,
 $} 
 \end{equation}
-is the $2N$x$2N$ matrix containing the implicit terms, which is subdivided into 4 $N$x$N$ submatrices contain.
+is the $2N$x$2N$ matrix containing the implicit terms, which is subdivided into 4 $N$x$N$ submatrices.
 
 Vector:
 \begin{equation}
 \makebox[\textwidth][c]{$
-		\mathbf{B}=\left[
+		\mathbf{B}\left(\mathbf{Q}^{n}\right)^{n}=\left[
 		\begin{array}{cc}
-  \mathbf{B}_{1}\\
-	\mathbf{B}_{2}\\
+  \mathbf{B}_{1}\left(\mathbf{Q}^{n}\right)\\
+	\mathbf{B}_{2}\left(\mathbf{Q}^{n}\right)\\
  \end{array}\right] \;,
 $} 
 \end{equation}
@@ -582,6 +582,7 @@ $\Fr{}$ & - & Froude number \\
 $g$ & \si{m/s^2} & acceleration due to gravity \\
 $h$ & \si{m} & flow depth \\
 $m$ & - & index of the cell centre \\
+$M$ & - & number of cells in the domain \\
 $n$ & - & index of time \\
 $\mathsub{M}{f}$ & - & morphodynamic acceleration factor \\
 $q$ & \si{m^2/s} & discharge per unit width \\
