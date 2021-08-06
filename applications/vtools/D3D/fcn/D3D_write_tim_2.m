@@ -17,11 +17,18 @@ function D3D_write_tim_2(data_loc,path_dir_out,fname_tim_v,ref_date)
 %make varargin
 fig_print=1;
 tim_u='minutes';
+write_local=1;
 
 nloc=numel(data_loc);
 for kloc=1:nloc
-    path_tim=fullfile(path_dir_out,sprintf('%s.tim',fname_tim_v{kloc}));
-    fid=fopen(path_tim,'w');
+    fname_tim=sprintf('%s.tim',fname_tim_v{kloc});
+    path_tim=fullfile(path_dir_out,fname_tim);
+    if write_local==1
+        path_tim_loc=fullfile(pwd,fname_tim);
+    else
+        path_tim_loc=path_tim;
+    end
+    fid=fopen(path_tim_loc,'w');
     nq=numel(data_loc(kloc).quantity);
     fprintf(fid,'* Column 1: Time (%s) w.r.t. refdate=%s \n',tim_u,datestr(ref_date,'yyyy-mm-dd HH:MM:ss'));
     for kq=2:nq
@@ -44,18 +51,35 @@ for kloc=1:nloc
     end %kl
     fclose(fid);
     
-    %plot
-    if fig_print
-        for kq=2:nq
-            path_fig=fullfile(path_dir_out,sprintf('%s_%s.png',fname_tim_v{kloc},data_loc(kloc).quantity{kq}));
-            figure('visible',0)
-            plot(data_loc(kloc).tim,data_loc(kloc).val(:,kq-1))
-            ylabel(strrep(data_loc(kloc).quantity(kq),'_','\_'))
-            title(strrep(fname_tim_v{kloc},'_','\_'))
-            print(gcf,path_fig,'-dpng','-r300')
-        end
+    if write_local==1
+        copyfile_check(path_tim_loc,path_tim);
+        delete(path_tim_loc);
     end
     
     %disp
     messageOut(NaN,sprintf('file written: %s',path_tim))
+    
+    %plot
+    if fig_print
+        for kq=2:nq
+            fname_fig=sprintf('%s_%s.png',fname_tim_v{kloc},data_loc(kloc).quantity{kq});
+            path_fig=fullfile(path_dir_out,fname_fig);
+            if write_local==1
+                path_fig_loc=fullfile(pwd,fname_fig);
+            else
+                path_fig_loc=path_fig;
+            end
+            figure('visible',0)
+            plot(data_loc(kloc).tim,data_loc(kloc).val(:,kq-1))
+            ylabel(strrep(data_loc(kloc).quantity(kq),'_','\_'))
+            title(strrep(fname_tim_v{kloc},'_','\_'))
+            print(gcf,path_fig_loc,'-dpng','-r300')
+            if write_local==1
+                copyfile_check(path_fig_loc,path_fig);
+                delete(path_fig_loc);
+            end
+        end
+    end
+    
+
 end %kloc
