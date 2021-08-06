@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17376 $
-%$Date: 2021-07-02 16:00:24 +0200 (Fri, 02 Jul 2021) $
-%$Author: chavarri $
-%$Id: D3D_write_tim.m 17376 2021-07-02 14:00:24Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_write_tim.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %write a tim file based on information in structure
 

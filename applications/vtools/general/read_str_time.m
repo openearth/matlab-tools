@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17337 $
-%$Date: 2021-06-10 13:14:13 +0200 (Thu, 10 Jun 2021) $
-%$Author: chavarri $
-%$Id: D3D_bct.m 17337 2021-06-10 11:14:13Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_bct.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %read string with time
 
