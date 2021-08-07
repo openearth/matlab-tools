@@ -22,7 +22,7 @@ if strcmp(ext,'.nc') %FM
     if contains(fname,'_map')
         ismap=1;
     end
-    time_dtime=NC_read_time(nc_map,kt);
+    [time_dtime,~,time_r]=NC_read_time(nc_map,kt);
     if ismor && ismap %morfo time not available in history
         time_mor_r=ncread(nc_map,'morft',kt(1),kt(2)); %results time vector [seconds since start date]
     end

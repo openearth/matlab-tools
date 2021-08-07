@@ -29,10 +29,13 @@ for kloc=1:nloc
         path_tim_loc=path_tim;
     end
     fid=fopen(path_tim_loc,'w');
-    nq=numel(data_loc(kloc).quantity);
+    nq=numel(data_loc(kloc).quantity); %considering time, which must be in first column
+    if size(data_loc(kloc).val,2)~=nq-1
+        error('size of data does not match with size of quantity')
+    end
     fprintf(fid,'* Column 1: Time (%s) w.r.t. refdate=%s \n',tim_u,datestr(ref_date,'yyyy-mm-dd HH:MM:ss'));
     for kq=2:nq
-        fprintf(fid,'* Column 2: %s \n',data_loc(kloc).quantity{kq});
+        fprintf(fid,'* Column %d: %s \n',kq,data_loc(kloc).quantity{kq});
     end
     nl=numel(data_loc(kloc).tim);
     tim_loc=data_loc(kloc).tim-ref_date;

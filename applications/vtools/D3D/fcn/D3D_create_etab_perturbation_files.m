@@ -15,11 +15,12 @@
 %
 %INPUT:
 %   -path_in: path to the input. One of: 
-%       -folder containing mdf-file or mdu-file
+%       -folder containing mdf-file or mdu-file (reads the dep file of the mdf or mdu in that folder).
 %       -mdu-file
 %       -mdf-file
 %       -dep-file
 %       -xyn-file
+%       -map_nc-file (reads the first result time of mor_bl)
 %
 %PAIR INPUT
 %   -path_grd: path to the grd-file in case the path_in is a dep-file (compulsory)
@@ -105,12 +106,31 @@ if write_files
             dep=D3D_io_input('read',path_dep,path_grd,'location',location); 
             dep_ref=dep.cor.dep;
         case '.xyz'
-            dep=D3D_io_input('read',path_dep);
             simdef.D3D.structure=2;
+            dep=D3D_io_input('read',path_dep);
+            dep_ref=dep(:,3);
+        case '.nc'
+            simdef.D3D.structure=2;
+            
+            path_map=path_dep;
+            [~,~,time_dnum,~]=D3D_results_time(path_map,0,[1,1]);
+            gridInfo=EHY_getGridInfo(path_map,'XYcen');
+            bl=EHY_getMapModelData(path_map,'varName','mesh2d_mor_bl','t0',time_dnum,'tend',time_dnum);
+            dep(:,1)=gridInfo.Xcen;
+            dep(:,2)=gridInfo.Ycen;
+            dep(:,3)=bl.val';
+            
             dep_ref=dep(:,3);
         otherwise 
             error('not sure what to do')
     end
+end
+
+%if we read a map-file, we have to change the extension for writing. 
+%this cannot be inside the above <switch> because it only passes
+%in case we write the files
+if strcmp(ext_dep,'.nc')
+    ext_dep='.xyz';
 end
 
 %% variation depth

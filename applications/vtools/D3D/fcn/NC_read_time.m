@@ -12,7 +12,7 @@
 %
 %read time from NC file
 
-function [time_dtime,units]=NC_read_time(nc_map,kt)
+function [time_dtime,units,time_r]=NC_read_time(nc_map,kt)
 
 nci=ncinfo(nc_map);
 time_r=ncread(nc_map,'time',kt(1),kt(2)); %results time vector [seconds/minutes/hours since start date]
