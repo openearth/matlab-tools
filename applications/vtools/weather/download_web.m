@@ -4,18 +4,18 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 16769 $
-%$Date: 2020-11-05 11:40:08 +0100 (Thu, 05 Nov 2020) $
-%$Author: chavarri $
-%$Id: add_floodplane.m 16769 2020-11-05 10:40:08Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/bed_level_flume/add_floodplane.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function err=download_web(url_down,fpath_out,varargin)
 
 parin=inputParser;
 
-addOptional(parin,'chrome','c:\Program Files (x86)\Google\Chrome\Application\new_chrome.exe');
+addOptional(parin,'chrome','c:\Program Files (x86)\Google\Chrome\Application\chrome.exe');
 
 parse(parin,varargin{:})
 

@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 15 $
-%$Date: 2021-08-05 15:12:18 +0200 (Thu, 05 Aug 2021) $
-%$Author: chavarri $
-%$Id: main_plot_all.m 15 2021-08-05 13:12:18Z chavarri $
-%$HeadURL: file:///P:/11206813-007-kpp2021_rmm-3d/E_Software_Scripts/00_svn/rmm_plot/main_plot_all.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 %% PREAMBLE
