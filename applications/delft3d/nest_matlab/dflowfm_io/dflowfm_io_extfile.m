@@ -171,8 +171,10 @@ switch lower(cmd)
                     end
                     
                     for i_row = 1: no_row
-                        fprintf(fid,[format '\n'],cell2mat(Value(i_row,:)));
+                        fprintf(fid,[format '\n'],string(Value(i_row,:)));
                     end
+                    
+                end
                 end
                 
             end
