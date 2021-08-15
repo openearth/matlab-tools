@@ -15,12 +15,17 @@ function err=download_web(url_down,fpath_out,varargin)
 
 parin=inputParser;
 
-addOptional(parin,'chrome','c:\Program Files (x86)\Google\Chrome\Application\chrome.exe');
+% addOptional(parin,'chrome','c:\Program Files (x86)\Google\Chrome\Application\chrome.exe');
+addOptional(parin,'chrome','c:\Program Files\Google\Chrome\Application\chrome.exe');
 
 parse(parin,varargin{:})
 
 fpath_chrome=parin.Results.chrome;
 
+if exist(fpath_chrome,'file')~=2
+    err=true;
+    return
+end
 % "c:\Program Files (x86)\Google\Chrome\Application\new_chrome.exe" --headless --dump-dom https://www.buienradar.nl/weer/delft/nl/2757345/14daagse > c:\Users\chavarri\Downloads\file.html
 cmd_down=sprintf('"%s" --headless --dump-dom %s > %s',fpath_chrome,url_down,fpath_out);
 

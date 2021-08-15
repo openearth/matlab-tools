@@ -1064,7 +1064,8 @@ switch flg.which_p
                             error('do')
                             out=get_fm1d_data('mesh1d_czs',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
-                            wl=ncread(file.map,'mesh2d_flowelem_ba',[kF(1),kt(1)],[kF(2),1]);
+%                             wl=ncread(file.map,'mesh2d_flowelem_ba',[kF(1),kt(1)],[kF(2),1]);
+                            wl=ncread(file.map,'mesh2d_flowelem_ba',[kF(1)],[kF(2)]);
                             
                             %output
                             out.z=wl;
