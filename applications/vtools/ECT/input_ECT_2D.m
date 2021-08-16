@@ -4,13 +4,28 @@
 ECT_input.flg.read=1;
 ECT_input.flg.check_input=0;
 ECT_input.flg.sed_trans=1;
+    % 1 = Meyer-Peter, Muller (1948)    
+    % 2 = Engelund-Hansen (1967)
+    % 3 = Ashida-Michiue (1972)
+    % 4 = Wilcock-Crowe (2003)
 ECT_input.flg.vp=1;
 ECT_input.flg.E=1;
 ECT_input.flg.friction_closure=1;
+    % 1 = Chezy | Darcy-Weisbach
+    % 2 = Manning 
 ECT_input.flg.friction_input=1;
 ECT_input.flg.hiding=0;
+    % 0 = no hiding-exposure 
+    % 1 = Egiazaroff (1965)
+    % 2 = Power law
+    % 3 = Ashida-Michiue (1972)
 ECT_input.flg.Dm=1;
+    % 1 = geometric
+    % 2 = arithmetic 
 ECT_input.flg.mu=0;
+    % 0 = no
+    % 1 = constant
+    % 2 = C/C90 relation
 ECT_input.flg.derivatives=1;
 ECT_input.flg.particle_activity=0;
 ECT_input.flg.cp=0;
@@ -49,7 +64,12 @@ ECT_input.diff_hir=NaN(size(ECT_input.gsd)); %diffusion hirano
 % sedTrans=[8,1.5,0];
 % sedTrans=[17,0.05];
 ECT_input.sedTrans=[0.05/ECT_input.Cf,2.5,0];
-
+    % MPM48    = [a_mpm,b_mpm,theta_c] [-,-,-] ; double [3,1] | double [1,3]; MPM = [8,1.5,0.047], FLvB = [5.7,1.5,0.047] ; Ribberink = [15.85,1.5,0.0307]
+    % EH67     = [m_eh,n_eh] ; [s^4/m^3,-] ; double [2,1] | double [1,2] ; original = [0.05,5]
+    % AM72     = [a_am,theta_c] [-,-] ; double [2,1] | double [1,2] ; original = [17,0.05]
+    % GL       = [r,w,tau_ref]
+    % Ribb     = [m_r,n_r,l_r] [s^5/m^(2.5),-,-] ; double [2,1] ; original = [2.7e-8,6,1.5]
+			
 ECT_input.E_param=[0.0199,1.5]; %FLvB
 ECT_input.vp_param=[11.5,0.7]; %FLvB
 

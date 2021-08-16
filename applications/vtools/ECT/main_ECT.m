@@ -22,7 +22,7 @@ addOET(path_add_fcn) %1=c-drive; 2=p-drive
 
     %% input to function
 
-path_input='input_ECT_2D.m';
+path_input="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210305_parallel_sequential\input_ECT_2D_bars.m";
 
 %% CALL
 

@@ -18,8 +18,8 @@ function fig_twoD(in_2D,eig_r,eig_i,kwx_v,kwy_v)
 if isfield(in_2D,'qs_anl')==0
     in_2D.qs_anl=0;
 end
-if isfield(in_2D,'flg')==0
-    in_2D.flg.dummy=NaN;
+if isfield(in_2D,'fig')==0
+    in_2D.fig.dummy=NaN;
 end
 if isfield(in_2D.fig,'fig_visible')==0
     in_2D.fig.fig_visible=true;

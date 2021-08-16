@@ -31,7 +31,7 @@ switch what_do
                 stru_out=dflowfm_io_mdu('read',fname);
             case {'.sed','.mor'}
                 stru_out=delft3d_io_sed(fname);
-            case {'.pli','.pliz','.pol'}
+            case {'.pli','.pliz','.pol','.ldb'}
                 tek=tekal('read',fname,'loaddata');
                 stru_out.name={tek.Field.Name};
                 stru_out.val={tek.Field.Data};
@@ -60,10 +60,10 @@ switch what_do
                 dflowfm_io_mdu('write',fname,stru_in);
             case {'.mdf'}
                 delft3d_io_mdf('write',fname,stru_in.keywords);
-            case '.pli'
-%                 stru_in.name: double or string
-%                 stru_in.xy: [np,2] array with x-coordinate (:,1) and y-coordinate (:,2)
-                D3D_write_poly(stru_in.name,stru_in.xy,fname);
+            case {'.pli','.ldb'}
+%                 stru_in(kpol).name: double or string
+%                 stru_in(kpol).xy: [np,2] array with x-coordinate (:,1) and y-coordinate (:,2)
+                D3D_write_polys(fname,stru_in);
             case '.dep'
                 delft3d_io_dep('write',fname,stru_in,varargin(2:end));
             case '.bct'

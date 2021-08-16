@@ -21,10 +21,15 @@ function goVgo(varargin)
 
 %% PARSE
 
-if isempty(varargin)
-    play_music=1;
-else
-    play_music=varargin{1};
+switch numel(varargin)
+    case 0
+        play_music=1;
+        check_rain_var=1;
+    case 1
+        play_music=varargin{1};
+    case 2
+        play_music=varargin{1};
+        check_rain_var=varargin{1};
 end
     
 % parin=inputParser;
@@ -35,25 +40,37 @@ end
 
 %% INPUT
 
+path_rain='p:\i1000561-riverlab-2021\04_weather\rain.mat';
 web_data='https://waterberichtgeving.rws.nl/wbviewer/maak_grafiek.php?loc=H-RN-0001&set=ecmwf_ens&nummer=2&format=wbcharts';
 sisu_path='sisu.mat';
 
 %% CALC
 
+%discharge
 web(web_data);
+
+%music
 if play_music
 load(sisu_path,'sisu');
 sound(sisu.y,sisu.Fs);
 end
 
+%rainvar
+if check_rain_var
+   load(path_rain,'rain');
+   fprintf('Last rain data added was %3.1f h ago for a model on %s \n',hours(datetime('now')-rain(end).tim_anl),datestr(rain(end).tim_model));
+end
+
 %% disp
-fprintf('|-------------------------------------------|\n');
-fprintf('|-------------------------------------------|\n');
-fprintf('|-----|                               |-----|\n');
-fprintf('|-----|          Know thyself         |-----|\n');
-fprintf('|-----|       Nothing to excess       |-----|\n');
-fprintf('|-----|       Surety brings ruin      |-----|\n');
-fprintf('|-----|                               |-----|\n');
-fprintf('|-------------------------------------------|\n');
-fprintf('|-------------------------------------------|\n');
+
+fprintf('|------------------------------------------------------------|\n');
+fprintf('|------------------------------------------------------------|\n');
+fprintf('|-----|                                                |-----|\n');
+fprintf('|-----|           Gnothi sauton  (know thyself)        |-----|\n');
+fprintf('|-----|           Meden agan (Nothing in excess)       |-----|\n');
+fprintf('|-----|       Engya para d''ate (surety brings ruin)    |-----|\n');
+fprintf('|-----|                                                |-----|\n');
+fprintf('|------------------------------------------------------------|\n');
+fprintf('|------------------------------------------------------------|\n');
+
 end %function
