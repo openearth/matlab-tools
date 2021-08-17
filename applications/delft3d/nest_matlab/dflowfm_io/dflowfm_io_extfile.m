@@ -162,9 +162,9 @@ switch lower(cmd)
                     no_row = size(Value,1);
                     no_col = size(Value,2);
                     
-                    if isstr(Value{1,1})
+                    if ischar(Value(1,1))
                         format = ['%8s ' repmat('%12.6f ',1,no_col - 1)];
-                    elseif isinteger(Value{1,1})
+                    elseif isinteger(Value(1,1))
                         format = ['%8i ' repmat('%12.6f ',1,no_col - 1)];
                     else
                         format = repmat('%12.6f ',1,no_col);
