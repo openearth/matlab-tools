@@ -62,6 +62,8 @@ while 1
         end
         save(fname_rain,'rain')
         t_last=t_now;
+        errstatus_rd=1;
+        errstatus_dw=1;
         messageOut(NaN,'Data read.')
     else
         messageOut(NaN,'In pause.')
