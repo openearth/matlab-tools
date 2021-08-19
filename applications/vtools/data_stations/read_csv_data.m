@@ -34,7 +34,7 @@
 % file_structure.idx_x=3;
 % file_structure.epsg=4326;
 % file_structure.grootheid='Q';
-% file_structure.eenheid='m^3/s';
+% file_structure.eenheid='m3/s';
 % file_structure.tzone='-05:00';
 % 
 % data_station=read_csv_data(fpath_q,'file_structure',file_structure)
@@ -83,7 +83,7 @@ end
 switch file_type
     case 0
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug,'file_structure',file_structure);
-    case {1,2,3,4,6,7,8,9,10} %locations in rows
+    case {1,2,3,4,6,7,8,9,10,11} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
     case {5} %locations in columns
         vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);
@@ -102,7 +102,7 @@ for kloc=1:nloc
     %% get indexes 
     
     if ~input_file_structure
-        [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=get_file_data(file_type,fpath);
+        [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone,var_hog]=get_file_data(file_type,fpath);
     end
     
     switch file_type
@@ -304,6 +304,9 @@ for kloc=1:nloc
     if contains(eenheid,hoedanigheid)
         hoedanigheid='';
     end
+    if strcmp(parameter,hoedanigheid)
+        hoedanigheid='';
+    end
     eenheid=strcat(eenheid,hoedanigheid);
 
     %filter
@@ -448,7 +451,7 @@ v2struct(file_structure) %output from get_file_data and file_type=0 or file_type
 %% file type data
 
 if file_type~=0 
-[fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time]=get_file_data(file_type,fpath);
+[fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone,var_hog]=get_file_data(file_type,fpath);
 end
 
 %cycle header
@@ -467,7 +470,8 @@ end
 if isnan(idx_var_time)
     idx_var_time=find_str_in_cell(tok_header,var_time);    
 end
-idx_var_loc =find_str_in_cell(tok_header,var_loc );
+% idx_var_loc =find_str_in_cell(tok_header,var_loc );
+% idx_var_hog =find_str_in_cell(tok_header,var_hog );
 
 nv=numel(idx_var_time);
 
@@ -485,18 +489,13 @@ keep_going=true;
 %first line outside loop to get location
 kl=1; %line counter
 kloc=1; %location counter
+nloc=1; %number of locations
 ks=1; %time counter
+ks_vec=1; %vector of time counters
 
     %get info
     tok=get_clean_line(fid,fdelim);
-    
-    %check location change
-    if ~isnan(idx_var_loc)
-        locname_tm1=tok(idx_var_loc); %t-1
-    else
-        locname_tm1=''; %no location column in file
-    end
-    
+
     %save time
     vardata{kloc,1}(ks,:)=tok(idx_var_time);
     
@@ -514,30 +513,43 @@ while ~feof(fid) && keep_going
     %get info
     tok=get_clean_line(fid,fdelim);
     
-    %check location change
-    if ~isnan(idx_var_loc)
-        locname_t=tok(idx_var_loc);
-    else
-        locname_t='';
+    var_once_loc=tok(idx_var_once);
+    
+    %check if new elevation or existing
+    bol_cmp=false(nloc,numel(var_once_loc));
+    for kkloc=1:nloc 
+        [~,bol_cmp(kkloc,:)]=find_str_in_cell(vardata{kkloc,2},var_once_loc); 
+        
+        %filter empty ones
+        bol_empty=cellfun(@(X)isempty(X),var_once_loc); 
+        bol_cmp(kkloc,bol_empty)=true;
     end
-    if ~strcmp(locname_t,locname_tm1)
-        %schrink finished location
-        vardata{kloc,1}=vardata{kloc,1}(1:ks-1,:); 
-        
+    idx_same=find(all(bol_cmp,2)); %index of vardata with same varonce
+    
+    if isempty(idx_same) %new elevation
         %update
-        locname_tm1=locname_t;
-        kloc=kloc+1;
+        nloc=nloc+1;
+        kloc=nloc;
         ks=1;
+        ks_vec=cat(1,ks_vec,ks);
         
+        %preallocate
+        vardata{kloc,1}=cell(npreall,nv);
+
         %new constants
         if ~isnan(idx_var_once)
-            vardata{kloc,2}=tok(idx_var_once);
+            vardata{kloc,2}=var_once_loc;
         else
             vardata{kloc,2}='';
         end
+    elseif numel(idx_same)>1
+        error('something is not working')
     else
-        ks=ks+1;
-    end
+        kloc=idx_same;
+        ks_vec(kloc)=ks_vec(kloc)+1;
+        ks=ks_vec(kloc);
+%         ks=find(~cellfun(@(X)isempty(X),(vardata{kloc,1}(:,1))),1,'last')+1; %exremely expensive
+    end      
     
     %save
     vardata{kloc,1}(ks,:)=tok(idx_var_time);
@@ -554,7 +566,7 @@ while ~feof(fid) && keep_going
     end
 
     %debug
-    if flg_debug && kl==10
+    if flg_debug && kl==100
         keep_going=false;
     end
     
@@ -562,8 +574,14 @@ while ~feof(fid) && keep_going
 %     fprintf('line %d \n',kl)
 end
 fclose(fid);
-vardata{kloc,1}=vardata{kloc,1}(1:ks-1,:);
-vardata=vardata(1:kloc,:);
+
+%squeeze data
+vardata=vardata(1:nloc,:);
+for kkloc=1:nloc
+%     ks=find(~cellfun(@(X)isempty(X),(vardata{kkloc,1}(:,1))),1,'last')+1;   
+    ks=ks_vec(kkloc);
+    vardata{kkloc,1}=vardata{kkloc,1}(1:ks-1,:);
+end
 
 vardata=cellfun(@(X)strrep(X,'"',''),vardata,'UniformOutput',false);
 
@@ -571,9 +589,9 @@ end %function
 
 %%
 
-function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=get_file_data(file_type,fpath)
+function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone,var_hog]=get_file_data(file_type,fpath)
 
-         [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=empty_file_structure;
+         [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone,var_hog]=empty_file_structure;
 
 switch file_type
     case 1
@@ -865,7 +883,45 @@ switch file_type
         
         fdelim=';';
         headerlines=1;
-    case 10 %same as 6 but timezone is actually specified but data is in referentie!
+    case 10 %same as 11 with bemonsteringhoogte, needs to be before for getting it prior to the other one
+        %MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING     ;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                              ;WAARDEBEPALINGSMETHODE_CODE    ;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;WAARNEMINGTIJD;LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE   ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME
+%                             ;Lobith                ;                     ;             ;Debiet                ;Q              ;                      ;               ;m3/s        ;                              ;                 ;Oppervlaktewater         ;OW               ;                                    ;                            ;Debiet uit Q-f relatie                                           ;other:F216                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;3072,2         ;                   ;Normale waarde        ;Ongecontroleerd;ONXXREG_AFVOER           ;                         ;                 ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;713748,798641064;5748949,04523234;                   ;           ;           
+%                             ;Krimpen a/d IJssel    ;                     ;             ;Waterhoogte           ;WATHTE         ;                      ;               ;cm          ;t.o.v. Normaal Amsterdams Peil;NAP              ;Oppervlaktewater         ;OW               ;                                    ;                            ;Rekenkundig gemiddelde waarde over vorige 5 en volgende 5 minuten;other:F007                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;-4             ;                   ;Normale waarde        ;Ongecontroleerd;RIKZMON_WAT              ;Vlotter                  ;127              ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;608561,131040599;5752923,14544908;;;
+%
+%MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE                           ;LOCATIE_CODE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;CAS_NR    ;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                  ;WAARDEBEPALINGSMETHODE_CODE;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;REFERENTIE;WAARNEMINGTIJD (MET/CET);LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME;GROEPERING_OMSCHRIJVING;GROEPERING_CODE;GROEPERING_KANAAL;GROEPERING_TYPE
+%                     ;Hoek van Holland rechter oever (kilometer 1030.1);HOEKVHLRTOVR;                     ;             ;(massa)Concentratie   ;CONCTTE        ;chloride              ;Cl             ;16887-00-6;mg/l        ;uitgedrukt in chloor     ;Cl               ;Oppervlaktewater         ;OW               ;                                    ;                            ;Berekende chloride concentratie - methode NDB '80-'81;other:F072                 ;Steekbemonstering              ;SB                     ;31-12-2017     ;00:00:00  ;                        ;             ;11089          ;                   ;Normale waarde        ;Gecontroleerd;ZHXXREG_ZOUT             ;                         ;                 ;                                  ;                          ;                                    ;                            ;-250               ;NAP           ;25831;576915,135917929;5759061,05599413;;;;;;;
+
+        %variables to save once
+        var_once={'MEETPUNT_IDENTIFICATIE','X','Y','PARAMETER_ CODE','EENHEID_CODE','GROOTHEID_ CODE','EPSG','HOEDANIGHEID_CODE','BEMONSTERINGSHOOGTE'};
+        idx_location=1;
+        idx_x=2;
+        idx_y=3;
+        idx_parameter=4;
+        idx_eenheid=5;
+        idx_grootheid=6;
+        idx_epsg=7;
+        idx_hoedanigheid=8;
+        idx_bemonsteringshoogte=9;
+        
+        %variables to save with time
+%         var_time={'WAARNEMINGDATUM','WAARNEMINGTIJD (MET/CET)','NUMERIEKEWAARDE'};
+        var_time={'WAARNEMINGDATUM','REFERENTIE','NUMERIEKEWAARDE'};
+        idx_datum=1;
+        fmt_datum='dd-MM-yyy';
+        idx_tijd=2;
+        fmt_tijd='HH:mm:ss';
+        idx_waarheid=3;
+        
+        %variable with location, to check for different places in same file. !! not needed anymore
+        var_loc={'MEETPUNT_IDENTIFICATIE'};
+        
+        %variable with elevation, to check and save in existing variable !!not needed anymore
+        var_hog={'BEMONSTERINGSHOOGTE'};
+        
+        fdelim=';';
+        tzone='+01:00'; %waterinfo in CET
+        headerlines=1;    
+    case 11 %same as 6 but timezone is actually specified but data is in referentie!
         %MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING     ;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                              ;WAARDEBEPALINGSMETHODE_CODE    ;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;WAARNEMINGTIJD;LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE   ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME
 %                             ;Lobith                ;                     ;             ;Debiet                ;Q              ;                      ;               ;m3/s        ;                              ;                 ;Oppervlaktewater         ;OW               ;                                    ;                            ;Debiet uit Q-f relatie                                           ;other:F216                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;3072,2         ;                   ;Normale waarde        ;Ongecontroleerd;ONXXREG_AFVOER           ;                         ;                 ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;713748,798641064;5748949,04523234;                   ;           ;           
 %                             ;Krimpen a/d IJssel    ;                     ;             ;Waterhoogte           ;WATHTE         ;                      ;               ;cm          ;t.o.v. Normaal Amsterdams Peil;NAP              ;Oppervlaktewater         ;OW               ;                                    ;                            ;Rekenkundig gemiddelde waarde over vorige 5 en volgende 5 minuten;other:F007                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;-4             ;                   ;Normale waarde        ;Ongecontroleerd;RIKZMON_WAT              ;Vlotter                  ;127              ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;608561,131040599;5752923,14544908;;;
@@ -975,13 +1031,14 @@ end %function
 
 %%
 
-function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone]=empty_file_structure
+function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone,var_hog]=empty_file_structure
 
 idx_location=NaN;
 var_once={''};
 idx_var_time=NaN;
 var_time={''};
 var_loc={''};
+var_hog={''};
 parameter=NaN;
 location=NaN;
 idx_grootheid=NaN;

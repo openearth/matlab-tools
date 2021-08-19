@@ -78,17 +78,22 @@ switch what_do
 % stru_in.val
                 D3D_write_bc(fname,stru_in)
             case '.xyz'
+%                 D3D_io_input('write',xyz)
+%                 xyz(:,1) = x-coordinate
+%                 xyz(:,2) = y-coordinate
+%                 xyz(:,3) = z-coordinate
                 fid=fopen(fname,'w');
                 ndep=size(stru_in,1);
                 for kl=1:ndep
                     fprintf(fid,' %14.7f %14.7f %14.13f \n',stru_in(kl,1),stru_in(kl,2),stru_in(kl,3));
                 end
                 fclose(fid);
+                messageOut(NaN,sprintf('File written: %s',fname));
             case '' %writing a series of tim files
 %                 D3D_io_input('write',dire_out,stru_in,reftime);
-%                 dire_out: folder to write  
-%                 stru_in: same structure as for bc
-%                 reftime: datetime of the mdu file
+%                 dire_out = folder to write  
+%                 stru_in = same structure as for bc
+%                 reftime = datetime of the mdu file
                 ref_date=varargin{2}; %all time series must have the reference date of the mdu
                 ns=numel(stru_in);
                 for ks=1:ns

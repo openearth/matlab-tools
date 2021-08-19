@@ -23,8 +23,7 @@ idx_add2index=find(~contains(fields_add_all,{'time','waarde'}));
 fields_add2index=fields_add_all(idx_add2index);
 nadd2i=numel(fields_add2index);
 
-%change this to only grootheid, location clear, ? or deal with doubles?
-idx_compare=find(~contains(fields_add_all,{'time','waarde','source','location'}));
+idx_compare=find(~any(cell2mat(cellfun(@(X)strcmp(X,fields_add_all),{'time','waarde','source','location','epsg','x','y'},'UniformOutput',false)),2)); %beautiful line to complicate my future debugging
 fields_add=fields_add_all(idx_compare);
 nadd=numel(fields_add);
 
@@ -36,7 +35,42 @@ end
 
 [data_one_station,idx]=read_data_stations(paths_main_folder,tok_add{:});
 
-if ~isempty(data_one_station)
+ns=numel(idx);
+%%
+if ns==0
+    in=input('New data. Proceed? (0=NO, 1=YES): ');
+    if in==0
+        return
+    end
+    load(paths.data_stations_index,'data_stations_index');
+    ns=numel(data_stations_index);
+    fnames_index=fieldnames(data_stations_index);
+    nfnamesindex=numel(fnames_index);
+    for kfnames=1:nfnamesindex
+        %check type one above
+        data_exist=data_stations_index(ns).(fnames_index{kfnames});
+        if ischar(data_exist)
+            data_stations_index(ns+1).(fnames_index{kfnames})='';
+        elseif isa(data_exist,'double')
+            data_stations_index(ns+1).(fnames_index{kfnames})=NaN;
+        end
+    end
+    for kadd2i=1:nadd2i
+        data_stations_index(ns+1).(fields_add2index{kadd2i})=data_add.(fields_add2index{kadd2i});
+    end
+    
+    %save index
+    save(paths.data_stations_index,'data_stations_index');
+    
+    %save new file
+    data_one_station=data_stations_index(ns+1);
+    data_one_station.time=data_add.time;
+    data_one_station.waarde=data_add.waarde;
+    fname_save=fullfile(paths.separate,sprintf('%06d.mat',ns+1));
+    save(fname_save,'data_one_station');
+    messageOut(NaN,sprintf('New file written: %s',fname_save)); 
+%%
+elseif ns==1
     fprintf('Data already available:\n')
     fprintf('Location clear: %s\n',data_one_station.location_clear)
     fprintf('Grootheid: %s\n',data_one_station.grootheid)
@@ -78,36 +112,15 @@ if ~isempty(data_one_station)
     fname=fullfile(paths.separate,sprintf('%06d.mat',idx));
     save(fname,'data_one_station')
     messageOut(NaN,sprintf('data added to file %s',fname));
-else
-    in=input('New data. Proceed? (0=NO, 1=YES): ');
-    if in==0
-        return
+%%
+elseif ns>1
+    fprintf('Be more precise, there are more than one station with this data:\n')
+    for ks=1:ns
+        fprintf('Station index: %d \n',idx(ks))
+        fprintf('Location clear: %s\n',data_one_station(ks).location_clear)
+        fprintf('Grootheid: %s\n',data_one_station(ks).grootheid)
     end
-    load(paths.data_stations_index,'data_stations_index');
-    ns=numel(data_stations_index);
-    fnames_index=fieldnames(data_stations_index);
-    nfnamesindex=numel(fnames_index);
-    for kfnames=1:nfnamesindex
-        %check type one above
-        data_exist=data_stations_index(ns).(fnames_index{kfnames});
-        if ischar(data_exist)
-            data_stations_index(ns+1).(fnames_index{kfnames})='';
-        elseif isa(data_exist,'double')
-            data_stations_index(ns+1).(fnames_index{kfnames})=NaN;
-        end
-    end
-    for kadd2i=1:nadd2i
-        data_stations_index(ns+1).(fields_add2index{kadd2i})=data_add.(fields_add2index{kadd2i});
-    end
-    
-    %save index
-    save(paths.data_stations_index,'data_stations_index');
-    
-    %save new file
-    data_one_station=data_stations_index(ns+1);
-    data_one_station.time=data_add.time;
-    data_one_station.waarde=data_add.waarde;
-    fname_save=fullfile(paths.separate,sprintf('%06d.mat',ns+1));
-    save(fname_save,'data_one_station');
-    messageOut(NaN,sprintf('New file written: %s',fname_save));
+    return
 end
+
+end %function

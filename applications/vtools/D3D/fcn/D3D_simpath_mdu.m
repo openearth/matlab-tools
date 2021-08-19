@@ -68,8 +68,12 @@ end
 
 %sediment
 if isfield(mdu,'sediment')
-    simdef.file.mor=fullfile(path_sim,mdu.sediment.MorFile);
-    simdef.file.sed=fullfile(path_sim,mdu.sediment.SedFile);
+    if isfield(mdu.sediment,'MorFile')
+        simdef.file.mor=fullfile(path_sim,mdu.sediment.MorFile);
+    end
+    if isfield(mdu.sediment,'SedFile')
+        simdef.file.sed=fullfile(path_sim,mdu.sediment.SedFile);
+    end
 end
 
 %output

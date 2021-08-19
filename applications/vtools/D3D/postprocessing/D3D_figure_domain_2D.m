@@ -224,6 +224,10 @@ han.face=scatter(mesh2d_face_x,mesh2d_face_y,10,'r','o');
 % han.face=scatter(mean_mesh2d_face_x_bnd,mean_mesh2d_face_y_bnd,10,'g','x');
 han.face_line=plot(mesh2d_face_x_bnd,mesh2d_face_y_bnd,'k');
 
+% EHY
+% data_map.grid=EHY_getGridInfo(fname_grd,{'grid'});
+% plot(data_map.grid.grid(:,1),data_map.grid.grid(:,2),'color','k')
+
 % %nodes
 % for kn=1:nn
 %     han.p=scatter(network1d_node_x(kn),network1d_node_y(kn),10,'sr','filled');

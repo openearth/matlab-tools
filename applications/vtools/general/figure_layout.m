@@ -326,6 +326,10 @@ end
 % data_p.grid.Ycor=data_lp.grid.Ycor(kt,:,:);
 % EHY_plotMapModelData(data_p.grid,data_p.val,'t',1); 
 
+%plot 2D grid
+% data_map.grid=EHY_getGridInfo(fname_grd,{'grid'});
+% plot(data_map.grid.grid(:,1),data_map.grid.grid(:,2),'color','k')
+
 %% PLOT
 
 kr=1; kc=1;    
