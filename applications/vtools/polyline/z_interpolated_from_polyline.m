@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17444 $
-%$Date: 2021-08-02 21:26:54 +0200 (Mon, 02 Aug 2021) $
-%$Author: chavarri $
-%$Id: z_interpolated_from_polyline.m 17444 2021-08-02 19:26:54Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/z_interpolated_from_polyline.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Given a polyline <[x_s,y_s]> with values <[z_s]>, it finds
 %the value <z> associated to the point <[x,p]>.

@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 3 $
-%$Date: 2021-06-02 06:55:36 +0200 (Wed, 02 Jun 2021) $
-%$Author: chavarri $
-%$Id: main_plot.m 3 2021-06-02 04:55:36Z chavarri $
-%$HeadURL: file:///P:/11205272_waterverd_verzilting_2020/023_RMM2021/04_data_rework/04_scripts/svn/main_plot.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 %% PREAMBLE

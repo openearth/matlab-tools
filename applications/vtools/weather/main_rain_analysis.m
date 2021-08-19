@@ -1,11 +1,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17449 $
-%$Date: 2021-08-06 12:38:36 +0200 (Fri, 06 Aug 2021) $
-%$Author: chavarri $
-%$Id: D3D_io_input.m 17449 2021-08-06 10:38:36Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_io_input.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 %% PREAMBLE
