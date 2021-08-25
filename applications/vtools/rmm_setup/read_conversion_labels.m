@@ -67,7 +67,7 @@ for klr=1:nlr
         loclabels_rtc(klr).s3_function=0;
     end
     if exist('param_s3_rtc','var')
-        loclabels_rtc(klr).s3_param=function_s3_rtc(klr,1);   
+        loclabels_rtc(klr).s3_param=param_s3_rtc(klr,1);   
     else
         loclabels_rtc(klr).s3_param=0;
     end
