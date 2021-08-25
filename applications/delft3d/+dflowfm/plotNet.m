@@ -116,24 +116,24 @@ function varargout = plotNet(varargin)
    end
    
 %% plot centres (= flow cells = circumcenters)
-
-   if isfield(G.face,'FlowElemSize') && ~isempty(OPT.face)
-     if isempty(OPT.axis)
-        face.mask = true(1,G.face.FlowElemSize);
-     else
-        face.mask = inpolygon(G.face.FlowElem_x,G.face.FlowElem_y,OPT.axis.x,OPT.axis.y);
+   if isfield(G,'face')
+     if isfield(G.face,'FlowElemSize') && ~isempty(OPT.face)
+       if isempty(OPT.axis)
+          face.mask = true(1,G.face.FlowElemSize);
+       else
+          face.mask = inpolygon(G.face.FlowElem_x,G.face.FlowElem_y,OPT.axis.x,OPT.axis.y);
+       end
+       
+       if ( OPT.idmn>-1 && isfield(G.face,'FlowElemDomain'))
+           if ( length(G.face.FlowElemDomain)==G.face.FlowElemSize )
+              face.mask = (face.mask & G.face.FlowElemDomain==OPT.idmn);
+           end
+       end
+        
+       h.face = plot(G.face.FlowElem_x(:,face.mask),G.face.FlowElem_y(:,face.mask),OPT.face{:});
+       hold on   
      end
-     
-     if ( OPT.idmn>-1 && isfield(G.face,'FlowElemDomain'))
-         if ( length(G.face.FlowElemDomain)==G.face.FlowElemSize )
-            face.mask = (face.mask & G.face.FlowElemDomain==OPT.idmn);
-         end
-     end
-      
-     h.face = plot(G.face.FlowElem_x(:,face.mask),G.face.FlowElem_y(:,face.mask),OPT.face{:});
-     hold on   
    end
-
 %% plot connections (network edges)
 
    if isfield(G,'edge') && ~isempty(OPT.edge)
