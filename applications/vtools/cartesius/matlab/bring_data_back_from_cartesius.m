@@ -86,17 +86,12 @@ fid_ca=fopen(path_ca,'w');
 %% CALC
 
 switch flg.opt
-    %% 1,2
-    case {1,2}
+    case 1
         %% send file with commands to cartesius
 
-    cmd_send_commands_ca=sprintf('scp %s %s@cartesius.surfsara.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        cmd_send_commands_ca=sprintf('scp %s %s@cartesius.surfsara.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
 
         %% compress
-
-%         fname_compressed='move_data';
-
-%         output_folder_cartesius=cartesify(cartesius_project_folder_lin,output_folder_win);
 
         switch flg.opt
             case 1
@@ -149,6 +144,51 @@ switch flg.opt
         fprintf(fid_h6,'%s \n',cmd_uncomp);
         fprintf(fid_h6,'%s \n',cmd_del_tar);
 
+        case 2
+            
+        %% file in cartesius
+        
+        fprintf(fid_ca,'#!/bin/bash \n');
+        
+        %go to results file
+        output_folder_ca=cartesify(cartesius_project_folder_lin,output_folder_win);
+        fprintf(fid_ca,'cd %s \n',output_folder_ca);
+        
+        %compress all files
+fprintf(fid_ca,'for i in *; do                                                     \n');
+fprintf(fid_ca,'	extension="${i##*.}"                                           \n');
+fprintf(fid_ca,'	if [ "$extension" = "nc" ] || [ "$extension" = "dia" ]; then   \n');
+fprintf(fid_ca,'		out_var="${i%%.$extension}.tar.gz"                         \n');
+fprintf(fid_ca,'		tar -zcvf $out_var $i                                      \n');
+fprintf(fid_ca,'		fpath=$(realpath $out_var)                                 \n');
+fprintf(fid_ca,'		echo $fpath >> var_names.txt                               \n');
+fprintf(fid_ca,'	fi                                                             \n');
+fprintf(fid_ca,'done                                                               \n'); 
+        
+        %% file in h6
+        
+        %send file with commands to cartesius
+        cmd_send_commands_ca=sprintf('scp %s %s@cartesius.surfsara.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        fprintf(fid_h6,'%s \n',cmd_send_commands_ca);
+        fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        %bring back <var_names.txt>
+        
+        %read
+        
+        %create dir
+        
+        %transport each file
+        
+        %uncompress
+        
+        %delete tar
+        
+%         fprintf(fid_h6,'%s \n',cmd_mkdir);
+%         fprintf(fid_h6,'%s \n',cmd_transport);
+%         fprintf(fid_h6,'%s \n',cmd_cd_C_sim);
+%         fprintf(fid_h6,'%s \n',cmd_uncomp);
+%         fprintf(fid_h6,'%s \n',cmd_del_tar);
+        
         case 3
             %% transport
             nf=numel(path_bring_back);

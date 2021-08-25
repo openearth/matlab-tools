@@ -15,7 +15,7 @@
 %
 %convert a shape file to a struct. 
 
-function [outputvar] = shp2struct(fullfile,varargin)
+function [outputvar] = shp2struct(fpath,varargin)
 
 %% PARSE
 
@@ -26,7 +26,10 @@ read_val=parin.Results.read_val;
 
 %% CALC
 
-SHP=qpfopen(fullfile);
+if exist(fpath,'file')~=2
+    error('file does not exist: %s',fpath)
+end
+SHP=qpfopen(fpath);
 Q=qpread(SHP);
 objstr = {Q.Name};
 outputvar.xy=qpread(SHP,objstr{1},'griddata');

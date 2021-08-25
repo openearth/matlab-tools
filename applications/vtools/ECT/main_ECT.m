@@ -29,6 +29,7 @@ path_input="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_code
 run(path_input);
 in_2D.flg=ECT_input.flg;
 [ECT_matrices,sed_trans]=call_ECT(ECT_input);
+% sed_trans.qbk.*(1-(2650-1590)/2650)
 [eig_r,eig_i,kwx_v,kwy_v]=twoD_study(ECT_matrices,in_2D);
 fig_twoD(in_2D,eig_r,eig_i,kwx_v,kwy_v)
 

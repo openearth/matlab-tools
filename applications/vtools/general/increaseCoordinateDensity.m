@@ -10,6 +10,15 @@
 %$Id$
 %$HeadURL$
 %
+%Increases the density of a polyline
+%
+%INPUT
+%   -c_axis: [x,y] coordinates of the polyline
+%   -ninc: number of subdivisions in between points
+%
+%OUTPUT
+%   -c_out: [x,y] coordinates of the polyline with increased density
+
 function [c_out]=increaseCoordinateDensity(c_axis,ninc)
 
 c_out=[];

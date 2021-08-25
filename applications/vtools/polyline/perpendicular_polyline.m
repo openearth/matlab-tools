@@ -10,6 +10,11 @@
 %$Id$
 %$HeadURL$
 %
+%Compute polylines <xyL> and <xyR> perpendicular to the 
+%left and right, respectively, of a polyline
+%defined by coordinates in <xp> at a distance <ds>. The 
+%angle of the polyline is defined on an average based on
+%<np_average> points
 
 function [xyL,xyR]=perpendicular_polyline(xy,np_average,ds)
 

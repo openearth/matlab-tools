@@ -73,6 +73,15 @@ for ksim=1:nsim
     mdf_loc=mdf;
     mdf_loc=D3D_modify_input_structure(mdf_loc,input_m.mdf(ksim));
     
+    %special case of grid change->copy to simulation folder
+    if isfield(input_m.mdf,'NetFile')
+        [~,fname_grd,fext_grd]=fileparts(input_m.mdf(ksim).NetFile);
+        fnameext_grd=sprintf('%s%s',fname_grd,fext_grd);
+        fpath_grd=fullfile(path_sim_loc,fnameext_grd);
+        copyfile_check(input_m.mdf(ksim).NetFile,fpath_grd)
+        mdf_loc.geometry.NetFile=fnameext_grd;
+    end
+    
     %copy files
     D3D_write_sim_folder(path_sim_loc,path_file,mdf_loc);
     
@@ -92,7 +101,7 @@ for ksim=1:nsim
 end
 
 fclose(fid_lin);
-copyfile(fout_c_lin,fout_lin)
+copyfile(fout_c_lin,fout_lin);
 
 fclose(fid_win);
-copyfile(fout_c_win,fout_win)
+copyfile(fout_c_win,fout_win);

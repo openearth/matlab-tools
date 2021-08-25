@@ -26,69 +26,79 @@ paths_main_folder='C:\Users\chavarri\checkouts\riv\data_stations\';
 
 %%
 load(fullfile(paths_main_folder,'data_stations_index.mat'))
-%% ADD
 
-% fpath_data='c:\Users\chavarri\temporal\210805_HvH_sal\20210730_034.csv';
-% 
-% data_stations=read_csv_data(fpath_data,'flg_debug',0);
-% 
-% %%
-% ns=numel(data_stations);
-% for ks=1:ns
-%     data_stations(ks).location_clear='Hoek van Holland';
-%     add_data_stations(paths_main_folder,data_stations(ks))
+%% SEVERAL FILES SAME DATA
+
+fdir_data='C:\Users\chavarri\temporal\q\';
+
+dire=dir(fdir_data);
+nf=numel(dire)-2;
+% for kf=1:nf
+%     fpath_data=fullfile(dire(kf+2).folder,dire(kf+2).name);
+%     data_stations(kf)=read_csv_data(fpath_data,'flg_debug',0);
 % end
+for kf=7:7
+    fpath_data=fullfile(dire(kf+2).folder,dire(kf+2).name);
+    data_stations(7)=read_csv_data(fpath_data,'flg_debug',0);
+end
+
+%%
+tim=[];
+val=[];
+for kf=1:nf
+  tim=cat(1,tim,data_stations(kf).time);  
+  val=cat(1,val,data_stations(kf).waarde); 
+end
 
 %%
 
-% fpath_data='c:\Users\chavarri\temporal\210805_HvH_sal\20210818_002.csv';
-% 
-% data_stations=read_csv_data(fpath_data,'flg_debug',0);
-% 
-% %%
-% ns=numel(data_stations);
-% for ks=1:ns
-%     data_stations(ks).location_clear='Brienenoordbrug';
-%     add_data_stations(paths_main_folder,data_stations(ks))
-% end
+figure
+hold on
+plot(tim,val,'*-')
 
 %%
 
-% fpath_data='c:\Users\chavarri\temporal\210805_HvH_sal\20210818_003.csv';
-% 
-% data_stations=read_csv_data(fpath_data,'flg_debug',0);
-% 
-% %%
-% ns=numel(data_stations);
-% for ks=1:ns
-%     data_stations(ks).location_clear='Lekhaven';
-%     add_data_stations(paths_main_folder,data_stations(ks))
-% end
+tt=timetable(tim,val);
+tt2=rmmissing(tt);
+tt3=sortrows(tt2);
+[tt4,idx_u,idx_u2]=unique(tt3);
+
+% vidx=1:1:numel(tt3);
+% idxnu=find(~ismember(vidx,idx_u));
+% tt3.tim(idxnu(3))
+
+dupTimes=sort(tt4.tim);
+tf=(diff(dupTimes)==0);
+dupTimes=dupTimes(tf);
+dupTimes=unique(dupTimes);
+if ~isempty(dupTimes)
+    warning('problem with duplicates')
+end
+
+ttres=retime(tt4,'daily','mean');
+ttres_y=retime(tt4,'yearly','mean');
 
 %%
-% fpath_data='c:\Users\chavarri\temporal\210805_HvH_sal\20210819_011.csv';
-% 
-% data_stations=read_csv_data(fpath_data,'flg_debug',0);
-% 
-% %%
-% ns=numel(data_stations);
-% for ks=1:ns
-%     data_stations(ks).location_clear='Tiel Waal';
-%     data_stations(ks).bemonsteringshoogte=NaN;
-%     add_data_stations(paths_main_folder,data_stations(ks))
-% end
+
+figure
+plot(ttres.tim,ttres.val,'-*')
+
 %%
-% fpath_data='c:\Users\chavarri\temporal\210805_HvH_sal\20210819_003.csv';
+figure
+plot(ttres_y.tim,ttres_y.val,'-*')
+
+%%
+% location_clear_v={'Inloop Spui';'Inloop Spui';'Volkeraksluizen';'Volkeraksluizen'};
 % 
-% data_stations=read_csv_data(fpath_data,'flg_debug',0);
-% location_clear_v={'Beerenplaat','SPIJKNSBWTLK','SPIJKNSBWTLK','SPIJKNSBWTLK'};
-% %%
 % ns=numel(data_stations);
-% for ks=2:ns-1
+% for ks=1:4
 %     data_stations(ks).location_clear=location_clear_v{ks};
 %     add_data_stations(paths_main_folder,data_stations(ks))
 % end
-%%
+
+
+%% SINGLE FILE 
+
 % fpath_data='c:\Users\chavarri\temporal\210805_HvH_sal\20210819_006.csv';
 % 
 % data_stations=read_csv_data(fpath_data,'flg_debug',0);
@@ -99,6 +109,7 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 %     data_stations(ks).location_clear=location_clear_v{ks};
 %     add_data_stations(paths_main_folder,data_stations(ks))
 % end
+
 %%
 
 
