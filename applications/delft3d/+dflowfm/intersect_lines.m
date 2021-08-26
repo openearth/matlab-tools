@@ -47,13 +47,16 @@ B.ymax = max(B.y1,B.y2);
     repmat(reshape(A.ymin,NA,1),1,NB) <= repmat(reshape(B.ymax,1,NB),NA,1) &    ...
 repmat(reshape(A.ymax,NA,1),1,NB) >= repmat(reshape(B.ymin,1,NB),NA,1));
 
-switch ( find(size(A.x1)==1 & size(B.x1==1)) )
-    case 1
-        i = reshape(i,1,[]);
-        j = reshape(j,1,[]);
-    case 2
-        i = reshape(i,[],1);
-        j = reshape(j,[],1);
+shape = find(size(A.x1)==1 & size(B.x1==1));
+if shape ~= [1 2] 
+    switch ( shape )
+        case 1
+            i = reshape(i,1,[]);
+            j = reshape(j,1,[]);
+        case 2
+            i = reshape(i,[],1);
+            j = reshape(j,[],1);
+    end
 end
 det   = ( (A.x2(i)-A.x1(i)).*(B.y2(j)-B.y1(j)) - (A.y2(i)-A.y1(i)).*(B.x2(j)-B.x1(j)) );
 alpha = ( (B.x1(j)-A.x1(i)).*(B.y2(j)-B.y1(j)) - (B.y1(j)-A.y1(i)).*(B.x2(j)-B.x1(j)) ) ./ det;
