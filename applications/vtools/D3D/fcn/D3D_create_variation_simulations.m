@@ -43,6 +43,11 @@ call_script=parin.Results.call_script;
 
 %% CALC
 
+nsim=numel(input_m.sim);
+if isfield(input_m.sim,'dorun')==0
+    input_m.sim.dorun=true(nsim,1);
+end
+
 [path_folder_sims,~,~]=fileparts(input_m.sim(1).path_sim);
 
 %ref
@@ -59,8 +64,13 @@ fout_win=fullfile(path_folder_sims,fout_name_win);
 fout_c_win=fullfile(pwd,fout_name_win);
 fid_win=fopen(fout_c_win,'w');
 
-nsim=numel(input_m.sim);
+
 for ksim=1:nsim
+    
+    if input_m.sim(ksim).dorun==0
+        continue
+    end
+    
     sim_id=input_m.sim(ksim).sim_id;
     path_sim_loc=input_m.sim(ksim).path_sim;
 %     path_mdf_loc=fullfile(path_sim_loc,sprintf('%s.mdf',runid));
@@ -78,7 +88,10 @@ for ksim=1:nsim
         [~,fname_grd,fext_grd]=fileparts(input_m.mdf(ksim).NetFile);
         fnameext_grd=sprintf('%s%s',fname_grd,fext_grd);
         fpath_grd=fullfile(path_sim_loc,fnameext_grd);
-        copyfile_check(input_m.mdf(ksim).NetFile,fpath_grd)
+        sts=copyfile_check(input_m.mdf(ksim).NetFile,fpath_grd);
+        if ~sts
+            error('I cannot find the grid to be copied: %s',input_m.mdf(ksim).NetFile)
+        end
         mdf_loc.geometry.NetFile=fnameext_grd;
     end
     
