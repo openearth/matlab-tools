@@ -155,39 +155,66 @@ switch flg.opt
         fprintf(fid_ca,'cd %s \n',output_folder_ca);
         
         %compress all files
-fprintf(fid_ca,'for i in *; do                                                     \n');
-fprintf(fid_ca,'	extension="${i##*.}"                                           \n');
-fprintf(fid_ca,'	if [ "$extension" = "nc" ] || [ "$extension" = "dia" ]; then   \n');
-fprintf(fid_ca,'		out_var="${i%%.$extension}.tar.gz"                         \n');
-fprintf(fid_ca,'		tar -zcvf $out_var $i                                      \n');
-fprintf(fid_ca,'		fpath=$(realpath $out_var)                                 \n');
-fprintf(fid_ca,'		echo $fpath >> var_names.txt                               \n');
-fprintf(fid_ca,'	fi                                                             \n');
-fprintf(fid_ca,'done                                                               \n'); 
-        
+        fprintf(fid_ca,'for i in *; do                                                     \n');
+        fprintf(fid_ca,'	extension="${i##*.}"                                           \n');
+        fprintf(fid_ca,'	if [ "$extension" = "nc" ] || [ "$extension" = "dia" ]; then   \n');
+        fprintf(fid_ca,'		out_var="${i%%.$extension}.tar.gz"                         \n');
+        fprintf(fid_ca,'		tar -zcvf $out_var $i                                      \n');
+        fprintf(fid_ca,'		fpath=$(realpath $out_var)                                 \n');
+        fprintf(fid_ca,'		echo $fpath >> var_names.txt                               \n');
+        fprintf(fid_ca,'	fi                                                             \n');
+        fprintf(fid_ca,'done                                                               \n'); 
+                
         %% file in h6
+        
+        fprintf(fid_h6,'#!/bin/bash \n');
         
         %send file with commands to cartesius
         cmd_send_commands_ca=sprintf('scp %s %s@cartesius.surfsara.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
         fprintf(fid_h6,'%s \n',cmd_send_commands_ca);
         fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        
+        %create output folder and go there
+        output_folder_h6=linuxify(output_folder_win);
+        fprintf(fid_h6,'mkdir %s \n',output_folder_h6);
+        fprintf(fid_h6,'cd %s \n',output_folder_h6);
+        
         %bring back <var_names.txt>
+        fpath_varnames_h6=linuxify(fullfile(output_folder_win,'var_names.txt'));
+        fpath_varnames_ca=cartesify(cartesius_project_folder_lin,fpath_varnames_h6);
+        cmd_transport_varnames=sprintf('rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:%s %s',surf_userid,fpath_varnames_ca,fpath_varnames_h6);
+        fprintf(fid_h6,'%s \n',cmd_transport_varnames);
+
+        %read (loop)
+        fprintf(fid_h6,'file="var_names.txt" \n');
+        fprintf(fid_h6,'while IFS= read -r line \n');
+        fprintf(fid_h6,'do \n');
+            %filename with extension
+%         fprintf(fid_h6,'filename=$(basename -- "$line") \n');
+            %for some reason, the filename is in <lustre5> directory, but we need to read from <projects>
+fprintf(fid_h6,'full_string=$line \n');
+fprintf(fid_h6,'search_string="lustre5" \n');
+fprintf(fid_h6,'replace_string="projects" \n');
+fprintf(fid_h6,'linep=${full_string/$search_string/$replace_string} \n');
+
+fprintf(fid_h6,'full_string=$linep \n');
+fprintf(fid_h6,'search_string="%s" \n',cartesius_project_folder_lin);
+fprintf(fid_h6,'replace_string="/p/" \n');
+fprintf(fid_h6,'linep2=${full_string/$search_string/$replace_string} \n');
+
+        fprintf(fid_h6,'printf "start transferring %%s here %%s \\n" $linep $linep2 >> log.txt \n');
+            %transport each file
+        fprintf(fid_h6,'rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:$linep $linep2 \n',surf_userid);
+            %uncompress
+%             printf "start uncompressing %s.\n" $filename >> log.txt
+        fprintf(fid_h6,'tar -zxvf $linep2 \n');
+            %delete tar
+        fprintf(fid_h6,'rm -rf $linep2 \n'); 
+            %display for debug    
+%         fprintf(fid_h6,'	printf ''%%s\\n'' "$line" \n'); %one % taken, one \n taken
+%         fprintf(fid_h6,'	printf ''%%s\\n'' "$filename" \n'); %one % taken, one \n taken
+        fprintf(fid_h6,'done <"$file" \n');
         
-        %read
-        
-        %create dir
-        
-        %transport each file
-        
-        %uncompress
-        
-        %delete tar
-        
-%         fprintf(fid_h6,'%s \n',cmd_mkdir);
-%         fprintf(fid_h6,'%s \n',cmd_transport);
-%         fprintf(fid_h6,'%s \n',cmd_cd_C_sim);
-%         fprintf(fid_h6,'%s \n',cmd_uncomp);
-%         fprintf(fid_h6,'%s \n',cmd_del_tar);
         
         case 3
             %% transport
