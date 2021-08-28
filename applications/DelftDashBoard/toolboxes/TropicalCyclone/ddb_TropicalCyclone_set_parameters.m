@@ -282,11 +282,11 @@ switch lower(handles.toolbox.tropicalcyclone.downloadLocation)
         if (~isempty(storm_name))
             handles.toolbox.tropicalcyclone.TCStormName = storm_name;
             %  Build a Perl script command to download the file by name
-            cmd = [which('check_tc_files.pl') ' --name ' storm_name ...
+            cmd = ['perl ' which('check_tc_files.pl') ' --name ' storm_name ...
                 ' ' region_option ' --data_dir ' handles.tropicalCycloneDir];
         else
             %  Build a Perl script command to download all available files
-            cmd = [which('check_tc_files.pl') ' ' region_option ' --data_dir ' handles.tropicalCycloneDir];
+            cmd = ['perl ' which('check_tc_files.pl') ' ' region_option ' --data_dir ' handles.tropicalCycloneDir ' --best'];
         end
         
         %  Invoke the download command using a system() call.
@@ -296,17 +296,19 @@ switch lower(handles.toolbox.tropicalcyclone.downloadLocation)
         if (status == 0)
             %  The command was successful, so continue.
             %  Determine the name of the track file(s) based on data type (i.e., TC center).
-            if (strcmp(handles.toolbox.tropicalcyclone.downloadLocation, 'jtwccurrenttracks'))
+            if (strcmpi(handles.toolbox.tropicalcyclone.downloadLocation, 'jtwccurrenttracks'))
                 %  JTWC
-                [startIndex, endIndex, tokIndex, matchStr, tokenStr, exprNames, splitStr] = ...
-                regexp(result,'web\.txt was moved to ([A-Z]{3,4})\/(wp[0-9]{4}web_[0-9]{12}\.txt*)');
+                [~, ~, ~, ~, tokenStr, ~, ~] = ...
+                regexp(result,'web\.txt was moved to ([A-Z]{3,4})[\/\\]([a-z]{2}[0-9]{4}web_[0-9]{12}\.txt*)');
                 %  Define the file format conversion script name.
                 sname = 'parse_jtwc_warning.pl';  % Script name
                 prog = which(sname);              % Full path name of script
             else
                 %  NHC
-                [startIndex, endIndex, tokIndex, matchStr, tokenStr, exprNames, splitStr] = ...
-                regexp(result,'[acew][tp][0-9]\.txt was moved to ([A-Z]{3,4})\/(wt[a-z]{2}[0-9]{2}\.[a-z]{4}\.tcm\.[ace][tp][0-9]_[0-9]{12}\.txt*)')
+                %                 [startIndex, endIndex, tokIndex, matchStr, tokenStr, exprNames, splitStr] = ...
+                %                 regexp(result,'[acew][tp][0-9]\.txt was moved to ([A-Z]{3,4})\/(wt[a-z]{2}[0-9]{2}\.[a-z]{4}\.tcm\.[ace][tp][0-9]_[0-9]{12}\.txt*)');
+                [~, ~, ~, ~, tokenStr, ~, ~] = ...
+                regexp(result,'[acew][tp][0-9]\.txt was moved to ([A-Z]{3,4})[\/\\](wt[a-z]{2}[0-9]{2}\.[a-z]{4}\.tcm\.[ace][tp][0-9]_[0-9]{12}\.txt*)');
                 %  Define the file format conversion script name.
                 sname = 'read_fcst_advisory.pl';  % Script name
                 prog = which(sname);              % Full path name of script
@@ -332,7 +334,7 @@ switch lower(handles.toolbox.tropicalcyclone.downloadLocation)
                 %  Invoke another Perl script to convert to .trk format.
                 %  First, create the command string using the correct
                 %  script and current file names.
-                cmd = [prog ' ' txtfile ' wes.inp ' trkfile ' ' int2str(handles.toolbox.tropicalcyclone.nrRadialBins) ...
+                cmd = ['perl ' prog ' ' txtfile ' wes.inp ' trkfile ' ' int2str(handles.toolbox.tropicalcyclone.nrRadialBins) ...
                     ' ' int2str(handles.toolbox.tropicalcyclone.nrDirectionalBins) ' ' ...
                     int2str(handles.toolbox.tropicalcyclone.radius)];
                 
@@ -398,7 +400,7 @@ switch lower(handles.toolbox.tropicalcyclone.importFormat)
             
         %  Set the basin(s) to check based on which data set was
         %  selected.
-        if (strcmp(lower(handles.toolbox.tropicalcyclone.importFormat), 'jtwccurrenttrack'))
+        if (strcmpi(handles.toolbox.tropicalcyclone.importFormat, 'jtwccurrenttrack'))
             %  JTWC -- currently, this data set is from the Western
             %  Pacific.
             region = '--region sh,wp';
@@ -435,7 +437,7 @@ switch lower(handles.toolbox.tropicalcyclone.importFormat)
             end
             
             %  Create the name finding command.
-            cmd = [prog ' ' storm_name ' --data_dir '  handles.tropicalCycloneDir ' ' region];
+            cmd = ['perl ' prog ' ' storm_name ' --data_dir '  handles.tropicalCycloneDir ' ' region];
             %  Execute the command using a system() call.
             [status,result] = system(cmd);
             %  Evaluate the results.
@@ -469,7 +471,7 @@ switch lower(handles.toolbox.tropicalcyclone.importFormat)
                             %  Invoke another Perl script to convert to .trk format.
                             %  First, create the command string using the correct
                             %  script and current file names.
-                            cmd2 = [cprog ' ' char(m) ' wes.inp ' strrep(char(m),'.txt','.trk') ' '...
+                            cmd2 = ['perl ' cprog ' ' char(m) ' wes.inp ' strrep(char(m),'.txt','.trk') ' '...
                                 int2str(handles.toolbox.tropicalcyclone.nrRadialBins) ...
                             ' ' int2str(handles.toolbox.tropicalcyclone.nrDirectionalBins) ' '...
                             int2str(handles.toolbox.tropicalcyclone.radius)];
@@ -608,10 +610,6 @@ try
             handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
             handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';   
-        case{'hurdat2besttrack'}
-            tc=tc_read_hurdat2_best_track([pathname filename]);
-            handles.toolbox.tropicalcyclone.cyclonename=tc.name;
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
         otherwise
             giveWarning('text','Sorry, present import format not supported!');
             return
@@ -628,6 +626,12 @@ try
     fldnames=fieldnames(tc);
     for ifld=1:length(fldnames)
         track.(fldnames{ifld})=tc.(fldnames{ifld});
+    end
+    if isfield(track,'lon')
+       track.x = track.lon;
+    end
+    if isfield(track,'lat')
+      track.y = track.lat;
     end
     handles.toolbox.tropicalcyclone.track=track;
     
@@ -732,7 +736,8 @@ else
                 spw.wind_pressure_relation=inp.wind_pressure_relation;
                 spw.rmax_relation=inp.rmax_relation;
                 spw.cut_off_speed=30/1.85;  
-                spw.cut_off_speed=0/1.85;  
+                spw.cut_off_speed=30/1.85;  
+                spw.cut_off_speed=5;  
                 spw.pn=inp.pn;
                 
                 spw.asymmetry_magnitude='schwerdt1979';
@@ -916,7 +921,8 @@ elseif (iflag == 2)
                         if (indx <= length(snames))
                             %  A valid name selection was made.  Store the chosen
                             %  name and return to the caller.
-                            storm_name = strtrim(snames(indx,:));
+                            storm_info = textscan(strtrim(snames(indx,:)),'%s','delimiter',',');
+                            storm_name = strtrim(char(storm_info{1}(1)));
                             return;
                         end
                     else
