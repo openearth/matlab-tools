@@ -78,7 +78,7 @@ fid=fopen([name '.pol'],'wt');
 fprintf(fid,'%s\n',name);
 fprintf(fid,'%i %i\n',inp.nrTrackPoints,2);
 for j=1:inp.nrTrackPoints
-    fprintf(fid,'%6.3f %6.3f\n',inp.trackX(j),inp.trackY(j));
+    fprintf(fid,'%6.3f %6.3f\n',inp.track.x(j),inp.track.y(j));
 end
 fclose(fid);
 
@@ -133,68 +133,68 @@ for iq=1:nq
         dstr=datestr(inp.trackT(j),'yyyy  mm  dd  HH');
         switch met
             case 1
-                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f %6.1f %1.0e\n',dstr,inp.trackY(j),inp.trackX(j),met,inp.trackVMax(j,iq),e,e,e,e,e,inp.trackB(j,iq),inp.trackA(j,iq),e);
+                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f %6.1f %1.0e\n',dstr,inp.track.y(j),inp.track.x(j),met,inp.track.vmax(j,iq),e,e,e,e,e,inp.track.b(j,iq),inp.track.a(j,iq),e);
             case 2
                 
-                if inp.trackR35(j,iq)<0 || inp.trackR50(j,iq)<0
+                if inp.track.r35(j,iq)<0 || inp.track.r50(j,iq)<0
                     % Not enough input.
-                    if inp.trackPDrop(j,iq)<0
+                    if inp.track.pc(j,iq)<0
                         % switch to method 6
-                        fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,inp.trackY(j),inp.trackX(j),6,inp.trackVMax(j,iq),e,e,e,e,e,e,e,e);
+                        fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,inp.track.y(j),inp.track.x(j),6,inp.track.vmax(j,iq),e,e,e,e,e,e,e,e);
                     else
-                        if inp.trackRMax(j,iq)>=0
+                        if inp.track.rmax(j,iq)>=0
                             % RMax available. Switch to method 3.
-                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.trackY(j),inp.trackX(j),3,inp.trackVMax(j,iq),inp.trackRMax(j,iq),e,e,e,e,e,e,inp.trackPDrop(j,iq));
+                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.track.y(j),inp.track.x(j),3,inp.track.vmax(j,iq),inp.track.rmax(j,iq),e,e,e,e,e,e,inp.track.pc(j,iq));
                         else
                             % Switch to method 4.
-                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.trackY(j),inp.trackX(j),4,inp.trackVMax(j,iq),e,e,e,e,e,e,e,inp.trackPDrop(j,iq));
+                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.track.y(j),inp.track.x(j),4,inp.track.vmax(j,iq),e,e,e,e,e,e,e,inp.track.pc(j,iq));
                         end
                     end
                 else
                     fmt='  %s  %6.2f  %6.2f      %i  %6.1f ';
-                    if inp.trackRMax(j,iq)>=0
+                    if inp.track.rmax(j,iq)>=0
                         fmt=[fmt ' %6.1f'];
                     else
                         fmt=[fmt ' %1.0e'];
-                        inp.trackRMax(j,iq)=e;
+                        inp.track.rmax(j,iq)=e;
                     end
-                    if inp.trackR100(j,iq)>=0
+                    if inp.track.r100(j,iq)>=0
                         fmt=[fmt ' %6.1f'];
                     else
                         fmt=[fmt ' %1.0e'];
-                        inp.trackR100(j,iq)=e;
+                        inp.track.r100(j,iq)=e;
                     end
-                    if inp.trackR65(j,iq)>=0
+                    if inp.track.r65(j,iq)>=0
                         fmt=[fmt ' %6.1f'];
                     else
                         fmt=[fmt ' %1.0e'];
-                        inp.trackR65(j,iq)=e;
+                        inp.track.r65(j,iq)=e;
                     end
-                    if inp.trackR50(j,iq)>=0
+                    if inp.track.r50(j,iq)>=0
                         fmt=[fmt ' %6.1f'];
                     else
                         fmt=[fmt ' %1.0e'];
-                        inp.trackR50(j,iq)=e;
+                        inp.track.r50(j,iq)=e;
                     end
-                    if inp.trackR35(j,iq)>=0
+                    if inp.track.r35(j,iq)>=0
                         fmt=[fmt ' %6.1f'];
                     else
                         fmt=[fmt ' %1.0e'];
-                        inp.trackR35(j,iq)=e;
+                        inp.track.r35(j,iq)=e;
                     end
                     fmt=[fmt ' %1.0e %1.0e %1.0e\n'];
-                    fprintf(fid,fmt,dstr,inp.trackY(j),inp.trackX(j),met,inp.trackVMax(j,iq),inp.trackRMax(j,iq),inp.trackR100(j,iq),inp.trackR65(j,iq),inp.trackR50(j,iq),inp.trackR35(j,iq),e,e,e);
+                    fprintf(fid,fmt,dstr,inp.track.y(j),inp.track.x(j),met,inp.track.vmax(j,iq),inp.track.rmax(j,iq),inp.track.r100(j,iq),inp.track.r65(j,iq),inp.track.r50(j,iq),inp.track.r35(j,iq),e,e,e);
                 end
                 
                 
             case 3
-                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.trackY(j),inp.trackX(j),met,inp.trackVMax(j,iq),inp.trackRMax(j,iq),e,e,e,e,e,e,inp.trackPDrop(j,iq));
+                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.track.y(j),inp.track.x(j),met,inp.track.vmax(j,iq),inp.track.rmax(j,iq),e,e,e,e,e,e,inp.track.pc(j,iq));
             case 4
-                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.trackY(j),inp.trackX(j),met,inp.trackVMax(j,iq),e,e,e,e,e,e,e,inp.trackPDrop(j,iq));
+                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.track.y(j),inp.track.x(j),met,inp.track.vmax(j,iq),e,e,e,e,e,e,e,inp.track.pc(j,iq));
             case 5
-                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,inp.trackY(j),inp.trackX(j),met,inp.trackVMax(j,iq),inp.trackRMax(j,iq),e,e,e,e,e,e,e);
+                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,inp.track.y(j),inp.track.x(j),met,inp.track.vmax(j,iq),inp.track.rmax(j,iq),e,e,e,e,e,e,e);
             case 6
-                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,inp.trackY(j),inp.trackX(j),met,inp.trackVMax(j,iq),e,e,e,e,e,e,e,e);
+                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,inp.track.y(j),inp.track.x(j),met,inp.track.vmax(j,iq),e,e,e,e,e,e,e,e);
         end
     end
     
