@@ -27,7 +27,11 @@ for kg=1:ng
     tt_all{kg,1}=tt_aux;
 end
 tt=synchronize(tt_all{:});
+% uniqueRowsTT=unique(tt);
 tt=retime(tt,'regular','linear','TimeStep',dt_disc);
+% tt2=retime(uniqueRowsTT,'daily');
+% warning('solve this mess')
+% tt=retime(tt,'daily');
 tt_val=tt.Variables;
 tt_tim=tt.Time;
 

@@ -46,12 +46,15 @@ while 1
                 fpath_html=fullfile(fdir_rain,sprintf('file_%f.html',datenum(t_now)));
                 errstatus_dw=download_web(url_br,fpath_html);
             end
+            errstatus_dw=1; %if you don't manage to read, try to download again
             messageOut(NaN,'Trying to read.')
             [rain_one,errstatus_rd,errmessage]=read_web_buienradar(fpath_html);
         end
+        errstatus_rd=1; %set to error, such that it reads in the next loop
+        
 %         fclose all; %this should not be necessary, but for some reason sometimes the file cannot be deleted
 %         pause(5); %maybe this helps
-%         delete(fpath_html);
+        delete(fpath_html);
         rain_one.tim_anl=datetime('now');
         if exist(fname_rain,'file')==2
             load(fname_rain,'rain');
@@ -62,8 +65,6 @@ while 1
         end
         save(fname_rain,'rain')
         t_last=t_now;
-        errstatus_rd=1;
-        errstatus_dw=1;
         messageOut(NaN,'Data read.')
     else
         messageOut(NaN,'In pause.')

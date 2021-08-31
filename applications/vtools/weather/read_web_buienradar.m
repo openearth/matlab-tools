@@ -86,6 +86,7 @@ errstatus=0;
 errmessage='';
 
 if feof(fid)
+    fclose(fid);
     errstatus=1;
     errmessage='I reached the end and could not find the block';
 end
