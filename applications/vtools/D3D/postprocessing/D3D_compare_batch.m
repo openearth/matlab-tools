@@ -4,11 +4,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17358 $
-%$Date: 2021-06-22 11:28:04 +0200 (Tue, 22 Jun 2021) $
-%$Author: ottevan $
-%$Id: NC_read_map.m 17358 2021-06-22 09:28:04Z ottevan $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/NC_read_map.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

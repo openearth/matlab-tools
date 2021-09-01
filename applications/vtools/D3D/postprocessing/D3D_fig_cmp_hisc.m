@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 72 $
-%$Date: 2021-07-21 11:04:13 +0200 (wo, 21 jul 2021) $
-%$Author: ottevan $
-%$Id: fig_norm_t.m 72 2021-07-21 09:04:13Z ottevan $
-%$HeadURL: file:///P:/dflowfm/projects/2020_d-morphology/modellen/3655-sequential-parallel/maas/01_scripts/svn/fig_norm_t.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
