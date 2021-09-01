@@ -100,6 +100,8 @@ OPT.path_save=fullfile(pwd,'earth_tiles');
 OPT.path_tiles=fullfile(pwd,'earth_tiles'); 
 OPT.map_type=2;%map type
 OPT.han_ax=NaN;
+OPT.z_tiles=0;
+
 %1=satellite;
 %2=openstreetmap; 
 %3=google earth (satellite); 
@@ -240,7 +242,7 @@ end
 
 %% PLOT
 [nx,ny,~]=size(tiles);
-if isnan(OPT.han_ax) || ~isaxes(OPT.han_ax)
+if ~isaxes(OPT.han_ax)
     %If axis handle is invalid, create a new figure
     figure;
     hold on;
@@ -253,7 +255,7 @@ end
 
 for kx=1:nx
     for ky=1:ny
-         surf(ax,tiles{kx,ky,1},tiles{kx,ky,2},zeros(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none');
+         surf(ax,tiles{kx,ky,1},tiles{kx,ky,2},OPT.z_tiles*ones(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none');
     end
 end
 % switch logs.CS2.type

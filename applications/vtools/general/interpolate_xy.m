@@ -26,8 +26,19 @@
 %   -x_v: x-coordinate where to interpolate measurements; double(1,nxv)
 %   -x_thres: maximum x-distance from a measured point to a query point to be considered close enough to interpolate; double(1,1)
 
-function [x_m,y_m,val_m]=interpolate_xy(y,x,val,y_v,x_v,x_thres)
+function [x_m,y_m,val_m]=interpolate_xy(y,x,val,y_v,x_v,x_thres,varargin)
         
+%%
+
+parin=inputParser;
+
+addOptional(parin,'display',true);
+
+parse(parin,varargin{:});
+
+display_progress=parin.Results.display;
+
+%%
 ny=numel(y);
 
 nxv=numel(x_v);
@@ -66,6 +77,8 @@ for kyv=1:nyv %y queary points
         end
 
         %display
-        fprintf('Interpolating y %3.2f %%; x %3.2f %%\n',kyv/nyv*100,kxv/nxv*100)
+        if display_progress
+            fprintf('Interpolating y %3.2f %%; x %3.2f %%\n',kyv/nyv*100,kxv/nxv*100)
+        end
     end %ktv
 end %kxv

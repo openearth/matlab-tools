@@ -19,8 +19,8 @@ v2struct(ECT_matrices);
 
 if isfield(in_2D,'lims_lw')==0
     in_2D.lims_lw=[0.01,200];
-    np=250;
 end
+np=250;
 if isfield(in_2D,'kwx_v')==0
     in_2D.kwx_v=(10.^(linspace(log10(2*pi/in_2D.lims_lw(2)),log10(2*pi/in_2D.lims_lw(1)),np)));
 end
