@@ -9,6 +9,7 @@ function daten = EHY_datenum(date,format)
 % Example1:   daten = EHY_datenum('20200101')
 % Example2:   daten = EHY_datenum('20200101','yyyymmdd')
 % Example3:   daten = EHY_datenum('202001011500')
+% Example4:   daten = EHY_datenum(202001011500) % numeric value instead of char
 %
 % support function of the EHY_tools - E: Julien.Groenenboom@Deltares.nl
 %%
@@ -18,7 +19,8 @@ if iscell(date) && numel(date) == 1
     date = char(date);
 end
 if ~ischar(date)
-    error('This functions expects "date" to be a cell or char array')
+    warning(['Input provided (' num2str(date) ') will be treated as a char (i.e. ''' num2str(date) ''') instead of a numeric value'])
+    date = num2str(date);
 end
 
 if length(date) == 8

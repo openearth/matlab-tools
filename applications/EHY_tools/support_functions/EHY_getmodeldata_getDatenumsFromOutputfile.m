@@ -48,9 +48,11 @@ switch modelType
             %
             % Check if reconstructed timeseries matches with original data,
             % otherwise just read from file
-            if abs(time(end-2)-time_end(1)) > eps && displ
-                disp('Time could not be reconstructed, so it''s read from file')
-                time = ncread(inputFile, 'time'); 
+            if abs(time(end-2)-time_end(1)) > eps
+                if displ
+                    disp('Time could not be reconstructed, so it''s read from file')
+                end
+                time = ncread(inputFile, 'time');
             end
         end
         

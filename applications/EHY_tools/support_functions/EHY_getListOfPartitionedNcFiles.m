@@ -9,7 +9,7 @@ function ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,mergePartitionNrs)
 %% get list of ncFiles
 
 % correction for bug in DFM: *0001_0001_fou.nc / *_0012_0012_map.nc / *_0007_0007_numlimdt.xyz
-if length(inputFile) > 10 && ~isempty(str2num(inputFile(end-15:end-12))) && ...
+if length(inputFile) > 16 && ~isempty(str2num(inputFile(end-15:end-12))) && ...
         strcmp(inputFile(end-15:end-12), inputFile(end-10:end-7))
     ncFiles = dir([inputFile(1:end-16) '*' inputFile(end-6:end)]);
     ncFilesName = regexpi({ncFiles.name},['\S{' num2str(length(ncFiles(1).name)-16) '}+\d{4}_+\d{4}_+\S{3}.nc'],'match');

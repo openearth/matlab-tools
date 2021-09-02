@@ -25,7 +25,11 @@ end
 %% return if regular netCDF file
 varNameInput = varName;
 if strcmp(modelType,'nc')
-    newName = varName;
+    if strcmpi(varName,'wl') && ~nc_isvar(fName,'wl') && nc_isvar(fName,'waterlevel')
+        newName = 'waterlevel';
+    else
+        newName = varName;
+    end
     return
 end
 
