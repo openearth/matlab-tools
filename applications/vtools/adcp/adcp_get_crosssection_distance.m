@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 16769 $
-%$Date: 2020-11-05 11:40:08 +0100 (Thu, 05 Nov 2020) $
-%$Author: chavarri $
-%$Id: add_floodplane.m 16769 2020-11-05 10:40:08Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/bed_level_flume/add_floodplane.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [s,idx_out2,cords_xy_4326,cords_xy_28992]=adcp_get_crosssection_distance(data_block,varargin)

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17460 $
-%$Date: 2021-08-19 15:11:09 +0200 (Thu, 19 Aug 2021) $
-%$Author: chavarri $
-%$Id: D3D_io_input.m 17460 2021-08-19 13:11:09Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_io_input.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function piles=polnan2cell(piles_nan)
