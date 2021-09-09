@@ -27,6 +27,8 @@ switch units
         time_dtime=t0_dtime+minutes(time_r);
     case 'hours'
         time_dtime=t0_dtime+hours(time_r);
+    case 'days'
+        time_dtime=t0_dtime+days(time_r);
     otherwise
         error('add')
 end

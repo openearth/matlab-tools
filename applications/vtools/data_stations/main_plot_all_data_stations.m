@@ -40,6 +40,7 @@ load(paths.data_stations_index);
 ns=numel(data_stations_index);
 for ks=1:ns
     load(fullfile(paths.separate,sprintf('%06d.mat',ks)),'data_one_station');
+	warning('call fig_data_station')
     figure('visible',0)
     plot(data_one_station.time,data_one_station.waarde)
     title(data_one_station.location_clear);

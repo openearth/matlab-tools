@@ -60,7 +60,7 @@ switch what_do
                 dflowfm_io_mdu('write',fname,stru_in);
             case {'.mdf'}
                 delft3d_io_mdf('write',fname,stru_in.keywords);
-            case {'.pli','.ldb'}
+            case {'.pli','.ldb','.pol'}
 %                 stru_in(kpol).name: double or string
 %                 stru_in(kpol).xy: [np,2] array with x-coordinate (:,1) and y-coordinate (:,2)
                 D3D_write_polys(fname,stru_in);

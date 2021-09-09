@@ -60,6 +60,9 @@ end
 if isfield(mdu.geometry,'StructureFile')
     simdef.file.struct=fullfile(path_sim,mdu.geometry.StructureFile);
 end
+if isfield(mdu.geometry,'FixedWeirFile')
+    simdef.file.fxw=fullfile(path_sim,mdu.geometry.FixedWeirFile);
+end
 
 %dep
 if isfield(mdu.geometry,'BedlevelFile')

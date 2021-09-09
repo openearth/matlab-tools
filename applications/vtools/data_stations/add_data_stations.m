@@ -11,7 +11,26 @@
 %$HeadURL$
 %
 
-function add_data_stations(paths_main_folder,data_add)
+% data_station.location=platform_id;
+% data_station.location_clear=station_name;
+% data_station.x=xco;
+% data_station.y=yco;
+% data_station.epsg=epsg;
+% data_station.grootheid='WATHTE';
+% data_station.eenheid='mNAP';
+% data_station.time=tim;
+% data_station.waarde=val;
+ 
+function add_data_stations(paths_main_folder,data_add,varargin)
+
+OPT_de.ask=1;
+OPT_de.filter_time=1;
+OPT_de.tim_diff_thresh=seconds(0.9);
+
+if numel(varargin)>0
+    OPT_in=varargin;
+end
+OPT=setproperty(OPT_de,OPT_in);
 
 paths=paths_data_stations(paths_main_folder);
 
@@ -38,9 +57,14 @@ end
 ns=numel(idx);
 %%
 if ns==0
-    in=input('New data. Proceed? (0=NO, 1=YES): ');
-    if in==0
-        return
+    fprintf('New data:\n')
+    fprintf('Location clear: %s\n',data_add.location_clear)
+    fprintf('Grootheid: %s\n',data_add.grootheid)
+    if OPT.ask
+        in=input('Create new data? (0=NO, 1=YES): ');
+        if in==0
+            return
+        end
     end
     load(paths.data_stations_index,'data_stations_index');
     ns=numel(data_stations_index);
@@ -74,10 +98,11 @@ elseif ns==1
     fprintf('Data already available:\n')
     fprintf('Location clear: %s\n',data_one_station.location_clear)
     fprintf('Grootheid: %s\n',data_one_station.grootheid)
-    
-    in=input('Merge? (0=NO, 1=YES): ');
-    if in==0
-        return
+    if OPT.ask
+        in=input('Merge? (0=NO, 1=YES): ');
+        if in==0
+            return
+        end
     end
     if numel(data_one_station)>1
         error('Be more specific, there are several data sets for these tokens.')
@@ -101,6 +126,15 @@ elseif ns==1
     
     tim_tot=data_r.tim_tot;
     val_tot=data_r.val_tot;
+    
+    %filter times below threshold
+    if OPT.filter_time
+        tim_diff=diff(tim_tot);
+        bol_same=tim_diff<OPT.tim_diff_thresh;
+        bol_rem=[false;bol_same];
+        tim_tot(bol_rem)=[];
+        val_tot(bol_rem)=[];
+    end
     
 %     [tim_tot,idx_s]=sort(tim_tot);
 %     val_tot=val_tot(idx_s);

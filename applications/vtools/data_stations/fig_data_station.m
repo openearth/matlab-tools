@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17460 $
+%$Date: 2021-08-19 15:11:09 +0200 (Thu, 19 Aug 2021) $
+%$Author: chavarri $
+%$Id: figure_layout.m 17460 2021-08-19 13:11:09Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/figure_layout.m $
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_whatever(in_p)
+function fig_data_station(in_p)
 
 %% DEFAULTS
 
@@ -43,26 +43,18 @@ end
 if isfield(in_p,'fig_size')==0
     in_p.fig_size=[0,0,14,14];
 end
-if isfield(in_p,'fig_overwrite')==0
-    in_p.fig_overwrite=1;
-end
-if isfield(in_p,'fid_log')==0
-    in_p.fid_log=NaN;
+
+if isfield(in_p,'ylab')==0
+    in_p.ylab=labels4all(data_station.grootheid,1,lan);
 end
 
 v2struct(in_p)
 
-%% check if printing
-print_fig=check_print_figure(in_p);
-if ~print_fig
-    return
-end
-
 %% SIZE
 
 %square option
-npr=2; %number of plot rows
-npc=4; %number of plot columns
+npr=1; %number of plot rows
+npc=1; %number of plot columns
 axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
@@ -251,14 +243,14 @@ cmap=brewermap(3,'set1');
 
 kr=1; kc=1;
 lims.y(kr,kc,1:2)=[-2e-3,2e-3];
-lims.x(kr,kc,1:2)=lim_A;
-lims.c(kr,kc,1:2)=clims;
+% lims.x(kr,kc,1:2)=lim_A;
+% lims.c(kr,kc,1:2)=clims;
 xlabels{kr,kc}='L_a [m]';
-ylabels{kr,kc}='\lambda^* [-]';
+ylabels{kr,kc}=ylab;
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
-
+lims_d.x(kr,kc,1:2)=xlims;
 
 %% FIGURE INITIALIZATION
 
@@ -345,12 +337,12 @@ end
 %% PLOT
 
 kr=1; kc=1;    
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
-han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
-han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
-surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+han.p(kr,kc,1)=plot(data_station.time,data_station.waarde,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+% han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
+% han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
+% han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
+% surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
 
 %% PROPERTIES
 
@@ -362,7 +354,7 @@ grid(han.sfig(kr,kc),'on')
 han.sfig(kr,kc).Box='on';
 % han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
@@ -370,13 +362,13 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String='c';
+han.sfig(kr,kc).Title.String=data_station.location_clear;
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
-% han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
+han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap

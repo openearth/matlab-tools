@@ -14,10 +14,20 @@
 
 function [time_r,time_mor_r,time_dnum,time_dtime]=D3D_results_time(nc_map,ismor,kt)
 
+%% calc
 [~,fname,ext]=fileparts(nc_map);
 
 time_mor_r=NaN;
 if strcmp(ext,'.nc') %FM
+    
+    %take last
+    if isnan(kt)
+        nci=ncinfo(nc_map);
+        idx_t=find_str_in_cell({nci.Dimensions.Name},{'time'});
+        nt=nci.Dimensions(idx_t).Length;
+        kt=[nt,1];
+    end
+    
     ismap=0;
     if contains(fname,'_map')
         ismap=1;

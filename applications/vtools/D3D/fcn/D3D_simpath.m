@@ -59,41 +59,7 @@ end
 
 %% load
 switch simdef.D3D.structure
-%     case 1
-% 
-%         %% structured
-%         
-% %         D3D_io_input('read',
-% for kf1=1:nf
-%     kf=kf1+2; %. and ..
-%     if dire(kf).isdir==0 %it is not a directory
-%     [~,~,ext]=fileparts(dire(kf).name); %file extension
-%     switch ext
-%         case '.mdf'
-%             file.mdf=fullfile(dire(kf).folder,dire(kf).name);
-%         case '.sed'
-%             file.sed=fullfile(dire(kf).folder,dire(kf).name);
-%         case '.mor'
-%             file.mor=fullfile(dire(kf).folder,dire(kf).name);
-%         case '.tra'
-%             file.tra=fullfile(dire(kf).folder,dire(kf).name);
-%         case '.wr'
-%             file.wr=fullfile(dire(kf).folder,dire(kf).name);
-%         case '.grd'
-%             file.grd=fullfile(dire(kf).folder,dire(kf).name);
-%         case '.dat'
-%             if strcmp(dire(kf).name(1:4),'trim')
-%                 file.map=fullfile(dire(kf).folder,dire(kf).name);
-%             end
-%             if strcmp(dire(kf).name(1:4),'trih')
-%                 file.his=fullfile(dire(kf).folder,dire(kf).name);
-%             end
-%         case []
-%             file.runid=fullfile(dire(kf).folder,dire(kf).name);
-%     end
-%     end %isdir
-% end    
-    %% unstructured
+    %% D3D
     case {1,2}
 
 kmdf=1;

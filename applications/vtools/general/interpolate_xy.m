@@ -52,14 +52,21 @@ for kyv=1:nyv %y queary points
         y_loc=y_m(kyv,kxv); 
         val_loc=NaN(ny,1);
         for kx=1:ny
-            x_q_loc=x{kx};
-            bol_out=x_q_loc>(x_loc+x_thres) | x_q_loc<(x_loc-x_thres); %do not take values further than t_thresh into consideration
-%                     bol_out=false(size(t_q_loc)); %take all values into consideration
-            x_q_loc_int=x_q_loc(~bol_out);
-            val_q_loc_int=val{kx}(~bol_out);
-            if ~isempty(x_q_loc_int) && numel(x_q_loc_int)>1
-                val_loc(kx,1)=interp1(x_q_loc_int,val_q_loc_int,x_loc);
-            end
+            %interpolating based on closest two points in between
+            val_loc(kx,1)=interp_line_closest(x{kx},val{kx},x_loc,x_thres);
+           
+            %interpolate with interp (too expensive and I think unecessary)
+%             bol_out=x_q_loc>(x_loc+x_thres) | x_q_loc<(x_loc-x_thres); %do not take values further than t_thresh into consideration
+% %                     bol_out=false(size(t_q_loc)); %take all values into consideration
+%             x_q_loc_int=x_q_loc(~bol_out);
+%             val_q_loc_int=val{kx}(~bol_out);
+%             if ~isempty(x_q_loc_int) && numel(x_q_loc_int)>1
+%                 %interp1
+%                 val_loc(kx,1)=interp1(x_q_loc_int,val_q_loc_int,x_loc);
+%                 %gridded
+%                 F=griddedInterpolant(x_q_loc_int,val_q_loc_int,'linear','none');
+%                 val_loc(kx,1)=F(x_loc);                
+%             end
             %taking the x-coordinate directly if density is large (faster)
 %             [~,idx_min]=min(abs(x_q_loc(~bol_out)-x_loc));
 %             if ~isempty(idx_min)
@@ -73,7 +80,10 @@ for kyv=1:nyv %y queary points
         else
             y_int=y(~isnan(val_loc));
             val_int=val_loc(~isnan(val_loc));
-            val_m(kyv,kxv)=interp1(y_int,val_int,y_loc);             
+            y_thres=10000; %10000 m to allow interpolations
+            val_m(kyv,kxv)=interp_line_closest(y_int,val_int,y_loc,y_thres);
+
+%             val_m(kyv,kxv)=interp1(y_int,val_int,y_loc);             
         end
 
         %display

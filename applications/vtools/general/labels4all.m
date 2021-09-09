@@ -33,6 +33,7 @@
 %       -'y'        : y-coordinate
 %
 %       -'Q'        : water discharge
+%       -'Qcum'     : cumulative water discharge
 %
 %       -'t'        : time
 %       -'tshift'   : time shift
@@ -250,6 +251,16 @@ switch lower(var)
                 str_var='afvoer';
             case 'es'
                 str_var='caudal';
+         end
+         un_type='L3/T';
+     case 'qcum'
+         switch lan
+            case 'en'
+                str_var='cumulative discharge';
+            case 'nl'
+                str_var='cumulatieve afvoer';
+            case 'es'
+                str_var='caudal acumulado';
          end
          un_type='L3/T';
 %%
