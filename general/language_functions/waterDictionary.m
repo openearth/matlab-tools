@@ -16,6 +16,7 @@ function [string,str_found]=waterDictionary(id,un,lan,varargin)
 string            = id;
 OPT.addUnit       = true;
 OPT.dict          = 'waterDictionary.csv';
+OPT.stationnodot  = true;
 OPT               = setproperty(OPT,varargin);
 [pathDict,~,~]    = fileparts(mfilename('fullpath'));
 
@@ -29,7 +30,11 @@ colUnit = get_nr(header,'Unit');
 colLang = get_nr(header,lan   );
 
 %% Find the right row
-rowVar  = get_nr(dictionary(:,1),strtrim(id));
+if ~OPT.stationnodot
+    stationnodot=strrep(id,'.','');
+    string=stationnodot(~isspace(stationnodot));
+end
+rowVar  = get_nr(dictionary(:,1),strtrim(string));
 
 %% Construct the final string
 if ~isempty (rowVar) 
