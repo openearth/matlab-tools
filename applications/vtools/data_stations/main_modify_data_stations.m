@@ -22,32 +22,33 @@ load(path_ds_idx,'data_stations_index');
 
 %%
 
-% idx_mod=[47];
+idx_mod=[67];
 
-ks=0;
+% ks=0;
+% 
+% ks=ks+1;
+% [~,bol1]=find_str_in_cell({data_stations_index.location_clear},{'Hoek van Holland'}); 
+% bol2=[data_stations_index.bemonsteringshoogte]==-9.0; 
+% idx_mod(ks)=find(bol1&bol2);
+% % bh(ks)=-2.0;
+% 
+% ks=ks+1;
+% [~,bol1]=find_str_in_cell({data_stations_index.location_clear},{'Hoek van Holland'}); 
+% bol2=[data_stations_index.bemonsteringshoogte]==-4.5; 
+% idx_mod(ks)=find(bol1&bol2);
+% % bh(ks)=-2.0;
+% 
+% ks=ks+1;
+% [~,bol1]=find_str_in_cell({data_stations_index.location_clear},{'Hoek van Holland'}); 
+% bol2=[data_stations_index.bemonsteringshoogte]==-2.5; 
+% idx_mod(ks)=find(bol1&bol2);
+% % bh(ks)=-2.0;
 
-ks=ks+1;
-[~,bol1]=find_str_in_cell({data_stations_index.location_clear},{'Hoek van Holland'}); 
-bol2=[data_stations_index.bemonsteringshoogte]==-9.0; 
-idx_mod(ks)=find(bol1&bol2);
-% bh(ks)=-2.0;
-
-ks=ks+1;
-[~,bol1]=find_str_in_cell({data_stations_index.location_clear},{'Hoek van Holland'}); 
-bol2=[data_stations_index.bemonsteringshoogte]==-4.5; 
-idx_mod(ks)=find(bol1&bol2);
-% bh(ks)=-2.0;
-
-ks=ks+1;
-[~,bol1]=find_str_in_cell({data_stations_index.location_clear},{'Hoek van Holland'}); 
-bol2=[data_stations_index.bemonsteringshoogte]==-2.5; 
-idx_mod(ks)=find(bol1&bol2);
-% bh(ks)=-2.0;
 
 %%
 
-figure
-hold on
+% figure
+% hold on
 
 ns=numel(idx_mod);
 str_leg=cell(ns,1);
@@ -57,11 +58,10 @@ path_mod=fullfile(path_data_stations,'separate',sprintf('%06d.mat',idx_mod(ks)))
 load(path_ds_idx,'data_stations_index');
 load(path_mod)
 
+% plot(data_one_station.time,data_one_station.waarde)
 
-plot(data_one_station.time,data_one_station.waarde)
-
-% data_one_station.location_clear='Spijkenissebrug';
-% data_stations_index(idx_mod(ks)).location_clear='Spijkenissebrug';
+data_one_station.location_clear='Zuidland';
+data_stations_index(idx_mod(ks)).location_clear=data_one_station.location_clear;
 
 % data_one_station.eenheid='m3/s';
 % data_stations_index(idx_mod(ks)).eenheid='m3/s';
@@ -81,14 +81,14 @@ plot(data_one_station.time,data_one_station.waarde)
 % data_stations_index(idx_mod(ks))=data_one_station;
 % data_stations_index(idx_mod(ks)).time=[];
 % data_stations_index(idx_mod(ks)).waarde=[];
-% 
-% save(path_mod,'data_one_station');
-% save(path_ds_idx,'data_stations_index');
+
+save(path_mod,'data_one_station');
+save(path_ds_idx,'data_stations_index');
 
 %leg
 str_leg{ks}=sprintf('%d',idx_mod(ks));
 
 end
 
-ylim([0,50000])
-legend(str_leg)
+% ylim([0,50000])
+% legend(str_leg)
