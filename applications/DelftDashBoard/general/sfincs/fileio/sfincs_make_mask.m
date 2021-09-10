@@ -147,6 +147,20 @@ if ~isempty(xy_bnd_closed)
     end
 end
 
+% Set boundary points to open
+if ~isempty(xy_bnd_open)
+    % Set msk to 3 inside polygon where it is now 2
+    for ip=1:length(xy_bnd_closed)
+        if length(xy_bnd_closed(ip).x)>1
+            xp=xy_bnd_closed(ip).x;
+            yp=xy_bnd_closed(ip).y;
+            opend=inpolygon(x,y,xp,yp);
+            msk0=msk(opend); % original value of mask inside polygon
+            msk0(msk0==2)=3; % set to 3
+            msk(opend)=msk0;
+        end
+    end
+end
 
 % % Testing of removing boundary points
 % if ~isempty(xy_ex)
