@@ -140,7 +140,7 @@ elseif ns==1
     data_r=rmmissing(data_r);
     data_r=sortrows(data_r);
     tim_u=unique(data_r.tim_tot);
-    data_r=retime(data_r,tim_u,'mean'); 
+%     data_r=retime(data_r,tim_u,'mean'); 
 
     tim_tot=data_r.tim_tot;
     val_tot=data_r.val_tot;

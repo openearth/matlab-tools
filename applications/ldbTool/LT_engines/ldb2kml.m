@@ -1,4 +1,4 @@
-function ldb2kml(ldb,kmlfile,linecolour,linewidth)
+function ldb2kml(ldb,kmlfile,linecolour,linewidth,names)
 %LDB2KML Converts ldb to kml-file
 %
 % Reads a landboundary file and save it to a kml-file which can be opened
@@ -103,7 +103,7 @@ else
         error('Unknown linecolor input');
     end
 end
-if nargin>3
+if nargin<4
     try
         linewidth = max(0,linewidth); linewidth = min(100,linewidth);
     catch
@@ -111,6 +111,14 @@ if nargin>3
     end
 else
     linewidth = 1;
+end
+if nargin>4
+    if ~iscell(names)
+        error('ldb names must be cell array')
+    end
+    %would be nice to check here that the dimensions are right
+else
+    names=NaN;
 end
 
 clr=[min(255,clr(1)); min(255,clr(2)); min(255,clr(3))];
@@ -154,7 +162,11 @@ hW=waitbar(0,'Please wait while writing kml-file...');
 for ii=1:length(id)-1
     data=ldb(id(ii)+1:id(ii+1)-1,:);
     fprintf(fid,'%s \n','	<Placemark>');
-    fprintf(fid,'%s \n',['		<name>' num2str(ii) '</name>']);
+    if iscell(names)
+        fprintf(fid,'%s \n',['		<name>' names{ii} '</name>']);
+    else
+        fprintf(fid,'%s \n',['		<name>' num2str(ii) '</name>']);
+    end
     fprintf(fid,'%s \n','		<styleUrl>style_1</styleUrl>');
     fprintf(fid,'%s \n','		<LineString>');
     fprintf(fid,'%s \n','			<tessellate>1</tessellate>');

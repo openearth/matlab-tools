@@ -968,10 +968,14 @@ end
     function [output,OPT] = EHY_convert_pol2kml(inputFile,outputFile,OPT)
         pol=landboundary('read',inputFile);
         [pol(:,1),pol(:,2),OPT] = EHY_convert_coorCheck(pol(:,1),pol(:,2),OPT);
+        %read names of pol 
+        %This could be done inside <landboundary>, but I do not want to mess up too much
+        T=tekal('open',inputFile,'loaddata');
+        names={T.Field.Name};
         if OPT.saveOutputFile
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
+            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth,names)
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end

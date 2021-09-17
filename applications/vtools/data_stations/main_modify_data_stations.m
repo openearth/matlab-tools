@@ -23,7 +23,7 @@ load(path_ds_idx,'data_stations_index');
 %%
 
 %single index
-idx_mod=[94,95];
+idx_mod=[48,49,50];
 
 %search for index
 % ks=0;
@@ -49,16 +49,14 @@ path_mod=fullfile(path_data_stations,'separate',sprintf('%06d.mat',idx_mod(ks)))
 load(path_ds_idx,'data_stations_index');
 load(path_mod)
 
-location='VOLKRSZSSHLD';
-data_one_station.location=location;
-data_stations_index(idx_mod(ks)).location=location;
+% data_one_station.location='VOLKRSZSSHLD';
+% data_stations_index(idx_mod(ks)).location=data_one_station.location;
 
 % data_one_station.waarde=data_one_station.waarde/100;
 % plot(data_one_station.time,data_one_station.waarde)
 
-
-% data_one_station.location_clear='Zuidland';
-% data_stations_index(idx_mod(ks)).location_clear=data_one_station.location_clear;
+data_one_station.location_clear='Middelharnis boei';
+data_stations_index(idx_mod(ks)).location_clear=data_one_station.location_clear;
 
 % data_one_station.eenheid='m3/s';
 % data_stations_index(idx_mod(ks)).eenheid='m3/s';
