@@ -43,9 +43,15 @@ end
 if isfield(in_p,'fig_size')==0
     in_p.fig_size=[0,0,14,14];
 end
+if isfield(in_p,'lan')==0
+    in_p.lan='en';
+end
+if isfield(in_p,'xlims')==0
+    in_p.xlims=[min(in_p.data_station.time),max(in_p.data_station.time)];
+end
 
 if isfield(in_p,'ylab')==0
-    in_p.ylab=labels4all(data_station.grootheid,1,lan);
+    in_p.ylab=labels4all(in_p.data_station.grootheid,1,in_p.lan);
 end
 
 v2struct(in_p)
@@ -242,10 +248,10 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-lims.y(kr,kc,1:2)=[-2e-3,2e-3];
+% lims.y(kr,kc,1:2)=[-2e-3,2e-3];
 % lims.x(kr,kc,1:2)=lim_A;
 % lims.c(kr,kc,1:2)=clims;
-xlabels{kr,kc}='L_a [m]';
+% xlabels{kr,kc}='L_a [m]';
 ylabels{kr,kc}=ylab;
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
@@ -446,7 +452,7 @@ set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, 
 %% PRINT
 
 if any(fig_print==1)
-    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
+    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r300');
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
 end
 if any(fig_print==2)

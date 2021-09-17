@@ -39,12 +39,15 @@ load(paths.data_stations_index);
 
 ns=numel(data_stations_index);
 for ks=1:ns
+% for ks=70:ns
     load(fullfile(paths.separate,sprintf('%06d.mat',ks)),'data_one_station');
-	warning('call fig_data_station')
-    figure('visible',0)
-    plot(data_one_station.time,data_one_station.waarde)
-    title(data_one_station.location_clear);
-    ylabel(sprintf('%s [%s]',data_one_station.grootheid,data_one_station.eenheid))
-    print(gcf,fullfile(paths.figures,sprintf('%06d.png',ks)),'-dpng','-r300')
+    
+    in_p.fname=fullfile(paths.figures,sprintf('%06d',ks));
+    in_p.data_station=data_one_station;
+    in_p.fig_print=1;
+    in_p.fig_visible=0;
+    
+    fig_data_station(in_p)
+
     fprintf('done %4.2f %% \n',ks/ns*100)
 end %ks

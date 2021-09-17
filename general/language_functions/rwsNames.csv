@@ -83,8 +83,8 @@ SP_100713_R_LMW-Cl_Bernisse-Zuidland-g6    ,     ,SP_1007.13_R_LMW-Cl_Bernisse-Z
 SP_101157_L_LMW-Cl_Beningen                ,     ,SP_1011.57_L_LMW-Cl_Beningen               ,Beningen
 CK_102839_R_HBR-H_Scheurhaven              ,     ,CK_102.839_R_HBR-H_Scheurhaven             ,Scheurhaven
 HK_1501_R_HBR-H_Hartelkanaal-Q8            ,     ,HK_15.01_R_HBR-H_Hartelkanaal-Q8           ,Hartelkanaal
-HV_102774_L_LMW-Cl_Haringvlietboei         ,     ,HV_1027.74_L_LMW-Cl_Haringvlietboei        ,Haringvlietboei
-HV_102935_L_LMW-Cl_Stellendamboei          ,     ,HV_1029.35_L_LMW-Cl_Stellendamboei         ,Stellendamboei
+HV_102774_L_LMW-Cl_Haringvlietboei         ,     ,HV_1027.74_L_LMW-Cl_Haringvlietboei        ,Haringvliet boei
+HV_102935_L_LMW-Cl_Stellendamboei          ,     ,HV_1029.35_L_LMW-Cl_Stellendamboei         ,Stellendam boei
 433-036-00021_kwaliteit                    ,     ,433-036-00021_kwaliteit                    ,Gouda
 000-105-00027_kwaliteit                    ,     ,000-105-00027_kwaliteit                    ,Middelwatering
 000-105-00029_kwaliteit                    ,     ,000-105-00029_kwaliteit                    ,Nesse
@@ -164,3 +164,12 @@ WL_9518_R_LMW-H_Vuren, ,WL_951.8_R_LMW-H_Vuren,Vuren
 SP_100713_R_LMW-H_Zuidland-g6, ,SP_1007.13_R_LMW-H_Zuidland-g6,ZUIDLD 
 MIDDHNSMB, ,MIDDHNSMB,MIDDHNSMB 
 SPIJKNSBWTLK, ,SPIJKNSBWTLK,Spijkenissebrug 
+HARVWT, ,HARVWT,Haringvliet boei
+KIER1, ,KIER1,Kier 1 ponton
+KIER3, ,KIER3,Kier 3 ponton
+KIER4, ,KIER4,Kier 4 ponton
+HV_1028.21_R_LMW-Cl_Kier4, , ,Kier 4 ponton
+STELLDBNN, ,STELLDBNN,Stellendam binnen
+STELLDBTMBI, ,STELLDBTMBI,Stellendam boei
+VOLKRSZSSHLD, ,VOLKRSZSSHLD,Volkeraksluizen
+NZ_000_LMW-Cl_Stellendam-buiten-g6, ,NZ_0.00_LMW-Cl_Stellendam-buiten-g6,Stellendam buiten

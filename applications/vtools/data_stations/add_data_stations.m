@@ -23,14 +23,12 @@
  
 function add_data_stations(paths_main_folder,data_add,varargin)
 
-OPT_de.ask=1;
-OPT_de.filter_time=1;
-OPT_de.tim_diff_thresh=seconds(0.9);
+OPT.ask=1; %0=don't ask; 1=always ask; 2=ask only if new data
+OPT.filter_time=1;
+OPT.tim_diff_thresh=seconds(0.9);
+OPT.combine_type=0;
 
-if numel(varargin)>0
-    OPT_in=varargin;
-end
-OPT=setproperty(OPT_de,OPT_in);
+OPT=setproperty(OPT,varargin);
 
 paths=paths_data_stations(paths_main_folder);
 
@@ -42,7 +40,12 @@ idx_add2index=find(~contains(fields_add_all,{'time','waarde'}));
 fields_add2index=fields_add_all(idx_add2index);
 nadd2i=numel(fields_add2index);
 
-idx_compare=find(~any(cell2mat(cellfun(@(X)strcmp(X,fields_add_all),{'time','waarde','source','location','epsg','x','y'},'UniformOutput',false)),2)); %beautiful line to complicate my future debugging
+if isfield(data_add,'location_clear')
+    str_no_check={'time','waarde','source','location','epsg','x','y'};
+else
+    str_no_check={'time','waarde','source','epsg','x','y'};
+end
+idx_compare=find(~any(cell2mat(cellfun(@(X)strcmp(X,fields_add_all),str_no_check,'UniformOutput',false)),2)); %beautiful line to complicate my future debugging
 fields_add=fields_add_all(idx_compare);
 nadd=numel(fields_add);
 
@@ -58,9 +61,13 @@ ns=numel(idx);
 %%
 if ns==0
     fprintf('New data:\n')
-    fprintf('Location clear: %s\n',data_add.location_clear)
+    if isfield(data_add,'location_clear')
+        fprintf('Location clear: %s\n',data_add.location_clear)
+    else
+        fprintf('Location: %s\n',data_add.location)
+    end
     fprintf('Grootheid: %s\n',data_add.grootheid)
-    if OPT.ask
+    if OPT.ask>0
         in=input('Create new data? (0=NO, 1=YES): ');
         if in==0
             return
@@ -98,7 +105,7 @@ elseif ns==1
     fprintf('Data already available:\n')
     fprintf('Location clear: %s\n',data_one_station.location_clear)
     fprintf('Grootheid: %s\n',data_one_station.grootheid)
-    if OPT.ask
+    if OPT.ask==1
         in=input('Merge? (0=NO, 1=YES): ');
         if in==0
             return
@@ -115,18 +122,29 @@ elseif ns==1
     tim_ex=data_one_station.time;
     val_ex=data_one_station.waarde;
     
+    switch OPT.combine_type
+        case 0
+                
+        case 1 
+            
+            bol_ex_out=tim_ex>min(tim_add) & tim_ex<max(tim_add);
+            tim_ex=tim_ex(~bol_ex_out);
+            val_ex=val_ex(~bol_ex_out);
+            
+    end
+  
     tim_tot=cat(1,tim_ex,reshape(tim_add,[],1));
     val_tot=cat(1,val_ex,reshape(val_add,[],1));
-    
+
     data_r=timetable(tim_tot,val_tot);
     data_r=rmmissing(data_r);
     data_r=sortrows(data_r);
     tim_u=unique(data_r.tim_tot);
     data_r=retime(data_r,tim_u,'mean'); 
-    
+
     tim_tot=data_r.tim_tot;
     val_tot=data_r.val_tot;
-    
+
     %filter times below threshold
     if OPT.filter_time
         tim_diff=diff(tim_tot);
@@ -135,7 +153,6 @@ elseif ns==1
         tim_tot(bol_rem)=[];
         val_tot(bol_rem)=[];
     end
-    
 %     [tim_tot,idx_s]=sort(tim_tot);
 %     val_tot=val_tot(idx_s);
      

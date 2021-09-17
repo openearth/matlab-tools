@@ -28,6 +28,18 @@
 
 function [data_stations,idx]=read_data_stations(paths_main_folder,varargin)
 
+%% PARSE
+
+if isempty(paths_main_folder)
+    paths_main_folder='C:\Users\chavarri\checkouts\riv\data_stations\';
+    
+end
+if ~isfolder(paths_main_folder)
+    error('Input folder does not exist: %s',paths_main_folder)
+end
+
+%% CALC
+
 %get indices of stations to read
 idx=data_stations_stations_to_load(paths_main_folder,varargin{:});
 

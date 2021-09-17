@@ -109,44 +109,16 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% FROM NC FILE
 
-fdir_nc='p:\11205259-004-dcsm-fm\waterlevel_data\RWS_data-distributielaag\ncFiles';
+% fdir_nc='p:\11205259-004-dcsm-fm\waterlevel_data\RWS_data-distributielaag\ncFiles';
+% add_data_stations_from_nc(paths_main_folder,fdir_nc)
 
-dire=dir(fdir_nc);
-nf=numel(dire);
-for kf=1:nf
-    fpath=fullfile(dire(kf).folder,dire(kf).name);
-    [~,~,ext]=fileparts(fpath);
-    if strcmp(ext,'.nc')==0
-        continue
-    end
-    station_name=ncread(fpath,'station_name')';
-    platform_name=ncread(fpath,'platform_name')';
-    platform_id=ncread(fpath,'platform_id')';
-    xco=ncread(fpath,'station_x_coordinate');
-    yco=ncread(fpath,'station_y_coordinate');
-    val=ncread(fpath,'waterlevel');
-    
-    tim=NC_read_time(fpath,[1,Inf]);
-    
-    nci=ncinfo(fpath);
-    if strcmp(nci.Variables(5).Attributes(1).Value,'latitude')==0
-        error('solve')
-    else
-        epsg=4326;
-    end
-    
-    data_station.location=deblank(platform_id);
-    data_station.location_clear=deblank(station_name);
-    data_station.x=xco;
-    data_station.y=yco;
-    data_station.epsg=epsg;
-    data_station.grootheid='WATHTE';
-    data_station.eenheid='mNAP';
-    data_station.time=tim;
-    data_station.waarde=val;
-    
-    OPT.ask=0;
-    add_data_stations(paths_main_folder,data_station,OPT);
+%% FROM DONAR
 
-end
+fpath_donar='p:\11206813-007-kpp2021_rmm-3d\C_Work\02_data\01_received\210907\vanSacha\mtg.mat';
+add_data_stations_from_donar(paths_main_folder,fpath_donar);
+
+
+
+
+
 

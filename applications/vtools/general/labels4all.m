@@ -40,7 +40,8 @@
 %
 %       -'corr'     : correlation coefficient
 %
-%       -
+%       -'dd'       : wind direction
+%       -'fh'       : wind speed
 %
 %   -un: factor for unit conversion from SI
 %
@@ -295,6 +296,26 @@ switch lower(var)
                 str_var='coeficiente de correlación';
          end
          un_type='-';
+    case 'dd'
+         switch lan
+            case 'en'
+                str_var='wind direction';
+            case 'nl'
+                str_var='windrichting';
+            case 'es'
+                str_var='dirección del viento';
+         end
+         un_type='degrees';
+    case 'fh'
+         switch lan
+            case 'en'
+                str_var='wind speed';
+            case 'nl'
+                str_var='windsnelheid';
+            case 'es'
+                str_var='velocidad del viento';
+         end
+         un_type='L/T';
     otherwise
          error('this is missing')
 end %var
@@ -367,6 +388,13 @@ switch un_type
                     case 'nl'
                         str_un=' [jaar]';
                 end
+            otherwise
+                error('this factor is missing')
+        end
+    case 'degrees'
+        switch un
+            case 1
+                str_un=' [o]';
             otherwise
                 error('this factor is missing')
         end
