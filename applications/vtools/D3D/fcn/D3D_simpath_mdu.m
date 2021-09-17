@@ -85,13 +85,24 @@ if isfield(mdu.output,'OutputDir')
     if isempty(path_output_loc)
         path_output_loc=sprintf('DFM_OUTPUT_%s',runid);
     end
-        path_output=fullfile(path_sim,path_output_loc);
-        file_aux=D3D_simpath_output(path_output);
-        fnames=fieldnames(file_aux);
-        nfields=numel(fnames);
-        for kfields=1:nfields
-            simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
+    path_output=fullfile(path_sim,path_output_loc);
+    file_aux=D3D_simpath_output(path_output);
+    fnames=fieldnames(file_aux);
+    nfields=numel(fnames);
+    for kfields=1:nfields
+        simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
+    end
+    if isfield(mdu.output,'CrsFile')
+        aux=mdu.output.CrsFile;
+        tok=regexp(aux,' ','split');
+        ncrs=numel(tok);
+        for kcrs=1:ncrs
+            simdef.file.crsfile{kcrs}=fullfile(path_sim,tok{1,kcrs});
         end
+    end
+    
 end
+
+
 
 end %function
