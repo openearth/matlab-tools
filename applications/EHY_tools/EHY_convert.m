@@ -973,11 +973,16 @@ end
         T=tekal('open',inputFile,'loaddata');
         names={T.Field.Name};
         if OPT.saveOutputFile
+            % polylines
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
             ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth,names)
             copyfile(tempFile,outputFile);
             delete(tempFile)
+            % markers with names
+            nanInd=unique([1; find(isnan(pol(:,1))); size(pol,1)]);
+            xyInd=nanInd(1:end-1)+round(diff(nanInd)/2);
+            KMLPlaceMark(pol(xyInd,2),pol(xyInd,1),strrep(outputFile,'.kml','_names.kml'),'name',names,'icon',OPT.iconFile);
         end
         output = [];
     end
