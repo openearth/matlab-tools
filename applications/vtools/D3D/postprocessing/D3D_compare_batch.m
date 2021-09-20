@@ -62,8 +62,18 @@ for ks=1:ns
     %based only on reference. Maybe take all and do a check 
     if ks==ks_ref
         [time_r,time_mor_r,time_dnum]=D3D_results_time(simdef.file.map,1,[1,Inf]);
-        time_dnum_kt=time_dnum(kt_v);
-        time_mor_r_kt=time_mor_r(kt_v);
+        ntt=numel(time_dnum);
+        kt_v_loc=kt_v;
+        kt_v_loc(isnan(kt_v_loc))=ntt;
+        time_dnum_kt=time_dnum(kt_v_loc);
+        time_mor_r_kt=time_mor_r(kt_v_loc);
+        if ks==1
+            kt_v_pre=kt_v_loc;
+        end
+        if sum(kt_v_loc-kt_v_pre)~=0
+            warning('The final time is different for varying simulations')
+        end
+        kt_v_pre=kt_v_loc;
     end
     
     %grid
@@ -111,7 +121,6 @@ val_int=NaN(np,ns,nt);
 end
 
 %set back to variable prior to loop
-simdef.flg.which_v=which_v;
 simdef.flg.get_cord=0;
 simdef.flg.get_EHY=0;
 simdef.flg.which_s=5; %for using EHY plot in case of D3D
@@ -131,6 +140,10 @@ sim_v=1:ns;
 sim_v(ks_ref)=[];
 sim_v=[ks_ref,sim_v];
 
+%% VARIABLE LOOP
+nv=numel(which_v);
+for kv=1:nv
+simdef.flg.which_v=which_v(kv);
 %% TIME LOOP
 for kt=1:nt    
     in_read.kt=kt_v(kt);
@@ -384,6 +397,9 @@ for kval=1:nval
         D3D_fig_cmp_conv(in_pc);
     end
 end
+
+end %kv
+
 
 end %function
 

@@ -76,6 +76,8 @@ for ksim=1:nsim
 %     path_mdf_loc=fullfile(path_sim_loc,sprintf('%s.mdf',runid));
     
     if exist(path_sim_loc,'dir')==7
+        fclose(fid_win);
+        fclose(fid_lin);
         error('Directory already exist: %s',path_sim_loc)
     end
     mkdir(path_sim_loc)
@@ -90,6 +92,8 @@ for ksim=1:nsim
         fpath_grd=fullfile(path_sim_loc,fnameext_grd);
         sts=copyfile_check(input_m.mdf(ksim).NetFile,fpath_grd);
         if ~sts
+            fclose(fid_win);
+            fclose(fid_lin);
             error('I cannot find the grid to be copied: %s',input_m.mdf(ksim).NetFile)
         end
         mdf_loc.geometry.NetFile=fnameext_grd;
