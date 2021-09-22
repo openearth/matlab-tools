@@ -181,7 +181,7 @@ switch lower(rawdataformat)
     case{'geotiff'}
         if ~iscell(fname1)
             % just one file
-            [z,x,y,I] = ddb_geoimread(fname1,'info');
+            [z,x,y,I] = ddb_geoimread(fname1);
             z=flipud(z);
             z(z<-15000)=NaN; % Get rid of no data values
             x00=min(x);

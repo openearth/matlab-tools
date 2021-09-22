@@ -2,7 +2,9 @@ function [Hs, Tm] = wave_fetch(F, u10)
 % Simple empircal formulation for determing Hs and Tm based on fetch and umag
 % v1.0 	Nederhoff	July-16
 
-%% Constants based on Breugem and Holthuisjen (2006)
+%% Constants based on Breugem and Holthuijsen (2007)
+% https://ascelibrary.org/doi/pdf/10.1061/%28ASCE%290733-950X%282007%29133%3A3%28173%29
+
 % Wave height
 Hinf    = 0.24;
 k1      = 4.14*10^-4;

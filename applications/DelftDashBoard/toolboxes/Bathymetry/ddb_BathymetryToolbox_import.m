@@ -334,4 +334,3 @@ ddb_updateBathymetryMenu(handles);
 setHandles(handles);
 
 ddb_updateDataInScreen;
-qgis
