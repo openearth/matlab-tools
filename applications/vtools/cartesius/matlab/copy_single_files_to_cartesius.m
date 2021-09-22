@@ -25,6 +25,7 @@ end
 
 fclose(fid);
 messageOut(NaN,'Run in H6: ');
+fprintf('\n')
 fprintf('%s \n',linuxify(path_commands))
 
 end %function

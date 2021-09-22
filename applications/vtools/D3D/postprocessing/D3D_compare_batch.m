@@ -61,19 +61,24 @@ for ks=1:ns
     %time
     %based only on reference. Maybe take all and do a check 
     if ks==ks_ref
-        [time_r,time_mor_r,time_dnum]=D3D_results_time(simdef.file.map,1,[1,Inf]);
+        [ismor,~,~]=D3D_is(simdef.file.map);
+        [time_r,time_mor_r,time_dnum]=D3D_results_time(simdef.file.map,ismor,[1,Inf]);
         ntt=numel(time_dnum);
         kt_v_loc=kt_v;
         kt_v_loc(isnan(kt_v_loc))=ntt;
         time_dnum_kt=time_dnum(kt_v_loc);
+        if ismor
         time_mor_r_kt=time_mor_r(kt_v_loc);
-        if ks==1
-            kt_v_pre=kt_v_loc;
         end
-        if sum(kt_v_loc-kt_v_pre)~=0
-            warning('The final time is different for varying simulations')
-        end
-        kt_v_pre=kt_v_loc;
+        time_r_kt=time_r(kt_v_loc);
+        kt_v=kt_v_loc;
+%         if ks==1
+%             kt_v_pre=kt_v_loc;
+%         end
+%         if sum(kt_v_loc-kt_v_pre)~=0
+%             warning('The final time is different for varying simulations')
+%         end
+%         kt_v_pre=kt_v_loc;
     end
     
     %grid
@@ -150,7 +155,7 @@ for kt=1:nt
     %% SIMULATION LOOP
     for ks=sim_v
 
-        messageOut(NaN,sprintf('dealing with simulation %4.2f %% at time %4.2f %%',ks/ns*100,kt/nt*100))
+        messageOut(NaN,sprintf('dealing with variable %4.2f %% simulation %4.2f %% time %4.2f %%',kt/nt*100,ks/ns*100,kt/nt*100))
 
         path_sim=input_m.sim(ks).path_sim;
         simdef.D3D.dire_sim=path_sim;
@@ -217,7 +222,11 @@ for kt=1:nt
             in_p.part_pli=NaN;
             in_p.axis_eq=axis_eq;
             in_p.log_val=0;
-            in_p.tim_str=sprintf('time = %f s',time_mor_r_kt(kt)); %tim_str;
+            if ismor
+                in_p.tim_str=sprintf('time = %f s',time_mor_r_kt(kt)); %tim_str;
+            else
+                in_p.tim_str=sprintf('time = %f s',time_r_kt(kt)); %tim_str;
+            end
             in_p.val_label=val_label;
             
             if isfield(out_read,'z_size')
@@ -240,9 +249,13 @@ end %kt
 
 %% SAVE
 
-data=v2struct(time_dnum_kt,time_mor_r_kt,gridInfo_all,val_all,val_int,c_area,simdef,tag_cmp,input_m,val_label);
+if ismor
+    data=v2struct(time_dnum_kt,time_r_kt,time_mor_r_kt,gridInfo_all,val_all,val_int,c_area,simdef,tag_cmp,input_m,val_label);
+else
+    data=v2struct(time_dnum_kt,time_r_kt,              gridInfo_all,val_all,val_int,c_area,simdef,tag_cmp,input_m,val_label);
+end
 
-path_val_mat=fullfile(fdir_fig,'data.mat');
+path_val_mat=fullfile(fdir_fig,sprintf('data_%02d.mat',which_v(kv)));
 save(path_val_mat,'data')
 
 %% clean label
@@ -345,7 +358,11 @@ for kval=1:nval
     in_h.fname=fullfile(fdir_fig,sprintf('%s_hisc_v_%02d_tag_%s',norms_label{kval,2},simdef.flg.which_v,tag_cmp));
     in_h.edg=edg;
     in_h.cou=cou;
-    in_h.time_r=time_mor_r_kt;
+    if ismor
+        in_h.time_r=time_mor_r_kt;
+    else
+        in_h.time_r=time_r_kt;
+    end
     in_h.val_label={norms_label{kval,1},sprintf('%s%s',val_label_str,norms_label{kval,3})};
     in_h.lims_y=NaN;
     
@@ -364,7 +381,11 @@ for kval=1:nval
 
         %morpho time
         in_p4.fname=fullfile(fdir_fig,sprintf('%s_tmor_v_%02d_tag_%s_ref_%s',norms_label{kval,2},simdef.flg.which_v,tag_cmp,input_m.sim(ks).sim_id));
-        in_p4.tim_v=time_mor_r_kt;
+        if ismor
+            in_p4.tim_v=time_mor_r_kt;
+        else
+            in_p4.tim_v=time_r_kt;
+        end
 
         D3D_fig_cmp_norm_t(in_p4);
         

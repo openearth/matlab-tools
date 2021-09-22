@@ -14,6 +14,11 @@
 
 function copy_run_folder_to_cartesius(surf_userid,folder2send_win,cartesius_project_folder_lin,temporary_folder_win,runscript)
 
+isrun=1;
+if isempty(runscript)
+    isrun=0;
+end
+
 %% paths
 
 path_h6=fullfile(temporary_folder_win,'commands_copy_run_1.sh');
@@ -108,9 +113,11 @@ fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(ca
 fprintf(fid_ca,'%s \n',cmd_cd_C_sim);
 fprintf(fid_ca,'%s \n',cmd_uncomp);
 fprintf(fid_ca,'%s \n',cmd_del_tar);
+if isrun
 fprintf(fid_ca,'%s \n',cmd_cd_cart_run);
 fprintf(fid_ca,'%s \n',cmd_dos2unix);
 fprintf(fid_ca,'%s \n',cmd_submit);
+end
 % fprintf('\n')
 
 fclose(fid_h6);
