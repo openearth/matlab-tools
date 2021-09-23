@@ -976,7 +976,12 @@ end
             % polylines
             [~,name]=fileparts(outputFile);
             tempFile=[tempdir name '.kml'];
-            ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth,names)
+            try % including 'names'-arguments 
+                ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth,names)
+            catch % An older version of ldb2kml is being used
+                disp(['Please consider updating the ldb2kml-function: ' which('ldb2kml') ])
+                ldb2kml(pol(:,1:2),tempFile,OPT.lineColor,OPT.lineWidth)
+            end
             copyfile(tempFile,outputFile);
             delete(tempFile)
             % markers with names
