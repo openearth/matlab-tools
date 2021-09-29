@@ -61,6 +61,7 @@ INFO.YOrigin  = 'bottom';
 INFO.Servers  = {''};
 %
 switch servername
+    % more options on: https://qms.nextgis.com/#
     case 'bluemarble'
         INFO.GetMap.URL        = 'http://s3.amazonaws.com/com.modestmaps.bluemarble/${z}-r${y}-c${x}.jpg';
         INFO.GetMap.TileLevels = 9;
@@ -75,6 +76,10 @@ switch servername
         INFO.GetMap.TileLevels = 19;
         INFO.YOrigin           = 'top';
         INFO.Servers           = {''};
+    case 'google'
+        INFO.GetMap.URL        = 'https://mt1.google.com/vt/lyrs=s&x=${x}&y=${y}&z=${z}';
+        INFO.GetMap.TileLevels = 19;
+        INFO.YOrigin           = 'top';
     case 'openstreetmap'
         INFO.GetMap.URL = 'http://${s}.tile.openstreetmap.org/${z}/${x}/${y}.png';
         INFO.GetMap.TileLevels = 19;
