@@ -1583,6 +1583,8 @@ if OPT.fromEPSG~=OPT.toEPSG
                 end
                 fclose(fid);
             end
+        otherwise
+            error('cannot convert coordinates in this file format: %s',ext)
     end
 end
 end
