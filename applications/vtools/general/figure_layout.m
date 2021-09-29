@@ -87,7 +87,7 @@ prop.mf1='g';
 prop.mt1='s'; 
 prop.lw1=1;
 prop.ls1='-'; %'-','--',':','-.'
-prop.m1='none'; % 'o', '+', '*', ...
+prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'...
 prop.fs=10;
 prop.fn='Helvetica';
 prop.color=[... %>= matlab 2014b default

@@ -18,6 +18,7 @@ function out_s=adcp_get_data_block(data_block,varargin)
 flg.use_cords=0;
 flg.correct_angle_track=0;
 flg.limit_cs=Inf;
+flg.flip_section=NaN; %automatic
 
 flg=setproperty(flg,varargin);
 
@@ -55,8 +56,11 @@ vvert=[data_block(~idx_out2).vvert];
 [vpara,vperp]=adcp_projectVelocity(data_block,idx_out2,angle_track,1);
 
 %turn profiles to downstream
-if isCross && angle_track>0 && angle_track<pi
-    [s,vmag,vvert,vpara,vperp,angle_track,cords_xy_4326,~,~]=adcp_flip_section(s,vmag,vvert,vpara,vperp,angle_track,cords_xy_4326,cords_x_28992,cords_y_28992,angle_track);
+if isnan(flg.flip_section)
+    flg.flip_section=isCross && angle_track>0 && angle_track<pi;
+end
+if flg.flip_section
+    [s,vmag,vvert,vpara,vperp,angle_track,cords_xy_4326,cords_xy_28992,depth_track]=adcp_flip_section(s,vmag,vvert,vpara,vperp,angle_track,cords_xy_4326,cords_xy_28992,angle_track,depth_track);
 end
 
 %compute streamwise and crosswise
@@ -75,11 +79,16 @@ end
 ds=diff(cen2cor(s));
 dh=diff(cen2cor(depth));
 qloc_mag=vmag.*dh';
+vdamag=mean(vmag,1,'omitnan'); %depth averaged velocity
+if any(abs(dh-dh(1))>1e12)
+    error('the computation of the depth-aeraged velocity must take into account variations in depth')
+    % sum(qloc_mag,1,'omitnan')/sum(dh,'omitnan')
+end
 qmag=sum(qloc_mag,1,'omitnan');
 Qmag=cumsum(qmag.*ds);
 
 %% OUT
 
-out_s=v2struct(s_m,d_m,s,vmag,vvert,vpara,vperp,vstream,vcross,angle_track,cords_xy_4326,cords_xy_28992,depth_track,qmag,Qmag);
+out_s=v2struct(s_m,d_m,s,vmag,vvert,vpara,vperp,vstream,vcross,angle_track,cords_xy_4326,cords_xy_28992,depth_track,qmag,Qmag,vdamag);
 
 end

@@ -60,13 +60,13 @@ end
 ns=numel(idx);
 %%
 if ns==0
-    fprintf('New data:\n')
+    fprintf('\nNew data:\n')
     if isfield(data_add,'location_clear')
-        fprintf('Location clear: %s\n',data_add.location_clear)
+        fprintf('    Location clear: %s\n',data_add.location_clear)
     else
-        fprintf('Location: %s\n',data_add.location)
+        fprintf('    Location: %s\n',data_add.location)
     end
-    fprintf('Grootheid: %s\n',data_add.grootheid)
+    fprintf('    Grootheid: %s\n',data_add.grootheid)
     if OPT.ask>0
         in=input('Create new data? (0=NO, 1=YES): ');
         if in==0
@@ -102,9 +102,9 @@ if ns==0
     messageOut(NaN,sprintf('New file written: %s',fname_save)); 
 %%
 elseif ns==1
-    fprintf('Data already available:\n')
-    fprintf('Location clear: %s\n',data_one_station.location_clear)
-    fprintf('Grootheid: %s\n',data_one_station.grootheid)
+    fprintf('\nData already available:\n')
+    fprintf('    Location clear: %s\n',data_one_station.location_clear)
+    fprintf('    Grootheid: %s\n',data_one_station.grootheid)
     if OPT.ask==1
         in=input('Merge? (0=NO, 1=YES): ');
         if in==0

@@ -22,9 +22,7 @@ if strcmp(ext,'.nc') %FM
     
     %take last
     if isnan(kt)
-        nci=ncinfo(nc_map);
-        idx_t=find_str_in_cell({nci.Dimensions.Name},{'time'});
-        nt=nci.Dimensions(idx_t).Length;
+        nt=NC_nt(nc_map);
         kt=[nt,1];
     end
     

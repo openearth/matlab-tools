@@ -114,8 +114,41 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% FROM DONAR
 
-fpath_donar='p:\11206813-007-kpp2021_rmm-3d\C_Work\02_data\01_received\210907\vanSacha\mtg.mat';
-add_data_stations_from_donar(paths_main_folder,fpath_donar);
+% fpath_donar='p:\11206813-007-kpp2021_rmm-3d\C_Work\02_data\01_received\210907\vanSacha\mtg.mat';
+% add_data_stations_from_donar(paths_main_folder,fpath_donar);
+
+%% FROM HbR
+
+clc
+fdir_hbr='d:\temporal\210402_RMM3D\C_Work\02_data\16_waterlevel_HbR\';
+
+[dir_paths,~,dir_fnames]=dirwalk(fdir_hbr);
+np=numel(dir_paths);
+
+% for kp=1:np
+for kp=3:np
+    nf=numel(dir_fnames{kp});
+    for kf=1:nf
+		if ~isempty(dir_fnames{kp,1})
+			fpaths_file=fullfile(dir_paths{kp},dir_fnames{kp,1}{kf,1});
+            [~,fname,fext]=fileparts(fpaths_file);
+            if strcmp(fname,'Observations')
+                data_stations=read_csv_data(fpaths_file,'flg_debug',0);
+                [location_clear,str_found]=RWS_location_clear(data_stations.location);
+                if ~str_found
+                    error('not found %s',data_stations.location)
+                end
+                data_stations.location_clear=location_clear{1,1};
+                add_data_stations(paths_main_folder,data_stations,'ask',0)
+                fprintf('%s \n',fpaths_file)
+            end
+			
+		end
+    end %kf
+end %kf
+
+
+
 
 
 

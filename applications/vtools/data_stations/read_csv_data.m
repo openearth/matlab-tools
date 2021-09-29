@@ -83,10 +83,10 @@ end
 switch file_type
     case 0
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug,'file_structure',file_structure);
-    case {1,2,3,4,6,7,8,9,10,11} %locations in rows
+    case {1,2,3,4,6,7,8,9,10,11,12} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
     case {5} %locations in columns
-        vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);
+        vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);       
     otherwise
         error('Specify file type')
 end
@@ -108,6 +108,8 @@ for kloc=1:nloc
     switch file_type
         case 5
             idx_waarheid=2; %we have used this index to indicate each of the locations.
+        case 12
+            [location,epsg,x,y,bemonsteringshoogte,grootheid,eenheid,hoedanigheid]=read_meta_data_01(fpath);
     end
     
     %% convert
@@ -208,6 +210,11 @@ for kloc=1:nloc
             if strcmp(grootheid,'Debiet') %in some file types the code is not given and we assing the omschrijving to grotheid
                 grootheid='Q';
             end
+        end
+    else
+        switch grootheid
+            case 'H10'
+                grootheid='WATHTE';
         end
     end
         %parameter
@@ -513,18 +520,21 @@ while ~feof(fid) && keep_going
     %get info
     tok=get_clean_line(fid,fdelim);
     
-    var_once_loc=tok(idx_var_once);
-    
     %check if new elevation or existing
-    bol_cmp=false(nloc,numel(var_once_loc));
-    for kkloc=1:nloc 
-        [~,bol_cmp(kkloc,:)]=find_str_in_cell(vardata{kkloc,2},var_once_loc); 
-        
-        %filter empty ones
-        bol_empty=cellfun(@(X)isempty(X),var_once_loc); 
-        bol_cmp(kkloc,bol_empty)=true;
+    if ~isnan(idx_var_once)
+        var_once_loc=tok(idx_var_once); %save local data to be read once
+        bol_cmp=false(nloc,numel(var_once_loc));
+        for kkloc=1:nloc 
+            [~,bol_cmp(kkloc,:)]=find_str_in_cell(vardata{kkloc,2},var_once_loc); 
+
+            %filter empty ones
+            bol_empty=cellfun(@(X)isempty(X),var_once_loc); 
+            bol_cmp(kkloc,bol_empty)=true;
+        end
+        idx_same=find(all(bol_cmp,2)); %index of vardata with same varonce
+    else
+        idx_same=1;
     end
-    idx_same=find(all(bol_cmp,2)); %index of vardata with same varonce
     
     if isempty(idx_same) %new elevation
         %update
@@ -537,11 +547,11 @@ while ~feof(fid) && keep_going
         vardata{kloc,1}=cell(npreall,nv);
 
         %new constants
-        if ~isnan(idx_var_once)
-            vardata{kloc,2}=var_once_loc;
-        else
-            vardata{kloc,2}='';
-        end
+%         if ~isnan(idx_var_once)
+            vardata{kloc,2}=var_once_loc; %there is always a constant if there is elevation?
+%         else
+%             vardata{kloc,2}='';
+%         end
     elseif numel(idx_same)>1
         error('something is not working')
     else
@@ -587,6 +597,8 @@ vardata=cellfun(@(X)strrep(X,'"',''),vardata,'UniformOutput',false);
 
 end %function
 
+%%
+%% get_file_data
 %%
 
 function [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone,var_hog]=get_file_data(file_type,fpath)
@@ -951,6 +963,55 @@ switch file_type
         fdelim=';';
         tzone='+01:00'; %waterinfo in CET
         headerlines=1;    
+    case 12 %HbR
+        [fdir,~,~]=fileparts(fpath);
+        
+        %features
+        fpath_md_feat=fullfile(fdir,'Meta_Data_Features.csv');
+        if exist(fpath_md_feat,'file')~=2
+            error('features metadata file does not exist')
+        end
+        feat=readcell(fpath_md_feat);
+        idx_l=find_str_in_cell(feat(1,:),{'FEATURE_NAME'});
+        loc=feat{2,idx_l};
+        
+        %properties
+        fpath_md_prop=fullfile(fdir,'Meta_Data_Properties.csv');
+        if exist(fpath_md_prop,'file')~=2
+            error('features metadata file does not exist')
+        end
+        prop=readcell(fpath_md_prop);
+        idx_p=find_str_in_cell(prop(1,:),{'PROPERTY_NAME'});
+        gro=prop{2,idx_p};
+        
+        str_val=sprintf('"%s_%s"',gro,loc);
+        
+%         var_once={''};
+%         idx_location=NaN;
+%         idx_x=NaN;
+%         idx_y=NaN;
+%         idx_parameter=NaN;
+%         idx_eenheid=NaN;
+%         idx_grootheid=NaN;
+%         idx_epsg=NaN;
+%         idx_hoedanigheid=NaN;
+        
+        %variables to save with time
+%         var_time={'WAARNEMINGDATUM','WAARNEMINGTIJD (MET/CET)','NUMERIEKEWAARDE'};
+        var_time={'"PHENOMENON_TIME_UTC"',str_val};
+        
+        idx_time=1;
+        fmt_time='yyyy-MM-dd HH:mm:ss';
+        
+        idx_waarheid=2;
+        
+        %variable with location, to check for different places in same file.
+%         var_loc={'MEETPUNT_IDENTIFICATIE'};
+        
+        fdelim=';';
+        tzone='+00:00'; 
+        headerlines=1;    
+        
     otherwise
         error('You are asking for an inexisteng file type')
 
@@ -970,11 +1031,20 @@ fclose(fid);
 
 keep_searching=true;
 
-%% check for header with several lines of info
+%% ad-hoc filetypes
+
+%check for header with several lines of info
 %very ad-hoc. This is not the nicest.
 
 if numel(fline)>8 && strcmp(fline(1:9),'Parameter')
     file_type=7;
+    keep_searching=false;
+end
+
+%HbR data
+[~,fname,~]=fileparts(fpath);
+if strcmp(fname,'Observations') && numel(fline)>10 && strcmp(fline(1:11),'"PHENOMENON')
+    file_type=12;
     keep_searching=false;
 end
 
@@ -1070,3 +1140,51 @@ idx_tzone=NaN;
 tzone=NaN;
 
 end 
+
+%%
+%% read_meta_data_01
+%%
+
+function [location,epsg,x,y,bemonsteringshoogte,grootheid,eenheid,hoedanigheid]=read_meta_data_01(fpath)
+
+[fdir,~,~]=fileparts(fpath);
+
+%features
+fpath_md_feat=fullfile(fdir,'Meta_Data_Features.csv');
+if exist(fpath_md_feat,'file')~=2
+    error('features metadata file does not exist')
+end
+feat=readcell(fpath_md_feat);
+
+idx_l=find_str_in_cell(feat(1,:),{'FEATURE_NAME'});
+location=feat{2,idx_l};
+
+idx_l=find_str_in_cell(feat(1,:),{'WKID'});
+epsg=feat{2,idx_l};
+
+idx_l=find_str_in_cell(feat(1,:),{'X'});
+x=feat{2,idx_l};
+
+idx_l=find_str_in_cell(feat(1,:),{'Y'});
+y=feat{2,idx_l};
+
+idx_l=find_str_in_cell(feat(1,:),{'Z (m to NAP)'});
+bemonsteringshoogte=undutchify(feat{2,idx_l});
+
+%properties
+fpath_md_prop=fullfile(fdir,'Meta_Data_Properties.csv');
+if exist(fpath_md_prop,'file')~=2
+    error('features metadata file does not exist')
+end
+prop=readcell(fpath_md_prop);
+
+idx_p=find_str_in_cell(prop(1,:),{'PROPERTY_NAME'});
+grootheid=prop{2,idx_p};
+        
+idx_p=find_str_in_cell(prop(1,:),{'UNIT_OF_MEASUREMENT'});
+eenheid=prop{2,idx_p};
+
+idx_p=find_str_in_cell(prop(1,:),{'DATUM'});
+hoedanigheid=prop{2,idx_p};
+
+end %read_meta_data_01

@@ -43,6 +43,9 @@
 %       -'dd'       : wind direction
 %       -'fh'       : wind speed
 %
+%       -'mea'      : measured
+%       -'sim'      : computed
+%
 %   -un: factor for unit conversion from SI
 %
 %   -lan: language
@@ -316,6 +319,26 @@ switch lower(var)
                 str_var='velocidad del viento';
          end
          un_type='L/T';
+    case 'mea'
+         switch lan
+            case 'en'
+                str_var='measured';
+            case 'nl'
+                str_var='gemeten';
+            case 'es'
+                str_var='medido';
+         end
+         un_type='-';
+    case 'sim'
+         switch lan
+            case 'en'
+                str_var='computed';
+            case 'nl'
+                str_var='berekend';
+            case 'es'
+                str_var='computado';
+         end
+         un_type='-';
     otherwise
          error('this is missing')
 end %var

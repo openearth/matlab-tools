@@ -20,6 +20,9 @@
 
 function varargout=D3D_io_input(what_do,fname,varargin)
 
+if ~ischar(fname)
+    error('fname should be char')
+end
 [~,~,ext]=fileparts(fname);
 
 switch what_do
@@ -60,7 +63,7 @@ switch what_do
                 dflowfm_io_mdu('write',fname,stru_in);
             case {'.mdf'}
                 delft3d_io_mdf('write',fname,stru_in.keywords);
-            case {'.pli','.ldb','.pol'}
+            case {'.pli','.ldb','.pol','.pliz'}
 %                 stru_in(kpol).name: double or string
 %                 stru_in(kpol).xy: [np,2] array with x-coordinate (:,1) and y-coordinate (:,2)
                 D3D_write_polys(fname,stru_in);
@@ -89,6 +92,8 @@ switch what_do
                 end
                 fclose(fid);
                 messageOut(NaN,sprintf('File written: %s',fname));
+            case '.shp'
+                shapewrite(fname,'polyline',{stru_in.xy},{})
             case '' %writing a series of tim files
 %                 D3D_io_input('write',dire_out,stru_in,reftime);
 %                 dire_out = folder to write  
