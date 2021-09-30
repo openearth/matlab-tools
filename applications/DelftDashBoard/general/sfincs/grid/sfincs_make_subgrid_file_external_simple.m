@@ -89,6 +89,7 @@ subgrd.z_zmax               = zeros(imax,jmax);
 subgrd.z_volmax             = zeros(imax,jmax);
 subgrd.z_depth              = zeros(imax,jmax,nbin);
 subgrd.z_hrep               = zeros(imax,jmax,nbin);
+subgrd.z_navg               = zeros(imax,jmax,nbin);
 subgrd.z_dhdz               = zeros(imax,jmax);
 
 % Display
@@ -188,17 +189,24 @@ for ii=1:ni
         end
         
         % Volumes based on depth
-        [zmin,zmax,volmax,ddd]              = mx_subgrid_volumes(d,nbin,dx,dy,maxdzdv);
+        cellareas                           = repmat(dx*dy,nib1,njb1);
+        [zmin,zmax,volmax,ddd]              = mx_subgrid_volumes(d,cellareas,nbin,dx,dy,maxdzdv);
+%       [zmin,zmax,volmax,ddd]              = mx_subgrid_volumes(d,nbin,dx,dy,maxdzdv);
+
         subgrd.z_zmin(ic1:ic2,jc1:jc2)      = zmin;
         subgrd.z_zmax(ic1:ic2,jc1:jc2)      = zmax;
         subgrd.z_volmax(ic1:ic2,jc1:jc2)    = volmax;
         subgrd.z_depth(ic1:ic2,jc1:jc2,:)   = ddd;
         
-        % Do the same for manning (tbd; now constant)
-        [zmin,zmax,ddd,dhdz]                = mx_subgrid_depth(d,n,nbin,dx);
+        % Do the same for manning
+        % not certain if it should be 100 or dx
+        [zmin,zmax,ddd,dhdz,navg]           = mx_subgrid_depth_02(d,n,nbin,100);
+    %   [zmin,zmax,ddd,dhdz]                = mx_subgrid_depth(d,n,nbin,dx);
+
         subgrd.z_hrep(ic1:ic2,jc1:jc2,:)    = ddd;
         subgrd.z_dhdz(ic1:ic2,jc1:jc2,:)    = dhdz;
-        
+        subgrd.z_navg(ic1:ic2,jc1:jc2,:)    = navg;
+
     end
 end
 
@@ -213,7 +221,7 @@ switch lower(uopt)
     case{'minmean'}
         iopt=2;
 end
-[u_zmin,u_zmax,u_dhdz,u_hrep,v_zmin,v_zmax,v_dhdz,v_hrep]=mx_subgrid_uv(subgrd.z_zmin,subgrd.z_zmax,subgrd.z_dhdz,subgrd.z_hrep,iopt);
+[u_zmin,u_zmax,u_dhdz,u_hrep,u_navg,v_zmin,v_zmax,v_dhdz,v_hrep,v_navg]=mx_subgrid_uv_02(subgrd.z_zmin,subgrd.z_zmax,subgrd.z_dhdz,subgrd.z_hrep,subgrd.z_navg,iopt);
 
 % Allocate variables
 subgrd1.z_zmin   = subgrd.z_zmin(1:nmax,1:mmax,:);
@@ -225,12 +233,15 @@ subgrd1.u_zmin   = u_zmin;
 subgrd1.u_zmax   = u_zmax;
 subgrd1.u_dhdz   = u_dhdz;
 subgrd1.u_hrep   = u_hrep;
+subgrd1.u_navg   = u_navg;
+
 subgrd1.v_zmin   = v_zmin;
 subgrd1.v_zmax   = v_zmax;
 subgrd1.v_dhdz   = v_dhdz;
 subgrd1.v_hrep   = v_hrep;
+subgrd1.v_navg   = v_navg;
 
 % Write subgrid
 cd(dr)
-sfincs_write_binary_subgrid_tables_v7(subgrd1,msk,nbin,subgridfile,uopt);
+sfincs_write_binary_subgrid_tables_v8(subgrd1,msk,nbin,subgridfile,uopt);
 fclose('all');
