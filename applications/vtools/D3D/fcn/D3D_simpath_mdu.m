@@ -63,11 +63,12 @@ end
 if isfield(mdu.geometry,'FixedWeirFile')
     simdef.file.fxw=fullfile(path_sim,mdu.geometry.FixedWeirFile);
 end
-
-%dep
 if isfield(mdu.geometry,'BedlevelFile')
     simdef.file.dep=fullfile(path_sim,mdu.geometry.BedlevelFile);
 end
+
+%extenral forcing
+simdef.file.extforcefilenew=fullfile(path_sim,mdu.external_forcing.ExtForceFileNew);
 
 %sediment
 if isfield(mdu,'sediment')

@@ -59,7 +59,7 @@ end
 
 %% load
 switch simdef.D3D.structure
-    %% D3D
+    %% D3D4 and FM
     case {1,2}
 
 kmdf=1;

@@ -52,6 +52,8 @@ switch what_do
             case '.xyz'
 %                 stru_out=dflowfm_io_xydata('read',fname); %extremely slow
                 stru_out=readmatrix(fname,'FileType','text');
+            case '.ext'
+                stru_out=delft3d_io_sed(fname); %there are repeated blocks, so we cannot use dflowfm_io_mdu
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
