@@ -61,7 +61,7 @@ switch what_do
     case 'write'
         stru_in=varargin{1};
         switch ext
-            case {'.mdu','.mor','.sed'}
+            case {'.mdu','.mor','.sed','.ext'}
                 dflowfm_io_mdu('write',fname,stru_in);
             case {'.mdf'}
                 delft3d_io_mdf('write',fname,stru_in.keywords);

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17478 $
-%$Date: 2021-09-09 17:44:11 +0200 (Thu, 09 Sep 2021) $
-%$Author: chavarri $
-%$Id: create_m_files_adcp.m 17478 2021-09-09 15:44:11Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/adcp/create_m_files_adcp.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function adcp_plot_01(fdir_mat,fdir_fig)

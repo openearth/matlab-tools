@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17447 $
-%$Date: 2021-08-04 13:03:01 +0200 (Wed, 04 Aug 2021) $
-%$Author: chavarri $
-%$Id: read_data_stations.m 17447 2021-08-04 11:03:01Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/data_stations/read_data_stations.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function idx=data_stations_stations_to_load(paths_main_folder,varargin)

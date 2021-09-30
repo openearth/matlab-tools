@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17480 $
-%$Date: 2021-09-10 15:22:14 +0200 (Fri, 10 Sep 2021) $
-%$Author: chavarri $
-%$Id: read_data_stations.m 17480 2021-09-10 13:22:14Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/data_stations/read_data_stations.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function add_data_stations_from_nc(paths_main_folder,fdir_nc)
