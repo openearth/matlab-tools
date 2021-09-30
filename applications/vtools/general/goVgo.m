@@ -67,7 +67,7 @@ fprintf('|------------------------------------------------------------|\n');
 fprintf('|------------------------------------------------------------|\n');
 fprintf('|-----|                                                |-----|\n');
 fprintf('|-----|           Gnothi sauton  (know thyself)        |-----|\n');
-fprintf('|-----|           Meden agan (Nothing in excess)       |-----|\n');
+fprintf('|-----|           Meden agan (nothing in excess)       |-----|\n');
 fprintf('|-----|       Engya para d''ate (surety brings ruin)    |-----|\n');
 fprintf('|-----|                                                |-----|\n');
 fprintf('|------------------------------------------------------------|\n');

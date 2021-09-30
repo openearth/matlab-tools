@@ -100,6 +100,7 @@ Data_xy.Ycor = arb.y;
 
 %% Determine X,Y and distance (S) at crossings (*cor) and middle of crossings (*cen)
 % *cor
+Data_xy.Scor=NaN(size(Data_xy.Xcor));
 nonan = ~isnan(Data_xy.Xcor);
 Data_xy.Scor(nonan,:) = [0; cumsum(sqrt(diff(Data_xy.Xcor(nonan)).^2+diff(Data_xy.Ycor(nonan)).^2))];
 % *cen
