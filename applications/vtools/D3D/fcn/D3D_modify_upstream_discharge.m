@@ -19,10 +19,11 @@
 %time series management
 %read the grid and find the nodes closest to the pli for substituting <fpath_pli>
 
-function D3D_modify_upstream_discharge(fdir_sim,fpath_pli,s_m,f_m,fpath_us_pli_pc)
+function D3D_modify_upstream_discharge(fdir_sim,fpath_pli,s_m,f_m,fpath_us_pli_pc,tag_mod)
 
 
 %% path
+
 simdef.D3D.dire_sim=fdir_sim;
 simdef=D3D_simpath(simdef);
 fpath_map=simdef.file.map;
@@ -31,32 +32,34 @@ fpath_ext=simdef.file.extforcefilenew;
 
 %% read original q
 
-ext=D3D_io_input('read',fpath_ext);
+%original external
+extn=D3D_io_input('read',fpath_ext);
 [fdir_ext,fname_ext,fext_ext]=fileparts(fpath_ext);
 
-ext_mod=struct();
-ext_mod.General=ext.General;
+%modified external
+extn_mod=struct();
+extn_mod.General=extn.General;
 
-%find upstream boundary
-field_name=fieldnames(ext);
+%find upstream boundaries in external
+field_name=fieldnames(extn);
 nfn=numel(field_name);
 kubc=0;
 for kfn=1:nfn
     if ~strcmp(field_name{kfn}(1:4),'boun') %boundary
         continue
     end
-    if strcmp(ext.(field_name{kfn}).quantity,'dischargebnd')
+    if strcmp(extn.(field_name{kfn}).quantity,'dischargebnd')
         kubc=kubc+1;
-        ubc(kubc).locationfile_rel=ext.(field_name{kfn}).locationfile;
-        ubc(kubc).locationfile=fullfile(fdir_ext,ext.(field_name{kfn}).locationfile);
-        ubc(kubc).forcingfile_rel=ext.(field_name{kfn}).forcingfile;
-        ubc(kubc).forcingfile=fullfile(fdir_ext,ext.(field_name{kfn}).forcingfile);
+        ubc(kubc).locationfile_rel=extn.(field_name{kfn}).locationfile;
+        ubc(kubc).locationfile=fullfile(fdir_ext,extn.(field_name{kfn}).locationfile);
+        ubc(kubc).forcingfile_rel=extn.(field_name{kfn}).forcingfile;
+        ubc(kubc).forcingfile=fullfile(fdir_ext,extn.(field_name{kfn}).forcingfile);
     else
-        ext_mod.(field_name{kfn})=ext.(field_name{kfn});
+        extn_mod.(field_name{kfn})=extn.(field_name{kfn});
     end
-    
 end
 
+%read boundary conditions that are upstream
 bc_u=struct('Name','','Contents','','Location','','TimeFunction','','ReferenceTime',[],'TimeUnit','','Interpolation','','Parameter',struct(),'Data',[]);
 nubc=numel(ubc);
 for kubc=1:nubc
@@ -75,11 +78,11 @@ if numel(bc_u)>1
     %...
 end
 
-%% read q at boundary
+%% read discharge along the input pli-file
 
 [ismor,~,~]=D3D_is(fpath_map);
 [~,~,tend,~]=D3D_results_time(fpath_map,ismor,NaN);
-% q1=EHY_getMapModelData(fpath_map,'varName','mesh2d_q1','t0',tend,'tend',tend,'disp',0,'pliFile',fpath_us_pli);
+% q1=EHY_getMapModelData(fpath_map,'varName','mesh2d_q1','t0',tend,'tend',tend,'disp',0,'pliFile',fpath_us_pli); %this is at links
 u=EHY_getMapModelData(fpath_map,'varName','mesh2d_ucmag','t0',tend,'tend',tend,'disp',0,'pliFile',fpath_pli);
 h=EHY_getMapModelData(fpath_map,'varName','mesh2d_waterdepth','t0',tend,'tend',tend,'disp',0,'pliFile',fpath_pli);
 
@@ -91,12 +94,11 @@ s=u.Scen(bol_cen_nn);
 q=u.val(bol_cen_nn).*h.val(bol_cen_nn);
 Q=q.*B(bol_cen_nn);
 
-%% modify
+%% modify according to input function
 
 Q_tot=sum(Q);
 Q_frac=Q./Q_tot; %fraction of discharge
 F=griddedInterpolant(s_m,f_m);
-% f_m_atsim=F(s);
 f_m_atsim=F(s);
 Q_fm=Q_frac.*f_m_atsim';
 Q_frac_m=Q_fm/sum(Q_fm,'omitnan');
@@ -111,8 +113,8 @@ fpath_us_pli=ubc.locationfile;
 fdirrel_us_pli=fileparts(ubc.locationfile_rel);
 fdirrel_us_bc=fileparts(ubc.forcingfile_rel);
 [fdir_bc,fnam_bc,fext_bc]=fileparts(ubc(kubc).forcingfile);
-fname_bc_mod=sprintf('%s_mod%s',fnam_bc,fext_bc);
-fpath_bc_mod=fullfile(fdir_bc,fname_bc_mod);
+fname_bc_mod=sprintf('%s_%s%s',fnam_bc,tag_mod,fext_bc);
+
 
 %read original pli
 
@@ -137,9 +139,8 @@ xy_pli_anl=pli_anl.val{1,1};
 if mind_idx==2
     xy_pli_ori=flipud(xy_pli_ori);
 end
-
 us_xy_parts=xy_pli_ori;
-% us_xy_parts=increaseCoordinateDensity(xy_pli_ori,nu);
+% us_xy_parts=increaseCoordinateDensity(xy_pli_ori,nu); %necessary if reading from <ubc.locationfile>
 
 for ku=1:nu
     %write pli
@@ -161,26 +162,39 @@ for ku=1:nu
     
     %fill ext
     kbnu=0;
-    while isfield(ext_mod,sprintf('boundary%d',kbnu))
+    while isfield(extn_mod,sprintf('boundary%d',kbnu))
         kbnu=kbnu+1;
     end
-    ext_mod.(sprintf('boundary%d',kbnu)).quantity='dischargebnd';
-    ext_mod.(sprintf('boundary%d',kbnu)).locationfile=strrep(fullfile(fdirrel_us_pli,sprintf('%s.pli',pli_name)),'\','/');
-    ext_mod.(sprintf('boundary%d',kbnu)).forcingfile=strrep(fullfile(fdirrel_us_bc,fname_bc_mod),'\','/');
+    extn_mod.(sprintf('boundary%d',kbnu)).quantity='dischargebnd';
+    extn_mod.(sprintf('boundary%d',kbnu)).locationfile=strrep(fullfile(fdirrel_us_pli,sprintf('%s.pli',pli_name)),'\','/');
+    extn_mod.(sprintf('boundary%d',kbnu)).forcingfile=strrep(fullfile(fdirrel_us_bc,fname_bc_mod),'\','/');
 end
 
-
+%write bc
+fpath_bc_mod=fullfile(fdir_bc,fname_bc_mod);
 D3D_io_input('write',fpath_bc_mod,bc_mod);
 
-fpath_ext_mod=fullfile(fdir_ext,sprintf('%s_mod%s',fname_ext,fext_ext));
-D3D_io_input('write',fpath_ext_mod,ext_mod);
+%write ext
+fpath_ext_mod=fullfile(fdir_ext,sprintf('%s_%s%s',fname_ext,tag_mod,fext_ext));
+D3D_io_input('write',fpath_ext_mod,extn_mod);
 
 %% PLOT
 
 figure
+subplot(2,1,1)
 hold on
 hanp(1)=plot(s,Q,'b-*');
 hanp(2)=plot(s,Q_m,'r-*');
-% hanp(1)=plot(s,q_frac,'b-*');
-% hanp(2)=plot(s,f_m_atsim,'r-*');
+xlabel('distance along cross-section [m]')
+ylabel('discharge [m^3/s]')
 legend(hanp,{'original','modified'})
+
+subplot(2,1,2)
+hold on
+hanp(1)=plot(s,Q_frac,'b-*');
+hanp(2)=plot(s,f_m_atsim,'r-*');
+xlabel('distance along cross-section [m]')
+ylabel('fracion [-]')
+legend(hanp,{'original discharge ration','multiplication function'})
+
+
