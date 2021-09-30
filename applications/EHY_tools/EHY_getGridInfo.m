@@ -23,6 +23,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %               layer_perc              E.layer_perc (bed to surface), sum = 1 = 100%
 %               spherical               E.spherical (0=cartesian,1=spherical)
 %               grid                    E.grid [plot grid with plot(E.grid(:,1),E.grid(:,2)) ]
+%               domain_number           E.domain_number
 %
 % varargin{2:3) <keyword/value> pair
 %               stations                celll array of station names identical to
@@ -120,7 +121,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) addToAdministration+gridInfoPart.(fn{iFN})];
-                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid'}))
+                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid','domain_number'}))
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
                     gridInfo.(fn{iFN}) = gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
@@ -271,6 +272,10 @@ switch modelType
                         else
                             disp('Cell center info not found in network. Import grid>export grid in RGFGRID and try again')
                         end
+                    end
+                    if ismember('domain_number',wantedOutput)
+%                         E.cen_partition_globalnr=ncread(inputFile,'mesh2d_flowelem_globalnr');
+                        E.domain_number=ncread(inputFile,'mesh2d_flowelem_domain');
                     end
                     if ismember('XYuv',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'NetLink_xu');
@@ -595,6 +600,10 @@ switch modelType
                         if ismember('XYcen',wantedOutput)
                             E.Xcen(ghostCellsCenter) = [];
                             E.Ycen(ghostCellsCenter) = [];
+                        end
+                        if ismember('domain_number',wantedOutput)
+%                             E.cen_partition_globalnr(ghostCellsCenter) = [];
+                            E.domain_number(ghostCellsCenter) = [];
                         end
                         if isfield(E,'no_NetElem')
                             E.no_NetElem = sum(FlowElemDomain == domainNr);
