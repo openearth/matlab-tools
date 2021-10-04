@@ -101,6 +101,8 @@ simdef.flg.which_v=17; %which variable:
 %   38=time step [s]
 %	39=sediment thickness per layer (including active layer) [m]
 %	40=volume fraction content per layer (including active layer) [-]
+%   41=wave height [m]
+%   42=wave forces [N]
 
     %% domain
     

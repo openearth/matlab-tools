@@ -10,7 +10,7 @@
 %$Id$
 %$HeadURL$
 %
-%get data from 1 time step in D3D, output name as in D3D
+%get data in D3D
 %
 %INPUT
 %open input_D3D_fig_layout
@@ -52,19 +52,30 @@ if ~(isfield(in,'kt') && any(in.kt==0)) %you want something else than dimensions
     if isfield(in,'kt')==0 %if time undefined, take all
         in.kt=NaN;
     end
-    if isnan(in.kt) %if NaN, take all
-        in.kt=[1,out_aux.nTt]; %[first position, counter]
+    switch simdef.D3D.structure        
+        case 1
+            if isnan(in.kt) %if NaN, take all
+                in.kt=1:1:out_aux.nTt; 
+            end
+%             if numel(in.kt)==1 && in.kt~=0 %if there is only one element, take this single value. The NaN option is removed above.
+                
+%             end
+        case {2,3}
+            if isnan(in.kt) %if NaN, take all
+                in.kt=[1,out_aux.nTt]; %[first position, counter]
+            end
+            if numel(in.kt)==1 && ~isnan(in.kt) && in.kt~=0 %if there is only one element, take this single value
+                in.kt=[in.kt,1]; %[first position, counter]
+            end
+            if numel(in.kt)==2 && in.kt(2)==Inf
+                in.kt=[in.kt(1),out_aux.nTt]; %[first position, counter]
+            end
+            %final test
+            if numel(in.kt)~=2 || any(isnan(in.kt)) || any(in.kt==Inf)
+                error('kt it is not how it should be')
+            end
     end
-    if numel(in.kt)==1 && ~isnan(in.kt) && in.kt~=0 %if there is only one element, take this single value
-        in.kt=[in.kt,1]; %[first position, counter]
-    end
-    if numel(in.kt)==2 && in.kt(2)==Inf
-        in.kt=[in.kt(1),out_aux.nTt]; %[first position, counter]
-    end
-    %final test
-    if numel(in.kt)~=2 || any(isnan(in.kt)) || any(in.kt==Inf)
-        error('kt it is not how it should be')
-    end
+
 
     %kf
     if isfield(in,'kf')==0
@@ -75,6 +86,11 @@ if ~(isfield(in,'kt') && any(in.kt==0)) %you want something else than dimensions
         end
     end
 
+    %kl
+    if isfield(in,'kl')==0
+        in.kl=1; %active layer only by default
+    end
+    
     %kF
     if simdef.D3D.structure==1
         if isa(simdef.flg.which_p,'double')

@@ -24,6 +24,10 @@ function simdef=D3D_simpath(simdef)
 
 %% file paths of the files to analyze
 
+if strcmp(simdef.D3D.dire_sim,filesep)
+    simdef.D3D.dire_sim(end)='';
+end
+
 dire=dir(simdef.D3D.dire_sim);
 nf=numel(dire)-2;
 

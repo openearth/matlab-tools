@@ -46,6 +46,9 @@
 %       -'mea'      : measured
 %       -'sim'      : computed
 %
+%       -'dg'       : geometric mean grain size
+%       -'dm'       : arithmetic mean grain size
+%
 %   -un: factor for unit conversion from SI
 %
 %   -lan: language
@@ -339,6 +342,26 @@ switch lower(var)
                 str_var='computado';
          end
          un_type='-';
+    case 'dg'
+         switch lan
+            case 'en'
+                str_var='geometric mean grain size';
+            case 'nl'
+                str_var='geometrische gemiddelde korrelgrootte';
+            case 'es'
+                str_var='media geométrica del tamaño de grano';
+         end
+         un_type='L';
+    case 'dm'
+         switch lan
+            case 'en'
+                str_var='arithmetic mean grain size';
+            case 'nl'
+                str_var='rekenkundig gemiddelde korrelgrootte';
+            case 'es'
+                str_var='media aritmética del tamaño de grano';
+         end
+         un_type='L';
     otherwise
          error('this is missing')
 end %var

@@ -20,10 +20,11 @@ function out=D3D_read_map(simdef,in)
 file=simdef.file;
 flg=simdef.flg;
 
-kt=in.kt(1);    
+kt=in.kt;    
 ky=in.ky;
 kx=in.kx;
 kf=in.kf;
+kl=in.kl;
 nl=in.nl;
 
 %% DEFAULT
@@ -44,6 +45,9 @@ if file.partitions>1
 end
 if flg.get_EHY
     flg.which_s=0;
+end
+if isfield(flg,'lan')==0
+    flg.lan='en';
 end
 
 %% results structure
@@ -249,23 +253,20 @@ switch flg.which_p
                 out.zlabel='flow depth [m]';    
             case {3,26} %dm,dg
                 %%
-                LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,1,1:nf},'quiet'); %fractions at top layer [-] (t,y,x,l,f)
+                LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,kl,1:nf},'quiet'); %fractions at top layer [-] (t,y,x,l,f)
                 
                 dm=mean_grain_size(LYRFRAC,dchar,mean_type);
                 dm(dm==1)=NaN;
                 
                 %output                
                 out=out_var_2DH(dm,XZ,YZ,time_r,XCOR,YCOR,nT,nx,ny,flg,kt);
+                switch flg.which_v
+                    case 3
+                        out.zlabel=labels4all('dm',1,flg.lan);    
+                    case 26
+                        out.zlabel=labels4all('dg',1,flg.lan);    
+                end
                 
-%                 out.z=reshape(dm,ny,nx);
-%                 out.XZ=reshape(XZ,ny,nx);
-%                 out.YZ=reshape(YZ,ny,nx);
-%                 out.time_r=time_r(kt);
-%                 switch flg.which_p
-%                     case 2
-%                         out.z (1,:)=NaN;
-%                         out.z (end,:)=NaN;                     
-%                 end
             case 4 %dm fIk
                 LYRFRAC=vs_let(NFStruct,'map-sed-series',{kt},'LYRFRAC',{ky,kx,1:nl,1:nf},'quiet'); %fractions at layers [-] (t,y,x,l,f)
                 DP_BEDLYR=vs_let(NFStruct,'map-sed-series',{kt},'DP_BEDLYR',{ky,kx,1:nl+1},'quiet'); %fractions at layers [-] (t,y,x,l)
@@ -895,7 +896,7 @@ switch mean_type
 end
 
 % make safe for ill defined lyrfrac
-idx = find(abs(sum(LYRFRAC,5) - 1) > 1e-14);
+idx = find(abs(sum(LYRFRAC,5) - 1) > 1e-6); 
 dm(idx) = NaN;  
 
 end %function mean_grain_size

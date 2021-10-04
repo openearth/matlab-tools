@@ -32,6 +32,8 @@ ns=numel(str2find);
 idx=[];
 bol=false(size(data));
 for ks=1:ns
+%     bol_empty=cellfun(@(x)isempty(x),data);
+%     data{bol_empty}='';
     aux_where=strfind(data,str2find(ks));
     %check exact agreement
     idx_rkm=find(~cellfun(@isempty,aux_where));
