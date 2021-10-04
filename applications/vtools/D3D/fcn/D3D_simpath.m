@@ -24,7 +24,7 @@ function simdef=D3D_simpath(simdef)
 
 %% file paths of the files to analyze
 
-if strcmp(simdef.D3D.dire_sim,filesep)
+if strcmp(simdef.D3D.dire_sim(end),filesep)
     simdef.D3D.dire_sim(end)='';
 end
 
