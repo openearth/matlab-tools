@@ -1043,8 +1043,16 @@ end
 % shp2ldb
     function [output,OPT] = EHY_convert_shp2ldb(inputFile,outputFile,OPT)
         output = shape2ldb(inputFile,0);
-        if iscell(output) && numel(output) == 1
-            output = output{1};
+        if iscell(output)
+            if numel(output) == 1
+                output = output{1};
+            else
+                ldb = [];
+                for i = 1:length(output)
+                    ldb = [ldb; NaN NaN; output{i,1}(:,1:2)];
+                end
+                output = ldb(2:end,:);
+            end
         end
         if OPT.saveOutputFile
             landboundary('write',outputFile,output(:,1:2));

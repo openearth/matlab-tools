@@ -120,7 +120,9 @@ end
 if isfield(Data,'face_nodes')
     if isfield(Data,'val')
         switch numel(size(Data.val))
-            case {2,3}
+            case 2
+                val = arbcross(arb,{'FACE' permute(Data.val,[2 1])});
+            case 3
                 val = arbcross(arb,{'FACE' permute(Data.val,[dimsInd.faces, setdiff([2 3 1], dimsInd.faces,'stable')])});
             case 4
                 val = arbcross(arb,{'FACE' permute(Data.val,[dimsInd.faces dimsInd.bed_layers dimsInd.sedfrac dimsInd.time])});
