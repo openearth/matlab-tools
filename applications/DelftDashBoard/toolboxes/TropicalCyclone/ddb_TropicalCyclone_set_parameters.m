@@ -374,8 +374,8 @@ switch lower(handles.toolbox.tropicalcyclone.importFormat)
         [fname] = ddb_read_recent_hurricanes(handles.toolbox.tropicalcyclone.dataDir);
         iflag = 1; filename= fname; pathname = pwd;
         close(wb);
-    case('noaa')
-        wb = waitbox('HUDRAT2 hurricanes are being imported');
+    case('database_btd')
+        wb = waitbox('NHC & JTWC best track data (BTD) archived data are being imported');
         [fname] = ddb_selectNOAAstorm;  
         iflag = 1; filename= fname; pathname = pwd;
         close(wb);
@@ -554,18 +554,18 @@ try
     switch lower(handles.toolbox.tropicalcyclone.importFormat)
         case{'jtwcbesttrack'}
             tc=tc_read_jtwc_best_track([pathname filename]);
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.93;
         case{'unisysbesttrack'}
             tc=tc_read_unisys_best_track([pathname filename]);
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.93;
         case{'jtwccurrenttrack', 'nhccurrenttrack'}
             %  JTWC, NHC current tracks in generic .trk format:
             tc=ddb_readGenericTrackFile([pathname filename]);
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.93;
             itype = 1;
         case{'jmv30'}
             tc=tc_read_jmv30([pathname filename]);
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.93;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
             handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
         case{'bom'}
@@ -576,15 +576,15 @@ try
         case{'hurdat2besttrack'}
             tc=tc_read_hurdat2_best_track([pathname filename]);
             handles.toolbox.tropicalcyclone.cyclonename=tc.name;
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.93;
         case{'pagasa'}
             tc=read_pagasa_cyclone_track([pathname filename]);
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.93;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
             handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';       
-        case('noaa')
+        case('database_btd')
             load([handles.toolbox.tropicalcyclone.dataDir 'hurricanes.mat']);
-            for ii = 1:length(tc);
+            for ii = 1:length(tc)
                 years    = year(tc(ii).time(1));
                 basin    = tc(ii).basin;
                 storm    = tc(ii).storm_number(1);
@@ -593,7 +593,7 @@ try
             end
             it = find(strcmp(hurricane_names, fname));
             tc = tc(it(1));
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.93;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
             handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';   
         case('recent')
@@ -607,7 +607,7 @@ try
             end
             it = find(strcmp(hurricane_names, fname));
             tc = tc(it(1));
-            handles.toolbox.tropicalcyclone.windconversionfactor=0.9;
+            handles.toolbox.tropicalcyclone.windconversionfactor=0.93;
             handles.toolbox.tropicalcyclone.wind_profile='holland2010';
             handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';   
         otherwise
@@ -748,6 +748,7 @@ else
 %                spw.asymmetry_radial_distribution='v/vmax';
                 spw.asymmetry_radial_distribution='constant';
                 spw.tdummy=tdummy;
+                spw.r35estimate = handles.toolbox.tropicalcyclone.r35estimate;
 
                 
                 % And now the actual tropical cyclone data                
@@ -767,7 +768,7 @@ else
 %                end
                 
                 % Run WES
-                tc=wes3(tc,'tcstructure',spw,[name '.spw']);
+                tc=wes4(tc,'tcstructure',spw,[name '.spw']);
  
                 % Create polygon file for visualization
                 fid=fopen([name '.pol'],'wt');

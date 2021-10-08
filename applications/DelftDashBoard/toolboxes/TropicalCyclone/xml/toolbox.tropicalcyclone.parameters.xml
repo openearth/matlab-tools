@@ -135,6 +135,13 @@
     <tooltipstring>Click to delete current cyclone track</tooltipstring>
   </element>
   <element>
+    <style>checkbox</style>
+    <text>R35 relation</text>
+    <position>570 80</position>
+    <variable>handles.toolbox.tropicalcyclone.r35estimate</variable>
+    <tooltipstring>Select to include estimate R35 based on Nederhoff et al. (2019)</tooltipstring>
+  </element>
+  <element>
     <style>pushbutton</style>
     <position>470 85 90 20</position>
     <text>Load Track</text>

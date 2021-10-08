@@ -7,6 +7,7 @@ function [rmax,dr35] = wind_radii_nederhoff(vmax,lat,region, probability)
 % v1.3  Nederhoff   Aug-18
 % v1.4  Nederhoff   Mar-19
 % v1.5  Nederhoff   Sep-20
+% URL: https://nhess.copernicus.org/articles/19/2359/2019/
 
 %% Input
 % vmax in m/s, 10 meter height and 1-minute averaged

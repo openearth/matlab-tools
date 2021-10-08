@@ -27,7 +27,7 @@ tc=wes_compute_forward_speed(tc,spw);
 %% 6) Land decay
 tc=wes_land_decay(tc,spw);
 
-%% 7) Estimate missing values for Vmax, Pc and Rmax
+%% 7) Estimate missing values for Vmax, Pc, Rmax and R35
 tc=wes_estimate_missing_values(tc,spw);
 
 %% 8) Compute relative Vmax
@@ -38,6 +38,7 @@ tc=wes_compute_relative_wind_speeds(tc,spw);
 
 %% 10. Determine rainfall if requested
 [tc,spw,include_precip]=wes_compute_rainfall(tc,spw,r);
+
 
 %% 11. Write spiderweb
 if ~isfield(spw,'merge_frac')
@@ -192,7 +193,7 @@ if ~isfield(spw,'wind_pressure_relation')
     spw.wind_pressure_relation='holland2008';
 end
 if ~isfield(spw,'rmax_relation')
-    spw.rmax_relation='gross2004';
+    spw.rmax_relation='nederhoff2019';
 end
 
 spw.use_relative_speed=1;
@@ -265,9 +266,9 @@ nt=length(tc.track);
 % Convert wind speeds to m/s
 switch lower(tc.wind_speed_unit)
     case{'kts','kt','knots'}
-        tc.radius_velocity=tc.radius_velocity*kts2ms*spw.wind_conversion_factor; % Convert to m/s
+        tc.radius_velocity=tc.radius_velocity*kts2ms*spw.wind_conversion_factor;    % Convert to m/s
         for it=1:nt
-            tc.track(it).vmax=tc.track(it).vmax*kts2ms*spw.wind_conversion_factor; % Convert to m/s
+            tc.track(it).vmax=tc.track(it).vmax*kts2ms*spw.wind_conversion_factor;  % Convert to m/s
         end
 end
 
@@ -444,13 +445,14 @@ for it=1:length(tc.track)
     use_vmax=0;
     use_pc=0;
     use_rmax=0;
-    
+    use_r35=0;
     % Determine which parameters are required
     switch lower(spw.wind_profile)
         case{'holland1980','holland2010'}
             use_vmax=1;
             use_pc=1;
             use_rmax=1;
+            use_r35=spw.r35estimate;
         case{'fujita1952'}
             use_pc=1;
             use_rmax=1; % We actually need R0, not Rmax!!!
@@ -518,16 +520,32 @@ for it=1:length(tc.track)
         end
     end
 
-    % Rmax
+    % Radius of maximum winds (Rmax)
     if use_rmax
         if isnan(tc.track(it).rmax)
             switch lower(spw.rmax_relation)
                 case{'gross2004'}
-                    tc.track(it).rmax=rmax_gross2004(tc.track(it).vmax,tc.track(it).y);
+                    tc.track(it).rmax       = rmax_gross2004(tc.track(it).vmax,tc.track(it).y);
                 case{'25nm'}
-                    tc.track(it).rmax=25*1.852;
+                    tc.track(it).rmax       = 25*1.852;
                 case{'pagasajma'}
-                    tc.track(it).rmax=rmax_jma_pagasa(tc.track(it).pc);
+                    tc.track(it).rmax       = rmax_jma_pagasa(tc.track(it).pc);
+                case{'nederhoff2019'}
+                    [rmax,dr35]             = wind_radii_nederhoff(tc.track(it).vmax,tc.track(it).y,7, 0);  
+                    [tc.track(it).rmax]     = rmax.mode;
+            end
+        end
+    end
+    
+    % Radius of gale force winds (R35)
+    if use_r35 
+        if tc.track(it).vmax > 20   % if gale force winds (note 20 m/s not kn/s)
+            if isnan(tc.track(it).quadrant(1).radius(1)) && isnan(tc.track(it).quadrant(2).radius(1)) && isnan(tc.track(it).quadrant(3).radius(1)) && isnan(tc.track(it).quadrant(4).radius(1))
+                [rmax,dr35]                            = wind_radii_nederhoff(tc.track(it).vmax,tc.track(it).y,7, 0);
+                tc.track(it).quadrant(1).radius(1)     = rmax.mode + dr35.mode;
+                tc.track(it).quadrant(2).radius(1)     = rmax.mode + dr35.mode;
+                tc.track(it).quadrant(3).radius(1)     = rmax.mode + dr35.mode;
+                tc.track(it).quadrant(4).radius(1)     = rmax.mode + dr35.mode;
             end
         end
     end
@@ -541,7 +559,6 @@ function tc=wes_compute_relative_wind_speeds(tc,spw)
 nt=length(tc.track);
 
 for it=1:nt
-    disp(it)
            
     % Compute max wind speed relative to propagation speed
     u_prop=tc.track(it).vtx;

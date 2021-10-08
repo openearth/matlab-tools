@@ -81,7 +81,7 @@ handles.pushFind  = uicontrol(gcf,'Style','pushbutton','String','Search','Positi
 
 handles2 = getHandles;
 load([handles2.toolbox.tropicalcyclone.dataDir 'hurricanes.mat']);
-for ii = 1:length(tc);
+for ii = 1:length(tc)
     years    = year(tc(ii).time(1));
     basin    = tc(ii).basin;
     storm    = tc(ii).storm_number(1);

@@ -160,15 +160,13 @@ handles.toolbox.tropicalcyclone.TCBasinHandles=[];
 handles.toolbox.tropicalcyclone.tcBasinsDir = [fileparts(fileparts(handles.settingsDir)) filesep 'external' filesep 'data'];
 handles.toolbox.tropicalcyclone.tcBasinsFiles = dir([handles.toolbox.tropicalcyclone.tcBasinsDir filesep '*.xy']);
 
-handles.toolbox.tropicalcyclone.importFormat='JTWCCurrentTrack';
-% handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','hurdat2besttrack','pagasa'};
-% handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2','PAGASA', 'noaa'};
-handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','noaa','recent','bom'};
-handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0','HURDAT2', 'Recent Hurricanes','BoM'};
+handles.toolbox.tropicalcyclone.importFormat='database_btd';
+handles.toolbox.tropicalcyclone.importFormats={'database_btd','recent','JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30','bom'};
+handles.toolbox.tropicalcyclone.importFormatNames={'NHC & JTWC Best Track Archive', 'Recent Hurricanes','BoM','JTWC Current Track','NHC Current Track','JTWC Best Track','Unisys Best Track','JMV 3.0'};
 
-handles.toolbox.tropicalcyclone.downloadLocation='JTWCCurrentTracks';
-handles.toolbox.tropicalcyclone.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones', 'recent'};
-handles.toolbox.tropicalcyclone.downloadLocationNames={'JTWC Current Cyclones','NHC Current Hurricanes','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)', 'Recent Hurricanes'};
+handles.toolbox.tropicalcyclone.downloadLocation='recent';
+handles.toolbox.tropicalcyclone.downloadLocations={'recent', 'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};
+handles.toolbox.tropicalcyclone.downloadLocationNames={'Recent Hurricanes', 'JTWC Current Cyclones','NHC Current Hurricanes','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)', };
 
 handles.toolbox.tropicalcyclone.wind_profile='holland2010';
 handles.toolbox.tropicalcyclone.wind_profile_options={'holland1980','holland2010','fujita1952','modifiedrankinevortex'};
@@ -180,9 +178,11 @@ handles.toolbox.tropicalcyclone.wind_pressure_relation='holland2008';
 handles.toolbox.tropicalcyclone.wind_pressure_relation_options={'holland2008','vatvani'};
 handles.toolbox.tropicalcyclone.wind_pressure_relation_options_names={'Holland (2008)','Vatvani'};
 
-handles.toolbox.tropicalcyclone.rmax_relation='gross2004';
-handles.toolbox.tropicalcyclone.rmax_relation_options={'gross2004','25nm','pagasajma','vickerywadhera2008'};
-handles.toolbox.tropicalcyclone.rmax_relation_option_names={'Gross (2004)','25NM','Pagasa-JMA','Vickery and Wadhera (2008)'};
+handles.toolbox.tropicalcyclone.rmax_relation='nederhoff2019';
+handles.toolbox.tropicalcyclone.rmax_relation_options={'nederhoff2019', 'gross2004','25nm','pagasajma','vickerywadhera2008'};
+handles.toolbox.tropicalcyclone.rmax_relation_option_names={'Nederhoff et al. (2019)', 'Gross (2004)','25NM','Pagasa-JMA','Vickery and Wadhera (2008)'};
+
+handles.toolbox.tropicalcyclone.r35estimate = 1;
 
 %% Ensemble
 handles.toolbox.tropicalcyclone.ensemble.t0=datenum(2008,9,11,0,0,0);
