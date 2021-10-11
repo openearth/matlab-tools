@@ -118,6 +118,7 @@ function varargout=Local_read(bcafile,BND)
 
 OPT.debug = 0;
 fid       = fopen(bcafile,'r');
+v = version;
 
 if fid > 0 
 
@@ -134,7 +135,13 @@ if fid > 0
    
       iset    = iset + 1;
       if ~ischar(rec) || isempty(rec), break, end % eof
-      rec = pad(rec,' ',12);
+      
+      if str2num(v(end-5:end-2)) >= 2019
+          rec = pad(rec,12);%2019
+      else
+          rec = pad(rec,' ',12);%2015
+      end
+      
       BCA.DATA(iset).label   = strtrim(rec(1:12));
 
       rec     = fgetl(fid); if OPT.debug;disp(rec);end
