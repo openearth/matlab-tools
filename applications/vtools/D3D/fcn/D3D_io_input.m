@@ -54,6 +54,13 @@ switch what_do
                 stru_out=readmatrix(fname,'FileType','text');
             case '.ext'
                 stru_out=delft3d_io_sed(fname); %there are repeated blocks, so we cannot use dflowfm_io_mdu
+            case '.sob'
+                a=readcell(fname,'FileType','text');
+                aux2=cellfun(@(X)datetime(X,'InputFormat','yyyy/MM/dd;HH:mm:ss'),a(:,1));
+                val=cell2mat(a(:,2));
+                stru_out.tim=aux2;
+                stru_out.val=val;
+%                 figure; hold on; plot(aux2,val)
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext

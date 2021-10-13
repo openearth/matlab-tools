@@ -19,8 +19,14 @@
 %time series management
 %read the grid and find the nodes closest to the pli for substituting <fpath_pli>
 
-function D3D_modify_upstream_discharge(fdir_sim,fpath_pli,s_m,f_m,fpath_us_pli_pc,tag_mod)
+function D3D_modify_upstream_discharge(fdir_sim,fpath_pli,s_m,f_m,fpath_us_pli_pc,tag_mod,varargin)
 
+%% parse
+
+OPT.lan='en';
+OPT.write=1;
+
+OPT=setproperty(OPT,varargin{:});
 
 %% path
 
@@ -28,6 +34,8 @@ simdef.D3D.dire_sim=fdir_sim;
 simdef=D3D_simpath(simdef);
 fpath_map=simdef.file.map;
 fpath_ext=simdef.file.extforcefilenew;
+fdir_fig=fullfile(simdef.D3D.dire_sim,'figures');
+mkdir_check(fdir_fig);
 % nci=ncinfo(fpath_map);
 
 %% read original q
@@ -150,7 +158,9 @@ for ku=1:nu
     
     pli_loc.name=pli_name;
     pli_loc.xy=xy;
+    if OPT.write
     D3D_io_input('write',fpath_pli_us_loc,pli_loc);
+    end
     
     %fill bc
     bc_mod(ku).name=pli_name;
@@ -170,6 +180,7 @@ for ku=1:nu
     extn_mod.(sprintf('boundary%d',kbnu)).forcingfile=strrep(fullfile(fdirrel_us_bc,fname_bc_mod),'\','/');
 end
 
+if OPT.write
 %write bc
 fpath_bc_mod=fullfile(fdir_bc,fname_bc_mod);
 D3D_io_input('write',fpath_bc_mod,bc_mod);
@@ -177,9 +188,21 @@ D3D_io_input('write',fpath_bc_mod,bc_mod);
 %write ext
 fpath_ext_mod=fullfile(fdir_ext,sprintf('%s_%s%s',fname_ext,tag_mod,fext_ext));
 D3D_io_input('write',fpath_ext_mod,extn_mod);
+end
 
 %% PLOT
 
+in_p.fname=fullfile(fdir_fig,'modify_upstream_discharge');
+in_p.fig_visible=0;
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.s=s;
+in_p.Q=Q;
+in_p.Q_m=Q_m;
+in_p.lan=OPT.lan;
+
+D3D_figure_modify_upstream_discharge(in_p)
+
+%%
 figure
 subplot(2,1,1)
 hold on
@@ -195,6 +218,6 @@ hanp(1)=plot(s,Q_frac,'b-*');
 hanp(2)=plot(s,f_m_atsim,'r-*');
 xlabel('distance along cross-section [m]')
 ylabel('fracion [-]')
-legend(hanp,{'original discharge ration','multiplication function'})
+legend(hanp,{'original discharge ratio','multiplication function'})
 
 

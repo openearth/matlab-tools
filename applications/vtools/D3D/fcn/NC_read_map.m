@@ -690,8 +690,8 @@ switch flg.which_p
                 out.zlabel='bed shear stress [Pa]';
                 %%
             case 17
-                bl_0=ncread(file.map,'mesh2d_mor_bl',[1,kt(1)],[Inf,kt(2)]);
-                bl  =ncread(file.map,'mesh2d_mor_bl',[1,1],[Inf,1]);
+                bl_0=ncread(file.map,'mesh2d_mor_bl',[1,kt(1)],[Inf,1]);
+                bl  =ncread(file.map,'mesh2d_mor_bl',[1,kt(2)],[Inf,1]);
                 
                 bl_change=bl-bl_0;
                 
