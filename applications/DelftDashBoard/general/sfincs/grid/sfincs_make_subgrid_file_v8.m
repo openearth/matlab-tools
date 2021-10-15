@@ -17,7 +17,9 @@ function sfincs_make_subgrid_file_v8(dr,subgridfile,bathy,manning_input,cs,nbin,
 % sfincs_make_subgrid_file(dr,subgridfile,bathy,cs,nbin,refi,refj)
 %%
 
+% Variable input
 polygons=[];
+quiet   = false;
 
 %% Read input arguments
 for ii=1:length(varargin)
@@ -25,27 +27,31 @@ for ii=1:length(varargin)
         switch lower(varargin{ii})
             case{'polygons'}
                 polygons=varargin{ii+1};
+            case{'quiet'}
+                quiet=varargin{ii+1};
         end
     end
 end
 
+% Handle coordinate systems
 if ~isempty(cs)
     
+    % Global load bathymetry from Dashboard
     global bathymetry
-
     if isempty(bathymetry)
         error('Bathymetry database has not yet been initialized! Please run initialize_bathymetry_database.m first.')
     end
     
+    % Define subgrid file
     subgridfile=[dr filesep subgridfile];
     
+    % Loop over bathy
     for ib=1:length(bathy)
         model.bathymetry(ib).name=bathy(ib).name;
         ii=strmatch(lower(bathy(ib).name),lower(bathymetry.datasets),'exact');
         model.bathymetry(ib).csname=bathymetry.dataset(ii).horizontalCoordinateSystem.name;
         model.bathymetry(ib).cstype=bathymetry.dataset(ii).horizontalCoordinateSystem.type;
     end
-    
     model.cs.name=cs.name;
     model.cs.type=cs.type;
 
@@ -65,7 +71,7 @@ rotation=inp.rotation;
 indexfile=[dr inp.indexfile];
 bindepfile=[dr inp.depfile];
 binmskfile=[dr inp.mskfile];
-[z,msk]=sfincs_read_binary_inputs(mmax,nmax,indexfile,bindepfile,binmskfile);
+[~,msk]     = sfincs_read_binary_inputs(mmax,nmax,indexfile,bindepfile,binmskfile);
 
 di=dy;       % cell size
 dj=dx;       % cell size
@@ -94,17 +100,20 @@ subgrd.z_hrep=zeros(imax,jmax,nbin);
 subgrd.z_navg=zeros(imax,jmax,nbin);
 subgrd.z_dhdz=zeros(imax,jmax);
 
+% Display
+if quiet ~= 1
+    disp(['Used grid size of flux grid is dx= ',num2str(dx),' and dy= ',num2str(dy)])
+    disp(['Used grid size of subgrid pixels is dx= ',num2str(djf),' and dy= ',num2str(dif)])
+end
+
+%% Loop through blocks
 ib=0;
 for ii=1:ni
     for jj=1:nj
-%for ii=1:1
-%    for jj=1:1
         
-        %% Loop through blocks
-        
+        % Count
         ib=ib+1;
-        
-        disp(['Processing block ' num2str(ib) ' of ' num2str(ni*nj)]);
+        if quiet ~= 1; disp(['Processing block ' num2str(ib) ' of ' num2str(ni*nj)]); end
         
         % cell indices
         ic1=(ii-1)*nib+1;
@@ -144,7 +153,6 @@ for ii=1:ni
                 cellareas = (dy*111111.1)*(dx*111111.1)*cos(yc*pi/180);
             end
         end
-        
         clear xx yy
         
         % Initialize depth of subgrid at NaN
@@ -157,7 +165,6 @@ for ii=1:ni
             for ibat=1:length(model.bathymetry)
                 
                 % Convert model grid to bathymetry cs
-                
                 [xg,yg]=convertCoordinates(xg0,yg0,'persistent','CS1.name',model.cs.name,'CS1.type',model.cs.type,'CS2.name',model.bathymetry(ibat).csname,'CS2.type',model.bathymetry(ibat).cstype);
                 
                 xmin=nanmin(nanmin(xg));
@@ -170,9 +177,7 @@ for ii=1:ni
                 bboxy=[ymin-ddy ymax+ddy];
                 
                 % Now get the bathy data for this block
-
                 if ~isempty(find(isnan(zg)))
-                    
                     [xx,yy,zz,ok]=ddb_getBathymetry(bathymetry,bboxx,bboxy,'bathymetry',model.bathymetry(ibat).name,'maxcellsize',min(dif,djf),'quiet');
                     zz(zz<bathy(ibat).zmin)=NaN;
                     zz(zz>bathy(ibat).zmax)=NaN;
@@ -181,11 +186,7 @@ for ii=1:ni
                         zg(isnan(zg))=zg1(isnan(zg));
                     end
                 end
-                
-                
             end
-            
-%             zg = zg - 1.0;
             
             % Adjust bathymetry based on polygon data
             if ~isempty(polygons)
@@ -217,24 +218,19 @@ for ii=1:ni
                                     zg(inpol)=min(zg(inpol),polygons(ipol).value);
                             end
                         end
-                        
                     end
                 end
             end
             
         else
             
+            % Simply load bathy structure
             xx=bathy.x;
             yy=bathy.y;
             zz=bathy.z;
             zg=interp2(xx,yy,zz,xg0,yg0);
             zg(isnan(zg))=0;
             
-        end
-        
-        zg(isnan(zg))=0;
-        if ~isempty(find(isnan(zg)))
-            error(['NaNs found in bathymetry!!! Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
         end
 
         % Now get manning values
@@ -248,7 +244,7 @@ for ii=1:ni
             manning=sn.manning;
             clear sn
         elseif isstruct(manning_input) % x and y must be in the same coordinate system as the model !!!
-            manning=interp2(manning_input.x,manning_input.y,manning_input.val,xg,yg);            
+            manning=interp2(manning_input.x,manning_input.y,manning_input.val,xg0,yg0);            
         else
             manning_deep    = manning_input(1);
             manning_shallow = manning_input(2);
@@ -258,16 +254,19 @@ for ii=1:ni
             manning(zg>=manning_level)=manning_shallow;
         end
         
-        % Set all roughness values below 0.0 m to 0.028
+        % Set all roughness values below 0.0 m to 0.024
         ideep=find(zg<=0);
         manning(ideep)=min(manning(ideep), 0.024);
-%        manning=max(manning,0.028);
-%        manning=min(manning,0.040);
         
+        % clear temp variables
         clear zg1 xx yy zz
         
-        %% Now compute subgrid properties
+        % Check: no NaNs
+        if ~isempty(find(isnan(zg))) || ~isempty(find(isnan(manning)))
+           error(['stop processing: NaN in subgrid table -> Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
+        end
         
+        %% Now compute subgrid properties
         % Volumes
         np=0;
         d=zeros(nib1,njb1,refi*refj); % First create 3D matrix (nmax,mmax,refi*refj)
