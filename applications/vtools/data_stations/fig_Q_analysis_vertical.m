@@ -58,11 +58,11 @@ end
 prnt.filename=fname;
 
 prnt.size=[0,0,14,16]; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-npr=2; %number of plot rows
+npr=3; %number of plot rows
 npc=1; %number of plot columns
 marg.mt=1.0; %top margin [cm]
 marg.mb=1.5; %bottom margin [cm]
-marg.mr=2.0; %right margin [cm]
+marg.mr=2.5; %right margin [cm]
 marg.ml=2.0; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
 marg.sv=0.5; %vertical spacing [cm]
@@ -157,9 +157,11 @@ set(groot,'defaultLegendInterpreter','tex');
 q_lim=[0,max(q_sort)+0.05*max(q_sort)];
 p_lim=[min(p_q_max)/2,1];
 
+p_lim_days=[min(p_q_days)/2,1];
+
 %axes and limits
 kr=1; kc=1;
-% lims.y(kr,kc,1:2)=[-2e-3,2e-3];
+% lims.y(kr,kc,1:2)=p_lim;
 lims.x(kr,kc,1:2)=q_lim;
 % lims.c(kr,kc,1:2)=clims;
 % xlabels{kr,kc}='L_a [m]';
@@ -172,10 +174,10 @@ lims.x(kr,kc,1:2)=q_lim;
 switch lan
     case 'en'
 xlabels{kr,kc}='max. annual discharge [m^3/s]';
-ylabels{kr,kc}='probability [-]';
+ylabels{kr,kc}={'probability of max.','annual discharge [-]'};
     case 'es'
 xlabels{kr,kc}='caudal máximo anual [m^3/s]';
-ylabels{kr,kc}='probabilidad [-]';
+ylabels{kr,kc}={'probabilidad del caudal','máx. anual [-]'};
 end
 
 kr=2; kc=2;
@@ -189,6 +191,32 @@ ylabels{kr,kc}='return period [year]';
     case 'es'
 xlabels{kr,kc}='caudal max. anual [m^3/s]';
 ylabels{kr,kc}='periodo de retorno [-]';
+end
+
+kr=3; kc=1;
+lims.y(kr,kc,1:2)=p_lim_days;
+lims.x(kr,kc,1:2)=q_lim;
+% lims.c(kr,kc,1:2)=clims;
+switch lan
+    case 'en'
+xlabels{kr,kc}='discharge [m^3/s]';
+ylabels{kr,kc}={'probability of daily','discharge [-]'};
+    case 'es'
+xlabels{kr,kc}='caudal[m^3/s]';
+ylabels{kr,kc}={'probabilidad del caudal','diario [-]'};
+end
+
+kr=3; kc=2;
+lims.y(kr,kc,1:2)=p_lim_days;
+lims.x(kr,kc,1:2)=q_lim;
+% lims.c(kr,kc,1:2)=clims;
+switch lan
+    case 'en'
+% xlabels{kr,kc}='daily discharge [m^3/s]';
+ylabels{kr,kc}={'probability of daily','discharge [days/year]'};
+    case 'es'
+% xlabels{kr,kc}='caudal diario [m^3/s]';
+ylabels{kr,kc}={'probabilidad del caudal','diario [días/año]'};
 end
 
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
@@ -285,6 +313,27 @@ han.sfig(kr,kc).YScale='log';
 ytick_aux=1./[100,50,20,10,5,2,1];
 han.sfig(kr,kc).YTick=ytick_aux;
 han.sfig(kr,kc).YTickLabel=1./ytick_aux;
+han.sfig(kr,kc).XTickLabel='';
+han.sfig(kr,kc).XColor='none';
+han.sfig(kr,kc).YColor='k';
+han.sfig(kr,kc).Color='none';
+% han.sfig(kr,kc).YTick='none';
+
+kr=3; kc=2;
+% pos.sfig=[0.25,0.6,0.25,0.25]; % position of first axes    
+pos.sfig=han.sfig(3,1).Position; % position of first axes    
+han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right');
+han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+hold(han.sfig(kr,kc),'on')
+grid(han.sfig(kr,kc),'on')
+han.sfig(kr,kc).Box='on';
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+% han.sfig(kr,kc).YScale='log';
+ytick_aux=han.sfig(kr,kc).YTick;
+% ytick_aux=1./[100,50,20,10,5,2,1];
+han.sfig(kr,kc).YTick=ytick_aux;
+han.sfig(kr,kc).YTickLabel=ytick_aux*365;
 han.sfig(kr,kc).XColor='none';
 han.sfig(kr,kc).YColor='k';
 han.sfig(kr,kc).Color='none';
@@ -318,6 +367,25 @@ grid(han.sfig(kr,kc),'on')
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+han.sfig(kr,kc).XTickLabel='';
+% han.sfig(kr,kc).YTickLabel='';
+% han.sfig(kr,kc).XTick=[];  
+% han.sfig(kr,kc).YTick=[];  
+% han.sfig(kr,kc).XScale='log';
+han.sfig(kr,kc).YScale='log';
+% han.sfig(kr,kc).Title.String='c';
+% han.sfig(kr,kc).XColor='r';
+% han.sfig(kr,kc).YColor='k';
+
+kr=3; kc=1;   
+hold(han.sfig(kr,kc),'on')
+grid(han.sfig(kr,kc),'on')
+% axis(han.sfig(kr,kc),'equal')
+han.sfig(kr,kc).Box='on';
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
@@ -325,7 +393,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
-han.sfig(kr,kc).YScale='log';
+% han.sfig(kr,kc).YScale='log';
 % han.sfig(kr,kc).Title.String='c';
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
@@ -340,6 +408,13 @@ han.p(kr,kc,1)=scatter(q_year_max,time_q_year_max,prop.ms1,prop.mt1,'filled','pa
 
 kr=2; kc=1;    
 han.p(kr,kc,1)=scatter(q_sort,p_q_max,prop.ms2,prop.mf2,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf2);
+
+kr=3; kc=1;    
+han.p(kr,kc,1)=plot(q_day_u,p_q_days,'parent',han.sfig(kr,kc),'color',prop.c1,'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+
+% plot(q_day_days_cs,q_day_u)
+% plot(p_q_days,q_day_u)
+% plot(p_q_days_y,q_day_u)
 
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);

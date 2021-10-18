@@ -122,7 +122,7 @@ set(groot,'defaultLegendInterpreter','tex');
 % cbar(kr,kc).label='surface fraction content of fine sediment [-]';
 
 % brewermap('demo')
-cmap=brewermap(3,'set1');
+cmap=brewermap(9,'set1');
 
 %center around 0
 % ncmap=1000;
@@ -343,7 +343,13 @@ end
 %% PLOT
 
 kr=1; kc=1;    
-han.p(kr,kc,1)=plot(data_station.time,data_station.waarde,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.p(kr,kc,1)=plot(data_station.time,data_station.waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+if isfield(in_p,'xp')
+    np=numel(in_p.xp);
+    for kp=1:np
+        han.p2(kr,kc,kp)=plot(xp{kp,1},yp{kp,1},'parent',han.sfig(kr,kc),'color',cmap(kp,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+    end
+end
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot

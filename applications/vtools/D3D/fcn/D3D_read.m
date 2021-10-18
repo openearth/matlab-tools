@@ -57,12 +57,18 @@ if ~(isfield(in,'kt') && any(in.kt==0)) %you want something else than dimensions
             if isnan(in.kt) %if NaN, take all
                 in.kt=1:1:out_aux.nTt; 
             end
+            if isinf(in.kt)
+                in.kt=out_aux.nTt; %take last one
+            end
 %             if numel(in.kt)==1 && in.kt~=0 %if there is only one element, take this single value. The NaN option is removed above.
                 
 %             end
         case {2,3}
             if isnan(in.kt) %if NaN, take all
                 in.kt=[1,out_aux.nTt]; %[first position, counter]
+            end
+            if isinf(in.kt)
+                in.kt=[out_aux.nTt,1]; %take last one
             end
             if numel(in.kt)==1 && ~isnan(in.kt) && in.kt~=0 %if there is only one element, take this single value
                 in.kt=[in.kt,1]; %[first position, counter]

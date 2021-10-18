@@ -12,7 +12,7 @@
 %
 %
 
-function [ismor,is1d,str_network1d]=D3D_is(nc_map)
+function [ismor,is1d,str_network1d,issus]=D3D_is(nc_map)
 
 [~,~,ext]=fileparts(nc_map);
 
@@ -24,6 +24,13 @@ if strcmp(ext,'.nc') %FM
     ismor=1;
     if any(isnan(idx))
         ismor=0;
+    end
+    
+    %is suspended load
+    idx=find_str_in_cell({nci.Variables.Name},{'cross_section_suspended_sediment_transport','mesh2d_sscx'});
+    issus=1;
+    if any(isnan(idx))
+        issus=0;
     end
 
     %is 1D simulation

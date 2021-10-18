@@ -15,7 +15,7 @@
 %INPUT
 %   -var: variable to generate label
 %       -'eta'      : bed elevation
-%       -'deta'     : bed elevation change
+%       -'detab'     : bed elevation change
 %
 %       -'dist'     : distance
 %       -'dist_prof': distance along section
@@ -43,11 +43,17 @@
 %       -'dd'       : wind direction
 %       -'fh'       : wind speed
 %
+%       -'simulation' : simulation
+%       -'measurement': measurment
 %       -'mea'      : measured
 %       -'sim'      : computed
 %
+%       -'original' : original
+%       -'modified' : modified
+%
 %       -'dg'       : geometric mean grain size
 %       -'dm'       : arithmetic mean grain size
+%
 %
 %   -un: factor for unit conversion from SI
 %
@@ -56,7 +62,7 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function [lab,str_var,str_un]=labels4all(var,un,lan)
+function [lab,str_var,str_un,str_diff]=labels4all(var,un,lan)
 
 switch lower(var)
     case {'eta','etab'}
@@ -76,7 +82,7 @@ switch lower(var)
             case 'nl'
                 str_var='bodemverandering';
             case 'es'
-                str_var='';
+                str_var='cambio en la elevación del lecho';
         end
         un_type='L';
     case 'dist'
@@ -194,8 +200,7 @@ switch lower(var)
             case 'en'
                 str_var='velocity magnitude';
             case 'nl'
-                error('add')
-                str_var='chloride';
+                str_var='snelheidsgrootte';
             case 'es'
                 str_var='magnitud de la velocidad';
         end
@@ -238,6 +243,26 @@ switch lower(var)
                 str_var='Meting';
             case 'es'
                 str_var='Medición';
+         end
+         un_type='-';
+    case 'original'
+         switch lan
+            case 'en'
+                str_var='original';
+            case 'nl'
+                str_var='origineel';
+            case 'es'
+                str_var='original';
+         end
+         un_type='-';
+    case 'modified'
+         switch lan
+            case 'en'
+                str_var='modified';
+            case 'nl'
+                str_var='gewijzigd';
+            case 'es'
+                str_var='modificado';
          end
          un_type='-';
      case 'difference'
@@ -446,6 +471,17 @@ switch un_type
         end
 end %un_type
         
+%% LABEL 
+
 lab=strcat(str_var,str_un);
+ switch lan
+    case 'en'
+        str_d='difference in';
+    case 'nl'
+        str_d='verschil in';
+    case 'es'
+        str_d='diferencia de';
+ end
+str_diff=sprintf('%s %s',str_d,lab);
 
 end %function

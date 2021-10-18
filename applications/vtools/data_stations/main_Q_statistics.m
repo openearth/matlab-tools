@@ -60,6 +60,8 @@ for ky=1:ny
     time_q_year_stat(ky,2)=time_loc(idx_min);
 end %ky
 
+%% probability of maximum discharge
+
 [q_sort,q_sort_idx]=sort(q_year_stat(:,1));
 p_q_max=(ny:-1:1)'/(ny+1);
 
@@ -72,7 +74,19 @@ if any(year_u-year(tim_w))
     error('ups2')
 end
 
-%%
+%% probability of daily discharge
+
+[q_day_u,~,~]=unique(ttres_d.val(~isnan(ttres_d.val)));
+nud=numel(q_day_u);
+q_day_days=NaN(nud,1);
+for kud=1:nud
+    q_day_days(kud)=sum(ttres_d.val==q_day_u(kud));
+end
+q_day_days_cs=cumsum(q_day_days);
+p_q_days=q_day_days_cs./(q_day_days_cs(end)+1);
+
+%% days with no data
+
 tim_w=ttres_d.tim;
 val_w=ttres_d.val;
 
@@ -153,21 +167,22 @@ end
 
 %% raw
 
+if 0
 figure
 hold on
 plot(year_u,q_year_stat(:,1),'*-')
 plot(year_u,q_year_stat(:,2),'*-')
 plot(ttres_y_tim,ttres_y.val,'*-')
 
-%%
-
 figure
 hold on
 plot(ttres_d.tim,ttres_d.val,'*-');
+end
 
 %% nice
+
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
-in_p.fname='Q_analysis';
+in_p.fname='Q_analysis_day';
 in_p.fig_visible=1;
 in_p.data_station=data_station;
 in_p.lan='es';
@@ -175,6 +190,9 @@ in_p.time_q_year_max=time_q_year_stat(:,1);
 in_p.q_year_max=q_year_stat(:,1);
 in_p.q_sort=q_sort;
 in_p.p_q_max=p_q_max;
+
+in_p.q_day_u=q_day_u;
+in_p.p_q_days=p_q_days;
 
 fig_Q_analysis_vertical(in_p);
 % fig_Q_analysis_horizontal(in_p);

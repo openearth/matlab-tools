@@ -11,13 +11,17 @@
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/labels4all.m $
 %
     
-function [lab,str_var,str_un]=D3D_which_v_2_label(which_v,un,lan)
+function [lab,str_var,str_un,str_diff]=D3D_which_v_2_label(which_v,un,lan)
 
 switch which_v
+    case 1
+        [lab,str_var,str_un,str_diff]=labels4all('etab',un,lan); 
+    case 2
+        [lab,str_var,str_un,str_diff]=labels4all('h',un,lan); 
     case 10
-        [lab,str_var,str_un]=labels4all('umag',un,lan); 
+        [lab,str_var,str_un,str_diff]=labels4all('umag',un,lan); 
     case 17
-        [lab,str_var,str_un]=labels4all('detab',un,lan); 
+        [lab,str_var,str_un,str_diff]=labels4all('detab',un,lan); 
     otherwise
         error('ups')
 end
