@@ -229,7 +229,6 @@ for ii=1:ni
             yy=bathy.y;
             zz=bathy.z;
             zg=interp2(xx,yy,zz,xg0,yg0);
-            zg(isnan(zg))=0;
             
         end
 
