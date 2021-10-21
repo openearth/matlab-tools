@@ -113,6 +113,9 @@ end
 
 %% return output at specified reference level
 if ~isempty(OPT.z)
+    if strcmpi(OPT.varName,'chl')
+        OPT.varName = varNameInput; % set back to original requested varName (needed for chl)
+    end
     Data = EHY_getmodeldata_z(inputFile,stat_name,modelType,OPT);
     if nargout==1
         varargout{1} = Data;
@@ -551,7 +554,7 @@ dimensionsComment = sprintf('%s,',dimensionsComment{:});
 Data.dimensions = ['[' dimensionsComment(1:end-1) ']'];
 
 %% Chlorinity  requested than convert salinity to chlorinity
-if strcmp(varNameInput,'chl')
+if strcmpi(varNameInput,'chl')
     Data.val = 1000.*saco_convert(Data.val,27); % 1000: from g/kg to mg/l
 end
 

@@ -477,7 +477,7 @@ end
 Data.OPT               = OPT;
 Data.OPT.inputFile     = inputFile;
 
-if strcmp(varNameInput,'chl')
+if strcmpi(varNameInput,'chl')
     Data.val = 1000.*saco_convert(Data.val,27); % 1000: from g/kg to mg/l
 end
 
