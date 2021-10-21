@@ -41,7 +41,7 @@ if isfield(in_p,'fname')==0
     in_p.fname='fig';
 end
 if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,14,14];
+    in_p.fig_size=[0,0,14,14]; %(1+sqrt(5)/2)
 end
 if isfield(in_p,'fig_overwrite')==0
     in_p.fig_overwrite=1;

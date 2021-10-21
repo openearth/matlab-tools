@@ -22,6 +22,8 @@ switch which_v
         [lab,str_var,str_un,str_diff]=labels4all('umag',un,lan); 
     case 17
         [lab,str_var,str_un,str_diff]=labels4all('detab',un,lan); 
+    case 43
+        [lab,str_var,str_un,str_diff]=labels4all('vicouv',un,lan); 
     otherwise
         error('ups')
 end

@@ -57,6 +57,9 @@ end
 %is
 [ismor,is1d,str_network]=D3D_is(file.map);
 
+%whether data is at links or cell centre
+islink=D3D_islink(flg.which_v);
+
 %% CONSTANST
 
 cnt.g=9.81; %readable from mdu
@@ -110,6 +113,8 @@ if flg.which_p~=-1
                 x_face=NaN;
                 y_face=NaN;
                 faces=NaN;
+                edge_nodes_x=NaN;
+                edge_nodes_y=NaN;
                 if flg.get_cord
                     if file.partitions>1 || flg.get_EHY
                         gridInfo=EHY_getGridInfo(file.map,{'face_nodes_xy','XYcen','face_nodes','XYcor'});
@@ -118,10 +123,20 @@ if flg.which_p~=-1
                     else
                         x_node=ncread(file.map,'mesh2d_node_x');
                         y_node=ncread(file.map,'mesh2d_node_y');
-                        
+
                         x_face=ncread(file.map,'mesh2d_face_x',kF(1),kF(2));
                         y_face=ncread(file.map,'mesh2d_face_y',kF(1),kF(2));
                         faces=ncread(file.map,'mesh2d_face_nodes',[1,kF(1)],[Inf,kF(2)]);
+                    end
+                    if islink
+                        if file.partitions>1 || flg.get_EHY
+                            gridInfo=EHY_getGridInfo(file.map,{'face_nodes_xy','edge_nodes_xy'});
+                            edge_nodes_x=gridInfo.edge_nodes_x;
+                            edge_nodes_y=gridInfo.edge_nodes_y;
+                        else
+                            edge_nodes_x=ncread(file.map,'mesh2d_edge_x');
+                            edge_nodes_y=ncread(file.map,'mesh2d_edge_y');
+                        end
                     end
                 end
             end
@@ -1277,7 +1292,7 @@ switch flg.which_p
                         out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='total sediment thickness [m]';
-                
+                %%    
             case 41 %wave height
                 switch simdef.D3D.structure
                     case 2 %FM
@@ -1296,6 +1311,7 @@ switch flg.which_p
                         error('not available')
                 end
                 out.zlabel='wave height [m]';
+                %%
             case 42 %wave forces
                 switch simdef.D3D.structure
                     case 2 %FM
@@ -1317,7 +1333,33 @@ switch flg.which_p
                     case 3 %SOBEK3
                         error('not available')
                 end
-                out.zlabel='wave forces [N]';                
+                out.zlabel='wave forces [N]';         
+                %%
+            case 43 %horizontal eddy-viscosity
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            error('not available')
+                        else
+                            if flg.get_EHY
+                                zn=get_EHY(file.map,'mesh2d_viu',time_dnum);
+                                F=scatteredInterpolant(edge_nodes_x,edge_nodes_y,zn);
+                                z=F(face_nodes_x,face_nodes_y);
+                                out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                                zn=ncread(file.map,'mesh2d_viu',[1,kt(1)],[Inf,kt(2)]); 
+                                %dealing with nan in zn
+                                bol_nan=isnan(zn);
+                                F=scatteredInterpolant(edge_nodes_x(~bol_nan),edge_nodes_y(~bol_nan),zn(~bol_nan),'linear','linear');
+%                                 F=scatteredInterpolant(edge_nodes_x,edge_nodes_y,zn,'linear','linear');
+                                z=F(x_face,y_face);
+                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
+                        end
+                    case 3 %SOBEK3
+                        error('not available')
+                end
+                out.zlabel='horizontal eddy viscosity [m^2/s]';     
                 %%
             otherwise
                 error('ups...')

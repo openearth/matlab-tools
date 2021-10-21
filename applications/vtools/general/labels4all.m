@@ -14,11 +14,13 @@
 %
 %INPUT
 %   -var: variable to generate label
-%       -'eta'      : bed elevation
+%       -'eta'       : elevation
+%
+%       -'etab'      : bed elevation
 %       -'detab'     : bed elevation change
 %
-%       -'dist'     : distance
-%       -'dist_prof': distance along section
+%       -'dist'      : distance
+%       -'dist_prof' : distance along section
 %       -'dist_mouth': distance from mouth
 %
 %       -{'etaw','WATHTE'}     : water level
@@ -54,6 +56,8 @@
 %       -'dg'       : geometric mean grain size
 %       -'dm'       : arithmetic mean grain size
 %
+%       -'vicouv'   : horizontal viscosity
+%
 %
 %   -un: factor for unit conversion from SI
 %
@@ -65,7 +69,7 @@
 function [lab,str_var,str_un,str_diff]=labels4all(var,un,lan)
 
 switch lower(var)
-    case {'eta','etab'}
+    case 'eta'
         switch lan
             case 'en'
                 str_var='elevation';
@@ -73,6 +77,16 @@ switch lower(var)
                 str_var='hoogte';
             case 'es'
                 str_var='elevación';
+        end
+        un_type='L';
+    case 'etab'
+        switch lan
+            case 'en'
+                str_var='bed elevation';
+            case 'nl'
+                str_var='bodemhoogte';
+            case 'es'
+                str_var='elevación del lecho';
         end
         un_type='L';
     case {'detab'}
@@ -387,6 +401,16 @@ switch lower(var)
                 str_var='media aritmética del tamaño de grano';
          end
          un_type='L';
+    case 'vicouv'
+         switch lan
+            case 'en'
+                str_var='horizontal eddy viscosity';
+            case 'nl'
+                str_var='horizontale wervelviscositeit:';
+            case 'es'
+                str_var='viscosidad de turbulencia horizontal';
+         end
+         un_type='L2/s';
     otherwise
          error('this is missing')
 end %var
@@ -459,6 +483,13 @@ switch un_type
                     case 'nl'
                         str_un=' [jaar]';
                 end
+            otherwise
+                error('this factor is missing')
+        end
+    case 'L2/s'
+        switch un
+            case 1
+                str_un=' [m^2/s]';
             otherwise
                 error('this factor is missing')
         end
