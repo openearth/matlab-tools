@@ -81,11 +81,15 @@ output_data={[],[],[],[],[]};
 
 if exist('scn')
     for ii=1:length(input_dataname)
-        for i=1:length(scn.parameter)
-            if strfind(scn.parameter(i).name,input_dataname{ii})
-                output_data{data_num(ii)}=scn.parameter(i).data;
-            end
+        i = strcmpi({scn.parameter.name},input_dataname{ii});
+        if any(i)
+            output_data{data_num(ii)}=scn.parameter(i).data;
         end
+%         for i=1:length(scn.parameter)
+%             if strcmp(scn.parameter(i).name,input_dataname{ii})
+%                 output_data{data_num(ii)}=scn.parameter(i).data;
+%             end
+%         end
     end
     % if no duration than scn.parameter(6).data
     if isempty(output_data{5})
