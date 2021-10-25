@@ -15,10 +15,10 @@ inp.tspinup=60;
 inp.t0out=inp.tstart;
 inp.dtmapout=600;
 inp.dthisout=600;
-inp.dtmaxout=0;
+inp.dtmaxout=999999;
 inp.dtwnd=1800;
-inp.alpha=0.75;
-inp.theta=0.90;
+inp.alpha=0.55;
+inp.theta=0.95;
 inp.huthresh=0.01;
 inp.manning=0.04;
 inp.manning_land=0.04;
@@ -90,7 +90,7 @@ inp.thdfile='';
 inp.manningfile='';
 
 inp.inputformat='bin';
-inp.outputformat='bin';
+inp.outputformat='net';
 
 inp.cdnrb=3;
 inp.cdwnd=[0 28 50];
