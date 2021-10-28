@@ -122,7 +122,7 @@ if      length(settings.xbox) == 2 & length(settings.ybox) == 2
         xxnew = [xx(1)-0.5*dx xx(2)+0.5*dx xx(2)+0.5*dx xx(1)-0.5*dx xx(1)-0.5*dx];
         yynew = [yy(1) yy(1) yy(2) yy(2) yy(1)];
         plot(xxnew,yynew,'Color','k')
-else    fprintf('Warning : no zoombox indicated for axes %1.0f, plot of total coastline.\n',settings.subfig)
+else    %fprintf('Warning : no zoombox indicated for axes %1.0f, plot of total coastline.\n',settings.subfig)
 end
 
 %% Lookup id of year to plot

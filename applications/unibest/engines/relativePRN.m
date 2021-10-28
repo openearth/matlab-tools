@@ -73,23 +73,24 @@ function [PRNdata2]=relativePRN(PRNdata,PRNdataREF)
     PRNdata2=struct;
 
     for ii=1:length(PRNdata)
+        tt=[1:size(PRNdataREF(1).no,2)];
         %% COMPUTE IMPACT
         PRNdata2(ii).files       = [PRNdata(ii).files,'-',PRNdataREF(1).files];              % {'Com4m.prn'}
         PRNdata2(ii).timestep    = PRNdata(ii).timestep;                                     % [61x1 double]
         PRNdata2(ii).year        = PRNdata(ii).year;                                         % [61x1 double]
-        PRNdata2(ii).no          = PRNdata(ii).no         -PRNdataREF(1).no         ;        % [304x61 double]
-        PRNdata2(ii).x           = repmat(PRNdataREF(ii).x(:,1),[1,size(PRNdataREF(ii).x,2)]) + PRNdata(ii).x-PRNdataREF(1).x;        % [304x61 double]
-        PRNdata2(ii).y           = repmat(PRNdataREF(ii).y(:,1),[1,size(PRNdataREF(ii).y,2)]) + PRNdata(ii).y-PRNdataREF(1).y;        % [304x61 double]
-        PRNdata2(ii).z           = PRNdata(ii).z          -PRNdataREF(1).z          ;        % [304x61 double]
-        PRNdata2(ii).zminz0      = PRNdata(ii).zminz0     -PRNdataREF(1).zminz0     ;        % [304x61 double]
-        PRNdata2(ii).sourceyear  = PRNdata(ii).sourceyear -PRNdataREF(1).sourceyear ;        % [304x61 double]
-        PRNdata2(ii).sourcetotal = PRNdata(ii).sourcetotal-PRNdataREF(1).sourcetotal;        % [304x61 double]
-        PRNdata2(ii).stored      = PRNdata(ii).stored     -PRNdataREF(1).stored     ;        % [304x61 double]
-        PRNdata2(ii).ray         = PRNdata(ii).ray;                                          % [305x61 double]
-        PRNdata2(ii).alfa        = PRNdata(ii).alfa;                                         % [305x61 double]
+        PRNdata2(ii).no          = PRNdata(ii).no(:,tt)         -PRNdataREF(1).no         ;        % [304x61 double]
+        PRNdata2(ii).x           = repmat(PRNdataREF(ii).x(:,1),[1,size(PRNdataREF(ii).x,2)]) + PRNdata(ii).x(:,tt)-PRNdataREF(1).x;        % [304x61 double]
+        PRNdata2(ii).y           = repmat(PRNdataREF(ii).y(:,1),[1,size(PRNdataREF(ii).y,2)]) + PRNdata(ii).y(:,tt)-PRNdataREF(1).y;        % [304x61 double]
+        PRNdata2(ii).z           = PRNdata(ii).z(:,tt)          -PRNdataREF(1).z          ;        % [304x61 double]
+        PRNdata2(ii).zminz0      = PRNdata(ii).zminz0(:,tt)     -PRNdataREF(1).zminz0     ;        % [304x61 double]
+        PRNdata2(ii).sourceyear  = PRNdata(ii).sourceyear(:,tt) -PRNdataREF(1).sourceyear ;        % [304x61 double]
+        PRNdata2(ii).sourcetotal = PRNdata(ii).sourcetotal(:,tt)-PRNdataREF(1).sourcetotal;        % [304x61 double]
+        PRNdata2(ii).stored      = PRNdata(ii).stored(:,tt)     -PRNdataREF(1).stored     ;        % [304x61 double]
+        PRNdata2(ii).ray         = PRNdata(ii).ray(:,tt);                                          % [305x61 double]
+        PRNdata2(ii).alfa        = PRNdata(ii).alfa(:,tt);                                         % [305x61 double]
         %PRNdata2(ii).alfaDIFF    = PRNdata(ii).alfa       -PRNdataREF(1).alfa       ;        % [305x61 double]
-        PRNdata2(ii).transport   = PRNdata(ii).transport  -PRNdataREF(1).transport  ;        % [305x61 double]
-        PRNdata2(ii).volume      = PRNdata(ii).volume     -PRNdataREF(1).volume     ;        % [305x61 double]
+        PRNdata2(ii).transport   = PRNdata(ii).transport(:,tt)  -PRNdataREF(1).transport  ;        % [305x61 double]
+        PRNdata2(ii).volume      = PRNdata(ii).volume(:,tt)     -PRNdataREF(1).volume     ;        % [305x61 double]
         PRNdata2(ii).xdist       = PRNdata(ii).xdist;                                        % [305x1 double]
         PRNdata2(ii).xdist2      = PRNdata(ii).xdist2;                                       % [304x1 double]
     end

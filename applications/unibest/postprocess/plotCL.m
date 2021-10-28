@@ -85,9 +85,32 @@ fontsize = 12;
 addpath(genpath(input.dir));
 close all;
 
-f = figure(1);clf;set(gcf,'Position',[60 300 1000 300]);set(gcf,'Color',[1 1 1]);hold off;
-set(gcf,'PaperSize',[9.8925    3.4973],'PaperPosition',[0 0 9.8925    3.4973],'PaperUnits','centimeters','PaperType','A4','PaperPositionMode','manual'); % made size three times smaller than 29.6774 10.492, since scaling is otherwise too small
-
+if isfield(input,'visible')
+    if input.visible==0
+        f = figure('visible','off');
+    else
+        f = figure(1);
+    end
+else
+    f = figure(1);
+end
+% set(gcf,'PaperType','A4','PaperPositionMode','manual');
+% clf;set(gcf,'Position',[60 300 1000 300]);set(gcf,'Color',[1 1 1]);hold off;
+% set(gcf,'PaperPositionMode','manual','PaperSize',[9.8925    3.4973],'PaperPosition',[0 0 9.8925    3.4973],'PaperUnits','centimeters'); % made size three times smaller than 29.6774 10.492, since scaling is otherwise too small
+clf;
+HOR=1000;
+VER=300;
+SCALE=30;
+set(gcf,'PaperPositionMode','manual');
+set(gcf,'PaperType','a4letter');
+set(gcf,'PaperPositionMode','manual', ...
+        'PaperOrientation','portrait', ...
+        'PaperUnits','centimeters');
+set(gcf,'PaperPosition',[0 0 HOR/SCALE VER/SCALE], ...
+        'PaperSize',[HOR/SCALE VER/SCALE], ...
+        'Position',[65,5,HOR,VER], ...
+        'PaperUnits','centimeters'); 
+set(gcf,'Color',[1 1 1]);
 
 %% PLOT FIGURE
 h1 = gca;hold on;
@@ -109,19 +132,25 @@ settings.axcolor         = [0.2 0.2 0.2];
 settings.backgroundcolor = [1 1 1];
 if isfield(input,'xlim'); settings.xlim=input.xlim; end
 if isfield(input,'ylim'); settings.ylim=input.ylim; end
+if isfield(input,'ylab'); settings.ylab=input.ylab; end
 legtxt={'Reference','Release'};
 leglocation='SouthWest';
 if  ~isempty(findstr(lower(input.type),'coast')) || ~isempty(findstr(lower(input.type),'cst'))
     settings.title   = ['Coastline position w.r.t. initial situation [m]'];
+    settings.linestyle  = '-';
+    settings.marker  = 'none';
     hline(1)         = UBlineplot(reffile,settings);hold on;
     settings.color   = 'r';
-    settings.marker  = 'none';
-    settings.linestyle  = '--';
+    settings.linestyle  = '-.';
+    settings.marker     = '+';
+    settings.linewidth  = 2;
     hline(2)         = UBlineplot(input.file,settings);
     if isfield(input,'file2')
         try
         settings.color   = 'g';
-        settings.linestyle  = '-.';
+        settings.linestyle  = '--';
+        settings.marker     = '.';
+        settings.linewidth  = 2;
         legtxt{3}='release 2';hold on;
         settings.ylim = ylim;
         hline(3)         = UBlineplot(input.file2,settings);
@@ -131,6 +160,8 @@ if  ~isempty(findstr(lower(input.type),'coast')) || ~isempty(findstr(lower(input
         try
         settings.color   = 'c';
         settings.linestyle  = '-.';
+        settings.marker     = '.';
+        settings.linewidth  = 2;
         legtxt{4}='release 3';hold on;
         settings.ylim = ylim;
         hline(4)         = UBlineplot(input.file3,settings);
@@ -143,16 +174,23 @@ if  ~isempty(findstr(lower(input.type),'coast')) || ~isempty(findstr(lower(input
         leglocation=input.leglocation;
     end
 else
+    settings.backgroundcolor = [1 1 1];
     settings.title   = ['Comparison of alongshore sediment transports [\times 10^3 m^3/s]'];
+    settings.linewidth = 3;
+    settings.marker  = 'none';
+    settings.linestyle = '-';
     hline(1)         = UBtransportlineplot(reffile,settings);hold on;
     settings.color   = 'r';
-    settings.marker  = 'none';
-    settings.linestyle = ':';
+    settings.linestyle = '-.';
+    settings.marker     = '+';
+    settings.linewidth = 2;
     hline(2)         = UBtransportlineplot(input.file,settings);
     if isfield(input,'file2')
         try
         settings.color   = 'g';
-        settings.linestyle  = '-.';
+        settings.linestyle  = '--';
+        settings.marker     = '.';
+        settings.linewidth  = 2;
         legtxt{3}='release 2';hold on;
         settings.ylim = ylim;
         hline(3)         = UBtransportlineplot(input.file2,settings);
@@ -162,6 +200,8 @@ else
         try
         settings.color   = 'c';
         settings.linestyle  = '-.';
+        settings.marker     = '.';
+        settings.linewidth  = 2;
         legtxt{4}='release 3';hold on;
         settings.ylim = ylim;
         hline(4)         = UBtransportlineplot(input.file3,settings);
@@ -177,9 +217,9 @@ end
 
 if ~ischar(input.fignum);input.fignum=num2str(input.fignum);end
 try
-    hleg = legend(hline,legtxt,'Location',leglocation,'FontSize',8);
+    hleg = legend(hline,legtxt,'Location',leglocation,'FontSize',settings.fontsize);
 catch
-    hleg = legend(hline(1:2),legtxt(1:2),'Location',leglocation,'FontSize',8);
+    hleg = legend(hline(1:2),legtxt(1:2),'Location',leglocation,'FontSize',settings.fontsize);
 end
 pname = [input.test_id '_fig' input.fignum];
 saveplot(gcf, input.output_dir, pname);

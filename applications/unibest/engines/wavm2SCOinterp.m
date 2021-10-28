@@ -75,7 +75,7 @@ function wavm2SCOinterp(wavm,x,y,SCOName,varargin)
 % $HeadURL: https://repos.deltares.nl/repos/mctools/trunk/matlab/applications/UNIBEST_CL/SCOextract/wavm2SCOinterp.m $
 % $Keywords: $
 
-quiet_on = 0;
+quiet_on = 1;
 if size(varargin,2)>0
     if isstr(varargin{end})
         if strcmp(varargin{end},'quiet')
@@ -121,8 +121,8 @@ sortDists=sort(dists(:));
 %% NEW METHOD -> ALSO USEFUL FOR GEOGRAPHIC COORDINATE GRIDS!
 m=[];n=[];dists4=[];
 [m0,n0] = find(dists==min(dists(:)),1);
-m1 = m0+[-1:1];
-n1 = n0+[-1:1];
+m1 = min(max(m0+[-1:1],1),size(xp,1));
+n1 = min(max(n0+[-1:1],1),size(xp,2));
 xp2 = xp(m1,n1);
 yp2 = yp(m1,n1);
 m3 = m0;
@@ -186,14 +186,27 @@ for ii=1:size(Hs,1)
         else % Developer, please check this change, I think its ok (Freek Scheel)
             % Changed to 'linear' instead of 'cubic' because of odd results
             % (WdB, nov '15)
-            outHs(ii,1)=griddata(tXp,tYp,squeeze(Hs(ii,:,:)),x,y,'linear');
-            outTp(ii,1)=griddata(tXp,tYp,squeeze(Tp(ii,:,:)),x,y,'linear');
+            try
+              outHs(ii,1)=griddata(tXp,tYp,squeeze(Hs(ii,:,:)),x,y,'linear');
+              outTp(ii,1)=griddata(tXp,tYp,squeeze(Tp(ii,:,:)),x,y,'linear');
+              XDIR = squeeze(xDir(ii,:,:));
+              U1 = sin(XDIR*pi/180);
+              V1 = cos(XDIR*pi/180);
+              U2 = griddata(tXp,tYp,U1,x,y,'linear');
+              V2 = griddata(tXp,tYp,V1,x,y,'linear');
+            catch
+                Hs0=squeeze(Hs(ii,:,:));Hs0=Hs0(~isnan(Hs0));
+                Tp0=squeeze(Tp(ii,:,:));Tp0=Tp0(~isnan(Tp0));
+                Xd0=squeeze(xDir(ii,:,:));Xd0=Xd0(~isnan(Xd0));
+                outHs(ii,1)=mean(Hs0);
+                outTp(ii,1)=mean(Tp0);
+                XDIR=median(Xd0);
+                U1 = sin(XDIR*pi/180);
+                V1 = cos(XDIR*pi/180);
+                U2 = U1;
+                V2 = V1;
+            end
             %outXDir2(ii,1)=griddata(tXp,tYp,squeeze(xDir(ii,:,:)),x,y,'linear');   % <---- not a good way to interpolate wave angles!
-            XDIR = squeeze(xDir(ii,:,:));
-            U1 = sin(XDIR*pi/180);
-            V1 = cos(XDIR*pi/180);
-            U2 = griddata(tXp,tYp,U1,x,y,'linear');
-            V2 = griddata(tXp,tYp,V1,x,y,'linear');
             outxDir(ii,1) = mod(atan2(U2,V2)*180/pi,360);
         end
     end

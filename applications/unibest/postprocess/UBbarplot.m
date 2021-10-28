@@ -190,7 +190,7 @@ if      isfield(settings, 'xbox') & isfield(settings, 'ybox') & length(settings.
         xnew = [xx(1) xx(2) xx(2)-dxnew xx(1)-dxnew xx(1)];
         ynew = [yy(1) yy(2) yy(2)+dynew yy(1)+dynew yy(1)];
         plot(xnew,ynew,'Color','k')
-else    fprintf('Warning : no zoombox indicated for axes %1.0f, plot of total coastline.\n',settings.subfig)
+else    %fprintf('Warning : no zoombox indicated for axes %1.0f, plot of total coastline.\n',settings.subfig)
 end
 
 %lookup id of year to plot

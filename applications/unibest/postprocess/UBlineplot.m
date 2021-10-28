@@ -179,7 +179,7 @@ if      isfield(settings, 'xbox') & isfield(settings, 'ybox') & length(settings.
         ynew = [yy(1) yy(2) yy(2)+dynew yy(1)+dynew yy(1)];
         %plot(xnew,ynew,'Color','k','LineWidth',settings.linewidth)
 else    ZOOM = 'OFF';
-        fprintf('Warning : no zoombox indicated for axes %1.0f, plot of total coastline.\n',settings.subfig)
+        %fprintf('Warning : no zoombox indicated for axes %1.0f, plot of total coastline.\n',settings.subfig)
 end
 
 %% Define x- and y-values for plotting coastline changes
@@ -228,7 +228,7 @@ if      (isfield(settings, 'xbox') & isfield(settings, 'ybox') & length(settings
         fprintf('Error for axis %1.0f : indicate handle current axis.\n',settings.subfig)
         return
 elseif  isfield(settings,'curaxis')  
-        axes(settings.curaxis);
+        set(gcf,'CurrentAxes',settings.curaxis); %axes(settings.curaxis);
         set(gca,'LineWidth',min(max(settings.linewidth-1,0.5),1));
 end
 if      strfind(lower(settings.orientation),'hor')

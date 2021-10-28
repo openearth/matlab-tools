@@ -121,8 +121,32 @@ end
 %% PLOT DATA                                  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for tt=1:length(data(ii).equi)
-    f = figure(1);set(gcf,'Position',[60 300 1000 300]);set(gcf,'Color',[1 1 1]);hold off;
-    set(gcf,'PaperSize',[9.8925    3.4973],'PaperPosition',[0 0 9.8925    3.4973],'PaperUnits','centimeters','PaperType','A4','PaperPositionMode','manual');
+    if isfield(input,'visible')
+        if input.visible==0
+            f = figure('visible','off');
+        else
+            f = figure(1);
+        end
+    else
+        f = figure(1);
+    end
+    
+    HOR=1000;
+    VER=300;
+    SCALE=30;
+    set(gcf,'PaperPositionMode','manual');
+    set(gcf,'PaperType','a4letter');
+    set(gcf,'PaperPositionMode','manual', ...
+            'PaperOrientation','portrait', ...
+            'PaperUnits','centimeters');
+    set(gcf,'PaperPosition',[0 0 HOR/SCALE VER/SCALE], ...
+            'PaperSize',[HOR/SCALE VER/SCALE], ...
+            'Position',[65,5,HOR,VER], ...
+            'PaperUnits','centimeters'); 
+    set(gcf,'Color',[1 1 1]);
+    
+%     set(gcf,'Position',[60 300 1000 300]);set(gcf,'Color',[1 1 1]);hold off;
+%     set(gcf,'PaperSize',[9.8925    3.4973],'PaperPosition',[0 0 9.8925    3.4973],'PaperUnits','centimeters','PaperType','A4','PaperPositionMode','manual');
     for ii = 1:length(file)
         hline(ii)   = plot(D(ii).phi{tt},D(ii).Qs{tt}*1000,'LineStyle','-','Color',color{ii},'LineWidth',linewidth(ii),'Marker',markers1{ii},'MarkerSize', 6);hold on;
         if strcmpi(file{ii}(end-3:end),'.glo')
@@ -154,7 +178,7 @@ for tt=1:length(data(ii).equi)
       legtext = {[file{1} ''],[file{1} '_reference'],'current coastline'};
     end
     legend(legtext,'interpreter','none','location','SouthEast');
-    set(gca,'Xticklabel',num2str(mod(str2num(get(gca,'Xticklabel')),360)));
+    set(gca,'Xticklabel',num2str(mod(get(gca,'Xtick'),360))');
     set(gca,'FontSize',fontsize);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% SAVE DATA                                  %%

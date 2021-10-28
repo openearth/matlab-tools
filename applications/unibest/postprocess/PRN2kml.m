@@ -1,4 +1,4 @@
-function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,EPSGcode,EPSG,varargin)
+function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,EPSGcode,EPSG,colours,linewidth,xoffset_landwardlimit,varargin)
 %function PRN2kml : Converts a UNIBEST PRN-file into a KML-file with coastlines and KML-file with bars
 %
 %   Syntax:
@@ -78,7 +78,7 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
 
     %% process varargin
     OPT.lineWidth = 2;
-    OPT.lineAlpha = 0.8;
+    OPT.lineAlpha = 1;
     OPT.zdata = [];
     OPT.KMLlabels = 0;
     OPT.KMLlabeltext = {};
@@ -90,7 +90,16 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     if ~isempty(varargin) 
        OPT = setproperty(OPT, varargin{:});
     end
-
+    if nargin>=10
+        OPT.lineColours = colours;
+    end
+    if nargin>=11
+        OPT.lineWidth = linewidth;
+    end
+    if nargin<12
+        xoffset_landwardlimit=0;
+    end
+    
     %% load data
     %PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile
     if ~isstruct(PRNfile)
@@ -100,13 +109,14 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
         PRNdata = PRNfile;
         [pthnm,filnm,extnm] = fileparts(PRNdata.files{1});
     end
+    [pthnm2,filnm2,extnm2] = fileparts(KMLfile);
     if ~isempty(MDAfile);    MDAdata=readMDA(MDAfile);end
     if isempty(vectorscale); vectorscale=10; end
     if isempty(segments);    segments=100; end
     if isempty(EPSG);        EPSG=load('EPSG'); end
     if isempty(EPSGcode);    EPSGcode=28992; end
     if isempty(KMLfile);     KMLfile = [filnm,'.kml']; end
-    if isempty(OPT.KMLheader); OPT.KMLheader = filnm; end
+    if isempty(OPT.KMLheader);OPT.KMLheader = filnm2; end
 
     %% reference time
     reftimenum = 0;
@@ -118,8 +128,12 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     timesteps=timesteps(IDT);
     
     %% coast angle
-    ANGLEcoast = mean(PRNdata.alfa(:,timesteps),2);
-    smoothvar(ANGLEcoast,10);
+    try
+        ANGLEcoast = mean(PRNdata.alfa(:,timesteps),2);
+        smoothvar(ANGLEcoast,10);
+    catch
+        ANGLEcoast = zeros(size(PRNdata.x,1),1);
+    end
     if ~isempty(MDAdata)
         ANGLEcoast = MDAdata.ANGLEcoast;
     end
@@ -127,7 +141,11 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     %%-------------------------------------------------------------------------
     %% write coastlines to KML file
     %%-------------------------------------------------------------------------
-    colours     = jet(length(timesteps));
+    if isfield(OPT,'lineColours')
+        colours     = repmat(OPT.lineColours,[length(timesteps),1]);
+    else
+        colours     = jet(length(timesteps));
+    end
     if OPT.KMLlineplot
         fid         = fopen(KMLfile,'wt');
         kml         = KML_header('kmlName',OPT.KMLheader);
@@ -136,13 +154,26 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
             x = PRNdata.x(:,timesteps(tt));
             y = PRNdata.y(:,timesteps(tt));
             %z = PRNdata.zminz0(:,timesteps(tt));
-            t1 = PRNdata.year(timesteps(tt))*365.25+reftimenum; 
+            if PRNdata.year(1)>1500
+                t1 = PRNdata.year(timesteps(tt))*365.25;
+            else
+                t1 = PRNdata.year(timesteps(tt))*365.25+reftimenum; 
+            end
             if tt==1;t1=t1-0.5;end
             if tt<length(timesteps)
-            t2 = PRNdata.year(timesteps(tt)+1)*365.25+reftimenum;
+                if PRNdata.year(1)>1500
+                    t2 = PRNdata.year(timesteps(tt)+1)*365.25;
+                else
+                    t2 = PRNdata.year(timesteps(tt)+1)*365.25+reftimenum;
+                end
             else
-            t2 = PRNdata.year(timesteps(tt))*365.25+reftimenum+DT*365.25;
+                if PRNdata.year(1)>1500
+                    t2 = PRNdata.year(timesteps(tt))*365.25+DT*365.25;
+                else
+                    t2 = PRNdata.year(timesteps(tt))*365.25+reftimenum+DT*365.25;
+                end
             end
+                       
             tstart = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
             tend   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
             S.lineColor = colours(tt,:);  % color of the lines in RGB
@@ -150,16 +181,37 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
             S.lineWidth = OPT.lineWidth;        % line width, can be a fraction     
             S0 = S; 
             S0.name      = ['col0'];
-            S0.lineColor = [0.3 0.3 0.3];
+            S0.lineColor = [0.0 0.0 1];
 
             [lon,lat] = convertCoordinates(x,y,EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
-
+            
             if tt==1
-            kml         = [kml KML_style(S0)];
+            kml         = [kml KML_style(S)];
             kml         = [kml KML_line(lat,lon,'styleName',S0.name)];
             end 
             kml         = [kml KML_style(S)];
             kml         = [kml KML_line(lat,lon,'styleName',S.name,'timeIn',tstart,'timeOut',tend)];
+
+            if xoffset_landwardlimit~=0
+                if length(x)>length(ANGLEcoast)
+                    ANGLEcoast2=[ANGLEcoast(1);(ANGLEcoast(1:end-1)+ANGLEcoast(2:end))/2;ANGLEcoast(end)];
+                else
+                    ANGLEcoast2=(ANGLEcoast(1:end-1)+ANGLEcoast(2:end))/2;
+                end
+                if length(xoffset_landwardlimit)==1
+                    xoffset_landwardlimit=repmat(xoffset_landwardlimit,size(ANGLEcoast2));
+                end
+                xland   = x + xoffset_landwardlimit.*sin(ANGLEcoast2*pi/180);
+                yland   = y + xoffset_landwardlimit.*cos(ANGLEcoast2*pi/180);
+                
+                S2 = S;
+                S2.name=['landwardlimit',num2str(xoffset_landwardlimit(1),'%1.0f')];
+                S2.lineAlpha=0.3;
+                S2.lineWidth = OPT.lineWidth*2;
+                [lon2,lat2] = convertCoordinates(xland,yland,EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
+                kml         = [kml KML_style(S2)];
+                kml         = [kml KML_line(lat2,lon2,'styleName',S2.name,'timeIn',tstart,'timeOut',tend)];
+            end
         end
         kml         = [kml KML_footer];
         fprintf(fid,kml);

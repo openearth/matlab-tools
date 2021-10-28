@@ -121,6 +121,13 @@ else
     locs = locations;
 end
 
+% make sure to have tide available for every output location
+if length(tide)==1
+    for ii=1:size(locs,1)
+        tide(ii)=tide(1);
+    end
+end
+ 
 % Read durations:
 if iscell(durations)
     durations={durations};
@@ -151,8 +158,8 @@ wavm_select = repmat(0,[size(locs,1),1]);
 for ii=1:length(input_data.wavm)
     wavm=[input_data.path{ii},input_data.wavm{ii}];
     vs_use(wavm);
-    XP = vs_get('map-series',{1},'XP');
-    YP = vs_get('map-series',{1},'YP');
+    XP = vs_get('map-series',{1},'XP','quiet');
+    YP = vs_get('map-series',{1},'YP','quiet');
 
     % detect if points are inside grid (works only for regular grids)
     xv = [XP(1,1);XP(1,end);XP(end,end);XP(end,1);XP(1,1)]; 
@@ -183,7 +190,7 @@ for ii=1:length(input_data.wavm)
     % yv = [YP(1,1:end-1)';YP(1:end-1,end);YP(end,1:end-1)';YP(1:end-1,1)];
 
     wavm_select(wavm_select==0 & IN{ii}==1)=ii;
-    time = vs_get('map-series','TIME');
+    time = vs_get('map-series','TIME','quiet');
 end
 
 if length(dur)==1
@@ -211,7 +218,7 @@ for ii=1:size(locs,1)
             removeSCOcond(SCO_file2{ii},'Hs',0.01,'Tp',1);  
         end
         
-        writeTIDE2SCO(SCO_file2{ii},tide.Vgetij, tide.refDepth, tide.Occurence, tide.DH);
+        writeTIDE2SCO(SCO_file2{ii},tide(ii).Vgetij, tide(ii).refDepth, tide(ii).Occurence, tide(ii).DH);
         warning on
         fprintf(fid,[' location %03.0f (%s) extracted from wavm file :  %s\n'],ii,SCO_file2{ii},wavm);
     else

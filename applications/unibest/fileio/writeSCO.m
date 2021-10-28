@@ -205,7 +205,7 @@ if SCOdata.isTimeseries~=1
         fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:)]');
     else
         fprintf(fid,'            H0         Hsig         Tper         Wdir           Duration        Vwind          DIRwind        Wdrag\n');
-        fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f %10.2f %10.2f %10.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:),SCOdata.WS(:),SCOdata.Wdir(:),SCOdata.Wdrag(:)]');       
+        fprintf(fid,'   %14.3f%14.3f%14.3f%14.3f%14.5f %13.3f %13.3f %13.5f\n',[SCOdata.h0(:),SCOdata.hs(:),SCOdata.tp(:),SCOdata.xdir(:),SCOdata.dur(:),SCOdata.WS(:),SCOdata.Wdir(:),SCOdata.Wdrag(:)]');       
     end
     if writedummyTIDE==1
         fprintf(fid,'  1    (Number of Tide condition)\n');

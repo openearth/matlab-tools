@@ -7,11 +7,11 @@ else
     pname = [dir,filesep,name];
 end
 
-hgsave(fh, [pname '.fig']);
-disp(['Saved "' pname '.fig"']);
+%hgsave(fh, [pname '.fig']);
+%disp(['    Saved "' pname '.fig"']);
 
-print(fh, '-depsc2', [pname '.eps']);
-disp(['Saved "' pname '.eps"']);
+%print(fh, '-depsc2', [pname '.eps']);
+%disp(['    Saved "' pname '.eps"']);
 
 print(fh, '-dpng', [pname '.png']);
-disp(['Saved "' pname '.png"']);
+disp(['    Saved "' pname '.png"']);
