@@ -207,6 +207,26 @@ if 0 && strcmp(Data.modelType,'dfm')
     no_XYcenTrajectory = length(Data_xy.Xcen);
 end
 
+% In case of velocity we project it to the pli
+if isfield(Data,'vel_x')
+    angle_track=angle_polyline(Data_xy.Xcen,Data_xy.Ycen,2);
+    Data_xy.vel_para=NaN(size(Data_xy.vel_x));
+    Data_xy.vel_perp=Data_xy.vel_para;
+    for kl=1:no_layers
+        [Data_xy.vel_para(1,:,kl),Data_xy.vel_perp(1,:,kl)]=project_vector(Data_xy.vel_x(1,:,kl),Data_xy.vel_y(1,:,kl),angle_track);
+    end
+    if no_layers>1
+        layer_thickness=diff(Data_xy.Zint,1,3);
+        layer_thickness_tot=sum(layer_thickness,3);
+        
+        Data_xy.vel_x_da=sum(layer_thickness.*Data_xy.vel_x,3)./layer_thickness_tot;
+        Data_xy.vel_y_da=sum(layer_thickness.*Data_xy.vel_y,3)./layer_thickness_tot;
+        Data_xy.vel_mag_da=sum(layer_thickness.*Data_xy.vel_mag,3)./layer_thickness_tot;
+        Data_xy.vel_para_da=sum(layer_thickness.*Data_xy.vel_para,3)./layer_thickness_tot;
+        Data_xy.vel_perp_da=sum(layer_thickness.*Data_xy.vel_perp,3)./layer_thickness_tot;
+    end
+end 
+
 %% make gridInfo for plotting using EHY_plotMapModelData
 if nargout > 1
     if no_layers > 1 
