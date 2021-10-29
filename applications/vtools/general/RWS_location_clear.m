@@ -15,8 +15,8 @@ function [str_sta,str_found]=RWS_location_clear(stationlist)
 
 if ~iscell(stationlist)
     stationlist_c{1,1}=stationlist;
+    stationlist=stationlist_c;
 end
-stationlist=stationlist_c;
 
 ns=numel(stationlist);
 str_sta=cell(1,ns);

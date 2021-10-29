@@ -299,8 +299,8 @@ end
 % OPT.epsg_out=28992; %Amersfoort
 % OPT.tzl=tzl; %zoom
 % OPT.save_tiles=false;
-% OPT.path_save='C:\Users\chavarri\checkouts\riv\earth_tiles\';
-% % OPT.path_tiles=fullfile(pwd,'earth_tiles'); 
+% OPT.path_save=fullfile(pwd,'earth_tiles');
+% OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
 % OPT.map_type=3;%map type
 % OPT.han_ax=han.sfig(kr,kc);
 % 
