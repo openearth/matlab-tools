@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17465 $
-%$Date: 2021-08-25 16:36:23 +0200 (Wed, 25 Aug 2021) $
-%$Author: chavarri $
-%$Id: perpendicular_polyline.m 17465 2021-08-25 14:36:23Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/perpendicular_polyline.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %The option for Sieben's approximation is based on <D-Flow_FM_Technical_Reference_Manual.pdf> 
 %Version: 1.1.0; SVN Revision: 72877; 27 September 2021 but correcting for the erratas based on checking the source code.

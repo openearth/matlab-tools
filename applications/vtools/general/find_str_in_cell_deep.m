@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17508 $
-%$Date: 2021-09-30 11:17:04 +0200 (Thu, 30 Sep 2021) $
-%$Author: chavarri $
-%$Id: adcp_plot_01.m 17508 2021-09-30 09:17:04Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/adcp/adcp_plot_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %This awesome recurrent functions finds the index of
 %a cell array containin a certain string

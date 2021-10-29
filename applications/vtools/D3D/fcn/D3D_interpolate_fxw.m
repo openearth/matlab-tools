@@ -4,14 +4,14 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17498 $
-%$Date: 2021-09-29 08:53:15 +0200 (Wed, 29 Sep 2021) $
-%$Author: chavarri $
-%$Id: figure_layout.m 17498 2021-09-29 06:53:15Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/figure_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
-function [F_crest,F_bed,cord,F_crest_width,F_slope_right,F_slope_left]=D3D_interpolate_fxw(fpath_fxw)
+function [F_crest,F_weir_height,cord,F_crest_width,F_slope_right,F_slope_left]=D3D_interpolate_fxw(fpath_fxw)
 
 fxw=D3D_io_input('read',fpath_fxw);
 
@@ -20,16 +20,18 @@ fxw=D3D_io_input('read',fpath_fxw);
 ng=numel(fxw.val);
 
 F_crest=cell(ng,1);
-F_bed=F_crest;
+F_weir_height=F_crest;
 cord=F_crest;
 F_crest_width=F_crest;
 F_slope_right=F_crest;
 F_slope_left=F_crest;
+F_weir_height=F_crest;
+
 for kg=1:ng
     xc=fxw.val{1,kg}{1,1}(:,1);
     yc=fxw.val{1,kg}{1,1}(:,2);
     crest_level=fxw.val{1,kg}{1,1}(:,3);
-    bed_level=fxw.val{1,kg}{1,1}(:,4);
+    weir_height=fxw.val{1,kg}{1,1}(:,4); %left
     
     crest_width=fxw.val{1,kg}{1,1}(:,6);
     slope_right=fxw.val{1,kg}{1,1}(:,7);
@@ -38,7 +40,7 @@ for kg=1:ng
     s=[0,sqrt(sum((xc-xc(1)).^2+(yc-yc(1)).^2))];
 
     F_crest{kg}=griddedInterpolant(s,crest_level,'linear','none');
-    F_bed{kg}=griddedInterpolant(s,bed_level,'linear','none');
+    F_weir_height{kg}=griddedInterpolant(s,weir_height,'linear','none');
     F_crest_width{kg}=griddedInterpolant(s,crest_width,'linear','none');
     F_slope_right{kg}=griddedInterpolant(s,slope_right,'linear','none');
     F_slope_left{kg}=griddedInterpolant(s,slope_left,'linear','none');
