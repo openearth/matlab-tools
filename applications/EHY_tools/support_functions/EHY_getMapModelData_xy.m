@@ -209,7 +209,7 @@ end
 
 % In case of velocity we project it to the pli
 if isfield(Data,'vel_x')
-    angle_track=angle_polyline(Data_xy.Xcen,Data_xy.Ycen,2);
+    angle_track=angle_polyline(Data_xy.Xcen,Data_xy.Ycen,OPT.nAverageAnglePli);
     Data_xy.vel_para=NaN(size(Data_xy.vel_x));
     Data_xy.vel_perp=Data_xy.vel_para;
     for kl=1:no_layers
@@ -244,7 +244,7 @@ if nargout > 1
                 Data_xy.Scor_staircase(2*iC,1)   = Data_xy.Scor(iC+1);
             end
         elseif isfield(Data,'vel_x')
-            error('to do')
+            warning('to do')
         end
         
     end

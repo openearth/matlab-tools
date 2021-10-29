@@ -53,6 +53,7 @@ OPT.disp              = 1;  % display status of getting map model data
 OPT.gridFile          = ''; % grid (either lga or nc file) needed in combination with delwaq output file
 OPT.sgft0             = 0;  % delwaq segment function (sgf) - datenum or datestr of t0
 OPT.sgfkmax           = []; % delwaq segment function (sgf) - number of layers (k_max)
+OPT.nAverageAnglePli  = 2;  % number of points of the pli-file to average in computing the angle for projecting vectorial variables
 
 % return output at specified reference level
 OPT.z                 = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
