@@ -230,10 +230,10 @@ function writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattri
 tp='real';
 fmt=[];
 if ~isempty(attributes)
-    if isfield(attributes,'type')
+    if isfield(attributes,'TYPE')
         tp=attributes.type.value;
     end
-    if isfield(attributes,'format')
+    if isfield(attributes,'FORMAT')
         fmt=attributes.format.value;
     end
 end
