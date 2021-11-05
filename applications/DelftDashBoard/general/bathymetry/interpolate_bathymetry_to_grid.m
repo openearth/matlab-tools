@@ -45,6 +45,7 @@ gridtype='structured';
 dmin=50;
 internaldiff=0;
 quiet=0;
+internaldiffusionrange=[-20000 -2];
 
 % Set defaults for datasets
 for ii=1:length(datasets)
@@ -72,6 +73,8 @@ for i=1:length(varargin)
                 dmin=varargin{ii+1};
             case{'internaldiffusion'}
                 internaldiff=varargin{ii+1};
+            case{'internaldiffusionrange'}
+                internaldiffusionrange=varargin{ii+1};                                
             case{'quiet'}
                 quiet=1;
         end
@@ -187,10 +190,6 @@ for id=1:length(datasets)
     end
         
 end
-
-internaldiffusionrange=[-20000 20000];
-%internaldiffusionrange=[-2 2];
-internaldiffusionrange=[-20000 -2];
 
 if strcmpi(gridtype,'structured')
     if internaldiff
