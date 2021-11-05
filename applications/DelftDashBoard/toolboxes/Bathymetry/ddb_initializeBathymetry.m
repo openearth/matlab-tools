@@ -114,7 +114,7 @@ handles.toolbox.bathymetry.import.dx=0;
 handles.toolbox.bathymetry.import.dy=0;
 handles.toolbox.bathymetry.import.nrZoom=5;
 handles.toolbox.bathymetry.import.maxElevation=100000;
-handles.toolbox.bathymetry.import.minElevation=-100000;
+handles.toolbox.bathymetry.import.minElevation=-900;
 
 handles.toolbox.bathymetry.import.dataFile='';
 handles.toolbox.bathymetry.import.dataName='';
