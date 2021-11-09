@@ -58,6 +58,8 @@
 %
 %       -'vicouv'   : horizontal viscosity
 %
+%       -'at'       : at
+%
 %
 %   -un: factor for unit conversion from SI
 %
@@ -66,7 +68,19 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function [lab,str_var,str_un,str_diff]=labels4all(var,un,lan)
+function [lab,str_var,str_un,str_diff]=labels4all(var,un,lan,varargin)
+
+%%
+
+parin=inputParser;
+
+addOptional(parin,'Lref','+NAP');
+
+parse(parin,varargin{:});
+
+Lref=parin.Results.Lref;
+
+%%
 
 switch lower(var)
     case 'eta'
@@ -411,6 +425,16 @@ switch lower(var)
                 str_var='viscosidad de turbulencia horizontal';
          end
          un_type='L2/s';
+    case 'at'
+         switch lan
+            case 'en'
+                str_var='at';
+            case 'nl'
+                str_var='in';
+            case 'es'
+                str_var='en';
+         end
+         un_type='-';
     otherwise
          error('this is missing')
 end %var
@@ -421,7 +445,7 @@ switch un_type
     case 'Lref'
         switch un
             case 1
-                str_un=' [m+NAP]';
+                str_un=sprintf(' [m%s]',Lref);
             case 1/1000
                 str_un=' [km]';
             otherwise

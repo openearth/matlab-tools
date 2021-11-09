@@ -82,6 +82,7 @@ end
 
 S=E2./E1;
 S(S>1)=1; %rounding error can happen
+S(S<0)=0;
 aux=1-S.^p;
 aux(aux<0)=0;
 c_dr=aux.^m;

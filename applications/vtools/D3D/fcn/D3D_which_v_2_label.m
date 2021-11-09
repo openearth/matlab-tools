@@ -20,6 +20,8 @@ switch which_v
         [lab,str_var,str_un,str_diff]=labels4all('h',un,lan); 
     case 10
         [lab,str_var,str_un,str_diff]=labels4all('umag',un,lan); 
+    case 12
+        [lab,str_var,str_un,str_diff]=labels4all('etaw',un,lan); 
     case 17
         [lab,str_var,str_un,str_diff]=labels4all('detab',un,lan); 
     case 43

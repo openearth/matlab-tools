@@ -49,6 +49,9 @@ end
 if isfield(in_p,'fid_log')==0
     in_p.fid_log=NaN;
 end
+if isfield(in_p,'lan')==0
+    in_p.lan='en';
+end
 
 v2struct(in_p)
 
@@ -422,9 +425,10 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
-% pos.leg=han.leg(kr,kc).Position;
-% han.leg.Position=pos.leg(kr,kc)+[0,0,0,0];
-% han.sfig(kr,kc).Position=pos.sfig;
+han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
+pos.leg=han.leg(kr,kc).Position;
+han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
+han.sfig(kr,kc).Position=pos.sfig;
 
 %% COLORBAR
 
