@@ -42,15 +42,16 @@ ntopo=size(demy,2);
 mtopo=size(demx,2);
 
 % Get indices. Do this in blocks as the mex file can't handle large arrays
-nn1=ceil(ntopo/500);
-mm1=ceil(mtopo/500);
+blocksize = 50;
+nn1=ceil(ntopo/blocksize);
+mm1=ceil(mtopo/blocksize);
 indices=zeros(ntopo,mtopo);
 for in=1:nn1
     for im=1:mm1
-        i1=(in-1)*500+1;
-        j1=(im-1)*500+1;
-        i2=i1+499;
-        j2=j1+499;
+        i1=(in-1)*blocksize+1;
+        j1=(im-1)*blocksize+1;
+        i2=i1+blocksize-1;
+        j2=j1+blocksize-1;
         i2=min(i2,ntopo);
         j2=min(j2,mtopo);
         ind=mx_find_grid_indices(demx(j1:j2),demy(i1:i2),xg,yg);
