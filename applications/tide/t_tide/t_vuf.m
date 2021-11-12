@@ -36,8 +36,9 @@ function [v,u,f]=t_vuf(ltype,ctime,ju,lat);
 
 if strcmp(ltype,'full'),
 
-  [const]=t_get18consts(ctime);
-
+%   [const]=t_get18consts(ctime);
+    load('t_18constituents.mat')
+    
   % Phase relative to Greenwich (in units of cycles).
   v=rem( const.doodson*astro+const.semi, 1);
 

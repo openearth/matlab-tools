@@ -173,7 +173,8 @@ end
 %check consistency with t_tide's centraltime
 
 if longseries,
-  const=t_get18consts;
+%   const=t_get18consts;
+  load('t_18constituents.mat','const')
   ju=zeros(size(freq));
   for k=1:size(names,1),
     inam=strmatch(names(k,:),const.name);

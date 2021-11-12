@@ -959,7 +959,8 @@ else                                                % Choose them all if > 18.6 
     if isempty(centraltime)
      error('time series longer than 18.6 years require keyword ''start time''')
     end
-    [const,sat,cshallow]=t_get18consts(centraltime);
+%     [const,sat,cshallow]=t_get18consts(centraltime);
+    load('t_18constituents.mat','const')
     ju=[2:length(const.freq)]';  % Skip Z0
     for ff=1:2,                  % loop twice to make sure of neighbouring pairs
     jck=find(diff(const.freq(ju))<minres);
