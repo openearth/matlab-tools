@@ -28,7 +28,8 @@ for kb=1:nb
         block_fn=fieldnames(loc_block);
         nkk=numel(block_fn);
         for kk=1:nkk
-           idx=find_str_in_cell(var_fn,block_fn(kk));
+%            idx=find_str_in_cell(var_fn,block_fn(kk));
+            idx=find_str_in_cell(lower(var_fn),lower(block_fn(kk)));
            if ~isnan(idx)
                loc.(loc_fn{kb}).(block_fn{kk})=var.(var_fn{idx});
            end

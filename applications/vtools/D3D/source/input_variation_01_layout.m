@@ -47,9 +47,17 @@ path_dir_rel_bct=sprintf('%s%s%s',path_input_folder_refmdf,dir_bct_tag);
 
 bct_var=[1,2];
 
+%%
+
+input_m=struct();
+
 %% mor
 
-nsim=0;
+if isfield(input_m,'sim')
+    nsim=numel(input_m.sim);
+else
+    nsim=0;
+end
 
 nmor=size(mor_var,1);
 

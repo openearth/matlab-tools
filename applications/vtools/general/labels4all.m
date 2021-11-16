@@ -37,6 +37,9 @@
 %       -'Q'        : water discharge
 %       -'Qcum'     : cumulative water discharge
 %
+%       -'tide'     : tide
+%       -'surge'    : surge
+%
 %       -'t'        : time
 %       -'tshift'   : time shift
 %
@@ -430,7 +433,7 @@ switch lower(var)
             case 'en'
                 str_var='at';
             case 'nl'
-                str_var='in';
+                str_var='te';
             case 'es'
                 str_var='en';
          end

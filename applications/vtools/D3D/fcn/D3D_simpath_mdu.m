@@ -51,20 +51,31 @@ simdef.file.mdf=path_mdu;
 
 %geometry
 simdef.file.grd=fullfile(path_sim,mdu.geometry.NetFile);
-if isfield(mdu.geometry,'CrossDefFile')
+% simdef=D3D_read_mdu_flag(mdu.geometry,'CrossDefFile',simdef.file,'csdef',path_sim);
+if isfield(mdu.geometry,'CrossDefFile') && ~isempty(mdu.geometry.CrossDefFile)
     simdef.file.csdef=fullfile(path_sim,mdu.geometry.CrossDefFile);
+else
+    simdef.file.csdef='';
 end
-if isfield(mdu.geometry,'CrossLocFile')
+if isfield(mdu.geometry,'CrossLocFile') && ~isempty(mdu.geometry.CrossLocFile)
     simdef.file.csloc=fullfile(path_sim,mdu.geometry.CrossLocFile);
+else
+    simdef.file.csloc='';
 end
-if isfield(mdu.geometry,'StructureFile')
+if isfield(mdu.geometry,'StructureFile') && ~isempty(mdu.geometry.StructureFile)
     simdef.file.struct=fullfile(path_sim,mdu.geometry.StructureFile);
+else
+    simdef.file.struct='';
 end
-if isfield(mdu.geometry,'FixedWeirFile')
+if isfield(mdu.geometry,'FixedWeirFile') && ~isempty(mdu.geometry.FixedWeirFile)
     simdef.file.fxw=fullfile(path_sim,mdu.geometry.FixedWeirFile);
+else
+    simdef.file.fxw='';
 end
-if isfield(mdu.geometry,'BedlevelFile')
+if isfield(mdu.geometry,'BedlevelFile') && ~isempty(mdu.geometry.BedlevelFile)
     simdef.file.dep=fullfile(path_sim,mdu.geometry.BedlevelFile);
+else
+    simdef.file.dep='';
 end
 
 %extenral forcing

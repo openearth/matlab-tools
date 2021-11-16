@@ -19,9 +19,12 @@
 function D3D_write_dep_from_map(fpath_map,fpath_dep)
 
 [time_r,time_mor_r,time_dnum,time_dtime]=D3D_results_time(fpath_map,1,NaN);
-gridInfo=EHY_getGridInfo(fpath_map,'XYcen');
+gridInfo=EHY_getGridInfo(fpath_map,{'XYcen','XYcor'});
 data_map_etab=EHY_getMapModelData(fpath_map,'varName','mesh2d_mor_bl','t0',time_dnum,'tend',time_dnum,'disp',0);
-dep=[gridInfo.Xcen,gridInfo.Ycen,data_map_etab.val'];
-D3D_io_input('write',fpath_dep,dep);
+F=scatteredInterpolant(gridInfo.Xcen,gridInfo.Ycen,data_map_etab.val','linear','linear');
+dep_cor=F(gridInfo.Xcor,gridInfo.Ycor);
+% dep_w=[gridInfo.Xcen,gridInfo.Ycen,data_map_etab.val'];
+dep_w=[gridInfo.Xcor,gridInfo.Ycor,dep_cor];
+D3D_io_input('write',fpath_dep,dep_w);
 
 

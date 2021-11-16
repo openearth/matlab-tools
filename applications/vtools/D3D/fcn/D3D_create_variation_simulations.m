@@ -45,7 +45,9 @@ call_script=parin.Results.call_script;
 
 nsim=numel(input_m.sim);
 if isfield(input_m.sim,'dorun')==0
-    input_m.sim.dorun=true(nsim,1);
+    for ksim=1:nsim
+        input_m.sim(ksim).dorun=true;
+    end
 end
 
 [path_folder_sims,~,~]=fileparts(input_m.sim(1).path_sim);
