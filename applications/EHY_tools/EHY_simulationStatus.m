@@ -180,18 +180,20 @@ if exist('StatsIntervalLine','var')
 else
     outFile = [fileparts(mdFile) filesep 'out.txt'];
     
-    % datenumStart is in out.txt
-    str2find = '* File creation date:';
-    fID = fopen(outFile,'r');
-    found = false;
-    while ~feof(fID) && ~found
-        line = fgetl(fID);
-        if length(line)>22 && strcmp(line(1:22),'* File creation date: ')
-            found = true;
-            datenumStart = datenum(line(23:end),'HH:MM:ss, dd-mm-yyyy');
+    if exist(outFile,'file')
+        % datenumStart is in out.txt
+        str2find = '* File creation date:';
+        fID = fopen(outFile,'r');
+        found = false;
+        while ~feof(fID) && ~found
+            line = fgetl(fID);
+            if length(line)>22 && strcmp(line(1:22),'* File creation date: ')
+                found = true;
+                datenumStart = datenum(line(23:end),'HH:MM:ss, dd-mm-yyyy');
+            end
         end
+        fclose(fID);
     end
-    fclose(fID);
     
     % datenumStart is not in out.txt but in *.o*-file
     if ~exist('datenumStart','var')
