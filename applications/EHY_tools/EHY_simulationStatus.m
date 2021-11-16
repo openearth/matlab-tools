@@ -198,21 +198,20 @@ else
     % datenumStart is not in out.txt but in *.o*-file
     if ~exist('datenumStart','var')
         oFile = dir([fileparts(mdFile) filesep '*.o*']);
-        if length(oFile) ~= 1
-            error
-        else
-            oFile = [fileparts(mdFile) filesep oFile.name];
-            fID = fopen(oFile,'r');
-            found = false;
-            while ~feof(fID) && ~found
-                line = fgetl(fID);
-                if length(line)>26 && strcmp(line(1:6),'Dimr [')
-                    found = true;
-                    datenumStart = datenum(line(7:25),'yyyy-mm-dd HH:MM:ss');
-                end
-            end
-            fclose(fID);
+        if isempty(oFile) % one more folder up if coupled with D-Waves
+            oFile = dir([fileparts(fileparts(mdFile)) filesep '*.o*']);
         end
+        oFile = [oFile(end).folder filesep oFile(end).name]; % (end) to take the last run (highest number)
+        fID = fopen(oFile,'r');
+        found = false;
+        while ~feof(fID) && ~found
+            line = fgetl(fID);
+            if length(line)>26 && strcmp(line(1:6),'Dimr [')
+                found = true;
+                datenumStart = datenum(line(7:25),'yyyy-mm-dd HH:MM:ss');
+            end
+        end
+        fclose(fID);
     end
     
     timeNeededToFinish = (now-datenumStart)/percentage*(100-percentage);
