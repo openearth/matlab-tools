@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17477 $
-%$Date: 2021-09-09 17:43:43 +0200 (Thu, 09 Sep 2021) $
-%$Author: chavarri $
-%$Id: parse_layout.m 17477 2021-09-09 15:43:43Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/parse_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [qh_cen,qh_mean,qh_std,yupper,ylower,q_env,qh_sep]=qh_prop_all(qh,tim_constr,q_edge)
