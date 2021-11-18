@@ -1,7 +1,7 @@
 
 %% INPUT
 
-simdef.D3D.dire_sim='C:\Users\chavarri\temporal\200930_bendeffect\05_waal\r001\';
+simdef.D3D.dire_sim='C:\Users\chavarri\checkouts\riverlab\real_world\Rijntakken_1D\models\f_007\dflowfm';
 
 %% CALC
 
