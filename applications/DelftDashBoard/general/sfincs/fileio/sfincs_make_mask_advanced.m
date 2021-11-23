@@ -84,16 +84,27 @@ if count_activegrid > 0
             [msk,z] = cut_mask_on_elevation(msk, z, zlev);
             
         elseif strcmp(varargin_activegrid(ii).action, 'includepolygon')
-            [msk] = cut_mask_on_include_polygon(x,y,msk,xy_in);
-            
+            if ~isempty(xy_in)
+                [msk] = cut_mask_on_include_polygon(x,y,msk,xy_in);
+            else
+                warning('includepolygon is empty')
+            end
         elseif strcmp(varargin_activegrid(ii).action, 'excludepolygon')
-            [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,xy_ex);
+            if ~isempty(xy_ex)
+                [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,xy_ex);
+            else
+                warning('excludepolygon is empty')
+            end            
         end
     end
     
 else
    warning('No options to determine active grid are selected') 
 end
+
+% update z based on final msk > important for 'find_surrounding_points'
+
+z(msk==0) = NaN;
 
 disp('Info - finished determine active grid')
     
@@ -111,15 +122,27 @@ if count_boundarycells > 0
     for ii = 1:count_boundarycells %use order as defined in varargin to do this
         if strcmp(varargin_boundarycells(ii).action, 'closedboundarypolygon')
             
-            msk = replace_boundary_cells_closed(x,y,msk,msk_ids_edge,xy_bnd_closed); %closed boundaries is independent of zlev_polygon on purpose!            
+            if ~isempty(xy_bnd_closed)
+                msk = replace_boundary_cells_closed(x,y,msk,msk_ids_edge,xy_bnd_closed); %closed boundaries is independent of zlev_polygon on purpose!            
+            else
+                warning('closedboundarypolygon is empty')
+            end               
             
         elseif strcmp(varargin_boundarycells(ii).action, 'waterlevelboundarypolygon')
 
-            msk = replace_boundary_cells_waterlevel(x,y,msk,msk_ids_edge,z,xy_bnd_waterlevel,zlev_polygon);
+            if ~isempty(xy_bnd_waterlevel)
+                msk = replace_boundary_cells_waterlevel(x,y,msk,msk_ids_edge,z,xy_bnd_waterlevel,zlev_polygon);
+            else
+                warning('waterlevelboundarypolygon is empty')
+            end                
             
         elseif strcmp(varargin_boundarycells(ii).action, 'outflowboundarypolygon')
 
-            msk = replace_boundary_cells_outflow(x,y,msk,msk_ids_edge,z,xy_bnd_outflow,zlev_polygon);
+            if ~isempty(xy_bnd_outflow)
+                msk = replace_boundary_cells_outflow(x,y,msk,msk_ids_edge,z,xy_bnd_outflow,zlev_polygon);
+            else
+                warning('outflowboundarypolygon is empty')
+            end         
             
         elseif strcmp(varargin_boundarycells(ii).action, 'backwards_compatible')
 
@@ -158,8 +181,8 @@ function [msk] = cut_mask_on_include_polygon(x,y,msk,xy_poly)
 
     msk_ids = inpolygon_to_grid(x,y,xy_poly); %in & on are included by as standard
     
-    msk(msk_ids) = 1;
-
+    msk(msk_ids) = 1;    
+    
     disp('Debug - finished cut_mask_on_include_polygon')    
 end
 
