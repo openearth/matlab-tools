@@ -5,22 +5,27 @@ function msk = sfincs_make_mask_advanced(x,y,z,varargin)
 %           1. Determine active grid based on either elevation and/or include-exclude polygons
 %           2. Determine msk=1/2/3 values for boundary cells (closed/waterlevel/outflow)
 %           3. Finalize
+%           X.   Supporting functions - activegrid
+%           XX.  Supporting functions - boundarycells
+%           XXX. Supporting functions - general
 
 varargin_activegrid = struct;
 varargin_boundarycells = struct;
+count_activegrid = 0;
+count_boundarycells = 0;
 
+% active grid
+zlev = [-10000, 10000];
 xy_in=[];
 xy_ex=[];
+
+% boundary cells
+zlev_polygon = 5; %max elevation to apply msk=2 to 'waterlevelboundarypolygon' and minimum elevation to apply msk=3 for 'outflowboundarypolygon'
 xy_bnd_closed=[];
 xy_bnd_waterlevel=[];
 xy_bnd_outflow=[];
 
-zlev = [-10000, 10000];
-zlev_polygon = 5; %max elevation to apply msk=2 to 'waterlevelboundarypolygon' and minimum elevation to apply msk=3 for 'outflowboundarypolygon'
-
-count_activegrid = 0;
-count_boundarycells = 0;
-
+% read varargin and order
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
@@ -54,12 +59,16 @@ for ii=1:length(varargin)
             case{'outflowboundarypolygon'}
                 xy_bnd_outflow=varargin{ii+1};      
                 count_boundarycells = count_boundarycells + 1;
-                varargin_boundarycells(count_boundarycells).action = 'outflowboundarypolygon';                  
+                varargin_boundarycells(count_boundarycells).action = 'outflowboundarypolygon';    
+                
+            case{'backwards_compatible'} % option like before based on pure elevation
+                count_boundarycells = count_boundarycells + 1;
+                varargin_boundarycells(count_boundarycells).action = 'backwards_compatible';  
         end
     end
 end
 
-% initialize matrix of mask
+%% 0. Initialize matrix of mask
 msk=zeros(size(z));
 
 %% 1. Determine active grid based on either elevation and/or include-exclude polygons
@@ -96,12 +105,38 @@ disp('Info - start determine boundary cells')
 % msk(1,:)=2;
 % msk(end,:)=2;
 
+if count_activegrid > 0
+
+    % Determine boundary cells
+    msk_ids_edge = find_surrounding_points(msk, z);
+    
+    disp([' Msk values at boundary cells changed using zlev_polygon = ',num2str(zlev_polygon)])    
+    
+    % now start using polygons
+    for ii = 1:count_boundarycells %use order as defined in varargin to do this
+        if strcmp(varargin_activegrid(ii).action, 'closedboundarypolygon')
+
+            
+        elseif strcmp(varargin_activegrid(ii).action, 'waterlevelboundarypolygon')
+
+            
+        elseif strcmp(varargin_activegrid(ii).action, 'outflowboundarypolygon')
+
+            
+        elseif strcmp(varargin_activegrid(ii).action, 'backwards_compatible')
+
+        end
+                
+    end
+else
+   warning('No options to determine boundary cells are selected')     
+end
 disp('Info - finished determine boundary cells')
 
 %% 3. Finalize
 disp('Debug - finished sfincs_make_mask_advanced')
 
-%% Supporting functions for activegrid
+%% X. Supporting functions - activegrid
 
 function [msk, z] = cut_mask_on_elevation(msk, z, zlev)
     disp('Debug - call cut_mask_on_elevation')
@@ -138,90 +173,92 @@ function [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,xy_poly)
     disp('Debug - finished cut_mask_on_include_polygon')    
 end
 
-%% Supporting functions for boundarycells
+%% XX. Supporting functions - boundarycells
 function msk_ids_edge = find_surrounding_points(msk, z)
-% Find any surrounding points that have a NaN value
+    % Find any surrounding points that have a NaN value
+    disp('  Debug - call find_surrounding_points')
 
-msk_ids_edge = zeros(size(z));
+    msk_ids_edge = zeros(size(msk));
 
-imax=size(z,1);
-jmax=size(z,2);
+    imax=size(z,1);
+    jmax=size(z,2);
 
-% Left
-iside=1;
-ii1a(iside)=1;
-ii2a(iside)=imax;
-jj1a(iside)=1;
-jj2a(iside)=jmax-1;
-ii1b(iside)=1;
-ii2b(iside)=imax;
-jj1b(iside)=2;
-jj2b(iside)=jmax;
-% Right
-iside=2;
-ii1a(iside)=1;
-ii2a(iside)=imax;
-jj1a(iside)=2;
-jj2a(iside)=jmax;
-ii1b(iside)=1;
-ii2b(iside)=imax;
-jj1b(iside)=1;
-jj2b(iside)=jmax-1;
-% Bottom
-iside=3;
-ii1a(iside)=1;
-ii2a(iside)=imax-1;
-jj1a(iside)=1;
-jj2a(iside)=jmax;
-ii1b(iside)=2;
-ii2b(iside)=imax;
-jj1b(iside)=1;
-jj2b(iside)=jmax;
-% Top
-iside=4;
-ii1a(iside)=2;
-ii2a(iside)=imax;
-jj1a(iside)=1;
-jj2a(iside)=jmax;
-ii1b(iside)=1;
-ii2b(iside)=imax-1;
-jj1b(iside)=1;
-jj2b(iside)=jmax;
+    % Left
+    iside=1;
+    ii1a(iside)=1;
+    ii2a(iside)=imax;
+    jj1a(iside)=1;
+    jj2a(iside)=jmax-1;
+    ii1b(iside)=1;
+    ii2b(iside)=imax;
+    jj1b(iside)=2;
+    jj2b(iside)=jmax;
+    % Right
+    iside=2;
+    ii1a(iside)=1;
+    ii2a(iside)=imax;
+    jj1a(iside)=2;
+    jj2a(iside)=jmax;
+    ii1b(iside)=1;
+    ii2b(iside)=imax;
+    jj1b(iside)=1;
+    jj2b(iside)=jmax-1;
+    % Bottom
+    iside=3;
+    ii1a(iside)=1;
+    ii2a(iside)=imax-1;
+    jj1a(iside)=1;
+    jj2a(iside)=jmax;
+    ii1b(iside)=2;
+    ii2b(iside)=imax;
+    jj1b(iside)=1;
+    jj2b(iside)=jmax;
+    % Top
+    iside=4;
+    ii1a(iside)=2;
+    ii2a(iside)=imax;
+    jj1a(iside)=1;
+    jj2a(iside)=jmax;
+    ii1b(iside)=1;
+    ii2b(iside)=imax-1;
+    jj1b(iside)=1;
+    jj2b(iside)=jmax;
 
-% Find points with neighboring NaN value and set mask for these points to 2
-for iside=1:4
-    zb=z(ii1a(iside):ii2a(iside),jj1a(iside):jj2a(iside));     % bed level of neighbour
-    zc=z(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside));     % bed level cell itself
-    mskc=msk_ids_edge(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside)); % original mask of cell itself
-    ibnd= isnan(zb) & ~isnan(zc);                              % if bed level of cell itself is not nan and the neighbour's is, we have a boundary point
-    mskc(ibnd)=true;
-    msk_ids_edge(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside))=mskc;
-end
-
-end
-
-%% Supporting functions - general
-function msk_ids = inpolygon_to_grid(x,y,xy_poly)
-disp('  Debug - call inpolygon_to_grid')
-    
-if ~isempty(xy_poly)
-    msk_ids = zeros(size(x));    
-    
-    for ip=1:length(xy_poly) % can be multiple polygons
-        if length(xy_poly(ip).x)>1
-
-            xp=xy_poly(ip).x;
-            yp=xy_poly(ip).y;
-            
-            [msk_ids_tmp,~] = inpolygon(x,y,xp,yp);    
-
-            msk_ids = max(msk_ids,msk_ids_tmp);  
-        end
+    % Find points with neighboring NaN value and set mask for these points to 2
+    for iside=1:4
+        zb=z(ii1a(iside):ii2a(iside),jj1a(iside):jj2a(iside));     % bed level of neighbour
+        zc=z(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside));     % bed level cell itself
+        mskc=msk_ids_edge(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside)); % original mask of cell itself
+        ibnd= isnan(zb) & ~isnan(zc);                              % if bed level of cell itself is not nan and the neighbour's is, we have a boundary point
+        mskc(ibnd)=true;
+        msk_ids_edge(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside))=mskc;
     end
-    msk_ids = logical(msk_ids);
-    
+
+    disp('  Debug - finished find_surrounding_points')    
 end
-disp('  Debug - finished inpolygon_to_grid')
+
+%% XXX. Supporting functions - general
+function msk_ids = inpolygon_to_grid(x,y,xy_poly)
+    disp('  Debug - call inpolygon_to_grid')
+    
+    if ~isempty(xy_poly)
+        msk_ids = zeros(size(x));    
+
+        for ip=1:length(xy_poly) % can be multiple polygons
+            if length(xy_poly(ip).x)>1
+
+                xp=xy_poly(ip).x;
+                yp=xy_poly(ip).y;
+
+                [msk_ids_tmp,~] = inpolygon(x,y,xp,yp);    
+
+                msk_ids = max(msk_ids,msk_ids_tmp);  
+            end
+        end
+        msk_ids = logical(msk_ids);
+
+    end
+    disp('  Debug - finished inpolygon_to_grid')
 end
 
 %%
