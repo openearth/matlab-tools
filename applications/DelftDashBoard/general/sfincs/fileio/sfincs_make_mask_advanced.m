@@ -21,6 +21,7 @@ xy_ex=[];
 
 % boundary cells
 zlev_polygon = 5; %max elevation to apply msk=2 to 'waterlevelboundarypolygon' and minimum elevation to apply msk=3 for 'outflowboundarypolygon'
+backwards_compatible = 0;
 xy_bnd_closed=[];
 xy_bnd_waterlevel=[];
 xy_bnd_outflow=[];
@@ -32,36 +33,37 @@ for ii=1:length(varargin)
             
             % active grid            
             case{'zlev'} % here order specified by user matters
-                zlev=varargin{ii+1};
+                zlev = varargin{ii+1};
                 count_activegrid = count_activegrid + 1;
                 varargin_activegrid(count_activegrid).action = 'zlev';
             case{'includepolygon'}
-                xy_in=varargin{ii+1};
+                xy_in = varargin{ii+1};
                 count_activegrid = count_activegrid + 1;
                 varargin_activegrid(count_activegrid).action = 'includepolygon';                
             case{'excludepolygon'}
-                xy_ex=varargin{ii+1};
+                xy_ex = varargin{ii+1};
                 count_activegrid = count_activegrid + 1;
                 varargin_activegrid(count_activegrid).action = 'excludepolygon';  
                 
             % boundary cells    
             case{'zlev_polygon'} % here order doesn't matter
-                zlev_polygon=varargin{ii+1};         
+                zlev_polygon = varargin{ii+1};         
                 
             case{'closedboundarypolygon'} % here order specified by user matters
-                xy_bnd_closed=varargin{ii+1};
+                xy_bnd_closed = varargin{ii+1};
                 count_boundarycells = count_boundarycells + 1;
                 varargin_boundarycells(count_boundarycells).action = 'closedboundarypolygon';                  
             case{'waterlevelboundarypolygon'}
-                xy_bnd_waterlevel=varargin{ii+1};
+                xy_bnd_waterlevel = varargin{ii+1};
                 count_boundarycells = count_boundarycells + 1;
                 varargin_boundarycells(count_boundarycells).action = 'waterlevelboundarypolygon';                  
             case{'outflowboundarypolygon'}
-                xy_bnd_outflow=varargin{ii+1};      
+                xy_bnd_outflow = varargin{ii+1};      
                 count_boundarycells = count_boundarycells + 1;
                 varargin_boundarycells(count_boundarycells).action = 'outflowboundarypolygon';    
                 
             case{'backwards_compatible'} % option like before based on pure elevation
+                backwards_compatible = varargin{ii+1};
                 count_boundarycells = count_boundarycells + 1;
                 varargin_boundarycells(count_boundarycells).action = 'backwards_compatible';  
         end
@@ -98,39 +100,37 @@ disp('Info - finished determine active grid')
 %% 2. Determine msk=1/2/3 values for boundary cells (closed/waterlevel/outflow)
 disp('Info - start determine boundary cells')
 
-% Boundary points
-% Set outer edges of grid to 2 (boundary points) > not done anymore
-% msk(:,1)=2;
-% msk(:,end)=2;
-% msk(1,:)=2;
-% msk(end,:)=2;
-
-if count_activegrid > 0
+if count_boundarycells > 0
 
     % Determine boundary cells
     msk_ids_edge = find_surrounding_points(msk, z);
     
     disp([' Msk values at boundary cells changed using zlev_polygon = ',num2str(zlev_polygon)])    
     
-    % now start using polygons
+    % now start using polygons or backwards compatible version
     for ii = 1:count_boundarycells %use order as defined in varargin to do this
-        if strcmp(varargin_activegrid(ii).action, 'closedboundarypolygon')
-
+        if strcmp(varargin_boundarycells(ii).action, 'closedboundarypolygon')
             
-        elseif strcmp(varargin_activegrid(ii).action, 'waterlevelboundarypolygon')
-
+            msk = replace_boundary_cells_closed(x,y,msk,msk_ids_edge,xy_bnd_closed); %closed boundaries is independent of zlev_polygon on purpose!            
             
-        elseif strcmp(varargin_activegrid(ii).action, 'outflowboundarypolygon')
+        elseif strcmp(varargin_boundarycells(ii).action, 'waterlevelboundarypolygon')
 
+            msk = replace_boundary_cells_waterlevel(x,y,msk,msk_ids_edge,z,xy_bnd_waterlevel,zlev_polygon);
             
-        elseif strcmp(varargin_activegrid(ii).action, 'backwards_compatible')
+        elseif strcmp(varargin_boundarycells(ii).action, 'outflowboundarypolygon')
 
-        end
-                
+            msk = replace_boundary_cells_outflow(x,y,msk,msk_ids_edge,z,xy_bnd_outflow,zlev_polygon);
+            
+        elseif strcmp(varargin_boundarycells(ii).action, 'backwards_compatible')
+
+            msk = replace_boundary_cells_backwardscompatible(msk,msk_ids_edge);
+            
+        end                
     end
 else
    warning('No options to determine boundary cells are selected')     
 end
+
 disp('Info - finished determine boundary cells')
 
 %% 3. Finalize
@@ -140,6 +140,7 @@ disp('Debug - finished sfincs_make_mask_advanced')
 
 function [msk, z] = cut_mask_on_elevation(msk, z, zlev)
     disp('Debug - call cut_mask_on_elevation')
+    
     % Remove points below zlev(1)
     z(z<zlev(1)) = NaN;
 
@@ -175,9 +176,9 @@ end
 
 %% XX. Supporting functions - boundarycells
 function msk_ids_edge = find_surrounding_points(msk, z)
-    % Find any surrounding points that have a NaN value
     disp('  Debug - call find_surrounding_points')
 
+    % Find any surrounding points that have a NaN value    
     msk_ids_edge = zeros(size(msk));
 
     imax=size(z,1);
@@ -234,8 +235,59 @@ function msk_ids_edge = find_surrounding_points(msk, z)
         msk_ids_edge(ii1b(iside):ii2b(iside),jj1b(iside):jj2b(iside))=mskc;
     end
 
+    msk_ids_edge = logical(msk_ids_edge);
+    
     disp('  Debug - finished find_surrounding_points')    
 end
+
+function msk = replace_boundary_cells_closed(x,y,msk,msk_ids_edge,xy_poly)
+    disp('Debug - call replace_boundary_cells_closed')
+    
+    msk_ids = inpolygon_to_grid(x,y,xy_poly); %in & on are included by as standard
+
+    msk_ids_closed = msk_ids_edge == true & msk_ids == true;
+
+    msk(msk_ids_closed) = 1;
+
+    disp('Debug - finished replace_boundary_cells_closed')    
+end
+   
+function msk = replace_boundary_cells_waterlevel(x,y,msk,msk_ids_edge,z,xy_poly,zlev_polygon)
+    disp('Debug - call replace_boundary_cells_waterlevel')
+    
+    msk_ids = inpolygon_to_grid(x,y,xy_poly); %in & on are included by as standard
+
+    zlev_polygon_ids = z <= zlev_polygon; %only set to msk=2 if below/equal elevation of zlev_polygon (default is 5m)
+    
+    msk_ids_waterlevel = msk_ids_edge == true & msk_ids == true & zlev_polygon_ids == true;
+
+    msk(msk_ids_waterlevel) = 2;
+
+    disp('Debug - finished replace_boundary_cells_waterlevel')    
+end
+
+function msk = replace_boundary_cells_outflow(x,y,msk,msk_ids_edge,z,xy_poly,zlev_polygon)
+    disp('Debug - call replace_boundary_cells_outflow')
+    
+    msk_ids = inpolygon_to_grid(x,y,xy_poly); %in & on are included by as standard
+
+    zlev_polygon_ids = z > zlev_polygon; %only set to msk=3 if above elevation of zlev_polygon (default is 5m)
+    
+    msk_ids_outflow = msk_ids_edge == true & msk_ids == true & zlev_polygon_ids == true;
+
+    msk(msk_ids_outflow) = 3;
+
+    disp('Debug - finished replace_boundary_cells_outflow')    
+end
+
+function msk = replace_boundary_cells_backwardscompatible(msk,msk_ids_edge)
+    disp('Debug - call replace_boundary_cells_backwardscompatible')
+    
+    msk(msk_ids_edge) = 2; % as in old version of sfincs_make_mask.m where all boundary cells are set to msk=2
+
+    disp('Debug - finished replace_boundary_cells_backwardscompatible')    
+end
+
 
 %% XXX. Supporting functions - general
 function msk_ids = inpolygon_to_grid(x,y,xy_poly)
@@ -260,99 +312,5 @@ function msk_ids = inpolygon_to_grid(x,y,xy_poly)
     end
     disp('  Debug - finished inpolygon_to_grid')
 end
-
-%%
-% Set boundary points to closed
-%{
-if ~isempty(xy_bnd_closed)
-    % Set msk to 1 inside polygon where it is now 2
-    for ip=1:length(xy_bnd_closed)
-        if length(xy_bnd_closed(ip).x)>1
-            xp=xy_bnd_closed(ip).x;
-            yp=xy_bnd_closed(ip).y;
-            clsd=inpolygon(x,y,xp,yp);
-            msk0=msk(clsd); % original value of mask inside polygon
-            msk0(msk0==2)=1; % set to 1
-            msk(clsd)=msk0;
-        end
-    end
-end
-%}
-
-% Set boundary points to open
-%{
-if ~isempty(xy_bnd_outflow)
-    % Set msk to 3 inside polygon where it is now 2
-    for ip=1:length(xy_bnd_outflow)
-        if length(xy_bnd_outflow(ip).x)>1
-            xp=xy_bnd_outflow(ip).x;
-            yp=xy_bnd_outflow(ip).y;
-            opend=inpolygon(x,y,xp,yp);
-            msk0=msk(opend); % original value of mask inside polygon
-            msk0(msk0==2)=3; % set to 3
-            msk(opend)=msk0;
-        end
-    end
-end
-%}
-
-%{
-if ~isempty(xy_in)
-    % Throw away points below zlev(1), but not points within polygon
-    % Do this by temporarily raising these points to zlev(1)+0.01 
-    inp = zeros(size(x));    
-    for ip=1:length(xy_in)
-        if length(xy_in(ip).x)>1
-            %    xp=xy(:,1);
-            %    yp=xy(:,2);
-            xp=xy_in(ip).x;
-            yp=xy_in(ip).y;
-            inp_tmp=inpolygon(x,y,xp,yp);
-            
-            inp = max(inp,inp_tmp);            
-        end
-    end
-    inp = logical(inp);
-    z(inp)=max(z(inp),zlev(1)+0.01);
-    
-end
-%}
-
-%{
-if ~isempty(xy_ex)
-    % Throw away points within polygon
-    % Do this by temporarily setting these points to NaN
-    for ip=1:length(xy_ex)
-        if length(xy_ex(ip).x)>1
-            %    xp=xy(:,1);
-            %    yp=xy(:,2);
-            xp=xy_ex(ip).x;
-            yp=xy_ex(ip).y;
-            exp=inpolygon(x,y,xp,yp);
-            z(exp)=NaN;
-        end
-    end
-%     xp_ex=xy_ex(:,1);
-%     yp_ex=xy_ex(:,2);
-%     inp_ex=inpolygon(x,y,xp_ex,yp_ex);
-%     z(inp_ex)=NaN; %max(z(inp),zlev(1)+0.01);
-end
-%}
-
-% % Testing of removing boundary points
-% if ~isempty(xy_ex)
-%     % Set msk to 1 inside polygon where it is now 2 
-%     for ip=1:length(xy_ex)
-%         if length(xy_ex(ip).x)>1
-%             xp=xy_ex(ip).x;
-%             yp=xy_ex(ip).y;
-%             inp=inpolygon(x,y,xp,yp);
-%             msk0=msk(inp); % original value of mask inside polygon
-%             msk0(msk0==2)=1; % set to 1
-%             msk(inp)=msk0;
-%         end
-%     end
-% end
-
 
 end
