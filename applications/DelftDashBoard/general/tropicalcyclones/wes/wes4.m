@@ -962,16 +962,20 @@ if spw.rainfall>0
         end
         
         %% Random pmax?
-        if random == 1
-            if isempty(randomID)
-                randomID            = randi([1,length(pmax_out)],1,1); % random ID for length of pmax (10,000)
-            end
-            pr_chosen              = pr(:,randomID)';
-            
-        elseif random == 0 || random == 2
-            pr_chosen              = pr';
-        end
+        if strcmpi(spw.rain_relation(1:4), 'ipet') == true
+            pr_chosen = pr;
+        else
+            if random == 1
+                if isempty(randomID)
+                    randomID            = randi([1,length(pmax_out)],1,1); % random ID for length of pmax (10,000)
+                end
+                pr_chosen              = pr(:,randomID)';
 
+            elseif random == 0 || random == 2
+                pr_chosen              = pr';
+            end            
+        end
+        
         %% fix NaNs and negative values if occuring
         pr_chosen(pr_chosen < 0) = 0;
         pr_chosen(isnan(pr_chosen)) = 0;
