@@ -61,6 +61,8 @@ switch what_do
                 stru_out.tim=aux2;
                 stru_out.val=val;
 %                 figure; hold on; plot(aux2,val)
+            case '.shp'
+                stru_out=shp2struct(fname);
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext

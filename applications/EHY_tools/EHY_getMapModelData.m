@@ -29,6 +29,11 @@ function varargout = EHY_getMapModelData(inputFile,varargin)
 %
 % Example1: EHY_getMapModelData % interactive
 % For questions/suggestions, please contact Julien.Groenenboom@deltares.nl
+%
+%names of variables:
+%   mesh2d_flowelem_ba      cell area
+%   mesh2d_flowelem_bl      bed level
+
 %% check user input
 if ~exist('inputFile','var')
     EHY_getMapModelData_interactive
