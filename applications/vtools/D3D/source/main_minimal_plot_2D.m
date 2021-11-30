@@ -1,11 +1,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17208 $
-%$Date: 2021-04-23 08:52:13 +0200 (Fri, 23 Apr 2021) $
-%$Author: chavarri $
-%$Id: fig_mean_diff.m 17208 2021-04-23 06:52:13Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/q_analysis/fig_mean_diff.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Minimal example to plot 2D results with a map in the background. 
 
