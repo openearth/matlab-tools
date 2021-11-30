@@ -25,7 +25,15 @@
 
 function fig_qh(in)
 
+%%
+
+if isfield(in,'is_x')==0
+    in.is_x=1; %Q
+end
+
 v2struct(in)
+
+%%
 
 nt=size(qh_sep,2);
 
@@ -139,7 +147,12 @@ kr=1; kc=1;
 lims.x(kr,kc,1:2)=lim_x;
 % lims.c(kr,kc,1:2)=clims;
 ylabels{kr,kc}=sprintf('water elevation at %s [m+NAP]',station_etaw);
-xlabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
+
+if is_x==1
+    xlabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
+else
+    xlabels{kr,kc}=sprintf('water elevation at %s [m+NAP]',station_q);
+end
 
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time

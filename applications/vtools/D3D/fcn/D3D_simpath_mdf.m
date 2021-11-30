@@ -75,6 +75,11 @@ if isfield(mdu.keywords,'fildep') && ~isempty(mdu.keywords.fildep)
     simdef.file.dep=fullfile(path_sim,mdu.keywords.fildep);
 end
 
+%tdk
+if isfield(mdu.keywords,'fil2dw') && ~isempty(mdu.keywords.fil2dw)
+    simdef.file.wr=fullfile(path_sim,mdu.keywords.fil2dw);
+end
+
 %output
 % if isfield(mdu.output,'OutputDir')
 %     path_output_loc=mdu.output.OutputDir;
