@@ -1,6 +1,12 @@
 function sfincs_write_obsfile(filename,obs)
 char_len_max = 256; % only first characters of supplied names are used
 
+%%% checks:
+if any(isnan(obs.x)) || any(isnan(obs.y))
+    error('Your input contains NaN values, please check')
+end
+%%%
+
 fid=fopen(filename,'wt');
 for ii=1:length(obs.x)
     if isfield(obs,'names')  

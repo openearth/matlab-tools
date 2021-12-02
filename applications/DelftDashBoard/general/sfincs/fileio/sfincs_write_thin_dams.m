@@ -15,6 +15,13 @@ function sfincs_write_thin_dams(filename,thindams)
 % xloc2X3 yloc2X3  % end polyline 2
 %%%%%
 
+%%% checks:
+if any(isnan([thindams.x])) || any(isnan([thindams.y]))
+    error('Your input contains NaN values, please check')
+end
+%%%
+
+
 fid=fopen(filename,'wt');
 
 for ip = 1:thindams(1).length % number of thin dams

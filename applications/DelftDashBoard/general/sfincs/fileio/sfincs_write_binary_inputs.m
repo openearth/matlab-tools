@@ -1,4 +1,9 @@
-function sfincs_write_binary_inputs(z,msk,indexfile,bindepfile,binmskfile)
+function sfincs_write_binary_inputs(z,msk,indexfile,depfile,mskfile)
+%%% checks:
+if any(isnan(z)) || any(isnan(msk))
+    error('Your input contains NaN values, please check')
+end
+%%%
 
 % Writes binary input files for SFINCS
 
@@ -19,11 +24,11 @@ fclose(fid);
 zv=z(msk>iincl);
 % zv=max(zv,-5);
 
-fid=fopen(bindepfile,'w');
+fid=fopen(depfile,'w');
 fwrite(fid,zv,'real*4');
 fclose(fid);
 
 % Mask file
-fid=fopen(binmskfile,'w');
+fid=fopen(mskfile,'w');
 fwrite(fid,mskv,'integer*1');
 fclose(fid);

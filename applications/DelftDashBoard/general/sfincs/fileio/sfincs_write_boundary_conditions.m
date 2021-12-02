@@ -1,5 +1,11 @@
 function sfincs_write_boundary_conditions(filename,t,v)
 
+%%% checks:
+if any(isnan(t)) || any(isnan(v))
+    error('Your input contains NaN values, please check')
+end
+%%%
+
 np=size(v,2);
 fmt=['%10.1f' repmat('%8.3f',[1 np]) '\n'];
 
