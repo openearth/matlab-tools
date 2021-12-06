@@ -48,7 +48,7 @@ switch file_type
         tags ={'id'            ,'branchid'      ,'chainage'  ,'name'          ,'shift'    ,'definition'    };            
         exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+' ,'\w+([.-]?\w+)*','-?\d+.\d+','\w+([.-]?\w+)*'};
         fcnts=[1               ,1               ,2         ,1               ,2        ,1               ];
-    case 2 %FM cross-section definition
+    case 2 %FM cross-section definition zw
         tag_cs='[Definition]';
         tags ={'id'            ,'type'          ,'thalweg'  ,'numLevels'  ,'levels'   ,'flowWidths'  ,'totalWidths'  ,'leveeCrestLevel'  ,'leveeFlowArea'  ,'leveeTotalArea','leveeBaseLevel','mainWidth','fp1Width','fp2Width','isShared'};            
         exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+'        ,'-?\d+.\d+','-?\d+.\d+'   ,'-?\d+.\d+'    ,'-?\d+.\d+'        ,'\d+.\d+'        ,'\d+.\d+'       ,'-?\d+.\d+'     ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+'     };
@@ -58,6 +58,21 @@ switch file_type
         tags ={'id'            ,'branchId'      ,'chainage'  ,'shift'    ,'definitionId'    };            
         exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+' ,'-?\d+.\d+','\w+([.-]?\w+)*'  };
         fcnts=[1               ,1               ,2         ,2        ,1                 ];
+    case 4 %FM cross-section definition xyz
+        tag_cs='[Definition]';
+        tags ={'id'            ,'type'          ,'thalweg'  ,'xyzCount'  ,'xCoordinates' ,'yCoordinates' ,'zCoordinates' ,'conveyance'     ,'sectionCount'  ,'frictionIds'};            
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+'       ,'-?\d+.\d+'    ,'-?\d+.\d+'    ,'-?\d+.\d+'    ,'\w+([.-]?\w+)*' ,'\d+'           ,'\w+([.-]?\w+)*'};
+        fcnts=[1               ,1               ,2          ,2           ,2              ,2              ,2              ,1                ,2               ,1               ];
+    case 5 %FM cross-section definition yz
+        tag_cs='[Definition]';
+        tags ={'id'            ,'type'          ,'thalweg'  ,'yzCount'  ,'yCoordinates' ,'zCoordinates' ,'conveyance'     ,'sectionCount'  ,'frictionIds'};            
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+'       '-?\d+.\d+'    ,'-?\d+.\d+'    ,'\w+([.-]?\w+)*' ,'\d+'           ,'\w+([.-]?\w+)*'};
+        fcnts=[1               ,1               ,2          ,2           ,2              ,2              ,1                ,2               ,1               ];
+    case 6 %FM cross-section definition rectangle
+        tag_cs='[Definition]';
+        tags ={'id'            ,'type'          ,'thalweg'  ,'width'     ,'height'       ,'closed'};            
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','-?\d+.\d+' ,'-?\d+.\d+'    ,'\w+([.-]?\w+)*'};
+        fcnts=[1               ,1               ,2          ,2           ,2              ,1];
 end
 
 ntags=numel(tags);
