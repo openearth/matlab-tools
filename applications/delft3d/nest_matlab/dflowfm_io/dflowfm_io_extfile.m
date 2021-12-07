@@ -175,8 +175,8 @@ switch lower(cmd)
                     end
 
                 end
+                fclose(fid);
             end
-            fclose(fid);
         end
 end
 
