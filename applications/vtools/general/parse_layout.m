@@ -14,12 +14,12 @@
 %function out=f(varargin)
 
 parin=inputParser;
-input.sedTrans.default=[8,1.5,0.047];
-addOptional(parin,'sedTrans',input.sedTrans.default,@isnumeric);
+
+addOptional(parin,'sedTrans',0,@isnumeric);
+
 parse(parin,varargin{:});
-a_mpm=parin.Results.sedTrans(1);
-b_mpm=parin.Results.sedTrans(2);
-theta_c=parin.Results.sedTrans(3);
+
+sedTrans=parin.Results.sedTrans;
 
 %%
 

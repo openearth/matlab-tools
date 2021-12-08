@@ -7,6 +7,7 @@
 %$Id$
 %$HeadURL$
 %
+%Description
 
 %% PREAMBLE
 
@@ -15,8 +16,12 @@ clear
 clc
 fclose all;
 
-%% ADD OET
+%% PATHS
 
 path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+
+%% ADD OET
+
 addpath(path_add_fcn)
-addOET
+addOET(path_add_fcn) 
+

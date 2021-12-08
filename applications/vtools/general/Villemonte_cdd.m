@@ -38,11 +38,20 @@ m2=OPT.m2;
 % m=OPT.m;
 L=OPT.L;
 d1=OPT.d1;
-if all(d1==0) && OPT.type==1
-    warning('Weir height is not specified and its effect neglected')
-    d1=inf;
+if all(d1==0) 
+    if OPT.type==1
+        warning('Weir height is not specified and its effect neglected')
+        d1=inf;
+    elseif OPT.type==2
+%         error('you need to specify a sill height')
+    end
 end
-d1=reshape(d1,size(E1));
+if numel(d1)==1
+    d1=d1.*ones(size(E1));
+elseif any(size(d1)~=size(E1))
+    error('dimensions do not agree')
+end
+
 
 %%
 
@@ -78,6 +87,11 @@ switch OPT.type
         
         %m
         m=1/2;
+        
+        %check
+%         if any(p)==inf || isnan(p) || any(p<0)
+%             error('ups...')
+%         end
 end
 
 S=E2./E1;
