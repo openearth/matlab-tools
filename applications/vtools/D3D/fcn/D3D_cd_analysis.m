@@ -17,7 +17,7 @@
 %INPUT:
 %   -
 
-function [scen_u,q,c_dd,c_dd_V1,c_dm_T1,c_dr_T1,c_dm_M1,c_dr_M1,c_dd_V2,c_dm_T2,c_dr_T2,c_dm_M2,c_dr_M2,crest_level,S]=D3D_cd_analysis(val_u,val_d,scen_u,idx_h,idx_u,idx_etaw,F_crest,F_weir_height,F_crest_width,F_slope_right,F_slope_left)
+function [scen_u,q,c_dd,c_dd_V1,c_dm_T1,c_dr_T1,c_dm_M1,c_dr_M1,c_dd_V2,c_dm_T2,c_dr_T2,c_dm_M2,c_dr_M2,crest_level,S,E_u,E_d]=D3D_cd_analysis(val_u,val_d,scen_u,idx_h,idx_u,idx_etaw,F_crest,F_weir_height,F_crest_width,F_slope_right,F_slope_left)
 
 g=9.81;
 
@@ -39,7 +39,8 @@ c_dr_T2=c_dd;
 crest_level=c_dd;
 S=c_dd;
 q=c_dd;
-
+E_u=c_dd;
+E_d=c_dd;
 for kg=1:ng
 
     kp=1; %at crest
@@ -72,18 +73,18 @@ for kg=1:ng
         crest_level{kg}{kp}=crest_level_int;
 
         hT_u=val_u{kg}{kp}(:,idx_etaw)-crest_level_int; %water level upstream relative to crest height
-        E_u=hT_u+val_u{kg}{kp}(:,idx_u).^2/2/g; %energy upstream relative to crest height
+        E_u{kg}{kp}=hT_u+val_u{kg}{kp}(:,idx_u).^2/2/g; %energy upstream relative to crest height
 
         hT_d=val_d{kg}{kp}(:,idx_etaw)-crest_level_int; %water level downstream relative to crest height
-        E_d=hT_d+val_d{kg}{kp}(:,idx_u).^2/2/g; %energy downstream relative to crest height
+        E_d{kg}{kp}=hT_d+val_d{kg}{kp}(:,idx_u).^2/2/g; %energy downstream relative to crest height
 
-        c_dd{kg}{kp}=q_c.*3./2./sqrt(2*g).*E_u.^(-3/2); %C_{dd} measured
+        c_dd{kg}{kp}=q_c.*3./2./sqrt(2*g).*E_u{kg}{kp}.^(-3/2); %C_{dd} measured
 
         %Villemonte
         OPT.type=1;
         OPT.d1=weir_height_int;
 
-        [c_dd_V1{kg}{kp},c_dm_T1{kg}{kp},c_dr_T1{kg}{kp}]=Villemonte_cdd(E_u_c,E_d,OPT);
+        [c_dd_V1{kg}{kp},c_dm_T1{kg}{kp},c_dr_T1{kg}{kp}]=Villemonte_cdd(E_u_c,E_d{kg}{kp},OPT);
 
         c_dm_M1{kg}{kp}=c_dd_c./c_dr_T1{kg}{kp};
         c_dr_M1{kg}{kp}=c_dd_c./c_dm_T1{kg}{kp};
@@ -94,7 +95,7 @@ for kg=1:ng
         OPT.m2=slope_right_int; %user-specified ramp of the downwind slope from the weir ratio of ramp length and height [ ? ], default 4.0
         OPT.L=crest_width_int; %L crest is the length of the weir’s crest [ m ] in the direction across the weir (i.e., in the direction of the flow).
 
-        [c_dd_V2{kg}{kp},c_dm_T2{kg}{kp},c_dr_T2{kg}{kp},S{kg}{kp}]=Villemonte_cdd(E_u_c,E_d,OPT);
+        [c_dd_V2{kg}{kp},c_dm_T2{kg}{kp},c_dr_T2{kg}{kp},S{kg}{kp}]=Villemonte_cdd(E_u_c,E_d{kg}{kp},OPT);
 
         c_dm_M2{kg}{kp}=c_dd_c./c_dr_T2{kg}{kp};
         c_dr_M2{kg}{kp}=c_dd_c./c_dm_T2{kg}{kp};

@@ -12,7 +12,9 @@
 %
 %Creates the paths for transferring and running a simulation in Cartesius
 
-function copy_run_folder_to_cartesius(surf_userid,folder2send_win,cartesius_project_folder_lin,temporary_folder_win,runscript)
+function copy_run_folder_to_cartesius(surf_userid,folder2send_win,cartesius_project_folder_lin,temporary_folder_win,runscript,surf_computer)
+
+%%
 
 isrun=1;
 if isempty(runscript)
@@ -57,11 +59,11 @@ for kpath=2:npath-1
     path_dest_cart=strcat(path_dest_cart,pathsplit{1,kpath},'/');
 end
 path_dest_cart=strcat(cartesius_project_folder_lin,path_dest_cart);
-cmd_send=sprintf('rsync -av --bwlimit=5000 %s %s@cartesius.surfsara.nl:%s',comp_path_lin,surf_userid,path_dest_cart);
+cmd_send=sprintf('rsync -av --bwlimit=5000 %s %s@%s:%s',comp_path_lin,surf_userid,surf_computer,path_dest_cart);
 
 %% send file with commands to cartesius
 
-cmd_send_commands_ca=sprintf('scp %s %s@cartesius.surfsara.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+cmd_send_commands_ca=sprintf('scp %s %s@%s:%s \n',linuxify(path_ca),surf_userid,surf_computer,cartesify(cartesius_project_folder_lin,path_ca));
 
 %% uncompress file
 
@@ -108,7 +110,7 @@ fprintf(fid_h6,'%s \n',cmd_send_commands_ca);
 % fprintf('In Cartesius: \n\n');
 % fprintf('Start if necessary: \n');
 % fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl \n',surf_userid);
-fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+fprintf(fid_h6,'ssh %s@%s ''%s'' \n',surf_userid,surf_computer,cartesify(cartesius_project_folder_lin,path_ca));
 
 fprintf(fid_ca,'%s \n',cmd_cd_C_sim);
 fprintf(fid_ca,'%s \n',cmd_uncomp);
