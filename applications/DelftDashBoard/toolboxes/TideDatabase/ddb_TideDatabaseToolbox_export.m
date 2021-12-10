@@ -170,7 +170,7 @@ name=handles.tideModels.model(ii).name;
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
 cnst=nc_varget(tidefile,'tidal_constituents');
-for ii=1:length(cnst)
+for ii=1:size(cnst,1)
     cnstlist{ii}=deblank(upper(cnst(ii,:)));
 end
 handles.toolbox.tidedatabase.constituentList=cnstlist;
