@@ -44,6 +44,8 @@ elseif length(date) == 20 && all(ismember(date([5 8]),'-')) && all(ismember(date
 elseif all(ismember(date([5 8]),'-')) && all(ismember(date([14 17]),':'))
     date = date(1:19);
     format = 'yyyy-mm-dd HH:MM:SS'; % '1970-01-01 00:00:00.......'
+elseif all(ismember(date([5 7]),'-')) && all(ismember(date([13 16]),':'))
+    format = 'yyyy-m-dd HH:MM:SS'; % '2021-5-30 00:00:00'
 end
 
 %% Determine daten

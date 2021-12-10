@@ -83,5 +83,5 @@ disp('start making the movie')
 EHY_movieMaker(imageDir,OPT);
 
 disp([newline 'Note that next time you want to make this movie, you can also use:'])
-disp(['<strong>EHY_movieMaker(''' imageDir ''',''frameRate'',' num2str(OPT.frameRate) ''',''quality'',' num2str(OPT.quality) ');</strong>'])
+disp(['<strong>EHY_movieMaker(''' imageDir ''',''frameRate'',' num2str(OPT.frameRate) ',''quality'',' num2str(OPT.quality) ');</strong>'])
 end
