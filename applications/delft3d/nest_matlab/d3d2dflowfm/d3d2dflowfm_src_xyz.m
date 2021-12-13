@@ -49,12 +49,15 @@ names  = {src.DATA.name};
 %% read discharge information
 dis      = ddb_bct_io('read',fildis);
 location = {dis.Table.Location};
+for i_loc = 1: length(location) location{i_loc} = location{i_loc}(1:min(length(location{i_loc}),20)); end
 
 %% read the depth information (for determining the height of a discharge point
 dep   = wldep('read',fildep,[mmax nmax]);
 
 for i_src = 1: length(m_src)
+    names{i_src}
     i_table = strmatch(strtrim(names{i_src}),location,'exact');
+    
 
     %% Depthaveraged discharge?
     dav = true; if kmax > 1 && k_src(i_src) > 0 dav = false; end
