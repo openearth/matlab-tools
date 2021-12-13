@@ -98,8 +98,8 @@ for kb=1:nb
         flowWidths_v=cat(1,flowWidths_v,flowWidths{1,kcs}');    
         totalWidths_v=cat(1,totalWidths_v,totalWidths{1,kcs}');    
     end
-    F_flowWidths{kb,1}=scatteredInterpolant(chain_v,level_v,flowWidths_v);
-    F_totalWidths{kb,1}=scatteredInterpolant(chain_v,level_v,totalWidths_v);
+    F_flowWidths{kb,1}=scatteredInterpolant(chain_v,level_v,flowWidths_v,'linear','nearest');
+    F_totalWidths{kb,1}=scatteredInterpolant(chain_v,level_v,totalWidths_v,'linear','nearest');
 end %kb
 
 %% loop on nodes
