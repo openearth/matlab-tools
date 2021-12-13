@@ -178,13 +178,12 @@ for i_pnt = 1: no_pnt
                     end
                 end
             end
-            
-            %% Write the series for individual support points, first time open file, after that append
-            if i_pnt == 1
-                dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini');
-            else
-                dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini','first',false);
-            end
         end
+    end
+    %% Write the series for individual support points, first time open file, after that append
+    if i_pnt == 1
+        dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini');
+    else
+        dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini','first',false);
     end
 end
