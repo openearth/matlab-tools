@@ -33,6 +33,7 @@ function varargout = EHY_getMapModelData(inputFile,varargin)
 %names of variables:
 %   mesh2d_flowelem_ba      cell area
 %   mesh2d_flowelem_bl      bed level
+%   mesh2d_czs              chezy friction
 
 %% check user input
 if ~exist('inputFile','var')
