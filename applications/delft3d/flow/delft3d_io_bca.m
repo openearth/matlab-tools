@@ -135,6 +135,10 @@ if fid > 0
    
       iset    = iset + 1;
       if ~ischar(rec) || isempty(rec), break, end % eof
+
+      if length(v) > 23 
+         v = v(1:end-9); %2021
+      end
       
       if str2num(v(end-5:end-2)) >= 2019
           rec = pad(rec,12);%2019
