@@ -55,19 +55,21 @@ if ~isempty(morphAnResult.OutputBendErosionProfile)
 end
 
 %% Step 4 (Additional erosion)
-result(end+1) = fillresultwithprofile(createEmptyDUROSResult,...
-    morphAnResult.OutputAdditionalErosionPreProfile,...
-    morphAnResult.OutputAdditionalErosionProfile,...
-    xInitial,zInitial);
-
-result(end).VTVinfo.Xr = morphAnResult.OutputPointR.X;
-result(end).VTVinfo.Zr = morphAnResult.OutputPointR.Z;
-result(end).VTVinfo.Xp = morphAnResult.OutputPointP.X;
-result(end).VTVinfo.Zp = morphAnResult.OutputPointP.Z;
-result(end).VTVinfo.TVolume = morphAnResult.OutputAdditionalErosionVolume;
-result(end).Volumes.Erosion = morphAnResult.OutputAdditionalErosionVolume;
-result(end).Volumes.Volume = morphAnResult.OutputAdditionalErosionVolume;
-result(end).info.ID = 'Additional Erosion';
+if ~isempty(morphAnResult.OutputAdditionalErosionProfile)
+    result(end+1) = fillresultwithprofile(createEmptyDUROSResult,...
+        morphAnResult.OutputAdditionalErosionPreProfile,...
+        morphAnResult.OutputAdditionalErosionProfile,...
+        xInitial,zInitial);
+    
+    result(end).VTVinfo.Xr = morphAnResult.OutputPointR.X;
+    result(end).VTVinfo.Zr = morphAnResult.OutputPointR.Z;
+    result(end).VTVinfo.Xp = morphAnResult.OutputPointP.X;
+    result(end).VTVinfo.Zp = morphAnResult.OutputPointP.Z;
+    result(end).VTVinfo.TVolume = morphAnResult.OutputAdditionalErosionVolume;
+    result(end).Volumes.Erosion = morphAnResult.OutputAdditionalErosionVolume;
+    result(end).Volumes.Volume = morphAnResult.OutputAdditionalErosionVolume;
+    result(end).info.ID = 'Additional Erosion';
+end
 
 %% Step 5 (Boundary profile) - Not present in MorphAn calculation (needs seperate routine)
 % result(end+1) = fillresultwithprofile(createEmptyDUROSResult,...
