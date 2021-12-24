@@ -106,7 +106,7 @@ switch filetype
         for i_pnt = 1: size(string_mnnes,1)
             for i_nes = 1: 4
                 if ~isempty(string_mnnes{i_pnt,i_nes})
-                    fprintf(fid,'%14.9e %14.9e %s \n',x_nest(i_pnt,i_nes),y_nest(i_pnt,i_nes),(string_mnnes{i_pnt,i_nes}));
+                    fprintf(fid,'%14.9e %14.9e %s \n',x_nest(i_pnt,i_nes),y_nest(i_pnt,i_nes),char(string_mnnes{i_pnt,i_nes}));
                 end
             end
         end

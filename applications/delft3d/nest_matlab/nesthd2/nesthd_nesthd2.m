@@ -45,13 +45,11 @@ if ~isnan(add_inf.t_start)
 end
 if exist('OPT','var') && ~isempty(OPT.no_times) gen_inf.notims = min(gen_inf.notims,OPT.no_times); end
 
-%  For dfm add A0 through the keyworoff-set in stead of directly 
-%  including it into the boundary (request Jelmer) 
+%  For dfm add A0 through the keyworoff-set in stead of directly
+%  including it into the boundary (request Jelmer)
 if strcmp(gen_inf.to,'dfm') && isfield(add_inf,'a0')
-    if add_inf.a0 ~= 0.
-        add_inf.a0_dfm = add_inf.a0;
-        add_inf.a0     = 0.;
-    end
+    add_inf.a0_dfm = add_inf.a0;
+    add_inf.a0     = 0.;
 end
 
 %% General settings
@@ -84,27 +82,27 @@ end
 
 %% Generate transport bc if available on history file
 if lstci > 0
-    
+
     %% Needed?
     if sum(add_inf.genconc) > 0
         if isempty(bnd) return; end
-        
+
         %% Determine (nested) concentrations
         bndval      = nesthd_detcon(fid_adm,bnd,gen_inf,add_inf,files{3});
-        
+
         %% Vertical interpolation, temporary, not correct place, should be done inside detcon
         if isfield(add_inf,'interpolate_z')
             bndtype(1:nobnd)= {'c'};
             det_inf         = nesthd_get_general  (add_inf.interpolate_z);
             bndval          = nesthd_interpolate_z(bndtype,bndval,gen_inf.rel_pos(1,:), det_inf.rel_pos);
         end
-        
+
         %% Generate depth averaged bc from 3D simulation
         [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-        
+
         %% Write concentrations to file
         nesthd_wricon(files{5},bnd,gen_inf,bndval,add_inf);
-        
+
     end
 end
 
