@@ -132,15 +132,40 @@ else
                 switch lower(flist(i).name)
                     case{'.','..','.svn'}
                     otherwise
-                        fname=[dr2 filesep flist(i).name filesep 'xml' filesep 'toolbox.' flist(i).name '.xml'];
+                        foldername = flist(i).name;
+                        toolboxname = foldername;
+                        
+                        if length(foldername) > 4
+                            if strcmp(foldername(1:4),'DDB-') %strip name of toolbox in case supplied as 'DDB-XXX-toolbox'
+                                toolboxname = foldername(5:end);
+                                if strcmp(toolboxname(end-7:end),'-toolbox')
+                                    toolboxname = toolboxname(1:end-8);
+                                end
+
+                            end
+                        end
+                        
+                        fname=[dr2 filesep foldername filesep 'xml' filesep 'toolbox.' toolboxname '.xml'];
+                        fname_trunk=[dr2 filesep foldername filesep 'trunk' filesep 'xml' filesep 'toolbox.' toolboxname '.xml'];
+                        
                         if exist(fname,'file')
                             xml=xml2struct(fname,'structuretype','short');
                             switch lower(xml.enable)
                                 case{'1','y','yes'}
                                     k=k+1;
-                                    name{k}=flist(i).name;
+                                    name{k}=toolboxname;
                                     tp{k}='additional';
+                                    dr_advanced{k}=[dr2 filesep foldername filesep];
                             end
+                        elseif exist(fname_trunk,'file') % in case toolbox has trunk/tags/branches structure
+                            xml=xml2struct(fname_trunk,'structuretype','short');
+                            switch lower(xml.enable)
+                                case{'1','y','yes'}
+                                    k=k+1;
+                                    name{k}=toolboxname;
+                                    tp{k}='additional';
+                                    dr_advanced{k}=[dr2 filesep foldername filesep 'trunk' filesep];                                    
+                            end                            
                         end
                 end
             end
@@ -214,7 +239,7 @@ for it=1:nt
 %             handles.toolbox.(nm).miscDir=[handles.toolbox.(nm).dir 'misc' filesep];
             handles.toolbox.(nm).dataDir=[handles.toolBoxDir name{it} filesep];
         else
-            handles.toolbox.(nm).dir=[dr2 filesep name{it} filesep];
+            handles.toolbox.(nm).dir=[dr_advanced{it} filesep];
             handles.toolbox.(nm).xmlDir=[handles.toolbox.(nm).dir 'xml' filesep];
 %             handles.toolbox.(nm).miscDir=[handles.toolbox.(nm).dir 'misc' filesep];
 %             handles.toolbox.(nm).dataDir=[handles.toolbox.(nm).dir 'data' filesep];
