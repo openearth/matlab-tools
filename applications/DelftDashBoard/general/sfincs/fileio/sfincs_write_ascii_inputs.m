@@ -1,6 +1,6 @@
 function sfincs_write_ascii_inputs(z,msk,ascdepfile,ascmskfile)
 %%% checks:
-if any(isnan(z)) || any(isnan(msk))
+if any(isnan(z(:))) || any(isnan(msk(:)))
     error('Your input contains NaN values, please check')
 end
 %%%

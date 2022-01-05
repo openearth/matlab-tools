@@ -1,6 +1,6 @@
 function sfincs_write_binary_inputs(z,msk,indexfile,depfile,mskfile)
 %%% checks:
-if any(isnan(z)) || any(isnan(msk))
+if any(isnan(z(:))) || any(isnan(msk(:)))
     error('Your input contains NaN values, please check')
 end
 %%%
