@@ -266,9 +266,9 @@
   <element>
     <style>pushbutton</style>
     <position>910 70 80 20</position>
-    <text>Use Dataset</text>
+    <text>Use Option</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
-    <option1>useoptionactivegrid</option1>
+    <option1>useoptionboundarycells</option1>
     <tooltipstring>Use selected option (from list on the left)</tooltipstring>    
   </element>
   

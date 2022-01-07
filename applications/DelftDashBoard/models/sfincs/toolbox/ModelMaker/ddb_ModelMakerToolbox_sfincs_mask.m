@@ -1094,7 +1094,10 @@ if xy_waterlevelboundary(1).length==0
 end
 
 clear varargin
-varargin_id = 0;
+varargin_id = 1;
+varargin{varargin_id} = 'zlev_polygon';
+varargin_id = varargin_id + 1;        
+varargin{varargin_id} = zlev_polygon;
 
 % loop over active grid options
 for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options
@@ -1131,8 +1134,40 @@ for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options
     end
 end
 
-% TODO: same for boundary cell options
+% same for boundary cell options
+for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options
+    
+    name = handles.toolbox.modelmaker.sfincs.mask.boundarycells_action{ii};
+    
+    if strcmp(name, 'waterlevel boundary')
+        varargin_id = varargin_id + 1;        
+        varargin{varargin_id} = 'waterlevelboundarypolygon';
 
+        varargin_id = varargin_id + 1;
+        varargin{varargin_id} = xy_waterlevelboundary;  
+        
+    elseif strcmp(name, 'outflow boundary')
+        varargin_id = varargin_id + 1;        
+        varargin{varargin_id} = 'outflowboundarypolygon';
+
+        varargin_id = varargin_id + 1;
+        varargin{varargin_id} = xy_outflowboundary;          
+        
+    elseif strcmp(name, 'closed boundary')
+        varargin_id = varargin_id + 1;        
+        varargin{varargin_id} = 'closedboundarypolygon';
+
+        varargin_id = varargin_id + 1;
+        varargin{varargin_id} = xy_closedboundary;   
+        
+    elseif strcmp(name, 'elevation')
+        varargin_id = varargin_id + 1;        
+        varargin{varargin_id} = 'backwards_compatible';
+
+        varargin_id = varargin_id + 1;
+        varargin{varargin_id} = 1;  %not used         
+    end
+end
 
 
 % run sfincs_make_mask

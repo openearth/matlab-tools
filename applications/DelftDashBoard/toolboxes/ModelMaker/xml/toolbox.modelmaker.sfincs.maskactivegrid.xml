@@ -184,7 +184,7 @@
   <element>
     <style>pushbutton</style>
     <position>910 70 80 20</position>
-    <text>Use Dataset</text>
+    <text>Use Option</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>useoptionactivegrid</option1>
     <tooltipstring>Use selected option (from list on the left)</tooltipstring>    
@@ -207,21 +207,21 @@
   
   <element>
     <style>pushbutton</style>
-    <position>1100 100 80 20</position>
+    <position>1110 100 80 20</position>
     <text>Remove Option</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>removeoptionactivegrid</option1>   
   </element>  
   <element>
     <style>pushbutton</style>
-    <position>1100 80 80 20</position>
+    <position>1110 80 80 20</position>
     <text>Move Up</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>upoptionactivegrid</option1>    
   </element>
   <element>
     <style>pushbutton</style>
-    <position>1100 60 80 20</position>
+    <position>1110 60 80 20</position>
     <text>Move Down</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>downoptionactivegrid</option1>
