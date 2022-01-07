@@ -7,6 +7,9 @@ while 1
     if str==-1
         break
     end
+    if strcmp(str,'') %ignore empty lines
+        break
+    end
     c=textscan(str,'%s','delimiter','=');
     c=c{1};
     keyw=deblank2(c{1});
