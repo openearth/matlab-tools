@@ -1,7 +1,8 @@
 function sfincs_write_binary_inputs(z,msk,indexfile,depfile,mskfile)
 %%% checks:
-if any(isnan(z(:))) || any(isnan(msk(:)))
-    error('Your input contains NaN values, please check')
+id = isnan(msk(:));
+if any(isnan(z(id)))
+    error('Your input contains NaN values for active grid cells, please check')
 end
 %%%
 
