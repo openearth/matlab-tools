@@ -31,7 +31,12 @@ for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
             
-            % active grid            
+            % active grid    
+            case{'reuse'} % reuse existing loaded msk
+                msk_reuse = varargin{ii+1};
+                count_activegrid = count_activegrid + 1;
+                varargin_activegrid(count_activegrid).action = 'reuse';
+                
             case{'zlev'} % here order specified by user matters
                 zlev = varargin{ii+1};
                 count_activegrid = count_activegrid + 1;
@@ -79,8 +84,11 @@ disp('Info - start determine active grid')
 if count_activegrid > 0
 
     for ii = 1:count_activegrid %use order as defined in varargin to do this
-        
-        if strcmp(varargin_activegrid(ii).action, 'zlev')
+
+        if strcmp(varargin_activegrid(ii).action, 'reuse')
+            msk = msk_reuse;
+            
+        elseif strcmp(varargin_activegrid(ii).action, 'zlev')
             [msk,z] = cut_mask_on_elevation(msk, z, zlev);
             
         elseif strcmp(varargin_activegrid(ii).action, 'includepolygon')
@@ -91,7 +99,7 @@ if count_activegrid > 0
             end
         elseif strcmp(varargin_activegrid(ii).action, 'excludepolygon')
             if ~isempty(xy_ex)
-                [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,xy_ex);
+                [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,z,xy_ex);
             else
                 warning('excludepolygon is empty')
             end            
@@ -186,7 +194,7 @@ function [msk] = cut_mask_on_include_polygon(x,y,msk,xy_poly)
     disp('Debug - finished cut_mask_on_include_polygon')    
 end
 
-function [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,xy_poly)
+function [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,z,xy_poly)
     disp('Debug - call cut_mask_on_exclude_polygon')
 
     msk_ids = inpolygon_to_grid(x,y,xy_poly); %in & on are included by as standard
