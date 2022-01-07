@@ -1,6 +1,6 @@
 function sfincs_write_ascii_inputs(z,msk,ascdepfile,ascmskfile)
 %%% checks:
-id = isnan(msk(:));
+id = ~isnan(msk(:));
 if any(isnan(z(id)))
     error('Your input contains NaN values for active grid cells, please check')
 end

@@ -1,4 +1,4 @@
-function msk = sfincs_make_mask_advanced(x,y,z,varargin)
+function [msk,z] = sfincs_make_mask_advanced(x,y,z,varargin)
 % Leijnse april 18: included option to exclude points via polygon input
 % Leijnse nov 21: complete revisit of code
 %   contains:
@@ -113,6 +113,7 @@ end
 % update z based on final msk > important for 'find_surrounding_points'
 
 z(msk==0) = NaN;
+msk(msk==0) = NaN;
 
 disp('Info - finished determine active grid')
     

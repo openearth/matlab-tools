@@ -30,8 +30,10 @@ switch lower(opt)
             % Cell centres!
             handles.model.sfincs.domain(ad).xg=xg;
             handles.model.sfincs.domain(ad).yg=yg;
-            handles.model.sfincs.domain(ad).gridx=xz(2:end,2:end);
-            handles.model.sfincs.domain(ad).gridy=yz(2:end,2:end);
+%             handles.model.sfincs.domain(ad).gridx=xz(2:end,2:end);
+%             handles.model.sfincs.domain(ad).gridy=yz(2:end,2:end);
+            handles.model.sfincs.domain(ad).gridx=xz(1:end,1:end); %DOUBLE CHECK WHETHER THIS IS CORRECT!
+            handles.model.sfincs.domain(ad).gridy=yz(1:end,1:end);  
             
             % Attribute files
             msk=zeros(inp.nmax,inp.mmax);

@@ -886,11 +886,10 @@ id=ad;
 % These are the centre points !!!
 xg=handles.model.sfincs.domain(id).gridx;
 yg=handles.model.sfincs.domain(id).gridy;
+% xg=handles.model.sfincs.domain(id).xg; 
+% yg=handles.model.sfincs.domain(id).yg;
 zg=handles.model.sfincs.domain(id).gridz;
 msk=handles.model.sfincs.domain(id).mask;
-
-%% Update model data
-handles.model.sfincs.domain(id).gridz=zg;
 
 %% Now make the mask matrix
 zmin=handles.toolbox.modelmaker.sfincs.zmin;
@@ -927,13 +926,15 @@ zlev = [zmin zmax];
 % msk=sfincs_make_mask_advanced(xg,yg,zg,'zlev',zlev,'includepolygon',xy_in,'excludepolygon',xy_ex);
 % msk=sfincs_make_mask_advanced(xg,yg,zg,'includepolygon',xy_in,'excludepolygon',xy_ex,'waterlevelboundarypolygon',xy_waterlevelboundary);
 % msk=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'excludepolygon',xy_ex,'includepolygon',xy_in,'zlev_polygon',zlev_polygon,'waterlevelboundarypolygon',xy_waterlevelboundary);
-msk=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'zlev_polygon',zlev_polygon,'outflowboundarypolygon',xy_outflowboundary,'closedboundarypolygon',xy_closedboundary);
+% msk=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'zlev_polygon',zlev_polygon,'outflowboundarypolygon',xy_outflowboundary,'closedboundarypolygon',xy_closedboundary);
+[msk,zg]=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'includepolygon',xy_in,'excludepolygon',xy_ex);
 
 % msk=sfincs_make_mask(xg,yg,zg,'zlev',[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_closedboundary,'outflowboundarypolygon',xy_outflowboundary,'waterlevelboundarypolygon',xy_waterlevelboundary);
 % msk(isnan(zg))=0; %KEEP THIS????
 
 % QUESTION: UPDATE elevation Z TOO?
-
+%% Update model data
+handles.model.sfincs.domain(id).gridz=zg;
 handles.model.sfincs.domain(id).mask=msk;
 
 %% And save the files
