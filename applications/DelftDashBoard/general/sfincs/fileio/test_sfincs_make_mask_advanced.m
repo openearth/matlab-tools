@@ -352,11 +352,18 @@ if test_determine_boundary_cells == 1
     %%
 end
 
+% test of how function will be called in DDB with 1 single cell:
 
+varargin{1} = 'zlev';
+varargin{2} = zlev;
 
+xy_bnd_closed = [];
 
+msk=sfincs_make_mask_advanced(x,y,z,varargin);
 
-
-
+figure; 
+subplot(2,1,1); hold on; axis equal; scatter(x(:),y(:),[],z(:),'filled'); shading flat; colorbar('Ticks',zz); colormap(parula(length(zz))) %();
+subplot(2,1,2); hold on; axis equal; scatter(x(:),y(:),[],msk(:),'filled'); shading flat; colorbar('Ticks',0:3); clim([0 3])
+title(['Mask using zlev= [',num2str(zlev(1)), ',',num2str(zlev(2)), ']'])
 
 

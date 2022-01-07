@@ -267,3 +267,17 @@ handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).length=0;
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).x=[];
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).y=[];
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile='';
+
+% options for sfincs_make_mask_advanced
+handles.toolbox.modelmaker.sfincs.mask.activegrid_options = {'current mask','elevation','include polygon','exclude polygon'};
+handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options = 1;
+handles.toolbox.modelmaker.sfincs.mask.activegrid_index = 1;
+handles.toolbox.modelmaker.sfincs.mask.activegrid_option = 1;
+handles.toolbox.modelmaker.sfincs.mask.activegrid_action={'current mask'};
+
+handles.toolbox.modelmaker.sfincs.mask.boundarycells_options = {'closed boundary polygon','waterlevel boundary polygon','outflow boundary polygon','elevation as in quick mode'};
+handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options = 0;
+handles.toolbox.modelmaker.sfincs.mask.boundarycells_index = 1;
+handles.toolbox.modelmaker.sfincs.mask.boundarycells_option = 1;
+handles.toolbox.modelmaker.sfincs.mask.boundarycells_action={};
+

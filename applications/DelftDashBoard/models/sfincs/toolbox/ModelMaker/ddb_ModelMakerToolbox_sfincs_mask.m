@@ -140,6 +140,15 @@ else
         case{'savewaterlevelboundarypolygon'}
             saveWaterlevelBoundaryPolygon;            
             
+        case{'useoptionactivegrid'}
+            useOptionActiveGrid;
+        case{'removeoptionactivegrid'}
+            removeOptionActiveGrid;            
+        case{'upoptionactivegrid'}
+            upOptionActiveGrid;
+        case{'downoptionactivegrid'}
+            downOptionActiveGrid;            
+            
         case{'generatemask'}
             generateMask;
     end
@@ -873,7 +882,84 @@ for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons
 end
 fclose(fid);
 
+%%
+function useOptionActiveGrid
 
+handles=getHandles;
+
+id=handles.toolbox.modelmaker.sfincs.mask.activegrid_index;
+name=handles.toolbox.modelmaker.sfincs.mask.activegrid_options{id};
+
+% Check if dataset is already selected
+usedd=1;
+for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options
+    if strcmpi(handles.toolbox.modelmaker.sfincs.mask.activegrid_action{ii},name)
+        usedd=0;
+        break
+    end
+end
+
+if usedd
+
+    handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options=handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options+1;
+    n=handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options;
+    
+    handles.toolbox.modelmaker.sfincs.mask.activegrid_action{n}=name;    
+    handles.toolbox.modelmaker.sfincs.mask.activegrid_option=n;    
+
+end
+
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function removeOptionActiveGrid
+% Remove selected dataset
+
+handles=getHandles;
+
+if handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options>0
+    iac=handles.toolbox.modelmaker.sfincs.mask.activegrid_option;  
+    
+    handles.toolbox.modelmaker.sfincs.mask.activegrid_action=removeFromCellArray(handles.toolbox.modelmaker.sfincs.mask.activegrid_action, iac);
+    
+    handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options=handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options-1;
+    handles.toolbox.modelmaker.sfincs.mask.activegrid_option=max(min(iac,handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options),1);
+    
+    setHandles(handles);
+    gui_updateActiveTab;
+end
+
+%%
+function upOptionActiveGrid
+% Move selected dataset up
+handles=getHandles;
+
+if handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options>0
+    iac=handles.toolbox.modelmaker.sfincs.mask.activegrid_option;  
+
+    handles.toolbox.modelmaker.sfincs.mask.activegrid_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.activegrid_action, iac,'up');
+    
+    handles.toolbox.modelmaker.sfincs.mask.activegrid_option=iac-1;
+    
+    setHandles(handles);
+end
+
+%%
+function downOptionActiveGrid
+
+% Move selected dataset down
+handles=getHandles;
+
+if handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options>0
+    iac=handles.toolbox.modelmaker.sfincs.mask.activegrid_option;  
+
+    handles.toolbox.modelmaker.sfincs.mask.activegrid_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.activegrid_action, iac,'down');
+    
+    handles.toolbox.modelmaker.sfincs.mask.activegrid_option=iac-1;
+    
+    setHandles(handles);
+end
 
 %%
 function generateMask
@@ -894,6 +980,7 @@ msk=handles.model.sfincs.domain(id).mask;
 %% Now make the mask matrix
 zmin=handles.toolbox.modelmaker.sfincs.zmin;
 zmax=handles.toolbox.modelmaker.sfincs.zmax;
+zlev = [zmin zmax];
 zlev_polygon=handles.toolbox.modelmaker.sfincs.zlev_polygon;
 
 xy_in=handles.toolbox.modelmaker.sfincs.mask.includepolygon;
@@ -918,21 +1005,57 @@ if xy_waterlevelboundary(1).length==0
     xy_waterlevelboundary=[];
 end
 
-disp('TODO: make order changeable as in user defined!')
-zlev = [zmin zmax];
+clear varargin
+varargin_id = 0;
 
-% 'reuse'
-% msk=sfincs_make_mask_advanced(xg,yg,zg,'zlev',zlev,'includepolygon',xy_in,'excludepolygon',xy_ex,'zlev_polygon',zlev_polygon,'waterlevelboundarypolygon',xy_waterlevelboundary,'outflowboundarypolygon',xy_outflowboundary,'closedboundarypolygon',xy_closedboundary);
-% msk=sfincs_make_mask_advanced(xg,yg,zg,'zlev',zlev,'includepolygon',xy_in,'excludepolygon',xy_ex);
-% msk=sfincs_make_mask_advanced(xg,yg,zg,'includepolygon',xy_in,'excludepolygon',xy_ex,'waterlevelboundarypolygon',xy_waterlevelboundary);
-% msk=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'excludepolygon',xy_ex,'includepolygon',xy_in,'zlev_polygon',zlev_polygon,'waterlevelboundarypolygon',xy_waterlevelboundary);
-% msk=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'zlev_polygon',zlev_polygon,'outflowboundarypolygon',xy_outflowboundary,'closedboundarypolygon',xy_closedboundary);
-[msk,zg]=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'includepolygon',xy_in,'excludepolygon',xy_ex);
+% loop over active grid options
+for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options
+    
+    name = handles.toolbox.modelmaker.sfincs.mask.activegrid_action{ii};
+    
+    if strcmp(name, 'current mask')   
+        varargin_id = varargin_id + 1;        
+        varargin{varargin_id} = 'reuse';
+
+        varargin_id = varargin_id + 1;
+        varargin{varargin_id} = msk;
+        
+    elseif strcmp(name, 'elevation')
+        varargin_id = varargin_id + 1;        
+        varargin{varargin_id} = 'zlev';
+
+        varargin_id = varargin_id + 1;
+        varargin{varargin_id} = zlev;  
+        
+    elseif strcmp(name, 'include polygon')
+        varargin_id = varargin_id + 1;        
+        varargin{varargin_id} = 'includepolygon';
+
+        varargin_id = varargin_id + 1;
+        varargin{varargin_id} = xy_in;   
+        
+    elseif strcmp(name, 'exclude polygon')
+        varargin_id = varargin_id + 1;        
+        varargin{varargin_id} = 'excludepolygon';
+
+        varargin_id = varargin_id + 1;
+        varargin{varargin_id} = xy_ex;           
+    end
+end
+
+% TODO: same for boundary cell options
+
+
+
+% run sfincs_make_mask
+[msk,zg]=sfincs_make_mask_advanced(xg,yg,zg,varargin);
 
 % msk=sfincs_make_mask(xg,yg,zg,'zlev',[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_closedboundary,'outflowboundarypolygon',xy_outflowboundary,'waterlevelboundarypolygon',xy_waterlevelboundary);
+
 % msk(isnan(zg))=0; %KEEP THIS????
 
 % QUESTION: UPDATE elevation Z TOO?
+
 %% Update model data
 handles.model.sfincs.domain(id).gridz=zg;
 handles.model.sfincs.domain(id).mask=msk;

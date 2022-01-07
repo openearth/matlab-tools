@@ -26,6 +26,12 @@ xy_bnd_closed=[];
 xy_bnd_waterlevel=[];
 xy_bnd_outflow=[];
 
+% in case all supplied in one cell (as done in DDB)
+if size(varargin,2)==1
+    disp('varargin contains only 1 cell, assumed is that all keyword-argument pairs are supplied within this cell')
+    varargin = varargin{1};
+end
+
 % read varargin and order
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -67,7 +73,7 @@ for ii=1:length(varargin)
                 count_boundarycells = count_boundarycells + 1;
                 varargin_boundarycells(count_boundarycells).action = 'outflowboundarypolygon';    
                 
-            case{'backwards_compatible'} % option like before based on pure elevation
+            case{'backwards_compatible'} % option like before based on pure elevation (backwards_compatible)
                 backwards_compatible = varargin{ii+1};
                 count_boundarycells = count_boundarycells + 1;
                 varargin_boundarycells(count_boundarycells).action = 'backwards_compatible';  

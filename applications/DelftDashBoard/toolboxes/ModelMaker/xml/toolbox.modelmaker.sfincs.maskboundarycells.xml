@@ -3,153 +3,6 @@
 
   <element>
     <style>listbox</style>
-    <text>Include Polygons</text>
-    <textposition>above-center</textposition>
-    <variable>handles.toolbox.modelmaker.sfincs.mask.activeincludepolygon</variable>
-    <type>integer</type>
-    <position>10 20 90 100</position>
-    <tooltipstring>Select include polygon</tooltipstring>
-    <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
-    <option1>selectincludepolygon</option1>
-    <listtext>
-      <variable>handles.toolbox.modelmaker.sfincs.mask.includepolygonnames</variable>
-    </listtext>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>110 100 80 20</position>
-    <text>Draw Polygon</text>
-    <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
-    <option1>drawincludepolygon</option1>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>110 75 80 20</position>
-    <text>Delete Polygon</text>
-    <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
-    <option1>deleteincludepolygon</option1>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <style>pushselectfile</style>
-    <position>110 50 80 20</position>
-    <text>Load Polygon</text>
-    <variable>handles.toolbox.modelmaker.sfincs.mask.includepolygonfile</variable>
-    <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
-    <option1>loadincludepolygon</option1>
-    <showfilename>no</showfilename>
-    <extension>*.pol</extension>
-    <selectiontext>Select polygon file</selectiontext>
-    <tooltipstring>Select polygon file</tooltipstring>
-  </element>
-  <element>
-    <style>pushsavefile</style>
-    <position>110 25 80 20</position>
-    <text>Save Polygon</text>
-    <variable>handles.toolbox.modelmaker.sfincs.mask.includepolygonfile</variable>
-    <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
-    <option1>saveincludepolygon</option1>
-    <showfilename>no</showfilename>
-    <extension>*.pol</extension>
-    <selectiontext>Save polygon file</selectiontext>
-    <tooltipstring>Save polygon file</tooltipstring>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
-  </element>
-
-  <element>
-    <style>listbox</style>
-    <text>Exclude Polygons</text>
-    <textposition>above-center</textposition>
-    <variable>handles.toolbox.modelmaker.sfincs.mask.activeexcludepolygon</variable>
-    <type>integer</type>
-    <position>210 20 90 100</position>
-    <tooltipstring>Select include polygon</tooltipstring>
-    <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
-    <option1>selectexcludepolygon</option1>
-    <listtext>
-      <variable>handles.toolbox.modelmaker.sfincs.mask.excludepolygonnames</variable>
-    </listtext>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>310 100 80 20</position>
-    <text>Draw Polygon</text>
-    <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
-    <option1>drawexcludepolygon</option1>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>310 75 80 20</position>
-    <text>Delete Polygon</text>
-    <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
-    <option1>deleteexcludepolygon</option1>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <style>pushselectfile</style>
-    <position>310 50 80 20</position>
-    <text>Load Polygon</text>
-    <variable>handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile</variable>
-    <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
-    <option1>loadexcludepolygon</option1>
-    <showfilename>no</showfilename>
-    <extension>*.pol</extension>
-    <selectiontext>Select polygon file</selectiontext>
-    <tooltipstring>Select polygon file</tooltipstring>
-  </element>
-  <element>
-    <style>pushsavefile</style>
-    <position>310 25 80 20</position>
-    <text>Save Polygon</text>
-    <variable>handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile</variable>
-    <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
-    <option1>saveexcludepolygon</option1>
-    <showfilename>no</showfilename>
-    <extension>*.pol</extension>
-    <selectiontext>Save polygon file</selectiontext>
-    <tooltipstring>Save polygon file</tooltipstring>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
-  </element>
-
-
-  <element>
-    <style>listbox</style>
     <text>Closed Boundaries</text>
     <textposition>above-center</textposition>
     <variable>handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon</variable>
@@ -372,7 +225,7 @@
   
   <element>
     <style>edit</style>
-    <position>1060 110 50 20</position>
+    <position>1100 110 50 20</position>
     <tooltipstring>Edit maximum elevation SFINCS model</tooltipstring>
     <text>Zmax</text>
     <textposition>left</textposition>
@@ -381,7 +234,7 @@
   </element>
   <element>
     <style>edit</style>
-    <position>1060 85 50 20</position>
+    <position>1100 85 50 20</position>
     <tooltipstring>Edit minimum elevation SFINCS model</tooltipstring>
     <text>Zmin</text>
     <textposition>left</textposition>
@@ -390,14 +243,47 @@
   </element>
   <element>
     <style>edit</style>
-    <position>1060 45 50 20</position>
+    <position>1100 45 50 20</position>
     <text>Zlev water/land</text>
     <textposition>left</textposition>
     <variable>handles.toolbox.modelmaker.sfincs.zlev_polygon</variable>
     <tooltipstring>Edit max elevation to apply msk=2 to 'waterlevelboundarypolygon' and minimum elevation to apply msk=3 for 'outflowboundarypolygon'
 </tooltipstring>    
     <type>real</type>
+  </element>
+  <element>
+    <style>listbox</style>
+    <text>Active grid options</text>
+    <textposition>above-center</textposition>    
+    <variable>handles.toolbox.modelmaker.sfincs.mask.activegrid_index</variable>
+    <type>integer</type>
+    <position>1300 20 100 100</position>
+    <tooltipstring>Available options for determining active cells of mask</tooltipstring>
+    <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
+    <option1>selectdataset</option1>
+    <listtext>
+      <variable>handles.toolbox.modelmaker.sfincs.mask.activegrid_options</variable>
+    </listtext>
+    <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <check>
+          <variable>handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options</variable>
+          <value>0</value>
+          <operator>gt</operator>
+        </check>
+    </dependency>    
   </element>  
+  
+  <element>
+    <style>pushbutton</style>
+    <position>1400 70 80 20</position>
+    <text>Use Dataset</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
+    <option1>useoptionactivegrid</option1>
+    <tooltipstring>Use selected option (from list on the left)</tooltipstring>    
+  </element>
+  
   <element>
     <style>pushbutton</style>
     <position>1200 110 100 20</position>

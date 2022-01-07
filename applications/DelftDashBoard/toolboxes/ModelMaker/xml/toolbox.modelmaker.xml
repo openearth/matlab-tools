@@ -112,10 +112,16 @@
     </tab>
     <tab>
       <formodel>sfincs</formodel>
-      <tabstring>Mask</tabstring>
+      <tabstring>Mask active grid</tabstring>
       <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
-      <element>toolbox.modelmaker.sfincs.mask.xml</element>
+      <element>toolbox.modelmaker.sfincs.maskactivegrid.xml</element>
     </tab>    
+    <tab>
+      <formodel>sfincs</formodel>
+      <tabstring>Mask boundary cells</tabstring>
+      <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
+      <element>toolbox.modelmaker.sfincs.maskboundarycells.xml</element>
+    </tab>      
     <tab>
       <formodel>sfincs</formodel>
       <tabstring>Coastline</tabstring>
