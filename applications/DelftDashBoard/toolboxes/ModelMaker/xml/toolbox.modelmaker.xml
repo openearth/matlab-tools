@@ -4,7 +4,7 @@
   <longname>Model Maker</longname>
   <enable>1</enable>
   <element>
-    <position>10 10 1000 140</position>
+    <position>10 10 1900 140</position>
     <style>tabpanel</style>
     <tab>
       <formodel>delft3dflow</formodel>

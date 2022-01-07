@@ -221,10 +221,12 @@ handles.toolbox.modelmaker.clipzmin=-10000;
 %% SFINCS
 handles.toolbox.modelmaker.sfincs.zmin=-2;
 handles.toolbox.modelmaker.sfincs.zmax=10;
+handles.toolbox.modelmaker.sfincs.zlev_polygon=5;
 handles.toolbox.modelmaker.sfincs.include_xy=[];
 handles.toolbox.modelmaker.sfincs.exclude_xy=[];
 handles.toolbox.modelmaker.sfincs.closedboundary_xy=[];
-handles.toolbox.modelmaker.sfincs.openboundary_xy=[];
+handles.toolbox.modelmaker.sfincs.outflowboundary_xy=[];
+handles.toolbox.modelmaker.sfincs.waterlevelboundary_xy=[];
 
 handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons=0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygonnames={''};
@@ -250,11 +252,18 @@ handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).x=[];
 handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).y=[];
 handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonfile='';
 
-handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons=0;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames={''};
-handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon=1;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).length=0;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).x=[];
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).y=[];
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonfile='';
+handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons=0;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames={''};
+handles.toolbox.modelmaker.sfincs.mask.activeoutflowboundarypolygon=1;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile='';
 
+handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons=0;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames={''};
+handles.toolbox.modelmaker.sfincs.mask.activewaterlevelboundarypolygon=1;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile='';

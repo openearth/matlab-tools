@@ -118,17 +118,27 @@ else
         case{'saveclosedboundarypolygon'}
             saveClosedBoundaryPolygon;
 
-        case{'selectopenboundarypolygon'}
-            selectOpenBoundaryPolygon;
-        case{'drawopenboundarypolygon'}
-            drawOpenBoundaryPolygon;
-        case{'deleteopenboundarypolygon'}
-            deleteOpenBoundaryPolygon;
-        case{'loadopenboundarypolygon'}
-            loadOpenBoundaryPolygon;
-        case{'saveopenboundarypolygon'}
-            saveOpenBoundaryPolygon;
+        case{'selectoutflowboundarypolygon'}
+            selectOutflowBoundaryPolygon;
+        case{'drawoutflowboundarypolygon'}
+            drawOutflowBoundaryPolygon;
+        case{'deleteoutflowboundarypolygon'}
+            deleteOutflowBoundaryPolygon;
+        case{'loadoutflowboundarypolygon'}
+            loadOutflowBoundaryPolygon;
+        case{'saveoutflowboundarypolygon'}
+            saveOutflowBoundaryPolygon;
 
+        case{'selectwaterlevelboundarypolygon'}
+            selectWaterlevelBoundaryPolygon;
+        case{'drawwaterlevelboundarypolygon'}
+            drawWaterlevelBoundaryPolygon;
+        case{'deletewaterlevelboundarypolygon'}
+            deleteWaterlevelBoundaryPolygon;
+        case{'loadwaterlevelboundarypolygon'}
+            loadWaterlevelBoundaryPolygon;
+        case{'savewaterlevelboundarypolygon'}
+            saveWaterlevelBoundaryPolygon;            
             
         case{'generatemask'}
             generateMask;
@@ -578,45 +588,45 @@ fclose(fid);
 
 
 %%
-function selectOpenBoundaryPolygon
+function selectOutflowBoundaryPolygon
 handles=getHandles;
 setHandles(handles);
 
 
 %%
-function drawOpenBoundaryPolygon
+function drawOutflowBoundaryPolygon
 
 handles=getHandles;
 ddb_zoomOff;
 
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonhandle=gui_polyline('draw','tag','sfincsopenboundarypolygon','color','b','marker','o', ...
-    'createcallback',@createOpenBoundaryPolygon,'changecallback',@changeOpenBoundaryPolygon, ...
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonhandle=gui_polyline('draw','tag','sfincsoutflowboundarypolygon','color','b','marker','o', ...
+    'createcallback',@createOutflowBoundaryPolygon,'changecallback',@changeOutflowBoundaryPolygon, ...
     'closed',1);
 
 setHandles(handles);
 
 %%
-function createOpenBoundaryPolygon(h,x,y)
+function createOutflowBoundaryPolygon(h,x,y)
 handles=getHandles;
-handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons=handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons+1;
-iac=handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(iac).handle=h;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(iac).x=x;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(iac).y=y;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(iac).length=length(x);
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames{iac}=['polygon_' num2str(iac,'%0.3i')];
-handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon=iac;
+handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons=handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons+1;
+iac=handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(iac).handle=h;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(iac).x=x;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(iac).y=y;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(iac).length=length(x);
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames{iac}=['polygon_' num2str(iac,'%0.3i')];
+handles.toolbox.modelmaker.sfincs.mask.activeoutflowboundarypolygon=iac;
 setHandles(handles);
 gui_updateActiveTab;
 
 %%
-function deleteOpenBoundaryPolygon
+function deleteOutflowBoundaryPolygon
 
 handles=getHandles;
 
-iac=handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon;
-if handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons>0
-    h=handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(iac).handle;
+iac=handles.toolbox.modelmaker.sfincs.mask.activeoutflowboundarypolygon;
+if handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons>0
+    h=handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(iac).handle;
     if ~isempty(h)
         try
             delete(h);
@@ -624,82 +634,82 @@ if handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons>0
     end
 end
 
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon=removeFromStruc(handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon,iac);
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames=removeFromCellArray(handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames,iac);
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon=removeFromStruc(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon,iac);
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames=removeFromCellArray(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames,iac);
 
-handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons=max(handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons-1,0);
-handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon=min(handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon,handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons);
+handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons=max(handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons-1,0);
+handles.toolbox.modelmaker.sfincs.mask.activeoutflowboundarypolygon=min(handles.toolbox.modelmaker.sfincs.mask.activeoutflowboundarypolygon,handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons);
 
-if handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons==0
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon=[];
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).x=[];
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).y=[];
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).length=0;
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).handle=[];
-    handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons=0;
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames={''};
-    handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon=1;
+if handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons==0
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon=[];
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).x=[];
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).y=[];
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).length=0;
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).handle=[];
+    handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons=0;
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames={''};
+    handles.toolbox.modelmaker.sfincs.mask.activeoutflowboundarypolygon=1;
 end
 
 setHandles(handles);
 
 %%
-function changeOpenBoundaryPolygon(h,x,y,varargin)
+function changeOutflowBoundaryPolygon(h,x,y,varargin)
 handles=getHandles;
-for ip=1:handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons
-    if handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).handle==h
+for ip=1:handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons
+    if handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).handle==h
         iac=ip;
         break
     end
 end
 
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(iac).x=x;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(iac).y=y;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(iac).length=length(x);
-handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon=iac;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(iac).x=x;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(iac).y=y;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(iac).length=length(x);
+handles.toolbox.modelmaker.sfincs.mask.activeoutflowboundarypolygon=iac;
 setHandles(handles);
 gui_updateActiveTab;
 
 %%
-function loadOpenBoundaryPolygon
+function loadOutflowBoundaryPolygon
 
 handles=getHandles;
 
 % Clear all
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon=[];
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).x=[];
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).y=[];
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).length=0;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(1).handle=[];
-handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons=0;
-handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames={''};
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon=[];
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).handle=[];
+handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons=0;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames={''};
 
-h=findobj(gca,'Tag','sfincsopenboundarypolygon');
+h=findobj(gca,'Tag','sfincsoutflowboundarypolygon');
 delete(h);
 
-data=tekal('read',handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonfile,'loaddata');
-handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons=length(data.Field);
-handles.toolbox.modelmaker.sfincs.mask.activeopenboundarypolygon=1;
-for ip=1:handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons
+data=tekal('read',handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile,'loaddata');
+handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons=length(data.Field);
+handles.toolbox.modelmaker.sfincs.mask.activeoutflowboundarypolygon=1;
+for ip=1:handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons
     x=data.Field(ip).Data(:,1);
     y=data.Field(ip).Data(:,2);
     if x(end)~=x(1) || y(end)~=y(1)
         x=[x;x(1)];
         y=[y;y(1)];
     end
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).x=x;
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).y=y;
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).length=length(x);
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames{ip}=deblank2(data.Field(ip).Name);
-    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsopenboundarypolygon','color','b','marker','o', ...
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).x=x;
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).y=y;
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).length=length(x);
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames{ip}=deblank2(data.Field(ip).Name);
+    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsoutflowboundarypolygon','color','b','marker','o', ...
         'changecallback',@changeIncludePolygon);
-    handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).handle=h;
+    handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).handle=h;
 end
 
 setHandles(handles);
 
 %%
-function saveOpenBoundaryPolygon
+function saveOutflowBoundaryPolygon
 
 handles=getHandles;
 
@@ -710,17 +720,158 @@ else
     fmt='%11.1f %11.1f\n';
 end
 
-fid=fopen(handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonfile,'wt');
-for ip=1:handles.toolbox.modelmaker.sfincs.mask.nropenboundarypolygons
-    fprintf(fid,'%s\n',handles.toolbox.modelmaker.sfincs.mask.openboundarypolygonnames{ip});
-    fprintf(fid,'%i %i\n',[handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).length 2]);
-    for ix=1:handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).length
-        fprintf(fid,fmt,[handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).x(ix) handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon(ip).y(ix)]);
+fid=fopen(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile,'wt');
+for ip=1:handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons
+    fprintf(fid,'%s\n',handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames{ip});
+    fprintf(fid,'%i %i\n',[handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).length 2]);
+    for ix=1:handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).length
+        fprintf(fid,fmt,[handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).x(ix) handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).y(ix)]);
     end
 end
 fclose(fid);
 
+%%
+function selectWaterlevelBoundaryPolygon
+handles=getHandles;
+setHandles(handles);
 
+
+%%
+function drawWaterlevelBoundaryPolygon
+
+handles=getHandles;
+ddb_zoomOff;
+
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonhandle=gui_polyline('draw','tag','sfincswaterlevelboundarypolygon','color','b','marker','o', ...
+    'createcallback',@createWaterlevelBoundaryPolygon,'changecallback',@changeWaterlevelBoundaryPolygon, ...
+    'closed',1);
+
+setHandles(handles);
+
+%%
+function createWaterlevelBoundaryPolygon(h,x,y)
+handles=getHandles;
+handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons=handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons+1;
+iac=handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(iac).handle=h;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(iac).x=x;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(iac).y=y;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(iac).length=length(x);
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames{iac}=['polygon_' num2str(iac,'%0.3i')];
+handles.toolbox.modelmaker.sfincs.mask.activewaterlevelboundarypolygon=iac;
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function deleteWaterlevelBoundaryPolygon
+
+handles=getHandles;
+
+iac=handles.toolbox.modelmaker.sfincs.mask.activewaterlevelboundarypolygon;
+if handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons>0
+    h=handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(iac).handle;
+    if ~isempty(h)
+        try
+            delete(h);
+        end
+    end
+end
+
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon=removeFromStruc(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon,iac);
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames=removeFromCellArray(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames,iac);
+
+handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons=max(handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons-1,0);
+handles.toolbox.modelmaker.sfincs.mask.activewaterlevelboundarypolygon=min(handles.toolbox.modelmaker.sfincs.mask.activewaterlevelboundarypolygon,handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons);
+
+if handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons==0
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon=[];
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).x=[];
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).y=[];
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).length=0;
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).handle=[];
+    handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons=0;
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames={''};
+    handles.toolbox.modelmaker.sfincs.mask.activewaterlevelboundarypolygon=1;
+end
+
+setHandles(handles);
+
+%%
+function changeWaterlevelBoundaryPolygon(h,x,y,varargin)
+handles=getHandles;
+for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons
+    if handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).handle==h
+        iac=ip;
+        break
+    end
+end
+
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(iac).x=x;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(iac).y=y;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(iac).length=length(x);
+handles.toolbox.modelmaker.sfincs.mask.activewaterlevelboundarypolygon=iac;
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function loadWaterlevelBoundaryPolygon
+
+handles=getHandles;
+
+% Clear all
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon=[];
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).handle=[];
+handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons=0;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames={''};
+
+h=findobj(gca,'Tag','sfincswaterlevelboundarypolygon');
+delete(h);
+
+data=tekal('read',handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile,'loaddata');
+handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons=length(data.Field);
+handles.toolbox.modelmaker.sfincs.mask.activewaterlevelboundarypolygon=1;
+for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons
+    x=data.Field(ip).Data(:,1);
+    y=data.Field(ip).Data(:,2);
+    if x(end)~=x(1) || y(end)~=y(1)
+        x=[x;x(1)];
+        y=[y;y(1)];
+    end
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).x=x;
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).y=y;
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).length=length(x);
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames{ip}=deblank2(data.Field(ip).Name);
+    h=gui_polyline('plot','x',x,'y',y,'tag','sfincswaterlevelboundarypolygon','color','b','marker','o', ...
+        'changecallback',@changeIncludePolygon);
+    handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).handle=h;
+end
+
+setHandles(handles);
+
+%%
+function saveWaterlevelBoundaryPolygon
+
+handles=getHandles;
+
+cs=handles.screenParameters.coordinateSystem.type;
+if strcmpi(cs,'geographic')
+    fmt='%12.7f %12.7f\n';
+else
+    fmt='%11.1f %11.1f\n';
+end
+
+fid=fopen(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile,'wt');
+for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons
+    fprintf(fid,'%s\n',handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames{ip});
+    fprintf(fid,'%i %i\n',[handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).length 2]);
+    for ix=1:handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).length
+        fprintf(fid,fmt,[handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).x(ix) handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).y(ix)]);
+    end
+end
+fclose(fid);
 
 
 
@@ -736,6 +887,7 @@ id=ad;
 xg=handles.model.sfincs.domain(id).gridx;
 yg=handles.model.sfincs.domain(id).gridy;
 zg=handles.model.sfincs.domain(id).gridz;
+msk=handles.model.sfincs.domain(id).mask;
 
 %% Update model data
 handles.model.sfincs.domain(id).gridz=zg;
@@ -743,11 +895,13 @@ handles.model.sfincs.domain(id).gridz=zg;
 %% Now make the mask matrix
 zmin=handles.toolbox.modelmaker.sfincs.zmin;
 zmax=handles.toolbox.modelmaker.sfincs.zmax;
+zlev_polygon=handles.toolbox.modelmaker.sfincs.zlev_polygon;
 
 xy_in=handles.toolbox.modelmaker.sfincs.mask.includepolygon;
 xy_ex=handles.toolbox.modelmaker.sfincs.mask.excludepolygon;
 xy_closedboundary=handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon;
-xy_outflowboundary=handles.toolbox.modelmaker.sfincs.mask.openboundarypolygon;
+xy_outflowboundary=handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon;
+xy_waterlevelboundary=handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon;
 
 if xy_in(1).length==0
     xy_in=[];
@@ -761,9 +915,25 @@ end
 if xy_outflowboundary(1).length==0
     xy_outflowboundary=[];
 end
+if xy_waterlevelboundary(1).length==0
+    xy_waterlevelboundary=[];
+end
 
-msk=sfincs_make_mask(xg,yg,zg,[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_closedboundary,'outflowboundarypolygon',xy_outflowboundary);
-msk(isnan(zg))=0;
+disp('TODO: make order changeable as in user defined!')
+zlev = [zmin zmax];
+
+% 'reuse'
+% msk=sfincs_make_mask_advanced(xg,yg,zg,'zlev',zlev,'includepolygon',xy_in,'excludepolygon',xy_ex,'zlev_polygon',zlev_polygon,'waterlevelboundarypolygon',xy_waterlevelboundary,'outflowboundarypolygon',xy_outflowboundary,'closedboundarypolygon',xy_closedboundary);
+% msk=sfincs_make_mask_advanced(xg,yg,zg,'zlev',zlev,'includepolygon',xy_in,'excludepolygon',xy_ex);
+% msk=sfincs_make_mask_advanced(xg,yg,zg,'includepolygon',xy_in,'excludepolygon',xy_ex,'waterlevelboundarypolygon',xy_waterlevelboundary);
+% msk=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'excludepolygon',xy_ex,'includepolygon',xy_in,'zlev_polygon',zlev_polygon,'waterlevelboundarypolygon',xy_waterlevelboundary);
+msk=sfincs_make_mask_advanced(xg,yg,zg,'reuse',msk,'zlev_polygon',zlev_polygon,'outflowboundarypolygon',xy_outflowboundary,'closedboundarypolygon',xy_closedboundary);
+
+% msk=sfincs_make_mask(xg,yg,zg,'zlev',[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_closedboundary,'outflowboundarypolygon',xy_outflowboundary,'waterlevelboundarypolygon',xy_waterlevelboundary);
+% msk(isnan(zg))=0; %KEEP THIS????
+
+% QUESTION: UPDATE elevation Z TOO?
+
 handles.model.sfincs.domain(id).mask=msk;
 
 %% And save the files
