@@ -149,6 +149,15 @@ else
         case{'downoptionactivegrid'}
             downOptionActiveGrid;            
             
+        case{'useoptionboundarycells'}
+            useOptionBoundaryCells;
+        case{'removeoptionboundarycells'}
+            removeOptionBoundaryCells;            
+        case{'upoptionboundarycells'}
+            upOptionBoundaryCells;
+        case{'downoptionboundarycells'}
+            downOptionBoundaryCells;        
+            
         case{'generatemask'}
             generateMask;
     end
@@ -957,6 +966,85 @@ if handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options>0
     handles.toolbox.modelmaker.sfincs.mask.activegrid_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.activegrid_action, iac,'down');
     
     handles.toolbox.modelmaker.sfincs.mask.activegrid_option=iac-1;
+    
+    setHandles(handles);
+end
+
+%%
+function useOptionBoundaryCells
+
+handles=getHandles;
+
+id=handles.toolbox.modelmaker.sfincs.mask.boundarycells_index;
+name=handles.toolbox.modelmaker.sfincs.mask.boundarycells_options{id};
+
+% Check if dataset is already selected
+usedd=1;
+for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options
+    if strcmpi(handles.toolbox.modelmaker.sfincs.mask.boundarycells_action{ii},name)
+        usedd=0;
+        break
+    end
+end
+
+if usedd
+
+    handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options=handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options+1;
+    n=handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options;
+    
+    handles.toolbox.modelmaker.sfincs.mask.boundarycells_action{n}=name;    
+    handles.toolbox.modelmaker.sfincs.mask.boundarycells_option=n;    
+
+end
+
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function removeOptionBoundaryCells
+% Remove selected dataset
+
+handles=getHandles;
+
+if handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options>0
+    iac=handles.toolbox.modelmaker.sfincs.mask.boundarycells_option;  
+    
+    handles.toolbox.modelmaker.sfincs.mask.boundarycells_action=removeFromCellArray(handles.toolbox.modelmaker.sfincs.mask.boundarycells_action, iac);
+    
+    handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options=handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options-1;
+    handles.toolbox.modelmaker.sfincs.mask.boundarycells_option=max(min(iac,handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options),1);
+    
+    setHandles(handles);
+    gui_updateActiveTab;
+end
+
+%%
+function upOptionBoundaryCells
+% Move selected dataset up
+handles=getHandles;
+
+if handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options>0
+    iac=handles.toolbox.modelmaker.sfincs.mask.boundarycells_option;  
+
+    handles.toolbox.modelmaker.sfincs.mask.boundarycells_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.boundarycells_action, iac,'up');
+    
+    handles.toolbox.modelmaker.sfincs.mask.boundarycells_option=iac-1;
+    
+    setHandles(handles);
+end
+
+%%
+function downOptionBoundaryCells
+
+% Move selected dataset down
+handles=getHandles;
+
+if handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options>0
+    iac=handles.toolbox.modelmaker.sfincs.mask.boundarycells_option;  
+
+    handles.toolbox.modelmaker.sfincs.mask.boundarycells_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.boundarycells_action, iac,'down');
+    
+    handles.toolbox.modelmaker.sfincs.mask.boundarycells_option=iac-1;
     
     setHandles(handles);
 end

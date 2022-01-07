@@ -275,7 +275,7 @@ handles.toolbox.modelmaker.sfincs.mask.activegrid_index = 1;
 handles.toolbox.modelmaker.sfincs.mask.activegrid_option = 1;
 handles.toolbox.modelmaker.sfincs.mask.activegrid_action={'current mask'};
 
-handles.toolbox.modelmaker.sfincs.mask.boundarycells_options = {'closed boundary polygon','waterlevel boundary polygon','outflow boundary polygon','elevation as in quick mode'};
+handles.toolbox.modelmaker.sfincs.mask.boundarycells_options = {'waterlevel boundary','outflow boundary','closed boundary','elevation'};
 handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options = 0;
 handles.toolbox.modelmaker.sfincs.mask.boundarycells_index = 1;
 handles.toolbox.modelmaker.sfincs.mask.boundarycells_option = 1;

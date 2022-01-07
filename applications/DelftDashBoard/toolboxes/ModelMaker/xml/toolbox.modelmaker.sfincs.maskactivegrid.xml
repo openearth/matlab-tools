@@ -149,19 +149,19 @@
  
   <element>
     <style>edit</style>
-    <position>440 100 50 20</position>
+    <position>420 100 50 20</position>
     <tooltipstring>Edit maximum elevation SFINCS model</tooltipstring>
     <text>Zmax</text>
-    <textposition>left</textposition>
+    <textposition>right</textposition>
     <variable>handles.toolbox.modelmaker.sfincs.zmax</variable>
     <type>real</type>
   </element>
   <element>
     <style>edit</style>
-    <position>440 75 50 20</position>
+    <position>420 75 50 20</position>
     <tooltipstring>Edit minimum elevation SFINCS model</tooltipstring>
     <text>Zmin</text>
-    <textposition>left</textposition>
+    <textposition>right</textposition>
     <variable>handles.toolbox.modelmaker.sfincs.zmin</variable>
     <type>real</type>
   </element>
@@ -172,7 +172,7 @@
     <textposition>above-center</textposition>    
     <variable>handles.toolbox.modelmaker.sfincs.mask.activegrid_index</variable>
     <type>integer</type>
-    <position>510 20 100 100</position>
+    <position>800 20 100 100</position>
     <tooltipstring>Available options for determining active cells of mask</tooltipstring>
     <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
     <option1>selectdataset</option1>
@@ -183,7 +183,7 @@
   
   <element>
     <style>pushbutton</style>
-    <position>620 70 80 20</position>
+    <position>910 70 80 20</position>
     <text>Use Dataset</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>useoptionactivegrid</option1>
@@ -196,7 +196,7 @@
     <textposition>above-center</textposition>
     <variable>handles.toolbox.modelmaker.sfincs.mask.activegrid_option</variable>
     <type>integer</type>
-    <position>710 20 100 100</position>
+    <position>1000 20 100 100</position>
     <tooltipstring>Selected options. Options should be ordered from first action to be done to the last.</tooltipstring>
     <onchange>ddb_ModelMakerToolbox_sfincs_mask</onchange>
     <option1>pickselecteddataset</option1>
@@ -207,22 +207,21 @@
   
   <element>
     <style>pushbutton</style>
-    <position>820 100 80 20</position>
+    <position>1100 100 80 20</position>
     <text>Remove Option</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>removeoptionactivegrid</option1>   
-  </element>
-  
+  </element>  
   <element>
     <style>pushbutton</style>
-    <position>820 80 80 20</position>
+    <position>1100 80 80 20</position>
     <text>Move Up</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>upoptionactivegrid</option1>    
   </element>
   <element>
     <style>pushbutton</style>
-    <position>820 60 80 20</position>
+    <position>1100 60 80 20</position>
     <text>Move Down</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>downoptionactivegrid</option1>
@@ -230,9 +229,9 @@
   
   <element>
     <style>pushbutton</style>
-    <position>1000 70 100 20</position>
+    <position>1210 100 100 20</position>
     <tooltipstring>Push to generate model mask file</tooltipstring>
-    <text>Make Mask</text>
+    <text>Update Mask</text>
     <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
     <option1>generatemask</option1>
     <enable>1</enable>
