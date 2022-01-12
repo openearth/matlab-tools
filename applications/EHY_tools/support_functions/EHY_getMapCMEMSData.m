@@ -34,5 +34,4 @@ end
 if size(values,1) == 1
     values = squeeze(values);
 end
-
-
+values = flipud(values);

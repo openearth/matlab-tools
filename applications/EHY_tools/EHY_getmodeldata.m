@@ -466,7 +466,7 @@ switch modelType
         for i_stat = 1:length(dims(stationsInd).index)
             % stat_ind
             if ischar(stat_name); stat_name = cellstr(stat_name); end
-            if ~strcmp(Data.requestedStations{i_stat},stat_name{i_stat})  %GTSO-03 > GTSO-03 (01), GTSO-03 (02), etc.
+            if ~isempty(stat_name) && ~strcmp(Data.requestedStations{i_stat},stat_name{i_stat})  %GTSO-03 > GTSO-03 (01), GTSO-03 (02), etc.
                 S = regexp(Data.stationNames, regexptranslate('wildcard',[stat_name{i_stat} '*']));
                 stat_ind = find(~cellfun(@isempty,S));
                 dims(end+1).name = 'layers';

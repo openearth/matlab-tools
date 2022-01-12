@@ -34,7 +34,7 @@ switch modelType
         outputDir = EHY_getOutputDirFM(mdFile);
         mdu = dflowfm_io_mdu('read',mdFile);
         
-        if isfield(mdu.output,'StatsInterval') && mdu.output.StatsInterval > 0
+        if isfield(mdu.output,'StatsInterval') && ~isempty(mdu.output.StatsInterval) && mdu.output.StatsInterval > 0
             if exist([outputDir name '_0001.dia'],'file')
                 diaFile = [outputDir name '_0001.dia'];
             else

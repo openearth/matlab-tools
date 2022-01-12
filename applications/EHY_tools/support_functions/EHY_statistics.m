@@ -1,6 +1,9 @@
 function [Statistics,Z_int] = EHY_statistics(varargin)
 %% [Statistics,Z_int] = EHY_statistics(varargin)
 %
+% function Statistics = EHY_statistics(Z_sim, Z_obs)
+% Simulated vs. observed values. No interpolation of x- or time (see below) is performed
+%
 % 1D: function Statistics = EHY_statistics(X_sim, Z_sim, X_obs, Z_obs)
 % uses interp1
 %
@@ -40,7 +43,13 @@ if any(cellfun(@isempty,varargin))
 end
 
 %% Interpolate
-if nargin == 4 % Statistics = EHY_statistics(X_sim, Z_sim, X_obs, Z_obs)
+if nargin == 2 % Statistics = EHY_statistics(X_sim, Z_sim, X_obs, Z_obs)
+    
+    Z_sim = varargin{1};
+    Z_int = Z_sim;
+    Z_obs = varargin{2};
+
+elseif nargin == 4 % Statistics = EHY_statistics(X_sim, Z_sim, X_obs, Z_obs)
     
     X_sim = varargin{1};
     Z_sim = varargin{2};
