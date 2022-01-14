@@ -265,7 +265,7 @@ nt=length(tc.track);
 
 % Convert wind speeds to m/s
 switch lower(tc.wind_speed_unit)
-    case{'kts','kt','knots'}
+    case{'kts','kt','knots','knts'}
         tc.radius_velocity=tc.radius_velocity*kts2ms*spw.wind_conversion_factor;    % Convert to m/s
         for it=1:nt
             tc.track(it).vmax=tc.track(it).vmax*kts2ms*spw.wind_conversion_factor;  % Convert to m/s
