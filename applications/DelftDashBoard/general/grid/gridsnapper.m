@@ -91,9 +91,15 @@ for ip=1:np-1
         
         dst=sqrt((xs-xxx).^2 + (ys-yyy).^2);
         inear=find(dst==min(dst));
-        inear=inear(1);
         
-        if nnew(inear)~=nlast || mnew(inear)~=mlast
+        if isempty(inear)
+            disp('warning')
+        else
+        inear=inear(1);
+            
+        end
+        
+        if nnew(inear)~=nlast | mnew(inear)~=mlast
             
             % New point found !!!
             

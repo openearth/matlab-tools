@@ -313,8 +313,9 @@ end
 fclose(fid);
 
 %%
-function I = robustgeotiffinfo(fname)
+function I2 = robustgeotiffinfo(fname)
 I=imfinfo(fname);
+I2 = I;%(1); %was needed for FHICS models
 
 %%
 function [x,y]=robustpixcenters(I)

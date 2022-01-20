@@ -70,11 +70,11 @@ for i=1:length(varargin)
             case{'modeloffset'}
                 modeloffset=varargin{i+1};                
             case{'dmin'}
-                dmin=varargin{ii+1};
+                dmin=varargin{i+1};
             case{'internaldiffusion'}
-                internaldiff=varargin{ii+1};
+                internaldiff=varargin{i+1};
             case{'internaldiffusionrange'}
-                internaldiffusionrange=varargin{ii+1};                                
+                internaldiffusionrange=varargin{i+1};                                
             case{'quiet'}
                 quiet=1;
         end
