@@ -870,20 +870,40 @@ end
     end
 % nc2shp
     function [output,OPT] = EHY_convert_nc2shp(inputFile,outputFile,OPT)
-        OPT_user=OPT;
-        OPT.saveOutputFile=0;
-        lines=EHY_convert_nc2ldb(inputFile,outputFile,OPT);
-        OPT=OPT_user;
-        nanInd=find(isnan(lines(:,1)));
-        if nanInd(1)~=1; nanInd = [0; nanInd]; end
-        if nanInd(end)~=size(lines,1); nanInd(end+1) = NaN; end
-        for ii=1:length(nanInd)-1
-            lines2{ii}=lines(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+        GI = EHY_getGridInfo(inputFile,'face_nodes_xy');
+        if isfield(GI,'face_nodes_x')
+            % write as shape 'polygon'
+            
+            XYcell(1:size(GI.face_nodes_x,2),1) = {[]};
+            for i = 1:size(GI.face_nodes_x,2)
+                nonan = ~isnan(GI.face_nodes_x(:,i));
+                XYcell{i,1} = [GI.face_nodes_x(nonan,i) GI.face_nodes_y(nonan,i)];
+            end
+            
+            if OPT.saveOutputFile
+                shapewrite(outputFile,'polygon',XYcell)
+            end
+            output.face_nodes_x = GI.face_nodes_x;
+            output.face_nodes_y = GI.face_nodes_y;
+        else
+            % write as shape 'polyline'
+            disp('There is no UGRID-info available in your network. A shapefile ''polyline'' is created.')
+            disp('In case you want a shapefile ''polygon'', save your grid as UGRID (via RGFGRID or interacter [open grid, save as.. UGRID]) and try again.')
+            OPT_user = OPT;
+            OPT.saveOutputFile = 0;
+            lines = EHY_convert_nc2ldb(inputFile,outputFile,OPT);
+            OPT = OPT_user;
+            nanInd = find(isnan(lines(:,1)));
+            if nanInd(1)~=1; nanInd = [0; nanInd]; end
+            if nanInd(end)~=size(lines,1); nanInd(end+1) = NaN; end
+            for ii = 1:length(nanInd)-1
+                lines2{ii} = lines(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+            end
+            if OPT.saveOutputFile
+                shapewrite(outputFile,'polyline',lines2,{})
+            end
+            output = lines;
         end
-        if OPT.saveOutputFile
-            shapewrite(outputFile,'polyline',lines2,{})
-        end
-        output=lines;
     end
 % obs2kml
     function [output,OPT] = EHY_convert_obs2kml(inputFile,outputFile,OPT)
