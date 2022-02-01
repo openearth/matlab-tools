@@ -640,12 +640,12 @@ for it=1:nt
     
 end
 
-% tc.track(it).dpcdt=zeros(size(pc));
-for it2=2:length(tc.track)-1
-    tc.track(it2).dpcdt=(tc.track(it2+1).pc-tc.track(it2-1).pc)/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
-end
-tc.track(1).dpcdt=tc.track(2).dpcdt;
-tc.track(end).dpcdt=tc.track(end-1).dpcdt;
+% % tc.track(it).dpcdt=zeros(size(pc));
+% for it2=2:length(tc.track)-1
+%     tc.track(it2).dpcdt=(tc.track(it2+1).pc-tc.track(it2-1).pc)/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
+% end
+% tc.track(1).dpcdt=tc.track(2).dpcdt;
+% tc.track(end).dpcdt=tc.track(end-1).dpcdt;
 
 %% 9) Create (finally) the spiderweb winds
 function [tc,r]=wes_compute_spiderweb_winds_and_pressure(tc,spw,spwinput)
@@ -661,16 +661,18 @@ errs=[];
 for it=1:length(tc.track)
     
     % A) Get values from tc and spw
-    dp   = spw.pn - tc.track(it).pc;
-    vrel = tc.track(it).vmax_rel;
-    pc   = tc.track(it).pc;
-    rmax = tc.track(it).rmax;
-    pn	 = spw.pn;
-    rhoa = spw.rhoa;
-    xn   = 0.5;
-    rn   = 150;
-    lat  = abs(tc.track(it).y);
-    vt   = (tc.track(it).vtx.^2 + tc.track(it).vty.^2).^0.5;
+    dp     = spw.pn - tc.track(it).pc;
+    vrel   = tc.track(it).vmax_rel;
+    pc     = tc.track(it).pc;
+    rmax   = tc.track(it).rmax;
+    pn	   = spw.pn;
+    rhoa   = spw.rhoa;
+    xn     = 0.5;
+    lat    = abs(tc.track(it).y);
+    vt     = (tc.track(it).vtx.^2 + tc.track(it).vty.^2).^0.5;
+    phit   = atan2(tc.track(it).vty,tc.track(it).vtx)*180/pi;
+    ux     = tc.track(it).vtx;
+    uy     = tc.track(it).vty;
     
     % Initialize arrays
     wind_speed=zeros(length(phi),length(r));
@@ -692,13 +694,6 @@ for it=1:length(tc.track)
         end
     end
     
-    % B) Pressure change in time
-    try
-        dpdt = (tc.track(it+1).pc -tc.track(it).pc) / ((tc.track(it+1).time - tc.track(it).time)*24);
-    catch
-        dpdt = (tc.track(it).pc -tc.track(it-1).pc) / ((tc.track(it).time - tc.track(it-1).time)*24);
-    end     
-    
     % C) Holland (2008) related
     % If not known than we assume NOT Holland (2008) values
     if isfield(spwinput, 'holland2008')
@@ -706,36 +701,19 @@ for it=1:length(tc.track)
     else
         spw.holland2008 = 0;
     end
-
-    % If Holland, 2008 we determine xn
-    if spw.holland2008 == 1;
-        xn  = 0.6*(1-dp/215);
-    end
     
-    % D) Holland 2010 related: find xn fit
-    if ~unidir && strcmpi(spw.wind_profile,'holland2010')
-        % Try to compute average Xn from the four quadrants
-        xn_fit=[NaN NaN NaN NaN];
-        iok=0;
-        for iq=1:length(tc.track(it).quadrant)
-            robs=[];
-            vobs=[];
-            n=0;
-            for j=1:2 % Only use R34 and R50
-                if ~isnan(tc.track(it).quadrant(iq).radius(j))
-                    n=n+1;
-                    robs(n)=tc.track(it).quadrant(iq).radius(j);
-                    vobs(n)=tc.track(it).quadrant(iq).relative_speed(j);
-                end
-            end
-            if ~isempty(robs)
-                [vr,pr,rn,xn,rmf]=holland2010(robs,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'robs',robs,'vobs',vobs, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
-                xn_fit(iq)=xn;
-                iok=1;
-            end
+    % D) Holland 2010 related: find fit for xn and asymmetry vector
+    if strcmpi(spw.wind_profile,'holland2010')
+        % Some default values (will be overwritten when there is quadrant data)
+        if spw.holland2008 == 1
+            xn  = 0.6*(1-dp/215);
         end
-        if iok
-            xn=nanmean(xn_fit); % Let's fix this later to more properly take the information in the quadrants into account
+        vtcor = 0.6*vt;        
+        if ~unidir
+            obs.quadrant=tc.track(it).quadrant;
+            [xn,vtcor,phia]=fit_wind_field_holland2010(tc.track(it).vmax,tc.track(it).rmax,tc.track(it).pc,vt,phit,pn,spw.phi_spiral,lat,tc.track(it).dpcdt,obs);
+            ux=vtcor*cos((phit+phia)*pi/180);
+            uy=vtcor*sin((phit+phia)*pi/180);
         end
     end
     
@@ -767,7 +745,11 @@ for it=1:length(tc.track)
         case{'holland1980'}
             [vr,pr]=holland1980(r,pn,pc,vrel,rmax,'rhoa',rhoa);
         case{'holland2010'}
-            [vr,pr]=holland2010(r,vrel,pc,rmax,'pn',pn,'rhoa',rhoa,'xn',xn,'rn',rn, 'vt', vt, 'lat', lat, 'dpdt', dpdt, 'holland2008', spw.holland2008);
+            vms     = tc.track(it).vmax - vtcor;
+            pc      = tc.track(it).pc;
+            rmax    = tc.track(it).rmax;
+            dpdt    = tc.track(it).dpcdt;
+            [vr,pr] = holland2010_v02(r,vms,pc,pn,rmax,dpdt,lat,vt,xn);
         case{'fujita1952'}
             r0=rmax; % Should adjust here to r0!!!
             c1=0.7;
@@ -813,8 +795,6 @@ for it=1:length(tc.track)
     end
 
     % G. Asymmetry
-    ux=tc.track(it).vtx;
-    uy=tc.track(it).vty;    
     switch lower(spw.asymmetry_option)
         case{'schwerdt1979'}
             % Use Schwerdt (1979) to compute u_prop and v_prop
@@ -833,8 +813,13 @@ for it=1:length(tc.track)
             uy=c2*uy*efold;
         case{'mvo'}
             % Let factor increase from 0 to rmax, and then keep it constant
-            c2=0.6;
-            ff=[0 0.6 0.6];
+            if ~unidir && strcmpi(spw.wind_profile,'holland2010')
+                % Use wind vector from Holland (2010) fit without correction
+                c2=1.0;
+            else
+                c2=0.6;
+            end
+            ff=[0 c2 c2];
             rr=[0 rmax 5000];
             f=interp1(rr,ff,r);
             f=repmat(f,[spw.nr_directional_bins 1]);
