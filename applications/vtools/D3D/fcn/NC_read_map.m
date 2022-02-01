@@ -72,11 +72,13 @@ cnt.g=9.81; %readable from mdu
 
 %% time, space, fractions
 if flg.which_p~=-1
-    
-    [time_r,time_mor_r,time_dnum]=D3D_results_time(file.map,ismor,kt);
-    
+        
     switch simdef.D3D.structure
         case 2 %FM
+            
+            %time
+            [time_r,time_mor_r,time_dnum,time_dtime]=D3D_results_time(file.map,ismor,kt);
+            
             if is1d
                 %take coordinates from curved domain (in case the domain is
                 %straightened)
@@ -141,24 +143,26 @@ if flg.which_p~=-1
                 end
             end
         case 3 %SOBEK3
-            x_node=ncread(file.map,'x_coordinate');
-            y_node=ncread(file.map,'y_coordinate');
+%                     x_node_reach=ncread(file.reach,'x_coordinate');
+%                     y_node_reach=ncread(file.reach,'y_coordinate');
+% 
+%                     offset_reach=ncread(file.reach,'chainage');
+%                     branch_reach=ncread(file.reach,'branchid');
+%                     branch_length_reach=branch_length_sobek3(offset_reach,branch_reach);
+% 
+%                     branch_id_reach=S3_get_branch_order(simdef);            
+            file_read=S3_file_read(flg.which_v,file);
             
-            offset=ncread(file.map,'chainage');
-            branch=ncread(file.map,'branchid');
+            x_node=ncread(file_read,'x_coordinate');
+            y_node=ncread(file_read,'y_coordinate');
+
+            offset=ncread(file_read,'chainage');
+            branch=ncread(file_read,'branchid');
             branch_length=branch_length_sobek3(offset,branch);
-            
+
             branch_id=S3_get_branch_order(simdef);
-            
-            %reachsegments
-            x_node_reach=ncread(file.reach,'x_coordinate');
-            y_node_reach=ncread(file.reach,'y_coordinate');
-            
-            offset_reach=ncread(file.reach,'chainage');
-            branch_reach=ncread(file.reach,'branchid');
-            branch_length_reach=branch_length_sobek3(offset_reach,branch_reach);
-            
-            branch_id_reach=S3_get_branch_order(simdef);
+
+            [time_r,time_mor_r,time_dnum,time_dtime]=D3D_results_time(file_read,ismor,kt);
     end
     
     if in.nfl>1
@@ -502,10 +506,12 @@ switch flg.which_p
                             
                         end
                     case 3 %SOBEK3
-                        out=get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
+                        out=get_sobek3_data('water_velocity',file_read,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='depth-averaged velocity [m/s]';
             case 11 %velocity
+                switch simdef.D3D.structure
+                    case 2
                 ucx=ncread(file.map,'mesh2d_ucx',[1,1,kt(1)],[Inf,Inf,kt(2)]);
                 ucy=ncread(file.map,'mesh2d_ucy',[1,1,kt(1)],[Inf,Inf,kt(2)]);
                 ucz=ncread(file.map,'mesh2d_ucz',[1,1,kt(1)],[Inf,Inf,kt(2)]);
@@ -649,7 +655,10 @@ switch flg.which_p
                 out.y_face_s=in.pol.y;
                 out.z_face_s=z_face_s;
                 
-                
+                    case 3
+                        error('use variable 10 rather than 11')
+%                         out=get_sobek3_data('water_velocity',file_read,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
+                end
                 out.zlabel='velocity [m/s]';
                 %%
             case 12 %water level
@@ -674,7 +683,7 @@ switch flg.which_p
                             end                            
                         end
                     case 3 %SOBEK3
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=get_sobek3_data('water_level',file_read,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='water level [m]';
                 %%
@@ -1511,6 +1520,9 @@ end
 if exist('time_mor_r','var')
     out.time_mor=time_mor_r;
 end
+if exist('time_dtime','var')
+    out.time_dtime=time_dtime;
+end
 out.time_r=time_r;
 
 out.kf=kf;
@@ -1799,8 +1811,8 @@ o_o=o_br(u_idx);
 
 %output
 out.z=wl_o;
-out.XZ=x_node;
-out.YZ=y_node;
+out.XZ=x_node(u_idx);
+out.YZ=y_node(u_idx);
 out.SZ=o_o;
 
 end %function

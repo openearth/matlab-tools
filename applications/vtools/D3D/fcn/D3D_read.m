@@ -27,9 +27,15 @@
 
 function out=D3D_read(simdef,in)
 
+%% parse error
+
+if simdef.err==1
+    error('There is an error in reading the folder. I cannot find the right files. Check <D3D_simpath>')
+end
+
 %% grid output
 
-if strcmp(simdef.flg.which_p,'grid')
+if isfield(simdef.flg,'which_p')==1 && strcmp(simdef.flg.which_p,'grid')
     switch simdef.D3D.structure
         case 1
             out=wlgrid('read',fullfile(simdef.D3D.dire_sim,'grd.grd'));
@@ -211,12 +217,15 @@ switch simdef.D3D.structure
                     error('ups... you will have to modify this to get the dimensions only')
             out=D3D_read_his(simdef,in);
         end
-    case {2,3}
+    case 2
         if isa(simdef.flg.which_p,'double')
             out=NC_read_dimensions(simdef.file.map);
         else
             out=NC_read_dimensions(simdef.file.his);
         end
+    case 3
+        file_read=S3_file_read(simdef.flg.which_v,simdef.file);
+        out=NC_read_dimensions(file_read);
 end
   
 end

@@ -21,8 +21,9 @@
 function D3D_bc_q0(simdef)
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
-
+file_name=simdef.file.bc_q0;
+% dire_sim=simdef.D3D.dire_sim;
+fname_pli_u=simdef.pli.fname_u;
 time=simdef.bct.time;
 Q=simdef.bct.Q;
 
@@ -49,7 +50,7 @@ nt=length(time);
 kl=1;
 for kun=1:upstream_nodes
     data{kl, 1}=        '[forcing]'; kl=kl+1;
-    data{kl, 1}=sprintf('Name                            = Upstream_%02d_0001',kun); kl=kl+1;
+    data{kl, 1}=sprintf('Name                            = %s_%02d_0001',fname_pli_u,kun); kl=kl+1;
     data{kl, 1}=        'Function                        = timeseries'; kl=kl+1;
     data{kl, 1}=        'Time-interpolation              = linear'; kl=kl+1;
     data{kl, 1}=        'Quantity                        = time'; kl=kl+1;
@@ -61,7 +62,7 @@ for kun=1:upstream_nodes
     end
     data{kl, 1}=''; kl=kl+1;
     data{kl, 1}=        '[forcing]'; kl=kl+1;
-    data{kl, 1}=sprintf('Name                            = Upstream_%02d_0002',kun); kl=kl+1;
+    data{kl, 1}=sprintf('Name                            = %s_%02d_0002',fname_pli_u,kun); kl=kl+1;
     data{kl, 1}=        'Function                        = timeseries'; kl=kl+1;
     data{kl, 1}=        'Time-interpolation              = linear'; kl=kl+1;
     data{kl, 1}=        'Quantity                        = time'; kl=kl+1;
@@ -76,6 +77,6 @@ end %knu
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'bc_q0.bc');
+% file_name=fullfile(dire_sim,'bc_q0.bc');
 writetxt(file_name,data)
 

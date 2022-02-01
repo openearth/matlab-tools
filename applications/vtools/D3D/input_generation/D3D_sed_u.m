@@ -33,7 +33,8 @@ check_existing=parin.Results.check_existing;
 
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
+% dire_sim=simdef.D3D.dire_sim;
+file_name=simdef.file.sed;
 IFORM=simdef.tra.IFORM; %sediment transport flag [-] [integer(1,1)] 2=MPM; 4=MPM-based; 14=AM
 sedTrans=simdef.tra.sedTrans;
 dk=simdef.sed.dk;
@@ -43,7 +44,6 @@ if isfield(simdef.tra,'node_relations')
     node_relations=simdef.tra.node_relations;
 end
     
-
 %other
 nf=length(dk); %number of fractions 
 
@@ -106,5 +106,5 @@ end
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'sed.sed');
+% file_name=fullfile(dire_sim,'sed.sed');
 writetxt(file_name,data,'check_existing',check_existing)

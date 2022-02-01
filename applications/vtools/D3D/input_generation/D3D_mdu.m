@@ -19,15 +19,27 @@
 %   -a .mdf file compatible with D3D is created in folder_out
 %
 
-function D3D_mdu(simdef)
+function D3D_mdu(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
+% dire_sim=simdef.D3D.dire_sim;
 
-runid_serie=simdef.runid.serie;
-runid_number=simdef.runid.number;
+% runid_serie=simdef.runid.serie;
+% runid_number=simdef.runid.number;
 
-restart=simdef.mdf.restart;
+% restart=simdef.mdf.restart;
 Tstart=simdef.mdf.Tstart;
 % Tunit=simdef.mdf.Tunit;
 % Tfact=simdef.mdf.Tfact;
@@ -65,6 +77,9 @@ morphology=simdef.mor.morphology;
 
 filter=simdef.mdf.filter;
 
+% file_name=simdef.runid.name;
+file_name=simdef.file.mdf;
+
 %% FILE
 
 kl=1;
@@ -81,9 +96,9 @@ data{kl,1}=        'AutoStart         = 0               '; kl=kl+1;
 data{kl,1}=        ''; kl=kl+1;
 %% GEOMETRY
 data{kl,1}=        '[geometry]'; kl=kl+1;
-data{kl,1}=        'NetFile           = net.nc'  ; kl=kl+1;
+data{kl,1}=sprintf('NetFile           = %s',simdef.mdf.grd); kl=kl+1;
 % if simdef.mor.morphology || simdef.grd.cell_type
-data{kl,1}=        'BathymetryFile    =  dep.xyz' ; kl=kl+1;
+data{kl,1}=sprintf('BathymetryFile    = %s',simdef.mdf.dep); kl=kl+1;
 % else
 % data{kl,1}=        'BathymetryFile    =         ' ; kl=kl+1;
 % end
@@ -91,6 +106,7 @@ data{kl,1}=        'DryPointsFile     =         '; kl=kl+1;
 data{kl,1}=        'GridEnclosureFile =         '; kl=kl+1;
 if simdef.ini.etaw_type==2
 data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.ini.etaw_file); kl=kl+1;
+% data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.mdf.etaw_file); kl=kl+1;
 else
 data{kl,1}=        'WaterLevIniFile   =         '; kl=kl+1;
 end
@@ -108,7 +124,7 @@ data{kl,1}=        'ManholeFile       =         '; kl=kl+1;
 if simdef.ini.etaw_type==1
 data{kl,1}=sprintf('WaterLevIni       = %0.7E',etab+h); kl=kl+1;
 else
-data{kl,1}=sprintf('WaterLevIni       = 0    ',etab+h); kl=kl+1;
+data{kl,1}=        'WaterLevIni       = 0    '; kl=kl+1;
 end
 % if simdef.ini.etab0_type==2
 % data{kl,1}=sprintf('Bedlevuni         = %0.7E',etab); kl=kl+1;
@@ -168,7 +184,7 @@ data{kl,1}=        'FixedWeirfrictscheme= 1        '; kl=kl+1;
 data{kl,1}=        'Fixedweirtopwidth = 3          '; kl=kl+1;
 data{kl,1}=        'Fixedweirtopfrictcoef= -999    '; kl=kl+1;
 data{kl,1}=        'Fixedweirtalud    = 4          '; kl=kl+1;
-data{kl,1}=        'Izbndpos          = 0          '; kl=kl+1;
+data{kl,1}=        'Izbndpos          = 1          '; kl=kl+1;
 data{kl,1}=        'Tlfsmo            = 0          '; kl=kl+1;
 data{kl,1}=        'Logprofatubndin   = 1          '; kl=kl+1; % ubnds inflow: 0=uniform U1, 1 = log U1, 2 = user3D
 data{kl,1}=        'Logprofkepsbndin  = 0          '; kl=kl+1; % inflow: 0=0 keps, 1 = log keps inflow, 2 = log keps in and outflow
@@ -250,7 +266,7 @@ data{kl,1}=sprintf('DtUser            = %0.7E',Dt); kl=kl+1;
 data{kl,1}=        'DtNodal           =                              '; kl=kl+1;
 data{kl,1}=sprintf('DtMax             = %0.7E',Dt); kl=kl+1;
 data{kl,1}=        'DtInit            = 1                            '; kl=kl+1;
-data{kl,1}=        'Timestepanalysis  = 1                            '; kl=kl+1; %# 0=no, 1=see file *.steps
+data{kl,1}=        'Timestepanalysis  = 0                            '; kl=kl+1; %# 0=no, 1=see file *.steps
 data{kl,1}=        'Autotimestepdiff  = 0                            '; kl=kl+1; %# 0 = no, 1 = yes (Time limitation based on explicit diffusive term)
 data{kl,1}=        'Tunit             = S                            '; kl=kl+1;
 data{kl,1}=        'TStart            = 0                            '; kl=kl+1;
@@ -264,7 +280,7 @@ data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 data{kl,1}=        '[external forcing]                               '; kl=kl+1;
 data{kl,1}=        'ExtForceFile      =                              '; kl=kl+1;
-data{kl,1}=        'ExtForceFileNew   = bnd.ext                      '; kl=kl+1;
+data{kl,1}=sprintf('ExtForceFileNew   = %s',simdef.mdf.extn)          ; kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 data{kl,1}=        '[trachytopes]                                    '; kl=kl+1;
@@ -318,7 +334,7 @@ data{kl,1}=        'Wrimap_flow_flux_q1_main= 1                      '; kl=kl+1;
 data{kl,1}=        'Wrimap_spiral_flow= 1                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_numlimdt   = 1                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_taucurrent = 1                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_chezy      = 0                            '; kl=kl+1;
+data{kl,1}=        'Wrimap_chezy      = 1                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_turbulence = 1                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_wind       = 0                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_heat_fluxes= 0                            '; kl=kl+1;
@@ -338,16 +354,16 @@ data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 if morphology
 data{kl,1}=        '[sediment]                                       '; kl=kl+1;
-data{kl,1}=        'MorFile           = mor.mor                      '; kl=kl+1;
-data{kl,1}=        'SedFile           = sed.sed                      '; kl=kl+1;
+data{kl,1}=sprintf('MorFile           = %s                      ',simdef.mdf.mor); kl=kl+1;
+data{kl,1}=sprintf('SedFile           = %s                      ',simdef.mdf.sed); kl=kl+1;
 data{kl,1}=        'Sedimentmodelnr   = 4                            '; kl=kl+1;
 data{kl,1}=        'MorCFL            = 0                            '; kl=kl+1; %# Use morphological time step restriction (1, default) or not (0)
 
 end
 %% WRITE
 
-file_name=fullfile(dire_sim,sprintf('sim_%s%s.mdu',runid_serie,runid_number));
-writetxt(file_name,data)
+% file_name=fullfile(dire_sim,sprintf('sim_%s%s.mdu',runid_serie,runid_number));
+writetxt(file_name,data,'check_existing',check_existing);
 
 %%
 

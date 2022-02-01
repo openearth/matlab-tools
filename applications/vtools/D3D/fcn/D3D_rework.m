@@ -80,6 +80,7 @@ if isfield(simdef.D3D,'structure')==0
     simdef.D3D.structure=0;
 end
 
+
 %%
 %% GRID
 %%
@@ -87,7 +88,11 @@ end
 simdef.grd.dummy=NaN;
 
 if isfield(simdef.file,'grd')==0
-    simdef.file.grd=fullfile(simdef.D3D.dire_sim,'grd.grd');
+    if simdef.D3D.structure==1
+        simdef.file.grd=fullfile(simdef.D3D.dire_sim,'grd.grd');
+    else
+        simdef.file.grd=fullfile(simdef.D3D.dire_sim,'grd_net.nc');
+    end
 end
 
 if isfield(simdef.grd,'cell_type')==0
@@ -143,6 +148,10 @@ end
 %%
 
 simdef.mdf.dummy=NaN;
+
+%grd
+[~,fname,fext]=fileparts(simdef.file.grd); %should always be in simulation folder
+simdef.mdf.grd=sprintf('%s%s',fname,fext);
 
 %secondary flow
 if isfield(simdef.mdf,'secflow')
@@ -210,7 +219,6 @@ else
         simdef.mdf.Flhis_dt=(floor(simdef.mdf.Flhis_dt/simdef.mdf.Dt)+1)*simdef.mdf.Dt;
     end
 end
-
 
 %gravity
 if isfield(simdef.mdf,'g')==0
@@ -286,28 +294,16 @@ if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
     error('adjust flow depth file accordingly')
 end
 
-%%
-%% INI 
-%%
-
-simdef.ini.dummy=NaN;
-
-if isfield(simdef.ini,'etab0_type')==0
-    simdef.ini.etab0_type=1;
-end
-switch simdef.ini.etab0_type
-    case {1,2}
-    case 3
-        aux_dim=size(simdef.ini.xyz);
-        if aux_dim(2)~=3
-            error('dimensions do not agree')
-        end
-    otherwise
-        error('etab0_type nonexistent')
+if isfield(simdef.mdf,'extn')==0
+    simdef.mdf.extn='bnd.ext';
 end
 
-if isfield(simdef.ini,'h')==0
-    simdef.ini.h=NaN;
+if isfield(simdef.mdf,'mor')==0
+    simdef.mdf.mor='mor.mor';
+end
+
+if isfield(simdef.mdf,'sed')==0
+    simdef.mdf.sed='sed.sed';
 end
 
 %%
@@ -315,6 +311,10 @@ end
 %%
 
 simdef.sed.dummy=NaN;
+
+if isfield(simdef.file,'sed')==0
+    simdef.file.sed=fullfile(simdef.D3D.dire_sim,'sed.sed');
+end
 
 if isfield(simdef.sed,'dk')==0
     simdef.sed.dk=[];
@@ -325,6 +325,10 @@ end
 %%
 
 simdef.mor.dummy=NaN;
+
+if isfield(simdef.file,'mor')==0
+    simdef.file.mor=fullfile(simdef.D3D.dire_sim,'mor.mor');
+end
 
 nf=numel(simdef.sed.dk);
 if nf==1
@@ -408,21 +412,131 @@ end
 %% FINI
 %%
 
-if isfield(simdef.file,'fini')==0
-    simdef.file.fini=fullfile(simdef.D3D.dire_sim,'fini.ini');
+simdef.ini.dummy=NaN;
+
+if isfield(simdef.ini,'etaw_type')==0
+    simdef.ini.etaw_type=1;
 end
-if isfield(simdef.ini,'I0')==0
-    simdef.ini.I0=0;
+
+if isfield(simdef.ini,'h')==0
+    simdef.ini.h=NaN;
+end
+
+if simdef.D3D.structure==1
+    if isfield(simdef.file,'fini')==0
+        simdef.file.fini=fullfile(simdef.D3D.dire_sim,'fini.ini');
+    end
+    if isfield(simdef.ini,'I0')==0
+        simdef.ini.I0=0;
+    end
+else
+    if isfield(simdef.file,'etaw')==0
+        simdef.file.etaw=fullfile(simdef.D3D.dire_sim,'etaw.xyz');
+    end
+    if isfield(simdef.ini,'etaw_file')==0
+        simdef.ini.etaw_type='etaw.xyz';
+    end
 end
     
+if isfield(simdef.ini,'etab0_type')==0
+    simdef.ini.etab0_type=1;
+end
+switch simdef.ini.etab0_type
+    case {1,2}
+    case 3
+        aux_dim=size(simdef.ini.xyz);
+        if aux_dim(2)~=3
+            error('dimensions do not agree')
+        end
+    otherwise
+        error('etab0_type nonexistent')
+end
+
 %%
 %% RUNID
 %%
 
-if isfield(simdef,'runid')
-    if isa(simdef.runid.number,'double')
-        error('specify runid as string')
+simdef.runid.dummy=NaN;
+if isfield(simdef.runid,'name')==0
+    if isfield(simdef.runid,'number')
+        if isa(simdef.runid.number,'double')
+            error('specify runid as string')
+        end
     end
+    simdef.runid.name=sprintf('sim_%s%s.mdu',simdef.runid.serie,simdef.runid.number);
+end
+
+%% 
+%% DEP
+%%
+
+if isfield(simdef.file,'dep')==0
+    switch simdef.D3D.structure
+        case 1
+            simdef.mdf.dep='dep.dep';
+            simdef.file.dep=fullfile(simdef.D3D.dire_sim,'dep.dep');
+        case 2
+            simdef.mdf.dep='dep.xyz';
+            simdef.file.dep=fullfile(simdef.D3D.dire_sim,'dep.xyz');
+    end
+end
+
+%%
+%% PLI
+%%
+
+simdef.pli.dummy=NaN;
+if isfield(simdef.file,'fdir_pli')==0
+    simdef.file.fdir_pli=simdef.D3D.dire_sim;
+    simdef.file.fdir_pli_rel='';
+end
+
+if isfield(simdef.pli,'fname_u')==0
+    simdef.pli.fname_u='Upstream';
+end
+
+if isfield(simdef.pli,'str_bc_u')==0
+    simdef.pli.str_bc_u='bc_q0';    
+end
+
+if isfield(simdef.pli,'fname_d')==0
+    simdef.pli.fname_d='Downstream';
+end
+
+if isfield(simdef.pli,'str_bc_d')==0
+    simdef.pli.str_bc_u='bc_wL';    
+end
+
+%%
+%% EXTN
+%%
+
+if isfield(simdef.file,'bc_wL')==0
+    simdef.file.bc_wL=fullfile(simdef.D3D.dire_sim,'bc_wL.bc');    
+end
+
+if isfield(simdef.file,'bc_q0')==0
+    simdef.file.bc_q0=fullfile(simdef.D3D.dire_sim,'bc_q0.bc');    
+end
+
+if isfield(simdef.file,'extn')==0
+    simdef.file.extn=fullfile(simdef.D3D.dire_sim,'bnd.ext');
+end
+
+%%
+%% BC
+%%
+
+if isfield(simdef.file,'fdir_bc_rel')==0
+    simdef.file.fdir_bc_rel='';
+end
+
+simdef.bc.dummy=NaN;
+if isfield(simdef.bc,'fname_u')==0
+    simdef.bc.fname_u='bc_q0';
+end
+if isfield(simdef.bc,'fname_d')==0
+    simdef.bc.fname_d='bc_wL';
 end
 
 %% RENAME OUT

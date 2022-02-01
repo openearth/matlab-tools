@@ -22,11 +22,12 @@ parin=inputParser;
 
 num_str_def=repmat('%0.15E ',1,nx);
 addOptional(parin,'num_str',num_str_def);
+addOptional(parin,'check_existing',1)
 
 parse(parin,varargin{:});
 
 num_str=parin.Results.num_str;
-
+check_existing=parin.Results.check_existing;
 % if isspace(num_str(end))==0
 %     num_str=[num_str,' '];
 % end
@@ -34,7 +35,7 @@ num_str=parin.Results.num_str;
 %% CALC
 
     %check if the file already exists
-if exist(file_name,'file')
+if exist(file_name,'file') && check_existing
     error('You are trying to overwrite a file!')
 end
 

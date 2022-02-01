@@ -165,7 +165,11 @@ vds = hypot(dv(:,1), dv(:,2));
 % check for identical points
 idx = find(vds < 10*eps);
 if(~isempty(idx))
-   error(['Points ' num2str(idx) ' of the polyline are identical']);
+    niden=numel(idx);
+    for kiden=1:niden
+        fprintf('Points %d of the polyline are identical \n',idx(kiden))
+    end
+       error('Cannot handle identical points');
 end
 
 % check for a case when closed polygon's vertices lie on a stright line, 

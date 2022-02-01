@@ -25,10 +25,24 @@
 %OUTPUT:
 %   -a .mor compatible with D3D is created in file_name
 
-function D3D_mor_u(simdef)
+function D3D_mor_u(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
+% dire_sim=simdef.D3D.dire_sim;
+file_name=simdef.file.mor;
+fname_pli_u=simdef.pli.fname_u;
 
 IHidExp=simdef.mor.IHidExp;
 ASKLHE=simdef.mor.ASKLHE;
@@ -153,7 +167,7 @@ end
 for kun=1:simdef.mor.upstream_nodes
 data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[Boundary]'; kl=kl+1;
-data{kl,1}=sprintf('  Name = Upstream_%02d',kun); kl=kl+1;
+data{kl,1}=sprintf('  Name = %s_%02d',fname_pli_u,kun); kl=kl+1;
 data{kl,1}=sprintf('  IBedCond = %d',IBedCond); kl=kl+1;
 data{kl,1}=sprintf('  ICmpCond = %d',ICmpCond); kl=kl+1;
 end
@@ -174,7 +188,7 @@ data{kl,1}=sprintf('  HiranoIllposed = %d',HiranoCheck); kl=kl+1; %if we test fo
 data{kl,1}=sprintf('  Derivatives = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 data{kl,1}=sprintf('  fIk = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 data{kl,1}=sprintf('  RegularizationLocations = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
-data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get “mesh1d_umod”
+data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get “mesh1d_umod�?
 
 % data{kl,1}=        ''; kl=kl+1;
 % data{kl,1}=        '[Numerics]'; kl=kl+1;
@@ -212,5 +226,5 @@ end
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'mor.mor');
-writetxt(file_name,data)
+% file_name=fullfile(dire_sim,'mor.mor');
+writetxt(file_name,data,'check_existing',check_existing)

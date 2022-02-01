@@ -21,7 +21,8 @@
 function D3D_bc_wL(simdef)
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
+file_name=simdef.file.bc_wL;
+fname_pli_d=simdef.pli.fname_d;
 
 time=simdef.bct.time;
 etaw=simdef.bct.etaw;
@@ -46,7 +47,7 @@ nt=length(time);
 %no edit
 kl=1;
 data{kl, 1}='[forcing]'; kl=kl+1;
-data{kl, 1}='Name                            = Downstream_0001'; kl=kl+1;
+data{kl, 1}=sprintf('Name                            = %s_0001',fname_pli_d); kl=kl+1;
 data{kl, 1}='Function                        = timeseries'; kl=kl+1;
 data{kl, 1}='Time-interpolation              = linear'; kl=kl+1;
 data{kl, 1}='Quantity                        = time'; kl=kl+1;
@@ -58,7 +59,7 @@ data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,etaw(kt)); kl=kl+1;
 end
 data{kl, 1}=''; kl=kl+1;
 data{kl, 1}='[forcing]'; kl=kl+1;
-data{kl, 1}='Name                            = Downstream_0002'; kl=kl+1;
+data{kl, 1}=sprintf('Name                            = %s_0002',fname_pli_d); kl=kl+1;
 data{kl, 1}='Function                        = timeseries'; kl=kl+1;
 data{kl, 1}='Time-interpolation              = linear'; kl=kl+1;
 data{kl, 1}='Quantity                        = time'; kl=kl+1;
@@ -71,6 +72,5 @@ end
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'bc_wL.bc');
 writetxt(file_name,data)
 

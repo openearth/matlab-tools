@@ -21,10 +21,12 @@
 function D3D_bnd_pli_us(simdef)
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
+% dire_sim=simdef.D3D.dire_sim;
 B=simdef.grd.B;
 upstream_nodes=simdef.mor.upstream_nodes;
 dy=simdef.grd.dy;
+fname_pli_u=simdef.pli.fname_u;
+fdir_pli=simdef.file.fdir_pli;
 
 switch simdef.grd.type
     case 1
@@ -81,14 +83,15 @@ end
 
 for kun=1:upstream_nodes
 kl=1;
-data{kl, 1}=sprintf('Upstream_%02d',kun); kl=kl+1;
+data{kl, 1}=sprintf('%s_%02d',fname_pli_u,kun); kl=kl+1;
 data{kl, 1}=        '    2    2'; kl=kl+1;
-data{kl, 1}=sprintf('%0.7E  %0.7E Upstream_%02d_0001',cords(1,1,kun),cords(1,2,kun),kun); kl=kl+1;
-data{kl, 1}=sprintf('%0.7E  %0.7E Upstream_%02d_0002',cords(2,1,kun),cords(2,2,kun),kun); %kl=kl+1;
+data{kl, 1}=sprintf('%0.7E  %0.7E %s_%02d_0001',cords(1,1,kun),cords(1,2,kun),fname_pli_u,kun); kl=kl+1;
+data{kl, 1}=sprintf('%0.7E  %0.7E %s_%02d_0002',cords(2,1,kun),cords(2,2,kun),fname_pli_u,kun); %kl=kl+1;
 
 %% WRITE
 
-file_name=fullfile(dire_sim,sprintf('Upstream_%02d.pli',kun));
-writetxt(file_name,data)
+% file_name=fullfile(dire_sim,sprintf('Upstream_%02d.pli',kun));
+file_name=fullfile(fdir_pli,sprintf('%s_%02d.pli',fname_pli_u,kun));
+writetxt(file_name,data,'check_existing',false)
 
 end

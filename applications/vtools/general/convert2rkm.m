@@ -125,8 +125,14 @@ if rkm2xy
     var_out=[rkm_file{1,XCol},rkm_file{1,YCol}];
 
     %branch
-    tok=cellfun(@(X)regexp(X,'_','split'),rkm_file{1,branchCol},'UniformOutput',false); %e.g. 850.0_Rhein 
-    tok=cellfun(@(X)X{1,2},tok,'UniformOutput',false);
+    
+%     tok=cellfun(@(X)regexp(X,'_','split'),rkm_file{1,branchCol},'UniformOutput',false); %e.g. 850.0_Rhein 
+%     tok=cellfun(@(X)X{1,2},tok,'UniformOutput',false);
+
+    sep_idx=strfind(rkm_file{1,branchCol},'_');
+    sep_1_idx=cellfun(@(X)X(1),sep_idx,'UniformOutput',false); %first '_'
+    tok=cellfun(@(X,Y)X(Y+1:end),rkm_file{1,branchCol},sep_1_idx,'UniformOutput',false);
+    
     branch=cellfun(@(X)deblank(lower(X)),tok,'UniformOutput',false);
     
 else
@@ -159,7 +165,11 @@ for kp=1:np
 %     plot(var_in(kp,1),var_in(kp,2),'*r');
 %     plot(var_compare_branch(:,1),var_compare_branch(:,2),'ob')
 %     
+%     if kp==66
+%         a=1;
+%     end
 %     %% end debug
+    
     [min_dist,x_d_min,y_d_min,~,xc,~,~,~,~]=p_poly_dist(var_in(kp,1),var_in(kp,2),var_compare_branch(:,1),var_compare_branch(:,2));
     xc=max([1,xc]);
     dist_p2o=sqrt((x_d_min                   -var_compare_branch(xc,1))^2+(y_d_min                   -var_compare_branch(xc,2))^2);

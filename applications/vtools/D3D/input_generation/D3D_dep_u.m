@@ -25,7 +25,7 @@
 function D3D_dep_u(simdef)
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim; 
+file_name=simdef.file.dep;
 
 % dx=simdef.grd.dx;
 % dy=simdef.grd.dy;
@@ -50,11 +50,23 @@ etab0_type=simdef.ini.etab0_type;
 %...
 %]
 
+%XYcen
+fpath_netmap=fullfile(pwd,'tmpgrd_net.nc');
+D3D_grd2map(simdef.file.grd,'fpath_map',fpath_netmap);
+gridInfo=EHY_getGridInfo(fpath_netmap,{'XYcen','XYcor'});
+delete(fpath_netmap);
+
+Xtot=[gridInfo.Xcen;gridInfo.Xcor];
+Ytot=[gridInfo.Ycen;gridInfo.Ycor];
+
 switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation
     case 1
         slope=simdef.ini.s; %slope (defined positive downwards)
         L=simdef.grd.L;
-        depths=[0,0,etab+slope*L;0,B,etab+slope*L;L,0,etab;L,B,etab];
+%         depths=[0,0,etab+slope*L;0,B,etab+slope*L;L,0,etab;L,B,etab];
+
+        %using grid
+        depths=etab+slope*(L-Xtot);
     case 2
         large_number=1e4;
         depths=[-large_number,-large_number,etab;-large_number,large_number,etab;large_number,-large_number,etab;large_number,large_number,etab];
@@ -64,20 +76,32 @@ end
 
 %% add noise
 % noise=zeros(ny,nx);
-% rng(0)
+rng(0)
 switch simdef.ini.etab_noise
     case 0
+        noise=zeros(size(depths));
 %         noise=zeros(ny,nx);
 %     case 1 %random noise
 %         noise_amp=simdef.ini.noise_amp;
 %         noise(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
-%     case 2 %sinusoidal
-%         noise_amp=simdef.ini.noise_amp;
-%         noise_Lb=simdef.ini.noise_Lb;
+    case 2 %sinusoidal
+%         %XYcen
+%         fpath_netmap=fullfile(pwd,'tmpgrd_net.nc');
+%         D3D_grd2map(simdef.file.grd,'fpath_map',fpath_netmap);
+%         gridInfo=EHY_getGridInfo(fpath_netmap,{'XYcen'});
+%         delete(fpath_netmap);
+        
+        %depth
+%         depths=etab+slope*Xtot;
+        
+        %noise
+        noise_amp=simdef.ini.noise_amp;
+        noise_Lb=simdef.ini.noise_Lb;
+        
 %         x_v=2*dx:dx:L;
 %         y_v=-B/2:dy:B/2;
 %         [x_m,y_m]=meshgrid(x_v,y_v);
-%         noise(1:end-3,3:end-1)=noise_amp*sin(pi*y_m/B).*cos(2*pi*x_m/noise_Lb-pi/2);
+        noise=noise_amp*sin(pi*(Ytot-B/2)./B).*cos(2*pi*Xtot/noise_Lb-pi/2);
 %     case 3 %random noise including at x=0
 %         noise_amp=simdef.ini.noise_amp;
 % %         noise(1:end-3,2:end-1)=noise_amp.*(rand(ny-3,nx-2)-0.5);
@@ -86,9 +110,10 @@ switch simdef.ini.etab_noise
         error('sorry... not implemented!')
 end
 
-% depths=depths+noise;
+depths=depths+noise;
+
+matwrite=[Xtot,Ytot,depths];
 
 %% WRITE
-
-file_name=fullfile(dire_sim,'dep.xyz');  
-write_2DMatrix(file_name,depths);
+  
+write_2DMatrix(file_name,matwrite,'check_existing',false);

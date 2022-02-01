@@ -20,7 +20,19 @@
 %OUTPUT:
 %   -a configuration .xml file compatible with D3D is created in file_name
 
-function D3D_xml(simdef)
+function D3D_xml(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
 dire_sim=simdef.D3D.dire_sim;
@@ -44,7 +56,8 @@ data{12 ,1}='    </control>';
 data{13 ,1}='    <flow2D3D name="myNameFlow">';
 data{14 ,1}='        <library>flow2d3d</library>';
 % data{15 ,1}=sprintf('        <mdfFile>sim_%s%03d.mdf</mdfFile>',simdef.runid.serie,simdef.runid.number);
-data{15 ,1}=sprintf('        <mdfFile>sim_%s%s.mdf</mdfFile>',simdef.runid.serie,simdef.runid.number);
+% data{15 ,1}=sprintf('        <mdfFile>sim_%s%s.mdf</mdfFile>',simdef.runid.serie,simdef.runid.number);
+data{15 ,1}=sprintf('        <mdfFile>%s.mdf</mdfFile>',simdef.runid.name);
 data{16 ,1}='        <!--';
 data{17 ,1}='            Note: exactly one mdfFile (single domain) or ddbFile (domain decomposition)';
 data{18 ,1}='            element must be present.';
@@ -108,7 +121,7 @@ data{kl,1}='    </control>                                                      
 data{kl,1}='    <component name="myNameDFlowFM">                                                                                                                                                                                                 '; kl=kl+1;
 data{kl,1}='        <library>dflowfm</library>                                                                                                                                                                                                   '; kl=kl+1;
 data{kl,1}='        <workingDir>.</workingDir>                                                                                                                                                                                                   '; kl=kl+1;
-data{kl,1}=sprintf('        <inputFile>sim_%s%s.mdu</inputFile>',simdef.runid.serie,simdef.runid.number); kl=kl+1;
+data{kl,1}=sprintf('        <inputFile>%s.mdu</inputFile>',simdef.runid.name); kl=kl+1;
 data{kl,1}='    </component>                                                                                                                                                                                                                     '; kl=kl+1;
 data{kl,1}='</dimrConfig>                                                                                                                                                                                                                        '; kl=kl+1;
 
@@ -119,4 +132,4 @@ end
 
 
 % file_name=fullfile(dire_sim,'config_d_hydro.xml');
-writetxt(file_name,data);
+writetxt(file_name,data,'check_existing',check_existing);

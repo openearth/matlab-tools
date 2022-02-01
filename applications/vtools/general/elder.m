@@ -26,9 +26,9 @@ g=9.81;
 kappa=0.41;
 
 switch friction_type
-    case 1
+    case 1 %C_f (non-dimensional)
         cf=ci;
-    case 2
+    case 2 %C (Chezy)
         cf=g/ci^2;
 end
 
