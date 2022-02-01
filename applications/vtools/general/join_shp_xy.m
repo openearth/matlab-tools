@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17432 $
-%$Date: 2021-07-28 05:37:56 +0200 (Wed, 28 Jul 2021) $
-%$Author: chavarri $
-%$Id: copyfile_check.m 17432 2021-07-28 03:37:56Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/copyfile_check.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %join shp xy coordinates in single matrix
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17579 $
-%$Date: 2021-11-09 16:30:34 +0100 (Tue, 09 Nov 2021) $
-%$Author: chavarri $
-%$Id: figure_layout.m 17579 2021-11-09 15:30:34Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/figure_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Joins xml-files of tides in NL
 %
@@ -41,7 +41,7 @@ if ~isempty(err)
     fid_log=NaN;
     messageOut(fid_log,sprintf('I cannot open a log file: %s',fpath_log));
 end
-fprintf(fid_log,'NL_tides_merger $Revision: 17579 $ \r\n');
+fprintf(fid_log,'NL_tides_merger $Revision$ \r\n');
 
 %output folder
 mkdir_check(fdir_out,fid_log);

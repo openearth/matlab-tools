@@ -4,11 +4,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17526 $
-%$Date: 2021-10-21 14:25:16 +0200 (Thu, 21 Oct 2021) $
-%$Author: chavarri $
-%$Id: NC_read_map.m 17526 2021-10-21 12:25:16Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/NC_read_map.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %get data from 1 time step in D3D, output name as in D3D
 

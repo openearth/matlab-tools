@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17579 $
-%$Date: 2021-11-09 16:30:34 +0100 (Tue, 09 Nov 2021) $
-%$Author: chavarri $
-%$Id: Villemonte_cdd.m 17579 2021-11-09 15:30:34Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/Villemonte_cdd.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Willem Ottevanger made this function to convert xyz cross-sections
 %of a 1D model into zw cross-sections.
