@@ -70,7 +70,14 @@
     <option1>updatedepthcontour</option1>
     <tooltipstring>Re-plot depth contour</tooltipstring>
   </element>
-
+  <element>
+    <style>pushbutton</style>
+    <position>200 70 50 20</position>
+    <text>Snap</text>
+    <callback>ddb_sfincs_boundary_conditions</callback>
+    <option1>snapboundarysplinetodepthcontour</option1>
+    <tooltipstring>Snap boundary spline to depth contour</tooltipstring>
+  </element>
   <element>
     <style>panel</style>
     <position>270 10 270 150</position>

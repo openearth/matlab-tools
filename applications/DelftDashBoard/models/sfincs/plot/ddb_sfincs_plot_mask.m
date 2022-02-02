@@ -79,7 +79,7 @@ switch lower(opt)
 % 
         
         if vis            
-            set(p,'Visible','on');
+%             set(p,'Visible','on');
         else
             set(p,'Visible','off');
         end

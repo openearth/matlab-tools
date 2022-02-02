@@ -77,7 +77,9 @@ else
             save_boundary_spline;
         case{'updatedepthcontour'}
             update_depth_contour;
-
+        case{'snapboundarysplinetodepthcontour'}
+            snap_boundary_spline_to_depth_contour;            
+            
         case{'createflowboundarypoints'}
             create_flow_boundary_points;
         case{'removeflowboundarypoints'}
@@ -223,6 +225,79 @@ set(h,'HitTest','off');
 handles.model.sfincs.depthcontour.handle=h;
 
 setHandles(handles);
+
+%%
+function snap_boundary_spline_to_depth_contour
+handles=getHandles;
+
+xz=handles.GUIData.x;
+yz=handles.GUIData.y;
+zz=handles.GUIData.z;
+
+val=handles.model.sfincs.depthcontour.value;
+
+[c,~]=contour(xz,yz,zz, [val val]);
+
+%
+if isempty(c)
+    ddb_giveWarning('text',['No contour found for depth: ',num2str(val)]);    
+end
+    
+%
+xtmp = c(1,:);
+ytmp = c(2,:);
+
+id = find(xtmp == val);
+xtmp(id) = NaN;
+ytmp(id) = NaN;
+
+xtmp = xtmp(~isnan(xtmp));
+ytmp = ytmp(~isnan(ytmp));
+
+x = handles.model.sfincs.boundaryspline.x;
+y = handles.model.sfincs.boundaryspline.y;
+
+xchanged = x;
+ychanged = y;
+
+% snap boundary spline to nearest depth contour point
+
+distmax = 0.5;  %point needs to be found within 50km
+
+for id = 1:handles.model.sfincs.boundaryspline.length
+
+    [index, distance, twoout] = nearxy(xtmp',ytmp',x(id),y(id),distmax);
+
+    if ~isempty(index)
+        [mindistance,idmindistance] = min(distance);
+
+        idwanted = index(idmindistance);
+
+        xchanged(id) = xtmp(idwanted);
+        ychanged(id) = ytmp(idwanted);        
+    end
+end
+
+% figure; hold on; plot(xtmp, ytmp,'k.');plot(x, y,'b.'); plot(xchanged, ychanged,'ro')
+
+handles.model.sfincs.boundaryspline.x = xchanged;
+handles.model.sfincs.boundaryspline.y = ychanged;
+handles.model.sfincs.boundaryspline.length=length(xchanged);
+handles.model.sfincs.boundaryspline.changed=1;
+
+h=handles.model.sfincs.depthcontour.handle;
+if ~isempty(h)
+    try
+        delete(h);
+    end
+end
+
+gui_polyline('plot','x',xchanged,'y',ychanged,'Tag','sfincsboundaryspline','Marker','o','createcallback',@create_boundary_spline,'changecallback',@change_boundary_spline, ...
+    'type','spline','closed',0);
+
+setHandles(handles);
+
+
 
 %%
 function create_flow_boundary_points
