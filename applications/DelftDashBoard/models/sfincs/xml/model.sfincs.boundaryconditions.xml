@@ -128,6 +128,14 @@
     <tooltipstring>Edit distance between boundary points</tooltipstring>
   </element>
   <element>
+    <style>pushbutton</style>
+    <position>400 70 50 20</position>
+    <text>Snap</text>
+    <callback>ddb_sfincs_boundary_conditions</callback>
+    <option1>snapboundarypointstodepthcontour</option1>
+    <tooltipstring>Snap boundary points to depth contour</tooltipstring>
+  </element>  
+  <element>
     <style>pushselectfile</style>
     <position>400 120 130 20</position>
     <text>Load Boundary Points</text>

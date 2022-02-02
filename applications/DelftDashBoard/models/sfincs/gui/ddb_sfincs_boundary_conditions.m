@@ -88,6 +88,9 @@ else
             load_flow_boundary_points;
         case{'saveflowboundarypoints'}
             save_flow_boundary_points;
+        case{'snapboundarypointstodepthcontour'}
+            snap_boundary_points_to_depth_contour;            
+            
 
         case{'createwaveboundarypoints'}
             create_wave_boundary_points;
@@ -268,8 +271,11 @@ xchanged = x;
 ychanged = y;
 
 % snap boundary spline to nearest depth contour point
-
-distmax = 1.0;  %point needs to be found within 100km
+if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
+    distmax = 100000; %100km
+else %geographic
+    distmax = 1.0;  %point needs to be found within 100km
+end
 
 for id = 1:handles.model.sfincs.boundaryspline.length
 
@@ -292,13 +298,10 @@ handles.model.sfincs.boundaryspline.y = ychanged;
 handles.model.sfincs.boundaryspline.length=length(xchanged);
 handles.model.sfincs.boundaryspline.changed=1;
 
-
-
 gui_polyline('plot','x',xchanged,'y',ychanged,'Tag','sfincsboundaryspline','Marker','o','createcallback',@create_boundary_spline,'changecallback',@change_boundary_spline, ...
     'type','spline','closed',0);
 
 setHandles(handles);
-
 
 
 %%
@@ -426,6 +429,71 @@ fclose(fid);
 
 
 setHandles(handles);
+
+%%
+function snap_boundary_points_to_depth_contour
+handles=getHandles;
+
+xz=handles.GUIData.x;
+yz=handles.GUIData.y;
+zz=handles.GUIData.z;
+
+val=handles.model.sfincs.depthcontour.value;
+
+[c,~]=contour(xz,yz,zz, [val val]);
+
+%
+if isempty(c)
+    ddb_giveWarning('text',['No contour found for depth: ',num2str(val)]);    
+end
+    
+%
+xtmp = c(1,:);
+ytmp = c(2,:);
+
+id = find(xtmp == val);
+xtmp(id) = NaN;
+ytmp(id) = NaN;
+
+xtmp = xtmp(~isnan(xtmp));
+ytmp = ytmp(~isnan(ytmp));
+
+x = handles.model.sfincs.domain(ad).flowboundarypoints.x;
+y = handles.model.sfincs.domain(ad).flowboundarypoints.y;
+
+xchanged = x;
+ychanged = y;
+
+% snap boundary points to nearest depth contour point
+if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
+    distmax = 100000; %100km
+else %geographic
+    distmax = 1.0;  %point needs to be found within 100km
+end
+
+for id = 1:handles.model.sfincs.domain(ad).flowboundarypoints.length
+
+    [index, distance, twoout] = nearxy(xtmp',ytmp',x(id),y(id),distmax);
+
+    if ~isempty(index)
+        [mindistance,idmindistance] = min(distance);
+
+        idwanted = index(idmindistance);
+
+        xchanged(id) = xtmp(idwanted);
+        ychanged(id) = ytmp(idwanted);        
+    end
+end
+
+handles.model.sfincs.domain(ad).flowboundarypoints.x = xchanged;
+handles.model.sfincs.domain(ad).flowboundarypoints.y = ychanged;
+handles.model.sfincs.domain(ad).flowboundarypoints.length  = length(xchanged);
+
+setHandles(handles);
+
+delete_flow_boundary_points;
+
+plot_flow_boundary_points;
 
 %%
 function generate_tides
