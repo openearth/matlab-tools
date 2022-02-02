@@ -20,7 +20,7 @@ function make_netcdf_bathymetry_tiles(fname1,dr,dataname,rawdataformat,nx,ny,nco
 zrange=[-1e9 1e9];    % Depths outside this range will be set to NaN
 izoom1=1;             % First zoom level to be created
 positiveup=1;         % Set to 0 if raw data is positive down
-
+iquiet=0;
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
@@ -30,6 +30,8 @@ for ii=1:length(varargin)
                 izoom1=varargin{ii+1};
             case{'positiveup'}
                 positiveup=varargin{ii+1};
+            case{'quiet'}
+                iquiet=1;
         end
     end
 end
@@ -138,7 +140,9 @@ switch lower(rawdataformat)
     case{'geotiff'}
         if ~iscell(fname1)
             % just one file
-            [z,x,y,I] = ddb_geoimread(fname1);
+            [z,x,y,I] = geoimread(fname1,'info');
+            maxx=max(x);
+            maxy=max(y);
             z=flipud(z);
             z(z<-15000)=NaN; % Get rid of no data values
             x00=min(x);
@@ -247,7 +251,9 @@ if imaketiles
         
         if k==1
             
+            if ~iquiet
             wb = awaitbar(0,'Generating tiles ...');
+            end
 
             if multiple_files
                 nfiles=length(fname1);
@@ -259,17 +265,42 @@ if imaketiles
 
                 if multiple_files
                     % This is where we read in the separate files
+                    disp(['Processing file ' num2str(ifile) ' of ' num2str(nfiles) ' ...']);
                     [z,x,y,I] = ddb_geoimread(fname1{ifile});
                     xminf=min(x);
                     yminf=min(y);
+                    xmaxf=max(x);
+                    ymaxf=max(y);
                     z=flipud(z);
                     z(z<-15000)=NaN;
+                    z(z<-9998)=NaN;
+                else
+                    xminf=x0(k);
+                    yminf=x0(k);
+                    xmaxf=maxx;
+                    ymaxf=maxy;                    
                 end                
                 
                 tilen=0;
                 
-                for i=1:nnx
-                    for j=1:nny
+                iii1=floor((xminf-x0(k))/(nx*dx));
+                iii1=max(iii1,1);
+                iii1=min(iii1,nnx);
+                iii2=ceil((xmaxf-x0(k))/(nx*dx))+1;                
+                iii2=max(iii2,1);
+                iii2=min(iii2,nnx);
+
+                jjj1=floor((yminf-y0(k))/(ny*dy));
+                jjj1=max(jjj1,1);
+                jjj1=min(jjj1,nny);
+                jjj2=ceil((ymaxf-y0(k))/(ny*dy))+1;                
+                jjj2=max(jjj2,1);
+                jjj2=min(jjj2,nny);
+                
+%                for i=1:nnx
+%                    for j=1:nny
+                for i=iii1:iii2
+                    for j=jjj1:jjj2
                         
                         tilen=tilen+1;
 
@@ -334,17 +365,23 @@ if imaketiles
 
                         end
                         
-                        
-                        str=['Generating tiles - tile ' num2str(tilen) ' of ' ...
-                            num2str(nnx*nny) ' ...'];
-                        [hh,abort2]=awaitbar(tilen/(nnx*nny),wb,str);
+                        abort2=0;
+                        hh=1;
+                        if ~iquiet
+                            str=['Generating tiles - tile ' num2str(tilen) ' of ' ...
+                                num2str(nnx*nny) ' ...'];
+                            [hh,abort2]=awaitbar(tilen/(nnx*nny),wb,str);
+                        else
+                            disp(['Generating tiles - tile ' num2str(tilen) ' of ' ...
+                                num2str(nnx*nny) ' ...']);
+                        end
                         
                         if abort2 % Abort the process by clicking abort button
                             break;
-                        end;
-                        if isempty(hh); % Break the process when closing the figure
+                        end
+                        if isempty(hh) % Break the process when closing the figure
                             break;
-                        end;
+                        end
                         
 %                         disp(['Processing ' num2str((i-1)*nny+j) ' of ' num2str(nnx*nny) ' ...']);
                         
@@ -440,8 +477,10 @@ if imaketiles
             end
             
             % Close waitbar
+            if ~iquiet
             if ~isempty(hh)
                 close(wb);
+            end
             end
             
         else

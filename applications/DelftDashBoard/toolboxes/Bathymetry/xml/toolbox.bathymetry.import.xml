@@ -193,9 +193,11 @@
     <tooltipstring>Select units of vertical data</tooltipstring>
     <listtext>metres</listtext>
     <listtext>centimetres</listtext>
+    <listtext>millimetres</listtext>
     <listtext>feet</listtext>
     <listvalue>m</listvalue>
     <listvalue>cm</listvalue>
+    <listvalue>mm</listvalue>
     <listvalue>ft</listvalue>
   </element>
   <element>
@@ -213,23 +215,23 @@
   </element>
   <element>
     <style>edit</style>
-    <position>620 35 60 20</position>
-    <text>Max Elevation</text>
+    <position>630 35 60 20</position>
+    <text>Max Elevation (m)</text>
     <textposition>left</textposition>
     <enable>1</enable>
     <variable>handles.toolbox.bathymetry.import.maxElevation</variable>
     <type>real</type>
-    <tooltipstring>Edit maximum elevation for data to be imported. Data with higher elevations will be discarded.</tooltipstring>
+    <tooltipstring>Edit maximum elevation in metres for data to be imported. Data with higher elevations will be discarded.</tooltipstring>
   </element>
   <element>
     <style>edit</style>
-    <position>620 10 60 20</position>
-    <text>Min Elevation</text>
+    <position>630 10 60 20</position>
+    <text>Min Elevation (m)</text>
     <textposition>left</textposition>
     <enable>1</enable>
     <variable>handles.toolbox.bathymetry.import.minElevation</variable>
     <type>real</type>
-    <tooltipstring>Edit minimum elevation for data to be imported. Data with lower elevations will be discarded.</tooltipstring>
+    <tooltipstring>Edit minimum elevation in metres for data to be imported. Data with lower elevations will be discarded.</tooltipstring>
   </element>
   <element>
     <style>popupmenu</style>

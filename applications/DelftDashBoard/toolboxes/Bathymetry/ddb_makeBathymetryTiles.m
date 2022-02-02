@@ -128,8 +128,8 @@ switch lower(rawdataformat)
         dy=s.y(2)-s.y(1);
         ncols=length(s.x);
     case{'netcdf'}
-        %        x=nc_varget(fname1,'x');
-        %        y=nc_varget(fname1,'y');
+%               x=nc_varget(fname1,'x');
+%               y=nc_varget(fname1,'y');
         %        z=nc_varget(fname1,'z');
         x=nc_varget(fname1,'lon');
         y=nc_varget(fname1,'lat');
@@ -150,6 +150,9 @@ switch lower(rawdataformat)
             pbyp=1;
         else
             z=nc_varget(fname1,'elevation');
+%            z=nc_varget(fname1,'Band1');
+            z(z<-15000)=NaN;
+            z(z>15000)=NaN;
         end
         
         
@@ -181,7 +184,7 @@ switch lower(rawdataformat)
     case{'geotiff'}
         if ~iscell(fname1)
             % just one file
-            [z,x,y,I] = ddb_geoimread(fname1);
+            [z,x,y,I] = geoimread(fname1,'info');
             z=flipud(z);
             z(z<-15000)=NaN; % Get rid of no data values
             x00=min(x);
@@ -195,7 +198,7 @@ switch lower(rawdataformat)
                 % Too large, read piece by piece...
                 pbyp=1;
             else
-                [z,xdum,ydum,I] = ddb_geoimread(fname1);
+                [z,xdum,ydum,I] = geoimread(fname1);
                 z=flipud(z);
                 z(z<-15000)=NaN;
             end
@@ -207,7 +210,7 @@ switch lower(rawdataformat)
             ymax=-1e9;
             for ii=1:length(fname1)
                 filename=fname1{ii};
-                [A,x,y,I]=ddb_geoimread(filename,'info');
+                [A,x,y,I]=geoimread(filename,'info');
                 xx=[x(1) x(end) x(end) x(1) x(1)];
                 yy=[y(end) y(end) y(1) y(1) y(end)];
                 dx=(x(end)-x(1))/(length(x)-1);

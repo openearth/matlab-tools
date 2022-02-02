@@ -164,7 +164,8 @@ try
             dy=yg(2)-yg(1);
         case{'geotiff'}
             wb = waitbox('Reading data file ...');
-            [A,x,y,I] = ddb_geoimread(handles.toolbox.bathymetry.import.dataFile);
+%            [A,x,y,I] = ddb_geoimread(handles.toolbox.bathymetry.import.dataFile,'info');
+            [A,x,y,I] = geoimread(handles.toolbox.bathymetry.import.dataFile,'info');
             x0=min(x);
             y0=min(y);
             dx=abs(x(2)-x(1));
@@ -291,6 +292,17 @@ if ~isempty(strmatch(handles.toolbox.bathymetry.import.attributes.title,handles.
 end
 
 zrange=[handles.toolbox.bathymetry.import.minElevation handles.toolbox.bathymetry.import.maxElevation];
+
+switch lower(handles.toolbox.bathymetry.import.vertUnits)
+    case{'m'}
+    case{'cm'}
+        zrange=zrange/0.01;
+    case{'mm'}
+        zrange=zrange/0.001;
+    case{'ft'}
+        zrange=zrange/0.3048;
+end
+
 
 multiple_files=0;
 [pathstr,name,ext] = fileparts(fname);
