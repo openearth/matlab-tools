@@ -49,6 +49,12 @@
       <element>toolbox.modelmaker.sfincs.quickmode.xml</element>
     </tab>
     <tab>
+      <formodel>sfincs</formodel>
+      <tabstring>Quadtree</tabstring>
+      <callback>ddb_ModelMakerToolbox_sfincs_buq</callback>
+      <element>toolbox.modelmaker.sfincs.buq.xml</element>
+    </tab>    
+    <tab>
       <formodel>modflowusg</formodel>
       <tabstring>Grid</tabstring>
       <callback>ddb_ModelMakerToolbox_modflowusg_grid</callback>
