@@ -69,5 +69,6 @@ end
 handles.toolbox.tropicalcyclone.trackhandle=gui_polyline('plot','tag','cyclonetrack','marker','o', ...
     'changecallback',@ddb_TropicalCyclone_change_cyclone_track,'rightclickcallback',@ddb_selectCyclonePoint, ...
     'closed',0,'x',handles.toolbox.tropicalcyclone.track.x,'y',handles.toolbox.tropicalcyclone.track.y,'text',txt);
+%    'closed',0,'x',handles.toolbox.tropicalcyclone.track.x,'y',handles.toolbox.tropicalcyclone.track.y,'text',txt,'type','spline','dxspline',5000);
 
 setHandles(handles);

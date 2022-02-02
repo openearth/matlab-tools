@@ -730,7 +730,7 @@ else
                 spw.cs.name='WGS 84';
                 spw.cs.type='geographic';
                 spw.phi_spiral=inp.phi_spiral;
-                spw.rhoa=1.05;
+                spw.rhoa=1.15;
                 spw.wind_conversion_factor=inp.windconversionfactor;
                 spw.wind_profile=inp.wind_profile;
                 spw.wind_pressure_relation=inp.wind_pressure_relation;

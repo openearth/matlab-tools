@@ -71,7 +71,7 @@ handles.fid     = 1;
 handles.ok      = 0;
 
 
-handles.Window=MakeNewWindow('Select Coordinate System',[400 480]);
+handles.Window=MakeNewWindow('Select Your Storm',[400 480]);
 
 handles.SelectCS = uicontrol(gcf,'Style','listbox','String','','Position', [ 30 70 340 390],'BackgroundColor',[1 1 1]);
 
