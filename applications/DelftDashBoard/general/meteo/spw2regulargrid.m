@@ -8,7 +8,7 @@ function [t,ug,vg,pg,frac,prcpg]=spw2regulargrid(spwfile,xg,yg,dt,varargin)
 % mergefrac=0.5;          % merge fraction 
 % projection='projected'  % if spiderweb coordinated are specified in projected coordinates specify as 'projected' in meters, default is spherical (lat-lon)
 % [xg,yg]=meshgrid(-70:0.1:-50,20:0.1:30);
-% [t,ug,vg,pg,frac]=spw2regular('ike.spw',xg,yg,dt,'interpolation',interpolation,'backgroundpressure',backgroundpressure,'mergefrac',mergefrac);
+% [t,ug,vg,pg,frac]=spw2regulargrid('ike.spw',xg,yg,dt,'interpolation',interpolation,'backgroundpressure',gavprs,'mergefrac',mergefrac);
 %
 mergefrac=[];
 interpmethod='spline';
