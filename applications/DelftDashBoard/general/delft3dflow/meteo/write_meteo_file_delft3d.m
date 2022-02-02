@@ -140,9 +140,9 @@ dy=parameter.y(2)-parameter.y(1);
 tic
 fid=fopen([fname '.' ext],'wt');
 if hcm
-fprintf(fid,'%s\n','### START OF HEADER');
-fprintf(fid,'%s\n','### All text on a line behind the first # is parsed as commentary');
-fprintf(fid,'%s\n','### Additional commments');
+    fprintf(fid,'%s\n','### START OF HEADER');
+    fprintf(fid,'%s\n','### All text on a line behind the first # is parsed as commentary');
+    fprintf(fid,'%s\n','### Additional commments');
 end
 fprintf(fid,'%s\n',['FileVersion      =    ' vsn '                                               # Version of meteo input file, to check if the newest file format is used']);
 fprintf(fid,'%s\n','filetype         =    meteo_on_equidistant_grid                          # Type of meteo input file: meteo_on_flow_grid, meteo_on_equidistant_grid, meteo_on_curvilinear_grid or meteo_on_spiderweb_grid');
@@ -161,7 +161,7 @@ fprintf(fid,'%s\n','n_quantity       =    1                                     
 fprintf(fid,'%s\n',['quantity1        =    ' quantity '                                             # Name of quantity1']);
 fprintf(fid,'%s\n',['unit1            =    ' unit '                                              # Unit of quantity1']);
 if hcm
-fprintf(fid,'%s\n','### END OF HEADER');
+    fprintf(fid,'%s\n','### END OF HEADER');
 end
 
 fmt=[repmat(fmt,1,ncols) '\n'];
