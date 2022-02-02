@@ -12,7 +12,12 @@ if isempty(varargin)
 
     h=[];                    
     
-    xmldir=fileparts(which('tropical_cyclone_selector'));
+    if ~isfield(inp,'path')
+        xmldir=fileparts(which('tropical_cyclone_selector'));
+    else
+        xmldir=inp.path;
+    end
+    
     xmlfile='tropical_cyclone_selector.xml';
     
     [h,ok]=gui_newWindow(h,'xmlfile',xmlfile,'xmldir',xmldir,'createcallback',@initialize,'createinput',inp,'modal',0,'zoom',0);
