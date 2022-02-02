@@ -25,27 +25,44 @@ switch lower(opt)
             delete(handles.model.sfincs.domain(id).maskhandle);
         end
         
-        x0=handles.model.sfincs.domain(id).input.x0;
-        y0=handles.model.sfincs.domain(id).input.y0;
-        dx=handles.model.sfincs.domain(id).input.dx;
-        dy=handles.model.sfincs.domain(id).input.dy;
-        mmax=handles.model.sfincs.domain(id).input.mmax;
-        nmax=handles.model.sfincs.domain(id).input.nmax;
-        rot=handles.model.sfincs.domain(id).input.rotation*pi/180;
+        if isempty(handles.model.sfincs.domain(id).buq)
         
-        [xg0,yg0]=meshgrid(0:dx:mmax*dx,0:dy:nmax*dy);
-        xg = x0 + xg0* cos(rot) + yg0*-sin(rot);
-        yg = y0 + xg0* sin(rot) + yg0*cos(rot);
-        zg=zeros(size(xg));
-        zg(1:end-1,1:end-1)=handles.model.sfincs.domain(id).mask;
-        zg(zg==0)=NaN;
-
-        vals=[1;2;3];
-        rgb=[1 1 0; 1 0 0;0 0 1];
-        p=indexpatch(xg,yg,zg,vals,rgb);
+            x0=handles.model.sfincs.domain(id).input.x0;
+            y0=handles.model.sfincs.domain(id).input.y0;
+            dx=handles.model.sfincs.domain(id).input.dx;
+            dy=handles.model.sfincs.domain(id).input.dy;
+            mmax=handles.model.sfincs.domain(id).input.mmax;
+            nmax=handles.model.sfincs.domain(id).input.nmax;
+            rot=handles.model.sfincs.domain(id).input.rotation*pi/180;
+            
+            [xg0,yg0]=meshgrid(0:dx:mmax*dx,0:dy:nmax*dy);
+            xg = x0 + xg0* cos(rot) + yg0*-sin(rot);
+            yg = y0 + xg0* sin(rot) + yg0*cos(rot);
+            zg=zeros(size(xg));
+            zg(1:end-1,1:end-1)=handles.model.sfincs.domain(id).mask;
+            zg(zg==0)=NaN;
+            
+            vals=[1;2;3];
+            rgb=[1 1 0; 1 0 0;0 0 1];
+            p=indexpatch(xg,yg,zg,vals,rgb);
+        
+        else
+            p=hggroup;
+            xx=handles.model.sfincs.domain(id).gridx(handles.model.sfincs.domain(id).mask==1);
+            yy=handles.model.sfincs.domain(id).gridy(handles.model.sfincs.domain(id).mask==1);
+            msk1=plot(xx,yy,'o');
+            set(msk1,'MarkerFaceColor','y','MarkerEdgeColor','y','MarkerSize',3);
+            set(msk1,'Parent',p);
+            xx=handles.model.sfincs.domain(id).gridx(handles.model.sfincs.domain(id).mask==2);
+            yy=handles.model.sfincs.domain(id).gridy(handles.model.sfincs.domain(id).mask==2);
+            msk2=plot(xx,yy,'o');
+            set(msk2,'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',3);
+            set(msk2,'Parent',p);
+        end
+        
         handles.model.sfincs.domain(id).maskhandle=p;
         try
-        set(p,'HitTest','off');
+        set(p,'HitTest','off','tag','sfincsmask');
         end
         
 %         figure(100)
