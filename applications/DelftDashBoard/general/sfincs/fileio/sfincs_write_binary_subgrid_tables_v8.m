@@ -1,4 +1,4 @@
-function sfincs_write_binary_subgrid_tables_v7(subgrd,msk,nbin,subgridfile,uopt)
+function sfincs_write_binary_subgrid_tables_v8(subgrd,msk,nbin,subgridfile,uopt)
 
 % Writes binary subgrid files for SFINCS
 % nmax=size(msk,1);
