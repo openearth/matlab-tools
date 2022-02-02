@@ -8,6 +8,7 @@ inp.x0=0;
 inp.y0=0;
 inp.rotation=0;
 inp.latitude=0;
+inp.crsgeo=0;
 inp.tref=floor(now);
 inp.tstart=floor(now);
 inp.tstop=floor(now+1);
@@ -77,6 +78,7 @@ inp.srcfile='';
 inp.disfile='';
 inp.inifile='';
 inp.sbgfile='';
+inp.qtrfile='';
 
 inp.spwfile='';
 inp.amufile='';
@@ -88,6 +90,7 @@ inp.obsfile='';
 inp.crsfile='';
 inp.thdfile='';
 inp.manningfile='';
+inp.scsfile='';
 
 inp.inputformat='bin';
 inp.outputformat='net';
