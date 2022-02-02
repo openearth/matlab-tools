@@ -230,6 +230,13 @@ setHandles(handles);
 function snap_boundary_spline_to_depth_contour
 handles=getHandles;
 
+h=handles.model.sfincs.boundaryspline.handle;
+if ~isempty(h)
+    try
+        delete(h);
+    end
+end
+
 xz=handles.GUIData.x;
 yz=handles.GUIData.y;
 zz=handles.GUIData.z;
@@ -262,7 +269,7 @@ ychanged = y;
 
 % snap boundary spline to nearest depth contour point
 
-distmax = 0.5;  %point needs to be found within 50km
+distmax = 1.0;  %point needs to be found within 100km
 
 for id = 1:handles.model.sfincs.boundaryspline.length
 
@@ -285,12 +292,7 @@ handles.model.sfincs.boundaryspline.y = ychanged;
 handles.model.sfincs.boundaryspline.length=length(xchanged);
 handles.model.sfincs.boundaryspline.changed=1;
 
-h=handles.model.sfincs.depthcontour.handle;
-if ~isempty(h)
-    try
-        delete(h);
-    end
-end
+
 
 gui_polyline('plot','x',xchanged,'y',ychanged,'Tag','sfincsboundaryspline','Marker','o','createcallback',@create_boundary_spline,'changecallback',@change_boundary_spline, ...
     'type','spline','closed',0);
