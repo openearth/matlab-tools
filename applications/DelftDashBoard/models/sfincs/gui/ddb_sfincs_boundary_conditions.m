@@ -116,6 +116,40 @@ gui_polyline('draw','Tag','sfincsboundaryspline','Marker','o','createcallback',@
     'type','spline','closed',0);
 
 %%
+function load_boundary_spline
+handles=getHandles;
+
+delete_boundary_spline
+
+clear data
+data = tekal('read', handles.model.sfincs.boundaryspline.filename,'loaddata') ;
+% assumed is that only 1 single polyline is given!
+% also assumed that polygon is in same CRS as current CRS!
+
+x = data.Field.Data(:,1);  
+y = data.Field.Data(:,2);  
+
+handles.model.sfincs.boundaryspline.x=x;
+handles.model.sfincs.boundaryspline.y=y;
+handles.model.sfincs.boundaryspline.length=length(x);
+handles.model.sfincs.boundaryspline.changed=1;
+
+gui_polyline('plot','x',x,'y',y,'Tag','sfincsboundaryspline','Marker','o','createcallback',@create_boundary_spline,'changecallback',@change_boundary_spline, ...
+    'type','spline','closed',0);
+setHandles(handles);
+
+%%
+function save_boundary_spline
+handles=getHandles;
+
+clear data
+data.Field(1).Data(:,1) = handles.model.sfincs.boundaryspline.x;
+data.Field(1).Data(:,2) = handles.model.sfincs.boundaryspline.y;
+
+tekal('write', handles.model.sfincs.boundaryspline.filename,data) 
+
+
+%%
 function delete_boundary_spline
 
 handles=getHandles;

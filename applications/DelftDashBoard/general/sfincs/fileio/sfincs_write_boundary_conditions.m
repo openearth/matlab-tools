@@ -1,7 +1,7 @@
 function sfincs_write_boundary_conditions(filename,t,v)
 
 %%% checks:
-if any(isnan(t)) || any(isnan(v))
+if any(isnan(t)) | any(isnan(v))
     error('Your input contains NaN values, please check')
 end
 %%%
