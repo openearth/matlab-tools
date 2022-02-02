@@ -175,19 +175,19 @@ handles.model.sfincs.boundaryspline.length=0;
 setHandles(handles);
 
 %%
-function create_boundary_spline(h,x,y,nr)
-
-delete_boundary_spline;
+function save_boundary_spline
 
 handles=getHandles;
-handles.model.sfincs.boundaryspline.handle=h;
-handles.model.sfincs.boundaryspline.x=x;
-handles.model.sfincs.boundaryspline.y=y;
-handles.model.sfincs.boundaryspline.length=length(x);
-handles.model.sfincs.boundaryspline.changed=1;
+x=handles.model.sfincs.boundaryspline.x;
+y=handles.model.sfincs.boundaryspline.y;
+fid=fopen(handles.model.sfincs.boundaryspline.filename,'wt');
+fprintf(fid,'%s\n','BL01');
+fprintf(fid,'%i %i\n',length(x),2);
+for j=1:length(x)
+    fprintf(fid,'%17.10e %17.10e\n',x(j),y(j));
+end
+fclose(fid);
 setHandles(handles);
-
-gui_updateActiveTab;
 
 %%
 function change_boundary_spline(h,x,y,nr)
@@ -312,7 +312,8 @@ handles=getHandles;
 xs=handles.model.sfincs.boundaryspline.x;
 ys=handles.model.sfincs.boundaryspline.y;
 
-[xp,yp]=spline2d(xs,ys,handles.model.sfincs.boundaryspline.flowdx);
+cstype=handles.screenParameters.coordinateSystem.type;
+[xp,yp]=spline2d(xs,ys,handles.model.sfincs.boundaryspline.flowdx,cstype);
 
 merge=0;
 if ~isempty(handles.model.sfincs.domain(ad).flowboundarypoints.x)
@@ -338,7 +339,7 @@ else
     handles.model.sfincs.domain(ad).flowboundarypoints.y=yp;
 end
 
-handles.model.sfincs.domain(ad).flowboundarypoints.length=length(xp);
+handles.model.sfincs.domain(ad).flowboundarypoints.length=length(handles.model.sfincs.domain(ad).flowboundarypoints.x);
 
 %if isempty(handles.model.sfincs.domain(ad).input.bndfile)
     handles.model.sfincs.domain(ad).input.bndfile='sfincs.bnd';
@@ -405,9 +406,19 @@ handles=getHandles;
 
 filename=handles.model.sfincs.domain(ad).input.bndfile;
 
+cstype=handles.screenParameters.coordinateSystem.type;
+switch lower(cstype)
+    case {'geographic','spherical','deg'}
+        fmt='%12.5f %12.5f\n';
+    otherwise
+        fmt='%10.1f %10.1f\n';
+end
+
+handles.model.sfincs.domain(ad).flowboundarypoints.length=length(handles.model.sfincs.domain(ad).flowboundarypoints.x);
+
 fid=fopen(filename,'wt');
-for ip=1:handles.model.sfincs.domain(ad).flowboundarypoints.length
-    fprintf(fid,'%10.1f %10.1f\n',handles.model.sfincs.domain(ad).flowboundarypoints.x(ip),handles.model.sfincs.domain(ad).flowboundarypoints.y(ip));
+for ip=1:length(handles.model.sfincs.domain(ad).flowboundarypoints.x)
+    fprintf(fid,fmt,handles.model.sfincs.domain(ad).flowboundarypoints.x(ip),handles.model.sfincs.domain(ad).flowboundarypoints.y(ip));
 end
 fclose(fid);
 
@@ -514,7 +525,7 @@ tt(2)=86400*(handles.model.sfincs.domain(ad).input.tstop -handles.model.sfincs.d
 tmat=handles.model.sfincs.domain(ad).input.tstart:10/1440:handles.model.sfincs.domain(ad).input.tstop;
 t=[tt(1):600:tt(2)];
 
-wl=get_timeseries_at_point(tmat,x,y);
+[wl,conList,gt]=get_timeseries_at_point(tmat,x,y);
 
 fmt=repmat(' %10.3f',[1 handles.model.sfincs.domain(ad).flowboundarypoints.length]);
 fmt=['%10.1f' fmt '\n'];
@@ -528,6 +539,18 @@ for it=1:length(t)
 end
 fclose(fid);
 
+% Now make a bca file
+refdate=floor(now);
+boundary(1).boundary=ddb_delft3dfm_initialize_boundary('sfincs','water_level','astronomic',refdate,refdate,x,y);
+boundary(1).boundary.water_level.astronomic_components.forcing_file='sfincs.bca';
+for ip=1:length(x)
+    for ic=1:length(conList)
+        boundary(1).boundary.water_level.astronomic_components.nodes(ip).name{ic}=conList{ic};
+        boundary(1).boundary.water_level.astronomic_components.nodes(ip).amplitude(ic)=gt.amp(ic,ip);
+        boundary(1).boundary.water_level.astronomic_components.nodes(ip).phase(ic)=gt.phi(ic,ip);
+    end
+end
+delft3dfm_write_bc_file(boundary,refdate);
 
 setHandles(handles);
 
@@ -543,7 +566,7 @@ setHandles(handles);
 % exportTEK(wl',tim',fname,[xstr '_' ystr]);
 
 %%
-function wl=get_timeseries_at_point(tim,x,y)
+function [wl,conList,gt]=get_timeseries_at_point(tim,x,y)
 
 handles=getHandles;
 ii=handles.toolbox.tidedatabase.activeModel;
@@ -554,7 +577,8 @@ else
     tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
 end
 
-[lon,lat, gt, depth, conList] =  readTideModel(tidefile,'type','h','x',x','y',y','constituent','all');
+%[lon,lat, gt, depth, conList] =  read_tide_model(tidefile,'type','h','x',x','y',y','constituent','all');
+[gt,conList] =  read_tide_model(tidefile,'type','h','x',x','y',y','constituent','all');
 
 % t0=handles.toolbox.tidestations.startTime;
 % t1=handles.toolbox.tidestations.stopTime;
@@ -571,8 +595,8 @@ end
 wl=zeros(length(tim),length(x));
 
 for ip=1:length(x)
-    gt0.amp=gt.amp(ip,:);
-    gt0.phi=gt.phi(ip,:);
+    gt0.amp=gt.amp(:,ip);
+    gt0.phi=gt.phi(:,ip);
     wl0=makeTidePrediction(tim,conList,gt0.amp,gt0.phi,y(ip));
     wl(:,ip)=wl0';
 
