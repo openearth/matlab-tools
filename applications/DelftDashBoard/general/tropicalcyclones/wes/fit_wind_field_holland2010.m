@@ -1,10 +1,13 @@
-function [xn,vt,phia]=fit_wind_field_holland2010(vmax,rmax,pc,vtreal,phit,pn,phi_spiral,lat,dpdt,obs)
+function [xn,vt,phia]=fit_wind_field_holland2010(vmax,rmax,pc,vtreal,phit,pn,phi_spiral,lat,dpdt,obs,wrad)
 
 size_factor=1;
 
 phi=90:-10:-270; % radial angles (cartesian, degrees)
 
 rmax=rmax*1000; % convert from km to m
+
+%wrad=[35 50 65 100];
+%wrad=wrad*0.9/1.944; % Convert 10-minute averaged m/s
 
 r=4000:4000:1000000;
 
@@ -77,6 +80,12 @@ if nobs>0 && vmax>21
             else
                 phia=ddd(imx)-90-phit;
             end
+            if phia<-180
+                phia=phia+360;
+            end
+            if phia>180
+                phia=phia-360;
+            end
         end
 %         
 %     end
@@ -84,7 +93,7 @@ if nobs>0 && vmax>21
     for irep=1:3
         
         w=compute_wind_field(r,phi,vmax,pc,rmax,pn,vtreal,phit,lat,dpdt,phi_spiral,xn,vt,phia);
-        [mean_error, rms_error, err]=compute_mean_error(r,w,obs);
+        [mean_error, rms_error, err]=compute_mean_error(r,w,obs,wrad);
         
         nit=0;
         
@@ -94,9 +103,9 @@ if nobs>0 && vmax>21
             nit=nit+1;
             
             wu=compute_wind_field(r,phi,vmax,pc,rmax,pn,vtreal,phit,lat,dpdt,phi_spiral,xn+dxn,vt,phia);
-            [mean_error_u, rms_error_u, err_u]=compute_mean_error(r,wu,obs);
+            [mean_error_u, rms_error_u, err_u]=compute_mean_error(r,wu,obs,wrad);
             wd=compute_wind_field(r,phi,vmax,pc,rmax,pn,vtreal,phit,lat,dpdt,phi_spiral,xn-dxn,vt,phia);
-            [mean_error_d, rms_error_d, err_d]=compute_mean_error(r,wd,obs);
+            [mean_error_d, rms_error_d, err_d]=compute_mean_error(r,wd,obs,wrad);
             
             if rms_error_u<rms_error
                 % Better with larger value of xn
@@ -128,9 +137,9 @@ if nobs>0 && vmax>21
             nit=nit+1;
             
             w=compute_wind_field(r,phi,vmax,pc,rmax,pn,vtreal,phit,lat,dpdt,phi_spiral,xn,vt+dvt,phia);
-            [mean_error_u, rms_error_u, err_u]=compute_mean_error(r,w,obs);
+            [mean_error_u, rms_error_u, err_u]=compute_mean_error(r,w,obs,wrad);
             w=compute_wind_field(r,phi,vmax,pc,rmax,pn,vtreal,phit,lat,dpdt,phi_spiral,xn,vt-dvt,phia);
-            [mean_error_d, rms_error_d, err_d]=compute_mean_error(r,w,obs);
+            [mean_error_d, rms_error_d, err_d]=compute_mean_error(r,w,obs,wrad);
             
             if rms_error_u<rms_error
                 % Better with larger value of vt
@@ -155,15 +164,15 @@ if nobs>0 && vmax>21
         end
         
         nit=0;
-        % Now the asymmetry magnitude
+        % Now the asymmetry direction
         while 1
             
             nit=nit+1;
             
             w=compute_wind_field(r,phi,vmax,pc,rmax,pn,vtreal,phit,lat,dpdt,phi_spiral,xn,vt,phia+dphia);
-            [mean_error_u, rms_error_u, err_u]=compute_mean_error(r,w,obs);
+            [mean_error_u, rms_error_u, err_u]=compute_mean_error(r,w,obs,wrad);
             w=compute_wind_field(r,phi,vmax,pc,rmax,pn,vtreal,phit,lat,dpdt,phi_spiral,xn,vt,phia-dphia);
-            [mean_error_d, rms_error_d, err_d]=compute_mean_error(r,w,obs);
+            [mean_error_d, rms_error_d, err_d]=compute_mean_error(r,w,obs,wrad);
             
             if rms_error_u<rms_error
                 % Better with larger value of vt
@@ -176,6 +185,13 @@ if nobs>0 && vmax>21
             else
                 break
             end
+            if phia<-180
+                phia=phia+360;
+            end
+            if phia>180
+                phia=phia-360;
+            end
+                
             
             if nit>100
                 break
@@ -187,7 +203,7 @@ if nobs>0 && vmax>21
     
 end
 
-function [mean_error, rms_error, err]=compute_mean_error(r,w,obs)
+function [mean_error, rms_error, err]=compute_mean_error(r,w,obs,wrad)
 
 nq=4;
 nrad=1;
@@ -195,8 +211,6 @@ nrad=1;
 iq1=[1 10 19 28];
 iq2=[10 19 28 37];
 
-wrad=[35 50 65 100];
-wrad=wrad*0.9/1.944; % Convert 10-minute averaged m/s
 
 err=zeros(nq,nrad);
 
