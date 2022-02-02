@@ -30,15 +30,15 @@ switch lower(opt)
             % Cell centres!
             handles.model.sfincs.domain(ad).xg=xg;
             handles.model.sfincs.domain(ad).yg=yg;
-%             handles.model.sfincs.domain(ad).gridx=xz(2:end,2:end);
-%             handles.model.sfincs.domain(ad).gridy=yz(2:end,2:end);
-            handles.model.sfincs.domain(ad).gridx=xz(1:end,1:end); %DOUBLE CHECK WHETHER THIS IS CORRECT!
-            handles.model.sfincs.domain(ad).gridy=yz(1:end,1:end);  
+%            handles.model.sfincs.domain(ad).gridx=xz(2:end,2:end);
+%            handles.model.sfincs.domain(ad).gridy=yz(2:end,2:end);
+            handles.model.sfincs.domain(ad).gridx=xz;
+            handles.model.sfincs.domain(ad).gridy=yz;
             
             % Attribute files
             msk=zeros(inp.nmax,inp.mmax);
             z=msk;
-            if ~isempty(inp.indexfile) && ~isempty(inp.depfile) && ~isempty(inp.mskfile)
+            if ~isempty(inp.indexfile) || ~isempty(inp.depfile) || ~isempty(inp.mskfile)
                 [z,msk]=sfincs_read_binary_inputs(inp.mmax,inp.nmax,inp.indexfile,inp.depfile,inp.mskfile);
                 handles.model.sfincs.domain(ad).mask=msk;
                 handles.model.sfincs.domain(ad).gridz=z;
@@ -54,9 +54,11 @@ switch lower(opt)
             if ~isempty(inp.bndfile)
                 handles.model.sfincs.domain(ad).flowboundarypoints=sfincs_read_boundary_points(inp.bndfile);
                 % Bzs file
+                if exist(inp.bzsfile,'file')
                 [t,val]=sfincs_read_boundary_conditions(inp.bzsfile);
                 handles.model.sfincs.domain(ad).flowboundaryconditions.time=inp.tref+t/86400;
                 handles.model.sfincs.domain(ad).flowboundaryconditions.zs=val;
+                end
             end
 
             % Bwv file

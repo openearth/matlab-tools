@@ -46,6 +46,7 @@ for id=id1:id2
             handles=ddb_sfincs_plot_wave_boundary_points(handles,option,'domain',id,'visible',1);
             handles=ddb_sfincs_plot_mask(handles,option,'domain',id,'visible',1);
             handles=ddb_sfincs_plot_coastline_points(handles,option,'domain',id,'visible',1);
+            handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id,'visible',1);
             
         case{'delete'}
             
@@ -55,6 +56,7 @@ for id=id1:id2
             handles=ddb_sfincs_plot_wave_boundary_points(handles,option,'domain',id);
             handles=ddb_sfincs_plot_mask(handles,option,'domain',id);
             handles=ddb_sfincs_plot_coastline_points(handles,option,'domain',id);
+            handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id);
 
             try
                 delete(handles.model.sfincs.boundaryspline.handle);                
@@ -82,12 +84,12 @@ for id=id1:id2
             
         case{'update'}
             
-            if act
-                col=[1 1 0];
-            else
-                col=[0.8 0.8 0.8];
-            end
-            handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id,'visible',vis,'color',col);
+%             if act
+%                 col=[1 1 0];
+%             else
+%                 col=[0.8 0.8 0.8];
+%             end
+%             handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id,'visible',vis,'color',col);
 
             col=[0.8 0.8 0.8];
             handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id,'visible',vis,'color',col);
@@ -130,9 +132,18 @@ for id=id1:id2
             else
                 ivis=0;
             end
-            ivis=0;
+            ivis=1;
             handles=ddb_sfincs_plot_mask(handles,option,'domain',id,'visible',ivis);
             handles=ddb_sfincs_plot_coastline_points(handles,option,'domain',id,'visible',ivis);            
+
+%             if act && vis
+%                 ivis=1;
+%             else
+%                 ivis=0;
+%             end
+            
+            handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id,'visible',1);
+            
             
     end
     
