@@ -188,11 +188,11 @@ function generateGrid(opt)
 
 handles=getHandles;
 
-npmax=20000000;
-if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY>npmax
-    ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
-    return
-end
+% npmax=20000000;
+% if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY>npmax
+%     ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
+%     return
+% end
 
 % Temporarily set zMax to very high value
 zmx=handles.toolbox.modelmaker.zMax;

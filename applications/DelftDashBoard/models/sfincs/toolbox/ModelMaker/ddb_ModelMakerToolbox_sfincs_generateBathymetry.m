@@ -41,7 +41,9 @@ if icheck
     end
     [pathstr,name,ext]=fileparts(filename);
     handles.model.sfincs.domain(id).input.depfile=filename;
-    handles.model.sfincs.domain(id).input.indexfile=[name '.ind'];
+    if isempty(handles.model.sfincs.domain(id).buq)
+        handles.model.sfincs.domain(id).input.indexfile=[name '.ind'];
+    end
     handles.model.sfincs.domain(id).input.mskfile=[name '.msk'];
     % Check if there is already data in depth matrix
     dmax=max(max(handles.model.sfincs.domain(id).gridz));
@@ -62,12 +64,17 @@ if icheck
     end
 end
 
-%% Grid coordinates and type
-% These are the centre points !
 xg=handles.model.sfincs.domain(id).gridx;
 yg=handles.model.sfincs.domain(id).gridy;
 zg=handles.model.sfincs.domain(id).gridz;
-gridtype='structured';
+
+%% Grid coordinates and type
+% These are the centre points !
+if ~isempty(handles.model.sfincs.domain(id).buq)
+    gridtype='unstructured';
+else
+    gridtype='structured';
+end
 
 %% Generate bathymetry
 [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',overwrite,'gridtype',gridtype,'modeloffset',modeloffset);
@@ -87,33 +94,52 @@ zmax=handles.toolbox.modelmaker.sfincs.zmax;
 xyinc=[];
 xyexc=[];
 
+msk=zeros(size(xg))+1;
 
-msk=sfincs_make_mask(xg,yg,zg,[zmin zmax],'includepolygon',xyinc,'excludepolygon',xyexc);
+% msk=sfincs_make_mask(xg,yg,zg,[zmin zmax],'includepolygon',xyinc,'excludepolygon',xyexc);
 msk(isnan(zg))=0;
-% zg(msk==0)=NaN;
+% % zg(msk==0)=NaN;
 handles.model.sfincs.domain(id).mask=msk;
 
 
-%% And save the files
-indexfile=handles.model.sfincs.domain(id).input.indexfile;
-bindepfile=handles.model.sfincs.domain(id).input.depfile;
-binmskfile=handles.model.sfincs.domain(id).input.mskfile;
+% %% And save the files
+% indexfile=handles.model.sfincs.domain(id).input.indexfile;
+% bindepfile=handles.model.sfincs.domain(id).input.depfile;
+% binmskfile=handles.model.sfincs.domain(id).input.mskfile;
+% 
+% % handles.model.sfincs.domain(id).input.inputformat='asc';
+% 
+% if strcmpi(handles.model.sfincs.domain(id).input.inputformat,'bin')
+%     sfincs_write_binary_inputs(zg,msk,indexfile,bindepfile,binmskfile);
+% else
+%     sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
+% end
+% 
+% handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
+% 
+% handles = ddb_sfincs_plot_mask(handles, 'plot');
 
-% handles.model.sfincs.domain(id).input.inputformat='asc';
-
-if strcmpi(handles.model.sfincs.domain(id).input.inputformat,'bin')
-    sfincs_write_binary_inputs(zg,msk,indexfile,bindepfile,binmskfile);
-else
-    sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
-end
-
-handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
-
-handles = ddb_sfincs_plot_mask(handles, 'plot');
-
-
-
-
+%% Subgrid
+dr='.\';
+subgridfile='sfincs.sbg';
+bathy=datasets;
+manning_input=[0.02 0.02 0.0];
+cs=handles.screenParameters.coordinateSystem;
+refi=5;
+refj=5;
+uopt='minmean';
+maxdzdv=10;
+usemex=1;
+nbin=5;
+% 
+% global bathymetry
+% bathymetry=handles.bathymetry;
+% 
+% bathy.zmin=-9999;
+% bathy.zmax= 9999;
+% 
+% sfincs_make_subgrid_file_v8(dr,subgridfile,bathy,manning_input,cs,nbin,refi,refj,uopt,maxdzdv,usemex);
+% 
 
 %%
 % figure(100)
