@@ -1,5 +1,14 @@
 function ddb_giveWarning(varargin)
 
+
+if strcmpi(varargin{1},'error')
+    err=lasterror;
+    disp(err);
+    for j=1:length(err.stack)
+        disp(err.stack(j));
+    end
+end
+
 show_fig=1;
 txt=varargin{2};
 sz=[260 272];
