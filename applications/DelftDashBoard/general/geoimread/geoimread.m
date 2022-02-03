@@ -150,17 +150,17 @@ for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
             case{'info'}
-                if license('test','map_toolbox')
-                    x0=I.TiePoints.WorldPoints.X;
-                    y0=I.TiePoints.WorldPoints.Y;
-                    dx=I.PixelScale(1);
-                    dy=-I.PixelScale(2);
-                    nx=I.Width;
-                    ny=I.Height;
-                    x=x0:dx:x0+(nx-1)*dx;
-                    y=y0:dy:y0+(ny-1)*dy;
-                    A=[];
-                else
+%                 if license('test','map_toolbox')
+%                     x0=I.TiePoints.WorldPoints.X;
+%                     y0=I.TiePoints.WorldPoints.Y;
+%                     dx=I.PixelScale(1);
+%                     dy=-I.PixelScale(2);
+%                     nx=I.Width;
+%                     ny=I.Height;
+%                     x=x0:dx:x0+(nx-1)*dx;
+%                     y=y0:dy:y0+(ny-1)*dy;
+%                     A=[];
+%                 else
                     x0=I.ModelTiepointTag(4);
                     y0=I.ModelTiepointTag(5);
                     dx=I.ModelPixelScaleTag(1);
@@ -170,7 +170,7 @@ for ii=1:length(varargin)
                     x=x0:dx:x0+(nx-1)*dx;
                     y=y0:dy:y0+(ny-1)*dy;
                     A=[];
-                end
+%                 end
                 return
         end
     end
@@ -345,12 +345,14 @@ fclose(fid);
 %--- BELOW is to make it more robust if no mapping toolbox ---
 
 function I = robustgeotiffinfo(fname)
-if license('test','map_toolbox')
-    I=geotiffinfo(fname);
-else
+% if license('test','map_toolbox')
+%     I=geotiffinfo(fname);
+% else
     I=imfinfo(fname);
-%     %TODO: generate home-made refmatrix(?)....
-%     if isfield(tags, 'ModelTransformationTag') && numel(tags.ModelTransformationTag) >= 8
+    %TODO: generate home-made refmatrix(?)....
+%    if isfield(tags, 'ModelTransformationTag') && numel(tags.ModelTransformationTag) >= 8
+%        geoimread does not work for rotated systems
+%     if isfield(I, 'ModelTransformationTag') && numel(I.ModelTransformationTag) >= 8
 %         geoimread does not work for rotated systems
 %         
 %     else %use ModelPixelScaleTag instead
@@ -360,7 +362,7 @@ else
 %         J = [dx 0; 0 dy];
 %     end
 %     I.RefMatrix=[flipud(J); x0-J(1,1)-J(1,2)];
-end
+% end
 
 function [x,y]=robustpixcenters(I)
 % if license('test','map_toolbox')
