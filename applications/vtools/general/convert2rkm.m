@@ -20,7 +20,7 @@
 %       For rkm to x-y
 %   -input 2: rkm of the points; double(number of points,1)
 %   -input 3: branch of the points; cell(number of points,1)
-%       accepted branch names (capitals are not considered):
+%       usual branch names (capitals are not considered):
 %           -Rhein: rhein
 %           -Waal: wa
 %           -Pannerdensch Kanaal: pk

@@ -66,6 +66,7 @@ HiranoDiffusion=simdef.mor.HiranoDiffusion;
 HiranoRegularize=simdef.mor.HiranoRegularize;
 RegularizationRadious=simdef.mor.RegularizationRadious;
 SedTransDerivativesComputation=simdef.mor.SedTransDerivativesComputation;
+UpwindBedload=simdef.mor.UpwindBedload;
 
 % HiranoCheckPerturbation=1e-6;
 % HiranoCheckEigThr=1e-6;
@@ -190,14 +191,14 @@ data{kl,1}=sprintf('  fIk = %d',0); kl=kl+1; %if we test for ill-posedness, we s
 data{kl,1}=sprintf('  RegularizationLocations = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get â€œmesh1d_umodâ€?
 
-% data{kl,1}=        ''; kl=kl+1;
-% data{kl,1}=        '[Numerics]'; kl=kl+1;
+data{kl,1}=        ''; kl=kl+1;
+ data{kl,1}=        '[Numerics]'; kl=kl+1;
 % data{kl,1}=sprintf('  HiranoCheck = %d       [ - ] Flag for well-posedness of Hirano check',HiranoCheck); kl=kl+1;
 % data{kl,1}=        '                            0 (default): Off'; kl=kl+1;
 % data{kl,1}=        '                            1          : On'; kl=kl+1;
 % data{kl,1}=sprintf('  HiranoCheckPertubation = %0.7E',HiranoCheckPerturbation); kl=kl+1;
 % data{kl,1}=sprintf('  HiranoCheckEigThr = %0.7E',HiranoCheckEigThr); kl=kl+1;
-% data{kl,1}=sprintf('  UpwindBedload = %s',UpwindBedload); kl=kl+1;
+data{kl,1}=sprintf('  UpwindBedload = %s',UpwindBedload); kl=kl+1;
 
 %% HiranoIllposed
 data{kl,1}=        ''; kl=kl+1;

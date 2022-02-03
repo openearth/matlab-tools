@@ -17,6 +17,16 @@
 %OUTPUT:
 %
 
-function
+function 
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'sedTrans',0,@isnumeric);
+
+parse(parin,varargin{:});
+
+sedTrans=parin.Results.sedTrans;
 
 end %function
