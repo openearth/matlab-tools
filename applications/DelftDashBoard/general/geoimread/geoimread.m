@@ -287,7 +287,7 @@ if nargout == 4
         %TODO: check whether GTRasterTypeGeoKey is RasterPixelIsArea or RasterPixelIsPoint
         I.CornerCoords.Row = .5 + [0 0 size(A,1) size(A,1)]; %TODO: is this .5 always true?  
         I.CornerCoords.Col = .5 + [0 size(A,2) size(A,2) 0];
-        [I.CornerCoords.Lat,I.CornerCoords.Lon] = projinv(I,I.CornerCoords.X,I.CornerCoords.Y);
+%         [I.CornerCoords.Lat,I.CornerCoords.Lon] = projinv(I,I.CornerCoords.X,I.CornerCoords.Y);
         I.GeoTIFFTags.ModelTiepointTag(4) = x(1);
         I.GeoTIFFTags.ModelTiepointTag(5) = y(1);
         I.SpatialRef.XLimWorld = [min(x),max(x)];
@@ -363,9 +363,9 @@ else
 end
 
 function [x,y]=robustpixcenters(I)
-if license('test','map_toolbox')
-    [x,y]=pixcenters(I);
-else
+% if license('test','map_toolbox')
+%     [x,y]=pixcenters(I);
+% else
     try
     %I have not read documentation... but this only works for rectilinear systems.
     assert(I.ModelPixelScaleTag(3)==0,'unexpected ModelPixelScaleTag format.');
@@ -376,5 +376,5 @@ else
     x=((0:I.Width-1)*I.ModelTransformationTag(1))+I.ModelTransformationTag(4);
     y=((0:I.Height-1)*I.ModelTransformationTag(6))+I.ModelTransformationTag(8);
     end
-end
+% end
 
