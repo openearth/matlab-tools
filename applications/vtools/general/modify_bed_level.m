@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17029 $
-%$Date: 2021-02-01 13:23:23 +0100 (Mon, 01 Feb 2021) $
-%$Author: chavarri $
-%$Id: function_layout.m 17029 2021-02-01 12:23:23Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/function_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Modifies the bed elevation of a Delft3D-FM grid based on the 
 %values along a polyline referenced to the river kilometer.
