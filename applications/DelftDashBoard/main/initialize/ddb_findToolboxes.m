@@ -127,6 +127,18 @@ else
     if ~isempty(dr2)
         addpath(genpath(dr2));
         flist=dir(dr2);
+        
+        % If toolbox "CSIPS" exists, move it to the end since it uses components
+        % from the other toolboxes
+        for jjj=1:length(flist)
+            if strcmpi(flist(jjj).name,'csips')
+                flast=flist(end);
+                flist(end)=flist(jjj);
+                flist(jjj)=flast;
+                break
+            end
+        end
+        
         for i=1:length(flist)
             if flist(i).isdir
                 switch lower(flist(i).name)
@@ -174,12 +186,6 @@ else
     
 end
 
-% If toolbox "CSIPS" exists, move it to the end since it uses components
-% from the other toolboxes
-index=find(ismember(lower(name),'csips'));
-if ~isempty(index)
-   name = [name(1:index-1) name(index+1:end) name(index)];
-end
 
 % Only use toolboxes included in xml file
 if ~strcmpi(handles.configuration.include_toolboxes{1},'all')
