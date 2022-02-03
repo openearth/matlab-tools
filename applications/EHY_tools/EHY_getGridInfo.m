@@ -918,8 +918,8 @@ switch modelType
             case 'grid'
                 if ismember(typeOfModelFileDetail,{'lga','cco'})
                     dw = delwaq('open',inputFile);
-                    dw.X(dw.X == -999) = NaN;
-                    dw.Y(dw.Y == -999) = NaN;
+                    dw.X(dw.X > -1000 & dw.X <= -999) = NaN; % dummy-value can be -999, -999.999
+                    dw.Y(dw.Y > -1000 & dw.Y <= -999) = NaN;
                     if ismember('dimensions',wantedOutput)
                         E.MNKmax = dw.MNK;
                     end
