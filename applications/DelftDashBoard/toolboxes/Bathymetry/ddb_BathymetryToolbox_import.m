@@ -178,13 +178,13 @@ try
         close(wb_h);
     end
 catch
+    ddb_giveWarning('error','An error occured while reading the data file! See command window for details.');
     try
         close(wb);
     end
     try
         close(wb_h);
     end
-    ddb_giveWarning('text','An error occured while reading the data file!');
     return
 end
 
