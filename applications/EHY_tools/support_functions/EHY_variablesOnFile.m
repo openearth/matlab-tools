@@ -26,13 +26,15 @@ switch modelType
     case {'dfm','nc'}
         infonc    = ncinfo(fname);
         variables = {infonc.Variables.Name}';
-        description(1:numel(variables),1) = {''};
-        for iV = 1:length(variables)
-            % add attribute info - long_name
-            if ~isempty(infonc.Variables(iV).Attributes)
-                AttrInd =  strmatch('long_name',{infonc.Variables(iV).Attributes.Name},'exact');
-                if ~isempty(AttrInd)
-                    description{iV,1} = infonc.Variables(iV).Attributes(AttrInd).Value;
+        if nargout > 1
+            description(1:numel(variables),1) = {''};
+            for iV = 1:length(variables)
+                % add attribute info - long_name
+                if ~isempty(infonc.Variables(iV).Attributes)
+                    AttrInd =  strmatch('long_name',{infonc.Variables(iV).Attributes.Name},'exact');
+                    if ~isempty(AttrInd)
+                        description{iV,1} = infonc.Variables(iV).Attributes(AttrInd).Value;
+                    end
                 end
             end
         end
@@ -47,20 +49,24 @@ switch modelType
         dw = delwaq('open',fname);
         variables = dw.SubsName;
         
-        % additional info
-        try % could crash in case of big files
-            FI = qpfopen(fname);
-            [~,DataProps] = qp_getdata(FI);
-            variables2 = {DataProps.ShortName}';
-            [lia,locb] = ismember(variables2,variables);
-            dmy1 = cellstr(repmat(' [',numel(DataProps),1));
-            dmy2 = cellstr(repmat( ']',numel(DataProps),1));
-            description2 = strcat({DataProps.Name}', dmy1, {DataProps.Units}', dmy2);
-            
-            description(1:length(variables),1) = {''};
-            description(locb(locb~=0)) = description2(lia);
-        catch
-            description(1:length(variables),1) = {'Could not load description'};
+        if nargout > 1
+            % additional info
+            s = dir(fname);
+            if s.bytes < 10^9
+                FI = qpfopen(fname);
+                [~,DataProps] = qp_getdata(FI);
+                variables2 = {DataProps.ShortName}';
+                [lia,locb] = ismember(variables2,variables);
+                dmy1 = cellstr(repmat(' [',numel(DataProps),1));
+                dmy2 = cellstr(repmat( ']',numel(DataProps),1));
+                description2 = strcat({DataProps.Name}', dmy1, {DataProps.Units}', dmy2);
+                
+                description(1:length(variables),1) = {''};
+                description(locb(locb~=0)) = description2(lia);
+            else
+                disp('EHY_variablesOnFile: Big file! (>1 Gb), so loading of description info is skipped')
+                description(1:length(variables),1) = {'Could not load description'};
+            end
         end
         
     case 'simona'
@@ -74,5 +80,7 @@ switch modelType
 end
 
 %%
-varAndDescr = strcat(variables,' [',description,']');
-varAndDescr = strtrim(strrep(varAndDescr,'[]',''));
+if nargout > 1
+    varAndDescr = strcat(variables,' [',description,']');
+    varAndDescr = strtrim(strrep(varAndDescr,'[]',''));
+end
