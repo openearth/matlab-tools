@@ -32,7 +32,7 @@ function erase_directory(path2erase,fid_log)
 
 %erase folder directly
 if ispc
-    dos(sprintf('RD /S /Q %s',path2erase));
+    dos(sprintf('RD /S /Q "%s"',path2erase));
 elseif isunix
     system(sprintf('rm -rf %s',path2erase));
 elseif ismac
