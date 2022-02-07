@@ -28,21 +28,24 @@ function D3D_crosssectiondefinitions(simdef,varargin)
 
 parin=inputParser;
 
-inp.check_existing.default=true;
-addOptional(parin,'check_existing',inp.check_existing.default)
-
-inp.fname.default='CrossSectionDefinitions.ini';
-addOptional(parin,'fname',inp.check_existing.default)
+addOptional(parin,'check_existing',true)
+addOptional(parin,'fname','CrossSectionDefinitions.ini')
+addOptional(parin,'csd_global',NaN)
 
 parse(parin,varargin{:})
 
 check_existing=parin.Results.check_existing;
 fname=parin.Results.fname;
+csd_global=parin.Results.csd_global;
 
 %% RENAME
 
 dire_sim=simdef.D3D.dire_sim;
 csd=simdef.csd;  
+if isnan(csd_global)
+    csd_global=struct();
+    csd_global.leveeTransitionHeight=0.75;
+end
 
 ncsd=numel(csd);
 fields_csd=fields(csd);
@@ -58,7 +61,7 @@ data{kl,1}=        '   fileType              = crossDef'; kl=kl+1;
 %% 
 data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[Global]'; kl=kl+1;
-data{kl,1}=        '   leveeTransitionHeight = 0.75'; kl=kl+1;
+data{kl,1}=sprintf('   leveeTransitionHeight = %5.2f',csd_global.leveeTransitionHeight); kl=kl+1;
 %%
 for kcsd=1:ncsd
     nlevels=csd(kcsd).numLevels;

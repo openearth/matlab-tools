@@ -198,7 +198,7 @@ data{kl,1}=        ''; kl=kl+1;
 % data{kl,1}=        '                            1          : On'; kl=kl+1;
 % data{kl,1}=sprintf('  HiranoCheckPertubation = %0.7E',HiranoCheckPerturbation); kl=kl+1;
 % data{kl,1}=sprintf('  HiranoCheckEigThr = %0.7E',HiranoCheckEigThr); kl=kl+1;
-data{kl,1}=sprintf('  UpwindBedload = %s',UpwindBedload); kl=kl+1;
+data{kl,1}=sprintf('  UpwindBedload = %d',UpwindBedload); kl=kl+1;
 
 %% HiranoIllposed
 data{kl,1}=        ''; kl=kl+1;

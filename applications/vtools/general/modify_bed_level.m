@@ -220,7 +220,7 @@ if flg.plot
     %% polyline
     
     fdir_fig_1=fullfile(fdir_output,'fig_polyline');
-    mkdir_check(fdir_fig_1)
+    mkdir_check(fdir_fig_1);
     
     figure('visible','off')
     hold on
@@ -231,8 +231,14 @@ if flg.plot
     han.cbar=colorbar;
     han.cbar.Label.String='bed level change [m]';
     for krkm=1:drkm:nrkm
-        xlim(rkm_raw(krkm,1)+[-drkm/2,+drkm/2].*1000);
-        ylim(rkm_raw(krkm,2)+[-drkm/2,+drkm/2].*1000);
+        x_lims=rkm_raw(krkm,1)+[-drkm/2,+drkm/2].*1000;
+        y_lims=rkm_raw(krkm,2)+[-drkm/2,+drkm/2].*1000;
+        is_data=any(nodes_x>x_lims(1) & nodes_x<x_lims(2) & nodes_y>y_lims(1) & nodes_y<y_lims(2));
+        if ~is_data
+            continue
+        end
+        xlim(x_lims);
+        ylim(y_lims);
         fname_fig=sprintf('polyline_%03d.png',krkm);
         fpath_fig=fullfile(fdir_fig_1,fname_fig);
         print(gcf,fpath_fig,'-dpng','-r300')
@@ -242,7 +248,7 @@ if flg.plot
     %% inside polygon
     
     fdir_fig_1=fullfile(fdir_output,'fig_polygon');
-    mkdir_check(fdir_fig_1)
+    mkdir_check(fdir_fig_1);
     
     figure('visible','off')
 %     figure('visible','on')
@@ -257,8 +263,14 @@ if flg.plot
     plot(x_pol_out,y_pol_out,'-g')
     axis equal
     for krkm=1:drkm:nrkm
-        xlim(rkm_raw(krkm,1)+[-drkm/2,+drkm/2].*1000);
-        ylim(rkm_raw(krkm,2)+[-drkm/2,+drkm/2].*1000);
+        x_lims=rkm_raw(krkm,1)+[-drkm/2,+drkm/2].*1000;
+        y_lims=rkm_raw(krkm,2)+[-drkm/2,+drkm/2].*1000;
+        is_data=any(nodes_x>x_lims(1) & nodes_x<x_lims(2) & nodes_y>y_lims(1) & nodes_y<y_lims(2));
+        if ~is_data
+            continue
+        end
+        xlim(x_lims);
+        ylim(y_lims);
         fname_fig=sprintf('polygon_%03d.png',krkm);
         fpath_fig=fullfile(fdir_fig_1,fname_fig);
         print(gcf,fpath_fig,'-dpng','-r300')
@@ -268,7 +280,7 @@ if flg.plot
     %% bed level change
     
     fdir_fig_1=fullfile(fdir_output,'fig_bed_change');
-    mkdir_check(fdir_fig_1)
+    mkdir_check(fdir_fig_1);
     
     cmap=brewermap(100,'RdYlGn');
     
@@ -287,8 +299,14 @@ if flg.plot
     plot(axis_xy(:,1),axis_xy(:,2),'c')
     text(axis_xy(:,1),axis_xy(:,2),num2str(axis_dz))
     for krkm=1:drkm:nrkm
-        xlim(rkm_raw(krkm,1)+[-drkm/2,+drkm/2].*1000);
-        ylim(rkm_raw(krkm,2)+[-drkm/2,+drkm/2].*1000);
+        x_lims=rkm_raw(krkm,1)+[-drkm/2,+drkm/2].*1000;
+        y_lims=rkm_raw(krkm,2)+[-drkm/2,+drkm/2].*1000;
+        is_data=any(nodes_x>x_lims(1) & nodes_x<x_lims(2) & nodes_y>y_lims(1) & nodes_y<y_lims(2));
+        if ~is_data
+            continue
+        end
+        xlim(x_lims);
+        ylim(y_lims);
         fname_fig=sprintf('bed_change_%03d.png',krkm);
         fpath_fig=fullfile(fdir_fig_1,fname_fig);
         print(gcf,fpath_fig,'-dpng','-r300')
@@ -299,18 +317,20 @@ end
 
 %% PLOT DEBUG
 
-% cmap=brewermap(100,'RdYlGn');
-% figure('visible','on')
-% hold on
-% scatter(nodes_x,nodes_y,10,dz_loc,'filled')
-% plot(x_pol_in,y_pol_in,'-b')
-% han.cbar=colorbar;
-% han.cbar.Label.String='bed level change [m]';
-% clim(absolute_limits(dz_loc));
-% colormap(cmap);
-% axis equal
-% plot(axis_xy(:,1),axis_xy(:,2),'c')
+cmap=brewermap(100,'RdYlGn');
+figure('visible','on')
+hold on
+scatter(nodes_x,nodes_y,10,dz_loc,'filled')
+plot(x_pol_in,y_pol_in,'-b')
+han.cbar=colorbar;
+han.cbar.Label.String='bed level change [m]';
+clim(absolute_limits(dz_loc)+[-eps,+eps]);
+colormap(cmap);
+axis equal
+% plot(axis_xy(:,1),axis_xy(:,2),'c-*')
 % text(axis_xy(:,1),axis_xy(:,2),num2str(axis_dz))
+plot(rkm_raw(:,1),rkm_raw(:,2),'c-*')
+text(rkm_raw(:,1),rkm_raw(:,2),num2str(rkm_raw(:,4)))
     
 end %function
 

@@ -28,11 +28,8 @@ function D3D_crosssectionlocation(simdef,varargin)
 
 parin=inputParser;
 
-inp.check_existing.default=true;
-addOptional(parin,'check_existing',inp.check_existing.default)
-
-inp.fname.default='CrossSectionLocations.ini';
-addOptional(parin,'fname',inp.check_existing.default)
+addOptional(parin,'check_existing',true)
+addOptional(parin,'fname','CrossSectionLocations.ini')
 
 parse(parin,varargin{:})
 

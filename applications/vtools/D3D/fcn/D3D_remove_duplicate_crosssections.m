@@ -29,6 +29,7 @@ function D3D_remove_duplicate_crosssections(path_cs_def,path_cs_loc,folder_out)
 %% CALC
 
 %read
+[~,csdef_global]=S3_read_crosssectiondefinitions(path_cs_def,'file_type',7);
 [~,csdef]=S3_read_crosssectiondefinitions(path_cs_def,'file_type',2);
 [~,csloc]=S3_read_crosssectiondefinitions(path_cs_loc,'file_type',3);
 

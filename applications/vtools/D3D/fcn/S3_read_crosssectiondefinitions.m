@@ -39,8 +39,9 @@ file_type=parin.Results.file_type;
 %% FM or SOBEK3
 
 %fcnts = function to apply to the string we get:
-%   -1 = get rid of the first string
-%   -2 = convert to double
+%    1 = get rid of the first string
+%    2 = convert to double
+%    3 = convert to double and make integer (take only number before .)
 
 switch file_type
     case 1 %SOBEK 3 cross-section definition
@@ -52,7 +53,7 @@ switch file_type
         tag_cs='[Definition]';
         tags ={'id'            ,'type'          ,'thalweg'  ,'numLevels'  ,'levels'   ,'flowWidths'  ,'totalWidths'  ,'leveeCrestLevel'  ,'leveeFlowArea'  ,'leveeTotalArea','leveeBaseLevel','mainWidth','fp1Width','fp2Width','isShared'};            
         exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+'        ,'-?\d+.\d+','-?\d+.\d+'   ,'-?\d+.\d+'    ,'-?\d+.\d+'        ,'\d+.\d+'        ,'\d+.\d+'       ,'-?\d+.\d+'     ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+'     };
-        fcnts=[1               ,1               ,2          ,2            ,2          ,2             ,2              ,2                  ,2                ,2               ,2               ,2          ,2         ,2         ,2         ];
+        fcnts=[1               ,1               ,2          ,3            ,2          ,2             ,2              ,2                  ,2                ,2               ,2               ,2          ,2         ,2         ,2         ];
     case 3 %FM cross-section location  
         tag_cs='[CrossSection]';
         tags ={'id'            ,'branchId'      ,'chainage'  ,'shift'    ,'definitionId'    };            
@@ -73,6 +74,11 @@ switch file_type
         tags ={'id'            ,'type'          ,'thalweg'  ,'width'     ,'height'       ,'closed'};            
         exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','-?\d+.\d+' ,'-?\d+.\d+'    ,'\w+([.-]?\w+)*'};
         fcnts=[1               ,1               ,2          ,2           ,2              ,1];
+    case 7 %Global block
+        tag_cs='[Global]';
+        tags ={'leveeTransitionHeight'};            
+        exprs={'-?\d+.\d+'            };
+        fcnts=[2                      ];
 end
 
 ntags=numel(tags);
@@ -132,6 +138,12 @@ switch fcnts_loc
     case 2 %convert to double
 %         strconv=str2double(str_aux_r{1,1});
         strconv=str2double(str_aux_r);
+    case 3 %make integer
+        %20.00 -> 20
+        strconv=str2double(str_aux_r);
+        if numel(strconv)>1
+            strconv=strconv(1);
+        end
 end
 
 end %rework_str
