@@ -6,7 +6,7 @@ function [u,v] = magdir2uv(mag,dir,convention)
 % u          = u-component of magnitude
 % v          = v-component of magnitude
 % mag        = magnitude parameter
-% dir        = directional parameter in degrees
+% dir        = directional parameter in degrees (going to)
 % convention = either 'cartesian' or 'nautical'
 %
 % where:
@@ -16,89 +16,109 @@ function [u,v] = magdir2uv(mag,dir,convention)
 % note that both convention are considered clockwise from geographic North
 
 % created by E.Moerman 08-08-2012
+% modified by P.W. van Steijn 09-02-2022 to make it faster without a loop over all elements
 
-if nargin == 2,
+if nargin == 2
     convention='cartesian';
-end;
+end
 
-for ii = 1:size(dir,1)
-    for jj=1:size(dir,2)
-        
-        if dir(ii,jj) > 0 && dir(ii,jj) < 90 % quadrant 1, 0-90 degrees
-            if strcmp(convention,'cartesian')
-                u(ii,jj) = sind(dir(ii,jj)).*mag(ii,jj);
-                v(ii,jj) = cosd(dir(ii,jj)).*mag(ii,jj);
-            else
-                u(ii,jj) = sind(dir(ii,jj)).*mag(ii,jj).*-1;
-                v(ii,jj) = cosd(dir(ii,jj)).*mag(ii,jj).*-1;
-            end
-            
-        elseif dir(ii,jj) > 90 && dir(ii,jj) < 180 % quadrant 2, 90-180 degrees
-            if strcmp(convention,'cartesian')
-                u(ii,jj) = cosd(dir(ii,jj)-90).*mag(ii,jj);
-                v(ii,jj) = sind(dir(ii,jj)-90).*mag(ii,jj).*-1;
-            else
-                u(ii,jj) = cosd(dir(ii,jj)-90).*mag(ii,jj).*-1;
-                v(ii,jj) = sind(dir(ii,jj)-90).*mag(ii,jj);
-            end
-            
-        elseif dir(ii,jj) > 180 && dir(ii,jj) < 270 % quadrant 3, 180-270 degrees
-            if strcmp(convention,'cartesian')
-                u(ii,jj) = sind(dir(ii,jj)-180).*mag(ii,jj).*-1;
-                v(ii,jj) = cosd(dir(ii,jj)-180).*mag(ii,jj).*-1;
-            else
-                u(ii,jj) = sind(dir(ii,jj)-180).*mag(ii,jj);
-                v(ii,jj) = cosd(dir(ii,jj)-180).*mag(ii,jj);
-            end
-            
-        elseif dir(ii,jj) > 270 && dir(ii,jj) < 360 % quadrant 4, 270-360 degrees
-            if strcmp(convention,'cartesian')
-                u(ii,jj) = cosd(dir(ii,jj)-270).*mag(ii,jj).*-1;
-                v(ii,jj) = sind(dir(ii,jj)-270).*mag(ii,jj);
-            else
-                u(ii,jj) = cosd(dir(ii,jj)-270).*mag(ii,jj);
-                v(ii,jj) = sind(dir(ii,jj)-270).*mag(ii,jj).*-1;
-            end
-            
-        elseif dir(ii,jj) == 0 || dir(ii,jj) == 360;
-            if strcmp(convention,'cartesian')
-                u(ii,jj) = 0;
-                v(ii,jj) = mag(ii,jj);
-            else
-                u(ii,jj) = 0;
-                v(ii,jj) = mag(ii,jj).*-1;
-            end
-            
-        elseif dir(ii,jj) == 90
-            if strcmp(convention,'cartesian')
-                u(ii,jj) = mag(ii,jj);
-                v(ii,jj) = 0;
-            else
-                u(ii,jj) = mag(ii,jj).*-1;
-                v(ii,jj) = 0;
-            end
-            
-        elseif dir(ii,jj) == 180
-            if strcmp(convention,'cartesian')
-                
-                u(ii,jj) = 0;
-                v(ii,jj) = mag(ii,jj).*-1;
-            else
-                u(ii,jj) = 0;
-                v(ii,jj) = mag(ii,jj);
-            end
-            
-        elseif dir(ii,jj) == 270
-            if strcmp(convention,'cartesian')
-                u(ii,jj) = mag(ii,jj).*-1;
-                v(ii,jj) = 0;
-            else
-                u(ii,jj) = mag(ii,jj);
-                v(ii,jj) = 0;
-            end
-        elseif isnan(dir(ii,jj))
-                u(ii,jj) = NaN;
-                v(ii,jj) = NaN;
-        end
+u = nan(size(dir));
+v = nan(size(dir));
+
+dir(dir>360) = dir(dir>360)-360; % substract 360 degrees for values larger than 360
+dir(dir<0) = dir(dir<0)+360; % add 360 degrees for negative values
+
+IDs = dir>0&dir<90; % quadrant 1, 0-90 degrees
+if sum(IDs(:))>0
+    if strcmp(convention,'cartesian')
+        u(IDs) = sind(dir(IDs)).*mag(IDs);
+        v(IDs) = cosd(dir(IDs)).*mag(IDs);
+    else
+        u(IDs) = sind(dir(IDs)).*mag(IDs).*-1;
+        v(IDs) = cosd(dir(IDs)).*mag(IDs).*-1;
     end
+end
+
+IDs = dir > 90 & dir < 180; % quadrant 2, 90-180 degrees
+if sum(IDs(:))>0
+    if strcmp(convention,'cartesian')
+        u(IDs) = cosd(dir(IDs)-90).*mag(IDs);
+        v(IDs) = sind(dir(IDs)-90).*mag(IDs).*-1;
+    else
+        u(IDs) = cosd(dir(IDs)-90).*mag(IDs).*-1;
+        v(IDs) = sind(dir(IDs)-90).*mag(IDs);
+    end
+end
+
+IDs = dir > 180 & dir < 270; % quadrant 3, 180-270 degrees
+if sum(IDs(:))>0
+    if strcmp(convention,'cartesian')
+        u(IDs) = sind(dir(IDs)-180).*mag(IDs).*-1;
+        v(IDs) = cosd(dir(IDs)-180).*mag(IDs).*-1;
+    else
+        u(IDs) = sind(dir(IDs)-180).*mag(IDs);
+        v(IDs) = cosd(dir(IDs)-180).*mag(IDs);
+    end
+end
+
+IDs = dir > 270 & dir < 360; % quadrant 4, 270-360 degrees
+if sum(IDs(:))>0
+    if strcmp(convention,'cartesian')
+        u(IDs) = cosd(dir(IDs)-270).*mag(IDs).*-1;
+        v(IDs) = sind(dir(IDs)-270).*mag(IDs);
+    else
+        u(IDs) = cosd(dir(IDs)-270).*mag(IDs);
+        v(IDs) = sind(dir(IDs)-270).*mag(IDs).*-1;
+    end
+end
+
+IDs = dir == 0 | dir == 360;
+if sum(IDs(:))>0
+    if strcmp(convention,'cartesian')
+        u(IDs) = 0;
+        v(IDs) = mag(IDs);
+    else
+        u(IDs) = 0;
+        v(IDs) = mag(IDs).*-1;
+    end
+end
+
+IDs = dir == 90;
+if sum(IDs(:))>0
+    if strcmp(convention,'cartesian')
+        u(IDs) = mag(IDs);
+        v(IDs) = 0;
+    else
+        u(IDs) = mag(IDs).*-1;
+        v(IDs) = 0;
+    end
+end
+
+IDs = dir == 180;
+if sum(IDs(:))>0
+    if strcmp(convention,'cartesian')
+        
+        u(IDs) = 0;
+        v(IDs) = mag(IDs).*-1;
+    else
+        u(IDs) = 0;
+        v(IDs) = mag(IDs);
+    end
+end
+
+IDs = dir(IDs) == 270;
+if sum(IDs(:))>0
+    if strcmp(convention,'cartesian')
+        u(IDs) = mag(IDs).*-1;
+        v(IDs) = 0;
+    else
+        u(IDs) = mag(IDs);
+        v(IDs) = 0;
+    end
+end
+
+IDs = isnan(dir);
+if sum(IDs(:))>0
+    u(IDs) = NaN;
+    v(IDs) = NaN;
 end
