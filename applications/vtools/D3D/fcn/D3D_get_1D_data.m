@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17612 $
-%$Date: 2021-11-29 15:26:03 +0100 (Mon, 29 Nov 2021) $
-%$Author: ottevan $
-%$Id: D3D_io_input.m 17612 2021-11-29 14:26:03Z ottevan $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_io_input.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
                 
 function [z,SZ,time_r,zlab,refdate]=D3D_get_1D_data(flg,branch_v,dire_sim_v,which_v_v,time_data,kt_v,time_cmp,in_read)
