@@ -44,17 +44,16 @@ function D3D_dep_s(simdef)
 
 %% RENAME
 
-if isfield(simdef.file,'dep')==0
-%     dire_sim=simdef.D3D.dire_sim; 
-    simdef.file.dep=fullfile(simdef.D3D.dire_sim,'dep.dep');
-end
+% if isfield(simdef.file,'dep')==0
+% %     dire_sim=simdef.D3D.dire_sim; 
+%     simdef.file.dep=fullfile(simdef.D3D.dire_sim,'dep.dep');
+% end
 path_dep=simdef.file.dep;
 
 if isfield(simdef.file,'grd')==0
     error('provide grid file');
 end
 path_grd=simdef.file.grd;
-% path_grd=fullfile(dire_sim,'grd.grd');
 
 if isfield(simdef.ini,'etab_noise')==0
     simdef.ini.etab_noise=0;
@@ -77,6 +76,9 @@ end
 % M=simdef.grd.M;
 % N=simdef.grd.N;
 
+if strcmp(simdef.mdf.Dpsopt,'DP')==0
+    error('This function is prepared for DPSOPT=DP. Worked with the read grid to change it')
+end
 %% read grid
 grd=wlgrid('read',path_grd);
 M=size(grd.X,1)+1;

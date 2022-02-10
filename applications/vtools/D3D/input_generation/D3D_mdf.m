@@ -32,15 +32,30 @@
 %   -Introductuion of friction as input
 %   -Introduction of map print time as input
 
-function D3D_mdf(simdef)
+function D3D_mdf(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
+% dire_sim=simdef.D3D.dire_sim;
 
-runid_serie=simdef.runid.serie;
-runid_number=simdef.runid.number;
+% runid_serie=simdef.runid.serie;
+% runid_number=simdef.runid.number;
 
-path_grd=fullfile(dire_sim,'grd.grd');
+file_name=simdef.file.mdf;
+
+% path_grd=fullfile(dire_sim,'grd.grd');
+path_grd=simdef.file.grd;
 
 %only straight flume!
 % M=simdef.grd.M;
@@ -159,12 +174,12 @@ data{kl,1}=        'Htur2d = #N#'; kl=kl+1;
 data{kl,1}=sprintf('Irov   = %d',wall_rough); kl=kl+1;
 data{kl,1}=sprintf('Z0v    = %0.7E',wall_ks/30); kl=kl+1;
 if simdef.mor.morphology
-data{kl,1}=        'Filsed = #sed.sed#'; kl=kl+1;
-data{kl,1}=        'Filmor = #mor.mor#'; kl=kl+1;
+data{kl,1}=sprintf('Filsed = #%s#',simdef.mdf.sed); kl=kl+1;
+data{kl,1}=sprintf('Filmor = #%s#',simdef.mdf.mor); kl=kl+1;
 end
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Iter   =      2'; kl=kl+1;
-data{kl,1}=        'Dryflp = #YES#'; kl=kl+1;
+%data{kl,1}=        'Dryflp = #YES#'; kl=kl+1;
 data{kl,1}=sprintf('Dpsopt = #%s#',Dpsopt); kl=kl+1; %flow depth at cell centres: DP=depth specified at cell centres; kl=kl+1; MAX; kl=kl+1; MEAN; kl=kl+1; MIN
 data{kl,1}=sprintf('Dpuopt = #%s#',Dpuopt); kl=kl+1; %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together
 data{kl,1}=        'Dryflc =  1.0000000e-003'; kl=kl+1;
@@ -212,11 +227,12 @@ data{kl,1}=        'CflMsg = #Y#'; kl=kl+1; %write more than 100 CFL cheks
 data{kl,1}=        'Online = #N#'; kl=kl+1;
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
 if simdef.mor.morphology
-data{kl,1}=        'TraFrm = #tra.tra#'; 
+data{kl,1}=sprintf('TraFrm = #%s#',simdef.mdf.tra); 
 end
 
 
 %% WRITE
 
-file_name=fullfile(dire_sim,sprintf('sim_%s%s.mdf',runid_serie,runid_number));
-writetxt(file_name,data)
+% file_name=fullfile(dire_sim,sprintf('sim_%s%s.mdf',runid_serie,runid_number));
+% writetxt(file_name,data)
+writetxt(file_name,data,'check_existing',check_existing);

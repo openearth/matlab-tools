@@ -53,11 +53,7 @@ function [simdef]=D3D_rework(simdef)
 
 vkappa=0.41; %von Karman
 
-%%
-%% FILE
-%%
 
-simdef.file.dummy=NaN;
 
 %%
 %% D3D
@@ -80,6 +76,18 @@ if isfield(simdef.D3D,'structure')==0
     simdef.D3D.structure=0;
 end
 
+%%
+%% FILE
+%%
+
+simdef.file.dummy=NaN;
+
+switch simdef.D3D.structure
+    case 1
+        if isfield(simdef.file,'tra')==0
+            simdef.file.tra=fullfile(simdef.D3D.dire_sim,'tra.tra');
+        end
+end
 
 %%
 %% GRID
@@ -306,6 +314,12 @@ if isfield(simdef.mdf,'sed')==0
     simdef.mdf.sed='sed.sed';
 end
 
+if simdef.D3D.structure==1
+if isfield(simdef.mdf,'tra')==0
+    simdef.mdf.tra='tra.tra';
+end
+end
+
 %%
 %% SED
 %%
@@ -467,7 +481,13 @@ if isfield(simdef.runid,'name')==0
             error('specify runid as string')
         end
     end
-    simdef.runid.name=sprintf('sim_%s%s.mdu',simdef.runid.serie,simdef.runid.number);
+    switch simdef.D3D.structure
+        case 1
+            ext='mdf';
+        case 2
+            ext='mdu';
+    end
+    simdef.runid.name=sprintf('sim_%s%s.%s',simdef.runid.serie,simdef.runid.number,ext);
 end
 
 %% 
@@ -542,6 +562,8 @@ end
 if isfield(simdef.bc,'fname_d')==0
     simdef.bc.fname_d='bc_wL';
 end
+
+
 
 %% RENAME OUT
 

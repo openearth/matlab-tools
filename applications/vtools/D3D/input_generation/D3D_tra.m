@@ -26,11 +26,24 @@
 %200526
 %   -addition Engelund-Hansen and modification file
 
-function D3D_tra(simdef)
+function D3D_tra(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
+
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
-
+% dire_sim=simdef.D3D.dire_sim;
+file_name=simdef.file.tra;
 IFORM=simdef.tra.IFORM;
 sedTrans=simdef.tra.sedTrans;
 
@@ -68,7 +81,7 @@ end
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'tra.tra');
-writetxt(file_name,data);
+% file_name=fullfile(dire_sim,'tra.tra');
+writetxt(file_name,data,'check_existing',check_existing);
 
 end %function

@@ -100,12 +100,13 @@ data{54 ,1}='        -->';
 data{55 ,1}='    </delftOnline>';
 data{56 ,1}='</deltaresHydro>';
 
-        switch simdef.D3D.compile
-            case 0 %DIMR
+%         switch simdef.D3D.compile
+%             case 0 %DIMR
                 file_name=fullfile(dire_sim,'config_d_hydro.xml');
-            otherwise
-                file_name=fullfile(dire_sim,'config_flow2d3d.xml');
-        end
+%             otherwise
+%                 file_name=fullfile(dire_sim,'config_flow2d3d.xml');
+%         end
+% file_name=fullfile(dire_sim,'dimr_config.xml');
     case 2
 kl=1;
 data{kl,1}='<?xml version="1.0" encoding="iso-8859-1"?>                                                                                                                                                                                          '; kl=kl+1;

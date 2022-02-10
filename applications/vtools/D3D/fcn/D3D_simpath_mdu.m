@@ -79,7 +79,9 @@ else
 end
 
 %extenral forcing
-simdef.file.extforcefilenew=fullfile(path_sim,mdu.external_forcing.ExtForceFileNew);
+if isfield(mdu.external_forcing,'ExtForceFileNew') && ~isemtpy(mdu.external_forcing.ExtForceFileNew)
+    simdef.file.extforcefilenew=fullfile(path_sim,mdu.external_forcing.ExtForceFileNew);
+end
 
 %sediment
 if isfield(mdu,'sediment')

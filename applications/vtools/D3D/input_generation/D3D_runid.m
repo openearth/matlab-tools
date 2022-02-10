@@ -28,7 +28,8 @@ dire_sim=simdef.D3D.dire_sim;
 %% FILE
 
 % data{1,1}=sprintf('sim_%s%03d',simdef.runid.serie,simdef.runid.number);
-data{1,1}=sprintf('sim_%s%s',simdef.runid.serie,simdef.runid.number);
+% data{1,1}=sprintf('sim_%s%s',simdef.runid.serie,simdef.runid.number);
+data{1,1}=sprintf('%s',simdef.runid.name);
 
 %% WRITE
 
