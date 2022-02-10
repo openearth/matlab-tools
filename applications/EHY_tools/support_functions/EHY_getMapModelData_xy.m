@@ -209,11 +209,13 @@ end
 
 % In case of velocity we project it to the pli
 if isfield(Data,'vel_x')
-    angle_track=angle_polyline(Data_xy.Xcen,Data_xy.Ycen,OPT.nAverageAnglePli);
+    angle_track=angle_polyline(Data_xy.Xcen,Data_xy.Ycen,OPT.nAverageAnglePli,0);
     Data_xy.vel_para=NaN(size(Data_xy.vel_x));
     Data_xy.vel_perp=Data_xy.vel_para;
-    for kl=1:no_layers
-        [Data_xy.vel_para(1,:,kl),Data_xy.vel_perp(1,:,kl)]=project_vector(Data_xy.vel_x(1,:,kl),Data_xy.vel_y(1,:,kl),angle_track);
+    if ~isnan(angle_track) %insufficient number of points to project data
+        for kl=1:no_layers
+            [Data_xy.vel_para(1,:,kl),Data_xy.vel_perp(1,:,kl)]=project_vector(Data_xy.vel_x(1,:,kl),Data_xy.vel_y(1,:,kl),angle_track);
+        end
     end
     if no_layers>1
         layer_thickness=diff(Data_xy.Zint,1,3);
@@ -244,7 +246,7 @@ if nargout > 1
                 Data_xy.Scor_staircase(2*iC,1)   = Data_xy.Scor(iC+1);
             end
         elseif isfield(Data,'vel_x')
-            warning('to do')
+%             warning('to do')
         end
         
     end
