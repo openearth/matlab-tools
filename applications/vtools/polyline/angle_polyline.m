@@ -11,11 +11,26 @@
 %$HeadURL$
 %
 
-function angle_track=angle_polyline(cords_x,cords_y,ds)
+function angle_track=angle_polyline(cords_x,cords_y,ds,varargin)
+
+%% PARSE
+
+switch numel(varargin)
+    case 0
+        do_break=false;
+    case 1
+        do_break=varargin{1,1};
+end
+
+%% CALC
 
 np=numel(cords_x);
 if np<2
-    error('Cannot compute angle based on 1 point.')
+    angle_track=NaN;
+    if do_break
+        error('Cannot compute angle based on 1 point.')
+    end 
+    return
 elseif np==2
     ds=1;
 else

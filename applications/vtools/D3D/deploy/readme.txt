@@ -1,5 +1,3 @@
-D3D_interpolate_crosssections Executable
-
 1. Prerequisites for Deployment 
 
 Verify that version 9.6 (R2019a) of the MATLAB Runtime is installed.   
@@ -24,7 +22,7 @@ in the MathWorks Documentation Center.
 
 Files to Package for Standalone 
 ================================
--D3D_interpolate_crosssections.exe
+-<function_name>.exe
 -MCRInstaller.exe 
     Note: if end users are unable to download the MATLAB Runtime using the
     instructions in the previous section, include it when building your 

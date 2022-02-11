@@ -39,9 +39,13 @@
 %OUTPUT:
 %   -
 
-function modify_bed_level(fpath_grd,fpath_bedchg,fpath_rkm,varargin)
+function D3D_modify_bed_level(fpath_grd,fpath_bedchg,fpath_rkm,varargin)
 
 %% PARSE
+
+fid_log=NaN; %maybe make a log file?
+
+messageOut(fid_log,'Start parsing');
 
 parin=inputParser;
 
@@ -52,6 +56,7 @@ addOptional(parin,'factor',1);
 addOptional(parin,'plot',1);
 addOptional(parin,'save',1);
 addOptional(parin,'fdir_output',pwd);
+addOptional(parin,'debug',0);
 
 parse(parin,varargin{:});
 
@@ -62,8 +67,9 @@ trend_factor=parin.Results.factor;
 flg.plot=parin.Results.plot;
 flg.save=parin.Results.save;
 fdir_output=parin.Results.fdir_output;
+do_debug=parin.Results.debug;
 
-%% FLAGS
+%% FLAGS and INI
 
 do_axis=1;
 if isempty(fpath_axis)
@@ -80,19 +86,44 @@ if isempty(fpath_pol_out)
     do_pol_out=0;
 end
 
+if ~isnumeric(trend_factor)
+    trend_factor=str2double(trend_factor);
+    if isnan(trend_factor)
+        error('ERROR! <trend_factor> is not numeric')
+    end
+end
+if numel(trend_factor)>1
+    error('ERROR! <trend_factor> can only be one number')
+end
+
+if ~isnumeric(do_debug)
+    do_debug=str2double(do_debug);
+    if isnan(do_debug)
+        error('ERROR! <do_debug> is not numeric')
+    end
+end
+
+mkdir_check(fdir_output,fid_log,1);
+
 %% paths
 
 [fdir_input,fname_grd]=fileparts(fpath_grd);
 
-fname_pol='rivpol';
+%would be nice to set the name of the inpolygon file with the name of the
+%polygon file, but it becomes too long when using a set of polygons inside a 
+%folder. 
 
-fname_inpol=sprintf('inpol_%s_%s.mat',fname_grd,fname_pol);
+% fname_pol='rivpol';
+
+fname_inpol=sprintf('inpol_%s.mat',fname_grd);
 fpath_inpol=fullfile(fdir_input,fname_inpol);
 
-fname_outpol=sprintf('outpol_%s_%s.mat',fname_grd,fname_pol);
+fname_outpol=sprintf('outpol_%s.mat',fname_grd);
 fpath_outpol=fullfile(fdir_input,fname_outpol);
 
 %% read bed level changes
+
+messageOut(fid_log,'Start reading bed level changes')
 
 fid=fopen(fpath_bedchg,'r');
 raw_bl=textscan(fid,'%f %s %f');
@@ -107,6 +138,7 @@ etab_xy=convert2rkm(fpath_rkm,etab_rkm,etab_br); %xy of the input data
 %% river axis
 
 if do_axis
+    messageOut(fid_log,'Start projecting to river axis')
     
     %read
     fid=fopen(fpath_axis,'r');
@@ -115,6 +147,8 @@ if do_axis
 
     axis_xy=cell2mat(raw_axis);
 else
+    messageOut(fid_log,'Skip projecting to river axis')
+    
     axis_xy=etab_xy;
 end
 
@@ -130,9 +164,11 @@ else
 end
 
 axis_br=etab_br(idx_g);
-axis_dz=axis_dz.*trend_factor;  % apply lineair correction
+axis_dz=axis_dz.*trend_factor;  % apply correction
 
 %% read grid
+
+messageOut(fid_log,'Start reading grid')
 
 nodes_x=ncread(fpath_grd,'mesh2d_node_x');
 nodes_y=ncread(fpath_grd,'mesh2d_node_y');
@@ -144,6 +180,8 @@ np=numel(nodes_x);
 
 in_bol=true(np,1);
 if do_pol_in
+    messageOut(fid_log,'Start finding points in polygon')
+    
     [x_pol_in,y_pol_in]=join_shp_xy(fpath_pol_in);
     if exist(fpath_inpol,'file')==2
         load(fpath_inpol,'in_bol')
@@ -151,12 +189,16 @@ if do_pol_in
         in_bol=inpolygon_chunks(nodes_x,nodes_y,x_pol_in,y_pol_in,100);
         save(fpath_inpol,'in_bol')
     end
+else
+    messageOut(fid_log,'Skip finding points in polygon')
 end
 
 %% read polygons of points to exclude
 
 out_bol=false(np,1);
 if do_pol_out
+    messageOut(fid_log,'Start finding points out polygon')
+    
     [x_pol_out,y_pol_out]=join_shp_xy(fpath_pol_out);
     if exist(fpath_outpol,'file')==2
         load(fpath_outpol,'out_bol')
@@ -164,6 +206,8 @@ if do_pol_out
         out_bol=inpolygon_chunks(nodes_x,nodes_y,x_pol_out,y_pol_out,100);
         save(fpath_outpol,'out_bol')
     end
+else
+    messageOut(fid_log,'Skip finding points out polygon')
 end
 
 %% identify grid points inside polygons
@@ -172,11 +216,14 @@ mod_bol=in_bol&~out_bol;
 
 %% adapt 
 
+messageOut(fid_log,'Start adapting grid')
+
 [axis_br_u,~,axis_br_u_idx]=unique(axis_br);
 nbr=numel(axis_br_u);
 
 np=numel(nodes_x);
 dz_loc=zeros(np,1);
+if ~do_debug
 for kp=1:np
     if ~mod_bol(kp)
         continue
@@ -192,21 +239,28 @@ for kp=1:np
     
     fprintf('changing elevation %4.2f %% \n',kp/np*100);
 end
+end %debug
+
 fprintf('changing elevation %4.2f %% \n',100);
 nodesZ_new=nodes_z+dz_loc;
 
 %% save
 
 if flg.save
+    messageOut(fid_log,'Start save new grid')
+    
     fname_grd_new=sprintf('%s_mod.nc',fname_grd);
     fpath_grd_new=fullfile(fdir_output,fname_grd_new);
     copyfile_check(fpath_grd,fpath_grd_new);
     ncwrite_class(fpath_grd_new,'mesh2d_node_z',nodes_z,nodesZ_new);
+else
+    messageOut(fid_log,'Skip save new grid')
 end
 
 %% PLOT
 
 if flg.plot
+    messageOut(fid_log,'Start plot')
     
     %% read locations for plot
     
@@ -225,6 +279,10 @@ if flg.plot
     figure('visible','off')
     hold on
     scatter(etab_xy(:,1),etab_xy(:,2),20,etab_dz,'filled','marker','s','markeredgecolor','k')
+    if do_debug
+        fprintf('size axis_xy = %d',size(axis_xy));
+        fprintf('size axis_dz = %d',size(axis_dz));
+    end
     scatter(axis_xy(:,1),axis_xy(:,2),10,axis_dz,'filled','marker','o')
     legend('input','axis')
     axis equal
@@ -244,6 +302,7 @@ if flg.plot
         print(gcf,fpath_fig,'-dpng','-r300')
         fprintf('printing figure %4.2f %% \n',krkm/nrkm*100)
     end
+    close(gcf)
     
     %% inside polygon
     
@@ -259,8 +318,12 @@ if flg.plot
 %     scatter(nodes_x(~in_bol),nodes_y(~in_bol),2,'k','filled')
 %     scatter(nodes_x(out_bol),nodes_y(out_bol),2,'r','filled')
 %     scatter(nodes_x(~out_bol),nodes_y(~out_bol),2,'k','filled')
-    plot(x_pol_in,y_pol_in,'-b')
-    plot(x_pol_out,y_pol_out,'-g')
+    if do_pol_in
+        plot(x_pol_in,y_pol_in,'-b')
+    end
+    if do_pol_out
+        plot(x_pol_out,y_pol_out,'-g')
+    end
     axis equal
     for krkm=1:drkm:nrkm
         x_lims=rkm_raw(krkm,1)+[-drkm/2,+drkm/2].*1000;
@@ -276,6 +339,7 @@ if flg.plot
         print(gcf,fpath_fig,'-dpng','-r300')
         fprintf('printing figure %4.2f %% \n',krkm/nrkm*100)
     end
+    close(gcf)
     
     %% bed level change
     
@@ -297,7 +361,7 @@ if flg.plot
     axis equal
 %     scatter(axis_xy(:,1),axis_xy(:,2),20,axis_dz,'filled','marker','o')
     plot(axis_xy(:,1),axis_xy(:,2),'c')
-    text(axis_xy(:,1),axis_xy(:,2),num2str(axis_dz))
+%     text(axis_xy(:,1),axis_xy(:,2),num2str(axis_dz))
     for krkm=1:drkm:nrkm
         x_lims=rkm_raw(krkm,1)+[-drkm/2,+drkm/2].*1000;
         y_lims=rkm_raw(krkm,2)+[-drkm/2,+drkm/2].*1000;
@@ -312,25 +376,39 @@ if flg.plot
         print(gcf,fpath_fig,'-dpng','-r300')
         fprintf('printing figure %4.2f %% \n',krkm/nrkm*100)
     end
-    
+    close(gcf)
+else
+    messageOut(fid_log,'Skip plot')
 end
 
 %% PLOT DEBUG
 
-cmap=brewermap(100,'RdYlGn');
-figure('visible','on')
-hold on
-scatter(nodes_x,nodes_y,10,dz_loc,'filled')
-plot(x_pol_in,y_pol_in,'-b')
-han.cbar=colorbar;
-han.cbar.Label.String='bed level change [m]';
-clim(absolute_limits(dz_loc)+[-eps,+eps]);
-colormap(cmap);
-axis equal
-% plot(axis_xy(:,1),axis_xy(:,2),'c-*')
-% text(axis_xy(:,1),axis_xy(:,2),num2str(axis_dz))
-plot(rkm_raw(:,1),rkm_raw(:,2),'c-*')
-text(rkm_raw(:,1),rkm_raw(:,2),num2str(rkm_raw(:,4)))
     
+%     rkm_raw=readmatrix(fpath_rkm);
+%     nrkm=numel(rkm_raw(:,1));
+%     drkm=5;
+%     
+%     %%
+% cmap=brewermap(100,'RdYlGn');
+% figure('visible','on')
+% hold on
+% scatter(nodes_x,nodes_y,10,dz_loc,'filled')
+% plot(x_pol_in,y_pol_in,'-b')
+% han.cbar=colorbar;
+% han.cbar.Label.String='bed level change [m]';
+% clim(absolute_limits(dz_loc)+[-eps,+eps]);
+% colormap(cmap);
+% axis equal
+% % plot(axis_xy(:,1),axis_xy(:,2),'c-*')
+% % text(axis_xy(:,1),axis_xy(:,2),num2str(axis_dz))
+% plot(rkm_raw(:,1),rkm_raw(:,2),'c-*')
+% text(rkm_raw(:,1),rkm_raw(:,2),num2str(rkm_raw(:,4)))
+% if do_pol_in
+%     plot(x_pol_in,y_pol_in,'-b')
+% end
+% if do_pol_out
+%     plot(x_pol_out,y_pol_out,'-g')
+% end
+
 end %function
 
