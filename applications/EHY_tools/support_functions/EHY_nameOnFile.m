@@ -81,7 +81,7 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'bedlevel'   ) newName = 'DPS0'       ; end
         if strcmpi(varName,'uv'         ) newName = 'U1'         ; end
         if strcmpi(varName,'density'    ) newName = 'RHO'        ; end
-        if strcmpi(varName,'dps'        ) newName = 'DPS0'       ; end
+%         if strcmpi(varName,'dps'        ) newName = 'DPS0'       ; end %DPS is different than DPS0 in case of morphodynamic simulation
         if strcmpi(varName,'avbedload'  ) newName = 'SBUUA'      ; end
         if strcmpi(varName,'avsuspload' ) newName = 'SSUUA'      ; end
         if strcmpi(varName,'bedload'    ) newName = 'SBUU'       ; end
