@@ -1090,15 +1090,15 @@ end
     end
 % src2kml
     function [output,OPT] = EHY_convert_src2kml(inputFile,outputFile,OPT)
-        OPT_user=OPT;
-        OPT.saveOutputFile=0;
-        xyn=EHY_convert_src2xyn(inputFile,outputFile,OPT);
-        [xyn{1,1},xyn{1,2},OPT] = EHY_convert_coorCheck(xyn{1,1},xyn{1,2},OPT);
-        OPT=OPT_user;
+        OPT_user = OPT;
+        OPT.saveOutputFile = 0;
+        xyn = EHY_convert_src2xyn(inputFile,outputFile,OPT);
+        [xyn.x,xyn.y] = EHY_convert_coorCheck(xyn.x,xyn.y,OPT);
+        OPT = OPT_user;
         if OPT.saveOutputFile
-            [~,name]=fileparts(outputFile);
-            tempFile=[tempdir name '.kml'];
-            KMLPlaceMark(xyn{1,2},xyn{1,1},tempFile,'name',xyn{1,3},'icon',OPT.iconFile);
+            [~,name] = fileparts(outputFile);
+            tempFile = [tempdir name '.kml'];
+            KMLPlaceMark(xyn.x,xyn.y,tempFile,'name',xyn.name,'icon',OPT.iconFile);
             copyfile(tempFile,outputFile);
             delete(tempFile)
         end
@@ -1106,19 +1106,21 @@ end
     end
 % src2xyn
     function [output,OPT] = EHY_convert_src2xyn(inputFile,outputFile,OPT)
-        src=delft3d_io_src('read',inputFile);
+        src = delft3d_io_src('read',inputFile);
         OPT = EHY_convert_gridCheck(OPT,inputFile);
-        [x,y]=EHY_mn2xy(src.m,src.n,OPT.grdFile);
+        [x,y] = EHY_mn2xy(src.m,src.n,OPT.grdFile);
         
         if OPT.saveOutputFile
-            fid=fopen(outputFile,'w');
-            for iM=1:length(x)
+            fid = fopen(outputFile,'w');
+            for iM = 1:length(x)
                 fprintf(fid,'%20.7f%20.7f ',[x(iM,1) y(iM,1)]);
                 fprintf(fid,'%-s\n',['''' strtrim(src.DATA(iM).name) '''']);
             end
             fclose(fid);
         end
-        output={x y reshape({src.DATA.name},[],1)};
+        output.x = reshape(x,1,[]);
+        output.y = reshape(y,1,[]);
+        output.name = reshape({src.DATA.name},1,[]);
     end
 % thd2kml
     function [output,OPT] = EHY_convert_thd2kml(inputFile,outputFile,OPT)
@@ -1182,26 +1184,6 @@ end
         end
         output = [];
     end
-% xyn2obs
-    function [output,OPT] = EHY_convert_xyn2obs(inputFile,outputFile,OPT)
-        try
-            xyn=delft3d_io_xyn('read',inputFile);
-        catch
-            fid=fopen(inputFile,'r');
-            D=textscan(fid,'%f%f%s','delimiter','\n');
-            fclose(fid);
-            xyn.x=D{1,1};
-            xyn.y=D{1,2};
-            xyn.name=D{1,3};
-        end
-        OPT = EHY_convert_gridCheck(OPT,inputFile);
-        [m,n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
-        if OPT.saveOutputFile
-            obs.m=m; obs.n=n; obs.namst=xyn.name;
-            delft3d_io_obs('write',outputFile,obs);
-        end
-        output = [reshape(m,[],1) reshape(n,[],1)];
-    end
 % xyn2locaties
     function [output,OPT] = EHY_convert_xyn2locaties(inputFile,outputFile,OPT)
         try
@@ -1226,6 +1208,26 @@ end
             disp('You may want to change/check the observation point numbers yourself (e.g. P 4001 = .. )')
         end
         output=obs;
+    end
+% xyn2obs
+    function [output,OPT] = EHY_convert_xyn2obs(inputFile,outputFile,OPT)
+        try
+            xyn=delft3d_io_xyn('read',inputFile);
+        catch
+            fid=fopen(inputFile,'r');
+            D=textscan(fid,'%f%f%s','delimiter','\n');
+            fclose(fid);
+            xyn.x=D{1,1};
+            xyn.y=D{1,2};
+            xyn.name=D{1,3};
+        end
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
+        [m,n]=EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
+        if OPT.saveOutputFile
+            obs.m=m; obs.n=n; obs.namst=xyn.name;
+            delft3d_io_obs('write',outputFile,obs);
+        end
+        output = [reshape(m,[],1) reshape(n,[],1)];
     end
 % xyn2segmnr
     function [output,OPT] = EHY_convert_xyn2segmnr(inputFile,outputFile,OPT)
@@ -1272,6 +1274,24 @@ end
             end
             fclose(fid);
         end
+    end
+% xyn2src
+    function [output,OPT] = EHY_convert_xyn2src(inputFile,outputFile,OPT)
+        xyn = delft3d_io_xyn('read',inputFile);
+        OPT = EHY_convert_gridCheck(OPT,inputFile);
+        [m,n] = EHY_xy2mn(xyn.x,xyn.y,OPT.grdFile);
+        for i = 1:length(m)
+            src(i).name = xyn.name{i};
+            src(i).interpolation = 'Y';
+            src(i).m = m(i);
+            src(i).n = n(i);
+            src(i).k = 0;
+            src(i).type = [];
+        end
+        if OPT.saveOutputFile
+            delft3d_io_src('write',outputFile,src)
+        end
+        output = src;
     end
 % xyn2xyz
     function [output,OPT] = EHY_convert_xyn2xyz(inputFile,outputFile,OPT)
