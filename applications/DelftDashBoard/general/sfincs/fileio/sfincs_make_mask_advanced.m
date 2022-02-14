@@ -95,7 +95,7 @@ if count_activegrid > 0
             msk = msk_reuse;
             
         elseif strcmp(varargin_activegrid(ii).action, 'zlev')
-            [msk,z] = cut_mask_on_elevation(msk, z, zlev);
+            [msk] = cut_mask_on_elevation(msk, z, zlev);
             
         elseif strcmp(varargin_activegrid(ii).action, 'includepolygon')
             if ~isempty(xy_in)
@@ -105,7 +105,7 @@ if count_activegrid > 0
             end
         elseif strcmp(varargin_activegrid(ii).action, 'excludepolygon')
             if ~isempty(xy_ex)
-                [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,z,xy_ex);
+                [msk] = cut_mask_on_exclude_polygon(x,y,msk,xy_ex);
             else
                 warning('excludepolygon is empty')
             end            
@@ -176,17 +176,16 @@ disp('Debug - finished sfincs_make_mask_advanced')
 
 %% X. Supporting functions - activegrid
 
-function [msk, z] = cut_mask_on_elevation(msk, z, zlev)
+function [msk] = cut_mask_on_elevation(msk, z, zlev)
     disp('Debug - call cut_mask_on_elevation')
-    
-    % Remove points below zlev(1)
-    z(z<zlev(1)) = NaN;
 
-    % Remove points above zlev(2)
-    z(z>zlev(2)) = NaN;    
-    
-    % Set values in mask to 1 where z~=NaN 
-    msk(~isnan(z)) = 1;
+    % Remove points below zlev(1) and above zlev(2)    
+    idout = z<zlev(1) | z>zlev(2);
+    idin = ~idout;
+
+    msk(idout) = 0;
+    msk(idin) = 1;    
+%     % Set values in mask to 1 where z~=NaN 
 
     disp('Debug - finished cut_mask_on_elevation')    
 end
@@ -201,12 +200,11 @@ function [msk] = cut_mask_on_include_polygon(x,y,msk,xy_poly)
     disp('Debug - finished cut_mask_on_include_polygon')    
 end
 
-function [msk,z] = cut_mask_on_exclude_polygon(x,y,msk,z,xy_poly)
+function [msk] = cut_mask_on_exclude_polygon(x,y,msk,xy_poly)
     disp('Debug - call cut_mask_on_exclude_polygon')
 
     msk_ids = inpolygon_to_grid(x,y,xy_poly); %in & on are included by as standard
     
-    z(msk_ids) = NaN;
     msk(msk_ids) = 0;
 
     disp('Debug - finished cut_mask_on_include_polygon')    

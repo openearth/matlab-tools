@@ -1056,13 +1056,7 @@ handles=getHandles;
 
 id=ad;
 
-%% Grid coordinates and type
-% These are the centre points !!!
-xg=handles.model.sfincs.domain(id).gridx;
-yg=handles.model.sfincs.domain(id).gridy;
-% xg=handles.model.sfincs.domain(id).xg; 
-% yg=handles.model.sfincs.domain(id).yg;
-zg=handles.model.sfincs.domain(id).gridz;
+%% Grid mask
 msk=handles.model.sfincs.domain(id).mask;
 
 %% Now make the mask matrix
@@ -1169,15 +1163,28 @@ for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options
     end
 end
 
+% reload bathy > means in case of reuse that read-in dep-file is not used!
+xg=handles.model.sfincs.domain(id).gridx;
+yg=handles.model.sfincs.domain(id).gridy; % These are the centre points !!!
+zg=handles.model.sfincs.domain(id).gridz;
+gridtype='structured';
 
-% run sfincs_make_mask
+[filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.sfincs.domain(id).input.depfile);
+
+datasets(1).name=handles.screenParameters.backgroundBathymetry;
+%TODO TL: check whether this goes well in case goes right if in Bathymetry Tab more than 1 dataset is selected > probably not...
+
+%% Generate bathymetry
+[xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',1,'gridtype',gridtype,'modeloffset',0);
+
+%% Update model data
+
+% run sfincs_make_mask_advanced!
 [msk,zg]=sfincs_make_mask_advanced(xg,yg,zg,varargin);
 
 % msk=sfincs_make_mask(xg,yg,zg,'zlev',[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_closedboundary,'outflowboundarypolygon',xy_outflowboundary,'waterlevelboundarypolygon',xy_waterlevelboundary);
 
-% msk(isnan(zg))=0; %KEEP THIS????
-
-% QUESTION: UPDATE elevation Z TOO?
+zg(isnan(msk)) = NaN; 
 
 %% Update model data
 handles.model.sfincs.domain(id).gridz=zg;
@@ -1195,6 +1202,8 @@ if strcmpi(handles.model.sfincs.domain(id).input.inputformat,'bin')
 else
     sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
 end
+
+handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
 
 handles = ddb_sfincs_plot_mask(handles, 'plot');
 
