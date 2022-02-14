@@ -80,20 +80,26 @@ if strcmp(simdef.mdf.Dpsopt,'DP')==0
     error('This function is prepared for DPSOPT=DP. Worked with the read grid to change it')
 end
 %% read grid
-grd=wlgrid('read',path_grd);
-M=size(grd.X,1)+1;
-N=size(grd.X,2)+1;
+% grd=wlgrid('read',path_grd);
+% M=size(grd.X,1)+1;
+% N=size(grd.X,2)+1;
+
+grd=D3D_io_input('read',path_grd);
+M=grd.mmax;
+N=grd.nmax;
+% M=size(grd.cor.x,2)+1;
+% N=size(grd.cor.x,1)+1;
 
 slope=simdef.ini.s; %slope (defined positive downwards)
 % dx=simdef.grd.dx;
-dx_m=diff(grd.X);
+dx_m=diff(grd.cor.x,[],2);
 dx=dx_m(1,1);
 if ~all(dx_m==dx,'all')
     error('sorry, this is made for a constant dx. Adjust the code!')
 end
 if simdef.ini.etab_noise==2
 dy=simdef.grd.dy;
-warning('read from grid?')
+% warning('read from grid?')
 B=simdef.grd.B;
 end
 % nx=simdef.grd.M;
@@ -102,7 +108,7 @@ nx=M;
 
 %L from grid
 % L=simdef.grd.L;
-L=grd.X(end)-grd.X(1);
+L=grd.cor.x(end)-grd.cor.x(1);
 
 etab=simdef.ini.etab;
 
@@ -122,18 +128,20 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
         depths=-9.99e2*ones(ny,nx); %initial depths with dummy values
 
         if numel(slope)==1
-            vd=-(d0+slope*(L+dx/2):-dx*slope:d0+dx/2*slope); %depths vector 
+%             vd=-(d0+slope*(L+dx/2):-dx*slope:d0+dx/2*slope); %depths vector 
+            depths(1:end-1,:)=-(d0+slope*(L-grd.cend.x(1:end-1,:)));
         elseif numel(slope)==nx-1
             vd(nx-1)=d0+slope(nx-1)*dx/2;
             for kx=nx-2:-1:1
                 vd(kx)=vd(kx+1)+dx*slope(kx);
             end
             vd=-vd;
+            depths(1:ny-1,1:nx-1)=repmat(vd,length(1:ny-1),1);
         else
             error('The input SLOPE can be a single value or a vector with nx+1 components')
         end
 
-        depths(1:ny-1,1:nx-1)=repmat(vd,length(1:ny-1),1);
+        
     case 2 %constant bed elevation
         ny=ncy+2; %number of depths points in y direction
 
@@ -155,13 +163,18 @@ switch etab_noise
         noise_amp=simdef.ini.noise_amp;
         noise(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
     case 2 %sinusoidal
-        warning('Check indeces after changin ny def')
         noise_amp=simdef.ini.noise_amp;
         noise_Lb=simdef.ini.noise_Lb;
-        x_v=2*dx:dx:L;
-        y_v=-B/2:dy:B/2;
-        [x_m,y_m]=meshgrid(x_v,y_v);
-        noise(1:end-3,3:end-1)=noise_amp*sin(pi*y_m/B).*cos(2*pi*x_m/noise_Lb-pi/2);
+        x_in=grd.cend.x(2:end-1,:);
+        y_in=grd.cend.y(2:end-1,:);
+        noise_in=noise_amp*sin(pi*(y_in-B/2)./B).*cos(2*pi*x_in/noise_Lb-pi/2);
+        noise_in=flipud(noise_in); %consistency with FM
+        noise(2:end-1,:)=noise_in;
+%         noise(1:end-1,:)=noise_amp*sin(pi*(grd.cend.y(1:end-1,:)-B/2)./B).*cos(2*pi*grd.cend.x(1:end-1,:)/noise_Lb-pi/2);
+%         x_v=2*dx:dx:L;
+%         y_v=-B/2:dy:B/2;
+%         [x_m,y_m]=meshgrid(x_v,y_v);
+%         noise(1:end-3,3:end-1)=noise_amp*sin(pi*y_m/B).*cos(2*pi*x_m/noise_Lb-pi/2);
     case 3 %random noise including at x=0
         warning('Check indeces after changin ny def')
         noise_amp=simdef.ini.noise_amp;

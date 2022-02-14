@@ -54,6 +54,8 @@ else
     str_typeb='Uniform';
 end
 
+etaw=etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+
 %% FILE
 
 %% upstream

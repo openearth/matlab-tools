@@ -15,6 +15,13 @@
 %INPUT
 %   -simdef.D3D.dire_sim = path to the folder containg the simulation files
 %
+%OUTPUT
+%   -simdef.D3D.structure
+%       1: D3D4
+%       2: FM
+%       3: S3
+%       4: SMT (FM)
+%
 %TODO:
 %   -change to dirwalk
 %   -read mdf file structured as when unstructured
@@ -31,11 +38,11 @@ end
 dire=dir(simdef.D3D.dire_sim);
 nf=numel(dire)-2;
 
-%% identify D3D-4 or FM or sobek3
-whatis=false(1,3);
+%% identify 
+whatis=false(1,4);
 for kf1=1:nf
     kf=kf1+2; %. and ..
-    [~,~,ext]=fileparts(dire(kf).name);
+    [~,fname,ext]=fileparts(dire(kf).name);
     switch ext
         case '.mdf'
             simdef.D3D.structure=1;
@@ -46,6 +53,11 @@ for kf1=1:nf
         case '.md1d'
             simdef.D3D.structure=3;
             whatis(3)=true;
+        case '.yml'
+            if strcmp(fname,'smt') %could it be another yml? too strong?
+                simdef.D3D.structure=4;
+                whatis(4)=true;
+            end
     end
 end
 
@@ -64,7 +76,12 @@ end
 %% load
 switch simdef.D3D.structure
     %% D3D4 and FM
-    case {1,2}
+    case {1,2,4}
+
+if simdef.D3D.structure==4 %we take the files from the first one for generic things
+    dire=dir(fullfile(simdef.D3D.dire_sim,'output','0'));
+    nf=numel(dire)-2;
+end
 
 kmdf=1;
 for kf1=1:nf
@@ -88,7 +105,7 @@ file.mdf=mdf_aux{idx};
 switch simdef.D3D.structure
     case 1
         simdef_aux=D3D_simpath_mdf(file.mdf);
-    case 2
+    case {2,4}
         simdef_aux=D3D_simpath_mdu(file.mdf);
 end
 file=simdef_aux.file;
@@ -134,8 +151,8 @@ for kf1=1:nf
         end
     end %isdir
 end
-
-end
+        
+end %simdef.D3D.structure
 
 if exist('file','var')>0
     simdef.file=file;

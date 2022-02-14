@@ -34,6 +34,10 @@ if isfield(in_2D,'pert_anl')==0
     in_2D.pert_anl=1; %0=NO; 1=full; 2=no friction; 3=no friction & no diffusion; 
 end
 
+if isfield(in_2D,'flg_disp')==0
+    in_2D.flg_disp=1;
+end
+
 v2struct(in_2D)
 
 %%
@@ -132,7 +136,9 @@ for kc=1:nc
     end
     
 %     parfor_progress
+if flg_disp
 fprintf('2D done %5.1f %% \n',kc/nc*100)
+end
 end
 % parfor_progress(0)
 

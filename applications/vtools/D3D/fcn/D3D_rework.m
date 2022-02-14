@@ -202,6 +202,7 @@ end
 %rework stop time
 if rem(simdef.mdf.Tstop,simdef.mdf.Dt)~=0
     simdef.mdf.Tstop=(floor(simdef.mdf.Tstop/simdef.mdf.Dt)+1)*simdef.mdf.Dt; %output in seconds
+    
     warning('Simulation time does not match with time step. I have changed the simulation time.')
 end
 
@@ -298,9 +299,9 @@ end
 if isfield(simdef.mdf,'Dpsopt')==0
     simdef.mdf.Dpsopt='MEAN';
 end
-if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
-    error('adjust flow depth file accordingly')
-end
+% if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
+%     error('adjust flow depth file accordingly')
+% end
 
 if isfield(simdef.mdf,'extn')==0
     simdef.mdf.extn='bnd.ext';
@@ -318,6 +319,14 @@ if simdef.D3D.structure==1
 if isfield(simdef.mdf,'tra')==0
     simdef.mdf.tra='tra.tra';
 end
+end
+
+if isfield(simdef.mdf,'izbndpos')==0
+    if simdef.D3D.structure==1
+        simdef.mdf.izbndpos=0;
+    else
+        simdef.mdf.izbndpos=1;
+    end
 end
 
 %%

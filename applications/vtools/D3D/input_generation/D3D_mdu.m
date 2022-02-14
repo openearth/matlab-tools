@@ -184,7 +184,7 @@ data{kl,1}=        'FixedWeirfrictscheme= 1        '; kl=kl+1;
 data{kl,1}=        'Fixedweirtopwidth = 3          '; kl=kl+1;
 data{kl,1}=        'Fixedweirtopfrictcoef= -999    '; kl=kl+1;
 data{kl,1}=        'Fixedweirtalud    = 4          '; kl=kl+1;
-data{kl,1}=        'Izbndpos          = 1          '; kl=kl+1;
+data{kl,1}=sprintf('Izbndpos          = %d         ',simdef.mdf.izbndpos); kl=kl+1;
 data{kl,1}=        'Tlfsmo            = 0          '; kl=kl+1;
 data{kl,1}=        'Logprofatubndin   = 1          '; kl=kl+1; % ubnds inflow: 0=uniform U1, 1 = log U1, 2 = user3D
 data{kl,1}=        'Logprofkepsbndin  = 0          '; kl=kl+1; % inflow: 0=0 keps, 1 = log keps inflow, 2 = log keps in and outflow

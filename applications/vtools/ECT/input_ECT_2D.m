@@ -59,10 +59,10 @@ ECT_input.nu_mom=0;
 ECT_input.Dh=ECT_input.nu_mom; %secondary flow diffusivity [m^2/s]
 ECT_input.diff_hir=NaN(size(ECT_input.gsd)); %diffusion hirano
 
-% sedTrans=[5.7,1.5,0.047]; %FLvB
-% sedTrans=[8,1.5,0.03];
-% sedTrans=[8,1.5,0];
-% sedTrans=[17,0.05];
+% ECT_input.sedTrans=[5.7,1.5,0.047]; %FLvB
+% ECT_input.sedTrans=[8,1.5,0.03];
+% ECT_input.sedTrans=[8,1.5,0];
+% ECT_input.sedTrans=[17,0.05];
 ECT_input.sedTrans=[0.05/ECT_input.Cf,2.5,0];
     % MPM48    = [a_mpm,b_mpm,theta_c] [-,-,-] ; double [3,1] | double [1,3]; MPM = [8,1.5,0.047], FLvB = [5.7,1.5,0.047] ; Ribberink = [15.85,1.5,0.0307]
     % EH67     = [m_eh,n_eh] ; [s^4/m^3,-] ; double [2,1] | double [1,2] ; original = [0.05,5]

@@ -20,12 +20,13 @@
 %   -kt: time to read as [start,counter] [double]
 %       if NaN it reads the last one
 
-function [time_r,time_mor_r,time_dnum,time_dtime]=D3D_results_time(fpath_nc,ismor,kt)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,kt)
 
 %% calc
 [~,fname,ext]=fileparts(fpath_nc);
 
 time_mor_r=NaN;
+time_mor_dtime=NaN;
 if strcmp(ext,'.nc') %FM
     
     %take last
@@ -40,7 +41,7 @@ if strcmp(ext,'.nc') %FM
     end
     [time_dtime,~,time_r]=NC_read_time(fpath_nc,kt);
     if ismor && ismap %morfo time not available in history
-        time_mor_r=ncread(fpath_nc,'morft',kt(1),kt(2)); %results time vector [seconds since start date]
+        [time_mor_dtime,~,time_mor_r]=NC_read_time(fpath_nc,kt,'type','morpho'); %results time vector [seconds since start date]
     end
 elseif strcmp(ext,'.dat') %D3D4
     NFStruct=vs_use(fpath_nc,'quiet');
@@ -63,12 +64,13 @@ elseif strcmp(ext,'.dat') %D3D4
         time_mor_r=MORFT*24*3600; %seconds
     end
     time_dtime=t0_dtime+seconds(time_r);
-    
+    time_mor_dtime=t0_dtime+seconds(time_mor_r);
 %     %we output only the one we request. It would be better to only read the one we want...
 %     time_r=time_r(kt(1));
 %     time_dtime=time_dtime(kt(1));
 end
 
 time_dnum=datenum(time_dtime);
+time_mor_dnum=datenum(time_mor_dtime);
 
 end %function

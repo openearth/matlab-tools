@@ -41,7 +41,8 @@ switch what_do
             case '.ini'
                 stru_out=delft3d_io_sed(fname);
             case '.grd'
-                stru_out=delft3d_io_grd('read',fname);
+                OPT.nodatavalue=NaN;
+                stru_out=delft3d_io_grd('read',fname,OPT);
             case '.dep'
                 G=delft3d_io_grd('read',varargin{1});
                 stru_out=delft3d_io_dep('read',fname,G,varargin(2:3));

@@ -12,11 +12,31 @@
 %
 %read time from NC file
 
-function [time_dtime,units,time_r]=NC_read_time(nc_map,kt)
+function [time_dtime,units,time_r]=NC_read_time(nc_map,kt,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'type','hydro')
+
+parse(parin,varargin{:});
+
+tim_type=parin.Results.type;
+
+%% CALC
 
 [t0_dtime,units]=NC_read_time_0(nc_map);
 
-time_r=ncread(nc_map,'time',kt(1),kt(2)); %results time vector [seconds/minutes/hours since start date]
+switch tim_type
+    case 'hydro'
+        tim_str='time';
+    case 'morpho'
+        tim_str='morft';
+end
+        
+time_r=ncread(nc_map,tim_str,kt(1),kt(2)); %results time vector [seconds/minutes/hours since start date]
+
 switch units
     case 'seconds'
         time_dtime=t0_dtime+seconds(time_r);

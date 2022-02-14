@@ -42,6 +42,10 @@ end
 %other
 nt=length(time);
 
+if simdef.mdf.izbndpos==0
+    etaw=etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+end
+
 %% FILE
 
 %no edit
