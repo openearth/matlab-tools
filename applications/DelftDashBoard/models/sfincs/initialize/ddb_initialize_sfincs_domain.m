@@ -128,3 +128,6 @@ handles.model.sfincs.domain(id).obspoints.x=[];
 handles.model.sfincs.domain(id).obspoints.y=[];
 handles.model.sfincs.domain(id).obspoints.names={''};
 handles.model.sfincs.domain(id).obspoints.length=0;
+
+% Quadtree
+handles.model.sfincs.domain(id).buq = [];

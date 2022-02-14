@@ -1171,9 +1171,22 @@ gridtype='structured';
 
 [filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.sfincs.domain(id).input.depfile);
 
-datasets(1).name=handles.screenParameters.backgroundBathymetry;
-%TODO TL: check whether this goes well in case goes right if in Bathymetry Tab more than 1 dataset is selected > probably not...
-
+%% Select bathymetry sources
+clear datasets
+if handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets == 0
+   datasets(1).name=handles.screenParameters.backgroundBathymetry; % use active bathymetry
+ 
+else    
+    for ii=1:handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets
+        nr=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).number;
+        datasets(ii).name=handles.bathymetry.datasets{nr};
+        datasets(ii).startdates=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).startDate;
+        datasets(ii).searchintervals=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).searchInterval;
+        datasets(ii).zmin=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).zMin;
+        datasets(ii).zmax=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).zMax;
+        datasets(ii).verticaloffset=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).verticalLevel;
+    end
+end
 %% Generate bathymetry
 [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',1,'gridtype',gridtype,'modeloffset',0);
 

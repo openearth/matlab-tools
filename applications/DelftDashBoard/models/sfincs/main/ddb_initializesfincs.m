@@ -70,7 +70,7 @@ handles.model.sfincs.domain=[];
 handles=ddb_initialize_sfincs_domain(handles,'dummy',1,'dummy');
 
 handles.model.sfincs.menuview.grid=1;
-handles.model.sfincs.menuview.bathymetry=0;
+handles.model.sfincs.menuview.bathymetry=1;
 handles.model.sfincs.menuview.mask=1;
 
 handles.model.sfincs.boundaryspline.handle=[];
