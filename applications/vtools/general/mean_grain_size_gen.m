@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17724 $
-%$Date: 2022-02-03 06:41:30 +0100 (Thu, 03 Feb 2022) $
-%$Author: chavarri $
-%$Id: function_layout.m 17724 2022-02-03 05:41:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/function_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Compute mean grain size 
 %

@@ -1,11 +1,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17637 $
-%$Date: 2021-12-08 22:21:26 +0100 (Wed, 08 Dec 2021) $
-%$Author: chavarri $
-%$Id: mkdir_check.m 17637 2021-12-08 21:21:26Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/mkdir_check.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [c_anl,eig_i_morpho]=ECT_celerity_growth(ECT_matrices,varargin)

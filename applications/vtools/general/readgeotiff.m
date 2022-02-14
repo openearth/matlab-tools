@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17515 $
-%$Date: 2021-10-04 09:42:18 +0200 (Mon, 04 Oct 2021) $
-%$Author: chavarri $
-%$Id: D3D_simpath.m 17515 2021-10-04 07:42:18Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_simpath.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Read geotiff files. This function stems from <GEOTIFF_READ>. 
 %Unfortunaltely, in that function reading of the <z> variable

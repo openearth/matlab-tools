@@ -6,11 +6,11 @@ rem %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 rem % 
 rem %Victor Chavarrias (victor.chavarrias@deltares.nl)
 rem %
-rem %$Revision: 17749 $
-rem %$Date: 2022-02-10 07:52:25 +0100 (Thu, 10 Feb 2022) $
-rem %$Author: chavarri $
-rem %$Id: D3D_modify_bed_level.m 17749 2022-02-10 06:52:25Z chavarri $
-rem %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_modify_bed_level.m $
+rem %$Revision$
+rem %$Date$
+rem %$Author$
+rem %$Id$
+rem %$HeadURL$
 rem %
 rem %Modifies the bed elevation of a Delft3D-FM grid based on the 
 rem %values along a polyline referenced to the river kilometer.
