@@ -1,4 +1,4 @@
-function varargout = mvbLogin(varargin);
+    function varargout = mvbLogin(varargin);
 %MVBLOGIN Login script for Meetnet Vlaamse Banken API.
 %
 %   This script logs in into the API of Meetnet Vlaamse Banken (Flemish

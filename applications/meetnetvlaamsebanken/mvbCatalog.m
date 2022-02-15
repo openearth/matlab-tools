@@ -82,8 +82,8 @@ OPT.token=weboptions;
 if nargin==0;
     catalog = {OPT};
     return
-elseif nargin==1;
-    OPT.token=varargin{1};
+elseif mod(in,2)==1;
+    OPT.token=varargin{end};
 else
     % overwrite defaults with user arguments
     OPT = setproperty(OPT, varargin);

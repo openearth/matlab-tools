@@ -100,7 +100,7 @@ OPT.vector=true; % Output switch
 if nargin==0;
     varargout = {OPT};
     return
-elseif odd(nargin);
+elseif mod(nargin,2)==1;
     OPT.token = varargin{end}; %Assume token is the last input argument.
     varargin = varargin(1:end-1);
 end
@@ -112,7 +112,7 @@ response=webread([OPT.apiurl,'ping'],OPT.token);
 if isempty(response.Customer) %If login has expired.
     fprintf(1,['Your login token has expired or is invalid, please login using mvbLogin \n'...
         'Use the obtained token from mvbLogin in this function. \n']);
-    fprintf(1,'Trying auto-login using mvbLogin_private.m...');
+    fprintf(1,'Trying auto-login using mvbLogin_private.m... ');
     OPT.token = mvbLogin_private;
     response=webread([OPT.apiurl,'ping'],OPT.token);
     if isempty(response.Customer) %If login is invalid

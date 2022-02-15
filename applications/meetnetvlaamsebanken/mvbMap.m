@@ -16,7 +16,8 @@ function catalog = mvbMap(varargin)
 %       token: <weboptions object>
 %           Weboptions object containing the accesstoken. Generate this
 %           token via mvbLogin.
-%       language: 
+%       language: string of preferred language: 'NL','FR' or 'EN',
+%           officially 'nl-BE', 'fr-FR' or 'en-GB'.
 %       apiurl: url to Meetnet Vlaamse Banken API.
 %       epsg_out: EPSG code for the map's coordinate system. E.g.:
 %           4326 (WGS'84)
@@ -81,36 +82,52 @@ function catalog = mvbMap(varargin)
 %% Input arguments
 OPT.apiurl='https://api.meetnetvlaamsebanken.be/V2/';
 OPT.token=weboptions;
+%OPT.epsg_in=31370;
 OPT.epsg_map=31370;
-OPT.language=3;
+OPT.xlim=[ 10000, 90000];
+OPT.ylim=[190000,255000];
+OPT.tzl=nan;
+OPT.language='en-GB';
+OPT.ax=gca;
 
 % return defaults (aka introspection)
 if nargin==0;
     catalog = {OPT};
     return
-elseif nargin==1;
-    OPT.token=varargin{1};
+elseif mod(in,2)==1;
+    OPT.token=varargin{end};
 else
     % overwrite defaults with user arguments
     OPT = setproperty(OPT, varargin);
 end
 
+if isnan(OPT.tzl);
+    OPT.tzl=round(log2(360*60*1852*2/diff(OPT.xlim)));
+end
 % if ischar(OPT.language);
 %     if strncmpi(OPT.language,'NL',1);
-%         OPT.language=1;
+%         OPT.language='nl-BE';
 %     elseif strncmpi(OPT.language,'FR',1);
-%         OPT.language=2;
+%         OPT.language='fr-FR';
 %     elseif strncmpi(OPT.language,'EN',1);
-%         OPT.language=3;
+%         OPT.language='en-GB';
 %     else
-%         fprintf(1,'Unknown language option "%s", using EN-GB instead. \n',OPT.language);
-%         OPT.language=3;
+%         fprintf(1,'Unknown language option "%s", using en-GB instead. \n',OPT.language);
+%         OPT.language='en-GB';
 %     end
-% elseif isscalar(OPT.language) && OPT.language >=1 && OPT.language <=3;
-%     %Use number
+% % elseif isscalar(OPT.language) && OPT.language >=1 && OPT.language <=3;
+% %     %Use number
 % else
-%     fprintf(1,'Unknown language option "%s", using EN-GB instead. \n',OPT.language);
-%     OPT.language=3;
+%     fprintf(1,'Unknown language option "%s", using en-GB instead. \n',OPT.language);
+%     OPT.language='en-GB';
+% end
+% % Find index for locale/language.
+% % Try for chosen language.
+% langIdx=find(strcmpi({catalog.Locations(1).Name.Culture},{OPT.language}),1);
+% % When choosen language is not available in catalog, fall back to 'en-GB'.
+% if isempty(langIdx);
+%     fprintf(1,'Language "%s" not available in catalog, using en-GB instead.\n',OPT.language);
+%     langIdx=find(strcmpi({catalog.Locations(1).Name.Culture},{'en-GB'}),1);
 % end
 
 %% Login Check
@@ -128,18 +145,17 @@ catalog = mvbCatalog(OPT.token);
 if ~exist('plotMapTiles.m','file')==2
     error('Map plot function not found, sign up to or update OpenEarthTools');
 end
-[~,ax,~]=plotMapTiles('xlim',[ 2.2934, 3.3673],'ylim',[51.0880,51.5950],'epsg_out',OPT.epsg_map);
-if OPT.epsg_map==31370;
-    xlim([1e4 9e4]);
-end
-xlabel(ax,'Easting [m]');
-ylabel(ax,'Northing [m]');
-title(ax,'Locations of Measurement Stations');
+[~,ax,~]=plotMapTiles('xlim',OPT.xlim,'ylim',OPT.ylim,'epsg_in',OPT.epsg_map,'epsg_out',OPT.epsg_map,'tzl',OPT.tzl,'han_ax',OPT.ax);
+%xlim(ax,OPT.xlim);
+%ylim(ax,OPT.ylim);
+xlabel(OPT.ax,'Easting [m]');
+ylabel(OPT.ax,'Northing [m]');
+title(OPT.ax,'Locations of Measurement Stations');
 
 %% Plot stations
 for n = 1:length(catalog.Locations);
-    ll=str2num(catalog.Locations(n).PositionWKT(8:end-1)); %#ok<ST2NM>
-    [x,y]=convertCoordinates(ll(1),ll(2),'CS1.code',4326,'CS2.code',OPT.epsg_map);
+    lonlat=str2num(catalog.Locations(n).PositionWKT(8:end-1)); %#ok<ST2NM>
+    [x,y]=convertCoordinates(lonlat(1),lonlat(2),'CS1.code',4326,'CS2.code',OPT.epsg_map);
     plot(x,y,'xk');
     %text(x,y,{ctl.Locations(n).ID;ctl.Locations(n).Name(OPT.language).Message});
     text(x,y,{catalog.Locations(n).ID})

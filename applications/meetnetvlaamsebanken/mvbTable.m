@@ -23,6 +23,7 @@ function varargout = mvbTable(varargin)
 %       language: string of preferred language: 'NL','FR' or 'EN',
 %           officially 'nl-BE', 'fr-FR' or 'en-GB'.
 %       catalog: catalog of all data, obtained from MVBCATALOG.
+%       apiurl: url to Meetnet Vlaamse Banken API.
 %
 %   Output:
 %   	datatable: mask indicating data availability for location/parameter
@@ -87,7 +88,7 @@ OPT.language='en-GB';
 if nargin==0;
     varargout = {OPT};
     return
-elseif odd(nargin);
+elseif mod(nargin,2)==1;
     OPT.token = varargin{end}; %Assume token is the last input argument.
     varargin = varargin(1:end-1);
 end
