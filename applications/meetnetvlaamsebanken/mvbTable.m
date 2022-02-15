@@ -135,7 +135,8 @@ end
 Locations={catalog.Locations.ID};
 Parameters={catalog.Parameters.ID};
 AvailableData={catalog.AvailableData.ID};
-dataTable=false(length(Locations),length(Parameters));
+%pcolor ambiguities require matrix dimensions to be one larger.
+dataTable=false(length(Locations)+1,length(Parameters)+1);
 
 temp=[catalog.Locations.Name];
 LocName={temp(langIdx,:).Message}';
@@ -174,7 +175,8 @@ end
 
 figure; 
 ax=axes('Units','normalized','Position',[0.30 0.30 0.60 0.65]); hold on;
-pcolorcorcen(1:length(Parameters)+1,length(Locations)+1:-1:1,single(dataTable));
+%pcolor ambiguities require matrix dimensions to be one larger.
+pcolor(1:length(Parameters)+1,length(Locations)+1:-1:1,single(dataTable));
 shading faceted;
 ax.XAxis.TickValues=[1:1:length(Parameters)]+0.5;
 ax.XAxis.TickLabels=Parameters;

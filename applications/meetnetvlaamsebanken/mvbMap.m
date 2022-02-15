@@ -94,7 +94,7 @@ OPT.ax=gca;
 if nargin==0;
     catalog = {OPT};
     return
-elseif mod(in,2)==1;
+elseif mod(nargin,2)==1;
     OPT.token=varargin{end};
 else
     % overwrite defaults with user arguments
