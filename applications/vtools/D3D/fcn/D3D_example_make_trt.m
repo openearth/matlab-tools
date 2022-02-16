@@ -14,6 +14,6 @@ rough_fraction = 1;
 
 fid = fopen('trachy.arl','w'); 
 for k = 1:length(xu); 
-    fprintf(fid, '%20.6f %20.6f %5i %5.2f\n', xu(k), xu(k), rough_code, rough_fraction);
+    fprintf(fid, '%20.6f %20.6f 0.0 %5i %5.2f\n', xu(k), xu(k), rough_code, rough_fraction);
 end 
 fclose (fid);
