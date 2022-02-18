@@ -53,7 +53,7 @@ try
         ampstr              = [repmat(' ',1,12-length(ampstr)) ampstr];
         argstr              = num2str(u,'%10.5f');
         argstr              = [repmat(' ',1,12-length(argstr)) argstr];
-        str                 = ['wl ' t0str t1str nrstr ampstr argstr];
+        str                 = ['wl ' t0str ' ' t1str nrstr ampstr argstr];
         str                 = deblank(str);
         fprintf(fid,'%s\n',str);
     end
@@ -82,13 +82,14 @@ try
         argstr              = num2str(0,'%10.0f');
         argstr              = [repmat(' ',1,12-length(argstr)) argstr];
         if ii < 4
-            str                 = ['wl ' t0str t1str nrstr ampstr argstr wanted];
+            str                 = ['wl ' t0str ' ' t1str nrstr ampstr argstr wanted];
         else
-            str                 = ['uc ' t0str t1str nrstr ampstr argstr '           1', wanted];  % only for depth-averaged flow
+            str                 = ['uc ' t0str ' ' t1str nrstr ampstr argstr '           1', wanted];  % only for depth-averaged flow
         end
         str                 = deblank(str);
         fprintf(fid,'%s\n',str);
     end
+    fclose(fid);
     %%
     succes = 1;
 catch
