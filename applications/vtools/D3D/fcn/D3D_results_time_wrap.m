@@ -21,7 +21,7 @@
 %TODO:
 %   -
 
-function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time_wrap(sim_path)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(sim_path)
 
 simdef.D3D.dire_sim=sim_path;
 simdef=D3D_simpath(simdef);
@@ -42,6 +42,7 @@ switch simdef.D3D.structure
         time_dtime=[];
         time_mor_dnum=[];
         time_mor_dtime=[];
+        sim_idx=[];
         for kf=0:1:nf
             fdir_loc=fullfile(fdir_output,num2str(kf));
             simdef.D3D.dire_sim=fdir_loc;
@@ -57,6 +58,7 @@ switch simdef.D3D.structure
             time_dtime=cat(1,time_dtime,time_dtime_loc);
             time_mor_dnum=cat(1,time_mor_dnum,time_mor_dnum_loc);
             time_mor_dtime=cat(1,time_mor_dtime,time_mor_dtime_loc);
+            sim_idx=cat(1,sim_idx,kf.*ones(size(time_mor_dtime_loc)));
             
             messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
         end

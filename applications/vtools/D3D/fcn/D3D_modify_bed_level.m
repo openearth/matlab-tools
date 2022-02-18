@@ -57,6 +57,7 @@ addOptional(parin,'plot',1);
 addOptional(parin,'save',1);
 addOptional(parin,'fdir_output',pwd);
 addOptional(parin,'debug',0);
+addOptional(parin,'nparts_inpoly',100);
 
 parse(parin,varargin{:});
 
@@ -68,6 +69,7 @@ flg.plot=parin.Results.plot;
 flg.save=parin.Results.save;
 fdir_output=parin.Results.fdir_output;
 do_debug=parin.Results.debug;
+nparts_inpoly=parin.Results.nparts_inpoly;
 
 %% FLAGS and INI
 
@@ -107,7 +109,7 @@ mkdir_check(fdir_output,fid_log,1);
 
 %% paths
 
-[fdir_input,fname_grd]=fileparts(fpath_grd);
+[fdir_input,fname_grd,fext_grd]=fileparts(fpath_grd);
 
 %would be nice to set the name of the inpolygon file with the name of the
 %polygon file, but it becomes too long when using a set of polygons inside a 
@@ -170,9 +172,18 @@ axis_dz=axis_dz.*trend_factor;  % apply correction
 
 messageOut(fid_log,'Start reading grid')
 
-nodes_x=ncread(fpath_grd,'mesh2d_node_x');
-nodes_y=ncread(fpath_grd,'mesh2d_node_y');
-nodes_z=ncread(fpath_grd,'mesh2d_node_z');
+switch fext_grd
+    case '.nc'
+        nodes_x=ncread(fpath_grd,'mesh2d_node_x');
+        nodes_y=ncread(fpath_grd,'mesh2d_node_y');
+        nodes_z=ncread(fpath_grd,'mesh2d_node_z');
+    case '.tif'
+        [I,Tinfo]=readgeotiff(fpath_grd);
+        [x_m,y_m]=meshgrid(I.x,I.y);
+        nodes_x=x_m(:);
+        nodes_y=y_m(:);
+        nodes_z=I.z(:);
+end
 
 np=numel(nodes_x);
 
@@ -186,7 +197,7 @@ if do_pol_in
     if exist(fpath_inpol,'file')==2
         load(fpath_inpol,'in_bol')
     else
-        in_bol=inpolygon_chunks(nodes_x,nodes_y,x_pol_in,y_pol_in,100);
+        in_bol=inpolygon_chunks(nodes_x,nodes_y,x_pol_in,y_pol_in,nparts_inpoly);
         save(fpath_inpol,'in_bol')
     end
 else
@@ -203,7 +214,7 @@ if do_pol_out
     if exist(fpath_outpol,'file')==2
         load(fpath_outpol,'out_bol')
     else
-        out_bol=inpolygon_chunks(nodes_x,nodes_y,x_pol_out,y_pol_out,100);
+        out_bol=inpolygon_chunks(nodes_x,nodes_y,x_pol_out,y_pol_out,nparts_inpoly);
         save(fpath_outpol,'out_bol')
     end
 else
@@ -249,10 +260,20 @@ nodesZ_new=nodes_z+dz_loc;
 if flg.save
     messageOut(fid_log,'Start save new grid')
     
-    fname_grd_new=sprintf('%s_mod.nc',fname_grd);
-    fpath_grd_new=fullfile(fdir_output,fname_grd_new);
-    copyfile_check(fpath_grd,fpath_grd_new);
-    ncwrite_class(fpath_grd_new,'mesh2d_node_z',nodes_z,nodesZ_new);
+    fname_grd_new=sprintf('%s_mod%s',fname_grd,fext_grd);
+    
+    switch fext_grd
+        case '.nc'
+            fpath_grd_new=fullfile(fdir_output,fname_grd_new);
+            copyfile_check(fpath_grd,fpath_grd_new);
+            ncwrite_class(fpath_grd_new,'mesh2d_node_z',nodes_z,nodesZ_new);
+        case '.tif'
+            image=reshape(nodesZ_new,size(I.z));
+            bit_depth=Tinfo.BitDepth;
+            option.ModelTiepointTag=Tinfo.ModelTiepointTag;
+
+            geotiffwrite(fname_grd_new,[],image, bit_depth, option)
+    end
 else
     messageOut(fid_log,'Skip save new grid')
 end

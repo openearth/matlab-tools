@@ -18,10 +18,19 @@ fclose all;
 
 %% PATHS
 
-path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+fpath_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+fpath_project='';
+
+% fpath_add_fcn='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\';
+% fpath_project='';
 
 %% ADD OET
 
-addpath(path_add_fcn)
-addOET(path_add_fcn) 
+addpath(fpath_add_fcn)
+addOET(fpath_add_fcn) 
 
+%% PATHS
+
+fpaths=paths_project(fpath_project);
+
+%% INPUT

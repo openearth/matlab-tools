@@ -51,7 +51,7 @@ function [simdef]=D3D_rework(simdef)
 % Dt=simdef.mdf.Dt;
 % C=simdef.mdf.C;
 
-vkappa=0.41; %von Karman
+simdef.mdf.vkappa=0.41; %von Karman
 
 
 
@@ -252,7 +252,7 @@ if isfield(simdef.mdf,'correct_C')==0
     simdef.mdf.correct_C=0;
 end
 if simdef.mdf.correct_C==1
-    simdef.mdf.C=sqrt(simdef.mdf.g)/vkappa*log(-1+exp(simdef.mdf.C*vkappa/sqrt(simdef.mdf.g)));
+    simdef.mdf.C=sqrt(simdef.mdf.g)/simdef.mdf.vkappa*log(-1+exp(simdef.mdf.C*simdef.mdf.vkappa/sqrt(simdef.mdf.g)));
 end
 % Cin =sqrt(simdef.mdf.g)/vkappa*log(-1+exp(Cw *vkappa/sqrt(simdef.mdf.g)));
 % Cd3d=sqrt(simdef.mdf.g)/vkappa*log(+1+exp(Cin*vkappa/sqrt(simdef.mdf.g)));

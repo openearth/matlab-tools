@@ -14,6 +14,10 @@
 
 function path_lin=cartesify(cartesius_project_folder_lin,path_win)
 
+if isempty(cartesius_project_folder_lin)
+    cartesius_project_folder_lin='projects/0/hisigem/';
+end
+
 path_lin=linuxify(path_win);
 path_lin=strrep(path_lin,'/p/',cartesius_project_folder_lin);
 

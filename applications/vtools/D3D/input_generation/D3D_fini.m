@@ -44,7 +44,7 @@ N=size(grd.X,2)+1;
 slope=simdef.ini.s;
 dx_m=diff(grd.X);
 dx=dx_m(1,1);
-if ~all(dx_m==dx,'all')
+if ~all(abs(dx_m-dx)<1e-6,'all')
     error('sorry, this is made for a constant dx. Adjust the code!')
 end
 K=simdef.grd.K;

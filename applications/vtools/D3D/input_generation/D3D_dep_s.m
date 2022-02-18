@@ -94,7 +94,7 @@ slope=simdef.ini.s; %slope (defined positive downwards)
 % dx=simdef.grd.dx;
 dx_m=diff(grd.cor.x,[],2);
 dx=dx_m(1,1);
-if ~all(dx_m==dx,'all')
+if ~all(abs(dx_m-dx)<1e-6,'all')
     error('sorry, this is made for a constant dx. Adjust the code!')
 end
 if simdef.ini.etab_noise==2
@@ -163,18 +163,33 @@ switch etab_noise
         noise_amp=simdef.ini.noise_amp;
         noise(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
     case 2 %sinusoidal
+        %noise parameters
         noise_amp=simdef.ini.noise_amp;
         noise_Lb=simdef.ini.noise_Lb;
+        
+        %central with dummies
         x_in=grd.cend.x(2:end-1,:);
         y_in=grd.cend.y(2:end-1,:);
-        noise_in=noise_amp*sin(pi*(y_in-B/2)./B).*cos(2*pi*x_in/noise_Lb-pi/2);
+        
+        %cross-sectional variation
+        if ncy==1 %1D, you actually want no variation in transverse direction
+            Ay=-1; %the amplitude is -1 contrary to FM because the sign of the bed is different!
+        else
+            Ay=sin(pi*(y_in-B/2)./B);
+        end
+        
+        noise_in=noise_amp*Ay.*cos(2*pi*x_in/noise_Lb-pi/2); %total noise
         noise_in=flipud(noise_in); %consistency with FM
         noise(2:end-1,:)=noise_in;
-%         noise(1:end-1,:)=noise_amp*sin(pi*(grd.cend.y(1:end-1,:)-B/2)./B).*cos(2*pi*grd.cend.x(1:end-1,:)/noise_Lb-pi/2);
-%         x_v=2*dx:dx:L;
-%         y_v=-B/2:dy:B/2;
-%         [x_m,y_m]=meshgrid(x_v,y_v);
-%         noise(1:end-3,3:end-1)=noise_amp*sin(pi*y_m/B).*cos(2*pi*x_m/noise_Lb-pi/2);
+        
+        %% BEGIN DEBUG
+%         figure
+%         hold on
+%         scatter3(x_in(:),y_in(:),noise_in(:),10,noise_in(:),'filled')
+%         view([0,0])
+%          xlim([550,650])
+
+        %END DEBUG
     case 3 %random noise including at x=0
         warning('Check indeces after changin ny def')
         noise_amp=simdef.ini.noise_amp;

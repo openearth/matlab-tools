@@ -57,6 +57,7 @@ elseif numel(varargin)==1
     if iscell(varargin{1})
         flg.opt=3;
         path_bring_back=varargin{1}; %path in Windows where to place the same file in Cartesius
+        
     else
         error('not sure what is going on here')
     end
@@ -75,6 +76,7 @@ end
 if strcmp(output_folder_win(end),'\')
     output_folder_win(end)='';
 end
+output_folder_win=small_p(output_folder_win);
 
 %% FILES
 
@@ -89,7 +91,7 @@ switch flg.opt
     case 1
         %% send file with commands to cartesius
 
-        cmd_send_commands_ca=sprintf('scp %s %s@cartesius.surfsara.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        cmd_send_commands_ca=sprintf('scp %s %s@snellius.surf.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
 
         %% compress
 
@@ -120,7 +122,7 @@ switch flg.opt
         
         %% transport
 
-        cmd_transport=sprintf('rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:%s %s',surf_userid,compressed_path_cartesius,compressed_path_h6);
+        cmd_transport=sprintf('rsync -av --bwlimit=5000 %s@snellius.surf.nl:%s %s',surf_userid,compressed_path_cartesius,compressed_path_h6);
 
         %% uncompress
 
@@ -137,7 +139,7 @@ switch flg.opt
         
         %h6
         fprintf(fid_h6,'%s \n',cmd_send_commands_ca);
-        fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        fprintf(fid_h6,'ssh %s@snellius.surf.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
         fprintf(fid_h6,'%s \n',cmd_mkdir);
         fprintf(fid_h6,'%s \n',cmd_transport);
         fprintf(fid_h6,'%s \n',cmd_cd_C_sim);
@@ -170,9 +172,9 @@ switch flg.opt
         fprintf(fid_h6,'#!/bin/bash \n');
         
         %send file with commands to cartesius
-        cmd_send_commands_ca=sprintf('scp %s %s@cartesius.surfsara.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        cmd_send_commands_ca=sprintf('scp %s %s@snellius.surf.nl:%s \n',linuxify(path_ca),surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
         fprintf(fid_h6,'%s \n',cmd_send_commands_ca);
-        fprintf(fid_h6,'ssh %s@cartesius.surfsara.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
+        fprintf(fid_h6,'ssh %s@snellius.surf.nl ''%s'' \n',surf_userid,cartesify(cartesius_project_folder_lin,path_ca));
         
         %create output folder and go there
         output_folder_h6=linuxify(output_folder_win);
@@ -180,9 +182,10 @@ switch flg.opt
         fprintf(fid_h6,'cd %s \n',output_folder_h6);
         
         %bring back <var_names.txt>
-        fpath_varnames_h6=linuxify(fullfile(output_folder_win,'var_names.txt'));
-        fpath_varnames_ca=cartesify(cartesius_project_folder_lin,fpath_varnames_h6);
-        cmd_transport_varnames=sprintf('rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:%s %s',surf_userid,fpath_varnames_ca,fpath_varnames_h6);
+        fpath_varnames_win=fullfile(output_folder_win,'var_names.txt');
+        fpath_varnames_h6=linuxify(fpath_varnames_win);
+        fpath_varnames_ca=cartesify(cartesius_project_folder_lin,fpath_varnames_win);
+        cmd_transport_varnames=sprintf('rsync -av --bwlimit=5000 %s@snellius.surf.nl:%s %s',surf_userid,fpath_varnames_ca,fpath_varnames_h6);
         fprintf(fid_h6,'%s \n',cmd_transport_varnames);
 
         %read (loop)
@@ -204,7 +207,7 @@ fprintf(fid_h6,'linep2=${full_string/$search_string/$replace_string} \n');
 
         fprintf(fid_h6,'printf "start transferring %%s here %%s \\n" $linep $linep2 >> log.txt \n');
             %transport each file
-        fprintf(fid_h6,'rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:$linep $linep2 \n',surf_userid);
+        fprintf(fid_h6,'rsync -av --bwlimit=5000 %s@snellius.surf.nl:$linep $linep2 \n',surf_userid);
             %uncompress
 %             printf "start uncompressing %s.\n" $filename >> log.txt
         fprintf(fid_h6,'tar -zxvf $linep2 \n');
@@ -223,12 +226,14 @@ fprintf(fid_h6,'linep2=${full_string/$search_string/$replace_string} \n');
             cmd_transport=cell(nf,1);
             kf=1;
             [path_dir,~,~]=fileparts(path_bring_back{kf});
+            path_dir=small_p(path_dir);
             cmd_mkdir{kf}=sprintf('mkdir %s',linuxify(path_dir));
             cmd_cd=sprintf('cd %s',linuxify(path_dir));
             for kf=1:nf
+                path_bring_back{kf}=small_p(path_bring_back{kf});
                 [path_dir,~,~]=fileparts(path_bring_back{kf});
                 cmd_mkdir{kf}=sprintf('mkdir %s',linuxify(path_dir));
-                cmd_transport{kf,1}=sprintf('rsync -av --bwlimit=5000 %s@cartesius.surfsara.nl:%s %s &>log.txt',surf_userid,cartesify(cartesius_project_folder_lin,path_bring_back{kf}),linuxify(path_bring_back{kf}));
+                cmd_transport{kf,1}=sprintf('rsync -av --bwlimit=5000 %s@snellius.surf.nl:%s %s &>log.txt',surf_userid,cartesify(cartesius_project_folder_lin,path_bring_back{kf}),linuxify(path_bring_back{kf}));
             end %kf
             
             %% display
@@ -255,5 +260,15 @@ fclose(fid_ca);
 % fprintf('Run file for bringing data back to H6: %s \n',path_h6);
 fprintf('For an unknown reason, sometimes it crashes because \n rsync is not found. Simply submit again. \n')
 fprintf('qsub %s \n',linuxify(path_h6))
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function path_dir=small_p(path_dir)
+
+path_dir=strrep(path_dir,'P:','p:');
 
 end %function

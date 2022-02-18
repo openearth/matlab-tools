@@ -85,23 +85,27 @@ switch simdef.ini.etab_noise
 %         noise_amp=simdef.ini.noise_amp;
 %         noise(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
     case 2 %sinusoidal
-%         %XYcen
-%         fpath_netmap=fullfile(pwd,'tmpgrd_net.nc');
-%         D3D_grd2map(simdef.file.grd,'fpath_map',fpath_netmap);
-%         gridInfo=EHY_getGridInfo(fpath_netmap,{'XYcen'});
-%         delete(fpath_netmap);
-        
-        %depth
-%         depths=etab+slope*Xtot;
-        
         %noise
         noise_amp=simdef.ini.noise_amp;
         noise_Lb=simdef.ini.noise_Lb;
         
-%         x_v=2*dx:dx:L;
-%         y_v=-B/2:dy:B/2;
-%         [x_m,y_m]=meshgrid(x_v,y_v);
-        noise=noise_amp*sin(pi*(Ytot-B/2)./B).*cos(2*pi*Xtot/noise_Lb-pi/2);
+        %variation in cross-direction
+        if ~any(gridInfo.Ycen-gridInfo.Ycen(1)) %1D, you actually want no variation in transverse direction
+            Ay=1;
+        else
+            Ay=sin(pi*(Ytot-B/2)./B);
+        end
+        
+        %total noise
+        noise=noise_amp*Ay.*cos(2*pi*Xtot/noise_Lb-pi/2);
+        
+%         %% BEGIN DEBUG
+%         figure
+%         hold on
+%         scatter3(Xtot,Ytot,noise,10,noise,'filled')
+%         view([0,0])
+%         xlim([550,650])
+        % END DEBUG
 %     case 3 %random noise including at x=0
 %         noise_amp=simdef.ini.noise_amp;
 % %         noise(1:end-3,2:end-1)=noise_amp.*(rand(ny-3,nx-2)-0.5);

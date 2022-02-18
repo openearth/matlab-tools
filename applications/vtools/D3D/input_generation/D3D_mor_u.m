@@ -190,6 +190,7 @@ data{kl,1}=sprintf('  Derivatives = %d',0); kl=kl+1; %if we test for ill-posedne
 data{kl,1}=sprintf('  fIk = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 data{kl,1}=sprintf('  RegularizationLocations = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get â€œmesh1d_umodâ€?
+data{kl,1}=        '  RawTransportAtZeta = 1'; kl=kl+1; 
 
 data{kl,1}=        ''; kl=kl+1;
  data{kl,1}=        '[Numerics]'; kl=kl+1;
