@@ -55,9 +55,11 @@ addOptional(parin,'polygon_out','');
 addOptional(parin,'factor',1);
 addOptional(parin,'plot',1);
 addOptional(parin,'save',1);
+addOptional(parin,'save_shp',0);
 addOptional(parin,'fdir_output',pwd);
 addOptional(parin,'debug',0);
 addOptional(parin,'nparts_inpoly',100);
+addOptional(parin,'delft3d_exe','c:\Program Files (x86)\Deltares\Delft3D Flexible Mesh Suite HMWQ (2021.03)\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat');
 
 parse(parin,varargin{:});
 
@@ -67,9 +69,11 @@ fpath_pol_out=parin.Results.polygon_out;
 trend_factor=parin.Results.factor;
 flg.plot=parin.Results.plot;
 flg.save=parin.Results.save;
+flg.save_shp=parin.Results.save_shp;
 fdir_output=parin.Results.fdir_output;
 do_debug=parin.Results.debug;
 nparts_inpoly=parin.Results.nparts_inpoly;
+fpath_exe=parin.Results.delft3d_exe;
 
 %% FLAGS and INI
 
@@ -264,9 +268,29 @@ if flg.save
     
     switch fext_grd
         case '.nc'
+            %grid
             fpath_grd_new=fullfile(fdir_output,fname_grd_new);
             copyfile_check(fpath_grd,fpath_grd_new);
             ncwrite_class(fpath_grd_new,'mesh2d_node_z',nodes_z,nodesZ_new);
+            
+            %this could also be done with tif files
+            if flg.save_shp
+                %shp modified
+                fpath_shp=fullfile(fdir_output,sprintf('%s_etab_mod.shp',fname_grd)); 
+                fpath_map=fullfile(fdir_output,sprintf('%s_mod_map.nc',fname_grd));
+                [map_mod,polygons]=D3D_grd2shp(fpath_grd_new,'fpath_exe',fpath_exe,'fpath_map',fpath_map,'fpath_shp',fpath_shp);
+
+                %shp original
+                fpath_shp=fullfile(fdir_output,sprintf('%s_etab.shp',fname_grd)); 
+                fpath_map=fullfile(fdir_output,sprintf('%s_map.nc',fname_grd));
+                map=D3D_grd2shp(fpath_grd,'fpath_exe',fpath_exe,'fpath_map',fpath_map,'fpath_shp',fpath_shp);
+
+                %shp difference
+                map_diff=map_mod.val-map.val;
+                fpath_shp=fullfile(fdir_output,sprintf('%s_etab_diff.shp',fname_grd)); 
+                shapewrite(fpath_shp,'polygon',polygons,map_diff)
+                messageOut(fid_log,sprintf('file created: %s',fpath_shp))
+            end
         case '.tif'
             image=reshape(nodesZ_new,size(I.z));
             bit_depth=Tinfo.BitDepth;

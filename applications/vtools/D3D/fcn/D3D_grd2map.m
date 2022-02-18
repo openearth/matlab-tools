@@ -37,7 +37,7 @@ mkdir_check(fdir_work);
 
 %copy grid to working directory
 fpath_grd_copy=fullfile(fdir_work,'tmp_net.nc');
-copyfile_check(fpath_grd,fpath_grd_copy);
+copyfile_check(fpath_grd,fpath_grd_copy,1);
 
 %create mdu file
 fpath_mdu=fullfile(fdir_work,'tmp.mdu');

@@ -24,7 +24,7 @@ function D3D_bc_q0(simdef)
 file_name=simdef.file.bc_q0;
 % dire_sim=simdef.D3D.dire_sim;
 fname_pli_u=simdef.pli.fname_u;
-time=simdef.bct.time;
+time=simdef.bct.time_Q;
 Q=simdef.bct.Q;
 
 % Tunit=simdef.mdf.Tunit;
@@ -58,7 +58,7 @@ for kun=1:upstream_nodes
     data{kl, 1}=        'Quantity                        = dischargebnd'; kl=kl+1;
     data{kl, 1}=        'Unit                            = m³/s'; kl=kl+1;
     for kt=1:nt
-        data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,Q/upstream_nodes); kl=kl+1;
+        data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,Q(kt)/upstream_nodes); kl=kl+1;
     end
     data{kl, 1}=''; kl=kl+1;
     data{kl, 1}=        '[forcing]'; kl=kl+1;
@@ -70,7 +70,7 @@ for kun=1:upstream_nodes
     data{kl, 1}=        'Quantity                        = dischargebnd'; kl=kl+1;
     data{kl, 1}=        'Unit                            = m³/s'; kl=kl+1;
     for kt=1:nt
-        data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,Q/upstream_nodes); kl=kl+1;
+        data{kl, 1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,Q(kt)/upstream_nodes); kl=kl+1;
     end
     data{kl, 1}=''; kl=kl+1;
 end %knu

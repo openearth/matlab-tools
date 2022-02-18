@@ -28,8 +28,7 @@ user_cartesius=parin.Results.cartesiusUser;
 cartesius_project_folder_lin=parin.Results.cartesiusProject;
 computer_cartesius=parin.Results.cartesiusComputer;
 direction=parin.Results.direction;
-
-path_win=small_p(path_win);
+    
 switch direction
     case 1 %send
         path_disp=sprintf('scp %s %s@%s:%s',linuxify(path_win),user_cartesius,computer_cartesius,cartesify(cartesius_project_folder_lin,path_win));

@@ -572,7 +572,47 @@ if isfield(simdef.bc,'fname_d')==0
     simdef.bc.fname_d='bc_wL';
 end
 
+%%
+%% BCT
+%%
 
+%discharge
+if isfield(simdef.bct,'time_Q')==0
+    simdef.bct.time_Q=[simdef.mdf.Tstart;simdef.mdf.Tstop];
+end
+if numel(simdef.bct.Q)==1
+    simdef.bct.Q=simdef.bct.Q.*ones(size(simdef.bct.time_Q));
+end
+if any(size(simdef.bct.time_Q)-size(simdef.bct.Q))
+    error('dimensions of Q boundary condition do not agree')
+end
+
+%add extra time with same value as last in case the last time step gets outside the domain
+if simdef.D3D.structure==2
+simdef.bct.Q=cat(1,simdef.bct.Q,simdef.bct.Q(end));
+simdef.bct.time_Q=cat(1,simdef.bct.time_Q,simdef.bct.time_Q(end)*1.1);
+end
+
+%water level
+if isfield(simdef.bct,'time')==0
+    simdef.bct.time=[simdef.mdf.Tstart;simdef.mdf.Tstop];
+end
+if numel(simdef.bct.etaw)==1
+    simdef.bct.etaw=simdef.bct.etaw.*ones(size(simdef.bct.time));
+end
+if any(size(simdef.bct.time)-size(simdef.bct.etaw))
+    error('dimensions of etaw boundary condition do not agree')
+end
+    %correcting for last cell
+if simdef.mdf.izbndpos==0
+    simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+end
+
+%add extra time with same value as last in case the last time step gets outside the domain
+if simdef.D3D.structure==2
+simdef.bct.etaw=cat(1,simdef.bct.etaw,simdef.bct.etaw(end));
+simdef.bct.time=cat(1,simdef.bct.time,simdef.bct.time(end)*1.1);
+end
 
 %% RENAME OUT
 

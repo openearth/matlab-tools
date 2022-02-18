@@ -14,10 +14,14 @@
 
 function path_lin=linuxify(path_win)
 
-path_win=small_p(path_win);
-path_lin=strcat('/',path_win);
-path_lin=strrep(path_lin,':','');
-path_lin=strrep(path_lin,'\','/');
+if strcmp(path_win(2),':') %windows path
+    path_win=small_p(path_win);
+    path_lin=strcat('/',path_win);
+    path_lin=strrep(path_lin,':','');
+    path_lin=strrep(path_lin,'\','/');
+else
+    path_lin=path_win;
+end
 
 end
 
