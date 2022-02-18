@@ -319,7 +319,7 @@ if ~exist('Data','var')
                         Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
                     end
                     
-                    if strcmp(OPT.varName,'DPS0') % make bedlevel positive up 
+                    if any(strcmp(OPT.varName,{'DPS0','DPS'})) % make bedlevel positive up 
                         Data.val = -1*Data.val;
                     end
             end
