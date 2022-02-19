@@ -26,8 +26,19 @@
 %   -change to dirwalk
 %   -read mdf file structured as when unstructured
 
-function simdef=D3D_simpath(simdef)
+function simdef=D3D_simpath(simdef,varargin)
 
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'break',1);
+
+parse(parin,varargin{:})
+
+do_break=parin.Results.break;
+
+simdef.err=0; %error flag
 
 %% file paths of the files to analyze
 
@@ -61,9 +72,8 @@ for kf1=1:nf
     end
 end
 
-simdef.err=0;
+
 if sum(whatis)==0
-%     error('I cannot find the main file in this folder: %s',simdef.D3D.dire_sim)
     fprintf('I cannot find the main file in this folder: %s \n',simdef.D3D.dire_sim);
     simdef.err=1;
     return
@@ -109,6 +119,7 @@ switch simdef.D3D.structure
         simdef_aux=D3D_simpath_mdu(file.mdf);
 end
 file=simdef_aux.file;
+simdef.err=simdef_aux.err;
 [~,file.runid,~]=fileparts(file.mdf);
 
     %% sobek 3
@@ -155,9 +166,17 @@ end
         
 end %simdef.D3D.structure
 
-if exist('file','var')>0
+%I don't think this is necessary. For FM and D3D4 there is always <file>
+%and for S3 I think so too because we have already checked that 
+%there is an md1d-file
+% if exist('file','var')>0
     simdef.file=file;
-else
-    fprintf('simulation folder: \n %s \n',simdef.D3D.dire_sim);
-    error('It seems that the folder you have specified has no simulation results')
+% else
+%     fprintf('It seems that the folder you have specified has no simulation results: \n %s \n',simdef.D3D.dire_sim);
+% end
+
+if do_break && simdef.err>0
+    error('See messages above')
 end
+
+end %function

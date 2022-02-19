@@ -100,7 +100,7 @@ if isfield(mdu.output,'OutputDir')
         path_output_loc=sprintf('DFM_OUTPUT_%s',runid);
     end
     simdef.file.output=fullfile(path_sim,path_output_loc);
-    file_aux=D3D_simpath_output(simdef.file.output);
+    [file_aux,simdef.err]=D3D_simpath_output(simdef.file.output);
     fnames=fieldnames(file_aux);
     nfields=numel(fnames);
     for kfields=1:nfields
