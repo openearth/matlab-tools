@@ -109,6 +109,7 @@ switch simdef.D3D.structure
         simdef_aux=D3D_simpath_mdu(file.mdf);
 end
 file=simdef_aux.file;
+[~,file.runid,~]=fileparts(file.mdf);
 
     %% sobek 3
     case 3

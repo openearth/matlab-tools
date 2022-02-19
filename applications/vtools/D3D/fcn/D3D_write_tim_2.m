@@ -12,12 +12,27 @@
 %
 %write a tim file based on information in structure
 
-function D3D_write_tim_2(data_loc,path_dir_out,fname_tim_v,ref_date)
+function D3D_write_tim_2(data_loc,path_dir_out,fname_tim_v,ref_date,varargin)
 
-%make varargin
-fig_print=1;
-tim_u='minutes';
-write_local=1;
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'ylims',NaN)
+addOptional(parin,'print',1)
+addOptional(parin,'unit','minutes')
+addOptional(parin,'local',1)
+
+parse(parin,varargin{:});
+
+fig_print=parin.Results.print;
+tim_u=parin.Results.unit;
+write_local=parin.Results.local;
+ylims=parin.Results.ylims;
+
+nylim=size(ylims,1);
+
+%% CALC
 
 nloc=numel(data_loc);
 for kloc=1:nloc
@@ -65,21 +80,31 @@ for kloc=1:nloc
     %plot
     if fig_print
         for kq=2:nq
-            fname_fig=sprintf('%s_%s.png',fname_tim_v{kloc},data_loc(kloc).quantity{kq});
-            path_fig=fullfile(path_dir_out,fname_fig);
-            if write_local==1
-                path_fig_loc=fullfile(pwd,fname_fig);
-            else
-                path_fig_loc=path_fig;
-            end
-            figure('visible',0)
-            plot(data_loc(kloc).tim,data_loc(kloc).val(:,kq-1))
-            ylabel(strrep(data_loc(kloc).quantity(kq),'_','\_'))
-            title(strrep(fname_tim_v{kloc},'_','\_'))
-            print(gcf,path_fig_loc,'-dpng','-r300')
-            if write_local==1
-                copyfile_check(path_fig_loc,path_fig);
-                delete(path_fig_loc);
+            for kylim=1:nylim
+                if nylim==1
+                    fname_fig=sprintf('%s_%s.png',fname_tim_v{kloc},data_loc(kloc).quantity{kq});
+                else
+                    fname_fig=sprintf('%s_%s_%02d.png',fname_tim_v{kloc},data_loc(kloc).quantity{kq},kylim);
+                end
+                path_fig=fullfile(path_dir_out,fname_fig);
+                if write_local==1
+                    path_fig_loc=fullfile(pwd,fname_fig);
+                else
+                    path_fig_loc=path_fig;
+                end
+                figure('visible',0)
+                plot(data_loc(kloc).tim,data_loc(kloc).val(:,kq-1))
+                ylabel(strrep(data_loc(kloc).quantity(kq),'_','\_'))
+                title(strrep(fname_tim_v{kloc},'_','\_'))
+                if ~isnan(ylims(kylim,1))
+                    ylim(ylims(kylim,:));
+                end
+                print(gcf,path_fig_loc,'-dpng','-r300')
+                close(gcf)
+                if write_local==1
+                    copyfile_check(path_fig_loc,path_fig);
+                    delete(path_fig_loc);
+                end
             end
         end
     end

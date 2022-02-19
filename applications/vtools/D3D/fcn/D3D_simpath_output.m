@@ -18,8 +18,9 @@
 %TODO:
 %   -change to dirwalk
 
-function file=D3D_simpath_output(path_results)
+function [file,err]=D3D_simpath_output(path_results)
 
+err=0;
 partitions=0;
 dire_res=dir(path_results);
 nfr=numel(dire_res)-2;
@@ -33,6 +34,11 @@ for kflr=1:nfr
                 if ~contains(dire_res(kf).name,'merge')
                     file.map=fullfile(dire_res(kf).folder,dire_res(kf).name);
                     partitions=partitions+1;
+                    
+                    %check we are not missing
+                    if str2double(file.map(end-10:end-10+3))~=partitions-1
+                        err=1;
+                    end
                 end
             end
             if strcmp(dire_res(kf).name(end-5:end-3),'his')
@@ -61,6 +67,10 @@ for kflr=1:nfr
         end %kflr2
     end %if no dir
 end %kflr
+
+if err==1
+    messageOut(NaN,sprintf('missing map files'));    
+end
 
 file.partitions=partitions;
 

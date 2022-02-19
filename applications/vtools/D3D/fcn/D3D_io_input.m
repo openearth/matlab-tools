@@ -132,7 +132,12 @@ switch what_do
                     data_loc(ks).quantity=stru_in(ks).quantity;
                 end
                 fname_tim_v={stru_in.name};
-                D3D_write_tim_2(data_loc,fname,fname_tim_v,ref_date)
+                %not sure if needed
+%                 if nargin<6
+%                     D3D_write_tim_2(data_loc,fname,fname_tim_v,ref_date)
+%                 else
+                    D3D_write_tim_2(data_loc,fname,fname_tim_v,ref_date,varargin{3:end})
+%                 end
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end
