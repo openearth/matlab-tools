@@ -26,6 +26,7 @@ else %folder is given
         path_files{kf,1}=fullfile(dire(kfa).folder,dire(kfa).name);
     end    
 end
+nf=numel(path_files);
 [fdir,fname,~]=fileparts(path_files{1,1});
 
 %varargin
