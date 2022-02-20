@@ -13,11 +13,27 @@
 
 function make_video(path_folder,varargin)
 
+%% PARSE
+
+if iscell(path_folder) %files to use are given
+    path_files=path_folder;
+else %folder is given  
+    dire=dir(path_folder);
+    nf=numel(dire)-2;
+    path_files=cell(nf,1);
+    for kf=1:nf
+        kfa=kf+2;
+        path_files{kf,1}=fullfile(dire(kfa).folder,dire(kfa).name);
+    end    
+end
+[fdir,fname,~]=fileparts(path_files{1,1});
+
+%varargin
 parin=inputParser;
 
 addOptional(parin,'frame_rate',20);
 addOptional(parin,'quality',50);
-addOptional(parin,'path_video',fullfile(path_folder,'movie'));
+addOptional(parin,'path_video',fullfile(fdir,fname));
 
 parse(parin,varargin{:});
 
@@ -32,9 +48,6 @@ end
 
 %% MAKE VIDEO
 
-dire=dir(path_folder);
-nf=numel(dire)-2;
-
 video_var=VideoWriter(path_video,'MPEG-4');
 video_var.FrameRate=frame_rate;
 video_var.Quality=quality;
@@ -42,8 +55,7 @@ video_var.Quality=quality;
 open(video_var)
 
 for kf=1:nf
-    kfa=kf+2;
-    im=imread(fullfile(dire(kfa).folder,dire(kfa).name));
+    im=imread(path_files{kf,1});
     writeVideo(video_var,im)
     fprintf('%5.1f %% done \n',kf/nf*100)
 end
