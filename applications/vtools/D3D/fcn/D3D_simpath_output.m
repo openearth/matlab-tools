@@ -36,7 +36,8 @@ for kflr=1:nfr
                     partitions=partitions+1;
                     
                     %check we are not missing
-                    if str2double(file.map(end-10:end-10+3))~=partitions-1
+                    num_part=str2double(file.map(end-10:end-10+3));
+                    if ~isnan(num_part) && num_part~=partitions-1
                         err=1;
                     end
                 end
@@ -69,7 +70,7 @@ for kflr=1:nfr
 end %kflr
 
 if err==1
-    messageOut(NaN,sprintf('missing map files'));    
+    messageOut(NaN,sprintf('Missing map files here: %s',path_results));    
 end
 
 file.partitions=partitions;

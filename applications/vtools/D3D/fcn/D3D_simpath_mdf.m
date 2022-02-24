@@ -19,7 +19,7 @@
 function simdef=D3D_simpath_mdf(path_mdu)
 
 simdef.D3D.structure=2;
-
+simdef.err=0;
 mdu=D3D_io_input('read',path_mdu);
 
 %% loop on sim folder
