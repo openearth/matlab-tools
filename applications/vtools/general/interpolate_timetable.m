@@ -18,14 +18,9 @@
 %   -tt_tim: common time of all time series
 %   -tt_val: interpolated values of all time series
 
-function [tt_tim,tt_val]=interpolate_timetable(tim_ct,val_ct,dt_disc)
+function val_out=interpolate_timetable(tim_ct,val_ct,tim_re)
 
 %% PARSE
-
-% if nargin>3
-%     do_average=true;
-%     dt_av=varargin{1,1};
-% end
 
 %% CALC
 
@@ -38,21 +33,92 @@ for kg=1:ng
     tt_all{kg,1}=tt_aux;
 end
 tt=synchronize(tt_all{:});
-% tt1=retime(tt,'regular','linear','TimeStep',dt_disc); %linear takes the closest points and interpolates in between without considering the points in between
-tt=retime(tt,'regular','mean','TimeStep',dt_disc);
-tt_val=tt.Variables;
-tt_tim=tt.Time;
 
-%%
-% figure
-% hold on
-% plot(tim_ct{1},val_ct{1},'-o')
-% plot(tt1.Time,tt1.Var1_1,'-s')
-% plot(tt2.Time,tt2.Var1_1,'-*')
-%% average
+%% retime
 
-% if do_average
-%     tt_avg=retime(tt,dt_av,'mean');
-% end %average
+nt=numel(tim_re);
+val_in=tt.Variables;
+val_out=NaN(nt,ng);
+for kg=1:ng
+    val_out(:,kg)=interpolate_timeserie(tim_in,val_in,tim_re);
+end
 
 end %function
+
+%%
+%% FUNCTION
+%%
+
+function val_out=interpolate_timeserie(tim_in,val_in,tim_re)
+
+bol_nn=~isnan(val_in);
+tim_in_c=tim_in(bol_nn);
+val_in_c=val_in(bol_nn);
+
+nr=numel(tim_re);
+val_out=NaN(nr,1);
+for kr=1:nr
+    t_cell_l=tim_re(kr)-dt/2;
+    t_cell_u=tim_re(kr)+dt/2;
+    [val_l,~,idx_l]=interp_line_closest(tim_in_c,val_in_c,t_cell_l,years(1e3)); %value at lower edge
+    [val_u,idx_u,~]=interp_line_closest(tim_in_c,val_in_c,t_cell_u,years(1e3)); %value at upper edge
+    if isnan(val_l) || isnan(val_u) %we do not make a mean if there is no value above and below the edges
+        continue
+    end
+
+    %points between lower limit and upper limit
+    tim_cell=[t_cell_l,tim_in_c(idx_l:idx_u),t_cell_u];
+    val_cell=[val_l,val_in_c(idx_l:idx_u),val_u];
+    tim_cen=cor2cen(tim_cell);
+    
+    np=numel(tim_cen);
+    val_cen=NaN(1,np);
+    for kp=1:np
+        val_cen(1,kp)=interp_line_closest(tim_cell,val_cell,tim_cen(kp),years(1e3));
+    end
+    dtim_cell=diff(tim_cell);
+    val_out(kr,1)=sum(val_cen.*seconds(dtim_cell))./sum(seconds(dtim_cell));
+end
+
+end %function
+
+%% CHECKS
+
+%see the following test to see why I don't use <retime>
+% t1=datetime(2000,1,1,0,0,0):hours(1):datetime(2000,1,5,0,0,0); %not fine and shifted
+% t1=datetime(2000,1,1,0,0,0)+seconds(1):hours(1):datetime(2000,1,5,0,0,0)-seconds(1); %fine but shifted
+
+% nt=numel(t1);
+% v=linspace(0,4,nt);
+% % v(2:3:end-1)=NaN;
+% 
+% tt=timetable(t1',v');
+% tt2=retime(tt,'regular','mean','TimeStep',days(1)); 
+% 
+% tim_ch=datetime(2000,1,1,12,0,0):days(1)/2:datetime(2000,1,5,12,0,0);
+% nd=numel(tim_ch);
+% val_ch=NaN(nd,1);
+% for kd=1:nd
+% bol_ti=t1>=tim_ch(kd)-days(1)/2&t1<=tim_ch(kd)+days(1)/2;
+% bol_nn=~isnan(v);
+% bol_t=bol_ti&bol_nn;
+% tim_ch_loc=t1(bol_t);
+% if numel(tim_ch_loc)<=1
+%     continue
+% end
+% diff_t_loc=diff(tim_ch_loc);
+% t_cor=cen2cor(tim_ch_loc);
+% dt_cor=diff(t_cor);
+% dt_d=dt_cor;
+% dt_d(1)=dt_d(1)/2;
+% dt_d(end)=dt_d(end)/2;
+% val_ch_aux=sum(v(bol_t).*hours(dt_d))./sum(hours(dt_d));
+% val_ch(kd,1)=val_ch_aux;
+% end
+% 
+% 
+% figure
+% hold on
+% plot(t1,v,'-o');
+% plot(tt2.Time,tt2.Var1,'-*')
+% plot(tim_ch,val_ch,'-s')

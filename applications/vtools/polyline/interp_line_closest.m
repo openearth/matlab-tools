@@ -11,8 +11,10 @@
 %$HeadURL$
 %
 
-function y=interp_line_closest(xv_all,yv_all,x,x_thres)
+function [y,idx_1,idx_2]=interp_line_closest(xv_all,yv_all,x,x_thres)
 
+idx_1=NaN;
+idx_2=NaN;
 idx_2=find(xv_all>x,1,'first');
 if isempty(idx_2)
     idx_2=find(xv_all==x,1,'first');
