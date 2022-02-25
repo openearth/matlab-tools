@@ -53,11 +53,11 @@ function varargout = poly_op(varargin)
 % Created: 18 Oct 2013
 % Created with Matlab version: 8.1.0.604 (R2013a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%

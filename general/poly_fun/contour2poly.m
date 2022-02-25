@@ -37,6 +37,7 @@ function varargout = contour2poly(c,varargin)
 %
 % See also: CONTOURC, POLY_SPLIT, POLY_JOIN, POLY2CONTOUR
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
 %       Gerben J. de Boer
@@ -63,17 +64,35 @@ function varargout = contour2poly(c,varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 26 Oct 2020
+% Created with Matlab version: 9.9.0.1467703 (R2020b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% Code
 if ~isempty(c)
-      S=contour_split(c)
-     [P.x,P.y] = poly_join(S.x,S.y);
+    S=contour_split(c);
+    [P.x,P.y] = poly_join(S.x,S.y);
 else
-      P = struct('x',[],'y',[],'levels',[],'n',0);
+    P = struct('x',[],'y',[],'levels',[],'n',0);
 end
 
 if     nargout==1;varargout = {P};          
 elseif nargout==2;varargout = {P.x,P.y};
-elseif nargout==3;varargout = {P.x,P.y,S.level};
-elseif nargout==4;varargout = {P.x,P.y,S.level,S.n};
+elseif nargout==3;varargout = {P.x,P.y,S.levels};
+elseif nargout==4;varargout = {P.x,P.y,S.levels,S.n};
 end
    
 %% EOF
