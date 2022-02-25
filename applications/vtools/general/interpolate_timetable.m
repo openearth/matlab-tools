@@ -29,7 +29,10 @@ function val_out=interpolate_timetable(tim_ct,val_ct,tim_re)
 ng=numel(tim_ct);
 tt_all=cell(ng,1);
 for kg=1:ng
-    tt_aux=timetable(tim_ct{1,kg},val_ct{1,kg});
+    if min(size(val_ct{1,kg}))>1
+        error('only 1 data column per time serie')
+    end
+    tt_aux=timetable(reshape(tim_ct{1,kg},[],1),reshape(val_ct{1,kg},[],1));
     tt_all{kg,1}=tt_aux;
 end
 tt=synchronize(tt_all{:});
@@ -38,9 +41,17 @@ tt=synchronize(tt_all{:});
 
 nt=numel(tim_re);
 val_in=tt.Variables;
+tim_in=tt.Time;
 val_out=NaN(nt,ng);
+
+
+%IMPROVE
+%Do not allow NaN in <val_in> and do not loop on kg here.
+% fprintf('interpolating time %4.2f %% \n',0)
 for kg=1:ng
-    val_out(:,kg)=interpolate_timeserie(tim_in,val_in,tim_re);
+    val_out(:,kg)=interpolate_timeserie(tim_in,val_in(:,kg),tim_re);
+    %disp
+%     fprintf('interpolating time %4.2f %%',kg/ng*100)
 end
 
 end %function
@@ -51,33 +62,52 @@ end %function
 
 function val_out=interpolate_timeserie(tim_in,val_in,tim_re)
 
+%%
+
+% tim_in=reshape(tim_in,1,[]);
+% val_in=reshape(val_in,1,[]);
+
+%%
 bol_nn=~isnan(val_in);
 tim_in_c=tim_in(bol_nn);
 val_in_c=val_in(bol_nn);
-
+dt_re=diff(cen2cor(tim_re));
 nr=numel(tim_re);
 val_out=NaN(nr,1);
 for kr=1:nr
-    t_cell_l=tim_re(kr)-dt/2;
-    t_cell_u=tim_re(kr)+dt/2;
+    t_cell_l=tim_re(kr)-dt_re(kr)/2;
+    t_cell_u=tim_re(kr)+dt_re(kr)/2;
+    %IMPROVE
+    %set an initial guess of the index and from that move one
+    %up and done in a while loop to find the limits
     [val_l,~,idx_l]=interp_line_closest(tim_in_c,val_in_c,t_cell_l,years(1e3)); %value at lower edge
     [val_u,idx_u,~]=interp_line_closest(tim_in_c,val_in_c,t_cell_u,years(1e3)); %value at upper edge
     if isnan(val_l) || isnan(val_u) %we do not make a mean if there is no value above and below the edges
         continue
+    elseif idx_l>idx_u %there are no points inside. The first point to the right of the lower edge is larger than the upper edge
+%         tim_in_c(idx_l)>t_cell_u %true
+        tim_cell=[t_cell_l,t_cell_u]; %cannot concatenate empty datetime arrays
+        val_cell=[val_l,val_u];
+    else
+        tim_cell=[t_cell_l,tim_in_c(idx_l:idx_u)',t_cell_u]; %cannot concatenate empty datetime arrays
+        val_cell=[val_l,val_in_c(idx_l:idx_u)',val_u];
     end
 
     %points between lower limit and upper limit
-    tim_cell=[t_cell_l,tim_in_c(idx_l:idx_u),t_cell_u];
-    val_cell=[val_l,val_in_c(idx_l:idx_u),val_u];
     tim_cen=cor2cen(tim_cell);
     
     np=numel(tim_cen);
     val_cen=NaN(1,np);
+    %IMPROVE
+    %loop on kg here because the index are the same for all
     for kp=1:np
         val_cen(1,kp)=interp_line_closest(tim_cell,val_cell,tim_cen(kp),years(1e3));
     end
     dtim_cell=diff(tim_cell);
-    val_out(kr,1)=sum(val_cen.*seconds(dtim_cell))./sum(seconds(dtim_cell));
+    val_out(kr,1)=sum(val_cen.*seconds(dtim_cell))./sum(seconds(dtim_cell)); %sum(seconds(dtim_cell))
+
+    %disp
+    fprintf('interpolating time %4.2f %% \n',kr/nr*100)
 end
 
 end %function

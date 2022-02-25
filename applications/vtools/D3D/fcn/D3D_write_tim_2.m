@@ -27,6 +27,9 @@ parse(parin,varargin{:});
 
 fig_print=parin.Results.print;
 tim_u=parin.Results.unit;
+if strcmp(tim_u,'minutes')==0
+    error('I think that the input should be minutes')
+end
 write_local=parin.Results.local;
 ylims=parin.Results.ylims;
 

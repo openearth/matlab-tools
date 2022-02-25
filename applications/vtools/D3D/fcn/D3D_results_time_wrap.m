@@ -21,16 +21,22 @@
 %TODO:
 %   -
 
-function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(sim_path)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(sim_path,varargin)
 
+%% PARSE
+nc_type='map'; %map
+if numel(varargin)>0
+    nc_type=varargin{1};
+end
+
+%%
 simdef.D3D.dire_sim=sim_path;
 simdef=D3D_simpath(simdef);
 
 switch simdef.D3D.structure
     case {1,2,3}
-        path_map=simdef.file.map;
-        ismor=D3D_is(path_map);
-        fpath_nc=path_map;
+        fpath_nc=simdef.file.(nc_type);
+        ismor=D3D_is(fpath_nc);
         [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
     case 4
         fdir_output=fullfile(sim_path,'output');
@@ -47,9 +53,8 @@ switch simdef.D3D.structure
             fdir_loc=fullfile(fdir_output,num2str(kf));
             simdef.D3D.dire_sim=fdir_loc;
             simdef=D3D_simpath(simdef);
-            path_map=simdef.file.map;
-            ismor=D3D_is(path_map);
-            fpath_nc=path_map;
+            fpath_nc=simdef.file.(nc_type);
+            ismor=D3D_is(fpath_nc);
             [time_r_loc,time_mor_r_loc,time_dnum_loc,time_dtime_loc,time_mor_dnum_loc,time_mor_dtime_loc]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
             
             time_r=cat(1,time_r,time_r_loc);

@@ -14,18 +14,20 @@
 function [y,idx_1,idx_2]=interp_line_closest(xv_all,yv_all,x,x_thres)
 
 idx_1=NaN;
-idx_2=NaN;
 idx_2=find(xv_all>x,1,'first');
+% xv_all(idx_2)-x
 if isempty(idx_2)
     idx_2=find(xv_all==x,1,'first');
     if isempty(idx_2)
         y=NaN;
     else
+        idx_1=idx_2;
         y=yv_all(idx_2);
     end
 else
 %     idx_1=find(xv_all<x,1,'last'); 
     idx_1=idx_2-1;
+%     xv_all(idx_1)
     if idx_1==0
         y=NaN;
     else
