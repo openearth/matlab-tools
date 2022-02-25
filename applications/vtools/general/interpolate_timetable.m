@@ -68,6 +68,15 @@ function val_out=interpolate_timeserie(tim_in,val_in,tim_re)
 % val_in=reshape(val_in,1,[]);
 
 %%
+
+if isempty(tim_in.TimeZone) || isempty(tim_re.TimeZone)
+    error('Add the timezones to not make a mess!')
+end
+tim_in.TimeZone=tim_re.TimeZone; %set the values to same timezone
+tim_in=datenum(tim_in);
+tim_re=datenum(tim_re);
+    
+%%
 bol_nn=~isnan(val_in);
 tim_in_c=tim_in(bol_nn);
 val_in_c=val_in(bol_nn);
@@ -80,8 +89,8 @@ for kr=1:nr
     %IMPROVE
     %set an initial guess of the index and from that move one
     %up and done in a while loop to find the limits
-    [val_l,~,idx_l]=interp_line_closest(tim_in_c,val_in_c,t_cell_l,years(1e3)); %value at lower edge
-    [val_u,idx_u,~]=interp_line_closest(tim_in_c,val_in_c,t_cell_u,years(1e3)); %value at upper edge
+    [val_l,~,idx_l]=interp_line_closest(tim_in_c,val_in_c,t_cell_l,NaN,false); %value at lower edge
+    [val_u,idx_u,~]=interp_line_closest(tim_in_c,val_in_c,t_cell_u,NaN,false); %value at upper edge
     if isnan(val_l) || isnan(val_u) %we do not make a mean if there is no value above and below the edges
         continue
     elseif idx_l>idx_u %there are no points inside. The first point to the right of the lower edge is larger than the upper edge
@@ -95,17 +104,17 @@ for kr=1:nr
 
     %points between lower limit and upper limit
     tim_cen=cor2cen(tim_cell);
-    
+      
     np=numel(tim_cen);
     val_cen=NaN(1,np);
     %IMPROVE
     %loop on kg here because the index are the same for all
     for kp=1:np
-        val_cen(1,kp)=interp_line_closest(tim_cell,val_cell,tim_cen(kp),years(1e3));
+        val_cen(1,kp)=interp_line_closest(tim_cell,val_cell,tim_cen(kp),NaN,false); 
     end
     dtim_cell=diff(tim_cell);
-    val_out(kr,1)=sum(val_cen.*seconds(dtim_cell))./sum(seconds(dtim_cell)); %sum(seconds(dtim_cell))
-
+    val_out(kr,1)=sum(val_cen.*dtim_cell)./sum(dtim_cell); %sum(seconds(dtim_cell))
+    
     %disp
     fprintf('interpolating time %4.2f %% \n',kr/nr*100)
 end
