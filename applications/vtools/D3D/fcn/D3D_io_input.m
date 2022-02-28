@@ -27,6 +27,9 @@ end
 
 switch what_do
     case 'read'
+        if exist(fname,'file')~=2
+            error('File does not exist: %s',fname)
+        end
         switch ext
             case '.mdf'
                 stru_out=delft3d_io_mdf('read',fname);
@@ -112,8 +115,16 @@ switch what_do
                 end
                 fclose(fid);
                 messageOut(NaN,sprintf('File written: %s',fname));
+            case '.xyn'
+                fid=fopen(fname,'w');
+                ndep=numel(stru_in);
+                for kl=1:ndep
+                    fprintf(fid,' %14.7f %14.7f %s \n',stru_in(kl).x,stru_in(kl).y,stru_in(kl).name);
+                end
+                fclose(fid);
+                messageOut(NaN,sprintf('File written: %s',fname));
             case '.shp'
-                shapewrite(fname,'polyline',{stru_in.xy},{})
+                shapewrite(fname,'polyline',{stru_in.xy},{})                
             case '' %writing a series of tim files
 %                 D3D_io_input('write',dire_out,stru_in,reftime);
 %                 dire_out = folder to write  
