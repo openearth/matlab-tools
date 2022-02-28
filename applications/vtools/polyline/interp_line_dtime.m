@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17792 $
-%$Date: 2022-02-24 21:11:49 +0100 (Thu, 24 Feb 2022) $
-%$Author: chavarri $
-%$Id: interp_line.m 17792 2022-02-24 20:11:49Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/interp_line.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function y=interp_line_dtime(xv,yv,x)

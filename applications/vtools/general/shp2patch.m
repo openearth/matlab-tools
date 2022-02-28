@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17465 $
-%$Date: 2021-08-25 16:36:23 +0200 (Wed, 25 Aug 2021) $
-%$Author: chavarri $
-%$Id: shp2struct.m 17465 2021-08-25 14:36:23Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/shp2struct.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Create data ready for path plot out of an shp-file
 %

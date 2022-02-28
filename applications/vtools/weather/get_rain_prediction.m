@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17455 $
-%$Date: 2021-08-15 15:42:18 +0200 (Sun, 15 Aug 2021) $
-%$Author: chavarri $
-%$Id: download_web.m 17455 2021-08-15 13:42:18Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/weather/download_web.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function get_rain_prediction(fdir_rain,url_br,T_data)
