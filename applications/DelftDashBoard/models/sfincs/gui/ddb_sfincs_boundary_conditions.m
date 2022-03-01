@@ -144,17 +144,6 @@ gui_polyline('plot','x',x,'y',y,'Tag','sfincsboundaryspline','Marker','o','creat
 setHandles(handles);
 
 %%
-function save_boundary_spline
-handles=getHandles;
-
-clear data
-data.Field(1).Data(:,1) = handles.model.sfincs.boundaryspline.x;
-data.Field(1).Data(:,2) = handles.model.sfincs.boundaryspline.y;
-
-tekal('write', handles.model.sfincs.boundaryspline.filename,data) 
-
-
-%%
 function delete_boundary_spline
 
 handles=getHandles;
