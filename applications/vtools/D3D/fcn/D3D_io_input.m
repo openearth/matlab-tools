@@ -114,7 +114,7 @@ switch what_do
                     fprintf(fid,' %14.7f %14.7f %14.13f \n',stru_in(kl,1),stru_in(kl,2),stru_in(kl,3));
                 end
                 fclose(fid);
-                messageOut(NaN,sprintf('File written: %s',fname));
+                
             case '.xyn'
                 fid=fopen(fname,'w');
                 ndep=numel(stru_in);
@@ -122,9 +122,10 @@ switch what_do
                     fprintf(fid,' %14.7f %14.7f %s \n',stru_in(kl).x,stru_in(kl).y,stru_in(kl).name);
                 end
                 fclose(fid);
-                messageOut(NaN,sprintf('File written: %s',fname));
+%                 messageOut(NaN,sprintf('File written: %s',fname));
             case '.shp'
-                shapewrite(fname,'polyline',{stru_in.xy},{})                
+                shapewrite(fname,'polyline',{stru_in.xy},{})  
+%                 messageOut(NaN,sprintf('File written: %s',fname));
             case '' %writing a series of tim files
 %                 D3D_io_input('write',dire_out,stru_in,reftime);
 %                 dire_out = folder to write  
@@ -160,6 +161,7 @@ switch what_do
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end
+        messageOut(NaN,sprintf('File written: %s',fname));
 end
 
 end %function

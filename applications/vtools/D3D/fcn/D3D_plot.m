@@ -141,8 +141,13 @@ for ks=1:ns
                     simdef.flg.which_v=which_v(kv);
 
 
-    %                 in_read.kt=kt; %old
-                    in_read.kt=[kt,1]; %new 
+    
+                    switch simdef.D3D.structure
+                        case 1
+                            in_read.kt=kt; %old
+                        case 2
+                            in_read.kt=[kt,1]; %new 
+                    end
                     out_read=D3D_read(simdef,in_read);
                     if simdef.flg.save_data
                         D3D_save(simdef,out_read)

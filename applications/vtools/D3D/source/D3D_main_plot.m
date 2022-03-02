@@ -22,7 +22,7 @@ addOET(path_add_fcn)
 
 %% INPUT
 
-path_input="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210305_parallel_sequential\input_fig_cfl_01.m"; 
+path_input="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210825_grid_sensitivity\input_fig_ncr.m"; 
 
 %% CALL
 

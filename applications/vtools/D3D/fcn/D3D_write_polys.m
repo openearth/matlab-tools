@@ -17,17 +17,22 @@ function D3D_write_polys(path_out,stru_in)
 %    1.9385889E+05   4.4052012E+05
 %    1.9380717E+05   4.4048145E+05
 
+npol=numel(stru_in);
 
+if ~isfield(stru_in,'name')
+    for kpol=1:npol
+        stru_in(kpol).name=sprintf('L%06d',kpol);
+    end %kpol
+end
     
 fid=fopen(path_out,'w');
-
-npol=numel(stru_in);
 
 for kpol=1:npol
     
     [nv,ni]=size(stru_in(kpol).xy);
     str_w=repmat('    %9.8E',1,ni);
     str_we=strcat(str_w,'\n');
+    
     
     if isa(stru_in(kpol).name,'double')
         fprintf(fid,'L%06d \n',stru_in(kpol).name); 
