@@ -37,12 +37,16 @@ function D3D_fini(simdef)
 %% RENAME
 
 %read grid
-grd=wlgrid('read',simdef.file.grd);
-M=size(grd.X,1)+1;
-N=size(grd.X,2)+1;
+% grd=wlgrid('read',simdef.file.grd);
+% M=size(grd.X,1)+1;
+% N=size(grd.X,2)+1;
+
+grd=D3D_io_input('read',simdef.file.grd);
+M=grd.mmax;
+N=grd.nmax;
 
 slope=simdef.ini.s;
-dx_m=diff(grd.X);
+dx_m=diff(grd.cor.x,1,2);
 dx=dx_m(1,1);
 if ~all(abs(dx_m-dx)<1e-6,'all')
     error('sorry, this is made for a constant dx. Adjust the code!')
@@ -52,11 +56,12 @@ h=simdef.ini.h;
 % u=simdef.ini.u;
 etab=simdef.ini.etab;
 % L=simdef.grd.L;
-L=grd.X(end)-grd.X(1);
+% L=grd.X(end)-grd.X(1);
+L=grd.cor.x(end)-grd.cor.x(1);
 I=simdef.ini.I0;
 secflow=simdef.mdf.secflow;
 etab0_type=simdef.ini.etab0_type;
-u=0;
+u=simdef.ini.u;
 v=0; %v velocity
 
 %other
@@ -101,6 +106,7 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
     otherwise
         error('..')
 end
+
 %u velocity
 u_mat(2:N-1,1:M-1)=u;
 
@@ -109,6 +115,22 @@ v_mat(2:N-1,1:M-1)=v;
 
 %seconday flow intensity 
 I_mat(2:N-1,1:M-1)=I;
+
+%noise
+switch simdef.ini.etaw_noise
+    case 0
+    case 5
+        mu=simdef.ini.noise_x0;
+        etab_max=simdef.ini.noise_amp;
+        sig=simdef.ini.noise_Lb;
+        
+        x=grd.cend.x;
+        noise=etab_max*exp(-(x-mu).^2/sig^2);
+        
+        water_levels=water_levels+noise;
+%         u_mat=
+end
+
 
 %% WRITE
 

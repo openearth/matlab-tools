@@ -20,7 +20,7 @@
 function file_read=S3_file_read(which_v,file)
 
 switch which_v
-    case {12} %map
+    case {2,12} %map
         file_read=file.map;
     case {10} %reachsegments
         file_read=file.reach;

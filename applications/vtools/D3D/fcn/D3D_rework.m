@@ -240,7 +240,7 @@ if isfield(simdef.mdf,'C')==0
 %     error('specify friction coefficient, even though it is not used') %why?
 end
 if simdef.mdf.C==0
-    warning('You may not want to specify friction (i.e., friction type = 10), then, set the coefficient to 1, but not zero!')
+%     warning('You may not want to specify friction (i.e., friction type = 10), then, set the coefficient to 1, but not zero!')
 end
 %in d3d, even when friction is set to constant, it accounts for some
 %roughness height that messes all... I think it is incorrect. Here I solve
@@ -449,6 +449,10 @@ if isfield(simdef.ini,'h')==0
     simdef.ini.h=NaN;
 end
 
+if isfield(simdef.ini,'u')==0
+    simdef.ini.u=0;
+end
+
 if simdef.D3D.structure==1
     if isfield(simdef.file,'fini')==0
         simdef.file.fini=fullfile(simdef.D3D.dire_sim,'fini.ini');
@@ -477,6 +481,10 @@ switch simdef.ini.etab0_type
         end
     otherwise
         error('etab0_type nonexistent')
+end
+
+if isfield(simdef.ini,'etaw_noise')==0
+    simdef.ini.etaw_noise=0;
 end
 
 %%

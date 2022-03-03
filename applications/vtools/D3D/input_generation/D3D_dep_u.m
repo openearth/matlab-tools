@@ -68,8 +68,9 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
         %using grid
         depths=etab+slope*(L-Xtot);
     case 2
-        large_number=1e4;
-        depths=[-large_number,-large_number,etab;-large_number,large_number,etab;large_number,-large_number,etab;large_number,large_number,etab];
+%         large_number=1e4;
+%         depths=[-large_number,-large_number,etab;-large_number,large_number,etab;large_number,-large_number,etab;large_number,large_number,etab];
+        depths=etab.*ones(size(Xtot));
     case 3
         depths=simdef.ini.xyz;
 end
@@ -110,6 +111,13 @@ switch simdef.ini.etab_noise
 %         noise_amp=simdef.ini.noise_amp;
 % %         noise(1:end-3,2:end-1)=noise_amp.*(rand(ny-3,nx-2)-0.5);
 %         noise(1:end-3,1:end)=noise_amp.*(rand(ny-3,nx)-0.5);
+    case 5        
+        mu=simdef.ini.noise_x0;
+        etab_max=simdef.ini.noise_amp;
+        sig=simdef.ini.noise_Lb;
+        
+        x=Xtot;
+        noise=etab_max.*exp(-(x-mu).^2/sig^2);
     otherwise
         error('sorry... not implemented!')
 end
