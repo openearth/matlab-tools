@@ -190,7 +190,9 @@ end
 % Only use toolboxes included in xml file
 if ~strcmpi(handles.configuration.include_toolboxes{1},'all')
     name0=name;
+    dr_advanced0=dr_advanced;
     tp0=tp;
+    dr_advanced=[];
     name=[];
     tp=[];
     k=0;
@@ -200,13 +202,16 @@ if ~strcmpi(handles.configuration.include_toolboxes{1},'all')
             k=k+1;
             name{k}=name0{j};
             tp{k}  =tp0{j};
+            dr_advanced{k}=dr_advanced0{j};
         end
     end
 else
     % All toolboxes included, set ModelMaker as the first toolbox
     name0=name;
+    dr_advanced0=dr_advanced;
     tp0=tp;
     name=[];
+    dr_advanced=[];
     tp=[];
     name{1}='ModelMaker';
     tp{1}='standard';
@@ -216,6 +221,7 @@ else
             n=n+1;
             name{n}=name0{k};
             tp{n}  =tp0{k};
+            dr_advanced{k}=dr_advanced0{k};
         end        
     end
 end

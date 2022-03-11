@@ -92,11 +92,17 @@ for i=1:length(flist)
                 end
                 if exist(xmlfile,'file')
                     xml=xml2struct(xmlfile,'structuretype','short');
-                    switch lower(xml.enable)
-                        case{'1','y','yes'}
-                            k=k+1;
-                            name{k}=flist(i).name;
-                            tp{k}='standard';
+                    if strcmpi(flist(i).name,'none')
+                        k=k+1;
+                        name{k}=flist(i).name;
+                        tp{k}='standard';
+                    else
+                        switch lower(xml.enable)
+                            case{'1','y','yes'}
+                                k=k+1;
+                                name{k}=flist(i).name;
+                                tp{k}='standard';
+                        end
                     end
                 end
         end
