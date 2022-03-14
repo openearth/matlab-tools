@@ -98,14 +98,14 @@ data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[geometry]'; kl=kl+1;
 data{kl,1}=sprintf('NetFile           = %s',simdef.mdf.grd); kl=kl+1;
 % if simdef.mor.morphology || simdef.grd.cell_type
-data{kl,1}=sprintf('BathymetryFile    = %s',simdef.mdf.dep); kl=kl+1;
+% data{kl,1}=sprintf('BathymetryFile    = %s',simdef.mdf.dep); kl=kl+1;
 % else
 % data{kl,1}=        'BathymetryFile    =         ' ; kl=kl+1;
 % end
 data{kl,1}=        'DryPointsFile     =         '; kl=kl+1;
 data{kl,1}=        'GridEnclosureFile =         '; kl=kl+1;
 if simdef.ini.etaw_type==2
-data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.ini.etaw_file); kl=kl+1;
+% data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.ini.etaw_file); kl=kl+1;
 % data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.mdf.etaw_file); kl=kl+1;
 else
 data{kl,1}=        'WaterLevIniFile   =         '; kl=kl+1;
@@ -167,7 +167,7 @@ data{kl,1}=        'SigmaGrowthFactor = 1         '; kl=kl+1;
 data{kl,1}=        ''; kl=kl+1;
 %% NUMERICS
 data{kl,1}=        '[numerics]'; kl=kl+1;
-data{kl,1}=        'CFLMax            = 0.7        '; kl=kl+1;
+data{kl,1}=sprintf('CFLMax            = %f         ',simdef.mdf.CFLMax); kl=kl+1;
 data{kl,1}=        'AdvecType         = 33         '; kl=kl+1;
 data{kl,1}=        'TimeStepType      = 2          '; kl=kl+1;
 data{kl,1}=        'Limtyphu          = 0          '; kl=kl+1;
@@ -204,6 +204,7 @@ data{kl,1}=        'Maxwaterleveldiff = 0          '; kl=kl+1;
 data{kl,1}=        'Maxvelocitydiff   = 0          '; kl=kl+1;
 data{kl,1}=        'Epshu             = 0.0001     '; kl=kl+1;
 data{kl,1}=        'SobekDFM_umin     = 0          '; kl=kl+1;
+data{kl,1}=sprintf('TransportAutoTimestepdiff = %d         ',simdef.mdf.TransportAutoTimestepdiff); kl=kl+1;
 data{kl,1}=sprintf('filter            = %d         ',filter); kl=kl+1;
 data{kl,1}=        ''; kl=kl+1;
 %%
@@ -218,10 +219,10 @@ data{kl,1}=sprintf('Dicouv            = %0.7E',Dicouv); kl=kl+1;
 data{kl,1}=sprintf('Vicoww            = %0.7E',Vicoww); kl=kl+1;
 data{kl,1}=sprintf('Dicoww            = %0.7E',Dicoww); kl=kl+1;
 data{kl,1}=        'Vicwminb          = 0            '; kl=kl+1;
-data{kl,1}=sprintf('Smagorinsky       = %0.7E',Smagorinsky); kl=kl+1; %# Add Smagorinsky horizontal turbulence : vicu = vicu + ( (Smagorinsky*dx)**2)*S, e.g. 0.1
-data{kl,1}=        'Elder             = 0            '; kl=kl+1; %# Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0
+data{kl,1}=sprintf('Smagorinsky       = %0.7E',Smagorinsky); kl=kl+1; %Add Smagorinsky horizontal turbulence : vicu = vicu + ( (Smagorinsky*dx)**2)*S, e.g. 0.1
+data{kl,1}=        'Elder             = 0            '; kl=kl+1; %Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0
 data{kl,1}=sprintf('Irov              = %d',wall_rough); kl=kl+1;
-data{kl,1}=sprintf('wall_ks           = %0.7E',wall_ks); kl=kl+1; %# Nikuradse roughness for side walls, wall_z0=wall_ks/30
+data{kl,1}=sprintf('wall_ks           = %0.7E',wall_ks); kl=kl+1; %Nikuradse roughness for side walls, wall_z0=wall_ks/30
 data{kl,1}=        'Rhomean           = 1000         '; kl=kl+1;
 data{kl,1}=        'Idensform         = 2            '; kl=kl+1;
 data{kl,1}=sprintf('Ag                = %0.7E',g)     ; kl=kl+1;
@@ -234,11 +235,11 @@ data{kl,1}=        'InitialSalinity   = 0            '; kl=kl+1;
 data{kl,1}=        'Sal0abovezlev     = -999         '; kl=kl+1;
 data{kl,1}=        'DeltaSalinity     = -999         '; kl=kl+1;
 data{kl,1}=        'Backgroundsalinity= 0            '; kl=kl+1;
-data{kl,1}=        'InitialTemperature= 1            '; kl=kl+1;
+data{kl,1}=        'InitialTemperature= 15           '; kl=kl+1;
 data{kl,1}=        'Secchidepth       = 2            '; kl=kl+1;
 data{kl,1}=        'Stanton           = -1           '; kl=kl+1;
 data{kl,1}=        'Dalton            = -1           '; kl=kl+1;
-data{kl,1}=        'Backgroundwatertemperature= 6    '; kl=kl+1;
+data{kl,1}=        'Backgroundwatertemperature= 1    '; kl=kl+1;
 data{kl,1}=sprintf('SecondaryFlow     = %d',secflow); kl=kl+1;
 data{kl,1}=sprintf('BetaSpiral        = %d',secflow); kl=kl+1;
 data{kl,1}=        'Temperature       = 0            '; kl=kl+1;
@@ -267,7 +268,7 @@ data{kl,1}=        'DtNodal           =                              '; kl=kl+1;
 data{kl,1}=sprintf('DtMax             = %0.7E',Dt); kl=kl+1;
 data{kl,1}=        'DtInit            = 1                            '; kl=kl+1;
 data{kl,1}=        'Timestepanalysis  = 0                            '; kl=kl+1; %# 0=no, 1=see file *.steps
-data{kl,1}=        'Autotimestepdiff  = 0                            '; kl=kl+1; %# 0 = no, 1 = yes (Time limitation based on explicit diffusive term)
+% data{kl,1}=        'Autotimestepdiff  = 1                            '; kl=kl+1; %# 0 = no, 1 = yes (Time limitation based on explicit diffusive term)
 data{kl,1}=        'Tunit             = S                            '; kl=kl+1;
 data{kl,1}=        'TStart            = 0                            '; kl=kl+1;
 data{kl,1}=sprintf('TStop             = %d',Tstop); kl=kl+1;
@@ -279,7 +280,7 @@ data{kl,1}=        'RestartDateTime   = 20190418                     '; kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 data{kl,1}=        '[external forcing]                               '; kl=kl+1;
-data{kl,1}=        'ExtForceFile      =                              '; kl=kl+1;
+data{kl,1}=sprintf('ExtForceFile      = %s',simdef.mdf.ext)           ; kl=kl+1;
 data{kl,1}=sprintf('ExtForceFileNew   = %s',simdef.mdf.extn)          ; kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
 %%
@@ -357,7 +358,7 @@ data{kl,1}=        '[sediment]                                       '; kl=kl+1;
 data{kl,1}=sprintf('MorFile           = %s                      ',simdef.mdf.mor); kl=kl+1;
 data{kl,1}=sprintf('SedFile           = %s                      ',simdef.mdf.sed); kl=kl+1;
 data{kl,1}=        'Sedimentmodelnr   = 4                            '; kl=kl+1;
-data{kl,1}=        'MorCFL            = 0                            '; kl=kl+1; %# Use morphological time step restriction (1, default) or not (0)
+data{kl,1}=        'MorCFL            = 0                            '; kl=kl+1; %Use morphological time step restriction (1, default) or not (0)
 
 end
 %% WRITE
@@ -367,8 +368,6 @@ writetxt(file_name,data,'check_existing',check_existing);
 
 %%
 
-%# Generated on 11:26:57, 05-06-2014
-%# Deltares, D-Flow FM Version 1.1.99.34297M, Jun 05 2014, 10:13:56
 %
 %[model]
 %Program                      = D-Flow FM

@@ -239,7 +239,15 @@ if isfield(simdef.mdf,'C')==0
     simdef.mdf.C=NaN;
 %     error('specify friction coefficient, even though it is not used') %why?
 end
-if simdef.mdf.C==0
+if isnan(simdef.mdf.C) %no friction
+    switch simdef.D3D.structure
+        case 1
+            simdef.mdf.C=5e3;
+        case 2
+            simdef.mdf.C=0;
+    end
+% if simdef.mdf.C==0 && simdef.D3D.structure=1
+%     error('friction coefficient cannot be 0 in D3D4
 %     warning('You may not want to specify friction (i.e., friction type = 10), then, set the coefficient to 1, but not zero!')
 end
 %in d3d, even when friction is set to constant, it accounts for some
@@ -303,6 +311,10 @@ end
 %     error('adjust flow depth file accordingly')
 % end
 
+if isfield(simdef.mdf,'ext')==0
+    simdef.mdf.ext='ext.ext';
+end
+
 if isfield(simdef.mdf,'extn')==0
     simdef.mdf.extn='bnd.ext';
 end
@@ -327,6 +339,14 @@ if isfield(simdef.mdf,'izbndpos')==0
     else
         simdef.mdf.izbndpos=1;
     end
+end
+
+if isfield(simdef.mdf,'CFLMax')==0
+    simdef.mdf.CFLMax=0.7;
+end
+
+if isfield(simdef.mdf,'TransportAutoTimestepdiff')==0
+    simdef.mdf.TransportAutoTimestepdiff=1;
 end
 
 %%
@@ -453,6 +473,10 @@ if isfield(simdef.ini,'u')==0
     simdef.ini.u=0;
 end
 
+if isfield(simdef.ini,'v')==0
+    simdef.ini.v=0;
+end
+
 if simdef.D3D.structure==1
     if isfield(simdef.file,'fini')==0
         simdef.file.fini=fullfile(simdef.D3D.dire_sim,'fini.ini');
@@ -461,11 +485,20 @@ if simdef.D3D.structure==1
         simdef.ini.I0=0;
     end
 else
+    if isfield(simdef.file,'ext')==0
+        simdef.file.ext=fullfile(simdef.D3D.dire_sim,'ext.ext');
+    end
     if isfield(simdef.file,'etaw')==0
         simdef.file.etaw=fullfile(simdef.D3D.dire_sim,'etaw.xyz');
     end
     if isfield(simdef.ini,'etaw_file')==0
         simdef.ini.etaw_type='etaw.xyz';
+    end
+    if isfield(simdef.file,'ini_vx')==0
+        simdef.file.ini_vx=fullfile(simdef.D3D.dire_sim,'ini_vx.xyz');
+    end
+    if isfield(simdef.file,'ini_vy')==0
+        simdef.file.ini_vy=fullfile(simdef.D3D.dire_sim,'ini_vy.xyz');
     end
 end
     

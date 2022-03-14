@@ -68,10 +68,9 @@ switch what_do
             case '.shp'
                 stru_out=shp2struct(fname);
             case '.tim'
-%                 tim=dflowfm_io_series('read',fname);
-%                 stru_out.tim=varargin{1}+minutes([tim.Values{:,1}]);
-%                 stru_out.val=cell2mat(tim.Values(:,2:end));
-                
+                if nargin~=3
+                    error('You need to specify the reference date as input')
+                end
                 tim=readmatrix(fname,'filetype','text');
                 stru_out.tim=varargin{1}+minutes(tim(:,1));
                 stru_out.val=tim(:,2:end);

@@ -52,6 +52,6 @@ for kbc=1:nbc
 end %kbc
 
 fclose(fid);
-messageOut(NaN,sprintf('File created: %s',fpath))
+% messageOut(NaN,sprintf('File created: %s',fpath))
 
 end %function

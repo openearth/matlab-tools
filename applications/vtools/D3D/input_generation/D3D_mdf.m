@@ -144,7 +144,7 @@ data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Ag     =  9.8100000e+000'; kl=kl+1;
 data{kl,1}=        'Rhow   =  1.0000000e+003'; kl=kl+1;
 data{kl,1}=        'Tempw  =  1.5000000e+001'; kl=kl+1;
-data{kl,1}=        'Salw   =  3.1000000e+001'; kl=kl+1;
+data{kl,1}=        'Salw   =  0.0000000e+001'; kl=kl+1;
 data{kl,1}=        'Wstres =  6.3000000e-004  0.0000000e+000  7.2300000e-003  1.0000000e+002  7.2300000e-003  1.0000000e+002'; kl=kl+1;
 data{kl,1}=        'Rhoa   =  1.0000000e+000'; kl=kl+1;
 data{kl,1}=        'Betac  =  1.0000000e+000'; kl=kl+1;
