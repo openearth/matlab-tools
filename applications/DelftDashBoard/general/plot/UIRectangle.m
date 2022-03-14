@@ -90,6 +90,8 @@ rotation=0;
 ddx=[];
 ddy=[];
 number=[];
+snap=0;
+dxsnap=0;
 
 try
 setappdata(hg,'number',number)
@@ -148,6 +150,9 @@ for i=1:length(varargin)
                 ddy=varargin{i+1};
             case{'number'}
                 number=varargin{i+1};
+            case{'snap'}
+                snap=1;
+                dxsnap=varargin{i+1};
         end
     end
 end
@@ -187,6 +192,8 @@ switch lower(opt)
         setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
         setappdata(hg,'number',number);
+        setappdata(hg,'snap',snap);
+        setappdata(hg,'dxsnap',dxsnap);
 
         set(gcf, 'windowbuttondownfcn',   {@startRectangle,hg});
         set(gcf, 'windowbuttonmotionfcn', {@dragRectangle,hg});
@@ -218,6 +225,8 @@ switch lower(opt)
         setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
         setappdata(hg,'number',number);
+        setappdata(hg,'snap',snap);
+        setappdata(hg,'dxsnap',dxsnap);
 
         hg=plotRectangle(hg,'nocallback');
         
@@ -334,6 +343,14 @@ pos=get(ax, 'CurrentPoint');
 posx=pos(1,1);
 posy=pos(1,2);
 
+snap=getappdata(hg,'snap');
+dxsnap=getappdata(hg,'dxsnap');
+
+if snap
+    posx=roundnearest(posx,dxsnap);
+    posy=roundnearest(posy,dxsnap);
+end
+
 xl=get(ax,'XLim');
 yl=get(ax,'YLim');
 
@@ -399,6 +416,14 @@ ax=getappdata(hg,'axes');
 pos=get(ax, 'CurrentPoint');
 posx=pos(1,1);
 posy=pos(1,2);
+
+snap=getappdata(hg,'snap');
+dxsnap=getappdata(hg,'dxsnap');
+
+if snap
+    posx=roundnearest(posx,dxsnap);
+    posy=roundnearest(posy,dxsnap);
+end
 
 xl=get(ax,'XLim');
 yl=get(ax,'YLim');
@@ -477,6 +502,14 @@ pos = get(gca, 'CurrentPoint');
 x=pos(1,1);
 y=pos(1,2);
 
+snap=getappdata(hg,'snap');
+dxsnap=getappdata(hg,'dxsnap');
+
+if snap
+    x=roundnearest(x,dxsnap);
+    y=roundnearest(y,dxsnap);
+end
+
 dx=x-x0;
 dy=y-y0;
 
@@ -530,8 +563,20 @@ function changeRectangle(imagefig, varargins,hg,i)
 
 ax=getappdata(hg,'axes');
 pos = get(ax, 'CurrentPoint');
-setappdata(hg,'posx0',pos(1,1));
-setappdata(hg,'posy0',pos(1,2));
+posx=pos(1,1);
+posy=pos(1,2);
+
+snap=getappdata(hg,'snap');
+dxsnap=getappdata(hg,'dxsnap');
+
+if snap
+    posx=roundnearest(posx,dxsnap);
+    posy=roundnearest(posy,dxsnap);
+end
+
+
+setappdata(hg,'posx0',posx);
+setappdata(hg,'posy0',posy);
 
 switch get(gcf,'SelectionType')
     case{'normal'}
@@ -560,6 +605,14 @@ ax=getappdata(hg,'axes');
 pos = get(ax, 'CurrentPoint');
 posx=pos(1,1);
 posy=pos(1,2);
+
+snap=getappdata(hg,'snap');
+dxsnap=getappdata(hg,'dxsnap');
+
+if snap
+    posx=roundnearest(posx,dxsnap);
+    posy=roundnearest(posy,dxsnap);
+end
 
 x0=getappdata(hg,'x0');
 y0=getappdata(hg,'y0');
