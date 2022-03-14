@@ -328,10 +328,10 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
   if DPS0
      G.cen.dep     = -vs_get(NFSstruct,'map-const','DPS0' ,{nz  ,mz  },'quiet');%'
   if strcmpi(strtrim(G.dryflp),'DP')
-      if G.mmax==1 || G.nmax==1
-          G.cor.dep     = center2corner1(G.cen.dep,'nearest');
+      if any(G.mmax==[1,3]) || any(G.nmax==[1,3])
+        G.cor.dep     = center2corner1(G.cen.dep,'nearest');
       else
-         G.cor.dep     = center2corner(G.cen.dep,'nearest');
+        G.cor.dep     = center2corner(G.cen.dep,'nearest');
       end
      disp('trim-file: Depth at corners; extrapolated from centers by VS_MESHGRID2DCORCEN from trim*')
      G.cen.dep_comment = 'positive up';
