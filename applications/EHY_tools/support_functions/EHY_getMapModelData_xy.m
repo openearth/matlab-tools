@@ -212,11 +212,12 @@ if isfield(Data,'vel_x')
     angle_track=angle_polyline(Data_xy.Xcen,Data_xy.Ycen,OPT.nAverageAnglePli,0);
     Data_xy.vel_para=NaN(size(Data_xy.vel_x));
     Data_xy.vel_perp=Data_xy.vel_para;
-    if ~isnan(angle_track) %insufficient number of points to project data
+    bol_nn=~isnan(angle_track);
+%     if ~isnan(angle_track) %insufficient number of points to project data
         for kl=1:no_layers
-            [Data_xy.vel_para(1,:,kl),Data_xy.vel_perp(1,:,kl)]=project_vector(Data_xy.vel_x(1,:,kl),Data_xy.vel_y(1,:,kl),angle_track);
+            [Data_xy.vel_para(1,bol_nn,kl),Data_xy.vel_perp(1,bol_nn,kl)]=project_vector(Data_xy.vel_x(1,bol_nn,kl),Data_xy.vel_y(1,bol_nn,kl),angle_track(bol_nn));
         end
-    end
+%     end
     if no_layers>1
         layer_thickness=diff(Data_xy.Zint,1,3);
         layer_thickness_tot=sum(layer_thickness,3);
