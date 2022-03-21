@@ -79,7 +79,7 @@ simdef.flg.which_v=17; %which variable:
 %   16=specific water discharge
 %   17=cumulative bed elevation
 %   18=water discharge 
-%   19=bed load transport in streamwise direction (at nodes)
+%   19=bed load transport for size fraction kf at nodes [m^3/s]
 %   20=velocity at the main channel
 %   21=discharge at main channel
 %   22=cumulative nourished volume of sediment
@@ -104,6 +104,7 @@ simdef.flg.which_v=17; %which variable:
 %   41=wave height [m]
 %   42=wave forces [N]
 %   43=horizontal eddy viscosity [m^2/s]
+%   44=total bed load transport at nodes [m^3/s]
 
     %% domain
     

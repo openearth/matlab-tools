@@ -176,7 +176,7 @@ if flg.which_p~=-1
     
     %sediment
     %delft3d_io_sed seems to be quite expensive. We only read it if necessary.
-    if flg.which_p==1 || flg.which_p==4 || flg.which_v==4
+    if any(flg.which_p==[1,4]) || any(flg.which_v==[3,4])
         if isfield(file,'sed')
             dchar=D3D_read_sed(file.sed);
         end
@@ -335,21 +335,22 @@ switch flg.which_p
                         if is1d
                             out=get_fm1d_data('mesh1d_dm',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
-                            error('adapt')
-                            if flg.get_EHY
-                                if ismor==0
-                                    z=get_EHY(file.map,'mesh2d_flowelem_bl',time_dnum);
+                            nci=ncinfo(file.map);
+                            if isnan(find_str_in_cell({nci.Variables.Name},{'mesh2d_dm'}))
+                                warning('dm not available in output, constructing from mass and thickness. Check if this is true')
+                                if flg.get_EHY
+                                    error('do')
+%                                     M=get_EHY(file.map,'mesh2d_msed',time_dnum);
+%                                     L=get_EHY(file.map,'mesh2d_thlyr',time_dnum);
+                                    out=v2struct(z,face_nodes_x,face_nodes_y);
                                 else
-                                    z=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
+                                    F=ncread(file.map,'mesh2d_lyrfrac',[kF(1),1,1,kt(1)],[kF(2),Inf,Inf,kt(2)]); %faces, layer, fraction, time
+                                    z=mean_grain_size(F,dchar,mean_type);
+                                    z=z(:,1); %active layer
+                                    out=v2struct(z,x_node,y_node,x_face,y_face,faces);
                                 end
-                                out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
-                                if ismor==0
-                                    z=ncread(file.map,'mesh2d_flowelem_bl',kF(1),kF(2));
-                                else
-                                    z=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]);
-                                end
-                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                                error('do')
                             end
                         end
                     case 3 %SOBEK3
@@ -499,11 +500,13 @@ switch flg.which_p
                         else
                             if in.nfl>1
                                 z=ncread(file.map,'mesh2d_ucmaga',[kF(1),kt(1)],[kF(2),1]);
+                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
                             else
                                 z=get_EHY(file.map,'mesh2d_ucmag',time_dnum);
-                            end
-                            out=v2struct(z,face_nodes_x,face_nodes_y); 
-                            
+%                                 out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+%                                 out=v2struct(z,face_nodes_x,face_nodes_y);
+                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end                            
                         end
                     case 3 %SOBEK3
                         out=get_sobek3_data('water_velocity',file_read,in,branch,offset,x_node,y_node,branch_length,branch_id);
@@ -756,7 +759,7 @@ switch flg.which_p
                 end
                 out.zlabel='discharge [m^3/s]';
                 %%
-            case 19 %bed load transport magnitude [m^2/s]
+            case {19,44} %bed load transport magnitude [m^2/s]
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
@@ -766,19 +769,23 @@ switch flg.which_p
                             outy=get_fm1d_data('mesh1d_sbcy_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out=outx;
                             %                             out.z=sqrt(outx.z.^2+outy.z.^2);
-                            out.z=sqrt(outx.z(:,kf).^2+outy.z(:,kf).^2);
+                            switch flg.which_v
+                                case 19
+                                    out.z=sqrt(outx.z(:,kf).^2+outy.z(:,kf).^2);
+                                case 44
+                                    out.z=sqrt(sum(outx.z,2).^2+sum(outy.z,2).^2);
+                            end
                         else
-                            error('check')
-                            wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
+                            sx=ncread(file.map,'mesh2d_sbcx',[kF(1),1,kt(1)],[kF(2),Inf,kt(2)]);
+                            sy=ncread(file.map,'mesh2d_sbcy',[kF(1),1,kt(1)],[kF(2),Inf,kt(2)]);
+                            switch flg.which_v
+                                case 19
+                                    z=sqrt(sx(:,kf).^2+sy(:,kf).^2);
+                                case 44
+                                    z=sqrt(sum(sx,2).^2+sum(sy,2).^2);
+                            end
                             
-                            %output
-                            out.z=wl;
-                            out.x_node=x_node;
-                            out.y_node=y_node;
-                            out.x_face=x_face;
-                            out.y_face=y_face;
-                            out.faces=faces;
-                            
+                            out=v2struct(z,x_node,y_node,x_face,y_face,faces);
                         end
                     case 3 %SOBEK3
                         error('check')
@@ -1063,23 +1070,19 @@ switch flg.which_p
                         if is1d
                             out=get_fm1d_data('mesh1d_czs',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
-                            error('check')
-                            wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
-                            
-                            %output
-                            out.z=wl;
-                            out.x_node=x_node;
-                            out.y_node=y_node;
-                            out.x_face=x_face;
-                            out.y_face=y_face;
-                            out.faces=faces;
-                            
+                            if flg.get_EHY
+                                errro('do')
+                                out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                                z=ncread(file.map,'mesh2d_czs',[kF(1),kt(1)],[kF(2),kt(2)]);
+                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
                         end
                     case 3 %SOBEK3
                         error('check')
                         out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
-                out.zlabel='Chezy friction coefficient [m^(1/2)/s]';
+                out.zlabel='Chezy friction coefficient [m^{1/2}/s]';
                 %%
             case 33 %cell area
                 switch simdef.D3D.structure
@@ -1245,25 +1248,33 @@ switch flg.which_p
                 end
                 out.zlabel='time step [s]';
                 %%
-            case {27,39} %sediment thickness
+            case {14,27,39} %sediment thickness
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
                             out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             if flg.which_v==27
                                 out.z=sum(out.z,1)';
+                            elseif flg.which_v==14
+                                out.z=out.z(1,:)';
+                                error('check dimensions are right')
                             end
                         else
                             if flg.get_EHY
                                 z=get_EHY(file.map,'mesh2d_thlyr',time_dnum);
                                 if flg.which_v==27
-                                    z=sum(z,3);
+                                    z=sum(z,3)';
+                                elseif flg.which_v==14
+                                    z=z(1,:)';
+                                    error('check dimensions are right')
                                 end
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
                                 z=ncread(file.map,'mesh2d_thlyr',[1,kF(1),kt(1)],[Inf,kF(2),kt(2)]);
                                 if flg.which_v==27
-                                    z=sum(z,1);
+                                    z=sum(z,1)';
+                                elseif flg.which_v==14
+                                    z=z(1,:)';
                                 end
                                 out=v2struct(z,x_node,y_node,x_face,y_face,faces);
                             end
@@ -1276,6 +1287,8 @@ switch flg.which_p
                     out.zlabel='total sediment thickness [m]';
                 elseif flg.which_v==39
                     out.zlabel='sediment thickness [m]';
+                elseif flg.which_v==14
+                    out.zlabel='active layer thickness [m]';
                 end
                 %%
             case 40 %volume fraction content

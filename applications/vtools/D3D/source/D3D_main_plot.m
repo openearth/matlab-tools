@@ -22,7 +22,7 @@ addOET(path_add_fcn)
 
 %% INPUT
 
-path_input="c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210825_grid_sensitivity\input_fig_ncr.m"; 
+path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210414_Maas2D\input_D3D_fig_Meers.m'; 
 
 %% CALL
 
