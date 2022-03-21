@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 
-function [eig_r,eig_i,kwx_v,kwy_v,m_in,eigenvector,eigenvalue]=twoD_study(ECT_matrices,in_2D)
+function [eig_r,eig_i,kwx_v,kwy_v,m_in,eigenvector,eigenvalue,M,eigenvectorL]=twoD_study(ECT_matrices,in_2D)
 
 v2struct(ECT_matrices);
 
@@ -122,7 +122,7 @@ for kc=1:nc
     end
     
 %     eigen_R=eig(M);
-    [eigenvector,eigenvalue]=eig(M);
+    [eigenvector,eigenvalue,eigenvectorL]=eig(M);
     eigen_R=diag(eigenvalue);
     eig_r(kc,:)=real(eigen_R); 
     eig_i(kc,:)=imag(eigen_R);
