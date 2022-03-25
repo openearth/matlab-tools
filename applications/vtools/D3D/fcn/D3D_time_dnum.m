@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 7 $
-%$Date: 2022-02-24 12:09:33 +0100 (Thu, 24 Feb 2022) $
-%$Author: chavarri $
-%$Id: create_mat_map_sal_01.m 7 2022-02-24 11:09:33Z chavarri $
-%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/create_mat_map_sal_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %NaN = all
 %Inf = last

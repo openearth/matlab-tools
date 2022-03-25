@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17804 $
-%$Date: 2022-03-02 09:37:25 +0100 (Wed, 02 Mar 2022) $
-%$Author: chavarri $
-%$Id: angle_difference.m 17804 2022-03-02 08:37:25Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/angle_difference.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function pli_ext=polyline_extend(pli_loc,ds)
