@@ -72,7 +72,7 @@ fname_act={dire.name}';
 %% compare
 
 bol_pre=ismember(fname_int,fname_act);
-if ~all(bol_pre)
+if all(bol_pre)
     messageOut(NaN,'All files are in results folder');
     return
 end
@@ -84,7 +84,7 @@ messageOut(NaN,sprintf('You are missing %02d files',nfn));
 %% write new file
 
 %save old var file
-fname_old_save=strrep(fname_var,'.txt','_old.txt');
+fname_old_save=strrep(fname_var,'.txt',sprintf('_%s.txt',now_chr));
 fpath_old_save=fullfile(fdir_res,fname_old_save);
 copyfile_check(fpath_var,fpath_old_save);
 

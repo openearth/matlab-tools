@@ -15,7 +15,7 @@
 function [fpath_missing,kpart_missing]=D3D_check_results_available(fdir_sim,npart)
 
 simdef.D3D.dire_sim=fdir_sim;
-simdef=D3D_simpath(simdef);
+simdef=D3D_simpath(simdef,'break',0);
 
 %map
 kmiss=0;
@@ -29,5 +29,11 @@ for kpart=1:npart
         kpart_missing=cat(1,kpart_missing,kpart-1);
     end
 end %kpart
+
+if isempty(fpath_missing)
+    fprintf('All files are available \n')
+else
+    fprintf('You are missing files! \n')
+end
 
 end %function
