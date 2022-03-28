@@ -27,8 +27,12 @@ end
 OPT.outputFile = [pathstr filesep name];
 
 %% images 2 movie
-imageFiles = [dir([imageDir filesep '*.png']),...
-    dir([imageDir filesep '*.jpg'])];
+if contains(imageDir,'*') && (contains(imageDir,'.png') || contains(imageDir,'.png'))
+    imageFiles = dir(imageDir);
+else
+    imageFiles = [dir([imageDir filesep '*.png']),...
+        dir([imageDir filesep '*.jpg'])];
+end
 
 if isempty(imageFiles)
     if isnumeric(filename); disp('EHY_convert stopped by user.'); return; end
@@ -51,7 +55,7 @@ open(writerObj);
 
 for iF = 1:length(imageFiles)
     disp(['progress: ' num2str(iF) '/' num2str(length(imageFiles))]);
-    thisimage = imread([imageDir filesep imageFiles(iF).name]);
+    thisimage = imread([imageFiles(iF).folder filesep imageFiles(iF).name]);
     writeVideo(writerObj, thisimage);
 end
 close(writerObj);
