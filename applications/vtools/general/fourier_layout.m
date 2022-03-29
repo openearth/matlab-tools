@@ -6,7 +6,8 @@ mu=5;
 etab_max=1e-3;
 sig=1;
 
-x=0:0.01:10;
+L=10;
+x=0:0.01:L;
 y=etab_max.*exp(-(x-mu).^2/sig^2);
 
 % tim_s=data_r.tim;
@@ -43,15 +44,23 @@ y_rec_ifft=ifft(yf);
 %manual reconstruction
 y_rec_manual=zeros(size(noise));
 for km=1:nm
+    %matlab notation
     if km==1
         noise_add_fac=1;
     else
         fi=-((1:1:nx)-1)*(km-1);
         noise_add_fac=exp(-2*pi*1i/nx*fi);
     end
-    y_rec_manual=y_rec_manual+yf(km).*noise_add_fac;
+    y_rec_manual=y_rec_manual+1/nm.*yf(km).*noise_add_fac;
+    
+    %nice notation
+    lambda_loc=2*L/(km-1);
+    k_loc=2*pi/lambda_loc;
+    k_fou=2*(nt-1)/nt*k_loc;
+    y_fou=1/nt*yf(km);
+    y_rec_manual=y_rec_manual+y_fou.*exp(k_fou*1i.*x);
 end
-y_rec_manual=1/nx.*y_rec_manual;
+
 
 %% PLOT POWER
 

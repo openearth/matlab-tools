@@ -31,6 +31,7 @@ if isempty(idx_2)
     idx_2=find(xv_all==x,1,'first');
     if isempty(idx_2)
         y=NaN;
+        idx_2=NaN;
     else
         idx_1=idx_2;
         y=yv_all(idx_2);

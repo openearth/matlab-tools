@@ -21,11 +21,17 @@
 
 function D3D_morini_files(simdef,varargin)
 
-dire_sim=simdef.D3D.dire_sim;
+if isfield(simdef,'D3D')
+    fdir_out=fullfile(simdef.D3D.dire_sim,simdef.mor.folder_out);
+else
+    fdir_out=simdef.mor.folder_out;
+end
+mkdir_check(fdir_out);
+
 frac=simdef.mor.frac;
 frac_xy=simdef.mor.frac_xy;
 thk=simdef.mor.thk;
-folder_out=simdef.mor.folder_out;
+
 
 nf=size(frac,3);
 nl=size(frac,2);
@@ -44,11 +50,11 @@ check_Fak(frac_rn);
 
 %% write
 for kl=1:nl
-    file_name=fullfile(dire_sim,folder_out,sprintf('lyr%02d_thk.xyz',kl));
+    file_name=fullfile(fdir_out,sprintf('lyr%02d_thk.xyz',kl));
     outmat=[frac_xy(:,1),frac_xy(:,2),thk(:,kl)];
     write_2DMatrix(file_name,outmat,varargin{:})
     for kf=1:nf
-        file_name=fullfile(dire_sim,folder_out,sprintf('lyr%02d_frac%02d.xyz',kl,kf));
+        file_name=fullfile(fdir_out,sprintf('lyr%02d_frac%02d.xyz',kl,kf));
         outmat=[frac_xy(:,1),frac_xy(:,2),frac_rn(:,kl,kf)];
         write_2DMatrix(file_name,outmat,varargin{:})
         messageOut(NaN,sprintf('file written layer %4.2f %% fraction %4.2f %%: %s',kl/nl*100,kf/nf*100,file_name));
