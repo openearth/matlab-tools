@@ -25,17 +25,23 @@ fname   = varargin{1};
 
 switch lower(cmd)
 
-case 'read'
-    scratchFile=strrep(sprintf('scratch_%f',datenum(datetime('now'))),'.',''); %if you call <dflowfm_io_mdu> twice at the same time running in the same folder, using the same name causes failure
+case 'read' 
+    scratchFile=strrep(sprintf('scratch_%18.17f',datenum(datetime('now'))+rand),'.',''); %if you call <dflowfm_io_mdu> twice at the same time running in the same folder, using the same name causes failure
     try % if you have the permission to write in this dir
+%         fprintf('start reading %s here %s \n',fname,fullfile(pwd,scratchFile))
         simona2mdu_undress(fname,scratchFile,'comments',{'#' '*'});       %removes mdu cmments which dont belong in inifile
+%         fprintf('end reading %s here %s \n',fname,fullfile(pwd,scratchFile))
     catch % you don't have permission to write (e.g. MATLAB/bin/.. )
         scratchFile=[tempdir 'scratch'];
+%         fprintf('start reading %s here %s \n',fname,scratchFile)
         simona2mdu_undress(fname,scratchFile,'comments',{'#' '*'});
+%         fprintf('end reading %s here %s \n',fname,scratchFile)
     end
     [tmp       ] = inifile('open',scratchFile);
+%     fprintf('start deleting %s \n',fullfile(pwd,scratchFile))
     delete(scratchFile);
-
+%     fprintf('end deleting %s \n',fullfile(pwd,scratchFile))
+    
    %
    % Create one structure
    %
