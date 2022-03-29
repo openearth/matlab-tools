@@ -116,6 +116,7 @@ else
                                 k=k+1;
                                 name{k}=flist(i).name;
                                 tp{k}='standard';
+                                dr_advanced{k} = '';                                
                         end
                     end
             end
