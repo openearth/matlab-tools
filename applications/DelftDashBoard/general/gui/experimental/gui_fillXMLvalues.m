@@ -23,7 +23,7 @@ end
 for ii=1:length(fldnames)
     fldname=fldnames{ii};    
     switch fldname
-        case{'enable','multipledomains','includenumbers','includebuttons','showfilename','includenone','horizontalalignment','verticalalignment'}
+        case{'enable','multipledomains','includenumbers','includebuttons','showfilename','fullpath','includenone','horizontalalignment','verticalalignment'}
             switch lower(xml.(fldname)(1))
                 case{'y','1'}
                     xml.(fldname)=1;
@@ -128,6 +128,7 @@ default.extension=[];
 default.selectiontext=[];
 default.value=[];
 default.showfilename=1;
+default.fullpath=1;
 default.type='string';
 default.mx=[];
 default.max=[];

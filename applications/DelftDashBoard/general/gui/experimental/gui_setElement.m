@@ -281,7 +281,13 @@ switch lower(el.style)
         
     case{'pushselectfile'}
         if el.showfilename
-           val=gui_getValue(el,el.variable);
+           if el.fullpath 
+               val=gui_getValue(el,el.variable);
+           else
+               val=gui_getValue(el,el.variable);
+               [filepath,name,ext] = fileparts(val);
+               val=[name ext];
+           end
            set(el.texthandle,'enable','on','String',['File : ' val]);
            pos=get(el.texthandle,'position');
            ext=get(el.texthandle,'Extent');
