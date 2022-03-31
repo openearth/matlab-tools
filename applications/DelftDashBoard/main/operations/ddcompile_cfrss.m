@@ -64,7 +64,7 @@ function ddcompile3
 % FOR THIS SCRIPT TO RUN, YOUR WORKING FOLDER MUST BE THE MAIN DELFT
 % DASHBOARD SOURCE FOLDER (e.g. d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\)
 
-compilefolder='d:/delftdashboardsetup_cfrss/'; % Folder where executable and data will be created
+compilefolder='d:/delftdashboardsetup_cfrss_02/'; % Folder where executable and data will be created
 
 % addpath(genpath('d:\checkouts\ShorelineS\trunk\'));
 
@@ -279,7 +279,7 @@ eval([strrep(Revision(Revision~='$'),':','=') ';']);
 dos(['copy ' fileparts(which('ddsettings')) filesep 'main' filesep 'menu' filesep 'ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
 strrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
 
-copyfile(['exe' filesep 'bin' filesep 'DelftDashboard.exe'],[compilefolder filesep 'bin\CFRSS.exe']);
+copyfile(['exe' filesep 'bin' filesep 'DelftDashboard.exe'],[compilefolder filesep 'bin\CFRSS_User_Interface.exe']);
 %copyfile([inipath 'settings' filesep 'delftdashboard.xml'],[compilefolder filesep 'data\']);
 
 % Delete temporary files
