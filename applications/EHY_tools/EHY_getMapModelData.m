@@ -34,6 +34,8 @@ function varargout = EHY_getMapModelData(inputFile,varargin)
 %   mesh2d_flowelem_ba      cell area
 %   mesh2d_flowelem_bl      bed level
 %   mesh2d_czs              chezy friction
+%   mesh2d_flowelem_zcc     Vertical coordinate of layer centres at pressure points
+%   mesh2d_flowelem_zw      Vertical coordinate of layer interfaces at pressure points
 
 %% check user input
 if ~exist('inputFile','var')
