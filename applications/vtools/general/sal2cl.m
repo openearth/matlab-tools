@@ -10,6 +10,8 @@
 %$Id$
 %$HeadURL$
 %
+% 1: convert [psu]    -> [mgCl/l]
+%-1: convert [mgCl/l] -> [psu]
 
 function out_val=sal2cl(flg_conv,in_val)
 

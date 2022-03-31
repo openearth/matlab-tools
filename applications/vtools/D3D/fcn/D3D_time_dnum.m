@@ -1,4 +1,7 @@
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
 %$Revision$
@@ -7,6 +10,9 @@
 %$Id$
 %$HeadURL$
 %
+%Read time in datenum format
+%
+%double: represent indices of the times to load. I.e., load the results at times [1,5,10];
 %NaN = all
 %Inf = last
 

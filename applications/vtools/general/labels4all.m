@@ -28,6 +28,7 @@
 %
 %       -'sal'      : salinity [psu]
 %       -{'cl','CONCTTE'}       : chloride [mg/l]
+%       -'salm2'    : mass of salt per unit surface [kg/m^2]
 %
 %       -'umag'     : velocity magnitude
 %
@@ -71,7 +72,7 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function [lab,str_var,str_un,str_diff]=labels4all(var,un,lan,varargin)
+function [lab,str_var,str_un,str_diff,str_background]=labels4all(var,un,lan,varargin)
 
 %%
 
@@ -226,6 +227,16 @@ switch lower(var)
                 str_var='cloruro';
         end
         un_type='-';
+    case {'salm2'}
+        switch lan
+            case 'en'
+                str_var='salt';
+            case 'nl'
+                str_var='zout';
+            case 'es'
+                str_var='sal';
+        end
+        un_type='M/L2';
     case 'umag'
         switch lan
             case 'en'
@@ -427,7 +438,7 @@ switch lower(var)
             case 'es'
                 str_var='viscosidad de turbulencia horizontal';
          end
-         un_type='L2/s';
+         un_type='L2/T';
     case 'at'
          switch lan
             case 'en'
@@ -513,7 +524,7 @@ switch un_type
             otherwise
                 error('this factor is missing')
         end
-    case 'L2/s'
+    case 'L2/T'
         switch un
             case 1
                 str_un=' [m^2/s]';
@@ -527,19 +538,39 @@ switch un_type
             otherwise
                 error('this factor is missing')
         end
+    case 'M/L2'
+        switch un
+            case 1
+                str_un=' [kg/m^2]';
+            otherwise
+                error('this factor is missing')
+        end
 end %un_type
         
 %% LABEL 
 
 lab=strcat(str_var,str_un);
- switch lan
+
+%difference
+switch lan
     case 'en'
         str_d='difference in';
     case 'nl'
         str_d='verschil in';
     case 'es'
         str_d='diferencia de';
- end
+end
 str_diff=sprintf('%s %s',str_d,lab);
+
+%background
+ switch lan
+    case 'en'
+        str_b='above background';
+    case 'nl'
+        str_b='boven achtergrond';
+    case 'es'
+        str_b='sobre ambiente';
+ end
+str_background=sprintf('%s %s%s',str_var,str_b,str_un);
 
 end %function
