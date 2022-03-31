@@ -3,7 +3,7 @@
   <model>none</model>
   <longname>-</longname>
   <multipledomains>no</multipledomains>
-  <enable>0</enable>
+  <enable>1</enable>
   <menu>
     <dummy>0</dummy>
   </menu>
