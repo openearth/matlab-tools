@@ -66,6 +66,9 @@ handles.activeWaveGrid=1;
 models=fieldnames(handles.model);
 for k=1:length(models)
     model=models{k};
+    if ~strcmpi(model,'none')
+        disp(['Initializing model ' handles.model.(model).longName ' ...']);
+    end
     f=handles.model.(model).iniFcn;
     handles.activeModel.nr=k;
     setHandles(handles);

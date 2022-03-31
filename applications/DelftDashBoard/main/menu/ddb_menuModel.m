@@ -86,19 +86,20 @@ if isempty(varargin)
         
         name=models{k};
         
-        if handles.model.(name).enable
-            sep='off';
-            if strcmpi(handles.activeModel.name,name)
-%            if k==1
-                checked='on';
-            else
-                checked='off';
-            end            
-            uimenu(p,'Label',handles.model.(name).longName,'Callback',{@ddb_menuModel,0},'separator',sep,'checked',checked,'tag',name);
+        if ~strcmpi(name,'none')
+            if handles.model.(name).enable
+                sep='off';
+                if strcmpi(handles.activeModel.name,name)
+                    %            if k==1
+                    checked='on';
+                else
+                    checked='off';
+                end
+                uimenu(p,'Label',handles.model.(name).longName,'Callback',{@ddb_menuModel,0},'separator',sep,'checked',checked,'tag',name);
+            end
         end
         
     end
-    
 else
 
     % Toolbox selected from menu

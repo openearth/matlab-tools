@@ -63,18 +63,7 @@ function ddb_findToolboxes
 handles=getHandles;
 
 if isdeployed
-%     [status, result] = system('path');
-%     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
-%     dr=[fileparts(exeDir) filesep 'data' filesep 'toolboxes' filesep];
-%     dr=[ctfroot filesep 'ddbsettings' filesep 'toolboxes'];%dr=[ctfroot filesep 'toolboxes'];%
-%     [status, result] = system('path');
-%     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
-%    dr = [fileparts(exeDir) filesep 'ddbsettings' filesep 'toolboxes']; % by Bart Grasmeijer
-%    dr=[ctfroot filesep 'ddbsettings' filesep 'toolboxes']; % Changed back MvO (2017-4-20)
-
     dr=[ctfroot filesep 'DelftDashBoa' filesep 'ddbsettings' filesep 'toolboxes']; % Changed back MvO (2017-4-20)
-
-
 else
     ddb_root = fileparts(which('delftdashboard.ini'));
     dr=[ddb_root filesep 'toolboxes'];
@@ -154,7 +143,7 @@ else
                                 if strcmp(toolboxname(end-7:end),'-toolbox')
                                     toolboxname = toolboxname(1:end-8);
                                 end
-
+                                
                             end
                         end
                         
@@ -177,21 +166,21 @@ else
                                     k=k+1;
                                     name{k}=toolboxname;
                                     tp{k}='additional';
-                                    dr_advanced{k}=[dr2 filesep foldername filesep 'trunk' filesep];                                    
-                            end                            
+                                    dr_advanced{k}=[dr2 filesep foldername filesep 'trunk' filesep];
+                            end
                         end
                 end
             end
         end
     end
-    
 end
-
-
+    
 % Only use toolboxes included in xml file
 if ~strcmpi(handles.configuration.include_toolboxes{1},'all')
     name0=name;
-    dr_advanced0=dr_advanced;
+    try
+        dr_advanced0=dr_advanced;
+    end
     tp0=tp;
     dr_advanced=[];
     name=[];
@@ -203,7 +192,9 @@ if ~strcmpi(handles.configuration.include_toolboxes{1},'all')
             k=k+1;
             name{k}=name0{j};
             tp{k}  =tp0{j};
-            dr_advanced{k}=dr_advanced0{j};
+            try
+                dr_advanced{k}=dr_advanced0{j};
+            end
         end
     end
 else
@@ -223,9 +214,10 @@ else
             name{n}=name0{k};
             tp{n}  =tp0{k};
             dr_advanced{k}=dr_advanced0{k};
-        end        
+        end
     end
 end
+
 
 % Set names and functions
 nt=length(name);
@@ -242,20 +234,20 @@ for it=1:nt
         % Executable
         handles.toolbox.(nm).dir=[dr filesep name{it} filesep];
         handles.toolbox.(nm).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{it} filesep 'xml' filesep];
-%         handles.toolbox.(nm).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
+        %         handles.toolbox.(nm).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
         handles.toolbox.(nm).dataDir=[handles.toolBoxDir name{it} filesep];
     else
         % From Matlab
         if strcmpi(tp{it},'standard')
             handles.toolbox.(nm).dir=[dr filesep name{it} filesep];
             handles.toolbox.(nm).xmlDir=[handles.toolbox.(nm).dir 'xml' filesep];
-%             handles.toolbox.(nm).miscDir=[handles.toolbox.(nm).dir 'misc' filesep];
+            %             handles.toolbox.(nm).miscDir=[handles.toolbox.(nm).dir 'misc' filesep];
             handles.toolbox.(nm).dataDir=[handles.toolBoxDir name{it} filesep];
         else
             handles.toolbox.(nm).dir=[dr_advanced{it} filesep];
             handles.toolbox.(nm).xmlDir=[handles.toolbox.(nm).dir 'xml' filesep];
-%             handles.toolbox.(nm).miscDir=[handles.toolbox.(nm).dir 'misc' filesep];
-%             handles.toolbox.(nm).dataDir=[handles.toolbox.(nm).dir 'data' filesep];
+            %             handles.toolbox.(nm).miscDir=[handles.toolbox.(nm).dir 'misc' filesep];
+            %             handles.toolbox.(nm).dataDir=[handles.toolbox.(nm).dir 'data' filesep];
             handles.toolbox.(nm).dataDir=[handles.toolBoxDir name{it} filesep];
         end
     end

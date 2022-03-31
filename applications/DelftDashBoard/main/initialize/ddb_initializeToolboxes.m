@@ -68,7 +68,7 @@ for k=1:length(toolboxnames)
     if isfield(handles.toolbox.(name),'longName')
         longname=handles.toolbox.(name).longName;
         try
-            disp(['Initializing ' longname ' ...']);
+            disp(['Initializing toolbox ' longname ' ...']);
             f=handles.toolbox.(name).iniFcn;
             handles=f(handles);
         catch

@@ -68,13 +68,18 @@ for i=1:length(models)
     model=models{i};
     handles.activeModel.nr = i;
     setHandles(handles);
-    element=handles.model.(model).GUI.element;
-    if ~isempty(element)
-%        element.element.tab(1).tab.callback=@ddb_selectToolbox;
-        element=gui_addElements(gcf,element,'getFcn',@getHandles,'setFcn',@setHandles);
-        set(element(1).element.handle,'Visible','off');
-        handles.model.(model).GUI.element=element;
+%     disp(model);
+%    if strcmpi(model,'none')
+    if isfield(handles.model.(model),'GUI')
+        element=handles.model.(model).GUI.element;
+        if ~isempty(element)
+            %        element.element.tab(1).tab.callback=@ddb_selectToolbox;
+            element=gui_addElements(gcf,element,'getFcn',@getHandles,'setFcn',@setHandles);
+            set(element(1).element.handle,'Visible','off');
+            handles.model.(model).GUI.element=element;
+        end
     end
+%    end
 end
 
 handles.activeModel.nr = 1;
