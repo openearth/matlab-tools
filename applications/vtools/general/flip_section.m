@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17498 $
-%$Date: 2021-09-29 08:53:15 +0200 (Wed, 29 Sep 2021) $
-%$Author: chavarri $
-%$Id: adcp_flip_section.m 17498 2021-09-29 06:53:15Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/adcp/adcp_flip_section.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 

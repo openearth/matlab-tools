@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17795 $
-%$Date: 2022-02-25 15:34:37 +0100 (Fri, 25 Feb 2022) $
-%$Author: chavarri $
-%$Id: interp_line_closest.m 17795 2022-02-25 14:34:37Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/interp_line_closest.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [y,idx_1,idx_2]=interp_line_vector(xv_all,yv_all,x,x_thres,varargin)
