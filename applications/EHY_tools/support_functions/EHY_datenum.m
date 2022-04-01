@@ -23,6 +23,12 @@ if ~ischar(date)
     date = num2str(date);
 end
 
+% deal with 1950-01-01T00:00:00Z
+if strcmpi(date(end),'Z')
+    date = date(1:end-1); 
+end
+date = strrep(upper(date),'T',' ');
+
 if length(date) == 8
     format = 'yyyymmdd';
 elseif length(date) == 10

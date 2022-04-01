@@ -1081,8 +1081,17 @@ end
 % shp2pol
     function [output,OPT] = EHY_convert_shp2pol(inputFile,outputFile,OPT)
         output = shape2ldb(inputFile,0);
-        if iscell(output) && numel(output) == 1
-            output = output{1};
+        if iscell(output)
+            if numel(output) == 1
+                output = output{1};
+            else
+                output0 = output;
+                output = [];
+                for i = 1:length(output0)
+                    output = [output; NaN NaN; output0{i}];
+                end
+                output = output(2:end,:); % remove first row of NaN's
+            end
         end
         if OPT.saveOutputFile
             io_polygon('write',outputFile,output(:,1:2));

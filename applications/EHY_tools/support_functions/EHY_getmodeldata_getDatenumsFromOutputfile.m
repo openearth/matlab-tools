@@ -21,6 +21,8 @@ switch modelType
         % First, reconstruct the time series
         if nc_isvar(inputFile,'time')
             timeVar = 'time';
+        elseif nc_isvar(inputFile,'TIME')
+            timeVar = 'TIME';
         elseif nc_isvar(inputFile,'nmesh2d_dlwq_time')
             timeVar = 'nmesh2d_dlwq_time';
         end
@@ -52,7 +54,7 @@ switch modelType
                 if displ
                     disp('Time could not be reconstructed, so it''s read from file')
                 end
-                time = ncread(inputFile, 'time');
+                time = ncread(inputFile, timeVar);
             end
         end
         
