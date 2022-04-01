@@ -64,7 +64,7 @@ function ddcompile3
 % FOR THIS SCRIPT TO RUN, YOUR WORKING FOLDER MUST BE THE MAIN DELFT
 % DASHBOARD SOURCE FOLDER (e.g. d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\)
 
-compilefolder='d:/delftdashboardsetup_cfrss_02/'; % Folder where executable and data will be created
+compilefolder='d:/delftdashboard_cfrss/'; % Folder where executable and data will be created
 
 % addpath(genpath('d:\checkouts\ShorelineS\trunk\'));
 
@@ -260,7 +260,9 @@ end
 % ddb_copyAllFilesToDataFolder(inipath,[inipath filesep 'exe' filesep 'data' filesep],additionalToolboxDir,DataDir);
 
 %mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
-copyfile('settings/icons/earthicon.res','./');
+%copyfile('settings/icons/earthicon.res','./');
+%copyfile('settings/icons/deltares_icon.res','./');
+copyfile('settings/icons/deltares.ico','./');
 
 if ~exist('exe','dir')
     mkdir('exe');
@@ -271,7 +273,7 @@ end
 
 % And now do the actual compiling
 %mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar -r d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\settings\icons\deltares.gif
-mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar
+mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar -r deltares.ico
 
 % Change the revision number text
 Revision = ['$Revision: ' revisionnumber ' $'];
@@ -284,8 +286,9 @@ copyfile(['exe' filesep 'bin' filesep 'DelftDashboard.exe'],[compilefolder files
 
 % Delete temporary files
 delete('complist');
-delete('earthicon.rc');
-delete('earthicon.res');
+%delete('earthicon.rc');
+%delete('earthicon.res');
+delete('deltares.ico');
 
 rmdir('ddbsettings','s');
 
