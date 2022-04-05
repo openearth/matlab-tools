@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17773 $
+%$Date: 2022-02-18 07:02:30 +0100 (Fri, 18 Feb 2022) $
+%$Author: chavarri $
+%$Id: D3D_mor_u.m 17773 2022-02-18 06:02:30Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_mor_u.m $
 %
 %morphological initial file creation
 
@@ -25,7 +25,7 @@
 %OUTPUT:
 %   -a .mor compatible with D3D is created in file_name
 
-function D3D_mor_u(simdef,varargin)
+function D3D_mor_su(simdef,varargin)
 
 %% PARSE
 
@@ -95,7 +95,7 @@ kl=1;
 %%
 data{kl,1}=        '[MorphologyFileInformation]'; kl=kl+1;
 data{kl,1}=        '   FileCreatedBy    = V'; kl=kl+1;
-data{kl,1}=        '   FileCreationDate = today :D'; kl=kl+1;
+data{kl,1}=sprintf('   FileCreationDate = %s',datestr(datetime('now'))); kl=kl+1;
 data{kl,1}=        '   FileVersion      = 02.00'; kl=kl+1;
 %% 
 data{kl,1}=        ''; kl=kl+1;
@@ -165,13 +165,25 @@ end
 % data{kl,1}=        '   RDC    = 0.01      [ - ] Rc in case IopKCW = 2'; kl=kl+1;
 % data{kl,1}=        '   RDW    = 0.02      [ - ] Rw in case IopKCW = 2'; kl=kl+1;
 %%
-for kun=1:simdef.mor.upstream_nodes
-data{kl,1}=        ''; kl=kl+1;
-data{kl,1}=        '[Boundary]'; kl=kl+1;
-data{kl,1}=sprintf('  Name = %s_%02d',fname_pli_u,kun); kl=kl+1;
-data{kl,1}=sprintf('  IBedCond = %d',IBedCond); kl=kl+1;
-data{kl,1}=sprintf('  ICmpCond = %d',ICmpCond); kl=kl+1;
-end
+for kn=1:simdef.mor.upstream_nodes
+    
+    switch simdef.D3D.structure
+        case 1
+            data{kl,1}=        ''; kl=kl+1;
+            data{kl,1}=        '[Boundary]'; kl=kl+1;
+            data{kl,1}=sprintf('  Name = Upstream_%02d',kn); kl=kl+1;
+            data{kl,1}=sprintf('  IBedCond = %d',IBedCond); kl=kl+1;
+            data{kl,1}=sprintf('  ICmpCond = %d',ICmpCond); kl=kl+1;
+        case 2
+            data{kl,1}=        ''; kl=kl+1;
+            data{kl,1}=        '[Boundary]'; kl=kl+1;
+            data{kl,1}=sprintf('  Name = %s_%02d',fname_pli_u,kn); kl=kl+1;
+            data{kl,1}=sprintf('  IBedCond = %d',IBedCond); kl=kl+1;
+            data{kl,1}=sprintf('  ICmpCond = %d',ICmpCond); kl=kl+1;
+    end
+
+end %kn
+
 % data{kl,1}=        ''; kl=kl+1;
 % data{kl,1}=        '[Boundary]'; kl=kl+1;
 % data{kl,1}=        '  Name = Downstream'; kl=kl+1;
@@ -180,18 +192,17 @@ end
 %% OUTPUT
 data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[Output]'; kl=kl+1;
-data{kl,1}=        '  Dm = true'; kl=kl+1;
-data{kl,1}=        '  Dg = true'; kl=kl+1;
-data{kl,1}=        '  HidExp = true'; kl=kl+1;
+data{kl,1}=        '  Dm = 1'; kl=kl+1;
+data{kl,1}=        '  Dg = 1'; kl=kl+1;
+data{kl,1}=        '  HidExp = 1'; kl=kl+1;
 % data{kl,1}=        '  Percentiles = 10'; kl=kl+1;
 data{kl,1}=        '  Bedslope = 1'; kl=kl+1;
-data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get â€œmesh1d_umodâ€?
-data{kl,1}=        '  RawTransportAtZeta = 1'; kl=kl+1; 
 % data{kl,1}=sprintf('  HiranoIllposed = %d',HiranoCheck); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 % data{kl,1}=sprintf('  Derivatives = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 % data{kl,1}=sprintf('  fIk = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 % data{kl,1}=sprintf('  RegularizationLocations = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
-
+data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get â€œmesh1d_umodâ€?
+data{kl,1}=        '  RawTransportAtZeta = 1'; kl=kl+1; 
 
 data{kl,1}=        ''; kl=kl+1;
  data{kl,1}=        '[Numerics]'; kl=kl+1;

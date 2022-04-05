@@ -4,15 +4,15 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 27 $
+%$Date: 2022-03-31 13:12:25 +0200 (Thu, 31 Mar 2022) $
+%$Author: chavarri $
+%$Id: create_mat_map_sal_mass_01.m 27 2022-03-31 11:12:25Z chavarri $
+%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/create_mat_map_sal_mass_01.m $
 %
 %
 
-function create_mat_layout(fid_log,flg_loc,simdef)
+function create_mat_map_sal_mass_01(fid_log,flg_loc,simdef)
 
 % tag='map_sal_mass_01';
 tag=flg_loc.tag;
@@ -46,7 +46,7 @@ fpath_map=simdef.file.map;
 if exist(fpath_mat,'file')==2
     messageOut(fid_log,'Mat-file already exist.')
     if flg_loc.overwrite==0
-        messageOut(fid_log,'Not overwriting mat-file already exist.')
+        messageOut(fid_log,'Not overwriting mat-file.')
         return
     end
     messageOut(fid_log,'Overwriting mat-file.')
@@ -83,7 +83,7 @@ nt=numel(time_dnum);
 %load grid for number of layers
 % load(simdef.file.mat.grd,'gridInfo')
 
-raw_ba=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_ba','mergePartitions',1,'disp',0);
+% raw_ba=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_ba','mergePartitions',1,'disp',0);
 
 %% LOOP
 
@@ -96,95 +96,71 @@ end
 
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,0/nt*100));
 for kt=kt_v
-    fpath_mat_tmp=mat_tmp_name(tag,kt);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt);
     if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
     
-    %read data
-    data_u=EHY_getMapModelData(fpath_map,'varName','uv','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0,'pli',pli);
-    data_h=EHY_getMapModelData(fpath_map,'varName','wd','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0,'pli',pli);
-    q=data_u.vel_perp.*data_h.val;
-    Q=q.*diff(data_h.Scor)';
-
-    %differentiate parts
-    bol_sb=inpolygon(data_h.Xcen,data_h.Ycen,sb_raw.xy.XY{1,1}(:,1),sb_raw.xy.XY{1,1}(:,2));
-
-    idx_sb_1=find(bol_sb==1,1,'first');
-    idx_sb_f=find(bol_sb==1,1,'last');
-    idx_cs=zeros(size(bol_sb));
-    idx_cs(1:idx_sb_1-1)=1;
-    idx_cs(idx_sb_1:idx_sb_f)=2;
-    idx_cs(idx_sb_f+1:end)=3;
-
-    ncs=3;
-    Q_cs=NaN(1,ncs);
-    for kcs=1:ncs
-        Q_cs(kcs)=sum(Q(idx_cs==kcs),'omitnan');
-    end
-    Q_cs_frac=Q_cs./sum(Q_cs);
-
+    %% read data
+    raw_sal=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0);
+    raw_zint=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_zw','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0);
+    
+    %% calc
+    
+    %squeeze to take out the first (time) dimension. Then layers are in dimension 2.
+    cl=sal2cl(1,squeeze(raw_sal.val)); %mgCl/l
+    thk=diff(squeeze(raw_zint.val),1,2); %m
+    mass=sum(cl/1000.*thk,2,'omitnan')'; %mgCl/m^2; cl*1000/1000/1000 [kgCl/m^3]
+    
     %data
-    data=v2struct(data_u,data_h,q,Q,idx_cs,Q_cs,Q_cs_frac); %#ok
+%     data=v2struct(data_u,data_h,q,Q,idx_cs,Q_cs,Q_cs_frac); %#ok
+    data=mass; %#ok
 
     %% save and disp
     save_check(fpath_mat_tmp,'data');
     messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,kt/nt*100));
     
+    %% BEGIN DEBUG
+%     figure
+%     hold on
+%     plot(thk)
+%     plot(vol)
+% plot(raw_ba.val)
+% plot(mass,'-*')
+    %END DEBUG
 end    
 
 %% JOIN
 
-data=struct();
+%if creating files in parallel, another instance may have already created it.
+%
+%Not a good idea because of the overwriting flag. Maybe best to join it several times.
+%
+% if exist(fpath_mat,'file')==2
+%     messageOut(fid_log,'Finished looping and mat-file already exist, not joining.')
+%     return
+% end
+
+% data=struct();
 
 %% first time for allocating
 
 kt=1;
-fpath_mat_tmp=mat_tmp_name(tag,kt);
+fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt);
 tmp=load(fpath_mat_tmp,'data');
 
 %constant
-data(kpli).Xcor=tmp.data.data_h.Xcor;
-data(kpli).Ycor=tmp.data.data_h.Ycor;
-data(kpli).Scor=tmp.data.data_h.Scor;
-data(kpli).Scen=tmp.data.data_h.Scen;
-data(kpli).Xcen=tmp.data.data_h.Xcen;
-data(kpli).Ycen=tmp.data.data_h.Ycen;
-data(kpli).idx_cs=tmp.data.idx_cs;
 
 %time varying
-[~,ncx,~]=size(tmp.data.data_h.val);
-ncs=numel(tmp.data.Q_cs);
+nF=size(tmp.data,2);
 
-data(kpli).h=NaN(nt,ncx);
-data(kpli).vel_x=NaN(nt,ncx);
-data(kpli).vel_y=NaN(nt,ncx);
-data(kpli).vel_mag=NaN(nt,ncx);
-data(kpli).vel_dir=NaN(nt,ncx);
-data(kpli).vel_para=NaN(nt,ncx);
-data(kpli).vel_perp=NaN(nt,ncx);
-data(kpli).q=NaN(nt,ncx);
-data(kpli).Q=NaN(nt,ncx);
-
-data(kpli).Q_cs=NaN(nt,ncs);
-data(kpli).Q_cs_frac=NaN(nt,ncs);
+data=NaN(nt,nF);
 
 %% loop 
 
 for kt=1:nt
-    fpath_mat_tmp=mat_tmp_name(tag,kt);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt);
     tmp=load(fpath_mat_tmp,'data');
 
-    data(kpli).h(kt,:)=tmp.data.data_h.val;
-    data(kpli).vel_x(kt,:)=tmp.data.data_u.vel_x;
-    data(kpli).vel_y(kt,:)=tmp.data.data_u.vel_y;
-    data(kpli).vel_mag(kt,:)=tmp.data.data_u.vel_mag;
-    data(kpli).vel_dir(kt,:)=tmp.data.data_u.vel_dir;
-    data(kpli).vel_para(kt,:)=tmp.data.data_u.vel_para;
-    data(kpli).vel_perp(kt,:)=tmp.data.data_u.vel_perp;
-    data(kpli).q(kt,:)=tmp.data.q;
-    data(kpli).Q(kt,:)=tmp.data.Q;
-
-    data(kpli).Q_cs(kt,:)=tmp.data.Q_cs;
-    data(kpli).Q_cs_frac(kt,:)=tmp.data.Q_cs_frac;
+    data(kt,:)=tmp.data;
 
 end
 

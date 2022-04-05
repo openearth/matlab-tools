@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 
-function [eig_r,eig_i,kwx_v,kwy_v,m_in,eigenvector,eigenvalue,M,eigenvectorL]=twoD_study(ECT_matrices,in_2D)
+function [eig_r,eig_i,kwx_v,kwy_v,m_in,eigenvector,eigenvalue,M,eigenvectorL,eigen_R]=twoD_study(ECT_matrices,in_2D)
 
 v2struct(ECT_matrices);
 

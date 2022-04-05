@@ -11,7 +11,38 @@
 %$HeadURL$
 %
 
-function D3D_plot_1D(flg,br_name,z,SZ,zlab,refdate,time_r,desc_sim_v,time_data,which_v_v)
+function D3D_plot_1D(flg,br_name,z,SZ,zlab,refdate,time_r,desc_sim_v,time_data,which_v_v,varargin)
+
+%% PARSE
+
+if isfield(flg,'fig_xvallt')==0
+    flg.fig_xvallt=0;
+end
+if isfield(flg,'fig_xvalltalls')==0
+    flg.fig_xvalltalls=0;
+end
+if isfield(flg,'print')==0
+    flg.print=0;
+end
+if isfield(flg,'rkm')==0
+    flg.rkm=0;
+end
+if isfield(flg,'fig_xt')==0
+    flg.fig_xt=0;
+end
+if isfield(flg,'fig_xtchange')==0
+    flg.fig_xtchange=0;
+end
+if isfield(flg,'unit')==0
+    flg.unit='s';
+end
+if nargin>10
+    do_add_plot=true;
+    x_add=varargin{1,1};
+    z_add=varargin{1,2};
+end
+
+%%
 
 [ns,nb,nt,nv]=size(SZ);
 
@@ -45,6 +76,12 @@ for kb=1:nb
             hold on
             for kt0=1:nt
                 plot(SZ{ks,kb,kt,kv},z{ks,kb,kt,kv}(:,kt0),'color',cmap(kt0,:))
+                if do_add_plot
+%                     nadd=numel(x_add);
+%                     for kadd=1:nadd
+                        plot(x_add{kt0},z_add{kt0},'color',cmap(kt0,:),'linestyle','--')
+%                     end
+                end
             end
 
             han.cbar=colorbar;
@@ -52,7 +89,13 @@ for kb=1:nb
             clim([min(time_r{ks,kb}),max(time_r{ks,kb})]);
             aux_tick=linspace(min(time_r{ks,kb}),max(time_r{ks,kb}),10);
             han.cbar.YTick=aux_tick;
-            han.cbar.YTickLabel=datestr(datetime(str2double(refdate_str(1:4)),str2double(refdate_str(5:6)),str2double(refdate_str(7:8)))+seconds(aux_tick),'dd/mm/yyyy');
+            switch flg.unit
+                case 'date'
+                    tim_str=datestr(datetime(str2double(refdate_str(1:4)),str2double(refdate_str(5:6)),str2double(refdate_str(7:8)))+seconds(aux_tick),'dd/mm/yyyy');
+                case 's'
+                    tim_str=aux_tick;
+            end
+            han.cbar.YTickLabel=tim_str;
             colormap(cmap);
 
             title(sprintf('%s; %s',br_name{kb,1},desc_sim_v{ks}))
@@ -207,6 +250,76 @@ for kv=1:nv
 end
 
 end
+
+%% all simulation, 1 branch, 1 variable, all times (time_data=0)
+
+if flg.fig_xvalltalls
+    
+han=struct();
+kt=1;
+for kb=1:nb
+    for kv=1:nv
+%         for ks=1:ns
+            ks=1;
+            nt=size(z{ks,kb,kt,kv},2);
+            cmap=brewermap(nt,'RdYlGn');
+            refdate_str=num2str(refdate{ks,1});
+%             time_d=datetime(str2double(refdate_str(1:4)),str2double(refdate_str(5:6)),str2double(refdate_str(7:8)))+seconds(time_r{ks,kb});
+            figure('Visible',fig_vis)
+            hold on
+            for ks=1:ns
+                for kt0=1:nt
+                    han.p(ks)=plot(SZ{ks,kb,kt,kv},z{ks,kb,kt,kv}(:,kt0),'color',cmap(kt0,:));
+%                     if do_add_plot
+    %                     nadd=numel(x_add);
+    %                     for kadd=1:nadd
+%                             plot(x_add{kt0},z_add{kt0},'color',cmap(kt0,:),'linestyle','--')
+    %                     end
+%                     end
+                end
+            end
+            
+            han.cbar=colorbar;
+            han.cbar.Label.String='time';
+            clim([min(time_r{ks,kb}),max(time_r{ks,kb})]);
+            aux_tick=linspace(min(time_r{ks,kb}),max(time_r{ks,kb}),10);
+            han.cbar.YTick=aux_tick;
+            switch flg.unit
+                case 'date'
+                    tim_str=datestr(datetime(str2double(refdate_str(1:4)),str2double(refdate_str(5:6)),str2double(refdate_str(7:8)))+seconds(aux_tick),'dd/mm/yyyy');
+                case 's'
+                    tim_str=aux_tick;
+            end
+            han.cbar.YTickLabel=tim_str;
+            colormap(cmap);
+
+            title(sprintf('%s; %s',br_name{kb,1}))
+            
+            if flg.err
+                str_var=sprintf('difference in %s',zlab{kv});
+                str_fig='err';
+            else
+                str_var=zlab{kv};
+                str_fig='';
+            end
+            ylabel(str_var)
+            if flg.rkm
+                xlabel('river km [km]')
+            else
+                xlabel('streamwise coordinate [m]')
+            end
+
+            if flg.print
+                print(gcf,sprintf('xvalltalls_%s_kb_%s_kt_%02d_kv_%02d.png',str_fig,br_name{kb,1},kt,which_v_v(kv)),'-dpng','-r300')
+                close(gcf)
+            end
+%         end
+    end
+end
+
+end
+
+%%
 
 %%
 %% time_data=1

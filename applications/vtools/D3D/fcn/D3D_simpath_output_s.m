@@ -26,7 +26,7 @@ nfr=numel(dire_res)-2;
 for kflr=1:nfr
     kf=kflr+2; %. and ..
     if dire_res(kf).isdir==0 %it is not a directory
-    [~,~,ext]=fileparts(dire_res(kf).name); %file extension
+    [~,fname,ext]=fileparts(dire_res(kf).name); %file extension
     switch ext
         case '.dat'
             if strcmp(dire_res(kf).name(1:4),'trim')
@@ -36,8 +36,11 @@ for kflr=1:nfr
             if strcmp(dire_res(kf).name(1:4),'trih')
                 file.his=fullfile(dire_res(kf).folder,dire_res(kf).name);
             end
-        case '.dia'
-            file.dia=fullfile(dire_res(kf).folder,dire_res(kf).name);
+%         case '.dia'
+%             file.dia=fullfile(dire_res(kf).folder,dire_res(kf).name);
+    end
+    if strcmp(fname,'tri-diag')
+        file.dia=fullfile(dire_res(kf).folder,dire_res(kf).name);
     end
 %     else %directory in results directory
 %         dire_res2=dir(fullfile(dire_res(kf).folder,dire_res(kf).name));

@@ -190,7 +190,7 @@ data{kl,1}=        'Logprofatubndin   = 1          '; kl=kl+1; % ubnds inflow: 0
 data{kl,1}=        'Logprofkepsbndin  = 0          '; kl=kl+1; % inflow: 0=0 keps, 1 = log keps inflow, 2 = log keps in and outflow
 data{kl,1}=        'Slopedrop2D       = 0          '; kl=kl+1;
 data{kl,1}=        'Chkadvd           = 0.1        '; kl=kl+1;
-data{kl,1}=        'Teta0             = 0.55       '; kl=kl+1;
+data{kl,1}=sprintf('Teta0             = %f         ',simdef.mdf.theta); kl=kl+1;
 data{kl,1}=        'Qhrelax           = 0.01       '; kl=kl+1;
 data{kl,1}=        'Jbasqbnddownwindhs= 0          '; kl=kl+1;
 data{kl,1}=        'cstbnd            = 0          '; kl=kl+1;
@@ -206,7 +206,9 @@ data{kl,1}=        'Epshu             = 0.0001     '; kl=kl+1;
 data{kl,1}=        'SobekDFM_umin     = 0          '; kl=kl+1;
 data{kl,1}=sprintf('TransportAutoTimestepdiff = %d         ',simdef.mdf.TransportAutoTimestepdiff); kl=kl+1;
 data{kl,1}=sprintf('filter            = %d         ',filter); kl=kl+1;
+data{kl,1}=sprintf('MinTimestepBreak  = %d         ',0); kl=kl+1;
 data{kl,1}=        ''; kl=kl+1;
+
 %%
 data{kl,1}=        '[physics]                        '; kl=kl+1;
 data{kl,1}=sprintf('UnifFrictCoef     = %0.7E',C); kl=kl+1;
@@ -244,6 +246,7 @@ data{kl,1}=sprintf('SecondaryFlow     = %d',secflow); kl=kl+1;
 data{kl,1}=sprintf('BetaSpiral        = %d',secflow); kl=kl+1;
 data{kl,1}=        'Temperature       = 0            '; kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
+
 %%
 data{kl,1}=        '[wind]                                  '; kl=kl+1;
 data{kl,1}=        'ICdtyp            = 2                   '; kl=kl+1;

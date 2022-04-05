@@ -1,48 +1,64 @@
 
+%% PREAMBLE
+
+clc
+clear
+
 %% INPUT
 
-%spatial example
-mu=5;
-etab_max=1e-3;
-sig=1;
+%% space parameters
+Fs=1/0.005; %[1/m] sampling frequency. [Hz] if the signal is time.                    
+dx=1/Fs; %[m] spatial step.
+nx=1000; %[-] number of points of the sample. Needs to be multiple of 2.
 
-L=10;
-x=0:0.01:L;
-y=etab_max.*exp(-(x-mu).^2/sig^2);
+%% domain (no input)
 
-% tim_s=data_r.tim;
-% y=data_r.val;
+x=(0:nx-1)*dx; %[m] space vector
+f2=(0:nx-1)*(Fs/nx); %[1/m] frequency domain double-sided spectrum
+f1=Fs*(0:(nx/2))/nx; %[1/m] frequency domain single-sided spectrum
 
-tim_s=x;
+L=x(end); %[m] length of the domain
 
-%  varname_1='water level [m]';
-%  varname_2='spectral power [m^2/s]';
- 
-%  varname_1='streamwise velocity [m/s]';
-%  varname_2='spectral power [m^2/s^3]';
+%% variable
+
+%spatial example 1
+mu=3; %[m] mean of the Gaussian bell (x_0).
+etab_max=1e-3; %variable, e.g. [m] (amplitude of the perturbation in flow depth).
+sig=0.1; %[m] standard deviation of the Gaussian bell.
+
+y=etab_max.*exp(-(x-mu).^2/sig^2); %variable e.g., [m]
+
+%spatial example 2
+% y=0.1*sin(2*pi*1.*x)+0.2*sin(2*pi*5.*x);
+
+%% CALC
 
 %% fft
 
-aux=diff(tim_s);
-dt_s=seconds(aux(1));
-nt=numel(tim_s);
-fs=1/dt_s; %[Hz]
-f=(0:nt-1)*(fs/nt); %[Hz]
-
-yf=fft(y); 
+yf=fft(y); %double-sided spectrum Fourier coefficients
 % pf=abs(yf).^2/nt;    % power of the DFT (also correct, but check the units above)
-pf=abs(yf).^2/dt_s;    % power of the DFT
+pf=abs(yf).^2/dx;    % power of the DFT
 
-%% ifft
+S2=yf/nx; %double-sided spectrum
+S1=S2(1:nx/2+1); %single-sided spectrum
+S1(2:end-1)=2*S1(2:end-1);
 
-nm=2; %number of modes to reconstruct
+S2_abs=abs(yf/nx); %absolute double-sided spectrum
+S1_abs=S2_abs(1:nx/2+1); %single-sided spectrum
+S1_abs(2:end-1)=2*S1_abs(2:end-1);
+
+%% ifft double-sided spectrum
+
+% nm=10; %number of modes to reconstruct
+nm=nx; %number of modes to reconstruct
 
 %ifft reconstruction
-yf(nm+1:end)=0;
-y_rec_ifft=ifft(yf);
+yf(nm+1:end)=0; %remove modes
+y_rec_ifft=ifft(yf); %reconstruct
 
-%manual reconstruction
-y_rec_manual=zeros(size(noise));
+y_rec_manual_1=NaN(nm,nx);
+y_rec_manual_2=NaN(nm,nx);
+y_rec_manual_3=NaN(nm,nx);
 for km=1:nm
     %matlab notation
     if km==1
@@ -51,26 +67,71 @@ for km=1:nm
         fi=-((1:1:nx)-1)*(km-1);
         noise_add_fac=exp(-2*pi*1i/nx*fi);
     end
-    y_rec_manual=y_rec_manual+1/nm.*yf(km).*noise_add_fac;
+    y_rec_manual_1(km,:)=1/nm.*yf(km).*noise_add_fac;
     
     %nice notation
     lambda_loc=2*L/(km-1);
     k_loc=2*pi/lambda_loc;
-    k_fou=2*(nt-1)/nt*k_loc;
-    y_fou=1/nt*yf(km);
-    y_rec_manual=y_rec_manual+y_fou.*exp(k_fou*1i.*x);
+    k_fou=2*(nx-1)/nx*k_loc;
+    y_fou=1/nx*yf(km);
+    y_rec_manual_2(km,:)=y_fou.*exp(k_fou*1i.*x);
+    
+    %using frequency double-sided
+    k_fou=2*pi*f2(km);
+    y_fou=1/nx*yf(km);
+    y_rec_manual_3(km,:)=y_fou.*exp(k_fou*1i.*x);
 end
 
+y_rec_manual_1_sum=sum(y_rec_manual_1,1);
+y_rec_manual_2_sum=sum(y_rec_manual_2,1);
+y_rec_manual_3_sum=sum(y_rec_manual_2,1);
 
-%% PLOT POWER
+%they are all equal
+abs_min(y_rec_manual_1_sum,y_rec_ifft);
+abs_min(y_rec_manual_2_sum,y_rec_ifft);
+abs_min(y_rec_manual_3_sum,y_rec_ifft);
 
-figure
-plot(1./f,pf);
+%% ifft single-sided spectrum
 
-%% PLOT reconstruction
+nm1=numel(f1);
+y_rec_manual_s1_1=NaN(nm1,nx);
+for km=1:nm1
+    k_fou=2*pi*f1(km);
+    y_rec_manual_s1_1(km,:)=S1(km)*exp(1i*k_fou*x);   
+end
+
+y_rec_manual_s1_sum=sum(y_rec_manual_s1_1,1);
+
+%they are all equal
+abs_min(y_rec_manual_s1_sum,y_rec_ifft,'tol',1e-8);
+
+%% PLOT 
+
+%% reconstruction
 
 figure
 hold on
-plot(tim_s,y,'k');
-plot(tim_s,y_rec_ifft,'bo')
-plot(tim_s,y_rec_manual,'r*')
+plot(x,y,'k*');
+plot(x,y_rec_ifft)
+plot(x,y_rec_manual_1_sum)
+plot(x,y_rec_manual_2_sum)
+plot(x,y_rec_manual_3_sum)
+plot(x,y_rec_manual_s1_sum)
+
+%% power
+
+figure
+plot(1./f2,pf);
+
+%  varname_1='water level [m]';
+%  varname_2='spectral power [m^2/s]';
+ 
+%  varname_1='streamwise velocity [m/s]';
+%  varname_2='spectral power [m^2/s^3]';
+
+%% amplitudes
+
+figure
+plot(f1,S1_abs,'-*')
+
+

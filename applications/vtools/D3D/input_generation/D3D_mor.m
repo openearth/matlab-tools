@@ -37,8 +37,10 @@ D3D_structure=simdef.D3D.structure;
 
 %% FILE
 
-if D3D_structure==1
-    D3D_mor_s(simdef);
-else
-    D3D_mor_u(simdef,'check_existing',check_existing);
-end
+D3D_mor_su(simdef,'check_existing',check_existing);
+
+% if D3D_structure==1
+%     D3D_mor_s(simdef);
+% else
+%     D3D_mor_u(simdef,'check_existing',check_existing);
+% end

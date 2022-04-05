@@ -537,7 +537,8 @@ if isfield(simdef.runid,'name')==0
         case 2
             ext='mdu';
     end
-    simdef.runid.name=sprintf('sim_%s%s.%s',simdef.runid.serie,simdef.runid.number,ext);
+%     simdef.runid.name=sprintf('sim_%s%s.%s',simdef.runid.serie,simdef.runid.number,ext);
+    simdef.runid.name=sprintf('r%s%s.%s',simdef.runid.serie,simdef.runid.number,ext);
 end
 
 %% 

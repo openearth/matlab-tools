@@ -31,5 +31,7 @@ while ~feof(fid)
     end %kl<kl_start
 end %~feof(fid)
 
+fclose(fid);
+
 end %function
 

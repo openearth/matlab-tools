@@ -1,0 +1,137 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 27 $
+%$Date: 2022-03-31 13:12:25 +0200 (Thu, 31 Mar 2022) $
+%$Author: chavarri $
+%$Id: create_mat_map_sal_mass_01.m 27 2022-03-31 11:12:25Z chavarri $
+%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/create_mat_map_sal_mass_01.m $
+%
+%
+
+function create_mat_map_ls_01(fid_log,in_plot_loc,simdef)
+
+if ~in_plot_loc.do
+    messageOut(fid_log,'Not doing ''fig_map_ls_01''')
+    return
+end
+messageOut(fid_log,'Start ''fig_map_ls_01''')
+
+fpath_mat=simdef.file.mat.map_ls_01;
+fdir_mat=simdef.file.mat.dir;
+
+if exist(fpath_mat,'file')==2
+    messageOut(fid_log,'Mat-file already exist.')
+    return
+end
+messageOut(fid_log,'Mat-file does not exist. Reading.')
+
+%load grid for number of layers
+% load(simdef.file.mat.grd,'gridInfo')
+fpath_map=simdef.file.map;
+
+if exist(simdef.file.mat.map_ls_01_tim,'file')==2
+    messageOut(fid_log,'time file already exists');
+    load(simdef.file.mat.map_ls_01_tim,'time_dnum');
+else
+    time_dnum=get_time_dnum(fpath_map,in_plot_loc.tim);
+    save(simdef.file.mat.map_ls_01_tim,'time_dnum');
+end
+
+% if isnan(in_plot_loc.layer)
+%     layer=gridInfo.no_layers;
+% else
+%     layer=in_plot_loc.layer;
+% end
+
+nt=numel(time_dnum);
+% kt_v=randi(nt,1,nt);
+kt_v=1:1:nt;
+
+npli=numel(in_plot_loc.pli);
+for kpli=1:npli
+    for kt=kt_v
+        fpath_mat_tmp=fullfile(fdir_mat,sprintf('map_ls_tmp_pli_%02d_kt_%02d.mat',kpli,kt));
+        if exist(fpath_mat_tmp,'file')==2; continue; end
+		
+        [data_uxy,~]            =EHY_getMapModelData(fpath_map,'varName','uv'        ,'t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0,'pliFile',in_plot_loc.pli{kpli,1});
+        [data_uz,~]             =EHY_getMapModelData(fpath_map,'varName','mesh2d_ucz','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0,'pliFile',in_plot_loc.pli{kpli,1});
+        [data_sal,data_sal.grid]=EHY_getMapModelData(fpath_map,'varName','sal'       ,'t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0,'pliFile',in_plot_loc.pli{kpli,1});
+        data_map_ls_01.sal=data_sal.val;
+        data_map_ls_01.Xcor=data_sal.Xcor;
+        data_map_ls_01.Ycor=data_sal.Ycor;
+        data_map_ls_01.Scor=data_sal.Scor;
+        data_map_ls_01.Xcen=data_sal.Xcen;
+        data_map_ls_01.Ycen=data_sal.Ycen;
+        data_map_ls_01.Scen=data_sal.Scen;
+        data_map_ls_01.Zint=data_sal.Zint;
+        data_map_ls_01.Zcen=data_sal.Zcen;
+        data_map_ls_01.grid=data_sal.grid;
+        data_map_ls_01.uz=data_uz.val;
+        data_map_ls_01.ux=data_uxy.vel_x;
+        data_map_ls_01.uy=data_uxy.vel_y;
+        data_map_ls_01.uperp=data_uxy.vel_perp;
+        data_map_ls_01.upara=data_uxy.vel_para;
+        
+        %save
+        save_check(fpath_mat_tmp,'data_map_ls_01');
+        
+        %disp
+        messageOut(fid_log,sprintf('Reading map_ls_01 pli %4.2f %% kt %4.2f %%',kpli/npli*100,kt/nt*100));
+    end    
+end %kpli
+
+%% join
+
+%if creating files in parallel, another instance may have already created it.
+if exist(fpath_mat,'file')==2
+    messageOut(fid_log,'Mat-file already exist.')
+    return
+end
+
+data_map_ls_01=struct();
+for kpli=1:npli
+    kt=1;
+    fpath_mat_tmp=fullfile(fdir_mat,sprintf('map_ls_tmp_pli_%02d_kt_%02d.mat',kpli,kt));
+    tmp=load(fpath_mat_tmp,'data_map_ls_01');
+    
+    data_map_ls_01(kpli).Xcor=tmp.data_map_ls_01.Xcor;
+    data_map_ls_01(kpli).Ycor=tmp.data_map_ls_01.Ycor;
+    data_map_ls_01(kpli).Scor=tmp.data_map_ls_01.Scor;
+    data_map_ls_01(kpli).Xcen=tmp.data_map_ls_01.Xcen;
+    data_map_ls_01(kpli).Ycen=tmp.data_map_ls_01.Ycen;
+    data_map_ls_01(kpli).Scen=tmp.data_map_ls_01.Scen;
+    data_map_ls_01(kpli).grid=tmp.data_map_ls_01.grid;
+    
+    [~,ncx,ncz]=size(tmp.data_map_ls_01.sal);
+    
+    data_map_ls_01(kpli).sal=NaN(nt,ncx,ncz);
+    data_map_ls_01(kpli).Zint=NaN(nt,ncx,ncz+1);
+    data_map_ls_01(kpli).Zcen=NaN(nt,ncx,ncz);
+    data_map_ls_01(kpli).uz=NaN(nt,ncx,ncz);
+    data_map_ls_01(kpli).ux=NaN(nt,ncx,ncz);
+    data_map_ls_01(kpli).uy=NaN(nt,ncx,ncz);
+    data_map_ls_01(kpli).uperp=NaN(nt,ncx,ncz);
+    data_map_ls_01(kpli).upara=NaN(nt,ncx,ncz);
+        
+    for kt=1:nt
+        fpath_mat_tmp=fullfile(fdir_mat,sprintf('map_ls_tmp_pli_%02d_kt_%02d.mat',kpli,kt));
+        tmp=load(fpath_mat_tmp,'data_map_ls_01');
+        
+        data_map_ls_01(kpli).sal(kt,:,:)=tmp.data_map_ls_01.sal;
+        data_map_ls_01(kpli).Zint(kt,:,:)=tmp.data_map_ls_01.Zint;
+        data_map_ls_01(kpli).Zcen(kt,:,:)=tmp.data_map_ls_01.Zcen;
+        data_map_ls_01(kpli).uz(kt,:,:)=tmp.data_map_ls_01.uz;
+        data_map_ls_01(kpli).ux(kt,:,:)=tmp.data_map_ls_01.ux;
+        data_map_ls_01(kpli).uy(kt,:,:)=tmp.data_map_ls_01.uy;
+        data_map_ls_01(kpli).uperp(kt,:,:)=tmp.data_map_ls_01.uperp;
+        data_map_ls_01(kpli).upara(kt,:,:)=tmp.data_map_ls_01.upara;
+    end
+end
+
+save_check(fpath_mat,'data_map_ls_01');
+
+end %function
