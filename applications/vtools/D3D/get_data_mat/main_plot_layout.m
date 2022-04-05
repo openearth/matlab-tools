@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17937 $
+%$Date: 2022-04-05 13:43:41 +0200 (Tue, 05 Apr 2022) $
+%$Author: chavarri $
+%$Id: main_plot.m 17937 2022-04-05 11:43:41Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/main_plot.m $
 %
 %Plot results IJsselmeer 3D
 
@@ -31,7 +31,7 @@ addOET(fpath_add_fcn)
 
 %% PATHS
 
-fpaths=paths_project(fpath_project);
+fpaths=paths_project(fpath_project); %generate the paths of the project folder depending whether it is the local folder or the one in the p-drive
 
 %% INPUT
 
@@ -49,8 +49,6 @@ in_plot.fig_map_sal_01.unit='cl';  %sal, cl
 in_plot.fig_map_ls_01.do=1;
 % in_plot.fig_map_ls_01.tim=[1,5];
 in_plot.fig_map_ls_01.tim=NaN;
-% in_plot.fig_map_ls_01.pli{1,1}=fullfile(fpaths.fdir_pli,'ls_grotesluis_EPSG-28992.pli');
-% in_plot.fig_map_ls_01.pli{2,1}=fullfile(fpaths.fdir_pli,'ls_kleinesluis_EPSG-28992.pli');
 in_plot.fig_map_ls_01.pli{1,1}=fullfile(fpaths.fdir_pli,'ls_KU_01.pli');
 in_plot.fig_map_ls_01.clims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)];
 in_plot.fig_map_ls_01.rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
