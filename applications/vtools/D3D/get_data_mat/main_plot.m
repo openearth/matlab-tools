@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 28 $
-%$Date: 2022-04-01 15:55:51 +0200 (Fri, 01 Apr 2022) $
-%$Author: chavarri $
-%$Id: main_plot.m 28 2022-04-01 13:55:51Z chavarri $
-%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/main_plot.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Plot results IJsselmeer 3D
 

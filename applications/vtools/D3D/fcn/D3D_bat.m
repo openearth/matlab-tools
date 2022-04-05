@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17593 $
-%$Date: 2021-11-16 10:28:04 +0100 (Tue, 16 Nov 2021) $
-%$Author: chavarri $
-%$Id: D3D_create_variation_simulations.m 17593 2021-11-16 09:28:04Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_create_variation_simulations.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function D3D_bat(simdef,fpath_software,varargin)

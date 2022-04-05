@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 27 $
-%$Date: 2022-03-31 13:12:25 +0200 (Thu, 31 Mar 2022) $
-%$Author: chavarri $
-%$Id: create_mat_map_sal_mass_01.m 27 2022-03-31 11:12:25Z chavarri $
-%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/create_mat_map_sal_mass_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

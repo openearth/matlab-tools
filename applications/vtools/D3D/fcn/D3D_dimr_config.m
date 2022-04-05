@@ -4,11 +4,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17778 $
-%$Date: 2022-02-18 17:06:51 +0100 (Fri, 18 Feb 2022) $
-%$Author: chavarri $
-%$Id: D3D_grd2map.m 17778 2022-02-18 16:06:51Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_grd2map.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

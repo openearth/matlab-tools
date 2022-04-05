@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17749 $
-%$Date: 2022-02-10 07:52:25 +0100 (Thu, 10 Feb 2022) $
-%$Author: chavarri $
-%$Id: D3D_plot_1D.m 17749 2022-02-10 06:52:25Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_plot_1D.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Analytical solution of dam break. Modified from existing in testbench. 
 %

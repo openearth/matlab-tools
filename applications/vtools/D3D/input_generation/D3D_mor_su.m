@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17773 $
-%$Date: 2022-02-18 07:02:30 +0100 (Fri, 18 Feb 2022) $
-%$Author: chavarri $
-%$Id: D3D_mor_u.m 17773 2022-02-18 06:02:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_mor_u.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %morphological initial file creation
 
