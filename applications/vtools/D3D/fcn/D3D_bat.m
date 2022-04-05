@@ -16,8 +16,16 @@ function D3D_bat(simdef,fpath_software,varargin)
 %% 
 
 dire_sim=simdef.D3D.dire_sim;
-structure=simdef.D3D.structure;
+% structure=simdef.D3D.structure;
 fname_mdu=simdef.runid.name;
+
+[~,~,ext]=fileparts(fname_mdu);
+switch ext
+    case '.mdu'
+        structure=2;
+    case '.mdf'
+        structure=1;
+end
 
 %% PARSE
 

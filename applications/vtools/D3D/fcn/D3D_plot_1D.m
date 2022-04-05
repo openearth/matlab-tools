@@ -36,6 +36,9 @@ end
 if isfield(flg,'unit')==0
     flg.unit='s';
 end
+if isfield(flg,'str')==0
+    flg.str='';
+end
 if nargin>10
     do_add_plot=true;
     x_add=varargin{1,1};
@@ -257,6 +260,7 @@ if flg.fig_xvalltalls
     
 han=struct();
 kt=1;
+ls={'--','-.'};
 for kb=1:nb
     for kv=1:nv
 %         for ks=1:ns
@@ -269,13 +273,13 @@ for kb=1:nb
             hold on
             for ks=1:ns
                 for kt0=1:nt
-                    han.p(ks)=plot(SZ{ks,kb,kt,kv},z{ks,kb,kt,kv}(:,kt0),'color',cmap(kt0,:));
-%                     if do_add_plot
-    %                     nadd=numel(x_add);
-    %                     for kadd=1:nadd
-%                             plot(x_add{kt0},z_add{kt0},'color',cmap(kt0,:),'linestyle','--')
-    %                     end
-%                     end
+                    han.p(ks)=plot(SZ{ks,kb,kt,kv},z{ks,kb,kt,kv}(:,kt0),'color',cmap(kt0,:),'linestyle',ls{ks});
+                    if do_add_plot
+                        nadd=numel(x_add);
+                        for kadd=1:nadd
+                            han.a=plot(x_add{kt0},z_add{kt0},'color',cmap(kt0,:),'linestyle','-');
+                        end
+                    end
                 end
             end
             
@@ -308,9 +312,15 @@ for kb=1:nb
             else
                 xlabel('streamwise coordinate [m]')
             end
+            
+            if do_add_plot
+                legend([han.p,han.a],{desc_sim_v{:},'analytical'})
+            else
+                legend(han.p,desc_sim_v)
+            end
 
             if flg.print
-                print(gcf,sprintf('xvalltalls_%s_kb_%s_kt_%02d_kv_%02d.png',str_fig,br_name{kb,1},kt,which_v_v(kv)),'-dpng','-r300')
+                print(gcf,sprintf('xvalltalls_%s_kb_%s_kt_%02d_kv_%02d_%s.png',str_fig,br_name{kb,1},kt,which_v_v(kv),flg.str),'-dpng','-r300')
                 close(gcf)
             end
 %         end
