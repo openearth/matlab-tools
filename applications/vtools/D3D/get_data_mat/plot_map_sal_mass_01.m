@@ -24,6 +24,12 @@ if ~flg_loc.do
 end
 messageOut(fid_log,sprintf('Start ''%s''',tag));
 
+%% DEFAULTS
+
+% if isfield(flg_loc,'background')==0
+%     flg_loc.background=NaN
+% end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;

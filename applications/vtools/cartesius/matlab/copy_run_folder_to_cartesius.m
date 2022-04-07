@@ -72,6 +72,16 @@ path_file_cartesius=strcat(path_dest_cart,comp_name);
 cmd_uncomp=sprintf('tar -zxvf %s',path_file_cartesius);
 cmd_del_tar=sprintf('rm %s',comp_name); %delete tar
 
+%% create output folder
+
+%Using singularity for some reason the folder needs to be created by hand
+if isrun
+    simdef.D3D.dire_sim=folder2send_win;
+    simdef=D3D_simpath(simdef);
+    [~,fdir_out,~]=fileparts(simdef.file.output);
+    cmd_mkdir=sprintf('mkdir %s',fdir_out);
+end
+
 %% run simulation
 
 path_dest_cart_run=strcat(path_dest_cart,folder_run);
@@ -117,6 +127,7 @@ fprintf(fid_ca,'%s \n',cmd_uncomp);
 fprintf(fid_ca,'%s \n',cmd_del_tar);
 if isrun
 fprintf(fid_ca,'%s \n',cmd_cd_cart_run);
+fprintf(fid_ca,'%s \n',cmd_mkdir);
 fprintf(fid_ca,'%s \n',cmd_dos2unix);
 fprintf(fid_ca,'%s \n',cmd_submit);
 end
