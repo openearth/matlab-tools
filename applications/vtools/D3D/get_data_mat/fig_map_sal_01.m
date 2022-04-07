@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 25 $
-%$Date: 2022-03-31 13:05:27 +0200 (Thu, 31 Mar 2022) $
-%$Author: chavarri $
-%$Id: fig_map_sal_01.m 25 2022-03-31 11:05:27Z chavarri $
-%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/fig_map_sal_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
