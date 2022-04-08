@@ -95,9 +95,10 @@ only_back=parin.Results.only_back;
 
 %% FILES
 
-path_h6=fullfile(path_commands,'bring_data_back.sh');
+suf=now_chr;
+path_h6=fullfile(path_commands,sprintf('bring_data_back_%s.sh',suf));
 fid_h6=fopen(path_h6,'w');
-path_ca=fullfile(path_commands,'tmp_bring_data_back.sh');
+path_ca=fullfile(path_commands,sprintf('tmp_bring_data_back_%s.sh',suf));
 fid_ca=fopen(path_ca,'w');
 
 %% CALC
