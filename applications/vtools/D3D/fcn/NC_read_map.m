@@ -1091,8 +1091,7 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            error('do')
-                            out=get_fm1d_data('mesh1d_czs',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=get_fm1d_data('mesh1d_flowelem_ba',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             wl=ncread(file.map,'mesh2d_flowelem_ba',[kF(1)],[kF(2)]);
                             
@@ -1783,7 +1782,7 @@ switch tag_read
         wl=ncread(file_map,tag_read,1,Inf);
     case {'mesh1d_sbcx','mesh1d_sbcy','mesh1d_sbcx_reconstructed','mesh1d_sbcy_reconstructed','mesh1d_sscx_reconstructed','mesh1d_sscy_reconstructed','mesh1d_sbn','mesh1d_sbt'} %{s,f,t}
         wl=ncread(file_map,tag_read,[1,1,kt(1)],[Inf,Inf,kt(2)]);
-    case {'mesh1d_waterdepth','mesh1d_s1','mesh1d_umod','mesh1d_mor_bl','mesh1d_q1_main','mesh1d_q1','mesh1d_dm','mesh1d_ucmag','mesh1d_dg','mesh1d_bl_ave','mesh1d_czs'} %mesh1d_nNodes,time
+    case {'mesh1d_waterdepth','mesh1d_s1','mesh1d_umod','mesh1d_mor_bl','mesh1d_q1_main','mesh1d_q1','mesh1d_dm','mesh1d_ucmag','mesh1d_dg','mesh1d_bl_ave','mesh1d_czs','mesh1d_taus'} %mesh1d_nNodes,time
         wl=ncread(file_map,tag_read,[1,kt(1)],[Inf,kt(2)]);
     case {'mesh1d_lyrfrac'} %mesh1d_nNodes,nBedLayers,nSedTot,time
         wl=ncread(file_map,tag_read,[1,1,1,kt(1)],[Inf,Inf,Inf,kt(2)]);
