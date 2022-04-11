@@ -704,16 +704,19 @@ switch flg.which_p
                 out.zlabel='face indices [-]';
                 %%
             case 15 %bed shear stress
-                taus=ncread(file.map,'mesh2d_taus',[1,kt(1)],[Inf,kt(2)]);
-                
-                %output
-                out.z=taus;
-                out.x_node=x_node;
-                out.y_node=y_node;
-                out.x_face=x_face;
-                out.y_face=y_face;
-                out.faces=faces;
-                
+                if is1d
+                    out=get_fm1d_data('mesh1d_taus',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                else
+                    taus=ncread(file.map,'mesh2d_taus',[1,kt(1)],[Inf,kt(2)]);
+                    
+                    %output
+                    out.z=taus;
+                    out.x_node=x_node;
+                    out.y_node=y_node;
+                    out.x_face=x_face;
+                    out.y_face=y_face;
+                    out.faces=faces;
+                end
                 out.zlabel='bed shear stress [Pa]';
                 %%
             case 17
