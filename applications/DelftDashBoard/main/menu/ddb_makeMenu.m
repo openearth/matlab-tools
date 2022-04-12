@@ -111,8 +111,24 @@ handles=ddb_addMenuItem(handles,'View','Aerial',               'Callback',{@ddb_
 handles=ddb_addMenuItem(handles,'View','Hybrid',               'Callback',{@ddb_menuView},'Checked','off','Enable','on','longname','Hybrid');
 handles=ddb_addMenuItem(handles,'View','Roads',                'Callback',{@ddb_menuView},'Checked','off','Enable','on','longname','Map');
 handles=ddb_addMenuItem(handles,'View','None',                 'Callback',{@ddb_menuView},'Checked','off','Enable','on','longname','None');
-handles=ddb_addMenuItem(handles,'View','Shoreline',            'Callback',{@ddb_menuView},'Checked','on','longname','Shoreline','Separator','on');
-handles=ddb_addMenuItem(handles,'View','Cities',               'Callback',{@ddb_menuView});
+
+set(handles.GUIHandles.Menu.View.BackgroundBathymetry,'Checked','off');
+set(handles.GUIHandles.Menu.View.Aerial,'Checked','off');
+set(handles.GUIHandles.Menu.View.Hybrid,'Checked','off');
+set(handles.GUIHandles.Menu.View.Roads,'Checked','off');
+set(handles.GUIHandles.Menu.View.None,'Checked','off');
+
+switch lower(handles.configuration.background_image)
+    case{'bathymetry'}
+        set(handles.GUIHandles.Menu.View.BackgroundBathymetry,'Checked','on');
+    case{'satellite'}
+        set(handles.GUIHandles.Menu.View.Roads,'Checked','on');
+end
+
+if handles.configuration.include_menu_shoreline
+    handles=ddb_addMenuItem(handles,'View','Shoreline',            'Callback',{@ddb_menuView},'Checked','on','longname','Shoreline','Separator','on');
+    handles=ddb_addMenuItem(handles,'View','Cities',               'Callback',{@ddb_menuView});
+end
 % handles=ddb_addMenuItem(handles,'View','Model',                'longname','Model specific items','Separator','on');
 handles=ddb_addMenuItem(handles,'View','Settings',             'Callback',{@ddb_menuView},'Separator','on');
 

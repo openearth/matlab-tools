@@ -82,8 +82,10 @@ pause(0.01);
 % Update background image
 handles=ddb_updateBackgroundImage(handles);
 
-if strcmp(get(handles.GUIHandles.Menu.View.Shoreline,'Checked'),'on')
-    ddb_updateShoreline(handles);
+if isfield(handles.GUIHandles.Menu.View,'Shoreline')
+    if strcmp(get(handles.GUIHandles.Menu.View.Shoreline,'Checked'),'on')
+        ddb_updateShoreline(handles);
+    end
 end
 
 setHandles(handles);

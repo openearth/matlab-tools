@@ -51,6 +51,13 @@ if isfield(xml,'coordinate_system')
     end
 end
 
+% Default background map
+configuration.background_image='bathymetry';
+if isfield(xml,'background_image')
+    configuration.background_image=xml.background_image.background_image.value;
+end
+
+
 if isfield(xml,'xlim') && isfield(xml,'ylim')
     configuration.xlim=str2num(xml.xlim.xlim.value);
     configuration.ylim=str2num(xml.ylim.ylim.value);   

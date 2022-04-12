@@ -61,7 +61,10 @@ function setInstructions(a)
 
 %%
 handles=getHandles;
-set(handles.GUIHandles.textAnn1,'String',a{1});
-set(handles.GUIHandles.textAnn2,'String',a{2});
-set(handles.GUIHandles.textAnn3,'String',a{3});
+set(handles.GUIHandles.textAnn,'visible','on');
+set(handles.GUIHandles.textAnn,'String',a);
+
+% set(handles.GUIHandles.textAnn1,'String',a{1});
+% set(handles.GUIHandles.textAnn2,'String',a{2});
+% set(handles.GUIHandles.textAnn3,'String',a{3});
 

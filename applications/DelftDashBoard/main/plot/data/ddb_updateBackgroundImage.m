@@ -71,17 +71,24 @@ yl(2)=yl(2)+dy;
 
 pos=get(handles.GUIHandles.mapAxis,'Position');
 
-imageQuality=1;
+imageQuality=0.5;
 
 % Coordinate system of bathymetry data or satellite image
 switch handles.GUIData.backgroundImageType
-    case{'bathymetry','none'}
+    case{'bathymetry'}
         iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
         dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
         dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
+        set(handles.GUIHandles.colorBarPanel,'visible','on');
+    case{'none'}
+        iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+        dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
+        dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
+        set(handles.GUIHandles.colorBarPanel,'visible','off');
     case{'satellite'}
         dataCoord.name='WGS 84';
         dataCoord.type='geographic';
+        set(handles.GUIHandles.colorBarPanel,'visible','off');
 end
 coord=handles.screenParameters.coordinateSystem;
 
@@ -161,7 +168,7 @@ switch handles.GUIData.backgroundImageType
         
         switch src
             case{'bing'}
-                [xx,yy,cdata]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',0,'npix',1200,'whatKind',lower(handles.screenParameters.satelliteImageType),'cache',handles.satelliteDir);
+                [xx,yy,cdata]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',0,'npix',1600,'whatKind',lower(handles.screenParameters.satelliteImageType),'cache',handles.satelliteDir);
             case{'googlemaps'}                
                 pos=get(gca,'Position');
                 dx=0.1*(xl0(2)-xl0(1));

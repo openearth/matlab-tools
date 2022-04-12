@@ -77,6 +77,7 @@ stranchor='';
 if posx<=xlim(1) || posx>=xlim(2) || posy<=ylim(1) || posy>=ylim(2)
     set(gcf,'Pointer','arrow');
 else
+    setptr(gcf,pnt);
     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         strx=['X : ' num2str(posx,'%10.4f')];
         stry=['Y : ' num2str(posy,'%10.4f')];
@@ -84,12 +85,6 @@ else
         strx=['X : ' num2str(posx,'%10.0f')];
         stry=['Y : ' num2str(posy,'%10.0f')];
     end
-    ix=round((posx-handles.GUIData.x(1))/(handles.GUIData.x(2)-handles.GUIData.x(1)));
-    iy=round((posy-handles.GUIData.y(1))/(handles.GUIData.y(2)-handles.GUIData.y(1)));
-    if ix>0 && ix<length(handles.GUIData.x) && iy>0 && iy<length(handles.GUIData.y)
-        strz=['Z : ' num2str(handles.GUIData.z(iy,ix),'%10.1f')];
-    end
-    setptr(gcf,pnt);
     if strcmp(get(handles.GUIHandles.toolBar.anchor,'State'),'on')
         if ~isempty(handles.GUIHandles.anchorhandle)
             xa=get(handles.GUIHandles.anchorhandle,'XData');
@@ -107,6 +102,15 @@ else
                 stranchor=['Distance : ' num2str(0.001*dist,'%0.2f') ' km'];
             end
         end
+    end
+    try
+        ix=round((posx-handles.GUIData.x(1))/(handles.GUIData.x(2)-handles.GUIData.x(1)));
+        iy=round((posy-handles.GUIData.y(1))/(handles.GUIData.y(2)-handles.GUIData.y(1)));
+        if ix>0 && ix<length(handles.GUIData.x) && iy>0 && iy<length(handles.GUIData.y)
+            strz=['Z : ' num2str(handles.GUIData.z(iy,ix),'%10.1f')];
+        end
+    catch
+        strz='Z : ';
     end
 end
 

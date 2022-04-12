@@ -130,7 +130,7 @@ end
 
 axtxt=axes;
 set(axtxt,'Parent',handles.GUIHandles.mapAxisPanel);
-set(axtxt,'Position',[10 10 300 50],'Units','pixels');
+set(axtxt,'Position',[10 10 800 200],'Units','pixels');
 set(axtxt,'xlim',[0 1],'ylim',[0 1]);
 set(axtxt,'color','none');
 set(axtxt,'hittest','off');
@@ -138,19 +138,28 @@ set(axtxt,'Box','off');
 set(axtxt,'xcolor','none');
 set(axtxt,'ycolor','none');
 set(axtxt,'tag','instructionaxis');
-
-handles.GUIHandles.textAnn1=text(0.00,0.9,'');
-handles.GUIHandles.textAnn2=text(0.00,0.5,'');
-handles.GUIHandles.textAnn3=text(0.00,0.1,'');
-set(handles.GUIHandles.textAnn1,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
-set(handles.GUIHandles.textAnn2,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
-set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
-
 handles.GUIHandles.instructionAxis=axtxt;
+
+handles.GUIHandles.textAnn=annotation('textbox', [0, 0, 0.01, 0.01], 'String', {'','',''},'FontSize',12,'FontWeight','bold','HitTest','off');
+set(handles.GUIHandles.textAnn,'VerticalAlignment','bottom');
+set(handles.GUIHandles.textAnn,'FitBoxToText','on');
+%set(handles.GUIHandles.textAnn,'BackgroundColor',[1 1 1]);
+set(handles.GUIHandles.textAnn,'BackgroundColor','none');
+set(handles.GUIHandles.textAnn,'EdgeColor','none');
+%set(handles.GUIHandles.textAnn,'FaceAlpha',0.5);
+handles.GUIHandles.textAnn.Parent=handles.GUIHandles.instructionAxis;
+
+% handles.GUIHandles.textAnn1=text(0.00,0.9,'');
+% handles.GUIHandles.textAnn2=text(0.00,0.5,'');
+% handles.GUIHandles.textAnn3=text(0.00,0.1,'');
+% set(handles.GUIHandles.textAnn1,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
+% set(handles.GUIHandles.textAnn2,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
+% set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0],'HitTest','off');
+
 
 axes(handles.GUIHandles.mapAxis);
 
-set(axtxt,'Position',[10 10 300 50],'Units','pixels');
+set(axtxt,'Position',[10 10 800 200],'Units','pixels');
 uistack(handles.GUIHandles.instructionAxis,'top');
 
 % handles.GUIHandles.textAnn1=annotation('textbox',[0.02 0.3 0.7 0.2]);

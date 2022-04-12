@@ -65,7 +65,7 @@ handles=getHandles;
 handles.screenParameters.xMaxRange=[-360 360];
 handles.screenParameters.yMaxRange=[-90 90];
 
-handles.GUIData.backgroundImageType='bathymetry';
+handles.GUIData.backgroundImageType=handles.configuration.background_image;
 
 if ~isempty(handles.configuration.bathymetry)
     % Use bathymetry defined in xml file
@@ -90,7 +90,7 @@ end
 handles.screenParameters.backgroundQuality='Medium';
 handles.screenParameters.hillShading=10;
 
-handles.screenParameters.satelliteImageType='aerial';
+handles.screenParameters.satelliteImageType='roads';
 
 handles.screenParameters.coordinateSystem.name=handles.configuration.cs.name;
 handles.screenParameters.coordinateSystem.type=handles.configuration.cs.type;

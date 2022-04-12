@@ -90,7 +90,8 @@ end
 
 if zmlev==0
     % Automatic zoomlevel
-    zmlev=round(log2(npix*3/(xmax-xmin)));
+    npix0=1600;
+    zmlev=round(log2(npix0*3/(xmax-xmin)));
     zmlev=max(zmlev,4);
     zmlev=min(zmlev,23);
 end
@@ -122,6 +123,7 @@ ymax2=max(yy);
 adjust=1;
 
 if adjust
+    
     % Adjust for mercator projection
     
     % Above the equator

@@ -88,7 +88,7 @@ handles=ddb_makeToolBar(handles);
 
 str=['WGS 84 / UTM zone ' num2str(handles.screenParameters.UTMZone{1}) 'N'];
 try
-set(handles.GUIHandles.Menu.CoordinateSystem.UTM,'Label',str);
+    set(handles.GUIHandles.Menu.CoordinateSystem.UTM,'Label',str);
 end
 
 % set(handles.GUIHandles.mainWindow,'Visible','off');
