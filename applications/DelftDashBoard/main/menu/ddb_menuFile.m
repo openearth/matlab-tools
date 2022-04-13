@@ -64,6 +64,8 @@ function ddb_menuFile(hObject, eventdata, varargin)
 handles=getHandles;
 
 if isempty(varargin)
+
+    model=handles.activeModel.name;
     
     % Create new menu items
     
@@ -75,9 +77,9 @@ if isempty(varargin)
     end
     
     % New
-    uimenu(p,'Label','New','Callback',{@ddb_menuFile,@ddb_resetAll});
-    
-    model=handles.activeModel.name;
+    if ~strcmpi(model,'none')
+        uimenu(p,'Label','New','Callback',{@ddb_menuFile,@ddb_resetAll});
+    end    
     
     % Model open options
     for i=1:length(handles.model.(model).GUI.menu.openFile)
@@ -106,7 +108,9 @@ if isempty(varargin)
     end
     
     % Select working directory
-    uimenu(p,'Label','Select Working Directory','Callback',{@ddb_menuFile,@ddb_selectWorkingDirectory},'Separator','on');
+    if ~strcmpi(model,'none')
+        uimenu(p,'Label','Select Working Directory','Callback',{@ddb_menuFile,@ddb_selectWorkingDirectory},'Separator','on');
+    end
 
     % Exit
     uimenu(p,'Label','Exit','Callback',{@ddb_menuFile,@ddb_menuExit},'Separator','on');
