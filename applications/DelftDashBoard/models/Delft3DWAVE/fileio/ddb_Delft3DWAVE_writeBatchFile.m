@@ -54,8 +54,12 @@ fid=fopen('batch_wave.bat','wt');
 %     exedir='c:\delft3d\w32\wave\bin\';
 % end
 
+if ~isfield(handles.model.delft3dwave,'arch')
+    handles.model.delft3dwave.arch = 'win32';
+end
+
 fprintf(fid, '%s\n',['set mdwfile=' mdwfile]);
-fprintf(fid, '%s\n',['set ARCH=win32']);
+fprintf(fid, '%s\n',['set ARCH=',handles.model.delft3dwave.arch]);
 fprintf(fid, '%s\n',['set D3D_HOME=' handles.model.delft3dwave.exedir]);
 fprintf(fid, '%s\n',['set waveexedir=%D3D_HOME%\%ARCH%\wave\bin']);
 fprintf(fid, '%s\n',['set swanexedir=%D3D_HOME%\%ARCH%\swan\bin']);
