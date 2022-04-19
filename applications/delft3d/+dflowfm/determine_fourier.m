@@ -22,6 +22,12 @@ try
 
     %% Loop over all components
     fid=fopen(output,'wt');
+    
+    % Write header
+    frmt = repmat('%s ',1,length(components));
+    str = sprintf(['* ',frmt],components{:});
+    fprintf(fid,'%s\n',str);
+    
     for i=1:length(components)
 
         % Get nearest
@@ -40,7 +46,7 @@ try
         ncyc                = floor(ttot/period);
         ttot                = ncyc*period;
         ntimesteps          = round(tfac*ttot/dt_user);
-
+       
         % Write
         startime_wanted     = stoptime-ntimesteps*dt_user/tfac;
         t0str               = num2str((startime_wanted-reftime)*tfac,'%10.2f');
