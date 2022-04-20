@@ -46,6 +46,7 @@ nt=numel(time_dnum)-1; %if the simulation does not finish the last one may not b
 np=size(gridInfo.face_nodes_x,2);
 data_map_sal_01=NaN(nt,np);
 for kt=1:nt
+    %TO DO: save temporary files and join at the end 
     data_map=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'layer',layer,'disp',0);
     data_map_sal_01(kt,:)=data_map.val;
     messageOut(fid_log,sprintf('Reading map_sal_01 %4.2f %%',kt/nt*100));

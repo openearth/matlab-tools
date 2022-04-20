@@ -70,6 +70,9 @@ switch unit
     case 'cl'
         clims=sal2cl(1,clims);
         val=sal2cl(1,val);
+    case 'sal'
+    otherwise
+        error('not sure what to do')
 end
 
 %% dependent

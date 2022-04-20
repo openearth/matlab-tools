@@ -20,11 +20,11 @@ if ~in_plot_loc.do
 end
 messageOut(fid_log,'Start ''fig_map_ls_01''')
 
-%% BEGIN DEBUG
-
-% load(fullfile(simdef.file.mat.dir,'map_ls_tmp_pli_01_kt_70.mat'));
-
-%% END DEBUG
+% %% BEGIN DEBUG
+% 
+% % load(fullfile(simdef.file.mat.dir,'map_ls_tmp_pli_01_kt_70.mat'));
+% 
+% %% END DEBUG
 
 %load
 load(simdef.file.mat.map_ls_01,'data_map_ls_01');
@@ -35,12 +35,9 @@ npli=numel(data_map_ls_01);
 nt=size(data_map_ls_01(1).sal,1);
 
 %figures
+in_p=in_plot_loc; %attention with unexpected input
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.lan=in_plot_loc.lan;
-in_p.unit=in_plot_loc.unit;
-in_p.fig_plot_vel=in_plot_loc.fig_plot_vel;
-in_p.fig_flip_section=in_plot_loc.fig_flip_section;
 
 if isfield(in_plot_loc,'fig_overwrite')
     in_p.fig_overwrite=in_plot_loc.fig_overwrite;

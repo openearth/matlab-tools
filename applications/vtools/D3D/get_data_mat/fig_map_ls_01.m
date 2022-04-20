@@ -371,7 +371,8 @@ if fig_flip_section
     data_ls.grid.Ycor=fliplr(data_ls.grid.Ycor);
     val=fliplr(val);
 end
-EHY_plotMapModelData(data_ls.grid,val,'t',1); 
+% EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','continuous shades'); 
+EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','interp'); 
 if fig_plot_vel
     nl=size(data_ls.Zcen,3);
     % nx=numel(data_ls.Scen);

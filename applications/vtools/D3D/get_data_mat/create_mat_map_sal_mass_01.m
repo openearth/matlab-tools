@@ -164,7 +164,8 @@ for kt=1:nt
 
 end
 
-save_check(fpath_mat,'data');
+% save_check(fpath_mat,'data','-v7.3');
+save(fpath_mat,'data','-v7.3');
 
 end %function
 

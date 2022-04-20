@@ -148,7 +148,13 @@ han.sfig(kpr,kpc).YLim=lims.z;
 % % han.sfig(kpr,kpc).YScale='log';
 % han.sfig(kpr,kpc).Title.String='c';
 if flg.plot_unitx==1
-    xlabel(han.sfig(kpr,kpc),'streamwise position [m]');
+    if isfield(in,'path_rkm')==0
+        xlabel(han.sfig(kpr,kpc),'streamwise position [m]');
+    else
+        xlabel(han.sfig(kpr,kpc),'river km');
+    end
+elseif flg.plot_unitx==1/1000
+    xlabel(han.sfig(kpr,kpc),'streamwise position [km]');
 else
     error('Hard-code the label')
 end
