@@ -21,10 +21,25 @@ simdef=D3D_figure_defaults(simdef);
 flg=simdef.flg;
 
 %%
-x_node=in.x_node;
-y_node=in.y_node;
+do_EHY=0;
+if isfield(in,'face_nodes_x')
+    do_EHY=1;
+end
 
-faces=in.faces;
+%% 
+
+if ~do_EHY
+    x_node=in.x_node;
+    y_node=in.y_node;
+    faces=in.faces;
+else
+    gridInfo.face_nodes_x=in.face_nodes_x;
+    gridInfo.face_nodes_y=in.face_nodes_y;   
+    
+    %for limits only
+    x_node=in.face_nodes_x;
+    y_node=in.face_nodes_y;
+end
 z_var=in.z.*flg.plot_unitz;
 time_r=in.time_r.*flg.plot_unitt;
 
@@ -53,8 +68,8 @@ end
 
 %limits
     %defaults
-lims.x=[min(x_node),max(x_node)];
-lims.y=[min(y_node),max(y_node)];
+lims.x=[min(x_node(:)),max(x_node(:))];
+lims.y=[min(y_node(:)),max(y_node(:))];
 lims.z=[min(z_var),max(z_var)];
 % lims.f=[min(min(cvar(:,1))),max(max(cvar(:,1)))];
 if isfield(flg,'lims')
@@ -223,7 +238,13 @@ zlabel(han.sfig(kpr,kpc),'elevation [m]');
 title(han.sfig(kpr,kpc),tit_str)
 
 %plots
-patch('Faces',faces','Vertices',[x_node,y_node],'FaceVertexCData',z_var,'FaceColor','flat','EdgeColor',flg.prop.edgecolor,'parent',han.sfig(1,1))
+if do_EHY
+    kr=1; kc=1;
+    set(han.fig,'CurrentAxes',han.sfig(kr,kc))
+    EHY_plotMapModelData(gridInfo,z_var,'t',1)
+else
+    patch('Faces',faces','Vertices',[x_node,y_node],'FaceVertexCData',z_var,'FaceColor','flat','EdgeColor',flg.prop.edgecolor,'parent',han.sfig(1,1))
+end
 
 %colormap
 colormap(han.sfig(1,1),cmap);
