@@ -61,7 +61,7 @@ ylims=[min(gridInfo.face_nodes_y(:)),max(gridInfo.face_nodes_y(:))];
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.unit='salm2';
+in_p.unit='clm2';
 in_p.xlims=xlims;
 in_p.ylims=ylims;
 in_p.gridInfo=gridInfo;

@@ -29,6 +29,7 @@
 %       -'sal'      : salinity [psu]
 %       -{'cl','CONCTTE'}       : chloride [mg/l]
 %       -'salm2'    : mass of salt per unit surface [kg/m^2]
+%       -'cl_surf'  : surface chloride [mg/l]
 %
 %       -'umag'     : velocity magnitude
 %
@@ -37,6 +38,7 @@
 %
 %       -'Q'        : water discharge
 %       -'Qcum'     : cumulative water discharge
+%       -'qsp'      : specific water discharge
 %
 %       -'tide'     : tide
 %       -'surge'    : surge
@@ -227,6 +229,16 @@ switch lower(var)
                 str_var='cloruro';
         end
         un_type='-';
+    case {'cl_surf'}
+        switch lan
+            case 'en'
+                str_var='surface chloride';
+            case 'nl'
+                str_var='chloride aan wateroppervlak';
+            case 'es'
+                str_var='cloruro en la superficie';
+        end
+        un_type='-';
     case {'salm2'}
         switch lan
             case 'en'
@@ -235,6 +247,16 @@ switch lower(var)
                 str_var='zout';
             case 'es'
                 str_var='sal';
+        end
+        un_type='M/L2';
+    case {'clm2'}
+        switch lan
+            case 'en'
+                str_var='chloride';
+            case 'nl'
+                str_var='chloride';
+            case 'es'
+                str_var='cloro';
         end
         un_type='M/L2';
     case 'umag'
@@ -337,6 +359,16 @@ switch lower(var)
                 str_var='caudal acumulado';
          end
          un_type='L3/T';
+     case 'qsp'
+         switch lan
+            case 'en'
+                str_var='specific discharge';
+            case 'nl'
+                str_var='specifieke afvoer';
+            case 'es'
+                str_var='caudal específico';
+         end
+         un_type='L2/T';
 %%
      case 't'
          switch lan

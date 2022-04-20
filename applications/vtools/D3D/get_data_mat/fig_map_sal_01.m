@@ -55,6 +55,10 @@ end
 if isfield(in_p,'is_background')==0
     in_p.is_background=0;
 end
+in_p.plot_ldb=0;
+if isfield(in_p,'ldb')
+    in_p.plot_ldb=1;
+end
 
 v2struct(in_p)
 
@@ -67,12 +71,12 @@ end
 %% units
 
 switch unit
-    case 'cl'
+    case {'cl','cl_surf'}
         clims=sal2cl(1,clims);
         val=sal2cl(1,val);
-    case 'sal'
-    otherwise
-        error('not sure what to do')
+%     case 'sal'
+%     otherwise
+%         error('not sure what to do')
 end
 
 %% dependent
@@ -152,7 +156,6 @@ else
     cbar(kr,kc).label=lab;
 end
     
-
 % brewermap('demo')
 cmap=turbo(100);
 
@@ -377,6 +380,12 @@ end
 kr=1; kc=1;    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
 EHY_plotMapModelData(gridInfo,val,'t',1); 
+if plot_ldb
+    nldb=numel(ldb);
+    for kldb=1:nldb
+        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','c','linewidth',prop.lw1,'linestyle','-','marker','none')
+    end
+end
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);

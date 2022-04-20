@@ -12,9 +12,9 @@
 %
 %
 
-function plot_map_sal_01(fid_log,in_plot_loc,simdef)
+function plot_map_sal_01(fid_log,flg_loc,simdef)
 
-if ~in_plot_loc.do
+if ~flg_loc.do
     messageOut(fid_log,'Not doing ''fig_map_sal_01''')
     return
 end
@@ -26,24 +26,27 @@ load(simdef.file.mat.grd,'gridInfo');
 load(simdef.file.mat.map_sal_01_tim,'time_dnum');
 
 nt=size(data_map_sal_01,1);
-nclim=size(in_plot_loc.clims,1);
+nclim=size(flg_loc.clims,1);
 
 max_tot=max(data_map_sal_01(:));
 xlims=[min(gridInfo.face_nodes_x(:)),max(gridInfo.face_nodes_x(:))];
 ylims=[min(gridInfo.face_nodes_y(:)),max(gridInfo.face_nodes_y(:))];
 
 %figures
+in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.lan=in_plot_loc.lan;
 in_p.xlims=xlims;
 in_p.ylims=ylims;
-in_p.fig_overwrite=in_plot_loc.fig_overwrite;
-in_p.unit=in_plot_loc.unit;
 
 switch in_p.fig_print
     case 1
         fext='.png';
+end
+
+%ldb
+if isfield(flg_loc,'fpath_ldb')
+    in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
 end
 
 %% LOOP
@@ -59,7 +62,7 @@ for kt=1:nt
         in_p.val=data_map_sal_01(kt,:);
         in_p.tim=time_dnum(kt);
         
-        clims=in_plot_loc.clims(kclim,:);
+        clims=flg_loc.clims(kclim,:);
         if all(isnan(clims)==[0,1]) %[0,NaN]
             in_p.clims=[clims(1),max_tot];
         else
@@ -74,7 +77,7 @@ end %kt
 
 dt_aux=diff(time_dnum);
 dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
-rat=in_plot_loc.rat; %[s] we want <rat> model seconds in each movie second
+rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
 for kclim=1:nclim
    make_video(fpath_file(:,kclim),'frame_rate',1/dt*rat);
 end
