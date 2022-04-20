@@ -214,8 +214,8 @@ if isfield(Data,'vel_x')
     Data_xy.vel_perp=Data_xy.vel_para;
     bol_nn=~isnan(angle_track);
 %     if ~isnan(angle_track) %insufficient number of points to project data
-        for kl=1:no_layers
-            [Data_xy.vel_para(1,bol_nn,kl),Data_xy.vel_perp(1,bol_nn,kl)]=project_vector(Data_xy.vel_x(1,bol_nn,kl),Data_xy.vel_y(1,bol_nn,kl),angle_track(bol_nn));
+        for k=1:no_layers
+            [Data_xy.vel_para(:,bol_nn,k),Data_xy.vel_perp(:,bol_nn,k)]=project_vector(Data_xy.vel_x(:,bol_nn,k),Data_xy.vel_y(:,bol_nn,k),angle_track(bol_nn));
         end
 %     end
     if no_layers>1
