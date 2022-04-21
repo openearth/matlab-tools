@@ -90,6 +90,7 @@ switch flg_loc.order_anl
     case 1
         kt_v=1:1:nt;
     case 2
+        rng('shuffle')
         kt_v=randi(nt,1,nt);
 end
 

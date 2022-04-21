@@ -519,7 +519,7 @@ switch un_type
         switch lower(var)
             case 'sal'
                 str_un=' [psu]';
-            case {'cl','conctte'}
+            case {'cl','conctte','cl_surf'}
                 str_un= ' [mg/l]'; 
             otherwise
                 str_un = '';
