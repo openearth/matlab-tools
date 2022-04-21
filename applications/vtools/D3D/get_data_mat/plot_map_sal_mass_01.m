@@ -68,11 +68,21 @@ in_p.gridInfo=gridInfo;
 
 fext=ext_of_fig(in_p.fig_print);
 
+%% time order
+
+switch flg_loc.order_anl
+    case 1
+        kt_v=1:1:nt;
+    case 2
+        rng('shuffle')
+        kt_v=randi(nt,1,nt);
+end
+
 %% LOOP
 nref=2;
 
 fpath_file=cell(nt,nclim,nref);
-for kt=1:nt
+for kt=kt_v
     in_p.tim=time_dnum(kt);
     for kclim=1:nclim
         clims=flg_loc.clims(kclim,:);
