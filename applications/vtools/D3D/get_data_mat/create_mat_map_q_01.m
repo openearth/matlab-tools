@@ -29,9 +29,6 @@ messageOut(fid_log,sprintf('Start ''%s''',tag));
 if isfield(flg_loc,'overwrite')==0
     flg_loc.overwrite=0;
 end
-if isfield(flg_loc,'order_anl')==0
-    flg_loc.order_anl=1;
-end
 
 %% PATHS
 
@@ -86,13 +83,7 @@ nt=numel(time_dnum);
 
 %% LOOP
 
-switch flg_loc.order_anl
-    case 1
-        kt_v=1:1:nt;
-    case 2
-        rng('shuffle')
-        kt_v=randi(nt,1,nt);
-end
+kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,0/nt*100));
 for kt=kt_v
@@ -179,7 +170,6 @@ for kt=1:nt
 end
 
 save_check(fpath_mat,'data');
-% save(fpath_mat,'data','-v7.3');
 
 end %function
 

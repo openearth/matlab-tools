@@ -68,18 +68,10 @@ in_p.gridInfo=gridInfo;
 
 fext=ext_of_fig(in_p.fig_print);
 
-%% time order
-
-switch flg_loc.order_anl
-    case 1
-        kt_v=1:1:nt;
-    case 2
-        rng('shuffle')
-        kt_v=randi(nt,1,nt);
-end
-
 %% LOOP
 nref=2;
+
+kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
 fpath_file=cell(nt,nclim,nref);
 for kt=kt_v

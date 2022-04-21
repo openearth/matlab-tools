@@ -84,8 +84,10 @@ fext=ext_of_fig(in_p.fig_print);
 
 %% LOOP
 
+kt_v=gdm_kt_v(flg_loc,nt); %time index vector
+
 fpath_file=cell(nt,nclim);
-for kt=1:nt
+for kt=kt_v
     if flg_loc.load_all==0
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
         if exist(fpath_mat_tmp,'file')~=2; continue; end

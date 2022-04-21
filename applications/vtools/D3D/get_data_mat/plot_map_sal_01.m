@@ -51,8 +51,10 @@ end
 
 %% LOOP
 
+kt_v=gdm_kt_v(flg_loc,nt); %time index vector
+
 fpath_file=cell(nt,nclim);
-for kt=1:nt
+for kt=kt_v
     for kclim=1:nclim
         fname_noext=fullfile(simdef.file.fig.map_sal_01,sprintf('sal_map_01_%s_%s_clim_%02d',simdef.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim));
         fpath_file{kt,kclim}=sprintf('%s%s',fname_noext,fext); %for movie 

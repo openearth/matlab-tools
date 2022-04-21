@@ -12,9 +12,9 @@
 %
 %
 
-function create_mat_map_sal_01(fid_log,in_plot_loc,simdef)
+function create_mat_map_sal_01(fid_log,flg_loc,simdef)
 
-if ~in_plot_loc.do
+if ~flg_loc.do
     messageOut(fid_log,'Not doing ''fig_map_sal_01''')
     return
 end
@@ -32,20 +32,23 @@ messageOut(fid_log,'Mat-file does not exist. Reading.')
 load(simdef.file.mat.grd,'gridInfo')
 fpath_map=simdef.file.map;
 
-time_dnum=get_time_dnum(fpath_map,in_plot_loc.tim);
+time_dnum=get_time_dnum(fpath_map,flg_loc.tim);
 save(simdef.file.mat.map_sal_01_tim,'time_dnum');
 
-if isnan(in_plot_loc.layer)
+if isnan(flg_loc.layer)
     layer=gridInfo.no_layers;
 else
-    layer=in_plot_loc.layer;
+    layer=flg_loc.layer;
 end
 
-% nt=numel(time_dnum);
-nt=numel(time_dnum)-1; %if the simulation does not finish the last one may not be in all partitions. 
+nt=numel(time_dnum);
+% nt=numel(time_dnum)-1; %if the simulation does not finish the last one may not be in all partitions. 
 np=size(gridInfo.face_nodes_x,2);
 data_map_sal_01=NaN(nt,np);
-for kt=1:nt
+
+kt_v=gdm_kt_v(flg_loc,nt); %time index vector
+
+for kt=kt_v
     %TO DO: save temporary files and join at the end 
     data_map=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'layer',layer,'disp',0);
     data_map_sal_01(kt,:)=data_map.val;
