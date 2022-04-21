@@ -1,7 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%                 VTOOLS                 %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
+%
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
 %$Revision$
@@ -10,7 +7,7 @@
 %$Id$
 %$HeadURL$
 %
-%
+%Plot results IJsselmeer 3D
 
 %% PREAMBLE
 
@@ -34,41 +31,62 @@ addOET(fpath_add_fcn)
 
 %% PATHS
 
-fpaths=paths_project(fpath_project); %generate the paths of the project folder depending whether it is the local folder or the one in the p-drive
+fpaths=paths_project(fpath_project);
 
 %% INPUT
 
-in_plot.fdir_sim{1}=fullfile(fpaths.fdir_runs,'r018');
+in_plot.fdir_sim{1}=fullfile(fpaths.fdir_runs,'r016');
 in_plot.lan='nl';
 
-in_plot.fig_map_sal_01.do=0;
-in_plot.fig_map_sal_01.tim=NaN;
-in_plot.fig_map_sal_01.layer=NaN;
-in_plot.fig_map_sal_01.clims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
-in_plot.fig_map_sal_01.rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
-in_plot.fig_map_sal_01.fig_overwrite=1; 
-in_plot.fig_map_sal_01.unit='cl';  %sal, cl
+tag='fig_map_sal_01';
+in_plot.(tag).do=0;
+in_plot.(tag).tag='map_sal_01';
+in_plot.(tag).tim=NaN;
+in_plot.(tag).layer=NaN;
+in_plot.(tag).clims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
+in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
+in_plot.(tag).fig_overwrite=1; 
+in_plot.(tag).unit='cl_surf';  %sal, cl
+in_plot.(tag).fpath_ldb{1,1}=fullfile(fpaths.fdir_ldb,'lake_IJssel_ext.ldb');
 
-in_plot.fig_map_ls_01.do=1;
-% in_plot.fig_map_ls_01.tim=[1,5];
-in_plot.fig_map_ls_01.tim=NaN;
-in_plot.fig_map_ls_01.pli{1,1}=fullfile(fpaths.fdir_pli,'ls_KU_01.pli');
-in_plot.fig_map_ls_01.clims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)];
-in_plot.fig_map_ls_01.rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
-in_plot.fig_map_ls_01.fig_overwrite=0;
-in_plot.fig_map_ls_01.unit='cl';  %sal, cl
-in_plot.fig_map_ls_01.fig_plot_vel=0; %plot velocity vector
-in_plot.fig_map_ls_01.ylims=[-10.1,0];
-in_plot.fig_map_ls_01.fig_flip_section=1;
+tag='fig_map_ls_01';
+in_plot.(tag).do=0;
+in_plot.(tag).tag='map_ls_01';
+in_plot.(tag).tim=NaN;
+% in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'ls_grotesluis_EPSG-28992.pli');
+% in_plot.(tag).pli{2,1}=fullfile(fpaths.fdir_pli,'ls_kleinesluis_EPSG-28992.pli');
+in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'ls_KU_01.pli');
+in_plot.(tag).clims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)];
+in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
+in_plot.(tag).fig_overwrite=1;
+in_plot.(tag).unit='cl';  %sal, cl
+in_plot.(tag).fig_plot_vel=0; %plot velocity vector
+in_plot.(tag).ylims=[-10.1,0];
+in_plot.(tag).fig_flip_section=1;
+in_plot.(tag).fig_size=[0,0,14,9];
+in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
 
-in_plot.fig_map_sal_mass_01.do=0;
-in_plot.fig_map_sal_mass_01.tag='map_sal_mass_01';
-in_plot.fig_map_sal_mass_01.tim=NaN;
-in_plot.fig_map_sal_mass_01.clims=[NaN,NaN;0,4]; %in [psu]
-in_plot.fig_map_sal_mass_01.rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
-in_plot.fig_map_sal_mass_01.overwrite=0; 
-in_plot.fig_map_sal_mass_01.fig_overwrite=0; 
-% in_plot.fig_map_sal_mass_01.unit='cl';  %sal, cl
+tag='fig_map_sal_mass_01';
+in_plot.(tag).do=0;
+in_plot.(tag).tag='map_sal_mass_01';
+in_plot.(tag).tim=NaN;
+in_plot.(tag).clims=[NaN,NaN;0,4]; %in [psu]
+in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
+in_plot.(tag).overwrite=0; 
+in_plot.(tag).fig_overwrite=0; 
+in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
+
+tag='fig_map_q_01';
+in_plot.(tag).do=1;
+in_plot.(tag).tag='map_q_01';
+in_plot.(tag).tim=NaN;
+in_plot.(tag).clims=[NaN,NaN;0,10]; %in [psu]
+in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
+in_plot.(tag).overwrite=0; 
+in_plot.(tag).fig_overwrite=0; 
+in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
+in_plot.(tag).do_movie=0;
+in_plot.(tag).fpath_ldb{1,1}=fullfile(fpaths.fdir_ldb,'lake_IJssel_ext.ldb');
 
 %% CREATE MAT-FILES
 
@@ -98,6 +116,8 @@ for ks=1:ns
     %% sal mass
     create_mat_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
     
+    %% q
+    create_mat_map_q_01(fid_log,in_plot.fig_map_q_01,simdef)
 end %ks
 
 
@@ -121,4 +141,6 @@ for ks=1:ns
     %% sal mass
     plot_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
     
+    %% q
+    plot_map_q_01(fid_log,in_plot.fig_map_q_01,simdef)
 end %ks
