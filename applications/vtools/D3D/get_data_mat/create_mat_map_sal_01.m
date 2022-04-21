@@ -14,19 +14,21 @@
 
 function create_mat_map_sal_01(fid_log,flg_loc,simdef)
 
-if ~flg_loc.do
-    messageOut(fid_log,'Not doing ''fig_map_sal_01''')
-    return
-end
-messageOut(fid_log,'Start ''fig_map_sal_01''')
+tag=flg_loc.tag;
+
+%% DO
+
+ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+
+%%
 
 fpath_mat=simdef.file.mat.map_sal_01;
 
-if exist(fpath_mat,'file')==2
-    messageOut(fid_log,'Mat-file already exist.')
-    return
-end
-messageOut(fid_log,'Mat-file does not exist. Reading.')
+%% OVERWRITE
+
+ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
+
+%%
 
 %load grid for number of layers
 load(simdef.file.mat.grd,'gridInfo')

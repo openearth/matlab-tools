@@ -18,11 +18,9 @@ tag=flg_loc.tag;
 
 %% DO
 
-if ~flg_loc.do
-    messageOut(fid_log,sprintf('Not doing ''%s''',tag));
-    return
-end
-messageOut(fid_log,sprintf('Start ''%s''',tag));
+ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+
+%%
 
 %% DEFAULTS
 

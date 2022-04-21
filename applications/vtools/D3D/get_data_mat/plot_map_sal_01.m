@@ -14,11 +14,13 @@
 
 function plot_map_sal_01(fid_log,flg_loc,simdef)
 
-if ~flg_loc.do
-    messageOut(fid_log,'Not doing ''fig_map_sal_01''')
-    return
-end
-messageOut(fid_log,'Start ''fig_map_sal_01''')
+tag=flg_loc.tag;
+
+%% DO
+
+ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+
+%%
 
 %load
 load(simdef.file.mat.map_sal_01,'data_map_sal_01');

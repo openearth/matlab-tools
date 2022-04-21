@@ -18,11 +18,7 @@ tag=flg_loc.tag;
 
 %% DO
 
-if ~flg_loc.do
-    messageOut(fid_log,sprintf('Not doing ''%s''',tag));
-    return
-end
-messageOut(fid_log,sprintf('Start ''%s''',tag));
+ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
@@ -39,16 +35,7 @@ fpath_map=simdef.file.map;
 
 %% OVERWRITE
 
-if exist(fpath_mat,'file')==2
-    messageOut(fid_log,'Mat-file already exist.')
-    if flg_loc.overwrite==0
-        messageOut(fid_log,'Not overwriting mat-file.')
-        return
-    end
-    messageOut(fid_log,'Overwriting mat-file.')
-else
-    messageOut(fid_log,'Mat-file does not exist. Reading.')
-end
+ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD TIME
 

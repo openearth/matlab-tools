@@ -14,11 +14,13 @@
 
 function plot_map_ls_01(fid_log,in_plot_loc,simdef)
 
-if ~in_plot_loc.do
-    messageOut(fid_log,'Not doing ''fig_map_ls_01''')
-    return
-end
-messageOut(fid_log,'Start ''fig_map_ls_01''')
+tag=flg_loc.tag;
+
+%% DO
+
+ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+
+%%
 
 % %% BEGIN DEBUG
 % 
