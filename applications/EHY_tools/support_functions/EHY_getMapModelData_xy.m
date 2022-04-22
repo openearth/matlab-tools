@@ -209,24 +209,22 @@ end
 
 % In case of velocity we project it to the pli
 if isfield(Data,'vel_x')
-    angle_track=angle_polyline(Data_xy.Xcen,Data_xy.Ycen,OPT.nAverageAnglePli,0);
-    Data_xy.vel_para=NaN(size(Data_xy.vel_x));
-    Data_xy.vel_perp=Data_xy.vel_para;
-    bol_nn=~isnan(angle_track);
-%     if ~isnan(angle_track) %insufficient number of points to project data
-        for k=1:no_layers
-            [Data_xy.vel_para(:,bol_nn,k),Data_xy.vel_perp(:,bol_nn,k)]=project_vector(Data_xy.vel_x(:,bol_nn,k),Data_xy.vel_y(:,bol_nn,k),angle_track(bol_nn));
-        end
-%     end
+    angle_track = angle_polyline(Data_xy.Xcen,Data_xy.Ycen,OPT.nAverageAnglePli,0);
+    Data_xy.vel_para = NaN(size(Data_xy.vel_x));
+    Data_xy.vel_perp = Data_xy.vel_para;
+    bol_nn = ~isnan(angle_track);
+    for k = 1:no_layers
+        [Data_xy.vel_para(:,bol_nn,k),Data_xy.vel_perp(:,bol_nn,k)] = project_vector(Data_xy.vel_x(:,bol_nn,k),Data_xy.vel_y(:,bol_nn,k),angle_track(bol_nn));
+    end
     if no_layers>1
-        layer_thickness=diff(Data_xy.Zint,1,3);
-        layer_thickness_tot=sum(layer_thickness,3);
+        layer_thickness = diff(Data_xy.Zint,1,3);
+        layer_thickness_tot = sum(layer_thickness,3);
         
-        Data_xy.vel_x_da=sum(layer_thickness.*Data_xy.vel_x,3)./layer_thickness_tot;
-        Data_xy.vel_y_da=sum(layer_thickness.*Data_xy.vel_y,3)./layer_thickness_tot;
-        Data_xy.vel_mag_da=sum(layer_thickness.*Data_xy.vel_mag,3)./layer_thickness_tot;
-        Data_xy.vel_para_da=sum(layer_thickness.*Data_xy.vel_para,3)./layer_thickness_tot;
-        Data_xy.vel_perp_da=sum(layer_thickness.*Data_xy.vel_perp,3)./layer_thickness_tot;
+        Data_xy.vel_x_da = sum(layer_thickness.*Data_xy.vel_x,3)./layer_thickness_tot;
+        Data_xy.vel_y_da = sum(layer_thickness.*Data_xy.vel_y,3)./layer_thickness_tot;
+        Data_xy.vel_mag_da = sum(layer_thickness.*Data_xy.vel_mag,3)./layer_thickness_tot;
+        Data_xy.vel_para_da = sum(layer_thickness.*Data_xy.vel_para,3)./layer_thickness_tot;
+        Data_xy.vel_perp_da = sum(layer_thickness.*Data_xy.vel_perp,3)./layer_thickness_tot;
     end
 end 
 

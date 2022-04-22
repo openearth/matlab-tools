@@ -65,15 +65,17 @@ switch typeOfModelFileDetail
         
     case {'map_nc','fou_nc'} % dfm
         % Get the name of varName as specified on the map file of a simulation
-        if strcmpi(varName,'wl'         ) newName = 's1'         ; end
-        if strcmpi(varName,'salinity'   ) newName = 'sa1'        ; end
-        if strcmpi(varName,'temperature') newName = 'tem1'       ; end
-        if strcmpi(varName,'density')     newName = 'rho'        ; end
-        if strcmpi(varName,'uv'         ) newName = 'ucx'        ; end
-        if strcmpi(varName,'wd'         ) newName = 'waterdepth' ; end
-        if strcmpi(varName,'bedlevel'   ) newName = 'FlowElem_bl'; end
+        if strcmpi(varName,'wl'         ) newName = 's1'         ;  end
+        if strcmpi(varName,'salinity'   ) newName = 'sa1'        ;  end
+        if strcmpi(varName,'temperature') newName = 'tem1'       ;  end
+        if strcmpi(varName,'density')     newName = 'rho'        ;  end
+        if strcmpi(varName,'uv'         ) newName = 'ucx'        ;  end
+        if strcmpi(varName,'wd'         ) newName = 'waterdepth' ;  end
+        if strcmpi(varName,'bedlevel'   ) newName = 'FlowElem_bl';  end
         if strcmpi(varName,'Zcen_cen'   ) newName = 'flowelem_zcc'; end
-        if strcmpi(varName,'Zcen_int'   ) newName = 'flowelem_zw'; end
+        if strcmpi(varName,'Zcen_int'   ) newName = 'flowelem_zw';  end
+        if strcmpi(varName,'vel_perp'   ) newName = 'ucx';          end
+        if strcmpi(varName,'vel_para'   ) newName = 'ucx';          end
 
     case 'trim' % d3d
         % Get the name of varName as specified on the map file of a simulation

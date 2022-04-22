@@ -19,6 +19,10 @@ if iscell(date) && numel(date) == 1
     date = char(date);
 end
 if ~ischar(date)
+    if date > datenum(1900,1,1) && date < datenum(2100,1,1)
+        daten = date; % date is already a MATLAB datenum
+        return
+    end
     warning(['Input provided (' num2str(date) ') will be treated as a char (i.e. ''' num2str(date) ''') instead of a numeric value'])
     date = num2str(date);
 end
