@@ -262,7 +262,7 @@ for ii=1:ni
         
         % Check: no NaNs
         if ~isempty(find(isnan(zg))) || ~isempty(find(isnan(manning)))
-           error(['stop processing: NaN in subgrid table -> Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
+%            error(['stop processing: NaN in subgrid table -> Block ii = ' num2str(ii) ', jj = ' num2str(jj)]);
         end
         
         %% Now compute subgrid properties

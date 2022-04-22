@@ -952,10 +952,11 @@ if spw.rainfall>0
             pr_chosen = pr;
         else
             if random == 1
-                if isempty(randomID)
-                    randomID            = randi([1,length(pmax_out)],1,1); % random ID for length of pmax (10,000)
-                end
-                pr_chosen              = pr(:,randomID)';
+%                 if isempty(randomID)
+%                     randomID            = randi([1,length(pmax_out)],1,1); % random ID for length of pmax (10,000)
+%                 end
+%                 pr_chosen              = pr(:,randomID)';
+                pr_chosen              = pr';
 
             elseif random == 0 || random == 2
                 pr_chosen              = pr';

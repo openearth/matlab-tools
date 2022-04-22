@@ -66,15 +66,15 @@ end
 
 % assess samples
 values      = sort(pmax_samples);
-median50    = values(round(length(values) * 0.50));
-perc   = values(round(length(values) * tp.perc / 100));
 
 if probability == 1
-    pmax_out = pmax_samples;
-    disp('NOTE: using the BaCla rainfall model with random = 1 might be relatively slow to generate all fits')    
+    randomID = randi([1,length(pmax_samples)],1,1);
+    pmax_out = pmax_samples(randomID);   
 elseif probability == 2
+    perc   = values(round(length(values) * tp.perc / 100));
     pmax_out = perc;
 else
+    median50    = values(round(length(values) * 0.50));
     pmax_out = median50;          
 end
 

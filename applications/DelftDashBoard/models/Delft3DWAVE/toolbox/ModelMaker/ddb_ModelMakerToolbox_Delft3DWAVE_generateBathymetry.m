@@ -35,7 +35,7 @@ if icheck
     if isempty(handles.model.delft3dwave.domain.domains(awg).bedlevel)
         [filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.delft3dwave.domain.domains(awg).bedlevel);
     else
-        handles.model.delft3dwave.domain.domains(awg).bedlevel=[handles.model.delft3dwave.domain.attName '.dep']; ok = 1
+        handles.model.delft3dwave.domain.domains(awg).bedlevel=[handles.model.delft3dwave.domain.attName '.dep']; ok = 1;
     end
     if ~ok
         return
