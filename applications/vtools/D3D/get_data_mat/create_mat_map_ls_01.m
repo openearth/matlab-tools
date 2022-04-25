@@ -32,27 +32,11 @@ fdir_mat=simdef.file.mat.dir;
 
 ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
-%%
+%% LOAD TIME
 
-%load grid for number of layers
-% load(simdef.file.mat.grd,'gridInfo')
-fpath_map=simdef.file.map;
+[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map);
 
-if exist(simdef.file.mat.map_ls_01_tim,'file')==2
-    messageOut(fid_log,'Time-file already exists. Loading.');
-    load(simdef.file.mat.map_ls_01_tim,'time_dnum');
-else
-    time_dnum=get_time_dnum(fpath_map,flg_loc.tim);
-    save(simdef.file.mat.map_ls_01_tim,'time_dnum');
-end
-
-% if isnan(in_plot_loc.layer)
-%     layer=gridInfo.no_layers;
-% else
-%     layer=in_plot_loc.layer;
-% end
-
-nt=numel(time_dnum);
+%% LOOP TIME
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 

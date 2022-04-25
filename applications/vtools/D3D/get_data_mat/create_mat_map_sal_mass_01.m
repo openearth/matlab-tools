@@ -22,10 +22,6 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-if isfield(flg_loc,'overwrite')==0
-    flg_loc.overwrite=0;
-end
-
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -35,31 +31,11 @@ fpath_map=simdef.file.map;
 
 %% OVERWRITE
 
-ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
+[ret,flg_loc]=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD TIME
 
-load_tim=false;
-if exist(fpath_mat_time,'file')==2 
-    messageOut(fid_log,'Time-file already exists');
-    if flg_loc.overwrite==0
-        messageOut(fid_log,'Not overwriting time-file.')
-        load(fpath_mat_time,'tim');
-        v2struct(tim);
-    else 
-        messageOut(fid_log,'Overwriting time-file.')
-        load_tim=true;
-    end
-else
-    messageOut(fid_log,'Time-file does not exist. Reading.');
-    load_tim=true;
-end
-if load_tim
-    [time_dnum,time_dtime]=D3D_time_dnum(fpath_map,flg_loc.tim);
-    tim=v2struct(time_dnum,time_dtime); %#ok
-    save_check(fpath_mat_time,'tim');
-end
-nt=numel(time_dnum);
+[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map);
 
 %% CONSTANT IN TIME
 

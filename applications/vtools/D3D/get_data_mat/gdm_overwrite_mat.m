@@ -12,7 +12,7 @@
 %
 %
 
-function ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat)
+function [ret,flg_loc]=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat)
 
 %% PARSE
 
@@ -29,6 +29,7 @@ if exist(fpath_mat,'file')==2
     if flg_loc.overwrite==0
         messageOut(fid_log,'Not overwriting mat-file.')
         ret=1;
+        return
     end
     messageOut(fid_log,'Overwriting mat-file.')
 else

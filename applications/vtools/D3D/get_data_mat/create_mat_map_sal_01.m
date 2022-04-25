@@ -20,22 +20,21 @@ tag=flg_loc.tag;
 
 ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
-%%
+%% PATHS
 
-fpath_mat=simdef.file.mat.map_sal_01;
+fdir_mat=simdef.file.mat.dir;
+fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 
 %% OVERWRITE
 
-ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
+[ret,flg_loc]=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
-%%
+%% GRID
 
 %load grid for number of layers
 load(simdef.file.mat.grd,'gridInfo')
 fpath_map=simdef.file.map;
-
-time_dnum=get_time_dnum(fpath_map,flg_loc.tim);
-save(simdef.file.mat.map_sal_01_tim,'time_dnum');
 
 if isnan(flg_loc.layer)
     layer=gridInfo.no_layers;
@@ -43,19 +42,54 @@ else
     layer=flg_loc.layer;
 end
 
-nt=numel(time_dnum);
+%% LOAD TIME
+
+[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map);
 % nt=numel(time_dnum)-1; %if the simulation does not finish the last one may not be in all partitions. 
-np=size(gridInfo.face_nodes_x,2);
-data_map_sal_01=NaN(nt,np);
+
+%% LOOP TIME
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
+kt=0;
+messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,kt/nt*100));
 for kt=kt_v
-    %TO DO: save temporary files and join at the end 
-    data_map=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'layer',layer,'disp',0);
-    data_map_sal_01(kt,:)=data_map.val;
-    messageOut(fid_log,sprintf('Reading map_sal_01 %4.2f %%',kt/nt*100));
-end
-save_check(fpath_mat,'data_map_sal_01');
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'layer',layer);
+    if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
+    
+    data=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'layer',layer,'disp',0); %#ok
+    
+    save_check(fpath_mat_tmp,'data');
+    messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,kt/nt*100));
+end %kt
+
+%% JOIN
+
+%% first time for allocating
+
+kt=1;
+fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'layer',layer);
+tmp=load(fpath_mat_tmp,'data');
+
+%constant
+
+%time varying
+nF=size(tmp.data,2);
+
+data=NaN(nt,nF);
+
+%% loop 
+
+kt=0;
+messageOut(fid_log,sprintf('Joining %s kt %4.2f %%',tag,kt/nt*100));
+for kt=1:nt
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
+    tmp=load(fpath_mat_tmp,'data');
+
+    data(kt,:)=tmp.data;
+    messageOut(fid_log,sprintf('Joining %s kt %4.2f %%',tag,kt/nt*100));
+end %kt
+
+save_check(fpath_mat,'data');
 
 end %function

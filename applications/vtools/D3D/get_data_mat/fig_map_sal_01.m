@@ -383,7 +383,7 @@ EHY_plotMapModelData(gridInfo,val,'t',1);
 if plot_ldb
     nldb=numel(ldb);
     for kldb=1:nldb
-        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','c','linewidth',prop.lw1,'linestyle','-','marker','none')
+        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',1,'linestyle','-','marker','none')
     end
 end
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);

@@ -27,6 +27,7 @@ ret=0;
 if ~flg_loc.do
     messageOut(fid_log,sprintf('Not doing ''%s''',tag));
     ret=1;
+    return
 end
 messageOut(fid_log,sprintf('Start ''%s''',tag));
 

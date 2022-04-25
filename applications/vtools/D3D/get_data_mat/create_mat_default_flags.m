@@ -18,17 +18,18 @@ if isfield(in_plot,'lan')==0
     in_plot.lan='nl';
 end
 
-if isfield(in_plot,'fig_map_sal_01')==0
-    in_plot.fig_map_sal_01.do=0;
-end
-
-if isfield(in_plot,'fig_map_ls_01')==0
-    in_plot.fig_map_ls_01.do=0;
-end
-
-if isfield(in_plot,'fig_map_sal_mass_01')==0
-    in_plot.fig_map_sal_mass_01.do=0;
-end
+%moved to each function
+% if isfield(in_plot,'fig_map_sal_01')==0
+%     in_plot.fig_map_sal_01.do=0;
+% end
+% 
+% if isfield(in_plot,'fig_map_ls_01')==0
+%     in_plot.fig_map_ls_01.do=0;
+% end
+% 
+% if isfield(in_plot,'fig_map_sal_mass_01')==0
+%     in_plot.fig_map_sal_mass_01.do=0;
+% end
 
 %% MAP
 
