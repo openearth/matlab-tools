@@ -36,6 +36,7 @@ addOptional(parin,'frame_rate',20);
 addOptional(parin,'quality',50);
 addOptional(parin,'path_video',fullfile(fdir,fname));
 addOptional(parin,'overwrite',1);
+addOptional(parin,'fid_log',NaN);
 
 parse(parin,varargin{:});
 
