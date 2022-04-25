@@ -35,16 +35,26 @@ parin=inputParser;
 addOptional(parin,'frame_rate',20);
 addOptional(parin,'quality',50);
 addOptional(parin,'path_video',fullfile(fdir,fname));
+addOptional(parin,'overwrite',1);
 
 parse(parin,varargin{:});
 
 frame_rate=parin.Results.frame_rate;
 quality=parin.Results.quality;
 path_video=parin.Results.path_video;
+do_over=parin.Results.overwrite;
+
+%% SKIP OR DELETE
 
 path_video_ext=sprintf('%s.mp4',path_video);
 if exist(path_video_ext,'file')==2
-    delete(path_video_ext)
+    if do_over
+        messageOut(fid_log,sprintf('Movie exists, overwriting: %s',path_video_ext));
+        delete(path_video_ext)
+    else
+        messageOut(fid_log,sprintf('Movie exists, not-overwriting: %s',path_video_ext));
+        return
+    end
 end
 
 %% MAKE VIDEO
