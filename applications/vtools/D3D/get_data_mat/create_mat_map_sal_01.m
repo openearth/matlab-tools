@@ -51,16 +51,17 @@ end
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
-kt=0;
-messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,kt/nt*100));
+ktc=0;
+messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 for kt=kt_v
+    ktc=ktc+1;
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'layer',layer);
     if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
     
     data=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'layer',layer,'disp',0); %#ok
     
     save_check(fpath_mat_tmp,'data');
-    messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,kt/nt*100));
+    messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 end %kt
 
 %% JOIN

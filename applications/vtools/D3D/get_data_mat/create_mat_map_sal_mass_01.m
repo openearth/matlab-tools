@@ -48,8 +48,10 @@ fpath_map=simdef.file.map;
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
-messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,0/nt*100));
+ktc=0;
+messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 for kt=kt_v
+    ktc=ktc+1;
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt);
     if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
     
@@ -70,7 +72,7 @@ for kt=kt_v
 
     %% save and disp
     save_check(fpath_mat_tmp,'data');
-    messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,kt/nt*100));
+    messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
     
     %% BEGIN DEBUG
 %     figure

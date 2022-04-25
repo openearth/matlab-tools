@@ -41,8 +41,12 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
 npli=numel(flg_loc.pli);
+
+ktc=0; kpli=0;
+messageOut(fid_log,sprintf('Reading map_ls_01 pli %4.2f %% kt %4.2f %%',kpli/npli*100,ktc/nt*100));
 for kpli=1:npli
     for kt=kt_v
+        ktc=ktc+1;
         fpath_mat_tmp=fullfile(fdir_mat,sprintf('map_ls_tmp_pli_%02d_kt_%02d.mat',kpli,kt));
         if exist(fpath_mat_tmp,'file')==2; continue; end
 		
@@ -69,7 +73,7 @@ for kpli=1:npli
         save_check(fpath_mat_tmp,'data_map_ls_01');
         
         %disp
-        messageOut(fid_log,sprintf('Reading map_ls_01 pli %4.2f %% kt %4.2f %%',kpli/npli*100,kt/nt*100));
+        messageOut(fid_log,sprintf('Reading map_ls_01 pli %4.2f %% kt %4.2f %%',kpli/npli*100,ktc/nt*100));
     end    
 end %kpli
 

@@ -55,6 +55,9 @@ end
 if isfield(in_p,'is_background')==0
     in_p.is_background=0;
 end
+if isfield(in_p,'is_diff')==0
+    in_p.is_diff=0;
+end
 in_p.plot_ldb=0;
 if isfield(in_p,'ldb')
     in_p.plot_ldb=1;
@@ -152,6 +155,8 @@ cbar(kr,kc).location='northoutside';
 [lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
 if is_background
     cbar(kr,kc).label=str_back;
+elseif is_diff
+    cbar(kr,kc).label=str_diff;
 else
     cbar(kr,kc).label=lab;
 end
