@@ -44,19 +44,15 @@ load(simdef.file.mat.grd,'gridInfo')
 
 %% LOOP
 
-if isnan(flg_loc.stations)
-    stations=EHY_getStationNames(fpath_his,'dfm');
-else
-    stations=flg_loc.stations;
-end
+stations=gdm_station_names(fid_log,flg_loc,fpath_his);
+
+ns=numel(stations);
 
 if isnan(flg_loc.layer)
     layer=gridInfo.no_layers;
 else
     layer=flg_loc.layer;
 end
-
-ns=numel(stations);
 
 ks_v=gdm_kt_v(flg_loc,ns);
 
@@ -83,7 +79,7 @@ for ks=ks_v
 
     %% save and disp
     save_check(fpath_mat_tmp,'data');
-    messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/nt*100));
+    messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
     
     %% BEGIN DEBUG
 
