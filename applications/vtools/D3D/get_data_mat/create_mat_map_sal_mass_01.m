@@ -52,7 +52,7 @@ ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 for kt=kt_v
     ktc=ktc+1;
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
     if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
     
     %% read data
@@ -100,7 +100,7 @@ end
 %% first time for allocating
 
 kt=1;
-fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt);
+fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
 tmp=load(fpath_mat_tmp,'data');
 
 %constant
@@ -113,15 +113,14 @@ data=NaN(nt,nF);
 %% loop 
 
 for kt=1:nt
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
     tmp=load(fpath_mat_tmp,'data');
 
     data(kt,:)=tmp.data;
 
 end
 
-% save_check(fpath_mat,'data','-v7.3');
-save(fpath_mat,'data','-v7.3');
+save_check(fpath_mat,'data','-v7.3');
 
 end %function
 
@@ -129,8 +128,8 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt)
-
-fpath_mat_tmp=fullfile(fdir_mat,sprintf('%s_tmp_kt_%04d.mat',tag,kt));
-
-end %function
+% function fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,kt)
+% 
+% fpath_mat_tmp=fullfile(fdir_mat,sprintf('%s_tmp_kt_%04d.mat',tag,kt));
+% 
+% end %function

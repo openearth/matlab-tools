@@ -15,6 +15,7 @@
 function plot_map_sal_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
 tag=flg_loc.tag;
+tag_diff=sprintf('%s_diff',tag);
 
 %% DO
 
@@ -28,7 +29,7 @@ fdir_mat_ref=simdef_ref.file.mat.dir;
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag);
+fdir_fig=fullfile(simdef.file.fig.dir,tag_diff);
 mkdir_check(fdir_fig);
 fpath_grd=simdef.file.mat.grd;
 
@@ -37,6 +38,12 @@ fpath_grd=simdef.file.mat.grd;
 load(fpath_grd,'gridInfo');
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
+
+if isnan(flg_loc.layer)
+    layer=gridInfo.no_layers;
+else
+    layer=flg_loc.layer;
+end
 
 %% 
 
@@ -73,17 +80,18 @@ for kt=kt_v
     fpath_mat_tmp    =mat_tmp_name(fdir_mat    ,tag,'tim',time_dnum(kt),'layer',layer);
     data    =load(fpath_mat_tmp    ,'data');
     
-    val=data.data-data_ref.data;
+    val=data.data.val-data_ref.data.val;
     for kclim=1:nclim
         %fullfile(fdir_fig,sprintf('%s_%s_%s_clim_%02d',tag,runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim));
-        fname_noext=fullfile(fdir_fig,sprintf('%s_diff_%s_%s_%s_clim_%02d',tag,simdef.file.runid,simdef_ref.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim));
+        fname_noext=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d',tag_diff,simdef.file.runid,simdef_ref.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim));
         fpath_file{kt,kclim}=sprintf('%s%s',fname_noext,fext); %for movie 
         
         in_p.fname=fname_noext;
         in_p.val=val;
         in_p.tim=time_dnum(kt);
         
-        clims=flg_loc.clims(kclim,:);
+        clims=flg_loc.clims_diff(kclim,:);
+        
         in_p.clims=clims;
         
         fig_map_sal_01(in_p);

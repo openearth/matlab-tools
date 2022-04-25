@@ -58,9 +58,16 @@ for kt=kt_v
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'layer',layer);
     if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
     
-    data=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'layer',layer,'disp',0); %#ok
+    fpath_sal=mat_tmp_name(fdir_mat,'sal','tim',time_dnum(kt),'layer',layer);
+    if exist(fpath_sal,'file')==2
+        load(fpath_sal,'data_sal')
+    else
+        data_sal=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'layer',layer,'disp',0); 
+        save_check(fpath_sal,'data_sal');
+    end
     
-    save_check(fpath_mat_tmp,'data');
+    data=data_sal.val; %#ok
+    save_check(fpath_mat_tmp,'data'); 
     messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 end %kt
 
@@ -84,7 +91,7 @@ data=NaN(nt,nF);
 kt=0;
 messageOut(fid_log,sprintf('Joining %s kt %4.2f %%',tag,kt/nt*100));
 for kt=1:nt
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'layer',layer);
     tmp=load(fpath_mat_tmp,'data');
 
     data(kt,:)=tmp.data;

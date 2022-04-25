@@ -155,14 +155,17 @@ cbar(kr,kc).location='northoutside';
 [lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
 if is_background
     cbar(kr,kc).label=str_back;
+    cmap=turbo(100);
 elseif is_diff
     cbar(kr,kc).label=str_diff;
+    cmap=brewermap(100,'RdYlBu');
 else
     cbar(kr,kc).label=lab;
+    cmap=turbo(100);
 end
     
 % brewermap('demo')
-cmap=turbo(100);
+
 
 %center around 0
 % ncmap=1000;
