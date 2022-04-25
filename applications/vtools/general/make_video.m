@@ -44,6 +44,7 @@ frame_rate=parin.Results.frame_rate;
 quality=parin.Results.quality;
 path_video=parin.Results.path_video;
 do_over=parin.Results.overwrite;
+fid_log=parin.Results.fid_log;
 
 %% SKIP OR DELETE
 
