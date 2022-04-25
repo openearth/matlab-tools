@@ -20,17 +20,22 @@ tag=flg_loc.tag;
 
 ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
+%% PATHS
+
+fdir_mat=simdef.file.mat.dir;
+fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
+
 %%
 
 %load
-load(simdef.file.mat.map_sal_01,'data_map_sal_01');
+load(fpath_mat,'data');
 load(simdef.file.mat.grd,'gridInfo');
-load(simdef.file.mat.map_sal_01_tim,'time_dnum');
+[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,'');
 
-nt=size(data_map_sal_01,1);
 nclim=size(flg_loc.clims,1);
 
-max_tot=max(data_map_sal_01(:));
+max_tot=max(data(:));
 xlims=[min(gridInfo.face_nodes_x(:)),max(gridInfo.face_nodes_x(:))];
 ylims=[min(gridInfo.face_nodes_y(:)),max(gridInfo.face_nodes_y(:))];
 
@@ -63,7 +68,7 @@ for kt=kt_v
         
         in_p.fname=fname_noext;
         in_p.gridInfo=gridInfo;
-        in_p.val=data_map_sal_01(kt,:);
+        in_p.val=data(kt,:);
         in_p.tim=time_dnum(kt);
         
         clims=flg_loc.clims(kclim,:);
