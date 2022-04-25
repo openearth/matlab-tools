@@ -73,8 +73,8 @@ for ks=ks_v
     if exist(fpath_sal,'file')==2
         load(fpath_sal,'data_sal')
     else
-        data_sal=EHY_getmodeldata(path_his,stationlist,'dfm','varName','sal','layer',layer,'t0',time_dnum(1),'tend',time_dnum(end));
-        save_check(fpath_uv,'data_sal');
+        data_sal=EHY_getmodeldata(fpath_his,stations{ks},'dfm','varName','sal','layer',layer,'t0',time_dnum(1),'tend',time_dnum(end));
+        save_check(fpath_sal,'data_sal');
     end
     
     %% calc
