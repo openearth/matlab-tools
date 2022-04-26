@@ -41,7 +41,7 @@ ns=numel(stations);
 % load(simdef.file.mat.grd,'gridInfo');
 [nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,'');
 
-nclim=size(flg_loc.clims,1);
+nylim=size(flg_loc.ylims_diff,1);
 
 %figures
 in_p=flg_loc;
@@ -60,7 +60,7 @@ fext=ext_of_fig(in_p.fig_print);
 
 ks_v=gdm_kt_v(flg_loc,ns);
 
-fpath_file=cell(nt,nclim);
+fpath_file=cell(ns,nylim);
 for ks=ks_v
     fpath_mat_tmp_ref=mat_tmp_name(fdir_mat_ref,tag,'station',stations{ks});
     fpath_mat_tmp    =mat_tmp_name(fdir_mat    ,tag,'station',stations{ks});
@@ -69,16 +69,16 @@ for ks=ks_v
     data    =load(fpath_mat_tmp    ,'data');
     
     val=data.data-data_ref.data;
-    for kclim=1:nclim
-        fname_noext=fullfile(fdir_fig,sprintf('sal_his_diff_01_%s_%s_%s_clim_%02d',simdef.file.runid,simdef_ref.file.runid,stations{ks},kclim));
-        fpath_file{ks,kclim}=sprintf('%s%s',fname_noext,fext); %for movie 
+    for kylim=1:nylim
+        fname_noext=fullfile(fdir_fig,sprintf('sal_his_diff_01_%s_%s_%s_ylim_%02d',simdef.file.runid,simdef_ref.file.runid,stations{ks},kylim));
+        fpath_file{ks,kylim}=sprintf('%s%s',fname_noext,fext); %for movie 
         
         in_p.fname=fname_noext;
         in_p.val=val;
         in_p.tim=time_dtime;
         in_p.station=stations{ks};
         
-        ylims=flg_loc.ylims_diff(kclim,:);
+        ylims=flg_loc.ylims_diff(kylim,:);
         if isnan(ylims)
             in_p.ylims=[min(val(:))-eps,max(val(:))+eps];
         else
