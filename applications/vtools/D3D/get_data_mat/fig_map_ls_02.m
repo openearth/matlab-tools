@@ -41,7 +41,7 @@ if isfield(in_p,'fname')==0
     in_p.fname='fig';
 end
 if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,14,14]; %(1+sqrt(5)/2)
+    in_p.fig_size=[0,0,14,21]; %(1+sqrt(5)/2)
 end
 if isfield(in_p,'fig_overwrite')==0
     in_p.fig_overwrite=1;
@@ -63,23 +63,32 @@ end
 
 %% units
 
-switch unit
-    case 'cl'
-        clims=sal2cl(1,clims);
-        data_ls.sal=sal2cl(1,data_ls.sal);
-end
+ka=0;
 
-%% dependent
+ka=ka+1;
+val_v{ka,1}=data_ls.sal;
+unit_v{ka,1}=unit;
+clims_v{ka,1}=clims_sal;
 
-if isnan(clims(1))
-    tol=1e-8;
-    clims=[min(data_ls.sal(:))-tol,max(data_ls.sal(:))+tol];
-end
+ka=ka+1;
+val_v{ka,1}=data_ls.upara;
+unit_v{ka,1}='us';
+clims_v{ka,1}=clims_us;
+
+ka=ka+1;
+val_v{ka,1}=data_ls.uperp;
+unit_v{ka,1}='un';
+clims_v{ka,1}=clims_un;
+
+ka=ka+1;
+val_v{ka,1}=data_ls.uz;
+unit_v{ka,1}='uz';
+clims_v{ka,1}=clims_uz;
 
 %% SIZE
 
 %square option
-npr=1; %number of plot rows
+npr=4; %number of plot rows
 npc=1; %number of plot columns
 axis_m=allcomb(1:1:npr,1:1:npc);
 
@@ -96,7 +105,7 @@ marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
-marg.sv=0.0; %vertical spacing [cm]
+marg.sv=0.5; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 
@@ -136,13 +145,45 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
-kr=1; kc=1;
-cbar(kr,kc).displacement=[0.0,0,0,0]; 
-cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label=labels4all(unit,1,lan);
 
-% brewermap('demo')
-cmap=turbo(100);
+for ka=1:na
+   
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+    
+    cbar(kr,kc).displacement=[0.0,0,0,0]; 
+    cbar(kr,kc).location='northoutside';
+    cbar(kr,kc).label=labels4all(unit_v{ka,1},1,lan);
+
+    switch unit_v{ka,1}
+        case 'cl'
+            clims{kr,kc}=sal2cl(1,clims_v{ka,1});
+            val_v{ka,1}=sal2cl(1,val_v{ka,1});
+        otherwise
+            clims{kr,kc}=clims_v{ka,1};
+    end
+    
+    if isnan(clims{kr,kc}(1))
+        tol=1e-8;
+        clims{kr,kc}=[min(val_v{ka,1}(:))-tol,max(val_v{ka,1}(:))+tol];
+    end
+    
+    if isfield(in_p,'is_simetric')==0
+        if diff(abs(clims{kr,kc}))==0
+            is_simetric{kr,kc}=true;
+        else
+            is_simetric{kr,kc}=false;
+        end
+    end
+    
+    if is_simetric{kr,kc}
+        cmap{kr,kc}=brewermap(100,'RdYlBu');
+    else
+        cmap{kr,kc}=turbo(100);
+    end
+
+end
+
 
 %center around 0
 % ncmap=1000;
@@ -263,20 +304,22 @@ cmap=turbo(100);
 
 %% LABELS AND LIMITS
 
-% ka=1;
-% kr=axis_m(ka,1);
-% kc=axis_m(ka,2);
+for ka=1:na
+   
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
 
-kr=1; kc=1;
+% kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
-lims.c(kr,kc,1:2)=clims;
+lims.c(kr,kc,1:2)=clims{kr,kc};
 xlabels{kr,kc}=labels4all('x',1,lan);
 ylabels{kr,kc}=labels4all('eta',1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
+end
 
 %% FIGURE INITIALIZATION
 
@@ -362,10 +405,13 @@ end
 
 %% PLOT
 
-kr=1; kc=1;    
+for ka=1:na
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
 % data_ls.grid
-val=data_ls.sal(kt,:,:);
+val=val_v{ka,1};
 if fig_flip_section
     data_ls.grid.Xcor=[0;cumsum(flipud(diff(data_ls.grid.Xcor)))];
     data_ls.grid.Ycor=fliplr(data_ls.grid.Ycor);
@@ -389,6 +435,7 @@ if fig_plot_vel
     end
     han.q=quiver(x_m,y_m,u_m,v_m,'parent',han.sfig(kr,kc),'color','w');
 end
+end %ka
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
@@ -401,15 +448,21 @@ end
 
 %% PROPERTIES
 
-    %sub11
-kr=1; kc=1;   
+for ka=1:na
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+    
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+if kr==npr
+    han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+else
+    han.sfig(kr,kc).XTickLabel='';
+end
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
@@ -417,7 +470,10 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+if kr==1
+    han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+else
+end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
@@ -427,12 +483,13 @@ han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-kr=1; kc=1;
+% kr=1; kc=1;
 % view(han.sfig(kr,kc),[0,90]);
-colormap(han.sfig(kr,kc),cmap);
+colormap(han.sfig(kr,kc),cmap{kr,kc});
 % if ~isnan(lims.c(kr,kc,1:1))
 caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
+
 
 %% ADD TEXT
 
@@ -476,7 +533,7 @@ caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 
 %% COLORBAR
 
-kr=1; kc=1;
+% kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 % pos.cbar=han.cbar.Position;
@@ -493,6 +550,8 @@ han.cbar.Label.String=cbar(kr,kc).label;
 %     aux_str{ka}=sprintf('%5.3f',aux3(ka));
 % end
 % han.cbar.TickLabels=aux_str;
+
+end
 
 %% GENERAL
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)

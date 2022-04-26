@@ -46,7 +46,7 @@ mkdir_check(fdir_fig);
 % load(simdef.file.mat.map_ls_01,'data_map_ls_01');
 load(fpath_mat_time,'time_dnum');
 
-nclim=size(flg_loc.clims,1);
+nclim=size(flg_loc.clims_sal,1);
 npli=numel(flg_loc.pli);
 nt=numel(time_dnum);
 
@@ -82,18 +82,22 @@ for kpli=1:npli
             fpath_file{kt,kclim,kpli}=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;
-            in_p.kt=kt;
+%             in_p.kt=kt;
             in_p.tim=time_dnum(kt);
 
-            clims=flg_loc.clims(kclim,:);
-            if all(isnan(clims)==[0,1]) %[0,NaN]
-                error('do')
+%             clims=flg_loc.clims(kclim,:);
+%             if all(isnan(clims)==[0,1]) %[0,NaN]
+%                 error('do')
 %                 in_p.clims=[clims(1),max_tot];
-            else
-                in_p.clims=clims;
-            end
-
-            fig_map_ls_01(in_p);
+%             else
+%                 in_p.clims=clims;
+%             end
+            in_p.clims_sal=flg_loc.clims_sal(kclim,:);
+            in_p.clims_us=flg_loc.clims_us(kclim,:);
+            in_p.clims_un=flg_loc.clims_un(kclim,:);
+            in_p.clims_uz=flg_loc.clims_uz(kclim,:);
+            
+            fig_map_ls_02(in_p);
         end %kclim
     end %kt
 end %kpli

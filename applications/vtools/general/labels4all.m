@@ -271,6 +271,36 @@ switch lower(var)
                 str_var='magnitud de la velocidad';
         end
         un_type='L/T';
+    case 'un'
+        switch lan
+            case 'en'
+                str_var='cross-wise velocity';
+            case 'nl'
+                str_var='kruissnelheid';
+            case 'es'
+                str_var='velocidad transversal';
+        end
+        un_type='L/T';
+    case 'us'
+        switch lan
+            case 'en'
+                str_var='streamwise velocity';
+            case 'nl'
+                str_var='stroomgewijze snelheid';
+            case 'es'
+                str_var='velocidad longitudinal';
+        end
+        un_type='L/T';
+    case 'uz'
+        switch lan
+            case 'en'
+                str_var='vertical velocity';
+            case 'nl'
+                str_var='verticale snelheid';
+            case 'es'
+                str_var='velocidad vertical';
+        end
+        un_type='L/T';
     case 'x'
         switch lan
             case 'en'
