@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17958 $
+%$Date: 2022-04-20 09:27:05 +0200 (Wed, 20 Apr 2022) $
+%$Author: chavarri $
+%$Id: fig_map_ls_01.m 17958 2022-04-20 07:27:05Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_ls_01.m $
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_map_sal_01(in_p)
+function fig_map_ls_02(in_p)
 
 %% DEFAULTS
 
@@ -52,20 +52,6 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
-if isfield(in_p,'is_background')==0
-    in_p.is_background=0;
-end
-if isfield(in_p,'is_diff')==0
-    in_p.is_diff=0;
-end
-in_p.plot_ldb=0;
-if isfield(in_p,'ldb')
-    in_p.plot_ldb=1;
-end
-in_p.plot_vector=0;
-if isfield(in_p,'vec_x')
-    in_p.plot_vector=1;
-end
 
 v2struct(in_p)
 
@@ -78,19 +64,16 @@ end
 %% units
 
 switch unit
-    case {'cl','cl_surf'}
+    case 'cl'
         clims=sal2cl(1,clims);
-        val=sal2cl(1,val);
-%     case 'sal'
-%     otherwise
-%         error('not sure what to do')
+        data_ls.sal=sal2cl(1,data_ls.sal);
 end
 
 %% dependent
 
 if isnan(clims(1))
     tol=1e-8;
-    clims=[min(val(:))-tol,max(val(:))+tol];
+    clims=[min(data_ls.sal(:))-tol,max(data_ls.sal(:))+tol];
 end
 
 %% SIZE
@@ -156,20 +139,10 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
-if is_background
-    cbar(kr,kc).label=str_back;
-    cmap=turbo(100);
-elseif is_diff
-    cbar(kr,kc).label=str_diff;
-    cmap=brewermap(100,'RdYlBu');
-else
-    cbar(kr,kc).label=lab;
-    cmap=turbo(100);
-end
-    
-% brewermap('demo')
+cbar(kr,kc).label=labels4all(unit,1,lan);
 
+% brewermap('demo')
+cmap=turbo(100);
 
 %center around 0
 % ncmap=1000;
@@ -299,7 +272,7 @@ lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 lims.c(kr,kc,1:2)=clims;
 xlabels{kr,kc}=labels4all('x',1,lan);
-ylabels{kr,kc}=labels4all('y',1,lan);
+ylabels{kr,kc}=labels4all('eta',1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
@@ -391,15 +364,30 @@ end
 
 kr=1; kc=1;    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
-EHY_plotMapModelData(gridInfo,val,'t',1); 
-if plot_ldb
-    nldb=numel(ldb);
-    for kldb=1:nldb
-        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',1,'linestyle','-','marker','none')
-    end
+% data_ls.grid
+val=data_ls.sal(kt,:,:);
+if fig_flip_section
+    data_ls.grid.Xcor=[0;cumsum(flipud(diff(data_ls.grid.Xcor)))];
+    data_ls.grid.Ycor=fliplr(data_ls.grid.Ycor);
+    val=fliplr(val);
 end
-if plot_vector
-    quiver(gridInfo.Xcen,gridInfo.Ycen,vec_x',vec_y','parent',han.sfig(kr,kc))
+% EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','continuous shades'); 
+EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','interp'); 
+if fig_plot_vel
+    nl=size(data_ls.Zcen,3);
+    % nx=numel(data_ls.Scen);
+    x_m=[];
+    y_m=[];
+    u_m=[];
+    v_m=[];
+    for kl=1:nl
+        x_m=cat(1,x_m,data_ls.Scen);
+        y_m=cat(1,y_m,squeeze(data_ls.Zcen(kt,:,kl))');
+        u_m=cat(1,u_m,squeeze(data_ls.upara(kt,:,kl))');
+    %     u_m=cat(1,u_m,squeeze(data_ls.ux(kt,:,kl))');
+        v_m=cat(1,v_m,squeeze(data_ls.uz(kt,:,kl))');
+    end
+    han.q=quiver(x_m,y_m,u_m,v_m,'parent',han.sfig(kr,kc),'color','w');
 end
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
@@ -417,7 +405,7 @@ end
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
-axis(han.sfig(kr,kc),'equal')
+% axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);

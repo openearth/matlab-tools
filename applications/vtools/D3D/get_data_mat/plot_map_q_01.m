@@ -54,7 +54,7 @@ v2struct(tim); %time_dnum, time_dtime
 %%
 
 nt=size(time_dnum,1);
-nclim=size(flg_loc.clims,1);
+nclim=size(flg_loc.clims_mag,1);
 
 if flg_loc.load_all
     max_tot=max(data(:));
@@ -68,10 +68,13 @@ ylims=[min(gridInfo.face_nodes_y(:)),max(gridInfo.face_nodes_y(:))];
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.unit='qsp';
+in_p.unit={'qsp','qxsp','qysp'};
 in_p.xlims=xlims;
 in_p.ylims=ylims;
 in_p.gridInfo=gridInfo;
+in_p.kr_tit=1;
+in_p.kc_tit=2;
+in_p.fig_size=[0,0,25,14];
 
 %ldb
 if isfield(flg_loc,'fpath_ldb')
@@ -90,26 +93,43 @@ for kt=kt_v
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
         if exist(fpath_mat_tmp,'file')~=2; continue; end
         load(fpath_mat_tmp,'data');
-        in_p.val=data;
+%         in_p.val=data.q_mag;
+        
+        %for vector plotting
+%         in_p.vec_x=data.q_x;
+%         in_p.vec_y=data.q_y;
+
+        %for several plots
+        in_p.val{1,1}=data.q_mag;
+        in_p.val{1,2}=data.q_x;
+        in_p.val{1,3}=data.q_y;
     else
+        error('obsolete')
         in_p.val=data(kt,:);
     end
     
     in_p.tim=time_dnum(kt);
     for kclim=1:nclim
-        clims=flg_loc.clims(kclim,:);
+%         clims=flg_loc.clims(kclim,:);
+        
         fname_noext=fig_name(fdir_fig,tag,runid,kt,kclim,time_dnum);
         fpath_file{kt,kclim}=sprintf('%s%s',fname_noext,fext); %for movie 
 
         in_p.fname=fname_noext;
 
-        if all(isnan(clims)==[0,1]) %[0,NaN]
-            in_p.clims=[clims(1),max_tot];
-        else
-            in_p.clims=clims;
-        end
+        in_p.clims={};
+%         if all(isnan(clims)==[0,1]) %[0,NaN]
+%             in_p.clims{1,1}=[clims(1),max_tot];
+%             in_p.clims{1,2}=[clims(1),max_tot];
+%             in_p.clims{1,3}=[clims(1),max_tot];
+%         else
+            in_p.clims{1,1}=flg_loc.clims_mag(kclim,:);
+            in_p.clims{1,2}=flg_loc.clims_x(kclim,:);
+            in_p.clims{1,3}=flg_loc.clims_y(kclim,:);
+%         end
         
-        fig_map_sal_01(in_p);
+%         fig_map_sal_01(in_p);
+        fig_map_several(in_p);
     end %kclim
 end %kt
 

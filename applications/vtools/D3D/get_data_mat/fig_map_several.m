@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17976 $
+%$Date: 2022-04-25 11:04:04 +0200 (Mon, 25 Apr 2022) $
+%$Author: chavarri $
+%$Id: fig_map_sal_01.m 17976 2022-04-25 09:04:04Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_sal_01.m $
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_map_sal_01(in_p)
+function fig_map_several(in_p)
 
 %% DEFAULTS
 
@@ -66,6 +66,13 @@ in_p.plot_vector=0;
 if isfield(in_p,'vec_x')
     in_p.plot_vector=1;
 end
+if isfield(in_p,'kr_tit')==0
+    in_p.kr_tit=1;
+end
+if isfield(in_p,'kc_tit')==0
+    in_p.kc_tit=1;
+end
+
 
 v2struct(in_p)
 
@@ -75,35 +82,24 @@ if ~print_fig
     return
 end
 
-%% units
-
-switch unit
-    case {'cl','cl_surf'}
-        clims=sal2cl(1,clims);
-        val=sal2cl(1,val);
-%     case 'sal'
-%     otherwise
-%         error('not sure what to do')
-end
-
-%% dependent
-
-if isnan(clims(1))
-    tol=1e-8;
-    clims=[min(val(:))-tol,max(val(:))+tol];
-end
-
 %% SIZE
 
 %square option
-npr=1; %number of plot rows
-npc=1; %number of plot columns
+npr=size(val,1); %number of plot rows
+npc=size(val,2); %number of plot columns
 axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
 % axis_m=[1,1;2,1;2,2];
 
 na=size(axis_m,1);
+
+%%
+
+
+
+%%
+
 
 %figure input
 prnt.filename=fname;
@@ -152,22 +148,65 @@ set(groot,'defaultTextInterpreter','tex');
 set(groot,'defaultAxesTickLabelInterpreter','tex'); 
 set(groot,'defaultLegendInterpreter','tex');
 
+
+
+for ka=1:na
+    
+    %% units
+kr=axis_m(ka,1);
+kc=axis_m(ka,2);
+switch unit{kr,kc}
+    case {'cl','cl_surf'}
+        clims{kr,kc}=sal2cl(1,clims{kr,kc});
+        val{kr,kc}=sal2cl(1,val{kr,kc});
+%     case 'sal'
+%     otherwise
+%         error('not sure what to do')
+end
+
+    %% dependent
+
+if isnan(clims{kr,kc}(1))
+    tol=1e-8;
+    clims{kr,kc}=[min(val{kr,kc}(:))-tol,max(val{kr,kc}(:))+tol];
+end
+
+if isfield(in_p,'is_simetric')==0
+    if diff(abs(clims{kr,kc}))==0
+        is_simetric{kr,kc}=true;
+    else
+        is_simetric{kr,kc}=false;
+    end
+end
+
+end
+
 %% COLORBAR AND COLORMAP
-kr=1; kc=1;
+
+for ka=1:na
+kr=axis_m(ka,1);
+kc=axis_m(ka,2);
+
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
+[lab,str_var,str_un,str_diff,str_back]=labels4all(unit{kr,kc},1,lan);
 if is_background
     cbar(kr,kc).label=str_back;
-    cmap=turbo(100);
+    cmap{kr,kc}=turbo(100);
 elseif is_diff
     cbar(kr,kc).label=str_diff;
-    cmap=brewermap(100,'RdYlBu');
+    cmap{kr,kc}=brewermap(100,'RdYlBu');
 else
     cbar(kr,kc).label=lab;
-    cmap=turbo(100);
+    if is_simetric{kr,kc}
+        cmap{kr,kc}=brewermap(100,'RdYlBu');
+    else
+        cmap{kr,kc}=turbo(100);
+    end
 end
-    
+
+end
+
 % brewermap('demo')
 
 
@@ -291,19 +330,22 @@ end
 %% LABELS AND LIMITS
 
 % ka=1;
-% kr=axis_m(ka,1);
-% kc=axis_m(ka,2);
 
-kr=1; kc=1;
+for ka=1:na
+kr=axis_m(ka,1);
+kc=axis_m(ka,2);
+
+% kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
-lims.c(kr,kc,1:2)=clims;
+lims.c(kr,kc,1:2)=clims{kr,kc};
 xlabels{kr,kc}=labels4all('x',1,lan);
 ylabels{kr,kc}=labels4all('y',1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
+end
 
 %% FIGURE INITIALIZATION
 
@@ -389,9 +431,13 @@ end
 
 %% PLOT
 
-kr=1; kc=1;    
+for ka=1:na
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+    
+% kr=1; kc=1;    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
-EHY_plotMapModelData(gridInfo,val,'t',1); 
+EHY_plotMapModelData(gridInfo,val{kr,kc},'t',1); 
 if plot_ldb
     nldb=numel(ldb);
     for kldb=1:nldb
@@ -400,6 +446,7 @@ if plot_ldb
 end
 if plot_vector
     quiver(gridInfo.Xcen,gridInfo.Ycen,vec_x',vec_y','parent',han.sfig(kr,kc))
+end
 end
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
@@ -413,23 +460,38 @@ end
 
 %% PROPERTIES
 
+for ka=1:na
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+    
     %sub11
-kr=1; kc=1;   
+% kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-% han.sfig(kr,kc).XTickLabel='';
-% han.sfig(kr,kc).YTickLabel='';
+if kc==1
+    han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+else
+    han.sfig(kr,kc).YTickLabel='';
+end
+if kr==1
+    han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+else
+    han.sfig(kr,kc).XTickLabel='';
+end
+
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+if kr==kr_tit && kc==kc_tit
+    han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+else
+    han.sfig(kr,kc).Title.String=' ';
+end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
@@ -439,13 +501,14 @@ han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-kr=1; kc=1;
+% kr=1; kc=1;
 % view(han.sfig(kr,kc),[0,90]);
-colormap(han.sfig(kr,kc),cmap);
+colormap(han.sfig(kr,kc),cmap{kr,kc});
 % if ~isnan(lims.c(kr,kc,1:1))
 caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
 
+end
 %% ADD TEXT
 
     %if irregular
@@ -488,7 +551,10 @@ caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 
 %% COLORBAR
 
-kr=1; kc=1;
+for ka=1:na
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+% kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 % pos.cbar=han.cbar.Position;
@@ -505,6 +571,8 @@ han.cbar.Label.String=cbar(kr,kc).label;
 %     aux_str{ka}=sprintf('%5.3f',aux3(ka));
 % end
 % han.cbar.TickLabels=aux_str;
+
+end
 
 %% GENERAL
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)

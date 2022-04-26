@@ -4,15 +4,15 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17988 $
+%$Date: 2022-04-26 06:34:06 +0200 (Tue, 26 Apr 2022) $
+%$Author: chavarri $
+%$Id: plot_map_ls_01.m 17988 2022-04-26 04:34:06Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_map_ls_01.m $
 %
 %
 
-function plot_map_ls_01(fid_log,flg_loc,simdef)
+function plot_map_ls_02(fid_log,flg_loc,simdef)
 
 tag=flg_loc.tag;
 
@@ -63,7 +63,7 @@ for kpli=1:npli
     [~,pliname,~]=fileparts(flg_loc.pli{kpli,1});
     pliname=strrep(pliname,' ','_');
     
-    in_p.xlims=[0,data_map_ls_01(kpli).Scor(end)];
+    
     in_p.ylims=flg_loc.ylims(kpli,:); %move to input
     
     %loading all
@@ -73,6 +73,8 @@ for kpli=1:npli
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pli',pliname);
         load(fpath_mat_tmp,'data_map_ls_01');
         in_p.data_ls=data_map_ls_01;
+        
+        in_p.xlims=[0,data_map_ls_01.Scor(end)];
         
         for kclim=1:nclim
             fname_noext=fullfile(fdir_fig,sprintf('sal_ls_01_%s_%s_clim_%02d_pli_%s',simdef.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim,pliname));

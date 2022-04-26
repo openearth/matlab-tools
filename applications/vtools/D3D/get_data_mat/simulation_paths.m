@@ -36,25 +36,4 @@ mkdir_check(fdir_fig);
     simdef.file.mat.grd=fullfile(fdir_mat,'grd.mat');
 % end
 
-%% map_sal_01
-
-% if in_plot.fig_map_sal_01.do
-%     simdef.file.mat.map_sal_01=fullfile(fdir_mat,'map_sal_01.mat');
-%     simdef.file.mat.map_sal_01_tim=fullfile(fdir_mat,'map_sal_01_tim.mat');
-%     
-%     simdef.file.fig.map_sal_01=fullfile(fdir_fig,'map_sal_01');
-%     mkdir_check(simdef.file.fig.map_sal_01);
-% end
-
-%% map_ls_01
-
-%move to its own function
-if in_plot.fig_map_ls_01.do
-    simdef.file.mat.map_ls_01=fullfile(fdir_mat,'map_ls_01.mat');
-    simdef.file.mat.map_ls_01_tim=fullfile(fdir_mat,'map_ls_01_tim.mat');
-    
-    simdef.file.fig.map_ls_01=fullfile(fdir_fig,'map_ls_01');
-    mkdir_check(simdef.file.fig.map_ls_01);
-end
-
 end %function

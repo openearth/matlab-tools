@@ -48,10 +48,7 @@ in_p.fig_visible=0;
 in_p.xlims=xlims;
 in_p.ylims=ylims;
 
-switch in_p.fig_print
-    case 1
-        fext='.png';
-end
+fext=ext_of_fig(in_p.fig_print);
 
 %ldb
 if isfield(flg_loc,'fpath_ldb')

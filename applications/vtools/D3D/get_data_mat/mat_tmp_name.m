@@ -21,12 +21,14 @@ parin=inputParser;
 addOptional(parin,'tim',[]);
 addOptional(parin,'layer',[]);
 addOptional(parin,'station','');
+addOptional(parin,'pli','');
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 layer=parin.Results.layer;
 station=parin.Results.station;
+pli=parin.Results.pli;
 
 %%
 
@@ -51,6 +53,11 @@ end
 %layer
 if ~isempty(layer)
     str_add=sprintf('%s_layer_%04d',str_add,layer);
+end
+
+%pli
+if ~isempty(pli)
+    str_add=sprintf('%s_pli_%s',str_add,pli);
 end
 
 %final

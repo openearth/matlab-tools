@@ -45,9 +45,12 @@ npli=numel(flg_loc.pli);
 ktc=0; kpli=0;
 messageOut(fid_log,sprintf('Reading map_ls_01 pli %4.2f %% kt %4.2f %%',kpli/npli*100,ktc/nt*100));
 for kpli=1:npli
+    [~,pliname,~]=fileparts(flg_loc.pli{kpli,1});
+    pliname=strrep(pliname,' ','_');
     for kt=kt_v
         ktc=ktc+1;
-        fpath_mat_tmp=fullfile(fdir_mat,sprintf('map_ls_tmp_pli_%02d_kt_%02d.mat',kpli,kt));
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pli',pliname);
+
         if exist(fpath_mat_tmp,'file')==2; continue; end
 		
         [data_uxy,~]            =EHY_getMapModelData(fpath_map,'varName','uv'        ,'t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0,'pliFile',flg_loc.pli{kpli,1});
@@ -88,7 +91,7 @@ end
 data_map_ls_01=struct();
 for kpli=1:npli
     kt=1;
-    fpath_mat_tmp=fullfile(fdir_mat,sprintf('map_ls_tmp_pli_%02d_kt_%02d.mat',kpli,kt));
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pli',pliname);
     tmp=load(fpath_mat_tmp,'data_map_ls_01');
     
     data_map_ls_01(kpli).Xcor=tmp.data_map_ls_01.Xcor;
@@ -111,7 +114,7 @@ for kpli=1:npli
     data_map_ls_01(kpli).upara=NaN(nt,ncx,ncz);
         
     for kt=1:nt
-        fpath_mat_tmp=fullfile(fdir_mat,sprintf('map_ls_tmp_pli_%02d_kt_%02d.mat',kpli,kt));
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pli',pliname);
         tmp=load(fpath_mat_tmp,'data_map_ls_01');
         
         data_map_ls_01(kpli).sal(kt,:,:)=tmp.data_map_ls_01.sal;

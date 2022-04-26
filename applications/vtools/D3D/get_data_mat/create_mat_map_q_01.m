@@ -125,9 +125,11 @@ tmp=load(fpath_mat_tmp,'data');
 %constant
 
 %time varying
-nF=size(tmp.data,2);
+nF=size(tmp.data.q_mag,2);
 
-data=NaN(nt,nF);
+q_mag=NaN(nt,nF);
+q_x=NaN(nt,nF);
+q_y=NaN(nt,nF);
 
 %% loop 
 
@@ -135,10 +137,13 @@ for kt=1:nt
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
     tmp=load(fpath_mat_tmp,'data');
 
-    data(kt,:)=tmp.data;
+    q_mag(kt,:)=tmp.data.q_mag;
+    q_x(kt,:)=tmp.data.q_x;
+    q_y(kt,:)=tmp.data.q_y;
 
 end
 
+data=v2struct(q_mag,q_x,q_y); %#ok
 save_check(fpath_mat,'data');
 
 end %function
