@@ -113,7 +113,7 @@ end %kt
 
 %% movies
 
-if isfield(flg_loc,'do_movie')
+if isfield(flg_loc,'do_movie')==0
     flg_loc.do_movie=1;
 end
 

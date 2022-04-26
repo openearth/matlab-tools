@@ -36,7 +36,7 @@ ns=numel(stations);
 %load
 % load(fpath_mat,'data');
 % load(simdef.file.mat.grd,'gridInfo');
-[nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,'');
+[~,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,'');
 
 nclim=size(flg_loc.clims,1);
 
@@ -56,7 +56,7 @@ fext=ext_of_fig(in_p.fig_print);
 
 ks_v=gdm_kt_v(flg_loc,ns);
 
-fpath_file=cell(nt,nclim);
+fpath_file=cell(ns,nclim);
 for ks=ks_v
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks});
     load(fpath_mat_tmp,'data');

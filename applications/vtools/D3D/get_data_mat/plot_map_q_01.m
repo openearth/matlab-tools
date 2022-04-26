@@ -115,6 +115,10 @@ end %kt
 
 %% movies
 
+if isfield(flg_loc,'do_movie')==0
+    flg_loc.do_movie=1;
+end
+
 if flg_loc.do_movie
     dt_aux=diff(time_dnum);
     dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 

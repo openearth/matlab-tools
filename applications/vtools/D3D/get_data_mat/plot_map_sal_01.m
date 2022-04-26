@@ -86,11 +86,17 @@ end %kt
 
 %% movies
 
-dt_aux=diff(time_dnum);
-dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
-rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
-for kclim=1:nclim
-   make_video(fpath_file(:,kclim),'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
+if isfield(flg_loc,'do_movie')==0
+    flg_loc.do_movie=1;
+end
+
+if flg_loc.do_movie
+    dt_aux=diff(time_dnum);
+    dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
+    rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
+    for kclim=1:nclim
+       make_video(fpath_file(:,kclim),'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
+    end
 end
 
 end %function
