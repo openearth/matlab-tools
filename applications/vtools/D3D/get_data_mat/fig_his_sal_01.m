@@ -52,6 +52,12 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
+if isfield(in_p,'is_background')==0
+    in_p.is_background=0;
+end
+if isfield(in_p,'is_diff')==0
+    in_p.is_diff=0;
+end
 
 v2struct(in_p)
 
@@ -269,7 +275,6 @@ lims.y(kr,kc,1:2)=ylims;
 % lims.c(kr,kc,1:2)=clims;
 % xlabels{kr,kc}='L_a [m]';
 [lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
-is_background=0;
 if is_background
 %     cbar(kr,kc).label=str_back;
 %     cmap=turbo(100);
