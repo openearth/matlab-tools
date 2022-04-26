@@ -76,13 +76,18 @@ for kt=kt_v
     %% calc
     
     %squeeze to take out the first (time) dimension. Then layers are in dimension 2.
+    vel_x=squeeze(data_uv.vel_x); %m/s
+    vel_y=squeeze(data_uv.vel_y); %m/s
     vel_mag=squeeze(data_uv.vel_mag); %m/s
+    
     thk=diff(squeeze(data_zw.val),1,2); %m
-    q=sum(vel_mag.*thk,2,'omitnan')'; %m^2/s
+    
+    q_x=sum(vel_x.*thk,2,'omitnan')'; %m^2/s
+    q_y=sum(vel_y.*thk,2,'omitnan')'; %m^2/s
+    q_mag=sum(vel_mag.*thk,2,'omitnan')'; %m^2/s
     
     %data
-%     data=v2struct(data_u,data_h,q,Q,idx_cs,Q_cs,Q_cs_frac); %#ok
-    data=q; %#ok
+    data=v2struct(q_x,q_y,q_mag); %#ok
 
     %% save and disp
     save_check(fpath_mat_tmp,'data');
