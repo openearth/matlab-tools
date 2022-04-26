@@ -15,6 +15,7 @@
 function plot_map_ls_02(fid_log,flg_loc,simdef)
 
 tag=flg_loc.tag;
+tag_fig='map_ls_02';
 
 %% DO
 
@@ -25,7 +26,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag);
+fdir_fig=fullfile(simdef.file.fig.dir,tag_fig);
 mkdir_check(fdir_fig);
 
 % simdef.file.mat.map_ls_01=fullfile(fdir_mat,'map_ls_01.mat');
@@ -77,7 +78,7 @@ for kpli=1:npli
         in_p.xlims=[0,data_map_ls_01.Scor(end)];
         
         for kclim=1:nclim
-            fname_noext=fullfile(fdir_fig,sprintf('sal_ls_01_%s_%s_clim_%02d_pli_%s',simdef.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim,pliname));
+            fname_noext=fullfile(fdir_fig,sprintf('sal_ls_02_%s_%s_clim_%02d_pli_%s',simdef.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim,pliname));
             fpath_file{kt,kclim,kpli}=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;

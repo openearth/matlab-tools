@@ -39,6 +39,8 @@
 %       -'Q'        : water discharge
 %       -'Qcum'     : cumulative water discharge
 %       -'qsp'      : specific water discharge
+%       -'qxsp'     : specific water discharge in x direction
+%       -'qysp'     : specific water discharge in y direction
 %
 %       -'tide'     : tide
 %       -'surge'    : surge
@@ -367,6 +369,26 @@ switch lower(var)
                 str_var='specifieke afvoer';
             case 'es'
                 str_var='caudal específico';
+         end
+         un_type='L2/T';
+     case 'qxsp'
+         switch lan
+            case 'en'
+                str_var='x-specific discharge';
+            case 'nl'
+                str_var='x-specifieke afvoer';
+            case 'es'
+                str_var='caudal específico x';
+         end
+         un_type='L2/T';
+     case 'qysp'
+         switch lan
+            case 'en'
+                str_var='y-specific discharge';
+            case 'nl'
+                str_var='y-specifieke afvoer';
+            case 'es'
+                str_var='caudal específico y';
          end
          un_type='L2/T';
 %%
