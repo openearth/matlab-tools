@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17941 $
-%$Date: 2022-04-05 21:30:07 +0200 (Tue, 05 Apr 2022) $
-%$Author: chavarri $
-%$Id: D3D_bat.m 17941 2022-04-05 19:30:07Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_bat.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Change the location of a geometry node in a 1D network. Given a 
 %grid, a node (either by its name or its index) and the new

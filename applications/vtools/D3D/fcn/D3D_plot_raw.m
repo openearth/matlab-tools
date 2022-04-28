@@ -4,21 +4,21 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17942 $
-%$Date: 2022-04-05 21:30:26 +0200 (Tue, 05 Apr 2022) $
-%$Author: chavarri $
-%$Id: D3D_status.m 17942 2022-04-05 19:30:26Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_status.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 23 $
-%$Date: 2022-03-29 14:05:57 +0200 (Tue, 29 Mar 2022) $
-%$Author: chavarri $
-%$Id: main_plot_raw.m 23 2022-03-29 12:05:57Z chavarri $
-%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/main_plot_raw.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 %%
