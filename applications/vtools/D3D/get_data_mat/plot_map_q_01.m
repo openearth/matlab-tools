@@ -91,7 +91,7 @@ fpath_file=cell(nt,nclim);
 for kt=kt_v
     if flg_loc.load_all==0
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-        if exist(fpath_mat_tmp,'file')~=2; continue; end
+        if exist(fpath_mat_tmp,'file')~=2; flg_loc.do_movie=0; continue; end
         load(fpath_mat_tmp,'data');
 %         in_p.val=data.q_mag;
         

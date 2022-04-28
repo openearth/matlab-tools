@@ -25,6 +25,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %%
 
+error('change paths')
 fpath_mat=simdef.file.mat.map_ls_01;
 fdir_mat=simdef.file.mat.dir;
 
