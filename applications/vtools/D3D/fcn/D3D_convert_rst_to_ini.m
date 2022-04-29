@@ -1,107 +1,123 @@
-function D3D_convert_rst_to_ini(rstfile, inifile, fileprefix); 
+function D3D_convert_rst_to_ini(rstfilename, inifilename, filesuffix); 
+[inipath,ininame,iniext] = fileparts(inifilename);
 
-xz = ncread(rstfile, 'FlowElem_xzw'); 
-yz = ncread(rstfile, 'FlowElem_yzw'); 
-
-xz_bnd = ncread(rstfile, 'FlowElem_xbnd'); 
-yz_bnd = ncread(rstfile, 'FlowElem_ybnd'); 
+xz = ncread(rstfilename, 'FlowElem_xzw'); 
+yz = ncread(rstfilename, 'FlowElem_yzw'); 
 
 % s1 
-s1 = ncread(rstfile, 's1'); 
-s1_bnd = ncread(rstfile, 's1_bnd'); 
+s1 = ncread(rstfilename, 's1'); 
 
 %ucx,uxy
-ucx = ncread(rstfile, 'ucx'); 
-ucy = ncread(rstfile, 'ucy'); 
+ucx = ncread(rstfilename, 'ucx'); 
+ucy = ncread(rstfilename, 'ucy'); 
 
-%bl
-bl = ncread(rstfile, 'FlowElem_bl'); 
-mor_bl = ncread(rstfile, 'mor_bl'); 
-bl_bnd = ncread(rstfile, 'bl_bnd'); 
+ncinf = ncinfo(rstfilename); 
+write_bl = false; 
+if sum(strcmp({ncinf.Variables.Name}, 'FlowElem_bl'))==1; 
+    bl = ncread(rstfilename, 'FlowElem_bl'); 
+    write_bl = true; 
+end
 
-waterlevelfile = sprintf('%s_s1.xyz',fileprefix);
-bedlevelfile = sprintf('%s_bl.xyz',fileprefix)
-uvelocityfile = sprintf('%s_ucx.xyz',fileprefix)
-vvelocityfile = sprintf('%s_ucy.xyz',fileprefix)
+waterlevelfile = fullfile('waterlevel', sprintf('waterlevel_%s.xyz',filesuffix));
+savesamples( inipath, waterlevelfile, xz, yz, s1); 
+if write_bl
+    bedlevelfile = fullfile('bedlevel', sprintf('bedlevel_%s.xyz',filesuffix));
+    savesamples( inipath, bedlevelfile, xz, yz, bl); 
+end
+velocityxfile = fullfile('velocity', sprintf('velocity_x_%s.xyz',filesuffix));
+savesamples( inipath, velocityxfile, xz, yz, ucx); 
 
-samples('write',waterlevelfile,xz,yz,s1)
-samples('write',bedlevelfile,xz,yz,bl)
-samples('write',uvelocityfile,xz,yz,ucx)
-samples('write',vvelocityfile,xz,yz,ucy)
+velocityyfile = fullfile('velocity', sprintf('velocity_y_%s.xyz',filesuffix));
+savesamples( inipath, velocityyfile, xz, yz, ucy); 
+
 
 %%
-Info = inifile('new')
+Info = inifile('new');
 C='General'; 
-[Info, IndexChapter] = inifile('add', Info, C)
+[Info, IndexChapter] = inifile('add', Info, C);
 K='fileVersion'; Value = '2.00';
-Info = inifile('set', Info, C, K, Value)
+Info = inifile('set', Info, C, K, Value);
 K='fileType';    Value = 'iniField';
-Info = inifile('set', Info, C, K, Value)
+Info = inifile('set', Info, C, K, Value);
 
 C='Initial'; 
-[Info, IndexChapter] = inifile('add', Info, C)
+[Info, IndexChapter] = inifile('add', Info, C);
 K='quantity';            Value = 'waterlevel';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='dataFile';            Value = waterlevelfile;
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='dataFileType';        Value = 'sample';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='interpolationMethod'; Value = 'triangulation';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='operand';             Value = 'o';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='averagingType';       Value = '';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='averagingRelSize';    Value = '';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='averagingNumMin';     Value = '';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='averagingPercentile'; Value = '';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='extrapolationMethod'; Value = '';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='locationType';        Value = '';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='value';               Value = '';
-Info = inifile('set', Info, IndexChapter, K, Value)
+% Info = inifile('set', Info, IndexChapter, K, Value);
+% K='averagingType';       Value = '';
+% Info = inifile('set', Info, IndexChapter, K, Value);
+% K='averagingRelSize';    Value = '';
+% Info = inifile('set', Info, IndexChapter, K, Value);
+% K='averagingNumMin';     Value = '';
+% Info = inifile('set', Info, IndexChapter, K, Value);
+% K='averagingPercentile'; Value = '';
+% Info = inifile('set', Info, IndexChapter, K, Value);
+% K='extrapolationMethod'; Value = '';
+% Info = inifile('set', Info, IndexChapter, K, Value);
+% K='locationType';        Value = '';
+% Info = inifile('set', Info, IndexChapter, K, Value);
+% K='value';               Value = '';
+% Info = inifile('set', Info, IndexChapter, K, Value);
+
+if write_bl
+    C='Initial'; 
+    [Info, IndexChapter] = inifile('add', Info, C);
+    K='quantity';            Value = 'bedlevel';
+    Info = inifile('set', Info, IndexChapter, K, Value);
+    K='dataFile';            Value = bedlevelfile;
+    Info = inifile('set', Info, IndexChapter, K, Value);
+    K='dataFileType';        Value = 'sample';
+    Info = inifile('set', Info, IndexChapter, K, Value);
+    K='interpolationMethod'; Value = 'triangulation';
+    Info = inifile('set', Info, IndexChapter, K, Value);
+    K='operand';             Value = 'o';
+    Info = inifile('set', Info, IndexChapter, K, Value);
+end
 
 C='Initial'; 
-[Info, IndexChapter] = inifile('add', Info, C)
-K='quantity';            Value = 'bedlevel';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='dataFile';            Value = bedlevelfile;
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='dataFileType';        Value = 'sample';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='interpolationMethod'; Value = 'triangulation';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='operand';             Value = 'o';
-Info = inifile('set', Info, IndexChapter, K, Value)
-
-C='Initial'; 
-[Info, IndexChapter] = inifile('add', Info, C)
+[Info, IndexChapter] = inifile('add', Info, C);
 K='quantity';            Value = 'initialvelocityx';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='dataFile';            Value = uvelocityfile;
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
+K='dataFile';            Value = velocityxfile;
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='dataFileType';        Value = 'sample';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='interpolationMethod'; Value = 'triangulation';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='operand';             Value = 'o';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 
 C='Initial'; 
-[Info, IndexChapter] = inifile('add', Info, C)
+[Info, IndexChapter] = inifile('add', Info, C);
 K='quantity';            Value = 'initialvelocityy';
-Info = inifile('set', Info, IndexChapter, K, Value)
-K='dataFile';            Value = vvelocityfile;
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
+K='dataFile';            Value = velocityyfile;
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='dataFileType';        Value = 'sample';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='interpolationMethod'; Value = 'triangulation';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 K='operand';             Value = 'o';
-Info = inifile('set', Info, IndexChapter, K, Value)
+Info = inifile('set', Info, IndexChapter, K, Value);
 
-Info = inifile('write', inifile, Info)
+Info = inifile('write', inifilename, Info);
+
+
+end
+
+function savesamples( samplepath, samplefile, xz, yz, zz); 
+    samplefullfile = fullfile(samplepath, samplefile); 
+    [samplefullpath,~,~] = fileparts(samplefullfile); 
+    if ~(exist(samplefullpath) == 7); 
+        mkdir(samplefullpath);
+    end
+    samples('write',samplefullfile,xz,yz,zz);
+end
