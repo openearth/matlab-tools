@@ -35,6 +35,7 @@ simdef=D3D_simpath(simdef);
 
 switch simdef.D3D.structure
     case {1,2,3}
+        sim_idx=NaN;
         fpath_nc=simdef.file.(nc_type);
         ismor=D3D_is(fpath_nc);
         [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,[1,Inf]);

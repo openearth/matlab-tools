@@ -1383,7 +1383,49 @@ switch flg.which_p
                     case 3 %SOBEK3
                         error('not available')
                 end
-                out.zlabel='horizontal eddy viscosity [m^2/s]';     
+                out.zlabel='horizontal eddy viscosity [m^2/s]';    
+                %%
+            case 45
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            out=get_fm1d_data('mesh2d_hice',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        else
+                            if flg.get_EHY
+                                zn=get_EHY(file.map,'mesh2d_hice',time_dnum);
+                                F=scatteredInterpolant(edge_nodes_x,edge_nodes_y,zn);
+                                z=F(face_nodes_x,face_nodes_y);
+                                out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                                z=ncread(file.map,'mesh2d_hice',[1,kt(1)],[Inf,kt(2)]); 
+                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
+                        end
+                    case 3 %SOBEK3
+                        error('not available')
+                end
+                out.zlabel='thickness of the floating ice cover [m]';   
+                %%
+            case 46
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            out=get_fm1d_data('mesh2d_pice',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        else
+                            if flg.get_EHY
+                                zn=get_EHY(file.map,'mesh2d_pice',time_dnum);
+                                F=scatteredInterpolant(edge_nodes_x,edge_nodes_y,zn);
+                                z=F(face_nodes_x,face_nodes_y);
+                                out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                                z=ncread(file.map,'mesh2d_pice',[1,kt(1)],[Inf,kt(2)]); 
+                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
+                        end
+                    case 3 %SOBEK3
+                        error('not available')
+                end
+                out.zlabel='pressure exerted by the floating ice cover [m]';   
                 %%
             otherwise
                 error('ups...')

@@ -22,7 +22,7 @@ addOET(path_add_fcn)
 
 %% INPUT
 
-path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\210414_Maas2D\input_D3D_fig_Meers.m'; 
+path_input='c:\Users\chavarri\temporal\220429_ice\03_scripts\input_D3D_fig_ice.m'; 
 
 %% CALL
 

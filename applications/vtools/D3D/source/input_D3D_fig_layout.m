@@ -105,6 +105,8 @@ simdef.flg.which_v=17; %which variable:
 %   42=wave forces [N]
 %   43=horizontal eddy viscosity [m^2/s]
 %   44=total bed load transport at nodes [m^3/s]
+%	45=thickness of the floating ice cover [m] 
+%	46=pressure exerted by the floating ice cover [m] 
 
     %% domain
     

@@ -405,36 +405,39 @@ end
 
 %% PLOT
 
+if fig_flip_section
+    data_ls.grid.Xcor=[0;cumsum(flipud(diff(data_ls.grid.Xcor)))];
+    data_ls.grid.Ycor=fliplr(data_ls.grid.Ycor);
+end
+
 for ka=1:na
     kr=axis_m(ka,1);
     kc=axis_m(ka,2);
     
-set(han.fig,'CurrentAxes',han.sfig(kr,kc))
-% data_ls.grid
-val=val_v{ka,1};
-if fig_flip_section
-    data_ls.grid.Xcor=[0;cumsum(flipud(diff(data_ls.grid.Xcor)))];
-    data_ls.grid.Ycor=fliplr(data_ls.grid.Ycor);
-    val=fliplr(val);
-end
-% EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','continuous shades'); 
-EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','interp'); 
-if fig_plot_vel
-    nl=size(data_ls.Zcen,3);
-    % nx=numel(data_ls.Scen);
-    x_m=[];
-    y_m=[];
-    u_m=[];
-    v_m=[];
-    for kl=1:nl
-        x_m=cat(1,x_m,data_ls.Scen);
-        y_m=cat(1,y_m,squeeze(data_ls.Zcen(kt,:,kl))');
-        u_m=cat(1,u_m,squeeze(data_ls.upara(kt,:,kl))');
-    %     u_m=cat(1,u_m,squeeze(data_ls.ux(kt,:,kl))');
-        v_m=cat(1,v_m,squeeze(data_ls.uz(kt,:,kl))');
+    set(han.fig,'CurrentAxes',han.sfig(kr,kc))
+    % data_ls.grid
+    val=val_v{ka,1};
+    if fig_flip_section
+        val=fliplr(val);
     end
-    han.q=quiver(x_m,y_m,u_m,v_m,'parent',han.sfig(kr,kc),'color','w');
-end
+    % EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','continuous shades'); 
+    EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','interp'); 
+    if fig_plot_vel
+        nl=size(data_ls.Zcen,3);
+        % nx=numel(data_ls.Scen);
+        x_m=[];
+        y_m=[];
+        u_m=[];
+        v_m=[];
+        for kl=1:nl
+            x_m=cat(1,x_m,data_ls.Scen);
+            y_m=cat(1,y_m,squeeze(data_ls.Zcen(kt,:,kl))');
+            u_m=cat(1,u_m,squeeze(data_ls.upara(kt,:,kl))');
+        %     u_m=cat(1,u_m,squeeze(data_ls.ux(kt,:,kl))');
+            v_m=cat(1,v_m,squeeze(data_ls.uz(kt,:,kl))');
+        end
+        han.q=quiver(x_m,y_m,u_m,v_m,'parent',han.sfig(kr,kc),'color','w');
+    end
 end %ka
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);

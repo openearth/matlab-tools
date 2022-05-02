@@ -19,7 +19,7 @@ clc
 
 in_read.branch={'Rhine','Waal'}; %branch
 in_read.kt=10; %output time index
-simdef.D3D.dire_sim='C:\Users\chavarri\temporal\220421_JL\r012\dflowfm\';
+simdef.D3D.dire_sim='p:\studenten-riv\03_Work\220324_Josephien_Lingbeek\01_runs\r014\dflowfm\';
 simdef.flg.which_v=2; 
 %   1=etab
 %   2=h
