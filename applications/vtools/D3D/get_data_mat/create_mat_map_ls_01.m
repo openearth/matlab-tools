@@ -23,11 +23,11 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 %% PARSE
 
 
-%%
+%% PATHS
 
-error('change paths')
-fpath_mat=simdef.file.mat.map_ls_01;
 fdir_mat=simdef.file.mat.dir;
+fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 
 %% OVERWRITE
 
