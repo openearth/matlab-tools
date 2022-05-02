@@ -441,7 +441,7 @@ EHY_plotMapModelData(gridInfo,val{kr,kc},'t',1);
 if plot_ldb
     nldb=numel(ldb);
     for kldb=1:nldb
-        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',1,'linestyle','-','marker','none')
+        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',0.5,'linestyle','-','marker','none')
     end
 end
 if plot_vector

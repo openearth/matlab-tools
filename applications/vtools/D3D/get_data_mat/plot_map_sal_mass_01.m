@@ -66,6 +66,11 @@ in_p.gridInfo=gridInfo;
 
 fext=ext_of_fig(in_p.fig_print);
 
+%ldb
+if isfield(flg_loc,'fpath_ldb')
+    in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
+end
+
 %% LOOP
 nref=2;
 
