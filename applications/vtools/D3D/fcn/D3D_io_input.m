@@ -53,6 +53,22 @@ switch what_do
 %                 stru_out=wldep('read',fname,G);
             case {'.bct','.bc'}
                 stru_out=bct_io('read',fname);
+                for kT=1:stru_out.NTables
+                    tim_ref=num2str(stru_out.Table(kT).ReferenceTime(1));
+                    tim_ref_dtim=datetime(str2double(tim_ref(1:4)),str2double(tim_ref(5:6)),str2double(tim_ref(7:8)));
+                    idx_tim=find_str_in_cell({stru_out.Table(kT).Parameter.Name},{'time'});
+                    if isnan(idx_tim)
+                        warning('Time not found')
+                        continue
+                    end
+                    tim_data=stru_out.Table(kT).Data(:,idx_tim);
+                    switch stru_out.Table(kT).TimeUnit
+                        case 'minutes'
+                            tim_un=minutes(tim_data);
+                    end
+                    tim_dtim=tim_ref_dtim+tim_un;
+                    stru_out.Table(kT).Time=tim_dtim;
+                end
             case '.xyz'
 %                 stru_out=dflowfm_io_xydata('read',fname); %extremely slow
                 stru_out=readmatrix(fname,'FileType','text');

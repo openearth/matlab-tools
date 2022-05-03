@@ -1258,8 +1258,7 @@ switch flg.which_p
                             if flg.which_v==27
                                 out.z=sum(out.z,1)';
                             elseif flg.which_v==14
-                                out.z=out.z(1,:)';
-                                error('check dimensions are right')
+                                out.z=squeeze(out.z(1,:,:));
                             end
                         else
                             if flg.get_EHY

@@ -42,6 +42,7 @@ runid=simdef.file.runid;
 %% LOAD
 
 load(fpath_mat,'data');
+create_mat_grd(fid_log,flg_loc,simdef)
 load(fpath_grd,'gridInfo');
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime

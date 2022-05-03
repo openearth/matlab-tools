@@ -58,6 +58,9 @@ end
 if isfield(in_p,'is_diff')==0
     in_p.is_diff=0;
 end
+if isfield(in_p,'ldb_thk')==0
+    in_p.ldb_thk=0.5;
+end
 in_p.plot_ldb=0;
 if isfield(in_p,'ldb')
     in_p.plot_ldb=1;
@@ -441,7 +444,7 @@ EHY_plotMapModelData(gridInfo,val{kr,kc},'t',1);
 if plot_ldb
     nldb=numel(ldb);
     for kldb=1:nldb
-        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',0.5,'linestyle','-','marker','none')
+        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',ldb_thk,'linestyle','-','marker','none')
     end
 end
 if plot_vector

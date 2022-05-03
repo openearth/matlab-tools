@@ -32,8 +32,6 @@ fdir_fig=fullfile(fdir_sim,'figures');
 simdef.file.fig.dir=fdir_fig;
 mkdir_check(fdir_fig);
 
-% if in_plot.map
-    simdef.file.mat.grd=fullfile(fdir_mat,'grd.mat');
-% end
+simdef.file.mat.grd=fullfile(fdir_mat,'grd.mat');
 
 end %function

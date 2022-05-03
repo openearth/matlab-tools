@@ -25,6 +25,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
+fpath_map=simdef.file.map;
 
 %% OVERWRITE
 
@@ -33,9 +34,10 @@ fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 %% GRID
 
 %load grid for number of layers
+create_mat_grd(fid_log,flg_loc,simdef)
 load(simdef.file.mat.grd,'gridInfo')
-fpath_map=simdef.file.map;
 
+%%
 if isnan(flg_loc.layer)
     layer=gridInfo.no_layers;
 else

@@ -22,6 +22,8 @@ addOptional(parin,'tim',[]);
 addOptional(parin,'layer',[]);
 addOptional(parin,'station','');
 addOptional(parin,'pli','');
+addOptional(parin,'pol','');
+addOptional(parin,'iso','');
 
 parse(parin,varargin{:});
 
@@ -29,6 +31,8 @@ time_dnum=parin.Results.tim;
 layer=parin.Results.layer;
 station=parin.Results.station;
 pli=parin.Results.pli;
+pol=parin.Results.pol;
+iso=parin.Results.iso;
 
 %%
 
@@ -57,10 +61,23 @@ end
 
 %pli
 if ~isempty(pli)
-    str_add=sprintf('%s_pli_%s',str_add,pli);
+    str_add=sprintf('%s_pli_%s',str_add,strrep(pli,' ',''));
+end
+
+%pol
+if ~isempty(pol)
+    str_add=sprintf('%s_pol_%s',str_add,strrep(pol,' ',''));
+end
+
+%iso
+if ~isempty(iso)
+    str_add=sprintf('%s_iso_%s',str_add,strrep(iso,' ',''));
 end
 
 %final
-fpath_mat_tmp=fullfile(fdir_mat,sprintf('%s_%s.mat',tag,str_add));
+str_add=sprintf('%s_%s.mat',tag,str_add);
+str_add=strrep(str_add,'__','_');
+str_add=strrep(str_add,'_.mat','.mat');
+fpath_mat_tmp=fullfile(fdir_mat,str_add);
 
 end %function

@@ -13,12 +13,13 @@
 %
 
 function create_mat_grd(fid_log,in_plot,simdef)
-    
-if ~in_plot.map
-    messageOut(fid_log,'It is not necessary to get the grid')
-    return
-end
-messageOut(fid_log,'It is necessary to get the grid')
+
+%calling only in those we need
+% if ~in_plot.map
+%     messageOut(fid_log,'It is not necessary to get the grid')
+%     return
+% end
+% messageOut(fid_log,'It is necessary to get the grid')
 
 if exist(simdef.file.mat.grd,'file')==2
     messageOut(fid_log,'Grid mat-file exist')
@@ -26,7 +27,7 @@ if exist(simdef.file.mat.grd,'file')==2
 end
 messageOut(fid_log,'Grid mat-file does not exist. Reading.')
 
-gridInfo=EHY_getGridInfo(simdef.file.map,{'face_nodes_xy','XYcen','no_layers'},'mergePartitions',1);
-save_check(simdef.file.mat.grd,'gridInfo');
+gridInfo=EHY_getGridInfo(simdef.file.map,{'face_nodes_xy','XYcen','no_layers'},'mergePartitions',1); %#ok
+save_check(simdef.file.mat.grd,'gridInfo'); 
     
 end %function

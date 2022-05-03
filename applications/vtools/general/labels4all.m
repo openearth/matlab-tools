@@ -276,7 +276,7 @@ switch lower(var)
             case 'en'
                 str_var='cross-wise velocity';
             case 'nl'
-                str_var='kruissnelheid';
+                str_var='dwarssnelheid';
             case 'es'
                 str_var='velocidad transversal';
         end
@@ -284,9 +284,9 @@ switch lower(var)
     case 'us'
         switch lan
             case 'en'
-                str_var='streamwise velocity';
+                str_var='longitudinal velocity';
             case 'nl'
-                str_var='stroomgewijze snelheid';
+                str_var='longitudinale snelheid';
             case 'es'
                 str_var='velocidad longitudinal';
         end
