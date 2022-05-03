@@ -97,19 +97,19 @@ configuration.include_menu_coordinate_system=1;
 configuration.include_menu_options=1;
 
 if isfield(xml,'include_menu_coordinate_system')
-    if strcmpi(xml.include_menu_coordinate_system.include_menu_coordinate_system.value(1),'n')
+    if strcmpi(xml.include_menu_coordinate_system.include_menu_coordinate_system.value.value.value(1),'n')
         configuration.include_menu_coordinate_system=0;
     end    
 end
 
 if isfield(xml,'include_menu_options')
-    if strcmpi(xml.include_menu_options.include_menu_options.value(1),'n')
+    if strcmpi(xml.include_menu_options.include_menu_options.value.value.value(1),'n')
         configuration.include_menu_options=0;
     end    
 end
 
 if isfield(xml,'include_menu_shoreline')
-    if strcmpi(xml.include_menu_shoreline.include_menu_shoreline.value(1),'n')
+    if strcmpi(xml.include_menu_shoreline.include_menu_shoreline.value.value.value(1),'n')
         configuration.include_menu_shoreline=0;
     end    
 end
