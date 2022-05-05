@@ -57,22 +57,9 @@ for kt=kt_v
     
     %% read data
     
-    fpath_uv=mat_tmp_name(fdir_mat,'uv','tim',time_dnum(kt));
-    if exist(fpath_uv,'file')==2
-        load(fpath_uv,'data_uv')
-    else
-        data_uv=EHY_getMapModelData(fpath_map,'varName','uv','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0);
-        save_check(fpath_uv,'data_uv');
-    end
-    
-    fpath_zw=mat_tmp_name(fdir_mat,'zw','tim',time_dnum(kt));
-    if exist(fpath_zw,'file')==2
-        load(fpath_zw,'data_zw')
-    else
-        data_zw=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_zw','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0);
-        save_check(fpath_zw,'data_zw');
-    end
-    
+    data_uv=gdm_read_data_map(fdir_mat,fpath_map,'uv','tim',time_dnum(kt));
+    data_zw=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zw','tim',time_dnum(kt));
+       
     %% calc
     
     %squeeze to take out the first (time) dimension. Then layers are in dimension 2.

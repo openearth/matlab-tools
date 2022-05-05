@@ -24,8 +24,7 @@ end
 
 fdir_mat=simdef.file.mat.dir;
 
-pol=D3D_io_input('read',fpath_pol);
-pol_name=strrep(pol.name{1,1},' ','');
+[pol,pol_name]=gdm_read_pol(fpath_pol);
 fpath_bol=mat_tmp_name(fdir_mat,'bol_grd','pol',pol_name);
 if exist(fpath_bol,'file')==2 && ~flg_loc.overwrite
     messageOut(fid_log,sprintf('Polygon grd-boolean exists: %s',fpath_bol));

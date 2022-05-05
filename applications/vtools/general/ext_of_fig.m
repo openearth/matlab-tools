@@ -15,6 +15,8 @@
 function fext=ext_of_fig(fig_print)
 
 switch fig_print
+    case 0
+        fext=''; %just to pass this function
     case 1
         fext='.png';
     case 2

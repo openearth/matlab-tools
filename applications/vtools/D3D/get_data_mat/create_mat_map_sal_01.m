@@ -60,13 +60,7 @@ for kt=kt_v
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'layer',layer);
     if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
     
-    fpath_sal=mat_tmp_name(fdir_mat,'sal','tim',time_dnum(kt),'layer',layer);
-    if exist(fpath_sal,'file')==2
-        load(fpath_sal,'data_sal')
-    else
-        data_sal=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'layer',layer,'disp',0); 
-        save_check(fpath_sal,'data_sal');
-    end
+    data_sal=gdm_read_data_map(fdir_mat,fpath_map,'sal','layer',layer,'tim',time_dnum(kt));
     
     data=data_sal.val; %#ok
     save_check(fpath_mat_tmp,'data'); 

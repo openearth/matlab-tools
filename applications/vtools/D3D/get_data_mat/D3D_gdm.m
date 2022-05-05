@@ -104,6 +104,12 @@ for ks=1:ns
     if isfield(in_plot,'fig_his_sal_01')==1
     plot_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
     end
+    
+    %% sal 3D
+    if isfield(in_plot,'fig_map_sal3D_01')==1
+    plot_map_sal3D_01(fid_log,in_plot.fig_map_sal3D_01,simdef)
+    end
+    
 end %ks
 
 %% differences plot

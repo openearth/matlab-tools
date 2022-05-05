@@ -100,7 +100,7 @@ switch lower(var)
             case 'es'
                 str_var='elevación';
         end
-        un_type='L';
+        un_type='Lref';
     case 'etab'
         switch lan
             case 'en'
@@ -110,7 +110,7 @@ switch lower(var)
             case 'es'
                 str_var='elevación del lecho';
         end
-        un_type='L';
+        un_type='Lref';
     case {'detab'}
         switch lan
             case 'en'

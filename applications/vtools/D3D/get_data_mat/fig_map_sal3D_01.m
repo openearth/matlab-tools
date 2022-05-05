@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 18016 $
+%$Date: 2022-05-03 16:22:21 +0200 (Tue, 03 May 2022) $
+%$Author: chavarri $
+%$Id: fig_map_sal_01.m 18016 2022-05-03 14:22:21Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_sal_01.m $
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_whatever(in_p)
+function fig_map_sal3D_01(in_p)
 
 %% DEFAULTS
 
@@ -52,20 +52,55 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
+if isfield(in_p,'is_background')==0
+    in_p.is_background=0;
+end
+if isfield(in_p,'is_diff')==0
+    in_p.is_diff=0;
+end
+if isfield(in_p,'ldb_thk')==0
+    in_p.ldb_thk=0.5;
+end
+in_p.plot_ldb=0;
+if isfield(in_p,'ldb')
+    in_p.plot_ldb=1;
+end
+in_p.plot_vector=0;
+if isfield(in_p,'vec_x')
+    in_p.plot_vector=1;
+end
 
 v2struct(in_p)
 
 %% check if printing
-do_fig=check_print_figure(in_p);
-if ~do_fig
+print_fig=check_print_figure(in_p);
+if ~print_fig
     return
 end
+
+%% units
+
+% switch unit
+%     case {'cl','cl_surf'}
+%         clims=sal2cl(1,clims);
+%         val=sal2cl(1,val);
+% %     case 'sal'
+% %     otherwise
+% %         error('not sure what to do')
+% end
+
+%% dependent
+
+% if isnan(clims(1))
+%     tol=1e-8;
+%     clims=[min(val(:))-tol,max(val(:))+tol];
+% end
 
 %% SIZE
 
 %square option
-npr=2; %number of plot rows
-npc=4; %number of plot columns
+npr=1; %number of plot rows
+npc=1; %number of plot columns
 axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
@@ -79,7 +114,7 @@ prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0
 marg.mt=1.0; %top margin [cm]
 marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
-marg.ml=1.5; %left margin [cm]
+marg.ml=2.0; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
 marg.sv=0.0; %vertical spacing [cm]
 
@@ -124,10 +159,22 @@ set(groot,'defaultLegendInterpreter','tex');
 % kr=1; kc=1;
 % cbar(kr,kc).displacement=[0.0,0,0,0]; 
 % cbar(kr,kc).location='northoutside';
-% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
-
+% [lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
+% if is_background
+%     cbar(kr,kc).label=str_back;
+%     cmap=turbo(100);
+% elseif is_diff
+%     cbar(kr,kc).label=str_diff;
+%     cmap=brewermap(100,'RdYlBu');
+% else
+%     cbar(kr,kc).label=lab;
+%     cmap=turbo(100);
+% end
+    
+%     cmap=turbo(100);
 % brewermap('demo')
-cmap=brewermap(3,'set1');
+cmap=summer(100);
+
 
 %center around 0
 % ncmap=1000;
@@ -253,11 +300,13 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-lims.y(kr,kc,1:2)=[-2e-3,2e-3];
-lims.x(kr,kc,1:2)=lim_A;
-lims.c(kr,kc,1:2)=clims;
-xlabels{kr,kc}='L_a [m]';
-ylabels{kr,kc}='\lambda^* [-]';
+lims.y(kr,kc,1:2)=ylims;
+lims.x(kr,kc,1:2)=xlims;
+lims.z(kr,kc,1:2)=zlims;
+lims.c(kr,kc,1:2)=zlims;
+xlabels{kr,kc}=labels4all('x',1,lan);
+ylabels{kr,kc}=labels4all('y',1,lan);
+zlabels{kr,kc}=labels4all('eta',1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
@@ -347,34 +396,51 @@ end
 
 %% PLOT
 
-kr=1; kc=1;    
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
-han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
-han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
-surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
-patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
+kr=1; kc=1;   
+% set(han.fig,'CurrentAxes',han.sfig(kr,kc))
+% patch(gridInfo.Xcen,gridInfo.Ycen,bl)
+EHY_plotMapModelData_V(gridInfo,bl,'t',1,'z',z); 
+% surf(gridInfo.Xcen,gridInfo.Ycen,bl)
+% patch('Faces',faces','Vertices',[x_node,y_node,bl_nodes],'FaceVertexCData',cvar(:,1),'FaceColor','flat','EdgeColor','k')
+
+patch(iso,'EdgeColor','none','parent',han.sfig(kr,kc),'FaceAlpha',0.5,'FaceColor','r')
+
+
+
+
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+% han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
+% han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
+% han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
+% surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+% patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
+
 
 %% PROPERTIES
 
     %sub11
 kr=1; kc=1;   
+camlight;
+lighting gouraud;
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
+daspect([max(daspect)*[1 1] 1])
 han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).ZLim=lims.z(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+han.sfig(kr,kc).ZLabel.String=zlabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String='c';
+han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
@@ -384,11 +450,11 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-% kr=1; kc=2;
-% view(han.sfig(kr,kc),[0,90]);
-% colormap(han.sfig(kr,kc),cmap);
-% if ~isnan(lims.c(kr,kc,1:1))
-% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+kr=1; kc=1;
+view(han.sfig(kr,kc),views);
+colormap(han.sfig(kr,kc),cmap);
+% % if ~isnan(lims.c(kr,kc,1:1))
+caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
 
 %% ADD TEXT
@@ -426,19 +492,19 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
-han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
-pos.leg=han.leg(kr,kc).Position;
-han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
-han.sfig(kr,kc).Position=pos.sfig;
+% han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
+% pos.leg=han.leg(kr,kc).Position;
+% han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
+% han.sfig(kr,kc).Position=pos.sfig;
 
 %% COLORBAR
 
 % kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
-% pos.cbar=han.cbar.Position;
-% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
-% han.sfig(kr,kc).Position=pos.sfig;
+% % pos.cbar=han.cbar.Position;
+% % han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+% % han.sfig(kr,kc).Position=pos.sfig;
 % han.cbar.Label.String=cbar(kr,kc).label;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it

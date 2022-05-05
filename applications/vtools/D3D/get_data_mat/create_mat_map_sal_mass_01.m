@@ -56,14 +56,15 @@ for kt=kt_v
     if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
     
     %% read data
-    raw_sal=EHY_getMapModelData(fpath_map,'varName','sal','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0);
-    raw_zint=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_zw','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0);
+    
+    data_sal=gdm_read_data_map(fdir_mat,fpath_map,'sal','tim',time_dnum(kt));
+    data_zw=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zw','tim',time_dnum(kt));
     
     %% calc
     
     %squeeze to take out the first (time) dimension. Then layers are in dimension 2.
-    cl=sal2cl(1,squeeze(raw_sal.val)); %mgCl/l
-    thk=diff(squeeze(raw_zint.val),1,2); %m
+    cl=sal2cl(1,squeeze(data_sal.val)); %mgCl/l
+    thk=diff(squeeze(data_zw.val),1,2); %m
     mass=sum(cl/1000.*thk,2,'omitnan')'; %mgCl/m^2; cl*1000/1000/1000 [kgCl/m^3]
     
     %data
