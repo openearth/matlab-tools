@@ -113,6 +113,8 @@ for kpol=1:npol
                 %END DEBUG
                 
                 fig_map_sal3D_01(in_p);
+                
+                messageOut(fid_log,sprintf('Done printing figure time %4.2f %% iso %4.2f %%',kt/nt*100,kiso/niso*100));
 
 %             end %kclim
         end %kiso
@@ -128,9 +130,9 @@ for kpol=1:npol
         dt_aux=diff(time_dnum);
         dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
         rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
-        for kclim=1:nclim
-           make_video(fpath_file(:,kclim),'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
-        end
+%         for kclim=1:nclim
+           make_video(fpath_file,'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
+%         end
     end
 
 end %kpol
@@ -143,13 +145,13 @@ end %function
 
 function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,iso)
 
-fprintf('fdir_fig: %s \n',fdir_fig);
-fprintf('tag: %s \n',tag);
-fprintf('runid: %s \n',runid);
-fprintf('time_dnum: %f \n',time_dnum);
-fprintf('iso: %s \n',iso);
+% fprintf('fdir_fig: %s \n',fdir_fig);
+% fprintf('tag: %s \n',tag);
+% fprintf('runid: %s \n',runid);
+% fprintf('time_dnum: %f \n',time_dnum);
+% fprintf('iso: %s \n',iso);
                 
 fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_iso_%s',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),iso));
 
-fprintf('fpath_fig: %s \n',fpath_fig);
+% fprintf('fpath_fig: %s \n',fpath_fig);
 end %function
