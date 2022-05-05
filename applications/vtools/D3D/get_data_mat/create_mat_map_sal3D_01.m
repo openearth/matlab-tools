@@ -165,28 +165,13 @@ for kpol=1:npol
             sal_iso=isosurface(x_int,y_int,z_int,sal_int,flg_loc.isoval(kiso));
             
             %remove faces below bed level
-            bl_v=F_bl(sal_iso.vertices(:,1),sal_iso.vertices(:,2));
-            idx_out=find(sal_iso.vertices(:,3)<bl_v);            
-            bol_out=any(ismember(sal_iso.faces,idx_out),2); 
-            sal_iso.faces(bol_out,:)=[];
-            
-%             %this is really expensive and I am sure I can do better.
-%             idx_out=find(sal_iso.vertices(:,3)<bl_v);
-%             faces_c=sal_iso.faces;
-%             nf=size(faces_c,1);
-%             for kf=1:nf
-%                 if any(any(faces_c(kf,:)==idx_out))
-%                     faces_c(kf,:)=NaN;
-%                 end
-% %                 fprintf('cleaning %4.2f %% \n',kf/nf*100)
-%             end
-%             bol_nan=isnan(faces_c(:,1));
-%             faces_c2=faces_c;
-%             faces_c2(bol_nan,:)=[];
-%             sal_iso_c=sal_iso;
-%             sal_iso_c.faces=faces_c2;
-%             sal_iso=sal_iso_c; %rename
-            
+            if ~isempty(sal_iso.vertices)
+                bl_v=F_bl(sal_iso.vertices(:,1),sal_iso.vertices(:,2));
+                idx_out=find(sal_iso.vertices(:,3)<bl_v);            
+                bol_out=any(ismember(sal_iso.faces,idx_out),2); 
+                sal_iso.faces(bol_out,:)=[];
+            end
+                        
             %data
             data=sal_iso; %#ok
 %             data=v2struct(sal_iso); %#ok
@@ -199,8 +184,8 @@ for kpol=1:npol
 
 %             figure
 %             hold on
-%             patch(sal_iso_c,'edgecolor','none','facecolor','r')
-%             EHY_plotMapModelData_V(gridInfo,bl_pol,'t',1,'z',bl_int);            
+%             patch(sal_iso,'edgecolor','none','facecolor','r')
+%             EHY_plotMapModelData_V(gridInfo,bl_pol,'t',1,'z',bl_cor);            
 %             camlight;
 %             lighting gouraud;
 
