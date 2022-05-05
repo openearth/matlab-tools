@@ -109,9 +109,7 @@ for kpol=1:npol
                 in_p.fname=fname_noext;
                 
                 %BEGIN DEBUG
-                fprintf('fname_noext: %s',fname_noext);
-                fprintf('fdir_fig: %s',fdir_fig);
-                fprintf('tag: %s',tag);
+
                 %END DEBUG
                 
                 fig_map_sal3D_01(in_p);
@@ -145,6 +143,13 @@ end %function
 
 function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,iso)
 
+fprintf('fdir_fig: %s \n',fdir_fig);
+fprintf('tag: %s \n',tag);
+fprintf('runid: %s \n',runid);
+fprintf('time_dnum: %f \n',time_dnum);
+fprintf('iso: %s \n',iso);
+                
 fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_iso_%s',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),iso));
 
+fprintf('fpath_fig: %s \n',fpath_fig);
 end %function
