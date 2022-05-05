@@ -108,6 +108,12 @@ for kpol=1:npol
 
                 in_p.fname=fname_noext;
                 
+                %BEGIN DEBUG
+                fprintf('fname_noext: %s',fname_noext);
+                fprintf('fdir_fig: %s',fdir_fig);
+                fprintf('tag: %s',tag);
+                %END DEBUG
+                
                 fig_map_sal3D_01(in_p);
 
 %             end %kclim
