@@ -103,7 +103,7 @@ for kpol=1:npol
 %             for kclim=1:nclim
 %                 in_p.clims=flg_loc.clims(kclim,:);
 
-                fname_noext=fig_name(fdir_fig,tag,runid,kt,time_dnum(kt),num2str(flg_loc.isoval(kiso)));
+                fname_noext=fig_name(fdir_fig,tag,runid,time_dnum(kt),num2str(flg_loc.isoval(kiso)));
                 fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                 in_p.fname=fname_noext;
@@ -137,8 +137,8 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,kt,time_dnum,iso)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,iso)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_iso_%s',tag,runid,datestr(time_dnum(kt),'yyyymmddHHMM'),iso));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_iso_%s',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),iso));
 
 end %function

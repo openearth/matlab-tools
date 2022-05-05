@@ -26,7 +26,11 @@ fpath_project='';
 
 %% ADD OET
 
-addpath(fpath_add_fcn)
+if ispc
+    addpath(fpath_add_fcn)
+elseif isunix
+    addpath(strrep(strrep(strcat('/',strrep(fpath_add_fcn,'P:','p:')),':',''),'\','/'));
+end
 addOET(fpath_add_fcn) 
 
 %% PATHS
