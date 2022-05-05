@@ -139,6 +139,6 @@ end %function
 
 function fpath_fig=fig_name(fdir_fig,tag,runid,kt,time_dnum,iso)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_iso_%f',tag,runid,datestr(time_dnum(kt),'yyyymmddHHMM'),iso));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_iso_%s',tag,runid,datestr(time_dnum(kt),'yyyymmddHHMM'),iso));
 
 end %function
