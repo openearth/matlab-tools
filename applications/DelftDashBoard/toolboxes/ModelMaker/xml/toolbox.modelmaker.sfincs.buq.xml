@@ -43,7 +43,7 @@
     <style>pushselectfile</style>
     <position>100 50 80 20</position>
     <text>Load Polygon</text>
-    <variable>handles.toolbox.modelmaker.sfincs.buq.refinement_polygon_file</variable>
+    <variable>handles.toolbox.modelmaker.sfincs.buq.refinement_polygonfile</variable>
     <onchange>ddb_ModelMakerToolbox_sfincs_buq</onchange>
     <option1>load_refinement_polygon</option1>
     <showfilename>no</showfilename>
@@ -55,7 +55,7 @@
     <style>pushsavefile</style>
     <position>100 25 80 20</position>
     <text>Save Polygon</text>
-    <variable>handles.toolbox.modelmaker.sfincs.buq.refinement_polygon_file</variable>
+    <variable>handles.toolbox.modelmaker.sfincs.buq.refinement_polygonfile</variable>
     <onchange>ddb_ModelMakerToolbox_sfincs_buq</onchange>
     <option1>save_refinement_polygon</option1>
     <showfilename>no</showfilename>

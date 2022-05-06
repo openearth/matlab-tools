@@ -281,3 +281,6 @@ handles.toolbox.modelmaker.sfincs.mask.boundarycells_index = 1;
 handles.toolbox.modelmaker.sfincs.mask.boundarycells_option = 1;
 handles.toolbox.modelmaker.sfincs.mask.boundarycells_action={};
 
+% options for sfincs quadtree
+handles.toolbox.modelmaker.sfincs.buq.nr_refinement_polygons = 0;
+handles.toolbox.modelmaker.sfincs.buq.active_refinement_level = 1;
