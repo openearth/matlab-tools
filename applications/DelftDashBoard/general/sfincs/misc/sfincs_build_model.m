@@ -56,12 +56,15 @@ for ii=1:length(varargin)
                         xy_bnd_closed=load_polygon(varargin{ii+1});
                     catch
                         xy_bnd_closed=load_polygon_ascii(varargin{ii+1});
-                    end                    
-                     
+                    end                                         
                 end
             case{'openboundarypolygon'}
                 if ~isempty(varargin{ii+1})
-                    xy_bnd_open=load_polygon(varargin{ii+1});
+                    try
+                        xy_bnd_open=load_polygon(varargin{ii+1});
+                    catch
+                        xy_bnd_open=load_polygon_ascii(varargin{ii+1});                        
+                    end                     
                 end
         end
     end
@@ -116,7 +119,12 @@ if ~isempty(inp.sbgfile)
        disp('WARNING: subgrid generation: dy is not a whole number, this might cause problems') 
     end    
 %     refj=refi;
-    sfincs_make_subgrid_file_v7(folder,inp.sbgfile,bathy,cs,nbin,refi,refj,subgrid_uopt,maxdzdv,usemex,inp.manning_sea,inp.manning_land,inp.rgh_lev_land);       
+
+    manning_input(1) = inp.manning_sea;
+    manning_input(2) = inp.manning_land;
+    manning_input(3) = inp.rgh_lev_land;
+    
+    sfincs_make_subgrid_file_v8(folder,inp.sbgfile,bathy,manning_input,cs,nbin,refi,refj,subgrid_uopt,maxdzdv,usemex)
 end
 
 disp('Done.');
