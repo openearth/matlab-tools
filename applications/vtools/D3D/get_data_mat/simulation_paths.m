@@ -19,7 +19,8 @@ function simdef=simulation_paths(fdir_sim,in_plot)
 simdef.D3D.dire_sim=fdir_sim;
 simdef=D3D_simpath(simdef,'break',1);
 
-tok=regexp(fdir_sim,'\','split');
+%the runid is not in the mdu name, but in the folder name
+tok=regexp(fdir_sim,filesep,'split');
 simdef.file.runid=tok{1,end};
 
 %% mat and fig
