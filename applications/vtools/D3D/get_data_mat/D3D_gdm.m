@@ -147,4 +147,30 @@ for ks=1:ns
     
 end
 
+%% differences plot all in one
+
+messageOut(fid_log,'---Plotting differences between runs in one plot')
+
+%reference paths
+ks_ref=in_plot.sim_ref;
+fdir_sim=in_plot.fdir_sim{ks_ref};
+simdef_ref=simulation_paths(fdir_sim,in_plot);
+
+simdef=struct();
+ksc=0;
+for ks=1:ns
+    
+    if ks==ks_ref; continue; end
+    ksc=ksc+1;
+    %% paths
+    fdir_sim=in_plot.fdir_sim{ks};
+    simdef(ksc)=simulation_paths(fdir_sim,in_plot);
+end
+
+%% his sal 01
+if isfield(in_plot,'fig_his_sal_01')==1
+%     in_plot.fig_his_sal_01.tag=
+plot_his_sal_diff_01(fid_log,in_plot.fig_his_sal_01,simdef_ref,simdef)
+end
+
 end %function

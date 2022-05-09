@@ -60,7 +60,7 @@ fext=ext_of_fig(in_p.fig_print);
 for kpol=1:npol
     
     kt_v=gdm_kt_v(flg_loc,nt); %time index vector
-    fpath_file=cell(nt,1); 
+    fpath_file=cell(nt,niso); 
     
     %polygon name
     [~,pol_name]=gdm_read_pol(flg_loc.pol{kpol});
@@ -88,7 +88,9 @@ for kpol=1:npol
     in_p.zlims=zlims;
     in_p.views=flg_loc.view(kpol,:);
 
+    ktc=0;
     for kt=kt_v
+        ktc=ktc+1;
         for kiso=1:niso
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'iso',num2str(flg_loc.isoval(kiso)));
             if exist(fpath_mat_tmp,'file')~=2; flg_loc.do_movie=0; continue; end
@@ -104,7 +106,7 @@ for kpol=1:npol
 %                 in_p.clims=flg_loc.clims(kclim,:);
 
                 fname_noext=fig_name(fdir_fig,tag,runid,time_dnum(kt),num2str(flg_loc.isoval(kiso)));
-                fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+                fpath_file{kt,kiso}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                 in_p.fname=fname_noext;
                 
@@ -114,7 +116,7 @@ for kpol=1:npol
                 
                 fig_map_sal3D_01(in_p);
                 
-                messageOut(fid_log,sprintf('Done printing figure time %4.2f %% iso %4.2f %%',kt/nt*100,kiso/niso*100));
+                messageOut(fid_log,sprintf('Done printing figure time %4.2f %% iso %4.2f %%',ktc/nt*100,kiso/niso*100));
 
 %             end %kclim
         end %kiso
@@ -130,9 +132,9 @@ for kpol=1:npol
         dt_aux=diff(time_dnum);
         dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
         rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
-%         for kclim=1:nclim
-           make_video(fpath_file,'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
-%         end
+        for kiso=1:niso
+           make_video(fpath_file(:,kiso),'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
+        end
     end
 
 end %kpol
