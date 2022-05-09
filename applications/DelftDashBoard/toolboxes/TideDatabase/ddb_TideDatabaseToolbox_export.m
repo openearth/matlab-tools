@@ -184,7 +184,7 @@ handles=getHandles;
 ii=handles.toolbox.tidedatabase.activeModel;
 iac=handles.toolbox.tidedatabase.activeConstituent;
 name=handles.tideModels.model(ii).name;
-if strcmpi(handles.tideModels.model(ii).URL(1:5),'https')
+if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
     tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
 else
     tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
@@ -492,7 +492,7 @@ function [tim,wl]=get_timeseries_at_point
 handles=getHandles;
 ii=handles.toolbox.tidedatabase.activeModel;
 name=handles.tideModels.model(ii).name;
-if strcmpi(handles.tideModels.model(ii).URL(1:5),'https')
+if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
     tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
 else
     tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
