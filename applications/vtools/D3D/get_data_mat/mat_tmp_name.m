@@ -24,6 +24,7 @@ addOptional(parin,'station','');
 addOptional(parin,'pli','');
 addOptional(parin,'pol','');
 addOptional(parin,'iso','');
+addOptional(parin,'var','');
 
 parse(parin,varargin{:});
 
@@ -33,6 +34,7 @@ station=parin.Results.station;
 pli=parin.Results.pli;
 pol=parin.Results.pol;
 iso=parin.Results.iso;
+var=parin.Results.var;
 
 %%
 
@@ -72,6 +74,11 @@ end
 %iso
 if ~isempty(iso)
     str_add=sprintf('%s_iso_%s',str_add,strrep(iso,' ',''));
+end
+
+%var
+if ~isempty(var)
+    str_add=sprintf('%s_var_%s',str_add,strrep(var,' ',''));
 end
 
 %final

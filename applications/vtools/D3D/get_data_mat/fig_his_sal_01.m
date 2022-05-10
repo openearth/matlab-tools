@@ -144,7 +144,7 @@ set(groot,'defaultLegendInterpreter','tex');
 % cbar(kr,kc).label='surface fraction content of fine sediment [-]';
 
 % brewermap('demo')
-cmap=brewermap(3,'set1');
+cmap=brewermap(9,'set1');
 
 %center around 0
 % ncmap=1000;
@@ -375,8 +375,11 @@ end
 
 %% PLOT
 
-kr=1; kc=1;    
-han.p(kr,kc,1)=plot(tim,val,'parent',han.sfig(kr,kc),'color','r','linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+kr=1; kc=1;   
+nS=size(val,2);
+for kS=1:nS
+han.p(kr,kc,kS)=plot(tim,val(:,kS),'parent',han.sfig(kr,kc),'color',cmap(kS,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+end
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
@@ -450,10 +453,12 @@ han.sfig(kr,kc).Title.String=strrep(station,'_','\_');
 
 %% LEGEND
 
-% kr=1; kc=1;
+kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
-% han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
+if nS>1
+han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),leg_str,'location','best');
+end
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
 % pos.leg=han.leg(kr,kc).Position;
 % han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];

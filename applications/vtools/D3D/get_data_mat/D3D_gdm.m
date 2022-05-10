@@ -60,6 +60,11 @@ for ks=1:ns
     create_mat_map_sal3D_01(fid_log,in_plot.fig_map_sal3D_01,simdef)
     end
     
+    %% map_summerbed
+    if isfield(in_plot,'fig_map_summerbed_01')==1
+    create_mat_map_summerbed_01(fid_log,in_plot.fig_map_q_01,simdef)
+    end
+    
 end %ks
 
 
@@ -110,6 +115,10 @@ for ks=1:ns
     plot_map_sal3D_01(fid_log,in_plot.fig_map_sal3D_01,simdef)
     end
     
+    %% map_summerbed
+    if isfield(in_plot,'fig_map_summerbed_01')==1
+    end
+    
 end %ks
 
 %% differences plot
@@ -142,6 +151,7 @@ for ks=1:ns
     
     %% his sal 01
     if isfield(in_plot,'fig_his_sal_01')==1
+    in_plot.fig_his_sal_01.tag_fig=sprintf('%s_diff',in_plot.fig_his_sal_01.tag);
     plot_his_sal_diff_01(fid_log,in_plot.fig_his_sal_01,simdef_ref,simdef)
     end
     
@@ -156,7 +166,6 @@ ks_ref=in_plot.sim_ref;
 fdir_sim=in_plot.fdir_sim{ks_ref};
 simdef_ref=simulation_paths(fdir_sim,in_plot);
 
-simdef=struct();
 ksc=0;
 for ks=1:ns
     
@@ -164,13 +173,14 @@ for ks=1:ns
     ksc=ksc+1;
     %% paths
     fdir_sim=in_plot.fdir_sim{ks};
-    simdef(ksc)=simulation_paths(fdir_sim,in_plot);
+    simdef_all(ksc)=simulation_paths(fdir_sim,in_plot);
+    in_plot.fig_his_sal_01.leg_str{ksc}=in_plot.str_sim{ks};
 end
 
 %% his sal 01
-if isfield(in_plot,'fig_his_sal_01')==1
-%     in_plot.fig_his_sal_01.tag=
-plot_his_sal_diff_01(fid_log,in_plot.fig_his_sal_01,simdef_ref,simdef)
+if isfield(in_plot,'fig_his_sal_01')==1 && ~isempty(simdef_all)
+    in_plot.fig_his_sal_01.tag_fig='his_sal_diff_all_01';
+    plot_his_sal_diff_01(fid_log,in_plot.fig_his_sal_01,simdef_ref,simdef_all)
 end
 
 end %function

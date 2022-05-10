@@ -14,6 +14,7 @@
 
 function create_mat_grd(fid_log,in_plot,simdef)
 
+warning('outdated, call <gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map)>')
 %calling only in those we need
 % if ~in_plot.map
 %     messageOut(fid_log,'It is not necessary to get the grid')

@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 
-function [nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map)
+function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map)
 
 %% PARSE
 
@@ -37,8 +37,9 @@ else
     load_tim=true;
 end
 if load_tim
-    [time_dnum,time_dtime]=D3D_time_dnum(fpath_map,flg_loc.tim);
-    tim=v2struct(time_dnum,time_dtime); %#ok
+    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,flg_loc.tim);
+    tim=v2struct(time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx); %#ok
+    
     save_check(fpath_mat_time,'tim');
 end
 nt=numel(time_dnum);

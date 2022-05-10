@@ -1,59 +1,41 @@
 %
-%
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
-%add paths to OET tools:
-%   https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab
-%   run(oetsettings)
-%add paths to RIV tools:
-%   https://repos.deltares.nl/repos/RIVmodels/rivtools/trunk/matlab
-%   run(rivsettings)
+%1D minimal plot
 
 %% PREAMBLE
 
+% dbclear all;
 clear
 clc
+fclose all;
+
+%% PATHS
+
+% fpath_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+% fpath_add_fcn='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\';
+fpath_add_fcn='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\general\';
+
+%% ADD OET
+
+if isunix
+    fpath_add_fcn=strrep(strrep(strcat('/',strrep(fpath_add_fcn,'P:','p:')),':',''),'\','/');
+end
+addpath(fpath_add_fcn)
+addOET(fpath_add_fcn) 
 
 %% INPUT
 
-in_read.branch={'Rhine','Waal'}; %branch
-in_read.kt=10; %output time index
-simdef.D3D.dire_sim='p:\studenten-riv\03_Work\220324_Josephien_Lingbeek\01_runs\r014\dflowfm\';
-simdef.flg.which_v=2; 
-%   1=etab
-%   2=h
-%   3=dm Fak
-%   4=dm fIk
-%   5=fIk
-%   6=I
-%   7=elliptic
-%	8=Fak
-%   9=detrended etab based on etab_0
-%   10=depth averaged velocity
-%   11=velocity
-%   12=water level
-%   13=face indices
-%   14=active layer thickness
-%   15=bed shear stress
-%   16=specific water discharge
-%   17=cumulative bed elevation
-%   18=water discharge 
-%   19=bed load transport in streamwise direction (at nodes)
-%   20=velocity at the main channel
-%   21=discharge at main channel
-%   22=cumulative nourished volume of sediment
-%   23=suspended transport in streamwise direction
-%   24=cumulative bed load transport
-%   25=total sediment mass (summation of all substrate layers)
-%   26=dg Fak
-%   27=total sediment thickness (summation of all substrate layers)
-%   28=main channel averaged bed level
-%   29=sediment transport magnitude at edges m^2/s
-%   30=sediment transport magnitude at edges m^3/s
-%   31=morphodynamic width [m]
-%   32=Chezy 
-%   33=cell area [m^2]
+in_read.branch={'Channel_1D_1'}; %branch
+in_read.kt=inf; %output time index
+simdef.D3D.dire_sim='p:\studenten-riv\03_Work\220324_Josephien_Lingbeek\01_runs\r043\dflowfm\';
+simdef.flg.which_v=2; %see list: open input_D3D_fig_layout
 
 %% do not change
 
@@ -61,7 +43,6 @@ simdef.flg.which_p=3; %plot type
 
 %% CALL
 
-simdef=D3D_comp(simdef);
 simdef=D3D_simpath(simdef);
 out_read=D3D_read(simdef,in_read);
 

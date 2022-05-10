@@ -15,7 +15,11 @@
 function plot_his_sal_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
 tag=flg_loc.tag;
-tag_diff=sprintf('%s_diff',tag);
+if isfield(flg_loc,'tag_fig')==0
+    tag_fig=tag;
+else
+    tag_fig=flg_loc.tag_fig;
+end
 
 %% DO
 
@@ -25,11 +29,16 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 fdir_mat_ref=simdef_ref.file.mat.dir;
 
-fdir_mat=simdef.file.mat.dir;
+nS=numel(simdef);
+fdir_mat=simdef_ref.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag_diff);
-fpath_his=simdef.file.his;
+if nS==1
+    fdir_fig=fullfile(simdef.file.fig.dir,tag_fig);
+else
+    fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig);
+end
+fpath_his=simdef_ref.file.his;
 mkdir_check(fdir_fig);
 
 %%
@@ -61,16 +70,24 @@ fext=ext_of_fig(in_p.fig_print);
 ks_v=gdm_kt_v(flg_loc,ns);
 
 fpath_file=cell(ns,nylim);
-for ks=ks_v
+for ks=ks_v %stations
     fpath_mat_tmp_ref=mat_tmp_name(fdir_mat_ref,tag,'station',stations{ks});
-    fpath_mat_tmp    =mat_tmp_name(fdir_mat    ,tag,'station',stations{ks});
-    
     data_ref=load(fpath_mat_tmp_ref,'data');
-    data    =load(fpath_mat_tmp    ,'data');
-    
-    val=data.data-data_ref.data;
+    val_scenario=NaN(numel(data_ref.data),nS);
+    for kS=1:nS %simulations
+        fdir_mat=simdef(kS).file.mat.dir;
+        fpath_mat_tmp    =mat_tmp_name(fdir_mat    ,tag,'station',stations{ks});
+        data=load(fpath_mat_tmp    ,'data');
+        val_scenario(:,kS)=data.data;
+    end
+
+    val=val_scenario-data_ref.data;
     for kylim=1:nylim
-        fname_noext=fullfile(fdir_fig,sprintf('sal_his_diff_01_%s_%s_%s_ylim_%02d',simdef.file.runid,simdef_ref.file.runid,stations{ks},kylim));
+        if nS==1 %not the nicest if-else
+            fname_noext=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_ylim_%02d',tag_fig,simdef.file.runid,simdef_ref.file.runid,stations{ks},kylim));
+        else
+            fname_noext=fullfile(fdir_fig,sprintf('%s_%s_%s_ylim_%02d',tag_fig,simdef_ref.file.runid,stations{ks},kylim));
+        end
         fpath_file{ks,kylim}=sprintf('%s%s',fname_noext,fext); %for movie 
         
         in_p.fname=fname_noext;

@@ -33,6 +33,6 @@ fdir_fig=fullfile(fdir_sim,'figures');
 simdef.file.fig.dir=fdir_fig;
 mkdir_check(fdir_fig);
 
-simdef.file.mat.grd=fullfile(fdir_mat,'grd.mat');
+simdef.file.mat.grd=fullfile(fdir_mat,'grd.mat'); %moved to <gdm_load_grid>, should be erased here after updated everywhere
 
 end %function
