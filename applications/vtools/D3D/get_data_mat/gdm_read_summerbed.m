@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 1780 $
-%$Date: 2022-03-25 13:26:03 +0100 (Fri, 25 Mar 2022) $
-%$Author: chavarri $
-%$Id: read_summerbed.m 1780 2022-03-25 12:26:03Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/RIVmodels/models/dflowfm/maas/01_scripts/read_summerbed.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Reads summerbed polygons in a shp-file and finds the points of a grid that are
 %inside the polygon. 
