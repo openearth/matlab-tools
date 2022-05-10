@@ -28,6 +28,7 @@ fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fpath_map=simdef.file.map;
+fpath_rkm=flg_loc.fpath_rkm;
 
 %% MEASUREMENTS
 
@@ -41,13 +42,16 @@ fpath_map=simdef.file.map;
 ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD TIME
-
-[nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map);
+if simdef.D3D.structure==4
+    fpath_pass=simdef.D3D.dire_sim;
+else
+    fpath_pass=fpath_map;
+end
+[nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass);
 
 %% CONSTANT IN TIME
 
-%load grid for number of layers
-gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+% gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 %summerbed
 sb_def=gdm_read_summerbed(fid_log,flg_loc,simdef);
@@ -59,7 +63,9 @@ nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
 
 ktc=0;
-messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
+krkmv=0;
+kvar=0;
+messageOut(fid_log,sprintf('Reading %s rkm poly %4.2f %% time %4.2f %% variable %4.2f %%',tag,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100));
 for krkmv=1:nrkmv %rkm polygons
     
     rkm_name=flg_loc.rkm_name{krkmv};
@@ -68,7 +74,9 @@ for krkmv=1:nrkmv %rkm polygons
     
     rkmv=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,fpath_map,fpath_rkm,rkm_cen,rkm_cen_br,rkm_name);
     npol=numel(rkmv.rkm_cen);
-    
+    pol_name=flg_loc.rkm_name{krkmv};
+
+    ktc=0;
     for kt=kt_v %time
         ktc=ktc+1;
 
@@ -76,23 +84,37 @@ for krkmv=1:nrkmv %rkm polygons
     %         var_num=flg_loc.var(kvar);
     %         [var_str,lab_str,ylims]=var_num2str(var_num);
             var_str=flg_loc.var{kvar};
-            pol_name=flg_loc.rkm_name{krkmv};
-
+            
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str);
             if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
             %% read data
-            %fpath_map change to right folder SMT
-            data_var=gdm_read_data_map(fdir_mat,fpath_map,var_str,'tim',time_dnum(kt));
+            if simdef.D3D.structure==4
+                %this may not be strong enough. It will fail if the run is in path with <\0\> in the name. 
+                fpath_map_loc=strrep(fpath_map,[filesep,'0',filesep],[filesep,num2str(sim_idx(kt)),filesep]); 
+            else
+                fpath_map_loc=fpath_map;
+            end
+            data_var=gdm_read_data_map(fdir_mat,fpath_map_loc,var_str,'tim',time_dnum(kt));
 
             %% calc
+            bol_nan=isnan(data_var.val)';
 
-            val=NaN(npol,1);
+            val_mean=NaN(npol,1);
+            val_std=NaN(npol,1);
+            val_max=NaN(npol,1);
+            val_min=NaN(npol,1);
+            val_num=NaN(npol,1);
             for kpol=1:npol
-                bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb;
-                val(kpol,1)=mean(data_var.val(bol_get),'omitnan');
-
-                messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
+                bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan;
+                if any(bol_get)
+                    val_mean(kpol,1)=mean(data_var.val(bol_get));
+                    val_std(kpol,1)=std(data_var.val(bol_get));
+                    val_max(kpol,1)=max(data_var.val(bol_get));
+                    val_min(kpol,1)=min(data_var.val(bol_get));
+                    val_num(kpol,1)=numel(data_var.val(bol_get));
+                end
+%                 messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
 %                 %% BEGIN DEBUG
 %                  figure
 %                  hold on
@@ -102,11 +124,11 @@ for krkmv=1:nrkmv %rkm polygons
             end
 
             %data
-            data=v2struct(val); %#ok
+            data=v2struct(val_mean); %#ok
 
             %% save and disp
             save_check(fpath_mat_tmp,'data');
-            messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
+            messageOut(fid_log,sprintf('Reading %s rkm poly %4.2f %% time %4.2f %% variable %4.2f %%',tag,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100));
 
         %% BEGIN DEBUG
     %     figure

@@ -16,17 +16,17 @@ function data=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,fpath_map,fpath_rkm,rkm
 
 %%
 
-gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
-
 fpath_rkm_pol=mat_tmp_name(fdir_mat,tag,'pol',rkm_name);
 if exist(fpath_rkm_pol,'file')==2 %&& ~flg_loc.overwrite 
     load(fpath_rkm_pol,'data')
     return
 end
 
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+
 rkm_edg=cen2cor(rkm_cen)';
 %     rkm_edg_br=maas_branches(rkm_edg); %cannot call this function here
-rkm_edg_br=[rkm_cen_br,rkm_cen_br{end}]; %this is not good enough. It may be that an edge point falls in a different branch name
+rkm_edg_br=cat(1,rkm_cen_br,rkm_cen_br{end}); %this is not good enough. It may be that an edge point falls in a different branch name
 
 rkm_edg_xy=convert2rkm(fpath_rkm,rkm_edg,rkm_edg_br);
 rkm_cen_xy=convert2rkm(fpath_rkm,rkm_cen,rkm_cen_br);

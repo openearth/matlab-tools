@@ -33,10 +33,10 @@ end
 
 %% MAP
 
-in_plot.map=0;
-if any([in_plot.fig_map_sal_01.do,in_plot.fig_map_sal_01.do,in_plot.fig_map_sal_mass_01.do])
-    in_plot.map=1;
-end
+% in_plot.map=0;
+% if any([in_plot.fig_map_sal_01.do,in_plot.fig_map_sal_01.do,in_plot.fig_map_sal_mass_01.do])
+%     in_plot.map=1;
+% end
 
 %% copy flags
 

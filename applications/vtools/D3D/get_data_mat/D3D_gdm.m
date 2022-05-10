@@ -62,7 +62,7 @@ for ks=1:ns
     
     %% map_summerbed
     if isfield(in_plot,'fig_map_summerbed_01')==1
-    create_mat_map_summerbed_01(fid_log,in_plot.fig_map_q_01,simdef)
+    create_mat_map_summerbed_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
     end
     
 end %ks
@@ -117,6 +117,7 @@ for ks=1:ns
     
     %% map_summerbed
     if isfield(in_plot,'fig_map_summerbed_01')==1
+    plot_1D_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
     end
     
 end %ks

@@ -22,6 +22,7 @@ messageOut(NaN,'Start reading summer bed polygon')
 fdir_mat=simdef.file.mat.dir;
 fpath_sb_pol=flg_loc.sb_pol;
 fpath_sb_mat=fpath_rkm_sb_bol(fdir_mat,fpath_sb_pol);
+fpath_map=simdef.file.map;
 
 %%
 gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
@@ -44,10 +45,10 @@ sb=polcell2nan(sb_raw.xy.XY);
 % end
 is_nan_1=isnan(sb(:,1));
 sb(is_nan_1,:)=[];
-messageOut(fid_log,'Start finding boundary summer bed')
+messageOut(fid_log,'Start finding boundary summer bed.')
 idx_b=boundary(sb(:,1),sb(:,2),0.8); %shrink value found by trial and error
 sb=sb(idx_b,:);
-messageOut(fid_log,'start finding inpolygon summer bed')
+messageOut(fid_log,'Start finding inpolygon summer bed.')
 bol_sb=inpolygon(gridInfo.Xcen,gridInfo.Ycen,sb(:,1),sb(:,2));
 
 %% SAVE

@@ -20,7 +20,7 @@ function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dn
 
 if isa(in_dtime(1),'double') 
     if isfolder(fpath_map) %SMT
-        [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(sim_path,varargin);
+        [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(fpath_map);
     else
         [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map,0,[1,Inf]);
         sim_idx=NaN;
