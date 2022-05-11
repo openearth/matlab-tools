@@ -13,18 +13,16 @@
 %INPUT:
 
 
-function sb_def=gdm_read_summerbed(fid_log,flg_loc,simdef)
+function sb_def=gdm_read_summerbed(fid_log,fdir_mat,fpath_sb_pol,fpath_map)
 
 messageOut(NaN,'Start reading summer bed polygon')
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
-fpath_sb_pol=flg_loc.sb_pol;
 fpath_sb_mat=fpath_rkm_sb_bol(fdir_mat,fpath_sb_pol);
-fpath_map=simdef.file.map;
 
 %%
+
 gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 if exist(fpath_sb_mat,'file')==2

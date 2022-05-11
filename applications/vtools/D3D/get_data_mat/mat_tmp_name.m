@@ -25,6 +25,7 @@ addOptional(parin,'pli','');
 addOptional(parin,'pol','');
 addOptional(parin,'iso','');
 addOptional(parin,'var','');
+addOptional(parin,'sb','');
 
 parse(parin,varargin{:});
 
@@ -35,6 +36,7 @@ pli=parin.Results.pli;
 pol=parin.Results.pol;
 iso=parin.Results.iso;
 var=parin.Results.var;
+sb=parin.Results.sb;
 
 %%
 
@@ -79,6 +81,11 @@ end
 %var
 if ~isempty(var)
     str_add=sprintf('%s_var_%s',str_add,strrep(var,' ',''));
+end
+
+%sb
+if ~isempty(sb)
+    str_add=sprintf('%s_sb_%s',str_add,strrep(sb,' ',''));
 end
 
 %final
