@@ -43,7 +43,15 @@ for cc = 1:length(s.plot.const)
     
     % plot landboundary
     if isfield(s.plot,'ldb')
-        plot(ldb(:,1),ldb(:,2),'Color',[0.3 0.3 0.3])
+        if isfield(s.plot,'flagLdbFilled') && s.plot.flagLdbFilled == 1        
+            if isfield(s.plot,'ldbFillColor')
+                filledLDB(ldb,'k',s.plot.ldbFillColor,[],-10);
+            else
+                filledLDB(ldb,'k',[0.7 0.7 0.7],[],-10);
+            end
+        else
+            plot(ldb(:,1),ldb(:,2),'Color',[0.3 0.3 0.3])
+        end
     end
     % plot measurement and model stations
     plot(meas.X,meas.Y,'rx','Color',[0.6 0.6 0.6])
