@@ -68,6 +68,8 @@
 %
 %       -'at'       : at
 %
+%       -'La'       : active layer
+%
 %
 %   -un: factor for unit conversion from SI
 %
@@ -533,6 +535,36 @@ switch lower(var)
                 str_var='en';
          end
          un_type='-';
+    case 'la'
+         switch lan
+            case 'en'
+                str_var='active layer thickness';
+            case 'nl'
+                str_var='active laag';
+            case 'es'
+                str_var='capa activa';
+         end
+         un_type='L';
+    case 'ltot'
+         switch lan
+            case 'en'
+                str_var='sediment thickness';
+            case 'nl'
+                str_var='sediment laag';
+            case 'es'
+                str_var='capa de sedimento';
+         end
+         un_type='L';
+    case 'sbtot'
+         switch lan
+            case 'en'
+                str_var='total sediment transport';
+            case 'nl'
+                str_var='totaal sedimenttransport';
+            case 'es'
+                str_var='transporte de sedimento total';
+         end
+         un_type='L2/T';
     otherwise
          error('this is missing')
 end %var

@@ -12,7 +12,7 @@
 %
 %
 
-function plot_1D_01(fid_log,flg_loc,simdef)
+function plot_1D_sb_diff_01(fid_log,flg_loc,simdef)
 
 tag=flg_loc.tag;
 
@@ -43,7 +43,7 @@ v2struct(tim); %time_dnum, time_dtime
 nt=size(time_dnum,1);
 nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
-nsb=numel(flg_loc.sb_pol);
+nsb=numel(flg_loc.sb_pol_diff);
 
 %figures
 in_p=flg_loc;
@@ -52,6 +52,7 @@ in_p.fig_visible=0;
 % in_p.unit={'qsp','qxsp','qysp'};
 %             in_p.gen_struct=gen_struct;
 in_p.fig_size=[0,0,14.5,12];
+in_p.is_diff=1;
 
 fext=ext_of_fig(in_p.fig_print);
 
@@ -59,8 +60,11 @@ fext=ext_of_fig(in_p.fig_print);
 for ksb=1:nsb
 
     %summerbed
-    fpath_sb_pol=flg_loc.sb_pol{ksb};
-    [~,sb_pol,~]=fileparts(fpath_sb_pol);
+    fpath_sb_pol=flg_loc.sb_pol{flg_loc.sb_pol_diff{ksb}(1)};
+    [~,sb_pol_1,~]=fileparts(fpath_sb_pol);
+    fpath_sb_pol=flg_loc.sb_pol{flg_loc.sb_pol_diff{ksb}(2)};
+    [~,sb_pol_2,~]=fileparts(fpath_sb_pol);
+    sb_pol_diff=sprintf('%s-%s',sb_pol_1,sb_pol_2);
 
     for krkmv=1:nrkmv %rkm polygons
 
@@ -79,10 +83,12 @@ for ksb=1:nsb
                 var_str=D3D_var_num2str(varname);
 
                 %load
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
-                load(fpath_mat_tmp,'data');
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol_1);
+                data_1=load(fpath_mat_tmp,'data');
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol_2);
+                data_2=load(fpath_mat_tmp,'data');
 
-                fn_data=fieldnames(data);
+                fn_data=fieldnames(data_1.data);
                 nfn=numel(fn_data);
 
                 in_p.tim=time_dnum(kt);
@@ -92,11 +98,11 @@ for ksb=1:nsb
                 for kfn=1:nfn
                     statis=fn_data{kfn};
 
-                    fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str,statis);
+                    fdir_fig_loc=fullfile(fdir_fig,sb_pol_diff,pol_name,var_str,statis);
                     mkdir_check(fdir_fig_loc);
 
-                    in_p.val=data.(statis);
-                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,statis,sb_pol);
+                    in_p.val=data_1.data.(statis)-data_2.data.(statis);
+                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,statis,sb_pol_diff);
                     fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                     in_p.fname=fname_noext;

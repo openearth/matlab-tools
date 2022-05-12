@@ -118,6 +118,9 @@ for ks=1:ns
     %% map_summerbed
     if isfield(in_plot,'fig_map_summerbed_01')==1
     plot_1D_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
+        if isfield(in_plot.fig_map_summerbed_01,'sb_pol_diff')
+        plot_1D_sb_diff_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
+        end
     end
     
 end %ks

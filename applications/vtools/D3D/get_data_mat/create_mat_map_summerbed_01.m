@@ -92,9 +92,8 @@ for ksb=1:nsb
             ktc=ktc+1;
 
             for kvar=1:nvar %variable
-        %         var_num=flg_loc.var(kvar);
-        %         [var_str,lab_str,ylims]=var_num2str(var_num);
-                var_str=flg_loc.var{kvar};
+                varname=flg_loc.var{kvar};
+                var_str=D3D_var_num2str(varname);
 
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
@@ -106,7 +105,7 @@ for ksb=1:nsb
                 else
                     fpath_map_loc=fpath_map;
                 end
-                data_var=gdm_read_data_map(fdir_mat,fpath_map_loc,var_str,'tim',time_dnum(kt));
+                data_var=gdm_read_data_map(fdir_mat,fpath_map_loc,varname,'tim',time_dnum(kt));
 
                 %% calc
                 bol_nan=isnan(data_var.val)';

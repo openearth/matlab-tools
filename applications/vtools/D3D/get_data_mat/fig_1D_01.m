@@ -43,25 +43,25 @@ end
 if isfield(in_p,'fig_size')==0
     in_p.fig_size=[0,0,14,14];
 end
-
 if isfield(in_p,'xlims')==0
     in_p.xlims=[min(in_p.s),max(in_p.s)];
 end
-
 if isfield(in_p,'ylims')==0
     bol_p=in_p.s>in_p.xlims(1) & in_p.s<in_p.xlims(2);
-    in_p.ylims=[min(in_p.val(bol_p)),max(in_p.val(bol_p))];
+    in_p.ylims=[min(in_p.val(bol_p))-eps,max(in_p.val(bol_p))+eps];
 end
-
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
 if isfield(in_p,'fid_log')==0
     in_p.fid_log=NaN;
 end
-plot_gen_struct=0;
+in_p.plot_gen_struct=0;
 if isfield(in_p,'gen_struct')
-    plot_gen_struct=1;
+    in_p.plot_gen_struct=1;
+end
+if isfield(in_p,'is_diff')==0
+    in_p.is_diff=0;
 end
 
 v2struct(in_p)
@@ -229,7 +229,12 @@ lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 % lims.c(kr,kc,1:2)=clims;
 xlabels{kr,kc}='river km';
-ylabels{kr,kc}=labels4all(lab_str,1,lan);
+[lab,str_var,str_un,str_diff,str_background]=labels4all(lab_str,1,lan);
+if is_diff
+    ylabels{kr,kc}=str_diff;
+else
+    ylabels{kr,kc}=lab;
+end
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time

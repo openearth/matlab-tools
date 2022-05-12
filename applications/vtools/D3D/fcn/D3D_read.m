@@ -29,7 +29,7 @@ function out=D3D_read(simdef,in)
 
 %% parse error
 
-if simdef.err==1
+if isfield(simdef,'err') && simdef.err==1
     error('There is an error in reading the folder. I cannot find the right files. Check <D3D_simpath>')
 end
 
