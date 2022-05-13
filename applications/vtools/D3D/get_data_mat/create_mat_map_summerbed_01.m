@@ -22,12 +22,6 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-%% BEGIN DEBUG
-
-fprintf_structure(fid_log,simdef.file);
-
-%END DEBUG
-
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;

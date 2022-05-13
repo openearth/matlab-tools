@@ -76,10 +76,12 @@ end
 if sum(whatis)==0
     fprintf('I cannot find the main file in this folder: %s \n',simdef.D3D.dire_sim);
     simdef.err=1;
+    throw_error(do_break,simdef.err)
     return
 elseif sum(whatis)>1
     fprintf('In this folder there are main files of several software systems: %s \n',simdef.D3D.dire_sim);
     simdef.err=2;
+    throw_error(do_break,simdef.err)
     return
 end
 
@@ -175,8 +177,19 @@ end %simdef.D3D.structure
 %     fprintf('It seems that the folder you have specified has no simulation results: \n %s \n',simdef.D3D.dire_sim);
 % end
 
-if do_break && simdef.err>0
+throw_error(do_break,simdef.err)
+
+end %function
+
+%%
+%% FUNCTION
+%%
+
+function throw_error(do_break,err)
+
+if do_break && err>0
     error('See messages above')
 end
 
 end %function
+
