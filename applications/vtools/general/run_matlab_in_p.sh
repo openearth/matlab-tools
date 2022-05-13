@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd
 #$ -m bea
-#$ -q normal-e3
+#$ -q normal-e3-c7
 
 # NOTES:
 #	-do a dos2unix
