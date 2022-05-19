@@ -1,8 +1,0 @@
-Tutorials philosophy:
-The idea is to include in this directory a number of m-files that give an example of a certain engine or application. When properly commented this example can be transferred easily to the OpenEarth wiki by publishing the function to html and copying this html code and graphics (if any) tot a wiki page wrapping the code with {html}{html}.
-
-Regarding the tutorials the following convention is suggested:
-- create a directory and an m-file that have the same name as the wiki page to which it will be published
-- on the wiki page include a link to the repository location of the m-file underlying the page
-
-See for example: Create_a_NetCDF_file
