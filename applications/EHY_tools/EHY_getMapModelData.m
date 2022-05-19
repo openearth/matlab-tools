@@ -62,6 +62,7 @@ OPT.gridFile          = ''; % grid (either lga or nc file) needed in combination
 OPT.sgft0             = 0;  % delwaq segment function (sgf) - datenum or datestr of t0
 OPT.sgfkmax           = []; % delwaq segment function (sgf) - number of layers (k_max)
 OPT.nAverageAnglePli  = 2;  % number of points of the pli-file to average in computing the angle for projecting vectorial variables
+OPT.tol_t             = 0;  % tolerance to match time in datenum 
 
 % return output at specified reference level
 OPT.z                 = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z

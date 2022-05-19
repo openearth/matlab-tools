@@ -18,8 +18,8 @@ elseif (~isempty(OPT.t0) && ~isempty(OPT.tend)) || ~isempty(OPT.tint)
         t0_ind = 1;
         tend_ind = length(Data.times);
     else
-        t0_ind = find(Data.times >= OPT.t0,1,'first');
-        tend_ind = find(Data.times <= OPT.tend,1,'last');
+        t0_ind = find(Data.times + OPT.tol_t >= OPT.t0,1,'first');
+        tend_ind = find(Data.times - OPT.tol_t <= OPT.tend,1,'last');
     end
     
     if isfield(OPT,'tint') && ~isempty(OPT.tint)
