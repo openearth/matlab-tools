@@ -11,9 +11,14 @@ function [x,y,z,col] = georeference_image(filename)
 % alpha(hpcolor,0.75);
 
 % Get full filename
-filename1 = [filename, '.jpg'];
-filename2 = [filename, '.jgw'];
-[jpgcol X] = imread(filename1); 
+if exist([filename, '.jpg'])
+    filename1 = [filename, '.jpg'];
+    filename2 = [filename, '.jgw'];
+elseif exist([filename, '.png'])
+    filename1 = [filename, '.png'];
+    filename2 = [filename, '.pgw'];
+end
+[jpgcol X] = imread(filename1);
 
 % Other
 sz = size(jpgcol);
