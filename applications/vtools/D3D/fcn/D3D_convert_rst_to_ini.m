@@ -50,7 +50,7 @@ K='dataFileType';        Value = 'sample';
 Info = inifile('set', Info, IndexChapter, K, Value);
 K='interpolationMethod'; Value = 'triangulation';
 Info = inifile('set', Info, IndexChapter, K, Value);
-K='operand';             Value = 'o';
+K='operand';             Value = 'O';
 % Info = inifile('set', Info, IndexChapter, K, Value);
 % K='averagingType';       Value = '';
 % Info = inifile('set', Info, IndexChapter, K, Value);
@@ -78,7 +78,7 @@ if write_bl
     Info = inifile('set', Info, IndexChapter, K, Value);
     K='interpolationMethod'; Value = 'triangulation';
     Info = inifile('set', Info, IndexChapter, K, Value);
-    K='operand';             Value = 'o';
+    K='operand';             Value = 'O';
     Info = inifile('set', Info, IndexChapter, K, Value);
 end
 
@@ -92,7 +92,7 @@ K='dataFileType';        Value = 'sample';
 Info = inifile('set', Info, IndexChapter, K, Value);
 K='interpolationMethod'; Value = 'triangulation';
 Info = inifile('set', Info, IndexChapter, K, Value);
-K='operand';             Value = 'o';
+K='operand';             Value = 'O';
 Info = inifile('set', Info, IndexChapter, K, Value);
 
 C='Initial'; 
@@ -105,7 +105,7 @@ K='dataFileType';        Value = 'sample';
 Info = inifile('set', Info, IndexChapter, K, Value);
 K='interpolationMethod'; Value = 'triangulation';
 Info = inifile('set', Info, IndexChapter, K, Value);
-K='operand';             Value = 'o';
+K='operand';             Value = 'O';
 Info = inifile('set', Info, IndexChapter, K, Value);
 
 Info = inifile('write', inifilename, Info);
