@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18023 $
-%$Date: 2022-05-05 10:40:39 +0200 (Thu, 05 May 2022) $
-%$Author: chavarri $
-%$Id: create_mat_map_sal3D_01.m 18023 2022-05-05 08:40:39Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/create_mat_map_sal3D_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

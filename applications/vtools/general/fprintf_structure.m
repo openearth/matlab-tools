@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18044 $
-%$Date: 2022-05-12 14:36:40 +0200 (Thu, 12 May 2022) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 18044 2022-05-12 12:36:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function fprintf_structure(fid_log,stru)

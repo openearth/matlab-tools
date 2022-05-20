@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18035 $
-%$Date: 2022-05-10 16:01:00 +0200 (Tue, 10 May 2022) $
-%$Author: chavarri $
-%$Id: plot_his_sal_diff_01.m 18035 2022-05-10 14:01:00Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_his_sal_diff_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 
