@@ -16,15 +16,15 @@ function data=gdm_read_data_map(fdir_mat,fpath_map,varname,varargin)
 
 %% PARSE
 
-parin=inputParser;
-
-addOptional(parin,'tim',[]);
-addOptional(parin,'layer',[]);
-
-parse(parin,varargin{:});
-
-time_dnum=parin.Results.tim;
-layer=parin.Results.layer;
+% parin=inputParser;
+% 
+% addOptional(parin,'tim',[]);
+% addOptional(parin,'layer',[]);
+% 
+% parse(parin,varargin{:});
+% 
+% time_dnum=parin.Results.tim;
+% layer=parin.Results.layer;
 
 %% CALC
 

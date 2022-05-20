@@ -10,6 +10,9 @@
 %$Id$
 %$HeadURL$
 %
+%[fid_lin,fid_win]=D3D_create_run_batch('open',path_folder_sims);
+%D3D_create_run_batch('add',path_folder_sims,fid_lin,fid_win,sim_id);
+%D3D_create_run_batch('close',path_folder_sims,fid_lin,fid_win);
 
 function varargout=D3D_create_run_batch(do_what,path_folder_sims,varargin)
 

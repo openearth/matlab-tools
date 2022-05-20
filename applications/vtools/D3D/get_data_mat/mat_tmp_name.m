@@ -26,6 +26,8 @@ addOptional(parin,'pol','');
 addOptional(parin,'iso','');
 addOptional(parin,'var','');
 addOptional(parin,'sb','');
+addOptional(parin,'tim2',[]);
+addOptional(parin,'stat','');
 
 parse(parin,varargin{:});
 
@@ -37,6 +39,8 @@ pol=parin.Results.pol;
 iso=parin.Results.iso;
 var=parin.Results.var;
 sb=parin.Results.sb;
+time_dnum_2=parin.Results.tim2;
+stat=parin.Results.stat;
 
 %%
 
@@ -51,6 +55,11 @@ str_add='';
 %time
 if ~isempty(time_dnum)
     str_add=sprintf('%s%s',str_add,datestr(time_dnum,'yyyymmddHHMMSS'));
+end
+
+%time 2
+if ~isempty(time_dnum_2)
+    str_add=sprintf('%s-%s',str_add,datestr(time_dnum,'yyyymmddHHMMSS'));
 end
 
 %station
@@ -81,6 +90,11 @@ end
 %var
 if ~isempty(var)
     str_add=sprintf('%s_var_%s',str_add,strrep(var,' ',''));
+end
+
+%stat
+if ~isempty(stat)
+    str_add=sprintf('%s_stat_%s',str_add,strrep(stat,' ',''));
 end
 
 %sb

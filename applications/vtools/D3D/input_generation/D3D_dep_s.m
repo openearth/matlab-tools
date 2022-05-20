@@ -112,6 +112,9 @@ L=grd.cor.x(end)-grd.cor.x(1);
 
 etab=simdef.ini.etab;
 
+%central with dummies
+x_in=grd.cend.x(2:end-1,:);
+y_in=grd.cend.y(2:end-1,:);
 
 %other
 ncy=N-2; %number of cells in y direction (N in RFGRID) [-]
@@ -167,9 +170,7 @@ switch etab_noise
         noise_amp=simdef.ini.noise_amp;
         noise_Lb=simdef.ini.noise_Lb;
         
-        %central with dummies
-        x_in=grd.cend.x(2:end-1,:);
-        y_in=grd.cend.y(2:end-1,:);
+
         
         %cross-sectional variation
         if ncy==1 %1D, you actually want no variation in transverse direction
@@ -205,7 +206,12 @@ switch etab_noise
         [~,xf_idx]=min(abs(xedge-noise_trench_x(2)));
         
         noise(:,x0_idx:xf_idx)=noise_amp;
+    case 6
+        mu=simdef.ini.noise_x0;
+        etab_max=simdef.ini.noise_amp;
+        sig=simdef.ini.noise_Lb;
         
+        noise(2:end-1,:)=-etab_max.*exp(-((x_in-mu(1)).^2/sig^2+(y_in-mu(2)).^2/sig^2)); %factor 2 missing in the denominator?
     otherwise
         error('say something about it!')
 end

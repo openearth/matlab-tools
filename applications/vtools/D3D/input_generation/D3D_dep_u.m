@@ -118,6 +118,8 @@ switch simdef.ini.etab_noise
         
         x=Xtot;
         noise=etab_max.*exp(-(x-mu).^2/sig^2);
+    case 6
+        %2D gaussian
     otherwise
         error('sorry... not implemented!')
 end

@@ -67,6 +67,7 @@ HiranoRegularize=simdef.mor.HiranoRegularize;
 RegularizationRadious=simdef.mor.RegularizationRadious;
 SedTransDerivativesComputation=simdef.mor.SedTransDerivativesComputation;
 UpwindBedload=simdef.mor.UpwindBedload;
+BedloadScheme=simdef.mor.BedloadScheme;
 
 % HiranoCheckPerturbation=1e-6;
 % HiranoCheckEigThr=1e-6;
@@ -211,7 +212,15 @@ data{kl,1}=        ''; kl=kl+1;
 % data{kl,1}=        '                            1          : On'; kl=kl+1;
 % data{kl,1}=sprintf('  HiranoCheckPertubation = %0.7E',HiranoCheckPerturbation); kl=kl+1;
 % data{kl,1}=sprintf('  HiranoCheckEigThr = %0.7E',HiranoCheckEigThr); kl=kl+1;
+
+if ~isnan(UpwindBedload)
 data{kl,1}=sprintf('  UpwindBedload = %d',UpwindBedload); kl=kl+1;
+else
+data{kl,1}=sprintf('  BedloadScheme = #%s#',BedloadScheme); kl=kl+1;
+end
+% BedloadScheme = #upwsb#  !default upwind
+% BedloadScheme = #central#  !central (old Upwind=false)
+% BedloadScheme = #upwind# !Mart's scheme
 
 %% HiranoIllposed
 % data{kl,1}=        ''; kl=kl+1;

@@ -35,11 +35,28 @@ if isa(in_dtime(1),'double')
         time_mor_dtime=time_mor_dtime(end);
         sim_idx=sim_idx(end);
     else
-        time_dnum=time_dnum(in_dtime);
-        time_dtime=time_dtime(in_dtime);
-        time_mor_dnum=time_mor_dnum(in_dtime);
-        time_mor_dtime=time_mor_dtime(in_dtime);
-        sim_idx=sim_idx(in_dtime);
+        nt=numel(in_dtime);
+        time_dnum_s=NaN(nt,1);
+        time_dtime_s=NaT(nt,1);
+        time_dtime_s.TimeZone='+00:00';
+        time_mor_dnum_s=NaN(nt,1);
+        time_mor_dtime_s=NaT(nt,1);
+        time_mor_dtime_s.TimeZone='+00:00';
+        sim_idx_s=NaN(nt,1);
+        for kt=1:nt
+            idx_g=absmintol(time_dnum,in_dtime(kt),'tol',1,'dnum',1);
+            
+            time_dnum_s(kt,1)=time_dnum(idx_g);
+            time_dtime_s(kt,1)=time_dtime(idx_g);
+            time_mor_dnum_s(kt,1)=time_mor_dnum(idx_g);
+            time_mor_dtime_s(kt,1)=time_mor_dtime(idx_g);
+            sim_idx_s(kt,1)=sim_idx(idx_g);
+        end
+        time_dnum=time_dnum_s;
+        time_dtime=time_dtime_s;
+        time_mor_dnum=time_mor_dnum_s;
+        time_mor_dtime=time_mor_dtime_s;
+        sim_idx=sim_idx_s;
     end
 elseif isa(in_dtime(1),'datetime')
     time_dnum=datenum_tzone(in_dtime);

@@ -181,7 +181,7 @@ data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Iter   =      2'; kl=kl+1;
 %data{kl,1}=        'Dryflp = #YES#'; kl=kl+1;
 data{kl,1}=sprintf('Dpsopt = #%s#',Dpsopt); kl=kl+1; %flow depth at cell centres: DP=depth specified at cell centres; kl=kl+1; MAX; kl=kl+1; MEAN; kl=kl+1; MIN
-data{kl,1}=sprintf('Dpuopt = #%s#',Dpuopt); kl=kl+1; %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together. dpuopt = #mean_dps#
+data{kl,1}=sprintf('Dpuopt = #%s#',Dpuopt); kl=kl+1; %flow depth at cell interface: ATT! DPSOPT = DP and DPUOPT = MEAN should not be used together. dpuopt = #mean_dps#, 
 data{kl,1}=        'Dryflc =  1.0000000e-003'; kl=kl+1;
 data{kl,1}=        'Dco    = -9.9900000e+002'; kl=kl+1;
 data{kl,1}=        'Tlfsmo =  0.0000000e+001'; kl=kl+1; %smoothing boundary conditions time [6.0000000e+001]

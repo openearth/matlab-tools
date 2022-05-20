@@ -46,7 +46,7 @@ end
 if isfield(in_p,'xlims')==0
     in_p.xlims=[min(in_p.s),max(in_p.s)];
 end
-if isfield(in_p,'ylims')==0
+if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
     bol_p=in_p.s>in_p.xlims(1) & in_p.s<in_p.xlims(2);
     in_p.ylims=[min(in_p.val(bol_p))-eps,max(in_p.val(bol_p))+eps];
 end
@@ -62,6 +62,10 @@ if isfield(in_p,'gen_struct')
 end
 if isfield(in_p,'is_diff')==0
     in_p.is_diff=0;
+end
+in_p.plot_val0=0;
+if isfield(in_p,'val0')
+    in_p.plot_val0=1;
 end
 
 v2struct(in_p)
@@ -136,7 +140,8 @@ set(groot,'defaultLegendInterpreter','tex');
 % cbar(kr,kc).label='surface fraction content of fine sediment [-]';
 
 % brewermap('demo')
-% cmap=brewermap(3,'set1');
+nv=size(val,2); 
+cmap=brewermap(nv,'set1');
 
 %center around 0
 % ncmap=1000;
@@ -295,14 +300,33 @@ end
 %% PLOT
 
 kr=1; kc=1;    
-han.p(kr,kc,1)=plot(s,val,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+for kv=1:nv
+han.p(kr,kc,kv)=plot(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+end
+if isfield(in_p,'leg_str')
+    str_sim=leg_str;
+else
+    if nv==1
+        str_sim={labels4all('sim',1,lan)};
+    else
+        str_sim={sprintf('%d',kv)}; %change to runid?
+    end
+end
 if plot_gen_struct
 plot(([[gen_struct.rkm];[gen_struct.rkm]]),repmat(ylims,numel([gen_struct.rkm]),1)','--','color',[0.6,0.6,0.6],'parent',han.sfig(kr,kc))
 end
 if plot_mea
 %     han.p(kr,kc,2)=plot(mea_etab_p.rkm,mea_etab_p.etab,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-    han.p(kr,kc,2)=plot(s,val_mea,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-    str_leg={labels4all('sim',1,lan),labels4all('mea',1,lan)};
+    nfv=numel(han.p(kr,kc));
+    han.p(kr,kc,nfv+1)=plot(s,val_mea,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+    str_leg=[str_sim{:},labels4all('mea',1,lan)]; %check concatenation is right
+else
+    str_leg=str_sim;
+end
+if plot_val0
+    nfv=numel(han.p(kr,kc));
+    han.p(kr,kc,nfv+1)=plot(s,val0,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle','--','marker',prop.m1);
+    str_leg={str_leg{:},'initial'};
 end
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
@@ -328,7 +352,13 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+if numel(tim)==1
+    han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+elseif numel(tim)==2
+    han.sfig(kr,kc).Title.String=sprintf('%s - %s',datestr(tim(1),'dd-mm-yyyy HH:MM'),datestr(tim(2),'dd-mm-yyyy HH:MM'));
+else
+    error('not sure how more than 2 will look like')
+end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
@@ -384,8 +414,8 @@ kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
-if plot_mea
-han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),str_leg,'location','best');
+if plot_mea || nv>1
+    han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),str_leg,'location','eastoutside');
 end
 % pos.leg=han.leg(kr,kc).Position;
 % han.leg.Position=pos.leg(kr,kc)+[0,0,0,0];

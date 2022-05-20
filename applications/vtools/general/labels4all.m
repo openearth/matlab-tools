@@ -103,7 +103,7 @@ switch lower(var)
                 str_var='elevación';
         end
         un_type='Lref';
-    case {'etab','mesh2d_mor_bl'}
+    case {'etab','mesh2d_mor_bl','dps'}
         switch lan
             case 'en'
                 str_var='bed elevation';

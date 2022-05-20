@@ -401,6 +401,11 @@ end
 if isfield(simdef.mor,'UpwindBedload')==0
     simdef.mor.UpwindBedload=1;
 end
+if isfield(simdef.mor,'BedloadScheme')==1
+    simdef.mor.UpwindBedload=NaN;
+else
+    simdef.mor.BedloadScheme=NaN;
+end
 
 %% 
 %% BCM

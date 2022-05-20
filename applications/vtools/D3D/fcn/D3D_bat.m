@@ -16,16 +16,29 @@ function D3D_bat(simdef,fpath_software,varargin)
 %% 
 
 dire_sim=simdef.D3D.dire_sim;
-% structure=simdef.D3D.structure;
-fname_mdu=simdef.runid.name;
+structure=simdef.D3D.structure;
+% fname_mdu=simdef.runid.name; %runid does not have the extension!
+runid=simdef.runid.name;
 
-[~,~,ext]=fileparts(fname_mdu);
-switch ext
-    case '.mdu'
-        structure=2;
-    case '.mdf'
-        structure=1;
+% [~,~,ext]=fileparts(fname_mdu);
+% switch ext
+%     case '.mdu'
+%         structure=2;
+%     case '.mdf'
+%         structure=1;
+%     otherwise
+%         error('not sure what structure is file %s',fname_mdu)
+% end
+
+switch structure
+    case 1
+        ext='.mdf';
+    case 2
+        ext='.mdu';
+    otherwise
+        error('do something')
 end
+fname_mdu=sprintf('%s%s',runid,ext);
 
 %% PARSE
 
@@ -52,7 +65,7 @@ fpath_dimr=fullfile(dire_sim,dimr_str);
 
 %% dimr
 
-D3D_dimr_config(fpath_dimr,fname_mdu);
+D3D_xml(fpath_dimr,fname_mdu)
 
 %% batch
 

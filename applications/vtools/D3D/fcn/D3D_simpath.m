@@ -42,6 +42,9 @@ simdef.err=0; %error flag
 
 %% file paths of the files to analyze
 
+if numel(simdef.D3D.dire_sim)==0
+    error('The simulation path is empty')
+end
 if strcmp(simdef.D3D.dire_sim(end),filesep)
     simdef.D3D.dire_sim(end)='';
 end

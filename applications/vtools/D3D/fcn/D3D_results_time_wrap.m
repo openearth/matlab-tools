@@ -24,12 +24,21 @@
 function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(sim_path,varargin)
 
 %% PARSE
-nc_type='map'; %map
-if numel(varargin)>0
-    nc_type=varargin{1};
+
+switch numel(varargin)
+    case 0
+        nc_type='map'; 
+        write_csv=1;
+    case 1
+        nc_type=varargin{1};
+        write_csv=1;
+    case 2
+        nc_type=varargin{1};
+        write_csv=varargin{2};
 end
 
-%%
+%% CALC
+
 simdef.D3D.dire_sim=sim_path;
 simdef=D3D_simpath(simdef);
 
@@ -50,6 +59,7 @@ switch simdef.D3D.structure
         time_mor_dnum=[];
         time_mor_dtime=[];
         sim_idx=[];
+        fpath_map={};
         for kf=0:1:nf
             fdir_loc=fullfile(fdir_output,num2str(kf));
             simdef.D3D.dire_sim=fdir_loc;
@@ -65,9 +75,25 @@ switch simdef.D3D.structure
             time_mor_dnum=cat(1,time_mor_dnum,time_mor_dnum_loc);
             time_mor_dtime=cat(1,time_mor_dtime,time_mor_dtime_loc);
             sim_idx=cat(1,sim_idx,kf.*ones(size(time_mor_dtime_loc)));
+            fpath_map=cat(1,fpath_map,repmat({fpath_nc},numel(time_mor_dtime_loc),1));
             
             messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
         end
+        
+        %write CSV
+        nt=numel(time_r);
+        fdir_csv=fullfile(sim_path,'csv');
+        mkdir_check(fdir_csv);
+        fpath_tim_csv=fullfile(fdir_csv,'tim.csv');
+        %better to always create in case tim file is overwritten
+%         if exist(fpath_tim_csv,'file')~=2
+            fid=fopen(fpath_tim_csv,'w');
+            fprintf(fid,'index, flow time since start [s], morpho time since start [s], flow date [datenum], morpho date [datenum], flow date [yyyy-mm-dd HH:MM:SS], morpho date [yyyy-mm-dd HH:MM:SS], map path \r\n');
+            for kt=1:nt
+                fprintf(fid,'%03d, %10.1f, %10.1f, %15.7f, %15.7f, %s, %s, %s \r\n',sim_idx(kt),time_r(kt),time_mor_r(kt),time_dnum(kt),time_mor_dnum(kt),datestr(time_dnum(kt),'yyyy-mm-dd HH:MM:SS'),datestr(time_mor_dnum(kt),'yyyy-mm-dd HH:MM:SS'),fpath_map{kt});
+            end %kt
+            fclose(fid);
+%         end
 
 
 end
