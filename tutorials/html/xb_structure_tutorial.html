@@ -1,0 +1,456 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>The XBeach structure</title>
+      <meta name="generator" content="MATLAB 7.9">
+      <meta name="date" content="2010-12-30">
+      <meta name="m-file" content="xb_structure_tutorial">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
+	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
+
+  	// Accordion
+  	collapsible($(".collapsible"));
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
+    </script><link type="text/css" href="script/css/matlabcode.css" rel="stylesheet">
+   </head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>The XBeach structure</h1>
+            <div>
+               <p>In order to facilitate easy access to complex models in the XBeach Toolbox, the XBeach structure is used. An XBeach structure
+                  is a MATLAB struct having a certain generic structure. This structure and several functions that provides easy access to XBeach
+                  structures is explained in this tutorial.
+               </p>
+            </div>
+            <h2>Contents</h2>
+            <div>
+               <ul>
+                  <li><a href="#1">Structure of the XBeach structure</a></li>
+                  <li><a href="#11">Accessing the XBeach structure</a></li>
+                  <li><a href="#19">Modifying the XBeach structure</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">Structure of the XBeach structure</a></h2>
+               <div>
+                  <p>The XBeach structure is a common MATLAB structure having at least one field: <i>data</i>. Other fields are often available too and provide meta data of the XBeach structure. The <i>data</i> field contains a structure array containing at least two fields: <i>name</i> and <i>value</i>. Other fields, again provide meta data on the name/value pairs. The structure array in <i>data</i> has an item for each parameter stored in the structure. The name of each parameter is stored in <i>name</i> and it's value in <i>value</i>. Hence, an XBeach structure looks like this:
+                  </p><pre class="codeinput"><span class="comment">% create empty xbeach structure</span>
+xb = xb_empty
+</pre><pre class="codeoutput">
+xb = 
+
+        date: '30-Dec-2010 17:47:25'
+    function: 'xb_empty'
+        type: ''
+        file: ''
+        data: [0x0 struct]
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>The meta information consists of the modification date, the name of the last modifying function, the type of structure and
+                     the file(s) from which the data is obtained. The latter two being empty in this case. The XBeach structure contains no data
+                     since <i>data</i> is empty. Many functions output XBeach structures, at least all xb_generate_* functions do so. Two examples:
+                  </p><pre class="codeinput">xbm = xb_generate_model
+</pre><pre class="codeoutput">
+xbm = 
+
+        date: '30-Dec-2010 17:47:25'
+    function: 'xb_generate_model'
+        type: 'input'
+        file: ''
+        data: [1x21 struct]
+
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput">fpath = fullfile(strrep(abspath(fileparts(which(mfilename))), [filesep <span class="string">'trunk'</span> filesep], [filesep <span class="string">'test'</span> filesep]), <span class="string">'datoutput'</span>, <span class="string">'2D'</span>);
+
+xbo = xb_read_output(fpath)
+</pre><pre class="codeoutput">Error using ==&gt; xb_read_output at 79
+File does not exist [e:\Temp\tpd74361c1_bdec_4ee9_a597_3ec30e27a41f\datoutput\2D]
+
+Error in ==&gt; xb_structure_tutorial at 37
+xbo = xb_read_output(fpath)
+
+Error in ==&gt; evalinemptyworkspace&gt;eval_fun at 8
+eval(getappdata(0,'emptyworkspaceevaluation'));
+
+Error in ==&gt; evalinemptyworkspace at 3
+eval_fun();
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>In these examples the structures contain data. The <i>data</i> field of the latter structure looks like this:
+                  </p><pre class="codeinput">xbo.data
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>The <i>data</i> field apparently contains 5 variables of which the first two look like this:
+                  </p><pre class="codeinput">xbo.data(1)
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput">xbo.data(2)
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>We can see that the first parameter is a structure again. Displaying the contents of this variable reveals that this is a
+                     nested XBeach structure generated by the xb_read_dat function and containing 22 variables being dimensions.
+                  </p><pre class="codeinput">xbo.data(1).value
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput"><span class="comment">% check if this really is a XBeach structure</span>
+xb_check(xbo.data(1).value)
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Also the XBeach structure obtained from the <i>xb_generate_model</i> function contains nested XBeach structures, for example:
+                  </p><pre class="codeinput">xbm.data(12).value
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput">{xbm.data(12).value.data.name}
+{xbm.data(12).value.data.value}
+</pre></div>
+            </div>
+            <div>
+               <h2><a name="11">Accessing the XBeach structure</a></h2>
+               <div>
+                  <p>The structure of the XBeach structure as explained in the previous section is extremely felxible, but it's a tedious job to
+                     find and read data in that structure. Not to speak of altering data. In order to make XBeach structures better accessible,
+                     a variety of functions is developed. We start off with <i>xb_show</i>. This function does, what we manually did in the previous section: it reveals the contents of an XBeach structure and works
+                     like the <i>whos</i> function in MATLAB.
+                  </p><pre class="codeinput">xb_show(xbo);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>We see the meta data of the XBeach structure on top and a list of variables in the XBeach structure below. The list also displays
+                     the dimensions, size and type of the variables and, if possible, the contents. We can access nested XBeach structures, be
+                     requesting their specific name:
+                  </p><pre class="codeinput">xb_show(xbo, <span class="string">'DIMS'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>It is also possible to filter the list of variables in a similar manner as can be done with the <i>xb_read_output</i> function (see the <a href="xb_readresults_tutorial.html">3. Reading your model results</a>).
+                  </p><pre class="codeinput"><span class="comment">% this list is too long</span>
+xb_show(xbm);
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput"><span class="comment">% only display the variables starting with a _z_</span>
+xb_show(xbm, <span class="string">'z*'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput"><span class="comment">% or having exactly four characters</span>
+xb_show(xbm, <span class="string">'/^.{4}$'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Now we can easily examine the contents of an XBeach structure, we also need to be able to access these contents. For this
+                     purpose, the <i>xb_get</i> function is available.
+                  </p><pre class="codeinput"><span class="comment">% retrieve bathymetry from XBeach output structure</span>
+zb = xb_get(xbo, <span class="string">'zb'</span>);
+
+<span class="comment">% retrieve multiple variables at once</span>
+[zb zs u v] = xb_get(xbo, <span class="string">'zb'</span>, <span class="string">'zs'</span>, <span class="string">'u'</span>, <span class="string">'v'</span>);
+
+<span class="comment">% retrieve a nested structure</span>
+dims = xb_get(xbo, <span class="string">'DIMS'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Accessing variables in a nested structure can be done directly using the dot symbol:</p><pre class="codeinput">[nx ny] = xb_get(xbo, <span class="string">'DIMS.globalx'</span>, <span class="string">'DIMS.globaly'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>If a requested variable does not exist, an empty vector is returned. The existance of a variable can be checked using <i>xb_exist</i> which returns the number of variables that exist from the given selection.
+                  </p><pre class="codeinput">xb_exist(xbo, <span class="string">'zb'</span>);
+xb_exist(xbo, <span class="string">'zb'</span>, <span class="string">'zs'</span>);
+xb_exist(xbo, <span class="string">'zb'</span>, <span class="string">'xb'</span>);
+xb_exist(xbo, <span class="string">'xb'</span>);
+</pre></div>
+            </div>
+            <div>
+               <h2><a name="19">Modifying the XBeach structure</a></h2>
+               <div>
+                  <p>Modifying variables in an XBeach structure is possible using the <i>xb_set</i> function. This function works similar to the <i>xb_get</i> function. If a variable does not exist, it is created.
+                  </p><pre class="codeinput">xbm = xb_set(xbm, <span class="string">'dtheta'</span>, 10);
+xbm = xb_set(xbm, <span class="string">'thetamin'</span>, -45, <span class="string">'thetamax'</span>, 45, <span class="string">'dtheta'</span>, 10);
+xbm = xb_set(xbm, <span class="string">'bcfile.Hm0'</span>, 9);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Variables can be deleted and renamed:</p><pre class="codeinput">xbm2 = xb_del(xbm, <span class="string">'dtheta'</span>);
+xbm2 = xb_rename(xbm2, <span class="string">'instat'</span>, <span class="string">'instat_old'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Multiple XBeach structures can be joined and splitted. The meta data from the left-most structure is used and it's variables
+                     are overwritten in order from left to right.
+                  </p><pre class="codeinput">xbm3 = xb_join(xbm, xbm2);
+[xbm4 xbm5] = xb_split(xbm3, {<span class="string">'thetamin'</span>, <span class="string">'thetamax'</span>}, {<span class="string">'instat'</span>, <span class="string">'instat_old'</span>});
+
+xb_show(xbm5);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Setting meta data in your XBeach structure and consolidating the data goes like this:</p><pre class="codeinput"><span class="comment">% create XBeach structure</span>
+xb = xb_meta(xb_empty, mfilename, <span class="string">'dummy'</span>, <span class="string">'some_file_name'</span>);
+
+<span class="comment">% put some data in it</span>
+xb = xb_set(xb, <span class="string">'a'</span>, [1 2 3 4 5], <span class="string">'b'</span>, [2 2 2 2 2], <span class="string">'c'</span>, [5 5 5 5 6]);
+
+<span class="comment">% show it</span>
+xb_show(xb);
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput"><span class="comment">% consolidate it</span>
+xb = xb_consolidate(xb);
+
+<span class="comment">% show it again</span>
+xb_show(xb);
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('xb_structure_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=3766/OpenEarthTools/trunk/matlab/applications/xbeach/xb_structure_tutorial.m">xb_structure_tutorial.m (revision: 3766)</a><br>
+Published with MATLAB&reg; 7.9<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% The XBeach structure
+%
+% In order to facilitate easy access to complex models in the XBeach
+% Toolbox, the XBeach structure is used. An XBeach structure is a MATLAB
+% struct having a certain generic structure. This structure and several
+% functions that provides easy access to XBeach structures is explained in
+% this tutorial.
+
+%% Structure of the XBeach structure
+%
+% The XBeach structure is a common MATLAB structure having at least one
+% field: _data_. Other fields are often available too and provide meta data
+% of the XBeach structure. The _data_ field contains a structure array
+% containing at least two fields: _name_ and _value_. Other fields, again
+% provide meta data on the name/value pairs. The structure array in _data_
+% has an item for each parameter stored in the structure. The name of each
+% parameter is stored in _name_ and it's value in _value_. Hence, an XBeach
+% structure looks like this:
+
+% create empty xbeach structure
+xb = xb_empty
+
+%%
+% The meta information consists of the modification date, the name of the
+% last modifying function, the type of structure and the file(s) from which
+% the data is obtained. The latter two being empty in this case. The XBeach
+% structure contains no data since _data_ is empty. Many functions output
+% XBeach structures, at least all xb_generate_* functions do so. Two
+% examples:
+
+xbm = xb_generate_model
+
+%%
+
+fpath = fullfile(strrep(abspath(fileparts(which(mfilename))), [filesep 'trunk' filesep], [filesep 'test' filesep]), 'datoutput', '2D');
+
+xbo = xb_read_output(fpath)
+
+%%
+% In these examples the structures contain data. The _data_ field of the
+% latter structure looks like this:
+
+xbo.data
+
+%%
+% The _data_ field apparently contains 5 variables of which the first two
+% look like this:
+
+xbo.data(1)
+
+%%
+
+xbo.data(2)
+
+%%
+% We can see that the first parameter is a structure again. Displaying the
+% contents of this variable reveals that this is a nested XBeach structure
+% generated by the xb_read_dat function and containing 22 variables being
+% dimensions.
+
+xbo.data(1).value
+
+%%
+
+% check if this really is a XBeach structure
+xb_check(xbo.data(1).value)
+
+%%
+% Also the XBeach structure obtained from the _xb_generate_model_ function
+% contains nested XBeach structures, for example:
+
+xbm.data(12).value
+
+%%
+
+{xbm.data(12).value.data.name}
+{xbm.data(12).value.data.value}
+
+%% Accessing the XBeach structure
+%
+% The structure of the XBeach structure as explained in the previous
+% section is extremely felxible, but it's a tedious job to find and read
+% data in that structure. Not to speak of altering data. In order to make
+% XBeach structures better accessible, a variety of functions is developed.
+% We start off with _xb_show_. This function does, what we manually did in
+% the previous section: it reveals the contents of an XBeach structure and
+% works like the _whos_ function in MATLAB.
+
+xb_show(xbo);
+
+%%
+% We see the meta data of the XBeach structure on top and a list of
+% variables in the XBeach structure below. The list also displays the
+% dimensions, size and type of the variables and, if possible, the
+% contents. We can access nested XBeach structures, be requesting their
+% specific name:
+
+xb_show(xbo, 'DIMS');
+
+%%
+% It is also possible to filter the list of variables in a similar manner
+% as can be done with the _xb_read_output_ function (see the
+% <xb_readresults_tutorial.html 3. Reading your model results>).
+
+% this list is too long
+xb_show(xbm);
+
+%%
+
+% only display the variables starting with a _z_
+xb_show(xbm, 'z*');
+
+%%
+
+% or having exactly four characters
+xb_show(xbm, '/^.{4}$');
+
+%%
+% Now we can easily examine the contents of an XBeach structure, we also
+% need to be able to access these contents. For this purpose, the _xb_get_
+% function is available.
+
+% retrieve bathymetry from XBeach output structure
+zb = xb_get(xbo, 'zb');
+
+% retrieve multiple variables at once
+[zb zs u v] = xb_get(xbo, 'zb', 'zs', 'u', 'v');
+
+% retrieve a nested structure
+dims = xb_get(xbo, 'DIMS');
+
+%%
+% Accessing variables in a nested structure can be done directly using the
+% dot symbol:
+
+[nx ny] = xb_get(xbo, 'DIMS.globalx', 'DIMS.globaly');
+
+%%
+% If a requested variable does not exist, an empty vector is returned. The
+% existance of a variable can be checked using _xb_exist_ which returns the
+% number of variables that exist from the given selection.
+
+xb_exist(xbo, 'zb');
+xb_exist(xbo, 'zb', 'zs');
+xb_exist(xbo, 'zb', 'xb');
+xb_exist(xbo, 'xb');
+
+%% Modifying the XBeach structure
+%
+% Modifying variables in an XBeach structure is possible using the _xb_set_
+% function. This function works similar to the _xb_get_ function. If a
+% variable does not exist, it is created.
+
+xbm = xb_set(xbm, 'dtheta', 10);
+xbm = xb_set(xbm, 'thetamin', -45, 'thetamax', 45, 'dtheta', 10);
+xbm = xb_set(xbm, 'bcfile.Hm0', 9);
+
+%%
+% Variables can be deleted and renamed:
+
+xbm2 = xb_del(xbm, 'dtheta');
+xbm2 = xb_rename(xbm2, 'instat', 'instat_old');
+
+%%
+% Multiple XBeach structures can be joined and splitted. The meta data from
+% the left-most structure is used and it's variables are overwritten in
+% order from left to right.
+
+xbm3 = xb_join(xbm, xbm2);
+[xbm4 xbm5] = xb_split(xbm3, {'thetamin', 'thetamax'}, {'instat', 'instat_old'});
+
+xb_show(xbm5);
+
+%%
+% Setting meta data in your XBeach structure and consolidating the data
+% goes like this:
+
+% create XBeach structure
+xb = xb_meta(xb_empty, mfilename, 'dummy', 'some_file_name');
+
+% put some data in it
+xb = xb_set(xb, 'a', [1 2 3 4 5], 'b', [2 2 2 2 2], 'c', [5 5 5 5 6]);
+
+% show it
+xb_show(xb);
+
+%%
+
+% consolidate it
+xb = xb_consolidate(xb);
+
+% show it again
+xb_show(xb);
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

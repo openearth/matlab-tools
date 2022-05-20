@@ -1,0 +1,290 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>3. Reading your model results</title>
+      <meta name="generator" content="MATLAB 7.9">
+      <meta name="date" content="2010-12-30">
+      <meta name="m-file" content="xb_readresults_tutorial">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
+	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
+
+  	// Accordion
+  	collapsible($(".collapsible"));
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
+    </script><link type="text/css" href="script/css/matlabcode.css" rel="stylesheet">
+   </head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>3. Reading your model results</h1>
+            <div>
+               <p>Once an XBeach model is finished running, it's time to load the model output into the XBeach Toolbox. This tutorial shows
+                  you how.
+               </p>
+            </div>
+            <h2>Contents</h2>
+            <div>
+               <ul>
+                  <li><a href="#1">Reading model output</a></li>
+                  <li><a href="#3">Narrowing the amount of data read</a></li>
+                  <li><a href="#6">Swapping your data dimensions</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">Reading model output</a></h2>
+               <div>
+                  <p>Reading model output is done with the <i>xb_read_output</i> function. The function is capable of reading both netCDF as DAT output. Any file ending with <i>.nc</i> is supposed to be a XBeach netCDF output file. Any file enign with <i>.dat</i> or any directory is supposed to be or contain one or more XBeach DAT output files.
+                  </p><pre class="codeinput"><span class="comment">% reading DAT files</span>
+xbo = xb_read_output(<span class="string">'path_to_model/'</span>);
+xbo = xb_read_output(<span class="string">'path_to_model/zb.dat'</span>);
+
+<span class="comment">% reading netCDF files</span>
+xbo = xb_read_output(<span class="string">'path_to_model/xboutput.nc'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>It is also possible to supply the result structure from either the <i>xb_run</i> or <i>xb_run_remote</i> function that contains information on the location where the model can be found on disk.
+                  </p><pre class="codeinput">xbo = xb_read_output(xbr);
+</pre></div>
+            </div>
+            <div>
+               <h2><a name="3">Narrowing the amount of data read</a></h2>
+               <div>
+                  <p>For large models, the amount of data read from the output files can become very large. In order to cope with the large amounts
+                     of data, the amount of data read can be narrowed down to a specific part. Narrowing down the data can be done in two ways:
+                     limiting the number of variables read or limiting the amount of data read for each variable.
+                  </p><pre class="codeinput"><span class="comment">% limit the number of variables read from directory with DAT files</span>
+xbo = xb_read_output(<span class="string">'path_to_model/'</span>, <span class="string">'vars'</span>, {<span class="string">'zb'</span>, <span class="string">'zs'</span>, <span class="string">'H'</span>});
+
+<span class="comment">% limit the number of variables read from netCDF file</span>
+xbo = xb_read_output(<span class="string">'path_to_model/xboutput.nc'</span>, <span class="string">'vars'</span>, {<span class="string">'zb'</span>, <span class="string">'zs'</span>, <span class="string">'H'</span>});
+
+<span class="comment">% use asterix filtering to limit the number of parameters read</span>
+xbo = xb_read_output(<span class="string">'path_to_model/'</span>, <span class="string">'vars'</span>, {<span class="string">'z*'</span>, <span class="string">'H'</span>, <span class="string">'*_mean'</span>});
+
+<span class="comment">% use regular expression filtering to limit the number of parameters read</span>
+<span class="comment">% (don't forget the starting slash)</span>
+xbo = xb_read_output(<span class="string">'path_to_model/'</span>, <span class="string">'vars'</span>, <span class="string">'/_(min|max|mean)$'</span>);
+xbo = xb_read_output(<span class="string">'path_to_model/'</span>, <span class="string">'vars'</span>, {<span class="string">'/^z'</span>, <span class="string">'/g$'</span>});
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Limiting the amount of data read per variable is done using starting indices, lengths and strides. This way of filtering is
+                     common to netCDF files and also implemented in the DAT read functions in the XBeach Toolbox.
+                  </p>
+                  <p>The filtering works using at most three vectors (start, length and stride) with each a length of at most the number of dimensions
+                     in the variable to be read. Thus, a 3D variable has vectors of length equal to or smaller than 3. If the length is smaller
+                     than the number of dimensions, the filtering is assigned to the first few dimensions. The other dimensions are kept unfiltered.
+                  </p>
+                  <p>The start indices are zero-based and indicate which part of the data at the beginning of a particular dimension should be
+                     skipped. So, with zero nothing is skipped, with one only the first item, with ten the first ten items, etcetera.
+                  </p>
+                  <p>The lengths indicate the number of items to be read counting from the starting index. The strides indicates the read resolution
+                     of the data to be read. So, specifying a length 99 and a stride 3 means that 33 items are read.
+                  </p>
+                  <p>For example:</p><pre class="codeinput"><span class="comment">% using start, length and stride options to limit the amount of data read</span>
+<span class="comment">% from a netCDF file</span>
+xbo = xb_read_output(<span class="string">'path_to_model/xboutput.nc'</span>, <span class="keyword">...</span>
+    <span class="string">'vars'</span>, {<span class="string">'z*'</span>, <span class="string">'H'</span>}, <span class="keyword">...</span>
+    <span class="string">'start'</span>, [99 10 0], <span class="keyword">...</span>
+    <span class="string">'length'</span>, [1 10 -1], <span class="keyword">...</span>
+    <span class="string">'stride'</span>, [1 2 5] <span class="keyword">...</span>
+);
+
+<span class="comment">% in the XBeach Toolbox limiting the amount of data read from DAT files is</span>
+<span class="comment">% implemented according to the netCDF standards</span>
+xbo = xb_read_output(<span class="string">'path_to_model/'</span>, <span class="keyword">...</span>
+    <span class="string">'vars'</span>, {<span class="string">'z*'</span>, <span class="string">'H'</span>}, <span class="keyword">...</span>
+    <span class="string">'start'</span>, [99 10 0], <span class="keyword">...</span>
+    <span class="string">'length'</span>, [1 10 -1], <span class="keyword">...</span>
+    <span class="string">'stride'</span>, [1 2 5] <span class="keyword">...</span>
+);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>In the two examples above, the 100st item is read from the first dimension (time), the 10th to 20th items using a stride of
+                     2 are read from the second dimension (y) and all data is read from the third dimension (x) using a stride of 5. Consequently,
+                     the matrices read will have a size of [1 5 20] assuming the third dimension to have a length of 100.
+                  </p>
+               </div>
+            </div>
+            <div>
+               <h2><a name="6">Swapping your data dimensions</a></h2>
+               <div>
+                  <p>In the model output DAT files the first two dimensions are x and y. The last dimension is time. In case there are more than
+                     three dimensions, they are located in between y and time. Following netCDF conventions, the dimension order in model output
+                     netCDF files is different. The first three dimensions are time, y and x respectively. All other dimensions are located thereafter.
+                     It is decided that the XBeach Toolbox is designed for the time, y, x dimension order. Consequently, reading DAT files using
+                     the XBeach Toolbox will return matrices in this order as well. To facilitate the use of other, older functions, the dimension
+                     order of an XBeach output structure can be swapped:
+                  </p><pre class="codeinput"><span class="comment">% swap dimension from new to old standard ...</span>
+xbo = xb_swap(xbo);
+
+<span class="comment">% ... and back</span>
+xbo = xb_swap(xbo);
+
+<span class="comment">% force swapping from new to old standard ...</span>
+xbo = xb_swap(xbo, <span class="string">'order'</span>, <span class="string">'tyx'</span>, <span class="string">'force'</span>, true);
+
+<span class="comment">% ... and back</span>
+xbo = xb_swap(xbo, <span class="string">'order'</span>, <span class="string">'xyt'</span>, <span class="string">'force'</span>, true);
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('xb_readresults_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=3766/OpenEarthTools/trunk/matlab/applications/xbeach/xb_readresults_tutorial.m">xb_readresults_tutorial.m (revision: 3766)</a><br>
+Published with MATLAB&reg; 7.9<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% 3. Reading your model results
+%
+% Once an XBeach model is finished running, it's time to load the model
+% output into the XBeach Toolbox. This tutorial shows you how.
+
+%% Reading model output
+%
+% Reading model output is done with the _xb_read_output_ function. The
+% function is capable of reading both netCDF as DAT output. Any file ending
+% with _.nc_ is supposed to be a XBeach netCDF output file. Any file enign
+% with _.dat_ or any directory is supposed to be or contain one or more
+% XBeach DAT output files.
+
+% reading DAT files
+xbo = xb_read_output('path_to_model/');
+xbo = xb_read_output('path_to_model/zb.dat');
+
+% reading netCDF files
+xbo = xb_read_output('path_to_model/xboutput.nc');
+
+%%
+% It is also possible to supply the result structure from either the
+% _xb_run_ or _xb_run_remote_ function that contains information on the
+% location where the model can be found on disk.
+
+xbo = xb_read_output(xbr);
+
+%% Narrowing the amount of data read
+%
+% For large models, the amount of data read from the output files can
+% become very large. In order to cope with the large amounts of data, the
+% amount of data read can be narrowed down to a specific part. Narrowing
+% down the data can be done in two ways: limiting the number of variables
+% read or limiting the amount of data read for each variable.
+
+% limit the number of variables read from directory with DAT files
+xbo = xb_read_output('path_to_model/', 'vars', {'zb', 'zs', 'H'});
+
+% limit the number of variables read from netCDF file
+xbo = xb_read_output('path_to_model/xboutput.nc', 'vars', {'zb', 'zs', 'H'});
+
+% use asterix filtering to limit the number of parameters read
+xbo = xb_read_output('path_to_model/', 'vars', {'z*', 'H', '*_mean'});
+
+% use regular expression filtering to limit the number of parameters read
+% (don't forget the starting slash)
+xbo = xb_read_output('path_to_model/', 'vars', '/_(min|max|mean)$');
+xbo = xb_read_output('path_to_model/', 'vars', {'/^z', '/g$'});
+
+%%
+% Limiting the amount of data read per variable is done using starting
+% indices, lengths and strides. This way of filtering is common to netCDF
+% files and also implemented in the DAT read functions in the XBeach
+% Toolbox.
+%
+% The filtering works using at most three vectors (start, length and
+% stride) with each a length of at most the number of dimensions in the
+% variable to be read. Thus, a 3D variable has vectors of length equal to
+% or smaller than 3. If the length is smaller than the number of
+% dimensions, the filtering is assigned to the first few dimensions. The
+% other dimensions are kept unfiltered.
+%
+% The start indices are zero-based and indicate which part of the data at
+% the beginning of a particular dimension should be skipped. So, with zero
+% nothing is skipped, with one only the first item, with ten the first ten
+% items, etcetera.
+%
+% The lengths indicate the number of items to be read counting from the
+% starting index. The strides indicates the read resolution of the data to
+% be read. So, specifying a length 99 and a stride 3 means that 33 items
+% are read.
+%
+% For example:
+
+% using start, length and stride options to limit the amount of data read
+% from a netCDF file
+xbo = xb_read_output('path_to_model/xboutput.nc', ...
+    'vars', {'z*', 'H'}, ...
+    'start', [99 10 0], ...
+    'length', [1 10 -1], ...
+    'stride', [1 2 5] ...
+);
+
+% in the XBeach Toolbox limiting the amount of data read from DAT files is
+% implemented according to the netCDF standards
+xbo = xb_read_output('path_to_model/', ...
+    'vars', {'z*', 'H'}, ...
+    'start', [99 10 0], ...
+    'length', [1 10 -1], ...
+    'stride', [1 2 5] ...
+);
+
+%%
+% In the two examples above, the 100st item is read from the first
+% dimension (time), the 10th to 20th items using a stride of 2 are read
+% from the second dimension (y) and all data is read from the third
+% dimension (x) using a stride of 5. Consequently, the matrices read will
+% have a size of [1 5 20] assuming the third dimension to have a length of
+% 100.
+
+%% Swapping your data dimensions
+%
+% In the model output DAT files the first two dimensions are x and y. The
+% last dimension is time. In case there are more than three dimensions,
+% they are located in between y and time. Following netCDF conventions, the
+% dimension order in model output netCDF files is different. The first
+% three dimensions are time, y and x respectively. All other dimensions are
+% located thereafter. It is decided that the XBeach Toolbox is designed for
+% the time, y, x dimension order. Consequently, reading DAT files using the
+% XBeach Toolbox will return matrices in this order as well. To facilitate
+% the use of other, older functions, the dimension order of an XBeach
+% output structure can be swapped:
+
+% swap dimension from new to old standard ...
+xbo = xb_swap(xbo);
+
+% ... and back
+xbo = xb_swap(xbo);
+
+% force swapping from new to old standard ...
+xbo = xb_swap(xbo, 'order', 'tyx', 'force', true);
+
+% ... and back
+xbo = xb_swap(xbo, 'order', 'xyt', 'force', true);
+##### SOURCE END #####
+-->
+   </body>
+</html>

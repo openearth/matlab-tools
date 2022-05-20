@@ -1,0 +1,179 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>4. Visualising your model results</title>
+      <meta name="generator" content="MATLAB 7.9">
+      <meta name="date" content="2010-12-30">
+      <meta name="m-file" content="xb_visualise_tutorial">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
+	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
+
+  	// Accordion
+  	collapsible($(".collapsible"));
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
+    </script><link type="text/css" href="script/css/matlabcode.css" rel="stylesheet">
+   </head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>4. Visualising your model results</h1>
+            <div>
+               <p>The XBeach Toolbox contains basic tools to visualise model input and output, especially bathymetries. The purpose of these
+                  tools is not to provide awesome visualisations, but just to provide insight in the massive amount of data you will probably
+                  be dealing with soon.
+               </p>
+            </div>
+            <h2>Contents</h2>
+            <div>
+               <ul>
+                  <li><a href="#1">Visualise model input</a></li>
+                  <li><a href="#3">Visualise model output</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">Visualise model input</a></h2>
+               <div>
+                  <p>Once your model setup is finished, or at least you think so, you can visualise your bathymetry and other data using the <i>xb_plot</i> function. This function basically plots any vector or matrix data from an XBeach structure. It provides a simple interface
+                     to select the data to be plotted (can be multiple) and the way it should be plotted.
+                  </p><pre class="codeinput"><span class="comment">% generate dummy model</span>
+xbm = xb_generate_model;
+
+<span class="comment">% plot model setup</span>
+xb_plot(xbm);
+</pre><img vspace="5" hspace="5" src="xb_visualise_tutorial_01.png" relsrc="xb_visualise_tutorial_01.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>Depending on the amount of vector and matrix data, the plotting options will be extended</p><pre class="codeinput"><span class="comment">% obtain bathymetry data</span>
+url = <span class="string">'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB121_2524.nc'</span>;
+[x y z] = deal(nc_varget(url, <span class="string">'x'</span>), nc_varget(url, <span class="string">'y'</span>), nc_varget(url, <span class="string">'z'</span>));
+z = squeeze(z(end,:,:));
+
+<span class="comment">% generate storm surge</span>
+[h Hs Tp] = bc_normstorm(<span class="string">'loc'</span>, <span class="string">'Petten'</span>, <span class="string">'freq'</span>, 1e-4);
+[t h duration Hs Tp] = bc_stormsurge(<span class="string">'h_max'</span>, h, <span class="string">'Hm0_max'</span>, Hs, <span class="string">'Tp_max'</span>, Tp, <span class="string">'nwaves'</span>,32);
+
+<span class="comment">% generate model setup using JARKUS bathymetry and obtained surge and wave</span>
+<span class="comment">% confitions</span>
+xbm = xb_generate_model( <span class="keyword">...</span>
+    <span class="string">'bathy'</span>,    {<span class="string">'x'</span>, x, <span class="string">'y'</span>, y, <span class="string">'z'</span>, z}, <span class="keyword">...</span>
+    <span class="string">'tide'</span>,     {<span class="string">'time'</span> t, <span class="string">'front'</span>, h, <span class="string">'back'</span>, 0}, <span class="keyword">...</span>
+    <span class="string">'waves'</span>,    {<span class="string">'Hm0'</span>, Hs, <span class="string">'Tp'</span>, Tp, <span class="string">'duration'</span>, duration} <span class="keyword">...</span>
+);
+
+xb_plot(xbm);
+</pre><img vspace="5" hspace="5" src="xb_visualise_tutorial_02.png" relsrc="xb_visualise_tutorial_02.png"> </div>
+            </div>
+            <div>
+               <h2><a name="3">Visualise model output</a></h2>
+               <div>
+                  <p>The <i>xb_plot</i> function also works for XBeach output structures obtained from the <i>xb_read_output</i> function. Again, all vector and matrix data is plotted and also a slider to walk through time becomes available. The slider
+                     can also be animated. Difference plots can be made with a secondary slider, the difference between the two moments in time
+                     is plotted.
+                  </p><pre class="codeinput">fpath = fullfile(strrep(abspath(fileparts(which(mfilename))), [filesep <span class="string">'trunk'</span> filesep], [filesep <span class="string">'test'</span> filesep]), <span class="string">'datoutput'</span>, <span class="string">'2D'</span>);
+
+xbo = xb_read_output(fpath);
+
+xb_plot(xbo);
+</pre><pre class="codeoutput">Error using ==&gt; xb_read_output at 79
+File does not exist [e:\Temp\tp006a82dc_78b7_4911_bbb3_23940e3b8e49\datoutput\2D]
+
+Error in ==&gt; xb_visualise_tutorial at 56
+xbo = xb_read_output(fpath);
+
+Error in ==&gt; evalinemptyworkspace&gt;eval_fun at 8
+eval(getappdata(0,'emptyworkspaceevaluation'));
+
+Error in ==&gt; evalinemptyworkspace at 3
+eval_fun();
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('xb_visualise_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=3766/OpenEarthTools/trunk/matlab/applications/xbeach/xb_visualise_tutorial.m">xb_visualise_tutorial.m (revision: 3766)</a><br>
+Published with MATLAB&reg; 7.9<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% 4. Visualising your model results
+%
+% The XBeach Toolbox contains basic tools to visualise model input and
+% output, especially bathymetries. The purpose of these tools is not to
+% provide awesome visualisations, but just to provide insight in the
+% massive amount of data you will probably be dealing with soon.
+
+%% Visualise model input
+%
+% Once your model setup is finished, or at least you think so, you can
+% visualise your bathymetry and other data using the _xb_plot_ function.
+% This function basically plots any vector or matrix data from an XBeach
+% structure. It provides a simple interface to select the data to be
+% plotted (can be multiple) and the way it should be plotted.
+
+% generate dummy model
+xbm = xb_generate_model;
+
+% plot model setup
+xb_plot(xbm);
+
+%%
+% Depending on the amount of vector and matrix data, the plotting options
+% will be extended
+
+% obtain bathymetry data
+url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB121_2524.nc';
+[x y z] = deal(nc_varget(url, 'x'), nc_varget(url, 'y'), nc_varget(url, 'z'));
+z = squeeze(z(end,:,:));
+
+% generate storm surge
+[h Hs Tp] = bc_normstorm('loc', 'Petten', 'freq', 1e-4);
+[t h duration Hs Tp] = bc_stormsurge('h_max', h, 'Hm0_max', Hs, 'Tp_max', Tp, 'nwaves',32);
+
+% generate model setup using JARKUS bathymetry and obtained surge and wave
+% confitions
+xbm = xb_generate_model( ...
+    'bathy',    {'x', x, 'y', y, 'z', z}, ...
+    'tide',     {'time' t, 'front', h, 'back', 0}, ...
+    'waves',    {'Hm0', Hs, 'Tp', Tp, 'duration', duration} ...
+);
+
+xb_plot(xbm);
+
+%% Visualise model output
+%
+% The _xb_plot_ function also works for XBeach output structures obtained
+% from the _xb_read_output_ function. Again, all vector and matrix data is
+% plotted and also a slider to walk through time becomes available. The
+% slider can also be animated. Difference plots can be made with a
+% secondary slider, the difference between the two moments in time is
+% plotted.
+
+fpath = fullfile(strrep(abspath(fileparts(which(mfilename))), [filesep 'trunk' filesep], [filesep 'test' filesep]), 'datoutput', '2D');
+
+xbo = xb_read_output(fpath);
+
+xb_plot(xbo);
+##### SOURCE END #####
+-->
+   </body>
+</html>

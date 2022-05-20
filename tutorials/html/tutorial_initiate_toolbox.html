@@ -1,0 +1,168 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>1. Initializing the OpenEarthTools toolbox in matlab</title>
+      <meta name="generator" content="MATLAB 7.10">
+      <meta name="date" content="2010-06-22">
+      <meta name="m-file" content="tutorial_initiate_toolbox">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
+	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
+
+  	// Accordion
+  	collapsible($(".collapsible"));
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
+    </script><link type="text/css" href="script/css/matlabcode.css" rel="stylesheet">
+   </head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>1. Initializing the OpenEarthTools toolbox in matlab</h1>
+            <div>
+               <p>If you want to use OpenEarthTools in MATLAB, you should always run the function that initiates the toolbox: "_<b>oetsettings</b>_". Oetsettings is essential to unleash the power of OpenEarth to MATLAB. It adds all relevant toolbox paths to the matlab
+                  search path. This tutorial shows how to initiate the toolbox with oetsettings in various ways
+               </p>
+            </div>
+            <h2>Contents</h2>
+            <div>
+               <ul>
+                  <li><a href="#1">Run oetsettings manually</a></li>
+                  <li><a href="#3">Run oetsettings via a shortcut</a></li>
+                  <li><a href="#5">Run oetsettings as part of the matlab startup</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">Run oetsettings manually</a></h2>
+               <div>
+                  <p>The most straightforward way of initiating OpenEarthTools in Marlab is to manually run the function that adds all relevant
+                     paths to the matlab search path (<i><b>oetsettings.m</b></i>). Once you have obtained a cheackout of OpenEarthTools oetsettings.m can be located in the matlab directory of the trunk.
+                     Running the function in matlab will do the trick:
+                  </p><pre class="codeinput">run(<span class="string">'&lt;enter filepath here&gt;/oetsettings'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Information on making a checkout of the OpenEarthTools can be found on:</p>
+                  <p>
+                     <a href="http://public.deltares.nl/display/OET/OpenEarth+developer+in+five+easy+steps"> OpenEarth
+                     developer in five steps</a>
+                     
+                  </p>
+               </div>
+            </div>
+            <div>
+               <h2><a name="3">Run oetsettings via a shortcut</a></h2>
+               <div>
+                  <p>As you neither want to remember this code or the location of the mfile, but you will run it every time you start MATLAB from
+                     know on, you could make a ahortcut on the shortcut bar. Just rightclick ==&gt; new shortcut. Enter the command to run oetsettings.
+                     If you save this, you can run oetsetings by pressing that shortcut button. You might even want to add some other commands,
+                     so matlab is effectiveley reset every time you press this button. The following code can be used in a shortcut:
+                  </p><pre class="codeinput">restoredefaultpath
+
+run(<span class="string">'&lt;enter filepath here&gt;\oetsettings.m'</span>)
+
+cd <span class="string">&lt;enter</span> <span class="string">filepath</span> <span class="string">here&gt;</span>
+
+clc; clear; close;
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p><img vspace="5" hspace="5" src="prerendered_images/create_shortcut.PNG" relsrc="prerendered_images/create_shortcut.PNG"> </p>
+               </div>
+            </div>
+            <div>
+               <h2><a name="5">Run oetsettings as part of the matlab startup</a></h2>
+               <div>
+                  <p>There is also a possibility to add scripts or functions to the matlab startup routine. This is easily done by including a
+                     file names startup.m in the directory matlab starts. Matlab will automatically run this script or function. The same code
+                     used for creating a shortcut can be included in the matlab startup.m.
+                  </p><pre class="codeinput">run(<span class="string">'&lt;enter filepath here&gt;\oetsettings.m'</span>)
+
+cd <span class="string">&lt;enter</span> <span class="string">filepath</span> <span class="string">here&gt;</span>
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_initiate_toolbox');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2703/OpenEarthTools/trunk/matlab/general/_tutorial_initiate_toolbox.m">_tutorial_initiate_toolbox.m (revision: 2703)</a><br>
+Published with MATLAB&reg; 7.10<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% 1. Initializing the OpenEarthTools toolbox in matlab
+% If you want to use OpenEarthTools in MATLAB, you should always run the function that initiates the
+% toolbox: "_*oetsettings*_". Oetsettings is essential to unleash the power of OpenEarth to MATLAB. 
+% It adds all relevant toolbox paths to the matlab search path. This tutorial shows how to initiate
+% the toolbox with oetsettings in various ways
+
+%% Run oetsettings manually
+% The most straightforward way of initiating OpenEarthTools in Marlab is to manually run the 
+% function that adds all relevant paths to the matlab search path (_*oetsettings.m*_). Once you have
+% obtained a cheackout of OpenEarthTools oetsettings.m can be located in the matlab directory of
+% the trunk. Running the function in
+% matlab will do the trick:
+
+run('<enter filepath here>/oetsettings');
+
+%%
+% Information on making a checkout of the OpenEarthTools can be found on:
+%
+% <html>
+% <a href="http://public.deltares.nl/display/OET/OpenEarth+developer+in+five+easy+steps"> OpenEarth
+% developer in five steps</a>
+% </html>
+%
+
+
+%% Run oetsettings via a shortcut
+% As you neither want to remember this code or the location of the mfile, but you will run it every 
+% time you start MATLAB from know on, you could make a ahortcut on the shortcut bar. Just rightclick 
+% ==> new shortcut. Enter the command to run oetsettings. If you save this, you can run oetsetings 
+% by pressing that shortcut button. You might even want to add some other commands, so matlab is 
+% effectiveley reset every time you press this button. The following code can be used in a shortcut:
+
+restoredefaultpath
+
+run('<enter filepath here>\oetsettings.m')
+
+cd <enter filepath here>
+
+clc; clear; close;
+
+%%
+% 
+% <<prerendered_images/create_shortcut.PNG>>
+% 
+
+%% Run oetsettings as part of the matlab startup
+% There is also a possibility to add scripts or functions to the matlab startup routine. This is
+% easily done by including a file names startup.m in the directory matlab starts. Matlab will
+% automatically run this script or function. The same code used for creating a shortcut can be
+% included in the matlab startup.m.
+
+run('<enter filepath here>\oetsettings.m')
+
+cd <enter filepath here>
+##### SOURCE END #####
+-->
+   </body>
+</html>

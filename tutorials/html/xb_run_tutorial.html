@@ -1,0 +1,222 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>2. Running your model</title>
+      <meta name="generator" content="MATLAB 7.9">
+      <meta name="date" content="2010-12-30">
+      <meta name="m-file" content="xb_run_tutorial">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
+	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
+
+  	// Accordion
+  	collapsible($(".collapsible"));
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
+    </script><link type="text/css" href="script/css/matlabcode.css" rel="stylesheet">
+   </head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>2. Running your model</h1>
+            <div>
+               <p>This tutorial shows how you can run an XBeach model using the XBeach Toolbox, once you have a full model setup. Running a
+                  model can be done locally or remotely using either a specific XBeach executable or the latest executable from TeamCity (see
+                  <a href="http://build.deltares.nl">http://build.deltares.nl</a>)
+               </p>
+            </div>
+            <h2>Contents</h2>
+            <div>
+               <ul>
+                  <li><a href="#1">Running your model locally</a></li>
+                  <li><a href="#4">Running your model remotely</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">Running your model locally</a></h2>
+               <div>
+                  <p>To run an XBeach model setup, you can supply the XBeach structure containing the model to the <i>xb_run</i> function. This function writes the model to disk, downloads the latest XBeach executable for your operating system and needs
+                     from TeamCity and forks a process that runs the model. The function returns another XBeach structure containing information
+                     on the model run like process id and location.
+                  </p><pre class="codeinput"><span class="comment">% setup dummy model</span>
+xbm = xb_generate_model;
+
+<span class="comment">% run dummy model</span>
+xbr = xb_run(xbm);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>In the way described above, the model is ran in the current directory with the latest executable from TeamCity on a single
+                     node with DAT output only. These options can be changed as follows:
+                  </p><pre class="codeinput"><span class="comment">% running the model in a different location</span>
+xbr = xb_run(xbm, <span class="string">'path'</span>, <span class="string">'path_to_model/'</span>);
+
+<span class="comment">% running the model with a different executable</span>
+xbr = xb_run(xbm, <span class="string">'binary'</span>, <span class="string">'xbeach.exe'</span>);
+
+<span class="comment">% running the model on multiple cores (not yet implemented)</span>
+xbr = xb_run(xbm, <span class="string">'nodes'</span>, 4);
+
+<span class="comment">% running the model with netcdf output</span>
+xbr = xb_run(xbm, <span class="string">'netcdf'</span>, true);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>The <i>xbr</i> variable containing information on the model run can be used to read the model output once the model has finished running.
+                     The variable can also be used to monitor whether the model has finished already or not.
+                  </p><pre class="codeinput"><span class="comment">% check if model is still running</span>
+<span class="keyword">if</span> xb_check_run(xbr)
+    finished = false;
+<span class="keyword">else</span>
+    finished = true;
+<span class="keyword">end</span>
+
+<span class="comment">% display a message once the model is finished</span>
+xb_check_run(xbr, <span class="string">'repeat'</span>, true);
+</pre></div>
+            </div>
+            <div>
+               <h2><a name="4">Running your model remotely</a></h2>
+               <div>
+                  <p>Large XBeach models may be too time consuming to run locally on your own desktop. Cluster computing is a solution to this
+                     problem. Via SSH XBeach model runs can be started on a remote cluster on multiple nodes. To accomodate this procedure, the
+                     <i>xb_run_remote</i> function is developed. It works similar to the <i>xb_run</i> function except it needs a username and password to log on to the cluster.
+                  </p><pre class="codeinput"><span class="comment">% run a dummy model remotely</span>
+xbr = xb_run_remote(xbm, <span class="string">'ssh_user'</span>, <span class="string">'user'</span>, <span class="string">'ssh_pass'</span>, <span class="string">'pass'</span>);
+
+<span class="comment">% you can also ask the function to prompt for a username and password</span>
+xbr = xb_run_remote(xbm, <span class="string">'ssh_prompt'</span>, true);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>The same options as for the <i>xb_run</i> function are available for the <i>xb_run_remote</i> function, except for the <i>path</i> option, which is called <i>path_local</i> to distinguish from the option <i>path_remote</i>. The former contains the path to the model on disk seen from the local computer, while the latter contains the same path
+                     seen from the cluster computer. By default, the models are ran on the cluster computer called <i>h4</i> via the home directory of the current user:
+                  </p><pre class="codeinput"><span class="comment">% default settings for xb_run_remote</span>
+xbr = xb_run_remote(xbm, <span class="string">'ssh_host'</span>, <span class="string">'h4'</span>, <span class="string">'path_local'</span>, <span class="string">'u:\'</span>, <span class="string">'path_remote'</span>, <span class="string">'~/'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>The status of the remote run can be monitored in the same way as a local run:</p><pre class="codeinput">xb_check_run(xbr, <span class="string">'repeat'</span>, true);
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('xb_run_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=3766/OpenEarthTools/trunk/matlab/applications/xbeach/xb_run_tutorial.m">xb_run_tutorial.m (revision: 3766)</a><br>
+Published with MATLAB&reg; 7.9<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% 2. Running your model
+%
+% This tutorial shows how you can run an XBeach model using the XBeach
+% Toolbox, once you have a full model setup. Running a model can be done
+% locally or remotely using either a specific XBeach executable or the
+% latest executable from TeamCity (see <http://build.deltares.nl>)
+
+%% Running your model locally
+%
+% To run an XBeach model setup, you can supply the XBeach structure
+% containing the model to the _xb_run_ function. This function writes the
+% model to disk, downloads the latest XBeach executable for your operating
+% system and needs from TeamCity and forks a process that runs the model.
+% The function returns another XBeach structure containing information on
+% the model run like process id and location.
+
+% setup dummy model
+xbm = xb_generate_model;
+
+% run dummy model
+xbr = xb_run(xbm);
+
+%%
+% In the way described above, the model is ran in the current directory
+% with the latest executable from TeamCity on a single node with DAT output
+% only. These options can be changed as follows:
+
+% running the model in a different location
+xbr = xb_run(xbm, 'path', 'path_to_model/');
+
+% running the model with a different executable
+xbr = xb_run(xbm, 'binary', 'xbeach.exe');
+
+% running the model on multiple cores (not yet implemented)
+xbr = xb_run(xbm, 'nodes', 4);
+
+% running the model with netcdf output
+xbr = xb_run(xbm, 'netcdf', true);
+
+%%
+% The _xbr_ variable containing information on the model run can be used to
+% read the model output once the model has finished running. The variable
+% can also be used to monitor whether the model has finished already or
+% not.
+
+% check if model is still running
+if xb_check_run(xbr)
+    finished = false;
+else
+    finished = true;
+end
+
+% display a message once the model is finished
+xb_check_run(xbr, 'repeat', true);
+
+%% Running your model remotely
+%
+% Large XBeach models may be too time consuming to run locally on your own
+% desktop. Cluster computing is a solution to this problem. Via SSH XBeach
+% model runs can be started on a remote cluster on multiple nodes. To
+% accomodate this procedure, the _xb_run_remote_ function is developed. It
+% works similar to the _xb_run_ function except it needs a username and
+% password to log on to the cluster.
+
+% run a dummy model remotely
+xbr = xb_run_remote(xbm, 'ssh_user', 'user', 'ssh_pass', 'pass');
+
+% you can also ask the function to prompt for a username and password
+xbr = xb_run_remote(xbm, 'ssh_prompt', true);
+
+%%
+% The same options as for the _xb_run_ function are available for the
+% _xb_run_remote_ function, except for the _path_ option, which is called
+% _path_local_ to distinguish from the option _path_remote_. The former
+% contains the path to the model on disk seen from the local computer,
+% while the latter contains the same path seen from the cluster computer.
+% By default, the models are ran on the cluster computer called _h4_ via
+% the home directory of the current user:
+
+% default settings for xb_run_remote
+xbr = xb_run_remote(xbm, 'ssh_host', 'h4', 'path_local', 'u:\', 'path_remote', '~/');
+
+%%
+% The status of the remote run can be monitored in the same way as a local
+% run:
+
+xb_check_run(xbr, 'repeat', true);
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

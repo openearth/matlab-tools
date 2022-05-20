@@ -1,0 +1,239 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>2. Creating new functions</title>
+      <meta name="generator" content="MATLAB 7.10">
+      <meta name="date" content="2010-06-22">
+      <meta name="m-file" content="tutorial_creating_new_functions">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
+	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
+
+  	// Accordion
+  	collapsible($(".collapsible"));
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
+    </script><link type="text/css" href="script/css/matlabcode.css" rel="stylesheet">
+   </head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>2. Creating new functions</h1>
+            <div>
+               <p>To keep the OpenEarth toolbox well organised, it is of crucial importance that all functions receive a proper help block (in
+                  Matlab this is the first uninterrupted comment block after the function declaration and/or before the first line of code.
+               </p>
+               <p>To lower the threshold to add such a helpblock the oetnewfun routine was developed. It creates a new function using the input
+                  arguments supplied by the user or using default arguments.
+               </p>
+            </div>
+            <h2>Contents</h2>
+            <div>
+               <ul>
+                  <li><a href="#1">Invoking a new function template</a></li>
+                  <li><a href="#2">Function template layout</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">Invoking a new function template</a></h2>
+               <div>
+                  <p>The following command opens a new function in the matlab editor with the name "testfun.m".</p><pre class="codeinput">oetnewfun(<span class="string">'testfun'</span>)
+</pre></div>
+            </div>
+            <div>
+               <h2><a name="2">Function template layout</a></h2>
+               <div>
+                  <p>The resulting function now comes with a helpblock, a standard LGPL copyright block and a list of svn-keywords. See for an
+                     example the code below. The only thing you have to do is enter the correct information for:
+                  </p>
+                  <ol>
+                     <li><b>h1line</b> (one line description below the function declaration)
+                     </li>
+                     <li><b>description</b> (description of the functionality)
+                     </li>
+                     <li><b>syntax</b> (How should / can we approach your function)
+                     </li>
+                     <li><b>input</b> (explanation of the input arguments)
+                     </li>
+                     <li><b>Output</b> (explanation of the output arguments)
+                     </li>
+                     <li><b>Example</b> (Give an example of how we can use the function)
+                     </li>
+                     <li><b>See also</b> (Just enter names of related function seperated by a space, like with the matlab documentation)
+                     </li>
+                  </ol><pre class="codeinput"><span class="keyword">function</span> varargout = testfun(varargin)
+<span class="comment">%TESTFUN  One line description goes here.</span>
+<span class="comment">%</span>
+<span class="comment">%   More detailed description goes here.</span>
+<span class="comment">%</span>
+<span class="comment">%   Syntax:</span>
+<span class="comment">%   varargout = testfun(varargin)</span>
+<span class="comment">%</span>
+<span class="comment">%   Input:</span>
+<span class="comment">%   varargin  =</span>
+<span class="comment">%</span>
+<span class="comment">%   Output:</span>
+<span class="comment">%   varargout =</span>
+<span class="comment">%</span>
+<span class="comment">%   Example</span>
+<span class="comment">%   testfun</span>
+<span class="comment">%</span>
+<span class="comment">%   See also</span>
+
+<span class="comment">%   --------------------------------------------------------------------</span>
+<span class="comment">%   Copyright (C) 2009 Delft University of Technology</span>
+<span class="comment">%       Mark van Koningsveld</span>
+<span class="comment">%</span>
+<span class="comment">%       m.vankoningsveld@tudelft.nl</span>
+<span class="comment">%</span>
+<span class="comment">%       Hydraulic Engineering Section</span>
+<span class="comment">%       Faculty of Civil Engineering and Geosciences</span>
+<span class="comment">%       Stevinweg 1</span>
+<span class="comment">%       2628CN Delft</span>
+<span class="comment">%       The Netherlands</span>
+<span class="comment">%</span>
+<span class="comment">%   This library is free software: you can redistribute it and/or</span>
+<span class="comment">%   modify it under the terms of the GNU Lesser General Public</span>
+<span class="comment">%   License as published by the Free Software Foundation, either</span>
+<span class="comment">%   version 2.1 of the License, or (at your option) any later version.</span>
+<span class="comment">%</span>
+<span class="comment">%   This library is distributed in the hope that it will be useful,</span>
+<span class="comment">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+<span class="comment">%   Lesser General Public License for more details.</span>
+<span class="comment">%</span>
+<span class="comment">%   You should have received a copy of the GNU Lesser General Public</span>
+<span class="comment">%   License along with this library. If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment">%   --------------------------------------------------------------------</span>
+
+<span class="comment">% Created: 17 May 2009</span>
+<span class="comment">% Created with Matlab version: 7.7.0.471 (R2008b)</span>
+
+<span class="comment">% $Id: _tutorial_creating_new_functions.m 1018 2009-09-10 14:36:54Z geer $</span>
+
+<span class="comment">% $Author: geer $</span>
+
+<span class="comment">% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/_tutorial_creating_new_functions.m $</span>
+<span class="comment">% $Keywords: $</span>
+</pre></div>
+            </div>
+            <div>
+               <div></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_creating_new_functions');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2703/OpenEarthTools/trunk/matlab/general/_tutorial_creating_new_functions.m">_tutorial_creating_new_functions.m (revision: 2703)</a><br>
+Published with MATLAB&reg; 7.10<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% 2. Creating new functions
+% To keep the OpenEarth toolbox well organised, it is of crucial importance
+% that all functions receive a proper help block (in Matlab this is the
+% first uninterrupted comment block after the function declaration and/or
+% before the first line of code. 
+%
+% To lower the threshold to add such a helpblock the oetnewfun routine was
+% developed. It creates a new function using the input arguments supplied
+% by the user or using default arguments.
+
+%% Invoking a new function template
+% The following command opens a new function in the matlab editor with the
+% name "testfun.m".
+
+oetnewfun('testfun')
+
+%% Function template layout
+% The resulting function now comes with a helpblock, a standard LGPL
+% copyright block and a list of svn-keywords. See for an example the code 
+% below. The only thing you have to do is enter the correct information
+% for:
+%
+% # *h1line* (one line description below the function declaration)
+% # *description* (description of the functionality)
+% # *syntax* (How should / can we approach your function)
+% # *input* (explanation of the input arguments)
+% # *Output* (explanation of the output arguments)
+% # *Example* (Give an example of how we can use the function)
+% # *See also* (Just enter names of related function seperated by a space, like with the matlab documentation)
+%
+
+function varargout = testfun(varargin)
+%TESTFUN  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = testfun(varargin)
+%
+%   Input:
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   testfun
+%
+%   See also 
+
+%   REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%   Copyright (C) 2009 Delft University of Technology
+%       Mark van Koningsveld
+%
+%       m.vankoningsveld@tudelft.nl	
+%
+%       Hydraulic Engineering Section
+%       Faculty of Civil Engineering and Geosciences
+%       Stevinweg 1
+%       2628CN Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+
+% Created: 17 May 2009
+% Created with Matlab version: 7.7.0.471 (R2008b)
+
+% $Id: _tutorial_creating_new_functions.m 1018 2009-09-10 14:36:54Z geer $
+% $Date: 2009-09-10 16:36:54 +0200 (do, 10 sep 2009) $
+% $Author: geer $
+% $Revision: 1018 $
+% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/_tutorial_creating_new_functions.m $
+% $Keywords: $
+
+%%
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

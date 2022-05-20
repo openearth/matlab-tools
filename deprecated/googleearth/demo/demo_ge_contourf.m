@@ -1,0 +1,49 @@
+function demo_ge_contourf()
+ error('%s has been deprecated',mfilename)
+
+close all
+
+[X,Y] = meshgrid(1:20,1:20);
+
+Z = peaks(20);
+cMap = 'jet';
+
+lineValues = [-10:0.5:40];
+figure
+subplot(1,2,1)
+imagesc(X(1,:),Y(:,1),Z,[min(lineValues),max(lineValues)])
+set(gca,'Ydir','normal')
+axis image
+colorbar
+subplot(1,2,2)
+[C,h] = contourf(X,Y,Z,lineValues);
+colorbar
+axis image
+colormap(cMap)
+
+
+kmlStr = ge_contourf(X,Y,Z,...
+                    'cMap',cMap,...
+               'lineValues',lineValues,...
+               'polyAlpha','FF',...
+               'lineColor','00FFFFFF',...
+               'altitude',1e4,...
+               'altitudeMode','clampToGround',...
+               'cLimHigh',5,...
+               'cLimLow',-2);
+%              
+% kmlStr = [kmlStr,ge_colorbar(0,10,0,...
+%                     'cBarBorderWidth',1,...
+%                       'cBarFormatStr','%+7.2f',...
+%                            'numUnits',numLevels,...
+%                            'cLimLow',lineValues(1),...
+%                            'cLimHigh',lineValues(end),...
+%                                'name','click the icon to see the colorbar',...
+%                                'cMap',cMapStr)];
+
+                
+%if any(strcmp(devenv,{'octave','matlab'}))
+%    ge_output(['demo_ge_contourf_',devenv,'.kml'],kmlStr);
+%else
+    ge_output('demo_ge_contourf_other.kml',kmlStr);
+%end
