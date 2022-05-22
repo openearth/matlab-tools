@@ -135,7 +135,12 @@ switch modelType
                 nanInd = isnan(values);
                 gridInfo.face_nodes_x(:,nanInd) = [];
                 gridInfo.face_nodes_y(:,nanInd) = [];
-                values(nanInd) = [];
+                if isfield(gridInfo,'Zcen') % use center bed level for 3D-plot ('tiles' plot / tegeltjes aanpak a la morphology)
+                    gridInfo.face_nodes_z = repmat(reshape(gridInfo.Zcen,1,[]),size(gridInfo.face_nodes_x,1),1);
+                end
+                if isfield(gridInfo,'face_nodes_z')
+                    gridInfo.face_nodes_z(:,nanInd) = [];
+                end
                 
                 nnodes = size(gridInfo.face_nodes_x,1) - sum(isnan(gridInfo.face_nodes_x));
                 unodes = unique(nnodes);
@@ -146,11 +151,19 @@ switch modelType
                     poly_n = find(nnodes==nr);
                     npoly = length(poly_n);
                     tvertex = nr*npoly;
-                    XYvertex = NaN(tvertex,2);
+                    if isfield(gridInfo,'face_nodes_z') 
+                        XYvertex = NaN(tvertex,3); % actually XYZvertex
+                    else
+                        XYvertex = NaN(tvertex,2);
+                    end
                     Vpatch = NaN(npoly,1);
                     offset = 0;
                     for ip = 1:npoly
-                        XYvertex(offset+(1:nr),:) = [gridInfo.face_nodes_x(1:nr,poly_n(ip)) gridInfo.face_nodes_y(1:nr,poly_n(ip))];
+                        if isfield(gridInfo,'face_nodes_z') 
+                            XYvertex(offset+(1:nr),:) = [gridInfo.face_nodes_x(1:nr,poly_n(ip)) gridInfo.face_nodes_y(1:nr,poly_n(ip)) gridInfo.face_nodes_z(1:nr,poly_n(ip))];
+                        else
+                            XYvertex(offset+(1:nr),:) = [gridInfo.face_nodes_x(1:nr,poly_n(ip)) gridInfo.face_nodes_y(1:nr,poly_n(ip))];
+                        end
                         offset = offset+nr;
                         Vpatch(ip) = values(poly_n(ip));
                     end

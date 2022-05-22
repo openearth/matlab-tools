@@ -106,7 +106,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
             fn = fieldnames(gridInfoPart);
         else
             for iFN = 1:length(fn)
-                if any(strcmp(fn{iFN},{'edge_nodes','face_nodes','face_nodes_x','face_nodes_y'}))
+                if any(strcmp(fn{iFN},{'edge_nodes','face_nodes','face_nodes_x','face_nodes_y','face_nodes_z'}))
                     % some partitions only contain triangles,squares, ..
                     nrRows = size(gridInfo.(fn{iFN}),1);
                     nrRowsPart = size(gridInfoPart.(fn{iFN}),1);
@@ -117,7 +117,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
                     end
                 end
                 
-                if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y'}))
+                if any(strcmp(fn{iFN},{'face_nodes_x','face_nodes_y','face_nodes_z'}))
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) addToAdministration+gridInfoPart.(fn{iFN})];
@@ -484,6 +484,14 @@ switch modelType
                             disp('Face_x_bnd-info not found in network. Import grid>export grid in RGFGRID and try again')
                         end
                     end
+                    if ismember('face_nodes_z',wantedOutput)
+                        mesh2d_face_nodes = ncread(inputFile,'mesh2d_face_nodes');
+                        nonan = ~isnan(mesh2d_face_nodes);
+                        mesh2d_face_nodes(~nonan) = 1;
+                        mesh2d_node_z = ncread(inputFile,'mesh2d_node_z');
+                        E.face_nodes_z = mesh2d_node_z(mesh2d_face_nodes);
+                        E.face_nodes_z(~nonan) = NaN;
+                    end
                     
                     if ismember('edge_nodes',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_edge_nodes');
@@ -596,6 +604,9 @@ switch modelType
                         if ismember('face_nodes_xy',wantedOutput)
                             E.face_nodes_x(:,ghostCellsCenter) = [];
                             E.face_nodes_y(:,ghostCellsCenter) = [];
+                        end
+                        if ismember('face_nodes_z',wantedOutput)
+                            E.face_nodes_z(:,ghostCellsCenter) = [];
                         end
                         if ismember('XYcen',wantedOutput)
                             E.Xcen(ghostCellsCenter) = [];
