@@ -161,7 +161,8 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref)
     ks_ref=in_plot.sim_ref;
     fdir_sim=in_plot.fdir_sim{ks_ref};
     simdef_ref=simulation_paths(fdir_sim,in_plot);
-
+    
+    %%
     for ks=1:ns
 
         if ks==ks_ref; continue; end

@@ -345,6 +345,15 @@ end
 % data_map.grid=EHY_getGridInfo(fname_grd,{'grid'});
 % plot(data_map.grid.grid(:,1),data_map.grid.grid(:,2),'color','k')
 
+%plot3D
+    %as vertices
+% gridInfo = EHY_getGridInfo(mapFile,{'face_nodes_xy','face_nodes_z'});
+% Data = EHY_getMapModelData(mapFile,'varName','salinity','t',7,'k',42);
+% EHY_plotMapModelData(gridInfo,Data.val);
+    %as tiles
+% gridInfo = EHY_getGridInfo(mapFile,{'face_nodes_xy','Z'});
+% EHY_plotMapModelData(gridInfo,Data.val);
+
 %% PLOT
 
 kr=1; kc=1;    

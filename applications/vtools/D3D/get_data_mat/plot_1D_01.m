@@ -76,9 +76,10 @@ for ksb=1:nsb
             ktc=ktc+1;
             for kvar=1:nvar %variable
                 varname=flg_loc.var{kvar};
-                var_str=D3D_var_num2str(varname);
+                var_str=D3D_var_num2str_structure(varname,simdef);
 
-                %load
+
+                %% load
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
                 load(fpath_mat_tmp,'data');
 
@@ -92,6 +93,18 @@ for ksb=1:nsb
                 for kfn=1:nfn
                     statis=fn_data{kfn};
 
+                %% measurements
+                    
+                    in_p.plot_mea=false;
+                    if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+                        data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',time_dnum(kt),'var',var_str,'stat',statis);
+                        if isstruct(data_mea)
+                            in_p.plot_mea=true;
+                            in_p.val_mea=data_mea.y;
+                            in_p.s_mea=data_mea.x;
+                        end
+                    end
+                                        
                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str,statis);
                     mkdir_check(fdir_fig_loc);
 

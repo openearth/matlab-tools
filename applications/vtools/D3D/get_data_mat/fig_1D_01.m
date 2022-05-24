@@ -67,14 +67,18 @@ in_p.plot_val0=0;
 if isfield(in_p,'val0')
     in_p.plot_val0=1;
 end
+if isfield(in_p,'plot_mea')==0 
+    if isfield(in_p,'val_mea')
+        in_p.plot_mea=true;
+    else
+        in_p.plot_mea=false;
+    end
+end
 
+    
 v2struct(in_p)
 
-plot_mea=false;
-% if isfield(in_p,'mea_etab_p')
-if isfield(in_p,'val_mea')
-    plot_mea=true;
-end
+
 
 %% check if printing
 print_fig=check_print_figure(in_p);
@@ -233,7 +237,7 @@ kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 % lims.c(kr,kc,1:2)=clims;
-xlabels{kr,kc}='river km';
+xlabels{kr,kc}=labels4all('dist_prof',1,lan);
 [lab,str_var,str_un,str_diff,str_background]=labels4all(lab_str,1,lan);
 if is_diff
     ylabels{kr,kc}=str_diff;
@@ -318,13 +322,13 @@ end
 if plot_mea
 %     han.p(kr,kc,2)=plot(mea_etab_p.rkm,mea_etab_p.etab,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
     nfv=numel(han.p(kr,kc));
-    han.p(kr,kc,nfv+1)=plot(s,val_mea,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+    han.p(kr,kc,nfv+1)=plot(s_mea,val_mea,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
     str_leg=[str_sim{:},labels4all('mea',1,lan)]; %check concatenation is right
 else
     str_leg=str_sim;
 end
 if plot_val0
-    nfv=numel(han.p(kr,kc));
+    nfv=numel(han.p(kr,kc,:));
     han.p(kr,kc,nfv+1)=plot(s,val0,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle','--','marker',prop.m1);
     str_leg={str_leg{:},'initial'};
 end
@@ -449,7 +453,7 @@ set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, 
 %% PRINT
 
 if any(fig_print==1)
-    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
+    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r300');
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
 end
 if any(fig_print==2)

@@ -106,7 +106,8 @@ for kt=kt_v
             fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum(1),'var',var_str,'pli',pliname);
             data_ref_t0=load(fpath_mat_tmp,'data');
             
-                %we are taking the last simulation. They should all be the same.
+                %we are taking the first one simulation. They should all be the same.
+            fdir_mat=simdef(1).file.mat.dir;
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str,'pli',pliname);
             data_t0=load(fpath_mat_tmp,'data');
             
