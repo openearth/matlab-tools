@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17803 $
-%$Date: 2022-03-02 09:37:07 +0100 (Wed, 02 Mar 2022) $
-%$Author: chavarri $
-%$Id: D3D_plot.m 17803 2022-03-02 08:37:07Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_plot.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function D3D_plot_grid(fdir_sim)

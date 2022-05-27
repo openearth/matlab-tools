@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17818 $
-%$Date: 2022-03-14 11:41:37 +0100 (Mon, 14 Mar 2022) $
-%$Author: chavarri $
-%$Id: D3D_write_bc.m 17818 2022-03-14 10:41:37Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_write_bc.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function stru_out=D3D_table_d3d4_to_FM(stru_in)
