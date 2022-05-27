@@ -22,7 +22,24 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-tol_t=5/60/24;
+if ~isfield(flg_loc,'do_rkm')
+    if isfield(flg_loc,'fpath_rkm')
+        flg_loc.do_rkm=1;
+    else
+        flg_loc.do_rkm=0;
+    end
+end
+if flg_loc.do_rkm==1
+    if ~isfield(flg_loc,'fpath_rkm')
+        error('Provide rkm file')
+    elseif exist(flg_loc.fpath_rkm,'file')~=2
+        error('rkm file does not exist')
+    end
+end
+
+if ~isfield(flg_loc,'tol_t')
+    flg_loc.tol_t=5/60/24;
+end
 
 %% PATHS
 
@@ -41,12 +58,8 @@ npli=numel(flg_loc.pli);
 ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD TIME
-if simdef.D3D.structure==4
-    fpath_pass=simdef.D3D.dire_sim;
-else
-    fpath_pass=fpath_map;
-end
-[nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass);
+
+[nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
    
 %% LOOP TIME
 
@@ -71,15 +84,14 @@ for kt=kt_v
             if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
             %% read data
-            if simdef.D3D.structure==4
-                %this may not be strong enough. It will fail if the run is in path with <\0\> in the name. 
-                fpath_map_loc=strrep(fpath_map,[filesep,'0',filesep],[filesep,num2str(sim_idx(kt)),filesep]); 
-            else
-                fpath_map_loc=fpath_map;
-            end
-            data=EHY_getMapModelData(fpath_map_loc,'varName',var_str,'t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0,'pliFile',fpath_pli,'tol_t',tol_t);
             
-%             data=data_var.val; %#ok
+            data=gdm_read_data_map_ls_simdef(fpath_map,simdef,var_str,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t);
+            
+            if flg_loc.do_rkm
+                data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',1000);
+                data.rkm_cen=convert2rkm(flg_loc.fpath_rkm,[data.Xcen,data.Ycen],'TolMinDist',1000);
+            end
+            
             save_check(fpath_mat_tmp,'data'); 
             messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
         end

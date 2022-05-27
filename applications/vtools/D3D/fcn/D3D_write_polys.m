@@ -17,6 +17,10 @@ function D3D_write_polys(path_out,stru_in)
 %    1.9385889E+05   4.4052012E+05
 %    1.9380717E+05   4.4048145E+05
 
+if ~isstruct(stru_in)
+    error('Input must be a structure with field <xy> at least')
+end
+
 npol=numel(stru_in);
 
 if ~isfield(stru_in,'name')

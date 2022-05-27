@@ -32,7 +32,17 @@ runid=simdef.file.runid;
 % simdef.file.mat.map_ls_01_tim=fullfile(fdir_mat,'map_ls_01_tim.mat');
 
 % simdef.file.fig.map_ls_01=fullfile(fdir_fig,'map_ls_01');
-    
+
+%% PARSE
+
+if isfield(flg_loc,'do_rkm')==0
+    if isfield(flg_loc,'fpath_rkm')
+        flg_loc.do_rkm=1;
+    else
+        flg_loc.do_rkm=0;
+    end
+end
+
 %% TIME
 
 load(fpath_mat_time,'tim');
@@ -78,19 +88,43 @@ for kt=kt_v
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname);
             load(fpath_mat_tmp,'data');
             
-            in_p.s=data.Scen;
-            in_p.val=data.val';
-            in_p.lab_str=var_str;
+
+            
             
             for kylim=1:nylims
                 in_p.ylims=flg_loc.ylims(kylim,:);
-
+                if isfield(flg_loc,'xlims')
+                    in_p.xlims=flg_loc.xlims(kylim,:);
+                else
+                    in_p.xlims=[NaN,NaN];
+                end
+                
                 fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,pliname);
                 fpath_file{kt,kylim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                 in_p.fname=fname_noext;
+                
+                if size(data.val,3)>1
+                    in_p.data_ls.sal=data.val;
+                    in_p.data_ls.grid=data.gridInfo;
+                    in_p.unit=var_str;
+                    in_p.clims=[NaN,NaN];
+                    if flg_loc.do_rkm
+                        in_p.data_ls.grid.Xcor=data.rkm_cor;
+                    end
                     
-                fig_1D_01(in_p)
+                    fig_map_ls_01(in_p)
+                else
+                    in_p.lab_str=var_str;
+                    if flg_loc.do_rkm
+                        in_p.s=data.rkm_cen;
+                    else
+                        in_p.s=data.Scen;
+                    end
+                    in_p.val=data.val';
+                    
+                    fig_1D_01(in_p)
+                end
             end
             
             messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));

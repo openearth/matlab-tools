@@ -63,6 +63,9 @@
 %
 %       -'dg'       : geometric mean grain size
 %       -'dm'       : arithmetic mean grain size
+%       -'d10'      : 
+%       -'d50'      : 
+%       -'d90'      : 
 %
 %       -'vicouv'   : horizontal viscosity
 %
@@ -513,6 +516,36 @@ switch lower(var)
                 str_var='rekenkundig gemiddelde korrelgrootte';
             case 'es'
                 str_var='media aritmética del tamaño de grano';
+         end
+         un_type='L';
+    case 'd10'
+         switch lan
+            case 'en'
+                str_var='d_{10}';
+            case 'nl'
+                str_var='d_{10}';
+            case 'es'
+                str_var='d_{10}';
+         end
+         un_type='L';
+    case 'd50'
+         switch lan
+            case 'en'
+                str_var='d_{50}';
+            case 'nl'
+                str_var='d_{50}';
+            case 'es'
+                str_var='d_{50}';
+         end
+         un_type='L';
+    case 'd90'
+         switch lan
+            case 'en'
+                str_var='d_{90}';
+            case 'nl'
+                str_var='d_{90}';
+            case 'es'
+                str_var='d_{90}';
          end
          un_type='L';
     case 'vicouv'

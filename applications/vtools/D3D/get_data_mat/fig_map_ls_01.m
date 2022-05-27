@@ -52,6 +52,18 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
+if isfield(in_p,'cmap')==0
+    in_p.cmap=turbo(100);
+end
+if isfield(in_p,'kt')==0
+    in_p.kt=1;
+end
+if isfield(in_p,'fig_flip_section')==0
+    in_p.fig_flip_section=0;
+end
+if isfield(in_p,'fig_plot_vel')==0
+    in_p.fig_plot_vel=0;
+end
 
 v2struct(in_p)
 
@@ -74,6 +86,14 @@ end
 if isnan(clims(1))
     tol=1e-8;
     clims=[min(data_ls.sal(:))-tol,max(data_ls.sal(:))+tol];
+end
+
+if isnan(xlims(1))
+    xlims=[min(data_ls.grid.Xcor),max(data_ls.grid.Xcor)];
+end
+
+if isnan(ylims(1))
+    ylims=[min(data_ls.grid.Ycor(:)),max(data_ls.grid.Ycor(:))];
 end
 
 %% SIZE
@@ -142,7 +162,7 @@ cbar(kr,kc).location='northoutside';
 cbar(kr,kc).label=labels4all(unit,1,lan);
 
 % brewermap('demo')
-cmap=turbo(100);
+% cmap=turbo(100);
 
 %center around 0
 % ncmap=1000;

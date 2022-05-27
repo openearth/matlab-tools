@@ -78,6 +78,11 @@ for ks=1:ns
         create_mat_map_2DH_ls_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef)
     end
     
+    %% long prof underlayer
+    if isfield(in_plot,'long_prof_underlayer_01')==1
+        create_mat_long_prof_underlayer_01(fid_log,in_plot.long_prof_underlayer_01,simdef)
+    end
+    
 end %ks
 
 

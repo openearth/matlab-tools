@@ -63,6 +63,8 @@ in_plot.str_sim{ks}='scenario 4';
 in_plot.sim_ref=1;
 in_plot.lan='nl';
 
+%%
+
 tag='fig_map_sal_01';
 in_plot.(tag).do=0;
 in_plot.(tag).tag='map_sal_01';
@@ -77,6 +79,8 @@ in_plot.(tag).overwrite=0; %overwrite mat-files
 in_plot.(tag).unit='cl_surf';  %sal, cl
 in_plot.(tag).ldb_thk=0.1;  %sal, cl
 in_plot.(tag).fpath_ldb{1,1}=fullfile(fpaths.fdir_ldb,'lake_IJssel_ext.ldb');
+
+%%
 
 tag='fig_map_ls_01';
 in_plot.(tag).do=0;
@@ -95,6 +99,8 @@ in_plot.(tag).fig_plot_vel=0; %plot velocity vector
 in_plot.(tag).ylims=[-10.1,0];
 in_plot.(tag).fig_flip_section=1;
 in_plot.(tag).fig_size=[0,0,14,9];
+
+%%
 
 tag='fig_map_ls_02';
 in_plot.(tag).do=0;
@@ -117,6 +123,8 @@ in_plot.(tag).ylims=[-10.1,0];
 in_plot.(tag).fig_flip_section=1;
 in_plot.(tag).fig_size=[0,0,14,21];
 
+%%
+
 tag='fig_map_sal_mass_01';
 in_plot.(tag).do=0;
 in_plot.(tag).tag='map_sal_mass_01';
@@ -128,6 +136,8 @@ in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
 in_plot.(tag).fig_overwrite=0; %overwrite figures
 in_plot.(tag).overwrite=0; %overwrite mat-files
 in_plot.(tag).unit='clm2';
+
+%%
 
 tag='fig_map_q_01';
 in_plot.(tag).do=0;
@@ -144,6 +154,8 @@ in_plot.(tag).do_movie=0;
 in_plot.(tag).ldb_thk=0.1;  %sal, cl
 in_plot.(tag).fpath_ldb{1,1}=fullfile(fpaths.fdir_ldb,'lake_IJssel_ext.ldb');
 
+%%
+
 tag='fig_his_sal_01';
 in_plot.(tag).do=1;
 in_plot.(tag).tag='his_sal_01';
@@ -158,6 +170,8 @@ in_plot.(tag).overwrite=0; %overwrite mat-files
 in_plot.(tag).unit='cl_surf';  %sal, cl
 in_plot.(tag).ldb_thk=0.1;  %sal, cl
 in_plot.(tag).fpath_ldb{1,1}=fullfile(fpaths.fdir_ldb,'lake_IJssel_ext.ldb');
+
+%%
 
 tag='fig_map_sal3D_01';
 in_plot.(tag).do=0;
@@ -178,6 +192,62 @@ in_plot.(tag).overwrite=0; %overwrite mat-files
 in_plot.(tag).do_movie=1;
 in_plot.(tag).unit='cl';  %sal, cl
 % in_plot.(tag).fpath_ldb{1,1}=fullfile(fpaths.fdir_ldb,'lake_IJssel_ext.ldb');
+
+%%
+
+tag='fig_map_summerbed_01';
+in_plot.(tag).do=1;
+in_plot.(tag).tag='map_summerbed_01';
+in_plot.(tag).tim=NaN;
+% in_plot.(tag).tim=[datenum(2014,01,01),datenum(2015,01,11),datenum(2016,01,01),datenum(2016,01,01),datenum(2016,09,27)];
+in_plot.(tag).tim_type=2; %1=flow; 2=morpho (currently
+in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
+in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
+in_plot.(tag).fig_overwrite=0; %overwrite figures
+in_plot.(tag).overwrite=1; %overwrite mat-files
+in_plot.(tag).do_movie=0;
+in_plot.(tag).var={1,14,27,44}; %can be cell array vector. See <open input_D3D_fig_layout> for possible input flags
+in_plot.(tag).rkm={145:1:177,145:0.25:177}; %river km vectors to average the data; cell(1,nrkm)
+in_plot.(tag).rkm_name={'1km','250m'}; %river km vectors to average the data; cell(1,nrkm)
+    %construct branches name
+    for kidx=1:numel(in_plot.(tag).rkm)
+        in_plot.(tag).rkm_br{kidx,1}=maas_branches(in_plot.(tag).rkm{kidx});
+    end
+in_plot.(tag).xlims=[145,177]; %x limits for plotting [nxlims,2]
+in_plot.(tag).fpath_rkm=fullfile(fpaths.dir_rkm,'rkm.csv');
+
+%polygons and measurements associated to it
+
+kp=0;
+
+kp=kp+1;
+in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.dir_rkm,'L3R3.shp');
+in_plot.(tag).measurements{kp,1}=fullfile(fpaths.dir_data,'20220415_van_Arjan_1d_calibratie_parameters','L3R3_measured.mat'); 
+
+kp=kp+1;
+in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.dir_rkm,'L1L3.shp');
+in_plot.(tag).measurements{kp,1}=fullfile(fpaths.dir_data,'20220415_van_Arjan_1d_calibratie_parameters','L1L3_measured.mat'); 
+
+kp=kp+1;
+in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.dir_rkm,'L1R1.shp');
+in_plot.(tag).measurements{kp,1}=fullfile(fpaths.dir_data,'20220415_van_Arjan_1d_calibratie_parameters','L1R1_measured.mat'); 
+
+kp=kp+1;
+in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.dir_rkm,'R1R3.shp');
+in_plot.(tag).measurements{kp,1}=fullfile(fpaths.dir_data,'20220415_van_Arjan_1d_calibratie_parameters','R1R3_measured.mat'); 
+
+%difference between polygons
+kp=0;
+
+kp=kp+1;
+in_plot.(tag).sb_pol_diff{kp,1}=[2,4];
+in_plot.(tag).measurements_diff{kp,1}=fullfile(fpaths.dir_data,'20220415_van_Arjan_1d_calibratie_parameters','L1L3_minus_R1R3_measured.mat'); 
+
+%time average
+in_plot.(tag).tim_ave{1,1}=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)];
+% in_plot.(tag).tim_ave{2,1}=[datenum(2016,01,01),datenum(2016,09,27)];
+in_plot.(tag).tim_ave_type=2; %1=flow; 2=morpho
+in_plot.(tag).tol_tim=30; %tolerance to match day in period with results
 
 
 %%

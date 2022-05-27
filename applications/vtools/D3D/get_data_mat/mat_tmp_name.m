@@ -59,7 +59,7 @@ end
 
 %time 2
 if ~isempty(time_dnum_2)
-    str_add=sprintf('%s-%s',str_add,datestr(time_dnum,'yyyymmddHHMMSS'));
+    str_add=sprintf('%s-%s',str_add,datestr(time_dnum_2,'yyyymmddHHMMSS'));
 end
 
 %station
