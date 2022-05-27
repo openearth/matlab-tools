@@ -54,17 +54,24 @@ switch what_do
             case {'.bct','.bc'}
                 stru_out=bct_io('read',fname);
                 for kT=1:stru_out.NTables
-                    tim_ref=num2str(stru_out.Table(kT).ReferenceTime(1));
-                    tim_ref_dtim=datetime(str2double(tim_ref(1:4)),str2double(tim_ref(5:6)),str2double(tim_ref(7:8)));
                     idx_tim=find_str_in_cell({stru_out.Table(kT).Parameter.Name},{'time'});
                     if isnan(idx_tim)
                         warning('Time not found')
                         continue
                     end
+                    str_time=stru_out.Table(kT).Parameter(idx_tim).Unit;
+                    [tim_ref_dtim,units,~,~]=read_str_time(str_time);
+%                     tim_ref=num2str(stru_out.Table(kT).ReferenceTime(1));
+%                     tim_ref_dtim=datetime(str2double(tim_ref(1:4)),str2double(tim_ref(5:6)),str2double(tim_ref(7:8)));
+%                     units=stru_out.Table(kT).TimeUnit;
                     tim_data=stru_out.Table(kT).Data(:,idx_tim);
-                    switch stru_out.Table(kT).TimeUnit
+                    switch units
+                        case 'seconds'
+                            tim_un=seconds(tim_data);
                         case 'minutes'
                             tim_un=minutes(tim_data);
+                        otherwise
+                            error('add')
                     end
                     tim_dtim=tim_ref_dtim+tim_un;
                     stru_out.Table(kT).Time=tim_dtim;
@@ -117,6 +124,9 @@ switch what_do
 % stru_in.quantity
 % stru_in.unit
 % stru_in.val
+                if isfield(stru_in,'Check') %read from 
+                    stru_in=D3D_table_d3d4_to_FM(stru_in);
+                end
                 D3D_write_bc(fname,stru_in)
             case '.xyz'
 %                 D3D_io_input('write',xyz)

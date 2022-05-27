@@ -90,7 +90,7 @@ for ksb=1:nsb
         ktc=0;
         for kt=kt_v %time
             ktc=ktc+1;
-
+                 
             for kvar=1:nvar %variable
                 varname=flg_loc.var{kvar};
                 var_str=D3D_var_num2str(varname);

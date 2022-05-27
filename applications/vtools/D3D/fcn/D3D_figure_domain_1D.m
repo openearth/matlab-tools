@@ -206,7 +206,7 @@ han.p=scatter(XZ,YZ,10,'r','filled');
 if flg.plot_nodes
 for kn=1:nn
     han.p=scatter(network1d_node_x(kn),network1d_node_y(kn),10,'sr','filled');
-    str_p=strrep(network1d_node_id(kn,:),'_',' ');
+    str_p=strrep(network1d_node_id(kn,:),'_','\_');
     text(network1d_node_x(kn),network1d_node_y(kn),str_p,'Rotation',45,'Fontsize',10,'color','c')    
 end
 end
@@ -217,13 +217,13 @@ for kb=1:nb
     idx_br=mesh1d_node_branch==kb;
     mean_x=mean(network1d_geom_x(geom_cs(kb):geom_cs(kb+1)));
     mean_y=mean(network1d_geom_y(geom_cs(kb):geom_cs(kb+1)));
-    str_p=strrep(network1d_branch_id(kb,:),'_',' ');
+    str_p=strrep(network1d_branch_id(kb,:),'_','\_');
     text(mean_x,mean_y,str_p,'Rotation',0,'Fontsize',10,'color','k')    
 end
 end
 
 %mesh1d
-
+plot(mesh1d_node_x,mesh1d_node_y,'*')
 
 % light
 % material dull

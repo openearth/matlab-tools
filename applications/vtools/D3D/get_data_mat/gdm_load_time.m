@@ -19,6 +19,10 @@ if isfield(flg_loc,'overwrite')==0
     flg_loc.overwrite=0;
 end
 
+if isfield(flg_loc,'tim_type')==0
+    flg_loc.tim_type=1;
+end
+
 %% CALC
 
 load_tim=false;
@@ -37,6 +41,9 @@ else
     load_tim=true;
 end
 if load_tim
+    if flg_loc.tim_type==2 && ~isnan(flg_loc.tim)
+        error('implement this option')
+    end
     [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,flg_loc.tim);
     tim=v2struct(time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx); %#ok
     

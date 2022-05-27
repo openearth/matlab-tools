@@ -44,6 +44,10 @@ if isa(in_dtime(1),'double')
         time_mor_dtime_s.TimeZone='+00:00';
         sim_idx_s=NaN(nt,1);
         for kt=1:nt
+            
+            %here change <time_dnum> for <time_mor_dnum> for getting the flow
+            %time associated to the input morpho time
+            
             idx_g=absmintol(time_dnum,in_dtime(kt),'tol',1,'dnum',1);
             
             time_dnum_s(kt,1)=time_dnum(idx_g);

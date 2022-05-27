@@ -85,8 +85,13 @@ for ksb=1:nsb
 
                 fn_data=fieldnames(data);
                 nfn=numel(fn_data);
-
-                in_p.tim=time_dnum(kt);
+                
+                if flg_loc.tim_type==1
+                    in_p.tim=time_dnum(kt);
+                elseif flg_loc.tim_type==2
+                    in_p.tim=time_mor_dnum(kt);
+                end
+                
                 in_p.lab_str=var_str;
                 in_p.xlims=flg_loc.xlims;
 
@@ -97,7 +102,12 @@ for ksb=1:nsb
                     
                     in_p.plot_mea=false;
                     if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
-                        data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',time_dnum(kt),'var',var_str,'stat',statis);
+                        if flg_loc.tim_type==1
+                            tim_search_in_mea=time_dnum(kt);
+                        elseif flg_loc.tim_type==2
+                            tim_search_in_mea=time_mor_dnum(kt);
+                        end
+                        data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str,'stat',statis);
                         if isstruct(data_mea)
                             in_p.plot_mea=true;
                             in_p.val_mea=data_mea.y;

@@ -12,17 +12,21 @@
 %
 function out=NC_read_grid(simdef,in)
 
-% out=nc2struct(simdef.file.grd);
+% out=nc2struct(simdef.file.grd,str_network1d));
 
-out.network1d_branch_order=ncread(simdef.file.grd,'network1d_branch_order');
-out.network1d_node_id=ncread(simdef.file.grd,'network1d_node_id');
-out.network1d_geom_node_count=ncread(simdef.file.grd,'network1d_geom_node_count');
-out.network1d_geom_x=ncread(simdef.file.grd,'network1d_geom_x');
-out.network1d_geom_y=ncread(simdef.file.grd,'network1d_geom_y');
-out.network1d_node_x=ncread(simdef.file.grd,'network1d_node_x');
-out.network1d_node_y=ncread(simdef.file.grd,'network1d_node_y');
+[ismor,is1d,str_network1d,issus]=D3D_is(simdef.file.grd);
+
+out.network1d_branch_order=ncread(simdef.file.grd,sprintf('%s_branch_order',str_network1d));
+out.network1d_node_id=ncread(simdef.file.grd,sprintf('%s_node_id',str_network1d));
+out.network1d_geom_node_count=ncread(simdef.file.grd,sprintf('%s_geom_node_count',str_network1d));
+out.network1d_geom_x=ncread(simdef.file.grd,sprintf('%s_geom_x',str_network1d));
+out.network1d_geom_y=ncread(simdef.file.grd,sprintf('%s_geom_y',str_network1d));
+out.network1d_node_x=ncread(simdef.file.grd,sprintf('%s_node_x',str_network1d));
+out.network1d_node_y=ncread(simdef.file.grd,sprintf('%s_node_y',str_network1d));
 out.mesh1d_node_branch=ncread(simdef.file.grd,'mesh1d_node_branch');
-out.network1d_branch_id=ncread(simdef.file.grd,'network1d_branch_id');
-% out.mesh1d
+out.network1d_branch_id=ncread(simdef.file.grd,sprintf('%s_branch_id',str_network1d));
+
+out.mesh1d_node_x=ncread(simdef.file.grd,'mesh1d_node_x');
+out.mesh1d_node_y=ncread(simdef.file.grd,'mesh1d_node_y');
 
 end %function

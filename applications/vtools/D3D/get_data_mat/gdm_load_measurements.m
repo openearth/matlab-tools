@@ -46,6 +46,8 @@ fn2=fieldnames(data.(fn{idx_var}));
 
 idx_stat=find_str_in_cell(fn2,{stat});
 
+if isnan(idx_stat); data_out=NaN; return; end
+
 struct_loc=data.(fn{idx_var}).(fn2{idx_stat});
 
 tim_mea=struct_loc.tim_dnum;
@@ -63,6 +65,8 @@ function var_nam_accepted=gdm_var_name_accepted(var_name)
 switch var_name
     case {'mesh2d_mor_bl','bl','DPS'}
         var_nam_accepted={'mesh2d_mor_bl','bl','DPS'};
+    otherwise
+        var_nam_accepted={var_name};
 
 end
 
