@@ -1,15 +1,6 @@
 function [OUT] = read_csv(fname)
 %read_csv  Function to read .csv files MANUALLY downloaded from waterinfo
 %
-%   Script can deal with multiple variables in csv file, these are added as
-%   GROOTHEID_OMSCHRJVING_1, GROOTHEID_OMSCHRJVING_2, GROOTHEID_OMSCHRJVING_n
-%   and the values as
-%   NUMERIEKEWAARDE_1, NUMERIEKEWAARDE_2, NUMERIEKEWAARDE_n
-%
-%   NOTE: Function is not suitable (yet) for csv files with multiple stations!
-%
-%   csv files downloaded from https://waterinfo.rws.nl/.
-%
 %   Syntax:
 %   OUT = waterinfo.read_csv(fname)
 %
@@ -21,6 +12,26 @@ function [OUT] = read_csv(fname)
 %
 %   Example
 %   [OUT] = waterinfo.read_csv('d:\waterinfo.csv\')
+%
+%   NOTES:
+%   Script can deal with multiple variables in csv file, these are added as
+%   GROOTHEID_OMSCHRJVING_1, GROOTHEID_OMSCHRJVING_2, GROOTHEID_OMSCHRJVING_n
+%   the values as
+%   NUMERIEKEWAARDE_1, NUMERIEKEWAARDE_2, NUMERIEKEWAARDE_n
+%   and the corresponding date entries as
+%   datenum_1, datenum_2, datenum_n
+%
+%   Function can deal with multiple stations, the names are added to
+%   MEETPUNT_IDENTIFICATIE
+%   the datenum and value fields are appended as
+%   NUMERIEKEWAARDE_n{:,x}
+%
+%   Function can deal with multiple samplings heights, the heights are added to
+%   BEMONSTERINGSHOOGTE
+%   the datenum and value fields are appended as
+%   NUMERIEKEWAARDE_n{x,:}
+%
+%   csv files downloaded from https://waterinfo.rws.nl/.
 %
 %   See also
 %   waterinfo.read_csv
@@ -108,24 +119,41 @@ frmt        = cellstr(repmat('%s',length(header),1));
 
 id1       = find(strcmp(header,'WAARNEMINGDATUM'));
 id2       = find(contains(header,'WAARNEMINGTIJD'));
-if contains(header(id2),'MET')
-    id2       = find(strcmp(header,'REFERENTIE'));
-end
 id3       = find(strcmp(header,'NUMERIEKEWAARDE'));
 frmt{id1} = '%{dd-MM-yyyy}D';
 frmt{id2} = '%{HH:mm:ss}D';
 frmt{id3} = '%q';
 frmt        = horzcat(frmt{:});
 
-delimiter = ';';
-startRow = 2;
-fid = fopen(fname,'r');
-data = textscan(fid,frmt,...
-    'Delimiter',delimiter,...
-    'HeaderLines',startRow-1,...
-    'DateLocale','nl_NL',...
-    'ReturnOnError',false);
-fclose(fid);
+try
+    delimiter = ';';
+    startRow = 2;
+    fid = fopen(fname,'r');
+    data = textscan(fid,frmt,...
+        'Delimiter',delimiter,...
+        'HeaderLines',startRow-1,...
+        'DateLocale','nl_NL',...
+        'ReturnOnError',false);
+    fclose(fid);
+catch % time in other column
+    id2       = find(strcmp(header,'REFERENTIE'));
+    frmt        = cellstr(repmat('%s',length(header),1));
+    frmt{id1} = '%{dd-MM-yyyy}D';
+    frmt{id2} = '%{HH:mm:ss}D';
+    frmt{id3} = '%q';
+    frmt        = horzcat(frmt{:});
+    
+    delimiter = ';';
+    startRow = 2;
+    fid = fopen(fname,'r');
+    data = textscan(fid,frmt,...
+        'Delimiter',delimiter,...
+        'HeaderLines',startRow-1,...
+        'DateLocale','nl_NL',...
+        'ReturnOnError',false);
+    fclose(fid);
+    
+end
 
 flds = fieldnames(OUT);
 for i = 1:length(flds)
@@ -141,32 +169,56 @@ for i = 1:length(flds)
     elseif length(unique(tmp)) > 1
         
         
-        if strcmp(f,'WAARNEMINGDATUM') || strcmp(f,'WAARNEMINGTIJD') || strcmp(f,'REFERENTIE') % Time array
-            OUT = rmfield(OUT,f);
-            if ~isfield(OUT,'datenum')
-                OUT.datenum = datenum([year(data{id1}),month(data{id1}),day(data{id1}),...
-                    hour(data{id2}),minute(data{id2}),second(data{id2})]);
+
+        if strcmp(f,'NUMERIEKEWAARDE') % Values
+            % Replace decimal separator
+            if any(contains(data{i},','))
+                data{i} = strrep(data{i},',','.');
             end
-        elseif strcmp(f,'NUMERIEKEWAARDE') % Values
-            flds2 = fieldnames(OUT);
-            ids = ~cellfun('isempty',strfind(flds2,'GROOTHEID_OMSCHRIJVING'));
-            vars = flds2(ids);
-            nvars = length(vars);
-            for j = 1:nvars
-                fnew = sprintf('%s_%d',f,j);
+            
+            idv         = contains(flds,'GROOTHEID_OMSCHRIJVING');
+            vars        = unique(data{idv});
+            nvars       = length(vars);
+            ids         = contains(flds,'MEETPUNT_IDENTIFICATIE');
+            stats       = unique(data{ids});
+            nstats      = length(stats);
+            idh         = contains(flds,'BEMONSTERINGSHOOGTE');
+            heights     = unique(data{idh});
+            nheights    = length(heights);
+            
+            
+            for j = 1:nvars % Loop through variables
+                fvar = sprintf('%s_%d',f,j);
+                fdat = sprintf('datenum_%d',j);
                 v = vars{j};
-                id      = strcmp(header,'GROOTHEID_OMSCHRIJVING');
-                locs    = strcmp(data{id},OUT.(v));
-                OUT.(fnew) = str2double(data{i}(locs));
+                vlocs    = strcmp(data{idv},v);
+                
+                for k = 1:nstats % Loop through monitoring stations
+                    s = stats{k};
+                    slocs = strcmp(data{ids},s);
+                    
+                    
+                    for m = 1:nheights
+                        h = heights{m};
+                        hlocs = strcmp(data{idh},h);                      
+                        entries = vlocs & slocs & hlocs;
+
+                        % Date entries
+                        OUT.(fvar){m,k} = str2double(data{i}(entries));
+                        OUT.(fdat){m,k} = datenum([year(data{id1}(entries)),...
+                            month(data{id1}(entries)),...
+                            day(data{id1}(entries)),...
+                            hour(data{id2}(entries)),...
+                            minute(data{id2}(entries)),...
+                            second(data{id2}(entries))]);
+                    end
+                    
+                end
             end
         else
-            OUT = rmfield(OUT,f);
-            tmp2 = unique(tmp);
-            for j = 1:length(tmp2)
-                fnew = sprintf('%s_%d',f,j);
-                OUT.(fnew) = tmp2(j);
-            end
+            OUT.(f) = unique(data{i});
         end
+        
     end
     
 end
@@ -177,30 +229,31 @@ end
 
 %% 3) Calculations
 
-% Replace dummy values with NaN
-% Note: dummy value changes with variable
-for i = 1:nvars
-    v = sprintf('NUMERIEKEWAARDE_%d',i);
-    OUT.(v)(OUT.(v) == 99999) = NaN;
-    OUT.(v)(OUT.(v) == 999999999) = NaN;
-end
 
-% Check if time is sorted and sort otherwise
-if diff(OUT.datenum) < 0
-    [OUT.datenum,sid] = sort(OUT.datenum);
-    for j = 1:nvars
-        v = sprintf('NUMERIEKEWAARDE_%d',j);
-        OUT.(v) = OUT.(v)(ids);
-    end
-end
-
-% find double date entries on a single value
-if length(OUT.datenum) > length(unique(OUT.datenum))
-    fprintf('\tDouble date entries found and removed\n');
-    [OUT.datenum,ia,~] = unique(OUT.datenum);
-    for j = 1:nvars
-        v = sprintf('NUMERIEKEWAARDE_%d',j);
-        OUT.(v) = OUT.(v)(ia);
+for j = 1:nvars
+    v = sprintf('NUMERIEKEWAARDE_%d',j);
+    d = sprintf('datenum_%d',j);
+    for k = 1:size(OUT.(v),2)
+        for m = 1:size(OUT.(v),1)
+            
+            % Replace dummy values with NaN
+            % Note: dummy value changes with variable
+            if max(OUT.(v){m,k}) > mean(OUT.(v){m,k})+10*std(OUT.(v){m,k}) % Dummy value
+                OUT.(v){m,k}(OUT.(v){m,k} == max(OUT.(v){m,k})) = NaN;
+            end
+            
+            % Check if time is sorted and sort otherwise
+            if diff(OUT.(d){m,k}) < 0
+                [OUT.(d){m,k},sid] = sort(OUT.(d){m,k});
+            end
+            
+            % find double date entries on a single value
+            if length(OUT.(d){m,k}) > length(unique(OUT.(d){m,k}))
+                
+                fprintf('\tDouble date entries found and removed\n');
+                [OUT.OUT.(d){m,k},~,~] = unique(OUT.(d){m,k});
+            end
+        end
     end
 end
 
@@ -218,11 +271,13 @@ clc;
 [fpath,name,ext] = fileparts(fname);
 
 fprintf('\tDone reading %s%s\n',name,ext);
-fprintf('\t%d variables were found and processed:\n',nvars);
-for i = 1:nvars
-    v = vars{i};
-    fprintf('\t- %s\n',OUT.(v){:});
-end
+fprintf('\t%d monitoring station(s) was/were found and processed:\n',nstats);
+fprintf('\t- %s\n',OUT.MEETPUNT_IDENTIFICATIE{:})
+fprintf('\t%d variable(s) was/were found and processed:\n',nvars);
+fprintf('\t- %s\n',OUT.GROOTHEID_OMSCHRIJVING{:})
+fprintf('\t%d sampling height(s) was/were found and processed:\n',nheights);
+fprintf('\t- %s\n',OUT.BEMONSTERINGSHOOGTE{:})
+
 fprintf('\n');
 
 return
