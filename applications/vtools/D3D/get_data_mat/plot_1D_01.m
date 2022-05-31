@@ -69,15 +69,22 @@ for ksb=1:nsb
 
         in_p.s=rkmv.rkm_cen;
 
-        ktc=0;
         kt_v=gdm_kt_v(flg_loc,nt); %time index vector
-        fpath_file=cell(nt,1);
-        for kt=kt_v %time
-            ktc=ktc+1;
-            for kvar=1:nvar %variable
-                varname=flg_loc.var{kvar};
-                var_str=D3D_var_num2str_structure(varname,simdef);
+%         fpath_file=cell(nt,1); %movie
 
+        for kvar=1:nvar %variable
+            varname=flg_loc.var{kvar};
+            var_str=D3D_var_num2str_structure(varname,simdef);
+            
+            %time 0
+            kt=1;
+                %model
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
+            data_0=load(fpath_mat_tmp,'data');            
+                
+            ktc=0;
+            for kt=kt_v %time
+                ktc=ktc+1;
 
                 %% load
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
@@ -97,36 +104,56 @@ for ksb=1:nsb
 
                 for kfn=1:nfn
                     statis=fn_data{kfn};
-
-                %% measurements
-                    
-                    in_p.plot_mea=false;
-                    if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
-                        if flg_loc.tim_type==1
-                            tim_search_in_mea=time_dnum(kt);
-                        elseif flg_loc.tim_type==2
-                            tim_search_in_mea=time_mor_dnum(kt);
-                        end
-                        data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str,'stat',statis);
-                        if isstruct(data_mea)
-                            in_p.plot_mea=true;
-                            in_p.val_mea=data_mea.y;
-                            in_p.s_mea=data_mea.x;
-                        end
+                    switch statis
+                        case 'val_std'
+                            in_p.is_std=true;
+                        otherwise
+                            in_p.is_std=false;
                     end
-                                        
-                    fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str,statis);
-                    mkdir_check(fdir_fig_loc);
+                    
+                    for kref=1:2
+                        
+                        %measurements                        
+                        in_p.plot_mea=false;
+                        if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+                            tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
+                            data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str,'stat',statis);
+                            if isstruct(data_mea) %there is data
+                                in_p.plot_mea=true;
+                                in_p.s_mea=data_mea.x;
+                                if kref==1
+                                    in_p.val_mea=data_mea.y;
+                                elseif kref==2
+                                    tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
+                                    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str,'stat',statis);
+                                    in_p.val_mea=data_mea.y-data_mea_0.y;
+                                    %we are assuming <s_mea> is the same
+                                end
+                            end
+                        end
+                        
+                        if kref==1
+                            in_p.val=data.(statis);
+                            in_p.is_diff=0;
+                            str_dir='val';
+                        elseif kref==2
+                            in_p.val=data.(statis)-data_0.data.(statis);
+                            in_p.is_diff=1;
+                            str_dir='diff';
+                        end
+                        
+                        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str,statis,str_dir);
+                        mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                    in_p.val=data.(statis);
-                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,statis,sb_pol);
-                    fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
-
-                    in_p.fname=fname_noext;
-
-                    fig_1D_01(in_p);
+                        fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,statis,sb_pol,kref);
+%                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+                        
+                        in_p.fname=fname_noext;
+                        
+                        fig_1D_01(in_p);
+                    end %kref
                     messageOut(fid_log,sprintf('Done plotting figure %s rkm poly %4.2f %% time %4.2f %% variable %4.2f %% statistic %4.2f %%',tag,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100,kfn/nfn*100));
-                end
+                end %kfn
 
                 %BEGIN DEBUG
 
@@ -134,20 +161,20 @@ for ksb=1:nsb
 
                 %% movie
 
-                if isfield(flg_loc,'do_movie')==0
-                    flg_loc.do_movie=1;
-                end
+%                 if isfield(flg_loc,'do_movie')==0
+%                     flg_loc.do_movie=1;
+%                 end
+% 
+%                 if flg_loc.do_movie
+%                     dt_aux=diff(time_dnum);
+%                     dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
+%                     rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
+%                     make_video(fpath_file,'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
+%                 end
 
-                if flg_loc.do_movie
-                    dt_aux=diff(time_dnum);
-                    dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
-                    rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
-                    make_video(fpath_file,'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
-                end
 
-
-            end %kvar
-        end %kt    
+            end %kt
+        end %kvar    
     end %nrkmv
 end %ksb
 
@@ -157,7 +184,7 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref)
 
 % fprintf('fdir_fig: %s \n',fdir_fig);
 % fprintf('tag: %s \n',tag);
@@ -165,7 +192,19 @@ function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol)
 % fprintf('time_dnum: %f \n',time_dnum);
 % fprintf('iso: %s \n',iso);
                 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,fn,sb_pol));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,fn,sb_pol,kref));
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
+end %function
+
+%%
+
+function tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum)
+
+if flg_loc.tim_type==1
+    tim_search_in_mea=time_dnum;
+elseif flg_loc.tim_type==2
+    tim_search_in_mea=time_mor_dnum;
+end
+
 end %function

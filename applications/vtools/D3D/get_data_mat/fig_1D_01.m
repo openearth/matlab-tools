@@ -48,7 +48,7 @@ if isfield(in_p,'xlims')==0
 end
 if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
     bol_p=in_p.s>in_p.xlims(1) & in_p.s<in_p.xlims(2);
-    in_p.ylims=[min(in_p.val(bol_p))-eps,max(in_p.val(bol_p))+eps];
+    in_p.ylims=[min(in_p.val(bol_p))-10*eps,max(in_p.val(bol_p))+10*eps];
 end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
@@ -74,11 +74,11 @@ if isfield(in_p,'plot_mea')==0
         in_p.plot_mea=false;
     end
 end
-
-    
+if isfield(in_p,'is_std')==0
+    in_p.is_std=0;
+end
+ 
 v2struct(in_p)
-
-
 
 %% check if printing
 print_fig=check_print_figure(in_p);
@@ -238,9 +238,11 @@ lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 % lims.c(kr,kc,1:2)=clims;
 xlabels{kr,kc}=labels4all('dist_prof',1,lan);
-[lab,str_var,str_un,str_diff,str_background]=labels4all(lab_str,1,lan);
+[lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan);
 if is_diff
     ylabels{kr,kc}=str_diff;
+elseif is_std
+    ylabels{kr,kc}=str_std;
 else
     ylabels{kr,kc}=lab;
 end

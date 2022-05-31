@@ -38,9 +38,7 @@ switch what_do
             case {'.sed','.mor'}
                 stru_out=delft3d_io_sed(fname);
             case {'.pli','.pliz','.pol','.ldb'}
-                tek=tekal('read',fname,'loaddata');
-                stru_out.name={tek.Field.Name};
-                stru_out.val={tek.Field.Data};
+                stru_out=D3D_read_polys(fname,varargin{:});
             case '.ini'
                 stru_out=delft3d_io_sed(fname);
             case '.grd'
@@ -79,6 +77,12 @@ switch what_do
             case '.xyz'
 %                 stru_out=dflowfm_io_xydata('read',fname); %extremely slow
                 stru_out=readmatrix(fname,'FileType','text');
+            case '.xyn'
+                obs_xy=readmatrix(fname,'FileType','text');
+                obs_nam=readcell(fname,'FileType','text');
+                stru_out.name=obs_nam(:,3)';
+                stru_out.x=obs_xy(:,1)';
+                stru_out.y=obs_xy(:,2)';
             case '.ext'
                 stru_out=delft3d_io_sed(fname); %there are repeated blocks, so we cannot use dflowfm_io_mdu
             case '.sob'

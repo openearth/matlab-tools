@@ -54,6 +54,7 @@ end
 
 nt=numel(time_dnum);
 nclim=size(flg_loc.clims,1);
+nref=2; 
 
 xlims=[min(gridInfo.face_nodes_x(:)),max(gridInfo.face_nodes_x(:))];
 ylims=[min(gridInfo.face_nodes_y(:)),max(gridInfo.face_nodes_y(:))];
@@ -79,7 +80,24 @@ end
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
 fpath_file=cell(nt,nclim);
+
+%first time
+kt=1;
+if is_layer
+    fpath_mat_tmp_ref=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum(kt),'layer',layer);
+    fpath_mat_tmp    =mat_tmp_name(fdir_mat    ,tag,'tim',time_dnum(kt),'layer',layer);
+else
+    fpath_mat_tmp_ref=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum(kt));
+    fpath_mat_tmp    =mat_tmp_name(fdir_mat    ,tag,'tim',time_dnum(kt));
+end
+
+data_ref_0=load(fpath_mat_tmp_ref,'data');
+
+data_0    =load(fpath_mat_tmp    ,'data');
+    
 for kt=kt_v
+    
+    %load data
     if is_layer
         fpath_mat_tmp_ref=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum(kt),'layer',layer);
         fpath_mat_tmp    =mat_tmp_name(fdir_mat    ,tag,'tim',time_dnum(kt),'layer',layer);
@@ -92,22 +110,29 @@ for kt=kt_v
     
     data    =load(fpath_mat_tmp    ,'data');
     
-%     val=data.data.val-data_ref.data.val;
-    val=data.data-data_ref.data;
     for kclim=1:nclim
-        %fullfile(fdir_fig,sprintf('%s_%s_%s_clim_%02d',tag,runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim));
-        fname_noext=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d',tag_diff,simdef.file.runid,simdef_ref.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim));
-        fpath_file{kt,kclim}=sprintf('%s%s',fname_noext,fext); %for movie 
-        
-        in_p.fname=fname_noext;
-        in_p.val=val;
-        in_p.tim=time_dnum(kt);
-        
-        clims=flg_loc.clims_diff(kclim,:);
-        
-        in_p.clims=clims;
-        
-        fig_map_sal_01(in_p);
+        for kref=1:nref
+            if kref==1
+                val=data.data-data_ref.data;
+                in_p.is_background=0;
+            elseif kref==2
+                val=(data.data-data_ref.data)-(data_0.data-data_ref_0.data);
+                in_p.is_background=1;
+            end
+            
+            fname_noext=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d_ref_%02d',tag_diff,simdef.file.runid,simdef_ref.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim,kref));
+            fpath_file{kt,kclim,kref}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+            in_p.fname=fname_noext;
+            in_p.val=val;
+            in_p.tim=time_dnum(kt);
+
+            clims=flg_loc.clims_diff(kclim,:);
+
+            in_p.clims=clims;
+
+            fig_map_sal_01(in_p);
+        end %kref
     end %kclim
 end %kt
 
@@ -122,7 +147,9 @@ if flg_loc.do_movie
     dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
     rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
     for kclim=1:nclim
-       make_video(fpath_file(:,kclim),'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
+        for kref=1:nref
+           make_video(fpath_file(:,kclim,kref),'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
+        end
     end
 end
 

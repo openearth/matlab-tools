@@ -81,7 +81,7 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function [lab,str_var,str_un,str_diff,str_background]=labels4all(var,un,lan,varargin)
+function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back]=labels4all(variable,un,lan,varargin)
 
 %%
 
@@ -95,7 +95,7 @@ Lref=parin.Results.Lref;
 
 %%
 
-switch lower(var)
+switch lower(variable)
     case 'eta'
         switch lan
             case 'en'
@@ -604,6 +604,66 @@ end %var
 
 %% UNIT
 
+str_un=str_unit(un_type,un,lan,Lref,variable);
+        
+%% LABEL 
+
+lab=strcat(str_var,str_un);
+
+%string unit no ref
+switch un_type
+    case 'Lref'
+        str_un_nr=str_unit('L',un,lan,Lref,variable);
+    otherwise
+        str_un_nr=str_un;
+end
+ 
+%difference
+switch lan
+    case 'en'
+        str_d='difference in';
+    case 'nl'
+        str_d='verschil in';
+    case 'es'
+        str_d='diferencia de';
+end
+str_diff=sprintf('%s %s%s',str_d,str_var,str_un_nr);
+
+%background
+ switch lan
+    case 'en'
+        str_b='above background';
+    case 'nl'
+        str_b='boven achtergrond';
+    case 'es'
+        str_b='sobre ambiente';
+ end
+str_background=sprintf('%s %s%s',str_var,str_b,str_un);
+
+%standard deviation
+ switch lan
+    case 'en'
+        str_s='standard deviation';
+    case 'nl'
+        str_s='standaardafwijking';
+    case 'es'
+        str_s='desviación estándar';
+ end
+str_std=sprintf('%s %s%s',str_s,str_var,str_un_nr);
+
+ %difference above background
+str_diff_back=sprintf('%s %s %s%s',str_d,str_var,str_b,str_un_nr);
+
+end %function
+
+%%
+%% FUNCTIONS
+%% 
+
+%%
+
+function str_un=str_unit(un_type,un,lan,Lref,val)
+
 switch un_type
     case 'Lref'
         switch un
@@ -633,7 +693,7 @@ switch un_type
                 error('this factor is missing')
         end
     case '-'
-        switch lower(var)
+        switch lower(val)
             case 'sal'
                 str_un=' [psu]';
             case {'cl','conctte','cl_surf'}
@@ -695,31 +755,5 @@ switch un_type
                 error('this factor is missing')
         end
 end %un_type
-        
-%% LABEL 
-
-lab=strcat(str_var,str_un);
-
-%difference
-switch lan
-    case 'en'
-        str_d='difference in';
-    case 'nl'
-        str_d='verschil in';
-    case 'es'
-        str_d='diferencia de';
-end
-str_diff=sprintf('%s %s',str_d,lab);
-
-%background
- switch lan
-    case 'en'
-        str_b='above background';
-    case 'nl'
-        str_b='boven achtergrond';
-    case 'es'
-        str_b='sobre ambiente';
- end
-str_background=sprintf('%s %s%s',str_var,str_b,str_un);
 
 end %function

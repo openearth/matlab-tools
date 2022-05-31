@@ -45,6 +45,10 @@ for ks=1:ns
         create_mat_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
     end
     
+    if isfield(in_plot,'fig_map_sal_mass_01')==1
+        create_mat_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
+    end
+    
     %% q
     if isfield(in_plot,'fig_map_q_01')==1
         create_mat_map_q_01(fid_log,in_plot.fig_map_q_01,simdef)

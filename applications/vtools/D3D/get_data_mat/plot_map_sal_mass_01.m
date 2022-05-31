@@ -107,7 +107,7 @@ for kt=kt_v
                         in_p.clims=[clims(1),max_tot];
                     else
                         in_p.clims=clims;
-                    end
+                    end                    
             end
                     
             fig_map_sal_01(in_p);

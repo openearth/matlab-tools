@@ -159,12 +159,15 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
-if is_background
+[lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,1,lan);
+if is_background && ~is_diff
     cbar(kr,kc).label=str_back;
     cmap=turbo(100);
-elseif is_diff
+elseif is_diff && ~is_background
     cbar(kr,kc).label=str_diff;
+    cmap=brewermap(100,'RdYlBu');
+elseif is_diff && is_background
+    cbar(kr,kc).label=str_diff_back;
     cmap=brewermap(100,'RdYlBu');
 else
     cbar(kr,kc).label=lab;

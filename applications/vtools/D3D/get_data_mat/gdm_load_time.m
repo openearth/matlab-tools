@@ -15,12 +15,16 @@ function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load
 
 %% PARSE
 
-if isfield(flg_loc,'overwrite')==0
-    flg_loc.overwrite=0;
+if isfield(flg_loc,'overwrite_tim')==0
+    flg_loc.overwrite_tim=0;
 end
 
 if isfield(flg_loc,'tim_type')==0
     flg_loc.tim_type=1;
+end
+
+if isfield(flg_loc,'tim_tol')==0
+    flg_loc.tim_tol=10;
 end
 
 %% CALC
@@ -28,7 +32,7 @@ end
 load_tim=false;
 if exist(fpath_mat_time,'file')==2 
     messageOut(fid_log,'Time-file already exists');
-    if flg_loc.overwrite==0
+    if flg_loc.overwrite_tim==0
         messageOut(fid_log,'Not overwriting time-file.')
         load(fpath_mat_time,'tim');
         v2struct(tim);
@@ -41,10 +45,7 @@ else
     load_tim=true;
 end
 if load_tim
-    if flg_loc.tim_type==2 && ~isnan(flg_loc.tim)
-        error('implement this option')
-    end
-    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,flg_loc.tim);
+    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,flg_loc.tim,'tim_type',flg_loc.tim_type,'tol',flg_loc.tim_tol);
     tim=v2struct(time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx); %#ok
     
     save_check(fpath_mat_time,'tim');

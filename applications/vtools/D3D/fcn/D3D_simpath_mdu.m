@@ -94,29 +94,47 @@ if isfield(mdu,'sediment')
 end
 
 %output
-if isfield(mdu.output,'OutputDir')
-    path_output_loc=mdu.output.OutputDir;
-    if isempty(path_output_loc)
-        path_output_loc=sprintf('DFM_OUTPUT_%s',runid);
-    end
-    simdef.file.output=fullfile(path_sim,path_output_loc);
-    [file_aux,simdef.err]=D3D_simpath_output(simdef.file.output);
-    fnames=fieldnames(file_aux);
-    nfields=numel(fnames);
-    for kfields=1:nfields
-        simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
-    end
-    if isfield(mdu.output,'CrsFile')
-        aux=mdu.output.CrsFile;
-        tok=regexp(aux,' ','split');
-        ncrs=numel(tok);
-        for kcrs=1:ncrs
-            simdef.file.crsfile{kcrs}=fullfile(path_sim,tok{1,kcrs});
+if isfield(mdu,'output')
+    %output dir
+    if isfield(mdu.output,'OutputDir')
+        path_output_loc=mdu.output.OutputDir;
+        if isempty(path_output_loc)
+            path_output_loc=sprintf('DFM_OUTPUT_%s',runid);
+        end
+        simdef.file.output=fullfile(path_sim,path_output_loc);
+        [file_aux,simdef.err]=D3D_simpath_output(simdef.file.output);
+        fnames=fieldnames(file_aux);
+        nfields=numel(fnames);
+        for kfields=1:nfields
+            simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
         end
     end
     
+    %CrsFile
+    if isfield(mdu.output,'CrsFile')
+        simdef.file.crsfile=paths_str2cell(path_sim,mdu.output.CrsFile);
+    end
+    
+    %ObsFile
+    if isfield(mdu.output,'ObsFile')
+        simdef.file.obsfile=paths_str2cell(path_sim,mdu.output.ObsFile);
+    end
 end
 
 
+end %function
+
+%%
+%% FUNCTION
+%%
+
+function c=paths_str2cell(path_sim,s)
+
+tok=regexp(s,' ','split');
+ns=numel(tok);
+c=cell(1,ns);
+for ks=1:ns
+    c{1,ks}=fullfile(path_sim,tok{1,ks});
+end
 
 end %function

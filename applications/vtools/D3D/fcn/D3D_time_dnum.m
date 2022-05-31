@@ -16,7 +16,21 @@
 %NaN = all
 %Inf = last
 
-function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,in_dtime)
+function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,in_dtime,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'tim_type',1);
+addOptional(parin,'tol',1);
+
+parse(parin,varargin{:});
+
+tim_type=parin.Results.tim_type;
+tol=parin.Results.tol;
+
+%%
 
 if isa(in_dtime(1),'double') 
     if isfolder(fpath_map) %SMT
@@ -44,11 +58,14 @@ if isa(in_dtime(1),'double')
         time_mor_dtime_s.TimeZone='+00:00';
         sim_idx_s=NaN(nt,1);
         for kt=1:nt
-            
-            %here change <time_dnum> for <time_mor_dnum> for getting the flow
-            %time associated to the input morpho time
-            
-            idx_g=absmintol(time_dnum,in_dtime(kt),'tol',1,'dnum',1);
+            if tim_type==1
+                tim_cmp=time_dnum;
+            elseif tim_type==2
+                tim_cmp=time_mor_dnum;
+            else
+                error('not sure what you want')
+            end
+            idx_g=absmintol(tim_cmp,in_dtime(kt),'tol',tol,'dnum',1);
             
             time_dnum_s(kt,1)=time_dnum(idx_g);
             time_dtime_s(kt,1)=time_dtime(idx_g);

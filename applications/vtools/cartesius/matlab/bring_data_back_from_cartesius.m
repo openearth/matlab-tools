@@ -227,7 +227,9 @@ switch flg.opt
         fprintf(fid_h6,'linep2=${full_string/$search_string/$replace_string} \n');
         fprintf(fid_h6,'timstr=$(date) \n');
         
-        fprintf(fid_h6,'printf "%%s start transferring %%s here %%s \\n" $timstr $linep $linep2 >> log.txt \n');
+%         fprintf(fid_h6,'printf "%%s start transferring %%s here %%s \\n" $timstr $linep $linep2 >> log.txt \n'); %the behaviour of $(date) changed?
+        fprintf(fid_h6,'printf "%%s %%s %%s %%s %%s %%s start transferring %%s here %%s \\n" $timstr $linep $linep2 >> log.txt \n');
+        
             %transport each file
         fprintf(fid_h6,'rsync -av --bwlimit=5000 %s@%s:$linep $linep2 \n',surf_userid,surf_comp);
             %uncompress
