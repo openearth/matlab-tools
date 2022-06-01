@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 31 $
-%$Date: 2022-04-08 15:56:29 +0200 (Fri, 08 Apr 2022) $
-%$Author: chavarri $
-%$Id: main_bring_data_back.m 31 2022-04-08 13:56:29Z chavarri $
-%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/main_bring_data_back.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function varargout=decimal_sexagesimal(varargin)
