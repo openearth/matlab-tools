@@ -48,14 +48,14 @@ fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fpath_map=simdef.file.map;
 
+%% OVERWRITE
+
+ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
+
 %% DIMENSIONS
 
 nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
-
-%% OVERWRITE
-
-ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD TIME
 

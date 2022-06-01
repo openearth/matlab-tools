@@ -65,7 +65,7 @@ for kt=kt_v
     %squeeze to take out the first (time) dimension. Then layers are in dimension 2.
     cl=sal2cl(1,squeeze(data_sal.val)); %mgCl/l
     thk=diff(squeeze(data_zw.val),1,2); %m
-    mass=sum(cl/1000.*thk,2,'omitnan')'; %mgCl/m^2; cl*1000/1000/1000 [kgCl/m^3]
+    mass=sum(cl/1000.*thk,2,'omitnan')'; %mgCl/m^2; cl*1000/1000/1000 [kgCl/m^2]
     
     %data
 %     data=v2struct(data_u,data_h,q,Q,idx_cs,Q_cs,Q_cs_frac); %#ok

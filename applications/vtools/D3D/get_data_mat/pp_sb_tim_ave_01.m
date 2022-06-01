@@ -28,14 +28,23 @@ if isfield(flg_loc,'tol_tim')
     tol_tim=flg_loc.tol_tim;
 end
 
+if isfield(flg_loc,'overwrite_ave')==0
+    flg_loc.overwrite_ave=flg_loc.overwrite;
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat_loc=fullfile(fdir_mat,sprintf('%s.mat',tag_w));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 % fdir_fig=fullfile(simdef.file.fig.dir,tag);
 % mkdir_check(fdir_fig); %we create it in the loop
 % runid=simdef.file.runid;
+
+%% OVERWRITE
+
+ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat_loc,'overwrite_ave'); if ret; return; end
 
 %% LOAD
 
@@ -61,11 +70,18 @@ for ksb=1:nsb
     for krkmv=1:nrkmv %rkm polygons
 
         pol_name=flg_loc.rkm_name{krkmv};
-
+        
         ktc=0;
         for ktp=1:ntp %time period
             tim_p=flg_loc.tim_ave{ktp};           
-
+            if isnan(tim_p) 
+                tim_p=time_dnum;
+                flg_loc.tim_ave_type=1; %if we want all times, it does not matter which type of time we request. We match flow time. 
+            end
+            
+            tim_p_diff=diff(cen2cor(tim_p));
+            tim_p_tot=sum(tim_p_diff);
+            
             nt=numel(tim_p);
             for kvar=1:nvar %variable
                 varname=flg_loc.var{kvar};
@@ -133,27 +149,39 @@ for ksb=1:nsb
                     %The name is not unique enough. There can be two periods with the same begin and end. 
                     fpath_mat_tmp_w=mat_tmp_name(fdir_mat,tag_w,'tim',tim_p(1),'tim2',tim_p(end),'pol',pol_name,'var',var_str,'sb',sb_pol,'stat',statis);
 
-                    if exist(fpath_mat_tmp_w,'file')==2 && ~flg_loc.overwrite ; continue; end
+                    if exist(fpath_mat_tmp_w,'file')==2 && ~flg_loc.overwrite_ave ; continue; end
 
-                    val_mean=mean(val_p.(statis),2);
-                    val_std=std(val_p.(statis),0,2);
+                    val_mean=sum(val_p.(statis).*tim_p_diff,2)./tim_p_tot;
+%                     val_std=std(val_p.(statis),0,2);
+                    val_std=sqrt(var(val_p.(statis),tim_p_diff,2));
                     val_max=max(val_p.(statis),[],2);
                     val_min=min(val_p.(statis),[],2);
 
                     %data
                     data=v2struct(val_mean,val_std,val_max,val_min); %#ok
 
-                    %save and disp
+                    %save
                     save_check(fpath_mat_tmp_w,'data');
-                    messageOut(fid_log,sprintf('Reading %s sb poly %4.2f %% rkm poly %4.2f %% time %4.2f %% variable %4.2f %%',tag_w,ksb/nsb*100,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100));
-
+                    
                 end %kfn
+                
+                %disp
+                messageOut(fid_log,sprintf('Reading %s sb poly %4.2f %% rkm poly %4.2f %% variable %4.2f %%',tag_w,ksb/nsb*100,krkmv/nrkmv*100,kvar/nvar*100));
             end %kvar
         end %ktp
     end %nrkmv
 end %ksb
 
+%% SAVE
+
+%only dummy for preventing passing through the function if not overwriting
+data=NaN;
+save(fpath_mat_loc,'data')
+
+
 end %function
+
+
 
 %% 
 %% FUNCTION

@@ -62,7 +62,6 @@ in_p.fig_size=[0,0,14.5,12];
 
 fext=ext_of_fig(in_p.fig_print);
 
-
 %% LOOP
 for ksb=1:nsb
 
@@ -79,8 +78,17 @@ for ksb=1:nsb
 
 %         ktc=0;
         for ktp=1:ntp %time period
-            tim_p=flg_loc.tim_ave{ktp};           
-            tim_str=sprintf('%s-%s',datestr(tim_p(1),'yyyymmddHHMMSS'),datestr(tim_p(end),'yyyymmddHHMMSS'));
+            tim_p=flg_loc.tim_ave{ktp};   
+            tim_p_str=tim_p;
+            if isnan(tim_p) 
+                tim_p=time_dnum;
+                tim_p_str=tim_p;
+                if flg_loc.tim_ave_type==2
+                    tim_p_str=time_mor_dnum;
+                end
+            end
+                    
+            tim_str=sprintf('%s-%s',datestr(tim_p_str(1),'yyyymmddHHMMSS'),datestr(tim_p_str(end),'yyyymmddHHMMSS'));
             
 %             nt=numel(tim_p);
             for kvar=1:nvar %variable
@@ -97,8 +105,9 @@ for ksb=1:nsb
                 
                 fn_data=fieldnames(data);
                 nfn=numel(fn_data);
+                
 
-                in_p.tim=[tim_p(1),tim_p(end)];
+                in_p.tim=[tim_p_str(1),tim_p_str(end)];
                 in_p.lab_str=var_str;
                 in_p.xlims=flg_loc.xlims;
 
@@ -115,6 +124,11 @@ for ksb=1:nsb
                     for kfn2=1:nfn
                         statis2=fn_data{kfn2};
                         
+                        if strcmp(statis2,'val_std')
+                            in_p.is_std=1;
+                        else
+                            in_p.is_std=0;
+                        end
                         in_p.val=data.(statis2);
 
                         fname_noext=fig_name(fdir_fig_loc,tag,runid,tim_p(1),tim_p(end),var_str,statis,statis2,sb_pol);

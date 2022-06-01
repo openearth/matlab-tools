@@ -12,12 +12,18 @@
 %
 %
 
-function [ret,flg_loc]=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat)
+function [ret,flg_loc]=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat,varargin)
 
 %% PARSE
 
 if isfield(flg_loc,'overwrite')==0
     flg_loc.overwrite=0;
+end
+
+if numel(varargin)>0
+    if isfield(flg_loc,varargin{1,1})
+        flg_loc.overwrite=[flg_loc.overwrite,flg_loc.(varargin{1,1})];
+    end
 end
 
 %% CALC
@@ -26,7 +32,7 @@ ret=0;
 
 if exist(fpath_mat,'file')==2
     messageOut(fid_log,'Mat-file already exist.')
-    if flg_loc.overwrite==0
+    if ~any(flg_loc.overwrite)
         messageOut(fid_log,'Not overwriting mat-file.')
         ret=1;
         return

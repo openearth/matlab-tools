@@ -1,0 +1,69 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 18020 $
+%$Date: 2022-05-05 08:45:01 +0200 (Thu, 05 May 2022) $
+%$Author: chavarri $
+%$Id: create_mat_map_sal_mass_01.m 18020 2022-05-05 06:45:01Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/create_mat_map_sal_mass_01.m $
+%
+%
+
+function plot_tim_y(fid_log,flg_loc,simdef)
+
+tag=flg_loc.tag;
+if isfield(flg_loc,'tag_tim')==0
+    tag_tim=flg_loc.tag;
+else
+    tag_tim=flg_loc.tag_tim;
+end
+
+%% DO
+
+ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+
+%% PARSE
+
+%% PATHS
+
+fdir_fig=fullfile(simdef.file.fig.dir,tag);
+fdir_mat=simdef.file.mat.dir;
+fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat_tim=fullfile(fdir_mat,sprintf('%s.mat',tag_tim));
+fpath_mat_time=strrep(fpath_mat_tim,'.mat','_tim.mat');
+fpath_map=simdef.file.map;
+
+mkdir_check(fdir_fig);
+
+%% LOAD TIME
+
+[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map);
+
+%% LOAD VARIABLE
+
+load(fpath_mat,'data')
+
+%% PLOT
+
+%figures
+in_p=flg_loc;
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fig_visible=0;
+
+in_p.val=data.val;
+
+fname_noext=fullfile(fdir_fig,sprintf('%s_%s',tag,simdef.file.runid));
+
+in_p.do_title=0;
+in_p.lab_str=data.unit;
+in_p.fname=fname_noext;
+in_p.val=data.val;
+in_p.s=datetime(time_dnum,'ConvertFrom','datenum');
+in_p.xlab_str='';
+        
+fig_1D_01(in_p)
+
+end %function

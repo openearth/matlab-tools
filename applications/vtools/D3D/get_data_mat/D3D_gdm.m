@@ -43,10 +43,7 @@ for ks=1:ns
     %% sal mass
     if isfield(in_plot,'fig_map_sal_mass_01')==1
         create_mat_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
-    end
-    
-    if isfield(in_plot,'fig_map_sal_mass_01')==1
-        create_mat_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
+        create_mat_map_sal_mass_cum_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
     end
     
     %% q
@@ -82,11 +79,6 @@ for ks=1:ns
         create_mat_map_2DH_ls_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef)
     end
     
-    %% long prof underlayer
-    if isfield(in_plot,'long_prof_underlayer_01')==1
-        create_mat_long_prof_underlayer_01(fid_log,in_plot.long_prof_underlayer_01,simdef)
-    end
-    
 end %ks
 
 
@@ -120,6 +112,12 @@ for ks=1:ns
     %% sal mass
     if isfield(in_plot,'fig_map_sal_mass_01')==1
         plot_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
+        
+        in_plot_loc=in_plot.fig_map_sal_mass_01;
+        in_plot_loc.tag=strcat(in_plot.fig_map_sal_mass_01.tag,'_cum');
+        in_plot_loc.tag_tim=in_plot.fig_map_sal_mass_01.tag;
+
+        plot_tim_y(fid_log,in_plot_loc,simdef)
     end
     
     %% q

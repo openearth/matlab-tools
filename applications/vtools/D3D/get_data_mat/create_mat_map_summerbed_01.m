@@ -22,6 +22,10 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
+if isfield(flg_loc,'overwrite_tim')==0
+    flg_loc.overwrite_tim=0;
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -39,15 +43,11 @@ fpath_rkm=flg_loc.fpath_rkm;
         
 %% OVERWRITE
 
-ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
+ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat,'overwrite_tim'); if ret; return; end
 
 %% LOAD TIME
-if simdef.D3D.structure==4
-    fpath_pass=simdef.D3D.dire_sim;
-else
-    fpath_pass=fpath_map;
-end
-[nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass);
+
+[nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
 
 %% CONSTANT IN TIME
 
@@ -60,9 +60,7 @@ nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
 nsb=numel(flg_loc.sb_pol);
 
-        
 %% LOOP
-
 
 ktc=0;
 krkmv=0;
@@ -154,48 +152,11 @@ for ksb=1:nsb
     end %nrkmv
 end %ksb
 
-%% JOIN
+%% SAVE
 
-%if creating files in parallel, another instance may have already created it.
-%
-%Not a good idea because of the overwriting flag. Maybe best to join it several times.
-%
-% if exist(fpath_mat,'file')==2
-%     messageOut(fid_log,'Finished looping and mat-file already exist, not joining.')
-%     return
-% end
-
-% data=struct();
-
-%% first time for allocating
-
-% kt=1;
-% fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-% tmp=load(fpath_mat_tmp,'data');
-% 
-% %constant
-% 
-% %time varying
-% nF=size(tmp.data.q_mag,2);
-% 
-% q_mag=NaN(nt,nF);
-% q_x=NaN(nt,nF);
-% q_y=NaN(nt,nF);
-% 
-% %% loop 
-% 
-% for kt=1:nt
-%     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-%     tmp=load(fpath_mat_tmp,'data');
-% 
-%     q_mag(kt,:)=tmp.data.q_mag;
-%     q_x(kt,:)=tmp.data.q_x;
-%     q_y(kt,:)=tmp.data.q_y;
-% 
-% end
-% 
-% data=v2struct(q_mag,q_x,q_y); %#ok
-% save_check(fpath_mat,'data');
+%only dummy for preventing passing through the function if not overwriting
+data=NaN;
+save(fpath_mat,'data')
 
 end %function
 

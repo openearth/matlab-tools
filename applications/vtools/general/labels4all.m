@@ -30,6 +30,7 @@
 %       -{'cl','CONCTTE'}       : chloride [mg/l]
 %       -'salm2'    : mass of salt per unit surface [kg/m^2]
 %       -'cl_surf'  : surface chloride [mg/l]
+%       -'sal_mass' : mass of salt [kg]
 %
 %       -'umag'     : velocity magnitude
 %
@@ -256,6 +257,16 @@ switch lower(variable)
                 str_var='sal';
         end
         un_type='M/L2';
+    case {'sal_mass'}
+        switch lan
+            case 'en'
+                str_var='salt';
+            case 'nl'
+                str_var='zout';
+            case 'es'
+                str_var='sal';
+        end
+        un_type='M';
     case {'clm2'}
         switch lan
             case 'en'
@@ -751,6 +762,13 @@ switch un_type
         switch un
             case 1
                 str_un=' [kg/m^2]';
+            otherwise
+                error('this factor is missing')
+        end
+    case 'M'
+        switch un
+            case 1
+                str_un=' [kg]';
             otherwise
                 error('this factor is missing')
         end

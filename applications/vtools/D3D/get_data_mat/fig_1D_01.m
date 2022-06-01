@@ -77,7 +77,17 @@ end
 if isfield(in_p,'is_std')==0
     in_p.is_std=0;
 end
- 
+if isfield(in_p,'do_title')==0
+    if isfield(in_p,'tim')==0
+        in_p.do_title=0;
+    else
+        in_p.do_title=1;
+    end
+end
+if isfield(in_p,'xlab_str')==0
+    in_p.xlab_str='dist_prof';
+end
+
 v2struct(in_p)
 
 %% check if printing
@@ -237,7 +247,11 @@ kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 % lims.c(kr,kc,1:2)=clims;
-xlabels{kr,kc}=labels4all('dist_prof',1,lan);
+if ~isempty(xlab_str)
+    xlabels{kr,kc}=labels4all(xlab_str,1,lan);
+else
+    xlabels{kr,kc}='';
+end
 [lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan);
 if is_diff
     ylabels{kr,kc}=str_diff;
@@ -358,12 +372,14 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-if numel(tim)==1
-    han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
-elseif numel(tim)==2
-    han.sfig(kr,kc).Title.String=sprintf('%s - %s',datestr(tim(1),'dd-mm-yyyy HH:MM'),datestr(tim(2),'dd-mm-yyyy HH:MM'));
-else
-    error('not sure how more than 2 will look like')
+if do_title
+    if numel(tim)==1
+        han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+    elseif numel(tim)==2
+        han.sfig(kr,kc).Title.String=sprintf('%s - %s',datestr(tim(1),'dd-mm-yyyy HH:MM'),datestr(tim(2),'dd-mm-yyyy HH:MM'));
+    else
+        error('not sure how more than 2 will look like')
+    end
 end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
