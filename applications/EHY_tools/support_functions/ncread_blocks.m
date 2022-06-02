@@ -43,6 +43,9 @@ if all(ismember({'start','count'},who)) && ~isempty(timeInd) % start and count s
     maxblocksize = 0.5*stride(1); %Gb
     no_blocks    = ceil((nr_times_clip / nr_times) * (filesize / maxblocksize));
     bl_length    = ceil(nr_times_clip / no_blocks);
+    while (no_blocks-1) * bl_length > nr_times_clip % two times ceil() leads to too much indices
+        no_blocks = no_blocks - 1;
+    end
     
     % cycle over blocks
     offset       = start(1) - 1;
