@@ -48,12 +48,6 @@ stations=gdm_station_names(fid_log,flg_loc,fpath_his);
 
 ns=numel(stations);
 
-if isnan(flg_loc.layer)
-    layer=gridInfo.no_layers;
-else
-    layer=flg_loc.layer;
-end
-
 ks_v=gdm_kt_v(flg_loc,ns);
 
 ksc=0;
@@ -64,6 +58,8 @@ for ks=ks_v
     if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
     
     %% read data
+    
+    layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
     
     fpath_sal=mat_tmp_name(fdir_mat,'sal','station',stations{ks},'layer',layer);
     if exist(fpath_sal,'file')==2

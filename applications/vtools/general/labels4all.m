@@ -30,7 +30,9 @@
 %       -{'cl','CONCTTE'}       : chloride [mg/l]
 %       -'salm2'    : mass of salt per unit surface [kg/m^2]
 %       -'cl_surf'  : surface chloride [mg/l]
+%       -'cl_bottom': bottom chloride [mg/l]
 %       -'sal_mass' : mass of salt [kg]
+%       -'sal_t'    : mass of salt per unit time [kg/s]
 %
 %       -'umag'     : velocity magnitude
 %
@@ -51,8 +53,8 @@
 %
 %       -'corr'     : correlation coefficient
 %
-%       -'dd'       : wind direction
-%       -'fh'       : wind speed
+%       -{'dd','wind_dir'}  : wind direction
+%       -{'fh','wind_u'}    : wind speed
 %
 %       -'simulation' : simulation
 %       -'measurement': measurment
@@ -75,6 +77,7 @@
 %       -'La'       : active layer
 %
 %
+%
 %   -un: factor for unit conversion from SI
 %
 %   -lan: language
@@ -82,7 +85,7 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back]=labels4all(variable,un,lan,varargin)
+function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil]=labels4all(variable,un,lan,varargin)
 
 %%
 
@@ -247,6 +250,16 @@ switch lower(variable)
                 str_var='cloruro en la superficie';
         end
         un_type='-';
+    case {'cl_bottom'}
+        switch lan
+            case 'en'
+                str_var='bottom chloride';
+            case 'nl'
+                str_var='chloride aan bodem';
+            case 'es'
+                str_var='cloruro en el lecho';
+        end
+        un_type='-';
     case {'salm2'}
         switch lan
             case 'en'
@@ -267,6 +280,16 @@ switch lower(variable)
                 str_var='sal';
         end
         un_type='M';
+    case {'sal_t'}
+        switch lan
+            case 'en'
+                str_var='salt';
+            case 'nl'
+                str_var='zout';
+            case 'es'
+                str_var='sal';
+        end
+        un_type='M/T';
     case {'clm2'}
         switch lan
             case 'en'
@@ -469,7 +492,7 @@ switch lower(variable)
                 str_var='coeficiente de correlación';
          end
          un_type='-';
-    case 'dd'
+    case {'dd','wind_dir'}
          switch lan
             case 'en'
                 str_var='wind direction';
@@ -479,7 +502,7 @@ switch lower(variable)
                 str_var='dirección del viento';
          end
          un_type='degrees';
-    case 'fh'
+    case {'fh','wind_u'}
          switch lan
             case 'en'
                 str_var='wind speed';
@@ -665,6 +688,17 @@ str_std=sprintf('%s %s%s',str_s,str_var,str_un_nr);
  %difference above background
 str_diff_back=sprintf('%s %s %s%s',str_d,str_var,str_b,str_un_nr);
 
+ %filtered
+ switch lan
+    case 'en'
+        str_f='filtered';
+    case 'nl'
+        str_f='gefilterd';
+    case 'es'
+        str_f='filtrado de';
+ end
+str_fil=sprintf('%s %s %s',str_f,str_var,str_un_nr);
+
 end %function
 
 %%
@@ -707,7 +741,7 @@ switch un_type
         switch lower(val)
             case 'sal'
                 str_un=' [psu]';
-            case {'cl','conctte','cl_surf'}
+            case {'cl','conctte','cl_surf','cl_bottom'}
                 str_un= ' [mg/l]'; 
             otherwise
                 str_un = '';
@@ -769,6 +803,13 @@ switch un_type
         switch un
             case 1
                 str_un=' [kg]';
+            otherwise
+                error('this factor is missing')
+        end
+    case 'M/T'
+        switch un
+            case 1
+                str_un=' [kg/s]';
             otherwise
                 error('this factor is missing')
         end

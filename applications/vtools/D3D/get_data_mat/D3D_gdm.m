@@ -79,6 +79,11 @@ for ks=1:ns
         create_mat_map_2DH_ls_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef)
     end
     
+    %% his sal meteo
+    if isfield(in_plot,'fig_his_sal_meteo_01')==1
+        create_mat_his_sal_meteo_01(fid_log,in_plot.fig_his_sal_meteo_01,simdef)
+    end
+    
 end %ks
 
 
@@ -154,6 +159,11 @@ for ks=1:ns
     %% map 2DH ls
     if isfield(in_plot,'fig_map_2DH_ls_01')==1
         plot_map_2DH_ls_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef)
+    end
+    
+    %% his sal meteo
+    if isfield(in_plot,'fig_his_sal_meteo_01')==1
+        plot_his_sal_meteo_01(fid_log,in_plot.fig_his_sal_meteo_01,simdef)
     end
     
 end %ks

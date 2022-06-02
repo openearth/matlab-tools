@@ -18,9 +18,21 @@
 %   -tt_tim: common time of all time series
 %   -tt_val: interpolated values of all time series
 
-function val_out=interpolate_timetable(tim_ct,val_ct,tim_re)
+function val_out=interpolate_timetable(tim_ct,val_ct,tim_re,varargin)
 
 %% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'disp',1);
+
+parse(parin,varargin{:});
+
+do_disp=parin.Results.disp;
+
+if ~iscell(tim_ct)
+    error('Provide input as cell array')
+end
 
 %% CALC
 
@@ -32,7 +44,10 @@ for kg=1:ng
     if min(size(val_ct{1,kg}))>1
         error('only 1 data column per time serie')
     end
-    tt_aux=timetable(reshape(tim_ct{1,kg},[],1),reshape(val_ct{1,kg},[],1));
+    if ~isdatetime(tim_ct{kg})
+        error('input must be in datetime')
+    end
+    tt_aux=timetable(reshape(tim_ct{kg},[],1),reshape(val_ct{kg},[],1));
     tt_all{kg,1}=tt_aux;
 end
 tt=synchronize(tt_all{:});
@@ -49,7 +64,7 @@ val_out=NaN(nt,ng);
 %Do not allow NaN in <val_in> and do not loop on kg here.
 % fprintf('interpolating time %4.2f %% \n',0)
 for kg=1:ng
-    val_out(:,kg)=interpolate_timeserie(tim_in,val_in(:,kg),tim_re);
+    val_out(:,kg)=interpolate_timeserie(tim_in,val_in(:,kg),tim_re,do_disp);
     %disp
 %     fprintf('interpolating time %4.2f %%',kg/ng*100)
 end
@@ -60,7 +75,7 @@ end %function
 %% FUNCTION
 %%
 
-function val_out=interpolate_timeserie(tim_in,val_in,tim_re)
+function val_out=interpolate_timeserie(tim_in,val_in,tim_re,do_disp)
 
 %%
 
@@ -116,7 +131,9 @@ for kr=1:nr
     val_out(kr,1)=sum(val_cen.*dtim_cell)./sum(dtim_cell); %sum(seconds(dtim_cell))
     
     %disp
-    fprintf('interpolating time %4.2f %% \n',kr/nr*100)
+    if do_disp
+        fprintf('interpolating time %4.2f %% \n',kr/nr*100)
+    end
 end
 
 end %function

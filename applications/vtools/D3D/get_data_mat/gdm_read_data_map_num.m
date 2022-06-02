@@ -38,8 +38,8 @@ end
 
 simdef.D3D.structure=2;
 simdef.file.map=fpath_map;
-in.flg.get_EHY=1;
-in.flg.get_cord=0;
+simdef.flg.get_EHY=1;
+simdef.flg.get_cord=0;
 simdef.flg.which_p=2; 
 simdef.flg.which_v=varname;
 

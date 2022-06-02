@@ -64,7 +64,7 @@ end
 
 %station
 if ~isempty(station)
-    str_add=sprintf('%s%s',str_add,strrep(station,' ','_'));
+    str_add=sprintf('%s_%s',str_add,strrep(station,' ','_'));
 end
 
 %layer
@@ -106,6 +106,9 @@ end
 str_add=sprintf('%s_%s.mat',tag,str_add);
 str_add=strrep(str_add,'__','_');
 str_add=strrep(str_add,'_.mat','.mat');
+if strcmp(str_add(1),'_')
+    str_add(1)='';
+end
 fpath_mat_tmp=fullfile(fdir_mat,str_add);
 
 end %function

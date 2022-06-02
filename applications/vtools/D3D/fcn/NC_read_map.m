@@ -779,16 +779,27 @@ switch flg.which_p
                                     out.z=sqrt(sum(outx.z,2).^2+sum(outy.z,2).^2);
                             end
                         else
-                            sx=ncread(file.map,'mesh2d_sbcx',[kF(1),1,kt(1)],[kF(2),Inf,kt(2)]);
-                            sy=ncread(file.map,'mesh2d_sbcy',[kF(1),1,kt(1)],[kF(2),Inf,kt(2)]);
+                            if flg.get_EHY
+                               sx=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
+                               sy=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
+                                
+                                sx=squeeze(sx)';
+                                sy=squeeze(sy)';
+                            else
+                                sx=ncread(file.map,'mesh2d_sbcx',[kF(1),1,kt(1)],[kF(2),Inf,kt(2)]);
+                                sy=ncread(file.map,'mesh2d_sbcy',[kF(1),1,kt(1)],[kF(2),Inf,kt(2)]);
+                            end
                             switch flg.which_v
                                 case 19
                                     z=sqrt(sx(:,kf).^2+sy(:,kf).^2);
                                 case 44
                                     z=sqrt(sum(sx,2).^2+sum(sy,2).^2);
                             end
-                            
-                            out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            if flg.get_EHY
+                               out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                               out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
                         end
                     case 3 %SOBEK3
                         error('check')
