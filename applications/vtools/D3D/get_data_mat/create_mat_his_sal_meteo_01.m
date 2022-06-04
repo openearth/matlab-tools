@@ -90,18 +90,32 @@ end
 
 %% add the ones with the same name
 
-data.crs_inst=gdm_add_same_name(flg_loc.fpath_crs_inst,css,'sal_t',time_dtime);
+data.crs_inst=gdm_add_same_name(flg_loc.fpath_crs_inst,css,'cl_t',time_dtime);
 
 %% filter
 
-tim_f=time_dtime(1):hours(25):time_dtime(end);
+% tim_f=time_dtime(1):hours(25):time_dtime(end);
+% nc=numel(data.crs_inst);
+% for kc=1:nc
+%    val_int=interpolate_timetable({time_dtime},{data.crs_inst(kc).val},tim_f,'disp',0);
+%    data.crs_inst_fil(kc).val=val_int;
+%    data.crs_inst_fil(kc).tim=tim_f';
+%    data.crs_inst_fil(kc).name=data.crs_inst(kc).name;
+%    data.crs_inst_fil(kc).unit=data.crs_inst(kc).unit;
+% end
+
+dt=diff(time_dnum);
+if any(abs(dt-dt(1))>1e-8)
+    error('dt should be the same')
+end
+window_h=25; %hours to make the window average
+num_ave=round((window_h/24)/dt(1)); 
 nc=numel(data.crs_inst);
 for kc=1:nc
-   val_int=interpolate_timetable({time_dtime},{data.crs_inst(kc).val},tim_f,'disp',0);
-   data.crs_inst_fil(kc).val=val_int;
-   data.crs_inst_fil(kc).tim=tim_f';
-   data.crs_inst_fil(kc).name=data.crs_inst(kc).name;
-   data.crs_inst_fil(kc).unit=data.crs_inst(kc).unit;
+    data.crs_inst_fil(kc).val=movmean(data.crs_inst(kc).val,num_ave);
+    data.crs_inst_fil(kc).tim=time_dtime;
+    data.crs_inst_fil(kc).name=data.crs_inst(kc).name;
+    data.crs_inst_fil(kc).unit=data.crs_inst(kc).unit;
 end
 
 %% CROSS SECTIONS CUM
@@ -126,7 +140,7 @@ end
 
 %% add the ones with the same name
 
-data.crs_cum=gdm_add_same_name(flg_loc.fpath_crs_cum,css,'sal_mass',time_dtime);
+data.crs_cum=gdm_add_same_name(flg_loc.fpath_crs_cum,css,'cl_mass',time_dtime);
 
 %% WIND
 
@@ -182,11 +196,12 @@ end %function
 function data=gdm_add_same_name(fpath,css,unit,tim)
 
 crs_raw=readcell(fpath);
-[crs_u,~,idx_u2]=unique(crs_raw(:,2));
+[crs_u,idx_1,idx_u2]=unique(crs_raw(:,2));
 nu=numel(crs_u);
 for ku=1:nu
     data(ku).val=sum(css(:,idx_u2==ku),2);
-    data(ku).name=crs_u{ku};
+%     data(ku).name=crs_u{ku};
+    data(ku).name=crs_raw{idx_1(ku),1};
     data(ku).unit=unit;
     data(ku).tim=tim;
 end

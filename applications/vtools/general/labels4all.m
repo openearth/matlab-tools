@@ -32,7 +32,9 @@
 %       -'cl_surf'  : surface chloride [mg/l]
 %       -'cl_bottom': bottom chloride [mg/l]
 %       -'sal_mass' : mass of salt [kg]
+%       -'cl_mass' : mass of salt [kg]
 %       -'sal_t'    : mass of salt per unit time [kg/s]
+%       -'cl_t'    : mass of salt per unit time [kg/s]
 %
 %       -'umag'     : velocity magnitude
 %
@@ -280,6 +282,16 @@ switch lower(variable)
                 str_var='sal';
         end
         un_type='M';
+    case {'cl_mass'}
+        switch lan
+            case 'en'
+                str_var='chloride';
+            case 'nl'
+                str_var='chloride';
+            case 'es'
+                str_var='cloro';
+        end
+        un_type='M';
     case {'sal_t'}
         switch lan
             case 'en'
@@ -288,6 +300,16 @@ switch lower(variable)
                 str_var='zout';
             case 'es'
                 str_var='sal';
+        end
+        un_type='M/T';
+    case {'cl_t'}
+        switch lan
+            case 'en'
+                str_var='chloride';
+            case 'nl'
+                str_var='chloride';
+            case 'es'
+                str_var='cloro';
         end
         un_type='M/T';
     case {'clm2'}
