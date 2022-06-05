@@ -322,7 +322,7 @@ switch lower(variable)
                 str_var='cloro';
         end
         un_type='M/L2';
-    case 'umag'
+    case {'umag', 'mesh2d_ucmag'}
         switch lan
             case 'en'
                 str_var='velocity magnitude';
