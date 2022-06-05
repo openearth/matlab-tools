@@ -77,6 +77,7 @@
 %       -'at'       : at
 %
 %       -'La'       : active layer
+%       -'mesh2d_taus' : bed shear stress
 %
 %
 %
@@ -634,6 +635,16 @@ switch lower(variable)
                 str_var='capa activa';
          end
          un_type='L';
+    case 'mesh2d_taus'
+         switch lan
+            case 'en'
+                str_var='bed shear stress';
+            case 'nl'
+                str_var='bed schuifspanning';
+            case 'es'
+                str_var='tensión de fondo';
+         end
+         un_type='M/T2/L';
     case 'ltot'
          switch lan
             case 'en'
@@ -654,6 +665,16 @@ switch lower(variable)
                 str_var='transporte de sedimento total';
          end
          un_type='L2/T';
+    case 'mesh2d_czs'
+         switch lan
+            case 'en'
+                str_var='Chézy friction coefficient';
+            case 'nl'
+                str_var='Chézy wrijvingscoëfficiënt';
+            case 'es'
+                str_var='Coeficiente de fricción de Chézy';
+         end
+         un_type='L/T1/2';
     otherwise
          error('this is missing')
 end %var
@@ -835,6 +856,21 @@ switch un_type
             otherwise
                 error('this factor is missing')
         end
+    case 'M/T2/L'
+        switch un
+            case 1
+                str_un=' [Pa]';
+            otherwise
+                error('this factor is missing')
+        end
+    case 'L/T1/2'
+        switch un
+            case 1
+                str_un=' [m/s^{1/2}]';
+            otherwise
+                error('this factor is missing')
+        end
+        
 end %un_type
 
 end %function

@@ -781,7 +781,7 @@ switch flg.which_p
                         else
                             if flg.get_EHY
                                sx=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
-                               sy=get_EHY(file.map,'mesh2d_sbcy',time_dnum);
+                               sy=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
                                 
                                 sx=squeeze(sx)';
                                 sy=squeeze(sy)';
@@ -1086,7 +1086,6 @@ switch flg.which_p
                         else
                             if flg.get_EHY
                                 z=get_EHY(file.map,'mesh2d_czs',time_dnum);
-                                %errro('do')
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
                                 z=ncread(file.map,'mesh2d_czs',[kF(1),kt(1)],[kF(2),kt(2)]);
@@ -1278,8 +1277,7 @@ switch flg.which_p
                                 if flg.which_v==27
                                     z=sum(z,3)';
                                 elseif flg.which_v==14
-                                    z=z(1,:)';
-                                    error('check dimensions are right')
+                                    z=squeeze(z(:,:,1));
                                 end
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else

@@ -106,7 +106,8 @@ for ksb=1:nsb
                 data_var=gdm_read_data_map(fdir_mat,fpath_map_loc,varname,'tim',time_dnum(kt));
 
                 %% calc
-                bol_nan=isnan(data_var.val)';
+                bol_nan=reshape(isnan(data_var.val),[],1); %not needed if well coded before...
+%                 bol_nan=isnan(data_var.val);
 
                 val_mean=NaN(npol,1);
                 val_std=NaN(npol,1);
