@@ -41,6 +41,8 @@ switch var_num
         var_str='mesh2d_mor_bl';
     case 2 
         var_str='mesh2d_waterdepth';
+    case 3
+        var_str='mesh2d_dm';
     case 10 
         var_str='mesh2d_ucmag';
     case 11 
@@ -49,6 +51,8 @@ switch var_num
         var_str='mesh2d_s1';
     case 14
         var_str='La';
+    case 15
+        var_str='mesh2d_taus';
     case 19
         var_str='mesh2d_sbc'; 
     case 23
@@ -57,7 +61,7 @@ switch var_num
         var_str='mesh2d_dg';
     case 27 
         var_str='Ltot';
-    case 33
+    case 32
         var_str='mesh2d_czs';
     case 44
         var_str='sbtot';

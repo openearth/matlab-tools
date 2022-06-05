@@ -781,7 +781,7 @@ switch flg.which_p
                         else
                             if flg.get_EHY
                                sx=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
-                               sy=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
+                               sy=get_EHY(file.map,'mesh2d_sbcy',time_dnum);
                                 
                                 sx=squeeze(sx)';
                                 sy=squeeze(sy)';
@@ -1085,7 +1085,8 @@ switch flg.which_p
                             out=get_fm1d_data('mesh1d_czs',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             if flg.get_EHY
-                                errro('do')
+                                z=get_EHY(file.map,'mesh2d_czs',time_dnum);
+                                %errro('do')
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
                                 z=ncread(file.map,'mesh2d_czs',[kF(1),kt(1)],[kF(2),kt(2)]);
