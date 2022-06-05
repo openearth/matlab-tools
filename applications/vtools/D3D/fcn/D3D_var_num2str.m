@@ -45,6 +45,8 @@ switch var_num
         var_str='mesh2d_ucmag';
     case 11 
         var_str='mesh2d_umod';
+    case 12 
+        var_str='mesh2d_s1';
     case 14
         var_str='La';
     case 19

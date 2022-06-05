@@ -212,7 +212,7 @@ switch lower(variable)
                 str_var='todo el período';
         end
         un_type='-';
-    case 'h'
+    case {'h','mesh2d_waterdepth'}
         switch lan
             case 'en'
                 str_var='depth';
