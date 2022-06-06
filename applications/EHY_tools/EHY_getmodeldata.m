@@ -373,7 +373,7 @@ switch modelType
         
     case 'sobek3_new'
         %% SOBEK3 new
-        time_ind  = dims(time_ind).index;
+        time_ind  = dims(timeInd).index;
         % loop over stations
         for i_stat = 1:length(dims(stationsInd).index)
             stat_ind  = dims(stationsInd).index(i_stat);
