@@ -4,7 +4,7 @@ function [index] = EHY_thinning(x,y,varargin)
 %  Applies to the current axis
 %  thinDistance is in cm!
 %
-%  If you adjust your axis (XLim and YLim) after calling this function, the thinDistance you applied is no longer correct  
+%  If you adjust your axis (XLim and YLim) after calling this function, the thinDistance you applied is no longer correct
 %
 %% Some general parameters
 index = [];
@@ -28,7 +28,7 @@ set(gca,'Units',orgUnit);
 %% x and y scaled, in cm, relative to the origin
 lenX = 1; lenY = 1;
 if strcmpi(OPT.Units,'centimeters') lenX = pos(3); lenY = pos(4); end
-dX       = diff(XLim); 
+dX       = diff(XLim);
 dY       = diff(YLim);
 x_scaled = (x - XLim(1))*lenX/dX;
 y_scaled = (y - YLim(1))*lenY/dY;
@@ -42,7 +42,7 @@ for i_pnt = 1: length(x)
         else
             % determine distance from points already defined as valid
             distance = sqrt((x_scaled(i_pnt) - x_scaled(index)).^2 + (y_scaled(i_pnt) - y_scaled(index)).^2);
-            
+
             % distance sufficient than add to the list of valid points
             if min(distance) >= OPT.thinDistance
                 index = [index i_pnt];
