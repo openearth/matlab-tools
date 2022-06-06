@@ -96,13 +96,7 @@ for i_ldb = 1: no_ldb
     LDB(i_ldb).x(LDB(i_ldb).x == 999.999) = NaN;
 end
 
-%% Plot the landboundaries (several ldb's first one is the "boss")
-for i_ldb = 1: no_ldb
-    if i_ldb == 1 plot(LDB(i_ldb).x,LDB(i_ldb).y,'k'); hold on; end
-    if i_ldb >= 2 plot(LDB(i_ldb).x,LDB(i_ldb).y,'r'); hold on; end
-end
-
-%% Sailed path
+%% First, the sailed path
 if ~isempty(fileCrs)
     CRS     = readldb(fileCrs);
     CRS.y(CRS.x == 999.999) = NaN;
@@ -110,6 +104,12 @@ if ~isempty(fileCrs)
     plot(CRS.x     ,CRS.y     ,'r' ,'LineWidth',1.0);hold on
     plot(CRS.x(  1),CRS.y(  1),'r.','MarkerSize',25);hold on
     plot(CRS.x(end),CRS.y(end),'r.','MarkerSize',15);hold on
+end
+
+%% Next: Plot the landboundaries (several ldb's first one is the "boss")
+for i_ldb = 1: no_ldb
+    if i_ldb == 1 plot(LDB(i_ldb).x,LDB(i_ldb).y,'k'); hold on; end
+    if i_ldb >= 2 plot(LDB(i_ldb).x,LDB(i_ldb).y,'r'); hold on; end
 end
 
 %% Plot the measurement locations
