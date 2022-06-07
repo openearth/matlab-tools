@@ -102,7 +102,11 @@ switch lower(cmd)
                if size(tmp.DATA,2) == 3
                    out.Name{no_bnd}      = tmp.DATA{i_pnt,3};
                else
-                   out.Name{no_bnd}      = [name '_' num2str(i_pnt,'%4.4i')];
+                   if ~isfield(tmp,'Blckname')
+                       out.Name{no_bnd}      = [name '_' num2str(i_pnt,'%4.4i')];
+                   else
+                       out.Name{no_bnd}      = [tmp.Blckname '_' num2str(i_pnt,'%4.4i')];
+                   end
                end
                out.FileName{no_bnd} = name;
             end
