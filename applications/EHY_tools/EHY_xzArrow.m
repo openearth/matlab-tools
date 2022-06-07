@@ -1,0 +1,89 @@
+function EHY_xzArrow(x,z,u,w,varargin)
+
+OPT.scale     = 1.0 ; % 1 cm (matlan lenx etc) corresponds with scale m/s
+OPT.thinX     = 1.0 ; % Thinning in x direction
+OPT.thinZ     = 1.0 ; % Thinning in y(z) direction
+OPT.XScale    = 1   ; % Used to account for scaling of x axis (from m to km)  
+OPT           = setproperty(OPT,varargin);
+x             = x/OPT.XScale;
+
+xStart        = [];
+zStart        = [];
+xEnd          = [];
+zEnd          = [];
+
+%% Get the dimensions of the data
+mmax = size(z,1);
+nmax = size(z,2);
+
+%% Get figure dimensions
+orgUnit = get(gca,'Units');
+set(gca,'Units','centimeters');
+pos     = get(gca,'Position');
+XLim    = get(gca,'XLim'    );
+YLim    = get(gca,'YLim'    );
+set(gca,'Units',orgUnit);
+lenX    = pos(3);
+lenY    = pos(4);
+daspect([(XLim(2) - XLim(1))/lenX (YLim(2) - YLim(1))/lenY 1]);
+
+%% Thinning (firts x,s direction)
+indexX       = EHY_thinning(x,ones(1,mmax),'thinDistance',OPT.thinX,'Units','centimeters');
+
+for mThin = indexX
+    zPlot  = z   (mThin,:);
+    valu   = u(mThin,:);
+    valw   = w(mThin,:);
+    indexZ = ~isnan(zPlot);
+    
+    %  Flip the z direction. Surface as start will normally give nicer figures
+    zPlot  = flip(zPlot(indexZ));
+    valu   = flip(valu(indexZ));
+    valw   = flip(valw(indexZ));
+    
+    %  Thinning in the z direction
+    indexZ     = EHY_thinning(ones(1,length(zPlot)),zPlot,'thinDistance',OPT.thinZ,'Units','centimeters');
+    zPlot      = zPlot(indexZ);
+    valu       = valu(indexZ);
+    valw       = valw(indexZ);
+    
+    % Scale v velocities with aspect ratio of figure
+    valw       = ((OPT.XScale*(XLim(2) - XLim(1))/lenX)/((YLim(2) - YLim(1))/lenY))*valw;
+      
+    for iZ = 1: length(zPlot)
+        %  Determine start and end point of a single vector
+        xStart(end + 1) = x    (mThin);
+        zStart(end + 1) = zPlot(iZ);
+        xEnd  (end + 1) = xStart(end) + ((valu(iZ)/OPT.scale)/lenX)*(XLim(2) - XLim(1));
+        zEnd  (end + 1) = zStart(end) + ((valw(iZ)/OPT.scale)/lenY)*(YLim(2) - YLim(1));
+    end
+end
+
+%% Scale the arrrowheads, first compute the actual length, in cm,  of the vecors
+for iVec = 1: length(xStart)
+    lenVecX      = ((xEnd(iVec) - xStart(iVec))/(XLim(2) - XLim(1)))*lenX;
+    lenVecZ      = ((zEnd(iVec) - zStart(iVec))/(YLim(2) - YLim(1)))*lenY;
+    lenVec(iVec) = sqrt(lenVecX.^2 + lenVecZ.^2);
+end
+
+%  Now scale the arrowheads (length of arrowheads proportional to vector length)
+unit = sqrt(lenX^2 + lenY^2)/72;
+H    = 0.3*lenVec/unit;
+W    = 0.2*lenVec/unit;
+
+%% Finally, plot the arrows
+hold on
+arrow3([xStart; zStart]', [xEnd; zEnd]',[],W,H);
+
+%% Still to do, vector legend 0.5 cm below X axis (had to be above the xaxis otherwise it is simply not plotted; Shame)
+xLegStart = XLim(1) + ((lenX - 1.5)/lenX)*(XLim(2) - XLim(1));
+xLegEnd   = XLim(1) + ((lenX - 0.5)/lenX)*(XLim(2) - XLim(1));
+yLegStart = YLim(1) + (0.1         /lenY)*(YLim(2) - YLim(1));
+arrow3([xLegStart; yLegStart]', [xLegEnd; yLegStart]');
+xTxt      =  XLim(1) + ((lenX - 2.25)/lenX)*(XLim(2) - XLim(1));
+yTxt      = YLim(1) + (0.15          /lenY)*(YLim(2) - YLim(1));
+hText     = text(xTxt,yTxt,[num2str(OPT.scale) ' m/s']);
+set (hText,'FontSize'         ,6       );
+set (hText,'VerticalAlignment','middle');
+    
+
