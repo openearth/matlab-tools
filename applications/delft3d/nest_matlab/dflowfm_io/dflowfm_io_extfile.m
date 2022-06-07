@@ -22,7 +22,7 @@ switch lower(cmd)
             %% Cycle over the Chapters
             ListOfChapters = inifile('chapters',Info);
             if isempty(Info.Data{1,1}) throw(MException()); end    % then we have an old ext file, go to catch
-            for i_chapter = 1: length(ListOfChapters);
+            for i_chapter = 1: length(ListOfChapters)
                 i_forcing = i_forcing + 1;
                 i_val     = 0;
                 ext_force(i_forcing).Chapter = ListOfChapters{i_chapter};
@@ -71,9 +71,10 @@ switch lower(cmd)
                                 end
                             end
                         end
-                        fprintf('Reading keyword %4.2f %% chapter %4.2f %% \n',i_key/length(ListOfKeywords)*100,i_chapter/length(ListOfChapters)*100)
                     end
+                    
                 end
+                fprintf('Reading Chapter %4.2f %% \n',i_chapter/length(ListOfChapters)*100)
             end
             type = 'ini';
 
