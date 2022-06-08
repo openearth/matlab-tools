@@ -79,6 +79,8 @@
 %       -'La'       : active layer
 %       -'mesh2d_taus' : bed shear stress
 %
+%       -'rkm'      : river kilometer
+%
 %
 %
 %   -un: factor for unit conversion from SI
@@ -675,6 +677,16 @@ switch lower(variable)
                 str_var='Coeficiente de fricción de Chézy';
          end
          un_type='L/T1/2';
+    case 'rkm'
+         switch lan
+            case 'en'
+                str_var='river kilometer';
+            case 'nl'
+                str_var='rivierkilometer';
+            case 'es'
+                str_var='kilómetro del río';
+         end
+         un_type='L';
     otherwise
          error('this is missing')
 end %var

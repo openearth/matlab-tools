@@ -781,7 +781,7 @@ switch flg.which_p
                         else
                             if flg.get_EHY
                                sx=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
-                               sy=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
+                               sy=get_EHY(file.map,'mesh2d_sbcy',time_dnum);
                                 
                                 sx=squeeze(sx)';
                                 sy=squeeze(sy)';

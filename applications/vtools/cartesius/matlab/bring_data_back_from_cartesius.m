@@ -85,6 +85,7 @@ addOptional(parin,'surf_comp','snellius.surf.nl');
 addOptional(parin,'surf_path_hidden','gpfs/work4');
 addOptional(parin,'surf_path_seen','projects');
 addOptional(parin,'only_back',false);
+addOptional(parin,'queue','normal-e3-c7');
 
 parse(parin,varargin{idx_varargin:end});
 
@@ -92,6 +93,7 @@ surf_comp=parin.Results.surf_comp;
 pre_path_surf_hidden=parin.Results.surf_path_hidden;
 pre_path_surf_seen=parin.Results.surf_path_seen;
 only_back=parin.Results.only_back;
+queue=parin.Results.queue;
 
 %% FILES
 
@@ -186,6 +188,7 @@ switch flg.opt
         %% file in h6
         
         fprintf(fid_h6,'#!/bin/bash \n');
+        fprintf(fid_h6,'#$ -q %s \n',queue);
         
         %send file with commands to cartesius
         if ~only_back

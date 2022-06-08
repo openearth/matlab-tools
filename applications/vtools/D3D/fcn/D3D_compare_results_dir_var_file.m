@@ -25,6 +25,7 @@ addOptional(parin,'surf_path_seen','projects');
 addOptional(parin,'surf_userid','');
 addOptional(parin,'cartesius_project_folder_lin','/projects/0/hisigem/');
 addOptional(parin,'path_commands','');
+addOptional(parin,'queue','normal-e3-c7');
 
 parse(parin,varargin{:})
 
@@ -35,6 +36,7 @@ fname_var=parin.Results.fname;
 surf_userid=parin.Results.surf_userid;
 cartesius_project_folder_lin=parin.Results.cartesius_project_folder_lin;
 path_commands=parin.Results.path_commands;
+queue=parin.Results.queue;
 
 %% CALC
 % fdir_res='P:\11208075-002-ijsselmeer\06_simulations\02_runs\r005\DFM_OUTPUT_ijsselmeer_3D\';
@@ -51,7 +53,7 @@ while ~feof(fid)
     fpath_int=cat(1,fpath_int,{lin});
     tok=regexp(lin,'/','split');
 %     /gpfs/work4/0/hisigem/11208075-002-ijsselmeer/06_simulations/02_runs/r006/DFM_OUTPUT_ijsselmeer_3D/ijsselmeer_3D_0000_20180605_000000_rst.tar.gz
-    fname_comp=tok{end};
+    fname_comp=deblank(tok{end});
     fname_uncomp=strrep(fname_comp,'.tar.gz','');
     if any(strcmp(fname_uncomp(end-2:end),{'rst','map','his'}))
         fext='.nc';
@@ -102,7 +104,7 @@ if ~isempty(surf_userid)
     if isempty(path_commands)
         error('set <path_commands> to path with temporal data')
     end
-    bring_data_back_from_cartesius(2,surf_userid,fdir_res,cartesius_project_folder_lin,path_commands,'surf_comp',surf_comp,'surf_path_hidden',pre_path_surf_hidden,'surf_path_seen',pre_path_surf_seen,'only_back',true)
+    bring_data_back_from_cartesius(2,surf_userid,fdir_res,cartesius_project_folder_lin,path_commands,'surf_comp',surf_comp,'surf_path_hidden',pre_path_surf_hidden,'surf_path_seen',pre_path_surf_seen,'only_back',true,'queue',queue)
 end
 
 end %function

@@ -15,6 +15,11 @@
 function plot_1D_01(fid_log,flg_loc,simdef)
 
 tag=flg_loc.tag;
+if isfield(flg_loc,'tag_fig')==0
+    tag_fig=tag;
+else
+    tag_fig=flg_loc.tag_fig;
+end
 
 %% DO
 
@@ -25,12 +30,13 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+nS=numel(simdef);
+fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag);
+fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig);
 mkdir_check(fdir_fig); %we create it in the loop
-runid=simdef.file.runid;
+runid=simdef(1).file.runid;
 
 %% LOAD
 
@@ -53,7 +59,11 @@ in_p.fig_visible=0;
 %             in_p.gen_struct=gen_struct;
 in_p.fig_size=[0,0,14.5,12];
 
-fext=ext_of_fig(in_p.fig_print);
+% fext=ext_of_fig(in_p.fig_print);
+
+if nS>1
+    in_p.leg_str=flg_loc.leg_str;
+end
 
 %% LOOP
 for ksb=1:nsb
@@ -68,29 +78,41 @@ for ksb=1:nsb
         rkmv=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,'','','','',pol_name);
 
         in_p.s=rkmv.rkm_cen;
+        in_p.xlab_str='rkm';
+        in_p.xlab_un=1/1000;
 
         kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 %         fpath_file=cell(nt,1); %movie
 
         for kvar=1:nvar %variable
             varname=flg_loc.var{kvar};
-            var_str=D3D_var_num2str_structure(varname,simdef);
+            var_str=D3D_var_num2str_structure(varname,simdef(1));
             
             %time 0
             kt=1;
                 %model
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
-            data_0=load(fpath_mat_tmp,'data');            
-                
+            for kS=1:nS    
+                fdir_mat=simdef(kS).file.mat.dir;
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
+                load(fpath_mat_tmp,'data');            
+                data_0_loc(kS)=data;
+            end
+            data_0=data_0_loc;
+            
             ktc=0;
             for kt=kt_v %time
                 ktc=ktc+1;
 
                 %% load
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
-                load(fpath_mat_tmp,'data');
-
-                fn_data=fieldnames(data);
+                for kS=1:nS
+                    fdir_mat=simdef(kS).file.mat.dir;
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
+                    load(fpath_mat_tmp,'data');
+                    data_loc(kS)=data;
+                end
+                data=data_loc;
+                
+                fn_data=fieldnames(data(1));
                 nfn=numel(fn_data);
                 
                 if flg_loc.tim_type==1
@@ -133,11 +155,11 @@ for ksb=1:nsb
                         end
                         
                         if kref==1
-                            in_p.val=data.(statis);
+                            in_p.val=[data.(statis)];
                             in_p.is_diff=0;
                             str_dir='val';
                         elseif kref==2
-                            in_p.val=data.(statis)-data_0.data.(statis);
+                            in_p.val=[data.(statis)]-[data_0.(statis)];
                             in_p.is_diff=1;
                             str_dir='diff';
                         end

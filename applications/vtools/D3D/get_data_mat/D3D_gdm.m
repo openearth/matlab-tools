@@ -230,7 +230,7 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref)
         
         %paths
         fdir_sim=in_plot.fdir_sim{ks};
-        simdef_all(ksc)=simulation_paths(fdir_sim,in_plot);
+        simdef_all(ksc)=simulation_paths(fdir_sim,in_plot); %2DO change name to all but no ref
         leg_str{ksc}=in_plot.str_sim{ks};
     end
 
@@ -249,5 +249,25 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref)
     end
         
 end %reference run 
+
+%% plot all runs in same figure
+
+messageOut(fid_log,'---Plotting all runs in one figure')
+
+for ks=1:ns
+
+    %paths
+    fdir_sim=in_plot.fdir_sim{ks};
+    simdef_all_2(ks)=simulation_paths(fdir_sim,in_plot); %2DO change name to all
+    leg_str_all_2{ks}=in_plot.str_sim{ks};
+end
+
+%% map_summerbed
+if isfield(in_plot,'fig_map_summerbed_01')==1
+    in_plot.fig_map_summerbed_01.tag_fig=sprintf('%s_all',in_plot.fig_map_summerbed_01.tag);
+    in_plot.fig_map_summerbed_01.leg_str=leg_str_all_2;
+    plot_1D_01(fid_log,in_plot.fig_map_summerbed_01,simdef_all_2)
+end
+
 
 end %function

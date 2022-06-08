@@ -76,8 +76,8 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-marg.mt=1.0; %top margin [cm]
-marg.mb=4.0; %bottom margin [cm]
+marg.mt=4.0; %top margin [cm]
+marg.mb=1.0; %bottom margin [cm]
 marg.mr=1.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
@@ -253,7 +253,7 @@ cmap=brewermap(9,'set1');
 % kr=axis_m(ka,1);
 % kc=axis_m(ka,2);
 
-kr=1; kc=1;
+kr=4; kc=1;
 lims.y(kr,kc,1:2)=[0,360];
 % lims.x(kr,kc,1:2)=lim_A;
 % lims.c(kr,kc,1:2)=clims;
@@ -263,7 +263,7 @@ ylabels{kr,kc}=labels4all('wind_dir',1,lan);
 lims_d.x(kr,kc,1:2)=xlims; %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
-kr=1; kc=2;
+kr=4; kc=2;
 % lims.y(kr,kc,1:2)=[-2e-3,2e-3];
 % lims.x(kr,kc,1:2)=lim_A;
 % lims.c(kr,kc,1:2)=clims;
@@ -302,7 +302,7 @@ ylabels{kr,kc}=labels4all(data.crs_cum(1).unit,1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 lims_d.x(kr,kc,1:2)=xlims; %duration
 
-kr=4; kc=1;
+kr=1; kc=1;
 % lims.y(kr,kc,1:2)=[-2e-3,2e-3];
 % lims.x(kr,kc,1:2)=lim_A;
 % lims.c(kr,kc,1:2)=clims;
@@ -311,7 +311,7 @@ ylabels{kr,kc}=labels4all(data.obs(1).unit,1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 lims_d.x(kr,kc,1:2)=xlims; %duration
 
-kr=4; kc=2;
+kr=1; kc=2;
 % lims.y(kr,kc,1:2)=[-2e-3,2e-3];
 % lims.x(kr,kc,1:2)=lim_A;
 % lims.c(kr,kc,1:2)=clims;
@@ -428,13 +428,13 @@ end
 
 %% PLOT
 
-kr=4;     
+kr=1;     
 nobs=numel(data.obs);
 k1=0;
 k2=0;
 for kobs=1:nobs
     vm=mean(data.obs(kobs).val,'omitnan');
-    if vm>500
+    if vm>250
         kc=1;
         k1=k1+1;
         han.p1(kr,kc,k1)=plot(data.obs(kobs).tim,data.obs(kobs).val,'parent',han.sfig(kr,kc),'color',cmap(kc,:),'linewidth',prop.lw1,'linestyle',prop.ls{k1},'marker',prop.m1);
@@ -469,12 +469,12 @@ end
 bf_l=10.8;
 bf_h=13.8;
 
-kr=1; kc=2;    
+kr=4; kc=2;    
 % han.p(kr,kc,1)=patch([xlims(1),xlims(2),xlims(2),xlims(1)],[bf_l,bf_l,bf_h,bf_h],[0.9,0.9,0.9],'parent',han.sfig(kr,kc));
 han.p(kr,kc,1)=fill([xlims(1),xlims(2),xlims(2),xlims(1)],[bf_l,bf_l,bf_h,bf_h],[0,0,0.9],'parent',han.sfig(kr,kc),'edgecolor','none','facealpha',0.5);
 han.p(kr,kc,2)=plot(data.wind.tim,data.wind.u,'parent',han.sfig(kr,kc),'color',cmap(kc,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 
-kr=1; kc=1;    
+kr=4; kc=1;    
 han.p(kr,kc,3)=plot(data.wind.tim,data.wind.dir,'parent',han.sfig(kr,kc),'color',cmap(kc,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
@@ -487,7 +487,7 @@ han.p(kr,kc,3)=plot(data.wind.tim,data.wind.dir,'parent',han.sfig(kr,kc),'color'
 %% PROPERTIES
 
     %sub11
-kr=1; kc=1;   
+kr=4; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
@@ -507,7 +507,7 @@ han.sfig(kr,kc).YTick=[0,90,180,270,360];
 % han.sfig(kr,kc).XColor='r';
 han.sfig(kr,kc).YColor=cmap(kc,:);
 
-kr=1; kc=2;   
+kr=4; kc=2;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
@@ -588,7 +588,7 @@ han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
-kr=4; kc=1;   
+kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
@@ -608,7 +608,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XColor='r';
 han.sfig(kr,kc).YColor=cmap(kc,:);
 
-kr=4; kc=2;   
+kr=1; kc=2;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
@@ -672,23 +672,27 @@ han.sfig(kr,kc).YColor=cmap(kc,:);
 
 %% LEGEND
 
-kr=4; kc=1;
+kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
 han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),str_obs_1,'location','northoutside');
 pos.leg=han.leg(kr,kc).Position;
-han.sfig(kr,kc).Position=pos.sfig+[0,-0.11,0,0];
-han.leg(kr,kc).Position=pos.leg+[-0.2,-0.03,0,0];
+han.leg(kr,kc).Position=pos.leg+[-0.2,+0.03,0,0];
+han.sfig(kr,kc).Position=pos.sfig;
 
-kr=4; kc=2;
+% han.sfig(kr,kc).Position=pos.sfig+[0,-0.11,0,0];
+% han.leg(kr,kc).Position=pos.leg+[-0.2,-0.03,0,0];
+
+kr=1; kc=2;
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
 han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p2(kr,kc,:),1,[]),str_obs_2,'location','northoutside');
 pos.leg=han.leg(kr,kc).Position;
-han.sfig(kr,kc).Position=pos.sfig+[0,-0.11,0,0];
-han.leg(kr,kc).Position=pos.leg+[0.2,-0.03,0,0];
+han.leg(kr,kc).Position=pos.leg+[0.2,+0.03,0,0];
+han.sfig(kr,kc).Position=pos.sfig;
+
 
 kr=3; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
