@@ -968,7 +968,7 @@ if strcmp('Fixed bins method',data.handles.method.method_dropdown.String{data.ha
     data.data.output.v=tabs;
     data.data.output.bin_limits(ind_sort,1) = [1:size(bin_limits,1)]';
     data.data.output.bin_limits(:,2:5)      = bin_limits;
-    inds_axis = [1:size(bin_limits,1)]'; inds_axis(ind_sort)
+    inds_axis = [1:size(bin_limits,1)]';
     data.data.output.cluster=inds_f;
     guidata(findobj('Tag','IRT','type','figure'),data);
 
