@@ -434,7 +434,7 @@ k1=0;
 k2=0;
 for kobs=1:nobs
     vm=mean(data.obs(kobs).val,'omitnan');
-    if vm>250
+    if vm>300
         kc=1;
         k1=k1+1;
         han.p1(kr,kc,k1)=plot(data.obs(kobs).tim,data.obs(kobs).val,'parent',han.sfig(kr,kc),'color',cmap(kc,:),'linewidth',prop.lw1,'linestyle',prop.ls{k1},'marker',prop.m1);
@@ -497,7 +497,7 @@ han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 % han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-han.sfig(kr,kc).XTickLabel='';
+% han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 han.sfig(kr,kc).YTick=[0,90,180,270,360];  
@@ -598,7 +598,7 @@ han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 % han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-% han.sfig(kr,kc).XTickLabel='';
+han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
@@ -678,7 +678,7 @@ pos.sfig=han.sfig(kr,kc).Position;
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
 han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),str_obs_1,'location','northoutside');
 pos.leg=han.leg(kr,kc).Position;
-han.leg(kr,kc).Position=pos.leg+[-0.2,+0.03,0,0];
+han.leg(kr,kc).Position=pos.leg+[-0.2,+0.10,0,0];
 han.sfig(kr,kc).Position=pos.sfig;
 
 % han.sfig(kr,kc).Position=pos.sfig+[0,-0.11,0,0];
@@ -690,7 +690,7 @@ kr=1; kc=2;
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
 han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p2(kr,kc,:),1,[]),str_obs_2,'location','northoutside');
 pos.leg=han.leg(kr,kc).Position;
-han.leg(kr,kc).Position=pos.leg+[0.2,+0.03,0,0];
+han.leg(kr,kc).Position=pos.leg+[0.2,+0.10,0,0];
 han.sfig(kr,kc).Position=pos.sfig;
 
 
