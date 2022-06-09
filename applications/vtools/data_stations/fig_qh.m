@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17614 $
+%$Date: 2021-11-30 12:06:07 +0100 (Tue, 30 Nov 2021) $
+%$Author: chavarri $
+%$Id: fig_qh.m 17614 2021-11-30 11:06:07Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/q_analysis/fig_qh.m $
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
@@ -23,71 +23,31 @@
 %   -FontName if interpreter LaTeX: check post 114116
 %	-When adding text in duration axis, scatter interprets days while surf interprets hours
 
-function fig_qh_t(in_p)
-
-%%
-if isfield(in_p,'fig_visible')==0
-    in_p.fig_visible=1;
-end
-if isfield(in_p,'fig_print')==0
-    in_p.fig_print=0;
-end
-if isfield(in_p,'fname')==0
-    in_p.fname='fig';
-end
-if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,14.5,15]; %(1+sqrt(5)/2)
-end
-if isfield(in_p,'fig_overwrite')==0
-    in_p.fig_overwrite=1;
-end
-if isfield(in_p,'fid_log')==0
-    in_p.fid_log=NaN;
-end
-if isfield(in_p,'lan')==0
-    in_p.lan='en';
-end
-if isfield(in_p,'lim_y')==0
-    in_p.lim_y=NaN;
-end
-if isfield(in_p,'lim_t')==0
-    in_p.lim_t=NaN;
-end
-if isfield(in_p,'Lref')==0
-    in_p.Lref='+NAP';
-end
+function fig_qh(in)
 
 %%
 
-v2struct(in_p)
+if isfield(in,'is_x')==0
+    in.is_x=1; %Q
+end
+
+v2struct(in)
 
 %%
 
-if isnan(lim_y)
-    lim_y=[min(H),max(H)];
-end
-
-if isnan(lim_t)
-    lim_t=[min(tim),max(tim)];
-end
-
-%%
 nt=size(qh_sep,2);
 
 %figure input
 prnt.filename=fname;
-prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-npr=2; %number of plot rows
-npc=2; %number of plot columns
+prnt.size=[0,0,14.5,9]; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
+npr=1; %number of plot rows
+npc=1; %number of plot columns
 marg.mt=1.0; %top margin [cm]
 marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
-marg.sh=0.5; %horizontal spacing [cm]
-marg.sv=0.5; %vertical spacing [cm]
-
-axis_m=[1,1;2,1;2,2];
-na=size(axis_m,1);
+marg.sh=1.0; %horizontal spacing [cm]
+marg.sv=0.0; %vertical spacing [cm]
 
 prop.ms1=2; 
 prop.mt1='o'; 
@@ -182,43 +142,17 @@ set(groot,'defaultLegendInterpreter','tex');
 % %data rework
 
 %axes and limits
-kr=2; kc=1;
-lims.y(kr,kc,1:2)=lim_y;
-lims.x(kr,kc,1:2)=lim_x;
-% lims.c(kr,kc,1:2)=clims;
-% ylabels{kr,kc}=sprintf('water elevation at %s [m+NAP]',station_etaw);
-% xlabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
-[lab,str_var,str_un,str_diff]=labels4all('etaw',1,lan,'Lref',Lref);
-[~,str_conj,~,~]=labels4all('at',1,lan);
-ylabels{kr,kc}=sprintf('%s %s %s %s',str_var,str_conj,station_etaw,str_un);
-[lab,str_var,str_un,str_diff]=labels4all('q',1,lan);
-xlabels{kr,kc}=sprintf('%s %s %s %s',str_var,str_conj,station_q,str_un);
-
-%axes and limits
 kr=1; kc=1;
-lims_d.y(kr,kc,1:2)=lim_t;
+% lims.y(kr,kc,1:2)=[-2e-3,2e-3];
 lims.x(kr,kc,1:2)=lim_x;
 % lims.c(kr,kc,1:2)=clims;
-% ylabels{kr,kc}=sprintf('water elevation at %s [m+NAP]',station_etaw);
-% xlabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
-% [lab,str_var,str_un,str_diff]=labels4all('etaw',1,lan);
-% [~,str_conj,~,~]=labels4all('at',1,lan);
-% ylabels{kr,kc}=sprintf('%s %s %s %s',str_var,str_conj,station_etaw,str_un);
-% [lab,str_var,str_un,str_diff]=labels4all('etaw',1,lan);
-% xlabels{kr,kc}=sprintf('%s %s %s %s',str_var,str_conj,station_q,str_un);
+ylabels{kr,kc}=sprintf('water elevation at %s [m+NAP]',station_etaw);
 
-kr=2; kc=2;
-lims_d.x(kr,kc,1:2)=lim_t;
-lims.y(kr,kc,1:2)=lim_y;
-% lims.c(kr,kc,1:2)=clims;
-% ylabels{kr,kc}=sprintf('water elevation at %s [m+NAP]',station_etaw);
-% xlabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
-% [lab,str_var,str_un,str_diff]=labels4all('etaw',1,lan);
-% [~,str_conj,~,~]=labels4all('at',1,lan);
-% ylabels{kr,kc}=sprintf('%s %s %s %s',str_var,str_conj,station_etaw,str_un);
-% [lab,str_var,str_un,str_diff]=labels4all('etaw',1,lan);
-% xlabels{kr,kc}=sprintf('%s %s %s %s',str_var,str_conj,station_q,str_un);
-
+if is_x==1
+    xlabels{kr,kc}=sprintf('water discharge at %s [m^3/s]',station_q);
+else
+    xlabels{kr,kc}=sprintf('water elevation at %s [m+NAP]',station_q);
+end
 
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
@@ -279,10 +213,10 @@ set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 
 %subplots initialize
     %if regular
-for ka=1:na
-    kr=axis_m(ka,1);
-    kc=axis_m(ka,2);
-    han.sfig(kr,kc)=subaxis(npr,npc,kc,kr,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
+for kr=1:npr
+    for kc=1:npc
+        han.sfig(kr,kc)=subaxis(npr,npc,kc,kr,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
+    end
 end
     %if irregular
 % han.sfig(1,1)=subaxis(npr,npc,1,1,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
@@ -298,16 +232,29 @@ end
 % han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 
-%% HOLD
-
-for ka=1:na
-    hold(han.sfig(axis_m(ka,1),axis_m(ka,2)),'on')
-end
-
-%%
+%properties
+    %sub11
+kr=1; kc=1;   
+hold(han.sfig(kr,kc),'on')
+grid(han.sfig(kr,kc),'on')
+% axis(han.sfig(kr,kc),'equal')
+han.sfig(kr,kc).Box='on';
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+% han.sfig(kr,kc).XTickLabel='';
+% han.sfig(kr,kc).YTickLabel='';
+% han.sfig(kr,kc).XTick=[];  
+% han.sfig(kr,kc).YTick=[];  
+% han.sfig(kr,kc).XScale='log';
+% han.sfig(kr,kc).YScale='log';
+% han.sfig(kr,kc).Title.String=station;
+% han.sfig(kr,kc).XColor='r';
+% han.sfig(kr,kc).YColor='k';
 
 %plots
-kr=2; kc=1;    
+kr=1; kc=1;    
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
@@ -324,72 +271,6 @@ for kt=1:nt
 han.p2(kr,kc,kt)=plot(qh_cen{1,kt},qh_mean{1,kt},'parent',han.sfig(kr,kc),'color',prop.color2(kt,:),'linewidth',prop.lw1,'linestyle',prop.ls1{kt},'marker',prop.m1);
 % pause
 end
-
-kr=1; kc=1;
-plot(Q,tim,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle','-','marker','none');
-
-kr=2; kc=2;
-plot(tim,H,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle','-','marker','none');
-
-%properties
-    %sub11
-kr=2; kc=1;   
-hold(han.sfig(kr,kc),'on')
-grid(han.sfig(kr,kc),'on')
-% axis(han.sfig(kr,kc),'equal')
-han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-% han.sfig(kr,kc).XTickLabel='';
-% han.sfig(kr,kc).YTickLabel='';
-% han.sfig(kr,kc).XTick=[];  
-% han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
-% han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String=station;
-% han.sfig(kr,kc).XColor='r';
-% han.sfig(kr,kc).YColor='k';
-
-kr=1; kc=1;   
-hold(han.sfig(kr,kc),'on')
-grid(han.sfig(kr,kc),'on')
-% axis(han.sfig(kr,kc),'equal')
-han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
-% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-han.sfig(kr,kc).XTickLabel='';
-% han.sfig(kr,kc).YTickLabel='';
-% han.sfig(kr,kc).XTick=[];  
-% han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
-% han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String=station;
-% han.sfig(kr,kc).XColor='r';
-% han.sfig(kr,kc).YColor='k';
-
-kr=2; kc=2;   
-hold(han.sfig(kr,kc),'on')
-grid(han.sfig(kr,kc),'on')
-% axis(han.sfig(kr,kc),'equal')
-han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-% han.sfig(kr,kc).XTickLabel='';
-han.sfig(kr,kc).YTickLabel='';
-% han.sfig(kr,kc).XTick=[];  
-% han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
-% han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String=station;
-% han.sfig(kr,kc).XColor='r';
-% han.sfig(kr,kc).YColor='k';
-
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
 % han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
@@ -430,16 +311,13 @@ han.sfig(kr,kc).YTickLabel='';
 % end
 % 
 %legend
-kr=2; kc=1;
+kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
 
-if nt>1
 labels_all=cat(2,tim_labels,cellfun(@(X)sprintf('mean %s',X),tim_labels,'UniformOutput',false));
 han.leg(kr,kc)=legend(han.sfig(kr,kc),[reshape(han.p3(kr,kc,:),1,numel(han.p3(kr,kc,:))),reshape(han.p2(kr,kc,:),1,numel(han.p2(kr,kc,:)))],labels_all,'location','southeast');
-end
-
 % pos.leg=han.leg.Position;
 % han.leg.Position=pos.leg+[0,0,0,0];
 % han.sfig(kr,kc).Position=pos.sfig;
@@ -473,22 +351,22 @@ han.fig.Renderer='painters';
 if any(fig_print==1)
     print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
+    close(han.fig);
 end
 if any(fig_print==2)
     savefig(han.fig,strcat(prnt.filename,'.fig'))
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.fig'))) 
+    close(han.fig);
 end
 if any(fig_print==3)
     print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
+    close(han.fig);
 end
-if any(fig_print==4)
+if any(fig_print==3)
     print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
     messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+    close(han.fig);
 end
-if any(ismember(fig_print,[1,2,3,4]))
-close(han.fig);
-end
-
 
 end

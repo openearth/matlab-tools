@@ -74,6 +74,47 @@ if any(year_u-year(tim_w))
     error('ups2')
 end
 
+%% fit
+
+q_lim=12000;
+bol_fit=q_sort>q_lim;
+
+x=log(q_sort(bol_fit));
+y=log(p_q_max(bol_fit));
+% x=q_sort(bol_fit);
+% y=p_q_max(bol_fit);
+
+% x_tot=q_sort;
+% y_tot=p_q_max;
+x_tot=log(q_sort);
+y_tot=log(p_q_max);
+
+% [B,fval,y_fit,fcn]=fit_function('exp',x,y,'x0',ones(1,2)/5000);
+B=polyfit(x,y,1);
+y_fit=B(1).*x+B(2);
+
+% y_fit=polyval(B,x);
+
+figure 
+hold on
+plot(x_tot,y_tot)
+plot(x,y)
+plot(x,y_fit,'-*')
+
+%% find Q of certain p
+
+p=0.01;
+
+fcn=@(X)B(1).*X+B(2);
+fcn_p=@(X)(fcn(X)-log(p))^2;
+
+opt=optimset('MaxFunEvals',20000,'MaxIter',10000);
+[Q_p,fval]=fminsearch(fcn_p,16000,opt);
+fcn_p(Q_p)
+fcn(exp(Q_p))
+Q=exp(Q_p);
+fprintf('Q = %f m^3/s has probability of yearly maximum p = %f with return period %f years \n',Q,p,1/p)
+
 %% probability of daily discharge
 
 [q_day_u,~,~]=unique(ttres_d.val(~isnan(ttres_d.val)));
