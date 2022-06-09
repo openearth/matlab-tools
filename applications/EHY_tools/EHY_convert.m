@@ -1047,8 +1047,8 @@ end
 % shp2kml
     function [output,OPT] = EHY_convert_shp2kml(inputFile,outputFile,OPT)
         ldb = shape2ldb(inputFile,0);
-        if iscell(output) && numel(output) == 1
-            output = output{1};
+        if iscell(ldb) && numel(ldb) == 1
+            ldb = ldb{1};
         end
         if OPT.saveOutputFile
             [ldb(:,1),ldb(:,2),OPT] = EHY_convert_coorCheck(ldb(:,1),ldb(:,2),OPT);
