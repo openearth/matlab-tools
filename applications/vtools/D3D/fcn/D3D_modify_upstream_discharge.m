@@ -68,7 +68,8 @@ for kfn=1:nfn
 end
 
 %read boundary conditions that are upstream
-bc_u=struct('Name','','Contents','','Location','','TimeFunction','','ReferenceTime',[],'TimeUnit','','Interpolation','','Parameter',struct(),'Data',[]);
+% bc_u=struct('Name','','Contents','','Location','','TimeFunction','','ReferenceTime',[],'TimeUnit','','Interpolation','','Parameter',struct(),'Data',[]);
+bc_u=struct('Name','','Contents','','Location','','TimeFunction','','ReferenceTime',[],'TimeUnit','','Interpolation','','Parameter',struct(),'Data',[],'Time',[]);
 nubc=numel(ubc);
 for kubc=1:nubc
     bc_o=D3D_io_input('read',ubc(kubc).forcingfile);
@@ -134,7 +135,8 @@ fname_bc_mod=sprintf('%s_%s%s',fnam_bc,tag_mod,fext_bc);
 fpath_us_pli=fpath_us_pli_pc;
 
 us_pli=D3D_io_input('read',fpath_us_pli);
-xy_pli_ori=us_pli.val{1,1};
+% xy_pli_ori=us_pli.val{1,1};
+xy_pli_ori=us_pli(1).xy;
 nu=size(xy_pli_ori,1)-1;
 if nu~=numel(Q_m)
     error('something is going wrong with the interpolation')
@@ -142,7 +144,8 @@ end
     
 %flip if different direction than analysis pli
 pli_anl=D3D_io_input('read',fpath_pli);
-xy_pli_anl=pli_anl.val{1,1};
+% xy_pli_anl=pli_anl.val{1,1};
+xy_pli_anl=pli_anl(1).xy;
 [~,mind_idx]=min(sqrt(sum((xy_pli_anl-xy_pli_ori(1,:))^2,2)));
 if mind_idx==2
     xy_pli_ori=flipud(xy_pli_ori);
