@@ -146,6 +146,7 @@ for kpol=1:npol
                     messageOut(fid_log,sprintf('Reading raw data for variable: %s','mesh2d_flowelem_zcc'));
                     data_zcc=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_zcc','t0',time_dnum(kt),'tend',time_dnum(kt),'mergePartitions',1,'disp',0); %#ok
                     save_check(fpath_zcc,'data_zcc');
+                    zcc=squeeze(data_zcc.val(:,bol_grd,:));
                 end
             end
 
