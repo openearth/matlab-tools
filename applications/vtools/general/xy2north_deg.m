@@ -10,16 +10,19 @@
 %$Id$
 %$HeadURL$
 %
-%
+%computes the direction in north-degrees of a vector with <x>
+%and <y> component to. This is useful for computing wind direction.
 
 function north_deg=xy2north_deg(x,y)
 
 rad=atan2(y,x);
 deg=rad*360/2/pi;
-north_deg=-deg+90;
+north_deg=deg+90;
 north_deg(north_deg<0)=360+north_deg(north_deg<0);
 
-%CHECK
+end %function
+
+%% CHECK
 
 % theta=linspace(0,2*pi,360);
 % [x,y]=pol2cart(theta,1.5);
@@ -28,6 +31,8 @@ north_deg(north_deg<0)=360+north_deg(north_deg<0);
 % figure
 % hold on
 % scatter(x,y,10,north_deg)
+% axis equal
+% xlabel('x-component')
+% ylabel('y-component')
 % colorbar
 
-end %function
