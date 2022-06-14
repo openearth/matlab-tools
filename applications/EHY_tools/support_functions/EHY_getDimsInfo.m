@@ -294,6 +294,12 @@ if nargout > 2
         dims(dimsInd.sedfrac).indexOut = 1:length(sed_ind);
     end
     
+    %% Get bed layers information
+    if ~isempty(dimsInd.bed_layers)
+        dims(dimsInd.bed_layers).index    = OPT.bed_layers;
+        dims(dimsInd.bed_layers).indexOut = 1:length(OPT.bed_layers);
+    end
+    
     %% Turbulence (Delft3D 4's ZTUR) - Turbulence energy & energy dissipation
     if ~isempty(dimsInd.turbulence)
         dims(dimsInd.turbulence).index    = 1:2;

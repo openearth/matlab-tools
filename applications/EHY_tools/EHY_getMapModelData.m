@@ -63,6 +63,7 @@ OPT.sgft0             = 0;  % delwaq segment function (sgf) - datenum or datestr
 OPT.sgfkmax           = []; % delwaq segment function (sgf) - number of layers (k_max)
 OPT.nAverageAnglePli  = 2;  % number of points of the pli-file to average in computing the angle for projecting vectorial variables
 OPT.tol_t             = 0;  % tolerance to match time in datenum 
+OPT.bed_layers        = 0;  % bed layers
 
 % return output at specified reference level
 OPT.z                 = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z

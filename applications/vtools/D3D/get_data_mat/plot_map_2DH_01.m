@@ -28,6 +28,15 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 %     flg_loc.background=NaN
 % end
 
+if isfield(flg_loc,'clims')==0
+    flg_loc.clims=[NaN,NaN];
+    flg_loc.clims_diff_t=[NaN,NaN];
+end
+   
+if isfield(flg_loc,'do_diff')==0
+    flg_loc.do_diff=1;
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -77,7 +86,12 @@ ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
-ndiff=2;
+
+if flg_loc.do_diff==0
+    ndiff=1;
+else 
+    ndiff=2;
+end
 
 for kvar=1:nvar %variable
     varname=flg_loc.var{kvar};
@@ -92,6 +106,10 @@ for kvar=1:nvar %variable
     kt=1;
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
     data_ref=load(fpath_mat_tmp,'data');
+    if sum(size(data_ref.data)==1)==0
+        messageOut(fid_log,sprintf('Cannot plot variable with more than 1 dimension: %s',var_str))
+        continue
+    end
     
     fpath_file=cell(nt,nclim,ndiff);
     for kt=kt_v

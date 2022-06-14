@@ -444,7 +444,8 @@ switch flg.which_p
                             out.z=squeeze(out.z(:,1,kf,:)); %get first layer and fractions we ask for
                         else
                             if flg.get_EHY
-                                z=get_EHY(file.map,'mesh2d_lyrfrac',time_dnum);
+                                OPT.bed_layers=1;
+                                z=get_EHY(file.map,'mesh2d_lyrfrac',time_dnum,OPT);
                                 
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
@@ -1273,7 +1274,7 @@ switch flg.which_p
                             end
                         else
                             if flg.get_EHY
-                                z=get_EHY(file.map,'mesh2d_thlyr',time_dnum);
+                                z=get_EHY(file.map,'mesh2d_thlyr',time_dnum,'bed_layers',1:1:in.nl);
                                 if flg.which_v==27
                                     z=sum(z,3)';
                                 elseif flg.which_v==14
@@ -1885,12 +1886,15 @@ end %function
 
 %%
 
-function val=get_EHY(file_map,vartok,time_dnum)
+function val=get_EHY(file_map,vartok,time_dnum,varargin)
 
 OPT.varName=vartok;
 OPT.t0=time_dnum(1);
 OPT.tend=time_dnum(end);
 OPT.disp=0;
+OPT.bed_layers=0;
+
+OPT=setproperty(OPT,varargin{:});
 
 map_data=EHY_getMapModelData(file_map,OPT);
 if numel(size(map_data.val))==2

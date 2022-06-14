@@ -77,6 +77,7 @@
 %       -'at'       : at
 %
 %       -'La'       : active layer
+%       -'Fak'      : volume fraction content in the active layer
 %       -'mesh2d_taus' : bed shear stress
 %
 %       -'rkm'      : river kilometer
@@ -97,10 +98,12 @@ function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_f
 parin=inputParser;
 
 addOptional(parin,'Lref','+NAP');
+addOptional(parin,'frac',1);
 
 parse(parin,varargin{:});
 
 Lref=parin.Results.Lref;
+frac=parin.Results.frac;
 
 %%
 
@@ -637,6 +640,19 @@ switch lower(variable)
                 str_var='capa activa';
          end
          un_type='L';
+    case 'fak'
+         switch lan
+            case 'en'
+                str_var=sprintf('volume fraction content of size fraction %d in active layer',frac);
+            case 'nl'
+                error('do')
+%                 str_var='active laag';
+            case 'es'
+                error('do')
+%                 str_var='capa activa';
+         end
+         un_type='L';
+
     case 'mesh2d_taus'
          switch lan
             case 'en'

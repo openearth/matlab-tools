@@ -97,31 +97,37 @@ for ksb=1:nsb
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
                 %% read data
-                if simdef.D3D.structure==4
-                    %this may not be strong enough. It will fail if the run is in path with <\0\> in the name. 
-                    fpath_map_loc=strrep(fpath_map,[filesep,'0',filesep],[filesep,num2str(sim_idx(kt)),filesep]); 
-                else
-                    fpath_map_loc=fpath_map;
-                end
-                data_var=gdm_read_data_map(fdir_mat,fpath_map_loc,varname,'tim',time_dnum(kt));
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));      
 
                 %% calc
-                bol_nan=reshape(isnan(data_var.val),[],1); %not needed if well coded before...
-%                 bol_nan=isnan(data_var.val);
+                %dimension 1 of <data_var.val> must be faces.
+                if isfield(data_var,'dimensions')
+                    str_sim_c=strrep(data_var.dimensions,'[','');
+                    str_sim_c=strrep(str_sim_c,']','');
+                    tok=regexp(str_sim_c,',','split');
+                    idx_f=find_str_in_cell(tok,{'mesh2d_nFaces'});
+                    dim=1:1:numel(tok);
+                    dimnF=dim;
+                    dimnF(dimnF==idx_f)=[];
+                    data_var.val=permute(data_var.val,[idx_f,dimnF]);
+                end
+%                 bol_nan=reshape(isnan(data_var.val),[],1); %not needed if well coded before...
+                bol_nan=any(isnan(data_var.val),2); %necessary for multidimensional 
 
-                val_mean=NaN(npol,1);
-                val_std=NaN(npol,1);
-                val_max=NaN(npol,1);
-                val_min=NaN(npol,1);
-                val_num=NaN(npol,1);
+                ndim_2=size(data_var.val,2);
+                val_mean=NaN(npol,ndim_2);
+                val_std=NaN(npol,ndim_2);
+                val_max=NaN(npol,ndim_2);
+                val_min=NaN(npol,ndim_2);
+                val_num=NaN(npol,ndim_2);
                 for kpol=1:npol
                     bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan;
                     if any(bol_get)
-                        val_mean(kpol,1)=mean(data_var.val(bol_get));
-                        val_std(kpol,1)=std(data_var.val(bol_get));
-                        val_max(kpol,1)=max(data_var.val(bol_get));
-                        val_min(kpol,1)=min(data_var.val(bol_get));
-                        val_num(kpol,1)=numel(data_var.val(bol_get));
+                        val_mean(kpol,:)=mean(data_var.val(bol_get,:));
+                        val_std(kpol,:)=std(data_var.val(bol_get,:));
+                        val_max(kpol,:)=max(data_var.val(bol_get,:));
+                        val_min(kpol,:)=min(data_var.val(bol_get,:));
+                        val_num(kpol,:)=numel(data_var.val(bol_get,:));
                     end
     %                 messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
     %                 %% BEGIN DEBUG

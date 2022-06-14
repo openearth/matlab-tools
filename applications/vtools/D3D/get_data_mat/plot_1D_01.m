@@ -99,6 +99,13 @@ for ksb=1:nsb
             end
             data_0=data_0_loc;
             
+            %skip if multidimentional
+            fn_data=fieldnames(data_0(1));
+            if size(data_0.(fn_data{1}),2)>1
+                messageOut(fid_log,sprintf('Skipping variable with multiple dimensions: %s',var_str));
+                continue
+            end
+                
             ktc=0;
             for kt=kt_v %time
                 ktc=ktc+1;

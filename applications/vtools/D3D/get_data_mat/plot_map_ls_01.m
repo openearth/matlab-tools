@@ -42,8 +42,8 @@ mkdir_check(fdir_fig);
 % %% END DEBUG
 
 %load
-% load(simdef.file.mat.map_ls_01,'data_map_ls_01');
-load(fpath_mat_time,'time_dnum');
+load(fpath_mat_time,'tim');
+v2struct(tim); %time_dnum, time_dtime
 
 nclim=size(flg_loc.clims,1);
 npli=numel(flg_loc.pli);

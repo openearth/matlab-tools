@@ -44,11 +44,27 @@ simdef.flg.which_p=2;
 simdef.flg.which_v=varname;
 
 if isempty(time_dnum)
-%     data=EHY_getMapModelData(fpath_map,'varName',varname,'mergePartitions',1,'disp',0);
+    error('provide time')
 else
     out=D3D_read(simdef,in);
 end
 
-data.val=out.z';
+if numel(size(out.z))>2
+    %not strong enough do this:
+%                 if isfield(data_var,'dimensions')
+%                     str_sim_c=strrep(data_var.dimensions,'[','');
+%                     str_sim_c=strrep(str_sim_c,']','');
+%                     tok=regexp(str_sim_c,',','split');
+%                     idx_f=find_str_in_cell(tok,{'mesh2d_nFaces'});
+%                     dim=1:1:numel(tok);
+%                     dimnF=dim;
+%                     dimnF(dimnF==idx_f)=[];
+%                     data_var.val=permute(data_var.val,[idx_f,dimnF]);
+%                 end
+    data.val=squeeze(out.z)'; %[faces,else]
+else
+    data.val=out.z; %[faces,else]
+%     data.val=out.z'; %[faces,else]
+end
 
 end %function

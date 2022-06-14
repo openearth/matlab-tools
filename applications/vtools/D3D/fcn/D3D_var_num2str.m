@@ -43,6 +43,8 @@ switch var_num
         var_str='mesh2d_waterdepth';
     case 3
         var_str='mesh2d_dm';
+    case 8
+        var_str='Fak';
     case 10 
         var_str='mesh2d_ucmag';
     case 11 

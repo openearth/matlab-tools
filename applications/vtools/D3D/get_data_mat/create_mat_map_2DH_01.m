@@ -27,7 +27,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fpath_map=simdef.file.map;
+% fpath_map=simdef.file.map;
 
 %% DIMENSIONS
 
@@ -38,13 +38,9 @@ nvar=numel(flg_loc.var);
 ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD TIME
-if simdef.D3D.structure==4
-    fpath_pass=simdef.D3D.dire_sim;
-else
-    fpath_pass=fpath_map;
-end
-[nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass);
-   
+
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
+
 %% LOOP TIME
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
@@ -61,14 +57,7 @@ for kt=kt_v
         if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
         %% read data
-        if simdef.D3D.structure==4
-            %this may not be strong enough. It will fail if the run is in path with <\0\> in the name. 
-            fpath_map_loc=strrep(fpath_map,[filesep,'0',filesep],[filesep,num2str(sim_idx(kt)),filesep]); 
-        else
-            fpath_map_loc=fpath_map;
-        end
-        data_var=gdm_read_data_map(fdir_mat,fpath_map_loc,var_str,'tim',time_dnum(kt)); 
-            
+        data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));         
         data=squeeze(data_var.val); %#ok
         save_check(fpath_mat_tmp,'data'); 
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
