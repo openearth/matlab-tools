@@ -63,9 +63,6 @@ for kpli=1:npli
     [~,pliname,~]=fileparts(flg_loc.pli{kpli,1});
     pliname=strrep(pliname,' ','_');
     
-    in_p.xlims=[0,data_map_ls_01(kpli).Scor(end)];
-    in_p.ylims=flg_loc.ylims(kpli,:); %move to input
-    
     %loading all
 %     in_p.data_ls=data_map_ls_01(kpli);
     for kt=1:nt
@@ -74,6 +71,8 @@ for kpli=1:npli
         load(fpath_mat_tmp,'data_map_ls_01');
         in_p.data_ls=data_map_ls_01;
         
+        in_p.xlims=[0,data_map_ls_01(kpli).Scor(end)];
+        in_p.ylims=flg_loc.ylims(kpli,:); %move to input
         for kclim=1:nclim
             fname_noext=fullfile(fdir_fig,sprintf('sal_ls_01_%s_%s_clim_%02d_pli_%s',simdef.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim,pliname));
             fpath_file{kt,kclim,kpli}=sprintf('%s%s',fname_noext,fext); %for movie 
