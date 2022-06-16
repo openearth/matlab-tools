@@ -28,6 +28,7 @@ function data=gdm_read_data_map(fdir_mat,fpath_map,varname,varargin)
 
 %% CALC
 
+% varname=D3D_var_derived2raw(varname); %I don't think I need it...
 var_str=D3D_var_num2str(varname);
 fpath_sal=mat_tmp_name(fdir_mat,var_str,varargin{:});
 

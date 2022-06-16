@@ -18,6 +18,7 @@
 %
 %       -'etab'      : bed elevation
 %       -'detab'     : bed elevation change
+%       -'detab_ds'  : bed slope
 %
 %       -'dist'      : distance
 %       -'dist_prof' : distance along section
@@ -138,6 +139,16 @@ switch lower(variable)
                 str_var='cambio en la elevación del lecho';
         end
         un_type='L';
+    case {'detab_ds'}
+        switch lan
+            case 'en'
+                str_var='bed slope';
+            case 'nl'
+                str_var='bodemverhang';
+            case 'es'
+                str_var='pendiente del lecho';
+        end
+        un_type='-';
     case 'dist'
         switch lan
             case 'en'
@@ -814,6 +825,8 @@ switch un_type
                 str_un=' [psu]';
             case {'cl','conctte','cl_surf','cl_bottom'}
                 str_un= ' [mg/l]'; 
+            case {'detab_ds'}
+                str_un= ' [-]'; 
             otherwise
                 str_un = '';
         end

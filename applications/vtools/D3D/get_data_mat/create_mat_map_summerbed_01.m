@@ -90,28 +90,17 @@ for ksb=1:nsb
             ktc=ktc+1;
                  
             for kvar=1:nvar %variable
-                varname=flg_loc.var{kvar};
-                var_str=D3D_var_num2str(varname);
+                [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
 
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_read,'sb',sb_pol);
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
                 %% read data
-                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));      
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));      
 
                 %% calc
-                %dimension 1 of <data_var.val> must be faces.
-                if isfield(data_var,'dimensions')
-                    str_sim_c=strrep(data_var.dimensions,'[','');
-                    str_sim_c=strrep(str_sim_c,']','');
-                    tok=regexp(str_sim_c,',','split');
-                    idx_f=find_str_in_cell(tok,{'mesh2d_nFaces'});
-                    dim=1:1:numel(tok);
-                    dimnF=dim;
-                    dimnF(dimnF==idx_f)=[];
-                    data_var.val=permute(data_var.val,[idx_f,dimnF]);
-                end
-%                 bol_nan=reshape(isnan(data_var.val),[],1); %not needed if well coded before...
+                data_var=gdm_order_dimensions(fid_log,data_var);
+
                 bol_nan=any(isnan(data_var.val),2); %necessary for multidimensional 
 
                 ndim_2=size(data_var.val,2);
@@ -137,8 +126,10 @@ for ksb=1:nsb
     %                  axis equal
     %                 %END DEBUG
                 end
+                
+                %% process
 
-                %data
+                %% data
                 data=v2struct(val_mean,val_std,val_max,val_min,val_num); %#ok
 
                 %% save and disp

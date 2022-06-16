@@ -75,7 +75,9 @@ for ksb=1:nsb
         rkmv=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,'','','','',pol_name);
 
         in_p.s=rkmv.rkm_cen;
-
+        in_p.xlab_str='rkm';
+        in_p.xlab_un=1/1000;
+        
 %         ktc=0;
         for ktp=1:ntp %time period
             tim_p=flg_loc.tim_ave{ktp};   
@@ -92,33 +94,35 @@ for ksb=1:nsb
             
 %             nt=numel(tim_p);
             for kvar=1:nvar %variable
-                varname=flg_loc.var{kvar};
-                var_str=D3D_var_num2str(varname);                
+                [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
                     
                 %ATTENTION! very weak point. 
                 %We loop over the fieldnames (i.e., statistics) of a file containing the statistics of a variable. 
                 %E.g., we compute the std of a mean. Not all are computed in the postprocessing, so we cannot load
                 %the file without 'statis' and loop over it. 
                 statis='val_mean';
-                fpath_mat_tmp_w=mat_tmp_name(fdir_mat,tag_w,'tim',tim_p(1),'tim2',tim_p(end),'pol',pol_name,'var',var_str,'sb',sb_pol,'stat',statis);
+                fpath_mat_tmp_w=mat_tmp_name(fdir_mat,tag_w,'tim',tim_p(1),'tim2',tim_p(end),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'stat',statis);
                 load(fpath_mat_tmp_w,'data')
                 
                 fn_data=fieldnames(data);
                 nfn=numel(fn_data);
-                
 
                 in_p.tim=[tim_p_str(1),tim_p_str(end)];
-                in_p.lab_str=var_str;
+                in_p.lab_str=var_str_save;
                 in_p.xlims=flg_loc.xlims;
 
                 %loop statistics
                 for kfn=1:nfn
                     statis=fn_data{kfn};
 
-                    fpath_mat_tmp_w=mat_tmp_name(fdir_mat,tag_w,'tim',tim_p(1),'tim2',tim_p(end),'pol',pol_name,'var',var_str,'sb',sb_pol,'stat',statis);
+                    fpath_mat_tmp_w=mat_tmp_name(fdir_mat,tag_w,'tim',tim_p(1),'tim2',tim_p(end),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'stat',statis);
+                    if exist(fpath_mat_tmp_w,'file')~=2
+                        messageOut(fid_log,sprintf('Statistics %s for variable %s unavailable',statis,var_str_save))
+                        continue
+                    end
                     load(fpath_mat_tmp_w,'data')
                     
-                    fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,tim_str,var_str,statis);
+                    fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,tim_str,var_str_save,statis);
                     mkdir_check(fdir_fig_loc);
                     
                     for kfn2=1:nfn
@@ -131,7 +135,7 @@ for ksb=1:nsb
                         end
                         in_p.val=data.(statis2);
 
-                        fname_noext=fig_name(fdir_fig_loc,tag,runid,tim_p(1),tim_p(end),var_str,statis,statis2,sb_pol);
+                        fname_noext=fig_name(fdir_fig_loc,tag,runid,tim_p(1),tim_p(end),var_str_save,statis,statis2,sb_pol);
     %                     fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                         in_p.fname=fname_noext;

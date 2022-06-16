@@ -12,13 +12,13 @@
 %
 %
 
-function var_str=D3D_var_num2str_structure(varname,simdef)
+function [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(varname,simdef)
 
-var_str=D3D_var_num2str(varname);
+[var_str_read,var_id,var_str_save]=D3D_var_num2str(varname);
 if simdef.D3D.structure==1
-    switch var_str
+    switch var_str_read
         case 'bl'
-            var_str='DPS';
+            var_str_read='DPS';
     end
 end
 

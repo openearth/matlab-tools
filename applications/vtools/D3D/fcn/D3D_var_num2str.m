@@ -10,14 +10,29 @@
 %$Id$
 %$HeadURL$
 %
+%INPUT
+%   -var_id = identifies what variable to read [char] or [double]
 %
+%OUTPUT
+%   -var_str_read = save name of the variable to read [char]
+%   -var_str_save = save name of the processed variable [char]
 
-function var_str=D3D_var_num2str(var_num)
+function [var_str_read,var_id,var_str_save]=D3D_var_num2str(var_id)
 
-if ischar(var_num)
-    var_str=var_num;
+
+if ischar(var_id)
+    switch var_id
+        case 'detab_ds'
+            var_str_read='mesh2d_mor_bl';
+            var_str_save=var_id;
+            var_id=var_str_read;
+        otherwise
+            var_str_read=var_id;
+            var_str_save=var_str_read;
+    end
 else
-    var_str=fcn_num2str(var_num);
+    var_str_read=fcn_num2str(var_id);
+    var_str_save=var_str_read;
 end
 
 end %function

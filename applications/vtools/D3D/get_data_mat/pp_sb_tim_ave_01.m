@@ -84,8 +84,7 @@ for ksb=1:nsb
             
             nt=numel(tim_p);
             for kvar=1:nvar %variable
-                varname=flg_loc.var{kvar};
-                var_str=D3D_var_num2str(varname);
+                [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
                 
                 %allocate
                 kt=1;
@@ -95,7 +94,7 @@ for ksb=1:nsb
                     tim_p_loc=time_dnum(idx_m); %flow time associated to the objective morpho time
                 end
             
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',tim_p_loc,'pol',pol_name,'var',var_str,'sb',sb_pol);
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',tim_p_loc,'pol',pol_name,'var',var_str_save,'sb',sb_pol);
                 load(fpath_mat_tmp,'data');
                 
                 fn_data=fieldnames(data);
@@ -127,11 +126,10 @@ for ksb=1:nsb
                 
                     ktc=ktc+1;
 
-                    varname=flg_loc.var{kvar};
-                    var_str=D3D_var_num2str(varname);
+                    [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
 
                     %load
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',tim_p_loc,'pol',pol_name,'var',var_str,'sb',sb_pol);
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',tim_p_loc,'pol',pol_name,'var',var_str_save,'sb',sb_pol);
                     load(fpath_mat_tmp,'data');
                     
                     %fill matrix with values for all times
@@ -147,7 +145,7 @@ for ksb=1:nsb
                     statis=fn_data{kfn};
 
                     %The name is not unique enough. There can be two periods with the same begin and end. 
-                    fpath_mat_tmp_w=mat_tmp_name(fdir_mat,tag_w,'tim',tim_p(1),'tim2',tim_p(end),'pol',pol_name,'var',var_str,'sb',sb_pol,'stat',statis);
+                    fpath_mat_tmp_w=mat_tmp_name(fdir_mat,tag_w,'tim',tim_p(1),'tim2',tim_p(end),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'stat',statis);
 
                     if exist(fpath_mat_tmp_w,'file')==2 && ~flg_loc.overwrite_ave ; continue; end
 

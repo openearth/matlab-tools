@@ -64,6 +64,7 @@ for ks=1:ns
     %% map summerbed
     if isfield(in_plot,'fig_map_summerbed_01')==1
         create_mat_map_summerbed_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
+        pp_sb_var_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
             if isfield(in_plot.fig_map_summerbed_01,'tim_ave')
                 pp_sb_tim_ave_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
             end

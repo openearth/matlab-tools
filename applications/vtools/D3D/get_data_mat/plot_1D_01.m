@@ -85,15 +85,14 @@ for ksb=1:nsb
 %         fpath_file=cell(nt,1); %movie
 
         for kvar=1:nvar %variable
-            varname=flg_loc.var{kvar};
-            var_str=D3D_var_num2str_structure(varname,simdef(1));
+            [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
             
             %time 0
             kt=1;
                 %model
             for kS=1:nS    
                 fdir_mat=simdef(kS).file.mat.dir;
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
                 load(fpath_mat_tmp,'data');            
                 data_0_loc(kS)=data;
             end
@@ -102,7 +101,7 @@ for ksb=1:nsb
             %skip if multidimentional
             fn_data=fieldnames(data_0(1));
             if size(data_0.(fn_data{1}),2)>1
-                messageOut(fid_log,sprintf('Skipping variable with multiple dimensions: %s',var_str));
+                messageOut(fid_log,sprintf('Skipping variable with multiple dimensions: %s',var_str_save));
                 continue
             end
                 
@@ -113,7 +112,7 @@ for ksb=1:nsb
                 %% load
                 for kS=1:nS
                     fdir_mat=simdef(kS).file.mat.dir;
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str,'sb',sb_pol);
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
                     load(fpath_mat_tmp,'data');
                     data_loc(kS)=data;
                 end
@@ -128,7 +127,7 @@ for ksb=1:nsb
                     in_p.tim=time_mor_dnum(kt);
                 end
                 
-                in_p.lab_str=var_str;
+                in_p.lab_str=var_str_save;
                 in_p.xlims=flg_loc.xlims;
 
                 for kfn=1:nfn
@@ -146,7 +145,7 @@ for ksb=1:nsb
                         in_p.plot_mea=false;
                         if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
                             tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-                            data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str,'stat',statis);
+                            data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
                             if isstruct(data_mea) %there is data
                                 in_p.plot_mea=true;
                                 in_p.s_mea=data_mea.x;
@@ -154,7 +153,7 @@ for ksb=1:nsb
                                     in_p.val_mea=data_mea.y;
                                 elseif kref==2
                                     tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
-                                    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str,'stat',statis);
+                                    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
                                     in_p.val_mea=data_mea.y-data_mea_0.y;
                                     %we are assuming <s_mea> is the same
                                 end
@@ -171,10 +170,10 @@ for ksb=1:nsb
                             str_dir='diff';
                         end
                         
-                        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str,statis,str_dir);
+                        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                         mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                        fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,statis,sb_pol,kref);
+                        fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kref);
 %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
                         
                         in_p.fname=fname_noext;
