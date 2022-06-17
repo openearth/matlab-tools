@@ -40,8 +40,26 @@ end
 
 %% CALC
 
+%do not ask for meaningless variables
+varargin_clean=varargin;
+nv=numel(varargin)/2;
+for kv=1:nv
+    par=varargin{kv*2-1};
+    val=varargin{kv*2};
+    switch par
+        case 'bemonsteringshoogte'
+            if val<-1e-7
+                varargin_clean(kv*2-1:kv*2)='';
+                messageOut(NaN,sprintf('Parameter without meaning removed: %s',par))
+            end
+            
+    end
+    
+end
+
+%% 
 %get indices of stations to read
-idx=data_stations_stations_to_load(paths_main_folder,varargin{:});
+idx=data_stations_stations_to_load(paths_main_folder,varargin_clean{:});
 
 %% load data
 

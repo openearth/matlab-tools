@@ -33,6 +33,10 @@ if isfield(flg_loc,'clims')==0
     flg_loc.clims_diff_t=[NaN,NaN];
 end
    
+if isfield(flg_loc,'clims_diff_t')==0
+    flg_loc.clims_diff_t=flg_loc.clims;
+end
+
 if isfield(flg_loc,'do_diff')==0
     flg_loc.do_diff=1;
 end
@@ -117,7 +121,12 @@ for kvar=1:nvar %variable
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
         load(fpath_mat_tmp,'data');
         
-        in_p.tim=time_dnum(kt);
+        switch flg_loc.tim_type
+            case 1
+                in_p.tim=time_dnum(kt);
+            case 2
+                in_p.tim=time_mor_dnum(kt);
+        end
         
         for kclim=1:nclim
             for kdiff=1:ndiff

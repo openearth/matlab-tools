@@ -82,6 +82,8 @@ switch var_num
         var_str='mesh2d_czs';
     case 44
         var_str='sbtot';
+    case 47
+        var_str='ba_mor';
 otherwise
     error('add')
 end %var_num

@@ -107,6 +107,7 @@ simdef.flg.which_v=17; %which variable:
 %   44=total bed load transport at nodes [m^3/s]
 %	45=thickness of the floating ice cover [m] 
 %	46=pressure exerted by the floating ice cover [m] 
+%	47=morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
 
     %% domain
     

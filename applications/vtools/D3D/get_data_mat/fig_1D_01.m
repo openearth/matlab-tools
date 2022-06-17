@@ -48,8 +48,9 @@ if isfield(in_p,'xlims')==0
 end
 if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
     bol_p=in_p.s>in_p.xlims(1) & in_p.s<in_p.xlims(2);
-    in_p.ylims=[min(min(in_p.val(bol_p,:)))-10*eps,max(max(in_p.val(bol_p,:)))+10*eps];
+    in_p.ylims=[min(min(in_p.val(bol_p,:))),max(max(in_p.val(bol_p,:)))];
 end
+in_p.ylims=in_p.ylims+[-1,1].*mean(in_p.ylims)/1000+10.*[-eps,eps];
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end

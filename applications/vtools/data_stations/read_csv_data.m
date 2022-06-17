@@ -83,7 +83,7 @@ end
 switch file_type
     case 0
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug,'file_structure',file_structure);
-    case {1,2,3,4,6,7,8,9,10,11,12} %locations in rows
+    case {1,2,3,4,6,7,8,9,10,11,12,13} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
     case {5} %locations in columns
         vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);       
@@ -108,7 +108,7 @@ for kloc=1:nloc
     switch file_type
         case 5
             idx_waarheid=2; %we have used this index to indicate each of the locations.
-        case 12
+        case 13
             [location,epsg,x,y,bemonsteringshoogte,grootheid,eenheid,hoedanigheid]=read_meta_data_01(fpath);
     end
     
@@ -895,7 +895,47 @@ switch file_type
         
         fdelim=';';
         headerlines=1;
-    case 10 %same as 11 with bemonsteringhoogte, needs to be before for getting it prior to the other one
+    case 10 %same as 11 with time zone and getting location from locatie code, needs to be before for getting it prior to the other one
+        %MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING     ;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                              ;WAARDEBEPALINGSMETHODE_CODE    ;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;WAARNEMINGTIJD;LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE   ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME
+%                             ;Lobith                ;                     ;             ;Debiet                ;Q              ;                      ;               ;m3/s        ;                              ;                 ;Oppervlaktewater         ;OW               ;                                    ;                            ;Debiet uit Q-f relatie                                           ;other:F216                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;3072,2         ;                   ;Normale waarde        ;Ongecontroleerd;ONXXREG_AFVOER           ;                         ;                 ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;713748,798641064;5748949,04523234;                   ;           ;           
+%                             ;Krimpen a/d IJssel    ;                     ;             ;Waterhoogte           ;WATHTE         ;                      ;               ;cm          ;t.o.v. Normaal Amsterdams Peil;NAP              ;Oppervlaktewater         ;OW               ;                                    ;                            ;Rekenkundig gemiddelde waarde over vorige 5 en volgende 5 minuten;other:F007                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;-4             ;                   ;Normale waarde        ;Ongecontroleerd;RIKZMON_WAT              ;Vlotter                  ;127              ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;608561,131040599;5752923,14544908;;;
+%
+%MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE                           ;LOCATIE_CODE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;CAS_NR    ;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                  ;WAARDEBEPALINGSMETHODE_CODE;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;REFERENTIE;WAARNEMINGTIJD (MET/CET);LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME;GROEPERING_OMSCHRIJVING;GROEPERING_CODE;GROEPERING_KANAAL;GROEPERING_TYPE
+%                     ;Hoek van Holland rechter oever (kilometer 1030.1);HOEKVHLRTOVR;                     ;             ;(massa)Concentratie   ;CONCTTE        ;chloride              ;Cl             ;16887-00-6;mg/l        ;uitgedrukt in chloor     ;Cl               ;Oppervlaktewater         ;OW               ;                                    ;                            ;Berekende chloride concentratie - methode NDB '80-'81;other:F072                 ;Steekbemonstering              ;SB                     ;31-12-2017     ;00:00:00  ;                        ;             ;11089          ;                   ;Normale waarde        ;Gecontroleerd;ZHXXREG_ZOUT             ;                         ;                 ;                                  ;                          ;                                    ;                            ;-250               ;NAP           ;25831;576915,135917929;5759061,05599413;;;;;;;
+
+        %variables to save once
+        var_once={'LOCATIE_CODE','X','Y','PARAMETER_ CODE','EENHEID_CODE','GROOTHEID_ CODE','EPSG','HOEDANIGHEID_CODE','BEMONSTERINGSHOOGTE'};
+%         var_once={'LOCATIE_CODE','X','Y','PARAMETER_ CODE','EENHEID_CODE','GROOTHEID_ CODE','EPSG','HOEDANIGHEID_CODE','BEMONSTERINGSHOOGTE','WAARNEMINGTIJD (MET/CET)'};
+        idx_location=1;
+        idx_x=2;
+        idx_y=3;
+        idx_parameter=4;
+        idx_eenheid=5;
+        idx_grootheid=6;
+        idx_epsg=7;
+        idx_hoedanigheid=8;
+        idx_bemonsteringshoogte=9;
+        
+        %variables to save with time
+        var_time={'WAARNEMINGDATUM','WAARNEMINGTIJD (MET/CET)','NUMERIEKEWAARDE'};
+%         var_time={'WAARNEMINGDATUM','REFERENTIE','NUMERIEKEWAARDE'};
+        idx_datum=1;
+        fmt_datum='dd-MM-yyy';
+        idx_tijd=2;
+        fmt_tijd='HH:mm:ss';
+        idx_waarheid=3;
+        
+        %variable with location, to check for different places in same file. !! not needed anymore
+        var_loc={'MEETPUNT_IDENTIFICATIE'};
+        
+        %variable with elevation, to check and save in existing variable !!not needed anymore
+        var_hog={'BEMONSTERINGSHOOGTE'};
+        
+        fdelim=';';
+        tzone='+01:00'; %waterinfo in CET
+        headerlines=1;    
+        
+    case 11 %same as 12 with bemonsteringhoogte, needs to be before for getting it prior to the other one
         %MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING     ;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                              ;WAARDEBEPALINGSMETHODE_CODE    ;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;WAARNEMINGTIJD;LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE   ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME
 %                             ;Lobith                ;                     ;             ;Debiet                ;Q              ;                      ;               ;m3/s        ;                              ;                 ;Oppervlaktewater         ;OW               ;                                    ;                            ;Debiet uit Q-f relatie                                           ;other:F216                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;3072,2         ;                   ;Normale waarde        ;Ongecontroleerd;ONXXREG_AFVOER           ;                         ;                 ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;713748,798641064;5748949,04523234;                   ;           ;           
 %                             ;Krimpen a/d IJssel    ;                     ;             ;Waterhoogte           ;WATHTE         ;                      ;               ;cm          ;t.o.v. Normaal Amsterdams Peil;NAP              ;Oppervlaktewater         ;OW               ;                                    ;                            ;Rekenkundig gemiddelde waarde over vorige 5 en volgende 5 minuten;other:F007                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;-4             ;                   ;Normale waarde        ;Ongecontroleerd;RIKZMON_WAT              ;Vlotter                  ;127              ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;608561,131040599;5752923,14544908;;;
@@ -933,7 +973,7 @@ switch file_type
         fdelim=';';
         tzone='+01:00'; %waterinfo in CET
         headerlines=1;    
-    case 11 %same as 6 but timezone is actually specified but data is in referentie!
+    case 12 %same as 6 but timezone is actually specified but data is in referentie!
         %MONSTER_IDENTIFICATIE;MEETPUNT_IDENTIFICATIE;TYPERING_OMSCHRIJVING;TYPERING_CODE;GROOTHEID_OMSCHRIJVING;GROOTHEID_ CODE;PARAMETER_OMSCHRIJVING;PARAMETER_ CODE;EENHEID_CODE;HOEDANIGHEID_OMSCHRIJVING     ;HOEDANIGHEID_CODE;COMPARTIMENT_OMSCHRIJVING;COMPARTIMENT_CODE;WAARDEBEWERKINGSMETHODE_OMSCHRIJVING;WAARDEBEWERKINGSMETHODE_CODE;WAARDEBEPALINGSMETHODE_OMSCHRIJVING                              ;WAARDEBEPALINGSMETHODE_CODE    ;BEMONSTERINGSSOORT_OMSCHRIJVING;BEMONSTERINGSSOORT_CODE;WAARNEMINGDATUM;WAARNEMINGTIJD;LIMIETSYMBOOL;NUMERIEKEWAARDE;ALFANUMERIEKEWAARDE;KWALITEITSOORDEEL_CODE;STATUSWAARDE   ;OPDRACHTGEVENDE_INSTANTIE;MEETAPPARAAT_OMSCHRIJVING;MEETAPPARAAT_CODE;BEMONSTERINGSAPPARAAT_OMSCHRIJVING;BEMONSTERINGSAPPARAAT_CODE;PLAATSBEPALINGSAPPARAAT_OMSCHRIJVING;PLAATSBEPALINGSAPPARAAT_CODE;BEMONSTERINGSHOOGTE;REFERENTIEVLAK;EPSG ;X               ;Y               ;ORGAAN_OMSCHRIJVING;ORGAAN_CODE;TAXON_NAME
 %                             ;Lobith                ;                     ;             ;Debiet                ;Q              ;                      ;               ;m3/s        ;                              ;                 ;Oppervlaktewater         ;OW               ;                                    ;                            ;Debiet uit Q-f relatie                                           ;other:F216                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;3072,2         ;                   ;Normale waarde        ;Ongecontroleerd;ONXXREG_AFVOER           ;                         ;                 ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;713748,798641064;5748949,04523234;                   ;           ;           
 %                             ;Krimpen a/d IJssel    ;                     ;             ;Waterhoogte           ;WATHTE         ;                      ;               ;cm          ;t.o.v. Normaal Amsterdams Peil;NAP              ;Oppervlaktewater         ;OW               ;                                    ;                            ;Rekenkundig gemiddelde waarde over vorige 5 en volgende 5 minuten;other:F007                     ;Rechtstreekse meting           ;01                     ;01-01-2020     ;00:00:00      ;             ;-4             ;                   ;Normale waarde        ;Ongecontroleerd;RIKZMON_WAT              ;Vlotter                  ;127              ;                                  ;                          ;                                    ;                            ;-999999999         ;NVT           ;25831;608561,131040599;5752923,14544908;;;
@@ -963,7 +1003,7 @@ switch file_type
         fdelim=';';
         tzone='+01:00'; %waterinfo in CET
         headerlines=1;    
-    case 12 %HbR
+    case 13 %HbR
         [fdir,~,~]=fileparts(fpath);
         
         %features

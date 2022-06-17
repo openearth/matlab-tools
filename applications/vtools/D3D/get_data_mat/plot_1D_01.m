@@ -100,7 +100,7 @@ for ksb=1:nsb
             
             %skip if multidimentional
             fn_data=fieldnames(data_0(1));
-            if size(data_0.(fn_data{1}),2)>1
+            if size(data_0(1).(fn_data{1}),2)>1
                 messageOut(fid_log,sprintf('Skipping variable with multiple dimensions: %s',var_str_save));
                 continue
             end

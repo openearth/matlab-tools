@@ -25,6 +25,7 @@ end
 gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 rkm_edg=cen2cor(rkm_cen)';
+rkm_dx=diff(rkm_edg);
 %     rkm_edg_br=maas_branches(rkm_edg); %cannot call this function here
 rkm_edg_br=cat(1,rkm_cen_br,rkm_cen_br{end}); %this is not good enough. It may be that an edge point falls in a different branch name
 
@@ -41,6 +42,6 @@ for kpol=1:npol
 %             figure; hold on; plot(pol_loc(:,1),pol_loc(:,2),'-*')
 %             % END DEBUG
 end
-data=v2struct(bol_pol_loc,rkm_cen,rkm_edg,rkm_cen_br,rkm_edg_br,rkm_edg_xy,rkm_cen_xy,rkm_edg_xy_L,rkm_edg_xy_R); %#ok
+data=v2struct(bol_pol_loc,rkm_cen,rkm_edg,rkm_cen_br,rkm_edg_br,rkm_edg_xy,rkm_cen_xy,rkm_edg_xy_L,rkm_edg_xy_R,rkm_dx); %#ok
 save_check(fpath_rkm_pol,'data');
 

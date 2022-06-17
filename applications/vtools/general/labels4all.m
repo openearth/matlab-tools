@@ -33,9 +33,9 @@
 %       -'cl_surf'  : surface chloride [mg/l]
 %       -'cl_bottom': bottom chloride [mg/l]
 %       -'sal_mass' : mass of salt [kg]
-%       -'cl_mass' : mass of salt [kg]
+%       -'cl_mass'  : mass of salt [kg]
 %       -'sal_t'    : mass of salt per unit time [kg/s]
-%       -'cl_t'    : mass of salt per unit time [kg/s]
+%       -'cl_t'     : mass of salt per unit time [kg/s]
 %
 %       -'umag'     : velocity magnitude
 %
@@ -82,6 +82,8 @@
 %       -'mesh2d_taus' : bed shear stress
 %
 %       -'rkm'      : river kilometer
+%
+%       -'ba_mor'   : morphodynamic cell area
 %
 %
 %
@@ -714,8 +716,22 @@ switch lower(variable)
                 str_var='kilómetro del río';
          end
          un_type='L';
+    case 'ba_mor'
+         switch lan
+            case 'en'
+                str_var='morphodynamic cell area';
+            case 'nl'
+                str_var='morfodynamisch celgebied';
+            case 'es'
+                str_var='área morfodinámica';
+         end
+         un_type='L2';
+        
     otherwise
-         error('this is missing')
+        str_var=variable;
+        un_type='?';
+        messageOut(NaN,sprintf('Add variable %s',variable));
+%          error('this is missing')
 end %var
 
 %% UNIT
@@ -911,7 +927,17 @@ switch un_type
             otherwise
                 error('this factor is missing')
         end
-        
+    case 'L2'
+        switch un
+            case 1
+                str_un=' [m^2]';
+            otherwise
+                error('this factor is missing')
+        end
+    case '?'
+        str_un=' [?]';
+    otherwise
+        error('This unit is missing')
 end %un_type
 
 end %function

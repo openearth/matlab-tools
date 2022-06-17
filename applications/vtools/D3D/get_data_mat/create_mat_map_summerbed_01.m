@@ -109,6 +109,8 @@ for ksb=1:nsb
                 val_max=NaN(npol,ndim_2);
                 val_min=NaN(npol,ndim_2);
                 val_num=NaN(npol,ndim_2);
+                val_sum=NaN(npol,ndim_2);
+                val_sum_length=NaN(npol,ndim_2);
                 for kpol=1:npol
                     bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan;
                     if any(bol_get)
@@ -117,6 +119,8 @@ for ksb=1:nsb
                         val_max(kpol,:)=max(data_var.val(bol_get,:));
                         val_min(kpol,:)=min(data_var.val(bol_get,:));
                         val_num(kpol,:)=numel(data_var.val(bol_get,:));
+                        val_sum(kpol,:)=sum(data_var.val(bol_get,:),1,'omitnan');
+                        val_sum_length(kpol,:)=val_sum(kpol,:)./(rkmv.rkm_dx(kpol)*1000);
                     end
     %                 messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
     %                 %% BEGIN DEBUG
@@ -130,7 +134,7 @@ for ksb=1:nsb
                 %% process
 
                 %% data
-                data=v2struct(val_mean,val_std,val_max,val_min,val_num); %#ok
+                data=v2struct(val_mean,val_std,val_max,val_min,val_num,val_sum,val_sum_length); %#ok
 
                 %% save and disp
                 save_check(fpath_mat_tmp,'data');

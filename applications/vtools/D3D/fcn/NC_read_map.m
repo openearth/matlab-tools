@@ -1437,6 +1437,47 @@ switch flg.which_p
                 end
                 out.zlabel='pressure exerted by the floating ice cover [m]';   
                 %%
+            case 47
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            error('do')
+                            out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            if flg.which_v==27
+                                out.z=sum(out.z,1)';
+                            elseif flg.which_v==14
+                                out.z=squeeze(out.z(1,:,:));
+                            end
+                        else
+                            if flg.get_EHY
+                                z=get_EHY(file.map,'mesh2d_thlyr',time_dnum,'bed_layers',1:1:in.nl);
+                                Ltot=sum(z,3)';
+                                ba=get_EHY(file.map,'mesh2d_flowelem_ba',[]);
+                                z=ba;
+                                z(Ltot<1e-3)=0;
+                                out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                                error('do')
+                                z=ncread(file.map,'mesh2d_thlyr',[1,kF(1),kt(1)],[Inf,kF(2),kt(2)]);
+                                if flg.which_v==27
+                                    z=sum(z,1)';
+                                elseif flg.which_v==14
+                                    z=z(1,:)';
+                                end
+                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
+                        end
+                    case 3 %SOBEK3
+                        error('check')
+                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                end
+                if flg.which_v==27
+                    out.zlabel='total sediment thickness [m]';
+                elseif flg.which_v==39
+                    out.zlabel='sediment thickness [m]';
+                elseif flg.which_v==14
+                    out.zlabel='active layer thickness [m]';
+                end
             otherwise
                 error('ups...')
                 
@@ -1889,8 +1930,10 @@ end %function
 function val=get_EHY(file_map,vartok,time_dnum,varargin)
 
 OPT.varName=vartok;
-OPT.t0=time_dnum(1);
-OPT.tend=time_dnum(end);
+if ~isempty(time_dnum)
+    OPT.t0=time_dnum(1);
+    OPT.tend=time_dnum(end);
+end
 OPT.disp=0;
 OPT.bed_layers=0;
 
