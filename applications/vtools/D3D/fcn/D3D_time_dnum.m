@@ -24,22 +24,37 @@ parin=inputParser;
 
 addOptional(parin,'tim_type',1);
 addOptional(parin,'tol',1);
+addOptional(parin,'fdir_mat','');
 
 parse(parin,varargin{:});
 
 tim_type=parin.Results.tim_type;
 tol=parin.Results.tol;
+fdir_mat=parin.Results.fdir_mat;
+
+fpath_tim_all=fullfile(fdir_mat,'tim.mat');
 
 %%
 
 if isa(in_dtime(1),'double') 
-    if isfolder(fpath_map) %SMT
-        [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(fpath_map);
+    %get all results time
+    if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2
+        messageOut(NaN,sprintf('Mat-file with all times not available. Reading.'))
+        if isfolder(fpath_map) %SMT
+            [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(fpath_map);
+        else
+            [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map,0,[1,Inf]);
+            sim_idx=NaN;
+        end
+        data=v2struct(time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx);
+        save_check(fpath_tim_all,'data')
     else
-        [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map,0,[1,Inf]);
-        sim_idx=NaN;
+        messageOut(NaN,sprintf('Mat-file with all times available. Loading: %s',fpath_tim_all))
+        load(fpath_tim_all,'data')
+        v2struct(data);
     end
     
+    %get the requested ones
     if isnan(in_dtime(1)) 
         
     elseif isinf(in_dtime(1))
