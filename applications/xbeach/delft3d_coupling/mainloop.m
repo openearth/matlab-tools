@@ -71,8 +71,8 @@ use_smic        = 1; % use SuperMIC
 
 % Calculation H6
 useh6           = 0;
-user            = 'nederhof';
-pass            = 'pllcmn2018!';
+user            = '';
+pass            = '';
 type            = 'normal-e5';
 plink           = 'p:\11200397-lsu-xbeach-delft3d4\04_conceptual\03_running_scripts\plink.exe';
 
