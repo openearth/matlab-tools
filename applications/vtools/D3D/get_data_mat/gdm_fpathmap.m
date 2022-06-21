@@ -12,23 +12,14 @@
 %
 %
 
-function data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,varargin)
+function fpath_map_loc=gdm_fpathmap(simdef,sim_idx)
 
-%% PARSE
-
-parin=inputParser;
-
-addOptional(parin,'tim',[]);
-addOptional(parin,'sim_idx',[]);
-
-parse(parin,varargin{:});
-
-time_dnum=parin.Results.tim;
-sim_idx=parin.Results.sim_idx;
-        
-%% 
-
-fpath_map=gdm_fpathmap(simdef,sim_idx);
-data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
+fpath_map=simdef.file.map;
+if simdef.D3D.structure==4
+    %this may not be strong enough. It will fail if the run is in path with <\0\> in the name. 
+    fpath_map_loc=strrep(fpath_map,[filesep,'0',filesep],[filesep,num2str(sim_idx),filesep]); 
+else
+    fpath_map_loc=fpath_map;
+end
 
 end %function

@@ -35,9 +35,15 @@ if exist(fpath_mat_time,'file')==2
     messageOut(fid_log,sprintf('Time-file already exists: %s',fpath_mat_time));
     load(fpath_mat_time,'tim');
     v2struct(tim);
-    nt1=numel(time_dnum);
+    switch flg_loc.tim_type
+        case 1
+            tim_cmp=time_dnum;
+        case 2
+            tim_cmp=time_mor_dnum;
+    end
+    nt1=numel(tim_cmp);
     nt2=numel(flg_loc.tim);
-    if nt1~=nt2 || any(abs(time_dnum-flg_loc.tim)>1e-10)
+    if nt1~=nt2 || any(abs(reshape(tim_cmp,1,[])-reshape(flg_loc.tim,1,[]))>flg_loc.tim_tol)
         messageOut(fid_log,'Requested time is different than available time. Overwritting.')
         load_tim=true;
     else

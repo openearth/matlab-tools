@@ -60,54 +60,7 @@ simdef.flg.which_p=2; %which kind of plot:
 %GRID
 %   grid
 %
-simdef.flg.which_v=17; %which variable: 
-%   1=etab
-%   2=h
-%   3=dm Fak
-%   4=dm fIk
-%   5=fIk
-%   6=I
-%   7=elliptic
-%	8=Fak
-%   9=detrended etab based on etab_0
-%   10=depth averaged velocity
-%   11=velocity
-%   12=water level
-%   13=face indices
-%   14=active layer thickness
-%   15=bed shear stress
-%   16=specific water discharge
-%   17=cumulative bed elevation
-%   18=water discharge 
-%   19=bed load transport for size fraction kf at nodes [m^3/s]
-%   20=velocity at the main channel
-%   21=discharge at main channel
-%   22=cumulative nourished volume of sediment
-%   23=suspended transport in streamwise direction
-%   24=cumulative bed load transport
-%   25=total sediment mass (summation of all substrate layers, including active layer)
-%   26=dg Fak
-%   27=total sediment thickness (summation of all substrate layers, including active layer)
-%   28=main channel averaged bed level
-%   29=sediment transport magnitude at edges m^2/s
-%   30=sediment transport magnitude at edges m^3/s
-%   31=morphodynamic width [m]
-%   32=Chezy 
-%   33=cell area [m^2]
-%   34=space step [m]
-%   35=cumulative dredged volume of sediment [m^3]
-%   36=Froude number [-]
-%   37=CFL [-]
-%   38=time step [s]
-%	39=sediment thickness per layer (including active layer) [m]
-%	40=volume fraction content per layer (including active layer) [-]
-%   41=wave height [m]
-%   42=wave forces [N]
-%   43=horizontal eddy viscosity [m^2/s]
-%   44=total bed load transport at nodes [m^3/s]
-%	45=thickness of the floating ice cover [m] 
-%	46=pressure exerted by the floating ice cover [m] 
-%	47=morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
+simdef.flg.which_v=17; %which variable <open D3D_list_of_variables>
 
     %% domain
     

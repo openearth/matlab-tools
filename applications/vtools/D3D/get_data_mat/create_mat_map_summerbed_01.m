@@ -22,10 +22,6 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-if isfield(flg_loc,'overwrite_tim')==0
-    flg_loc.overwrite_tim=0;
-end
-
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -43,7 +39,7 @@ fpath_rkm=flg_loc.fpath_rkm;
         
 %% OVERWRITE
 
-ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat,'overwrite_tim'); if ret; return; end
+ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD TIME
 

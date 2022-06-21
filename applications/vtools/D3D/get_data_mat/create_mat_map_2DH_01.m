@@ -22,12 +22,31 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
+if isfield(flg_loc,'write_shp')==0
+    flg_loc.write_shp=0;
+end
+if flg_loc.write_shp==1
+    messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-% fpath_map=simdef.file.map;
+
+%% SHP
+
+if flg_loc.write_shp
+    fpath_poly=fullfile(fdir_mat,'grd_polygons.mat');
+    if exist(fpath_poly,'file')==2
+        load(fpath_poly,'polygons')
+    else
+        fpath_map=gdm_fpathmap(simdef,0);
+        polygons=D3D_grid_polygons(fpath_map);
+        save_check(fpath_poly,'polygons');
+    end
+end
 
 %% DIMENSIONS
 
@@ -54,12 +73,35 @@ for kt=kt_v
         var_str=D3D_var_num2str_structure(varname,simdef);
         
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
-        if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
+        fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
+
+        do_read=1;
+        if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
+            do_read=0;
+        end
+        do_shp=0;
+        if flg_loc.write_shp && (exist(fpath_shp_tmp,'file')~=2 || do_read==1)
+            do_shp=1;
+        end
 
         %% read data
-        data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));         
-        data=squeeze(data_var.val); %#ok
-        save_check(fpath_mat_tmp,'data'); 
+        if do_read
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));         
+            data=squeeze(data_var.val); %#ok
+            save_check(fpath_mat_tmp,'data'); 
+        end
+
+        %% shp
+        if do_shp
+            if ~do_read
+                load(fpath_mat_tmp,'data')
+            end
+            messageOut(fid_log,sprintf('Starting to write shp: %s',fpath_shp_tmp));
+            shapewrite(fpath_shp_tmp,'polygon',polygons,reshape(data,[],1));
+%             messageOut(fid_log,sprintf('Finished to write shp: %s',fpath_shp_tmp)); %next message is sufficient
+        end
+            
+        %% disp
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
     end
 

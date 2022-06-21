@@ -7,7 +7,10 @@
 %$Id$
 %$HeadURL$
 %
-%Plot results IJsselmeer 3D
+%layout for plot
+
+%open input_D3D_fig_layout
+
 
 %% PREAMBLE
 
@@ -249,6 +252,29 @@ in_plot.(tag).tim_ave{1,1}=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016
 in_plot.(tag).tim_ave_type=2; %1=flow; 2=morpho
 in_plot.(tag).tol_tim=30; %tolerance to match day in period with results
 
+%% map 2DH
+
+tag='fig_map_2DH_01';
+in_plot.(tag).do=1;
+in_plot.(tag).do_diff=1; %difference with initial values
+% in_plot.(tag).do_p=1; %regular plot
+% in_plot.(tag).do_s=0; %difference with reference
+in_plot.(tag).tag='map_2DH_01';
+in_plot.(tag).var={27,47};
+in_plot.(tag).tim=[datenum(2014,06,01),datenum(2015,06,01)];
+in_plot.(tag).tim_type=2; %1=flow; 2=morpho
+in_plot.(tag).fpath_rkm=fullfile(fpaths.dir_rkm,'rkm.csv'); %if present it plots rkm (to be done)
+% in_plot.(tag).tim=NaN;
+% in_plot.(tag).fig_size=[0,0,16,9];
+% in_plot.(tag).ylims=[NaN,NaN]; 
+% in_plot.(tag).xlims=[145,177]; 
+in_plot.(tag).write_shp=0; 
+in_plot.(tag).clims=[NaN,NaN;0,1]; 
+in_plot.(tag).overwrite_tim=0; %overwrite time-file
+in_plot.(tag).fig_overwrite=0; %overwrite figures
+in_plot.(tag).overwrite=0; %overwrite mat-files
+in_plot.(tag).do_movie=0; %
+in_plot.(tag).tol_tim=30; %tolerance to match day in period with results
 
 %%
 

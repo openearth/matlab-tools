@@ -1,0 +1,105 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 18082 $
+%$Date: 2022-05-27 16:38:11 +0200 (Fri, 27 May 2022) $
+%$Author: chavarri $
+%$Id: gdm_load_time_simdef.m 18082 2022-05-27 14:38:11Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_load_time_simdef.m $
+%
+%List all variables
+%
+%TO DO:
+% Link all numbers to strings and labels. 
+% [var_str_read,var_id,var_str_save]=D3D_var_num2str(3);
+% labels4all(var_str_read,1,'en')
+
+function D3D_list_of_variables
+
+%% FLOW
+
+%   1 =bed elevation (etab) [m]
+%   2 =flow depth (h) [m]
+
+%   12=water level
+
+%   10=depth averaged velocity [m/s]
+%   11=velocity
+
+%   18=water discharge 
+%   16=specific water discharge
+
+%   32=Chezy 
+%   43=horizontal eddy viscosity [m^2/s]
+%   6 =secondary flow intensity (I) [m/s]
+%   36=Froude number [-]
+%   37=CFL [-]
+%   33=cell area [m^2]
+%   34=space step [m]
+%   38=time step [s]
+
+%% MORPHODYNAMIC
+
+%   9 =detrended etab based on etab_0
+%   15=bed shear stress
+%   17=cumulative bed elevation
+%   25=total sediment mass (summation of all substrate layers, including active layer)
+
+%   44=total bed load transport at nodes [m^3/s]
+%   29=sediment transport magnitude at edges m^2/s
+%   30=sediment transport magnitude at edges m^3/s
+
+%	47=morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
+
+    %% his
+
+%   22=cumulative nourished volume of sediment
+%   23=suspended transport in streamwise direction
+%   24=cumulative bed load transport
+%   35=cumulative dredged volume of sediment [m^3]
+
+%% MIXED-SIZE SEDIMENT
+
+%   3 =arithmetic mean grain size of the active layer (dm Fak) [m]
+%   26=geometric  mean grain size of the active layer (dg Fak) [m]
+
+%	8 =volume fraction content in the active layer (Fak) [-]
+%	40=volume fraction content per layer (including active layer) [-]
+
+%   14=active layer thickness [m]
+%   27=total sediment thickness (summation of all substrate layers, including active layer)
+%	39=sediment thickness per layer (including active layer) [m]
+
+%   19=bed load transport for size fraction kf at nodes [m^3/s]
+
+%% ILL-POSEDNESS
+
+%   4 = arithmetic mean grain size of the interface between active layer and substrate (dm fIk)
+%   5 =fIk
+%   7 =elliptic
+
+%% WAVES
+
+%   41=wave height [m]
+%   42=wave forces [N]
+
+%% ICE
+
+%	45=thickness of the floating ice cover [m] 
+%	46=pressure exerted by the floating ice cover [m] 
+
+%% 1D
+
+%   20=velocity at the main channel
+%   21=discharge at main channel
+%   28=main channel averaged bed level
+%   31=morphodynamic width [m]
+
+%% OTHER
+
+%   13=face indices
+
+end %function
