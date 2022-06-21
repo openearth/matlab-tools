@@ -14,12 +14,7 @@
 
 function plot_his_sal_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
-tag=flg_loc.tag;
-if isfield(flg_loc,'tag_fig')==0
-    tag_fig=tag;
-else
-    tag_fig=flg_loc.tag_fig;
-end
+[tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
 %% DO
 
@@ -34,9 +29,9 @@ fdir_mat=simdef_ref.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 if nS==1
-    fdir_fig=fullfile(simdef.file.fig.dir,tag_fig);
+    fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
 else
-    fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig);
+    fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig,tag_serie);
 end
 fpath_his=simdef_ref.file.his;
 mkdir_check(fdir_fig);

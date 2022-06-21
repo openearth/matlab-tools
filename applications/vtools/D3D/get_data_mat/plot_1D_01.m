@@ -14,18 +14,7 @@
 
 function plot_1D_01(fid_log,flg_loc,simdef)
 
-tag=flg_loc.tag;
-if isfield(flg_loc,'tag_fig')==0
-    tag_fig=tag;
-else
-    tag_fig=flg_loc.tag_fig;
-end
-if isfield(flg_loc,'tag_serie')==0
-    tag_serie='01';
-else
-    tag_serie=flg_loc.tag_serie;
-end
-
+[tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
 %% DO
 

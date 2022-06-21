@@ -14,7 +14,8 @@
 
 function plot_tim_y(fid_log,flg_loc,simdef)
 
-tag=flg_loc.tag;
+[tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
+
 if isfield(flg_loc,'tag_tim')==0
     tag_tim=flg_loc.tag;
 else
@@ -29,7 +30,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PATHS
 
-fdir_fig=fullfile(simdef.file.fig.dir,tag);
+fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_tim=fullfile(fdir_mat,sprintf('%s.mat',tag_tim));

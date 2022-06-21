@@ -14,12 +14,7 @@
 
 function plot_map_2DH_ls_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
-tag=flg_loc.tag;
-if isfield(flg_loc,'tag_fig')==0
-    tag_fig=tag;
-else
-    tag_fig=flg_loc.tag_fig;
-end
+[tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
 %% DO
 
@@ -33,10 +28,10 @@ fdir_mat_ref=simdef_ref.file.mat.dir;
 fpath_mat=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
 if nS==1
-    fdir_fig=fullfile(simdef.file.fig.dir,tag_fig);
+    fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
     runid=sprintf('%s-%s',simdef.file.runid,simdef_ref.file.runid);
 else
-    fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig);
+    fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig,tag_serie);
     runid=sprintf('ref_%s',simdef_ref.file.runid);
 end
 mkdir_check(fdir_fig);

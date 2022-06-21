@@ -14,8 +14,7 @@
 
 function plot_map_sal_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
-tag=flg_loc.tag;
-tag_diff=sprintf('%s_diff',tag);
+[tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
 %% DO
 
@@ -29,7 +28,7 @@ fdir_mat_ref=simdef_ref.file.mat.dir;
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag_diff);
+fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
 fpath_grd=simdef.file.mat.grd;
 
@@ -120,7 +119,7 @@ for kt=kt_v
                 in_p.is_background=1;
             end
             
-            fname_noext=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d_ref_%02d',tag_diff,simdef.file.runid,simdef_ref.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim,kref));
+            fname_noext=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d_ref_%02d',tag_fig,simdef.file.runid,simdef_ref.file.runid,datestr(time_dnum(kt),'yyyymmddHHMM'),kclim,kref));
             fpath_file{kt,kclim,kref}=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;

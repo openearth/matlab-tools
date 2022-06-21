@@ -14,7 +14,7 @@
 
 function plot_map_q_01(fid_log,flg_loc,simdef)
 
-tag=flg_loc.tag;
+[tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
 %% DO
 
@@ -36,7 +36,7 @@ end
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag);
+fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
 % fpath_map=simdef.file.map;
 fpath_grd=simdef.file.mat.grd;
