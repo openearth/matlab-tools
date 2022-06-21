@@ -127,6 +127,14 @@ for ksb=1:nsb
 
                 for kfn=1:nfn
                     statis=fn_data{kfn};
+                    
+                    %skip statistics not in list    
+                    if isfield(flg_loc,'statis_plot')
+                        if ismember(statis,flg_loc.statis_plot)==0
+                            continue
+                        end
+                    end
+
                     switch statis
                         case 'val_std'
                             in_p.is_std=true;

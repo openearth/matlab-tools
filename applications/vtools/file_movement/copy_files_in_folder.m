@@ -10,6 +10,7 @@
 %$Id: gdm_load_time_simdef.m 18082 2022-05-27 14:38:11Z chavarri $
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_load_time_simdef.m $
 %
+%
 
 function copy_files_in_folder(fpath_dir,fpath_in)
 
@@ -18,9 +19,10 @@ inc=readcell(fpath_in,'delimiter',';');
 
 nf=size(inc,1);
 for kf=1:nf
-    [~,fname,fext]=fileparts(inc{kf,1});
+    if inc{kf,1}==0; continue; end
+    [~,fname,fext]=fileparts(inc{kf,2});
     fpath_dest=fullfile(fpath_dir,sprintf('%s%s',fname,fext));
-    copyfile_check(inc{kf,1 },fpath_dest);
+    copyfile_check(inc{kf,2},fpath_dest);
 end
 
 end %function

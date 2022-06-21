@@ -32,13 +32,17 @@ if isfield(flg_loc,'clims')==0
     flg_loc.clims=[NaN,NaN];
     flg_loc.clims_diff_t=[NaN,NaN];
 end
-   
 if isfield(flg_loc,'clims_diff_t')==0
     flg_loc.clims_diff_t=flg_loc.clims;
 end
 
 if isfield(flg_loc,'do_diff')==0
     flg_loc.do_diff=1;
+end
+
+if isfield(flg_loc,'xlims')==0
+    flg_loc.xlims=[NaN,NaN];
+    flg_loc.ylims=[NaN,NaN];
 end
 
 %% PATHS
@@ -65,18 +69,17 @@ v2struct(tim); %time_dnum, time_dtime
 nt=size(time_dnum,1);
 nclim=size(flg_loc.clims,1);
 nvar=numel(flg_loc.var);
+nxlim=size(flg_loc.xlims,1);
 
 %%
 
 % max_tot=max(data(:));
-[xlims,ylims]=D3D_gridInfo_lims(gridInfo);
+[xlims_all,ylims_all]=D3D_gridInfo_lims(gridInfo);
 
 %figures
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.xlims=xlims;
-in_p.ylims=ylims;
 in_p.gridInfo=gridInfo;
 
 fext=ext_of_fig(in_p.fig_print);
@@ -101,8 +104,7 @@ for kvar=1:nvar %variable
     varname=flg_loc.var{kvar};
     var_str=D3D_var_num2str_structure(varname,simdef);
     
-    fdir_fig_var=fullfile(fdir_fig,var_str);
-    mkdir_check(fdir_fig_var);
+
     
     in_p.unit=var_str;
     
@@ -129,25 +131,43 @@ for kvar=1:nvar %variable
         end
         
         for kclim=1:nclim
-            for kdiff=1:ndiff
-                switch kdiff
-                    case 1
-                        in_p.val=data;
-                        in_p.clims=flg_loc.clims(kclim,:);
-                        in_p.is_diff=0;
-                    case 2
-                        in_p.val=data-data_ref.data;
-                        in_p.clims=flg_loc.clims_diff_t(kclim,:);
-                        in_p.is_diff=1;
-                end
-                
-                fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str);
-                fpath_file{kt,kclim,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
+            for kxlim=1:nxlim
 
-                in_p.fname=fname_noext;
-                
-                fig_map_sal_01(in_p);
-            end
+                %xlim
+                xlims=flg_loc.xlims(kxlim,:);
+                ylims=flg_loc.ylims(kxlim,:);
+                if isnan(xlims(1))
+                    xlims=xlims_all;
+                    ylims=ylims_all;
+                end
+                in_p.xlims=xlims;
+                in_p.ylims=ylims;
+
+                for kdiff=1:ndiff
+                    switch kdiff
+                        case 1
+                            in_p.val=data;
+                            in_p.clims=flg_loc.clims(kclim,:);
+                            in_p.is_diff=0;
+                            tag_ref='val';
+                        case 2
+                            in_p.val=data-data_ref.data;
+                            in_p.clims=flg_loc.clims_diff_t(kclim,:);
+                            in_p.is_diff=1;
+                            tag_ref='diff';
+                    end
+
+                    fdir_fig_var=fullfile(fdir_fig,var_str,tag_ref);
+                    mkdir_check(fdir_fig_var,NaN,1,0);
+
+                    fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim);
+                    fpath_file{kt,kclim,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                    in_p.fname=fname_noext;
+
+                    fig_map_sal_01(in_p);
+                end %kdiff
+            end%kxlim
         end %kclim
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
     end %kt
@@ -177,8 +197,8 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,tnum,kref,kclim,var_str)
+function fpath_fig=fig_name(fdir_fig,tag,runid,tnum,kref,kclim,var_str,kxlim)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d_ref_%02d',tag,runid,var_str,datestr(tnum,'yyyymmddHHMM'),kclim,kref));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d_xlim_%02d_ref_%02d',tag,runid,var_str,datestr(tnum,'yyyymmddHHMM'),kclim,kref,kxlim));
 
 end %function
