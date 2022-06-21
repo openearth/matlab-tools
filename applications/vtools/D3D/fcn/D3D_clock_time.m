@@ -11,6 +11,14 @@
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_load_rkm_polygons.m $
 %
 %
+%E.G.
+% fpath_1='p:\11206813-007-kpp2021_rmm-3d\C_Work\01_RMM_simulations\computations\r047\DFM_OUTPUT_RMM_dflowfm\RMM_dflowfm_0000.dia';
+% d1=D3D_clock_time(fpath_1);
+% figure
+% hold on
+% h(1)=plot(d1.clock_time_done,d1.sim_time_done);
+% xlabel('clock time')
+% ylabel('simulated time')
 
 function data=D3D_clock_time(fpath_in)
 

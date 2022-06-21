@@ -70,7 +70,7 @@ function D3D_list_of_variables
 %	40=volume fraction content per layer (including active layer) [-]
 
 %   14=active layer thickness [m]
-%   27=total sediment thickness (summation of all substrate layers, including active layer)
+%   27=total sediment thickness (summation of all substrate layers, including active layer) (Ltot) [m]
 %	39=sediment thickness per layer (including active layer) [m]
 
 %   19=bed load transport for size fraction kf at nodes [m^3/s]
