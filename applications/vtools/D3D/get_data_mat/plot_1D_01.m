@@ -20,6 +20,12 @@ if isfield(flg_loc,'tag_fig')==0
 else
     tag_fig=flg_loc.tag_fig;
 end
+if isfield(flg_loc,'tag_serie')==0
+    tag_serie='01';
+else
+    tag_serie=flg_loc.tag_serie;
+end
+
 
 %% DO
 
@@ -34,7 +40,7 @@ nS=numel(simdef);
 fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig);
+fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
 mkdir_check(fdir_fig); %we create it in the loop
 runid=simdef(1).file.runid;
 

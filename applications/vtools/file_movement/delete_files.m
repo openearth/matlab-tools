@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17102 $
+%$Date: 2021-03-02 22:30:16 +0100 (Tue, 02 Mar 2021) $
+%$Author: chavarri $
+%$Id: delete_files.m 17102 2021-03-02 21:30:16Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/delete_files.m $
 %
 %
 

@@ -15,7 +15,7 @@ function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load
 
 %% PARSE
 
-if isfield(flg_loc,'overwrite_tim')==0
+if isfield(flg_loc,'overwrite_tim')==1
     messageOut(fid_log,'<overwrite_tim> flag is outdated. Time will be overwritten if the one present is different than the requested one')
 %     flg_loc.overwrite_tim=0;
 end
