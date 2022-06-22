@@ -281,6 +281,16 @@ handles.toolbox.modelmaker.sfincs.mask.boundarycells_index = 1;
 handles.toolbox.modelmaker.sfincs.mask.boundarycells_option = 1;
 handles.toolbox.modelmaker.sfincs.mask.boundarycells_action={};
 
-% options for sfincs quadtree
-handles.toolbox.modelmaker.sfincs.buq.nr_refinement_polygons = 0;
-handles.toolbox.modelmaker.sfincs.buq.active_refinement_level = 1;
+% Quadtree
+handles.toolbox.modelmaker.sfincs.buq.nr_refinement_polygons=0;
+handles.toolbox.modelmaker.sfincs.buq.refinement_polygon_names={''};
+handles.toolbox.modelmaker.sfincs.buq.active_refinement_polygon=1;
+handles.toolbox.modelmaker.sfincs.buq.refinement_polygon=[];
+handles.toolbox.modelmaker.sfincs.buq.refinement_polygon(1).length=0;
+handles.toolbox.modelmaker.sfincs.buq.refinement_polygon(1).x=[];
+handles.toolbox.modelmaker.sfincs.buq.refinement_polygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.buq.refinement_polygon_file='';
+handles.toolbox.modelmaker.sfincs.buq.refinement_level_strings={''};
+handles.toolbox.modelmaker.sfincs.buq.refinement_level_values=[];
+handles.toolbox.modelmaker.sfincs.buq.active_refinement_level=1;
+
