@@ -102,35 +102,35 @@ msk(isnan(zg))=0;
 handles.model.sfincs.domain(id).mask=msk;
 
 
-% %% And save the files
-% indexfile=handles.model.sfincs.domain(id).input.indexfile;
-% bindepfile=handles.model.sfincs.domain(id).input.depfile;
-% binmskfile=handles.model.sfincs.domain(id).input.mskfile;
-% 
-% % handles.model.sfincs.domain(id).input.inputformat='asc';
-% 
-% if strcmpi(handles.model.sfincs.domain(id).input.inputformat,'bin')
-%     sfincs_write_binary_inputs(zg,msk,indexfile,bindepfile,binmskfile);
-% else
-%     sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
-% end
-% 
-% handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
-% 
-% handles = ddb_sfincs_plot_mask(handles, 'plot');
+%% And save the files
+indexfile=handles.model.sfincs.domain(id).input.indexfile;
+bindepfile=handles.model.sfincs.domain(id).input.depfile;
+binmskfile=handles.model.sfincs.domain(id).input.mskfile;
 
-%% Subgrid
-dr='.\';
-subgridfile='sfincs.sbg';
-bathy=datasets;
-manning_input=[0.02 0.02 0.0];
-cs=handles.screenParameters.coordinateSystem;
-refi=5;
-refj=5;
-uopt='minmean';
-maxdzdv=10;
-usemex=1;
-nbin=5;
+% handles.model.sfincs.domain(id).input.inputformat='asc';
+
+if strcmpi(handles.model.sfincs.domain(id).input.inputformat,'bin')
+    sfincs_write_binary_inputs(zg,msk,indexfile,bindepfile,binmskfile);
+else
+    sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
+end
+
+% handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
+
+handles = ddb_sfincs_plot_mask(handles, 'plot');
+
+% %% Subgrid
+% dr='.\';
+% subgridfile='sfincs.sbg';
+% bathy=datasets;
+% manning_input=[0.02 0.02 0.0];
+% cs=handles.screenParameters.coordinateSystem;
+% refi=5;
+% refj=5;
+% uopt='minmean';
+% maxdzdv=10;
+% usemex=1;
+% nbin=5;
 % 
 % global bathymetry
 % bathymetry=handles.bathymetry;
