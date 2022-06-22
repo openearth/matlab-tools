@@ -1212,11 +1212,17 @@ binmskfile=handles.model.sfincs.domain(id).input.mskfile;
 
 if strcmpi(handles.model.sfincs.domain(id).input.inputformat,'bin')
     sfincs_write_binary_inputs(zg,msk,indexfile,bindepfile,binmskfile);
+%    hurrywave_write_binary_inputs(zg,msk,indexfile,bindepfile,binmskfile);
 else
     sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
 end
 
 handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
+
+if ~isempty(qtr)
+    handles.model.sfincs.domain(id).input.qtrfile='sfincs.qtr';
+    buq_save_buq_file(qtr, handles.model.sfincs.domain(id).mask, handles.model.sfincs.domain(id).input.qtrfile);
+end
 
 handles = ddb_sfincs_plot_mask(handles, 'plot');
 
