@@ -46,7 +46,9 @@ for id=id1:id2
             handles=ddb_sfincs_plot_wave_boundary_points(handles,option,'domain',id,'visible',1);
             handles=ddb_sfincs_plot_mask(handles,option,'domain',id,'visible',1);
             handles=ddb_sfincs_plot_coastline_points(handles,option,'domain',id,'visible',1);
-            handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id,'visible',1);
+            if ~isempty(handles.model.sfincs.domain(id).buq)
+                handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id,'visible',1);
+            end
             
         case{'delete'}
             
@@ -56,7 +58,9 @@ for id=id1:id2
             handles=ddb_sfincs_plot_wave_boundary_points(handles,option,'domain',id);
             handles=ddb_sfincs_plot_mask(handles,option,'domain',id);
             handles=ddb_sfincs_plot_coastline_points(handles,option,'domain',id);
-            handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id);
+            if ~isempty(handles.model.sfincs.domain(id).buq)
+                handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id);
+            end
 
             try
                 delete(handles.model.sfincs.boundaryspline.handle);                
@@ -141,8 +145,9 @@ for id=id1:id2
 %             else
 %                 ivis=0;
 %             end
-            
-            handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id,'visible',1);
+            if ~isempty(handles.model.sfincs.domain(id).buq)
+                handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id,'visible',1);
+            end
             
             
     end
