@@ -43,7 +43,7 @@ if exist(fpath_mat_time,'file')==2
     end
     nt1=numel(tim_cmp);
     nt2=numel(flg_loc.tim);
-    if nt1~=nt2 || any(abs(reshape(tim_cmp,1,[])-reshape(flg_loc.tim,1,[]))>flg_loc.tim_tol)
+    if nt1~=nt2 || any(abs(reshape(tim_cmp,1,[])-reshape(flg_loc.tim,1,[]))>flg_loc.tim_tol) || isnan(flg_loc.tim(1))
         messageOut(fid_log,'Requested time is different than available time. Overwritting.')
         load_tim=true;
     else

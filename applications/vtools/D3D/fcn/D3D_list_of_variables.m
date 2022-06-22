@@ -48,7 +48,8 @@ function D3D_list_of_variables
 %   17=cumulative bed elevation
 %   25=total sediment mass (summation of all substrate layers, including active layer)
 
-%   44=total bed load transport at nodes [m^3/s]
+%   48=total sediment transport at nodes [m^2/s]
+%   44=total bed load transport at nodes [m^2/s] 
 %   29=sediment transport magnitude at edges m^2/s
 %   30=sediment transport magnitude at edges m^3/s
 

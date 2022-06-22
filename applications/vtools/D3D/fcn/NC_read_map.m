@@ -10,7 +10,7 @@
 %$Id$
 %$HeadURL$
 %
-%get data from 1 time step in D3D, output name as in D3D
+%Process output D3D
 
 function out=NC_read_map(simdef,in)
 
@@ -56,9 +56,9 @@ end
 
 %is
 [ismor,is1d,str_network]=D3D_is(file.map);
-
-%whether data is at links or cell centre
-islink=D3D_islink(flg.which_v);
+simdef.flg.is1d=is1d;
+simdef.flg.ismor=ismor;
+simdef.flg.str_network=str_network;
 
 %% CONSTANST
 
@@ -72,108 +72,12 @@ cnt.g=9.81; %readable from mdu
 
 %% time, space, fractions
 if flg.which_p~=-1
-        
-    switch simdef.D3D.structure
-        case 2 %FM
-            
-            %time
-            [time_r,time_mor_r,time_dnum,time_dtime]=D3D_results_time(file.map,ismor,kt);
-            
-            if is1d
-                %take coordinates from curved domain (in case the domain is
-                %straightened)
-                if isfield(in,'rkm_curved')
-                    x_node=ncread(in.rkm_curved,'mesh1d_node_x');
-                    y_node=ncread(in.rkm_curved,'mesh1d_node_y');
-                    
-                    x_edge=ncread(in.rkm_curved,'mesh1d_edge_x');
-                    y_edge=ncread(in.rkm_curved,'mesh1d_edge_y');
-                    
-                    offset_edge=ncread(in.rkm_curved,'mesh1d_edge_offset');
-                    branch_edge=ncread(in.rkm_curved,'mesh1d_edge_branch');
-                else
-                    x_node=ncread(file.map,'mesh1d_node_x');
-                    y_node=ncread(file.map,'mesh1d_node_y');
-                    
-                    x_edge=ncread(file.map,'mesh1d_edge_x');
-                    y_edge=ncread(file.map,'mesh1d_edge_y');
-                    
-                    offset_edge=ncread(file.map,'mesh1d_edge_offset');
-                    branch_edge=ncread(file.map,'mesh1d_edge_branch');
-                end
-                
-                offset=ncread(file.map,'mesh1d_node_offset');
-                branch=ncread(file.map,'mesh1d_node_branch');
-                branch_length=ncread(file.map,sprintf('%s_edge_length',str_network));
-                branch_id=ncread(file.map,sprintf('%s_branch_id',str_network))';
-            else
-                %preallocate for always passing to functions
-                face_nodes_x=NaN;
-                face_nodes_y=NaN;
-                x_node=NaN;
-                y_node=NaN;
-                x_face=NaN;
-                y_face=NaN;
-                faces=NaN;
-                edge_nodes_x=NaN;
-                edge_nodes_y=NaN;
-                if flg.get_cord
-                    if file.partitions>1 || flg.get_EHY
-                        gridInfo=EHY_getGridInfo(file.map,{'face_nodes_xy','XYcen','face_nodes','XYcor'});
-                        face_nodes_x=gridInfo.face_nodes_x;
-                        face_nodes_y=gridInfo.face_nodes_y;
-                    else
-                        x_node=ncread(file.map,'mesh2d_node_x');
-                        y_node=ncread(file.map,'mesh2d_node_y');
-
-                        x_face=ncread(file.map,'mesh2d_face_x',kF(1),kF(2));
-                        y_face=ncread(file.map,'mesh2d_face_y',kF(1),kF(2));
-                        faces=ncread(file.map,'mesh2d_face_nodes',[1,kF(1)],[Inf,kF(2)]);
-                    end
-                    if islink
-                        if file.partitions>1 || flg.get_EHY
-                            gridInfo=EHY_getGridInfo(file.map,{'face_nodes_xy','edge_nodes_xy'});
-                            edge_nodes_x=gridInfo.edge_nodes_x;
-                            edge_nodes_y=gridInfo.edge_nodes_y;
-                        else
-                            edge_nodes_x=ncread(file.map,'mesh2d_edge_x');
-                            edge_nodes_y=ncread(file.map,'mesh2d_edge_y');
-                        end
-                    end
-                end
-            end
-        case 3 %SOBEK3
-%                     x_node_reach=ncread(file.reach,'x_coordinate');
-%                     y_node_reach=ncread(file.reach,'y_coordinate');
-% 
-%                     offset_reach=ncread(file.reach,'chainage');
-%                     branch_reach=ncread(file.reach,'branchid');
-%                     branch_length_reach=branch_length_sobek3(offset_reach,branch_reach);
-% 
-%                     branch_id_reach=S3_get_branch_order(simdef);            
-            file_read=S3_file_read(flg.which_v,file);
-            
-            x_node=ncread(file_read,'x_coordinate');
-            y_node=ncread(file_read,'y_coordinate');
-
-            offset=ncread(file_read,'chainage');
-            branch=ncread(file_read,'branchid');
-            branch_length=branch_length_sobek3(offset,branch);
-
-            branch_id=S3_get_branch_order(simdef);
-
-            [time_r,time_mor_r,time_dnum,time_dtime]=D3D_results_time(file_read,ismor,kt);
-    end
     
-    if in.nfl>1
-        z_node=ncread(file.map,'mesh2d_node_z');
-        layer_sigma=ncread(file.map,'mesh2d_layer_sigma');
-    end
-    
-    % x_face_bnd=ncread(file.map,'mesh2d_face_x_bnd');
-    % y_face_bnd=ncread(file.map,'mesh2d_face_y_bnd');
-    % scatter(x_face_bnd(:),y_face_bnd(:))
-    
+    [time_r,time_mor_r,time_dnum,time_dtime]=D3D_results_time(file.map,ismor,kt); %time
+
+    grd_in=NC_read_map_grd(simdef,in); %grid properties
+    v2struct(grd_in); %eventually all variables are function of <grd_in> and this is not needed. 
+
     %sediment
     %delft3d_io_sed seems to be quite expensive. We only read it if necessary.
     if any(flg.which_p==[1,4]) || any(flg.which_v==[3,4])
@@ -181,8 +85,9 @@ if flg.which_p~=-1
             dchar=D3D_read_sed(file.sed);
         end
     end
-    
+
 end %which_p
+
 %% vars
 
 switch flg.which_p
@@ -213,44 +118,12 @@ switch flg.which_p
             case 0 %nothing
                 
             case 1 %etab
-                switch simdef.D3D.structure
-                    case 2 %FM
-                        if is1d
-                            if ismor
-                                out=get_fm1d_data('mesh1d_mor_bl',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            else
-                                out=get_fm1d_data('mesh1d_flowelem_bl',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            end
-                        else
-                            if flg.get_EHY
-                                if ismor==0
-                                    z=get_EHY(file.map,'mesh2d_flowelem_bl',time_dnum);
-                                else
-                                    z=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
-                                end
-                                out=v2struct(z,face_nodes_x,face_nodes_y);
-                            else
-                                if ismor==0
-                                    z=ncread(file.map,'mesh2d_flowelem_bl',kF(1),kF(2));
-                                else
-                                    z=ncread(file.map,'mesh2d_mor_bl',[kF(1),kt(1)],[kF(2),kt(2)]);
-                                end
-                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
-                            end
-                        end
-                    case 3 %SOBEK3
-                        out_wl=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                        out_h=get_sobek3_data('water_depth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                        
-                        out=out_wl;
-                        out.z=out_wl.z-out_h.z;
-                end
-                out.zlabel='bed elevation [m]';
+                out=NC_read_map_01(simdef,in,grd_in);
             case 2 %h
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else %FM2D
                             if flg.which_p==3 %1D
                                 %% d3d interpolation
@@ -305,10 +178,10 @@ switch flg.which_p
                             if flg.which_p==2
                                 if flg.get_EHY
                                     if ismor==0
-                                        z=get_EHY(file.map,'mesh2d_waterdepth',time_dnum);
+                                        z=NC_read_map_get_EHY(file.map,'mesh2d_waterdepth',time_dnum);
                                     else
-                                        bl=get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
-                                        wl=get_EHY(file.map,'mesh2d_s1',time_dnum);
+                                        bl=NC_read_map_get_EHY(file.map,'mesh2d_mor_bl',time_dnum);
+                                        wl=NC_read_map_get_EHY(file.map,'mesh2d_s1',time_dnum);
                                         z=wl-bl;
                                     end
                                     out=v2struct(z,face_nodes_x,face_nodes_y);
@@ -325,7 +198,7 @@ switch flg.which_p
                             end
                         end
                     case 3 %SOBEK3
-                        out=get_sobek3_data('water_depth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_depth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='flow depth [m]';
                 %%
@@ -333,15 +206,15 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_dm',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_dm',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             nci=ncinfo(file.map);
                             if isnan(find_str_in_cell({nci.Variables.Name},{'mesh2d_dm'}))
                                 warning('dm not available in output, constructing from mass and thickness. Check if this is true')
                                 if flg.get_EHY
                                     error('do')
-%                                     M=get_EHY(file.map,'mesh2d_msed',time_dnum);
-%                                     L=get_EHY(file.map,'mesh2d_thlyr',time_dnum);
+%                                     M=NC_read_map_get_EHY(file.map,'mesh2d_msed',time_dnum);
+%                                     L=NC_read_map_get_EHY(file.map,'mesh2d_thlyr',time_dnum);
                                     out=v2struct(z,face_nodes_x,face_nodes_y);
                                 else
                                     F=ncread(file.map,'mesh2d_lyrfrac',[kF(1),1,1,kt(1)],[kF(2),Inf,Inf,kt(2)]); %faces, layer, fraction, time
@@ -355,7 +228,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='arithmetic mean grain size [m]';
                 %%
@@ -440,12 +313,12 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_lyrfrac',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_lyrfrac',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out.z=squeeze(out.z(:,1,kf,:)); %get first layer and fractions we ask for
                         else
                             if flg.get_EHY
                                 OPT.bed_layers=1;
-                                z=get_EHY(file.map,'mesh2d_lyrfrac',time_dnum,OPT);
+                                z=NC_read_map_get_EHY(file.map,'mesh2d_lyrfrac',time_dnum,OPT);
                                 
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
@@ -497,20 +370,20 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             if in.nfl>1
                                 z=ncread(file.map,'mesh2d_ucmaga',[kF(1),kt(1)],[kF(2),1]);
                                 out=v2struct(z,x_node,y_node,x_face,y_face,faces);
                             else
-                                z=get_EHY(file.map,'mesh2d_ucmag',time_dnum);
+                                z=NC_read_map_get_EHY(file.map,'mesh2d_ucmag',time_dnum);
 %                                 out=v2struct(z,x_node,y_node,x_face,y_face,faces);
 %                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                                 out=v2struct(z,x_node,y_node,x_face,y_face,faces);
                             end                            
                         end
                     case 3 %SOBEK3
-                        out=get_sobek3_data('water_velocity',file_read,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_velocity',file_read,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='depth-averaged velocity [m/s]';
             case 11 %velocity
@@ -669,10 +542,10 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_s1',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_s1',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             if flg.get_EHY
-                                z=get_EHY(file.map,'mesh2d_s1',time_dnum);
+                                z=NC_read_map_get_EHY(file.map,'mesh2d_s1',time_dnum);
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
                                 wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
@@ -687,7 +560,7 @@ switch flg.which_p
                             end                            
                         end
                     case 3 %SOBEK3
-                        out=get_sobek3_data('water_level',file_read,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file_read,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='water level [m]';
                 %%
@@ -706,7 +579,7 @@ switch flg.which_p
                 %%
             case 15 %bed shear stress
                 if is1d
-                    out=get_fm1d_data('mesh1d_taus',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                    out=NC_read_map_get_fm1d_data('mesh1d_taus',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 else
                     taus=ncread(file.map,'mesh2d_taus',[1,kt(1)],[Inf,kt(2)]);
                     
@@ -743,7 +616,7 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_q1',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_q1',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
                         else
                             error('check')
                             wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
@@ -759,7 +632,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='discharge [m^3/s]';
                 %%
@@ -769,8 +642,8 @@ switch flg.which_p
                         if is1d
                             %                             outx=get_fm1d_data('mesh1d_sbcx',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             %                             outy=get_fm1d_data('mesh1d_sbcy',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            outx=get_fm1d_data('mesh1d_sbcx_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            outy=get_fm1d_data('mesh1d_sbcy_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            outx=NC_read_map_get_fm1d_data('mesh1d_sbcx_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            outy=NC_read_map_get_fm1d_data('mesh1d_sbcy_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out=outx;
                             %                             out.z=sqrt(outx.z.^2+outy.z.^2);
                             switch flg.which_v
@@ -781,8 +654,8 @@ switch flg.which_p
                             end
                         else
                             if flg.get_EHY
-                               sx=get_EHY(file.map,'mesh2d_sbcx',time_dnum);
-                               sy=get_EHY(file.map,'mesh2d_sbcy',time_dnum);
+                               sx=NC_read_map_get_EHY(file.map,'mesh2d_sbcx',time_dnum);
+                               sy=NC_read_map_get_EHY(file.map,'mesh2d_sbcy',time_dnum);
                                 
                                 sx=squeeze(sx)';
                                 sy=squeeze(sy)';
@@ -804,7 +677,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='bed load transport magnitude [m^2/s]';
                 %%
@@ -813,7 +686,7 @@ switch flg.which_p
                     case 2 %FM
                         if is1d
                             %activate with .mor; [Output]; VelocMagAtZeta=true
-                            out=get_fm1d_data('mesh1d_umod',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_umod',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             error('check')
                             wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
@@ -829,7 +702,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='flow velocity at the main channel [m/s]';
                 %%
@@ -837,7 +710,7 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_q1_main',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_q1_main',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
                         else
                             error('check')
                             wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
@@ -853,7 +726,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='flow discharge at the main channel [m^3/s]';
                 %%
@@ -863,8 +736,8 @@ switch flg.which_p
                         if is1d
                             %                             outx=get_fm1d_data('mesh1d_sbcx',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             %                             outy=get_fm1d_data('mesh1d_sbcy',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            outx=get_fm1d_data('mesh1d_sscx_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            outy=get_fm1d_data('mesh1d_sscy_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            outx=NC_read_map_get_fm1d_data('mesh1d_sscx_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            outy=NC_read_map_get_fm1d_data('mesh1d_sscy_reconstructed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out=outx;
                             %                             out.z=sqrt(outx.z.^2+outy.z.^2);
                             out.z=sqrt(outx.z(:,kf,:).^2+outy.z(:,kf,:).^2);
@@ -883,7 +756,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='suspended transport magnitude [m^2/s]';
                 %%
@@ -891,8 +764,8 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out_area=get_fm1d_data('mesh1d_flowelem_ba',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            out_mass=get_fm1d_data('mesh1d_msed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out_area=NC_read_map_get_fm1d_data('mesh1d_flowelem_ba',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out_mass=NC_read_map_get_fm1d_data('mesh1d_msed',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             
                             tot_mass_m2=squeeze(sum(out_mass.z(kf,:,:),2)); %total mass in all substrate
                             
@@ -922,7 +795,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='sediment mass [kg]';
                 %%
@@ -930,7 +803,7 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_dg',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_dg',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             error('check')
                             wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
@@ -946,7 +819,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='geometric mean grain size [m]';
                 %%
@@ -958,7 +831,7 @@ switch flg.which_p
                 %                             out.z=sum(out.z,1)';
                 %                         else
                 %                             if flg.get_EHY
-                %                                z=get_EHY(file.map,'mesh2d_thlyr',time_dnum);
+                %                                z=NC_read_map_get_EHY(file.map,'mesh2d_thlyr',time_dnum);
                 %                                z=sum(z,2);
                 %                                out=v2struct(z,face_nodes_x,face_nodes_y);
                 %                             else
@@ -977,7 +850,7 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_bl_ave',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_bl_ave',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             error('check')
                             wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
@@ -992,7 +865,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='main channel averaged bed level [m]';
                 %%
@@ -1000,8 +873,8 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            outx=get_fm1d_data('mesh1d_sbn',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
-                            outy=get_fm1d_data('mesh1d_sbt',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
+                            outx=NC_read_map_get_fm1d_data('mesh1d_sbn',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
+                            outy=NC_read_map_get_fm1d_data('mesh1d_sbt',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
                             
                             out=outx;
                             out.z=sqrt(outx.z.^2+outy.z.^2);
@@ -1021,7 +894,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='sediment transport magnitude at edges [m^2/s]';
                 %%
@@ -1029,9 +902,9 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            outx=get_fm1d_data('mesh1d_sbn',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
-                            outy=get_fm1d_data('mesh1d_sbt',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
-                            outw=get_fm1d_data('mesh1d_mor_width_u',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
+                            outx=NC_read_map_get_fm1d_data('mesh1d_sbn',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
+                            outy=NC_read_map_get_fm1d_data('mesh1d_sbt',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
+                            outw=NC_read_map_get_fm1d_data('mesh1d_mor_width_u',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
                             
                             out=outx;
                             out.z=sqrt(outx.z(:,kf,:).^2+outy.z(:,kf,:).^2).*repmat(outw.z,1,numel(kf),size(outx.z,3));
@@ -1051,7 +924,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='sediment transport magnitude at edges [m^3/s]';
                 %%
@@ -1059,7 +932,7 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_mor_width_u',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_mor_width_u',file.map,in,branch_edge,offset_edge,x_edge,y_edge,branch_length,branch_id);
                         else
                             error('check')
                             wl=ncread(file.map,'mesh2d_s1',[kF(1),kt(1)],[kF(2),1]);
@@ -1075,7 +948,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='morphodynamic width [m]';
                 %%
@@ -1083,10 +956,10 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_czs',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_czs',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             if flg.get_EHY
-                                z=get_EHY(file.map,'mesh2d_czs',time_dnum);
+                                z=NC_read_map_get_EHY(file.map,'mesh2d_czs',time_dnum);
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
                                 z=ncread(file.map,'mesh2d_czs',[kF(1),kt(1)],[kF(2),kt(2)]);
@@ -1095,7 +968,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='Chezy friction coefficient [m^{1/2}/s]';
                 %%
@@ -1103,7 +976,7 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_flowelem_ba',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_flowelem_ba',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             wl=ncread(file.map,'mesh2d_flowelem_ba',[kF(1)],[kF(2)]);
                             
@@ -1118,7 +991,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='cell area [m^2]';
                 %%
@@ -1134,7 +1007,7 @@ switch flg.which_p
                             YZ=[];
                             for kb=1:nb
                                 in.branch=branch_aux(1,kb);
-                                out=get_fm1d_data('mesh1d_node_offset',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                                out=NC_read_map_get_fm1d_data('mesh1d_node_offset',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                                 dx_aux=diff(out.z);
                                 if ~isempty(dx_aux)
                                     dx=cat(1,dx,dx_aux);
@@ -1162,15 +1035,15 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='space step [m]';
             case 36 %Froude
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            out_h=get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out_h=NC_read_map_get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out.z=out.z./sqrt(cnt.g.*out_h.z);
                         else
                             if in.nfl>1
@@ -1194,7 +1067,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('do')
-                        out=get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
+                        out=NC_read_map_get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
                 end
                 out.zlabel='Froude number [-]';
                 %%
@@ -1203,8 +1076,8 @@ switch flg.which_p
                     case 2 %FM
                         if is1d
                             error('do')
-                            out=get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            out_h=get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out_h=NC_read_map_get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out.z=out.z./sqrt(cnt.g.*out_h.z);
                         else
                             if in.nfl>1
@@ -1234,7 +1107,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('do')
-                        out=get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
+                        out=NC_read_map_get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
                 end
                 out.zlabel='CFL [-]';
                 %%
@@ -1243,8 +1116,8 @@ switch flg.which_p
                     case 2 %FM
                         if is1d
                             error('do')
-                            out=get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
-                            out_h=get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_ucmag',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out_h=NC_read_map_get_fm1d_data('mesh1d_waterdepth',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out.z=out.z./sqrt(cnt.g.*out_h.z);
                         else
                             dt=ncread(file.map,'timestep',kt(1),kt(2));
@@ -1258,7 +1131,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('do')
-                        out=get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
+                        out=NC_read_map_get_sobek3_data('water_velocity',file.reach,in,branch_reach,offset_reach,x_node_reach,y_node_reach,branch_length_reach,branch_id_reach);
                 end
                 out.zlabel='time step [s]';
                 %%
@@ -1266,7 +1139,7 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             if flg.which_v==27
                                 out.z=sum(out.z,1)';
                             elseif flg.which_v==14
@@ -1274,7 +1147,7 @@ switch flg.which_p
                             end
                         else
                             if flg.get_EHY
-                                z=get_EHY(file.map,'mesh2d_thlyr',time_dnum,'bed_layers',1:1:in.nl);
+                                z=NC_read_map_get_EHY(file.map,'mesh2d_thlyr',time_dnum,'bed_layers',1:1:in.nl);
                                 if flg.which_v==27
                                     z=sum(z,3)';
                                 elseif flg.which_v==14
@@ -1293,7 +1166,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 if flg.which_v==27
                     out.zlabel='total sediment thickness [m]';
@@ -1308,11 +1181,11 @@ switch flg.which_p
                     case 2 %FM
                         if is1d
                             error('check')
-                            out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             out.z=sum(out.z,1)';
                         else
                             if flg.get_EHY
-                                z=get_EHY(file.map,'mesh2d_lyrfrac',time_dnum);
+                                z=NC_read_map_get_EHY(file.map,'mesh2d_lyrfrac',time_dnum);
                                 
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
@@ -1323,7 +1196,7 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
                 out.zlabel='total sediment thickness [m]';
                 %%    
@@ -1334,7 +1207,7 @@ switch flg.which_p
                             error('not available')
                         else
                             if flg.get_EHY
-                                z=get_EHY(file.map,'mesh2d_hwav',time_dnum);
+                                z=NC_read_map_get_EHY(file.map,'mesh2d_hwav',time_dnum);
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
                                 z=ncread(file.map,'mesh2d_hwav',[kF(1),1,kf(1),kt(1)],[kF(2),Inf,kf(2),kt(2)]);                                
@@ -1353,8 +1226,8 @@ switch flg.which_p
                             error('not available')
                         else
                             if flg.get_EHY
-                                fx=get_EHY(file.map,'mesh2d_Fx',time_dnum);
-                                fy=get_EHY(file.map,'mesh2d_Fy',time_dnum);
+                                fx=NC_read_map_get_EHY(file.map,'mesh2d_Fx',time_dnum);
+                                fy=NC_read_map_get_EHY(file.map,'mesh2d_Fy',time_dnum);
                                 z=hypot(fx,fy);
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
                             else
@@ -1376,7 +1249,7 @@ switch flg.which_p
                             error('not available')
                         else
                             if flg.get_EHY
-                                zn=get_EHY(file.map,'mesh2d_viu',time_dnum);
+                                zn=NC_read_map_get_EHY(file.map,'mesh2d_viu',time_dnum);
                                 F=scatteredInterpolant(edge_nodes_x,edge_nodes_y,zn);
                                 z=F(face_nodes_x,face_nodes_y);
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
@@ -1399,10 +1272,10 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh2d_hice',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh2d_hice',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             if flg.get_EHY
-                                zn=get_EHY(file.map,'mesh2d_hice',time_dnum);
+                                zn=NC_read_map_get_EHY(file.map,'mesh2d_hice',time_dnum);
                                 F=scatteredInterpolant(edge_nodes_x,edge_nodes_y,zn);
                                 z=F(face_nodes_x,face_nodes_y);
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
@@ -1420,10 +1293,10 @@ switch flg.which_p
                 switch simdef.D3D.structure
                     case 2 %FM
                         if is1d
-                            out=get_fm1d_data('mesh2d_pice',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh2d_pice',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                         else
                             if flg.get_EHY
-                                zn=get_EHY(file.map,'mesh2d_pice',time_dnum);
+                                zn=NC_read_map_get_EHY(file.map,'mesh2d_pice',time_dnum);
                                 F=scatteredInterpolant(edge_nodes_x,edge_nodes_y,zn);
                                 z=F(face_nodes_x,face_nodes_y);
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
@@ -1442,7 +1315,7 @@ switch flg.which_p
                     case 2 %FM
                         if is1d
                             error('do')
-                            out=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            out=NC_read_map_get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                             if flg.which_v==27
                                 out.z=sum(out.z,1)';
                             elseif flg.which_v==14
@@ -1450,9 +1323,9 @@ switch flg.which_p
                             end
                         else
                             if flg.get_EHY
-                                z=get_EHY(file.map,'mesh2d_thlyr',time_dnum,'bed_layers',1:1:in.nl);
+                                z=NC_read_map_get_EHY(file.map,'mesh2d_thlyr',time_dnum,'bed_layers',1:1:in.nl);
                                 Ltot=sum(z,3)';
-                                ba=get_EHY(file.map,'mesh2d_flowelem_ba',[]);
+                                ba=NC_read_map_get_EHY(file.map,'mesh2d_flowelem_ba',[]);
                                 z=ba;
                                 z(Ltot<1e-3)=0;
                                 out=v2struct(z,face_nodes_x,face_nodes_y);
@@ -1469,15 +1342,12 @@ switch flg.which_p
                         end
                     case 3 %SOBEK3
                         error('check')
-                        out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
                 end
-                if flg.which_v==27
-                    out.zlabel='total sediment thickness [m]';
-                elseif flg.which_v==39
-                    out.zlabel='sediment thickness [m]';
-                elseif flg.which_v==14
-                    out.zlabel='active layer thickness [m]';
-                end
+                [var_str_read,var_id,var_str_save]=D3D_var_num2str(flg.which_v);
+                out.zlabel=labels4all(var_str_read,1,'en');
+            case 48 %total sediment transport 
+                out=NC_read_map_48(simdef,in,grd_in);
             otherwise
                 error('ups...')
                 
@@ -1492,7 +1362,7 @@ switch flg.which_p
             case 2 %FM
                 if is1d
                     %layer fractions
-                    out_lyrfrac=get_fm1d_data('mesh1d_lyrfrac',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id); %mesh1d_nNodes,nBedLayers,nSedTot,time
+                    out_lyrfrac=NC_read_map_get_fm1d_data('mesh1d_lyrfrac',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id); %mesh1d_nNodes,nBedLayers,nSedTot,time
                     
                     %take out mud fractions
                     %                     idx_bedload=strcmp(sedtype,'bedload');
@@ -1502,14 +1372,14 @@ switch flg.which_p
                     %                     warning('solve this')
                     
                     %layer thickness
-                    out_thlyr=get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id); %nBedLayers,mesh1d_nNodes,time
+                    out_thlyr=NC_read_map_get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id); %nBedLayers,mesh1d_nNodes,time
                     
                     %reorder
                     nnb=size(out_thlyr.z,2); %number of nNodes in branches to plot
                     thlyr=out_thlyr.z';
                     
                     %bed level
-                    out_bl=get_fm1d_data('mesh1d_mor_bl',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id); %{s,t}
+                    out_bl=NC_read_map_get_fm1d_data('mesh1d_mor_bl',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id); %{s,t}
                     bl=out_bl.z;
                 else
                     error('check')
@@ -1526,7 +1396,7 @@ switch flg.which_p
                 end
             case 3 %SOBEK3
                 error('check')
-                out=get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
         end
         out.zlabel='elevation [m]';
         
@@ -1622,15 +1492,20 @@ end
 
 %% OUTPUT FOR ALL
 
-if exist('time_dnum','var')
-    out.time_dnum=time_dnum;
-end
-if exist('time_mor_r','var')
-    out.time_mor=time_mor_r;
-end
-if exist('time_dtime','var')
-    out.time_dtime=time_dtime;
-end
+%why shouldn't it exist?
+% if exist('time_dnum','var')
+%     out.time_dnum=time_dnum;
+% end
+% if exist('time_mor_r','var')
+%     out.time_mor=time_mor_r;
+% end
+% if exist('time_dtime','var')
+%     out.time_dtime=time_dtime;
+% end
+
+out.time_dnum=time_dnum;
+out.time_mor=time_mor_r;
+out.time_dtime=time_dtime;
 out.time_r=time_r;
 
 out.kf=kf;
@@ -1719,134 +1594,6 @@ end
 
 %%
 
-function [z_br,o_br,cord_br]=get_data_from_branches(z,in,branch,offset,x_node,y_node,branch_length,branch_id)
-
-branch_2p_idx=get_branch_idx(in.branch,branch_id);
-
-%in FM1D, the branch id start at 0, while is starts at 1 in SOBEK3
-% cte_br=1;
-% if isempty(find(branch==0,1)) %sobek3;
-%     cte_br=0;
-% end
-
-%in FM1D, the branch id start at 0, while is starts at 1 in SOBEK3
-cte_br=0;
-if ~isempty(find(branch==0,1)) %fm;
-    branch_2p_idx=branch_2p_idx-1;
-    cte_br=1;
-end
-
-nb=numel(branch_2p_idx);
-
-z_br=[];
-cord_br=[];
-o_br=[];
-last_dx_bm1=0;
-o_br_end_bm1=0;
-
-zsize=size(z);
-ndim=numel(zsize);
-dim_s=zsize==numel(branch);
-idx_dim_s=find(dim_s);
-
-for kb=1:nb
-    idx_br=branch==branch_2p_idx(kb); %logical indexes of intraloop branch
-    br_length=branch_length(branch_2p_idx(kb)+cte_br); %total branch length. As the branches start counting on 0, in position n+1 we find the length of branch n.
-    
-    %this is really ugly and there must be a simple way to do it. sorry, I
-    %am in a rush :)
-    switch ndim
-        case 1
-            z_a1=z(idx_br);
-        case 2
-            switch idx_dim_s
-                case 1
-                    z_a1=z(idx_br,:);
-                case 2
-                    z_a1=z(:,idx_br);
-                otherwise
-                    error('ups... check where are the dimensions of the streamwise coordinate')
-            end
-        case 3
-            switch idx_dim_s
-                case 1
-                    z_a1=z(idx_br,:,:);
-                case 2
-                    z_a1=z(:,idx_br,:);
-                case 3
-                    z_a1=z(:,:,idx_br);
-                otherwise
-                    error('ups... check where are the dimensions of the streamwise coordinate')
-            end
-        case 4
-            switch idx_dim_s
-                case 1
-                    z_a1=z(idx_br,:,:,:);
-                case 2
-                    z_a1=z(:,idx_br,:,:);
-                case 3
-                    z_a1=z(:,:,idx_br,:);
-                case 4
-                    z_a1=z(:,:,:,idx_br);
-                otherwise
-                    error('ups... check where are the dimensions of the streamwise coordinate')
-            end
-        otherwise
-            error('ups... more dimensions than I thought')
-    end
-    
-    if isempty(z_a1)
-        error('Branch %s has no computational nodes',branch_id(branch_2p_idx(kb)+cte_br,:))
-        %
-        %        figure
-        %        plot(branch,'-*')
-    end
-    
-    o_a1=offset(idx_br);
-    last_dx=br_length-o_a1(end);
-    
-    %     switch idx_dim_s
-    %         case 1
-    %             z_ba=cat(1,z_br,z_a1);
-    %         case 2
-    %             z_ba=cat(1,z_br,z_a1);
-    %         otherwise
-    %             error('ups... check where are the dimensions of the streamwise coordinate')
-    %     end
-    
-    z_ba=cat(idx_dim_s,z_br,z_a1);
-    z_br=z_ba;
-    %     z_br=[z_br;z_a1];
-    o_br=[o_br;o_a1+o_br_end_bm1+last_dx_bm1];
-    
-    last_dx_bm1=last_dx;
-    o_br_end_bm1=o_br(end);
-    
-    x_node_a1=x_node(idx_br);
-    y_node_a1=y_node(idx_br);
-    cord_br=[cord_br;[x_node_a1,y_node_a1]];
-    
-end
-
-% o_br=o_br(2:end);
-
-% np=size(cord_br,1);
-% o_br=zeros(np,1);
-% for kp=2:np
-%     o_br(kp)=o_br(kp-1)+sqrt((cord_br(kp,1)-cord_br(kp-1,1)).^2+(cord_br(kp,2)-cord_br(kp-1,2))^2);
-% end
-
-%test uniqueness
-% o_u=unique(o_br);
-% ndiff=numel(o_u)-numel(o_br);
-% if ndiff~=0
-%     error('offset has repeated values')
-% end
-
-end
-
-%%
-
 function branch_length=branch_length_sobek3(offset,branch)
 
 branch_2p_idx=unique(branch);
@@ -1861,89 +1608,3 @@ for kb=1:nb
 end
 
 end %function
-
-%%
-
-function out=get_fm1d_data(tag_read,file_map,in,branch,offset,x_node,y_node,branch_length,branch_id)
-
-kf=in.kf;
-kt=in.kt;
-
-%it does not matter whether it is nodes or edges
-switch tag_read
-    case {'mesh1d_flowelem_bl','mesh1d_flowelem_ba','mesh1d_mor_width_u','mesh1d_node_offset'} %{s}
-        wl=ncread(file_map,tag_read,1,Inf);
-    case {'mesh1d_sbcx','mesh1d_sbcy','mesh1d_sbcx_reconstructed','mesh1d_sbcy_reconstructed','mesh1d_sscx_reconstructed','mesh1d_sscy_reconstructed','mesh1d_sbn','mesh1d_sbt'} %{s,f,t}
-        wl=ncread(file_map,tag_read,[1,1,kt(1)],[Inf,Inf,kt(2)]);
-    case {'mesh1d_waterdepth','mesh1d_s1','mesh1d_umod','mesh1d_mor_bl','mesh1d_q1_main','mesh1d_q1','mesh1d_dm','mesh1d_ucmag','mesh1d_dg','mesh1d_bl_ave','mesh1d_czs','mesh1d_taus'} %mesh1d_nNodes,time
-        wl=ncread(file_map,tag_read,[1,kt(1)],[Inf,kt(2)]);
-    case {'mesh1d_lyrfrac'} %mesh1d_nNodes,nBedLayers,nSedTot,time
-        wl=ncread(file_map,tag_read,[1,1,1,kt(1)],[Inf,Inf,Inf,kt(2)]);
-    case {'mesh1d_thlyr'} %nBedLayers,mesh1d_nNodes,time
-        wl=ncread(file_map,tag_read,[1,1,kt(1)],[Inf,Inf,kt(2)]);
-    case {'mesh1d_msed'} %nSedTot,nBedLayers,mesh1d_nNodes,time
-        wl=ncread(file_map,tag_read,[1,1,1,kt(1)],[Inf,Inf,Inf,kt(2)]);
-    otherwise
-        error('indicate for %s variable what the size is',tag_read)
-end
-
-[wl_br,o_br,cord_br]=get_data_from_branches(wl,in,branch,offset,x_node,y_node,branch_length,branch_id);
-
-%output
-out.z=wl_br;
-out.XZ=cord_br(:,1);
-out.YZ=cord_br(:,2);
-out.SZ=o_br;
-
-%convert to river km
-if isfield(in,'path_rkm')
-    rkm_br=convert2rkm(in.path_rkm,cord_br,'TolMinDist',in.rkm_TolMinDist);
-    out.SZ=rkm_br;
-end
-
-end %function
-
-%%
-
-function out=get_sobek3_data(tag_read,file_map,in,branch,offset,x_node,y_node,branch_length,branch_id)
-
-kt=in.kt;
-
-% wl=ncread(file_map,tag_read,[1,kt(1)],[Inf,1]);
-wl=ncread(file_map,tag_read,[1,kt(1)],[Inf,kt(2)]);
-
-[wl_br,o_br]=get_data_from_branches(wl,in,branch,offset,x_node,y_node,branch_length,branch_id);
-[~,u_idx,~]=unique(o_br);
-wl_o=wl_br(u_idx,:);
-o_o=o_br(u_idx);
-
-%output
-out.z=wl_o;
-out.XZ=x_node(u_idx);
-out.YZ=y_node(u_idx);
-out.SZ=o_o;
-
-end %function
-
-%%
-
-function val=get_EHY(file_map,vartok,time_dnum,varargin)
-
-OPT.varName=vartok;
-if ~isempty(time_dnum)
-    OPT.t0=time_dnum(1);
-    OPT.tend=time_dnum(end);
-end
-OPT.disp=0;
-OPT.bed_layers=0;
-
-OPT=setproperty(OPT,varargin{:});
-
-map_data=EHY_getMapModelData(file_map,OPT);
-if numel(size(map_data.val))==2
-    val=map_data.val';
-else
-    val=map_data.val;
-end
-
-end

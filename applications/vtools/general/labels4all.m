@@ -689,6 +689,16 @@ switch lower(variable)
     case 'sbtot'
          switch lan
             case 'en'
+                str_var='bedload sediment transport';
+            case 'nl'
+                str_var='bedload sedimenttransport';
+            case 'es'
+                str_var='transporte de sedimento de fondo';
+         end
+         un_type='L2/T';
+    case 'stot'
+         switch lan
+            case 'en'
                 str_var='total sediment transport';
             case 'nl'
                 str_var='totaal sedimenttransport';

@@ -84,6 +84,8 @@ switch var_num
         var_str='sbtot';
     case 47
         var_str='ba_mor';
+    case 48
+        var_str='stot';
 otherwise
     error('add')
 end %var_num

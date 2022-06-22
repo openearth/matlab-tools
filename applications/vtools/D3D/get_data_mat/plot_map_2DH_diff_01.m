@@ -24,9 +24,14 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,'do_s'); if ret; return; end
 
 %% DEFAULTS
 
-% if isfield(flg_loc,'background')==0
-%     flg_loc.background=NaN
-% end
+if isfield(flg_loc,'clims')==0
+    flg_loc.clims=[NaN,NaN];
+    flg_loc.clims_diff_s=[NaN,NaN];
+end
+
+if isfield(flg_loc,'tim_type')==0
+    flg_loc.tim_type=1;
+end
 
 %% PATHS
 
@@ -120,19 +125,9 @@ for kvar=1:nvar %variable
     
     %% movies
 
-    if isfield(flg_loc,'do_movie')==0
-        flg_loc.do_movie=1;
-    end
-
-    if flg_loc.do_movie
-        dt_aux=diff(time_dnum);
-        dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
-        rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
-        for kdiff=1:ndiff
-            for kclim=1:nclim
-               make_video(fpath_file(:,kclim,kdiff),'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
-            end
-        end
+    for kclim=1:nclim
+        fpath_mov=fpath_file(:,kclim);
+        gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
     end
     
 end %kvar
@@ -145,6 +140,6 @@ end %function
 
 function fpath_fig=fig_name(fdir_fig,tag,tnum,runid,runid_ref,kclim,var_str)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s-%s_%s_%s_clim_%02d',tag,runid,runid_ref,var_str,datestr(tnum,'yyyymmddHHMM'),kclim));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s-%s_%s_%s_clim_%02d',tag,runid,runid_ref,var_str,datestr(tnum,'yyyymmddHHMMSS'),kclim));
 
 end %function

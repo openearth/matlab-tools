@@ -69,7 +69,9 @@ in_p.plot_vector=0;
 if isfield(in_p,'vec_x')
     in_p.plot_vector=1;
 end
-
+if isfield(in_p,'do_axis_equal')==0
+    in_p.do_axis_equal=1;
+end
 v2struct(in_p)
 
 %% check if printing
@@ -423,7 +425,9 @@ end
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
-axis(han.sfig(kr,kc),'equal')
+if do_axis_equal
+    axis(han.sfig(kr,kc),'equal')
+end
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
