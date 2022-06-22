@@ -320,7 +320,7 @@ zz=zeros(size(xz));
 handles.model.sfincs.domain(id).gridx=xz;
 handles.model.sfincs.domain(id).gridy=yz;
 handles.model.sfincs.domain(id).gridz=zz;
-handles.model.sfincs.domain(id).mask=zeros(size(xz));
+handles.model.sfincs.domain(id).mask=zeros(size(xz))+1;
 
 handles.model.sfincs.domain(id).input.qtrfile='sfincs.qtr';
 buq_save_buq_file(buq, handles.model.sfincs.domain(id).mask, handles.model.sfincs.domain(id).input.qtrfile);
