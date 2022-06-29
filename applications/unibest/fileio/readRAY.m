@@ -94,118 +94,134 @@ function [RAYdata] = readRAY(RAYfilename)
 % $HeadURL$
 % $Keywords: $
 
-if nargin == 0
-    
-    RAYdata = create_RAYdata_struct;
-    
-elseif nargin == 1
+    if nargin == 0
 
-    if isnumeric(RAYfilename)
-        for ii=1:RAYfilename
-            RAYdata(1,ii) = create_RAYdata_struct;
-        end
-        return
-    end
-    
-    R=struct;
-    filedata2={};
-    if isstr(RAYfilename)
-        filedata2={RAYfilename};
-    elseif iscell(RAYfilename)
-        filedata2=RAYfilename;
-    elseif isstruct(RAYfilename)
-        for jj=1:length(RAYfilename)
-            filedata2{jj}=RAYfilename(jj).name;
-        end
-    end
+        RAYdata = create_RAYdata_struct;
 
-    %% read RAY file
-    for ii=1:length(filedata2)
-        [pth,nm1,nm2]   = fileparts(filedata2{ii});
-        R(ii).name      = [nm1,nm2];
-        R(ii).path      = [pth];
-        fid1            = fopen(filedata2{ii},'r');
-        a=[];
-        for iii=1:6
+    elseif nargin == 1
+
+        if isnumeric(RAYfilename)
+            for ii=1:RAYfilename
+                RAYdata(1,ii) = create_RAYdata_struct;
+            end
+            return
+        end
+
+        R=struct;
+        filedata2={};
+        if isstr(RAYfilename)
+            filedata2={RAYfilename};
+        elseif iscell(RAYfilename)
+            filedata2=RAYfilename;
+        elseif isstruct(RAYfilename)
+            for jj=1:length(RAYfilename)
+                filedata2{jj}=RAYfilename(jj).name;
+            end
+        end
+
+        %% read RAY file
+        for ii=1:length(filedata2)
+            [pth,nm1,nm2]   = fileparts(filedata2{ii});
+            R(ii).name      = [nm1,nm2];
+            R(ii).path      = [pth];
+            fid1            = fopen(filedata2{ii},'r');
+            for iii=1:6
+                tline = fgetl(fid1);
+                R(ii).info{iii}=strvcat(tline(1:end));
+            end
             tline = fgetl(fid1);
-            a=strvcat(tline(1:end));
-            R(ii).info{iii}=a;
-        end
-        tline = fgetl(fid1);tline = fgetl(fid1);
-        DATA  = strread(tline);
-        
-        %--------------------------------------------------------------
-        %% TIME-SERIES FILE
-        %--------------------------------------------------------------
-        jj=1;
-        if length(DATA)>=13
-            while ~feof(fid1)
-                if jj>1; tline = fgetl(fid1); end
-                DATA = strread(tline);
-                R(ii).time(jj,1)      = DATA(1);  
-                R(ii).equi(jj,1)      = DATA(2);  
-                R(ii).c1(jj,1)        = DATA(3);     
-                R(ii).c2(jj,1)        = DATA(4); 
-                R(ii).h0(jj,1)        = DATA(5);    
-                R(ii).hoek(jj,1)      = DATA(6);  
-                R(ii).fshape(jj,1)    = DATA(7); 
+
+            % Read content of file
+            inh=fread(fid1);
+
+            % Find line-ends
+            inh=inh(inh~=13); % remove 13
+            id10=find(inh(2:end)==10 & inh(1:end-1)~=10)+1; % read line-ends (id=10), but only the first if their are two consecutive line-ends.
+            if inh(1)==10;id10=[1,id10];end
+
+            % Read 1st content line to know the number of columns
+            DATA=strread(char(inh(1:id10)'));
+            nrlines=length(id10);
+            nrcolumns=length(DATA);        
+
+            %--------------------------------------------------------------
+            %% TIME-SERIES FILE
+            %--------------------------------------------------------------
+            if nrcolumns>=13
+                % scan and retrieve data
+                DATA0=sscanf(char(inh),'%f',[nrcolumns nrlines])';
+                R(ii).time      = DATA0(:,1);  
+                R(ii).equi      = DATA0(:,2);  
+                R(ii).c1        = DATA0(:,3);     
+                R(ii).c2        = DATA0(:,4); 
+                R(ii).h0        = DATA0(:,5);    
+                R(ii).hoek      = DATA0(:,6);  
+                R(ii).fshape    = DATA0(:,7); 
                 qq = 0;
-                R(ii).QSoffset(jj,1)  = 0;
-                if (length(DATA)==14 && DATA(end)~=1) || (length(DATA)==15)
-                R(ii).QSoffset(jj,1)  = DATA(8);                           % timeseries ray with tide offset
-                qq = 1;
+                R(ii).QSoffset  = 0;
+                if (length(DATA)==14 && DATA0(:,end)~=1) || (length(DATA)==15)
+                    R(ii).QSoffset  = DATA0(:,8);                           % timeseries ray with tide offset
+                    qq = 1;
                 end
-                R(ii).Xb(jj,1)        = DATA(8+qq);    
-                R(ii).perc2(jj,1)     = DATA(9+qq); 
-                R(ii).perc20(jj,1)    = DATA(10+qq); 
-                R(ii).perc50(jj,1)    = DATA(11+qq); 
-                R(ii).perc80(jj,1)    = DATA(12+qq);
-                R(ii).perc100(jj,1)   = DATA(13+qq);
-                R(ii).hass            = 0;
-                if (length(DATA)>=14 && DATA(end)==1)                       % timeseries ray with high-angle stability switch
-                R(ii).hass            = 1;
+                R(ii).Xb        = DATA0(:,8+qq);    
+                R(ii).perc2     = DATA0(:,9+qq); 
+                R(ii).perc20    = DATA0(:,10+qq); 
+                R(ii).perc50    = DATA0(:,11+qq); 
+                R(ii).perc80    = DATA0(:,12+qq);
+                R(ii).perc100   = DATA0(:,13+qq);
+                R(ii).hass      = ones(size(R(ii).c1));
+                if length(DATA)==(14+qq)                      % timeseries ray with high-angle stability switch
+                    R(ii).hass            = DATA0(:,14+qq);
                 end
-                R(ii).Cequi(jj)       = computeEQUI(R(ii).equi(jj),R(ii).c1(jj),R(ii).c2(jj),R(ii).hoek(jj),R(ii).QSoffset(jj));
-                jj=jj+1;
-            end
+                R(ii).Cequi       = computeEQUI(R(ii).equi,R(ii).c1,R(ii).c2,R(ii).hoek,R(ii).QSoffset);
 
-        %--------------------------------------------------------------
-        %% STATIC CLIMATE
-        %--------------------------------------------------------------    
-        else
-            R(ii).time = [];
-            if length(DATA)==7 || (length(DATA)==8 && DATA(end)==1)
-                %% normal ray + QSoffset
-                [R(ii).equi,  R(ii).c1,    R(ii).c2, ...
-                 R(ii).h0,    R(ii).hoek,  R(ii).fshape,  R(ii).QSoffset] = strread(tline,'%f%f%f%f%f%f%f');
+            %--------------------------------------------------------------
+            %% STATIC CLIMATE
+            %--------------------------------------------------------------    
             else
-                %% normal ray
-                [R(ii).equi,  R(ii).c1,    R(ii).c2, ...
-                 R(ii).h0,    R(ii).hoek,  R(ii).fshape] = strread(tline,'%f%f%f%f%f%f');
-                R(ii).QSoffset=0;
+                % read 1st line
+                R(ii).time     = [];
+                R(ii).equi     = DATA(1);
+                R(ii).c1       = DATA(2);
+                R(ii).c2       = DATA(3);
+                R(ii).h0       = DATA(4);
+                R(ii).hoek     = DATA(5);
+                R(ii).fshape   = DATA(6);
+                R(ii).QSoffset = 0;
+                R(ii).hass     = 1;
+                if nrcolumns>=7
+                    if DATA(7)~=1
+                    R(ii).QSoffset = DATA(7);
+                    else
+                    R(ii).hass = DATA(7); 
+                    end
+                end
+                if nrcolumns==8
+                    R(ii).hass = DATA(8); 
+                end
+
+                % read 2nd line
+                DATA2=strread(char(inh(id10(2)+1:id10(3))'));
+                R(ii).Xb      = DATA2(1);
+                R(ii).perc2   = DATA2(2);
+                R(ii).perc20  = DATA2(3);
+                R(ii).perc50  = DATA2(4);
+                R(ii).perc80  = DATA2(5);
+                R(ii).perc100 = DATA2(6);
+                R(ii).hass    = 0;
+                if length(DATA2)>=7
+                    R(ii).hass    = DATA2(7);
+                end
+                R(ii).Cequi = computeEQUI(R(ii).equi,R(ii).c1,R(ii).c2,R(ii).hoek,R(ii).QSoffset);
             end
-            tline = fgetl(fid1);tline = fgetl(fid1);
-            DATA2 = strread(tline);
-            if length(DATA2)==6
-                % Normal Ray:
-                R(ii).hass     = 0;
-                [R(ii).Xb R(ii).perc2 R(ii).perc20 R(ii).perc50 R(ii).perc80 R(ii).perc100]=strread(tline,'%f%f%f%f%f%f');
-            elseif length(DATA2)==7
-                % Ray with high-angle stability switch:
-                [R(ii).Xb R(ii).perc2 R(ii).perc20 R(ii).perc50 R(ii).perc80 R(ii).perc100 R(ii).hass]=strread(tline,'%f%f%f%f%f%f%f');
-            else
-                error(['Unexpected number of values in last *.Ray line in file ' R(ii).name]);
-            end
-            R(ii).Cequi = computeEQUI(R(ii).equi,R(ii).c1,R(ii).c2,R(ii).hoek,R(ii).QSoffset);
+            fclose all;
         end
-        fclose all;
-    end
-    RAYdata=R;
+        RAYdata=R;
 
-else
-    % Should not be possible to get here:
-    error(['Specified ' num2str(nargin) ' input variables, maximum is 1'])
-end
+    else
+        % Should not be possible to get here:
+        error(['Specified ' num2str(nargin) ' input variables, maximum is 1'])
+    end
 
 end
 
@@ -220,22 +236,25 @@ function [Cequi]=computeEQUI(equi,c1,c2,hoek,QSoffset)
     %  
     %  OUTPUT:
     %    Cequi   Equilibrium coastline angle [°N]
-    if c1 == 0
-        % No transports
-        Cequi = hoek-equi;
-    else
-        Cangle    = [(hoek-equi)-70:0.1:(hoek-equi)+70];
-        phi_r     = Cangle-(hoek-equi);
-        QS        = -c1.*phi_r.*exp(-((c2.*phi_r).^2)) +QSoffset/1000;
-        if max(QS)>=0 && min(QS)<=0
-            id        = find(abs(QS)==min(abs(QS)));
-        elseif max(QS)<0
-            id        = find(QS==max(QS));
-        elseif min(QS)>0
-            id        = find(QS==min(QS));
+    
+    Cequi=nan(size(equi));
+    for jj=1:length(equi)
+        if c1(jj) == 0
+            % No transports
+            Cequi(jj,1) = hoek(jj)-equi(jj);
+        else
+            Cangle    = [(hoek(jj)-equi(jj))-70:0.1:(hoek(jj)-equi(jj))+70];
+            phi_r     = Cangle-(hoek(jj)-equi(jj));
+            QS        = -c1(jj).*phi_r.*exp(-((c2(jj).*phi_r).^2)) +QSoffset(jj)/1000;
+            if max(QS)>=0 && min(QS)<=0
+                id        = find(abs(QS)==min(abs(QS)));
+            elseif max(QS)<0
+                id        = find(QS==max(QS));
+            elseif min(QS)>0
+                id        = find(QS==min(QS));
+            end
+            Cequi(jj,1)     = Cangle(id(1));
         end
-        Cequi     = Cangle(id(1));
-        Cequi     = Cequi(:);
     end
 end
 
