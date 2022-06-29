@@ -147,7 +147,7 @@ for kpli=1:npli
                     fdir_fig_loc=fullfile(fdir_fig,pliname,var_str,tag_ref);
                     mkdir_check(fdir_fig_loc,NaN,1,0);
 
-                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,pliname,kdiff);
+                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,pliname,kdiff,kylim);
                     fpath_file{kt,kylim,kpli,kvar,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                     in_p.fname=fname_noext;
@@ -204,8 +204,8 @@ end %function
 %% FUNCTIONS
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,pliname,kdiff)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,pliname,kdiff,kylim)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_ref_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,pliname,kdiff));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_ref_%02d_ylim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,pliname,kdiff,kylim));
 
 end

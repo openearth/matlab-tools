@@ -33,6 +33,14 @@ fpath_map=gdm_fpathmap(simdef,sim_idx);
 switch varname
     case 'clm2'
         data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum); 
+    case 'bl'
+        switch simdef.D3D.structure
+            case 1
+                data_var=gdm_read_data_map(fdir_mat,fpath_map,'DPS','tim',time_dnum); 
+            case {2,4}
+                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
+        end
+            
     otherwise %name directly available in output
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
 end

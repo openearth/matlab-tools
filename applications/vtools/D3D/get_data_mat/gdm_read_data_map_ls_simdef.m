@@ -20,11 +20,34 @@ switch varname
     case {'d10','d50','d90','dm'}
         data=gdm_read_data_map_ls_grainsize(fdir_mat,fpath_map,simdef,varargin);
     case {'h'}
-        data_bl=gdm_read_data_map_ls(fdir_mat,fpath_map,'DPS',varargin{:});
-        data_wl=gdm_read_data_map_ls(fdir_mat,fpath_map,'wl',varargin{:});
+        switch simdef.D3D.structure
+            case 1
+                data_bl=gdm_read_data_map_ls(fdir_mat,fpath_map,'DPS',varargin{:});
+                data_wl=gdm_read_data_map_ls(fdir_mat,fpath_map,'wl',varargin{:});
+
+                data=data_bl;
+                data.val=data_wl.val-data_bl.val;
+            case {2,4}
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'wd',varargin{:});
+        end
         
-        data=data_bl;
-        data.val=data_wl.val-data_bl.val;
+    case {'umag'}
+        switch simdef.D3D.structure
+            case 1
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'U1',varargin{:});
+                data.val=data.vel_mag;
+            case {2,4}
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'mesh2d_ucmag',varargin{:});
+%                 data=gdm_read_data_map_ls(fdir_mat,fpath_map,'uv',varargin{:});
+%                 data.val=data.vel_mag;
+        end
+    case {'bl'}
+        switch simdef.D3D.structure
+            case 1
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'DPS',varargin{:});
+            case {2,4}
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'bl',varargin{:});
+        end
     otherwise
         data=gdm_read_data_map_ls(fdir_mat,fpath_map,varname,varargin{:});
 end

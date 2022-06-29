@@ -88,7 +88,7 @@ for kt=kt_v
 
             %% read data
             
-            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,var_str,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t);
+            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t);
             
             if flg_loc.do_rkm
                 data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',1000);

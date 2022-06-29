@@ -26,7 +26,7 @@ function save_check(fpath_mat,str_save,varargin)
 %% CALC
 
 [fdir,fname,fext]=fileparts(fpath_mat);
-mkdir_check(fdir);
+mkdir_check(fdir,NaN,1,0);
 if isempty(fname)
     fpath_mat=fullfile(fdir,sprintf('matfile_%f.mat',datenum(datetime('now'))));
 end
