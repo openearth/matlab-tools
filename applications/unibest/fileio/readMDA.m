@@ -108,32 +108,38 @@ fclose(fid);
 
 %% Interpolate reference line
 dist = distXY(MDAdata.X,MDAdata.Y);
-dist2=[];
+dist2 = dist(1);
 for ii=2:length(MDAdata.nrgridcells)
     igr = MDAdata.nrgridcells(ii);
-    dx2 = (dist(ii)-dist(ii-1))/igr;
-    dist2=[dist2;[dist(ii-1):dx2:dist(ii)-dx2]'];
+    dx2 = (dist(ii)-dist(ii-1))/igr.*[1:igr];
+    dist2=[dist2;dist(ii-1)+dx2];
 end
+    
 MDAdata.Xi=interp1(dist,MDAdata.X,dist2,'spline');
 MDAdata.Yi=interp1(dist,MDAdata.Y,dist2,'spline');
 MDAdata.Y1i=interp1(dist,MDAdata.Y1,dist2,'spline');
-if length(MDAdata.Xi)<length(dist2)||MDAdata.Xi(end)~=MDAdata.X(end)
-    MDAdata.Xi = [MDAdata.Xi;MDAdata.X(end)];
-    MDAdata.Yi = [MDAdata.Yi;MDAdata.Y(end)];
-    MDAdata.Y1i = [MDAdata.Y1i;MDAdata.Y1(end)];
-end
+MDAdata.Xci = (MDAdata.Xi(1:end-1)+MDAdata.Xi(2:end))/2;
+MDAdata.Yci = (MDAdata.Yi(1:end-1)+MDAdata.Yi(2:end))/2;
+MDAdata.Y1ci = (MDAdata.Y1i(1:end-1)+MDAdata.Y1i(2:end))/2;
+
 %% compute coastline
 dx = diff(MDAdata.Xi);dx=[dx(1);(dx(2:end)+dx(1:end-1))/2;dx(end)];
 dy = diff(MDAdata.Yi);dy=[dy(1);(dy(2:end)+dy(1:end-1))/2;dy(end)];
-MDAdata.Xcoast = MDAdata.Xi + MDAdata.Y1i.*-dy.*(dx.^2+dy.^2).^-0.5;
-MDAdata.Ycoast = MDAdata.Yi + MDAdata.Y1i.*dx.*(dx.^2+dy.^2).^-0.5;
+dxc = diff(MDAdata.Xci);dxc=[dxc(1);(dxc(2:end)+dxc(1:end-1))/2;dxc(end)];
+dyc = diff(MDAdata.Yci);dyc=[dyc(1);(dyc(2:end)+dyc(1:end-1))/2;dyc(end)];
+
+MDAdata.Xtransp = MDAdata.Xi + MDAdata.Y1i.*-dy.*(dx.^2+dy.^2).^-0.5;
+MDAdata.Ytransp = MDAdata.Yi + MDAdata.Y1i.*dx.*(dx.^2+dy.^2).^-0.5;
+MDAdata.Xcoast = MDAdata.Xci + MDAdata.Y1ci.*-dyc.*(dxc.^2+dyc.^2).^-0.5;
+MDAdata.Ycoast = MDAdata.Yci + MDAdata.Y1ci.*dxc.*(dxc.^2+dyc.^2).^-0.5;
 
 %% compute coastline orientation of the reference line (normal to coast in seaward direction) [°N] 
 %  Note that this is not the angle of the coastline, but the angle of the reference line!!!
-MDAdata.ANGLEcoast = mod(atan2(-dy,dx)*180/pi,360);
+MDAdata.ANGLEreferenceline = mod(atan2(-dy,dx)*180/pi,360);
+MDAdata.ANGLEcoast = mod(atan2(-dyc,dxc)*180/pi,360);
 
-%% Q-points
-MDAdata.QpointsX = (MDAdata.Xi(2:end)+MDAdata.Xi(1:end-1))/2;
-MDAdata.QpointsY = (MDAdata.Yi(2:end)+MDAdata.Yi(1:end-1))/2;
-MDAdata.QpointsX = [2*MDAdata.QpointsX(1)-MDAdata.QpointsX(2);MDAdata.QpointsX;2*MDAdata.QpointsX(end)-MDAdata.QpointsX(end-1)];
-MDAdata.QpointsY = [2*MDAdata.QpointsY(1)-MDAdata.QpointsY(2);MDAdata.QpointsY;2*MDAdata.QpointsY(end)-MDAdata.QpointsY(end-1)];
+% %% Q-points
+% MDAdata.QpointsX = (MDAdata.Xi(2:end)+MDAdata.Xi(1:end-1))/2;
+% MDAdata.QpointsY = (MDAdata.Yi(2:end)+MDAdata.Yi(1:end-1))/2;
+% MDAdata.QpointsX = [2*MDAdata.QpointsX(1)-MDAdata.QpointsX(2);MDAdata.QpointsX;2*MDAdata.QpointsX(end)-MDAdata.QpointsX(end-1)];
+% MDAdata.QpointsY = [2*MDAdata.QpointsY(1)-MDAdata.QpointsY(2);MDAdata.QpointsY;2*MDAdata.QpointsY(end)-MDAdata.QpointsY(end-1)];
