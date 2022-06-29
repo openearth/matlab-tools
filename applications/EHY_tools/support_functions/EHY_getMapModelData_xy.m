@@ -139,7 +139,16 @@ if isfield(Data,'face_nodes')
         Zint = arbcross(arb,{'FACE' permute(Data.Zint,[2 3 1])});
     end
 elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
-    val = arbcross(arb,{'FACE' permute(Data.val,[2 3 4 1])});
+    if isfield(Data,'val')
+        val = arbcross(arb,{'FACE' permute(Data.val,[2 3 4 1])});
+    elseif isfield(Data,'vel_x')
+        vel_x = arbcross(arb,{'FACE' permute(Data.vel_x,[2 3 4 1])});
+        vel_y = arbcross(arb,{'FACE' permute(Data.vel_y,[2 3 4 1])});
+        vel_dir = arbcross(arb,{'FACE' permute(Data.vel_dir,[2 3 4 1])});
+        vel_mag = arbcross(arb,{'FACE' permute(Data.vel_mag,[2 3 4 1])});
+    else
+        error('You should not get here')
+    end
     if no_layers > 1
         Zint = arbcross(arb,{'FACE' permute(Data.Zint,[2 3 4 1])});
     end
