@@ -29,6 +29,12 @@ sim_idx=parin.Results.sim_idx;
 %% 
 
 fpath_map=gdm_fpathmap(simdef,sim_idx);
-data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
+
+switch varname
+    case 'clm2'
+        data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum); 
+    otherwise %name directly available in output
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
+end
 
 end %function

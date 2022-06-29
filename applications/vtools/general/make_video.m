@@ -70,7 +70,7 @@ open(video_var)
 for kf=1:nf
     im=imread(path_files{kf,1});
     writeVideo(video_var,im)
-    messageOut(fid_log,sprintf('Creating moview %5.1f %% \n',kf/nf*100));
+    messageOut(fid_log,sprintf('Creating movie %5.1f %% \n',kf/nf*100));
 end
 
 close(video_var)

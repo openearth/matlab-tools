@@ -12,7 +12,7 @@
 %
 %
 
-function create_mat_map_sal_mass_cum_01(fid_log,flg_loc,simdef)
+function create_mat_map_sal_mass_cum_01(fid_log,flg_loc,simdef,var_str)
 
 tag=flg_loc.tag;
 tag_loc=strcat(tag,'_cum');
@@ -27,7 +27,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag_loc); if ret; return; end
 
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
-fpath_mat_loc=fullfile(fdir_mat,sprintf('%s.mat',tag_loc));
+fpath_mat_loc=fullfile(fdir_mat,sprintf('%s_%s.mat',tag_loc,var_str));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fpath_map=simdef.file.map;
 
@@ -52,7 +52,8 @@ messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 mass_cum=NaN(nt,1);
 for kt=kt_v
     ktc=ktc+1;
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
+%     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
     data_loc=load(fpath_mat_tmp,'data');
     
     mass_cum(kt,1)=sum(data_loc.data'.*data_ba.val,'omitnan');
@@ -60,7 +61,7 @@ for kt=kt_v
 end    
 
 data.val=mass_cum;
-data.unit='sal_mass';
+data.unit='sal_mass'; %#ok
 
 save_check(fpath_mat_loc,'data','-v7.3');
 

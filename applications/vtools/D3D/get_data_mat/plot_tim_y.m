@@ -12,7 +12,7 @@
 %
 %
 
-function plot_tim_y(fid_log,flg_loc,simdef)
+function plot_tim_y(fid_log,flg_loc,simdef,var_str)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
@@ -30,9 +30,10 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PATHS
 
-fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie,var_str);
 fdir_mat=simdef.file.mat.dir;
-fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+% fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat=fullfile(fdir_mat,sprintf('%s_%s.mat',tag,var_str));
 fpath_mat_tim=fullfile(fdir_mat,sprintf('%s.mat',tag_tim));
 fpath_mat_time=strrep(fpath_mat_tim,'.mat','_tim.mat');
 fpath_map=simdef.file.map;

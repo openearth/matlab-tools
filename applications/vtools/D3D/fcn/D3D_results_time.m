@@ -25,8 +25,6 @@ function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D
 %% calc
 [~,fname,ext]=fileparts(fpath_nc);
 
-time_mor_r=NaN;
-time_mor_dtime=NaN;
 if strcmp(ext,'.nc') %FM
     
     %take last
@@ -42,6 +40,9 @@ if strcmp(ext,'.nc') %FM
     [time_dtime,~,time_r]=NC_read_time(fpath_nc,kt);
     if ismor && ismap %morfo time not available in history
         [time_mor_dtime,~,time_mor_r]=NC_read_time(fpath_nc,kt,'type','morpho'); %results time vector [seconds since start date]
+    else
+        time_mor_dtime=NaT(size(time_dtime));
+        time_mor_r=NaN(size(time_dtime));
     end
 elseif strcmp(ext,'.dat') %D3D4
     NFStruct=vs_use(fpath_nc,'quiet');
@@ -62,6 +63,8 @@ elseif strcmp(ext,'.dat') %D3D4
     if ismor==1
         MORFT=vs_let(NFStruct,'map-infsed-serie','MORFT','quiet'); %morphological time (days since start)
         time_mor_r=MORFT*24*3600; %seconds
+    else
+        time_mor_r=NaN(size(time_r));
     end
     time_dtime=t0_dtime+seconds(time_r);
     time_mor_dtime=t0_dtime+seconds(time_mor_r);

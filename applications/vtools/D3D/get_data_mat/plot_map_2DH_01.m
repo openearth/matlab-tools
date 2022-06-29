@@ -114,7 +114,7 @@ for kvar=1:nvar %variable
     kt=1;
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
     data_ref=load(fpath_mat_tmp,'data');
-    if sum(size(data_ref.data)==1)==0
+    if any(simdef.D3D.structure==[2,4]) && sum(size(data_ref.data)==1)==0 || size(data_ref.data,3)>1 %in D3D4 2D data has matrix form
         messageOut(fid_log,sprintf('Cannot plot variable with more than 1 dimension: %s',var_str))
         continue
     end
@@ -150,13 +150,21 @@ for kvar=1:nvar %variable
                         case 1
                             in_p.val=data;
                             in_p.clims=flg_loc.clims(kclim,:);
-                            in_p.is_diff=0;
                             tag_ref='val';
+                            in_p.is_diff=0;
+                            in_p.is_background=0;
                         case 2
                             in_p.val=data-data_ref.data;
                             in_p.clims=flg_loc.clims_diff_t(kclim,:);
-                            in_p.is_diff=1;
                             tag_ref='diff';
+                            switch var_str
+                                case 'clm2'
+                                    in_p.is_diff=0;
+                                    in_p.is_background=1;
+                                otherwise
+                                    in_p.is_diff=1;
+                                    in_p.is_background=0;
+                            end
                     end
 
                     fdir_fig_var=fullfile(fdir_fig,var_str,tag_ref);
@@ -193,6 +201,6 @@ end %function
 
 function fpath_fig=fig_name(fdir_fig,tag,runid,tnum,kref,kclim,var_str,kxlim)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d_xlim_%02d_ref_%02d',tag,runid,var_str,datestr(tnum,'yyyymmddHHMMSS'),kclim,kref,kxlim));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d_xlim_%02d_ref_%02d',tag,runid,var_str,datestr(tnum,'yyyymmddHHMMSS'),kclim,kxlim,kref));
 
 end %function

@@ -10,6 +10,7 @@
 %$Id$
 %$HeadURL$
 %
+%mkdir_check(path_dir,NaN,1,0)  %break and no display
 
 function sta=mkdir_check(path_dir,varargin)
 

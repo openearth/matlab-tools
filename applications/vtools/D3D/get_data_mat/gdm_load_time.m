@@ -28,6 +28,8 @@ if isfield(flg_loc,'tim_tol')==0
     flg_loc.tim_tol=10;
 end
 
+
+
 %% CALC
 
 load_tim=false;
@@ -35,15 +37,31 @@ if exist(fpath_mat_time,'file')==2
     messageOut(fid_log,sprintf('Time-file already exists: %s',fpath_mat_time));
     load(fpath_mat_time,'tim');
     v2struct(tim);
+    
+    %compare datenum
+    if isdatetime(flg_loc.tim)
+        tim_obj=datenum_tzone(flg_loc.tim);
+    else
+        tim_obj=flg_loc.tim;
+    end
+    
+    if isduration(flg_loc.tim_tol)
+        tim_tol_d=days(flg_loc.tim_tol);
+    else
+        tim_tol_d=flg_loc.tim_tol;
+    end
+    
+    %flow or morpho time
     switch flg_loc.tim_type
         case 1
             tim_cmp=time_dnum;
         case 2
             tim_cmp=time_mor_dnum;
     end
+    
     nt1=numel(tim_cmp);
     nt2=numel(flg_loc.tim);
-    if nt1~=nt2 || any(abs(reshape(tim_cmp,1,[])-reshape(flg_loc.tim,1,[]))>flg_loc.tim_tol) || isnan(flg_loc.tim(1))
+    if nt1~=nt2 || any(abs(reshape(tim_cmp,1,[])-reshape(tim_obj,1,[]))>tim_tol_d) || isnan(tim_obj(1))
         messageOut(fid_log,'Requested time is different than available time. Overwritting.')
         load_tim=true;
     else

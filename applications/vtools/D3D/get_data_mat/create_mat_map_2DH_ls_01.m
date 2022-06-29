@@ -46,7 +46,7 @@ end
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fpath_map=simdef.file.map;
+% fpath_map=simdef.file.map;
 
 %% OVERWRITE
 
@@ -77,15 +77,18 @@ for kt=kt_v
         [~,pliname,~]=fileparts(fpath_pli);
         pliname=strrep(pliname,' ','_');
         for kvar=1:nvar %variable
+            if ~ischar(flg_loc.var{kvar})
+                error('cannot read section along variables not from EHY')
+            end
             varname=flg_loc.var{kvar};
             var_str=D3D_var_num2str_structure(varname,simdef);
-
+            
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname);
             if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
             %% read data
             
-            data=gdm_read_data_map_ls_simdef(fpath_map,simdef,var_str,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t);
+            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,var_str,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t);
             
             if flg_loc.do_rkm
                 data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',1000);

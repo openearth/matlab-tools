@@ -12,7 +12,7 @@
 %
 %
 
-function data=gdm_read_data_map_ls(fpath_map_loc,varname,varargin)
+function data=gdm_read_data_map_ls(fdir_mat,fpath_map,varname,varargin)
 
 %% PARSE
 
@@ -22,42 +22,29 @@ addOptional(parin,'tim',[]);
 % addOptional(parin,'layer',[]);
 addOptional(parin,'tol_t',5/60/24);
 addOptional(parin,'pli','');
-addOptional(parin,'dchar','');
+% addOptional(parin,'dchar','');
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 tol_t=parin.Results.tol_t;
 pli=parin.Results.pli;
-dchar=parin.Results.dchar;
+% dchar=parin.Results.dchar;
+
+[~,pliname,~]=fileparts(pli);
+pliname=strrep(pliname,' ','_');
 
 %%
 
-switch varname
-    case {'d10','d50','d90','dm'}
-        if isempty(dchar)
-            error('You need to specify characteristic grain sizes. <D3D_read_sed(fpath_sed)>')
-        end
-        var_str='mesh2d_lyrfrac';
-        [data,data.gridInfo]=EHY_getMapModelData(fpath_map_loc,'varName',var_str,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pliFile',pli,'tol_t',tol_t);
-        
-        Fa=data.val;
-        switch varname
-            case 'd10'
-                val=grain_size_dX_mat(Fa,dchar,10);
-            case 'd50'
-                val=grain_size_dX_mat(Fa,dchar,50);
-            case 'd90'
-                val=grain_size_dX_mat(Fa,dchar,90);
-            case 'dm'
-                val=sum(Fa.*permute(dchar,[1,3,4,2]),4); %arithmetic mean grain size
-        end
-        data.val=val;
-        
-    otherwise
-        var_str=varname;
-        [data,data.gridInfo]=EHY_getMapModelData(fpath_map_loc,'varName',var_str,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pliFile',pli,'tol_t',tol_t);
+var_str=varname;
+fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'pli',pliname);
+if exist(fpath_sal,'file')==2
+    messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_sal));
+    load(fpath_sal,'data')
+else
+    messageOut(NaN,sprintf('Reading raw data for variable: %s',var_str));
+    [data,data.gridInfo]=EHY_getMapModelData(fpath_map,'varName',var_str,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pliFile',pli,'tol_t',tol_t);
+    save_check(fpath_sal,'data');
 end
-
 
 end %function

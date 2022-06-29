@@ -95,8 +95,8 @@ if isa(in_dtime(1),'double')
         sim_idx=sim_idx_s;
     end
 elseif isa(in_dtime(1),'datetime')
-    time_dnum=datenum_tzone(in_dtime);
-    time_dtime=in_dtime;
+    tim_cmp=datenum_tzone(in_dtime);
+    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,tim_cmp,varargin{:});
 else
     error('ups...')
 end

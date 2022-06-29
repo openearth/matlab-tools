@@ -17,6 +17,7 @@ function D3D_create_simulation_all(flg,input_m,fdir_sim_runs,fcn_adapt)
 
 fpath_input=fullfile(fdir_sim_runs,'readme.mat');
 save(fpath_input,'input_m');
+D3D_write_readme(input_m,'fpath_out',fullfile(fdir_sim_runs,'readme.txt'));
 
 %% run files
 

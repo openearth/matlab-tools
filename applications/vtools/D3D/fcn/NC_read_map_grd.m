@@ -17,6 +17,7 @@ function grd_in=NC_read_map_grd(simdef,in)
 fpath_map=simdef.file.map;
 islink=D3D_islink(simdef.flg.which_v); %whether data is at links or cell centre
 is1d=simdef.flg.is1d;
+str_network=simdef.flg.str_network;
 
 %% allocate 
 

@@ -23,7 +23,6 @@ function D3D_list_of_variables
 
 %   1 =bed elevation (etab) [m]
 %   2 =flow depth (h) [m]
-
 %   12=water level
 
 %   10=depth averaged velocity [m/s]

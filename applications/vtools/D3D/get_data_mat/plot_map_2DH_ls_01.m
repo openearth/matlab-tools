@@ -43,6 +43,22 @@ if isfield(flg_loc,'do_rkm')==0
     end
 end
 
+if isfield(flg_loc,'ylims')==0
+    flg_loc.ylims=[NaN,NaN];
+    flg_loc.ylims_diff_t=[NaN,NaN];
+end
+if isfield(flg_loc,'ylims_diff_t')==0
+    flg_loc.ylims_diff_t=flg_loc.ylims;
+end
+
+if isfield(flg_loc,'do_diff')==0
+    flg_loc.do_diff=1;
+end
+
+if isfield(flg_loc,'tim_type')==0
+    flg_loc.tim_type=1;
+end
+
 %% TIME
 
 load(fpath_mat_time,'tim');
@@ -55,6 +71,12 @@ nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
 nylims=size(flg_loc.ylims,1);
 
+if flg_loc.do_diff==0
+    ndiff=1;
+else 
+    ndiff=2;
+end
+
 %% figure
 in_p=flg_loc; %attention with unexpected input
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
@@ -66,92 +88,114 @@ fext=ext_of_fig(in_p.fig_print);
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
-ktc=0; kpli=0;
-messageOut(fid_log,sprintf('Reading %s pli %4.2f %% kt %4.2f %%',tag,kpli/npli*100,ktc/nt*100));
-fpath_file=cell(nt,nylims,npli,nvar);
-for kt=kt_v
-    ktc=ktc+1;
-    
-    in_p.tim=time_dnum(kt);
-    for kpli=1:npli
-        fpath_pli=flg_loc.pli{kpli,1};
-        [~,pliname,~]=fileparts(fpath_pli);
-        pliname=strrep(pliname,' ','_');
-        for kvar=1:nvar %variable
-           
-            varname=flg_loc.var{kvar};
-            var_str=D3D_var_num2str_structure(varname,simdef);
-            
-            fdir_fig_loc=fullfile(fdir_fig,pliname,var_str);
-            mkdir_check(fdir_fig_loc);
-            
+ktc=0; kpli=0; kvar=0;
+messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
+fpath_file=cell(nt,nylims,npli,nvar,ndiff);
+
+for kpli=1:npli
+    fpath_pli=flg_loc.pli{kpli,1};
+    [~,pliname,~]=fileparts(fpath_pli);
+    pliname=strrep(pliname,' ','_');
+    for kvar=1:nvar %variable
+
+        varname=flg_loc.var{kvar};
+        var_str=D3D_var_num2str_structure(varname,simdef);
+
+        %time 1 for reference
+        if flg_loc.do_diff
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str,'pli',pliname);
+            data_ref=load(fpath_mat_tmp,'data');                
+        end
+
+        ktc=0;     
+        for kt=kt_v
+            ktc=ktc+1;
+
+            switch flg_loc.tim_type
+                case 1
+                    in_p.tim=time_dnum(kt);
+                case 2
+                    in_p.tim=time_mor_dnum(kt);
+            end
+   
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname);
             load(fpath_mat_tmp,'data');
             
-
-            
-            
             for kylim=1:nylims
-                in_p.ylims=flg_loc.ylims(kylim,:);
+                
                 if isfield(flg_loc,'xlims')
                     in_p.xlims=flg_loc.xlims(kylim,:);
                 else
                     in_p.xlims=[NaN,NaN];
                 end
                 
-                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,pliname);
-                fpath_file{kt,kylim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
+                for kdiff=1:ndiff
+                    
+                    switch kdiff
+                        case 1
+                            data_val_p=data.val;
+                            in_p.ylims=flg_loc.ylims(kylim,:);
+                            in_p.is_diff=0;
+                            tag_ref='val';
+                        case 2
+                            data_val_p=data.val-data_ref.data.val;
+                            in_p.ylims=flg_loc.ylims_diff_t(kylim,:);
+                            in_p.is_diff=1;
+                            tag_ref='diff';
+                    end
+                    
+                    fdir_fig_loc=fullfile(fdir_fig,pliname,var_str,tag_ref);
+                    mkdir_check(fdir_fig_loc,NaN,1,0);
 
-                in_p.fname=fname_noext;
-                
-                if size(data.val,3)>1
-                    in_p.data_ls.sal=data.val;
-                    in_p.data_ls.grid=data.gridInfo;
-                    in_p.unit=var_str;
-                    in_p.clims=[NaN,NaN];
-                    if flg_loc.do_rkm
-                        in_p.data_ls.grid.Xcor=data.rkm_cor;
-                    end
-                    
-                    fig_map_ls_01(in_p)
-                else
-                    in_p.lab_str=var_str;
-                    if flg_loc.do_rkm
-                        in_p.s=data.rkm_cen;
+                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,pliname,kdiff);
+                    fpath_file{kt,kylim,kpli,kvar,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                    in_p.fname=fname_noext;
+
+                    if size(data.val,3)>1
+                        if kdiff==2
+                            error('not ready')
+                        end
+                        in_p.data_ls.sal=data_val_p;
+                        in_p.data_ls.grid=data.gridInfo;
+                        in_p.unit=var_str;
+                        in_p.clims=[NaN,NaN];
+                        if flg_loc.do_rkm
+                            in_p.data_ls.grid.Xcor=data.rkm_cor;
+                        end
+
+                        fig_map_ls_01(in_p)
                     else
-                        in_p.s=data.Scen;
+                        in_p.lab_str=var_str;
+                        if flg_loc.do_rkm
+                            in_p.s=data.rkm_cen;
+                        else
+                            in_p.s=data.Scen;
+                        end
+                        in_p.val=data_val_p';
+
+                        fig_1D_01(in_p)
                     end
-                    in_p.val=data.val';
-                    
-                    fig_1D_01(in_p)
-                end
-            end
+                end %kdiff
+            end %kylim
             
             messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
-        end
-        
-
-
-    end
-end %kt
+        end %kt
+    end %kvar
+end %kpli
 
 %% movies
 
-if isfield(flg_loc,'do_movie')==0
-    flg_loc.do_movie=1;
-end
-
-if flg_loc.do_movie
-    dt_aux=diff(time_dnum);
-    dt=dt_aux(1)*24*3600; %[s] we have 1 frame every <dt> seconds 
-    rat=flg_loc.rat; %[s] we want <rat> model seconds in each movie second
+for kvar=1:nvar
     for kpli=1:npli
         for kylim=1:nylims
-           make_video(fpath_file(:,kylim,kpli),'frame_rate',1/dt*rat,'overwrite',flg_loc.fig_overwrite);
+            for kdiff=1:ndiff
+                fpath_mov=fpath_file(:,kylim,kpli,kvar,kdiff);
+                gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+            end
         end
     end
 end
-
 
 
 end %function
@@ -160,8 +204,8 @@ end %function
 %% FUNCTIONS
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,pliname)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,pliname,kdiff)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,pliname));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_ref_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,pliname,kdiff));
 
 end

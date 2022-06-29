@@ -42,8 +42,9 @@ for ks=1:ns
     
     %% sal mass
     if isfield(in_plot,'fig_map_sal_mass_01')==1
-        create_mat_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
-        create_mat_map_sal_mass_cum_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
+        messageOut(fid_log,'Outdated. Call <fig_map_2DH_01> with variable <clm2>')
+%         create_mat_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
+%         create_mat_map_sal_mass_cum_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
     end
     
     %% q
@@ -72,7 +73,9 @@ for ks=1:ns
     
     %% map 2DH
     if isfield(in_plot,'fig_map_2DH_01')==1
+        in_plot.fig_map_2DH_01.tag='map_2DH_01';
         create_mat_map_2DH_01(fid_log,in_plot.fig_map_2DH_01,simdef)
+        pp_mat_map_2DH_cum_01(fid_log,in_plot.fig_map_2DH_01,simdef) %compute integrated amount over surface with time       
     end
     
     %% map 2DH ls
@@ -117,13 +120,13 @@ for ks=1:ns
     
     %% sal mass
     if isfield(in_plot,'fig_map_sal_mass_01')==1
-        plot_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
+%         plot_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
         
-        in_plot_loc=in_plot.fig_map_sal_mass_01;
-        in_plot_loc.tag=strcat(in_plot.fig_map_sal_mass_01.tag,'_cum');
-        in_plot_loc.tag_tim=in_plot.fig_map_sal_mass_01.tag;
-
-        plot_tim_y(fid_log,in_plot_loc,simdef)
+%         in_plot_loc=in_plot.fig_map_sal_mass_01;
+%         in_plot_loc.tag=strcat(in_plot.fig_map_sal_mass_01.tag,'_cum');
+%         in_plot_loc.tag_tim=in_plot.fig_map_sal_mass_01.tag;
+% 
+%         plot_tim_y(fid_log,in_plot_loc,simdef)
     end
     
     %% q
@@ -157,6 +160,7 @@ for ks=1:ns
     %% map 2DH
     if isfield(in_plot,'fig_map_2DH_01')==1
         plot_map_2DH_01(fid_log,in_plot.fig_map_2DH_01,simdef)
+        plot_map_2DH_cum_01(fid_log,in_plot.fig_map_2DH_01,simdef)
     end
     
     %% map 2DH ls

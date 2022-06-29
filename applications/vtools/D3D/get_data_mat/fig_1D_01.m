@@ -43,14 +43,14 @@ end
 if isfield(in_p,'fig_size')==0
     in_p.fig_size=[0,0,14,14];
 end
-if isfield(in_p,'xlims')==0
+if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
     in_p.xlims=[min(in_p.s),max(in_p.s)];
 end
 if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
-    bol_p=in_p.s>in_p.xlims(1) & in_p.s<in_p.xlims(2);
+    bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);
     in_p.ylims=[min(min(in_p.val(bol_p,:))),max(max(in_p.val(bol_p,:)))];
 end
-in_p.ylims=in_p.ylims+[-1,1]*abs(mean(in_p.ylims)/1000)+10.*[-eps,eps];
+in_p.ylims=in_p.ylims+[-1,1].*abs(mean(in_p.ylims)/1000)+10.*[-eps,eps];
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
@@ -90,6 +90,18 @@ if isfield(in_p,'xlab_str')==0
 end
 if isfield(in_p,'xlab_un')==0
     in_p.xlab_un=1;
+end
+if isfield(in_p,'mt')==0
+    in_p.mt=1;
+end
+if isfield(in_p,'mb')==0
+    in_p.mb=1.5;
+end
+if isfield(in_p,'mr')==0
+    in_p.mr=0.5;
+end
+if isfield(in_p,'ml')==0
+    in_p.ml=1.5;
 end
 
 v2struct(in_p)

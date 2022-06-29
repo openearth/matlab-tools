@@ -27,7 +27,7 @@
 %170720
 %   -V & Pepijn. Created for the first time.
 
-function input_out=check_tra(input,fid_log)
+function input = add_sedflags(input,fid_log)
 
 input_out = add_sedflags(input,fid_log);
 
