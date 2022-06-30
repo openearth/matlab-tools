@@ -265,7 +265,7 @@ else
     fmt='%11.1f %11.1f\n';
 end
 
-fid=fopen(handles.toolbox.modelmaker.sfincs.buq.refinement_polygonfile,'wt');
+fid=fopen(handles.toolbox.modelmaker.sfincs.buq.refinement_polygon_file,'wt');
 for ip=1:handles.toolbox.modelmaker.sfincs.buq.nr_refinement_polygons
     fprintf(fid,'%s\n',handles.toolbox.modelmaker.sfincs.buq.refinement_polygon_names{ip});
     fprintf(fid,'%i %i\n',[handles.toolbox.modelmaker.sfincs.buq.refinement_polygon(ip).length 2]);

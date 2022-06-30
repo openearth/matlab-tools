@@ -1163,13 +1163,20 @@ for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options
     end
 end
 
+if ~isempty(handles.model.sfincs.domain(id).buq)
+    varargin_id = varargin_id + 1;
+    varargin{varargin_id} = 'quadtree';
+    varargin_id = varargin_id + 1;
+    varargin{varargin_id} = handles.model.sfincs.domain(id).buq;
+end
+
 % reload bathy > means in case of reuse that read-in dep-file is not used!
 xg=handles.model.sfincs.domain(id).gridx;
 yg=handles.model.sfincs.domain(id).gridy; % These are the centre points !!!
 zg=handles.model.sfincs.domain(id).gridz;
 gridtype='structured';
 
-[filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.sfincs.domain(id).input.depfile);
+% [filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.sfincs.domain(id).input.depfile);
 
 %% Select bathymetry sources
 clear datasets
@@ -1187,8 +1194,9 @@ else
         datasets(ii).verticaloffset=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).verticalLevel;
     end
 end
-%% Generate bathymetry
-[xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',1,'gridtype',gridtype,'modeloffset',0);
+
+% %% Generate bathymetry
+% [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',1,'gridtype',gridtype,'modeloffset',0);
 
 %% Update model data
 
@@ -1217,10 +1225,11 @@ else
     sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
 end
 
-handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
+%handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
 
-if ~isempty(qtr)
+if ~isempty(handles.model.sfincs.domain(id).buq)
     handles.model.sfincs.domain(id).input.qtrfile='sfincs.qtr';
+    qtr = handles.model.sfincs.domain(id).buq;
     buq_save_buq_file(qtr, handles.model.sfincs.domain(id).mask, handles.model.sfincs.domain(id).input.qtrfile);
 end
 

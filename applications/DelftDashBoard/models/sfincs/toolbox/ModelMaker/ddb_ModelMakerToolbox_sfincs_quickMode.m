@@ -84,6 +84,8 @@ else
             prepare_for_fews;
         case{'edittimes'}
             edit_times;
+        case{'write_model_setup_yml'}
+            write_model_setup_yml;
     end
     
 end
@@ -245,6 +247,44 @@ writetable(T,['sfincs_grid.csv']);
 close(wb);
 
 setHandles(handles);
+
+function write_model_setup_yml
+handles=getHandles;
+
+
+config.coordinates.x0=handles.model.sfincs.domain.input.x0;
+config.coordinates.y0=handles.model.sfincs.domain.input.y0;
+config.coordinates.dx=handles.model.sfincs.domain.input.dx;
+config.coordinates.dy=handles.model.sfincs.domain.input.dy;
+config.coordinates.mmax=handles.model.sfincs.domain.input.mmax;
+config.coordinates.nmax=handles.model.sfincs.domain.input.nmax;
+config.coordinates.rotation=handles.model.sfincs.domain.input.rotation;
+config.coordinates.crs=handles.screenParameters.coordinateSystem.name;
+
+config.mask=[];
+config.mask.zmin=handles.toolbox.modelmaker.sfincs.zmin;
+config.mask.zmax=handles.toolbox.modelmaker.sfincs.zmax;
+if ~isempty(handles.toolbox.modelmaker.sfincs.mask.includepolygonfile)
+    config.mask.exclude_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.includepolygonfile;
+end
+if ~isempty(handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile)
+    config.mask.exclude_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile;
+end
+if ~isempty(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile)
+    config.mask.open_boundary_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile;
+end
+if ~isempty(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile)
+    config.mask.outflow_boundary_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile;
+end
+
+for j=1:length(handles.toolbox.modelmaker.bathymetry.selectedDatasets)
+    config.bathymetry.dataset{j}.name=handles.toolbox.modelmaker.bathymetry.selectedDatasets(j).name;
+    config.bathymetry.dataset{j}.source='delftdashboard';
+    config.bathymetry.dataset{j}.zmin=handles.toolbox.modelmaker.bathymetry.selectedDatasets(j).zMin;
+    config.bathymetry.dataset{j}.zmax=handles.toolbox.modelmaker.bathymetry.selectedDatasets(j).zMax;
+end
+
+yml.write(config, 'model_setup.yml',0);
 
 %%
 function edit_times
