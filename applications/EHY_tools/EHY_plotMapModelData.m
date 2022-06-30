@@ -133,6 +133,7 @@ switch modelType
             case 'flat'
                 % don't plot NaN's (gives problems in older MATLAB versions)
                 nanInd = isnan(values);
+                values(nanInd) = [];
                 gridInfo.face_nodes_x(:,nanInd) = [];
                 gridInfo.face_nodes_y(:,nanInd) = [];
                 if isfield(gridInfo,'Zcen') % use center bed level for 3D-plot ('tiles' plot / tegeltjes aanpak a la morphology)
