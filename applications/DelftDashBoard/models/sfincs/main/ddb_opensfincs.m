@@ -65,13 +65,15 @@ switch lower(opt)
             if ~isempty(inp.bwvfile)
                 handles.model.sfincs.domain(ad).waveboundarypoints=sfincs_read_boundary_points(inp.bwvfile);
                 % Bhs file
-                [t,val]=sfincs_read_boundary_conditions(inp.bhsfile);
-                handles.model.sfincs.domain(ad).waveboundarypoints.time=inp.tref+t/86400;
-                handles.model.sfincs.domain(ad).waveboundarypoints.hs=val;
-                [t,val]=sfincs_read_boundary_conditions(inp.btpfile);
-                handles.model.sfincs.domain(ad).waveboundarypoints.tp=val;
-                [t,val]=sfincs_read_boundary_conditions(inp.bwdfile);
-                handles.model.sfincs.domain(ad).waveboundarypoints.wd=val;                
+                if ~isempty(inp.bhsfile)
+                    [t,val]=sfincs_read_boundary_conditions(inp.bhsfile);
+                    handles.model.sfincs.domain(ad).waveboundarypoints.time=inp.tref+t/86400;
+                    handles.model.sfincs.domain(ad).waveboundarypoints.hs=val;
+                    [t,val]=sfincs_read_boundary_conditions(inp.btpfile);
+                    handles.model.sfincs.domain(ad).waveboundarypoints.tp=val;
+                    [t,val]=sfincs_read_boundary_conditions(inp.bwdfile);
+                    handles.model.sfincs.domain(ad).waveboundarypoints.wd=val;
+                end
             end
 
             % Obs file
