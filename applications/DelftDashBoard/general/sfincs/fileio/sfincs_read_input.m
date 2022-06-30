@@ -3,12 +3,16 @@ function inp=sfincs_read_input(fname,inp)
 % Read input file
 fid=fopen(fname,'r');
 while 1
-    str=fgetl(fid);
+    str=deblank2(fgetl(fid));
     if str==-1
+        % end of file
         break
     end
     if strcmp(str,'') %ignore empty lines
-        break
+        continue
+    end
+    if strcmpi(str(1),'#') %ignore comment lines
+        continue
     end
     c=textscan(str,'%s','delimiter','=');
     c=c{1};
