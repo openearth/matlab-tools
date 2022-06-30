@@ -121,6 +121,21 @@ gui_polyline('draw','Tag','sfincsboundaryspline','Marker','o','createcallback',@
     'type','spline','closed',0);
 
 %%
+function create_boundary_spline(h,x,y,nr)
+
+delete_boundary_spline;
+
+handles=getHandles;
+handles.model.sfincs.boundaryspline.handle=h;
+handles.model.sfincs.boundaryspline.x=x;
+handles.model.sfincs.boundaryspline.y=y;
+handles.model.sfincs.boundaryspline.length=length(x);
+handles.model.sfincs.boundaryspline.changed=1;
+setHandles(handles);
+
+gui_updateActiveTab;
+
+%%
 function load_boundary_spline
 handles=getHandles;
 
