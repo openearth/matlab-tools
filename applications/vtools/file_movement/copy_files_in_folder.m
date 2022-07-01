@@ -21,7 +21,10 @@ nf=size(inc,1);
 for kf=1:nf
     if inc{kf,1}==0; continue; end
     [~,fname,fext]=fileparts(inc{kf,2});
-    fpath_dest=fullfile(fpath_dir,sprintf('%s%s',fname,fext));
+    fpath_dest=fullfile(fpath_dir,inc{kf,3},sprintf('%s%s',fname,fext));
+    if ~(exist(fullfile(fpath_dir,inc{kf,3}))==7)
+        mkdir(fullfile(fpath_dir,inc{kf,3}));
+    end
     copyfile_check(inc{kf,2},fpath_dest);
 end
 
