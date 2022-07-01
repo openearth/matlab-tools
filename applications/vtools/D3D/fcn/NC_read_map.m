@@ -1149,7 +1149,7 @@ switch flg.which_p
                             if flg.get_EHY
                                 z=NC_read_map_get_EHY(file.map,'mesh2d_thlyr',time_dnum,'bed_layers',1:1:in.nl);
                                 if flg.which_v==27
-                                    z=sum(z,3)';
+                                    z=sum(z,2)';
                                 elseif flg.which_v==14
                                     z=squeeze(z(:,:,1));
                                 end
