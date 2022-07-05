@@ -1,4 +1,4 @@
-function ddcompile3
+function ddcompile4
 %DDCOMPILE3  One line description goes here.
 %
 %   More detailed description goes here.
@@ -70,7 +70,7 @@ compilefolder='d:/delftdashboardsetup/'; % Folder where executable and data will
 
 include_additional_toolboxes=0;
 include_additional_models=0;
-revisionnumber='17723';
+revisionnumber='18219';
 
 if ~exist(compilefolder,'dir')
     mkdir(compilefolder);
