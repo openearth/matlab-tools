@@ -20,6 +20,7 @@ function fid = delft3d_io_meteo_write(filehandle,time,X,Y,data,varargin)
 %    grid_file        = default, ['temp.grd']; % if no (relative) path specified, will be written in same path as amx file
 %                                              % but with LOCAL reference to grd file inside amx file
 %    grid_unit        = 'm' or 'degree' (default)
+%    gridCenterCorner = 'corner' or 'center': location of data (at corner of cells or in center of cells), only relevant for 'meteo_on_equidistant_grid'
 %    quantity         = 'air_pressure'     ,'x_wind','y_wind','relative_humidity','air_temperature','cloudiness'
 %    unit             = 'Pa','mbar'        ,'m s-1'          ,'%'                ,'Celsius'        ,'%'
 %    refdatenum       = default, datenum(1970,1,1);
@@ -97,6 +98,7 @@ OPT.n_quantity       = 1;
 OPT.quantity         = 'x_wind';
 OPT.unit             = 'm s-1';
 OPT.grid_unit         = 'degree';
+OPT.gridCenterCorner = 'corner'; % 'corner' or 'center'
 
 OPT.refdatenum       = datenum(1970,1,1); 
 OPT.timezone         = '+00:00';
@@ -171,9 +173,15 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
         fprinteol(fid,OPT.OS);
         fprintf  (fid,['grid_unit        = ' OPT.grid_unit]);
         fprinteol(fid,OPT.OS);
-        fprintf  (fid,['x_llcorner       = ',num2str(x(1,1))]);
-        fprinteol(fid,OPT.OS);
-        fprintf  (fid,['y_llcorner       = ',num2str(y(1,1))]);
+        if strcmpi(OPT.gridCenterCorner,'corner')
+            fprintf  (fid,['x_llcorner       = ',num2str(x(1,1))]);
+            fprinteol(fid,OPT.OS);
+            fprintf  (fid,['y_llcorner       = ',num2str(y(1,1))]);
+        else
+            fprintf  (fid,['x_llcenter       = ',num2str(x(1,1))]);
+            fprinteol(fid,OPT.OS);
+            fprintf  (fid,['y_llcenter       = ',num2str(y(1,1))]);
+        end
         fprinteol(fid,OPT.OS);
         fprintf  (fid,['dx               = ',num2str(dx)]);
         fprinteol(fid,OPT.OS);
