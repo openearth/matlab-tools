@@ -61,7 +61,7 @@ end
 fprintf(fid, '%s\n',['set mdwfile=' mdwfile]);
 fprintf(fid, '%s\n',['set ARCH=',handles.model.delft3dwave.arch]);
 fprintf(fid, '%s\n',['set D3D_HOME=' handles.model.delft3dwave.exedir]);
-fprintf(fid, '%s\n',['set waveexedir=%D3D_HOME%\%ARCH%\wave\bin']);
+fprintf(fid, '%s\n',['set waveexedir=%D3D_HOME%\%ARCH%\dwaves\bin']);
 fprintf(fid, '%s\n',['set swanexedir=%D3D_HOME%\%ARCH%\swan\bin']);
 fprintf(fid, '%s\n',['set swanbatdir=%D3D_HOME%\%ARCH%\swan\scripts']);
 fprintf(fid, '%s\n',['title Wave simulation']);
