@@ -249,8 +249,10 @@ if include_additional_toolboxes
                                     if isfolder([additionalToolboxDir filesep toolbox filesep 'exe'])
 %                                         mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'exe']);
 %                                         copyfiles([additionalToolboxDir filesep toolbox filesep 'exe'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'exe']);
-                                        mkdir([compilefolder filesep 'exe']);
-                                        copyfiles([additionalToolboxDir filesep toolbox filesep 'exe'],[compilefolder filesep 'exe']);
+                                        mkdir([compilefolder filesep 'exe' filesep 'swan']);
+                                        copyfiles([additionalToolboxDir filesep toolbox filesep 'exe' filesep 'swan'],[compilefolder filesep 'exe' filesep 'swan']);
+                                        mkdir([compilefolder filesep 'bin']);
+                                        copyfiles([additionalToolboxDir filesep toolbox filesep 'exe\dlls' ],[compilefolder filesep 'bin']);
                                          
                                     end
                                 end
