@@ -58,14 +58,25 @@ if ~isfield(handles.model.delft3dwave,'arch')
     handles.model.delft3dwave.arch = 'win32';
 end
 
+
+
+
 fprintf(fid, '%s\n',['set mdwfile=' mdwfile]);
 fprintf(fid, '%s\n',['set ARCH=',handles.model.delft3dwave.arch]);
 fprintf(fid, '%s\n',['set D3D_HOME=' handles.model.delft3dwave.exedir]);
 fprintf(fid, '%s\n',['set waveexedir=%D3D_HOME%\%ARCH%\dwaves\bin']);
 fprintf(fid, '%s\n',['set swanexedir=%D3D_HOME%\%ARCH%\swan\bin']);
 fprintf(fid, '%s\n',['set swanbatdir=%D3D_HOME%\%ARCH%\swan\scripts']);
-fprintf(fid, '%s\n',['title Wave simulation']);
-fprintf(fid, '%s\n',['set PATH=%waveexedir%;%swanbatdir%;%swanexedir%;%PATH%']);
+
+if isfield(handles.model.delft3dwave,'dlldir')
+    fprintf(fid, '%s\n',['set dlldir=' handles.model.delft3dwave.dlldir]);
+    fprintf(fid, '%s\n',['title Wave simulation']);
+    
+    fprintf(fid, '%s\n',['set PATH=%waveexedir%;%swanbatdir%;%swanexedir%;%dlldir%;%PATH%']);        
+else
+    fprintf(fid, '%s\n',['title Wave simulation']);
+    fprintf(fid, '%s\n',['set PATH=%waveexedir%;%swanbatdir%;%swanexedir%;%PATH%']);
+end
 fprintf(fid, '%s\n',['"%waveexedir%\wave.exe" %mdwfile% 0']);
 fprintf(fid, '%s\n',['title %CD%']);
 
