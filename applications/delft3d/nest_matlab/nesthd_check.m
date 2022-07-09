@@ -16,10 +16,10 @@ check_nesthd2   = true;
 if ~isdeployed && any(which('setproperty')) addpath(genpath('..\..\..\..\matlab')); end
 
 %% Create list of directories
-tmp             = dir2(testdir);
+tmp             = dir(testdir);
 index           = [tmp.isdir];
 dirs            = tmp(index);
-for i_dir = 2: length(dirs) tests{i_dir - 1} = [testdir filesep dirs(i_dir).name]; end
+for i_dir = 3: length(dirs) tests{i_dir - 2} = [testdir filesep dirs(i_dir).name]; end
 
 %% Create ini files
 for i_test = 1: length(tests)
