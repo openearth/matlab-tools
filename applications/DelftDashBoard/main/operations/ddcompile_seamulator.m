@@ -263,10 +263,24 @@ if include_additional_toolboxes
                                         copyfile([additionalToolboxDir filesep toolbox filesep 'copy_of_xml_for_DelftDashboard-data\delftdashboard.xml'],[compilefolder filesep 'data\']);
                                     end
                                 end
+                                % Copy toolbox specific data binary files while unzipping                               
+                                try
+                                    if isfolder([additionalToolboxDir filesep toolbox filesep 'data'])
+                                        mkdir([compilefolder filesep 'data\selection_v05_processed_bin\']);
+%                                         copyfile([additionalToolboxDir filesep toolbox filesep 'copy_of_xml_for_DelftDashboard-data\delftdashboard.xml'],[compilefolder filesep 'data\']);
+                                        unzip([additionalToolboxDir filesep toolbox filesep 'data' filesep 'selection_v05_processed_bin.zip'], [compilefolder filesep 'data\selection_v05_processed_bin\'])
+                                    end
+                                end                                
                                 % copy specific Seamulator version of
                                 % data/delftdashboard.xml
                                 copyfile([additionalToolboxDir filesep toolbox filesep 'data\*.mat'],[compilefolder filesep 'data\']);
 
+                                % Copy run batch script of Seamulator exe:
+                                try
+                                    if isfolder([additionalToolboxDir filesep toolbox filesep 'exe'])
+                                        copyfile([additionalToolboxDir filesep toolbox filesep 'exe' filesep 'run_seamulator.bat'],compilefolder);
+                                    end
+                                end
                                 
                                 %                         try
                                 %                             if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
