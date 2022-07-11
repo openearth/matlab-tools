@@ -1,9 +1,10 @@
 function EHY_xzArrow(x,z,u,w,varargin)
 
-OPT.scale     = 1.0 ; % 1 cm (matlan lenx etc) corresponds with scale m/s
-OPT.thinX     = 1.0 ; % Thinning in x direction
-OPT.thinZ     = 1.0 ; % Thinning in y(z) direction
-OPT.XScale    = 1   ; % Used to account for scaling of x axis (from m to km)  
+OPT.scale     = 1.0   ; % 1 cm (matlan lenx etc) corresponds with scale m/s
+OPT.thinX     = 1.0   ; % Thinning in x direction
+OPT.thinZ     = 1.0   ; % Thinning in y(z) direction
+OPT.XScale    = 1     ; % Used to account for scaling of x axis (from m to km)
+OPT.w0        = true  ; % Not always desirable to include (scaled) w velocities. Sometimes w = 0 is better
 OPT           = setproperty(OPT,varargin);
 x             = x/OPT.XScale;
 
@@ -34,6 +35,8 @@ for mThin = indexX
     zPlot  = z   (mThin,:);
     valu   = u(mThin,:);
     valw   = w(mThin,:);
+    if ~OPT.w0 valw(1:length(valw)) = 0.; end
+    
     indexZ = ~isnan(zPlot);
     
     %  Flip the z direction. Surface as start will normally give nicer figures
@@ -68,8 +71,8 @@ end
 
 %  Now scale the arrowheads (length of arrowheads proportional to vector length)
 unit = sqrt(lenX^2 + lenY^2)/72;
-H    = 0.3*lenVec/unit;
-W    = 0.2*lenVec/unit;
+H    = 0.3*min(lenVec,1)/unit;
+W    = 0.2*min(lenVec,1)/unit;
 
 %% Finally, plot the arrows
 hold on
