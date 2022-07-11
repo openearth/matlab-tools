@@ -65,7 +65,9 @@ clear all
 % FOR THIS SCRIPT TO RUN, YOUR WORKING FOLDER MUST BE THE MAIN DELFT
 % DASHBOARD SOURCE FOLDER (e.g. d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\)
 
-compilefolder='d:/delftdashboard_seamulator/'; % Folder where executable and data will be created
+compilefolder='d:/delftdashboard_seamulator_v0_1/'; % Folder where executable and data will be created
+
+do_unzip = 1;
 
 % addpath(genpath('d:\checkouts\ShorelineS\trunk\'));
 
@@ -251,8 +253,8 @@ if include_additional_toolboxes
 %                                         copyfiles([additionalToolboxDir filesep toolbox filesep 'exe'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'exe']);
                                         mkdir([compilefolder filesep 'exe' filesep 'swan']);
                                         copyfiles([additionalToolboxDir filesep toolbox filesep 'exe' filesep 'swan'],[compilefolder filesep 'exe' filesep 'swan']);
-                                        mkdir([compilefolder filesep 'bin']);
-                                        copyfiles([additionalToolboxDir filesep toolbox filesep 'exe\dlls' ],[compilefolder filesep 'bin']);
+                                        mkdir([compilefolder filesep 'exe' filesep 'dlls']);
+                                        copyfiles([additionalToolboxDir filesep toolbox filesep 'exe' filesep 'dlls' filesep],[compilefolder filesep 'exe' filesep 'dlls' filesep]);
                                          
                                     end
                                 end
@@ -267,8 +269,10 @@ if include_additional_toolboxes
                                 try
                                     if isfolder([additionalToolboxDir filesep toolbox filesep 'data'])
                                         mkdir([compilefolder filesep 'data\selection_v05_processed_bin\']);
-%                                         copyfile([additionalToolboxDir filesep toolbox filesep 'copy_of_xml_for_DelftDashboard-data\delftdashboard.xml'],[compilefolder filesep 'data\']);
-                                        unzip([additionalToolboxDir filesep toolbox filesep 'data' filesep 'selection_v05_processed_bin.zip'], [compilefolder filesep 'data\selection_v05_processed_bin\'])
+
+                                        if do_unzip == 1
+                                            unzip([additionalToolboxDir filesep toolbox filesep 'data' filesep 'selection_v05_processed_bin.zip'], [compilefolder filesep 'data\selection_v05_processed_bin\'])
+                                        end
                                     end
                                 end                                
                                 % copy specific Seamulator version of
