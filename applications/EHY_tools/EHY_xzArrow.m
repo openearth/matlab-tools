@@ -1,10 +1,10 @@
 function EHY_xzArrow(x,z,u,w,varargin)
 
-OPT.scale     = 1.0   ; % 1 cm (matlan lenx etc) corresponds with scale m/s
+OPT.scale     = 1.0   ; % 1 cm (matlab lenx etc) corresponds with scale m/s
 OPT.thinX     = 1.0   ; % Thinning in x direction
 OPT.thinZ     = 1.0   ; % Thinning in y(z) direction
 OPT.XScale    = 1     ; % Used to account for scaling of x axis (from m to km)
-OPT.w0        = true  ; % Not always desirable to include (scaled) w velocities. Sometimes w = 0 is better
+OPT.w0        = true  ; % By defaut vertical velocities are taken into account. Not always desirable. Sometimes w = 0 (OPT.w0 = false) is better.
 OPT           = setproperty(OPT,varargin);
 x             = x/OPT.XScale;
 
@@ -36,23 +36,23 @@ for mThin = indexX
     valu   = u(mThin,:);
     valw   = w(mThin,:);
     if ~OPT.w0 valw(1:length(valw)) = 0.; end
-    
+
     indexZ = ~isnan(zPlot);
-    
+
     %  Flip the z direction. Surface as start will normally give nicer figures
     zPlot  = flip(zPlot(indexZ));
     valu   = flip(valu(indexZ));
     valw   = flip(valw(indexZ));
-    
+
     %  Thinning in the z direction
     indexZ     = EHY_thinning(ones(1,length(zPlot)),zPlot,'thinDistance',OPT.thinZ,'Units','centimeters');
     zPlot      = zPlot(indexZ);
     valu       = valu(indexZ);
     valw       = valw(indexZ);
-    
+
     % Scale v velocities with aspect ratio of figure
     valw       = ((OPT.XScale*(XLim(2) - XLim(1))/lenX)/((YLim(2) - YLim(1))/lenY))*valw;
-      
+
     for iZ = 1: length(zPlot)
         %  Determine start and end point of a single vector
         xStart(end + 1) = x    (mThin);
@@ -88,5 +88,5 @@ yTxt      = YLim(1) + (0.15          /lenY)*(YLim(2) - YLim(1));
 hText     = text(xTxt,yTxt,[num2str(OPT.scale) ' m/s']);
 set (hText,'FontSize'         ,6       );
 set (hText,'VerticalAlignment','middle');
-    
+
 
