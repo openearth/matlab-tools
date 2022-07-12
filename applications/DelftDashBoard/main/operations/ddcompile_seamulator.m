@@ -65,7 +65,7 @@ clear all
 % FOR THIS SCRIPT TO RUN, YOUR WORKING FOLDER MUST BE THE MAIN DELFT
 % DASHBOARD SOURCE FOLDER (e.g. d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\)
 
-compilefolder='d:/delftdashboard_seamulator_v0_1/'; % Folder where executable and data will be created
+compilefolder='d:/delftdashboard_seamulator_v00_01/'; % Folder where executable and data will be created
 
 do_unzip = 1;
 
@@ -251,8 +251,8 @@ if include_additional_toolboxes
                                     if isfolder([additionalToolboxDir filesep toolbox filesep 'exe'])
 %                                         mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'exe']);
 %                                         copyfiles([additionalToolboxDir filesep toolbox filesep 'exe'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'exe']);
-                                        mkdir([compilefolder filesep 'exe' filesep 'swan']);
-                                        copyfiles([additionalToolboxDir filesep toolbox filesep 'exe' filesep 'swan'],[compilefolder filesep 'exe' filesep 'swan']);
+                                        mkdir([compilefolder filesep 'exe' filesep 'Delft3D 4.04.01']);
+                                        copyfiles([additionalToolboxDir filesep toolbox filesep 'exe' filesep 'Delft3D 4.04.01'],[compilefolder filesep 'exe' filesep 'Delft3D 4.04.01']);
                                         mkdir([compilefolder filesep 'exe' filesep 'dlls']);
                                         copyfiles([additionalToolboxDir filesep toolbox filesep 'exe' filesep 'dlls' filesep],[compilefolder filesep 'exe' filesep 'dlls' filesep]);
                                          
@@ -327,9 +327,9 @@ copyfile([inipath, filesep, 'settings/icons/deltares.ico'],compilefolder);
 if ~exist([compilefolder, filesep,'exe'],'dir')
     mkdir([compilefolder, filesep,'exe']);
 end
-if ~exist([compilefolder, filesep, 'exe' filesep 'bin'],'dir')
-    mkdir([compilefolder, filesep, 'exe' filesep 'bin']);
-end
+% if ~exist([compilefolder, filesep, 'exe' filesep 'bin'],'dir')
+%     mkdir([compilefolder, filesep, 'exe' filesep 'bin']);
+% end
 
 % And now do the actual compiling
 %mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar -r d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\settings\icons\deltares.gif
