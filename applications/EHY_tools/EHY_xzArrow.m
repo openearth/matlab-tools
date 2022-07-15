@@ -4,7 +4,7 @@ OPT.scale     = 1.0   ; % 1 cm (matlab lenx etc) corresponds with scale m/s
 OPT.thinX     = 1.0   ; % Thinning in x direction
 OPT.thinZ     = 1.0   ; % Thinning in y(z) direction
 OPT.XScale    = 1     ; % Used to account for scaling of x axis (from m to km)
-OPT.w0        = true  ; % By defaut vertical velocities are taken into account. Not always desirable. Sometimes w = 0 (OPT.w0 = false) is better.
+OPT.ucz       = true  ; % By defaut vertical velocities are taken into account. Not always desirable. Sometimes w = 0 (OPT.w0 = false) is better.
 OPT           = setproperty(OPT,varargin);
 x             = x/OPT.XScale;
 
@@ -35,7 +35,7 @@ for mThin = indexX
     zPlot  = z   (mThin,:);
     valu   = u(mThin,:);
     valw   = w(mThin,:);
-    if ~OPT.w0 valw(1:length(valw)) = 0.; end
+    if ~OPT.ucz valw(1:length(valw)) = 0.; end
 
     indexZ = ~isnan(zPlot);
 
@@ -82,7 +82,7 @@ arrow3([xStart; zStart]', [xEnd; zEnd]',[],W,H);
 xLegStart = XLim(1) + ((lenX - 1.5)/lenX)*(XLim(2) - XLim(1));
 xLegEnd   = XLim(1) + ((lenX - 0.5)/lenX)*(XLim(2) - XLim(1));
 yLegStart = YLim(1) + (0.1         /lenY)*(YLim(2) - YLim(1));
-arrow3([xLegStart; yLegStart]', [xLegEnd; yLegStart]');
+arrow3([xLegStart; yLegStart]', [xLegEnd; yLegStart]',[],0.2/unit,0.3/unit);
 xTxt      =  XLim(1) + ((lenX - 2.25)/lenX)*(XLim(2) - XLim(1));
 yTxt      = YLim(1) + (0.15          /lenY)*(YLim(2) - YLim(1));
 hText     = text(xTxt,yTxt,[num2str(OPT.scale) ' m/s']);
