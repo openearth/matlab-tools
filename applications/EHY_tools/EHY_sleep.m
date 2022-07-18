@@ -1,5 +1,8 @@
 function [varargout] = EHY_sleep (varargin)
-
+%% EHY_sleep(varargin)
+%
+% This functions helps ensuring that young HAF moms and dads get enough sleep
+%
 %% initialise
 fileName      = mfilename('fullpath');
 [dirName,~,~] = fileparts(fileName);
