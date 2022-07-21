@@ -9,10 +9,13 @@ fileName      = mfilename('fullpath');
 [dirName,~,~] = fileparts(fileName);
 
 %% Irfanview installed?
-if ~exist('c:\Program Files\IrfanView\i_view64.exe')
-    txt = sprintf(['This program requires irfanview for displaying images (to avoid using the matlab image toolbox) \n' ...
+if exist('c:\Program Files (x86)\IrfanView\i_view32.exe','file')
+    IrfanViewExe = 'c:\Program Files (x86)\IrfanView\i_view32.exe';
+elseif exist('c:\Program Files\IrfanView\i_view64.exe','file')
+    IrfanViewExe = 'c:\Program Files\IrfanView\i_view64.exe';
+else
+    fprintf(['This program requires IrfanView for displaying images (to avoid using the matlab image toolbox) \n' ...
              'Please install from: https://www.fosshub.com/IrfanView.html']);
-    display(txt);
 end
 
 %% Check!
@@ -26,5 +29,4 @@ else
 end
 
 %% Display
-system (['"c:\Program Files\IrfanView\i_view64.exe" /file=' fileName]);
-
+system (['"' IrfanViewExe '" /file=' fileName]);
