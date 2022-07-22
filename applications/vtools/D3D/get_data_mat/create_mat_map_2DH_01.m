@@ -29,6 +29,11 @@ if flg_loc.write_shp==1
     messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
 end
 
+if isfield(flg_loc,'var_idx')==0
+    flg_loc.var_idx=cell(1,numel(flg_loc.var));
+end
+var_idx=flg_loc.var_idx;
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -72,7 +77,7 @@ for kt=kt_v
         varname=flg_loc.var{kvar};
         var_str=D3D_var_num2str_structure(varname,simdef);
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar});
         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
 
         do_read=1;
@@ -86,7 +91,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));         
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar});         
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end

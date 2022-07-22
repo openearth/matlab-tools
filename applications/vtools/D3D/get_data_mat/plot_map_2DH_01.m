@@ -49,6 +49,11 @@ if isfield(flg_loc,'tim_type')==0
     flg_loc.tim_type=1;
 end
 
+if isfield(flg_loc,'var_idx')==0
+    flg_loc.var_idx=cell(1,numel(flg_loc.var));
+end
+var_idx=flg_loc.var_idx;
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -109,10 +114,16 @@ for kvar=1:nvar %variable
     var_str=D3D_var_num2str_structure(varname,simdef);
     
     in_p.unit=var_str;
+    switch var_str
+        case {'T_max','T_da','T_surf'}
+            in_p.fact=1/3600/24;
+        otherwise
+            in_p.fact=1;
+    end
     
     %time 1 for difference
     kt=1;
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar});
     data_ref=load(fpath_mat_tmp,'data');
     if any(simdef.D3D.structure==[2,4]) && sum(size(data_ref.data)==1)==0 || size(data_ref.data,3)>1 %in D3D4 2D data has matrix form
         messageOut(fid_log,sprintf('Cannot plot variable with more than 1 dimension: %s',var_str))
@@ -122,7 +133,7 @@ for kvar=1:nvar %variable
     fpath_file=cell(nt,nclim,ndiff);
     for kt=kt_v
         ktc=ktc+1;
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar});
         load(fpath_mat_tmp,'data');
         
         switch flg_loc.tim_type
@@ -167,10 +178,10 @@ for kvar=1:nvar %variable
                             end
                     end
 
-                    fdir_fig_var=fullfile(fdir_fig,var_str,tag_ref);
+                    fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),tag_ref);
                     mkdir_check(fdir_fig_var,NaN,1,0);
 
-                    fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim);
+                    fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
                     fpath_file{kt,kclim,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                     in_p.fname=fname_noext;
@@ -199,8 +210,8 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,tnum,kref,kclim,var_str,kxlim)
+function fpath_fig=fig_name(fdir_fig,tag,runid,tnum,kref,kclim,var_str,kxlim,var_idx)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_clim_%02d_xlim_%02d_ref_%02d',tag,runid,var_str,datestr(tnum,'yyyymmddHHMMSS'),kclim,kxlim,kref));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s%s_%s_clim_%02d_xlim_%02d_ref_%02d',tag,runid,var_str,var_idx,datestr(tnum,'yyyymmddHHMMSS'),kclim,kxlim,kref));
 
 end %function

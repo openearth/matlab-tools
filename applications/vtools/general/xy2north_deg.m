@@ -12,12 +12,17 @@
 %
 %computes the direction in north-degrees of a vector with <x>
 %and <y> component to. This is useful for computing wind direction.
+%
+% x>=0 => north_deg \in [180,360]
+% x<=0 => north_deg \in [0,180]
+% y>=0 => north_deg \in [90,270]
+% y<=0 => north_deg \in [270,90]
 
 function north_deg=xy2north_deg(x,y)
 
 rad=atan2(y,x);
 deg=rad*360/2/pi;
-north_deg=deg+90;
+north_deg=-(deg+90);
 north_deg(north_deg<0)=360+north_deg(north_deg<0);
 
 end %function

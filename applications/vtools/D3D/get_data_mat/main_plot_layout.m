@@ -9,18 +9,7 @@
 %
 %layout for plot
 
-%open input_D3D_fig_layout
-
-%%
-'umag' velocity magnitude
-'clm2' mass of salt per unit surface 
-'bl'  bed level
-'h'  water depth
-'wl' water level
-'dm' 
-'dg'
-'
-
+%open D3D_list_of_variables
 
 %% PREAMBLE
 

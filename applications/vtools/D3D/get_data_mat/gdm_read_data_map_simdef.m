@@ -20,11 +20,13 @@ parin=inputParser;
 
 addOptional(parin,'tim',[]);
 addOptional(parin,'sim_idx',[]);
+addOptional(parin,'var_idx',[]);
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 sim_idx=parin.Results.sim_idx;
+var_idx=parin.Results.var_idx;
         
 %% 
 
@@ -40,7 +42,12 @@ switch varname
             case {2,4}
                 data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
         end
-            
+    case {'T_max','T_da','T_surf'}         
+        if isempty(var_idx)
+            error('Provide the index of the constituent to analyze')
+        end
+        data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx); 
+        
     otherwise %name directly available in output
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
 end

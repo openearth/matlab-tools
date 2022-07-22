@@ -42,7 +42,7 @@ mkdir_check(fdir_fig);
 
 %% LOAD TIME
 
-[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map);
+[nt,time_dnum,~]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
 
 %% LOAD VARIABLE
 

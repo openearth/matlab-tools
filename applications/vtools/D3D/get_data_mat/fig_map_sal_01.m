@@ -72,6 +72,9 @@ end
 if isfield(in_p,'do_axis_equal')==0
     in_p.do_axis_equal=1;
 end
+if isfield(in_p,'fact')==0
+    in_p.fact=1;
+end
 v2struct(in_p)
 
 %% check if printing
@@ -161,7 +164,7 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,1,lan);
+[lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,fact,lan);
 if is_background && ~is_diff
     cbar(kr,kc).label=str_back;
     cmap=turbo(100);

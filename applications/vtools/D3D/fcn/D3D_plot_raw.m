@@ -80,10 +80,10 @@ function D3D_plot_raw(fdir_sim,flg,t0,tend,stations)
 
 %%
 
-if isfield(flg,'fig_separate')
+if isfield(flg,'fig_separate')==0
     flg.fig_separate=0;
 end
-if isfield(flg,'fig_print')
+if isfield(flg,'fig_print')==0
     flg.fig_print=0;
 end
 fig_visible=~flg.fig_print;
@@ -102,7 +102,7 @@ else
 end
 
 %flags his
-if any([flg.his_sal,flg.his_etaw])
+if any([flg.his_sal,flg.his_etaw,flg.his_dt])
     flg.his=1;
 else
     flg.his=0;
@@ -161,7 +161,11 @@ gridInfo = EHY_getGridInfo(path_map,{'face_nodes_xy'},'mergePartitions',1);
 
     %% vars
 if flg.map_ucmaga
+    try
 Data_ucmaga=EHY_getMapModelData(path_map,'varName','mesh2d_ucmaga','t0',t0,'tend',tend,'mergePartitions',1);
+    catch
+Data_ucmaga=EHY_getMapModelData(path_map,'varName','mesh2d_ucmag','t0',t0,'tend',tend,'mergePartitions',1);
+    end
 [max_ucmaga_val,max_ucmaga_idx]=max(Data_ucmaga.val);
 max_ucmaga_x=Data_face_x.val(max_ucmaga_idx);
 max_ucmaga_y=Data_face_y.val(max_ucmaga_idx);
@@ -242,6 +246,13 @@ messageOut(NaN,'loading water level')
 his_wl=EHY_getmodeldata(path_his,stations,'dfm','varName','wl','t0',t0,'tend',tend);
 end
 
+%% dt
+
+if flg.his_dt
+messageOut(NaN,'loading time step')
+his_dt=EHY_getmodeldata(path_his,stations,'dfm','varName','timestep','t0',t0,'tend',tend);
+end
+
 %%
 %% PLOT
 %%
@@ -259,9 +270,15 @@ if flg.map_etab
     han.cbar=colorbar;
     han.cbar.Label.String='bed level [m]';
     
-    path_fig_name=fullfile(dir_figs,sprintf('etab_%s',datestr(t0,'yyyy-mm-dd-HHMM')));
-    fname_fig=sprintf('%s.png',path_fig_name);
-    print(gcf,fname_fig,'-dpng','-r300')    
+    if ~isnan(flg.clim_etab(1))
+        clim(flg.clim_etab)
+    end
+    
+    if flg.fig_print
+        path_fig_name=fullfile(dir_figs,sprintf('etab_%s',datestr(t0,'yyyy-mm-dd-HHMM')));
+        fname_fig=sprintf('%s.png',path_fig_name);
+        print(gcf,fname_fig,'-dpng','-r300')   
+    end
 end
 
     %% chezy
@@ -305,11 +322,16 @@ if flg.map_etaw
     axis equal
     han.cbar=colorbar;
     han.cbar.Label.String='water level [m+NAP]';
-    clim([-0.3,-0.15])
     
-    path_fig_name=fullfile(dir_figs,sprintf('etaw_%s',datestr(t0,'yyyy-mm-dd-HHMM')));
-    fname_fig=sprintf('%s.png',path_fig_name);
-    print(gcf,fname_fig,'-dpng','-r300')    
+    if ~isnan(flg.clim_etaw(1))
+        clim(flg.clim_etaw)
+    end
+    
+    if flg.fig_print
+        path_fig_name=fullfile(dir_figs,sprintf('etaw_%s',datestr(t0,'yyyy-mm-dd-HHMM')));
+        fname_fig=sprintf('%s.png',path_fig_name);
+        print(gcf,fname_fig,'-dpng','-r300')    
+    end
 end
 
     %% lim dt
@@ -345,10 +367,12 @@ if flg.map_ucmaga
     han.cbar.Label.String='velocity magnitude [m/s]';
 %     clim([0,2])
 
-    path_fig_name=fullfile(dir_figs,sprintf('ucmaga_%s',datestr(t0,'yyyy-mm-dd-HHMM')));
-%     savefig(gcf,sprintf('%s.fig',path_fig_name))
-    fname_fig=sprintf('%s.png',path_fig_name);
-    print(gcf,fname_fig,'-dpng','-r300')    
+    if flg.fig_print
+        path_fig_name=fullfile(dir_figs,sprintf('ucmaga_%s',datestr(t0,'yyyy-mm-dd-HHMM')));
+    %     savefig(gcf,sprintf('%s.fig',path_fig_name))
+        fname_fig=sprintf('%s.png',path_fig_name);
+        print(gcf,fname_fig,'-dpng','-r300')    
+    end
 end
 
     %% diffusivity
@@ -504,4 +528,20 @@ end
 
 end %his_etaw
 
+%% dt
+
+if flg.his_dt
+   tim_datet=datetime(his_dt.times,'convertFrom','datenum');
+   figure('visible',fig_visible)
+   hold on
+   plot(tim_datet,his_dt.val);
+    ylabel('water level [m+NAP]')
+
+    fname_fig='his_dt.png';
+    path_fig=fullfile(dir_figs,fname_fig);
+    if flg.fig_print
+        print(gcf,path_fig,'-dpng','-r300')    
+        close(gcf)
+    end
+end
 end %function

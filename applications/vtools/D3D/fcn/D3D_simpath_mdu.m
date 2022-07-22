@@ -77,6 +77,11 @@ if isfield(mdu.geometry,'BedlevelFile') && ~isempty(mdu.geometry.BedlevelFile)
 else
     simdef.file.dep='';
 end
+if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
+    simdef.file.thd=fullfile(path_sim,mdu.geometry.ThinDamFile);
+else
+    simdef.file.thd='';
+end
 
 %extenral forcing
 if isfield(mdu.external_forcing,'ExtForceFileNew') && ~isempty(mdu.external_forcing.ExtForceFileNew)
@@ -121,6 +126,12 @@ if isfield(mdu,'output')
     end
 end
 
+%processes
+if isfield(mdu,'processes')
+    if isfield(mdu.processes,'SubstanceFile')
+        simdef.file.sub=fullfile(path_sim,mdu.processes.SubstanceFile);
+    end
+end
 
 end %function
 

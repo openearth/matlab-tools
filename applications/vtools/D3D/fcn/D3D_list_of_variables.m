@@ -21,12 +21,12 @@ function D3D_list_of_variables
 
 %% FLOW
 
-%   1 =bed elevation (etab) [m]
-%   2 =flow depth (h) [m]
-%   12=water level
+%   1   'bl'    = bed elevation (etab) [m]
+%   2   'h'     = flow depth (h) [m]
+%   12  'wl'    =water level
 
-%   10=depth averaged velocity [m/s]
-%   11=velocity
+%   10  'umag'  = depth averaged velocity [m/s]
+%   11          = velocity
 
 %   18=water discharge 
 %   16=specific water discharge
@@ -63,8 +63,12 @@ function D3D_list_of_variables
 
 %% MIXED-SIZE SEDIMENT
 
-%   3 =arithmetic mean grain size of the active layer (dm Fak) [m]
-%   26=geometric  mean grain size of the active layer (dg Fak) [m]
+%   3   'dm'    = arithmetic mean grain size of the active layer (dm Fak) [m]
+%   26  'dg'    = geometric  mean grain size of the active layer (dg Fak) [m]
+
+%       'd90'   = d90 at the bed surface [m]
+%       'd50'   = d50 at the bed surface [m]
+%       'd10'   = d10 at the bed surface [m]
 
 %	8 =volume fraction content in the active layer (Fak) [-]
 %	40=volume fraction content per layer (including active layer) [-]
@@ -98,8 +102,19 @@ function D3D_list_of_variables
 %   28=main channel averaged bed level
 %   31=morphodynamic width [m]
 
+%% SALT
+
+%   'clm2' mass of salt per unit surface 
+
+%% CONSTITUENTS
+
+%   'T_max'     = residence based on maximum time in the water column
+%   'T_da'      = residence time based on depth-averaged concentration
+%   'T_surf'    = residence time at the surface
+
 %% OTHER
 
 %   13=face indices
+
 
 end %function

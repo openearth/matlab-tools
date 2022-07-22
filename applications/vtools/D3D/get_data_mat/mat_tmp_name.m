@@ -28,6 +28,7 @@ addOptional(parin,'var','');
 addOptional(parin,'sb','');
 addOptional(parin,'tim2',[]);
 addOptional(parin,'stat','');
+addOptional(parin,'var_idx','');
 
 parse(parin,varargin{:});
 
@@ -41,6 +42,7 @@ var=parin.Results.var;
 sb=parin.Results.sb;
 time_dnum_2=parin.Results.tim2;
 stat=parin.Results.stat;
+var_idx=parin.Results.var_idx;
 
 %%
 
@@ -100,6 +102,11 @@ end
 %sb
 if ~isempty(sb)
     str_add=sprintf('%s_sb_%s',str_add,strrep(sb,' ',''));
+end
+
+%var_idx
+if ~isempty(var_idx)
+    str_add=sprintf('%s_var_idx_%02d',str_add,var_idx);
 end
 
 %final

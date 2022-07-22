@@ -101,6 +101,37 @@ switch what_do
                 tim=readmatrix(fname,'filetype','text');
                 stru_out.tim=varargin{1}+minutes(tim(:,1));
                 stru_out.val=tim(:,2:end);
+            case '.sub'
+                %%
+                ksub=0;
+                kpar=0;
+                fid=fopen(fname);
+                while ~feof(fid)
+                    lin=fgetl(fid);
+                    if strcmp(lin(1:3),'sub')
+                        ksub=ksub+1;
+                        tok=regexp(lin,'''','split');
+                        stru_out.substance(ksub).name=tok{1,2};
+                    end
+                    if strcmp(lin(1:3),'par')
+                        kpar=kpar+1;
+                        tok=regexp(lin,'''','split');
+                        stru_out.parameter(kpar).name=tok{1,2};
+                        lin=fgetl(fid);
+                        while ~strcmp(lin(1:13),'end-parameter')
+                            lin=deblankstart(lin);
+                            tok=regexp(lin,'''','split');
+                            if numel(tok)>1 %char
+                                stru_out.parameter(kpar).(deblank(tok{1,1}))=tok{1,2};
+                            else
+                                tok=regexp(lin,' ','split');
+                                stru_out.parameter(kpar).(deblank(tok{1,1}))=str2double(tok{1,end});
+                            end
+                            lin=fgetl(fid);
+                        end
+                    end
+                end
+                fclose(fid);
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
