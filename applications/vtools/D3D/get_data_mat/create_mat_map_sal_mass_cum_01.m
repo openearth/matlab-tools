@@ -38,7 +38,7 @@ warning('tricky thing. We would like to overwrite if the time of analysis has ch
 
 %% LOAD TIME
 
-[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map);
+[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map,fdir_mat);
 
 %% CONSTANT IN TIME
 

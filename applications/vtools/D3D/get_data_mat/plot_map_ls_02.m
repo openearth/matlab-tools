@@ -44,7 +44,14 @@ mkdir_check(fdir_fig);
 
 %load
 % load(simdef.file.mat.map_ls_01,'data_map_ls_01');
-load(fpath_mat_time,'time_dnum');
+%temporal solution for old results
+tmp_tim=load(fpath_mat_time);
+if isfield(tmp_tim,'tim')
+    v2struct(tmp_tim.tim); %time_dnum, time_dtime
+else
+    v2struct(tmp_tim)
+end
+% load(fpath_mat_time,'time_dnum');
 
 nclim=size(flg_loc.clims_sal,1);
 npli=numel(flg_loc.pli);
