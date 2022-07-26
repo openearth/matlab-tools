@@ -97,8 +97,11 @@ end
 %% dependent
 
 if isnan(clims(1))
+    clims=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
+end
+if isnan(clims(1)) %still NaN because all are NaN
     tol=1e-8;
-    clims=[min(val(:))-tol,max(val(:))+tol];
+    clims=[-tol,+tol];
 end
 
 %% SIZE
