@@ -238,8 +238,10 @@ for j = 1:nvars
             
             % Replace dummy values with NaN
             % Note: dummy value changes with variable
-            if max(OUT.(v){m,k}) > mean(OUT.(v){m,k})+10*std(OUT.(v){m,k}) % Dummy value
-                OUT.(v){m,k}(OUT.(v){m,k} == max(OUT.(v){m,k})) = NaN;
+            if any(OUT.(v){m,k} > 1e6) % Most likely dummy values
+                dum = max(OUT.(v){m,k});
+                OUT.(v){m,k}(OUT.(v){m,k} == dum) = NaN;
+                fprintf('\tDummy values %d are set to NaN\n',dum);
             end
             
             % Check if time is sorted and sort otherwise
