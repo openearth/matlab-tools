@@ -48,6 +48,19 @@ switch varname
             case {2,4}
                 data=gdm_read_data_map_ls(fdir_mat,fpath_map,'bl',varargin{:});
         end
+    case {'sb'}
+        switch simdef.D3D.structure
+            case 1
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'SBUU',varargin{:}); %<sbuu> already reads both
+%                 data_v=gdm_read_data_map_ls(fdir_mat,fpath_map,'SBVV',varargin{:});
+%                 data=data_u;
+%                 data.val=hypot(data_u.val,data_v.val);
+                data.val=data.vel_mag;
+            case {2,4}
+                error('check')
+                data_x=gdm_read_data_map_ls(fdir_mat,fpath_map,'sxtot',varargin{:});
+                data_y=gdm_read_data_map_ls(fdir_mat,fpath_map,'sytot',varargin{:});
+        end
     otherwise
         data=gdm_read_data_map_ls(fdir_mat,fpath_map,varname,varargin{:});
 end

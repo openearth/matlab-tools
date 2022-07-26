@@ -307,6 +307,9 @@ end
 if isfield(simdef.mdf,'Dpsopt')==0
     simdef.mdf.Dpsopt='MEAN';
 end
+if isfield(simdef.mdf,'Dpuopt')==0
+    simdef.mdf.Dpuopt='min_dps'; %this is default. Most accurate is <mean_dps>
+end
 % if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
 %     error('adjust flow depth file accordingly')
 % end
@@ -653,6 +656,12 @@ end
     %correcting for last cell
 if simdef.mdf.izbndpos==0
     simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+end
+    %correcting for dpuopt. 
+%This correction only makes sense in idealistic cases maybe. If bed level at velocity points is 'min' in an ideal case (normal flow, sloping case),
+%there is a shift of half a cell in the water level at velocity points. To start under normal flow, we correct for that shift in the BC. 
+if strcmp(simdef.mdf.Dpuopt,'min_dps')
+    simdef.bct.etaw=simdef.bct.etaw+simdef.grd.dx/2*simdef.ini.s;
 end
 
 %add extra time with same value as last in case the last time step gets outside the domain

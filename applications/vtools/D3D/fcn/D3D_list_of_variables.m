@@ -23,7 +23,7 @@ function D3D_list_of_variables
 
 %   1   'bl'    = bed elevation (etab) [m]
 %   2   'h'     = flow depth (h) [m]
-%   12  'wl'    =water level
+%   12  'wl'    = water level
 
 %   10  'umag'  = depth averaged velocity [m/s]
 %   11          = velocity
@@ -47,10 +47,10 @@ function D3D_list_of_variables
 %   17=cumulative bed elevation
 %   25=total sediment mass (summation of all substrate layers, including active layer)
 
-%   48=total sediment transport at nodes [m^2/s]
-%   44=total bed load transport at nodes [m^2/s] 
-%   29=sediment transport magnitude at edges m^2/s
-%   30=sediment transport magnitude at edges m^3/s
+%   48          = total sediment transport at nodes [m^2/s]
+%   44  'sb'    = total bed load transport at nodes [m^2/s] 
+%   29          = sediment transport magnitude at edges m^2/s
+%   30          = sediment transport magnitude at edges m^3/s
 
 %	47=morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
 

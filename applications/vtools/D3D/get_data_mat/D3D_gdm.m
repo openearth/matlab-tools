@@ -80,6 +80,7 @@ for ks=1:ns
     
     %% map 2DH ls
     if isfield(in_plot,'fig_map_2DH_ls_01')==1
+        in_plot.fig_map_2DH_ls_01.tag='map_2DH_ls_01';
         create_mat_map_2DH_ls_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef)
     end
     
