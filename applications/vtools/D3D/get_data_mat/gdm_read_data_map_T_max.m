@@ -20,7 +20,7 @@ parin=inputParser;
 
 addOptional(parin,'tim',[]);
 addOptional(parin,'var_idx',[]);
-addOptional(parin,'tol',1e-7);
+addOptional(parin,'tol',1.5e-7);
 
 parse(parin,varargin{:});
 

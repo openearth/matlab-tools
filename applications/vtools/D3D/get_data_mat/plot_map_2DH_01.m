@@ -54,6 +54,10 @@ if isfield(flg_loc,'var_idx')==0
 end
 var_idx=flg_loc.var_idx;
 
+if isfield(flg_loc,'clims_type')==0
+    flg_loc.clims_type=1; %constant values
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -72,6 +76,15 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
+
+%% DEPENDENT INPUT
+
+switch flg_loc.clims_type
+    case 2
+        if isfield(flg_loc,'clims_type_var')==0
+            flg_loc.clims_type_var=time_dnum(1); 
+        end
+end
 
 %% DIMENSIONS
 
@@ -160,7 +173,12 @@ for kvar=1:nvar %variable
                     switch kdiff
                         case 1
                             in_p.val=data;
-                            in_p.clims=flg_loc.clims(kclim,:);
+                            switch flg_loc.clims_type
+                                case 1
+                                    in_p.clims=flg_loc.clims(kclim,:);
+                                case 2
+                                    in_p.clims=[0,time_dnum(kt)-flg_loc.clims_type_var];
+                            end
                             tag_ref='val';
                             in_p.is_diff=0;
                             in_p.is_background=0;
