@@ -87,6 +87,10 @@
 %
 %       -'sb'       : bed load sediment transport
 %
+%       -'T_surf'   :
+%       -'T_da'     :
+%       -'T_max'    :
+%
 %
 %
 %   -un: factor for unit conversion from SI
@@ -688,7 +692,7 @@ switch lower(variable)
                 str_var='capa de sedimento';
          end
          un_type='L';
-    case 'sbtot'
+    case {'sbtot','sb'}
          switch lan
             case 'en'
                 str_var='bedload sediment transport';
@@ -738,17 +742,36 @@ switch lower(variable)
                 str_var='área morfodinámica';
          end
          un_type='L2';
-    case 'sb'
+    case 't_da'
          switch lan
             case 'en'
-                str_var='bedload sediment transport rate';
+                str_var='depth-average residence time';
             case 'nl'
-                warning('add')
-                str_var='bedload sediment transport rate';
+                str_var='dieptegemiddelde verblijftijd';
             case 'es'
-                str_var='magnitud del transporte de fondo';
+                str_var='?';
          end
-         un_type='L2/T';
+         un_type='T';
+    case 't_surf'
+         switch lan
+            case 'en'
+                str_var='surface residence time';
+            case 'nl'
+                str_var='oppervlakte verblijftijd';
+            case 'es'
+                str_var='?';
+         end
+         un_type='T';
+    case 't_max'
+         switch lan
+            case 'en'
+                str_var='maximum residence time';
+            case 'nl'
+                str_var='maximale verblijftijd';
+            case 'es'
+                str_var='?';
+         end
+         un_type='T';
     otherwise
         str_var=variable;
         un_type='?';
