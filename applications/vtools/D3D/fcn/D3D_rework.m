@@ -661,8 +661,28 @@ end
 %This correction only makes sense in idealistic cases maybe. If bed level at velocity points is 'min' in an ideal case (normal flow, sloping case),
 %there is a shift of half a cell in the water level at velocity points. To start under normal flow, we correct for that shift in the BC. 
 if strcmp(simdef.mdf.Dpuopt,'min_dps')
+    warning('correction of BC')
     simdef.bct.etaw=simdef.bct.etaw+simdef.grd.dx/2*simdef.ini.s;
+    
+    %as a consequence, the flow depth at the water level point is larger than it should and the velocity smaller. We correct the sedimen transport rate. 
+    %ACal_corrected=ACal*qb_intended/qb_wrong
+    %qb_wrong: sediment transport with the wrong velocity at water level point
+    switch simdef.tra.IFORM
+        case 4
+            if simdef.tra.sedTrans(3)==0
+                warning('correction ACal')
+                h_wrong=simdef.ini.h+simdef.ini.s*simdef.grd.dx/2;
+                u_wrong=simdef.bct.Q(1)/simdef.grd.B/h_wrong;
+                simdef.tra.sedTrans(1)=simdef.tra.sedTrans(1)*(simdef.ini.u/u_wrong)^(simdef.tra.sedTrans(2)*2);
+            else
+                messageOut(NaN,'A correction should be applied to <ACal>')
+            end
+        otherwise
+            messageOut(NaN,'A correction should be applied to <ACal>')
+    end
 end
+
+
 
 %add extra time with same value as last in case the last time step gets outside the domain
 if simdef.D3D.structure==2

@@ -85,6 +85,8 @@
 %
 %       -'ba_mor'   : morphodynamic cell area
 %
+%       -'sb'       : bed load sediment transport
+%
 %
 %
 %   -un: factor for unit conversion from SI
@@ -736,7 +738,17 @@ switch lower(variable)
                 str_var='área morfodinámica';
          end
          un_type='L2';
-        
+    case 'sb'
+         switch lan
+            case 'en'
+                str_var='bedload sediment transport rate';
+            case 'nl'
+                warning('add')
+                str_var='bedload sediment transport rate';
+            case 'es'
+                str_var='magnitud del transporte de fondo';
+         end
+         un_type='L2/T';
     otherwise
         str_var=variable;
         un_type='?';

@@ -54,7 +54,7 @@ data{1  ,1}=sprintf('%d    IFORM',IFORM);
 switch IFORM
     case 1
     data{2  ,1}=sprintf('#%d    EH',IFORM);
-    data{3  ,1}=sprintf('%5.3f',sedTrans(1));
+    data{3  ,1}=sprintf('%10.8f',sedTrans(1));
     data{4  ,1}=        '999';
     case 2
     data{2  ,1}=sprintf('#%d    MPM',IFORM);
@@ -62,16 +62,16 @@ switch IFORM
     data{8  ,1}=        '999.999';
     case 4 
     data{2  ,1}=sprintf('#%d    GENERAL',IFORM);
-    data{3  ,1}=sprintf('%5.3f',sedTrans(1));
+    data{3  ,1}=sprintf('%10.8f',sedTrans(1));
     data{4  ,1}=        '0.0';
-    data{5  ,1}=sprintf('%5.3f',sedTrans(2));
+    data{5  ,1}=sprintf('%10.8f',sedTrans(2));
     data{6  ,1}=        '1.0';
-    data{7  ,1}=sprintf('%5.3f',sedTrans(3));
-    data{8  ,1}=        '999.999';
+    data{7  ,1}=sprintf('%10.8f',sedTrans(3));
+%     data{8  ,1}=        '999.999'; %ERROR in latest version as this becomes <ACals>
     case 14 
     data{2  ,1}=sprintf('#%d    AM',IFORM);
-    data{3  ,1}=sprintf('%5.3f',sedTrans(1)); %alpha (a_am)
-    data{4  ,1}=sprintf('%5.3f',sedTrans(2)); %theta_c  
+    data{3  ,1}=sprintf('%10.8f',sedTrans(1)); %alpha (a_am)
+    data{4  ,1}=sprintf('%10.8f',sedTrans(2)); %theta_c  
     data{5  ,1}=        '1.5';                %m
     data{6  ,1}=        '1.0';                %p  
     data{7  ,1}=        '1.0';                %q   

@@ -20,11 +20,13 @@ parin=inputParser;
 
 addOptional(parin,'tim',[]);
 addOptional(parin,'var_idx',[]);
+addOptional(parin,'tol',1e-7);
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 var_idx=parin.Results.var_idx;
+tol=parin.Results.tol;
 
 %% NUMBER TRACERS
 
@@ -73,9 +75,14 @@ bol_c_neg=val_c<=0;
 bol_d_neg=val_d<=0; 
 bol_d_leq_c=val_d>=val_c;
 
+bol_th=val_d>val_c-tol;
+
 %filter
 val_c(bol_c_neg)=0;
 val_d(bol_d_neg)=0;
+
+val_d(bol_th)=NaN;
+val_c(bol_th)=NaN;
 
 val_d(bol_d_leq_c)=val_c(bol_d_leq_c);
 
