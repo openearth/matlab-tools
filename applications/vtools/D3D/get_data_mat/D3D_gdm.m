@@ -152,7 +152,7 @@ for ks=1:ns
             plot_1D_sb_diff_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
         end
         if isfield(in_plot.fig_map_summerbed_01,'tim_ave')
-            in_plot_loc=in_plot_loc.fig_map_summerbed_01;
+            in_plot_loc=in_plot.fig_map_summerbed_01;
             in_plot_loc.tag_fig=sprintf('%s_tim_ave',in_plot_loc.tag);
             plot_1D_tim_ave_01(fid_log,in_plot_loc,simdef)
         end
