@@ -17,8 +17,8 @@ simdef=D3D_simpath(simdef);
 
 switch simdef.D3D.structure
     case 1
-        error('do')
-        kl=search_text_ascii(simdef.file.dia,'*** Simulation finished ***',1);
+        warning('add text of a D3D4 crash')
+%         kl=search_text_ascii(simdef.file.dia,'*** Simulation finished ***',1);
     case 2
         kl=search_text_ascii(simdef.file.dia,'** INFO   : Simulation did not reach stop time',1);
 end

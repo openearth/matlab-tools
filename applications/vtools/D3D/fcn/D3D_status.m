@@ -27,6 +27,7 @@ source='';
 
 simdef=D3D_simpath(simdef);
 
+%this can be improved seeing whether a map and his file are requested
 if isfield(simdef.file,'map')==0 && isfield(simdef.file,'his')==0
     sta=1; 
     return

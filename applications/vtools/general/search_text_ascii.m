@@ -12,7 +12,7 @@
 %
 %find the line in an ascii file starting from a certain one that has certain text on it
 
-function kl_tok=search_text_ascii(path_ascii,tok_find,kl_start)
+function [kl_tok,fline]=search_text_ascii(path_ascii,tok_find,kl_start)
 
 fid=fopen(path_ascii,'r');
 

@@ -747,7 +747,7 @@ switch lower(variable)
             case 'en'
                 str_var='depth-average residence time';
             case 'nl'
-                str_var='dieptegemiddelde verblijftijd';
+                str_var='dieptegemiddelde leeftijd';
             case 'es'
                 str_var='?';
          end
@@ -757,7 +757,7 @@ switch lower(variable)
             case 'en'
                 str_var='surface residence time';
             case 'nl'
-                str_var='oppervlakte verblijftijd';
+                str_var='oppervlakte leeftijd';
             case 'es'
                 str_var='?';
          end
@@ -767,7 +767,7 @@ switch lower(variable)
             case 'en'
                 str_var='maximum residence time';
             case 'nl'
-                str_var='maximale verblijftijd';
+                str_var='maximale leeftijd';
             case 'es'
                 str_var='?';
          end
