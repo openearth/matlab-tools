@@ -177,7 +177,7 @@ for kvar=1:nvar %variable
                                 case 1
                                     in_p.clims=flg_loc.clims(kclim,:);
                                 case 2
-                                    in_p.clims=[0,time_dnum(kt)-flg_loc.clims_type_var];
+                                    in_p.clims=[0,flg_loc.clims_type_var-time_dnum(kt)];
                             end
                             tag_ref='val';
                             in_p.is_diff=0;
