@@ -536,10 +536,15 @@ switch modelType
                         end
                     end
                     if ismember('spherical', wantedOutput)
-                        if nc_isvar(inputFile,'wgs84')
-                            E.spherical = 1;
+                        tmp = EHY_getGridInfo(inputFile,{'XYcor'},'mergePartitions',0);
+                        if isfield(tmp,'Xcor')
+                            E.spherical = EHY_isSpherical(tmp.Xcor,tmp.Ycor);
                         else
-                            E.spherical = 0;
+                            if nc_isvar(inputFile,'wgs84')
+                                E.spherical = 1;
+                            else
+                                E.spherical = 0;
+                            end
                         end
                     end
                     if ismember('grid', wantedOutput)

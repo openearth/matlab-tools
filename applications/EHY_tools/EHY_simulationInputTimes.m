@@ -83,6 +83,13 @@ if exist('mdFile','var')
                 mdInput{9}=mdu.output.HisInterval(1);
                 mdInput{7}=mdu.output.HisInterval(2);
                 mdInput{10}=mdu.output.HisInterval(3);
+            else
+                try
+                    mdu.output.HisInterval = cellfun(@str2num,regexp(mdu.output.HisInterval,'\s+','split'));
+                    mdInput{9}=mdu.output.HisInterval(1);
+                    mdInput{7}=mdu.output.HisInterval(2);
+                    mdInput{10}=mdu.output.HisInterval(3);
+                end
             end
             if length(mdu.output.MapInterval)==1
                 mdInput{14}=mdu.output.MapInterval;
@@ -90,6 +97,13 @@ if exist('mdFile','var')
                 mdInput{14}=mdu.output.MapInterval(1);
                 mdInput{12}=mdu.output.MapInterval(2);
                 mdInput{15}=mdu.output.MapInterval(3);
+            else
+                try
+                    mdu.output.MapInterval = cellfun(@str2num,regexp(mdu.output.MapInterval,'\s+','split'));
+                    mdInput{14}=mdu.output.MapInterval(1);
+                    mdInput{12}=mdu.output.MapInterval(2);
+                    mdInput{15}=mdu.output.MapInterval(3);
+                end
             end
             HisMapUnit='S';
         case 'simona'
