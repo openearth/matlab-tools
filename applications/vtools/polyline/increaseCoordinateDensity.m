@@ -29,6 +29,13 @@ c_out=cat(1,c_out,reshape(c_loc',1,[]));
 end
 c_out=c_out';
 
+%remove equal consecutive points
+%don't do unique because it reorders the points!
+dx=diff(c_out(:,1));
+dy=diff(c_out(:,2));
+dist=hypot(dx,dy);
+c_out(dist<=1e-12,:)=[];
+
 % figure
 % hold on
 % plot(x_axis,y_axis,'-*')

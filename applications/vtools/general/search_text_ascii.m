@@ -12,7 +12,7 @@
 %
 %find the line in an ascii file starting from a certain one that has certain text on it
 
-function [kl_tok,fline]=search_text_ascii(path_ascii,tok_find,kl_start)
+function [kl_tok,fline_got]=search_text_ascii(path_ascii,tok_find,kl_start)
 
 fid=fopen(path_ascii,'r');
 
@@ -25,6 +25,7 @@ while ~feof(fid)
         bol=contains(fline,tok_find);
         if bol
             kl_tok=kl;
+            fline_got=fline;
             fclose(fid);
             return
         end %bol

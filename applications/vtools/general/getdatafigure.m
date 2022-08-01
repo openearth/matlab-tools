@@ -43,6 +43,7 @@ if contains(fname_save_mat,'.mat')==0
     fname_save_mat=sprintf('%s.mat',fname_save_mat);
 end
 fname_save_fig=strrep(fname_save_mat,'.mat','.png');
+fname_save_csv=strrep(fname_save_mat,'.mat','.csv');
 labels_x=parin.Results.labels_x;
 labels_y=parin.Results.labels_y;
 
@@ -91,6 +92,7 @@ if flg.debug
     y_ax_high=75;
 else
     
+    %this points do not need to be the limits of the figure, but the longer the distance the more accurate the result
     fprintf('Click on low x value \n');
     [x_px_low,y_aux,~]=ginput(1);
     scatter(x_px_low,y_aux,20,'sg')
@@ -182,7 +184,7 @@ end
 
 han.fout=figure;
 hold on
-scatter(x_ax,y_ax)
+scatter(x_ax,y_ax,10,class_f,'filled')
 switch XScale
     case 'log'
         set(gca,'XScale','log')
@@ -198,8 +200,12 @@ print(han.fout,fname_save_fig,'-dpng','-r300')
 %% SAVE
 
 data=[x_ax',y_ax',class_f];
-save(fname_save_mat,'data')
-fprintf('Data saved: %s \n',fname_save_mat)
+save_check(fname_save_mat,'data')
+% fprintf('Data saved: %s \n',fname_save_mat)
+
+%% EXPORT CSV
+
+write_2DMatrix(fname_save_csv,data,'num_str','%+10e, %+10e, %d')
 
 end %function
 

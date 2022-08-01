@@ -200,7 +200,7 @@ for kvar=1:nvar %variable
                     mkdir_check(fdir_fig_var,NaN,1,0);
 
                     fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
-                    fpath_file{kt,kclim,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
+                    fpath_file{kt,kclim,kdiff,kxlim}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                     in_p.fname=fname_noext;
 
@@ -215,8 +215,10 @@ for kvar=1:nvar %variable
     
     for kdiff=1:ndiff
         for kclim=1:nclim
-            fpath_mov=fpath_file(:,kclim,kdiff);
-            gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+            for kxlim=1:nxlim
+                fpath_mov=fpath_file(:,kclim,kdiff,kxlim);
+                gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+            end
         end
     end
     

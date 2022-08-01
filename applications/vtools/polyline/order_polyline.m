@@ -12,7 +12,12 @@
 %
 %order points in a polyline
 
-function [cline_s,idx_o]=order_polyline(cline,p0_idx)
+function [cline_s,idx_o]=order_polyline(cline,varargin)
+
+p0_idx=1;
+if nargin==2
+    p0_idx=varargin{1,1};
+end
 
 np=size(cline,1);
 

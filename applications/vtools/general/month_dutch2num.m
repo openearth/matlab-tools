@@ -10,14 +10,14 @@
 %$Id$
 %$HeadURL$
 %
-%get absolute limits
+%Convert month names to number
 
 function month_num=month_dutch2num(month_dutch)
 
 switch lower(month_dutch)
-    case 'januari'
+    case {'januari','jan'}
         month_num=1;
-    case 'februari'
+    case {'februari','feb'}
         month_num=2;
     case 'maart'
         month_num=3;

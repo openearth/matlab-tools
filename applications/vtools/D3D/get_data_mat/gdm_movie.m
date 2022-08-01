@@ -34,7 +34,7 @@ end
 
 if isfield(flg_loc,'rat')==0
     T=time_dnum(end)-time_dnum(1);
-    flg_loc.rat=T/(flg_loc.tim_movie/24/3600); %[s] we want <rat> model seconds in each movie second
+    flg_loc.rat=T/(flg_loc.tim_movie/24/3600); %[-] we want <rat> model seconds in each movie second
 end
 
 %%
