@@ -10,6 +10,7 @@
 %$Id$
 %$HeadURL$
 %
+%variables: open D3D_list_of_variables
 
 function D3D_gdm(in_plot)
 

@@ -171,7 +171,11 @@ set(groot,'defaultLegendInterpreter','tex');
 
 % brewermap('demo')
 nv=size(val,2); 
-cmap=brewermap(nv,'set1');
+if nv<=9
+    cmap=brewermap(nv,'set1');
+else
+    cmap=jet(nv);
+end
 
 %center around 0
 % ncmap=1000;

@@ -36,7 +36,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD
 
-[nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his);
+[nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his,fdir_mat);
 
 %% LOAD
 
@@ -195,7 +195,7 @@ end %function
 %% FUNCTION
 %%
 
-function data=gdm_add_same_name(fpath,css,unit,tim)
+function data_s=gdm_add_same_name(fpath,css,unit,tim)
 
 crs_raw=readcell(fpath);
 [crs_u,idx_1,idx_u2]=unique(crs_raw(:,2));
@@ -207,5 +207,9 @@ for ku=1:nu
     data(ku).unit=unit;
     data(ku).tim=tim;
 end
+
+%order as close as initial
+[~,sidx2]=sort(idx_1);
+data_s=data(sidx2);
 
 end %function

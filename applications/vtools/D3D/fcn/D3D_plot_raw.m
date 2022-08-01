@@ -11,6 +11,10 @@
 %$HeadURL$
 %
 
+%%
+%% SCRIPT
+%%
+
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
@@ -20,10 +24,6 @@
 %$Id$
 %$HeadURL$
 %
-
-%%
-%% SCRIPT
-%%
 
 % %% PREAMBLE
 % 
@@ -46,35 +46,45 @@
 % 
 % %% PATHS
 % 
-% fdir_sim='P:\11208075-002-ijsselmeer\06_simulations\02_runs\r016\';
+% fdir_sim='P:\11208075-002-ijsselmeer\06_simulations\02_runs\r030\';
 % 
 % %% INPUT
 % 
 % %his
-% flg.his_sal=1; %salinity
-%     flg.sal_u=1; %unit: 1=psu; 2=chlorinity
-% flg.his_etaw=1; %water level
-% 
+% flg.his_sal=0; %salinity
+%     flg.sal_u=0; %unit: 1=psu; 2=chlorinity
+% flg.his_etaw=0; %water level
+% flg.his_dt=0; %time step
+% flg.his_ucmaga=1; %water level
+% flg.his_times=0; %his-times available
+%
 % %map
 % flg.map_times=0;
 % flg.map_ucmaga=0;
 % flg.map_Patm=0;
 % flg.map_etab=0;
+%     flg.clim_etab=[-20,10];
 % flg.map_chez=0;
 % flg.map_etaw=0;
+%     flg.clim_etaw=[0,4];
 % flg.map_numlimdt=0;
 % flg.map_sal=0; %not available yet
 % flg.map_waterdepth=0;
 % 
 % %times from history file
 % % NaN: all times available
-% % t0=datenum(2018,10,01,00,00,00);
-% t0=NaN;
-% % tend=t0;
+% % t0=datenum(2035,01,10,20,00,00);
+% % t0=NaN;
+% tend=t0;
 % 
-% stations={'KU_0020.00','KU_0021.00','FL47','MWTL_Vrouwezand','obs_WPJ_PWN'};
+% % stations={'KU_0020.00','KU_0021.00','FL47','MWTL_Vrouwezand','obs_WPJ_PWN'};
+% % stations=[]; %all
 % % stations={'obs_WPJ_PWN'};
-% % stations={'KU_0021.00'};
+% stations={'KU_0032.00'};
+% 
+% flg.fig_print=0;
+% flg.fig_close=0;
+% flg.fig_visible=1;
 
 function D3D_plot_raw(fdir_sim,flg,t0,tend,stations)
 
@@ -102,7 +112,7 @@ else
 end
 
 %flags his
-if any([flg.his_sal,flg.his_etaw,flg.his_dt])
+if any([flg.his_sal,flg.his_etaw,flg.his_dt,flg.his_ucmaga,flg.his_times])
     flg.his=1;
 else
     flg.his=0;
@@ -123,6 +133,12 @@ end
 if flg.his
     [~,~,time_dnum_his_0,time_dtime_his_0]=D3D_results_time(path_his,0,[1,1]);
     [~,~,time_dnum_his_f,time_dtime_his_f]=D3D_results_time(path_his,0,NaN);
+    if flg.his_times
+        fprintf('his-results: \n');
+        fprintf('%s \n',datestr(time_dtime_his_0,'yyyy-mm-dd HH:MM:SS'))
+        fprintf('%s \n',datestr(time_dtime_his_f,'yyyy-mm-dd HH:MM:SS'))
+        return
+    end
     if isnan(t0)
         t0=time_dnum_his_0;
         tend=time_dnum_his_f;
@@ -251,6 +267,13 @@ end
 if flg.his_dt
 messageOut(NaN,'loading time step')
 his_dt=EHY_getmodeldata(path_his,stations,'dfm','varName','timestep','t0',t0,'tend',tend);
+end
+
+%% dt
+
+if flg.his_ucmaga
+messageOut(NaN,'loading velocity magnitude')
+his_ucmaga=EHY_getmodeldata(path_his,stations,'dfm','varName','velocity_magnitude','t0',t0,'tend',tend);
 end
 
 %%
@@ -416,8 +439,14 @@ end
 
 end %map
 
-%% his
+%%
+%% HIS
+%%
+
+%% sal
+
 if flg.his_sal
+    
 %% time step
 % 
 % val=ncread(path_his,'timestep');
@@ -434,7 +463,7 @@ for ks=1:ns
     zcen_stat=his_zcen.val(:,ks,:);
 %     wl_val_stat=his_wl.val(:,ks,:);
     
-    %% check interfaces
+    % check interfaces
 
 %     time_mat_zcen=repmat(his_sal.times,1,size(his_sal.val,3));
 %     time_mat_zint=repmat(his_sal.times,1,size(his_sal.val,3)+1);
@@ -444,7 +473,7 @@ for ks=1:ns
 %     scatter(time_mat_zcen(:),zcen_stat(:),10,val_stat(:),'filled')
 %     scatter(time_mat_zint(:),zint_stat(:),10,'*k')
     
-    %% salinity patch
+    % salinity patch
     
     time_cor=cen2cor(his_sal.times);
     z_int_mat=reshape(zint_stat,nt,nl+1)';
@@ -505,7 +534,8 @@ if flg.fig_separate
             print(gcf,path_fig,'-dpng','-r300')   
             close(gcf)
         end
-    end %ks    
+    end %ks  
+    
 else
     cmap=brewermap(ns,'set1');
     figure('visible',fig_visible)
@@ -544,4 +574,49 @@ if flg.his_dt
         close(gcf)
     end
 end
+
+%% ucmaga
+
+if flg.his_ucmaga
+    plot_his_sep(flg,his_ucmaga,dir_figs)
+end
+
 end %function
+
+%% 
+%% FUNCTIONS
+%%
+
+function plot_his_sep(flg,his_wl,dir_figs)
+    
+    fig_visible=~flg.fig_print;
+    if isfield(flg,'fig_visible')==1
+        fig_visible=flg.fig_visible;
+    end
+    
+    fig_close=~flg.fig_print;
+    if isfield(flg,'fig_close')==1
+        fig_close=flg.fig_close;
+    end
+    
+    tim_datet=datetime(his_wl.times,'convertFrom','datenum');
+    stations=his_wl.requestedStations;
+    ns=numel(stations);
+    han.phe=[];
+    for ks=1:ns
+        figure('visible',fig_visible)
+        hold on
+        han.phe(ks)=plot(tim_datet,his_wl.val(:,ks,:),'color','k');
+        ylabel(labels4all(his_wl.OPT.varName,1,'en'))
+        fname_fig=sprintf('%s_%s.png',stations{ks},his_wl.OPT.varName);
+        title(strrep(stations{ks},'_','\_'))
+        path_fig=fullfile(dir_figs,fname_fig);
+        if flg.fig_print
+            print(gcf,path_fig,'-dpng','-r300')  
+            if fig_close
+                close(gcf)
+            end
+        end
+    end %ks  
+    
+end %plot_his_sep

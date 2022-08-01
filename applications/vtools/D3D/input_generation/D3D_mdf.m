@@ -218,7 +218,7 @@ data{kl,1}=        'PHderv = #YYY#       '; kl=kl+1;
 data{kl,1}=        'PHproc = #YYYYYYYYYY#'; kl=kl+1;
 data{kl,1}=        'PHflux = #YYYY#      '; kl=kl+1;
 % data{kl,1}=sprintf('Flmap  =  0.0000000e+000 %0.7e   %0.7e',Flmap_dt,ceil(Tstop/Flmap_dt)*Flmap_dt); kl=kl+1;
-data{kl,1}=sprintf('Flmap  =  0.0000000e+000 %0.7e   %0.7e',Flmap_dt*Tfact,Tstop*Tfact); kl=kl+1;
+data{kl,1}=sprintf('Flmap  =  %0.7e %0.7e   %0.7e',Flmap_dt(1)*Tfact,Flmap_dt(2)*Tfact,Tstop*Tfact); kl=kl+1;
 data{kl,1}=sprintf('Flhis  =  0.0000000e+000 %0.7e   %0.7e',Flhis_dt*Tfact,Tstop*Tfact); kl=kl+1;
 data{kl,1}=        'Flpp   =  0.0000000e+000 0    0.0000000e+000'; kl=kl+1;
 data{kl,1}=        'Flrst  = 0'; kl=kl+1;

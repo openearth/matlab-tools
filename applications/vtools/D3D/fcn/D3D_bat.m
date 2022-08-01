@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 
-function D3D_bat(simdef,fpath_software,varargin)
+function [strsoft_lin,strsoft_win]=D3D_bat(simdef,fpath_software,varargin)
 
 %% 
 
@@ -69,6 +69,6 @@ D3D_xml(fpath_dimr,fname_mdu)
 
 %% batch
 
-D3D_bat_write(dire_sim,fpath_software,dimr_str,structure)
+[strsoft_lin,strsoft_win]=D3D_bat_write(dire_sim,fpath_software,dimr_str,structure);
 
 end %function

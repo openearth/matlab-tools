@@ -188,6 +188,9 @@ end
 if isfield(simdef.mdf,'Dt')==0
     simdef.mdf.Dt=NaN;
 end
+if numel(simdef.mdf.Dt)>1
+    error('Dimension of <Dt> should be 1')
+end
 
 %restart
 if isfield(simdef.mdf,'restart')==0
@@ -209,11 +212,17 @@ end
 %map time
 if isfield(simdef.mdf,'Flmap_dt')==0
     warning('you are not saving map results')
-    simdef.mdf.Flmap_dt=0;
+    simdef.mdf.Flmap_dt=[0,0]; %start, interval
 else
-    if rem(simdef.mdf.Flmap_dt,simdef.mdf.Dt)~=0 
+    if numel(simdef.mdf.Flmap_dt)==1
+        simdef.mdf.Flmap_dt=[0,simdef.mdf.Flmap_dt];
+    elseif numel(simdef.mdf.Flmap_dt)==2
+    else
+        error('Flmap_dt [start,interval]')
+    end
+    if rem(simdef.mdf.Flmap_dt(2),simdef.mdf.Dt)~=0 
         warning('Map results time is not multiple of time step. I am rewring the map results time.')
-        simdef.mdf.Flmap_dt=(floor(simdef.mdf.Flmap_dt/simdef.mdf.Dt)+1)*simdef.mdf.Dt;
+        simdef.mdf.Flmap_dt=(floor(simdef.mdf.Flmap_dt(2)/simdef.mdf.Dt)+1)*simdef.mdf.Dt;
     end
 end
 
