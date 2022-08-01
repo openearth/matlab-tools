@@ -21,6 +21,8 @@ parin=inputParser;
 addOptional(parin,'tim',[]);
 addOptional(parin,'layer',[]);
 addOptional(parin,'tol_t',5/60/24);
+addOptional(parin,'sim_idx',[]); %just to pass
+addOptional(parin,'var_idx',[]); %just to pass
 % addOptional(parin,'pli','');
 
 parse(parin,varargin{:});

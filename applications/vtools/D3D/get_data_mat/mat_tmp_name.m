@@ -29,6 +29,7 @@ addOptional(parin,'sb','');
 addOptional(parin,'tim2',[]);
 addOptional(parin,'stat','');
 addOptional(parin,'var_idx','');
+addOptional(parin,'sim_idx',''); %just to be able to pass all varargin
 
 parse(parin,varargin{:});
 

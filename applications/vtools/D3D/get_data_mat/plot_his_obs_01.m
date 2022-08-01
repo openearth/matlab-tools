@@ -47,7 +47,7 @@ nxlim=size(flg_loc.xlims,1);
 %figures
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
-in_p.fig_visible=1;
+in_p.fig_visible=0;
 
 %ldb
 if isfield(flg_loc,'fpath_ldb')

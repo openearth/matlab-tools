@@ -53,8 +53,17 @@ in_p.plot_ldb=0;
 if isfield(in_p,'ldb')
     in_p.plot_ldb=1;
 end
+if isfield(in_p,'plot_sat')==0
+    in_p.plot_sat=1;   
+end
 
 v2struct(in_p)
+
+if plot_sat
+    text_color='w';
+else
+    text_color='k';
+end
 
 %%
 
@@ -279,18 +288,18 @@ han.sfig(kr,kc).Title.String=titles;
 % han.sfig(kr,kc).YColor='k';
 
 kr=1; kc=1;
-% OPT.xlim=xlims;
-% OPT.ylim=ylims;
-% OPT.epsg_in=28992; %WGS'84 / google earth
-% OPT.epsg_out=28992; %Amersfoort
-% OPT.tzl=10; %zoom
-% OPT.save_tiles=false;
-% OPT.path_save=fullfile(pwd,'earth_tiles');
-% OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
-% OPT.map_type=3;%map type
-% OPT.han_ax=han.sfig(kr,kc);
-% 
-% plotMapTiles(OPT);
+OPT.xlim=xlims;
+OPT.ylim=ylims;
+OPT.epsg_in=28992; %WGS'84 / google earth
+OPT.epsg_out=28992; %Amersfoort
+OPT.tzl=10; %zoom
+OPT.save_tiles=false;
+OPT.path_save=fullfile(pwd,'earth_tiles');
+OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
+OPT.map_type=3;%map type
+OPT.han_ax=han.sfig(kr,kc);
+
+plotMapTiles(OPT);
 
 %plots
 kr=1; kc=1;    
@@ -403,10 +412,10 @@ han.fig.Renderer='painters';
 
 %here to prevent the change in all font size
 for kobs=1:nobs
-    text(data.obs(kobs).xy(1),data.obs(kobs).xy(2),strrep(data.obs(kobs).name,'_','\_'),'fontsize',6);
+    text(data.obs(kobs).xy(1),data.obs(kobs).xy(2),strrep(data.obs(kobs).name,'_','\_'),'fontsize',6,'color',text_color);
 end
 for kcrs=1:ncrs
-    text(mean(data.crs(kcrs).xy(:,1)),mean(data.crs(kcrs).xy(:,2)),strrep(data.crs(kcrs).name,'_','\_'),'fontsize',6);
+    text(mean(data.crs(kcrs).xy(:,1)),mean(data.crs(kcrs).xy(:,2)),strrep(data.crs(kcrs).name,'_','\_'),'fontsize',6,'color',text_color);
 end
 
 % tolx=1000*sfact;
