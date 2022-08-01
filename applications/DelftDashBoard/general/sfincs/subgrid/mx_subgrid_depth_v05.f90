@@ -239,9 +239,8 @@
                   zmax_a   = max(zmax_a, d(n,m,ip))
                endif   
                !
-               dd0_a(j)     = d(n,m,ip)
-               !
-               manning0_a(j) = manning(n,m,j) ! This array must always have 'normal' values (i.e. no NaNs, or -999.0)
+               dd0_a(j)      = d(n,m,ip)
+               manning0_a(j) = manning(n,m,ip) ! This array must always have 'normal' values (i.e. no NaNs, or -999.0)
                !
             enddo
             !
@@ -268,8 +267,8 @@
                   zmax_b   = max(zmax_b, d(n,m,ip))
                endif   
                !
-               dd0_b(j)     = d(n,m,ip)
-               manning0_b(j) = manning(n,m,j)
+               dd0_b(j)      = d(n,m,ip)
+               manning0_b(j) = manning(n,m,ip)
                !
             enddo
             !
@@ -288,6 +287,7 @@
             ! Sort Side B based on elevation and make sure Manning's n is also sorted
             !
             call sort(npix/2, dd0_b, dd_b, indx)
+            !
             do ip = 1, npix/2
                manning_b(ip) = manning0_b(indx(ip))
             enddo
