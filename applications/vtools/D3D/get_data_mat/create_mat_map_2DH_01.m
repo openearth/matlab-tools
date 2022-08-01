@@ -29,6 +29,11 @@ if flg_loc.write_shp==1
     messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
 end
 
+%add velocity vector to variables if needed
+if isfield(flg_loc,'do_vector')==0
+    flg_loc.do_vector=zeros(1,numel(flg_loc.var));
+end
+
 if isfield(flg_loc,'var_idx')==0
     flg_loc.var_idx=cell(1,numel(flg_loc.var));
 end
@@ -105,7 +110,12 @@ for kt=kt_v
             shapewrite(fpath_shp_tmp,'polygon',polygons,reshape(data,[],1));
 %             messageOut(fid_log,sprintf('Finished to write shp: %s',fpath_shp_tmp)); %next message is sufficient
         end
-            
+        
+        %% velocity
+        if flg_loc.do_vector(kvar)
+            gdm_read_data_map_simdef(fdir_mat,simdef,'uv','tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'do_load',0);         
+        end
+        
         %% disp
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
     end

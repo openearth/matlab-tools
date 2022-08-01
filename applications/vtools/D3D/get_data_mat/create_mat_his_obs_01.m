@@ -1,0 +1,84 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 18256 $
+%$Date: 2022-07-22 13:08:11 +0200 (Fri, 22 Jul 2022) $
+%$Author: chavarri $
+%$Id: create_mat_map_2DH_01.m 18256 2022-07-22 11:08:11Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/create_mat_map_2DH_01.m $
+%
+%
+
+function create_mat_his_obs_01(fid_log,flg_loc,simdef)
+
+tag=flg_loc.tag;
+
+%% DO
+
+ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+
+%% PARSE
+
+% if isfield(flg_loc,'write_shp')==0
+%     flg_loc.write_shp=0;
+% end
+
+%% PATHS
+
+fdir_mat=simdef.file.mat.dir;
+fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+
+%% DIMENSIONS
+
+
+%% OVERWRITE
+
+ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
+
+%% OBSERVATION STATIONS
+
+obs=struct('name',{''},'xy',{[]});
+nobsf=numel(simdef.file.obsfile);
+for kobsf=1:nobsf
+    obs_loc=D3D_io_input('read',simdef.file.obsfile{1,kobsf},'version',2);
+    obs=[obs;obs_loc];
+end
+%remove first
+obs(1)=[];
+%clean names
+nobs=numel(obs);
+for kobs=1:nobs
+    obs(kobs).name=strtrim(deblank(strrep(obs(kobs).name,'''','')));
+end
+
+%% CROSS SECTIONS
+
+crs=struct('name',{''},'xy',{[]});
+nobsf=numel(simdef.file.crsfile);
+for kobsf=1:nobsf
+    crs_loc=D3D_io_input('read',simdef.file.crsfile{1,kobsf});
+    crs=[crs,crs_loc];
+end
+%remove first
+crs(1)=[];
+%clean names
+ncrs=numel(crs);
+for kcrs=1:ncrs
+    crs(kcrs).name=strtrim(deblank(strrep(crs(kcrs).name,'''','')));
+end
+
+%% SAVE
+
+data.obs=obs;
+data.crs=crs;
+
+save_check(fpath_mat,'data'); %#ok
+
+end %function
+
+%% 
+%% FUNCTION
+%%

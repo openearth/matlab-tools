@@ -156,6 +156,12 @@ for kvar=1:nvar %variable
                 in_p.tim=time_mor_dnum(kt);
         end
         
+        %load vector
+        if flg_loc.do_vector
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var', 'uv','var_idx',var_idx{kvar});
+            data_uv=load(fpath_mat_tmp,'data');
+        end
+        
         for kclim=1:nclim
             for kxlim=1:nxlim
 

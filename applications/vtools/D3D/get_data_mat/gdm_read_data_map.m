@@ -16,15 +16,13 @@ function data=gdm_read_data_map(fdir_mat,fpath_map,varname,varargin)
 
 %% PARSE
 
-% parin=inputParser;
-% 
-% addOptional(parin,'tim',[]);
-% addOptional(parin,'layer',[]);
-% 
-% parse(parin,varargin{:});
-% 
-% time_dnum=parin.Results.tim;
-% layer=parin.Results.layer;
+parin=inputParser;
+
+addOptional(parin,'do_load',1);
+
+parse(parin,varargin{:});
+
+do_load=parin.Results.do_load;
 
 %% CALC
 
@@ -33,8 +31,13 @@ var_str=D3D_var_num2str(varname);
 fpath_sal=mat_tmp_name(fdir_mat,var_str,varargin{:});
 
 if exist(fpath_sal,'file')==2
-    messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_sal));
-    load(fpath_sal,'data')
+    if do_load
+        messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_sal));
+        load(fpath_sal,'data')
+    else
+        messageOut(NaN,sprintf('Mat-file with raw data exists: %s',fpath_sal));
+        data=NaN;
+    end
 else
     messageOut(NaN,sprintf('Reading raw data for variable: %s',var_str));
     if ischar(varname)

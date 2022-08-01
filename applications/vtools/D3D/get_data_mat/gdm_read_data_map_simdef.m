@@ -49,7 +49,8 @@ switch varname
         data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx); 
         
     otherwise %name directly available in output
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
+%         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,varargin{:}); 
 end
 
 end %function

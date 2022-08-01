@@ -26,7 +26,7 @@ function D3D_list_of_variables
 %   12  'wl'    = water level
 
 %   10  'mesh2d_ucmag'  = depth averaged velocity [m/s]
-%   11                  = velocity
+%   11  'uv'            = velocity [m/s] 
 
 %   18=water discharge 
 %   16=specific water discharge

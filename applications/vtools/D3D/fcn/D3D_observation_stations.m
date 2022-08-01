@@ -12,7 +12,17 @@
 %
 %Read observation stations name and location
 
-function obs_sta=D3D_observation_stations(path_his)
+function obs_sta=D3D_observation_stations(path_his,varargin)
+
+% parin=inputParser;
+% 
+% addOptional(parin,'varName','station');
+% 
+% parse(parin,varargin{:});
+% 
+% varName=parin.Results.varName;
+
+%%
 
 nci=ncinfo(path_his);
 is_sta=ismember('station_id',{nci.Variables.Name});

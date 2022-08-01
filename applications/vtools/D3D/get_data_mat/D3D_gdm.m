@@ -90,6 +90,12 @@ for ks=1:ns
         create_mat_his_sal_meteo_01(fid_log,in_plot.fig_his_sal_meteo_01,simdef)
     end
     
+    %% observation stations
+    if isfield(in_plot,'fig_his_obs_01')==1
+        in_plot.fig_his_obs_01.tag='his_obs_01';
+        create_mat_his_obs_01(fid_log,in_plot.fig_his_obs_01,simdef)
+    end
+    
 end %ks
 
 
@@ -173,6 +179,11 @@ for ks=1:ns
     %% his sal meteo
     if isfield(in_plot,'fig_his_sal_meteo_01')==1
         plot_his_sal_meteo_01(fid_log,in_plot.fig_his_sal_meteo_01,simdef)
+    end
+    
+    %% observation stations
+    if isfield(in_plot,'fig_his_obs_01')==1
+        plot_his_obs_01(fid_log,in_plot.fig_his_obs_01,simdef)
     end
     
 end %ks
