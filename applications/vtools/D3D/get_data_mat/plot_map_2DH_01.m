@@ -172,8 +172,10 @@ for kvar=1:nvar %variable
         
         %load vector
         if flg_loc.do_vector(kvar)
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var', 'uv','var_idx',var_idx{kvar});
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,'uv','tim',time_dnum(kt),'var_idx',var_idx{kvar});
             data_uv=load(fpath_mat_tmp,'data');
+            in_p.vec_x=data_uv.data.vel_x;
+            in_p.vec_y=data_uv.data.vel_y;
         end
         
         for kclim=1:nclim
