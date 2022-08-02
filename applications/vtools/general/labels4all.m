@@ -933,8 +933,8 @@ switch un_type
     case 'degrees'
         switch un
             case 1
-                str_un=' [o]';
-            otherwise
+                str_un=' [º N]';
+            otherwise 
                 error('this factor is missing')
         end
     case 'M/L2'

@@ -58,6 +58,10 @@ if isfield(flg_loc,'clims_type')==0
     flg_loc.clims_type=1; %constant values
 end
 
+if isfield(flg_loc,'do_vector')==0
+    flg_loc.do_vector=zeros(1,numel(flg_loc.var));
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -84,6 +88,16 @@ switch flg_loc.clims_type
         if isfield(flg_loc,'clims_type_var')==0
             flg_loc.clims_type_var=time_dnum(1); 
         end
+end
+
+if isfield(flg_loc,'layer')==0
+    layer=[];
+else
+    if isnan(flg_loc.layer)
+        layer=gridInfo.no_layers;
+    else
+        layer=flg_loc.layer;
+    end
 end
 
 %% DIMENSIONS
@@ -136,7 +150,7 @@ for kvar=1:nvar %variable
     
     %time 1 for difference
     kt=1;
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar});
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
     data_ref=load(fpath_mat_tmp,'data');
     if any(simdef.D3D.structure==[2,4]) && sum(size(data_ref.data)==1)==0 || size(data_ref.data,3)>1 %in D3D4 2D data has matrix form
         messageOut(fid_log,sprintf('Cannot plot variable with more than 1 dimension: %s',var_str))
@@ -146,7 +160,7 @@ for kvar=1:nvar %variable
     fpath_file=cell(nt,nclim,ndiff);
     for kt=kt_v
         ktc=ktc+1;
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar});
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
         load(fpath_mat_tmp,'data');
         
         switch flg_loc.tim_type
@@ -157,7 +171,7 @@ for kvar=1:nvar %variable
         end
         
         %load vector
-        if flg_loc.do_vector
+        if flg_loc.do_vector(kvar)
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var', 'uv','var_idx',var_idx{kvar});
             data_uv=load(fpath_mat_tmp,'data');
         end
@@ -183,7 +197,8 @@ for kvar=1:nvar %variable
                                 case 1
                                     in_p.clims=flg_loc.clims(kclim,:);
                                 case 2
-                                    in_p.clims=[0,flg_loc.clims_type_var-time_dnum(kt)];
+                                    tim_up=max(time_dnum(kt)-flg_loc.clims_type_var,0);
+                                    in_p.clims=[0,tim_up];
                             end
                             tag_ref='val';
                             in_p.is_diff=0;

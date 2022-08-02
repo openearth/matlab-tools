@@ -61,7 +61,8 @@ end
 %% layer
 
 if ~isempty(layer)
-   data.val=data.val(:,layer);
+    %maybe better to search for [layer] in the ones coming from EHY?
+   data.val=data.val(:,:,layer);
 end
 
 end %function
