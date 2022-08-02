@@ -21,12 +21,14 @@ parin=inputParser;
 addOptional(parin,'tim',[]);
 addOptional(parin,'sim_idx',[]);
 addOptional(parin,'var_idx',[]);
+addOptional(parin,'layer',[]);
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 sim_idx=parin.Results.sim_idx;
 var_idx=parin.Results.var_idx;
+layer=parin.Results.layer;
         
 %% 
 
@@ -49,8 +51,7 @@ switch varname
         data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx); 
         
     otherwise %name directly available in output
-%         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,varargin{:}); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer); 
 end
 
 end %function

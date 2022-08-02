@@ -44,6 +44,7 @@ var_idx=flg_loc.var_idx;
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
+fpath_map=gdm_fpathmap(simdef,0);
 
 %% SHP
 
@@ -51,8 +52,7 @@ if flg_loc.write_shp
     fpath_poly=fullfile(fdir_mat,'grd_polygons.mat');
     if exist(fpath_poly,'file')==2
         load(fpath_poly,'polygons')
-    else
-        fpath_map=gdm_fpathmap(simdef,0);
+    else        
         polygons=D3D_grid_polygons(fpath_map);
         save_check(fpath_poly,'polygons');
     end
@@ -61,6 +61,20 @@ end
 %% DIMENSIONS
 
 nvar=numel(flg_loc.var);
+
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+
+%% layer
+
+if isfield(flg_loc,'layer')==0
+    layer=[];
+else
+    if isnan(flg_loc.layer)
+        layer=gridInfo.no_layers;
+    else
+        layer=flg_loc.layer;
+    end
+end
 
 %% OVERWRITE
 
@@ -82,7 +96,7 @@ for kt=kt_v
         varname=flg_loc.var{kvar};
         var_str=D3D_var_num2str_structure(varname,simdef);
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar});
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
 
         do_read=1;
@@ -96,7 +110,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar});         
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'layer',layer);    
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end

@@ -12,6 +12,29 @@
 %
 %variables: open D3D_list_of_variables
 
+%% 2DH
+
+% tag='fig_map_2DH_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=1; %regular plot
+% in_plot.(tag).do_s=1; %difference with reference
+% in_plot.(tag).do_diff=0; 
+% in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
+% in_plot.(tag).layer=NaN; %NaN=top layer
+% % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
+% in_plot.(tag).tim=NaN; %all times
+% in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
+% % in_plot.(tag).clims_type_var=datenum(2018,07,01); %in case of <clims_type>=2
+% in_plot.(tag).clims=[NaN,NaN]; 
+% in_plot.(tag).clims_diff_t=[NaN,NaN]; %clim of difference with time
+% in_plot.(tag).clims_diff_s=[NaN,NaN]; %clim of difference with simulation
+% in_plot.(tag).do_movie=0; %
+% in_plot.(tag).tim_movie=40; %movie duration [s]
+% in_plot.(tag).fpath_ldb{1,1}=fullfile(fpath_project,'model','postprocessing','mkm-inner.ldb');
+% in_plot.(tag).fpath_ldb{2,1}=fullfile(fpath_project,'model','postprocessing','mkm-outer.ldb');
+% in_plot.(tag).fig_overwrite=1; %overwrite figures
+% in_plot.(tag).overwrite=1; %overwrite mat-files
+
 function D3D_gdm(in_plot)
 
 %% CREATE MAT-FILES
