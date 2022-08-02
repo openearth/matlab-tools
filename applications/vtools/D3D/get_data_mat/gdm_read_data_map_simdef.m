@@ -23,6 +23,7 @@ addOptional(parin,'sim_idx',[]);
 addOptional(parin,'var_idx',[]);
 addOptional(parin,'layer',[]);
 addOptional(parin,'do_load',1);
+addOptional(parin,'tol',1.5e-7);
 
 parse(parin,varargin{:});
 
@@ -31,6 +32,7 @@ sim_idx=parin.Results.sim_idx;
 var_idx=parin.Results.var_idx;
 layer=parin.Results.layer;
 do_load=parin.Results.do_load;
+tol=parin.Results.tol;
 
 %% 
 
@@ -50,7 +52,7 @@ switch varname
         if isempty(var_idx)
             error('Provide the index of the constituent to analyze')
         end
-        data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx); 
+        data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol); 
         
     otherwise %name directly available in output
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load); 

@@ -80,11 +80,18 @@ messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
 css=NaN(nt,ns);
 for ks=ks_v
     ksc=ksc+1;
-        
-    data_sal=gdm_read_data_his(fdir_mat,fpath_his,'cross_section_salt','station',crs{ks},'tim',time_dnum(1),'tim2',time_dnum(end));
-    data_q  =gdm_read_data_his(fdir_mat,fpath_his,'cross_section_discharge','station',crs{ks},'tim',time_dnum(1),'tim2',time_dnum(end));
     
-    css(:,ks)=sal2cl(1,data_sal.val).*data_q.val./1000; %mgCl/l*m^3/s -> kgCl/s
+    
+    %<cross_section_salt> is not salt but flux salt!
+%     data_sal=gdm_read_data_his(fdir_mat,fpath_his,'cross_section_salt','station',crs{ks},'tim',time_dnum(1),'tim2',time_dnum(end));
+%     data_q  =gdm_read_data_his(fdir_mat,fpath_his,'cross_section_discharge','station',crs{ks},'tim',time_dnum(1),'tim2',time_dnum(end));
+%     
+%     css(:,ks)=sal2cl(1,data_sal.val).*data_q.val./1000; %mgCl/l*m^3/s -> kgCl/s
+
+    data_sal=gdm_read_data_his(fdir_mat,fpath_his,'cross_section_salt','station',crs{ks},'tim',time_dnum(1),'tim2',time_dnum(end)); %psu*m^3/s
+    
+    css(:,ks)=sal2cl(1,data_sal.val)./1000; %mgCl/l*m^3/s -> kgCl/s
+    
     messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
 end    
 

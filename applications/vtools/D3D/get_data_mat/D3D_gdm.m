@@ -36,6 +36,27 @@
 % in_plot.(tag).fig_overwrite=1; %overwrite figures
 % in_plot.(tag).overwrite=1; %overwrite mat-files
 
+%% 2DH ls
+
+% tag='fig_map_2DH_ls_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=1; %regular plot
+% in_plot.(tag).do_s=1; %difference with reference
+% in_plot.(tag).var={'bl'}; %<open main_plot_layout>
+% in_plot.(tag).tim=NaN;
+% in_plot.(tag).tim_type=2;
+% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random
+% in_plot.(tag).tol_tim=1.1;
+% in_plot.(tag).fig_size=[0,0,16,9].*2;
+% in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'y500.pli');
+% in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
+% in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).do_movie=0; %
+% in_plot.(tag).ml=2.5;
+% in_plot.(tag).plot_markers=1;
+
 function D3D_gdm(in_plot)
 
 %% CREATE MAT-FILES

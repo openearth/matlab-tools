@@ -71,6 +71,38 @@ switch varname
         error('not sure what you want to do')
 end
 
+%% BEGIN DEBUG
+
+% datetime(time_dnum,'convertfrom','datenum')
+% gridInfo=gdm_load_grid(NaN,fdir_mat,fpath_map);
+% 
+% %%
+% 
+% figure
+% hold on
+% % EHY_plotMapModelData(gridInfo,val_c)
+% % EHY_plotMapModelData(gridInfo,val_d)
+% % EHY_plotMapModelData(gridInfo,bol_th)
+% % EHY_plotMapModelData(gridInfo,val_cc)
+% % EHY_plotMapModelData(gridInfo,bol_c_neg)
+% EHY_plotMapModelData(gridInfo,T_sub)
+% axis equal
+% colorbar
+% 
+% % END DEBUG
+% 
+% %%
+% 
+% val_cc=42.*ones(size(val_c));
+% % val_cc(bol_th)=12;
+% val_cc(bol_th)=NaN;
+% 
+% figure
+% hold on
+% plot(val_cc);
+
+%%
+
 bol_c_neg=val_c<=0;
 bol_d_neg=val_d<=0; 
 bol_d_leq_c=val_d>=val_c;
@@ -81,13 +113,19 @@ bol_th=val_d>val_c-tol;
 val_c(bol_c_neg)=0;
 val_d(bol_d_neg)=0;
 
-val_d(bol_th)=NaN;
-val_c(bol_th)=NaN;
+val_d(bol_th)=0;
+val_c(bol_th)=0;
+
+% val_d(bol_th)=NaN;
+% val_c(bol_th)=NaN;
 
 val_d(bol_d_leq_c)=val_c(bol_d_leq_c);
 
 %rest time
 T_sub=log(val_d./val_c)./dec_rate;
+
+bol_nan=isnan(T_sub);
+T_sub(bol_nan)=0;
 
 T_max=max(T_sub,[],2,'omitnan'); %[faces,1], it only does something if it is 2D-array
         

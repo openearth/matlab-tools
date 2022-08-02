@@ -43,7 +43,8 @@ if isa(in_dtime(1),'double')
         if isfolder(fpath_map) %SMT
             [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(fpath_map);
         else
-            [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map,0,[1,Inf]);
+            is_mor=D3D_is(fpath_map);
+            [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map,is_mor,[1,Inf]);
             sim_idx=NaN(size(time_r));
         end
         data=v2struct(time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx);

@@ -10,7 +10,12 @@
 %$Id$
 %$HeadURL$
 %
+%Find index <idx> of vector <v> with value closer to <o>.
 %
+%OUTPUT:
+%   -idx: index
+%   -min_v: difference with objective
+%   -flg_found: 0=not found; 1=found
 
 function [idx,min_v,flg_found]=absmintol(v,o,varargin)
 

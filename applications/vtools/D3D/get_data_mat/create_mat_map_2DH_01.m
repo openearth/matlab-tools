@@ -39,6 +39,11 @@ if isfield(flg_loc,'var_idx')==0
 end
 var_idx=flg_loc.var_idx;
 
+if isfield(flg_loc,'tol')==0
+    flg_loc.tol=1.5e-7;
+end
+tol=flg_loc.tol;
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -110,7 +115,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'layer',layer);    
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'layer',layer,'tol',tol);    
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end
