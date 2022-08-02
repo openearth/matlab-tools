@@ -23,6 +23,7 @@
 % in_plot.(tag).layer=NaN; %NaN=top layer
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
 % in_plot.(tag).tim=NaN; %all times
+% in_plot.(tag).order_anl=2; %1=normal; 2=random
 % in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
 % % in_plot.(tag).clims_type_var=datenum(2018,07,01); %in case of <clims_type>=2
 % in_plot.(tag).clims=[NaN,NaN]; 

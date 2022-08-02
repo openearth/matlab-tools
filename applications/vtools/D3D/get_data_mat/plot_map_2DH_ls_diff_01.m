@@ -20,13 +20,22 @@ function plot_map_2DH_ls_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
 ret=gdm_do_mat(fid_log,flg_loc,tag,'do_s'); if ret; return; end
 
+%% PARSE
+
+tol_tim=1; %tolerance to match objective day with available day
+if isfield(flg_loc,'tol_tim')
+    tol_tim=flg_loc.tol_tim;
+end
+
 %% PATHS
 
 nS=numel(simdef);
 fdir_mat_ref=simdef_ref.file.mat.dir;
-% fdir_mat=simdef.file.mat.dir;
-fpath_mat=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
-fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
+fdir_mat=simdef.file.mat.dir;
+fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
+fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); 
+fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); 
 if nS==1
     fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
     runid=sprintf('%s-%s',simdef.file.runid,simdef_ref.file.runid);
@@ -39,16 +48,15 @@ mkdir_check(fdir_fig);
 % fpath_map=simdef_ref.file.map;
 % runid_ref=simdef_ref.file.runid;
 
-    
-
 %% TIME
 
-load(fpath_mat_time,'tim');
-v2struct(tim); %time_dnum, time_dtime
+tim_ref=load(fpath_mat_time_ref,'tim');
+tim    =load(fpath_mat_time,'tim');
+time_dnum=tim.tim.time_dnum; %time_dnum is the local one
 
 %% DIMENSIONS
 
-nt=numel(time_dnum);
+nt=numel(time_dnum); %we loop over time and check whether there is a reference
 nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
 nylims=size(flg_loc.ylims,1);
@@ -71,7 +79,18 @@ fpath_file=cell(nt,nylims,npli,nvar);
 for kt=kt_v
     ktc=ktc+1;
     
-    in_p.tim=time_dnum(kt);
+    %match times
+    tim_search=gdm_time_dnum_flow_mor(flg_loc,tim.tim.time_dnum(kt),tim.tim.time_mor_dnum(kt)); %[1,1]
+    tim_ref_v=gdm_time_dnum_flow_mor(flg_loc,tim_ref.tim.time_dnum,tim_ref.tim.time_mor_dnum); %[nt_ref,1] 
+    [idx,min_v,flg_found]=absmintol(tim_ref_v,tim_search,'tol',tol_tim,'do_break',0,'do_disp_list',0,'dnum',1);
+    if ~flg_found
+        messageOut(fid_log,'No available reference data:');
+        messageOut(fid_log,sprintf('     time                  : %s',datestr(tim_search    ,'yyyy-mm-dd HH:MM:SS')));
+        messageOut(fid_log,sprintf('     closest reference time: %s',datestr(tim_ref_v(idx),'yyyy-mm-dd HH:MM:SS')));
+        continue
+    end    
+    
+    in_p.tim=tim_search;
     for kpli=1:npli
         fpath_pli=flg_loc.pli{kpli,1};
         [~,pliname,~]=fileparts(fpath_pli);

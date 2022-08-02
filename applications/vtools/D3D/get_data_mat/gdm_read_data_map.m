@@ -16,8 +16,6 @@ function data=gdm_read_data_map(fdir_mat,fpath_map,varname,varargin)
 
 %% PARSE
 
-%% PARSE
-
 parin=inputParser;
 
 addOptional(parin,'tim',[]);

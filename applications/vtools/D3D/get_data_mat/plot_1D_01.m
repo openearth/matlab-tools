@@ -227,15 +227,3 @@ fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d',tag,runid,datestr(t
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
 end %function
-
-%%
-
-function tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum)
-
-if flg_loc.tim_type==1
-    tim_search_in_mea=time_dnum;
-elseif flg_loc.tim_type==2
-    tim_search_in_mea=time_mor_dnum;
-end
-
-end %function
