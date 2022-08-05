@@ -17,21 +17,55 @@
 %   -var_str_read = save name of the variable to read [char]
 %   -var_str_save = save name of the processed variable [char]
 
-function [var_str_read,var_id,var_str_save]=D3D_var_num2str(var_id)
+function [var_str_read,var_id_out,var_str_save]=D3D_var_num2str(var_id,varargin)
 
+%%
+
+parin=inputParser;
+
+addOptional(parin,'is1d',false);
+addOptional(parin,'ismor',false);
+
+parse(parin,varargin{:});
+
+is1d=parin.Results.is1d;
+ismor=parin.Results.ismor;
+
+%%
+
+var_id_out=var_id;
+var_str_read=var_id;
+var_str_save=var_id;
 
 if ischar(var_id)
     switch var_id
         case 'detab_ds'
             var_str_read='mesh2d_mor_bl';
             var_str_save=var_id;
-            var_id=var_str_read;
+            var_id_out=var_str_read;
+        case 'bl'
+            if is1d
+                if ismor
+                    var_id_out='mesh1d_mor_bl';
+                else
+                    var_id_out='mesh1d_flowelem_bl';
+                end
+            end
+        case 'h'
+            if is1d
+                var_id_out='mesh1d_waterdepth';
+            end
+        case 'umag'
+            if is1d
+                var_id_out='mesh1d_umod';
+            else
+                var_id_out='mesh2d_ucmag';
+            end
         otherwise
-            var_str_read=var_id;
-            var_str_save=var_str_read;
+
     end
 else
-    var_str_read=fcn_num2str(var_id);
+    var_str_read=fcn_num2str(var_id_out);
     var_str_save=var_str_read;
 end
 

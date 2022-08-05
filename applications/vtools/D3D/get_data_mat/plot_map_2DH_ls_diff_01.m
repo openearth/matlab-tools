@@ -119,7 +119,7 @@ for kt=kt_v %time
             data_ref_t0=load(fpath_mat_tmp,'data');
             
                 %we are taking the last simulation (last loaded time). They should all be the same.
-            val0=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref_t0,fdir_mat,tag,var_str,pliname);    
+            val0=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref_v(1),data_ref_t0,fdir_mat,tag,var_str,pliname);    
             
             in_p.s=data_ref.data.Scen;
             in_p.val=val;
@@ -129,7 +129,7 @@ for kt=kt_v %time
             for kylim=1:nylims
                 in_p.ylims=flg_loc.ylims(kylim,:);
 
-                fname_noext=fig_name(fdir_fig_loc,tag,time_dnum(kt),var_str,pliname,kylim,runid);
+                fname_noext=fig_name(fdir_fig_loc,tag,time_ref,var_str,pliname,kylim,runid);
                 fpath_file{kt,kylim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                 in_p.fname=fname_noext;
@@ -198,12 +198,12 @@ if ~flg_found
     messageOut(fid_log,sprintf('     reference time   : %s',datestr(time_ref      ,'yyyy-mm-dd HH:MM:SS')));
     messageOut(fid_log,sprintf('     closest   time   : %s',datestr(time_loc_v(kt_loc),'yyyy-mm-dd HH:MM:SS')));
 
-    val(:,kS)=NaN(nx,1);
+    val=NaN(nx,1);
 else
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt_loc),'var',var_str,'pli',pliname);
     data=load(fpath_mat_tmp,'data');
 
-    val(:,kS)=D3D_diff_val(data.data.val,data_ref.data.val,data.data.Scen,data_ref.data.Scen);
+    val=D3D_diff_val(data.data.val,data_ref.data.val,data.data.Scen,data_ref.data.Scen);
 end    
 
 end %function

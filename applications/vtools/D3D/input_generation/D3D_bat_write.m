@@ -19,7 +19,7 @@ fid_bat=fopen(fullfile(dire_sim,'run.bat'),'w');
 fprintf(fid_bat,'@ echo off \r\n');
 switch structure
     case 1 %D3D4
-        strsoft_lin=sprintf('call %s\\x64\\dflow2d3d\\scripts\\run_dflow2d3d.bat %s',fpath_software,dimr_str);
+        strsoft_win=sprintf('call %s\\x64\\dflow2d3d\\scripts\\run_dflow2d3d.bat %s',fpath_software,dimr_str);
     case 2 %FM
         strsoft_win=sprintf('call %s\\x64\\dimr\\scripts\\run_dimr.bat %s',fpath_software,dimr_str);
 end

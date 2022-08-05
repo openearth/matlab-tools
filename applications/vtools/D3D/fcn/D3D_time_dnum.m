@@ -16,7 +16,7 @@
 %NaN = all
 %Inf = last
 
-function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,in_dtime,varargin)
+function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g]=D3D_time_dnum(fpath_map,in_dtime,varargin)
 
 %% PARSE
 

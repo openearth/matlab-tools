@@ -30,6 +30,7 @@ addOptional(parin,'tim2',[]);
 addOptional(parin,'stat','');
 addOptional(parin,'var_idx','');
 addOptional(parin,'sim_idx',''); %just to be able to pass all varargin
+addOptional(parin,'branch',''); 
 
 parse(parin,varargin{:});
 
@@ -44,6 +45,7 @@ sb=parin.Results.sb;
 time_dnum_2=parin.Results.tim2;
 stat=parin.Results.stat;
 var_idx=parin.Results.var_idx;
+branch=parin.Results.branch;
 
 %%
 
@@ -108,6 +110,11 @@ end
 %var_idx
 if ~isempty(var_idx)
     str_add=sprintf('%s_var_idx_%02d',str_add,var_idx);
+end
+
+%branch
+if ~isempty(branch)
+    str_add=sprintf('%s_branch_%s',str_add,branch);
 end
 
 %final

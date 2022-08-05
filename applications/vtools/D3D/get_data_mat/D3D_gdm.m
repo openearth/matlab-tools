@@ -12,6 +12,45 @@
 %
 %variables: open D3D_list_of_variables
 
+%% PREAMBLE
+
+% %
+% %Victor Chavarrias (victor.chavarrias@deltares.nl)
+% %
+% %$Revision$
+% %$Date$
+% %$Author$
+% %$Id$
+% %$HeadURL$
+% %
+% %Description
+% 
+% %% PREAMBLE
+% 
+% % dbclear all;
+% clear
+% clc
+% fclose all;
+% 
+% %% PATHS
+% 
+% fpath_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+% 
+% % fpath_project='d:\temporal\220517_improve_exner\';
+% fpath_project='p:\dflowfm\projects\2022_improve_exner\';
+% 
+% %% ADD OET
+% 
+% if isunix
+%     fpath_add_fcn=strrep(strrep(strcat('/',strrep(fpath_add_fcn,'P:','p:')),':',''),'\','/');
+% end
+% addpath(fpath_add_fcn)
+% addOET(fpath_add_fcn) 
+% 
+% %% PATHS
+% 
+% fpaths=paths_project(fpath_project);
+
 %% 2DH
 
 % tag='fig_map_2DH_01';
@@ -56,6 +95,54 @@
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).ml=2.5;
 % in_plot.(tag).plot_markers=1;
+
+%% summerbed
+
+%computes statistic values (mean, max, min, std) of a variables inside the summerbed 
+%and inside a kilometre polygon. 
+
+% tag='fig_map_summerbed_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).tim=NaN; %analysis time [datenum, datetime]. NaN=all, Inf=last.
+% % in_plot.(tag).tim=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)];
+% in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
+% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).do_movie=0;
+% % in_plot.(tag).statis_plot={'val_mean'}; %statistics to plot. Comment to have all. 
+% in_plot.(tag).var={'mesh2d_taus'}; % ,'mesh2d_dg'} %,14,27,'mesh2d_dg'}; % ,14,27,44,'mesh2d_dg',47}; %{1,14,27,44,'mesh2d_dg','mesh2d_DXX01','mesh2d_DXX06'}; %can be cell array vector. See <open D3D_list_of_variables> for possible input flags
+% in_plot.(tag).rkm={145:1:175}; %river km vectors to average the data; cell(1,nrkm)
+% in_plot.(tag).rkm_name={'1km'}; %name of the river km vector (for saving); cell(1,nrkm)
+%     %construct branches name
+%     for kidx=1:numel(in_plot.(tag).rkm)
+%         in_plot.(tag).rkm_br{kidx,1}=maas_branches(in_plot.(tag).rkm{kidx}); %branch name of each rkm point
+%     end
+% in_plot.(tag).xlims=[145,175]; %x limits for plotting [nxlims,2]
+% in_plot.(tag).fpath_rkm=fullfile(fpaths.dir_rkm,'rkm.csv'); %river kilometer file. See format: open convert2rkm
+% 
+% %polygons and measurements associated to it
+% 
+% kp=0;
+% 
+% kp=kp+1;
+% in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.dir_rkm,'L3R3.shp');
+% in_plot.(tag).measurements{kp,1}=fullfile(fpaths.dir_data,'20220415_van_Arjan_1d_calibratie_parameters','L3R3_measured.mat'); 
+%
+% %time average
+%
+% %Computes the statistics (mean, max, min, std) for each statistic of a variable over a period of time. E.g., 
+% %the std of the bed elevation between <t1> and <t2>.
+%
+% in_plot.(tag).overwrite_ave=1; %overwrite mat-files
+% %Times taken to compute the statistics in time. [<t3>,<t4>] means e.g. that the mean is based on the results at <t3> and <t4>. 
+% %For computing the mean based on all results between <t1> and <t2>, set these times in <tim> and set NaN in <tim_ave> (i.e., the time in <tim_ave> is the same as that in <tim>). 
+% in_plot.(tag).tim_ave{1,1}=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)]; 
+% in_plot.(tag).tim_ave_type=2; %1=flow; 2=morpho
+% in_plot.(tag).tol_tim=30; %tolerance to match day in period with results
+
+
+%%
 
 function D3D_gdm(in_plot)
 
@@ -110,6 +197,7 @@ for ks=1:ns
     
     %% map summerbed
     if isfield(in_plot,'fig_map_summerbed_01')==1
+        in_plot.fig_map_summerbed_01.tag='map_summerbed_01';
         create_mat_map_summerbed_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
         pp_sb_var_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
             if isfield(in_plot.fig_map_summerbed_01,'tim_ave')
@@ -139,6 +227,12 @@ for ks=1:ns
     if isfield(in_plot,'fig_his_obs_01')==1
         in_plot.fig_his_obs_01.tag='his_obs_01';
         create_mat_his_obs_01(fid_log,in_plot.fig_his_obs_01,simdef)
+    end
+    
+    %% map 1D
+    if isfield(in_plot,'fig_map_1D')==1
+        in_plot.fig_map_1D.tag='map_1D';
+        create_mat_map_1D(fid_log,in_plot.fig_map_1D,simdef)
     end
     
 end %ks
@@ -231,6 +325,12 @@ for ks=1:ns
         plot_his_obs_01(fid_log,in_plot.fig_his_obs_01,simdef)
     end
     
+    %% map 1D
+    if isfield(in_plot,'fig_map_1D')==1
+        plot_map_1D_xv_01(fid_log,in_plot.fig_map_1D,simdef);
+        %create part to plot all simulations in one plot
+    end
+    
 end %ks
 
 %% differences plot
@@ -256,9 +356,9 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref)
 
         %% map_sal_01
         if isfield(in_plot,'fig_map_sal_01')==1
-            in_plot_loc=in_plot_loc.fig_map_sal_01;
-            in_plot_loc.tag_fig=sprintf('%s_diff',in_plot_loc.tag);
-            plot_map_sal_diff_01(fid_log,in_plot_loc,simdef_ref,simdef)
+%             in_plot_loc=in_plot_loc.fig_map_sal_01;
+%             in_plot_loc.tag_fig=sprintf('%s_diff',in_plot_loc.tag);
+%             plot_map_sal_diff_01(fid_log,in_plot_loc,simdef_ref,simdef)
         end
 
         %% sal mass  
@@ -283,7 +383,7 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref)
             in_plot.fig_map_2DH_ls_01.tag_fig=sprintf('%s_diff',in_plot.fig_map_2DH_ls_01.tag);
             plot_map_2DH_ls_diff_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef_ref,simdef)
         end
-    end
+    end %ks
 
     %% differences plot all in one
 
@@ -319,6 +419,8 @@ end %reference run
 
 %% plot all runs in same figure
 
+if ns>1
+    
 messageOut(fid_log,'---Plotting all runs in one figure')
 
 for ks=1:ns
@@ -336,5 +438,6 @@ if isfield(in_plot,'fig_map_summerbed_01')==1
     plot_1D_01(fid_log,in_plot.fig_map_summerbed_01,simdef_all_2)
 end
 
+end
 
 end %function

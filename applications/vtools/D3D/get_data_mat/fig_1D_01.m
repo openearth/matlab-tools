@@ -103,6 +103,9 @@ end
 if isfield(in_p,'ml')==0
     in_p.ml=1.5;
 end
+if isfield(in_p,'do_marker')==0
+    in_p.do_marker=0;
+end
 
 v2struct(in_p)
 
@@ -176,7 +179,11 @@ if nv<=9
 else
     cmap=jet(nv);
 end
-
+if do_marker
+    mk=repmat({'o','+','*','.','x','s','d','^','v','>','<','p','h'},1,nv); %we are for sure safe...
+else
+    mk=repmat({'none'},1,nv);
+end
 %center around 0
 % ncmap=1000;
 % cmap1=brewermap(ncmap,'RdYlGn');
@@ -341,7 +348,7 @@ end
 
 kr=1; kc=1;    
 for kv=1:nv
-han.p(kr,kc,kv)=plot(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.p(kr,kc,kv)=plot(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',mk{kv});
 end
 if isfield(in_p,'leg_str')
     str_sim=leg_str;

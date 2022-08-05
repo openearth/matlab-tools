@@ -24,6 +24,7 @@ addOptional(parin,'var_idx',[]);
 addOptional(parin,'layer',[]);
 addOptional(parin,'do_load',1);
 addOptional(parin,'tol',1.5e-7);
+addOptional(parin,'idx_branch',[]);
 
 parse(parin,varargin{:});
 
@@ -33,6 +34,7 @@ var_idx=parin.Results.var_idx;
 layer=parin.Results.layer;
 do_load=parin.Results.do_load;
 tol=parin.Results.tol;
+idx_branch=parin.Results.idx_branch;
 
 %% 
 
@@ -46,7 +48,7 @@ switch varname
             case 1
                 data_var=gdm_read_data_map(fdir_mat,fpath_map,'DPS','tim',time_dnum); 
             case {2,4}
-                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum); 
+                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch); 
         end
     case {'T_max','T_da','T_surf'}         
         if isempty(var_idx)
@@ -55,7 +57,7 @@ switch varname
         data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol); 
         
     otherwise %name directly available in output
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch); 
 end
 
 end %function

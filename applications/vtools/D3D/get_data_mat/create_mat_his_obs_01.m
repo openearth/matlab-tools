@@ -26,6 +26,11 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 %     flg_loc.write_shp=0;
 % end
 
+where_obs=1; %default is from <ObsFile> in mdu
+if isfield(flg_loc,'fpath_obs_plot')==1
+    where_obs=2;
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -40,14 +45,19 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% OBSERVATION STATIONS
 
-obs=struct('name',{''},'xy',{[]});
-nobsf=numel(simdef.file.obsfile);
-for kobsf=1:nobsf
-    obs_loc=D3D_io_input('read',simdef.file.obsfile{1,kobsf},'version',2);
-    obs=[obs;obs_loc];
+switch where_obs
+    case 1
+        obs=D3D_io_input('read',simdef.file.obsfile,'version',2);
+        do_all=num2cell(ones(numel(obs),1));
+        [obs.do_plot]=do_all{:};
+        [obs.do_label]=do_all{:};
+    case 2
+        obs_num=readmatrix(flg_loc.fpath_obs_plot,'FileType','text','delimiter',',');
+        obs_nam=readcell(flg_loc.fpath_obs_plot,'FileType','text','delimiter',',');
+        
+        obs=struct('name',obs_nam(:,3),'xy',num2cell(obs_num(:,1:2),2),'do_plot',num2cell(obs_num(:,4)),'do_label',num2cell(obs_num(:,5)));
 end
-%remove first
-obs(1)=[];
+
 %clean names
 nobs=numel(obs);
 for kobs=1:nobs

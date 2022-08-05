@@ -311,7 +311,9 @@ if plot_ldb
 end
 nobs=numel(data.obs);
 for kobs=1:nobs
-    scatter(data.obs(kobs).xy(1),data.obs(kobs).xy(2),10,'r','filled');
+    if data.obs(kobs).do_plot
+        scatter(data.obs(kobs).xy(1),data.obs(kobs).xy(2),10,'r','filled');
+    end
 %     text(obs(kobs).xy(1),obs(kobs).xy(2),strrep(obs(kobs).name,'_','\_'));
 end
 ncrs=numel(data.crs);
@@ -412,7 +414,9 @@ han.fig.Renderer='painters';
 
 %here to prevent the change in all font size
 for kobs=1:nobs
-    text(data.obs(kobs).xy(1),data.obs(kobs).xy(2),strrep(data.obs(kobs).name,'_','\_'),'fontsize',6,'color',text_color);
+    if data.obs(kobs).do_label
+        text(data.obs(kobs).xy(1),data.obs(kobs).xy(2),strrep(data.obs(kobs).name,'_','\_'),'fontsize',6,'color',text_color);
+    end
 end
 for kcrs=1:ncrs
     text(mean(data.crs(kcrs).xy(:,1)),mean(data.crs(kcrs).xy(:,2)),strrep(data.crs(kcrs).name,'_','\_'),'fontsize',6,'color',text_color);

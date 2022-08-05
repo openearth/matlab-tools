@@ -18,7 +18,8 @@
 %   -fpath_nc: path to the netcdf-file [string]
 %   -ismor: whether the simulation morphodynamic development: 0=NO; 1=YES [double]
 %   -kt: time to read as [start,counter] [double]
-%       if NaN it reads the last one
+%       NaN     = last 
+%       [1,Inf] = all 
 
 function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,kt)
 

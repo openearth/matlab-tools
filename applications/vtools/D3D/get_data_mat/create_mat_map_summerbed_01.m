@@ -22,6 +22,12 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
+if isfield(flg_loc,'sb_pol')==0
+    %2DO
+    %if no input, all points taken.
+    error('You need to specify the summerbed polygon')
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -153,8 +159,9 @@ end %ksb
 %% SAVE
 
 %only dummy for preventing passing through the function if not overwriting
-data=NaN;
-save(fpath_mat,'data')
+%this is not nice though, because a change in time analysis will not be checked. 
+% data=NaN;
+% save(fpath_mat,'data')
 
 end %function
 

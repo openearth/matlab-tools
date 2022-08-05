@@ -20,6 +20,36 @@
 
 function varargout=D3D_io_input(what_do,fname,varargin)
 
+%% cell 
+
+if iscell(fname)
+    F=@(X)fileparts_ext(X);
+    ext_c=cellfun(F,fname,'UniformOutput',false);
+    idx_ext=find_str_in_cell(ext_c,ext_c(1));
+    nf=numel(fname);
+    if numel(idx_ext)~=nf
+        error('Not all files in the cell array have the same extension')
+    end
+    
+    kf=1;
+    stru_out_all=D3D_io_input(what_do,fname{kf},varargin{:});
+    for kf=2:nf
+        stru_out_loc=D3D_io_input(what_do,fname{kf},varargin{:});
+        if isstruct(stru_out_loc)
+            if numel(stru_out_loc)==1
+                error('do concatenation of variables')
+            else %concatenation of structures
+                stru_out_all=[stru_out_all;stru_out_loc];
+            end
+            
+        end
+        
+    end
+    varargout{1,1}=stru_out_all;
+    return
+end
+
+%% char
 if ~ischar(fname)
     error('fname should be char')
 end
@@ -222,3 +252,12 @@ end
 
 end %function
 
+%%
+%%
+%%
+
+function ext=fileparts_ext(fname)
+
+[~,~,ext]=fileparts(fname);
+
+end

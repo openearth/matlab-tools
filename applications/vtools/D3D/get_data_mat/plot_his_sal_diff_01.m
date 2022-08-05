@@ -43,7 +43,7 @@ ns=numel(stations);
 %load
 % load(fpath_mat,'data');
 % load(simdef.file.mat.grd,'gridInfo');
-[nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,'');
+[nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his);
 
 nylim=size(flg_loc.ylims_diff,1);
 

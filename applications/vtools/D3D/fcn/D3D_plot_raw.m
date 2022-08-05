@@ -15,15 +15,15 @@
 %% SCRIPT
 %%
 
-%
-%Victor Chavarrias (victor.chavarrias@deltares.nl)
-%
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
-%
+% %
+% %Victor Chavarrias (victor.chavarrias@deltares.nl)
+% %
+% %$Revision$
+% %$Date$
+% %$Author$
+% %$Id$
+% %$HeadURL$
+% %
 
 % %% PREAMBLE
 % 
@@ -51,6 +51,7 @@
 % %% INPUT
 % 
 % %his
+% flg.his_sta=0; %stations
 % flg.his_sal=0; %salinity
 %     flg.sal_u=0; %unit: 1=psu; 2=chlorinity
 % flg.his_etaw=0; %water level
@@ -112,7 +113,7 @@ else
 end
 
 %flags his
-if any([flg.his_sal,flg.his_etaw,flg.his_dt,flg.his_ucmaga,flg.his_times])
+if any([flg.his_sal,flg.his_etaw,flg.his_dt,flg.his_ucmaga,flg.his_times,flg.his_sta])
     flg.his=1;
 else
     flg.his=0;
@@ -133,12 +134,6 @@ end
 if flg.his
     [~,~,time_dnum_his_0,time_dtime_his_0]=D3D_results_time(path_his,0,[1,1]);
     [~,~,time_dnum_his_f,time_dtime_his_f]=D3D_results_time(path_his,0,NaN);
-    if flg.his_times
-        fprintf('his-results: \n');
-        fprintf('%s \n',datestr(time_dtime_his_0,'yyyy-mm-dd HH:MM:SS'))
-        fprintf('%s \n',datestr(time_dtime_his_f,'yyyy-mm-dd HH:MM:SS'))
-        return
-    end
     if isnan(t0)
         t0=time_dnum_his_0;
         tend=time_dnum_his_f;
@@ -156,6 +151,31 @@ end
 
 dir_figs=fullfile(simdef.D3D.dire_sim,'figures','checks');
 mkdir_check(dir_figs);
+
+%% checks without loading data
+
+%% times
+if flg.his_times
+    fprintf('his-results: \n');
+    fprintf('%s \n',datestr(time_dtime_his_0,'yyyy-mm-dd HH:MM:SS'))
+    fprintf('%s \n',datestr(time_dtime_his_f,'yyyy-mm-dd HH:MM:SS'))
+end
+
+%% stations
+
+if flg.his_sta
+    obs=D3D_observation_stations(path_his);
+    nobs=numel(obs.name);
+    for kobs=1:nobs
+        fprintf('%s \n',obs.name{kobs});
+    end
+end
+
+%% ret
+
+if flg.his_times || flg.his_sta
+    return
+end
 
 %% LOAD
 
@@ -233,7 +253,7 @@ end
 end %map
 
 %% HIS
-
+    
 %% sal
 if flg.his_sal
     
@@ -443,6 +463,7 @@ end %map
 %% HIS
 %%
 
+
 %% sal
 
 if flg.his_sal
@@ -514,46 +535,11 @@ end %sal
 
 if flg.his_etaw
    
-ns=size(his_wl.val,2);
-
-tim_datet=datetime(his_wl.times,'convertFrom','datenum');
-
+    plot_his(flg,his_wl,dir_figs); 
 if flg.fig_separate
-    %%
-    stations=his_wl.stationNames;
-    han.phe=[];
-    for ks=1:ns
-        figure('visible',fig_visible)
-        hold on
-        han.phe(ks)=plot(tim_datet,his_wl.val(:,ks,:),'color','k');
-%         legend(han.phe,strrep(stations,'_','\_'));
-        ylabel('water level [m+NAP]')
-        fname_fig=sprintf('%s_etaw.png',stations{ks});
-        path_fig=fullfile(dir_figs,fname_fig);
-        if flg.fig_print
-            print(gcf,path_fig,'-dpng','-r300')   
-            close(gcf)
-        end
-    end %ks  
-    
+    plot_his_sep(flg,his_wl,dir_figs); 
 else
-    cmap=brewermap(ns,'set1');
-    figure('visible',fig_visible)
-    hold on
-    han.phe=[];
-    for ks=1:ns
-        han.phe(ks)=plot(tim_datet,his_wl.val(:,ks,:),'color',cmap(ks,:));
-    end %ks
-    legend(han.phe,strrep(stations,'_','\_'));
-    ylabel('water level [m+NAP]')
-
-    fname_fig=sprintf('%s_etaw.png',stations{ks});
-    path_fig=fullfile(dir_figs,fname_fig);
-    if flg.fig_print
-        print(gcf,path_fig,'-dpng','-r300')    
-        close(gcf)
-    end
-    
+    plot_his_together(flg,his_wl,dir_figs);     
 end
 
 end %his_etaw
@@ -587,36 +573,100 @@ end %function
 %% FUNCTIONS
 %%
 
+%%
+
 function plot_his_sep(flg,his_wl,dir_figs)
     
-    fig_visible=~flg.fig_print;
-    if isfield(flg,'fig_visible')==1
-        fig_visible=flg.fig_visible;
-    end
-    
-    fig_close=~flg.fig_print;
-    if isfield(flg,'fig_close')==1
-        fig_close=flg.fig_close;
-    end
-    
-    tim_datet=datetime(his_wl.times,'convertFrom','datenum');
-    stations=his_wl.requestedStations;
-    ns=numel(stations);
-    han.phe=[];
-    for ks=1:ns
-        figure('visible',fig_visible)
-        hold on
-        han.phe(ks)=plot(tim_datet,his_wl.val(:,ks,:),'color','k');
-        ylabel(labels4all(his_wl.OPT.varName,1,'en'))
-        fname_fig=sprintf('%s_%s.png',stations{ks},his_wl.OPT.varName);
-        title(strrep(stations{ks},'_','\_'))
-        path_fig=fullfile(dir_figs,fname_fig);
-        if flg.fig_print
-            print(gcf,path_fig,'-dpng','-r300')  
-            if fig_close
-                close(gcf)
-            end
+fig_visible=~flg.fig_print;
+if isfield(flg,'fig_visible')==1
+    fig_visible=flg.fig_visible;
+end
+
+fig_close=~flg.fig_print;
+if isfield(flg,'fig_close')==1
+    fig_close=flg.fig_close;
+end
+
+tim_datet=datetime(his_wl.times,'convertFrom','datenum');
+stations=his_wl.requestedStations;
+ns=numel(stations);
+
+han.phe=[];
+for ks=1:ns
+    figure('visible',fig_visible)
+    hold on
+    han.phe(ks)=plot(tim_datet,his_wl.val(:,ks,:),'color','k');
+    ylabel(labels4all(his_wl.OPT.varName,1,'en'))
+    fname_fig=sprintf('%s_%s.png',stations{ks},his_wl.OPT.varName);
+    title(strrep(stations{ks},'_','\_'))
+    path_fig=fullfile(dir_figs,fname_fig);
+    if flg.fig_print
+        print(gcf,path_fig,'-dpng','-r300')  
+        if fig_close
+            close(gcf)
         end
-    end %ks  
+    end
+end %ks  
     
 end %plot_his_sep
+
+%%
+
+function plot_his_together(flg,his_wl,dir_figs)
+
+fig_visible=~flg.fig_print;
+if isfield(flg,'fig_visible')==1
+    fig_visible=flg.fig_visible;
+end
+
+fig_close=~flg.fig_print;
+if isfield(flg,'fig_close')==1
+    fig_close=flg.fig_close;
+end
+
+tim_datet=datetime(his_wl.times,'convertFrom','datenum');
+stations=his_wl.requestedStations;
+ns=numel(stations);
+
+if ns<=9
+    cmap=brewermap(ns,'set1');
+else
+    cmap=jet(ns);
+end
+
+figure('visible',fig_visible)
+hold on
+han.phe=[];
+for ks=1:ns
+    han.phe(ks)=plot(tim_datet,his_wl.val(:,ks,:),'color',cmap(ks,:));
+end %ks
+legend(han.phe,strrep(stations,'_','\_'),'location','eastoutside');
+% legend(han.phe,strrep(stations,'_','\_'),'location','eastoutside','fontsize',3);
+ylabel(labels4all(his_wl.OPT.varName,1,'en'))
+
+fname_fig=sprintf('%s_etaw.png','obs');
+path_fig=fullfile(dir_figs,fname_fig);
+if flg.fig_print
+    print(gcf,path_fig,'-dpng','-r300')   
+    if fig_close
+        close(gcf)
+    end
+end
+    
+end %function
+
+%%
+
+function plot_his(flg,his_wl,dir_figs)
+
+if isfield(flg,'fig_separate')==0
+    flg.fig_separate=0;
+end
+
+if flg.fig_separate
+    plot_his_sep(flg,his_wl,dir_figs); 
+else
+    plot_his_together(flg,his_wl,dir_figs);     
+end
+
+end %function

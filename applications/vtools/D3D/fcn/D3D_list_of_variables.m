@@ -25,7 +25,7 @@ function D3D_list_of_variables
 %   2   'h'     = flow depth (h) [m]
 %   12  'wl'    = water level
 
-%   10  'mesh2d_ucmag'  = depth averaged velocity [m/s]
+%   10  'umag'  = depth averaged velocity [m/s]
 %   11  'uv'            = velocity [m/s] 
 
 %   18=water discharge 
@@ -42,17 +42,19 @@ function D3D_list_of_variables
 
 %% MORPHODYNAMIC
 
-%   9 =detrended etab based on etab_0
-%   15=bed shear stress
-%   17=cumulative bed elevation
-%   25=total sediment mass (summation of all substrate layers, including active layer)
+%   9                   = detrended etab based on etab_0
+%   15  'mesh2d_taus'   = bed shear stress [Pa]
+%   17  (plot diff)     = cumulative bed elevation
+%   25                  = total sediment mass (summation of all substrate layers, including active layer)
 
-%   48          = total sediment transport at nodes [m^2/s]
-%   44  'sb'    = total bed load transport at nodes [m^2/s] 
-%   29          = sediment transport magnitude at edges m^2/s
-%   30          = sediment transport magnitude at edges m^3/s
+%   48                  = total sediment transport at nodes [m^2/s]
+%   44  'sb'            = total bed load transport at nodes [m^2/s] 
+%   29                  = sediment transport magnitude at edges m^2/s
+%   30                  = sediment transport magnitude at edges m^3/s
 
-%	47=morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
+%	47                  = morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
+
+%       'deta_ds'       = slope in streamwise direction (only for <summerbed> analysis)
 
     %% his
 
