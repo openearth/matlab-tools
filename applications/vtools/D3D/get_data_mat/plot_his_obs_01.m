@@ -74,6 +74,7 @@ for kxlim=1:nxlim
         in_p.ylims=flg_loc.ylims(kxlim,:);
     end
     
+    in_p.tiles_zoom=flg_loc.tiles_zoom(kxlim);
 
     fname_noext=fig_name(fdir_fig,tag,runid,kxlim);
     in_p.fname=fname_noext;

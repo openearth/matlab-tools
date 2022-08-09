@@ -27,6 +27,9 @@ end
 if isfield(in_2D.fig,'fig_print')==0
     in_2D.fig.fig_print=false;
 end
+if isfield(in_2D.fig,'fig_name')==0
+    in_2D.fig.fig_name='domain';
+end
 if isfield(in_2D.fig,'print_size')==0
     in_2D.fig.print_size=[0,0,17,10];
 end
@@ -94,7 +97,7 @@ ks=1;
 %%
 %figure input
 % prnt.filename=sprintf('dom_%s',str_p{1,ks});
-prnt.filename='domain';
+prnt.filename=fig_name;
 prnt.size=print_size; %slide=[0,0,25.4,19.05]; tex=[0,0,11.6,..]
 npr=1; %number of plot rows
 npc=2; %number of plot columns

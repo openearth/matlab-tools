@@ -25,6 +25,12 @@
 %
 %   OPTION 4
 %   varargin = double indices to load
+%
+%E.g.
+%[data_stations,idx]=read_data_stations('c:\Users\chavarri\checkouts\riv\data_stations','location','HOEKVHLRTOVR','grootheid','CONCTTE','bemonsteringshoogte',-9);
+%figure
+%plot(data_stations.time,data_stations.waarde);
+%ylabel(data_stations.grootheid)
 
 function [data_stations,idx]=read_data_stations(paths_main_folder,varargin)
 
@@ -48,7 +54,7 @@ for kv=1:nv
     val=varargin{kv*2};
     switch par
         case 'bemonsteringshoogte'
-            if val<-1e-7
+            if abs(val)<-1e-7
                 varargin_clean(kv*2-1:kv*2)='';
                 messageOut(NaN,sprintf('Parameter without meaning removed: %s',par))
             end

@@ -61,7 +61,7 @@ if exist(fpath_mat_time,'file')==2
     
     nt1=numel(tim_cmp);
     nt2=numel(tim_obj);
-    ntT=NC_nt(fpath_map); 
+    ntT=D3D_nt(fpath_map); 
     if isnan(tim_obj(1)) && ntT==nt1
         messageOut(fid_log,'Requested time is the same as existing one. Loading.')
     elseif nt1~=nt2 || any(abs(reshape(tim_cmp,1,[])-reshape(tim_obj,1,[]))>tim_tol_d) 

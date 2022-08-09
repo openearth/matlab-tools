@@ -56,6 +56,9 @@ end
 if isfield(in_p,'plot_sat')==0
     in_p.plot_sat=1;   
 end
+if isfield(in_p,'fpath_tiles')==0 && in.plot_sat
+    error('Provide path to save tiles <fpath_tiles>')
+end
 
 v2struct(in_p)
 
@@ -63,6 +66,10 @@ if plot_sat
     text_color='w';
 else
     text_color='k';
+end
+
+if isfolder(fpath_tiles)==0
+    error('<fpath_tiles> is not a folder')
 end
 
 %%
@@ -287,17 +294,19 @@ han.sfig(kr,kc).Title.String=titles;
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
+if plot_sat
 kr=1; kc=1;
 OPT.xlim=xlims;
 OPT.ylim=ylims;
 OPT.epsg_in=28992; %WGS'84 / google earth
 OPT.epsg_out=28992; %Amersfoort
-OPT.tzl=10; %zoom
+OPT.tzl=tiles_zoom; %zoom
 OPT.save_tiles=false;
 OPT.path_save=fullfile(pwd,'earth_tiles');
-OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
+OPT.path_tiles=fpath_tiles; 
 OPT.map_type=3;%map type
 OPT.han_ax=han.sfig(kr,kc);
+end
 
 plotMapTiles(OPT);
 

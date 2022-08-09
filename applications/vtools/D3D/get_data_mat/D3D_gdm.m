@@ -240,9 +240,12 @@ end %ks
 
 %% PLOT
 
+%%
 %% individual runs
+%%
 
 messageOut(fid_log,'---Plotting individual runs')
+
 for ks=1:ns
     
     %% paths
@@ -333,10 +336,12 @@ for ks=1:ns
     
 end %ks
 
-%% differences plot
-
-if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref)
-
+if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref) && ns>1
+    
+    %%
+    %% differences plot
+    %%
+    
     messageOut(fid_log,'---Plotting differences between runs')
 
     %reference paths
@@ -385,8 +390,10 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref)
         end
     end %ks
 
+    %%
     %% differences plot all in one
-
+    %%
+    
     messageOut(fid_log,'---Plotting differences between runs in one plot')
 
     ksc=0;
@@ -417,7 +424,9 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref)
         
 end %reference run 
 
+%%
 %% plot all runs in same figure
+%%
 
 if ns>1
     
@@ -438,6 +447,6 @@ if isfield(in_plot,'fig_map_summerbed_01')==1
     plot_1D_01(fid_log,in_plot.fig_map_summerbed_01,simdef_all_2)
 end
 
-end
+end %ns>1
 
 end %function

@@ -49,6 +49,9 @@ if strcmp(ext,'.nc') %FM
 elseif strcmp(ext,'.dat')
     NFStruct=vs_use(nc_map,'quiet');
     ismor=1;
+    is1d=0;
+    str_network1d='';
+    issus=NaN; %add!
     if isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'map-infsed-serie'}))
         ismor=0;
     end

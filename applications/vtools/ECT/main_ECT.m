@@ -25,6 +25,9 @@ addOET(path_add_fcn)
 % path_input='input_ECT_2D.m';
 path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\220517_improve_exner\input_ECT_2D.m';
 
+in_2D.fig.fig_print=1;
+in_2D.fig.fig_name='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\220517_improve_exner\domain';
+
 %% CALL
 
 run(path_input);
@@ -32,8 +35,8 @@ in_2D.flg=ECT_input.flg;
 [ECT_matrices,sed_trans]=call_ECT(ECT_input);
 % sed_trans.qbk.*(1-(2650-1590)/2650)
 in_2D.lims_lw=[0.01,100];
-% [eig_r,eig_i,kwx_v,kwy_v]=twoD_study(ECT_matrices,in_2D);
-% fig_twoD(in_2D,eig_r,eig_i,kwx_v,kwy_v)
+[eig_r,eig_i,kwx_v,kwy_v]=twoD_study(ECT_matrices,in_2D);
+fig_twoD(in_2D,eig_r,eig_i,kwx_v,kwy_v)
 
 %% CFL
 [c_anl,eig_i_morpho]=ECT_celerity_growth(ECT_matrices,'kwx',2*pi/100);

@@ -44,6 +44,10 @@ if isfield(flg_loc,'do_p')==0
     flg_loc.do_p=1;
 end
 
+if isfield(flg_loc,'do_xvallt')==0
+    flg_loc.do_xvallt=0;
+end
+
 %% PATHS
 
 nS=numel(simdef);
@@ -231,7 +235,7 @@ for kbr=1:nbr %branches
 
         end %kt
         
-        %% all times in same figure
+        %% all times in same figure xtv
         
         if flg_loc.do_xtv && nS==1 && nt>1
             [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
@@ -260,6 +264,14 @@ for kbr=1:nbr %branches
                 fig_surf(in_p)
             end %kdiff
         end %do_xtv
+        
+        %% all times in same figure xvt
+        
+        if flg_loc.do_xvallt && nS==1 && nt>1
+            error('not finished')
+                
+            fig_1D_01(in_p);
+        end
         
     end %kvar    
 end %kbr
