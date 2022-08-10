@@ -37,7 +37,9 @@ end
 
 fdir_mat_ref=simdef_ref.file.mat.dir;
 fdir_mat=simdef.file.mat.dir;
-fpath_mat=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
+fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
+fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
 fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
@@ -52,12 +54,17 @@ runid=simdef.file.runid;
 gridInfo_ref=gdm_load_grid(fid_log,fdir_mat_ref,fpath_map_ref);
 gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
-load(fpath_mat_time,'tim');
-v2struct(tim); %time_dnum, time_dtime
+tim_ref=load(fpath_mat_time_ref,'tim');
+time_dnum_ref=tim_ref.tim.time_dnum;
+time_ref_v=gdm_time_dnum_flow_mor(flg_loc,tim_ref.tim.time_dnum,tim_ref.tim.time_mor_dnum); %[nt_ref,1] 
+
+tim=load(fpath_mat_time,'tim');
+time_dnum=tim.tim.time_dnum; %time_dnum is the local one
+time_mor_dnum=tim.tim.time_mor_dnum;
 
 %% DIMENSIONS
 
-nt=size(time_dnum,1);
+nt=numel(time_dnum_ref);
 nclim=size(flg_loc.clims,1);
 nvar=numel(flg_loc.var);
 
@@ -98,18 +105,19 @@ for kvar=1:nvar %variable
     fpath_file=cell(nt,nclim);
     for kt=kt_v
         ktc=ktc+1;
-        fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum(kt),'var',var_str);
+        
+        time_ref=time_ref_v(kt);
+        in_p.tim=time_ref;
+
+        fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str);
         data_ref=load(fpath_mat_tmp,'data');
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str);
-        data=load(fpath_mat_tmp,'data');
+        val=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref);
         
-        in_p.tim=time_dnum(kt);
+        in_p.val=val;
         
         for kclim=1:nclim
-            val=D3D_diff_val(data.data,data_ref.data,gridInfo,gridInfo_ref);
             
-            in_p.val=val;
             in_p.clims=flg_loc.clims_diff_s(kclim,:);
             in_p.is_diff=1;
 
@@ -141,5 +149,38 @@ end %function
 function fpath_fig=fig_name(fdir_fig,tag,tnum,runid,runid_ref,kclim,var_str)
 
 fpath_fig=fullfile(fdir_fig,sprintf('%s_%s-%s_%s_%s_clim_%02d',tag,runid,runid_ref,var_str,datestr(tnum,'yyyymmddHHMMSS'),kclim));
+
+end %function
+
+%%
+
+function val=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref)
+
+%% PARSE
+
+tol_tim=1; %tolerance to match objective day with available day
+if isfield(flg_loc,'tol_tim')
+    tol_tim=flg_loc.tol_tim;
+end
+
+%% CALC
+
+size_data=size(data_ref.data);
+
+time_loc_v=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum); %[nt_loc,1]
+
+[kt_loc,min_v,flg_found]=absmintol(time_loc_v,time_ref,'tol',tol_tim,'do_break',0,'do_disp_list',0,'dnum',1);
+if ~flg_found
+    messageOut(fid_log,'No available reference data:');
+    messageOut(fid_log,sprintf('     reference time   : %s',datestr(time_ref      ,'yyyy-mm-dd HH:MM:SS')));
+    messageOut(fid_log,sprintf('     closest   time   : %s',datestr(time_loc_v(kt_loc),'yyyy-mm-dd HH:MM:SS')));
+
+    val=NaN(size_data);
+else
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt_loc),'var',var_str);
+    data=load(fpath_mat_tmp,'data');
+
+    val=D3D_diff_val(data.data,data_ref.data,gridInfo,gridInfo_ref);
+end    
 
 end %function
