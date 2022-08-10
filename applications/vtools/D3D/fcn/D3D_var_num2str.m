@@ -120,6 +120,8 @@ switch var_num
         var_str='ba_mor';
     case 48
         var_str='stot';
+    case 49
+        var_str='dg_La';
 otherwise
     error('add')
 end %var_num

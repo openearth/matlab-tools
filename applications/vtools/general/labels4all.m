@@ -579,7 +579,7 @@ switch lower(variable)
                 str_var='computado';
          end
          un_type='-';
-    case {'dg','mesh2d_dg'}
+    case {'dg','mesh2d_dg','dg_la'}
          switch lan
             case 'en'
                 str_var='geometric mean grain size';

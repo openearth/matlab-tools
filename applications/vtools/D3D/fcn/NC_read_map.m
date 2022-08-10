@@ -1348,6 +1348,34 @@ switch flg.which_p
                 out.zlabel=labels4all(var_str_read,1,'en');
             case 48 %total sediment transport 
                 out=NC_read_map_48(simdef,in,grd_in);
+            case 49 %geometric mean grain size (where sediment is available)
+                switch simdef.D3D.structure
+                    case 2 %FM
+                        if is1d
+                            dg=NC_read_map_get_fm1d_data('mesh1d_dg',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            La=NC_read_map_get_fm1d_data('mesh1d_thlyr',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                            z=dg;
+                            z(squeeze(out.z(1,:,:))<0.001) = NaN;
+                            out.z=z; 
+                        else
+                            if flg.get_EHY
+                                La=NC_read_map_get_EHY(file.map,'mesh2d_thlyr',time_dnum,'bed_layers',1:1:in.nl);
+                                dg=NC_read_map_get_EHY(file.map,'mesh2d_dg',time_dnum);
+                                z=dg;
+                                z(squeeze(La(:,1))<0.001) = NaN;
+                                out=v2struct(z,face_nodes_x,face_nodes_y);
+                            else
+                                La=ncread(file.map,'mesh2d_thlyr',[1,kF(1),kt(1)],[Inf,kF(2),kt(2)]);
+                                dg=ncread(file.map,'mesh2d_dg',[kF(1),kt(1)],[kF(2),kt(2)]);
+                                z=dg;
+                                z(squeeze(La(1,:)).'<0.001) = NaN;
+                                out=v2struct(z,x_node,y_node,x_face,y_face,faces);
+                            end
+                        end
+                    case 3 %SOBEK3
+                        error('check')
+                        out=NC_read_map_get_sobek3_data('water_level',file.map,in,branch,offset,x_node,y_node,branch_length,branch_id);
+                end
             otherwise
                 error('ups...')
                 
