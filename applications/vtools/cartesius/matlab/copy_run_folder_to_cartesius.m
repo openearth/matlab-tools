@@ -12,7 +12,17 @@
 %
 %Creates the paths for transferring and running a simulation in Cartesius
 
-function copy_run_folder_to_cartesius(surf_userid,folder2send_win,cartesius_project_folder_lin,temporary_folder_win,runscript,surf_computer)
+function path_h6=copy_run_folder_to_cartesius(surf_userid,folder2send_win,cartesius_project_folder_lin,temporary_folder_win,runscript,surf_computer,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'fname_app','');
+
+parse(parin,varargin{:});
+
+fname_app=parin.Results.fname_app;
 
 %%
 
@@ -21,10 +31,31 @@ if isempty(runscript)
     isrun=0;
 end
 
+%% recursive call
+
+if iscell(folder2send_win)
+    path_h6_call=fullfile(temporary_folder_win,'commands_copy_run_all.sh');
+    fid_h6_call=fopen(path_h6_call,'w');
+    
+    nd=numel(folder2send_win);
+    for kd=1:nd
+        path_h6=copy_run_folder_to_cartesius(surf_userid,folder2send_win{kd},cartesius_project_folder_lin,temporary_folder_win,runscript,surf_computer,'fname_app',sprintf('_%02d',kd));
+        fprintf(fid_h6_call,'%s \n',linuxify(path_h6));
+    end
+    fclose(fid_h6_call);
+    
+    %disp
+    fprintf('---------- \n\n')
+    fprintf('In H6: \n\n')
+    fprintf('%s \n',linuxify(path_h6_call));
+    
+    return
+end
+
 %% paths
 
-path_h6=fullfile(temporary_folder_win,'commands_copy_run_1.sh');
-path_ca=fullfile(temporary_folder_win,'commands_copy_run_2.sh');
+path_h6=fullfile(temporary_folder_win,sprintf('commands_copy_run_1%s.sh',fname_app));
+path_ca=fullfile(temporary_folder_win,sprintf('commands_copy_run_2%s.sh',fname_app));
 
 fid_h6=fopen(path_h6,'w');
 fid_ca=fopen(path_ca,'w');
@@ -34,6 +65,7 @@ fid_ca=fopen(path_ca,'w');
 if strcmp(folder2send_win(end),'\')
     folder2send_win(end)='';
 end
+folder2send_win=deblank(folder2send_win);
 pathsplit=regexp(folder2send_win,'\','split');
 comp_name=sprintf('%s.tar.gz',pathsplit{1,end});
 comp_path_win=fullfile(temporary_folder_win,comp_name);
