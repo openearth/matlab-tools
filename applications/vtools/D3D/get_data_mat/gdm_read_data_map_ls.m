@@ -23,12 +23,14 @@ addOptional(parin,'tim',[]);
 addOptional(parin,'tol_t',5/60/24);
 addOptional(parin,'pli','');
 % addOptional(parin,'dchar','');
+addOptional(parin,'overwrite',false);
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 tol_t=parin.Results.tol_t;
 pli=parin.Results.pli;
+overwrite=parin.Results.overwrite;
 % dchar=parin.Results.dchar;
 
 [~,pliname,~]=fileparts(pli);
@@ -38,7 +40,7 @@ pliname=strrep(pliname,' ','_');
 
 var_str=varname;
 fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'pli',pliname);
-if exist(fpath_sal,'file')==2
+if exist(fpath_sal,'file')==2 ~=overwrite
     messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_sal));
     load(fpath_sal,'data')
 else

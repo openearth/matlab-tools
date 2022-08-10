@@ -50,6 +50,10 @@ if ischar(var_id)
                 else
                     var_id_out='mesh1d_flowelem_bl';
                 end
+            else
+                if ismor
+                    var_id_out='mesh2d_mor_bl';
+                end
             end
         case 'h'
             if is1d

@@ -51,6 +51,25 @@
 % 
 % fpaths=paths_project(fpath_project);
 
+%% 
+
+%% simulation
+
+% ks=0;
+% 
+% ks=ks+1;
+% in_plot.fdir_sim{ks}=fullfile(fpaths.dir_runs,'r002'); 
+% in_plot.str_sim{ks}='reference';
+% 
+% in_plot.sim_ref=1;
+% in_plot.lan='en';
+% in_plot.tag_serie='01';
+
+%% display map times
+
+% tag='disp_time_map';
+% in_plot.(tag).do=1;
+
 %% 2DH
 
 % tag='fig_map_2DH_01';
@@ -94,7 +113,7 @@
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).ml=2.5;
-% in_plot.(tag).plot_markers=1;
+% in_plot.(tag).do_marker=1;
 
 %% summerbed
 
@@ -163,6 +182,12 @@ for ks=1:ns
     simdef=simulation_paths(fdir_sim,in_plot);
     messageOut(fid_log,sprintf('Simulation: %s',simdef.file.runid))	
         
+    %% display time
+    if isfield(in_plot,'disp_time_map')==1
+        in_plot.disp_time_map.tag='disp_time_map';
+        disp_time_map(fid_log,in_plot.disp_time_map,simdef);
+    end
+    
     %% sal
     if isfield(in_plot,'fig_map_sal_01')==1
         create_mat_map_sal_01(fid_log,in_plot.fig_map_sal_01,simdef)

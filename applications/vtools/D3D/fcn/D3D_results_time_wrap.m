@@ -21,7 +21,7 @@
 %TODO:
 %   -
 
-function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(sim_path,varargin)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_results_time_wrap(sim_path,varargin)
 
 %% PARSE
 
@@ -48,6 +48,7 @@ switch simdef.D3D.structure
         fpath_nc=simdef.file.(nc_type);
         ismor=D3D_is(fpath_nc);
         [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
+        time_idx=(1:1:numel(time_r))';
     case 4
         fdir_output=fullfile(sim_path,'output');
         dire=dir(fdir_output);
@@ -60,6 +61,7 @@ switch simdef.D3D.structure
         time_mor_dtime=[];
         sim_idx=[];
         fpath_map={};
+        time_idx=[];
         for kf=0:1:nf
             fdir_loc=fullfile(fdir_output,num2str(kf));
             simdef.D3D.dire_sim=fdir_loc;
@@ -76,6 +78,7 @@ switch simdef.D3D.structure
             time_mor_dtime=cat(1,time_mor_dtime,time_mor_dtime_loc);
             sim_idx=cat(1,sim_idx,kf.*ones(size(time_mor_dtime_loc)));
             fpath_map=cat(1,fpath_map,repmat({fpath_nc},numel(time_mor_dtime_loc),1));
+            time_idx=cat(1,time_idx,(time_idx(end)+1:1:time_idx(end)+1+numel(time_r_loc))');
             
             messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
         end

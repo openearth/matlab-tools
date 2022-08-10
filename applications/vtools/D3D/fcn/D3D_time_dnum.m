@@ -16,7 +16,7 @@
 %NaN = all
 %Inf = last
 
-function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g]=D3D_time_dnum(fpath_map,in_dtime,varargin)
+function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,in_dtime,varargin)
 
 %% PARSE
 
@@ -41,13 +41,14 @@ if isa(in_dtime(1),'double')
     if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2
         messageOut(NaN,sprintf('Mat-file with all times not available. Reading.'))
         if isfolder(fpath_map) %SMT
-            [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_results_time_wrap(fpath_map);
+            [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_results_time_wrap(fpath_map);
         else
             is_mor=D3D_is(fpath_map);
             [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map,is_mor,[1,Inf]);
             sim_idx=NaN(size(time_r));
+            time_idx=(1:1:numel(time_r))';
         end
-        data=v2struct(time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx);
+        data=v2struct(time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx);
         save_check(fpath_tim_all,'data')
     else
         messageOut(NaN,sprintf('Mat-file with all times available. Loading: %s',fpath_tim_all))
@@ -56,24 +57,32 @@ if isa(in_dtime(1),'double')
     end
     
     %get the requested ones
-    if isnan(in_dtime(1)) 
-        
-    elseif isinf(in_dtime(1))
-        time_dnum=time_dnum(end);
-        time_dtime=time_dtime(end);
-        time_mor_dnum=time_mor_dnum(end);
-        time_mor_dtime=time_mor_dtime(end);
-        sim_idx=sim_idx(end);
-    else
-        nt=numel(in_dtime);
-        time_dnum_s=NaN(nt,1);
-        time_dtime_s=NaT(nt,1);
-        time_dtime_s.TimeZone='+00:00';
-        time_mor_dnum_s=NaN(nt,1);
-        time_mor_dtime_s=NaT(nt,1);
-        time_mor_dtime_s.TimeZone='+00:00';
-        sim_idx_s=NaN(nt,1);
-        for kt=1:nt
+
+        %all
+    if any(isnan(in_dtime))  
+        return
+    end
+    
+        %match each one
+    ntt=numel(time_dnum);
+    nt=numel(in_dtime);
+    time_dnum_s=NaN(nt,1);
+    time_dtime_s=NaT(nt,1);
+    time_dtime_s.TimeZone='+00:00';
+    time_mor_dnum_s=NaN(nt,1);
+    time_mor_dtime_s=NaT(nt,1);
+    time_mor_dtime_s.TimeZone='+00:00';
+    sim_idx_s=NaN(nt,1);
+    time_idx_s=NaN(nt,1);
+    for kt=1:nt
+        if isinf(in_dtime(kt)) %last
+            idx_g=ntt;
+        elseif mod(in_dtime(kt),1)==0 && in_dtime(kt)<=ntt %if integer and smaller than total number of results, you are specifying index
+            idx_g=in_dtime(kt);
+            if ntt>datenum(1687,07,05) %if there are more than 
+                messageOut(NaN,'I supposed the input was an index but the number of results is huge, so maybe you want datenum?') %create a flag to force datenum
+            end
+        else %datenum
             if tim_type==1
                 tim_cmp=time_dnum;
             elseif tim_type==2
@@ -82,22 +91,26 @@ if isa(in_dtime(1),'double')
                 error('not sure what you want')
             end
             idx_g=absmintol(tim_cmp,in_dtime(kt),'tol',tol,'dnum',1);
-            
-            time_dnum_s(kt,1)=time_dnum(idx_g);
-            time_dtime_s(kt,1)=time_dtime(idx_g);
-            time_mor_dnum_s(kt,1)=time_mor_dnum(idx_g);
-            time_mor_dtime_s(kt,1)=time_mor_dtime(idx_g);
-            sim_idx_s(kt,1)=sim_idx(idx_g);
         end
-        time_dnum=time_dnum_s;
-        time_dtime=time_dtime_s;
-        time_mor_dnum=time_mor_dnum_s;
-        time_mor_dtime=time_mor_dtime_s;
-        sim_idx=sim_idx_s;
+
+        time_dnum_s(kt,1)=time_dnum(idx_g);
+        time_dtime_s(kt,1)=time_dtime(idx_g);
+        time_mor_dnum_s(kt,1)=time_mor_dnum(idx_g);
+        time_mor_dtime_s(kt,1)=time_mor_dtime(idx_g);
+        sim_idx_s(kt,1)=sim_idx(idx_g);
+        time_idx_s(kt,1)=time_idx(idx_g);
     end
-elseif isa(in_dtime(1),'datetime')
+    time_dnum=time_dnum_s;
+    time_dtime=time_dtime_s;
+    time_mor_dnum=time_mor_dnum_s;
+    time_mor_dtime=time_mor_dtime_s;
+    sim_idx=sim_idx_s;
+    time_idx=time_idx_s;
+%     end
+elseif isa(in_dtime(1),'datetime') %datetime
     tim_cmp=datenum_tzone(in_dtime);
-    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,tim_cmp,varargin{:});
+    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,tim_cmp,varargin{:});
+    return
 else
     error('ups...')
 end

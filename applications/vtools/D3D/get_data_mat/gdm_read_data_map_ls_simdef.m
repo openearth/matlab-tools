@@ -15,6 +15,7 @@
 function data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx,varargin)
             
 fpath_map=gdm_fpathmap(simdef,sim_idx);
+ismor=D3D_is(fpath_map);
 
 switch varname
     case {'d10','d50','d90','dm'}
@@ -46,7 +47,11 @@ switch varname
             case 1
                 data=gdm_read_data_map_ls(fdir_mat,fpath_map,'DPS',varargin{:});
             case {2,4}
-                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'bl',varargin{:});
+                if ismor
+                    data=gdm_read_data_map_ls(fdir_mat,fpath_map,'mesh2d_mor_bl',varargin{:});
+                else
+                    data=gdm_read_data_map_ls(fdir_mat,fpath_map,'bl',varargin{:});
+                end
         end
     case {'sb'}
         switch simdef.D3D.structure
