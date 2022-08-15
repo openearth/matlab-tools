@@ -55,7 +55,8 @@
 function Data_xy=arbcross_wrap(nodes,xs,ys,zs,xc,yc)
 
 arb=arbcross(nodes,xs,ys,xc,yc);
-val=arbcross(arb,{'FACE' zs});
+% val=arbcross(arb,{'FACE' zs});
+val=arbcross(arb,{'NODE' zs});
 
 %renaming
 Data_xy.Xcor = arb.x;

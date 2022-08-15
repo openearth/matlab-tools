@@ -43,41 +43,42 @@ file_type=parin.Results.file_type;
 %    2 = convert to double
 %    3 = convert to double and make integer (take only number before .)
 
+str_dec='[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)';
 switch file_type
     case 1 %SOBEK 3 cross-section definition
         tag_cs='[CrossSection]';
-        tags ={'id'            ,'branchid'      ,'chainage'  ,'name'          ,'shift'    ,'definition'    };            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+' ,'\w+([.-]?\w+)*','-?\d+.\d+','\w+([.-]?\w+)*'};
-        fcnts=[1               ,1               ,2         ,1               ,2        ,1               ];
+        tags ={'id'            ,'branchid'      ,'chainage'            ,'name'          ,'shift'              ,'definition'    };            
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*',sprintf('%s',str_dec) ,'\w+([.-]?\w+)*',sprintf('%s',str_dec),'\w+([.-]?\w+)*'};
+        fcnts=[1               ,1               ,2                     ,1               ,2                    ,1               ];
     case 2 %FM cross-section definition zw
         tag_cs='[Definition]';
         tags ={'id'            ,'type'          ,'thalweg'  ,'numLevels'  ,'levels'   ,'flowWidths'  ,'totalWidths'  ,'leveeCrestLevel'  ,'leveeFlowArea'  ,'leveeTotalArea','leveeBaseLevel','mainWidth','fp1Width','fp2Width','isShared'};            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+'        ,'-?\d+.\d+','-?\d+.\d+'   ,'-?\d+.\d+'    ,'-?\d+.\d+'        ,'\d+.\d+'        ,'\d+.\d+'       ,'-?\d+.\d+'     ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+'     };
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*',sprintf('%s',str_dec),'\d+'        ,sprintf('%s',str_dec),sprintf('%s',str_dec)   ,sprintf('%s',str_dec)    ,sprintf('%s',str_dec)        ,'\d+.\d+'        ,'\d+.\d+'       ,sprintf('%s',str_dec)     ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+'     };
         fcnts=[1               ,1               ,2          ,3            ,2          ,2             ,2              ,2                  ,2                ,2               ,2               ,2          ,2         ,2         ,2         ];
     case 3 %FM cross-section location  
         tag_cs='[CrossSection]';
         tags ={'id'            ,'branchId'      ,'chainage'  ,'shift'    ,'definitionId'    };            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+' ,'-?\d+.\d+','\w+([.-]?\w+)*'  };
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*',sprintf('%s',str_dec),sprintf('%s',str_dec),'\w+([.-]?\w+)*'  };
         fcnts=[1               ,1               ,2         ,2        ,1                 ];
     case 4 %FM cross-section definition xyz
         tag_cs='[Definition]';
         tags ={'id'            ,'type'          ,'thalweg'  ,'xyzCount'  ,'xCoordinates' ,'yCoordinates' ,'zCoordinates' ,'conveyance'     ,'sectionCount'  ,'frictionIds'};            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+'       ,'-?\d+.\d+'    ,'-?\d+.\d+'    ,'-?\d+.\d+'    ,'\w+([.-]?\w+)*' ,'\d+'           ,'\w+([.-]?\w+)*'};
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*',sprintf('%s',str_dec),'\d+'       ,sprintf('%s',str_dec)    ,sprintf('%s',str_dec)    ,sprintf('%s',str_dec)    ,'\w+([.-]?\w+)*' ,'\d+'           ,'\w+([.-]?\w+)*'};
         fcnts=[1               ,1               ,2          ,2           ,2              ,2              ,2              ,1                ,2               ,1               ];
     case 5 %FM cross-section definition yz
         tag_cs='[Definition]';
         tags ={'id'            ,'type'          ,'thalweg'  ,'yzCount'  ,'yCoordinates' ,'zCoordinates' ,'conveyance'     ,'sectionCount'  ,'frictionIds'};            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','\d+'       '-?\d+.\d+'    ,'-?\d+.\d+'    ,'\w+([.-]?\w+)*' ,'\d+'           ,'\w+([.-]?\w+)*'};
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*',sprintf('%s',str_dec),'\d+'       sprintf('%s',str_dec)    ,sprintf('%s',str_dec)    ,'\w+([.-]?\w+)*' ,'\d+'           ,'\w+([.-]?\w+)*'};
         fcnts=[1               ,1               ,2          ,2           ,2              ,2              ,1                ,2               ,1               ];
     case 6 %FM cross-section definition rectangle
         tag_cs='[Definition]';
         tags ={'id'            ,'type'          ,'thalweg'  ,'width'     ,'height'       ,'closed'};            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*','-?\d+.\d+','-?\d+.\d+' ,'-?\d+.\d+'    ,'\w+([.-]?\w+)*'};
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*',sprintf('%s',str_dec),sprintf('%s',str_dec) ,sprintf('%s',str_dec)    ,'\w+([.-]?\w+)*'};
         fcnts=[1               ,1               ,2          ,2           ,2              ,1];
     case 7 %Global block
         tag_cs='[Global]';
         tags ={'leveeTransitionHeight'};            
-        exprs={'-?\d+.\d+'            };
+        exprs={sprintf('%s',str_dec)            };
         fcnts=[2                      ];
 end
 

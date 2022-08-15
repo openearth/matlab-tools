@@ -73,13 +73,11 @@ for km=1:nm
     lambda_loc=2*L/(km-1);
     k_loc=2*pi/lambda_loc;
     k_fou=2*(nx-1)/nx*k_loc;
-    y_fou=1/nx*yf(km);
-    y_rec_manual_2(km,:)=y_fou.*exp(k_fou*1i.*x);
+    y_rec_manual_2(km,:)=S2(km).*exp(k_fou*1i.*x);
     
     %using frequency double-sided
     k_fou=2*pi*f2(km);
-    y_fou=1/nx*yf(km);
-    y_rec_manual_3(km,:)=y_fou.*exp(k_fou*1i.*x);
+    y_rec_manual_3(km,:)=S2(km).*exp(k_fou*1i.*x);
 end
 
 y_rec_manual_1_sum=sum(y_rec_manual_1,1);
@@ -87,9 +85,9 @@ y_rec_manual_2_sum=sum(y_rec_manual_2,1);
 y_rec_manual_3_sum=sum(y_rec_manual_2,1);
 
 %they are all equal
-abs_min(y_rec_manual_1_sum,y_rec_ifft);
-abs_min(y_rec_manual_2_sum,y_rec_ifft);
-abs_min(y_rec_manual_3_sum,y_rec_ifft);
+% abs_min(y_rec_manual_1_sum,y_rec_ifft);
+% abs_min(y_rec_manual_2_sum,y_rec_ifft);
+% abs_min(y_rec_manual_3_sum,y_rec_ifft);
 
 %% ifft single-sided spectrum
 
@@ -103,7 +101,7 @@ end
 y_rec_manual_s1_sum=sum(y_rec_manual_s1_1,1);
 
 %they are all equal
-abs_min(y_rec_manual_s1_sum,y_rec_ifft,'tol',1e-8);
+% abs_min(y_rec_manual_s1_sum,y_rec_ifft,'tol',1e-8);
 
 %% PLOT 
 
@@ -135,3 +133,70 @@ figure
 plot(f1,S1_abs,'-*')
 
 
+%% Negative frequencies explanation
+
+%% INPUT
+
+dx=0.1; %[m] sampling period, space step       
+nx=100; %[-] number of samples
+
+%initial condition parameters
+A=1; %[m] amplitude
+lambda=2; %[m] wave length
+
+%% CALC
+
+%% domain
+
+fsx=1/dx; %[1/m] sampling frequency    
+x=(0:nx-1)*dx; %[m] space domain
+L=x(end); %[m] domain length
+fx2=(0:nx-1)*fsx/nx; %[1/m] double-sided frequency domain
+
+%% initial condition
+
+z=A(1).*cos(2*pi*x/lambda(1)); %total noise
+
+%% Fourier
+
+cf=fft2(z); %forier coefficients
+
+%% plot
+
+figure
+hold on
+plot(fx2,abs(cf))
+xlabel('frequency [1/m]')
+
+%% negative frequencies
+
+%maximum values of the fourier coefficients
+[~,idx_s]=sort(abs(cf),'descend');
+idx_m=idx_s(1:2); %indices of the maximum 2 values
+fxp=fx2(idx_m); %frequencies of the maximum 2 values
+
+z=A(1).*cos(2*pi*x/lambda(1)); %[m] original signal
+z1p=A(1).*cos(2*pi*x.*fxp'); %[m] using result from FFT
+
+figure
+hold on
+plot(x,z,'-o')
+plot(x,z1p(1,:),'-s') %using positive frequencies
+plot(x,z1p(2,:),'-d') %using negative frequencies
+
+%the result is the same!
+
+%% negative frequencies
+
+%if the sampling is different, the nagtive frequencies can be better visualized
+
+x2=0:dx/2:L;
+
+z=A(1).*cos(2*pi*x2/lambda(1)); %[m] original signal
+z1p=A(1).*cos(2*pi*x2.*fxp'); %[m] using result from FFT
+
+figure
+hold on
+plot(x2,z,'-o')
+plot(x2,z1p(1,:),'-s') %using positive frequencies
+plot(x2,z1p(2,:),'-d') %using negative frequencies

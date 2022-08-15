@@ -38,6 +38,7 @@ fpath_tim_all=fullfile(fdir_mat,'tim.mat');
 
 if isa(in_dtime(1),'double') 
     %get all results time
+    idx_g=NaN; %not needed, but we need to output it
     if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2
         messageOut(NaN,sprintf('Mat-file with all times not available. Reading.'))
         if isfolder(fpath_map) %SMT

@@ -36,11 +36,11 @@ if iscell(fname)
     for kf=2:nf
         stru_out_loc=D3D_io_input(what_do,fname{kf},varargin{:});
         if isstruct(stru_out_loc)
-            if numel(stru_out_loc)==1
-                error('do concatenation of variables')
-            else %concatenation of structures
+%             if numel(stru_out_loc)==1
+%                 error('do concatenation of variables')
+%             else %concatenation of structures
                 stru_out_all=[stru_out_all;stru_out_loc];
-            end
+%             end
             
         end
         

@@ -22,6 +22,8 @@ simdef.D3D.structure=2;
 
 mdu=D3D_io_input('read',path_mdu);
 
+simdef.err=0;
+
 %% loop on sim folder
 
 [path_sim,runid,~]=fileparts(path_mdu);
@@ -51,36 +53,26 @@ simdef.file.mdf=path_mdu;
 
 %geometry
 simdef.file.grd=fullfile(path_sim,mdu.geometry.NetFile);
-% simdef=D3D_read_mdu_flag(mdu.geometry,'CrossDefFile',simdef.file,'csdef',path_sim);
+
 if isfield(mdu.geometry,'CrossDefFile') && ~isempty(mdu.geometry.CrossDefFile)
-    simdef.file.csdef=fullfile(path_sim,mdu.geometry.CrossDefFile);
-else
-    simdef.file.csdef='';
+    simdef.file.csdef=paths_str2cell(path_sim,mdu.geometry.CrossDefFile);
 end
 if isfield(mdu.geometry,'CrossLocFile') && ~isempty(mdu.geometry.CrossLocFile)
-    simdef.file.csloc=fullfile(path_sim,mdu.geometry.CrossLocFile);
-else
-    simdef.file.csloc='';
+    simdef.file.csloc=paths_str2cell(path_sim,mdu.geometry.CrossLocFile);
 end
 if isfield(mdu.geometry,'StructureFile') && ~isempty(mdu.geometry.StructureFile)
-    simdef.file.struct=fullfile(path_sim,mdu.geometry.StructureFile);
-else
-    simdef.file.struct='';
+    simdef.file.struct=paths_str2cell(path_sim,mdu.geometry.StructureFile);
 end
 if isfield(mdu.geometry,'FixedWeirFile') && ~isempty(mdu.geometry.FixedWeirFile)
-    simdef.file.fxw=fullfile(path_sim,mdu.geometry.FixedWeirFile);
+    simdef.file.fxw=paths_str2cell(path_sim,mdu.geometry.FixedWeirFile);
 else
     simdef.file.fxw='';
 end
 if isfield(mdu.geometry,'BedlevelFile') && ~isempty(mdu.geometry.BedlevelFile)
-    simdef.file.dep=fullfile(path_sim,mdu.geometry.BedlevelFile);
-else
-    simdef.file.dep='';
+    simdef.file.dep=paths_str2cell(path_sim,mdu.geometry.BedlevelFile);
 end
 if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
-    simdef.file.thd=fullfile(path_sim,mdu.geometry.ThinDamFile);
-else
-    simdef.file.thd='';
+    simdef.file.thd=paths_str2cell(path_sim,mdu.geometry.ThinDamFile);
 end
 
 %extenral forcing
@@ -129,7 +121,7 @@ end
 %processes
 if isfield(mdu,'processes')
     if isfield(mdu.processes,'SubstanceFile')
-        simdef.file.sub=fullfile(path_sim,mdu.processes.SubstanceFile);
+        simdef.file.sub=paths_str2cell(path_sim,mdu.processes.SubstanceFile);
     end
 end
 
@@ -143,9 +135,13 @@ function c=paths_str2cell(path_sim,s)
 
 tok=regexp(s,' ','split');
 ns=numel(tok);
-c=cell(1,ns);
-for ks=1:ns
-    c{1,ks}=fullfile(path_sim,tok{1,ks});
+if ns>1
+    c=cell(1,ns);
+    for ks=1:ns
+        c{1,ks}=fullfile(path_sim,tok{1,ks});
+    end
+else
+    c=s;
 end
 
 end %function
