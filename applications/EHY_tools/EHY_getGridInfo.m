@@ -258,11 +258,13 @@ switch modelType
                     end
                     if ismember('XYcor',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_node_x');
-                        if strcmp(varName,'noMatchFound')
+                        if nc_isvar(inputFile,'network1d_geom_x')
                             varName = 'network1d_geom_x';
                         end
-                        E.Xcor = ncread(inputFile,varName);
-                        E.Ycor = ncread(inputFile,strrep(varName,'x','y'));
+                        if nc_isvar(inputFile,varName)
+                            E.Xcor = ncread(inputFile,varName);
+                            E.Ycor = ncread(inputFile,strrep(varName,'x','y'));
+                        end
                     end
                     if ismember('XYcen',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'FlowElem_xcc');
@@ -536,11 +538,18 @@ switch modelType
                         end
                     end
                     if ismember('spherical', wantedOutput)
-                        tmp = EHY_getGridInfo(inputFile,{'XYcor'},'mergePartitions',0);
-                        if isfield(tmp,'Xcor')
-                            E.spherical = EHY_isSpherical(tmp.Xcor,tmp.Ycor);
+                        if strcmp(typeOfModelFileDetail,'his_nc') && nc_isvar(inputFile,'station_x_coordinate')
+                            x = ncread(inputFile,'station_x_coordinate');
+                            y = ncread(inputFile,'station_y_coordinate');
+                            E.spherical = EHY_isSpherical(x,y);
+                        elseif strcmp(typeOfModelFileDetail,'map_nc')
+                            tmp = EHY_getGridInfo(inputFile,{'XYcor'},'mergePartitions',0,'disp',0);
+                            if isfield(tmp,'Xcor')
+                                E.spherical = EHY_isSpherical(tmp.Xcor,tmp.Ycor);
+                            end
                         else
                             if nc_isvar(inputFile,'wgs84')
+                                disp('Variable ''wgs84'' is on file, so assuming this is spherical (note that this is not always the case...) ')
                                 E.spherical = 1;
                             else
                                 E.spherical = 0;
