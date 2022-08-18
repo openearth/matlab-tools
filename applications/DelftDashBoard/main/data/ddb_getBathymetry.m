@@ -266,6 +266,12 @@ switch lower(tp)
                 return
             end
             
+            data_in_cell_centres=1;
+            if data_in_cell_centres
+                xx=xx+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
+                yy=yy+0.5*dy;
+            end            
+            
             ix1=find(xx<xl(1),1,'last');
             if isempty(ix1)
                 ix1=1;
@@ -302,9 +308,17 @@ switch lower(tp)
             x0Tiles=xx(ix1:ix2);
             
             if ~justgettiles
+                
                 % Mesh of horizontal coordinates
-                xx=x0Tiles(1):dx:x0Tiles(end)+tilesizex-dx;
-                yy=y0+(iy1-1)*tilesizey:dy:y0+iy2*tilesizey-dy;
+                xx=x0Tiles(1):dx:x0Tiles(end) + tilesizex - dx;
+                yy=y0+(iy1-1)*tilesizey:dy:y0 + iy2*tilesizey - dy;
+                
+                data_in_cell_centres=1;
+                if data_in_cell_centres
+                    xx=xx+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
+                    yy=yy+0.5*dy;
+                end
+                
                 [x,y]=meshgrid(xx,yy);
             end
             
@@ -391,6 +405,8 @@ switch lower(tp)
                                     end
                                     try
                                         urlwrite([remotedir filename],[localdir filename],'Timeout',5);
+                                    catch
+                                        disp(['Missing tile : ' remotedir filename]);
                                     end
                                 end
                                 ncfile=[localdir filename];
@@ -474,11 +490,6 @@ switch lower(tp)
                 x=x(iy1:iy2,ix1:ix2);
                 y=y(iy1:iy2,ix1:ix2);
                 
-                data_in_cell_centres=1;
-                if data_in_cell_centres
-                    x=x+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
-                    y=y+0.5*dy;
-                end
                 
                 z=z(iy1:iy2,ix1:ix2);
 
