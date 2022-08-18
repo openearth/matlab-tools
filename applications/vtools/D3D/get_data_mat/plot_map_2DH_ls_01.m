@@ -59,6 +59,10 @@ if isfield(flg_loc,'tim_type')==0
     flg_loc.tim_type=1;
 end
 
+if isfield(flg_loc,'tol')==0
+    flg_loc.tol=30;
+end
+
 %% TIME
 
 load(fpath_mat_time,'tim');
@@ -121,6 +125,17 @@ for kpli=1:npli
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname);
             load(fpath_mat_tmp,'data');
             
+            %measurements                        
+            in_p.plot_mea=false;
+            if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+                tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
+                data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean','tol',flg_loc.tol);
+                if isstruct(data_mea) %there is data
+                    in_p.plot_mea=true;
+                    in_p.s_mea=data_mea.x;
+                end
+            end
+                        
             for kylim=1:nylims
                 
                 if isfield(flg_loc,'xlims')
@@ -152,6 +167,17 @@ for kpli=1:npli
 
                     in_p.fname=fname_noext;
 
+                    %measurements
+                    if in_p.plot_mea
+                        if kdiff==1
+                            in_p.val_mea=data_mea.y;
+                        elseif kdiff==2
+                            tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
+                            data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
+                            in_p.val_mea=data_mea.y-data_mea_0.y;
+                        end
+                    end
+                    
                     if size(data.val,3)>1
                         if kdiff==2
                             error('not ready')

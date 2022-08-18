@@ -32,12 +32,15 @@ fname_mea=fullfile(fdir_weather,'measured.csv'); %https://docs.google.com/spread
 
 load(fname_mod,'rain');
 
-mea_raw=readcell(fname_mea,'NumHeaderLines',1);
-mea_tim=datetime(mea_raw(:,1),'InputFormat','dd-MM-yyyy');
-mea_val=cell2mat(mea_raw(:,2));
-idx_d=find(mea_val==-999,1,'first');
-mea_tim=mea_tim(1:idx_d-1);
-mea_val=mea_val(1:idx_d-1);
+% mea_raw=readcell(fname_mea,'NumHeaderLines',1);
+% mea_tim=datetime(mea_raw(:,1),'InputFormat','dd-MM-yyyy');
+% mea_val=cell2mat(mea_raw(:,2));
+% idx_d=find(mea_val==-999,1,'first');
+% mea_tim=mea_tim(1:idx_d-1);
+% mea_val=mea_val(1:idx_d-1);
+
+mea_tim=datetime(2022,08,15,00,00,00);
+mea_val=40.6;
 
     %% 
 [mod_tim,idx_u]=unique([rain.tim_model]);
@@ -48,7 +51,7 @@ mod_tim_rm=repmat(mod_tim',1,14);
 mod_tim_m=mod_tim_rm+days(0:1:13).*ones(nmod,14);
 mod_tim_m_d=dateshift(mod_tim_m,'start','day');
 
-% mod_tim_m_d=mod_tim_m-dt_mod;
+
 %%
 
 nmea=numel(mea_tim);
@@ -79,5 +82,24 @@ figure
 hold on
 for kmea=1:nmea
     plot(diff_tim{kmea,1},diff_val{kmea,1},'*-k');
+    
 %     pause
 end
+ylabel('predicted daily rain - measured daily rain [mm]')
+xtickformat(gca,'d')
+
+%%
+
+in_p.fig_print=1;
+in_p.fig_visible=0;
+in_p.fname='c:\Users\chavarri\Downloads\rain_01';
+
+for kmea=1:nmea
+    in_p.mod_tim=mod_tim_s{kmea,1};
+    in_p.mod_val=mod_val_s{kmea,1};
+    in_p.mea_tim=mea_tim(kmea);
+    in_p.mea_val=mea_val(kmea);
+    
+    fig_rain_event_01(in_p);
+end
+

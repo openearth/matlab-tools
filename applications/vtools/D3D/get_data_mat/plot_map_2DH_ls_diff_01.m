@@ -18,7 +18,12 @@ function plot_map_2DH_ls_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
 %% DO
 
-ret=gdm_do_mat(fid_log,flg_loc,tag,'do_s'); if ret; return; end
+if contains(tag_fig,'all')
+    tag_do='do_s_all';
+else
+    tag_do='do_s';
+end
+ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 
 %% PARSE
 
@@ -26,6 +31,11 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,'do_s'); if ret; return; end
 % if isfield(flg_loc,'tol_tim')
 %     tol_tim=flg_loc.tol_tim;
 % end
+
+if isfield(flg_loc,'tol')==0
+    flg_loc.tol=30;
+end
+
 
 %% PATHS
 
@@ -80,6 +90,7 @@ for kt=kt_v %time
     ktc=ktc+1;
     time_ref=time_ref_v(kt);
     in_p.tim=time_ref;
+                
     for kpli=1:npli %pli
         
         fpath_pli=flg_loc.pli{kpli,1};
@@ -126,6 +137,18 @@ for kt=kt_v %time
             in_p.val0=val0;
             in_p.lab_str=var_str;
             
+            %measurements                        
+            in_p.plot_mea=false;
+            if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+                tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
+                data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str,'stat','val_mean','tol',flg_loc.tol);
+                if isstruct(data_mea) %there is data
+                    in_p.plot_mea=true;
+                    in_p.s_mea=data_ref.data.Scen;
+                    in_p.val_mea=D3D_diff_val(data_mea.y,data_ref.data.val,data_mea.x,data_ref.data.Scen);
+                end
+            end
+
             for kylim=1:nylims
                 in_p.ylims=flg_loc.ylims(kylim,:);
 

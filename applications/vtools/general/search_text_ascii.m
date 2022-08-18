@@ -17,17 +17,18 @@ function [kl_tok,fline_got]=search_text_ascii(path_ascii,tok_find,kl_start)
 fid=fopen(path_ascii,'r');
 
 kl=0;
-kl_tok=NaN;
+kl_tok=[];
+fline_got={};
 while ~feof(fid)
     kl=kl+1;
     fline=fgetl(fid);
     if kl>kl_start
         bol=contains(fline,tok_find);
         if bol
-            kl_tok=kl;
-            fline_got=fline;
-            fclose(fid);
-            return
+            kl_tok=cat(1,kl_tok,kl);
+            fline_got=cat(1,fline_got,fline);
+%             fclose(fid);
+%             return
         end %bol
     end %kl<kl_start
 end %~feof(fid)

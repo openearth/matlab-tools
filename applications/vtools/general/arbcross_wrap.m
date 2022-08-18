@@ -55,8 +55,15 @@
 function Data_xy=arbcross_wrap(nodes,xs,ys,zs,xc,yc)
 
 arb=arbcross(nodes,xs,ys,xc,yc);
-% val=arbcross(arb,{'FACE' zs});
-val=arbcross(arb,{'NODE' zs});
+if size(nodes,1)==numel(zs)
+    data_loc_str='FACE';
+elseif numel(xs)==numel(zs)
+    data_loc_str='NODE';
+else
+    error('Not sure where your data is. It could be edges?')
+end
+% val=arbcross(arb,{data_loc_str zs});
+val=arbcross(arb,zs);
 
 %renaming
 Data_xy.Xcor = arb.x;

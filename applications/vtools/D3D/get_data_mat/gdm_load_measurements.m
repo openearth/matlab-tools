@@ -16,19 +16,21 @@ function data_out=gdm_load_measurements(fid_log,fpath_mea,varargin)
 
 %% PARSE
 
-%% PARSE
-
 parin=inputParser;
 
 addOptional(parin,'tim',[]);
 addOptional(parin,'var','');
 addOptional(parin,'stat','');
+addOptional(parin,'do_rkm',0);
+addOptional(parin,'tol',30);
 
 parse(parin,varargin{:});
 
 tim_dnum=parin.Results.tim;
 var_nam=parin.Results.var;
 stat=parin.Results.stat;
+do_rkm=parin.Results.do_rkm;
+tol=parin.Results.tol;
 
 %% CALC
 
@@ -51,11 +53,17 @@ if isnan(idx_stat); data_out=NaN; return; end
 struct_loc=data.(fn{idx_var}).(fn2{idx_stat});
 
 tim_mea=struct_loc.tim_dnum;
-idx_min=absmintol(tim_mea,tim_dnum,'dnum',1,'tol',30,'do_break',0);
+idx_min=absmintol(tim_mea,tim_dnum,'dnum',1,'tol',tol,'do_break',0);
 
 if isnan(idx_min); data_out=NaN; return; end
 
-data_out.x=struct_loc.rkm;
+% fprintf('index time match %03d \n',idx_min);
+
+if do_rkm || ~isfield(struct_loc,'s')
+    data_out.x=struct_loc.rkm;
+else
+    data_out.x=struct_loc.s;
+end
 data_out.y=struct_loc.val(:,idx_min);
 
 end %function
