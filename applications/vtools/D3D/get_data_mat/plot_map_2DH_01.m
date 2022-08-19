@@ -62,6 +62,10 @@ if isfield(flg_loc,'do_vector')==0
     flg_loc.do_vector=zeros(1,numel(flg_loc.var));
 end
 
+if isfield(flg_loc,'do_3D')==0
+    flg_loc.do_3D=0;
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -157,7 +161,7 @@ for kvar=1:nvar %variable
         continue
     end
     
-    fpath_file=cell(nt,nclim,ndiff);
+    fpath_file=cell(nt,nclim,ndiff,2); %2D,3D
     for kt=kt_v
         ktc=ktc+1;
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
@@ -223,11 +227,30 @@ for kvar=1:nvar %variable
                     mkdir_check(fdir_fig_var,NaN,1,0);
 
                     fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
-                    fpath_file{kt,kclim,kdiff,kxlim}=sprintf('%s%s',fname_noext,fext); %for movie 
+                    fpath_file{kt,kclim,kdiff,kxlim,1}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                     in_p.fname=fname_noext;
+                    in_p.do_3D=0;
 
                     fig_map_sal_01(in_p);
+                    
+                    if flg_loc.do_3D
+                        fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),'3D',tag_ref);
+                        mkdir_check(fdir_fig_var,NaN,1,0);
+                        
+                        fname_noext=fig_name(fdir_fig_var,sprintf('%s_3D',tag),runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
+                        fpath_file{kt,kclim,kdiff,kxlim,2}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                        in_p.fname=fname_noext;
+                        in_p.do_3D=1;  
+                        in_p.gridInfo.Zcen=in_p.val;  
+%                         in_p.fig_visible=1;  
+%                         in_p.fig_print=0;  
+                        
+                        fig_map_sal_01(in_p);
+
+                    end
+                    
                 end %kdiff
             end%kxlim
         end %kclim
@@ -239,8 +262,12 @@ for kvar=1:nvar %variable
     for kdiff=1:ndiff
         for kclim=1:nclim
             for kxlim=1:nxlim
-                fpath_mov=fpath_file(:,kclim,kdiff,kxlim);
+                fpath_mov=fpath_file(:,kclim,kdiff,kxlim,1);
                 gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+                if flg_loc.do_3D
+                    fpath_mov=fpath_file(:,kclim,kdiff,kxlim,2);
+                    gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+                end
             end
         end
     end

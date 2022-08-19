@@ -75,6 +75,12 @@ end
 if isfield(in_p,'fact')==0
     in_p.fact=1;
 end
+if isfield(in_p,'do_3D')==0
+    in_p.do_3D=0;
+end
+if isfield(in_p,'zlims')==0
+    in_p.zlims=NaN;
+end
 v2struct(in_p)
 
 %% check if printing
@@ -104,6 +110,10 @@ end
 if isnan(clims(1)) %still NaN because all are NaN
     tol=1e-8;
     clims=[-tol,+tol];
+end
+
+if isnan(zlims)
+    zlims=clims;
 end
 
 %% SIZE
@@ -314,6 +324,7 @@ kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 lims.c(kr,kc,1:2)=clims;
+lims.z(kr,kc,1:2)=zlims;
 xlabels{kr,kc}=labels4all('x',1,lan);
 ylabels{kr,kc}=labels4all('y',1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
@@ -407,7 +418,12 @@ end
 
 kr=1; kc=1;    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
-EHY_plotMapModelData(gridInfo,val,'t',1); 
+if do_3D
+    EHY_plotMapModelData(gridInfo,val,'t',1);
+%     EHY_plotMapModelData(gridInfo,val,'t',1,'edgecolor',edgecolor,'linestyle',linestyle); 
+else
+    EHY_plotMapModelData(gridInfo,val,'t',1); 
+end
 if plot_ldb
     nldb=numel(ldb);
     for kldb=1:nldb
@@ -433,12 +449,22 @@ end
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
-if do_axis_equal
-    axis(han.sfig(kr,kc),'equal')
-end
+
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+if do_3D
+    han.sfig(kr,kc).ZLim=lims.z(kr,kc,:);
+end
+if do_axis_equal
+%     axis(han.sfig(kr,kc),'equal')
+    han.dar=get(han.sfig(kr,kc),'DataAspectRatio');
+    if han.dar(3)==1
+          set(gca,'DataAspectRatio',[1 1 1/max(han.dar(1:2))])
+    else
+          set(gca,'DataAspectRatio',[1 1 han.dar(3)])
+    end
+end
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
@@ -458,7 +484,9 @@ han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
 
 %colormap
 kr=1; kc=1;
-% view(han.sfig(kr,kc),[0,90]);
+if do_3D
+view(han.sfig(kr,kc),views);
+end
 colormap(han.sfig(kr,kc),cmap);
 % if ~isnan(lims.c(kr,kc,1:1))
 caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));

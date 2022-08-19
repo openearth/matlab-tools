@@ -99,6 +99,8 @@ for kvar=1:nvar %variable
     
     fdir_fig_var=fullfile(fdir_fig,var_str);
     mkdir_check(fdir_fig_var);
+    fdir_fig_var_3d=fullfile(fdir_fig,var_str,'3D');
+    mkdir_check(fdir_fig_var_3d,NaN,1,0);
     
     in_p.unit=var_str;
     
@@ -125,8 +127,27 @@ for kvar=1:nvar %variable
             fpath_file{kt,kclim}=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;
-
+            in_p.do_3D=0;  
+            
             fig_map_sal_01(in_p);
+            
+            if flg_loc.do_3D
+
+                fname_noext=fig_name(fdir_fig_var_3d,tag_fig,time_dnum(kt),runid,runid_ref,kclim,var_str);
+                bol_nan=isnan(in_p.gridInfo.Xcen);
+                F=scatteredInterpolant(in_p.gridInfo.Xcen(~bol_nan),in_p.gridInfo.Ycen(~bol_nan),val(~bol_nan));
+                vz=F(in_p.gridInfo.Xcor,in_p.gridInfo.Ycor);
+                in_p.fname=fname_noext;
+                in_p.do_3D=1;  
+%                 in_p.gridInfo.Zcen=in_p.val;  
+                in_p.gridInfo.Zcor=vz; 
+%                         in_p.fig_visible=1;  
+%                         in_p.fig_print=0;  
+
+                fig_map_sal_01(in_p);
+
+            end
+
         end %kclim
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag_fig,ktc/nt*100));
     end %kt

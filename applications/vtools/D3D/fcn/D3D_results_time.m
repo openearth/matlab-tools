@@ -56,11 +56,16 @@ elseif strcmp(ext,'.dat') %D3D4
     if ITDATE(2)~=0
         error('modify this!')
     end
-    if TZONE~=0
-        error('solve this')
+    if sign(TZONE)<0
+        str_sign='-';
+    else
+        str_sign='+';
     end
+    tzone_h=floor(TZONE);
+    tzone_m=(TZONE-tzone_h).*60;
+    str_tz=sprintf('%s%02d:%02d',str_sign,tzone_h,tzone_m);
     t0_str=sprintf('%d',ITDATE(1));
-    t0_dtime=datetime(t0_str,'InputFormat','yyyyMMdd');
+    t0_dtime=datetime(t0_str,'InputFormat','yyyyMMdd','TimeZone',str_tz);
     if ismor==1
         MORFT=vs_let(NFStruct,'map-infsed-serie','MORFT','quiet'); %morphological time (days since start)
         time_mor_r=MORFT*24*3600; %seconds
