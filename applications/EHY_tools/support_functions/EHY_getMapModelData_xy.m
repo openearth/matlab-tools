@@ -141,7 +141,28 @@ if isfield(Data,'face_nodes')
 elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
     if isfield(Data,'val')
         val = arbcross(arb,{'FACE' permute(Data.val,[2 3 4 1])});
-    elseif isfield(Data,'vel_x')
+    elseif isfield(Data,'vel_x') || isfield(Data,'val_x')
+        %COMMENT #1
+        %when reading, for instance, <sbuu>, the variable is in
+        %<val_x> <val_y> rather than <vel_x> <vel_y>, but it is 
+        %in essence the same. Ideal we would not make this 
+        %distinction when reading, but this change is not backward
+        %compatible. We solve is here the best we can for not 
+        %repeating code.
+        
+        if isfield(Data,'val_x')
+            Data.vel_x=Data.val_x;
+            Data.vel_y=Data.val_y;
+            Data.vel_mag=Data.val_mag;
+            Data.vel_dir=NaN(size(Data.val_mag));
+        end
+        
+        vel_x = arbcross(arb,{'FACE' permute(Data.vel_x,[2 3 4 1])});
+        vel_y = arbcross(arb,{'FACE' permute(Data.vel_y,[2 3 4 1])});
+        vel_dir = arbcross(arb,{'FACE' permute(Data.vel_dir,[2 3 4 1])});
+        vel_mag = arbcross(arb,{'FACE' permute(Data.vel_mag,[2 3 4 1])});
+    elseif isfield(Data,'val_x')
+        
         vel_x = arbcross(arb,{'FACE' permute(Data.vel_x,[2 3 4 1])});
         vel_y = arbcross(arb,{'FACE' permute(Data.vel_y,[2 3 4 1])});
         vel_dir = arbcross(arb,{'FACE' permute(Data.vel_dir,[2 3 4 1])});

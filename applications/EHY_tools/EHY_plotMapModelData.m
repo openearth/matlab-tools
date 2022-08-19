@@ -115,6 +115,8 @@ if strcmp(modelType,'d3d')
     
     if all(size(gridInfo.Xcor)-size(values) == [1 1])
         % this is needed for info in cell center, like Delft3d 4 output
+        %but we need values without dummy's for 3D
+        values_raw=values;
         values(end+1,:) = NaN;
         values(:,end+1) = NaN;
     elseif all(size(gridInfo.Xcor)-size(values) == [0 0])
@@ -212,20 +214,118 @@ switch modelType
         end
         
     case 'd3d'
-        hPcolor = pcolor(gridInfo.Xcor,gridInfo.Ycor,values);
-        set(hPcolor,'linestyle',OPT.linestyle,'edgecolor',OPT.edgecolor,'facecolor',OPT.facecolor);
-        if ~isempty(OPT.contour)
-            [cCon,hCon] = contour(gridInfo.Xcor,gridInfo.Ycor,values,OPT.contour,'LineStyle','-',...
-                'LineColor',OPT.edgecolor,'LineWidth',OPT.linewidth,'ShowText',OPT.contourtext);
-        else
-            cCon = []; hCon = [];
-        end
-        
-        if nargout==1
-            varargout{1}=hPcolor;
-        elseif nargout==3
-            varargout{1}=hPcolor;
-            varargout{2}=cCon;
-            varargout{3}=hCon;
-        end
+        if isfield(gridInfo,'Zcen')==0 && isfield(gridInfo,'Zcor')==0 %2D
+            hPcolor = pcolor(gridInfo.Xcor,gridInfo.Ycor,values);
+            set(hPcolor,'linestyle',OPT.linestyle,'edgecolor',OPT.edgecolor,'facecolor',OPT.facecolor);
+            if ~isempty(OPT.contour)
+                [cCon,hCon] = contour(gridInfo.Xcor,gridInfo.Ycor,values,OPT.contour,'LineStyle','-',...
+                    'LineColor',OPT.edgecolor,'LineWidth',OPT.linewidth,'ShowText',OPT.contourtext);
+            else
+                cCon = []; hCon = [];
+            end
+
+            if nargout==1
+                varargout{1}=hPcolor;
+            elseif nargout==3
+                varargout{1}=hPcolor;
+                varargout{2}=cCon;
+                varargout{3}=hCon;
+            end
+        else %3D
+            switch lower(OPT.facecolor)
+                case 'flat'
+                    values=values_raw(:);
+                    
+                    gridInfo.face_nodes_x=face_from_cor(gridInfo.Xcor);
+                    gridInfo.face_nodes_y=face_from_cor(gridInfo.Ycor);
+                    if isfield(gridInfo,'Zcor')
+                        gridInfo.face_nodes_z=face_from_cor(gridInfo.Zcor);
+                    else %zcen
+                        gridInfo.face_nodes_z=repmat(reshape(gridInfo.Zcen,1,[]),size(gridInfo.face_nodes_x,1),1);
+                    end
+                    
+                    %The code from here down is similar to the one in FM. It should be made a function! 
+                    
+                    % don't plot NaN's (gives problems in older MATLAB versions)
+                    nanInd = isnan(values);
+                    values(nanInd) = [];
+                    gridInfo.face_nodes_x(:,nanInd) = [];
+                    gridInfo.face_nodes_y(:,nanInd) = [];
+                    gridInfo.face_nodes_z(:,nanInd) = [];
+
+                    nnodes = size(gridInfo.face_nodes_x,1) - sum(isnan(gridInfo.face_nodes_x));
+                    unodes = unique(nnodes);
+                    unodes(unodes==0) = [];
+
+                    for i = 1:length(unodes)
+                        nr = unodes(i);
+                        poly_n = find(nnodes==nr);
+                        npoly = length(poly_n);
+                        tvertex = nr*npoly;
+                        if isfield(gridInfo,'face_nodes_z') 
+                            XYvertex = NaN(tvertex,3); % actually XYZvertex
+                        else
+                            XYvertex = NaN(tvertex,2);
+                        end
+                        Vpatch = NaN(npoly,1);
+                        offset = 0;
+                        for ip = 1:npoly
+%                             if isfield(gridInfo,'face_nodes_z') 
+                                XYvertex(offset+(1:nr),:) = [gridInfo.face_nodes_x(1:nr,poly_n(ip)) gridInfo.face_nodes_y(1:nr,poly_n(ip)) gridInfo.face_nodes_z(1:nr,poly_n(ip))];
+%                             else
+%                                 XYvertex(offset+(1:nr),:) = [gridInfo.face_nodes_x(1:nr,poly_n(ip)) gridInfo.face_nodes_y(1:nr,poly_n(ip))];
+%                             end
+                            offset = offset+nr;
+                            Vpatch(ip) = values(poly_n(ip));
+                        end
+
+                        hPatch(i,1) = patch('vertices',XYvertex, ...
+                            'faces',reshape(1:tvertex,[nr npoly])', ...
+                            'facevertexcdata',Vpatch, ...
+                            'marker','none',...
+                            'edgecolor',OPT.edgecolor,...
+                            'linestyle',OPT.linestyle,...
+                            'faceColor','flat',...
+                            'LineWidth',OPT.linewidth);
+                    end %i
+                otherwise
+                    error('This needs to be implemented')
+            end %switch
+        end %2D,3D
 end
+
+end %function
+
+%%
+%% FUNCTION
+%%
+
+
+function [face_nodes]=face_from_cor(cor)
+
+npmx=size(cor,2);
+npmy=size(cor,1);
+
+nel=(npmx-1)*(npmy-1);
+nnel=4;
+
+face_nodes=NaN(nel,nnel);
+
+x_m=cor(:);
+
+c1=0;
+idx_vert=reshape(1:1:npmx*npmy,npmy,npmx);
+
+for kx=1:npmx-1
+    for ky=1:npmy-1
+        idx_xl=idx_vert(ky,kx);
+        idx_xu=idx_vert(ky,kx+1);
+        idx_yl=idx_vert(ky+1,kx);
+        idx_yu=idx_vert(ky+1,kx+1);
+        c1=c1+1;
+        face_nodes(c1,:)=x_m([idx_xl,idx_xu,idx_yu,idx_yl]);
+    end %ky
+end %kx
+
+face_nodes=face_nodes';
+end %function

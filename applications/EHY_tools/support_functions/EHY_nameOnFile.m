@@ -212,11 +212,11 @@ fmNames{end+1,1}={'NetLink_yu','mesh2d_edge_y'}; % y-coordinate of edge
 fmNames{end+1,1}={'NetLink','mesh2d_edge_nodes'}; % 'link between two netnodes' / 'Mapping from every edge to the two nodes that it connects'
 fmNames{end+1,1}={'NetElemNode','mesh2d_face_nodes'}; % 'mapping from net cell to net nodes' 
 
-fmNames{end+1,1}={'FlowElemContour_x','mesh2d_face_x_bnd','mesh2d_agg_face_x_bnd'}; % x-coordinates of flow element contours
-fmNames{end+1,1}={'FlowElemContour_y','mesh2d_face_y_bnd','mesh2d_agg_face_y_bnd'}; % y-coordinates of flow element contours
+fmNames{end+1,1}={'FlowElemContour_x','mesh2d_face_x_bnd','Mesh2d_face_x_bnd','mesh2d_agg_face_x_bnd'}; % x-coordinates of flow element contours
+fmNames{end+1,1}={'FlowElemContour_y','mesh2d_face_y_bnd','Mesh2d_face_x_bnd','mesh2d_agg_face_y_bnd'}; % y-coordinates of flow element contours
 
 fmNames{end+1,1}={'mesh2d_flowelem_domain','FlowElemDomain'}; % flow element domain
-fmNames{end+1,1}={'mesh2d_flowelem_bl','FlowElem_bl'}; % bed level
+fmNames{end+1,1}={'mesh2d_flowelem_bl','Mesh2d_flowelem_bl','FlowElem_bl'}; % bed level
 fmNames{end+1,1}={'mesh2d_flowelem_ba','FlowElem_bac'}; % area (m2) of cell faces
 
 %% List of Delft3D FM and SFINCS variable names
