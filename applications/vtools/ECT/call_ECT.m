@@ -52,15 +52,11 @@ if isfield(ECT_input.flg,'pmm')==0
     ECT_input.flg.pmm=0;
 end
 
-if isfield(ECT_input.flg,'v')==0
-    ECT_input.flg.v=0;
-end
-
 if isfield(ECT_input.flg,'vp')==0
     ECT_input.flg.vp=1; %compute particle velocity: 0=NO, 1=YES
 end
 
-if isfield(ECT_input.flg,'vp')==0
+if isfield(ECT_input.flg,'E')==0
     ECT_input.flg.E=1; %compute entrainment-deposition formulation: 0=NO, 1=YES
 end
 
@@ -68,8 +64,12 @@ if isfield(ECT_input.flg,'calib_s')==0
     ECT_input.flg.calib_s=1; 
 end
 
-if isfield(ECT_input.flg,'u_b')==0
-    ECT_input.flg.u_b=NaN; 
+if isfield(ECT_input,'u_b')==0
+    ECT_input.u_b=NaN; 
+end
+
+if isfield(ECT_input,'v')==0
+    ECT_input.v=0;
 end
 
 v2struct(ECT_input)
