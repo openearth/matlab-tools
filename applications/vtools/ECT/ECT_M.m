@@ -10,6 +10,26 @@
 %$Id$
 %$HeadURL$
 %
+%
+%Compute system matrix, eigenvectors, and eigenvalues
+%
+%INPUT:
+%	-pert_anl     = type of perturbation analysis: 1 = full system, 2 = no friction, 3 = no friction and no diffusion
+%	-kwx          = wavenumber in x-direction [1/m]
+%	-kwy          = wavenumber in y-direction [1/m]
+%	-Dx           = diffusion matrix in x-direction
+%	-Dy           = diffusion matrix in y-direction
+%	-Ax           = flux matrix in x-direction
+%	-Ay           = flux matrix in y-direction
+%	-B            = friction terms matrix
+%	-M_pmm        = preconditioning mass matrix
+%                 
+%OUTPUT:          
+%	-M            = system matrix
+%	-eigenvector  = right eigenvectors matrix
+%	-eigenvalue   = eigenvalues matrix
+%	-eigenvectorL = left eigenvectors
+%	-eigenvalue_v = eigenvalues vector
 
 function [M,eigenvector,eigenvalue,eigenvectorL,eigenvalue_v]=ECT_M(pert_anl,kwx,kwy,Dx,Dy,C,Ax,Ay,B,M_pmm)
 
@@ -31,7 +51,6 @@ switch pert_anl
             error('implement')
 end
     
-%eigen_R=eig(M);
 [eigenvector,eigenvalue,eigenvectorL]=eig(M);
 eigenvalue_v=diag(eigenvalue);
 
