@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18082 $
-%$Date: 2022-05-27 16:38:11 +0200 (Fri, 27 May 2022) $
-%$Author: chavarri $
-%$Id: gdm_load_time_simdef.m 18082 2022-05-27 14:38:11Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_load_time_simdef.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

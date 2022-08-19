@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17536 $
-%$Date: 2021-10-29 21:38:05 +0200 (Fri, 29 Oct 2021) $
-%$Author: chavarri $
-%$Id: fig_Q_analysis_horizontal.m 17536 2021-10-29 19:38:05Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/data_stations/fig_Q_analysis_horizontal.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function data_station_prob=data_station_probability(data_station)

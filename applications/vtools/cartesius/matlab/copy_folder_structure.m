@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17944 $
-%$Date: 2022-04-07 14:24:09 +0200 (Thu, 07 Apr 2022) $
-%$Author: chavarri $
-%$Id: copy_run_folder_to_cartesius.m 17944 2022-04-07 12:24:09Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/cartesius/matlab/copy_run_folder_to_cartesius.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Copies the folder structure in the p-drive to SURF
 

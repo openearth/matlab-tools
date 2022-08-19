@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17276 $
-%$Date: 2021-05-10 11:39:12 +0200 (Mon, 10 May 2021) $
-%$Author: chavarri $
-%$Id: figure_layout.m 17276 2021-05-10 09:39:12Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/figure_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Plots a variable as a function of 2 parameters and the contour of 
 %the objective value. Based on <fig_sedtrans_calib>.

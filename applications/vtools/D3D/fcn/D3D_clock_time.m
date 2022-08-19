@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18039 $
-%$Date: 2022-05-10 19:09:44 +0200 (Tue, 10 May 2022) $
-%$Author: chavarri $
-%$Id: gdm_load_rkm_polygons.m 18039 2022-05-10 17:09:44Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_load_rkm_polygons.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 %E.G.

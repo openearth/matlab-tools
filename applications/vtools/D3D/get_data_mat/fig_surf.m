@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18270 $
-%$Date: 2022-08-01 12:23:51 +0200 (Mon, 01 Aug 2022) $
-%$Author: chavarri $
-%$Id: fig_1D_01.m 18270 2022-08-01 10:23:51Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_1D_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error

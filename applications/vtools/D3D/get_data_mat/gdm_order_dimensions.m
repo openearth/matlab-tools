@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18154 $
-%$Date: 2022-06-14 05:40:14 +0200 (Tue, 14 Jun 2022) $
-%$Author: chavarri $
-%$Id: labels4all.m 18154 2022-06-14 03:40:14Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/labels4all.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %dimension 1 of <data.val> must be faces.
 

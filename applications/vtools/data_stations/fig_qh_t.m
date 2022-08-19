@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17599 $
-%$Date: 2021-11-18 21:17:32 +0100 (Thu, 18 Nov 2021) $
-%$Author: chavarri $
-%$Id: fig_qh_t.m 17599 2021-11-18 20:17:32Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/q_analysis/fig_qh_t.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error

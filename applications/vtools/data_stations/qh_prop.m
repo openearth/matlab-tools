@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17599 $
-%$Date: 2021-11-18 21:17:32 +0100 (Thu, 18 Nov 2021) $
-%$Author: chavarri $
-%$Id: qh_prop.m 17599 2021-11-18 20:17:32Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/q_analysis/qh_prop.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [q_cen,q_mean,q_std,yupper,ylower,q_env]=qh_prop(qh_2env,q_edge)

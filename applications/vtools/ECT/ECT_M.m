@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17936 $
-%$Date: 2022-04-05 13:43:17 +0200 (Tue, 05 Apr 2022) $
-%$Author: chavarri $
-%$Id: twoD_study.m 17936 2022-04-05 11:43:17Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/ECT/twoD_study.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [M,eigenvector,eigenvalue,eigenvectorL,eigenvalue_v]=ECT_M(pert_anl,kwx,kwy,Dx,Dy,C,Ax,Ay,B,M_pmm)

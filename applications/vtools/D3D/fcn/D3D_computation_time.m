@@ -34,11 +34,12 @@ while ~feof(fid)
                 t0=datetime(tok_num(1),tok_num(2),tok_num(3),tok_num(4),tok_num(5),tok_num(6));
                 %tf
                 [kl_g,fline]=search_text_ascii(fpath_dia,'***             date, time :',kl); %attention, different number of spaces than t0
-                if isnan(kl_g)
+                if isempty(kl_g) || isnan(kl_g)
                     error('I could not find the end time')
                 end
                 tok=regexp(fline,'***             date, time : (\d{4})-(\d{2})-(\d{2}), (\d{2}):(\d{2}):(\d{2})','tokens');
-                tok_num=str2double(tok{1,1});
+%                 tok_num=str2double(tok{1,1}); %I don't know why this worked before but not now 
+                tok_num=str2double(tok{1,1}{1,1});
                 tf=datetime(tok_num(1),tok_num(2),tok_num(3),tok_num(4),tok_num(5),tok_num(6));
                 %duration
                 tim_dur=tf-t0;

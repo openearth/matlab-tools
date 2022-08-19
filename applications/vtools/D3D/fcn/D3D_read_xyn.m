@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17614 $
-%$Date: 2021-11-30 12:06:07 +0100 (Tue, 30 Nov 2021) $
-%$Author: chavarri $
-%$Id: D3D_observation_stations.m 17614 2021-11-30 11:06:07Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_observation_stations.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function stru_out=D3D_read_xyn(fname,varargin)

@@ -209,6 +209,8 @@ if isfield(flg_loc,'tol_tim')
     tol_tim=flg_loc.tol_tim;
 end
 
+fid_log=NaN;
+
 %% CALC
 
 nx=numel(data_ref.data.val);

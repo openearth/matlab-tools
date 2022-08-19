@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17614 $
-%$Date: 2021-11-30 12:06:07 +0100 (Tue, 30 Nov 2021) $
-%$Author: chavarri $
-%$Id: fig_mean_diff.m 17614 2021-11-30 11:06:07Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/q_analysis/fig_mean_diff.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error

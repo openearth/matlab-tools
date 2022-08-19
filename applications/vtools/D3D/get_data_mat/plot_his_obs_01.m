@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18185 $
-%$Date: 2022-06-21 13:23:15 +0200 (Tue, 21 Jun 2022) $
-%$Author: chavarri $
-%$Id: plot_his_sal_meteo_01.m 18185 2022-06-21 11:23:15Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_his_sal_meteo_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

@@ -15,6 +15,7 @@ function D3D_create_simulation_all(flg,input_m,fdir_sim_runs,fcn_adapt)
 
 %% save input matrix
 
+mkdir_check(fdir_sim_runs);
 fpath_input=fullfile(fdir_sim_runs,'readme.mat');
 save(fpath_input,'input_m');
 D3D_write_readme(input_m,'fpath_out',fullfile(fdir_sim_runs,'readme.txt'));
@@ -143,10 +144,14 @@ for ksim=1:nsim
         end
 
         %observation points
-    %     if simdef.mdf.Flhis_dt>0
-    %     D3D_obs(simdef) 
-    %     end
+        if simdef.mdf.Flhis_dt>0
+            D3D_obs(simdef) 
+        end
 
+        %simdef
+        fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
+        save(fpath_simdef,'simdef')
+        
     end 
     
     %% run script

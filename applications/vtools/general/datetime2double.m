@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18084 $
-%$Date: 2022-05-31 15:22:48 +0200 (Tue, 31 May 2022) $
-%$Author: chavarri $
-%$Id: D3D_io_input.m 18084 2022-05-31 13:22:48Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_io_input.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [tim_double,tim_str]=datetime2double(dtime,varargin)

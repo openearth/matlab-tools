@@ -366,7 +366,11 @@ if plot_mea
 %     han.p(kr,kc,2)=plot(mea_etab_p.rkm,mea_etab_p.etab,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
     nfv=numel(han.p(kr,kc,:));
     han.p(kr,kc,nfv+1)=plot(s_mea,val_mea,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-    str_leg={str_sim{:},labels4all('mea',1,lan)}; %check concatenation is right
+    if isfield(in_p,'leg_mea')==0
+        str_leg={str_sim{:},labels4all('mea',1,lan)}; %check concatenation is right
+    else
+        str_leg={str_sim{:},in_p.leg_mea};
+    end
 else
     str_leg=str_sim;
 end

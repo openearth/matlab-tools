@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18181 $
-%$Date: 2022-06-20 08:15:58 +0200 (Mon, 20 Jun 2022) $
-%$Author: chavarri $
-%$Id: D3D_time_dnum.m 18181 2022-06-20 06:15:58Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_time_dnum.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

@@ -22,7 +22,7 @@ switch simdef.D3D.structure
         kl=search_text_ascii(simdef.file.dia,'** INFO   : Computation finished at:',1);
 end
 is_done=true;
-if isnan(kl)
+if isempty(kl) || isnan(kl)
     is_done=false;
 end
 

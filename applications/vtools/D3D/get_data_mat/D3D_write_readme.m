@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18070 $
-%$Date: 2022-05-20 18:33:29 +0200 (Fri, 20 May 2022) $
-%$Author: chavarri $
-%$Id: D3D_create_simulation_all.m 18070 2022-05-20 16:33:29Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_create_simulation_all.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function D3D_write_readme(input_m,varargin)
