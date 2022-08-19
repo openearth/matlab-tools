@@ -10,6 +10,19 @@
 %$Id$
 %$HeadURL$
 %
+%Compute frequencies of FFT
+%
+%INPUT:
+%	-x   = independent variable; double, [1,nx];
+%   -y   = independent variable; double, [1,ny];
+%
+%OUTPUT:
+%	-dx  = step in x direction; double, [1,1];
+%	-fx2 = double-sided frequency in x direction; double, [1,nx];
+%	-fx1 = single-sided frequency in x direction; double, [1,nx/2+1];
+%	-dy  = step in y direction double, [1,1];
+%	-fy2 = double-sided frequency in y direction; double, [1,ny];
+%	-fy1 = single-sided frequency in y direction; double, [1,ny/2+1];
 
 function [dx,fx2,fx1,dy,fy2,fy1]=fourier_freq(x,y)
 

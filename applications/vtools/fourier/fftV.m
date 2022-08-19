@@ -10,27 +10,30 @@
 %$Id$
 %$HeadURL$
 %
-%INPUT
+%Wrap aroun Fast Fourier Transform
+%
+%INPUT:
 %   For 1D:
-%       -x: independent variable; double, [1,nx];
-%       -z: dependent variable; double, [1,nx];
+%       -x = independent variable; double, [1,nx];
+%       -z = dependent variable; double, [1,ny];
 %
 %   For 2D:
-%       -x: independent variable; double, [1,nx];
-%       -y: independent variable; double, [1,ny];
-%       -z: dependent variable; double, [ny,nx];
+%       -x = independent variable; double, [1,nx];
+%       -y = independent variable; double, [1,ny];
+%       -z = dependent variable; double, [ny,nx];
 %
 %OUTPUT:
 %   If 1D:
-%       -f2: double-sided frequency [1/unit(X)]
-%       -f1: single-sided frequency [1/unit(X)]
-
+%       -f2 = double-sided frequency [1/unit(X)]
+%       -f1 = single-sided frequency [1/unit(X)]
+%TO DO:
+%	-Check that everything works in 1D
+%
 %E.G. 2D
 %   [fx2,fy2,P2,fx1,fy1,P1]=fftV(x,y,z)
 %
 %E.G. 1D
 %   [f2,P2,f1,P1]=fftV(x,z)
-
 
 function [varargout]=fftV(varargin)
 
@@ -82,7 +85,6 @@ zf_shift=fftshift(zf);
 % P1=P2a(1:nx/2+1);
 % P1(2:end-1)=2*P1(2:end-1);
 
-
 %double-sided
 P2=zf_shift/nx/ny;
 
@@ -95,16 +97,4 @@ else
     varargout{1,3}=P2;
 end
 
-%%
-
-% figure 
-% hold on
-% plot(x,z(1,:))
-% %%
-% zf_1=fft(z(1,:));
-% % zf_1s=fftshift(zf(1,:));
-% figure 
-% hold on
-% plot(fx2,zf_1,'-b*')
-% plot(fx2,zf(1,:),'-ro')
 end %function
