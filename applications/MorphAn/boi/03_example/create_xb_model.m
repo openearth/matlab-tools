@@ -78,12 +78,23 @@ if d_start > d_offshore
     z   = [z_start; z];
 end
 
-plot(x,z,'-')
+
 
 
 %% grid
 
 [xgr zgr] = xb_grid_xgrid2_boi(x,z,'Tm',Tp,'wl',3,'dxmin',1,'ppwl',40);
+
+% --- add cells. Do not use first dx. It is not always representative for
+% the dx.
+dx = diff(xgr);
+dx = dx(2);
+
+xgr = [xgr(1)-dx*2; xgr(1)-dx; xgr];
+zgr = [zgr(1); zgr(1); zgr];
+
+
+plot(x,z,'-')
 
 plot(xgr, zgr,'--')
 legend({'profile','required depth','extended profile','grid'})

@@ -24,6 +24,16 @@ globalx2 = nc_varget([path2 'xboutput.nc'],'globalx');
 
 % --- plot domain
 figure;
+plot(globalx1, squeeze(zb1(1,:)),'o-')
+hold on
+plot(globalx2, squeeze(zb2(1,:)),'*-')
+grid on
+xlabel('x [m+RSP]')
+ylabel('zb [m+NAP]')
+legend({'sim 1','sim2'})
+
+% --- plot domain
+figure;
 subplot(2,1,1)
 plot(globalx1, squeeze(zb1(1,:)))
 hold on
@@ -36,8 +46,8 @@ plot(globalx1(2:end), diff(globalx1))
 hold on
 plot(globalx2(2:end), diff(globalx2),'--')
 grid on
-xlabel('dx [m]')
-ylabel('zb [m+NAP]')
+xlabel('x [m+RSP]')
+ylabel('dx [m]')
 
 % --- plot erosion
 figure;
