@@ -20,7 +20,7 @@ if ~isempty(output)
     mdf.flmap(3) = output.TLMAPS;
 end
 % Histories
-siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'SDSOUTPUT' 'HISTORIES'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'SDSOUTPUT' 'HIST'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.SDSOUTPUT.HISTORIES')
     output       = siminp_struc.ParsedTree.SDSOUTPUT.HISTORIES;
 else

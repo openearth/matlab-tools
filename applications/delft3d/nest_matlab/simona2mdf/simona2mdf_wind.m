@@ -44,15 +44,15 @@ if strcmpi(mdf.sub1(3),'w');
             if strcmpi(wind.SERIES,'regular')
                 times  = wind.FRAME(1):wind.FRAME(2):wind.FRAME(3);
                 values = reshape(wind.VALUES,2,[])';
-                wnd.minutes   = times;
-                wnd.speed     = values(:,1)*wind.WCONVERSIONF;
-                wnd.direction = values(:,2);
-                mdf.filwnd    = [name_mdf '.wnd'];
-                simona2mdf_io_wnd('write',mdf.filwnd,wnd);
-                mdf.filwnd    = simona2mdf_rmpath(mdf.filwnd);
             else
-                simona2mdf_message('TIME_AND_VALUE (wind series) not implemented yet','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
+                [times,values] = simona2mdf_getseries(wind,'speedDir',true); 
             end
+            wnd.minutes   = times;
+            wnd.speed     = values(:,1)*wind.WCONVERSIONF;
+            wnd.direction = values(:,2);
+            mdf.filwnd    = [name_mdf '.wnd'];
+            simona2mdf_io_wnd('write',mdf.filwnd,wnd);
+            mdf.filwnd    = simona2mdf_rmpath(mdf.filwnd);
         else
             %
             % Constant value specified
