@@ -79,7 +79,7 @@ warning('DATA IN UTC+1, NO DST.')
 %% 1) Read data
 delimiter = ';';
 startRow = 2;
-formatSpec = '%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %{dd-MM-yyyy}D %{HH:mm:ss}D %s %q %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %*[^\n\r]';
+formatSpec = '%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %{dd-MM-yyyy}D %{HH:mm:ss}D %s%s %q %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %*[^\n\r]';
 ikeep = 1; % file contains multiple paramters, keep only nr ikeep
 fileID = fopen(fname,'r');
 dataArray = textscan(fileID,formatSpec,...
@@ -117,8 +117,8 @@ for i=1:length(dataArray)
 end
 
 %% 2) Convert to datenum and values
-Time            = datenum([year(dataArray{20}),month(dataArray{20}),day(dataArray{20}),hour(dataArray{21}),minute(dataArray{21}),second(dataArray{21})]);
-NUMERIEKEWAARDE = dataArray{23};
+Time            = datenum([year(dataArray{22}),month(dataArray{22}),day(dataArray{22}),hour(dataArray{23}),minute(dataArray{23}),second(dataArray{23})]);
+NUMERIEKEWAARDE = dataArray{25};
 NUMERIEKEWAARDE = strrep(NUMERIEKEWAARDE,',','.');
 Val             = str2double(NUMERIEKEWAARDE);
 
