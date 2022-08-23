@@ -357,17 +357,19 @@ switch modelType
         
     case 'sobek3'
         %% SOBEK3
-        time_ind  = dims(time_ind).index;
+        time_ind  = dims(timeInd).index;
         % loop over stations
         for i_stat = 1:length(dims(stationsInd).index)
             stat_ind  = dims(stationsInd).index(i_stat);
             indexOut = dims(stationsInd).indexOut(i_stat);
             % open data file
-            D          = read_sobeknc(inputFile);
+            D          = read_sobeknc(inputFile); %we are reading the whole file! better to just read what is requested.
             % get data
             switch OPT.varName
                 case 'wl'
                     Data.val(:,indexOut)         =D.value(stat_ind,time_ind);
+                otherwise
+                    Data.val(:,indexOut)         =D.(OPT.varName)(stat_ind,time_ind);
             end
         end
         
