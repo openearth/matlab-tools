@@ -40,7 +40,6 @@ mkdir_check(fdir_fig);
 
 %% STATIONS
 
-stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef.D3D.structure);
 
 %% TIME
 
@@ -58,7 +57,7 @@ end
 
 % ns=numel(stations);
 nvar=numel(flg_loc.var);
-nclim=size(flg_loc.clims,1);
+ntr=numel(flg_loc.stations_track);
 
 %% FIGURE INI
 
@@ -66,6 +65,7 @@ in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 in_p.tim=time_dtime;
+in_p.s_fact=1/1000; 
 
 % fext=ext_of_fig(in_p.fig_print);
 
@@ -76,6 +76,12 @@ in_p.tim=time_dtime;
 
 %% LOOP
 
+for ktr=1:ntr
+    flg_loc.stations=flg_loc.stations_track{ktr};
+    stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef.D3D.structure);
+    
+    nclim=size(flg_loc.clims{ktr},1);
+    
     %%
     for kvar=1:nvar
         
@@ -86,7 +92,7 @@ in_p.tim=time_dtime;
 %         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
         layer=1;
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str,'layer',layer);
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str,'layer',layer,'station',flg_loc.stations_track_name{ktr});
         
         load(fpath_mat_tmp,'data');
         
@@ -107,11 +113,16 @@ in_p.tim=time_dtime;
 
                 if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
                     [str_sta,str_found]=RWS_location_clear(stations);
+                    %pass o
                     ns=numel(str_sta);
+                    clear data_mea %better to preallocate
                     for ks=1:ns
-                        data_mea(ks)=read_data_stations(flg_loc.measurements,'location_clear',str_sta{ks}); %location maybe better?
+                        aux=read_data_stations(flg_loc.measurements,'location_clear',str_sta{ks}); %location maybe better?
+                        if ~isempty(aux) %not nice
+                            data_mea(ks)=aux;
+                        end
                     end
-                    if isempty(data_mea)
+                    if exist('data_mea','var')==0
                         in_p.do_measurements=0;
                     else
                         in_p.do_measurements=1;
@@ -134,35 +145,45 @@ in_p.tim=time_dtime;
         end
 
         %%
-        [x,idx_s]=sort([data_mea.raai]);
-        [t_m,d_m]=meshgrid(time_dtime,x);
+
+        if in_p.do_measurements
+            [x,idx_s]=sort([data_mea.raai]);
+            [t_m,d_m]=meshgrid(time_dtime,x);
         
-        in_p.t_m=t_m;
-        in_p.d_m=d_m;
-        in_p.val_m=data(:,idx_s)';
+            in_p.t_m=t_m;
+            in_p.d_m=d_m.*1000;
+            in_p.val_m=data(:,idx_s)';
        
-        in_p.t_m_mea=data_mea_mat.data.t_m_mea;
-        in_p.d_m_mea=data_mea_mat.data.d_m_mea;
-        in_p.val_m_mea=data_mea_mat.data.val_m_mea;
+            in_p.t_m_mea=data_mea_mat.data.t_m_mea;
+            in_p.d_m_mea=data_mea_mat.data.d_m_mea.*1000;
+            in_p.val_m_mea=data_mea_mat.data.val_m_mea;
+        else
+            [t_m,d_m]=meshgrid(time_dtime,flg_loc.s{ktr});
+            
+            in_p.t_m=t_m;
+            in_p.d_m=d_m.*1000;
+            in_p.val_m=data';
+        end
+        
 
         %% filtered data
-        if flg_loc.do_fil  
+        if flg_loc.do_fil(ktr) 
             in_p.do_fil=1;
             
-%             tim_f=time_dtime(1):hours(25):time_dtime(end);
-%             in_p.val_f=interpolate_timetable({time_dtime},{data},tim_f,'disp',0); %make the input to work if several stations?
-
-            [in_p.val_f,in_p.tim_f]=movmean_tim(time_dtime,data,flg_loc.fil_tim);
+            [tim_f,data_f]=filter_1D(time_dtime,data,'method','godin');
             
-%             godin_filter
-
-            if in_p.do_measurements
-%                 val_mea_f=interpolate_timetable({data_mea.time},{data_mea.waarde},tim_f,'disp',0); %make the input to work if several stations?
-                [val_mea_f,tim_f]=movmean_tim(data_mea.time,data_mea.waarde,flg_loc.fil_tim);
-                in_p.data_stations_f.time=tim_f;
-                in_p.data_stations_f.waarde=val_mea_f;
+            in_p.val_m=data_f';
+            
+            [t_m,d_m]=meshgrid(tim_f,flg_loc.s{ktr});
+            in_p.t_m=t_m;
+            in_p.d_m=d_m.*1000;
+            
+            if in_p.do_measurements                
+                [tim_f,data_f]=filter_1D(data_mea.time,data_mea.waarde,'method','godin');
+                error('do right data type')
+%                 in_p.data_stations_f.time=tim_f;
+%                 in_p.data_stations_f.waarde=data_f;
             end
-           
         end
         
         %% value
@@ -171,12 +192,12 @@ in_p.tim=time_dtime;
         mkdir_check(fdir_fig_var,NaN,1,0);
         
         for kylim=1:nclim
-            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef.file.runid,var_str,layer,kylim));
+            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef.file.runid,var_str,flg_loc.stations_track_name{ktr},layer,kylim));
 
             in_p.fname=fname_noext;
             
 %             in_p.ylims=get_ylims(flg_loc.ylims(kylim,:),in_p.do_measurements,data,data_mea);
-            in_p.clims=[0,sal2cl(-1,500)];
+            in_p.clims=flg_loc.clims{ktr}(kylim,:);
             in_p.lim_t=[min(time_dtime),max(time_dtime)];
             
             fig_his_xt_01(in_p);
@@ -184,6 +205,7 @@ in_p.tim=time_dtime;
         
     end %kvar
 
+end %ktr
 
 %% movies
 

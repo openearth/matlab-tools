@@ -73,9 +73,9 @@ switch unit
     case {'cl','cl_surf'}
         clims=sal2cl(1,clims);
         val_m=sal2cl(1,val_m);
-        if do_fil
-            val_f=sal2cl(1,val_f);
-        end
+%         if do_fil
+%             val_f=sal2cl(1,val_f);
+%         end
 %     case 'sal'
 %     otherwise
 %         error('not sure what to do')
@@ -90,7 +90,11 @@ end
 
 %square option
 npr=1; %number of plot rows
-npc=2; %number of plot columns
+if do_measurements
+    npc=2; %number of plot columns
+else
+    npc=1; %number of plot columns
+end
 axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
@@ -101,7 +105,11 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
+if do_measurements
 marg.mt=2.5; %top margin [cm]
+else
+marg.mt=1.5; %top margin [cm]
+end
 marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
@@ -283,7 +291,7 @@ clims=[0,max(val_m(:))];
 end
 
 %axes and limits
-kr=1; kc=2;
+kr=1; kc=1;
 % lims.x(kr,kc,1:2)=lim_t;
 lims.x(kr,kc,1:2)=lim_dist;
 lims.c(kr,kc,1:2)=clims;
@@ -291,7 +299,7 @@ lims.c(kr,kc,1:2)=clims;
 xlabels{kr,kc}=labels4all('rkm',s_fact,lan);
 lims_d.y(kr,kc,1:2)=lim_t;
 
-kr=1; kc=1;
+kr=1; kc=2;
 % lims.x(kr,kc,1:2)=lim_t;
 lims.x(kr,kc,1:2)=lim_dist;
 lims.c(kr,kc,1:2)=clims;
@@ -379,15 +387,17 @@ end
 
 %% PLOT
 
-kr=1; kc=2;  
+kr=1; kc=1;  
 han.s=surf(d_m.*s_fact,t_m,val_m,'parent',han.sfig(kr,kc),'edgecolor','none');
 % for ktl=1:ntl
 %     plot3(lim_dist,repmat(time_line(ktl),1,2),repmat(max(val_m(:)),1,2),'parent',han.sfig(kr,kc),'color','w','linestyle','--','linewidth',2);
 % end
 % plot3([12,12],lim_t,repmat(max(val_m(:)),1,2),'parent',han.sfig(kr,kc),'color','m','linestyle','-','linewidth',2);
 
-kr=1; kc=1;  
+if do_measurements
+kr=1; kc=2;  
 han.s=surf(d_m_mea.*s_fact,t_m_mea,val_m_mea,'parent',han.sfig(kr,kc),'edgecolor','none');
+end
 %measurement dots
 % nx=numel(d_mea);
 % for kx=1:nx
@@ -417,7 +427,7 @@ han.s=surf(d_m_mea.*s_fact,t_m_mea,val_m_mea,'parent',han.sfig(kr,kc),'edgecolor
 %% PROPERTIES
 
     %sub11
-kr=1; kc=2;   
+kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
@@ -427,7 +437,7 @@ han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 % han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
-han.sfig(kr,kc).YTickLabel='';
+% han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
@@ -448,7 +458,8 @@ caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
 
     %sub11
-kr=1; kc=1;   
+if do_measurements
+kr=1; kc=2;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
@@ -458,7 +469,7 @@ han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 % han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
-% han.sfig(kr,kc).YTickLabel='';
+han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
@@ -477,7 +488,7 @@ colormap(han.sfig(kr,kc),cmap);
 % if ~isnan(lims.c(kr,kc,1:1))
 caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
-
+end
 
 %% ADD TEXT
 
@@ -524,8 +535,10 @@ kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 pos.cbar=han.cbar.Position;
+if do_measurements
 han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
 han.sfig(kr,kc).Position=pos.sfig;
+end
 han.cbar.Label.String=cbar(kr,kc).label;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it

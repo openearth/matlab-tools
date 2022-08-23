@@ -53,39 +53,40 @@ end
 %% DIMENSIONS
 
 nvar=numel(flg_loc.var);
+ntr=numel(flg_loc.stations_track);
 
 %% CONSTANT IN TIME
 
 %% LOOP
 
-stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef.D3D.structure);
-
-ns=numel(stations);
-
 % ks_v=gdm_kt_v(flg_loc,ns);
 
 ksc=0;
-messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
+messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ntr*100));
 
+for ktr=1:ntr
+    flg_loc.stations=flg_loc.stations_track{ktr};
+    stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef.D3D.structure);
+%     ns=numel(stations);
     ksc=ksc+1;
     for kvar=1:nvar
-        
+
         varname=flg_loc.var{kvar};
         var_str=D3D_var_num2str_structure(varname,simdef);
-        
+
         %loop over stations and get data of each layer, etcetera. See RMM3D21
-%         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
+    %         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
         layer=1;
-        
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str,'layer',layer);
-        
+
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str,'layer',layer,'station',flg_loc.stations_track_name{ktr});
+
         if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
         %% read data
-        
+
         %2DO make a function that reworks the data if necessary
         data_raw=EHY_getmodeldata(fpath_his,stations,model_type_str,'varName',var_str,'layer',layer,'t0',time_dnum(1),'tend',time_dnum(end));
-        
+
         %save_check(fpath_mat_tmp,'data_raw');
 
         %% calc
@@ -94,40 +95,13 @@ messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
 
         %% save and disp
         save_check(fpath_mat_tmp,'data');
-        messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
+        messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ntr*100));
 
         %% BEGIN DEBUG
 
         %END DEBUG
     end %kvar
-
-
-%% JOIN
-
-% %% first time for allocating
-% 
-% kt=1;
-% fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-% tmp=load(fpath_mat_tmp,'data');
-% 
-% %constant
-% 
-% %time varying
-% nF=size(tmp.data,2);
-% 
-% data=NaN(nt,nF);
-% 
-% %% loop 
-% 
-% for kt=1:nt
-%     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-%     tmp=load(fpath_mat_tmp,'data');
-% 
-%     data(kt,:)=tmp.data;
-% 
-% end
-% 
-% save_check(fpath_mat,'data');
+end %kss
 
 end %function
 
