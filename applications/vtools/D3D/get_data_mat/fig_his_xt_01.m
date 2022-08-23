@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 32 $
-%$Date: 2021-09-17 10:33:25 +0200 (Fri, 17 Sep 2021) $
-%$Author: chavarri $
-%$Id: fig_his_xt.m 32 2021-09-17 08:33:25Z chavarri $
-%$HeadURL: file:///P:/11206813-007-kpp2021_rmm-3d/E_Software_Scripts/00_svn/rmm_plot/fig_his_xt.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error

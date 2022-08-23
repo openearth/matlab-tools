@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18286 $
-%$Date: 2022-08-09 13:35:55 +0200 (Tue, 09 Aug 2022) $
-%$Author: chavarri $
-%$Id: read_data_stations.m 18286 2022-08-09 11:35:55Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/data_stations/read_data_stations.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [xm,ym,val_int_s]=interpolate_xy_data_stations(data_stations,x_v,t_v)
