@@ -103,11 +103,11 @@ for kpli=1:npli
     for kvar=1:nvar %variable
 
         varname=flg_loc.var{kvar};
-        var_str=D3D_var_num2str_structure(varname,simdef);
-
+        [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef);
+        
         %time 1 for reference
         if flg_loc.do_diff
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str,'pli',pliname);
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname);
             data_ref=load(fpath_mat_tmp,'data');                
         end
 
@@ -122,7 +122,7 @@ for kpli=1:npli
                     in_p.tim=time_mor_dnum(kt);
             end
    
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname);
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname);
             load(fpath_mat_tmp,'data');
             
             %measurements                        
@@ -159,10 +159,10 @@ for kpli=1:npli
                             tag_ref='diff';
                     end
                     
-                    fdir_fig_loc=fullfile(fdir_fig,pliname,var_str,tag_ref);
+                    fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
                     mkdir_check(fdir_fig_loc,NaN,1,0);
 
-                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str,pliname,kdiff,kylim);
+                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
                     fpath_file{kt,kylim,kpli,kvar,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                     in_p.fname=fname_noext;
@@ -184,7 +184,7 @@ for kpli=1:npli
                         end
                         in_p.data_ls.sal=data_val_p;
                         in_p.data_ls.grid=data.gridInfo;
-                        in_p.unit=var_str;
+                        in_p.unit=var_str_read;
                         in_p.clims=[NaN,NaN];
                         if flg_loc.do_rkm
                             in_p.data_ls.grid.Xcor=data.rkm_cor;
@@ -192,7 +192,7 @@ for kpli=1:npli
 
                         fig_map_ls_01(in_p)
                     else
-                        in_p.lab_str=var_str;
+                        in_p.lab_str=var_str_read;
                         if flg_loc.do_rkm
                             in_p.s=data.rkm_cen;
                         else

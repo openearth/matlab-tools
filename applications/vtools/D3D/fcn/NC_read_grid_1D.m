@@ -30,6 +30,8 @@ branch=ncread(fpath_map,'mesh1d_node_branch');
 branch_length=ncread(fpath_map,sprintf('%s_edge_length',str_network));
 branch_id=ncread(fpath_map,sprintf('%s_branch_id',str_network))';
 
-gridInfo=v2struct(x_node,y_node,x_edge,y_edge,offset_edge,branch_edge,offset,branch,branch_length,branch_id);
+no_layers=1;
+
+gridInfo=v2struct(x_node,y_node,x_edge,y_edge,offset_edge,branch_edge,offset,branch,branch_length,branch_id,no_layers);
 
 end %function

@@ -85,27 +85,28 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% SINGLE FILE SEVERAL STATIONS
 
-% location_clear_v={'Inloop Spui';'Inloop Spui';'Volkeraksluizen';'Volkeraksluizen'};
-% 
-% ns=numel(data_stations);
-% for ks=1:4
-%     data_stations(ks).location_clear=location_clear_v{ks};
-%     add_data_stations(paths_main_folder,data_stations(ks))
-% end
-
-
-%% SINGLE FILE 
-
 % fpath_data='c:\Users\chavarri\temporal\210805_HvH_sal\20210819_006.csv';
 % 
 % data_stations=read_csv_data(fpath_data,'flg_debug',0);
 % location_clear_v={'Inloop Spui';'Inloop Spui';'Volkeraksluizen';'Volkeraksluizen'};
-% %%
+% 
 % ns=numel(data_stations);
 % for ks=1:4
 %     data_stations(ks).location_clear=location_clear_v{ks};
 %     add_data_stations(paths_main_folder,data_stations(ks))
 % end
+
+%% SINGLE FILE 
+
+fpath_data='p:\11208053-004-kpp2022-rmm1d2d\C_Work\13_VoorbereidingLekvragen\03_ModelLek2022\Metingen\Datalevering Zoutmeetnet Lek Rijkswaterstaat aug 2022 v22-08-2022\CL ZML Boei 1 01-08 - 22-08-2022.csv';
+data_stations=read_csv_data(fpath_data,'flg_debug',0);
+
+%%
+ns=numel(data_stations);
+for ks=1:4
+    data_stations(ks).location_clear=location_clear_v{ks};
+    add_data_stations(paths_main_folder,data_stations(ks))
+end
 
 %% FROM NC FILE
 
@@ -119,33 +120,33 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% FROM HbR
 
-clc
-fdir_hbr='d:\temporal\210402_RMM3D\C_Work\02_data\16_waterlevel_HbR\';
-
-[dir_paths,~,dir_fnames]=dirwalk(fdir_hbr);
-np=numel(dir_paths);
-
-% for kp=1:np
-for kp=3:np
-    nf=numel(dir_fnames{kp});
-    for kf=1:nf
-		if ~isempty(dir_fnames{kp,1})
-			fpaths_file=fullfile(dir_paths{kp},dir_fnames{kp,1}{kf,1});
-            [~,fname,fext]=fileparts(fpaths_file);
-            if strcmp(fname,'Observations')
-                data_stations=read_csv_data(fpaths_file,'flg_debug',0);
-                [location_clear,str_found]=RWS_location_clear(data_stations.location);
-                if ~str_found
-                    error('not found %s',data_stations.location)
-                end
-                data_stations.location_clear=location_clear{1,1};
-                add_data_stations(paths_main_folder,data_stations,'ask',0)
-                fprintf('%s \n',fpaths_file)
-            end
-			
-		end
-    end %kf
-end %kf
+% clc
+% fdir_hbr='d:\temporal\210402_RMM3D\C_Work\02_data\16_waterlevel_HbR\';
+% 
+% [dir_paths,~,dir_fnames]=dirwalk(fdir_hbr);
+% np=numel(dir_paths);
+% 
+% % for kp=1:np
+% for kp=3:np
+%     nf=numel(dir_fnames{kp});
+%     for kf=1:nf
+% 		if ~isempty(dir_fnames{kp,1})
+% 			fpaths_file=fullfile(dir_paths{kp},dir_fnames{kp,1}{kf,1});
+%             [~,fname,fext]=fileparts(fpaths_file);
+%             if strcmp(fname,'Observations')
+%                 data_stations=read_csv_data(fpaths_file,'flg_debug',0);
+%                 [location_clear,str_found]=RWS_location_clear(data_stations.location);
+%                 if ~str_found
+%                     error('not found %s',data_stations.location)
+%                 end
+%                 data_stations.location_clear=location_clear{1,1};
+%                 add_data_stations(paths_main_folder,data_stations,'ask',0)
+%                 fprintf('%s \n',fpaths_file)
+%             end
+% 			
+% 		end
+%     end %kf
+% end %kf
 
 
 

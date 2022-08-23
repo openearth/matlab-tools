@@ -58,6 +58,15 @@ end
 if isfield(in_p,'is_diff')==0
     in_p.is_diff=0;
 end
+if isfield(in_p,'data_stations') && ~isfield(in_p,'do_measurements')
+    in_p.do_mesurements=1;
+end
+if isfield(in_p,'do_mesurements')==0
+    in_p.do_mesurements=0;
+end
+if isfield(in_p,'do_fil')==0
+    in_p.do_fil=0;
+end
 
 v2struct(in_p)
 
@@ -73,9 +82,24 @@ switch unit
     case {'cl','cl_surf'}
         ylims=sal2cl(1,ylims);
         val=sal2cl(1,val);
+        if do_fil
+            val_f=sal2cl(1,val_f);
+        end
 %     case 'sal'
 %     otherwise
 %         error('not sure what to do')
+end
+
+%%
+
+if do_fil==0
+    lw=1;
+    lw_mea=1;
+else
+    lw=0.5;
+    lw_mea=0.5;
+    lw_f=1;
+    lw_mea_f=1;
 end
 
 %% SIZE
@@ -378,8 +402,21 @@ end
 kr=1; kc=1;   
 nS=size(val,2);
 for kS=1:nS
-han.p(kr,kc,kS)=plot(tim,val(:,kS),'parent',han.sfig(kr,kc),'color',cmap(kS,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+    han.p(kr,kc,kS)=plot(tim,val(:,kS),'parent',han.sfig(kr,kc),'color',cmap(kS,:),'linewidth',lw,'linestyle',prop.ls1,'marker',prop.m1);
+    if do_measurements
+        %deal better with colors...
+        han.pm(kr,kc,kS)=plot(data_stations(kS).time,data_stations(kS).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea,'linestyle',prop.ls1,'marker',prop.m1);
+    end
+    if do_fil
+        han.pf(kr,kc,kS)=plot(tim_f,val_f(:,kS),'parent',han.sfig(kr,kc),'color',cmap(kS,:),'linewidth',lw_f,'linestyle',prop.ls1,'marker',prop.m1);
+        if do_measurements
+            %deal better with colors...
+            han.pm(kr,kc,kS)=plot(data_stations_f(kS).time,data_stations_f(kS).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea_f,'linestyle',prop.ls1,'marker',prop.m1);
+        end
+    end
+        
 end
+
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
@@ -456,8 +493,18 @@ han.sfig(kr,kc).Title.String=strrep(station,'_','\_');
 kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
-if nS>1
-han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),leg_str,'location','best');
+
+if do_measurements
+    if nS>1
+        error('deal with str_leg')
+    else
+        leg_str={labels4all('sim',1,lan),labels4all('mea',1,lan)};
+        han.leg(kr,kc)=legend(han.sfig(kr,kc),[reshape(han.p(kr,kc,:),1,[]),reshape(han.pm(kr,kc,:),1,[])],leg_str,'location','best');
+    end
+else
+    if nS>1
+        han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),leg_str,'location','best');
+    end
 end
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
 % pos.leg=han.leg(kr,kc).Position;

@@ -10,6 +10,10 @@
 %$Id$
 %$HeadURL$
 %
+%Read name of stations. 
+%
+%From file by providing:
+%   -str_flg_path
 
 function stations=gdm_station_names(fid_log,flg_loc,fpath_his,varargin)
 
@@ -18,10 +22,21 @@ function stations=gdm_station_names(fid_log,flg_loc,fpath_his,varargin)
 parin=inputParser;
 
 addOptional(parin,'obs_type',1); %1=stations, 2=cross-section
+addOptional(parin,'model_type',2); 
 
 parse(parin,varargin{:});
 
 obs_type=parin.Results.obs_type;
+model_type=parin.Results.model_type;
+
+%%
+
+switch model_type
+    case 2
+        model_type_str='dfm';
+    case 3
+        model_type_str='sobek3';
+end
 
 %% CHOSE
 
@@ -45,7 +60,7 @@ if ~isfield(flg_loc,str_flg)
             flg_loc.(str_flg)=stations_raw(:,1)';
         end
     else
-        flg_loc.(str_flg)=NaN;
+        flg_loc.(str_flg)=NaN; 
     end
 end
 
@@ -53,9 +68,9 @@ end
 
 if ~iscell(flg_loc.(str_flg))
     if obs_type==1
-        stations=EHY_getStationNames(fpath_his,'dfm');
+        stations=EHY_getStationNames(fpath_his,model_type_str);
     elseif obs_type==2
-        stations=EHY_getStationNames(fpath_his,'dfm','varName','cross_section_*');
+        stations=EHY_getStationNames(fpath_his,model_type_str,'varName','cross_section_*');
     else
         error('')
     end

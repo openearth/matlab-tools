@@ -212,7 +212,13 @@ for ks=1:ns
     
     %% his sal
     if isfield(in_plot,'fig_his_sal_01')==1
+        warning('deprecate and call <his_01>')
         create_mat_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
+    end
+    
+    %% his
+    if isfield(in_plot,'fig_his_01')==1
+        create_mat_his_01(fid_log,in_plot.fig_his_01,simdef)
     end
     
     %% sal 3D
@@ -312,6 +318,11 @@ for ks=1:ns
     %% his sal 01
     if isfield(in_plot,'fig_his_sal_01')==1
         plot_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
+    end
+    
+    %% his 01
+    if isfield(in_plot,'fig_his_01')==1
+        plot_his_01(fid_log,in_plot.fig_his_01,simdef)
     end
     
     %% sal 3D

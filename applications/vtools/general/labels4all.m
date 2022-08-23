@@ -629,14 +629,24 @@ switch lower(variable)
                 str_var='d_{90}';
          end
          un_type='L';
-    case 'vicouv'
+    case {'vicouv'}
          switch lan
             case 'en'
                 str_var='horizontal eddy viscosity';
             case 'nl'
-                str_var='horizontale wervelviscositeit:';
+                str_var='horizontale viscositeit';
             case 'es'
                 str_var='viscosidad de turbulencia horizontal';
+         end
+         un_type='L2/T';
+    case {'dicouv','water_dispersion'}
+         switch lan
+            case 'en'
+                str_var='horizontal diffusivity';
+            case 'nl'
+                str_var='horizontale diffusie';
+            case 'es'
+                str_var='difusividad horizontal';
          end
          un_type='L2/T';
     case 'at'

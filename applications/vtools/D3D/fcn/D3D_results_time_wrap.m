@@ -78,7 +78,12 @@ switch simdef.D3D.structure
             time_mor_dtime=cat(1,time_mor_dtime,time_mor_dtime_loc);
             sim_idx=cat(1,sim_idx,kf.*ones(size(time_mor_dtime_loc)));
             fpath_map=cat(1,fpath_map,repmat({fpath_nc},numel(time_mor_dtime_loc),1));
-            time_idx=cat(1,time_idx,(time_idx(end)+1:1:time_idx(end)+1+numel(time_r_loc))');
+            if isempty(time_idx)
+                time_idx=(1:1:numel(time_r_loc))';
+            else
+                time_idx=cat(1,time_idx,(time_idx(end)+1:1:time_idx(end)+1+numel(time_r_loc))');
+            end
+                
             
             messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
         end
