@@ -266,6 +266,12 @@ for ks=1:ns
         create_mat_map_1D(fid_log,in_plot.fig_map_1D,simdef)
     end
     
+    %% his xt
+    if isfield(in_plot,'fig_his_xt_01')==1
+        in_plot.fig_his_xt_01.tag='his_xt_01';
+        create_mat_his_xt_01(fid_log,in_plot.fig_his_xt_01,simdef)
+    end
+    
 end %ks
 
 
@@ -368,6 +374,12 @@ for ks=1:ns
     if isfield(in_plot,'fig_map_1D')==1
         plot_map_1D_xv_01(fid_log,in_plot.fig_map_1D,simdef);
         %create part to plot all simulations in one plot
+    end
+    
+    %% his xt
+    if isfield(in_plot,'fig_his_xt_01')==1
+        in_plot.fig_his_xt_01.tag='his_xt_01';
+        plot_his_xt_01(fid_log,in_plot.fig_his_xt_01,simdef)
     end
     
 end %ks

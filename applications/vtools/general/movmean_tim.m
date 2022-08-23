@@ -22,25 +22,13 @@
 
 function [fil,tim_re]=movmean_tim(time_dtime,data,window_s)
 
-time_dnum=datenum(time_dtime); %we do operations in +00:00
-
-dt=diff(time_dnum);
-if any(abs(dt-dt(1))>1e-8)
-%     tim_in=datetime(time_dnum,'convertFrom','datenum','TimeZone','+00:00');
-%     tim_re=datetime(time_dnum(1):dt(1):time_dnum(end),'convertFrom','datenum','TimeZone','+00:00');
-    dt_dtime=diff(time_dtime);
-    dt_dtime=dt_dtime(1);
-    tim_re=time_dtime(1):dt_dtime:time_dtime(end);
-    data_re=interpolate_timetable({time_dtime},{data},tim_re,'disp',0);
-%     time_dnum=datenum(data_re);
-    data=data_re;
-else
-    tim_re=time_dtime;
-end
+[tim_re,data]=uniform_data(time_dtime,data);
 
 if isvector(data)
     data=reshape(data,[],1);
 end
+
+dt=diff(tim_re);
 
 num_ave=round((window_s/24/3600)/dt(1)); 
 [np,nS]=size(data);

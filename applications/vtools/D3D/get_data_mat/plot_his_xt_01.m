@@ -12,7 +12,7 @@
 %
 %
 
-function plot_his_01(fid_log,flg_loc,simdef)
+function plot_his_xt_01(fid_log,flg_loc,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
@@ -56,9 +56,9 @@ end
 
 %% DIMENSIONS
 
-ns=numel(stations);
+% ns=numel(stations);
 nvar=numel(flg_loc.var);
-nylim=size(flg_loc.ylims,1);
+nclim=size(flg_loc.clims,1);
 
 %% FIGURE INI
 
@@ -67,7 +67,7 @@ in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 in_p.tim=time_dtime;
 
-fext=ext_of_fig(in_p.fig_print);
+% fext=ext_of_fig(in_p.fig_print);
 
 %ldb
 % if isfield(flg_loc,'fpath_ldb')
@@ -76,28 +76,20 @@ fext=ext_of_fig(in_p.fig_print);
 
 %% LOOP
 
-ks_v=gdm_kt_v(flg_loc,ns);
-
-fpath_file=cell(ns,nylim);
-ksc=0;
-for ks=ks_v
-    ksc=ksc+1;
-    
-    in_p.station=stations{ks};
-    
     %%
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
         var_str=D3D_var_num2str_structure(varname,simdef);
         
-        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
+        %2DO: solve!
+%         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
+        layer=1;
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str,'layer',layer);
         
         load(fpath_mat_tmp,'data');
         
-        in_p.val=data;
         in_p.unit=var_str;
         if isfield(flg_loc,'unit')
             if ~isempty(flg_loc.unit{kvar})
@@ -108,37 +100,69 @@ for ks=ks_v
         %% measurements
         
         %2DO move to function
-        in_p.do_measurements=0;
+        in_p.do_measurements=0; %it is compulsory for this figure...
+      
         if isfield(flg_loc,'measurements')
-            if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
-                [str_sta,str_found]=RWS_location_clear(stations{ks});
-                data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:}); %location maybe better?
-                if isempty(data_mea)
-                    in_p.do_measurements=0;
+            fpath_mea=fullfile(fdir_mat,sprintf('%s_mea.mat',tag));
+
+                if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
+                    [str_sta,str_found]=RWS_location_clear(stations);
+                    ns=numel(str_sta);
+                    for ks=1:ns
+                        data_mea(ks)=read_data_stations(flg_loc.measurements,'location_clear',str_sta{ks}); %location maybe better?
+                    end
+                    if isempty(data_mea)
+                        in_p.do_measurements=0;
+                    else
+                        in_p.do_measurements=1;
+                        in_p.data_stations=data_mea;
+                    end
                 else
-                    in_p.do_measurements=1;
-                    in_p.data_stations=data_mea;
+                    error('do reader')
                 end
-            else
-                error('do reader')
-            end
+                
+                if exist(fpath_mea,'file')==2
+                    data_mea_mat=load(fpath_mea,'data');
+                else
+                    x=sort([data_mea.raai]);
+                    [t_m_mea,d_m_mea,val_m_mea]=interpolate_xy_data_stations(data_mea,x,time_dtime(1:2:end));
+                    data=v2struct(t_m_mea,d_m_mea,val_m_mea);
+                    data_mea_mat.data=data;
+                    save_check(fpath_mea,'data')
+                end           
+            
         end
+
+        %%
+        [x,idx_s]=sort([data_mea.raai]);
+        [t_m,d_m]=meshgrid(time_dtime,x);
+        
+        in_p.t_m=t_m;
+        in_p.d_m=d_m;
+        in_p.val_m=data(:,idx_s)';
+       
+        in_p.t_m_mea=data_mea_mat.data.t_m_mea;
+        in_p.d_m_mea=data_mea_mat.data.d_m_mea;
+        in_p.val_m_mea=data_mea_mat.data.val_m_mea;
 
         %% filtered data
         if flg_loc.do_fil  
             in_p.do_fil=1;
             
-            [tim_f,data_f]=filter_1D(time_dtime,data,'method','godin');
+%             tim_f=time_dtime(1):hours(25):time_dtime(end);
+%             in_p.val_f=interpolate_timetable({time_dtime},{data},tim_f,'disp',0); %make the input to work if several stations?
+
+            [in_p.val_f,in_p.tim_f]=movmean_tim(time_dtime,data,flg_loc.fil_tim);
             
-            in_p.val_f=data_f;
-            in_p.tim_f=tim_f;
-            
-            if in_p.do_measurements                
-                [tim_f,data_f]=filter_1D(data_mea.time,data_mea.waarde,'method','godin');
-                
+%             godin_filter
+
+            if in_p.do_measurements
+%                 val_mea_f=interpolate_timetable({data_mea.time},{data_mea.waarde},tim_f,'disp',0); %make the input to work if several stations?
+                [val_mea_f,tim_f]=movmean_tim(data_mea.time,data_mea.waarde,flg_loc.fil_tim);
                 in_p.data_stations_f.time=tim_f;
-                in_p.data_stations_f.waarde=data_f;
+                in_p.data_stations_f.waarde=val_mea_f;
             end
+           
         end
         
         %% value
@@ -146,19 +170,20 @@ for ks=ks_v
         fdir_fig_var=fullfile(fdir_fig,var_str);
         mkdir_check(fdir_fig_var,NaN,1,0);
         
-        for kylim=1:nylim
-            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef.file.runid,stations{ks},var_str,layer,kylim));
-            fpath_file{ks,kylim}=sprintf('%s%s',fname_noext,fext); %for movie 
+        for kylim=1:nclim
+            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef.file.runid,var_str,layer,kylim));
 
             in_p.fname=fname_noext;
             
-            in_p.ylims=get_ylims(flg_loc.ylims(kylim,:),in_p.do_measurements,data,data_mea);
-
-            fig_his_sal_01(in_p);
+%             in_p.ylims=get_ylims(flg_loc.ylims(kylim,:),in_p.do_measurements,data,data_mea);
+            in_p.clims=[0,sal2cl(-1,500)];
+            in_p.lim_t=[min(time_dtime),max(time_dtime)];
+            
+            fig_his_xt_01(in_p);
         end %kylim
         
     end %kvar
-end %kt
+
 
 %% movies
 
