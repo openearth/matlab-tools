@@ -26,15 +26,11 @@
 
 function [dx,fx2,fx1,dy,fy2,fy1]=fourier_freq(x,y)
 
-x_diff=diff(x);
-dx=x_diff(1);
-if any(x_diff-dx)
-    error('dx must be constant.')
-end
-y_diff=diff(y);
-dy=y_diff(1);
-if any(y_diff-dy)
-    error('dy must be constant.')
+dx=get_dy(x);
+dy=get_dy(y);
+
+if isinf(dx) && isinf(dy)
+    error('at least one dimension larger than 1')
 end
 
 fsx=1/dx; %sampling frequency
@@ -50,3 +46,21 @@ fx2=(-nx/2:nx/2-1)*(fsx/nx);
 fy2=(-ny/2:ny/2-1)*(fsy/ny);
 
 end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function dy=get_dy(y)
+
+y_diff=diff(y);
+if isempty(y_diff) %1D in y
+    dy=Inf;
+else
+    dy=y_diff(1);
+    if any(y_diff-dy)
+        error('space step must be constant.')
+    end
+end
+
+end

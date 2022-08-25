@@ -57,7 +57,8 @@ switch method
             [time_dtime,data_u]=uniform_data(time_dtime,data(:,ks));
             [data_f(:,ks),~]=godin(time_dnum_00,data_u); %deal with several stations
         end
-        
+    case 'tidal_max'
+        [tim_f,data_f]=tidal_values(time_dtime,data);
 end
 
 end %function

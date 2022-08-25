@@ -52,6 +52,12 @@ end
 if isfield(in_p,'s_fact')==0
     in_p.s_fact=1;
 end
+if isfield(in_p,'plot_style')==0
+    in_p.plot_style='surf';
+end
+if isfield(in_p,'do_showtext')==0
+    in_p.plot_style='on';
+end
 
 v2struct(in_p)
 
@@ -73,6 +79,9 @@ switch unit
     case {'cl','cl_surf'}
         clims=sal2cl(1,clims);
         val_m=sal2cl(1,val_m);
+        if exist('levels','var')==1
+        levels=sal2cl(1,levels);
+        end
 %         if do_fil
 %             val_f=sal2cl(1,val_f);
 %         end
@@ -81,10 +90,13 @@ switch unit
 %         error('not sure what to do')
 end
 
-
 %%
 
-
+nS=size(val_m,3);
+if nS>1 && strcmp(plot_style,'contour')==0
+    messageOut('You want something else than a contour plot with more than one simulation at a time, that is not possible. I switch to contour.')
+    plot_style='contour';
+end
 
 %% SIZE
 
@@ -163,7 +175,9 @@ cbar(kr,kc).label=labels4all(unit,1,lan);
 
 % brewermap('demo')
 cmap=improved_turbo(100);
-
+if nS>1
+    cmap=brewermap(nS,'set1');
+end
 %center around 0
 % ncmap=1000;
 % cmap1=brewermap(ncmap,'RdYlGn');
@@ -388,7 +402,24 @@ end
 %% PLOT
 
 kr=1; kc=1;  
-han.s=surf(d_m.*s_fact,t_m,val_m,'parent',han.sfig(kr,kc),'edgecolor','none');
+switch plot_style
+    case 'surf'
+        han.s=surf(d_m.*s_fact,t_m,val_m,'parent',han.sfig(kr,kc),'edgecolor','none');
+    case 'contour'
+        t_m_dtnum=datenum_tzone(t_m);
+        for kS=1:nS
+            if exist('levels','var')==1
+                if numel(levels)==1
+                    levels=[levels,levels];
+                end
+                [~,han.s(kr,kc,kS)]=contour(d_m.*s_fact,t_m_dtnum,val_m(:,:,kS),levels,'parent',han.sfig(kr,kc),'showtext',do_showtext,'color',cmap(kS,:));
+            else
+                [~,han.s(kr,kc,kS)]=contour(d_m.*s_fact,t_m_dtnum,val_m(:,:,kS),'parent',han.sfig(kr,kc),'showtext',do_showtext);
+            end
+        end
+    otherwise
+        error('style type not implemented')
+end
 % for ktl=1:ntl
 %     plot3(lim_dist,repmat(time_line(ktl),1,2),repmat(max(val_m(:)),1,2),'parent',han.sfig(kr,kc),'color','w','linestyle','--','linewidth',2);
 % end
@@ -442,13 +473,23 @@ han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String=labels4all('simulation',1,lan);
+if do_measurements
+    han.sfig(kr,kc).Title.String=labels4all('simulation',1,lan);
+end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
-han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+switch plot_style
+    case 'surf'
+        han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+    case 'contour'
+        han.sfig(kr,kc).YLim=datenum_tzone(lims_d.y(kr,kc,:));
+%         datetick(han.sfig(kr,kc),'y','yyyy-mm-dd HH:MM:SS')
+%         datetick(han.sfig(kr,kc),'y','yyyy-mm-dd')
+        datetick(han.sfig(kr,kc),'y','mmm-dd')
+end
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 view(han.sfig(kr,kc),[0,90]);
@@ -480,7 +521,12 @@ han.sfig(kr,kc).Title.String=labels4all('measurement',1,lan);
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
-han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+switch plot_style
+    case 'surf'
+        han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+    case 'contour'
+        han.sfig(kr,kc).YLim=datenum_tzone(lims_d.y(kr,kc,:));
+end
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 view(han.sfig(kr,kc),[0,90]);
@@ -521,16 +567,18 @@ end
 
 %% LEGEND
 
-% kr=1; kc=1;
-% pos.sfig=han.sfig(kr,kc).Position;
-% %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
-% han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
+if nS>1
+kr=1; kc=1;
+pos.sfig=han.sfig(kr,kc).Position;
+% han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
+han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.s(kr,kc,:),1,[]),leg_str,'location','eastoutside');
 % pos.leg=han.leg(kr,kc).Position;
 % han.leg.Position=pos.leg(kr,kc)+[0,0,0,0];
 % han.sfig(kr,kc).Position=pos.sfig;
-
+end
 %% COLORBAR
 
+if strcmp(plot_style,'surf')
 kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
@@ -550,6 +598,7 @@ han.cbar.Label.String=cbar(kr,kc).label;
 %     aux_str{ka}=sprintf('%5.3f',aux3(ka));
 % end
 % han.cbar.TickLabels=aux_str;
+end
 
 %% GENERAL
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)

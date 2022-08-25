@@ -495,6 +495,13 @@ if isfield(in_plot,'fig_map_summerbed_01')==1
     plot_1D_01(fid_log,in_plot.fig_map_summerbed_01,simdef_all_2)
 end
 
+%% his xt
+if isfield(in_plot,'fig_his_xt_01')==1
+    in_plot.fig_his_xt_01.tag_fig=sprintf('%s_all',in_plot.fig_his_xt_01.tag);
+    in_plot.fig_his_xt_01.leg_str=leg_str_all_2;
+    plot_his_xt_01(fid_log,in_plot.fig_his_xt_01,simdef_all_2)
+end
+    
 end %ns>1
 
 end %function

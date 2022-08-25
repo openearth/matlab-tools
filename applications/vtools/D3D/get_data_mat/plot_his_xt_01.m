@@ -31,11 +31,12 @@ end
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+nS=numel(simdef);
+fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
-fpath_his=simdef.file.his;
+fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+fpath_his=simdef(1).file.his;
 mkdir_check(fdir_fig);
 
 %% STATIONS
@@ -47,7 +48,7 @@ mkdir_check(fdir_fig);
 
 %% GRID
 
-if simdef.D3D.structure~=3
+if simdef(1).D3D.structure~=3
     gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 else
     gridInfo=NaN;
@@ -62,23 +63,24 @@ ntr=numel(flg_loc.stations_track);
 %% FIGURE INI
 
 in_p=flg_loc;
+if isfield(in_p,'fig_print')==0
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+end
 in_p.fig_visible=0;
 in_p.tim=time_dtime;
 in_p.s_fact=1/1000; 
 
-% fext=ext_of_fig(in_p.fig_print);
+if nS>1
+    in_p.leg_str=flg_loc.leg_str;
+end
 
-%ldb
-% if isfield(flg_loc,'fpath_ldb')
-%     in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
-% end
+% fext=ext_of_fig(in_p.fig_print);
 
 %% LOOP
 
 for ktr=1:ntr
     flg_loc.stations=flg_loc.stations_track{ktr};
-    stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef.D3D.structure);
+    stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.structure);
     
     nclim=size(flg_loc.clims{ktr},1);
     
@@ -86,15 +88,20 @@ for ktr=1:ntr
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
-        var_str=D3D_var_num2str_structure(varname,simdef);
+        var_str=D3D_var_num2str_structure(varname,simdef(1));
         
         %2DO: solve!
 %         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
         layer=1;
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str,'layer',layer,'station',flg_loc.stations_track_name{ktr});
-        
-        load(fpath_mat_tmp,'data');
+        data_all=[];
+        for kS=1:nS
+            fdir_mat=simdef(kS).file.mat.dir;
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str,'layer',layer,'station',flg_loc.stations_track_name{ktr});
+            load(fpath_mat_tmp,'data');
+            data_all=cat(3,data_all,data);
+        end
+        data=data_all;
         
         in_p.unit=var_str;
         if isfield(flg_loc,'unit')
@@ -132,15 +139,9 @@ for ktr=1:ntr
                     error('do reader')
                 end
                 
-                if exist(fpath_mea,'file')==2
-                    data_mea_mat=load(fpath_mea,'data');
-                else
-                    x=sort([data_mea.raai]);
-                    [t_m_mea,d_m_mea,val_m_mea]=interpolate_xy_data_stations(data_mea,x,time_dtime(1:2:end));
-                    data=v2struct(t_m_mea,d_m_mea,val_m_mea);
-                    data_mea_mat.data=data;
-                    save_check(fpath_mea,'data')
-                end           
+                if in_p.do_measurements==1
+                    data_mea_mat=load_mea(fpath_mea,data_mea,time_dtime);
+                end
             
         end
 
@@ -152,7 +153,9 @@ for ktr=1:ntr
         
             in_p.t_m=t_m;
             in_p.d_m=d_m.*1000;
-            in_p.val_m=data(:,idx_s)';
+%             in_p.val_m=data(:,idx_s)';
+            data_aux=data(:,idx_s,:);
+            in_p.val_m=permute(data_aux,[2,1,3]);
        
             in_p.t_m_mea=data_mea_mat.data.t_m_mea;
             in_p.d_m_mea=data_mea_mat.data.d_m_mea.*1000;
@@ -162,7 +165,8 @@ for ktr=1:ntr
             
             in_p.t_m=t_m;
             in_p.d_m=d_m.*1000;
-            in_p.val_m=data';
+%             in_p.val_m=data';
+            in_p.val_m=permute(data,[2,1,3]);
         end
         
 
@@ -170,9 +174,12 @@ for ktr=1:ntr
         if flg_loc.do_fil(ktr) 
             in_p.do_fil=1;
             
-            [tim_f,data_f]=filter_1D(time_dtime,data,'method','godin');
+            for kS=1:nS
+                [tim_f,data_f(:,:,kS)]=filter_1D(time_dtime,data(:,:,kS),'method','godin'); %we could first do 1 to preallocate...
+            end
             
-            in_p.val_m=data_f';
+%             in_p.val_m=data_f';
+            in_p.val_m=permute(data_f,[2,1,3]);
             
             [t_m,d_m]=meshgrid(tim_f,flg_loc.s{ktr});
             in_p.t_m=t_m;
@@ -192,7 +199,7 @@ for ktr=1:ntr
         mkdir_check(fdir_fig_var,NaN,1,0);
         
         for kylim=1:nclim
-            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef.file.runid,var_str,flg_loc.stations_track_name{ktr},layer,kylim));
+            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef(1).file.runid,var_str,flg_loc.stations_track_name{ktr},layer,kylim));
 
             in_p.fname=fname_noext;
             
@@ -239,5 +246,21 @@ if isnan(ylims)
         ylims=[min(data(:)),max(data(:))];
     end
 end
+
+end %function
+
+%%
+
+function data_mea_mat=load_mea(fpath_mea,data_mea,time_dtime)
+
+if exist(fpath_mea,'file')==2
+    data_mea_mat=load(fpath_mea,'data');
+else
+    x=sort([data_mea.raai]);
+    [t_m_mea,d_m_mea,val_m_mea]=interpolate_xy_data_stations(data_mea,x,time_dtime(1:2:end));
+    data=v2struct(t_m_mea,d_m_mea,val_m_mea);
+    data_mea_mat.data=data;
+    save_check(fpath_mea,'data')
+end           
 
 end %function

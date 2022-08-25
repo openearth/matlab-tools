@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 18328 $
+%$Date: 2022-08-23 14:42:59 +0200 (Tue, 23 Aug 2022) $
+%$Author: chavarri $
+%$Id: interpolate_xy_data_stations.m 18328 2022-08-23 12:42:59Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/interpolate_xy_data_stations.m $
 %
 
 function [xm,ym,val_int_s]=interpolate_xy_data_stations(data_stations,x_v,t_v)
