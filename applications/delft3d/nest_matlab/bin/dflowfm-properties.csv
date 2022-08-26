@@ -207,7 +207,7 @@ output,StatsInterval,output,Output,Statistics output interval,Interval,0,,,FALSE
 output,Writebalancefile,output,Output,Write water balance file,0|1,0,0,1,FALSE,,,,,,"Write balance file (1: yes, 0: no)"
 output,TimingsInterval,output,Output,Timing statistics output interval,Interval,0,,,FALSE,,,,,,"Timings statistics output interval"
 *output,TimeSplitInterval,,Output,Time splitting interval,Interval,0X,,,TRUE,,,,,,"Time splitting interval, after which a new output file is started. value+unit, e.g. '1 M', valid units: Y,M,D,h,m,s."
-output,MapFormat,output,Output,Map file output format:NetCDF|Tecplot|Both,1|2|3,1,1,3,TRUE,,,,,,"Map file format (1: NetCDF, 2: Tecplot, 3: NetCFD and Tecplot)"
+output,MapFormat,output,Output,Map file output format:NetCDF|Tecplot|Both,1|2|3,4,1,3,TRUE,,,,,,"Map file format (1: NetCDF, 2: Tecplot, 3: NetCFD and Tecplot)"
 output,Wrihis_balance,output,His,Write mass balance totals,0|1,1,,,FALSE,,WriteHisFile,,,,"Write mass balance totals to his file (1: yes, 0: no)"
 output,Wrihis_structure_gen,output,His,Write general structure parameters,0|1,1,,,FALSE,,WriteHisFile,,,,"Write general structure parameters to his file (1: yes, 0: no)"
 output,Wrihis_structure_dam,output,His,Write dam parameters,0|1,1,,,FALSE,,WriteHisFile,,,,"Write dam parameters to his file (1: yes, 0: no)"
