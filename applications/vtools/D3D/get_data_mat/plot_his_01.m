@@ -108,13 +108,13 @@ for ks=ks_v
         %% measurements
         
         %2DO move to function
-        in_p.do_measurements=0;
         if isfield(flg_loc,'measurements')
             if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
                 [str_sta,str_found]=RWS_location_clear(stations{ks});
                 data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:}); %location maybe better?
                 if isempty(data_mea)
                     in_p.do_measurements=0;
+                    data_mea=NaN;
                 else
                     in_p.do_measurements=1;
                     in_p.data_stations=data_mea;
@@ -122,6 +122,9 @@ for ks=ks_v
             else
                 error('do reader')
             end
+        else
+            in_p.do_measurements=0;
+            data_mea=NaN;
         end
 
         %% filtered data
