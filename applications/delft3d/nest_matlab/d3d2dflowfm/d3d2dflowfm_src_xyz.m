@@ -55,9 +55,8 @@ for i_loc = 1: length(location) location{i_loc} = location{i_loc}(1:min(length(l
 dep   = wldep('read',fildep,[mmax nmax]);
 
 for i_src = 1: length(m_src)
-    names{i_src}
     i_table = strmatch(strtrim(names{i_src}),location,'exact');
-    
+
 
     %% Depthaveraged discharge?
     dav = true; if kmax > 1 && k_src(i_src) > 0 dav = false; end
@@ -96,7 +95,7 @@ for i_src = 1: length(m_src)
     filsrc{i_src}    = [pathdis filesep simona2mdu_replacechar(strtrim(names{i_src}),' ','_') '.pli'];
     if ~dav filsrc{i_src} = [filsrc{i_src} 'z']; end
     dflowfm_io_xydata('write',filsrc{i_src},LINE);
-    
+
     %% Generate the series (for now always including salinity and temperature, not sure if that is allowed)
 %    i_table = strmatch(strtrim(names{i_src}),location,'exact');
     SERIES.Values(:,1)   = dis.Table(i_table).Data(:,1); % times
@@ -110,7 +109,7 @@ for i_src = 1: length(m_src)
     if ~isempty(nr_col)
          nr_sal                      = nr_col;
          SERIES.Comments{nr_col + 1} = ['* COLUMN' num2str(nr_col,'%1i') '=Salinity (psu)'];
-         SERIES.Values(:,nr_col)     = dis.Table(i_table).Data(:,nr_col); 
+         SERIES.Values(:,nr_col)     = dis.Table(i_table).Data(:,nr_col);
     end
 
     %% Temperature (if present)

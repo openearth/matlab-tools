@@ -14,7 +14,7 @@ mdu.wind.PavBnd     = -999;
 
 %% Salinity
 if strcmpi(mdf.sub1(1),'S') 
-    mdu.physics.Salinity                   = true;
+    mdu.physics.Salinity                   = 1;
     mdu.physics.Backgroundwatertemperature = mdf.tempw;
     mdu.physics.Backgroundsalinity         = -999.999;
 end

@@ -96,7 +96,7 @@ numerics,cstbnd,advanced,,Use Delft-3D velocity handling,0|1,0,,,FALSE,,,,,,"Del
 numerics,Maxitverticalforestersal,advanced,,Max vertical Forester iterations for salinity,Integer,100,0,,TRUE,,,,,,"Forester iterations for salinity (0: no vertical filter for salinity, > 0: max nr of iterations)"
 numerics,Maxitverticalforestertem,advanced,,Max vertical Forester iterations for temperature,Integer,0,,,TRUE,,,,,,"Forester iterations for temperature (0: no vertical filter for temperature, > 0: max nr of iterations)"
 numerics,Jaorgsethu,,,Velocity reconstruction order,0|1,1,,,TRUE,,,,,,"Velocity reconstruction scheme (0 : setumod, sethu, setau sequence, 1 : sethu, setau, setumod sequence (standard))"
-numerics,Turbulencemodel,,,Turbulence model:None|Constant|Algebraic|k-eps|k-tau,0|1|2|3|4,1,,,FALSE,,,,,,"Turbulence model (0: none, 1: constant, 2: algebraic, 3: k-epsilon, 4: k-tau)"
+numerics,Turbulencemodel,,,Turbulence model:None|Constant|Algebraic|k-eps|k-tau,0|1|2|3|4,3,,,FALSE,,,,,,"Turbulence model (0: none, 1: constant, 2: algebraic, 3: k-epsilon, 4: k-tau)"
 numerics,Turbulenceadvection,,,Turbulence advection:None|horizontally explicit and vertically implicit",0|3,0,,,FALSE,,,,,,"Turbulence advection (0: none, 3: horizontally explicit and vertically implicit)"
 numerics,AntiCreep,numerics,,Use anti-creep,0|1,0,,,FALSE,,kmx>0,,,,"Include anti-creep calculation (0: no, 1: yes)"
 numerics,Maxwaterleveldiff,,,Water level threshold,Double,0,,,FALSE,,,,,,"Upper bound (in m) on water level changes (<=0: no bounds)"
@@ -192,7 +192,7 @@ GUIOnly,SpecifyRstStop,output,Restart,Specify Rst Output Stop Time,0|1,0,,,FALSE
 GUIOnly,RstOutputStopTime,output,Restart,Rst Output Stop Time,DateTime,,,,FALSE,WriteRstFile && SpecifyRstStart && SpecifyRstStop,WriteRstFile,,,,"No restart files will be written after this time stamp"
 *,,,,,,,,,,,,,,,
 output,OutputDir,output,Output,Output directory,String,,,,TRUE,,,,,,"Output directory of map-, his-, rst-, dat- and timings-files, default: DFM_OUTPUT_<modelname>. Set to . for current dir."
-output,FlowGeomFile,,,,FileName,,,,TRUE,,,,,,"Flow geometry NetCDF *_flowgeom.nc" 
+output,FlowGeomFile,,,,FileName,,,,TRUE,,,,,,"Flow geometry NetCDF *_flowgeom.nc"
 output,ObsFile,,,,FileName,,,,TRUE,,,,,,"Points file *.xyn with observation stations with rows x, y, station name"
 output,CrsFile,,,,FileName,,,,TRUE,,,,,,"Polyline file *_crs.pli defining observation cross sections"
 output,HisFile,,,,FileName,,,,TRUE,,,,,,"History output file *_his.nc in NetCDF format"

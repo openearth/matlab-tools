@@ -25,32 +25,26 @@ fname   = varargin{1};
 
 switch lower(cmd)
 
-case 'read' 
+case 'read'
     scratchFile=strrep(sprintf('scratch_%18.17f',datenum(datetime('now'))+rand),'.',''); %if you call <dflowfm_io_mdu> twice at the same time running in the same folder, using the same name causes failure
     try % if you have the permission to write in this dir
-%         fprintf('start reading %s here %s \n',fname,fullfile(pwd,scratchFile))
         simona2mdu_undress(fname,scratchFile,'comments',{'#' '*'});       %removes mdu cmments which dont belong in inifile
-%         fprintf('end reading %s here %s \n',fname,fullfile(pwd,scratchFile))
     catch % you don't have permission to write (e.g. MATLAB/bin/.. )
         scratchFile=[tempdir 'scratch'];
-%         fprintf('start reading %s here %s \n',fname,scratchFile)
         simona2mdu_undress(fname,scratchFile,'comments',{'#' '*'});
-%         fprintf('end reading %s here %s \n',fname,scratchFile)
     end
     [tmp       ] = inifile('open',scratchFile);
-%     fprintf('start deleting %s \n',fullfile(pwd,scratchFile))
     delete(scratchFile);
-%     fprintf('end deleting %s \n',fullfile(pwd,scratchFile))
-    
+
    %
    % Create one structure
    %
-   
+
    for igroup = 1: size(tmp.Data,1)
        for ipar = 1:size(tmp.Data{igroup,2},1)
             grpnam = strtrim(tmp.Data{igroup,1});
             parnam = strtrim(tmp.Data{igroup,2}{ipar,1});
-            
+
             %replace spaces by underscore
 
             grpnam = simona2mdu_replacechar(grpnam,' ','_');
@@ -101,30 +95,25 @@ case 'write'
    %
    names  = fieldnames(mdu);
    maxlen = 0;
-    
-   %when writing a file read with delft3d_io_sed, the block names have a number. 
+
+   %when writing a file read with delft3d_io_sed, the block names have a number.
    %Here we remove it
-   
-%    [names,names_clean]=D3D_clean_group_names(mdu) -> call this!
-   
+
     ngroup=numel(names);
     names_clean=cell(ngroup,1);
     for kb=1:ngroup
         tok=regexp(names{kb,1},'\d','split');
         names_clean{kb,1}=tok{1,1};
     end %kb
-                
+
    for igroup=1:ngroup
-%        tmp.Data{igroup,1} = simona2mdu_replacechar(names{igroup},'_',' ');
-        tmp.Data{igroup,1} = simona2mdu_replacechar(names_clean{igroup},'_',' ');
-        pars = fieldnames(mdu.(names{igroup}));
+       tmp.Data{igroup,1} = simona2mdu_replacechar(names_clean{igroup},'_',' ');
+       pars = fieldnames(mdu.(names{igroup}));
        for ipar = 1: length(pars)
            tmp2{ipar,1}=pars{ipar};
-%            tmp2{ipar,1} = simona2mdu_replacechar(pars{ipar},'_',' '); %why is this? not only wall_ks has underscore V
-%            if  strcmpi(tmp2{ipar,1},'wall ks') tmp2{ipar,1} = simona2mdu_replacechar(tmp2{ipar,1},' ','_'); end
            val=mdu.(names{igroup}).(pars{ipar});
            if strcmp(class(val),'Delft3D')
-               
+
            else
                if iscell(val)
                    line=sprintf('%s ',val{:});
@@ -137,12 +126,11 @@ case 'write'
                     else
                         line = val;
                     end
-                
-                   
+
+
                end
                maxlen = max(maxlen,length(line) + 1);
-    %            line(40:c = ['# ' mdu_Comments.(names{igroup}).(pars{ipar})];
-                tmp2{ipar,2} = line;
+               tmp2{ipar,2} = line;
            end
        end
        tmp.Data{igroup,2} = tmp2;
@@ -160,8 +148,7 @@ case 'write'
                line(end + 1) = ' ';
            end
            line(maxlen + 5:maxlen + length(mdu_Comments.(names{igroup}).(pars{ipar})) + 6) = ...
-           ['# ' mdu_Comments.(names{igroup}).(pars{ipar})]
-           tmp.Data{igroup,2}{ipar,2} = line;
+           ['# ' mdu_Comments.(names{igroup}).(pars{ipar})];
        end
    end
    end
