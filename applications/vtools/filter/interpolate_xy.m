@@ -24,7 +24,7 @@
 %   -val: value of the measurements; cell(1,ny);
 %   -y_v: y-coordinate where to interpolate measurements; double(1,nyv)
 %   -x_v: x-coordinate where to interpolate measurements; double(1,nxv)
-%   -x_thres: maximum x-distance from a measured point to a query point to be considered close enough to interpolate; double(1,1)
+%   -x_thres: maximum x-distance from a measured point to a query point to be considered close enough to interpolate; double(1,1). NaN = threshold
 
 function [x_m,y_m,val_m]=interpolate_xy(y,x,val,y_v,x_v,x_thres,varargin)
         

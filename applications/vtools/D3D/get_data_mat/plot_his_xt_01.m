@@ -18,12 +18,22 @@ function plot_his_xt_01(fid_log,flg_loc,simdef)
 
 %% DO
 
-ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+if contains(tag_fig,'all')
+    tag_do='do_all';
+else
+    tag_do='do_p';
+end
+ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 
 %% PARSE
 
+nS=numel(simdef);
+
 if isfield(flg_loc,'do_fil')==0
-    flg_loc.do_fil=0;
+    flg_loc.do_fil=zeros(nS,1);
+end
+if isfield(flg_loc,'fil_method')==0
+    flg_loc.do_fil=repmat({'godin'},1,nS);
 end
 if isfield(flg_loc,'fil_tim')==0
     flg_loc.fil_tim=25*3600;
@@ -31,7 +41,7 @@ end
 
 %% PATHS
 
-nS=numel(simdef);
+
 fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
@@ -164,7 +174,7 @@ for ktr=1:ntr
             [t_m,d_m]=meshgrid(time_dtime,flg_loc.s{ktr});
             
             in_p.t_m=t_m;
-            in_p.d_m=d_m.*1000;
+            in_p.d_m=d_m.*1000; %km->m change input!
 %             in_p.val_m=data';
             in_p.val_m=permute(data,[2,1,3]);
         end
@@ -175,7 +185,7 @@ for ktr=1:ntr
             in_p.do_fil=1;
             
             for kS=1:nS
-                [tim_f,data_f(:,:,kS)]=filter_1D(time_dtime,data(:,:,kS),'method','godin'); %we could first do 1 to preallocate...
+                [tim_f,data_f(:,:,kS)]=filter_1D(time_dtime,data(:,:,kS),'method',flg_loc.fil_method{ktr},'window',flg_loc.fil_tim,'x',flg_loc.s{ktr}); %we could first do 1 to preallocate...
             end
             
 %             in_p.val_m=data_f';
@@ -183,10 +193,10 @@ for ktr=1:ntr
             
             [t_m,d_m]=meshgrid(tim_f,flg_loc.s{ktr});
             in_p.t_m=t_m;
-            in_p.d_m=d_m.*1000;
+            in_p.d_m=d_m.*1000; %km->m change input!
             
             if in_p.do_measurements                
-                [tim_f,data_f]=filter_1D(data_mea.time,data_mea.waarde,'method','godin');
+                [tim_f,data_f]=filter_1D(data_mea.time,data_mea.waarde,'method',flg_loc.fil_method{ktr},'window',flg_loc.fil_tim);
                 error('do right data type')
 %                 in_p.data_stations_f.time=tim_f;
 %                 in_p.data_stations_f.waarde=data_f;

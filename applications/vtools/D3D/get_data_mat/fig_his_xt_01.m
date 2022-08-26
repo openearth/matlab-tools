@@ -58,6 +58,9 @@ end
 if isfield(in_p,'do_showtext')==0
     in_p.plot_style='on';
 end
+if isfield(in_p,'plot_axis')==0
+    in_p.plot_axis='xt';
+end
 
 v2struct(in_p)
 
@@ -96,6 +99,38 @@ nS=size(val_m,3);
 if nS>1 && strcmp(plot_style,'contour')==0
     messageOut('You want something else than a contour plot with more than one simulation at a time, that is not possible. I switch to contour.')
     plot_style='contour';
+end
+
+%%
+
+if strcmp(plot_axis,'xt')
+    x_m=d_m.*s_fact;
+    if strcmp(plot_style,'contour')
+        y_m=datenum_tzone(t_m);
+    else
+        y_m=t_m;    
+    end
+    v_m=val_m;
+    
+    if do_measurements
+        x_mea=d_m_mea.*s_fact;
+        y_m=t_m_mea;
+        v_m=val_m_mea;
+    end
+else
+    if strcmp(plot_style,'contour')
+        x_m=datenum_tzone(t_m);
+    else
+        x_m=t_m;    
+    end
+    y_m=d_m.*s_fact;
+    v_m=val_m;
+           
+    if do_measurements
+        x_mea=t_m_mea;
+        y_mea=d_m_mea.*s_fact;
+        v_mea=val_m_mea;
+    end
 end
 
 %% SIZE
@@ -307,19 +342,32 @@ end
 %axes and limits
 kr=1; kc=1;
 % lims.x(kr,kc,1:2)=lim_t;
-lims.x(kr,kc,1:2)=lim_dist;
+if strcmp(plot_axis,'xt')
+    lims.x(kr,kc,1:2)=lim_dist;
+    xlabels{kr,kc}=labels4all('rkm',s_fact,lan);
+    % xlabels{kr,kc}=labels4all('dist_mouth',s_fact,lan);
+    lims_d.y(kr,kc,1:2)=lim_t;
+else
+    lims.y(kr,kc,1:2)=lim_dist;
+    ylabels{kr,kc}=labels4all('rkm',s_fact,lan);
+    lims_d.x(kr,kc,1:2)=lim_t;
+end
 lims.c(kr,kc,1:2)=clims;
 % xlabels{kr,kc}=labels4all('dist_mouth',s_fact,lan);
-xlabels{kr,kc}=labels4all('rkm',s_fact,lan);
-lims_d.y(kr,kc,1:2)=lim_t;
 
 kr=1; kc=2;
 % lims.x(kr,kc,1:2)=lim_t;
-lims.x(kr,kc,1:2)=lim_dist;
+if strcmp(plot_axis,'xt')
+    lims.x(kr,kc,1:2)=lim_dist;
+    xlabels{kr,kc}=labels4all('rkm',s_fact,lan);
+    % xlabels{kr,kc}=labels4all('dist_mouth',s_fact,lan);
+    lims_d.y(kr,kc,1:2)=lim_t;
+else
+    lims.y(kr,kc,1:2)=lim_dist;
+    ylabels{kr,kc}=labels4all('rkm',s_fact,lan);
+    lims_d.x(kr,kc,1:2)=lim_t;
+end
 lims.c(kr,kc,1:2)=clims;
-% xlabels{kr,kc}=labels4all('dist_mouth',s_fact,lan);
-xlabels{kr,kc}=labels4all('rkm',s_fact,lan);
-lims_d.y(kr,kc,1:2)=lim_t;
 
 %% FIGURE INITIALIZATION
 
@@ -404,17 +452,17 @@ end
 kr=1; kc=1;  
 switch plot_style
     case 'surf'
-        han.s=surf(d_m.*s_fact,t_m,val_m,'parent',han.sfig(kr,kc),'edgecolor','none');
+%         han.s=surf(d_m.*s_fact,t_m,val_m,'parent',han.sfig(kr,kc),'edgecolor','none');
+        han.s=surf(x_m,y_m,v_m,'parent',han.sfig(kr,kc),'edgecolor','none');
     case 'contour'
-        t_m_dtnum=datenum_tzone(t_m);
         for kS=1:nS
             if exist('levels','var')==1
                 if numel(levels)==1
                     levels=[levels,levels];
                 end
-                [~,han.s(kr,kc,kS)]=contour(d_m.*s_fact,t_m_dtnum,val_m(:,:,kS),levels,'parent',han.sfig(kr,kc),'showtext',do_showtext,'color',cmap(kS,:));
+                [~,han.s(kr,kc,kS)]=contour(x_m,y_m,v_m(:,:,kS),levels,'parent',han.sfig(kr,kc),'showtext',do_showtext,'color',cmap(kS,:));
             else
-                [~,han.s(kr,kc,kS)]=contour(d_m.*s_fact,t_m_dtnum,val_m(:,:,kS),'parent',han.sfig(kr,kc),'showtext',do_showtext);
+                [~,han.s(kr,kc,kS)]=contour(x_m,y_m,v_m(:,:,kS),'parent',han.sfig(kr,kc),'showtext',do_showtext);
             end
         end
     otherwise
@@ -427,7 +475,7 @@ end
 
 if do_measurements
 kr=1; kc=2;  
-han.s=surf(d_m_mea.*s_fact,t_m_mea,val_m_mea,'parent',han.sfig(kr,kc),'edgecolor','none');
+han.s=surf(x_mea,y_mea,v_mea,'parent',han.sfig(kr,kc),'edgecolor','none');
 end
 %measurement dots
 % nx=numel(d_mea);
@@ -463,9 +511,14 @@ hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+if strcmp(plot_axis,'xt')
+    han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+    han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+else
+    han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+    han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+end
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 % han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
@@ -483,12 +536,21 @@ end
 % xtickformat(han.sfig(kr,kc),'hh:mm')
 switch plot_style
     case 'surf'
-        han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+        if strcmp(plot_axis,'xt')
+            han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+        else
+            han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
+        end
     case 'contour'
-        han.sfig(kr,kc).YLim=datenum_tzone(lims_d.y(kr,kc,:));
+        if strcmp(plot_axis,'xt')
+            han.sfig(kr,kc).YLim=datenum_tzone(lims_d.y(kr,kc,:));
+            datetick(han.sfig(kr,kc),'y','mmm-dd')
+        else
+            han.sfig(kr,kc).XLim=datenum_tzone(lims_d.x(kr,kc,:));
+%             datetick(han.sfig(kr,kc),'x','mmm-dd')
+        end
 %         datetick(han.sfig(kr,kc),'y','yyyy-mm-dd HH:MM:SS')
 %         datetick(han.sfig(kr,kc),'y','yyyy-mm-dd')
-        datetick(han.sfig(kr,kc),'y','mmm-dd')
 end
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
@@ -505,12 +567,18 @@ hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+if strcmp(plot_axis,'xt')
+    han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+    han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+    han.sfig(kr,kc).YTickLabel='';
+else
+    han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+    han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+    han.sfig(kr,kc).XTickLabel='';
+end
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 % han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
-han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
@@ -523,9 +591,17 @@ han.sfig(kr,kc).Title.String=labels4all('measurement',1,lan);
 % xtickformat(han.sfig(kr,kc),'hh:mm')
 switch plot_style
     case 'surf'
-        han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+        if strcmp(plot_axis,'xt')
+            han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+        else
+            han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
+        end
     case 'contour'
-        han.sfig(kr,kc).YLim=datenum_tzone(lims_d.y(kr,kc,:));
+        if strcmp(plot_axis,'xt')
+            han.sfig(kr,kc).YLim=datenum_tzone(lims_d.y(kr,kc,:));
+        else
+            han.sfig(kr,kc).XLim=datenum_tzone(lims_d.x(kr,kc,:));
+        end
 end
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
