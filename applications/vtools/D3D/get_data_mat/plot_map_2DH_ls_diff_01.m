@@ -102,7 +102,7 @@ for kt=kt_v %time
             var_str=D3D_var_num2str_structure(varname,simdef_ref);
             
             fdir_fig_loc=fullfile(fdir_fig,pliname,var_str);
-            mkdir_check(fdir_fig_loc);
+            mkdir_check(fdir_fig_loc,NaN,1,0);
             
             fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str,'pli',pliname);
             data_ref=load(fpath_mat_tmp,'data');

@@ -173,8 +173,10 @@ lims.x(kr,kc,1:2)=q_lim;
 % lims.c(kr,kc,1:2)=clims;
 switch lan
     case 'en'
-xlabels{kr,kc}='max. annual discharge [m^3/s]';
-ylabels{kr,kc}={'probability of max.','annual discharge [-]'};
+% xlabels{kr,kc}='max. annual discharge [m^3/s]';
+% xlabels{kr,kc}='min. annual discharge [m^3/s]';
+% ylabels{kr,kc}={'probability of max.','annual discharge [-]'};
+ylabels{kr,kc}={'probability of min.','annual discharge [-]'};
     case 'es'
 xlabels{kr,kc}='caudal máximo anual [m^3/s]';
 ylabels{kr,kc}={'probabilidad del caudal','máx. anual [-]'};
@@ -186,7 +188,8 @@ lims.x(kr,kc,1:2)=q_lim;
 % lims.c(kr,kc,1:2)=clims;
 switch lan
     case 'en'
-xlabels{kr,kc}='max. annual discharge [m^3/s]';
+% xlabels{kr,kc}='max. annual discharge [m^3/s]';
+xlabels{kr,kc}='min. annual discharge [m^3/s]';
 ylabels{kr,kc}='return period [year]';
     case 'es'
 xlabels{kr,kc}='caudal max. anual [m^3/s]';

@@ -10,8 +10,14 @@
 %$Id$
 %$HeadURL$
 %
+%Check computational time
+%
+%INPUT:
+%   -simdef: structure, path to dia file, path to simulation folder
+%
 %OUTPUT:
-
+%
+%E.G.:
 
 function [tim_dur,t0,tf]=D3D_computation_time(simdef,varargin)
 

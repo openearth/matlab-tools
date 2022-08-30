@@ -161,9 +161,9 @@ end
 
 %% nice
 
-in_p.fig_print=0; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fname='Q_analysis_day';
-in_p.fig_visible=1;
+in_p.fig_visible=0;
 in_p.data_station=data_station;
 in_p.lan='en';
 % in_p.time_q_year_max=data_station_prob.year.max.tim;

@@ -13,6 +13,14 @@
 
 function do_fig=check_print_figure(in_p)
 
+%%
+
+if isfield(in_p,'fig_overwrite')==0
+    in_p.fig_overwrite=0;
+end
+
+%%
+
 fname=in_p.fname;
 fig_print=in_p.fig_print; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 fig_overwrite=in_p.fig_overwrite; 

@@ -179,9 +179,16 @@ switch flg.opt
         fprintf(fid_ca,'	extension="${i##*.}"                                           \n');
         fprintf(fid_ca,'	if [ "$extension" = "nc" ] || [ "$extension" = "dia" ]; then   \n');
         fprintf(fid_ca,'		out_var="${i%%.$extension}.tar.gz"                         \n');
-        fprintf(fid_ca,'		tar -zcvf $out_var $i                                      \n');
-        fprintf(fid_ca,'		fpath=$(realpath $out_var)                                 \n');
-        fprintf(fid_ca,'		echo $fpath >> var_names.txt                               \n');
+		fprintf(fid_ca,'		echo $out_var                                              \n');
+		fprintf(fid_ca,'        if [ ! -f $out_var ]                                       \n');
+		fprintf(fid_ca,'        then                                                       \n');
+		fprintf(fid_ca,'        	echo "File does not exist. Compressing."               \n');
+		fprintf(fid_ca,'        	tar -zcvf $out_var $i                                  \n');
+		fprintf(fid_ca,'        	fpath=$(realpath $out_var)                             \n');
+		fprintf(fid_ca,'        	echo $fpath >> var_names.txt                           \n');
+		fprintf(fid_ca,'        else                                                       \n');
+		fprintf(fid_ca,'        	echo "File found. Skip compression"                    \n');
+		fprintf(fid_ca,'        fi                                                         \n');
         fprintf(fid_ca,'	fi                                                             \n');
         fprintf(fid_ca,'done                                                               \n'); 
                 

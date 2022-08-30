@@ -98,13 +98,16 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% SINGLE FILE 
 
-fpath_data='p:\11208053-004-kpp2022-rmm1d2d\C_Work\13_VoorbereidingLekvragen\03_ModelLek2022\Metingen\Datalevering Zoutmeetnet Lek Rijkswaterstaat aug 2022 v22-08-2022\CL ZML Boei 1 01-08 - 22-08-2022.csv';
+fpath_data='c:\Users\chavarri\temporal\data\20220829_026.csv';
 data_stations=read_csv_data(fpath_data,'flg_debug',0);
 
 %%
 ns=numel(data_stations);
-for ks=1:4
-    data_stations(ks).location_clear=location_clear_v{ks};
+for ks=1:ns
+%     data_stations(ks).location_clear=location_clear_v{ks};
+    data_stations(ks).location_clear='Lobith';
+    data_stations(ks).location='LOBH';
+    data_stations(ks).bemonsteringshoogte=NaN;
     add_data_stations(paths_main_folder,data_stations(ks))
 end
 
