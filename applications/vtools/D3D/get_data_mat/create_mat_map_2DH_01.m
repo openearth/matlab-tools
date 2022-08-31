@@ -69,18 +69,6 @@ nvar=numel(flg_loc.var);
 
 gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
-%% layer
-
-if isfield(flg_loc,'layer')==0
-    layer=[];
-else
-    if isnan(flg_loc.layer)
-        layer=gridInfo.no_layers;
-    else
-        layer=flg_loc.layer;
-    end
-end
-
 %% OVERWRITE
 
 ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
@@ -101,6 +89,8 @@ for kt=kt_v
         varname=flg_loc.var{kvar};
         var_str=D3D_var_num2str_structure(varname,simdef);
         
+        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str);
+
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
 

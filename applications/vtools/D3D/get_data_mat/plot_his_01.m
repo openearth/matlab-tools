@@ -18,7 +18,12 @@ function plot_his_01(fid_log,flg_loc,simdef)
 
 %% DO
 
-ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+if contains(tag_fig,'all')
+    tag_do='do_all';
+else
+    tag_do='do_p';
+end
+ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 
 %% PARSE
 
@@ -31,28 +36,26 @@ end
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+nS=numel(simdef);
+fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
-fpath_his=simdef.file.his;
+fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+fpath_his=simdef(1).file.his;
+fpath_map=simdef(1).file.map;
 mkdir_check(fdir_fig);
 
 %% STATIONS
 
-stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef.D3D.structure);
+stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.structure);
 
 %% TIME
 
-[~,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his);
+[nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his);
 
 %% GRID
 
-if simdef.D3D.structure~=3
-    gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
-else
-    gridInfo=NaN;
-end
+
 
 %% DIMENSIONS
 
@@ -91,13 +94,20 @@ for ks=ks_v
         varname=flg_loc.var{kvar};
         var_str=D3D_var_num2str_structure(varname,simdef);
         
-        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
+        data_all=NaN(nt,nS);
+        for kS=1:nS
+            fdir_mat=simdef(kS).file.mat.dir;
+            fpath_his=simdef(kS).file.his;
+            
+            gridInfo=gdm_load_grid_simdef(simdef(kS));
+            layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks}); 
+            
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
+            load(fpath_mat_tmp,'data');
+            data_all(:,kS)=data;
+        end
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
-        
-        load(fpath_mat_tmp,'data');
-        
-        in_p.val=data;
+        in_p.val=data_all;
         in_p.unit=var_str;
         if isfield(flg_loc,'unit')
             if ~isempty(flg_loc.unit{kvar})
@@ -131,7 +141,7 @@ for ks=ks_v
         if flg_loc.do_fil  
             in_p.do_fil=1;
             
-            [tim_f,data_f]=filter_1D(time_dtime,data,'method','godin');
+            [tim_f,data_f]=filter_1D(time_dtime,data,'method','godin'); 
             
             in_p.val_f=data_f;
             in_p.tim_f=tim_f;
@@ -150,7 +160,7 @@ for ks=ks_v
         mkdir_check(fdir_fig_var,NaN,1,0);
         
         for kylim=1:nylim
-            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef.file.runid,stations{ks},var_str,layer,kylim));
+            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef(1).file.runid,stations{ks},var_str,layer,kylim));
             fpath_file{ks,kylim}=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;

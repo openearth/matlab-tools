@@ -32,7 +32,13 @@ tim_type=parin.Results.tim_type;
 tol=parin.Results.tol;
 fdir_mat=parin.Results.fdir_mat;
 
-fpath_tim_all=fullfile(fdir_mat,'tim.mat');
+%check if his or map
+    %not robust enough I think for when dealing with SMT and D3D4
+str_tim='';
+if ~isfolder(fpath_map) && contains(fpath_map,'_his')
+    str_tim='_his';
+end
+fpath_tim_all=fullfile(fdir_mat,sprintf('tim%s.mat',str_tim));
 
 %%
 
@@ -55,6 +61,17 @@ if isa(in_dtime(1),'double')
         messageOut(NaN,sprintf('Mat-file with all times available. Loading: %s',fpath_tim_all))
         load(fpath_tim_all,'data')
         v2struct(data);
+        
+        %check all fields exist
+        fn=fieldnames(data);
+        fn_check={'time_dnum','time_dtime','time_mor_dnum','time_mor_dtime','sim_idx','time_idx'}; %fieldnames that must be present
+        [~,bol_f]=find_str_in_cell(fn_check,fn);
+        if ~all(bol_f) %old time file, data is missing. 
+            messageOut(NaN,'Old time file. Erasing and computing again.')
+            delete(fpath_tim_all)
+            [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,in_dtime,varargin{:});
+            return
+        end
     end
     
     %get the requested ones

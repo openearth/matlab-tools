@@ -74,9 +74,11 @@
 
 % tag='fig_map_2DH_01';
 % in_plot.(tag).do=1;
+% in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
+% in_plot.(tag).do_diff=1; %difference initial time
 % in_plot.(tag).do_s=1; %difference with reference
-% in_plot.(tag).do_diff=0; 
+% in_plot.(tag).do_s_diff=1; %difference with reference and initial time
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
 % in_plot.(tag).layer=NaN; %NaN=top layer
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
@@ -213,11 +215,12 @@ for ks=1:ns
     %% his sal
     if isfield(in_plot,'fig_his_sal_01')==1
         warning('deprecate and call <his_01>')
-        create_mat_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
+%         create_mat_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
     end
     
     %% his
     if isfield(in_plot,'fig_his_01')==1
+        in_plot.fig_his_01.tag='his_01';
         create_mat_his_01(fid_log,in_plot.fig_his_01,simdef)
     end
     
@@ -307,6 +310,7 @@ for ks=1:ns
     
     %% sal mass
     if isfield(in_plot,'fig_map_sal_mass_01')==1
+        messageOut(fid_log,'Outdated. Call <fig_map_2DH_01> with variable <clm2>')
 %         plot_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
         
 %         in_plot_loc=in_plot.fig_map_sal_mass_01;
@@ -323,7 +327,8 @@ for ks=1:ns
     
     %% his sal 01
     if isfield(in_plot,'fig_his_sal_01')==1
-        plot_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
+        warning('deprecate and call <his_01>')
+%         plot_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
     end
     
     %% his 01
@@ -416,15 +421,23 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref) && ns>1
 
         %% sal mass  
         if isfield(in_plot,'fig_map_sal_mass_01')==1
-            plot_map_sal_diff_01(fid_log,in_plot.fig_map_sal_mass_01,simdef_ref,simdef)
+            messageOut(fid_log,'Outdated. Call <fig_map_2DH_01> with variable <clm2>')
+%             plot_map_sal_diff_01(fid_log,in_plot.fig_map_sal_mass_01,simdef_ref,simdef)
         end
 
         %% his sal 01
         if isfield(in_plot,'fig_his_sal_01')==1
-            in_plot.fig_his_sal_01.tag_fig=sprintf('%s_diff',in_plot.fig_his_sal_01.tag);
-            plot_his_sal_diff_01(fid_log,in_plot.fig_his_sal_01,simdef_ref,simdef)
+            warning('deprecate and call <his_01>')
+%             in_plot.fig_his_sal_01.tag_fig=sprintf('%s_diff',in_plot.fig_his_sal_01.tag);
+%             plot_his_sal_diff_01(fid_log,in_plot.fig_his_sal_01,simdef_ref,simdef)
         end
 
+        %% his sal 01
+        if isfield(in_plot,'fig_his_01')==1
+            in_plot.fig_his_01.tag_fig=sprintf('%s_diff',in_plot.fig_his_01.tag);
+            plot_his_diff_01(fid_log,in_plot.fig_his_01,simdef_ref,simdef)
+        end
+        
         %% map 2DH
         if isfield(in_plot,'fig_map_2DH_01')==1
             in_plot.fig_map_2DH_01.tag_fig=sprintf('%s_diff',in_plot.fig_map_2DH_01.tag);
@@ -502,6 +515,13 @@ if isfield(in_plot,'fig_his_xt_01')==1
     plot_his_xt_01(fid_log,in_plot.fig_his_xt_01,simdef_all_2)
 end
     
+%% his sal 01
+if isfield(in_plot,'fig_his_01')==1
+    in_plot.fig_his_01.tag_fig=sprintf('%s_all',in_plot.fig_his_01.tag);
+    in_plot.fig_his_01.leg_str=leg_str_all_2;
+    plot_his_01(fid_log,in_plot.fig_his_01,simdef_all_2)
+end
+
 end %ns>1
 
 end %function

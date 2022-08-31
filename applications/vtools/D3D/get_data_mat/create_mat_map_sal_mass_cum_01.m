@@ -33,7 +33,7 @@ fpath_map=simdef.file.map;
 
 %% OVERWRITE
 
-[ret,flg_loc]=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat_loc); if ret; return; end
+% [ret,flg_loc]=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat_loc); if ret; return; end
 warning('tricky thing. We would like to overwrite if the time of analysis has changed')
 
 %% LOAD TIME

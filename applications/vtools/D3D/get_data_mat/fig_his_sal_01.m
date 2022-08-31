@@ -61,8 +61,8 @@ end
 if isfield(in_p,'data_stations') && ~isfield(in_p,'do_measurements')
     in_p.do_mesurements=1;
 end
-if isfield(in_p,'do_mesurements')==0
-    in_p.do_mesurements=0;
+if isfield(in_p,'do_measurements')==0
+    in_p.do_measurements=0;
 end
 if isfield(in_p,'do_fil')==0
     in_p.do_fil=0;

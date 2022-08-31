@@ -35,6 +35,7 @@ fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fpath_his=simdef.file.his;
+fpath_map=simdef.file.map;
 
 %% OVERWRITE
 
@@ -81,7 +82,9 @@ for ks=ks_v
 
         %% read data
         
-        %2DO make a function that reworks the data if necessary
+        %2DO:
+        %   -make a function that reworks the data if necessary
+        %   -load the times as specified in the input! now it is inconsistent.
         data_raw=EHY_getmodeldata(fpath_his,stations{ks},model_type_str,'varName',var_str,'layer',layer,'t0',time_dnum(1),'tend',time_dnum(end));
         save_check(fpath_mat_tmp,'data_raw');
 

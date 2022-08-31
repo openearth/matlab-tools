@@ -94,16 +94,6 @@ switch flg_loc.clims_type
         end
 end
 
-if isfield(flg_loc,'layer')==0
-    layer=[];
-else
-    if isnan(flg_loc.layer)
-        layer=gridInfo.no_layers;
-    else
-        layer=flg_loc.layer;
-    end
-end
-
 %% DIMENSIONS
 
 nt=size(time_dnum,1);
@@ -152,6 +142,8 @@ for kvar=1:nvar %variable
             in_p.fact=1;
     end
     
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str);
+    
     %time 1 for difference
     kt=1;
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
@@ -196,32 +188,8 @@ for kvar=1:nvar %variable
                 in_p.ylims=ylims;
 
                 for kdiff=1:ndiff
-                    switch kdiff
-                        case 1
-                            in_p.val=data;
-                            switch flg_loc.clims_type
-                                case 1
-                                    in_p.clims=flg_loc.clims(kclim,:);
-                                case 2
-                                    tim_up=max(time_dnum(kt)-flg_loc.clims_type_var,0);
-                                    in_p.clims=[0,tim_up];
-                            end
-                            tag_ref='val';
-                            in_p.is_diff=0;
-                            in_p.is_background=0;
-                        case 2
-                            in_p.val=data-data_ref.data;
-                            in_p.clims=flg_loc.clims_diff_t(kclim,:);
-                            tag_ref='diff';
-                            switch var_str
-                                case 'clm2'
-                                    in_p.is_diff=0;
-                                    in_p.is_background=1;
-                                otherwise
-                                    in_p.is_diff=1;
-                                    in_p.is_background=0;
-                            end
-                    end
+                    
+                    [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,'clims','clims_diff_t',var_str);
 
                     fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),tag_ref);
                     mkdir_check(fdir_fig_var,NaN,1,0);

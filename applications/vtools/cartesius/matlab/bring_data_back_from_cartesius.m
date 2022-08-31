@@ -24,12 +24,12 @@
 % fname_move='RMM_dflowfm_0000_fou.nc';
 % npartitions=120;
 % 
-% bring_data_back_from_Cartesius(surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands,fname_move,npartitions)
+% bring_data_back_from_Cartesius(1,surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands,fname_move,npartitions)
 % 
 %OPTION 2
 %all files in the folder (see Note 1)
 %
-% bring_data_back_from_Cartesius(surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands)
+% bring_data_back_from_Cartesius(2,surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands)
 %
 %OPTION 3
 %list of single files
@@ -44,13 +44,13 @@
 % 'p:/11205258-016-kpp2020rmm-3d/C_Work/01_RMM_simulations/computations/a_029/figures/crossection/a_029_crosssection_error.txt'...
 % };
 %
-% bring_data_back_from_Cartesius(surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands,path_bring_back)
+% bring_data_back_from_Cartesius(3,surf_userid,output_folder_win,cartesius_project_folder_lin,path_commands,path_bring_back)
 %
 %NOTES
 %
-%1: When transferring all the data, the full path in SURF is see. E.g.:
+%1: When transferring all the data, the full path in SURF is, e.g.:
 %   </gpfs/work4/0/hisigem/11208075-002-ijsselmeer/06_simulations/02_runs/r005/DFM_OUTPUT_ijsselmeer_3D/ijsselmeer_3D_0000_20180605_000000_rst.tar.gz>
-%however, the visible path must be use to get the data back. E.g.:
+%however, the visible path must be used to get the data back. E.g.:
 %   </projects/0/hisigem/11208075-002-ijsselmeer/06_simulations/02_runs/r005/DFM_OUTPUT_ijsselmeer_3D/ijsselmeer_3D_0000_20180605_000000_rst.tar.gz>
 %the pair input <surf_path_hidden> and <surf_path_seen> are used to replace the sring. 
 
@@ -272,6 +272,7 @@ switch flg.opt
             
             %% display
             fprintf(fid_h6,'#!/bin/bash \n');
+            fprintf(fid_h6,'#$ -q normal-e3-c7 \n');
             fprintf(fid_h6,'%s \n',cmd_mkdir{1,1});
             fprintf(fid_h6,'%s \n',cmd_cd);
             for kf=1:nf
