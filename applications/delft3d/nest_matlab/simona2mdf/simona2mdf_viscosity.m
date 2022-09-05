@@ -35,9 +35,11 @@ end
 %
 % Fill viscosity values/arrays and write (in case of space varying values)
 %
+mdf.vicouv = 0.; % specified as space varying values
+mdf.dicouv = 0.; % specified as space varying values
 
-mmax = mdf.mnkmax(1);
-nmax = mdf.mnkmax(2);
+mmax       = mdf.mnkmax(1);
+nmax       = mdf.mnkmax(2);
 
 if ~simona2mdf_fieldandvalue(problem,'VISCOSITY') && ~simona2mdf_fieldandvalue(problem,'HOR_VISCOSITY')
     vico(1:mmax,1:nmax) = 10.0; % Insane default value
