@@ -35,6 +35,8 @@ end
 
 %% Change variable name (for usage in EHY_getmodeldata) for Delft3D 4, IMPLIC and SOBEK3
 if strcmpi(varName,'vel'                  ) varName = 'uv'         ; end
+if strcmpi(varName,'vel_perp'             ) varName = 'uv'         ; end
+if strcmpi(varName,'vel_para'             ) varName = 'uv'         ; end
 if strcmpi(varName,'sal'                  ) varName = 'salinity'   ; end
 if strcmpi(varName,'chl'                  ) varName = 'salinity'   ; end
 if strcmpi(varName,'tem'                  ) varName = 'temperature'; end
@@ -76,12 +78,14 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'Zcen_int'   ) newName = 'flowelem_zw';  end
         if strcmpi(varName,'vel_perp'   ) newName = 'ucx';          end
         if strcmpi(varName,'vel_para'   ) newName = 'ucx';          end
+        if strcmpi(varName,'velW'       ) newName = 'ucz';          end
 
     case 'trim' % d3d
         % Get the name of varName as specified on the map file of a simulation
         if strcmpi(varName,'wl'         ) newName = 'S1'         ; end
         if strcmpi(varName,'bedlevel'   ) newName = 'DPS0'       ; end
         if strcmpi(varName,'uv'         ) newName = 'U1'         ; end
+        if strcmpi(varName,'velW'       ) newName = 'wphy'       ; end
         if strcmpi(varName,'density'    ) newName = 'RHO'        ; end
 %         if strcmpi(varName,'dps'        ) newName = 'DPS0'       ; end %DPS is different than DPS0 in case of morphodynamic simulation
         if strcmpi(varName,'avbedload'  ) newName = 'SBUUA'      ; end

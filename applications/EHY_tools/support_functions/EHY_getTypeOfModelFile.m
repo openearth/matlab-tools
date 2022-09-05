@@ -39,7 +39,7 @@ end
 
 % mdFile
 if isempty(typeOfModelFile)
-    if ismember(ext,{'.mdu','.mdf'}) || ~isempty(strfind([name ext],'siminp'))
+    if ismember(ext,{'.mdu','.mdf'}) || (~isempty(strfind([name ext],'siminp')) && isempty(ext)) % Avoid nc file with "siminp" in name being recognised as mdFile
         typeOfModelFile = 'mdFile';
     end
 end

@@ -62,6 +62,11 @@ for mThin = indexX
     end
 end
 
+ % (avoid identical start and end point in case u = 0)
+for i_pnt = 1: length(xStart)
+    if xStart(i_pnt) == xEnd(i_pnt)  xEnd(i_pnt) = 1.0001*xEnd(i_pnt); end
+end
+
 %% Scale the arrrowheads, first compute the actual length, in cm,  of the vecors
 for iVec = 1: length(xStart)
     lenVecX      = ((xEnd(iVec) - xStart(iVec))/(XLim(2) - XLim(1)))*lenX;

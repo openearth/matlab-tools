@@ -435,7 +435,15 @@ switch modelType
                             E.layer_perc = 1.0;
                         else
                             if nc_isvar(inputFile,'mesh2d_layer_sigma')
-                                E.layer_perc = diff(ncread(inputFile,'mesh2d_interface_sigma'));
+%                                E.layer_perc = diff(ncread(inputFile,'mesh2d_interface_sigma'));
+%                                mesh2d_interface_sigma not written corect to map file. reconstruct later percentage based upon cebtre coorsdibates
+                                tmp = ncread(inputFile,'mesh2d_layer_sigma');
+                                interface (1) = -1.0;
+                                for i_interface = 2: no_layers + 1
+                                    interface(i_interface) = interface(i_interface - 1) + 2*(tmp(i_interface -1) - interface(i_interface - 1));
+                                end
+                                E.layer_perc = diff(interface);
+                                
                             elseif nc_isvar(inputFile,'zcoordinate_w') && strcmp(layer_model,'sigma-model')
                                 % reconstruct thickness based upon z-coordinates of a active station and first timestep
                                 % for sigma-models only
