@@ -72,6 +72,7 @@ startdate       = ceil(now);
 searchinterval  = -1e5;
 quiet=0;
 justgettiles    = 0; 
+cachep          = true;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -86,6 +87,10 @@ for i=1:length(varargin)
                 startdate=varargin{i+1};
             case{'searchinterval'}
                 searchinterval=varargin{i+1};
+            case{'cachep'}
+                if varargin{i+1}==0
+                    cachep=false;
+                end
             case{'quiet'}
                 quiet=1;
         end
@@ -244,7 +249,7 @@ switch lower(tp)
                 iopendap=1;
                 remotedir=[bathymetry.dataset(iac).URL '/' levdir '/'];
                 localdir=[bathydir name filesep levdir filesep];
-            elseif strcmpi(bathymetry.dataset(iac).URL(1),'p')
+            elseif strcmpi(bathymetry.dataset(iac).URL(1),'p') && cachep
                 % P drive
                 ipdrive=1;
                 remotedir=[bathymetry.dataset(iac).URL filesep levdir filesep];
