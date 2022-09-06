@@ -223,6 +223,12 @@ switch lower(tp)
             nnx=bathymetry.dataset(iac).zoomLevel(ilev).ntilesx;
             nny=bathymetry.dataset(iac).zoomLevel(ilev).ntilesy;
             vertunits=bathymetry.dataset(iac).verticalCoordinateSystem.units;
+
+            data_in_cell_centres=1;
+            if data_in_cell_centres
+                x0=x0+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
+                y0=y0+0.5*dy;
+            end            
             
             tilesizex=dx*nx;
             tilesizey=dy*ny;
@@ -232,10 +238,16 @@ switch lower(tp)
             levdir=['zl' num2str(ilev,'%0.2i')];
             
             iopendap=0;
+            ipdrive=0;
             if strcmpi(bathymetry.dataset(iac).URL(1:4),'http')
                 % OpenDAP
                 iopendap=1;
                 remotedir=[bathymetry.dataset(iac).URL '/' levdir '/'];
+                localdir=[bathydir name filesep levdir filesep];
+            elseif strcmpi(bathymetry.dataset(iac).URL(1),'p')
+                % P drive
+                ipdrive=1;
+                remotedir=[bathymetry.dataset(iac).URL filesep levdir filesep];
                 localdir=[bathydir name filesep levdir filesep];
             else
                 % Local
@@ -266,11 +278,11 @@ switch lower(tp)
                 return
             end
             
-            data_in_cell_centres=1;
-            if data_in_cell_centres
-                xx=xx+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
-                yy=yy+0.5*dy;
-            end            
+%             data_in_cell_centres=1;
+%             if data_in_cell_centres
+%                 xx=xx+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
+%                 yy=yy+0.5*dy;
+%             end            
             
             ix1=find(xx<xl(1),1,'last');
             if isempty(ix1)
@@ -313,12 +325,12 @@ switch lower(tp)
                 xx=x0Tiles(1):dx:x0Tiles(end) + tilesizex - dx;
                 yy=y0+(iy1-1)*tilesizey:dy:y0 + iy2*tilesizey - dy;
                 
-                data_in_cell_centres=1;
-                if data_in_cell_centres
-                    xx=xx+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
-                    yy=yy+0.5*dy;
-                end
-                
+%                 data_in_cell_centres=1;
+%                 if data_in_cell_centres
+%                     xx=xx+0.5*dx; % This really should be added as the data are defined in the cell centres!!!               
+%                     yy=yy+0.5*dy;
+%                 end
+%                 
                 [x,y]=meshgrid(xx,yy);
             end
             
@@ -380,7 +392,7 @@ switch lower(tp)
                         
                         filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(itile,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                         
-                        if iopendap
+                        if iopendap || ipdrive
                             if bathymetry.dataset(iac).useCache
                                 % First check if file is available locally
                                 idownload=0;
@@ -404,7 +416,12 @@ switch lower(tp)
                                         mkdir(localdir);
                                     end
                                     try
-                                        urlwrite([remotedir filename],[localdir filename],'Timeout',5);
+                                        if iopendap
+                                            urlwrite([remotedir filename],[localdir filename],'Timeout',5);
+                                        else
+                                            % pdrive
+                                            copyfile([remotedir filename], localdir);
+                                        end
                                     catch
                                         disp(['Missing tile : ' remotedir filename]);
                                     end
