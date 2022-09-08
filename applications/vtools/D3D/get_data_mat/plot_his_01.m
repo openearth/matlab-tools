@@ -99,7 +99,7 @@ for ks=ks_v
             fdir_mat=simdef(kS).file.mat.dir;
             fpath_his=simdef(kS).file.his;
             
-            gridInfo=gdm_load_grid_simdef(simdef(kS));
+            gridInfo=gdm_load_grid_simdef(fid_log,simdef(kS));
             layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks}); 
             
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
@@ -141,7 +141,7 @@ for ks=ks_v
         if flg_loc.do_fil  
             in_p.do_fil=1;
             
-            [tim_f,data_f]=filter_1D(time_dtime,data,'method','godin'); 
+            [tim_f,data_f]=filter_1D(time_dtime,data_all,'method','godin'); 
             
             in_p.val_f=data_f;
             in_p.tim_f=tim_f;
@@ -165,7 +165,7 @@ for ks=ks_v
 
             in_p.fname=fname_noext;
             
-            in_p.ylims=get_ylims(flg_loc.ylims(kylim,:),in_p.do_measurements,data,data_mea);
+            in_p.ylims=get_ylims(flg_loc.ylims(kylim,:),in_p.do_measurements,data_all,data_mea);
 
             fig_his_sal_01(in_p);
         end %kylim

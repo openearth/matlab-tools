@@ -10,13 +10,44 @@
 %$Id$
 %$HeadURL$
 %
+%INPUT
+%   simdef: several options:
+%       -simdef structure
+%       -cell array with path to simulation folder
+%
 %OUTPUT:
 %   sta=1: not started
 %   sta=2: running
 %   sta=3: done
 %   sta=4: interrupted (did not reach final time but exit controlled)
 
-function [sta,time_comp,tgen,version,tim_ver,source]=D3D_status(simdef,varargin)
+function [sta,time_comp,tgen,version,tim_ver,source,processes]=D3D_status(simdef,varargin)
+
+%% PARSE
+
+%% CASE
+
+if iscell(simdef)
+    ns=numel(simdef);
+    sta=NaN(ns,1);
+    time_comp=NaT(ns,1)-datetime(2000,1,1); %duration
+    tgen=NaT(ns,1);
+    version=cell(ns,1);
+    tim_ver=NaT(ns,1);
+    source=cell(ns,1);
+    processes=NaN(ns,1);
+    for ks=1:ns
+        if isfolder(simdef{ks})
+            simdef_true.D3D.dire_sim=simdef{ks};
+            [sta(ks),time_comp(ks),tgen(ks),version{ks},tim_ver(ks),source{ks}]=D3D_status(simdef_true,varargin{:});
+        else
+            error('do')
+        end
+    end
+    return
+end
+
+%% CALC
 
 sta=NaN;
 time_comp=NaT-datetime(2000,1,1); %duration
@@ -24,6 +55,7 @@ tgen=NaT;
 version='';
 tim_ver=NaT;
 source='';
+processes=NaN;
 
 simdef=D3D_simpath(simdef);
 
@@ -36,8 +68,10 @@ end
 is_inter=D3D_is_interrupt(simdef,varargin);
 if is_inter
     sta=4;
-    time_comp=D3D_computation_time(simdef.file.dia);
-    [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
+    if simdef.D3D.structure==2
+        time_comp=D3D_computation_time(simdef.file.dia);
+        [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
+    end
     return 
 end
 
@@ -45,7 +79,7 @@ is_done=D3D_is_done(simdef,varargin);
 
 if is_done
     sta=3;
-    time_comp=D3D_computation_time(simdef.file.dia);
+    [time_comp,~,~,processes]=D3D_computation_time(simdef.file.dia);
     [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
     return 
 end

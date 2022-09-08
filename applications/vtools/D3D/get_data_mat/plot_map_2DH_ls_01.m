@@ -16,6 +16,12 @@ function plot_map_2DH_ls_01(fid_log,flg_loc,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
+%% PARSE
+
+if isfield(flg_loc,'fig_print')==0
+    flg_loc.fig_print=1;
+end
+
 %% DO
 
 ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
@@ -83,7 +89,6 @@ end
 
 %% figure
 in_p=flg_loc; %attention with unexpected input
-in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 
 fext=ext_of_fig(in_p.fig_print);

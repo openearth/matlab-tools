@@ -81,6 +81,31 @@ fcn(exp(Q_p))
 Q=exp(Q_p);
 fprintf('Q = %f m^3/s has probability of yearly maximum p = %f with return period %f years \n',Q,p,1/p)
 
+%% order each year
+
+tim=data_station_prob.day.mean.tim;
+val=data_station_prob.day.mean.val;
+
+time_year=year(tim);
+[year_u,year_u_idx1,year_u_idx2]=unique(time_year);
+
+ny=numel(year_u);
+q_s=NaN(366,ny);
+tim_s=NaT(366,ny);
+tim_s.TimeZone='+00:00';
+
+for ky=1:ny
+    q_loc=val(year_u_idx2==ky);
+    time_loc=tim(year_u_idx2==ky);
+    [q_loc_s,idx_s]=sort(q_loc);
+    tim_loc_s=time_loc(idx_s);
+    
+    q_s(1:numel(q_loc_s),ky)=q_loc_s;
+    tim_s(1:numel(q_loc_s),ky)=tim_loc_s;
+end %ky
+
+%out
+
 %% WRITE
 
 if flg.write_csv
@@ -161,9 +186,9 @@ end
 
 %% nice
 
-in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fig_print=0; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fname='Q_analysis_day';
-in_p.fig_visible=0;
+in_p.fig_visible=1;
 in_p.data_station=data_station;
 in_p.lan='en';
 % in_p.time_q_year_max=data_station_prob.year.max.tim;
@@ -181,3 +206,18 @@ in_p.p_q_days=data_station_prob.day.unique.p;
 
 fig_Q_analysis_vertical(in_p);
 % fig_Q_analysis_horizontal(in_p);
+
+%% dayly mean matrix
+
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fname='Q_matrix';
+in_p.fig_visible=0;
+in_p.lan='en';
+in_p.q=q_s;
+in_p.tim=year_u;
+in_p.lims_q=[600,1200];
+in_p.lims_d=[1,60];
+in_p.lims_y=[min(year_u),max(year_u)];
+
+
+fig_Q_matrix(in_p)

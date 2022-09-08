@@ -22,6 +22,10 @@ switch simdef.D3D.structure
         kl=search_text_ascii(simdef.file.dia,'** INFO   : Computation finished at:',1);
 end
 is_done=true;
+if numel(kl)>1
+    messageOut(NaN,sprintf('Simulation run more than once: %s',simdef.D3D.dire_sim));
+    kl=kl(end);
+end
 if isempty(kl) || isnan(kl)
     is_done=false;
 end

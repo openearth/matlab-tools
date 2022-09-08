@@ -64,8 +64,8 @@ end
 %% SIZE
 
 %square option
-npr=2; %number of plot rows
-npc=4; %number of plot columns
+npr=1; %number of plot rows
+npc=1; %number of plot columns
 axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
@@ -253,11 +253,11 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-lims.y(kr,kc,1:2)=[-2e-3,2e-3];
-lims.x(kr,kc,1:2)=lim_A;
-lims.c(kr,kc,1:2)=clims;
-xlabels{kr,kc}='L_a [m]';
-ylabels{kr,kc}='\lambda^* [-]';
+% lims.y(kr,kc,1:2)=lims_y;
+% lims.x(kr,kc,1:2)=lims_x;
+% lims.c(kr,kc,1:2)=lims_c;
+xlabels{kr,kc}='x';
+ylabels{kr,kc}='y';
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
@@ -435,10 +435,10 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
-han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
-pos.leg=han.leg(kr,kc).Position;
-han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
-han.sfig(kr,kc).Position=pos.sfig;
+% han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
+% pos.leg=han.leg(kr,kc).Position;
+% han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
+% han.sfig(kr,kc).Position=pos.sfig;
 
 %% COLORBAR
 

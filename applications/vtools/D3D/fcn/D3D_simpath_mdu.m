@@ -141,7 +141,7 @@ if ns>1
         c{1,ks}=fullfile(path_sim,tok{1,ks});
     end
 else
-    c=s;
+    c=fullfile(path_sim,s);
 end
 
 end %function

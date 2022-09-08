@@ -24,8 +24,16 @@ path_csdef_ori=simdef.file.csdef;
 path_csloc_ori=simdef.file.csloc;
 path_map_ori=simdef.file.map;
 
-[~,cs_def_ori]=S3_read_crosssectiondefinitions(path_csdef_ori,'file_type',2);
-[~,cs_loc_ori]=S3_read_crosssectiondefinitions(path_csloc_ori,'file_type',3);
+if exist(path_csdef_ori,'file')==2
+    [~,cs_def_ori]=S3_read_crosssectiondefinitions(path_csdef_ori,'file_type',2);
+else
+    error('Cannot access file: %s',path_csdef_ori);
+end
+if exist(path_csloc_ori,'file')==2
+    [~,cs_loc_ori]=S3_read_crosssectiondefinitions(path_csloc_ori,'file_type',3);
+else
+    error('Cannot access file: %s',path_csloc_ori);
+end
 
 if any([cs_loc_ori.shift])
     error('You have to rework this function for dealing with a shift.')
@@ -207,7 +215,7 @@ min_lev_i=F_min{idx_br,1}(ch_l); %interpolate minimum elevation
 max_lev_i=F_max{idx_br,1}(ch_l); %interpolate maximum elevation
 
 lev_i=linspace(min_lev_i,max_lev_i,nelev_cs)';
-relative_levels=[0;diff(lev_i)];
+relative_levels=cumsum([0;diff(lev_i)]);
 flowWidths_i=F_flowWidths{idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
 totalWidths_i=F_totalWidths{idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
 

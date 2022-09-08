@@ -64,6 +64,12 @@ while ~feof(fid_log)
     
 end %while
 
+if kc==0
+    messageOut(NaN,'No lines found for time analysis')
+    data.dummy=NaN;
+    return
+end
+
 tok_all=tok_all(1:kc);
 
 %% rework

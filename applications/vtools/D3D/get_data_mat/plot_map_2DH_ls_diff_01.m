@@ -36,6 +36,9 @@ if isfield(flg_loc,'tol')==0
     flg_loc.tol=30;
 end
 
+if isfield(flg_loc,'fig_print')==0
+    flg_loc.fig_print=1;
+end
 
 %% PATHS
 
@@ -72,7 +75,6 @@ nylims=size(flg_loc.ylims,1);
 %% figure
 
 in_p=flg_loc; %attention with unexpected input
-in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 in_p.is_diff=1;
 

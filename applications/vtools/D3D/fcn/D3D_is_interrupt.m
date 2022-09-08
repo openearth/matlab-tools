@@ -11,21 +11,23 @@
 %$HeadURL$
 %
 
-function is_done=D3D_is_interrupt(simdef,varargin)
+function is_interr=D3D_is_interrupt(simdef,varargin)
 
 simdef=D3D_simpath(simdef);
 
 switch simdef.D3D.structure
     case 1
-        warning('add text of a D3D4 crash')
-%         kl=search_text_ascii(simdef.file.dia,'*** Simulation finished ***',1);
-        kl=NaN;
+        kl=search_text_ascii(simdef.file.dia,'*** ERROR Flow exited abnormally',1);
     case 2
         kl=search_text_ascii(simdef.file.dia,'** INFO   : Simulation did not reach stop time',1);
 end
-is_done=true;
-if isnan(kl)
-    is_done=false;
+is_interr=true;
+if numel(kl)>1
+    messageOut(NaN,sprintf('Simulation run more than once: %s',simdef.D3D.dire_sim));
+    kl=kl(end);
+end
+if isempty(kl) || isnan(kl)
+    is_interr=false;
 end
 
 end %function
