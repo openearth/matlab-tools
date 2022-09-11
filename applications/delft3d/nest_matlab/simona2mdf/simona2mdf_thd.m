@@ -13,7 +13,7 @@ OPT = setproperty(OPT,varargin{1:end});
 
 siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEU'});
 
-if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.CLOSEU.MNN');
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.CLOSEU.MNN')
    line = siminp_struc.ParsedTree.MESH.DRYPOINTS.CLOSEU.MNN;
    for i_line = 1: length(line)
       THD.DATA(end+1).mn(1)     = line(i_line).MNNLINE(1);
@@ -30,7 +30,7 @@ end
 
 siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEV'});
 
-if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.CLOSEV.NMM');
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.CLOSEV.NMM')
    line = siminp_struc.ParsedTree.MESH.DRYPOINTS.CLOSEV.NMM;
    for i_line = 1: length(line)
       THD.DATA(end+1).mn(1)     = line(i_line).NMMLINE(2);

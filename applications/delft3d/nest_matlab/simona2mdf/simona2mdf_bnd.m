@@ -16,7 +16,7 @@ if ~isempty(bnd)
     mdf.filbnd = [name_mdf '.bnd'];
     delft3d_io_bnd('write',mdf.filbnd,bnd);
     mdf.filbnd = simona2mdf_rmpath(mdf.filbnd);
-
+    
     %
     % Harmonic boundary conditions
     %
@@ -60,7 +60,7 @@ if ~isempty(bnd)
         delft3d_io_bca('write',mdf.filana,bca);
         mdf.filana = simona2mdf_rmpath(mdf.filana);
     end
-
+    
     %
     % Transport boundary conditions (Salinity only for now)
     %
@@ -71,7 +71,7 @@ if ~isempty(bnd)
         ddb_bct_io('write',mdf.filbcc,bcc);
         mdf.filbcc = simona2mdf_rmpath(mdf.filbcc);
     end
-
+        
     %
     % Thatcher Harleman times
     %

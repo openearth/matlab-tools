@@ -30,7 +30,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
         % Type of boundary out of the bndstruc, for astronomical data continue
         %
 
-        if strcmpi(bnd.DATA(ibnd).datatype,'T');
+        if strcmpi(bnd.DATA(ibnd).datatype,'T')
 
             ibnd_bct = ibnd_bct + 1;
             clear times values
@@ -117,7 +117,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
                     bct.Table(ibnd_bct).Parameter(2).Unit=unit;
                     bct.Table(ibnd_bct).Parameter(3).Name=[quant 'End B'];
                     bct.Table(ibnd_bct).Parameter(3).Unit=unit;
-                case{'3d-profile'}
+                otherwise
                    j=1;
                    for kk=1:kmax
                        j=j+1;

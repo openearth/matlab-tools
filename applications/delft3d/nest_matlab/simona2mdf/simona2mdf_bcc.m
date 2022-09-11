@@ -29,6 +29,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY'
     %
 
     for ibnd = 1: length(bnd.DATA)
+        clear times values
 
         %
         % For all boundaries
@@ -37,27 +38,35 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY'
         ibnd_bcc = ibnd_bcc + 1;
 
         for iside = 1: 2
-
             %
             % Get seriesnr
             %
-
+            pntnr = [];
             for ipnt = 1: length(series)
-                 if series(ipnt).P == bnd.pntnr(ibnd,iside) && series(ipnt).CO == constnr
-                      pntnr = ipnt;
-                      break
-                 end
+                if series(ipnt).P == bnd.pntnr(ibnd,iside)
+                    pntnr = [pntnr ipnt];
+                end
             end
+
+            profile{ibnd_bcc} = 'Uniform';
+            kmax              = length(pntnr);
+            if kmax > 1 profile{ibnd_bcc} = '3d-profile';end
+
             %
             % Get the time series data
             %
-            if simona2mdf_fieldandvalue(series(ipnt),'SERIES')
-                 [times(iside,:),values(iside,:,1)] = simona2mdf_getseries(series(pntnr));
-            else
-                 times(iside,1)    = mdf.tstart;
-                 times(iside,2)    = mdf.tstop;
-                 values(iside,1,1) = series(pntnr).CINIT;
-                 values(iside,2,1) = series(pntnr).CINIT;
+
+            for ipnt = 1: kmax
+                if kmax == 1; k = 1                 ; end
+                if kmax >  1; k = series(ipnt).LAYER; end
+                if simona2mdf_fieldandvalue(series(ipnt),'SERIES')
+                    [times(iside,:),values(iside,:,k)] = simona2mdf_getseries(series(pntnr(ipnt)));
+                else
+                    times(iside,1)    = mdf.tstart;
+                    times(iside,2)    = mdf.tstop;
+                    values(iside,1,k) = series(pntnr).CINIT;
+                    values(iside,2,k) = series(pntnr).CINIT;
+                end
             end
         end
 
@@ -66,20 +75,20 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY'
         %
 
         if ~isequal(times(1,:),times(2,:))
-             simona2mdf_message('Times for timeseries SIDE A and SIDE B must be identical','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
+            simona2mdf_message('Times for timeseries SIDE A and SIDE B must be identical','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
         end
+
 
         %
         % Fill the bcc (INFO) structure
         %
 
         quant   ='Salinity             ';
-        unit    ='[ppt]';
-        profile = 'uniform';
+        unit    ='[psu]';
 
         bcc.NTables=ibnd_bcc;
         bcc.Table(ibnd_bcc).Name=['Boundary Section : ' num2str(ibnd)];
-        bcc.Table(ibnd_bcc).Contents=profile;
+        bcc.Table(ibnd_bcc).Contents=profile{ibnd_bcc};
         bcc.Table(ibnd_bcc).Location=bnd.DATA(ibnd).name;
         bcc.Table(ibnd_bcc).TimeFunction='non-equidistant';
         bcc.Table(ibnd_bcc).ReferenceTime=str2num(datestr(datenum(mdf.itdate,'yyyy-mm-dd'),'yyyymmdd'));
@@ -88,18 +97,35 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY'
         bcc.Table(ibnd_bcc).Parameter(1).Name='time';
         bcc.Table(ibnd_bcc).Parameter(1).Unit='[min]';
 
-        bcc.Table(ibnd_bcc).Parameter(2).Name=[quant 'End A'];
-        bcc.Table(ibnd_bcc).Parameter(2).Unit=unit;
-        bcc.Table(ibnd_bcc).Parameter(3).Name=[quant 'End B'];
-        bcc.Table(ibnd_bcc).Parameter(3).Unit=unit;
+        if kmax == 1
+            bcc.Table(ibnd_bcc).Parameter(2).Name=[quant 'End A'];
+            bcc.Table(ibnd_bcc).Parameter(2).Unit=unit;
+            bcc.Table(ibnd_bcc).Parameter(3).Name=[quant 'End B'];
+            bcc.Table(ibnd_bcc).Parameter(3).Unit=unit;
+        else
+            j = 1;
+            for k=1:kmax
+                j=j+1;
+                bcc.Table(ibnd_bcc).Parameter(j).Name=[quant 'End A layer: ' num2str(k)];
+                bcc.Table(ibnd_bcc).Parameter(j).Unit=unit;
+            end
+            for k=1:kmax
+                j=j+1;
+                bcc.Table(ibnd_bcc).Parameter(j).Name=[quant 'End B layer: ' num2str(k)];
+                bcc.Table(ibnd_bcc).Parameter(j).Unit=unit;
+            end
+        end
+
 
         %
         % Fill bnd structure with time series
         %
 
         bcc.Table(ibnd_bcc).Data(:,1) = times(1,:);
-        bcc.Table(ibnd_bcc).Data(:,2) = values(1,:,1);
-        bcc.Table(ibnd_bcc).Data(:,3) = values(2,:,1);
+        for k = 1: kmax
+            bcc.Table(ibnd_bcc).Data(:,       k + 1) = values(1,:,k);
+            bcc.Table(ibnd_bcc).Data(:,kmax + k + 1) = values(2,:,k);
+        end
     end
 end
 
