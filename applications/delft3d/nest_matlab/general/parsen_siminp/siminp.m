@@ -181,7 +181,7 @@ if isfield(Field,'Field')
       if ~isempty(Keyword)
           if length(Keyword) >= 5
               if strncmp(Keyword,'POWER',min(length(Keyword),5))
-                  i = 1
+                  i = 1;
               end
           end
          found = 0;
