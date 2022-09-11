@@ -47,7 +47,7 @@ end
 if simona2mdf_fieldandvalue(mdf,'filbct')
 
     %% Time series bc
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu,'Series'      ,true,'Sign',true);
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu,'Series'      ,true,'Sign',true,'Thick',mdf.thick);
 end
 
 %% Same story, this time for sea level anomalies
@@ -101,7 +101,7 @@ end
 
 %% Convert salinity boundary conditions
 if simona2mdf_fieldandvalue(mdf,'filbcc') && ~isempty(filpli)
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu,'Salinity',true,'Sign',true);
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu,'Salinity',true,'Thick',mdf.thick,'Sign',true);
 end
 
 %% Same story, this time for the temperature boundaries boundaries
@@ -123,5 +123,5 @@ end
 
 %% Convert salinity temperature boundary conditions
 if simona2mdf_fieldandvalue(mdf,'filbcc') && ~isempty(filpli)
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu,'Temperature',true,'Sign',true);
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu,'Temperature',true,'Thick',mdf.thick,'Sign',true);
 end

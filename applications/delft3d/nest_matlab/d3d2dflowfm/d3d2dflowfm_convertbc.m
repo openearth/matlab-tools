@@ -9,6 +9,7 @@ OPT.Salinity     = false;
 OPT.Temperature  = false;
 OPT.Correction   = '';
 OPT.Sign         = false;
+OPT.Thick        = 100.;
 
 if ~isempty(varargin)
     OPT = setproperty(OPT,varargin);
@@ -49,11 +50,12 @@ for i_pli = 1: length(filpli)
         i_output = i_output + 1;
 
         %% Get the type of forcing for this point
-        if size(LINE.DATA,2) == 3;
+        if size(LINE.DATA,2) == 3
             index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
         else
             continue
         end
+        
         sign = str2num(LINE.DATA{i_pnt,3}(index(end-1):index(end) - 1));
         if OPT.Salinity || OPT.Temperature
             b_type  = 't';
@@ -161,15 +163,15 @@ for i_pli = 1: length(filpli)
                         quan_bct = bct.Table(i_table).Parameter(2).Name;
                         quan_bct = sscanf(quan_bct,'%s');
                         if OPT.Salinity
-                            if strcmp(strtrim(bndname),strtrim(name_bct)) && strcmpi(quan_bct(1:8 ),'Salinity');
+                            if strcmp(strtrim(bndname),strtrim(name_bct)) && strcmpi(quan_bct(1:8 ),'Salinity')
                                 nr_table = i_table;
                             end
                         elseif OPT.Temperature
-                            if strcmp(strtrim(bndname),strtrim(name_bct)) && strcmpi(quan_bct(1:11),'Temperature');
+                            if strcmp(strtrim(bndname),strtrim(name_bct)) && strcmpi(quan_bct(1:11),'Temperature')
                                 nr_table = i_table;
                             end
                         else
-                            if strcmp(strtrim(bndname),strtrim(name_bct));
+                            if strcmp(strtrim(bndname),strtrim(name_bct))
                                 nr_table = i_table;
                             end
                         end
@@ -183,18 +185,27 @@ for i_pli = 1: length(filpli)
                         kmax = floor(size(bct.Table(nr_table).Data,2) - 1) / 2;
                     end
 
-
                     %% Fill series array
                     %  First: Time in minutes
                     SERIES.Values(:,1) = bct.Table(nr_table).Data(:,1);
                     quan_bct           = bct.Table(nr_table).Parameter(2).Name;
                     quan_bct           = sscanf(quan_bct,'%s');
-
+                                        
+                    Values_A = bct.Table(nr_table).Data(:,2       :2        + (kmax - 1));
+                    Values_B = bct.Table(nr_table).Data(:,2 + kmax:2 + kmax + (kmax - 1));
+                                                 
                     % Then: Values (for now generate the depth averaged values)
-                    if strcmpi      (side,'a');                                      %end A
-                        SERIES.Values(:,2)      = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
-                    else                                                             %end B
-                        SERIES.Values(:,2)      = sign*mean(bct.Table(nr_table).Data(:,2 + kmax:2 + kmax + (kmax - 1)),2);
+                    if (~isempty(strfind(quan_bct,'Current')) || OPT.Salinity || OPT.Temperature) && kmax > 1
+                        for i_time = 1: size(Values_A,1)
+                            Values_A(i_time,:) = (OPT.Thick/100.).*Values_A(i_time,:);
+                            Values_B(i_time,:) = (OPT.Thick/100.).*Values_B(i_time,:);
+                        end
+                    end
+                    
+                    if strcmpi      (side,'a')                                      %end A
+                        SERIES.Values(:,2)      = sign*sum(Values_A,2);
+                    else                                                            %end B
+                        SERIES.Values(:,2)      = sign*sum(Values_B,2);
                         % Total discharge boundary, side B = -999 in bct file but not used!
                         if floor(mean(abs(SERIES.Values(:,2)))) == 999;
                             SERIES.Values(:,2)  = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);

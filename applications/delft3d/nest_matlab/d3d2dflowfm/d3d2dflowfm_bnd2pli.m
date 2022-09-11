@@ -70,14 +70,14 @@ bc0(iline)   = false;
 
 %% Set initial boundary orientation
 dir_old = 'n';
-if mbnd(1,1) == mbnd(1,2);
+if mbnd(1,1) == mbnd(1,2)
     dir_old = 'm';
 end
 
-for ibnd = 1 : no_bnd;
+for ibnd = 1 : no_bnd
 
     % Change in orientation or jump of more than 1 cell ==> new polyline
-    if ibnd > 1;
+    if ibnd > 1
         if mbnd(ibnd,1) == mbnd(ibnd,2)
             dir       = 'm';
             diff      = abs(nbnd(ibnd,1) - nbnd(ibnd-1,2));
@@ -87,7 +87,7 @@ for ibnd = 1 : no_bnd;
             diff      = abs(mbnd(ibnd,1) - mbnd(ibnd-1,2));
             if nbnd(ibnd,1) ~= nbnd(ibnd-1,2) diff = 1e6; end
         end
-        if ~strcmp(dir,dir_old) || diff > 1
+        if ~strcmp(dir,dir_old) || diff > 1 || ~strcmp(D.DATA(ibnd).bndtype,D.DATA(max(ibnd-1,1)).bndtype)
             dir_old    = dir;
             iline      = iline + 1;
             irow       = 1;
@@ -111,6 +111,7 @@ for ibnd = 1 : no_bnd;
     end
 
     %% Fill LINE struct (starting with side A)
+    
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
@@ -130,7 +131,7 @@ for ibnd = 1 : no_bnd;
     LINE(iline).DATA{irow,3} = string;
 
     %% Fill LINE struct for side B (avoid double points by checking if it is not first point of next boundary segment)
-    if ~(xb(ibnd,2) == xb(min(ibnd + 1,no_bnd),1) && yb(ibnd,2) == yb(min(ibnd +1,no_bnd),1))
+    if ~(xb(ibnd,2) == xb(min(ibnd + 1,no_bnd),1) && yb(ibnd,2) == yb(min(ibnd +1,no_bnd),1)) 
        irow = irow + 1;
        LINE(iline).DATA{irow,1} = xb(ibnd,2);
        LINE(iline).DATA{irow,2} = yb(ibnd,2);
