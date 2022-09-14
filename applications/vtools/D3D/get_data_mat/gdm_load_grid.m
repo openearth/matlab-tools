@@ -46,7 +46,7 @@ switch dim
     case 1
         gridInfo=NC_read_grid_1D(fpath_map);
     case 2
-        gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers'},'mergePartitions',1); %#ok
+        gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid'},'mergePartitions',1); %#ok
         save_check(fpath_grd,'gridInfo'); 
 end    
 

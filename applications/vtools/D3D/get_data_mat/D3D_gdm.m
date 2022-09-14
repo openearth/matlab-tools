@@ -190,6 +190,12 @@ for ks=1:ns
         disp_time_map(fid_log,in_plot.disp_time_map,simdef);
     end
     
+    %% grid
+    if isfield(in_plot,'fig_grid_01')==1
+        in_plot.fig_grid_01.tag='grid_01';
+        create_grid_01(fid_log,in_plot.fig_grid_01,simdef);
+    end
+    
     %% sal
     if isfield(in_plot,'fig_map_sal_01')==1
         create_mat_map_sal_01(fid_log,in_plot.fig_map_sal_01,simdef)
@@ -292,6 +298,11 @@ for ks=1:ns
     fdir_sim=in_plot.fdir_sim{ks};
     simdef=simulation_paths(fdir_sim,in_plot);
     messageOut(fid_log,sprintf('Simulation: %s',simdef.file.runid))
+    
+    %% grid
+    if isfield(in_plot,'fig_grid_01')==1
+        plot_grid_01(fid_log,in_plot.fig_grid_01,simdef)
+    end
     
     %% map_sal_01
     if isfield(in_plot,'fig_map_sal_01')==1

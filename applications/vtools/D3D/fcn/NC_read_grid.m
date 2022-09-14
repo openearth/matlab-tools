@@ -12,6 +12,7 @@
 %
 function out=NC_read_grid(simdef,in)
 
+warning('outdated, call <D3D_gdm>')
 % out=nc2struct(simdef.file.grd,str_network1d));
 
 [ismor,is1d,str_network1d,issus]=D3D_is(simdef.file.grd);

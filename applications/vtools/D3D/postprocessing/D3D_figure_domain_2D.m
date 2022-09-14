@@ -20,10 +20,10 @@ function D3D_figure_domain_2D(simdef,in)
 flg=simdef.flg;
 v2struct(in);
 
-nface=size(mesh2d_face_nodes,2);
+% nface=size(mesh2d_face_nodes,2);
 
-mean_mesh2d_face_x_bnd=mean(mesh2d_face_x_bnd,1);
-mean_mesh2d_face_y_bnd=mean(mesh2d_face_y_bnd,1);
+% mean_mesh2d_face_x_bnd=mean(mesh2d_face_x_bnd,1);
+% mean_mesh2d_face_y_bnd=mean(mesh2d_face_y_bnd,1);
 
 %%
 
@@ -44,8 +44,8 @@ if isfield(flg,'equal_axis')==0
 end
 
 %%
-XZ=network1d_geom_x*flg.plot_unitx;
-YZ=network1d_geom_y.*flg.plot_unity;
+% XZ=network1d_geom_x*flg.plot_unitx;
+% YZ=network1d_geom_y.*flg.plot_unity;
 % SZ=in.SZ.*flg.plot_unitx;
 % z=in.z.*flg.plot_unitz;
 % sub=in.sub;
@@ -58,8 +58,8 @@ YZ=network1d_geom_y.*flg.plot_unity;
 
 
 %defaults 
-lims.x=[min(XZ)-eps,max(XZ)+eps];
-lims.y=[min(YZ)-eps,max(YZ)+eps];
+% lims.x=[min(XZ)-eps,max(XZ)+eps];
+% lims.y=[min(YZ)-eps,max(YZ)+eps];
 
 %limits
 if isfield(flg,'lims')
@@ -166,8 +166,8 @@ han.sfig(kpr,kpc).Box='on';
 if flg.equal_axis
 axis(han.sfig(kpr,kpc),'equal')
 end
-han.sfig(kpr,kpc).XLim=lims.x;
-han.sfig(kpr,kpc).YLim=lims.y;
+% han.sfig(kpr,kpc).XLim=lims.x;
+% han.sfig(kpr,kpc).YLim=lims.y;
 % han.sfig(kpr,kpc).ZLim=lims.z;
 han.sfig(kpr,kpc).XLabel.String='x coordinate [m]';
 han.sfig(kpr,kpc).YLabel.String='y coordinate [m]';
