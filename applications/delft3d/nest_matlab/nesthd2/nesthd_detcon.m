@@ -1,4 +1,4 @@
-      function [bndval] = detcon(fid_adm,bnd,nfs_inf,add_inf,fileInp)
+      function [bndval] = detcon(fid_adm,bnd,nfs_inf,add_inf,fileInp,varargin)
 
 %***********************************************************************
 % delft hydraulics                         marine and coastal management
@@ -13,15 +13,7 @@
 % limitations        :
 % subroutines called : getwgh, check, getwcr
 %***********************************************************************
-
-if isfield(add_inf,'display')==0
-  add_inf.display=1;
-end
-      
-if add_inf.display==1
-h = waitbar(0,'Generating transport boundary conditions','Color',[0.831 0.816 0.784]);
-end
-
+%% Initialisation
 no_pnt    = length(bnd.DATA);
 notims    = nfs_inf.notims;
 t0        = nfs_inf.times(1); 
@@ -30,9 +22,11 @@ kmax      = nfs_inf.kmax;
 lstci     = nfs_inf.lstci;
 modelType = EHY_getModelType(fileInp);
 
-for itim = 1: notims
-    bndval(itim).value(1:no_pnt,1:kmax,1:lstci) = 0.;
-end
+OPT.ipnt   = NaN;
+OPT        = setproperty(OPT,varargin);
+if isnan(OPT.ipnt) OPT.ipnt = 1:1:no_pnt; end
+
+for itim = 1: notims bndval(itim).value(1:length(OPT.ipnt),1:kmax,1:lstci) = 0.; end
 
 %% Determine time series of the boundary conditions
 for i_conc = 1:lstci
@@ -41,7 +35,8 @@ for i_conc = 1:lstci
     if add_inf.genconc(i_conc)
         
         %% Cycle over all boundary support points
-        for i_pnt = 1: no_pnt
+        for i_pnt = OPT.ipnt
+            if length(OPT.ipnt) == 1 bndNr = 1; else bndNr = i_pnt; end
             
             if add_inf.display==1
                 waitbar(i_pnt/no_pnt);
@@ -117,8 +112,8 @@ for i_conc = 1:lstci
                 if exist_stat(iwght)
                     for itim = 1: notims
                         for k = 1: kmax
-                            bndval(itim).value(i_pnt,k,i_conc) = bndval(itim).value(i_pnt,k,i_conc) +  ...
-                                conc(itim,iwght,k)*weight(iwght);
+                            bndval(itim).value(bndNr,k,i_conc) = bndval(itim).value(bndNr,k,i_conc) +  ...
+                                                                 conc(itim,iwght,k)*weight(iwght);
                         end
                     end
                 end
@@ -129,9 +124,9 @@ for i_conc = 1:lstci
                 if i_conc == 1 && i_pnt == 1; warning('z-layer model nesting currently only supports nearest neighbour'); end
                 [~,weight_maxid] = max(weight);
                 data_zcen_cen    = EHY_getmodeldata(fileInp,mnnes(weight_maxid),modelType,'varName','Zcen_cen','t0',t0,'tend',t0);
-                bndval(1).zcen_cen(i_pnt,:) = squeeze(data_zcen_cen.val); % Use z values from first timestep only
+                bndval(1).zcen_cen(bndNr,:) = squeeze(data_zcen_cen.val); % Use z values from first timestep only
                 for itim = 1: notims
-                    bndval(itim).value(i_pnt,:,i_conc) = conc(itim,weight_maxid,:);
+                    bndval(itim).value(bndNr,:,i_conc) = conc(itim,weight_maxid,:);
                 end
             end
         end
@@ -141,16 +136,13 @@ end
 %% Adjust boundary conditions
 for i_conc = 1: lstci
     if add_inf.genconc(i_conc)
-        for i_pnt = 1: no_pnt
+        for i_pnt = OPT.ipnt
+            if length(OPT.ipnt) == 1 bndNr = 1; else bndNr = i_pnt; end
             for itim = 1 : notims
-                bndval(itim).value(i_pnt,:,i_conc) =  bndval(itim).value(i_pnt,:,i_conc) + add_inf.add(i_conc);
-                bndval(itim).value(i_pnt,:,i_conc) =  min(bndval(itim).value(i_pnt,:,i_conc),add_inf.max(i_conc));
-                bndval(itim).value(i_pnt,:,i_conc) =  max(bndval(itim).value(i_pnt,:,i_conc),add_inf.min(i_conc));
+                bndval(itim).value(bndNr,:,i_conc) =  bndval(itim).value(bndNr,:,i_conc) + add_inf.add(i_conc);
+                bndval(itim).value(bndNr,:,i_conc) =  min(bndval(itim).value(bndNr,:,i_conc),add_inf.max(i_conc));
+                bndval(itim).value(bndNr,:,i_conc) =  max(bndval(itim).value(bndNr,:,i_conc),add_inf.min(i_conc));
             end
         end
     end
-end
-
-if add_inf.display==1
-    close(h);
 end

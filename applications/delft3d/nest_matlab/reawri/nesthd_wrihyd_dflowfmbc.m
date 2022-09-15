@@ -1,4 +1,4 @@
-function nesthd_wrihyd_dflowfmbc(fileOut,bnd,nfs_inf,bndval,add_inf)
+function nesthd_wrihyd_dflowfmbc(fileOut,bnd,nfs_inf,bndval,add_inf,varargin)
 
 % wrihyd_dflowfmbc  : writes hydrodynamic bc to a DFLOWFM bc file
 %                     first beta version
@@ -6,10 +6,13 @@ function nesthd_wrihyd_dflowfmbc(fileOut,bnd,nfs_inf,bndval,add_inf)
 %                              TK: 18/03/2019  Constituents added
 %
 %% Set some general parameters
-no_pnt        = length(bnd.DATA);
+no_pnt        = size  (bndval(1).value,1);
 no_times      = length(bndval);
 no_layers     = nfs_inf.nolay;
 thick         = nfs_inf.thick;
+OPT.first     = false;
+OPT.ipnt      = NaN;
+OPT           = setproperty(OPT,varargin);
 
 st = dbstack;
 if length(st) >= 2 && strcmp(st(2).name,'nesthd_wricon') % caller is nesthd_wricon
@@ -37,34 +40,37 @@ end
 
 %% cycle over boundary points
 for i_pnt = 1: no_pnt
+    if no_pnt >  1; bndNr = i_pnt   ; end
+    if no_pnt == 1; bndNr = OPT.ipnt; end
     ext_force = [];
     l_act     =  0;
+
     for i_conc = 1:max(1,lstci)
         if lstci >= 1
             if add_inf.genconc(i_conc)
-                
+
                 %% Name of the constituent
                 quantity = nfs_inf.namcon{i_conc};
                 l_act    = l_act + 1;
             end
         elseif lstci == -1
-            
+
             %% Type of hydrodynamic boundary
-            if strcmpi(bnd.DATA(i_pnt).bndtype,'z')
+            if strcmpi(bnd.DATA(bndNr).bndtype,'z')
                 quantity = 'waterlevel';
-            elseif strcmpi(bnd.DATA(i_pnt).bndtype,'p')  
+            elseif strcmpi(bnd.DATA(bndNr).bndtype,'p')
                 quantity = 'uxuyadvectionvelocity';
             else
                 quantity = ''; % initialise to avoid errors or checks like if exist('quantity','var') && ...
             end
             l_act = 1;
         end
-        
+
         if lstci == -1 || (lstci >=1 && add_inf.genconc(i_conc))
             %% Header information
             ext_force(l_act).Chapter                  = 'forcing';
             ext_force(l_act).Keyword.Name {1}         = 'Name';
-            ext_force(l_act).Keyword.Value{1}         = bnd.Name{i_pnt};
+            ext_force(l_act).Keyword.Value{1}         = bnd.Name{bndNr};
             ext_force(l_act).Keyword.Name {end+1}     = 'Function';
             if strcmpi(quantity,'waterlevel') ||  strcmpi(add_inf.profile,'uniform')
                 dav                                   = true;
@@ -73,20 +79,20 @@ for i_pnt = 1: no_pnt
                 dav                                   = false;
                 ext_force(l_act).Keyword.Value{end+1} = 't3d';
             end
-            
+
             ext_force(l_act).Keyword.Name {end+1}     = 'Time-interpolation';
             ext_force(l_act).Keyword.Value{end+1}     = 'linear';
-            
+
             if (strcmpi(quantity,'uxuyadvectionvelocity'))
                 ext_force(l_act).Keyword.Name {end+1}     = 'Vector';
                 ext_force(l_act).Keyword.Value{end+1}     = 'uxuyadvectionvelocitybnd:ux,uy';
             end
-            
+
             if  strcmpi(quantity,'waterlevel') &&  isfield(add_inf,'a0_dfm')
                 ext_force(l_act).Keyword.Name {end+1} = 'Offset';
                 ext_force(l_act).Keyword.Value{end+1} = num2str(add_inf.a0_dfm,'%12.3f');
             end
-            
+
             if ~dav
                 if strcmpi(nfs_inf.layer_model,'sigma-model')
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position type         ';
@@ -96,27 +102,27 @@ for i_pnt = 1: no_pnt
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position specification';
                     ext_force(l_act).Keyword.Value{end+1} = sprintf(format,pos);
                 else % z-(sigma-)layer model
-                    if i_pnt == 1 && i_conc == 1; warning('Fixed or mixed layers (z and z-sigma) not properly checked yet'); end
+                    if bndNr == 1 && i_conc == 1; warning('Fixed or mixed layers (z and z-sigma) not properly checked yet'); end
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position type         ';
                     ext_force(l_act).Keyword.Value{end+1} = 'zdatum';
-                    zcen_cen                              = bndval(1).zcen_cen(i_pnt,:); % take z-(sigma-)layer coordinates from first timestep
+                    zcen_cen                              = bndval(1).zcen_cen(bndNr,:); % take z-(sigma-)layer coordinates from first timestep
                     nonan                                 = ~isnan(zcen_cen);
-                    
+
                     format                                = repmat('%6.3f ',1,sum(nonan));
                     ext_force(l_act).Keyword.Name {end+1} = 'Vertical position specification';
                     ext_force(l_act).Keyword.Value{end+1} = sprintf(format,zcen_cen(nonan));
                 end
                 nr_active_layer = cumsum(nonan);
             end
-            
+
             ext_force(l_act).Keyword.Name {end+1} = 'Quantity';
             ext_force(l_act).Keyword.Value{end+1} = 'time';
             ext_force(l_act).Keyword.Name {end+1} = 'Unit';
             ext_force(l_act).Keyword.Value{end+1} = ['minutes since ' itdate];
-            
+
             no_xy = 1;
             if strcmpi(quantity,'uxuyadvectionvelocity') no_xy = 2; end
-            
+
             if dav
                 for i_xy = 1: no_xy
                     ext_force(l_act).Keyword.Name {end+1} = 'Quantity';
@@ -155,13 +161,13 @@ for i_pnt = 1: no_pnt
                     end
                 end
             end
-            
+
             %% Series information
             for i_time = 1: no_times
                 ext_force(l_act).values{i_time,1} = (nfs_inf.times(i_time) - nfs_inf.itdate)*1440. + add_inf.timeZone*60.;    % minutes!
                 if dav
                     ext_force(l_act).values(i_time,2) = {bndval(i_time).value(i_pnt,1,i_conc)};
-                    if lower(bnd.DATA(i_pnt).bndtype) == 'p' || lower(bnd.DATA(i_pnt).bndtype) == 'x'
+                    if lower(bnd.DATA(bndNr).bndtype) == 'p' || lower(bnd.DATA(bndNr).bndtype) == 'x'
                         ext_force(i_conc).values(i_time,3) = {bndval(i_time).value(i_pnt,2,1)};
                     end
                 else
@@ -181,7 +187,7 @@ for i_pnt = 1: no_pnt
         end
     end
     %% Write the series for individual support points, first time open file, after that append
-    if i_pnt == 1
+    if (i_pnt == 1  && no_pnt > 1) || OPT.first
         dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini');
     else
         dflowfm_io_extfile('write',fileOut,'ext_force',ext_force,'type','ini','first',false);

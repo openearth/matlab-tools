@@ -1,15 +1,34 @@
-function wricon(fileInp,bnd,nfs_inf,bndval,add_inf)
+function wricon(fileOut,bnd,nfs_inf,bndval,add_inf,varargin)
 
 % wricon : Write transport boundary conditions to a bcc (Delft3D) or timser (SIMONA) file
 
-modelType = EHY_getModelType(fileInp);
+modelType    = EHY_getModelType(fileOut);
+[~,fileType] = EHY_getTypeOfModelFile(fileOut);
+nopnt        = length(bnd.DATA);
+OPT.ipnt     = NaN;
+OPT          = setproperty(OPT,varargin);
 
 switch modelType
    case 'd3d'
-      nesthd_wricon_bcc    (fileInp,bnd,nfs_inf,bndval,add_inf);
+      nesthd_wricon_bcc    (fileOut,bnd,nfs_inf,bndval,add_inf);
    case 'simona'
-      nesthd_wricon_timeser(fileInp,bnd,nfs_inf,bndval,add_inf);
+      nesthd_wricon_timeser(fileOut,bnd,nfs_inf,bndval,add_inf);
    case 'dfm'
-        % New inifile format
-        nesthd_wrihyd_dflowfmbc  (fileInp,bnd,nfs_inf,bndval,add_inf);
+       switch fileType
+           
+           % Old (HK) format 
+           case 'tim'      
+               nesthd_wrihyd_dflowfmtim (fileOut,bnd,nfs_inf,bndval,add_inf)
+           % New inifile format
+           case 'bc'
+               if isnan(OPT.ipnt)
+                   nesthd_wrihyd_dflowfmbc  (fileOut,bnd,nfs_inf,bndval,add_inf)
+               else
+                   if OPT.ipnt == 1
+                       nesthd_wrihyd_dflowfmbc  (fileOut,bnd,nfs_inf,bndval,add_inf,'first',true ,'ipnt',OPT.ipnt);
+                   else
+                       nesthd_wrihyd_dflowfmbc  (fileOut,bnd,nfs_inf,bndval,add_inf,'first',false,'ipnt',OPT.ipnt);
+                   end
+               end
+       end
 end

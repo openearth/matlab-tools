@@ -3,6 +3,23 @@ function nesthd_nesthd2 (varargin)
 %% nesthd2 : nesting of hydrodynamic models (stage 2)
 %  Matlab version of nesthd2 (beta release; based on the original fortran code)
 %  Theo van der Kaaij, March 2011
+%
+%% Warning!!!!
+Gen_inf    =      {'Nesthd Version 2.1:'                                                     ;
+                  ' '                                                                       ;
+                  'Severe changes have been made to the internal data structure'            ;
+                  'Purpose was to limit memory usage (request from Firmijn)'                ;
+                  ' '                                                                       ;
+                  'Instead ot treating all support points simultaneously, '                 ;
+                  'they are now treated one at the time'                                    ;
+                  ' '                                                                       ;
+                  'It was tested extensively,'                                              ;  
+                  'however I cannot guarantee that I overlooked something'                  ;
+                  ' '                                                                       ;
+                  'If you encounter problems, please do not hesitate to contact me'         ;
+                  'Theo.vanderkaaij@deltares.nl'                                           };
+    
+simona2mdf_message(Gen_inf,'n_sec',10,'Window','NESTHD Message','Close',true);
 
 %% Initialisation
 files   = varargin{1};
@@ -60,24 +77,38 @@ notims      = gen_inf.notims;
 
 %% HYDRODYNAMIC BC
 if add_inf.do_hydro
+    %% Display how far we are
+    if isfield(add_inf,'display')==0 add_inf.display=1; end
+    if add_inf.display==1            h = waitbar(0,'Generating Hydrodynamic boundary conditions','Color',[0.831 0.816 0.784]); end
+    
     %% Generate hydrodynamic boundary conditions
-    [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3});
-    if error return; end
-
-    %% Vertical interpolation, temporary, not correct place, should be done inside dethyd
-    if isfield(add_inf,'interpolate_z')
-        bndtype         = {bnd.DATA(:).bndtype};
-        det_inf         = nesthd_get_general  (add_inf.interpolate_z);
-        bndval          = nesthd_interpolate_z(bndtype,bndval,gen_inf.rel_pos(1,:), det_inf.rel_pos);
+    switch gen_inf.to
+        case {'d3d' 'simona'}
+            [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3});
+            if error return; end
+            
+            %% Generate depth averaged bc from 3D simulation
+            [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+            
+            %% Write the hydrodynamic boundary conditions to file
+            nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf);
+            
+            clear bndval
+        case 'dfm'
+            for ibnd = 1: nobnd
+                [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3},'ipnt',ibnd);
+                if error return; end
+                
+                %% Generate depth averaged bc from 3D simulation
+                [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+                
+                %% Write the hydrodynamic boundary conditions to file
+                nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf,'ipnt',ibnd);
+                
+                clear bndval
+            end
     end
-
-    %% Generate depth averaged bc from 3D simulation
-    [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-
-    %% Write the hydrodynamic boundary conditions to file
-    nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf);
-
-    clear bndval
+    if add_inf.display==1 close(h); end
 end
 
 %% Generate transport bc if available on history file
@@ -85,24 +116,33 @@ if lstci > 0
 
     %% Needed?
     if sum(add_inf.genconc) > 0
-        if isempty(bnd) return; end
 
+        %% Display how far we are
+        if isfield(add_inf,'display')==0 add_inf.display=1                                                                    ; end
+        if add_inf.display==1            h = waitbar(0,'Generating transport boundary conditions','Color',[0.831 0.816 0.784]); end
+        
         %% Determine (nested) concentrations
-        bndval      = nesthd_detcon(fid_adm,bnd,gen_inf,add_inf,files{3});
-
-        %% Vertical interpolation, temporary, not correct place, should be done inside detcon
-        if isfield(add_inf,'interpolate_z')
-            bndtype(1:nobnd)= {'c'};
-            det_inf         = nesthd_get_general  (add_inf.interpolate_z);
-            bndval          = nesthd_interpolate_z(bndtype,bndval,gen_inf.rel_pos(1,:), det_inf.rel_pos);
+        switch gen_inf.to
+           case {'d3d' 'simona'}
+                bndval      = nesthd_detcon(fid_adm,bnd,gen_inf,add_inf,files{3});
+                
+                %% Generate depth averaged bc from 3D simulation
+                [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+                
+                %% Write concentrations to file
+                nesthd_wricon(files{5},bnd,gen_inf,bndval,add_inf);
+            case 'dfm'
+                for ibnd = 1: nobnd
+                    bndval      = nesthd_detcon(fid_adm,bnd,gen_inf,add_inf,files{3},'ipnt',ibnd);
+                    
+                    %% Generate depth averaged bc from 3D simulation
+                    [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+                    
+                    %% Write concentrations to file
+                    nesthd_wricon(files{5},bnd,gen_inf,bndval,add_inf,'ipnt',ibnd);
+                end
         end
-
-        %% Generate depth averaged bc from 3D simulation
-        [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-
-        %% Write concentrations to file
-        nesthd_wricon(files{5},bnd,gen_inf,bndval,add_inf);
-
+        if add_inf.display==1 close(h); end
     end
 end
 

@@ -1,4 +1,4 @@
-      function [bndval,error] = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,fileInp)
+      function [bndval,error] = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,fileInp,varargin)
 
       % dethyd : determines nested hydrodynamic boundary conditions (part of nesthd2)
 
@@ -22,40 +22,29 @@
       if strcmpi(name,'trih-w41_2') shenzen = true; end
 
       %% Initialisation
-      error = false;
-      
-      if isfield(add_inf,'display')==0
-          add_inf.display=1;
-      end
-      
-      if add_inf.display==1
-        h = waitbar(0,'Generating Hydrodynamic boundary conditions','Color',[0.831 0.816 0.784]);
-      end
-      
-      nopnt  = length(bnd.DATA);
-      notims = nfs_inf.notims;
-      t0     = nfs_inf.times(1);
-      tend   = nfs_inf.times(notims);
-      kmax   = nfs_inf.kmax;
-      names  = nfs_inf.names;
+      modelType  = EHY_getModelType(fileInp);
+      g          = 9.81;
+      error      = false;
+      nopnt      = length(bnd.DATA);
+      notims     = nfs_inf.notims;
+      t0         = nfs_inf.times(1);
+      tend       = nfs_inf.times(notims);
+      kmax       = nfs_inf.kmax;
+      names      = nfs_inf.names;
 
-      g = 9.81;
-
-      for itim = 1: notims
-         bndval (itim).value(1:nopnt,1:2*kmax,1) = 0.;
-      end
-
-      modelType = EHY_getModelType(fileInp);
-
-      load_wl = false;
-      load_uv = false;
+      OPT.ipnt   = NaN;
+      OPT        = setproperty(OPT,varargin);
+      if isnan(OPT.ipnt) OPT.ipnt = 1:1:nopnt; end
+      for itim = 1: notims bndval (itim).value(1:length(OPT.ipnt),1:2*kmax,1) = 0.; end
 
       %% -----cycle over all boundary support points
-      for ipnt = 1: nopnt
+      for ipnt = OPT.ipnt
+          if length(OPT.ipnt) == 1 bndNr = 1; else bndNr = ipnt; end
           type = lower(bnd.DATA(ipnt).bndtype);
+
           if add_inf.display==1
             waitbar(ipnt/nopnt);
-          else 
+          else
               fprintf('done %5.1f %% \n',ipnt/nopnt*100)
           end
 
@@ -164,15 +153,15 @@
                       %% Water level boundaries
                       case 'z'
                           for itim = 1: notims
-                              bndval(itim).value(ipnt,1,1) = bndval(itim).value(ipnt,1,1) + ...
-                                                             weight(iwght)*(wl(itim,iwght) + add_inf.a0);
+                              bndval(itim).value(bndNr,1,1) = bndval(itim).value(bndNr,1,1) + ...
+                                                              weight(iwght)*(wl(itim,iwght) + add_inf.a0);
                           end
 
                           %% Velocity boundaries (perpendicular component)
                       case {'c' 'p'}
                           for itim = 1: notims
-                              bndval(itim).value(ipnt,1:kmax,1) = bndval(itim).value(ipnt,1:kmax,1)      + ...
-                                                                  squeeze(uu(itim,iwght,:)*weight(iwght))';
+                              bndval(itim).value(bndNr,1:kmax,1) = bndval(itim).value(bndNr,1:kmax,1)      + ...
+                                                                   squeeze(uu(itim,iwght,:)*weight(iwght))';
                           end
 
                           %% Rieman boundaries
@@ -184,10 +173,10 @@
                               rpos = -1.0;
                           end
                           for itim = 1: notims
-                              bndval(itim).value(ipnt,1:kmax,1) = bndval(itim).value(ipnt,1:kmax,1)  + ...
-                                                                 (squeeze(uu(itim,iwght,:))'         + ...
-                                                                 rpos*wl(itim,iwght)*sqrt(g/nfs_inf.dps(nr_key)))*weight(iwght);
-                          end
+                              bndval(itim).value(bndNr,1:kmax,1) = bndval(itim).value(bndNr,1:kmax,1)  + ...
+                                                                   (squeeze(uu(itim,iwght,:))'         + ...
+                                                                   rpos*wl(itim,iwght)*sqrt(g/nfs_inf.dps(nr_key)))*weight(iwght);
+                          end 
                   end
               end
           end
@@ -206,10 +195,10 @@
                       for itim = 1: notims
                           gradient_global              = nesthd_tri_grad      (x(1:3),y(1:3),wl(itim,1:3));
                           [gradient_boundary,~]        = nesthd_rotate_vector (gradient_global(1),gradient_global(2),pi/2. - angle);
-                          bndval(itim).value(ipnt,1,1) = gradient_boundary;
+                          bndval(itim).value(bndNr,1,1) = gradient_boundary;
                       end
                   else
-                      bndval(itim).value(ipnt,1,1) = NaN;
+                      bndval(itim).value(bndNr,1,1) = NaN;
                   end
           end
 
@@ -217,7 +206,7 @@
           switch type
               case {'x' 'p'}
                   [mnnes,weight,angle]         = nesthd_getwgh2 (fid_adm,mnbcsp,'p');
-                  
+
                   %% Temporary for testing with old hong kong model
                   if shenzen
                       for i_stat = 1: length(mnnes)
@@ -226,7 +215,7 @@
                           mnnes{i_stat} = [mnnes{i_stat}(1:i_start(2)) mnnes{i_stat}(i_start(2) + 2:i_com(2))  mnnes{i_stat}(i_com(2) + 2:end)];
                       end
                   end
-                  
+
                   logi      = ~cellfun(@isempty,mnnes); % avoid "Station :  does not exist"-message
                   data_uv   = EHY_getmodeldata(fileInp,mnnes(logi),modelType,'varName','uv','t0',t0,'tend',tend);
                   data_uv.vel_x(:,~logi,:) = NaN; data_uv.vel_y(:,~logi,:) = NaN; % this works for 2D and 3D models
@@ -261,14 +250,12 @@
                   for iwght = 1: 4
                       if exist_stat(iwght)
                           for itim = 1: notims
-                              bndval(itim).value(ipnt,kmax+1:2*kmax,1) = bndval(itim).value(ipnt,kmax+1:2*kmax,1) + ...
-                                                                         squeeze(vv(itim,iwght,:)*weight(iwght))' ;
+                              bndval(itim).value(bndNr,kmax+1:2*kmax,1) = bndval(itim).value(bndNr,kmax+1:2*kmax,1) + ...
+                                                                          squeeze(vv(itim,iwght,:)*weight(iwght))' ;
                           end
                       end
                   end
           end
       end
-
-      if add_inf.display==1
-        close(h);
-      end
+      
+      
