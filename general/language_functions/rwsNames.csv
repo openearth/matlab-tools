@@ -101,69 +101,71 @@ MPN-529                                    ,     ,MPN-529                       
 433-036-00021                              ,     ,433-036-00021                              ,Gouda
 KGM-63                                     ,     ,KGM-63                                     ,Krimpenerwaard
 sal_mea_BEERPLKOVR, , ,Beerenplaat
-sal_mea_Brienenoordbrug, , ,Brienenoordbrug
-HY_300, ,HY_3.00,Gouda
+sal_mea_Brienenoordbrug, , ,Brienenoordbrug 
+HY_300, ,HY_3.00,Gouda 
 sal_mea_Groen-18, , ,Groen-18
 sal_mea_Groen-26, , ,Groen-26
 sal_mea_Hoek_van_Holland, , ,Hoek van Holland
 sal_mea_INLSU, , ,INLSU
-sal_mea_Kinderdijk, , ,Kinderdijk
+sal_mea_Kinderdijk, , ,Kinderdijk  
 sal_mea_Krimpen_ad_IJssel, , ,Krimpen a/d IJssel
-sal_mea_Lekhaven, , ,Lekhaven
-sal_mea_Lek-972, , ,Lek-972
-sal_mea_Lek-977, , ,Lek-977
-sal_mea_Lek-978, , ,Lek-978
-sal_mea_Lek-979, , ,Lek-979
-sal_mea_Lek-981, , ,Lek-981
-sal_mea_Lek-982, , ,Lek-982
-sal_mea_Lek-983.5, , ,Lek-983.5
-sal_mea_Lek-985, , ,Lek-985
-sal_mea_Lek-986, , ,Lek-986
-sal_mea_Lek-989, , ,Lek-989
+sal_mea_Lekhaven, , ,Lekhaven 
+sal_mea_Lek-972, , ,Lek-972 
+sal_mea_Lek-977, , ,Lek-977 
+sal_mea_Lek-978, , ,Lek-978 
+sal_mea_Lek-979, , ,Lek-979 
+sal_mea_Lek-981, , ,Lek-981 
+sal_mea_Lek-982, , ,Lek-982 
+sal_mea_Lek-984, , ,Lek-984.2 
+sal_mea_Lek-983.5, , ,Lek-983.5 
+sal_mea_Lek-985, , ,Lek-985 
+sal_mea_Lek-986, , ,Lek-986 
+sal_mea_Lek-988, , ,Lek-988
+sal_mea_Lek-989, , ,Lek-989 
 sal_mea_MIDDHNSMB, , ,Middelharnis boei
-sal_mea_Middelwatering, , ,Middelwatering
-sal_mea_Nesse, , ,Nesse
-sal_mea_Rood-12, , ,Rood-12
-sal_mea_Rood-6, , ,Rood-6
-sal_mea_Rood-9, , ,Rood-9
-sal_mea_SPIJKNSBWTLK, , ,Spijkenissebrug
-sal_mea_Snelle-Sluis, , ,Snelle-Sluis
-sal_mea_Verdoold, , ,Verdoold
-sal_mea_Veurink, , ,Veurink
-sal_mea_ZUIDLD, , ,Zuidland
+sal_mea_Middelwatering, , ,Middelwatering 
+sal_mea_Nesse, , ,Nesse 
+sal_mea_Rood-12, , ,Rood-12 
+sal_mea_Rood-6, , ,Rood-6 
+sal_mea_Rood-9, , ,Rood-9 
+sal_mea_SPIJKNSBWTLK, , ,Spijkenissebrug 
+sal_mea_Snelle-Sluis, , ,Snelle-Sluis 
+sal_mea_Verdoold, , ,Verdoold 
+sal_mea_Veurink, , ,Veurink 
+sal_mea_ZUIDLD, , ,Zuidland 
 SR_10356_R_LMW-TW_Bathse-Spuikanaal-Inloop-meetpaal, , ,Inloop Spui
 HD_99893_L_LMW-Cl_Volkerak-Noord, , ,Volkeraksluizen
 NW_102689_R_LMW-H_Maeslantkering-zeezijde, , ,Maeslantkering zeezijde
 NW_102689_L_LMW-H_Maeslantkering-zeezijde, , ,Maeslantkering zeezijde
 SP_100713_R_LMW-H_Zuidland-g6, , ,Zuidland
-HD_98455_L_LMW-H_Moerdijk-g6, ,HD_984.55_L_LMW-H_Moerdijk-g6,Moerdijk
-HD_99815_L_LMW-H_Rak-noord, ,HD_998.15_L_LMW-H_Rak-noord,Rak noord
-HV_102431_R_Hellevoetsluis-g6, ,HV_1024.31_R_Hellevoetsluis-g6,Hellevoetsluis
-HY_1799_R_LMW-H_Krimpen-ad-IJssel-g6, ,HY_17.99_R_LMW-H_Krimpen-ad-IJssel-g6,Krimpen a/d IJssel
-KH_000_LMW-H_Scheveningen-g6, ,KH_0.00_LMW-H_Scheveningen-g6,Scheveningen
-LE_9471_R_LMW-H_Hagestein-beneden, ,LE_947.1_R_LMW-H_Hagestein-beneden,Hagestein beneden
-LE_9716_R_LMW-H_Schoonhoven, ,LE_971.6_R_LMW-H_Schoonhoven,Schoonhoven
-LE_9887_R_LMW-H_Krimpen-aan-de-Lek-g6, ,LE_988.7_R_LMW-H_Krimpen-aan-de-Lek-g6,Krimpen a/d Lek
-MA_20069_L_LMW-H_Lith-boven, ,MA_200.69_L_LMW-H_Lith-boven,Lith boven
-MA_20237_L_LMW-H_Lith-dorp, ,MA_202.37_L_LMW-H_Lith-dorp,Lith dorp
-MA_23061_L_LMW-H_Heesbeen, ,MA_230.61_L_LMW-H_Heesbeen,Heesbeen
-MA_24760_R_LMW-H_Keizersveer, ,MA_247.60_R_LMW-H_Keizersveer,Keizersveer
-NM_99947_R_LMW-H_Rotterdam-g6, ,NM_999.47_R_LMW-H_Rotterdam-g6,Rotterdam
-NM_101091_R_LMW-H_Vlaardingen-g6, ,NM_1010.91_R_LMW-H_Vlaardingen-g6,Vlaardingen
-NW_101875_R_LMW-H_Maassluis-g6, ,NW_1018.75_R_LMW-H_Maassluis-g6,Maassluis
-NW_103019_R_LMW-H_Hoek-van-Holland, ,NW_1030.19_R_LMW-H_Hoek-van-Holland,Hoek van Holland
-NZ_LMW-H_Brouwershavense-Gat-8-meetpaal, ,NZ_LMW-H_Brouwershavense-Gat-8-meetpaal,Brouwershavensche Gat 08
-NZ_000_LMW-H_Haringvliet-10, ,NZ_0.00_LMW-H_Haringvliet-10,Haringvliet 10
-NZ_000_LMW-H_Lichteiland-Goeree, ,NZ_0.00_LMW-H_Lichteiland-Goeree,Lichteiland Goeree
-OM_97625_L_LMW-H_Dordrecht-g6, ,OM_976.25_L_LMW-H_Dordrecht-g6,Dordrecht
-OM_99253_L_LMW-H_Goidschalxoord-g6, ,OM_992.53_L_LMW-H_Goidschalxoord-g6,Goidschalxoord
-OM_100304_L_LMW-H_Spijkenisse, ,OM_1003.04_L_LMW-H_Spijkenisse,Spijkenisse
-WL_9133_R_LMW-H_Tiel-Waal, ,WL_913.3_R_LMW-H_Tiel-Waal,Tiel Waal
-WL_9348_L_LMW-H_Zaltbommel, ,WL_934.8_L_LMW-H_Zaltbommel,Zaltbommel
-WL_9518_R_LMW-H_Vuren, ,WL_951.8_R_LMW-H_Vuren,Vuren
-SP_100713_R_LMW-H_Zuidland-g6, ,SP_1007.13_R_LMW-H_Zuidland-g6,ZUIDLD
-MIDDHNSMB, ,MIDDHNSMB,Middelharnis boei
-SPIJKNSBWTLK, ,SPIJKNSBWTLK,Spijkenissebrug
+HD_98455_L_LMW-H_Moerdijk-g6, ,HD_984.55_L_LMW-H_Moerdijk-g6,Moerdijk 
+HD_99815_L_LMW-H_Rak-noord, ,HD_998.15_L_LMW-H_Rak-noord,Rak noord 
+HV_102431_R_Hellevoetsluis-g6, ,HV_1024.31_R_Hellevoetsluis-g6,Hellevoetsluis 
+HY_1799_R_LMW-H_Krimpen-ad-IJssel-g6, ,HY_17.99_R_LMW-H_Krimpen-ad-IJssel-g6,Krimpen a/d IJssel 
+KH_000_LMW-H_Scheveningen-g6, ,KH_0.00_LMW-H_Scheveningen-g6,Scheveningen 
+LE_9471_R_LMW-H_Hagestein-beneden, ,LE_947.1_R_LMW-H_Hagestein-beneden,Hagestein beneden 
+LE_9716_R_LMW-H_Schoonhoven, ,LE_971.6_R_LMW-H_Schoonhoven,Schoonhoven 
+LE_9887_R_LMW-H_Krimpen-aan-de-Lek-g6, ,LE_988.7_R_LMW-H_Krimpen-aan-de-Lek-g6,Krimpen a/d Lek 
+MA_20069_L_LMW-H_Lith-boven, ,MA_200.69_L_LMW-H_Lith-boven,Lith boven 
+MA_20237_L_LMW-H_Lith-dorp, ,MA_202.37_L_LMW-H_Lith-dorp,Lith dorp 
+MA_23061_L_LMW-H_Heesbeen, ,MA_230.61_L_LMW-H_Heesbeen,Heesbeen 
+MA_24760_R_LMW-H_Keizersveer, ,MA_247.60_R_LMW-H_Keizersveer,Keizersveer 
+NM_99947_R_LMW-H_Rotterdam-g6, ,NM_999.47_R_LMW-H_Rotterdam-g6,Rotterdam 
+NM_101091_R_LMW-H_Vlaardingen-g6, ,NM_1010.91_R_LMW-H_Vlaardingen-g6,Vlaardingen 
+NW_101875_R_LMW-H_Maassluis-g6, ,NW_1018.75_R_LMW-H_Maassluis-g6,Maassluis 
+NW_103019_R_LMW-H_Hoek-van-Holland, ,NW_1030.19_R_LMW-H_Hoek-van-Holland,Hoek van Holland 
+NZ_LMW-H_Brouwershavense-Gat-8-meetpaal, ,NZ_LMW-H_Brouwershavense-Gat-8-meetpaal,Brouwershavensche Gat 08 
+NZ_000_LMW-H_Haringvliet-10, ,NZ_0.00_LMW-H_Haringvliet-10,Haringvliet 10 
+NZ_000_LMW-H_Lichteiland-Goeree, ,NZ_0.00_LMW-H_Lichteiland-Goeree,Lichteiland Goeree 
+OM_97625_L_LMW-H_Dordrecht-g6, ,OM_976.25_L_LMW-H_Dordrecht-g6,Dordrecht 
+OM_99253_L_LMW-H_Goidschalxoord-g6, ,OM_992.53_L_LMW-H_Goidschalxoord-g6,Goidschalxoord 
+OM_100304_L_LMW-H_Spijkenisse, ,OM_1003.04_L_LMW-H_Spijkenisse,Spijkenisse 
+WL_9133_R_LMW-H_Tiel-Waal, ,WL_913.3_R_LMW-H_Tiel-Waal,Tiel Waal 
+WL_9348_L_LMW-H_Zaltbommel, ,WL_934.8_L_LMW-H_Zaltbommel,Zaltbommel 
+WL_9518_R_LMW-H_Vuren, ,WL_951.8_R_LMW-H_Vuren,Vuren 
+SP_100713_R_LMW-H_Zuidland-g6, ,SP_1007.13_R_LMW-H_Zuidland-g6,ZUIDLD 
+MIDDHNSMB, ,MIDDHNSMB,Middelharnis boei 
+SPIJKNSBWTLK, ,SPIJKNSBWTLK,Spijkenissebrug 
 HARVWT, ,HARVWT,Haringvliet boei
 KIER1, ,KIER1,Kier 1 ponton
 KIER3, ,KIER3,Kier 3 ponton
@@ -180,16 +182,16 @@ HK_100_QO_Q-Splitsingspunt, ,HK_1.00_QO_Q-Splitsingspunt,Hartelkanaal
 OM_100261_QL_Spijkenisserbrug, , ,Spijkenisserbrug
 OM_100300_QO_Q-Splitsingspunt, ,OM_1003.00_QO_Q-Splitsingspunt,Spijkenisserbrug
 HY_1900_QO_Q-Splitsingspunt, ,HY_19.00_QO_Q-Splitsingspunt,Hollandsche IJssel
-NM_99300_QO_Q-Splitsingspunt, ,NM_993.00_QO_Q-Splitsingspunt,Nieuwe Maas oost
-NM_99500_QO_Q-Splitsingspunt, ,NM_995.00_QO_Q-Splitsingspunt,Nieuwe Maas west
+NM_99300_QO_Q-Splitsingspunt, ,NM_993.00_QO_Q-Splitsingspunt,Nieuwe Maas oost 
+NM_99500_QO_Q-Splitsingspunt, ,NM_995.00_QO_Q-Splitsingspunt,Nieuwe Maas west  
 LE_98900_QO_Q-Splitsingspunt, ,LE_989.00_QO_Q-Splitsingspunt,Lek
 NM_99000_QO_Q-Splitsingspunt, ,NM_990.00_QO_Q-Splitsingspunt,Nieuwe Maas
 NO_98400_QO_Q-Splitsingspunt, ,NO_984.00_QO_Q-Splitsingspunt,Noord
 NW_101355_QL_Geulhaven-Radarpost-10, ,NW_1013.55_QL_Geulhaven-Radarpost-10,Nieuwe Waterweg
-OM_100600_QO_Q-Splitsingspunt, ,OM_1006.00_QO_Q-Splitsingspunt,Oude Maas
+OM_100600_QO_Q-Splitsingspunt, ,OM_1006.00_QO_Q-Splitsingspunt,Oude Maas 
 NM_101200_QO_Q-Splitsingspunt, ,NM_1012.00_QO_Q-Splitsingspunt,Nieuwe Maas
 CK_102839_R_HBR-H_Scheurhaven, ,CK_1028.39_R_HBR-H_Scheurhaven,Scheurhaven
-1EEMH, ,1EEMH,1e Eemhaven
+1EEMH, ,1EEMH,1e Eemhaven 
 AMALH, ,AMALH,Amaliahaven
 EURH, ,EURH,Europahaven
 HARH, ,HARH,Hartelhaven
@@ -202,14 +204,14 @@ RP10, ,RP10,Geulhaven Radarpost 10
 RP23, ,RP23,Kuip2 Radarpost 23
 SUURB, ,SUURB,Suurhoffbrug
 TENNH, ,TENNH,Tennesseehaven
-HbR_wl_EEM1, ,HbR_wl_EEM1,1e Eemhaven
+HbR_wl_EEM1, ,HbR_wl_EEM1,1e Eemhaven 
 HbR_wl_ROZE, ,HbR_wl_ROZE,Rozenburgsesluis Calandkanaal
 HbR_wl_SCHE, ,HbR_wl_SCHE,Scheurhaven
 HbR_wl_EURH, ,HbR_wl_EURH,Europahaven
 HbR_wl_HARH, ,HbR_wl_HARH,Hartelhaven
 HbR_wl_TENN, ,HbR_wl_TENN,Tennesseehaven
 HbR_wl_HARB, ,HbR_wl_HARB,Hartelsluis
-HbR_wl_HARR, ,HbR_wl_HARR,Rozenburgsesluis Hartelkanaal
+HbR_wl_HARR, ,HbR_wl_HARR,Rozenburgsesluis Hartelkanaal 
 HbR_wl_HARM, ,HbR_wl_HARM,Harmsenbrug
 HbR_wl_HARQ, ,HbR_wl_HARQ,Hartelkanaal
 HbR_wl_SUUR, ,HbR_wl_SUUR,Suurhoffbrug
