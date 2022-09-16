@@ -70,6 +70,12 @@
 % tag='disp_time_map';
 % in_plot.(tag).do=1;
 
+%% grid
+
+% in_plot.fig_grid_01.do=1;
+% in_plot.fig_grid_01.fig_print=0;
+% in_plot.fig_grid_01.fig_visible=1;
+
 %% 2DH
 
 % tag='fig_map_2DH_01';
@@ -167,371 +173,105 @@
 
 function D3D_gdm(in_plot)
 
-%% CREATE MAT-FILES
+%% DEFAULT
 
 in_plot=create_mat_default_flags(in_plot);
 fid_log=NaN;
 
-%loop on simulations
 ns=numel(in_plot.fdir_sim);
 
-%% LOOP
-messageOut(fid_log,'---Creating mat-files')
+%% CREATE MAT-FILES
+
+messageOut(fid_log,'------------------------------')
+messageOut(fid_log,'---Creating mat-files---------')
+messageOut(fid_log,'------------------------------')
+
 for ks=1:ns
-    
+
     %% paths
-    fdir_sim=in_plot.fdir_sim{ks};
-    simdef=simulation_paths(fdir_sim,in_plot);
-    messageOut(fid_log,sprintf('Simulation: %s',simdef.file.runid))	
-        
-    %% display time
-    if isfield(in_plot,'disp_time_map')==1
-        in_plot.disp_time_map.tag='disp_time_map';
-        disp_time_map(fid_log,in_plot.disp_time_map,simdef);
-    end
+    simdef=gdm_paths_single_run(fid_log,in_plot,ks);
     
-    %% grid
-    if isfield(in_plot,'fig_grid_01')==1
-        in_plot.fig_grid_01.tag='grid_01';
-        create_grid_01(fid_log,in_plot.fig_grid_01,simdef);
-    end
-    
-    %% sal
-    if isfield(in_plot,'fig_map_sal_01')==1
-        create_mat_map_sal_01(fid_log,in_plot.fig_map_sal_01,simdef)
-    end
-    
-    %% ls 
-    if isfield(in_plot,'fig_map_ls_01')==1
-        create_mat_map_ls_01(fid_log,in_plot.fig_map_ls_01,simdef)
-    end
-    
-    %% sal mass
-    if isfield(in_plot,'fig_map_sal_mass_01')==1
-        messageOut(fid_log,'Outdated. Call <fig_map_2DH_01> with variable <clm2>')
-%         create_mat_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
-%         create_mat_map_sal_mass_cum_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
-    end
-    
-    %% q
-    if isfield(in_plot,'fig_map_q_01')==1
-        create_mat_map_q_01(fid_log,in_plot.fig_map_q_01,simdef)
-    end
-    
-    %% his sal
-    if isfield(in_plot,'fig_his_sal_01')==1
-        warning('deprecate and call <his_01>')
-%         create_mat_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
-    end
-    
-    %% his
-    if isfield(in_plot,'fig_his_01')==1
-        in_plot.fig_his_01.tag='his_01';
-        create_mat_his_01(fid_log,in_plot.fig_his_01,simdef)
-    end
-    
-    %% sal 3D
-    if isfield(in_plot,'fig_map_sal3D_01')==1
-        create_mat_map_sal3D_01(fid_log,in_plot.fig_map_sal3D_01,simdef)
-    end
-    
-    %% map summerbed
-    if isfield(in_plot,'fig_map_summerbed_01')==1
-        in_plot.fig_map_summerbed_01.tag='map_summerbed_01';
-        create_mat_map_summerbed_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
-        pp_sb_var_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
-            if isfield(in_plot.fig_map_summerbed_01,'tim_ave')
-                pp_sb_tim_ave_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
-            end
-    end
-    
-    %% map 2DH
-    if isfield(in_plot,'fig_map_2DH_01')==1
-        in_plot.fig_map_2DH_01.tag='map_2DH_01';
-        create_mat_map_2DH_01(fid_log,in_plot.fig_map_2DH_01,simdef)
-        pp_mat_map_2DH_cum_01(fid_log,in_plot.fig_map_2DH_01,simdef) %compute integrated amount over surface with time       
-    end
-    
-    %% map 2DH ls
-    if isfield(in_plot,'fig_map_2DH_ls_01')==1
-        in_plot.fig_map_2DH_ls_01.tag='map_2DH_ls_01';
-        create_mat_map_2DH_ls_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef)
-    end
-    
-    %% his sal meteo
-    if isfield(in_plot,'fig_his_sal_meteo_01')==1
-        create_mat_his_sal_meteo_01(fid_log,in_plot.fig_his_sal_meteo_01,simdef)
-    end
-    
-    %% observation stations
-    if isfield(in_plot,'fig_his_obs_01')==1
-        in_plot.fig_his_obs_01.tag='his_obs_01';
-        create_mat_his_obs_01(fid_log,in_plot.fig_his_obs_01,simdef)
-    end
-    
-    %% map 1D
-    if isfield(in_plot,'fig_map_1D')==1
-        in_plot.fig_map_1D.tag='map_1D';
-        create_mat_map_1D(fid_log,in_plot.fig_map_1D,simdef)
-    end
-    
-    %% his xt
-    if isfield(in_plot,'fig_his_xt_01')==1
-        in_plot.fig_his_xt_01.tag='his_xt_01';
-        create_mat_his_xt_01(fid_log,in_plot.fig_his_xt_01,simdef)
-    end
+    %% call
+    create_mat_single_run(fid_log,in_plot,simdef);
     
 end %ks
 
+%% PLOT INDIVIDUAL RUNS
 
-%% PLOT
-
-%%
-%% individual runs
-%%
-
-messageOut(fid_log,'---Plotting individual runs')
+messageOut(fid_log,'------------------------------')
+messageOut(fid_log,'---Plotting individual runs---')
+messageOut(fid_log,'------------------------------')
 
 for ks=1:ns
     
     %% paths
-    fdir_sim=in_plot.fdir_sim{ks};
-    simdef=simulation_paths(fdir_sim,in_plot);
-    messageOut(fid_log,sprintf('Simulation: %s',simdef.file.runid))
+    simdef=gdm_paths_single_run(fid_log,in_plot,ks);
     
-    %% grid
-    if isfield(in_plot,'fig_grid_01')==1
-        plot_grid_01(fid_log,in_plot.fig_grid_01,simdef)
-    end
-    
-    %% map_sal_01
-    if isfield(in_plot,'fig_map_sal_01')==1
-        plot_map_sal_01(fid_log,in_plot.fig_map_sal_01,simdef)
-    end
-    
-    %% map_ls_01
-    if isfield(in_plot,'fig_map_ls_01')==1
-        plot_map_ls_01(fid_log,in_plot.fig_map_ls_01,simdef)
-    end
-    
-    %% map_ls_02
-    if isfield(in_plot,'fig_map_ls_02')==1
-        plot_map_ls_02(fid_log,in_plot.fig_map_ls_02,simdef)
-    end
-    
-    %% sal mass
-    if isfield(in_plot,'fig_map_sal_mass_01')==1
-        messageOut(fid_log,'Outdated. Call <fig_map_2DH_01> with variable <clm2>')
-%         plot_map_sal_mass_01(fid_log,in_plot.fig_map_sal_mass_01,simdef)
-        
-%         in_plot_loc=in_plot.fig_map_sal_mass_01;
-%         in_plot_loc.tag=strcat(in_plot.fig_map_sal_mass_01.tag,'_cum');
-%         in_plot_loc.tag_tim=in_plot.fig_map_sal_mass_01.tag;
-% 
-%         plot_tim_y(fid_log,in_plot_loc,simdef)
-    end
-    
-    %% q
-    if isfield(in_plot,'fig_map_q_01')==1
-        plot_map_q_01(fid_log,in_plot.fig_map_q_01,simdef)
-    end
-    
-    %% his sal 01
-    if isfield(in_plot,'fig_his_sal_01')==1
-        warning('deprecate and call <his_01>')
-%         plot_his_sal_01(fid_log,in_plot.fig_his_sal_01,simdef)
-    end
-    
-    %% his 01
-    if isfield(in_plot,'fig_his_01')==1
-        plot_his_01(fid_log,in_plot.fig_his_01,simdef)
-    end
-    
-    %% sal 3D
-    if isfield(in_plot,'fig_map_sal3D_01')==1
-        plot_map_sal3D_01(fid_log,in_plot.fig_map_sal3D_01,simdef)
-    end
-    
-    %% map_summerbed
-    if isfield(in_plot,'fig_map_summerbed_01')==1
-        plot_1D_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
-        if isfield(in_plot.fig_map_summerbed_01,'sb_pol_diff')
-            plot_1D_sb_diff_01(fid_log,in_plot.fig_map_summerbed_01,simdef)
-        end
-        if isfield(in_plot.fig_map_summerbed_01,'tim_ave')
-            in_plot_loc=in_plot.fig_map_summerbed_01;
-            in_plot_loc.tag_fig=sprintf('%s_tim_ave',in_plot_loc.tag);
-            plot_1D_tim_ave_01(fid_log,in_plot_loc,simdef)
-        end
-    end
-    
-    %% map 2DH
-    if isfield(in_plot,'fig_map_2DH_01')==1
-        plot_map_2DH_01(fid_log,in_plot.fig_map_2DH_01,simdef)
-        plot_map_2DH_cum_01(fid_log,in_plot.fig_map_2DH_01,simdef)
-    end
-    
-    %% map 2DH ls
-    if isfield(in_plot,'fig_map_2DH_ls_01')==1
-        plot_map_2DH_ls_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef)
-    end
-    
-    %% his sal meteo
-    if isfield(in_plot,'fig_his_sal_meteo_01')==1
-        plot_his_sal_meteo_01(fid_log,in_plot.fig_his_sal_meteo_01,simdef)
-    end
-    
-    %% observation stations
-    if isfield(in_plot,'fig_his_obs_01')==1
-        plot_his_obs_01(fid_log,in_plot.fig_his_obs_01,simdef)
-    end
-    
-    %% map 1D
-    if isfield(in_plot,'fig_map_1D')==1
-        plot_map_1D_xv_01(fid_log,in_plot.fig_map_1D,simdef);
-        %create part to plot all simulations in one plot
-    end
-    
-    %% his xt
-    if isfield(in_plot,'fig_his_xt_01')==1
-        in_plot.fig_his_xt_01.tag='his_xt_01';
-        plot_his_xt_01(fid_log,in_plot.fig_his_xt_01,simdef)
-    end
+    %% call
+    plot_individual_runs(fid_log,in_plot,simdef);
     
 end %ks
+
+%% PLOT DIFFERENCES WITH REFERENCE
 
 if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref) && ns>1
-    
-    %%
-    %% differences plot
-    %%
-    
-    messageOut(fid_log,'---Plotting differences between runs')
 
-    %reference paths
+    %% reference paths
     ks_ref=in_plot.sim_ref;
-    fdir_sim=in_plot.fdir_sim{ks_ref};
-    simdef_ref=simulation_paths(fdir_sim,in_plot);
-    
-    %%
+    simdef_ref=gdm_paths_single_run(fid_log,in_plot,ks_ref,'disp',0);
+
+    %% PLOT DIFFERENCES BETWEEN RUNS
+
+    messageOut(fid_log,'---------------------------------------------------')
+    messageOut(fid_log,'---Plotting differences between runs---------------')
+    messageOut(fid_log,'---------------------------------------------------')
+
     for ks=1:ns
 
         if ks==ks_ref; continue; end
 
         %% paths
-        fdir_sim=in_plot.fdir_sim{ks};
-        simdef=simulation_paths(fdir_sim,in_plot);
-        messageOut(fid_log,sprintf('Simulation %s',simdef.file.runid))
+        simdef=gdm_paths_single_run(fid_log,in_plot,ks);
 
-        %% map_sal_01
-        if isfield(in_plot,'fig_map_sal_01')==1
-%             in_plot_loc=in_plot_loc.fig_map_sal_01;
-%             in_plot_loc.tag_fig=sprintf('%s_diff',in_plot_loc.tag);
-%             plot_map_sal_diff_01(fid_log,in_plot_loc,simdef_ref,simdef)
-        end
+        %% call
+        plot_differences_between_runs(fid_log,in_plot,simdef_ref,simdef)
 
-        %% sal mass  
-        if isfield(in_plot,'fig_map_sal_mass_01')==1
-            messageOut(fid_log,'Outdated. Call <fig_map_2DH_01> with variable <clm2>')
-%             plot_map_sal_diff_01(fid_log,in_plot.fig_map_sal_mass_01,simdef_ref,simdef)
-        end
-
-        %% his sal 01
-        if isfield(in_plot,'fig_his_sal_01')==1
-            warning('deprecate and call <his_01>')
-%             in_plot.fig_his_sal_01.tag_fig=sprintf('%s_diff',in_plot.fig_his_sal_01.tag);
-%             plot_his_sal_diff_01(fid_log,in_plot.fig_his_sal_01,simdef_ref,simdef)
-        end
-
-        %% his sal 01
-        if isfield(in_plot,'fig_his_01')==1
-            in_plot.fig_his_01.tag_fig=sprintf('%s_diff',in_plot.fig_his_01.tag);
-            plot_his_diff_01(fid_log,in_plot.fig_his_01,simdef_ref,simdef)
-        end
-        
-        %% map 2DH
-        if isfield(in_plot,'fig_map_2DH_01')==1
-            in_plot.fig_map_2DH_01.tag_fig=sprintf('%s_diff',in_plot.fig_map_2DH_01.tag);
-            plot_map_2DH_diff_01(fid_log,in_plot.fig_map_2DH_01,simdef_ref,simdef)
-        end
-        
-        %% map 2DH ls
-        if isfield(in_plot,'fig_map_2DH_ls_01')==1
-            in_plot.fig_map_2DH_ls_01.tag_fig=sprintf('%s_diff',in_plot.fig_map_2DH_ls_01.tag);
-            plot_map_2DH_ls_diff_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef_ref,simdef)
-        end
     end %ks
 
-    %%
-    %% differences plot all in one
-    %%
-    
-    messageOut(fid_log,'---Plotting differences between runs in one plot')
+    %% PLOT DIFFERENCES BETWEEN RUNS IN ONE FIGURE
 
+    messageOut(fid_log,'-----------------------------------------------------')
+    messageOut(fid_log,'---Plotting differences between runs in one figure---')
+    messageOut(fid_log,'-----------------------------------------------------')
+
+    %% paths no ref
     ksc=0;
     for ks=1:ns
-
         if ks==ks_ref; continue; end
         ksc=ksc+1;
-        
-        %paths
-        fdir_sim=in_plot.fdir_sim{ks};
-        simdef_all(ksc)=simulation_paths(fdir_sim,in_plot); %2DO change name to all but no ref
-        leg_str{ksc}=in_plot.str_sim{ks};
+        [simdef_no_ref(ksc),leg_str_no_ref{ksc}]=gdm_paths_single_run(fid_log,in_plot,ks,'disp',0);
     end
+    
+    %% call
+    plot_differences_between_runs_one_figure(fid_log,in_plot,simdef_ref,simdef_no_ref,leg_str_no_ref)
 
-    %% his sal 01
-    if isfield(in_plot,'fig_his_sal_01')==1 && ~isempty(simdef_all)
-        in_plot.fig_his_sal_01.tag_fig='his_sal_diff_all_01';
-        in_plot.fig_his_sal_01.leg_str=leg_str;
-        plot_his_sal_diff_01(fid_log,in_plot.fig_his_sal_01,simdef_ref,simdef_all)
-    end
-
-    %% map 2DH ls
-    if isfield(in_plot,'fig_map_2DH_ls_01')==1
-        in_plot.fig_map_2DH_ls_01.tag_fig=sprintf('%s_diff_all',in_plot.fig_map_2DH_ls_01.tag);
-        in_plot.fig_map_2DH_ls_01.leg_str=leg_str;
-        plot_map_2DH_ls_diff_01(fid_log,in_plot.fig_map_2DH_ls_01,simdef_ref,simdef_all)
-    end
-        
 end %reference run 
 
-%%
-%% plot all runs in same figure
-%%
+%% PLOT ALL RUNS IN ONE FIGURE
 
 if ns>1
     
-messageOut(fid_log,'---Plotting all runs in one figure')
+    messageOut(fid_log,'-------------------------------------')
+    messageOut(fid_log,'---Plotting all runs in one figure---')
+    messageOut(fid_log,'-------------------------------------')
 
-for ks=1:ns
+    %% paths all
+    for ks=1:ns
+        [simdef_all(ks),leg_str_all{ks}]=gdm_paths_single_run(fid_log,in_plot,ks,'disp',0);
+    end
 
-    %paths
-    fdir_sim=in_plot.fdir_sim{ks};
-    simdef_all_2(ks)=simulation_paths(fdir_sim,in_plot); %2DO change name to all
-    leg_str_all_2{ks}=in_plot.str_sim{ks};
-end
-
-%% map_summerbed
-if isfield(in_plot,'fig_map_summerbed_01')==1
-    in_plot.fig_map_summerbed_01.tag_fig=sprintf('%s_all',in_plot.fig_map_summerbed_01.tag);
-    in_plot.fig_map_summerbed_01.leg_str=leg_str_all_2;
-    plot_1D_01(fid_log,in_plot.fig_map_summerbed_01,simdef_all_2)
-end
-
-%% his xt
-if isfield(in_plot,'fig_his_xt_01')==1
-    in_plot.fig_his_xt_01.tag_fig=sprintf('%s_all',in_plot.fig_his_xt_01.tag);
-    in_plot.fig_his_xt_01.leg_str=leg_str_all_2;
-    plot_his_xt_01(fid_log,in_plot.fig_his_xt_01,simdef_all_2)
-end
-    
-%% his sal 01
-if isfield(in_plot,'fig_his_01')==1
-    in_plot.fig_his_01.tag_fig=sprintf('%s_all',in_plot.fig_his_01.tag);
-    in_plot.fig_his_01.leg_str=leg_str_all_2;
-    plot_his_01(fid_log,in_plot.fig_his_01,simdef_all_2)
-end
+    %% call
+    plot_all_runs_one_figure(fid_log,in_plot,simdef_all,leg_str_all)
 
 end %ns>1
 

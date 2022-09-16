@@ -161,7 +161,14 @@ for ksb=1:nsb
                     %save
                     save_check(fpath_mat_tmp_w,'data');
                     
+                    %cumulative in time mean
+                    if strcmp(statis,'val_mean')
+                        a=1;
+                    end
+                    
                 end %kfn
+                
+                
                 
                 %disp
                 messageOut(fid_log,sprintf('Reading %s sb poly %4.2f %% rkm poly %4.2f %% variable %4.2f %%',tag_w,ksb/nsb*100,krkmv/nrkmv*100,kvar/nvar*100));

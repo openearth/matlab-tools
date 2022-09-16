@@ -38,12 +38,30 @@ parse(parin,varargin{:})
 
 do_break=parin.Results.break;
 
+%% MAKE DIR
+
+if isstruct(simdef)==0
+    simdef_struct.D3D.dire_sim=simdef;
+    simdef=D3D_simpath(simdef_struct,varargin{:});
+    return
+end
+
+%%
+
 simdef.err=0; %error flag
 
 %% file paths of the files to analyze
 
 if numel(simdef.D3D.dire_sim)==0
-    error('The simulation path is empty')
+    fprintf('The simulation dir variable is empty: %s \n',simdef.D3D.dire_sim);
+    simdef.err=1;
+    throw_error(do_break,simdef.err)
+    return
+elseif isfolder(simdef.D3D.dire_sim)==0
+    fprintf('There is no folder here: %s \n',simdef.D3D.dire_sim);
+    simdef.err=1;
+    throw_error(do_break,simdef.err)
+    return
 end
 if strcmp(simdef.D3D.dire_sim(end),filesep)
     simdef.D3D.dire_sim(end)='';

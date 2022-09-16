@@ -26,19 +26,19 @@ function D3D_list_of_variables
 %   12  'wl'    = water level
 
 %   10  'umag'  = depth averaged velocity [m/s]
-%   11  'uv'            = velocity [m/s] 
+%   11  'uv'    = velocity [m/s] 
 
 %   18=water discharge 
 %   16=specific water discharge
 
-%   32=Chezy 
-%   43=horizontal eddy viscosity [m^2/s]
-%   6 =secondary flow intensity (I) [m/s]
-%   36=Froude number [-]
-%   37=CFL [-]
-%   33=cell area [m^2]
-%   34=space step [m]
-%   38=time step [s]
+%   32  'mesh2d_czs'        = Chezy  [m/s^{1/2}]
+%   43                      = horizontal eddy viscosity [m^2/s]
+%   6                       = secondary flow intensity (I) [m/s]
+%   36                      = Froude number [-]
+%   37                      = CFL [-]
+%   33 'mesh2d_flowelem_ba' = cell area [m^2]
+%   34                      = space step [m]
+%   38                      = time step [s]
 
 %% MORPHODYNAMIC
 
@@ -72,20 +72,20 @@ function D3D_list_of_variables
 %       'd50'   = d50 at the bed surface [m]
 %       'd10'   = d10 at the bed surface [m]
 
-%	8 =volume fraction content in the active layer (Fak) [-]
-%	40=volume fraction content per layer (including active layer) [-]
+%	8   'Fak'   = volume fraction content in the active layer (Fak) [-]
+%	40          = volume fraction content per layer (including active layer) [-]
 
-%   14=active layer thickness [m]
-%   27=total sediment thickness (summation of all substrate layers, including active layer) (Ltot) [m]
-%	39=sediment thickness per layer (including active layer) [m]
+%   14          = active layer thickness [m]
+%   27  'Ltot'  = total sediment thickness (summation of all substrate layers, including active layer) (Ltot) [m]
+%	39          = sediment thickness per layer (including active layer) [m]
 
-%   19=bed load transport for size fraction kf at nodes [m^3/s]
+%   19          = bed load transport for size fraction kf at nodes [m^3/s]
 
 %% ILL-POSEDNESS
 
 %   4 = arithmetic mean grain size of the interface between active layer and substrate (dm fIk)
-%   5 =fIk
-%   7 =elliptic
+%   5 = fIk
+%   7 = elliptic
 
 %% WAVES
 
