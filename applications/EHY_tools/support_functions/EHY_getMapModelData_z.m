@@ -41,7 +41,9 @@ elseif isempty(strfind(DataAll.dimensions(2:dimTextInd(1)-1),'time'))
 end
 
 %% from [m,n] (like d3d4) to cells (like dfm)
-modelSize = size(DataAll.val);
+%  Notsure if this will always work; also not sure if modelsize cannot be 4
+%  in case of velocities
+try modelSize = size(DataAll.val); catch modelSize = size(DataAll.vel_x); end 
 if length(modelSize) == 4
     DataAll.val    = reshape(DataAll.val,   [modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 
     DataZ.Zcen_cen = reshape(DataZ.Zcen_cen,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 

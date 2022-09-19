@@ -29,7 +29,12 @@ lenY    = pos(4);
 daspect([(XLim(2) - XLim(1))/lenX (YLim(2) - YLim(1))/lenY 1]);
 
 %% Thinning (firts x,s direction)
-indexX       = EHY_thinning(x,ones(1,mmax),'thinDistance',OPT.thinX,'Units','centimeters');
+if nmax > 1 % nmax is misused to determine wheteher it is a top- or crosssectiobal view
+    indexX       = EHY_thinning(x,ones(1,mmax),'thinDistance',OPT.thinX,'Units','centimeters');
+else
+    indexX       = EHY_thinning(x,z,'thinDistance',OPT.thinX,'Units','centimeters');
+    indexZ       = indexX;
+end
 
 for mThin = indexX
     zPlot  = z   (mThin,:);
@@ -45,7 +50,9 @@ for mThin = indexX
     valw   = flip(valw(indexZ));
 
     %  Thinning in the z direction
-    indexZ     = EHY_thinning(ones(1,length(zPlot)),zPlot,'thinDistance',OPT.thinZ,'Units','centimeters');
+    if nmax > 1
+        indexZ     = EHY_thinning(ones(1,length(zPlot)),zPlot,'thinDistance',OPT.thinZ,'Units','centimeters');
+    end
     zPlot      = zPlot(indexZ);
     valu       = valu(indexZ);
     valw       = valw(indexZ);
