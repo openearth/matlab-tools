@@ -296,6 +296,9 @@ if nargout > 2
     
     %% Get bed layers information
     if ~isempty(dimsInd.bed_layers)
+        if OPT.bed_layers==0 %all
+            OPT.bed_layers=1:1:dims(dimsInd.bed_layers).size;
+        end
         dims(dimsInd.bed_layers).index    = OPT.bed_layers;
         dims(dimsInd.bed_layers).indexOut = 1:length(OPT.bed_layers);
     end
