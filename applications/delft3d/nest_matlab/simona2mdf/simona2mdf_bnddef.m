@@ -66,7 +66,8 @@ for iopen = 1: length(bnddef.B)
     %
     % Find the correct opening
     %
-
+    
+    iline = [];
     for iline = 1: length(opendef.OPEN)
         if opendef.OPEN(iline).SEQNR == OpenNr
             iopennr = iline;
@@ -102,6 +103,7 @@ for iopen = 1: length(bnddef.B)
 
     if strcmpi (deblank(bnddef.B(iopen).BTYPE),'wl')
         bnd.DATA(iopen).bndtype = 'Z';
+        bnd.DATA(iopen).vert_profile = 'logarithmic';
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'vel')
         bnd.DATA(iopen).bndtype = 'C';
         if first
@@ -124,8 +126,10 @@ for iopen = 1: length(bnddef.B)
         bnd.DATA(iopen).bndtype = 'R';
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'Disch')
         bnd.DATA(iopen).bndtype = 'Q';
+        bnd.DATA(iopen).vert_profile = 'logarithmic';
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'Disch-ad')
         bnd.DATA(iopen).bndtype = 'T';
+        bnd.DATA(iopen).vert_profile = 'logarithmic';
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'QH')
         bnd.DATA(iopen).bndtype = 'X';
     end

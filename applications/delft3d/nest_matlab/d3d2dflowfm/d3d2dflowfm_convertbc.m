@@ -158,6 +158,7 @@ for i_pli = 1: length(filpli)
                     bndname = strtrim(LINE.DATA{i_pnt,3}(index(3):index(end - 1) - 1));
                     side    = bndname(end:end);
                     bndname = bndname(1:end-5);
+                    nr_table = [];
                     for i_table = 1: bct.NTables
                         name_bct = bct.Table(i_table).Location;
                         quan_bct = bct.Table(i_table).Parameter(2).Name;
@@ -165,14 +166,17 @@ for i_pli = 1: length(filpli)
                         if OPT.Salinity
                             if strcmp(strtrim(bndname),strtrim(name_bct)) && strcmpi(quan_bct(1:8 ),'Salinity')
                                 nr_table = i_table;
+                                break
                             end
                         elseif OPT.Temperature
                             if strcmp(strtrim(bndname),strtrim(name_bct)) && strcmpi(quan_bct(1:11),'Temperature')
                                 nr_table = i_table;
+                                break
                             end
                         else
                             if strcmp(strtrim(bndname),strtrim(name_bct))
                                 nr_table = i_table;
+                                break
                             end
                         end
                     end
@@ -199,13 +203,17 @@ for i_pli = 1: length(filpli)
                         for i_time = 1: size(Values_A,1)
                             Values_A(i_time,:) = (OPT.Thick/100.).*Values_A(i_time,:);
                             Values_B(i_time,:) = (OPT.Thick/100.).*Values_B(i_time,:);
+                            if ~isempty(strfind(quan_bct,'Current'))
+                                 Values_A(i_time,:) = sign*Values_A(i_time,:);
+                                 Values_B(i_time,:) = sign*Values_B(i_time,:);
+                            end
                         end
                     end
                     
                     if strcmpi      (side,'a')                                      %end A
-                        SERIES.Values(:,2)      = sign*sum(Values_A,2);
+                        SERIES.Values(:,2)      = sum(Values_A,2);
                     else                                                            %end B
-                        SERIES.Values(:,2)      = sign*sum(Values_B,2);
+                        SERIES.Values(:,2)      = sum(Values_B,2);
                         % Total discharge boundary, side B = -999 in bct file but not used!
                         if floor(mean(abs(SERIES.Values(:,2)))) == 999;
                             SERIES.Values(:,2)  = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
@@ -237,7 +245,7 @@ for i_pli = 1: length(filpli)
             clear SERIES;
 
             % Remove boundary conditions information from the pli-file
-            if i_pnt == size(LINE.DATA,1);
+            if i_pnt == size(LINE.DATA,1)
                 readData           = dflowfm_io_xydata('read' ,filpli{i_pli});
                 readData.DATA(:,3) = [];
                 dflowfm_io_xydata('write' ,filpli{i_pli} ,readData);

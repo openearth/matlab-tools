@@ -34,7 +34,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
 
             ibnd_bct = ibnd_bct + 1;
             clear times values
-            if strcmpi(bnd.DATA(ibnd).bndtype,'C') && strcmpi(bnd.DATA(ibnd).vert_profile,'3D Profile')
+            if strcmpi(bnd.DATA(ibnd).bndtype,'C') && strcmpi(bnd.DATA(ibnd).vert_profile,'3d-profile')
                 kmax = mdf.mnkmax(3);
             else
                 kmax = 1;
@@ -48,6 +48,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
                     %
                     % Get seriesnr
                     %
+                    pntnr = [];
                     for k = 1: kmax
                         for ipnt = 1: length(series.S)
                             if series.S(ipnt).P == bnd.pntnr(ibnd,iside);
