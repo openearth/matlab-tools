@@ -21,3 +21,4 @@ easting       ,  ^o , Easting               , Breedtegraad                , Este
 northing      ,  ^o , Northing              , Hoogtegraad                 , Norte
 X             ,   m , X                     , X-RD                        , X
 Y             ,   m , Y                     , Y-RD                        , Y
+O2           , mg/l, Dissolved Oxygen      , Zuurstof                    , Oxígeno disuelto
