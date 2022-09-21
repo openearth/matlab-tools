@@ -6,6 +6,7 @@ modelType    = EHY_getModelType      (fileOut);
 nopnt        = length(bnd.DATA);
 OPT.ipnt   = NaN;
 OPT        = setproperty(OPT,varargin);
+openFile   = false;
 
 switch modelType
    case 'd3d'
@@ -16,18 +17,11 @@ switch modelType
        switch fileType
            
            % Old (HK) format 
-           case 'tim'      
-               nesthd_wrihyd_dflowfmtim (fileOut,bnd,nfs_inf,bndval,add_inf)
+           case 'tim'             
+               nesthd_wrihyd_dflowfmtim (fileOut,bnd,nfs_inf,bndval,add_inf                 ,'ipnt',OPT.ipnt);
            % New inifile format
            case 'bc'
-               if isnan(OPT.ipnt)
-                   nesthd_wrihyd_dflowfmbc  (fileOut,bnd,nfs_inf,bndval,add_inf)
-               else
-                   if OPT.ipnt == 1
-                       nesthd_wrihyd_dflowfmbc  (fileOut,bnd,nfs_inf,bndval,add_inf,'first',true ,'ipnt',OPT.ipnt);
-                   else
-                       nesthd_wrihyd_dflowfmbc  (fileOut,bnd,nfs_inf,bndval,add_inf,'first',false,'ipnt',OPT.ipnt);
-                   end
-               end
+               if OPT.ipnt == 1 openFile = true; end
+               nesthd_wrihyd_dflowfmbc  (fileOut,bnd,nfs_inf,bndval,add_inf,'first',openFile,'ipnt',OPT.ipnt);
        end
 end
