@@ -1,4 +1,4 @@
-function inp=sfincs_read_input(fname,inp)
+function inp=hurrywave_read_input(fname,inp)
 
 % Read input file
 fid=fopen(fname,'r');
@@ -18,9 +18,15 @@ while 1
 end
 fclose(fid);
 
-inp.tref=datenum(inp.tref,'yyyymmdd HHMMSS');
-inp.tstart=datenum(inp.tstart,'yyyymmdd HHMMSS');
-inp.tstop=datenum(inp.tstop,'yyyymmdd HHMMSS');
+if ischar(inp.tref)
+    inp.tref=datenum(inp.tref,'yyyymmdd HHMMSS');
+end
+if ischar(inp.tstart)
+    inp.tstart=datenum(inp.tstart,'yyyymmdd HHMMSS');
+end
+if ischar(inp.tstop)
+    inp.tstop=datenum(inp.tstop,'yyyymmdd HHMMSS');
+end
 
 keywords=fieldnames(inp);
 
