@@ -239,8 +239,8 @@ for kf1=1:nf
                 kmdf=kmdf+1;
         end
     else %directory
-        dire=dir(fpath_loc);
-        mdf_aux_out=search_4_mdu(dire);
+        dire_2=dir(fpath_loc);
+        mdf_aux_out=search_4_mdu(dire_2);
         if ~isempty(mdf_aux) && ~isempty(mdf_aux_out)
             error('There are mdu/mdf files in the main and subfolders');
         else
