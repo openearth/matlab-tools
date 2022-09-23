@@ -71,7 +71,7 @@ switch lower(cmd),
     case 'read',
         Info=Local_read_bct(varargin{:});
     case 'write',
-        OK=Local_write_bct(varargin{:});
+        OK=Local_write_bct(varargin{1},varargin{2},varargin{3:end});
         if nargout>0,
             Info=OK;
         elseif OK<0,
@@ -219,10 +219,12 @@ Str1=strrep(Str(1:(Q(i)-1)),[Quote Quote],Quote);
 remainder=Str((Q(i)+1):end);
 
 
-function OK=Local_write_bct(filename,Info)
+function OK=Local_write_bct(filename,Info,varargin)
 
 OK=0;
-fid=fopen(filename,'w');
+OPT.append = false;
+OPT = setproperty(OPT,varargin);
+if ~OPT.append fid=fopen(filename,'w'); else fid=fopen(filename,'a'); end
 % When the file is written using a fixed line/record length this is
 % shown in the first line
 %fprintf(fid,'# %i\n',linelength);
