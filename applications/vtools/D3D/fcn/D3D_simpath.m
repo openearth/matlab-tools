@@ -120,7 +120,7 @@ end
 
 mdf_aux=search_4_mdu(dire);
 
-if isempty('mdf_aux')
+if isempty(mdf_aux)
     error('This folder has no mdu or mdf file file: %s',fdir_mdu)
 end
 nstring=cellfun(@(X)numel(X),mdf_aux);
@@ -243,7 +243,7 @@ for kf1=1:nf
         mdf_aux_out=search_4_mdu(dire_2);
         if ~isempty(mdf_aux) && ~isempty(mdf_aux_out)
             error('There are mdu/mdf files in the main and subfolders');
-        else
+        elseif ~isempty(mdf_aux_out)
             mdf_aux=mdf_aux_out;
         end
     end %isdir
