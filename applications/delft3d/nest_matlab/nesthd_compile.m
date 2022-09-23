@@ -3,7 +3,7 @@ function compile_nesthd
 %
 %See also: nest_matlab
 
-addpath(genpath('..\..\..\..\matlab'));
+addpath(genpath('..\..\..\'));
 addpath(genpath('nest_ui'));
 addpath(genpath('nesthd1'));
 addpath(genpath('nesthd2'));

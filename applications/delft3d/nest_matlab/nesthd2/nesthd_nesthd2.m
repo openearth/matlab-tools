@@ -82,31 +82,17 @@ if add_inf.do_hydro
     if add_inf.display==1            h = waitbar(0,'Generating Hydrodynamic boundary conditions','Color',[0.831 0.816 0.784]); end
     
     %% Generate hydrodynamic boundary conditions
-    switch gen_inf.to
-        case {'d3d' 'simona'}
-            [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3});
-            if error return; end
-            
-            %% Generate depth averaged bc from 3D simulation
-            [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-            
-            %% Write the hydrodynamic boundary conditions to file
-            nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf);
-            
-            clear bndval
-        case 'dfm'
-            for ibnd = 1: nobnd
-                [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3},'ipnt',ibnd);
-                if error return; end
-                
-                %% Generate depth averaged bc from 3D simulation
-                [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-                
-                %% Write the hydrodynamic boundary conditions to file
-                nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf,'ipnt',ibnd);
-                
-                clear bndval
-            end
+    for ibnd = 1: nobnd
+        [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3},'ipnt',ibnd);
+        if error return; end
+        
+        %% Generate depth averaged bc from 3D simulation
+        [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+        
+        %% Write the hydrodynamic boundary conditions to file
+        nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf,'ipnt',ibnd);
+        
+        clear bndval
     end
     if add_inf.display==1 close(h); end
 end
@@ -122,26 +108,16 @@ if lstci > 0
         if add_inf.display==1            h = waitbar(0,'Generating transport boundary conditions','Color',[0.831 0.816 0.784]); end
         
         %% Determine (nested) concentrations
-        switch gen_inf.to
-           case {'d3d' 'simona'}
-                bndval      = nesthd_detcon(fid_adm,bnd,gen_inf,add_inf,files{3});
-                
-                %% Generate depth averaged bc from 3D simulation
-                [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-                
-                %% Write concentrations to file
-                nesthd_wricon(files{5},bnd,gen_inf,bndval,add_inf);
-            case 'dfm'
-                for ibnd = 1: nobnd
-                    bndval      = nesthd_detcon(fid_adm,bnd,gen_inf,add_inf,files{3},'ipnt',ibnd);
-                    
-                    %% Generate depth averaged bc from 3D simulation
-                    [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
-                    
-                    %% Write concentrations to file
-                    nesthd_wricon(files{5},bnd,gen_inf,bndval,add_inf,'ipnt',ibnd);
-                end
+        for ibnd = 1: nobnd
+            bndval      = nesthd_detcon(fid_adm,bnd,gen_inf,add_inf,files{3},'ipnt',ibnd);
+            
+            %% Generate depth averaged bc from 3D simulation
+            [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+            
+            %% Write concentrations to file
+            nesthd_wricon(files{5},bnd,gen_inf,bndval,add_inf,'ipnt',ibnd);
         end
+        
         if add_inf.display==1 close(h); end
     end
 end

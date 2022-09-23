@@ -10,9 +10,9 @@ openFile   = false;
 
 switch modelType
    case 'd3d'
-      nesthd_wrihyd_bct(fileOut,bnd,nfs_inf,bndval,add_inf)
+       nesthd_wrihyd_bct   (fileOut,bnd,nfs_inf,bndval,add_inf,'ipnt',OPT.ipnt);
    case 'simona'
-      nesthd_wrihyd_timeser(fileOut,bnd,nfs_inf,bndval,add_inf)
+      nesthd_wrihyd_timeser(fileOut,bnd,nfs_inf,bndval,add_inf,'ipnt',OPT.ipnt);
    case 'dfm'
        switch fileType
            

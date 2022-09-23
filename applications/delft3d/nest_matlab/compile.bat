@@ -1,2 +1,2 @@
 del nesthd*.exe
-"c:\Program Files (x86)\MATLAB\MATLAB2012b\bin\matlab" -nosplash -nodesktop -wait -r nesthd_compile
+"C:\Program Files\Matlab\Matlab2019a_64\bin\matlab.exe" -nosplash -nodesktop -wait -r nesthd_compile

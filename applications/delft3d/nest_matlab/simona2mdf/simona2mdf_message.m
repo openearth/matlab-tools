@@ -15,9 +15,9 @@ OPT = setproperty(OPT,varargin);
 
 %% No logo's specified but nesthd path set, set logo's depending on window name
 if ~isempty(OPT.nesthd_path) && isempty(OPT.Logo)
-    if ~isempty(strfind(lower(OPT.Window),'siminp')) || ~isempty(strfind(lower(OPT.Window),'nesthd'))
+    if ~isempty(strfind(lower(OPT.Window),'siminp')) 
         OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
-    elseif ~isempty(strfind(lower(OPT.Window),'dflowfm'))
+    elseif ~isempty(strfind(lower(OPT.Window),'dflowfm')) || ~isempty(strfind(lower(OPT.Window),'nesthd'))
         OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'dflowfm.jpg']    );
     end
 end

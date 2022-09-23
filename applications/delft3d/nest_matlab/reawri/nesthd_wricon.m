@@ -10,9 +10,9 @@ OPT          = setproperty(OPT,varargin);
 
 switch modelType
    case 'd3d'
-      nesthd_wricon_bcc    (fileOut,bnd,nfs_inf,bndval,add_inf);
+      nesthd_wricon_bcc    (fileOut,bnd,nfs_inf,bndval,add_inf,'ipnt',OPT.ipnt);
    case 'simona'
-      nesthd_wricon_timeser(fileOut,bnd,nfs_inf,bndval,add_inf);
+      nesthd_wricon_timeser(fileOut,bnd,nfs_inf,bndval,add_inf,'ipnt',OPT.ipnt);
    case 'dfm'
        switch fileType
            
