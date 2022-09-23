@@ -22,7 +22,7 @@ function D3D_list_of_variables
 %% FLOW
 
 %   1   'bl'    = bed elevation (etab) [m]
-%   2   'h'     = flow depth (h) [m]
+%   2   'wd'     = flow depth (h) [m]
 %   12  'wl'    = water level
 
 %   10  'umag'  = depth averaged velocity [m/s]

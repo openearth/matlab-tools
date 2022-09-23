@@ -46,6 +46,7 @@ switch varname
     case 'bl'
         switch simdef.D3D.structure
             case 1
+                error('change the name of the variable to read in <D3D_var_num2str>')
                 data_var=gdm_read_data_map(fdir_mat,fpath_map,'DPS','tim',time_dnum); 
             case {2,4}
                 data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch); 
@@ -55,7 +56,8 @@ switch varname
             error('Provide the index of the constituent to analyze')
         end
         data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol); 
-        
+    case 'Ltot'
+        data_var=gdm_read_data_map_Ltot(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch);         
     otherwise %name directly available in output
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch); 
 end

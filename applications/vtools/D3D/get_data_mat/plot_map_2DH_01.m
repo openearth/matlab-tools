@@ -66,6 +66,27 @@ if isfield(flg_loc,'do_3D')==0
     flg_loc.do_3D=0;
 end
 
+if isfield(flg_loc,'do_plot_along_rkm')==0
+    flg_loc.do_plot_along_rkm=0;
+end
+if flg_loc.do_plot_along_rkm
+    if ~isfield(flg_loc,'fpath_rkm')
+        error('Provide rkm file')
+    else
+        if ~exist(flg_loc.fpath_rkm,'file')
+            error('File with rkm does not exist')
+        end
+    end
+end
+
+if isfield(flg_loc,'rkm_tol_x')==0
+    flg_loc.rkm_tol_x=1000;
+end
+
+if isfield(flg_loc,'rkm_tol_y')==0
+    flg_loc.rkm_tol_y=1000;
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -222,6 +243,41 @@ for kvar=1:nvar %variable
                 end %kdiff
             end%kxlim
         end %kclim
+        
+        %% plot along rkm
+        if flg_loc.do_plot_along_rkm==1
+            fid=fopen(flg_loc.fpath_rkm,'r');
+            rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
+            fclose(fid);
+            
+            nrkm=size(rkm_file{1,1},1);
+            for krkm=1:nrkm
+                
+                in_p.xlims=rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
+                in_p.ylims=rkm_file{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
+
+                for kclim=1:nclim
+                    
+                    for kdiff=1:ndiff
+
+                        [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,'clims','clims_diff_t',var_str);
+
+                        fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),'rkm',datestr(time_dnum(kt),'yyyymmddHHMMSS'),tag_ref);
+                        mkdir_check(fdir_fig_var,NaN,1,0);
+
+                        fname_noext=fig_name(fdir_fig_var,tag,sprintf('%s_rkm',runid),time_dnum(kt),kdiff,kclim,var_str,krkm,num2str(var_idx{kvar}));
+                        fpath_file{kt,kclim,kdiff,kxlim,1}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                        in_p.fname=fname_noext;
+                        in_p.do_3D=0; %maybe also add 3D?
+
+                        fig_map_sal_01(in_p);
+                    end %kdiff
+                end %kclim
+            end %krkm
+        end %do
+        
+        %% disp
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
     end %kt
     

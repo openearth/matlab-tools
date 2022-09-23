@@ -80,7 +80,6 @@
 
 % tag='fig_map_2DH_01';
 % in_plot.(tag).do=1;
-% in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
 % in_plot.(tag).do_diff=1; %difference initial time
 % in_plot.(tag).do_s=1; %difference with reference
@@ -101,6 +100,8 @@
 % in_plot.(tag).fpath_ldb{2,1}=fullfile(fpath_project,'model','postprocessing','mkm-outer.ldb');
 % in_plot.(tag).fig_overwrite=1; %overwrite figures
 % in_plot.(tag).overwrite=1; %overwrite mat-files
+% in_plot.(tag).do_vector=0; %add velocity vectors
+% in_plot.(tag).do_axis_equal=0;
 
 %% 2DH ls
 
@@ -122,6 +123,7 @@
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).ml=2.5;
 % in_plot.(tag).do_marker=1;
+% in_plot.(tag).markersize=5;
 
 %% summerbed
 
@@ -168,6 +170,29 @@
 % in_plot.(tag).tim_ave_type=2; %1=flow; 2=morpho
 % in_plot.(tag).tol_tim=30; %tolerance to match day in period with results
 
+%% 1D map
+
+% tag='fig_map_1D';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=0; %regular plot
+% in_plot.(tag).do_xtv=1; %
+% in_plot.(tag).do_diff=1; %regular plot
+% in_plot.(tag).do_s=1; %difference with reference
+% in_plot.(tag).var={'h'}; %<open main_plot_layout>
+% in_plot.(tag).branch{1,1}={'Channel_1D_1'}; %<open main_plot_layout>
+% in_plot.(tag).branch_name{1,1}='c1';
+% in_plot.(tag).tim=NaN;
+% in_plot.(tag).tim_type=1;
+% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random
+% in_plot.(tag).xlims=[NaN,NaN];
+% in_plot.(tag).ylims=[NaN,NaN];
+% % in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
+% % in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
+% in_plot.(tag).fig_overwrite=1; %overwrite figures
+% in_plot.(tag).overwrite=1; %overwrite mat-files
+% in_plot.(tag).do_movie=0; %
+% % in_plot.(tag).ml=2.5;
+% in_plot.(tag).plot_markers=1;
 
 %%
 
@@ -178,6 +203,9 @@ function D3D_gdm(in_plot)
 in_plot=create_mat_default_flags(in_plot);
 fid_log=NaN;
 
+if ~isfield(in_plot,'fdir_sim')
+    error('Specify the simulations to analyse <fdir_sim>')
+end
 ns=numel(in_plot.fdir_sim);
 
 %% CREATE MAT-FILES

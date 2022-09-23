@@ -55,16 +55,71 @@ if ischar(var_id)
                     var_id_out='mesh2d_mor_bl';
                 end
             end
-        case 'h'
+            var_str_read='bl';
+            var_str_save=var_str_read;
+        case {'h','wd'}
             if is1d
                 var_id_out='mesh1d_waterdepth';
+            else
+                var_id_out='mesh2d_waterdepth';
             end
+            var_str_read='h';
+            var_str_save=var_str_read;
         case 'umag'
             if is1d
+                error('I am not sure this is correct. <umod> is morpho')
                 var_id_out='mesh1d_umod';
             else
                 var_id_out='mesh2d_ucmag';
             end
+            var_str_read='umag';
+            var_str_save=var_str_read;
+        case 'wl'
+            if is1d
+                var_id_out='mesh1d_s1';
+            end
+            var_str_read='wl';
+            var_str_save=var_str_read;
+        case {'mesh2d_umod','mesh1d_umod','umod'}
+            if is1d
+                var_id_out='mesh1d_umod';
+            else
+                var_id_out='mesh2d_umod';
+            end
+            var_str_read='umod';
+            var_str_save=var_str_read;
+        case {'mesh2d_dg','mesh1d_dg','dg'}
+            if is1d
+                var_id_out='mesh1d_dg';
+            else
+                var_id_out='mesh2d_dg';
+            end
+            var_str_read='dg';
+            var_str_save=var_str_read;
+        case {'mesh2d_czs','mesh1d_czs','czs'}
+            if is1d
+                var_id_out='mesh1d_czs';
+            else
+                var_id_out='mesh2d_czs';
+            end
+            var_str_read='czs';
+            var_str_save=var_str_read;
+        case {'mesh2d_thlyr','mesh1d_thlyr','thlyr'}
+            if is1d
+                var_id_out='mesh1d_thlyr';
+            else
+                var_id_out='mesh2d_thlyr';
+            end
+            var_str_read='thlyr';
+            var_str_save=var_str_read;
+        case {'Fak','lyrfrac','mesh2d_lyrfrac','mesh1d_lyrfrac'}
+            if is1d
+                var_id_out='mesh1d_lyrfrac';
+            else
+                var_id_out='mesh2d_lyrfrac';
+            end
+            var_str_read='lyrfrac';
+            var_str_save=var_str_read;
         otherwise
 
     end

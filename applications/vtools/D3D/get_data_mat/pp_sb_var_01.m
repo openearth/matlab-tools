@@ -118,8 +118,8 @@ end %ksb
 %% SAVE
 
 %only dummy for preventing passing through the function if not overwriting
-data=NaN;
-save(fpath_mat,'data')
+% data=NaN;
+% save(fpath_mat,'data')
 
 end %function
 

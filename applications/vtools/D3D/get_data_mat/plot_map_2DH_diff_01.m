@@ -29,6 +29,10 @@ if isfield(flg_loc,'clims')==0
     flg_loc.clims_diff_s=[NaN,NaN];
 end
 
+if isfield(flg_loc,'clims_type')==0
+    flg_loc.clims_type=1;
+end
+
 if isfield(flg_loc,'tim_type')==0
     flg_loc.tim_type=1;
 end
@@ -137,9 +141,15 @@ for kvar=1:nvar %variable
         
         data=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref);
         
-        data_s_diff=data-data_ref.data; %difference between runs
-        data_st_diff=(data-data_ref.data)-(data_0-data_ref_0.data); %difference between runs and respect to initial conditions
+        %the output from <gdm_match_times_diff_val_2D> is already the difference!
+%         data_s_diff=data-data_ref.data; %difference between runs
+%         data_st_diff=(data-data_ref.data)-(data_0-data_ref_0.data); %difference between runs and respect to initial conditions
+        
+        data_s_diff=data; %difference between runs
+        data_st_diff=data_s_diff-(data_0-data_ref_0.data); %difference between runs and respect to initial conditions
+
         data_st_diff_struct.data=data_st_diff; %to pass to function
+        
         for kdiff=1:ndiff
     
             for kclim=1:nclim

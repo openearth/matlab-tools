@@ -112,25 +112,16 @@ switch simdef.D3D.structure
     case {1,2,4}
 
 if simdef.D3D.structure==4 %we take the files from the first one for generic things
-    dire=dir(fullfile(simdef.D3D.dire_sim,'output','0'));
-    nf=numel(dire)-2;
+    fdir_mdu=fullfile(simdef.D3D.dire_sim,'output','0');
+    dire=dir(fdir_mdu);
+else
+    fdir_mdu=simdef.D3D.dire_sim;
 end
 
-kmdf=1;
-for kf1=1:nf
-    kf=kf1+2; %. and ..
-    if dire(kf).isdir==0 %it is not a directory
-        [~,~,ext]=fileparts(dire(kf).name); %file extension
-        switch ext
-            case {'.mdu','.mdf'}
-                mdf_aux{kmdf}=fullfile(dire(kf).folder,dire(kf).name);
-                kmdf=kmdf+1;
-        end
-    end %isdir
-end
+mdf_aux=search_4_mdu(dire);
 
-if exist('mdf_aux','var')~=1
-    error('This folder has no mdu or mdf file file.')
+if isempty('mdf_aux')
+    error('This folder has no mdu or mdf file file: %s',fdir_mdu)
 end
 nstring=cellfun(@(X)numel(X),mdf_aux);
 [~,idx]=min(nstring);
@@ -230,3 +221,32 @@ end
 
 end %function
 
+%%
+
+function mdf_aux=search_4_mdu(dire)
+nf=numel(dire)-2;
+kmdf=1;
+mdf_aux={};
+for kf1=1:nf
+    kf=kf1+2; %. and ..
+    fpath_loc=fullfile(dire(kf).folder,dire(kf).name);
+    if dire(kf).isdir==0 %it is not a directory
+        
+        [~,~,ext]=fileparts(dire(kf).name); %file extension
+        switch ext
+            case {'.mdu','.mdf'}
+                mdf_aux{kmdf}=fpath_loc;
+                kmdf=kmdf+1;
+        end
+    else %directory
+        dire=dir(fpath_loc);
+        mdf_aux_out=search_4_mdu(dire);
+        if ~isempty(mdf_aux) && ~isempty(mdf_aux_out)
+            error('There are mdu/mdf files in the main and subfolders');
+        else
+            mdf_aux=mdf_aux_out;
+        end
+    end %isdir
+end
+
+end %function

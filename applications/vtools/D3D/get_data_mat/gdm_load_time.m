@@ -93,14 +93,15 @@ if exist(fpath_mat_time,'file')==2
                 tim_obj(isinf(tim_obj))=time_idx_f;
         end
     end
-    if any(abs(reshape(tim_cmp,1,[])-reshape(tim_obj,1,[]))>tim_tol_d) 
-        messageOut(fid_log,'Requested time is different than available time. Overwritting.')
-        do_load=1;
-    else
-        messageOut(fid_log,'Requested time is the same as existing one. Loading.')
-        return
+    if do_load==0
+        if any(abs(reshape(tim_cmp,1,[])-reshape(tim_obj,1,[]))>tim_tol_d) 
+            messageOut(fid_log,'Requested time is different than available time. Overwritting.')
+            do_load=1;
+        else
+            messageOut(fid_log,'Requested time is the same as existing one. Loading.')
+            return
+        end
     end
-
 else
     messageOut(fid_log,'Time-file does not exist. Reading.');
     do_load=1;

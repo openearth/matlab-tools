@@ -48,7 +48,10 @@ if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
 end
 if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
     bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);
-    in_p.ylims=[min(min(in_p.val(bol_p,:))),max(max(in_p.val(bol_p,:)))];
+    in_p.ylims=[min(min(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan')];
+end
+if isnan(in_p.ylims(1))
+    in_p.ylims=[0,0];
 end
 in_p.ylims=in_p.ylims+[-1,1].*abs(mean(in_p.ylims)/1000)+10.*[-eps,eps];
 if isfield(in_p,'lan')==0
@@ -481,8 +484,8 @@ pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
 if plot_mea || nv>1
     han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),str_leg,'location',leg_loc);
+    pos.leg=han.leg(kr,kc).Position;
 end
-pos.leg=han.leg(kr,kc).Position;
 if ~isnan(leg_move(1))
 han.leg.Position=pos.leg+leg_move;
 han.sfig(kr,kc).Position=pos.sfig;

@@ -22,6 +22,12 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
+if isfield(flg_loc,'do_diff')==0
+    flg_loc.do_diff=1;
+end
+if isfield(flg_loc,'do_xvt')==0
+    flg_loc.do_xvt=0;
+end
 
 %% PATHS
 
@@ -39,19 +45,30 @@ runid=simdef(1).file.runid;
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
+if flg_loc.tim_type==1
+    tim_dnum_p=time_dnum;
+    tim_dtime_p=time_dtime;
+elseif flg_loc.tim_type==2
+    tim_dnum_p=time_mor_dnum;
+    tim_dtime_p=time_mor_dtime;
+end
+                
 %% DIMENSION
 
 nt=size(time_dnum,1);
 nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
 nsb=numel(flg_loc.sb_pol);
+if flg_loc.do_diff==0
+    ndiff=1;
+else 
+    ndiff=2;
+end
 
 %figures
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-% in_p.unit={'qsp','qxsp','qysp'};
-%             in_p.gen_struct=gen_struct;
 in_p.fig_size=[0,0,14.5,12];
 
 % fext=ext_of_fig(in_p.fig_print);
@@ -80,7 +97,15 @@ for ksb=1:nsb
 %         fpath_file=cell(nt,1); %movie
 
         for kvar=1:nvar %variable
+            
+            
             [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
+            
+            if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
+                in_p.lab_str=flg_loc.unit{kvar};
+            else
+                in_p.lab_str=var_str_save;
+            end
             
             %time 0
             kt=1;
@@ -103,6 +128,8 @@ for ksb=1:nsb
             ktc=0;
             for kt=kt_v %time
                 ktc=ktc+1;
+                
+                in_p.tim=tim_dnum_p(kt);
 
                 %% load
                 for kS=1:nS
@@ -116,13 +143,6 @@ for ksb=1:nsb
                 fn_data=fieldnames(data(1));
                 nfn=numel(fn_data);
                 
-                if flg_loc.tim_type==1
-                    in_p.tim=time_dnum(kt);
-                elseif flg_loc.tim_type==2
-                    in_p.tim=time_mor_dnum(kt);
-                end
-                
-                in_p.lab_str=var_str_save;
                 in_p.xlims=flg_loc.xlims;
 
                 for kfn=1:nfn
@@ -142,7 +162,14 @@ for ksb=1:nsb
                             in_p.is_std=false;
                     end
                     
-                    for kref=1:2
+                    %allocate
+                    if flg_loc.do_xvt
+                        nx=numel(data.(statis));  
+                        data_xvt.(statis)=NaN(nx,nS,nt);
+                        data_xvt0.(statis)=NaN(nx,nS);
+                    end
+                    
+                    for kdiff=1:ndiff
                         
                         %measurements                        
                         in_p.plot_mea=false;
@@ -152,9 +179,9 @@ for ksb=1:nsb
                             if isstruct(data_mea) %there is data
                                 in_p.plot_mea=true;
                                 in_p.s_mea=data_mea.x;
-                                if kref==1
+                                if kdiff==1
                                     in_p.val_mea=data_mea.y;
-                                elseif kref==2
+                                elseif kdiff==2
                                     tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
                                     data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
                                     in_p.val_mea=data_mea.y-data_mea_0.y;
@@ -163,11 +190,11 @@ for ksb=1:nsb
                             end
                         end
                         
-                        if kref==1
+                        if kdiff==1
                             in_p.val=[data.(statis)];
                             in_p.is_diff=0;
                             str_dir='val';
-                        elseif kref==2
+                        elseif kdiff==2
                             in_p.val=[data.(statis)]-[data_0.(statis)];
                             in_p.is_diff=1;
                             str_dir='diff';
@@ -176,12 +203,18 @@ for ksb=1:nsb
                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                         mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                        fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kref);
+                        fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
 %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
                         
                         in_p.fname=fname_noext;
                         
                         fig_1D_01(in_p);
+                        
+                        %save for xvt
+                        if flg_loc.do_xvt
+                            data_xvt.(statis)(:,:,kt)=[data.(statis)];
+                            data_xvt0.(statis)(:,:,kt)=[data.(statis)];
+                        end
                     end %kref
                     messageOut(fid_log,sprintf('Done plotting figure %s rkm poly %4.2f %% time %4.2f %% variable %4.2f %% statistic %4.2f %%',tag,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100,kfn/nfn*100));
                 end %kfn
@@ -205,6 +238,55 @@ for ksb=1:nsb
 
 
             end %kt
+            
+            %% xvt
+            if flg_loc.do_xvt
+                %make function
+                [x_m,y_m]=meshgrid(in_p.s,tim_dtime_p);
+                in_p.x_m=x_m;
+                in_p.y_m=y_m;
+                in_p.ml=2.5;
+                in_p.clab_str=in_p.lab_str;
+                in_p.ylab_str='';
+%                 in_p.tit_str=branch_name;
+                for kfn=1:nfn
+                    statis=fn_data{kfn};
+                    
+                    %skip statistics not in list    
+                    if isfield(flg_loc,'statis_plot')
+                        if ismember(statis,flg_loc.statis_plot)==0
+                            continue
+                        end
+                    end
+                    
+                    switch statis
+                        case 'val_std'
+                            in_p.is_std=true;
+                        otherwise
+                            in_p.is_std=false;
+                    end
+                    for kdiff=1:ndiff
+                        switch kdiff
+                            case 1
+                                in_p.val=squeeze(data_xvt.(statis))';
+                                in_p.is_diff=0;
+                                str_dir='val';
+                            case 2
+                                in_p.val=squeeze(data_xvt.(statis)-data_xvt0.(statis))';
+                                in_p.is_diff=1;
+                                str_dir='diff';
+                        end
+%                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
+                        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
+
+                        fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff);
+
+                        in_p.fname=fname_noext;
+                        fig_surf(in_p)
+                    end %kdiff
+                end %kfn
+            end %do
+            
         end %kvar    
     end %nrkmv
 end %ksb
@@ -226,4 +308,12 @@ function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref)
 fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,fn,sb_pol,kref));
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
+end %function
+
+%%
+
+function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref)
+
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%02d',tag,runid,var_str,fn,sb_pol,kref));
+
 end %function

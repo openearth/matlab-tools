@@ -116,21 +116,24 @@ for ksb=1:nsb
                 for kpol=1:npol
                     bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan;
                     if any(bol_get)
-                        val_mean(kpol,:)=mean(data_var.val(bol_get,:));
-                        val_std(kpol,:)=std(data_var.val(bol_get,:));
+                        val_mean(kpol,:)=mean(data_var.val(bol_get,:),'omitnan');
+                        val_std(kpol,:)=std(data_var.val(bol_get,:),'omitnan');
                         val_max(kpol,:)=max(data_var.val(bol_get,:));
                         val_min(kpol,:)=min(data_var.val(bol_get,:));
                         val_num(kpol,:)=numel(data_var.val(bol_get,:));
                         val_sum(kpol,:)=sum(data_var.val(bol_get,:),1,'omitnan');
                         val_sum_length(kpol,:)=val_sum(kpol,:)./(rkmv.rkm_dx(kpol)*1000);
                     end
-    %                 messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
-    %                 %% BEGIN DEBUG
-    %                  figure
-    %                  hold on
-    %                  scatter(gridInfo.Xcen(bol_sb),gridInfo.Ycen(bol_sb),10,data.val(bol_sb))
-    %                  axis equal
-    %                 %END DEBUG
+                    messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
+%                     %% BEGIN DEBUG
+%                     gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+%                     %%
+%                      figure
+%                      hold on
+%                      scatter(gridInfo.Xcen,gridInfo.Ycen,10,data_var.val)
+%                      axis equal
+%                      colorbar
+%                     %END DEBUG
                 end
                 
                 %% process

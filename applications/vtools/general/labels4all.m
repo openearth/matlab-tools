@@ -48,6 +48,8 @@
 %       -'qxsp'     : specific water discharge in x direction
 %       -'qysp'     : specific water discharge in y direction
 %
+%       -'stot'     : total sediment transport [m^2/s]
+%
 %       -'tide'     : tide
 %       -'surge'    : surge
 %
@@ -347,7 +349,7 @@ switch lower(variable)
                 str_var='cloro';
         end
         un_type='M/L2';
-    case {'umag', 'mesh2d_ucmag','velocity_magnitude'}
+    case {'umag', 'mesh2d_ucmag','velocity_magnitude','ucmag'}
         switch lan
             case 'en'
                 str_var='velocity magnitude';
@@ -682,7 +684,7 @@ switch lower(variable)
          end
          un_type='L';
 
-    case 'mesh2d_taus'
+    case {'mesh2d_taus','taus'}
          switch lan
             case 'en'
                 str_var='bed shear stress';
@@ -722,7 +724,7 @@ switch lower(variable)
                 str_var='transporte de sedimento total';
          end
          un_type='L2/T';
-    case 'mesh2d_czs'
+    case {'mesh2d_czs','czs'}
          switch lan
             case 'en'
                 str_var='Chézy friction coefficient';

@@ -233,31 +233,43 @@ mod_bol=in_bol&~out_bol;
 
 messageOut(fid_log,'Start adapting grid')
 
-[axis_br_u,~,axis_br_u_idx]=unique(axis_br);
-nbr=numel(axis_br_u);
+[~,fname_bedchg]=fileparts(fpath_bedchg);
+fname_etab=sprintf('%s.mat',fname_bedchg);
+fpath_etab=fullfile(fdir_output,fname_etab);
 
-np=numel(nodes_x);
-dz_loc=zeros(np,1);
-if ~do_debug
-for kp=1:np
-    if ~mod_bol(kp)
-        continue
+if exist(fpath_etab,'file')~=2
+    [axis_br_u,~,axis_br_u_idx]=unique(axis_br);
+    nbr=numel(axis_br_u);
+
+    np=numel(nodes_x);
+    dz_loc=zeros(np,1);
+    if ~do_debug
+    for kp=1:np
+        if ~mod_bol(kp)
+            continue
+        end
+        dz_br=NaN(nbr,1);
+        min_dist=NaN(nbr,1);
+        for kbr=1:nbr
+            bol_br=axis_br_u_idx==kbr;
+            [dz_br(kbr),~,min_dist(kbr)]=z_interpolated_from_polyline(nodes_x(kp),nodes_y(kp),axis_xy(bol_br,1),axis_xy(bol_br,2),axis_dz(bol_br));
+        end %kbr
+        [~,min_idx]=min(min_dist);
+        dz_loc(kp)=dz_br(min_idx);
+
+        fprintf('changing elevation %4.2f %% \n',kp/np*100);
     end
-    dz_br=NaN(nbr,1);
-    min_dist=NaN(nbr,1);
-    for kbr=1:nbr
-        bol_br=axis_br_u_idx==kbr;
-        [dz_br(kbr),~,min_dist(kbr)]=z_interpolated_from_polyline(nodes_x(kp),nodes_y(kp),axis_xy(bol_br,1),axis_xy(bol_br,2),axis_dz(bol_br));
-    end %kbr
-    [~,min_idx]=min(min_dist);
-    dz_loc(kp)=dz_br(min_idx);
-    
-    fprintf('changing elevation %4.2f %% \n',kp/np*100);
-end
-end %debug
+    end %debug
 
-fprintf('changing elevation %4.2f %% \n',100);
-nodesZ_new=nodes_z+dz_loc;
+    fprintf('changing elevation %4.2f %% \n',100);
+    nodesZ_new=nodes_z+dz_loc;
+    
+    data=v2struct(nodesZ_new,dz_loc);
+    save_check(fpath_etab,'data')
+else
+    load(fpath_etab,'data')
+    v2struct(data)
+end
 
 %% save
 
@@ -344,7 +356,9 @@ if flg.plot
         ylim(y_lims);
         fname_fig=sprintf('polyline_%03d.png',krkm);
         fpath_fig=fullfile(fdir_fig_1,fname_fig);
-        print(gcf,fpath_fig,'-dpng','-r300')
+        if exist(fpath_fig,'file')~=2
+            print(gcf,fpath_fig,'-dpng','-r300')
+        end
         fprintf('printing figure %4.2f %% \n',krkm/nrkm*100)
     end
     close(gcf)
@@ -381,7 +395,9 @@ if flg.plot
         ylim(y_lims);
         fname_fig=sprintf('polygon_%03d.png',krkm);
         fpath_fig=fullfile(fdir_fig_1,fname_fig);
-        print(gcf,fpath_fig,'-dpng','-r300')
+        if exist(fpath_fig,'file')~=2
+            print(gcf,fpath_fig,'-dpng','-r300')
+        end
         fprintf('printing figure %4.2f %% \n',krkm/nrkm*100)
     end
     close(gcf)
@@ -418,7 +434,9 @@ if flg.plot
         ylim(y_lims);
         fname_fig=sprintf('bed_change_%03d.png',krkm);
         fpath_fig=fullfile(fdir_fig_1,fname_fig);
-        print(gcf,fpath_fig,'-dpng','-r300')
+        if exist(fpath_fig,'file')~=2
+            print(gcf,fpath_fig,'-dpng','-r300')
+        end
         fprintf('printing figure %4.2f %% \n',krkm/nrkm*100)
     end
     close(gcf)

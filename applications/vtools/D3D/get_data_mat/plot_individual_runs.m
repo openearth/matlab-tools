@@ -85,11 +85,11 @@ end
 tag_check='fig_map_summerbed_01';
 if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
-    plot_1D_01(fid_log,in_plot_fig,simdef)
-    if isfield(in_plot_fig,'sb_pol_diff')
+    plot_1D_01(fid_log,in_plot_fig,simdef);
+    if isfield(in_plot_fig,'sb_pol_diff') && ~isnan(in_plot_fig.sb_pol_diff)
         plot_1D_sb_diff_01(fid_log,in_plot_fig,simdef)
     end
-    if isfield(in_plot_fig,'tim_ave')
+    if isfield(in_plot_fig,'tim_ave') && ~isnan(in_plot_fig.tim_ave)
         in_plot_fig.tag_fig=sprintf('%s_tim_ave',in_plot_fig.tag);
         plot_1D_tim_ave_01(fid_log,in_plot_fig,simdef)
     end
