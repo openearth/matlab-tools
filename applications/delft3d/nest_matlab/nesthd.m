@@ -50,7 +50,7 @@ function nesthd(varargin)
 %% set additional paths
 %  is already taken care of by oetsettings: then setproperty is on path (most important OET function)
 if ~isdeployed && any(which('setproperty'))
-   addpath(genpath('..\..\..\..\matlab'));
+   addpath(genpath('..\..\..\'));
 end
 
 %% Check if nesthd_path is set
@@ -79,7 +79,7 @@ if ~isempty(varargin)
 else
 
     %% Stand alone
-    %  Display a warning 
+    %  Display a warning
     Gen_inf    = {'Nesthd Version 2.0:'                                                     ;
                   ' '                                                                       ;
                   'In addition to nesting Delft3D-Flow models and SIMONA models,'           ;
@@ -96,9 +96,9 @@ else
                   ' '                                                                       ;
                   'If you encounter problems, please do not hesitate to contact me'         ;
                   'Theo.vanderkaaij@deltares.nl'                                           };
-    
+
     simona2mdf_message(Gen_inf,'n_sec',10,'Window','NESTHD Message','Close',true);
-    
+
     %  SStart ui
     nesthd_nest_ui;
 end
