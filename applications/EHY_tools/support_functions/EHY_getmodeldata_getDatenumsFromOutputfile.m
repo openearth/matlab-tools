@@ -92,11 +92,15 @@ switch modelType
         end
         
     case 'simona'
-        sds = qpfopen(inputFile);
+        sds = qpfopen(inputFile); 
         if strcmpi(OPT.SDS_his_or_map,'his')
-            datenums_wl = qpread(sds,1,'water level (station)','times');
-            datenums_vel = [];
-            try datenums_vel = qpread(sds,1,'velocity (station)','times'); end
+            fields     = qpread   (sds    ,1    ); 
+            fieldnames = transpose({fields.Name});
+
+            datenums_wl = []; datenums_vel = [];
+            if find(contains(fieldnames,'water level (station)')) datenums_wl  = qpread(sds,1,'water level (station)','times'); end
+            if find(contains(fieldnames,'velocity (station)'   )) datenums_vel = qpread(sds,1,'velocity (station)'   ,'times'); end
+            
             if length(datenums_wl) < length(datenums_vel)
                 datenums = datenums_vel;
             else
