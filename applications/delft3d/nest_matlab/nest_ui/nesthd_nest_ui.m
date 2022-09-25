@@ -57,7 +57,7 @@ handles = nesthd_ini_ui(handles);
 PutInCentre(handles.nest_ui);
 simona2mdf_legalornot(handles.nest_ui,[getenv_np('nesthd_path') filesep 'bin' filesep 'deltares.gif']);
 
-set (handles.bg,'Visible','On');
+set (handles.bg,'Visible'   ,'On');
 
 set_nesthd1(handles,'off');
 set_nesthd2(handles,'off');
@@ -101,6 +101,7 @@ axes(hObject);
 fig = imread ([handles.add_files filesep 'nest_1.jpg']);
 handles.bg = image(fig);
 set(hObject,'DataAspectRatio',[1 1.25 1]);
+set(hObject,'YTick'          ,[]        );
 
 % Update handles structure
 guidata(hObject, handles);
