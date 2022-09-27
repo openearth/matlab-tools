@@ -256,8 +256,8 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-% lims.y(kr,kc,1:2)=lims_y;
-% lims.x(kr,kc,1:2)=lims_x;
+lims.x(kr,kc,1:2)=xlims;
+lims.y(kr,kc,1:2)=ylims;
 % lims.c(kr,kc,1:2)=lims_c;
 xlabels{kr,kc}='x';
 ylabels{kr,kc}='y';
@@ -380,8 +380,8 @@ if axis_equal
 axis(han.sfig(kr,kc),'equal')
 end
 han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';

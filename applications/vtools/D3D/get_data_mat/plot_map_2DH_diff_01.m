@@ -20,8 +20,6 @@ function plot_map_2DH_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
 ret=gdm_do_mat(fid_log,flg_loc,tag,'do_s'); if ret; return; end
 
-%%
-
 %% DEFAULTS
 
 if isfield(flg_loc,'clims')==0

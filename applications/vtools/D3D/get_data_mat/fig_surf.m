@@ -277,6 +277,7 @@ cmap=jet(100);
 kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
+lims.c(kr,kc,1:2)=clims;
 % lims.c(kr,kc,1:2)=clims;
 if ~isempty(xlab_str)
     xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);
@@ -401,12 +402,12 @@ end
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-% kr=1; kc=2;
-% view(han.sfig(kr,kc),[0,90]);
-% colormap(han.sfig(kr,kc),cmap);
-% if ~isnan(lims.c(kr,kc,1:1))
-% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
-% end
+kr=1; kc=1;
+view(han.sfig(kr,kc),[0,90]);
+colormap(han.sfig(kr,kc),cmap);
+if ~isnan(lims.c(kr,kc,1:1))
+caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+end
 
 %% ADD TEXT
 % if plot_gen_struct

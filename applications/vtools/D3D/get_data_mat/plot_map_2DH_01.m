@@ -70,10 +70,23 @@ if isfield(flg_loc,'do_plot_along_rkm')==0
     flg_loc.do_plot_along_rkm=0;
 end
 if flg_loc.do_plot_along_rkm
-    if ~isfield(flg_loc,'fpath_rkm')
+    if ~isfield(flg_loc,'fpath_rkm_plot_along')
         error('Provide rkm file')
     else
-        if ~exist(flg_loc.fpath_rkm,'file')
+        if ~exist(flg_loc.fpath_rkm_plot_along,'file')
+            error('File with rkm does not exist')
+        end
+    end
+end
+
+if isfield(flg_loc,'do_rkm_disp')==0
+    flg_loc.do_rkm_disp=0;
+end
+if flg_loc.do_rkm_disp
+    if ~isfield(flg_loc,'fpath_rkm_disp') 
+        error('Provide rkm file')
+    else
+        if ~exist(flg_loc.fpath_rkm_disp,'file')
             error('File with rkm does not exist')
         end
     end
@@ -132,6 +145,13 @@ in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 in_p.gridInfo=gridInfo;
+if flg_loc.do_rkm_disp
+    fid=fopen(flg_loc.fpath_rkm_disp,'r');
+    rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
+    fclose(fid);
+    rkm_file{1,3}=cellfun(@(X)strrep(X,'_','\_'),rkm_file{1,3},'UniformOutput',false);
+    in_p.rkm=rkm_file;
+end
 
 fext=ext_of_fig(in_p.fig_print);
 
@@ -245,8 +265,9 @@ for kvar=1:nvar %variable
         end %kclim
         
         %% plot along rkm
+        %2DO: move to function for cleaning
         if flg_loc.do_plot_along_rkm==1
-            fid=fopen(flg_loc.fpath_rkm,'r');
+            fid=fopen(flg_loc.fpath_rkm_plot_along,'r');
             rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
             fclose(fid);
             

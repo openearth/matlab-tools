@@ -14,6 +14,13 @@
 
 function [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,str_clims,str_clims_diff,var_str)
 
+%% PARSE
+
+if isfield(flg_loc,'clims_type')==0
+    flg_loc.clims_type=1;
+end
+
+%%
 switch kdiff
     case 1
         in_p.val=data;

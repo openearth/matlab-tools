@@ -81,6 +81,11 @@ end
 if isfield(in_p,'zlims')==0
     in_p.zlims=NaN;
 end
+in_p.plot_rkm=0;
+if isfield(in_p,'rkm')==1
+    in_p.plot_rkm=1;
+end
+
 v2struct(in_p)
 
 %% check if printing
@@ -435,7 +440,15 @@ end
 if plot_vector
     quiver(gridInfo.Xcen,gridInfo.Ycen,vec_x',vec_y','parent',han.sfig(kr,kc))
 end
-
+if plot_rkm
+    nrkm=numel(rkm{1,1});
+    for krkm=1:nrkm
+        bol_in=rkm{1,1}(krkm)>lims.x(kr,kc,1) && rkm{1,1}(krkm)<lims.x(kr,kc,2) && rkm{1,2}(krkm)>lims.y(kr,kc,1) && rkm{1,2}(krkm)<lims.y(kr,kc,2);
+        if ~bol_in; continue; end
+        scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,'k','parent',han.sfig(kr,kc))
+        text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color','k','parent',han.sfig(kr,kc))
+    end
+end
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);

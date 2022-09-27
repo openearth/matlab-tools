@@ -28,6 +28,30 @@ do_load=parin.Results.do_load;
 dim=parin.Results.dim;
 fpath_grd=parin.Results.fpath_grd;
 
+%% check dimensions
+
+if isempty(fpath_map) %grid file must already exist
+    if exist(fpath_grd,'file')~=2
+        error('If there is no input to <fpath_map>, <fpath_grd> must already exist: %s',fpath_grd)
+    end
+    load(fpath_grd,'gridInfo')
+    if isfield(gridInfo,'branch')
+        is1d=true;
+    else
+        is1d=false;
+    end
+else    
+    [~,is1d,~,~]=D3D_is(fpath_map);
+end
+
+if is1d && dim==2
+    dim=1;
+    messageOut(fid_log,'The grid seems to be 1D. I read it as such')
+elseif ~is1d && dim==1
+    dim=2;
+    messageOut(fid_log,'The grid seems to be 2D. I read it as such')
+end
+
 %%
 
 if exist(fpath_grd,'file')==2
@@ -46,8 +70,8 @@ switch dim
     case 1
         gridInfo=NC_read_grid_1D(fpath_map);
     case 2
-        gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid'},'mergePartitions',1); %#ok
-        save_check(fpath_grd,'gridInfo'); 
+        gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid'},'mergePartitions',1); %#ok        
 end    
+save_check(fpath_grd,'gridInfo'); 
 
 end %function

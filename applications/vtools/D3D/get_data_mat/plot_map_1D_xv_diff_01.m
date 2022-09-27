@@ -4,21 +4,21 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 18311 $
+%$Date: 2022-08-19 06:18:42 +0200 (Fri, 19 Aug 2022) $
+%$Author: chavarri $
+%$Id: plot_map_1D_xv_01.m 18311 2022-08-19 04:18:42Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_map_1D_xv_01.m $
 %
 %
 
-function plot_map_1D_xv_01(fid_log,flg_loc,simdef)
+function plot_map_1D_xv_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
 %% DO
 
-ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+ret=gdm_do_mat(fid_log,flg_loc,tag,'do_s'); if ret; return; end
 
 %% PARSE
 
@@ -51,14 +51,41 @@ end
 %% PATHS
 
 nS=numel(simdef);
-fdir_mat=simdef(1).file.mat.dir;
-fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
-fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-mkdir_check(fdir_fig); %we create it in the loop
-runid=simdef(1).file.runid;
+fdir_mat_ref=simdef_ref.file.mat.dir;
+fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
+fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); 
 
-fpath_map=gdm_fpathmap(simdef(1),0);
+if nS==1
+    fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+    runid=sprintf('%s-%s',simdef.file.runid,simdef_ref.file.runid);
+else
+    fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig,tag_serie);
+    runid=sprintf('ref_%s',simdef_ref.file.runid);
+end
+mkdir_check(fdir_fig);
+
+% fdir_mat_ref=simdef_ref.file.mat.dir;
+fdir_mat=simdef(1).file.mat.dir; %assuming same grid!
+% fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
+% fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+% fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
+% fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
+% fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+% mkdir_check(fdir_fig);
+% fpath_map_ref=simdef_ref.file.map;
+% fpath_map=simdef_ref.file.map;
+% runid_ref=simdef_ref.file.runid;
+% runid=simdef.file.runid;
+
+% nS=numel(simdef);
+% fdir_mat=simdef(1).file.mat.dir;
+% fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+% fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
+% fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+% mkdir_check(fdir_fig); %we create it in the loop
+% runid=simdef(1).file.runid;
+
+fpath_map=gdm_fpathmap(simdef_ref,0);
 
 %take coordinates from curved domain (in case the domain is straightened)
 fpath_map_grd=fpath_map; 
@@ -68,8 +95,9 @@ end
 
 %% LOAD
 
-gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map_grd,'dim',1);
-load(fpath_mat_time,'tim');
+gridInfo_ref=gdm_load_grid(fid_log,fdir_mat_ref,fpath_map_grd,'dim',1);
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map_grd,'dim',1); %we assume same grid
+load(fpath_mat_time_ref,'tim'); %we are assuming the same time -> val=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,pliname)
 v2struct(tim); %time_dnum, time_dtime
 
 if flg_loc.tim_type==1
@@ -111,8 +139,9 @@ for kbr=1:nbr %branches
     
     branch=flg_loc.branch{kbr,1};
     branch_name=flg_loc.branch_name{kbr,1};
-
-    gridInfo_br=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat,gridInfo,branch,branch_name);
+    
+    gridInfo_br_ref=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat_ref,gridInfo_ref,branch,branch_name); %we assume they all have the same grid...
+    gridInfo_br=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat,gridInfo,branch,branch_name); %we assume they all have the same grid...
     nx=numel(gridInfo.offset);    
     
     if do_rkm
@@ -134,7 +163,11 @@ for kbr=1:nbr %branches
 
         %time 0
         kt=1;
-            %model
+            %reference
+        fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
+        load(fpath_mat_tmp,'data');            
+        data_0_ref=data;
+            %cases
         data_0=NaN(nx,nS);    
         for kS=1:nS    
             fdir_mat=simdef(kS).file.mat.dir;
@@ -152,10 +185,18 @@ for kbr=1:nbr %branches
 
         ktc=0;
         data_T=NaN(nx,nS,nt);
+        data_T_ref=NaN(nx,1,nt);
         for kt=kt_v %time
             ktc=ktc+1;
 
             %% load
+            
+            %reference
+            fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
+            load(fpath_mat_tmp,'data');
+            data_T_ref(:,1,kt)=data;
+            
+            %cases
             for kS=1:nS
                 fdir_mat=simdef(kS).file.mat.dir;
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
@@ -193,15 +234,23 @@ for kbr=1:nbr %branches
                 end
 
                 if kdiff==1
-                    in_p.val=data_T(:,:,kt);
+                    val_diff=NaN(nx,nS);
+                    for kS=1:nS
+                        val_diff(:,kS)=D3D_diff_val(data_T(:,kS,kt),data_T_ref(:,1,kt),gridInfo_br,gridInfo_br_ref);
+                    end
+                    in_p.val=val_diff;
                     in_p.is_diff=0;
                     str_dir='val';
                 elseif kdiff==2
-                    in_p.val=data_T(:,:,kt)-data_0(:,:);
+                    val_diff=NaN(nx,nS);
+                    for kS=1:nS
+                        val_diff(:,kS)=D3D_diff_val(data_T(:,kS,kt)-data_0(:,kS),data_T_ref(:,1,kt)-data_0_ref,gridInfo_br,gridInfo_br_ref);
+                    end
+                    in_p.val=val_diff;
                     in_p.is_diff=1;
                     str_dir='diff';
                 end
-
+                
                 fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
                 mkdir_check(fdir_fig_loc,fid_log,1,0);
 
@@ -237,32 +286,36 @@ for kbr=1:nbr %branches
         
         %% all times in same figure xtv
         
-        if flg_loc.do_xtv && nS==1 && nt>1
-            [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
-            in_p.x_m=x_m;
-            in_p.y_m=y_m;
-            in_p.clab_str=var_str_save;
-            in_p.ylab_str='';
-            in_p.tit_str=branch_name;
-            for kdiff=1:ndiff
-                switch kdiff
-                    case 1
-                        in_p.val=squeeze(data_T)';
-                        in_p.is_diff=0;
-                        str_dir='val';
-                    case 2
-                        in_p.val=squeeze(data_T-data_0)';
-                        in_p.is_diff=1;
-                        str_dir='diff';
-                end
-                fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
-                mkdir_check(fdir_fig_loc,fid_log,1,0);
+        if flg_loc.do_xtv && nt>1
+            for kS=1:nS
+                fdir_fig_s=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                
+                [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
+                in_p.x_m=x_m;
+                in_p.y_m=y_m;
+                in_p.clab_str=var_str_save;
+                in_p.ylab_str='';
+                in_p.tit_str=branch_name;
+                for kdiff=1:ndiff
+                    switch kdiff
+                        case 1
+                            in_p.val=squeeze(data_T(:,kS,:)-data_T_ref)';
+                            in_p.is_diff=0;
+                            str_dir='val';
+                        case 2
+                            in_p.val=squeeze((data_T(:,kS,:)-data_T_ref)-(data_0(:,kS,:)-data_0_ref))';
+                            in_p.is_diff=1;
+                            str_dir='diff';
+                    end
+                    fdir_fig_loc=fullfile(fdir_fig_s,branch_name,var_str_save,str_dir);
+                    mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                fname_noext=fig_name_all(fdir_fig_loc,tag,runid,var_str_save,branch_name,str_dir);
+                    fname_noext=fig_name_all(fdir_fig_loc,tag,runid,var_str_save,branch_name,str_dir);
 
-                in_p.fname=fname_noext;
-                fig_surf(in_p)
-            end %kdiff
+                    in_p.fname=fname_noext;
+                    fig_surf(in_p)
+                end %kdiff
+            end
         end %do_xtv
         
         %% all times in same figure xvt

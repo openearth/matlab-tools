@@ -61,7 +61,8 @@ end
 
 %% GRID
 
-gdm_load_grid(fid_log,fdir_mat,fpath_map);
+gdm_load_grid(fid_log,fdir_mat,fpath_map,'do_load',0);
+% gdm_load_grid_simdef(fid_log,simdef,'do_load',0); %don't call, because we have to pass the grd-file
 
 %% shp
 if flg_loc.write_shp

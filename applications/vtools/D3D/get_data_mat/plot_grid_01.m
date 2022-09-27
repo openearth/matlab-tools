@@ -97,9 +97,7 @@ for kvar=1:nvar %variable
                         error('do. I think that reading with EHY should pass to the case of FM')
                     case 2
                         if is1d 
-                            error('do. Adapt <D3D_figure_domain_1D> and call it <fig_grid_1D_01>')
                             fig_grid_1D_01(in_p);
-                            D3D_figure_domain_1D
                         else
                             fig_grid_2D_01(in_p);
                         end

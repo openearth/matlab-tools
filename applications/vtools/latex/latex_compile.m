@@ -19,6 +19,8 @@ fdir_o=pwd;
 [fdir,fname,fext]=fileparts(fpath_tex);
 
 cd(fdir);
+delete(sprintf('%s.aux',fname));
+delete(sprintf('%s.log',fname));
 system(sprintf('pdflatex %s',fpath_tex));
 system(sprintf('bibtex  %s',fname));
 system(sprintf('pdflatex %s',fpath_tex));

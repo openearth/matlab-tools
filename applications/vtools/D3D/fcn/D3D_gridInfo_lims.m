@@ -20,5 +20,13 @@ elseif isfield(gridInfo,'Xcor')
     xlims=[min(gridInfo.Xcor(:)),max(gridInfo.Ycor(:))];
     ylims=[min(gridInfo.Xcor(:)),max(gridInfo.Ycor(:))];
 elseif isfield(gridInfo,'offset')
-    error('what to do with rkm')
+%     error('what to do with rkm')
+    xlims=[min(gridInfo.x_node(:)),max(gridInfo.x_node)];
+    ylims=[min(gridInfo.y_node(:)),max(gridInfo.y_node)];
 end
+
+tol=0.05;
+xlims=xlims+diff(xlims).*[-tol,tol]+10*[-eps,eps];
+ylims=ylims+diff(ylims).*[-tol,tol]+10*[-eps,eps];
+
+end %function

@@ -75,6 +75,7 @@
 % in_plot.fig_grid_01.do=1;
 % in_plot.fig_grid_01.fig_print=0;
 % in_plot.fig_grid_01.fig_visible=1;
+% in_plot.fig_grid_01.axis_equal=0;
 
 %% 2DH
 
@@ -102,6 +103,8 @@
 % in_plot.(tag).overwrite=1; %overwrite mat-files
 % in_plot.(tag).do_vector=0; %add velocity vectors
 % in_plot.(tag).do_axis_equal=0;
+% in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv'); %file to go along specified rkm to plot
+% in_plot.(tag).fpath_rkm_disp=fullfile(fpaths.dir_rkm,'rkm.csv'); %file to display rkm
 
 %% 2DH ls
 

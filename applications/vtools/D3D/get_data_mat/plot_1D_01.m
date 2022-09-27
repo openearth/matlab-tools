@@ -22,9 +22,6 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-if isfield(flg_loc,'do_diff')==0
-    flg_loc.do_diff=1;
-end
 if isfield(flg_loc,'do_xvt')==0
     flg_loc.do_xvt=0;
 end
@@ -59,11 +56,7 @@ nt=size(time_dnum,1);
 nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
 nsb=numel(flg_loc.sb_pol);
-if flg_loc.do_diff==0
-    ndiff=1;
-else 
-    ndiff=2;
-end
+ndiff=gdm_ndiff(flg_loc);
 
 %figures
 in_p=flg_loc;
@@ -102,10 +95,11 @@ for ksb=1:nsb
             [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
             
             if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
-                in_p.lab_str=flg_loc.unit{kvar};
+                lab_str=flg_loc.unit{kvar};
             else
-                in_p.lab_str=var_str_save;
+                lab_str=var_str_save;
             end
+            in_p.lab_str=lab_str;
             
             %time 0
             kt=1;
@@ -165,7 +159,7 @@ for ksb=1:nsb
                     %allocate
                     if flg_loc.do_xvt
                         nx=numel(data.(statis));  
-                        data_xvt.(statis)=NaN(nx,nS,nt);
+%                         data_xvt.(statis)=NaN(nx,nS,nt); %we cannot preallocate here! time is outside
                         data_xvt0.(statis)=NaN(nx,nS);
                     end
                     
@@ -190,6 +184,7 @@ for ksb=1:nsb
                             end
                         end
                         
+                        %2DO: loop on ylims and use <dgm_data_diff>
                         if kdiff==1
                             in_p.val=[data.(statis)];
                             in_p.is_diff=0;
@@ -213,7 +208,7 @@ for ksb=1:nsb
                         %save for xvt
                         if flg_loc.do_xvt
                             data_xvt.(statis)(:,:,kt)=[data.(statis)];
-                            data_xvt0.(statis)(:,:,kt)=[data.(statis)];
+                            data_xvt0.(statis)(:,:,kt)=[data_0.(statis)];
                         end
                     end %kref
                     messageOut(fid_log,sprintf('Done plotting figure %s rkm poly %4.2f %% time %4.2f %% variable %4.2f %% statistic %4.2f %%',tag,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100,kfn/nfn*100));
@@ -240,52 +235,7 @@ for ksb=1:nsb
             end %kt
             
             %% xvt
-            if flg_loc.do_xvt
-                %make function
-                [x_m,y_m]=meshgrid(in_p.s,tim_dtime_p);
-                in_p.x_m=x_m;
-                in_p.y_m=y_m;
-                in_p.ml=2.5;
-                in_p.clab_str=in_p.lab_str;
-                in_p.ylab_str='';
-%                 in_p.tit_str=branch_name;
-                for kfn=1:nfn
-                    statis=fn_data{kfn};
-                    
-                    %skip statistics not in list    
-                    if isfield(flg_loc,'statis_plot')
-                        if ismember(statis,flg_loc.statis_plot)==0
-                            continue
-                        end
-                    end
-                    
-                    switch statis
-                        case 'val_std'
-                            in_p.is_std=true;
-                        otherwise
-                            in_p.is_std=false;
-                    end
-                    for kdiff=1:ndiff
-                        switch kdiff
-                            case 1
-                                in_p.val=squeeze(data_xvt.(statis))';
-                                in_p.is_diff=0;
-                                str_dir='val';
-                            case 2
-                                in_p.val=squeeze(data_xvt.(statis)-data_xvt0.(statis))';
-                                in_p.is_diff=1;
-                                str_dir='diff';
-                        end
-%                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
-                        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
-
-                        fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff);
-
-                        in_p.fname=fname_noext;
-                        fig_surf(in_p)
-                    end %kdiff
-                end %kfn
-            end %do
+            plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid);
             
         end %kvar    
     end %nrkmv
@@ -312,8 +262,88 @@ end %function
 
 %%
 
-function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref)
+function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%02d',tag,runid,var_str,fn,sb_pol,kref));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%02d_clim_%02d',tag,runid,var_str,fn,sb_pol,kref,kclim));
 
+end %function
+
+%%
+
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid)
+
+%% PARSE
+
+if ~flg_loc.do_xvt
+    messageOut(fid_log,'Not doing xvt plot.')
+    return
+end
+
+if numel(tim_dtime_p)<=1
+    messageOut(fid_log,'Insufficient times for xvt plot')
+    return
+end
+
+%% CALC
+
+fn_data=fieldnames(data_xvt);
+nfn=numel(fn_data);
+ndiff=gdm_ndiff(flg_loc);
+nclim=size(flg_loc.ylims,1);
+
+[x_m,y_m]=meshgrid(s,tim_dtime_p);
+
+in_p=flg_loc;
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fig_visible=0;
+in_p.fig_size=[0,0,14.5,12];
+
+in_p.x_m=x_m;
+in_p.y_m=y_m;
+in_p.ml=2.5;
+in_p.clab_str=lab_str;
+in_p.ylab_str='';
+in_p.xlab_str='rkm';
+in_p.xlab_un=1/1000;
+%                 in_p.tit_str=branch_name;
+for kfn=1:nfn
+    statis=fn_data{kfn};
+
+    %skip statistics not in list    
+    if isfield(flg_loc,'statis_plot')
+        if ismember(statis,flg_loc.statis_plot)==0
+            continue
+        end
+    end
+
+    switch statis
+        case 'val_std'
+            in_p.is_std=true;
+        otherwise
+            in_p.is_std=false;
+    end
+    for kdiff=1:ndiff
+%         switch kdiff
+%             case 1
+%                 in_p.val=squeeze(data_xvt.(statis))';
+%                 in_p.is_diff=0;
+%                 str_dir='val';
+%             case 2
+%                 in_p.val=squeeze(data_xvt.(statis)-data_xvt0.(statis))';
+%                 in_p.is_diff=1;
+%                 str_dir='diff';
+%         end
+        for kclim=1:nclim
+            [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,squeeze(data_xvt.(statis))',squeeze(data_xvt0.(statis))','ylims','ylims_diff',var_str_save);
+            
+    %                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
+            fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim);
+
+            in_p.fname=fname_noext;
+            fig_surf(in_p)
+        end %kclim
+    end %kdiff
+end %kfn
+            
 end %function

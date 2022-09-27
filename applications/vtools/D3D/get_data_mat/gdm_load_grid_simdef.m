@@ -11,13 +11,13 @@
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/mkdir_check.m $
 %
 
-function gridInfo=gdm_load_grid_simdef(fid_log,simdef)
+function gridInfo=gdm_load_grid_simdef(fid_log,simdef,varargin)
 
 fdir_mat=simdef.file.mat.dir;
 fpath_map=simdef.file.map;
 
 if simdef.D3D.structure~=3
-    gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+    gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map,varargin{:});
 else
     gridInfo=NaN;
 end
