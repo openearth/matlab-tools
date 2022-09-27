@@ -70,35 +70,27 @@ end
 dire=dir(simdef.D3D.dire_sim);
 nf=numel(dire)-2;
 
+%%
+
 %% identify 
 whatis=false(1,4);
 for kf1=1:nf
     kf=kf1+2; %. and ..
-    [~,fname,ext]=fileparts(dire(kf).name);
-    switch ext
-        case '.mdf'
-            simdef.D3D.structure=1;
-            whatis(1)=true;
-        case '.mdu'
-            simdef.D3D.structure=2;
-            whatis(2)=true;
-        case '.md1d'
-            simdef.D3D.structure=3;
-            whatis(3)=true;
-        case '.yml'
-            if strcmp(fname,'smt') %could it be another yml? too strong?
-                simdef.D3D.structure=4;
-                whatis(4)=true;
-            end
-    end
+    [simdef,whatis]=structure_from_ext(simdef,dire(kf).name,whatis);
 end
 
-
 if sum(whatis)==0
-    fprintf('I cannot find the main file in this folder: %s \n',simdef.D3D.dire_sim);
-    simdef.err=1;
-    throw_error(do_break,simdef.err)
-    return
+    %try to see if it is a dimr folder and it has an mdu below
+    [fpath_mdu,err]=search_4_mdu(dire);
+    if err
+        fprintf('I cannot find the main file in this folder: %s \n',simdef.D3D.dire_sim);
+        simdef.err=1;
+        throw_error(do_break,simdef.err)
+        return
+    else
+%         fdir=fileparts(fpath_mdu);
+        simdef=structure_from_ext(simdef,fpath_mdu,false(1,4));
+    end
 elseif sum(whatis)>1
     fprintf('In this folder there are main files of several software systems: %s \n',simdef.D3D.dire_sim);
     simdef.err=2;
@@ -118,14 +110,9 @@ else
     fdir_mdu=simdef.D3D.dire_sim;
 end
 
-mdf_aux=search_4_mdu(dire);
+fpath_mdu=search_4_mdu(dire);
 
-if isempty(mdf_aux)
-    error('This folder has no mdu or mdf file file: %s',fdir_mdu)
-end
-nstring=cellfun(@(X)numel(X),mdf_aux);
-[~,idx]=min(nstring);
-file.mdf=mdf_aux{idx};
+file.mdf=fpath_mdu;
 switch simdef.D3D.structure
     case 1
         simdef_aux=D3D_simpath_mdf(file.mdf);
@@ -223,7 +210,10 @@ end %function
 
 %%
 
-function mdf_aux=search_4_mdu(dire)
+function [fpath_mdu,err]=search_4_mdu(dire)
+
+err=0;
+
 nf=numel(dire)-2;
 kmdf=1;
 mdf_aux={};
@@ -249,4 +239,39 @@ for kf1=1:nf
     end %isdir
 end
 
+if isempty(mdf_aux)
+    err=1;
+    fpath_mdu='';
+elseif ischar(mdf_aux)
+    fpath_mdu=mdf_aux;
+else
+    nstring=cellfun(@(X)numel(X),mdf_aux);
+    [~,idx]=min(nstring);
+    fpath_mdu=mdf_aux{idx};    
+end
+
+
+end %function
+
+%%
+
+function [simdef,whatis]=structure_from_ext(simdef,fpath_file,whatis)
+
+[~,fname,ext]=fileparts(fpath_file);
+switch ext
+    case '.mdf'
+        simdef.D3D.structure=1;
+        whatis(1)=true;
+    case '.mdu'
+        simdef.D3D.structure=2;
+        whatis(2)=true;
+    case '.md1d'
+        simdef.D3D.structure=3;
+        whatis(3)=true;
+    case '.yml'
+        if strcmp(fname,'smt') %could it be another yml? too strong?
+            simdef.D3D.structure=4;
+            whatis(4)=true;
+        end
+end
 end %function
