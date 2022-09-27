@@ -106,7 +106,7 @@ if sum(IDs(:))>0
     end
 end
 
-IDs = dir(IDs) == 270;
+IDs = dir == 270;
 if sum(IDs(:))>0
     if strcmp(convention,'cartesian')
         u(IDs) = mag(IDs).*-1;
