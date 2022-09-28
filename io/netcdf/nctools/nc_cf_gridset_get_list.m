@@ -81,7 +81,8 @@ for i=1:length(urls)
    %% get meta-info
    %  TO DO: get bounding box too
    
-      disp(['    ',pad('name  ',' ',namewidth),': first date - last date  nt  urlPath                                                   '])
+      %disp(['    ',pad('name  ',' ',namewidth),': first date - last date  nt  urlPath                                                   ']
+      disp(['    ',pad('name  ',namewidth,'right',' '),': first date - last date  nt  urlPath                                                   '])
       for i=1:length(L)
          try
              t{i} = nc_cf_time(L{i},'time');
@@ -95,7 +96,7 @@ for i=1:length(urls)
             y1(i) = ylim(2);
             nt(i) = length(t{i});
            %disp([num2str(i,'%0.3d'),'/',num2str(length(L),'%0.3d')])
-            disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-namewidth),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.3d'),' ',L{i}])
+            disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),namewidth,'right',' '),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.3d'),' ',L{i}])
          catch
             error(['not a valid netCDF CF gridset file: ',L{i}]);
          end
@@ -119,12 +120,12 @@ for i=1:length(urls)
       dprintf(OPT.fid,[yearheader(iy,:),'\n']);
       end
       spp = repmat(' ',[1 length(years)]);
-      dprintf(OPT.fid,['#   ',pad('name',' ',-namewidth),': first date - last date  nt ',spp,'  [x0 x1 y0 y1]                                             \n'])
+      dprintf(OPT.fid,['#   ',pad('name',namewidth,'right',' '),': first date - last date  nt ',spp,'  [x0 x1 y0 y1]                                             \n'])
       for i=1:length(L)
          [dummy,dummy,ind]=intersect(year(t{i}),years);
          array(i,ind)='#';
          mask (i,ind)=1;
-         dprintf(OPT.fid,[num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-namewidth),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.3d'),' ',array(i,:),' ',num2str(x0(i),OPT.bbfmt),' ',num2str(x1(i),OPT.bbfmt),' ',num2str(y0(i),OPT.bbfmt),' ',num2str(y1(i),OPT.bbfmt),'\n'])
+         dprintf(OPT.fid,[num2str(i,'%0.3d'),' ',pad(filename(L{i}),namewidth,'right',' '),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.3d'),' ',array(i,:),' ',num2str(x0(i),OPT.bbfmt),' ',num2str(x1(i),OPT.bbfmt),' ',num2str(y0(i),OPT.bbfmt),' ',num2str(y1(i),OPT.bbfmt),'\n'])
       end
       
       if OPT.fid > 1
