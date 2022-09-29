@@ -45,8 +45,9 @@ fpath_tim_all=fullfile(fdir_mat,sprintf('tim%s.mat',str_tim));
 if isa(in_dtime(1),'double') 
     %get all results time
     idx_g=NaN; %not needed, but we need to output it
-    if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2
-        messageOut(NaN,sprintf('Mat-file with all times not available. Reading.'))
+    %if it is NaN we read it anyhow because we do not reach this point in case it is NaN and it is the same size as the one we have already.
+    if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2 || any(isnan(in_dtime)) 
+        messageOut(NaN,sprintf('Mat-file with all times not available or outdated. Reading.'))
         if isfolder(fpath_map) %SMT
             [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_results_time_wrap(fpath_map);
         else

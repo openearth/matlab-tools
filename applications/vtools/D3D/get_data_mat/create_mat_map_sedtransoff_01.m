@@ -156,7 +156,6 @@ for kst=1:nst
         
         %% save sum 
         
-        
         fpath_mat_st=mat_tmp_name(fdir_mat,var_sum{kst},'tim',time_dnum(kt)); %we save it as 'raw' to be able to read in <gdm_read_data_map_simdef>
         if exist(fpath_mat_st,'file')==2 && ~flg_loc.overwrite
             continue
@@ -186,6 +185,7 @@ in_plot_sb.(tag_sb).do_diff=0; %difference initial time
 in_plot_sb.(tag_sb).do_s=0; %difference with reference
 in_plot_sb.(tag_sb).do_s_diff=0; %difference with reference and initial time
 in_plot_sb.(tag_sb).var=var_sum; %open D3D_list_of_variables
+in_plot_sb.(tag_sb).do_val_B_mor=1; %compute value of the variable per unit of morphodynamic width
 in_plot_sb.(tag_sb).tim=flg_loc.tim; %all times
 in_plot_sb.(tag_sb).order_anl=2; %1=normal; 2=random
 in_plot_sb.(tag_sb).tim_ave=NaN; 

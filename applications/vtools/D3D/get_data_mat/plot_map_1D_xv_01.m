@@ -22,10 +22,6 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-if isfield(flg_loc,'do_diff')==0
-    flg_loc.do_diff=1;
-end
-
 is_straigth=0;
 if isfield(flg_loc,'fpath_map_curved')
     is_straigth=1;
@@ -85,12 +81,8 @@ end
 nt=size(time_dnum,1);
 nvar=numel(flg_loc.var);
 nbr=numel(flg_loc.branch);
-
-if flg_loc.do_diff==0
-    ndiff=1;
-else 
-    ndiff=2;
-end
+nclim=size(flg_loc.ylims,1);
+ndiff=gdm_ndiff(flg_loc);
 
 %figures
 in_p=flg_loc;
@@ -245,23 +237,17 @@ for kbr=1:nbr %branches
             in_p.ylab_str='';
             in_p.tit_str=branch_name;
             for kdiff=1:ndiff
-                switch kdiff
-                    case 1
-                        in_p.val=squeeze(data_T)';
-                        in_p.is_diff=0;
-                        str_dir='val';
-                    case 2
-                        in_p.val=squeeze(data_T-data_0)';
-                        in_p.is_diff=1;
-                        str_dir='diff';
-                end
-                fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
-                mkdir_check(fdir_fig_loc,fid_log,1,0);
+                for kclim=1:nclim
+                    [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,squeeze(data_T)',squeeze(data_0)','ylims','ylims_diff',var_str_save);
 
-                fname_noext=fig_name_all(fdir_fig_loc,tag,runid,var_str_save,branch_name,str_dir);
+                    fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,tag_ref);
+                    mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                in_p.fname=fname_noext;
-                fig_surf(in_p)
+                    fname_noext=fig_name_all(fdir_fig_loc,tag,runid,var_str_save,branch_name,tag_ref,kclim);
+
+                    in_p.fname=fname_noext;
+                    fig_surf(in_p)
+                end %kclim
             end %kdiff
         end %do_xtv
         
@@ -295,8 +281,8 @@ fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s',tag,runid,datestr(time_d
 % fprintf('fpath_fig: %s \n',fpath_fig);
 end %function
 
-function fpath_fig=fig_name_all(fdir_fig,tag,runid,var_str,branch_name,str_dir)
+function fpath_fig=fig_name_all(fdir_fig,tag,runid,var_str,branch_name,str_dir,kclim)
                 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s',tag,runid,var_str,branch_name,str_dir));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_clim_%d',tag,runid,var_str,branch_name,str_dir,kclim));
 
 end %function

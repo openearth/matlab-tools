@@ -52,7 +52,7 @@ function D3D_list_of_variables
 %   29                  = sediment transport magnitude at edges m^2/s
 %   30                  = sediment transport magnitude at edges m^3/s
 
-%	47                  = morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
+%	47  'ba_mor'        = morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
 
 %       'deta_ds'       = slope in streamwise direction (only for <summerbed> analysis)
 

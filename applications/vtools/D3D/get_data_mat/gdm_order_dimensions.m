@@ -22,7 +22,17 @@ if isfield(data,'dimensions') %read from EHY
     dim=1:1:numel(tok);
     dimnF=dim;
     dimnF(dimnF==idx_f)=[];
-    data.val=permute(data.val,[idx_f,dimnF]);
+    if ~isempty(dimnF) 
+        data.val=permute(data.val,[idx_f,dimnF]);
+        %reconstruct dimensions vector
+        str_order=tok([idx_f,dimnF]);
+        str_aux=sprintf('%s,',str_order{:});
+        str_aux=sprintf('[%s]',str_aux);
+        str_aux=strrep(str_aux,',]',']');
+        data.dimensions=str_aux;
+    else
+        %there is only <mesh2d_nFaces>
+    end
 else
     size_val=size(data.val);
     if size_val(1)==1 && size_val(2)>1

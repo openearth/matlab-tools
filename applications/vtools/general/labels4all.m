@@ -48,7 +48,8 @@
 %       -'qxsp'     : specific water discharge in x direction
 %       -'qysp'     : specific water discharge in y direction
 %
-%       -'stot'     : total sediment transport [m^2/s]
+%       -'stot'       : total sediment transport [m^2/s]
+%       -'stot_B_mor' : total sediment transport [m^3/s]
 %
 %       -'tide'     : tide
 %       -'surge'    : surge
@@ -724,6 +725,16 @@ switch lower(variable)
                 str_var='transporte de sedimento total';
          end
          un_type='L2/T';
+    case 'stot_b_mor'
+         switch lan
+            case 'en'
+                str_var='total sediment transport';
+            case 'nl'
+                str_var='totaal sedimenttransport';
+            case 'es'
+                str_var='transporte de sedimento total';
+         end
+         un_type='L3/T';
     case {'mesh2d_czs','czs'}
          switch lan
             case 'en'

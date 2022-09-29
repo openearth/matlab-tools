@@ -26,6 +26,22 @@ if isfield(flg_loc,'do_xvt')==0
     flg_loc.do_xvt=0;
 end
 
+if isfield(flg_loc,'do_val_B_mor')==0
+    flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
+end
+%add B_mor variables to plot
+nvar_tmp=numel(flg_loc.var);
+for kvar=1:nvar_tmp
+    if flg_loc.do_val_B_mor(kvar)
+        [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
+        flg_loc.var=cat(1,flg_loc.var,sprintf('%s_B_mor',var_str_save));
+        
+        if isfield(flg_loc,'unit')
+            flg_loc.unit=cat(1,flg_loc.unit,sprintf('%s_B_mor',flg_loc.unit{kvar}));
+        end
+    end
+end
+                
 %% PATHS
 
 nS=numel(simdef);
@@ -91,7 +107,6 @@ for ksb=1:nsb
 
         for kvar=1:nvar %variable
             
-            
             [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
             
             if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
@@ -104,6 +119,7 @@ for ksb=1:nsb
             %time 0
             kt=1;
                 %model
+            clear data_0_loc; %clear is not nice but we cannot preallocate because we do not know the fieldnames in advance and they maybe different between variables    
             for kS=1:nS    
                 fdir_mat=simdef(kS).file.mat.dir;
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
@@ -126,6 +142,7 @@ for ksb=1:nsb
                 in_p.tim=tim_dnum_p(kt);
 
                 %% load
+                clear data_loc; 
                 for kS=1:nS
                     fdir_mat=simdef(kS).file.mat.dir;
                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
@@ -323,16 +340,6 @@ for kfn=1:nfn
             in_p.is_std=false;
     end
     for kdiff=1:ndiff
-%         switch kdiff
-%             case 1
-%                 in_p.val=squeeze(data_xvt.(statis))';
-%                 in_p.is_diff=0;
-%                 str_dir='val';
-%             case 2
-%                 in_p.val=squeeze(data_xvt.(statis)-data_xvt0.(statis))';
-%                 in_p.is_diff=1;
-%                 str_dir='diff';
-%         end
         for kclim=1:nclim
             [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,squeeze(data_xvt.(statis))',squeeze(data_xvt0.(statis))','ylims','ylims_diff',var_str_save);
             

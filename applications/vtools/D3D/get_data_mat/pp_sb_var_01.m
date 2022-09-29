@@ -22,9 +22,9 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-% if isfield(flg_loc,'overwrite_tim')==0
-%     flg_loc.overwrite_tim=0;
-% end
+if isfield(flg_loc,'do_val_B_mor')==0
+    flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
+end
 
 %% PATHS
 
@@ -78,22 +78,33 @@ for ksb=1:nsb
             for kvar=1:nvar %variable
                 [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
                 
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
-                if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
+                if flg_loc.do_val_B_mor(kvar)
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',sprintf('%s_B_mor',var_str_save),'sb',sb_pol);
+                else
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol); %the variable to save is different than the raw variable name we read
+                end
                 
+                if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
+
+                fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_read,'sb',sb_pol);
+                data_raw=load(fpath_mat_load,'data');
+                val=data_raw.data.val_mean;
+
                 switch var_id
                     case 'detab_ds'
-                        fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_read,'sb',sb_pol);
-                        data_raw=load(fpath_mat_load,'data');
-                        val=data_raw.data.val_mean;
-                        
                         dx=diff(rkm_cen*1000);
                         detab_dx=NaN(size(val));
                         detab_dx(2:end-1)=(val(3:end)-val(1:end-2))./(dx(1:end-1)+dx(2:end));
                         
-                        val_mean=detab_dx;
+                        val_mean=detab_dx; 
                     otherwise
-                        continue
+                        if flg_loc.do_val_B_mor(kvar)
+                            fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var','ba_mor','sb',sb_pol);
+                            data_ba_mor=load(fpath_mat_load,'data');
+                            val_mean=val./data_ba_mor.data.val_sum_length;
+                        else
+                            continue
+                        end
                 end
                 
                 %% data

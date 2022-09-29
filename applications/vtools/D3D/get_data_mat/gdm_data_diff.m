@@ -20,6 +20,14 @@ if isfield(flg_loc,'clims_type')==0
     flg_loc.clims_type=1;
 end
 
+if isfield(flg_loc,str_clims)==0
+    flg_loc.(str_clims)=[NaN,NaN];
+end
+
+if isfield(flg_loc,str_clims_diff)==0
+    flg_loc.(str_clims_diff)=[NaN,NaN];
+end
+
 %%
 switch kdiff
     case 1
@@ -35,7 +43,8 @@ switch kdiff
         in_p.is_diff=0;
         in_p.is_background=0;
     case 2
-        in_p.val=data-data_ref.data;
+%         in_p.val=data-data_ref.data; %why is data in ref under <.data> ?
+        in_p.val=data-data_ref; 
         in_p.clims=flg_loc.(str_clims_diff)(kclim,:);
         tag_ref='diff';
         switch var_str
