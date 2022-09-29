@@ -31,7 +31,7 @@ rkm_edg_br=cat(1,rkm_cen_br,rkm_cen_br{end}); %this is not good enough. It may b
 
 rkm_edg_xy=convert2rkm(fpath_rkm,rkm_edg,rkm_edg_br);
 rkm_cen_xy=convert2rkm(fpath_rkm,rkm_cen,rkm_cen_br);
-[rkm_edg_xy_L,rkm_edg_xy_R]=perpendicular_polyline(rkm_edg_xy,2,1000);
+[rkm_edg_xy_L,rkm_edg_xy_R]=perpendicular_polyline(rkm_edg_xy,2,1000); %lines 1000 m to the right and left of the centre. Make the step an input.
 npol=numel(rkm_cen);
 bol_pol_loc=cell(npol,1);
 for kpol=1:npol

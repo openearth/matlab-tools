@@ -54,6 +54,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 %% CONSTANT IN TIME
 
 % gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+data_ba=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_ba');
 
 %% DIMENSION
 
@@ -113,6 +114,7 @@ for ksb=1:nsb
                 val_num=NaN(npol,ndim_2);
                 val_sum=NaN(npol,ndim_2);
                 val_sum_length=NaN(npol,ndim_2);
+                val_width=NaN(npol,ndim_2);
                 for kpol=1:npol
                     bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan;
                     if any(bol_get)
@@ -123,6 +125,10 @@ for ksb=1:nsb
                         val_num(kpol,:)=numel(data_var.val(bol_get,:));
                         val_sum(kpol,:)=sum(data_var.val(bol_get,:),1,'omitnan');
                         val_sum_length(kpol,:)=val_sum(kpol,:)./(rkmv.rkm_dx(kpol)*1000);
+                        
+                        %this is variable independent. It could be done within an outside loop and saved apart.  
+                        %Problem is that it is not a property of the rkmv alone or the sb_def alone. 
+                        val_width(kpol,:)=sum(data_ba.val(bol_get),1,'omitnan')/(rkmv.rkm_dx(kpol)*1000); 
                     end
                     messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
 %                     %% BEGIN DEBUG
@@ -130,7 +136,8 @@ for ksb=1:nsb
 %                     %%
 %                      figure
 %                      hold on
-%                      scatter(gridInfo.Xcen,gridInfo.Ycen,10,data_var.val)
+% %                      scatter(gridInfo.Xcen,gridInfo.Ycen,10,data_var.val)
+%                      scatter(gridInfo.Xcen(bol_get),gridInfo.Ycen(bol_get),10,'r','filled')   
 %                      axis equal
 %                      colorbar
 %                     %END DEBUG
