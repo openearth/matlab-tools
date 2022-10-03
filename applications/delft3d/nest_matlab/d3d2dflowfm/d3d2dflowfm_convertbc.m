@@ -210,12 +210,16 @@ for i_pli = 1: length(filpli)
                         end
                     end
                     
+                    if contains(quan_bct,'totaldischarge') && ~OPT.Salinity && ~OPT.Temperature
+                        Values_A= sign*Values_A;
+                    end
+                    
                     if strcmpi      (side,'a')                                      %end A
                         SERIES.Values(:,2)      = sum(Values_A,2);
                     else                                                            %end B
                         SERIES.Values(:,2)      = sum(Values_B,2);
                         % Total discharge boundary, side B = -999 in bct file but not used!
-                        if floor(mean(abs(SERIES.Values(:,2)))) == 999;
+                        if floor(mean(abs(SERIES.Values(:,2)))) == 999
                             SERIES.Values(:,2)  = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
                         end
                     end
