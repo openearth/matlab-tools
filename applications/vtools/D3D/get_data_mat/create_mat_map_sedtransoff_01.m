@@ -175,6 +175,8 @@ end %kst
 if flg_loc.do_sb
     
 in_plot_sb.fdir_sim=flg_loc.fdir_sim;
+in_plot_sb.lan=flg_loc.lan;
+in_plot_sb.tag_serie=flg_loc.tag_serie;
 
 tag_sb='fig_map_summerbed_01';
 in_plot_sb.(tag_sb)=flg_loc;

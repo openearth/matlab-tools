@@ -101,7 +101,7 @@ for ksb=1:nsb
                         if flg_loc.do_val_B_mor(kvar)
                             fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var','ba_mor','sb',sb_pol);
                             data_ba_mor=load(fpath_mat_load,'data');
-                            val_mean=val./data_ba_mor.data.val_sum_length;
+                            val_mean=val.*data_ba_mor.data.val_sum_length;
                         else
                             continue
                         end

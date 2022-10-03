@@ -73,6 +73,7 @@ nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
 nsb=numel(flg_loc.sb_pol);
 ndiff=gdm_ndiff(flg_loc);
+nylim=size(flg_loc.ylims,1);
 
 %figures
 in_p=flg_loc;
@@ -201,26 +202,20 @@ for ksb=1:nsb
                             end
                         end
                         
-                        %2DO: loop on ylims and use <dgm_data_diff>
-                        if kdiff==1
-                            in_p.val=[data.(statis)];
-                            in_p.is_diff=0;
-                            str_dir='val';
-                        elseif kdiff==2
-                            in_p.val=[data.(statis)]-[data_0.(statis)];
-                            in_p.is_diff=1;
-                            str_dir='diff';
-                        end
-                        
-                        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
-                        mkdir_check(fdir_fig_loc,fid_log,1,0);
+                        for kylim=nylim
+                            [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data.(statis)],[data.(statis)]-[data_0.(statis)],'ylims','ylims_diff',var_str_save);
 
-                        fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
-%                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
-                        
-                        in_p.fname=fname_noext;
-                        
-                        fig_1D_01(in_p);
+                            fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
+                            mkdir_check(fdir_fig_loc,fid_log,1,0);
+
+                            fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+    %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                            in_p.fname=fname_noext;
+
+                            fig_1D_01(in_p);
+                            
+                        end
                         
                         %save for xvt
                         if flg_loc.do_xvt

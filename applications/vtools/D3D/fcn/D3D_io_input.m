@@ -17,6 +17,18 @@
 %e.g.
 % dep=D3D_io_input('read',fdep,fgrd,'location','cor');
 % D3D_io_input('write','c:\Users\chavarri\Downloads\trial.dep',dep,'location','cor','dummy',false,'format','%15.13e');
+%
+%e.g. Interpolating bed level to D3D4 grid:
+%
+% dep=D3D_io_input('read',fpath_dep);
+% grd=D3D_io_input('read',fpath_grd_d3d4,'location','cor');
+% 
+% F=scatteredInterpolant(dep(:,1),dep(:,2),dep(:,3));
+% dep_int=F(grd.cend.x,grd.cend.y);
+% 
+% grd.cor.dep=-dep_int(1:end-1,1:end-1);
+% 
+% D3D_io_input('write',fpath_dep_out,grd,'location','cor');
 
 function varargout=D3D_io_input(what_do,fname,varargin)
 
@@ -107,6 +119,14 @@ switch what_do
             case '.xyz'
 %                 stru_out=dflowfm_io_xydata('read',fname); %extremely slow
                 stru_out=readmatrix(fname,'FileType','text');
+                if size(stru_out,2)>3
+                    messageOut(NaN,'The file seems to have a weir delimiter and cannot read it properly. Trying in a different way.')
+                    [xyz_all,err]=read_xyz(fname);
+                    if err~=1
+                        stru_out=xyz_all;
+                    end
+                end
+
             case '.xyn'
                 stru_out=D3D_read_xyn(fname,varargin{:});
             case '.ext'
