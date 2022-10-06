@@ -60,6 +60,9 @@ end
 if isfield(mdu.geometry,'CrossLocFile') && ~isempty(mdu.geometry.CrossLocFile)
     simdef.file.csloc=paths_str2cell(path_sim,mdu.geometry.CrossLocFile);
 end
+if isfield(mdu.geometry,'PillarFile') && ~isempty(mdu.geometry.PillarFile)
+    simdef.file.pillars=paths_str2cell(path_sim,mdu.geometry.PillarFile);
+end
 if isfield(mdu.geometry,'StructureFile') && ~isempty(mdu.geometry.StructureFile)
     simdef.file.struct=paths_str2cell(path_sim,mdu.geometry.StructureFile);
 end
@@ -75,7 +78,7 @@ if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
     simdef.file.thd=paths_str2cell(path_sim,mdu.geometry.ThinDamFile);
 end
 
-%extenral forcing
+%external forcing
 if isfield(mdu.external_forcing,'ExtForceFileNew') && ~isempty(mdu.external_forcing.ExtForceFileNew)
     simdef.file.extforcefilenew=fullfile(path_sim,mdu.external_forcing.ExtForceFileNew);
 end

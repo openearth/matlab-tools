@@ -1,4 +1,7 @@
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
 %$Revision$
@@ -37,7 +40,7 @@ for kstruct=1:nstruct
         gen_struct(kgs).xy_pli=pli.xy;
         gen_struct(kgs).xy=mean(gen_struct(kgs).xy_pli,1);
         if ~isempty(fpath_rkm)
-            gen_struct(kgs).rkm=convert2rkm(path_rkm,gen_struct(kgs).xy);
+            gen_struct(kgs).rkm=convert2rkm(fpath_rkm,gen_struct(kgs).xy);
         end
     end
 end

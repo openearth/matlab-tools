@@ -445,8 +445,8 @@ if plot_rkm
     for krkm=1:nrkm
         bol_in=rkm{1,1}(krkm)>lims.x(kr,kc,1) && rkm{1,1}(krkm)<lims.x(kr,kc,2) && rkm{1,2}(krkm)>lims.y(kr,kc,1) && rkm{1,2}(krkm)<lims.y(kr,kc,2);
         if ~bol_in; continue; end
-        scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,'k','parent',han.sfig(kr,kc))
-        text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color','k','parent',han.sfig(kr,kc))
+        scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,'c','parent',han.sfig(kr,kc))
+        text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color','c','parent',han.sfig(kr,kc))
     end
 end
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);

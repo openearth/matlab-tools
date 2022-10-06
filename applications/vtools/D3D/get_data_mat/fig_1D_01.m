@@ -62,7 +62,14 @@ if isfield(in_p,'fid_log')==0
 end
 in_p.plot_gen_struct=0;
 if isfield(in_p,'gen_struct')
-    in_p.plot_gen_struct=1;
+%     in_p.plot_gen_struct=1;
+    in_p.plot_all_struct=1;
+    in_p.all_struct=in_p.gen_struct;
+    in_p.all_struct=struct_assign_val(in_p.all_struct,'type',1);
+end
+in_p.plot_all_struct=0;
+if isfield(in_p,'all_struct')
+    in_p.plot_all_struct=1;
 end
 if isfield(in_p,'is_diff')==0
     in_p.is_diff=0;
@@ -120,6 +127,9 @@ if isfield(in_p,'leg_move')==0
 end
 if isfield(in_p,'markersize')==0
     in_p.markersize=10;
+end
+if isfield(in_p,'plot_pillars_name')==0
+    in_p.plot_pillars_name=0;
 end
 
 v2struct(in_p)
@@ -374,8 +384,14 @@ else
         str_sim={sprintf('%d',kv)}; %change to runid?
     end
 end
-if plot_gen_struct
-plot(([[gen_struct.rkm];[gen_struct.rkm]]),repmat(ylims,numel([gen_struct.rkm]),1)','--','color',[0.6,0.6,0.6],'parent',han.sfig(kr,kc))
+if plot_all_struct
+% plot(([[gen_struct.rkm];[gen_struct.rkm]]),repmat(ylims,numel([gen_struct.rkm]),1)','--','color',[0.6,0.6,0.6],'parent',han.sfig(kr,kc))
+    %better loop to control color and whether to plot them or not in the future
+    nas=numel([all_struct.rkm]);
+    cmap_alls=[0.4,0.4,0.4;0.8,0.8,0.8];
+    for kas=1:nas
+        plot([all_struct(kas).rkm;all_struct(kas).rkm],ylims,'--','color',cmap_alls(all_struct(kas).type,:),'parent',han.sfig(kr,kc))
+    end
 end
 if plot_mea
 %     han.p(kr,kc,2)=plot(mea_etab_p.rkm,mea_etab_p.etab,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
@@ -444,9 +460,15 @@ end
 % end
 
 %% ADD TEXT
-if plot_gen_struct
-structure_name=strrep({gen_struct.name},'ST_','');
-text([gen_struct.rkm],ylims(1)*ones(size([gen_struct.rkm])),structure_name,'Rotation',90)
+if plot_all_struct
+
+for kas=1:nas
+    if all_struct(kas).type==2 && ~plot_pillars_name; continue; end
+    structure_name=strrep(all_struct(kas).name,'ST_',''); %dangerours... better to clean using rwsnames
+    idx=strfind(structure_name,'=');
+    structure_name(1:idx)='';
+    text(all_struct(kas).rkm,ylims(1),structure_name,'Rotation',90)
+end
 end
 
     %if irregular

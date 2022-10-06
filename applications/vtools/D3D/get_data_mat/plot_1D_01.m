@@ -112,6 +112,13 @@ if nS>1
     in_p.leg_str=flg_loc.leg_str;
 end
 
+%% COMMON
+
+all_struct=D3D_read_structures(simdef,'fpath_rkm',flg_loc.fpath_rkm); %check that either it is fine if empty or check emptyness for filling <in_p>
+if ~isempty(all_struct)
+    in_p.all_struct=all_struct;
+end
+
 %% LOOP
 for ksb=1:nsb
 
@@ -278,7 +285,7 @@ for ksb=1:nsb
             
             %% xvt
             if flg_loc.do_xvt
-                plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid);
+                plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid,all_struct);
             end
             
             %% cumulative
@@ -341,7 +348,7 @@ end %function
 
 %%
 
-function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid)
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid,all_struct)
 
 %% PARSE
 
@@ -369,6 +376,7 @@ in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 in_p.fig_size=[0,0,14.5,12];
 
+in_p.all_struct=all_struct;
 in_p.x_m=x_m;
 in_p.y_m=y_m;
 in_p.ml=2.5;
