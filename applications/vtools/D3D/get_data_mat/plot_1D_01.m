@@ -25,23 +25,48 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 if isfield(flg_loc,'do_xvt')==0
     flg_loc.do_xvt=0;
 end
+    
+flg_loc=check_ylims(flg_loc,'ylims_var');
+flg_loc=check_ylims(flg_loc,'ylims_diff_var');
 
+%add cumulative variables to plot
+if isfield(flg_loc,'do_cum')==0
+    flg_loc.do_cum=zeros(size(flg_loc.var));
+end
+
+%add B_mor variables to plot
 if isfield(flg_loc,'do_val_B_mor')==0
     flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
 end
-%add B_mor variables to plot
 nvar_tmp=numel(flg_loc.var);
 for kvar=1:nvar_tmp
     if flg_loc.do_val_B_mor(kvar)
         [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
         flg_loc.var=cat(1,flg_loc.var,sprintf('%s_B_mor',var_str_save));
-        
+        flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
+        flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});
+        flg_loc.do_cum=cat(1,flg_loc.do_cum,flg_loc.do_cum(kvar));
         if isfield(flg_loc,'unit')
             flg_loc.unit=cat(1,flg_loc.unit,sprintf('%s_B_mor',flg_loc.unit{kvar}));
         end
     end
 end
-                
+
+
+% nvar_tmp=numel(flg_loc.var);
+% for kvar=1:nvar_tmp
+%     if flg_loc.do_cum(kvar)
+%         [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
+%         flg_loc.var=cat(1,flg_loc.var,sprintf('%s_B_mor',var_str_save));
+%         flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
+%         flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});
+%         
+%         if isfield(flg_loc,'unit')
+%             flg_loc.unit=cat(1,flg_loc.unit,sprintf('%s_B_mor',flg_loc.unit{kvar}));
+%         end
+%     end
+% end
+
 %% PATHS
 
 nS=numel(simdef);
@@ -58,6 +83,7 @@ runid=simdef(1).file.runid;
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
+% tim_p=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum); %move the below part to a function...
 if flg_loc.tim_type==1
     tim_dnum_p=time_dnum;
     tim_dtime_p=time_dtime;
@@ -73,7 +99,6 @@ nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
 nsb=numel(flg_loc.sb_pol);
 ndiff=gdm_ndiff(flg_loc);
-nylim=size(flg_loc.ylims,1);
 
 %figures
 in_p=flg_loc;
@@ -116,6 +141,11 @@ for ksb=1:nsb
                 lab_str=var_str_save;
             end
             in_p.lab_str=lab_str;
+            
+            %ylims
+            flg_loc.ylims=flg_loc.ylims_var{kvar,1};
+            flg_loc.ylims_diff=flg_loc.ylims_diff_var{kvar,1};
+            nylim=size(flg_loc.ylims,1);
             
             %time 0
             kt=1;
@@ -247,7 +277,36 @@ for ksb=1:nsb
             end %kt
             
             %% xvt
-            plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid);
+            if flg_loc.do_xvt
+                plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid);
+            end
+            
+            %% cumulative
+            if flg_loc.do_cum(kvar)
+                %2DO: make function
+                
+                statis='val_mean';
+                diff_tim=seconds(diff(tim_dtime_p));
+                data_xvt_loc=squeeze(data_xvt.(statis));
+                val_tim=data_xvt_loc(:,1:end-1).*reshape(diff_tim,1,[]);
+                val_cum=cumsum([zeros(nx,1),val_tim],2);
+                
+                in_p.lab_str=sprintf('%s_t',lab_str); %add time
+
+                for kt=kt_v
+                    in_p.tim=tim_dnum_p(kt);
+                    in_p.val=val_cum(:,kt);
+
+                    fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'cum');
+                    mkdir_check(fdir_fig_loc,fid_log,1,0);
+
+                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+
+                    in_p.fname=fname_noext;
+
+                    fig_1D_01(in_p);
+                end
+            end
             
         end %kvar    
     end %nrkmv
@@ -348,4 +407,31 @@ for kfn=1:nfn
     end %kdiff
 end %kfn
             
+end %function
+
+%%
+
+function flg_loc=check_ylims(flg_loc,str_check)
+
+%In case there is <flg_loc.ylims> and it is a cell, this is the one you want to use
+str_no_var=strrep(str_check,'_var','');
+if isfield(flg_loc,str_no_var) && iscell(flg_loc.(str_no_var))
+    flg_loc.(str_check)=flg_loc.(str_no_var);
+end
+
+nvar_tmp=numel(flg_loc.var);
+if isfield(flg_loc,str_check)==0
+    flg_loc.(str_check)=cell(nvar_tmp,1);
+    for kvar=1:nvar_tmp
+        flg_loc.(str_check){kvar,1}=[NaN,NaN];
+    end
+end
+
+if numel(flg_loc.(str_check))~=nvar_tmp
+    messageOut(fid_log,sprintf('The number of variables (%d) is different than the number of limits (%d). Everything to automatic.',nvar_tmp,numel(flg_loc.(str_check))));
+    for kvar=1:nvar_tmp
+        flg_loc.(str_check){kvar,1}=[NaN,NaN];
+    end
+end
+
 end %function

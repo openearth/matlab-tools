@@ -100,6 +100,7 @@ Gammak=NaN;
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 var_sum=cell(nst,1);
+unit_v=cell(nst,1);
 
 ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
@@ -187,11 +188,13 @@ in_plot_sb.(tag_sb).do_diff=0; %difference initial time
 in_plot_sb.(tag_sb).do_s=0; %difference with reference
 in_plot_sb.(tag_sb).do_s_diff=0; %difference with reference and initial time
 in_plot_sb.(tag_sb).var=var_sum; %open D3D_list_of_variables
-in_plot_sb.(tag_sb).do_val_B_mor=1; %compute value of the variable per unit of morphodynamic width
+% in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
+in_plot_sb.(tag_sb).do_val_B_mor=ones(size(var_sum)); %compute value of the variable per unit of morphodynamic width
 in_plot_sb.(tag_sb).tim=flg_loc.tim; %all times
 in_plot_sb.(tag_sb).order_anl=2; %1=normal; 2=random
 in_plot_sb.(tag_sb).tim_ave=NaN; 
 in_plot_sb.(tag_sb).unit=unit_v; 
+in_plot_sb.(tag_sb).do_cum=ones(size(var_sum)); 
 
 D3D_gdm(in_plot_sb)
 

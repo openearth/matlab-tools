@@ -10,7 +10,7 @@
 %$Id$
 %$HeadURL$
 %
-%
+%Postprocessing of summerbed analysis data for each time.
 
 function pp_sb_var_01(fid_log,flg_loc,simdef)
 
