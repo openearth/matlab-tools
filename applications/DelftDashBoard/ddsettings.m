@@ -43,9 +43,9 @@ disp(' ');
 % 
 % % SuperTrans
 % 
-% addpath(genpath('..\SuperTrans'));
+% addpath(genpath('..\..\..\SuperTrans'));
 % addpath(genpath('..\..\io\netcdf\'));
-% addpath(genpath('..\..\..\matlab\'));
+% addpath(genpath('..\matlab\'));
 % 
 % netcdf_settings('quiet',false) % in /io/netcdf/
 
