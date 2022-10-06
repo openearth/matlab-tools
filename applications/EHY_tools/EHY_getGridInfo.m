@@ -418,8 +418,13 @@ switch modelType
                                 % from z coordinate information (first 2 stations, first time step)
                                 if ~exist('E','var') || (exist('E','var') && ~isfield(E,'layer_model'))
                                     tmp_c  = ncread(inputFile,'zcoordinate_c',[1 1 1],[inf 2 1]);
-                                    if tmp_c(2,1) -  tmp_c(1,1) ~= tmp_c(2,2) -  tmp_c(1,2)
-                                        E.layer_model = 'sigma-model';
+                                    if ~isnan(tmp_c(end,1)) && ~isnan(tmp_c(end,2)) && ...
+                                        tmp_c(end,1) -  tmp_c(end - 1,1) ~= tmp_c(end,2) -  tmp_c(end - 1,2)
+                                            E.layer_model = 'sigma-model';
+                                        if isnan(tmp_c(1,1)) || isnan(tmp_c(1,2)) || ... 
+                                            tmp_c(1,1) -  tmp_c(2,1) == tmp_c(1,2) -  tmp_c(2,2)
+                                            E.layer_model = 'z-sigma-model';
+                                        end
                                     else
                                         E.layer_model = 'z-model';
                                     end

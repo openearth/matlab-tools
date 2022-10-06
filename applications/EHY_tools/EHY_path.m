@@ -67,5 +67,6 @@ end
 
 % remove double fileseps
 deleteIndex = strfind(path,[filesep filesep]);
+deleteIndex(deleteIndex == 1) = [];
 path(deleteIndex) = '';
 end
