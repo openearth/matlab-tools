@@ -20,14 +20,16 @@ function plot_grid_01(fid_log,flg_loc,simdef)
 
 ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
-if isfield(flg_loc,'clims')==0
-    flg_loc.clims=[NaN,NaN];
-    flg_loc.clims_diff_t=[NaN,NaN];
-end
-
 if isfield(flg_loc,'xlims')==0
     flg_loc.xlims=[NaN,NaN];
     flg_loc.ylims=[NaN,NaN];
+end
+
+flg_loc=gdm_parse_plot_along_rkm(flg_loc);
+
+flg_loc.plot_pol=0;
+if isfield(flg_loc,'pol')==1
+    flg_loc.plot_pol=1;
 end
 
 %% PATHS
@@ -49,7 +51,7 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,'');
 
 %% DIMENSIONS
 
-nclim=size(flg_loc.clims,1);
+% nclim=size(flg_loc.clims,1); %why clims in the grid?
 nxlim=size(flg_loc.xlims,1);
 nvar=1; %for when we plot orthogonality
 
@@ -62,6 +64,7 @@ in_p=flg_loc;
 % in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 % in_p.fig_visible=0;
 in_p.gridInfo=gridInfo;
+in_p=gdm_read_plot_along_rkm(in_p,flg_loc);
 
 fext=ext_of_fig(in_p.fig_print);
 
@@ -70,41 +73,73 @@ if isfield(flg_loc,'fpath_ldb')
     in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
 end
 
+%pol
+if flg_loc.plot_pol
+    np=numel(flg_loc.pol);
+    pol=cell(np,1);
+    for kp=1:np
+        pol{kp,1}=D3D_io_input('read',flg_loc.pol{kp},'xy_only',true); %maybe it gives problems if it is not shp due to parsing 
+    end
+    in_p.pol=pol;
+end
+
 for kvar=1:nvar %variable
-%     varname=flg_loc.var{kvar};
-%     var_str=D3D_var_num2str_structure(varname,simdef);
-      var_str='grid';
+
+    var_str='grid';
         
-        for kclim=1:nclim
-            for kxlim=1:nxlim
+    for kxlim=1:nxlim
 
-                %xlim
-                xlims=flg_loc.xlims(kxlim,:);
-                ylims=flg_loc.ylims(kxlim,:);
-                if isnan(xlims(1))
-                    xlims=xlims_all;
-                    ylims=ylims_all;
+        %xlim
+        xlims=flg_loc.xlims(kxlim,:);
+        ylims=flg_loc.ylims(kxlim,:);
+        if isnan(xlims(1))
+            xlims=xlims_all;
+            ylims=ylims_all;
+        end
+        in_p.xlims=xlims;
+        in_p.ylims=ylims;
+
+        fname_noext=fig_name(fdir_fig,tag,runid,var_str,kxlim);
+
+        in_p.fname=fname_noext;
+
+        switch simdef.D3D.structure
+            case 1
+                error('do. I think that reading with EHY should pass to the case of FM')
+            case 2
+                if is1d 
+                    fig_grid_1D_01(in_p);
+                else
+                    fig_grid_2D_01(in_p);
                 end
-                in_p.xlims=xlims;
-                in_p.ylims=ylims;
+        end
 
-                fname_noext=fig_name(fdir_fig,tag,runid,kclim,var_str,kxlim);
-
-                in_p.fname=fname_noext;
-                
-                switch simdef.D3D.structure
-                    case 1
-                        error('do. I think that reading with EHY should pass to the case of FM')
-                    case 2
-                        if is1d 
-                            fig_grid_1D_01(in_p);
-                        else
-                            fig_grid_2D_01(in_p);
-                        end
-                end
+    end %kxlim
+    
+    %% plot along rkm
+    if ~is1d && flg_loc.do_plot_along_rkm==1
                     
-            end%kxlim
-        end %kclim
+        %2DO: move to function for cleaning
+        fid=fopen(flg_loc.fpath_rkm_plot_along,'r');
+        rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
+        fclose(fid);
+
+        fdir_fig_loc=fullfile(fdir_fig,'rkm');
+        mkdir_check(fdir_fig_loc,NaN,1,0);
+        
+        nrkm=size(rkm_file{1,1},1);
+        for krkm=1:nrkm
+
+            in_p.xlims=rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
+            in_p.ylims=rkm_file{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
+
+            fname_noext=fig_name(fdir_fig_loc,tag,sprintf('%s_rkm',runid),var_str,krkm);
+
+            in_p.fname=fname_noext;
+
+            fig_grid_2D_01(in_p);
+        end %krkm
+    end %do
         
 end %kvar
 
@@ -114,8 +149,8 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,kclim,var_str,kxlim)
+function fpath_fig=fig_name(fdir_fig,tag,runid,var_str,kxlim)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_clim_%02d_xlim_%02d',tag,runid,var_str,kclim,kxlim));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_xlim_%02d',tag,runid,var_str,kxlim));
 
 end %function

@@ -120,6 +120,15 @@ if ischar(var_id)
             end
             var_str_read='lyrfrac';
             var_str_save=var_str_read;
+        case {'ba','mesh2d_flowelem_ba'}
+            if is1d
+                error('no idea')
+                var_id_out='mesh1d_lyrfrac';
+            else
+                var_id_out='mesh2d_flowelem_ba';
+            end
+            var_str_read='ba';
+            var_str_save='ba';
         otherwise
 
     end

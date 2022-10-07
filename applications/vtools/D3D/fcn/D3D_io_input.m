@@ -139,7 +139,7 @@ switch what_do
                 stru_out.val=val;
 %                 figure; hold on; plot(aux2,val)
             case '.shp'
-                stru_out=shp2struct(fname);
+                stru_out=shp2struct(fname,varargin{:});
             case '.tim'
                 if nargin~=3
                     error('You need to specify the reference date as input')

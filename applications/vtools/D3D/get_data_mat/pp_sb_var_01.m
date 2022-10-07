@@ -25,6 +25,12 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 if isfield(flg_loc,'do_val_B_mor')==0
     flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
 end
+if isfield(flg_loc,'do_val_B')==0
+    flg_loc.do_val_B=zeros(size(flg_loc.var));
+end
+if any(flg_loc.do_val_B_mor & flg_loc.do_val_B)
+    error('either full width or morphodynamic width')
+end
 
 %% PATHS
 
@@ -80,6 +86,8 @@ for ksb=1:nsb
                 
                 if flg_loc.do_val_B_mor(kvar)
                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',sprintf('%s_B_mor',var_str_save),'sb',sb_pol);
+                elseif flg_loc.do_val_B(kvar)
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',sprintf('%s_B',var_str_save),'sb',sb_pol);
                 else
                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol); %the variable to save is different than the raw variable name we read
                 end
@@ -98,10 +106,14 @@ for ksb=1:nsb
                         
                         val_mean=detab_dx; 
                     otherwise
-                        if flg_loc.do_val_B_mor(kvar)
+                        if flg_loc.do_val_B_mor(kvar) %multiply value by morphodynamic width
                             fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var','ba_mor','sb',sb_pol);
                             data_ba_mor=load(fpath_mat_load,'data');
                             val_mean=val.*data_ba_mor.data.val_sum_length;
+                        elseif flg_loc.do_val_B(kvar) %multiply value per width
+                            fpath_mat_load=gdm_map_summerbed_mat_name('ba',fdir_mat,tag,pol_name,time_dnum(kt),sb_pol);
+                            data_ba=load(fpath_mat_load,'data');
+                            val_mean=val.*data_ba.data.val_sum_length;
                         else
                             continue
                         end

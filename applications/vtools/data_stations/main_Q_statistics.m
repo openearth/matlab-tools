@@ -30,8 +30,8 @@ addOET(path_add_fcn)
 
 flg.write_csv=0;
 
-data_station=read_data_stations(path_data_stations,'location_clear','Lobith','grootheid','Q');
-% data_station=read_data_stations(path_data_stations,'location_clear','Calamar','grootheid','Q');
+% data_station=read_data_stations(path_data_stations,'location_clear','Lobith','grootheid','Q');
+data_station=read_data_stations(path_data_stations,'location_clear','Baton Rouge','grootheid','WATHTE');
 
 %% CALC
 
@@ -207,7 +207,7 @@ in_p.p_q_days=data_station_prob.day.unique.p;
 fig_Q_analysis_vertical(in_p);
 % fig_Q_analysis_horizontal(in_p);
 
-%% dayly mean matrix
+%% daily mean matrix
 
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fname='Q_matrix';
@@ -219,5 +219,17 @@ in_p.lims_q=[600,1200];
 in_p.lims_d=[1,60];
 in_p.lims_y=[min(year_u),max(year_u)];
 
-
 fig_Q_matrix(in_p)
+
+%% yearly ordered
+
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fname='yearly_ordered';
+in_p.fig_visible=0;
+in_p.lan='en';
+in_p.val=data_station.waarde;
+in_p.tim=data_station.time;
+in_p.unit=data_station.grootheid;
+in_p.tit_str=data_station.location_clear;
+
+fig_yearly_ordered(in_p)

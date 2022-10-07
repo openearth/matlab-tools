@@ -35,6 +35,13 @@ if any(flg_loc.do_val_B_mor)
     flg_loc.var=cat(1,flg_loc.var,'ba_mor');
 end
 
+if isfield(flg_loc,'do_val_B')==0
+    flg_loc.do_val_B=zeros(size(flg_loc.var));
+end
+if any(flg_loc.do_val_B)
+    flg_loc.var=cat(1,flg_loc.var,'ba');
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -56,7 +63,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD TIME
 
-[nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
 
 %% CONSTANT IN TIME
 
@@ -101,8 +108,9 @@ for ksb=1:nsb
                  
             for kvar=1:nvar %variable
                 [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
-
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_read,'sb',sb_pol);
+                
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol);
+                        
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
                 %% read data
@@ -138,7 +146,9 @@ for ksb=1:nsb
                         %Problem is that it is not a property of the rkmv alone or the sb_def alone. 
 %                         val_width(kpol,:)=sum(data_ba.val(bol_get),1,'omitnan')/(rkmv.rkm_dx(kpol)*1000); 
                     end
-                    messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
+                    %display
+%                     messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
+
 %                     %% BEGIN DEBUG
 %                     gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 %                     %%

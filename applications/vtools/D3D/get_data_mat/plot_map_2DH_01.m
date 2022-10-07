@@ -66,39 +66,7 @@ if isfield(flg_loc,'do_3D')==0
     flg_loc.do_3D=0;
 end
 
-if isfield(flg_loc,'do_plot_along_rkm')==0
-    flg_loc.do_plot_along_rkm=0;
-end
-if flg_loc.do_plot_along_rkm
-    if ~isfield(flg_loc,'fpath_rkm_plot_along')
-        error('Provide rkm file')
-    else
-        if ~exist(flg_loc.fpath_rkm_plot_along,'file')
-            error('File with rkm does not exist')
-        end
-    end
-end
-
-if isfield(flg_loc,'do_rkm_disp')==0
-    flg_loc.do_rkm_disp=0;
-end
-if flg_loc.do_rkm_disp
-    if ~isfield(flg_loc,'fpath_rkm_disp') 
-        error('Provide rkm file')
-    else
-        if ~exist(flg_loc.fpath_rkm_disp,'file')
-            error('File with rkm does not exist')
-        end
-    end
-end
-
-if isfield(flg_loc,'rkm_tol_x')==0
-    flg_loc.rkm_tol_x=1000;
-end
-
-if isfield(flg_loc,'rkm_tol_y')==0
-    flg_loc.rkm_tol_y=1000;
-end
+flg_loc=gdm_parse_plot_along_rkm(flg_loc);
 
 %% PATHS
 
@@ -145,13 +113,7 @@ in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 in_p.gridInfo=gridInfo;
-if flg_loc.do_rkm_disp
-    fid=fopen(flg_loc.fpath_rkm_disp,'r');
-    rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
-    fclose(fid);
-    rkm_file{1,3}=cellfun(@(X)strrep(X,'_','\_'),rkm_file{1,3},'UniformOutput',false);
-    in_p.rkm=rkm_file;
-end
+in_p=gdm_read_plot_along_rkm(in_p,flg_loc);
 
 fext=ext_of_fig(in_p.fig_print);
 

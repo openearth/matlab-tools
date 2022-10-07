@@ -22,14 +22,14 @@ function D3D_list_of_variables
 %% FLOW
 
 %   1   'bl'    = bed elevation (etab) [m]
-%   2   'wd'     = flow depth (h) [m]
+%   2   'wd'    = flow depth (h) [m]
 %   12  'wl'    = water level
 
 %   10  'umag'  = depth averaged velocity [m/s]
 %   11  'uv'    = velocity [m/s] 
 
-%   18=water discharge 
-%   16=specific water discharge
+%   18          = water discharge 
+%   16  'q'     = specific water discharge (as u*h) [m^2/2]
 
 %   32  'mesh2d_czs'        = Chezy  [m/s^{1/2}]
 %   43                      = horizontal eddy viscosity [m^2/s]

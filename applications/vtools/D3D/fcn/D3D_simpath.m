@@ -192,6 +192,24 @@ end %simdef.D3D.structure
 %     fprintf('It seems that the folder you have specified has no simulation results: \n %s \n',simdef.D3D.dire_sim);
 % end
 
+%% type of simulation
+
+if isfield(simdef.file,'map')
+    [ismor,is1d,str_network1d,issus]=D3D_is(simdef.file.map);
+else
+    ismor=NaN;
+    is1d=NaN;
+    str_network1d='';
+    issus=NaN;
+end
+
+simdef.D3D.ismor=ismor;
+simdef.D3D.is1d=is1d;
+simdef.D3D.str_network1d=str_network1d;
+simdef.D3D.issus=issus;
+
+%%
+
 throw_error(do_break,simdef.err)
 
 end %function

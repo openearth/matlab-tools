@@ -98,18 +98,18 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% SINGLE FILE 
 
-fpath_data='c:\Users\chavarri\temporal\data\20220829_026.csv';
-data_stations=read_csv_data(fpath_data,'flg_debug',0);
+% fpath_data='c:\Users\chavarri\temporal\data\20220829_026.csv';
+% data_stations=read_csv_data(fpath_data,'flg_debug',0);
 
 %%
-ns=numel(data_stations);
-for ks=1:ns
-%     data_stations(ks).location_clear=location_clear_v{ks};
-    data_stations(ks).location_clear='Lobith';
-    data_stations(ks).location='LOBH';
-    data_stations(ks).bemonsteringshoogte=NaN;
-    add_data_stations(paths_main_folder,data_stations(ks))
-end
+% ns=numel(data_stations);
+% for ks=1:ns
+% %     data_stations(ks).location_clear=location_clear_v{ks};
+%     data_stations(ks).location_clear='Lobith';
+%     data_stations(ks).location='LOBH';
+%     data_stations(ks).bemonsteringshoogte=NaN;
+%     add_data_stations(paths_main_folder,data_stations(ks))
+% end
 
 %% FROM NC FILE
 
@@ -151,11 +151,37 @@ end
 %     end %kf
 % end %kf
 
+%% RAW READ
 
+fpath_data='c:\Users\chavarri\Downloads\data.txt';
 
+data_raw=readcell(fpath_data);
+data_raw_m=readmatrix(fpath_data);
 
+%%
+t=[data_raw{:,1}];
+val=data_raw_m(:,2);
 
+figure; hold on; plot(t,val)
 
+%%
+data_stations.location='Baton Rouge (01160)';
+data_stations.x=-91.20694444;
+data_stations.y=30.42916667;
+data_stations.raai=228.4*1.60934;
+data_stations.grootheid='WATHTE';
+data_stations.parameter='';
+data_stations.eenheid='m';
+data_stations.time=reshape(t,[],1);
+data_stations.waarde=reshape(val*0.3048,[],1);
+data_stations.epsg=4326;
+data_stations.bemonsteringshoogte=NaN;
+data_stations.location_clear='Baton Rouge';
+data_stations.branch='mississippi';
+data_stations.dist_mouth=228.4*1.60934;
+data_stations.source='https://rivergages.mvr.usace.army.mil/WaterControl/stationinfo2.cfm?sid=01160&fid=BTRL1';
+
+add_data_stations(paths_main_folder,data_stations,'ask',1)
 
 
 

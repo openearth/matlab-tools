@@ -4,10 +4,10 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18353 $
-%$Date: 2022-09-08 13:39:21 +0200 (Thu, 08 Sep 2022) $
+%$Revision: 18282 $
+%$Date: 2022-08-05 16:25:39 +0200 (Fri, 05 Aug 2022) $
 %$Author: chavarri $
-%$Id: figure_layout.m 18353 2022-09-08 11:39:21Z chavarri $
+%$Id: figure_layout.m 18282 2022-08-05 14:25:39Z chavarri $
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/figure_layout.m $
 %
 %MATLAB BUGS:
@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_grid_2D_01(in_p)
+function fig_yearly_ordered(in_p)
 
 %% DEFAULTS
 
@@ -52,20 +52,6 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
-if isfield(in_p,'axis_equal')==0
-    in_p.axis_equal=1;
-end
-if isfield(in_p,'plot_tiles')==0
-    in_p.plot_tiles=0;
-end
-in_p.plot_rkm=0;
-if isfield(in_p,'rkm')==1
-    in_p.plot_rkm=1;
-end
-in_p.plot_pol=0;
-if isfield(in_p,'pol')==1
-    in_p.plot_pol=1;
-end
 
 v2struct(in_p)
 
@@ -74,6 +60,12 @@ do_fig=check_print_figure(in_p);
 if ~do_fig
     return
 end
+
+%% CALC
+
+tim_year=year(tim);
+tim_year_u=unique(tim_year);
+nu=numel(tim_year_u);
 
 %% SIZE
 
@@ -102,8 +94,7 @@ marg.sv=0.0; %vertical spacing [cm]
 prop.ms1=10; 
 prop.mf1='g'; 
 prop.mt1='s'; 
-prop.lw1=0.5;
-prop.lw2=1;
+prop.lw1=1;
 prop.ls1='-'; %'-','--',':','-.'
 prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'... {'o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'};
 prop.fs=10;
@@ -136,13 +127,13 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
-% kr=1; kc=1;
-% cbar(kr,kc).displacement=[0.0,0,0,0]; 
-% cbar(kr,kc).location='northoutside';
-% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
+kr=1; kc=1;
+cbar(kr,kc).displacement=[0.0,0,0,0]; 
+cbar(kr,kc).location='northoutside';
+cbar(kr,kc).label='year';
 
 % brewermap('demo')
-cmap=brewermap(3,'set1');
+cmap=brewermap(nu,'RdYlBu');
 
 %center around 0
 % ncmap=1000;
@@ -268,14 +259,15 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-lims.x(kr,kc,1:2)=xlims;
-lims.y(kr,kc,1:2)=ylims;
-% lims.c(kr,kc,1:2)=lims_c;
-xlabels{kr,kc}='x';
-ylabels{kr,kc}='y';
+% lims.y(kr,kc,1:2)=lims_d;
+% lims.x(kr,kc,1:2)=lims_y;
+lims.c(kr,kc,1:2)=[tim_year_u(1),tim_year_u(end)];
+% xlabels{kr,kc}='year';
+ylabels{kr,kc}=labels4all(unit,1,lan,'Lref','asl');
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
-% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
+lims_d.x(kr,kc,1:2)=[datetime(0,1,1),datetime(0,12,31)]; %time
+lims_d.x.TimeZone=tim.TimeZone;
 
 
 %% FIGURE INITIALIZATION
@@ -310,25 +302,19 @@ end
 
 %% MAP TILES
 
-kr=1; kc=1;
-
-if plot_tiles
-    
-OPT.xlim=xlims;
-OPT.ylim=ylims;
-OPT.epsg_in=28992; %WGS'84 / google earth
-OPT.epsg_out=28992; %Amersfoort
-dx=diff(xlims);
-tzl=tiles_zoom(dx);
-OPT.tzl=tzl; %zoom
-OPT.save_tiles=false;
-OPT.path_save=fullfile(pwd,'earth_tiles');
-OPT.path_tiles=in_p.path_tiles; 
-OPT.map_type=3;%map type
-OPT.han_ax=han.sfig(kr,kc);
-
-plotMapTiles(OPT);
-end
+% kr=1; kc=1;
+% OPT.xlim=x_lims;
+% OPT.ylim=y_lims;
+% OPT.epsg_in=28992; %WGS'84 / google earth
+% OPT.epsg_out=28992; %Amersfoort
+% OPT.tzl=tzl; %zoom
+% OPT.save_tiles=false;
+% OPT.path_save=fullfile(pwd,'earth_tiles');
+% OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
+% OPT.map_type=3;%map type
+% OPT.han_ax=han.sfig(kr,kc);
+% 
+% plotMapTiles(OPT);
 
 %% EHY
 
@@ -378,32 +364,24 @@ end
 %% PLOT
 
 kr=1; kc=1;    
-plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-
-if plot_pol
-    np=numel(pol);
-    for kp=1:np
-        plot(pol{kp,1}(:,1),pol{kp,1}(:,2),'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw2,'linestyle',prop.ls1,'marker',prop.m1);
+for ku=1:nu
+    bol=tim_year==tim_year_u(ku);
+    tim_ny=tim(bol)-years(tim_year_u(ku));
+    switch tim_year_u(ku)
+        case year(datetime('now'))
+            lw=3;
+        otherwise
+            lw=1;
     end
+    plot(tim_ny,val(bol),'color',cmap(ku,:),'linewidth',lw,'parent',han.sfig(kr,kc))
 end
-
-if plot_rkm
-    nrkm=numel(rkm{1,1});
-    for krkm=1:nrkm
-        bol_in=rkm{1,1}(krkm)>lims.x(kr,kc,1) && rkm{1,1}(krkm)<lims.x(kr,kc,2) && rkm{1,2}(krkm)>lims.y(kr,kc,1) && rkm{1,2}(krkm)<lims.y(kr,kc,2);
-        if ~bol_in; continue; end
-        scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,'c','parent',han.sfig(kr,kc))
-        text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color','c','parent',han.sfig(kr,kc))
-    end
-end
-
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
 % han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
-% surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+
 % patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
 
 %% PROPERTIES
@@ -412,13 +390,11 @@ end
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
-if axis_equal
-axis(han.sfig(kr,kc),'equal')
-end
+% axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
@@ -426,21 +402,21 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String='c';
+han.sfig(kr,kc).Title.String=tit_str;
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
 %duration ticks
-% xtickformat(han.sfig(kr,kc),'hh:mm')
-% han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
+xtickformat(han.sfig(kr,kc),'dd-MMM')
+han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-% kr=1; kc=2;
-% view(han.sfig(kr,kc),[0,90]);
-% colormap(han.sfig(kr,kc),cmap);
+kr=1; kc=1;
+view(han.sfig(kr,kc),[0,90]);
+colormap(han.sfig(kr,kc),cmap);
 % if ~isnan(lims.c(kr,kc,1:1))
-% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
 
 %% ADD TEXT
@@ -485,13 +461,13 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 
 %% COLORBAR
 
-% kr=1; kc=1;
-% pos.sfig=han.sfig(kr,kc).Position;
-% han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
+kr=1; kc=1;
+pos.sfig=han.sfig(kr,kc).Position;
+han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 % pos.cbar=han.cbar.Position;
 % han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
 % han.sfig(kr,kc).Position=pos.sfig;
-% han.cbar.Label.String=cbar(kr,kc).label;
+han.cbar.Label.String=cbar(kr,kc).label;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
 % v2p=[1,5,11,15,np1];

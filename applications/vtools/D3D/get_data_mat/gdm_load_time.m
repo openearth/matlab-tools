@@ -98,7 +98,7 @@ if exist(fpath_mat_time,'file')==2
             messageOut(fid_log,'Requested time is different than available time. Overwritting.')
             do_load=1;
         else
-            messageOut(fid_log,'Requested time is the same as existing one. Loading.')
+            messageOut(fid_log,sprintf('Requested time is the same as existing one considering tolerance of %d days. Loading.',tim_tol_d))
             return
         end
     end

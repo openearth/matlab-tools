@@ -26,8 +26,8 @@ if isfield(flg_loc,'do_xvt')==0
     flg_loc.do_xvt=0;
 end
     
-flg_loc=check_ylims(flg_loc,'ylims_var');
-flg_loc=check_ylims(flg_loc,'ylims_diff_var');
+flg_loc=check_ylims(fid_log,flg_loc,'ylims_var'); %if made general, call <gdm_parse_ylims>
+flg_loc=check_ylims(fid_log,flg_loc,'ylims_diff_var');
 
 %add cumulative variables to plot
 if isfield(flg_loc,'do_cum')==0
@@ -35,23 +35,8 @@ if isfield(flg_loc,'do_cum')==0
 end
 
 %add B_mor variables to plot
-if isfield(flg_loc,'do_val_B_mor')==0
-    flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
-end
-nvar_tmp=numel(flg_loc.var);
-for kvar=1:nvar_tmp
-    if flg_loc.do_val_B_mor(kvar)
-        [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
-        flg_loc.var=cat(1,flg_loc.var,sprintf('%s_B_mor',var_str_save));
-        flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
-        flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});
-        flg_loc.do_cum=cat(1,flg_loc.do_cum,flg_loc.do_cum(kvar));
-        if isfield(flg_loc,'unit')
-            flg_loc.unit=cat(1,flg_loc.unit,sprintf('%s_B_mor',flg_loc.unit{kvar}));
-        end
-    end
-end
-
+flg_loc=check_B(fid_log,flg_loc,'B_mor');
+flg_loc=check_B(fid_log,flg_loc,'B');
 
 % nvar_tmp=numel(flg_loc.var);
 % for kvar=1:nvar_tmp
@@ -83,15 +68,8 @@ runid=simdef(1).file.runid;
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
-% tim_p=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum); %move the below part to a function...
-if flg_loc.tim_type==1
-    tim_dnum_p=time_dnum;
-    tim_dtime_p=time_dtime;
-elseif flg_loc.tim_type==2
-    tim_dnum_p=time_mor_dnum;
-    tim_dtime_p=time_mor_dtime;
-end
-                
+[tim_dnum_p,tim_dtime_p]=gdm_time_flow_mor(flg_loc,simdef,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
+
 %% DIMENSION
 
 nt=size(time_dnum,1);
@@ -178,6 +156,9 @@ for ksb=1:nsb
                 ktc=ktc+1;
                 
                 in_p.tim=tim_dnum_p(kt);
+                if isnan(in_p.tim)
+                    error('Something is not going fine here.')
+                end
 
                 %% load
                 clear data_loc; 
@@ -419,7 +400,7 @@ end %function
 
 %%
 
-function flg_loc=check_ylims(flg_loc,str_check)
+function flg_loc=check_ylims(fid_log,flg_loc,str_check)
 
 %In case there is <flg_loc.ylims> and it is a cell, this is the one you want to use
 str_no_var=strrep(str_check,'_var','');
@@ -439,6 +420,30 @@ if numel(flg_loc.(str_check))~=nvar_tmp
     messageOut(fid_log,sprintf('The number of variables (%d) is different than the number of limits (%d). Everything to automatic.',nvar_tmp,numel(flg_loc.(str_check))));
     for kvar=1:nvar_tmp
         flg_loc.(str_check){kvar,1}=[NaN,NaN];
+    end
+end
+
+end %function
+
+%%
+
+function flg_loc=check_B(fid_log,flg_loc,str_in)
+
+str_do=sprintf('do_val_%s',str_in);
+if isfield(flg_loc,str_do)==0
+    flg_loc.(str_do)=zeros(size(flg_loc.var));
+end
+nvar_tmp=numel(flg_loc.var);
+for kvar=1:nvar_tmp
+    if flg_loc.(str_do)(kvar)
+        [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},'');
+        flg_loc.var=cat(1,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
+        flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
+        flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});
+        flg_loc.do_cum=cat(1,flg_loc.do_cum,flg_loc.do_cum(kvar));
+        if isfield(flg_loc,'unit')
+            flg_loc.unit=cat(1,flg_loc.unit,sprintf('%s_%s',flg_loc.unit{kvar},str_in));
+        end
     end
 end
 

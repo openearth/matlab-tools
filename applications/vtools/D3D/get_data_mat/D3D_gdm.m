@@ -64,6 +64,7 @@
 % in_plot.sim_ref=1;
 % in_plot.lan='en';
 % in_plot.tag_serie='01';
+% in_plot.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\';
 
 %% display map times
 
@@ -72,10 +73,18 @@
 
 %% grid
 
-% in_plot.fig_grid_01.do=1;
-% in_plot.fig_grid_01.fig_print=0;
-% in_plot.fig_grid_01.fig_visible=1;
-% in_plot.fig_grid_01.axis_equal=0;
+% tag='fig_grid_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).fig_print=1;
+% in_plot.(tag).fig_visible=0;
+% in_plot.(tag).axis_equal=1;
+% in_plot.(tag).do_plot_along_rkm=1;
+% in_plot.(tag).do_rkm_disp=1;
+% in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv');
+% in_plot.(tag).fpath_rkm_disp=fullfile(fpaths.dir_rkm,'rkm.csv');
+% in_plot.(tag).rkm_tol_x=5000;
+% in_plot.(tag).rkm_tol_y=5000;
+% in_plot.(tag).plot_tiles=1;
 
 %% 2DH
 

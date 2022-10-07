@@ -14,6 +14,8 @@
 
 function tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum)
 
+messageOut(NaN,'addapt and call <gdm_time_flow_mor>')
+
 %% PARSE
 
 if isfield(flg_loc,'tim_type')==0
