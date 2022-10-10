@@ -566,7 +566,7 @@ if isfield(Data,'times')
     Data.times(idDel:end) = [];
     if isfield(Data,'val')
         Data.val(idDel:end,:,:) = [];
-    else
+    elseif isfield('Data','vel_x')
         Data.vel_x(idDel:end,:,:) = [];
         Data.vel_y(idDel:end,:,:) = [];
         Data.vel_mag(idDel:end,:,:) = [];
