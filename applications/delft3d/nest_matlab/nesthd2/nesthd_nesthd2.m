@@ -1,3 +1,4 @@
+
 function nesthd_nesthd2 (varargin)
 
 %% nesthd2 : nesting of hydrodynamic models (stage 2)
@@ -13,7 +14,10 @@ Gen_inf    =      {'Nesthd Version 2.1:'                                        
                   'Instead ot treating all support points simultaneously, '                 ;
                   'they are now treated one at the time'                                    ;
                   ' '                                                                       ;
-                  'It was tested extensively,'                                              ;  
+                  'Also added is the genartion of boundary conditions from a D-Hydro'       ;
+                  'z-sigma or z-model'                                                      ;
+                  ' '                                                                       ;
+                  'The adjustments/extensions were tested extensively,'                     ;  
                   'however I cannot guarantee that I overlooked something'                  ;
                   ' '                                                                       ;
                   'If you encounter problems, please do not hesitate to contact me'         ;
@@ -86,8 +90,11 @@ if add_inf.do_hydro
         [bndval,error]      = nesthd_dethyd(fid_adm,bnd,gen_inf,add_inf,files{3},'ipnt',ibnd);
         if error return; end
         
-        %% Generate depth averaged bc from 3D simulation
+        %% Generate depth averaged bc from 3D simulation (not sure if this still works!)
         [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+        
+        %% Interpolate to fixed heights
+        [bndval] = nesthd_interpolate_z_dfm(bndval,gen_inf,add_inf,files{3},'bndType',bnd.DATA(ibnd).bndtype);
         
         %% Write the hydrodynamic boundary conditions to file
         nesthd_wrihyd (files{4},bnd,gen_inf,bndval, add_inf,'ipnt',ibnd);
@@ -113,6 +120,9 @@ if lstci > 0
             
             %% Generate depth averaged bc from 3D simulation
             [bndval,gen_inf] = nesthd_detbc2dh(bndval,bnd,gen_inf,add_inf);
+            
+            %% Interpolate to fixed heights
+            [bndval] = nesthd_interpolate_z_dfm(bndval,gen_inf,add_inf,files{3});
             
             %% Write concentrations to file
             nesthd_wricon(files{5},bnd,gen_inf,bndval,add_inf,'ipnt',ibnd);

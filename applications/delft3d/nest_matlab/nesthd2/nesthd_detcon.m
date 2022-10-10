@@ -1,4 +1,4 @@
-      function [bndval] = detcon(fid_adm,bnd,nfs_inf,add_inf,fileInp,varargin)
+function [bndval] = detcon(fid_adm,bnd,nfs_inf,add_inf,fileInp,varargin)
 
 %***********************************************************************
 % delft hydraulics                         marine and coastal management
@@ -16,7 +16,7 @@
 %% Initialisation
 no_pnt    = length(bnd.DATA);
 notims    = nfs_inf.notims;
-t0        = nfs_inf.times(1); 
+t0        = nfs_inf.times(1);
 tend      = nfs_inf.times(notims);
 kmax      = nfs_inf.kmax;
 lstci     = nfs_inf.lstci;
@@ -51,7 +51,7 @@ for i_conc = 1:lstci
             if isempty(mnnes)
                 error = true;
                 if add_inf.display==1
-                close(h);
+                    close(h);
                 end
                 simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
                 return
@@ -76,63 +76,34 @@ for i_conc = 1:lstci
             conc(isnan(conc)) = 0.;
             
             %% Exclude permanently dry points
-            for i_stat = 1: 4
-                exist_stat(i_stat) = false;
-                for k = 1: kmax
-                    index = find(conc(:,i_stat,k) == conc(1,i_stat,k));
-                    if length(index) ~= notims
-                        exist_stat(i_stat) = true;
-                    end
-                end
+            exist_stat          = nesthd_wetOrDry(fileInp,conc,mnnes);
+            weight(~exist_stat) = 0.;
+            
+            %% In case of Zmodel, replace nodata values with above or below layer
+            if kmax>1 && strcmp(add_inf.profile,'3d-profile')==1 && ~strcmpi(nfs_inf.layer_model,'sigma-model')
+                conc = nesthd_uvcFill (conc,'noValue',0.0000);
             end
-            weight(~exist_stat) = 0;
             
             %% Normalise weights
             wghttot = sum(exist_stat.*weight);
             weight  = weight/wghttot;
             
-            % In case of Zmodel, replace nodata values (-999) with above or below layer
-            if kmax>1 && strcmp(add_inf.profile,'3d-profile')==1
-                for itim = 1: notims
-                    for kk=kmax-1:-1:1
-                        if conc(itim,:,kk)==-999
-                            conc(itim,:,kk)=conc(itim,:,kk+1);
-                        end
-                    end
-                    for kk=2:kmax
-                        if conc(itim,:,kk)==-999
-                            conc(itim,:,kk)=conc(itim,:,kk-1);
-                        end
-                    end
-                end
-            end
-            
-            %% Determine weighed value
+            %% Determine weighed bandary values
             for iwght = 1: 4
                 if exist_stat(iwght)
                     for itim = 1: notims
                         for k = 1: kmax
                             bndval(itim).value(bndNr,k,i_conc) = bndval(itim).value(bndNr,k,i_conc) +  ...
-                                                                 conc(itim,iwght,k)*weight(iwght);
+                                conc(itim,iwght,k)*weight(iwght);
                         end
                     end
                 end
             end
-            
-            %% JV: for 3D dfm z-layer models, the z should also be coupled. No weighing applied 
-            if strcmpi(nfs_inf.layer_model,'z-model') && strcmpi(nfs_inf.from,'dfm') %JV
-                if i_conc == 1 && i_pnt == 1; warning('z-layer model nesting currently only supports nearest neighbour'); end
-                [~,weight_maxid] = max(weight);
-                data_zcen_cen    = EHY_getmodeldata(fileInp,mnnes(weight_maxid),modelType,'varName','Zcen_cen','t0',t0,'tend',t0);
-                bndval(1).zcen_cen(bndNr,:) = squeeze(data_zcen_cen.val); % Use z values from first timestep only
-                for itim = 1: notims
-                    bndval(itim).value(bndNr,:,i_conc) = conc(itim,weight_maxid,:);
-                end
-            end
         end
+        
     end
 end
-    
+
 %% Adjust boundary conditions
 for i_conc = 1: lstci
     if add_inf.genconc(i_conc)
@@ -145,4 +116,11 @@ for i_conc = 1: lstci
             end
         end
     end
+end
+
+%% Store station with largest weight for interpolation to fixed heights later (use station with largest weight as basis)
+if strcmp(nfs_inf.from,'dfm') && (strcmp(nfs_inf.layer_model,'z-sigma-model'    ) || ...
+        strcmp(nfs_inf.layer_model,'z-model'          ) )
+    [~,nrMax]                   = max(weight);
+    bndval(1).statMax           = mnnes{nrMax};
 end
