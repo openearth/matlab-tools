@@ -125,6 +125,7 @@ if size(OPT.z,1) == length(OPT.x) && ...
     OPT.z = OPT.z';
     OPT.x = OPT.x';
     OPT.y = OPT.y';
+    OPT.ne= OPT.ne';
     
     xb_verbose(0,'Swap grid dimensions to be y,x');
 end
@@ -141,6 +142,7 @@ if size(OPT.z,1) == 1
     if mean(OPT.z(1:n)) > mean(OPT.z(n:end))
         OPT.x = -fliplr(OPT.x);
         OPT.z =  fliplr(OPT.z);
+        OPT.ne=  fliplr(OPT.ne);
         
         xb_verbose(0,'Flip x-dimension to start with the most offshore point');
     end
@@ -155,13 +157,13 @@ if OPT.optimize
         end
     end
         
-    [x y z ne alpha xori yori] = xb_grid_optimize( ...
+    [x, y, z, ne, alpha, xori, yori] = xb_grid_optimize( ...
         'x', OPT.x, 'y', OPT.y, 'z', OPT.z, 'ne', OPT.ne, ...
         'xgrid', OPT.xgrid, 'ygrid', OPT.ygrid, 'rotate', OPT.rotate, ...
         'crop', OPT.crop, 'finalise', OPT.finalise, 'posdwn', OPT.posdwn, ...
         'world_coordinates', OPT.world_coordinates,'zdepth', OPT.zdepth);
 else
-    [x y z ne alpha xori yori] = deal(OPT.x, OPT.y, OPT.z, OPT.ne, 0, NaN, NaN);
+    [x, y, z, ne, alpha, xori, yori] = deal(OPT.x, OPT.y, OPT.z, OPT.ne, 0, NaN, NaN);
 end
 
 %% add bathy

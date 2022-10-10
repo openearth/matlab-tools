@@ -128,6 +128,9 @@ function run(obj, event, type)
     S = get(pobj, 'userdata');
     
     fpath = get(findobj(pobj, 'tag', 'rundir_text'), 'string');
+    if exist(fpath,'dir')==0
+        mkdir(fpath);
+    end
     
     xbr = [];
     switch type

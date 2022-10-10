@@ -86,7 +86,7 @@ function [token, cred] = mvbLogin_private(varargin);
 % $Keywords: $
 
 %% Input arguments
-OPT.apiurl='https://api.meetnetvlaamsebanken.be/';
+OPT.apiurl='https://api.meetnetvlaamsebanken.be';
 OPT.username='user@company.org'; % <--Provide your username here.
 OPT.password='P4ssW0rd';         % <--Provide your password here.
 %DO NOT COMMIT THIS FILE IN SVN/GIT!

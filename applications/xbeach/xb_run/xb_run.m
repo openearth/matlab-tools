@@ -73,7 +73,7 @@ function xb = xb_run(xb, varargin)
 OPT = struct( ...
     'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
     'binary', '', ...
-    'copy', true,...
+    'copy', false,...
     'nodes', 1, ...
     'netcdf', false, ...
     'path', pwd ...
@@ -132,9 +132,9 @@ end
 if exist(OPT.binary, 'dir') == 7 && OPT.copy
     copyfile(fullfile(OPT.binary, '*'), fullfile(OPT.path, 'bin'));
 else
-    if isunix()
+    if isunix() && OPT.copy
         copyfile(OPT.binary, fullfile(OPT.path, 'bin', 'xbeach'));
-    elseif OPT.copy
+    elseif ispc && OPT.copy
         copyfile(OPT.binary, fullfile(OPT.path, 'bin', 'xbeach.exe'));
     end
 end
@@ -146,10 +146,11 @@ if isunix()
         error('MPI support is not yet implemented, sorry!'); % TODO
     else
         % start xbeach
-        [r messages] = system(['cd ' OPT.path ' && bin/xbeach']);
+%         [r messages] = system(['cd ' OPT.path ' && bin/xbeach &']);
+        [r, messages] = system(['cd ' OPT.path ' && xbeach &']);
         
         % get current running xbeach instances
-        [r tasklist] = system(['ps | grep -i xbeach$']);
+        [r, tasklist] = system(['ps | grep -i xbeach$']);
         re = regexp(tasklist, '\n(?<pid>\d+)\s+', 'names');
         pids = cellfun(@str2num, {re.pid});
         

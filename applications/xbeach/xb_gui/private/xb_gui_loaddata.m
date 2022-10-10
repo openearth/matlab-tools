@@ -272,7 +272,7 @@ if xs_check(S.model)
         colorbar('peer', cobj);
     end
 
-    set(cobj, 'xlim', [min(min(x)) max(max(x))], 'ylim', [min(min(y)) max(max(y))]);
+    set(cobj, 'xlim', [min(x(:)) max(x(:))], 'ylim', [min(y(:)) max(y(:))]);
 end
 
 %% fill run tab
