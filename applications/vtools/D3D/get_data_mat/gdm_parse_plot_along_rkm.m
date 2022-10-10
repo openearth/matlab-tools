@@ -23,6 +23,10 @@ if flg_loc.do_plot_along_rkm
     else
         if ~exist(flg_loc.fpath_rkm_plot_along,'file')
             error('File with rkm does not exist')
+        else
+            fid=fopen(flg_loc.fpath_rkm_plot_along,'r');
+            flg_loc.rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
+            fclose(fid);
         end
     end
 end

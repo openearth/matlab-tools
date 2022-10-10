@@ -19,6 +19,8 @@
 %   -path_csloc = path to the file to read
 %
 %OUPUT
+%   -csloc_in = raw ascii read of cross-sections-location file; cell(nl,1); nl=number of lines of file
+%   -cs       = structure of cross-sections-location; struct
 %
 %OPTIONAL 
 %   -'file_type' = type of file: 

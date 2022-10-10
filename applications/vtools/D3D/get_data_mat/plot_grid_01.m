@@ -120,14 +120,15 @@ for kvar=1:nvar %variable
     if ~is1d && flg_loc.do_plot_along_rkm==1
                     
         %2DO: move to function for cleaning
-        fid=fopen(flg_loc.fpath_rkm_plot_along,'r');
-        rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
-        fclose(fid);
-
+%         fid=fopen(flg_loc.fpath_rkm_plot_along,'r');
+%         rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
+%         fclose(fid);
+        rkm_file=flg_loc.rkm_file; %maybe a better name...
+        
         fdir_fig_loc=fullfile(fdir_fig,'rkm');
         mkdir_check(fdir_fig_loc,NaN,1,0);
         
-        nrkm=size(rkm_file{1,1},1);
+        nrkm=size(flg_loc.rkm_file{1,1},1);
         for krkm=1:nrkm
 
             in_p.xlims=rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];

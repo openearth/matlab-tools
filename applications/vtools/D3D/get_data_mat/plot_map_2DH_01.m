@@ -229,9 +229,11 @@ for kvar=1:nvar %variable
         %% plot along rkm
         %2DO: move to function for cleaning
         if flg_loc.do_plot_along_rkm==1
-            fid=fopen(flg_loc.fpath_rkm_plot_along,'r');
-            rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
-            fclose(fid);
+            %parsed in <flg_loc>
+%             fid=fopen(flg_loc.fpath_rkm_plot_along,'r');
+%             rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
+%             fclose(fid);
+            rkm_file=flg_loc.rkm_file; %maybe a better name...
             
             nrkm=size(rkm_file{1,1},1);
             for krkm=1:nrkm

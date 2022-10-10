@@ -83,6 +83,10 @@ switch what_do
                 stru_out=D3D_read_polys(fname,varargin{:});
             case '.ini'
                 stru_out=delft3d_io_sed(fname);
+                cstype=parse_ini(stru_out);
+                if ~isnan(cstype)
+                    [~,stru_out]=S3_read_crosssectiondefinitions(fname,'file_type',cstype);
+                end
             case '.grd'
                 OPT.nodatavalue=NaN;
                 stru_out=delft3d_io_grd('read',fname,OPT);
@@ -186,7 +190,30 @@ switch what_do
         stru_in=varargin{1};
         switch ext
             case {'.mdu','.mor','.sed','.ext','.ini'}
-                dflowfm_io_mdu('write',fname,stru_in);
+                if strcmp(ext,'.ini')
+                    cstype=NaN;
+                    if isfield(stru_in,'id') %cross-sectional type of structure. It may not be strong enough.
+                        if isfield(stru_in,'chainage')
+                            cstype=3;
+                        else
+                            cstype=2;
+                        end
+                    end
+                    if ~isnan(cstype)
+                        [fdir,fname]=fileparts(fname);
+                        simdef.D3D.dire_sim=fdir;
+                        switch cstype
+                            case 2 %definition
+                                simdef.csd=stru_in;
+                                D3D_crosssectiondefinitions(simdef,'fname',sprintf('%s.ini',fname));
+                            case 3 %location
+                                simdef.csl=stru_in;
+                                D3D_crosssectionlocation(simdef,'fname',sprintf('%s.ini',fname));
+                        end
+                    end
+                else
+                    dflowfm_io_mdu('write',fname,stru_in);
+                end
             case {'.mdf'}
                 delft3d_io_mdf('write',fname,stru_in.keywords);
             case {'.pli','.ldb','.pol','.pliz'}
@@ -280,4 +307,32 @@ function ext=fileparts_ext(fname)
 
 [~,~,ext]=fileparts(fname);
 
+end %function
+
+%%
+
+function cstype=parse_ini(stru_out)
+
+cstype=NaN;
+if isfield(stru_out,'General') 
+    cstype=1;
+    str_gen='General';
+elseif isfield(stru_out,'general') 
+    cstype=1;
+    str_gen='general';                    
 end
+if ~isnan(cstype)
+    if isfield(stru_out.(str_gen),'fileType') %maybe also non-capital? we need a general way of dealing with it
+        switch stru_out.(str_gen).fileType
+            case 'crossDef'
+                cstype=2;
+            case 'crossLoc'
+                cstype=3;
+        end
+    else
+        cstype=NaN;
+        messageOut(NaN,'It is an ini-file with [general] block, but I cannot find the <fileType>')
+    end
+end
+                
+end %function

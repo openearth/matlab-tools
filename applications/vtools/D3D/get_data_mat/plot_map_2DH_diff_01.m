@@ -43,6 +43,12 @@ if isfield(flg_loc,'do_s_diff')==0
     flg_loc.do_s_diff=0;
 end
 
+if isfield(flg_loc,'var_idx')==0
+    flg_loc.var_idx=cell(1,numel(flg_loc.var));
+end
+var_idx=flg_loc.var_idx;
+
+flg_loc=gdm_parse_plot_along_rkm(flg_loc);
 
 %% PATHS
 
@@ -76,9 +82,8 @@ time_mor_dnum=tim.tim.time_mor_dnum;
 %% DIMENSIONS
 
 nt=numel(time_dnum_ref);
-nclim=size(flg_loc.clims,1);
+nclim=size(flg_loc.clims_diff_s,1);
 nvar=numel(flg_loc.var);
-
 
 if flg_loc.do_s_diff==0
     ndiff=1;
@@ -119,14 +124,17 @@ for kvar=1:nvar %variable
     
     fpath_file=cell(nt,nclim);
     
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str);
+    
     %time 1 for diff
     kt=1;
     time_ref=time_ref_v(kt);
 
-    fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
+%     fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str);
     data_ref_0=load(fpath_mat_tmp,'data');
 
-    data_0=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref_0,fdir_mat,tag,var_str,gridInfo,gridInfo_ref);
+    data_0=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref_0,fdir_mat,tag,var_str,gridInfo,gridInfo_ref,layer,var_idx{kvar});
 
     for kt=kt_v
         ktc=ktc+1;
@@ -134,10 +142,10 @@ for kvar=1:nvar %variable
         time_ref=time_ref_v(kt);
         in_p.tim=time_ref;
 
-        fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str);
+        fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
         data_ref=load(fpath_mat_tmp,'data');
         
-        data=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref);
+        data=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref,layer,var_idx{kvar});
         
         %the output from <gdm_match_times_diff_val_2D> is already the difference!
 %         data_s_diff=data-data_ref.data; %difference between runs
@@ -149,7 +157,8 @@ for kvar=1:nvar %variable
         data_st_diff_struct.data=data_st_diff; %to pass to function
         
         for kdiff=1:ndiff
-    
+            
+            kxlim=1; %2DO make loop
             for kclim=1:nclim
                 
                 [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data_s_diff,data_st_diff_struct,'clims_diff_s','clims_diff_st',var_str);
@@ -166,7 +175,7 @@ for kvar=1:nvar %variable
 
                 in_p.is_diff=1;
 
-                fname_noext=fig_name(fdir_fig_var,tag_fig,time_dnum(kt),runid,runid_ref,kclim,var_str,tag_ref);
+                fname_noext=fig_name(fdir_fig_var,tag_fig,time_dnum(kt),runid,runid_ref,kclim,var_str,tag_ref,num2str(var_idx{kvar}),kxlim);
                 fpath_file{kt,kclim}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                 in_p.fname=fname_noext;
@@ -176,7 +185,7 @@ for kvar=1:nvar %variable
 
                 if flg_loc.do_3D
 
-                    fname_noext=fig_name(fdir_fig_var_3d,tag_fig,time_dnum(kt),runid,runid_ref,kclim,var_str,tag_ref_3D);
+                    fname_noext=fig_name(fdir_fig_var_3d,tag_fig,time_dnum(kt),runid,runid_ref,kclim,var_str,tag_ref_3D,num2str(var_idx{kvar}),kxlim);
                     bol_nan=isnan(in_p.gridInfo.Xcen);
                     F=scatteredInterpolant(in_p.gridInfo.Xcen(~bol_nan),in_p.gridInfo.Ycen(~bol_nan),data(~bol_nan));
                     vz=F(in_p.gridInfo.Xcor,in_p.gridInfo.Ycor);
@@ -194,9 +203,44 @@ for kvar=1:nvar %variable
             end %kclim
         end %kdiff
         
-        %% diff
+        %% plot along rkm
+        %2DO: move to function for cleaning
+        if flg_loc.do_plot_along_rkm==1
+            rkm_file=flg_loc.rkm_file; %maybe a better name...
+            
+            nrkm=size(rkm_file{1,1},1);
+            for krkm=1:nrkm
+                
+                in_p.xlims=rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
+                in_p.ylims=rkm_file{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
+
+                for kclim=1:nclim
+                    
+                    for kdiff=1:ndiff
+
+                        [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,'clims_diff_s','clims_diff_st',var_str);
+                        in_p.is_diff=1; %it is difference between simulations!
+
+                        fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),'rkm',datestr(time_dnum(kt),'yyyymmddHHMMSS'),tag_ref);
+                        mkdir_check(fdir_fig_var,NaN,1,0);
+                        
+                        fname_noext=fig_name(fdir_fig_var,sprintf('%s_rkm',tag_fig),time_dnum(kt),runid,runid_ref,kclim,var_str,tag_ref,num2str(var_idx{kvar}),krkm);
+                        fpath_file{kt,kclim,kdiff,kxlim,1}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                        in_p.fname=fname_noext;
+                        in_p.do_3D=0; %maybe also add 3D?
+                        
+
+                        fig_map_sal_01(in_p);
+                    end %kdiff
+                end %kclim
+            end %krkm
+        end %do
+        
+        %% disp
         
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag_fig,ktc/nt*100));
+        
     end %kt
     
     %% movies
@@ -214,15 +258,15 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,tnum,runid,runid_ref,kclim,var_str,tag_ref_3D)
+function fpath_fig=fig_name(fdir_fig,tag,tnum,runid,runid_ref,kclim,var_str,tag_ref,var_idx,kxlim)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s-%s_%s_%s_%s_clim_%02d',tag,runid,runid_ref,var_str,tag_ref_3D,datestr(tnum,'yyyymmddHHMMSS'),kclim));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s-%s_%s%s_%s_%s_clim_%02d_xlim_%02d',tag,runid,runid_ref,var_str,var_idx,tag_ref,datestr(tnum,'yyyymmddHHMMSS'),kclim,kxlim));
 
 end %function
 
 %%
 
-function val=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref)
+function val=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref,layer,var_idx_loc)
 
 %% PARSE
 
@@ -245,7 +289,7 @@ if ~flg_found
 
     val=NaN(size_data);
 else
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt_loc),'var',var_str);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt_loc),'var',var_str,'var_idx',var_idx_loc,'layer',layer);
     data=load(fpath_mat_tmp,'data');
 
     val=D3D_diff_val(data.data,data_ref.data,gridInfo,gridInfo_ref);
