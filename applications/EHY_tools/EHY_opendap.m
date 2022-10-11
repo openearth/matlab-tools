@@ -32,9 +32,12 @@ end
 %% Retreive list of files available on the opendap server
 [path,~,~] = fileparts(mfilename('fullpath'));
 
+D = dir([path filesep 'list_opendap.mat']);
+if ~isempty(D) && D.datenum < datenum(2022,10,10); delete([path filesep 'list_opendap.mat']); end
 if ~exist([path filesep 'list_opendap.mat'],'file')
 %    url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml';
-    url = 'p:\z4821-trapjeslijn\wxf211\waterbase\local_2\water_base_20180918\';
+    warning('List of OPENDAP waterbase files is out fo date. Rebuiding the list');
+    url = '\\dfs-trusted\dfs\openearth-opendap-opendap\thredds\rijkswaterstaat\waterbase\';
     list = opendap_catalog(url,'disp','','maxlevel',4);
     save([path filesep 'list_opendap.mat'],'list');
 else
@@ -67,7 +70,7 @@ if ~isempty(OPT.Parameter)
         %% No station name specified, return list of stations
         i_stat = 1;
         for i_data = 1: length(list_stat)
-            i_sep = strfind(list_stat{i_data},'/');
+            i_sep = strfind(list_stat{i_data},'\');
             name_tmp = list_stat{i_data}(i_sep(end) + 1:end-3);
             i_id     = strfind(name_tmp,'-');
             name_tmp = name_tmp(i_id+1:end);
