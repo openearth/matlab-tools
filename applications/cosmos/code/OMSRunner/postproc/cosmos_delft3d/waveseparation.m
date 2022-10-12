@@ -4,7 +4,10 @@ function [Bulk,Separation]=waveseparation(freqs,dirs,energy,factor)
 
 % Organize directional bin
 % dirs(dirs<0)=dirs(dirs<0)+360;
-dirs=sort(dirs);
+% dirs=sort(dirs);
+
+[dirs,isort]=sort(dirs);
+energy=energy(:,isort);
 
 % dirs(dirs>90)=dirs(dirs>90)-90;
 % dirs(dirs<90)=90-dirs(dirs<90);
