@@ -51,6 +51,7 @@ function xb = xb_generate_bathy(varargin)
 %
 %   See also xb_grid_xgrid, xb_grid_ygrid, xb_generate_model
 %
+
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -125,7 +126,9 @@ if size(OPT.z,1) == length(OPT.x) && ...
     OPT.z = OPT.z';
     OPT.x = OPT.x';
     OPT.y = OPT.y';
-    OPT.ne= OPT.ne';
+    if ~isempty(OPT.ne); %Non-erodible layer may not be defined, but if it is, it should be treated like x, y and z.
+        OPT.ne= OPT.ne';
+    end
     
     xb_verbose(0,'Swap grid dimensions to be y,x');
 end
@@ -142,7 +145,10 @@ if size(OPT.z,1) == 1
     if mean(OPT.z(1:n)) > mean(OPT.z(n:end))
         OPT.x = -fliplr(OPT.x);
         OPT.z =  fliplr(OPT.z);
-        OPT.ne=  fliplr(OPT.ne);
+        if ~isempty(OPT.ne);
+            %Non-erodible layer must be flipped along with grid.
+            OPT.ne=fliplr(OPT.ne);
+        end
         
         xb_verbose(0,'Flip x-dimension to start with the most offshore point');
     end
@@ -156,7 +162,7 @@ if OPT.optimize
             OPT.crop = 'select';
         end
     end
-        
+    
     [x, y, z, ne, alpha, xori, yori] = xb_grid_optimize( ...
         'x', OPT.x, 'y', OPT.y, 'z', OPT.z, 'ne', OPT.ne, ...
         'xgrid', OPT.xgrid, 'ygrid', OPT.ygrid, 'rotate', OPT.rotate, ...
