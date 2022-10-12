@@ -49,6 +49,12 @@
       <element>toolbox.modelmaker.sfincs.quickmode.xml</element>
     </tab>
     <tab>
+      <formodel>hurrywave</formodel>
+      <tabstring>Quick Mode</tabstring>
+      <callback>ddb_ModelMakerToolbox_hurrywave_quickMode</callback>
+      <element>toolbox.modelmaker.hurrywave.quickmode.xml</element>
+    </tab>
+    <tab>
       <formodel>sfincs</formodel>
       <tabstring>Quadtree</tabstring>
       <callback>ddb_ModelMakerToolbox_sfincs_buq</callback>
@@ -67,6 +73,7 @@
       <formodel>ww3</formodel>
       <formodel>xbeach</formodel>
       <formodel>sfincs</formodel>
+      <formodel>hurrywave</formodel>
       <tabstring>Bathymetry</tabstring>
       <callback>ddb_ModelMakerToolbox_bathymetry</callback>
       <enable>1</enable>
@@ -146,5 +153,17 @@
       <callback>ddb_ModelMakerToolbox_shorelines</callback>
       <element>toolbox.modelmaker.shorelines.xml</element>
     </tab>    
+    <tab>
+      <formodel>hurrywave</formodel>
+      <tabstring>Mask active grid</tabstring>
+      <callback>ddb_ModelMakerToolbox_hurrywave_mask</callback>
+      <element>toolbox.modelmaker.hurrywave.maskactivegrid.xml</element>
+    </tab>    
+    <tab>
+      <formodel>hurrywave</formodel>
+      <tabstring>Mask boundary cells</tabstring>
+      <callback>ddb_ModelMakerToolbox_hurrywave_mask</callback>
+      <element>toolbox.modelmaker.hurrywave.maskboundarycells.xml</element>
+    </tab>      
   </element>
 </root>

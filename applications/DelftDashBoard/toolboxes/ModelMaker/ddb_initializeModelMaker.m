@@ -294,3 +294,47 @@ handles.toolbox.modelmaker.sfincs.buq.refinement_level_strings={''};
 handles.toolbox.modelmaker.sfincs.buq.refinement_level_values=[];
 handles.toolbox.modelmaker.sfincs.buq.active_refinement_level=1;
 
+%% HurryWave
+handles.toolbox.modelmaker.hurrywave.zmin=-2;
+handles.toolbox.modelmaker.hurrywave.zmax=10;
+handles.toolbox.modelmaker.hurrywave.zlev_polygon=5;
+handles.toolbox.modelmaker.hurrywave.include_xy=[];
+handles.toolbox.modelmaker.hurrywave.exclude_xy=[];
+handles.toolbox.modelmaker.hurrywave.boundary_xy=[];
+
+handles.toolbox.modelmaker.hurrywave.mask.nrincludepolygons=0;
+handles.toolbox.modelmaker.hurrywave.mask.includepolygonnames={''};
+handles.toolbox.modelmaker.hurrywave.mask.activeincludepolygon=1;
+handles.toolbox.modelmaker.hurrywave.mask.includepolygon(1).length=0;
+handles.toolbox.modelmaker.hurrywave.mask.includepolygon(1).x=[];
+handles.toolbox.modelmaker.hurrywave.mask.includepolygon(1).y=[];
+handles.toolbox.modelmaker.hurrywave.mask.includepolygonfile='';
+
+handles.toolbox.modelmaker.hurrywave.mask.nrexcludepolygons=0;
+handles.toolbox.modelmaker.hurrywave.mask.excludepolygonnames={''};
+handles.toolbox.modelmaker.hurrywave.mask.activeexcludepolygon=1;
+handles.toolbox.modelmaker.hurrywave.mask.excludepolygon(1).length=0;
+handles.toolbox.modelmaker.hurrywave.mask.excludepolygon(1).x=[];
+handles.toolbox.modelmaker.hurrywave.mask.excludepolygon(1).y=[];
+handles.toolbox.modelmaker.hurrywave.mask.excludepolygonfile='';
+
+handles.toolbox.modelmaker.hurrywave.mask.nrboundarypolygons=0;
+handles.toolbox.modelmaker.hurrywave.mask.boundarypolygonnames={''};
+handles.toolbox.modelmaker.hurrywave.mask.activeboundarypolygon=1;
+handles.toolbox.modelmaker.hurrywave.mask.boundarypolygon(1).length=0;
+handles.toolbox.modelmaker.hurrywave.mask.boundarypolygon(1).x=[];
+handles.toolbox.modelmaker.hurrywave.mask.boundarypolygon(1).y=[];
+handles.toolbox.modelmaker.hurrywave.mask.boundarypolygonfile='';
+
+% options for hurrywave_make_mask_advanced
+handles.toolbox.modelmaker.hurrywave.mask.activegrid_options = {'current mask','elevation','include polygon','exclude polygon'};
+handles.toolbox.modelmaker.hurrywave.mask.nr_activegrid_options = 1;
+handles.toolbox.modelmaker.hurrywave.mask.activegrid_index = 1;
+handles.toolbox.modelmaker.hurrywave.mask.activegrid_option = 1;
+handles.toolbox.modelmaker.hurrywave.mask.activegrid_action={'current mask'};
+
+handles.toolbox.modelmaker.hurrywave.mask.boundarycells_options = {'waterlevel boundary','outflow boundary','closed boundary','elevation'};
+handles.toolbox.modelmaker.hurrywave.mask.nr_boundarycells_options = 0;
+handles.toolbox.modelmaker.hurrywave.mask.boundarycells_index = 1;
+handles.toolbox.modelmaker.hurrywave.mask.boundarycells_option = 1;
+handles.toolbox.modelmaker.hurrywave.mask.boundarycells_action={};
