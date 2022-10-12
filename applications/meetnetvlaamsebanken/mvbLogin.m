@@ -95,7 +95,7 @@ end
 OPT = setproperty(OPT, varargin);
 
 %% Remove password from command window
-fprintf(1,[repmat('\b',1,1+11+length(OPT.username)+3+11+length(OPT.password)+3),'\n']);
+fprintf(1,[repmat('\b',1,3+11+length(OPT.username)+3+11+length(OPT.password)+3),'\n']);
 warning('Remove your password from the command history!')
 
 %% Login to API
@@ -116,7 +116,7 @@ if isempty(response.Customer);
     %If the response is a struct with empty fields, login has failed.
     fprintf(2,'Login failed, try again \n');
 elseif response.Customer.Login==OPT.username;
-    fprintf(1,'Login successful! \n');
+    fprintf(1,'Login successful! \nValid till: %s\n',datestr(datenum(response.Timestamp,'yyyy-mm-ddTHH:MM:SS')+1/24));
 end
 
 if nargout==2;
