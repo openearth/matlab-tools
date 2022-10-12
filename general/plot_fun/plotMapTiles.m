@@ -29,7 +29,8 @@ function [tiles,ax,logs]=plotMapTiles(varargin)
 %       tzl: Tile Zoom Level, from 0 (continent) to 19 (house). Default [10]
 %       save_tiles: Cache tiles locally, default [true]
 %       path_save: path to cache tiles to, default ['./earth_tiles']
-%       han_ax: handle to the axis. If NaN, it creates a new figure
+%       han_ax: handle to the axis. If [], it creates a new figure
+%       z_level: altitude for tile surface.
 %
 %   Output:
 %       tiles: cell array with map tiles
@@ -99,7 +100,7 @@ OPT.save_tiles=true;
 OPT.path_save=fullfile(pwd,'earth_tiles');
 OPT.path_tiles=fullfile(pwd,'earth_tiles'); 
 OPT.map_type=2;%map type
-OPT.han_ax=NaN;
+OPT.han_ax=[];
 OPT.z_tiles=0;
 
 %1=satellite;
@@ -120,12 +121,20 @@ end
 OPT = setproperty(OPT,varargin);
 
 %% PATHS
+if exist(OPT.path_tiles,'dir') ~= 7;
+    mkdir(OPT.path_tiles);
+end
 addpath(OPT.path_tiles)
 
 %% CONVERT COORDINATES
 % Convert input coordinates to WGS'84.
 [xRD,yRD] = ndgrid(OPT.xlim,OPT.ylim);
-[lon_deg,lat_deg,logs]=convertCoordinates(xRD,yRD,'CS1.code',OPT.epsg_in,'CS2.code',4326);
+if OPT.epsg_in == 4326 %WGS'84, no transformation needed
+    lon_deg = xRD;
+    lat_deg = yRD;
+else
+    [lon_deg,lat_deg,logs]=convertCoordinates(xRD,yRD,'CS1.code',OPT.epsg_in,'CS2.code',4326);
+end
 [xtile,ytile] = deg2osm(OPT.tzl,lat_deg,lon_deg);
 
 %% Determine Tiles
@@ -150,7 +159,7 @@ for kx=1:nx
         end
         
         [tx, ty] = ndgrid([txl:ti:txl+1],[tyl:ti:tyl+1]); %#ok<NBRAK>
-        [lat_deg,lon_deg] = osm2deg(OPT.tzl,tx,ty);
+        [lat_deg_tile,lon_deg_tile] = osm2deg(OPT.tzl,tx,ty);
         
         switch OPT.map_type
             case 1
@@ -160,14 +169,21 @@ for kx=1:nx
                 source = sprintf([baseserver,'/%i/%i'],OPT.tzl,txl);
                 sourcecache = sprintf(['%s/%s/%i.',baseformat],OPT.path_tiles,source,tyl);
                 httptilename = sprintf('https://%s/%i%s',source,tyl,basetoken);
-            case 2
+            case {2, 'osm', 'hum'}
                 %check possible ones here: https://wiki.openstreetmap.org/wiki/Tile_servers
-%                 baseserver = 'a.tile.openstreetmap.org'; 
-                baseserver = 'a.tile.openstreetmap.de'; 
+                %Format: http://[a-c].openstreetmap.org/zoom/x/y.png
+%                 baseserver = 'a.tile.openstreetmap.org';
+                switch OPT.map_type;
+                    case {2,'osm'}
+                        baseserver = 'a.tile.openstreetmap.de'; 
+                    case 'hum'
+                        baseserver = 'a.tile.openstreetmap.fr/hot/'; 
+                end
                 baseformat = 'png';
                 source = sprintf([baseserver,'/%i/%i'],OPT.tzl,txl);
                 sourcecache = sprintf(['%s/%s/%i.',baseformat],OPT.path_tiles,source,tyl);
-                httptilename = sprintf(['http://%s/%i.',baseformat],source,tyl);
+                httptilename = sprintf(['https://%s/%i.',baseformat],source,tyl);
+
             case {3,4,5,6,7,8,9}
                 %For Google Maps have a look here: https://stackoverflow.com/questions/23017766/google-maps-tile-url-for-hybrid-maptype-tiles
                 switch OPT.map_type
@@ -193,10 +209,10 @@ for kx=1:nx
                         str_type='r'; %r = altered roadmap
                         baseformat = 'png';
                 end
-                baseserver = sprintf('mt1.google.com/vt/lyrs=%s',str_type); 
-                source = sprintf([baseserver,'&x=%d&y=%d&z=%d'],txl,tyl,OPT.tzl); %http://mt1.google.com/vt/lyrs=m&x=1325&y=3143&z=13
+                baseserver = sprintf('mt.google.com/vt/lyrs=%s',str_type); 
+                source = sprintf([baseserver,'&x=%d&y=%d&z=%d'],txl,tyl,OPT.tzl); %http://mt.google.com/vt/lyrs=m&x=1325&y=3143&z=13
                 sourcecache = sprintf('%s/%s/%i/%i/%i.%s',OPT.path_tiles,baseserver,OPT.tzl,txl,tyl,baseformat);
-                httptilename = sprintf('http://%s',source);
+                httptilename = sprintf('https://%s',source);
         end
 
         if exist(sourcecache,'file')==2
@@ -214,7 +230,7 @@ for kx=1:nx
             switch OPT.map_type %True colour or map
                 case {1,3,5,6,8} %True colour sattellite image
                     imwrite(A,sprintf('%s',sourcecache));
-                case {2,4,7,9} %Map
+                case {2,4,7,9,'osm','hum'} %Map
                     imwrite(A,map,sprintf('%s',sourcecache));
             end
         end
@@ -222,16 +238,21 @@ for kx=1:nx
         switch OPT.map_type
             case {1,3,5,6,8}
                 
-            case {2,4,7,9}
+            case {2,4,7,9,'osm','hum'}
                 A = ind2rgb(A,map);                
         end
             
         %satellite and openstreetmap
         Im = permute(A,[2 1 3]); 
-
-        [xRD,yRD,logs]=convertCoordinates(lon_deg,lat_deg,'CS1.code',4326,'CS2.code',OPT.epsg_out);
-        tiles{kx,ky,1}=xRD;
-        tiles{kx,ky,2}=yRD;
+        
+        if OPT.epsg_out == 4326; %WGS'84, no transformation needed.
+            xRD_tile = lon_deg_tile;
+            yRD_tile = lat_deg_tile;
+        else
+            [xRD_tile,yRD_tile,logs]=convertCoordinates(lon_deg_tile,lat_deg_tile,'CS1.code',4326,'CS2.code',OPT.epsg_out);
+        end
+        tiles{kx,ky,1}=xRD_tile;
+        tiles{kx,ky,2}=yRD_tile;
         tiles{kx,ky,3}=Im;
         
         %display
@@ -242,7 +263,8 @@ end
 
 %% PLOT
 [nx,ny,~]=size(tiles);
-if ~isaxes(OPT.han_ax)
+
+if isempty(OPT.han_ax) || ~isaxes(OPT.han_ax)
     %If axis handle is invalid, create a new figure
     figure;
     hold on;
@@ -251,6 +273,8 @@ if ~isaxes(OPT.han_ax)
 else
     %Plot to axis handle
     ax=OPT.han_ax;
+    hold on;
+    axis equal;
 end
 
 for kx=1:nx
@@ -283,13 +307,18 @@ end
 end
 
 function [xtile,ytile] = deg2osm(zoom,lat_deg,lon_deg)
+%DEG2OSM Determines OSM tile numbers from latitude and longitude.
+%Works for Google Maps too.
+%https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
     n = 2^zoom;
     xtile = n * ((lon_deg + 180) / 360);
     ytile = n/ 2 * (1 - (log(tan(lat_deg*pi/180) + sec(lat_deg*pi/180)) / pi)) ;
 end
 
 function [lat_deg,lon_deg] = osm2deg(zoom,xtile,ytile)
-    % OSM documentation
+%OSM2DEG Determines NW corner latitude and longitude from OSM tile number.
+%Works for Google Maps too.
+%https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
     n = 2^zoom;
     lon_deg = xtile ./ n * 360.0 - 180.0;
     lat_rad = atan(sinh(pi * (1 - 2 * ytile ./ n)));
