@@ -92,7 +92,7 @@ urlstr = getMeteoUrl(meteosource,cycledate,cyclehour,'forecasthour',forecasthour
 
 switch lower(meteosource)
     case{'gfs1p0','gfs0p5','gfs0p25','gfs0p25_1hr','ncep_gfs_analysis','ncepncar_reanalysis','ncepncar_reanalysis_2','ncep_gfs_analysis_precip','nam_hawaiinest', ...
-            'gfs_anl4'}
+            'gfs_anl4','gfs_anl_0p50'}
         xlim=mod(xlim,360);
 end
 
@@ -125,7 +125,8 @@ try
 %            tminstr=ncreadatt(urlstr,'time','minimum');
 %            tmaxstr=ncreadatt(urlstr,'time','maximum');
 try
-            tminstr=nc_attget(urlstr,'time','minimum');
+%            tminstr=nc_attget(urlstr,'time','minimum');
+            tminstr=ncreadatt(urlstr,'time','minimum');
             tmaxstr=nc_attget(urlstr,'time','maximum');
             tminstr=deblank(strrep(tminstr,'z',''));
             tmaxstr=deblank(strrep(tmaxstr,'z',''));
@@ -148,7 +149,8 @@ end
     end
     
 %    timdim=nc_info(urlstr,'time');
-    tim=nc_varget(urlstr,'time');
+%    tim=nc_varget(urlstr,'time');
+    tim=ncread(urlstr,'time');
     nt=length(tim);
 %    try
 %        nt=timdim.Length;
