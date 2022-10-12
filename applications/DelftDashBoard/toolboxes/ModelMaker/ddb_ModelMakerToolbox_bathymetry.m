@@ -58,10 +58,10 @@ if isempty(varargin)
     ddb_refreshScreen;
     setHandles(handles);
     ddb_plotModelMaker('activate');
-    if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
-        setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
-            'Right-click and drag RED markers to rotate box)', 'Note: make sure origin is offshore and x direction is cross-shore'});
-    end
+%     if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
+%         setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
+%             'Right-click and drag RED markers to rotate box)', 'Note: make sure origin is offshore and x direction is cross-shore'});
+%     end
 else
     
     %Options selected
@@ -240,6 +240,8 @@ switch lower(handles.activeModel.name)
         handles=ddb_ModelMakerToolbox_ww3_generate_bathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'sfincs'}
         handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);        
+    case{'hurrywave'}
+        handles=ddb_ModelMakerToolbox_hurrywave_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);        
 end
 
 setHandles(handles);
