@@ -109,6 +109,11 @@ if plt.colorbar.type==1
         else
             for i=1:plt.colorbar.tickincrement:size(contours,2)
                 ylabls{i}=[num2str(contours(i)) ' ' plt.colorbar.unit];
+                if contours(i)<0
+                    ylabls{i}=['10^-^' num2str(-contours(i))];
+                else
+                    ylabls{i}=['10^' num2str(contours(i))];
+                end
             end
         end
         set(gca,'yticklabel',ylabls);
@@ -174,7 +179,7 @@ if plt.colorbar.type==1
         end
         
         ipos=0;
-        for icol=2:nocol-1;
+        for icol=2:nocol-1
             ipos=ipos+1;
             col=clmap(icol,:);
             x(1)=(ipos-1)/(nocol-2);

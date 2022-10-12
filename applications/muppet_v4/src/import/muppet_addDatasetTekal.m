@@ -164,13 +164,31 @@ switch tp
     case{'xy'}
         % x and y
         npar=ncols;
-        dataset.selectxcoordinate=1;   
-        if isempty(dataset.xcoordinate)
+        if npar==2
+            dataset.selectxcoordinate=1;
+            if isempty(dataset.xcoordinate)
+                dataset.xcoordinate=columnlabels{1};
+            end
+            if isempty(dataset.parameter)
+                dataset.parameter=columnlabels{2};
+            end
+        else
+            dataset.selectxcoordinate=1;
+            dataset.selectycoordinate=1;
+            if isempty(dataset.xcoordinate)
             dataset.xcoordinate=columnlabels{1};
+            end
+            if isempty(dataset.ycoordinate)
+            dataset.ycoordinate=columnlabels{2};
+            end
+            if isempty(dataset.parameter)
+            dataset.parameter=columnlabels{3};
+            end
         end
-        if isempty(dataset.parameter)
-            dataset.parameter=columnlabels{2};
-        end
+%        if isempty(dataset.parameter)
+%            dataset.parameter=columnlabels{2};
+%        end
+        
         for ipar=1:npar
             par=[];
             par=muppet_setDefaultParameterProperties(par);
@@ -323,15 +341,44 @@ switch dataset.tekaltype
         end
     case{'xy'}
         icolx=strmatch(lower(dataset.xcoordinate),lower(dataset.columnlabels),'exact');
-%        icolx=1;
-        icoly=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
-        parameter.x=fid.Field(iblock).Data(:,icolx);
-        parameter.y=fid.Field(iblock).Data(:,icoly);
-        parameter.x(parameter.x==999.999)=NaN;
-        parameter.x(parameter.x==-999)=NaN;
-        parameter.y(parameter.y==999.999)=NaN;
-        parameter.y(parameter.y==-999)=NaN;
-        dataset.type='xy1dxy';
+        icoly=strmatch(lower(dataset.ycoordinate),lower(dataset.columnlabels),'exact');
+        if isempty(icoly)
+            
+            % This is an xy dataset
+            icoly=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
+            
+            parameter.x=fid.Field(iblock).Data(:,icolx);
+            parameter.y=fid.Field(iblock).Data(:,icoly);
+            parameter.x(parameter.x==999.999)=NaN;
+            parameter.x(parameter.x==-999)=NaN;
+            parameter.y(parameter.y==999.999)=NaN;
+            parameter.y(parameter.y==-999)=NaN;
+            dataset.type='xy1dxy';
+            
+        else
+            
+            % This is an xyz dataset
+            icolz=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
+            
+            parameter.x=fid.Field(iblock).Data(:,icolx);
+            parameter.y=fid.Field(iblock).Data(:,icoly);
+            parameter.val=fid.Field(iblock).Data(:,icolz);
+            parameter.x(parameter.x==999.999)=NaN;
+            parameter.x(parameter.x==-999)=NaN;
+            parameter.y(parameter.y==999.999)=NaN;
+            parameter.y(parameter.y==-999)=NaN;
+            parameter.val(parameter.val==999.999)=NaN;
+            parameter.val(parameter.val==-999)=NaN;
+            dataset.type='scalar1dxyz';
+            
+        end
+%         parameter.x=fid.Field(iblock).Data(:,icolx);
+%         parameter.y=fid.Field(iblock).Data(:,icoly);
+%         parameter.x(parameter.x==999.999)=NaN;
+%         parameter.x(parameter.x==-999)=NaN;
+%         parameter.y(parameter.y==999.999)=NaN;
+%         parameter.y(parameter.y==-999)=NaN;
+%         dataset.type='xy1dxy';
     case{'histogram'}
         icol=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
         parameter.x=1:size(fid.Field(iblock).Data{1},1);

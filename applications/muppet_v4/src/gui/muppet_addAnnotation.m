@@ -27,10 +27,14 @@ set(an,'ButtonDownFcn',{@muppet_UIEditAnnotationOptions});
 setappdata(an,'style',ann.plotroutine);
 
 pos0=ann.position;
+
+
 ann.position(1)=pos0(1)/fig.width;
 ann.position(2)=pos0(2)/fig.height;
 ann.position(3)=pos0(3)/fig.width;
 ann.position(4)=pos0(4)/fig.height;
+
+
 
 switch lower(ann.plotroutine)
     case 'text box'
@@ -55,6 +59,7 @@ switch lower(ann.plotroutine)
         end
         set(an,'linewidth',ann.linewidth);
         set(an,'linestyle',ann.linestyle);
+        set(an,'FitBoxToText','on');
     case 'single line'
         set(an,'position',ann.position);
         set(an,'color',colorlist('getrgb','color',ann.linecolor));

@@ -30,6 +30,15 @@
         <name>decimals</name>
       </plotoption>
       <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
         <name>marker</name>
       </plotoption>
       <plotoption>
@@ -41,8 +50,59 @@
       <plotoption>
         <name>markerfacecolor</name>
       </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
       <elementgroup>samples</elementgroup>
       <elementgroup>markerautomatic</elementgroup>
+      <elementgroup>legendtext</elementgroup>
+    </plotroutine>
+    <plotroutine>
+      <name>StatsText</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextrmse</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextrmsedecimals</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextr2</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextr2decimals</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextstdev</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextstdevdecimals</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextbias</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextbiasdecimals</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextposition</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextfontname</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextfontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextfontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>statstextfontweight</name>
+      </plotoption>
+      <elementgroup>statstext</elementgroup>
     </plotroutine>
   </plottype>
 </root>

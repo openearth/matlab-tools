@@ -1891,4 +1891,34 @@
       </check>
     </dependency>
   </subplotoption>
+  <subplotoption>
+    <name>xscale</name>
+    <type>string</type>
+    <keyword>XScale</keyword>
+    <variable>xscale</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>xscale</variable>
+        <operator>ne</operator>
+        <value>linear</value>
+      </check>
+    </dependency>
+  </subplotoption>
+  <subplotoption>
+    <name>yscale</name>
+    <type>string</type>
+    <keyword>YScale</keyword>
+    <variable>yscale</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>yscale</variable>
+        <operator>ne</operator>
+        <value>linear</value>
+      </check>
+    </dependency>
+  </subplotoption>
 </root>

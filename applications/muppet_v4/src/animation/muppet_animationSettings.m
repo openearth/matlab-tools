@@ -43,8 +43,8 @@ if isempty(varargin)
         % Check if avi settings have been set
         if strcmpi(handles.animationsettings.format,'avi')
             if isempty(handles.animationsettings.avioptions)
-                aviops=avi('options');
-                handles.animationsettings.avioptions=aviops;
+%                 aviops=avi('options');
+%                 handles.animationsettings.avioptions=aviops;
             end
         end
         

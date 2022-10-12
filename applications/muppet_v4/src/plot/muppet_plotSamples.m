@@ -23,7 +23,7 @@ if ~strcmpi(opt.marker,'none') && strcmpi(opt.markerfacecolor,'automatic')
 end
 
 z1=zeros(size(x));
-z1=z1+3000;
+z1=z1+0;
 
 %% Plot samples
 h=[];
@@ -42,6 +42,11 @@ if ~strcmpi(opt.marker,'none')
     end
     h=s(1);
     set(s,'Clipping','on');
+
+    clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
+%    caxis(cax);
+    colormap(clmap);
+    
 end
 
 %% Add text

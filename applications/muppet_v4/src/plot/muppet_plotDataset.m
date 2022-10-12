@@ -198,6 +198,8 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         muppet_addAnnotation(handles.figures(ifig).figure,ifig,isub,id);
     case {'tidal ellipse'}
         h=muppet_plotTidalEllipse(handles,ifig,isub,id);
+    case {'statstext'}
+        h=muppet_plotStatsText(handles,ifig,isub,id);
 end
 
 %% Add color bar for dataset (in addition to colorbar for subplot!)

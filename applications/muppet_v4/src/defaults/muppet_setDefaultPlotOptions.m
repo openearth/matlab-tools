@@ -207,9 +207,34 @@ opt.head2length=6;
 opt.box=1;
 opt.backgroundcolor='white';
 
+% Stats text
+opt.statstext.position='upper-left';
+opt.statstext.rmse.include=0;
+opt.statstext.rmse.nrdecimals=1;
+opt.statstext.r2.include=0;
+opt.statstext.r2.nrdecimals=1;
+opt.statstext.stdev.include=0;
+opt.statstext.stdev.nrdecimals=1;
+opt.statstext.font.name='Helvetica';
+opt.statstext.font.size=6;
+opt.statstext.font.angle='normal';
+opt.statstext.font.weight='normal';
+opt.statstext.font.color='black';
+
 % Transparency
 opt.edgealpha=1;
 opt.facealpha=1;
+
+% Line text
+opt.addlinetext=0;
+opt.linetext.x=0;
+opt.linetext.dy=0.03;
+opt.linetext.string='';
+opt.linetext.font.name='Helvetica';
+opt.linetext.font.size=6;
+opt.linetext.font.angle='normal';
+opt.linetext.font.weight='normal';
+opt.linetext.font.color='black';
 
 %% Now overwrite with defaults from xml file
 h=getHandles;
@@ -241,3 +266,4 @@ for ii=1:n
         opt.changed=0;        
     end
 end
+

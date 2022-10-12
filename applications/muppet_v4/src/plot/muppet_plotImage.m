@@ -25,14 +25,17 @@ else
     data.c(:,:,1)=flipud(data.c(:,:,1));
     data.c(:,:,2)=flipud(data.c(:,:,2));
     data.c(:,:,3)=flipud(data.c(:,:,3));
+    data.alpha=flipud(data.alpha);
     if opt.whitevalue<1
         brightness=sum(data.c,3)/3;
         data.z(brightness>255*opt.whitevalue)=NaN;
     end    
-    p=surf(data.z,double(data.c)/255);shading flat;
+%     data.z(data.alpha==0)=NaN;        
+%    p=surf(data.z,double(data.c)/255);shading flat;
+    p=image(data.c);
 end
 
 if opt.opacity<1
     data.alpha=data.alpha*opt.opacity;
 end
-set(p,'Alphadata',double(data.alpha)/255);
+set(p,'AlphaData',double(data.alpha)/255);

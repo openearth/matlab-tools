@@ -74,7 +74,11 @@ switch lower(opt.plotroutine)
             h2=plot(x,y);
         end
     case{'line'}
+        try
         h1=plot(x,y);
+        catch
+            h1=plot([0 0],[0 0]);
+        end
     case{'area below line'}
         np=length(x);
         x=[x;flipud(x)];
@@ -132,3 +136,5 @@ switch opt.timebar.type
         set(p,'MarkerFaceColor',colorlist('getrgb','color',opt.timebar.markerfacecolor));
         set(p,'MarkerEdgeColor',colorlist('getrgb','color',opt.timebar.markeredgecolor));
 end
+
+%text2line(h1,0.8,0.05,'\ksi_s = 0.01');

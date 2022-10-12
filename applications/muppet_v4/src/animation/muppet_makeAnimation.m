@@ -105,16 +105,22 @@ if ~isempty(animationsettings.avifilename)
             open(avihandle);
         case{'avi'}
             
-            for itry=1:10
-                avihandle = avi('initialize');
-                itry
-                pause(0.1);
-                if avihandle.CPointer>0
-                    break
-                end
-            end
-            avihandle = avi('open', avihandle,animationsettings.avifilename);
-            avihandle = avi('addvideo', avihandle, animationsettings.framerate, a);
+%             for itry=1:10
+%                 avihandle = avi('initialize');
+%                 itry
+%                 pause(0.1);
+%                 if avihandle.CPointer>0
+%                     break
+%                 end
+%             end
+%             avihandle = avi('open', avihandle,animationsettings.avifilename);
+%             avihandle = avi('addvideo', avihandle, animationsettings.framerate, a);
+
+            avihandle=VideoWriter(animationsettings.avifilename,'Motion JPEG AVI');
+            avihandle.FrameRate=animationsettings.framerate;
+            avihandle.Quality=animationsettings.quality;
+            open(avihandle);
+    
     end
 end
         
@@ -283,9 +289,11 @@ try
                     writeVideo(avihandle,a);
 %                    imgs(:,:,:,iblock)=a;
                 case{'avi'}
-                    aaa=uint8(a(1:sz(1),1:sz(2),:));
-                    avihandle = avi('addframe', avihandle, aaa, iblock);
-                    clear aaa
+%                     aaa=uint8(a(1:sz(1),1:sz(2),:));
+%                     avihandle = avi('addframe', avihandle, aaa, iblock);
+%                     clear aaa
+                    a=a(1:sz(1),1:sz(2),:);
+                    writeVideo(avihandle,a);
                 case{'gif'}
                     nf = nf+1;
                     if nf==1
@@ -448,8 +456,9 @@ try
         case{'mp4'}
             close(h);
         case{'avi'}
-            h=avi('close', h);
-            flag=avi('finalize',h) ;
+%             h=avi('close', h);
+%             flag=avi('finalize',h) ;
+            close(h);
         case{'gif'}
             % Try to make animated gif (not very succesful so far)
             imwrite(im,map,'test.gif','DelayTime',1/animationsettings.framerate,'LoopCount',inf,'TransparentColor',itransp-1,'DisposalMethod','restoreBG');

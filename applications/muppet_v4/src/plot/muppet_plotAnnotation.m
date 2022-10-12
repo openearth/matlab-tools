@@ -35,14 +35,19 @@ for ii=i1:i2
     
     if opt.addtext
         
-        switch plt.coordinatesystem.type
-            case{'geographic'}
-                plt.fscale=111111;
-            otherwise
-                plt.fscale=1;
+        switch plt.type
+            case{'map'}
+                switch plt.coordinatesystem.type
+                    case{'geographic'}
+                        plt.fscale=111111;
+                    otherwise
+                        plt.fscale=1;
+                end
+                dist=0.001*(opt.font.size/20)*plt.scale/plt.fscale;
+            case{'xy'}
+                dist=0.0;
         end
-
-        dist=0.001*plt.scale/plt.fscale;
+        
         dstshade=dist*0.15*opt.font.size/8;
         switch lower(opt.textposition)
             case{'northeast','east','southeast'}
@@ -71,8 +76,12 @@ for ii=i1:i2
             txshade=text(x1+dstshade,y1-dstshade,[data.text{ii}]);
         end
         
+        x1=x1+2;
+        
         tx=text(x1,y1,[data.text{ii}]);
                 
+%         opt.font.size=10;
+        
         set(tx,'FontName',opt.font.name);
         set(tx,'FontWeight',opt.font.weight);
         set(tx,'FontAngle',opt.font.angle);
@@ -81,6 +90,9 @@ for ii=i1:i2
         set(tx,'HorizontalAlignment',horal,'VerticalAlignment',veral);
         set(tx,'Rotation',data.rotation(ii));
         set(tx,'Clipping','on');
+        
+%        set(tx,'Rotation',-90);
+        set(tx,'Rotation',0);
         
         if opt.addtextshade
             set(txshade,'FontName',opt.font.name);

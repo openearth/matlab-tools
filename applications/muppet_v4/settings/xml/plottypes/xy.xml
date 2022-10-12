@@ -19,6 +19,12 @@
     <name>ylim</name>
   </subplotoption>
   <subplotoption>
+    <name>xscale</name>
+  </subplotoption>
+  <subplotoption>
+    <name>yscale</name>
+  </subplotoption>
+  <subplotoption>
     <name>xtick</name>
   </subplotoption>
   <subplotoption>
@@ -130,7 +136,7 @@
     <name>colorbarlabel</name>
   </subplotoption>
   <subplotoption>
-    <name>colorbarttickincrement</name>
+    <name>colorbartickincrement</name>
   </subplotoption>
   <subplotoption>
     <name>colorbarunit</name>

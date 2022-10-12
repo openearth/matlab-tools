@@ -9,13 +9,13 @@ x=data.x;
 y=data.y;
 
 if opt.fillclosedpolygons==1
-%     ldb=[x y];
-%     h2=filledLDB(ldb,'none',[0 1 0],opt.maxdistance,10000);
+    ldb=[x y];
+    h2=filledLDB(ldb,'none',[0 1 0],opt.maxdistance,10000);
 %     if iscell(h2)
 %         h2=cell2mat(h2);
 %     end
-    h2=patch(x,y,'r');
-    set(h2,'LineStyle','none');
+%     h2=patch(x,y,'r');
+%     set(h2,'LineStyle','none');
 end
 % z=zeros(size(x));
 % z=z+opt.polygonelevation;
@@ -133,11 +133,22 @@ end
 %set(h1,'LineWidth',opt.linewidth,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
 
 if opt.fillclosedpolygons
-    set(h2,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
-    set(h2,'FaceColor',colorlist('getrgb','color',opt.fillcolor));
-    if transp
-        set(h2,'EdgeAlpha',opt.edgealpha);
-        set(h2,'FaceAlpha',opt.facealpha);
+    if iscell(h2)
+        for k=1:length(h2)
+            set(h2{k},'EdgeColor',colorlist('getrgb','color',opt.linecolor));
+            set(h2{k},'FaceColor',colorlist('getrgb','color',opt.fillcolor));
+            if transp
+                set(h2{k},'EdgeAlpha',opt.edgealpha);
+                set(h2{k},'FaceAlpha',opt.facealpha);
+            end
+        end
+    else
+        set(h2,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
+        set(h2,'FaceColor',colorlist('getrgb','color',opt.fillcolor));
+        if transp
+            set(h2,'EdgeAlpha',opt.edgealpha);
+            set(h2,'FaceAlpha',opt.facealpha);
+        end
     end
     %     z=zeros(size(get(h1,'ZData')))+opt.polygonelevation;
     %     z=zeros(size(get(h1,'XData')))+1000;
@@ -181,3 +192,14 @@ set(h1,'MarkerFaceColor',colorlist('getrgb','color',opt.markerfacecolor));
 set(h1,'MarkerSize',opt.markersize);
 
 uistack(h1,'top');
+
+if opt.addlinetext
+    xxx=opt.linetext.x;
+    yyy=opt.linetext.dy;
+    str=opt.linetext.string;
+%    text2line(h1,0.03,0.03,'\xi_s = 0.01');
+    tx=text2line(h1,xxx,yyy,str);
+    set(tx,'FontSize',opt.linetext.font.size);
+    uistack(tx,'top');
+end
+
