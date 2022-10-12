@@ -93,6 +93,7 @@ switch lower(opt)
         set(clrbar,'Box','off');
         set(clrbar,'TickLength',[0 0]);
         set(clrbar,'NextPlot','add');
+        clrbar.YLabel.String='meters';
         handles.GUIHandles.colorBar=clrbar;
         setHandles(handles);
     case{'update'}
