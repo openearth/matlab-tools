@@ -8,6 +8,9 @@
 
 % Version 1.0
 
+% Sept/2014 - it was pointed out that the elevations are in feet, not meters.
+%             plot labels changed. Also added a note about time zones.
+
 echo on
        echo on
        % Load the example.
@@ -29,7 +32,12 @@ echo on
        'error','linear',...                   % coloured boostrap CI
        'synthesis',1);                       % Use SNR=1 for synthesis. 
 
-
+     % Note - in the demo I use tuk_time which is MST. Strictly speaking,
+     % in order to get Greenwich phase one should use Greenwich TIME as well,
+     % which means adding 6 hours.
+     % However, I stuck with doing things the sloppy not-quite-correct way so that 
+     % results would comparable to those published in Mike Foreman's data report on the Fortran code.
+     
        echo off
 
     %    pout=t_predic(tuk_time,tidestruc,,...
@@ -37,43 +45,45 @@ echo on
     %                  'synthesis',1);
 
 clf;orient tall;
+set(gcf,'defaultaxestickdir','out','defaultaxestickdirmode','manual');
 subplot(411);
-plot(tuk_time-datenum(1975,1,0),[tuk_elev pout]);
+plot(tuk_time-datenum(1975,1,0),tuk_elev,'b');
+line(tuk_time-datenum(1975,1,0),pout,'color',[0 .5 0]);
 line(tuk_time-datenum(1975,1,0),tuk_elev-pout,'linewi',2,'color','r');
 xlabel('Days in 1975');
-ylabel('Elevation (m)');
+ylabel('Elevation (ft)');
 text(190,5.5,'Original Time series','color','b');
 text(190,4.75,'Tidal prediction from Analysis','color',[0 .5 0]);
 text(190,4.0,'Original time series minus Prediction','color','r');
-title('Demonstration of t\_tide toolbox');
+title('Demonstration of T\_Tide toolbox');
 
-subplot(412);
+ax(1)=subplot(412);
 fsig=tidestruc.tidecon(:,1)>tidestruc.tidecon(:,2); % Significant peaks
 semilogy([tidestruc.freq(~fsig),tidestruc.freq(~fsig)]',[.0005*ones(sum(~fsig),1),tidestruc.tidecon(~fsig,1)]','.-r');
 line([tidestruc.freq(fsig),tidestruc.freq(fsig)]',[.0005*ones(sum(fsig),1),tidestruc.tidecon(fsig,1)]','marker','.','color','b');
 line(tidestruc.freq,tidestruc.tidecon(:,2),'linestyle',':','color',[0 .5 0]);
 set(gca,'ylim',[.0005 1],'xlim',[0 .5]);
-xlabel('frequency (cph)');
+xlabel('frequency (cycles/hour)');
 text(tidestruc.freq,tidestruc.tidecon(:,1),tidestruc.name,'rotation',45,'vertical','base');
-ylabel('Amplitude (m)');
-text(.27,.4,'Analyzed lines with 95% significance level');
-text(.35,.2,'Significant Constituents','color','b');
-text(.35,.1,'Insignificant Constituents','color','r');
-text(.35,.05,'95% Significance Level','color',[0 .5 0]);
+ylabel('Amplitude (ft)');
+text(.3,.4,'Analyzed lines with 95% significance level','fontweight','bold');
+text(.3,.2,'Significant Constituents','color','b');
+text(.3,.1,'Insignificant Constituents','color','r');
+text(.3,.05,'95% Significance Level','color',[0 .5 0]);
 
-subplot(413);
+ax(2)=subplot(413);
 errorbar(tidestruc.freq(~fsig),tidestruc.tidecon(~fsig,3),tidestruc.tidecon(~fsig,4),'.r');
 hold on;
 errorbar(tidestruc.freq(fsig),tidestruc.tidecon(fsig,3),tidestruc.tidecon(fsig,4),'o');
 hold off;
 set(gca,'ylim',[-45 360+45],'xlim',[0 .5],'ytick',[0:90:360]);
-xlabel('frequency (cph)');
+xlabel('frequency (cycles/hour)');
 ylabel('Greenwich Phase (deg)');
-text(.27,330,'Analyzed Phase angles with 95% CI');
-text(.35,290,'Significant Constituents','color','b');
-text(.35,250,'Insignificant Constituents','color','r');
+text(.3,330,'Analyzed Phase angles with 95% CI','fontweight','bold');
+text(.3,290,'Significant Constituents','color','b');
+text(.3,250,'Insignificant Constituents','color','r');
 
-subplot(414);
+ax(3)=subplot(414);
 ysig=tuk_elev;
 yerr=tuk_elev-pout;
 nfft=389;
@@ -97,9 +107,10 @@ semilogy(F,Pxs);
 line(F,Pxe,'color','r');
 xlabel('frequency (cph)');
 ylabel('m^2/cph');
-text(.17,1e4,'Spectral Estimates before and after removal of tidal energy');
-text(.35,1e3,'Original (interpolated) series','color','b');
-text(.35,1e2,'Analyzed Non-tidal Energy','color','r');
+text(.2,1e2,'Spectral Estimates before and after removal of tidal energy','fontweight','bold');
+text(.3,1e1,'Original (interpolated) series','color','b');
+text(.3,1e0,'Analyzed Non-tidal Energy','color','r');
 
-
+% Zoom  on phase/amplitude together
+linkaxes(ax,'x');
 

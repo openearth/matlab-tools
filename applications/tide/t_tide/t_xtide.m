@@ -1,4 +1,4 @@
-function pred=t_xtide(varargin);
+function pred=t_xtide(varargin)
 % T_XTIDE Tidal prediction
 % YOUT=T_XTIDE(STATION) makes a tidal prediction
 % for the current day using the harmonics file from XTIDE. 
@@ -58,7 +58,15 @@ function pred=t_xtide(varargin);
 % Get the harmonics data from a) a mat-file if it exists, or b) from a harmonics
 % file.
 
-if ~exist('t_xtide.mat','file'), % Read the harmonics file and make a mat file
+if nargin>=1 && isstr(varargin{1}) && strcmp(varargin{1}(1:7),'t_xtide')
+    inputname=varargin{1};
+    varargin(1)=[];
+else
+    inputname='t_xtide.mat';
+end
+ 
+
+if ~exist(inputname,'file') % Read the harmonics file and make a mat file
 
   filnam='/usr/share/xtide/harmonics.txt';
   
@@ -68,20 +76,20 @@ if ~exist('t_xtide.mat','file'), % Read the harmonics file and make a mat file
   
   % Input name
   fid=-1;
-  while fid==-1,
+  while fid==-1
     rep=filnam;
-    while (lower(rep(1))~='y'),
+    while (lower(rep(1))~='y')
      filnam=rep;
      rep='n';
      rep=input(['Harmonics filename: ' filnam '? (y/Y/new file name):'],'s');
-     if isempty(rep), rep='y'; end;
-    end; 
+     if isempty(rep), rep='y'; end
+    end
     
     fid=fopen(filnam);
-    if fid==-1,
+    if fid==-1
       fprintf(['\n****** Can''t open filename ->' filnam '<-\n\n']);
-    end;
-  end;
+    end
+  end
     
   fprintf('Reading harmonics file (this will take a while)\n');
   [xtide,xharm]=read_xtidefile(fid);
@@ -90,83 +98,83 @@ if ~exist('t_xtide.mat','file'), % Read the harmonics file and make a mat file
   save t_xtide xtide xharm
    
 else
-  load t_xtide
-end;
+  load(inputname,'-mat');
+end
 
-if nargin>0,
+if length(varargin)>0
 
-  if isstr(varargin{1}),  % Station  name given
+  if isstr(varargin{1})  % Station  name given
     % Identify station - look for exact match first
     ista=strmatch(lower(varargin{1}),lower(xharm.station),'exact');
     % otherwise go for partial matches
-    if isempty(ista),
+    if isempty(ista)
       % First check to see if a number was selected:
       inum=-10;
-      while inum<-1,
+      while inum<-1
         inum=inum+1;
         ll=findstr(lower(varargin{1}),sprintf('(%d)',-inum));
-        if ~isempty(ll),
+        if ~isempty(ll)
           inum=abs(inum);
 	      varargin{1}=deblank(varargin{1}(1:ll-1));
-        end;
-      end;  
+        end
+      end  
       ista=strmatch(lower(varargin{1}),lower(xharm.station));
-      if length(ista)>1,
-        if inum>0 & inum<=length(ista),
+      if length(ista)>1
+        if inum>0 && inum<=length(ista)
           ista=ista(inum);
         else	
           fprintf('Ambiguous Station Choice - Taking first of:\n');
-          for kk=1:length(ista),
+          for kk=1:length(ista)
 	        fprintf('%5d: %s\n',ista(kk),deblank(xharm.station(ista(kk),:)));
 	        fprintf('      Long: %.4f  Lat: %.4f \n',xharm.longitude(ista(kk)),xharm.latitude(ista(kk)));
           end;
           fprintf('\n');
           ista=ista(1);
         end 	
-      elseif length(ista)==1 & inum>1,
+      elseif length(ista)==1 && inum>1
         fprintf('***Can''t find variant (%d) of station - Taking only choice\n',inum);
-      elseif length(ista)==0,  
+      elseif length(ista)==0 
         error('Could not match station');
-      end;    
-     end;
+      end  
+    end
      varargin(1)=[];
 
    else   % Lat/long?
       [dist,hdg]=t_gcdist(xharm.latitude,xharm.longitude,varargin{2},varargin{1});
       [mind,ista]=min(dist);
-      if length(ista)>1,
+      if length(ista)>1
         fprintf('Ambiguous Station Choice - Taking first of:\n');
-        for kk=1:length(ista),
+        for kk=1:length(ista)
 	      fprintf('%5d: %s\n',ista(kk),deblank(xharm.station(ista(kk),:)));
 	      fprintf('      Long: %.4f  Lat: %.4f \n',xharm.longitude(ista(kk)),xharm.latitude(ista(kk)));
-        end;
+        end
         fprintf('\n');
         ista=ista(1);
       else
  	    fprintf('%5d: %s\n',ista,deblank(xharm.station(ista,:)));
 	    fprintf('      Long: %.4f  Lat: %.4f \n',xharm.longitude(ista),xharm.latitude(ista)); 
-      end;
+      end
       varargin(1:2)=[];
-   end;
+  end
   
   % Time vector (if available) otherwise take current time.
 
-  if length(varargin)>0 & ~isstr(varargin{1}),
+  if length(varargin)>0 && ~isstr(varargin{1})
     tim=varargin{1};
     tim=tim(:)';
     varargin(1)=[];
-    if length(tim)==1,
-      if tim<1000,
+    if length(tim)==1
+      if tim<1000
         dat=clock;
         tim=datenum(dat(1),dat(2),dat(3))+[0:1/48:tim];
       else
         tim=tim+[0:1/48:2]; % 2 days worth.
-      end;	 	
-    end;
+      end	 	
+    end
   else 
     dat=clock;
     tim=datenum(dat(1),dat(2),dat(3))+[0:.25:48]/24;
-  end;
+  end
  
    % Parse properties
 
@@ -174,28 +182,28 @@ if nargin>0,
   unt='original';
   
   k=1;
-  while length(varargin)>0,
-      switch lower(varargin{1}(1:3)),
-	case 'for',
-	 format=lower(varargin{2});
-	case 'uni',
-	 unt=lower(varargin{2}); 
-	otherwise,
-           error(['Can''t understand property:' varargin{1}]);
-      end;
+  while length(varargin)>0
+      switch lower(varargin{1}(1:3))
+	    case 'for'
+	      format=lower(varargin{2});
+	    case 'uni'
+	      unt=lower(varargin{2}); 
+        otherwise
+          error(['Can''t understand property:' varargin{1}]);
+      end
       varargin([1 2])=[]; 
-  end;
+  end
  
   % if we want a time series
   pred=[];
   % Convert units if requested.
   [units,convf]=convert_units(unt,xharm.units(ista,:));
-  if strcmp(format(1:2),'ra') | strcmp(format(1:2),'fu') | strcmp(format(1:2),'ti')
+  if strcmp(format(1:2),'ra') || strcmp(format(1:2),'fu') || strcmp(format(1:2),'ti')
     
     % Data every minute for hi/lo forecasting.
-    if strcmp(format(1:2),'ti'),
+    if strcmp(format(1:2),'ti')
       tim=tim(1):(1/1440):tim(end); 
-    end;
+    end
 
     % Convert into time since the beginning of year
     mid=datevec(mean(tim));
@@ -214,9 +222,9 @@ if nargin>0,
     pred=pred*convf;
     
     % Compute times of hi/lo from every-minute data
-    if strcmp(format(1:2),'ti'),
+    if strcmp(format(1:2),'ti')
      % Check if this is a current station
-      if ~isempty(findstr('Current',xharm.station(ista,:))), currents=1; else currents=0; end;
+      if ~isempty(findstr('Current',xharm.station(ista,:))), currents=1; else currents=0; end
       dpred=diff(pred);
       ddpred=diff(dpred>0);
 
@@ -231,15 +239,15 @@ if nargin>0,
       hi.units=deblank(units);
       
       pred=hi;
-    end;
-  end;
+    end
+  end
   
   % Create information structure
   
-  if strcmp(format(1:2),'in') | strcmp(format(1:2),'fu'),
-    if ~isempty(pred), 
-      pred.yout=pred; 
-      pred.mtime=tim; 
+  if strcmp(format(1:2),'in') || strcmp(format(1:2),'fu')
+    if ~isempty(pred)
+      pred=struct('yout',pred,...
+                  'mtime',tim);
     else
       kk=find(xharm.A(ista,:)~=0);
       pred.freq=xtide.name(kk,:);
@@ -252,15 +260,15 @@ if nargin>0,
     pred.timezone=xharm.timezone(ista);
     pred.units=deblank(units);
     pred.datum=xharm.datum(ista)*convf;
-  end;
+  end
  
-end;
+end
 
 % If no output parameters then we plot or display things
 
-if nargout==0,
-  switch format(1:2),    
-    case 'ti',
+if nargout==0
+  switch format(1:2)  
+    case 'ti'
   
     fprintf('High/Low Predictions for %s\n',xharm.station(ista,:));
     fprintf('Time offset %.1f from UTC\n\n',xharm.timezone(ista));
@@ -268,7 +276,7 @@ if nargout==0,
     outstr=repmat(' ',length(flat),41);
     outstr(:,1:20)=datestr(hi.mtime);
     outstr(:,22:27)=reshape(sprintf('%6.2f',hi.value),6,length(flat))';
-    if currents,
+    if currents
       ll=hi.type==1;
       outstr(ll,31:41)=repmat(' Flood Tide',sum(ll),1);
       ll=hi.type==0;
@@ -278,36 +286,38 @@ if nargout==0,
       outstr(ll,31:41)=repmat(' High Tide ',sum(ll),1);
       ll=hi.type==0;
       outstr(ll,31:41)=repmat(' Low Tide  ',sum(ll),1);
-    end;
+    end
     disp(outstr)   
            
     case 'ra'
      plot(tim,pred)
      datetick;
      title(['Tidal prediction for ',deblank(xharm.station(ista,:)) ' beginning ' datestr(tim(1))]); 
-     ylabel(deblank(xharm.units(ista,:)));
+  %%   ylabel(deblank(xharm.units(ista,:)));
+     ylabel(units);
 
     case 'fu'
      plot(tim,pred.yout)
      datetick;
      title(['Tidal prediction for ',deblank(xharm.station(ista,:)) ' beginning ' datestr(tim(1))]); 
-     ylabel(deblank(xharm.units(ista,:)));
+   %%  ylabel(deblank(xharm.units(ista,:)));
+     ylabel(units);
      
-    case 'in',
+    case 'in'
         
     fprintf('Station: %s\n',pred.station);
-    if pred.longitude<0, lon='W'; else lon='E'; end;
-    if pred.latitude<0,  lat='S'; else lat='N'; end;
+    if pred.longitude<0, lon='W'; else lon='E'; end
+    if pred.latitude<0,  lat='S'; else lat='N'; end
     fprintf('Location: %d %.1f'' %c, %d %.1f'' %c\n',fix(abs(pred.latitude)),rem(abs(pred.latitude),1)*60,...
          lat,fix(abs(pred.longitude)),rem(abs(pred.longitude),1)*60,lon);
     fprintf('Time offset %.1f from UTC\n\n',pred.timezone);
      	
-   end;
+  end
    clear pred
-end;  
+end
   
 %%%%%%%%%%%%%%%%%%%%
-function [xtide,xharm]=read_xtidefile(fid);
+function [xtide,xharm]=read_xtidefile(fid)
 % Reads the xtide harmonics file and creates a data structure
 % with all that info for faster access
 
@@ -319,30 +329,30 @@ ncon=sscanf(l,'%d');
 xtide=struct('name',repmat(' ',ncon,8),'speed',zeros(ncon,1),...
 	     'startyear',0,'equilibarg',zeros(ncon,68),'nodefactor',zeros(ncon,68));
 
-for k=1:ncon,
+for k=1:ncon
  l=fgetl_nocom(fid);
  xtide.name(k,:)=l(1:8);
  xtide.speed(k)=sscanf(l(9:end),'%f');
-end;
+end
 
 xtide.startyear=sscanf(fgetl_nocom(fid),'%d');
 
 nyear=sscanf(fgetl_nocom(fid),'%d');
 
-for k=1:ncon,
+for k=1:ncon
   l=fgetl(fid);
   xtide.equilibarg(k,:)=fscanf(fid,'%f',nyear);
   l=fgetl(fid);
-end;
+end
 l=fgetl(fid); % Skip *END*
 
 nyear=sscanf(fgetl_nocom(fid),'%d');
 
-for k=1:ncon,
+for k=1:ncon
   l=fgetl(fid);
   xtide.nodefactor(k,:)=fscanf(fid,'%f',nyear);
   l=fgetl(fid);
-end;
+end
 l=fgetl(fid); % Skip *END*
 
 % Now read in all harmonic data
@@ -358,27 +368,27 @@ xharm=struct('station',repmat(' ',nsta,79),'units',repmat(' ',nsta,8),...
 	     'A',zeros(nsta,ncon),'kappa',zeros(nsta,ncon));
 
 nh=0;
-while length(l)>0 & l(1)~=-1,
+while length(l)>0 && l(1)~=-1
  
   l=[l '   '];
   nh=nh+1;
-  while ~strcmp(l(1:3),'# !'),
+  while ~strcmp(l(1:3),'# !')
     l=[fgetl(fid) '   '];
-  end;
-  while strcmp(l(1:3),'# !'),
-   switch l(4:7),
-    case 'unit',
+  end
+  while strcmp(l(1:3),'# !')
+   switch l(4:7)
+    case 'unit'
      tmp=deblank(l(findstr(l,':')+2:end));
      xharm.units(nh,1:length(tmp))=tmp;
-    case 'long',
+    case 'long'
       xharm.longitude(nh)=sscanf(l(findstr(l,':')+1:end),'%f');
     case 'lati'  
       xharm.latitude(nh)=sscanf(l(findstr(l,':')+1:end),'%f');
-   end;
+   end
    l=fgetl(fid);
-  end; 
+  end
   tmp=deblank(l);
-  if tmp(1)~='#', % Not commented out
+  if tmp(1)~='#' % Not commented out
     xharm.station(nh,1:length(tmp))=tmp;
 
     tmp=fgetl(fid);
@@ -389,22 +399,22 @@ while length(l)>0 & l(1)~=-1,
     tmp=fgetl(fid);
     xharm.datum(nh)=sscanf(tmp,'%f');
 
-    for k=1:ncon,
+    for k=1:ncon
       l=fgetl(fid);
-      if l(1)~='x',
+      if l(1)~='x'
 	ll=min([findstr(' ',l) find(abs(l)==9)]); % space or tab
 	tmp=sscanf(l(ll+1:end),'%f',2);
 	xharm.A(nh,k)=tmp(1);
 	xharm.kappa(nh,k)=tmp(2);
-      end;
-    end;
+      end
+    end
     l=fgetl(fid);
   else
     nh=nh-1;  
-  end;
+  end
   
   if rem(nh,50)==0, fprintf('.'); end;
-end;
+end
 fprintf('\n');
 
 % Convert internally to sparse matrix storage (much smaller).
@@ -414,60 +424,60 @@ xharm.kappa=sparse(xharm.kappa);
 return;
   
 %%%%%%%%%%%%%%%%%%%%  
-function l=fgetl_nocom(fid);
+function l=fgetl_nocom(fid)
 % Gets a line that isn't a comment line
 %
 l=fgetl(fid);
-while length(l)>0 & l(1)=='#',
+while length(l)>0 && l(1)=='#'
   l=fgetl(fid);
-end;
+end
   
 %%%%%%%%%%%%%%%%%%%%%
-function [units,convf]=convert_units(unt,origunits);
+function [units,convf]=convert_units(unt,origunits)
 % Conversion factors from origianl units if requested and possible
 % (no conversions from knots to feet).
 %
-  if strcmp(unt(1:3),origunits(1:3)) | strcmp(unt(1:3),'ori'),
+  if strcmp(unt(1:3),origunits(1:3)) || strcmp(unt(1:3),'ori')
     units=origunits;
     convf=1;
   else
-   switch unt(1:3),
-    case 'fee',
-       if strcmp(origunits(1:3), 'met'),
+   switch unt(1:3)
+    case 'fee'
+       if strcmp(origunits(1:3), 'met')
   	  units='feet';
   	  convf=3.2808399;
        else
   	  units=origunits;
   	  convf=1;
-       end;
-    case 'met',
-       if strcmp(origunits(1:3), 'fee'),
+       end
+    case 'met'
+       if strcmp(origunits(1:3), 'fee')
   	  units='meters';
   	  convf=0.3048;
        else
   	  units=origunits;
   	  convf=1;
-       end;
-    case 'm/s',
-       if strcmp(origunits(1:3), 'kno'),
+       end
+    case 'm/s'
+       if strcmp(origunits(1:3), 'kno')
   	  units='meters/sec';
   	  convf=0.51444444;
        else
   	  units=origunits;
   	  convf=1;
-       end;
-    case 'kno',
-       if strcmp(origunits(1:3), 'm/s'),
+       end
+    case 'kno'
+       if strcmp(origunits(1:3), 'm/s')
   	  units='knots';
   	  convf=1.9438445;
        else
   	  units=origunits;
   	  convf=1;
-       end;
+       end
     otherwise
       error('Unknown units')
-    end;
-  end;
+   end
+  end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [d,hdg]=t_gcdist(lat1,lon1,lat2,lon2)
