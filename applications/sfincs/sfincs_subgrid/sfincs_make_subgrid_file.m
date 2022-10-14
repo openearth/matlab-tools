@@ -311,6 +311,40 @@ for ii=1:ni
         end
         clear zg1 xx yy zz manning1 manning2
         
+        % Adjust manning based on polygon data
+        if ~isempty(polygons)
+            for ipol=1:length(polygons)
+                if strcmpi(polygons(ipol).type,'manning')
+
+                    [xpol,ypol]=landboundary('read',polygons(ipol).filename);
+
+                    xmin=nanmin(nanmin(xg0));
+                    xmax=nanmax(nanmax(xg0));
+                    ymin=nanmin(nanmin(yg0));
+                    ymax=nanmax(nanmax(yg0));
+
+                    xminp=nanmin(xpol);
+                    xmaxp=nanmax(xpol);
+                    yminp=nanmin(ypol);
+                    ymaxp=nanmax(ypol);
+
+                    if xminp<xmax && xmaxp>xmin && yminp<ymax && ymaxp>ymin 
+                        inpol=inpolygon(xg0,yg0,xpol,ypol);
+                        switch lower(polygons(ipol).operator)
+                            case{'min'}
+                                manning(inpol)=min(manning(inpol),polygons(ipol).value);
+                            case{'max'}
+                                manning(inpol)=max(manning(inpol),polygons(ipol).value);
+                            case{'add'}
+                                manning(inpol)=manning(inpol)+polygons(ipol).value;
+                            case{'eq'}
+                                manning(inpol)=min(manning(inpol),polygons(ipol).value);
+                        end
+                    end
+                end
+            end
+        end
+        
         % Check: no NaNs
         if ~isempty(find(isnan(zg), 1)) || ~isempty(find(isnan(manning), 1))
             isn=find(isnan(zg));
