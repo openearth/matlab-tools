@@ -42,14 +42,17 @@
 %       -'x'        : x-coordinate
 %       -'y'        : y-coordinate
 %
-%       -'Q'        : water discharge
-%       -'Qcum'     : cumulative water discharge
-%       -'qsp'      : specific water discharge
-%       -'qxsp'     : specific water discharge in x direction
-%       -'qysp'     : specific water discharge in y direction
+%       -{'Q','qsp_B'}  : water discharge
+%       -'Qcum'         : cumulative water discharge
+%       -'qsp'          : specific water discharge
+%       -'qxsp'         : specific water discharge in x direction
+%       -'qysp'         : specific water discharge in y direction
+%
+%       -{'Q_t','qsp_B_t'}  : volume of water
 %
 %       -'stot'       : total sediment transport [m^2/s]
 %       -'stot_B_mor' : total sediment transport [m^3/s]
+%       -'stot_B_mor_t' : total sediment transport [m^3]
 %
 %       -'tide'     : tide
 %       -'surge'    : surge
@@ -83,6 +86,7 @@
 %       -'La'       : active layer
 %       -'Fak'      : volume fraction content in the active layer
 %       -'mesh2d_taus' : bed shear stress
+%       -'mesh2d_taus_t' : integral bed shear stress with time
 %
 %       -'rkm'      : river kilometer
 %
@@ -460,7 +464,7 @@ switch lower(variable)
                 str_var='Diferencia';
          end
          un_type='-';
-     case 'q'
+     case {'q','qsp_b'}
          switch lan
             case 'en'
                 str_var='discharge';
@@ -695,6 +699,16 @@ switch lower(variable)
                 str_var='tensión de fondo';
          end
          un_type='M/T2/L';
+    case {'mesh2d_taus_t','taus_t'}
+         switch lan
+            case 'en'
+                str_var='bed shear stress time';
+            case 'nl'
+                str_var='bed schuifspanning tijd';
+            case 'es'
+                str_var='tensión de fondo y tiempo';
+         end
+         un_type='M/T/L';
     case 'ltot'
          switch lan
             case 'en'
@@ -735,6 +749,26 @@ switch lower(variable)
                 str_var='transporte de sedimento total';
          end
          un_type='L3/T';
+    case 'stot_b_mor_t'
+         switch lan
+            case 'en'
+                str_var='total sediment transport';
+            case 'nl'
+                str_var='totaal sedimenttransport';
+            case 'es'
+                str_var='transporte de sedimento total';
+         end
+         un_type='L3';
+    case {'q_t','qsp_b_t'}
+         switch lan
+            case 'en'
+                str_var='water volume';
+            case 'nl'
+                str_var='watervolume';
+            case 'es'
+                str_var='volumen de agua';
+         end
+         un_type='L3';
     case {'mesh2d_czs','czs'}
          switch lan
             case 'en'
@@ -903,6 +937,15 @@ switch un_type
             otherwise
                 error('this factor is missing')
         end
+    case 'L3'
+        switch un
+            case 1
+                str_un=' [m^3]';
+%             case 1/1000
+%                 str_un=' [km]';
+            otherwise
+                error('this factor is missing')
+        end
     case '-'
         switch lower(val)
             case 'sal'
@@ -999,6 +1042,13 @@ switch un_type
         switch un
             case 1
                 str_un=' [m^2]';
+            otherwise
+                error('this factor is missing')
+        end
+    case 'M/T/L'
+        switch un
+            case 1
+                str_un=' [Pa s]';
             otherwise
                 error('this factor is missing')
         end

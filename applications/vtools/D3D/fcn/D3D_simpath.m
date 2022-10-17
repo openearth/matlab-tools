@@ -232,11 +232,11 @@ function [fpath_mdu,err]=search_4_mdu(dire)
 
 err=0;
 
-nf=numel(dire)-2;
+nf=numel(dire);
 kmdf=1;
 mdf_aux={};
-for kf1=1:nf
-    kf=kf1+2; %. and ..
+for kf=1:nf
+    if strcmp(dire(kf).name,'.') || strcmp(dire(kf).name,'..'); continue; end
     fpath_loc=fullfile(dire(kf).folder,dire(kf).name);
     if dire(kf).isdir==0 %it is not a directory
         
@@ -247,6 +247,7 @@ for kf1=1:nf
                 kmdf=kmdf+1;
         end
     else %directory
+%         fprintf('searching here %s \n',fpath_loc);
         dire_2=dir(fpath_loc);
         mdf_aux_out=search_4_mdu(dire_2);
         if ~isempty(mdf_aux) && ~isempty(mdf_aux_out)

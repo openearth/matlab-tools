@@ -35,7 +35,7 @@ else
 end
 
 if isfield(simdef(1).file,'pillars') && ~isempty(simdef(1).file.pillars)
-    pillars=D3D_pillars(simdef.file.pillars,'fpath_rkm',fpath_rkm);
+    pillars=D3D_pillars(simdef(1).file.pillars,'fpath_rkm',fpath_rkm);
     %pillars saved as type 2
     aux=num2cell(2*ones(numel(pillars),1));
     [pillars.type]=aux{:};
