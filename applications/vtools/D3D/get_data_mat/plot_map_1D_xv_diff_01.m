@@ -18,7 +18,12 @@ function plot_map_1D_xv_diff_01(fid_log,flg_loc,simdef_ref,simdef)
 
 %% DO
 
-ret=gdm_do_mat(fid_log,flg_loc,tag,'do_s'); if ret; return; end
+if contains(tag_fig,'all')
+    tag_do='do_s_all';
+else
+    tag_do='do_s';
+end
+ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 
 %% PARSE
 
@@ -36,13 +41,14 @@ if isfield(flg_loc,'fpath_rkm')
     do_rkm=1;
 end
 
-if isfield(flg_loc,'do_xtv')==0
-    flg_loc.do_xtv=1;
-end
-
-if isfield(flg_loc,'do_p')==0
-    flg_loc.do_p=1;
-end
+%add if necessary
+% if isfield(flg_loc,'do_s_xtv')==0
+%     flg_loc.do_s_xtv=1;
+% end
+% 
+% if isfield(flg_loc,'do_s_p')==0
+%     flg_loc.do_s_p=1;
+% end
 
 if isfield(flg_loc,'do_xvallt')==0
     flg_loc.do_xvallt=0;
@@ -113,7 +119,9 @@ end
 nt=size(time_dnum,1);
 nvar=numel(flg_loc.var);
 nbr=numel(flg_loc.branch);
+nylim=size(flg_loc.ylims_diff_s,1); 
 
+%2DO call function that computes this
 if flg_loc.do_diff==0
     ndiff=1;
 else 
@@ -175,7 +183,7 @@ for kbr=1:nbr %branches
             load(fpath_mat_tmp,'data');            
             data_0(:,kS)=data;
         end
-
+        
         %skip if multidimentional
 %             fn_data=fieldnames(data_0(1));
 %             if size(data_0(1).(fn_data{1}),2)>1
@@ -204,10 +212,6 @@ for kbr=1:nbr %branches
                 data_T(:,kS,kt)=data;
             end
             
-            if ~flg_loc.do_p
-                continue
-            end
-            
             in_p.tim=time_dnum_v(kt);
             in_p.lab_str=var_str_save;
             in_p.xlims=flg_loc.xlims;
@@ -232,34 +236,49 @@ for kbr=1:nbr %branches
                         end
                     end
                 end
-
-                if kdiff==1
-                    val_diff=NaN(nx,nS);
-                    for kS=1:nS
-                        val_diff(:,kS)=D3D_diff_val(data_T(:,kS,kt),data_T_ref(:,1,kt),gridInfo_br,gridInfo_br_ref);
-                    end
-                    in_p.val=val_diff;
-                    in_p.is_diff=0;
-                    str_dir='val';
-                elseif kdiff==2
-                    val_diff=NaN(nx,nS);
-                    for kS=1:nS
-                        val_diff(:,kS)=D3D_diff_val(data_T(:,kS,kt)-data_0(:,kS),data_T_ref(:,1,kt)-data_0_ref,gridInfo_br,gridInfo_br_ref);
-                    end
-                    in_p.val=val_diff;
-                    in_p.is_diff=1;
-                    str_dir='diff';
-                end
                 
-                fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
-                mkdir_check(fdir_fig_loc,fid_log,1,0);
+                for kylim=1:nylim
+                    
+                    
+                    %2DO adapt this function
+%                     [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,data,data_ref,'clims_diff_s','clims_diff_st',var_str);
+%                     in_p.is_diff=1; %it is difference between simulations!
 
-                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,branch_name,str_dir);
-%                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+                    if kdiff==1
+                        in_p.ylims=flg_loc.ylims_diff_s(kylim,:);
+                        val_diff=NaN(nx,nS);
+                        for kS=1:nS
+                            val_diff(:,kS)=D3D_diff_val(data_T(:,kS,kt),data_T_ref(:,1,kt),gridInfo_br,gridInfo_br_ref);
+                        end
+                        in_p.val=val_diff;
+                        in_p.is_diff=0;
+                        str_dir='val';
+                        val_diff0=D3D_diff_val(data_0(:,1),data_0_ref,gridInfo_br,gridInfo_br_ref); %same initial condition
+                        in_p.val0=data_0(:,1);
+                        in_p.val0=val_diff0;
+                    elseif kdiff==2
+                        in_p.ylims=flg_loc.ylims_diff_st(kylim,:);
+                        val_diff=NaN(nx,nS);
+                        for kS=1:nS
+                            val_diff(:,kS)=D3D_diff_val(data_T(:,kS,kt)-data_0(:,kS),data_T_ref(:,1,kt)-data_0_ref,gridInfo_br,gridInfo_br_ref);
+                        end
+                        in_p.val=val_diff;
+                        in_p.is_diff=1;
+                        str_dir='diff';
+                        val_diff0=D3D_diff_val(data_0(:,1)-data_0(:,1),data_0_ref-data_0_ref,gridInfo_br,gridInfo_br_ref); %just make 0
+                        in_p.val0=val_diff0;
+                    end
 
-                in_p.fname=fname_noext;
+                    fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
+                    mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                fig_1D_01(in_p);
+                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,branch_name,str_dir,kylim);
+    %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                    in_p.fname=fname_noext;
+
+                    fig_1D_01(in_p);
+                end %kylim
             end %kref
             messageOut(fid_log,sprintf('Done plotting figure %s time %4.2f %% variable %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
 
@@ -335,7 +354,7 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,branch_name,str_dir)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,branch_name,str_dir,kylim)
 
 % fprintf('fdir_fig: %s \n',fdir_fig);
 % fprintf('tag: %s \n',tag);
@@ -343,7 +362,7 @@ function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,branch_name,str
 % fprintf('time_dnum: %f \n',time_dnum);
 % fprintf('iso: %s \n',iso);
                 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,branch_name,str_dir));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_kylim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,branch_name,str_dir,kylim));
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
 end %function

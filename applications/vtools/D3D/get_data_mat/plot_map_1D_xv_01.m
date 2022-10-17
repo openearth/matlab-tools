@@ -155,6 +155,7 @@ for kbr=1:nbr %branches
                 data_T(:,kS,kt)=data;
             end
             
+            %skip regular plot (needs to be here to load the data for xtv plot)
             if ~flg_loc.do_p
                 continue
             end
