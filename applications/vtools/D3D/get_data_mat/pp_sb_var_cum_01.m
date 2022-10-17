@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18402 $
-%$Date: 2022-10-03 17:07:33 +0200 (Mon, 03 Oct 2022) $
-%$Author: chavarri $
-%$Id: pp_sb_var_01.m 18402 2022-10-03 15:07:33Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/pp_sb_var_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Postprocessing of summerbed analysis data. Computation of
 %cumulative values.

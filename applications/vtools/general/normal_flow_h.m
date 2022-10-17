@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18412 $
-%$Date: 2022-10-07 16:37:21 +0200 (Fri, 07 Oct 2022) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 18412 2022-10-07 14:37:21Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %compute normal flow
 

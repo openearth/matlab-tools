@@ -16,10 +16,11 @@
 %   -simdef: structure, path to dia file, path to simulation folder
 %
 %OUTPUT:
+%   -sim_efficiency = simulation time / (clock time * # processes)
 %
 %E.G.:
 
-function [tim_dur,t0,tf,processes,tim_sim]=D3D_computation_time(simdef,varargin)
+function [tim_dur,t0,tf,processes,tim_sim,sim_efficiency]=D3D_computation_time(simdef,varargin)
 
 [fpath_dia,structure]=D3D_simdef_2_dia(simdef);
 
@@ -98,6 +99,8 @@ while ~feof(fid)
     end
 
 end %while
+
+sim_efficiency=tim_sim/(tim_dur*processes);
 
 fclose(fid);
 

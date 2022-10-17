@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18101 $
-%$Date: 2022-06-02 16:01:43 +0200 (Thu, 02 Jun 2022) $
-%$Author: chavarri $
-%$Id: interpolate_timetable.m 18101 2022-06-02 14:01:43Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/interpolate_timetable.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Interpolates several time series into a common time vector.
 %

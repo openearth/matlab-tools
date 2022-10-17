@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18311 $
-%$Date: 2022-08-19 06:18:42 +0200 (Fri, 19 Aug 2022) $
-%$Author: chavarri $
-%$Id: D3D_general_structures.m 18311 2022-08-19 04:18:42Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_general_structures.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function struct=D3D_pillars(path_pillars,varargin)

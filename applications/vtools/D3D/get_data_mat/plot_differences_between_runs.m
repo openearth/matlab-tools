@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18361 $
-%$Date: 2022-09-14 07:43:17 +0200 (Wed, 14 Sep 2022) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 18361 2022-09-14 05:43:17Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Plot differences between runs
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18411 $
-%$Date: 2022-10-06 14:18:03 +0200 (Thu, 06 Oct 2022) $
-%$Author: chavarri $
-%$Id: fig_map_sal_01.m 18411 2022-10-06 12:18:03Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_sal_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function tz1=tiles_zoom(dx)

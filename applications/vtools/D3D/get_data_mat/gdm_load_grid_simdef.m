@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18209 $
-%$Date: 2022-06-29 10:31:50 +0200 (Wed, 29 Jun 2022) $
-%$Author: chavarri $
-%$Id: mkdir_check.m 18209 2022-06-29 08:31:50Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/mkdir_check.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function gridInfo=gdm_load_grid_simdef(fid_log,simdef,varargin)

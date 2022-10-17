@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18334 $
-%$Date: 2022-08-25 11:30:40 +0200 (Thu, 25 Aug 2022) $
-%$Author: chavarri $
-%$Id: filter_1D.m 18334 2022-08-25 09:30:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/filter_1D.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

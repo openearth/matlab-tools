@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18049 $
-%$Date: 2022-05-13 06:29:15 +0200 (Fri, 13 May 2022) $
-%$Author: chavarri $
-%$Id: script_layout.m 18049 2022-05-13 04:29:15Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/script_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Description
 
