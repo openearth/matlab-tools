@@ -68,7 +68,7 @@ runid=simdef(1).file.runid;
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
-[tim_dnum_p,tim_dtime_p]=gdm_time_flow_mor(flg_loc,simdef,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
+[tim_dnum_p,tim_dtime_p]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
 
 %% DIMENSION
 
@@ -92,7 +92,7 @@ end
 
 %% COMMON
 
-all_struct=D3D_read_structures(simdef,'fpath_rkm',flg_loc.fpath_rkm); %check that either it is fine if empty or check emptyness for filling <in_p>
+all_struct=D3D_read_structures(simdef(1),'fpath_rkm',flg_loc.fpath_rkm); %check that either it is fine if empty or check emptyness for filling <in_p>
 if ~isempty(all_struct)
     in_p.all_struct=all_struct;
 end

@@ -14,6 +14,13 @@
 
 function simdef=simulation_paths(fdir_sim,in_plot)
 
+%% PARSE
+
+%remove the last bar because we use it later to split the name and find <runid>
+if fdir_sim(end)==filesep
+    fdir_sim(end)='';
+end
+
 %% paths
 
 simdef.D3D.dire_sim=fdir_sim;

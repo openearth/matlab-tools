@@ -73,7 +73,8 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 tim_ref=load(fpath_mat_time_ref,'tim');
 time_dnum_ref=tim_ref.tim.time_dnum;
-time_ref_v=gdm_time_dnum_flow_mor(flg_loc,tim_ref.tim.time_dnum,tim_ref.tim.time_mor_dnum); %[nt_ref,1] 
+% time_ref_v=gdm_time_dnum_flow_mor(flg_loc,tim_ref.tim.time_dnum,tim_ref.tim.time_mor_dnum); 
+[time_ref_v,~]=gdm_time_flow_mor(flg_loc,simdef_ref,tim_ref.tim.time_dnum,tim_ref.tim.time_dtime,tim_ref.tim.time_mor_dnum,tim_ref.tim.time_mor_dtime); %[nt_ref,1] 
 
 tim=load(fpath_mat_time,'tim');
 time_dnum=tim.tim.time_dnum; %time_dnum is the local one
