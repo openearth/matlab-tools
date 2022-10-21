@@ -29,7 +29,7 @@ res_type=parin.Results.res_type;
 if isfolder(fpath_res)
         fdir_output=fullfile(fpath_res,'output');
         dire=dir(fdir_output);
-        nf=numel(dire)-2-1; %already the number of the files, which start at 0
+        nf=length(cell2mat(regexp({dire.name}, '[0-9]+')))-1; %already the number of the files, which start at 0
         nt=0;
         for kf=0:1:nf
             fdir_loc=fullfile(fdir_output,num2str(kf));
