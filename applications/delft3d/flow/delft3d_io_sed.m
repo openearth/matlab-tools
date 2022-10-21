@@ -100,6 +100,8 @@ for iChapter = 1:nChapter
         else
             if strcmp(Keyword,'Percentiles')
                 Value=ValueLine;
+            elseif strcmp(Keyword,'Type')
+                Value=ValueLine;
             else
                 [Value,Comment] = strtok(ValueLine);
             end
