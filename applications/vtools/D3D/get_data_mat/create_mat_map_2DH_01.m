@@ -86,12 +86,11 @@ messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 for kt=kt_v
     ktc=ktc+1;
     for kvar=1:nvar %variable
-        varname=flg_loc.var{kvar};
-        var_str=D3D_var_num2str_structure(varname,simdef);
+        [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
         
-        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str);
+        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read);
 
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
 
         do_read=1;
@@ -105,7 +104,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'layer',layer,'tol',tol);    
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'layer',layer,'tol',tol);    
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end

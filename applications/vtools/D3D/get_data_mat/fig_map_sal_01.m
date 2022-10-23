@@ -78,12 +78,21 @@ end
 if isfield(in_p,'do_3D')==0
     in_p.do_3D=0;
 end
+if isfield(in_p,'do_cbar')==0
+    in_p.do_cbar=1;
+end
 if isfield(in_p,'zlims')==0
     in_p.zlims=NaN;
 end
 in_p.plot_rkm=0;
 if isfield(in_p,'rkm')==1
     in_p.plot_rkm=1;
+end
+if isfield(in_p,'views')==0
+    in_p.views=[45,45];
+end
+if isfield(in_p,'cmap')==0
+    in_p.cmap=[]; %default
 end
 
 v2struct(in_p)
@@ -187,20 +196,24 @@ kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
 [lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,fact,lan);
-if is_background && ~is_diff
-    cbar(kr,kc).label=str_back;
-    cmap=turbo(100);
-elseif is_diff && ~is_background
-    cbar(kr,kc).label=str_diff;
-    cmap=brewermap(100,'RdYlBu');
-elseif is_diff && is_background
-    cbar(kr,kc).label=str_diff_back;
-    cmap=brewermap(100,'RdYlBu');
+if isempty(cmap) %default
+    if is_background && ~is_diff
+        cbar(kr,kc).label=str_back;
+        cmap=turbo(100);
+    elseif is_diff && ~is_background
+        cbar(kr,kc).label=str_diff;
+        cmap=brewermap(100,'RdYlBu');
+    elseif is_diff && is_background
+        cbar(kr,kc).label=str_diff_back;
+        cmap=brewermap(100,'RdYlBu');
+    else
+        cbar(kr,kc).label=lab;
+        cmap=turbo(100);
+    end
 else
     cbar(kr,kc).label=lab;
-    cmap=turbo(100);
 end
-    
+
 % brewermap('demo')
 
 
@@ -482,6 +495,9 @@ if do_axis_equal
 end
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+if do_3D
+han.sfig(kr,kc).ZLabel.String=cbar(kr,kc).label;
+end
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
@@ -549,6 +565,7 @@ caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 
 %% COLORBAR
 
+if in_p.do_cbar
 kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
@@ -566,6 +583,7 @@ han.cbar.Label.String=cbar(kr,kc).label;
 %     aux_str{ka}=sprintf('%5.3f',aux3(ka));
 % end
 % han.cbar.TickLabels=aux_str;
+end
 
 %% GENERAL
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)

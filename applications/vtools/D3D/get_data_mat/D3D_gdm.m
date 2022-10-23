@@ -35,6 +35,7 @@
 % %% PATHS
 % 
 % fpath_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+% % fpath_add_fcn='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\';
 % 
 % % fpath_project='d:\temporal\220517_improve_exner\';
 % fpath_project='p:\dflowfm\projects\2022_improve_exner\';
@@ -94,8 +95,10 @@
 % in_plot.(tag).do_diff=1; %difference initial time
 % in_plot.(tag).do_s=1; %difference with reference
 % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
+% in_plot.(tag).do_3D=0; %3D plot
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
-% in_plot.(tag).layer=NaN; %NaN=top layer
+% % in_plot.(tag).layer=NaN; %NaN=top layer
+% in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
 % in_plot.(tag).tim=NaN; %all times
 % in_plot.(tag).order_anl=2; %1=normal; 2=random

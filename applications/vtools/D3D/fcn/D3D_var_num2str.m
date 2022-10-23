@@ -25,11 +25,13 @@ parin=inputParser;
 
 addOptional(parin,'is1d',false);
 addOptional(parin,'ismor',false);
+addOptional(parin,'structure',2);
 
 parse(parin,varargin{:});
 
 is1d=parin.Results.is1d;
 ismor=parin.Results.ismor;
+structure=parin.Results.structure;
 
 %%
 
@@ -51,8 +53,19 @@ if ischar(var_id)
                     var_id_out='mesh1d_flowelem_bl';
                 end
             else
-                if ismor
-                    var_id_out='mesh2d_mor_bl';
+                switch structure
+                    case 1
+                        if ismor
+                            var_id_out='DPS';
+                        else
+                            var_id_out='DP0';
+                        end
+                    case {2,4}
+                        if ismor
+                            var_id_out='mesh2d_mor_bl';
+                        end
+                    otherwise
+                        error('ups')
                 end
             end
             var_str_read='bl';

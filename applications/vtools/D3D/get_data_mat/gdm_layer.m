@@ -26,7 +26,7 @@ end
 
 %remove the input if makes no sense. Otherwise the filename has the 'layer'.
 switch var_str
-    case {'clm2'}
+    case {'clm2','bl'}
         layer=[];
 end
 

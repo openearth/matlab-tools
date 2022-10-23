@@ -92,7 +92,11 @@ while ~feof(fid)
                     fline=fgetl(fid);
                 end
                 tok=regexp(fline,'#processes   : (\d*)','tokens');
-                processes=str2double(tok{1,1}{1,1});
+                if ~isempty(tok)
+                    processes=str2double(tok{1,1}{1,1});
+                else
+                    processes=1;
+                end
                 break
             end
 %             kl=search_text_ascii(simdef.file.dia,'** INFO   : Computation finished at:',1);

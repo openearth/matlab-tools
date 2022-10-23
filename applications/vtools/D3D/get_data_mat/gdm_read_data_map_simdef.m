@@ -43,14 +43,15 @@ fpath_map=gdm_fpathmap(simdef,sim_idx);
 switch varname
     case 'clm2'
         data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum); 
-    case 'bl'
-        switch simdef.D3D.structure
-            case 1
-                error('change the name of the variable to read in <D3D_var_num2str>')
-                data_var=gdm_read_data_map(fdir_mat,fpath_map,'DPS','tim',time_dnum); 
-            case {2,4}
-                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch); 
-        end
+        %'bl' can be read fine in FM and the variable name is switched to 'DPS' for D3D4.
+%     case 'bl'
+%         switch simdef.D3D.structure
+%             case 1
+%                 error('change the name of the variable to read in <D3D_var_num2str>')
+%                 data_var=gdm_read_data_map(fdir_mat,fpath_map,'DPS','tim',time_dnum); 
+%             case {2,4}
+%                 data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch); 
+%         end
     case {'T_max','T_da','T_surf'}         
         if isempty(var_idx)
             error('Provide the index of the constituent to analyze')

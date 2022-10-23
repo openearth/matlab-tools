@@ -310,6 +310,7 @@ for kbr=1:nbr %branches
                 fdir_fig_s=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                 
                 [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
+                in_p.ylims=NaN;
                 in_p.x_m=x_m;
                 in_p.y_m=y_m;
                 in_p.clab_str=var_str_save;

@@ -187,15 +187,15 @@ for kvar=1:nvar %variable
                 if flg_loc.do_3D
 
                     fname_noext=fig_name(fdir_fig_var_3d,tag_fig,time_dnum(kt),runid,runid_ref,kclim,var_str,tag_ref_3D,num2str(var_idx{kvar}),kxlim);
-                    bol_nan=isnan(in_p.gridInfo.Xcen);
-                    F=scatteredInterpolant(in_p.gridInfo.Xcen(~bol_nan),in_p.gridInfo.Ycen(~bol_nan),data(~bol_nan));
-                    vz=F(in_p.gridInfo.Xcor,in_p.gridInfo.Ycor);
+                    
+                    Zcor=cen2cor_2D(in_p.gridInfo.Xcen,in_p.gridInfo.Ycen,in_p.gridInfo.Xcor,in_p.gridInfo.Ycor,data);
+                    
                     in_p.fname=fname_noext;
                     in_p.do_3D=1;  
-    %                 in_p.gridInfo.Zcen=in_p.val;  
-                    in_p.gridInfo.Zcor=vz; 
-    %                         in_p.fig_visible=1;  
-    %                         in_p.fig_print=0;  
+    %                 in_p.gridInfo.Zcen=in_p.val;  %if this is passed, the plot is with tiles. This is more correct, but not pleasent to the eye.
+                    in_p.gridInfo.Zcor=Zcor; %if this is passed, it is more pleasent to the eye since the solution is continuous.
+%                         in_p.fig_visible=1;  
+%                         in_p.fig_print=0;  
 
                     fig_map_sal_01(in_p);
 

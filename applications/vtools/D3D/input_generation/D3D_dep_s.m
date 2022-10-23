@@ -212,6 +212,12 @@ switch etab_noise
         sig=simdef.ini.noise_Lb;
         
         noise(2:end-1,:)=-etab_max.*exp(-((x_in-mu(1)).^2/sig^2+(y_in-mu(2)).^2/sig^2)); %factor 2 missing in the denominator?
+    case 7 %from figure
+        etab_max=simdef.ini.noise_amp;
+        pert=perturbation_from_figure(simdef.ini.noise_fig_path); %at cell centres
+        pert=flipud(pert); %indexing of figures is oposite
+        noise(2:end-1,2:end-1)=-pert.*etab_max; %positive downwards
+        
     otherwise
         error('say something about it!')
 end

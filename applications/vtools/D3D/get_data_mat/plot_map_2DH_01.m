@@ -66,6 +66,10 @@ if isfield(flg_loc,'do_3D')==0
     flg_loc.do_3D=0;
 end
 
+if isfield(flg_loc,'do_2D')==0
+    flg_loc.do_2D=1;
+end
+
 flg_loc=gdm_parse_plot_along_rkm(flg_loc);
 
 %% PATHS
@@ -193,18 +197,22 @@ for kvar=1:nvar %variable
                 for kdiff=1:ndiff
                     
                     [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,'clims','clims_diff_t',var_str);
-
-                    fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),tag_ref);
-                    mkdir_check(fdir_fig_var,NaN,1,0);
-
-                    fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
-                    fpath_file{kt,kclim,kdiff,kxlim,1}=sprintf('%s%s',fname_noext,fext); %for movie 
-
-                    in_p.fname=fname_noext;
-                    in_p.do_3D=0;
-
-                    fig_map_sal_01(in_p);
                     
+                    %2D plot
+                    if flg_loc.do_2D
+                        fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),tag_ref);
+                        mkdir_check(fdir_fig_var,NaN,1,0);
+
+                        fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
+                        fpath_file{kt,kclim,kdiff,kxlim,1}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                        in_p.fname=fname_noext;
+                        in_p.do_3D=0;
+
+                        fig_map_sal_01(in_p);
+                    end
+                    
+                    %3D plot
                     if flg_loc.do_3D
                         fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),'3D',tag_ref);
                         mkdir_check(fdir_fig_var,NaN,1,0);
@@ -212,14 +220,16 @@ for kvar=1:nvar %variable
                         fname_noext=fig_name(fdir_fig_var,sprintf('%s_3D',tag),runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
                         fpath_file{kt,kclim,kdiff,kxlim,2}=sprintf('%s%s',fname_noext,fext); %for movie 
 
+                        Zcor=cen2cor_2D(in_p.gridInfo.Xcen,in_p.gridInfo.Ycen,in_p.gridInfo.Xcor,in_p.gridInfo.Ycor,data);
+                        
                         in_p.fname=fname_noext;
                         in_p.do_3D=1;  
-                        in_p.gridInfo.Zcen=in_p.val;  
+        %                 in_p.gridInfo.Zcen=in_p.val;  %if this is passed, the plot is with tiles. This is more correct, but not pleasent to the eye.
+                        in_p.gridInfo.Zcor=Zcor; %if this is passed, it is more pleasent to the eye since the solution is continuous.
 %                         in_p.fig_visible=1;  
 %                         in_p.fig_print=0;  
                         
                         fig_map_sal_01(in_p);
-
                     end
                     
                 end %kdiff
