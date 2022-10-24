@@ -37,6 +37,9 @@ end
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 
+if isfield(flg_loc,'do_convergence')==0
+    flg_loc.do_convergence=0;
+end
 
 %% PATHS
 
@@ -89,18 +92,26 @@ fext=ext_of_fig(in_p.fig_print);
 ks_v=gdm_kt_v(flg_loc,ns);
 
 fpath_file=cell(ns,nylim);
-ksc=0;
-for ks=ks_v
-    ksc=ksc+1;
+
+%loop on variables
+for kvar=1:nvar
     
-    in_p.station=stations{ks};
+    varname=flg_loc.var{kvar};
+    var_str=D3D_var_num2str_structure(varname,simdef);
     
-    %%
-    for kvar=1:nvar
+    ksc=0;
+
+    %allocate for convergence
+    if flg_loc.do_convergence
+        data_conv=NaN(ns,nS);
+    end
+    
+    %loop on stations
+    for ks=ks_v
         
-        varname=flg_loc.var{kvar};
-        var_str=D3D_var_num2str_structure(varname,simdef);
-        
+        ksc=ksc+1;
+
+        in_p.station=stations{ks};
         data_all=NaN(nt,nS);
         for kS=1:nS
             fdir_mat=simdef(kS).file.mat.dir;
@@ -112,6 +123,11 @@ for ks=ks_v
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
             load(fpath_mat_tmp,'data');
             data_all(:,kS)=data;
+        end
+        
+        %save for convergence
+        if flg_loc.do_convergence
+            data_conv(ks,:)=diff(data_all(end-1:end,:),1,1)/seconds(diff(time_dtime(end-1:end)));
         end
         
         in_p.val=data_all;
@@ -177,8 +193,25 @@ for ks=ks_v
             fig_his_sal_01(in_p);
         end %kylim
         
-    end %kvar
-end %kt
+    end %ks
+
+    %% convergence
+    
+    if flg_loc.do_convergence
+        
+        fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim);
+        
+        in_p.fname=fname_noext;
+        in_p.data=data_conv;
+        in_p.stations=stations;
+        in_p.unit=sprintf('%s_t',var_str);
+        
+        fig_his_convergence(in_p)
+        
+    end
+    
+end %kvar
+
 
 %% movies
 
@@ -232,6 +265,18 @@ if ~isempty(layer)
     fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,runid,station,var_str,layer,kylim));
 else
     fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_ylim_%02d',tag,runid,station,var_str,kylim));
+end
+
+end %function
+
+%%
+
+function fname=fig_name_convergence(fdir_fig_var,tag,runid,var_str,layer,kylim)
+
+if ~isempty(layer)
+    fname=fullfile(fdir_fig_var,sprintf('%s_%s_conv_%s_layer_%04d_ylim_%02d',tag,runid,var_str,layer,kylim));
+else
+    fname=fullfile(fdir_fig_var,sprintf('%s_%s_conv_%s_ylim_%02d',tag,runid,var_str,kylim));
 end
 
 end %function

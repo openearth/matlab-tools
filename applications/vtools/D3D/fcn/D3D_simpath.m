@@ -119,40 +119,7 @@ switch simdef.D3D.structure
     case {2,4}
         simdef_aux=D3D_simpath_mdu(file.mdf);
         if simdef.D3D.structure==4 
-            %the relative paths are relative to the layout mdu
-            fn=fieldnames(simdef_aux.file);
-            nfn=numel(fn);
-            for kfn=1:nfn
-                fi=simdef_aux.file.(fn{kfn});
-                if ischar(fi)
-                    if exist(simdef_aux.file.(fn{kfn}))==2;
-                        continue
-                    else
-                        simdef_aux.file.(fn{kfn})=strrep(simdef_aux.file.(fn{kfn}),[filesep,'..'],[filesep,'..',filesep,'..']);
-                        if exist(simdef_aux.file.(fn{kfn}))==2;
-                            disp('Old style smt.yml simulation found')
-                            continue
-                        else
-                            error('File (%s) not found: ',simdef_aux.file.(fn{kfn}))
-                        end
-                    end
-                elseif iscell(fi)
-                    nc=numel(fi);
-                    for kc=1:nc
-                        if exist(simdef_aux.file.(fn{kfn}){kc})==2;
-                            continue
-                        else
-                            simdef_aux.file.(fn{kfn}){kc}=strrep(simdef_aux.file.(fn{kfn}){kc},[filesep,'..'],[filesep,'..',filesep,'..']);
-                            if exist(simdef_aux.file.(fn{kfn}){kc})==2;
-                                disp('Old style smt.yml simulation found')
-                                continue
-                            else
-                                error('File (%s) not found: ',simdef_aux.file.(fn{kfn}){kc})
-                            end
-                        end
-                    end
-                end
-            end
+            simdef_aux.file=adapt_paths_smt(simdef_aux.file); %the relative paths are relative to the layout mdu
         end
 end
 file=simdef_aux.file;
@@ -313,4 +280,41 @@ switch ext
             whatis(4)=true;
         end
 end
+
 end %function
+
+%%
+
+function simdef_aux_file=adapt_paths_smt(simdef_aux_file)
+
+fn=fieldnames(simdef_aux_file);
+nfn=numel(fn);
+for kfn=1:nfn
+    fi=simdef_aux_file.(fn{kfn});
+    if ischar(fi)
+        simdef_aux_file.(fn{kfn})=adapt_paths_smt_char(fi);
+    elseif iscell(fi)
+        nc=numel(fi);
+        for kc=1:nc
+            fi2=fi{kc};
+            simdef_aux_file.(fn{kfn}){kc}=adapt_paths_smt_char(fi2);
+        end
+    end
+end
+
+end %function
+
+%%
+
+function fi=adapt_paths_smt_char(fi)
+
+if ~exist(fi,'file')==2 && ~isfolder(fi)
+    fi=strrep(fi,[filesep,'..'],[filesep,'..',filesep,'..']);
+    if exist(fi,'file')==2 || isfolder(fi)
+        disp('Old style smt.yml simulation found')
+    else
+        error('File (%s) not found: ',simdef_aux.file.(fn{kfn}))
+    end
+end
+
+end
