@@ -281,8 +281,10 @@ for kvar=1:nvar %variable
     for kdiff=1:ndiff
         for kclim=1:nclim
             for kxlim=1:nxlim
-                fpath_mov=fpath_file(:,kclim,kdiff,kxlim,1);
-                gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+                if flg_loc.do_2D
+                    fpath_mov=fpath_file(:,kclim,kdiff,kxlim,1);
+                    gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+                end
                 if flg_loc.do_3D
                     fpath_mov=fpath_file(:,kclim,kdiff,kxlim,2);
                     gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
