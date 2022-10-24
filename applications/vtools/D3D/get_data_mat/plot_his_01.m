@@ -204,7 +204,7 @@ for kvar=1:nvar
         in_p.fname=fname_noext;
         in_p.data=data_conv;
         in_p.stations=stations;
-        in_p.unit=sprintf('%s_t',var_str);
+        in_p.unit=sprintf('%s/t',var_str);
         
         fig_his_convergence(in_p)
         
@@ -274,9 +274,9 @@ end %function
 function fname=fig_name_convergence(fdir_fig_var,tag,runid,var_str,layer,kylim)
 
 if ~isempty(layer)
-    fname=fullfile(fdir_fig_var,sprintf('%s_%s_conv_%s_layer_%04d_ylim_%02d',tag,runid,var_str,layer,kylim));
+    fname=fullfile(fdir_fig_var,sprintf('%s_conv_%s_%s_layer_%04d_ylim_%02d',tag,runid,var_str,layer,kylim));
 else
-    fname=fullfile(fdir_fig_var,sprintf('%s_%s_conv_%s_ylim_%02d',tag,runid,var_str,kylim));
+    fname=fullfile(fdir_fig_var,sprintf('%s_conv_%s_%s_ylim_%02d',tag,runid,var_str,kylim));
 end
 
 end %function
