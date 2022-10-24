@@ -118,6 +118,42 @@ switch simdef.D3D.structure
         simdef_aux=D3D_simpath_mdf(file.mdf);
     case {2,4}
         simdef_aux=D3D_simpath_mdu(file.mdf);
+        if simdef.D3D.structure==4 
+            %the relative paths are relative to the layout mdu
+            fn=fieldnames(simdef_aux.file);
+            nfn=numel(fn);
+            for kfn=1:nfn
+                fi=simdef_aux.file.(fn{kfn});
+                if ischar(fi)
+                    if exist(simdef_aux.file.(fn{kfn}))==2;
+                        continue
+                    else
+                        simdef_aux.file.(fn{kfn})=strrep(simdef_aux.file.(fn{kfn}),[filesep,'..'],[filesep,'..',filesep,'..']);
+                        if exist(simdef_aux.file.(fn{kfn}))==2;
+                            disp('Old style smt.yml simulation found')
+                            continue
+                        else
+                            error('File (%s) not found: ',simdef_aux.file.(fn{kfn}))
+                        end
+                    end
+                elseif iscell(fi)
+                    nc=numel(fi);
+                    for kc=1:nc
+                        if exist(simdef_aux.file.(fn{kfn}){kc})==2;
+                            continue
+                        else
+                            simdef_aux.file.(fn{kfn}){kc}=strrep(simdef_aux.file.(fn{kfn}){kc},[filesep,'..'],[filesep,'..',filesep,'..']);
+                            if exist(simdef_aux.file.(fn{kfn}){kc})==2;
+                                disp('Old style smt.yml simulation found')
+                                continue
+                            else
+                                error('File (%s) not found: ',simdef_aux.file.(fn{kfn}){kc})
+                            end
+                        end
+                    end
+                end
+            end
+        end
 end
 file=simdef_aux.file;
 simdef.err=simdef_aux.err;
