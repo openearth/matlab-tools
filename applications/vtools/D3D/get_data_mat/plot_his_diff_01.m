@@ -86,7 +86,7 @@ for kvar=1:nvar
     
     for ks=ks_v %stations
             
-        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
+        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str);
         fpath_mat_tmp_ref=mat_tmp_name(fdir_mat_ref,tag,'station',stations{ks},'var',var_str,'layer',layer);
         data_ref=load(fpath_mat_tmp_ref,'data');
         

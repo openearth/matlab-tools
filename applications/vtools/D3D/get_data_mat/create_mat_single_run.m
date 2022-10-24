@@ -82,7 +82,8 @@ if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
     create_mat_map_summerbed_01(fid_log,in_plot_fig,simdef)
     pp_sb_var_01(fid_log,in_plot_fig,simdef)
-    if isfield(in_plot_fig,'tim_ave') && ~isnan(in_plot_fig.tim_ave)
+    if isfield(in_plot_fig,'tim_ave')
+%     if isfield(in_plot_fig,'tim_ave') && ~isnan(in_plot_fig.tim_ave)
         pp_sb_tim_ave_01(fid_log,in_plot_fig,simdef)
     end
 %     pp_sb_var_cum_01(fid_log,in_plot_fig,simdef) %not really needed. We are already loading all the data in the plot part for the xtv plot

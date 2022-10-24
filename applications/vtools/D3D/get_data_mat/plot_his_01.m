@@ -34,6 +34,10 @@ if isfield(flg_loc,'fil_tim')==0
     flg_loc.fil_tim=25*3600;
 end
 
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
+
+
 %% PATHS
 
 nS=numel(simdef);
@@ -53,15 +57,18 @@ stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.
 
 [nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his);
 
-%% GRID
-
-
-
 %% DIMENSIONS
 
 ns=numel(stations);
 nvar=numel(flg_loc.var);
 nylim=size(flg_loc.ylims,1);
+
+%% GRID
+
+%Load here all the grids, which are needed for the layers. 
+for kS=1:nS
+    gridInfo(kS)=gdm_load_grid_simdef(fid_log,simdef(kS)); %not nice to have to load it every time
+end
 
 %% FIGURE INI
 
@@ -99,8 +106,8 @@ for ks=ks_v
             fdir_mat=simdef(kS).file.mat.dir;
             fpath_his=simdef(kS).file.his;
             
-            gridInfo=gdm_load_grid_simdef(fid_log,simdef(kS));
-            layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks}); 
+%             gridInfo=gdm_load_grid_simdef(fid_log,simdef(kS)); %not nice to have to load it every time
+            layer=gdm_station_layer(flg_loc,gridInfo(kS),fpath_his,stations{ks},var_str); 
             
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
             load(fpath_mat_tmp,'data');
@@ -160,7 +167,7 @@ for ks=ks_v
         mkdir_check(fdir_fig_var,NaN,1,0);
         
         for kylim=1:nylim
-            fname_noext=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,simdef(1).file.runid,stations{ks},var_str,layer,kylim));
+            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations{ks},var_str,layer,kylim);
             fpath_file{ks,kylim}=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;
@@ -204,6 +211,27 @@ if isnan(ylims)
     else
         ylims=[min(data(:)),max(data(:))];
     end
+end
+
+dy=diff(ylims);
+if dy==0
+    my=mean(ylims);
+    ylims=ylims+[-my/100,my/100];
+end
+if isnan(ylims)
+    ylims=[-1e-10,1e-10];
+end
+
+end %function
+
+%%
+
+function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim)
+
+if ~isempty(layer)
+    fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,runid,station,var_str,layer,kylim));
+else
+    fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_ylim_%02d',tag,runid,station,var_str,kylim));
 end
 
 end %function

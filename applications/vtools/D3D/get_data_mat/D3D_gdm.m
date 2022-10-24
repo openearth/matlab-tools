@@ -209,6 +209,26 @@
 % % in_plot.(tag).ml=2.5;
 % in_plot.(tag).plot_markers=1;
 
+%% HIS
+
+% tag='fig_his_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=0; %regular plot
+% % in_plot.(tag).do_diff=1; %difference initial time
+% in_plot.(tag).do_s=0; %difference with reference
+% % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
+% in_plot.(tag).do_all=1; %all figures in same plot
+% in_plot.(tag).tim=NaN;
+% in_plot.(tag).stations=NaN;
+% in_plot.(tag).var={'sal'};
+% in_plot.(tag).layer=NaN;
+% in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
+% in_plot.(tag).ylims_diff=[NaN,NaN;-sal2cl(-1,400),sal2cl(-1,400)]; %in [psu]
+% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
+% in_plot.(tag).fig_overwrite=1; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).unit={'cl_surf'};  %sal, cl
+
 %%
 
 function D3D_gdm(in_plot)

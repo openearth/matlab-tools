@@ -32,7 +32,7 @@ model_type=parin.Results.model_type;
 %%
 
 switch model_type
-    case 2
+    case {2,4}
         model_type_str='dfm';
     case 3
         model_type_str='sobek3';

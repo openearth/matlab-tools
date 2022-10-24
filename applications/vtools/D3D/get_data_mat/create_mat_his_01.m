@@ -23,7 +23,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 %% PARSE
 
 switch simdef.D3D.structure
-    case 2
+    case {2,4}
         model_type_str='dfm';
     case 3
         model_type_str='sobek3';
@@ -74,7 +74,7 @@ for ks=ks_v
         varname=flg_loc.var{kvar};
         var_str=D3D_var_num2str_structure(varname,simdef);
         
-        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
+        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str);
         
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
         

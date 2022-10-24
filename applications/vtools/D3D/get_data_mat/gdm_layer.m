@@ -25,9 +25,6 @@ else
 end
 
 %remove the input if makes no sense. Otherwise the filename has the 'layer'.
-switch var_str
-    case {'clm2','bl'}
-        layer=[];
-end
+layer=gdm_layer_needed(layer,var_str);
 
 end %function

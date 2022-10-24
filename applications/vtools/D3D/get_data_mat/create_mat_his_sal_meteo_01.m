@@ -56,7 +56,7 @@ css=NaN(nt,ns);
 for ks=ks_v
     ksc=ksc+1;
     
-    layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks});
+    layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},'sal');
         
     data_sal=gdm_read_data_his(fdir_mat,fpath_his,'sal','station',stations{ks},'layer',layer,'tim',time_dnum(1),'tim2',time_dnum(end));
     
