@@ -210,6 +210,8 @@ switch what_do
                                 simdef.csl=stru_in;
                                 D3D_crosssectionlocation(simdef,'fname',sprintf('%s.ini',fname));
                         end
+                    else
+                        dflowfm_io_mdu('write',fname,stru_in);
                     end
                 else
                     dflowfm_io_mdu('write',fname,stru_in);
