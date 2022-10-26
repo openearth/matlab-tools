@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 18012 $
+%$Date: 2022-05-02 16:48:37 +0200 (Mon, 02 May 2022) $
+%$Author: chavarri $
+%$Id: D3D_main_plot.m 18012 2022-05-02 14:48:37Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/source/D3D_main_plot.m $
 %
 
 %% PREAMBLE

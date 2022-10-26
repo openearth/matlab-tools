@@ -7,6 +7,8 @@
 %$Id$
 %$HeadURL$
 %
+%creates a set of simulations based on a reference one 
+%and the variations set in a structure
 
 %% PREAMBLE
 

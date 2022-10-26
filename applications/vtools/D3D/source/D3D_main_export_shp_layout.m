@@ -1,3 +1,35 @@
+%
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+%This functionality has been emmbeded in <D3D_gdm>. Best is to call it within that routine. 
+
+%% PREAMBLE
+
+% dbclear all;
+clear
+clc
+fclose all;
+
+%% PATHS
+
+fpath_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+% fpath_project='d:\temporal\220517_improve_exner\';
+
+%fpath_project='p:\dflowfm\projects\2022_improve_exner\';
+
+%% ADD OET
+
+if isunix
+    fpath_add_fcn=strrep(strrep(strcat('/',strrep(fpath_add_fcn,'P:','p:')),':',''),'\','/');
+end
+addpath(fpath_add_fcn)
+addOET(fpath_add_fcn) 
 
 
 %% FILES

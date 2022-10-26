@@ -1,11 +1,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17617 $
+%$Date: 2021-11-30 12:07:58 +0100 (Tue, 30 Nov 2021) $
+%$Author: chavarri $
+%$Id: D3D_main_minimal_2D_plot.m 17617 2021-11-30 11:07:58Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/source/D3D_main_minimal_2D_plot.m $
 %
 %Minimal example to plot 2D results with a map in the background. 
 
