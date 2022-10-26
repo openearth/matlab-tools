@@ -7,7 +7,7 @@
 %$Id$
 %$HeadURL$
 %
-%Creates paths pf the project directory
+%Creates paths of the project directory
 
 function fpaths=paths_project(fpath_project)
 

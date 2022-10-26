@@ -12,9 +12,19 @@
 %
 %compute normal flow
 
-function slope=normal_flow_slope_simplified(Q,B,cf,h)
+function slope=normal_flow_slope_simplified(Q,B,cf,h,varargin)
 
-g=9.81;
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'g',9.81);
+
+parse(parin,varargin{:});
+
+g=parin.Results.g;
+
+%%
 
 slope=cf*(Q/B)^2/g/h^3;
 
