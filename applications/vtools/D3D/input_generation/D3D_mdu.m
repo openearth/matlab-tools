@@ -110,6 +110,7 @@ if simdef.ini.etaw_type==2
 else
 data{kl,1}=        'WaterLevIniFile   =         '; kl=kl+1;
 end
+% IniFieldFile                              = ../../../q_dependent/inifile_j14_prespinup.ini     # Initial values and parameter fields file
 data{kl,1}=        'LandBoundaryFile  =         '; kl=kl+1;
 data{kl,1}=        'ThinDamFile       =         '; kl=kl+1;
 data{kl,1}=        'FixedWeirFile     =         '; kl=kl+1;

@@ -41,9 +41,9 @@ fpaths=paths_project(fpath_project);
 % fdir_input_folder_refmdf='../../01_input';
 
 flg.only_run_script=0;
-flg.overwrite=0;
+flg.overwrite=1;
 
-input_m=input_variation_01('','',fpaths.fdir_sim_runs);
+input_m=input_variation_01('','');
 fcn_adapt=@(X)adapt_input_01(X);
 
 %% CALC

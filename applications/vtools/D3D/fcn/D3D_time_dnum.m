@@ -25,19 +25,30 @@ parin=inputParser;
 addOptional(parin,'tim_type',1);
 addOptional(parin,'tol',1);
 addOptional(parin,'fdir_mat','');
+addOptional(parin,'results_type','map');
 
 parse(parin,varargin{:});
 
 tim_type=parin.Results.tim_type;
 tol=parin.Results.tol;
 fdir_mat=parin.Results.fdir_mat;
+results_type=parin.Results.results_type;
 
 %check if his or map
     %not robust enough I think for when dealing with SMT and D3D4
-str_tim='';
 if ~isfolder(fpath_map) && contains(fpath_map,'_his')
-    str_tim='_his';
+    results_type='his';
 end
+
+switch results_type
+    case 'map'
+        str_tim='';
+    case 'his'
+        str_tim='_his';
+    otherwise
+        error('No idea about the type')
+end
+
 fpath_tim_all=fullfile(fdir_mat,sprintf('tim%s.mat',str_tim));
 
 %%
@@ -49,7 +60,7 @@ if isa(in_dtime(1),'double')
     if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2 || any(isnan(in_dtime)) 
         messageOut(NaN,sprintf('Mat-file with all times not available or outdated. Reading.'))
         if isfolder(fpath_map) %SMT
-            [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_results_time_wrap(fpath_map);
+            [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_results_time_wrap(fpath_map,results_type);
         else
             is_mor=D3D_is(fpath_map);
             [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map,is_mor,[1,Inf]);

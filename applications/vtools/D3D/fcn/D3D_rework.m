@@ -541,6 +541,13 @@ end
 %% RUNID
 %%
 
+switch simdef.D3D.structure
+    case 1
+        ext='mdf';
+    case 2
+        ext='mdu';
+end
+
 simdef.runid.dummy=NaN;
 if isfield(simdef.runid,'name')==0
     if isfield(simdef.runid,'number')
@@ -548,14 +555,14 @@ if isfield(simdef.runid,'name')==0
             error('specify runid as string')
         end
     end
-    switch simdef.D3D.structure
-        case 1
-            ext='mdf';
-        case 2
-            ext='mdu';
-    end
 %     simdef.runid.name=sprintf('sim_%s%s.%s',simdef.runid.serie,simdef.runid.number,ext);
     simdef.runid.name=sprintf('r%s%s.%s',simdef.runid.serie,simdef.runid.number,ext);
+end
+
+
+if isfield(simdef.file,'mdf')==0
+    fname_mdu=sprintf('%s.%s',simdef.runid.name,ext);
+    simdef.file.mdf=fullfile(simdef.D3D.dire_sim,fname_mdu);
 end
 
 %% 

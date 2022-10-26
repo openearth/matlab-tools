@@ -147,6 +147,9 @@
 
 % tag='fig_map_summerbed_01';
 % in_plot.(tag).do=1;
+% in_plot.(tag).do_xvt=0;
+% in_plot.(tag).do_diff=1; %difference with initial time
+% in_plot.(tag).do_s=1; %difference with reference simulation
 % in_plot.(tag).tim=NaN; %analysis time [datenum, datetime]. NaN=all, Inf=last.
 % % in_plot.(tag).tim=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)];
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
@@ -258,6 +261,18 @@ for ks=1:ns
     create_mat_single_run(fid_log,in_plot,simdef);
     
 end %ks
+
+%%
+
+%2DO Reworking
+%Currently we first plot individual runs, then against a 
+%reference and then together, all calling different runs. 
+%This is idiotic. Here we have to prepare <simdef_ref> and 
+%<simdef> as structure having all simulations. Then, each
+%independent plotting function plots each run individually
+%and compared to a reference. See <plot_1D_01>.
+%An improvement to <plot_1D_01> is not to pass <simdef_ref>
+%but to get it withing the function. Consider it at least. 
 
 %% PLOT INDIVIDUAL RUNS
 

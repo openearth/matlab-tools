@@ -286,13 +286,15 @@ kr=1; kc=1;
 % lims.x(kr,kc,1:2)=lim_A;
 % lims.c(kr,kc,1:2)=clims;
 % xlabels{kr,kc}='L_a [m]';
-[lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
+[lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil]=labels4all(unit,1,lan);
 if is_background
 %     cbar(kr,kc).label=str_back;
 %     cmap=turbo(100);
 elseif is_diff
     ylabels{kr,kc}=str_diff;
 %     cmap=brewermap(100,'RdYlBu');
+elseif is_std
+    ylabels{kr,kc}=str_std;
 else
     ylabels{kr,kc}=lab;
 %     cmap=turbo(100);

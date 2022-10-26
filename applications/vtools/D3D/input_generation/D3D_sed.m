@@ -37,6 +37,11 @@ D3D_structure=simdef.D3D.structure;
 
 %% FILE
 
+%2DO: The files are the same!
+%Within the function, check if tra-file exists. If yes, do not write the
+%sediment parameters to the sed-file.
+%
+
 if D3D_structure==1
     D3D_sed_s(simdef);
 else

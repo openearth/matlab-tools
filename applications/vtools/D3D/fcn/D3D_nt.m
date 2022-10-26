@@ -34,7 +34,7 @@ if isfolder(fpath_res)
         for kf=0:1:nf
             fdir_loc=fullfile(fdir_output,num2str(kf));
             simdef.D3D.dire_sim=fdir_loc;
-            simdef=D3D_simpath(simdef);
+            simdef=D3D_simpath(simdef); %very expensive... 
             fpath_nc=simdef.file.(res_type);
             nt=nt+NC_nt(fpath_nc);
                         

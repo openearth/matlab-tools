@@ -58,7 +58,8 @@ stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.
 
 %% TIME
 
-[nt,time_dnum,time_dtime]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his);
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
+[tim_dnum_p,tim_dtime_p]=gdm_time_flow_mor(flg_loc,simdef,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
 
 %% DIMENSIONS
 
@@ -78,7 +79,12 @@ end
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.tim=time_dtime;
+
+in_p_c=flg_loc;
+in_p_c.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p_c.fig_visible=0;
+
+in_p.tim=tim_dtime_p;
 
 fext=ext_of_fig(in_p.fig_print);
 
@@ -127,7 +133,10 @@ for kvar=1:nvar
         
         %save for convergence
         if flg_loc.do_convergence
-            data_conv(ks,:)=diff(data_all(end-1:end,:),1,1)/seconds(diff(time_dtime(end-1:end)));
+            %simplest form, take last two values
+%             data_conv(ks,:)=diff(data_all(end-1:end,:),1,1)/seconds(diff(time_dtime(end-1:end)));
+            %std of the predifined time
+            [data_conv(ks,:),unit_conv,is_std_conv]=check_convergence(flg_loc,data_all,tim_dtime_p,var_str);
         end
         
         in_p.val=data_all;
@@ -201,12 +210,13 @@ for kvar=1:nvar
         
         fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim);
         
-        in_p.fname=fname_noext;
-        in_p.data=data_conv;
-        in_p.stations=stations;
-        in_p.unit=sprintf('%s/t',var_str);
+        in_p_c.fname=fname_noext;
+        in_p_c.data=data_conv;
+        in_p_c.stations=stations;
+        in_p_c.unit=unit_conv;
+        in_p_c.is_std=unit_conv;
         
-        fig_his_convergence(in_p)
+        fig_his_convergence(in_p_c)
         
     end
     
@@ -280,3 +290,35 @@ else
 end
 
 end %function
+
+%%
+
+function [data_conv,unit,is_std]=check_convergence(flg_loc,data_all,time_dtime_p,var_str)
+
+%% PARSE
+
+if isfield(flg_loc,'convergence_type')==0
+    flg_loc.convergence_type=2;
+end
+if isfield(flg_loc,'convergence_time')==0
+    flg_loc.convergence_time=seconds(3600);
+end
+
+%% CALC
+switch flg_loc.convergence_type
+    case 1 %simplest form, take last two values
+        data_conv(ks,:)=diff(data_all(end-1:end,:),1,1)/seconds(diff(time_dtime_p(end-1:end)));
+        
+        unit=sprintf('%s/t',var_str);
+        is_std=0;
+    case 2 %std over time
+        t0=time_dtime_p(end)-flg_loc.convergence_time;
+        bol_tim=time_dtime_p>t0;
+        data_conv=std(data_all(bol_tim,:));
+        
+        unit=var_str;
+        is_std=1;
+end
+
+            
+end

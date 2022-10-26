@@ -49,7 +49,8 @@ if simdef.D3D.structure~=3
 else
     gridInfo=NaN;
 end
-[nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his,fdir_mat);
+% [nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his,fdir_mat);
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
 
 %% DIMENSIONS
 
@@ -72,7 +73,7 @@ for ks=ks_v
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
-        var_str=D3D_var_num2str_structure(varname,simdef);
+        [var_str,var_id]=D3D_var_num2str_structure(varname,simdef);
         
         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str);
         
@@ -81,14 +82,16 @@ for ks=ks_v
         if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
         %% read data
+        %<gdm_read_data_his_simdef>
         
         %2DO:
         %   -make a function that reworks the data if necessary
-        %   -load the times as specified in the input! now it is inconsistent.
-        data_raw=EHY_getmodeldata(fpath_his,stations{ks},model_type_str,'varName',var_str,'layer',layer,'t0',time_dnum(1),'tend',time_dnum(end));
-        save_check(fpath_mat_tmp,'data_raw');
-
-        %% calc
+        %   -load the times as specified in the input! now it is inconsistent. ?? I don;t know what I meant to say anymore.
+        
+            %% raw data
+            data_raw=gdm_read_data_his(fdir_mat,fpath_his,var_id,'station',stations{ks},'layer',layer,'tim',time_dnum(1),'tim2',time_dnum(end),'structure',simdef.D3D.structure,'sim_idx',sim_idx);
+        
+        %% processed data
 
         data=data_raw.val; %#ok
 

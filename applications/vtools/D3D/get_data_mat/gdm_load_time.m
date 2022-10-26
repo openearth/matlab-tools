@@ -11,9 +11,19 @@
 %$HeadURL$
 %
 
-function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map,fdir_mat)
+function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map,fdir_mat,varargin)
 
 %% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'results_type','map'); %1=map
+
+parse(parin,varargin{:});
+
+results_type=parin.Results.results_type;
+
+%%
 
 if isfield(flg_loc,'overwrite_tim')==1
     messageOut(fid_log,'<overwrite_tim> flag is outdated. Time will be overwritten if the one present is different than the requested one')
@@ -42,7 +52,7 @@ if exist(fpath_mat_time,'file')==2
     if isdatetime(flg_loc.tim)
         tim_obj=datenum_tzone(flg_loc.tim);
     else %is double
-        ntt=D3D_nt(fpath_map); %inside the NaN check we save computational time
+        ntt=D3D_nt(fpath_map,'res_type',results_type); %inside the NaN check we save computational time
         if any(isnan(flg_loc.tim)) 
             if ntt==nt
                 messageOut(fid_log,'Requested time is the same as existing one (all). Loading.')
@@ -110,7 +120,7 @@ end
 %load
 if do_load==1
 
-[time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,flg_loc.tim,'tim_type',flg_loc.tim_type,'tol',flg_loc.tim_tol,'fdir_mat',fdir_mat);
+[time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,flg_loc.tim,'tim_type',flg_loc.tim_type,'tol',flg_loc.tim_tol,'fdir_mat',fdir_mat,'results_type',results_type);
 tim=v2struct(time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx); %#ok
 
 save_check(fpath_mat_time,'tim');

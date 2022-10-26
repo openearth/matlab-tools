@@ -197,21 +197,21 @@ switch lower(variable)
     case {'etaw','waterlevel','wathte','mesh2d_s1','wl'}
         switch lan
             case 'en'
-                str_var='Water level';
+                str_var='water level';
             case 'nl'
-                str_var='Waterstand';
+                str_var='waterstand';
             case 'es'
-                str_var='Nivel del agua';
+                str_var='nivel del agua';
         end
         un_type='Lref'; 
     case {'etaw/t','waterlevel/t','wathte/t','mesh2d_s1/t','wl/t'}
         switch lan
             case 'en'
-                str_var='Change in water level';
+                str_var='change in water level';
             case 'nl'
-                str_var='Waterstandverandering';
+                str_var='waterstandverandering';
             case 'es'
-                str_var='Cambio en el nivel del agua';
+                str_var='cambio en el nivel del agua';
         end
         un_type='L/T'; 
      case 'tide'

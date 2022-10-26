@@ -156,7 +156,7 @@ for ksim=1:nsim
     
     %% run script
 
-    [strsoft_lin,strsoft_win]=D3D_bat(simdef,input_m.sim(ksim).fpath_software);    
+    [strsoft_lin,strsoft_win]=D3D_bat(simdef,simdef.file.software);    
     D3D_create_run_batch('add',fdir_sim_runs,fid_lin,fid_win,simdef.runid.name,strsoft_lin,strsoft_win);
     
     %% erase run in p and move new
