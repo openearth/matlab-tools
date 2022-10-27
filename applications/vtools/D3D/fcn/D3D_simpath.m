@@ -309,8 +309,9 @@ end %function
 
 function fi=adapt_paths_smt_char(fi)
 
-if ~exist(fi,'file')==2 && ~isfolder(fi)
-    fi=strrep(fi,[filesep,'..'],[filesep,'..',filesep,'..']);
+if ~(exist(fi,'file')==2) && ~isfolder(fi)
+    idx = strfind(fi,[filesep,'..']);
+    fi=[fi(1:idx-1),[filesep,'..'],fi(idx:end)];
     if exist(fi,'file')==2 || isfolder(fi)
         disp('Old style smt.yml simulation found')
     else
