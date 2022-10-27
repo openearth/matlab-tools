@@ -22,6 +22,15 @@ polygons=[];
 quiet   = false;
 nrmax   = 2000;
 rgh_missing = 0.04;
+msk=[];
+inp=[];
+bathymetry_database=[];
+manning_deep_value=0.024;
+manning_deep_level=-99999;
+
+if strcmpi(cs.type,'cartesian')
+    cs.type='projected';
+end
 
 %% Read input arguments
 for ii=1:length(varargin)
@@ -33,6 +42,16 @@ for ii=1:length(varargin)
                 quiet=varargin{ii+1};
             case{'rgh_missing'}
                 rgh_missing=varargin{ii+1};
+            case{'mask'}
+                msk=varargin{ii+1};
+            case{'input'}
+                inp=varargin{ii+1};
+            case{'bathymetry_database'}
+                bathymetry_database=varargin{ii+1};
+            case{'manning_deep_value'}
+                manning_deep_value=varargin{ii+1};
+            case{'manning_deep_level'}
+                manning_deep_level=varargin{ii+1};
         end
     end
 end
@@ -41,9 +60,13 @@ end
 if ~isempty(cs)
     
     % Global load bathymetry from Dashboard
-    global bathymetry
-    if isempty(bathymetry)
-        error('Bathymetry database has not yet been initialized! Please run initialize_bathymetry_database.m first.')
+    if isempty(bathymetry_database)
+        global bathymetry
+        if isempty(bathymetry)
+            error('Bathymetry database has not yet been initialized! Please run initialize_bathymetry_database.m first.')
+        end
+    else
+        bathymetry=bathymetry_database;
     end
     
     % Define subgrid file
@@ -51,7 +74,6 @@ if ~isempty(cs)
     if ~isempty(subgridfile)
         subgridfile=[dr filesep subgridfile];
     end
-
     
     % Loop over bathy
     for ib=1:length(bathy)
@@ -77,7 +99,9 @@ if ~isempty(cs)
 end
 
 % Read sfincs inputs
-inp=sfincs_read_input([dr 'sfincs.inp'],[]);
+if isempty(inp)
+    inp=sfincs_read_input([dr 'sfincs.inp'],[]);
+end
 mmax=inp.mmax;
 nmax=inp.nmax;
 dx=inp.dx;
@@ -85,14 +109,17 @@ dy=inp.dy;
 x0=inp.x0;
 y0=inp.y0;
 rotation=inp.rotation;
+
 cosrot=cos(rotation*pi/180);
 sinrot=sin(rotation*pi/180);
 ilev=1;
 
-indexfile   = [dr inp.indexfile];
-bindepfile  = [dr inp.depfile];
-binmskfile  = [dr inp.mskfile];
-[~,msk]     = sfincs_read_binary_inputs(mmax,nmax,indexfile,bindepfile,binmskfile);
+if isempty(msk)
+    indexfile   = [dr inp.indexfile];
+    bindepfile  = [dr inp.depfile];
+    binmskfile  = [dr inp.mskfile];
+    [~,msk]     = sfincs_read_binary_inputs(mmax,nmax,indexfile,bindepfile,binmskfile);
+end
 
 di=dy/2^(ilev-1);  % cell size
 dj=dx/2^(ilev-1);  % cell size
@@ -299,6 +326,11 @@ for ii=1:ni
                         end
                     end
                 end
+            end
+            
+            if manning_deep_level>-99998.0
+                ideep=find(zg<manning_deep_level);
+                manning(ideep)=min(manning(ideep),manning_deep_value);                
             end
             
         else

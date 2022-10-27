@@ -17,8 +17,8 @@ inp.dtmapout=600;
 inp.dthisout=600;
 inp.dtmaxout=0;
 inp.dtwnd=1800;
-inp.alpha=0.75;
-inp.theta=0.90;
+inp.alpha=0.6;
+inp.theta=1.0;
 inp.huthresh=0.01;
 inp.manning=0.04;
 inp.manning_land=0.04;
@@ -38,6 +38,7 @@ inp.pavbnd=0;
 inp.gapres=101200;
 inp.advlim=9999.9;
 inp.stopdepth=100;
+inp.advection=1;
 
 % inp.depfile='sfincs.dep';
 % inp.mskfile='sfincs.msk';
@@ -90,7 +91,7 @@ inp.thdfile='';
 inp.manningfile='';
 
 inp.inputformat='bin';
-inp.outputformat='bin';
+inp.outputformat='net';
 
 inp.cdnrb=3;
 inp.cdwnd=[0 28 50];

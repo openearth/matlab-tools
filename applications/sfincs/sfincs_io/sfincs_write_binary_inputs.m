@@ -2,7 +2,7 @@ function sfincs_write_binary_inputs(z,msk,indexfile,bindepfile,binmskfile)
 
 % Writes binary input files for SFINCS
 
-iincl=0;  % include only msk=1 and msk=2
+iincl=0;  % include only msk>0
 %iincl=-1; % include all points
 
 % Index file
@@ -16,12 +16,12 @@ fwrite(fid,indices,'integer*4');
 fclose(fid);
 
 % Depth file
-zv=z(msk>iincl);
-% zv=max(zv,-5);
-
-fid=fopen(bindepfile,'w');
-fwrite(fid,zv,'real*4');
-fclose(fid);
+if ~isempty(bindepfile)
+    zv=z(msk>iincl);
+    fid=fopen(bindepfile,'w');
+    fwrite(fid,zv,'real*4');
+    fclose(fid);
+end
 
 % Mask file
 fid=fopen(binmskfile,'w');
