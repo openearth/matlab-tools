@@ -40,7 +40,7 @@ if isfield(simdef(1).file,'pillars') && ~isempty(simdef(1).file.pillars)
     aux=num2cell(2*ones(numel(pillars),1));
     [pillars.type]=aux{:};
 else 
-    gen_struct=struct('xy',[],'xy_pli',[],'rkm',[],'type',[]);
+    gen_struct=struct('name',[],'xy',[],'xy_pli',[],'rkm',[],'type',[]);
 end
 
 %I have not checked the case there is only one of the two. Check that preallocation is correct

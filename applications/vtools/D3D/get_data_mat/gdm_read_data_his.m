@@ -25,6 +25,7 @@ addOptional(parin,'layer',NaN);
 addOptional(parin,'station','');
 addOptional(parin,'sim_idx','');
 addOptional(parin,'structure',NaN); %no SMT
+addOptional(parin,'do_load',1); 
 % addOptional(parin,'tol_t',5/60/24);
 
 parse(parin,varargin{:});
