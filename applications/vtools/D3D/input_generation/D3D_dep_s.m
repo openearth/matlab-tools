@@ -72,6 +72,9 @@ switch etab0_type
         end
 end
 
+if isfield(simdef.ini,'noise_seed')==0
+    simdef.ini.noise_seed=0;
+end
 %only straight flume!
 % M=simdef.grd.M;
 % N=simdef.grd.N;
@@ -155,9 +158,10 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
 end
 
 
+
 %add noise
 noise=zeros(ny,nx);
-rng(0)
+rng(simdef.ini.noise_seed)
 switch etab_noise
     case 0
 %         noise=zeros(ny,nx);

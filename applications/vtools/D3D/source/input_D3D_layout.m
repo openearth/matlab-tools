@@ -99,7 +99,8 @@ simdef.mor.BShld=           0; %B parameter in Kock and Flokstra
 simdef.mor.CShld=           0; %C parameter in Kock and Flokstra
 simdef.mor.DShld=           0; %D parameter in Kock and Flokstra
 simdef.mor.UpwindBedload=   0; %Use upwind bedload (1) or central bedload (0)
-    
+simdef.mor.SedThr=          1e-3; %Flow depth threshold below which morphodynamics are not computed [m]
+
 %ill-posedness
 simdef.mor.HiranoCheck=     0; %Flag for well-posedness of Hirano check [-] [double(1,1)]: 0=NO; 1=YES
 simdef.mor.HiranoRegularize=0; %Flag for regularizing the active layer model: 0=NO; 1=only at ill-posed locations; 2=everywhere [-] [double(1,1)]

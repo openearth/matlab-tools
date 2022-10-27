@@ -44,30 +44,33 @@ check_existing=parin.Results.check_existing;
 file_name=simdef.file.mor;
 fname_pli_u=simdef.pli.fname_u;
 
-IHidExp=simdef.mor.IHidExp;
-ASKLHE=simdef.mor.ASKLHE;
-ThTrLyr=simdef.mor.ThTrLyr;
-ThUnLyr=simdef.mor.ThUnLyr;
-total_ThUnLyr=simdef.mor.total_ThUnLyr;
-MorStt=simdef.mor.MorStt;
-MorFac=simdef.mor.MorFac;
-ISlope=simdef.mor.ISlope;
-AShld=simdef.mor.AShld;
-BShld=simdef.mor.BShld;
-CShld=simdef.mor.CShld;
-DShld=simdef.mor.DShld;
-IBedCond=simdef.mor.IBedCond;
-BedUpd=simdef.mor.BedUpd;
-CmpUpd=simdef.mor.CmpUpd;
-ICmpCond=simdef.mor.ICmpCond;
 secflow=simdef.mdf.secflow;
-HiranoCheck=simdef.mor.HiranoCheck;
-HiranoDiffusion=simdef.mor.HiranoDiffusion;
-HiranoRegularize=simdef.mor.HiranoRegularize;
-RegularizationRadious=simdef.mor.RegularizationRadious;
-SedTransDerivativesComputation=simdef.mor.SedTransDerivativesComputation;
-UpwindBedload=simdef.mor.UpwindBedload;
-BedloadScheme=simdef.mor.BedloadScheme;
+
+v2struct(simdef.mor);
+
+% IHidExp=simdef.mor.IHidExp;
+% ASKLHE=simdef.mor.ASKLHE;
+% ThTrLyr=simdef.mor.ThTrLyr;
+% ThUnLyr=simdef.mor.ThUnLyr;
+% total_ThUnLyr=simdef.mor.total_ThUnLyr;
+% MorStt=simdef.mor.MorStt;
+% MorFac=simdef.mor.MorFac;
+% ISlope=simdef.mor.ISlope;
+% AShld=simdef.mor.AShld;
+% BShld=simdef.mor.BShld;
+% CShld=simdef.mor.CShld;
+% DShld=simdef.mor.DShld;
+% IBedCond=simdef.mor.IBedCond;
+% BedUpd=simdef.mor.BedUpd;
+% CmpUpd=simdef.mor.CmpUpd;
+% ICmpCond=simdef.mor.ICmpCond;
+% HiranoCheck=simdef.mor.HiranoCheck;
+% HiranoDiffusion=simdef.mor.HiranoDiffusion;
+% HiranoRegularize=simdef.mor.HiranoRegularize;
+% RegularizationRadious=simdef.mor.RegularizationRadious;
+% SedTransDerivativesComputation=simdef.mor.SedTransDerivativesComputation;
+% UpwindBedload=simdef.mor.UpwindBedload;
+% BedloadScheme=simdef.mor.BedloadScheme;
 
 % HiranoCheckPerturbation=1e-6;
 % HiranoCheckEigThr=1e-6;
@@ -139,7 +142,7 @@ data{kl,1}=        '   Sus              =  1.0000000e+000      [-]      Multipli
 data{kl,1}=        '   Bed              =  1.0000000e+000      [-]      Multiplication factor for bed-load transport vector magnitude'; kl=kl+1;
 data{kl,1}=        '   SusW             =  1.0000000e+000      [-]      Wave-related suspended sed. transport factor'; kl=kl+1;
 data{kl,1}=        '   BedW             =  1.0000000e+000      [-]      Wave-related bed-load sed. transport factor'; kl=kl+1;
-data{kl,1}=        '   SedThr           =  1.0000000e-003      [m]      Minimum water depth for sediment computations'; kl=kl+1;
+data{kl,1}=sprintf('   SedThr           =  %0.7E      [m]      Minimum water depth for sediment computations',SedThr); kl=kl+1;
 data{kl,1}=        '   ThetSD           =  0.0000000e+000      [-]      Factor for erosion of adjacent dry cells'; kl=kl+1;
 data{kl,1}=        '   HMaxTH           =  1.5000000e+000      [m]      Max depth for variable THETSD. Set < SEDTHR to use global value only'; kl=kl+1;
 if any(IBedCond==[3,5])

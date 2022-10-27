@@ -13,12 +13,20 @@
 
 function D3D_create_simulation_all(flg,input_m,fdir_sim_runs,fcn_adapt)
 
+%% get only all variations component
+
+if isfield(input_m,'sim')
+    input_m_s=input_m.sim;
+else
+    input_m_s=input_m;
+end
+
 %% save input matrix
 
 mkdir_check(fdir_sim_runs);
 fpath_input=fullfile(fdir_sim_runs,'readme.mat');
 save(fpath_input,'input_m');
-D3D_write_readme(input_m,'fpath_out',fullfile(fdir_sim_runs,'readme.txt'));
+D3D_write_readme(input_m_s,'fpath_out',fullfile(fdir_sim_runs,'readme.txt'));
 
 %% run files
 
@@ -26,14 +34,14 @@ D3D_write_readme(input_m,'fpath_out',fullfile(fdir_sim_runs,'readme.txt'));
 
 %% loop on simulations
 
-nsim=numel(input_m.sim);
+nsim=numel(input_m_s);
 for ksim=1:nsim
     
-    if input_m.sim(ksim).dorun==0; continue; end
+    if input_m_s(ksim).dorun==0; continue; end
     
     %% adapt input
     
-    simdef=fcn_adapt(input_m.sim(ksim));
+    simdef=fcn_adapt(input_m_s(ksim));
     simdef=D3D_rework(simdef); %defaults
 
     %% create files

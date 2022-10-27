@@ -73,7 +73,7 @@ for ks=ks_v
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
-        [var_str,var_id]=D3D_var_num2str_structure(varname,simdef);
+        [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
         
         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str);
         
@@ -93,7 +93,7 @@ for ks=ks_v
         
         %% processed data
 
-        data=data_raw.val; %#ok
+        data=squeeze(data_raw.val); %#ok
 
         %% save and disp
         save_check(fpath_mat_tmp,'data');

@@ -36,7 +36,7 @@ results_type=parin.Results.results_type;
 
 %check if his or map
     %not robust enough I think for when dealing with SMT and D3D4
-if ~isfolder(fpath_map) && contains(fpath_map,'_his')
+if ~isfolder(fpath_map) && (contains(fpath_map,'_his') || contains(fpath_map,'trih'))
     results_type='his';
 end
 
@@ -119,6 +119,9 @@ if isa(in_dtime(1),'double')
                 tim_cmp=time_mor_dnum;
             else
                 error('not sure what you want')
+            end
+            if isnan(tim_cmp)
+                error('Problem with time') %wanted morpho time?
             end
             idx_g=absmintol(tim_cmp,in_dtime(kt),'tol',tol,'dnum',1);
         end

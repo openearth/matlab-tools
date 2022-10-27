@@ -418,6 +418,9 @@ if isfield(simdef.mor,'BedloadScheme')==1
 else
     simdef.mor.BedloadScheme=NaN;
 end
+if isfield(simdef.mor,'SedThr')==0
+    simdef.mor.SedThr=1e-3;
+end
 
 %% 
 %% BCM

@@ -58,14 +58,14 @@ stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.
 
 %% TIME
 
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
-[tim_dnum_p,tim_dtime_p]=gdm_time_flow_mor(flg_loc,simdef,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
+%we are reading only one time
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(1),'results_type','his'); %force his reading. Needed for SMT.
+[tim_dnum_p,tim_dtime_p]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
 
 %% DIMENSIONS
 
 ns=numel(stations);
 nvar=numel(flg_loc.var);
-nylim=size(flg_loc.ylims,1);
 
 %% GRID
 
@@ -97,13 +97,11 @@ fext=ext_of_fig(in_p.fig_print);
 
 ks_v=gdm_kt_v(flg_loc,ns);
 
-fpath_file=cell(ns,nylim);
-
 %loop on variables
 for kvar=1:nvar
     
     varname=flg_loc.var{kvar};
-    var_str=D3D_var_num2str_structure(varname,simdef);
+    var_str=D3D_var_num2str_structure(varname,simdef(1));
     
     ksc=0;
 
@@ -111,6 +109,9 @@ for kvar=1:nvar
     if flg_loc.do_convergence
         data_conv=NaN(ns,nS);
     end
+    
+    nylim=size(flg_loc.ylims_var{kvar},1);
+    fpath_file=cell(ns,nylim);
     
     %loop on stations
     for ks=ks_v
@@ -128,6 +129,9 @@ for kvar=1:nvar
             
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
             load(fpath_mat_tmp,'data');
+            if size(data,1)~=size(data_all,1)
+                error('Not all simulations have the same output interval.') %
+            end
             data_all(:,kS)=data;
         end
         
@@ -197,7 +201,7 @@ for kvar=1:nvar
 
             in_p.fname=fname_noext;
             
-            in_p.ylims=get_ylims(flg_loc.ylims(kylim,:),in_p.do_measurements,data_all,data_mea);
+            in_p.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,data_all,data_mea);
 
             fig_his_sal_01(in_p);
         end %kylim
@@ -259,7 +263,7 @@ end
 dy=diff(ylims);
 if dy==0
     my=mean(ylims);
-    ylims=ylims+[-my/100,my/100];
+    ylims=ylims+abs(my/100)*[-1,1];
 end
 if isnan(ylims)
     ylims=[-1e-10,1e-10];

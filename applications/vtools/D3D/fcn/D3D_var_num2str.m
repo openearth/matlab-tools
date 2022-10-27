@@ -26,12 +26,14 @@ parin=inputParser;
 addOptional(parin,'is1d',false);
 addOptional(parin,'ismor',false);
 addOptional(parin,'structure',2);
+addOptional(parin,'res_type','map');
 
 parse(parin,varargin{:});
 
 is1d=parin.Results.is1d;
 ismor=parin.Results.ismor;
 structure=parin.Results.structure;
+res_type=parin.Results.res_type;
 
 %%
 
@@ -55,10 +57,19 @@ if ischar(var_id)
             else
                 switch structure
                     case 1
-                        if ismor
-                            var_id_out='DPS';
-                        else
-                            var_id_out='DP0';
+                        switch res_type
+                            case 'map'
+                                if ismor
+                                    var_id_out='DPS';
+                                else
+                                    var_id_out='DP0';
+                                end
+                            case 'his'
+                                if ismor
+                                    var_id_out='ZDPS';
+                                else
+                                    var_id_out='DPS';
+                                end
                         end
                     case {2,4}
                         if ismor

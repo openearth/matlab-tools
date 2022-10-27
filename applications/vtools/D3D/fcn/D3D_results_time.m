@@ -46,12 +46,18 @@ if strcmp(ext,'.nc') %FM
         time_mor_r=NaN(size(time_dtime));
     end
 elseif strcmp(ext,'.dat') %D3D4
+    ismap=1;
+    str_get='map';
+    if contains(fname,'trih')
+        ismap=0;
+        str_get='his';
+    end
     NFStruct=vs_use(fpath_nc,'quiet');
-    ITMAPC=vs_let(NFStruct,'map-info-series','ITMAPC','quiet'); %results time vector
-    ITDATE=vs_let(NFStruct,'map-const','ITDATE','quiet');
-    TZONE=vs_let(NFStruct,'map-const','TZONE','quiet');
-    TUNIT=vs_let(NFStruct,'map-const','TUNIT','quiet'); %dt unit
-    DT=vs_let(NFStruct,'map-const','DT','quiet'); %dt
+    ITMAPC=vs_let(NFStruct,sprintf('%s-info-series',str_get),sprintf('IT%sC',upper(str_get)),'quiet'); %results time vector
+    ITDATE=vs_let(NFStruct,sprintf('%s-const',str_get),'ITDATE','quiet');
+    TZONE=vs_let(NFStruct,sprintf('%s-const',str_get),'TZONE','quiet');
+    TUNIT=vs_let(NFStruct,sprintf('%s-const',str_get),'TUNIT','quiet'); %dt unit
+    DT=vs_let(NFStruct,sprintf('%s-const',str_get),'DT','quiet'); %dt
     time_r=ITMAPC*DT*TUNIT; %results time vector [s]
     if ITDATE(2)~=0
         error('modify this!')
@@ -67,7 +73,7 @@ elseif strcmp(ext,'.dat') %D3D4
     t0_str=sprintf('%d',ITDATE(1));
     t0_dtime=datetime(t0_str,'InputFormat','yyyyMMdd','TimeZone',str_tz);
     if ismor==1
-        MORFT=vs_let(NFStruct,'map-infsed-serie','MORFT','quiet'); %morphological time (days since start)
+        MORFT=vs_let(NFStruct,sprintf('%s-infsed-serie',str_get),'MORFT','quiet'); %morphological time (days since start)
         time_mor_r=MORFT*24*3600; %seconds
     else
         time_mor_r=NaN(size(time_r));

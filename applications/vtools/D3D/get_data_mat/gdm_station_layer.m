@@ -14,7 +14,8 @@
 
 function layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations,var_str)
     
-layer=[];
+% layer=[];
+layer='';
 
 if isnan(flg_loc.layer)
     layer=gridInfo.no_layers;

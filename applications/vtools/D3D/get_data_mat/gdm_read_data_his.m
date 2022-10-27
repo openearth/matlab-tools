@@ -20,7 +20,8 @@ parin=inputParser;
 
 addOptional(parin,'tim',[]);
 addOptional(parin,'tim2',[]);
-addOptional(parin,'layer',[]);
+% addOptional(parin,'layer',[]);
+addOptional(parin,'layer',NaN);
 addOptional(parin,'station','');
 addOptional(parin,'sim_idx','');
 addOptional(parin,'structure',NaN); %no SMT
@@ -40,7 +41,8 @@ structure=parin.Results.structure;
     
 % var_str=D3D_var_num2str(varname); %should not be necessary, done outside.
 
-if ~isempty(layer)
+% if ~isempty(layer)
+if ~ischar(layer)
     fpath_mat=mat_tmp_name(fdir_mat,varname,'station',station,'layer',layer,'tim',tim,'tim2',tim2);
 else
     fpath_mat=mat_tmp_name(fdir_mat,varname,'station',station,'tim',tim,'tim2',tim2);
@@ -61,23 +63,28 @@ else
     OPT.t0=tim;
     OPT.tend=tim2;
 
-    if structure==4
-        his_u=unique(sim_idx);
-        nhis=numel(his_u);
-        fpath_his_ori=fpath_his; %save the one with '0' for replacing
-        for khis=1:nhis
-            sim_idx_loc=his_u(khis);
-            fpath_his=strrep(fpath_his_ori,[filesep,'0',filesep],[filesep,num2str(sim_idx_loc),filesep]); 
-            data_loc=EHY_getmodeldata(fpath_his,station,'dfm',OPT);
-            if khis==1
-                data=data_loc;
-            else
-                data.val=cat(1,data.val,data_loc.val);
-                data.times=cat(1,data.times,data_loc.times);
+    switch structure
+        case 1
+            data=EHY_getmodeldata(fpath_his,station,'d3d',OPT);
+        case 2
+            data=EHY_getmodeldata(fpath_his,station,'dfm',OPT);
+        case 4
+            his_u=unique(sim_idx);
+            nhis=numel(his_u);
+            fpath_his_ori=fpath_his; %save the one with '0' for replacing
+            for khis=1:nhis
+                sim_idx_loc=his_u(khis);
+                fpath_his=strrep(fpath_his_ori,[filesep,'0',filesep],[filesep,num2str(sim_idx_loc),filesep]); 
+                data_loc=EHY_getmodeldata(fpath_his,station,'dfm',OPT);
+                if khis==1
+                    data=data_loc;
+                else
+                    data.val=cat(1,data.val,data_loc.val);
+                    data.times=cat(1,data.times,data_loc.times);
+                end
             end
-        end
-    else
-        data=EHY_getmodeldata(fpath_his,station,'dfm',OPT);
+        otherwise
+            error('do')
     end
     save_check(fpath_mat,'data');
 end

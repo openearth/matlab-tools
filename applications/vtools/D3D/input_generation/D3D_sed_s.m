@@ -52,7 +52,7 @@ for kf=1:nf
     % data{stu+(kf-1)*nlb+kf+4,1}=sprintf('   SedMinDia        =  %0.7e      [m]      Minimum sediment diameter (D50)',dk(kf)-0.00001);
     % data{stu+(kf-1)*nlb+kf+5,1}=sprintf('   SedMaxDia        =  %0.7e      [m]      Maximum sediment diameter (D50)',dk(kf)+0.00001);
     data{stu+(kf-1)*nlb+kf+6,1}=        '   CDryB            =  1.5900000e+003      [kg/m3]  Dry bed density';
-    data{stu+(kf-1)*nlb+kf+7,1}=        '   IniSedThick      =  1.0000000e+000      [m]      Initial sediment layer thickness at bed (overuled if IniComp is prescribed)';
+    data{stu+(kf-1)*nlb+kf+7,1}=        '   IniSedThick      =  1.0000000e+002      [m]      Initial sediment layer thickness at bed (overuled if IniComp is prescribed)';
     data{stu+(kf-1)*nlb+kf+8,1}=        '   FacDSS           =  1.0000000e+000      [-]      FacDss * SedDia = Initial suspended sediment diameter. Range [0.6 - 1.0]';
 end
 

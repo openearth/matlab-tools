@@ -52,7 +52,7 @@ elseif strcmp(ext,'.dat')
     is1d=0;
     str_network1d='';
     issus=NaN; %add!
-    if isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'map-infsed-serie'}))
+    if isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'map-infsed-serie'})) && isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'his-infsed-serie'}))
         ismor=0;
     end
 

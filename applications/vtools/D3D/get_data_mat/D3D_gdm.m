@@ -12,7 +12,9 @@
 %
 %variables: open D3D_list_of_variables
 
-%% PREAMBLE
+%%
+%% CALLING 
+%%
 
 % %
 % %Victor Chavarrias (victor.chavarrias@deltares.nl)
@@ -51,15 +53,13 @@
 % %% PATHS
 % 
 % fpaths=paths_project(fpath_project);
-
-%% 
-
-%% simulation
-
+% 
+% %% simulation
+% 
 % ks=0;
 % 
 % ks=ks+1;
-% in_plot.fdir_sim{ks}=fullfile(fpaths.dir_runs,'r002'); 
+% in_plot.fdir_sim{ks}=fullfile(fpaths.fdir_sim_runs,'r002'); 
 % in_plot.str_sim{ks}='reference';
 % 
 % in_plot.sim_ref=1;
@@ -97,7 +97,7 @@
 % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
 % in_plot.(tag).do_3D=0; %3D plot
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
-% % in_plot.(tag).layer=NaN; %NaN=top layer
+% % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
 % in_plot.(tag).tim=NaN; %all times
@@ -222,9 +222,9 @@
 % % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
 % in_plot.(tag).do_all=1; %all figures in same plot
 % in_plot.(tag).tim=NaN;
-% in_plot.(tag).stations=NaN;
+% in_plot.(tag).stations=NaN; %NaN=all
 % in_plot.(tag).var={'sal'};
-% in_plot.(tag).layer=NaN;
+% in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
 % in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).ylims_diff=[NaN,NaN;-sal2cl(-1,400),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
