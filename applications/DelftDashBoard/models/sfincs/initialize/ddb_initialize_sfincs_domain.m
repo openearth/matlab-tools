@@ -131,3 +131,7 @@ handles.model.sfincs.domain(id).obspoints.length=0;
 
 % Quadtree
 handles.model.sfincs.domain(id).buq = [];
+
+% Sub-grid
+handles.model.sfincs.domain(id).use_subgrid = 1;
+

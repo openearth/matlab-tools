@@ -77,6 +77,16 @@ if isempty(varargin)
         set(h,'Visible','on');
         uistack(h,'top');
     end
+    h=findobj(gca,'Tag','sfincswaterlevelboundarypolygon');
+    if ~isempty(h)
+        set(h,'Visible','on');
+        uistack(h,'top');
+    end
+    h=findobj(gca,'Tag','sfincsoutflowboundarypolygon');
+    if ~isempty(h)
+        set(h,'Visible','on');
+        uistack(h,'top');
+    end
     
     handles=getHandles;
     ddb_sfincs_plot_mask(handles, 'update','domain',ad,'visible',1);
@@ -107,16 +117,16 @@ else
         case{'saveexcludepolygon'}
             saveExcludePolygon;
 
-        case{'selectclosedboundarypolygon'}
-            selectClosedBoundaryPolygon;
-        case{'drawclosedboundarypolygon'}
-            drawClosedBoundaryPolygon;
-        case{'deleteclosedboundarypolygon'}
-            deleteClosedBoundaryPolygon;
-        case{'loadclosedboundarypolygon'}
-            loadClosedBoundaryPolygon;
-        case{'saveclosedboundarypolygon'}
-            saveClosedBoundaryPolygon;
+%         case{'selectclosedboundarypolygon'}
+%             selectClosedBoundaryPolygon;
+%         case{'drawclosedboundarypolygon'}
+%             drawClosedBoundaryPolygon;
+%         case{'deleteclosedboundarypolygon'}
+%             deleteClosedBoundaryPolygon;
+%         case{'loadclosedboundarypolygon'}
+%             loadClosedBoundaryPolygon;
+%         case{'saveclosedboundarypolygon'}
+%             saveClosedBoundaryPolygon;
 
         case{'selectoutflowboundarypolygon'}
             selectOutflowBoundaryPolygon;
@@ -140,26 +150,28 @@ else
         case{'savewaterlevelboundarypolygon'}
             saveWaterlevelBoundaryPolygon;            
             
-        case{'useoptionactivegrid'}
-            useOptionActiveGrid;
-        case{'removeoptionactivegrid'}
-            removeOptionActiveGrid;            
-        case{'upoptionactivegrid'}
-            upOptionActiveGrid;
-        case{'downoptionactivegrid'}
-            downOptionActiveGrid;            
+%         case{'useoptionactivegrid'}
+%             useOptionActiveGrid;
+%         case{'removeoptionactivegrid'}
+%             removeOptionActiveGrid;            
+%         case{'upoptionactivegrid'}
+%             upOptionActiveGrid;
+%         case{'downoptionactivegrid'}
+%             downOptionActiveGrid;            
             
-        case{'useoptionboundarycells'}
-            useOptionBoundaryCells;
-        case{'removeoptionboundarycells'}
-            removeOptionBoundaryCells;            
-        case{'upoptionboundarycells'}
-            upOptionBoundaryCells;
-        case{'downoptionboundarycells'}
-            downOptionBoundaryCells;        
+%         case{'useoptionboundarycells'}
+%             useOptionBoundaryCells;
+%         case{'removeoptionboundarycells'}
+%             removeOptionBoundaryCells;            
+%         case{'upoptionboundarycells'}
+%             upOptionBoundaryCells;
+%         case{'downoptionboundarycells'}
+%             downOptionBoundaryCells;        
             
         case{'generatemask'}
             generateMask;
+        case{'bathymetry_changed'}
+            bathymetry_changed;
     end
 end
 
@@ -171,14 +183,13 @@ function selectIncludePolygon
 handles=getHandles;
 setHandles(handles);
 
-
 %%
 function drawIncludePolygon
 
 handles=getHandles;
 ddb_zoomOff;
 
-handles.toolbox.modelmaker.sfincs.mask.includepolygonhandle=gui_polyline('draw','tag','sfincsincludepolygon','marker','o', ...
+handles.toolbox.modelmaker.sfincs.mask.includepolygonhandle=gui_polyline('draw','tag','sfincsincludepolygon','color','y','marker','o', ...
     'createcallback',@createIncludePolygon,'changecallback',@changeIncludePolygon, ...
     'closed',1);
 
@@ -280,7 +291,7 @@ for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons
     handles.toolbox.modelmaker.sfincs.mask.includepolygon(ip).y=y;
     handles.toolbox.modelmaker.sfincs.mask.includepolygon(ip).length=length(x);
     handles.toolbox.modelmaker.sfincs.mask.includepolygonnames{ip}=deblank2(data.Field(ip).Name);
-    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsincludepolygon','marker','o', ...
+    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsincludepolygon','color','y','marker','o', ...
         'changecallback',@changeIncludePolygon);
     handles.toolbox.modelmaker.sfincs.mask.includepolygon(ip).handle=h;
 end
@@ -455,156 +466,6 @@ end
 fclose(fid);
 
 
-
-
-%%
-function selectClosedBoundaryPolygon
-handles=getHandles;
-setHandles(handles);
-
-
-%%
-function drawClosedBoundaryPolygon
-
-handles=getHandles;
-ddb_zoomOff;
-
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonhandle=gui_polyline('draw','tag','sfincsclosedboundarypolygon','color','b','marker','o', ...
-    'createcallback',@createClosedBoundaryPolygon,'changecallback',@changeClosedBoundaryPolygon, ...
-    'closed',1);
-
-setHandles(handles);
-
-%%
-function createClosedBoundaryPolygon(h,x,y)
-handles=getHandles;
-handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons+1;
-iac=handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(iac).handle=h;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(iac).x=x;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(iac).y=y;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(iac).length=length(x);
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames{iac}=['polygon_' num2str(iac,'%0.3i')];
-handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon=iac;
-setHandles(handles);
-gui_updateActiveTab;
-
-%%
-function deleteClosedBoundaryPolygon
-
-handles=getHandles;
-
-iac=handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon;
-if handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons>0
-    h=handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(iac).handle;
-    if ~isempty(h)
-        try
-            delete(h);
-        end
-    end
-end
-
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon=removeFromStruc(handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon,iac);
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames=removeFromCellArray(handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames,iac);
-
-handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=max(handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons-1,0);
-handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon=min(handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon,handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons);
-
-if handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons==0
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon=[];
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).x=[];
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).y=[];
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).length=0;
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).handle=[];
-    handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=0;
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames={''};
-    handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon=1;
-end
-
-setHandles(handles);
-
-%%
-function changeClosedBoundaryPolygon(h,x,y,varargin)
-handles=getHandles;
-for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons
-    if handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).handle==h
-        iac=ip;
-        break
-    end
-end
-
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(iac).x=x;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(iac).y=y;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(iac).length=length(x);
-handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon=iac;
-setHandles(handles);
-gui_updateActiveTab;
-
-%%
-function loadClosedBoundaryPolygon
-
-handles=getHandles;
-
-% Clear all
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon=[];
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).x=[];
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).y=[];
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).length=0;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).handle=[];
-handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=0;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames={''};
-
-h=findobj(gca,'Tag','sfincsclosedboundarypolygon');
-delete(h);
-
-data=tekal('read',handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonfile,'loaddata');
-handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=length(data.Field);
-handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon=1;
-for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons
-    x=data.Field(ip).Data(:,1);
-    y=data.Field(ip).Data(:,2);
-    if x(end)~=x(1) || y(end)~=y(1)
-        x=[x;x(1)];
-        y=[y;y(1)];
-    end
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).x=x;
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).y=y;
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).length=length(x);
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames{ip}=deblank2(data.Field(ip).Name);
-    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsclosedboundarypolygon','color','b','marker','o', ...
-        'changecallback',@changeIncludePolygon);
-    handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).handle=h;
-end
-
-setHandles(handles);
-
-%%
-function saveClosedBoundaryPolygon
-
-handles=getHandles;
-
-cs=handles.screenParameters.coordinateSystem.type;
-if strcmpi(cs,'geographic')
-    fmt='%12.7f %12.7f\n';
-else
-    fmt='%11.1f %11.1f\n';
-end
-
-fid=fopen(handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonfile,'wt');
-for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons
-    fprintf(fid,'%s\n',handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames{ip});
-    fprintf(fid,'%i %i\n',[handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).length 2]);
-    for ix=1:handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).length
-        fprintf(fid,fmt,[handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).x(ix) handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(ip).y(ix)]);
-    end
-end
-fclose(fid);
-
-
-
-
-
-
 %%
 function selectOutflowBoundaryPolygon
 handles=getHandles;
@@ -617,7 +478,7 @@ function drawOutflowBoundaryPolygon
 handles=getHandles;
 ddb_zoomOff;
 
-handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonhandle=gui_polyline('draw','tag','sfincsoutflowboundarypolygon','color','b','marker','o', ...
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonhandle=gui_polyline('draw','tag','sfincsoutflowboundarypolygon','color','c','marker','o', ...
     'createcallback',@createOutflowBoundaryPolygon,'changecallback',@changeOutflowBoundaryPolygon, ...
     'closed',1);
 
@@ -719,7 +580,7 @@ for ip=1:handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons
     handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).y=y;
     handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).length=length(x);
     handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames{ip}=deblank2(data.Field(ip).Name);
-    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsoutflowboundarypolygon','color','b','marker','o', ...
+    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsoutflowboundarypolygon','color','c','marker','o', ...
         'changecallback',@changeIncludePolygon);
     handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ip).handle=h;
 end
@@ -760,7 +621,7 @@ function drawWaterlevelBoundaryPolygon
 handles=getHandles;
 ddb_zoomOff;
 
-handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonhandle=gui_polyline('draw','tag','sfincswaterlevelboundarypolygon','color','b','marker','o', ...
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonhandle=gui_polyline('draw','tag','sfincswaterlevelboundarypolygon','color','r','marker','o', ...
     'createcallback',@createWaterlevelBoundaryPolygon,'changecallback',@changeWaterlevelBoundaryPolygon, ...
     'closed',1);
 
@@ -862,7 +723,7 @@ for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons
     handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).y=y;
     handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).length=length(x);
     handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames{ip}=deblank2(data.Field(ip).Name);
-    h=gui_polyline('plot','x',x,'y',y,'tag','sfincswaterlevelboundarypolygon','color','b','marker','o', ...
+    h=gui_polyline('plot','x',x,'y',y,'tag','sfincswaterlevelboundarypolygon','color','r','marker','o', ...
         'changecallback',@changeIncludePolygon);
     handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ip).handle=h;
 end
@@ -891,163 +752,6 @@ for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons
 end
 fclose(fid);
 
-%%
-function useOptionActiveGrid
-
-handles=getHandles;
-
-id=handles.toolbox.modelmaker.sfincs.mask.activegrid_index;
-name=handles.toolbox.modelmaker.sfincs.mask.activegrid_options{id};
-
-% Check if dataset is already selected
-usedd=1;
-for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options
-    if strcmpi(handles.toolbox.modelmaker.sfincs.mask.activegrid_action{ii},name)
-        usedd=0;
-        break
-    end
-end
-
-if usedd
-
-    handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options=handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options+1;
-    n=handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options;
-    
-    handles.toolbox.modelmaker.sfincs.mask.activegrid_action{n}=name;    
-    handles.toolbox.modelmaker.sfincs.mask.activegrid_option=n;    
-
-end
-
-setHandles(handles);
-gui_updateActiveTab;
-
-%%
-function removeOptionActiveGrid
-% Remove selected dataset
-
-handles=getHandles;
-
-if handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options>0
-    iac=handles.toolbox.modelmaker.sfincs.mask.activegrid_option;  
-    
-    handles.toolbox.modelmaker.sfincs.mask.activegrid_action=removeFromCellArray(handles.toolbox.modelmaker.sfincs.mask.activegrid_action, iac);
-    
-    handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options=handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options-1;
-    handles.toolbox.modelmaker.sfincs.mask.activegrid_option=max(min(iac,handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options),1);
-    
-    setHandles(handles);
-    gui_updateActiveTab;
-end
-
-%%
-function upOptionActiveGrid
-% Move selected dataset up
-handles=getHandles;
-
-if handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options>0
-    iac=handles.toolbox.modelmaker.sfincs.mask.activegrid_option;  
-
-    handles.toolbox.modelmaker.sfincs.mask.activegrid_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.activegrid_action, iac,'up');
-    
-    handles.toolbox.modelmaker.sfincs.mask.activegrid_option=iac-1;
-    
-    setHandles(handles);
-end
-
-%%
-function downOptionActiveGrid
-
-% Move selected dataset down
-handles=getHandles;
-
-if handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options>0
-    iac=handles.toolbox.modelmaker.sfincs.mask.activegrid_option;  
-
-    handles.toolbox.modelmaker.sfincs.mask.activegrid_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.activegrid_action, iac,'down');
-    
-    handles.toolbox.modelmaker.sfincs.mask.activegrid_option=iac-1;
-    
-    setHandles(handles);
-end
-
-%%
-function useOptionBoundaryCells
-
-handles=getHandles;
-
-id=handles.toolbox.modelmaker.sfincs.mask.boundarycells_index;
-name=handles.toolbox.modelmaker.sfincs.mask.boundarycells_options{id};
-
-% Check if dataset is already selected
-usedd=1;
-for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options
-    if strcmpi(handles.toolbox.modelmaker.sfincs.mask.boundarycells_action{ii},name)
-        usedd=0;
-        break
-    end
-end
-
-if usedd
-
-    handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options=handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options+1;
-    n=handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options;
-    
-    handles.toolbox.modelmaker.sfincs.mask.boundarycells_action{n}=name;    
-    handles.toolbox.modelmaker.sfincs.mask.boundarycells_option=n;    
-
-end
-
-setHandles(handles);
-gui_updateActiveTab;
-
-%%
-function removeOptionBoundaryCells
-% Remove selected dataset
-
-handles=getHandles;
-
-if handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options>0
-    iac=handles.toolbox.modelmaker.sfincs.mask.boundarycells_option;  
-    
-    handles.toolbox.modelmaker.sfincs.mask.boundarycells_action=removeFromCellArray(handles.toolbox.modelmaker.sfincs.mask.boundarycells_action, iac);
-    
-    handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options=handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options-1;
-    handles.toolbox.modelmaker.sfincs.mask.boundarycells_option=max(min(iac,handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options),1);
-    
-    setHandles(handles);
-    gui_updateActiveTab;
-end
-
-%%
-function upOptionBoundaryCells
-% Move selected dataset up
-handles=getHandles;
-
-if handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options>0
-    iac=handles.toolbox.modelmaker.sfincs.mask.boundarycells_option;  
-
-    handles.toolbox.modelmaker.sfincs.mask.boundarycells_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.boundarycells_action, iac,'up');
-    
-    handles.toolbox.modelmaker.sfincs.mask.boundarycells_option=iac-1;
-    
-    setHandles(handles);
-end
-
-%%
-function downOptionBoundaryCells
-
-% Move selected dataset down
-handles=getHandles;
-
-if handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options>0
-    iac=handles.toolbox.modelmaker.sfincs.mask.boundarycells_option;  
-
-    handles.toolbox.modelmaker.sfincs.mask.boundarycells_action=moveUpDownInCellArray(handles.toolbox.modelmaker.sfincs.mask.boundarycells_action, iac,'down');
-    
-    handles.toolbox.modelmaker.sfincs.mask.boundarycells_option=iac-1;
-    
-    setHandles(handles);
-end
 
 %%
 function generateMask
@@ -1056,184 +760,114 @@ handles=getHandles;
 
 id=ad;
 
-%% Grid mask
-msk=handles.model.sfincs.domain(id).mask;
-
-%% Now make the mask matrix
-zmin=handles.toolbox.modelmaker.sfincs.zmin;
-zmax=handles.toolbox.modelmaker.sfincs.zmax;
-zlev = [zmin zmax];
-zlev_polygon=handles.toolbox.modelmaker.sfincs.zlev_polygon;
-
-xy_in=handles.toolbox.modelmaker.sfincs.mask.includepolygon;
-xy_ex=handles.toolbox.modelmaker.sfincs.mask.excludepolygon;
-xy_closedboundary=handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon;
-xy_outflowboundary=handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon;
-xy_waterlevelboundary=handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon;
-
-if xy_in(1).length==0
-    xy_in=[];
-end
-if xy_ex(1).length==0
-    xy_ex=[];
-end
-if xy_closedboundary(1).length==0
-    xy_closedboundary=[];
-end
-if xy_outflowboundary(1).length==0
-    xy_outflowboundary=[];
-end
-if xy_waterlevelboundary(1).length==0
-    xy_waterlevelboundary=[];
-end
-
-clear varargin
-varargin_id = 1;
-varargin{varargin_id} = 'zlev_polygon';
-varargin_id = varargin_id + 1;        
-varargin{varargin_id} = zlev_polygon;
-
-% loop over active grid options
-for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options
+% First check if gridz is empty or bathymetry settings have changed
+% If so, generate bathymetry
+if isempty(handles.model.sfincs.domain(id).gridz) || handles.toolbox.modelmaker.sfincs.bathymetry_changed==1
     
-    name = handles.toolbox.modelmaker.sfincs.mask.activegrid_action{ii};
-    
-    if strcmp(name, 'current mask')   
-        varargin_id = varargin_id + 1;        
-        varargin{varargin_id} = 'reuse';
-
-        varargin_id = varargin_id + 1;
-        varargin{varargin_id} = msk;
-        
-    elseif strcmp(name, 'elevation')
-        varargin_id = varargin_id + 1;        
-        varargin{varargin_id} = 'zlev';
-
-        varargin_id = varargin_id + 1;
-        varargin{varargin_id} = zlev;  
-        
-    elseif strcmp(name, 'include polygon')
-        varargin_id = varargin_id + 1;        
-        varargin{varargin_id} = 'includepolygon';
-
-        varargin_id = varargin_id + 1;
-        varargin{varargin_id} = xy_in;   
-        
-    elseif strcmp(name, 'exclude polygon')
-        varargin_id = varargin_id + 1;        
-        varargin{varargin_id} = 'excludepolygon';
-
-        varargin_id = varargin_id + 1;
-        varargin{varargin_id} = xy_ex;           
+    if handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets==0
+        ddb_giveWarning('text','Please first select one or more bathymetry datasets!');
+        return
     end
-end
-
-% same for boundary cell options
-for ii=1:handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options
     
-    name = handles.toolbox.modelmaker.sfincs.mask.boundarycells_action{ii};
-    
-    if strcmp(name, 'waterlevel boundary')
-        varargin_id = varargin_id + 1;        
-        varargin{varargin_id} = 'waterlevelboundarypolygon';
-
-        varargin_id = varargin_id + 1;
-        varargin{varargin_id} = xy_waterlevelboundary;  
-        
-    elseif strcmp(name, 'outflow boundary')
-        varargin_id = varargin_id + 1;        
-        varargin{varargin_id} = 'outflowboundarypolygon';
-
-        varargin_id = varargin_id + 1;
-        varargin{varargin_id} = xy_outflowboundary;          
-        
-    elseif strcmp(name, 'closed boundary')
-        varargin_id = varargin_id + 1;        
-        varargin{varargin_id} = 'closedboundarypolygon';
-
-        varargin_id = varargin_id + 1;
-        varargin{varargin_id} = xy_closedboundary;   
-        
-    elseif strcmp(name, 'elevation')
-        varargin_id = varargin_id + 1;        
-        varargin{varargin_id} = 'backwards_compatible';
-
-        varargin_id = varargin_id + 1;
-        varargin{varargin_id} = 1;  %not used         
-    end
-end
-
-if ~isempty(handles.model.sfincs.domain(id).buq)
-    varargin_id = varargin_id + 1;
-    varargin{varargin_id} = 'quadtree';
-    varargin_id = varargin_id + 1;
-    varargin{varargin_id} = handles.model.sfincs.domain(id).buq;
-end
-
-% reload bathy > means in case of reuse that read-in dep-file is not used!
-xg=handles.model.sfincs.domain(id).gridx;
-yg=handles.model.sfincs.domain(id).gridy; % These are the centre points !!!
-zg=handles.model.sfincs.domain(id).gridz;
-gridtype='structured';
-
-% [filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.sfincs.domain(id).input.depfile);
-
-%% Select bathymetry sources
-clear datasets
-if handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets == 0
-   datasets(1).name=handles.screenParameters.backgroundBathymetry; % use active bathymetry
- 
-else    
-    for ii=1:handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets
-        nr=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).number;
+    for ii=1:handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets
+        nr=handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(ii).number;
         datasets(ii).name=handles.bathymetry.datasets{nr};
-        datasets(ii).startdates=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).startDate;
-        datasets(ii).searchintervals=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).searchInterval;
-        datasets(ii).zmin=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).zMin;
-        datasets(ii).zmax=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).zMax;
-        datasets(ii).verticaloffset=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).verticalLevel;
+        datasets(ii).zmin=handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(ii).zMin;
+        datasets(ii).zmax=handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(ii).zMax;
+        datasets(ii).verticaloffset=handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(ii).verticalLevel;
     end
+    handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,ad,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum,'check',0);        
 end
 
-% %% Generate bathymetry
-% [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',1,'gridtype',gridtype,'modeloffset',0);
+save_roughness=0;
+% In case of no subgrid, and the roughness map has changed and the number
+% of roughness datasets is greater than 0
+if handles.model.sfincs.domain(id).use_subgrid==0 && handles.toolbox.modelmaker.sfincs.roughness.nrSelectedDatasets>0 && handles.toolbox.modelmaker.sfincs.roughness_changed==1
+    datasets=[];
+    for ii=1:handles.toolbox.modelmaker.sfincs.roughness.nrSelectedDatasets
+        nr=handles.toolbox.modelmaker.sfincs.roughness.selectedDatasets(ii).number;
+        datasets(ii).name=handles.bathymetry.datasets{nr};
+    end
+    handles=ddb_ModelMakerToolbox_sfincs_generateBathymetry(handles,id,datasets,'check',0,'roughness',1);
+    handles.model.sfincs.domain(id).roughness_type='file';
+    handles.model.sfincs.domain(id).input.manningfile='sfincs.rgh';
+    save_roughness=1;
+end
 
-%% Update model data
+% Now make the mask
 
-% run sfincs_make_mask_advanced!
-[msk,zg]=sfincs_make_mask_advanced(xg,yg,zg,varargin);
+zlev = [handles.toolbox.modelmaker.sfincs.zmin handles.toolbox.modelmaker.sfincs.zmax];
 
-% msk=sfincs_make_mask(xg,yg,zg,'zlev',[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_closedboundary,'outflowboundarypolygon',xy_outflowboundary,'waterlevelboundarypolygon',xy_waterlevelboundary);
+xy_in=[];
+xy_ex=[];
+xy_bnd_wl=[];
+xy_bnd_out=[];
 
-zg(isnan(msk)) = NaN; 
+for ii=1:handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons
+    xy_in(ii).x    = handles.toolbox.modelmaker.sfincs.mask.includepolygon(ii).x;
+    xy_in(ii).y    = handles.toolbox.modelmaker.sfincs.mask.includepolygon(ii).y;
+    % Using constant zmin and zmax for now
+    xy_in(ii).zmin = handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmin;
+    xy_in(ii).zmax = handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmax;
+end
 
-%% Update model data
-handles.model.sfincs.domain(id).gridz=zg;
+for ii=1:handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons
+    xy_ex(ii).x    = handles.toolbox.modelmaker.sfincs.mask.excludepolygon(ii).x;
+    xy_ex(ii).y    = handles.toolbox.modelmaker.sfincs.mask.excludepolygon(ii).y;
+    % Using constant zmin and zmax for now
+    xy_ex(ii).zmin = handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmin;
+    xy_ex(ii).zmax = handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmax;
+end
+
+for ii=1:handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons
+    xy_bnd_wl(ii).x    = handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ii).x;
+    xy_bnd_wl(ii).y    = handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(ii).y;
+    % Using constant zmin and zmax for now
+    xy_bnd_wl(ii).zmin = handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmin;
+    xy_bnd_wl(ii).zmax = handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmax;
+end
+
+for ii=1:handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons
+    xy_bnd_out(ii).x    = handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ii).x;
+    xy_bnd_out(ii).y    = handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(ii).y;
+    % Using constant zmin and zmax for now
+    xy_bnd_out(ii).zmin = handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmin;
+    xy_bnd_out(ii).zmax = handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmax;
+end
+
+msk=sfincs_make_mask(handles.model.sfincs.domain(ad).gridx,handles.model.sfincs.domain(ad).gridy,handles.model.sfincs.domain(ad).gridz,zlev,'includepolygon',xy_in,'excludepolygon',xy_ex,'waterlevelboundarypolygon',xy_bnd_wl,'outflowboundarypolygon',xy_bnd_out);
+
 handles.model.sfincs.domain(id).mask=msk;
 
-%% And save the files
+handles = ddb_sfincs_plot_mask(handles, 'plot');
+
+% And save the files
+handles.model.sfincs.domain(id).input.indexfile = 'sfincs.ind';
+handles.model.sfincs.domain(id).input.depfile   = 'sfincs.dep';
+handles.model.sfincs.domain(id).input.mskfile   = 'sfincs.msk';
+
 indexfile=handles.model.sfincs.domain(id).input.indexfile;
 bindepfile=handles.model.sfincs.domain(id).input.depfile;
 binmskfile=handles.model.sfincs.domain(id).input.mskfile;
 
-% handles.model.sfincs.domain(id).input.inputformat='asc';
-
 if strcmpi(handles.model.sfincs.domain(id).input.inputformat,'bin')
-    sfincs_write_binary_inputs(zg,msk,indexfile,bindepfile,binmskfile);
-%    hurrywave_write_binary_inputs(zg,msk,indexfile,bindepfile,binmskfile);
+    if handles.model.sfincs.domain(ad).use_subgrid==1
+        bindepfile=[];
+    end
+    sfincs_write_binary_inputs(handles.model.sfincs.domain(id).gridz,msk,indexfile,bindepfile,binmskfile);
+
+    % Save roughness file
+    if save_roughness
+        sfincs_write_binary_roughness(handles.model.sfincs.domain(id).gridz,msk,handles.model.sfincs.domain(id).input.manningfile);
+    end
+
 else
-    sfincs_write_ascii_inputs(zg,msk,bindepfile,binmskfile);
+    sfincs_write_ascii_inputs(handles.model.sfincs.domain(id).gridz,msk,bindepfile,binmskfile);
 end
 
-%handles = ddb_sfincs_plot_bathymetry(handles, 'plot');
 
-if ~isempty(handles.model.sfincs.domain(id).buq)
-    handles.model.sfincs.domain(id).input.qtrfile='sfincs.qtr';
-    qtr = handles.model.sfincs.domain(id).buq;
-    buq_save_buq_file(qtr, handles.model.sfincs.domain(id).mask, handles.model.sfincs.domain(id).input.qtrfile);
-end
-
-handles = ddb_sfincs_plot_mask(handles, 'plot');
+handles.toolbox.modelmaker.sfincs.bathymetry_changed = 0;
+handles.toolbox.modelmaker.sfincs.roughness_changed = 0;
 
 setHandles(handles);
 

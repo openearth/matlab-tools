@@ -397,14 +397,20 @@ switch lower(tp)
                         
                         filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(itile,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                         
+                        if strcmpi(name, 'new_england_coned_2016')
+                            idir = [num2str(itile,'%0.5i') filesep];
+                        else
+                            idir = '';
+                        end    
+                        
                         if iopendap || ipdrive
                             if bathymetry.dataset(iac).useCache
                                 % First check if file is available locally
                                 idownload=0;
-                                if ~exist([localdir filename],'file')
+                                if ~exist([localdir idir filename],'file')
                                     idownload=1;
                                 else
-                                    f=dir([localdir filename]);
+                                    f=dir([localdir idir filename]);
                                     fsize=f.bytes;
                                     if fsize<1000
                                         % Probably something wrong with
@@ -412,7 +418,7 @@ switch lower(tp)
                                         % again.
                                         idownload=1;
                                         try
-                                            delete([localdir filename]);
+                                            delete([localdir idir filename]);
                                         end
                                     end
                                 end
@@ -420,23 +426,29 @@ switch lower(tp)
                                     if ~exist(localdir,'dir')
                                         mkdir(localdir);
                                     end
+                                    if ~isempty(idir)
+                                        if ~exist([localdir idir],'dir')
+                                            mkdir([localdir idir]);
+                                        end
+                                    end
+                                    
                                     try
                                         if iopendap
-                                            urlwrite([remotedir filename],[localdir filename],'Timeout',5);
+                                            urlwrite([remotedir idir filename],[localdir idir filename],'Timeout',5);
                                         else
                                             % pdrive
-                                            copyfile([remotedir filename], localdir);
+                                            copyfile([remotedir idir filename], localdir);
                                         end
                                     catch
-                                        disp(['Missing tile : ' remotedir filename]);
+                                        disp(['Missing tile : ' remotedir idir filename]);
                                     end
                                 end
-                                ncfile=[localdir filename];
+                                ncfile=[localdir idir filename];
                             else
-                                ncfile=[remotedir filename];
+                                ncfile=[remotedir idir filename];
                             end
                         else
-                            ncfile=[localdir filename];
+                            ncfile=[localdir idir filename];
                         end
                         
                         if ~justgettiles
@@ -450,10 +462,10 @@ switch lower(tp)
                                 catch
                                     disp(['Could not read ' ncfile ' !!!']);
                                 end
-                                try
-                                    qqq=nc_varget(ncfile, 'quality');
-                                    qqq=double(qqq);
-                                end
+%                                 try
+%                                     qqq=nc_varget(ncfile, 'quality');
+%                                     qqq=double(qqq);
+%                                 end
                                 try
                                     fv=nc_attget(ncfile,'depth','fill_value');
                                      ok=1;

@@ -227,6 +227,8 @@ handles.toolbox.modelmaker.sfincs.exclude_xy=[];
 handles.toolbox.modelmaker.sfincs.closedboundary_xy=[];
 handles.toolbox.modelmaker.sfincs.outflowboundary_xy=[];
 handles.toolbox.modelmaker.sfincs.waterlevelboundary_xy=[];
+handles.toolbox.modelmaker.sfincs.bathymetry_changed=0;
+handles.toolbox.modelmaker.sfincs.roughness_changed=0;
 
 handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons=0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygonnames={''};
@@ -234,6 +236,10 @@ handles.toolbox.modelmaker.sfincs.mask.activeincludepolygon=1;
 handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).length=0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).x=[];
 handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).zmin=-99999.0;
+handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).zmax=99999.0;
+handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmin=-99999.0;
+handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmax=99999.0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygonfile='';
 
 handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons=0;
@@ -242,15 +248,19 @@ handles.toolbox.modelmaker.sfincs.mask.activeexcludepolygon=1;
 handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).length=0;
 handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).x=[];
 handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).y=[];
+handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).zmin=-99999.0;
+handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).zmax=99999.0;
+handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmin=-99999.0;
+handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmax=99999.0;
 handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile='';
 
-handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=0;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames={''};
-handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon=1;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).length=0;
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).x=[];
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).y=[];
-handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonfile='';
+% handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=0;
+% handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames={''};
+% handles.toolbox.modelmaker.sfincs.mask.activeclosedboundarypolygon=1;
+% handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).length=0;
+% handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).x=[];
+% handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygon(1).y=[];
+% handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonfile='';
 
 handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons=0;
 handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonnames={''};
@@ -259,6 +269,8 @@ handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).length=0;
 handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).x=[];
 handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).y=[];
 handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile='';
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmin=2.0;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmax=99999.0;
 
 handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons=0;
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames={''};
@@ -267,19 +279,21 @@ handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).length=0;
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).x=[];
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).y=[];
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile='';
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmin=-99999.0;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmax=-2.0;
 
-% options for sfincs_make_mask_advanced
-handles.toolbox.modelmaker.sfincs.mask.activegrid_options = {'current mask','elevation','include polygon','exclude polygon'};
-handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options = 1;
-handles.toolbox.modelmaker.sfincs.mask.activegrid_index = 1;
-handles.toolbox.modelmaker.sfincs.mask.activegrid_option = 1;
-handles.toolbox.modelmaker.sfincs.mask.activegrid_action={'current mask'};
-
-handles.toolbox.modelmaker.sfincs.mask.boundarycells_options = {'waterlevel boundary','outflow boundary','closed boundary','elevation'};
-handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options = 0;
-handles.toolbox.modelmaker.sfincs.mask.boundarycells_index = 1;
-handles.toolbox.modelmaker.sfincs.mask.boundarycells_option = 1;
-handles.toolbox.modelmaker.sfincs.mask.boundarycells_action={};
+% % options for sfincs_make_mask_advanced
+% handles.toolbox.modelmaker.sfincs.mask.activegrid_options = {'current mask','elevation','include polygon','exclude polygon'};
+% handles.toolbox.modelmaker.sfincs.mask.nr_activegrid_options = 1;
+% handles.toolbox.modelmaker.sfincs.mask.activegrid_index = 1;
+% handles.toolbox.modelmaker.sfincs.mask.activegrid_option = 1;
+% handles.toolbox.modelmaker.sfincs.mask.activegrid_action={'current mask'};
+% 
+% handles.toolbox.modelmaker.sfincs.mask.boundarycells_options = {'waterlevel boundary','outflow boundary','closed boundary','elevation'};
+% handles.toolbox.modelmaker.sfincs.mask.nr_boundarycells_options = 0;
+% handles.toolbox.modelmaker.sfincs.mask.boundarycells_index = 1;
+% handles.toolbox.modelmaker.sfincs.mask.boundarycells_option = 1;
+% handles.toolbox.modelmaker.sfincs.mask.boundarycells_action={};
 
 % Quadtree
 handles.toolbox.modelmaker.sfincs.buq.nr_refinement_polygons=0;
@@ -293,6 +307,27 @@ handles.toolbox.modelmaker.sfincs.buq.refinement_polygon_file='';
 handles.toolbox.modelmaker.sfincs.buq.refinement_level_strings={''};
 handles.toolbox.modelmaker.sfincs.buq.refinement_level_values=[];
 handles.toolbox.modelmaker.sfincs.buq.active_refinement_level=1;
+
+% Bathymetry
+handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets = 0;
+handles.toolbox.modelmaker.sfincs.bathymetry.activeSelectedDataset = 1;
+handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasetNames = {};
+
+% Roughness
+handles.toolbox.modelmaker.sfincs.roughness.manning_land=0.06;
+handles.toolbox.modelmaker.sfincs.roughness.manning_sea=0.02;
+handles.toolbox.modelmaker.sfincs.roughness.rgh_lev_land=1.0;
+handles.toolbox.modelmaker.sfincs.roughness.nrSelectedDatasets = 0;
+handles.toolbox.modelmaker.sfincs.roughness.activeSelectedDataset = 1;
+handles.toolbox.modelmaker.sfincs.roughness.selectedDatasetNames = {};
+
+% Sub-grid
+handles.toolbox.modelmaker.sfincs.subgrid.nbin = 10;
+handles.toolbox.modelmaker.sfincs.subgrid.refi = 20;
+handles.toolbox.modelmaker.sfincs.subgrid.refj = 20;
+handles.toolbox.modelmaker.sfincs.subgrid.maxdzdv = 5;
+handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_value = 0.024;
+handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_level = -999.0;
 
 %% HurryWave
 handles.toolbox.modelmaker.hurrywave.zmin=-2;

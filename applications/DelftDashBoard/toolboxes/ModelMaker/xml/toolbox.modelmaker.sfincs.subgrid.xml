@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>edit</style>
+    <position>20 105 50 20</position>
+    <text>Nr Bins</text>
+    <variable>handles.toolbox.modelmaker.sfincs.subgrid.nbin</variable>
+    <type>int</type>
+    <textposition>right</textposition>
+    <tooltipstring>Number of vertical bins in sub-grid tables</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>20 80 50 20</position>
+    <text>Pixels per cell</text>
+    <variable>handles.toolbox.modelmaker.sfincs.subgrid.refi</variable>
+    <type>int</type>
+    <textposition>right</textposition>
+    <tooltipstring>Number of pixels per cell</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>20 55 50 20</position>
+    <text>Max dZ/dV</text>
+    <variable>handles.toolbox.modelmaker.sfincs.subgrid.maxdzdv</variable>
+    <type>real</type>
+    <textposition>right</textposition>
+    <tooltipstring>Max dZ/dV</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>200 105 50 20</position>
+    <text>Manning (max)</text>
+    <variable>handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_value</variable>
+    <type>real</type>
+    <textposition>right</textposition>
+    <tooltipstring>Maximum Manning's n below cut-off level</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>200 80 50 20</position>
+    <text>Manning (cut-off level)</text>
+    <variable>handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_level</variable>
+    <type>real</type>
+    <textposition>right</textposition>
+    <tooltipstring>Cut-off level for maximizing Manning's n value</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>870 10 100 20</position>
+    <text>GENERATE</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_subgrid</callback>
+    <option1>generatesubgrid</option1>
+    <tooltipstring>Generate model sub-grid bathymetry</tooltipstring>
+  </element>
+</root>

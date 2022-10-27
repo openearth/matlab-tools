@@ -36,14 +36,14 @@ close(wb);
 
 handles.model.sfincs.domain(id).gridx     = x;
 handles.model.sfincs.domain(id).gridy     = y;
-handles.model.sfincs.domain(id).gridz     = zeros(size(x));
+handles.model.sfincs.domain(id).gridz     = [];
 handles.model.sfincs.domain(id).mask      = zeros(size(x));
 handles.model.sfincs.domain(id).xg        = xg;
 handles.model.sfincs.domain(id).yg        = yg;
 
-nans=zeros(size(x));
-nans(nans==0)=NaN;
-handles.model.sfincs.domain(id).gridz=nans;
+% nans=zeros(size(x));
+% nans(nans==0)=NaN;
+% handles.model.sfincs.domain(id).gridz=nans;
 handles.model.sfincs.domain(id).input.mmax=size(x,2);
 handles.model.sfincs.domain(id).input.nmax=size(x,1);
 handles.model.sfincs.domain(id).input.x0=handles.toolbox.modelmaker.xOri;

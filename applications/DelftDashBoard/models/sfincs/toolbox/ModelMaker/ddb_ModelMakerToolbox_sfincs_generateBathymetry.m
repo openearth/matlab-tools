@@ -4,7 +4,7 @@ icheck=1;
 overwrite=1;
 filename=[];
 modeloffset=0;
-
+roughness=0;
 %% Read input arguments
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -19,6 +19,8 @@ for i=1:length(varargin)
                 id=varargin{i+1};
             case{'modeloffset'}
                 modeloffset=varargin{i+1};
+            case{'roughness'}
+                roughness=varargin{i+1};
         end
     end
 end
@@ -80,7 +82,13 @@ end
 [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',overwrite,'gridtype',gridtype,'modeloffset',modeloffset);
 
 %% Update model data
-handles.model.sfincs.domain(id).gridz=zg;
+if roughness==1
+    handles.model.sfincs.domain(id).manning=zg;
+else    
+    handles.model.sfincs.domain(id).gridz=zg;
+end
+
+return
 
 %% Now make the mask matrix
 zmin=handles.toolbox.modelmaker.sfincs.zmin;

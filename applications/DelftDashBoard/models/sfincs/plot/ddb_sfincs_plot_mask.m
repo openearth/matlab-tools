@@ -50,20 +50,20 @@ switch lower(opt)
             
             xx=handles.model.sfincs.domain(id).gridx(handles.model.sfincs.domain(id).mask==1);
             yy=handles.model.sfincs.domain(id).gridy(handles.model.sfincs.domain(id).mask==1);
-            msk1=plot(xx,yy,'o');
-            set(msk1,'MarkerFaceColor','y','MarkerEdgeColor','y','MarkerSize',1);
+            msk1=plot(xx,yy,'.');
+            set(msk1,'MarkerFaceColor','y','MarkerEdgeColor','y','MarkerSize',10);
             set(msk1,'Parent',p);
 
             xx=handles.model.sfincs.domain(id).gridx(handles.model.sfincs.domain(id).mask==2);
             yy=handles.model.sfincs.domain(id).gridy(handles.model.sfincs.domain(id).mask==2);
-            msk2=plot(xx,yy,'o');
-            set(msk2,'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',1);
+            msk2=plot(xx,yy,'.');
+            set(msk2,'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',10);
             set(msk2,'Parent',p);
             
             xx=handles.model.sfincs.domain(id).gridx(handles.model.sfincs.domain(id).mask==3);
             yy=handles.model.sfincs.domain(id).gridy(handles.model.sfincs.domain(id).mask==3);
-            msk3=plot(xx,yy,'o');
-            set(msk3,'MarkerFaceColor','c','MarkerEdgeColor','c','MarkerSize',1);
+            msk3=plot(xx,yy,'.');
+            set(msk3,'MarkerFaceColor','c','MarkerEdgeColor','c','MarkerSize',10);
             set(msk3,'Parent',p);
             
         else
@@ -72,19 +72,19 @@ switch lower(opt)
             xx=handles.model.sfincs.domain(id).gridx(handles.model.sfincs.domain(id).mask==1);
             yy=handles.model.sfincs.domain(id).gridy(handles.model.sfincs.domain(id).mask==1);
             msk1=plot(xx,yy,'o');
-            set(msk1,'MarkerFaceColor','y','MarkerEdgeColor','y','MarkerSize',1);
+            set(msk1,'MarkerFaceColor','y','MarkerEdgeColor','y','MarkerSize',2);
             set(msk1,'Parent',p);
 
             xx=handles.model.sfincs.domain(id).gridx(handles.model.sfincs.domain(id).mask==2);
             yy=handles.model.sfincs.domain(id).gridy(handles.model.sfincs.domain(id).mask==2);
             msk2=plot(xx,yy,'o');
-            set(msk2,'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',1);
+            set(msk2,'MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',2);
             set(msk2,'Parent',p);
 
             xx=handles.model.sfincs.domain(id).gridx(handles.model.sfincs.domain(id).mask==3);
             yy=handles.model.sfincs.domain(id).gridy(handles.model.sfincs.domain(id).mask==3);
             msk3=plot(xx,yy,'o');
-            set(msk3,'MarkerFaceColor','c','MarkerEdgeColor','c','MarkerSize',1);
+            set(msk3,'MarkerFaceColor','c','MarkerEdgeColor','c','MarkerSize',2);
             set(msk3,'Parent',p);
             
         end

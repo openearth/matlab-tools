@@ -92,55 +92,28 @@
     <text>Make Rectangular Grid</text>
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>generategrid</option1>
-  </element>
-  <element>
-    <style>pushbutton</style>
-    <position>320 85 160 20</position>
-    <tooltipstring>Push to generate model bathymetry and mask file</tooltipstring>
-    <text>Make Bathymetry and Mask</text>
-    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
-    <option1>generatebathymetry</option1>
     <enable>1</enable>
   </element>
   <element>
     <style>pushbutton</style>
-    <position>320 60 160 20</position>
-    <tooltipstring>Push to generate initial zero water level-file and csv-file with grid coordinates</tooltipstring>
-    <text>Prepare for FEWS</text>
-    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
-    <option1>prepare_for_fews</option1>
-    <enable>1</enable>
-  </element>  
-  <element>
-    <style>pushbutton</style>
-    <position>320 35 160 20</position>
+    <position>890 10 100 20</position>
     <tooltipstring>Generate model set-up yml file</tooltipstring>
     <text>Save YAML File</text>
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>write_model_setup_yml</option1>
+    <enable>0</enable>
+  </element>  
+  <element>
+    <style>checkbox</style>
+    <position>490 110 160 20</position>
+    <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+    <tooltipstring>Use SFINCS sub-grid approach</tooltipstring>
+    <text>Sub Grid</text>
     <enable>1</enable>
   </element>  
   <element>
     <style>edit</style>
-    <position>550 110 50 20</position>
-    <tooltipstring>Edit maximum elevation SFINCS model</tooltipstring>
-    <text>Zmax</text>
-    <textposition>left</textposition>
-    <variable>handles.toolbox.modelmaker.sfincs.zmax</variable>
-    <type>real</type>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>550 85 50 20</position>
-    <tooltipstring>Edit minimum elevation SFINCS model</tooltipstring>
-    <text>Zmin</text>
-    <textposition>left</textposition>
-    <variable>handles.toolbox.modelmaker.sfincs.zmin</variable>
-    <type>real</type>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>810 100 110 20</position>
+    <position>700 110 110 20</position>
     <tooltipstring>Edit reference time</tooltipstring>
     <text>Ref Time</text>
     <textposition>left</textposition>
@@ -151,7 +124,7 @@
   </element>
   <element>
     <style>edit</style>
-    <position>810 75 110 20</position>
+    <position>700 85 110 20</position>
     <tooltipstring>Edit start time</tooltipstring>
     <text>Start Time</text>
     <textposition>left</textposition>
@@ -162,7 +135,7 @@
   </element>
   <element>
     <style>edit</style>
-    <position>810 50 110 20</position>
+    <position>700 60 110 20</position>
     <tooltipstring>Edit stop time</tooltipstring>
     <text>Stop Time</text>
     <textposition>left</textposition>

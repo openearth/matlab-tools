@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>listbox</style>
+    <text>Available Datasets</text>
+    <textposition>above-center</textposition>
+    <variable>handles.toolbox.modelmaker.bathymetry.activeDataset</variable>
+    <type>integer</type>
+    <position>10 10 180 105</position>
+    <tooltipstring>Available bathymetry datasets</tooltipstring>
+    <onchange>ddb_ModelMakerToolbox_sfincs_bathymetry</onchange>
+    <option1>selectdataset</option1>
+    <listtext>
+      <variable>handles.bathymetry.longNames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>195 95 80 20</position>
+    <text>Use Dataset</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>usedataset</option1>
+    <tooltipstring>Use selected dataset (from list on the left)</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>195 70 80 20</position>
+    <text>Info</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>showinfo</option1>
+    <tooltipstring>Show meta data of selected dataset</tooltipstring>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>listbox</style>
+    <text>Selection</text>
+    <textposition>above-center</textposition>
+    <variable>handles.toolbox.modelmaker.sfincs.bathymetry.activeSelectedDataset</variable>
+    <type>integer</type>
+    <position>280 10 150 105</position>
+    <tooltipstring>Selected datasets. Datasets should be ordered from high resolution (will be used first) to low resolution.</tooltipstring>
+    <onchange>ddb_ModelMakerToolbox_sfincs_bathymetry</onchange>
+    <option1>pickselecteddataset</option1>
+    <listtext>
+      <variable>handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasetNames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>440 95 80 20</position>
+    <text>Remove</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>removedataset</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>440 70 80 20</position>
+    <text>Move Up</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>datasetup</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>440 45 80 20</position>
+    <text>Move Down</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>datasetdown</option1>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>580 95 50 20</position>
+    <text>Z Max</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(handles.toolbox.modelmaker.sfincs.bathymetry.activeSelectedDataset).zMax</variable>
+    <tooltipstring>Edit maximum height (positive upward) to be used from this dataset.</tooltipstring>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>bathymetry_changed</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>580 70 50 20</position>
+    <text>Z Min</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(handles.toolbox.modelmaker.sfincs.bathymetry.activeSelectedDataset).zMin</variable>
+    <tooltipstring>Edit minimum height (positive upward) to be used from this dataset.</tooltipstring>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>bathymetry_changed</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>580 45 50 20</position>
+    <text>Offset</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(handles.toolbox.modelmaker.sfincs.bathymetry.activeSelectedDataset).verticalLevel</variable>
+    <tooltipstring>Offset in metres between vertical datum of this dataset and Mean Sea Level (positive value indicates that vertical datum lies above MSL)</tooltipstring>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>bathymetry_changed</option1>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>text</style>
+    <position>640 45 100 20</position>
+    <prefix>Datum : </prefix>
+    <variable>handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(handles.toolbox.modelmaker.sfincs.bathymetry.activeSelectedDataset).verticalDatum</variable>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>870 35 50 20</position>
+    <text>Model Offset</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.toolbox.modelmaker.bathymetry.verticalDatum</variable>
+    <tooltipstring>Offset in metres between vertical datum of model and Mean Sea Level (positive value indicates that vertical datum lies above MSL)</tooltipstring>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>bathymetry_changed</option1>
+  </element>
+  <element>
+    <style>text</style>
+    <position>650 10</position>
+    <text>NOTE: The model bathymetry will be generated when you update the mask.</text>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>870 10 100 20</position>
+    <text>GENERATE</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+    <option1>generatesubgrid</option1>
+    <tooltipstring>Generate model bathymetry</tooltipstring>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>999</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+</root>

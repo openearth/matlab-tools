@@ -79,19 +79,19 @@
       <element>model.sfincs.boundaryconditions.xml</element>
     </tab>
     <tab>
-      <tabstring>Coastline</tabstring>
-      <element>model.sfincs.coastline.xml</element>
-      <callback>ddb_sfincs_coastline</callback>
-    </tab>
-    <tab>
       <tabstring>Meteo</tabstring>
       <element>model.sfincs.meteo.xml</element>
       <callback>ddb_sfincs_meteo</callback>
     </tab>
     <tab>
-      <tabstring>Obstacles</tabstring>
+      <tabstring>Structures</tabstring>
       <element>model.sfincs.obstacles.xml</element>
       <callback>ddb_sfincs_obstacles</callback>
+    </tab>
+    <tab>
+      <tabstring>Observation Points</tabstring>
+      <element>model.sfincs.observationpoints.xml</element>
+      <callback>ddb_sfincs_observation_points</callback>
     </tab>
     <tab>
       <tabstring>Output</tabstring>

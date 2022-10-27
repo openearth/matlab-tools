@@ -267,7 +267,7 @@
       <check>
         <variable>handles.model.delft3dflow.domain(ad).nrOpenBoundaries</variable>
         <value>0</value>
-        <operator>gt</operator>
+        <operator>lt</operator>
       </check>
     </dependency>
   </element>

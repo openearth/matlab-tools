@@ -4,7 +4,7 @@
   <longname>Model Maker</longname>
   <enable>1</enable>
   <element>
-    <position>10 10 1900 140</position>
+    <position>10 10 1000 140</position>
     <style>tabpanel</style>
     <tab>
       <formodel>delft3dflow</formodel>
@@ -55,12 +55,6 @@
       <element>toolbox.modelmaker.hurrywave.quickmode.xml</element>
     </tab>
     <tab>
-      <formodel>sfincs</formodel>
-      <tabstring>Quadtree</tabstring>
-      <callback>ddb_ModelMakerToolbox_sfincs_buq</callback>
-      <element>toolbox.modelmaker.sfincs.buq.xml</element>
-    </tab>    
-    <tab>
       <formodel>modflowusg</formodel>
       <tabstring>Grid</tabstring>
       <callback>ddb_ModelMakerToolbox_modflowusg_grid</callback>
@@ -72,7 +66,6 @@
       <formodel>delft3dwave</formodel>
       <formodel>ww3</formodel>
       <formodel>xbeach</formodel>
-      <formodel>sfincs</formodel>
       <formodel>hurrywave</formodel>
       <tabstring>Bathymetry</tabstring>
       <callback>ddb_ModelMakerToolbox_bathymetry</callback>
@@ -125,27 +118,33 @@
     </tab>
     <tab>
       <formodel>sfincs</formodel>
-      <tabstring>Mask active grid</tabstring>
+      <tabstring>Bathymetry</tabstring>
+      <callback>ddb_ModelMakerToolbox_sfincs_bathymetry</callback>
+      <element>toolbox.modelmaker.sfincs.bathymetry.xml</element>
+    </tab>    
+    <tab>
+      <formodel>sfincs</formodel>
+      <tabstring>Roughness</tabstring>
+      <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
+      <element>toolbox.modelmaker.sfincs.roughness.xml</element>
+    </tab>    
+    <tab>
+      <formodel>sfincs</formodel>
+      <tabstring>Mask Active Cells</tabstring>
       <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
       <element>toolbox.modelmaker.sfincs.maskactivegrid.xml</element>
     </tab>    
     <tab>
       <formodel>sfincs</formodel>
-      <tabstring>Mask boundary cells</tabstring>
+      <tabstring>Mask Boundary Cells</tabstring>
       <callback>ddb_ModelMakerToolbox_sfincs_mask</callback>
       <element>toolbox.modelmaker.sfincs.maskboundarycells.xml</element>
     </tab>      
     <tab>
       <formodel>sfincs</formodel>
-      <tabstring>Coastline</tabstring>
-      <callback>ddb_ModelMakerToolbox_sfincs_coastline</callback>
-      <element>toolbox.modelmaker.sfincs.coastline.xml</element>
-    </tab>    
-    <tab>
-      <formodel>sfincs</formodel>
-      <tabstring>Structures</tabstring>
-      <callback>ddb_ModelMakerToolbox_sfincs_structures</callback>
-      <element>toolbox.modelmaker.sfincs.structures.xml</element>
+      <tabstring>Sub Grid</tabstring>
+      <callback>ddb_ModelMakerToolbox_sfincs_subgrid</callback>
+      <element>toolbox.modelmaker.sfincs.subgrid.xml</element>
     </tab>    
     <tab>
       <formodel>shorelines</formodel>
@@ -155,13 +154,13 @@
     </tab>    
     <tab>
       <formodel>hurrywave</formodel>
-      <tabstring>Mask active grid</tabstring>
+      <tabstring>Mask Active Cells</tabstring>
       <callback>ddb_ModelMakerToolbox_hurrywave_mask</callback>
       <element>toolbox.modelmaker.hurrywave.maskactivegrid.xml</element>
     </tab>    
     <tab>
       <formodel>hurrywave</formodel>
-      <tabstring>Mask boundary cells</tabstring>
+      <tabstring>Mask Boundary Cells</tabstring>
       <callback>ddb_ModelMakerToolbox_hurrywave_mask</callback>
       <element>toolbox.modelmaker.hurrywave.maskboundarycells.xml</element>
     </tab>      

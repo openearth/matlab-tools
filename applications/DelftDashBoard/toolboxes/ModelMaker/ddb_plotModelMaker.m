@@ -91,11 +91,15 @@ switch lower(option)
         if ~isempty(h)
             delete(h);
         end
-        h=findobj(gca,'Tag','sfincsclosedboundarypolygon');
+%         h=findobj(gca,'Tag','sfincsclosedboundarypolygon');
+%         if ~isempty(h)
+%             delete(h);
+%         end
+        h=findobj(gca,'Tag','sfincswaterlevelboundarypolygon');
         if ~isempty(h)
             delete(h);
         end
-        h=findobj(gca,'Tag','sfincsopenboundarypolygon');
+        h=findobj(gca,'Tag','sfincsoutflowboundarypolygon');
         if ~isempty(h)
             delete(h);
         end
@@ -140,12 +144,17 @@ switch lower(option)
             set(h,'Visible','off');
             uistack(h,'top');
         end
-        h=findobj(gca,'Tag','sfincsclosedboundarypolygon');
+%         h=findobj(gca,'Tag','sfincsclosedboundarypolygon');
+%         if ~isempty(h)
+%             set(h,'Visible','off');
+%             uistack(h,'top');
+%         end
+        h=findobj(gca,'Tag','sfincswaterlevelboundarypolygon');
         if ~isempty(h)
             set(h,'Visible','off');
             uistack(h,'top');
         end
-        h=findobj(gca,'Tag','sfincsopenboundarypolygon');
+        h=findobj(gca,'Tag','sfincsoutflowboundarypolygon');
         if ~isempty(h)
             set(h,'Visible','off');
             uistack(h,'top');
@@ -191,12 +200,17 @@ switch lower(option)
             set(h,'Visible','off');
             uistack(h,'bottom');
         end
-        h=findobj(gca,'Tag','sfincsclosedboundarypolygon');
+%         h=findobj(gca,'Tag','sfincsclosedboundarypolygon');
+%         if ~isempty(h)
+%             set(h,'Visible','off');
+%             uistack(h,'bottom');
+%         end
+        h=findobj(gca,'Tag','sfincswaterlevelboundarypolygon');
         if ~isempty(h)
             set(h,'Visible','off');
             uistack(h,'bottom');
         end
-        h=findobj(gca,'Tag','sfincsopenboundarypolygon');
+        h=findobj(gca,'Tag','sfincsoutflowboundarypolygon');
         if ~isempty(h)
             set(h,'Visible','off');
             uistack(h,'bottom');

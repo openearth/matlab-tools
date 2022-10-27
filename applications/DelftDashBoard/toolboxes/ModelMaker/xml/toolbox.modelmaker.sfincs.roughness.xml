@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>panel</style>
+    <text>Global</text>
+    <position>10 10 190 120</position>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>20 85 50 20</position>
+    <textposition>right</textposition>
+    <text>Manning (land)</text>
+    <variable>handles.toolbox.modelmaker.sfincs.roughness.manning_land</variable>
+    <type>real</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>20 60 50 20</position>
+    <text>Manning (sea)</text>
+    <textposition>right</textposition>
+    <variable>handles.toolbox.modelmaker.sfincs.roughness.manning_sea</variable>
+    <type>real</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>20 35 50 20</position>
+    <text>Land level (m)</text>
+    <textposition>right</textposition>
+    <variable>handles.toolbox.modelmaker.sfincs.roughness.rgh_lev_land</variable>
+    <type>real</type>
+  </element>
+  <element>
+    <style>listbox</style>
+    <text>Available Datasets</text>
+    <textposition>above-center</textposition>
+    <variable>handles.toolbox.modelmaker.bathymetry.activeDataset</variable>
+    <type>integer</type>
+    <position>210 10 180 105</position>
+    <tooltipstring>Available bathymetry datasets</tooltipstring>
+    <onchange>ddb_ModelMakerToolbox_sfincs_roughness</onchange>
+    <option1>selectdataset</option1>
+    <listtext>
+      <variable>handles.bathymetry.longNames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>395 95 80 20</position>
+    <text>Use Dataset</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
+    <option1>usedataset</option1>
+    <tooltipstring>Use selected dataset (from list on the left)</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>395 70 80 20</position>
+    <text>Info</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
+    <option1>showinfo</option1>
+    <tooltipstring>Show meta data of selected dataset</tooltipstring>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>listbox</style>
+    <text>Selection</text>
+    <textposition>above-center</textposition>
+    <variable>handles.toolbox.modelmaker.sfincs.roughness.activeSelectedDataset</variable>
+    <type>integer</type>
+    <position>480 10 150 105</position>
+    <tooltipstring>Selected datasets. Datasets should be ordered from high resolution (will be used first) to low resolution.</tooltipstring>
+    <onchange>ddb_ModelMakerToolbox_sfincs_roughness</onchange>
+    <option1>pickselecteddataset</option1>
+    <listtext>
+      <variable>handles.toolbox.modelmaker.sfincs.roughness.selectedDatasetNames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>640 95 80 20</position>
+    <text>Remove</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
+    <option1>removedataset</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>640 70 80 20</position>
+    <text>Move Up</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
+    <option1>datasetup</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>640 45 80 20</position>
+    <text>Move Down</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
+    <option1>datasetdown</option1>
+  </element>
+  <element>
+    <style>text</style>
+    <position>650 10</position>
+    <text>NOTE: The spatially-varying roughness map will be generated when you update the mask.</text>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.modelmaker.sfincs.roughness.nrSelectedDatasets</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>870 10 100 20</position>
+    <text>GENERATE</text>
+    <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
+    <option1>generateroughness</option1>
+    <tooltipstring>Generate model roughness map</tooltipstring>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.modelmaker.sfincs.roughness.nrSelectedDatasets</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>999</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+</root>
