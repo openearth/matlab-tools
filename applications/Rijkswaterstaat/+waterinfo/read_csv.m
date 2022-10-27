@@ -160,30 +160,31 @@ for i = 1:length(flds)
     f = flds{i};
     tmp = data{i};
     
-    if length(unique(tmp)) == 1
-        if cellfun('isempty',unique(tmp))
+    if length(unique(tmp,'stable')) == 1
+        if cellfun('isempty',unique(tmp,'stable'))
             OUT.(f) = [];
-        elseif iscellstr(unique(tmp))
-            OUT.(f) = unique(tmp);
+        elseif iscellstr(unique(tmp,'stable'))
+            OUT.(f) = unique(tmp,'stable');
         end
-    elseif length(unique(tmp)) > 1
+    elseif length(unique(tmp,'stable')) > 1
         
         
 
         if strcmp(f,'NUMERIEKEWAARDE') % Values
+%             error('stop')
             % Replace decimal separator
             if any(contains(data{i},','))
                 data{i} = strrep(data{i},',','.');
             end
             
             idv         = contains(flds,'GROOTHEID_OMSCHRIJVING');
-            vars        = unique(data{idv});
+            vars        = unique(data{idv},'stable');
             nvars       = length(vars);
             ids         = contains(flds,'MEETPUNT_IDENTIFICATIE');
-            stats       = unique(data{ids});
+            stats       = unique(data{ids},'stable');
             nstats      = length(stats);
             idh         = contains(flds,'BEMONSTERINGSHOOGTE');
-            heights     = unique(data{idh});
+            heights     = unique(data{idh},'stable');
             nheights    = length(heights);
             
             
@@ -216,7 +217,7 @@ for i = 1:length(flds)
                 end
             end
         else
-            OUT.(f) = unique(data{i});
+            OUT.(f) = unique(data{i},'stable');
         end
         
     end
