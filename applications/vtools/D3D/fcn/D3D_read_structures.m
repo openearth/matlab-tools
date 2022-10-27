@@ -31,7 +31,7 @@ if isfield(simdef(1).file,'struct') && ~isempty(simdef(1).file.struct)
     aux=num2cell(ones(numel(gen_struct),1));
     [gen_struct.type]=aux{:};
 else
-    gen_struct=struct('xy',[],'xy_pli',[],'rkm',[],'type',[]);
+    gen_struct=struct('name',[],'xy',[],'xy_pli',[],'rkm',[],'type',[]);
 end
 
 if isfield(simdef(1).file,'pillars') && ~isempty(simdef(1).file.pillars)
