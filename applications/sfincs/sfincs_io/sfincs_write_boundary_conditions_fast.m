@@ -1,4 +1,5 @@
 function sfincs_write_boundary_conditions_fast(filename,t,v)
+
 if isrow(t)
     t = t';
 end
@@ -16,4 +17,4 @@ myvar = [t v]';
 fprintf(fid,fmt,myvar);
 
 fclose(fid);
-end
+

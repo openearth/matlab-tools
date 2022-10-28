@@ -10,7 +10,7 @@ function sfincs_write_weirs(filename,weirs)
 
 fid=fopen(filename,'wt');
 
-for ip = 1:weirs.length
+for ip = 1:length(weirs)
     fprintf(fid,'%s\n',weirs.name{ip});
     fprintf(fid,'%i %i\n',2,4);        
     fprintf(fid,'%10.1f %10.1f %10.1f %10.1f\n',weirs.x1(ip),weirs.y1(ip),weirs.h1(ip),weirs.Cd1(ip));

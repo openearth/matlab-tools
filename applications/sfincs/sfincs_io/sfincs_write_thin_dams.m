@@ -17,8 +17,8 @@ function sfincs_write_thin_dams(filename,thindams)
 
 fid=fopen(filename,'wt');
 
-for ip = 1:thindams(1).length % number of thin dams
-    fprintf(fid,'%s\n',thindams(ip).name{1});
+for ip = 1:length(thindams) % number of thin dams
+    fprintf(fid,'%s\n',['BL' num2str(ip)]);
     fprintf(fid,'%i %i\n',length(thindams(ip).x),2);        
     
     for ij = 1:length(thindams(ip).x) % number of points per thin dam

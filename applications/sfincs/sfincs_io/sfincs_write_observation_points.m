@@ -1,4 +1,4 @@
-function sfincs_write_boundary_points(filename,points,varargin)
+function sfincs_write_observation_points(filename,points,varargin)
 
 cstype='projected';
 
@@ -13,13 +13,13 @@ end
 
 switch lower(cstype)
     case {'geographic','spherical','deg'}
-        fmt='%12.5f %12.5f\n';
+        fmt='%12.5f %12.5f %s\n';
     otherwise
-        fmt='%10.1f %10.1f\n';
+        fmt='%10.1f %10.1f %s\n';
 end
 
 fid=fopen(filename,'wt');
-for ip=1:points.length
-    fprintf(fid,fmt,points.x(ip),points.y(ip));
+for ip=1:length(points)
+    fprintf(fid,fmt,points(ip).x,points(ip).y,['"' points(ip).name '"']);
 end
 fclose(fid);
