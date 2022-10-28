@@ -87,14 +87,14 @@ for kn=1:upstream_nodes
     data{kl, 1}='parameter            ''total discharge (t)  end B''               unit ''[m3/s]'''; kl=kl+1;
     data{kl, 1}=sprintf('records-in-table     %d',nt); kl=kl+1;
     for kt=1:nt
-        data{kl,1}=sprintf(repmat('%0.7E \t',1,3),time(kt)*Tfact,Q(kt),Q(kt)); kl=kl+1;
+        data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time(kt)*Tfact,Q(kt),Q(kt)); kl=kl+1;
     end
         otherwise
     data{kl, 1}='parameter            ''flux/discharge  (q)  end A''               unit ''[m3/s]'''; kl=kl+1;
     data{kl, 1}='parameter            ''flux/discharge  (q)  end B''               unit ''[m3/s]'''; kl=kl+1;
     data{kl, 1}=sprintf('records-in-table     %d',nt); kl=kl+1;
     for kt=1:nt
-        data{kl,1}=sprintf(repmat('%0.7E \t',1,3),time(kt)*Tfact,Q(kt)*dy/B,Q(kt)*dy/B); kl=kl+1;
+        data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time(kt)*Tfact,Q(kt)*dy/B,Q(kt)*dy/B); kl=kl+1;
     end
     end
 end %upstream_nodes
@@ -123,9 +123,9 @@ data{kl,1}=         'parameter            ''water elevation (z)  end B''        
 data{kl,1}=sprintf('records-in-table     %d',nt); kl=kl+1;
 for kt=1:nt
     %boundary at L+dx!
-%     data{kl,1}=sprintf(repmat('%0.7E \t',1,3),time(kt)*Tfact,etaw(kt),etaw(kt)); kl=kl+1;
+%     data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time(kt)*Tfact,etaw(kt),etaw(kt)); kl=kl+1;
     %correct value of boundary
-    data{kl,1}=sprintf(repmat('%0.7E \t',1,3),time(kt)*Tfact,etaw(kt),etaw(kt)); kl=kl+1;
+    data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time(kt)*Tfact,etaw(kt),etaw(kt)); kl=kl+1;
 end
 
 

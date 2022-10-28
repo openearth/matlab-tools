@@ -36,6 +36,7 @@ layer=parin.Results.layer;
 station=parin.Results.station;
 sim_idx=parin.Results.sim_idx;
 structure=parin.Results.structure;
+do_load=parin.Results.do_load;
 % tol_t=parin.Results.tol_t;
 
 %% READ
@@ -50,10 +51,10 @@ else
 end
 if exist(fpath_mat,'file')==2
     if do_load
-        messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_raw));
+        messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_mat));
         load(fpath_raw,'data')
     else
-        messageOut(NaN,sprintf('Mat-file with raw data exists: %s',fpath_raw));
+        messageOut(NaN,sprintf('Mat-file with raw data exists: %s',fpath_mat));
         data=NaN;
     end
 else

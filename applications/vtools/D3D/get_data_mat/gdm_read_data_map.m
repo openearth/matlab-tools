@@ -24,6 +24,7 @@ addOptional(parin,'layer',[]);
 addOptional(parin,'do_load',1);
 addOptional(parin,'tol_t',5/60/24);
 addOptional(parin,'idx_branch',[]);
+addOptional(parin,'branch','');
 
 parse(parin,varargin{:});
 
@@ -33,13 +34,14 @@ layer=parin.Results.layer;
 do_load=parin.Results.do_load;
 tol_t=parin.Results.tol_t;
 idx_branch=parin.Results.idx_branch;
+branch=parin.Results.branch;
 
 %% CALC
 
 % varname=D3D_var_derived2raw(varname); %I don't think I need it...
 [ismor,is1d]=D3D_is(fpath_map);
 [var_str,varname]=D3D_var_num2str(varname,'is1d',is1d,'ismor',ismor);
-fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'var_idx',var_idx);
+fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'var_idx',var_idx,'branch',branch);
 
 if exist(fpath_sal,'file')==2
     if do_load

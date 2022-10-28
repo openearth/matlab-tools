@@ -20,11 +20,13 @@ parin=inputParser;
 
 addOptional(parin,'tim',[]);
 addOptional(parin,'idx_branch',[]);
+addOptional(parin,'branch','');
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 idx_branch=parin.Results.idx_branch;
+branch=parin.Results.branch;
 
 %% CALC
 
@@ -33,7 +35,7 @@ if is1d
     error('make it 1D proof')
 end
 
-data=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_thlyr','tim',time_dnum,'idx_branch',idx_branch); 
+data=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_thlyr','tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
 data.val=sum(data.val,3);
 
 end %function

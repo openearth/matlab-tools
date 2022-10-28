@@ -99,8 +99,8 @@ ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 for kbr=1:nbr %branches
     
-    branch=flg_loc.branch{kbr,1};
-    branch_name=flg_loc.branch_name{kbr,1};
+    branch=flg_loc.branch{kbr};
+    branch_name=flg_loc.branch_name{kbr};
 
     gridInfo_br=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat,gridInfo,branch,branch_name);
     
@@ -126,7 +126,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'idx_branch',gridInfo_br.idx);    
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'idx_branch',gridInfo_br.idx,'branch',branch_name);    
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end                

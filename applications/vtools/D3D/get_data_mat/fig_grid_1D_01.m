@@ -58,7 +58,7 @@ v2struct(in_p)
 nb=size(gridInfo.branch_id,1); %first is 0
 nn=size(gridInfo.net_node_id,1);
 % network1d_node_id=network1d_node_id';
-geom_cs=[1;cumsum(gridInfo.node_count_geom)];
+geom_cs=[0;cumsum(gridInfo.node_count_geom)];
 
 %% default
 
@@ -212,12 +212,12 @@ han.sfig(kpr,kpc).YLabel.String='y coordinate [m]';
 if plot_sat
     addTiles(flg.tiles_path)
 end
-han.p=scatter(gridInfo.x_geom,gridInfo.y_geom,10,'r','filled','parent',han.sfig(kr,kc));
+han.p=scatter(gridInfo.x_geom,gridInfo.y_geom,20,'r','parent',han.sfig(kr,kc));
 
 %nodes
 if plot_nodes
 for kn=1:nn
-    han.p=scatter(gridInfo.x_net_node(kn),gridInfo.y_net_node(kn),20,'sr','filled','parent',han.sfig(kr,kc));
+    han.p=scatter(gridInfo.x_net_node(kn),gridInfo.y_net_node(kn),20,'or','parent',han.sfig(kr,kc));
     str_p=strrep(gridInfo.net_node_id(kn,:),'_','\_');
     text(gridInfo.x_net_node(kn),gridInfo.y_net_node(kn),str_p,'Rotation',45,'Fontsize',10,'color','c','parent',han.sfig(kr,kc))    
 end
@@ -226,16 +226,19 @@ end
 %branches
 if plot_branches
 for kb=1:nb
-    idx_br=gridInfo.branch==kb;
-    mean_x=mean(gridInfo.x_geom(geom_cs(kb):geom_cs(kb+1)));
-    mean_y=mean(gridInfo.y_geom(geom_cs(kb):geom_cs(kb+1)));
+    mean_x=mean(gridInfo.x_geom(geom_cs(kb)+1:geom_cs(kb+1)));
+    mean_y=mean(gridInfo.y_geom(geom_cs(kb)+1:geom_cs(kb+1)));
     str_p=strrep(gridInfo.branch_id(kb,:),'_','\_');
-    text(mean_x,mean_y,str_p,'Rotation',0,'Fontsize',10,'color','k','parent',han.sfig(kr,kc))    
+    text(mean_x,mean_y,str_p,'Rotation',0,'Fontsize',10,'color','k','parent',han.sfig(kr,kc),'Rotation',-45)    
 end
 end
 
 %mesh1d
-plot(gridInfo.x_node,gridInfo.y_node,'*','parent',han.sfig(kr,kc))
+cmap=jet(nb);
+for kb=1:nb
+    bol_br=gridInfo.branch==kb-1; %starts at 0
+    plot(gridInfo.x_node(bol_br),gridInfo.y_node(bol_br),'*','parent',han.sfig(kr,kc),'color',cmap(kb,:))
+end
 
 % light
 % material dull

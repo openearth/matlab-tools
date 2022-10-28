@@ -117,9 +117,9 @@ data{kl,1}=        'Commnt =                 no. thin dams: 0'; kl=kl+1;
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Itdate = #2000-01-01#'; kl=kl+1;
 data{kl,1}=sprintf('Tunit  = #%s#',Tunit); kl=kl+1;
-data{kl,1}=sprintf('Tstart = %0.7E',Tstart*Tfact); kl=kl+1;
-data{kl,1}=sprintf('Tstop  = %0.7E',Tstop*Tfact); kl=kl+1;
-data{kl,1}=sprintf('Dt     = %0.7E',Dt*Tfact); kl=kl+1;
+data{kl,1}=sprintf('Tstart = %0.12E',Tstart*Tfact); kl=kl+1;
+data{kl,1}=sprintf('Tstop  = %0.12E',Tstop*Tfact); kl=kl+1;
+data{kl,1}=sprintf('Dt     = %0.12E',Dt*Tfact); kl=kl+1;
 if restart==1
 data{kl,1}=        'Restid  = #trim-restart#'; kl=kl+1;
 end
@@ -218,8 +218,8 @@ data{kl,1}=        'PHderv = #YYY#       '; kl=kl+1;
 data{kl,1}=        'PHproc = #YYYYYYYYYY#'; kl=kl+1;
 data{kl,1}=        'PHflux = #YYYY#      '; kl=kl+1;
 % data{kl,1}=sprintf('Flmap  =  0.0000000e+000 %0.7e   %0.7e',Flmap_dt,ceil(Tstop/Flmap_dt)*Flmap_dt); kl=kl+1;
-data{kl,1}=sprintf('Flmap  =  %0.7e %0.7e   %0.7e',Flmap_dt(1)*Tfact,Flmap_dt(2)*Tfact,Tstop*Tfact); kl=kl+1;
-data{kl,1}=sprintf('Flhis  =  0.0000000e+000 %0.7e   %0.7e',Flhis_dt*Tfact,Tstop*Tfact); kl=kl+1;
+data{kl,1}=sprintf('Flmap  =  %0.12e %0.12e   %0.12e',Flmap_dt(1)*Tfact,Flmap_dt(2)*Tfact,Tstop*Tfact); kl=kl+1;
+data{kl,1}=sprintf('Flhis  =  0.0000000e+000 %0.12e   %0.12e',Flhis_dt*Tfact,Tstop*Tfact); kl=kl+1;
 data{kl,1}=        'Flpp   =  0.0000000e+000 0    0.0000000e+000'; kl=kl+1;
 data{kl,1}=        'Flrst  = 0'; kl=kl+1;
 data{kl,1}=        'Commnt =                  '; kl=kl+1;

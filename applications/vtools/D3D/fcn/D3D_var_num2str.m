@@ -91,8 +91,7 @@ if ischar(var_id)
             var_str_save=var_str_read;
         case 'umag'
             if is1d
-                error('I am not sure this is correct. <umod> is morpho')
-                var_id_out='mesh1d_umod';
+                var_id_out='mesh1d_ucmag';
             else
                 var_id_out='mesh2d_ucmag';
             end

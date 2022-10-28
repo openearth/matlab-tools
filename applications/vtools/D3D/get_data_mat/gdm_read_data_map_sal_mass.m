@@ -19,15 +19,19 @@ function data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,varargin)
 parin=inputParser;
 
 addOptional(parin,'tim',[]);
+addOptional(parin,'idx_branch',[]);
+addOptional(parin,'branch','');
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
+idx_branch=parin.Results.idx_branch;
+branch=parin.Results.branch;
 
 %% READ RAW
 
-data_sal=gdm_read_data_map(fdir_mat,fpath_map,'sal','tim',time_dnum); 
-data_zw=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zw','tim',time_dnum);
+data_sal=gdm_read_data_map(fdir_mat,fpath_map,'sal','tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
+data_zw=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zw','tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
 
 %% CALC
 

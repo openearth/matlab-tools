@@ -14,10 +14,29 @@
 %
 %INPUT:
 %   -path_mdu_ori: path to the mdu-file of the original (hydrodynamic) simulation; char
-%   -path_sim_upd: path to the folder of the simulation to update the cross-section definitions and locations files; char
+%
+%OPTIONAL:
+%   -fdir_new: path to the folder of the simulation to update the cross-section definitions and locations files; char
 
-function D3D_interpolate_crosssections(path_mdu_ori,path_sim_upd)
+function D3D_interpolate_crosssections(path_mdu_ori,varargin)
 
+%% PARSE
+
+if numel(varargin)==1 %backward compatibility
+    fdir_new=varargin{1,1};
+else %pair-value arguments
+    parin=inputParser;
+
+    addOptional(parin,'check_existing',true);
+
+    parse(parin,varargin{:});
+
+    check_existing=parin.Results.check_existing;
+    
+    fdir_new='';
+end
+
+%%
 simdef=D3D_simpath_mdu(path_mdu_ori);
 
 path_csdef_ori=simdef.file.csdef;
@@ -70,7 +89,12 @@ F_min=cell(nb,1);
 F_max=cell(nb,1);
 F_flowWidths=cell(nb,1);
 F_totalWidths=cell(nb,1);
+F_mainWidth=cell(nb,1);
+F_fp1Width=cell(nb,1);
+F_fp2Width=cell(nb,1);
 for kb=1:nb
+%     fprintf('Dealing with branch %s \n',network1d_branch_id_c{kb,1}); %debug
+    
     idx_br_loc=find_str_in_cell({cs_loc_ori.branchId},network1d_branch_id_c(kb,1));
     chain=[cs_loc_ori(idx_br_loc).chainage]';
     def_id={cs_loc_ori(idx_br_loc).definitionId};
@@ -78,6 +102,9 @@ for kb=1:nb
     levels={cs_def_ori(idx_br_def).levels};
     flowWidths={cs_def_ori(idx_br_def).flowWidths};
     totalWidths={cs_def_ori(idx_br_def).totalWidths};
+    mainWidth=[cs_def_ori(idx_br_def).mainWidth];
+    fp1Width=[cs_def_ori(idx_br_def).fp1Width];
+    fp2Width=[cs_def_ori(idx_br_def).fp2Width];
 
     %sort
     [chain,idx_s]=sort(chain);  %#ok<TRSRT> I want it column for the griddedInterpolant
@@ -93,6 +120,11 @@ for kb=1:nb
     max_lev=cellfun(@(X)X(end),levels)';
     F_max{kb,1}=griddedInterpolant(chain,max_lev);
 
+    %interpolation objects x-val for all branches
+    F_mainWidth{kb,1}=griddedInterpolant(chain,mainWidth);
+    F_fp1Width{kb,1}=griddedInterpolant(chain,fp1Width);
+    F_fp2Width{kb,1}=griddedInterpolant(chain,fp2Width);
+    
     %interpolation objects x-z-w for all branches
     ncs=numel(levels);
     chain_v=[];
@@ -108,24 +140,29 @@ for kb=1:nb
     end
     F_flowWidths{kb,1}=scatteredInterpolant(chain_v,level_v,flowWidths_v,'linear','nearest');
     F_totalWidths{kb,1}=scatteredInterpolant(chain_v,level_v,totalWidths_v,'linear','nearest');
+    
+
 end %kb
 
-%% loop on nodes
+%% loop on mesh nodes (i.e., cell centres)
 
 for kn=1:nn
     
     %local names
     br_l=strtrim(network1d_branch_id(mesh1d_node_branch(kn)+1,:));
-    ch_l=mesh1d_node_offset(kn);
+    ch_l=mesh1d_node_offset(kn); %local chainage
     cs_id_l=cs_name(br_l,ch_l);
     
-    [lev_i,relative_levels,flowWidths_i,totalWidths_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths);
+    [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
 
     %definition
     cs_def_upd(kn)=cs_def_ref; %copy original
     cs_def_upd(kn).id=cs_id_l; %modify name    
     cs_def_upd(kn).flowWidths=flowWidths_i; 
     cs_def_upd(kn).totalWidths=totalWidths_i;
+    cs_def_upd(kn).mainWidth=mainWidth_i;
+    cs_def_upd(kn).fp1Width=fp1Width_i;
+    cs_def_upd(kn).fp2Width=fp2Width_i;
     cs_def_upd(kn).numLevels=nelev_cs;
 
     %modify levels
@@ -160,7 +197,7 @@ for kbif=1:nbif
 
         ch_l=0;
         br_l=cs_loc_ds.branchId;
-        [lev_i,relative_levels,flowWidths_i,totalWidths_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths);
+        [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
     
         %add
         kn=kn+1;
@@ -172,6 +209,9 @@ for kbif=1:nbif
         cs_def_upd(kn).id=cs_id_l; %modify name    
         cs_def_upd(kn).flowWidths=flowWidths_i; 
         cs_def_upd(kn).totalWidths=totalWidths_i;
+        cs_def_upd(kn).mainWidth=mainWidth_i;
+        cs_def_upd(kn).fp1Width=fp1Width_i;
+        cs_def_upd(kn).fp2Width=fp2Width_i;
         cs_def_upd(kn).numLevels=nelev_cs;
 
         %modify levels
@@ -191,15 +231,27 @@ end %kbif
 
 %% write
 
-simdef.D3D.dire_sim=path_sim_upd;
-simdef.csd=cs_def_upd;
-simdef.csl=cs_loc_upd;
+[fdir_csdef,fname_csdef,fext_csdef]=fileparts(path_csdef_ori);
+[fdir_csloc,fname_csloc,fext_csloc]=fileparts(path_csloc_ori);
+if ~isempty(fdir_new) %not being passed as input
+    fdir_csdef=fdir_new;
+    fdir_csloc=fdir_new;
+end
+fpath_csdef_new=fullfile(fdir_csdef,sprintf('%s_int%s',fname_csdef,fext_csdef));
+fpath_csloc_new=fullfile(fdir_csloc,sprintf('%s_int%s',fname_csloc,fext_csloc));
+    
+D3D_io_input('write',fpath_csdef_new,cs_def_upd,'check_existing',check_existing);
+D3D_io_input('write',fpath_csloc_new,cs_loc_upd,'check_existing',check_existing);
 
-simdef=D3D_simpath(simdef);
-[~,csloc_fname,csloc_ext]=fileparts(simdef.file.csloc);
-[~,csdef_fname,csdef_ext]=fileparts(simdef.file.csdef);
-D3D_crosssectiondefinitions(simdef,'check_existing',false,'fname',sprintf('%s%s',csdef_fname,csdef_ext));
-D3D_crosssectionlocation(simdef,'check_existing',false,'fname',sprintf('%s%s',csloc_fname,csloc_ext));
+% simdef.D3D.dire_sim=fdir_new;
+% simdef.csd=cs_def_upd;
+% simdef.csl=cs_loc_upd;
+
+% simdef=D3D_simpath(simdef);
+% [~,csloc_fname,csloc_ext]=fileparts(simdef.file.csloc);
+% [~,csdef_fname,csdef_ext]=fileparts(simdef.file.csdef);
+% D3D_crosssectiondefinitions(simdef,'check_existing',false,'fname',sprintf('%s%s',csdef_fname,csdef_ext));
+% D3D_crosssectionlocation(simdef,'check_existing',false,'fname',sprintf('%s%s',csloc_fname,csloc_ext));
 
 end %function
 
@@ -207,16 +259,25 @@ end %function
 %% FUNCTIONS
 %%
 
-function [lev_i,relative_levels,flowWidths_i,totalWidths_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths)
+function [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width)
+
+%2DO: I could group between the function that require interpolation in chainage only and the ones that require
+%interpolation in both chainage and elevation. Then we simply loop through the functions generically and we do not
+%have to modify this function when a new variable changes. 
 
 idx_br=find_str_in_cell(network1d_branch_id_c,{br_l});
 
-min_lev_i=F_min{idx_br,1}(ch_l); %interpolate minimum elevation
-max_lev_i=F_max{idx_br,1}(ch_l); %interpolate maximum elevation
+%interpolation only on chainage
+min_lev_i  =F_min      {idx_br,1}(ch_l); %interpolate minimum elevation
+max_lev_i  =F_max      {idx_br,1}(ch_l); %interpolate maximum elevation
+mainWidth_i=F_mainWidth{idx_br,1}(ch_l); %interpolate main width
+fp1Width_i =F_fp1Width {idx_br,1}(ch_l); %interpolate fp1
+fp2Width_i =F_fp2Width {idx_br,1}(ch_l); %interpolate fp1
 
+%interpolation in elevation
 lev_i=linspace(min_lev_i,max_lev_i,nelev_cs)';
 relative_levels=cumsum([0;diff(lev_i)]);
-flowWidths_i=F_flowWidths{idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
+flowWidths_i =F_flowWidths {idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
 totalWidths_i=F_totalWidths{idx_br,1}(ch_l.*ones(nelev_cs,1),lev_i); %interpolate maximum elevation
 
 end %funtion

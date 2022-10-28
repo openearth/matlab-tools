@@ -37,7 +37,7 @@ cord_br=[];
 o_br=[];
 last_dx_bm1=0;
 o_br_end_bm1=0;
-idx_br_clean=zeros(size(offset));
+idx_br_clean=NaN(size(offset));
 
 for kb=1:nb
     idx_br=branch==branch_2p_idx(kb); %logical indexes of intraloop branch
@@ -61,6 +61,8 @@ for kb=1:nb
 
     idx_br_clean(idx_br)=kb;
 end
+
+% sum(~isnan(idx_br_clean))
 
 gridInfo.xy=cord_br;
 gridInfo.offset=o_br;

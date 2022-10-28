@@ -21,6 +21,8 @@ parin=inputParser;
 addOptional(parin,'tim',[]);
 addOptional(parin,'var_idx',[]);
 addOptional(parin,'tol',1.5e-7);
+addOptional(parin,'idx_branch',[]);
+addOptional(parin,'branch','');
 
 parse(parin,varargin{:});
 

@@ -222,7 +222,7 @@ else
     end
     if rem(simdef.mdf.Flmap_dt(2),simdef.mdf.Dt)~=0 
         warning('Map results time is not multiple of time step. I am rewring the map results time.')
-        simdef.mdf.Flmap_dt=(floor(simdef.mdf.Flmap_dt(2)/simdef.mdf.Dt)+1)*simdef.mdf.Dt;
+        simdef.mdf.Flmap_dt=[simdef.mdf.Flmap_dt(1),(floor(simdef.mdf.Flmap_dt(2)/simdef.mdf.Dt)+1)*simdef.mdf.Dt];
     end
 end
 

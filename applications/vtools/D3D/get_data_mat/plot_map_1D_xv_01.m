@@ -101,11 +101,11 @@ end
 %% LOOP
 for kbr=1:nbr %branches
     
-    branch=flg_loc.branch{kbr,1};
-    branch_name=flg_loc.branch_name{kbr,1};
+    branch=flg_loc.branch{kbr};
+    branch_name=flg_loc.branch_name{kbr};
 
     gridInfo_br=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat,gridInfo,branch,branch_name);
-    nx=numel(gridInfo.offset);    
+    nx=numel(gridInfo_br.offset);    
     
     if do_rkm
         in_p.s=gridInfo_br.rkm;

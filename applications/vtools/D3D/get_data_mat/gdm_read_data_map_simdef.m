@@ -25,6 +25,7 @@ addOptional(parin,'layer',[]);
 addOptional(parin,'do_load',1);
 addOptional(parin,'tol',1.5e-7);
 addOptional(parin,'idx_branch',[]);
+addOptional(parin,'branch','');
 
 parse(parin,varargin{:});
 
@@ -35,6 +36,7 @@ layer=parin.Results.layer;
 do_load=parin.Results.do_load;
 tol=parin.Results.tol;
 idx_branch=parin.Results.idx_branch;
+branch=parin.Results.branch;
 
 %% 
 
@@ -42,7 +44,7 @@ fpath_map=gdm_fpathmap(simdef,sim_idx);
 
 switch varname
     case 'clm2'
-        data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum); 
+        data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);
         %'bl' can be read fine in FM and the variable name is switched to 'DPS' for D3D4.
 %     case 'bl'
 %         switch simdef.D3D.structure
@@ -56,17 +58,17 @@ switch varname
         if isempty(var_idx)
             error('Provide the index of the constituent to analyze')
         end
-        data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol); 
+        data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol,'idx_branch',idx_branch,'branch',branch);
     case 'Ltot'
-        data_var=gdm_read_data_map_Ltot(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch);      
+        data_var=gdm_read_data_map_Ltot(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);       
     case 'ba_mor'
-        data_var=gdm_read_data_map_ba_mor(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch);      
+        data_var=gdm_read_data_map_ba_mor(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);       
     case 'qsp'
-        data_var=gdm_read_data_map_q(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch);      
+        data_var=gdm_read_data_map_q(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);      
     case 'ba' %no time
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'layer',layer,'do_load',do_load,'idx_branch',idx_branch); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); 
     otherwise %name directly available in output
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); 
 end
 
 end %function

@@ -20,11 +20,13 @@ parin=inputParser;
 
 addOptional(parin,'tim',[]);
 addOptional(parin,'idx_branch',[]);
+addOptional(parin,'branch','');
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 idx_branch=parin.Results.idx_branch;
+branch=parin.Results.branch;
 
 %% CALC
 
@@ -34,9 +36,9 @@ if is1d
 end
 
 [~,varname]=D3D_var_num2str('umag','is1d',is1d,'ismor',ismor);
-data_umag=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch); 
+data_umag=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
 [~,varname]=D3D_var_num2str('h','is1d',is1d,'ismor',ismor);
-data_h=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch); 
+data_h=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
 % data_Ltot=gdm_order_dimensions(NaN,data_Ltot);
 
 data=data_umag;

@@ -200,15 +200,15 @@ switch what_do
                         end
                     end
                     if ~isnan(cstype)
-                        [fdir,fname]=fileparts(fname);
+                        [fdir,fname,fext]=fileparts(fname);
                         simdef.D3D.dire_sim=fdir;
                         switch cstype
                             case 2 %definition
                                 simdef.csd=stru_in;
-                                D3D_crosssectiondefinitions(simdef,'fname',sprintf('%s.ini',fname));
+                                D3D_crosssectiondefinitions(simdef,'fname',sprintf('%s%s',fname,fext),varargin{2:end});
                             case 3 %location
                                 simdef.csl=stru_in;
-                                D3D_crosssectionlocation(simdef,'fname',sprintf('%s.ini',fname));
+                                D3D_crosssectionlocation(simdef,'fname',sprintf('%s%s',fname,fext),varargin{2:end});
                         end
                     else
                         dflowfm_io_mdu('write',fname,stru_in);
