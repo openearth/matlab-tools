@@ -229,6 +229,7 @@ handles.toolbox.modelmaker.sfincs.outflowboundary_xy=[];
 handles.toolbox.modelmaker.sfincs.waterlevelboundary_xy=[];
 handles.toolbox.modelmaker.sfincs.bathymetry_changed=0;
 handles.toolbox.modelmaker.sfincs.roughness_changed=0;
+handles.toolbox.modelmaker.sfincs.setup_config_file='model_setup.yml';
 
 handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons=0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygonnames={''};
@@ -240,7 +241,7 @@ handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).zmin=-99999.0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygon(1).zmax=99999.0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmin=-99999.0;
 handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmax=99999.0;
-handles.toolbox.modelmaker.sfincs.mask.includepolygonfile='';
+handles.toolbox.modelmaker.sfincs.mask.includepolygonfile='include.pol';
 
 handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons=0;
 handles.toolbox.modelmaker.sfincs.mask.excludepolygonnames={''};
@@ -252,7 +253,7 @@ handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).zmin=-99999.0;
 handles.toolbox.modelmaker.sfincs.mask.excludepolygon(1).zmax=99999.0;
 handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmin=-99999.0;
 handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmax=99999.0;
-handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile='';
+handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile='exclude.pol';
 
 % handles.toolbox.modelmaker.sfincs.mask.nrclosedboundarypolygons=0;
 % handles.toolbox.modelmaker.sfincs.mask.closedboundarypolygonnames={''};
@@ -271,6 +272,7 @@ handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon(1).y=[];
 handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile='';
 handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmin=2.0;
 handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmax=99999.0;
+handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile='bnd_out.pol';
 
 handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons=0;
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonnames={''};
@@ -281,6 +283,7 @@ handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon(1).y=[];
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile='';
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmin=-99999.0;
 handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmax=-2.0;
+handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile='bnd_wl.pol';
 
 % % options for sfincs_make_mask_advanced
 % handles.toolbox.modelmaker.sfincs.mask.activegrid_options = {'current mask','elevation','include polygon','exclude polygon'};
@@ -328,6 +331,7 @@ handles.toolbox.modelmaker.sfincs.subgrid.refj = 20;
 handles.toolbox.modelmaker.sfincs.subgrid.maxdzdv = 5;
 handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_value = 0.024;
 handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_level = -999.0;
+handles.toolbox.modelmaker.sfincs.subgrid.zmin = -99999.0;
 
 %% HurryWave
 handles.toolbox.modelmaker.hurrywave.zmin=-2;

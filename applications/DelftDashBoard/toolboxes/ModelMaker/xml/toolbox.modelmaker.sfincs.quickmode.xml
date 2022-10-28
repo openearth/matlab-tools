@@ -95,15 +95,6 @@
     <enable>1</enable>
   </element>
   <element>
-    <style>pushbutton</style>
-    <position>890 10 100 20</position>
-    <tooltipstring>Generate model set-up yml file</tooltipstring>
-    <text>Save YAML File</text>
-    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
-    <option1>write_model_setup_yml</option1>
-    <enable>0</enable>
-  </element>  
-  <element>
     <style>checkbox</style>
     <position>490 110 160 20</position>
     <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
@@ -144,4 +135,29 @@
     <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
     <option1>edittimes</option1>
   </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>890 -350 100 20</position>
+    <tooltipstring>Load model set-up from yml file</tooltipstring>
+    <text>Load YAML File</text>
+    <variable>handles.toolbox.modelmaker.sfincs.setup_config_file</variable>
+    <showfilename>no</showfilename>
+    <extension>*.yml</extension>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
+    <option1>read_model_setup_yml</option1>
+    <enable>0</enable>
+  </element>  
+  <element>
+    <style>pushsavefile</style>
+    <position>890 10 100 20</position>
+    <tooltipstring>Generate model set-up yml file</tooltipstring>
+    <text>Save YAML File</text>
+    <variable>handles.toolbox.modelmaker.sfincs.setup_config_file</variable>
+    <showfilename>no</showfilename>
+    <extension>*.yml</extension>
+    <selectiontext>Select YML model set-up file</selectiontext>
+    <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
+    <option1>write_model_setup_yml</option1>
+    <enable>1</enable>
+  </element>  
 </root>

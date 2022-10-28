@@ -42,6 +42,7 @@
     <listtext>
       <variable>handles.bathymetry.longNames</variable>
     </listtext>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushbutton</style>
@@ -50,6 +51,7 @@
     <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
     <option1>usedataset</option1>
     <tooltipstring>Use selected dataset (from list on the left)</tooltipstring>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushbutton</style>
@@ -73,6 +75,7 @@
     <listtext>
       <variable>handles.toolbox.modelmaker.sfincs.roughness.selectedDatasetNames</variable>
     </listtext>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushbutton</style>
@@ -80,6 +83,7 @@
     <text>Remove</text>
     <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
     <option1>removedataset</option1>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushbutton</style>
@@ -87,6 +91,7 @@
     <text>Move Up</text>
     <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
     <option1>datasetup</option1>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushbutton</style>
@@ -94,6 +99,7 @@
     <text>Move Down</text>
     <callback>ddb_ModelMakerToolbox_sfincs_roughness</callback>
     <option1>datasetdown</option1>
+    <enable>0</enable>
   </element>
   <element>
     <style>text</style>
@@ -115,6 +121,7 @@
         <operator>eq</operator>
       </check>
     </dependency>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushbutton</style>

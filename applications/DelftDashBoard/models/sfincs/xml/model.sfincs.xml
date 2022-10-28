@@ -74,6 +74,11 @@
       <callback>ddb_sfincs_numerics</callback>
     </tab>
     <tab>
+      <tabstring>Initial Conditions</tabstring>
+      <element>model.sfincs.initialconditions.xml</element>
+      <callback>ddb_sfincs_initial_conditions</callback>
+    </tab>
+    <tab>
       <tabstring>Boundary Conditions</tabstring>
       <callback>ddb_sfincs_boundary_conditions</callback>
       <element>model.sfincs.boundaryconditions.xml</element>
@@ -87,6 +92,11 @@
       <tabstring>Structures</tabstring>
       <element>model.sfincs.obstacles.xml</element>
       <callback>ddb_sfincs_obstacles</callback>
+    </tab>
+    <tab>
+      <tabstring>Discharges</tabstring>
+      <element>model.sfincs.discharges.xml</element>
+      <callback>ddb_sfincs_discharges</callback>
     </tab>
     <tab>
       <tabstring>Observation Points</tabstring>

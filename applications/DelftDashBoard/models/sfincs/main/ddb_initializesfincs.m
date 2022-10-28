@@ -99,3 +99,8 @@ handles.model.sfincs.coastspline.x=[];
 handles.model.sfincs.coastspline.y=[];
 handles.model.sfincs.coastspline.flowdx=500;
 
+handles.model.sfincs.activethindam=1;
+handles.model.sfincs.thindamnames={''};
+
+handles.model.sfincs.activeweir=1;
+handles.model.sfincs.weirnames={''};

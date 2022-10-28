@@ -1,4 +1,4 @@
-function handles = ddb_sfincs_plotObservationPoints(handles, opt, varargin)
+function handles = ddb_sfincs_plot_thin_dams(handles, opt, varargin)
 %ddb_sfincs_plotObservationPoints  One line description goes here.
 
 %% Copyright notice
@@ -64,91 +64,109 @@ for i=1:length(varargin)
     end
 end
 
+for ib=1:handles.model.sfincs.domain(id).nrthindams
+    if isfield(handles.model.sfincs.domain(id).thindams(ib),'handle')
+        plothandles(ib)=handles.model.sfincs.domain(id).thindams(ib).handle;
+    end
+end
+
+if iactive
+    linecolor='g';
+    markercolor='r';
+else
+    linecolor=[0.5 0.5 0.5];
+    markercolor=[0.5 0.5 0.5];
+end
 
 switch lower(opt)
     
     case{'plot'}
         
-        h=handles.model.sfincs.domain(id).observationpoints_handle;
-        
         % First delete old sections
         try
-            delete(h);
+            delete(plothandles);
         end
+
+        plothandles=[];
         
-        if length(handles.model.sfincs.domain(ad).observationpoints)>0
-            
-            for ip=1:length(handles.model.sfincs.domain(ad).observationpoints)
-                xy(ip,:)=[handles.model.sfincs.domain(ad).observationpoints(ip).x handles.model.sfincs.domain(ad).observationpoints(ip).y];
-                txt{ip}=handles.model.sfincs.domain.observationpoints(ip).name;
+        if handles.model.sfincs.domain(id).nrthindams>0
+
+            for isec=1:length(handles.model.sfincs.domain(id).thindams)
+                x=handles.model.sfincs.domain(id).thindams(isec).x;
+                y=handles.model.sfincs.domain(id).thindams(isec).y;
+                if isec==handles.model.sfincs.domain(id).activethindam
+                    markercolor='r';
+                else
+                    markercolor=[1 1 0];
+                end
+                p=gui_polyline('plot','x',x,'y',y,'tag','sfincsthindam', ...
+                    'changecallback',@ddb_sfincs_obstacles,'changeinput','changethindam','closed',0, ...
+                    'Marker','o','color',linecolor,'markeredgecolor',markercolor,'markerfacecolor',markercolor);
+                handles.model.sfincs.domain(id).thindams(isec).handle=p;
+
+                plothandles(isec)=p;
+                
             end
-            
-            h=gui_pointcloud('plot','xy',xy,'selectcallback',@ddb_sfincs_observation_points,'selectinput','selectfrommap',...
-                'tag','sfincs_observationpoints', ...
-                'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','y', ...
-                'ActiveMarkerSize',6,'ActiveMarkerEdgeColor','k','ActiveMarkerFaceColor','r', ...
-                'activepoint',handles.model.sfincs.domain.activeobservationpoint,'text',txt,'FontSize',10,'FontWeight','bold');
-            
-            handles.model.sfincs.domain(id).observationpoints_handle=h;
             
             if vis
-                set(h,'Visible','on');
+                set(plothandles,'Visible','on');
             else
-                set(h,'Visible','off');
+                set(plothandles,'Visible','off');
             end
-            
         end
+        
         
     case{'delete'}
         
-        plothandle=handles.model.sfincs.domain(id).observationpoints_handle;
-        
         % Delete old grid
         try
-            delete(plothandle);
+            delete(plothandles);
         end
         
         % And now (just to make sure) delete all objects with tag
-        h=findobj(gcf,'Tag','sfincs_observationpoints');
+        h=findobj(gcf,'Tag','sfincsthindam');
         if ~isempty(h)
             delete(h);
         end
         
-        handles.model.sfincs.domain(id).observationpoints_handle=[];
-        
     case{'update'}
-        
-        plothandle=handles.model.sfincs.domain(id).observationpoints_handle;
-        
         try
-            
-            if handles.model.sfincs.domain(ad).nrobservationpoints>0
+
+            if handles.model.sfincs.domain(id).nrthindams>0
                 
-                if iactive
-                    gui_pointcloud(plothandle,'change','color','markeredgecolor','k','markerfacecolor','y', ...
-                        'activemarkerfacecolor','r','markersize',5,'activemarkersize',6,'textvisible','on');
-                    set(plothandle,'HitTest','on');
-                    ch=get(plothandle,'Children');
-                    for ipp=1:length(ch)
-                        set(ch(ipp),'HitTest','on');
+                for ip=1:length(plothandles)
+
+                    if iactive
+                        if ip==handles.model.sfincs.domain(id).activethindam
+                            markercolor='r';
+                        else
+                            markercolor=[1 1 0];
+                        end
+                        set(plothandles(ip),'HitTest','on');
+                        ch=get(plothandles(ip),'Children');
+                        for ipp=1:length(ch)
+                            set(ch(ipp),'HitTest','on');
+                        end
+                    else
+                        markercolor=[0.5 0.5 0.5];
+                        set(plothandles(ip),'HitTest','off');
+                        ch=get(plothandles(ip),'Children');                        
+                        for ipp=1:length(ch)
+                            set(ch(ipp),'HitTest','off');
+                        end                        
                     end
-                else
-                    gui_pointcloud(plothandle,'change','color','markeredgecolor','k','markerfacecolor','y', ...
-                        'activemarkerfacecolor','y','markersize',5,'activemarkersize',6,'textvisible','off');
-                    set(plothandle,'HitTest','off');
-                    ch=get(plothandle,'Children');
-                    for ipp=1:length(ch)
-                        set(ch(ipp),'HitTest','off');
-                    end
+                    
+                    gui_polyline(plothandles(ip),'change','color',linecolor,'markeredgecolor',markercolor,'markerfacecolor',markercolor);
+                    
                 end
                 
-            end
-            
-            if vis
-                set(plothandle,'Visible','on');
-            else
-                set(plothandle,'Visible','off');
+                if vis
+                    set(plothandles,'Visible','on');
+                else
+                    set(plothandles,'Visible','off');
+                end
             end
         end
 end
+
 

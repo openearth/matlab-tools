@@ -115,7 +115,8 @@ switch lower(el.style)
                 end
             end
         else
-            stringlist=gui_getValue(el,el.listtext);
+%            stringlist=gui_getValue(el,el.listtext);
+            stringlist{1}=el.listtext;
         end
         
         ii=1;
@@ -144,7 +145,8 @@ switch lower(el.style)
                                 end
                             end
                         else
-                            values{1}=gui_getValue(el,el.listvalue);
+%                            values{1}=gui_getValue(el,el.listvalue);
+                            values{1}=el.listvalue;
                         end
                     else
                         % Values are the same as the string list

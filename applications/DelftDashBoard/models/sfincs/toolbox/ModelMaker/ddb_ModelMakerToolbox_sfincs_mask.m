@@ -66,27 +66,29 @@ if isempty(varargin)
     ddb_refreshScreen;
     ddb_plotModelMaker('deactivate');
     ddb_plotsfincs('update','active',1,'visible',1);
+    
+    bring_polygons_to_front;
 
-    h=findobj(gca,'Tag','sfincsincludepolygon');
-    if ~isempty(h)
-        set(h,'Visible','on');
-        uistack(h,'top');
-    end
-    h=findobj(gca,'Tag','sfincsexcludepolygon');
-    if ~isempty(h)
-        set(h,'Visible','on');
-        uistack(h,'top');
-    end
-    h=findobj(gca,'Tag','sfincswaterlevelboundarypolygon');
-    if ~isempty(h)
-        set(h,'Visible','on');
-        uistack(h,'top');
-    end
-    h=findobj(gca,'Tag','sfincsoutflowboundarypolygon');
-    if ~isempty(h)
-        set(h,'Visible','on');
-        uistack(h,'top');
-    end
+%     h=findobj(gca,'Tag','sfincsincludepolygon');
+%     if ~isempty(h)
+%         set(h,'Visible','on');
+%         uistack(h,'top');
+%     end
+%     h=findobj(gca,'Tag','sfincsexcludepolygon');
+%     if ~isempty(h)
+%         set(h,'Visible','on');
+%         uistack(h,'top');
+%     end
+%     h=findobj(gca,'Tag','sfincswaterlevelboundarypolygon');
+%     if ~isempty(h)
+%         set(h,'Visible','on');
+%         uistack(h,'top');
+%     end
+%     h=findobj(gca,'Tag','sfincsoutflowboundarypolygon');
+%     if ~isempty(h)
+%         set(h,'Visible','on');
+%         uistack(h,'top');
+%     end
     
     handles=getHandles;
     ddb_sfincs_plot_mask(handles, 'update','domain',ad,'visible',1);
@@ -189,7 +191,7 @@ function drawIncludePolygon
 handles=getHandles;
 ddb_zoomOff;
 
-handles.toolbox.modelmaker.sfincs.mask.includepolygonhandle=gui_polyline('draw','tag','sfincsincludepolygon','color','y','marker','o', ...
+handles.toolbox.modelmaker.sfincs.mask.includepolygonhandle=gui_polyline('draw','tag','sfincsincludepolygon','color',[1 0.64 0],'marker','o', ...
     'createcallback',@createIncludePolygon,'changecallback',@changeIncludePolygon, ...
     'closed',1);
 
@@ -291,7 +293,7 @@ for ip=1:handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons
     handles.toolbox.modelmaker.sfincs.mask.includepolygon(ip).y=y;
     handles.toolbox.modelmaker.sfincs.mask.includepolygon(ip).length=length(x);
     handles.toolbox.modelmaker.sfincs.mask.includepolygonnames{ip}=deblank2(data.Field(ip).Name);
-    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsincludepolygon','color','y','marker','o', ...
+    h=gui_polyline('plot','x',x,'y',y,'tag','sfincsincludepolygon','color',[1 0.64 0],'marker','o', ...
         'changecallback',@changeIncludePolygon);
     handles.toolbox.modelmaker.sfincs.mask.includepolygon(ip).handle=h;
 end
@@ -760,7 +762,12 @@ handles=getHandles;
 
 id=ad;
 
-% First check if gridz is empty or bathymetry settings have changed
+if isempty(handles.model.sfincs.domain(id).gridx)
+    ddb_giveWarning('text','Please first generate a SFINCS grid in the QuickMode tab !');
+    return
+end
+
+% Check if gridz is empty or bathymetry settings have changed
 % If so, generate bathymetry
 if isempty(handles.model.sfincs.domain(id).gridz) || handles.toolbox.modelmaker.sfincs.bathymetry_changed==1
     
@@ -840,6 +847,7 @@ msk=sfincs_make_mask(handles.model.sfincs.domain(ad).gridx,handles.model.sfincs.
 handles.model.sfincs.domain(id).mask=msk;
 
 handles = ddb_sfincs_plot_mask(handles, 'plot');
+bring_polygons_to_front;
 
 % And save the files
 handles.model.sfincs.domain(id).input.indexfile = 'sfincs.ind';
@@ -865,9 +873,32 @@ else
     sfincs_write_ascii_inputs(handles.model.sfincs.domain(id).gridz,msk,bindepfile,binmskfile);
 end
 
-
 handles.toolbox.modelmaker.sfincs.bathymetry_changed = 0;
 handles.toolbox.modelmaker.sfincs.roughness_changed = 0;
 
 setHandles(handles);
+
+%%
+function bring_polygons_to_front
+
+h=findobj(gca,'Tag','sfincsincludepolygon');
+if ~isempty(h)
+    set(h,'Visible','on');
+    uistack(h,'top');
+end
+h=findobj(gca,'Tag','sfincsexcludepolygon');
+if ~isempty(h)
+    set(h,'Visible','on');
+    uistack(h,'top');
+end
+h=findobj(gca,'Tag','sfincswaterlevelboundarypolygon');
+if ~isempty(h)
+    set(h,'Visible','on');
+    uistack(h,'top');
+end
+h=findobj(gca,'Tag','sfincsoutflowboundarypolygon');
+if ~isempty(h)
+    set(h,'Visible','on');
+    uistack(h,'top');
+end
 

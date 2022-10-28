@@ -1,68 +1,137 @@
 <?xml version="1.0"?>
 <root>
   <element>
+    <style>panel</style>
+    <text>Map</text>
+    <position>40 10 250 160</position>
+  </element>
+  <element>
     <style>edit</style>
-    <position>150 130 80 20</position>
+    <position>50 130 80 20</position>
     <tooltipstring>Edit map output interval (in seconds)</tooltipstring>
-    <text>Map output interval</text>
-    <textposition>left</textposition>
+    <text>Map Output Interval (s)</text>
+    <textposition>right</textposition>
     <type>real</type>
-    <variable>handles.model.sfincs.domain(ad).input.dtout</variable>
+    <variable>handles.model.sfincs.domain(ad).input.dtmapout</variable>
   </element>  
   <element>
     <style>edit</style>
-    <position>150 105 80 20</position>
-    <tooltipstring>Edit history output interval (in seconds)</tooltipstring>
-    <text>His output interval</text>
-    <textposition>left</textposition>
+    <position>50 105 80 20</position>
+    <tooltipstring>Edit output interval for max output (in seconds). Set to 0.0 if no max output is required.</tooltipstring>
+    <text>Max Output Interval (s)</text>
+    <textposition>right</textposition>
     <type>real</type>
-    <variable>handles.model.sfincs.domain(ad).input.dthisout</variable>
+    <variable>handles.model.sfincs.domain(ad).input.dtmaxout</variable>
   </element>  
   <element>
     <style>popupmenu</style>
-    <position>150 80 80 20</position>
+    <position>50 80 80 20</position>
+    <text>Restart Option</text>
+    <textposition>right</textposition>
+    <tooltipstring>Select restart option</tooltipstring>
+    <variable>handles.model.sfincs.domain(ad).restart_option</variable>
+    <type>string</type>
+    <listtext>None</listtext>
+    <listtext>Interval</listtext>
+    <listtext>Fixed Time</listtext>
+    <listvalue>none</listvalue>
+    <listvalue>interval</listvalue>
+    <listvalue>fixed</listvalue>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>50 55 80 20</position>
+    <tooltipstring>Edit output interval for restart output (in seconds)</tooltipstring>
+    <text>Restart Output Interval (s)</text>
+    <textposition>right</textposition>
+    <type>real</type>
+    <variable>handles.model.sfincs.domain(ad).input.dtrstout</variable>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).restart_option</variable>
+        <value>interval</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>  
+  <element>
+    <style>edit</style>
+    <position>50 55 80 20</position>
+    <tooltipstring>Edit output time for restart output (in seconds w.r.t. reference time)</tooltipstring>
+    <text>Restart Output Time (s)</text>
+    <textposition>right</textposition>
+    <type>real</type>
+    <variable>handles.model.sfincs.domain(ad).input.trstout</variable>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).restart_option</variable>
+        <value>fixed</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>  
+
+  <element>
+    <style>panel</style>
+    <text>Time Series</text>
+    <position>300 10 200 160</position>
+  </element>
+  
+  <element>
+    <style>edit</style>
+    <position>310 130 80 20</position>
+    <tooltipstring>Edit history output interval (in seconds)</tooltipstring>
+    <text>His Output Interval</text>
+    <textposition>right</textposition>
+    <type>real</type>
+    <variable>handles.model.sfincs.domain(ad).input.dthisout</variable>
+  </element>  
+
+  <element>
+    <style>panel</style>
+    <text>Options</text>
+    <position>510 10 200 160</position>
+  </element>
+
+  <element>
+    <style>popupmenu</style>
+    <position>520 130 80 20</position>
     <text>Output Format</text>
+    <textposition>right</textposition>
     <variable>handles.model.sfincs.domain(ad).input.outputformat</variable>
     <type>string</type>
     <listtext>Binary</listtext>
     <listtext>ASCII</listtext>
+    <listtext>NetCDF</listtext>
     <listvalue>bin</listvalue>
     <listvalue>asc</listvalue>
+    <listvalue>net</listvalue>
+  </element>
+
+  <element>
+    <style>checkbox</style>
+    <text>Store Meteo</text>
+    <position>520 105</position>
+    <type>integer</type>
+    <variable>handles.model.sfincs.domain(ad).input.storemeteo</variable>
   </element>
   <element>
-    <style>edit</style>
-    <position>310 130 80 20</position>
-    <tooltipstring>Edit zs file</tooltipstring>
-    <text>Zs File</text>
-    <textposition>left</textposition>
-    <type>string</type>
-    <variable>handles.model.sfincs.domain(ad).input.zsfile</variable>
-  </element>  
-  <element>
-    <style>edit</style>
-    <position>310 105 80 20</position>
-    <tooltipstring>Edit Hmax file</tooltipstring>
-    <text>Hmax File</text>
-    <textposition>left</textposition>
-    <type>string</type>
-    <variable>handles.model.sfincs.domain(ad).input.hmaxfile</variable>
-  </element>  
-  <element>
-    <style>edit</style>
-    <position>310 80 80 20</position>
-    <tooltipstring>Edit Vmax file</tooltipstring>
-    <text>Vmax File</text>
-    <textposition>left</textposition>
-    <type>string</type>
-    <variable>handles.model.sfincs.domain(ad).input.vmaxfile</variable>
-  </element>  
-  <element>
-    <style>pushselectfile</style>
-    <position>400 130 80 20</position>
-    <tooltipstring>Select observation points file</tooltipstring>
-    <text>Obs File</text>
-    <variable>handles.model.sfincs.domain(ad).input.obsfile</variable>
-    <extension>*.obs</extension>
-    <selectiontext>Select observation points file</selectiontext>
+    <style>checkbox</style>
+    <text>Store Velocities</text>
+    <position>520 80</position>
+    <type>integer</type>
+    <variable>handles.model.sfincs.domain(ad).input.storevel</variable>
   </element>
+  <element>
+    <style>checkbox</style>
+    <text>Store Cumulative Precipitation</text>
+    <position>520 55</position>
+    <type>integer</type>
+    <variable>handles.model.sfincs.domain(ad).input.storecumprcp</variable>
+  </element>
+
 </root>

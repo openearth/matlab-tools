@@ -86,6 +86,8 @@ else
             edit_times;
         case{'write_model_setup_yml'}
             write_model_setup_yml;
+        case{'read_model_setup_yml'}
+            read_model_setup_yml;
     end
     
 end
@@ -248,44 +250,6 @@ close(wb);
 
 setHandles(handles);
 
-function write_model_setup_yml
-handles=getHandles;
-
-
-config.coordinates.x0=handles.model.sfincs.domain.input.x0;
-config.coordinates.y0=handles.model.sfincs.domain.input.y0;
-config.coordinates.dx=handles.model.sfincs.domain.input.dx;
-config.coordinates.dy=handles.model.sfincs.domain.input.dy;
-config.coordinates.mmax=handles.model.sfincs.domain.input.mmax;
-config.coordinates.nmax=handles.model.sfincs.domain.input.nmax;
-config.coordinates.rotation=handles.model.sfincs.domain.input.rotation;
-config.coordinates.crs=handles.screenParameters.coordinateSystem.name;
-
-config.mask=[];
-config.mask.zmin=handles.toolbox.modelmaker.sfincs.zmin;
-config.mask.zmax=handles.toolbox.modelmaker.sfincs.zmax;
-if ~isempty(handles.toolbox.modelmaker.sfincs.mask.includepolygonfile)
-    config.mask.exclude_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.includepolygonfile;
-end
-if ~isempty(handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile)
-    config.mask.exclude_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile;
-end
-if ~isempty(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile)
-    config.mask.open_boundary_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile;
-end
-if ~isempty(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile)
-    config.mask.outflow_boundary_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile;
-end
-
-for j=1:length(handles.toolbox.modelmaker.bathymetry.selectedDatasets)
-    config.bathymetry.dataset{j}.name=handles.toolbox.modelmaker.bathymetry.selectedDatasets(j).name;
-    config.bathymetry.dataset{j}.source='delftdashboard';
-    config.bathymetry.dataset{j}.zmin=handles.toolbox.modelmaker.bathymetry.selectedDatasets(j).zMin;
-    config.bathymetry.dataset{j}.zmax=handles.toolbox.modelmaker.bathymetry.selectedDatasets(j).zMax;
-end
-
-yml.write(config, 'model_setup.yml',0);
-
 %%
 function edit_times
 handles=getHandles;
@@ -296,3 +260,222 @@ handles.model.sfincs.domain(ad).input.tref=datestr(tref,'yyyymmdd HHMMSS');
 handles.model.sfincs.domain(ad).input.tstart=datestr(tstart,'yyyymmdd HHMMSS');
 handles.model.sfincs.domain(ad).input.tstop=datestr(tstop,'yyyymmdd HHMMSS');
 setHandles(handles);
+
+%%
+function write_model_setup_yml
+
+handles=getHandles;
+
+fid=fopen(handles.toolbox.modelmaker.sfincs.setup_config_file,'wt');
+
+% Coordinates
+
+fprintf(fid,'%s\n','coordinates:');
+fprintf(fid,'%s\n',['  x0: ' num2fstr(handles.model.sfincs.domain.input.x0)]);
+fprintf(fid,'%s\n',['  y0: ' num2fstr(handles.model.sfincs.domain.input.y0)]);
+fprintf(fid,'%s\n',['  dx: ' num2fstr(handles.model.sfincs.domain.input.dx)]);
+fprintf(fid,'%s\n',['  dy: ' num2fstr(handles.model.sfincs.domain.input.dy)]);
+fprintf(fid,'%s\n',['  nmax: ' num2str(handles.model.sfincs.domain.input.nmax)]);
+fprintf(fid,'%s\n',['  mmax: ' num2str(handles.model.sfincs.domain.input.mmax)]);
+fprintf(fid,'%s\n',['  rotation: ' num2fstr(handles.model.sfincs.domain.input.rotation)]);
+fprintf(fid,'%s\n',['  crs: "' handles.screenParameters.coordinateSystem.name '"']);
+
+% Mask
+fprintf(fid,'%s\n','mask:');
+fprintf(fid,'%s\n',['  zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.zmin)]);
+fprintf(fid,'%s\n',['  zmax: ' num2fstr(handles.toolbox.modelmaker.sfincs.zmax)]);
+if handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons>0
+    fprintf(fid,'%s\n',['  include_polygon:']);
+    fprintf(fid,'%s\n',['  - file_name: "' handles.toolbox.modelmaker.sfincs.mask.includepolygonfile '"']);
+    fprintf(fid,'%s\n',['    zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmin)]);
+    fprintf(fid,'%s\n',['    zmax: ' num2fstr(handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmax)]);
+else
+    fprintf(fid,'%s\n',['  include_polygon: []']);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons>0
+    fprintf(fid,'%s\n',['  exclude_polygon:']);
+    fprintf(fid,'%s\n',['  - file_name: "' handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile '"']);
+    fprintf(fid,'%s\n',['    zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmin)]);
+    fprintf(fid,'%s\n',['    zmax: ' num2fstr(handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmax)]);
+else
+    fprintf(fid,'%s\n',['  exclude_polygon: []']);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons>0
+    fprintf(fid,'%s\n',['  open_boundary_polygon:']);
+    fprintf(fid,'%s\n',['  - file_name: "' handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile '"']);
+    fprintf(fid,'%s\n',['    zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmin)]);
+    fprintf(fid,'%s\n',['    zmax: ' num2fstr(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmax)]);
+else
+    fprintf(fid,'%s\n',['  open_boundary_polygon: []']);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons>0
+    fprintf(fid,'%s\n',['  outflow_boundary_polygon:']);
+    fprintf(fid,'%s\n',['  - file_name: "' handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile '"']);
+    fprintf(fid,'%s\n',['    zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmin)]);
+    fprintf(fid,'%s\n',['    zmax: ' num2fstr(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmax)]);
+else
+    fprintf(fid,'%s\n',['  outflow_boundary_polygon: []']);
+end
+fprintf(fid,'%s\n','bathymetry:');
+for j=1:length(handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets)
+    fprintf(fid,'%s\n',['  dataset:']);
+    fprintf(fid,'%s\n',['  - name: "' handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(j).name '"']);
+    fprintf(fid,'%s\n',['    source: "delftdashboard"']);
+    fprintf(fid,'%s\n',['    zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(j).zMin)]);
+    fprintf(fid,'%s\n',['    zmax: ' num2fstr(handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(j).zMax)]);
+end
+fprintf(fid,'%s\n','roughness:');
+fprintf(fid,'%s\n',['  dataset:']);
+fprintf(fid,'%s\n',['  - zlevel: ' num2fstr(handles.toolbox.modelmaker.sfincs.roughness.rgh_lev_land)]);
+fprintf(fid,'%s\n',['    roughness_type: manning']);
+fprintf(fid,'%s\n',['    roughness_deep: ' num2fstr(handles.toolbox.modelmaker.sfincs.roughness.manning_sea)]);
+fprintf(fid,'%s\n',['    roughness_shallow: ' num2fstr(handles.toolbox.modelmaker.sfincs.roughness.manning_land)]);
+for j=1:handles.toolbox.modelmaker.sfincs.roughness.nrSelectedDatasets
+    fprintf(fid,'%s\n',['  dataset:']);
+    fprintf(fid,'%s\n',['  - name: "' handles.toolbox.modelmaker.sfincs.roughness.selectedDatasets(j).name '"']);
+    fprintf(fid,'%s\n',['    source: "delftdashboard"']);
+%     fprintf(fid,'%s\n',['    zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.roughness.selectedDatasets(j).zMin)]);
+%     fprintf(fid,'%s\n',['    zmax: ' num2fstr(handles.toolbox.modelmaker.sfincs.roughness.selectedDatasets(j).zMax)]);
+end
+fprintf(fid,'%s\n','subgrid:');
+fprintf(fid,'%s\n',['  nr_bins: ' num2str(handles.toolbox.modelmaker.sfincs.subgrid.nbin)]);
+fprintf(fid,'%s\n',['  nr_subgrid_pixels: ' num2str(handles.toolbox.modelmaker.sfincs.subgrid.refi)]);
+fprintf(fid,'%s\n',['  zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.zmin)]);
+fprintf(fid,'%s\n',['  max_gradient: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.maxdzdv)]);
+fprintf(fid,'%s\n',['  manning_max: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_value)]);
+fprintf(fid,'%s\n',['  manning_max_level: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_level)]);
+
+fclose(fid);
+
+% Now save polygon files
+if handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons>0
+    save_polygon(handles.toolbox.modelmaker.sfincs.mask.includepolygon,handles.toolbox.modelmaker.sfincs.mask.includepolygonfile);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons>0
+    save_polygon(handles.toolbox.modelmaker.sfincs.mask.excludepolygon,handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons>0
+    save_polygon(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon,handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons>0
+    save_polygon(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon,handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile);
+end
+
+% coordinates: 
+%   x0: 34467.30970073266
+%   y0: 3618195.3228380345
+%   dx: 500.0
+%   dy: 500.0
+%   mmax: 78.0
+%   nmax: 58.0
+%   rotation: 39.686567752782075
+%   crs: "WGS 84 / UTM zone 18N"
+% 
+
+% config.coordinates.x0=handles.model.sfincs.domain.input.x0;
+% config.coordinates.y0=handles.model.sfincs.domain.input.y0;
+% config.coordinates.dx=handles.model.sfincs.domain.input.dx;
+% config.coordinates.dy=handles.model.sfincs.domain.input.dy;
+% config.coordinates.mmax=handles.model.sfincs.domain.input.mmax;
+% config.coordinates.nmax=handles.model.sfincs.domain.input.nmax;
+% config.coordinates.rotation=handles.model.sfincs.domain.input.rotation;
+% config.coordinates.crs=handles.screenParameters.coordinateSystem.name;
+% 
+% config.mask=[];
+% config.mask.zmin=handles.toolbox.modelmaker.sfincs.zmin;
+% config.mask.zmax=handles.toolbox.modelmaker.sfincs.zmax;
+% 
+% if handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons>0
+%     config.mask.include_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.includepolygonfile;
+%     config.mask.include_polygon{1}.zmin=handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmin;
+%     config.mask.include_polygon{1}.zmax=handles.toolbox.modelmaker.sfincs.mask.includepolygon_zmax;
+%     % And save the polygon file
+% end
+% 
+% if handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons>0
+%     config.mask.exclude_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile;
+%     config.mask.exclude_polygon{1}.zmin=handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmin;
+%     config.mask.exclude_polygon{1}.zmax=handles.toolbox.modelmaker.sfincs.mask.excludepolygon_zmax;
+%     % And save the polygon file
+% end
+% 
+% if handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons>0
+%     config.mask.wl_boundary_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile;
+%     config.mask.wl_boundary_polygon{1}.zmin=handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmin;
+%     config.mask.wl_boundary_polygon{1}.zmax=handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon_zmax;
+%     % And save the polygon file
+% end
+% 
+% if handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons>0
+%     config.mask.outflow_boundary_polygon{1}.file_name=handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile;
+%     config.mask.outflow_boundary_polygon{1}.zmin=handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmin;
+%     config.mask.outflow_boundary_polygon{1}.zmax=handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon_zmax;
+%     % And save the polygon file
+% end
+% 
+% for j=1:length(handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets)
+%     config.bathymetry.dataset{j}.name=handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(j).name;
+%     config.bathymetry.dataset{j}.source='delftdashboard';
+%     config.bathymetry.dataset{j}.zmin=handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(j).zMin;
+%     config.bathymetry.dataset{j}.zmax=handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets(j).zMax;
+% end
+% 
+% % yml.write(config, 'model_setup.yml',0);
+
+% %%
+% function read_model_setup_yml
+% 
+% handles=getHandles;
+% 
+% inp=yml.read(handles.toolbox.modelmaker.sfincs.setup_config_file);
+% 
+% % Coordinates
+% handles.model.sfincs.domain.input.x0=inp.coordinates.x0;
+% handles.model.sfincs.domain.input.y0=inp.coordinates.y0;
+% handles.model.sfincs.domain.input.dx=inp.coordinates.dx;
+% handles.model.sfincs.domain.input.dy=inp.coordinates.dy;
+% handles.model.sfincs.domain.input.nmax=inp.coordinates.nmax;
+% handles.model.sfincs.domain.input.mmax=inp.coordinates.mmax;
+% handles.model.sfincs.domain.input.rotation=inp.coordinates.rotation;
+% % TODO: crs
+% 
+% % Mask
+% handles.toolbox.modelmaker.sfincs.zmin=inp.mask.zmin;
+% handles.toolbox.modelmaker.sfincs.zmax=inp.mask.zmax;
+% if isfield(inp.mask,'include_polygon')
+%     
+% end
+% 
+% setHandles(handles);
+
+%%
+%%
+function save_polygon(p,file_name)
+
+handles=getHandles;
+
+cs=handles.screenParameters.coordinateSystem.type;
+if strcmpi(cs,'geographic')
+    fmt='%12.7f %12.7f\n';
+else
+    fmt='%11.1f %11.1f\n';
+end
+
+fid=fopen(file_name,'wt');
+for ip=1:length(p)
+    fprintf(fid,'%s\n',['BL' num2str(ip,'%0.4i')]);
+    fprintf(fid,'%i %i\n',[p(ip).length 2]);
+    for ix=1:p(ip).length
+        fprintf(fid,fmt,[p(ip).x(ix) p(ip).y(ix)]);
+    end
+end
+fclose(fid);
+
+%%
+function str=num2fstr(val)
+if round(val)==val
+    % Float
+    str=[num2str(val) '.0'];
+else
+    str=num2str(val);
+end

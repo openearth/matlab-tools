@@ -81,7 +81,7 @@
   <element>
     <style>panel</style>
     <position>270 10 270 150</position>
-    <text>Tide and Surge</text>
+    <text>Boundary Points</text>
   </element>
   <element>
     <style>pushbutton</style>
@@ -169,22 +169,30 @@
       </check>
     </dependency>
   </element>
+
   <element>
-    <style>edit</style>
-    <position>480 20 50 20</position>
-    <text>water level</text>
-    <variable>handles.model.sfincs.boundaryconditions.zs</variable>
-    <type>real</type>
-    <tooltipstring>Edit water level</tooltipstring>
+    <style>panel</style>
+    <position>550 10 220 150</position>
+    <text>Tidal Boundary Conditions</text>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>560 120 200 20</position>
+    <tooltipstring>Select tide database for boundary conditions</tooltipstring>
+    <variable>handles.toolbox.modelmaker.activeTideModelBC</variable>
+    <type>integer</type>
+    <listtext>
+      <variable>handles.tideModels.longNames</variable>
+    </listtext>
   </element>
 
   <element>
     <style>pushbutton</style>
-    <position>280 20 120 20</position>
-    <text>Generate Tides</text>
+    <position>560 95 200 20</position>
+    <text>Generate BCA File</text>
     <callback>ddb_sfincs_boundary_conditions</callback>
-    <option1>generatetides</option1>
-    <tooltipstring>Generate tidal boundary conditions</tooltipstring>
+    <option1>generatebcafile</option1>
+    <tooltipstring>Generate bca file with tidal components. NOTE: the BCA file is NOT used by SFINCS! It can be used to generate a BZS file with time series of water levels.</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
@@ -196,151 +204,51 @@
       </check>
     </dependency>
   </element>
-
-  <element>
-    <style>panel</style>
-    <position>550 10 270 150</position>
-    <text>Waves</text>
-  </element>
   <element>
     <style>pushbutton</style>
-    <position>560 120 100 20</position>
-    <text>Create points</text>
+    <position>560 70 200 20</position>
+    <text>Generate Tides</text>
     <callback>ddb_sfincs_boundary_conditions</callback>
-    <option1>createwaveboundarypoints</option1>
-    <tooltipstring>Create boundary points</tooltipstring>
+    <option1>generatetides</option1>
+    <tooltipstring>Generate time series from bca file</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.model.sfincs.boundaryspline.length</variable>
+        <variable>handles.model.sfincs.domain(ad).flowboundarypoints.length</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>
       </check>
     </dependency>
   </element>
-  <element>
-    <style>pushbutton</style>
-    <position>560 95 100 20</position>
-    <text>Delete points</text>
-    <callback>ddb_sfincs_boundary_conditions</callback>
-    <option1>removewaveboundarypoints</option1>
-    <tooltipstring>Delete boundary points</tooltipstring>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.sfincs.domain(ad).waveboundarypoints.length</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>610 70 50 20</position>
-    <text>Distance</text>
-    <variable>handles.model.sfincs.boundaryspline.wavedx</variable>
-    <type>real</type>
-    <tooltipstring>Edit distance between boundary points</tooltipstring>
-  </element>
-  <element>
-    <style>pushselectfile</style>
-    <position>680 120 130 20</position>
-    <text>Load Boundary Points</text>
-    <variable>handles.model.sfincs.domain(ad).input.bwvfile</variable>
-    <onchange>ddb_sfincs_boundary_conditions</onchange>
-    <option1>loadwaveboundarypoints</option1>
-    <showfilename>no</showfilename>
-    <extension>*.bwv</extension>
-    <selectiontext>Select boundary points file</selectiontext>
-    <tooltipstring>Select boundary points file</tooltipstring>
-  </element>
-  <element>
-    <style>pushsavefile</style>
-    <position>680 95 130 20</position>
-    <text>Save Boundary Points</text>
-    <variable>handles.model.sfincs.domain(ad).input.bwvfile</variable>
-    <onchange>ddb_sfincs_boundary_conditions</onchange>
-    <option1>savewaveboundarypoints</option1>
-    <showfilename>no</showfilename>
-    <extension>*.bwv</extension>
-    <selectiontext>Select boundary points file</selectiontext>
-    <tooltipstring>Select boundary points file</tooltipstring>
-    <dependency>
-      <action>enable</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.sfincs.domain(ad).waveboundarypoints.length</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>760 70 50 20</position>
-    <text>wave height</text>
-    <variable>handles.model.sfincs.boundaryconditions.hs</variable>
-    <type>real</type>
-    <tooltipstring>Edit wave height</tooltipstring>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>760 45 50 20</position>
-    <text>wave period</text>
-    <variable>handles.model.sfincs.boundaryconditions.tp</variable>
-    <type>real</type>
-    <tooltipstring>Edit wave period</tooltipstring>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>760 20 50 20</position>
-    <text>wave direction</text>
-    <variable>handles.model.sfincs.boundaryconditions.wd</variable>
-    <type>real</type>
-    <tooltipstring>Edit wave direction</tooltipstring>
-  </element>
-
-
   <element>
     <style>panel</style>
-    <position>830 10 220 150</position>
-    <text>Boundary conditions</text>
+    <position>780 10 210 150</position>
+    <text>Files</text>
   </element>
   <element>
     <style>edit</style>
-    <position>890 120 150 20</position>
+    <position>830 120 150 20</position>
+    <text>BND file</text>
+    <variable>handles.model.sfincs.domain(ad).input.bndfile</variable>
+    <type>string</type>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>830 95 150 20</position>
     <text>BZS file</text>
     <variable>handles.model.sfincs.domain(ad).input.bzsfile</variable>
     <type>string</type>
-    <tooltipstring>Edit bzs file name</tooltipstring>
+    <enable>0</enable>
   </element>
   <element>
     <style>edit</style>
-    <position>890 95 150 20</position>
-    <text>BHS file</text>
-    <variable>handles.model.sfincs.domain(ad).input.bhsfile</variable>
+    <position>830 70 150 20</position>
+    <text>BCA file</text>
+    <variable>handles.model.sfincs.domain(ad).input.bcafile</variable>
     <type>string</type>
-    <tooltipstring>Edit bzs file name</tooltipstring>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>890 70 150 20</position>
-    <text>BTP file</text>
-    <variable>handles.model.sfincs.domain(ad).input.btpfile</variable>
-    <type>string</type>
-    <tooltipstring>Edit bzs file name</tooltipstring>
-  </element>
-  <element>
-    <style>edit</style>
-    <position>890 45 150 20</position>
-    <text>BWD file</text>
-    <variable>handles.model.sfincs.domain(ad).input.bwdfile</variable>
-    <type>string</type>
-    <tooltipstring>Edit bzs file name</tooltipstring>
+    <enable>0</enable>
   </element>
 </root>

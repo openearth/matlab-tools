@@ -67,6 +67,8 @@ function handles = ddb_initialize_sfincs_domain(handles, opt, id, runid)
 % Input structure from sfincs.inp file
 handles.model.sfincs.domain(id).input=sfincs_initialize_input;
 
+handles.model.sfincs.domain(id).restart_option='none';
+
 % Runid is folder name
 [fldr,runid]=fileparts(pwd);
 
@@ -77,10 +79,14 @@ handles.model.sfincs.domain(id).attName='test';
 handles.model.sfincs.domain(id).roughness_type='landsea';
 handles.model.sfincs.domain(id).wind_type='uniform';
 handles.model.sfincs.domain(id).rain_type='uniform';
+handles.model.sfincs.domain(id).barometric_pressure_type='rectangular';
 
 % handles.model.sfincs.domain(id).tref=floor(now);
 % handles.model.sfincs.domain(id).tstart=floor(now);
 % handles.model.sfincs.domain(id).tstop =floor(now+1);
+handles.model.sfincs.domain(id).gridx=[];
+handles.model.sfincs.domain(id).gridy=[];
+handles.model.sfincs.domain(id).gridz=[];
 
 % Coast line
 handles.model.sfincs.domain(id).coastline.handle=[];
@@ -102,8 +108,9 @@ handles.model.sfincs.domain(id).flowboundarypoints.handle=[];
 handles.model.sfincs.domain(id).flowboundarypoints.x=[];
 handles.model.sfincs.domain(id).flowboundarypoints.y=[];
 handles.model.sfincs.domain(id).flowboundarypoints.length=0;
-handles.model.sfincs.domain(id).flowboundaryconditions.time=0;
-handles.model.sfincs.domain(id).flowboundaryconditions.zs=0;
+handles.model.sfincs.domain(id).flowboundarypoints.time=[];
+handles.model.sfincs.domain(id).flowboundarypoints.zs=[];
+handles.model.sfincs.domain(id).flowboundarypoints.astronomic_components=[];
 
 handles.model.sfincs.domain(id).waveboundarypoints.handle=[];
 handles.model.sfincs.domain(id).waveboundarypoints.x=[];
@@ -123,11 +130,28 @@ handles.model.sfincs.domain(id).sourcepoints.time=0;
 handles.model.sfincs.domain(id).sourcepoints.q=0;
 
 % Observation points
-handles.model.sfincs.domain(id).obspoints.handle=[];
-handles.model.sfincs.domain(id).obspoints.x=[];
-handles.model.sfincs.domain(id).obspoints.y=[];
-handles.model.sfincs.domain(id).obspoints.names={''};
-handles.model.sfincs.domain(id).obspoints.length=0;
+handles.model.sfincs.domain(id).nrobservationpoints=0;
+handles.model.sfincs.domain(id).observationpoints=[];
+handles.model.sfincs.domain(id).observationpoints_handle=[];
+handles.model.sfincs.domain(id).observationpointnames={''};
+
+% Observation points
+handles.model.sfincs.domain(id).nrcrosssections=0;
+handles.model.sfincs.domain(id).crosssections=[];
+handles.model.sfincs.domain(id).crosssectionnames={''};
+% handles.model.sfincs.domain(id).observationpoints.handle=[];
+% handles.model.sfincs.domain(id).observationpoints.x=[];
+% handles.model.sfincs.domain(id).observationpoints.y=[];
+% handles.model.sfincs.domain(id).observationpoints.names={''};
+% handles.model.sfincs.domain(id).observationpoints.length=0;
+
+% Thin dams
+handles.model.sfincs.domain(id).nrthindams=0;
+handles.model.sfincs.domain(ad).thindams=[];
+% handles.model.sfincs.domain(id).obspoints.x=[];
+% handles.model.sfincs.domain(id).obspoints.y=[];
+% handles.model.sfincs.domain(id).obspoints.names={''};
+% handles.model.sfincs.domain(id).obspoints.length=0;
 
 % Quadtree
 handles.model.sfincs.domain(id).buq = [];

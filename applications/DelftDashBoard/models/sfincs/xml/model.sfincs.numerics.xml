@@ -15,15 +15,15 @@
   </element>
   <element>
     <style>edit</style>
-    <position>150 105 50 20</position>
+    <position>150 -105 50 20</position>
     <text>Theta (-)</text>
     <variable>handles.model.sfincs.domain(ad).input.theta</variable>
     <tooltipstring>Edit smoothing coefficient theta</tooltipstring>
-    <type>real</type>
+    <type>real</type>    
   </element>
   <element>
     <style>edit</style>
-    <position>150 80 50 20</position>
+    <position>150 105 50 20</position>
     <text>Threshold Depth (m)</text>
     <variable>handles.model.sfincs.domain(ad).input.huthresh</variable>
     <tooltipstring>Edit threshold depth</tooltipstring>
@@ -31,7 +31,15 @@
   </element>
   <element>
     <style>edit</style>
-    <position>150 55 50 20</position>
+    <position>150 80 50 20</position>
+    <text>Spin-up Time (s)</text>
+    <variable>handles.model.sfincs.domain(ad).input.tspinup</variable>
+    <tooltipstring>Edit spin-up time in seconds</tooltipstring>
+    <type>real</type>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>150 -80 50 20</position>
     <text>Stop Depth (m)</text>
     <variable>handles.model.sfincs.domain(ad).input.stopdepth</variable>
     <type>real</type>

@@ -1,13 +1,153 @@
 <?xml version="1.0"?>
 <root>
   <element>
+    <style>panel</style>
+    <text>Thin Dams</text>
+    <position>40 10 280 160</position>
+  </element>
+  <element>
+    <style>listbox</style>
+    <position>50 20 150 125</position>
+    <tooltipstring>Select thin dam</tooltipstring>
+    <variable>handles.model.sfincs.domain(ad).activethindam</variable>
+    <type>integer</type>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>selectthindamfromlist</option1>
+    <listtext>
+      <variable>handles.model.sfincs.domain(ad).thindamnames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>210 125 100 20</position>
+    <text>Add To Map</text>
+    <tooltipstring>Add thin dam</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>addthindam</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>210 100 100 20</position>
+    <text>Delete From List</text>
+    <tooltipstring>Delete thin dam</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>deletethindam</option1>
+  </element>
+  <element>
     <style>pushselectfile</style>
-    <position>20 140 130 20</position>
-    <text>Thin Dam File</text>
+    <position>210 45 100 20</position>
+    <text>Load</text>
     <variable>handles.model.sfincs.domain(ad).input.thdfile</variable>
-    <showfilename>yes</showfilename>
+    <showfilename>no</showfilename>
     <extension>*.thd</extension>
     <selectiontext>Select thin dam file</selectiontext>
     <tooltipstring>Select thin dam file</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>loadthindams</option1>
+    <enable>1</enable>
   </element>
+  <element>
+    <style>pushsavefile</style>
+    <position>210 20 100 20</position>
+    <text>Save</text>
+    <variable>handles.model.sfincs.domain(ad).input.thdfile</variable>
+    <showfilename>no</showfilename>
+    <extension>*.thd</extension>
+    <selectiontext>Select thin dam file</selectiontext>
+    <tooltipstring>Select thin dam file</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>savethindams</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).nrthindams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+
+  <element>
+    <style>panel</style>
+    <text>Weirs (not implemented yet)</text>
+    <position>330 10 280 160</position>
+  </element>
+  <element>
+    <style>listbox</style>
+    <position>340 20 150 125</position>
+    <tooltipstring>Select thin dam</tooltipstring>
+    <variable>handles.model.sfincs.domain(ad).activethindam</variable>
+    <type>integer</type>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>selectthindamfromlist</option1>
+    <listtext>
+      <variable>handles.model.sfincs.domain(ad).thindamnames</variable>
+    </listtext>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>500 125 100 20</position>
+    <text>Add To Map</text>
+    <tooltipstring>Add thin dam</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>addthindam</option1>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>500 100 100 20</position>
+    <text>Delete From List</text>
+    <tooltipstring>Delete thin dam</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>deletethindam</option1>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>500 75 40 20</position>
+    <text>Height (m)</text>
+    <textposition>right</textposition>
+    <tooltipstring>Edit weir height</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>editweirheight</option1>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>500 45 100 20</position>
+    <text>Load</text>
+    <variable>handles.model.sfincs.domain(ad).input.thdfile</variable>
+    <showfilename>no</showfilename>
+    <extension>*.thd</extension>
+    <selectiontext>Select thin dam file</selectiontext>
+    <tooltipstring>Select thin dam file</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>loadthindams</option1>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>pushsavefile</style>
+    <position>500 20 100 20</position>
+    <text>Save</text>
+    <variable>handles.model.sfincs.domain(ad).input.thdfile</variable>
+    <showfilename>no</showfilename>
+    <extension>*.thd</extension>
+    <selectiontext>Select thin dam file</selectiontext>
+    <tooltipstring>Select thin dam file</tooltipstring>
+    <callback>ddb_sfincs_obstacles</callback>
+    <option1>savethindams</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).nrthindams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <enable>0</enable>
+  </element>
+
 </root>

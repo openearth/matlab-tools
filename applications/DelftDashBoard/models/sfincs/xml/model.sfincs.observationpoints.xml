@@ -1,68 +1,253 @@
 <?xml version="1.0"?>
 <root>
   <element>
-    <style>edit</style>
-    <position>150 130 80 20</position>
-    <tooltipstring>Edit map output interval (in seconds)</tooltipstring>
-    <text>Map output interval</text>
-    <textposition>left</textposition>
-    <type>real</type>
-    <variable>handles.model.sfincs.domain(ad).input.dtout</variable>
-  </element>  
+    <style>panel</style>
+    <text>Observation Points</text>
+    <position>40 10 340 160</position>
+  </element>
   <element>
-    <style>edit</style>
-    <position>150 105 80 20</position>
-    <tooltipstring>Edit history output interval (in seconds)</tooltipstring>
-    <text>His output interval</text>
-    <textposition>left</textposition>
-    <type>real</type>
-    <variable>handles.model.sfincs.domain(ad).input.dthisout</variable>
-  </element>  
-  <element>
-    <style>popupmenu</style>
-    <position>150 80 80 20</position>
-    <text>Output Format</text>
-    <variable>handles.model.sfincs.domain(ad).input.outputformat</variable>
-    <type>string</type>
-    <listtext>Binary</listtext>
-    <listtext>ASCII</listtext>
-    <listvalue>bin</listvalue>
-    <listvalue>asc</listvalue>
+    <style>listbox</style>
+    <position>50 20 160 130</position>
+    <tooltipstring>Select observation point</tooltipstring>
+    <textposition>above-center</textposition>
+    <variable>handles.model.sfincs.domain.activeobservationpoint</variable>
+    <type>integer</type>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>selectobservationpointfromlist</option1>
+    <listtext>
+      <variable>handles.model.sfincs.domain.observationpointnames</variable>
+    </listtext>
   </element>
   <element>
     <style>edit</style>
-    <position>310 130 80 20</position>
-    <tooltipstring>Edit zs file</tooltipstring>
-    <text>Zs File</text>
-    <textposition>left</textposition>
+    <position>250 130 120 20</position>
+    <text>Name</text>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>editobservationpoint</option1>
+    <tooltipstring>Edit observation point name</tooltipstring>
+    <variable>handles.model.sfincs.domain.observationpoints(handles.model.sfincs.domain.activeobservationpoint).name</variable>
     <type>string</type>
-    <variable>handles.model.sfincs.domain(ad).input.zsfile</variable>
-  </element>  
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.nrobservationpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
+  </element>
   <element>
     <style>edit</style>
-    <position>310 105 80 20</position>
-    <tooltipstring>Edit Hmax file</tooltipstring>
-    <text>Hmax File</text>
-    <textposition>left</textposition>
-    <type>string</type>
-    <variable>handles.model.sfincs.domain(ad).input.hmaxfile</variable>
-  </element>  
+    <position>250 105 50 20</position>
+    <text>X</text>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>editobservationpoint</option1>
+    <tooltipstring>Edit observation point x coordinate</tooltipstring>
+    <variable>handles.model.sfincs.domain.observationpoints(handles.model.sfincs.domain.activeobservationpoint).x</variable>
+    <type>real</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.nrobservationpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
+  </element>
   <element>
     <style>edit</style>
-    <position>310 80 80 20</position>
-    <tooltipstring>Edit Vmax file</tooltipstring>
-    <text>Vmax File</text>
-    <textposition>left</textposition>
-    <type>string</type>
-    <variable>handles.model.sfincs.domain(ad).input.vmaxfile</variable>
-  </element>  
+    <position>320 105 50 20</position>
+    <text>Y</text>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>editobservationpoint</option1>
+    <variable>handles.model.sfincs.domain.observationpoints(handles.model.sfincs.domain.activeobservationpoint).y</variable>
+    <type>real</type>
+    <tooltipstring>Edit observation point y coordinate</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.nrobservationpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>220 65 70 20</position>
+    <text>Add</text>
+    <tooltipstring>Add observation point</tooltipstring>
+    <callback>ddb_sfincs_observation_points</callback>
+    <option1>addobservationpoint</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>300 65 70 20</position>
+    <text>Delete</text>
+    <tooltipstring>Delete observation point</tooltipstring>
+    <callback>ddb_sfincs_observation_points</callback>
+    <option1>deleteobservationpoint</option1>
+  </element>
   <element>
     <style>pushselectfile</style>
-    <position>400 130 80 20</position>
-    <tooltipstring>Select observation points file</tooltipstring>
-    <text>Obs File</text>
-    <variable>handles.model.sfincs.domain(ad).input.obsfile</variable>
+    <position>220 20 70 20</position>
+    <tooltipstring>Open observation points file</tooltipstring>
+    <text>Open</text>
+    <variable>handles.model.sfincs.domain.input.obsfile</variable>
+    <extension>*.obs</extension>
+    <showfilename>no</showfilename>
+    <selectiontext>Select observation points file</selectiontext>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>loadobservationpoints</option1>
+  </element>
+  <element>
+    <style>pushsavefile</style>
+    <position>300 20 70 20</position>
+    <tooltipstring>Save observation points file</tooltipstring>
+    <text>Save</text>
+    <variable>handles.model.sfincs.domain.input.obsfile</variable>
+    <showfilename>no</showfilename>
     <extension>*.obs</extension>
     <selectiontext>Select observation points file</selectiontext>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>saveobservationpoints</option1>
   </element>
+
+  <element>
+    <style>panel</style>
+    <text>Cross Sections (not implemented yet)</text>
+    <position>390 10 340 160</position>
+  </element>
+  <element>
+    <style>listbox</style>
+    <position>400 20 160 130</position>
+    <tooltipstring>Select cross section</tooltipstring>
+    <textposition>above-center</textposition>
+    <variable>handles.model.sfincs.domain.activecrosssection</variable>
+    <type>integer</type>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>selectobservationpointfromlist</option1>
+    <listtext>
+      <variable>handles.model.sfincs.domain.crosssectionnames</variable>
+    </listtext>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>600 130 120 20</position>
+    <text>Name</text>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>editobservationpoint</option1>
+    <tooltipstring>Edit observation point name</tooltipstring>
+    <variable>handles.model.sfincs.domain.observationpoints(handles.model.sfincs.domain.activeobservationpoint).name</variable>
+    <type>string</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.nrobservationpoints</variable>
+        <value>999</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>600 105 50 20</position>
+    <text>X</text>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>editobservationpoint</option1>
+    <tooltipstring>Edit observation point x coordinate</tooltipstring>
+    <variable>handles.model.sfincs.domain.observationpoints(handles.model.sfincs.domain.activeobservationpoint).x</variable>
+    <type>real</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.nrobservationpoints</variable>
+        <value>999</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>670 105 50 20</position>
+    <text>Y</text>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>editobservationpoint</option1>
+    <variable>handles.model.sfincs.domain.observationpoints(handles.model.sfincs.domain.activeobservationpoint).y</variable>
+    <type>real</type>
+    <tooltipstring>Edit observation point y coordinate</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.nrobservationpoints</variable>
+        <value>999</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>570 65 70 20</position>
+    <text>Add</text>
+    <tooltipstring>Add observation point</tooltipstring>
+    <callback>ddb_sfincs_observation_points</callback>
+    <option1>addobservationpoint</option1>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>650 65 70 20</position>
+    <text>Delete</text>
+    <tooltipstring>Delete observation point</tooltipstring>
+    <callback>ddb_sfincs_observation_points</callback>
+    <option1>deleteobservationpoint</option1>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>570 20 70 20</position>
+    <tooltipstring>Open observation points file</tooltipstring>
+    <text>Open</text>
+    <variable>handles.model.sfincs.domain.input.obsfile</variable>
+    <extension>*.obs</extension>
+    <showfilename>no</showfilename>
+    <selectiontext>Select observation points file</selectiontext>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>loadobservationpoints</option1>
+    <enable>0</enable>
+  </element>
+  <element>
+    <style>pushsavefile</style>
+    <position>650 20 70 20</position>
+    <tooltipstring>Save observation points file</tooltipstring>
+    <text>Save</text>
+    <variable>handles.model.sfincs.domain.input.obsfile</variable>
+    <showfilename>no</showfilename>
+    <extension>*.obs</extension>
+    <selectiontext>Select observation points file</selectiontext>
+    <onchange>ddb_sfincs_observation_points</onchange>
+    <option1>saveobservationpoints</option1>
+    <enable>0</enable>
+  </element>
+
+
 </root>

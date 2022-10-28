@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>panel</style>
+    <text>Sorry, Initial Conditions Not Implemented Yet In Delft Dashboard ... Initial Water Levels Will Be Set To 0.0 !</text>
+    <position>40 10 960 160</position>
+  </element>
+</root>

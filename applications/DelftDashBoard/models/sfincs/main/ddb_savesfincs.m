@@ -10,25 +10,25 @@ if handles.model.sfincs.domain(ad).flowboundarypoints.length==0
     inp.bzsfile='';
 end
 
-if handles.model.sfincs.domain(ad).waveboundarypoints.length==0
-    inp.bwvfile='';
-    inp.bhsfile='';
-    inp.btpfile='';
-    inp.bwdfile='';
-end
+% if handles.model.sfincs.domain(ad).waveboundarypoints.length==0
+%     inp.bwvfile='';
+%     inp.bhsfile='';
+%     inp.btpfile='';
+%     inp.bwdfile='';
+% end
 
 if handles.model.sfincs.domain(ad).sourcepoints.length==0
     inp.srcfile='';
     inp.disfile='';
 end
 
-if length(handles.model.sfincs.domain(ad).obspoints.x)==0
+if handles.model.sfincs.domain(ad).nrobservationpoints==0
     inp.obsfile='';
 end
 
-if handles.model.sfincs.domain(ad).coastline.length==0
-    inp.cstfile='';
-end
+% if handles.model.sfincs.domain(ad).coastline.length==0
+%     inp.cstfile='';
+% end
 
 switch handles.model.sfincs.domain(ad).roughness_type
     case{'uniform'}
@@ -44,6 +44,16 @@ switch handles.model.sfincs.domain(ad).roughness_type
         inp.manning_sea=[];
         inp.manning_land=[];
         inp.rgh_lev_land=[];
+end
+
+switch handles.model.sfincs.domain(ad).restart_option
+    case{'none'}
+        inp.trstout=[];
+        inp.dtrstout=[];
+    case{'fixed'}
+        inp.dtrstout=[];
+    case{'interval'}
+        inp.trstout=[];
 end
 
 inp.bzifile='';
@@ -94,7 +104,7 @@ switch lower(opt)
         end
 
         % Obs file
-        if handles.model.sfincs.domain(ad).obspoints.length>0
+        if handles.model.sfincs.domain(ad).nrobservationpoints>0
             sfincs_write_obsfile(inp.obsfile,handles.model.sfincs.domain(ad).obspoints);
         end
 

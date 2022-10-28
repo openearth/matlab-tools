@@ -3,18 +3,18 @@
   <element>
     <style>panel</style>
     <text>Constants</text>
-    <position>40 95 180 75</position>
+    <position>40 100 180 70</position>
   </element>
   <element>
     <style>edit</style>
-    <position>160 130 50 20</position>
+    <position>160 135 50 20</position>
     <text>Air Density (kg/m3)</text>
     <variable>handles.model.sfincs.domain(ad).input.rhoa</variable>
     <type>real</type>
   </element>
   <element>
     <style>edit</style>
-    <position>160 105 50 20</position>
+    <position>160 110 50 20</position>
     <text>Water Density (kg/m3)</text>
     <variable>handles.model.sfincs.domain(ad).input.rhow</variable>
     <type>real</type>
@@ -22,25 +22,19 @@
   <element>
     <style>panel</style>
     <text>Advection</text>
-    <position>40 10 180 85</position>
+    <position>40 55 180 45</position>
   </element>
   <element>
-    <style>popupmenu</style>
+    <style>checkbox</style>
     <text>Advection</text>
-    <position>140 55 60 20</position>
+    <position>50 65 60 20</position>
     <type>integer</type>
     <variable>handles.model.sfincs.domain(ad).input.advection</variable>
-    <listtext>none</listtext>
-    <listtext>1D</listtext>
-    <listtext>2D</listtext>
-    <listvalue>0</listvalue>
-    <listvalue>1</listvalue>
-    <listvalue>2</listvalue>
   </element>
   <element>
     <style>edit</style>
-    <position>140 30 60 20</position>
-    <text>Advection Limiter</text>
+    <position>170 65 40 20</position>
+    <text>Limiter</text>
     <variable>handles.model.sfincs.domain(ad).input.advlim</variable>
     <type>real</type>
     <dependency>
@@ -52,6 +46,19 @@
         <operator>gt</operator>
       </check>
     </dependency>
+  </element>
+  <element>
+    <style>panel</style>
+    <text>Viscosity</text>
+    <position>40 10 180 45</position>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>160 20 50 20</position>
+    <text>Nu Visc</text>
+    <variable>handles.model.sfincs.domain(ad).input.nuvisc</variable>
+    <type>real</type>
+    <tooltipstring>Edit viscosity</tooltipstring>
   </element>
   <element>
     <style>panel</style>
@@ -70,6 +77,16 @@
     <listvalue>uniform</listvalue>
     <listvalue>landsea</listvalue>
     <listvalue>file</listvalue>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <style>edit</style>
@@ -83,6 +100,16 @@
       <check>
         <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
         <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
         <operator>eq</operator>
       </check>
     </dependency>
@@ -102,6 +129,16 @@
         <operator>eq</operator>
       </check>
     </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <style>edit</style>
@@ -115,6 +152,16 @@
       <check>
         <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
         <value>landsea</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
         <operator>eq</operator>
       </check>
     </dependency>
@@ -134,6 +181,16 @@
         <operator>eq</operator>
       </check>
     </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <style>pushselectfile</style>
@@ -149,6 +206,16 @@
       <check>
         <variable>handles.model.sfincs.domain(ad).roughness_type</variable>
         <value>file</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
         <operator>eq</operator>
       </check>
     </dependency>
@@ -244,7 +311,7 @@
     <text>Ambient Pressure (Pa)</text>
     <variable>handles.model.sfincs.domain(ad).input.gapres</variable>
     <type>real</type>
-    <tooltipstring>Edit background air pressure</tooltipstring>
+    <tooltipstring>Edit background air pressure (for use with spiderweb wind fields)</tooltipstring>
     <textposition>right</textposition>
   </element>
   <element>

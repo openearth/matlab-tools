@@ -15,7 +15,7 @@
   </element>
   <element>
     <style>edit</style>
-    <position>180 130 60 20</position>
+    <position>190 130 60 20</position>
     <text>Y0</text>
     <variable>handles.model.sfincs.domain(ad).input.y0</variable>
     <type>real</type>
@@ -31,7 +31,7 @@
   </element>
   <element>
     <style>edit</style>
-    <position>180 105 60 20</position>
+    <position>190 105 60 20</position>
     <text>NMax</text>
     <variable>handles.model.sfincs.domain(ad).input.nmax</variable>
     <type>integer</type>
@@ -47,7 +47,7 @@
   </element>
   <element>
     <style>edit</style>
-    <position>180 80 60 20</position>
+    <position>190 80 60 20</position>
     <text>dY</text>
     <variable>handles.model.sfincs.domain(ad).input.dy</variable>
     <type>real</type>
@@ -71,13 +71,14 @@
   <element>
     <style>pushselectfile</style>
     <position>260 130 130 20</position>
-    <tooltipstring>Select depth file</tooltipstring>
-    <text>Depth File</text>
-    <variable>handles.model.sfincs.domain(ad).input.depfile</variable>
-    <extension>*.dep</extension>
-    <selectiontext>Select depth file</selectiontext>
+    <tooltipstring>Select mask file</tooltipstring>
+    <text>Mask File</text>
+    <variable>handles.model.sfincs.domain(ad).input.mskfile</variable>
+    <extension>*.msk</extension>
+    <selectiontext>Select mask file</selectiontext>
     <callback>ddb_sfincs_domain</callback>
-    <option1>selectdepthfile</option1>
+    <option1>selectmaskfile</option1>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushselectfile</style>
@@ -89,21 +90,33 @@
     <selectiontext>Select index file</selectiontext>
     <callback>ddb_sfincs_domain</callback>
     <option1>selectindexfile</option1>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushselectfile</style>
     <position>260 80 130 20</position>
-    <tooltipstring>Select mask file</tooltipstring>
-    <text>Mask File</text>
-    <variable>handles.model.sfincs.domain(ad).input.mskfile</variable>
-    <extension>*.msk</extension>
-    <selectiontext>Select mask file</selectiontext>
+    <tooltipstring>Select depth file</tooltipstring>
+    <text>Depth File</text>
+    <variable>handles.model.sfincs.domain(ad).input.depfile</variable>
+    <extension>*.dep</extension>
+    <selectiontext>Select depth file</selectiontext>
     <callback>ddb_sfincs_domain</callback>
-    <option1>selectmaskfile</option1>
+    <option1>selectdepthfile</option1>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <enable>0</enable>
   </element>
   <element>
     <style>pushselectfile</style>
-    <position>260 55 130 20</position>
+    <position>260 80 130 20</position>
     <tooltipstring>Select sub-grid file</tooltipstring>
     <text>Sub-grid File</text>
     <variable>handles.model.sfincs.domain(ad).input.sbgfile</variable>
@@ -111,6 +124,17 @@
     <selectiontext>Select subgrid file</selectiontext>
     <callback>ddb_sfincs_domain</callback>
     <option1>selectsubgridfile</option1>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <enable>0</enable>
   </element>
   <element>
     <style>popupmenu</style>
@@ -122,5 +146,6 @@
     <listtext>ASCII</listtext>
     <listvalue>bin</listvalue>
     <listvalue>asc</listvalue>
+    <enable>0</enable>
   </element>
 </root>
