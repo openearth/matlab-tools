@@ -50,9 +50,9 @@ if isempty(varargin)
     % New tab selected
     handles=getHandles;
     ddb_refreshScreen;
-    ddb_plotsfincs('update','active',1,'visible',1);
+%     ddb_plotsfincs('update','active',1,'visible',1);
     ddb_sfincs_plot_mask(handles,'update','domain',ad,'visible',1);
-    ddb_sfincs_plot_coastline_points(handles, 'update', 'vis',1);    
+%     ddb_sfincs_plot_coastline_points(handles, 'update', 'vis',1);    
         
 else
     

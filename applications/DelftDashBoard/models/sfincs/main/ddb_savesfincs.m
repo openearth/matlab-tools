@@ -60,7 +60,9 @@ inp.bzifile='';
 
 switch lower(opt)
     case{'save'}
-                
+        
+        ddb_sfincs_save_input(handles);
+        
         sfincs_write_input('sfincs.inp',inp);
         
         fid=fopen('run.bat','wt');
@@ -69,7 +71,8 @@ switch lower(opt)
         
     case{'saveall'}
         
-        sfincs_write_input('sfincs.inp',inp);
+        ddb_sfincs_save_input(handles);
+%        sfincs_write_input('sfincs.inp',inp);
         
         % Attribute files
         
@@ -84,24 +87,24 @@ switch lower(opt)
         %             [t,val]=sfincs_read_boundary_conditions(inp.bzsfile);
         %             handles.model.sfincs.domain(ad).flowboundarypoints=sfincs_read_boundary_points(inp.bndfile);
         
-        % Bwv file
-        if handles.model.sfincs.domain(ad).waveboundarypoints.length>0
-            sfincs_write_boundary_points(inp.bwvfile,handles.model.sfincs.domain(ad).waveboundarypoints);
-            t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
-            v=handles.model.sfincs.domain(ad).waveboundarypoints.hs;
-            sfincs_save_boundary_conditions(inp.bhsfile,t,v,inp.tref);
-            t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
-            v=handles.model.sfincs.domain(ad).waveboundarypoints.tp;
-            sfincs_save_boundary_conditions(inp.btpfile,t,v,inp.tref);
-            t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
-            v=handles.model.sfincs.domain(ad).waveboundarypoints.wd;
-            sfincs_save_boundary_conditions(inp.bwdfile,t,v,inp.tref);
-        end
-        
-        % Coastline file
-        if handles.model.sfincs.domain(ad).coastline.length>0
-            sfincs_write_coastline(inp.cstfile,handles.model.sfincs.domain(ad).coastline);
-        end
+%         % Bwv file
+%         if handles.model.sfincs.domain(ad).waveboundarypoints.length>0
+%             sfincs_write_boundary_points(inp.bwvfile,handles.model.sfincs.domain(ad).waveboundarypoints);
+%             t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
+%             v=handles.model.sfincs.domain(ad).waveboundarypoints.hs;
+%             sfincs_save_boundary_conditions(inp.bhsfile,t,v,inp.tref);
+%             t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
+%             v=handles.model.sfincs.domain(ad).waveboundarypoints.tp;
+%             sfincs_save_boundary_conditions(inp.btpfile,t,v,inp.tref);
+%             t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
+%             v=handles.model.sfincs.domain(ad).waveboundarypoints.wd;
+%             sfincs_save_boundary_conditions(inp.bwdfile,t,v,inp.tref);
+%         end
+%         
+%         % Coastline file
+%         if handles.model.sfincs.domain(ad).coastline.length>0
+%             sfincs_write_coastline(inp.cstfile,handles.model.sfincs.domain(ad).coastline);
+%         end
 
         % Obs file
         if handles.model.sfincs.domain(ad).nrobservationpoints>0

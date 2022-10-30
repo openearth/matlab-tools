@@ -128,10 +128,10 @@ for i=1:nrp
         name=handles.toolbox.tidestations.database(iac).idCodes{k};
     end
         
-    nobs=length(handles.model.sfincs.domain(ad).obspoints.x);
+    nobs=handles.model.sfincs.domain(ad).nrobservationpoints;
 %    Names{1}='';
     if nobs>0
-        names=handles.model.sfincs.domain(ad).obspoints.names;
+        names=handles.model.sfincs.domain(ad).observationpointnames;
     else
         names={''};
     end
@@ -142,9 +142,11 @@ for i=1:nrp
     if isempty(strmatch(name,names,'exact'))
         % Station does not yet exist
         nobs=nobs+1;
-        handles.model.sfincs.domain(ad).obspoints.x(nobs)=posx2(i);
-        handles.model.sfincs.domain(ad).obspoints.y(nobs)=posy2(i);
-        handles.model.sfincs.domain(ad).obspoints.names{nobs}=name;
+        handles.model.sfincs.domain(ad).observationpoints(nobs).x=posx2(i);
+        handles.model.sfincs.domain(ad).observationpoints(nobs).y=posy2(i);
+        handles.model.sfincs.domain(ad).observationpoints(nobs).name=name;
+        handles.model.sfincs.domain(ad).observationpointnames{nobs}=name;
+        handles.model.sfincs.domain(ad).nrobservationpoints=nobs;
         
 %        handles.model.sfincs.domain(ad).obsnames{nobs}=name;
         

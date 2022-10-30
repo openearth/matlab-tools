@@ -56,7 +56,7 @@ if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
     ddb_plotModelMaker('activate');
-    ddb_plotsfincs('update','active',1,'visible',1);
+%    ddb_plotsfincs('update','active',1,'visible',1);
     ddb_sfincs_plot_mask(handles, 'update','domain',ad,'visible',0);
 
     if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)

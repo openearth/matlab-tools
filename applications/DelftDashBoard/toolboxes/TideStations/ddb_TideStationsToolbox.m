@@ -129,7 +129,7 @@ switch lower(model)
             ddb_sfincs_add_tide_stations;
             handles=getHandles;
             handles.model.sfincs.domain(ad).input.obsfile=filename;
-            sfincs_save_obs_file(filename,handles.model.sfincs.domain(ad).obspoints);
+            sfincs_write_observation_points(filename,handles.model.sfincs.domain(ad).observationpoints,'cstype',handles.screenParameters.coordinateSystem.type);
             setHandles(handles);
         end
     otherwise

@@ -47,13 +47,16 @@ ddb_zoomOff;
 
 
 if isempty(varargin)
+
+    ddb_refreshScreen;
+    
     % New tab selected
     handles=getHandles;
     handles=update_names(handles);
+    handles=ddb_sfincs_plot_thin_dams(handles,'plot','active',1);
     setHandles(handles);
 
-    ddb_refreshScreen;
-    ddb_plotsfincs('update','active',1,'visible',1);
+%    ddb_plotsfincs('update','active',1,'visible',1);
 else
     
     %Options selected

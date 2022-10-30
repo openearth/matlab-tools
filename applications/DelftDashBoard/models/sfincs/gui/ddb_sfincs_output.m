@@ -49,7 +49,7 @@ ddb_zoomOff;
 if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
-    ddb_plotsfincs('update','active',1,'visible',1);
+%     ddb_plotsfincs('update','active',1,'visible',1);
          
 else
     
