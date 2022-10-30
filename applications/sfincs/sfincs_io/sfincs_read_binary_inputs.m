@@ -13,9 +13,15 @@ indices=fread(fid,np,'integer*4');
 fclose(fid);
 
 % Read depth file
-fid=fopen(bindepfile,'r');
-zbv=fread(fid,np,'real*4');
-fclose(fid);
+if exist(bindepfile,'file')
+    fid=fopen(bindepfile,'r');
+    zbv=fread(fid,np,'real*4');
+    fclose(fid);
+else
+    warning(['The file ' bindepfile ' does not exist!']);
+    zbv=zeros(1,np);
+    zbv(zbv==0)=NaN;
+end
 
 % Read depth file
 fid=fopen(binmskfile,'r');
