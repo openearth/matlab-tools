@@ -1,17 +1,19 @@
 function EHY_xzArrow(x,z,u,w,varargin)
 
-OPT.scale     = 1.0   ; % 1 cm (matlab lenx etc) corresponds with scale m/s
-OPT.thinX     = 1.0   ; % Thinning in x direction
-OPT.thinZ     = 1.0   ; % Thinning in y(z) direction
-OPT.XScale    = 1     ; % Used to account for scaling of x axis (from m to km)
-OPT.ucz       = true  ; % By defaut vertical velocities are taken into account. Not always desirable. Sometimes w = 0 (OPT.w0 = false) is better.
-OPT           = setproperty(OPT,varargin);
-x             = x/OPT.XScale;
+OPT.scale      = 1.0   ; % 1 cm (matlab lenx etc) corresponds with scale m/s
+OPT.thinX      = 1.0   ; % Thinning in x direction
+OPT.thinZ      = 1.0   ; % Thinning in y(z) direction
+OPT.XScale     = 1     ; % Used to account for scaling of x axis (from m to km)
+OPT.ucz        = true  ; % By defaut vertical velocities are taken into account. Not always desirable. Sometimes w = 0 (OPT.w0 = false) is better.
+OPT.vecOrArrow = 'arrow';
+OPT            = setproperty(OPT,varargin);
+x              = x/OPT.XScale;
+if strcmpi(OPT.vecOrArrow(1:3),'jul') OPT.vecOrArrow = 'vector'; end
 
-xStart        = [];
-zStart        = [];
-xEnd          = [];
-zEnd          = [];
+xStart         = [];
+zStart         = [];
+xEnd           = [];
+zEnd           = [];
 
 %% Get the dimensions of the data
 mmax = size(z,1);
@@ -88,13 +90,13 @@ W    = 0.2*min(lenVec,1)/unit;
 
 %% Finally, plot the arrows
 hold on
-arrow3([xStart; zStart]', [xEnd; zEnd]',[],W,H);
+arrow3([xStart; zStart]', [xEnd; zEnd]','-k0.2',W,H,[],[],[],OPT.vecOrArrow);
 
 %% Still to do, vector legend 0.5 cm below X axis (had to be above the xaxis otherwise it is simply not plotted; Shame)
 xLegStart = XLim(1) + ((lenX - 1.5)/lenX)*(XLim(2) - XLim(1));
 xLegEnd   = XLim(1) + ((lenX - 0.5)/lenX)*(XLim(2) - XLim(1));
 yLegStart = YLim(1) + (0.1         /lenY)*(YLim(2) - YLim(1));
-arrow3([xLegStart; yLegStart]', [xLegEnd; yLegStart]',[],0.2/unit,0.3/unit);
+arrow3([xLegStart; yLegStart]', [xLegEnd; yLegStart]','-k0.35',0.2/unit,0.3/unit,[],[],[],OPT.vecOrArrow);
 xTxt      =  XLim(1) + ((lenX - 2.25)/lenX)*(XLim(2) - XLim(1));
 yTxt      = YLim(1) + (0.15          /lenY)*(YLim(2) - YLim(1));
 hText     = text(xTxt,yTxt,[num2str(OPT.scale) ' m/s']);
