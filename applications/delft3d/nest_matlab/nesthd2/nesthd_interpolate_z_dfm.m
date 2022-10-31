@@ -4,13 +4,13 @@ function [bndval] = nesthd_interpolate_z_dfm(bndval,gen_inf,add_inf,fileInp,vara
 %  For the generation of 3D boundary conditions in case the overall model is a D-Hydro model with fixed layer or combination of fixed/sigma layers.
 %
 %  Method:
-%  - Determine 1 interpolation vertical zInterp to e used for all time steps!
+%  - Determine 1 interpolation vertical zInterp to be used for all time steps!
 %  - Use the most important station, i.e. the station with the largest weight.
-%  - For z-sigma: use as starting point the vertical coordinates at the first time step. Than, stack layers until just below the water surface.
+%  - For z-sigma: use as starting point the vertical coordinates at the first time step. Then, stack layers until just below the water surface.
 %  = For z      : use vertical coordinates at time of maximum water level (time when most layers are "active").
 %  - add both water level and bed to the interpolation vertical,
 %  - interpolate everything to zInterp
-%  - add A0 to zInterp (in case overall and detailled model hev a different vertical reference level).
+%  - add A0 to zInterp (in case overall and detailled model have a different vertical reference level).
 %  - store zInterp for use in writing of the bc file
 
 %% Initialise
