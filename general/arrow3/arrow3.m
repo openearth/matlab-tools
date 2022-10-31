@@ -1,4 +1,4 @@
- function hn=arrow3(p1,p2,s,w,h,ip,alpha,beta)
+ function hn=arrow3(p1,p2,s,w,h,ip,alpha,beta,vecOrArrow)
 % ARROW3 (R13)
 %   ARROW3(P1,P2) draws lines from P1 to P2 with directional arrowheads.
 %   P1 and P2 are either nx2 or nx3 matrices.  Each row of P1 is an
@@ -339,6 +339,7 @@
 % Error Checking
 global LineWidthOrder ColorOrder
 if nargin<8 || isempty(beta), beta=0.4; end
+if nargin<9 || isempty(vecOrArrow), vecOrArrow='arrow'; end
 beta=abs(beta(1)); if nargout, hn=[]; end
 if strcmpi(p1,'colors')                            % plot color table
   if nargin>1, beta=abs(p2(1)); end
@@ -549,8 +550,14 @@ for i=1:n                           % translate, rotate, and scale
   x=reshape(xyz(:,1),j,k)+p2(i,1);
   y=reshape(xyz(:,2),j,k)+p2(i,2);
   z=reshape(xyz(:,3),j,k)+p2(i,3);
-  LocalSetSurface(xys,xs,ys,dx,dy,xr,yr,...
-    x,y,z,a(i),c(i,:),H2(i),2,m+1);
+  if strcmpi(vecOrArrow,'arrow')
+      LocalSetSurface(xys,xs,ys,dx,dy,xr,yr,...
+        x,y,z,a(i),c(i,:),H2(i),2,m+1);
+  else
+      nr_last = floor(size(x,2)/2) + 1;
+      plot(x(:,1      ),y(:,1      ),'LineWidth',lw(i));
+      plot(x(:,nr_last),y(:,nr_last),'LineWidth',lw(i));
+  end
 end
 delete(G);
 
