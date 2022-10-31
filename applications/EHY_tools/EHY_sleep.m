@@ -23,7 +23,12 @@ nr_times = input('How many times do you feed your baby (natural or by bottle) a 
 
 %% Assign
 if nr_times >=10
-    fileName = [dirName filesep 'sb.gif'];
+    try
+        fileName = [dirName filesep 'Fien.jpg'];
+    catch
+        fileName = [dirName filesep 'sb.gif'];
+    end
+
 else
     fileName = [dirName filesep 'cb.gif'];
 end
