@@ -161,15 +161,20 @@ for ii=1:length(iopen)
             attstr = name(isp(1)+1:end);
             name   = name(1:isp(1)-1);
             % Name string includes attributes
-            a=textscan(attstr,'%q','delimiter',' ');
+%            a=textscan(attstr,'%q','delimiter',' ');
+            a=textscan(attstr,'%q');
+            nat=0;
             for j=1:length(a{1})
                 ieq=find(a{1}{j}=='=');
-                attributes(j).Name  = a{1}{j}(1:ieq-1);
                 val=a{1}{j}(ieq+1:end);
-                if strcmpi(val(1),'"') || strcmpi(val(1),'''')
-                    attributes(j).Value = a{1}{j}(ieq+2:end-1);
-                else
-                    attributes(j).Value = a{1}{j}(ieq+1:end);
+                if ~isempty(val) && ~isempty(ieq)
+                    nat=nat+1;
+                    attributes(nat).Name  = a{1}{j}(1:ieq-1);
+                    if strcmpi(val(1),'"') || strcmpi(val(1),'''')
+                        attributes(nat).Value = a{1}{j}(ieq+2:end-1);
+                    else
+                        attributes(nat).Value = a{1}{j}(ieq+1:end);
+                    end
                 end
             end
         end
