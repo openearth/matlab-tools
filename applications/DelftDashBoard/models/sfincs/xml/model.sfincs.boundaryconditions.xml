@@ -179,7 +179,7 @@
     <style>popupmenu</style>
     <position>560 120 200 20</position>
     <tooltipstring>Select tide database for boundary conditions</tooltipstring>
-    <variable>handles.toolbox.modelmaker.activeTideModelBC</variable>
+    <variable>handles.toolbox.tidedatabase.activeModel</variable>
     <type>integer</type>
     <listtext>
       <variable>handles.tideModels.longNames</variable>

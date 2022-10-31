@@ -315,6 +315,7 @@ handles.toolbox.modelmaker.sfincs.buq.active_refinement_level=1;
 handles.toolbox.modelmaker.sfincs.bathymetry.nrSelectedDatasets = 0;
 handles.toolbox.modelmaker.sfincs.bathymetry.activeSelectedDataset = 1;
 handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasetNames = {};
+handles.toolbox.modelmaker.sfincs.bathymetry.selectedDatasets = [];
 
 % Roughness
 handles.toolbox.modelmaker.sfincs.roughness.manning_land=0.06;
@@ -323,6 +324,7 @@ handles.toolbox.modelmaker.sfincs.roughness.rgh_lev_land=1.0;
 handles.toolbox.modelmaker.sfincs.roughness.nrSelectedDatasets = 0;
 handles.toolbox.modelmaker.sfincs.roughness.activeSelectedDataset = 1;
 handles.toolbox.modelmaker.sfincs.roughness.selectedDatasetNames = {};
+handles.toolbox.modelmaker.sfincs.roughness.selectedDatasets = [];
 
 % Sub-grid
 handles.toolbox.modelmaker.sfincs.subgrid.nbin = 10;

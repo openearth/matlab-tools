@@ -559,7 +559,6 @@ try
     cs.type='geographic';
     [x,y]=ddb_coordConvert(x,y,handles.screenParameters.coordinateSystem,cs);
     
-    handles=getHandles;
     ii=handles.toolbox.tidedatabase.activeModel;
     name=handles.tideModels.model(ii).name;
     if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')

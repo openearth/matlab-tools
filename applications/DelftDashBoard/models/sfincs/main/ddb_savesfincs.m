@@ -62,13 +62,7 @@ switch lower(opt)
     case{'save'}
         
         ddb_sfincs_save_input(handles);
-        
-        sfincs_write_input('sfincs.inp',inp);
-        
-        fid=fopen('run.bat','wt');
-        fprintf(fid,'%s\n',[handles.model.sfincs.exedir filesep 'sfincs.exe']);
-        fclose(fid);
-        
+                
     case{'saveall'}
         
         ddb_sfincs_save_input(handles);
