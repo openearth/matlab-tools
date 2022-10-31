@@ -98,5 +98,5 @@ end %for
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'bcm.bcm'); kl=kl+1;
-writetxt(file_name,data);
+% file_name=fullfile(dire_sim,'bcm.bcm'); kl=kl+1;
+writetxt(simdef.file.bcm,data);

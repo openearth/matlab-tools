@@ -26,7 +26,7 @@ IBedCond=simdef.mor.IBedCond;
 
 %% FILE
 
-if any(IBedCond==[3,5])
+if any(IBedCond==[2,3,5,7])
     if D3D_structure==1
         D3D_bcm_s(simdef,varargin{:});
     else

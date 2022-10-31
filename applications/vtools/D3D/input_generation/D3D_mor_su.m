@@ -79,12 +79,6 @@ v2struct(simdef.mor);
 MxNULyr=round(total_ThUnLyr/ThUnLyr); %number of underlayers
 nf=numel(simdef.sed.dk);
 
-%bc change
-%I change the sign of 3 in structured, so in all cases it is 7
-if IBedCond==3
-    IBedCond=7;
-end
-
 if MorStt==0
     warning('MorStt=0 gives some issues with the boundary conditions')
 end
@@ -120,7 +114,7 @@ data{kl,1}=sprintf('   AShld  = %f       [ - ] Bed slope parameter Koch & Flokst
 data{kl,1}=sprintf('   BShld  = %f       [ - ] Bed slope parameter Koch & Flokstra',BShld); kl=kl+1;
 data{kl,1}=sprintf('   CShld  = %f       [ - ] Bed slope parameter Koch & Flokstra',CShld); kl=kl+1;
 data{kl,1}=sprintf('   DShld  = %f       [ - ] Bed slope parameter Koch & Flokstra',DShld); kl=kl+1;
-data{kl,1}=        '   AlfaBs           =  0.0000000e+000      [-]      Streamwise bed gradient factor for bed load transport'; kl=kl+1;
+data{kl,1}=sprintf('   AlfaBs           =  %0.7E      [-]      Streamwise bed gradient factor for bed load transport',AlfaBs); kl=kl+1;
 data{kl,1}=        '   AlfaBn           =  0.0000000e+000      [-]      Transverse bed gradient factor for bed load transport'; kl=kl+1;
 data{kl,1}=        '   CoulFri          = 0'; kl=kl+1;
 data{kl,1}=        '   FlFdRat          = 0                      '; kl=kl+1;
@@ -145,7 +139,7 @@ data{kl,1}=        '   BedW             =  1.0000000e+000      [-]      Wave-rel
 data{kl,1}=sprintf('   SedThr           =  %0.7E      [m]      Minimum water depth for sediment computations',SedThr); kl=kl+1;
 data{kl,1}=        '   ThetSD           =  0.0000000e+000      [-]      Factor for erosion of adjacent dry cells'; kl=kl+1;
 data{kl,1}=        '   HMaxTH           =  1.5000000e+000      [m]      Max depth for variable THETSD. Set < SEDTHR to use global value only'; kl=kl+1;
-if any(IBedCond==[3,5])
+if any(IBedCond==[2,3,5,7])
 data{kl,1}=        '   BcFil  = bcm.bcm'; kl=kl+1;
 else
 data{kl,1}=        '   BcFil  =        '; kl=kl+1;

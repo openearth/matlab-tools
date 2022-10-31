@@ -88,6 +88,11 @@ end
 % N=size(grd.X,2)+1;
 
 grd=D3D_io_input('read',path_grd);
+
+% %corner with dummies. This is the one of dep at cor!
+% grd.cord.x=NaN(size(grd.cend.x));
+
+grd.cord.x=NaN(size(grd.cend.x));
 M=grd.mmax;
 N=grd.nmax;
 % M=size(grd.cor.x,2)+1;
@@ -116,8 +121,10 @@ L=grd.cor.x(end)-grd.cor.x(1);
 etab=simdef.ini.etab;
 
 %central with dummies
-x_in=grd.cend.x(2:end-1,:);
-y_in=grd.cend.y(2:end-1,:);
+x_in=grd.cend.x;
+y_in=grd.cend.y;
+% x_in=grd.cend.x(2:end-1,:);
+% y_in=grd.cend.y(2:end-1,:);
 
 %other
 ncy=N-2; %number of cells in y direction (N in RFGRID) [-]
@@ -157,8 +164,6 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
         error('..')
 end
 
-
-
 %add noise
 noise=zeros(ny,nx);
 rng(simdef.ini.noise_seed)
@@ -174,8 +179,6 @@ switch etab_noise
         noise_amp=simdef.ini.noise_amp;
         noise_Lb=simdef.ini.noise_Lb;
         
-
-        
         %cross-sectional variation
         if ncy==1 %1D, you actually want no variation in transverse direction
             Ay=-1; %the amplitude is -1 contrary to FM because the sign of the bed is different!
@@ -185,7 +188,8 @@ switch etab_noise
         
         noise_in=noise_amp*Ay.*cos(2*pi*x_in/noise_Lb-pi/2); %total noise
         noise_in=flipud(noise_in); %consistency with FM
-        noise(2:end-1,:)=noise_in;
+%         noise(2:end-1,:)=noise_in;
+        noise=noise_in;
         
         %% BEGIN DEBUG
 %         figure
@@ -215,17 +219,27 @@ switch etab_noise
         etab_max=simdef.ini.noise_amp;
         sig=simdef.ini.noise_Lb;
         
-        noise(2:end-1,:)=-etab_max.*exp(-((x_in-mu(1)).^2/sig^2+(y_in-mu(2)).^2/sig^2)); %factor 2 missing in the denominator?
+        noise_mat=-etab_max.*exp(-((x_in-mu(1)).^2/sig^2+(y_in-mu(2)).^2/sig^2)); %factor 2 missing in the denominator?
+%         noise(2:end-1,:)=noise_mat;
+        noise=noise_mat;
     case 7 %from figure
         etab_max=simdef.ini.noise_amp;
         pert=perturbation_from_figure(simdef.ini.noise_fig_path); %at cell centres
         pert=flipud(pert); %indexing of figures is oposite
         noise(2:end-1,2:end-1)=-pert.*etab_max; %positive downwards
-        
+    case 8 %polygon
+        bol_pol=inpolygon(grd.cend.x,grd.cend.y,simdef.ini.noise_polygon(:,1),simdef.ini.noise_polygon(:,2));
+        noise(bol_pol)=simdef.ini.noise_amp;
     otherwise
         error('say something about it!')
 end
 
+%%
+% figure
+% surf(grd.cend.x(1:end-1,:),grd.cend.y(1:end-1,:),depths(1:end-1,:))
+% surf(grd.cend.x(1:end-1,:),grd.cend.y(1:end-1,:),noise(1:end-1,:))
+
+%%
 depths=depths+noise;
 
 %% WRITE

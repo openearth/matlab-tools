@@ -421,6 +421,9 @@ end
 if isfield(simdef.mor,'SedThr')==0
     simdef.mor.SedThr=1e-3;
 end
+if isfield(simdef.mor,'AlfaBs')==0
+    simdef.mor.AlfaBs=0;
+end
 
 %% 
 %% BCM
@@ -428,13 +431,17 @@ end
 
 simdef.bcm.dummy=NaN;
 
-if isfield(simdef.bcm,'fname')==0
-    simdef.bcm.fname=fullfile(simdef.D3D.dire_sim,'bcm.bcm');
+% if isfield(simdef.bcm,'fname')==0
+if isfield(simdef.file,'bcm')==0
+%     simdef.bcm.fname=fullfile(simdef.D3D.dire_sim,'bcm.bcm');
+    simdef.file.bcm=fullfile(simdef.D3D.dire_sim,'bcm.bcm');
 end
 
 switch simdef.mor.IBedCond
     case 3
-%         deta_dt=simdef.bcm.deta_dt;
+        if simdef.D3D.structure==2
+            simdef.mor.IBedCond=7; %I change the sign of 3 in structured, so in all cases it is 7
+        end
     case 5
         time=simdef.bcm.time;
         nt=length(time);

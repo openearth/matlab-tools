@@ -186,16 +186,19 @@ end
 
 %% nice
 
-in_p.fig_print=0; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fname='Q_analysis_day';
-in_p.fig_visible=1;
+in_p.fig_visible=0;
 in_p.data_station=data_station;
 in_p.lan='en';
+in_p.Lref='+msl';
+in_p.analysis='min';
 % in_p.time_q_year_max=data_station_prob.year.max.tim;
 % in_p.q_year_max=data_station_prob.year.max.val;
 % in_p.q_sort=data_station_prob.year.max.sort.val;
 % in_p.p_q_max=data_station_prob.year.max.sort.p;
 
+in_p.unit=data_station.grootheid;
 in_p.time_q_year_max=data_station_prob.year.min.tim;
 in_p.q_year_max=data_station_prob.year.min.val;
 in_p.q_sort=data_station_prob.year.min.sort.val;
@@ -223,13 +226,13 @@ fig_Q_matrix(in_p)
 
 %% yearly ordered
 
-in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
-in_p.fname='yearly_ordered';
-in_p.fig_visible=0;
-in_p.lan='en';
-in_p.val=data_station.waarde;
-in_p.tim=data_station.time;
-in_p.unit=data_station.grootheid;
-in_p.tit_str=data_station.location_clear;
+in_p_yd.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p_yd.fname='yearly_ordered';
+in_p_yd.fig_visible=0;
+in_p_yd.lan='en';
+in_p_yd.val=data_station.waarde;
+in_p_yd.tim=data_station.time;
+in_p_yd.unit=data_station.grootheid;
+in_p_yd.tit_str=data_station.location_clear;
 
-fig_yearly_ordered(in_p)
+fig_yearly_ordered(in_p_yd)

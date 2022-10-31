@@ -269,7 +269,6 @@ ylabels{kr,kc}=labels4all(unit,1,lan,'Lref','asl');
 lims_d.x(kr,kc,1:2)=[datetime(0,1,1),datetime(0,12,31)]; %time
 lims_d.x.TimeZone=tim.TimeZone;
 
-
 %% FIGURE INITIALIZATION
 
 han.fig=figure('name',prnt.filename);

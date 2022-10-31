@@ -160,6 +160,8 @@ data_raw_m=readmatrix(fpath_data);
 
 %%
 t=[data_raw{:,1}];
+t.TimeZone='America/Chicago';
+
 val=data_raw_m(:,2);
 
 figure; hold on; plot(t,val)
@@ -183,5 +185,11 @@ data_stations.source='https://rivergages.mvr.usace.army.mil/WaterControl/station
 
 add_data_stations(paths_main_folder,data_stations,'ask',1)
 
+%%
+
+% load c:\Users\chavarri\checkouts\riv\data_stations\separate\000411.mat 
+% %%
+% figure
+% plot(data_one_station.time,data_one_station.waarde)
 
 

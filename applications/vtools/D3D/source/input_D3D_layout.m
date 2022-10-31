@@ -53,7 +53,7 @@ simdef.grd.angle=           140; %turning angle of the curved part [grad]
 %% master definition file
 simdef.mdf.restart=         0; %restart simulation [-] [double(1,1)]: 0=NO; 1=YES. If 1: the trim file to restart has to be called trim-restart.dat and trim-restart.def
 simdef.mdf.Tstart=          0; %start simulation time [s] if not input is taken as 0. Double check it makes sense when you restart a simulation.
-simdef.mdf.Tstop=           90*24*3600/10; %simulation time [s] 
+simdef.mdf.Tstop=           60*24*3600; %simulation time [s] 
 simdef.mdf.CFL=             5; %CFL number [-]. Used in FM, can be used in D3D4 to compute <Dt> 
 % simdef.mdf.Dt=              30; %time step [s] [dx,dt]=[10,10]; [1,2.5]; [0.2,0.5]; [0.1,0.2]; [0.05,0.1]; [0.01,0.02];
 simdef.mdf.FrictType=       0; %friction type [-]: 0=Chezy; 1=Manning; 2=White-Colebrook; 3=idem, WAQUA style; 10=smooth wall (no friction coefficient needed)
@@ -98,8 +98,9 @@ simdef.mor.AShld=           1; %A parameter in Kock and Flokstra
 simdef.mor.BShld=           0; %B parameter in Kock and Flokstra
 simdef.mor.CShld=           0; %C parameter in Kock and Flokstra
 simdef.mor.DShld=           0; %D parameter in Kock and Flokstra
+simdef.mor.AlfaBs=          0; %streamwise factor for bedslope correction [-]
 simdef.mor.UpwindBedload=   0; %Use upwind bedload (1) or central bedload (0)
-simdef.mor.SedThr=          1e-3; %Flow depth threshold below which morphodynamics are not computed [m]
+simdef.mor.SedThr=          2e-2; %Flow depth threshold below which morphodynamics are not computed [m]
 
 %ill-posedness
 simdef.mor.HiranoCheck=     0; %Flag for well-posedness of Hirano check [-] [double(1,1)]: 0=NO; 1=YES
@@ -118,8 +119,8 @@ simdef.ini.u=               1.0; %initial flow velocity (everywhere) [m] [double
 simdef.ini.etab0_type=      1; %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation; 3=xyz 
 simdef.ini.s=               normal_flow_slope_simplified(simdef.ini.h*simdef.ini.u*simdef.grd.B,simdef.grd.B,simdef.mdf.g/simdef.mdf.C^2,simdef.ini.h,'g',simdef.mdf.g) ; %(if etab0_type=1) initial slope [-] [double(1,1)] | [double(M,1)] e.g. [3e-3] | linspace(0.001,0.0001,simdef.grd.L/simdef.grd.dx+1)]
 simdef.ini.etab=            -simdef.ini.h; %initial downstream bed level [m] [double(1,1)] e.g. [0] ATTENTION! if NaN, the bed level at the downstream end will be at 0; if you want the base level to be at 0, this should be -simdef.ini.h; if you want the bed level to be at 0, this should be 0;
-simdef.ini.etab_noise=      0; %flag for initial noise [double(1,1)] 0=NO; 1=random; 2=alternate bars; 3=random including upstream end; 4 trench
-simdef.ini.noise_amp=       -0.04; %noise amplitude (also bar height, trench height) [m] In case of trench, positive is trench and negative is hump.
+simdef.ini.etab_noise=      1; %flag for initial noise [double(1,1)] 0=NO; 1=random; 2=alternate bars; 3=random including upstream end; 4 trench
+simdef.ini.noise_amp=       0.01; %noise amplitude (also bar height, trench height) [m] In case of trench, positive is trench and negative is hump.
 simdef.ini.noise_Lb=        0; %(for etab_noise=2) bar length [m]
 simdef.ini.noise_trench_x=  [1,3]; %x-coordinates of the beginning and end of the trench [m] [double(1,2)]; e.g. [1,3]
 % aux=load('c:\Users\chavarri\temporal\D3D\runs\P\001\figures\etab_0002593800.mat');

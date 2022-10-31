@@ -45,6 +45,9 @@ end
 if isfield(in_p,'fid_log')==0
     in_p.fid_log=NaN;
 end
+if isfield(in_p,'Lref')==0
+    in_p.Lref='+NAP';
+end
 
 v2struct(in_p)
 
@@ -165,21 +168,25 @@ kr=1; kc=1;
 lims.x(kr,kc,1:2)=q_lim;
 % lims.c(kr,kc,1:2)=clims;
 % xlabels{kr,kc}='L_a [m]';
-xlabels{kr,kc}=labels4all('q',1,lan);
+xlabels{kr,kc}=labels4all(unit,1,lan,'Lref',Lref);
 
 kr=2; kc=1;
 lims.y(kr,kc,1:2)=p_lim;
 lims.x(kr,kc,1:2)=q_lim;
 % lims.c(kr,kc,1:2)=clims;
+[lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil]=labels4all(unit,1,lan,'Lref',Lref);
 switch lan
     case 'en'
-% xlabels{kr,kc}='max. annual discharge [m^3/s]';
-% xlabels{kr,kc}='min. annual discharge [m^3/s]';
-% ylabels{kr,kc}={'probability of max.','annual discharge [-]'};
-ylabels{kr,kc}={'probability of min.','annual discharge [-]'};
+ylabels{kr,kc}={sprintf('probability of %s.',analysis),sprintf('annual %s [-]',str_var)};
     case 'es'
-xlabels{kr,kc}='caudal máximo anual [m^3/s]';
-ylabels{kr,kc}={'probabilidad del caudal','máx. anual [-]'};
+% xlabels{kr,kc}=sprintf('%s máximo anual [m^3/s]',;
+switch analysis
+    case 'max'
+        analysis='máx';
+    case 'min'
+        analysis='mín';
+end
+ylabels{kr,kc}={sprintf('probabilidad del %s.',analysis),sprintf('%s anual [-]',str_var)};
 end
 
 kr=2; kc=2;
@@ -189,10 +196,10 @@ lims.x(kr,kc,1:2)=q_lim;
 switch lan
     case 'en'
 % xlabels{kr,kc}='max. annual discharge [m^3/s]';
-xlabels{kr,kc}='min. annual discharge [m^3/s]';
+% xlabels{kr,kc}=sprintf('%s. annual %s',lab);
 ylabels{kr,kc}='return period [year]';
     case 'es'
-xlabels{kr,kc}='caudal max. anual [m^3/s]';
+% xlabels{kr,kc}=sprintf('%s %s. anual [m^3/s]',str_var,analysis,);
 ylabels{kr,kc}='periodo de retorno [-]';
 end
 
@@ -202,11 +209,11 @@ lims.x(kr,kc,1:2)=q_lim;
 % lims.c(kr,kc,1:2)=clims;
 switch lan
     case 'en'
-xlabels{kr,kc}='discharge [m^3/s]';
-ylabels{kr,kc}={'probability of daily','discharge [-]'};
+xlabels{kr,kc}=lab;
+ylabels{kr,kc}={'probability of daily',sprintf('%s [-]',str_var)};
     case 'es'
-xlabels{kr,kc}='caudal[m^3/s]';
-ylabels{kr,kc}={'probabilidad del caudal','diario [-]'};
+xlabels{kr,kc}=lab;
+ylabels{kr,kc}={sprintf('probabilidad del %s',str_var),'diario [-]'};
 end
 
 kr=3; kc=2;
@@ -216,10 +223,10 @@ lims.x(kr,kc,1:2)=q_lim;
 switch lan
     case 'en'
 % xlabels{kr,kc}='daily discharge [m^3/s]';
-ylabels{kr,kc}={'probability of daily','discharge [days/year]'};
+ylabels{kr,kc}={'probability of daily',sprintf('%s [days/year]',str_var)};
     case 'es'
 % xlabels{kr,kc}='caudal diario [m^3/s]';
-ylabels{kr,kc}={'probabilidad del caudal','diario [días/año]'};
+ylabels{kr,kc}={sprintf('probabilidad del %s',str_var),'diario [días/año]'};
 end
 
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration

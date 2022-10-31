@@ -26,6 +26,7 @@ function D3D_bct_s(simdef)
 
 dire_sim=simdef.D3D.dire_sim;
 
+time_Q=simdef.bct.time_Q;
 time=simdef.bct.time;
 Q=simdef.bct.Q;
 dy=simdef.grd.dy;
@@ -45,9 +46,6 @@ if time(end)<Tstop
     warning('The end time in bct is smaller than the end time of the simulation (maybe due to rounding issues). I have changed it.')
 end
 
-%other
-nt=length(time);
-
 if simdef.grd.K>1
     str_typeb='Logarithmic';
 else
@@ -61,6 +59,7 @@ end
 %% FILE
 
 %% upstream
+nt=length(time_Q);
 kl=1;
 for kn=1:upstream_nodes
     data{kl, 1}=sprintf('table-name           ''Boundary Section : %d''',kn); kl=kl+1;
@@ -87,19 +86,20 @@ for kn=1:upstream_nodes
     data{kl, 1}='parameter            ''total discharge (t)  end B''               unit ''[m3/s]'''; kl=kl+1;
     data{kl, 1}=sprintf('records-in-table     %d',nt); kl=kl+1;
     for kt=1:nt
-        data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time(kt)*Tfact,Q(kt),Q(kt)); kl=kl+1;
+        data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time_Q(kt)*Tfact,Q(kt),Q(kt)); kl=kl+1;
     end
         otherwise
     data{kl, 1}='parameter            ''flux/discharge  (q)  end A''               unit ''[m3/s]'''; kl=kl+1;
     data{kl, 1}='parameter            ''flux/discharge  (q)  end B''               unit ''[m3/s]'''; kl=kl+1;
     data{kl, 1}=sprintf('records-in-table     %d',nt); kl=kl+1;
     for kt=1:nt
-        data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time(kt)*Tfact,Q(kt)*dy/B,Q(kt)*dy/B); kl=kl+1;
+        data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time_Q(kt)*Tfact,Q(kt)*dy/B,Q(kt)*dy/B); kl=kl+1;
     end
     end
 end %upstream_nodes
 
 %% downstream
+nt=length(time);
 data{kl, 1}=sprintf('table-name           ''Boundary Section : %d''',kn+1); kl=kl+1;
 data{kl, 1}=        'contents             ''Uniform             '''; kl=kl+1;
 data{kl, 1}=        'location             ''Downstream          '''; kl=kl+1;

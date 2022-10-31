@@ -127,6 +127,13 @@ for ksim=1:nsim
             D3D_mor(simdef,'check_existing',false)
         end
 
+        %morphodynamic boundary condition
+        [dirloc]=fileparts(simdef.file.bcm);
+        mkdir_check(dirloc);
+        if exist(simdef.file.bcm,'file')~=2
+            D3D_bcm(simdef,'check_existing',false)
+        end
+        
         %sediment parameters
         [dirloc]=fileparts(simdef.file.sed);
         mkdir_check(dirloc);

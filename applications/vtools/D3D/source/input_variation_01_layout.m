@@ -24,19 +24,71 @@ input_m=struct();
 
 %same name as in <simdef> (with '__' where there is substructure). 
 %Same order as in <allvari_add>.
-fn={'ini__noise_seed'}; 
+fn={'ini__noise_seed','mdf__Tstop','mor__MorFac','mdf__CFL','mor__AShld','mor__AlfaBs','mor__SedThr'}; 
 
 %% initialize
 
 allvari=[];
 
-%% variation
+%% 
 
-noise_seed_v=[0,1];
+variation_c{1}=[0,1]; %ini__noise_seed
+variation_c{2}=60*24*3600; %mdf__Tstop
+variation_c{3}=10; %mor__MorFac
+variation_c{4}=5; %mdf__CFL
+variation_c{5}=1; %mor__AShld
+variation_c{6}=0; %mor__AlfaBs
+variation_c{7}=0; %mor__SedThr
 
-allvari_add=allcomb(noise_seed_v);
+allvari=apply_variation(allvari,variation_c);
 
-allvari=cat(1,allvari,allvari_add);
+%%
+
+variation_c{1}=[0,1]; %ini__noise_seed
+variation_c{2}=365*2*24*3600; %mdf__Tstop
+variation_c{3}=10; %mor__MorFac
+variation_c{4}=5; %mdf__CFL
+variation_c{5}=1; %mor__AShld
+variation_c{6}=0; %mor__AlfaBs
+variation_c{7}=0; %mor__SedThr
+
+allvari=apply_variation(allvari,variation_c);
+
+%%
+
+variation_c{1}=[0,1]; %ini__noise_seed
+variation_c{2}=365*2*24*3600; %mdf__Tstop
+variation_c{3}=1; %mor__MorFac
+variation_c{4}=5; %mdf__CFL
+variation_c{5}=1; %mor__AShld
+variation_c{6}=0; %mor__AlfaBs
+variation_c{7}=0; %mor__SedThr
+
+allvari=apply_variation(allvari,variation_c);
+
+%%
+
+variation_c{1}=[0,1]; %ini__noise_seed
+variation_c{2}=365*10*24*3600; %mdf__Tstop
+variation_c{3}=1; %mor__MorFac
+variation_c{4}=1; %mdf__CFL
+variation_c{5}=1; %mor__AShld
+variation_c{6}=0; %mor__AlfaBs
+variation_c{7}=2e-2; %mor__SedThr
+
+allvari=apply_variation(allvari,variation_c);
+
+%%
+
+variation_c{1}=[0,1]; %ini__noise_seed
+variation_c{2}=365*10*24*3600; %mdf__Tstop
+variation_c{3}=10; %mor__MorFac
+variation_c{4}=5; %mdf__CFL
+variation_c{5}=1/3; %mor__AShld
+variation_c{6}=3; %mor__AlfaBs
+variation_c{7}=0.15; %mor__SedThr
+
+allvari=apply_variation(allvari,variation_c);
 
 %% ADD TO MATRIX
 
@@ -75,3 +127,16 @@ for ksim=1:nsim
 end
 
 end %function 
+
+%%
+%% FUNCTIONS
+%%
+
+function allvari=apply_variation(allvari,variation_c)
+
+allvari_add=allcomb(variation_c{:});
+% allvari_add=allcomb(noise_seed_v,Tstop_v,MorFac_v,CFL_v);
+
+allvari=cat(1,allvari,allvari_add);
+
+end
