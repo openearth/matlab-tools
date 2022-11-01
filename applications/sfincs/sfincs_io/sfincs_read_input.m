@@ -7,14 +7,21 @@ while 1
     if str==-1
         break
     end
-    c=textscan(str,'%s','delimiter','=');
-    c=c{1};
-    keyw=deblank2(c{1});
-    val=deblank2(c{2});
-    if ~isnan(str2double(val))
-        val=str2double(val);
+    try
+        c=textscan(str,'%s','delimiter','=');
+        c=c{1};
+        keyw=deblank2(c{1});
+        val=deblank2(c{2});
+        if ~isnan(str2double(val))
+            val=str2double(val);
+        end
+        if ~isempty(keyw) && ~isempty(val)
+            inp.(keyw)=val;
+        end        
+    catch
+        disp(['Error reading in keyword-argument pair: "',str,'", line is skipped'])
     end
-    inp.(keyw)=val;
+
 end
 fclose(fid);
 
