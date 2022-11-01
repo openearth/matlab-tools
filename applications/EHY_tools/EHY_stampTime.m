@@ -42,7 +42,7 @@ set (gca,'YGrid'   ,'on');
 
 Text = get (gca,'YLabel');
 set(Text,'string',OPT.YLabel);
-if ~isempty(Title) Text = get(gca,'Title'); set(Text,'string',Title); end
+if ~isempty(Title) Text = get(gca,'Title'); set(Text,'string',Title,'FontSize',5.0); end
 timeticks('x',TLim(1),TLim(2),'custom'); 
 
 %% Restore to original axes
