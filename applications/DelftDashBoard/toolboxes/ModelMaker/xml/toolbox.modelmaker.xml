@@ -44,7 +44,7 @@
     </tab>
     <tab>
       <formodel>sfincs</formodel>
-      <tabstring>Quick Mode</tabstring>
+      <tabstring>Outline</tabstring>
       <callback>ddb_ModelMakerToolbox_sfincs_quickMode</callback>
       <element>toolbox.modelmaker.sfincs.quickmode.xml</element>
     </tab>

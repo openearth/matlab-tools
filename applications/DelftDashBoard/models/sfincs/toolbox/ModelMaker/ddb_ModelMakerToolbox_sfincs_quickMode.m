@@ -337,13 +337,15 @@ for j=1:handles.toolbox.modelmaker.sfincs.roughness.nrSelectedDatasets
 %     fprintf(fid,'%s\n',['    zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.roughness.selectedDatasets(j).zMin)]);
 %     fprintf(fid,'%s\n',['    zmax: ' num2fstr(handles.toolbox.modelmaker.sfincs.roughness.selectedDatasets(j).zMax)]);
 end
-fprintf(fid,'%s\n','subgrid:');
-fprintf(fid,'%s\n',['  nr_bins: ' num2str(handles.toolbox.modelmaker.sfincs.subgrid.nbin)]);
-fprintf(fid,'%s\n',['  nr_subgrid_pixels: ' num2str(handles.toolbox.modelmaker.sfincs.subgrid.refi)]);
-fprintf(fid,'%s\n',['  zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.zmin)]);
-fprintf(fid,'%s\n',['  max_gradient: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.maxdzdv)]);
-fprintf(fid,'%s\n',['  manning_max: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_value)]);
-fprintf(fid,'%s\n',['  manning_max_level: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_level)]);
+if handles.model.sfincs.domain(ad).use_subgrid
+    fprintf(fid,'%s\n','subgrid:');
+    fprintf(fid,'%s\n',['  nr_bins: ' num2str(handles.toolbox.modelmaker.sfincs.subgrid.nbin)]);
+    fprintf(fid,'%s\n',['  nr_subgrid_pixels: ' num2str(handles.toolbox.modelmaker.sfincs.subgrid.refi)]);
+    fprintf(fid,'%s\n',['  zmin: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.zmin)]);
+    fprintf(fid,'%s\n',['  max_gradient: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.maxdzdv)]);
+    fprintf(fid,'%s\n',['  manning_max: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_value)]);
+    fprintf(fid,'%s\n',['  manning_max_level: ' num2fstr(handles.toolbox.modelmaker.sfincs.subgrid.manning_deep_level)]);
+end
 
 fclose(fid);
 

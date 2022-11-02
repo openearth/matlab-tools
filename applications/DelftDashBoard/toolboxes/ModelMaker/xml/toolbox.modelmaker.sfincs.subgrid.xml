@@ -46,11 +46,30 @@
     <tooltipstring>Cut-off level for maximizing Manning's n value</tooltipstring>
   </element>
   <element>
+    <style>edit</style>
+    <position>380 105 50 20</position>
+    <text>Zmin (m)</text>
+    <variable>handles.toolbox.modelmaker.sfincs.subgrid.zmin</variable>
+    <type>real</type>
+    <textposition>right</textposition>
+    <tooltipstring>Minimum bed level used in subgrid table (used to limit extreme depths)</tooltipstring>
+  </element>
+  <element>
     <style>pushbutton</style>
     <position>870 10 100 20</position>
     <text>GENERATE</text>
     <callback>ddb_ModelMakerToolbox_sfincs_subgrid</callback>
     <option1>generatesubgrid</option1>
     <tooltipstring>Generate model sub-grid bathymetry</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain(ad).use_subgrid</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
 </root>

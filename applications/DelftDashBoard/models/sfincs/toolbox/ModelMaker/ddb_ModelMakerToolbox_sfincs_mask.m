@@ -876,6 +876,21 @@ end
 handles.toolbox.modelmaker.sfincs.bathymetry_changed = 0;
 handles.toolbox.modelmaker.sfincs.roughness_changed = 0;
 
+
+% Now save polygon files
+if handles.toolbox.modelmaker.sfincs.mask.nrincludepolygons>0
+    save_polygon(handles.toolbox.modelmaker.sfincs.mask.includepolygon,handles.toolbox.modelmaker.sfincs.mask.includepolygonfile);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nrexcludepolygons>0
+    save_polygon(handles.toolbox.modelmaker.sfincs.mask.excludepolygon,handles.toolbox.modelmaker.sfincs.mask.excludepolygonfile);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nrwaterlevelboundarypolygons>0
+    save_polygon(handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygon,handles.toolbox.modelmaker.sfincs.mask.waterlevelboundarypolygonfile);
+end
+if handles.toolbox.modelmaker.sfincs.mask.nroutflowboundarypolygons>0
+    save_polygon(handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygon,handles.toolbox.modelmaker.sfincs.mask.outflowboundarypolygonfile);
+end
+
 setHandles(handles);
 
 %%
@@ -902,3 +917,24 @@ if ~isempty(h)
     uistack(h,'top');
 end
 
+%%
+function save_polygon(p,file_name)
+
+handles=getHandles;
+
+cs=handles.screenParameters.coordinateSystem.type;
+if strcmpi(cs,'geographic')
+    fmt='%12.7f %12.7f\n';
+else
+    fmt='%11.1f %11.1f\n';
+end
+
+fid=fopen(file_name,'wt');
+for ip=1:length(p)
+    fprintf(fid,'%s\n',['BL' num2str(ip,'%0.4i')]);
+    fprintf(fid,'%i %i\n',[p(ip).length 2]);
+    for ix=1:p(ip).length
+        fprintf(fid,fmt,[p(ip).x(ix) p(ip).y(ix)]);
+    end
+end
+fclose(fid);

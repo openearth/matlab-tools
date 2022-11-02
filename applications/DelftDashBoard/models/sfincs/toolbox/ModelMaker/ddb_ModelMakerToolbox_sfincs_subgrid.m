@@ -106,13 +106,15 @@ cs=handles.screenParameters.coordinateSystem;
 manning_input=[0.02 0.04 1.0];
 
 try
-    wb      = waitbox('Generating sub-grid file ...');
+%     wb      = waitbox('Generating sub-grid file ...');
     subgrd=sfincs_make_subgrid_file([],[],bathy,manning_input,cs,nbin,refi,refj,uopt,maxdzdv,'input',inp,'mask',msk,'bathymetry_database',handles.bathymetry,'manning_deep_value',ndeep,'manning_deep_level',nlev);
-    sfincs_write_binary_subgrid_tables(subgrd,msk,nbin,subgridfile,uopt);
-    handles.model.sfincs.domain(id).input.sbgfile=subgridfile;
-    close(wb);
+    if ~isempty(subgrd)
+        sfincs_write_binary_subgrid_tables(subgrd,msk,nbin,subgridfile,uopt);
+        handles.model.sfincs.domain(id).input.sbgfile=subgridfile;
+    end    
+%     close(wb);
 catch
-    close(wb);
+%     close(wb);
     ddb_giveWarning('error','Sorry, an error occurred while generating the subgrid file!');
 end
 setHandles(handles);

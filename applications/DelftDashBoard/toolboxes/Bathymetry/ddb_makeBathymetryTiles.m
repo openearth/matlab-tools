@@ -483,7 +483,7 @@ if imaketiles
                                 nc_grid_createNCfile2(fname,xx,yy,zz,OPT);
                             end
                         catch
-                            shite=1
+                            disp('something went wrong...');
                         end
                         
                     end
