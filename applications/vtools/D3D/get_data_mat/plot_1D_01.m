@@ -301,7 +301,7 @@ for ksb=1:nsb
                                     bol_ks(ks)=true;
                                     
                                     %2DO Adjust the call such that always <simdef> is a structure
-                                    [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(bol_ks).(statis)],[data_sim(bol_ks).(statis)]-[data_0(bol_ks).(statis)],'ylims','ylims_diff',var_str_save);
+                                    [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(bol_ks).(statis)],[data_0(bol_ks).(statis)],'ylims','ylims_diff',var_str_save);
 
                                     tag_fig=flg_loc.tag;
                                     fdir_fig=fullfile(simdef(bol_ks).file.fig.dir,tag_fig,tag_serie); 
@@ -323,7 +323,7 @@ for ksb=1:nsb
                             if flg_loc.do_all && nS>1
                                 bol_ks=true(nS,1);
 
-                                [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(bol_ks).(statis)],[data_sim(bol_ks).(statis)]-[data_0(bol_ks).(statis)],'ylims','ylims_diff',var_str_save);
+                                [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(bol_ks).(statis)],[data_0(bol_ks).(statis)],'ylims','ylims_diff',var_str_save);
 
                                 tag_fig=sprintf('%s_%s',flg_loc.tag,'all');
                                 fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie); 
