@@ -149,14 +149,31 @@ if quiet ~= 1
     disp(['Grid size of subgrid pixels is dx= ',num2str(djf),' and dy= ',num2str(dif)])
 end
 
+wb = awaitbar(0,'Generating subgrid file ...');
+abort2=0;
+
 %% Loop through blocks
 ib=0;
 for ii=1:ni
+    if abort2
+        break
+    end
     for jj=1:nj
         
         % Count
         ib=ib+1;
-        if quiet ~= 1; disp(['Processing block ' num2str(ib) ' of ' num2str(ni*nj)]); end
+        str=['Processing block ' num2str(ib) ' of ' num2str(ni*nj) ' ...'];
+        if quiet ~= 1; disp(str); end
+        
+        [hh,abort2]=awaitbar(ib/(ni*nj),wb,str);
+
+        if abort2 % Abort the process by clicking abort button
+            break
+        end
+        if isempty(hh) % Break the process when closing the figure
+            abort2=1;
+            break
+        end
         
         % cell indices
         ic1=(ii-1)*nib+1;
@@ -484,6 +501,16 @@ for ii=1:ni
         subgrd.v_navg(ic1:ic2,jc1:jc2,:)=navg_v;
                 
     end
+end
+
+% Close waitbar
+if ~isempty(hh)
+    close(wb);
+end
+
+if abort2
+    subgrd1=[];
+    return
 end
 
 % Done for this level
