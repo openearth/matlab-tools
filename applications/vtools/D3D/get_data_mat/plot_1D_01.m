@@ -50,6 +50,14 @@ end
 
 %% PARSE
 
+if isfield(flg_loc,'do_p')==0
+    flg_loc.do_p=1;
+end
+
+if isfield(flg_loc,'do_all')==0
+    flg_loc.do_all=1;
+end
+
 if isfield(flg_loc,'do_xvt')==0
     flg_loc.do_xvt=0;
 end
@@ -287,25 +295,55 @@ for ksb=1:nsb
                         for kylim=nylim
                             
                             %regular plot
-                            %2DO loop on <kS> to first plot individually and then all togethe. Then adjust the call such that always <simdef> is a structure
-                            [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim.(statis)],[data_sim.(statis)]-[data_0.(statis)],'ylims','ylims_diff',var_str_save);
+                            if flg_loc.do_p
+                                for ks=1:nS 
+                                    bol_ks=false(nS,1);
+                                    bol_ks(ks)=true;
+                                    
+                                    %2DO Adjust the call such that always <simdef> is a structure
+                                    [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(bol_ks).(statis)],[data_sim(bol_ks).(statis)]-[data_0(bol_ks).(statis)],'ylims','ylims_diff',var_str_save);
+
+                                    tag_fig=flg_loc.tag;
+                                    fdir_fig=fullfile(simdef(bol_ks).file.fig.dir,tag_fig,tag_serie); 
+                                    runid=simdef(bol_ks).file.runid;
+
+                                    fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
+                                    mkdir_check(fdir_fig_loc,fid_log,1,0);
+
+                                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+            %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                                    in_p.fname=fname_noext;
+
+                                    fig_1D_01(in_p);
+                                end %ks
+                            end %do_p
                             
-                            tag_fig=flg_loc.tag;
-                            fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie); %we should loop on kS and make each plot independently first and then all together
-                            runid=simdef(1).file.runid;
-                            
-                            fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
-                            mkdir_check(fdir_fig_loc,fid_log,1,0);
+                            %plot all together
+                            if flg_loc.do_all && nS>1
+                                bol_ks=true(nS,1);
 
-                            fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
-    %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+                                [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(bol_ks).(statis)],[data_sim(bol_ks).(statis)]-[data_0(bol_ks).(statis)],'ylims','ylims_diff',var_str_save);
 
-                            in_p.fname=fname_noext;
+                                tag_fig=sprintf('%s_%s',flg_loc.tag,'all');
+                                fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie); 
+                                runid='';
 
-                            fig_1D_01(in_p);
+                                fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
+                                mkdir_check(fdir_fig_loc,fid_log,1,0);
+
+                                fname_noext=fig_name(fdir_fig_loc,tag_fig,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+        %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+
+                                in_p.fname=fname_noext;
+
+                                fig_1D_01(in_p);
+                            end
                             
                             %difference with reference
                             if do_ref
+                                in_p.plot_mea=false; %when plotting difference between simulations, the measurements make no sense
+                                
                                 for kS=1:nS
                                     %2DO: make function
                                     [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(kS).(statis)]-data_ref.(statis),([data_sim(kS).(statis)]-data_ref.(statis))-([data_0(kS).(statis)]-data_0_ref.(statis)),'ylims','ylims_diff',var_str_save);
@@ -318,7 +356,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -339,7 +377,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -429,7 +467,11 @@ function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref)
 % fprintf('time_dnum: %f \n',time_dnum);
 % fprintf('iso: %s \n',iso);
                 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,fn,sb_pol,kref));
+if isempty(runid)
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,fn,sb_pol,kref));
+else
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,fn,sb_pol,kref));
+end
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
 end %function

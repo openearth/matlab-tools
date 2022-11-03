@@ -150,6 +150,7 @@
 % in_plot.(tag).do_xvt=0;
 % in_plot.(tag).do_diff=1; %difference with initial time
 % in_plot.(tag).do_s=1; %difference with reference simulation
+% in_plot.(tag).do_all=1; %all simulations in same figure
 % in_plot.(tag).tim=NaN; %analysis time [datenum, datetime]. NaN=all, Inf=last.
 % % in_plot.(tag).tim=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)];
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
