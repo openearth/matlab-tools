@@ -37,7 +37,7 @@ bol_pol_loc=cell(npol,1);
 for kpol=1:npol
     pol_loc=[[rkm_edg_xy_L(kpol:kpol+1,1);flipud(rkm_edg_xy_R(kpol:kpol+1,1));rkm_edg_xy_L(kpol,1)],[rkm_edg_xy_L(kpol:kpol+1,2);flipud(rkm_edg_xy_R(kpol:kpol+1,2));rkm_edg_xy_L(kpol,2)]];
 
-    bol_pol_loc{kpol,1}=inpolygon(gridInfo.Xcen,gridInfo.Ycen,pol_loc(:,1),pol_loc(:,2));
+    bol_pol_loc{kpol,1}=inpolygon(gridInfo.Xcen(:),gridInfo.Ycen(:),pol_loc(:,1),pol_loc(:,2));
 %             %% BEGIN DEBUG
 %             figure; hold on; plot(pol_loc(:,1),pol_loc(:,2),'-*')
 %             % END DEBUG

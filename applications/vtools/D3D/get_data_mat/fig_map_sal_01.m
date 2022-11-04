@@ -118,7 +118,7 @@ end
 
 if isnan(clims(1))
     bol_in=gridInfo.Xcen>xlims(1) & gridInfo.Xcen<xlims(2) & gridInfo.Ycen>ylims(1) & gridInfo.Ycen<ylims(2);
-    if any(bol_in)
+    if any(bol_in(:))
         clims=[min(val(bol_in),[],'omitnan'),max(val(bol_in),[],'omitnan')];
     %     clims=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
         tol=1e-8;

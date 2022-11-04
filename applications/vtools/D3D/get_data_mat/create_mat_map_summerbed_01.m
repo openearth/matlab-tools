@@ -117,7 +117,7 @@ for ksb=1:nsb
                 data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));      
 
                 %% calc
-                data_var=gdm_order_dimensions(fid_log,data_var);
+                data_var=gdm_order_dimensions(fid_log,data_var,'structure',simdef.D3D.structure);
 
                 bol_nan=any(isnan(data_var.val),2); %necessary for multidimensional 
 
@@ -154,8 +154,10 @@ for ksb=1:nsb
 %                     %%
 %                      figure
 %                      hold on
+%                      scatter(gridInfo.Xcen(:),gridInfo.Ycen(:),10,'b')
 % %                      scatter(gridInfo.Xcen,gridInfo.Ycen,10,data_var.val)
-%                      scatter(gridInfo.Xcen(bol_get),gridInfo.Ycen(bol_get),10,'r','filled')   
+% %                      scatter(gridInfo.Xcen(bol_get),gridInfo.Ycen(bol_get),10,'r','filled')   
+%                      scatter(gridInfo.Xcen(sb_def.bol_sb),gridInfo.Ycen(sb_def.bol_sb),10,'r','filled')   
 %                      axis equal
 %                      colorbar
 %                     %END DEBUG

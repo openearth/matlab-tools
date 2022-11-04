@@ -17,8 +17,8 @@ if isfield(gridInfo,'face_nodes_x')
     xlims=[min(gridInfo.face_nodes_x(:)),max(gridInfo.face_nodes_x(:))];
     ylims=[min(gridInfo.face_nodes_y(:)),max(gridInfo.face_nodes_y(:))];
 elseif isfield(gridInfo,'Xcor')
-    xlims=[min(gridInfo.Xcor(:)),max(gridInfo.Ycor(:))];
-    ylims=[min(gridInfo.Xcor(:)),max(gridInfo.Ycor(:))];
+    xlims=[min(gridInfo.Xcor(:)),max(gridInfo.Xcor(:))];
+    ylims=[min(gridInfo.Ycor(:)),max(gridInfo.Ycor(:))];
 elseif isfield(gridInfo,'offset')
 %     error('what to do with rkm')
     xlims=[min(gridInfo.x_node(:)),max(gridInfo.x_node)];

@@ -47,8 +47,18 @@ messageOut(fid_log,'Start finding boundary summer bed.')
 idx_b=boundary(sb(:,1),sb(:,2),0.8); %shrink value found by trial and error
 sb=sb(idx_b,:);
 messageOut(fid_log,'Start finding inpolygon summer bed.')
-bol_sb=inpolygon(gridInfo.Xcen,gridInfo.Ycen,sb(:,1),sb(:,2));
+bol_sb=inpolygon(gridInfo.Xcen(:),gridInfo.Ycen(:),sb(:,1),sb(:,2));
 
+% %% DEBUG
+% 
+% figure
+% hold on
+% scatter(gridInfo.Xcen(:),gridInfo.Ycen(:),10,'b')
+% plot(sb(:,1),sb(:,2))
+% scatter(gridInfo.Xcen(bol_sb),gridInfo.Ycen(bol_sb),10,'r')
+% axis equal
+% 
+% %%
 %% SAVE
 
 sb_def.bol_sb=bol_sb;
