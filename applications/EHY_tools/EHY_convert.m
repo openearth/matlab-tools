@@ -732,10 +732,14 @@ end
     function [output,OPT] = EHY_convert_ldb2shp(inputFile,outputFile,OPT)
         ldb = landboundary('read',inputFile);
         nanInd = find(isnan(ldb(:,1)));
-        if nanInd(1)~=1; nanInd = [0; nanInd]; end
-        if nanInd(end)~=size(ldb,1); nanInd(end+1) = size(ldb,1)+1; end
-        for ii = 1:length(nanInd)-1
-            ldb2{ii} = ldb(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+        if any(nanInd)
+            if nanInd(1)~=1; nanInd = [0; nanInd]; end
+            if nanInd(end)~=size(ldb,1); nanInd(end+1) = size(ldb,1)+1; end
+            for ii = 1:length(nanInd)-1
+                ldb2{ii} = ldb(nanInd(ii)+1:nanInd(ii+1)-1,1:2);
+            end
+        else
+            ldb2{1}=ldb;
         end
         if OPT.saveOutputFile
             shapewrite(outputFile,'polyline',ldb2,{})
