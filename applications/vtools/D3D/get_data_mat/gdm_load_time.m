@@ -47,6 +47,11 @@ if exist(fpath_mat_time,'file')==2
     v2struct(tim);
     
     nt=numel(time_dnum);
+    
+    if flg_loc.tim_just_load %debug flag to go fast
+        return
+    end
+    
     nt2=numel(flg_loc.tim);
 
     if isdatetime(flg_loc.tim)

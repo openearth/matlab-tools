@@ -14,6 +14,11 @@
 
 function [ismor,is1d,str_network1d,issus]=D3D_is(nc_map)
 
+if iscell(nc_map) %case of SMT-D3D4 
+    nc_map=nc_map{1}; %they are all the same
+    [ismor,is1d,str_network1d,issus]=D3D_is(nc_map);
+    return
+end
 [~,~,ext]=fileparts(nc_map);
 
 if strcmp(ext,'.nc') %FM

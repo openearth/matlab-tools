@@ -73,7 +73,7 @@ nf=numel(dire)-2;
 %%
 
 %% identify 
-whatis=false(1,4);
+whatis=false(1,5);
 for kf1=1:nf
     kf=kf1+2; %. and ..
     [simdef,whatis]=structure_from_ext(simdef,dire(kf).name,whatis);
@@ -101,16 +101,25 @@ end
 %% load
 switch simdef.D3D.structure
     %% D3D4 and FM
-    case {1,2,4}
+    case {1,2,4,5}
 
 if simdef.D3D.structure==4 %we take the files from the first one for generic things
     fdir_mdu=fullfile(simdef.D3D.dire_sim,'output','0');
     dire=dir(fdir_mdu);
+elseif simdef.D3D.structure==5 %we take the files from the first one for generic things
+    fdir_output=fullfile(simdef.D3D.dire_sim,'output');
+    tim_dir=D3D_SMTD3D4_sort_output(fdir_output);
+    
+    fdir_mdu=fullfile(fdir_output,sprintf('%d.min',tim_dir(1)));
 else
     fdir_mdu=simdef.D3D.dire_sim;
 end
 
-fpath_mdu=search_4_mdu(dire);
+if simdef.D3D.structure==5 %we take the files from the first one for generic things
+    fpath_mdu=D3D_SMTD3D4_get_all_mdf(fdir_mdu);
+else
+    fpath_mdu=search_4_mdu(dire);
+end
 
 file.mdf=fpath_mdu;
 switch simdef.D3D.structure
@@ -121,10 +130,30 @@ switch simdef.D3D.structure
         if simdef.D3D.structure==4 
             simdef_aux.file=adapt_paths_smt(simdef_aux.file); %the relative paths are relative to the layout mdu
         end
+    case 5
+        %get paths for each mdf
+        ndd=numel(fpath_mdu);
+        simdef_aux=D3D_simpath_mdf(fpath_mdu{1});
+        runids=simdef_aux.D3D.runid; %we store it here to fill it automatically below
+        fn=fieldnames(simdef_aux.file);
+        nfn=numel(fn);
+        for kdd=2:ndd
+            simdef_aux_loc=D3D_simpath_mdf(fpath_mdu{kdd});
+            for kfn=1:nfn
+                %it will not work if not all fields are in all files. 
+                simdef_aux.file.(fn{kfn})=cat(1,simdef_aux.file.(fn{kfn}),{simdef_aux_loc.file.(fn{kfn})});
+            end
+            runids=cat(1,runids,{simdef_aux_loc.D3D.runid});
+        end
+        simdef_aux.file.runids=runids;
+        simdef_aux.file.partitions=ndd;
+        simdef_aux.file.output_time=tim_dir;
 end
 file=simdef_aux.file;
 simdef.err=simdef_aux.err;
-[~,file.runid,~]=fileparts(file.mdf);
+if simdef.D3D.structure~=5
+    [~,file.runid,~]=fileparts(file.mdf);
+end
 
     %% sobek 3
     case 3
@@ -239,7 +268,7 @@ for kf=1:nf
         dire_2=dir(fpath_loc);
         mdf_aux_out=search_4_mdu(dire_2);
         if ~isempty(mdf_aux) && ~isempty(mdf_aux_out)
-            error('There are mdu/mdf files in the main and subfolders');
+            error('There are several mdu/mdf files in the main and subfolders');
         elseif ~isempty(mdf_aux_out)
             mdf_aux=mdf_aux_out;
         end
@@ -280,6 +309,11 @@ switch ext
             simdef.D3D.structure=4;
             whatis(4)=true;
         end
+    case ''
+        if strcmp(fname,'Qseries') 
+            simdef.D3D.structure=5;
+            whatis(5)=true;
+        end
 end
 
 end %function
@@ -317,6 +351,23 @@ if ~(exist(fi,'file')==2) && ~isfolder(fi)
     else
         error('File (%s) not found: ',simdef_aux.file.(fn{kfn}))
     end
+end
+
+end
+
+%%
+
+function fpath_mdu=D3D_SMTD3D4_get_all_mdf(fdir_mdu)
+    
+%get all mdf's
+dire=dir(fdir_mdu);
+nf=numel(dire);
+fpath_mdu={};
+for kf=1:nf
+    if dire(kf).isdir; continue; end
+    [~,~,ext]=fileparts(dire(kf).name);
+    if ~strcmp(ext,'.mdf'); continue; end
+    fpath_mdu=cat(1,fpath_mdu,fullfile(dire(kf).folder,dire(kf).name));
 end
 
 end

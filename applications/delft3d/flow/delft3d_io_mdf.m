@@ -288,6 +288,13 @@ elseif length(tmp)>0
                 
                 value    = newline(7:end);
                 
+                %deal with cases in which <#> is not at position 1, but it is comment and line shorter than 6 characters
+                keyword_trim=strtrim(keyword);
+                if ~isempty(keyword) && strcmp(keyword_trim(1),'#')
+                    value=keyword;
+                    keyword='';
+                end
+                
                 if ~isempty(keyword)
                     keyword_last     = keyword;
                     

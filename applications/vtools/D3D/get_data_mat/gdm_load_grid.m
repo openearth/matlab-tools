@@ -52,7 +52,7 @@ elseif ~is1d && dim==1
     messageOut(fid_log,'The grid seems to be 2D. I read it as such')
 end
 
-%%
+%% LOAD 
 
 if exist(fpath_grd,'file')==2
     if do_load
@@ -64,14 +64,22 @@ if exist(fpath_grd,'file')==2
     return
 end
 
+%% READ
+
 messageOut(fid_log,'Grid mat-file does not exist. Reading.')
 
-switch dim
-    case 1
-        gridInfo=NC_read_grid_1D(fpath_map);
-    case 2
-        gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid'},'mergePartitions',1); %#ok        
-end    
+if iscell(fpath_map) %SMT-D3D4
+    gridInfo=D3D_read_grid_SMTD3D4(fpath_map);   
+else
+    switch dim
+        case 1
+            gridInfo=NC_read_grid_1D(fpath_map);
+        case 2
+            gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid'},'mergePartitions',1); %#ok        
+    end    
+
+end
+
 save_check(fpath_grd,'gridInfo'); 
 
 end %function

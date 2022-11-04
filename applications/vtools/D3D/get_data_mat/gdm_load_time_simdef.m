@@ -32,15 +32,16 @@ end
 
 %% CALC
 
-if simdef.D3D.structure==4
-    fpath_pass=simdef.D3D.dire_sim;
-else
-    switch results_type
-        case 'map'
-            fpath_pass=simdef.file.map;
-        case 'his'
-            fpath_pass=simdef.file.his;
-    end
+switch simdef.D3D.structure
+    case {4,5}
+        fpath_pass=simdef.D3D.dire_sim;
+    otherwise
+        switch results_type
+            case 'map'
+                fpath_pass=simdef.file.map;
+            case 'his'
+                fpath_pass=simdef.file.his;
+        end
 end
 
 [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass,fdir_mat,'results_type',results_type);

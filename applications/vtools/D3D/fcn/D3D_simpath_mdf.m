@@ -87,13 +87,44 @@ end
 %         path_output_loc=sprintf('DFM_OUTPUT_%s',runid);
 %     end
 %         path_output=fullfile(path_sim,path_output_loc);
-        path_output=path_sim;
-        file_aux=D3D_simpath_output_s(path_output);
-        fnames=fieldnames(file_aux);
-        nfields=numel(fnames);
-        for kfields=1:nfields
-            simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
-        end
+
+%THIS WAS ACTIVE
+%         path_output=path_sim;
+%         file_aux=D3D_simpath_output_s(path_output);
+%         fnames=fieldnames(file_aux);
+%         nfields=numel(fnames);
+%         for kfields=1:nfields
+%             simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
+%         end
+
 % end
 
+%direct output filenames
+fpath_map=fullfile(path_sim,sprintf('trim-%s.dat',runid));
+if exist(fpath_map,'file')==2
+    simdef.file.map=fpath_map;
+end
+fpath_his=fullfile(path_sim,sprintf('trih-%s.dat',runid));
+if exist(fpath_his,'file')==2
+    simdef.file.his=fpath_his;
+end
+fpath_dia=fullfile(path_sim,sprintf('tri-diag.%s',runid));
+if exist(fpath_dia,'file')==2
+    simdef.file.dia=fpath_dia;
+end
+
+simdef.D3D.runid=runid;
+
 end %function
+
+
+
+
+
+
+
+
+
+
+
+

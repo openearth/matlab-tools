@@ -56,7 +56,7 @@ if ischar(var_id)
                 end
             else
                 switch structure
-                    case 1
+                    case {1,5}
                         switch res_type
                             case 'map'
                                 if ismor
@@ -115,7 +115,12 @@ if ischar(var_id)
             if is1d
                 var_id_out='mesh1d_dg';
             else
-                var_id_out='mesh2d_dg';
+                switch structure
+                    case {1,5}
+                        var_id_out='DG';
+                    case {2,4}
+                        var_id_out='mesh2d_dg';
+                end
             end
             var_str_read='dg';
             var_str_save=var_str_read;
@@ -177,7 +182,7 @@ switch var_num
         var_str='d10';
     case -1
         var_str='dm';
-    case 1
+    case {1,5}
         var_str='mesh2d_mor_bl';
     case 2 
         var_str='mesh2d_waterdepth';

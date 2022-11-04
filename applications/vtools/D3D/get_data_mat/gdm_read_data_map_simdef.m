@@ -42,6 +42,25 @@ branch=parin.Results.branch;
 
 fpath_map=gdm_fpathmap(simdef,sim_idx);
 
+if iscell(fpath_map) %SMTD3D4
+    nf=numel(fpath_map);
+    simdef_loc.D3D.structure=1;
+    
+    kf=1;
+    simdef_loc.file.map=fpath_map{kf};
+    branch=simdef.file.runids{kf};
+    val_loc=gdm_read_data_map_simdef(fdir_mat,simdef_loc,varname,varargin{:},'branch',branch);
+    val_loc_s=squeeze(val_loc.val); %I have to squeeze here to concatenate, which is not consistent with the rest and it is not doable if larger than 2D array output
+    for kf=2:nf
+        simdef_loc.file.map=fpath_map{kf};
+        branch=simdef.file.runids{kf};
+        val_loc=gdm_read_data_map_simdef(fdir_mat,simdef_loc,varname,varargin{:},'branch',branch);
+        val_loc_s=D3D_SMTD3D4_concatenate(val_loc_s,squeeze(val_loc.val),1);
+    end
+    data_var.val=val_loc_s;
+    return
+end
+
 switch varname
     case 'clm2'
         data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);

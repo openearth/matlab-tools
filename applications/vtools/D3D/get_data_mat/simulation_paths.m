@@ -28,7 +28,12 @@ simdef=D3D_simpath(simdef,'break',1);
 
 %the runid is not in the mdu name, but in the folder name
 tok=regexp(fdir_sim,filesep,'split');
-simdef.file.runid=tok{1,end};
+switch simdef.D3D.structure
+    case 5
+        simdef.file.runid=tok{1,end-1}; %<sim> is the last one
+    otherwise
+        simdef.file.runid=tok{1,end};
+end
 
 %% mat and fig
 

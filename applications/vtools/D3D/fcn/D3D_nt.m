@@ -27,32 +27,18 @@ res_type=parin.Results.res_type;
 %% 
 
 if isfolder(fpath_res)
-        fdir_output=fullfile(fpath_res,'output');
-        dire=dir(fdir_output);
-        nf=length(cell2mat(regexp({dire.name}, '[0-9]+')))-1; %already the number of the files, which start at 0
-        nt=0;
-        for kf=0:1:nf
-            fdir_loc=fullfile(fdir_output,num2str(kf));
-            simdef.D3D.dire_sim=fdir_loc;
-            simdef=D3D_simpath(simdef); %very expensive... 
-            fpath_nc=simdef.file.(res_type);
-            nt=nt+NC_nt(fpath_nc);
-                        
-%             messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
-        end
+    fdir_output=fullfile(fpath_res,'output');
+    nf=D3D_SMT_nf(fdir_output);
+    nt=0;
+    for kf=0:1:nf
+        fdir_loc=D3D_SMT_dir_output_loc(fdir_output,kf);       
+        simdef.D3D.dire_sim=fdir_loc;
+        simdef=D3D_simpath(simdef); %very expensive... 
+        fpath_nc=simdef.file.(res_type);
+        nt=nt+D3D_nt_single(fpath_nc,res_type);
+    end
 else
-    
-    [~,~,ext]=fileparts(fpath_res);
-    switch ext
-        case '.nc'
-            nt=NC_nt(fpath_res);
-        case '.dat'
-            NFStruct=vs_use(fpath_res,'quiet');
-            ITMAPC=vs_let(NFStruct,sprintf('%s-info-series',res_type),sprintf('IT%sC',upper(res_type)),'quiet'); %results time vector
-            nt=numel(ITMAPC); %there must be a better way... ask Bert!
-
-    end %ext
-    
+    nt=D3D_nt_single(fpath_res,res_type);    
 end %is
 
 end %function

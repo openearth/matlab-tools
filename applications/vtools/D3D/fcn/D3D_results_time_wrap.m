@@ -49,10 +49,16 @@ switch simdef.D3D.structure
         ismor=D3D_is(fpath_nc);
         [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
         time_idx=(1:1:numel(time_r))';
-    case 4
+    case {4,5}
         fdir_output=fullfile(sim_path,'output');
-        dire=dir(fdir_output);
-        nf=length(cell2mat(regexp({dire.name}, '[0-9]+')))-1; %already the number of the files, which start at 0
+        nf=D3D_SMT_nf(fdir_output);
+%         dire=dir(fdir_output);
+%         if simdef.D3D.structure==4
+%             nf=length(cell2mat(regexp({dire.name}, '[0-9]+')))-1; %already the number of the files, which start at 0
+%         else
+%             output_time=simdef.file.output_time;
+%             nf=numel(output_time)-1; %<nf> is not the number of files but the integer in SMTFM. Hence, number of files is <nf+1>
+%         end
         time_r=[];
         time_mor_r=[];
         time_dnum=[];
@@ -63,7 +69,13 @@ switch simdef.D3D.structure
         fpath_map={};
         time_idx=[];
         for kf=0:1:nf
-            fdir_loc=fullfile(fdir_output,num2str(kf));
+            fdir_loc=D3D_SMT_dir_output_loc(fdir_output,kf);
+%             if simdef.D3D.structure==4
+%                 fdir_loc=fullfile(fdir_output,num2str(kf));
+%             else
+%                 output_time=D3D_SMTD3D4_sort_output(fdir_output); %should be moved outside the loop
+%                 fdir_loc=fullfile(fdir_output,sprintf('%d.min',output_time(kf+1))); %<nf> is not the number of files but the integer in SMTFM. Hence, number of files is <nf+1>
+%             end
             simdef.D3D.dire_sim=fdir_loc;
             simdef=D3D_simpath(simdef);
             fpath_nc=simdef.file.(nc_type);
