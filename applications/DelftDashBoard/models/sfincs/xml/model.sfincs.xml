@@ -96,7 +96,7 @@
     <tab>
       <tabstring>Discharges</tabstring>
       <element>model.sfincs.discharges.xml</element>
-      <callback>ddb_sfincs_discharges</callback>
+      <callback>ddb_sfincs_discharge_points</callback>
     </tab>
     <tab>
       <tabstring>Observation Points</tabstring>

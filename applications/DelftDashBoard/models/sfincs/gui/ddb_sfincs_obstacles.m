@@ -120,6 +120,8 @@ setHandles(handles);
 
 refresh_thin_dams;
 
+input_changed;
+
 %%
 function change_thin_dam(h,x,y)
 
@@ -143,6 +145,8 @@ handles=ddb_sfincs_plot_thin_dams(handles,'plot','active',1);
 setHandles(handles);
 
 refresh_thin_dams;
+
+input_changed;
 
 %%
 function delete_thin_dam
@@ -174,6 +178,7 @@ if nrobs>0
     
     setHandles(handles);
     refresh_thin_dams;
+    input_changed;
 end
 
 %%
@@ -196,16 +201,23 @@ gui_updateActiveTab;
 
 %%
 function load_thin_dams
+
+ddb_sfincs_open_thd_file;
+
 handles=getHandles;
-handles.model.sfincs.domain(ad).thindams = sfincs_read_thin_dams(handles.model.sfincs.domain(ad).input.thdfile);
-handles.model.sfincs.domain(ad).nrthindams=length(handles.model.sfincs.domain(ad).thindams);
-handles.model.sfincs.domain(ad).activethindam=1;
 handles=update_names(handles);
 handles=ddb_sfincs_plot_thin_dams(handles,'plot','active',1);
+
 setHandles(handles);
 
 %%
 function save_thin_dams
-handles=getHandles;
-sfincs_write_thin_dams(handles.model.sfincs.domain(ad).input.thdfile, handles.model.sfincs.domain(ad).thindams);
 
+ddb_sfincs_save_thd_file;
+
+%%
+function input_changed
+handles=getHandles;
+if handles.auto_save
+    ddb_sfincs_save_thd_file;
+end

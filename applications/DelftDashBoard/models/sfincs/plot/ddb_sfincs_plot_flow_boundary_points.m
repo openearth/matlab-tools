@@ -41,15 +41,14 @@ switch lower(opt)
         
     case{'delete'}
         
-        % Delete old grid
-        try
-            delete(handles.model.sfincs.domain(id).flowboundarypoints.handle);
-        catch
-            p=findobj(gcf,'tag','sfincsflowboundarypoints');
-            if ~isempty(p)
-                delete(p);
-            end
+        % Delete old points
+        delete(handles.model.sfincs.domain(id).flowboundarypoints.handle);
+
+        p=findobj(gcf,'tag','sfincsflowboundarypoints');
+        if ~isempty(p)
+           delete(p);
         end
+        
         handles.model.sfincs.domain(id).flowboundarypoints.handle=[];
         
     case{'update'}

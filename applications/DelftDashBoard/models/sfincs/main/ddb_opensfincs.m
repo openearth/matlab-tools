@@ -26,15 +26,38 @@ switch lower(opt)
 
             % Change some stuff around
             if ~isempty(inp.sbgfile)
+                handles.model.sfincs.domain(ad).use_subgrid=1;                
                 inp.depfile='';
+            else    
+                handles.model.sfincs.domain(ad).use_subgrid=0;                
             end
-
+            
             handles.model.sfincs.domain(ad).input=inp;
+
+            if ~isempty(inp.manningfile)
+                handles.model.sfincs.domain(ad).roughness_type='file';
+            else
+                handles.model.sfincs.domain(ad).roughness_type='landsea';
+            end
+            
+            if ~isempty(inp.amufile) && ~isempty(inp.amvfile)
+                handles.model.sfincs.domain(ad).wind_type='rectangular';
+            elseif ~isempty(inp.spwfile)
+                handles.model.sfincs.domain(ad).wind_type='spiderweb';
+            else
+                handles.model.sfincs.domain(ad).wind_type='uniform';
+            end
+            
+            if ~isempty(inp.amprfile)
+                handles.model.sfincs.domain(ad).rain_type='rectangular';
+            elseif ~isempty(inp.spwfile)
+                handles.model.sfincs.domain(ad).rain_type='spiderweb';
+            else
+                handles.model.sfincs.domain(ad).rain_type='uniform';
+            end
             
             % Grid
             [xg,yg,xz,yz]=sfincs_make_grid(inp.x0,inp.y0,inp.dx,inp.dy,inp.mmax,inp.nmax,inp.rotation);
-            
-            % Cell centres!
             handles.model.sfincs.domain(ad).xg=xg;
             handles.model.sfincs.domain(ad).yg=yg;
             handles.model.sfincs.domain(ad).gridx=xz;
@@ -48,91 +71,27 @@ switch lower(opt)
                 handles.model.sfincs.domain(ad).mask=msk;
                 handles.model.sfincs.domain(ad).gridz=z;
             end
-                        
-%             % Coastline file
-%             if ~isempty(inp.cstfile)
-%                 handles.model.sfincs.domain(ad).coastline=sfincs_read_coastline(inp.cstfile);
-%                 handles.model.sfincs.domain(ad).coastline.active_point=1;
-%             end
-            
-            % Bnd file
-            if ~isempty(inp.bndfile)
-                handles.model.sfincs.domain(ad).flowboundarypoints=sfincs_read_boundary_points(inp.bndfile);
-                % Bzs file
-                if exist(inp.bzsfile,'file')
-                    [t,val]=sfincs_read_boundary_conditions(inp.bzsfile);
-                    handles.model.sfincs.domain(ad).flowboundaryconditions.time=inp.tref+t/86400;
-                    handles.model.sfincs.domain(ad).flowboundaryconditions.zs=val;
-                end
-            end
-
-%             % Bwv file
-%             if ~isempty(inp.bwvfile)
-%                 handles.model.sfincs.domain(ad).waveboundarypoints=sfincs_read_boundary_points(inp.bwvfile);
-%                 % Bhs file
-%                 if ~isempty(inp.bhsfile)
-%                     [t,val]=sfincs_read_boundary_conditions(inp.bhsfile);
-%                     handles.model.sfincs.domain(ad).waveboundarypoints.time=inp.tref+t/86400;
-%                     handles.model.sfincs.domain(ad).waveboundarypoints.hs=val;
-%                     [t,val]=sfincs_read_boundary_conditions(inp.btpfile);
-%                     handles.model.sfincs.domain(ad).waveboundarypoints.tp=val;
-%                     [t,val]=sfincs_read_boundary_conditions(inp.bwdfile);
-%                     handles.model.sfincs.domain(ad).waveboundarypoints.wd=val;
-%                 end
-%             end
-
-            % Obs file
-            if ~isempty(inp.obsfile)
-                points=sfincs_read_observation_points(inp.obsfile);
-                for ip=1:length(points.x)
-                    handles.model.sfincs.domain(ad).observationpoints(ip).x=points.x(ip);
-                    handles.model.sfincs.domain(ad).observationpoints(ip).y=points.y(ip);
-                    handles.model.sfincs.domain(ad).observationpoints(ip).name=points.names{ip};
-                end
-                handles.model.sfincs.domain(ad).nrobservationpoints=length(points.x);
-                handles.model.sfincs.domain(ad).activeobservationpoint=1;
-            end
-
-            % Src file
-            if ~isempty(inp.srcfile)
-                handles.model.sfincs.domain(ad).sourcepoints=sfincs_read_boundary_points(inp.srcfile);
-                [t,val]=sfincs_read_boundary_conditions(inp.disfile);
-                handles.model.sfincs.domain(ad).sourcepoints.time=inp.tref+t/86400;
-                handles.model.sfincs.domain(ad).sourcepoints.q=val;                
-            end
-
-            % Thd file
-            if ~isempty(inp.thdfile)
-                handles.model.sfincs.domain(ad).thindams = sfincs_read_thin_dams(inp.thdfile);
-                handles.model.sfincs.domain(ad).nrthindams=length(handles.model.sfincs.domain(ad).thindams);
-                handles.model.sfincs.domain(ad).activethindam=1;
-            end
-
-            if ~isempty(inp.manningfile)
-                handles.model.sfincs.domain(ad).roughness_type='file';
-            else
-                handles.model.sfincs.domain(ad).roughness_type='landsea';
-            end
-
-%             if ~isempty(inp.amufile) && ~isempty(inp.amvfile)
-%                 handles.model.sfincs.domain(ad).wind_type='rectangular';
-%             elseif ~isempty(inp.spwfile)
-%                 handles.model.sfincs.domain(ad).wind_type='spiderweb';
-%             else
-%                 handles.model.sfincs.domain(ad).wind_type='uniform';
-%             end
-%             
-%             if ~isempty(inp.amprfile)
-%                 handles.model.sfincs.domain(ad).rain_type='rectangular';
-%             elseif ~isempty(inp.spwfile)
-%                 handles.model.sfincs.domain(ad).rain_type='spiderweb';
-%             else
-%                 handles.model.sfincs.domain(ad).rain_type='uniform';
-%             end
             
             setHandles(handles);
+            
+            % Bnd and bzs file
+            ddb_sfincs_open_bnd_file;
+            ddb_sfincs_open_bzs_file;
+
+            % Obs file
+            ddb_sfincs_open_obs_file;
+
+            % Src and dis file
+            ddb_sfincs_open_src_file;
+            ddb_sfincs_open_dis_file;
+            
+            % Thd file
+            ddb_sfincs_open_thd_file;
+            
             ddb_plotsfincs('plot','active',0,'visible',1);
+
             gui_updateActiveTab;
+
         end        
     otherwise
 end

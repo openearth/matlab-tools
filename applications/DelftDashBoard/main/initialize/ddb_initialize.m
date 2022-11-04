@@ -160,9 +160,14 @@ switch lower(varargin{1})
         
         handles=getHandles;
         handles.GUIHandles.anchorhandle=[];
+        
+        handles.auto_save=0;
         setHandles(handles);
+
+        ddb_setAutoSave(0, 0);
        
     case{'all'}
+
         ddb_initializeModels;
         ddb_initializeToolboxes;
         ddb_refreshDomainMenu;

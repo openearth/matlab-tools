@@ -115,6 +115,14 @@ set(h,'cdata',cpan.icons.anchor);
 set(h,'State','off');
 handles.GUIHandles.toolBar.anchor=h;
 
+h = uitoggletool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Auto-save attribute files on change. Warning: this only works for some features in SFINCS!');
+set(h,'ClickedCallback',@ddb_setAutoSave);
+set(h,'Tag','UIAnchor');
+set(h,'cdata',c.ico.save16);
+%set(h,'text','Auto Save');
+set(h,'State','off');
+handles.GUIHandles.toolBar.autosave=h;
+
 % h = uitoggletool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Set Anchor');
 % set(h,'ClickedCallback','');
 % set(h,'Tag','UISetAnchor');

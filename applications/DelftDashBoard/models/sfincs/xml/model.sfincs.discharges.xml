@@ -2,7 +2,174 @@
 <root>
   <element>
     <style>panel</style>
-    <text>Sorry, Discharges Not Implemented Yet ...</text>
+    <text>Discharges</text>
     <position>40 10 960 160</position>
+  </element>
+  <element>
+    <style>listbox</style>
+    <position>50 20 160 130</position>
+    <tooltipstring>Select discharge point</tooltipstring>
+    <textposition>above-center</textposition>
+    <variable>handles.model.sfincs.domain.discharges.activepoint</variable>
+    <type>integer</type>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>selectdischargepointfromlist</option1>
+    <listtext>
+      <variable>handles.model.sfincs.domain.discharges.names</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>220 130 70 20</position>
+    <text>Add</text>
+    <tooltipstring>Add discharge point</tooltipstring>
+    <callback>ddb_sfincs_discharge_points</callback>
+    <option1>adddischargepoint</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>220 105 70 20</position>
+    <text>Delete</text>
+    <tooltipstring>Delete discharge point</tooltipstring>
+    <callback>ddb_sfincs_discharge_points</callback>
+    <option1>deletedischargepoint</option1>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>350 130 120 20</position>
+    <text>Name</text>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>editdischargepoint</option1>
+    <tooltipstring>Edit discharge point name</tooltipstring>
+    <variable>handles.model.sfincs.domain.discharges.point(handles.model.sfincs.domain.discharges.activepoint).name</variable>
+    <type>string</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.discharges.number</variable>
+        <value>0</value>
+        <operator>lt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>350 105 50 20</position>
+    <text>X</text>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>editdischargepoint</option1>
+    <tooltipstring>Edit discharge point x coordinate</tooltipstring>
+    <variable>handles.model.sfincs.domain.discharges.point(handles.model.sfincs.domain.discharges.activepoint).x</variable>
+    <type>real</type>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.discharges.number</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>420 105 50 20</position>
+    <text>Y</text>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>editdischargepoint</option1>
+    <variable>handles.model.sfincs.domain.discharges.point(handles.model.sfincs.domain.discharges.activepoint).y</variable>
+    <type>real</type>
+    <tooltipstring>Edit discharge point y coordinate</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.discharges.number</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>420 80 50 20</position>
+    <text>Discharge (m3/s)</text>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>editdischarge</option1>
+    <variable>handles.model.sfincs.domain.discharges.point(handles.model.sfincs.domain.discharges.activepoint).q</variable>
+    <type>real</type>
+    <tooltipstring>Edit constant discharge in m3/s</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.sfincs.domain.discharges.number</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.model.sfincs.domain.discharges.point(handles.model.sfincs.domain.discharges.activepoint).editable</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>220 45 100 20</position>
+    <tooltipstring>Open discharge points file</tooltipstring>
+    <text>Open Source File</text>
+    <variable>handles.model.sfincs.domain.input.srcfile</variable>
+    <extension>*.src</extension>
+    <showfilename>no</showfilename>
+    <selectiontext>Select discharge points file</selectiontext>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>loaddischargepoints</option1>
+  </element>
+  <element>
+    <style>pushsavefile</style>
+    <position>330 45 100 20</position>
+    <tooltipstring>Save discharge points file</tooltipstring>
+    <text>Save Source File</text>
+    <variable>handles.model.sfincs.domain.input.srcfile</variable>
+    <showfilename>no</showfilename>
+    <extension>*.src</extension>
+    <selectiontext>Select discharge points file</selectiontext>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>savedischargepoints</option1>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>220 20 100 20</position>
+    <tooltipstring>Open discharge file</tooltipstring>
+    <text>Open Discharge File</text>
+    <variable>handles.model.sfincs.domain.input.disfile</variable>
+    <extension>*.dis</extension>
+    <showfilename>no</showfilename>
+    <selectiontext>Select discharge file</selectiontext>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>loaddischarges</option1>
+  </element>
+  <element>
+    <style>pushsavefile</style>
+    <position>330 20 100 20</position>
+    <tooltipstring>Save discharge file</tooltipstring>
+    <text>Save Discharge File</text>
+    <variable>handles.model.sfincs.domain.input.disfile</variable>
+    <showfilename>no</showfilename>
+    <extension>*.dis</extension>
+    <selectiontext>Select discharge file</selectiontext>
+    <onchange>ddb_sfincs_discharge_points</onchange>
+    <option1>savedischarges</option1>
   </element>
 </root>

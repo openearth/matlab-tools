@@ -1,118 +1,16 @@
 function ddb_savesfincs(opt)
 
-handles=getHandles;
-
-inp=handles.model.sfincs.domain(ad).input;
-
-% Do some checks here
-if handles.model.sfincs.domain(ad).flowboundarypoints.length==0
-    inp.bndfile='';
-    inp.bzsfile='';
-end
-
-% if handles.model.sfincs.domain(ad).waveboundarypoints.length==0
-%     inp.bwvfile='';
-%     inp.bhsfile='';
-%     inp.btpfile='';
-%     inp.bwdfile='';
-% end
-
-if handles.model.sfincs.domain(ad).sourcepoints.length==0
-    inp.srcfile='';
-    inp.disfile='';
-end
-
-if handles.model.sfincs.domain(ad).nrobservationpoints==0
-    inp.obsfile='';
-end
-
-% if handles.model.sfincs.domain(ad).coastline.length==0
-%     inp.cstfile='';
-% end
-
-switch handles.model.sfincs.domain(ad).roughness_type
-    case{'uniform'}
-        inp.manning_sea=[];
-        inp.manning_land=[];
-        inp.rghfile='';
-        inp.rgh_lev_land=[];
-    case{'landsea'}
-        inp.manning=[];
-        inp.rghfile='';
-    case{'file'}
-        inp.manning=[];
-        inp.manning_sea=[];
-        inp.manning_land=[];
-        inp.rgh_lev_land=[];
-end
-
-switch handles.model.sfincs.domain(ad).restart_option
-    case{'none'}
-        inp.trstout=[];
-        inp.dtrstout=[];
-    case{'fixed'}
-        inp.dtrstout=[];
-    case{'interval'}
-        inp.trstout=[];
-end
-
-inp.bzifile='';
-
 switch lower(opt)
     case{'save'}
         
-        ddb_sfincs_save_input(handles);
+        ddb_sfincs_save_input;
                 
     case{'saveall'}
-        
-        ddb_sfincs_save_input(handles);
-%        sfincs_write_input('sfincs.inp',inp);
-        
+
         % Attribute files
+        ddb_sfincs_save_attribute_files;
         
-        % Bnd file
-        if handles.model.sfincs.domain(ad).flowboundarypoints.length>0
-            sfincs_write_boundary_points(inp.bndfile,handles.model.sfincs.domain(ad).flowboundarypoints);
-            t=handles.model.sfincs.domain(ad).flowboundarypoints.time;
-            v=handles.model.sfincs.domain(ad).flowboundarypoints.zs;
-            sfincs_save_boundary_conditions(inp.bzsfile,t,v,inp.tref);
-        end
-        %             % Bzs file
-        %             [t,val]=sfincs_read_boundary_conditions(inp.bzsfile);
-        %             handles.model.sfincs.domain(ad).flowboundarypoints=sfincs_read_boundary_points(inp.bndfile);
-        
-%         % Bwv file
-%         if handles.model.sfincs.domain(ad).waveboundarypoints.length>0
-%             sfincs_write_boundary_points(inp.bwvfile,handles.model.sfincs.domain(ad).waveboundarypoints);
-%             t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
-%             v=handles.model.sfincs.domain(ad).waveboundarypoints.hs;
-%             sfincs_save_boundary_conditions(inp.bhsfile,t,v,inp.tref);
-%             t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
-%             v=handles.model.sfincs.domain(ad).waveboundarypoints.tp;
-%             sfincs_save_boundary_conditions(inp.btpfile,t,v,inp.tref);
-%             t=handles.model.sfincs.domain(ad).waveboundarypoints.time;
-%             v=handles.model.sfincs.domain(ad).waveboundarypoints.wd;
-%             sfincs_save_boundary_conditions(inp.bwdfile,t,v,inp.tref);
-%         end
-%         
-%         % Coastline file
-%         if handles.model.sfincs.domain(ad).coastline.length>0
-%             sfincs_write_coastline(inp.cstfile,handles.model.sfincs.domain(ad).coastline);
-%         end
-
-        % Obs file
-        if handles.model.sfincs.domain(ad).nrobservationpoints>0
-            sfincs_write_obsfile(inp.obsfile,handles.model.sfincs.domain(ad).obspoints);
-        end
-
-        % Src file
-        if handles.model.sfincs.domain(ad).sourcepoints.length>0
-            sfincs_write_obsfile(inp.srcfile,handles.model.sfincs.domain(ad).sourcepoints);
-            t=handles.model.sfincs.domain(ad).sourcepoints.time;
-            v=handles.model.sfincs.domain(ad).sourcepoints.q;
-            sfincs_save_boundary_conditions(inp.disfile,t,v,inp.tref);
-        end
+        % sfincs.inp
+        ddb_sfincs_save_input;
         
 end
-
-%setHandles(handles);

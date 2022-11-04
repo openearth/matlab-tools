@@ -103,6 +103,8 @@ update_observation_point_names;
 
 refresh_observation_points;
 
+input_changed;
+
 %%
 function delete_observation_point
 
@@ -130,6 +132,7 @@ if nrobs>0
     setHandles(handles);
     update_observation_point_names;
     refresh_observation_points;
+    input_changed;       
 end
 
 %%
@@ -139,6 +142,7 @@ handles=getHandles;
 handles=ddb_sfincs_plot_observation_points(handles,'plot','active',1);
 setHandles(handles);
 refresh_observation_points;
+input_changed;
 
 %%
 function select_observation_point_from_list
@@ -151,26 +155,19 @@ refresh_observation_points;
 %%
 function load_observation_points
 
+ddb_sfincs_open_obs_file;
+update_observation_point_names;
+
 handles=getHandles;
-filename=handles.model.sfincs.domain(ad).input.obsfile;
-points=sfincs_read_observation_points(filename);
-for ip=1:length(points.x)
-    handles.model.sfincs.domain(ad).observationpoints(ip).x=points.x(ip);
-    handles.model.sfincs.domain(ad).observationpoints(ip).y=points.y(ip);
-    handles.model.sfincs.domain(ad).observationpoints(ip).name=points.names{ip};
-end
-handles.model.sfincs.domain(ad).nrobservationpoints=length(points.x);
-handles.model.sfincs.domain(ad).activeobservationpoint=1;
 handles=ddb_sfincs_plot_observation_points(handles,'plot','active',1);
 setHandles(handles);
-update_observation_point_names;
+
 refresh_observation_points;
 
 %%
 function save_observation_points
-handles=getHandles;
-filename=handles.model.sfincs.domain(ad).input.obsfile;
-sfincs_write_observation_points(filename,handles.model.sfincs.domain(ad).observationpoints,'cstype',handles.screenParameters.coordinateSystem.type);
+
+ddb_sfincs_save_obs_file;
 
 %%
 function refresh_observation_points
@@ -185,3 +182,9 @@ for ip=1:handles.model.sfincs.domain(ad).nrobservationpoints
 end
 setHandles(handles);
 
+%%
+function input_changed
+handles=getHandles;
+if handles.auto_save
+    ddb_sfincs_save_obs_file;
+end

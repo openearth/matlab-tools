@@ -122,12 +122,12 @@ handles.model.sfincs.domain(id).waveboundaryconditions.tp=0;
 handles.model.sfincs.domain(id).waveboundaryconditions.wd=0;
 
 % Sources
-handles.model.sfincs.domain(id).sourcepoints.handle=[];
-handles.model.sfincs.domain(id).sourcepoints.x=[];
-handles.model.sfincs.domain(id).sourcepoints.y=[];
-handles.model.sfincs.domain(id).sourcepoints.length=0;
-handles.model.sfincs.domain(id).sourcepoints.time=0;
-handles.model.sfincs.domain(id).sourcepoints.q=0;
+handles.model.sfincs.domain(id).discharges.handle=[];
+handles.model.sfincs.domain(id).discharges.time=0;
+handles.model.sfincs.domain(id).discharges.point=[];
+handles.model.sfincs.domain(id).discharges.number=0;
+handles.model.sfincs.domain(id).discharges.names={''};
+handles.model.sfincs.domain(id).discharges.activepoint=1;
 
 % Observation points
 handles.model.sfincs.domain(id).nrobservationpoints=0;
