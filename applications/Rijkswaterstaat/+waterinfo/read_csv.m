@@ -15,7 +15,7 @@ function [OUT] = read_csv(fname)
 %
 %   NOTES:
 %   Script can deal with multiple variables in csv file, these are added as
-%   GROOTHEID_OMSCHRJVING_1, GROOTHEID_OMSCHRJVING_2, GROOTHEID_OMSCHRJVING_n
+%   GROOTHEID_OMSCHRJVING{1,1}, GROOTHEID_OMSCHRJVING{2,1}, GROOTHEID_OMSCHRJVING{n,1} 
 %   the values as
 %   NUMERIEKEWAARDE_1, NUMERIEKEWAARDE_2, NUMERIEKEWAARDE_n
 %   and the corresponding date entries as
@@ -30,6 +30,11 @@ function [OUT] = read_csv(fname)
 %   BEMONSTERINGSHOOGTE
 %   the datenum and value fields are appended as
 %   NUMERIEKEWAARDE_n{x,:}
+%
+%   Function can deal with multiple sampling devices, the devices are added to
+%   MEETAPPARAAT_OMSCHRIJVING and MEETAPPARAAT_CODE
+%   the datenum and value fields are appended as
+%   NUMERIEKEWAARDE_n{:,:,x}
 %
 %   csv files downloaded from https://waterinfo.rws.nl/.
 %
@@ -186,8 +191,12 @@ for i = 1:length(flds)
             idh         = contains(flds,'BEMONSTERINGSHOOGTE');
             heights     = unique(data{idh},'stable');
             nheights    = length(heights);
+            % Separate entries for different devices
+            idd         = contains(flds,'MEETAPPARAAT_OMSCHRIJVING');
+            devices     = unique(data{idd},'stable');
+            ndevices    = length(devices);
             
-            
+   
             for j = 1:nvars % Loop through variables
                 fvar = sprintf('%s_%d',f,j);
                 fdat = sprintf('datenum_%d',j);
@@ -199,19 +208,26 @@ for i = 1:length(flds)
                     slocs = strcmp(data{ids},s);
                     
                     
-                    for m = 1:nheights
+                    for m = 1:nheights % Loop through sampling heights
                         h = heights{m};
                         hlocs = strcmp(data{idh},h);                      
-                        entries = vlocs & slocs & hlocs;
-
-                        % Date entries
-                        OUT.(fvar){m,k} = str2double(data{i}(entries));
-                        OUT.(fdat){m,k} = datenum([year(data{id1}(entries)),...
-                            month(data{id1}(entries)),...
-                            day(data{id1}(entries)),...
-                            hour(data{id2}(entries)),...
-                            minute(data{id2}(entries)),...
-                            second(data{id2}(entries))]);
+                        
+                        for n = 1:ndevices
+                            d = devices{n};
+                            dlocs = strcmp(data{idd},d);
+                            
+                            % Combine logicals
+                            entries = vlocs & slocs & hlocs & dlocs;
+                            
+                            % Date entries
+                            OUT.(fvar){m,k,n} = str2double(data{i}(entries));
+                            OUT.(fdat){m,k,n} = datenum([year(data{id1}(entries)),...
+                                month(data{id1}(entries)),...
+                                day(data{id1}(entries)),...
+                                hour(data{id2}(entries)),...
+                                minute(data{id2}(entries)),...
+                                second(data{id2}(entries))]);
+                        end
                     end
                     
                 end
@@ -280,6 +296,10 @@ fprintf('\t%d variable(s) was/were found and processed:\n',nvars);
 fprintf('\t- %s\n',OUT.GROOTHEID_OMSCHRIJVING{:})
 fprintf('\t%d sampling height(s) was/were found and processed:\n',nheights);
 fprintf('\t- %s\n',OUT.BEMONSTERINGSHOOGTE{:})
+if ndevices > 1
+    fprintf('\t%d devices were found and processed:\n',ndevices);
+    fprintf('\t- %s\n',OUT.MEETAPPARAAT_OMSCHRIJVING{:})
+end
 
 fprintf('\n');
 
