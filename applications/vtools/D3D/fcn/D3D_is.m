@@ -60,5 +60,13 @@ elseif strcmp(ext,'.dat')
     if isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'map-infsed-serie'})) && isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'his-infsed-serie'}))
         ismor=0;
     end
-
+elseif strcmp(ext,'.grd')
+    ismor=NaN;
+    is1d=0;
+    str_network1d='';
+    issus=NaN; %add!
+else
+    error('unknown format %s',ext)
 end
+
+end %function

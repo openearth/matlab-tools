@@ -149,8 +149,18 @@ for kvar=1:nvar %variable
             in_p.fact=1;
     end
     
-    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str);
-    
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar);
+
+    %string to save
+    if ~isempty(var_idx{kvar})
+        nvar=numel(var_idx{kvar});
+        str_var_idx=repmat('%02d_',1,nvar);
+        str_var_idx(end)='';
+        str_var_idx=sprintf(str_var_idx,var_idx{kvar});
+    else
+        str_var_idx='';
+    end
+
     %time 1 for difference
     kt=1;
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
@@ -180,7 +190,7 @@ for kvar=1:nvar %variable
             in_p.vec_x=data_uv.data.vel_x;
             in_p.vec_y=data_uv.data.vel_y;
         end
-        
+                
         for kclim=1:nclim
             for kxlim=1:nxlim
 
@@ -200,10 +210,11 @@ for kvar=1:nvar %variable
                     
                     %2D plot
                     if flg_loc.do_2D
-                        fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),tag_ref);
+
+                        fdir_fig_var=fullfile(fdir_fig,var_str,str_var_idx,tag_ref);
                         mkdir_check(fdir_fig_var,NaN,1,0);
 
-                        fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
+                        fname_noext=fig_name(fdir_fig_var,tag,runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,str_var_idx);
                         fpath_file{kt,kclim,kdiff,kxlim,1}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                         in_p.fname=fname_noext;
@@ -214,10 +225,10 @@ for kvar=1:nvar %variable
                     
                     %3D plot
                     if flg_loc.do_3D
-                        fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),'3D',tag_ref);
+                        fdir_fig_var=fullfile(fdir_fig,var_str,str_var_idx,'3D',tag_ref);
                         mkdir_check(fdir_fig_var,NaN,1,0);
                         
-                        fname_noext=fig_name(fdir_fig_var,sprintf('%s_3D',tag),runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,num2str(var_idx{kvar}));
+                        fname_noext=fig_name(fdir_fig_var,sprintf('%s_3D',tag),runid,time_dnum(kt),kdiff,kclim,var_str,kxlim,str_var_idx);
                         fpath_file{kt,kclim,kdiff,kxlim,2}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                         Zcor=cen2cor_2D(in_p.gridInfo.Xcen,in_p.gridInfo.Ycen,in_p.gridInfo.Xcor,in_p.gridInfo.Ycor,data);
@@ -257,10 +268,10 @@ for kvar=1:nvar %variable
 
                         [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,'clims','clims_diff_t',var_str);
 
-                        fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx{kvar}),'rkm',datestr(time_dnum(kt),'yyyymmddHHMMSS'),tag_ref);
+                        fdir_fig_var=fullfile(fdir_fig,var_str,str_var_idx,'rkm',datestr(time_dnum(kt),'yyyymmddHHMMSS'),tag_ref);
                         mkdir_check(fdir_fig_var,NaN,1,0);
 
-                        fname_noext=fig_name(fdir_fig_var,tag,sprintf('%s_rkm',runid),time_dnum(kt),kdiff,kclim,var_str,krkm,num2str(var_idx{kvar}));
+                        fname_noext=fig_name(fdir_fig_var,tag,sprintf('%s_rkm',runid),time_dnum(kt),kdiff,kclim,var_str,krkm,str_var_idx);
                         fpath_file{kt,kclim,kdiff,kxlim,1}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                         in_p.fname=fname_noext;

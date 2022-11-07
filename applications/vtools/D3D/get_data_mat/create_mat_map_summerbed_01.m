@@ -42,6 +42,11 @@ if any(flg_loc.do_val_B)
     flg_loc.var=cat(1,flg_loc.var,'ba');
 end
 
+if isfield(flg_loc,'var_idx')==0
+    flg_loc.var_idx=cell(1,numel(flg_loc.var));
+end
+var_idx=flg_loc.var_idx;
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -77,6 +82,10 @@ nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
 nsb=numel(flg_loc.sb_pol);
 
+%% GRID
+
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+
 %% LOOP
 
 ktc=0;
@@ -93,7 +102,7 @@ for ksb=1:nsb
     sb_def=gdm_read_summerbed(fid_log,fdir_mat,fpath_sb_pol,fpath_map);
 
     for krkmv=1:nrkmv %rkm polygons
-
+        
         rkm_name=flg_loc.rkm_name{krkmv};
         rkm_cen=flg_loc.rkm{krkmv}';
         rkm_cen_br=flg_loc.rkm_br{krkmv,1};
@@ -109,12 +118,14 @@ for ksb=1:nsb
             for kvar=1:nvar %variable
                 [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
                 
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol);
+                layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar); 
+                
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
                         
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
                 %% read data
-                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt));      
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'layer',layer,'var_idx',var_idx{kvar});      
 
                 %% calc
                 data_var=gdm_order_dimensions(fid_log,data_var,'structure',simdef.D3D.structure);

@@ -32,11 +32,17 @@ if any(flg_loc.do_val_B_mor & flg_loc.do_val_B)
     error('either full width or morphodynamic width')
 end
 
+if isfield(flg_loc,'var_idx')==0
+    flg_loc.var_idx=cell(1,numel(flg_loc.var));
+end
+var_idx=flg_loc.var_idx;
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
+fpath_map=simdef.file.map;
 
 %% MEASUREMENTS
         
@@ -57,6 +63,10 @@ kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
 nsb=numel(flg_loc.sb_pol);
+
+%% GRID
+
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 %% LOOP
 
@@ -84,6 +94,8 @@ for ksb=1:nsb
             for kvar=1:nvar %variable
                 [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
                 
+                layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar); 
+                
                 if flg_loc.do_val_B_mor(kvar)
                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',sprintf('%s_B_mor',var_str_save),'sb',sb_pol);
                 elseif flg_loc.do_val_B(kvar)
@@ -94,7 +106,8 @@ for ksb=1:nsb
                 
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
-                fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_read,'sb',sb_pol);
+                fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_read,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                
                 data_raw=load(fpath_mat_load,'data');
                 val=data_raw.data.val_mean;
 

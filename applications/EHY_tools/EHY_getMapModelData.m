@@ -63,7 +63,7 @@ OPT.sgft0             = 0;  % delwaq segment function (sgf) - datenum or datestr
 OPT.sgfkmax           = []; % delwaq segment function (sgf) - number of layers (k_max)
 OPT.nAverageAnglePli  = 2;  % number of points of the pli-file to average in computing the angle for projecting vectorial variables
 OPT.tol_t             = 0;  % tolerance to match time in datenum 
-OPT.bed_layers        = 0;  % bed layers
+OPT.bed_layers        = 0;  % bed layers (0=all)
 
 % return output at specified reference level
 OPT.z                 = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
@@ -306,6 +306,8 @@ if ~exist('Data','var')
                     Data.val_max = vs_let(trim,'map-series',{time_ind},'TAUMAX'   ,{n_ind,m_ind},'quiet');
                     Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
                     
+%                 case {'LYRFRAC'}
+%                     Data.val=vs_let(trim,'map-sed-series',{time_ind},'LYRFRAC',{n_ind,m_ind,OPT.bed_layers},'quiet'); %fractions at layers [-] (t,y,x,l,f)
                 otherwise % Apply generic approach
                     grp = char(vs_find(vs_use(inputFile,'quiet'), OPT.varName));
                     if ~isempty(strfind(grp,'-const'))

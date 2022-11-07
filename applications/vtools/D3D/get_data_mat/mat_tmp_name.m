@@ -109,7 +109,11 @@ end
 
 %var_idx
 if ~isempty(var_idx)
-    str_add=sprintf('%s_var_idx_%02d',str_add,var_idx);
+    nvar=numel(var_idx);
+    str_w=repmat('%02d_',1,nvar);
+    str_w(end)='';
+    str_w2=strcat('%s_var_idx_',str_w);
+    str_add=sprintf(str_w2,str_add,var_idx);
 end
 
 %branch

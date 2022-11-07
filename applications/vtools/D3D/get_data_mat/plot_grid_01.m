@@ -104,14 +104,14 @@ for kvar=1:nvar %variable
         in_p.fname=fname_noext;
 
         switch simdef.D3D.structure
-            case 1
-                error('do. I think that reading with EHY should pass to the case of FM')
-            case 2
+            case {1,2,4,5}
                 if is1d 
                     fig_grid_1D_01(in_p);
                 else
                     fig_grid_2D_01(in_p);
                 end
+            otherwise
+                error('Do for this type of model %d',simdef.D3D.structure)
         end
 
     end %kxlim

@@ -30,6 +30,11 @@ if ~isempty(simdef_ref)
 %     flg_loc.tag_fig=sprintf('%s_%s',flg_loc.tag,'diff'); %difference with simulations, we have to loop to do one by one or all together?
 end
 
+if isfield(flg_loc,'var_idx')==0
+    flg_loc.var_idx=cell(1,numel(flg_loc.var));
+end
+var_idx=flg_loc.var_idx;
+
 %%
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
@@ -116,6 +121,8 @@ else
     fpath_mat_time_ref=strrep(fpath_mat,'.mat','_tim.mat'); 
 end
 
+fpath_map=simdef(1).file.map; %assuming same number of layers for all simulations!
+
 % mkdir_check(fdir_fig); %we create it in the loop
 
 %% LOAD
@@ -134,7 +141,12 @@ nrkmv=numel(flg_loc.rkm_name);
 nsb=numel(flg_loc.sb_pol);
 ndiff=gdm_ndiff(flg_loc);
 
-%figures
+%% GRID
+
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+
+%% FIGURE
+
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
@@ -176,6 +188,8 @@ for ksb=1:nsb
             
             [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
             
+            layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar); 
+            
             if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
                 lab_str=flg_loc.unit{kvar};
             else
@@ -194,7 +208,7 @@ for ksb=1:nsb
             clear data_0_loc; %clear is not nice but we cannot preallocate because we do not know the fieldnames in advance and they maybe different between variables    
             for kS=1:nS    
                 fdir_mat=simdef(kS).file.mat.dir;
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
                 load(fpath_mat_tmp,'data');            
                 data_0_loc(kS)=data;
             end
@@ -210,7 +224,7 @@ for ksb=1:nsb
             %reference
             if do_ref
                 fdir_mat=simdef_ref.file.mat.dir;
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
                 load(fpath_mat_tmp,'data');            
                 data_0_ref=data;
             end
@@ -228,7 +242,7 @@ for ksb=1:nsb
                 clear data_loc; 
                 for kS=1:nS
                     fdir_mat=simdef(kS).file.mat.dir;
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
                     load(fpath_mat_tmp,'data');
                     data_load(kS)=data;
                 end
@@ -237,7 +251,7 @@ for ksb=1:nsb
                 %reference
                 if do_ref
                     fdir_mat=simdef_ref.file.mat.dir;
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol);
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
                     load(fpath_mat_tmp,'data');            
                     data_ref=data;
                 end

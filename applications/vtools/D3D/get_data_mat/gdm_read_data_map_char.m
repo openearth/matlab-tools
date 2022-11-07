@@ -21,6 +21,7 @@ parin=inputParser;
 addOptional(parin,'tim',[]);
 addOptional(parin,'layer',[]);
 addOptional(parin,'tol_t',5/60/24);
+addOptional(parin,'bed_layers',[]);
 % addOptional(parin,'pli','');
 
 parse(parin,varargin{:});
@@ -28,6 +29,7 @@ parse(parin,varargin{:});
 time_dnum=parin.Results.tim;
 layer=parin.Results.layer;
 tol_t=parin.Results.tol_t;
+bed_layers=parin.Results.bed_layers;
 % pli=parin.Results.pli;
 
 %% CALC
@@ -43,7 +45,7 @@ else
 %         end
 %     else
 %         if isempty(pli)
-            data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'tol_t',tol_t);
+            data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'tol_t',tol_t);%,'bed_layers',bed_layers);
 %         else
 %             data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'pliFile',pli);
 %         end

@@ -12,15 +12,19 @@
 %
 %
 
-function layer=gdm_layer(flg_loc,no_layers,var_str)
+function layer=gdm_layer(flg_loc,no_layers,var_str,kvar)
         
 if isfield(flg_loc,'layer')==0
     layer=[];
 else
-    if isnan(flg_loc.layer)
-        layer=no_layers;
+    if iscell(flg_loc.layer)
+        layer=flg_loc.layer{kvar};
     else
-        layer=flg_loc.layer;
+        if isnan(flg_loc.layer)
+            layer=no_layers;
+        else
+            layer=flg_loc.layer;
+        end
     end
 end
 

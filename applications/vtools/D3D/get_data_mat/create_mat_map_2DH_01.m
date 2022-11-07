@@ -67,6 +67,8 @@ end
 
 nvar=numel(flg_loc.var);
 
+%% GRID
+
 gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 %% OVERWRITE
@@ -88,7 +90,7 @@ for kt=kt_v
     for kvar=1:nvar %variable
         [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
         
-        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read);
+        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar); 
 
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');

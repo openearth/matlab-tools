@@ -144,7 +144,12 @@ if ischar(var_id)
             if is1d
                 var_id_out='mesh1d_lyrfrac';
             else
-                var_id_out='mesh2d_lyrfrac';
+                switch structure
+                    case {1,5}
+                        var_id_out='LYRFRAC';
+                    case {2,4}
+                        var_id_out='mesh2d_lyrfrac';
+                end
             end
             var_str_read='lyrfrac';
             var_str_save=var_str_read;

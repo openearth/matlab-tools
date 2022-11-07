@@ -24,4 +24,6 @@ for kdd=2:ndd
     gridInfo.Ycor=D3D_SMTD3D4_concatenate(gridInfo.Ycor,gridInfo_aux.Ycor,0);
     gridInfo.Xcen=D3D_SMTD3D4_concatenate(gridInfo.Xcen,gridInfo_aux.Xcen,1);
     gridInfo.Ycen=D3D_SMTD3D4_concatenate(gridInfo.Ycen,gridInfo_aux.Ycen,1);
+    
+    gridInfo.grid=cat(1,gridInfo.grid,gridInfo_aux.grid);
 end

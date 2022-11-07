@@ -25,6 +25,7 @@ addOptional(parin,'do_load',1);
 addOptional(parin,'tol_t',5/60/24);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
+addOptional(parin,'bed_layers',[]);
 
 parse(parin,varargin{:});
 
@@ -35,6 +36,7 @@ do_load=parin.Results.do_load;
 tol_t=parin.Results.tol_t;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
+bed_layers=parin.Results.bed_layers;
 
 %% CALC
 
@@ -55,7 +57,7 @@ else
     messageOut(NaN,sprintf('Reading raw data for variable: %s',var_str));
     if isempty(idx_branch) %2D
         if ischar(varname)
-            data=gdm_read_data_map_char(fpath_map,varname,'tim',time_dnum,'tol_t',tol_t);
+            data=gdm_read_data_map_char(fpath_map,varname,'tim',time_dnum,'tol_t',tol_t);%,'bed_layers',bed_layers);
         else
             data=gdm_read_data_map_num(fpath_map,varname,'tim',time_dnum);
         end

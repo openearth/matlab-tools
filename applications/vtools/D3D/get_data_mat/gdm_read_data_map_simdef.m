@@ -26,6 +26,7 @@ addOptional(parin,'do_load',1);
 addOptional(parin,'tol',1.5e-7);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
+addOptional(parin,'bed_layers',[]);
 
 parse(parin,varargin{:});
 
@@ -37,6 +38,7 @@ do_load=parin.Results.do_load;
 tol=parin.Results.tol;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
+bed_layers=parin.Results.bed_layers;
 
 %% 
 
@@ -86,8 +88,10 @@ switch varname
         data_var=gdm_read_data_map_q(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);      
     case 'ba' %no time
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); 
+    case {'mesh1s_lyrfrac','mesh2d_lyrfrac','LYRFRAC'}
+        data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     otherwise %name directly available in output
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'bed_layers',bed_layers); 
 end
 
 end %function

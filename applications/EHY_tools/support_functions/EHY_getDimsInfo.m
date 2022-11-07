@@ -98,9 +98,15 @@ switch lower(modelType)
             end
         end
         
-        % sediment fractions
+        % sediment fractions and layers
         if ismember('NAMSED',{d3d.ElmDef.Name})
             NAMSED = squeeze(vs_let(d3d,grp,'NAMSED','quiet'));
+            % sediment layer
+            if numel(Size)>3 %I cannot find a total number of bed layers in the output to double check
+                dims(end+1).name = 'bed_layers';
+            end
+            
+            % sediment fractions
             if size(NAMSED,2) > 1 && Size(end) == size(NAMSED,1)
                 dims(end+1).name = 'sedimentFraction';
             end
@@ -205,7 +211,7 @@ if nargout > 1
     dimsInd.constit = find(ismember({dims(:).name},'constit'));
     dimsInd.sedfrac = find(ismember({dims(:).name},{'sedimentFraction','nSedTot'}));
     dimsInd.turbulence = find(ismember({dims(:).name},'turbulence'));
-    dimsInd.bed_layers = find(ismember({dims(:).name},{'nBedLayers'})); 
+    dimsInd.bed_layers = find(ismember({dims(:).name},{'nBedLayers','bed_layers'})); 
 end
 
 %% Data
@@ -297,6 +303,11 @@ if nargout > 2
     %% Get bed layers information
     if ~isempty(dimsInd.bed_layers)
         if OPT.bed_layers==0 %all
+            %In FM it is filled, but not in D3D4. This is not the best, but not sure what else can I do.
+            if isempty(dims(dimsInd.bed_layers).size)
+                idx=find(strcmp({d3d.ElmDef.Name},'LYRFRAC'));
+                dims(dimsInd.bed_layers).size=d3d.ElmDef(idx).Size(3); 
+            end
             OPT.bed_layers=1:1:dims(dimsInd.bed_layers).size;
         end
         dims(dimsInd.bed_layers).index    = OPT.bed_layers;
