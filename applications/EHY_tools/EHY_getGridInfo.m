@@ -1026,8 +1026,8 @@ switch modelType
                     E.Ycen = nc_varget(inputFile,'y');
                 end
                 if ismember('XYcor',wantedOutput)
-                    E.Xcor = nc_varget(inputFile,'edge_x');
-                    E.Ycor = nc_varget(inputFile,'edge_y');
+                    E.Xcor = nc_varget(inputFile,'corner_x');
+                    E.Ycor = nc_varget(inputFile,'corner_y');
                 end
                 if ismember('dimensions',wantedOutput)
                     ind = strmatch('m',{infonc.Dimensions.Name},'exact');
