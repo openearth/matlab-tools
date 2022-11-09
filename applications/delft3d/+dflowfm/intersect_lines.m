@@ -2,7 +2,7 @@ function C = intersect_lines(A,B)
 % intersect line segments A and B, where A and B may be vectors, and
 %   compute weight factors for interpolation
 %
-% C = intersect_lines(A,B)
+% C = dflowfm.intersect_lines(A,B)
 %
 % Similar to DFLOW-FM's CROSSinbox
 %
