@@ -48,7 +48,7 @@ if exist(fpath_mat_time,'file')==2
     
     nt=numel(time_dnum);
     
-    if flg_loc.tim_just_load %debug flag to go fast
+    if isfield(flg_loc,'tim_just_load') %debug flag to go fast
         return
     end
     
