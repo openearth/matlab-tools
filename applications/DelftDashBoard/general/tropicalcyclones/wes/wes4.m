@@ -726,9 +726,6 @@ for it=1:length(tc.track)
             obs.quadrant=tc.track(it).quadrant;
             wrad=tc.radius_velocity;
             [xn,vtcor,phia]=fit_wind_field_holland2010(tc.track(it).vmax,tc.track(it).rmax,tc.track(it).pc,vt,phit,pn,spw.phi_spiral,lat,tc.track(it).dpcdt,obs,wrad);
-            if xn > 1
-                help=1
-            end
             ux=vtcor*cos((phit+phia)*pi/180);
             uy=vtcor*sin((phit+phia)*pi/180);
         end
