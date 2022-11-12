@@ -94,13 +94,6 @@ for id=id1:id2
             
         case{'update'}
             
-%             if act
-%                 col=[1 1 0];
-%             else
-%                 col=[0.8 0.8 0.8];
-%             end
-%             handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id,'visible',vis,'color',col);
-
             col=[0.8 0.8 0.8];
             handles=ddb_sfincs_plot_grid_outline(handles,option,'domain',id,'visible',vis,'color',col);
             
@@ -149,11 +142,6 @@ for id=id1:id2
             handles=ddb_sfincs_plot_discharge_points(handles,option,'domain',id,'visible',0);            
             handles=ddb_sfincs_plot_thin_dams(handles,option,'domain',id,'visible',0);            
 
-%             if act && vis
-%                 ivis=1;
-%             else
-%                 ivis=0;
-%             end
             if ~isempty(handles.model.sfincs.domain(id).buq)
                 handles=ddb_sfincs_plot_buq_blocks(handles,option,'domain',id,'visible',1);
             end
