@@ -532,7 +532,9 @@ try
     generate_tides;
     
 catch
+    try
     close(wb);
+    end
     ddb_giveWarning('error','Something went wrong while generating bca file ...');
 end
 
