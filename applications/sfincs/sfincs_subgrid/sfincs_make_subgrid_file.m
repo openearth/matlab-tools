@@ -27,6 +27,7 @@ inp=[];
 bathymetry_database=[];
 manning_deep_value=0.024;
 manning_deep_level=-99999;
+zzmin=-99999;
 
 if strcmpi(cs.type,'cartesian')
     cs.type='projected';
@@ -52,6 +53,8 @@ for ii=1:length(varargin)
                 manning_deep_value=varargin{ii+1};
             case{'manning_deep_level'}
                 manning_deep_level=varargin{ii+1};
+            case{'zmin'}
+                zzmin=varargin{ii+1};
         end
     end
 end
@@ -289,6 +292,12 @@ for ii=1:ni
             zz=bathy.z;
             zg=interp2(xx,yy,zz,xg0,yg0);
             
+        end
+        
+        % Set bed level to minimum required height
+        if zzmin>-99998.0
+            iok=find(~isnan(zg));
+            zg(iok)=max(zg(iok), zzmin);                
         end
 
 %         % Check if we find NaNs
