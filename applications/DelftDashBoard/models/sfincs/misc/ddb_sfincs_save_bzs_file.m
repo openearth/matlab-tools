@@ -10,8 +10,8 @@ if handles.model.sfincs.domain(ad).flowboundarypoints.length>0
         setHandles(handles);
     end
     filename=handles.model.sfincs.domain(ad).input.bzsfile;
-    t=handles.model.sfincs.domain(ad).flowboundaryconditions.time;
+    t=handles.model.sfincs.domain(ad).flowboundarypoints.time;
     t=86400*(t-handles.model.sfincs.domain(ad).input.tref);
-    v=handles.model.sfincs.domain(ad).flowboundaryconditions.zs;
+    v=handles.model.sfincs.domain(ad).flowboundarypoints.zs;
     sfincs_write_boundary_conditions_fast(filename,t,v);
 end
