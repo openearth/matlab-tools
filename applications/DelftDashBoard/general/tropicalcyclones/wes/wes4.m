@@ -552,6 +552,19 @@ for it=1:length(tc.track)
 
 end    
 
+% Compute dpcdt
+if length(tc.track)>2
+    for it2=2:length(tc.track)-1
+        tc.track(it2).dpcdt=(tc.track(it2+1).pc-tc.track(it2-1).pc)/(24*(tc.track(it2+1).time-tc.track(it2-1).time));
+    end
+    tc.track(1).dpcdt=tc.track(2).dpcdt;
+    tc.track(end).dpcdt=tc.track(end-1).dpcdt;
+else
+    tc.track(1).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
+    tc.track(2).dpcdt=(tc.track(2).pc-tc.track(1).pc)/(24*(tc.track(2).time-tc.track(1).time));
+end
+
+
 %% 8) Compute relative Vmax
 function tc=wes_compute_relative_wind_speeds(tc,spw)
 
@@ -713,6 +726,9 @@ for it=1:length(tc.track)
             obs.quadrant=tc.track(it).quadrant;
             wrad=tc.radius_velocity;
             [xn,vtcor,phia]=fit_wind_field_holland2010(tc.track(it).vmax,tc.track(it).rmax,tc.track(it).pc,vt,phit,pn,spw.phi_spiral,lat,tc.track(it).dpcdt,obs,wrad);
+            if xn > 1
+                help=1
+            end
             ux=vtcor*cos((phit+phia)*pi/180);
             uy=vtcor*sin((phit+phia)*pi/180);
         end
