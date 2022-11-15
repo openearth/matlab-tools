@@ -29,6 +29,9 @@
 % grd.cor.dep=-dep_int(1:end-1,1:end-1);
 % 
 % D3D_io_input('write',fpath_dep_out,grd,'location','cor');
+%
+%e.g. write BC
+%
 
 function varargout=D3D_io_input(what_do,fname,varargin)
 

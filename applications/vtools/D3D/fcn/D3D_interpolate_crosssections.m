@@ -65,6 +65,7 @@ mesh1d_node_offset=ncread(path_map_ori,'mesh1d_node_offset');
 mesh1d_node_branch=ncread(path_map_ori,'mesh1d_node_branch');
 mesh1d_flowelem_bl=ncread(path_map_ori,'mesh1d_flowelem_bl');
 mesh1d_edge_nodes=ncread(path_map_ori,'mesh1d_edge_nodes');
+network_edge_length=ncread(path_map_ori,'network_edge_length');
 
 [~,~,str_network1d]=D3D_is(path_map_ori);
 network1d_branch_id=ncread(path_map_ori,sprintf('%s_branch_id',str_network1d))';
@@ -179,33 +180,35 @@ for kn=1:nn
        
 end
 
-%% add CS at bifurcations
+%% add CS at beginning and end of branches
 
-us_u=unique(double(mesh1d_edge_nodes(1,:))); %upstream nodes unique
-us_count=hist(mesh1d_edge_nodes(1,:),us_u)'; %time a node is upstream node
-bol_bif=us_count>1;
-idx_bif=us_u(bol_bif);
-nbif=sum(bol_bif);
-
-for kbif=1:nbif
-    us_node_v=find(mesh1d_edge_nodes(1,:)==idx_bif(kbif));
-    nds=numel(us_node_v);
-    for kds=1:nds
-        idx_ds=mesh1d_edge_nodes(2,us_node_v(kds));
-        cs_loc_ds=cs_loc_upd(idx_ds);
-        cs_def_ds=cs_def_upd(idx_ds);
-
-        ch_l=0;
-        br_l=cs_loc_ds.branchId;
+kn=nn; %last one
+for kb=1:nb
+    
+    
+    br_l=strtrim(network1d_branch_id(kb,:)); %branch name
+    
+    %loop upstream and downstream
+    for kud=1:2
+        if kud==1 %upstream
+            ch_l=0;
+        elseif kud==2 %downstream
+            ch_l=network_edge_length(kb);
+        end
+        
+        %create location
+        cs_id_l=cs_name(br_l,ch_l);
+        idx_loc=find_str_in_cell({cs_loc_upd.id},{cs_id_l});
+        if ~isnan(idx_loc); continue; end %if it already exists we do not add it
+        
+        %data to add
         [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
     
-        %add
+        %update
         kn=kn+1;
-
-        cs_id_l=cs_name(br_l,ch_l);
-
+        
         %definition
-        cs_def_upd(kn)=cs_def_ds; %copy original
+        cs_def_upd(kn)=cs_def_ref; %copy original
         cs_def_upd(kn).id=cs_id_l; %modify name    
         cs_def_upd(kn).flowWidths=flowWidths_i; 
         cs_def_upd(kn).totalWidths=totalWidths_i;
@@ -225,9 +228,16 @@ for kbif=1:nbif
         cs_loc_upd(kn).chainage=ch_l;
         cs_loc_upd(kn).shift=0;
         cs_loc_upd(kn).definitionId=cs_id_l;
+    
+        
+    end %kud
 
-    end
-end %kbif
+end
+
+% %1=upstream
+% [cs_def_upd,cs_loc_upd]=add_CS_at_bifurcations(1,cs_def_upd,cs_loc_upd,mesh1d_edge_nodes,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width,network_edge_length,mesh1d_node_branch);
+% %2=downstream
+% [cs_def_upd,cs_loc_upd]=add_CS_at_bifurcations(2,cs_def_upd,cs_loc_upd,mesh1d_edge_nodes,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width,network_edge_length,mesh1d_node_branch);
 
 %% write
 
@@ -287,5 +297,75 @@ end %funtion
 function cs_id_l=cs_name(br_l,ch_l)
 
 cs_id_l=sprintf('br_%s_ch_%7.7f',br_l,ch_l);
+
+end %function
+
+%% 
+
+%All naming in this function is made for searching an upstream node. Then the possibility of searching for a downstream node was added. 
+
+function [cs_def_upd,cs_loc_upd]=add_CS_at_bifurcations(idx_ud,cs_def_upd,cs_loc_upd,mesh1d_edge_nodes,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width,network_edge_length,mesh1d_node_branch)
+
+if idx_ud==1 %upstream
+    idx_du=2;
+elseif idx_ud==2 %downstream
+    idx_du=1;
+end
+
+kn=numel(cs_loc_upd);
+
+us_u=unique(double(mesh1d_edge_nodes(idx_ud,:))); %upstream nodes unique
+us_count=hist(mesh1d_edge_nodes(idx_ud,:),us_u)'; %time a node is upstream node
+bol_bif=us_count>1;
+idx_bif=us_u(bol_bif);
+nbif=sum(bol_bif);
+
+for kbif=1:nbif
+    us_node_v=find(mesh1d_edge_nodes(idx_ud,:)==idx_bif(kbif));
+    nds=numel(us_node_v);
+    for kds=1:nds
+        idx_ds=mesh1d_edge_nodes(idx_du,us_node_v(kds));
+        cs_loc_ds=cs_loc_upd(idx_ds);
+        cs_def_ds=cs_def_upd(idx_ds);
+
+        if idx_ud==1 %upstream
+            ch_l=0;
+        elseif idx_ud==2 %downstream
+            idx_br=mesh1d_node_branch(idx_ds)+1;
+            ch_l=network_edge_length(idx_br);
+        end
+        
+        br_l=cs_loc_ds.branchId;
+        [lev_i,relative_levels,flowWidths_i,totalWidths_i,mainWidth_i,fp1Width_i,fp2Width_i]=interpolate_at_chain(ch_l,br_l,nelev_cs,network1d_branch_id_c,F_min,F_max,F_flowWidths,F_totalWidths,F_mainWidth,F_fp1Width,F_fp2Width);
+    
+        %add
+        kn=kn+1;
+
+        cs_id_l=cs_name(br_l,ch_l);
+
+        %definition
+        cs_def_upd(kn)=cs_def_ds; %copy original
+        cs_def_upd(kn).id=cs_id_l; %modify name    
+        cs_def_upd(kn).flowWidths=flowWidths_i; 
+        cs_def_upd(kn).totalWidths=totalWidths_i;
+        cs_def_upd(kn).mainWidth=mainWidth_i;
+        cs_def_upd(kn).fp1Width=fp1Width_i;
+        cs_def_upd(kn).fp2Width=fp2Width_i;
+        cs_def_upd(kn).numLevels=nelev_cs;
+
+        %modify levels
+        %the two lines below should be the same. We need to extrapolate in this case
+%         cs_def_upd(kn).levels=mesh1d_flowelem_bl(kn)+relative_levels; 
+        cs_def_upd(kn).levels=lev_i; 
+
+        %location
+        cs_loc_upd(kn).id=cs_id_l;
+        cs_loc_upd(kn).branchId=br_l;
+        cs_loc_upd(kn).chainage=ch_l;
+        cs_loc_upd(kn).shift=0;
+        cs_loc_upd(kn).definitionId=cs_id_l;
+
+    end
+end %kbif
 
 end %function

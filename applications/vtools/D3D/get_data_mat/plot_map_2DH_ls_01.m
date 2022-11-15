@@ -184,9 +184,10 @@ for kpli=1:npli
                     end
                     
                     if size(data.val,3)>1
-                        if kdiff==2
-                            error('not ready')
-                        end
+                          %why?  
+%                         if kdiff==2
+%                             error('not ready')
+%                         end
                         in_p.data_ls.sal=data_val_p;
                         in_p.data_ls.grid=data.gridInfo;
                         in_p.unit=var_str_read;

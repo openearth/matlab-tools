@@ -22,8 +22,9 @@ addOptional(parin,'tim',[]);
 % addOptional(parin,'layer',[]);
 addOptional(parin,'tol_t',5/60/24);
 addOptional(parin,'pli','');
-% addOptional(parin,'dchar','');
+% addOptional(parin,'dchar',''); %why did I comment this out?
 addOptional(parin,'overwrite',false);
+addOptional(parin,'branch','');
 
 parse(parin,varargin{:});
 
@@ -31,6 +32,7 @@ time_dnum=parin.Results.tim;
 tol_t=parin.Results.tol_t;
 pli=parin.Results.pli;
 overwrite=parin.Results.overwrite;
+branch=parin.Results.branch;
 % dchar=parin.Results.dchar;
 
 [~,pliname,~]=fileparts(pli);
@@ -39,7 +41,7 @@ pliname=strrep(pliname,' ','_');
 %%
 
 var_str=varname;
-fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'pli',pliname);
+fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'pli',pliname,'branch',branch);
 if exist(fpath_sal,'file')==2 ~=overwrite
     messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_sal));
     load(fpath_sal,'data')

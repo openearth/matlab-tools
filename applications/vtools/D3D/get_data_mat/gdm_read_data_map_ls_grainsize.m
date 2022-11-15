@@ -12,16 +12,24 @@
 %
 %
 
-function data=gdm_read_data_map_ls_grainsize(fpath_map,simdef,varargin)
+function data=gdm_read_data_map_ls_grainsize(fdir_mat,fpath_map,varname,simdef,varargin)
         
 fpath_sed=simdef.file.sed;
 if simdef.D3D.structure==4
-    fpath_sed=strrep(fpath_sed,[filesep,'0',filesep],filesep); %the path is relative to the mdu in the <source> directory
+    %the path is relative to the mdu in the <source> directory
+%     fpath_sed=strrep(fpath_sed,[filesep,'0',filesep],filesep); 
+    %in the new SMT, the path is correct. Maybe here we should check whether is it old or new SMT, or do try catch
+end
+switch simdef.D3D.structure
+    case {1,5}
+        varname_lyrfrac='LYRFRAC';
+    case {2,4}
+        varname_lyrfrac='mesh2d_lyrfrac';
 end
 dchar=D3D_read_sed(fpath_sed);
-varargin={varargin{:},'dchar',dchar};
+% varargin={varargin{:},'dchar',dchar}; %why was I passing it?
 
-data=gdm_read_data_map_ls(fpath_map,'mesh2d_lyrfrac',varargin{:});
+data=gdm_read_data_map_ls(fdir_mat,fpath_map,varname_lyrfrac,varargin{:});
 
 Fa=data.val;
 switch varname

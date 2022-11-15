@@ -38,6 +38,11 @@ if isfield(flg_loc,'tim_tol')==0
     flg_loc.tim_tol=10;
 end
 
+if isfield(flg_loc,'tim_just_load')==0
+    flg_loc.tim_just_load=0;
+end
+
+
 %% CALC
 
 do_load=0;
@@ -48,7 +53,7 @@ if exist(fpath_mat_time,'file')==2
     
     nt=numel(time_dnum);
     
-    if isfield(flg_loc,'tim_just_load') %debug flag to go fast
+    if isfield(flg_loc,'tim_just_load') && flg_loc.tim_just_load %debug flag to go fast
         return
     end
     

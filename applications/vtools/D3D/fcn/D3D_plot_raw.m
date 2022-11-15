@@ -106,7 +106,7 @@ messageOut(NaN,'start preprocessing')
 % ns=numel(stations);
 
 %flags map
-if any([flg.map_ucmaga,flg.map_Patm,flg.map_etab,flg.map_etaw,flg.map_numlimdt,flg.map_sal])
+if any([flg.map_ucmaga,flg.map_Patm,flg.map_etab,flg.map_etaw,flg.map_numlimdt,flg.map_sal,flg.map_waterdepth])
     flg.map=1;
 else
     flg.map=0;
@@ -125,13 +125,13 @@ end
 % simdef.D3D.dire_sim=fullfile(paths.dir_computations,runid);
 simdef.D3D.dire_sim=fdir_sim;
 simdef=D3D_simpath(simdef);
-path_his=simdef.file.his;
 if isfield(simdef.file,'map')
     path_map=simdef.file.map;
 end
 
 
 if flg.his
+    path_his=simdef.file.his;
     [~,~,time_dnum_his_0,time_dtime_his_0]=D3D_results_time(path_his,0,[1,1]);
     [~,~,time_dnum_his_f,time_dtime_his_f]=D3D_results_time(path_his,0,NaN);
     if isnan(t0)
@@ -197,11 +197,15 @@ gridInfo = EHY_getGridInfo(path_map,{'face_nodes_xy'},'mergePartitions',1);
 
     %% vars
 if flg.map_ucmaga
-    try
-Data_ucmaga=EHY_getMapModelData(path_map,'varName','mesh2d_ucmaga','t0',t0,'tend',tend,'mergePartitions',1);
-    catch
+%     try
+% Data_ucmaga=EHY_getMapModelData(path_map,'varName','mesh2d_ucmaga','t0',t0,'tend',tend,'mergePartitions',1);
+%     catch
 Data_ucmaga=EHY_getMapModelData(path_map,'varName','mesh2d_ucmag','t0',t0,'tend',tend,'mergePartitions',1);
-    end
+zw=EHY_getMapModelData(path_map,'varName','mesh2d_interface_z','t0',t0,'tend',tend,'mergePartitions',1);
+%     end
+% Data_ucx=EHY_getMapModelData(path_map,'varName','mesh2d_ucxa','t0',t0,'tend',tend,'mergePartitions',1);
+% Data_ucy=EHY_getMapModelData(path_map,'varName','mesh2d_ucya','t0',t0,'tend',tend,'mergePartitions',1);
+% Data_ucmaga.val=hypot(Data_ucx.vel_x,Data_ucx.vel_y);
 [max_ucmaga_val,max_ucmaga_idx]=max(Data_ucmaga.val);
 max_ucmaga_x=Data_face_x.val(max_ucmaga_idx);
 max_ucmaga_y=Data_face_y.val(max_ucmaga_idx);

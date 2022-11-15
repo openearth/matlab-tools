@@ -40,7 +40,7 @@ idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
 bed_layers=parin.Results.bed_layers;
 
-%% 
+%% CALC
 
 fpath_map=gdm_fpathmap(simdef,sim_idx);
 
