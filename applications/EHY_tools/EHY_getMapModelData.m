@@ -298,7 +298,16 @@ if ~exist('Data','var')
                     Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
                     
                 case 'DP_BEDLYR' % sediment thickness
-                    Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet');
+%                     Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet'); %V: why is there a <2> here? Why only the second interface? Use <OPT.bed_layers> for this particular case. 
+
+                    %<DP_BEDLYR> has 1 value more than the number of bed layers, as it is the elevation of all interface. Hence, 
+                    %if you want all the layers, I add one more.
+                    if dims(dimsInd.bed_layers).size==dims(dimsInd.bed_layers).sizeOut
+                        bed_layers_ind=cat(2,dims(dimsInd.bed_layers).indexOut,dims(dimsInd.bed_layers).indexOut(end)+1);
+                    else
+                        bed_layers_ind=dims(dimsInd.bed_layers).indexOut;
+                    end
+                    Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,bed_layers_ind},'quiet');
                     
                 case {'TAUKSI','TAUETA','TAUMAX'} % bed shear
                     Data.val_x   = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');

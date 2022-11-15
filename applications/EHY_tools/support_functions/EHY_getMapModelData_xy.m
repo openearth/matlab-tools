@@ -64,11 +64,7 @@ end
 %% get underlayers elevation
 
 if ~isempty(dimsInd.bed_layers) && dims(dimsInd.bed_layers).sizeOut > 1
-    if strcmp(Data.modelType,'dfm')
-        [Data.Zint,no_bed_layers]=EHY_getMapModelData_construct_Zint_bed(inputFile,Data.modelType,OPT);
-    else
-        error('sorry, not yet implemented.')
-    end
+    [Data.Zint,no_bed_layers]=EHY_getMapModelData_construct_Zint_bed(inputFile,Data.modelType,OPT);   
 else
     no_bed_layers = 1;
 end
@@ -140,7 +136,12 @@ if isfield(Data,'face_nodes')
     end
 elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
     if isfield(Data,'val')
-        val = arbcross(arb,{'FACE' permute(Data.val,[2 3 4 1])});
+        switch numel(size(Data.val))
+            case 4
+                val = arbcross(arb,{'FACE' permute(Data.val,[2 3 4 1])});
+            case 5
+                val = arbcross(arb,{'FACE' permute(Data.val,[2 3 4 5 1])});
+        end
     elseif isfield(Data,'vel_x') || isfield(Data,'val_x')
         %COMMENT #1
         %when reading, for instance, <sbuu>, the variable is in

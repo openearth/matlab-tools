@@ -102,7 +102,9 @@ switch lower(modelType)
         if ismember('NAMSED',{d3d.ElmDef.Name})
             NAMSED = squeeze(vs_let(d3d,grp,'NAMSED','quiet'));
             % sediment layer
-            if numel(Size)>3 %I cannot find a total number of bed layers in the output to double check
+            %I cannot find a total number of bed layers in the output to double check
+            %if numel(Size)>3 
+            if any(strcmp(OPT.varName,{'LYRFRAC','DP_BEDLYR','MSED'})) %this is far from ideal
                 dims(end+1).name = 'bed_layers';
             end
             
