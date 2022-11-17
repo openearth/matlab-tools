@@ -94,6 +94,9 @@ end
 if isfield(in_p,'cmap')==0
     in_p.cmap=[]; %default
 end
+if isfield(in_p,'str_idx')==0
+    in_p.str_idx=1; 
+end
 
 v2struct(in_p)
 
@@ -197,7 +200,7 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,fact,lan);
+[lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,fact,lan,'frac',str_idx);
 if isempty(cmap) %default
     if is_background && ~is_diff
         cbar(kr,kc).label=str_back;

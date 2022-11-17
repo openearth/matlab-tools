@@ -15,11 +15,13 @@
 function layer=gdm_layer_needed(layer,var_str)
 
 switch var_str
-    case {'sal','lyrfrac'} %needed
+    case {'sal','lyrfrac','thlyr'} %needed
 %         if isempty(layer)
         if ischar(layer)
             error('A layer number is needed')
         end
+    case 'La'
+        layer=1;
     otherwise %not needed
 %         layer=[];
         layer='';

@@ -76,9 +76,9 @@ function D3D_list_of_variables
 %	8   'Fak'   = volume fraction content in the active layer (Fak) [-]
 %	40          = volume fraction content per layer (including active layer) [-]
 
-%   14          = active layer thickness [m]
+%   14  'La'    = active layer thickness [m]
 %   27  'Ltot'  = total sediment thickness (summation of all substrate layers, including active layer) (Ltot) [m]
-%	39          = sediment thickness per layer (including active layer) [m]
+%	39  'thlyr' = sediment thickness of each layer (including active layer) [m] (use <layer> to specify which one to get).
 
 %   19          = bed load transport for size fraction kf at nodes [m^3/s]
 

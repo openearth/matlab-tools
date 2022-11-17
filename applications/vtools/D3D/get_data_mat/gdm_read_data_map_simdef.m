@@ -82,6 +82,13 @@ switch varname
         data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol,'idx_branch',idx_branch,'branch',branch);
     case 'Ltot'
         data_var=gdm_read_data_map_Ltot(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);       
+    case 'thlyr'
+        switch simdef.D3D.structure
+            case {2,4} %THLYR is available in output directly, call default case
+                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); 
+            case {1,5}
+                data_var=gdm_read_data_map_thlyr(fdir_mat,fpath_map,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); 
+        end
     case 'ba_mor'
         data_var=gdm_read_data_map_ba_mor(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);       
     case 'qsp'
@@ -91,7 +98,7 @@ switch varname
     case {'mesh1s_lyrfrac','mesh2d_lyrfrac','LYRFRAC'}
         data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     otherwise %name directly available in output
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'bed_layers',bed_layers); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); 
 end
 
 end %function

@@ -132,11 +132,16 @@ if ischar(var_id)
             end
             var_str_read='czs';
             var_str_save=var_str_read;
-        case {'mesh2d_thlyr','mesh1d_thlyr','thlyr'}
+        case {'mesh2d_thlyr','mesh1d_thlyr','thlyr','La'}
             if is1d
                 var_id_out='mesh1d_thlyr';
             else
-                var_id_out='mesh2d_thlyr';
+                switch structure
+                    case {1,5}
+                        var_id_out='thlyr';
+                    case {2,4}
+                        var_id_out='mesh2d_thlyr';
+                end
             end
             var_str_read='thlyr';
             var_str_save=var_str_read;

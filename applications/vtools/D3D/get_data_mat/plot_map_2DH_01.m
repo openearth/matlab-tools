@@ -150,7 +150,8 @@ for kvar=1:nvar %variable
     end
     
     layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar);
-
+    in_p.str_idx=layer; %maybe it is <var_idx> in other plots. 
+    
     %string to save
     if ~isempty(var_idx{kvar})
         nvar=numel(var_idx{kvar});

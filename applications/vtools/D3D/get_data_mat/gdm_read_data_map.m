@@ -25,7 +25,7 @@ addOptional(parin,'do_load',1);
 addOptional(parin,'tol_t',5/60/24);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
-addOptional(parin,'bed_layers',[]);
+% addOptional(parin,'bed_layers',[]); We use <layer> for flow and sediment
 
 parse(parin,varargin{:});
 
@@ -36,7 +36,7 @@ do_load=parin.Results.do_load;
 tol_t=parin.Results.tol_t;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
-bed_layers=parin.Results.bed_layers;
+% bed_layers=parin.Results.bed_layers;
 
 %% CALC
 
@@ -73,7 +73,18 @@ end
 
 if ~isempty(layer)
     %maybe better to search for [layer] in the ones coming from EHY?
-   data.val=data.val(:,:,layer);
+    idx_f=D3D_search_index_in_dimension(data,'layer');
+    if isnan(idx_f)
+        idx_f=D3D_search_index_in_dimension(data,'bed_layers');
+    end
+    if isnan(idx_f)
+        error('do not know where to get the layers index');
+    end
+    data.val=submatrix(data.val,idx_f,layer);
 end
+% if ~isempty(bed_layers)
+%     %maybe better to search for [layer] in the ones coming from EHY?
+%    data.val=data.val(:,:,layer);
+% end
 
 end %function
