@@ -413,6 +413,9 @@ if fig_plot_vel
     end
     han.q=quiver(x_m,y_m,u_m,v_m,'parent',han.sfig(kr,kc),'color','w');
 end
+if fig_plot_La
+    stairs(data_ls.grid.Xcor,[data_ls.grid.Ycor(1,:,2),NaN],'parent',han.sfig(kr,kc),'color','m','linewidth',1);
+end
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index

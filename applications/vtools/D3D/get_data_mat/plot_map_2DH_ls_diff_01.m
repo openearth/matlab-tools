@@ -110,7 +110,7 @@ for kt=kt_v %time
             data_ref=load(fpath_mat_tmp,'data');
             
             if size(data_ref.data.val,3)>1
-                messageOut(fid,sprintf('Cannot do differences of 2DV plot for variable %s',var_str));
+                messageOut(fid_log,sprintf('Cannot do differences of 2DV plot for variable %s',var_str));
                 continue
             end
             
