@@ -64,6 +64,9 @@ end
 if isfield(in_p,'fig_plot_vel')==0
     in_p.fig_plot_vel=0;
 end
+if isfield(in_p,'facecolor')==0
+    in_p.facecolor='flat';
+end
 
 v2struct(in_p)
 
@@ -392,7 +395,8 @@ if fig_flip_section
     val=fliplr(val);
 end
 % EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','continuous shades'); 
-EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','interp'); 
+% EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor','interp'); 
+EHY_plotMapModelData(data_ls.grid,val,'t',1,'facecolor',facecolor); 
 if fig_plot_vel
     nl=size(data_ls.Zcen,3);
     % nx=numel(data_ls.Scen);

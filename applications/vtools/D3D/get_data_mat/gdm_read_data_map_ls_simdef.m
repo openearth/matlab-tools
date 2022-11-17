@@ -118,6 +118,7 @@ switch varname
     case {'lyrfrac'}
         switch simdef.D3D.structure
             case {1,5}
+                error('do')
                 data=gdm_read_data_map_ls(fdir_mat,fpath_map,'SBUU',varargin{:}); %<sbuu> already reads both
 %                 data_v=gdm_read_data_map_ls(fdir_mat,fpath_map,'SBVV',varargin{:});
 %                 data=data_u;
