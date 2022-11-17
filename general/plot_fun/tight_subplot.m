@@ -52,9 +52,7 @@ for ih = 1:Nh
     for ix = 1:Nw
         ii = ii+1;
         ha(ii) = axes('Units','normalized', ...
-            'Position',[px py axw axh], ...
-            'XTickLabel','', ...
-            'YTickLabel','');
+            'Position',[px py axw axh]);
         px = px+axw+gap(2);
     end
     py = py-axh-gap(1);
