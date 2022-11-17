@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<root>
+  <name>sf_bay</name>
+  <x0>565110</x0>
+  <y0>4119998</y0>
+  <lenx>60000</lenx>
+  <leny>115000</leny>
+  <rotation>30</rotation>
+  <csname>WGS 84 / UTM zone 10N</csname>
+  <cstype>projected</cstype>
+  <bathymetry>
+    <name>sfbay</name>
+    <zmin>-10000</zmin>
+    <zmax>10000</zmax>
+    <vertical_offset>0</vertical_offset>
+  </bathymetry>
+  <bathymetry>
+    <name>usgs_ned_coastal</name>
+    <zmin>0.01</zmin>
+    <zmax>10000</zmax>
+    <vertical_offset>0</vertical_offset>
+  </bathymetry>
+  <bathymetry>
+    <name>ngdc_crm</name>
+    <zmin>-10000</zmin>
+    <zmax>10000</zmax>
+    <vertical_offset>0</vertical_offset>
+  </bathymetry>
+  <bathymetry>
+    <name>gebco19</name>
+    <zmin>-10000</zmin>
+    <zmax>10000</zmax>
+    <vertical_offset>0</vertical_offset>
+  </bathymetry>
+</root>
