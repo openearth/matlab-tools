@@ -44,6 +44,9 @@ if isfield(flg_loc,'do_xvallt')==0
     flg_loc.do_xvallt=0;
 end
 
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');
+
 %% PATHS
 
 nS=numel(simdef);
@@ -81,7 +84,7 @@ end
 nt=size(time_dnum,1);
 nvar=numel(flg_loc.var);
 nbr=numel(flg_loc.branch);
-nclim=size(flg_loc.ylims,1);
+
 ndiff=gdm_ndiff(flg_loc);
 
 %figures
@@ -121,6 +124,8 @@ for kbr=1:nbr %branches
 %         fpath_file=cell(nt,1); %movie
 
     for kvar=1:nvar %variable
+        
+        nclim=size(flg_loc.ylims_var{kvar},1);
         
         [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
 
@@ -162,7 +167,7 @@ for kbr=1:nbr %branches
             
             in_p.tim=time_dnum_v(kt);
             in_p.lab_str=var_str_save;
-            in_p.xlims=flg_loc.xlims;
+            in_p.xlims=flg_loc.xlims_var{kvar};
 
             for kdiff=1:ndiff
 

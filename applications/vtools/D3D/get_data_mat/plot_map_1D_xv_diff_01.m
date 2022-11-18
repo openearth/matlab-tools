@@ -54,6 +54,10 @@ if isfield(flg_loc,'do_xvallt')==0
     flg_loc.do_xvallt=0;
 end
 
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_s_var');
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_st_var');
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');
+
 %% PATHS
 
 nS=numel(simdef);
@@ -119,7 +123,6 @@ end
 nt=size(time_dnum,1);
 nvar=numel(flg_loc.var);
 nbr=numel(flg_loc.branch);
-nylim=size(flg_loc.ylims_diff_s,1); 
 
 %2DO call function that computes this
 if flg_loc.do_diff==0
@@ -145,12 +148,12 @@ end
 %% LOOP
 for kbr=1:nbr %branches
     
-    branch=flg_loc.branch{kbr,1};
-    branch_name=flg_loc.branch_name{kbr,1};
+    branch=flg_loc.branch{kbr};
+    branch_name=flg_loc.branch_name{kbr};
     
     gridInfo_br_ref=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat_ref,gridInfo_ref,branch,branch_name); %we assume they all have the same grid...
     gridInfo_br=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat,gridInfo,branch,branch_name); %we assume they all have the same grid...
-    nx=numel(gridInfo.offset);    
+    nx=numel(gridInfo_br.offset);    
     
     if do_rkm
         in_p.s=gridInfo_br.rkm;
@@ -166,6 +169,8 @@ for kbr=1:nbr %branches
 %         fpath_file=cell(nt,1); %movie
 
     for kvar=1:nvar %variable
+        
+        nylim=size(flg_loc.ylims_diff_s_var{kvar},1); 
         
         [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
 
@@ -214,7 +219,7 @@ for kbr=1:nbr %branches
             
             in_p.tim=time_dnum_v(kt);
             in_p.lab_str=var_str_save;
-            in_p.xlims=flg_loc.xlims;
+            in_p.xlims=flg_loc.xlims_var{kvar};
 
             for kdiff=1:ndiff
 
@@ -245,7 +250,7 @@ for kbr=1:nbr %branches
 %                     in_p.is_diff=1; %it is difference between simulations!
 
                     if kdiff==1
-                        in_p.ylims=flg_loc.ylims_diff_s(kylim,:);
+                        in_p.ylims=flg_loc.ylims_diff_s_var{kvar}(kylim,:);
                         val_diff=NaN(nx,nS);
                         for kS=1:nS
                             val_diff(:,kS)=D3D_diff_val(data_T(:,kS,kt),data_T_ref(:,1,kt),gridInfo_br,gridInfo_br_ref);
@@ -257,7 +262,7 @@ for kbr=1:nbr %branches
                         in_p.val0=data_0(:,1);
                         in_p.val0=val_diff0;
                     elseif kdiff==2
-                        in_p.ylims=flg_loc.ylims_diff_st(kylim,:);
+                        in_p.ylims=flg_loc.ylims_diff_st_var{kvar}(kylim,:);
                         val_diff=NaN(nx,nS);
                         for kS=1:nS
                             val_diff(:,kS)=D3D_diff_val(data_T(:,kS,kt)-data_0(:,kS),data_T_ref(:,1,kt)-data_0_ref,gridInfo_br,gridInfo_br_ref);
