@@ -188,7 +188,7 @@ for ksb=1:nsb
             
             [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
             
-            layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar); 
+            layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
             
             if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
                 lab_str=flg_loc.unit{kvar};

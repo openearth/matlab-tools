@@ -118,7 +118,7 @@ for ksb=1:nsb
             for kvar=1:nvar %variable
                 [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
                 
-                layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar); 
+                layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
                 
                 fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
                         

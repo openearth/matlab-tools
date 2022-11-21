@@ -20,8 +20,6 @@ switch var_str
         if ischar(layer)
             error('A layer number is needed')
         end
-    case 'La'
-        layer=1;
     otherwise %not needed
 %         layer=[];
         layer='';

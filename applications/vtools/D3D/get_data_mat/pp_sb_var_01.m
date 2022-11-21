@@ -94,7 +94,7 @@ for ksb=1:nsb
             for kvar=1:nvar %variable
                 [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
                 
-                layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar); 
+                layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
                 
                 if flg_loc.do_val_B_mor(kvar)
                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',sprintf('%s_B_mor',var_str_save),'sb',sb_pol);

@@ -125,7 +125,7 @@ for kvar=1:nvar %variable
     
     fpath_file=cell(nt,nclim);
     
-    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str);
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar});
     
     %time 1 for diff
     kt=1;

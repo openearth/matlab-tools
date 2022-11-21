@@ -149,7 +149,7 @@ for kvar=1:nvar %variable
             in_p.fact=1;
     end
     
-    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar);
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar});
     in_p.str_idx=layer; %maybe it is <var_idx> in other plots. 
     
     %string to save
