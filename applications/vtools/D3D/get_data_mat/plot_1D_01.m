@@ -559,6 +559,7 @@ for kfn=1:nfn
             
     %                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
             fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+            mkdir_check(fdir_fig_loc,NaN,1,0);
             fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim);
 
             in_p.fname=fname_noext;

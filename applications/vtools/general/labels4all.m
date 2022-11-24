@@ -686,6 +686,29 @@ switch lower(variable)
                 str_var='capa activa';
          end
          un_type='L';
+    case 'thlyr'
+        switch frac
+            case 1
+                 switch lan
+                    case 'en'
+                        str_var='active layer thickness';
+                    case 'nl'
+                        str_var='active laag';
+                    case 'es'
+                        str_var='capa activa';
+                 end
+                 un_type='L';
+            otherwise
+                 switch lan
+                    case 'en'
+                        str_var=sprintf('thickness of layer %d',frac);
+                    case 'nl'
+                        str_var=sprintf('dikte van laag %d',frac);
+                    case 'es'
+                        str_var=sprintf('grueso de la capa %d',frac);
+                 end
+                 un_type='L';
+        end
     case 'fak'
          switch lan
             case 'en'
