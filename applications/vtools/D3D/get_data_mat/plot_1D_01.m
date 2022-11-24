@@ -229,6 +229,18 @@ for ksb=1:nsb
                 data_0_ref=data;
             end
             
+            %allocate
+            if flg_loc.do_xvt
+                nx=numel(data_0(1).(fn_data{1}));  
+                nfn=numel(fn_data);
+                for kfn=1:nfn
+                    statis=fn_data{kfn};
+                    
+                    data_xvt.(statis)=NaN(nx,nS,nt);
+                    data_xvt0.(statis)=NaN(nx,nS,nt);
+                end
+            end
+            
             ktc=0;
             for kt=kt_v %time
                 ktc=ktc+1;
@@ -276,13 +288,6 @@ for ksb=1:nsb
                             in_p.is_std=true;
                         otherwise
                             in_p.is_std=false;
-                    end
-                    
-                    %allocate
-                    if flg_loc.do_xvt
-                        nx=numel(data_sim.(statis));  
-%                         data_xvt.(statis)=NaN(nx,nS,nt); %we cannot preallocate here! time is outside
-                        data_xvt0.(statis)=NaN(nx,nS);
                     end
                     
                     for kdiff=1:ndiff
@@ -397,17 +402,17 @@ for ksb=1:nsb
                                     in_p.fname=fname_noext;
 
                                     fig_1D_01(in_p);
-                                end
-                            end
-                            
-                        end
-                        
-                        %save for xvt
-                        if flg_loc.do_xvt
-                            data_xvt.(statis)(:,:,kt)=[data_sim.(statis)];
-                            data_xvt0.(statis)(:,:,kt)=[data_0.(statis)];
-                        end
+                                end %nS
+                            end %do_ref
+                        end %kylim
                     end %kref
+                    
+                    %save for xvt
+                    if flg_loc.do_xvt
+                        data_xvt.(statis)(:,:,kt)=[data_sim.(statis)];
+                        data_xvt0.(statis)(:,:,kt)=[data_0.(statis)];
+                    end
+
                     messageOut(fid_log,sprintf('Done plotting figure %s rkm poly %4.2f %% time %4.2f %% variable %4.2f %% statistic %4.2f %%',tag,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100,kfn/nfn*100));
                 end %kfn
 
