@@ -474,7 +474,7 @@ switch lower(variable)
                 str_var='Diferencia';
          end
          un_type='-';
-     case {'q','qsp_b'}
+     case {'q','qsp_b','lateral_discharge'}
          switch lan
             case 'en'
                 str_var='discharge';
