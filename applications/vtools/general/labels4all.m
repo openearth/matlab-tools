@@ -709,6 +709,7 @@ switch lower(variable)
                  end
                  un_type='L';
         end
+    case 
     case 'fak'
          switch lan
             case 'en'
