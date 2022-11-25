@@ -11,6 +11,9 @@
 %$HeadURL$
 %
 %
+%E.G. of file that is read:
+% 
+% 1 ; p:\11208033-002-maas-mor-2d\04_models\40m_v2\lixhe_keizersveer\r006\figures\grid_01\01\rkm\grid_01_r006_rkm_grid_xlim_01.png ; ./01_grid
 
 function copy_files_in_folder(fpath_dir,fpath_in)
 

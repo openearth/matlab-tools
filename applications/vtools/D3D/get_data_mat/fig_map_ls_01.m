@@ -64,8 +64,23 @@ end
 if isfield(in_p,'fig_plot_vel')==0
     in_p.fig_plot_vel=0;
 end
+if isfield(in_p,'fig_plot_La')==0
+    in_p.fig_plot_La=0;
+end
 if isfield(in_p,'facecolor')==0
     in_p.facecolor='flat';
+end
+if isfield(in_p,'clims')==0
+    in_p.clims=[NaN,NaN];
+end
+if isfield(in_p,'xlims')==0
+    in_p.xlims=[NaN,NaN];
+end
+if isfield(in_p,'ylims')==0
+    in_p.ylims=[NaN,NaN];
+end
+if isfield(in_p,'frac')==0
+    in_p.frac=NaN;
 end
 
 v2struct(in_p)
@@ -162,7 +177,7 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label=labels4all(unit,1,lan);
+cbar(kr,kc).label=labels4all(unit,1,lan,'frac',frac);
 
 % brewermap('demo')
 % cmap=turbo(100);

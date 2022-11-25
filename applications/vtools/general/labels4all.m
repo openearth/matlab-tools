@@ -194,7 +194,7 @@ switch lower(variable)
                 str_var='distancia a la desembocadura';
         end
         un_type='L'; 
-    case {'etaw','waterlevel','wathte','mesh2d_s1','wl'}
+    case {'etaw','waterlevel','wathte','mesh2d_s1','wl','waterlevelbnd'}
         switch lan
             case 'en'
                 str_var='water level';
@@ -474,7 +474,7 @@ switch lower(variable)
                 str_var='Diferencia';
          end
          un_type='-';
-     case {'q','qsp_b','lateral_discharge'}
+     case {'q','qsp_b','lateral_discharge','dischargebnd'}
          switch lan
             case 'en'
                 str_var='discharge';
@@ -709,7 +709,32 @@ switch lower(variable)
                  end
                  un_type='L';
         end
-    case 
+    case 'lyrfrac'
+        switch frac
+            case 1
+                 switch lan
+                    case 'en'
+                        str_var=sprintf('volume fraction content of size fraction %d in active layer',frac);
+                    case 'nl'
+                        error('do')
+        %                 str_var='active laag';
+                    case 'es'
+                        error('do')
+        %                 str_var='capa activa';
+                 end
+            otherwise
+                 switch lan
+                    case 'en'
+                        str_var='volume fraction content';
+                    case 'nl'
+                        error('do')
+        %                 str_var='active laag';
+                    case 'es'
+                        error('do')
+        %                 str_var='capa activa';
+                 end         
+        end
+        un_type='-';
     case 'fak'
          switch lan
             case 'en'
@@ -721,7 +746,7 @@ switch lower(variable)
                 error('do')
 %                 str_var='capa activa';
          end
-         un_type='L';
+         un_type='-';
 
     case {'mesh2d_taus','taus'}
          switch lan
