@@ -34,6 +34,9 @@ branch=parin.Results.branch;
 if is1d
     error('make it 1D proof')
 end
+if ~isempty(var_idx)
+    error('add the given fractions. See the d3d4 version')
+end
 
 data=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_thlyr','tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
 data.val=sum(data.val,3);

@@ -61,6 +61,10 @@ if ~isempty(layer)
     end
     thk=submatrix(thk,idx_f,layer);
 end
+% 
+% if ~isempty(var_idx) %sum over fractions
+%     
+% end
 
 data.val=thk;
 

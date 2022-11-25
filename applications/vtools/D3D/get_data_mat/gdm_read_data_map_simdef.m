@@ -81,13 +81,18 @@ switch varname
         end
         data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol,'idx_branch',idx_branch,'branch',branch);
     case 'Ltot'
-        data_var=gdm_read_data_map_Ltot(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);       
+        switch simdef.D3D.structure
+            case {2,4}
+                data_var=gdm_read_data_map_Ltot(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);       
+            case {1,5}
+                data_var=gdm_read_data_map_Ltot_d3d4(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);       
+        end
     case 'thlyr'
         switch simdef.D3D.structure
             case {2,4} %THLYR is available in output directly, call default case
-                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); 
+                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); 
             case {1,5}
-                data_var=gdm_read_data_map_thlyr(fdir_mat,fpath_map,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); 
+                data_var=gdm_read_data_map_thlyr(fdir_mat,fpath_map,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); 
         end
     case 'ba_mor'
         data_var=gdm_read_data_map_ba_mor(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);       

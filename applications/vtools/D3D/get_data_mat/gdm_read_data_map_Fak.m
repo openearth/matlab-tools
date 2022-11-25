@@ -36,7 +36,7 @@ branch=parin.Results.branch;
 
 %% CALC
     
-data_lyrfrac=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'bed_layers',1,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); %we load all layers
+data_lyrfrac=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); %we load all layers
 
 % sum(data_Fak.val,
 % %% BEGIN DEBUG
@@ -48,14 +48,17 @@ data_lyrfrac=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'bed_l
 data_var=data_lyrfrac;
 
 %get fractions in the desired layer
-idx_l=D3D_search_index_in_dimension(data_lyrfrac,'bed_layers'); 
-data_var.val=submatrix(data_lyrfrac.val,idx_l,layer); %take submatrix along dimension
+if ~isempty(layer)
+    idx_l=D3D_search_index_in_dimension(data_lyrfrac,'bed_layers'); 
+    data_var.val=submatrix(data_var.val,idx_l,layer); %take submatrix along dimension
+end
 
 %get desired fractions
-idx_f=D3D_search_index_in_dimension(data_lyrfrac,'sedimentFraction'); 
-data_var.val=submatrix(data_var.val,idx_f,var_idx); %take submatrix along dimension
-
-%sum over sediment dimension
-data_var.val=sum(data_var.val,idx_f);
+if ~isempty(var_idx)
+    idx_f=D3D_search_index_in_dimension(data_lyrfrac,'sedimentFraction'); 
+    data_var.val=submatrix(data_var.val,idx_f,var_idx); %take submatrix along dimension
+    %sum over sediment dimension
+    data_var.val=sum(data_var.val,idx_f);
+end
 
 end %function
