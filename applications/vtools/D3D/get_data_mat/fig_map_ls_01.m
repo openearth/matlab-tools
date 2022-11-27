@@ -67,6 +67,12 @@ end
 if isfield(in_p,'fig_plot_La')==0
     in_p.fig_plot_La=0;
 end
+if isfield(in_p,'fig_plot_Lunder')==0
+    in_p.fig_plot_Lunder=0;
+end
+if isfield(in_p,'fig_plot_edges')==0
+    in_p.fig_plot_edges=0;
+end
 if isfield(in_p,'facecolor')==0
     in_p.facecolor='flat';
 end
@@ -427,6 +433,11 @@ if fig_plot_vel
         v_m=cat(1,v_m,squeeze(data_ls.uz(kt,:,kl))');
     end
     han.q=quiver(x_m,y_m,u_m,v_m,'parent',han.sfig(kr,kc),'color','w');
+end
+if fig_plot_Lunder
+    for k = 3:(size(data_ls.grid.Ycor,3)-1);
+        stairs(data_ls.grid.Xcor,[data_ls.grid.Ycor(1,:,k),NaN],'parent',han.sfig(kr,kc),'color',[0.8 0.8 0.8],'linewidth',0.5);    
+    end
 end
 if fig_plot_La
     stairs(data_ls.grid.Xcor,[data_ls.grid.Ycor(1,:,2),NaN],'parent',han.sfig(kr,kc),'color','m','linewidth',1);
