@@ -25,7 +25,7 @@ function D3D_list_of_variables
 %   2   'wd'    = flow depth (h) [m]
 %   12  'wl'    = water level
 
-%   10  'umag'  = depth averaged velocity [m/s]
+%   10  'umag'  = depth averaged velocity [m/s]; call with <layers> to do an average of the selected layers
 %   11  'uv'    = velocity [m/s] 
 
 %   18          = water discharge 

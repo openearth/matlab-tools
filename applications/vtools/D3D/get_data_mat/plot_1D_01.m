@@ -30,11 +30,6 @@ if ~isempty(simdef_ref)
 %     flg_loc.tag_fig=sprintf('%s_%s',flg_loc.tag,'diff'); %difference with simulations, we have to loop to do one by one or all together?
 end
 
-if isfield(flg_loc,'var_idx')==0
-    flg_loc.var_idx=cell(1,numel(flg_loc.var));
-end
-var_idx=flg_loc.var_idx;
-
 %%
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
@@ -76,22 +71,14 @@ if isfield(flg_loc,'do_cum')==0
 end
 
 %add B_mor variables to plot
-flg_loc=check_B(fid_log,flg_loc,'B_mor');
-flg_loc=check_B(fid_log,flg_loc,'B');
+flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
+flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
 
-% nvar_tmp=numel(flg_loc.var);
-% for kvar=1:nvar_tmp
-%     if flg_loc.do_cum(kvar)
-%         [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
-%         flg_loc.var=cat(1,flg_loc.var,sprintf('%s_B_mor',var_str_save));
-%         flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
-%         flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});
-%         
-%         if isfield(flg_loc,'unit')
-%             flg_loc.unit=cat(1,flg_loc.unit,sprintf('%s_B_mor',flg_loc.unit{kvar}));
-%         end
-%     end
-% end
+%add var_idx
+if isfield(flg_loc,'var_idx')==0
+    flg_loc.var_idx=cell(1,numel(flg_loc.var));
+end
+var_idx=flg_loc.var_idx;
 
 %% PATHS
 
@@ -189,14 +176,7 @@ for ksb=1:nsb
             [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
             
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
-            
-            if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
-                lab_str=flg_loc.unit{kvar};
-            else
-                lab_str=var_str_save;
-            end
-            in_p.lab_str=lab_str;
-            
+                       
             %ylims
             flg_loc.ylims=flg_loc.ylims_var{kvar,1};
             flg_loc.ylims_diff=flg_loc.ylims_diff_var{kvar,1};
@@ -208,7 +188,9 @@ for ksb=1:nsb
             clear data_0_loc; %clear is not nice but we cannot preallocate because we do not know the fieldnames in advance and they maybe different between variables    
             for kS=1:nS    
                 fdir_mat=simdef(kS).file.mat.dir;
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
+%                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                
                 load(fpath_mat_tmp,'data');            
                 data_0_loc(kS)=data;
             end
@@ -224,7 +206,8 @@ for ksb=1:nsb
             %reference
             if do_ref
                 fdir_mat=simdef_ref.file.mat.dir;
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
+%                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
                 load(fpath_mat_tmp,'data');            
                 data_0_ref=data;
             end
@@ -251,10 +234,11 @@ for ksb=1:nsb
                 end
 
                 %% load
-                clear data_loc; 
+                clear data_load; 
                 for kS=1:nS
                     fdir_mat=simdef(kS).file.mat.dir;
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
+%                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
                     load(fpath_mat_tmp,'data');
                     data_load(kS)=data;
                 end
@@ -263,7 +247,8 @@ for ksb=1:nsb
                 %reference
                 if do_ref
                     fdir_mat=simdef_ref.file.mat.dir;
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
+%                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
                     load(fpath_mat_tmp,'data');            
                     data_ref=data;
                 end
@@ -282,10 +267,20 @@ for ksb=1:nsb
                             continue
                         end
                     end
-
+                    
+                    %units (cannot be outside <fn> loop because it can be overwritten)
+                    if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
+                        lab_str=flg_loc.unit{kvar};
+                    else
+                        lab_str=var_str_save;
+                    end
+                    in_p.lab_str=lab_str;
+                    
                     switch statis
                         case 'val_std'
                             in_p.is_std=true;
+                        case 'val_sum_length'
+                            in_p.lab_str=sprintf('%s/B',in_p.lab_str);
                         otherwise
                             in_p.is_std=false;
                     end
@@ -447,15 +442,14 @@ for ksb=1:nsb
                 
                 statis='val_mean';
                 diff_tim=seconds(diff(tim_dtime_p));
-                data_xvt_loc=squeeze(data_xvt.(statis));
-                val_tim=data_xvt_loc(:,1:end-1).*reshape(diff_tim,1,[]);
-                val_cum=cumsum([zeros(nx,1),val_tim],2);
-                
+                val_tim=data_xvt.(statis)(:,:,1:end-1).*repmat(reshape(diff_tim,1,1,[]),nx,nS,1);
+                val_cum=cumsum(cat(3,zeros(nx,nS,1),val_tim),3);
+
                 in_p.lab_str=sprintf('%s_t',lab_str); %add time
 
                 for kt=kt_v
                     in_p.tim=tim_dnum_p(kt);
-                    in_p.val=val_cum(:,kt);
+                    in_p.val=squeeze(val_cum(:,:,kt));
 
                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'cum');
                     mkdir_check(fdir_fig_loc,fid_log,1,0);
@@ -552,6 +546,12 @@ for kfn=1:nfn
         end
     end
 
+    %skip if multidimensional    
+    if size(data_xvt.(statis),3)>1; continue; end
+    
+    val_1=squeeze(data_xvt.(statis))';
+    val_0=squeeze(data_xvt0.(statis))';
+
     switch statis
         case 'val_std'
             in_p.is_std=true;
@@ -560,7 +560,8 @@ for kfn=1:nfn
     end
     for kdiff=1:ndiff
         for kclim=1:nclim
-            [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,squeeze(data_xvt.(statis))',squeeze(data_xvt0.(statis))','ylims','ylims_diff',var_str_save);
+
+            [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val_1,val_0,'ylims','ylims_diff',var_str_save);
             
     %                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
             fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
@@ -577,7 +578,7 @@ end %function
 
 %%
 
-function flg_loc=check_B(fid_log,flg_loc,str_in)
+function flg_loc=check_B(fid_log,flg_loc,simdef,str_in)
 
 str_do=sprintf('do_val_%s',str_in);
 if isfield(flg_loc,str_do)==0
@@ -586,7 +587,7 @@ end
 nvar_tmp=numel(flg_loc.var);
 for kvar=1:nvar_tmp
     if flg_loc.(str_do)(kvar)
-        [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},'');
+        [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
         flg_loc.var=cat(1,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
         flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
         flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});

@@ -176,6 +176,7 @@ end %kst
 if flg_loc.do_sb
     
 in_plot_sb.fdir_sim=flg_loc.fdir_sim;
+in_plot_sb.str_sim=flg_loc.str_sim;
 in_plot_sb.lan=flg_loc.lan;
 in_plot_sb.tag_serie=flg_loc.tag_serie;
 
@@ -186,13 +187,14 @@ in_plot_sb.(tag_sb).do_p=flg_loc.do_sb_p; %regular plot
 in_plot_sb.(tag_sb).do_xvt=1; %x-variable with time in color
 in_plot_sb.(tag_sb).do_diff=0; %difference initial time
 in_plot_sb.(tag_sb).do_s=0; %difference with reference
+in_plot_sb.(tag_sb).do_all=flg_loc.do_all; %difference with reference
 in_plot_sb.(tag_sb).do_s_diff=0; %difference with reference and initial time
 in_plot_sb.(tag_sb).var=var_sum; %open D3D_list_of_variables
 % in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
 in_plot_sb.(tag_sb).do_val_B_mor=ones(size(var_sum)); %compute value of the variable per unit of morphodynamic width
 in_plot_sb.(tag_sb).tim=flg_loc.tim; %all times
 in_plot_sb.(tag_sb).order_anl=2; %1=normal; 2=random
-in_plot_sb.(tag_sb).tim_ave=NaN; 
+in_plot_sb.(tag_sb).tim_ave{1,1}=NaN; 
 in_plot_sb.(tag_sb).unit=unit_v; 
 in_plot_sb.(tag_sb).do_cum=ones(size(var_sum)); 
 

@@ -73,14 +73,9 @@ end
 
 if ~isempty(layer)
     %maybe better to search for [layer] in the ones coming from EHY?
-    idx_f=D3D_search_index_in_dimension(data,'layer');
-    if isnan(idx_f)
-        idx_f=D3D_search_index_in_dimension(data,'bed_layers');
-    end
-    if isnan(idx_f)
-        error('do not know where to get the layers index');
-    end
+    idx_f=D3D_search_index_layer(data);
     data.val=submatrix(data.val,idx_f,layer);
+    
 end
 % if ~isempty(bed_layers)
 %     %maybe better to search for [layer] in the ones coming from EHY?

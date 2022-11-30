@@ -97,16 +97,17 @@ for ksb=1:nsb
                 layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
                 
                 if flg_loc.do_val_B_mor(kvar)
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',sprintf('%s_B_mor',var_str_save),'sb',sb_pol);
+                    var_str_save_tmp=sprintf('%s_B_mor',var_str_save);
                 elseif flg_loc.do_val_B(kvar)
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',sprintf('%s_B',var_str_save),'sb',sb_pol);
+                    var_str_save_tmp=sprintf('%s_B',var_str_save);
                 else
-                    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol); %the variable to save is different than the raw variable name we read
+                    var_str_save_tmp=var_str_save; %the variable to save is different than the raw variable name we read
                 end
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save_tmp,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
                 
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
-                fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_read,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                fpath_mat_load=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
                 
                 data_raw=load(fpath_mat_load,'data');
                 val=data_raw.data.val_mean;

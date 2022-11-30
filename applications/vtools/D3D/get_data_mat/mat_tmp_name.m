@@ -74,7 +74,13 @@ end
 
 %layer
 if ~isempty(layer)
-    str_add=sprintf('%s_layer_%04d',str_add,layer);
+    nvar=numel(layer);
+    str_w=repmat('%04d_',1,nvar);
+    str_w(end)='';
+    str_w2=strcat('%s_layer_',str_w);
+    str_add=sprintf(str_w2,str_add,layer);
+    
+%     str_add=sprintf('%s_layer_%04d',str_add,layer);
 end
 
 %pli

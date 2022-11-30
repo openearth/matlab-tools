@@ -91,6 +91,8 @@
 %       -'rkm'      : river kilometer
 %
 %       -'ba_mor'   : morphodynamic cell area
+%       -'ba'       : cell area
+%       -'ba/B'     : width
 %
 %       -'sb'       : bed load sediment transport
 %
@@ -858,6 +860,26 @@ switch lower(variable)
                 str_var='área morfodinámica';
          end
          un_type='L2';
+    case 'ba'
+         switch lan
+            case 'en'
+                str_var='cell area';
+            case 'nl'
+                str_var='celgebied';
+            case 'es'
+                str_var='área de las celdas';
+         end
+         un_type='L2';
+    case 'ba/b'
+         switch lan
+            case 'en'
+                str_var='width';
+            case 'nl'
+                str_var='breedte';
+            case 'es'
+                str_var='ancho';
+         end
+         un_type='L';
     case 't_da'
          switch lan
             case 'en'

@@ -28,10 +28,11 @@
 %
 %E.g.
 %[data_stations,idx]=read_data_stations('c:\Users\chavarri\checkouts\riv\data_stations','location','HOEKVHLRTOVR','grootheid','CONCTTE','bemonsteringshoogte',-9);
+%[data_stations,idx]=read_data_stations('c:\Users\chavarri\checkouts\riv\data_stations','location_clear','Lobith','grootheid','Q');
 %figure
 %plot(data_stations.time,data_stations.waarde);
 %ylabel(data_stations.grootheid)
-
+%load('c:\Users\chavarri\checkouts\riv\data_stations\data_stations_index.mat')
 function [data_stations,idx]=read_data_stations(paths_main_folder,varargin)
 
 %% PARSE
