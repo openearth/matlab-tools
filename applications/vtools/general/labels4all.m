@@ -839,7 +839,7 @@ switch lower(variable)
             case 'es'
                 str_var='Coeficiente de fricción de Chézy';
          end
-         un_type='L/T1/2';
+         un_type='L1/2/T';
     case 'rkm'
          switch lan
             case 'en'
@@ -1112,13 +1112,20 @@ switch un_type
             otherwise
                 error('this factor is missing')
         end
-    case 'L/T1/2'
+    case 'L1/2/T'
         switch un
             case 1
-                str_un=' [m/s^{1/2}]';
+                str_un=' [m^{1/2}/s]';
             otherwise
                 error('this factor is missing')
         end
+%     case 'L/T1/2'
+%         switch un
+%             case 1
+%                 str_un=' [m/s^{1/2}]';
+%             otherwise
+%                 error('this factor is missing')
+%         end
     case 'L2'
         switch un
             case 1
