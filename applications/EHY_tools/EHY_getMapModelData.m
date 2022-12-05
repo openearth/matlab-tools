@@ -278,11 +278,11 @@ if ~exist('Data','var')
                 case {'wd','waterdepth'} % water depth, bed to wl
                     wl  = vs_let(trim,'map-series',{time_ind},'S1'  ,{n_ind,m_ind},'quiet');
                     %if morphodynamics then DPS
-                    d3d = vs_use(inputFile,'quiet');
-                    ind = find(ismember({d3d.ElmDef.Name},{'ZCURU','U1'}));
+%                     d3d = vs_use(inputFile,'quiet');
+%                     ind = find(ismember({d3d.ElmDef.Name},{'ZCURU','U1'}));
                     ismor=D3D_is(inputFile);
                     if ismor
-                        dps = vs_let(trim,'map-sed-series',{1}       ,'DPS',{n_ind,m_ind},'quiet');
+                        dps = vs_let(trim,'map-sed-series',{time_ind},'DPS',{n_ind,m_ind},'quiet');
                     else
                         dps = vs_let(trim,'map-const' ,{1}       ,'DPS0',{n_ind,m_ind},'quiet');
                     end
