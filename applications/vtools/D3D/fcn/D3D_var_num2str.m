@@ -81,11 +81,34 @@ if ischar(var_id)
             end
             var_str_read='bl';
             var_str_save=var_str_read;
-        case {'h','wd'}
+        case {'h','wd','waterdepth'}
             if is1d
                 var_id_out='mesh1d_waterdepth';
             else
-                var_id_out='mesh2d_waterdepth';
+                switch structure
+                    case {1,5}
+                        switch res_type
+                            case 'map'
+%                                 if ismor
+                                    var_id_out='waterdepth'; %read by EHY
+%                                 else
+%                                     var_id_out='DP0';
+%                                 end
+%                             case 'his'
+%                                 if ismor
+%                                     var_id_out='ZDPS';
+%                                 else
+%                                     var_id_out='DPS';
+%                                 end
+                        end
+                    case {2,4}
+                        var_id_out='mesh2d_waterdepth';
+%                         if ismor
+%                             var_id_out='mesh2d_mor_bl';
+%                         end
+                    otherwise
+                        error('ups')
+                end                
             end
             var_str_read='h';
             var_str_save=var_str_read;

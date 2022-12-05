@@ -42,7 +42,7 @@ branch=parin.Results.branch;
 
 % varname=D3D_var_derived2raw(varname); %I don't think I need it...
 [ismor,is1d]=D3D_is(fpath_map);
-[var_str,varname]=D3D_var_num2str(varname,'is1d',is1d,'ismor',ismor);
+[var_str,varname_changed]=D3D_var_num2str(varname,'is1d',is1d,'ismor',ismor); %in the call in <create_mat_map_2DH_01> we already change the name. Here we only need the save name. Otherwise we need to pass <simdef.D3D.structure>
 fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'var_idx',var_idx,'branch',branch);
 
 if exist(fpath_sal,'file')==2

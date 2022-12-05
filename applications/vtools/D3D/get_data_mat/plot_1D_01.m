@@ -404,6 +404,8 @@ for ksb=1:nsb
                     
                     %save for xvt
                     if flg_loc.do_xvt
+                        %<data_sim> has simulation in the structure.
+                        %<data_xvt> has simulation in the second column. 
                         data_xvt.(statis)(:,:,kt)=[data_sim.(statis)];
                         data_xvt0.(statis)(:,:,kt)=[data_0.(statis)];
                     end
@@ -433,7 +435,7 @@ for ksb=1:nsb
             
             %% xvt
             if flg_loc.do_xvt
-                plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid,all_struct);
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie)
             end
             
             %% cumulative
@@ -499,7 +501,7 @@ end %function
 
 %%
 
-function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,lab_str,data_xvt,data_xvt0,fdir_fig,sb_pol,pol_name,var_str_save,tag,runid,all_struct)
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie)
 
 %% PARSE
 
@@ -519,6 +521,7 @@ fn_data=fieldnames(data_xvt);
 nfn=numel(fn_data);
 ndiff=gdm_ndiff(flg_loc);
 nclim=size(flg_loc.ylims,1);
+nS=numel(simdef);
 
 [x_m,y_m]=meshgrid(s,tim_dtime_p);
 
@@ -536,44 +539,50 @@ in_p.ylab_str='';
 in_p.xlab_str='rkm';
 in_p.xlab_un=1/1000;
 %                 in_p.tit_str=branch_name;
-for kfn=1:nfn
-    statis=fn_data{kfn};
 
-    %skip statistics not in list    
-    if isfield(flg_loc,'statis_plot')
-        if ismember(statis,flg_loc.statis_plot)==0
-            continue
-        end
-    end
+for kS=1:nS
 
-    %skip if multidimensional    
-    if size(data_xvt.(statis),3)>1; continue; end
+    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie); 
     
-    val_1=squeeze(data_xvt.(statis))';
-    val_0=squeeze(data_xvt0.(statis))';
+    for kfn=1:nfn
+        statis=fn_data{kfn};
 
-    switch statis
-        case 'val_std'
-            in_p.is_std=true;
-        otherwise
-            in_p.is_std=false;
-    end
-    for kdiff=1:ndiff
-        for kclim=1:nclim
+        %skip statistics not in list    
+        if isfield(flg_loc,'statis_plot')
+            if ismember(statis,flg_loc.statis_plot)==0
+                continue
+            end
+        end
 
-            [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val_1,val_0,'ylims','ylims_diff',var_str_save);
-            
-    %                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
-            fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
-            mkdir_check(fdir_fig_loc,NaN,1,0);
-            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim);
+        %skip if multidimensional    
+    %     if size(data_xvt.(statis),3)>1; continue; end %NO! in third dimension it is time
 
-            in_p.fname=fname_noext;
-            fig_surf(in_p)
-        end %kclim
-    end %kdiff
-end %kfn
-            
+        val_1=squeeze(data_xvt.(statis)(:,kS,:))';
+        val_0=squeeze(data_xvt0.(statis)(:,kS,:))';
+
+        switch statis
+            case 'val_std'
+                in_p.is_std=true;
+            otherwise
+                in_p.is_std=false;
+        end
+        for kdiff=1:ndiff
+            for kclim=1:nclim
+
+                [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val_1,val_0,'ylims','ylims_diff',var_str_save);
+
+        %                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
+                fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+                mkdir_check(fdir_fig_loc,NaN,1,0);
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim);
+
+                in_p.fname=fname_noext;
+                fig_surf(in_p)
+            end %kclim
+        end %kdiff
+    end %kfn
+end %kS
+
 end %function
 
 %%
