@@ -49,7 +49,7 @@ if strcmpi(varName,'bl'                   ) varName = 'bedlevel'   ; end
 if strcmpi(varName,'suspendedload'        ) varName = 'suspload'   ; end
 if strcmpi(varName,'sedimentconcentration') varName = 'sedconc'    ; end
 if strcmpi(varName,'den'                  ) varName = 'density'    ; end
-if strcmpi(varName,'wd'                   ) varName = 'waterdepth' ; end
+% if strcmpi(varName,'wd'                   ) varName = 'waterdepth' ; end %V: This is inconsistent with the case 7 lines above. Hopefully nothing is broken. 
 
 %% Change the name of the requested Variable name
 newName = varName;
