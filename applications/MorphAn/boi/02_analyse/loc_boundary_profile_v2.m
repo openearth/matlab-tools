@@ -117,11 +117,11 @@ for ii=2:length(zb0)
     if zb0(ii)> z_max_grensprofiel & zb0(ii-1) <= z_max_grensprofiel
         
         % if previous crossing is not up, add artifial point. No crossing
-        % with lower limit before crossing higher limit. Add point after
-        % last crossing right
+        % with lower limit before crossing higher limit. Add left crossing point after
+        % last crossing right and add right crossing at current location
         if ~previous_left_up
             crossing_l  = [crossing_l crossing_r(end)+1];
-            crossing_r  = [crossing_r crossing_r(end)+1];
+            crossing_r  = [crossing_r count + 1];
         end
         
         dz          = z_max_grensprofiel - zb0(ii-1);
@@ -185,7 +185,7 @@ else
 
     for jj=1:2:length(crossing_l)
         % --- number of points between crossings
-        N                   = crossing_l(jj+1)-crossing_l(jj);
+        N                   = crossing_l(jj+1)-crossing_l(jj)+1;
         % --- fit boundary profile left side
         [X11 X12 Z11 Z12]   = inpassen_links(N, crossing_l(jj), helling1, z_max_grensprofiel, z_min_grensprofiel,zb,x);
 
@@ -199,7 +199,7 @@ else
 %         end
         
         % --- number of points between crossings
-        N = crossing_r(jj+1)-crossing_r(jj);
+        N = crossing_r(jj+1)-crossing_r(jj)+1;
         % --- fit boundary profile left side
         [X21 X22 Z21 Z22] = inpassen_rechts(N, crossing_r(jj), helling2, z_max_grensprofiel, z_min_grensprofiel,zb,x);
         
@@ -228,7 +228,7 @@ function [X11 X12 Z11 Z12] = inpassen_links(N, crossing1, helling, z_max_grenspr
     for ii=1:N
         z_dummy             = zb0(crossing1 + ii -1) - z_min_grensprofiel;
         x_dummy             = x(crossing1 + ii -1) - z_dummy * helling;
-
+        %plot(x(crossing1 + ii -1),zb0(crossing1 + ii -1),'o')
         x_list_dummy1(ii)   = x_dummy;
 
     end
@@ -248,7 +248,7 @@ function [X21 X22 Z21 Z22] = inpassen_rechts(N, crossing2, helling2, z_max_grens
         z_dummy = zb0(crossing2 + ii -1) - z_min_grensprofiel;
         x_dummy = x(crossing2 + ii -1) + z_dummy * helling2;
         x_list_dummy2(ii)   = x_dummy;
-
+        %plot(x(crossing2 + ii -1),zb0(crossing2 + ii -1),'o')
     end
     index = find( min(x_list_dummy2)==x_list_dummy2);
     

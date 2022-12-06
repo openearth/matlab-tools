@@ -114,3 +114,15 @@ hold on
 tic
 plot([X0 X0+height*1 X0+height+3 X0+height+3+height*2],[Rp, znat+1.5 znat+1.5 Rp],'b-','linewidth',2)
 toc
+
+%% old method
+
+X0      = loc_boundary_profile(znat,xnat,x,z,Rp);
+height  = znat + 1.5 - Rp;
+
+figure
+plot(x,z)
+hold on
+tic
+plot([X0 X0+height*1 X0+height+3 X0+height+3+height*2],[Rp, znat+1.5 znat+1.5 Rp],'b-','linewidth',2)
+toc
