@@ -1,4 +1,4 @@
-function X11 = loc_boundary_profile_v2(znat,xnat,x0,zb0,maxwl,fig)
+function X11 = loc_boundary_profile_v2(znat,xnat,x0,zb0,maxwl,V_input,fig)
 %loc_boundary_profile_v2  Compute position of boundary profile
 %
 %   Compute position of boundary profile
@@ -188,7 +188,19 @@ else
         N                   = crossing_l(jj+1)-crossing_l(jj)+1;
         % --- fit boundary profile left side
         [X11 X12 Z11 Z12]   = inpassen_links(N, crossing_l(jj), helling1, z_max_grensprofiel, z_min_grensprofiel,zb,x);
-
+        
+        % --- move GP based on addition volume
+        if V_input>0
+            x_basepoint = get_basepoint_additionV(x,zb,z_min_grensprofiel,V_input);
+            if X11<x_basepoint
+                plot([x_basepoint x_basepoint],[min(zb) max(zb)],'k--','DisplayName','X0-addition')
+                plot([X11 x_basepoint],[Z11 Z11],'o--k','DisplayName','GP-addition')
+                X11 = x_basepoint;
+                X12 = x_basepoint + 1 * (z_max_grensprofiel-z_min_grensprofiel);
+                
+            end
+        end
+            
 
         if fig; plot([X11 X12],[Z11 Z12],'m-','DisplayName','GP-left'); end
 

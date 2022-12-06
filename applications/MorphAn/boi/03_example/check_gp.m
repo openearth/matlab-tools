@@ -94,7 +94,8 @@ end
 
 %% fast method (more complex)
 tic
-X0      = loc_boundary_profile_v2(znat,xnat,x,z,Rp,true);
+V = 50
+X0      = loc_boundary_profile_v2(znat,xnat,x,z,Rp,V,true);
 toc
 height  = znat + 1.5 - Rp;
 

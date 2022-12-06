@@ -11,16 +11,40 @@ close all
 path1 = 'referentie/';
 zs1      = nc_varget([path1 'xboutput.nc'],'zs');
 zb1      = nc_varget([path1 'xboutput.nc'],'zb');
+H1       = nc_varget([path1 'xboutput.nc'],'H');
+H_mean1       = nc_varget([path1 'xboutput.nc'],'H_mean');
 globalx1 = nc_varget([path1 'xboutput.nc'],'globalx');
 
 % --- sim 2
-path2 = 'c:\Users\ridde_mo\OneDrive - Stichting Deltares\Desktop\tmp\referentie\Ref.dsproj_data\XBeach_Erosie_Model_output\XBeach_1D\A_2_1 (2000) H90P1600RP50A10dt0\';
+path2 = 'C:\Users\ridde_mo\OneDrive - Stichting Deltares\Desktop\tmp\referentie\Ref2.dsproj_data\XBeach_Erosie_Model_output\XBeach_1D\A_2_1 (2000) H80P1200RP40A10dt0\';
 
 zs2      = nc_varget([path2 'xboutput.nc'],'zs');
 zb2      = nc_varget([path2 'xboutput.nc'],'zb');
+H2       = nc_varget([path2 'xboutput.nc'],'H');
+H_mean2       = nc_varget([path2 'xboutput.nc'],'H_mean');
 globalx2 = nc_varget([path2 'xboutput.nc'],'globalx');
 
 %% plotting
+
+% --- plot H
+figure;
+plot(globalx1, squeeze(H_mean1(10,:)),'o-')
+hold on
+plot(globalx2, squeeze(H_mean2(10,:)),'*-')
+grid on
+xlabel('x [m+RSP]')
+ylabel('H_{rms} [m]')
+legend({'sim 1','sim2'})
+
+% --- plot H
+figure;
+plot(globalx1, squeeze(H1(10,:)),'o-')
+hold on
+plot(globalx2, squeeze(H2(10,:)),'*-')
+grid on
+xlabel('x [m+RSP]')
+ylabel('instantaneous H [m]')
+legend({'sim 1','sim2'})
 
 % --- plot domain
 figure;
