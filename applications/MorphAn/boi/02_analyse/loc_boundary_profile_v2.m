@@ -78,10 +78,16 @@ crossing_l  = [];
 % --- logical required for missing lower left crossing
 % (z_min_grensprofiel > minimum bed level between two dunes)
 previous_left_up = true;
+previous_left_up_lower = false;
 
 for ii=2:length(zb0)
     % --- upward left min crossing
     if zb0(ii)> z_min_grensprofiel & zb0(ii-1) <= z_min_grensprofiel;
+       % no upper limit in previous dune. skip previous crossings
+        if previous_left_up_lower
+            crossing_l(end) = [];
+            crossing_r(end) = [];
+        end
         
         dz          = z_min_grensprofiel - zb0(ii-1);
         x_intersect = interp1([zb0(ii-1), zb0(ii)],[x0(ii-1) x0(ii)],zb0(ii-1)+dz );
@@ -95,6 +101,7 @@ for ii=2:length(zb0)
         crossing_l  = [crossing_l count];
         
         previous_left_up = true;
+        previous_left_up_lower = true;
         
     end
     % --- downward right min crossing
@@ -111,6 +118,7 @@ for ii=2:length(zb0)
         crossing_r  = [crossing_r count];
         
         previous_left_up = false;
+        previous_left_up_lower = false;
         
     end
     % --- upward left max crossing
@@ -135,6 +143,7 @@ for ii=2:length(zb0)
         crossing_l  = [crossing_l count];
         
         previous_left_up = false;
+        previous_left_up_lower = false;
         
     end
     % --- downward right max crossing
@@ -151,6 +160,7 @@ for ii=2:length(zb0)
         crossing_r  = [crossing_r count];
         
         previous_left_up = false;
+        previous_left_up_lower = false;
     end
     x       = [x x0(ii)];
     zb      = [zb zb0(ii)];
