@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 45 $
-%$Date: 2022-05-05 11:24:21 +0200 (Thu, 05 May 2022) $
-%$Author: chavarri $
-%$Id: main_plot.m 45 2022-05-05 09:24:21Z chavarri $
-%$HeadURL: file:///P:/11208075-002-ijsselmeer/07_scripts/svn/main_plot.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Create simulations variation from file input. 
 

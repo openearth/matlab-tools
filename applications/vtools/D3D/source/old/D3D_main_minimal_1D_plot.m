@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18035 $
-%$Date: 2022-05-10 16:01:00 +0200 (Tue, 10 May 2022) $
-%$Author: chavarri $
-%$Id: D3D_main_minimal_1D_plot.m 18035 2022-05-10 14:01:00Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/source/D3D_main_minimal_1D_plot.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %1D minimal plot
 

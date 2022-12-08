@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17759 $
-%$Date: 2022-02-14 10:50:54 +0100 (Mon, 14 Feb 2022) $
-%$Author: chavarri $
-%$Id: input_D3D.m 17759 2022-02-14 09:50:54Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/source/input_D3D.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %NOTES:
 %   -DIFFUSION

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18462 $
-%$Date: 2022-10-21 13:10:57 +0200 (Fri, 21 Oct 2022) $
-%$Author: ottevan $
-%$Id: D3D_results_time_wrap.m 18462 2022-10-21 11:10:57Z ottevan $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_results_time_wrap.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

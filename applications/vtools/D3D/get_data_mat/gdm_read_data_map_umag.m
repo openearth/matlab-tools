@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18496 $
-%$Date: 2022-10-28 18:21:27 +0200 (Fri, 28 Oct 2022) $
-%$Author: chavarri $
-%$Id: gdm_read_data_map_T_max.m 18496 2022-10-28 16:21:27Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_read_data_map_T_max.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

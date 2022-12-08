@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18458 $
-%$Date: 2022-10-18 12:26:40 +0200 (Tue, 18 Oct 2022) $
-%$Author: chavarri $
-%$Id: plot_1D_01.m 18458 2022-10-18 10:26:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_1D_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

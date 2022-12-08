@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17396 $
-%$Date: 2021-07-08 22:47:55 +0200 (Thu, 08 Jul 2021) $
-%$Author: chavarri $
-%$Id: D3D_main_run_single.m 17396 2021-07-08 20:47:55Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/source/D3D_main_run_single.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MAIN SCRIPT for creating a Delft3D simulation
 

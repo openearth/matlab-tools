@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18475 $
-%$Date: 2022-10-24 11:56:13 +0200 (Mon, 24 Oct 2022) $
-%$Author: chavarri $
-%$Id: plot_map_2DH_01.m 18475 2022-10-24 09:56:13Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_map_2DH_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Given a river-kilometer file, it decreases the resolution. 
 %

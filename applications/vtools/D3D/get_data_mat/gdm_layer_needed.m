@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18107 $
-%$Date: 2022-06-05 17:19:09 +0200 (Sun, 05 Jun 2022) $
-%$Author: chavarri $
-%$Id: gdm_station_layer.m 18107 2022-06-05 15:19:09Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_station_layer.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

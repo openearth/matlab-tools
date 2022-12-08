@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18488 $
-%$Date: 2022-10-27 14:13:26 +0200 (Thu, 27 Oct 2022) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 18488 2022-10-27 12:13:26Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %variables: open D3D_list_of_variables
 
