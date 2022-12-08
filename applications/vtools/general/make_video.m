@@ -10,6 +10,12 @@
 %$Id$
 %$HeadURL$
 %
+%Create movie
+%
+%INPUT:
+%   -path_folder:
+%       cell = files to make the movie. If multidimensional, images are concatenated.
+%       char = full path to the folder with the files to use
 
 function make_video(path_folder,varargin)
 
@@ -19,14 +25,14 @@ if iscell(path_folder) %files to use are given
     path_files=path_folder;
 else %folder is given  
     dire=dir(path_folder);
-    nf=numel(dire)-2;
-    path_files=cell(nf,1);
-    for kf=1:nf
-        kfa=kf+2;
-        path_files{kf,1}=fullfile(dire(kfa).folder,dire(kfa).name);
+    path_files={};
+    for kf=1:numel(dire)
+        fpath_file=fullfile(dire(kfa).folder,dire(kfa).name);
+        if isfolder(fpath_file); continue; end
+        path_files=cat(1,path_files,fpath_file);
     end    
 end
-nf=numel(path_files);
+[nf,np]=size(path_files);
 [fdir,fname,~]=fileparts(path_files{1,1});
 
 %varargin
@@ -37,6 +43,7 @@ addOptional(parin,'quality',50);
 addOptional(parin,'path_video',fullfile(fdir,fname));
 addOptional(parin,'overwrite',1);
 addOptional(parin,'fid_log',NaN);
+addOptional(parin,'position',NaN);
 
 parse(parin,varargin{:});
 
@@ -45,6 +52,14 @@ quality=parin.Results.quality;
 path_video=parin.Results.path_video;
 do_over=parin.Results.overwrite;
 fid_log=parin.Results.fid_log;
+pos_fig=parin.Results.position;
+if isnan(pos_fig)
+    pos_fig=cell(1,np);
+    for kp=1:np
+        pos_fig{1,kp}=[1,kp];
+    end
+end
+    
 
 %% SKIP OR DELETE
 
@@ -68,7 +83,16 @@ video_var.Quality=quality;
 open(video_var)
 
 for kf=1:nf
-    im=imread(path_files{kf,1});
+    for kp=1:np
+        %This is far from perfect. The size of <im> is continuously changing.
+        %2DO: we have to deal with the position of the images. 
+        if kp==1
+            im=imread(path_files{kf,kp});
+        else
+            im=cat(2,im,imread(path_files{kf,kp}));
+        end
+    end
+    
     writeVideo(video_var,im)
     messageOut(fid_log,sprintf('Creating movie %5.1f %% \n',kf/nf*100));
 end

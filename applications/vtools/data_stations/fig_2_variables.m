@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 18353 $
+%$Date: 2022-09-08 13:39:21 +0200 (Thu, 08 Sep 2022) $
+%$Author: chavarri $
+%$Id: figure_layout.m 18353 2022-09-08 11:39:21Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/figure_layout.m $
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_whatever(in_p)
+function fig_2_variables(in_p)
 
 %% DEFAULTS
 
@@ -64,16 +64,16 @@ end
 %% SIZE
 
 %square option
-npr=1; %number of plot rows
-npc=1; %number of plot columns
-axis_m=allcomb(1:1:npr,1:1:npc);
+% npr=1; %number of plot rows
+% npc=1; %number of plot columns
+% axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
-% axis_m=[1,1;2,1;2,2];
-% npr=max(axis_m(:,1));
-% npc=max(axis_m(:,2));
+axis_m=[1,1;2,1;2,2];
 
 na=size(axis_m,1);
+npr=max(axis_m(:,1));
+npc=max(axis_m(:,2));
 
 %figure input
 prnt.filename=fname;
@@ -83,7 +83,7 @@ marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
-marg.sv=0.0; %vertical spacing [cm]
+marg.sv=1.0; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 
@@ -258,11 +258,21 @@ kr=1; kc=1;
 % lims.y(kr,kc,1:2)=lims_y;
 % lims.x(kr,kc,1:2)=lims_x;
 % lims.c(kr,kc,1:2)=lims_c;
-xlabels{kr,kc}='x';
-ylabels{kr,kc}='y';
+% xlabels{kr,kc}='x';
+% ylabels{kr,kc}='y';
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
-% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
+lims_d.y(kr,kc,1:2)=tlims; %time
+
+kr=2; kc=2;
+% lims.y(kr,kc,1:2)=lims_y;
+% lims.x(kr,kc,1:2)=lims_x;
+% lims.c(kr,kc,1:2)=lims_c;
+% xlabels{kr,kc}='x';
+% ylabels{kr,kc}='y';
+% ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
+% lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
+lims_d.x(kr,kc,1:2)=tlims; %time
 
 
 %% FIGURE INITIALIZATION
@@ -359,13 +369,20 @@ end
 %% PLOT
 
 kr=1; kc=1;    
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
-han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
-han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
-surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
-patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
+han.p(kr,kc,1)=plot(d1.waarde,d1.time,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+
+kr=2; kc=1;    
+han.p(kr,kc,1)=plot(dint(:,1),dint(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+
+kr=2; kc=2;    
+han.p(kr,kc,1)=plot(d2.time,d2.waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+
+% han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
+% han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
+% han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
+% surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+% patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
 
 %% PROPERTIES
 
@@ -377,21 +394,64 @@ grid(han.sfig(kr,kc),'on')
 han.sfig(kr,kc).Box='on';
 % han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+han.sfig(kr,kc).XLabel.String=labels4all(d1.grootheid,1,'en');
+% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String='c';
+han.sfig(kr,kc).Title.String=d1.location_clear;
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
-% han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims_d.y(kr,kc,:);
+% han.sfig(kr,kc).XTick=hours([4,6]);
+
+kr=2; kc=1;   
+hold(han.sfig(kr,kc),'on')
+grid(han.sfig(kr,kc),'on')
+% axis(han.sfig(kr,kc),'equal')
+han.sfig(kr,kc).Box='on';
+% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLabel.String=labels4all(d1.grootheid,1,'en');
+han.sfig(kr,kc).YLabel.String=labels4all(d2.grootheid,1,'en');
+% han.sfig(kr,kc).XTickLabel='';
+% han.sfig(kr,kc).YTickLabel='';
+% han.sfig(kr,kc).XTick=[];  
+% han.sfig(kr,kc).YTick=[];  
+% han.sfig(kr,kc).XScale='log';
+% han.sfig(kr,kc).YScale='log';
+% han.sfig(kr,kc).Title.String=d2.location_clear;
+% han.sfig(kr,kc).XColor='r';
+% han.sfig(kr,kc).YColor='k';
+
+kr=2; kc=2;   
+hold(han.sfig(kr,kc),'on')
+grid(han.sfig(kr,kc),'on')
+% axis(han.sfig(kr,kc),'equal')
+han.sfig(kr,kc).Box='on';
+% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+han.sfig(kr,kc).YLabel.String=labels4all(d2.grootheid,1,'en');
+% han.sfig(kr,kc).XTickLabel='';
+% han.sfig(kr,kc).YTickLabel='';
+% han.sfig(kr,kc).XTick=[];  
+% han.sfig(kr,kc).YTick=[];  
+% han.sfig(kr,kc).XScale='log';
+% han.sfig(kr,kc).YScale='log';
+han.sfig(kr,kc).Title.String=d2.location_clear;
+% han.sfig(kr,kc).XColor='r';
+% han.sfig(kr,kc).YColor='k';
+
+%duration ticks
+% xtickformat(han.sfig(kr,kc),'hh:mm')
+han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap

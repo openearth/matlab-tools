@@ -12,7 +12,7 @@
 %INPUT:
 %   -tim_ct: cell array with time of time series
 %   -val_ct: cell array with values of time series
-%   -dt_disc: time step to interpolate the time series
+%   -tim_re: time step to interpolate the time series
 %
 %OUTPUT:
 %   -tt_tim: common time of all time series
