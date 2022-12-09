@@ -24,7 +24,7 @@ switch idx_dim
     case 4
         mat_out=mat(:,:,:,idx_get,:);
     case 5
-        mat_out=mat(:,:,:,:,idx_get(idx_get<=size(mat,5)));
+        mat_out=mat(:,:,:,:,idx_get(idx_get<=size(mat,5))); %?? Willem, did you do this?
     otherwise
         error('add')
 end

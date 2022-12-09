@@ -20,14 +20,19 @@ ny=size(matrix,1);
 %% PARSE
 parin=inputParser;
 
-num_str_def=repmat('%0.15E ',1,nx);
+num_str_def=repmat('%0.15E*delim*',1,nx);
 addOptional(parin,'num_str',num_str_def);
 addOptional(parin,'check_existing',1)
+addOptional(parin,'delimiter',' ')
 
 parse(parin,varargin{:});
 
 num_str=parin.Results.num_str;
 check_existing=parin.Results.check_existing;
+delimiter=parin.Results.delimiter;
+
+num_str(end-6:end)=''; %remove last delimiter
+num_str=strrep(num_str,'*delim*',delimiter); %add new
 % if isspace(num_str(end))==0
 %     num_str=[num_str,' '];
 % end

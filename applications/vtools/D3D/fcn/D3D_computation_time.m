@@ -55,7 +55,7 @@ while ~feof(fid)
                 %duration
                 tim_dur=tf-t0;
                 %simulated time
-                tim_sim=NaN;
+                tim_sim=NaT-NaT;
                 %processes
                 processes=NaN; %check where it is
             end
@@ -104,7 +104,7 @@ while ~feof(fid)
 
 end %while
 
-sim_efficiency=tim_sim/(tim_dur*processes);
+sim_efficiency=tim_sim./(tim_dur*processes);
 
 fclose(fid);
 

@@ -87,8 +87,8 @@ if ischar(var_id)
             else
                 switch structure
                     case {1,5}
-                        switch res_type
-                            case 'map'
+%                         switch res_type
+%                             case 'map'
 %                                 if ismor
                                     var_id_out='waterdepth'; %read by EHY
 %                                 else
@@ -100,7 +100,7 @@ if ischar(var_id)
 %                                 else
 %                                     var_id_out='DPS';
 %                                 end
-                        end
+%                         end
                     case {2,4}
                         var_id_out='mesh2d_waterdepth';
 %                         if ismor

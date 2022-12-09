@@ -79,29 +79,39 @@ for ks=ks_v
         
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
         
-        if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
-
-        %% read data
-        %<gdm_read_data_his_simdef>
+        do_read=1;
+        if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
+            do_read=0;
+        end
         
-        %2DO:
-        %   -make a function that reworks the data if necessary
-        %   -load the times as specified in the input! now it is inconsistent. ?? I don;t know what I meant to say anymore.
+        if do_read
+
+            %% read data
+            %<gdm_read_data_his_simdef>
+
+            %2DO:
+            %   -make a function that reworks the data if necessary
+            %   -load the times as specified in the input! now it is inconsistent. ?? I don;t know what I meant to say anymore.
+
+                %% raw data
+                data_raw=gdm_read_data_his(fdir_mat,fpath_his,var_id,'station',stations{ks},'layer',layer,'tim',time_dnum(1),'tim2',time_dnum(end),'structure',simdef.D3D.structure,'sim_idx',sim_idx);
+
+            %% processed data
+
+            data=squeeze(data_raw.val); %#ok
+
+            %% save and disp
+            save_check(fpath_mat_tmp,'data');
+            messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
+
+            %% BEGIN DEBUG
+
+            %END DEBUG
+            
+        end %do_read
         
-            %% raw data
-            data_raw=gdm_read_data_his(fdir_mat,fpath_his,var_id,'station',stations{ks},'layer',layer,'tim',time_dnum(1),'tim2',time_dnum(end),'structure',simdef.D3D.structure,'sim_idx',sim_idx);
+        gdm_export_his_01(fid_log,flg_loc,fpath_mat_tmp,time_dtime)
         
-        %% processed data
-
-        data=squeeze(data_raw.val); %#ok
-
-        %% save and disp
-        save_check(fpath_mat_tmp,'data');
-        messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
-
-        %% BEGIN DEBUG
-
-        %END DEBUG
     end %kvar
 end    
 

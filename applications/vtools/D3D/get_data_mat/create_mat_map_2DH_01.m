@@ -123,7 +123,7 @@ for kt=kt_v
         
         %% velocity
         if flg_loc.do_vector(kvar)
-            gdm_read_data_map_simdef(fdir_mat,simdef,'uv','tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'do_load',0);         
+            gdm_read_data_map_simdef(fdir_mat,simdef,'uv','tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'do_load',0);            
         end
         
         %% disp

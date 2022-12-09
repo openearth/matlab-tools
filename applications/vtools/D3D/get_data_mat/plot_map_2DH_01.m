@@ -188,8 +188,19 @@ for kvar=1:nvar %variable
         if flg_loc.do_vector(kvar)
             fpath_mat_tmp=mat_tmp_name(fdir_mat,'uv','tim',time_dnum(kt),'var_idx',var_idx{kvar});
             data_uv=load(fpath_mat_tmp,'data');
-            in_p.vec_x=data_uv.data.vel_x;
-            in_p.vec_y=data_uv.data.vel_y;
+            if size(data_uv.data.vel_x,3)>1 %3D simulation, a single direction must be given for arrows
+                %ATTENTION!
+                %This only holds for sigma layers. Otherwise, we have to average considering the thickness of
+                %the layers. 
+                %Another improvement is to search for the index of the layers rather than assuming it is 3.
+                vec_x=mean(data_uv.data.vel_x,3);
+                vec_y=mean(data_uv.data.vel_y,3);
+            else
+                vec_x=data_uv.data.vel_x;
+                vec_y=data_uv.data.vel_y;
+            end
+            in_p.vec_x=vec_x;
+            in_p.vec_y=vec_y;
         end
                 
         for kclim=1:nclim

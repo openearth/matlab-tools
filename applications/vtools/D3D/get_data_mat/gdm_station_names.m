@@ -32,6 +32,8 @@ model_type=parin.Results.model_type;
 %%
 
 switch model_type
+    case {1,5}
+        model_type_str='d3d';
     case {2,4}
         model_type_str='dfm';
     case 3

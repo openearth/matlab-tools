@@ -25,6 +25,9 @@ nd=numel(paths_ldb_in);
 for kd=1:nd
 
     filldb = paths_ldb_in{kd,1};
+    if exist(filldb,'file')~=2
+        error('File does not exist: %s',filldb);
+    end
     LINE   = [];
     ldb=landboundary('read',filldb);
     idx_ldb=cumsum(isnan(ldb(:,1)))+1; %add 1 to start at 1 rather than 0
