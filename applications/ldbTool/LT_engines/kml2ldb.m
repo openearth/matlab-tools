@@ -93,6 +93,7 @@ for ii=1:length(coorsStart)
     elseif mod(size(tLdb,2),3)~=0 && mod(size(tLdb,2),2)==0
         ldb=[ldb;tLdb(1:2:end)' tLdb(2:2:end)'; nan nan]; % kml consist of [lon,lat]-coordinates
     else % if size(tLdb,2) is a multiple of 2,3 and factor n
+        % F. Scheel: Warning, this function fails to detect [lon,lat,z] ldb-files with varying z-levels and vector lengths for which mod(size(tLdb,2),2) & mod(size(tLdb,2),3) are both 0
         if length(unique(tLdb(3:3:end)))==1 % z-value is always the same
             ldb=[ldb;tLdb(1:3:end)' tLdb(2:3:end)'; nan nan]; % kml consist of [lon,lat,z]-coordinates
         else
