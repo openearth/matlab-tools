@@ -218,7 +218,7 @@ for kvar=1:nvar %variable
 
                 for kdiff=1:ndiff
                     
-                    [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,'clims','clims_diff_t',var_str);
+                    [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref.data,'clims','clims_diff_t',var_str);
                     
                     %2D plot
                     if flg_loc.do_2D
@@ -278,7 +278,7 @@ for kvar=1:nvar %variable
                     
                     for kdiff=1:ndiff
 
-                        [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,'clims','clims_diff_t',var_str);
+                        [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref.data,'clims','clims_diff_t',var_str);
 
                         fdir_fig_var=fullfile(fdir_fig,var_str,str_var_idx,'rkm',datestr(time_dnum(kt),'yyyymmddHHMMSS'),tag_ref);
                         mkdir_check(fdir_fig_var,NaN,1,0);

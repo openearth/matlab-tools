@@ -57,6 +57,8 @@ switch idx_do
         val_out=normal_flow_h(Q,B,g/C^2,s,'g',g);
     case 4
         val_out=normal_flow_s(Q,B,g/C^2,h,'g',g);
+    case 5
+        val_out=normal_flow_Cf(Q,B,g/C^2,h,'g',g);
     otherwise
       
 end

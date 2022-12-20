@@ -100,6 +100,7 @@
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
 % % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
+% in_plot.(tag).tim_just_load=1;
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
 % in_plot.(tag).tim=NaN; %all times
 % in_plot.(tag).order_anl=2; %1=normal; 2=random
@@ -116,8 +117,12 @@
 % in_plot.(tag).overwrite=1; %overwrite mat-files
 % in_plot.(tag).do_vector=0; %add velocity vectors
 % in_plot.(tag).do_axis_equal=0;
+% in_plot.(tag).do_plot_along_rkm=1;
+% in_plot.(tag).do_rkm_disp=1;
 % in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv'); %file to go along specified rkm to plot
 % in_plot.(tag).fpath_rkm_disp=fullfile(fpaths.dir_rkm,'rkm.csv'); %file to display rkm
+% in_plot.(tag).rkm_tol_x=5000;
+% in_plot.(tag).rkm_tol_y=5000;
 
 %% 2DH ls
 
@@ -153,6 +158,7 @@
 % in_plot.(tag).do_s=1; %difference with reference simulation
 % in_plot.(tag).do_all=1; %all simulations in same figure
 % in_plot.(tag).tim=NaN; %analysis time [datenum, datetime]. NaN=all, Inf=last.
+% in_plot.(tag).tim_tol=hours(1); 
 % % in_plot.(tag).tim=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)];
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
 % in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.

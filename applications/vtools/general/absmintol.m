@@ -49,6 +49,9 @@ if isdatetime(v)
         is_dnum=0;
     end
 else
+    if isduration(tol) %if <v> is datenum tolerance may be given as duration
+        tol=days(tol);
+    end
     is_dtime=0;
 end
 

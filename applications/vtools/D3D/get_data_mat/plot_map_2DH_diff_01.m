@@ -43,6 +43,11 @@ if isfield(flg_loc,'do_s_diff')==0
     flg_loc.do_s_diff=0;
 end
 
+if isfield(flg_loc,'clims_diff_s')==0
+    flg_loc.clims_diff_s=[NaN,NaN];
+end
+
+
 if isfield(flg_loc,'var_idx')==0
     flg_loc.var_idx=cell(1,numel(flg_loc.var));
 end
@@ -104,6 +109,7 @@ in_p.fig_visible=0;
 in_p.xlims=xlims;
 in_p.ylims=ylims;
 in_p.gridInfo=gridInfo_ref;
+in_p=gdm_read_plot_along_rkm(in_p,flg_loc);
 
 fext=ext_of_fig(in_p.fig_print);
 

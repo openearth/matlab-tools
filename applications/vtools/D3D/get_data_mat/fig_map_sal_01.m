@@ -97,6 +97,10 @@ end
 if isfield(in_p,'str_idx')==0
     in_p.str_idx=1; 
 end
+if isfield(in_p,'vector_color')==0
+    in_p.vector_color='w'; 
+end
+
 
 v2struct(in_p)
 
@@ -125,7 +129,12 @@ if isnan(clims(1))
         clims=[min(val(bol_in),[],'omitnan'),max(val(bol_in),[],'omitnan')];
     %     clims=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
         tol=1e-8;
-        clims=clims+[-tol,+tol];
+        if is_diff
+            clims=absolute_limits(clims);
+        else
+            clims=clims+[-tol,+tol];
+        end
+        
     end
 end
 if isnan(clims(1)) %still NaN because all are NaN
@@ -456,7 +465,7 @@ if plot_ldb
     end
 end
 if plot_vector
-    quiver(gridInfo.Xcen,gridInfo.Ycen,vec_x',vec_y','parent',han.sfig(kr,kc))
+    quiver(gridInfo.Xcen,gridInfo.Ycen,vec_x',vec_y','parent',han.sfig(kr,kc),'color',vector_color)
 end
 if plot_rkm
     nrkm=numel(rkm{1,1});
