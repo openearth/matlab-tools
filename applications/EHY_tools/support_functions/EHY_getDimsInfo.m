@@ -69,6 +69,10 @@ switch lower(modelType)
             if length(Size)>=1 && Size(1) == NOSTAT
                 dims(end+1).name = 'stations';
             end
+            NTRUV = vs_get(d3d,grp,{1},'NTRUV','quiet');
+            if length(Size)>=1 && Size(1) == NTRUV
+                dims(end+1).name = 'cross_section';
+            end
         elseif strcmp(typeOfModelFileDetail,'trim')
             % faces/grid cells
             MMAX = vs_get(d3d,grp,{1},'MMAX','quiet');
