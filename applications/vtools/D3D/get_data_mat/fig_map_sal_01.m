@@ -100,7 +100,9 @@ end
 if isfield(in_p,'vector_color')==0
     in_p.vector_color='w'; 
 end
-
+if isfield(in_p,'plot_tiles')==0
+    in_p.plot_tiles=0;
+end
 
 v2struct(in_p)
 
@@ -398,19 +400,25 @@ end
 
 %% MAP TILES
 
-% kr=1; kc=1;
-% OPT.xlim=x_lims;
-% OPT.ylim=y_lims;
-% OPT.epsg_in=28992; %WGS'84 / google earth
-% OPT.epsg_out=28992; %Amersfoort
-% OPT.tzl=tzl; %zoom
-% OPT.save_tiles=false;
-% OPT.path_save=fullfile(pwd,'earth_tiles');
-% OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
-% OPT.map_type=3;%map type
-% OPT.han_ax=han.sfig(kr,kc);
-% 
-% plotMapTiles(OPT);
+kr=1; kc=1;
+
+if plot_tiles
+    
+OPT.xlim=xlims;
+OPT.ylim=ylims;
+OPT.epsg_in=28992; %WGS'84 / google earth
+OPT.epsg_out=28992; %Amersfoort
+dx=diff(xlims);
+tzl=tiles_zoom(dx);
+OPT.tzl=tzl; %zoom
+OPT.save_tiles=false;
+OPT.path_save=fullfile(pwd,'earth_tiles');
+OPT.path_tiles=in_p.path_tiles; 
+OPT.map_type=3;%map type
+OPT.han_ax=han.sfig(kr,kc);
+
+plotMapTiles(OPT);
+end
 
 %% EHY
 

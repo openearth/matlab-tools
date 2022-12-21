@@ -70,6 +70,7 @@ if isfield(flg_loc,'do_2D')==0
     flg_loc.do_2D=1;
 end
 
+
 flg_loc=gdm_parse_plot_along_rkm(flg_loc);
 
 %% PATHS

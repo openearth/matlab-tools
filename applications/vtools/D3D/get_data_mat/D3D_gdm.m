@@ -66,6 +66,7 @@
 % in_plot.lan='en';
 % in_plot.tag_serie='01';
 % in_plot.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\';
+% in_plot.path_tiles='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\earth_tiles';
 
 %% display map times
 
