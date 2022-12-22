@@ -104,6 +104,7 @@ if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
     plot_map_2DH_01(fid_log,in_plot_fig,simdef)
     plot_map_2DH_cum_01(fid_log,in_plot_fig,simdef)
+    plot_map_2DH_Fourier2D(fid_log,in_plot_fig,simdef)
 end
 
 %% map 2DH ls

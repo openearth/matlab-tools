@@ -95,6 +95,7 @@ if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
     create_mat_map_2DH_01(fid_log,in_plot_fig,simdef)
     pp_mat_map_2DH_cum_01(fid_log,in_plot_fig,simdef) %compute integrated amount over surface with time    
+    pp_mat_map_2DH_Fourier2D(fid_log,in_plot_fig,simdef) 
 end
 
 %% map 2DH ls
