@@ -67,32 +67,45 @@ for kvar=1:nvar
     var_str_read=D3D_var_num2str_structure(varname,simdef);
     layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     
-    
-    
     ktc=0;
     L=NaN(nt,1);
     int=L;
+    amp=L;
+    len=L;
     for kt=kt_v
 
         ktc=ktc+1;
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
         load(fpath_mat_tmp,'data')
         
-        [L(kt,1),int(kt,1)]=gdm_fourier2D(gridInfo,data);
+        [L(kt,1),int(kt,1),amp(kt,1),len(kt,1)]=gdm_fourier2D(gridInfo,data);
+%         [L(kt,1),int(kt,1)]=zero_crossing_properties(gridInfo.Xcen(:,1)',data(:,1)');
     
         %disp
         messageOut(fid_log,sprintf('Fourier2D %4.2f %%',ktc/nt*100));
     end %kt
     
+    clear data
+    
     fpath_mat_loc=mat_tmp_name(fdir_mat,sprintf('%s_Fourier2D_1',tag),'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
     data.val=L;
-    data.unit='bar_length';
-    save_check(fpath_mat_loc,'L')
+    data.unit='fourier_max_length_x';
+    save_check(fpath_mat_loc,'data')
     
     fpath_mat_loc=mat_tmp_name(fdir_mat,sprintf('%s_Fourier2D_2',tag),'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
     data.val=int;
-    data.unit='fourier_coeff_abs';
-    save_check(fpath_mat_loc,'int')
+    data.unit='fourier_spectral_power';
+    save_check(fpath_mat_loc,'data')
+    
+    fpath_mat_loc=mat_tmp_name(fdir_mat,sprintf('%s_Fourier2D_3',tag),'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
+    data.val=amp;
+    data.unit='amplitude_L';
+    save_check(fpath_mat_loc,'data')
+    
+    fpath_mat_loc=mat_tmp_name(fdir_mat,sprintf('%s_Fourier2D_4',tag),'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
+    data.val=len;
+    data.unit='length';
+    save_check(fpath_mat_loc,'data')
 end %kvar
 
 %% SAVE

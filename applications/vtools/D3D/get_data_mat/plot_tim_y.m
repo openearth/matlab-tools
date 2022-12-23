@@ -22,6 +22,11 @@ else
     tag_tim=flg_loc.tag_tim;
 end
 
+if isfield(flg_loc,'var_idx')==0
+    flg_loc.var_idx=cell(1,numel(flg_loc.var));
+end
+var_idx=flg_loc.var_idx;
+
 %% DO
 
 ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
@@ -33,8 +38,12 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie,var_str);
 fdir_mat=simdef.file.mat.dir;
 % fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
-fpath_mat=fullfile(fdir_mat,sprintf('%s_%s.mat',tag,var_str)); %see line below...
-% fpath_mat_loc=mat_tmp_name(fdir_mat,sprintf('%s_Fourier2D',tag),'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
+
+%NO BACKWARD COMPATIBILITY!
+% fpath_mat=fullfile(fdir_mat,sprintf('%s_%s.mat',tag,var_str)); %original
+% fpath_mat=mat_tmp_name(fdir_mat,tag,'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
+fpath_mat=mat_tmp_name(fdir_mat,tag,'var',var_str);
+
 fpath_mat_tim=fullfile(fdir_mat,sprintf('%s.mat',tag_tim));
 fpath_mat_time=strrep(fpath_mat_tim,'.mat','_tim.mat');
 fpath_map=simdef.file.map;

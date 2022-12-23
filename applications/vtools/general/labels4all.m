@@ -910,6 +910,66 @@ switch lower(variable)
                 str_var='?';
          end
          un_type='T';
+    case 'fourier_max_length_x'
+         switch lan
+            case 'en'
+                str_var='wavelength of maximum amplitude';
+            case 'nl'
+                error('')
+                str_var='maximale leeftijd';
+            case 'es'
+                error('')
+                str_var='?';
+         end
+         un_type='L';
+    case 'fourier_coeff_abs'
+         switch lan
+            case 'en'
+                str_var='maximum Fourier coefficient';
+            case 'nl'
+                error('')
+                str_var='maximale leeftijd';
+            case 'es'
+                error('')
+                str_var='?';
+         end
+         un_type='L'; 
+    case 'fourier_spectral_power'
+         switch lan
+            case 'en'
+                str_var='spectral power';
+            case 'nl'
+                error('')
+                str_var='maximale leeftijd';
+            case 'es'
+                error('')
+                str_var='?';
+         end
+         un_type='L2'; 
+    case 'amplitude_l'
+         switch lan
+            case 'en'
+                str_var='amplitude';
+            case 'nl'
+                error('')
+                str_var='maximale leeftijd';
+            case 'es'
+                error('')
+                str_var='?';
+         end
+         un_type='L'; 
+    case 'length'
+         switch lan
+            case 'en'
+                str_var='length';
+            case 'nl'
+                error('')
+                str_var='maximale leeftijd';
+            case 'es'
+                error('')
+                str_var='?';
+         end
+         un_type='L'; 
     otherwise
         str_var=variable;
         un_type='?';

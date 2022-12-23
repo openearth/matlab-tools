@@ -114,12 +114,12 @@ prnt.filename=sprintf('fourier2_%d_%d_%d_%010.0f',flg.which_v,flg.which_s,flg.wh
 prnt.size=flg.prnt_size;
 npr=1; %number of plot rows
 npc=1; %number of plot columns
-% marg.mt=0.5; %top margin [cm]
-% marg.mb=0.5; %bottom margin [cm]
-% marg.mr=0.5; %right margin [cm]
-% marg.ml=1.5; %left margin [cm]
-% marg.sh=1.0; %horizontal spacing [cm]
-% marg.sv=0.0; %vertical spacing [cm]
+marg.mt=0.5; %top margin [cm]
+marg.mb=0.5; %bottom margin [cm]
+marg.mr=0.5; %right margin [cm]
+marg.ml=1.5; %left margin [cm]
+marg.sh=1.0; %horizontal spacing [cm]
+marg.sv=0.0; %vertical spacing [cm]
 
 % marg.mt=0.5; %top margin [cm]
 % marg.mb=1.0; %bottom margin [cm]
@@ -135,16 +135,17 @@ npc=1; %number of plot columns
 % marg.sh=1.0; %horizontal spacing [cm]
 % marg.sv=0.0; %vertical spacing [cm]
 
-marg.mt=flg.marg.mt; %top margin [cm]
-marg.mb=flg.marg.mb; %bottom margin [cm]
-marg.mr=flg.marg.mr; %right margin [cm]
-marg.ml=flg.marg.ml; %left margin [cm]
-marg.sh=flg.marg.sh; %horizontal spacing [cm]
-marg.sv=flg.marg.sv; %vertical spacing [cm]
+% marg.mt=flg.marg.mt; %top margin [cm]
+% marg.mb=flg.marg.mb; %bottom margin [cm]
+% marg.mr=flg.marg.mr; %right margin [cm]
+% marg.ml=flg.marg.ml; %left margin [cm]
+% marg.sh=flg.marg.sh; %horizontal spacing [cm]
+% marg.sv=flg.marg.sv; %vertical spacing [cm]
 
 % prop.ms1=10; 
 % prop.lw=1;
-prop.fs=flg.prop.fs;
+% prop.fs=flg.prop.fs;
+prop.fs=10;
 % prop.fn='Helvetica';
 % prop.color=[... %>= matlab 2014b default
 %  0.0000    0.4470    0.7410;... %blue
@@ -166,8 +167,8 @@ prop.fs=flg.prop.fs;
 
 %colorbar
 cbar.sfig=[1,1]; 
-% cbar.displacement=[0.0,0.1,0,0]; 
-cbar.displacement=flg.cbar.displacement; 
+cbar.displacement=[0.0,0.1,0,0]; 
+% cbar.displacement=flg.cbar.displacement; 
 cbar.location='northoutside';
 % switch flg.which_v
 %     case 2

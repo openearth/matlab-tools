@@ -26,10 +26,10 @@ if isfield(flg_loc,'do_Fourier2D')==0
     flg_loc.do_Fourier2D=zeros(size(flg_loc.var));
 end
 
-if isfield(flg_loc,'var_idx')==0
-    flg_loc.var_idx=cell(1,numel(flg_loc.var));
-end
-var_idx=flg_loc.var_idx;
+% if isfield(flg_loc,'var_idx')==0
+%     flg_loc.var_idx=cell(1,numel(flg_loc.var));
+% end
+% var_idx=flg_loc.var_idx;
 
 %% PATHS
 
@@ -50,11 +50,13 @@ for kvar=1:nvar
     varname=flg_loc.var{kvar};
     var_str=D3D_var_num2str_structure(varname,simdef);
     
-    flg_loc_2=flg_loc;
-    flg_loc_2.tag=strcat(flg_loc.tag,'_Fourier2D');
-    flg_loc_2.tag_tim=flg_loc.tag;
+    for kfig=1:4
+        flg_loc_2=flg_loc;
+        flg_loc_2.tag=strcat(flg_loc.tag,sprintf('_Fourier2D_%d',kfig));
+        flg_loc_2.tag_tim=flg_loc.tag;
 
-    plot_tim_y(fid_log,flg_loc_2,simdef,var_str)            
+        plot_tim_y(fid_log,flg_loc_2,simdef,var_str)            
+    end
 end %kvar
 
 

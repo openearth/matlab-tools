@@ -111,7 +111,7 @@ if isfield(in_p,'mr')==0
     in_p.mr=0.5;
 end
 if isfield(in_p,'ml')==0
-    in_p.ml=1.5;
+    in_p.ml=2.0;
 end
 if isfield(in_p,'do_marker')==0
     in_p.do_marker=0;

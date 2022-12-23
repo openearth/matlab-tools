@@ -111,7 +111,7 @@ flg.ZScale='log';
 D3D_figure_fourier2(flg,file,in_plot)
 end
 
-if 1
+if 0
 flg.which_s=3;
 flg.lims.x=[0,0.05]; %x limit in [m]
 flg.lims.y=[0,0.25]; %y limit in [m]
@@ -149,7 +149,7 @@ end
 if 0
 %% original
 figure
-surf(x_m,y_m,z_m)
+surf(x_m,y_m,z_m,'edgecolor','none')
 xlabel('streamwise direction [m]')
 ylabel('transverse direction [m]')
 %% harmonics
@@ -163,6 +163,7 @@ view([-90,0])
 view([0,0])
 %% frequencies
 figure
+hold on
 scatter3(reshape(f_xm,[],1),reshape(f_ym,[],1),reshape(f_zr,[],1))
 xlabel('streamwise frequency [1/m]')
 ylabel('transversal frequency [1/m]')
