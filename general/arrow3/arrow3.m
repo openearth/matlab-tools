@@ -545,15 +545,16 @@ set(G,'EdgeColor','none');
 X=get(G,'XData'); Y=get(G,'YData'); Z=get(G,'ZData');
 H2=Zeros; [j,k]=size(X);
 for i=1:n                           % translate, rotate, and scale
-  H2(i)=copyobj(G,ax);
   xyz=[w(i)*X(:),w(i)*Y(:),h(i)*Z(:)]*[U(i,:);V(i,:);W(i,:)]*dar;
   x=reshape(xyz(:,1),j,k)+p2(i,1);
   y=reshape(xyz(:,2),j,k)+p2(i,2);
   z=reshape(xyz(:,3),j,k)+p2(i,3);
   if strcmpi(vecOrArrow,'arrow')
+      H2(i)=copyobj(G,ax);
       LocalSetSurface(xys,xs,ys,dx,dy,xr,yr,...
         x,y,z,a(i),c(i,:),H2(i),2,m+1);
   else
+      delete(G);
       nr_last = floor(size(x,2)/2) + 1;
       plot(x(:,1      ),y(:,1      ),'LineWidth',lw(i));
       plot(x(:,nr_last),y(:,nr_last),'LineWidth',lw(i));
