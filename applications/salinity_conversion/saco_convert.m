@@ -18,7 +18,7 @@
       % Formula  1: calculation     salinity       --->      density; equation according to millero/delft hydraulics       (NaCl)
       % Formula  2: calculation     salinity       --->      density; equation according to millero/delft hydraulics       (NaCl)
       % Formula  3: calculation     salinity       --->      density; equation according to UNESCO (millero-poisson) 1981  (Seawater)
-      % Formula  4: calculation     salinity       --->      density; eckart (1958): salt formula in Delft3D-Flow          (Seawater)
+      % Formula  4: calculation     salinity       --->      density;  (1958): salt formula in Delft3D-Flow          (Seawater)
       % Formula  5: calculation     salinity       --->      density; engineering approximation
       % Formula  6: calculation   chlorinity       --->      density; equation according to millero/delft hydraulics       (NaCl)
       % Formula  7: calculation   chlorinity       --->      density; equation according to franks/lo surdo                (NaCl)
@@ -78,7 +78,7 @@
          argout = conversion_03 (argin, varargin{1});
       case   (4)
          %
-         % Formula  4: calculation     salinity --->      density; eckart (1958): salt formula in Delft3D-Flow          (Seawater)
+         % Formula  4: calculation     salinity --->      density;  (1958): salt formula in Delft3D-Flow          (Seawater)
          % out:      Density; in:     Salinity and Temperature
          %
          argout = conversion_04 (argin, varargin{1});
@@ -369,7 +369,7 @@
       function [dens] = conversion_04 (sal,temp)
 
       % CALCULATION SALINITY ---> DENSITY
-      % ECKART (1958): SALT FORMULA IN TRISULA
+      %  (1958): SALT FORMULA IN TRISULA
       % SEAWATER:
       % TEMPERATURE RANGE: 0 - 40 dgr Celsius
       % SALINITY RANGE: 0 - 40
