@@ -353,6 +353,8 @@ switch modelType
                 end
             case 'cross_section_discharge'
                 Data.val(:,dims(stationsInd).indexOut) = waquaio(sds,[],'mq-stat',time_ind,dims(stationsInd).index);
+            case 'cross_section_cumulative_discharge'
+                Data.val(:,dims(stationsInd).indexOut) = waquaio(sds,[],'cq-stat',time_ind,dims(stationsInd).index);
         end
         
     case 'sobek3'

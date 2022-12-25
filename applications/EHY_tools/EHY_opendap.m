@@ -19,9 +19,9 @@ function varargout = EHY_opendap (varargin)
 %                        - Measurement height, etc
 %                        Is returned in the stucture Info
 %% Initialisation
-OPT.Parameter = '';
-OPT.Station   = '';
-
+OPT.Parameter      = '';
+OPT.Station        = '';
+OPT.WaterbaseOrDDL = 'Waterbase';
 OPT = setproperty(OPT,varargin);
 
 % interactively retrieving data
@@ -30,19 +30,13 @@ if nargout==0 & nargin==0
 end
 
 %% Retreive list of files available on the opendap server
-[path,~,~] = fileparts(mfilename('fullpath'));
+url = '\\dfs-trusted\dfs\openearth-opendap-opendap\thredds\rijkswaterstaat\Waterbase\';
+if strcmp(OPT.WaterbaseOrDDL,'DDL') url = '\\dfs-trusted\dfs\openearth-opendap-opendap\thredds\rijkswaterstaat\DDL\'; end
 
-D = dir([path filesep 'list_opendap.mat']);
-if ~isempty(D) && D.datenum < datenum(2022,10,10); delete([path filesep 'list_opendap.mat']); end
-if ~exist([path filesep 'list_opendap.mat'],'file')
-%    url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml';
-    warning('List of OPENDAP waterbase files is out fo date. Rebuiding the list');
-    url = '\\dfs-trusted\dfs\openearth-opendap-opendap\thredds\rijkswaterstaat\waterbase\';
-    list = opendap_catalog(url,'disp','','maxlevel',4);
-    save([path filesep 'list_opendap.mat'],'list');
-else
-    load([path filesep 'list_opendap.mat']);
-end
+Info = dir([url '**']);
+Info = Info(~[Info.isdir]);
+Info = Info(~[contains({Info.name},{'catalog' 'mat'})]);
+list = strcat({Info.folder},filesep,{Info.name});
 
 %% Nothing specified, return list of possible parameters
 if isempty(OPT.Parameter) & nargout==1
@@ -98,6 +92,7 @@ if ~isempty(OPT.Parameter)
                 for i_par = 1: length(i_stat)
                     Info       = ncinfo(list_stat{i_stat(i_par)});
                     param_name = Info.Variables(end).Name;
+                    if strcmpi(param_name,'y') param_name = Info.Variables(3).Name; end % Temporary fix for DDL data  
                     
                     %% Retrieve data
                     D           = nc_cf_timeseries(list_stat{i_stat(i_par)},param_name,'plot',0);
@@ -147,7 +142,22 @@ end
 end
 
 function EHY_opendap_interactive
-parameters=EHY_opendap;
+
+%% Select waterbase oer DDL
+fig = figure('Position',[400 400 270 60],'Visible','on');
+set(gcf,'Name','Select Data Source','NumberTitle','off');
+set(gcf,'MenuBar','none','ToolBar','none');
+tb1 = uicontrol(fig,'Style','pushbutton','String','Waterbase Data','Position',[10 ,10,100,40],'Callback',@pushBut);
+tb2 = uicontrol(fig,'Style','pushbutton','String','DDL Data'      ,'Position',[160,10,100,40],'Callback',@pushBut);
+movegui(gcf,'center');
+uiwait;
+
+if ~isempty (tb1.UserData) WaterbaseOrDDL = 'Waterbase'; end
+if ~isempty (tb2.UserData) WaterbaseOrDDL = 'DDL'      ; end    
+
+delete(fig);
+
+parameters=EHY_opendap('WaterbaseOrDDL',WaterbaseOrDDL);
 for iP=1:length(parameters)
     parameters2{iP,1}=strrep(parameters{iP}(4:end),'_',' ');
 end
@@ -157,7 +167,7 @@ end
     'ListSize',[500 500]); if isempty(selection); return; end
 selectedParameter=parameters{selection};
 
-Stations            = EHY_opendap('Parameter',selectedParameter);
+Stations            = EHY_opendap('Parameter',selectedParameter,'WaterbaseOrDDL',WaterbaseOrDDL);
 [selection,~]=  listdlg('PromptString',['Select a station for variable '''  parameters2{selection}  ''''],...
     'SelectionMode','single',...
     'ListString',Stations,...
@@ -170,11 +180,11 @@ selectedStation=Stations{selection};
 
 disp(['start downloading data... Station: ' selectedStation ' - Parameter: ' selectedParameter])
 if selection==1
-    [times,values]=EHY_opendap('Parameter',selectedParameter,'Station',selectedStation);
+    [times,values]=EHY_opendap('Parameter',selectedParameter,'Station',selectedStation,'WaterbaseOrDDL',WaterbaseOrDDL);
     disp([char(10) 'Note that next time you want to download this data, you can also use:'])
     disp(['[times,values]=EHY_opendap(''Parameter'',''' selectedParameter ''',''Station'',''' selectedStation ''');' char(10)])
 elseif selection==2
-    [times,values,info]=EHY_opendap('Parameter',selectedParameter,'Station',selectedStation);
+    [times,values,info]=EHY_opendap('Parameter',selectedParameter,'Station',selectedStation,'WaterbaseOrDDL',WaterbaseOrDDL);
     disp([char(10) 'Note that next time you want to download this data, you can also use:'])
     disp(['[times,values,info]=EHY_opendap(''Parameter'',''' selectedParameter ''',''Station'',''' selectedStation ''');' char(10)])
 end
@@ -224,3 +234,15 @@ if selection==1
 end
 
 end
+
+function pushBut(hObject, eventdata)
+
+hObject.UserData = 'pushed';
+guidata(hObject);
+uiresume;
+
+end
+
+
+
+

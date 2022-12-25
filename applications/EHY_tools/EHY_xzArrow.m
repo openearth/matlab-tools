@@ -71,7 +71,7 @@ for mThin = indexX
     end
 end
 
- % (avoid identical start and end point in case u = 0)
+% (avoid identical start and end point in case u = 0)
 for i_pnt = 1: length(xStart)
     if xStart(i_pnt) == xEnd(i_pnt)  xEnd(i_pnt) = 1.0001*xEnd(i_pnt); end
 end
