@@ -1,4 +1,4 @@
-function x_basepoint = get_basepoint_additionV(x,z,Rp,V_input)
+function [x_new, z_new, x_basepoint] = get_basepoint_additionV(x,z,Rp,V_input)
 %get_basepoint_additionV  Compute position of boundary profile given of
 %addition volume
 %
@@ -64,6 +64,12 @@ end
 
 if ~stop
     x_basepoint = NaN;
+    x_new = NaN;
+    z_new = NaN;
+else
+    x_new = x;
+    z_new = z;
+    z_new(x<x_basepoint) = Rp;
 end
 
 end

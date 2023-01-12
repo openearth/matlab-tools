@@ -42,6 +42,23 @@ helling1 = 1;
 % --- right slope 1/2
 helling2 = 2;  
 
+if fig
+figure
+end
+
+% --- move GP based on addition volume
+if V_input>0
+    if fig
+    plot(x0,zb0,'k.-','DisplayName','zb0');
+    end
+    [x0 zb0 x_basepoint] = get_basepoint_additionV(x0,zb0,z_min_grensprofiel,V_input);
+    if isnan(x_basepoint)
+        X11 = NaN;
+        return 
+    end
+end
+
+
 % --- add fictive point to make sure that we always have crossing at the
 % back side
 zb0(end+1)  = z_min_grensprofiel-1;
@@ -50,7 +67,6 @@ x0(end+1)   = x0(end);
 
 % --- plot profile
 if fig
-figure
 plot(x0,zb0,'k.-','DisplayName','zb');
 hold on
 plot(x0, x0*0+z_max_grensprofiel,'DisplayName','Max GP')
@@ -199,17 +215,7 @@ else
         % --- fit boundary profile left side
         [X11 X12 Z11 Z12]   = inpassen_links(N, crossing_l(jj), helling1, z_max_grensprofiel, z_min_grensprofiel,zb,x);
         
-        % --- move GP based on addition volume
-        if V_input>0
-            x_basepoint = get_basepoint_additionV(x,zb,z_min_grensprofiel,V_input);
-            if X11<x_basepoint
-                plot([x_basepoint x_basepoint],[min(zb) max(zb)],'k--','DisplayName','X0-addition')
-                plot([X11 x_basepoint],[Z11 Z11],'o--k','DisplayName','GP-addition')
-                X11 = x_basepoint;
-                X12 = x_basepoint + 1 * (z_max_grensprofiel-z_min_grensprofiel);
-                
-            end
-        end
+
             
 
         if fig; plot([X11 X12],[Z11 Z12],'m-','DisplayName','GP-left'); end
@@ -279,5 +285,7 @@ function [X21 X22 Z21 Z22] = inpassen_rechts(N, crossing2, helling2, z_max_grens
     X22 = x_list_dummy2(index);
     Z22 = z_min_grensprofiel;
 end
+
+
 
 end
