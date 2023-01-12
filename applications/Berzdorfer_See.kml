@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Placemark id="1.2.1">
+	<name>Berzdorfer See</name>
+	<snippet></snippet>
+	<description><![CDATA[<!DOCTYPE html><html><head></head><body><script type="text/javascript">window.location.href="https://www.google.com/earth/rpc/entity?lat=51.0897864&lng=14.950611499999999&fid=0x4708df0e2de5610d:0x9cfec537fb9fbf5a&hl=de&gl=de&client=earth-client&cv=7.3.6.9326&useragent=GoogleEarth/7.3.6.9326(Windows;Microsoft Windows (6.2.9200.0);de;kml:2.2;client:Pro;type:default)";</script></body></html>]]></description>
+	<styleUrl>#geocode</styleUrl>
+	<ExtendedData>
+		<Data name="placepageUri">
+			<value>https://www.google.com/earth/rpc/entity?lat=51.0897864&amp;lng=14.950611499999999&amp;fid=0x4708df0e2de5610d:0x9cfec537fb9fbf5a&amp;hl=de&amp;gl=de&amp;client=earth-client&amp;cv=7.3.6.9326&amp;useragent=GoogleEarth/7.3.6.9326(Windows;Microsoft Windows (6.2.9200.0);de;kml:2.2;client:Pro;type:default)</value>
+		</Data>
+	</ExtendedData>
+	<MultiGeometry>
+		<Point>
+			<coordinates>14.9569156,51.0865011,0</coordinates>
+		</Point>
+		<LinearRing>
+			<coordinates>
+				14.93493013586564,51.07001200189923,0 14.93493013586564,51.10299019810077,0 14.97890106413436,51.10299019810077,0 14.97890106413436,51.07001200189923,0 14.93493013586564,51.07001200189923,0 
+			</coordinates>
+		</LinearRing>
+	</MultiGeometry>
+</Placemark>
+</kml>
