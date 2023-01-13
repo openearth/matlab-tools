@@ -137,6 +137,8 @@ if isfield(Data,'face_nodes')
 elseif strcmp(Data.modelType,'d3d') || isfield(Data,'Xcor')
     if isfield(Data,'val')
         switch numel(size(Data.val))
+            case 3
+                val = arbcross(arb,{'FACE' permute(Data.val,[2 3 1])});
             case 4
                 val = arbcross(arb,{'FACE' permute(Data.val,[2 3 4 1])});
             case 5
