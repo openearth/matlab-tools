@@ -1,4 +1,4 @@
-function [Dis,cond,hgGate,hgWeir] = discharge_GS(level1,level2,GH,width,muGate,corrGate,corrWeir,C,L)
+function [Dis,cond,hgGate,hgWeir,upE] = discharge_GS(level1,level2,GH,width,muGate,corrGate,corrWeir,C,L,varargin)
 
 %% Compute discharges and discharge condition based on water levels right, left and structure definition
 %  Postive discharge if level1 > level2
@@ -17,9 +17,10 @@ if sign == -1; upWl = level2; downWl = level1; end
 
 %  Start with discharge estimated based on water level difference only
 Dis_tmp = muGate*corrGate*width*GH*sqrt(2*g*(upWl - downWl))*sign;
+crit    = Dis_tmp/1e5;
 
 % Iterate
-while diff > 0.01
+while diff > crit
     upU    = Dis_tmp/(upWl  *width);
     downU  = Dis_tmp/(downWl*width);
     upE    = upU  ^2/(2*g) + upWl  ;
@@ -30,6 +31,7 @@ while diff > 0.01
                         corrWeir       , lambda                                         ) ;
     hgGate   = flgsd2fm(width   , width, 0.0, width, 0.0, GH, 0.0, 0.0, upE, downWl, 1.0, ...
                         muGate*corrGate, lambda                                         );
+    hgGate   = compute_hgTK(width,GH,downWl,upE,muGate*corrGate,lambda);
     
     cond      = detCond_gs_TRM    (upE,hgWeir,hgGate,GH,muGate);
     
@@ -41,13 +43,14 @@ while diff > 0.01
         
         Dis = muGate*corrGate*width*GH*sqrt(2*g*(upE - hgGate))*sign;
         
-        %% Discharge subcritical
+        %% Discharge weirflow subcritical
     elseif cond == 6
         Dis = corrWeir*width*hgWeir*sqrt(2*g*(upE - hgWeir))*sign;
     end
     
     diff       = abs(Dis - Dis_tmp);
     Dis_tmp    = Dis;
+%    Dis_tmp    = 0.1*Dis + 0.9*Dis_tmp;
 end
 
 end
