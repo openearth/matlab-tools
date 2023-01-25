@@ -1,32 +1,42 @@
 function XY = pointcloud_thinner(XY,min_dist,split_amount)
+% POINTCLOUD_THINNER efficiently reduces a 2D-pointcloud based on min. allowed distance.
+%
 % The function POINTCLOUD_THINNER efficiently thins out a 2-dimensional
-% pointcloud, based on a min. allowed distance between 2 points.
+% pointcloud, based on a min. allowed distance between any 2 points. All
+% points wihtin this area are discarded, except for the test-point itself.
+% If the pointcloud contains more than 2 dimensions, filtering is performed
+% on x and y coordinates only, which are assumed to be the first two
+% columns. Other dimensions or properties are maintained per row. 
 %________
 % Syntax:
 %
-%      <XY_new> = pointcloud_thinner(XY,min_dist);
+%      XY_new = pointcloud_thinner(XY,min_dist);
 %
 % Input variables:
 %
 %      XY         The pointcloud to be thinned out, is a matrix of size
-%                 [M,2] with horizontal and vertical points. Once could
+%                 [M,2] with horizontal and vertical points. One could
 %                 also supply a [M,N] matrix, in which case it will assume
 %                 [M,1] to be the X-values, and [M,2] to be the Y-values.
-%                 All other columns will be maintained columnwise.
+%                 All other columns will be maintained rowwise.
 %      min_dist   The minimum distance by which points will be removed.
 %                 After running the function, the minimum distance between
-%                 any 2 point will be at least min_dist.
+%                 any 2 points in (x,y) space will be at least min_dist.
+%      split_amount For efficient processing the pointcloud may be split in
+%                 several parts. split_amount is the maximum length of such
+%                 part. A final check will be performed against the
+%                 complete reduced pointcloud. Current default is 1e5.
 %
 % Output variables:
 %
-%      XY_new     Ouput pointcloud created by POINTCLOUD_THINNER
+%      XY_new     Ouput pointcloud created by POINTCLOUD_THINNER [M,N].
 %
 % _____
 % Note:
 %
 % The function is made efficient by creating partitions of the data that
 % have a size most that is most effectively handled by Matlab, and can
-% therefor handle data with multiple millions of points.
+% therefore handle data with multiple millions of points.
 %
 % ________
 % Example:
@@ -72,12 +82,16 @@ function XY = pointcloud_thinner(XY,min_dist,split_amount)
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
-%% Code start:
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 
+%% Code start
 if exist('split_amount','var') ~= 1
-    
     split_amount = 100000;
-    
     % Tests have shown that once you're searching in arrays longer than 100.000
     % the amount of time required starts to scale linearly (below this amount,
     % search times are roughly equal). The test could change in the future
@@ -94,9 +108,7 @@ if isnumeric(XY)
     elseif size(XY,1)<2
         error('Your XY data should have at least 2 points');
     elseif size(XY,1) < size(XY,2)
-    	disp(['Your pointcloud has more dimensions than points! [' num2str(size(XY,1)) ',' num2str(size(XY,2)) ']']);
-        disp('Please flip your data is this is incorrect');
-        disp(' ');
+        warning('Your pointcloud has more dimensions than points! [%i, %i]\nPlease flip your data if this is incorrect\n',size(XY,1),size(XY,2));
     end
 else
     error('XY input should be a matrix');
@@ -115,6 +127,14 @@ end
 
 ori_size = size(XY,1);
 
+% Minimum distance check is based on distance^2, to avoid computation of sqrt.
+min_distsq=min_dist.^2;
+
+
+%% Filtering
+% The pointcloud is split in chuncks of [split_amount] rows for faster
+% filtering. If size(XY,1)<split_amount, final filtering is performed
+% imediately.
 number_of_partitions  = ceil(size(XY,1)./split_amount);
 next_iter             = true;
 
@@ -122,69 +142,84 @@ filter_tel = 1;
 number_of_pts_removed = [];
 
 while number_of_partitions > 1 && next_iter
-    
-    number_of_pts_removed(filter_tel) = 0;
-    
+    fprintf(1,'Filter #%i\n',filter_tel);
     clear XY_parts;
+    number_of_pts_removed(filter_tel) = 0; %#ok<*AGROW>
     partition_size = floor(size(XY,1)/number_of_partitions);
+
     for ii=1:number_of_partitions
-        inds = [[ii-1 ii] .* partition_size] + [1 0];
+        inds = ([ii-1 ii] .* partition_size) + [1 0];
         if ii == number_of_partitions
             inds = [inds(1) size(XY,1)];
         end
         XY_parts{ii} = XY(inds(1):inds(2),:);
     end
 
-    tic; tel = 0;
+    tic;
     XY_new = [];
     for partition = 1:length(XY_parts)
         for ii=1:length(XY_parts{partition})
-            if ii/(split_amount/100) == round(ii/(split_amount/100))
-                tel = tel + (split_amount/100);
-                disp(['Filter #' num2str(filter_tel) ': partition ' num2str(partition) '/' num2str(number_of_partitions) ': Step ' num2str(ii) '/' num2str(length(XY_parts{partition})) ' - '  num2str(tel*100/size(XY,1),'%9.1f') '% of total - ETA: ' num2str((((1-(tel/size(XY,1)))*toc)/(tel/size(XY,1)))./60,'%9.1f') ' min.']);
-            end
             if ~isnan(XY_parts{partition}(ii,1))
-                XY_parts{partition}(find(sqrt(((XY_parts{partition}(:,1) - XY_parts{partition}(ii,1)).^2) + ((XY_parts{partition}(:,2) - XY_parts{partition}(ii,2)).^2)) < min_dist & sqrt(((XY_parts{partition}(:,1) - XY_parts{partition}(ii,1)).^2) + ((XY_parts{partition}(:,2) - XY_parts{partition}(ii,2)).^2)) > 0),:) = NaN;
+                % All points closer than min_dist are set to nan (viz.
+                % removed from data) except for the point itself.
+                % Comparison based on distance^2 omits computing the sqrt,
+                % which saves a lot of time!
+                % Logical indexing suffices and is much faster than calling
+                % find.
+                % Duplicate points (same (x,y)) are now removed too.
+                %XY_parts{partition}(find(sqrt(((XY_parts{partition}(:,1) - XY_parts{partition}(ii,1)).^2) + ((XY_parts{partition}(:,2) - XY_parts{partition}(ii,2)).^2)) < min_dist & sqrt(((XY_parts{partition}(:,1) - XY_parts{partition}(ii,1)).^2) + ((XY_parts{partition}(:,2) - XY_parts{partition}(ii,2)).^2)) > 0),:) = NaN;
+                mask = (((XY_parts{partition}(:,1) - XY_parts{partition}(ii,1)).^2) + ((XY_parts{partition}(:,2) - XY_parts{partition}(ii,2)).^2)) < min_distsq;
+                mask(ii) = 0;
+                if any(mask)
+                    XY_parts{partition}(mask,:) = NaN;
+                end
             end
         end
+        fprintf(1,'Filter #%i: partition %2i/%2i - ETA: %4.1fmin.\n', filter_tel, partition, number_of_partitions, toc*(1-partition/length(XY_parts))/(partition/length(XY_parts))/60);
         XY_new = [XY_new; XY_parts{partition}(~isnan(XY_parts{partition}(:,1)),:)];
         number_of_pts_removed(filter_tel) = number_of_pts_removed(filter_tel) + sum(isnan(XY_parts{partition}(:,1)));
     end
     
-    number_of_partitions  = ceil(size(XY_new,1)./split_amount);
-    
-    if number_of_pts_removed(filter_tel) == 0 || number_of_pts_removed(filter_tel) < (0.001 .* size(XY,1))
+    if number_of_pts_removed(filter_tel) == 0 || number_of_pts_removed(filter_tel) < (0.001 * size(XY,1))
         next_iter = false;
     end
     
+    number_of_partitions  = ceil(size(XY_new,1)./split_amount);
     XY = XY_new;
-    
     filter_tel = filter_tel + 1;
-    
-    disp(' ');
+    fprintf(1,'\n');
 end
 
-% Final filtering:
-
-tel = 0; tic;
+%% Final filtering
+% To assert if all points in different parts also differ at least min_dist,
+% a final filter step is performed on the whole filtered pointcloud.
+tic;
+fprintf(1,'Final filter\n');
 for ii=1:size(XY,1)
-    if ii/(split_amount/100) == round(ii/(split_amount/100))
-        tel = tel + (split_amount/100);
-        disp(['Finalizing: Step ' num2str(ii) '/' num2str(size(XY,1)) ' - '  num2str(tel*100/size(XY,1),'%9.1f') '% of total - ETA: ' num2str((((1-(tel/size(XY,1)))*toc)/(tel/size(XY,1)))./60,'%9.1f') ' min.']);
+    if rem(ii,round(size(XY,1)/100,0)) == 0 %ii/(split_amount/100) == round(ii/(split_amount/100))
+        fprintf(1,'Finalizing: Step %5i/%5i - %4.1f%% of total - ETA: %5.1fmin.\n', ii, size(XY,1), ii/size(XY,1)*100, toc*(1-ii/size(XY,1))/(ii/size(XY,1))/60);
     end
     if ~isnan(XY(ii,1))
-        XY(find(sqrt(((XY(:,1) - XY(ii,1)).^2) + ((XY(:,2) - XY(ii,2)).^2)) < min_dist & sqrt(((XY(:,1) - XY(ii,1)).^2) + ((XY(:,2) - XY(ii,2)).^2)) > 0),:) = NaN;
+        % All points closer than min_dist are set to nan (viz. removed from
+        % data) except for the point itself.
+        % Comparison based on distance^2 omits computing the sqrt, which
+        % saves a lot of time!
+        % Logical indexing suffices and is much faster than calling find.
+        % Duplicate points (same (x,y)) are now removed too.
+        %XY(find(sqrt(((XY(:,1) - XY(ii,1)).^2) + ((XY(:,2) - XY(ii,2)).^2)) < min_dist & sqrt(((XY(:,1) - XY(ii,1)).^2) + ((XY(:,2) - XY(ii,2)).^2)) > 0),:) = NaN;
+        mask = (((XY(:,1) - XY(ii,1)).^2) + ((XY(:,2) - XY(ii,2)).^2)) < min_distsq;
+        mask(ii) = 0;
+        if any(mask)
+            XY(mask,:) = NaN;
+        end
     end
 end
 number_of_pts_removed(end+1) = sum(isnan(XY(:,1)));
 XY = XY(~isnan(XY(:,1)),:);
 
-disp(' ')
-disp('Script completed succesfully')
-disp(['Removed a total of ' num2str(sum(number_of_pts_removed)) ' points from the ' num2str(ori_size) ' point dataset'])
-disp(['Thinned dataset (min. distance ' num2str(min_dist) ') has a total of ' num2str(size(XY,1)) ' points']);
+fprintf(1,'\nScript completed succesfully.\n');
+fprintf(1,'Removed a total of %i points from the %i point dataset.\n', sum(number_of_pts_removed), ori_size);
+fprintf(1,'Points removed in step %i: %i\n',[1:length(number_of_pts_removed);number_of_pts_removed])
+fprintf(1,'Thinned dataset (min. distance %g) has a total of %i points.\n', min_dist, size(XY,1));
 
-
-
-
-
+%EOF
