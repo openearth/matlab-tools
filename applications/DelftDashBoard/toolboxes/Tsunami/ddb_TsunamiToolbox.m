@@ -584,7 +584,6 @@ if ~isempty(pathname)
                 else
                     [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips,'shift',1);
                 end
- figure(123);pcolor(xx,yy,zz);shading flat;axis equal;colormap('jet');colorbar;
                 
                 if handles.toolbox.tsunami.saveESRIGridFile
                     % Write tsunami asc file (in geographic coordinates)
@@ -626,7 +625,6 @@ if ~isempty(pathname)
                 yy1=yy;
 
         end
-         figure(124);pcolor(xx1,yy1,zz);shading flat;axis equal;colormap('jet');colorbar;
 
         ddb_plotInitialTsunami(handles,xx1,yy1,zz);
         
@@ -789,6 +787,8 @@ if ~isempty(pathname)
                 
         switch opt
             case{'fromparameters'}
+                
+                
                 xs=handles.toolbox.tsunami.segmentX;
                 ys=handles.toolbox.tsunami.segmentY;
                 wdts=handles.toolbox.tsunami.segmentWidth;
@@ -796,9 +796,15 @@ if ~isempty(pathname)
                 dips=handles.toolbox.tsunami.segmentDip;
                 sliprakes=handles.toolbox.tsunami.segmentSlipRake;
                 slips=handles.toolbox.tsunami.segmentSlip;
+                lengths=handles.toolbox.tsunami.segmentLength;
+                strikes=handles.toolbox.tsunami.segmentStrike;
                 
                 % Compute tsunami wave (in projected coordinate system!)
-                [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips);
+                if length(xs)==1
+                    [xx,yy,zz]=ddb_computeTsunamiOkada(xs,ys,depths,dips,wdts,lengths,sliprakes,slips,strikes);
+                else
+                    [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips,'shift',1);
+                end
                 
                 if handles.toolbox.tsunami.saveESRIGridFile
                     % Write tsunami asc file (in geographic coordinates)
