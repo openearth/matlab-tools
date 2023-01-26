@@ -63,7 +63,9 @@ function ddb_saveTsunamiTableFile(handles, filename)
 xml.longitude=handles.toolbox.tsunami.segmentLon;
 xml.latitude=handles.toolbox.tsunami.segmentLat;
 xml.strike=handles.toolbox.tsunami.segmentStrike;
-% xml.length=handles.toolbox.tsunami.segmentLength;
+if length(xml.longitude)==1
+    xml.length=handles.toolbox.tsunami.segmentLength;
+end
 xml.width=handles.toolbox.tsunami.segmentWidth;
 xml.depth=handles.toolbox.tsunami.segmentDepth;
 xml.dip=handles.toolbox.tsunami.segmentDip;

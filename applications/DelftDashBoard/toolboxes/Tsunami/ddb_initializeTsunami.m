@@ -113,6 +113,7 @@ handles.toolbox.tsunami.segmentStrike=0;
 handles.toolbox.tsunami.segmentDip=0;
 handles.toolbox.tsunami.segmentSlipRake=0;
 handles.toolbox.tsunami.segmentDepth=0;
+handles.toolbox.tsunami.segmentLength=0;
 handles.toolbox.tsunami.segmentWidth=0;
 handles.toolbox.tsunami.segmentFocalDepth=0;
 handles.toolbox.tsunami.segmentSlip=0.0;

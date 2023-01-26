@@ -2,7 +2,7 @@ function [xg,yg,zg]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,sli
 
 xg=[];
 yg=[];
-
+shift_from_faultline=1;
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
@@ -10,6 +10,8 @@ for ii=1:length(varargin)
                 xg=varargin{ii+1};
             case{'yg'}
                 yg=varargin{ii+1};
+            case{'shift'}
+                shift_from_faultline=varargin{ii+1};
         end
     end
 end
@@ -100,8 +102,11 @@ for i=1:n0+n1+n2
     x=x*1000;
     
     % Horizontal shift w.r.t. fault line
+    
     xshift = 1000*depth(ii)/tan(dip(ii)*degrad);    
-    x=x+xshift;
+    if shift_from_faultline
+        x=x+xshift;
+    end
         
     % Rotate
     y=x*sin(-(strike(ii))*degrad);

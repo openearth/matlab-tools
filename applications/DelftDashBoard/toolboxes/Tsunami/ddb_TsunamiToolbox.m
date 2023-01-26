@@ -90,6 +90,10 @@ else
             editMw;
         case{'drawfaultline'}
             drawFaultLine;
+        case{'clickepicenter'}
+            clickEpicenter;
+        case{'editepicentertable'}
+            editEpicenterTable;
         case{'computewaterlevel'}
             handles=getHandles;     
             switch lower(handles.activeModel.name)
@@ -144,6 +148,7 @@ handles=updateTsunamiValues(handles,'length');
 setHandles(handles);
 
 plotFaultLine;
+gui_updateActiveTab;
 
 %%
 function plotFaultLine
@@ -161,7 +166,11 @@ else
 end
 
 handles=deleteFaultLine(handles);
-h=gui_polyline('plot','x',x,'y',y,'tag','tsunamifault','marker','o','changecallback',@changeFaultLine);
+if length(x)==1
+    h=gui_polyline('plot','x',x,'y',y,'tag','tsunamifault','marker','o','changecallback',@changeEpicenter);
+else
+    h=gui_polyline('plot','x',x,'y',y,'tag','tsunamifault','marker','o','changecallback',@changeFaultLine);
+end
 handles.toolbox.tsunami.faulthandle=h;
 
 setHandles(handles);
@@ -210,18 +219,34 @@ if ok
 end
 
 %%
+function clickEpicenter
+
+handles=getHandles;
+ddb_zoomOff;
+
+handles=deleteFaultLine(handles);
+
+gui_polyline('draw','Tag','tsunamifault','Marker','o','createcallback',@createEpicenter,'changecallback',@changeEpicenter,'closed',0,'max',1);
+
+handles.toolbox.tsunami.newFaultLine=1;
+
+setHandles(handles);
+
+%%
 function handles=computeLengthAndStrike(handles)
 % Compute new length
 x = handles.toolbox.tsunami.segmentX;
 y = handles.toolbox.tsunami.segmentY;
-pd=pathdistance(x,y);
-handles.toolbox.tsunami.length=pd(end)/1000;
-
-% Compute new strike
-handles.toolbox.tsunami.segmentStrike=[];
-handles.toolbox.tsunami.segmentStrike(1)=90-180*atan2(y(2)-y(1),x(2)-x(1))/pi;
-for i=2:length(x)
-    handles.toolbox.tsunami.segmentStrike(i)=90-180*atan2(y(i)-y(i-1),x(i)-x(i-1))/pi;
+if length(x)>1
+    pd=pathdistance(x,y);
+    handles.toolbox.tsunami.length=pd(end)/1000;
+    
+    % Compute new strike
+    handles.toolbox.tsunami.segmentStrike=[];
+    handles.toolbox.tsunami.segmentStrike(1)=90-180*atan2(y(2)-y(1),x(2)-x(1))/pi;
+    for i=2:length(x)
+        handles.toolbox.tsunami.segmentStrike(i)=90-180*atan2(y(i)-y(i-1),x(i)-x(i-1))/pi;
+    end
 end
 
 %%
@@ -264,6 +289,57 @@ setHandles(handles);
 gui_updateActiveTab;
 
 %%
+function createEpicenter(h,x,y,nr)
+
+handles=getHandles;
+
+handles.toolbox.tsunami.faulthandle=h;
+
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    handles.toolbox.tsunami.segmentLon=x;
+    handles.toolbox.tsunami.segmentLat=y;
+    handles=convertFaultCoordinates(handles,'latlon2xy');
+else
+    handles.toolbox.tsunami.segmentX=x;
+    handles.toolbox.tsunami.segmentY=y;
+    handles=convertFaultCoordinates(handles,'xy2latlon');
+end
+
+%handles=computeLengthAndStrike(handles);
+
+% Update theoretical parameters
+% if handles.toolbox.tsunami.updateParameters
+% end
+
+% Update segment values
+if handles.toolbox.tsunami.segmentWidth==0
+    handles.toolbox.tsunami.segmentWidth=50;
+end
+if handles.toolbox.tsunami.segmentLength==0
+    handles.toolbox.tsunami.segmentLength=100;
+end
+if handles.toolbox.tsunami.segmentDepth==0
+    handles.toolbox.tsunami.segmentDepth=20;
+end
+if handles.toolbox.tsunami.segmentDip==0
+    handles.toolbox.tsunami.segmentDip=10;
+end
+if handles.toolbox.tsunami.segmentSlip==0
+    handles.toolbox.tsunami.segmentSlip=5;
+end
+if handles.toolbox.tsunami.segmentSlipRake==0
+    handles.toolbox.tsunami.segmentSlipRake=90;
+end
+
+handles.toolbox.tsunami.length = handles.toolbox.tsunami.segmentLength;
+
+handles=updateTsunamiValues(handles,'length');
+
+setHandles(handles);
+
+gui_updateActiveTab;
+
+%%
 function changeFaultLine(h,x,y,nr)
 
 handles=getHandles;
@@ -300,6 +376,32 @@ end
 
 setHandles(handles);
 
+gui_updateActiveTab;
+
+function changeEpicenter(h,x,y,nr)
+
+handles=getHandles;
+
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    handles.toolbox.tsunami.segmentLon=x;
+    handles.toolbox.tsunami.segmentLat=y;
+    handles=convertFaultCoordinates(handles,'latlon2xy');
+else
+    handles.toolbox.tsunami.segmentX=x;
+    handles.toolbox.tsunami.segmentY=y;
+    handles=convertFaultCoordinates(handles,'xy2latlon');
+end
+
+setHandles(handles);
+
+gui_updateActiveTab;
+
+%%
+function editEpicenterTable()
+handles=getHandles;
+handles.toolbox.tsunami.length = handles.toolbox.tsunami.segmentLength;
+handles=updateTsunamiValues(handles,'length');
+setHandles(handles);
 gui_updateActiveTab;
 
 %%
@@ -473,9 +575,16 @@ if ~isempty(pathname)
                 dips=handles.toolbox.tsunami.segmentDip;
                 sliprakes=handles.toolbox.tsunami.segmentSlipRake;
                 slips=handles.toolbox.tsunami.segmentSlip;
+                lengths=handles.toolbox.tsunami.segmentLength;
+                strikes=handles.toolbox.tsunami.segmentStrike;
                 
                 % Compute tsunami wave (in projected coordinate system!)
-                [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips);
+                if length(xs)==1
+                    [xx,yy,zz]=ddb_computeTsunamiOkada(xs,ys,depths,dips,wdts,lengths,sliprakes,slips,strikes);
+                else
+                    [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips,'shift',1);
+                end
+ figure(123);pcolor(xx,yy,zz);shading flat;axis equal;colormap('jet');colorbar;
                 
                 if handles.toolbox.tsunami.saveESRIGridFile
                     % Write tsunami asc file (in geographic coordinates)
@@ -517,7 +626,8 @@ if ~isempty(pathname)
                 yy1=yy;
 
         end
-        
+         figure(124);pcolor(xx1,yy1,zz);shading flat;axis equal;colormap('jet');colorbar;
+
         ddb_plotInitialTsunami(handles,xx1,yy1,zz);
         
         % Interpolate initial tsunami wave onto model grid(s)

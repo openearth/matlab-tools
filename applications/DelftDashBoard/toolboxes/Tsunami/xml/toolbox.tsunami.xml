@@ -7,16 +7,16 @@
     <position>40 10 1000 140</position>
     <style>tabpanel</style>
     <tab>
-      <tabstring>Okada</tabstring>
+      <tabstring>Fault Line</tabstring>
       <callback>ddb_TsunamiToolbox</callback>
       <formodel>delft3dflow</formodel>
       <element>toolbox.tsunami.okada.xml</element>
     </tab>
     <tab>
-      <tabstring>Subfaults</tabstring>
+      <tabstring>Epicenter</tabstring>
       <callback>ddb_TsunamiToolbox</callback>
       <formodel>delft3dflow</formodel>
-      <element>toolbox.tsunami.subfaults.xml</element>
+      <element>toolbox.tsunami.epicenter.xml</element>
     </tab>
     <tab>
       <tabstring>File</tabstring>
@@ -37,10 +37,10 @@
       <element>toolbox.tsunami.okada.xml</element>
     </tab>
     <tab>
-      <tabstring>Subfaults</tabstring>
+      <tabstring>Epicenter</tabstring>
       <callback>ddb_TsunamiToolbox</callback>
       <formodel>dflowfm</formodel>
-      <element>toolbox.tsunami.subfaults.xml</element>
+      <element>toolbox.tsunami.epicenter.xml</element>
     </tab>
     <tab>
       <tabstring>File</tabstring>

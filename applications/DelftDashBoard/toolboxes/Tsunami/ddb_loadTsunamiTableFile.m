@@ -71,6 +71,13 @@ handles.toolbox.tsunami.segmentDepth=str2num(xml.depth);
 handles.toolbox.tsunami.segmentDip=str2num(xml.dip);
 handles.toolbox.tsunami.segmentSlipRake=str2num(xml.sliprake);
 handles.toolbox.tsunami.segmentSlip=str2num(xml.slip);
+if isfield(xml,'length')
+    handles.toolbox.tsunami.segmentLength=str2num(xml.length);
+    handles.toolbox.tsunami.length=str2num(xml.length);
+else
+    handles.toolbox.tsunami.segmentLength=0;
+    handles.toolbox.tsunami.length=0;
+end
 try
     handles.toolbox.tsunami.EQtype=str2num(xml.eqtype);
 catch
