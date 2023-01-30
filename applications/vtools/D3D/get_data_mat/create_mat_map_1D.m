@@ -110,9 +110,9 @@ for kt=kt_v
         
             
         varname=flg_loc.var{kvar};
-        var_str=D3D_var_num2str_structure(varname,simdef);
+        [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(varname,simdef);
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'branch',branch_name);
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
 %         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
 
         do_read=1;
@@ -126,7 +126,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'idx_branch',gridInfo_br.idx,'branch',branch_name);    
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'idx_branch',gridInfo_br.idx,'branch',branch_name);    
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end                

@@ -22,8 +22,8 @@ addOET(path_add_fcn)
 
     %% input to function
 
-% path_input='input_ECT_2D.m';
-path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\220517_improve_exner\input_ECT_2D.m';
+path_input='input_ECT_2D.m';
+% path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\220517_improve_exner\input_ECT_2D.m';
 
 in_2D.fig.fig_print=1;
 in_2D.fig.fig_name='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\220517_improve_exner\domain';
@@ -43,8 +43,8 @@ fig_twoD(in_2D,eig_r,eig_i,kwx_v,kwy_v)
 c_app=max((sed_trans.Qbk(1:end-1).*(1-ECT_input.Fi1)+ECT_input.Fi1.*sed_trans.Qbk(end))/ECT_input.La);
 max_dt=1*ECT_input.dx/c_anl;
 max_dt_app=1*ECT_input.dx/c_app;
-fprintf('max dt = %4.2f s \n',max_dt);
-fprintf('max dt = %4.2f s \n',max_dt_app);
+fprintf('max dt        = %4.2f s \n',max_dt);
+fprintf('max dt aprox. = %4.2f s \n',max_dt_app);
 
 
 

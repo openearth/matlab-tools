@@ -209,6 +209,11 @@ if rem(simdef.mdf.Tstop,simdef.mdf.Dt)~=0
     warning('Simulation time does not match with time step. I have changed the simulation time.')
 end
 
+    %Add one time step in FM such that the output at the N-1 time is at the time we wanted using the output interval for sure
+if simdef.D3D.structure==2
+    simdef.mdf.Tstop=simdef.mdf.Tstop+2*simdef.mdf.Dt;
+end
+
 %map time
 if isfield(simdef.mdf,'Flmap_dt')==0
     warning('you are not saving map results')
@@ -224,6 +229,13 @@ else
         warning('Map results time is not multiple of time step. I am rewring the map results time.')
         simdef.mdf.Flmap_dt=[simdef.mdf.Flmap_dt(1),(floor(simdef.mdf.Flmap_dt(2)/simdef.mdf.Dt)+1)*simdef.mdf.Dt];
     end
+    
+%     if simdef.D3D.structure==2 
+        %In case of FM floor start time time for preventing that the last result time is not written. It is a bit dangerous. 
+%         simdef.mdf.Flmap_dt(1)=floor(simdef.mdf.Flmap_dt(1));
+        %A better option is to finish the simulation slighlty later
+%         simdef.mdf.Flmap_dt(2)=floor(simdef.mdf.Flmap_dt(2));
+%     end
 end
 
 %history time and observations filr
@@ -361,6 +373,10 @@ if isfield(simdef.mdf,'TransportAutoTimestepdiff')==0
     simdef.mdf.TransportAutoTimestepdiff=1;
 end
 
+if isfield(simdef.mdf,'theta')==0
+    simdef.mdf.theta=0.55;
+end
+
 %%
 %% SED
 %%
@@ -423,6 +439,12 @@ if isfield(simdef.mor,'SedThr')==0
 end
 if isfield(simdef.mor,'AlfaBs')==0
     simdef.mor.AlfaBs=0;
+end
+if isfield(simdef.mor,'ThetSD')==0
+    simdef.mor.ThetSD=0;
+end
+if isfield(simdef.mor,'HMaxTH')==0
+    simdef.mor.HMaxTH=0;
 end
 
 %% 
@@ -684,30 +706,33 @@ if simdef.mdf.izbndpos==0
     simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
 end
     %correcting for dpuopt. 
-%This correction only makes sense in idealistic cases maybe. If bed level at velocity points is 'min' in an ideal case (normal flow, sloping case),
-%there is a shift of half a cell in the water level at velocity points. To start under normal flow, we correct for that shift in the BC. 
-if strcmp(simdef.mdf.Dpuopt,'min_dps')
-    warning('correction of BC')
-    simdef.bct.etaw=simdef.bct.etaw+simdef.grd.dx/2*simdef.ini.s;
+if simdef.D3D.structure==1
+    %The truth is that I am not sure why I do not need it for FM. 
     
-    %as a consequence, the flow depth at the water level point is larger than it should and the velocity smaller. We correct the sedimen transport rate. 
-    %ACal_corrected=ACal*qb_intended/qb_wrong
-    %qb_wrong: sediment transport with the wrong velocity at water level point
-    switch simdef.tra.IFORM
-        case 4
-            if simdef.tra.sedTrans(3)==0
-                warning('correction ACal')
-                h_wrong=simdef.ini.h+simdef.ini.s*simdef.grd.dx/2;
-                u_wrong=simdef.bct.Q(1)/simdef.grd.B/h_wrong;
-                simdef.tra.sedTrans(1)=simdef.tra.sedTrans(1)*(simdef.ini.u/u_wrong)^(simdef.tra.sedTrans(2)*2);
-            else
+    %This correction only makes sense in idealistic cases maybe. If bed level at velocity points is 'min' in an ideal case (normal flow, sloping case),
+    %there is a shift of half a cell in the water level at velocity points. To start under normal flow, we correct for that shift in the BC. 
+    if strcmp(simdef.mdf.Dpuopt,'min_dps')
+        warning('correction of BC')
+        simdef.bct.etaw=simdef.bct.etaw+simdef.grd.dx/2*simdef.ini.s;
+
+        %as a consequence, the flow depth at the water level point is larger than it should and the velocity smaller. We correct the sedimen transport rate. 
+        %ACal_corrected=ACal*qb_intended/qb_wrong
+        %qb_wrong: sediment transport with the wrong velocity at water level point
+        switch simdef.tra.IFORM
+            case 4
+                if simdef.tra.sedTrans(3)==0
+                    warning('correction ACal')
+                    h_wrong=simdef.ini.h+simdef.ini.s*simdef.grd.dx/2;
+                    u_wrong=simdef.bct.Q(1)/simdef.grd.B/h_wrong;
+                    simdef.tra.sedTrans(1)=simdef.tra.sedTrans(1)*(simdef.ini.u/u_wrong)^(simdef.tra.sedTrans(2)*2);
+                else
+                    messageOut(NaN,'A correction should be applied to <ACal>')
+                end
+            otherwise
                 messageOut(NaN,'A correction should be applied to <ACal>')
-            end
-        otherwise
-            messageOut(NaN,'A correction should be applied to <ACal>')
+        end
     end
 end
-
 
 
 %add extra time with same value as last in case the last time step gets outside the domain

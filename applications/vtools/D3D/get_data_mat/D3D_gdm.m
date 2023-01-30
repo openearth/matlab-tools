@@ -146,6 +146,7 @@
 % in_plot.(tag).ml=2.5;
 % in_plot.(tag).do_marker=1;
 % in_plot.(tag).markersize=5;
+% in_plot.(tag).do_staircase=1;
 
 %% summerbed
 

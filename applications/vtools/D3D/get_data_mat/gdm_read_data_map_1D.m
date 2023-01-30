@@ -20,7 +20,7 @@ kt=[idx_tim,1]; %[start, counter];
 switch varname
     case {'mesh1d_flowelem_bl','mesh1d_flowelem_ba','mesh1d_mor_width_u','mesh1d_node_offset'} %{s}
         wl=ncread(fpath_map,varname,1,Inf);
-    case {'mesh1d_sbcx','mesh1d_sbcy','mesh1d_sbcx_reconstructed','mesh1d_sbcy_reconstructed','mesh1d_sscx_reconstructed','mesh1d_sscy_reconstructed','mesh1d_sbn','mesh1d_sbt'} %{s,f,t}
+    case {'mesh1d_sbcx','mesh1d_sbcy','mesh1d_sbcx_reconstructed','mesh1d_sbcy_reconstructed','mesh1d_sscx_reconstructed','mesh1d_sscy_reconstructed','mesh1d_sbn','mesh1d_sbt','mesh1d_sxtot','mesh1d_sytot'} %{s,f,t}
         wl=ncread(fpath_map,varname,[1,1,kt(1)],[Inf,Inf,kt(2)]);
     case {'mesh1d_waterdepth','mesh1d_s1','mesh1d_umod','mesh1d_mor_bl','mesh1d_q1_main','mesh1d_q1','mesh1d_dm','mesh1d_ucmag','mesh1d_dg','mesh1d_bl_ave','mesh1d_czs','mesh1d_taus'} %mesh1d_nNodes,time
         wl=ncread(fpath_map,varname,[1,kt(1)],[Inf,kt(2)]);

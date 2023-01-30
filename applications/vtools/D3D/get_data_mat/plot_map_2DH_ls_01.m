@@ -21,6 +21,12 @@ function plot_map_2DH_ls_01(fid_log,flg_loc,simdef)
 if isfield(flg_loc,'fig_print')==0
     flg_loc.fig_print=1;
 end
+if isfield(flg_loc,'do_staircase')==0
+    flg_loc.do_staircase=0;
+end
+if isfield(flg_loc,'do_all_t')==0
+    flg_loc.do_all_t=0;
+end
 
 %% DO
 
@@ -93,7 +99,7 @@ in_p.fig_visible=0;
 
 fext=ext_of_fig(in_p.fig_print);
 
-%% LOOP TIME
+%% LOOP 
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
@@ -101,7 +107,7 @@ ktc=0; kpli=0; kvar=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
 fpath_file=cell(nt,nylims,npli,nvar,ndiff);
 
-for kpli=1:npli
+for kpli=1:npli %variable
     fpath_pli=flg_loc.pli{kpli,1};
     [~,pliname,~]=fileparts(fpath_pli);
     pliname=strrep(pliname,' ','_');
@@ -116,8 +122,17 @@ for kpli=1:npli
             data_ref=load(fpath_mat_tmp,'data');                
         end
 
-        ktc=0;     
-        for kt=kt_v
+        %preallocate for plotting all times togehter
+        if flg_loc.do_all_t
+            if flg_loc.do_staircase
+                data_all=NaN(nt,numel(data_ref.data.val_staircase));
+            else
+                data_all=NaN(nt,numel(data_ref.data.val));
+            end
+        end
+        
+        ktc=0; 
+        for kt=kt_v %time
             ktc=ktc+1;
 
             switch flg_loc.tim_type
@@ -130,6 +145,15 @@ for kpli=1:npli
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname);
             load(fpath_mat_tmp,'data');
             
+            %save data for plotting all times togehter
+            if flg_loc.do_all_t
+                if flg_loc.do_staircase
+                    data_all(kt,:)=data.val_staircase;
+                else
+                    data_all(kt,:)=data.val;
+                end
+            end
+            
             %measurements                        
             in_p.plot_mea=false;
             if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
@@ -141,7 +165,7 @@ for kpli=1:npli
                 end
             end
                         
-            for kylim=1:nylims
+            for kylim=1:nylims %ylim
                 
                 if isfield(flg_loc,'xlims')
                     in_p.xlims=flg_loc.xlims(kylim,:);
@@ -149,16 +173,24 @@ for kpli=1:npli
                     in_p.xlims=[NaN,NaN];
                 end
                 
-                for kdiff=1:ndiff
+                for kdiff=1:ndiff %diff
                     
                     switch kdiff
                         case 1
-                            data_val_p=data.val;
+                            if flg_loc.do_staircase
+                                data_val_p=data.val_staircase;
+                            else
+                                data_val_p=data.val;
+                            end
                             in_p.ylims=flg_loc.ylims(kylim,:);
                             in_p.is_diff=0;
                             tag_ref='val';
                         case 2
-                            data_val_p=data.val-data_ref.data.val;
+                            if flg_loc.do_staircase
+                                data_val_p=data.val_staircase;
+                            else
+                                data_val_p=data.val_staircase-data_ref.data.val_staircase;
+                            end
                             in_p.ylims=flg_loc.ylims_diff_t(kylim,:);
                             in_p.is_diff=1;
                             tag_ref='diff';
@@ -199,12 +231,23 @@ for kpli=1:npli
                         fig_map_ls_01(in_p)
                     else
                         in_p.lab_str=var_str_read;
-                        if flg_loc.do_rkm
-                            in_p.s=data.rkm_cen;
+                        if flg_loc.do_staircase
+                            if flg_loc.do_rkm
+                                error('do')
+%                                 in_p.s=data.rkm_cen;
+                            else
+                                in_p.s=data.Scor_staircase;
+                            end
+                            in_p.val=data_val_p';                            
                         else
-                            in_p.s=data.Scen;
+                            if flg_loc.do_rkm
+                                in_p.s=data.rkm_cen;
+                            else
+                                in_p.s=data.Scen;
+                                in_p.s_staircase=data.Scor_staircase;
+                            end
+                            in_p.val=data_val_p';
                         end
-                        in_p.val=data_val_p';
 
                         fig_1D_01(in_p)
                     end
@@ -213,6 +256,50 @@ for kpli=1:npli
             
             messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
         end %kt
+        
+        %% all times together
+        
+        if flg_loc.do_all_t
+            in_p_all=in_p;
+            
+            for kylim=1:nylims %ylim
+                
+                for kdiff=1:ndiff %diff
+                    
+                    switch kdiff
+                        case 1
+                            if flg_loc.do_staircase
+                                data_val_p=data.val_staircase;
+                            else
+                                data_val_p=data.val;
+                            end
+                            in_p_all.ylims=flg_loc.ylims(kylim,:);
+                            in_p_all.is_diff=0;
+                            tag_ref='val';
+                        case 2
+                            if flg_loc.do_staircase
+                                data_val_p=data.val_staircase;
+                            else
+                                data_val_p=data.val_staircase-data_ref.data.val_staircase;
+                            end
+                            in_p_all.ylims=flg_loc.ylims_diff_t(kylim,:);
+                            in_p_all.is_diff=1;
+                            tag_ref='diff';
+                    end
+
+                    fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
+                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_all_t',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
+
+                    in_p_all.fname=fname_noext;
+                    in_p_all.val=data_all';
+                    in_p_all.clims=[0,days(time_dtime(end)-time_dtime(1))];
+                    in_p_all.do_time=1;
+
+                    fig_1D_01(in_p_all)
+                end %kdiff
+            end %kylim
+        end %do_all_t
+        
     end %kvar
 end %kpli
 

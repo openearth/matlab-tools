@@ -103,6 +103,12 @@ end
 if isfield(in_p,'plot_tiles')==0
     in_p.plot_tiles=0;
 end
+if isfield(in_p,'Lref')==0
+    in_p.Lref='+NAP';
+end
+if isfield(in_p,'do_title')==0
+    in_p.do_title=1;
+end
 
 v2struct(in_p)
 
@@ -211,7 +217,7 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,fact,lan,'frac',str_idx);
+[lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,fact,lan,'frac',str_idx,'Lref',Lref);
 if isempty(cmap) %default
     if is_background && ~is_diff
         cbar(kr,kc).label=str_back;
@@ -526,7 +532,9 @@ end
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
+if do_title
 han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 

@@ -131,6 +131,15 @@ end
 if isfield(in_p,'plot_pillars_name')==0
     in_p.plot_pillars_name=0;
 end
+if isfield(in_p,'do_staircase')==0
+    in_p.do_staircase=0;
+end
+if isfield(in_p,'do_time')==0
+    in_p.do_time=0;
+end
+if isfield(in_p,'Lref')==0
+    in_p.Lref='+NAP';
+end
 
 v2struct(in_p)
 
@@ -192,10 +201,11 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
-% kr=1; kc=1;
-% cbar(kr,kc).displacement=[0.0,0,0,0]; 
-% cbar(kr,kc).location='northoutside';
-% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
+
+kr=1; kc=1;
+cbar(kr,kc).displacement=[0.0,0,0,0]; 
+cbar(kr,kc).location='northoutside';
+cbar(kr,kc).label=labels4all('t',1/3600/24,lan);
 
 % brewermap('demo')
 nv=size(val,2); 
@@ -298,13 +308,17 @@ end
 kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
-% lims.c(kr,kc,1:2)=clims;
+if do_time
+    lims.c(kr,kc,1:2)=clims;
+else
+    lims.c(kr,kc,1:2)=NaN;
+end
 if ~isempty(xlab_str)
     xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);
 else
     xlabels{kr,kc}='';
 end
-[lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan);
+[lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan,'Lref',Lref);
 if is_diff
     ylabels{kr,kc}=str_diff;
 elseif is_std
@@ -373,7 +387,11 @@ end
 
 kr=1; kc=1;    
 for kv=1:nv
-han.p(kr,kc,kv)=plot(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',mk{kv},'markersize',markersize);
+    if do_staircase
+        han.p(kr,kc,kv)=stairs(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',mk{kv},'markersize',markersize);
+    else
+        han.p(kr,kc,kv)=plot(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',mk{kv},'markersize',markersize);
+    end
 end
 if isfield(in_p,'leg_str')
     str_sim=leg_str;
@@ -434,7 +452,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-if do_title
+if do_title && ~do_time
     if numel(tim)==1
         han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
     elseif numel(tim)==2
@@ -452,12 +470,12 @@ end
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-% kr=1; kc=2;
-% view(han.sfig(kr,kc),[0,90]);
-% colormap(han.sfig(kr,kc),cmap);
-% if ~isnan(lims.c(kr,kc,1:1))
-% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
-% end
+kr=1; kc=1;
+view(han.sfig(kr,kc),[0,90]);
+colormap(han.sfig(kr,kc),cmap);
+if ~isnan(lims.c(kr,kc,1:1))
+caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+end
 
 %% ADD TEXT
 if plot_all_struct
@@ -504,7 +522,7 @@ kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
-if plot_mea || nv>1
+if plot_mea || nv>1 && ~do_time
     han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),str_leg,'location',leg_loc);
     pos.leg=han.leg(kr,kc).Position;
 end
@@ -515,13 +533,15 @@ end
 
 %% COLORBAR
 
-% kr=1; kc=1;
-% pos.sfig=han.sfig(kr,kc).Position;
-% han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
-% pos.cbar=han.cbar.Position;
-% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
-% han.sfig(kr,kc).Position=pos.sfig;
-% han.cbar.Label.String=cbar(kr,kc).label;
+if do_time
+kr=1; kc=1;
+pos.sfig=han.sfig(kr,kc).Position;
+han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
+pos.cbar=han.cbar.Position;
+han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+han.sfig(kr,kc).Position=pos.sfig;
+han.cbar.Label.String=cbar(kr,kc).label;
+end
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
 % v2p=[1,5,11,15,np1];

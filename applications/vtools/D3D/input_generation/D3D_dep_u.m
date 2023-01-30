@@ -120,6 +120,13 @@ switch simdef.ini.etab_noise
         noise=etab_max.*exp(-(x-mu).^2/sig^2);
     case 6
         %2D gaussian
+        mu=simdef.ini.noise_x0;
+        etab_max=simdef.ini.noise_amp;
+        sig=simdef.ini.noise_Lb;
+        
+        x=Xtot;
+        y=Ytot;
+        noise=etab_max.*exp(-((x-mu(1)).^2/sig^2+(y-mu(2)).^2/sig^2)); %factor 2 missing in the denominator?
     otherwise
         error('sorry... not implemented!')
 end

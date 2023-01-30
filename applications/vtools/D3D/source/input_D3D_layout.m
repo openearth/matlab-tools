@@ -101,6 +101,8 @@ simdef.mor.DShld=           0; %D parameter in Kock and Flokstra
 simdef.mor.AlfaBs=          0; %streamwise factor for bedslope correction [-]
 simdef.mor.UpwindBedload=   0; %Use upwind bedload (1) or central bedload (0)
 simdef.mor.SedThr=          2e-2; %Flow depth threshold below which morphodynamics are not computed [m]
+simdef.mor.ThetSD=          0.5; %Factor for erosion of adjacent dry cells [-]
+simdef.mor.HMaxTH=          0; %Max depth for variable THETSD. Set < SEDTHR to use global value only [m]
 
 %ill-posedness
 simdef.mor.HiranoCheck=     0; %Flag for well-posedness of Hirano check [-] [double(1,1)]: 0=NO; 1=YES

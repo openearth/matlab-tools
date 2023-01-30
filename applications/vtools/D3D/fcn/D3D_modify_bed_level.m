@@ -131,6 +131,9 @@ fpath_outpol=fullfile(fdir_input,fname_outpol);
 
 messageOut(fid_log,'Start reading bed level changes')
 
+if exist(fpath_bedchg,'file')~=2
+    error('File with bed level changes does not exist: %s',fpath_bedchg)
+end
 fid=fopen(fpath_bedchg,'r');
 raw_bl=textscan(fid,'%f %s %f');
 fclose(fid);

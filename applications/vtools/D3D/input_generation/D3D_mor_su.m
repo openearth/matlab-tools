@@ -98,8 +98,8 @@ data{kl,1}=        '   FileVersion      = 02.00'; kl=kl+1;
 %% 
 data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[Morphology]'; kl=kl+1;
-data{kl,1}=sprintf('   MorFac           =  %0.7E               [-]      Morphological scale factor',MorFac); kl=kl+1;
-data{kl,1}=sprintf('   MorStt           =  %0.7E               [s]      Spin-up interval from TStart till start of morphological changes',MorStt); kl=kl+1;
+data{kl,1}=sprintf('   MorFac           =  %0.12E               [-]      Morphological scale factor',MorFac); kl=kl+1;
+data{kl,1}=sprintf('   MorStt           =  %0.12E               [s]      Spin-up interval from TStart till start of morphological changes',MorStt); kl=kl+1;
 data{kl,1}=        '   Thresh           =  1.0000000e-003      [m]      Threshold sediment thickness for transport and erosion reduction'; kl=kl+1;
 data{kl,1}=sprintf('   BedUpd           = %i                            Update bed levels during FLOW simulation',BedUpd); kl=kl+1;
 data{kl,1}=sprintf('   CmpUpd           = %i                            Update bed composition during flow run',CmpUpd); kl=kl+1;
@@ -137,8 +137,8 @@ data{kl,1}=        '   Bed              =  1.0000000e+000      [-]      Multipli
 data{kl,1}=        '   SusW             =  1.0000000e+000      [-]      Wave-related suspended sed. transport factor'; kl=kl+1;
 data{kl,1}=        '   BedW             =  1.0000000e+000      [-]      Wave-related bed-load sed. transport factor'; kl=kl+1;
 data{kl,1}=sprintf('   SedThr           =  %0.7E      [m]      Minimum water depth for sediment computations',SedThr); kl=kl+1;
-data{kl,1}=        '   ThetSD           =  0.0000000e+000      [-]      Factor for erosion of adjacent dry cells'; kl=kl+1;
-data{kl,1}=        '   HMaxTH           =  1.5000000e+000      [m]      Max depth for variable THETSD. Set < SEDTHR to use global value only'; kl=kl+1;
+data{kl,1}=sprintf('   ThetSD           =  %0.7E      [-]      Factor for erosion of adjacent dry cells',ThetSD); kl=kl+1;
+data{kl,1}=sprintf('   HMaxTH           =  %0.7E      [m]      Max depth for variable THETSD. Set < SEDTHR to use global value only',HMaxTH); kl=kl+1;
 if any(IBedCond==[2,3,5,7])
 data{kl,1}=        '   BcFil  = bcm.bcm'; kl=kl+1;
 else

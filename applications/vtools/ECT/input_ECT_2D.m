@@ -82,3 +82,5 @@ ECT_input.gsk_param=[1,0,0,0]; %Sekine
 ECT_input.hiding=-0.8;
 ECT_input.u_b=NaN;
 ECT_input.kappa=NaN(size(ECT_input.gsd)); %diffusivity of Gammak
+
+ECT_input.dx=10; %space step [m]

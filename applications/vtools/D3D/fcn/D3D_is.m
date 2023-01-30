@@ -12,11 +12,11 @@
 %
 %
 
-function [ismor,is1d,str_network1d,issus]=D3D_is(nc_map)
+function [ismor,is1d,str_network1d,issus,structure]=D3D_is(nc_map)
 
 if iscell(nc_map) %case of SMT-D3D4 
     nc_map=nc_map{1}; %they are all the same
-    [ismor,is1d,str_network1d,issus]=D3D_is(nc_map);
+    [ismor,is1d,str_network1d,issus,structure]=D3D_is(nc_map);
     return
 end
 [~,~,ext]=fileparts(nc_map);
@@ -51,6 +51,7 @@ if strcmp(ext,'.nc') %FM
         str_network1d='network1d';
     end
 
+    structure=2;
 elseif strcmp(ext,'.dat')
     NFStruct=vs_use(nc_map,'quiet');
     ismor=1;
@@ -60,11 +61,13 @@ elseif strcmp(ext,'.dat')
     if isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'map-infsed-serie'})) && isnan(find_str_in_cell({NFStruct.GrpDat.Name},{'his-infsed-serie'}))
         ismor=0;
     end
+    structure=1;
 elseif strcmp(ext,'.grd')
     ismor=NaN;
     is1d=0;
     str_network1d='';
     issus=NaN; %add!
+    structure=1;
 else
     error('unknown format %s',ext)
 end

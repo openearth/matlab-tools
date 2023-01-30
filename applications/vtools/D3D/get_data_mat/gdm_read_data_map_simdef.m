@@ -100,10 +100,12 @@ switch varname
         data_var=gdm_read_data_map_q(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);      
     case 'ba' %no time
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); 
-    case {'mesh1s_lyrfrac','mesh2d_lyrfrac','LYRFRAC'}
+    case {'mesh1d_lyrfrac','mesh2d_lyrfrac','LYRFRAC'}
         data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     case {'mesh2d_ucmag'} %different case for averaging in case there are several layers
         data_var=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+    case 'stot'
+        data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     otherwise %name directly available in output
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); 
 end

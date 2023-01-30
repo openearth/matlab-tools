@@ -30,7 +30,7 @@ addOET(fpath_add_fcn)
 
 %% INPUT
 
-year_in=2022;
+year_in=2023;
 fpath='C:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\latex\calendar.tex';
 fpath_csv='C:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\latex\calendar.csv';
 
