@@ -89,7 +89,7 @@ switch simdef.D3D.structure
         end
 end
 
-if isfield(simdef.file,'exe_input')
+if isfield(simdef.file,'exe_input')==0
     simdef.file.exe_input='c:\Program Files (x86)\Deltares\Delft3D Flexible Mesh Suite HMWQ (2021.03)\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat';
 end
 
