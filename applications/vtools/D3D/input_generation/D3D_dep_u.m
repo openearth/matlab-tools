@@ -42,6 +42,7 @@ etab0_type=simdef.ini.etab0_type;
 
 %varying slope flag
 % if numel(slope)>1; flg_vars=
+
 %% CALCULATIONS
 
 %data=[
@@ -52,7 +53,7 @@ etab0_type=simdef.ini.etab0_type;
 
 %XYcen
 fpath_netmap=fullfile(pwd,'tmpgrd_net.nc');
-D3D_grd2map(simdef.file.grd,'fpath_map',fpath_netmap);
+D3D_grd2map(simdef.file.grd,'fpath_map',fpath_netmap,'fpath_exe',simdef.file.exe_input);
 gridInfo=EHY_getGridInfo(fpath_netmap,{'XYcen','XYcor'});
 delete(fpath_netmap);
 
