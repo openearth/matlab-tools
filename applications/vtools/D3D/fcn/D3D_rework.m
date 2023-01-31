@@ -545,7 +545,7 @@ else
         simdef.file.etaw=fullfile(simdef.D3D.dire_sim,'etaw.xyz');
     end
     if isfield(simdef.ini,'etaw_file')==0
-        simdef.ini.etaw_type='etaw.xyz';
+        simdef.ini.etaw_type='etaw.xyz'; %? why?
     end
     if isfield(simdef.file,'ini_vx')==0
         simdef.file.ini_vx=fullfile(simdef.D3D.dire_sim,'ini_vx.xyz');

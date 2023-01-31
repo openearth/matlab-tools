@@ -127,7 +127,7 @@ for kt=kt_v %time
                 time_mor_dnum=tim.tim.time_mor_dnum;
                 
                 %match times
-                val(:,kS)=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,pliname);
+                val(:,kS)=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,pliname,simdef_ref);
                 
             end %kS
             
@@ -137,7 +137,7 @@ for kt=kt_v %time
             data_ref_t0=load(fpath_mat_tmp,'data');
             
                 %we are taking the last simulation (last loaded time). They should all be the same.
-            val0=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref_v(1),data_ref_t0,fdir_mat,tag,var_str,pliname);    
+            val0=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref_v(1),data_ref_t0,fdir_mat,tag,var_str,pliname,simdef_ref);
             
             in_p.s=data_ref.data.Scen;
             in_p.val=val;
@@ -147,8 +147,9 @@ for kt=kt_v %time
             %measurements                        
             in_p.plot_mea=false;
             if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
-                tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-                data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str,'stat','val_mean','tol',flg_loc.tol);
+%                 tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
+                [tim_dnum_p,~]=gdm_time_flow_mor(flg_loc,simdef_ref,tim_ref.tim.time_dnum(kt),tim_ref.tim.time_dtime(kt),tim_ref.tim.time_mor_dnum(kt),tim_ref.tim.time_mor_dtime(kt));
+                data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_dnum_p,'var',var_str,'stat','val_mean','tol',flg_loc.tol);
                 if isstruct(data_mea) %there is data
                     in_p.plot_mea=true;
                     in_p.s_mea=data_ref.data.Scen;
@@ -207,7 +208,7 @@ end %function
 
 %% 
 
-function val=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,pliname)
+function val=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,pliname,simdef)
 
 %% PARSE
 
@@ -222,13 +223,14 @@ fid_log=NaN;
 
 nx=numel(data_ref.data.val);
 
-time_loc_v=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum); %[nt_loc,1]
+% time_loc_v=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum); %[nt_loc,1]
+[tim_dnum_p,~]=gdm_time_flow_mor(flg_loc,simdef,time_dnum,NaT,time_mor_dnum,NaT);
 
-[kt_loc,min_v,flg_found]=absmintol(time_loc_v,time_ref,'tol',tol_tim,'do_break',0,'do_disp_list',0,'dnum',1);
+[kt_loc,min_v,flg_found]=absmintol(tim_dnum_p,time_ref,'tol',tol_tim,'do_break',0,'do_disp_list',0,'dnum',1);
 if ~flg_found
     messageOut(fid_log,'No available reference data:');
     messageOut(fid_log,sprintf('     reference time   : %s',datestr(time_ref      ,'yyyy-mm-dd HH:MM:SS')));
-    messageOut(fid_log,sprintf('     closest   time   : %s',datestr(time_loc_v(kt_loc),'yyyy-mm-dd HH:MM:SS')));
+    messageOut(fid_log,sprintf('     closest   time   : %s',datestr(tim_dnum_p(kt_loc),'yyyy-mm-dd HH:MM:SS')));
 
     val=NaN(nx,1);
 else
