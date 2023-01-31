@@ -179,7 +179,7 @@ switch lower(tp)
     %
     %         ok=1;
     
-    case{'netcdftiles'}
+    case{'netcdftiles','netcdf_tiles_v2'}
         
         x=[];
         y=[];
@@ -188,6 +188,13 @@ switch lower(tp)
         
         % New tile type
         ok=1;
+
+        switch bathymetry.dataset(iac).format
+            case{'v03'}
+                ncpar='value';
+            otherwise
+                ncpar='depth';
+        end
         
         nLevels=bathymetry.dataset(iac).nrZoomLevels;
         
@@ -377,31 +384,42 @@ switch lower(tp)
                         end
                         if abort2 % Abort the process by clicking abort button
                             break;
-                        end;
-                        if isempty(hh); % Break the process when closing the figure
+                        end
+                        if isempty(hh) % Break the process when closing the figure
                             break;
-                        end;
+                        end
                     end
                                        
                     zzz=zeros(ny,nx);
                     zzz(zzz==0)=NaN;
                     qqq=[];
+
                     
+                    iav=[];
                     % First check whether file exists at at all
-                    
-                    iav=find(bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==itile & bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
+                    switch bathymetry.dataset(iac).format
+                        case{'v03'}
+                            if j<=nny && itile<=nnx
+                                iav=bathymetry.dataset(iac).zoomLevel(ilev).iAvailable(j,itile);
+                                if iav==0
+                                    iav=[];
+                                end
+                            end
+                        otherwise
+                            iav=find(bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==itile & bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
+                    end        
                     
                     fv=NaN;
                     
                     if ~isempty(iav)
                         
                         filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(itile,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
-                        
-                        if strcmpi(name, 'new_england_coned_2016')
-                            idir = [num2str(itile,'%0.5i') filesep];
-                        else
-                            idir = '';
-                        end    
+
+                        idir = '';
+                        switch bathymetry.dataset(iac).format
+                            case{'v03'}
+                                idir = [num2str(itile,'%0.5i') filesep];
+                        end
                         
                         if iopendap || ipdrive
                             if bathymetry.dataset(iac).useCache
@@ -457,7 +475,7 @@ switch lower(tp)
                             fv=[];
                             if exist(ncfile,'file')
                                 try
-                                    zzz=nc_varget(ncfile, 'depth');
+                                    zzz=nc_varget(ncfile, ncpar);
                                     zzz=double(zzz);
                                 catch
                                     disp(['Could not read ' ncfile ' !!!']);
@@ -467,7 +485,7 @@ switch lower(tp)
 %                                     qqq=double(qqq);
 %                                 end
                                 try
-                                    fv=nc_attget(ncfile,'depth','fill_value');
+                                    fv=nc_attget(ncfile,ncpar','fill_value');
                                      ok=1;
                                 end
                             end

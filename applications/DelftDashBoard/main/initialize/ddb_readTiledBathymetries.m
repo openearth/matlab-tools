@@ -89,21 +89,40 @@ if ~strcmpi(requested_datasets{1},'all')
 end
 
 % Add specific fields to structure
-%fld = fieldnames(bathymetry);
+
 names = '';
 longNames = '';
-%for ii=1:length(bathymetry.(fld{1}))
+
 for ii=1:length(bathymetry.dataset)
-%     bathymetry.(fld{1})(ii).useCache = str2double(bathymetry.(fld{1})(ii).useCache);
-%     bathymetry.(fld{1})(ii).edit = str2double(bathymetry.(fld{1})(ii).edit);
-%     names{ii}= bathymetry.(fld{1})(ii).name;
-%     longNames{ii} = bathymetry.(fld{1})(ii).longName;
-
-    bathymetry.dataset(ii).useCache = str2double(bathymetry.dataset(ii).useCache);
-    bathymetry.dataset(ii).edit = str2double(bathymetry.dataset(ii).edit);
+    
+%    bathymetry.dataset(ii).useCache = 1;
+%    bathymetry.dataset(ii).edit     = 0;
+    
+    if isfield(bathymetry.dataset(ii),'useCache')
+        if ~isempty(bathymetry.dataset(ii).useCache)
+            bathymetry.dataset(ii).useCache = str2double(bathymetry.dataset(ii).useCache);
+        else    
+            bathymetry.dataset(ii).useCache = 1;
+        end
+    else    
+        bathymetry.dataset(ii).useCache = 1;
+    end
+    if isfield(bathymetry.dataset(ii),'edit')
+        if ~isempty(bathymetry.dataset(ii).edit)
+            bathymetry.dataset(ii).edit = str2double(bathymetry.dataset(ii).edit);
+        else
+            bathymetry.dataset(ii).edit = 0;
+        end
+    else
+        bathymetry.dataset(ii).edit = 0;
+    end
+    
     names{ii}= bathymetry.dataset(ii).name;
-    longNames{ii} = bathymetry.dataset(ii).longName;
+    longNames{ii} = '';
 
+    try
+        longNames{ii} = bathymetry.dataset(ii).longName;
+    end
 
 end
 bathymetry.datasets = names;

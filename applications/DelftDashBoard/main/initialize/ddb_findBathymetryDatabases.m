@@ -73,7 +73,7 @@ for i=1:bathymetry.nrDatasets
     % Set this dataset to available (for now)
     bathymetry.dataset(i).isAvailable=1;
     switch lower(bathymetry.dataset(i).type)
-        case{'netcdftiles'}
+        case{'netcdftiles','netcdf_tiles_v2'}
             localdir = [bathymetry.dir bathymetry.dataset(i).name filesep];
             % Check if data needs to be updated, because there is a new
             % version, or because the metadata file does not exist
@@ -159,70 +159,182 @@ for i=1:bathymetry.nrDatasets
             
             if bathymetry.dataset(i).isAvailable
 
-                load_data=1; % Let's do this properly in Python instead. 
+%                 format = 'v01'; % First version (no xml), read meta data from netcdffile
+% 
+%                 xml_file = [bathymetry.dir bathymetry.dataset(i).name filesep bathymetry.dataset(i).name '.xml'];
+%                 if exist(xml_file,'file')
+%                     xml=xml2struct(xml_file,'structureformat','supershort');
+%                     if isfield(xml,'format')
+%                         format=xml.format;
+%                     end
+%                 end    
                 
-                if load_data
-                    
-                    x0=nc_varget(fname,'x0');
-                    y0=nc_varget(fname,'y0');
-                    nx=nc_varget(fname,'nx');
-                    ny=nc_varget(fname,'ny');
-                    ntilesx=nc_varget(fname,'ntilesx');
-                    ntilesy=nc_varget(fname,'ntilesy');
-                    dx=nc_varget(fname,'grid_size_x');
-                    dy=nc_varget(fname,'grid_size_y');
-                    for k=1:length(x0)
-                        iav{k}=nc_varget(fname,['iavailable' num2str(k)]);
-                        jav{k}=nc_varget(fname,['javailable' num2str(k)]);
-                    end
-                    
-                    bathymetry.dataset(i).horizontalCoordinateSystem.name=nc_attget(fname,'crs','coord_ref_sys_name');
-                    tp=nc_attget(fname,'crs','coord_ref_sys_kind');
-                    switch lower(tp)
-                        case{'projected','proj','projection','xy','cartesian','cart'}
-                            bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
-                        case{'geographic','geographic 2d','geographic 3d','latlon','spherical'}
-                            bathymetry.dataset(i).horizontalCoordinateSystem.type='Geographic';
-                    end
-                    
-                    try
-                        bathymetry.dataset(i).verticalCoordinateSystem.name=nc_attget(fname,'crs','vertical_reference_level');
-                    catch
+%                bathymetry.dataset(i).format = format;
+                
+%                switch format
+                switch lower(bathymetry.dataset(i).type)
+
+                    case{'netcdftiles'}
+                        
+                        bathymetry.dataset(i).format = 'v01';
+                                                
+                         % First version (no xml), read meta data from netcdffile   
+                        x0=nc_varget(fname,'x0');
+                        y0=nc_varget(fname,'y0');
+                        nx=nc_varget(fname,'nx');
+                        ny=nc_varget(fname,'ny');
+                        ntilesx=nc_varget(fname,'ntilesx');
+                        ntilesy=nc_varget(fname,'ntilesy');
+                        dx=nc_varget(fname,'grid_size_x');
+                        dy=nc_varget(fname,'grid_size_y');
+                        for k=1:length(x0)
+                            iav{k}=nc_varget(fname,['iavailable' num2str(k)]);
+                            jav{k}=nc_varget(fname,['javailable' num2str(k)]);
+                        end
+
+                        bathymetry.dataset(i).horizontalCoordinateSystem.name=nc_attget(fname,'crs','coord_ref_sys_name');
+                        tp=nc_attget(fname,'crs','coord_ref_sys_kind');
+                        switch lower(tp)
+                            case{'projected','proj','projection','xy','cartesian','cart'}
+                                bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
+                            case{'geographic','geographic 2d','geographic 3d','latlon','spherical'}
+                                bathymetry.dataset(i).horizontalCoordinateSystem.type='Geographic';
+                        end
+
+                        try
+                            bathymetry.dataset(i).verticalCoordinateSystem.name=nc_attget(fname,'crs','vertical_reference_level');
+                        catch
+                            bathymetry.dataset(i).verticalCoordinateSystem.name='unknown';
+                        end
+
+                        try
+                            bathymetry.dataset(i).verticalCoordinateSystem.level=nc_attget(fname,'crs','difference_with_msl');
+                        catch
+                            bathymetry.dataset(i).verticalCoordinateSystem.level=0;
+                        end
+
+                        try
+                            bathymetry.dataset(i).verticalCoordinateSystem.units=nc_attget(fname,'crs','vertical_units');
+                        catch
+                            bathymetry.dataset(i).verticalCoordinateSystem.units='m';
+                        end
+
+                        if length(dx)>1
+                            bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
+                        else
+                            bathymetry.dataset(i).refinementFactor=1;
+                        end
+
+                        bathymetry.dataset(i).nrZoomLevels=length(x0);
+                        for k=1:bathymetry.dataset(i).nrZoomLevels
+                            bathymetry.dataset(i).zoomLevel(k).x0=double(x0(k));
+                            bathymetry.dataset(i).zoomLevel(k).y0=double(y0(k));
+                            bathymetry.dataset(i).zoomLevel(k).nx=double(nx(k));
+                            bathymetry.dataset(i).zoomLevel(k).ny=double(ny(k));
+                            bathymetry.dataset(i).zoomLevel(k).ntilesx=double(ntilesx(k));
+                            bathymetry.dataset(i).zoomLevel(k).ntilesy=double(ntilesy(k));
+                            bathymetry.dataset(i).zoomLevel(k).dx=double(dx(k));
+                            bathymetry.dataset(i).zoomLevel(k).dy=double(dy(k));
+                            bathymetry.dataset(i).zoomLevel(k).iAvailable=double(iav{k});
+                            bathymetry.dataset(i).zoomLevel(k).jAvailable=double(jav{k});
+                        end
+
+                    case{'netcdf_tiles_v2'}
+                        
+                        bathymetry.dataset(i).format = 'v03';
+                        
+                         % Latest version with yml, read meta data from netcdf file   
+
+                        x0=nc_varget(fname,'x0');
+                        y0=nc_varget(fname,'y0');
+                        nx=nc_varget(fname,'tile_size_x');
+                        ny=nc_varget(fname,'tile_size_y');
+                        ntilesx=nc_varget(fname,'nr_tiles_x');
+                        ntilesy=nc_varget(fname,'nr_tiles_y');
+                        dx=nc_varget(fname,'grid_size_x');
+                        dy=nc_varget(fname,'grid_size_y');
+
+                        for k=1:length(x0)
+                            av = nc_varget(fname,['available_zl' num2str(k,'%0.2i')]);
+                            % nc_varget seems to transpose the matrix when ntilesx or ntilesy is one 
+                            if size(av,1)~=ntilesy(k) || size(av,2)~=ntilesx(k)
+                                av=av';
+                            end
+                            iav{k}=av;
+                        end
+
+                        bathymetry.dataset(i).nrZoomLevels=length(x0);
+                        for k=1:bathymetry.dataset(i).nrZoomLevels
+                            bathymetry.dataset(i).zoomLevel(k).x0=double(x0(k));
+                            bathymetry.dataset(i).zoomLevel(k).y0=double(y0(k));
+                            bathymetry.dataset(i).zoomLevel(k).nx=double(nx(k));
+                            bathymetry.dataset(i).zoomLevel(k).ny=double(ny(k));
+                            bathymetry.dataset(i).zoomLevel(k).ntilesx=double(ntilesx(k));
+                            bathymetry.dataset(i).zoomLevel(k).ntilesy=double(ntilesy(k));
+                            bathymetry.dataset(i).zoomLevel(k).dx=double(dx(k));
+                            bathymetry.dataset(i).zoomLevel(k).dy=double(dy(k));
+                            bathymetry.dataset(i).zoomLevel(k).iAvailable=double(iav{k});
+                        end
+
+                        bathymetry.dataset(i).horizontalCoordinateSystem.name=nc_attget(fname,'crs','coord_ref_sys_name');
+                        tp=nc_attget(fname,'crs','coord_ref_sys_kind');
+                        switch lower(tp)
+                            case{'projected','proj','projection','xy','cartesian','cart'}
+                                bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
+                            case{'geographic','geographic 2d','geographic 3d','latlon','spherical'}
+                                bathymetry.dataset(i).horizontalCoordinateSystem.type='Geographic';
+                        end
+                        
+                        bathymetry.dataset(i).longName='unknown';
+                        bathymetry.dataset(i).source='unknown';
                         bathymetry.dataset(i).verticalCoordinateSystem.name='unknown';
-                    end
-                    
-                    try
-                        bathymetry.dataset(i).verticalCoordinateSystem.level=nc_attget(fname,'crs','difference_with_msl');
-                    catch
                         bathymetry.dataset(i).verticalCoordinateSystem.level=0;
-                    end
-                    
-                    try
-                        bathymetry.dataset(i).verticalCoordinateSystem.units=nc_attget(fname,'crs','vertical_units');
-                    catch
                         bathymetry.dataset(i).verticalCoordinateSystem.units='m';
-                    end
-                    
-                    if length(dx)>1
-                        bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
-                    else
                         bathymetry.dataset(i).refinementFactor=1;
-                    end
-                    
-                    bathymetry.dataset(i).nrZoomLevels=length(x0);
-                    for k=1:bathymetry.dataset(i).nrZoomLevels
-                        bathymetry.dataset(i).zoomLevel(k).x0=double(x0(k));
-                        bathymetry.dataset(i).zoomLevel(k).y0=double(y0(k));
-                        bathymetry.dataset(i).zoomLevel(k).nx=double(nx(k));
-                        bathymetry.dataset(i).zoomLevel(k).ny=double(ny(k));
-                        bathymetry.dataset(i).zoomLevel(k).ntilesx=double(ntilesx(k));
-                        bathymetry.dataset(i).zoomLevel(k).ntilesy=double(ntilesy(k));
-                        bathymetry.dataset(i).zoomLevel(k).dx=double(dx(k));
-                        bathymetry.dataset(i).zoomLevel(k).dy=double(dy(k));
-                        bathymetry.dataset(i).zoomLevel(k).iAvailable=double(iav{k});
-                        bathymetry.dataset(i).zoomLevel(k).jAvailable=double(jav{k});
-                    end
-                    
+                        
+                        % Now read yml file
+                        yml_file = [bathymetry.dir bathymetry.dataset(i).name filesep bathymetry.dataset(i).name '.yml'];
+
+                        if exist(yml_file,'file')
+
+                            r = yml.read(yml_file);
+                            
+                            try
+                                bathymetry.dataset(i).longName=r.long_name;
+                            end
+                            
+                            try
+                                bathymetry.dataset(i).source=r.source;
+                            end
+                            
+                            try
+                                bathymetry.dataset(i).verticalCoordinateSystem.name=r.vertical_reference_level;
+                            end
+                            
+                            try
+                                bathymetry.dataset(i).verticalCoordinateSystem.level=str2double(r.difference_with_msl);
+                            end
+                            
+                            try
+                                bathymetry.dataset(i).verticalCoordinateSystem.units=r.vertical_units;
+                            end
+                            
+                            if length(dx)>1
+                                bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
+                            end
+                            
+%                             bathymetry.dataset(i).horizontalCoordinateSystem.name=r.coord_ref_sys_name;
+%                             tp=r.coord_ref_sys_kind;
+%                             switch lower(tp)
+%                                 case{'projected','proj','projection','xy','cartesian','cart'}
+%                                     bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
+%                                 case{'geographic','geographic 2d','geographic 3d','latlon','spherical'}
+%                                     bathymetry.dataset(i).horizontalCoordinateSystem.type='Geographic';
+%                             end
+                            
+                        end
+                        
+                        
                 end
                 
             end
@@ -254,6 +366,14 @@ for i=1:bathymetry.nrDatasets
         bathymetry.dataset(i).source='Unknown';
     end
 end
+
+for ii=1:length(bathymetry.dataset)
+    longNames{ii} = '';
+    try
+        longNames{ii} = bathymetry.dataset(ii).longName;
+    end
+end
+bathymetry.longNames = longNames;
 
 disp([num2str(bathymetry.nrDatasets) ' bathymetry datasets found!']);
 
