@@ -29,8 +29,10 @@ manning_deep_value=0.024;
 manning_deep_level=-99999;
 zzmin=-99999;
 
-if strcmpi(cs.type,'cartesian')
-    cs.type='projected';
+if ~isempty(cs)
+    if strcmpi(cs.type,'cartesian')
+        cs.type='projected';
+    end
 end
 
 %% Read input arguments
@@ -205,15 +207,21 @@ for ii=1:ni
         yg0 = y0 + sinrot*xx + cosrot*yy;
 
         if isempty(cs)
-            cellareas=repmat(dx*dy,nib1,njb1);
+%            cellareas=repmat(dx*dy,nib1,njb1);
+            dxmp=repmat(dif,nib1,njb1);
+            dymp=repmat(djf,nib1,njb1);
         else
             if strcmpi(cs.type,'projected')
-                cellareas=repmat(dx*dy,nib1,njb1);
+%                cellareas=repmat(dx*dy,nib1,njb1);
+                dxmp=repmat(dif,nib1,njb1);
+                dymp=repmat(djf,nib1,njb1);
             else
                 xxc = (x0 + (jc1-1)*dx + 0.5*dx):dx: (x0 + jc2*dx - 0.5*dx);
                 yyc = (y0 + (ic1-1)*dy + 0.5*dy):dy: (y0 + ic2*dx - 0.5*dy);
                 [xc,yc] = meshgrid(xxc,yyc);
-                cellareas = (dy*111111.1)*(dx*111111.1)*cos(yc*pi/180);
+%                cellareas = (dy*111111.1)*(dx*111111.1)*cos(yc*pi/180);
+                dxmp=111111.1*dif*cos(yc*pi/180);
+                dymp=111111.1*djf;
             end
         end
         clear xx yy
@@ -407,7 +415,7 @@ for ii=1:ni
         if ~isempty(find(isnan(zg), 1)) || ~isempty(find(isnan(manning), 1))
             isn=find(isnan(zg));
             if ~isempty(isn)
-                if length(isn)<0.1*size(xg,1)*size(xg,2)
+                if length(isn)<0.1*size(xg0,1)*size(xg0,2)
                     % just a limited number of points
                     disp('Small number of NaNs found in topography data. Trying internal diffusion ...');
                     zg=internaldiffusion(zg);
@@ -448,8 +456,10 @@ for ii=1:ni
         end
         
         % Determine values for subgrid
-        [zmin,zmax,volmax,ddd]=mx_subgrid_volumes_v05(d,cellareas,nbin,dx,dy,maxdzdv);
-        
+        % No longer use mex files
+%        [zmin,zmax,volmax,ddd]=mx_subgrid_volumes_v05(d,cellareas,nbin,dx,dy,maxdzdv);
+        zvolmin=-20;
+        [zmin,zmax,volmax,ddd]=subgrid_volumes_v06(d, dxmp, dymp, nbin, zvolmin, maxdzdv);
         % Re-map Z points
         subgrd.z_zmin(ic1:ic2,jc1:jc2)=zmin;
         subgrd.z_zmax(ic1:ic2,jc1:jc2)=zmax;
@@ -473,7 +483,9 @@ for ii=1:ni
                 manning1(:,:,np)=manning(i1:refi:i2,j1:refj:j2);
             end
         end
-        [ddd_u,dhdz_u,navg_u,zmin_u,zmax_u]=mx_subgrid_depth_v05(d,manning1,nbin);
+        % No longer use mex files
+%        [ddd_u,dhdz_u,navg_u,zmin_u,zmax_u]=mx_subgrid_depth_v05(d,manning1,nbin);
+        [ddd_u,dhdz_u,navg_u,zmin_u,zmax_u]=subgrid_depth_v06(d,manning1,nbin);
         
         % Re-map U points
         subgrd.u_zmin(ic1:ic2,jc1:jc2)=zmin_u;
@@ -500,8 +512,10 @@ for ii=1:ni
                 manning1(:,:,np)=manning(i1:refi:i2,j1:refj:j2);
             end
         end
-        [ddd_v,dhdz_v,navg_v,zmin_v,zmax_v]=mx_subgrid_depth_v05(d,manning1,nbin);
-        
+        % No longer use mex files
+%        [ddd_v,dhdz_v,navg_v,zmin_v,zmax_v]=mx_subgrid_depth_v05(d,manning1,nbin);
+        [ddd_v,dhdz_v,navg_v,zmin_v,zmax_v]=subgrid_depth_v06(d,manning1,nbin);
+    
         % Re-map V points
         subgrd.v_zmin(ic1:ic2,jc1:jc2)=zmin_v;
         subgrd.v_zmax(ic1:ic2,jc1:jc2)=zmax_v;
