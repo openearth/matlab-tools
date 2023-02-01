@@ -67,6 +67,7 @@ simdef.mdf.Flmap_dt=        60; %printing map-file interval time [s] [double(1,1
 % simdef.mdf.obs_name={'s1','s2'} ; %name of the observation stations [-] [cell(np,1)] e.g. {'s1','s2'}
 simdef.mdf.Flrst_dt=      3600; %restart file time interval [s] [double(1,1)] e.g. [60]
 simdef.mdf.izbndpos=        0; %position of the boundary: 0=in ghost cell (D3D); 1=at edge cell [-] [double(1,1)]. If 0, the value in the BC will be shifted half a cell. 
+simdef.mdf.Removesmalllinkstrsh=0.1; %0.0 = remove no links ,  0.1 = remove links smaller than 0.1 sqrt(ba)
 
 %% morphology parameters
 simdef.mor.morphology=      1; %include morphology or not [-] [double(1,1)]: 0=NO; 1=YES

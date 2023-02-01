@@ -155,6 +155,7 @@ data{kl,1}=sprintf('Kmx               = %d',K)     ; kl=kl+1;
 data{kl,1}=        'Layertype         = 1         '; kl=kl+1;
 data{kl,1}=        'Numtopsig         = 0         '; kl=kl+1;
 data{kl,1}=        'SigmaGrowthFactor = 1         '; kl=kl+1;
+data{kl,1}=sprintf('Removesmalllinkstrsh = %d     ',simdef.mdf.Removesmalllinkstrsh); kl=kl+1; %0.0 = remove no links ,  0.1 = remove links smaller than 0.1 sqrt(ba)
 
 % Kmx                               = 28                  # Maximum number of vertical layers
 % Layertype                         = 2                   # Vertical layer type (1: all sigma, 2: all z, 3: use VertplizFile)

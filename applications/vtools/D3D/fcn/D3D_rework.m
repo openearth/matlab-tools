@@ -381,6 +381,10 @@ if isfield(simdef.mdf,'theta')==0
     simdef.mdf.theta=0.55;
 end
 
+if isfield(simdef.mdf,'Removesmalllinkstrsh')==0
+    simdef.mdf.Removesmalllinkstrsh=0.1;
+end
+
 %%
 %% SED
 %%
