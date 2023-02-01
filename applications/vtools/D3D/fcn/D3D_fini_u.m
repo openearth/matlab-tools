@@ -20,7 +20,7 @@ D3D_ext(simdef);
 
 %% XYcen
 fpath_netmap=fullfile(pwd,'tmpgrd_net.nc');
-D3D_grd2map(simdef.file.grd,'fpath_map',fpath_netmap);
+D3D_grd2map(simdef.file.grd,'fpath_map',fpath_netmap,'fpath_exe',simdef.file.exe_input);
 gridInfo=EHY_getGridInfo(fpath_netmap,{'XYcen','XYcor'});
 delete(fpath_netmap);
 
