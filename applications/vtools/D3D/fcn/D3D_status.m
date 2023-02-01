@@ -49,6 +49,23 @@ end
 
 %% CALC
 
+%% check if existing
+fdir_mat=fullfile(simdef.D3D.dire_sim,'mat');
+fpath_status=fullfile(fdir_mat,'status.m');
+if isfolder(fdir_mat)
+    if exist(fpath_status,'file')==2
+        load(fpath_status,'status');
+        if status.sta>2
+            v2struct(status);
+            return
+        end
+    end
+else
+    mkdir_check(fdir_mat);
+end
+
+%% does not exist or it has not finished
+
 sta=NaN;
 time_comp=NaT-datetime(2000,1,1); %duration
 tgen=NaT;
@@ -86,5 +103,10 @@ end
 
 sta=2; 
 [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
+
+%% save
+
+status=v2struct(sta,time_comp,tgen,version,tim_ver,source,processes);
+save_check(fpath_status,'status');
 
 end %function
