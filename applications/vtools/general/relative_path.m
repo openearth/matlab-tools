@@ -52,6 +52,6 @@ end
 str_down=fullfile(tok_file{idx_comm:end});
 
 fpath_rel=fullfile(str_up,str_down);
-strrep(fpath_rel,'\','/'); %regardless of the system, write linux bars, as these are read correctly by D3D
+fpath_rel=strrep(fpath_rel,'\','/'); %regardless of the system, write linux bars, as these are read correctly by D3D
 
 end %function
