@@ -87,6 +87,7 @@ fprintf(fid,'AutoStart                         = 0                      \r\n');
 fprintf(fid,'                                                           \r\n');
 fprintf(fid,'[geometry]                                                 \r\n');
 fprintf(fid,'NetFile                           = tmp_net.nc             \r\n');  
+fprintf(fid,'Removesmalllinkstrsh              = 0                      \r\n');  
 fprintf(fid,'                                                           \r\n');
 fprintf(fid,'[time]                                                     \r\n');
 fprintf(fid,'RefDate                           = 20000101               \r\n');
