@@ -51,7 +51,7 @@ end
 
 %% check if existing
 fdir_mat=fullfile(simdef.D3D.dire_sim,'mat');
-fpath_status=fullfile(fdir_mat,'status.m');
+fpath_status=fullfile(fdir_mat,'status.mat');
 if isfolder(fdir_mat)
     if exist(fpath_status,'file')==2
         load(fpath_status,'status');
@@ -98,15 +98,13 @@ if is_done
     sta=3;
     [time_comp,~,~,processes]=D3D_computation_time(simdef.file.dia);
     [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
+    %save if simulation has finished
+    status=v2struct(sta,time_comp,tgen,version,tim_ver,source,processes);
+    save_check(fpath_status,'status');
     return 
 end
 
 sta=2; 
 [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
-
-%% save
-
-status=v2struct(sta,time_comp,tgen,version,tim_ver,source,processes);
-save_check(fpath_status,'status');
 
 end %function

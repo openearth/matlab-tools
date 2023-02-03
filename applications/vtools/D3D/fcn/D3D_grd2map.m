@@ -53,7 +53,8 @@ if exist(fpath_exe,'file')~=2
 end
 fdir_now=pwd;
 cd(fdir_work)
-[status]=system(sprintf('call "%s" "%s"',fpath_exe,fpath_xml));
+% [status]=system(sprintf('call "%s" "%s"',fpath_exe,fpath_xml));
+[status]=system(sprintf('call "%s"',fpath_exe)); %for some reason the execute does not work when the path has a space, although it did before. If default name is <dimr_config> is used, there is no ptoblem. 
 cd(fdir_now);
 if status~=0
     error('something went wrong when executing')

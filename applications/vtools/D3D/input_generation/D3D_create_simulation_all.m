@@ -98,18 +98,17 @@ for ksim=1:nsim
         if simdef.D3D.structure==1
             D3D_fini(simdef)
         else 
-            simdef.file.dep=simdef.file.etaw;
-            [dirloc]=fileparts(simdef.file.dep);
+            simdef_c=simdef; %make a copy because filenames are changed for misusing the function
+            simdef_c.file.dep=simdef_c.file.etaw;
+            [dirloc]=fileparts(simdef_c.file.dep);
             mkdir_check(dirloc);
-            if exist(simdef.file.dep,'file')~=2
-                simdef.ini.etab=simdef.ini.etab+simdef.ini.h; %changed here to missuse the creation of dep file for water level
-                simdef.ini.noise_amp=-simdef.ini.noise_amp;
-                simdef.ini.etab_noise=simdef.ini.etaw_noise;
-                D3D_dep(simdef)
+            if exist(simdef_c.file.dep,'file')~=2
+                simdef_c.ini.etab=simdef_c.ini.etab+simdef_c.ini.h; %changed here to missuse the creation of dep file for water level
+                simdef_c.ini.noise_amp=-simdef_c.ini.noise_amp;
+                simdef_c.ini.etab_noise=simdef_c.ini.etaw_noise;
+                D3D_dep(simdef_c)
             end
-    %         if simdef.ini.u~=0 || simdef.ini.v~=0
-                D3D_fini_u(simdef)
-    %         end
+            D3D_fini_u(simdef)
         end
 
         %boundary definition    
