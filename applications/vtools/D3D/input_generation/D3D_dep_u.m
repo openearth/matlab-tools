@@ -118,7 +118,7 @@ switch simdef.ini.etab_noise
         sig=simdef.ini.noise_Lb;
         
         x=Xtot;
-        noise=etab_max.*exp(-(x-mu).^2/sig^2);
+        noise=etab_max.*exp(-(x-mu(1)).^2/sig^2);
     case 6
         %2D gaussian
         mu=simdef.ini.noise_x0;
