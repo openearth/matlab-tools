@@ -238,6 +238,16 @@ else
     data=load(fpath_mat_tmp,'data');
 
     val=D3D_diff_val(data.data.val,data_ref.data.val,data.data.Scen,data_ref.data.Scen);
+    
+    %% DEBUG
+%     figure
+%     hold on
+%     plot(data_ref.data.Scen,data_ref.data.val)
+%     s=abs((data.data.val(1)-data.data.val(2))/(data.data.Scen(1)-data.data.Scen(2)));
+%     etab_ref=data.data.val(end)+s*(data.data.Scen(end)-data.data.Scen');
+%     plot(data.data.Scen,data.data.val-etab_ref)
+%     plot(data_ref.data.Scen,val)
+%     plot(data.data.Scen,data.data.val-data_ref.data.val)
 end    
 
 end %function
