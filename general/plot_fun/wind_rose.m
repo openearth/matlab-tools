@@ -289,7 +289,7 @@ switch OPT.dtype
     case 'meteo'
         D=mod(-90-D,360) + 180; % degN2deguc(D);
         % add 180 as visual directional interpretation differs.
-        directional_interpretation = 'from ';
+        directional_interpretation = '';
     case 'current'
         D=mod(-90-D,360) + 180; % degN2deguc(D);
         % add 180 as visual directional interpretation differs.
