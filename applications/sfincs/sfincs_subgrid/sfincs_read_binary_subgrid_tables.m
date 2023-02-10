@@ -1,4 +1,4 @@
-function subgrd=sfincs_read_binary_subgrid_tables_v8(folder)
+function subgrd=sfincs_read_binary_subgrid_tables(folder)
 
 inpfile=[folder filesep 'sfincs.inp'];
 
