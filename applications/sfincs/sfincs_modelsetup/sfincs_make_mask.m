@@ -43,7 +43,7 @@ if ~isempty(xy_ex)
         xy_ex(1).zmin=[];
     end    
     if ~isfield(xy_ex,'zmax')
-        xy_ex(1).zmin=[];
+        xy_ex(1).zmax=[];
     end    
     for ip=1:length(xy_ex)
         if isempty(xy_ex(ip).zmin)
@@ -59,7 +59,7 @@ if ~isempty(xy_bnd_wl)
         xy_bnd_wl(1).zmin=[];
     end    
     if ~isfield(xy_bnd_wl,'zmax')
-        xy_bnd_wl(1).zmin=[];
+        xy_bnd_wl(1).zmax=[];
     end    
     for ip=1:length(xy_bnd_wl)
         if isempty(xy_bnd_wl(ip).zmin)
@@ -75,7 +75,7 @@ if ~isempty(xy_bnd_out)
         xy_bnd_out(1).zmin=[];
     end    
     if ~isfield(xy_bnd_out,'zmax')
-        xy_bnd_out(1).zmin=[];
+        xy_bnd_out(1).zmax=[];
     end    
     for ip=1:length(xy_bnd_out)
         if isempty(xy_bnd_out(ip).zmin)

@@ -22,8 +22,8 @@ usemex              = 1;
 grid_out            = 0;
 xy_in               = [];
 xy_ex               = [];
-xy_bnd_closed       = [];
-xy_bnd_open         = [];
+xy_bnd_wl       = [];
+xy_bnd_out         = [];
 
 %% Read input arguments
 for ii=1:length(varargin)
@@ -57,18 +57,22 @@ for ii=1:length(varargin)
                         xy_ex=load_polygon_ascii(varargin{ii+1});                        
                     end                    
                 end
-            case{'closedboundarypolygon'}
+            case{'waterlevelboundarypolygon'}
                 if ~isempty(varargin{ii+1})
                     try
-                        xy_bnd_closed=load_polygon(varargin{ii+1});
+                        xy_bnd_wl=load_polygon(varargin{ii+1});
                     catch
-                        xy_bnd_closed=load_polygon_ascii(varargin{ii+1});
+                        xy_bnd_wl=load_polygon_ascii(varargin{ii+1});
                     end                    
                      
                 end
-            case{'openboundarypolygon'}
+            case{'outflowboundarypolygon'}
                 if ~isempty(varargin{ii+1})
-                    xy_bnd_open=load_polygon(varargin{ii+1});
+                    try
+                        xy_bnd_out=load_polygon(varargin{ii+1});
+                    catch
+                        xy_bnd_out=load_polygon_ascii(varargin{ii+1});
+                    end                           
                 end
             case{'manning_input'}
                 if ~isempty(varargin{ii+1})
@@ -106,7 +110,7 @@ end
 
 % Create mask
 disp('Making mask ...');
-msk=sfincs_make_mask(xz,yz,zz,[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'closedboundarypolygon',xy_bnd_closed,'openboundarypolygon',xy_bnd_open);
+msk=sfincs_make_mask(xz,yz,zz,[zmin zmax],'includepolygon',xy_in,'excludepolygon',xy_ex,'waterlevelboundarypolygon',xy_bnd_wl,'outflowboundarypolygon',xy_bnd_out);
 A4fig; axis equal; pcolor(xz,yz,msk); shading flat; colorbar;xlim([minmin(xz),maxmax(xz)]);ylim([minmin(yz),maxmax(yz)]);
 idmsk = find(msk==2); plot(xz(idmsk), yz(idmsk), 'r*'); 
 idmsk = find(msk==3); plot(xz(idmsk), yz(idmsk), 'bo'); 
