@@ -20,6 +20,8 @@ structure=simdef.D3D.structure;
 % fname_mdu=simdef.runid.name; %runid does not have the extension!
 runid=simdef.runid.name;
 
+%2DO: add option that if <structure> does not exist, it searches in the directory.
+
 % [~,~,ext]=fileparts(fname_mdu);
 % switch ext
 %     case '.mdu'
@@ -50,10 +52,12 @@ switch structure
     case 2
         addOptional(parin,'dimr','dimr_config.xml');
 end
+addOptional(parin,'check_existing',true)
 
 parse(parin,varargin{:});
 
 dimr_str=parin.Results.dimr;
+check_existing=parin.Results.check_existing;
 
 %%
 
@@ -65,7 +69,7 @@ fpath_dimr=fullfile(dire_sim,dimr_str);
 
 %% dimr
 
-D3D_xml(fpath_dimr,fname_mdu)
+D3D_xml(fpath_dimr,fname_mdu,'check_existing',check_existing)
 
 %% batch
 

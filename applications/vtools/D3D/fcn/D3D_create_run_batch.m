@@ -10,10 +10,35 @@
 %$Id$
 %$HeadURL$
 %
+%E.G. 1
+%
 %[fid_lin,fid_win]=D3D_create_run_batch('open',path_folder_sims);
-%D3D_create_run_batch('add',path_folder_sims,fid_lin,fid_win,sim_id);
+%D3D_create_run_batch('add',path_folder_sims,fid_lin,fid_win,sim_id,strsoft_lin,strsoft_win);
 %D3D_create_run_batch('close',path_folder_sims,fid_lin,fid_win);
+%
+%
+%E.G. 2 (loop)
+%
+%
+% path_folder_sims='d:\temporal\210804_fm_1d_implicit\06_models\03_multiple_branch\03_runs_test_reference\';
+% simdef.file.software='p:\dflowfm\projects\2022_fm_1d_implicit\08_executables\exe_08\';
+% 
+% fdir_v=1:1:13;
+% 
+% [fid_lin,fid_win]=D3D_create_run_batch('open',path_folder_sims);
+% for kdir=1:numel(fdir_v)
+%     sim_id=sprintf('r%03d',fdir_v(kdir));
+%     
+%     simdef.D3D.dire_sim=fullfile(path_folder_sims,sim_id);
+%     simdef.D3D.structure=2;
+%     simdef.runid.name='sc'; %maybe same as <sim_id>
+%     
+%     [strsoft_lin,strsoft_win]=D3D_bat(simdef,simdef.file.software,'check_existing',false);
+%     D3D_create_run_batch('add',path_folder_sims,fid_lin,fid_win,sim_id,strsoft_lin,strsoft_win);
+% end
+% D3D_create_run_batch('close',path_folder_sims,fid_lin,fid_win);
 
+%%
 function varargout=D3D_create_run_batch(do_what,path_folder_sims,varargin)
 
 call_script_par='run_cases_par';

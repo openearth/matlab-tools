@@ -213,8 +213,12 @@ for kbr=1:nbr %branches
             for kS=1:nS
                 fdir_mat=simdef(kS).file.mat.dir;
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
-                load(fpath_mat_tmp,'data');
-                data_T(:,kS,kt)=data;
+                if exist(fpath_mat_tmp,'file')==2
+                    load(fpath_mat_tmp,'data');
+                    data_T(:,kS,kt)=data;
+                else %for the reference time there is no time in this simulation (crashed?)
+                    messageOut(fid_log,sprintf('No data for comparison: %s',fpath_mat_tmp));
+                end
             end
             
             in_p.tim=time_dnum_v(kt);

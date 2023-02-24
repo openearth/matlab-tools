@@ -83,7 +83,7 @@ end
 switch file_type
     case 0
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug,'file_structure',file_structure);
-    case {1,2,3,4,6,7,8,9,10,11,12,13,14} %locations in rows
+    case {1,2,3,4,6,7,8,9,10,11,12,13,14,15} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
     case {5} %locations in columns
         vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);       
@@ -1084,6 +1084,84 @@ switch file_type
         fdelim=',';
         tzone='+01:00'; %?
         headerlines=1;    
+    case 15
+% # BRON: KONINKLIJK NEDERLANDS METEOROLOGISCH INSTITUUT (KNMI)
+% # Opmerking: door stationsverplaatsingen en veranderingen in waarneemmethodieken zijn deze tijdreeksen van uurwaarden mogelijk inhomogeen! Dat betekent dat deze reeks van gemeten waarden niet geschikt is voor trendanalyse. Voor studies naar klimaatverandering verwijzen we naar de gehomogeniseerde reeks maandtemperaturen van De Bilt <http://www.knmi.nl/klimatologie/onderzoeksgegevens/homogeen_260/index.html> of de Centraal Nederland Temperatuur <http://www.knmi.nl/klimatologie/onderzoeksgegevens/CNT/>.
+% # 
+% # 
+% # STN      LON(east)   LAT(north)     ALT(m)  NAME
+% # 330:         4.122       51.992      11.90  HOEK VAN HOLLAND
+% # 
+% # YYYYMMDD = datum (YYYY=jaar,MM=maand,DD=dag); 
+% # HH       = tijd (HH=uur, UT.12 UT=13 MET, 14 MEZT. Uurvak 05 loopt van 04.00 UT tot 5.00 UT; 
+% # DD       = Windrichting (in graden) gemiddeld over de laatste 10 minuten van het afgelopen uur (360=noord, 90=oost, 180=zuid, 270=west, 0=windstil 990=veranderlijk. Zie http://www.knmi.nl/kennis-en-datacentrum/achtergrond/klimatologische-brochures-en-boeken; 
+% # FH       = Uurgemiddelde windsnelheid (in 0.1 m/s). Zie http://www.knmi.nl/kennis-en-datacentrum/achtergrond/klimatologische-brochures-en-boeken; 
+% # 
+% # STN,YYYYMMDD,   HH,   DD,   FH
+% # 
+%   330,20020101,    1,  300,   70
+        %variables to save once
+        var_once={'STN'};
+        idx_location=1;
+%         idx_eenheid=2;
+%         idx_x=2;
+%         idx_y=3;
+%         idx_parameter=4;
+%         
+%         idx_grootheid=6;
+%         idx_epsg=7;
+%         idx_hoedanigheid=8;
+        
+        %variables to save with time
+%         var_time={'WAARNEMINGDATUM','WAARNEMINGTIJD (MET/CET)','NUMERIEKEWAARDE'};
+        var_time={'YYYYMMDD','HH','DD'};
+        idx_datum=1;
+        fmt_datum='yyyyMMdd';
+        idx_tijd=2;
+        fmt_tijd='HH';
+        idx_waarheid=3;
+        
+        grootheid='DD'; %assing, as they are not in head
+        eenheid='degrees'; %assing, as they are not in head
+        
+        %variable with location, to check for different places in same file.
+        var_loc={'STN'};
+        
+        fdelim=',';
+        tzone='+00:00'; %?
+        headerlines=1;    
+    case 16
+% WAARNEMINGDATUM;WAARNEMINGTIJD;NUMERIEKEWAARDE
+% 1-1-2002;00:00:00;894,2
+        %variables to save once
+%         var_once={'STN'};
+%         idx_location=1;
+%         idx_eenheid=2;
+%         idx_x=2;
+%         idx_y=3;
+%         idx_parameter=4;
+%         
+%         idx_grootheid=6;
+%         idx_epsg=7;
+%         idx_hoedanigheid=8;
+%         location='';
+        %variables to save with time
+        var_time={'WAARNEMINGDATUM','WAARNEMINGTIJD','NUMERIEKEWAARDE'};
+        idx_datum=1;
+        fmt_datum='dd-MM-yyyy';
+        idx_tijd=2;
+        fmt_tijd='HH:MM:SS';
+        idx_waarheid=3;
+        
+        grootheid=''; %assing, as they are not in head
+        eenheid=''; %assing, as they are not in head
+        
+        %variable with location, to check for different places in same file.
+%         var_loc={'STN'};
+        
+        fdelim=';';
+        tzone='+00:00'; %?
+        headerlines=1;    
     otherwise
         error('You are asking for an inexisteng file type')
 
@@ -1129,7 +1207,7 @@ if keep_searching
         [fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_param,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg]=get_file_data(file_type);
         tok_header=regexp(fline,fdelim,'split');
         idx_var_once=find_str_in_cell(tok_header,var_once);
-        idx_var_time=find_str_in_cell(tok_header,var_time);    
+        idx_var_time=find_str_in_cell(cellfun(@(X)strtrim(X),tok_header,'UniformOutput',false),var_time);    
     %     idx_var_loc =find_str_in_cell(tok_header,var_loc );
         %it is possible to make it in one expression, but it gets unreadable
         if ~isempty(var_once{1,1}) 

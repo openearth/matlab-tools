@@ -190,6 +190,7 @@ end %kn
 %% OUTPUT
 data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[Output]'; kl=kl+1;
+data{kl,1}=        '  OutDefault = 1'; kl=kl+1; %default is all morphodynamic output unless you set it to false. 
 data{kl,1}=        '  Dm = 1'; kl=kl+1;
 data{kl,1}=        '  Dg = 1'; kl=kl+1;
 data{kl,1}=        '  HidExp = 1'; kl=kl+1;
@@ -201,6 +202,7 @@ data{kl,1}=        '  Bedslope = 1'; kl=kl+1;
 % data{kl,1}=sprintf('  RegularizationLocations = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get â€œmesh1d_umodâ€?
 data{kl,1}=        '  RawTransportAtZeta = 1'; kl=kl+1; 
+data{kl,1}=        '  SourceSinkTerms = 1'; kl=kl+1; 
 
 data{kl,1}=        ''; kl=kl+1;
  data{kl,1}=        '[Numerics]'; kl=kl+1;
