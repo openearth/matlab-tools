@@ -11,16 +11,16 @@ restoredefaultpath
 %% INPUT 
 
 ELV.paths_source='C:\Users\chavarri\checkouts\openearthtools_matlab\applications\ELV\trunk\source\';
-ELV.input_filename='c:\Users\chavarri\temporal\ELV\01_input\input_ELV_Q024.m';
-ELV.paths_runs='C:\Users\chavarri\temporal\ELV\';
+ELV.input_filename='d:\temporal\230226_CY\input_ELV_test.m';
+ELV.paths_runs='d:\temporal\230226_CY\ELV\';
 
 % ELV.paths_source='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\ELV\trunk\source\';
 % ELV.input_filename='p:\dflowfm\projects\2020_d-morphology\modellen\01_newscheme\01_input\input_ELV_Q024.m';
 % ELV.paths_runs='p:\dflowfm\projects\2020_d-morphology\modellen\01_newscheme\02_simulations'; 
 
 ELV.OET=1;
-ELV.runid_serie='Q';
-ELV.runid_number='024';
+ELV.runid_serie='A';
+ELV.runid_number='001';
 ELV.erase_previous=1; %it is dangerous, use with care and attention
 ELV.do_profile=0; %0=NO; 1=YES
 ELV.do_postprocessing=0; %0=NO; 1=YES
