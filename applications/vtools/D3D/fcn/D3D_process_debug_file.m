@@ -29,7 +29,7 @@
 %Important (can be generalized):
 %   -The character length must be 16 (1 space plus 15 for number).
 %   -x and y must be in first and second column, respectively.
-%   -Maximum there can be 3 loops for writing.
+%   -Maximum there can be 3 loops for writing (spatial and two indices such as `lsed`).
 %   -The loop on space must be identified with `ndx` or `ndxi`. 
 %
 %E.G. Read and plot per parts
@@ -60,7 +60,7 @@
 % %% plot
 % D3D_process_debug_file(fpath_db,'do','plot','data',data_fil,'clims',[0,1]*1e-4);
 
-function data_block=D3D_process_debug_file(fpath_db,varargin)
+function data=D3D_process_debug_file(fpath_db,varargin)
 
 %% PARSE
 
@@ -75,7 +75,7 @@ addOptional(parin,'clims',[NaN,NaN]);
 parse(parin,varargin{:});
 
 what_do=parin.Results.do;
-data_block=parin.Results.data;
+data=parin.Results.data;
 clims=parin.Results.clims;
 
 %%
@@ -91,7 +91,7 @@ switch what_do
         what_read=0;
         what_plot=1;
         
-        if isempty(fieldnames(data_block))
+        if isempty(fieldnames(data))
             error('Provide data for plotting');
         end
         
@@ -116,7 +116,7 @@ while ~feof(fid)
 
 %block starts
 kb=kb+1;
-data_block(kb)=D3D_read_debug_block(fid);
+data(kb)=D3D_read_debug_block(fid);
 
 messageOut(NaN,sprintf('Reading block %4d',kb));
 end %feof
@@ -134,11 +134,13 @@ xp=1;
 yp=1;
 vp=1;
 var_str='';
-loop_var_str='';
-idx_loop_var_str=1;
+loop_var_str_1='';
+loop_var_str_2='';
+kloopvar_1=1;
+kloopvar_2=1;
 nam='';
 tim=1;
-cbar_str=sprintf('%s, %s %d',strrep(var_str,'_','\_'),loop_var_str,idx_loop_var_str);
+cbar_str=sprintf('%s, %s=%d, %s=%d',strrep(var_str,'_','\_'),loop_var_str_1,kloopvar_1,loop_var_str_2,kloopvar_2);
 tit_str={sprintf('time1=%f',tim),strrep(nam,'_','\_')};
 
 han.fig=figure('visible',fig_visible);
@@ -152,55 +154,79 @@ han.tit=title(tit_str);
 
 %% loop
 messageOut(NaN,'Start plotting');
-nb=numel(data_block);
+nb=numel(data);
 for kb=1:nb
 
     col_x=1; %can be searched in data_block
     col_y=2; %can be searched in data_block
 
-    nv=numel(data_block(kb).vars)-2; %x and y
-
-    tim=data_block(kb).time1;
-    nam=data_block(kb).nam;
+    tim=data(kb).time1;
+    nam=data(kb).nam;
     tit_str={sprintf('time1=%f',tim),strrep(nam,'_','\_')};
     han.tit.String=tit_str;
 
-    %search for spatial loop
-    idx_ndx=find_str_in_cell(data_block(kb).loop_vars,{'ndxi','ndx'});
+    %search for spatial index
+    idx_ndx=find_str_in_cell(data(kb).loop_vars,{'ndxi','ndx'});
+    if isnan(idx_ndx)
+        error('Cannot find spatial variable')
+    end
+    
+    %search for dimensions to loop
+    ntot=size(data(kb).data); %the first three ones are spatial and the two loops, but we do not know in which location is spatial
+    if numel(ntot)~=4
+        error('Dimensions do not match expectations')
+    end
+    
+    nloop=ntot(1:3);
+    nloop(idx_ndx)=[];
+    nvar=ntot(4)-2; %x and y are the first 2
+    
+    idx_loop=1:3;
+    idx_loop(idx_ndx)=[];
+    
+    if nloop(1)~=1
+        loop_var_str_1=data(kb).loop_vars{idx_loop(1)};
+    else
+        loop_var_str_1='';
+    end
 
-    %loop on others (e.g., lsed)
-    for kloopvars=1:3 %maximum for now is 3D array and we do not loop on the one that has spatial array.
-        if kloopvars==idx_ndx; continue; end %skip spatial
-        ndim=size(data_block(kb).data,kloopvars);
-        
-        if ndim==1; continue; end %I have to deal with 3D arrays...
+    if nloop(2)~=1
+        loop_var_str_2=data(kb).loop_vars{idx_loop(2)};
+    else
+        loop_var_str_2='';
+    end
 
-        loop_var_str=data_block(kb).loop_vars{kloopvars};
+    %loop on non-spatial indices
+    for kloopvar_1=1:nloop(1) 
+        val_1=submatrix(data(kb).data,idx_loop(1),kloopvar_1);
+        for kloopvar_2=1:nloop(2)
+            val_2=submatrix(val_1,idx_loop(2),kloopvar_2);
 
-        for kd=1:ndim %lsed
-            idx_loop_var_str=kd;
-            valp=submatrix(data_block(kb).data,kloopvars,kd);
-
-            xp=valp(:,:,:,col_x);
+            xp=val_2(:,:,:,col_x);
             xp=squeeze(xp);
 
-            yp=valp(:,:,:,col_y);
+            yp=val_2(:,:,:,col_y);
             yp=squeeze(yp);
 
             han.s.XData=xp;
             han.s.YData=yp;
 
-            for kv=1:nv %variable written
+            for kv=1:nvar %variable written
                 col_v=2+kv; %x,y and then variables
                 
-                var_str=data_block(kb).vars{col_v};
-                cbar_str=sprintf('%s, %s %d',strrep(var_str,'_','\_'),loop_var_str,idx_loop_var_str);
+                var_str=data(kb).vars{col_v};
+                cbar_str=sprintf('%s, %s=%d, %s=%d',strrep(var_str,'_','\_'),loop_var_str_1,kloopvar_1,loop_var_str_2,kloopvar_2);
 
-                vp=valp(:,:,:,col_v);
+                vp=val_2(:,:,:,col_v);
                 vp=squeeze(vp);
                 
                 %Modify an open figure
                 han.s.CData=vp;
+%                 if any(vp<0)
+%                     a=1;
+%                 end
+%                 han.s.CData=log10(vp);
+%                 han.s.CData=sign(vp);
                 
                 bol0=vp==0;
                 han.s0.XData=xp;
@@ -219,9 +245,10 @@ for kb=1:nb
                     end
                     han.cbar.Limits=clims_loc;
                     han.sfig.CLim=clims_loc;
-                    fpath_fig=sprintf('%s_%s_%d_%s_%f_%03d_clim_%02d.png',nam,loop_var_str,kd,var_str,tim,kb,kclim);
+                    fpath_fig=sprintf('%s_%s_%d_%s_%d_%s_%f_%03d_clim_%02d.png',nam,loop_var_str_1,kloopvar_1,loop_var_str_2,kloopvar_2,var_str,tim,kb,kclim);
                     print(han.fig,fpath_fig,'-dpng','-r150');
                 end
+                
                 %A figure each time. It is time consuming
 %                 in_p.xp=xp;
 %                 in_p.yp=yp;
@@ -233,11 +260,10 @@ for kb=1:nb
 %                 in_p.idx_loop_var_str=kd;
 
 %                 figure_db(in_p);
-                
         
             end %kv
-        end %kd
-    end %kvars
+        end %kloopvar_2
+    end %kloopvar_1
     messageOut(NaN,sprintf('Figures printed %4.2f %% \n',kb/nb*100));
 end %kb
 
