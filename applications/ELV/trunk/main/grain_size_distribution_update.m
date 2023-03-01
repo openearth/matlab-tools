@@ -129,7 +129,7 @@ La_m=repmat(La,input.mdv.nef,1);
 Fak_new=Mak_new./La_m;
 idx_fil_1=Fak_new>1;
 idx_fil_2=Fak_new<0;
-if any(idx_fil_1) || any(idx_fil_2)
+if any(idx_fil_1(:)) || any(idx_fil_2(:))
     if input.mdv.chk.disp_Mak_update
         Fak_max=max(Fak_new(:));
         Fak_min=max(Fak_new(:));
