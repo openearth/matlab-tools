@@ -127,7 +127,7 @@ for it=1:nt
         if precipitation == 1
             prcp1=squeeze(prcp0(it1,:,:));    
             prcp2=squeeze(prcp0(it2,:,:));        
-            prcp=tfrac1*pdrp1+tfrac2*pdrp2;
+            prcp=tfrac1*prcp1+tfrac2*prcp2;
         end        
 
     end
