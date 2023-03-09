@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18496 $
-%$Date: 2022-10-28 18:21:27 +0200 (Fri, 28 Oct 2022) $
-%$Author: chavarri $
-%$Id: D3D_adapt_time.m 18496 2022-10-28 16:21:27Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/D3D_adapt_time.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

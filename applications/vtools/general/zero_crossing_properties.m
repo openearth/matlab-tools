@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18613 $
-%$Date: 2022-12-09 18:24:34 +0100 (Fri, 09 Dec 2022) $
-%$Author: chavarri $
-%$Id: create_mat_map_2DH_01.m 18613 2022-12-09 17:24:34Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/create_mat_map_2DH_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

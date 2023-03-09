@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18499 $
-%$Date: 2022-10-31 06:46:11 +0100 (Mon, 31 Oct 2022) $
-%$Author: chavarri $
-%$Id: D3D_rework.m 18499 2022-10-31 05:46:11Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_rework.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %read exported CSV data from WOW
 %

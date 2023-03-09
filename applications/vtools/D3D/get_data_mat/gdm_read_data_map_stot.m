@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18607 $
-%$Date: 2022-12-08 08:02:01 +0100 (Thu, 08 Dec 2022) $
-%$Author: chavarri $
-%$Id: gdm_read_data_map_umag.m 18607 2022-12-08 07:02:01Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_read_data_map_umag.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

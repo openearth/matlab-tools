@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17514 $
-%$Date: 2021-10-04 09:15:38 +0200 (Mon, 04 Oct 2021) $
-%$Author: chavarri $
-%$Id: find_str_in_cell.m 17514 2021-10-04 07:15:38Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/find_str_in_cell.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Write the TOC of a latex file
 %
