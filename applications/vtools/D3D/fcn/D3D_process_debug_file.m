@@ -144,10 +144,15 @@ cbar_str=sprintf('%s, %s=%d, %s=%d',strrep(var_str,'_','\_'),loop_var_str_1,kloo
 tit_str={sprintf('time1=%f',tim),strrep(nam,'_','\_')};
 
 han.fig=figure('visible',fig_visible);
-han.s=scatter(xp,yp,10,vp,'filled');
+
+han.s=scatter(xp,yp,10,vp,'o','filled'); %positive
+
 han.sfig=han.fig.CurrentAxes;
 hold(han.sfig,'on')
-han.s0=scatter(xp,yp,10,'r','x');
+
+han.s0=scatter(xp,yp,10,'r','x'); %0
+han.sn=scatter(xp,yp,10,vp,'s','filled'); %negative
+
 han.cbar=colorbar;
 han.cbar.Label.String=cbar_str;
 han.tit=title(tit_str);
@@ -208,8 +213,7 @@ for kb=1:nb
             yp=val_2(:,:,:,col_y);
             yp=squeeze(yp);
 
-            han.s.XData=xp;
-            han.s.YData=yp;
+
 
             for kv=1:nvar %variable written
                 col_v=2+kv; %x,y and then variables
@@ -222,11 +226,24 @@ for kb=1:nb
                 
                 %Modify an open figure
                 han.s.CData=vp;
+                han.sn.CData=vp;
+                han.s0.CData=[1,0,0];
 %                 if any(vp<0)
 %                     a=1;
 %                 end
 %                 han.s.CData=log10(vp);
 %                 han.s.CData=sign(vp);
+                
+                bolp=vp>0;
+                han.s.XData=xp;
+                han.s.YData=yp;
+                han.s.XData(~bolp)=NaN;
+                han.s.YData(~bolp)=NaN;
+
+                han.sn.XData=xp;
+                han.sn.YData=yp;
+                han.sn.XData(bolp)=NaN;
+                han.sn.YData(bolp)=NaN;
                 
                 bol0=vp==0;
                 han.s0.XData=xp;
