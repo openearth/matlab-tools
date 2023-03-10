@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18728 $
-%$Date: 2023-02-24 08:43:33 +0100 (Fri, 24 Feb 2023) $
-%$Author: chavarri $
-%$Id: D3D_mdu.m 18728 2023-02-24 07:43:33Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_mdu.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Write morphodynamic xyz files from map file.
 %
