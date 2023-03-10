@@ -55,13 +55,21 @@ str_get={'date','journaltitle'};
 fprintf(fid_w,lin); %first line with @
 bol_end=false; %condition to finish reading block
 
+%% BEGIN DEBUG
+% if contains(lin,'Stoelum96')
+% if contains(lin,'Mol08')
+%     
+%     a=1;
+% end
+
+%% END DEBUG
 ns=numel(str_set);
 bol_set=false(1,ns);
 bol_get=false(1,ns);
 str_save=cell(1,ns);
 while ~bol_end
     lin=fgets(fid_r);
-    bol_end=strcmp(lin(1),'}'); %it should be the first character. It is always after saving with jabref I think.
+    bol_end=strcmp(strtrim(deblank(lin)),'}');
     if bol_end; continue; end
     lin=strrep(lin,'\','\\');
     lin=strrep(lin,'%','%%'); 

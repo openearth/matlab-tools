@@ -12,6 +12,8 @@
 %
 %Write the TOC of a latex file
 %
+%TO DO:
+%   -Add figures and equations
 
 function toc=latex_toc(fpath_tex)
 
