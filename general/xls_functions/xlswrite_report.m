@@ -20,6 +20,7 @@ function xlswrite_report(filename,cell_arr,sheetname,varargin)
 OPT.format      = '0.000';
 OPT.Comments    = '';
 OPT.colwidth(1) = 20;
+OPT.xlsColor    = 'bright';
 for i_col = 2: size(cell_arr,2)
     OPT.colwidth(i_col) = 20;
 end
@@ -127,16 +128,32 @@ xlsborder        (filename,sheetname,range,'InsideHorizontal',2,2,1);
 xlsborder        (filename,sheetname,range,'InsideVertical'  ,2,2,1);
 
 %% Set Colors
-range            = det_excel_range(1+no_com,2,1+no_com,size(cell_arr,2),'rowcol');
-set_color_excel  (filename,sheetname,range,[255 255 0],'rgb');
-
-range            = det_excel_range(2+no_com,1,size(cell_arr,1),1,'rowcol');
-set_color_excel  (filename,sheetname,range,[0 255 255],'rgb');
-
-range            = det_excel_range(2+no_com,2,size(cell_arr,1),size(cell_arr,2),'rowcol');
-set_color_excel  (filename,sheetname,range,[192 192 192],'rgb');
-
-if no_com > 0
-    range            = det_excel_range(1       ,2,no_com          ,size(cell_arr,2),'rowcol');
-    set_color_excel  (filename,sheetname,range,[255 0 0],'rgb');
+if ~strcmpi(OPT.xlsColor,'grey')
+    if no_com > 0
+        range            = det_excel_range(1       ,2,no_com          ,size(cell_arr,2),'rowcol');
+        set_color_excel  (filename,sheetname,range,[255 0 0],'rgb');
+    end
+    
+    range            = det_excel_range(1+no_com,2,1+no_com,size(cell_arr,2),'rowcol');
+    set_color_excel  (filename,sheetname,range,[255 255 0],'rgb');
+    
+    range            = det_excel_range(2+no_com,1,size(cell_arr,1),1,'rowcol');
+    set_color_excel  (filename,sheetname,range,[0 255 255],'rgb');
+    
+    range            = det_excel_range(2+no_com,2,size(cell_arr,1),size(cell_arr,2),'rowcol');
+    set_color_excel  (filename,sheetname,range,[192 192 192],'rgb');
+else
+    if no_com > 0
+        range            = det_excel_range(1       ,1,no_com          ,size(cell_arr,2),'rowcol');
+        set_color_excel  (filename,sheetname,range,[225 225 225],'rgb');
+    end
+    for i_row = no_com + 1: size(cell_arr,1)
+        range            = det_excel_range(i_row,1,i_row,size(cell_arr,2),'rowcol');
+        if odd(i_row - no_com)
+            set_color_excel  (filename,sheetname,range,[225 225 225],'rgb');
+        else
+            set_color_excel  (filename,sheetname,range,[165 165 165],'rgb');
+        end
+    end
 end
+
