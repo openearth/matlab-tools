@@ -1,33 +1,32 @@
-id            , Unit, en                    , nl                          , es
-eta           ,   m , Elevation             , Hoogte                      , Elevación
-dist          ,   m , Distance              , Afstand                     , Distancia
-dist_prof     ,   m , Distance along section, Afstand langs gevaren track , Distancia a lo largo de la sección
-etaw          ,   m , Water level           , Waterstand                  , Nivel del agua
-waterlevel    ,   m , Water level           , Waterstand                  , Nivel del agua
-tide          ,   m , Tide                  , Getij                       , Marea
-surge         ,   m , Surge                 , Opzet                       , Marejada ciclónica
-plotted period,     , Plotted period        , Weergegeven periode         , Período trazado
-entire period ,     , Entire period         , Gehele periode              , Todo el período
-h             ,   m , Depth                 , Diepte                      , Profundidad
-sal           ,  psu, Salinity              , Saliniteit                  , Salinidad
-tem           ,  ^oC, Temperature           , Temperatuur                 , Temperatura
-chl           , mg/l, Chloride              , Chloride                    , Cloruro
-simulation    ,     , Simulation            , Berekening                  , Simulación
-measurement   ,     , Measurement           , Meting                      , Medición
-difference    ,     , Difference            , Verschil                    , Diferencia
-date          ,     , Date                  , Datum                       , Fecha
-model         ,     , Model                 , Model                       , Modelo
-easting       ,  ^o , Easting               , Breedtegraad                , Este
-northing      ,  ^o , Northing              , Hoogtegraad                 , Norte
-X             ,   m , X                     , X-RD                        , X
-Y             ,   m , Y                     , Y-RD                        , Y
-O2           ,  mg/l, Dissolved Oxygen      , Zuurstof                    , Oxígeno disuelto
-stationname  ,      , Stationname           , Stationsnaam                ,
-analysis     ,      , Analysis              , Analyse                     ,
-period       ,      , Period                , Periode                     ,
-stn          ,      , Statistical numbers   , Statistische kentallen      ,
-until        ,      , until                 , tot                         ,
-mean         ,      , Mean                  , Gemiddelde                  ,
-highwaters   ,      , Highwaters            , Hoogwaters                  ,
-lowwaters    ,      , Lowwaters             , Laagwaters                  ,
-std          ,      ,  s                    ,  s                          ,  s
+id            , Unit, en                    , nl                          , es                                   , haags
+eta           ,   m , Elevation             , Hoogte                      , Elevación                            ,
+dist          ,   m , Distance              , Afstand                     , Distancia                            ,
+dist_prof     ,   m , Distance along section, Afstand langs gevaren track , Distancia a lo largo de la sección   ,
+etaw          ,   m , Water level           , Waterstand                  , Nivel del agua                       ,
+waterlevel    ,   m , Water level           , Waterstand                  , Nivel del agua                       , Watâh haugte
+tide          ,   m , Tide                  , Getij                       , Marea                                ,
+surge         ,   m , Surge                 , Opzet                       , Marejada ciclónica                   ,
+plotted period,     , Plotted period        , Weergegeven periode         , Período trazado                      ,
+entire period ,     , Entire period         , Gehele periode              , Todo el período                      ,
+h             ,   m , Depth                 , Diepte                      , Profundidad                          ,
+sal           ,  psu, Salinity              , Saliniteit                  , Salinidad                            ,
+tem           ,  ^oC, Temperature           , Temperatuur                 , Temperatura                          ,
+chl           , mg/l, Chloride              , Chloride                    , Cloruro                              ,
+simulation    ,     , Simulation            , Berekening                  , Simulación                           , Bereikening
+measurement   ,     , Measurement           , Meting                      , Medición                             ,
+difference    ,     , Difference            , Verschil                    , Diferencia                           ,
+date          ,     , Date                  , Datum                       , Fecha                                ,
+model         ,     , Model                 , Model                       , Modelo                               ,
+easting       ,  ^o , Easting               , Breedtegraad                , Este                                 ,
+northing      ,  ^o , Northing              , Hoogtegraad                 , Norte                                ,
+X             ,   m , X                     , X-RD                        , X                                    ,
+Y             ,   m , Y                     , Y-RD                        , Y                                    ,
+O2           ,  mg/l, Dissolved Oxygen      , Zuurstof                    , Oxígeno disuelto                     ,
+stationname  ,      , Stationname           , Stationsnaam                , Lugar de medición                    , Stasionslaukasie
+analysis     ,      , Analysis              , Analyse                     , Análisis                             , Beoâhdeling
+period       ,      , Period                , Periode                     , Período                              , Periaude
+stn          ,      , Statistical numbers   , Statistische kentallen      , Cifras clave estadísticas            , Statistiese kentalle
+until        ,      , until                 , tot                         , -                                    , tot
+mean         ,      , Mean                  , Gemiddelde                  , promedio                             , Ongeveâh
+highwaters   ,      , Highwaters            , Hoogwaters                  , Agua alta                            , Haugwategs
+lowwaters    ,      , Lowwaters             , Laagwaters                  , Agua baja                            , Laagwategs
