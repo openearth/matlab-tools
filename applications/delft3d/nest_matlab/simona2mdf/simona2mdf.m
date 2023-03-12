@@ -25,7 +25,7 @@ end
 %% Display general information
 
 OPT.DispGen     = true;
-OPT.nesthd_path = getenv_np('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
 OPT = setproperty(OPT,varargin{3:end});
 
 %% Check if nesthd_path is set
@@ -83,9 +83,7 @@ end
 S = readsiminp(path_waq,[name_waq extension_waq]);
 S = all_in_one(S);
 
-
 %% parse the siminp information
-
 simona2mdf_message('Parsing AREA information'               ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
 mdf = simona2mdf_area     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 

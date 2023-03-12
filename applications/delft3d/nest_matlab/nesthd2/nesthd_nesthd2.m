@@ -14,7 +14,7 @@ Gen_inf    =      {'Nesthd Version 2.1:'                                        
                   'Instead ot treating all support points simultaneously, '                 ;
                   'they are now treated one at the time'                                    ;
                   ' '                                                                       ;
-                  'Also added is the genartion of boundary conditions from a D-Hydro'       ;
+                  'Also added is the generation of boundary conditions from a D-Hydro'      ;
                   'z-sigma or z-model'                                                      ;
                   ' '                                                                       ;
                   'The adjustments/extensions were tested extensively,'                     ;  
