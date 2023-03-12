@@ -21,4 +21,13 @@ easting       ,  ^o , Easting               , Breedtegraad                , Este
 northing      ,  ^o , Northing              , Hoogtegraad                 , Norte
 X             ,   m , X                     , X-RD                        , X
 Y             ,   m , Y                     , Y-RD                        , Y
-O2           , mg/l, Dissolved Oxygen      , Zuurstof                    , Oxígeno disuelto
+O2           ,  mg/l, Dissolved Oxygen      , Zuurstof                    , Oxígeno disuelto
+stationname  ,      , Stationname           , Stationsnaam                ,
+analysis     ,      , Analysis              , Analyse                     ,
+period       ,      , Period                , Periode                     ,
+stn          ,      , Statistical numbers   , Statistische kentallen      ,
+until        ,      , until                 , tot                         ,
+mean         ,      , Mean                  , Gemiddelde                  ,
+highwaters   ,      , Highwaters            , Hoogwaters                  ,
+lowwaters    ,      , Lowwaters             , Laagwaters                  ,
+std          ,      ,  s                    ,  s                          ,  s

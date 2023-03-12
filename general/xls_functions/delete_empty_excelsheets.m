@@ -1,6 +1,6 @@
 function delete_empty_ecelsheets(fileName)
-% delete_empty_excelsheets
 
+% delete_empty_excelsheets
 fileName =  relativeToabsolutePath(fileName);
 
 %
@@ -24,8 +24,8 @@ numSheets = worksheets.Count;
 sheetIdx = 1;
 sheetIdx2 = 1;
 while sheetIdx2 <= numSheets
-   sheetName = worksheets.Item(sheetIdx).Name(1:end-1);
-   if ~isempty(strmatch(sheetName,'Sheet'))
+   sheetName = worksheets.Item(sheetIdx).Name;
+   if ~isempty(strmatch(sheetName(1:end-1),'Sheet'))
       worksheets.Item(sheetIdx).Delete;
    else
       % Move to the next sheet
@@ -37,7 +37,6 @@ end
 %
 % Save and quit workbook
 %
-
 excelWorkbook.Save;
 excelWorkbook.Close(false);
 excelObj.Quit;
