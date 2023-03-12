@@ -49,7 +49,12 @@ function nesthd(varargin)
 
 %% set additional paths
 %  is already taken care of by oetsettings: then setproperty is on path (most important OET function)
-if ~isdeployed && any(which('setproperty'))
+%  dont know who did this but never do this again! (if you start from a
+%  random directory you get all kinds of subdirectories adde to your path!
+%  You dont know if you are using the file you want to use. Think about
+%  others prior to implementing something stupid like this just so that your
+%  stupid project continues a few minutes faste!
+if ~isdeployed && ~any(which('setproperty'))
    addpath(genpath('..\..\..\'));
 end
 
@@ -89,10 +94,6 @@ else
                   'This means that old, version 1, adminstration files do not work anymore' ;
                   ' '                                                                       ;
                   'Hence, old adminstration files will have to be re-generated'             ;
-                  ' '                                                                       ;
-                  'WARNING: 3D Nesting of tranport properties (like salinity  '             ;
-                  '         or temperature is supported for sigma layers|     '             ;
-                  '         NOT THOROUGHLY TESTED SO PLEASE CHECK RESULTS     '             ;
                   ' '                                                                       ;
                   'If you encounter problems, please do not hesitate to contact me'         ;
                   'Theo.vanderkaaij@deltares.nl'                                           };
