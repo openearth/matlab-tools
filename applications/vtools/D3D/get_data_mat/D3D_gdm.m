@@ -87,6 +87,7 @@
 % in_plot.(tag).rkm_tol_x=5000;
 % in_plot.(tag).rkm_tol_y=5000;
 % in_plot.(tag).plot_tiles=1;
+% in_plot.(tag).plot_fxw=1; %plot fixed weirs (from input, not snapped)
 % in_plot.(tag).pol{1,1}=fullfile(fpaths.fdir_pol,'summerbed.shp');
 
 %% 2DH
