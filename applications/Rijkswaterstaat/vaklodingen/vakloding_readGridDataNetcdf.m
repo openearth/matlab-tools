@@ -85,7 +85,7 @@ dates      = nc_cf_time(fname);
 datematrix = cell2mat(arrayfun(@datevec, dates, 'UniformOutput', false));
 
 if (~isnan(year))
-    date_indices = find(datematrix(:,1) == year);
+    date_indices = find(sum(datematrix(:,1) == year,2));
 else
     date_indices = 1:length(dates);
 end
