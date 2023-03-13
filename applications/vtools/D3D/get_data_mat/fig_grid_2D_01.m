@@ -397,6 +397,13 @@ if plot_rkm
     end
 end
 
+%% fixed weirs
+if plot_fxw
+nfw=numel(fxw);
+for kfxw=1:nfw
+    plot(fxw(kfxw).xy(:,1),fxw(kfxw).xy(:,2),'r');
+end
+end
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index

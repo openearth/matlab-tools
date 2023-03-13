@@ -32,6 +32,10 @@ if isfield(flg_loc,'pol')==1
     flg_loc.plot_pol=1;
 end
 
+if isfield(flg_loc,'plot_fxw')==0
+    flg_loc.plot_fxw=0;
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -48,6 +52,10 @@ runid=simdef.file.runid;
 
 gridInfo=gdm_load_grid(fid_log,fdir_mat,'');
 [ismor,is1d,str_network1d,issus]=D3D_is(fpath_grd);
+
+if isfield(simdef.file,'fxw') && ~isempty(simdef.file.fxw) && flg_loc.plot_fxw
+    fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw);
+end
 
 %% DIMENSIONS
 
@@ -81,6 +89,11 @@ if flg_loc.plot_pol
         pol{kp,1}=D3D_io_input('read',flg_loc.pol{kp},'xy_only',true); %maybe it gives problems if it is not shp due to parsing 
     end
     in_p.pol=pol;
+end
+
+%fxw
+if flg_loc.plot_fxw
+    in_p.fxw=fxw;
 end
 
 for kvar=1:nvar %variable

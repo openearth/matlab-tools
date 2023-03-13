@@ -44,6 +44,14 @@ if strcmp(ext,'.nc') %FM
     if any(isnan(idx))
         is1d=1;
     end
+    
+    %old grid formats, not very safe
+    idx=find_str_in_cell({nci.Variables.Name},{'Mesh2D'});
+    if is1d && ~isnan(idx)
+        is1d=0; 
+        messageOut(NaN,'This is most probably an old 2D grid. If it is not, modify.')
+    end
+    
     idx=find_str_in_cell({nci.Variables.Name},{'network1d_geom_x'});
     if isnan(idx)
         str_network1d='network';

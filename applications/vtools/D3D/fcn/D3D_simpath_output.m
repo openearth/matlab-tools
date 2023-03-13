@@ -18,7 +18,7 @@
 %TODO:
 %   -change to dirwalk
 
-function [file,err]=D3D_simpath_output(path_results)
+function [file,err]=D3D_simpath_output(path_results,runid)
 
 err=0;
 partitions=0;
@@ -36,7 +36,13 @@ for kflr=1:nfr
                     partitions=partitions+1;
                     
                     %check we are not missing
-                    num_part=str2double(file.map(end-10:end-10+3));
+                    num_part=file.map;
+                    num_part=strrep(num_part,path_results,'');
+                    num_part=strrep(num_part,runid,'');
+                    num_part=strrep(num_part,'_map.nc','');
+                    num_part=strrep(num_part,filesep,'');
+                    num_part=str2double(num_part);
+%                     num_part=str2double(file.map(end-10:end-10+3));
                     if ~isnan(num_part) && num_part~=partitions-1
                         err=1;
                     end
