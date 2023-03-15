@@ -5,13 +5,15 @@ function EHY_stampTime(times,values,stamp,timeNow,varargin)
 %  First beta version
 %% Initialise
 pos_stamp = stamp.Position;
-TLim      = stamp.TLim;
-YLim      = stamp.YLim;
-YTick     = stamp.YTick;
-Title     = stamp.Title;
-nrSeries  = size(values,2);
+TLim         = stamp.TLim;
+YLim         = stamp.YLim;
+YTick        = stamp.YTick;
+YTickLabel   = stamp.YTickLabel;
+Title        = stamp.Title;
+nrSeries     = size(values,2);
 
-OPT.YLabel = 'Water level';
+OPT.YLabel   = 'waterlevel';
+OPT.language = 'en'; 
 OPT        = setproperty(OPT,varargin);
 
 %% Begin Time plot: Start with setting original axes to normalized
@@ -33,16 +35,24 @@ end
 plot ([timeNow timeNow],YLim,'r','Linewidth',1.5);
 
 %% Set axis etc (make Figure nicer)
-set (gca,'Xlim'    ,TLim);
-set (gca,'Ylim'    ,YLim);
-if ~isempty(YTick) set(gca,'YTick',YTick); end
+set (gca,'Xlim'       ,TLim);
+set (gca,'Ylim'       ,YLim);
+if ~isempty(YTick     ) set(gca,'YTick'     ,YTick     ); end
+if ~isempty(YTickLabel) set(gca,'YTickLabel',YTickLabel); end
 set (gca,'FontSize',3   );
 set (gca,'XGrid'   ,'on');
 set (gca,'YGrid'   ,'on');
 
 Text = get (gca,'YLabel');
-set(Text,'string',OPT.YLabel);
-if ~isempty(Title) Text = get(gca,'Title'); set(Text,'string',Title,'FontSize',5.0); end
+set(Text,'string',waterDictionary(OPT.YLabel,NaN,OPT.language));
+if ~isempty(Title)
+    Text = get(gca,'Title'); 
+    posSpace = strfind(Title,' ');
+    param    = Title(1:posSpace(1) - 1);
+    param_n  = waterDictionary(param,NaN,OPT.language,'addUnit',false);
+    Title    = [param_n Title(posSpace:end)]; 
+    set(Text,'string',Title,'FontSize',5.0); 
+end
 timeticks('x',TLim(1),TLim(2),'custom'); 
 
 %% Restore to original axes
