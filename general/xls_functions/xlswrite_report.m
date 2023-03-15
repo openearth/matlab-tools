@@ -147,7 +147,7 @@ else
         range            = det_excel_range(1       ,1,no_com          ,size(cell_arr,2),'rowcol');
         set_color_excel  (filename,sheetname,range,[225 225 225],'rgb');
     end
-    for i_row = no_com + 1: size(cell_arr,1)
+    for i_row = no_com + 1: size(cell_arr,1) - 1
         range            = det_excel_range(i_row,1,i_row,size(cell_arr,2),'rowcol');
         if odd(i_row - no_com)
             set_color_excel  (filename,sheetname,range,[225 225 225],'rgb');
