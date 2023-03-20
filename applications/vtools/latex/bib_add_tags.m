@@ -79,56 +79,37 @@ while ~bol_end
     kl=kl+1;
     txt{kl,1}=lin;
     if ~contains(lin,'='); continue, end
-        tok=regexp(lin,'=','split');
-        for ks=1:ns
-            %check if it has `year`
-            if strcmp(strtrim(tok{1,1}),str_set{ks})
-                bol_set(ks)=true;
-                lin_set(ks)=kl;
-            end
-            %save `date`
-            if strcmp(strtrim(tok{1,1}),str_get{ks})
-%             if contains(tok{1,1},str_get{ks})
-                bol_get(ks)=true;
-                str_save{ks}=tok{1,2};
-            end
+    tok=regexp(lin,'=','split');
+    for ks=1:ns
+        %check if it has `year`
+        if strcmp(strtrim(tok{1,1}),str_set{ks})
+            bol_set(ks)=true;
+            lin_set(ks)=kl;
         end
-%         if ~any(bol_set) %do not write line with `year`
-%             fprintf(fid_w,lin);
-%         end
-%     else
-%         fprintf(fid_w,lin);
-%     end
-    
+        %save `date`
+        if strcmp(strtrim(tok{1,1}),str_get{ks})
+            bol_get(ks)=true;
+            str_save{ks}=tok{1,2};
+        end
+    end
 end %while
 
 %up to this point we have not written the end of the block `}`
 
 for ks=1:ns
     if ~bol_set(ks) && bol_get(ks)
-
-%         fprintf(fid_w,'%s = %s',str_set{ks},str_save{ks});
         kl=kl+1;
         txt{kl,1}=sprintf('%s = %s',str_set{ks},str_save{ks});
-    
     elseif bol_set(ks) && bol_get(ks)
         txt{lin_set(ks),1}=sprintf('%s = %s',str_set{ks},str_save{ks});
     end
-        
 end
 
 kl=kl+1;
 txt{kl,1}='}\r';
-% fprintf(fid_w,'}\r');
     
-%% CHECK SAME VALUES
-nl=numel(txt);
-% 
-% for kl=1:nl
-%     
-% end
-
 %% WRITE
+nl=numel(txt);
 for kw=1:nl
     fprintf(fid_w,txt{kw,1});
 end

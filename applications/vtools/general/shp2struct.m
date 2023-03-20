@@ -29,6 +29,10 @@ parse(parin,varargin{:});
 read_val=parin.Results.read_val;
 xy_only=parin.Results.xy_only;
 
+if read_val && xy_only
+    warning('Conflicting input flags. I am reading values (i.e., not only xy)')
+end
+
 %% CALC
 
 if exist(fpath,'file')~=2
