@@ -161,10 +161,20 @@ for ii=1:length(varargin)
 %                     y=y0:dy:y0+(ny-1)*dy;
 %                     A=[];
 %                 else
-                    x0=I.ModelTiepointTag(4);
-                    y0=I.ModelTiepointTag(5);
-                    dx=I.ModelPixelScaleTag(1);
-                    dy=-I.ModelPixelScaleTag(2);
+                    
+                    try %TL: older style geotiffs (I think)
+                        x0=I.ModelTiepointTag(4);
+                        y0=I.ModelTiepointTag(5);
+                        dx=I.ModelPixelScaleTag(1);
+                        dy=-I.ModelPixelScaleTag(2);
+                    catch %TL: newer style geotiffs (I think)
+                        x0=I.ModelTransformationTag(4);
+                        y0=I.ModelTransformationTag(8);
+                        dx=I.ModelTransformationTag(1);
+                        dy=-I.ModelTransformationTag(6);                        
+                        
+                    end
+%                     
                     nx=I.Width;
                     ny=I.Height;
                     x=x0:dx:x0+(nx-1)*dx;
