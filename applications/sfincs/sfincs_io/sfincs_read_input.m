@@ -25,9 +25,13 @@ while 1
 end
 fclose(fid);
 
-inp.tref=datenum(inp.tref,'yyyymmdd HHMMSS');
-inp.tstart=datenum(inp.tstart,'yyyymmdd HHMMSS');
-inp.tstop=datenum(inp.tstop,'yyyymmdd HHMMSS');
+try
+    inp.tref=datenum(inp.tref,'yyyymmdd HHMMSS');
+    inp.tstart=datenum(inp.tstart,'yyyymmdd HHMMSS');
+    inp.tstop=datenum(inp.tstop,'yyyymmdd HHMMSS');
+catch
+   warning('sfincs_read_input.m - something went wrong with reading in tref/tstart/tstop!')
+end
 
 keywords=fieldnames(inp);
 
