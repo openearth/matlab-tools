@@ -41,7 +41,7 @@ for ii=1:dx:length(x)
     if V > V_input
         
         % --- perform second step of iteration process
-        for jj=ii:1:ii+dx
+        for jj=ii-dx:1:ii+dx
             % --- compute volume
             V = compute_volume(x,z,Rp,jj);
             
@@ -76,12 +76,17 @@ end
 
 function V = compute_volume(x,z,Rp,index)
 % compute volume above water level (Rp) seaward of index
+    
+    
+    z_dummy = z - Rp;
+    z_dummy(z_dummy<0) = 0;
+    z_dummy(x>x(index)) = 0;
+    V = trapz(x,z_dummy);
 
-
-    % --- volume above Rp
-    z(z<Rp) = 0;
-    % --- remove z after given index
-    z(x>x(index)) = 0;
-    % --- compute volume
-    V = trapz(x,z);
+%     % --- volume above Rp
+%     z(z<Rp) = 0;
+%     % --- remove z after given index
+%     z(x>x(index)) = 0;
+%     % --- compute volume
+%     V = trapz(x,z);
 end

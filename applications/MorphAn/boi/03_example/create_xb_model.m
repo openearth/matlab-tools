@@ -12,9 +12,9 @@ addpath('../02_analyse')
 %% input
 
 % --- boundary conditions
-Hs          = 9;
-Tp          = 16;
-Rp          = 5;
+Hs          = 8;
+Tp          = 12;
+Rp          = 4;
 D50         = 240;
 tidalampl   = 1;
 phaseshift  = 0;
@@ -58,12 +58,14 @@ xlabel('X [m+RSP]'); ylabel('z [m+NAP]'); grid on;
 %% offshore water depth
 
 % --- water depth of boundary conditions
-d_profile           = 20;
+d_profile           = -1*z(1)+Rp;
+
 % --- compute required slope en water depth
 [d_start, slope]    = check_profile(Hs, Tp, d_profile);
 
 % --- required bed level (w.r.t. 0 m+NAP)
 z_start     = (d_start-Rp)*-1;
+
 % --- offshore water depth
 d_offshore = z(1) * -1 + Rp;
 
@@ -98,6 +100,7 @@ plot(x,z,'-')
 
 plot(xgr, zgr,'--')
 legend({'profile','required depth','extended profile','grid'})
+
 
 %% boundary tide
 

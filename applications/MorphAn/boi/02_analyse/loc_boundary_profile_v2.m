@@ -1,4 +1,4 @@
-function X11 = loc_boundary_profile_v2(znat,xnat,x0,zb0,maxwl,V_input,fig)
+function [X11 X_addition] = loc_boundary_profile_v2(znat,xnat,x0,zb0,maxwl,V_input,fig)
 %loc_boundary_profile_v2  Compute position of boundary profile
 %
 %   Compute position of boundary profile
@@ -50,11 +50,16 @@ end
 if V_input>0
     if fig
     plot(x0,zb0,'k.-','DisplayName','zb0');
+    hold on
     end
-    [x0 zb0 x_basepoint] = get_basepoint_additionV(x0,zb0,z_min_grensprofiel,V_input);
-    if isnan(x_basepoint)
+    [x0, zb0, X_addition] = get_basepoint_additionV(x0,zb0,z_min_grensprofiel,V_input);
+    if isnan(X_addition)
         X11 = NaN;
         return 
+    end
+    
+    if fig
+    plot([X_addition,X_addition],[z_min_grensprofiel, zb0(x0==X_addition)],'g-','DisplayName','toeslagpunt');
     end
 end
 

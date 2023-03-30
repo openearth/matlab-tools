@@ -9,10 +9,11 @@ close all
 %% input
 
 % --- path of snc file
-fname   = 'referentie\xboutput.nc';
+fname   = '***\demo_duinveiligheidsmodel.dsproj_data\XBeach_erosiemodel_output\XBeach_1D\Ameland - RSP 15.000 (2013) H108P1868RP45A10dt35\xboutput.nc';
 % --- Rp
-Rp      = 5;
-
+Rp      = 4.53;
+% ---
+Vtoelsag = 100;
 
 %% read nc
 
@@ -56,14 +57,15 @@ slopeland=1/2;
 scatter(xnat, znat,'g','filled')
 
 % --- boundary profile
-X0 = loc_boundary_profile(znat,xnat,x,zbe,Rp);
+[X0 X_addition]  = loc_boundary_profile_v2(znat,xnat,x,zbe,Rp,Vtoelsag,true);
 
 % --- plot
 height = znat+1.5 - Rp;
 figure(10)
 plot([X0 X0+height*1 X0+height+3 X0+height+3+height*2],[Rp, znat+1.5 znat+1.5 Rp],'b-','linewidth',2)
+plot([X_addition X_addition],[Rp zbe(X_addition==x)],'k--','linewidth',2)
 
-legend({'zb[t=0]','zb[t=tend]','rekenpeil','afslag punt','natte punten', 'natte punt','grensprofiel'},'Location','northwest')
+legend({'zb[t=0]','zb[t=tend]','rekenpeil','afslag punt','natte punten', 'natte punt','grensprofiel','toeslagvolume'},'Location','northwest')
 
 string = sprintf('V=%2.2f m^3/m\nXaf=%2.2f m; Zaf=%2.2f m\nXnat=%2.2f m; Znat=%2.2f m',V,xafslag,zafslag,xnat,znat);
 text(0.6,0.15,string,'Units','normalized')
