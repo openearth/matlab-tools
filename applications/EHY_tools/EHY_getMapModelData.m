@@ -63,7 +63,7 @@ OPT.sgft0             = 0;  % delwaq segment function (sgf) - datenum or datestr
 OPT.sgfkmax           = []; % delwaq segment function (sgf) - number of layers (k_max)
 OPT.nAverageAnglePli  = 2;  % number of points of the pli-file to average in computing the angle for projecting vectorial variables
 OPT.tol_t             = 0;  % tolerance to match time in datenum 
-OPT.bed_layers        = 0;  % bed layers
+OPT.bed_layers        = 0;  % bed layers (0=all)
 
 % return output at specified reference level
 OPT.z                 = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
@@ -306,9 +306,17 @@ if ~exist('Data','var')
             n_ind = dims(nInd).index;
             
             switch OPT.varName
-                case 'wd' % water depth, bed to wl
+               case {'wd','waterdepth'} % water depth, bed to wl
                     wl  = vs_let(trim,'map-series',{time_ind},'S1'  ,{n_ind,m_ind},'quiet');
-                    dps = vs_let(trim,'map-const' ,{1}       ,'DPS0',{n_ind,m_ind},'quiet');
+                    %if morphodynamics then DPS
+%                     d3d = vs_use(inputFile,'quiet');
+%                     ind = find(ismember({d3d.ElmDef.Name},{'ZCURU','U1'}));
+                    ismor=D3D_is(inputFile);
+                    if ismor
+                        dps = vs_let(trim,'map-sed-series',{time_ind},'DPS',{n_ind,m_ind},'quiet');
+                    else
+                        dps = vs_let(trim,'map-const' ,{1}       ,'DPS0',{n_ind,m_ind},'quiet');
+                    end
                     Data.val = wl+dps;
                     
                 case 'U1' % velocity
@@ -330,7 +338,16 @@ if ~exist('Data','var')
                     
                 case 'DP_BEDLYR' % sediment thickness
                     Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet');
-                    
+
+                    %<DP_BEDLYR> has 1 value more than the number of bed layers, as it is the elevation of all interface. Hence, 
+                    %if you want all the layers, I add one more.
+                    if dims(dimsInd.bed_layers).size==dims(dimsInd.bed_layers).sizeOut
+                        bed_layers_ind=cat(2,dims(dimsInd.bed_layers).indexOut,dims(dimsInd.bed_layers).indexOut(end)+1);
+                    else
+                        bed_layers_ind=dims(dimsInd.bed_layers).indexOut;
+                    end
+                    Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,bed_layers_ind},'quiet');
+       
                 case {'TAUKSI','TAUETA','TAUMAX'} % bed shear
                     Data.val_x   = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
                     Data.val_y   = vs_let(trim,'map-series',{time_ind},'TAUETA'   ,{n_ind,m_ind},'quiet');
