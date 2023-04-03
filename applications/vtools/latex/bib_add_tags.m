@@ -48,8 +48,8 @@ end %function
 function process_block(fid_w,fid_r,lin)
 
 %input
-str_set={'year','journal'     };
-str_get={'date','journaltitle'};
+str_set={'year','journal'     ,'school'};
+str_get={'date','journaltitle','institution'};
 
 %calc
 fprintf(fid_w,lin); %first line with @
