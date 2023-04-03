@@ -63,7 +63,7 @@ OPT.sgft0             = 0;  % delwaq segment function (sgf) - datenum or datestr
 OPT.sgfkmax           = []; % delwaq segment function (sgf) - number of layers (k_max)
 OPT.nAverageAnglePli  = 2;  % number of points of the pli-file to average in computing the angle for projecting vectorial variables
 OPT.tol_t             = 0;  % tolerance to match time in datenum 
-OPT.bed_layers        = 0;  % bed layers (0=all)
+OPT.bed_layers        = 0;  % bed layers
 
 % return output at specified reference level
 OPT.z                 = ''; % z = positive up. Wanted vertical level = OPT.zRef + OPT.z
@@ -76,6 +76,12 @@ OPT.pli               = []; % thalweg [n x 2]
 
 % ini waterlevel needed for DELWAQ .map files
 OPT.dw_iniWL          = 0;
+
+% for reading of fourier files
+OPT.fouFirst          = true;
+OPT.fouType           = 'mean';
+OPT.fouStart          = NaN;
+OPT.fouStop           = NaN;
 
 OPT                   = setproperty(OPT,varargin);
 
@@ -103,9 +109,34 @@ end
 modelType = EHY_getModelType(inputFile);
 
 %% Get name of the parameter as known on output file
-[OPT.varName,varNameInput] = EHY_nameOnFile(inputFile,OPT.varName);
+[OPT.varName,varNameInput] = EHY_nameOnFile(inputFile,OPT.varName,OPT);
 if strcmp(OPT.varName,'noMatchFound')
     error(['Requested variable (' varNameInput ') not available in model output'])
+end
+
+%% Fourier; read as scalars and reconstruct mag and dir (easier than trying to read directly as velocities, however dont like recursive programming!)
+if contains(OPT.varName,'fourier') && OPT.fouFirst
+    if ~contains(OPT.varName,'_ucx')
+        tmp          = EHY_getMapModelData(inputFile,OPT,'fouFirst',false);
+        if     ndims(tmp.val) == 2 % Add time dimension to fourier data
+            Data.val(1,:,:)   = tmp.val;
+        elseif ndims(tmp.val) == 3
+            Data.val(1,:,:,:) = tmp.val;
+        end
+    else
+        OPT.varName  = OPT.varName(1:end-4);
+        tmp          = EHY_getMapModelData(inputFile,OPT);
+        Data.vel_x   = tmp.val;
+        OPT.varName  = EHY_nameOnFile(inputFile,'ucy',OPT);
+        OPT.varName  = OPT.varName(1:end-4);
+        tmp          = EHY_getMapModelData(inputFile,OPT);
+        Data.vel_y   = tmp.val;
+        Data.vel_mag = sqrt(Data.vel_x.^2 + Data.vel_y.^2);
+        Data.vel_dir = mod(atan2(Data.vel_x,Data.vel_y)*180/pi,360);
+        Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
+    end
+    varargout{1} = Data;
+    return
 end
 
 %% find top or bottom layer in z-layer model
@@ -275,17 +306,9 @@ if ~exist('Data','var')
             n_ind = dims(nInd).index;
             
             switch OPT.varName
-                case {'wd','waterdepth'} % water depth, bed to wl
+                case 'wd' % water depth, bed to wl
                     wl  = vs_let(trim,'map-series',{time_ind},'S1'  ,{n_ind,m_ind},'quiet');
-                    %if morphodynamics then DPS
-%                     d3d = vs_use(inputFile,'quiet');
-%                     ind = find(ismember({d3d.ElmDef.Name},{'ZCURU','U1'}));
-                    ismor=D3D_is(inputFile);
-                    if ismor
-                        dps = vs_let(trim,'map-sed-series',{time_ind},'DPS',{n_ind,m_ind},'quiet');
-                    else
-                        dps = vs_let(trim,'map-const' ,{1}       ,'DPS0',{n_ind,m_ind},'quiet');
-                    end
+                    dps = vs_let(trim,'map-const' ,{1}       ,'DPS0',{n_ind,m_ind},'quiet');
                     Data.val = wl+dps;
                     
                 case 'U1' % velocity
@@ -306,16 +329,7 @@ if ~exist('Data','var')
                     Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
                     
                 case 'DP_BEDLYR' % sediment thickness
-%                     Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet'); %V: why is there a <2> here? Why only the second interface? Use <OPT.bed_layers> for this particular case. 
-
-                    %<DP_BEDLYR> has 1 value more than the number of bed layers, as it is the elevation of all interface. Hence, 
-                    %if you want all the layers, I add one more.
-                    if dims(dimsInd.bed_layers).size==dims(dimsInd.bed_layers).sizeOut
-                        bed_layers_ind=cat(2,dims(dimsInd.bed_layers).indexOut,dims(dimsInd.bed_layers).indexOut(end)+1);
-                    else
-                        bed_layers_ind=dims(dimsInd.bed_layers).indexOut;
-                    end
-                    Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,bed_layers_ind},'quiet');
+                    Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet');
                     
                 case {'TAUKSI','TAUETA','TAUMAX'} % bed shear
                     Data.val_x   = vs_let(trim,'map-series',{time_ind},OPT.varName,{n_ind,m_ind},'quiet');
@@ -323,8 +337,6 @@ if ~exist('Data','var')
                     Data.val_max = vs_let(trim,'map-series',{time_ind},'TAUMAX'   ,{n_ind,m_ind},'quiet');
                     Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
                     
-%                 case {'LYRFRAC'}
-%                     Data.val=vs_let(trim,'map-sed-series',{time_ind},'LYRFRAC',{n_ind,m_ind,OPT.bed_layers},'quiet'); %fractions at layers [-] (t,y,x,l,f)
                 otherwise % Apply generic approach
                     grp = char(vs_find(vs_use(inputFile,'quiet'), OPT.varName));
                     if ~isempty(strfind(grp,'-const'))
