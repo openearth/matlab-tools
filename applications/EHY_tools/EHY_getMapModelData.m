@@ -337,7 +337,7 @@ if ~exist('Data','var')
                     Data.vel_dir_comment = 'Considered clockwise from geographic North to where vector points';
                     
                 case 'DP_BEDLYR' % sediment thickness
-                    Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet');
+%                     Data.val = vs_let(trim,'map-sed-series',{time_ind},OPT.varName,{n_ind,m_ind,2},'quiet'); %V: why is there a <2> here? Why only the second interface? Use <OPT.bed_layers> for this particular case. 
 
                     %<DP_BEDLYR> has 1 value more than the number of bed layers, as it is the elevation of all interface. Hence, 
                     %if you want all the layers, I add one more.
@@ -354,6 +354,8 @@ if ~exist('Data','var')
                     Data.val_max = vs_let(trim,'map-series',{time_ind},'TAUMAX'   ,{n_ind,m_ind},'quiet');
                     Data.val_mag = sqrt(Data.val_x.^2 + Data.val_y.^2);
                     
+%                 case {'LYRFRAC'}
+%                     Data.val=vs_let(trim,'map-sed-series',{time_ind},'LYRFRAC',{n_ind,m_ind,OPT.bed_layers},'quiet'); %fractions at layers [-] (t,y,x,l,f)
                 otherwise % Apply generic approach
                     grp = char(vs_find(vs_use(inputFile,'quiet'), OPT.varName));
                     if ~isempty(strfind(grp,'-const'))
