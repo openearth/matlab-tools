@@ -175,7 +175,7 @@ data{kl,1}=        'TimeStepType      = 2          '; kl=kl+1;
 data{kl,1}=        'Limtyphu          = 0          '; kl=kl+1;
 data{kl,1}=        'Limtypmom         = 4          '; kl=kl+1;
 data{kl,1}=        'Limtypsa          = 4          '; kl=kl+1;
-data{kl,1}=        'TransportMethod   = 1          '; kl=kl+1;
+%data{kl,1}=        'TransportMethod   = 1          '; kl=kl+1;
 data{kl,1}=        'Vertadvtypmom     = 6          '; kl=kl+1; %vertical advection for u1: 0: No, 3: Upwind implicit, 4: Central implicit, 5: QUICKEST implicit., 6: centerbased upwind expl
 data{kl,1}=        'Vertadvtypsal     = 6          '; kl=kl+1;
 data{kl,1}=        'Icgsolver         = 4          '; kl=kl+1;
