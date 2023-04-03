@@ -32,7 +32,9 @@ for i_series = 1: nrSeries
 end
        
 %% Then TimeNow
-plot ([timeNow timeNow],YLim,'r','Linewidth',1.5);
+for i_time = 1: length(timeNow)
+    plot ([timeNow(i_time) timeNow(i_time)],YLim,'r','Linewidth',1.5);
+end
 
 %% Set axis etc (make Figure nicer)
 set (gca,'Xlim'       ,TLim);

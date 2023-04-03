@@ -1,4 +1,4 @@
-function [newName,varNameInput] = EHY_nameOnFile(fName,varName)
+function [newName,varNameInput] = EHY_nameOnFile(fName,varName,varargin)
 %% [newName,varNameInput] = EHY_nameOnFile(fName,varName)
 %
 % This function returns the variable/dimension name (newName) that you would like to
@@ -15,10 +15,12 @@ function [newName,varNameInput] = EHY_nameOnFile(fName,varName)
 %   returns newName = laydim;
 %
 % E: Julien.Groenenboom@deltares.nl
+%% Initialise
+if nargin == 3; OPT = varargin{1}; else; OPT.fouType = ''; end
 
 %% get modelType and typeOfModelFileDetail
-modelType                  = EHY_getModelType(fName);
-[~, typeOfModelFileDetail] = EHY_getTypeOfModelFile(fName);
+modelType                 = EHY_getModelType      (fName);
+[~,typeOfModelFileDetail] = EHY_getTypeOfModelFile(fName);
 if EHY_isCMEMS(fName)
     modelType = 'CMEMS';
 end
@@ -79,7 +81,6 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'vel_perp'   ) newName = 'ucx';          end
         if strcmpi(varName,'vel_para'   ) newName = 'ucx';          end
         if strcmpi(varName,'velW'       ) newName = 'ucz';          end
-
     case 'trim' % d3d
         % Get the name of varName as specified on the map file of a simulation
         if strcmpi(varName,'wl'         ) newName = 'S1'         ; end
@@ -118,7 +119,7 @@ if strcmpi(modelType,'CMEMS')
 end
 
 %% for FM output (netCDF files)
-if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
+if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc') 
     
     %%% get ncinfo
     infonc   = ncinfo(fName);
@@ -128,6 +129,62 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
         varNames = strrep(varNames,'_agg','');
         dimNames = strrep(dimNames,'_agg','');
         aggregated = 1;
+    end
+    
+    %% Now get the names on the fourier file 
+    if strcmpi(typeOfModelFileDetail,'fou_nc') && ~isempty(OPT.fouType) 
+        list    = {};
+        names   = {infonc.Variables.Name};
+        
+        % Create list with correct parmater names
+        for i_var = 1: length (names)
+            fouInfo    = EHY_fouInfo(fName,names{i_var});
+            if ~isempty(fouInfo)
+                % Type of analysis (mean, max, min)
+                if strcmp(fouInfo.type,OPT.fouType)
+                    
+                    % Name of the variables on fou file for requested type and quantity
+                    if strcmpi(newName,'sa1') if contains(fouInfo.name,'salt'                ) list{end + 1} = names{i_var}; end; end
+                    if strcmpi(newName,'s1' ) if contains(fouInfo.name,'water level'         ) list{end + 1} = names{i_var}; end; end
+                    if strcmpi(newName,'ucx') if contains(fouInfo.name,'U-component'         ) list{end + 1} = names{i_var}; end; end
+                    if strcmpi(newName,'ucy') if contains(fouInfo.name,'V-component'         ) list{end + 1} = names{i_var}; end; end
+                end
+            end
+        end
+        
+        % Correct parameter in list (correct start and stop time)
+        if ~isempty(list)
+            tmpName = '';
+            for i_fou = 1: length(list)
+                fouInfo    = EHY_fouInfo(fName,list{i_fou});
+                if isnan(OPT.fouStart) 
+                    % Start time not specified, simply take first one
+                    tmpName = list{i_fou};
+                    warning([' No start time for requested fourier variable specified. Taking the first one available (' list{i_fou} ' for ' ...
+                             varName ')']);
+                    break;
+                elseif ~isnan(OPT.fouStart) 
+                    if OPT.fouStart == fouInfo.fouStartDatenum && OPT.fouStop == fouInfo.fouStopDatenum
+                        tmpName = list{i_fou};
+                        break;
+                    end
+                end
+            end
+            
+            % add ucx, ucy to name to distingish between vector and scalar quantities
+            if ~isempty(tmpName)
+                if     strcmp(newName,'ucx')
+                    newName = [tmpName '_ucx'];
+                elseif strcmp(newName,'ucy')
+                    newName = [tmpName '_ucy'];
+                else
+                    newName = tmpName         ;
+                end
+            else
+                newName = tmpName;
+            end
+            matchFound = 1; % Avoid name not found later on
+        end
     end
     
     %%% Change Variable or Dimension name to deal with old/new variable names like NetNode_x (older) vs. mesh2d_node_x (newer)
@@ -144,7 +201,7 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
     if exist('aggregated','var') % DELWAQ-aggregated file
         newName = strrep(newName,'mesh2d','mesh2d_agg');
     end
-        
+    
     %%% Change Variable or Dimension name to deal with old/new variable names like tem1 (older) vs. mesh2d_tem1 (newer)
     if ~nc_isvar(fName,newName) && ~nc_isdim(fName,newName)
         if size(newName,1)>1
@@ -170,6 +227,7 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
                 newName = infonc.Dimensions(indDimNames(ii)).Name; matchFound = 1;
             end
         end
+        
         if ~exist('matchFound','var')
             newName = 'noMatchFound';
         end
@@ -188,6 +246,12 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
         end
     end
     
+    %% Add ucx/ucy to fourier names for vector components to be able to distingish vector/scalar while reading
+    if exist('varNameFou','var')
+       if contains(varNameFou,'U-component'         ) newName = [newName '_ucx']; end
+       if contains(varNameFou,'V-component'         ) newName = [newName '_ucx']; end
+    end
+        
 end
 
 % check case sensitive: ZwL to ZWL
