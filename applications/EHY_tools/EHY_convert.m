@@ -288,6 +288,16 @@ end
         end
         output = [];
     end
+% cll2xyz
+    function [output,OPT] = EHY_convert_cll2xyz(inputFile,outputFile,OPT)
+        output = dlmread(inputFile);
+        output = output(:,[1 2 4]); % x,y,code
+        if OPT.saveOutputFile
+            fid = fopen(outputFile,'w');
+            fprintf(fid,'%.7f %.7f %4.0f\n',output');
+            fclose(fid);
+        end
+    end
 % crs2kml
     function [output,OPT] = EHY_convert_crs2kml(inputFile,outputFile,OPT)
         OPT_user=OPT;
