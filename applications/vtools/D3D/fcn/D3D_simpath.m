@@ -154,7 +154,7 @@ simdef.err=simdef_aux.err;
 if simdef.D3D.structure~=5
     [~,file.runid,~]=fileparts(file.mdf);
 end
-
+file.mdfid=file.runid; %runid may be rewriten in `D3D_gdm`
     %% sobek 3
     case 3
         

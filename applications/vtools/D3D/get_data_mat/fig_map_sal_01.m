@@ -109,6 +109,13 @@ end
 if isfield(in_p,'do_title')==0
     in_p.do_title=1;
 end
+in_p.plot_fxw=0;
+if isfield(in_p,'fxw')
+    in_p.plot_fxw=1;
+end
+if isfield(in_p,'filter_lim')==0
+    filter_lim=[inf,-inf];
+end
 
 v2struct(in_p)
 
@@ -127,6 +134,17 @@ switch unit
 %     case 'sal'
 %     otherwise
 %         error('not sure what to do')
+end
+
+%% filter values
+
+bol_out=val>filter_lim(1) & val<filter_lim(2);
+val(bol_out)=NaN;
+stot=numel(val);
+sbo=sum(bol_out);
+
+if sbo>0
+    messageOut(NaN,sprintf('Removed %d points (%4.2f %%)',sbo,sbo/stot*100))
 end
 
 %% dependent
@@ -489,6 +507,9 @@ if plot_rkm
         scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,'c','parent',han.sfig(kr,kc))
         text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color','c','parent',han.sfig(kr,kc))
     end
+end
+if plot_fxw
+    plot(fxw.xy(:,1),fxw.xy(:,2),'parent',han.sfig(kr,kc),'color','m');
 end
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index

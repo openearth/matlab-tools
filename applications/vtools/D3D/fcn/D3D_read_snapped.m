@@ -12,7 +12,21 @@
 %
 %read snapped features
 
-function feature_struct=D3D_read_snapped(simdef,feature_tok,read_val)
+function feature_struct=D3D_read_snapped(simdef,feature_tok,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'read_val',false);
+addOptional(parin,'xy_only',false);
+
+parse(parin,varargin{:});
+
+read_val=parin.Results.read_val;
+xy_only=parin.Results.xy_only;
+
+%% CALC
 
 tok=regexp(simdef.file.shp.(feature_tok),sprintf('(\\w*)_\\d{4}_snapped_%s',feature_tok),'tokens');
 sim_name=tok{1,1}{1,1};
@@ -25,11 +39,36 @@ else
 end
 for kpart=1:npart
     fname_shp=fullfile(ffolder_shp,sprintf('%s_%04d_snapped_%s%s',sim_name,kpart-1,feature_tok,fext_shp));
-    feature_struct_loc=shp2struct(fname_shp,'read_val',false);
-    feature_struct.xy=cat(1,feature_struct.xy,feature_struct_loc.xy.XY);
+
+    feature_struct_loc=D3D_io_input('read',fname_shp,'read_val',read_val,'xy_only',xy_only);
+%     feature_struct.xy=cat(1,feature_struct.xy,feature_struct_loc.xy.XY);
+
+    if xy_only
+        feature_struct.xy=cat(1,feature_struct.xy,feature_struct_loc);
+    else
+        feature_struct.xy=cat(1,feature_struct.xy,feature_struct_loc.xy.XY);
+    end
     messageOut(NaN,sprintf('file read %4.2f %% %s',kpart/npart*100,fname_shp))
 end
+
 % switch feature_tok
 %     case 'fxw' %all have 4 numbers
 %         cell2mat(feature_struct.xy)
 % end
+
+% fpath_shp=simdef.file.shp.fxw;
+% npart=simdef.file.partitions;
+% [fdir,fname,fext]=fileparts(fpath_shp);
+% nmdf=numel(simdef.file.mdfid);
+% %number is after mdf/u name. It is better not to use `regexp` or similar
+% %because the mdf/u name may have a number. 
+% idx_part=nmdf+2:nmdf+2+3; %fname(idx_part) %e.g.: '0003'
+% shp_loc=[];
+% for kpart=npart
+%     fname_loc=fname;
+%     fname_loc(idx_part)=sprintf('%04d',kpart-1);
+%     fpath_loc=fullfile(fdir,sprintf('%s%s',fname_loc,fext));
+%     shp_loc=cat(1,shp_loc,D3D_io_input('read',fpath_loc,'xy_only',1));
+% end
+
+end %function

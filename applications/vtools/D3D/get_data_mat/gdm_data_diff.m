@@ -22,10 +22,12 @@ end
 
 if isfield(flg_loc,str_clims)==0
     flg_loc.(str_clims)=[NaN,NaN];
+    flg_loc.filter_lim.(str_clims)=[inf,-inf];
 end
 
 if isfield(flg_loc,str_clims_diff)==0
     flg_loc.(str_clims_diff)=[NaN,NaN];
+    flg_loc.filter_lim.(str_clims_diff)=[inf,-inf];
 end
 
 %%
@@ -42,6 +44,7 @@ switch kdiff
         tag_ref='val';
         in_p.is_diff=0;
         in_p.is_background=0;
+        in_p.filter_lim=flg_loc.filter_lim.(str_clims);
     case 2
 %         in_p.val=data-data_ref.data; %why is data in ref under <.data> ?
         in_p.val=data-data_ref; 
@@ -55,6 +58,7 @@ switch kdiff
                 in_p.is_diff=1;
                 in_p.is_background=0;
         end
+        in_p.filter_lim=flg_loc.filter_lim.(str_clims_diff);
 end
 
 end %function

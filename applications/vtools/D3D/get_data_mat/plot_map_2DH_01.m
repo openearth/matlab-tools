@@ -72,6 +72,10 @@ end
 
 flg_loc=gdm_parse_plot_along_rkm(flg_loc);
 
+if isfield(flg_loc,'do_fxw')==0
+    flg_loc.do_fxw=0;
+end
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;
@@ -126,6 +130,10 @@ if isfield(flg_loc,'fpath_ldb')
     in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
 end
 
+%fxw
+if flg_loc.do_fxw
+    in_p.fxw=D3D_read_snapped(simdef,'fxw','xy_only',1,'read_val',0);
+end
 ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 

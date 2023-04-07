@@ -36,7 +36,7 @@
 % 
 % %% PATHS
 % 
-% fpath_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+% fpath_add_fcn='c:\checkouts\oet_matlab\applications\vtools\general\';
 % % fpath_add_fcn='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\';
 % 
 % % fpath_project='d:\temporal\220517_improve_exner\';
@@ -65,7 +65,7 @@
 % in_plot.sim_ref=1;
 % in_plot.lan='en';
 % in_plot.tag_serie='01';
-% in_plot.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\';
+% in_plot.path_tiles='C:\checkouts\earth_tiles\';
 % in_plot.path_tiles='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\earth_tiles';
 
 %% display map times
@@ -119,6 +119,7 @@
 % in_plot.(tag).overwrite=1; %overwrite mat-files
 % in_plot.(tag).do_vector=0; %add velocity vectors
 % in_plot.(tag).do_axis_equal=0;
+% in_plot.(tag).do_fxw=0; %plot snapped fixed weirs
 % in_plot.(tag).do_plot_along_rkm=1;
 % in_plot.(tag).do_rkm_disp=1;
 % in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv'); %file to go along specified rkm to plot

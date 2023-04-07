@@ -41,6 +41,7 @@ addOptional(parin,'ds',NaN);
 addOptional(parin,'rkmi',NaN);
 addOptional(parin,'rkmf',NaN);
 addOptional(parin,'br','');
+addOptional(parin,'fdir_out','');
 
 parse(parin,varargin{:});
 
@@ -52,6 +53,7 @@ ds=parin.Results.ds;
 rkmi=parin.Results.rkmi;
 rkmf=parin.Results.rkmf;
 br=parin.Results.br;
+fdir_out=parin.Results.fdir_out;
 
 %%
 
@@ -71,29 +73,37 @@ if isnan(ds)
 end
 %2DO: add that all data is available. Maybe better inside the right function.
 
+[fdir,fname]=fileparts(fpath_data);
+if isempty(fdir_out)
+    fdir_out=fdir;
+end
+
 %% dia
 
-[fdir,fname]=fileparts(fpath_data);
 fpath_dia=fullfile(fdir,sprintf('%s.log',fname));
 fid_log=fopen(fpath_dia,'w');
 
-%% read
+%% read bed level
 
 messageOut(fid_log,'Start reading bed level');
 [etab_cen,pol]=load_etab(fpath_shp,fpath_data,xlsx_range,etab_year);
 
-messageOut(fid_log,'Start reading grid');
-gridInfo=EHY_getGridInfo(fpath_grd,{'XYcen','XYcor','Zcen'}); %`Zcen` gives you `Zcor`
+%% read grid
 
-% load('data.mat')
-% save('data.mat','pol','etab_cen','gridInfo')
+messageOut(fid_log,'Start reading grid');
+gridInfo=EHY_getGridInfo(fpath_grd,{'XYcen','XYcor','Zcen','Zcor','grid'}); %`Zcen` gives you `Zcor`
 
 %% find centroids of polygons
 
+messageOut(fid_log,'Start finding centroids');
 [xpol_cen,ypol_cen]=centroid_polygons(pol);
 
-% load('data_c.mat')
-% save('data_c.mat','xpol_cen','ypol_cen');
+%% BEGIN DEBUG
+
+% load('data.mat')
+% save('data.mat','pol','etab_cen','gridInfo','xpol_cen','ypol_cen')
+
+% END DEBUG
 
 %% roling mean
 
@@ -123,19 +133,24 @@ else
     messageOut(fid_log,'Skip finding points out polygon')
 end
 
-%% raw
+% %% BEGIN DEBUG
+% 
+% % pol_xy=polcell2nan(pol.xy.XY);
+% %%
+% figure
+% hold on
+% % plot(pol_xy(:,1),pol_xy(:,2),'k')
+% plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'r')
+% % scatter(xint,yint,10,'b');
+% % scatter(gridInfo.Xcor,gridInfo.Ycor,10,gridInfo.Zcor,'filled')
+% % scatter(xpol_cen,ypol_cen,10,etab_cen,'s','filled')
+% % scatter(xpol_cen,ypol_cen,20,etab_cen_mod,'s','filled')
+% scatter(xint,yint,10,zint,'filled')
+% colorbar
+% axis equal
+% 
+% %END DEBUG
 
-%original polygons
-fpath_xzy=fullfile(fdir,sprintf('etab_cen_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xzy,[xpol_cen,ypol_cen,etab_cen]);
-
-%filtered polygons
-fpath_xzy=fullfile(fdir,sprintf('etab_cen_fil_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xzy,[xpol_cen,ypol_cen,etab_cen_mod]);
-
-%original grid
-fpath_xyz=fullfile(fdir,sprintf('original_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xzy,[gridInfo.Xcor,gridInfo.Ycor,gridInfo.Zcor]);
 
 %% interpolate
 
@@ -155,20 +170,36 @@ yint=gridInfo.Ycen(bol_grd_int);
 
 zint=F(xint,yint);
 
-fpath_xzy=fullfile(fdir,sprintf('etab_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xzy,[xint,yint,zint]);
+%% write
+
+%original polygons
+bol_nn=~isnan(etab_cen);
+fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cen_original_%s.xyz',now_chr));
+D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen(bol_nn)]);
+
+%filtered polygons
+bol_nn=~isnan(etab_cen_mod);
+fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cen_filtered_%s.xyz',now_chr));
+D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen_mod(bol_nn)]);
+
+%original grid at corners
+bol_nn=~isnan(gridInfo.Zcor);
+fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cor_original_%s.xyz',now_chr));
+D3D_io_input('write',fpath_xyz,[gridInfo.Xcor(bol_nn),gridInfo.Ycor(bol_nn),gridInfo.Zcor(bol_nn)]);
+
+%original grid at centers
+bol_nn=~isnan(gridInfo.Zcen);
+fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cen_original_%s.xyz',now_chr));
+D3D_io_input('write',fpath_xyz,[gridInfo.Xcen(bol_nn),gridInfo.Ycen(bol_nn),gridInfo.Zcen(bol_nn)]);
+
+%interpolated
+bol_nn=~isnan(zint);
+fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cen_filtered_%s.xyz',now_chr));
+D3D_io_input('write',fpath_xyz,[xint(bol_nn),yint(bol_nn),zint(bol_nn)]);
 
 %%
 
 fclose(fid_log);
-
-%%
-
-% figure
-% hold on
-% scatter(xint,yint,10,zint,'filled')
-% colorbar 
-% axis equal
 
 end %main function
 
