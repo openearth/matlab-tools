@@ -214,6 +214,8 @@ switch opt
                 gt.phi(icons,:)=mod(180*atan2(sinpi,cospi)/pi,360);
             end
         end
+        gt.amp(isnan(gt.amp)) = 0;
+        gt.phi(isnan(gt.phi)) = 0;
         
     case{'limits'}
         
