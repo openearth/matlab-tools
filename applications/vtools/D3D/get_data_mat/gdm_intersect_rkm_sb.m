@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17465 $
-%$Date: 2021-08-25 16:36:23 +0200 (wo, 25 aug 2021) $
-%$Author: chavarri $
-%$Id: perpendicular_polyline.m 17465 2021-08-25 14:36:23Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/perpendicular_polyline.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Compute polylines <xyL> and <xyR> perpendicular to the 
 %left and right, respectively, of a polyline

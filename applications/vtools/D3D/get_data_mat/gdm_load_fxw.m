@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18514 $
-%$Date: 2022-11-04 12:19:10 +0100 (Fri, 04 Nov 2022) $
-%$Author: chavarri $
-%$Id: gdm_load_grid.m 18514 2022-11-04 11:19:10Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_load_grid.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

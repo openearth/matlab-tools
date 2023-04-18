@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18607 $
-%$Date: 2022-12-08 08:02:01 +0100 (do, 08 dec 2022) $
-%$Author: chavarri $
-%$Id: rkm_decrease_resolution.m 18607 2022-12-08 07:02:01Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/rkm_decrease_resolution.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Branch names of the rijntakken for a given track
 %

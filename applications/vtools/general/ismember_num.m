@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18819 $
-%$Date: 2023-03-13 16:40:14 +0100 (Mon, 13 Mar 2023) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 18819 2023-03-13 15:40:14Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Check if query values `q` are members of vector `v` considering a tolerance `tol`.
 

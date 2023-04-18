@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 2057 $
-%$Date: 2022-12-12 16:53:34 +0100 (Mon, 12 Dec 2022) $
-%$Author: chavarri $
-%$Id: fig_Q_dist_Q.m 2057 2022-12-12 15:53:34Z chavarri $
-%$HeadURL: https://repos.deltares.nl/repos/RIVmodels/models/dflowfm/maas/01_scripts/fig_Q_dist_Q.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
