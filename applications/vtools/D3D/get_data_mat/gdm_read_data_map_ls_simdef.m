@@ -129,6 +129,8 @@ switch varname
                 data_x=gdm_read_data_map_ls(fdir_mat,fpath_map,'sxtot',varargin{:});
                 data_y=gdm_read_data_map_ls(fdir_mat,fpath_map,'sytot',varargin{:});
         end
+    case {'Q'}
+        data=gdm_read_data_map_ls_Q(fdir_mat,fpath_map,varname,simdef,varargin{:});
     otherwise
         data=gdm_read_data_map_ls(fdir_mat,fpath_map,varname,varargin{:});
 end

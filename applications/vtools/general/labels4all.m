@@ -109,7 +109,7 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil]=labels4all(variable,un,lan,varargin)
+function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel]=labels4all(variable,un,lan,varargin)
 
 %%
 
@@ -1039,6 +1039,17 @@ str_diff_back=sprintf('%s %s %s%s',str_d,str_var,str_b,str_un_nr);
         str_f='filtrado de';
  end
 str_fil=sprintf('%s %s %s',str_f,str_var,str_un_nr);
+
+%relative
+ switch lan
+    case 'en'
+        str_f='relative';
+    case 'nl'
+        str_f='relatieve';
+    case 'es'
+        str_f='relativo';
+ end
+str_rel=sprintf('%s %s %s',str_f,str_var,'[-]');
 
 end %function
 

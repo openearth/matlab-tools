@@ -22,6 +22,7 @@ addOptional(parin,'tim',[]);
 % addOptional(parin,'layer',[]);
 addOptional(parin,'tol_t',5/60/24);
 addOptional(parin,'pli','');
+addOptional(parin,'pliname','');
 % addOptional(parin,'dchar',''); %why did I comment this out?
 addOptional(parin,'overwrite',false);
 addOptional(parin,'branch','');
@@ -33,10 +34,13 @@ tol_t=parin.Results.tol_t;
 pli=parin.Results.pli;
 overwrite=parin.Results.overwrite;
 branch=parin.Results.branch;
+pliname=parin.Results.pliname;
 % dchar=parin.Results.dchar;
 
-[~,pliname,~]=fileparts(pli);
-pliname=strrep(pliname,' ','_');
+if isempty(pliname)
+    [~,pliname,~]=fileparts(pli);
+    pliname=strrep(pliname,' ','_');
+end
 
 %%
 
@@ -47,7 +51,11 @@ if exist(fpath_sal,'file')==2 ~=overwrite
     load(fpath_sal,'data')
 else
     messageOut(NaN,sprintf('Reading raw data for variable: %s',var_str));
-    [data,data.gridInfo]=EHY_getMapModelData(fpath_map,'varName',var_str,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pliFile',pli,'tol_t',tol_t);
+    if isa(pli,'double')
+        [data,data.gridInfo]=EHY_getMapModelData(fpath_map,'varName',var_str,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pli',pli,'tol_t',tol_t);
+    else %char
+        [data,data.gridInfo]=EHY_getMapModelData(fpath_map,'varName',var_str,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pliFile',pli,'tol_t',tol_t);
+    end
     save_check(fpath_sal,'data');
 end
 

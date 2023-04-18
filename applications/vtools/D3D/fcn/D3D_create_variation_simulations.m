@@ -43,14 +43,16 @@ call_script=parin.Results.call_script;
 
 %% CALC
 
-nsim=numel(input_m.sim);
-if isfield(input_m.sim,'dorun')==0
+nsim=numel(input_m);
+if isfield(input_m,'dorun')==0
     for ksim=1:nsim
-        input_m.sim(ksim).dorun=true;
+        input_m(ksim).dorun=true;
     end
 end
 
-[path_folder_sims,~,~]=fileparts(input_m.sim(1).path_sim);
+simdef.mdf.dummy=NaN;
+simdef=D3D_modify_structure(simdef,input_m(1));
+[path_folder_sims,~,~]=fileparts(simdef.D3D.dire_sim);
 
 %ref
 [path_file,mdf,~]=D3D_read_sim_folder(path_ref);
@@ -66,15 +68,21 @@ fout_win=fullfile(path_folder_sims,fout_name_win);
 fout_c_win=fullfile(pwd,fout_name_win);
 fid_win=fopen(fout_c_win,'w');
 
+% [fid_lin,fid_win]=D3D_create_run_batch('open',fdir_sim_runs);
 
 for ksim=1:nsim
-    
-    if input_m.sim(ksim).dorun==0
+
+    simdef.mdf.dummy=NaN;
+    simdef=D3D_modify_structure(simdef,input_m(ksim));
+
+    if input_m(ksim).dorun==0
         continue
     end
     
-    sim_id=input_m.sim(ksim).sim_id;
-    path_sim_loc=input_m.sim(ksim).path_sim;
+%     sim_id=input_m(ksim).sim_id;
+%     path_sim_loc=input_m(ksim).path_sim;
+    sim_id=simdef.runid.name;
+    path_sim_loc=simdef.D3D.dire_sim;
 %     path_mdf_loc=fullfile(path_sim_loc,sprintf('%s.mdf',runid));
     
     if exist(path_sim_loc,'dir')==7
@@ -85,18 +93,18 @@ for ksim=1:nsim
     mkdir(path_sim_loc)
     
     mdf_loc=mdf;
-    mdf_loc=D3D_modify_input_structure(mdf_loc,input_m.mdf(ksim));
+    mdf_loc=D3D_modify_input_structure(mdf_loc,simdef.mdf);
     
     %special case of grid change->copy to simulation folder
-    if isfield(input_m.mdf,'NetFile')
-        [~,fname_grd,fext_grd]=fileparts(input_m.mdf(ksim).NetFile);
+    if isfield(input_m,'NetFile')
+        [~,fname_grd,fext_grd]=fileparts(input_m(ksim).NetFile);
         fnameext_grd=sprintf('%s%s',fname_grd,fext_grd);
         fpath_grd=fullfile(path_sim_loc,fnameext_grd);
-        sts=copyfile_check(input_m.mdf(ksim).NetFile,fpath_grd);
+        sts=copyfile_check(input_m(ksim).NetFile,fpath_grd);
         if ~sts
             fclose(fid_win);
             fclose(fid_lin);
-            error('I cannot find the grid to be copied: %s',input_m.mdf(ksim).NetFile)
+            error('I cannot find the grid to be copied: %s',input_m(ksim).NetFile)
         end
         mdf_loc.geometry.NetFile=fnameext_grd;
     end
@@ -115,6 +123,9 @@ for ksim=1:nsim
     fprintf(fid_win,'start "w1" %s \n',run_script_win);
     fprintf(fid_win,'cd ../ \n');
     
+%     [strsoft_lin,strsoft_win]=D3D_bat(simdef,simdef.file.software);    
+%     D3D_create_run_batch('add',fdir_sim_runs,fid_lin,fid_win,simdef.runid.name,strsoft_lin,strsoft_win);
+
     %disp
     messageOut(NaN,sprintf('Simulation created: %4.1f %%',ksim/nsim*100))
 end

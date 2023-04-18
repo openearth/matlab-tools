@@ -25,6 +25,11 @@ nf=numel(dire_ref);
 path_file={};
 kfs=1;
 runid='';
+
+if numel(nf)==0
+    error('There are no files here: %s',path_ref)
+end
+
 for kf=1:nf
     if ~dire_ref(kf).isdir
         [~,~,ext]=fileparts(dire_ref(kf).name);
