@@ -18,19 +18,15 @@ fclose all;
 
 %% PATHS
 
-fpath_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
-fpath_project='';
+fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
+fdir_d3d='c:\checkouts\delft3d\';
 
-% fpath_add_fcn='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\';
-% fpath_project='';
+% fpath_project='d:\temporal\220517_improve_exner\';
+fpath_project='p:\11209261-rivierkunde-2023-morerijn';
 
 %% ADD OET
 
-if isunix
-    fpath_add_fcn=strrep(strrep(strcat('/',strrep(fpath_add_fcn,'P:','p:')),':',''),'\','/');
-end
-addpath(fpath_add_fcn)
-addOET(fpath_add_fcn) 
+run(fpath_add_oet);
 
 %% PATHS
 

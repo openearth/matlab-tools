@@ -42,6 +42,7 @@ addOptional(parin,'rkmi',NaN);
 addOptional(parin,'rkmf',NaN);
 addOptional(parin,'br','');
 addOptional(parin,'fdir_out','');
+addOptional(parin,'do_debug',0);
 
 parse(parin,varargin{:});
 
@@ -54,6 +55,7 @@ rkmi=parin.Results.rkmi;
 rkmf=parin.Results.rkmf;
 br=parin.Results.br;
 fdir_out=parin.Results.fdir_out;
+do_debug=parin.Results.do_debug;
 
 %%
 
@@ -85,18 +87,45 @@ fid_log=fopen(fpath_dia,'w');
 
 %% read bed level
 
-messageOut(fid_log,'Start reading bed level');
-[etab_cen,pol]=load_etab(fpath_shp,fpath_data,xlsx_range,etab_year);
+fpath_mat_tmp=fullfile(pwd,'rbl.mat');
+if ~isfile(fpath_mat_tmp) || ~do_debug
+    messageOut(fid_log,'Start reading bed level');
+    [etab_cen,pol]=load_etab(fpath_shp,fpath_data,xlsx_range,etab_year);
+    if do_debug
+        save(fpath_mat_tmp,'etab_cen','pol')
+    end
+else
+    messageOut(fid_log,'Start loading bed level');
+    load(fpath_mat_tmp,'etab_cen','pol')
+end
 
 %% read grid
 
-messageOut(fid_log,'Start reading grid');
-gridInfo=EHY_getGridInfo(fpath_grd,{'XYcen','XYcor','Zcen','Zcor','grid'}); %`Zcen` gives you `Zcor`
+fpath_mat_tmp=fullfile(pwd,'rg.mat');
+if ~isfile(fpath_mat_tmp) || ~do_debug
+    messageOut(fid_log,'Start reading grid');
+    gridInfo=EHY_getGridInfo(fpath_grd,{'XYcen','XYcor','Zcen','Zcor','grid'}); %`Zcen` gives you `Zcor`
+    if do_debug
+        save(fpath_mat_tmp,'gridInfo')
+    end
+else
+    messageOut(fid_log,'Start loading grid');
+    load(fpath_mat_tmp,'gridInfo')
+end
 
 %% find centroids of polygons
 
-messageOut(fid_log,'Start finding centroids');
-[xpol_cen,ypol_cen]=centroid_polygons(pol);
+fpath_mat_tmp=fullfile(pwd,'fc.mat');
+if ~isfile(fpath_mat_tmp) || ~do_debug
+    messageOut(fid_log,'Start finding centroids');
+    [xpol_cen,ypol_cen]=centroid_polygons(pol);
+    if do_debug
+        save(fpath_mat_tmp,'xpol_cen','ypol_cen')
+    end
+else
+    messageOut(fid_log,'Start loading centroids');
+    load(fpath_mat_tmp,'xpol_cen','ypol_cen')
+end
 
 %% BEGIN DEBUG
 
@@ -107,30 +136,58 @@ messageOut(fid_log,'Start finding centroids');
 
 %% roling mean
 
-if do_rol_mean
-    etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen);
+fpath_mat_tmp=fullfile(pwd,'rm.mat');
+if ~isfile(fpath_mat_tmp) || ~do_debug
+    messageOut(fid_log,'Start computing rolling mean');
+    if do_rol_mean
+        etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen);
+    else
+        etab_cen_mod=etab_cen;
+    end
+    if do_debug
+        save(fpath_mat_tmp,'etab_cen_mod')
+    end
 else
-    etab_cen_mod=etab_cen;
+    messageOut(fid_log,'Start loading rolling mean');
+    load(fpath_mat_tmp,'etab_cen_mod')
 end
 
 %% read polygons of points to include
 
-bol_in=true(numel(gridInfo.Xcen),1);
-if do_pol_in
-    messageOut(fid_log,'Start finding points in polygon')    
-    bol_in=points_in_shp_and_grid(fpath_pol_in,gridInfo.Xcen,gridInfo.Ycen);
+fpath_mat_tmp=fullfile(pwd,'polin.mat');
+if ~isfile(fpath_mat_tmp) || ~do_debug 
+    bol_in=true(numel(gridInfo.Xcen),1);
+    if do_pol_in
+        messageOut(fid_log,'Start finding points in polygon')    
+        bol_in=points_in_shp_and_grid(fpath_pol_in,gridInfo.Xcen,gridInfo.Ycen);
+    else
+        messageOut(fid_log,'Skip finding points in polygon')
+    end
+    if do_debug
+        save(fpath_mat_tmp,'bol_in')
+    end
 else
-    messageOut(fid_log,'Skip finding points in polygon')
+    messageOut(fid_log,'Start loading points in polygon')   
+    load(fpath_mat_tmp,'bol_in')
 end
 
 %% read polygons of points to exclude
 
-bol_out=false(numel(gridInfo.Xcen),1);
-if do_pol_out
-    messageOut(fid_log,'Start finding points out polygon')
-    bol_out=points_in_shp_and_grid(fpath_pol_out,gridInfo.Xcen,gridInfo.Ycen);
+fpath_mat_tmp=fullfile(pwd,'polout.mat');
+if ~isfile(fpath_mat_tmp) || ~do_debug 
+    bol_out=false(numel(gridInfo.Xcen),1);
+    if do_pol_out
+        messageOut(fid_log,'Start finding points out polygon')
+        bol_out=points_in_shp_and_grid(fpath_pol_out,gridInfo.Xcen,gridInfo.Ycen);
+    else
+        messageOut(fid_log,'Skip finding points out polygon')
+    end
+    if do_debug
+        save(fpath_mat_tmp,'bol_out')
+    end
 else
-    messageOut(fid_log,'Skip finding points out polygon')
+    messageOut(fid_log,'Start loading points out polygon')   
+    load(fpath_mat_tmp,'bol_out')
 end
 
 % %% BEGIN DEBUG
