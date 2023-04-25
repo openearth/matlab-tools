@@ -10,7 +10,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %               dimensions              E.MNKmax | no_NetNode & no_NetElem
 %               XYcor                   E.Xcor & E.Ycor (=NetNodes)
 %               XYcen                   E.Xcen & E.Ycen (=NetElem/faces)
-%               XYu                     E.Xu & E.Yu (=velocity points)
+%               XYuv                    E.Xu & E.Yu (=velocity points)
 %               layer_model             E.layer_model (sigma-model or z-model)
 %               face_nodes              E.face_nodes
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
