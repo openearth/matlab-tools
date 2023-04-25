@@ -162,36 +162,9 @@ if ~exist('Data','var')
     
     %% check if output data is in several partitions and merge if necessary
     if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile) && exist('facesInd','var')
-        
-        % get cell array with ncFiles based on inputFile (and requested partition numbers)
-        ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,OPT.mergePartitionNrs);
-        
-        for iF = 1:length(ncFiles)
-            if OPT.disp
-                disp(['Reading and merging map model data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
-            end
-            ncFile = ncFiles{iF};
-            if nc_isvar(ncFile,OPT.varName)
-                DataPart = EHY_getMapModelData(ncFile,OPT,'mergePartitions',0);
-            else
-                disp(['Variable ',OPT.varName,' is not available in partition ' num2str(iF)])
-            end
-            if iF==1
-                Data = DataPart;
-            else
-                if isfield(Data,'val')
-                    Data.val = cat(facesInd,Data.val,DataPart.val);
-                elseif isfield(Data,'vel_x')
-                    Data.vel_x = cat(facesInd,Data.vel_x,DataPart.vel_x);
-                    Data.vel_y = cat(facesInd,Data.vel_y,DataPart.vel_y);
-                    Data.vel_mag = cat(facesInd,Data.vel_mag,DataPart.vel_mag);
-                    Data.vel_dir = cat(facesInd,Data.vel_dir,DataPart.vel_dir);
-                end
-            end
-        end
-        Data.OPT.mergePartitions = 1;
-        modelType = 'partitionedFmRun';
-        dims = EHY_getmodeldata_optimiseDims(dims);
+        Data=EHY_getMapModelData_partitions(inputFile,OPT,Data,dims,facesInd);
+    elseif OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile) && exist('edgesInd','var') %data at links
+        Data=EHY_getMapModelData_partitions(inputFile,OPT,Data,dims,edgesInd);
     end
     
     %% Get the computational data
@@ -546,4 +519,46 @@ end
 varargout{1} = Data;
 if nargout == 2
     varargout{2} = gridInfo;
+end
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function [Data,modelType,dims]=EHY_getMapModelData_partitions(inputFile,OPT,Data,dims,facesInd)
+
+%V: I cannot use `facesInd` because this variable is used to remove ghost nodes. 
+%Part of the code is copied from above, 
+% get cell array with ncFiles based on inputFile (and requested partition numbers)
+ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,OPT.mergePartitionNrs);
+
+for iF = 1:length(ncFiles)
+    if OPT.disp
+        disp(['Reading and merging map model data from partitions: ' num2str(iF) '/' num2str(length(ncFiles))])
+    end
+    ncFile = ncFiles{iF};
+    if nc_isvar(ncFile,OPT.varName)
+        DataPart = EHY_getMapModelData(ncFile,OPT,'mergePartitions',0);
+    else
+        disp(['Variable ',OPT.varName,' is not available in partition ' num2str(iF)])
+    end
+    if iF==1
+        Data = DataPart;
+    else
+        if isfield(Data,'val')
+            Data.val = cat(facesInd,Data.val,DataPart.val);
+        elseif isfield(Data,'vel_x')
+            Data.vel_x = cat(facesInd,Data.vel_x,DataPart.vel_x);
+            Data.vel_y = cat(facesInd,Data.vel_y,DataPart.vel_y);
+            Data.vel_mag = cat(facesInd,Data.vel_mag,DataPart.vel_mag);
+            Data.vel_dir = cat(facesInd,Data.vel_dir,DataPart.vel_dir);
+        end
+    end
+end
+Data.OPT.mergePartitions = 1;
+modelType = 'partitionedFmRun';
+dims = EHY_getmodeldata_optimiseDims(dims);
+
 end

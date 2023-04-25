@@ -218,6 +218,7 @@ if nargout > 1
     dimsInd.sedfrac = find(ismember({dims(:).name},{'sedimentFraction','nSedTot'}));
     dimsInd.turbulence = find(ismember({dims(:).name},'turbulence'));
     dimsInd.bed_layers = find(ismember({dims(:).name},{'nBedLayers','bed_layers'})); 
+    dimsInd.edges = find(ismember({dims(:).name},{'mesh2d_nEdges'})); 
 end
 
 %% Data

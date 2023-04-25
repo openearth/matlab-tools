@@ -121,7 +121,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'face_nodes','edge_nodes'}))
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}) addToAdministration+gridInfoPart.(fn{iFN})];
-                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid','domain_number'}))
+                elseif any(strcmp(fn{iFN},{'Xcor','Xcen','Ycor','Ycen','Zcor','Zcen','area','grid','domain_number','Xu','Yu'}))
                     gridInfo.(fn{iFN}) = [gridInfo.(fn{iFN}); gridInfoPart.(fn{iFN})];
                 elseif any(strcmp(fn{iFN},{'no_NetNode','no_NetElem'}))
                     gridInfo.(fn{iFN}) = gridInfo.(fn{iFN})+gridInfoPart.(fn{iFN});
@@ -158,6 +158,7 @@ if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile,modelType)
         end
         
         if isfield(gridInfo,'edge_nodes') % update edge_nodes
+            XY = [reshape(gridInfo.Xcor,[],1) reshape(gridInfo.Ycor,[],1)];
             nonan = ~isnan(gridInfo.edge_nodes);
             nonan = nonan(:);
             edge_nodes_x = NaN(length(nonan),1);
