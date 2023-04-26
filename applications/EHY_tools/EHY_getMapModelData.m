@@ -162,9 +162,9 @@ if ~exist('Data','var')
     
     %% check if output data is in several partitions and merge if necessary
     if OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile) && exist('facesInd','var')
-        Data=EHY_getMapModelData_partitions(inputFile,OPT,Data,dims,facesInd);
+        [Data,modelType,dims]=EHY_getMapModelData_partitions(inputFile,OPT,Data,dims,facesInd);
     elseif OPT.mergePartitions == 1 && EHY_isPartitioned(inputFile) && exist('edgesInd','var') %data at links
-        Data=EHY_getMapModelData_partitions(inputFile,OPT,Data,dims,edgesInd);
+        [Data,modelType,dims]=EHY_getMapModelData_partitions(inputFile,OPT,Data,dims,edgesInd);
     end
     
     %% Get the computational data
