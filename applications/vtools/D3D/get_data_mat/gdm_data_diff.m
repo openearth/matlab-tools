@@ -16,7 +16,7 @@ function [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref,str
 
 %%
 
-if numel(varargin)>9
+if nargin>10
     data_0=varargin{1,1};
     data_ref_0=varargin{1,2};
     str_clims_diff_0=varargin{1,3};

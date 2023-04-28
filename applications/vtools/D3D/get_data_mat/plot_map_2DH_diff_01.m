@@ -161,7 +161,7 @@ for kvar=1:nvar %variable
 %                 [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data_s_diff,data_st_diff,'clims_diff_s','clims_diff_st',var_str);
 
                 %passing values
-                [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val,val_ref,'clims_diff_s','clims_diff_st',var_str,val0,val_ref0);
+                [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val,val_ref,'clims','clims_diff_s',var_str,val0,val_ref0,'clims_diff_st','clims_diff_s_perc');
                 tag_ref_3D=sprintf('3D_%s',tag_ref);
                 
                 fdir_fig_var=fullfile(fdir_fig,var_str,tag_ref);
