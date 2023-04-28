@@ -74,9 +74,12 @@ end
 if isfield(in_p,'is_diff')==0
     in_p.is_diff=0;
 end
-in_p.plot_val0=0;
-if isfield(in_p,'val0')
-    in_p.plot_val0=1;
+if isfield(in_p,'plot_val0')==0
+    if isfield(in_p,'val0')
+        in_p.plot_val0=1;
+    else
+        in_p.plot_val0=0;
+    end
 end
 if isfield(in_p,'plot_mea')==0 
     if isfield(in_p,'val_mea')

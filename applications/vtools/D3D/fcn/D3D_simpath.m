@@ -308,6 +308,8 @@ switch ext
         if strcmp(fname,'smt') %could it be another yml? too strong?
             simdef.D3D.structure=4;
             whatis(4)=true;
+        else
+            fprintf('Warning! There is a yml-file but not called smt: %s',fpath_file)
         end
     case ''
         if strcmp(fname,'Qseries') 
@@ -349,7 +351,7 @@ if ~(exist(fi,'file')==2) && ~isfolder(fi)
     if exist(fi,'file')==2 || isfolder(fi)
         disp('Old style smt.yml simulation found')
     else
-        error('File (%s) not found: ',simdef_aux.file.(fn{kfn}))
+        error('File (%s) not found: ',fi)
     end
 end
 

@@ -58,6 +58,9 @@ end
 if isfield(in_p,'is_diff')==0
     in_p.is_diff=0;
 end
+if isfield(in_p,'is_percentage')==0
+    in_p.is_percentage=0;
+end
 if isfield(in_p,'_thk')==0
     in_p.ldb_thk=0.5;
 end
@@ -114,7 +117,10 @@ if isfield(in_p,'fxw')
     in_p.plot_fxw=1;
 end
 if isfield(in_p,'filter_lim')==0
-    filter_lim=[inf,-inf];
+    in_p.filter_lim=[inf,-inf];
+end
+if isfield(in_p,'cmap_cut_edges')==0
+    in_p.cmap_cut_edges=NaN;
 end
 
 v2struct(in_p)
@@ -123,6 +129,15 @@ v2struct(in_p)
 print_fig=check_print_figure(in_p);
 if ~print_fig
     return
+end
+
+%% faces or edges
+
+is_faces=1; %default is faces and we check whether it is edges
+if isfield(gridInfo,'edge_nodes')==1 %backward compatibility
+    if numel(val)==size(gridInfo.edge_nodes,2)
+        is_faces=0;
+    end
 end
 
 %% units
@@ -150,18 +165,23 @@ end
 %% dependent
 
 if isnan(clims(1))
-    bol_in=gridInfo.Xcen>xlims(1) & gridInfo.Xcen<xlims(2) & gridInfo.Ycen>ylims(1) & gridInfo.Ycen<ylims(2);
+    if is_faces
+        bol_in=gridInfo.Xcen>xlims(1) & gridInfo.Xcen<xlims(2) & gridInfo.Ycen>ylims(1) & gridInfo.Ycen<ylims(2);
+    else
+        bol_in=gridInfo.Xu>xlims(1) & gridInfo.Xu<xlims(2) & gridInfo.Yu>ylims(1) & gridInfo.Yu<ylims(2);
+    end
     if any(bol_in(:))
         clims=[min(val(bol_in),[],'omitnan'),max(val(bol_in),[],'omitnan')];
     %     clims=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
         tol=1e-8;
-        if is_diff
+        if is_diff || is_percentage
             clims=absolute_limits(clims);
         else
             clims=clims+[-tol,+tol];
         end
         
     end
+    val(~bol_in)=NaN; %do not plot points outside the domain
 end
 if isnan(clims(1)) %still NaN because all are NaN
     tol=1e-8;
@@ -235,24 +255,39 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_back,str_std,str_diff_back]=labels4all(unit,fact,lan,'frac',str_idx,'Lref',Lref);
-if isempty(cmap) %default
-    if is_background && ~is_diff
-        cbar(kr,kc).label=str_back;
-        cmap=turbo(100);
-    elseif is_diff && ~is_background
-        cbar(kr,kc).label=str_diff;
-        cmap=brewermap(100,'RdYlBu');
-    elseif is_diff && is_background
-        cbar(kr,kc).label=str_diff_back;
-        cmap=brewermap(100,'RdYlBu');
-    else
-        cbar(kr,kc).label=lab;
-        cmap=turbo(100);
-    end
+[lab,str_var,str_un,str_diff,str_back      ,str_std,str_diff_back,str_fil,str_rel,str_diff_perc]=labels4all(unit,fact,lan,'frac',str_idx,'Lref',Lref);
+
+if is_background && ~is_diff
+    cbar(kr,kc).label=str_back;
+elseif is_diff && ~is_background
+    cbar(kr,kc).label=str_diff;
+elseif is_diff && is_background
+    cbar(kr,kc).label=str_diff_back;
+elseif is_percentage
+    cbar(kr,kc).label=str_diff_perc;
 else
     cbar(kr,kc).label=lab;
 end
+
+if isempty(cmap) %default
+    if is_background && ~is_diff
+        cmap=turbo(100);
+    elseif is_diff && ~is_background
+        cmap=brewermap(100,'RdYlBu');
+    elseif is_diff && is_background
+        cmap=brewermap(100,'RdYlBu');
+    elseif is_percentage
+        cmap=brewermap(100,'RdYlBu');
+    else
+        cmap=turbo(100);
+    end
+end
+if ~isnan(cmap_cut_edges)
+    fcut=cmap_cut_edges;
+    nc=100/(1-fcut);
+    cmap=cmap(round(nc*fcut):round(nc*(1-fcut)),:);
+end
+ncolor=size(cmap,1);
 
 % brewermap('demo')
 
@@ -484,12 +519,27 @@ end
 
 kr=1; kc=1;    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
-if do_3D
-    EHY_plotMapModelData(gridInfo,val,'t',1);
-%     EHY_plotMapModelData(gridInfo,val,'t',1,'edgecolor',edgecolor,'linestyle',linestyle); 
+if is_faces
+    if do_3D
+        EHY_plotMapModelData(gridInfo,val,'t',1);
+    %     EHY_plotMapModelData(gridInfo,val,'t',1,'edgecolor',edgecolor,'linestyle',linestyle); 
+    else
+        EHY_plotMapModelData(gridInfo,val,'t',1); 
+    end
 else
-    EHY_plotMapModelData(gridInfo,val,'t',1); 
+    ne=size(val,2);
+    for ke=1:ne
+        if ~isnan(val(ke))
+            c_idx=round(interp_line([clims(1),clims(2)],[0,ncolor],val(ke)));
+            c_idx=max([c_idx,1]);
+            c_idx=min([c_idx,ncolor]);
+            xv=[gridInfo.Xcor(gridInfo.edge_nodes(1,ke)),gridInfo.Xcor(gridInfo.edge_nodes(2,ke))];
+            yv=[gridInfo.Ycor(gridInfo.edge_nodes(1,ke)),gridInfo.Ycor(gridInfo.edge_nodes(2,ke))];
+            plot(xv,yv,'color',cmap(c_idx,:))
+        end
+    end
 end
+
 if plot_ldb
     nldb=numel(ldb);
     for kldb=1:nldb

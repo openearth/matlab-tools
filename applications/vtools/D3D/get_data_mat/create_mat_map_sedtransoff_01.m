@@ -45,7 +45,8 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% GET RAW VARIABLES
 
-var_raw={'mesh2d_umod','mesh2d_czs','h','Ltot','Fak'}; %do not change order, we use it for loading in loop
+% var_raw={'mesh2d_umod','mesh2d_czs','h','Ltot','Fak'}; %do not change order, we use it for loading in loop
+var_raw={'umag','mesh2d_czs','h','Ltot','Fak'}; %do not change order, we use it for loading in loop
 tag_2DH='fig_map_2DH_01';
 in_plot_2DH.fdir_sim=flg_loc.fdir_sim;
 in_plot_2DH.(tag_2DH).do=1;

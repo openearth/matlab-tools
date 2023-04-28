@@ -37,6 +37,7 @@ addOptional(parin,'xlsx_range','');
 addOptional(parin,'year','');
 addOptional(parin,'polygon_in','');
 addOptional(parin,'polygon_out','');
+addOptional(parin,'polygon_in_bl','');
 addOptional(parin,'ds',NaN);
 addOptional(parin,'rkmi',NaN);
 addOptional(parin,'rkmf',NaN);
@@ -50,6 +51,7 @@ xlsx_range=parin.Results.xlsx_range;
 etab_year=parin.Results.xlsx_range;
 fpath_pol_in=parin.Results.polygon_in;
 fpath_pol_out=parin.Results.polygon_out;
+fpath_pol_in_bl=parin.Results.polygon_in_bl;
 ds=parin.Results.ds;
 rkmi=parin.Results.rkmi;
 rkmf=parin.Results.rkmf;
@@ -190,69 +192,99 @@ else
     load(fpath_mat_tmp,'bol_out')
 end
 
-% %% BEGIN DEBUG
-% 
+%% read polygons of point to include in interpolation of bed level polygon
+
+fpath_mat_tmp=fullfile(pwd,'polin_pol.mat');
+if ~isfile(fpath_mat_tmp) || ~do_debug 
+    bol_in_pol=true(numel(xpol_cen),1);
+    if do_pol_in
+        messageOut(fid_log,'Start finding points in polygon (bed level)')    
+        bol_in_pol=points_in_shp_and_grid(fpath_pol_in_bl,xpol_cen,ypol_cen);
+    else
+        messageOut(fid_log,'Skip finding points in polygon (bed level)')
+    end
+    if do_debug
+        save(fpath_mat_tmp,'bol_in_pol')
+    end
+else
+    messageOut(fid_log,'Start loading points in polygon (bed level)')   
+    load(fpath_mat_tmp,'bol_in_pol')
+end
+
+%% BEGIN DEBUG
+
 % % pol_xy=polcell2nan(pol.xy.XY);
-% %%
+% % shp=D3D_io_input('read','p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\07_pol_in_bl\waal.shp','xy_only',1);
+% %
 % figure
 % hold on
 % % plot(pol_xy(:,1),pol_xy(:,2),'k')
-% plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'r')
+% % plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'r')
 % % scatter(xint,yint,10,'b');
 % % scatter(gridInfo.Xcor,gridInfo.Ycor,10,gridInfo.Zcor,'filled')
 % % scatter(xpol_cen,ypol_cen,10,etab_cen,'s','filled')
+% scatter(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),10,etab_cen(bol_cen_int),'s','filled')
+% plot(shp(:,1),shp(:,2))
 % % scatter(xpol_cen,ypol_cen,20,etab_cen_mod,'s','filled')
-% scatter(xint,yint,10,zint,'filled')
+% % scatter(xint,yint,10,zint,'filled')
 % colorbar
 % axis equal
 % 
-% %END DEBUG
+% % END DEBUG
 
 
-%% interpolate
+%% interpolate polygon bed level at grid centres 
 
 bol_n=isnan(etab_cen);
 
-bol_cen_int=~bol_n;
+bol_cen_int=~bol_n & bol_in_pol;
 
-F=scatteredInterpolant(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),etab_cen_mod(bol_cen_int));
+F_fil=scatteredInterpolant(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),etab_cen_mod(bol_cen_int),'linear','none'); %filtered
+F_ori=scatteredInterpolant(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),etab_cen(bol_cen_int),'linear','none'); %original
 
 bol_grd_int=bol_in & ~bol_out;
 
 xint=gridInfo.Xcen(bol_grd_int);
 yint=gridInfo.Ycen(bol_grd_int);
 
-% xint=[gridInfo.Xcen;gridInfo.Xcor];
-% yint=[gridInfo.Ycen;gridInfo.Ycor];
-
-zint=F(xint,yint);
+etab_cengrd_mod=F_fil(xint,yint);
+etab_cengrd_ori=F_ori(xint,yint);
 
 %% write
 
-%original polygons
+%1) bed level from polygons
+
+    %1.1) original on polygon centres
 bol_nn=~isnan(etab_cen);
-fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cen_original_%s.xyz',now_chr));
+fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cenpol_original_%s.xyz',now_chr));
 D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen(bol_nn)]);
 
-%filtered polygons
+    %1.2) filtered on polygon centres
 bol_nn=~isnan(etab_cen_mod);
-fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cen_filtered_%s.xyz',now_chr));
+fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cenpol_filtered_%s.xyz',now_chr));
 D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen_mod(bol_nn)]);
 
-%original grid at corners
+    %1.3) filtered on grid centres 
+bol_nn=~isnan(etab_cengrd_mod);
+fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cengrd_filtered_%s.xyz',now_chr));
+D3D_io_input('write',fpath_xyz,[xint(bol_nn),yint(bol_nn),etab_cengrd_mod(bol_nn)]);
+
+    %1.4) original on grid centres 
+bol_nn=~isnan(etab_cengrd_ori);
+fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cengrd_original_%s.xyz',now_chr));
+D3D_io_input('write',fpath_xyz,[xint(bol_nn),yint(bol_nn),etab_cengrd_ori(bol_nn)]);
+
+%2) bed level from grid
+
+    %2.1) original on grid corners
 bol_nn=~isnan(gridInfo.Zcor);
-fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cor_original_%s.xyz',now_chr));
+fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_corgrd_original_%s.xyz',now_chr));
 D3D_io_input('write',fpath_xyz,[gridInfo.Xcor(bol_nn),gridInfo.Ycor(bol_nn),gridInfo.Zcor(bol_nn)]);
 
-%original grid at centers
+    %2.3) original on grid centres
 bol_nn=~isnan(gridInfo.Zcen);
-fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cen_original_%s.xyz',now_chr));
+fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cengrd_original_%s.xyz',now_chr));
 D3D_io_input('write',fpath_xyz,[gridInfo.Xcen(bol_nn),gridInfo.Ycen(bol_nn),gridInfo.Zcen(bol_nn)]);
-
-%interpolated
-bol_nn=~isnan(zint);
-fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cen_filtered_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[xint(bol_nn),yint(bol_nn),zint(bol_nn)]);
 
 %%
 

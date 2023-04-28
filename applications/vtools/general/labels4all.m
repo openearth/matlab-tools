@@ -100,6 +100,8 @@
 %       -'T_da'     :
 %       -'T_max'    :
 %
+%       -'mesh2d_fixed weir energy loss': energy head, energy per unit force kg*(m/s)^2/(kg*m/s^2)=m
+%
 %
 %
 %   -un: factor for unit conversion from SI
@@ -109,7 +111,7 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel]=labels4all(variable,un,lan,varargin)
+function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc]=labels4all(variable,un,lan,varargin)
 
 %%
 
@@ -970,6 +972,16 @@ switch lower(variable)
                 str_var='?';
          end
          un_type='L'; 
+    case 'mesh2d_fixed weir energy loss'
+        switch lan
+            case 'en'
+                str_var='energy head loss';
+            case 'nl'
+                str_var='energie hoofd verlies';
+            case 'es'
+                str_var='perdida de carga de energía';
+        end
+        un_type='L'; 
     otherwise
         str_var=variable;
         un_type='?';
@@ -1050,6 +1062,17 @@ str_fil=sprintf('%s %s %s',str_f,str_var,str_un_nr);
         str_f='relativo';
  end
 str_rel=sprintf('%s %s %s',str_f,str_var,'[-]');
+
+%percentage
+switch lan
+    case 'en'
+        str_d='difference in';
+    case 'nl'
+        str_d='verschil in';
+    case 'es'
+        str_d='diferencia de';
+end
+str_perc=sprintf('%s %s %s',str_d,str_var,'[%]');
 
 end %function
 

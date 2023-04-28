@@ -75,7 +75,7 @@ else
         case 1
             gridInfo=NC_read_grid_1D(fpath_map);
         case 2
-            gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid'},'mergePartitions',1); %#ok        
+            gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid','edge_nodes','XYuv'},'mergePartitions',1); %#ok        
     end    
 
 end

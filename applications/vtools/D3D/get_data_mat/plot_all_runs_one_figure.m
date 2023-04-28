@@ -46,4 +46,12 @@ if isfield(in_plot,tag_check)==1
     plot_map_1D_xv_01(fid_log,in_plot_fig,simdef)
 end
 
+%% map 2DH ls
+tag_check='fig_map_2DH_ls_01';
+if isfield(in_plot,tag_check)==1
+    in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
+    in_plot_fig.leg_str=leg_str;
+    plot_map_2DH_ls_01(fid_log,in_plot_fig,simdef)
+end
+
 end %function

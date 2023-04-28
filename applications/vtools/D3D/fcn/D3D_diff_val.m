@@ -12,7 +12,7 @@
 %
 %
 
-function val_diff=D3D_diff_val(val,val_ref,gridInfo,gridInfo_ref)
+function [val_diff,val_int,val_ref]=D3D_diff_val(val,val_ref,gridInfo,gridInfo_ref)
 
 if isstruct(gridInfo)
     if size(val)==size(val_ref)

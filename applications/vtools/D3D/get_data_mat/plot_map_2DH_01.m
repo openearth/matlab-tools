@@ -132,7 +132,8 @@ end
 
 %fxw
 if flg_loc.do_fxw
-    in_p.fxw=D3D_read_snapped(simdef,'fxw','xy_only',1,'read_val',0);
+%     in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped and in a different structure than when reading snapped
+    in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef,'fxw');
 end
 ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
@@ -226,7 +227,7 @@ for kvar=1:nvar %variable
 
                 for kdiff=1:ndiff
                     
-                    [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref.data,'clims','clims_diff_t',var_str);
+                    [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,data,data_ref.data,'clims','clims_diff_t',var_str,'');
                     
                     %2D plot
                     if flg_loc.do_2D

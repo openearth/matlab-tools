@@ -14,7 +14,7 @@
 
 function fxw=gdm_load_fxw(fid_log,fdir_mat,varargin)
 
-%%
+%% PARSE
 
 parin=inputParser;
 

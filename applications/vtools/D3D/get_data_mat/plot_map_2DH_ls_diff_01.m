@@ -40,6 +40,10 @@ if isfield(flg_loc,'fig_print')==0
     flg_loc.fig_print=1;
 end
 
+if isfield(flg_loc,'plot_val0')==0
+    flg_loc.plot_val0=0;
+end
+
 %% PATHS
 
 nS=numel(simdef);
@@ -139,7 +143,7 @@ for kt=kt_v %time
                 %we are taking the last simulation (last loaded time). They should all be the same.
             val0=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref_v(1),data_ref_t0,fdir_mat,tag,var_str,pliname,simdef_ref);
             
-            in_p.s=data_ref.data.Scen;
+            in_p=gdm_s_rkm_cen(in_p,flg_loc,data_ref.data);
             in_p.val=val;
             in_p.val0=val0;
             in_p.lab_str=var_str;
@@ -164,7 +168,7 @@ for kt=kt_v %time
                 fpath_file{kt,kylim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                 in_p.fname=fname_noext;
-                    
+
                 fig_1D_01(in_p)
             end
             

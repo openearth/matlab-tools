@@ -21,12 +21,14 @@ parin=inputParser;
 addOptional(parin,'tim',[]);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
+addOptional(parin,'var_idx',[]);
 
 parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
+var_idx=parin.Results.var_idx;
 
 %% CALC
 

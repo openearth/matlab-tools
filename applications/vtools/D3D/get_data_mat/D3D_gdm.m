@@ -94,6 +94,7 @@
 % in_plot.(tag).do_diff=1; %difference initial time
 % in_plot.(tag).do_s=1; %difference with reference
 % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
+% in_plot.(tag).do_s_perc=0; %difference with reference in percentage terms
 % in_plot.(tag).do_3D=0; %3D plot
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
 % % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
@@ -104,9 +105,11 @@
 % in_plot.(tag).order_anl=2; %1=normal; 2=random
 % in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
 % % in_plot.(tag).clims_type_var=datenum(2018,07,01); %in case of <clims_type>=2
-% in_plot.(tag).clims=[NaN,NaN]; 
+% in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
+% in_plot.(tag).filter_lim.clims=[998,1000]; %
 % in_plot.(tag).clims_diff_t=[NaN,NaN]; %clim of difference with time
 % in_plot.(tag).clims_diff_s=[NaN,NaN]; %clim of difference with simulation
+% in_plot.(tag).filter_lim.clims_diff_s=[-1001,-998]; %
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).tim_movie=40; %movie duration [s]
 % in_plot.(tag).fpath_ldb{1,1}=fullfile(fpath_project,'model','postprocessing','mkm-inner.ldb');
@@ -122,6 +125,7 @@
 % in_plot.(tag).fpath_rkm_disp=fullfile(fpaths.dir_rkm,'rkm.csv'); %file to display rkm
 % in_plot.(tag).rkm_tol_x=5000;
 % in_plot.(tag).rkm_tol_y=5000;
+% in_plot.(tag).plot_tiles=1; %plot satellite background image
 
 %% 2DH ls
 
@@ -129,7 +133,8 @@
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
 % in_plot.(tag).do_s=1; %difference with reference
-% in_plot.(tag).var={'bl'}; %<open main_plot_layout>
+% in_plot.(tag).do_all_t=0; %all times together
+% in_plot.(tag).var={'bl'}; 
 % in_plot.(tag).tim=NaN;
 % in_plot.(tag).tim_type=2;
 % in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random
@@ -145,6 +150,7 @@
 % in_plot.(tag).do_marker=1;
 % in_plot.(tag).markersize=5;
 % in_plot.(tag).do_staircase=1;
+% in_plot.(tag).plot_val0=0; %plot initial
 
 %% summerbed
 

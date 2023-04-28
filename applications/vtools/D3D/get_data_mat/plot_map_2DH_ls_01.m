@@ -27,6 +27,9 @@ end
 if isfield(flg_loc,'do_all_t')==0
     flg_loc.do_all_t=0;
 end
+if isfield(flg_loc,'do_all_s')==0
+    flg_loc.do_all_s=0;
+end
 
 %% DO
 
@@ -34,16 +37,17 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+nS=numel(simdef);
+fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
-runid=simdef.file.runid;
-% simdef.file.mat.map_ls_01=fullfile(fdir_mat,'map_ls_01.mat');
-% simdef.file.mat.map_ls_01_tim=fullfile(fdir_mat,'map_ls_01_tim.mat');
+runid=simdef(1).file.runid;
+% simdef(1).file.mat.map_ls_01=fullfile(fdir_mat,'map_ls_01.mat');
+% simdef(1).file.mat.map_ls_01_tim=fullfile(fdir_mat,'map_ls_01_tim.mat');
 
-% simdef.file.fig.map_ls_01=fullfile(fdir_fig,'map_ls_01');
+% simdef(1).file.fig.map_ls_01=fullfile(fdir_fig,'map_ls_01');
 
 %% PARSE
 
@@ -114,10 +118,11 @@ for kpli=1:npli %variable
     for kvar=1:nvar %variable
 
         varname=flg_loc.var{kvar};
-        [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef);
+        [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef(1));
         
         %time 1 for reference
-        if flg_loc.do_diff
+        if flg_loc.do_diff %difference in time
+            fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname);
             data_ref=load(fpath_mat_tmp,'data');                
         end
@@ -142,16 +147,20 @@ for kpli=1:npli %variable
                     in_p.tim=time_mor_dnum(kt);
             end
    
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname);
-            load(fpath_mat_tmp,'data');
+            for kS=1:nS
+                fdir_mat=simdef(kS).file.mat.dir; %1 used for reference for all. Should be the same. 
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname);
+                load(fpath_mat_tmp,'data');
             
-            %save data for plotting all times togehter
-            if flg_loc.do_all_t
-                if flg_loc.do_staircase
-                    data_all(kt,:)=data.val_staircase;
-                else
-                    data_all(kt,:)=data.val;
+                %save data for plotting all times togehter. Better not to do it if you don't need it for memory reasons.
+                if flg_loc.do_all_t || flg_loc.do_all_s 
+                    if flg_loc.do_staircase
+                        data_all(kt,:,kS)=data.val_staircase;
+                    else
+                        data_all(kt,:,kS)=data.val;
+                    end
                 end
+
             end
             
             %measurements                        
@@ -189,7 +198,7 @@ for kpli=1:npli %variable
                             if flg_loc.do_staircase
                                 data_val_p=data.val_staircase;
                             else
-                                data_val_p=data.val_staircase-data_ref.data.val_staircase;
+                                data_val_p=data.val-data_ref.data.val;
                             end
                             in_p.ylims=flg_loc.ylims_diff_t(kylim,:);
                             in_p.is_diff=1;
@@ -231,25 +240,29 @@ for kpli=1:npli %variable
                         fig_map_ls_01(in_p)
                     else
                         in_p.lab_str=var_str_read;
-                        if flg_loc.do_staircase
-                            if flg_loc.do_rkm
-                                error('do')
-%                                 in_p.s=data.rkm_cen;
-                            else
-                                in_p.s=data.Scor_staircase;
-                            end
-                            in_p.val=data_val_p';                            
-                        else
-                            if flg_loc.do_rkm
-                                in_p.s=data.rkm_cen;
-                            else
-                                in_p.s=data.Scen;
-                                in_p.s_staircase=data.Scor_staircase;
-                            end
-                            in_p.val=data_val_p';
-                        end
+                        in_p=gdm_s_rkm_cen(in_p,flg_loc,data);
+                        in_p.val=data_val_p'; 
 
-                        fig_1D_01(in_p)
+                        %all simulations together
+                        if flg_loc.do_all_s && nS>1
+
+                            tag_fig=sprintf('%s_%s',flg_loc.tag,'all'); 
+                            fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+                            fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
+                            mkdir_check(fdir_fig_loc,NaN,1,0);
+        
+                            fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
+
+                            in_p.fname=fname_noext;
+                            switch kdiff
+                                case 1
+                                    in_p.val=squeeze(data_all(kt,:,:));
+                                case 2
+                                    in_p.val=squeeze(data_all(kt,:,:))-squeeze(data_all(1,:,:));
+                            end
+
+                            fig_1D_01(in_p)
+                        end
                     end
                 end %kdiff
             end %kylim
