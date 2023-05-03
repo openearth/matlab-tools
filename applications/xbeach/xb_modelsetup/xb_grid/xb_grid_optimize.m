@@ -325,7 +325,7 @@ if isvector(z_w)
         
         xb_verbose(1,'Add non-erodible layer');
         
-        negrid = interp1(x_d, ne_w, x_xb);
+        negrid = interp1(x_d, double(ne_w), x_xb);
         if islogical(OPT.ne)
             negrid(isnan(negrid)) = 0;
             idx = ~logical(round(negrid));
@@ -369,7 +369,7 @@ else
         
         xb_verbose(1,'Add non-erodible layer');
         
-        negrid = interp2(x_w, y_w, ne_w, x_xb_w, y_xb_w);
+        negrid = interp2(x_w, y_w, double(ne_w), x_xb_w, y_xb_w);
         if islogical(OPT.ne)
             negrid(isnan(negrid)) = 0;
             idx = ~logical(round(negrid));
