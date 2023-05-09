@@ -269,22 +269,27 @@ else
     cbar(kr,kc).label=lab;
 end
 
-if isempty(cmap) %default
-    if is_background && ~is_diff
-        cmap=turbo(100);
-    elseif is_diff && ~is_background
-        cmap=brewermap(100,'RdYlBu');
-    elseif is_diff && is_background
-        cmap=brewermap(100,'RdYlBu');
-    elseif is_percentage
-        cmap=brewermap(100,'RdYlBu');
-    else
-        cmap=turbo(100);
-    end
-end
 if ~isnan(cmap_cut_edges)
     fcut=cmap_cut_edges;
     nc=100/(1-fcut);
+else
+    nc=100;
+end
+
+if isempty(cmap) %default
+    if is_background && ~is_diff
+        cmap=turbo(nc);
+    elseif is_diff && ~is_background
+        cmap=brewermap(nc,'RdBu');
+    elseif is_diff && is_background
+        cmap=brewermap(nc,'RdBu');
+    elseif is_percentage
+        cmap=brewermap(nc,'RdBu');
+    else
+        cmap=turbo(nc);
+    end
+end
+if ~isnan(cmap_cut_edges)
     cmap=cmap(round(nc*fcut):round(nc*(1-fcut)),:);
 end
 ncolor=size(cmap,1);

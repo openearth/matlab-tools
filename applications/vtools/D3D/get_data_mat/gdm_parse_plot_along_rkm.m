@@ -29,6 +29,11 @@ if flg_loc.do_plot_along_rkm
             fclose(fid);
         end
     end
+
+    %order of analysis    
+    nrkm=size(flg_loc.rkm_file{1,1},1);
+    flg_loc.krkm_v=gdm_kt_v(flg_loc,nrkm);
+
 end
 
 if isfield(flg_loc,'do_rkm_disp')==0

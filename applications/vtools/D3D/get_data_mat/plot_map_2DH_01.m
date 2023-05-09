@@ -140,6 +140,7 @@ messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
+%there is a function for this
 if flg_loc.do_diff==0
     ndiff=1;
 else 
@@ -271,17 +272,10 @@ for kvar=1:nvar %variable
         %% plot along rkm
         %2DO: move to function for cleaning
         if flg_loc.do_plot_along_rkm==1
-            %parsed in <flg_loc>
-%             fid=fopen(flg_loc.fpath_rkm_plot_along,'r');
-%             rkm_file=textscan(fid,'%f %f %s %f','headerlines',1,'delimiter',',');
-%             fclose(fid);
-            rkm_file=flg_loc.rkm_file; %maybe a better name...
-            
-            nrkm=size(rkm_file{1,1},1);
-            for krkm=1:nrkm
+            for krkm=flg_loc.krkm_v
                 
-                in_p.xlims=rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
-                in_p.ylims=rkm_file{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
+                in_p.xlims=flg_loc.rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
+                in_p.ylims=flg_loc.rkm_file{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
 
                 for kclim=1:nclim
                     
