@@ -23,11 +23,6 @@ function addOET(varargin)
 
 if nargin==0 %we assume it is called with `run` (i.e., no variables can be passed)
     path_v_gen=pwd; %when doing `run`, it does `cd` to where it is called
-    if isunix %we assume that if Linux we are in the p-drive. !!DANGER
-        path_v_gen=strrep(strrep(strcat('/',strrep(path_v_gen,'P:','p:')),':',''),'\','/');
-    end
-%     addpath(path_v_gen) 
-
     if evalin('caller', 'exist(''fdir_d3d'',''var'')')
         path_d3d_co=evalin('caller','fdir_d3d');
     else
@@ -40,6 +35,12 @@ elseif nargin==2
     path_d3d_co=varargin{1,1};
 else
     error('Incorrect number of input')
+end
+
+%linux
+if isunix %we assume that if Linux we are in the p-drive. !!DANGER
+    path_v_gen=strrep(strrep(strcat('/',strrep(path_v_gen,'P:','p:')),':',''),'\','/');
+    path_d3d_co=strrep(strrep(strcat('/',strrep(path_d3d_co,'P:','p:')),':',''),'\','/');
 end
 
 %% ADD
@@ -90,7 +91,7 @@ if exist('oetsettings','file')~=2
     path_qp_src=fullfile(path_d3d_co,'src','tools_lgpl','matlab','quickplot','progsrc');
     if isfolder(path_qp_src)==0
         warning('Folder with QuickPlot from Delft3D source not available here: %s',path_qp_src);
-        fprintf('Using QuickPlot in OpenEarthTools repository (old).')
+        fprintf('Using QuickPlot in OpenEarthTools repository (old).\n')
     else
         addpath(path_qp_src);
         fprintf('Using QuickPlot repository at %s \n',path_qp_src)

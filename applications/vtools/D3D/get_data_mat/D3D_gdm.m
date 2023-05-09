@@ -38,12 +38,18 @@
 % 
 % fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
 % fdir_d3d='c:\checkouts\delft3d\';
-% 
+%
+% fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
+% fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
+%
 % % fpath_project='d:\temporal\220517_improve_exner\';
 % fpath_project='p:\11209261-rivierkunde-2023-morerijn';
 % 
 % %% ADD OET
-% 
+%
+% if isunix %we assume that if Linux we are in the p-drive. 
+%     fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
+% end
 % run(fpath_add_oet);
 % 
 % %% PATHS
