@@ -50,8 +50,13 @@ set(Text,'string',waterDictionary(OPT.YLabel,NaN,OPT.language));
 if ~isempty(Title)
     Text = get(gca,'Title'); 
     posSpace = strfind(Title,' ');
-    param    = Title(1:posSpace(1) - 1);
-    param_n  = waterDictionary(param,NaN,OPT.language,'addUnit',false);
+    if ~isempty(posSpace)
+       param    = Title(1:posSpace(1) - 1);
+       param_n  = waterDictionary(param,NaN,OPT.language,'addUnit',false);
+    else
+        posSpace = 1;
+        param_n  = '';
+    end
     Title    = [param_n Title(posSpace:end)]; 
     set(Text,'string',Title,'FontSize',5.0); 
 end
