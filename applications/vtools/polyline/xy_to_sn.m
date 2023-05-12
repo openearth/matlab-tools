@@ -140,7 +140,7 @@ y_shift = yp - y_nearest(:);
 z = (x_shift + i*y_shift).*exp(-i*ang_nearest(:));
 
 % compute the channel perpendicular and following coordinates
-np = imag(z);
+np = -imag(z);
 sp = real(z) + s_nearest(:);
 
 % reformat the variables into the original size
