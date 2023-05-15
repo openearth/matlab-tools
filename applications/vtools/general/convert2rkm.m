@@ -87,6 +87,10 @@ else
     end
 end
 
+if ~isfile(path_rkm)
+    error('File for river kilometers does not exists: %s',path_rkm)
+end
+
 %parser
 parin=inputParser;
 

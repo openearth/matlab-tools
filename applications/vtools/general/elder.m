@@ -30,6 +30,9 @@ switch friction_type
         cf=ci;
     case 2 %C (Chezy)
         cf=g/ci^2;
+    case 3 %Manning
+        C=h^(1/6)/ci;
+        cf=g/C^2;
 end
 
 ust=sqrt(cf)*u;

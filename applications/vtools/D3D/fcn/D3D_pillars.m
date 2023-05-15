@@ -29,6 +29,6 @@ for kstruct=1:nstruct
     struct(kstruct).xy_pli=struct(kstruct).xy; %coherent with <D3D_general_structures>
     struct(kstruct).xy=mean(struct(kstruct).xy_pli(:,1:2),1);
     if ~isempty(fpath_rkm)
-        struct(kstruct).rkm=convert2rkm(fpath_rkm,struct(kstruct).xy,'TolMinDist',2000);
+        struct(kstruct).rkm=convert2rkm(fpath_rkm,struct(kstruct).xy,'TolMinDist',Inf); %make input TolMinDist
     end
 end

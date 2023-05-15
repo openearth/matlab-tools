@@ -371,12 +371,12 @@ if ns>1
     %% call
     plot_all_runs_one_figure(fid_log,in_plot,simdef_all,leg_str_all)
 
+else
+    simdef_all=NaN; %for passing to `gdm_adhoc`. Best would be to preallocate. 
 end %ns>1
 
 %% AD-HOC
 
-
-gdm_adhoc(fid_log,in_plot,simdef)
-
+gdm_adhoc(fid_log,in_plot,simdef_all)
 
 end %function

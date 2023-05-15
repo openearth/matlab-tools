@@ -29,29 +29,36 @@ do_nibo=parin.Results.NI_BO;
 
 %% CALC
 
+nrkm=numel(rkm);
+br=cell(nrkm,1);
+
+for krkm=1:nrkm
+
 switch track
     case {'WL','BO','NI','WA'}
         if rkm>960.15
             if do_nibo
-                br='NI';
+                br{krkm}='NI';
             else
-                br=waal_name;
+                br{krkm}=waal_name;
             end
         elseif rkm>952.85
             if do_nibo
-                br='BO';
+                br{krkm}='BO';
             else
-                br=waal_name;
+                br{krkm}=waal_name;
             end                
         elseif rkm>867.00
-            br=waal_name;
+            br{krkm}=waal_name;
         elseif rkm>852.90
-            br='BR';
+            br{krkm}='BR';
         else
-            br='Rhein';
+            br{krkm}='Rhein';
         end
     otherwise
         error('do')
+end
+
 end
 
 end %function

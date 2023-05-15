@@ -23,12 +23,22 @@ inc=readcell(fpath_in,'delimiter',';');
 nf=size(inc,1);
 for kf=1:nf
     if inc{kf,1}==0; continue; end
-    [~,fname,fext]=fileparts(inc{kf,2});
-    fpath_dest=fullfile(fpath_dir,inc{kf,3},sprintf('%s%s',fname,fext));
-    if ~(exist(fullfile(fpath_dir,inc{kf,3}))==7)
-        mkdir(fullfile(fpath_dir,inc{kf,3}));
-    end
-    copyfile_check(inc{kf,2},fpath_dest);
+%     if isfile(inc{kf,2})
+        [~,fname,fext]=fileparts(inc{kf,2});
+        if isempty(fname) %is file
+            fpath_dest=fullfile(fpath_dir,inc{kf,3},sprintf('%s%s',fname,fext));
+        else %is dir
+            fpath_dest=fullfile(fpath_dir,inc{kf,3});
+        end
+        if ~(exist(fullfile(fpath_dir,inc{kf,3}))==7)
+            mkdir(fullfile(fpath_dir,inc{kf,3}));
+        end
+        copyfile_check(inc{kf,2},fpath_dest);
+%     elseif isdir(inc{kf,2})
+%         copyfile_check(inc{kf,2},)
+%     else
+%         error('Not a file and not a dir: %s',inc{kf,2})
+%     end
 end
 
 end %function

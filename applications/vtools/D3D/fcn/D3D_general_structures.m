@@ -26,13 +26,14 @@ fpath_rkm=parin.Results.fpath_rkm;
 %% CALC
 
 path_struct_folder=fileparts(path_struct);
-struct=D3D_io_input('read',path_struct);
-struct_fieldnames=fieldnames(struct);
-nstruct=numel(struct_fieldnames);
+structures=D3D_io_input('read',path_struct);
+structures_fieldnames=fieldnames(structures);
+nstruct=numel(structures_fieldnames);
 kgs=0;
+gen_struct=struct('name',[],'xy',[],'xy_pli',[],'rkm',[],'type',[]);
 for kstruct=1:nstruct
-    if strcmp(struct.(struct_fieldnames{kstruct}).type,'generalstructure')
-        path_genstruc_pli=fullfile(path_struct_folder,struct.(struct_fieldnames{kstruct}).polylinefile);
+    if strcmp(structures.(structures_fieldnames{kstruct}).type,'generalstructure')
+        path_genstruc_pli=fullfile(path_struct_folder,structures.(structures_fieldnames{kstruct}).polylinefile);
         kgs=kgs+1;
         pli=D3D_io_input('read',path_genstruc_pli);
 

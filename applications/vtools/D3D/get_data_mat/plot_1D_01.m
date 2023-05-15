@@ -324,7 +324,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+                                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -346,7 +346,7 @@ for ksb=1:nsb
                                 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                 mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                fname_noext=fig_name(fdir_fig_loc,tag_fig,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+                                fname_noext=fig_name(fdir_fig_loc,tag_fig,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
         %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                 in_p.fname=fname_noext;
@@ -370,7 +370,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -391,7 +391,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -435,7 +435,7 @@ for ksb=1:nsb
             
             %% xvt
             if flg_loc.do_xvt
-               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie)
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie,var_idx{kvar})
             end
             
             %% cumulative
@@ -444,7 +444,7 @@ for ksb=1:nsb
                 
                 statis='val_mean';
                 diff_tim=seconds(diff(tim_dtime_p));
-                val_tim=data_xvt.(statis)(:,:,1:end-1).*repmat(reshape(diff_tim,1,1,[]),nx,nS,1);
+                val_tim=data_xvt.(statis)(:,:,1:end-1).*repmat(reshape(diff_tim,1,1,[]),nx,nS,1); %we do not use the last value. Block approach with variables 1:end-1 with time 1:end
                 val_cum=cumsum(cat(3,zeros(nx,nS,1),val_tim),3);
 
                 in_p.lab_str=sprintf('%s_t',lab_str); %add time
@@ -456,7 +456,7 @@ for ksb=1:nsb
                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'cum');
                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff);
+                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
 
                     in_p.fname=fname_noext;
 
@@ -474,7 +474,7 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref,var_idx)
 
 % fprintf('fdir_fig: %s \n',fdir_fig);
 % fprintf('tag: %s \n',tag);
@@ -483,9 +483,9 @@ function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref)
 % fprintf('iso: %s \n',iso);
                 
 if isempty(runid)
-    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,fn,sb_pol,kref));
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%02d_%s_%s_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx,fn,sb_pol,kref));
 else
-    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,fn,sb_pol,kref));
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%02d_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx,fn,sb_pol,kref));
 end
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
@@ -493,15 +493,15 @@ end %function
 
 %%
 
-function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim)
+function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim,var_idx)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%02d_clim_%02d',tag,runid,var_str,fn,sb_pol,kref,kclim));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%02d_%s_%s_%02d_clim_%02d',tag,runid,var_str,var_idx,fn,sb_pol,kref,kclim));
 
 end %function
 
 %%
 
-function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie)
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie,var_idx)
 
 %% PARSE
 
@@ -574,7 +574,7 @@ for kS=1:nS
         %                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
                 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
                 mkdir_check(fdir_fig_loc,NaN,1,0);
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim);
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim,var_idx);
 
                 in_p.fname=fname_noext;
                 fig_surf(in_p)
@@ -589,6 +589,10 @@ end %function
 
 function flg_loc=check_B(fid_log,flg_loc,simdef,str_in)
 
+flg_loc.var=reshape(flg_loc.var,1,numel(flg_loc.var));
+flg_loc.do_cum=reshape(flg_loc.do_cum,1,numel(flg_loc.do_cum));
+flg_loc.unit=reshape(flg_loc.unit,1,numel(flg_loc.unit));
+
 str_do=sprintf('do_val_%s',str_in);
 if isfield(flg_loc,str_do)==0
     flg_loc.(str_do)=zeros(size(flg_loc.var));
@@ -597,12 +601,18 @@ nvar_tmp=numel(flg_loc.var);
 for kvar=1:nvar_tmp
     if flg_loc.(str_do)(kvar)
         [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
-        flg_loc.var=cat(1,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
+        flg_loc.var=cat(2,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
         flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
         flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});
-        flg_loc.do_cum=cat(1,flg_loc.do_cum,flg_loc.do_cum(kvar));
+        flg_loc.do_cum=cat(2,flg_loc.do_cum,flg_loc.do_cum(kvar));
         if isfield(flg_loc,'unit')
-            flg_loc.unit=cat(1,flg_loc.unit,sprintf('%s_%s',flg_loc.unit{kvar},str_in));
+            flg_loc.unit=cat(2,flg_loc.unit,sprintf('%s_%s',flg_loc.unit{kvar},str_in));
+        end
+        if isfield(flg_loc,'layer')
+            flg_loc.layer=cat(2,flg_loc.layer,{zeros(0,0)});
+        end
+        if isfield(flg_loc,'var_idx')
+            flg_loc.var_idx=cat(2,flg_loc.var_idx,{zeros(0,0)});
         end
     end
 end

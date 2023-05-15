@@ -29,6 +29,10 @@ switch in_plot.adhoc
         tag_check='fig_his_01';
         in_plot_fig=gmd_tag(in_plot,tag_check);
         gdm_adhoc_export_for_groundwater(fid_log,in_plot_fig,simdef);
+    case 2
+        tag_check='fig_map_2DH_01';
+        in_plot_fig=gmd_tag(in_plot,tag_check);
+        gdm_adhoc_cummulative_energy_loss(fid_log,in_plot_fig,simdef);
     otherwise
         messageOut(fid_log,sprintf('Adhoc function %d does not exist.',in_plot.adhoc));
 end

@@ -12,7 +12,7 @@
 %
 %
 
-function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,varargin)
+function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,varargin)
 
 %% PARSE
 
@@ -44,6 +44,6 @@ switch simdef.D3D.structure
         end
 end
 
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass,fdir_mat,'results_type',results_type);
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass,fdir_mat,'results_type',results_type);
 
 end %function

@@ -49,13 +49,15 @@ data_var=data_lyrfrac;
 
 %get fractions in the desired layer
 if ~isempty(layer)
-    idx_l=D3D_search_index_in_dimension(data_lyrfrac,'bed_layers'); 
+%     idx_l=D3D_search_index_in_dimension(data_lyrfrac,'bed_layers'); 
+    idx_l=D3D_search_index_layer(data_lyrfrac);
     data_var.val=submatrix(data_var.val,idx_l,layer); %take submatrix along dimension
 end
 
 %get desired fractions
 if ~isempty(var_idx)
-    idx_f=D3D_search_index_in_dimension(data_lyrfrac,'sedimentFraction'); 
+%     idx_f=D3D_search_index_in_dimension(data_lyrfrac,'sedimentFraction'); 
+    idx_f=D3D_search_index_fraction(data_lyrfrac); 
     data_var.val=submatrix(data_var.val,idx_f,var_idx); %take submatrix along dimension
     %sum over sediment dimension
     data_var.val=sum(data_var.val,idx_f);

@@ -143,6 +143,9 @@ end
 if isfield(in_p,'Lref')==0
     in_p.Lref='+NAP';
 end
+if isfield(in_p,'ylab')==0
+    in_p.ylab='';
+end
 
 v2struct(in_p)
 
@@ -321,13 +324,17 @@ if ~isempty(xlab_str)
 else
     xlabels{kr,kc}='';
 end
-[lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan,'Lref',Lref);
-if is_diff
-    ylabels{kr,kc}=str_diff;
-elseif is_std
-    ylabels{kr,kc}=str_std;
+if isempty(ylab)
+    [lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan,'Lref',Lref);
+    if is_diff
+        ylabels{kr,kc}=str_diff;
+    elseif is_std
+        ylabels{kr,kc}=str_std;
+    else
+        ylabels{kr,kc}=lab;
+    end
 else
-    ylabels{kr,kc}=lab;
+    ylabels{kr,kc}=ylab;
 end
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
