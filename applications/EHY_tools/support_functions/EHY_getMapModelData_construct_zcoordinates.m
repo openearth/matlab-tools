@@ -143,8 +143,8 @@ switch gridInfo.layer_model
                     % check
                     if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
                         FMversion = EHY_getFMversion(inputFile,modelType);
-                        if FMversion < 67072
-                            disp('<strong>Numtopsiguniform was not yet implemented (correctly) in the FM version you used. You should move to FM >= 67072 (Jul 8, 2020) </strong>')
+                        if EHY_compareVersions('1.2.110', FMversion)
+                            disp('<strong>Numtopsiguniform was not yet implemented (correctly) in the FM version you used. You should move to FM version >= 1.2.110 </strong>')
                             disp('<strong>Reconstructing z-coordinates as if Numtopsiguniform = 0 (as was used in your run)</strong>')
                             mdu.geometry.numtopsiguniform = 0;
                         end
@@ -152,6 +152,7 @@ switch gridInfo.layer_model
                     
                     numtopsig = mdu.geometry.numtopsig;
                     if isfield(mdu.geometry,'numtopsiguniform') && mdu.geometry.numtopsiguniform
+                        numtopsiguniform = 1;
                         sigma_bottom = max([int_field(:,end-numtopsig) bl],[],2) ;
                         sigma_top    = wl(iT,:)';
                         dh = sigma_top - sigma_bottom;
@@ -205,6 +206,10 @@ switch gridInfo.layer_model
                     % this should already be the case
                     int_field(logi,cellIndMinUni(ii)) = bl(logi);
                 elseif keepzlayeringatbed == 1
+                    if exist('numtopsig','var') && exist('numtopsiguniform','var') && numtopsiguniform == 1 && ...
+                            cellIndMinUni(ii) >= size(int_field,2)-numtopsig
+                        continue
+                    end
                     int_field(logi,cellIndMinUni(ii)) = ZKlocal(cellIndMinUni(ii));
                 elseif keepzlayeringatbed == 2
                     int_field(logi,cellIndMinUni(ii)) = bl(logi);

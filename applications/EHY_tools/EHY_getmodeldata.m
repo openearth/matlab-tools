@@ -100,8 +100,8 @@ end
 %% temp fix for incorrect z-coordinates in dfm
 if strcmp(OPT.varName,'zcoordinate_w') && ~EHY_isCMEMS(inputFile)
     FMversion = EHY_getFMversion(inputFile,modelType);
-    if FMversion < 67858
-        disp('<strong>Reconstruction of zcoordinate_w is not needed anymore when moving to FM version >= 67858 (Oct 27, 2020)</strong>')
+    if EHY_compareVersions('1.2.110', FMversion) 
+        disp('<strong>Reconstruction of zcoordinate_w is not needed anymore when moving to a FM version >= 1.2.110</strong>')
         disp('Fix for DFM: Reconstructing Zcen_int based on water level and z-coordinates of cell centers')
         Data = EHY_getmodeldata_zcen_int(inputFile,stat_name,modelType,OPT);
         if nargout==1

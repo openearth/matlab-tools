@@ -369,7 +369,10 @@ switch modelType
                                 end
                             end
                         elseif strcmp(typeOfModelFileDetail,'map_nc') || strcmp(typeOfModelFileDetail,'net_nc') % map/nc file
-                            if nc_isvar(inputFile,'mesh2d_layer_z') % z-layer info
+                            if nc_isvar(inputFile,'mesh2d_layer_sigma_z') % z-sigma-layer info
+                                E.Zcen_cen = ncread(inputFile,'mesh2d_layer_sigma_z')';
+                                E.Zcen_int = ncread(inputFile,'mesh2d_interface_sigma_z')';
+                            elseif nc_isvar(inputFile,'mesh2d_layer_z') % z-layer info
                                 E.Zcen_cen = ncread(inputFile,'mesh2d_layer_z')';
                                 E.Zcen_int = ncread(inputFile,'mesh2d_interface_z')';
                             elseif nc_isvar(inputFile,'mesh2d_layer_sigma')
@@ -1022,11 +1025,15 @@ switch modelType
         switch typeOfModelFile
             case 'outputfile'
                 infonc = ncinfo(inputFile);
-                if ismember('XYcen',wantedOutput)
+                if ismember('XYcen',wantedOutput) && nc_isvar(inputFile,'x')
                     E.Xcen = nc_varget(inputFile,'x');
                     E.Ycen = nc_varget(inputFile,'y');
                 end
-                if ismember('XYcor',wantedOutput)
+                if ismember('XYcor',wantedOutput) && nc_isvar(inputFile,'edge_x') % nowadays called 'corner_x'
+                    E.Xcor = nc_varget(inputFile,'edge_x');
+                    E.Ycor = nc_varget(inputFile,'edge_y');
+                end
+                if ismember('XYcor',wantedOutput) && nc_isvar(inputFile,'corner_x')
                     E.Xcor = nc_varget(inputFile,'corner_x');
                     E.Ycor = nc_varget(inputFile,'corner_y');
                 end

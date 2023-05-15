@@ -237,7 +237,11 @@ if ~exist('Data','var')
                     if facesInd == 1
                         Data.val(FlowElemDomain ~= domainNr,:,:) = [];
                     elseif facesInd == 2
-                        Data.val(:,FlowElemDomain ~= domainNr,:) = [];
+                        if length(size(Data.val)) == 3; 
+                            Data.val(:,FlowElemDomain ~= domainNr,:) = [];
+                        else
+                            Data.val(:,FlowElemDomain ~= domainNr,:,:) = [];
+                        end
                     elseif facesInd == 3
                         Data.val(:,:,FlowElemDomain ~= domainNr,:) = [];
                     elseif facesInd == 4

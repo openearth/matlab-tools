@@ -47,12 +47,8 @@ if ~isempty(dimsInd.layers) && dims(dimsInd.layers).sizeOut > 1
         Zcen = EHY_getMapModelData(inputFile,OPT(:),'varName','mesh2d_flowelem_zcc');
         Data.Zcen = Zcen.val;
     else
-        try
-            GI = EHY_getGridInfo(inputFile,'layer_model','mergePartitions',0,'disp',0);
-            if strcmpi(Data.modelType,'dfm') && strcmpi(GI.layer_model,'z-model')
-                disp('Reconstruction of z-layer-coordinates for map-files is not needed anymore when moving to FM version >= 70827 (Mar, 2021) by specifying "fullGridOutput = 1"')
-            end
-        end
+        disp('The vertical coordinates are not directly available in your model file. You could achieve this by specifying in .mdu''s [output]-block "fullGridOutput = 1" (in FM versions more recent than March 2021)')
+        disp('The vertical coordinates will now be reconstructured based on the information available from the model output (and potentially the corresponding .mdu file).')
         [Data.Zint,Data.Zcen,Data.wl,Data.bed] = EHY_getMapModelData_construct_zcoordinates(inputFile,Data.modelType,OPT);
     end
     dmy = size(Data.Zcen);
