@@ -93,7 +93,7 @@ if exist('oetsettings','file')~=2
         warning('Folder with QuickPlot from Delft3D source not available here: %s',path_qp_src);
         fprintf('Using QuickPlot in OpenEarthTools repository (old).\n')
     else
-        addpath(path_qp_src);
+        addpath(path_qp);
         fprintf('Using QuickPlot repository at %s \n',path_qp_src)
     end
 
