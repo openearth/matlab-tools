@@ -388,6 +388,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).Title.String='c';
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
+han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')

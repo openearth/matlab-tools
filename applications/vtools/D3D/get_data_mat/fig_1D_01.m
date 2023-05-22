@@ -146,6 +146,9 @@ end
 if isfield(in_p,'ylab')==0
     in_p.ylab='';
 end
+if isfield(in_p,'xdir')==0
+    in_p.xdir='normal';
+end
 
 v2struct(in_p)
 
@@ -473,6 +476,7 @@ if do_title && ~do_time
 end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
+han.sfig(kr,kc).XAxis.Direction=xdir;
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')

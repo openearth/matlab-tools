@@ -20,9 +20,7 @@
 %
 %   -simdef.file.grd = full path to the grid file [string] e.g. 'c:\Users\chavarri\temporal\210503_VOW\03_simulations\02_flume\02_runs\r001\grd.grd'
 %   -simdef.ini.etab0_type = type of initial bed elevation: 1=constant sloping bed in M-direction; 2=constant bed elevation
-%   -simdef.grd.dx = horizontal discretization [m] [integer(1,1)]; e.g. [0.02] 
 %   -simdef.ini.s = bed slope [-] [integer(1,1)] or [integer(nx-1,1)] from upstream to downstream; e.g. [3e-4] or linspace(0.005,0.003,101)
-%   -simdef.grd.L = domain length [m] [integer(1,1)] [100]
 %   -simdef.ini.etab = %initial downstream bed level [m] [double(1,1)] e.g. [0]
 %
 %OUTPUT:
