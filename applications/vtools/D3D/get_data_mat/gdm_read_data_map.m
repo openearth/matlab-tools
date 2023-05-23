@@ -43,7 +43,8 @@ branch=parin.Results.branch;
 % varname=D3D_var_derived2raw(varname); %I don't think I need it...
 [ismor,is1d]=D3D_is(fpath_map);
 [var_str,varname_changed]=D3D_var_num2str(varname,'is1d',is1d,'ismor',ismor); %in the call in <create_mat_map_2DH_01> we already change the name. Here we only need the save name. Otherwise we need to pass <simdef.D3D.structure>
-fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'var_idx',var_idx,'branch',branch);
+% fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'var_idx',var_idx,'branch',branch);
+fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'branch',branch); %`var_idx` cannot be in the name because it is not saved as such. 
 
 if exist(fpath_sal,'file')==2
     if do_load
@@ -77,6 +78,15 @@ if ~isempty(layer)
     data.val=submatrix(data.val,idx_f,layer);
     
 end
+%get desired fractions
+if ~isempty(var_idx)
+%     idx_f=D3D_search_index_in_dimension(data_lyrfrac,'sedimentFraction'); 
+    idx_f=D3D_search_index_fraction(data); 
+    data.val=submatrix(data.val,idx_f,var_idx); %take submatrix along dimension
+    %sum over sediment dimension
+%     data.val=sum(data.val,idx_f); %why? not here. I copied this from another location. 
+end
+
 % if ~isempty(bed_layers)
 %     %maybe better to search for [layer] in the ones coming from EHY?
 %    data.val=data.val(:,:,layer);

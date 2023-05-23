@@ -20,6 +20,7 @@ parin=inputParser;
 
 addOptional(parin,'tim',[]);
 addOptional(parin,'var_idx',[]);
+addOptional(parin,'sum_var_idx',1);
 % addOptional(parin,'tol',1.5e-7);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
@@ -29,6 +30,7 @@ parse(parin,varargin{:});
 
 time_dnum=parin.Results.tim;
 var_idx=parin.Results.var_idx;
+sum_var_idx=parin.Results.sum_var_idx;
 % tol=parin.Results.tol;
 layer=parin.Results.layer;
 idx_branch=parin.Results.idx_branch;
@@ -60,7 +62,9 @@ if ~isempty(var_idx)
     idx_f=D3D_search_index_fraction(data_lyrfrac); 
     data_var.val=submatrix(data_var.val,idx_f,var_idx); %take submatrix along dimension
     %sum over sediment dimension
-    data_var.val=sum(data_var.val,idx_f);
+    if sum_var_idx
+        data_var.val=sum(data_var.val,idx_f); %I cannot see why do we need to sum over fractions. I don't remember for which case did I do this. 
+    end
 end
 
 end %function

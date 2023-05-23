@@ -21,6 +21,7 @@ parin=inputParser;
 addOptional(parin,'tim',[]);
 addOptional(parin,'sim_idx',[]);
 addOptional(parin,'var_idx',[]);
+addOptional(parin,'sum_var_idx',1);
 addOptional(parin,'layer',[]);
 addOptional(parin,'do_load',1);
 addOptional(parin,'tol',1.5e-7);
@@ -33,6 +34,7 @@ parse(parin,varargin{:});
 time_dnum=parin.Results.tim;
 sim_idx=parin.Results.sim_idx;
 var_idx=parin.Results.var_idx;
+sum_var_idx=parin.Results.sum_var_idx;
 layer=parin.Results.layer;
 do_load=parin.Results.do_load;
 tol=parin.Results.tol;
@@ -101,13 +103,13 @@ switch varname
     case 'ba' %no time
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); 
     case {'mesh1d_lyrfrac','mesh2d_lyrfrac','LYRFRAC'}
-        data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+        data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'sum_var_idx',sum_var_idx); 
     case {'mesh2d_ucmag'} %different case for averaging in case there are several layers
         data_var=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     case 'stot'
         data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     otherwise %name directly available in output
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); 
 end
 
 end %function

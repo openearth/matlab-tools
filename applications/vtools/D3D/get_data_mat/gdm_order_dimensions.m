@@ -45,6 +45,12 @@ if isfield(data,'dimensions') %read from EHY
     else
         %there is only <mesh2d_nFaces>
     end
+    %check if one empty dimension and try to join it
+%     sv=size(data.val);
+%     bol_1=sv==1;
+%     if any(bol_1)
+% 
+%     end
 else
     switch structure
         case {2,4}

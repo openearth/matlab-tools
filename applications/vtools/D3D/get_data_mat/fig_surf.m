@@ -123,6 +123,9 @@ end
 if isfield(in_p,'plot_pillars_name')==0
     in_p.plot_pillars_name=0;
 end
+if isfield(in_p,'frac')==0
+    in_p.frac=1;
+end
 
 v2struct(in_p)
 
@@ -187,7 +190,7 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(clab_str,1,lan);
+[lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(clab_str,1,lan,'frac',frac);
 if is_diff
     cbar(kr,kc).label=str_diff;
 elseif is_std

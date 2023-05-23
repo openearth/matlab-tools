@@ -162,7 +162,8 @@ for kst=1:nst
         
         data=struct();
         data.val=val; %we have to save it as structure because we use 'raw' type
-        
+        data.dimensions='[mesh2d_nFaces,sedimentFraction]';
+
         save_check(fpath_mat_st,'data')
         
         %% save sum 
@@ -173,8 +174,24 @@ for kst=1:nst
         end
         data=struct();
         data.val=sum(val,2); %we have to save it as structure because we use 'raw' type
+        data.dimensions='[mesh2d_nFaces]';
 
         save_check(fpath_mat_st,'data')
+        
+        %% save each fraction independently
+
+        %Don't think we need it. We have all of them together and take the ones we need in `gdm_read_data_map`
+%         for kf=1:size(qbk,2)
+%             fpath_mat_st=mat_tmp_name(fdir_mat,flg_loc.sedtrans_name{kst},'tim',time_dnum(kt),'var_idx',kf);
+%             if exist(fpath_mat_st,'file')==2 && ~flg_loc.overwrite
+%                 continue
+%             end
+%             data=struct();
+%             data.val=val(:,kf); %we have to save it as structure because we use 'raw' type
+%             data.dimensions='[mesh2d_nFaces]';
+% 
+%             save_check(fpath_mat_st,'data')
+%         end
         
         %% disp
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
@@ -185,7 +202,7 @@ end %kst
 
 if flg_loc.do_sb
     
-nf=numel(D3D_read_sed(simdef.file.sed));
+nf=numel(D3D_read_sed(simdef.file.sed)); %we cannot use the size of `qbk` because the loop may be skipped if files exist
 
 in_plot_sb.fdir_sim=flg_loc.fdir_sim;
 in_plot_sb.str_sim=flg_loc.str_sim;
@@ -201,24 +218,57 @@ in_plot_sb.(tag_sb).do_diff=0; %difference initial time
 in_plot_sb.(tag_sb).do_s=0; %difference with reference
 in_plot_sb.(tag_sb).do_all=flg_loc.do_all; 
 in_plot_sb.(tag_sb).do_s_diff=0; %difference with reference and initial time
+in_plot_sb.(tag_sb).tim=flg_loc.tim; %all times
+in_plot_sb.(tag_sb).order_anl=2; %1=normal; 2=random
+in_plot_sb.(tag_sb).tim_ave{1,1}=NaN; 
+% in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
+
 % in_plot_sb.(tag_sb).var=var_sum; %open D3D_list_of_variables
 % in_plot_sb.(tag_sb).do_val_B_mor=ones(size(var_sum)); %compute value of the variable per unit of morphodynamic width
+
+    %only var_sum
 in_plot_sb.(tag_sb).var=cat(2,var_sum,{'umag','mesh2d_czs','h','Ltot'},repmat({'Fak'},1,nf)); %open D3D_list_of_variables
+
 in_plot_sb.(tag_sb).layer=num2cell(cat(2,zeros(size(var_sum)),[0,0,0,0,ones(1,nf)])); %we want the first layer of `Fak` 
 in_plot_sb.(tag_sb).layer{numel(var_sum)+1}=[]; %we do not want to specify any layer in velocity 
+
 in_plot_sb.(tag_sb).var_idx=cell(1,nst+4+nf);
 for kf=1:nf
     in_plot_sb.(tag_sb).var_idx{1,nst+4+kf}=kf;
 end
-% in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
+
 in_plot_sb.(tag_sb).do_val_B_mor=[ones(1,nst),[0,0,0,0,zeros(1,nf)]]; %compute value of the variable per unit of morphodynamic width
-in_plot_sb.(tag_sb).tim=flg_loc.tim; %all times
-in_plot_sb.(tag_sb).order_anl=2; %1=normal; 2=random
-in_plot_sb.(tag_sb).tim_ave{1,1}=NaN; 
+
 in_plot_sb.(tag_sb).unit=cell(1,nst+4+nf);
 in_plot_sb.(tag_sb).unit(1:nst)=unit_v;
+
 in_plot_sb.(tag_sb).do_cum=[ones(1,nst),0,0,0,0,zeros(1,nf)]; 
 
+    %add each size fraction
+for kst=1:nst
+    for kf=1:nf
+        in_plot_sb.(tag_sb).var=cat(2,in_plot_sb.(tag_sb).var,flg_loc.sedtrans_name{kst}); 
+        in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
+        in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{kf});
+        in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,1);
+        in_plot_sb.(tag_sb).unit=cat(2,in_plot_sb.(tag_sb).unit,{'s'});
+        in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,0);
+    end
+end
+
+    %add transport per size fraction all together
+in_plot_sb.(tag_sb).do_area=zeros(1,numel(in_plot_sb.(tag_sb).var));
+for kst=1:nst
+    in_plot_sb.(tag_sb).var=cat(2,in_plot_sb.(tag_sb).var,flg_loc.sedtrans_name{kst}); 
+    in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
+    in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{1:1:nf});
+    in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,1);
+    in_plot_sb.(tag_sb).unit=cat(2,in_plot_sb.(tag_sb).unit,{'stot'});
+    in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,1);
+    in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,1);
+end
+
+% CALL
 D3D_gdm(in_plot_sb)
 
 end

@@ -46,6 +46,10 @@ end
 if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
     in_p.xlims=[min(in_p.s),max(in_p.s)];
 end
+if isfield(in_p,'do_area')==0
+    in_p.do_area=0;
+end
+
 if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
     bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);
     in_p.ylims=[min(min(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan')];
@@ -54,6 +58,7 @@ if isnan(in_p.ylims(1))
     in_p.ylims=[0,0];
 end
 in_p.ylims=in_p.ylims+[-1,1].*abs(mean(in_p.ylims)/1000)+10.*[-eps,eps];
+
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
@@ -149,6 +154,10 @@ end
 if isfield(in_p,'xdir')==0
     in_p.xdir='normal';
 end
+if isfield(in_p,'frac')==0
+    in_p.frac='';
+end
+
 
 v2struct(in_p)
 
@@ -157,6 +166,26 @@ print_fig=check_print_figure(in_p);
 if ~print_fig
     return
 end
+
+%% check dimensions
+
+sv=size(val);
+if numel(sv)>2
+    sv=sv(2:end);
+    bol_d1=sv==1;
+    if ~any(bol_d1)
+        messageOut(NaN,'I cannot plot more than 2 dimensions')
+        return
+    end
+end
+val=squeeze(val);
+if do_area
+    ylims=[0,max(sum(val,2))+eps];
+end
+
+%%
+
+
 
 %% SIZE
 
@@ -328,7 +357,10 @@ else
     xlabels{kr,kc}='';
 end
 if isempty(ylab)
-    [lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan,'Lref',Lref);
+    if numel(frac)>1
+        frac='';
+    end
+    [lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan,'Lref',Lref,'frac',frac);
     if is_diff
         ylabels{kr,kc}=str_diff;
     elseif is_std
@@ -398,12 +430,20 @@ end
 
 %% PLOT
 
-kr=1; kc=1;    
-for kv=1:nv
-    if do_staircase
-        han.p(kr,kc,kv)=stairs(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',mk{kv},'markersize',markersize);
-    else
-        han.p(kr,kc,kv)=plot(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',mk{kv},'markersize',markersize);
+kr=1; kc=1;  
+if do_area
+    han.p(kr,kc,:)=area(s,val,'parent',han.sfig(kr,kc));
+%     han_aux=area(s,val,'parent',han.sfig(kr,kc));
+    for kv=1:nv
+        han.p(kr,kc,kv).FaceColor=cmap(kv,:);
+    end
+else
+    for kv=1:nv
+        if do_staircase
+            han.p(kr,kc,kv)=stairs(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',mk{kv},'markersize',markersize);
+        else
+            han.p(kr,kc,kv)=plot(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',mk{kv},'markersize',markersize);
+        end
     end
 end
 if isfield(in_p,'leg_str')
@@ -412,7 +452,9 @@ else
     if nv==1
         str_sim={labels4all('sim',1,lan)};
     else
-        str_sim={sprintf('%d',kv)}; %change to runid?
+        for kv=1:nv
+            str_sim{kv}=sprintf('%d',kv); %change to runid?
+        end
     end
 end
 if plot_all_struct

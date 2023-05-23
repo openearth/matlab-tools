@@ -50,8 +50,11 @@
 %
 %       -{'Q_t','qsp_B_t'}  : volume of water
 %
-%       -'stot'       : total sediment transport [m^2/s]
-%       -'stot_B_mor' : total sediment transport [m^3/s]
+%       -'s'            : sediment transport of a size fraction [m^2/s]
+%       -'s_B_mor'      : sediment transport of a size fraction [m^3/s]
+%       -'s_B_mor_t'    : sediment transport of a size fraction [m^3]
+%       -'stot'         : total sediment transport [m^2/s]
+%       -'stot_B_mor'   : total sediment transport [m^3/s]
 %       -'stot_B_mor_t' : total sediment transport [m^3]
 %
 %       -'tide'     : tide
@@ -792,6 +795,36 @@ switch lower(variable)
                 str_var='transporte de sedimento de fondo';
          end
          un_type='L2/T';
+    case 's'
+         switch lan
+            case 'en'
+                str_var=sprintf('sediment transport of size fraction %d',frac);
+            case 'nl'
+                str_var=sprintf('totaal sedimenttransport van fractie %d',frac);
+            case 'es'
+                str_var=sprintf('transporte de sedimento de la fracción %d',frac);
+         end
+         un_type='L2/T';
+    case 's_b_mor'
+         switch lan
+            case 'en'
+                str_var=sprintf('sediment transport of size fraction %d',frac);
+            case 'nl'
+                str_var=sprintf('totaal sedimenttransport van fractie %d',frac);
+            case 'es'
+                str_var=sprintf('transporte de sedimento de la fracción %d',frac);
+         end
+         un_type='L3/T';
+    case 's_b_mor_t'
+         switch lan
+            case 'en'
+                str_var=sprintf('sediment transport of size fraction %d',frac);
+            case 'nl'
+                str_var=sprintf('totaal sedimenttransport van fractie %d',frac);
+            case 'es'
+                str_var=sprintf('transporte de sedimento de la fracción %d',frac);
+         end
+         un_type='L3';
     case 'stot'
          switch lan
             case 'en'

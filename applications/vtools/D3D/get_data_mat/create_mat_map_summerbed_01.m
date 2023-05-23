@@ -28,7 +28,7 @@ if isfield(flg_loc,'sb_pol')==0
     error('You need to specify the summerbed polygon')
 end
 
-if isfield(flg_loc,'do_val_B_mor')==0
+if isfield(flg_loc,'do_val_B_mor')==0 %why do we need it here?
     flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
 end
 if any(flg_loc.do_val_B_mor)
@@ -54,6 +54,10 @@ if isfield(flg_loc,'var_idx')==0
     flg_loc.var_idx=cell(1,numel(flg_loc.var));
 end
 var_idx=flg_loc.var_idx;
+
+if isfield(flg_loc,'sum_var_idx')==0
+    flg_loc.sum_var_idx=zeros(size(flg_loc.var));
+end
 
 %% PATHS
 
@@ -133,21 +137,24 @@ for ksb=1:nsb
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
                 %% read data
-                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'layer',layer,'var_idx',var_idx{kvar});      
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'layer',layer,'var_idx',var_idx{kvar},'sum_var_idx',flg_loc.sum_var_idx(kvar));      
 
                 %% calc
                 data_var=gdm_order_dimensions(fid_log,data_var,'structure',simdef.D3D.structure);
 
-                bol_nan=any(isnan(data_var.val),2); %necessary for multidimensional 
+                ndim_2=size(data_var.val);
+                ndim_2=ndim_2(2:end); %vector with dimensions which are not faces
+                v_nan=(1:1:numel(ndim_2))+1; %we check the NaN in all dimensions except the first one
+                bol_nan=any(isnan(data_var.val),v_nan); %necessary for multidimensional 
 
-                ndim_2=size(data_var.val,2);
-                val_mean=NaN(npol,ndim_2);
-                val_std=NaN(npol,ndim_2);
-                val_max=NaN(npol,ndim_2);
-                val_min=NaN(npol,ndim_2);
-                val_num=NaN(npol,ndim_2);
-                val_sum=NaN(npol,ndim_2);
-                val_sum_length=NaN(npol,ndim_2);
+                sval=[npol,ndim_2];
+                val_mean=NaN(sval);
+                val_std=NaN(sval);
+                val_max=NaN(sval);
+                val_min=NaN(sval);
+                val_num=NaN(sval);
+                val_sum=NaN(sval);
+                val_sum_length=NaN(sval);
 %                 val_width=NaN(npol,ndim_2);
                 for kpol=1:npol
                     bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan;

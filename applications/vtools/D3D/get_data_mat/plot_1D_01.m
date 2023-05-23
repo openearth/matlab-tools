@@ -70,6 +70,10 @@ if isfield(flg_loc,'do_cum')==0
     flg_loc.do_cum=zeros(size(flg_loc.var));
 end
 
+if isfield(flg_loc,'do_area')==0
+    flg_loc.do_area=zeros(size(flg_loc.var));
+end
+
 %add B_mor variables to plot
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
@@ -173,6 +177,9 @@ for ksb=1:nsb
 
         for kvar=1:nvar %variable
             
+            in_p.frac=var_idx{kvar};
+            in_p.do_area=flg_loc.do_area(kvar);
+
             [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
             
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
@@ -198,9 +205,12 @@ for ksb=1:nsb
             
             %skip if multidimentional
             fn_data=fieldnames(data_0(1));
-            if size(data_0(1).(fn_data{1}),2)>1
-                messageOut(fid_log,sprintf('Skipping variable with multiple dimensions: %s',var_str_save));
-                continue
+            sval=size(data_0(1).(fn_data{1}));
+            multi_dim=false;
+            if sval(2)>1 || numel(sval(2:end))>1
+                multi_dim=true;
+%                 messageOut(fid_log,sprintf('Skipping variable with multiple dimensions: %s',var_str_save));
+%                 continue
             end
             
             %reference
@@ -213,7 +223,7 @@ for ksb=1:nsb
             end
             
             %allocate
-            if flg_loc.do_xvt
+            if flg_loc.do_xvt && ~multi_dim
                 nx=numel(data_0(1).(fn_data{1}));  
                 nfn=numel(fn_data);
                 for kfn=1:nfn
@@ -333,7 +343,7 @@ for ksb=1:nsb
                                 end %ks
                             end %do_p
                             
-                            %plot all together
+                            %plot all simulations together
                             if flg_loc.do_all && nS>1
                                 bol_ks=true(nS,1);
 
@@ -403,7 +413,7 @@ for ksb=1:nsb
                     end %kref
                     
                     %save for xvt
-                    if flg_loc.do_xvt
+                    if flg_loc.do_xvt && ~multi_dim
                         %<data_sim> has simulation in the structure.
                         %<data_xvt> has simulation in the second column. 
                         data_xvt.(statis)(:,:,kt)=[data_sim.(statis)];
@@ -434,7 +444,7 @@ for ksb=1:nsb
             end %kt
             
             %% xvt
-            if flg_loc.do_xvt
+            if flg_loc.do_xvt && ~multi_dim
                plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie,var_idx{kvar})
             end
             
@@ -482,10 +492,14 @@ function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref,
 % fprintf('time_dnum: %f \n',time_dnum);
 % fprintf('iso: %s \n',iso);
                 
+nvi=numel(var_idx);
+svi=repmat('%02d',1,nvi);
+var_idx_s=sprintf(svi,var_idx);
+
 if isempty(runid)
-    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%02d_%s_%s_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx,fn,sb_pol,kref));
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kref));
 else
-    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%02d_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx,fn,sb_pol,kref));
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kref));
 end
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
@@ -538,6 +552,7 @@ in_p.clab_str=lab_str;
 in_p.ylab_str='';
 in_p.xlab_str='rkm';
 in_p.xlab_un=1/1000;
+in_p.frac=var_idx;
 %                 in_p.tit_str=branch_name;
 
 for kS=1:nS
@@ -612,7 +627,11 @@ for kvar=1:nvar_tmp
             flg_loc.layer=cat(2,flg_loc.layer,{zeros(0,0)});
         end
         if isfield(flg_loc,'var_idx')
-            flg_loc.var_idx=cat(2,flg_loc.var_idx,{zeros(0,0)});
+%             flg_loc.var_idx=cat(2,flg_loc.var_idx,{zeros(0,0)});
+            flg_loc.var_idx=cat(2,flg_loc.var_idx,flg_loc.var_idx(kvar));
+        end
+        if isfield(flg_loc,'do_area')
+            flg_loc.do_area=cat(2,flg_loc.do_area,flg_loc.do_area(kvar));
         end
     end
 end
