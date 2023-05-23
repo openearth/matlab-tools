@@ -217,7 +217,10 @@
 %
 %181011->190227
 %   -add diffusion to hirano
-
+%
+%230523
+%   -made possible different transport relations per fraction
+%
 %NOTES:
 %   -The analytical solutions do not have Morphological Factor
 %   -Ellipticity in the quasi-steady case it is based on the full derivative case, without the approximation for the eigenvalues
@@ -258,7 +261,7 @@ addOptional(parin,'nodeState',input.nodeState.default,@isnumeric);
     else
         input.sedTrans.default=NaN;
     end
-addOptional(parin,'sedTrans',input.sedTrans.default,@isnumeric);
+addOptional(parin,'sedTrans',input.sedTrans.default);
     %hiding-exposure
 input.hiding.default=999; %dummy positive number in order to show the check warning in case there is no input but is needed
 addOptional(parin,'hiding',input.hiding.default,@isnumeric);

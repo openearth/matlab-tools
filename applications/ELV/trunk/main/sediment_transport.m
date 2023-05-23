@@ -113,13 +113,16 @@
 %   -V. Generalized load relation
 %
 %170621
-%   -adapted to new Matlab arithmetics (after R2016b)
+%   -V. Adapted to new Matlab arithmetics (after R2016b)
+%
+%230523
+%   -V. Different size sediment transport relation for each fraction. 
 
 %% FUNCTION 
 
-function [qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm]=sediment_transport(flg,cnt,h,q,cf,La,Mak,dk,sed_trans_param,hiding_param,mor_fac,E_param,vp_param,Gammak,fid_log,kt)
+function [qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm]=sediment_transport(flg,cnt,h,q,cf,La,Mak,dk,sed_trans_param_in,hiding_param,mor_fac,E_param,vp_param,Gammak,fid_log,kt)
 
-%%
+%% PARSE
 
 %reshape h, q, dk, cf, La and at the same time check that they are vectors
 nx=length(h); %number of points in streamwise direction
@@ -147,7 +150,27 @@ Mak=reshape(Mak,nx,nef);
 Fak=Mak2Fak(Mak',La',input_i);
 Fak=Fak';
 
-%bed shear stress (tau_b) [N/m^2] ; double [nx,1]
+if numel(flg.sed_trans)==1
+    nu=1;
+    flg.sed_trans=ones(1,nf).*flg.sed_trans; %we still make a vector for filling `Qbk_st` with boolean
+elseif numel(flg.sed_trans)~=nf
+    error('The number of sediment transport relations flg.sed_trans (%d) must match the number of size fractions (%d)',numel(flg.sed_trans),nf)
+else %correct we reshape just in case
+    flg.sed_trans=reshape(flg.sed_trans,1,nf);
+    nu=nf;
+end
+
+if ~iscell(sed_trans_param_in) %only one sediment transport relation
+    sed_trans_param_cell{1,1}=sed_trans_param_in;
+else %different transport relation for each fraction
+    sed_trans_param_cell=sed_trans_param_in;
+    if numel(sed_trans_param_cell)~=nf
+        error('The number of sediment transport parameters (%d) must match the number of size fractions (%d)',numel(sed_trans_param_cell),nf)
+    end
+end
+
+%% bed shear stress (tau_b) [N/m^2] ; double [nx,1]
+
 switch flg.friction_closure
     case 1 %Darcy-Weisbach
         tau_b=cnt.rho_w*cf.*(q./h).^2;
@@ -158,14 +181,17 @@ switch flg.friction_closure
         error('check friction input')
 end
 
-%Shields stress (thetak) [-] ; double [nx,nf]
+%% Shields stress (thetak) [-] ; double [nx,nf]
+
 thetak=1/(cnt.rho_w*cnt.g*cnt.R)*tau_b./dk; 
 
-%mean grain size (Dm) [m] ; double [nx,1]
+%% mean grain size (Dm) [m] ; double [nx,1]
+
 Dm=mean_grain_size(Fak',input_i); %this function deals with the dimensions appropriately, it is sediment_transport which should be adapted
 Dm=Dm'; %we need to add this because sediment_transport is badly written...
 
-%hiding function (xik) [-] ; double [nx,nf]
+%% hiding function (xik) [-] ; double [nx,nf]
+
 switch flg.hiding
     case 0 %no hiding-exposure
         xik=ones(nx,nf); 
@@ -182,7 +208,7 @@ switch flg.hiding
         error('check hiding')
 end
 
-%ripple factor
+%% ripple factor
 switch flg.mu
     case 0 %unspecified
         mu=ones(nx,nf);
@@ -198,83 +224,104 @@ switch flg.mu
         error('not implemented')        
 end
 
-%sediment transport capacity including pores (Qbk) [m^2/s] ; double [nx,nf]
-switch flg.sed_trans
-    case 1 %MPM48
-        a_mpm=sed_trans_param(1);
-        b_mpm=sed_trans_param(2);
-        theta_c=sed_trans_param(3);
-        no_trans_idx=(mu.*thetak-xik.*theta_c)<0; %indexes of fractions below threshold ; boolean [nx,nf]
-        Qbk_st=a_mpm.*(mu.*thetak-xik.*theta_c).^b_mpm; %MPM relation
-        Qbk_st(no_trans_idx)=0; %the transport capacity of those fractions below threshold is 0
-    case 2 %EH67
-        m_eh=sed_trans_param(1);
-        n_eh=sed_trans_param(2);
-        theta_c=0;
-        u=q./h; %depth averaged flow velocity [m/s]
-        Qbk_st=cf.^(3/2).*(cnt.g*cnt.R*dk).^(-5/2).*m_eh.*(u.^n_eh); %EH relation
-        no_trans_idx=false(nx,nf);
-    case 3 %AM72
-        a_am=sed_trans_param(1);
-        theta_c=sed_trans_param(2);
-        no_trans_idx=(thetak-xik.*theta_c)<0; %indexes of fractions below threshold
-        Qbk_st=a_am.*(thetak-xik.*theta_c).*(sqrt(thetak)-sqrt(xik.*theta_c));
-        Qbk_st(no_trans_idx)=0; %the transport capacity of those fractions below threshold is 0
-    case 4 %WC03 
-        alpha=sed_trans_param(1);
-        theta_c=0;
-        dk_sand_idx=dk<0.002; %size fractions indeces considered as sand ; boolean [1,nf]
-        Fs=sum(dk_sand_idx.*Fak,2); %sand fraction (Fs) [-] ; double [nx,1]
-        tau_st_rm=0.021+0.015*exp(-20*Fs); %reference Shields stress for the mixture (tau_st_rm) [-] ; double [nx,1]
-        tau_rm=(cnt.R*cnt.rho_w*cnt.g).*tau_st_rm.*Dm; %reference bed shear stress for the mixture (tau_rm) [N/m^2] ; double [nx,1]
-        dk_Dm=dk./Dm; %dk/Dm [-] ; double [nx,nf]
-        b=0.67./(1+exp(1.5-dk_Dm)); %hiding power [-] ; double [nx,nf]
-        tau_rk=tau_rm.*(dk_Dm).^b; %reference shear stress for each grain size [N/m^2] ; double [nx,nf]
-        phi_k=tau_b./tau_rk; %parameter phi in WC [-] ; double [nx,nf]
-        phi_k_br1_idx=phi_k<1.35; %indeces of phi_i in branch 1 ; boolean [nx,nf]
-        Wk_st_br1=0.002*phi_k.^(7.5); %dimensionsless transport W as if all values were in branch 1 [-] ; double [nx,nf] 
-        Wk_st=14.*(1-0.894./(phi_k.^(1/2))).^(4.5); %dimensionsless transport W as if all values were in branch 2 [-] ; double [nx,nf] 
-        Wk_st(phi_k_br1_idx)=Wk_st_br1(phi_k_br1_idx); %compose
-%         Qbk=Wk_st.*(cf.^(3/2).*(q./h).^3)./cnt.R./cnt.g./(1-cnt.p); %transform Wk into Qbk   
-%         Qbk_st=Wk_st.*thetak.^(3/2);
-        Qbk_st=alpha.*Wk_st.*thetak.^(3/2);
-        no_trans_idx=false(nx,nf);
-    case 5 %Generalized load relation
-        theta_c=0;
-        r = sed_trans_param(1);
-        w = sed_trans_param(2);
-        tau_ref = sed_trans_param(3);
-        D_ref = 0.001;
-        G = cf.^(w+3/2)/(tau_ref^w*(cnt.R*cnt.g)^(w+1));
-        Qbk_st = (1-cnt.p)./sqrt(cnt.g*cnt.R*dk.^3).*(dk/D_ref).^r.*G.*1./dk.^w.*(q./h).^(2*w+3);
-        no_trans_idx=false(nx,nf);
-    case 6 %Parker
-        a_park=0.00218;
-        theta_c=0.0386;
-        chi=thetak./theta_c;
-        G=exp(14.2*(chi-1)-9.28*(chi-1).^2); %all in branch 2
-        G_1=5474*(1-0.853./chi).^(4.5); %branch 1
-        G_3=chi.^(14.2); %branch 3
-        G_1_idx=chi>=1.59; %branch 1 identifier
-        G_3_idx=chi< 1.00; %branch 3 identifier
-        G(G_1_idx)=G_1(G_1_idx);
-        G(G_3_idx)=G_3(G_3_idx);
-        Qbk_st=a_park.*thetak.^(3/2).*G;
-        no_trans_idx=false(nx,nf);
-    case 7 %Ribberink      
-        m_r=sed_trans_param(1);
-        n_r=sed_trans_param(2);
-        l_r=sed_trans_param(3);
-        theta_c=0;
-        u=q./h; %depth averaged flow velocity [m/s]
-        %the calibrated formula of Ribberink is already including pores. Here we substract them to later add the in Exner
-        Qbk_st=1./sqrt(cnt.g*cnt.R*dk.^3).*(1-0.40)*m_r.*(u.^n_r)./(Dm.^l_r); %Ribberink
-        no_trans_idx=false(nx,nf);
-    otherwise 
-        error('sediment transport formulation')
-end
+%% dimensionless sediment transport capacity (Qbk_st) [-] ; ; double [nx,nf]
 
-%entrainment
+%We cannot use `unique` on `flg.sed_trans` because the sediment transport 
+%parameters may be different. 
+% sed_trans_u=unique(flg.sed_trans);
+% nu=numel(sed_trans_u);
+
+Qbk_st_all=NaN(nx,nf);
+
+for ku=1:nu
+    sed_trans_loc=flg.sed_trans(ku);
+    sed_trans_param=sed_trans_param_cell{ku};
+
+    switch sed_trans_loc
+        case 1 %MPM48
+            a_mpm=sed_trans_param(1);
+            b_mpm=sed_trans_param(2);
+            theta_c=sed_trans_param(3);
+            no_trans_idx=(mu.*thetak-xik.*theta_c)<0; %indexes of fractions below threshold ; boolean [nx,nf]
+            Qbk_st=a_mpm.*(mu.*thetak-xik.*theta_c).^b_mpm; %MPM relation
+            Qbk_st(no_trans_idx)=0; %the transport capacity of those fractions below threshold is 0
+        case 2 %EH67
+            m_eh=sed_trans_param(1);
+            n_eh=sed_trans_param(2);
+            theta_c=0;
+            u=q./h; %depth averaged flow velocity [m/s]
+            Qbk_st=cf.^(3/2).*(cnt.g*cnt.R*dk).^(-5/2).*m_eh.*(u.^n_eh); %EH relation
+            no_trans_idx=false(nx,nf);
+        case 3 %AM72
+            a_am=sed_trans_param(1);
+            theta_c=sed_trans_param(2);
+            no_trans_idx=(thetak-xik.*theta_c)<0; %indexes of fractions below threshold
+            Qbk_st=a_am.*(thetak-xik.*theta_c).*(sqrt(thetak)-sqrt(xik.*theta_c));
+            Qbk_st(no_trans_idx)=0; %the transport capacity of those fractions below threshold is 0
+        case 4 %WC03 
+            alpha=sed_trans_param(1);
+            theta_c=0;
+            dk_sand_idx=dk<0.002; %size fractions indeces considered as sand ; boolean [1,nf]
+            Fs=sum(dk_sand_idx.*Fak,2); %sand fraction (Fs) [-] ; double [nx,1]
+            tau_st_rm=0.021+0.015*exp(-20*Fs); %reference Shields stress for the mixture (tau_st_rm) [-] ; double [nx,1]
+            tau_rm=(cnt.R*cnt.rho_w*cnt.g).*tau_st_rm.*Dm; %reference bed shear stress for the mixture (tau_rm) [N/m^2] ; double [nx,1]
+            dk_Dm=dk./Dm; %dk/Dm [-] ; double [nx,nf]
+            b=0.67./(1+exp(1.5-dk_Dm)); %hiding power [-] ; double [nx,nf]
+            tau_rk=tau_rm.*(dk_Dm).^b; %reference shear stress for each grain size [N/m^2] ; double [nx,nf]
+            phi_k=tau_b./tau_rk; %parameter phi in WC [-] ; double [nx,nf]
+            phi_k_br1_idx=phi_k<1.35; %indeces of phi_i in branch 1 ; boolean [nx,nf]
+            Wk_st_br1=0.002*phi_k.^(7.5); %dimensionsless transport W as if all values were in branch 1 [-] ; double [nx,nf] 
+            Wk_st=14.*(1-0.894./(phi_k.^(1/2))).^(4.5); %dimensionsless transport W as if all values were in branch 2 [-] ; double [nx,nf] 
+            Wk_st(phi_k_br1_idx)=Wk_st_br1(phi_k_br1_idx); %compose
+    %         Qbk=Wk_st.*(cf.^(3/2).*(q./h).^3)./cnt.R./cnt.g./(1-cnt.p); %transform Wk into Qbk   
+    %         Qbk_st=Wk_st.*thetak.^(3/2);
+            Qbk_st=alpha.*Wk_st.*thetak.^(3/2);
+            no_trans_idx=false(nx,nf);
+        case 5 %Generalized load relation
+            theta_c=0;
+            r = sed_trans_param(1);
+            w = sed_trans_param(2);
+            tau_ref = sed_trans_param(3);
+            D_ref = 0.001;
+            G = cf.^(w+3/2)/(tau_ref^w*(cnt.R*cnt.g)^(w+1));
+            Qbk_st = (1-cnt.p)./sqrt(cnt.g*cnt.R*dk.^3).*(dk/D_ref).^r.*G.*1./dk.^w.*(q./h).^(2*w+3);
+            no_trans_idx=false(nx,nf);
+        case 6 %Parker
+            a_park=0.00218;
+            theta_c=0.0386;
+            chi=thetak./theta_c;
+            G=exp(14.2*(chi-1)-9.28*(chi-1).^2); %all in branch 2
+            G_1=5474*(1-0.853./chi).^(4.5); %branch 1
+            G_3=chi.^(14.2); %branch 3
+            G_1_idx=chi>=1.59; %branch 1 identifier
+            G_3_idx=chi< 1.00; %branch 3 identifier
+            G(G_1_idx)=G_1(G_1_idx);
+            G(G_3_idx)=G_3(G_3_idx);
+            Qbk_st=a_park.*thetak.^(3/2).*G;
+            no_trans_idx=false(nx,nf);
+        case 7 %Ribberink      
+            m_r=sed_trans_param(1);
+            n_r=sed_trans_param(2);
+            l_r=sed_trans_param(3);
+            theta_c=0;
+            u=q./h; %depth averaged flow velocity [m/s]
+            %the calibrated formula of Ribberink is already including pores. Here we substract them to later add the in Exner
+            Qbk_st=1./sqrt(cnt.g*cnt.R*dk.^3).*(1-0.40)*m_r.*(u.^n_r)./(Dm.^l_r); %Ribberink
+            no_trans_idx=false(nx,nf);
+        otherwise 
+            error('sediment transport formulation')
+    end %sed_trans_loc
+
+%assign to each fraction
+bol_st=flg.sed_trans==sed_trans_loc;
+Qbk_st_all(:,bol_st)=Qbk_st(:,bol_st);
+
+end %ku
+
+Qbk_st=Qbk_st_all; %keep original name
+
+%% entrainment
+
 switch flg.E
     case 0 %do not compute
         Ek_st=NaN;
@@ -295,7 +342,8 @@ switch flg.E
         
 end
 
-%velocity
+%% velocity
+
 switch flg.vp
     case 0 %do not compute
         vpk_st=NaN;
@@ -310,21 +358,36 @@ switch flg.vp
         
 end
 
-%dependencies of entrainment deposition
+%% dependencies of entrainment deposition
+
 if flg.E~=0
+
     %deposition
-    switch flg.sed_trans
-        case 1
-            Dk_st=a_E/a_mpm*vpk_st;
-        case 3
-            Dk_st=a_E/a_am*vpk_st;
-        otherwise
-            %ATT! this does not work! It creates a discontinuity in Dk because it is 0 when Qbk_st is 0 but it should not because the term (thetak-theta_c) in Qbk_st cancels with the one in Ek_st
-            Dk_st=Ek_st.*vpk_st./Qbk_st; 
-            Dk_st(no_trans_idx)=0;
-    %         Dk_st(no_vpk_idx)=0;
+    Dk_st_all=NaN(nx,nf);
+    for ku=1:nu
+        sed_trans_loc=flg.sed_trans(ku);
+        sed_trans_param=sed_trans_param_cell{ku};
+        switch sed_trans_loc
+            case 1
+                a_mpm=sed_trans_param(1);
+                Dk_st=a_E/a_mpm*vpk_st;
+            case 3
+                a_am=sed_trans_param(1);
+                Dk_st=a_E/a_am*vpk_st;
+            otherwise
+                %ATT! this does not work! It creates a discontinuity in Dk because it is 0 when Qbk_st is 0 but it should not because the term (thetak-theta_c) in Qbk_st cancels with the one in Ek_st
+                Dk_st=Ek_st.*vpk_st./Qbk_st; 
+                Dk_st(no_trans_idx)=0;
+        %         Dk_st(no_vpk_idx)=0;
+        end
+
+        %assign to each fraction
+        bol_st=flg.sed_trans==sed_trans_loc;
+        Dk_st_all(:,bol_st)=Dk_st(:,bol_st);
+
     end
-    
+    Dk_st=Dk_st_all; %keep original name
+
     %equilibrium particle activity
     Gammak_eq_st=Fak.*Qbk_st./vpk_st;
     Gammak_eq=Gammak_eq_st.*dk; %without pores
@@ -349,9 +412,10 @@ else
     vpk=NaN;
 end
 
-Qbk=Qbk_st.*sqrt(cnt.g*cnt.R*dk.^3)./(1-cnt.p); %sediment transport capacity
+%% sediment transport including pores and morphodynamic acceleration factor (qbk) [m^2/s] ; double [nx,nf]
 
-%sediment transport including pores and morphodynamic acceleration factor (qbk) [m^2/s] ; double [nx,nf]
+Qbk=Qbk_st.*sqrt(cnt.g*cnt.R*dk.^3)./(1-cnt.p); %sediment transport capacity including pores (Qbk) [m^2/s] ; double [nx,nf]
+
 if flg.particle_activity==0
     qbk=mor_fac.*Fak.*Qbk; 
 else
@@ -360,7 +424,8 @@ else
     qbk=vpk.*Gammak-cnt.kappa'.*dGammak_dx;
 end
 
-%other dependencies
+%% other dependencies
+
 if flg.extra
     qbk_st=qbk./sqrt(cnt.g*cnt.R*dk.^3).*(1-cnt.p)./Fak;
     Wk_st=qbk_st./thetak.^(3/2);

@@ -120,7 +120,7 @@ for kst=1:nst
     hiding_param=flg_loc.sedtrans_hiding_param(kst);
     flg.mu=flg_loc.sedtrans_mu(kst);
     flg.mu_param=flg_loc.sedtrans_mu_param(kst);
-    flg.sed_trans=flg_loc.sedtrans(kst);
+    flg.sed_trans=flg_loc.sedtrans{kst};
     sed_trans_param=flg_loc.sedtrans_param{kst};
     
     var_sum{kst}=sprintf('%s_sum',flg_loc.sedtrans_name{kst});
