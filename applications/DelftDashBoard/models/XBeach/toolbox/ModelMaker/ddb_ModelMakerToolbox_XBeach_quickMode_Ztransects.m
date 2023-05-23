@@ -56,23 +56,27 @@ end
 if applydem == 1;
     [X,Y,Z] = arcgridread(handles.toolbox.modelmaker.xb_trans.DEM);
     id = ~isnan(X);
-    F1 = scatteredInterpolant(X(id), Y(id), Z(id), 'natural', 'nearest'); 
+    F1 = scatteredInterpolant(X(id), Y(id), Z(id), 'natural', 'nearest');
     zline2 = F1(xline, yline);
     id1 = zline > 0; id2 = isnan(zline); zline(id1 | id2) = zline2(id1 | id2);
 end
-
 depth = min(zline);
 
 %% Create Dean profile
-depthneeded  = handles.toolbox.modelmaker.depth;
-D50 = handles.toolbox.modelmaker.D50;
-D = D50*10^-3;
-A = -0.21*D^0.48;
-crossshore = ((xline - xline(1,1)).^2 + (yline - yline(1,1)).^2.).^0.5;
-xs = linspace(0, max(crossshore)*10, 1000);
-h = A*xs.^(2/3);
-id = find (h < depthneeded*-1);
-xs = xs(1:id(1)); h = h(1:id(1));
+if exist('handles.toolbox.modelmaker.depth','var') == 0
+    handles.toolbox.modelmaker.depth = 20;
+    handles.toolbox.modelmaker.D50   = 200;
+    handles.toolbox.modelmaker.dean  = 0;
+end
+depthneeded     = handles.toolbox.modelmaker.depth;
+D50             = handles.toolbox.modelmaker.D50;
+D               = D50*10^-3;
+A               = -0.21*D^0.48;
+crossshore      = ((xline - xline(1,1)).^2 + (yline - yline(1,1)).^2.).^0.5;
+xs              = linspace(0, max(crossshore)*10, 1000);
+h               = A*xs.^(2/3);
+id              = find (h < depthneeded*-1);
+xs              = xs(1:id(1)); h = h(1:id(1));
 
 if handles.toolbox.modelmaker.dean == 1
 
@@ -89,8 +93,8 @@ if handles.toolbox.modelmaker.dean == 1
 
 else
 
-    % Check created grid 
-    if min(zline) > depthneeded*-1;
+    % Check created grid
+    if min(zline) > depthneeded*-1
         dz = round(abs(depthneeded - min(zline)));
 
         % Determine slope
@@ -106,9 +110,9 @@ end
 
 %% Get average depth
 try
-handles.toolbox.modelmaker.Zvalues(ii) = depth;
+    handles.toolbox.modelmaker.Zvalues(ii) = depth;
 catch
-handles.toolbox.modelmaker.Zvalues(ii) = depth;
+    handles.toolbox.modelmaker.Zvalues(ii) = depth;
 end
 
 %% Draw a line
@@ -116,7 +120,7 @@ end
 if plotting == 0
     for xxx =1 :100
         try
-        delete(handles.toolbox.modelmaker.hfigure(xxx))
+            delete(handles.toolbox.modelmaker.hfigure(xxx))
         end
     end
 else

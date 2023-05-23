@@ -59,6 +59,7 @@ for ii = 1:length(distances);
     end
 end
 
+
 if handles.toolbox.modelmaker.transects ~= 0
     distances_total = sum(distances);
     ntransects = handles.toolbox.modelmaker.transects;

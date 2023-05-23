@@ -133,10 +133,10 @@ else
 end
 
 % Does the data need to be flipped?
-zmean1 = mean(z);
-zmean2 = mean(z');
-[p1,S1,mu1] = polyfit([1:length(zmean1)],zmean1,1);
-[p2,S2,mu2] = polyfit([1:length(zmean2)],zmean2,1);
+zmean1          = mean(z);
+zmean2          = mean(z');
+[p1,S1]         = polyfit([1:length(zmean1)],zmean1,1);
+[p2,S2]         = polyfit([1:length(zmean2)],zmean2,1);
 
 % x with number is org, x2 is used for creation
 if p2(1) > 0
@@ -233,7 +233,7 @@ else
     xtmp    = x2;
     ytmp    = y2;
     ztmp    = z2;
-    
+
     % Make
     xbm = xb_generate_model(...
         'bathy',...
