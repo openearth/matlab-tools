@@ -22,7 +22,7 @@ addOET(path_add_fcn)
 
     %% input to function
 
-path_input='input_ECT_eh.m';
+path_input='input_ECT_2D.m';
 % path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\220517_improve_exner\input_ECT_2D.m';
 
 in_2D.fig.fig_print=0;

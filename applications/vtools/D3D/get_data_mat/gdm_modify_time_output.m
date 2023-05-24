@@ -37,7 +37,12 @@ else
     fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
     fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 
-    [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
+    do_load=1;
+    %The file with all times `tim.mat` is never changed once it exists. This
+    %is problematic if the analysis time changes, as we modify the actual simulation
+    %time. I think that the best we can do is to erase this file and create it
+    %every time. I will think about it. 
+%     [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
 
     if do_load==0; return; end
 

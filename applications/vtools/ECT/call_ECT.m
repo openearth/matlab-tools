@@ -17,60 +17,7 @@ function [ECT_matrices,sed_trans]=call_ECT(ECT_input)
 
 %% PARSE
 
-if isfield(ECT_input.flg,'read')==0
-    ECT_input.flg.read=1;
-end
-
-if isfield(ECT_input.flg,'check_input')==0
-    ECT_input.flg.check_input=0;
-end
-
-if isfield(ECT_input.flg,'friction_closure')==0
-    ECT_input.flg.friction_closure=1;
-end
-if ECT_input.flg.friction_closure==2
-    error('I think that the matrices should change! it is not only to convert the value to Chezy')
-end
-
-if isfield(ECT_input.flg,'derivatives')==0
-    ECT_input.flg.derivatives=1;
-end
-
-if isfield(ECT_input.flg,'particle_activity')==0
-    ECT_input.flg.particle_activity=0;
-end
-
-if isfield(ECT_input.flg,'cp')==0
-    ECT_input.flg.cp=0;
-end
-
-if isfield(ECT_input.flg,'extra')==0
-    ECT_input.flg.extra=0;
-end
-
-if isfield(ECT_input.flg,'pmm')==0
-    ECT_input.flg.pmm=0;
-end
-
-if isfield(ECT_input.flg,'vp')==0
-    ECT_input.flg.vp=1; %compute particle velocity: 0=NO, 1=YES
-end
-
-if isfield(ECT_input.flg,'E')==0
-    ECT_input.flg.E=1; %compute entrainment-deposition formulation: 0=NO, 1=YES
-end
-
-if isfield(ECT_input.flg,'calib_s')==0
-    ECT_input.flg.calib_s=1; 
-end
-
-if isfield(ECT_input,'u_b')==0
-    ECT_input.u_b=NaN; 
-end
-
-if isfield(ECT_input,'v')==0
-    ECT_input.v=0;
-end
+ECT_input=parse_ECT(ECT_input);
 
 v2struct(ECT_input)
 
@@ -141,10 +88,10 @@ end
 %% RENAME
 
 [Ax,Ay,Dx,Dy,B,C,M_pmm]=rename_matrices(flg,alpha_pmm,A,A_qs,D_qs,Ax,Ay,Dx,Dy,B,C,Ax_sf,Ay_sf,Dx_sf,Dy_sf,B_sf,C_sf,Ax_SW,Ay_SW,Dx_SW,Dy_SW, B_SW, C_SW,Ax_SW_sf,Ay_SW_sf,Dx_SW_sf,Dy_SW_sf, B_SW_sf, C_SW_sf,Ax_SWE,Ay_SWE,Dx_SWE,Dy_SWE, B_SWE, C_SWE,Ax_SWE_sf,Ay_SWE_sf,Dx_SWE_sf,Dy_SWE_sf, B_SWE_sf, C_SWE_sf,A_ED,K_ED,B_ED,Ax_d,Ay_d,Dx_d,Dy_d, B_d, C_d);
-% [eigen_x,eigen_y]=rename_eigenvalues(flg,eigen_all,eigen_all_qs,eigen_all_dLa,eigen_all_ad,eigen_all_2Dx,eigen_all_2Dy,eigen_all_2Dx_sf,eigen_all_2Dy_sf,eigen_all_SWx,eigen_all_SWy,eigen_all_SWx_sf,eigen_all_SWy_sf,eigen_all_SWEx,eigen_all_SWEy,eigen_all_SWEx_sf,eigen_all_SWEy_sf,eigen_all_Dm,eigen_all_2Dx_d,eigen_all_2Dy_d);
+[eigen_x,eigen_y]=rename_eigenvalues(flg,eigen_all,eigen_all_qs,eigen_all_dLa,eigen_all_ad,eigen_all_2Dx,eigen_all_2Dy,eigen_all_2Dx_sf,eigen_all_2Dy_sf,eigen_all_SWx,eigen_all_SWy,eigen_all_SWx_sf,eigen_all_SWy_sf,eigen_all_SWEx,eigen_all_SWEy,eigen_all_SWEx_sf,eigen_all_SWEy_sf,eigen_all_Dm,eigen_all_2Dx_d,eigen_all_2Dy_d);
 
-ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm);
-% ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm,eigen_x,eigen_y);
+% ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm);
+ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm,eigen_x,eigen_y);
 sed_trans=v2struct(qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm,qbk_no_pores);
 
 % ECT_elliptic=v2struct(elliptic,elliptic_qs,elliptic_dLa,elliptic_ad,elliptic_Dm);
