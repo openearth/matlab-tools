@@ -35,7 +35,8 @@ end
 if isfield(flg_loc,'var_idx')==0
     flg_loc.var_idx=cell(1,numel(flg_loc.var));
 end
-var_idx=flg_loc.var_idx;
+
+flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
 
 %% PATHS
 
@@ -103,11 +104,11 @@ for ksb=1:nsb
                 else
                     var_str_save_tmp=var_str_save; %the variable to save is different than the raw variable name we read
                 end
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save_tmp,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save_tmp,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
                 
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
-                fpath_mat_load=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
+                fpath_mat_load=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
                 
                 data_raw=load(fpath_mat_load,'data');
                 val=data_raw.data.val_mean;

@@ -268,6 +268,15 @@ for kst=1:nst
     in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,1);
 end
 
+    %add celerities
+in_plot_sb.(tag_sb).var=cat(2,in_plot_sb.(tag_sb).var,'cel_morpho'); 
+in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
+in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{zeros(0,0)});
+in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,0);
+in_plot_sb.(tag_sb).unit=cat(2,in_plot_sb.(tag_sb).unit,{'cel_morpho'});
+in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,0);
+in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
+
 % CALL
 D3D_gdm(in_plot_sb)
 

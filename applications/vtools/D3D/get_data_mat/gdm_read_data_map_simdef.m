@@ -28,6 +28,7 @@ addOptional(parin,'tol',1.5e-7);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
 addOptional(parin,'bed_layers',[]);
+addOptional(parin,'sediment_transport',[]);
 
 parse(parin,varargin{:});
 
@@ -41,6 +42,7 @@ tol=parin.Results.tol;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
 bed_layers=parin.Results.bed_layers;
+sediment_transport=parin.Results.sediment_transport;
 
 %% CALC
 
@@ -108,10 +110,13 @@ switch varname
         data_var=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     case 'stot'
         data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
-    case 'cel_morpho'
-        data_var=gdm_read_data_map_cel_morpho(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx); 
-    otherwise %name directly available in output
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); 
+    otherwise 
+        %cases in which the variable name contains information on the analysis
+        if contains(varname,'cel_morpho')
+            data_var=gdm_read_data_map_cel_morpho(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'sediment_transport',sediment_transport); 
+        else %name directly available in output
+            data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); 
+        end
 end
 
 end %function

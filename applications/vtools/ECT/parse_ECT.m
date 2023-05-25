@@ -28,6 +28,10 @@ if ECT_input.flg.friction_closure==2
     error('I think that the matrices should change! it is not only to convert the value to Chezy')
 end
 
+if isfield(ECT_input.flg,'friction_input')==0
+    ECT_input.flg.friction_input=1;
+end
+
 if isfield(ECT_input.flg,'derivatives')==0
     ECT_input.flg.derivatives=1;
 end
@@ -66,6 +70,26 @@ end
 
 if isfield(ECT_input,'v')==0
     ECT_input.v=0;
+end
+
+if isfield(ECT_input,'E_param')==0
+    ECT_input.E_param=NaN;
+end
+
+if isfield(ECT_input,'vp_param')==0
+    ECT_input.vp_param=NaN;
+end
+
+if isfield(ECT_input,'gsk_param')==0
+    ECT_input.gsk_param=[0,0,0,0];
+end
+
+if isfield(ECT_input,'nu_mom')==0
+    ECT_input.nu_mom=0;
+end
+
+if isfield(ECT_input,'diff_hir')==0
+    ECT_input.diff_hir=0;
 end
 
 end %function

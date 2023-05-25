@@ -53,11 +53,12 @@ end
 if isfield(flg_loc,'var_idx')==0
     flg_loc.var_idx=cell(1,numel(flg_loc.var));
 end
-var_idx=flg_loc.var_idx;
 
 if isfield(flg_loc,'sum_var_idx')==0
     flg_loc.sum_var_idx=zeros(size(flg_loc.var));
 end
+
+flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
 
 %% PATHS
 
@@ -132,12 +133,12 @@ for ksb=1:nsb
                 
                 layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
                 
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
                         
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
                 %% read data
-                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'layer',layer,'var_idx',var_idx{kvar},'sum_var_idx',flg_loc.sum_var_idx(kvar));      
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'layer',layer,'var_idx',flg_loc.var_idx{kvar},'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar));      
 
                 %% calc
                 data_var=gdm_order_dimensions(fid_log,data_var,'structure',simdef.D3D.structure);

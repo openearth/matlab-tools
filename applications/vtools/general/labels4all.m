@@ -105,6 +105,8 @@
 %
 %       -'mesh2d_fixed weir energy loss': energy head, energy per unit force kg*(m/s)^2/(kg*m/s^2)=m
 %
+%       -'cel_morpho' : morphodynamic celerities
+%
 %
 %
 %   -un: factor for unit conversion from SI
@@ -1015,6 +1017,16 @@ switch lower(variable)
                 str_var='perdida de carga de energía';
         end
         un_type='L'; 
+    case 'cel_morpho'
+        switch lan
+            case 'en'
+                str_var='morphodynamic celerity';
+            case 'nl'
+                str_var='morfodynamische snelheid';
+            case 'es'
+                str_var='celeridad moprhodinámica';
+        end
+        un_type='L/T'; 
     otherwise
         str_var=variable;
         un_type='?';

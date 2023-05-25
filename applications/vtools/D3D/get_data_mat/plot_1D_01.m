@@ -62,9 +62,6 @@ if isfield(flg_loc,'do_xvt')==0
     flg_loc.do_xvt=0;
 end
     
-flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
-flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
-
 %add cumulative variables to plot
 if isfield(flg_loc,'do_cum')==0
     flg_loc.do_cum=zeros(size(flg_loc.var));
@@ -74,15 +71,21 @@ if isfield(flg_loc,'do_area')==0
     flg_loc.do_area=zeros(size(flg_loc.var));
 end
 
-%add B_mor variables to plot
-flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
-flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
-
 %add var_idx
 if isfield(flg_loc,'var_idx')==0
     flg_loc.var_idx=cell(1,numel(flg_loc.var));
 end
-var_idx=flg_loc.var_idx;
+
+flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
+
+
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
+
+%add B_mor variables to plot
+flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
+flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
+
 
 %% PATHS
 
@@ -177,7 +180,7 @@ for ksb=1:nsb
 
         for kvar=1:nvar %variable
             
-            in_p.frac=var_idx{kvar};
+            in_p.frac=flg_loc.var_idx{kvar};
             in_p.do_area=flg_loc.do_area(kvar);
 
             [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
@@ -195,8 +198,8 @@ for ksb=1:nsb
             clear data_0_loc; %clear is not nice but we cannot preallocate because we do not know the fieldnames in advance and they maybe different between variables    
             for kS=1:nS    
                 fdir_mat=simdef(kS).file.mat.dir;
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
-%                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+%                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                 
                 load(fpath_mat_tmp,'data');            
                 data_0_loc(kS)=data;
@@ -216,8 +219,8 @@ for ksb=1:nsb
             %reference
             if do_ref
                 fdir_mat=simdef_ref.file.mat.dir;
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
-%                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+%                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                 load(fpath_mat_tmp,'data');            
                 data_0_ref=data;
             end
@@ -247,8 +250,8 @@ for ksb=1:nsb
                 clear data_load; 
                 for kS=1:nS
                     fdir_mat=simdef(kS).file.mat.dir;
-                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
-%                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+%                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                     load(fpath_mat_tmp,'data');
                     data_load(kS)=data;
                 end
@@ -257,8 +260,8 @@ for ksb=1:nsb
                 %reference
                 if do_ref
                     fdir_mat=simdef_ref.file.mat.dir;
-                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,var_idx{kvar},layer);
-%                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'var_idx',var_idx{kvar});
+                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+%                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                     load(fpath_mat_tmp,'data');            
                     data_ref=data;
                 end
@@ -334,7 +337,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
+                                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -356,7 +359,7 @@ for ksb=1:nsb
                                 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                 mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                fname_noext=fig_name(fdir_fig_loc,tag_fig,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
+                                fname_noext=fig_name(fdir_fig_loc,tag_fig,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
         %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                 in_p.fname=fname_noext;
@@ -380,7 +383,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
+                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -401,7 +404,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
+                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -445,7 +448,7 @@ for ksb=1:nsb
             
             %% xvt
             if flg_loc.do_xvt && ~multi_dim
-               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie,var_idx{kvar})
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie,flg_loc.var_idx{kvar})
             end
             
             %% cumulative
@@ -466,7 +469,7 @@ for ksb=1:nsb
                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'cum');
                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx{kvar});
+                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
 
                     in_p.fname=fname_noext;
 
