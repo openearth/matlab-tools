@@ -227,6 +227,46 @@ end
             fclose(fid);
         end
     end
+% asc2xyz
+    function [output,OPT] = EHY_convert_asc2xyz(inputFile,outputFile,OPT)
+        % based on asc2nc.m
+        fid=fopen(inputFile,'r');
+
+        str=fgets(fid);
+        ncols=str2double(str(6:end));
+        str=fgets(fid);
+        nrows=str2double(str(6:end));
+        str=fgets(fid);
+        xll=str2double(str(10:end));
+        str=fgets(fid);
+        yll=str2double(str(10:end));
+        str=fgets(fid);
+        cellsz=str2double(str(9:end));
+        str=fgets(fid);
+        noval=str2double(str(13:end));
+
+        x=xll:cellsz:xll+(ncols-1)*cellsz;
+        y=yll:cellsz:yll+(nrows-1)*cellsz;
+
+        % maybe not the fatest way ..
+        y = fliplr(y);
+        output = [];
+        for i=1:nrows
+            disp(['Status converting .asc to .xyz: ' num2str(i) ' of ' num2str(nrows)]);
+            z = textscan(fid,'%f',ncols);
+            z = cell2mat(z);
+            XYZ = [x' repmat(y(i),length(z),1) z];
+            XYZ(z == noval,:) = [];
+            if OPT.saveOutputFile
+                if i == 1
+                    dlmwrite(outputFile, XYZ, 'precision', '%.7f', 'delimiter', ' ');
+                else
+                    dlmwrite(outputFile, XYZ, 'precision', '%.7f', 'delimiter', ' ','-append');
+                end
+            end
+            output = [output; XYZ];
+        end
+    end
 % box2dep
     function [output,OPT] = EHY_convert_box2dep(inputFile,outputFile,OPT)
         fid=fopen(inputFile,'r');
