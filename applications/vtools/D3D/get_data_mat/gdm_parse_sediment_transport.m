@@ -79,6 +79,7 @@ if ismember('cel_morpho',flg_loc.var)
     end
 else
     %sediment transport at this moment only needed for cel_morpho
+    flg_loc.sediment_transport=NaN(1,numel(flg_loc.var));
     return
 end
 

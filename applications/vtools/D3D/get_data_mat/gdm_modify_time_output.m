@@ -46,7 +46,15 @@ else
         delete(fpath_mat_tim)
     end
 
-    [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
+    do_load=1;
+    if isfile(fpath_mat_time)
+        tim_data=load(fpath_mat_time);
+        tim_data.time_dtime;
+        if tim_data.time_dtime==flg_loc.time(end)
+            do_load=0;
+        end
+    end
+%     [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
 
     if do_load==0; return; end
 
