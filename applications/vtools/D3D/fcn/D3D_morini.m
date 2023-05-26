@@ -16,8 +16,10 @@ function D3D_morini(simdef)
 frac=simdef.mor.frac;
 if isfield(simdef.mor,'path_dir_gsd_rel2mdu')
     folder_out=simdef.mor.path_dir_gsd_rel2mdu;
-else
+elseif isfield(simdef.mor,'folder_out')
     folder_out=simdef.mor.folder_out;
+else
+    folder_out='gsd';
 end
 dire_sim=simdef.D3D.dire_sim;
 
@@ -41,5 +43,5 @@ end %kl
            
 %% WRITE
 
-file_name=fullfile(dire_sim,'mor.ini');
+file_name=fullfile(dire_sim,'morini.ini');
 writetxt(file_name,data)

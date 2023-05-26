@@ -21,6 +21,10 @@
 
 function D3D_morini_files(simdef,varargin)
 
+if isfield(simdef.mor,'folder_out')==0
+    simdef.mor.folder_out='gsd';
+end
+
 if isfield(simdef,'D3D')
     fdir_out=fullfile(simdef.D3D.dire_sim,simdef.mor.folder_out);
 else

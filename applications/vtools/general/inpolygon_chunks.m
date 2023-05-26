@@ -19,6 +19,7 @@ npc=floor(np/nc);
 idx=1:npc:np;
 idx(end)=np+1;
 in_bol=false(np,1);
+nc=numel(idx)-1;
 
 tic;
 for kc=1:nc
