@@ -740,7 +740,9 @@ for krkm=1:nrkm
         bol_me =bol_rkm_me  & bol_loc & bol_br_me ;
         bol_mod=bol_rkm_mod & bol_loc & bol_br_mod;
         if sum(bol_mod)~=1
-            error('ups')
+            str_dp=ident_pol_str(bol_mod);
+            messageOut(fid_log,sprintf('Duplicate polygons: %s',str_dp{1}))
+%             error('ups')
         end
         if sum(bol_me)<5
             error('ups')
