@@ -49,8 +49,8 @@ else
     do_load=1;
     if isfile(fpath_mat_time)
         tim_data=load(fpath_mat_time);
-        tim_data.time_dtime;
-        if tim_data.time_dtime==flg_loc.time(end)
+        tim_data.tim.time_dtime;
+        if tim_data.tim.time_dtime==flg_loc.tim'
             do_load=0;
         end
     end
