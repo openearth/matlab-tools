@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18632 $
-%$Date: 2022-12-20 06:26:16 +0100 (di, 20 dec 2022) $
-%$Author: chavarri $
-%$Id: plot_map_2DH_diff_01.m 18632 2022-12-20 05:26:16Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_map_2DH_diff_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

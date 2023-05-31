@@ -4,11 +4,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18680 $
-%$Date: 2023-01-30 13:29:13 +0100 (ma, 30 jan 2023) $
-%$Author: chavarri $
-%$Id: D3D_var_num2str.m 18680 2023-01-30 12:29:13Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_var_num2str.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function ECT_input=parse_ECT(ECT_input)

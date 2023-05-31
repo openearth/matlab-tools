@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18895 $
-%$Date: 2023-04-18 17:17:22 +0200 (Tue, 18 Apr 2023) $
-%$Author: chavarri $
-%$Id: labels4all.m 18895 2023-04-18 15:17:22Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/labels4all.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function in_p=gdm_s_rkm_cen(in_p,flg_loc,data)
