@@ -57,7 +57,7 @@ end
 if isnan(in_p.ylims(1))
     in_p.ylims=[0,0];
 end
-in_p.ylims=in_p.ylims+[-1,1].*abs(mean(in_p.ylims)/1000)+10.*[-eps,eps];
+in_p.ylims=real(in_p.ylims+[-1,1].*abs(mean(in_p.ylims)/1000)+10.*[-eps,eps]);
 
 if isfield(in_p,'lan')==0
     in_p.lan='en';
@@ -180,7 +180,7 @@ if numel(sv)>2
 end
 val=squeeze(val);
 if do_area
-    ylims=[0,max(sum(val,2))+eps];
+    ylims=real([0,max(sum(val,2))+eps]);
 end
 
 %%
