@@ -205,7 +205,7 @@ for ksb=1:nsb
                 data_0_loc(kS)=data;
             end
             data_0=data_0_loc;
-            
+
             %skip if multidimentional
             fn_data=fieldnames(data_0(1));
             sval=size(data_0(1).(fn_data{1}));
@@ -226,14 +226,16 @@ for ksb=1:nsb
             end
             
             %allocate
-            if flg_loc.do_xvt && ~multi_dim
-                nx=numel(data_0(1).(fn_data{1}));  
+%             if flg_loc.do_xvt && ~multi_dim
+            if flg_loc.do_xvt 
+%                 nx=numel(data_0(1).(fn_data{1}));  
+                [nx,nD]=size(data_0(1).(fn_data{1}));
                 nfn=numel(fn_data);
                 for kfn=1:nfn
                     statis=fn_data{kfn};
                     
-                    data_xvt.(statis)=NaN(nx,nS,nt);
-                    data_xvt0.(statis)=NaN(nx,nS,nt);
+                    data_xvt.(statis)=NaN(nx,nS,nt,nD);
+                    data_xvt0.(statis)=NaN(nx,nS,nt,nD);
                 end
             end
             
@@ -416,11 +418,12 @@ for ksb=1:nsb
                     end %kref
                     
                     %save for xvt
-                    if flg_loc.do_xvt && ~multi_dim
+%                     if flg_loc.do_xvt && ~multi_dim
+                    if flg_loc.do_xvt
                         %<data_sim> has simulation in the structure.
                         %<data_xvt> has simulation in the second column. 
-                        data_xvt.(statis)(:,:,kt)=[data_sim.(statis)];
-                        data_xvt0.(statis)(:,:,kt)=[data_0.(statis)];
+                        data_xvt.(statis)(:,:,kt,:)=[data_sim.(statis)];
+                        data_xvt0.(statis)(:,:,kt,:)=[data_0.(statis)];
                     end
 
                     messageOut(fid_log,sprintf('Done plotting figure %s rkm poly %4.2f %% time %4.2f %% variable %4.2f %% statistic %4.2f %%',tag,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100,kfn/nfn*100));
@@ -457,14 +460,14 @@ for ksb=1:nsb
                 
                 statis='val_mean';
                 diff_tim=seconds(diff(tim_dtime_p));
-                val_tim=data_xvt.(statis)(:,:,1:end-1).*repmat(reshape(diff_tim,1,1,[]),nx,nS,1); %we do not use the last value. Block approach with variables 1:end-1 with time 1:end
-                val_cum=cumsum(cat(3,zeros(nx,nS,1),val_tim),3);
+                val_tim=data_xvt.(statis)(:,:,1:end-1,:).*repmat(reshape(diff_tim,1,1,[]),nx,nS,1,nD); %we do not use the last value. Block approach with variables 1:end-1 with time 1:end
+                val_cum=cumsum(cat(3,zeros(nx,nS,1,nD),val_tim),3);
 
                 in_p.lab_str=sprintf('%s_t',lab_str); %add time
 
                 for kt=kt_v
                     in_p.tim=tim_dnum_p(kt);
-                    in_p.val=squeeze(val_cum(:,:,kt));
+                    in_p.val=squeeze(val_cum(:,:,kt,:));
 
                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'cum');
                     mkdir_check(fdir_fig_loc,fid_log,1,0);
