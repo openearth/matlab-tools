@@ -259,13 +259,11 @@ switch modelType
                     end
                     if ismember('XYcor',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'mesh2d_node_x');
-                        if nc_isvar(inputFile,'network1d_geom_x')
-                            varName = 'network1d_geom_x';
-                        end
                         if nc_isvar(inputFile,varName)
                             E.Xcor = ncread(inputFile,varName);
                             E.Ycor = ncread(inputFile,strrep(varName,'x','y'));
                         end
+                        % something needed here for network1d_geom_x ? 
                     end
                     if ismember('XYcen',wantedOutput)
                         varName = EHY_nameOnFile(inputFile,'FlowElem_xcc');
