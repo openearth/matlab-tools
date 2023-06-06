@@ -382,7 +382,11 @@ switch modelType
                                 E.Zcen_cen = ncread(inputFile,'LayCoord_cc');
                                 E.Zcen_int = ncread(inputFile,'LayCoord_w');
                             elseif nc_isvar(inputFile,'mesh2d_flowelem_zcc')
-                                ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,OPT.mergePartitionNrs);
+                                if EHY_isPartitioned(inputFile,modelType)
+                                    ncFiles = EHY_getListOfPartitionedNcFiles(inputFile,OPT.mergePartitionNrs);
+                                else
+                                    ncFiles{1}=inputFile;
+                                end
                                 for iF = 1:length(ncFiles)
                                     % find partition with lowest non-NaN layer
                                     if ~isnan(nanmean(ncread(ncFiles{iF},'mesh2d_flowelem_zcc',[1 1 1],[1 Inf 1])))
