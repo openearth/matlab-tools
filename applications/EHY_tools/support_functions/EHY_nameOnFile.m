@@ -294,7 +294,7 @@ fmNames{end+1,1}={'x_velocity','point_u'};
 fmNames{end+1,1}={'y_velocity','point_v'};
 
 %%% DIMENSION names used within different versions of Delft3D Flexible Mesh
-fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode','NetElemNode'}; % number of nodes
+fmNames{end+1,1}={'mesh2d_nNodes','nmesh2d_node','nNetNode'}; % number of nodes
 fmNames{end+1,1}={'mesh2d_nFaces','nmesh2d_face','nNetElem','nFlowElem'}; % number of faces
 fmNames{end+1,1}={                'nmesh2d_edge','nNetLink'}; % number of velocity-points
 
