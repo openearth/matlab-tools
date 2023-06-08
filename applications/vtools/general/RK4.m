@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18632 $
-%$Date: 2022-12-20 06:26:16 +0100 (di, 20 dec 2022) $
-%$Author: chavarri $
-%$Id: absmintol.m 18632 2022-12-20 05:26:16Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/absmintol.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %General Runge-Kutta 4 algorithm
 %

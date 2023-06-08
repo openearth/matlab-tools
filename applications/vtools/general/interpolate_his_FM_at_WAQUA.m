@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17514 $
-%$Date: 2021-10-04 09:15:38 +0200 (ma, 04 okt 2021) $
-%$Author: chavarri $
-%$Id: find_str_in_cell.m 17514 2021-10-04 07:15:38Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/find_str_in_cell.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Two simulations model several steady-state blocks. One is with FM and the
 %second with WAQUA. Only the end state of each steady-state block is relevant.
