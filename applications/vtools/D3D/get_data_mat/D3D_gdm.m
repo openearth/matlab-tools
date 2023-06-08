@@ -37,7 +37,7 @@
 % %% PATHS
 % 
 % fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
-% fdir_d3d='c:\checkouts\delft3d\';
+% fdir_d3d='c:\checkouts\qp\';
 %
 % fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
 % fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';

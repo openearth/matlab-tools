@@ -28,13 +28,17 @@ tim_type=parin.Results.type;
 
 [t0_dtime,units]=NC_read_time_0(nc_map);
 
-switch tim_type
-    case 'hydro'
-        tim_str='time';
-    case 'morpho'
-        tim_str='morft';
+[is_wa,tim_str,~,~]=iswaqua(nc_map);
+
+if ~is_wa
+    switch tim_type
+        case 'hydro'
+            tim_str='time';
+        case 'morpho'
+            tim_str='morft';
+    end
 end
-        
+
 time_r=ncread(nc_map,tim_str,kt(1),kt(2)); %results time vector [seconds/minutes/hours since start date]
 
 switch units
