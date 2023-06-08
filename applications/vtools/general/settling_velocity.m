@@ -37,7 +37,7 @@ nu=1e-6;
 %% CALC
 
 switch ws_flag
-    case 1
+    case 1 %why is this not case 0?
         ws=R.*g.*dk.^2/(c1.*nu+sqrt(0.75.*c2.*R.*g.*dk.^3));
     case 2
         ws=ws_VR(dk,varargin{:});
