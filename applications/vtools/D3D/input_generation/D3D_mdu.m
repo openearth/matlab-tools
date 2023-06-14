@@ -345,6 +345,7 @@ data{kl,1}=        'Wrimap_turbulence = 1                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_wind       = 0                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_heat_fluxes= 0                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_every_dt   = 0                            '; kl=kl+1; %# Write output to map file every dt, based on start and stop from MapInterval, 0=no (default), 1=yes 
+data{kl,1}=        'Wrimap_fixed_weir_energy_loss   = 1              '; kl=kl+1; 
 data{kl,1}=        'MapOutputTimeVector=                             '; kl=kl+1;
 data{kl,1}=        'FullGridOutput    = 0                            '; kl=kl+1;
 data{kl,1}=        'EulerVelocities   = 0                            '; kl=kl+1;
