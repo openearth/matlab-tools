@@ -31,6 +31,7 @@
             %
             % 6 = Parker (1990)
             % 7 = Ribberink (1987)
+            % 8 = Van Rijn (1984) riv 1977
         % flg.friction_closure = friction closure relation
             % 1 = Chezy | Darcy-Weisbach
             % 2 = Manning 
@@ -46,11 +47,23 @@
             % 0 = no
             % 1 = constant
             % 2 = C/C90 relation
+        % flg.sbform = bed load due to currents in Van Rijn (1984) riv 1977
+            % 1 = always same formulation
+            % 2 = other formulation if t (transport stage parameter) < 3
+        % flg.wsform = settling velocity in Van Rijn (1984) riv 1977
+            % 1 = Van Rijn
+            % 2 = Ahrens (2000)
+            % 3 = Ahrens (2003)
+        % flg.theta_c = critical Shields stress
+            % 1 = hard coded or user input (default)
+            % 2 = compute from dstar
     % cnt = constans ; structure
         % cnt.g         = gravity [m^2/s] ; double [1,1]
         % cnt.rho_s     = sediment density [kg/m^3] ; double [1,1]
         % cnt.rho_w     = water density [kg/m^3] ; double [1,1]
         % cnt.p         = porosity [-] ; double [1,1]
+        % cnt.R         = relative density (rho_s - rho_w)/rho_w
+        % cnt.nu        = kinematic viscosity (mu/rho_w) with mu = dynamic viscosity. - in fortran code this parameter is called vismol.
     % h               = flow depth [m] ; double [nx,1] | double [1,nx] ; e.g. [0.5,0.1,0.6];
     % q               = specific water discharge [m^2/s] ; double [nx,1] | double [1,nx] ; e.g. [5;2;2];
     % cf              = dimensionless friction coefficient (u_{*}^{2}=cf*u^2) [-] ; double [nx,1] | double [1,nx] ; e.g. [0.011,0.011,0.011];
@@ -58,11 +71,12 @@
     % Mak             = effective mass matrix ; double [nx,nf-1] ; e.g. [0.2,0.3;0.8,0.1;0.9,0] ;
     % dk              = characteristic grain sizes [m] ; double [1,nf] | double [nf,1] ; e.g. [0.003,0.005]
     % sed_trans_param = parameters of the sediment transport relation choosen 
-            % MPM48    = [a_mpm,b_mpm,theta_c] [-,-,-] ; double [3,1] | double [1,3]; MPM = [8,1.5,0.047], FLvB = [5.7,1.5,0.047] ; Ribberink = [15.85,1.5,0.0307]
-            % EH67     = [m_eh,n_eh] ; [s^4/m^3,-] ; double [2,1] | double [1,2] ; original = [0.05,5]
-            % AM72     = [a_am,theta_c] [-,-] ; double [2,1] | double [1,2] ; original = [17,0.05]
-            % GL       = [r,w,tau_ref]
-            % Ribb     = [m_r,n_r,l_r] [s^5/m^(2.5),-,-] ; double [2,1] ; original = [2.7e-8,6,1.5]
+            % MPM48     = [a_mpm,b_mpm,theta_c] [-,-,-] ; double [3,1] | double [1,3]; MPM = [8,1.5,0.047], FLvB = [5.7,1.5,0.047] ; Ribberink = [15.85,1.5,0.0307]
+            % EH67      = [m_eh,n_eh] ; [s^4/m^3,-] ; double [2,1] | double [1,2] ; original = [0.05,5]
+            % AM72      = [a_am,theta_c] [-,-] ; double [2,1] | double [1,2] ; original = [17,0.05]
+            % GL        = [r,w,tau_ref]
+            % Ribb      = [m_r,n_r,l_r] [s^5/m^(2.5),-,-] ; double [2,1] ; original = [2.7e-8,6,1.5]
+            % VR84riv77 = [acal_b, acal_s, rksc, theta_c (optional)] ; double[4,1] ; original = CHECK
     % hiding_param    = parameter of the power law hiding function [-] ; double [1,1] ; e.g. [-0.8]
     % mor_fac         = morphological acceleration factor [-] ; double [1,1] ; e.g. [10]
     % E_param        = parameters of the entrainment function
@@ -138,6 +152,20 @@ input_i.mdv.nf=nf;
 input_i.sed.dk=dk;
 input_i.tra.Dm=flg.Dm;
 
+if ~isfield(flg,'theta_c')
+    flg.theta_c = 1;
+elseif flg.theta_c == 0
+    flg.theta_c = 1;
+end
+
+if ~isfield(flg,'sbform')
+    flg.sbform = 0;
+end
+
+if ~isfield(flg,'wsform')
+    flg.wsform = 0;
+end
+
 % if nx~=length(q) || nx~=size(Mak,1) || nx~= length(cf); error('h and q need to have the same length and needs to be equal to the number of rows in Mak, check your input'); end %check line, comment for improved performance
 
 h=reshape(h,nx,1);
@@ -169,6 +197,10 @@ else %different transport relation for each fraction
     end
 end
 
+%% D90 ; double [1,nx]
+
+d90=grainsize_dX(Fak',dk',90);
+
 %% bed shear stress (tau_b) [N/m^2] ; double [nx,1]
 
 switch flg.friction_closure
@@ -181,9 +213,13 @@ switch flg.friction_closure
         error('check friction input')
 end
 
+%% dimensionless particle parameter D* ; double[1,nf]
+
+dstar = dk*(cnt.R*cnt.g/cnt.nu^2)^(1/3);
+
 %% Shields stress (thetak) [-] ; double [nx,nf]
 
-thetak=1/(cnt.rho_w*cnt.g*cnt.R)*tau_b./dk; 
+thetak=1/(cnt.rho_w*cnt.g*cnt.R)*tau_b./dk;  
 
 %% mean grain size (Dm) [m] ; double [nx,1]
 
@@ -215,7 +251,6 @@ switch flg.mu
     case 1 %specified constant
         mu=flg.mu_param.*ones(nx,nf); %this is crap, I need to parse the input to properly do this
     case 2 %C/C90 expression
-        d90=grainsize_dX(Fak',dk',90);
         Cg90=18*log10(12.*h./d90');
         C=sqrt(cnt.g./cf);
         mu_v=min((C./Cg90).^(1.5),1);
@@ -236,31 +271,62 @@ Qbk_st_all=NaN(nx,nf);
 for ku=1:nu
     sed_trans_loc=flg.sed_trans(ku);
     sed_trans_param=sed_trans_param_cell{ku};
+    
+    %calculate critical Shields stress (theta_c) [-] ; double [1,nf]
 
+    switch flg.theta_c
+        case 1 %user input or hard coded
+            switch sed_trans_loc
+                case 1 %MPM48
+                    theta_c=sed_trans_param(3);
+                case 2 %AM
+                    theta_c=sed_trans_param(2);
+                case 6 %Parker
+                    theta_c = 0.0386;
+                case 8 %VR84riv77
+                    theta_c=sed_trans_param(4);
+                otherwise
+                    theta_c = 0;
+            end
+        case 2 %compute from dstar
+            if dstar<=4
+                theta_c = 0.240./dstar;
+            elseif dstar<=10
+                theta_c = 0.140./dstar.^0.64;
+            elseif dstar<=20
+                theta_c = 0.040./dstar.^0.10;
+            elseif dstar<=150
+                theta_c = 0.013.*dstar.^0.29;
+            else
+                theta_c = 0.055;
+            end     
+    end 
+    
+    %calculate sediment transport
     switch sed_trans_loc
         case 1 %MPM48
             a_mpm=sed_trans_param(1);
             b_mpm=sed_trans_param(2);
-            theta_c=sed_trans_param(3);
+%             theta_c=sed_trans_param(3);
             no_trans_idx=(mu.*thetak-xik.*theta_c)<0; %indexes of fractions below threshold ; boolean [nx,nf]
             Qbk_st=a_mpm.*(mu.*thetak-xik.*theta_c).^b_mpm; %MPM relation
             Qbk_st(no_trans_idx)=0; %the transport capacity of those fractions below threshold is 0
         case 2 %EH67
             m_eh=sed_trans_param(1);
             n_eh=sed_trans_param(2);
-            theta_c=0;
+%             theta_c=0;
             u=q./h; %depth averaged flow velocity [m/s]
             Qbk_st=cf.^(3/2).*(cnt.g*cnt.R*dk).^(-5/2).*m_eh.*(u.^n_eh); %EH relation
             no_trans_idx=false(nx,nf);
         case 3 %AM72
             a_am=sed_trans_param(1);
-            theta_c=sed_trans_param(2);
+%             theta_c=sed_trans_param(2);
             no_trans_idx=(thetak-xik.*theta_c)<0; %indexes of fractions below threshold
             Qbk_st=a_am.*(thetak-xik.*theta_c).*(sqrt(thetak)-sqrt(xik.*theta_c));
             Qbk_st(no_trans_idx)=0; %the transport capacity of those fractions below threshold is 0
         case 4 %WC03 
             alpha=sed_trans_param(1);
-            theta_c=0;
+%             theta_c=0;
             dk_sand_idx=dk<0.002; %size fractions indeces considered as sand ; boolean [1,nf]
             Fs=sum(dk_sand_idx.*Fak,2); %sand fraction (Fs) [-] ; double [nx,1]
             tau_st_rm=0.021+0.015*exp(-20*Fs); %reference Shields stress for the mixture (tau_st_rm) [-] ; double [nx,1]
@@ -278,7 +344,7 @@ for ku=1:nu
             Qbk_st=alpha.*Wk_st.*thetak.^(3/2);
             no_trans_idx=false(nx,nf);
         case 5 %Generalized load relation
-            theta_c=0;
+%             theta_c=0;
             r = sed_trans_param(1);
             w = sed_trans_param(2);
             tau_ref = sed_trans_param(3);
@@ -288,7 +354,7 @@ for ku=1:nu
             no_trans_idx=false(nx,nf);
         case 6 %Parker
             a_park=0.00218;
-            theta_c=0.0386;
+%             theta_c=0.0386;
             chi=thetak./theta_c;
             G=exp(14.2*(chi-1)-9.28*(chi-1).^2); %all in branch 2
             G_1=5474*(1-0.853./chi).^(4.5); %branch 1
@@ -303,11 +369,71 @@ for ku=1:nu
             m_r=sed_trans_param(1);
             n_r=sed_trans_param(2);
             l_r=sed_trans_param(3);
-            theta_c=0;
+%             theta_c=0;
             u=q./h; %depth averaged flow velocity [m/s]
             %the calibrated formula of Ribberink is already including pores. Here we substract them to later add the in Exner
             Qbk_st=1./sqrt(cnt.g*cnt.R*dk.^3).*(1-0.40)*m_r.*(u.^n_r)./(Dm.^l_r); %Ribberink
             no_trans_idx=false(nx,nf);
+        case 8 %Van Rijn 84 riv 77  
+            acal_b = sed_trans_param(1); %calibration coefficient for bed load
+            acal_s = sed_trans_param(2); %calibration coefficient for suspended load
+            alf1 = 1; %calibration factor. CHECK - DISCUSS SETTING
+            rksc = sed_trans_param(3); %bottom roughness height
+            
+            % bed load transport
+            tbcr = (cnt.rho_s - cnt.rho_w)*cnt.g*dk.*theta_c;
+            
+            rmuc = (log10(12.0.*h/rksc)./log10(12.0.*h/3./d90')).^2;
+            fc = 0.24*(log10(12.0.*h/rksc)).^(-2);
+            tbc = 0.125*cnt.rho_w*fc.*(q./h).^2;
+            tbce = rmuc.*tbc;
+            
+            tsp = (tbce - tbcr)./tbcr; %transport stage parameter
+            no_tsp_idx = tsp<1.0000e-06;
+            tsp(no_tsp_idx) = 0;
+            switch flg.sbform % bed load due to currents
+                case 1 %always same formulation
+                    sbc = 0.100*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^1.5;
+                case 2 %other formulation if tsp (transport stage parameter) < 3
+                    if tsp < 3
+                        sbc = 0.053*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^2.1;
+                    else
+                        sbc = 0.100*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^1.5;
+                    end
+                otherwise
+                    error('specify sbform')
+            end
+
+            % suspended sediment transport: use settling_velocity.m with ws_flag = 2
+            ws_flag = 2;
+            wsform = flg.wsform;
+            ws = settling_velocity(dk,ws_flag,wsform,dstar);
+            ca = 0.015*alf1*dk/rksc.*tsp.^1.5./dstar.^0.3;
+            rkap = 0.4;
+            ustar = sqrt(0.125*fc).*(q./h); %CHECK - FIX NANS?
+            
+            beta = 1.0 + 2.0*(ws./ustar).^2;
+            beta = min(beta, 1.5);
+            psi = 2.5*(ws./ustar).^0.8.*(ca/0.65).^0.4;
+            
+            zc = ws./rkap./ustar./beta + psi;
+            zc = min(zc,20.0);
+                
+            no_zc_idx = ustar<=0;
+            zc(no_zc_idx,:) = 0;
+            
+            ah = rksc./h;
+            if abs(zc - 1.2)>1.0E-4 %CHECK - I guess this is not correct
+               ff = (ah.^zc - ah.^1.2)./(1.0 - ah).^zc./(1.2 - zc); %CHECK
+            else
+               ff = -(ah./(1.0 - ah)).^1.2.*log(ah);
+            end
+            ssus = acal_s.*ff.*(q./h).*h.*ca;
+            
+            % sum
+            Qbk_st = sbc + ssus;
+            no_trans_idx = (h/rksc<1.33 | q./h < 1.0E-3); %indexes of fractions below threshold ; boolean [nx,nf]
+            Qbk_st(no_trans_idx,:) = 0; %the transport capacity of those fractions below threshold is 0
         otherwise 
             error('sediment transport formulation')
     end %sed_trans_loc

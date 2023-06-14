@@ -73,6 +73,9 @@ ECT_input.flg.mu=sediment_transport.sedtrans_mu;
     % 1 = constant
     % 2 = C/C90 relation
 ECT_input.flg.mu_param=sediment_transport.sedtrans_mu_param;
+ECT_input.flg.sbform=sediment_transport.sedtrans_sbform;
+ECT_input.flg.wsform=sediment_transport.sedtrans_wsform;
+ECT_input.flg.theta_c=sediment_transport.sedtrans_theta_c;
 ECT_input.flg.anl=2;
     % 1 = fully coupled
     % 2 = quasi-steady
@@ -92,7 +95,7 @@ ECT_input.sedTrans=sediment_transport.sedtrans_param;
     % AM72     = [a_am,theta_c] [-,-] ; double [2,1] | double [1,2] ; original = [17,0.05]
     % GL       = [r,w,tau_ref]
     % Ribb     = [m_r,n_r,l_r] [s^5/m^(2.5),-,-] ; double [2,1] ; original = [2.7e-8,6,1.5]
-
+    % VR84riv77 = [acal_b, acal_s, rksc, theta_c (optional)] ; double[4,1] ;
 ECT_input.gsd=sediment_transport.dk;
 
 ECT_input.hiding=sediment_transport.sedtrans_hiding_param;

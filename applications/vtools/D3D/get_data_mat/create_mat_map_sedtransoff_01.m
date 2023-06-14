@@ -99,6 +99,8 @@ cnt.g=9.81; %we should read from mdu...
 cnt.R=1.65; %we should read from sed, but then varie per sediment size fraction...
 cnt.p=0.00; %we compute sediment transport without pores
 cnt.rho_w=1000; %read properly...
+cnt.rho_s=2650; %read properly...
+cnt.nu = 1e-6; %we should compute based on temperature?
 
 mor_fac=1;
 E_param=NaN;
@@ -122,6 +124,9 @@ for kst=1:nst
     flg.mu_param=flg_loc.sedtrans_mu_param(kst);
     flg.sed_trans=flg_loc.sedtrans{kst};
     sed_trans_param=flg_loc.sedtrans_param{kst};
+    flg.sbform=flg_loc.sedtrans_sbform(kst);
+    flg.wsform=flg_loc.sedtrans_wsform(kst);
+    flg.theta_c = flg_loc.sedtrans_theta_c(kst);
     
     var_sum{kst}=sprintf('%s_sum',flg_loc.sedtrans_name{kst});
     unit_v{kst}='stot';
