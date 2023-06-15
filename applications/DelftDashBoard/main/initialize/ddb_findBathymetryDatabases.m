@@ -277,6 +277,10 @@ for i=1:bathymetry.nrDatasets
                         end
 
                         bathymetry.dataset(i).horizontalCoordinateSystem.name=nc_attget(fname,'crs','coord_ref_sys_name');
+                        if contains(bathymetry.dataset(i).horizontalCoordinateSystem.name, 'NAD83')
+                            bathymetry.dataset(i).horizontalCoordinateSystem.name = strrep(bathymetry.dataset(i).horizontalCoordinateSystem.name, 'NAD83', 'WGS 84');
+                        end
+                        
                         tp=nc_attget(fname,'crs','coord_ref_sys_kind');
                         switch lower(tp)
                             case{'projected','proj','projection','xy','cartesian','cart'}
