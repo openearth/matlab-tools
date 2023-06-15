@@ -152,20 +152,6 @@ input_i.mdv.nf=nf;
 input_i.sed.dk=dk;
 input_i.tra.Dm=flg.Dm;
 
-if ~isfield(flg,'theta_c')
-    flg.theta_c = 1;
-elseif flg.theta_c == 0
-    flg.theta_c = 1;
-end
-
-if ~isfield(flg,'sbform')
-    flg.sbform = 0;
-end
-
-if ~isfield(flg,'wsform')
-    flg.wsform = 0;
-end
-
 % if nx~=length(q) || nx~=size(Mak,1) || nx~= length(cf); error('h and q need to have the same length and needs to be equal to the number of rows in Mak, check your input'); end %check line, comment for improved performance
 
 h=reshape(h,nx,1);
@@ -197,6 +183,21 @@ else %different transport relation for each fraction
     end
 end
 
+if ~isfield(flg,'theta_c')
+    flg.theta_c = ones(nu,1);
+end
+if any(flg.theta_c<1 | flg.theta_c>2)
+    error('Provide consistent input for critical bed shear stress flag.')
+end
+
+if ~isfield(flg,'sbform')
+    flg.sbform = zeros(nu,1);
+end
+
+if ~isfield(flg,'wsform')
+    flg.wsform = zeros(nu,1);
+end
+
 %% D90 ; double [1,nx]
 
 d90=grainsize_dX(Fak',dk',90);
@@ -223,8 +224,7 @@ thetak=1/(cnt.rho_w*cnt.g*cnt.R)*tau_b./dk;
 
 %% mean grain size (Dm) [m] ; double [nx,1]
 
-Dm=mean_grain_size(Fak',input_i); %this function deals with the dimensions appropriately, it is sediment_transport which should be adapted
-Dm=Dm'; %we need to add this because sediment_transport is badly written...
+Dm=mean_grain_size(Fak',input_i)'; %this function deals with the dimensions appropriately, it is sediment_transport which should be adapted.
 
 %% hiding function (xik) [-] ; double [nx,nf]
 
@@ -274,7 +274,7 @@ for ku=1:nu
     
     %calculate critical Shields stress (theta_c) [-] ; double [1,nf]
 
-    switch flg.theta_c
+    switch flg.theta_c(ku)
         case 1 %user input or hard coded
             switch sed_trans_loc
                 case 1 %MPM48
@@ -289,7 +289,7 @@ for ku=1:nu
                     theta_c = 0;
             end
         case 2 %compute from dstar
-            if dstar<=4
+            if dstar<=4 %!!!ATTENTION `dstar` is vector!
                 theta_c = 0.240./dstar;
             elseif dstar<=10
                 theta_c = 0.140./dstar.^0.64;
@@ -381,59 +381,70 @@ for ku=1:nu
             rksc = sed_trans_param(3); %bottom roughness height
             
             % bed load transport
-            tbcr = (cnt.rho_s - cnt.rho_w)*cnt.g*dk.*theta_c;
+            tbcr = (cnt.rho_s - cnt.rho_w)*cnt.g*dk.*theta_c; %[1,nf]
             
-            rmuc = (log10(12.0.*h/rksc)./log10(12.0.*h/3./d90')).^2;
-            fc = 0.24*(log10(12.0.*h/rksc)).^(-2);
-            tbc = 0.125*cnt.rho_w*fc.*(q./h).^2;
-            tbce = rmuc.*tbc;
+            rmuc = (log10(12.0.*h/rksc)./log10(12.0.*h/3./d90')).^2; %[nx,1]
+            fc = 0.24*(log10(12.0.*h/rksc)).^(-2); %[nx,1]
+            tbc = 0.125*cnt.rho_w*fc.*(q./h).^2; %[nx,1]
+            tbce = rmuc.*tbc; %[nx,1]
             
-            tsp = (tbce - tbcr)./tbcr; %transport stage parameter
-            no_tsp_idx = tsp<1.0000e-06;
-            tsp(no_tsp_idx) = 0;
-            switch flg.sbform % bed load due to currents
-                case 1 %always same formulation
-                    sbc = 0.100*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^1.5;
-                case 2 %other formulation if tsp (transport stage parameter) < 3
-                    if tsp < 3
-                        sbc = 0.053*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^2.1;
-                    else
-                        sbc = 0.100*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^1.5;
-                    end
-                otherwise
-                    error('specify sbform')
+            tsp = (tbce - tbcr)./tbcr; %transport stage parameter [nx,nf]
+            no_tsp_idx = tsp<1.0000e-06; %boolean [nx,nf]
+            tsp(no_tsp_idx) = 0; %!!!ATTENTION in original is set go 1e-6: if (t<0.000001_hp) t = 0.000001_hp
+
+            % bed load due to currents
+            sbc = 0.100*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^1.5;
+            if flg.sbform(ku)
+                sbc_br2=0.053*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^2.1;
+                bol_br2=tsp<3;
+                sbc(bol_br2)=sbc_br2(bol_br2);
             end
 
+            %Better not to repeat code. Someone in the future may change it at one location but not the other.
+%             switch flg.sbform(ku) % bed load due to currents
+%                 case 1 %always same formulation
+%                     sbc = 0.100*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^1.5;
+%                 case 2 %other formulation if tsp (transport stage parameter) < 3
+%                     if tsp < 3 %!!!ATTENTION it is a matrix!
+%                         sbc = 0.053*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^2.1;
+%                     else
+%                         sbc = 0.100*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^1.5;
+%                     end
+%                 otherwise
+%                     error('specify sbform')
+%             end
+
             % suspended sediment transport: use settling_velocity.m with ws_flag = 2
-            ws_flag = 2;
-            wsform = flg.wsform;
+            ws_flag = 2; %!!! why hardcode it? I would leave it up to the user and set the default to 2 if not specified. 
+            wsform = flg.wsform(ku);
             ws = settling_velocity(dk,ws_flag,wsform,dstar);
             ca = 0.015*alf1*dk/rksc.*tsp.^1.5./dstar.^0.3;
             rkap = 0.4;
-            ustar = sqrt(0.125*fc).*(q./h); %CHECK - FIX NANS?
+            ustar = sqrt(0.125*fc).*(q./h); 
             
-            beta = 1.0 + 2.0*(ws./ustar).^2;
-            beta = min(beta, 1.5);
-            psi = 2.5*(ws./ustar).^0.8.*(ca/0.65).^0.4;
+            beta = 1.0 + 2.0*(ws./ustar).^2; %[nx,nf]
+            beta = min(beta, 1.5,'includenan'); %[nx,nf]
+            psi = 2.5*(ws./ustar).^0.8.*(ca/0.65).^0.4; %[nx,nf]
             
-            zc = ws./rkap./ustar./beta + psi;
-            zc = min(zc,20.0);
+            zc = ws./rkap./ustar./beta + psi; %[nx,nf]
+            zc = min(zc,20.0,'includenan'); %[nx,nf]
                 
-            no_zc_idx = ustar<=0;
-            zc(no_zc_idx,:) = 0;
+            no_zc_idx = ustar<=0; %[nx,1]
+            zc(no_zc_idx,:) = 0; %[nx,nf]
             
             ah = rksc./h;
-            if abs(zc - 1.2)>1.0E-4 %CHECK - I guess this is not correct
-               ff = (ah.^zc - ah.^1.2)./(1.0 - ah).^zc./(1.2 - zc); %CHECK
-            else
-               ff = -(ah./(1.0 - ah)).^1.2.*log(ah);
-            end
-            ssus = acal_s.*ff.*(q./h).*h.*ca;
+            bol_br1=abs(zc - 1.2)>1.0E-4;
+            ff_br1=(ah.^zc - ah.^1.2)./(1.0 - ah).^zc./(1.2 - zc); 
+            ff=-(ah./(1.0 - ah)).^1.2.*log(ah);
+            ff(bol_br1)=ff_br1(bol_br1);
+            ssus = acal_s.*ff.*q.*ca; 
             
             % sum
             Qbk_st = sbc + ssus;
-            no_trans_idx = (h/rksc<1.33 | q./h < 1.0E-3); %indexes of fractions below threshold ; boolean [nx,nf]
+            no_trans_idx = (h/rksc<1.33 | q./h < 1.0E-3 | h<1e-12); %indexes of fractions below threshold ; boolean [nx,1]
             Qbk_st(no_trans_idx,:) = 0; %the transport capacity of those fractions below threshold is 0
+
+            %!!! problem! `Qbk_st` is not sediment transport but non-dimensional sediment transport. See how it is converted below. `Qbk` is actual transport. 
         otherwise 
             error('sediment transport formulation')
     end %sed_trans_loc
