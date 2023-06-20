@@ -73,9 +73,19 @@ ECT_input.flg.mu=sediment_transport.sedtrans_mu;
     % 1 = constant
     % 2 = C/C90 relation
 ECT_input.flg.mu_param=sediment_transport.sedtrans_mu_param;
-ECT_input.flg.sbform=sediment_transport.sedtrans_sbform;
-ECT_input.flg.wsform=sediment_transport.sedtrans_wsform;
-ECT_input.flg.theta_c=sediment_transport.sedtrans_theta_c;
+
+if isfield(sediment_transport,'sedtrans_sbform')
+    ECT_input.flg.sbform=sediment_transport.sedtrans_sbform;
+end
+
+if isfield(sediment_transport,'sedtrans_wsform')
+    ECT_input.flg.wsform=sediment_transport.sedtrans_wsform;
+end
+
+if isfield(sediment_transport,'sedtrans_theta_c')
+    ECT_input.flg.theta_c=sediment_transport.sedtrans_theta_c;
+end
+
 ECT_input.flg.anl=2;
     % 1 = fully coupled
     % 2 = quasi-steady

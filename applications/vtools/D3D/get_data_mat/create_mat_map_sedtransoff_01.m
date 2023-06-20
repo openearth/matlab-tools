@@ -124,9 +124,17 @@ for kst=1:nst
     flg.mu_param=flg_loc.sedtrans_mu_param(kst);
     flg.sed_trans=flg_loc.sedtrans{kst};
     sed_trans_param=flg_loc.sedtrans_param{kst};
-    flg.sbform=flg_loc.sedtrans_sbform(kst);
-    flg.wsform=flg_loc.sedtrans_wsform(kst);
-    flg.theta_c = flg_loc.sedtrans_theta_c(kst); %shouldn't it crash?
+    if isfield(flg_loc,'sedtrans_sbform')
+        flg.sbform=flg_loc.sedtrans_sbform(kst);
+    end
+    
+    if isfield(flg_loc,'sedtrans_wsform')
+        flg.wsform=flg_loc.sedtrans_wsform(kst);
+    end
+    
+    if isfield(flg_loc,'sedtrans_theta_c')
+        flg.theta_c = flg_loc.sedtrans_theta_c(kst); %shouldn't it crash?
+    end
     
     var_sum{kst}=sprintf('%s_sum',flg_loc.sedtrans_name{kst});
     unit_v{kst}='stot';

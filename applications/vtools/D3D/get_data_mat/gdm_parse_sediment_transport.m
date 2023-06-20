@@ -96,9 +96,17 @@ if isfield(flg_loc,'sedtrans') %sediment transport offline
         flg_loc.sediment_transport(nv+kst).sedtrans_hiding_param=flg_loc.sedtrans_hiding_param(kst);
         flg_loc.sediment_transport(nv+kst).sedtrans_mu          =flg_loc.sedtrans_mu(kst);
         flg_loc.sediment_transport(nv+kst).sedtrans_mu_param    =flg_loc.sedtrans_mu_param(kst);
-        flg_loc.sediment_transport(nv+kst).sedtrans_sbform      =flg_loc.sedtrans_sbform(kst);
-        flg_loc.sediment_transport(nv+kst).sedtrans_wsform      =flg_loc.sedtrans_wsform(kst);
-        flg_loc.sediment_transport(nv+kst).sedtrans_theta_c     =flg_loc.sedtrans_theta_c(kst);
+        if isfield(flg_loc,'sedtrans_sbform')
+            flg_loc.sediment_transport(nv+kst).sedtrans_sbform      =flg_loc.sedtrans_sbform(kst);
+        end
+        
+        if isfield(flg_loc,'sedtrans_wsform')
+            flg_loc.sediment_transport(nv+kst).sedtrans_wsform      =flg_loc.sedtrans_wsform(kst);
+        end
+        
+        if isfield(flg_loc,'sedtrans_theta_c')
+            flg_loc.sediment_transport(nv+kst).sedtrans_theta_c     =flg_loc.sedtrans_theta_c(kst);
+        end
     end
 else %read sediment transport parameters from files
     error('do')
