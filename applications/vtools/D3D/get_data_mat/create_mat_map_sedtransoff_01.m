@@ -126,7 +126,7 @@ for kst=1:nst
     sed_trans_param=flg_loc.sedtrans_param{kst};
     flg.sbform=flg_loc.sedtrans_sbform(kst);
     flg.wsform=flg_loc.sedtrans_wsform(kst);
-    flg.theta_c = flg_loc.sedtrans_theta_c(kst);
+    flg.theta_c = flg_loc.sedtrans_theta_c(kst); %shouldn't it crash?
     
     var_sum{kst}=sprintf('%s_sum',flg_loc.sedtrans_name{kst});
     unit_v{kst}='stot';

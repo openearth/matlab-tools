@@ -321,39 +321,6 @@ end %ext
 
 end %function
 
-%% load_etab_dbf
-
-function [etab_cen,pol]=load_etab_dbf(fpath_shp,fpath_data)
-
-fid_log=NaN;
-
-%temporary folder for renaming files
-fdir_tmp=fullfile(pwd,'tmp_shp');
-mkdir_check(fdir_tmp);
-
-[fdir_shp,fname_shp,ext_shp]=fileparts(fpath_shp);
-fpath_shp_tmp=fullfile(fdir_tmp,sprintf('%s%s',fname_shp,ext_shp));
-copyfile_check(fpath_shp,fpath_shp_tmp);
-
-[fdir_dbf,fname_dbf,ext_dbf]=fileparts(fpath_data);
-fpath_dbf_tmp=fullfile(fdir_tmp,sprintf('%s%s',fname_shp,ext_dbf)); %rename the dbf file with the name of the shp to be able to read
-copyfile_check(fpath_data,fpath_dbf_tmp);
-
-messageOut(fid_log,'Start reading shp');
-pol=D3D_io_input('read',fpath_shp_tmp,'read_val',1);
-str_pol={'polygon:MEAN','polygon:COUNT'}; 
-polnames=cellfun(@(X)X.Name,pol.val,'UniformOutput',false);
-idx_pol=find_str_in_cell(polnames,str_pol);
-if any(isnan(idx_pol))
-    error('Could not find variable in shapefile %s. Maybe the variable name is different.',fpath_shp_tmp);
-end
-etab_cen=pol.val{idx_pol(1)}.Val;
-count=pol.val{idx_pol(2)}.Val;
-
-bol_nd=count==0;
-etab_cen(bol_nd)=NaN;
-
-end %function
 
 %% load_etab_excel
 
@@ -462,19 +429,6 @@ end %function
 
 %%
 
-function pol_lo=pol_str2double(pol_lo_str)
-
-if strcmp(pol_lo_str(1),'R')
-    s=1;
-elseif strcmp(pol_lo_str(1),'L')
-    s=-1;
-else
-    s=NaN;
-end
-
-pol_lo=s*str2double(pol_lo_str(2));
-
-end %function
 
 %%
 
@@ -555,72 +509,14 @@ end %function
 
 %%
 
-function rkm_pol=rkm_of_pol(rkm,br)
 
-ds_pol=polygon_ds;
-ds_m=ds_pol/1000;
-rkm_pol=round(rkm/ds_m)*ds_m;
-
-switch br
-    case 'WL'
-        rkm_pol=max(rkm,867.5);
-end
-
-end
 
 %%
 
-%rkm    = queary point. Can be any. 
-%br     = branch code.
-%dist   = distance to find the polygon names
-%
-function [rkm_pol,br_num]=get_pol_along_line(rkm,br,dist)
-
-% rkm_pol=rkm_of_pol(rkm,br); %the rkm along a certain branch closest to the query rkm. 
-ds_pol=polygon_ds; 
-rkm_s=rkm-dist/2/1000:ds_pol/1000:rkm+dist/2/1000;
-
-ns=numel(rkm_s);
-% str_pol=cell(ns,1);
-br_l=cell(ns,1);
-br_num=NaN(ns,1);
-rkm_pol=NaN(ns,1);
-for ks=1:ns
-    rkm_pol(ks)=rkm_of_pol(rkm_s(ks),br); %the rkm along a certain branch closest to the query rkm. 
-    br_l{ks}=branch_rt(br,rkm_pol(ks)); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
-%     str_pol{ks,1}=polygon_str(br_l,rkm_pol);
-    br_num(ks)=br_str2double(br_l{ks});
-end
-
-end
-
-%%
-
-function br_s=branch_rt(br,rkm_s)
-
-switch br
-    case {'WL','BO','NI'}
-        if rkm_s>960.15
-            br_s='NI';
-        elseif rkm_s>952.85
-            br_s='BO';
-        else
-            br_s='WL';
-        end
-    otherwise
-        error('do')
-end
-
-end %function
 
 
 %% 
 
-function ds=polygon_ds(varargin)
-
-ds=100; 
-
-end 
 
 %%
 
@@ -630,62 +526,10 @@ end
 % 
 % end
 
-%% 
-
-function br_num=br_str2double(br_str)
-
-% a=unique(cellfun(@(X)X(1:2),rkm_str,'UniformOutput',false));
-
-switch br_str
-    case 'BO'
-        br_num=1;
-    case 'BR'
-        br_num=2;
-    case 'IJ'
-        br_num=3;
-    case 'LE'
-        br_num=4;
-    case 'NI'
-        br_num=5;
-    case 'NR'
-        br_num=6;
-    case 'PK'
-        br_num=7;
-    case 'RH'
-        br_num=8;
-    case 'WL'
-        br_num=9;
-    otherwise
-        br_num=NaN;
-end 
-
-end %functions
 
 %%
 
-function [xpol_cen,ypol_cen]=centroid_polygons(pol)
 
-npol=numel(pol.xy.XY);
-xpol_cen=NaN(npol,1);
-ypol_cen=NaN(npol,1);
-for kpol=1:npol
-    polyin=polyshape(pol.xy.XY{kpol,1}(:,1),pol.xy.XY{kpol,1}(:,2));
-    [xpol_cen(kpol),ypol_cen(kpol)]=centroid(polyin);
-    fprintf('Polygon centroid %4.2f %% \n',kpol/npol*100);
-end
-
-% %% BEGIN DEBUG
-% 
-% figure
-% hold on
-% for kpol=1:100
-% plot(pol.xy.XY{kpol,1}(:,1),pol.xy.XY{kpol,1}(:,2))
-% scatter(xpol_cen(kpol),ypol_cen(kpol));
-% end
-% 
-% %% END DEBUG
-
-end %function
 
 %%
 
