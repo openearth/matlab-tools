@@ -142,7 +142,7 @@ for kx=1:nx
     ECT_input.Fi1=Fi1;
     
     %call
-    if isinf(Cf) || u<1e-4 || h<1e-4
+    if isinf(Cf) || u<1e-4 || h<1e-4 || La<1e-6
         val(kx,:)=zeros(1,nf);
     else
         [ECT_matrices,sed_trans]=call_ECT(ECT_input);
