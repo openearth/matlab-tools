@@ -289,17 +289,33 @@ for ku=1:nu
                     theta_c = 0;
             end
         case 2 %compute from dstar
-            if dstar<=4 %!!!ATTENTION `dstar` is vector!
-                theta_c = 0.240./dstar;
-            elseif dstar<=10
-                theta_c = 0.140./dstar.^0.64;
-            elseif dstar<=20
-                theta_c = 0.040./dstar.^0.10;
-            elseif dstar<=150
-                theta_c = 0.013.*dstar.^0.29;
-            else
-                theta_c = 0.055;
-            end     
+            theta_c = 0.055.*ones(1,length(dstar));
+            
+            bol_thetac_br1 = dstar<=4;
+            theta_c_br1 = 0.240./dstar;
+            bol_thetac_br2 = dstar>4 & dstar<=10;
+            theta_c_br2 = 0.140./dstar.^0.64; 
+            bol_thetac_br3 = dstar>10 & dstar<=20;
+            theta_c_br3 = 0.040./dstar.^0.10;
+            bol_thetac_br4 = dstar>20 & dstar<=150;
+            theta_c_br4 = 0.013.*dstar.^0.29;
+            
+            theta_c(bol_thetac_br1) = theta_c_br1(bol_thetac_br1);
+            theta_c(bol_thetac_br2) = theta_c_br2(bol_thetac_br2);
+            theta_c(bol_thetac_br3) = theta_c_br3(bol_thetac_br3);
+            theta_c(bol_thetac_br4) = theta_c_br4(bol_thetac_br4);
+            
+%             if dstar<=4 %!!!ATTENTION `dstar` is vector! --> THIS PART CAN BE REMOVED
+%                 theta_c = 0.240./dstar;
+%             elseif dstar<=10
+%                 theta_c = 0.140./dstar.^0.64;
+%             elseif dstar<=20
+%                 theta_c = 0.040./dstar.^0.10;
+%             elseif dstar<=150
+%                 theta_c = 0.013.*dstar.^0.29;
+%             else
+%                 theta_c = 0.055;
+%             end     
     end 
     
     %calculate sediment transport
@@ -390,7 +406,7 @@ for ku=1:nu
             
             tsp = (tbce - tbcr)./tbcr; %transport stage parameter [nx,nf]
             no_tsp_idx = tsp<1.0000e-06; %boolean [nx,nf]
-            tsp(no_tsp_idx) = 0; %!!!ATTENTION in original is set go 1e-6: if (t<0.000001_hp) t = 0.000001_hp
+            tsp(no_tsp_idx) = 1.0000e-06; %!!!ATTENTION in original is set go 1e-6: if (t<0.000001_hp) t = 0.000001_hp. --> I HAVE CHANGED IT ACCORDINGLY. CHECK
 
             % bed load due to currents
             sbc = 0.100*acal_b*cnt.R^0.5*sqrt(cnt.g)*dk.^1.5.*dstar.^(-0.3).*tsp.^1.5;
@@ -415,7 +431,7 @@ for ku=1:nu
 %             end
 
             % suspended sediment transport: use settling_velocity.m with ws_flag = 2
-            ws_flag = 2; %!!! why hardcode it? I would leave it up to the user and set the default to 2 if not specified. 
+            ws_flag = 2; %!!! why hardcode it? I would leave it up to the user and set the default to 2 if not specified. %ws_flag = 1 is not part of the original VR implementation. CHECK
             wsform = flg.wsform(ku);
             ws = settling_velocity(dk,ws_flag,wsform,dstar);
             ca = 0.015*alf1*dk/rksc.*tsp.^1.5./dstar.^0.3;
@@ -436,15 +452,14 @@ for ku=1:nu
             bol_br1=abs(zc - 1.2)>1.0E-4;
             ff_br1=(ah.^zc - ah.^1.2)./(1.0 - ah).^zc./(1.2 - zc); 
             ff=-(ah./(1.0 - ah)).^1.2.*log(ah);
+            ff=repmat(ff,1,size(ff_br1,2));
             ff(bol_br1)=ff_br1(bol_br1);
             ssus = acal_s.*ff.*q.*ca; 
             
             % sum
-            Qbk_st = sbc + ssus;
+            Qbk_st = (1-cnt.p)./sqrt(cnt.g*cnt.R*dk.^3).*(sbc + ssus); %dimensionless sediment transport with pores. ??? CHECK IF POROSITY SHOULD BE INCLUDED HERE OR NOT
             no_trans_idx = (h/rksc<1.33 | q./h < 1.0E-3 | h<1e-12); %indexes of fractions below threshold ; boolean [nx,1]
             Qbk_st(no_trans_idx,:) = 0; %the transport capacity of those fractions below threshold is 0
-
-            %!!! problem! `Qbk_st` is not sediment transport but non-dimensional sediment transport. See how it is converted below. `Qbk` is actual transport. 
         otherwise 
             error('sediment transport formulation')
     end %sed_trans_loc
