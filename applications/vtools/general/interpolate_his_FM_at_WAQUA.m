@@ -22,6 +22,14 @@ function interpolate_his_FM_at_WAQUA(fpath_his_fm,fpath_his_wa,fpath_ocs,fpath_o
 
 %% PARSE
 
+parin=inputParser;
+
+addOptional(parin,'adhoc','');
+
+parse(parin,varargin{:})
+
+fpath_adhoc=parin.Results.adhoc;
+
 %this should be made input
 idx_ocs_col_rkm=1; %column index with river kilometer
 idx_ocs_col_br=2; %column index with river branch
@@ -50,22 +58,16 @@ ocs_ct=readcell(fpath_ocs); %conversion table Q
 
 %% match CS to ST
 %we process the discharge CS and match them with water level ST
-[ncs,idx_ost_ocs]=match_CS_ST(ocs_ct,ost_ct,idx_ost_col_rkm,idx_ost_col_br,idx_ocs_col_rkm,idx_ocs_col_br);
-
-%% BEGIN DEBUG
-
-% ost_ct()
-
-% END DEBUG
+[ncs,idx_ost_ocs]=match_CS_ST(ocs_ct,ost_ct,idx_ost_col_rkm,idx_ost_col_br,idx_ocs_col_rkm,idx_ocs_col_br,fpath_adhoc);
 
 %% read data for all times
 
 messageOut(fid_log,'Reading data')
 
-etaw_fm=ncread(fpath_his_fm,'waterlevel'); %we will rewrite the whole variable, so we cannot load a part of it.  
-etaw_fm_mod=etaw_fm; %we cannot overwrite the same variable because we need the values at all times for the interpolation. We could locally copy these values though. 
+% etaw_fm=ncread(fpath_his_fm,'waterlevel'); %we will rewrite the whole variable, so we cannot load a part of it.  
+% etaw_fm_mod=etaw_fm; %we cannot overwrite the same variable because we need the values at all times for the interpolation. We could locally copy these values though. 
 
-Q_fm=ncread(fpath_his_fm,'cross_section_discharge');
+% Q_fm=ncread(fpath_his_fm,'cross_section_discharge');
 ocs_fm=NC_read_text(fpath_his_fm,'cross_section_name');
 ost_fm=NC_read_text(fpath_his_fm,'station_name');
 
@@ -99,6 +101,25 @@ if any(diff([numel(idx_ost_fm_v),numel(idx_ocs_fm_v),numel(idx_ocs_wa_v)]))
     error('There is a different number of stations')
 end
 
+%%
+
+%% check
+
+fid_check=fopen('check.txt','w');
+for kcs=1:ncs
+   idx_ocs_fm_loc=idx_ocs_fm_v(kcs);
+   idx_ocs_wa_loc=idx_ocs_wa_v(kcs);
+   idx_ost_fm_loc=idx_ost_fm_v(kcs);
+%    rkm_loc=ocs_ct{idx_ct,idx_ocs_col_rkm};
+%    br_loc=ocs_ct{idx_ct,idx_ocs_col_br};
+   ocs_fm_loc=ocs_fm{idx_ocs_fm_loc};
+   ocs_wa_loc=ocs_wa{idx_ocs_wa_loc};
+   ost_fm_loc=ost_fm{idx_ost_fm_loc};
+
+    fprintf(fid_check,'%s; %s; %s \n',ocs_fm_loc,ocs_wa_loc,ost_fm_loc);
+end
+fclose(fid_check);
+
 %% PLOT
 
 %Conclusion: times are correct
@@ -124,6 +145,11 @@ for kcs=1:ncs
         etaw_v=etaw_fm(idx_ost_fm_v(kcs),idx_tim_fm); %y-vector. FM water level for all times.
         
         etaw_fm_mod(idx_ost_fm_v(kcs),idx_tim_fm(kt))=interp1(Q_v,etaw_v,Q_q,'linear','extrap'); %interpolated FM water level.
+
+        %BEGIN DEBUG
+        
+        %END DEBUG
+
     end
 end
 
@@ -182,12 +208,23 @@ end %function
 
 %%
 
-function [ncs,idx_ost_ocs]=match_CS_ST(ocs_ct,ost_ct,idx_ost_col_rkm,idx_ost_col_br,idx_ocs_col_rkm,idx_ocs_col_br)
+function [ncs,idx_ost_ocs]=match_CS_ST(ocs_ct,ost_ct,idx_ost_col_rkm,idx_ost_col_br,idx_ocs_col_rkm,idx_ocs_col_br,fpath_adhoc)
+
+if ~isempty(fpath_adhoc)
+    do_adhoc=1;
+    adhoc_ct=readcell(fpath_adhoc); %conversion table etaw-Q
+    rkm_ah_ost=cell2mat(adhoc_ct(2:end,1));
+    br_ah_ost=adhoc_ct(2:end,2);
+%     rkm_ah_ocs=cell2mat(adhoc_ct(2:end,3));
+%     br_ah_ocs=adhoc_ct(2:end,4);
+end
 
 ncs=size(ocs_ct,1)-1; %number of observation CS
 idx_ost_ocs=NaN(ncs,1); %index between CS and station 
 rkm_ost_v=cell2mat(ost_ct(2:end,idx_ost_col_rkm));
 br_ost_v=ost_ct(2:end,idx_ost_col_br);
+rkm_ocs_v=cell2mat(ost_ct(2:end,idx_ocs_col_rkm));
+br_ocs_v=ost_ct(2:end,idx_ocs_col_br);
 for kobs=1:ncs
     rkm_q=ocs_ct{kobs+1,idx_ocs_col_rkm};
     br_q=ocs_ct{kobs+1,idx_ocs_col_br};
@@ -198,9 +235,65 @@ for kobs=1:ncs
         error('There are multiple or no stations with that match')
     end
     idx_ost_ocs(kobs,1)=find(bol_get);
+
+    if do_adhoc
+        %find ST in adhoc list
+        idx_ost=idx_ost_ocs(kobs,1)+1; %+1 for header
+        br_ost=ost_ct{idx_ost,idx_ost_col_br};
+        rkm_ost=ost_ct{idx_ost,idx_ost_col_rkm};
+
+        bol_rkm=rkm_ah_ost==rkm_ost;
+        [~,bol_br]=find_str_in_cell(br_ah_ost,{br_ost});
+        bol_get=bol_rkm & bol_br;   
+        if any(bol_get) %it is a station to overwrite
+            if sum(bol_get)~=1
+                error('There are multiple or no stations with that match in adhoc OST')
+            end
+            idx_ah=find(bol_get)+1; %+1 for header
+            rkm_ocs=adhoc_ct{idx_ah,3};
+            br_ocs=adhoc_ct{idx_ah,4};
+
+            bol_rkm=rkm_ocs_v==rkm_ocs;
+            [~,bol_br]=find_str_in_cell(br_ocs_v,{br_ocs});
+            bol_get=bol_rkm & bol_br;   
+            if sum(bol_get)~=1
+                error('There are multiple or no stations with that match in adhoc OCS')
+            end
+            idx_ost_ocs(kobs,1)=find(bol_get);
+
+            %BEGIN DEBUG
+            if rkm_ocs==1000
+                debug_1=1;
+            end
+            %END DEBUG
+
+        end 
+
+    end %do_adhoc
 end
 
 end %function
+
+%% 
+
+% function idx_ost_ocs=overwrite_idx(fpath_adhoc,idx_ost_ocs,ocs_ct,ost_ct,idx_ost_col_rkm,idx_ost_col_br,idx_ocs_col_rkm,idx_ocs_col_br)
+% 
+% if isempty(fpath_adhoc); return; end
+% 
+% adhoc_ct=readcell(fpath_adhoc); %conversion table etaw-Q
+% 
+
+% 
+% rkm_ost_v=cell2mat(ost_ct(2:end,idx_ost_col_rkm));
+% br_ost_v=ost_ct(2:end,idx_ost_col_br);
+% nah=size(adhoc_ct,1); %number of stations to correct
+% 
+% for kah=1:nah
+%     
+% end %nah
+% 
+% 
+% end %function 
 
 %%
 
