@@ -1,4 +1,4 @@
-function [TStartOut,TStopOut] = simulationTime(TStart,TStop,Tunit,RefDate)
+function [TStartOut,TStopOut] = simulationTime(TStart,TStop,Tunit,RefDate,mode)
 %DFLOWFM  One line description goes here.
 %
 %   Calculate TStart and TStop values w.r.t RefDate (all input in datenum)
@@ -7,10 +7,14 @@ function [TStartOut,TStopOut] = simulationTime(TStart,TStop,Tunit,RefDate)
 %   varargout = dflowfm(varargin)
 %
 %   Input: 
-%   TStart      datenum value
-%   TStop       datenum value
+%   TStart      datenum value or Tunit
+%   TStop       datenum value or Tunit
 %   Tunit       'S' (seconds), 'M' (minutes), or 'H' (hours)
 %   RefDate     datenum value
+%
+%   Optional
+%   mode        'datenum' (datenum to Tunit) or 'Tunit' (Tunit to datenum)
+                
 %
 %   Output:
 %   TStart and TStop in Tunit w.r.t. RefDate
@@ -62,6 +66,7 @@ function [TStartOut,TStopOut] = simulationTime(TStart,TStop,Tunit,RefDate)
 
 %% Calculate
 
+% Conversion factor
 if strcmpi(Tunit,'S')
     Tfac = 24*60*60;
 elseif strcmpi(Tunit,'M')
@@ -70,14 +75,25 @@ elseif strcmpi(Tunit,'H')
     Tfac = 24;
 end
 
-TStartOut = (TStart-RefDate)*Tfac;
-TStopOut = (TStop-RefDate)*Tfac;
+if strcmpi(mode,'datenum')
+    TStartOut = (TStart-RefDate)*Tfac;
+    TStopOut = (TStop-RefDate)*Tfac;
+elseif strcmpi(mode,'Tunit')
+    TStartOut = RefDate+(TStart/Tfac);
+    TStopOut = RefDate+(TStop/Tfac);
+end
 
 %% Display
 
-fprintf('\tRefDate = %s\n',datestr(RefDate,'yyyy-mm-dd HH:MM:SS'));
-fprintf('\tTStart = %.2f\n',TStartOut);
-fprintf('\tTStop = %.2f\n',TStopOut);
+if strcmpi(mode,'datenum')
+    fprintf('\tRefDate = %s\n',datestr(RefDate,'yyyy-mm-dd HH:MM:SS'));
+    fprintf('\tTStart = %.2f\n',TStartOut);
+    fprintf('\tTStop = %.2f\n',TStopOut);
+elseif strcmpi(mode,'Tunit')
+    fprintf('\tRefDate = %s\n',datestr(RefDate,'yyyy-mm-dd HH:MM:SS'));
+    fprintf('\tTStart = %s\n',datestr(TStartOut));
+    fprintf('\tTStop = %s\n',datestr(TStopOut));
+end
 
 return
 
