@@ -64,16 +64,16 @@ ocs_ct=readcell(fpath_ocs); %conversion table Q
 
 messageOut(fid_log,'Reading data')
 
-% etaw_fm=ncread(fpath_his_fm,'waterlevel'); %we will rewrite the whole variable, so we cannot load a part of it.  
-% etaw_fm_mod=etaw_fm; %we cannot overwrite the same variable because we need the values at all times for the interpolation. We could locally copy these values though. 
+etaw_fm=ncread(fpath_his_fm,'waterlevel'); %we will rewrite the whole variable, so we cannot load a part of it.  
+etaw_fm_mod=etaw_fm; %we cannot overwrite the same variable because we need the values at all times for the interpolation. We could locally copy these values though. 
 
-% Q_fm=ncread(fpath_his_fm,'cross_section_discharge');
+Q_fm=ncread(fpath_his_fm,'cross_section_discharge');
 ocs_fm=NC_read_text(fpath_his_fm,'cross_section_name');
 ost_fm=NC_read_text(fpath_his_fm,'station_name');
 
 Q_wa=ncread(fpath_his_wa,'CTRV');
 ocs_wa=NC_read_text(fpath_his_wa,'NAMTRV');
-% etaw_wa=ncread(fpath_his_wa,'ZWL'); 
+% etaw_wa=ncread(fpath_his_wa,'ZWL'); %not needed
 
 %time vectors
 [~,~,~,tim_fm_dtime]=D3D_results_time(fpath_his_fm,0,[1,Inf]);
@@ -82,11 +82,12 @@ ocs_wa=NC_read_text(fpath_his_wa,'NAMTRV');
 %% get indices
 
 %get index of the CS
-idx_ocs_fm_v=find_str_in_cell(ocs_fm,ocs_ct(2:end,idx_ocs_col_fm));
-idx_ocs_wa_v=find_str_in_cell(ocs_wa,ocs_ct(2:end,idx_ocs_col_wa));
+idx_ocs=idx_ost_ocs(:,2)+1; %CS to take
+idx_ocs_fm_v=find_str_in_cell(ocs_fm,ocs_ct(idx_ocs,idx_ocs_col_fm));
+idx_ocs_wa_v=find_str_in_cell(ocs_wa,ocs_ct(idx_ocs,idx_ocs_col_wa));
 
 %get index of ST
-idx_ost_fm_v=find_str_in_cell(ost_fm,ost_ct(idx_ost_ocs+1,idx_ost_col_fm),'first',1); %it seems there are repeated stations. We only take the first. We add 1 to `idx_ost_ocs` because in `ost_ct` the first raw is header.
+idx_ost_fm_v=find_str_in_cell(ost_fm,ost_ct(idx_ost_ocs(:,1)+1,idx_ost_col_fm),'first',1); %it seems there are repeated stations. We only take the first. We add 1 to `idx_ost_ocs` because in `ost_ct` the first raw is header.
 
 %get time index of the CS ans ST (same)
 idx_tim_fm=NaN(1,nt);
@@ -105,13 +106,13 @@ end
 
 %% check
 
-fid_check=fopen('check.txt','w');
+fdir=fileparts(fpath_ost);
+fid_check=fopen(fullfile(fdir,'match.csv'),'w');
+fprintf(fid_check,'CS FM; CS WA; ST FM \n');
 for kcs=1:ncs
    idx_ocs_fm_loc=idx_ocs_fm_v(kcs);
    idx_ocs_wa_loc=idx_ocs_wa_v(kcs);
    idx_ost_fm_loc=idx_ost_fm_v(kcs);
-%    rkm_loc=ocs_ct{idx_ct,idx_ocs_col_rkm};
-%    br_loc=ocs_ct{idx_ct,idx_ocs_col_br};
    ocs_fm_loc=ocs_fm{idx_ocs_fm_loc};
    ocs_wa_loc=ocs_wa{idx_ocs_wa_loc};
    ost_fm_loc=ost_fm{idx_ost_fm_loc};
@@ -220,12 +221,14 @@ if ~isempty(fpath_adhoc)
 end
 
 ncs=size(ocs_ct,1)-1; %number of observation CS
-idx_ost_ocs=NaN(ncs,1); %index between CS and station 
+idx_ost_ocs=NaN(ncs,2); %index between CS and station. 
 rkm_ost_v=cell2mat(ost_ct(2:end,idx_ost_col_rkm));
 br_ost_v=ost_ct(2:end,idx_ost_col_br);
-rkm_ocs_v=cell2mat(ost_ct(2:end,idx_ocs_col_rkm));
-br_ocs_v=ost_ct(2:end,idx_ocs_col_br);
+rkm_ocs_v=cell2mat(ocs_ct(2:end,idx_ocs_col_rkm));
+br_ocs_v=ocs_ct(2:end,idx_ocs_col_br);
 for kobs=1:ncs
+    idx_ost_ocs(kobs,2)=kobs; 
+
     rkm_q=ocs_ct{kobs+1,idx_ocs_col_rkm};
     br_q=ocs_ct{kobs+1,idx_ocs_col_br};
     bol_rkm=rkm_ost_v==rkm_q;
@@ -236,40 +239,40 @@ for kobs=1:ncs
     end
     idx_ost_ocs(kobs,1)=find(bol_get);
 
-    if do_adhoc
-        %find ST in adhoc list
-        idx_ost=idx_ost_ocs(kobs,1)+1; %+1 for header
-        br_ost=ost_ct{idx_ost,idx_ost_col_br};
-        rkm_ost=ost_ct{idx_ost,idx_ost_col_rkm};
+    %END if no adhoc
+    if ~do_adhoc; continue; end
 
-        bol_rkm=rkm_ah_ost==rkm_ost;
-        [~,bol_br]=find_str_in_cell(br_ah_ost,{br_ost});
-        bol_get=bol_rkm & bol_br;   
-        if any(bol_get) %it is a station to overwrite
-            if sum(bol_get)~=1
-                error('There are multiple or no stations with that match in adhoc OST')
-            end
-            idx_ah=find(bol_get)+1; %+1 for header
-            rkm_ocs=adhoc_ct{idx_ah,3};
-            br_ocs=adhoc_ct{idx_ah,4};
+    %find ST in adhoc list
+    idx_ost=idx_ost_ocs(kobs,1)+1; %+1 for header
+    br_ost=ost_ct{idx_ost,idx_ost_col_br};
+    rkm_ost=ost_ct{idx_ost,idx_ost_col_rkm};
 
-            bol_rkm=rkm_ocs_v==rkm_ocs;
-            [~,bol_br]=find_str_in_cell(br_ocs_v,{br_ocs});
-            bol_get=bol_rkm & bol_br;   
-            if sum(bol_get)~=1
-                error('There are multiple or no stations with that match in adhoc OCS')
-            end
-            idx_ost_ocs(kobs,1)=find(bol_get);
+    bol_rkm=rkm_ah_ost==rkm_ost;
+    [~,bol_br]=find_str_in_cell(br_ah_ost,{br_ost});
+    bol_get=bol_rkm & bol_br;   
 
-            %BEGIN DEBUG
-            if rkm_ocs==1000
-                debug_1=1;
-            end
-            %END DEBUG
+    %END if no match
+    if ~any(bol_get); continue; end %it is a station to overwrite
+    if sum(bol_get)~=1
+        error('There are multiple or no stations with that match in adhoc OST')
+    end
+    idx_ah=find(bol_get)+1; %+1 for header
+    rkm_ocs=adhoc_ct{idx_ah,3};
+    br_ocs=adhoc_ct{idx_ah,4};
 
-        end 
+    bol_rkm=rkm_ocs_v==rkm_ocs;
+    [~,bol_br]=find_str_in_cell(br_ocs_v,{br_ocs});
+    bol_get=bol_rkm & bol_br;   
+    if sum(bol_get)~=1
+        error('There are multiple or no stations with that match in adhoc OCS')
+    end
+    idx_ost_ocs(kobs,2)=find(bol_get);
 
-    end %do_adhoc
+%     %BEGIN DEBUG
+%     if rkm_ocs==1000
+%         debug_1=1;
+%     end
+%     %END DEBUG
 end
 
 end %function

@@ -125,6 +125,8 @@ data{kl,1}=        'Restid  = #trim-restart#'; kl=kl+1;
 end
 data{kl,1}=        'Tzone  = 0'; kl=kl+1;
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
+%Sub1 = #STWI# %'S'alinity, 'T'emperaure, 'I'secondary flow and 'W'ind
+%Sub2 = #PCW#  %'P'articles, 'W'ave, 'C'onstituents
 if secflow==1
 data{kl ,1}=        'Sub1   = #   I#'; kl=kl+1; %with computation of advection-diffusion of secondary flow intensity
 else

@@ -16,22 +16,25 @@ fclose all;
 
 %% PATHS
 
-path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
-path_data_stations='C:\Users\chavarri\checkouts\riv\data_stations\';
+fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
+fdir_d3d='c:\checkouts\qp\';
+path_data_stations='c:\checkouts\data_stations';
 
 % path_add_fcn='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\';
 
 %% ADD OET
 
-addpath(path_add_fcn)
-addOET(path_add_fcn)
+if isunix %we assume that if Linux we are in the p-drive. 
+    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
+end
+run(fpath_add_oet);
 
 %% INPUT
 
 flg.write_csv=0;
 
-% data_station=read_data_stations(path_data_stations,'location_clear','Lobith','grootheid','Q');
-data_station=read_data_stations(path_data_stations,'location_clear','Baton Rouge','grootheid','WATHTE');
+data_station=read_data_stations(path_data_stations,'location_clear','Lobith','grootheid','Q');
+% data_station=read_data_stations(path_data_stations,'location_clear','Baton Rouge','grootheid','WATHTE');
 
 %% CALC
 
@@ -191,8 +194,8 @@ in_p.fname='Q_analysis_day';
 in_p.fig_visible=0;
 in_p.data_station=data_station;
 in_p.lan='en';
-in_p.Lref='+msl';
-in_p.analysis='min';
+% in_p.Lref='+msl';
+in_p.analysis='max';
 % in_p.time_q_year_max=data_station_prob.year.max.tim;
 % in_p.q_year_max=data_station_prob.year.max.val;
 % in_p.q_sort=data_station_prob.year.max.sort.val;
