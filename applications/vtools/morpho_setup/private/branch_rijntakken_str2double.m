@@ -16,6 +16,8 @@ function br_num=br_str2double(br_str)
 
 % a=unique(cellfun(@(X)X(1:2),rkm_str,'UniformOutput',false));
 
+warning('deprecated, use `branch_rijntakken`')
+
 switch br_str
     case 'BO'
         br_num=1;
@@ -33,7 +35,7 @@ switch br_str
         br_num=7;
     case 'RH'
         br_num=8;
-    case 'WL'
+    case {'WL','WA'}
         br_num=9;
     otherwise
         br_num=NaN;
