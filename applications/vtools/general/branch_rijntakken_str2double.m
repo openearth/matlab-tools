@@ -4,19 +4,17 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 19025 $
+%$Date: 2023-07-03 08:46:37 +0200 (Mon, 03 Jul 2023) $
+%$Author: chavarri $
+%$Id: branch_rijntakken_str2double.m 19025 2023-07-03 06:46:37Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/morpho_setup/private/branch_rijntakken_str2double.m $
 %
 %
 
-function br_num=br_str2double(br_str)
+function br_num=branch_rijntakken_str2double(br_str)
 
 % a=unique(cellfun(@(X)X(1:2),rkm_str,'UniformOutput',false));
-
-warning('deprecated, use `branch_rijntakken`')
 
 switch br_str
     case 'BO'

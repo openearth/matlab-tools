@@ -13,7 +13,7 @@
 %Branch names of the rijntakken for a given track
 %
 
-function br=branch_rijntakken(rkm,track,varargin)
+function [br,br_num]=branch_rijntakken(rkm,track,varargin)
 
 %% PARSE
 
@@ -31,34 +31,39 @@ do_nibo=parin.Results.NI_BO;
 
 nrkm=numel(rkm);
 br=cell(nrkm,1);
+br_num=NaN(nrkm,1);
 
 for krkm=1:nrkm
 
-switch track
-    case {'WL','BO','NI','WA'}
-        if rkm>960.15
-            if do_nibo
-                br{krkm}='NI';
-            else
+    %name
+    switch track
+        case {'WL','BO','NI','WA'}
+            if rkm>960.15
+                if do_nibo
+                    br{krkm}='NI';
+                else
+                    br{krkm}=waal_name;
+                end
+            elseif rkm>952.85
+                if do_nibo
+                    br{krkm}='BO';
+                else
+                    br{krkm}=waal_name;
+                end                
+            elseif rkm>867.00
                 br{krkm}=waal_name;
+            elseif rkm>852.90
+                br{krkm}='BR';
+            else
+                br{krkm}='Rhein';
             end
-        elseif rkm>952.85
-            if do_nibo
-                br{krkm}='BO';
-            else
-                br{krkm}=waal_name;
-            end                
-        elseif rkm>867.00
-            br{krkm}=waal_name;
-        elseif rkm>852.90
-            br{krkm}='BR';
-        else
-            br{krkm}='Rhein';
-        end
-    otherwise
-        error('do')
-end
+        otherwise
+            error('do')
+    end
+    
+    %number
+    br_num(krkm,1)=branch_rijntakken_str2double(br{krkm});
 
-end
+end %rkm
 
 end %function

@@ -23,8 +23,8 @@ idx_rkm=NaN(size(etab_cen));
 for krkm=1:nrkm
     rkm_q=rkm_cen(krkm); %query rkm (any) at which to compute the mean
     rkm_mod=rkm_of_pol(rkm_q,br); %rkm to modify. Along a certain branch closest to the query rkm. 
-    br_mod_str=branch_rt(br,rkm_mod); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
-    [rkm_me,br_me]=get_pol_along_line(rkm_q,br_mod_str,dist(krkm)); %rkm and branch to compute the mean
+    br_mod_str=branch_rijntakken(rkm_mod,br,'ni_bo',true); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
+    [rkm_me,br_me]=get_pol_along_line(rkm_q,br_mod_str{1},dist(krkm)); %rkm and branch to compute the mean
     
     bol_rkm_me=ismember_num(rkm_pol_num,rkm_me,tol_rkm); %boolean of the rkm to compute the mean
     bol_br_me=ismember(br_pol_num,br_me); %boolean of the branch to compute the mean

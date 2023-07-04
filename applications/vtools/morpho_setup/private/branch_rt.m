@@ -14,6 +14,8 @@
 
 function br_s=branch_rt(br,rkm_s)
 
+warning('deprecated, use `branch_rijntakken')
+
 switch br
     case {'WL','BO','NI'}
         if rkm_s>960.15

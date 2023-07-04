@@ -43,7 +43,7 @@ count=pol.val{idx_pol(2)}.Val;
 
 ident_pol_str=pol.val{idx_pol(3)}.Val;
 rkm_pol_num=cellfun(@(X)str2double(X(4:end)),ident_pol_str);
-br_pol_num=cellfun(@(X)br_str2double(X(1:2)),ident_pol_str);
+br_pol_num=cellfun(@(X)branch_rijntakken_str2double(X(1:2)),ident_pol_str);
 
 loc_str=pol.val{idx_pol(4)}.Val;
 loc_pol_num=cellfun(@(X)pol_str2double(X),loc_str);

@@ -23,14 +23,16 @@ rkm_s=rkm-dist/2/1000:ds_pol/1000:rkm+dist/2/1000;
 
 ns=numel(rkm_s);
 % str_pol=cell(ns,1);
-br_l=cell(ns,1);
-br_num=NaN(ns,1);
+% br_l=cell(ns,1);
+% br_num=NaN(ns,1);
 rkm_pol=NaN(ns,1);
 for ks=1:ns
     rkm_pol(ks)=rkm_of_pol(rkm_s(ks),br); %the rkm along a certain branch closest to the query rkm. 
-    br_l{ks}=branch_rt(br,rkm_pol(ks)); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
+%     br_l{ks}=branch_rt(br,rkm_pol(ks)); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
 %     str_pol{ks,1}=polygon_str(br_l,rkm_pol);
-    br_num(ks)=br_str2double(br_l{ks});
+%     br_num(ks)=br_str2double(br_l{ks});
 end
+
+[br_l,br_num]=branch_rijntakken(rkm_pol(ks),br,'ni_bo',true); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
 
 end
