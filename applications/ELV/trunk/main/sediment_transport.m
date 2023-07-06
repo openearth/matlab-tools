@@ -366,7 +366,7 @@ for ku=1:nu
             tau_ref = sed_trans_param(3);
             D_ref = 0.001;
             G = cf.^(w+3/2)/(tau_ref^w*(cnt.R*cnt.g)^(w+1));
-            Qbk_st = (1-cnt.p)./sqrt(cnt.g*cnt.R*dk.^3).*(dk/D_ref).^r.*G.*1./dk.^w.*(q./h).^(2*w+3);
+            Qbk_st = (1-cnt.p)./sqrt(cnt.g*cnt.R*dk.^3).*(dk/D_ref).^r.*G.*1./dk.^w.*(q./h).^(2*w+3); %!!! Attention. Porosity included in the formulation.
             no_trans_idx=false(nx,nf);
         case 6 %Parker
             a_park=0.00218;
@@ -457,7 +457,7 @@ for ku=1:nu
             ssus = acal_s.*ff.*q.*ca; 
             
             % sum
-            Qbk_st = (1-cnt.p)./sqrt(cnt.g*cnt.R*dk.^3).*(sbc + ssus); %dimensionless sediment transport with pores. ??? CHECK IF POROSITY SHOULD BE INCLUDED HERE OR NOT
+            Qbk_st = 1./sqrt(cnt.g*cnt.R*dk.^3).*(sbc + ssus); %dimensionless sediment transport with pores. ??? CHECK IF POROSITY SHOULD BE INCLUDED HERE OR NOT
             no_trans_idx = (h/rksc<1.33 | q./h < 1.0E-3 | h<1e-12); %indexes of fractions below threshold ; boolean [nx,1]
             Qbk_st(no_trans_idx,:) = 0; %the transport capacity of those fractions below threshold is 0
         otherwise 
