@@ -19,6 +19,7 @@ dire_sim=simdef.D3D.dire_sim;
 structure=simdef.D3D.structure;
 % fname_mdu=simdef.runid.name; %runid does not have the extension!
 runid=simdef.runid.name;
+OMP_num=simdef.D3D.OMP_num;
 
 %2DO: add option that if <structure> does not exist, it searches in the directory.
 
@@ -73,6 +74,6 @@ D3D_xml(fpath_dimr,fname_mdu,'check_existing',check_existing)
 
 %% batch
 
-[strsoft_lin,strsoft_win]=D3D_bat_write(dire_sim,fpath_software,dimr_str,structure);
+[strsoft_lin,strsoft_win]=D3D_bat_write(dire_sim,fpath_software,dimr_str,structure,OMP_num);
 
 end %function

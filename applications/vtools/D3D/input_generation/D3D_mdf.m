@@ -89,6 +89,8 @@ Dicouv=simdef.mdf.Dicouv;
 Vicoww=simdef.mdf.Vicoww;
 Dicoww=simdef.mdf.Dicoww;
 
+nf=numel(simdef.sed.dk);
+
 if K>1
     Thick=[simdef.grd.Thick,100-sum(simdef.grd.Thick)];
 else
@@ -132,7 +134,16 @@ data{kl ,1}=        'Sub1   = #   I#'; kl=kl+1; %with computation of advection-d
 else
 data{kl ,1}=        'Sub1   = #    #'; kl=kl+1; %without computation of advection-diffusion of secondary flow intensity
 end
-data{kl,1}=        'Sub2   = #   #'; kl=kl+1;
+Sub2='   ';
+if any(simdef.tra.SedTyp~=3)
+    Sub2(3)='C';
+end
+data{kl,1}=sprintf('Sub2   = #%s#',Sub2); kl=kl+1;
+for kf=1:nf
+    if simdef.tra.SedTyp(kf)~=3
+data{kl,1}=sprintf('Namc%d = #Sediment%d#   ',kf,kf); kl=kl+1;
+    end %sedtyp
+end %kf
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Wnsvwp = #N#'; kl=kl+1;
 data{kl,1}=        'Wndint = #Y#'; kl=kl+1;
@@ -142,6 +153,9 @@ data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Commnt =                 no. open boundaries: 2'; kl=kl+1;
 data{kl,1}=        'Filbnd = #bnd.bnd#'; kl=kl+1;
 data{kl,1}=        'FilbcT = #bct.bct#'; kl=kl+1;
+if ~isempty(simdef.file.bcc)
+data{kl,1}=        'Filbcc = #bcc.bcc#'; kl=kl+1;
+end
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Ag     =  9.8100000e+000'; kl=kl+1;
 data{kl,1}=        'Rhow   =  1.0000000e+003'; kl=kl+1;
@@ -229,9 +243,9 @@ data{kl,1}=        'CflMsg = #Y#'; kl=kl+1; %write more than 100 CFL cheks
 data{kl,1}=        'Online = #N#'; kl=kl+1;
 data{kl,1}=        'chezy  = #Y#'; kl=kl+1; %output Chezy friction
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
-if simdef.mor.morphology
-data{kl,1}=sprintf('TraFrm = #%s#',simdef.mdf.tra); 
-end
+% if simdef.mor.morphology
+% data{kl,1}=sprintf('TraFrm = #%s#',simdef.mdf.tra); 
+% end
 
 
 %% WRITE

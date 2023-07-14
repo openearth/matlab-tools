@@ -75,6 +75,9 @@ end
 if isfield(simdef.D3D,'structure')==0
     simdef.D3D.structure=0;
 end
+if isfield(simdef.D3D,'OMP_num')==0
+    simdef.D3D.OMP_num=NaN; %maximum
+end
 
 %%
 %% FILE
@@ -82,12 +85,13 @@ end
 
 simdef.file.dummy=NaN;
 
-switch simdef.D3D.structure
-    case 1
-        if isfield(simdef.file,'tra')==0
-            simdef.file.tra=fullfile(simdef.D3D.dire_sim,'tra.tra');
-        end
-end
+%not needed when parameters passed through sed-file?
+% switch simdef.D3D.structure
+%     case 1
+%         if isfield(simdef.file,'tra')==0
+%             simdef.file.tra=fullfile(simdef.D3D.dire_sim,'tra.tra');
+%         end
+% end
 
 if isfield(simdef.file,'exe_input')==0
     simdef.file.exe_input='c:\Program Files (x86)\Deltares\Delft3D Flexible Mesh Suite HMWQ (2021.03)\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat';
@@ -154,6 +158,22 @@ end
 %     h=((Q/B)^2./C^2./s).^(1/3);
 %     etab=-h(end);
 % end
+
+%%
+%% TRA
+%%
+
+simdef=D3D_sedTrans_default(simdef);
+simdef=D3D_sedTyp_default(simdef);
+
+nf=numel(simdef.sed.dk);
+
+for kf=1:nf
+    if simdef.tra.IFORM(kf)==-3 && simdef.tra.SedTyp(kf)~=1
+        warning('With Partheniades-Krone the sediment type must be mud. It has been changed.')
+        simdef.tra.SedTyp(kf)=1;
+    end
+end
 
 %%
 %% MDF
@@ -749,6 +769,27 @@ simdef.bct.etaw=cat(1,simdef.bct.etaw,simdef.bct.etaw(end));
 simdef.bct.time=cat(1,simdef.bct.time,simdef.bct.time(end)*1.1);
 end
 
+%%
+%% BCC
+%%
+
+%for D3D4 we need to write a BCC file if there is a suspended sediment 
+%fraction even if Neumann BC are imposed. 
+
+%if the file name does not exists, we create an empty one. If empty we 
+%do not write it.
+if ~isfield(simdef.file,'bcc')
+    simdef.file.bcc=''; 
+    %if a file is needed, we add the name
+    if simdef.D3D.structure==1 && ~isempty(simdef.tra.SedTyp) && any(ismember(simdef.tra.SedTyp,[1,2]))
+        simdef.file.bcc=fullfile(simdef.D3D.dire_sim,'bcc.bcc');
+    end
+end
+
+if ~isfield(simdef,'bcc')
+    simdef.bcc=D3D_bcc_dummy(simdef);
+end
+
 %% RENAME OUT
 
 % simdef.grd.M=M;
@@ -757,3 +798,57 @@ end
 % simdef.ini.h=h;
 % simdef.ini.u=u;
 % simdef.grd.L=L;
+
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function bcc=D3D_bcc_dummy(simdef)
+
+nf=numel(simdef.sed.dk);
+bcc.NTables=simdef.mor.upstream_nodes+1; %upstream and downstream
+kc=0;
+%the prder of the tables matter. First all sediment for one boundary and
+%then all sediment for the other boundary
+    %upstream
+for ku=1:simdef.mor.upstream_nodes
+    for kf=1:nf
+        kc=kc+1;
+        bcc.Table(kc)=D3D_bcc_table_dummy(simdef,ku,sprintf('Upstream_%02d',ku),kf);
+    end
+end %ku
+    %downstream
+for kf=1:nf
+    kc=kc+1;
+    ku=simdef.mor.upstream_nodes+1;
+    bcc.Table(kc)=D3D_bcc_table_dummy(simdef,ku,'Downstream',kf);
+end %kf
+
+end %function
+
+%%
+
+function bcc_tab=D3D_bcc_table_dummy(simdef,ku,location,kf)
+
+bcc_tab.Name=sprintf('Boundary Section : %d',ku);
+bcc_tab.Contents='Uniform';
+bcc_tab.Location=location;
+bcc_tab.TimeFunction='non-equidistant';
+bcc_tab.ReferenceTime=20000101; %`Itdate` is harcoded in mdu. It would be better to read the mdu file here. 
+bcc_tab.TimeUnit='seconds';
+bcc_tab.Interpolation='linear';
+%para
+bcc_tab.Parameter(1).Name='time';
+bcc_tab.Parameter(1).Unit='[sec]';
+bcc_tab.Parameter(2).Name=sprintf('Sediment%d           end A uniform',kf);
+bcc_tab.Parameter(2).Unit='[kg/m3]';
+bcc_tab.Parameter(3).Name=sprintf('Sediment%d           end B uniform',kf);
+bcc_tab.Parameter(3).Unit='[kg/m3]';
+%data
+bcc_tab.Data=zeros(2,3);
+bcc_tab.Data(2,1)=simdef.mdf.Tstop;
+
+end

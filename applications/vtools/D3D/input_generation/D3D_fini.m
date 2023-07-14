@@ -63,7 +63,7 @@ secflow=simdef.mdf.secflow;
 etab0_type=simdef.ini.etab0_type;
 u=simdef.ini.u;
 v=0; %v velocity
-
+nf=numel(simdef.sed.dk);
 %other
 % ncy=N-2; %number of cells in y direction (N in RFGRID) [-]
 % ny=ncy+2; %number of depths points in y direction
@@ -116,6 +116,9 @@ v_mat(2:N-1,1:M-1)=v;
 %seconday flow intensity 
 I_mat(2:N-1,1:M-1)=I;
 
+%constituents (set to 0)
+Sub_mat=zeros(N,M);
+
 %noise
 switch simdef.ini.etaw_noise
     case 0
@@ -166,4 +169,13 @@ if secflow==1
         fprintf(fileID_out,write_str_x,I_mat(ky,:));
     end
 end
+%suspended sediment fractions
+for kf=1:nf
+    if any(simdef.tra.SedTyp(kf)==[1,2])
+        for ky=1:N
+            fprintf(fileID_out,write_str_x,Sub_mat(ky,:));
+        end
+    end
+end
+
 fclose(fileID_out);

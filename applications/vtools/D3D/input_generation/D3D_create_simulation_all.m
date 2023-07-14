@@ -92,7 +92,7 @@ for ksim=1:nsim
         end
 
         %initial bed grain size distribution
-    %     D3D_mini(simdef)
+        D3D_mini(simdef)
 
         %initial flow conditions
         if simdef.D3D.structure==1
@@ -141,11 +141,20 @@ for ksim=1:nsim
         end
 
         %sediment transport parameters
+%         if simdef.D3D.structure==1
+%             [dirloc]=fileparts(simdef.file.tra);
+%             mkdir_check(dirloc);
+%             if exist(simdef.file.tra,'file')~=2
+%                 D3D_tra(simdef,'check_existing',false)
+%             end
+%         end
+
+        %concentrations BC
         if simdef.D3D.structure==1
-            [dirloc]=fileparts(simdef.file.tra);
+            [dirloc]=fileparts(simdef.file.bcc);
             mkdir_check(dirloc);
-            if exist(simdef.file.tra,'file')~=2
-                D3D_tra(simdef,'check_existing',false)
+            if exist(simdef.file.bcc,'file')~=2 && ~isempty(simdef.file.bcc)
+                D3D_bcc(simdef,'check_existing',false)
             end
         end
 

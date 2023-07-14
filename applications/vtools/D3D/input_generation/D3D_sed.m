@@ -33,7 +33,7 @@ check_existing=parin.Results.check_existing;
 
 %% RENAME
 
-D3D_structure=simdef.D3D.structure;
+% D3D_structure=simdef.D3D.structure;
 
 %% FILE
 
@@ -42,8 +42,8 @@ D3D_structure=simdef.D3D.structure;
 %sediment parameters to the sed-file.
 %
 
-if D3D_structure==1
-    D3D_sed_s(simdef);
-else
+% if D3D_structure==1
+%     D3D_sed_s(simdef); %should not be needed if parameters of sedtrans are there
+% else
     D3D_sed_u(simdef,'check_existing',check_existing);
-end
+% end

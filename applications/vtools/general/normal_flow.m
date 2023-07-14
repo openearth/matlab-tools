@@ -25,6 +25,7 @@ addOptional(parin,'s',NaN);
 addOptional(parin,'Cf',NaN);
 addOptional(parin,'C',NaN);
 addOptional(parin,'g',9.81);
+addOptional(parin,'hydraulic_radius',1);
 
 parse(parin,varargin{:});
 
@@ -35,10 +36,13 @@ s=parin.Results.s;
 Cf=parin.Results.Cf;
 C=parin.Results.C;
 g=parin.Results.g;
+hydraulic_radius=parin.Results.hydraulic_radius;
 
 %% SELECT
 
+out_C=false;
 if isnan(C)
+    out_C=true;
     C=sqrt(g/Cf); %if `Cf=NaN` it will be NaN and hence the unknown
 end
 
@@ -54,11 +58,14 @@ switch idx_do
 %     case 1
 %         normal_flow_Q
     case 2
-        val_out=normal_flow_h(Q,B,g/C^2,s,'g',g);
+        val_out=normal_flow_h(Q,B,g/C^2,s,'g',g,'hydraulic_radius',hydraulic_radius);
     case 4
-        val_out=normal_flow_s(Q,B,g/C^2,h,'g',g);
+        val_out=normal_flow_s(Q,B,g/C^2,h,'g',g,'hydraulic_radius',hydraulic_radius);
     case 5
-        val_out=normal_flow_Cf(Q,B,g/C^2,h,'g',g);
+        val_out=normal_flow_Cf(Q,B,h,s,'g',g,'hydraulic_radius',hydraulic_radius);
+        if out_C
+            val_out=sqrt(g/val_out);
+        end
     otherwise
       
 end

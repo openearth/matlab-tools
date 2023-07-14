@@ -103,8 +103,8 @@ data{kl,1}=sprintf('   MorStt           =  %0.12E               [s]      Spin-up
 data{kl,1}=        '   Thresh           =  1.0000000e-003      [m]      Threshold sediment thickness for transport and erosion reduction'; kl=kl+1;
 data{kl,1}=sprintf('   BedUpd           = %i                            Update bed levels during FLOW simulation',BedUpd); kl=kl+1;
 data{kl,1}=sprintf('   CmpUpd           = %i                            Update bed composition during flow run',CmpUpd); kl=kl+1;
-data{kl,1}=        '   NeuBcMud         = 0'; kl=kl+1;
-data{kl,1}=        '   NeuBcSand        = 0'; kl=kl+1;
+data{kl,1}=        '   NeuBcMud         = 1'; kl=kl+1;
+data{kl,1}=        '   NeuBcSand        = 1'; kl=kl+1;
 data{kl,1}=        '   DensIn           = 0    Include effect of sediment concentration on fluid density'; kl=kl+1; 
 data{kl,1}=sprintf('   ISlope = %d         [ - ] Flag for bed slope effect',ISlope); kl=kl+1;
 data{kl,1}=        '                            1          : None'; kl=kl+1;

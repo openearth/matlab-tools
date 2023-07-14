@@ -224,7 +224,7 @@ for kpli=1:npli %variable
                         end
                     end
                     
-                    if size(data.val,3)>1
+                    if size(data.val,3)>1 %several vertical layers (patch plot)
                           %why?  
 %                         if kdiff==2
 %                             error('not ready')
@@ -238,10 +238,13 @@ for kpli=1:npli %variable
                         end
 
                         fig_map_ls_01(in_p)
-                    else
+                    else %single layer (line plot)
+
                         in_p.lab_str=var_str_read;
                         in_p=gdm_s_rkm_cen(in_p,flg_loc,data);
                         in_p.val=data_val_p'; 
+
+                        fig_1D_01(in_p)
 
                         %all simulations together
                         if flg_loc.do_all_s && nS>1

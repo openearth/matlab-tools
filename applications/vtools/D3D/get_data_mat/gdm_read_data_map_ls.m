@@ -46,7 +46,7 @@ end
 
 var_str=varname;
 fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'pli',pliname,'branch',branch);
-if exist(fpath_sal,'file')==2 ~=overwrite
+if exist(fpath_sal,'file')==2 && ~overwrite
     messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_sal));
     load(fpath_sal,'data')
 else

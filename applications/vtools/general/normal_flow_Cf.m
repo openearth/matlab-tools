@@ -19,15 +19,24 @@ function var_out=normal_flow_Cf(Q,B,h,slope,varargin)
 parin=inputParser;
 
 addOptional(parin,'g',9.81);
+addOptional(parin,'hydraulic_radius',1);
 
 parse(parin,varargin{:});
 
 g=parin.Results.g;
+hydraulic_radius=parin.Results.hydraulic_radius;
 
 %%
 
-F=@(C)Q/B/h-C*sqrt(B*h/(B+2*h)*slope);
-var_out=fzero(F,0.1);
+switch hydraulic_radius
+    case 1
+        F=@(C)Q/B/h-C*sqrt(B*h/(B+2*h)*slope);
+    case 2
+        F=@(C)Q/B/h-C*sqrt(h*slope);
+    otherwise
+        error('Implement.')
+end
+var_out=fzero(F,42);
 var_out=g/var_out^2;
 
 end %function

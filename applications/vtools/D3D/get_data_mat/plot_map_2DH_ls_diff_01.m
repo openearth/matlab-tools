@@ -44,6 +44,18 @@ if isfield(flg_loc,'plot_val0')==0
     flg_loc.plot_val0=0;
 end
 
+if isfield(flg_loc,'do_rkm')==0
+    if isfield(flg_loc,'fpath_rkm')
+        flg_loc.do_rkm=1;
+    else
+        flg_loc.do_rkm=0;
+    end
+end
+
+if isfield(flg_loc,'do_staircase')==0
+    flg_loc.do_staircase=0;
+end
+
 %% PATHS
 
 nS=numel(simdef);
@@ -74,6 +86,9 @@ time_ref_v=gdm_time_dnum_flow_mor(flg_loc,tim_ref.tim.time_dnum,tim_ref.tim.time
 nt=numel(time_dnum_ref); %we loop over reference time and match each simulation
 nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
+if isfield(flg_loc,'ylims')==0
+    flg_loc.ylims=[NaN,NaN];
+end
 nylims=size(flg_loc.ylims,1);
 
 %% figure

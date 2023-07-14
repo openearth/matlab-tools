@@ -140,6 +140,7 @@
 % in_plot.(tag).do_p=1; %regular plot
 % in_plot.(tag).do_s=1; %difference with reference
 % in_plot.(tag).do_all_t=0; %all times together
+% in_plot.(tag).do_all_s=1; %all simulations in the same plot
 % in_plot.(tag).var={'bl'}; 
 % in_plot.(tag).tim=NaN;
 % in_plot.(tag).tim_type=2;

@@ -23,6 +23,7 @@ function simdef=input_D3D(simdef)
 %% software
 simdef.D3D.structure=       1; %1=D3D4; 2=FM
 simdef.file.software='p:\dflowfm\projects\2022_improve_exner\08_executables\220517\';
+simdef.D3D.OMP_num=NaN; %number of OpenMP threads. NaN: nothing is specified (i.e., maximum is used).
 
 %% simulation
 simdef.runid.name='r001';
@@ -175,6 +176,7 @@ simdef.tra.IFORM=           4; %sediment transport flag [-] [integer(1,1)] 2=MPM
 simdef.tra.sedTrans=        [0.05*simdef.mdf.C^2/9.81,2.5,0]; %sediment transport parameters (as in ECT) EH
 % simdef.tra.sedTrans=        [17,0.05]; %sediment transport parameters (as in ECT) AM
 % simdef.tra.sedTrans=        [8,1.5,0.047]; %sediment transport parameters (as in ECT) MPM
+simdef.tra.SedTyp=3; %sediment (transport) type: 1=mud; 2=sand; 3=bedload [-] [double(1,1)]
 
 %%
 %% advanced input
