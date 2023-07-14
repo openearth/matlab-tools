@@ -79,6 +79,10 @@ if isfield(simdef.D3D,'OMP_num')==0
     simdef.D3D.OMP_num=NaN; %maximum
 end
 
+if ~isfield(simdef.file,'runid')
+    simdef.file.runid=fullfile(simdef.D3D.dire_sim,'runid');
+end
+
 %%
 %% FILE
 %%
@@ -271,6 +275,15 @@ else
     if rem(simdef.mdf.Flhis_dt,simdef.mdf.Dt)~=0 
         warning('History results time is not multiple of time step. I am rewring the history results time.')
         simdef.mdf.Flhis_dt=(floor(simdef.mdf.Flhis_dt/simdef.mdf.Dt)+1)*simdef.mdf.Dt;
+    end
+end
+
+if ~isfield(simdef.file,'obs')
+    switch simdef.D3D.structure
+        case 1
+            simdef.file.obs='obs.obs';
+        case 2
+            simdef.file.obs='obs.xyn';
     end
 end
 
@@ -473,6 +486,10 @@ if isfield(simdef.mor,'ThetSD')==0
 end
 if isfield(simdef.mor,'HMaxTH')==0
     simdef.mor.HMaxTH=0;
+end
+
+if isfield(simdef.file,'mini')==0
+    simdef.file.mini=fullfile(simdef.D3D.dire_sim,'mini.ini');
 end
 
 %% 
@@ -702,6 +719,15 @@ end
 %% BCT
 %%
 
+if ~isfield(simdef.file,'bct')
+    switch simdef.D3D.structure
+        case 1
+            simdef.file.bct=fullfile(simdef.D3D.dire_sim,'bct.bct'); 
+        case 2
+            simdef.file.bct=simdef.file.bc_wL; %we copy the value in D3D4 to check whether it exists or not
+    end
+end
+
 %discharge
 if isfield(simdef.bct,'time_Q')==0
     simdef.bct.time_Q=[simdef.mdf.Tstart;simdef.mdf.Tstop];
@@ -788,6 +814,19 @@ end
 
 if ~isfield(simdef,'bcc')
     simdef.bcc=D3D_bcc_dummy(simdef);
+end
+
+%%
+%% BND
+%%
+
+if ~isfield(simdef.file,'bnd')
+    switch simdef.D3D.structure
+        case 1
+            simdef.file.bnd=fullfile(simdef.D3D.dire_sim,'bnd.bnd');
+        case 2
+            simdef.file.bnd=simdef.file.extn;
+    end
 end
 
 %% RENAME OUT

@@ -34,6 +34,18 @@
 %   -Introduction of a varying slope
 %
 function D3D_fini(simdef)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
 %read grid
@@ -140,7 +152,7 @@ end
 file_name=fullfile(simdef.file.fini);
 
 %check if the file already exists
-if exist(file_name,'file')
+if exist(file_name,'file')>0 && check_existing 
     error('You are trying to overwrite a file!')
 end
 

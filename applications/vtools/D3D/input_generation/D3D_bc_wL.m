@@ -18,7 +18,19 @@
 %OUTPUT:
 %   -
 
-function D3D_bc_wL(simdef)
+function D3D_bc_wL(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
 file_name=simdef.file.bc_wL;
@@ -72,5 +84,5 @@ end
 
 %% WRITE
 
-writetxt(file_name,data)
+writetxt(file_name,datam,'check_existing',check_existing)
 

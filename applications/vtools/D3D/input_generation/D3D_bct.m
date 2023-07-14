@@ -18,7 +18,19 @@
 %OUTPUT:
 %   -
 
-function D3D_bct(simdef)
+function D3D_bct(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
 D3D_structure=simdef.D3D.structure;
@@ -39,14 +51,14 @@ end
 if D3D_structure==1
     switch simdef.bct.version_V
         case 0
-            D3D_bct_s(simdef)
+            D3D_bct_s(simdef,'check_existing',check_existing);
         case 1
             simdef.bct.fname=simdef.file.bct;
-            D3D_bct_2(simdef)
+            D3D_bct_2(simdef,'check_existing',check_existing);
         case 2
             bct_io('write',simdef.file.bct,simdef.bct);
     end
 else
-    D3D_bc_wL(simdef);
-    D3D_bc_q0(simdef);
+    D3D_bc_wL(simdef,'check_existing',check_existing);
+    D3D_bc_q0(simdef,'check_existing',check_existing);
 end

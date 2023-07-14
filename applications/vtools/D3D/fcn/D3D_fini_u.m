@@ -12,7 +12,17 @@
 %
 %generate depths in rectangular grid 
 
-function D3D_fini_u(simdef)
+function D3D_fini_u(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'check_existing',true)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
 
 %%
 
@@ -31,12 +41,10 @@ Ytot=[gridInfo.Ycen;gridInfo.Ycor];
 
 file_name=simdef.file.ini_vx;
 matwrite=[Xtot,Ytot,simdef.ini.u.*ones(size(Xtot))];
-write_2DMatrix(file_name,matwrite,'check_existing',false);
+write_2DMatrix(file_name,matwrite,'check_existing',check_existing);
 
 file_name=simdef.file.ini_vy;
 matwrite=[Xtot,Ytot,simdef.ini.v.*ones(size(Xtot))];
-write_2DMatrix(file_name,matwrite,'check_existing',false);
+write_2DMatrix(file_name,matwrite,'check_existing',check_existing);
   
-
-
 end %function

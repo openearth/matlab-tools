@@ -21,7 +21,19 @@
 %OUTPUT:
 %   -a .bct compatible with D3D is created in file_name
 
-function D3D_bct_s(simdef)
+function D3D_bct_s(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
 dire_sim=simdef.D3D.dire_sim;
@@ -132,4 +144,4 @@ end
 %% WRITE
 
 file_name=fullfile(dire_sim,'bct.bct');
-writetxt(file_name,data)
+writetxt(file_name,data,'check_existing',check_existing);

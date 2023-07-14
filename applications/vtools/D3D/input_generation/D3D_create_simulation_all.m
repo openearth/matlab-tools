@@ -51,12 +51,15 @@ for ksim=1:nsim
         sta=mkdir_check(simdef.D3D.dire_sim);
         if sta==2
             fprintf('Simulation already exists %s \n',simdef.D3D.dire_sim)
-            if flg.overwrite==1
-                fprintf('Deleting folder %s \n',simdef.D3D.dire_sim)
-                erase_directory(simdef.D3D.dire_sim,1)
-            else
-                fprintf('Skipping folder %s \n',simdef.D3D.dire_sim)
-                continue
+            switch flg.overwrite
+                case 0
+                    fprintf('Skipping folder %s \n',simdef.D3D.dire_sim)
+                    continue
+                case 1
+                    fprintf('Deleting folder %s \n',simdef.D3D.dire_sim)
+                    erase_directory(simdef.D3D.dire_sim,1)
+                case 2
+                    fprintf('Not overwriting files if exist %s \n',simdef.D3D.dire_sim)
             end
         end
 
@@ -65,7 +68,7 @@ for ksim=1:nsim
         %grid
         [dirloc]=fileparts(simdef.file.grd);
         mkdir_check(dirloc);
-        if exist(simdef.file.grd,'file')~=2
+        if exist(simdef.file.grd,'file')~=2 
             D3D_grid(simdef)
         end
         copyfile_check(simdef.file.grd,simdef.D3D.dire_sim); %copy to run location
@@ -78,25 +81,29 @@ for ksim=1:nsim
     %     end
 
         %hydrodynamic boundary conditions 
-        [dirloc]=fileparts(simdef.file.bc_wL);
+        [dirloc]=fileparts(simdef.file.bct);
         mkdir_check(dirloc);
-        if exist(simdef.file.bc_wL,'file')~=2
-            D3D_bct(simdef)
+        if exist(simdef.file.bct,'file')~=2
+            D3D_bct(simdef,'check_existing',false)
         end
 
         %initial bathymetry
         [dirloc]=fileparts(simdef.file.dep);
         mkdir_check(dirloc);
         if exist(simdef.file.dep,'file')~=2
-            D3D_dep(simdef)
+            D3D_dep(simdef,'check_existing',false)
         end
 
         %initial bed grain size distribution
-        D3D_mini(simdef)
+        if exist(simdef.file.mini,'file')~=2 
+            D3D_mini(simdef)
+        end
 
         %initial flow conditions
         if simdef.D3D.structure==1
-            D3D_fini(simdef)
+            if exist(simdef.file.fini,'file')~=2 
+                D3D_fini(simdef,'check_existing',false)
+            end
         else 
             simdef_c=simdef; %make a copy because filenames are changed for misusing the function
             simdef_c.file.dep=simdef_c.file.etaw;
@@ -108,14 +115,16 @@ for ksim=1:nsim
                 simdef_c.ini.etab_noise=simdef_c.ini.etaw_noise;
                 D3D_dep(simdef_c)
             end
-            D3D_fini_u(simdef)
+            if exist(simdef.file.ini_vx,'file')~=2
+                D3D_fini_u(simdef)
+            end
         end
 
         %boundary definition    
-        [dirloc]=fileparts(simdef.file.extn);
+        [dirloc]=fileparts(simdef.file.bnd);
         mkdir_check(dirloc);
         mkdir_check(simdef.file.fdir_pli);
-        if exist(simdef.file.extn,'file')~=2
+        if exist(simdef.file.bnd,'file')~=2
             D3D_bnd(simdef)
         end
 
@@ -158,17 +167,23 @@ for ksim=1:nsim
             end
         end
 
-        %mdf/mdu        
-        D3D_md(simdef,'check_existing',false)
+        %mdf/mdu    
+        if exist(simdef.file.mdf,'file')~=2
+            D3D_md(simdef,'check_existing',false)
+        end
 
         %runid
         if simdef.D3D.structure==1
-            D3D_runid(simdef)
+            if exist(simdef.file.runid,'file')~=2
+                D3D_runid(simdef)
+            end
         end
 
         %observation points
         if simdef.mdf.Flhis_dt>0
-            D3D_obs(simdef) 
+            if exist(simdef.file.obs,'file')~=2
+                D3D_obs(simdef,'check_existing',false);
+            end
         end
 
         %simdef
@@ -179,7 +194,7 @@ for ksim=1:nsim
     
     %% run script
 
-    [strsoft_lin,strsoft_win]=D3D_bat(simdef,simdef.file.software);    
+    [strsoft_lin,strsoft_win]=D3D_bat(simdef,simdef.file.software,'check_existing',false);    
     D3D_create_run_batch('add',fdir_sim_runs,fid_lin,fid_win,simdef.runid.name,strsoft_lin,strsoft_win);
     
     %% erase run in p and move new

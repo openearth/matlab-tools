@@ -18,7 +18,19 @@
 %OUTPUT:
 %   -
 
-function D3D_bc_q0(simdef)
+function D3D_bc_q0(simdef,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
+
 %% RENAME
 
 file_name=simdef.file.bc_q0;
@@ -78,5 +90,5 @@ end %knu
 %% WRITE
 
 % file_name=fullfile(dire_sim,'bc_q0.bc');
-writetxt(file_name,data)
+writetxt(file_name,data,'check_existing',check_existing);
 

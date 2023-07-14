@@ -30,12 +30,9 @@
 %   -fractions at the active layer introduced
 
 function D3D_mini_const(simdef)
+
 %% RENAME
 
-if isfield(simdef.file,'mini')==0
-    dire_sim=simdef.D3D.dire_sim;
-    simdef.file.mini=fullfile(dire_sim,'mini.ini');
-end
 file_name=simdef.file.mini;
 
 ThTrLyr=simdef.mor.ThTrLyr;

@@ -23,7 +23,7 @@
 function D3D_runid(simdef)
 %% RENAME
 
-dire_sim=simdef.D3D.dire_sim;
+% dire_sim=simdef.D3D.dire_sim;
 
 %% FILE
 
@@ -33,5 +33,6 @@ data{1,1}=sprintf('%s',simdef.runid.name);
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'runid');
+% file_name=fullfile(dire_sim,'runid');
+file_name=simdef.file.runid;
 writetxt(file_name,data);
