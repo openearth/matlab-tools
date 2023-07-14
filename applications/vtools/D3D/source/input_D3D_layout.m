@@ -24,6 +24,7 @@ function simdef=input_D3D(simdef)
 simdef.D3D.structure=       1; %1=D3D4; 2=FM
 simdef.file.software='p:\dflowfm\projects\2022_improve_exner\08_executables\220517\';
 simdef.D3D.OMP_num=NaN; %number of OpenMP threads. NaN: nothing is specified (i.e., maximum is used).
+simdef.file.exe_input='../../../08_executables/01/x64/dimr/scripts/run_dimr.bat'; %path to `run_dimr.bat` location for converting a grid into a map file in Delft3D FM. If relative, it must be one level down of the working Matlab folder because it is called from a temporary folder 
 
 %% simulation
 simdef.runid.name='r001';

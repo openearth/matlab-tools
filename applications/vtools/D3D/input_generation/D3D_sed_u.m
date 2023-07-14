@@ -82,12 +82,9 @@ for kf=1:nf
     data{kl,1}=        '   CDryB            =  1.5900000e+003      [kg/m3]  Dry bed density'; kl=kl+1;
     data{kl,1}=sprintf('   FacDSS           = %f                                FacDss*SedDia = Initial suspended sediment diameter [-]      ',FacDSS); kl=kl+1;
 
-    if ~isnan(sedTrans{kf}(1))
-
-
     switch IFORM(kf)
         case -4 %SANTOSS
-            
+            data{kl,1}=sprintf('   SedDia           =  %0.7e      [m]      sediment diameter (D50)',dk(kf)); kl=kl+1;
 
             %set everything as default
         case -3 %Partheniades-Krone
@@ -153,7 +150,6 @@ for kf=1:nf
             data{kl,1}=sprintf('   PowerQ                = %f                                Ripple factor or efficiency factor     ',PowerQ); kl=kl+1;
     end %IFORM
 
-    end %isnan
     if node_relations
         data{kl,1}=        '   NodeRelations         = #table.nrd#                       [ - ]    File with Overall Node Relations(relative path to sed)';    kl=kl+1;
     end %node realations
