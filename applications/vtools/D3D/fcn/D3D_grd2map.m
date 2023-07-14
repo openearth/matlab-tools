@@ -48,11 +48,11 @@ fpath_xml=fullfile(fdir_work,'dimr_config.xml');
 xmlfile(fpath_xml);
 
 %execute
+fdir_now=pwd;
+cd(fdir_work)
 if exist(fpath_exe,'file')~=2
     error('There is no <run_dimr.bat> here: %s',fpath_exe)
 end
-fdir_now=pwd;
-cd(fdir_work)
 % [status]=system(sprintf('call "%s" "%s"',fpath_exe,fpath_xml));
 [status]=system(sprintf('call "%s"',fpath_exe)); %for some reason the execute does not work when the path has a space, although it did before. If default name is <dimr_config> is used, there is no ptoblem. 
 cd(fdir_now);
