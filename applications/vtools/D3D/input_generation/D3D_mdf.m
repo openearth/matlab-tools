@@ -210,7 +210,7 @@ data{kl,1}=        'Momsol = #Cyclic#'; kl=kl+1;
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Commnt =                 no. discharges: 0'; kl=kl+1;
 data{kl,1}=        'Commnt =                 no. observation points: 0'; kl=kl+1;
-if isfield(simdef.mdf,'obs_name')
+if isfield(simdef.mdf,'obs_name') && Flhis_dt>0
 data{kl,1}=        'Filsta= #obs.obs#'; kl=kl+1;
 data{kl,1}=        'Fmtsta= #FR#'; kl=kl+1;
 end

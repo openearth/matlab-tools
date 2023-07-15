@@ -266,25 +266,27 @@ else
 %     end
 end
 
-%history time and observations filr
-simdef.mdf.obs_filename='obs.xyn';
-if isfield(simdef.mdf,'Flhis_dt')==0
+%history time and observations file
+if ~isfield(simdef.mdf,'Flhis_dt')
     simdef.mdf.Flhis_dt=0;
-    simdef.mdf.obs_filename='';
-else
-    if rem(simdef.mdf.Flhis_dt,simdef.mdf.Dt)~=0 
-        warning('History results time is not multiple of time step. I am rewring the history results time.')
-        simdef.mdf.Flhis_dt=(floor(simdef.mdf.Flhis_dt/simdef.mdf.Dt)+1)*simdef.mdf.Dt;
-    end
 end
-
-if ~isfield(simdef.file,'obs')
+if simdef.mdf.Flhis_dt==0
+    simdef.mdf.obs_filename='';
+    simdef.file.obs='';
+end
+if ~isfield(simdef.file,'obs') && simdef.mdf.Flhis_dt>0
     switch simdef.D3D.structure
         case 1
-            simdef.file.obs='obs.obs';
+            simdef.file.obs=fullfile(simdef.D3D.dire_sim,'obs.obs');
+            simdef.mdf.obs_filename='obs.obs';
         case 2
-            simdef.file.obs='obs.xyn';
+            simdef.file.obs=fullfile(simdef.D3D.dire_sim,'obs.xyn');
+            simdef.mdf.obs_filename='obs.xyn';
     end
+end
+if simdef.mdf.Flhis_dt>0 && rem(simdef.mdf.Flhis_dt,simdef.mdf.Dt)~=0 
+    warning('History results time is not multiple of time step. I am rewring the history results time.')
+    simdef.mdf.Flhis_dt=(floor(simdef.mdf.Flhis_dt/simdef.mdf.Dt)+1)*simdef.mdf.Dt;
 end
 
 %gravity

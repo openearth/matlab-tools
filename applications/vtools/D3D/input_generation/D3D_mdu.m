@@ -311,7 +311,9 @@ data{kl,1}=        'Wrishp_pump       = 0                            '; kl=kl+1;
 data{kl,1}=        'OutputDir         =                              '; kl=kl+1;
 data{kl,1}=        'WAQOutputDir      =                              '; kl=kl+1;
 data{kl,1}=        'FlowGeomFile      =                              '; kl=kl+1;
+if Flhis_dt>0
 data{kl,1}=sprintf('ObsFile           = %s',obs_filename); kl=kl+1; 
+end
 data{kl,1}=        'CrsFile           =                              '; kl=kl+1;
 data{kl,1}=        'HisFile           =                              '; kl=kl+1; 
 data{kl,1}=sprintf('HisInterval       = %0.7E',Flhis_dt); kl=kl+1; 

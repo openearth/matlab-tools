@@ -168,9 +168,9 @@ for ksim=1:nsim
         end
 
         %mdf/mdu    
-        if exist(simdef.file.mdf,'file')~=2
+%         if exist(simdef.file.mdf,'file')~=2
             D3D_md(simdef,'check_existing',false)
-        end
+%         end
 
         %runid
         if simdef.D3D.structure==1
