@@ -20,15 +20,15 @@
 %
 %E.G.:
 
-function [tim_dur,t0,tf,processes,tim_sim,sim_efficiency]=D3D_computation_time(simdef,varargin)
+function [tim_dur,t0,tf,processes,tim_sim,sim_efficiency,num_dt]=D3D_computation_time(simdef,varargin)
 
 [fpath_dia,structure]=D3D_simdef_2_dia(simdef);
 
 switch structure
     case 1
-        [tim_dur,t0,tf,processes,tim_sim]=D3D_computation_time_D3D4(fpath_dia);
+        [tim_dur,t0,tf,processes,tim_sim,num_dt]=D3D_computation_time_D3D4(fpath_dia);
     case 2
-        [tim_dur,t0,tf,processes,tim_sim]=D3D_computation_time_FM(fpath_dia);
+        [tim_dur,t0,tf,processes,tim_sim,num_dt]=D3D_computation_time_FM(fpath_dia);
 end
 
 sim_efficiency=tim_sim./(tim_dur*processes);
@@ -39,7 +39,7 @@ end %function
 %% FUNCTIONS
 %%
 
-function [tim_dur,t0,tf,processes,tim_sim]=D3D_computation_time_D3D4(fpath_dia)
+function [tim_dur,t0,tf,processes,tim_sim,num_dt]=D3D_computation_time_D3D4(fpath_dia)
 
 %t0
 % ***           date,time  : 2022-07-27, 16:41:07
@@ -54,6 +54,11 @@ end
 tok=regexp(fline{end},'***           date,time  : (\d{4})-(\d{2})-(\d{2}), (\d{2}):(\d{2}):(\d{2})','tokens');
 tok_num=str2double(tok{1,1});
 t0=datetime(tok_num(1),tok_num(2),tok_num(3),tok_num(4),tok_num(5),tok_num(6));
+
+%number of time steps
+[kl_g,fline]=search_text_ascii(fpath_dia,'|   TimeSteps   :',kl_s); 
+tok=regexp(fline{end},'|   TimeSteps   :\s*(\d*)','tokens');
+num_dt=str2double(tok{1,1});
 
 %tf
 [kl_g,fline]=search_text_ascii(fpath_dia,'***             date, time :',kl_s); %attention, different number of spaces than t0
@@ -80,7 +85,18 @@ end %function
 
 %%
 
-function [tim_dur,t0,tf,processes,tim_sim]=D3D_computation_time_FM(fpath_dia)
+function [tim_dur,t0,tf,processes,tim_sim,num_dt]=D3D_computation_time_FM(fpath_dia)
+
+%number of time steps
+% ** INFO   : nr of timesteps        ( )  :            22.0000000000
+% ** INFO   : nr of timesteps        ( )  :          5365.0000000000
+[kl_g,fline]=search_text_ascii(fpath_dia,'** INFO   : nr of timesteps        ( )  :',1); 
+% tok=regexp(fline{end},'** INFO   : nr of timesteps        ( )  :\s*(\d*)','tokens'); %I do not know why this is not captured. 
+tok=regexp(fline{end},'(\d*)','tokens');
+num_dt=str2double(tok{1,1}{1,1});
+
+% I think it would be better to follow the same approach as for D3D4. 
+
 
 % ** INFO   : Computation started  at: 11:28:10, 04-09-2022
 % ** INFO   : Computation finished at: 08:13:17, 05-09-2022

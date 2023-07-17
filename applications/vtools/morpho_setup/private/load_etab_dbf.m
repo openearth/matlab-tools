@@ -12,7 +12,9 @@
 %
 %
 
-function [etab_cen,pol]=load_etab_dbf(fpath_shp,fpath_data)
+function [etab_cen,pol]=load_etab_dbf(fpath_shp,fpath_data,mean_str,count_str)
+
+%% CALC
 
 fid_log=NaN;
 
@@ -30,7 +32,7 @@ copyfile_check(fpath_data,fpath_dbf_tmp);
 
 messageOut(fid_log,'Start reading shp');
 pol=D3D_io_input('read',fpath_shp_tmp,'read_val',1);
-str_pol={'polygon:MEAN','polygon:COUNT'}; 
+str_pol={sprintf('polygon:%s',mean_str),sprintf('polygon:%s',count_str)}; 
 polnames=cellfun(@(X)X.Name,pol.val,'UniformOutput',false);
 idx_pol=find_str_in_cell(polnames,str_pol);
 if any(isnan(idx_pol))

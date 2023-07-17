@@ -33,6 +33,6 @@ for ks=1:ns
 %     br_num(ks)=br_str2double(br_l{ks});
 end
 
-[br_l,br_num]=branch_rijntakken(rkm_pol(ks),br,'ni_bo',true); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
+[br_l,br_num]=branch_rijntakken(rkm_pol,br,'ni_bo',true); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
 
 end

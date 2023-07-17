@@ -44,6 +44,11 @@ addOptional(parin,'rkmf',NaN);
 addOptional(parin,'br','');
 addOptional(parin,'fdir_out','');
 addOptional(parin,'do_debug',0);
+addOptional(parin,'mean','MEAN');
+addOptional(parin,'count','COUNT');
+addOptional(parin,'hm_code','hm_nummer');
+addOptional(parin,'location','Locatie');
+addOptional(parin,'surface','oppervlak_');
 
 parse(parin,varargin{:});
 
@@ -58,6 +63,11 @@ rkmf=parin.Results.rkmf;
 br=parin.Results.br;
 fdir_out=parin.Results.fdir_out;
 do_debug=parin.Results.do_debug;
+mean_str=parin.Results.mean;
+count_str=parin.Results.count;
+hm_code_str=parin.Results.hm_code;
+location_str=parin.Results.location;
+surface_str=parin.Results.surface;
 
 %%
 
@@ -92,7 +102,7 @@ fid_log=fopen(fpath_dia,'w');
 fpath_mat_tmp=fullfile(pwd,'rbl.mat');
 if ~isfile(fpath_mat_tmp) || ~do_debug
     messageOut(fid_log,'Start reading bed level');
-    [etab_cen,pol]=load_etab(fpath_shp,fpath_data,xlsx_range,etab_year);
+    [etab_cen,pol]=load_etab(fpath_shp,fpath_data,xlsx_range,etab_year,mean_str,count_str);
     if do_debug
         save(fpath_mat_tmp,'etab_cen','pol')
     end
@@ -142,7 +152,7 @@ fpath_mat_tmp=fullfile(pwd,'rm.mat');
 if ~isfile(fpath_mat_tmp) || ~do_debug
     messageOut(fid_log,'Start computing rolling mean');
     if do_rol_mean
-        etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen);
+        etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen,hm_code_str,location_str,surface_str);
     else
         etab_cen_mod=etab_cen;
     end
@@ -213,33 +223,46 @@ end
 
 %% BEGIN DEBUG
 
-% % pol_xy=polcell2nan(pol.xy.XY);
-% % shp=D3D_io_input('read','p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\07_pol_in_bl\waal.shp','xy_only',1);
-% %
-% figure
-% hold on
-% % plot(pol_xy(:,1),pol_xy(:,2),'k')
-% % plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'r')
-% % scatter(xint,yint,10,'b');
-% % scatter(gridInfo.Xcor,gridInfo.Ycor,10,gridInfo.Zcor,'filled')
-% % scatter(xpol_cen,ypol_cen,10,etab_cen,'s','filled')
-% scatter(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),10,etab_cen(bol_cen_int),'s','filled')
+bol_out_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\04_pol_out\bol.mat');
+bol_in_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\03_pol_in\bol.mat');
+
+% pol_xy=polcell2nan(pol.xy.XY);
+% shp=D3D_io_input('read','p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\07_pol_in_bl\waal.shp','xy_only',1);
+%
+% tfile=readmatrix("c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\230321_rijntakken_mor\test.xyz",'FileType','text'); 
+
+figure
+hold on
+% plot(pol_xy(:,1),pol_xy(:,2),'k')
+% plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'r')
+plot(bol_in_aux.x_pol_in,bol_in_aux.y_pol_in,'g')
+plot(bol_out_aux.x_pol_in,bol_out_aux.y_pol_in,'r')
+% scatter(xint,yint,10,'xk');
+% scatter(xint,yint,10,etab_cengrd_mod);
+scatter(xint(bol_nn),yint(bol_nn),10,'b');
+% scatter(tfile(:,1),tfile(:,2),10,tfile(:,3))
+% scatter(gridInfo.Xcor,gridInfo.Ycor,10,gridInfo.Zcor,'filled')
+% scatter(xpol_cen,ypol_cen,10,etab_cen,'s','filled')
+% scatter(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),10,etab_cen_mod(bol_cen_int),'x','filled')
 % plot(shp(:,1),shp(:,2))
-% % scatter(xpol_cen,ypol_cen,20,etab_cen_mod,'s','filled')
-% % scatter(xint,yint,10,zint,'filled')
-% colorbar
-% axis equal
+% scatter(xpol_cen,ypol_cen,20,etab_cen_mod,'s','filled')
+% scatter(xint,yint,10,zint,'filled')
+colorbar
+axis equal
 % 
 % % END DEBUG
 
 
 %% interpolate polygon bed level at grid centres 
 
-bol_n=isnan(etab_cen);
-
+bol_n=isnan(etab_cen_mod);
 bol_cen_int=~bol_n & bol_in_pol;
 
 F_fil=scatteredInterpolant(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),etab_cen_mod(bol_cen_int),'linear','none'); %filtered
+
+bol_n=isnan(etab_cen);
+bol_cen_int=~bol_n & bol_in_pol;
+
 F_ori=scatteredInterpolant(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),etab_cen(bol_cen_int),'linear','none'); %original
 
 bol_grd_int=bol_in & ~bol_out;
@@ -298,7 +321,7 @@ end %main function
 
 %% load_etab
 
-function [etab_cen,pol]=load_etab(fpath_shp,fpath_data,xlsx_range,etab_year)
+function [etab_cen,pol]=load_etab(fpath_shp,fpath_data,xlsx_range,etab_year,mean_str,count_str)
 
 [~,~,ext]=fileparts(fpath_data);
 switch ext
@@ -313,7 +336,7 @@ switch ext
         etab_cen=match_pol_Excel(etab_pol_y,pol);
 
     case '.dbf'
-        [etab_cen,pol]=load_etab_dbf(fpath_shp,fpath_data);
+        [etab_cen,pol]=load_etab_dbf(fpath_shp,fpath_data,mean_str,count_str);
         
     otherwise
         error('Unrecognized extension of data file: %s',ext)
@@ -533,9 +556,9 @@ end %function
 
 %%
 
-function [ident_pol_str,rkm_pol_num,br_pol_num,loc_pol_num,area_cen]=data_pol(pol)
+function [ident_pol_str,rkm_pol_num,br_pol_num,loc_pol_num,area_cen]=data_pol(pol,hm_code_str,location_str,surface_str)
 
-str_pol={'polygon:hm_nummer','polygon:Locatie','polygon:oppervlak_'}; 
+str_pol={sprintf('polygon:%s',hm_code_str),sprintf('polygon:%s',location_str),sprintf('polygon:%s',surface_str)}; 
 polnames=cellfun(@(X)X.Name,pol.val,'UniformOutput',false);
 idx_pol=find_str_in_cell(polnames,str_pol);
 if any(isnan(idx_pol))
@@ -545,7 +568,7 @@ end
 ident_pol_str=pol.val{idx_pol(1)}.Val;
 rkm_pol_num=cellfun(@(X)str2double(X(4:end)),ident_pol_str);
 
-br_pol_num=cellfun(@(X)br_str2double(X(1:2)),ident_pol_str);
+br_pol_num=cellfun(@(X)branch_rijntakken_str2double(X(1:2)),ident_pol_str);
 
 loc_str=pol.val{idx_pol(2)}.Val;
 loc_pol_num=cellfun(@(X)pol_str2double(X),loc_str);
@@ -556,9 +579,9 @@ end %function
 
 %%
 
-function etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen)
+function etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen,hm_code_str,location_str,surface_str)
 
-[ident_pol_str,rkm_pol_num,br_pol_num,loc_pol_num,area_cen]=data_pol(pol);
+[ident_pol_str,rkm_pol_num,br_pol_num,loc_pol_num,area_cen]=data_pol(pol,hm_code_str,location_str,surface_str);
 
 loc_v=[-4:1:-1,1:1:4]; %L4-R4
 etab_cen_mod=NaN(size(etab_cen));
@@ -570,9 +593,8 @@ tol_rkm=1e-10;
 for krkm=1:nrkm
     rkm_q=rkm_q_v(krkm); %query rkm (any) at which to compute the mean
     rkm_mod=rkm_of_pol(rkm_q,br); %rkm to modify. Along a certain branch closest to the query rkm. 
-    br_mod_str=branch_rt(br,rkm_mod); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
-    br_mod_num=br_str2double(br_mod_str); %branch number
-    [rkm_me,br_me]=get_pol_along_line(rkm_q,br_mod_str,ds); %rkm and branch to compute the mean
+    [br_mod_str,br_mod_num]=branch_rijntakken(rkm_mod,br,'ni_bo',true); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
+    [rkm_me,br_me]=get_pol_along_line(rkm_q,br_mod_str{1},ds); %rkm and branch to compute the mean
     
     bol_rkm_me=ismember_num(rkm_pol_num,rkm_me,tol_rkm); %boolean of the rkm to compute the mean
     bol_br_me=ismember(br_pol_num,br_me); %boolean of the branch to compute the mean
@@ -583,18 +605,26 @@ for krkm=1:nrkm
         bol_loc=loc_v(kl)==loc_pol_num;
         bol_me =bol_rkm_me  & bol_loc & bol_br_me ;
         bol_mod=bol_rkm_mod & bol_loc & bol_br_mod;
-        if sum(bol_mod)~=1
-            str_dp=ident_pol_str(bol_mod);
-            messageOut(fid_log,sprintf('Duplicate polygons: %s',str_dp{1}))
-%             error('ups')
+
+        str_mod=ident_pol_str(bol_mod);
+        str_me =ident_pol_str(bol_me);
+
+        if sum(bol_mod)==0
+            messageOut(fid_log,sprintf('There is no polygon to modify at rkm %f branch %s',rkm_mod,br_mod_str{1}));
+            error('ups')
+        elseif sum(bol_mod)~=1
+            messageOut(fid_log,sprintf('Duplicate polygons: %s',str_mod{1}))
         end
-        if sum(bol_me)<5
+        num_pol_min=5;
+        if sum(bol_me)<num_pol_min
+            messageOut(fid_log,sprintf('There are less %d polygons (less than threshold %d) to average %s (%s).',sum(bol_me),num_pol_min,str_mod{1},conccellstr(str_me)))
             error('ups')
         end
+
         etab_cen_mod(bol_mod)=sum(etab_cen(bol_me).*area_cen(bol_me))/sum(area_cen(bol_me));
         
         %disp (expensive but useful)
-        fprintf(fid_log,'%s :      %s \n',conccellstr(ident_pol_str(bol_mod)),conccellstr(ident_pol_str(bol_me)));
+        fprintf(fid_log,'Location %2d, %s :      %s \n',loc_v(kl),conccellstr(str_mod),conccellstr(str_me));
         
         %DEBUG
 %         ident_pol_str(bol_me)

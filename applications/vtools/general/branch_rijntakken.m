@@ -38,27 +38,27 @@ for krkm=1:nrkm
     %name
     switch track
         case {'WL','BO','NI','WA'}
-            if rkm>960.15
+            if rkm(krkm)>960.15
                 if do_nibo
                     br{krkm}='NI';
                 else
                     br{krkm}=waal_name;
                 end
-            elseif rkm>952.85
+            elseif rkm(krkm)>952.85
                 if do_nibo
                     br{krkm}='BO';
                 else
                     br{krkm}=waal_name;
                 end                
-            elseif rkm>867.00
+            elseif rkm(krkm)>867.00
                 br{krkm}=waal_name;
-            elseif rkm>852.90
+            elseif rkm(krkm)>852.90
                 br{krkm}='BR';
             else
                 br{krkm}='Rhein';
             end
         otherwise
-            error('do')
+            error('Unknown branch %s',track)
     end
     
     %number

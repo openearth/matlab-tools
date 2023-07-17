@@ -16,10 +16,15 @@ function in_bol=inpolygon_chunks(nodesX,nodesY,x_pol,y_pol,nc)
 
 np=numel(nodesX);
 npc=floor(np/nc);
-idx=1:npc:np;
+if npc==1
+    idx=[1,np];
+    nc=1;
+else
+    idx=1:npc:np;
+    nc=numel(idx)-1;
+end
 idx(end)=np+1;
 in_bol=false(np,1);
-nc=numel(idx)-1;
 
 tic;
 for kc=1:nc

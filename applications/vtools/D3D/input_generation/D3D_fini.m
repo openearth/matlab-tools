@@ -33,7 +33,7 @@
 %151118->151125
 %   -Introduction of a varying slope
 %
-function D3D_fini(simdef)
+function D3D_fini(simdef,varargin)
 
 %% PARSE
 

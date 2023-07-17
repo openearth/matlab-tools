@@ -45,9 +45,10 @@ else
 end
 
 %%
-% figure
-% hold on
-% plot(x_pol_in,y_pol_in)
-% scatter(nodes_x,nodes_y)
-% axis equal
+figure
+hold on
+plot(x_pol_in,y_pol_in)
+scatter(nodes_x,nodes_y,10,'k*')
+scatter(nodes_x(in_bol),nodes_y(in_bol),10,'ro')
+axis equal
 end %function
