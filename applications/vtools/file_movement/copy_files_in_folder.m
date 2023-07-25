@@ -10,12 +10,31 @@
 %$Id$
 %$HeadURL$
 %
+%Copy files specified in a file to a certain folder. 
 %
-%E.G. of file that is read:
-% 
-% 1 ; p:\11208033-002-maas-mor-2d\04_models\40m_v2\lixhe_keizersveer\r006\figures\grid_01\01\rkm\grid_01_r006_rkm_grid_xlim_01.png ; ./01_grid
+%INPUT:
+%	-fpath_dir = directory to place the figures [char]. If empty, use current location.
+%	-fpath_in = full path to the file specifying the files to copy [char]
+%		-column 1: copy (1) or do not copy (0) file. 
+%		-column 2: full path to the figure to copy 
+%		-column 3: relative file location in folder `fpath_dir`.
+%
+%		E.G. 
+% 		1 ; p:\11208033-002-maas-mor-2d\04_models\40m_v2\lixhe_keizersveer\r006\figures\grid_01\01\rkm\grid_01_r006_rkm_grid_xlim_01.png ; ./01_grid
+%
+%
+%OUTPUT:
+%
 
 function copy_files_in_folder(fpath_dir,fpath_in)
+
+%% PARSE
+
+if isempty(fpath_dir)
+	fpath_dir=pwd;
+end
+	
+%% CALC
 
 %fprintf('I am here: %s \n',pwd)
 inc=readcell(fpath_in,'delimiter',';');

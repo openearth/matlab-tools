@@ -420,6 +420,10 @@ if isfield(simdef.mdf,'Removesmalllinkstrsh')==0
     simdef.mdf.Removesmalllinkstrsh=0.1;
 end
 
+if isfield(simdef.mdf,'Idensform')==0
+    simdef.mdf.Idensform=0;
+end
+
 %%
 %% SED
 %%

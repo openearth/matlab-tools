@@ -35,7 +35,14 @@ for ksim=1:nsim
     for kf=1:nf
         input_m(ksim).(fn{kf})=allvari(ksim,kf);
         if ~isempty(variation_str{kf})
-            input_m(ksim).(fn{kf})=variation_str{kf}(input_m(ksim).(fn{kf}));
+            if iscell(variation_str{kf})
+                if numel(variation_str{kf}(input_m(ksim).(fn{kf})))>1
+                    error('The input is cell but there is more than one element.')
+                end
+                input_m(ksim).(fn{kf})=variation_str{kf}{input_m(ksim).(fn{kf})};
+            else
+                input_m(ksim).(fn{kf})=variation_str{kf}(input_m(ksim).(fn{kf}));
+            end
         end
     end
     

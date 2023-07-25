@@ -30,6 +30,9 @@ end
 if isfield(flg_loc,'do_all_s')==0
     flg_loc.do_all_s=0;
 end
+if isfield(flg_loc,'do_all_s_2diff')==0 %plot all runs in same figure making the difference between each of 2 simulations
+    flg_loc.do_all_s_2diff=0;
+end
 
 %% DO
 
@@ -130,7 +133,7 @@ for kpli=1:npli %variable
         %preallocate for plotting all times togehter
         if flg_loc.do_all_t
             if flg_loc.do_staircase
-                data_all=NaN(nt,numel(data_ref.data.val_staircase));
+                data_all=NaN(nt,numel(data_ref.data.val_staircase)); %should have one more dimension?
             else
                 data_all=NaN(nt,numel(data_ref.data.val));
             end
@@ -161,7 +164,7 @@ for kpli=1:npli %variable
                     end
                 end
 
-            end
+            end %kS
             
             %measurements                        
             in_p.plot_mea=false;
@@ -224,7 +227,8 @@ for kpli=1:npli %variable
                         end
                     end
                     
-                    if size(data.val,3)>1 %several vertical layers (patch plot)
+                    if size(data.val,3)>1 
+                        %% several vertical layers (patch plot)   
                           %why?  
 %                         if kdiff==2
 %                             error('not ready')
@@ -237,36 +241,97 @@ for kpli=1:npli %variable
                             in_p.data_ls.grid.Xcor=data.rkm_cor;
                         end
 
-                        fig_map_ls_01(in_p)
-                    else %single layer (line plot)
+                        fig_map_ls_01(in_p)  
 
+                    else 
+                        %% single layer (line plot)
                         in_p.lab_str=var_str_read;
                         in_p=gdm_s_rkm_cen(in_p,flg_loc,data);
-                        in_p.val=data_val_p'; 
-
-                        fig_1D_01(in_p)
-
-                        %all simulations together
-                        if flg_loc.do_all_s && nS>1
-
-                            tag_fig=sprintf('%s_%s',flg_loc.tag,'all'); 
-                            fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-                            fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
-                            mkdir_check(fdir_fig_loc,NaN,1,0);
-        
-                            fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
-
-                            in_p.fname=fname_noext;
-                            switch kdiff
-                                case 1
-                                    in_p.val=squeeze(data_all(kt,:,:));
-                                case 2
-                                    in_p.val=squeeze(data_all(kt,:,:))-squeeze(data_all(1,:,:));
-                            end
-
+                        
+                        %The same function is called for several than for 1 simulations. It is not an option
+                        %to first load all in `data_all` and then loop to plot because the sizes may be 
+                        %different (space and time). It needs to be general and deal with each simulation 
+                        %independently. We have to discretize between one or more simulations because otherwise
+                        %when calling with several simulations and not overwriting, creating the case for 1
+                        %implies that the figure with all runs is not created. 
+                        if nS==1 
+                            %% single run
+                            in_p.val=data_val_p'; 
+    
                             fig_1D_01(in_p)
-                        end
-                    end
+                        else 
+                            %% all simulations together
+
+                            %% regular
+                            if flg_loc.do_all_s
+                            
+                                %Why do we need this? We already change the tag when calling the function.
+                                %
+    %                             tag_fig=sprintf('%s_%s',flg_loc.tag,'all'); 
+    %                             fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+    %                             fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
+    %                             mkdir_check(fdir_fig_loc,NaN,1,0);
+            
+                                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
+    
+                                in_p.fname=fname_noext;
+                                switch kdiff
+                                    case 1
+                                        in_p.val=squeeze(data_all(kt,:,:));
+                                    case 2
+                                        in_p.val=squeeze(data_all(kt,:,:))-squeeze(data_all(1,:,:));
+                                end
+    
+                                fig_1D_01(in_p)
+                            end %flg_loc.do_all_s
+
+                            %% ad-hoc differences between runs
+                            if flg_loc.do_all_s_2diff
+
+                                if mod(nS,2)~=0
+                                    error('It is not possible to make difference of runs 2 by 2 if the number of simulations is even.')
+                                end
+                                if ~isfield(flg_loc,'diff_idx')
+                                    error('Matrix with indices for differences does not exist.')
+                                end
+
+                                fname_noext=fig_name(fdir_fig_loc,sprintf('%s_s_diff',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
+    
+                                in_p.fname=fname_noext;
+                                switch kdiff
+                                    case 1
+                                        in_p.val=squeeze(data_all(kt,:,:));
+                                    case 2
+                                        in_p.val=squeeze(data_all(kt,:,:))-squeeze(data_all(1,:,:));
+                                end
+                                
+                                if numel(flg_loc.diff_idx)~=nS
+                                    error('Matrix with differenciation index does not have the right dimensions.')
+                                end
+                                
+
+                                data_diff=NaN(numel(data_ref.data.val),nS/2);
+                                leg_str_2diff=cell(nS/2,1);
+                                for ks2=1:nS/2
+                                    bol_g=flg_loc.diff_idx==ks2;
+                                    if sum(bol_g)~=2
+                                        error('There are no 2 runs to make the difference.')
+                                    end
+                                    data_diff(:,ks2)=diff(in_p.val(:,bol_g),1,2);
+                                    leg_str_2diff{ks2}=flg_loc.leg_str_2diff{find(bol_g,1)};
+                                end
+            
+                                in_p.cmap=NaN;
+                                in_p.ls=NaN;
+                                in_p.val=data_diff;
+                                in_p.is_diff=1;
+                                in_p.leg_str=leg_str_2diff;
+
+                                fig_1D_01(in_p)
+
+                            end %do_all_s_diff
+                        end %nS
+                    end %type plot
                 end %kdiff
             end %kylim
             

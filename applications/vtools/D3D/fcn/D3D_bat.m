@@ -18,7 +18,11 @@ function [strsoft_lin,strsoft_win]=D3D_bat(simdef,fpath_software,varargin)
 dire_sim=simdef.D3D.dire_sim;
 structure=simdef.D3D.structure;
 % fname_mdu=simdef.runid.name; %runid does not have the extension!
-runid=simdef.runid.name;
+if isfield(simdef.file,'mdfid') %this is the correct one. It is the mdf file name. 
+    runid=simdef.file.mdfid;
+else
+    runid=simdef.runid.name; %backward compatibility
+end
 OMP_num=simdef.D3D.OMP_num;
 
 %2DO: add option that if <structure> does not exist, it searches in the directory.

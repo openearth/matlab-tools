@@ -187,6 +187,9 @@ data{kl,1}=sprintf('Dicouv =  %0.7E',Dicouv); kl=kl+1;
 data{kl,1}=sprintf('Vicoww =  %0.7E',Vicoww); kl=kl+1;
 data{kl,1}=sprintf('Dicoww =  %0.7E',Dicoww); kl=kl+1;
 data{kl,1}=        'Htur2d = #N#'; kl=kl+1;
+if simdef.mdf.Idensform==2 %It cannot be switched off in D3D4. 
+data{kl,1}=        'DenFrm = #UNESCO#'; kl=kl+1;
+end
 data{kl,1}=sprintf('Irov   = %d',wall_rough); kl=kl+1;
 data{kl,1}=sprintf('Z0v    = %0.7E',wall_ks/30); kl=kl+1;
 if simdef.mor.morphology

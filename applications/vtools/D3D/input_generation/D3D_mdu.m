@@ -79,6 +79,7 @@ filter=simdef.mdf.filter;
 
 % file_name=simdef.runid.name;
 file_name=simdef.file.mdf;
+Idensform=simdef.mdf.Idensform;
 
 %% FILE
 
@@ -228,7 +229,7 @@ data{kl,1}=        'Elder             = 0            '; kl=kl+1; %Add Elder cont
 data{kl,1}=sprintf('Irov              = %d',wall_rough); kl=kl+1;
 data{kl,1}=sprintf('wall_ks           = %0.7E',wall_ks); kl=kl+1; %Nikuradse roughness for side walls, wall_z0=wall_ks/30
 data{kl,1}=        'Rhomean           = 1000         '; kl=kl+1;
-data{kl,1}=        'Idensform         = 2            '; kl=kl+1;
+data{kl,1}=sprintf('Idensform         = %d',Idensform); kl=kl+1; %# Density calulation (0: uniform, 1: Eckart, 2: Unesco, 3=Unesco83, 13=3+pressure). Setting it to 2 causes computation of baroclinic terms althought there is no salt.
 data{kl,1}=sprintf('Ag                = %0.7E',g)     ; kl=kl+1;
 data{kl,1}=        'TidalForcing      = 0            '; kl=kl+1;
 data{kl,1}=        'Doodsonstart      = 55.565       '; kl=kl+1;

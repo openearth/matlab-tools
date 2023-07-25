@@ -43,7 +43,7 @@ fpaths=paths_project(fpath_project);
 flg.only_run_script=0;
 flg.overwrite=1;
 
-input_m=input_variation_01('','');
+input_m=input_variation_01('',''); %!!! CHANGE copying from `main_create_simulations_variation_from_existing_layout.m`
 fcn_adapt=@(X)adapt_input_01(X);
 
 %% CALC
