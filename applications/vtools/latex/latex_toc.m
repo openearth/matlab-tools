@@ -10,7 +10,17 @@
 %$Id$
 %$HeadURL$
 %
-%Write the TOC of a latex file
+%Write the TOC of a latex file.
+%
+%E.G. of batch file calling the compiled routine:
+%```
+% @echo off
+% for %%f in (*.tex) do (
+%     rem if "%%~xf"==".tex" echo %%f
+% 	if "%%~xf"==".tex" call latex_toc %%f
+% )
+% pause
+%```
 %
 %TO DO:
 %   -Add figures and equations

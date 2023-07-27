@@ -256,7 +256,7 @@ if isnan(cmap(1,1))
     end
 else
     if size(cmap,1)~=nv
-        error('The number of provided colors does not match the number of values to plot')
+        error('The number of provided colors %s does not match the number of values to plot %d',size(cmap,1),nv);
     end
 end
 if do_marker

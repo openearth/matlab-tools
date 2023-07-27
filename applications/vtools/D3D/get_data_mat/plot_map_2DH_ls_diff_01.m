@@ -56,6 +56,8 @@ if isfield(flg_loc,'do_staircase')==0
     flg_loc.do_staircase=0;
 end
 
+flg_loc=gdm_parse_diff_input(flg_loc);
+
 %% PATHS
 
 nS=numel(simdef);
