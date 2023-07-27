@@ -1,7 +1,7 @@
 function [TStartOut,TStopOut] = simulationTime(TStart,TStop,Tunit,RefDate,mode)
 %DFLOWFM  One line description goes here.
 %
-%   Calculate TStart and TStop values w.r.t RefDate (all input in datenum)
+%   Calculate TStart and TStop values w.r.t RefDate
 %
 %   Syntax:
 %   varargout = dflowfm(varargin)
@@ -11,16 +11,18 @@ function [TStartOut,TStopOut] = simulationTime(TStart,TStop,Tunit,RefDate,mode)
 %   TStop       datenum value or Tunit
 %   Tunit       'S' (seconds), 'M' (minutes), or 'H' (hours)
 %   RefDate     datenum value
-%
-%   Optional
 %   mode        'datenum' (datenum to Tunit) or 'Tunit' (Tunit to datenum)
-                
 %
 %   Output:
 %   TStart and TStop in Tunit w.r.t. RefDate
 %
-%   Example
-%   dflowfm
+%   Example (copy-and-paste-ready)
+%   TStart  = datenum(2000,1,1);
+%   TStop   = datenum(2001,1,1);
+%   Tunit   = 'S';
+%   RefDate = datenum(2000,1,1);
+%   mode    = 'datenum';
+%   dflowfm.simulationTime(TStart,TStop,Tunit,RefDate,mode)
 %
 %   See also
 
