@@ -4,6 +4,7 @@ NZ_000_LMW-H_Lichteiland-Goeree            ,     ,NZ_0.00_LMW-H_Lichteiland-Goer
 NZ_000_LMW-H_Haringvliet-10                ,     ,NZ_0.00_LMW-H_Haringvliet-10               ,Haringvliet 10
 NZ_000_LMW-H_Brouwershavense-Gat-8-meet    ,     ,NZ_0.00_LMW-H_Brouwershavense-Gat-8-meet   ,Brouwershavense Gat 08
 NZ_000_LMW-H_Brouwershavense-Gat-8-meetpaal,     ,NZ_0.00_LMW-H_Brouwershavense-Gat-8-meet   ,Brouwershavense Gat 08
+NZ_LMW-H-A_Brouwershavense-Gat-8-meetpaal  ,     ,NZ_LMW-H-A_Brouwershavense-Gat-8-meetpaal  ,Brouwershavense Gat 08
 NW_103019_R_LMW-H_Hoek-van-Holland         ,     ,NW_1030.19_R_LMW-H_Hoek-van-Holland        ,Hoek van Holland
 NW_101875_R_LMW-H_Maassluis-g6             ,     ,NW_1018.75_R_LMW-H_Maassluis-g6            ,Maassluis
 NW_101341_L_HBR-H_Geulhaven-g6             ,     ,NW_1013.41_L_HBR-H_Geulhaven-g6            ,Geulhaven Radarpost 10
@@ -32,6 +33,7 @@ WL_9518_R_LMW-H_Vuren                      ,     ,WL_951.8_R_LMW-H_Vuren        
 WL_9348_L_LMW-H_Zaltbommel                 ,     ,WL_934.8_L_LMW-H_Zaltbommel                ,Zaltbommel
 WL_9133_R_LMW-H_Tiel-Waal                  ,     ,WL_913.3_R_LMW-H_Tiel-Waal                 ,Tiel Waal
 HV_102431_R_Hellevoetsluis-g6              ,     ,HV_1024.31_R_Hellevoetsluis-g6             ,Hellevoetsluis
+HV_1024.31_R_Hellevoetsluis-g6             ,     ,HV_1024.31_R_Hellevoetsluis-g6             ,Hellevoetsluis
 HD_99815_L_LMW-H_Rak-noord                 ,     ,HD_998.15_L_LMW-H_Rak-noord                ,Rak noord
 HD_98455_L_LMW-H_Moerdijk-g6               ,     ,HD_984.55_L_LMW-H_Moerdijk-g6              ,Moerdijk
 MA_24760_R_LMW-H_Keizersveer               ,     ,MA_247.60_R_LMW-H_Keizersveer              ,Keizersveer
@@ -181,6 +183,7 @@ STELLDBNN, ,STELLDBNN,Stellendam binnen
 STELLDBTMBI, ,STELLDBTMBI,Stellendam boei
 VOLKRSZSSHLD, ,VOLKRSZSSHLD,Volkeraksluizen
 NZ_000_LMW-Cl_Stellendam-buiten-g6, ,NZ_0.00_LMW-Cl_Stellendam-buiten-g6,Stellendam buiten
+NZ_000_LMW-H_Stellendam-buiten    , ,NZ_0.00_LMW-H_Stellendam-buiten    ,Stellendam Buiten
 OM_100418_QL_Botlekbrug, ,OM_1004.18_QL_Botlekbrug,Botlekbrug
 OM_100400_QO_Q-Splitsingspunt, ,OM_1004.00_QO_Q-Splitsingspunt,Botlekbrug
 HK_127_QL_Hartelsluis, ,HK_1.27_QL_Hartelsluis,Hartelsluis
@@ -230,3 +233,14 @@ Boei4, ,ZML Boei 4,ZML Boei 4
 Boei5, ,ZML Boei 5,ZML Boei 5
 Boei6, ,ZML Boei 6,ZML Boei 6
 Antwerpen, ,Antwerpen,Antwerpen Loodsgebouw
+SE_WLA_Antwerpen-Loodsgebouw-g6,                            ,   ,Antwerpen            ,Antwerpen Loodsgebouw
+WS_350_L_LMW-H_Baalhoek-meetpaal,                           ,   ,Baalhoek             ,Baalhoek
+WS_120_R_LMW-H_Borssele-meetpaal-(gastlocatie)              ,   ,Borssele             ,Borssele
+WS_520_L_LMW-H_Overloop-van-Hansweert-meetpaal-(gastlocatie),   ,Overloop Hansweert   ,Overloop Hansweert
+SE_580_L_LMW-H_Prosperpolder-meetpaal-(gastlocatie)         ,   ,Prosperpolder        ,Prospewrpolder
+WS_310_L_LMW-H-A_Schaar-van-de-Noord-meetpaal-(gastlocatie) ,   ,SchaarvdNoord        ,SchaarvdNoord
+WS_420_L_LMW-H-A_Walsoorden-meetpaal-(gastlocatie)          ,   ,Walsoorden           ,Walsoorden
+NZ_150_R_LMW-H-A_Westkapelle-meetstation-g6                 ,   ,Westkappelle         ,Westkappele
+NZ_LMW-H_Oostende-Haven-meetopstelling                      ,   ,Oostende             ,Oostende
+Scheur_Wielingen_Bol_van_Knokke                             ,   ,Scheur Wielingen     ,Scheur Wielingen
+SE_WLA_Hemiksem                                             ,   ,Hemiksem             ,Hemiksem
