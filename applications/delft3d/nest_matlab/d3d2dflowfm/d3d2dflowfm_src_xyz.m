@@ -52,7 +52,11 @@ location = {dis.Table.Location};
 for i_loc = 1: length(location) location{i_loc} = location{i_loc}(1:min(length(location{i_loc}),20)); end
 
 %% read the depth information (for determining the height of a discharge point
-dep   = wldep('read',fildep,[mmax nmax]);
+if ischar(fildep) 
+   dep   = wldep('read',fildep,[mmax nmax]);
+else
+    dep(1:mmax,1:nmax) = fildep;
+end
 
 for i_src = 1: length(m_src)
     i_table = strmatch(strtrim(names{i_src}),location,'exact');

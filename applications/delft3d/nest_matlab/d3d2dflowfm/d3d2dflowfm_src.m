@@ -6,11 +6,11 @@ function mdu = d3d2dflowfm_thd(mdf,mdu, name_mdu)
 %       block function
 
 mdu.Filsrc = '';
-
+fildep     = '';
 if simona2mdf_fieldandvalue(mdf,'filsrc')
     %% Set necessary files
     filgrd = [mdf.pathd3d filesep mdf.filcco];
-    fildep = [mdf.pathd3d filesep mdf.fildep];
+    if simona2mdf_fieldandvalue(mdf,'fildep') fildep = [mdf.pathd3d filesep mdf.fildep]; else fildep = mdf.depuni; end
     filsrc = [mdf.pathd3d filesep mdf.filsrc];
     fildis = [mdf.pathd3d filesep mdf.fildis];
 
