@@ -36,7 +36,11 @@ date = strrep(upper(date),'T',' ');
 if length(date) == 8
     format = 'yyyymmdd';
 elseif length(date) == 10
-    format = 'yyyymmddHH';
+    if all(ismember(date([5 8]),'-'))
+        format = 'yyyy-mm-dd'; % '2021-05-30'
+    else
+        format = 'yyyymmddHH';
+    end
 elseif length(date) == 12 && all(~(isspace(date)))
     format = 'yyyymmddHHMM';
 elseif length(date) == 13
