@@ -223,34 +223,34 @@ end
 
 %% BEGIN DEBUG
 
-bol_out_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\04_pol_out\bol.mat');
-bol_in_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\03_pol_in\bol.mat');
-
-% pol_xy=polcell2nan(pol.xy.XY);
-% shp=D3D_io_input('read','p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\07_pol_in_bl\waal.shp','xy_only',1);
-%
-% tfile=readmatrix("c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\230321_rijntakken_mor\test.xyz",'FileType','text'); 
-
-figure
-hold on
-% plot(pol_xy(:,1),pol_xy(:,2),'k')
-% plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'r')
-plot(bol_in_aux.x_pol_in,bol_in_aux.y_pol_in,'g')
-plot(bol_out_aux.x_pol_in,bol_out_aux.y_pol_in,'r')
-% scatter(xint,yint,10,'xk');
-% scatter(xint,yint,10,etab_cengrd_mod);
-scatter(xint(bol_nn),yint(bol_nn),10,'b');
-% scatter(tfile(:,1),tfile(:,2),10,tfile(:,3))
-% scatter(gridInfo.Xcor,gridInfo.Ycor,10,gridInfo.Zcor,'filled')
-% scatter(xpol_cen,ypol_cen,10,etab_cen,'s','filled')
-% scatter(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),10,etab_cen_mod(bol_cen_int),'x','filled')
-% plot(shp(:,1),shp(:,2))
-% scatter(xpol_cen,ypol_cen,20,etab_cen_mod,'s','filled')
-% scatter(xint,yint,10,zint,'filled')
-colorbar
-axis equal
+% bol_out_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\04_pol_out\bol.mat');
+% bol_in_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\03_pol_in\bol.mat');
 % 
-% % END DEBUG
+% % pol_xy=polcell2nan(pol.xy.XY);
+% % shp=D3D_io_input('read','p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\07_pol_in_bl\waal.shp','xy_only',1);
+% %
+% % tfile=readmatrix("c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\230321_rijntakken_mor\test.xyz",'FileType','text'); 
+% 
+% figure
+% hold on
+% % plot(pol_xy(:,1),pol_xy(:,2),'k')
+% % plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'r')
+% plot(bol_in_aux.x_pol_in,bol_in_aux.y_pol_in,'g')
+% plot(bol_out_aux.x_pol_in,bol_out_aux.y_pol_in,'r')
+% % scatter(xint,yint,10,'xk');
+% % scatter(xint,yint,10,etab_cengrd_mod);
+% scatter(xint(bol_nn),yint(bol_nn),10,'b');
+% % scatter(tfile(:,1),tfile(:,2),10,tfile(:,3))
+% % scatter(gridInfo.Xcor,gridInfo.Ycor,10,gridInfo.Zcor,'filled')
+% % scatter(xpol_cen,ypol_cen,10,etab_cen,'s','filled')
+% % scatter(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),10,etab_cen_mod(bol_cen_int),'x','filled')
+% % plot(shp(:,1),shp(:,2))
+% % scatter(xpol_cen,ypol_cen,20,etab_cen_mod,'s','filled')
+% % scatter(xint,yint,10,zint,'filled')
+% colorbar
+% axis equal
+% % 
+% % % END DEBUG
 
 
 %% interpolate polygon bed level at grid centres 

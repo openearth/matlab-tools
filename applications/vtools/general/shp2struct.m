@@ -38,14 +38,17 @@ end
 if exist(fpath,'file')~=2
     error('file does not exist: %s',fpath)
 end
+
 SHP=qpfopen(fpath);
 Q=qpread(SHP);
 objstr = {Q.Name};
 outputvar.xy=qpread(SHP,objstr{1},'griddata');
+
 if read_val
     for i=2:length(objstr)
       outputvar.val{i-1}=qpread(SHP,objstr{i},'data');
     end
+    outputvar.val_names=cellfun(@(X)X.Name,outputvar.val,'UniformOutput',false);
 end
 
 if xy_only

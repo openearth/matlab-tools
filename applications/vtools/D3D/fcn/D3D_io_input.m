@@ -10,15 +10,22 @@
 %$Id$
 %$HeadURL$
 %
-%write:
+%WRITE:
 %   pli:
 %       -pli.name: name of the polyline (char) or number of the polyline (double)
 %       -pli.xy: coordinates
-%e.g.
+%
+%READ:
+%   OPTIONAL INPUT
+%       -shp:
+%           -'read_val' = true: read values; false (default): only read xy.
+%           -'xy_only' = true: only read xy coordinates in matrix form; false (default): only read xy coordinates in cell form.
+%
+%E.G. Read and write D3D4 grd and dep
 % dep=D3D_io_input('read',fdep,fgrd,'location','cor');
 % D3D_io_input('write','c:\Users\chavarri\Downloads\trial.dep',dep,'location','cor','dummy',false,'format','%15.13e');
 %
-%e.g. Interpolating bed level to D3D4 grid:
+%E.G. Interpolating bed level to D3D4 grid:
 %
 % dep=D3D_io_input('read',fpath_dep);
 % grd=D3D_io_input('read',fpath_grd_d3d4,'location','cor');
@@ -29,8 +36,6 @@
 % grd.cor.dep=-dep_int(1:end-1,1:end-1);
 % 
 % D3D_io_input('write',fpath_dep_out,grd,'location','cor');
-%
-%e.g. write BC
 %
 
 function varargout=D3D_io_input(what_do,fname,varargin)
