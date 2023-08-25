@@ -14,7 +14,7 @@
 %Version: 1.1.0; SVN Revision: 72877; 27 September 2021 but correcting for the erratas based on checking the source code.
 %
 
-function [c_dd,c_dm,c_dr,S]=Villemonte_cdd(E1,E2,varargin)
+function [c_dd,c_dm,c_dr,S,p,cd0]=Villemonte_cdd(E1,E2,varargin)
 
 
 %% parameters
@@ -79,10 +79,12 @@ switch OPT.type
         
         %p
         D=d1./E1;
+        D=min(5,D);
         F=1-exp(-m2/c2);
         B1=1+D.*F;
         B2=1+D;
         A=1./B1.^2-1./B2.^2;
+        A=max(0.001,A);
         p=27/4./cd0.^2./A;
         
         %m

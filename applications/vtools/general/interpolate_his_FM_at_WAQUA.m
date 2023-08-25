@@ -117,7 +117,7 @@ for kcs=1:ncs
    ocs_wa_loc=ocs_wa{idx_ocs_wa_loc};
    ost_fm_loc=ost_fm{idx_ost_fm_loc};
 
-    fprintf(fid_check,'%s; %s; %s \n',ocs_fm_loc,ocs_wa_loc,ost_fm_loc);
+   fprintf(fid_check,'%s; %s; %s \n',ocs_fm_loc,ocs_wa_loc,ost_fm_loc);
 end
 fclose(fid_check);
 
@@ -147,9 +147,16 @@ for kcs=1:ncs
         
         etaw_fm_mod(idx_ost_fm_v(kcs),idx_tim_fm(kt))=interp1(Q_v,etaw_v,Q_q,'linear','extrap'); %interpolated FM water level.
 
-        %BEGIN DEBUG
-        
-        %END DEBUG
+%         %BEGIN DEBUG
+%         if kcs==340
+%             a=1;
+%         end
+%         %%
+%         figure
+%         hold on
+%         plot(Q_v,etaw_v,'*-')
+%         scatter(Q_q,etaw_fm_mod(idx_ost_fm_v(kcs),idx_tim_fm(kt)))
+%         %END DEBUG
 
     end
 end
