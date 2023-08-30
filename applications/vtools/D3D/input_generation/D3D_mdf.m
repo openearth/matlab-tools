@@ -89,6 +89,11 @@ Dicouv=simdef.mdf.Dicouv;
 Vicoww=simdef.mdf.Vicoww;
 Dicoww=simdef.mdf.Dicoww;
 
+AddTim='';
+if isfield(simdef.mdf, 'AddTim')
+   AddTim=simdef.mdf.AddTim;
+end
+
 nf=numel(simdef.sed.dk);
 
 if K>1
@@ -246,6 +251,9 @@ data{kl,1}=        'CflMsg = #Y#'; kl=kl+1; %write more than 100 CFL cheks
 data{kl,1}=        'Online = #N#'; kl=kl+1;
 data{kl,1}=        'chezy  = #Y#'; kl=kl+1; %output Chezy friction
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
+if isfield(simdef.mdf,'AddTim') && strcmpi(AddTim,'Y')
+   data{kl,1}=        'AddTim = #Y#               '; kl=kl+1;
+end
 % if simdef.mor.morphology
 % data{kl,1}=sprintf('TraFrm = #%s#',simdef.mdf.tra); 
 % end
