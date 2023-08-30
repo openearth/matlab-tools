@@ -23,7 +23,7 @@ switch structure
         strsoft_win=sprintf('call %s\\x64\\dflow2d3d\\scripts\\run_dflow2d3d.bat %s',fpath_software,dimr_str);
     case 2 %FM
         if ~isnan(OMP_num)
-            fprintf(fid_bat,'set OMP_NUM_THREADS=%d',OMP_num);
+            fprintf(fid_bat,'set OMP_NUM_THREADS=%d\r\n',OMP_num);
         end
         strsoft_win=sprintf('call %s\\x64\\dimr\\scripts\\run_dimr.bat %s',fpath_software,dimr_str);
 end
