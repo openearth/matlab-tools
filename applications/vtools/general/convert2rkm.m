@@ -65,6 +65,10 @@ end
 if mod(ni,2)==0 %convert from rkm to xy
     rkm2xy=true;
     var_in=varargin{1}; %rkm
+    if size(var_in,2)~=1
+        var_in=var_in';
+        np=size(var_in,1);
+    end
     var_in=[var_in,zeros(np,1)];
     branch_in=varargin{2};
     idx_varargin=3;
@@ -77,6 +81,7 @@ if mod(ni,2)==0 %convert from rkm to xy
     branch_in(idx_change)={'le'};
     %add others!
     
+
 else
     rkm2xy=false;
     
