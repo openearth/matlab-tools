@@ -212,7 +212,7 @@ function [RAYdata] = readRAY(RAYfilename)
                 if length(DATA2)>=7
                     R(ii).hass    = DATA2(7);
                 end
-                R(ii).Cequi = computeEQUI(R(ii).equi,R(ii).c1,R(ii).c2,R(ii).hoek,R(ii).QSoffset);
+                R(ii).Cequi = computeEQUI(R(ii).equi,R(ii).c1,R(ii).c2,R(ii).hoek,R(ii).QSoffset/1000);
             end
             fclose all;
         end
