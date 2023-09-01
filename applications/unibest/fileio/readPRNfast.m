@@ -99,6 +99,9 @@ end
 %end
 
 data.files=filenames;
+if ischar(filenames)
+    filenames={filenames};
+end
 for ii=1:length(filenames)
     %-----------inlezen--------------
     fid = fopen([pathname,filesep,filenames{ii}],'r');
@@ -130,21 +133,21 @@ for ii=1:length(filenames)
         data.timestep(1,tt) = TIMEblock(1);
         data.year(1,tt)     = TIMEblock(2);
     
-        data.no(:,tt) = [];%XYblock(:,1);
+        data.no(:,tt) = XYblock(:,1);
         data.xdist2=(QSblock(1:end-1,2)+QSblock(2:end,2))/2;
         data.x(:,tt) = XYblock(:,2);
         data.y(:,tt) = XYblock(:,3);
         data.z(:,tt) = XYblock(:,4);
         data.zminz0(:,tt) = XYblock(:,5);
-        data.sourceyear(:,tt)= [];%XYblock(:,6);
-        data.sourcetotal(:,tt)= [];%XYblock(:,7);
-        data.stored(:,tt)= [];%XYblock(:,8);
+        data.sourceyear(:,tt)= XYblock(:,6);
+        data.sourcetotal(:,tt)= XYblock(:,7);
+        data.stored(:,tt)= XYblock(:,8);
         
-        data.ray(:,tt) = [];%QSblock(:,1);
+        data.ray(:,tt) = QSblock(:,1);
         data.xdist(:,1) = QSblock(:,2);       
         data.alfa(:,tt) = QSblock(:,3);
         data.transport(:,tt) = QSblock(:,4);
-        data.volume(:,tt) = []; %QSblock(:,5);
+        data.volume(:,tt) = QSblock(:,5);
     end
     
 end

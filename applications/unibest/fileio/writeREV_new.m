@@ -71,56 +71,60 @@ function writeREV_new(REVdata,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%---------------Initialise------------------
-%-------------------------------------------
-if length(varargin)==2
-    dx = varargin{2};
-else
-    dx = 0.05;
-end
-%--------------Analyse data-----------------
-%-------------------------------------------
-%% READ revetment data
-number_of_revetments = length(REVdata);
-for ii=1:length(REVdata)
-    Npoints = length(REVdata(ii).Xw);
-    if isempty(REVdata(ii).Top)
-        if isempty(varargin)
-            disp('Please specify MDAdata')
-            return
-        end
-        MDAdata = varargin{1};
-        opt = REVdata(ii).Option;
-        switch opt
-            case 0
-                xy=[MDAdata.Xcoast,MDAdata.Ycoast];
-            case 1
-                xy=[MDAdata.Xi,MDAdata.Yi];
-            case 2
-                xy=[MDAdata.Xcoast,MDAdata.Ycoast];
-            case 3
-                xy=[MDAdata.Xi,MDAdata.Yi];
-        end
-        [xyNew0{ii}, y_offset{ii}] = relativeoffset(xy,[REVdata(ii).Xw(:),REVdata(ii).Yw(:)],dx);
+    %---------------Initialise------------------
+    %-------------------------------------------
+    if length(varargin)==2
+        dx = varargin{2};
     else
-        xyNew0{ii} = [REVdata(ii).Xw(:),REVdata(ii).Yw(:)];
-        y_offset{ii} = REVdata(ii).Top;
+        dx = 0.05;
     end
-end
-
-%-----------Write data to file--------------
-%-------------------------------------------
-fid=fopen(REVdata(ii).filename,'wt');
-fprintf(fid,'%s\n','NUMBER OF REVETMENT SECTIONS');
-fprintf(fid,' %1.0f\n',number_of_revetments);
-
-for ii=1:number_of_revetments
-    number_of_points = length(REVdata(ii).Xw);
-    fprintf(fid,'%s\n','NUMBER      KEY_ARR');
-    fprintf(fid,' %1.0f %7.0f\n',number_of_points,REVdata(ii).Option);
-    fprintf(fid,'%s\n','Xw      Yw      Top');
-    for jj=1:number_of_points
-        fprintf(fid,'%6.2f      %6.2f      %1.2f\n',[xyNew0{ii}(jj,1) xyNew0{ii}(jj,2) y_offset{ii}(jj)']);
+    %--------------Analyse data-----------------
+    %-------------------------------------------
+    %% READ revetment data
+    if ~isfield(REVdata,'Xw')
+        number_of_revetments = 0;
+    else  
+        number_of_revetments = length(REVdata);
+        for ii=1:length(REVdata)
+            Npoints = length(REVdata(ii).Xw);
+            if isempty(REVdata(ii).Top)
+                if isempty(varargin)
+                    disp('Please specify MDAdata')
+                    return
+                end
+                MDAdata = varargin{1};
+                opt = REVdata(ii).Option;
+                switch opt
+                    case 0
+                        xy=[MDAdata.Xcoast,MDAdata.Ycoast];
+                    case 1
+                        xy=[MDAdata.Xi,MDAdata.Yi];
+                    case 2
+                        xy=[MDAdata.Xcoast,MDAdata.Ycoast];
+                    case 3
+                        xy=[MDAdata.Xi,MDAdata.Yi];
+                end
+                [xyNew0{ii}, y_offset{ii}] = relativeoffset(xy,[REVdata(ii).Xw(:),REVdata(ii).Yw(:)],dx);
+            else
+                xyNew0{ii} = [REVdata(ii).Xw(:),REVdata(ii).Yw(:)];
+                y_offset{ii} = REVdata(ii).Top;
+            end
+        end
     end
+    %-----------Write data to file--------------
+    %-------------------------------------------
+    fid=fopen(REVdata(1).filename,'wt');
+    fprintf(fid,'%s\n','NUMBER OF REVETMENT SECTIONS');
+    fprintf(fid,' %1.0f\n',number_of_revetments);
+
+    for ii=1:number_of_revetments
+        number_of_points = length(REVdata(ii).Xw);
+        fprintf(fid,'%s\n','NUMBER      KEY_ARR');
+        fprintf(fid,' %1.0f %7.0f\n',number_of_points,REVdata(ii).Option);
+        fprintf(fid,'%s\n','Xw      Yw      Top');
+        for jj=1:number_of_points
+            fprintf(fid,'%6.2f      %6.2f      %1.2f\n',[xyNew0{ii}(jj,1) xyNew0{ii}(jj,2) y_offset{ii}(jj)']);
+        end
+    end
+    fclose(fid);
 end
-fclose(fid);

@@ -83,7 +83,11 @@ function writeGRO(filename,GROdata,varargin)
 % Check structure GROdata
 if ~isempty(GROdata)
     Ngroynes = length(GROdata);
-    if ~isfield(GROdata,'Xw')
+    if ~isfield(GROdata,'Xw') && ~isfield(GROdata,'Yw')
+        dispstr = 'ERROR: Revetment is empty';
+        disp(dispstr)
+        Ngroynes = 0;
+    elseif ~isfield(GROdata,'Xw')
         dispstr = 'ERROR: Field Xw does not exist';
         disp(dispstr)
         return
@@ -105,9 +109,10 @@ if ~isempty(GROdata)
         return
     end
 else
-    dispstr = 'ERROR: GROdata is empty';
-    disp(dispstr)
-    return
+    Ngroynes = 0;
+%     dispstr = 'ERROR: GROdata is empty';
+%     disp(dispstr)
+%     return
 end
 
 % Check for empty fields

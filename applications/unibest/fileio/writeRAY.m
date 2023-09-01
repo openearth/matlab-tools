@@ -123,10 +123,11 @@ elseif nargin == 1
         end
         
         if isempty(RAYdata(ii).time)
-            fprintf(fid4,'    equi              c1              c2             h0           angle         fshape\n');
             if isempty(RAYdata(ii).QSoffset)
+                fprintf(fid4,'    equi           c1           c2           h0         angle       fshape\n');
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).equi RAYdata(ii).c1 RAYdata(ii).c2 RAYdata(ii).h0 RAYdata(ii).hoek RAYdata(ii).fshape]);
             else
+                fprintf(fid4,'    equi           c1           c2           h0         angle       fshape    QSoffset\n');
                 fprintf(fid4,'%8.6e %8.6e %8.6e %8.6e %8.6e %8.6e %8.6e\n',[RAYdata(ii).equi RAYdata(ii).c1 RAYdata(ii).c2 RAYdata(ii).h0 RAYdata(ii).hoek RAYdata(ii).fshape RAYdata(ii).QSoffset]);
             end
             % hass fieldname found:
@@ -169,6 +170,7 @@ elseif nargin == 1
         end
         
         fclose(fid4);
+        fclose all;
     end
 else
     % Should not be possible to get here:

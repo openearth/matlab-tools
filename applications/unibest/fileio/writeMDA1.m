@@ -58,15 +58,30 @@ function writeMDA1(mda_filename, MDAdata)
     %% Write everything to the MDA file:
     N=length(MDAdata.X);
     fid=fopen(mda_filename,'wt');
-    fprintf(fid,'%s\n',' BASISPOINTS');
-    fprintf(fid,'%4.0f\n',N);
-    fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
+    %fprintf(fid,'%s\n',' BASISPOINTS');
+    %fprintf(fid,'%4.0f\n',N);
+    %fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
+    %for ii=1:N
+    %    fprintf(fid,'%13.2f   %13.2f %11.3f %11.0f %11.0f\n',[MDAdata.X(ii), MDAdata.Y(ii), MDAdata.Y1(ii),  MDAdata.nrgridcells(ii) MDAdata.nr(ii)]');
+    %    if ~isnan(MDAdata.Y2(ii))
+    %        fprintf(fid,'%13s   %13s %11.3f\n','','',MDAdata.Y2(ii));
+    %    end
+    %end
+    %fclose(fid);
+    
+    lineend=[10];
+    INH=[];
+    INH=[INH,double(' BASISPOINTS'),lineend];
+    INH=[INH,double(num2str(N,'%4.0f')),lineend];
+    INH=[INH,double('     Xw             Yw             Y              N              Ray'),lineend];
     for ii=1:N
-        fprintf(fid,'%13.2f   %13.2f %11.3f %11.0f %11.0f\n',[MDAdata.X(ii), MDAdata.Y(ii), MDAdata.Y1(ii),  MDAdata.nrgridcells(ii) MDAdata.nr(ii)]');
+        str1=sprintf('%13.2f   %13.2f %11.3f %11.0f %11.0f',[MDAdata.X(ii), MDAdata.Y(ii), MDAdata.Y1(ii),  MDAdata.nrgridcells(ii) MDAdata.nr(ii)]');
+        INH=[INH,double(str1),lineend];
         if ~isnan(MDAdata.Y2(ii))
-            fprintf(fid,'%13s   %13s %11.3f\n','','',MDAdata.Y2(ii));
+            str2=sprintf('%13s   %13s %11.3f','','',MDAdata.Y2(ii));
+            INH=[INH,double(str2),lineend];
         end
     end
+    fwrite(fid,INH);
     fclose(fid);
-
 end

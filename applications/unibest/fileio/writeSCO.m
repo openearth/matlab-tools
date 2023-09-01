@@ -212,9 +212,14 @@ if SCOdata.isTimeseries~=1
         fprintf(fid,'          DH            Vgety         Ref.depth   Perc\n');
         fprintf(fid,'             0.00          0.00          3.00        100.00\n');
     elseif writedummyTIDE==0
+        Ptide=SCOdata.Ptide;
+        if ~isempty(Ptide)
+        Ptide=round(SCOdata.Ptide*10^6)/10^6;
+        Ptide(end)=Ptide(end)+100-sum(Ptide);
+        end
         fprintf(fid,' %2.0f    (Number of Tide condition)\n',length(SCOdata.Htide));
         fprintf(fid,'     %9s %9s %9s %9s\n','DH','Vgety','Ref.depth','Perc');
-        fprintf(fid,'     %9.3f %9.3f %9.3f  %10.6f\n',[SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:), SCOdata.Ptide(:)]');
+        fprintf(fid,'     %9.3f %9.3f %9.3f  %10.6f\n',[SCOdata.Htide(:), SCOdata.Vtide(:), SCOdata.RefDep(:), Ptide(:)]');
     end
     fclose(fid);
    
