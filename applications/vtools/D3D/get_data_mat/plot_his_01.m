@@ -41,6 +41,16 @@ if isfield(flg_loc,'do_convergence')==0
     flg_loc.do_convergence=0;
 end
 
+%There are two inputs which are handled the same way:
+%   -his-file
+%   -map_2DH_his
+his_type=1; %his-file
+results_type='his';
+if isfield(flg_loc,'obs')
+    his_type=2;
+    results_type='map';
+end
+
 %% PATHS
 
 nS=numel(simdef);
@@ -54,12 +64,17 @@ mkdir_check(fdir_fig);
 
 %% STATIONS
 
-stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.structure);
+switch his_type
+    case 1
+        stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.structure);
+    case 2
+        stations={flg_loc.obs.name};
+end
 
 %% TIME
 
 %we are reading only one time
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(1),'results_type','his'); %force his reading. Needed for SMT.
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(1),'results_type',results_type); %force his reading. Needed for SMT.
 [tim_dnum_p,tim_dtime_p]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
 
 %% DIMENSIONS
@@ -124,8 +139,12 @@ for kvar=1:nvar
             fdir_mat=simdef(kS).file.mat.dir;
             fpath_his=simdef(kS).file.his;
             
-%             gridInfo=gdm_load_grid_simdef(fid_log,simdef(kS)); %not nice to have to load it every time
-            layer=gdm_station_layer(flg_loc,gridInfo(kS),fpath_his,stations{ks},var_str); 
+            switch his_type
+                case 1
+                    layer=gdm_station_layer(flg_loc,gridInfo(kS),fpath_his,stations{ks},var_str); 
+                case 2
+                    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+            end
             
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
             load(fpath_mat_tmp,'data');

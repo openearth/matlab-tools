@@ -100,6 +100,16 @@ if isfield(in_plot,tag_check)==1
     pp_mat_map_2DH_Fourier2D(fid_log,in_plot_fig,simdef) 
 end
 
+%% map 2DH his
+tag_check='fig_map_2DH_his_01';
+if isfield(in_plot,tag_check)==1
+    in_plot_fig=gmd_tag(in_plot,tag_check);
+    create_mat_map_2DH_his_01(fid_log,in_plot_fig,simdef)
+%     in_plot_fig=gmd_tag(in_plot,'fig_map_2DH_01'); %use the same output as for map_2DH 
+%     create_mat_map_2DH_01(fid_log,in_plot_fig,simdef) %create map_2DH mat-files
+%     pp_mat_map_2DH_his_01(fid_log,in_plot_fig,simdef) %postporcess to get his-style data
+end
+
 %% map 2DH ls
 tag_check='fig_map_2DH_ls_01';
 if isfield(in_plot,tag_check)==1

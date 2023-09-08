@@ -127,9 +127,9 @@ fpath_tim_csv=fullfile(fdir_csv,'tim.csv');
 %better to always create in case tim file is overwritten
 %         if exist(fpath_tim_csv,'file')~=2
 fid=fopen(fpath_tim_csv,'w');
-fprintf(fid,'index, flow time since start [s], morpho time since start [s], flow date [datenum], morpho date [datenum], flow date [yyyy-mm-dd HH:MM:SS], morpho date [yyyy-mm-dd HH:MM:SS], map path \r\n');
+fprintf(fid,'time index, sim number, flow time since start [s], morpho time since start [s], flow date [datenum], morpho date [datenum], flow date [yyyy-mm-dd HH:MM:SS], morpho date [yyyy-mm-dd HH:MM:SS], map path \r\n');
 for kt=1:nt
-    fprintf(fid,'%03d, %10.1f, %10.1f, %15.7f, %15.7f, %s, %s, %s \r\n',sim_idx(kt),time_r(kt),time_mor_r(kt),time_dnum(kt),time_mor_dnum(kt),datestr(time_dnum(kt),'yyyy-mm-dd HH:MM:SS'),datestr(time_mor_dnum(kt),'yyyy-mm-dd HH:MM:SS'),fpath_map{kt});
+    fprintf(fid,'%04d, %03d, %10.1f, %10.1f, %15.7f, %15.7f, %s, %s, %s \r\n',kt,sim_idx(kt),time_r(kt),time_mor_r(kt),time_dnum(kt),time_mor_dnum(kt),datestr(time_dnum(kt),'yyyy-mm-dd HH:MM:SS'),datestr(time_mor_dnum(kt),'yyyy-mm-dd HH:MM:SS'),fpath_map{kt});
 end %kt
 fclose(fid);
 %         end

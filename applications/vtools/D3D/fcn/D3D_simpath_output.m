@@ -64,12 +64,18 @@ for kflr=1:nfr
             kf=kflr2+2; %. and ..
             if dire_res2(kf).isdir==0 %it is not a directory
                 [~,~,ext]=fileparts(dire_res2(kf).name); %file extension
-                switch ext
-                    case '.shp'
+                ext_nodot=ext(2:end);
+                switch ext 
+                    case '.shp' %specify the ones to save
                         tok=regexp(dire_res2(kf).name,'_','split');
-                        str_name=strrep(tok{1,end},'.shp','');
-                        file.shp.(str_name)=fullfile(dire_res2(kf).folder,dire_res2(kf).name);
-                end
+                        str_name=strrep(tok{1,end},ext,'');
+                        fname=fullfile(dire_res2(kf).folder,dire_res2(kf).name);
+                        if ~isfield(file,ext_nodot) || ~isfield(file.(ext_nodot),str_name)
+                            file.(ext_nodot).(str_name)={fname};
+                        else
+                            file.(ext_nodot).(str_name)=cat(1,file.(ext_nodot).(str_name),fname);
+                        end
+                end %ext
             end %if no dir 2
         end %kflr2
     end %if no dir
