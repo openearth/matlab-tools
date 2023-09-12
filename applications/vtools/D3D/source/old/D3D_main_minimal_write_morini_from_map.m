@@ -4,14 +4,16 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 16714 $
+%$Date: 2020-10-28 20:38:23 +0100 (wo, 28 okt 2020) $
+%$Author: chavarri $
+%$Id: D3D_main_minimal_write_morini_from_map.m 16714 2020-10-28 19:38:23Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/source/D3D_main_minimal_write_morini_from_map.m $
 %
 
 %% PREAMBLE
+
+%CHECK <D3D_write_xyz_mor_from_map.m>
 
 close all
 fclose all;
