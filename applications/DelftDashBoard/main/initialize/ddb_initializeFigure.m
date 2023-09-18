@@ -64,7 +64,7 @@ handles=getHandles;
 
 handles.GUIHandles.mainWindow=MakeNewWindow(handles.configuration.title,[1300 700],[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 h=handles.GUIHandles.mainWindow;
-set(h,'WindowState','maximized');
+%set(h,'WindowState','maximized');
 
 set(h,'Tag','MainWindow','Visible','off');
 
