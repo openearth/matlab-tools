@@ -91,6 +91,7 @@ runid=simdef.file.runid;
 
 % load(fpath_mat,'data');
 gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+gridInfo_v=vectorize_structure(gridInfo);
 
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
@@ -121,6 +122,7 @@ in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 in_p.gridInfo=gridInfo;
+in_p.gridInfo_v=gridInfo_v;
 in_p=gdm_read_plot_along_rkm(in_p,flg_loc);
 
 fext=ext_of_fig(in_p.fig_print);
@@ -199,16 +201,29 @@ for kvar=1:nvar %variable
         if flg_loc.do_vector(kvar)
             fpath_mat_tmp=mat_tmp_name(fdir_mat,'uv','tim',time_dnum(kt),'var_idx',var_idx{kvar});
             data_uv=load(fpath_mat_tmp,'data');
-            if size(data_uv.data.vel_x,3)>1 %3D simulation, a single direction must be given for arrows
-                %ATTENTION!
-                %This only holds for sigma layers. Otherwise, we have to average considering the thickness of
-                %the layers. 
-                %Another improvement is to search for the index of the layers rather than assuming it is 3.
-                vec_x=mean(data_uv.data.vel_x,3);
-                vec_y=mean(data_uv.data.vel_y,3);
-            else
-                vec_x=data_uv.data.vel_x;
-                vec_y=data_uv.data.vel_y;
+            switch simdef.D3D.structure
+                case {1}
+                    if ndims(data_uv.data.vel_x)~=3 || size(data_uv.data.vel_x,1)>1
+                        error('It may be a 3D simulation. Work out this case.')
+                    end
+                    vec_x=squeeze(data_uv.data.vel_x); 
+                    vec_x=reshape(vec_x,[],1); %it is permuted in 'fig_map_sal_01`
+                    vec_y=squeeze(data_uv.data.vel_y);
+                    vec_y=reshape(vec_y,[],1); %it is permuted in 'fig_map_sal_01`
+                case {2,4,5}
+                    if size(data_uv.data.vel_x,3)>1 %3D simulation, a single direction must be given for arrows
+                        %ATTENTION!
+                        %This only holds for sigma layers. Otherwise, we have to average considering the thickness of
+                        %the layers. 
+                        %Another improvement is to search for the index of the layers rather than assuming it is 3.
+                        vec_x=mean(data_uv.data.vel_x,3);
+                        vec_y=mean(data_uv.data.vel_y,3);
+                    else
+                        vec_x=data_uv.data.vel_x;
+                        vec_y=data_uv.data.vel_y;
+                    end
+                otherwise
+                    error('I do not know how to plot vectors for simulation type %d',simdef.D3D.Structure)
             end
             in_p.vec_x=vec_x;
             in_p.vec_y=vec_y;

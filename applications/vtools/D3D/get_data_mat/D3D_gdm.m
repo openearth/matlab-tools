@@ -121,21 +121,23 @@
 % in_plot.(tag).fpath_ldb{1,1}=fullfile(fpath_project,'model','postprocessing','mkm-inner.ldb');
 % in_plot.(tag).fpath_ldb{2,1}=fullfile(fpath_project,'model','postprocessing','mkm-outer.ldb');
 % in_plot.(tag).fig_overwrite=1; %overwrite figures
-% in_plot.(tag).overwrite=1; %overwrite mat-files
+% in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).do_vector=0; %add velocity vectors
 % in_plot.(tag).do_axis_equal=0;
 % in_plot.(tag).do_fxw=0; %plot snapped fixed weirs
-% in_plot.(tag).do_plot_along_rkm=1;
-% in_plot.(tag).do_rkm_disp=1;
-% in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv'); %file to go along specified rkm to plot
-% in_plot.(tag).fpath_rkm_disp=fullfile(fpaths.dir_rkm,'rkm.csv'); %file to display rkm
+% in_plot.(tag).do_plot_along_rkm=0;
+% in_plot.(tag).do_rkm_disp=0;
+% % in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv'); %file to go along specified rkm to plot
+% % in_plot.(tag).fpath_rkm_disp=fullfile(fpaths.dir_rkm,'rkm.csv'); %file to display rkm
 % in_plot.(tag).rkm_tol_x=5000;
 % in_plot.(tag).rkm_tol_y=5000;
 % in_plot.(tag).plot_tiles=1; %plot satellite background image
+% % in_plot.(tag).fig_size=[0,0,37/2,15];
+% % in_plot.(tag).font_size=20;
 
 %% 2DH ls
 
-% tag='fig_map_2DH_ls_01';
+% tag='fig_rp_2DH_ls_01';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
 % in_plot.(tag).do_s=1; %difference with reference

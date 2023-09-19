@@ -122,6 +122,24 @@ end
 if isfield(in_p,'cmap_cut_edges')==0
     in_p.cmap_cut_edges=NaN;
 end
+%For D3D4 we need a reshaped version for plotting vectors and dealing with limits. It does nothing to FM. 
+if isfield(in_p,'gridInfo_v')==0
+    in_p.gridInfo_v=gmd_gridInfo_v(gridInfo);
+end
+if isfield(in_p,'vector_scale')==0
+    in_p.vector_scale=1;
+end
+if isfield(in_p,'font_size')==0
+    in_p.font_size=10;
+end
+if isfield(in_p,'marg')==0
+    in_p.marg.mt=1.0; %top margin [cm]
+    in_p.marg.mb=1.5; %bottom margin [cm]
+    in_p.marg.mr=0.5; %right margin [cm]
+    in_p.marg.ml=1.5; %left margin [cm]
+    in_p.marg.sh=1.0; %horizontal spacing [cm]
+    in_p.marg.sv=0.0; %vertical spacing [cm]
+end
 
 v2struct(in_p)
 
@@ -166,9 +184,9 @@ end
 
 if isnan(clims(1))
     if is_faces
-        bol_in=gridInfo.Xcen>xlims(1) & gridInfo.Xcen<xlims(2) & gridInfo.Ycen>ylims(1) & gridInfo.Ycen<ylims(2);
+        bol_in=gridInfo_v.Xcen>xlims(1) & gridInfo_v.Xcen<xlims(2) & gridInfo_v.Ycen>ylims(1) & gridInfo_v.Ycen<ylims(2);
     else
-        bol_in=gridInfo.Xu>xlims(1) & gridInfo.Xu<xlims(2) & gridInfo.Yu>ylims(1) & gridInfo.Yu<ylims(2);
+        bol_in=gridInfo_v.Xu>xlims(1) & gridInfo_v.Xu<xlims(2) & gridInfo_v.Yu>ylims(1) & gridInfo_v.Yu<ylims(2);
     end
     if any(bol_in(:))
         clims=[min(val(bol_in),[],'omitnan'),max(val(bol_in),[],'omitnan')];
@@ -207,12 +225,12 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-marg.mt=1.0; %top margin [cm]
-marg.mb=1.5; %bottom margin [cm]
-marg.mr=0.5; %right margin [cm]
-marg.ml=1.5; %left margin [cm]
-marg.sh=1.0; %horizontal spacing [cm]
-marg.sv=0.0; %vertical spacing [cm]
+% marg.mt=1.0; %top margin [cm]
+% marg.mb=1.5; %bottom margin [cm]
+% marg.mr=0.5; %right margin [cm]
+% marg.ml=1.5; %left margin [cm]
+% marg.sh=1.0; %horizontal spacing [cm]
+% marg.sv=0.0; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 
@@ -222,7 +240,7 @@ prop.mt1='s';
 prop.lw1=1;
 prop.ls1='-'; %'-','--',':','-.'
 prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'...
-prop.fs=10;
+prop.fs=font_size;
 prop.fn='Helvetica';
 prop.color=[... %>= matlab 2014b default
  0.0000    0.4470    0.7410;... %blue
@@ -552,7 +570,9 @@ if plot_ldb
     end
 end
 if plot_vector
-    quiver(gridInfo.Xcen,gridInfo.Ycen,vec_x',vec_y','parent',han.sfig(kr,kc),'color',vector_color)
+    %before it was `gridInfo.Xcen` which was a column vector. Now it is `gridInfo_v.Xcen` which is 
+    %a row vector. I hope nothing is broken.
+    quiver(gridInfo_v.Xcen,gridInfo_v.Ycen,vec_x',vec_y',vector_scale,'parent',han.sfig(kr,kc),'color',vector_color)
 end
 if plot_rkm
     nrkm=numel(rkm{1,1});
