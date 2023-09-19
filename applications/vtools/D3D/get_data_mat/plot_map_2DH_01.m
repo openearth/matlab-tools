@@ -132,8 +132,8 @@ end
 
 %fxw
 if flg_loc.do_fxw
-%     in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped and in a different structure than when reading snapped
-    in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef,'fxw');
+    in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped and in a different structure than when reading snapped
+%    in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef,'fxw');
 end
 
 ktc=0;

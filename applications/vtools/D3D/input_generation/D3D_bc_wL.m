@@ -84,5 +84,5 @@ end
 
 %% WRITE
 
-writetxt(file_name,datam,'check_existing',check_existing)
+writetxt(file_name,data,'check_existing',check_existing)
 

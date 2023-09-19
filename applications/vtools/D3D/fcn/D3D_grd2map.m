@@ -50,7 +50,7 @@ xmlfile(fpath_xml);
 %execute
 fdir_now=pwd;
 cd(fdir_work)
-if exist(fpath_exe,'file')~=2
+if ~exist(fpath_exe,'file')
     error('There is no <run_dimr.bat> here: %s',fpath_exe)
 end
 % [status]=system(sprintf('call "%s" "%s"',fpath_exe,fpath_xml));

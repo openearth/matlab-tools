@@ -78,7 +78,9 @@ for ksb=1:nsb
                 tim_p=time_dnum;
                 flg_loc.tim_ave_type=1; %if we want all times, it does not matter which type of time we request. We match flow time. 
             end
-            
+            if length(tim_p) < 2;
+                error('tim_ave expects more than a single time')
+            end
             tim_p_diff=diff(cen2cor(tim_p));
             tim_p_tot=sum(tim_p_diff);
             
@@ -103,6 +105,8 @@ for ksb=1:nsb
                 kfn=1;
                 statis=fn_data{kfn};
                 npoints=numel(data.(statis));
+                statshape=shape(data.(statis)); 
+                statidx=length(statshape) + 1; 
                 
                 for kfn=1:nfn
                     statis=fn_data{kfn};
@@ -112,7 +116,7 @@ for ksb=1:nsb
                 %add first values
                 for kfn=1:nfn
                     statis=fn_data{kfn};
-                    val_p.(statis)(:,kt)=data.(statis);
+                    val_p.(statis)(:,kt)=reshape(data.(statis),[npoints,1]);
                 end
                 
                 %loop on time
@@ -135,9 +139,11 @@ for ksb=1:nsb
                     %fill matrix with values for all times
                     for kfn=1:nfn
                         statis=fn_data{kfn};
-                        val_p.(statis)(:,kt)=data.(statis);
+                        val_p.(statis)(:,kt)=reshape(data.(statis),[npoints,1]);
                     end %kfn
                 end %kt
+                
+                val_p.(statis) = reshape(val_p.(statis), [statshape, nt]);
                 
                 %compute statistics in time
                 for kfn=1:nfn
@@ -149,11 +155,11 @@ for ksb=1:nsb
 
                     if exist(fpath_mat_tmp_w,'file')==2 && ~flg_loc.overwrite_ave ; continue; end
 
-                    val_mean=sum(val_p.(statis).*tim_p_diff,2)./tim_p_tot;
+                    val_mean=sum(val_p.(statis).*tim_p_diff,statidx)./tim_p_tot;
 %                     val_std=std(val_p.(statis),0,2);
-                    val_std=sqrt(var(val_p.(statis),tim_p_diff,2));
-                    val_max=max(val_p.(statis),[],2);
-                    val_min=min(val_p.(statis),[],2);
+                    val_std=sqrt(var(val_p.(statis),tim_p_diff,statidx));
+                    val_max=max(val_p.(statis),[],statidx);
+                    val_min=min(val_p.(statis),[],statidx);
 
                     %data
                     data=v2struct(val_mean,val_std,val_max,val_min); %#ok
