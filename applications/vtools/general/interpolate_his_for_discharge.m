@@ -1,0 +1,1268 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 19106 $
+%$Date: 2023-08-25 11:37:55 +0200 (Fri, 25 Aug 2023) $
+%$Author: chavarri $
+%$Id: interpolate_his_var_at_refQUA.m 19106 2023-08-25 09:37:55Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/interpolate_his_var_at_refQUA.m $
+%
+%Two simulations model several steady-state blocks. One is with FM and the
+%second with WAQUA. Only the end state of each steady-state block is relevant.
+%For each end state (i.e., for each constant discharge), the FM simulation 
+%provides a different discharge than the WAQUA one. With this function the 
+%water level in the FM simulation is modified to find the interpolated value
+%at the WAQUA discharge. 
+
+function interpolate_his_for_discharge( fpath_his_var,typ_var,fpath_his_ref,typ_ref,fpath_ocs,fpath_ost,tim_str,outputext,printfig,varargin)
+
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'adhoc','');
+
+parse(parin,varargin{:})
+
+fpath_adhoc=parin.Results.adhoc;
+
+%this should be made input
+idx_ocs_col_rkm=1; %column index with river kilometer
+idx_ocs_col_br=2; %column index with river branch
+
+idx_ost_col_rkm=1; %column index with river kilometer
+idx_ost_col_br=2; %column index with river branch
+
+if strcmp(typ_var,'fm')
+    idx_ocs_col_var=3; %column index with variant name   
+    idx_ost_col_var=3; %column index with variant name     
+elseif strcmp(typ_var,'waq')
+    idx_ocs_col_var=4; %column index with variant name
+    idx_ost_col_var=4; %column index with variant name
+end
+if strcmp(typ_ref,'fm')
+    idx_ocs_col_ref=3; %column index with variant name
+elseif strcmp(typ_ref,'waq')
+    idx_ocs_col_ref=4; %column index with variant name
+end
+
+fid_log=NaN;
+
+%% CALC
+
+%% convert input time to datetime
+
+tok=regexp(tim_str,',','split');
+tim_dtime=cellfun(@(X)datetime(X,'InputFormat','yyyy-MM-dd HH:mm:SS'),tok);
+tim_dtime.TimeZone='+00:00'; %same as in results!
+nt=numel(tim_dtime); %number of times
+
+%% read conversion tables
+
+ost_ct=readcell(fpath_ost); %conversion table etaw
+ocs_ct=readcell(fpath_ocs); %conversion table Q
+
+%% match CS to ST
+%we process the discharge CS and match them with water level ST
+[ncs,idx_ost_ocs]=match_CS_ST(ocs_ct,ost_ct,idx_ost_col_rkm,idx_ost_col_br,idx_ocs_col_rkm,idx_ocs_col_br,fpath_adhoc);
+
+%% read data for all times
+
+messageOut(fid_log,'Reading data')
+
+if strcmp(typ_var,'fm')
+    etaw_var=ncread(fpath_his_var,'waterlevel'); %we will rewrite the whole variable, so we cannot load a part of it.  
+    etaw_var_mod=etaw_var; %we cannot overwrite the same variable because we need the values at all times for the interpolation. We could locally copy these values though. 
+    Q_var=ncread(fpath_his_var,'cross_section_discharge');
+    ocs_var=NC_read_text(fpath_his_var,'cross_section_name');
+    ost_var=NC_read_text(fpath_his_var,'station_name');
+elseif strcmp(typ_var,'waq')
+    etaw_var=ncread(fpath_his_var,'ZWL'); %we will rewrite the whole variable, so we cannot load a part of it.  
+    etaw_var_mod=etaw_var; %we cannot overwrite the same variable because we need the values at all times for the interpolation. We could locally copy these values though. 
+    Q_var=ncread(fpath_his_var,'CTRV');
+    ocs_var=NC_read_text(fpath_his_var,'NAMTRV');
+    ost_var=NC_read_text(fpath_his_var,'NAMWL');
+end
+
+if strcmp(typ_ref,'fm')
+    Q_ref=ncread(fpath_his_ref,'cross_section_discharge');
+    ocs_ref=NC_read_text(fpath_his_ref,'cross_section_name');
+elseif strcmp(typ_ref,'waq')
+    Q_ref=ncread(fpath_his_ref,'CTRV');
+    ocs_ref=NC_read_text(fpath_his_ref,'NAMTRV');
+end
+% etaw_ref=ncread(fpath_his_ref,'ZWL'); %not needed
+
+%time vectors
+[~,~,~,tim_var_dtime]=D3D_results_time(fpath_his_var,0,[1,Inf]);
+[~,~,~,tim_ref_dtime]=D3D_results_time(fpath_his_ref,0,[1,Inf]);
+
+%% get indices
+
+%get index of the CS
+idx_ocs=idx_ost_ocs(:,2)+1; %CS to take
+idx_ocs_var_v=find_str_in_cell(ocs_var,ocs_ct(idx_ocs,idx_ocs_col_var));
+idx_ocs_ref_v=find_str_in_cell(ocs_ref,ocs_ct(idx_ocs,idx_ocs_col_ref));
+
+%get index of ST
+idx_ost_var_v=find_str_in_cell(ost_var,ost_ct(idx_ost_ocs(:,1)+1,idx_ost_col_var),'first',1); %it seems there are repeated stations. We only take the first. We add 1 to `idx_ost_ocs` because in `ost_ct` the first row is header.
+
+%get time index of the CS ans ST (same)
+idx_tim_var=NaN(1,nt);
+idx_tim_ref=idx_tim_var;
+for kt=1:nt
+    idx_tim_var(1,kt)=absmintol(tim_var_dtime,tim_dtime(kt));
+    idx_tim_ref(1,kt)=absmintol(tim_ref_dtime,tim_dtime(kt));
+end
+
+%check
+if any(diff([numel(idx_ost_var_v),numel(idx_ocs_var_v),numel(idx_ocs_ref_v)]))
+    error('There is a different number of stations')
+end
+
+%%
+
+%% check
+
+fdir=fileparts(fpath_ost);
+fid_check=fopen(fullfile(fdir,'match.csv'),'w');
+fprintf(fid_check,'CS FM; CS WA; ST FM \n');
+for kcs=1:ncs
+   idx_ocs_var_loc=idx_ocs_var_v(kcs);
+   idx_ocs_ref_loc=idx_ocs_ref_v(kcs);
+   idx_ost_var_loc=idx_ost_var_v(kcs);
+   ocs_var_loc=ocs_var{idx_ocs_var_loc};
+   ocs_ref_loc=ocs_ref{idx_ocs_ref_loc};
+   ost_var_loc=ost_var{idx_ost_var_loc};
+
+   fprintf(fid_check,'%s; %s; %s \n',ocs_var_loc,ocs_ref_loc,ost_var_loc);
+end
+fclose(fid_check);
+
+%% PLOT
+
+%Conclusion: times are correct
+% 
+% figure
+% hold on
+% plot(tim_var_dtime,Q_var(10,:),'-*')
+% plot(tim_var_dtime(idx_tim_var),Q_var(10,idx_tim_var),'o')
+% 
+% figure
+% hold on
+% plot(tim_ref_dtime,Q_ref(10,:),'-*')
+% plot(tim_ref_dtime(idx_tim_ref),Q_ref(10,idx_tim_ref),'o')
+
+%% interpolate
+
+messageOut(fid_log,'Interpolating')
+
+for kcs=1:ncs
+    for kt=1:nt
+        Q_q=Q_ref(idx_ocs_ref_v(kcs),idx_tim_ref(kt)); %query point. WAQUA discharge for a certain time.
+        Q_v=Q_var(idx_ocs_var_v(kcs),idx_tim_var); %x-vector. FM discharges for all times.
+        etaw_v=etaw_var(idx_ost_var_v(kcs),idx_tim_var); %y-vector. FM water level for all times.
+        
+        etaw_var_mod(idx_ost_var_v(kcs),idx_tim_var(kt))=interp1(Q_v,etaw_v,Q_q,'linear','extrap'); %interpolated FM water level.
+
+%         %BEGIN DEBUG
+%         if kcs==340
+%             a=1;
+%         end
+%         %%
+%         figure
+%         hold on
+%         plot(Q_v,etaw_v,'*-')
+%         scatter(Q_q,etaw_var_mod(idx_ost_var_v(kcs),idx_tim_var(kt)))
+%         %END DEBUG
+
+    end
+end
+
+%% write
+
+[fdir,fname,fext]=fileparts(fpath_his_var);
+fpath_his_var_mod=fullfile(fdir,sprintf('%s_mod%s',fname,['_',outputext,fext]));
+
+copyfile_check(fpath_his_var,fpath_his_var_mod);
+
+messageOut(fid_log,'Writing water level')
+ncwrite_class(fpath_his_var_mod,'waterlevel',etaw_var,etaw_var_mod);
+
+%% plot
+if printfig
+    messageOut(fid_log,'Plotting')
+    
+    fdir_fig=fullfile(fdir,'figures');
+    mkdir_check(fdir_fig);
+    
+    for kcs=1:ncs
+    
+        obs_name_raw=ocs_ct{kcs+1,idx_ocs_col_var};
+        obs_name_clean=strrep(obs_name_raw,'_','\_');
+    
+        in_p.obs=obs_name_clean;
+    
+        %% plot interpolation
+    
+        in_p.Q_var=Q_var(idx_ocs_var_v(kcs),idx_tim_var);
+        in_p.etaw_var=etaw_var(idx_ost_var_v(kcs),idx_tim_var);
+        in_p.Q_ref=Q_ref(idx_ocs_var_v(kcs),idx_tim_ref);
+        in_p.etaw_var_mod=etaw_var_mod(idx_ost_var_v(kcs),idx_tim_var);
+        
+        in_p.fname=fullfile(fdir_fig,obs_name_raw);
+    
+        fig_01(in_p);
+    
+        %% plot water level
+    
+        in_p.tim=tim_var_dtime;
+        in_p.etaw_var_loc=etaw_var(idx_ost_var_v(kcs),:);
+        in_p.etaw_var_mod_loc=etaw_var_mod(idx_ost_var_v(kcs),:);
+    
+        in_p.fname=fullfile(fdir_fig,sprintf('%s_etaw',obs_name_raw));
+    
+        fig_etaw(in_p)
+    
+    end %kcs
+end
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+%%
+
+function [ncs,idx_ost_ocs]=match_CS_ST(ocs_ct,ost_ct,idx_ost_col_rkm,idx_ost_col_br,idx_ocs_col_rkm,idx_ocs_col_br,fpath_adhoc)
+
+do_adhoc=0;
+if ~isempty(fpath_adhoc)
+    do_adhoc=1;
+    adhoc_ct=readcell(fpath_adhoc); %conversion table etaw-Q
+    rkm_ah_ost=cell2mat(adhoc_ct(2:end,1));
+    br_ah_ost=adhoc_ct(2:end,2);
+%     rkm_ah_ocs=cell2mat(adhoc_ct(2:end,3));
+%     br_ah_ocs=adhoc_ct(2:end,4);
+end
+
+ncs=size(ocs_ct,1)-1; %number of observation CS
+idx_ost_ocs=NaN(ncs,2); %index between CS and station. 
+rkm_ost_v=cell2mat(ost_ct(2:end,idx_ost_col_rkm));
+br_ost_v=ost_ct(2:end,idx_ost_col_br);
+rkm_ocs_v=cell2mat(ocs_ct(2:end,idx_ocs_col_rkm));
+br_ocs_v=ocs_ct(2:end,idx_ocs_col_br);
+for kobs=1:ncs
+    idx_ost_ocs(kobs,2)=kobs; 
+
+    rkm_q=ocs_ct{kobs+1,idx_ocs_col_rkm};
+    br_q=ocs_ct{kobs+1,idx_ocs_col_br};
+    bol_rkm=rkm_ost_v==rkm_q;
+    [~,bol_br]=find_str_in_cell(br_ost_v,{br_q});
+    bol_get=bol_rkm & bol_br;
+    if sum(bol_get)~=1
+        error('There are multiple or no stations with that match')
+    end
+    idx_ost_ocs(kobs,1)=find(bol_get);
+
+    %END if no adhoc
+    if ~do_adhoc; continue; end
+
+    %find ST in adhoc list
+    idx_ost=idx_ost_ocs(kobs,1)+1; %+1 for header
+    br_ost=ost_ct{idx_ost,idx_ost_col_br};
+    rkm_ost=ost_ct{idx_ost,idx_ost_col_rkm};
+
+    bol_rkm=rkm_ah_ost==rkm_ost;
+    [~,bol_br]=find_str_in_cell(br_ah_ost,{br_ost});
+    bol_get=bol_rkm & bol_br;   
+
+    %END if no match
+    if ~any(bol_get); continue; end %it is a station to overwrite
+    if sum(bol_get)~=1
+        error('There are multiple or no stations with that match in adhoc OST')
+    end
+    idx_ah=find(bol_get)+1; %+1 for header
+    rkm_ocs=adhoc_ct{idx_ah,3};
+    br_ocs=adhoc_ct{idx_ah,4};
+
+    bol_rkm=rkm_ocs_v==rkm_ocs;
+    [~,bol_br]=find_str_in_cell(br_ocs_v,{br_ocs});
+    bol_get=bol_rkm & bol_br;   
+    if sum(bol_get)~=1
+        error('There are multiple or no stations with that match in adhoc OCS')
+    end
+    idx_ost_ocs(kobs,2)=find(bol_get);
+
+%     %BEGIN DEBUG
+%     if rkm_ocs==1000
+%         debug_1=1;
+%     end
+%     %END DEBUG
+end
+
+end %function
+
+%% 
+
+% function idx_ost_ocs=overwrite_idx(fpath_adhoc,idx_ost_ocs,ocs_ct,ost_ct,idx_ost_col_rkm,idx_ost_col_br,idx_ocs_col_rkm,idx_ocs_col_br)
+% 
+% if isempty(fpath_adhoc); return; end
+% 
+% adhoc_ct=readcell(fpath_adhoc); %conversion table etaw-Q
+% 
+
+% 
+% rkm_ost_v=cell2mat(ost_ct(2:end,idx_ost_col_rkm));
+% br_ost_v=ost_ct(2:end,idx_ost_col_br);
+% nah=size(adhoc_ct,1); %number of stations to correct
+% 
+% for kah=1:nah
+%     
+% end %nah
+% 
+% 
+% end %function 
+
+%%
+
+function fig_01(in_p)
+
+%% DEFAULTS
+
+if isfield(in_p,'fig_visible')==0
+    in_p.fig_visible=0;
+end
+if isfield(in_p,'fig_print')==0
+    in_p.fig_print=1;
+end
+if isfield(in_p,'fname')==0
+    in_p.fname='fig';
+end
+if isfield(in_p,'fig_size')==0
+    in_p.fig_size=[0,0,14,14]; %(1+sqrt(5)/2)
+end
+if isfield(in_p,'fig_overwrite')==0
+    in_p.fig_overwrite=1;
+end
+if isfield(in_p,'fid_log')==0
+    in_p.fid_log=NaN;
+end
+if isfield(in_p,'lan')==0
+    in_p.lan='en';
+end
+
+v2struct(in_p)
+
+%% check if printing
+do_fig=check_print_figure(in_p);
+if ~do_fig
+    return
+end
+
+%% SIZE
+
+%square option
+npr=1; %number of plot rows
+npc=1; %number of plot columns
+axis_m=allcomb(1:1:npr,1:1:npc);
+
+%some of them
+% axis_m=[1,1;2,1;2,2];
+% npr=max(axis_m(:,1));
+% npc=max(axis_m(:,2));
+
+na=size(axis_m,1);
+
+%figure input
+prnt.filename=fname;
+prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
+marg.mt=1.0; %top margin [cm]
+marg.mb=1.5; %bottom margin [cm]
+marg.mr=0.5; %right margin [cm]
+marg.ml=1.5; %left margin [cm]
+marg.sh=1.0; %horizontal spacing [cm]
+marg.sv=0.0; %vertical spacing [cm]
+
+%% PLOT PROPERTIES 
+
+prop.ms1=10; 
+prop.mf1='g'; 
+prop.mt1='s'; 
+prop.lw1=1;
+prop.ls1='-'; %'-','--',':','-.'
+prop.m1='*'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'... {'o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'};
+prop.fs=10;
+prop.fn='Helvetica';
+prop.color=[... %>= matlab 2014b default
+ 0.0000    0.4470    0.7410;... %blue
+ 0.8500    0.3250    0.0980;... %red
+ 0.9290    0.6940    0.1250;... %yellow
+ 0.4940    0.1840    0.5560;... %purple
+ 0.4660    0.6740    0.1880;... %green
+ 0.3010    0.7450    0.9330;... %cyan
+ 0.6350    0.0780    0.1840];   %brown
+% prop.color=[... %<  matlab 2014b default
+%  0.0000    0.0000    1.0000;... %blue
+%  0.0000    0.5000    0.0000;... %green
+%  1.0000    0.0000    0.0000;... %red
+%  0.0000    0.7500    0.7500;... %cyan
+%  0.7500    0.0000    0.7500;... %purple
+%  0.7500    0.7500    0.0000;... %ocre
+%  0.2500    0.2500    0.2500];   %grey
+set(groot,'defaultAxesColorOrder',prop.color)
+% set(groot,'defaultAxesColorOrder','default') %reset the color order to the default value
+
+%set interpreter to Latex (to have bold text use \bfseries{})
+% set(groot,'defaultTextInterpreter','Latex'); 
+% set(groot,'defaultAxesTickLabelInterpreter','Latex'); 
+% set(groot,'defaultLegendInterpreter','Latex');
+set(groot,'defaultTextInterpreter','tex'); 
+set(groot,'defaultAxesTickLabelInterpreter','tex'); 
+set(groot,'defaultLegendInterpreter','tex');
+
+%% COLORBAR AND COLORMAP
+% kr=1; kc=1;
+% cbar(kr,kc).displacement=[0.0,0,0,0]; 
+% cbar(kr,kc).location='northoutside';
+% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
+
+% brewermap('demo')
+cmap=brewermap(3,'set1');
+
+%center around 0
+% ncmap=1000;
+% cmap1=brewermap(ncmap,'RdYlGn');
+% cmap=flipud([flipud(cmap1(1:ncmap/2-ncmap*0.05,:));flipud(cmap1(ncmap/2+ncmap*0.05:end,:))]);
+
+%cutted centre colormap
+% ncmap=100;
+% cmap=flipud(brewermap(ncmap,'RdBu'));
+% fact=0.1; %percentage of values to remove from the center
+% cmap=[cmap(1:(ncmap-round(fact*ncmap))/2,:);cmap((ncmap+round(fact*ncmap))/2:end,:)];
+
+%compressed colormap
+% ncmap=100;
+% cmap=flipud(brewermap(ncmap,'RdYlBu'));
+% p1=0.5; %fraction of cmap compressed in p2
+% p2=0.7; %fraction of
+% np1=round(ncmap*p1);
+% np2=round(ncmap*p2);
+% x=1:1:ncmap;
+% x1=1:1:np1; %x vector
+% x2=1:1:ncmap-np1; %x vector
+% y1=cmap(1:np1,:); 
+% y2=cmap(np1+1:end,:); 
+% xq1=linspace(1,np1,np2); %query vector 1
+% xq2=linspace(1,ncmap-np1,ncmap-np2); %query vector 2
+% vq1=interp1(x1,y1,xq1);
+% vq2=interp1(x2,y2,xq2);
+% cmap=[vq1;vq2];
+
+%gauss colormap
+% ncmap=100;
+% cmap=flipud(brewermap(ncmap,'RdYlBu'));
+% x=linspace(0,1,ncmap);
+% xs=normcdf(x,0.5,0.25);
+% plot(x,xs)
+% cmap2=interp1(x,cmap,xs);
+% cmap=cmap2;
+% %merge 2 colormaps at a specific value. cmap1 spans between [clim_l(1),aux_cmap_change] and cmap 2 between [aux_cmap_change,clim_l(2)]
+% ncmap=100; %total number of colors (will be rounded)
+% aux_cmap_change=1; %value in which the colormaps change. 
+% aux_cmap1_n=round(ncmap*(aux_cmap_change-clim_l(1))/(clim_l(2)-clim_l(1)));
+% aux_cmap2_n=round(ncmap*(clim_l(2)-aux_cmap_change)/(clim_l(2)-clim_l(1)));
+% cmap1=flipud(brewermap(aux_cmap1_n,'Reds'));
+% cmap2=brewermap(aux_cmap2_n,'Greens');
+% cmap=[cmap1;cmap2];
+
+%interpolate depending on values
+% c=[200e-6,210e-6,300e-6,420e-6,2e-3,5.6e-3,16e-3,20e-3]*1e3;
+% nc=numel(c);
+% cmap=brewermap(nc-1,'Reds');
+% 
+% F1=griddedInterpolant(c(1:end-1)',cmap(:,1),'linear','nearest');
+% F2=griddedInterpolant(c(1:end-1)',cmap(:,2),'linear','nearest');
+% F3=griddedInterpolant(c(1:end-1)',cmap(:,3),'linear','nearest');
+% 
+% %e.g.
+% ct=[0.1e-3:0.1e-3:24e-3]*1e3; %color-dependent value
+% nct=numel(ct);
+% y=zeros(1,nct); %e.g.
+% x=1:1:nct; %e.g.
+% for kct=1:nct
+% scatter(x(kct),y(kct),20,[F1(ct(kct)),F2(ct(kct)),F3(ct(kct))],'filled')
+% end
+% han.cbar=colorbar;
+% colormap(cmap)
+% clim([1,nc])
+% han.cbar.Ticks=1:1:nc;
+% aux_str=cell(nc,1);
+% for kc=1:nc
+%     if c(kc)<1
+%         aux_str{kc,1}=sprintf('%3.0fe-3',c(kc)*1000);
+%     else
+%         aux_str{kc,1}=sprintf('%3.1f',c(kc));
+%     end
+% end
+% han.cbar.TickLabels=aux_str;
+
+%% TEXT
+
+%     %irregulra
+% kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.015,0.5e-3;0.03,-0.5e-3;0.005,-1e-3];
+% texti.sfig(kr,kc).tex={'1','2','a'};
+% texti.sfig(kr,kc).clr={prop.color(1,:),prop.color(2,:),'k'};
+% texti.sfig(kr,kc).ref={'ul'};
+% texti.sfig(kr,kc).fwe={'bold','normal'};
+% texti.sfig(kr,kc).rot=[0,90];
+% 
+%     %regular
+% text_str={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o'};
+% text_str={'a','b';'c','d';'e','f';'g','h'};
+% for kr=1:npr
+%     for kc=1:npc
+% % kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.5,0.5];
+% texti.sfig(kr,kc).tex={text_str{kr,kc}}; %#ok
+% texti.sfig(kr,kc).clr={'k'};
+% texti.sfig(kr,kc).ref={'lr'};
+% texti.sfig(kr,kc).fwe={'bold'};
+% texti.sfig(kr,kc).rot=[0,90];
+%     end
+% end
+%     %regular more than one
+% text_str={'Hir.','Hir.','Hir.';'Ia','Ia','Ia';'Ib','Ib','Ib';'IIa','IIa','IIa';'IIb','IIb','IIb';'IIc','IIc','IIc';'IId','IId','IId'};
+% text_str2={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o';'p','q','r';'s','t','u'};
+% for kr=1:npr
+%     for kc=1:npc
+% % kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.5,0.5;0.5,0.5];
+% texti.sfig(kr,kc).tex={text_str{kr,kc},text_str2{kr,kc}}; %#ok
+% texti.sfig(kr,kc).clr={'k','k'};
+% texti.sfig(kr,kc).ref={'ll','lr'};
+% texti.sfig(kr,kc).fwe={'bold','normal'};
+% texti.sfig(kr,kc).rot=[0,90];
+%     end
+% end
+
+%% LABELS AND LIMITS
+
+% ka=1;
+% kr=axis_m(ka,1);
+% kc=axis_m(ka,2);
+
+kr=1; kc=1;
+% lims.y(kr,kc,1:2)=lims_y;
+% lims.x(kr,kc,1:2)=lims_x;
+% lims.c(kr,kc,1:2)=lims_c;
+xlabels{kr,kc}=labels4all('Q',1,lan);
+ylabels{kr,kc}=labels4all('etaw',1,lan);
+% ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
+% lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
+% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
+
+
+%% FIGURE INITIALIZATION
+
+han.fig=figure('name',prnt.filename);
+set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',fig_visible)
+set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
+% set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
+[mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
+
+%subplots initialize
+    %if regular
+for ka=1:na
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+    han.sfig(kr,kc)=subaxis(npr,npc,kc,kr,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
+end
+    %if irregular
+% han.sfig(1,1)=subaxis(npr,npc,1,1,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
+
+    %add axis on top
+% kr=1; kc=2;
+% % pos.sfig=[0.25,0.6,0.25,0.25]; % position of first axes    
+% pos.sfig=han.sfig(1,1).Position; % position of first axes    
+% han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right','Color','none');
+
+%% HOLD
+
+for ka=1:na
+    hold(han.sfig(axis_m(ka,1),axis_m(ka,2)),'on')
+end
+
+%% MAP TILES
+
+% kr=1; kc=1;
+% OPT.xlim=x_lims;
+% OPT.ylim=y_lims;
+% OPT.epsg_in=28992; %WGS'84 / google earth
+% OPT.epsg_out=28992; %Amersfoort
+% OPT.tzl=tzl; %zoom
+% OPT.save_tiles=false;
+% OPT.path_save=fullfile(pwd,'earth_tiles');
+% OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
+% OPT.map_type=3;%map type
+% OPT.han_ax=han.sfig(kr,kc);
+% 
+% plotMapTiles(OPT);
+
+%% EHY
+
+%get time vecto
+% simdef.D3D.dire_sim=sim_path;
+% simdef=D3D_simpath(simdef);
+% path_map=simdef.file.map;
+% 
+% ismor=D3D_is(path_map);
+% [~,~,time_dnum]=D3D_results_time(path_map,ismor,[192,2]);
+
+%read map data
+%data_map.grid=EHY_getGridInfo(filename,{'face_nodes_xy'});
+%grid_info=EHY_getGridInfo(path_map,{'face_nodes_xy','XYcen'});
+
+%read data long longitudinal section
+%[data_lp,data_lp.grid]=EHY_getMapModelData(path_map,'varName','mesh2d_lyrfrac','t0',time_dnum(1),'tend',time_dnum(end),'disp',1,'pliFile',path_lp);
+
+% kr=1; kc=1;
+% set(han.fig,'CurrentAxes',han.sfig(kr,kc))
+
+%plot map data
+% EHY_plotMapModelData(data_map.grid,data_map.val,'t',1); 
+
+%plot 1D data along longitudinal section
+% plot(data_bl.Scen,data_bl.val)
+
+%plot 2D data (layers) along longitudinal sections
+% data_p=data_lp;
+% data_p.val=squeeze(data_lp.val(kt,:,:,kf));
+% data_p.grid.Ycor=data_lp.grid.Ycor(kt,:,:);
+% EHY_plotMapModelData(data_p.grid,data_p.val,'t',1); 
+
+%plot 2D grid
+% data_map.grid=EHY_getGridInfo(fname_grd,{'grid'});
+% plot(data_map.grid.grid(:,1),data_map.grid.grid(:,2),'color','k')
+
+%plot3D
+    %as vertices
+% gridInfo = EHY_getGridInfo(mapFile,{'face_nodes_xy','face_nodes_z'});
+% Data = EHY_getMapModelData(mapFile,'varName','salinity','t',7,'k',42);
+% EHY_plotMapModelData(gridInfo,Data.val);
+    %as tiles
+% gridInfo = EHY_getGridInfo(mapFile,{'face_nodes_xy','Z'});
+% EHY_plotMapModelData(gridInfo,Data.val);
+
+%% PLOT
+
+kr=1; kc=1;    
+han.p(kr,kc,:)=plot(Q_var,etaw_var,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.s(kr,kc,:)=scatter(Q_ref,etaw_var_mod,prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
+
+% han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
+% han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
+% 
+% surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+% patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
+
+%% PROPERTIES
+
+    %sub11
+kr=1; kc=1;   
+hold(han.sfig(kr,kc),'on')
+grid(han.sfig(kr,kc),'on')
+% axis(han.sfig(kr,kc),'equal')
+han.sfig(kr,kc).Box='on';
+% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+% han.sfig(kr,kc).XTickLabel='';
+% han.sfig(kr,kc).YTickLabel='';
+% han.sfig(kr,kc).XTick=[];  
+% han.sfig(kr,kc).YTick=[];  
+% han.sfig(kr,kc).XScale='log';
+% han.sfig(kr,kc).YScale='log';
+han.sfig(kr,kc).Title.String=obs;
+% han.sfig(kr,kc).XColor='r';
+% han.sfig(kr,kc).YColor='k';
+han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
+
+%duration ticks
+% xtickformat(han.sfig(kr,kc),'hh:mm')
+% han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
+% han.sfig(kr,kc).XTick=hours([4,6]);
+
+%colormap
+% kr=1; kc=2;
+% view(han.sfig(kr,kc),[0,90]);
+% colormap(han.sfig(kr,kc),cmap);
+% if ~isnan(lims.c(kr,kc,1:1))
+% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+% end
+
+%% ADD TEXT
+
+    %if irregular
+% which_pos_text=[1,1;2,1;3,1;3,2];
+% nsf=size(which_pos_text);
+% for ksf=1:nsf
+%     kr=which_pos_text(ksf,1);
+%     kc=which_pos_text(ksf,2);
+%         ntxt=numel(texti.sfig(kr,kc).tex);
+%         for ktx=1:ntxt
+%             %if the specified values are in cm 
+%             aux.pos=cm2ax(texti.sfig(kr,kc).pos(ktx,:),han.fig,han.sfig(kr,kc),'reference',texti.sfig(kr,kc).ref{ktx});
+% %             text(texti.sfig(kr,kc).pos(1,1),texti.sfig(kr,kc).pos(1,2),texti.sfig(kr,kc).tex{ktx},'parent',han.sfig(kr,kc),'color',texti.sfig(kr,kc).clr{ktx},'fontweight','bold')
+%             text(aux.pos(1,1),aux.pos(1,2),texti.sfig(kr,kc).tex{ktx},'parent',han.sfig(kr,kc),'color',texti.sfig(kr,kc).clr{ktx},'fontweight',texti.sfig(kr,kc).fwe{ktx},'rotation',texti.sfig(kr,kc).rot(ktx))
+%         end
+% end
+%     %if regular
+% for kr=1:npr
+%     for kc=1:npc
+%         ntxt=numel(texti.sfig(kr,kc).tex);
+%         for ktx=1:ntxt
+%             %if the specified values are in cm 
+%             aux.pos=cm2ax(texti.sfig(kr,kc).pos(ktx,:),han.fig,han.sfig(kr,kc),'reference',texti.sfig(kr,kc).ref{ktx});
+% %             text(texti.sfig(kr,kc).pos(1,1),texti.sfig(kr,kc).pos(1,2),texti.sfig(kr,kc).tex{ktx},'parent',han.sfig(kr,kc),'color',texti.sfig(kr,kc).clr{ktx},'fontweight','bold')
+%             text(aux.pos(1,1),aux.pos(1,2),texti.sfig(kr,kc).tex{ktx},'parent',han.sfig(kr,kc),'color',texti.sfig(kr,kc).clr{ktx},'fontweight',texti.sfig(kr,kc).fwe{ktx},'rotation',texti.sfig(kr,kc).rot(ktx))
+%         end
+%     end
+% end
+
+%% LEGEND
+
+kr=1; kc=1;
+% pos.sfig=han.sfig(kr,kc).Position;
+% %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
+han.leg(kr,kc)=legend(han.sfig(kr,kc),[han.p(kr,kc,1),han.s(kr,kc,1)],{'original','modified'},'location','best');
+% han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
+% pos.leg=han.leg(kr,kc).Position;
+% han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
+% han.sfig(kr,kc).Position=pos.sfig;
+
+%% COLORBAR
+
+% kr=1; kc=1;
+% pos.sfig=han.sfig(kr,kc).Position;
+% han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
+% pos.cbar=han.cbar.Position;
+% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+% han.sfig(kr,kc).Position=pos.sfig;
+% han.cbar.Label.String=cbar(kr,kc).label;
+% 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
+% aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
+% v2p=[1,5,11,15,np1];
+% han.cbar.Ticks=v2p;
+% aux3=aux2(v2p);
+% aux_str=cell(1,numel(v2p));
+% for ka=1:numel(v2p)
+%     aux_str{ka}=sprintf('%5.3f',aux3(ka));
+% end
+% han.cbar.TickLabels=aux_str;
+
+%% GENERAL
+set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
+set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
+% han.fig.Renderer='painters';
+
+%% PRINT
+
+if any(fig_print==1)
+    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
+end
+if any(fig_print==2)
+    savefig(han.fig,strcat(prnt.filename,'.fig'))
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.fig'))) 
+end
+if any(fig_print==3)
+    print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
+end
+if any(fig_print==4)
+    print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+end
+if any(ismember(fig_print,[1,2,3,4]))
+close(han.fig);
+end
+
+end %function
+
+%%
+
+function fig_etaw(in_p)
+
+%% DEFAULTS
+
+if isfield(in_p,'fig_visible')==0
+    in_p.fig_visible=0;
+end
+if isfield(in_p,'fig_print')==0
+    in_p.fig_print=1;
+end
+if isfield(in_p,'fname')==0
+    in_p.fname='fig';
+end
+if isfield(in_p,'fig_size')==0
+    in_p.fig_size=[0,0,14,14]; %(1+sqrt(5)/2)
+end
+if isfield(in_p,'fig_overwrite')==0
+    in_p.fig_overwrite=1;
+end
+if isfield(in_p,'fid_log')==0
+    in_p.fid_log=NaN;
+end
+if isfield(in_p,'lan')==0
+    in_p.lan='en';
+end
+
+v2struct(in_p)
+
+%% check if printing
+do_fig=check_print_figure(in_p);
+if ~do_fig
+    return
+end
+
+%% SIZE
+
+%square option
+npr=1; %number of plot rows
+npc=1; %number of plot columns
+axis_m=allcomb(1:1:npr,1:1:npc);
+
+%some of them
+% axis_m=[1,1;2,1;2,2];
+% npr=max(axis_m(:,1));
+% npc=max(axis_m(:,2));
+
+na=size(axis_m,1);
+
+%figure input
+prnt.filename=fname;
+prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
+marg.mt=1.0; %top margin [cm]
+marg.mb=1.5; %bottom margin [cm]
+marg.mr=0.5; %right margin [cm]
+marg.ml=1.5; %left margin [cm]
+marg.sh=1.0; %horizontal spacing [cm]
+marg.sv=0.0; %vertical spacing [cm]
+
+%% PLOT PROPERTIES 
+
+prop.ms1=10; 
+prop.mf1='g'; 
+prop.mt1='s'; 
+prop.lw1=1;
+prop.ls1='-'; %'-','--',':','-.'
+prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'... {'o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'};
+prop.fs=10;
+prop.fn='Helvetica';
+prop.color=[... %>= matlab 2014b default
+ 0.0000    0.4470    0.7410;... %blue
+ 0.8500    0.3250    0.0980;... %red
+ 0.9290    0.6940    0.1250;... %yellow
+ 0.4940    0.1840    0.5560;... %purple
+ 0.4660    0.6740    0.1880;... %green
+ 0.3010    0.7450    0.9330;... %cyan
+ 0.6350    0.0780    0.1840];   %brown
+% prop.color=[... %<  matlab 2014b default
+%  0.0000    0.0000    1.0000;... %blue
+%  0.0000    0.5000    0.0000;... %green
+%  1.0000    0.0000    0.0000;... %red
+%  0.0000    0.7500    0.7500;... %cyan
+%  0.7500    0.0000    0.7500;... %purple
+%  0.7500    0.7500    0.0000;... %ocre
+%  0.2500    0.2500    0.2500];   %grey
+set(groot,'defaultAxesColorOrder',prop.color)
+% set(groot,'defaultAxesColorOrder','default') %reset the color order to the default value
+
+%set interpreter to Latex (to have bold text use \bfseries{})
+% set(groot,'defaultTextInterpreter','Latex'); 
+% set(groot,'defaultAxesTickLabelInterpreter','Latex'); 
+% set(groot,'defaultLegendInterpreter','Latex');
+set(groot,'defaultTextInterpreter','tex'); 
+set(groot,'defaultAxesTickLabelInterpreter','tex'); 
+set(groot,'defaultLegendInterpreter','tex');
+
+%% COLORBAR AND COLORMAP
+% kr=1; kc=1;
+% cbar(kr,kc).displacement=[0.0,0,0,0]; 
+% cbar(kr,kc).location='northoutside';
+% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
+
+% brewermap('demo')
+cmap=brewermap(3,'set1');
+
+%center around 0
+% ncmap=1000;
+% cmap1=brewermap(ncmap,'RdYlGn');
+% cmap=flipud([flipud(cmap1(1:ncmap/2-ncmap*0.05,:));flipud(cmap1(ncmap/2+ncmap*0.05:end,:))]);
+
+%cutted centre colormap
+% ncmap=100;
+% cmap=flipud(brewermap(ncmap,'RdBu'));
+% fact=0.1; %percentage of values to remove from the center
+% cmap=[cmap(1:(ncmap-round(fact*ncmap))/2,:);cmap((ncmap+round(fact*ncmap))/2:end,:)];
+
+%compressed colormap
+% ncmap=100;
+% cmap=flipud(brewermap(ncmap,'RdYlBu'));
+% p1=0.5; %fraction of cmap compressed in p2
+% p2=0.7; %fraction of
+% np1=round(ncmap*p1);
+% np2=round(ncmap*p2);
+% x=1:1:ncmap;
+% x1=1:1:np1; %x vector
+% x2=1:1:ncmap-np1; %x vector
+% y1=cmap(1:np1,:); 
+% y2=cmap(np1+1:end,:); 
+% xq1=linspace(1,np1,np2); %query vector 1
+% xq2=linspace(1,ncmap-np1,ncmap-np2); %query vector 2
+% vq1=interp1(x1,y1,xq1);
+% vq2=interp1(x2,y2,xq2);
+% cmap=[vq1;vq2];
+
+%gauss colormap
+% ncmap=100;
+% cmap=flipud(brewermap(ncmap,'RdYlBu'));
+% x=linspace(0,1,ncmap);
+% xs=normcdf(x,0.5,0.25);
+% plot(x,xs)
+% cmap2=interp1(x,cmap,xs);
+% cmap=cmap2;
+% %merge 2 colormaps at a specific value. cmap1 spans between [clim_l(1),aux_cmap_change] and cmap 2 between [aux_cmap_change,clim_l(2)]
+% ncmap=100; %total number of colors (will be rounded)
+% aux_cmap_change=1; %value in which the colormaps change. 
+% aux_cmap1_n=round(ncmap*(aux_cmap_change-clim_l(1))/(clim_l(2)-clim_l(1)));
+% aux_cmap2_n=round(ncmap*(clim_l(2)-aux_cmap_change)/(clim_l(2)-clim_l(1)));
+% cmap1=flipud(brewermap(aux_cmap1_n,'Reds'));
+% cmap2=brewermap(aux_cmap2_n,'Greens');
+% cmap=[cmap1;cmap2];
+
+%interpolate depending on values
+% c=[200e-6,210e-6,300e-6,420e-6,2e-3,5.6e-3,16e-3,20e-3]*1e3;
+% nc=numel(c);
+% cmap=brewermap(nc-1,'Reds');
+% 
+% F1=griddedInterpolant(c(1:end-1)',cmap(:,1),'linear','nearest');
+% F2=griddedInterpolant(c(1:end-1)',cmap(:,2),'linear','nearest');
+% F3=griddedInterpolant(c(1:end-1)',cmap(:,3),'linear','nearest');
+% 
+% %e.g.
+% ct=[0.1e-3:0.1e-3:24e-3]*1e3; %color-dependent value
+% nct=numel(ct);
+% y=zeros(1,nct); %e.g.
+% x=1:1:nct; %e.g.
+% for kct=1:nct
+% scatter(x(kct),y(kct),20,[F1(ct(kct)),F2(ct(kct)),F3(ct(kct))],'filled')
+% end
+% han.cbar=colorbar;
+% colormap(cmap)
+% clim([1,nc])
+% han.cbar.Ticks=1:1:nc;
+% aux_str=cell(nc,1);
+% for kc=1:nc
+%     if c(kc)<1
+%         aux_str{kc,1}=sprintf('%3.0fe-3',c(kc)*1000);
+%     else
+%         aux_str{kc,1}=sprintf('%3.1f',c(kc));
+%     end
+% end
+% han.cbar.TickLabels=aux_str;
+
+%% TEXT
+
+%     %irregulra
+% kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.015,0.5e-3;0.03,-0.5e-3;0.005,-1e-3];
+% texti.sfig(kr,kc).tex={'1','2','a'};
+% texti.sfig(kr,kc).clr={prop.color(1,:),prop.color(2,:),'k'};
+% texti.sfig(kr,kc).ref={'ul'};
+% texti.sfig(kr,kc).fwe={'bold','normal'};
+% texti.sfig(kr,kc).rot=[0,90];
+% 
+%     %regular
+% text_str={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o'};
+% text_str={'a','b';'c','d';'e','f';'g','h'};
+% for kr=1:npr
+%     for kc=1:npc
+% % kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.5,0.5];
+% texti.sfig(kr,kc).tex={text_str{kr,kc}}; %#ok
+% texti.sfig(kr,kc).clr={'k'};
+% texti.sfig(kr,kc).ref={'lr'};
+% texti.sfig(kr,kc).fwe={'bold'};
+% texti.sfig(kr,kc).rot=[0,90];
+%     end
+% end
+%     %regular more than one
+% text_str={'Hir.','Hir.','Hir.';'Ia','Ia','Ia';'Ib','Ib','Ib';'IIa','IIa','IIa';'IIb','IIb','IIb';'IIc','IIc','IIc';'IId','IId','IId'};
+% text_str2={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o';'p','q','r';'s','t','u'};
+% for kr=1:npr
+%     for kc=1:npc
+% % kr=1; kc=1;
+% texti.sfig(kr,kc).pos=[0.5,0.5;0.5,0.5];
+% texti.sfig(kr,kc).tex={text_str{kr,kc},text_str2{kr,kc}}; %#ok
+% texti.sfig(kr,kc).clr={'k','k'};
+% texti.sfig(kr,kc).ref={'ll','lr'};
+% texti.sfig(kr,kc).fwe={'bold','normal'};
+% texti.sfig(kr,kc).rot=[0,90];
+%     end
+% end
+
+%% LABELS AND LIMITS
+
+% ka=1;
+% kr=axis_m(ka,1);
+% kc=axis_m(ka,2);
+
+kr=1; kc=1;
+% lims.y(kr,kc,1:2)=lims_y;
+% lims.x(kr,kc,1:2)=lims_x;
+% lims.c(kr,kc,1:2)=lims_c;
+xlabels{kr,kc}='';
+ylabels{kr,kc}=labels4all('etaw',1,lan);
+% ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
+% lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
+% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
+
+
+%% FIGURE INITIALIZATION
+
+han.fig=figure('name',prnt.filename);
+set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',fig_visible)
+set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
+% set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
+[mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
+
+%subplots initialize
+    %if regular
+for ka=1:na
+    kr=axis_m(ka,1);
+    kc=axis_m(ka,2);
+    han.sfig(kr,kc)=subaxis(npr,npc,kc,kr,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
+end
+    %if irregular
+% han.sfig(1,1)=subaxis(npr,npc,1,1,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
+
+    %add axis on top
+% kr=1; kc=2;
+% % pos.sfig=[0.25,0.6,0.25,0.25]; % position of first axes    
+% pos.sfig=han.sfig(1,1).Position; % position of first axes    
+% han.sfig(kr,kc)=axes('units','normalized','Position',pos.sfig,'XAxisLocation','bottom','YAxisLocation','right','Color','none');
+
+%% HOLD
+
+for ka=1:na
+    hold(han.sfig(axis_m(ka,1),axis_m(ka,2)),'on')
+end
+
+%% MAP TILES
+
+% kr=1; kc=1;
+% OPT.xlim=x_lims;
+% OPT.ylim=y_lims;
+% OPT.epsg_in=28992; %WGS'84 / google earth
+% OPT.epsg_out=28992; %Amersfoort
+% OPT.tzl=tzl; %zoom
+% OPT.save_tiles=false;
+% OPT.path_save=fullfile(pwd,'earth_tiles');
+% OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
+% OPT.map_type=3;%map type
+% OPT.han_ax=han.sfig(kr,kc);
+% 
+% plotMapTiles(OPT);
+
+%% EHY
+
+%get time vecto
+% simdef.D3D.dire_sim=sim_path;
+% simdef=D3D_simpath(simdef);
+% path_map=simdef.file.map;
+% 
+% ismor=D3D_is(path_map);
+% [~,~,time_dnum]=D3D_results_time(path_map,ismor,[192,2]);
+
+%read map data
+%data_map.grid=EHY_getGridInfo(filename,{'face_nodes_xy'});
+%grid_info=EHY_getGridInfo(path_map,{'face_nodes_xy','XYcen'});
+
+%read data long longitudinal section
+%[data_lp,data_lp.grid]=EHY_getMapModelData(path_map,'varName','mesh2d_lyrfrac','t0',time_dnum(1),'tend',time_dnum(end),'disp',1,'pliFile',path_lp);
+
+% kr=1; kc=1;
+% set(han.fig,'CurrentAxes',han.sfig(kr,kc))
+
+%plot map data
+% EHY_plotMapModelData(data_map.grid,data_map.val,'t',1); 
+
+%plot 1D data along longitudinal section
+% plot(data_bl.Scen,data_bl.val)
+
+%plot 2D data (layers) along longitudinal sections
+% data_p=data_lp;
+% data_p.val=squeeze(data_lp.val(kt,:,:,kf));
+% data_p.grid.Ycor=data_lp.grid.Ycor(kt,:,:);
+% EHY_plotMapModelData(data_p.grid,data_p.val,'t',1); 
+
+%plot 2D grid
+% data_map.grid=EHY_getGridInfo(fname_grd,{'grid'});
+% plot(data_map.grid.grid(:,1),data_map.grid.grid(:,2),'color','k')
+
+%plot3D
+    %as vertices
+% gridInfo = EHY_getGridInfo(mapFile,{'face_nodes_xy','face_nodes_z'});
+% Data = EHY_getMapModelData(mapFile,'varName','salinity','t',7,'k',42);
+% EHY_plotMapModelData(gridInfo,Data.val);
+    %as tiles
+% gridInfo = EHY_getGridInfo(mapFile,{'face_nodes_xy','Z'});
+% EHY_plotMapModelData(gridInfo,Data.val);
+
+%% PLOT
+
+kr=1; kc=1;    
+han.p1(kr,kc,1)=plot(tim,etaw_var_loc,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.p1(kr,kc,2)=plot(tim,etaw_var_mod_loc,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+
+% han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
+% han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
+% 
+% surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+% patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
+
+%% PROPERTIES
+
+    %sub11
+kr=1; kc=1;   
+hold(han.sfig(kr,kc),'on')
+grid(han.sfig(kr,kc),'on')
+% axis(han.sfig(kr,kc),'equal')
+han.sfig(kr,kc).Box='on';
+% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+% han.sfig(kr,kc).XTickLabel='';
+% han.sfig(kr,kc).YTickLabel='';
+% han.sfig(kr,kc).XTick=[];  
+% han.sfig(kr,kc).YTick=[];  
+% han.sfig(kr,kc).XScale='log';
+% han.sfig(kr,kc).YScale='log';
+han.sfig(kr,kc).Title.String=obs;
+% han.sfig(kr,kc).XColor='r';
+% han.sfig(kr,kc).YColor='k';
+han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
+
+%duration ticks
+% xtickformat(han.sfig(kr,kc),'hh:mm')
+% han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
+% han.sfig(kr,kc).XTick=hours([4,6]);
+
+%colormap
+% kr=1; kc=2;
+% view(han.sfig(kr,kc),[0,90]);
+% colormap(han.sfig(kr,kc),cmap);
+% if ~isnan(lims.c(kr,kc,1:1))
+% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+% end
+
+%% ADD TEXT
+
+    %if irregular
+% which_pos_text=[1,1;2,1;3,1;3,2];
+% nsf=size(which_pos_text);
+% for ksf=1:nsf
+%     kr=which_pos_text(ksf,1);
+%     kc=which_pos_text(ksf,2);
+%         ntxt=numel(texti.sfig(kr,kc).tex);
+%         for ktx=1:ntxt
+%             %if the specified values are in cm 
+%             aux.pos=cm2ax(texti.sfig(kr,kc).pos(ktx,:),han.fig,han.sfig(kr,kc),'reference',texti.sfig(kr,kc).ref{ktx});
+% %             text(texti.sfig(kr,kc).pos(1,1),texti.sfig(kr,kc).pos(1,2),texti.sfig(kr,kc).tex{ktx},'parent',han.sfig(kr,kc),'color',texti.sfig(kr,kc).clr{ktx},'fontweight','bold')
+%             text(aux.pos(1,1),aux.pos(1,2),texti.sfig(kr,kc).tex{ktx},'parent',han.sfig(kr,kc),'color',texti.sfig(kr,kc).clr{ktx},'fontweight',texti.sfig(kr,kc).fwe{ktx},'rotation',texti.sfig(kr,kc).rot(ktx))
+%         end
+% end
+%     %if regular
+% for kr=1:npr
+%     for kc=1:npc
+%         ntxt=numel(texti.sfig(kr,kc).tex);
+%         for ktx=1:ntxt
+%             %if the specified values are in cm 
+%             aux.pos=cm2ax(texti.sfig(kr,kc).pos(ktx,:),han.fig,han.sfig(kr,kc),'reference',texti.sfig(kr,kc).ref{ktx});
+% %             text(texti.sfig(kr,kc).pos(1,1),texti.sfig(kr,kc).pos(1,2),texti.sfig(kr,kc).tex{ktx},'parent',han.sfig(kr,kc),'color',texti.sfig(kr,kc).clr{ktx},'fontweight','bold')
+%             text(aux.pos(1,1),aux.pos(1,2),texti.sfig(kr,kc).tex{ktx},'parent',han.sfig(kr,kc),'color',texti.sfig(kr,kc).clr{ktx},'fontweight',texti.sfig(kr,kc).fwe{ktx},'rotation',texti.sfig(kr,kc).rot(ktx))
+%         end
+%     end
+% end
+
+%% LEGEND
+
+kr=1; kc=1;
+% pos.sfig=han.sfig(kr,kc).Position;
+% %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
+han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{'original','modified'},'location','best');
+% han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
+% pos.leg=han.leg(kr,kc).Position;
+% han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
+% han.sfig(kr,kc).Position=pos.sfig;
+
+%% COLORBAR
+
+% kr=1; kc=1;
+% pos.sfig=han.sfig(kr,kc).Position;
+% han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
+% pos.cbar=han.cbar.Position;
+% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+% han.sfig(kr,kc).Position=pos.sfig;
+% han.cbar.Label.String=cbar(kr,kc).label;
+% 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
+% aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
+% v2p=[1,5,11,15,np1];
+% han.cbar.Ticks=v2p;
+% aux3=aux2(v2p);
+% aux_str=cell(1,numel(v2p));
+% for ka=1:numel(v2p)
+%     aux_str{ka}=sprintf('%5.3f',aux3(ka));
+% end
+% han.cbar.TickLabels=aux_str;
+
+%% GENERAL
+set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
+set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
+% han.fig.Renderer='painters';
+
+%% PRINT
+
+if any(fig_print==1)
+    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
+end
+if any(fig_print==2)
+    savefig(han.fig,strcat(prnt.filename,'.fig'))
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.fig'))) 
+end
+if any(fig_print==3)
+    print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
+end
+if any(fig_print==4)
+    print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
+    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+end
+if any(ismember(fig_print,[1,2,3,4]))
+close(han.fig);
+end
+
+end %function

@@ -32,7 +32,7 @@ function fig_unique_analysis(in_p)
 %% DEFAULTS
 
 if isfield(in_p,'fig_visible')==0
-    in_p.fig_visible=0;
+    in_p.fig_visible=1;
 end
 if isfield(in_p,'fig_print')==0
     in_p.fig_print=1;
@@ -370,11 +370,31 @@ ns=numel(x);
 for ks=1:ns
     idx_ls=find(mat_out(ks,1)==idx_c1); %first index on linestyle
     idx_color=find(mat_out(ks,2)==idx_c2); %second index on color
-    han.p(kr,kc,ks)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+    try
+       if isduration(y_mean{1})
+          han.p(kr,kc,ks)=errorbar(x{ks},seconds(y_mean{ks}),seconds(y_std{ks}),'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+       else
+          han.p(kr,kc,ks)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+       end
+    catch
+       han.p(kr,kc,ks)=errorbar(x(ks),y_mean(ks),y_std(ks),'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+    end
 %     pause
 end
+
+
+% draw lines
+mat_u=unique(mat_out,'rows');
+for ks = 1:size(mat_u,1)
+    idx_ls=find(mat_u(ks,1)==idx_c1); %first index on linestyle
+    idx_color=find(mat_u(ks,2)==idx_c2); %second index on color 
+    idx_data = find(ismember(mat_out,mat_u(ks,:),'rows'));
+    han.pl(kr,kc,ks)=plot(x(idx_data),y_mean(idx_data),'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+end
+
+
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
-% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
+% han.p(kr,kc,1)=plot(x,y_mean,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
 % han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
 % surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
@@ -395,15 +415,25 @@ for ks=1:numel(idx_mat{1,1})
     kl=kl+1;
     idx_ls=ks;
     str_leg{kl}=idx_mat{1,2}{ks};
-    han.pl(kr,kc,kl)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+    if isduration(y_mean{1})
+       han.pl(kr,kc,kl)=errorbar(x{ks},seconds(y_mean{ks}),seconds(y_std{ks}),'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+    else
+       han.pl(kr,kc,kl)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls}); hold on;
+    end
+
 end
-    %second index
+% %     second index
 for ks=1:numel(idx_mat{2,1})
     kl=kl+1;
     idx_color=ks;
     str_leg{kl}=idx_mat{2,2}{ks};
-    han.pl(kr,kc,kl)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle','-');
+    if isduration(y_mean{1})
+       han.pl(kr,kc,kl)=errorbar(x{ks},seconds(y_mean{ks}),seconds(y_std{ks}),'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle','-'); 
+    else
+       han.pl(kr,kc,kl)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle','-');hold on;
+    end
 end
+
 
 %% PROPERTIES
 
