@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 
-function D3D_create_simulation_all(flg,input_m,fdir_sim_runs,fcn_adapt)
+function D3D_create_simulation_all(flg,input_m,fcn_adapt)
 
 %% get only all variations component
 
@@ -20,6 +20,11 @@ if isfield(input_m,'sim')
 else
     input_m_s=input_m;
 end
+
+%% get main simulation folder
+
+%We assume that all simulationa re in the same folder
+fdir_sim_runs=fileparts(input_m(1).D3D__dire_sim);
 
 %% save input matrix
 

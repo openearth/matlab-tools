@@ -100,6 +100,9 @@ simdef.file.dummy=NaN;
 if isfield(simdef.file,'exe_input')==0
     simdef.file.exe_input='c:\Program Files (x86)\Deltares\Delft3D Flexible Mesh Suite HMWQ (2021.03)\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat';
 end
+if isfield(simdef.file,'exe_grd2map')==0
+    simdef.file.exe_grd2map=simdef.file.exe_input;
+end
 
 %%
 %% GRID

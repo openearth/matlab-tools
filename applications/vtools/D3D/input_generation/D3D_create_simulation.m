@@ -37,7 +37,7 @@ if ~only_run_script
     if sta==2
         fprintf('Simulation already exists %s \n',simdef.D3D.dire_sim)
         switch overwrite
-            case 0
+            case 0  
                 fprintf('Skipping folder %s \n',simdef.D3D.dire_sim)
                 return
             case 1
@@ -153,9 +153,9 @@ if ~only_run_script
     end
 
     %mdf/mdu    
-%         if exist(simdef.file.mdf,'file')~=2
+    if exist(simdef.file.mdf,'file')~=2
         D3D_md(simdef,'check_existing',false)
-%         end
+    end
 
     %runid
     if simdef.D3D.structure==1
