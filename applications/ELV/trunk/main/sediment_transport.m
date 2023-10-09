@@ -237,7 +237,7 @@ switch flg.hiding
         xik=(dk./Dm).^hiding_param;
     case 3 %Ashida-Michiue
         xik_br1_idx=dk./Dm<0.38889; %indeces of xik in branch 1 ; boolean [nx,nf]
-        xik_br1=0.8426*Dm./dk; %all as 1st branch (br 1)
+        xik_br1=0.8429*Dm./dk; %all as 1st branch (br 1)
         xik=(log10(19)./log10(19*dk./Dm)).^2; %all as 2nd branch (Egiazaroff) (br 0)
         xik(xik_br1_idx)=xik_br1(xik_br1_idx); %compose
     otherwise
