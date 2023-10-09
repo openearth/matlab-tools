@@ -18,6 +18,8 @@ if contains(grpName,'_avg')  fouInfo.type = 'mean'; end
 if contains(grpName,'_mean') fouInfo.type = 'mean'; end
 if contains(grpName,'_max')  fouInfo.type = 'max' ; end
 if contains(grpName,'_min')  fouInfo.type = 'min' ; end
+if contains(grpName,'_amp')  fouInfo.type = 'amp' ; end
+if contains(grpName,'_phs')  fouInfo.type = 'phs' ; end
 
 %  From the attributes
 index                   = contains(Names,'long_name');
