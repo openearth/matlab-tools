@@ -137,7 +137,7 @@
 
 %% 2DH ls
 
-% tag='fig_rp_2DH_ls_01';
+% tag='fig_map_2DH_ls_01';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
 % in_plot.(tag).do_s=1; %difference with reference
