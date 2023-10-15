@@ -411,7 +411,7 @@ for i=1:handles.toolbox.dredgeplume.nrTracks
     end
     
 end
-struct2xml(fname,s);
+struct2xml(fname,s,'structuretype','supershort');
 
 %%
 function loadTrackData
@@ -421,7 +421,7 @@ handles=getHandles;
 ddb_plotDredgePlume('delete');
 
 fname=handles.toolbox.dredgeplume.trkFile;
-s=xml2struct(fname);
+s=xml2struct(fname, 'structuretype', 'supershort');
 
 
 % First check if constituents match the ones in Delft3D-FLOW input
