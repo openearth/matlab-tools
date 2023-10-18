@@ -31,15 +31,12 @@ parse(parin,varargin{:})
 
 check_existing=parin.Results.check_existing;
 
-%% RENAME
-
-D3D_structure=simdef.D3D.structure;
-
 %% FILE
 
-if D3D_structure==1
+if simdef.D3D.structure==1
     D3D_obs_s(simdef,'check_existing',check_existing);
 else
     D3D_obs_u(simdef,'check_existing',check_existing);
 end
 
+end %function

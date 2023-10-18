@@ -33,7 +33,7 @@ check_existing=parin.Results.check_existing;
 
 %% RENAME
 
-D3D_structure=simdef.D3D.structure;
+% D3D_structure=simdef.D3D.structure;
 
 %% FILE
 

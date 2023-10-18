@@ -52,6 +52,9 @@ end
 
 if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
     bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);
+    if ~any(bol_p)
+        warning('There is nothing to plot. All points are outside domain of interest [%f,%f].',in_p.xlims(1),in_p.xlims(2))
+    end
     in_p.ylims=[min(min(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan')];
 end
 if isnan(in_p.ylims(1))
@@ -255,8 +258,13 @@ if isnan(cmap(1,1))
         cmap=jet(nv);
     end
 else
-    if size(cmap,1)~=nv
-        error('The number of provided colors %s does not match the number of values to plot %d',size(cmap,1),nv);
+    if size(cmap,2)~=3
+        error('The colormap is input and the number of columns must be 3, but it is %d',size(cmap,2))
+    end
+    if size(cmap,1)>nv
+        warning('The colormap is input and there are more colors (%d) than values to plot (%d)',size(cmap,1),nv);
+    elseif size(cmap,1)<nv
+        error('The number of provided colors (%d) is smaller than the number of values to plot (%d)',size(cmap,1),nv);
     end
 end
 if do_marker
@@ -267,8 +275,10 @@ end
 if isa(ls,'double') && isnan(ls)
     ls=repmat({'-'},1,nv);
 elseif iscell(ls)
-    if numel(ls)~=nv
-        error('The number of linestyles does not match the number of values to plot')
+    if numel(ls)>nv
+        warning('The number of linestyles (%d) is larger than the number of values to plot (%d)',numel(ls),nv)
+    elseif numel(ls)<nv
+        error('The number of linestyles (%d) is smaller than the number of values to plot',numel(ls),nv)
     end
 else
     error('Do not get which kind of input is this.')

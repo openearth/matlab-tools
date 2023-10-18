@@ -287,49 +287,8 @@ for kpli=1:npli %variable
 
                             %% ad-hoc differences between runs
                             if flg_loc.do_all_s_2diff
-
-                                if mod(nS,2)~=0
-                                    error('It is not possible to make difference of runs 2 by 2 if the number of simulations is even.')
-                                end
-                                if ~isfield(flg_loc,'diff_idx')
-                                    error('Matrix with indices for differences does not exist.')
-                                end
-
-                                fname_noext=fig_name(fdir_fig_loc,sprintf('%s_s_diff',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
-    
-                                in_p.fname=fname_noext;
-                                switch kdiff
-                                    case 1
-                                        in_p.val=squeeze(data_all(kt,:,:));
-                                    case 2
-                                        in_p.val=squeeze(data_all(kt,:,:))-squeeze(data_all(1,:,:));
-                                end
-                                
-                                if numel(flg_loc.diff_idx)~=nS
-                                    error('Matrix with differenciation index does not have the right dimensions.')
-                                end
-                                
-
-                                data_diff=NaN(numel(data_ref.data.val),nS/2);
-                                leg_str_2diff=cell(nS/2,1);
-                                for ks2=1:nS/2
-                                    bol_g=flg_loc.diff_idx==ks2;
-                                    if sum(bol_g)~=2
-                                        error('There are no 2 runs to make the difference.')
-                                    end
-                                    data_diff(:,ks2)=diff(in_p.val(:,bol_g),1,2);
-                                    leg_str_2diff{ks2}=flg_loc.leg_str_2diff{find(bol_g,1)};
-                                end
-            
-                                in_p.cmap=NaN;
-                                in_p.ls=NaN;
-                                in_p.val=data_diff;
-                                in_p.is_diff=1;
-                                in_p.leg_str=leg_str_2diff;
-
-                                fig_1D_01(in_p)
-
-                            end %do_all_s_diff
+                                plot_diff_2by2_together(flg_loc,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag)
+                            end %do_all_s_2diff
                         end %nS
                     end %type plot
                 end %kdiff
@@ -409,3 +368,56 @@ function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,pliname,kdiff,k
 fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_ref_%02d_ylim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMMSS'),var_str,pliname,kdiff,kylim));
 
 end
+
+%% 
+
+function plot_diff_2by2_together(flg_loc,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag)
+
+%% PARSE
+
+if mod(nS,2)~=0
+    warning('It is not possible to make difference of runs 2 by 2 if the number of simulations is even.')
+    return
+end
+
+if ~isfield(flg_loc,'diff_idx')
+    error('Matrix with indices for differences does not exist.')
+end
+
+if numel(flg_loc.diff_idx)~=nS
+    error('Matrix with differenciation index does not have the right dimensions.')
+end
+
+%% CALC
+
+fname_noext=fig_name(fdir_fig_loc,sprintf('%s_s_diff',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
+
+in_p.fname=fname_noext;
+switch kdiff
+    case 1
+        in_p.val=squeeze(data_all(kt,:,:));
+    case 2
+        in_p.val=squeeze(data_all(kt,:,:))-squeeze(data_all(1,:,:));
+end
+
+data_diff=NaN(numel(data_ref.data.val),nS/2);
+leg_str_2diff=cell(nS/2,1);
+for ks2=1:nS/2
+    bol_g=flg_loc.diff_idx==ks2;
+    if sum(bol_g)~=2
+        warning('There are no 2 runs to make the difference.')
+        return
+    end
+    data_diff(:,ks2)=diff(in_p.val(:,bol_g),1,2);
+    leg_str_2diff{ks2}=flg_loc.leg_str_2diff{find(bol_g,1)};
+end
+
+in_p.cmap=NaN;
+in_p.ls=NaN;
+in_p.val=data_diff;
+in_p.is_diff=1;
+in_p.leg_str=leg_str_2diff;
+
+fig_1D_01(in_p)
+
+end %function

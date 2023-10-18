@@ -219,8 +219,12 @@ data{kl,1}=        'Commnt =                  '; kl=kl+1;
 data{kl,1}=        'Commnt =                 no. discharges: 0'; kl=kl+1;
 data{kl,1}=        'Commnt =                 no. observation points: 0'; kl=kl+1;
 if isfield(simdef.mdf,'obs_name') && Flhis_dt>0
-data{kl,1}=        'Filsta= #obs.obs#'; kl=kl+1;
+data{kl,1}=sprintf('Filsta= #%s#',simdef.mdf.obs_filename); kl=kl+1;
 data{kl,1}=        'Fmtsta= #FR#'; kl=kl+1;
+end
+if isfield(simdef.mdf,'crs_name') && Flhis_dt>0
+data{kl,1}=sprintf('Filcrs= #%s#',simdef.mdf.crs_filename); kl=kl+1;
+data{kl,1}=        'Fmtcrs= #FR#'; kl=kl+1;
 end
 data{kl,1}=        'Commnt =                 no. drogues: 0'; kl=kl+1;
 data{kl,1}=        'Commnt =                  '; kl=kl+1;

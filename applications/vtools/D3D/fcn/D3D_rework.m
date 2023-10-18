@@ -276,6 +276,9 @@ end
 if simdef.mdf.Flhis_dt==0
     simdef.mdf.obs_filename='';
     simdef.file.obs='';
+
+    simdef.mdf.crs_filename='';
+    simdef.file.crs='';
 end
 if ~isfield(simdef.file,'obs') && simdef.mdf.Flhis_dt>0
     switch simdef.D3D.structure
@@ -287,6 +290,17 @@ if ~isfield(simdef.file,'obs') && simdef.mdf.Flhis_dt>0
             simdef.mdf.obs_filename='obs.xyn';
     end
 end
+if ~isfield(simdef.file,'crs') && simdef.mdf.Flhis_dt>0
+    switch simdef.D3D.structure
+        case 1
+            simdef.file.crs=fullfile(simdef.D3D.dire_sim,'crs.crs');
+            simdef.mdf.crs_filename='crs.crs';
+        case 2
+            simdef.file.crs=fullfile(simdef.D3D.dire_sim,'crs.xyn');
+            simdef.mdf.crs_filename='crs.xyn';
+    end
+end
+
 if simdef.mdf.Flhis_dt>0 && rem(simdef.mdf.Flhis_dt,simdef.mdf.Dt)~=0 
     warning('History results time is not multiple of time step. I am rewring the history results time.')
     simdef.mdf.Flhis_dt=(floor(simdef.mdf.Flhis_dt/simdef.mdf.Dt)+1)*simdef.mdf.Dt;

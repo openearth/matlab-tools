@@ -20,7 +20,7 @@
 
 function D3D_interpolate_crosssections(path_mdu_ori,varargin)
 
-%% PARSE
+%% PARSE 
 
 if numel(varargin)==1 %backward compatibility
     fdir_new=varargin{1,1};
@@ -36,11 +36,23 @@ else %pair-value arguments
     fdir_new='';
 end
 
-%%
+%% PATHS
+
 simdef=D3D_simpath_mdu(path_mdu_ori);
 
+if isfield(simdef.file,'csdef')==0
+    error('The mdu-file does not have cross-section definition: %s',path_mdu_ori);
+end
 path_csdef_ori=simdef.file.csdef;
+
+if isfield(simdef.file,'csloc')==0
+    error('The mdu-file does not have cross-section location: %s',path_mdu_ori);
+end
 path_csloc_ori=simdef.file.csloc;
+
+if isfield(simdef.file,'map')==0
+    error('The mdu-file does not have map output: %s',path_mdu_ori);
+end
 path_map_ori=simdef.file.map;
 
 if exist(path_csdef_ori,'file')==2
@@ -48,6 +60,8 @@ if exist(path_csdef_ori,'file')==2
 else
     error('Cannot access file: %s',path_csdef_ori);
 end
+check_fields_struct(cs_def_ori,{'levels','flowWidths','totalWidths','mainWidth','fp1Width','fp2Width'})
+
 if exist(path_csloc_ori,'file')==2
     [~,cs_loc_ori]=S3_read_crosssectiondefinitions(path_csloc_ori,'file_type',3);
 else
@@ -57,6 +71,8 @@ end
 if any([cs_loc_ori.shift])
     error('You have to rework this function for dealing with a shift.')
 end
+
+%% CALC
 
 nelev_cs=max([cs_def_ori.numLevels]); %number of points to interpolate the new elevation 
 
@@ -96,6 +112,7 @@ F_fp2Width=cell(nb,1);
 for kb=1:nb
 %     fprintf('Dealing with branch %s \n',network1d_branch_id_c{kb,1}); %debug
     
+    %2DO: A value may be empty. Check on that. 
     idx_br_loc=find_str_in_cell({cs_loc_ori.branchId},network1d_branch_id_c(kb,1));
     chain=[cs_loc_ori(idx_br_loc).chainage]';
     def_id={cs_loc_ori(idx_br_loc).definitionId};

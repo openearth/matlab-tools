@@ -42,22 +42,7 @@ np=size(simdef.mdf.obs_cord,1); %number of observation points
 
 %% FIND M N
 
-%read grid
-grid   = delft3d_io_grd('read',fullfile(simdef.D3D.dire_sim,'grd.grd'),'nodatavalue',NaN);
-x_cen=grid.cen.x;
-y_cen=grid.cen.y;
-x_cend=grid.cend.x;
-y_cend=grid.cend.y;
-
-obs_mn=NaN(np,2);
-for kp=1:np
-%     kp=1;
-    dist=(x_cend-obs_cord(kp,1)).^2+(y_cend-obs_cord(kp,2)).^2;
-%     dist=(x_cen-obs_cord(kp,1)).^2+(y_cen-obs_cord(kp,2)).^2;
-    [~,idx]=min(dist(:));
-    [row,col]=ind2sub(size(dist),idx);
-    obs_mn(kp,:)=[col,row];
-end
+obs_mn=D3D_xy2nm(simdef.file.grd,obs_cord);
     
 %% FILE
 

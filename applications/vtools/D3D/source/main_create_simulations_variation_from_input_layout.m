@@ -18,19 +18,21 @@ fclose all;
 
 %% PATHS
 
-fpath_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+fpath_add_fcn='c:\checkouts\oet_matlab\applications\vtools\general\';
+fdir_d3d='c:\checkouts\qp\';
+
 % fpath_add_fcn='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\';
+% fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
 
 % fpath_project='d:\temporal\220517_improve_exner\';
 fpath_project='p:\i1000561-riverlab-2021\08_bars_chaos\';
 
 %% ADD OET
 
-if isunix
-    fpath_add_fcn=strrep(strrep(strcat('/',strrep(fpath_add_fcn,'P:','p:')),':',''),'\','/');
+if isunix %we assume that if Linux we are in the p-drive. 
+    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
 end
-addpath(fpath_add_fcn)
-addOET(fpath_add_fcn) 
+run(fpath_add_oet);
 
 %% PATHS
 
