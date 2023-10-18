@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19114 $
-%$Date: 2023-08-31 08:37:28 +0200 (Thu, 31 Aug 2023) $
-%$Author: chavarri $
-%$Id: convert2rkm.m 19114 2023-08-31 06:37:28Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/convert2rkm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Plot rkm file
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18565 $
-%$Date: 2022-11-24 09:19:58 +0100 (do, 24 nov 2022) $
-%$Author: chavarri $
-%$Id: plot_differences_between_runs_one_figure.m 18565 2022-11-24 08:19:58Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_differences_between_runs_one_figure.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Based on the reference simulation, it removes input such as colormap and
 %linestyle for plotting. 

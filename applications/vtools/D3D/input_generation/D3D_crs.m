@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19054 $
-%$Date: 2023-07-14 15:34:18 +0200 (Fri, 14 Jul 2023) $
-%$Author: chavarri $
-%$Id: D3D_obs.m 19054 2023-07-14 13:34:18Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_obs.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %crs file creation
 %

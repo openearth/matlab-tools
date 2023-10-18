@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18895 $
-%$Date: 2023-04-18 17:17:22 +0200 (Tue, 18 Apr 2023) $
-%$Author: chavarri $
-%$Id: rkm_decrease_resolution.m 18895 2023-04-18 15:17:22Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/rkm_decrease_resolution.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Given a river-kilometer file, it decreases the resolution. 
 %

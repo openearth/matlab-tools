@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18974 $
-%$Date: 2023-05-31 14:56:04 +0200 (Wed, 31 May 2023) $
-%$Author: chavarri $
-%$Id: fig_1D_01.m 18974 2023-05-31 12:56:04Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_1D_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Based on cell-corner bed level, compute the cell-centre bed level.
 

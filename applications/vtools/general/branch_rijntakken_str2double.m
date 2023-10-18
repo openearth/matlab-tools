@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19025 $
-%$Date: 2023-07-03 08:46:37 +0200 (Mon, 03 Jul 2023) $
-%$Author: chavarri $
-%$Id: branch_rijntakken_str2double.m 19025 2023-07-03 06:46:37Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/morpho_setup/private/branch_rijntakken_str2double.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

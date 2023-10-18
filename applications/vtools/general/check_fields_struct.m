@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18545 $
-%$Date: 2022-11-15 13:06:55 +0100 (di, 15 nov 2022) $
-%$Author: chavarri $
-%$Id: D3D_interpolate_crosssections.m 18545 2022-11-15 12:06:55Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_interpolate_crosssections.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Check if fields in structure exist
 %

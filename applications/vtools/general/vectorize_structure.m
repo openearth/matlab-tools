@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18945 $
-%$Date: 2023-05-15 14:17:04 +0200 (Mon, 15 May 2023) $
-%$Author: chavarri $
-%$Id: plot_map_2DH_01.m 18945 2023-05-15 12:17:04Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_map_2DH_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 %All arrays in a structure are turned into a column vector. 

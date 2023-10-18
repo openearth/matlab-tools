@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19056 $
-%$Date: 2023-07-15 15:37:07 +0200 (Sat, 15 Jul 2023) $
-%$Author: chavarri $
-%$Id: D3D_create_simulation_all.m 19056 2023-07-15 13:37:07Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_create_simulation_all.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function simdef=D3D_create_simulation(simdef,varargin) 

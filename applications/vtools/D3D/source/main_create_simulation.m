@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18899 $
-%$Date: 2023-04-20 11:11:58 +0200 (Thu, 20 Apr 2023) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 18899 2023-04-20 09:11:58Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Description
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18696 $
-%$Date: 2023-02-01 21:38:46 +0100 (wo, 01 feb 2023) $
-%$Author: chavarri $
-%$Id: D3D_rework.m 18696 2023-02-01 20:38:46Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_rework.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %generate other input parameters 
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19106 $
-%$Date: 2023-08-25 11:37:55 +0200 (Fri, 25 Aug 2023) $
-%$Author: chavarri $
-%$Id: interpolate_his_var_at_refQUA.m 19106 2023-08-25 09:37:55Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/interpolate_his_var_at_refQUA.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Two simulations model several steady-state blocks. One is with FM and the
 %second with WAQUA. Only the end state of each steady-state block is relevant.
