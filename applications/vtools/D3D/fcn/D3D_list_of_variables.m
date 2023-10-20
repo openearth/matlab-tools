@@ -100,10 +100,10 @@ function D3D_list_of_variables
 
 %% 1D
 
-%   20=velocity at the main channel
-%   21=discharge at main channel
-%   28=main channel averaged bed level
-%   31=morphodynamic width [m]
+%   20  'mesh1d_umod'        = velocity at the main channel
+%   21  'mesh1d_q1_main'     = discharge at main channel - NO   
+%   28  'mesh1d_bl_ave'      = main channel averaged bed level
+%   31  'mesh1d_mor_width_u' = morphodynamic width [m]
 
 %% SALT
 

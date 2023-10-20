@@ -13,7 +13,7 @@
 %Gets as output the path to each file type
 %
 %INPUT
-%   -simdef.D3D.dire_sim = path to the folder containg the simulation files
+%   -simdef = path to the folder containg the simulation files
 %
 %OUTPUT
 %   -simdef.D3D.structure

@@ -235,12 +235,20 @@ switch var_num
         var_str='mesh2d_taus';
     case 19
         var_str='mesh2d_sbc'; 
+    case 20
+        var_str='mesh1d_umod';
+    case 21
+        var_str='mesh1d_q1_main';
     case 23
         var_str='mesh2d_stot';   
     case 26
         var_str='mesh2d_dg';
     case 27 
         var_str='Ltot';
+    case 28
+        var_str='mesh1d_bl_ave';
+    case 31
+        var_str='mesh1d_mor_width_u';
     case 32
         var_str='mesh2d_czs';
     case 44

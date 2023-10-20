@@ -67,6 +67,18 @@ end
 if isfield(in_p,'do_fil')==0
     in_p.do_fil=0;
 end
+if isfield(in_p,'mt')==0
+    in_p.mt=1;
+end
+if isfield(in_p,'mb')==0
+    in_p.mb=1.5;
+end
+if isfield(in_p,'mr')==0
+    in_p.mr=0.5;
+end
+if isfield(in_p,'ml')==0
+    in_p.ml=1.5;
+end
 
 v2struct(in_p)
 
@@ -117,10 +129,10 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-marg.mt=1.0; %top margin [cm]
-marg.mb=1.5; %bottom margin [cm]
-marg.mr=0.5; %right margin [cm]
-marg.ml=1.5; %left margin [cm]
+marg.mt=mt; %top margin [cm]
+marg.mb=mb; %bottom margin [cm]
+marg.mr=mr; %right margin [cm]
+marg.ml=ml; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
 marg.sv=0.0; %vertical spacing [cm]
 

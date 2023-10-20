@@ -213,7 +213,7 @@
 
 %% 1D map
 
-% tag='fig_map_1D';
+% tag='fig_map_1D_01';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=0; %regular plot
 % in_plot.(tag).do_xtv=1; %

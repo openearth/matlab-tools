@@ -79,6 +79,11 @@ if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
 end
 
 %external forcing
+if isfield(mdu.external_forcing,'ExtForceFile') && ~isempty(mdu.external_forcing.ExtForceFile)
+    simdef.file.extforcefile=fullfile(path_sim,mdu.external_forcing.ExtForceFile);
+end
+
+%external forcing
 if isfield(mdu.external_forcing,'ExtForceFileNew') && ~isempty(mdu.external_forcing.ExtForceFileNew)
     simdef.file.extforcefilenew=fullfile(path_sim,mdu.external_forcing.ExtForceFileNew);
 end

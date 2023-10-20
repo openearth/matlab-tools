@@ -287,7 +287,7 @@ for kpli=1:npli %variable
 
                             %% ad-hoc differences between runs
                             if flg_loc.do_all_s_2diff
-                                plot_diff_2by2_together(flg_loc,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag)
+                                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag)
                             end %do_all_s_2diff
                         end %nS
                     end %type plot
@@ -371,7 +371,7 @@ end
 
 %% 
 
-function plot_diff_2by2_together(flg_loc,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag)
+function plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag)
 
 %% PARSE
 

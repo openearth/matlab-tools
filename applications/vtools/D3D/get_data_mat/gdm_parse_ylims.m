@@ -24,7 +24,11 @@ nvar_tmp=numel(flg_loc.var);
 if isfield(flg_loc,str_check)==0
     flg_loc.(str_check)=cell(nvar_tmp,1);
     for kvar=1:nvar_tmp
-        flg_loc.(str_check){kvar,1}=[NaN,NaN];
+        if isfield(flg_loc,str_no_var) 
+            flg_loc.(str_check){kvar,1}=flg_loc.(str_no_var);
+        else
+            flg_loc.(str_check){kvar,1}=[NaN,NaN];
+        end
     end
 end
 

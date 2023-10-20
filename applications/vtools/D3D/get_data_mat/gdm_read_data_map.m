@@ -60,11 +60,12 @@ else
         if ischar(varname)
             data=gdm_read_data_map_char(fpath_map,varname,'tim',time_dnum,'tol_t',tol_t);%,'bed_layers',bed_layers);
         else
+            %outdated?
             data=gdm_read_data_map_num(fpath_map,varname,'tim',time_dnum);
         end
     else %1D
         [~,~,~,~,~,idx_tim]=D3D_time_dnum(fpath_map,time_dnum,'fdir_mat',fdir_mat);
-        val=gdm_read_data_map_1D(fpath_map,varname,idx_branch,idx_tim);
+        val=gdm_read_data_map_1D(fpath_map,var_str,idx_branch,idx_tim);
         data.val=val;
     end
     save_check(fpath_sal,'data');

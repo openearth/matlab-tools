@@ -143,6 +143,9 @@ switch what_do
                 stru_out=D3D_read_xyn(fname,varargin{:});
             case '.ext'
                 stru_out=delft3d_io_sed(fname); %there are repeated blocks, so we cannot use dflowfm_io_mdu
+                if isfield(stru_out,'x')==1 %old external file format
+                    stru_out=D3D_read_ext(fname); %there are repeated blocks, so we cannot use dflowfm_io_mdu
+                end
             case '.sob'
                 a=readcell(fname,'FileType','text');
                 aux2=cellfun(@(X)datetime(X,'InputFormat','yyyy/MM/dd;HH:mm:ss'),a(:,1));

@@ -112,7 +112,7 @@ switch varname
         data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     otherwise 
         %cases in which the variable name contains information on the analysis
-        if contains(varname,'cel_morpho')
+        if ischar(varname) && contains(varname,'cel_morpho')
             data_var=gdm_read_data_map_cel_morpho(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'sediment_transport',sediment_transport); 
         else %name directly available in output
             data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); 
