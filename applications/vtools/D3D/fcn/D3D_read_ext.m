@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18607 $
-%$Date: 2022-12-08 08:02:01 +0100 (do, 08 dec 2022) $
-%$Author: chavarri $
-%$Id: gdm_parse_ylims.m 18607 2022-12-08 07:02:01Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_parse_ylims.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 
