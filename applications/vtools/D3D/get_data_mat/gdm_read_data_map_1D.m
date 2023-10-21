@@ -17,11 +17,11 @@ function z=gdm_read_data_map_1D(fpath_map,varname,idx_branch,idx_tim)
 kt=[idx_tim,1]; %[start, counter];
 
 %it does not matter whether it is nodes or edges
-nci=ncinfo(fpath_map);
-if ~ismember(varname,{nci.Variables.Name})
-    messageOut(NaN,sprintf('Variable not in output: %s',varname))
-    return
-end
+% nci=ncinfo(fpath_map);
+% if ~ismember(varname,{nci.Variables.Name})
+%     messageOut(NaN,sprintf('Variable not in output: %s',varname))
+%     return
+% end
 switch varname
     case {'mesh1d_flowelem_bl','mesh1d_flowelem_ba','mesh1d_mor_width_u','mesh1d_node_offset'} %{s}
         wl=ncread(fpath_map,varname,1,Inf);
