@@ -17,6 +17,9 @@
 %
 %OPTIONAL:
 %   -fdir_new: path to the folder of the simulation to update the cross-section definitions and locations files; char
+%
+%OPTIONAL (pair value)
+%   -'check_existing'       
 
 function D3D_interpolate_crosssections(path_mdu_ori,varargin)
 
@@ -24,6 +27,7 @@ function D3D_interpolate_crosssections(path_mdu_ori,varargin)
 
 if numel(varargin)==1 %backward compatibility
     fdir_new=varargin{1,1};
+    check_existing=true;
 else %pair-value arguments
     parin=inputParser;
 
@@ -60,7 +64,7 @@ if exist(path_csdef_ori,'file')==2
 else
     error('Cannot access file: %s',path_csdef_ori);
 end
-check_fields_struct(cs_def_ori,{'levels','flowWidths','totalWidths','mainWidth','fp1Width','fp2Width'})
+check_fields_struct(cs_def_ori,{'levels','flowWidths','totalWidths','mainWidth','fp1Width','fp2Width'});
 
 if exist(path_csloc_ori,'file')==2
     [~,cs_loc_ori]=S3_read_crosssectiondefinitions(path_csloc_ori,'file_type',3);
