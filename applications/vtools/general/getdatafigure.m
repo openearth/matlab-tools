@@ -24,11 +24,17 @@
 
 function getdatafigure(paths_figure,varargin)
 
+if ~isfile(paths_figure)
+    error('File does not exist: %s',paths_figure)
+end 
+
+[fdir,fname,fext]=fileparts(paths_figure);
+
 %% PARSE
 
 parin=inputParser;
 
-addOptional(parin,'fname_save',fullfile(pwd,'data.mat'));
+addOptional(parin,'fname_save',fullfile(fdir,sprintf('%s.mat',fname)));
 addOptional(parin,'XScale','linear');
 addOptional(parin,'YScale','linear');
 addOptional(parin,'labels_x','');
@@ -42,7 +48,7 @@ fname_save_mat=parin.Results.fname_save;
 if contains(fname_save_mat,'.mat')==0
     fname_save_mat=sprintf('%s.mat',fname_save_mat);
 end
-fname_save_fig=strrep(fname_save_mat,'.mat','.png');
+fname_save_fig=strrep(fname_save_mat,'.mat','_check.png');
 fname_save_csv=strrep(fname_save_mat,'.mat','.csv');
 labels_x=parin.Results.labels_x;
 labels_y=parin.Results.labels_y;

@@ -21,7 +21,7 @@ ny=size(matrix,1);
 parin=inputParser;
 
 num_str_def=repmat('%0.15E*delim*',1,nx);
-addOptional(parin,'num_str',num_str_def);
+addOptional(parin,'num_str',NaN);
 addOptional(parin,'check_existing',1)
 addOptional(parin,'delimiter',' ')
 
@@ -31,8 +31,11 @@ num_str=parin.Results.num_str;
 check_existing=parin.Results.check_existing;
 delimiter=parin.Results.delimiter;
 
-num_str(end-6:end)=''; %remove last delimiter
-num_str=strrep(num_str,'*delim*',delimiter); %add new
+if isnan(num_str)
+    num_str=num_str_def;
+    num_str(end-6:end)=''; %remove last delimiter
+    num_str=strrep(num_str,'*delim*',delimiter); %add new
+end
 % if isspace(num_str(end))==0
 %     num_str=[num_str,' '];
 % end
