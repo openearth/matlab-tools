@@ -129,6 +129,20 @@ switch varname
                 data_x=gdm_read_data_map_ls(fdir_mat,fpath_map,'sxtot',varargin{:});
                 data_y=gdm_read_data_map_ls(fdir_mat,fpath_map,'sytot',varargin{:});
         end
+    case {'Fr','fr'}
+        switch simdef.D3D.structure
+            case {1,5}
+                error('do')
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'SBUU',varargin{:}); %<sbuu> already reads both
+%                 data_v=gdm_read_data_map_ls(fdir_mat,fpath_map,'SBVV',varargin{:});
+%                 data=data_u;
+%                 data.val=hypot(data_u.val,data_v.val);
+%                 data.val=data.vel_mag;
+            case {2,4}
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'mesh2d_ucmag',varargin{:});
+                data_h=gdm_read_data_map_ls(fdir_mat,fpath_map,'wd',varargin{:});
+                data.val=data.val./sqrt(9.81.*data_h.val); %ideally gravity is read from mdu.
+        end
     case {'Q'}
         data=gdm_read_data_map_ls_Q(fdir_mat,fpath_map,varname,simdef,varargin{:});
     otherwise

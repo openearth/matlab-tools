@@ -38,6 +38,7 @@
 %       -'cl_t'     : mass of salt per unit time [kg/s]
 %
 %       -'umag'     : velocity magnitude
+%       -'Fr'       : Froude number [-]
 %
 %       -'x'        : x-coordinate
 %       -'y'        : y-coordinate
@@ -483,7 +484,7 @@ switch lower(variable)
                 str_var='Diferencia';
          end
          un_type='-';
-     case {'q','qsp_b','lateral_discharge','dischargebnd'}
+     case {'q','qsp_b','lateral_discharge','dischargebnd','ctr'}
          switch lan
             case 'en'
                 str_var='discharge';
@@ -1027,6 +1028,16 @@ switch lower(variable)
                 str_var='celeridad moprhodinámica';
         end
         un_type='L/T'; 
+    case 'fr'
+         switch lan
+            case 'en'
+                str_var='Froude number';
+            case 'nl'
+                str_var='Froude getal';
+            case 'es'
+                str_var='número de Froude';
+         end
+         un_type='-';
     otherwise
         str_var=variable;
         un_type='?';
@@ -1172,10 +1183,10 @@ switch un_type
                 str_un=' [psu]';
             case {'cl','conctte','cl_surf','cl_bottom'}
                 str_un= ' [mg/l]'; 
-            case {'detab_ds'}
-                str_un= ' [-]'; 
+%             case {'detab_ds'}
+%                 str_un=' [-]'; 
             otherwise
-                str_un = '';
+                str_un=' [-]';
         end
     case 'L/T'
         switch un

@@ -79,6 +79,9 @@ end
 if isfield(in_p,'ml')==0
     in_p.ml=1.5;
 end
+if isfield(in_p,'do_title')==0
+    in_p.do_title=1;
+end
 
 v2struct(in_p)
 
@@ -454,7 +457,9 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
+if do_title
 han.sfig(kr,kc).Title.String=strrep(station,'_','\_');
+end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 
@@ -515,7 +520,7 @@ if do_measurements
     end
 else
     if nS>1
-        han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),leg_str,'location','best');
+        han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),strrep(leg_str,'_','\_'),'location','best');
     end
 end
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');

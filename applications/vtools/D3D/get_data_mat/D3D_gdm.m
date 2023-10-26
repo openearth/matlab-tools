@@ -105,7 +105,7 @@
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
 % % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
-% in_plot.(tag).tim_just_load=1;
+% in_plot.(tag).tim_just_load=0;
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
 % in_plot.(tag).tim=NaN; %all times
 % in_plot.(tag).order_anl=2; %1=normal; 2=random

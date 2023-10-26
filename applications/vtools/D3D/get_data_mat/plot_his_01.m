@@ -51,6 +51,10 @@ if isfield(flg_loc,'obs')
     results_type='map';
 end
 
+if isfield(flg_loc,'do_all_sta')==0
+    flg_loc.do_all_sta=0;
+end
+
 %% PATHS
 
 nS=numel(simdef);
@@ -108,6 +112,14 @@ fext=ext_of_fig(in_p.fig_print);
 %     in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
 % end
 
+%% CHECKS
+
+if flg_loc.do_all_sta && nS>1
+    %I am now squeezeing `data_all` to pass to the plotting routine. I have to think what I want to do
+    %for the case in which we want several stations from several simulations together in the same plot.
+    flg_loc.do_all_sta=0;
+end
+
 %% LOOP
 
 ks_v=gdm_kt_v(flg_loc,ns);
@@ -128,14 +140,32 @@ for kvar=1:nvar
     nylim=size(flg_loc.ylims_var{kvar},1);
     fpath_file=cell(ns,nylim);
     
+    %allocate to save all data
+    if flg_loc.do_all_sta
+        %if we want to plot all stations together, we need to allocate for it. 
+        Ns=ns; %number of stations that we allocate. 
+    else
+        %otherwise, it is a waste of memory.
+        Ns=1;
+    end
+    data_all=NaN(nt,nS,Ns);
+
     %loop on stations
     for ks=ks_v
         
         ksc=ksc+1;
 
         in_p.station=stations{ks};
-        data_all=NaN(nt,nS);
-        for kS=1:nS
+        
+        %if we do not want to plot all stations of the same run together, 
+        %we always write in first dimension
+        if flg_loc.do_all_sta
+            kss=ks; %index of the station in which we save
+        else
+            kss=1;
+        end
+
+        for kS=1:nS %simulations            
             fdir_mat=simdef(kS).file.mat.dir;
             fpath_his=simdef(kS).file.his;
             
@@ -151,7 +181,7 @@ for kvar=1:nvar
             if size(data,1)~=size(data_all,1)
                 error('Not all simulations have the same output interval.') %
             end
-            data_all(:,kS)=data;
+            data_all(:,kS,kss)=data;
         end
         
         %save for convergence
@@ -159,10 +189,10 @@ for kvar=1:nvar
             %simplest form, take last two values
 %             data_conv(ks,:)=diff(data_all(end-1:end,:),1,1)/seconds(diff(time_dtime(end-1:end)));
             %std of the predifined time
-            [data_conv(ks,:),unit_conv,is_std_conv]=check_convergence(flg_loc,data_all,tim_dtime_p,var_str);
+            [data_conv(ks,:),unit_conv,is_std_conv]=check_convergence(flg_loc,data_all(:,:,kss),tim_dtime_p,var_str);
         end
         
-        in_p.val=data_all;
+        in_p.val=data_all(:,:,kss);
         in_p.unit=var_str;
         if isfield(flg_loc,'unit')
             if ~isempty(flg_loc.unit{kvar})
@@ -196,7 +226,7 @@ for kvar=1:nvar
         if flg_loc.do_fil  
             in_p.do_fil=1;
             
-            [tim_f,data_f]=filter_1D(time_dtime,data_all,'method','godin'); 
+            [tim_f,data_f]=filter_1D(time_dtime,data_all(:,:,kss),'method','godin'); 
             
             in_p.val_f=data_f;
             in_p.tim_f=tim_f;
@@ -220,7 +250,7 @@ for kvar=1:nvar
 
             in_p.fname=fname_noext;
             
-            in_p.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,data_all,data_mea);
+            in_p.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,data_all(:,:,kss),data_mea);
 
             fig_his_sal_01(in_p);
         end %kylim
@@ -231,7 +261,7 @@ for kvar=1:nvar
     
     if flg_loc.do_convergence
         
-        fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim);
+        fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'conv');
         
         in_p_c.fname=fname_noext;
         in_p_c.data=data_conv;
@@ -242,6 +272,24 @@ for kvar=1:nvar
         fig_his_convergence(in_p_c)
         
     end
+
+    %% all obs in same figure
+    if flg_loc.do_all_sta
+
+        in_p_sta_all=in_p;
+
+        fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'allsta');
+        
+        in_p_sta_all.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,squeeze(data_all),data_mea);
+        in_p_sta_all.fname=fname_noext;
+        in_p_sta_all.val=squeeze(data_all);
+        in_p_sta_all.leg_str=stations; 
+        in_p_sta_all.do_title=0;
+        
+        fig_his_sal_01(in_p_sta_all)         
+       
+    end
+
     
 end %kvar
 
@@ -304,12 +352,12 @@ end %function
 
 %%
 
-function fname=fig_name_convergence(fdir_fig_var,tag,runid,var_str,layer,kylim)
+function fname=fig_name_convergence(fdir_fig_var,tag,runid,var_str,layer,kylim,anl)
 
 if ~isempty(layer)
-    fname=fullfile(fdir_fig_var,sprintf('%s_conv_%s_%s_layer_%04d_ylim_%02d',tag,runid,var_str,layer,kylim));
+    fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,anl,runid,var_str,layer,kylim));
 else
-    fname=fullfile(fdir_fig_var,sprintf('%s_conv_%s_%s_ylim_%02d',tag,runid,var_str,kylim));
+    fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_ylim_%02d',tag,anl,runid,var_str,kylim));
 end
 
 end %function
@@ -344,4 +392,4 @@ switch flg_loc.convergence_type
 end
 
             
-end
+end %function

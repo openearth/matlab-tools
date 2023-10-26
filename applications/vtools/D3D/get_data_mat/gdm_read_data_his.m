@@ -52,7 +52,7 @@ end
 if exist(fpath_mat,'file')==2
     if do_load
         messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_mat));
-        load(fpath_raw,'data')
+        load(fpath_mat,'data')
     else
         messageOut(NaN,sprintf('Mat-file with raw data exists: %s',fpath_mat));
         data=NaN;

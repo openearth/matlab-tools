@@ -34,9 +34,9 @@ function D3D_list_of_variables
 %   32  'mesh2d_czs'        = Chezy  [m/s^{1/2}]
 %   43                      = horizontal eddy viscosity [m^2/s]
 %   6                       = secondary flow intensity (I) [m/s]
-%   36                      = Froude number [-]
+%   36  'Fr'                = Froude number [-]
 %   37                      = CFL [-]
-%   33 'mesh2d_flowelem_ba' = cell area [m^2]
+%   33  'mesh2d_flowelem_ba'= cell area [m^2]
 %   34                      = space step [m]
 %   38                      = time step [s]
 
