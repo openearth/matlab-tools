@@ -46,7 +46,12 @@ switch modelType
     case {'d3d','d3d4','delft3d4','mdf'}
         %% Delft3D 4
         trih = vs_use(inputFile,'quiet');
-        stationNames = cellstr(strtrim(vs_get(trih,'his-const',{1},'NAMST','quiet')));
+        is_sta=EHY_isVarStaCrs_d3d4(OPT.varName);
+        if is_sta
+            stationNames = cellstr(strtrim(vs_get(trih,'his-const',{1},'NAMST','quiet')));
+        else
+            stationNames = cellstr(strtrim(vs_get(trih,'his-const',{1},'NAMTRA','quiet')));
+        end
         
     case {'waqua','simona','siminp','triwaq'}
         %% SIMONA (WAQUA/TRIWAQ)
@@ -99,3 +104,36 @@ switch modelType
         stationNames = dw.SegmentName;
         
 end
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+%Returns whether a Delft3D-4 variable is from an observation station or a
+%cross-section.
+%
+%INPUT:
+%   -varName = name of the variable to 
+%
+%OUTPUT:
+%   -is_sta = whether it is station (1) or cross-section (0)
+%
+function is_sta=EHY_isVarStaCrs_d3d4(varName)
+
+%The best would be if the information is in the his-file itself. I could not
+%find it. We could check the size of the variable and see if it matches the
+%number of stations or cross-sections, but it is dnagerous because there may
+%be the same number of them. Hence, my only solution is a list. 
+
+if ismember(varName,{'SBTR','SBTRC','CTR','FLTR'})
+    is_sta=0;
+else
+    is_sta=1;
+end
+
+end
+
+
+
