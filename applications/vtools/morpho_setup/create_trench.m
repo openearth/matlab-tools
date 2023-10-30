@@ -10,6 +10,35 @@
 %$Id$
 %$HeadURL$
 %
+%Creates a set of trenches of specified length on a certain river branch along the summerbed.
+%A new xyz-file with bed level is created and figures showing the result. 
+%
+%
+%INPUT:
+%	-fpath_etab  = full path to the xyz-file with bed elevation data [char]
+%	-fdir_pol_in = full path to the directory with the polygons defining the summerbed [char]. Only points inside all polygons in the folder are considered summerbed.
+%	-fpath_rkm   = full path to the river kilometer file [char]. 
+%	-fdir_out    = full path to the directory where files will be saved [char]. 
+%	-trench      = data of the trench [struct(1,1)]
+%		-trench.length = length of the trenches [m] [double(1,ntrench)]. `ntrench` is the number of trenches. 
+%		-trench.rkm    = river kilometer of the centre of the trench [km] [double(1,ntrench)]
+%		-trench.branch = river branch where to place each trench [cell(1,ntrench), char inside]
+%		-trench.height = height of the trench [m] [double(1,ntrench)]. Positive means dredging. 
+%
+%OUTPUT:
+%	
+%
+%E.G.:
+%
+%fdir_pol_in=fullfile(fpaths.fdir_data_bedlevel,'03_pol_in');
+%fdir_out=fullfile(fpaths.fdir_data,'05_trench');
+%fpath_rkm=fullfile(fpaths.fdir_rkm,'rkm_rijntakken_rhein.csv'); %full path to file with river kilometers
+%fpath_etab='p:\11209261-rivierkunde-2023-morerijn\06_simulations\02_runs\01_pilot_Waal\dflowfm2d-hydr-waal-j19_6-v2a\initial_conditions\bedlevel\morf-waal-j19_6-v2a_net_cen.xyz';
+%
+%trench.length=[500,500,500]; %length of the trench [m]
+%trench.rkm=[879.5,900,942]; %river kilometer to apply trench [km] (center of the trench)
+%trench.branch={'WA','WA','WA'}; %branch of the river kilometer 
+%trench.height=[1,1,1]; %heigh of trench [m] (positive means dredging)
 
 function create_trench(fpath_etab,fdir_pol_in,fpath_rkm,fdir_out,trench)
 
