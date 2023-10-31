@@ -255,6 +255,76 @@
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).unit={'cl_surf'};  %sal, cl
 
+%% sed trans offline
+
+% tag='fig_map_sedtransoff_01';
+% in_plot.(tag).do=1;
+% % in_plot.(tag).do_2d=1;
+% in_plot.(tag).do_sb=1; %do summerbed
+% in_plot.(tag).do_sb_p=1; %plot summerbed
+% in_plot.(tag).do_diff=0; 
+% in_plot.(tag).smt_last_time=1;
+% in_plot.(tag).do_all=1; %plot all simulations in same figure
+% in_plot.(tag).tim=[datetime(2000,01,01,0,0,0,'timezone','+00:00'),datetime(2000,03,01,0,0,0,'timezone','+00:00'),datetime(2001,01,01,0,0,0,'timezone','+00:00')];
+% in_plot.(tag).tim_type=1; %1=flow; 2=morpho
+% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% 
+% %% sediment transport variations
+% 
+% kst=0;
+% 
+% kst=kst+1;
+% in_plot.(tag).sedtrans_name{kst}='EH';
+% in_plot.(tag).sedtrans{kst}=2;
+% in_plot.(tag).sedtrans_param{kst,1}=[0.05,5];
+% in_plot.(tag).sedtrans_hiding(kst,1)=0;
+% in_plot.(tag).sedtrans_hiding_param(kst,1)=NaN;
+% in_plot.(tag).sedtrans_mu(kst,1)=0;
+% in_plot.(tag).sedtrans_mu_param(kst,1)=NaN;
+% % in_plot.(tag).ylims_var{kst,1}=[NaN,NaN;0,1e-2;0,1e-1]; 
+% % in_plot.(tag).ylims_var{kst,1}=[NaN,NaN]; 
+% 
+% kst=kst+1;
+% in_plot.(tag).sedtrans_name{kst}='MPM01';
+% in_plot.(tag).sedtrans{kst}=1;
+% in_plot.(tag).sedtrans_param{kst,1}=[8,1.5,0.047];
+% in_plot.(tag).sedtrans_hiding(kst,1)=1;
+% in_plot.(tag).sedtrans_hiding_param(kst,1)=-0.8;
+% in_plot.(tag).sedtrans_mu(kst,1)=0;
+% in_plot.(tag).sedtrans_mu_param(kst,1)=NaN;
+% % in_plot.(tag).ylims_var{kst,1}=[NaN,NaN;0,1e-2;0,1e-1]; 
+% 
+% kst=kst+1;
+% in_plot.(tag).sedtrans_name{kst}='EHMPM01';
+% in_plot.(tag).sedtrans{kst}=[2,1];
+% in_plot.(tag).sedtrans_param{kst,1}{1}=[0.05,5];
+% in_plot.(tag).sedtrans_param{kst,1}{2}=[8,1.5,0.047];
+% in_plot.(tag).sedtrans_hiding(kst,1)=1;
+% in_plot.(tag).sedtrans_hiding_param(kst,1)=-0.8;
+% in_plot.(tag).sedtrans_mu(kst,1)=0;
+% in_plot.(tag).sedtrans_mu_param(kst,1)=NaN;
+% % in_plot.(tag).ylims_var{kst,1}=[NaN,NaN;0,1e-2;0,1e-1]; 
+% 
+% %% streamwise polygons
+% 
+% in_plot.(tag).statis_plot={'val_mean'}; %statistics to plot. Comment to have all.
+% in_plot.(tag).rkm={872:1:957}; %river km vectors to average the data; cell(1,nrkm)
+% in_plot.(tag).rkm_name={'1km'}; %river km vectors to average the data; cell(1,nrkm)
+%     %construct branches name
+%     for kidx=1:numel(in_plot.(tag).rkm)
+%         in_plot.(tag).rkm_br{kidx,1}=branch_rijntakken(in_plot.(tag).rkm{kidx},'WA');
+%     end
+% in_plot.(tag).xlims=[872,957]; %x limits for plotting [nxlims,2]
+% in_plot.(tag).fpath_rkm=fullfile(fpaths.fdir_rkm,'rkm_rijntakken_rhein.csv');
+% 
+% %% summerbed polygons
+% kp=0;
+% 
+% kp=kp+1;
+% in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.fdir_shp,'sb.shp');
+
 %%
 
 function D3D_gdm(in_plot)

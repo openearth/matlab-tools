@@ -174,7 +174,7 @@ switch lower(variable)
                 str_var='pendiente del lecho';
         end
         un_type='-';
-    case 'dist'
+    case {'dist','cel_morpho_t'}
         switch lan
             case 'en'
                 str_var='distance';

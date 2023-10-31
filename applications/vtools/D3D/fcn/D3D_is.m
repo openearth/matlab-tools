@@ -52,11 +52,20 @@ if strcmp(ext,'.nc') %FM
         messageOut(NaN,'This is most probably an old 2D grid. If it is not, modify.')
     end
     
+    str_network1d='';
     idx=find_str_in_cell({nci.Variables.Name},{'network1d_geom_x'});
     if isnan(idx)
-        str_network1d='network';
+        idx=find_str_in_cell({nci.Variables.Name},{'network_geom_x'});
+        if ~isnan(idx)
+            str_network1d='network';
+        end
     else
         str_network1d='network1d';
+    end
+
+    if is1d==1 && isempty(str_network1d)
+        messageOut(NaN,'This seems a 1D Herman simulation.')
+        is1d=2;
     end
 
     structure=2;

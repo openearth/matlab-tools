@@ -44,7 +44,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 %% LOAD
 
 %2DO make this inside actually reading the grid and ouput <no_layers>=1. Repeat in <plot>
-if simdef.D3D.structure~=3
+if simdef.D3D.structure~=3 && simdef.D3D.is1d~=2
     gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 else
     gridInfo=NaN;
