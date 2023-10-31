@@ -43,12 +43,8 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD
 
-%2DO make this inside actually reading the grid and ouput <no_layers>=1. Repeat in <plot>
-if simdef.D3D.structure~=3 && simdef.D3D.is1d~=2
-    gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
-else
-    gridInfo=NaN;
-end
+gridInfo=gdm_load_grid_simdef(fid_log,simdef);
+
 % [nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his,fdir_mat);
 [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
 
