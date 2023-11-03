@@ -47,10 +47,9 @@ for kbc=1:nbc
         fprintf(fid,'Quantity                        = %s \n',bc(kbc).quantity{kq});
         fprintf(fid,'Unit                            = %s \n',bc(kbc).unit{kq});
     end
-    for kt=1:nt
-        fprintf(fid,' %f %f \n',bc(kbc).val(kt,:));
-    end %kt
-
+    fclose(fid);
+    writematrix(num2str(bc(kbc).val,'%f'),fpath,'WriteMode','append', 'Filetype', 'text', 'Delimiter', 'space', 'QuoteStrings', false)
+    fid=fopen(fpath,'a');
 end %kbc
 
 fclose(fid);
