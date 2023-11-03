@@ -70,6 +70,8 @@ else
             data=EHY_getmodeldata(fpath_his,station,'d3d',OPT);
         case 2
             data=EHY_getmodeldata(fpath_his,station,'dfm',OPT);
+        case 3
+            data=EHY_getmodeldata(fpath_his,station,'sobek3',OPT);
         case 4
             his_u=unique(sim_idx);
             nhis=numel(his_u);

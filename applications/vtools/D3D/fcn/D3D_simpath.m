@@ -70,8 +70,6 @@ end
 dire=dir(simdef.D3D.dire_sim);
 nf=numel(dire)-2;
 
-%%
-
 %% identify 
 whatis=false(1,5);
 for kf1=1:nf
@@ -149,55 +147,17 @@ switch simdef.D3D.structure
         simdef_aux.file.partitions=ndd;
         simdef_aux.file.output_time=tim_dir;
 end
+    %% sobek 3
+    case 3
+        simdef_aux=D3D_simpath_md1d(fpath_mdu);        
+end %simdef.D3D.structure
+
 file=simdef_aux.file;
 simdef.err=simdef_aux.err;
 if simdef.D3D.structure~=5
     [~,file.runid,~]=fileparts(file.mdf);
 end
 file.mdfid=file.runid; %runid may be rewriten in `D3D_gdm`
-    %% sobek 3
-    case 3
-        
-for kf1=1:nf
-    kf=kf1+2; %. and ..
-    if dire(kf).isdir==0 %it is not a directory
-    [~,fname,ext]=fileparts(dire(kf).name); %file extension
-    switch ext
-        case '.md1d'
-            file.mdf=fullfile(dire(kf).folder,dire(kf).name);
-        case '.ini'
-            switch fname
-                case 'NetworkDefinition'
-                    file.NetworkDefinition=fullfile(dire(kf).folder,dire(kf).name);
-            end
-        case '.bc'
-            file.bc=fullfile(dire(kf).folder,dire(kf).name);
-    end
-    else %it is results directory
-        dire_res=dir(fullfile(dire(kf).folder,dire(kf).name));
-        nfr=numel(dire_res)-2;
-        for kflr=1:nfr
-            kf=kflr+2; %. and ..
-            if dire_res(kf).isdir==0 %it is not a directory
-            [~,fname,ext]=fileparts(dire_res(kf).name); %file extension
-            switch ext
-                case '.nc'
-                    if strcmp(fname,'gridpoints')
-                        file.map=fullfile(dire_res(kf).folder,dire_res(kf).name);
-                    end
-                    if strcmp(fname,'observations')
-                        file.his=fullfile(dire_res(kf).folder,dire_res(kf).name);
-                    end
-                    if strcmp(fname,'reachsegments')
-                        file.reach=fullfile(dire_res(kf).folder,dire_res(kf).name);
-                    end
-            end
-            end
-        end
-    end %isdir
-end
-        
-end %simdef.D3D.structure
 
 %I don't think this is necessary. For FM and D3D4 there is always <file>
 %and for S3 I think so too because we have already checked that 
@@ -258,7 +218,7 @@ for kf=1:nf
         
         [~,~,ext]=fileparts(dire(kf).name); %file extension
         switch ext
-            case {'.mdu','.mdf'}
+            case {'.mdu','.mdf','.md1d'}
                 mdf_aux{kmdf}=fpath_loc;
                 kmdf=kmdf+1;
         end

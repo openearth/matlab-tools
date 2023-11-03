@@ -190,6 +190,13 @@ if ischar(var_id)
             end
             var_str_read='ba';
             var_str_save='ba';
+        case {'cross_section_discharge'}
+            switch structure
+                case 3
+                    var_id_out='water_discharge';
+            end
+            var_str_read='cross_section_discharge';
+            var_str_save='cross_section_discharge';
         otherwise
 
     end

@@ -83,7 +83,7 @@ switch what_do
         switch ext
             case '.mdf'
                 stru_out=delft3d_io_mdf('read',fname);
-            case '.mdu'
+            case {'.mdu','.md1d'}
                 stru_out=dflowfm_io_mdu('read',fname);
             case {'.sed','.mor'}
                 stru_out=delft3d_io_sed(fname);

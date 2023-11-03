@@ -82,6 +82,9 @@ end
 if isfield(in_p,'do_title')==0
     in_p.do_title=1;
 end
+if isfield(in_p,'xlims')==0
+    in_p.xlims=[min(tim),max(tim)];
+end
 
 v2struct(in_p)
 
@@ -310,7 +313,7 @@ cmap=brewermap(9,'set1');
 
 kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
-% lims.x(kr,kc,1:2)=lim_A;
+lims.x(kr,kc,1:2)=xlims;
 % lims.c(kr,kc,1:2)=clims;
 % xlabels{kr,kc}='L_a [m]';
 [lab,str_var,str_un,str_diff,str_back]=labels4all(unit,1,lan);
@@ -447,7 +450,7 @@ hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 % han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};

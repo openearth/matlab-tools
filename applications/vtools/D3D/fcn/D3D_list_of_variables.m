@@ -59,10 +59,11 @@ function D3D_list_of_variables
 
     %% his
 
-%   22=cumulative nourished volume of sediment
-%   23=suspended transport in streamwise direction
-%   24=cumulative bed load transport
-%   35=cumulative dredged volume of sediment [m^3]
+%   22                            = cumulative nourished volume of sediment
+%   23                            = suspended transport in streamwise direction
+%   24                            = cumulative bed load transport
+%   35                            = cumulative dredged volume of sediment [m^3]
+%       'cross_section_discharge' = cross-sectional instantaneous discharge [m^3/s]
 
 %% MIXED-SIZE SEDIMENT
 
