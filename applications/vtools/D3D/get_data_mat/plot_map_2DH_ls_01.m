@@ -33,26 +33,9 @@ end
 if isfield(flg_loc,'do_all_s_2diff')==0 %plot all runs in same figure making the difference between each of 2 simulations
     flg_loc.do_all_s_2diff=0;
 end
-
-%% DO
-
-ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
-
-%% PATHS
-
-nS=numel(simdef);
-fdir_mat=simdef(1).file.mat.dir;
-fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
-fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-mkdir_check(fdir_fig);
-runid=simdef(1).file.runid;
-% simdef(1).file.mat.map_ls_01=fullfile(fdir_mat,'map_ls_01.mat');
-% simdef(1).file.mat.map_ls_01_tim=fullfile(fdir_mat,'map_ls_01_tim.mat');
-
-% simdef(1).file.fig.map_ls_01=fullfile(fdir_fig,'map_ls_01');
-
-%% PARSE
+if isfield(flg_loc,'do_movie')==0 
+    flg_loc.do_movie=0;
+end
 
 if isfield(flg_loc,'do_rkm')==0
     if isfield(flg_loc,'fpath_rkm')
@@ -81,6 +64,24 @@ end
 if isfield(flg_loc,'tol')==0
     flg_loc.tol=30;
 end
+
+%% DO
+
+ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
+
+%% PATHS
+
+nS=numel(simdef);
+fdir_mat=simdef(1).file.mat.dir;
+fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
+fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+mkdir_check(fdir_fig);
+runid=simdef(1).file.runid;
+% simdef(1).file.mat.map_ls_01=fullfile(fdir_mat,'map_ls_01.mat');
+% simdef(1).file.mat.map_ls_01_tim=fullfile(fdir_mat,'map_ls_01_tim.mat');
+
+% simdef(1).file.fig.map_ls_01=fullfile(fdir_fig,'map_ls_01');
 
 %% TIME
 
@@ -155,6 +156,9 @@ for kpli=1:npli %variable
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname);
                 load(fpath_mat_tmp,'data');
             
+                %filter data
+                data=filter_1d_data(flg_loc,data);
+
                 %save data for plotting all times togehter. Better not to do it if you don't need it for memory reasons.
                 if flg_loc.do_all_t || flg_loc.do_all_s 
                     if flg_loc.do_staircase
@@ -345,6 +349,8 @@ end %kpli
 
 %% movies
 
+if flg_loc.do_movie
+
 for kvar=1:nvar
     for kpli=1:npli
         for kylim=1:nylims
@@ -356,6 +362,7 @@ for kvar=1:nvar
     end
 end
 
+end
 
 end %function
 
@@ -421,3 +428,48 @@ in_p.leg_str=leg_str_2diff;
 fig_1D_01(in_p)
 
 end %function
+
+%%
+
+function data=filter_1d_data(flg_loc,data)
+
+if flg_loc.do_staircase
+    y=data.val_staircase;
+    x=data.Scor_staircase;
+else
+    y=data.val;
+    x=data.Scen;
+end
+
+if isfield(flg_loc,'filter_lim')==0
+    bol_filter=false(size(y));
+else
+    bol_filter=y<flg_loc.filter_lim(1) | y>flg_loc.filter_lim(2);
+end
+
+y(bol_filter)=[];
+x(bol_filter)=[];
+
+if flg_loc.do_staircase
+    data.val_staircase=y;
+    data.Scor_staircase=x;
+else
+    data.val=y;
+    data.Scen=x;
+end
+
+end %function
+
+
+
+
+
+
+
+
+
+
+
+
+
+

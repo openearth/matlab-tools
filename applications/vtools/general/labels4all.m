@@ -26,6 +26,7 @@
 %
 %       -{'etaw','WATHTE'}     : water level
 %       -'h'        : flow depth
+%       -'hu'       : flow depth at velocity point
 %
 %       -'sal'      : salinity [psu]
 %       -{'cl','CONCTTE'}       : chloride [mg/l]
@@ -272,6 +273,16 @@ switch lower(variable)
                 str_var='diepte';
             case 'es'
                 str_var='profundidad';
+        end
+        un_type='L';
+    case {'hu'}
+        switch lan
+            case 'en'
+                str_var='depth at velocity point';
+            case 'nl'
+                str_var='depth at velocity point';
+            case 'es'
+                str_var='profundidad en punto de velocidad';
         end
         un_type='L';
     case {'sal'}

@@ -83,7 +83,7 @@ if isfield(in_p,'do_title')==0
     in_p.do_title=1;
 end
 if isfield(in_p,'xlims')==0
-    in_p.xlims=[min(tim),max(tim)];
+    in_p.xlims=[min(in_p.tim),max(in_p.tim)];
 end
 
 v2struct(in_p)
