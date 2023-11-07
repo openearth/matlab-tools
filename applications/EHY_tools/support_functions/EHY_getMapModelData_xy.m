@@ -34,7 +34,7 @@ end
 
 %% Horizontal (x,y) coordinates
 if ~isfield(OPT,'gridFile'); OPT.gridFile = ''; end
-tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','face_nodes','layer_model'},'mergePartitionNrs',OPT.mergePartitionNrs,'disp',OPT.disp,'gridFile',OPT.gridFile);
+tmp   = EHY_getGridInfo(inputFile,{'XYcor', 'XYcen','face_nodes','layer_model','edge_nodes'},'mergePartitionNrs',OPT.mergePartitionNrs,'disp',OPT.disp,'gridFile',OPT.gridFile);
 names = fieldnames(tmp); for i_name = 1: length(names) Data.(names{i_name}) = tmp.(names{i_name}); end
 
 %% get "z-data"
@@ -81,7 +81,7 @@ end
 
 warning off
 if strcmp(Data.modelType,'dfm') || isfield(Data,'face_nodes')
-    arb = arbcross(Data.face_nodes',Data.Xcor,Data.Ycor,pli(:,1),pli(:,2));
+    arb = arbcross(Data.face_nodes',Data.Xcor,Data.Ycor,Data.edge_nodes',pli(:,1),pli(:,2));
 elseif ismember(Data.modelType,{'d3d','delwaq'}) || isfield(Data,'Xcor')
     arb = arbcross(Data.Xcor,Data.Ycor,pli(:,1),pli(:,2));
 end
@@ -113,7 +113,11 @@ if isfield(Data,'face_nodes')
     if isfield(Data,'val')
         switch numel(size(Data.val))
             case 2
-                val = arbcross(arb,{'FACE' permute(Data.val,[2 1])});
+                if numel(Data.val)==numel(Data.Xcen) %data at faces
+                    val = arbcross(arb,{'FACE' permute(Data.val,[2 1])});
+                else %data at edges
+                    val = arbcross(arb,{'EDGE' permute(Data.val,[2 1])});
+                end
             case 3
                 val = arbcross(arb,{'FACE' permute(Data.val,[dimsInd.faces, setdiff([2 3 1], dimsInd.faces,'stable')])});
             case 4
