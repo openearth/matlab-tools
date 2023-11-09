@@ -140,7 +140,7 @@
 % tag='fig_map_2DH_ls_01';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
-% in_plot.(tag).do_s=1; %difference with reference
+% in_plot.(tag).do_diff=1; %difference with reference
 % in_plot.(tag).do_all_t=0; %all times together
 % in_plot.(tag).do_all_s=1; %all simulations in the same plot
 % in_plot.(tag).var={'bl'}; 
@@ -156,6 +156,7 @@
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).ml=2.5;
+% % in_plot.(tag).filter_lim=[0.992,1.1];
 % in_plot.(tag).do_marker=1;
 % in_plot.(tag).markersize=5;
 % in_plot.(tag).do_staircase=1;

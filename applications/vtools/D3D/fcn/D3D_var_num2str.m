@@ -82,7 +82,7 @@ if ischar(var_id)
             var_str_read='bl';
             var_str_save=var_str_read;
         case {'h','wd','waterdepth'}
-            if is1d
+            if is1d==1
                 var_id_out='mesh1d_waterdepth';
             else
                 switch structure
@@ -106,6 +106,8 @@ if ischar(var_id)
 %                         if ismor
 %                             var_id_out='mesh2d_mor_bl';
 %                         end
+                    case 3
+                        var_id_out='water_depth';
                     otherwise
                         error('ups')
                 end                

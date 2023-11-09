@@ -82,8 +82,9 @@ if isa(in_dtime(1),'double')
         %There is a file with all result times, but as we request the last one, we have to check that the simulation has not continued.
         last_changed=false;
         if any(isinf(in_dtime)) 
-            is_mor=D3D_is(fpath_map);
-            [~,~,time_dnum_f,~,~,~]=D3D_results_time(fpath_map,is_mor,NaN);
+%             is_mor=D3D_is(fpath_map);
+%             [~,~,time_dnum_f,~,~,~]=D3D_results_time(fpath_map,is_mor,NaN);
+            [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map,results_type);
             if abs(time_dnum_f-time_dnum)>1/3600/24 %1 s threshold
                 last_changed=true;
             end

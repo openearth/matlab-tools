@@ -85,7 +85,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% GRIDS
 
-gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map_grd,'dim',1);
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map_grd,'dim',1,'simdef',simdef);
 
 %% LOAD TIME
 

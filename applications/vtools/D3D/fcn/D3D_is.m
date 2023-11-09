@@ -56,7 +56,12 @@ if strcmp(ext,'.nc') %FM
     idx=find_str_in_cell({nci.Variables.Name},{'network1d_geom_x'});
     if isnan(idx)
         idx=find_str_in_cell({nci.Variables.Name},{'network_geom_x'});
-        if ~isnan(idx)
+        if isnan(idx)
+            idx=find_str_in_cell({nci.Variables.Name},{'gridpoint_id'}); %Sobek 3
+            if ~isnan(idx)
+                is1d=3;
+            end
+        else
             str_network1d='network';
         end
     else

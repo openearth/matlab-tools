@@ -197,7 +197,7 @@ end %kt
 %% movies
 
 if isfield(flg_loc,'do_movie')==0
-    flg_loc.do_movie=1;
+    flg_loc.do_movie=0;
 end
 
 if flg_loc.do_movie

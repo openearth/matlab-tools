@@ -385,7 +385,17 @@ if isfield(simdef.mdf,'Dpsopt')==0
     simdef.mdf.Dpsopt='MEAN';
 end
 if isfield(simdef.mdf,'Dpuopt')==0
-    simdef.mdf.Dpuopt='min_dps'; %this is default. Most accurate is <mean_dps>
+    simdef.mdf.Dpuopt=1; %this is default. Most accurate is <mean_dps>
+end
+if ischar(simdef.mdf.Dpuopt)
+    switch simdef.mdf.Dpuopt
+        case 'min_dps'
+            simdef.mdf.Dpuopt=1;
+        case 'mean_dps'
+            simdef.mdf.Dpuopt=2;
+        otherwise
+            error('here')
+    end
 end
 % if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
 %     error('adjust flow depth file accordingly')
@@ -779,8 +789,20 @@ if any(size(simdef.bct.time)-size(simdef.bct.etaw))
     error('dimensions of etaw boundary condition do not agree')
 end
     %correcting for last cell
-if simdef.mdf.izbndpos==0
-    simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+%In D3D4 we correct. 
+%In FM with Dpuopt=1 we correct.
+%In FM with Dpuopt=2 it is one full dx, not half. 
+switch simdef.D3D.structure
+    case 1
+        if simdef.mdf.izbndpos==0 
+            simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+        end
+    case 2
+        if simdef.mdf.izbndpos==0 && simdef.mdf.Dpuopt==1
+            simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+        elseif simdef.mdf.Dpuopt==2
+            simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx*simdef.ini.s; %displacement of boundary condition to ghost node
+        end
 end
     %correcting for dpuopt. 
 if simdef.D3D.structure==1
