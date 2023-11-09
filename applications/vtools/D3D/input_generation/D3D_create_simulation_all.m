@@ -24,13 +24,13 @@ end
 %% get main simulation folder
 
 %We assume that all simulationa re in the same folder
-fdir_sim_runs=fileparts(input_m(1).D3D__dire_sim);
+fdir_sim_runs=fileparts(input_m_s(1).D3D__dire_sim);
 
 %% save input matrix
 
 mkdir_check(fdir_sim_runs);
 fpath_input=fullfile(fdir_sim_runs,'readme.mat');
-save(fpath_input,'input_m');
+save(fpath_input,'input_m_s');
 D3D_write_readme(input_m_s,'fpath_out',fullfile(fdir_sim_runs,'readme.txt'));
 
 %% run files
