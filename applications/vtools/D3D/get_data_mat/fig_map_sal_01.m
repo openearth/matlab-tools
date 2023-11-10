@@ -124,7 +124,7 @@ if isfield(in_p,'cmap_cut_edges')==0
 end
 %For D3D4 we need a reshaped version for plotting vectors and dealing with limits. It does nothing to FM. 
 if isfield(in_p,'gridInfo_v')==0
-    in_p.gridInfo_v=gmd_gridInfo_v(gridInfo);
+    in_p.gridInfo_v=vectorize_structure(gridInfo);
 end
 if isfield(in_p,'vector_scale')==0
     in_p.vector_scale=1;
