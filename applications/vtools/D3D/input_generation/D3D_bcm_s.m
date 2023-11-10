@@ -25,7 +25,7 @@
 
 function D3D_bcm_s(simdef,varargin)
 
-[simdef]=D3D_rework(simdef); 
+%[simdef]=D3D_rework(simdef); 
 
 %% RENAME
 
@@ -40,7 +40,7 @@ switch IBedCond
         eta=simdef.bcm.eta;
     case {3,7}
         deta_dt=simdef.bcm.deta_dt;
-    case 5
+    case {4,5}
         transport=simdef.bcm.transport;
         [~,nf]=size(transport);
 end
@@ -94,6 +94,14 @@ switch IBedCond
     case 5
         for kf=1:nf
             data{kl, 1}=sprintf('parameter           ''transport excl pores Sediment%d'' unit ''[m2/s]''',kf); kl=kl+1;
+        end
+        data{kl,1}=sprintf('records-in-table     %d',nt); kl=kl+1;
+        for kt=1:nt
+            data{kl,1}=sprintf(repmat('%0.7E \t',1,1+nf),time(kt)*Tfact,transport(kt,:)); kl=kl+1;
+        end
+    case 4
+        for kf=1:nf
+            data{kl, 1}=sprintf('parameter           ''transport incl pores Sediment%d'' unit ''[m2/s]''',kf); kl=kl+1;
         end
         data{kl,1}=sprintf('records-in-table     %d',nt); kl=kl+1;
         for kt=1:nt

@@ -191,13 +191,17 @@ fpath_his_var_mod=fullfile(fdir,sprintf('%s_mod%s',fname,['_',outputext,fext]));
 copyfile_check(fpath_his_var,fpath_his_var_mod);
 
 messageOut(fid_log,'Writing water level')
-ncwrite_class(fpath_his_var_mod,'waterlevel',etaw_var,etaw_var_mod);
+if strcmp(typ_var,'fm')
+    ncwrite_class(fpath_his_var_mod,'waterlevel',etaw_var,etaw_var_mod);
+elseif strcmp(typ_var,'waq')
+    ncwrite_class(fpath_his_var_mod,'ZWL',etaw_var,etaw_var_mod);
+end
 
 %% plot
 if printfig
     messageOut(fid_log,'Plotting')
     
-    fdir_fig=fullfile(fdir,'figures');
+    fdir_fig=fullfile(fdir,['figures_',outputext]);
     mkdir_check(fdir_fig);
     
     for kcs=1:ncs
@@ -211,7 +215,7 @@ if printfig
     
         in_p.Q_var=Q_var(idx_ocs_var_v(kcs),idx_tim_var);
         in_p.etaw_var=etaw_var(idx_ost_var_v(kcs),idx_tim_var);
-        in_p.Q_ref=Q_ref(idx_ocs_var_v(kcs),idx_tim_ref);
+        in_p.Q_ref=Q_ref(idx_ocs_ref_v(kcs),idx_tim_ref);
         in_p.etaw_var_mod=etaw_var_mod(idx_ost_var_v(kcs),idx_tim_var);
         
         in_p.fname=fullfile(fdir_fig,obs_name_raw);
