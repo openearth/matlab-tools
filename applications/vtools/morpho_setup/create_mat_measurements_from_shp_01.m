@@ -10,7 +10,22 @@
 %$Id$
 %$HeadURL$
 %
+%Compute average of (bed level) data in shp-file and dbf-file along certain areas (L1, L2, ..., R3, R4). 
 %
+%E.G.
+% fpath_shp=fullfile(fpaths.fdir_data_bedlevel,'02_shp','vakken_RT_totaal_v4.shp'); %full path to shp-file [char].
+% fpath_dbf_csv=fullfile(fpaths.fdir_data_bedlevel,'01_dbf','AdJ.txt'); %full path to csv-file with dbf-files and tim [char].
+% fdir_out=fullfile(fpaths.fdir_data_bedlevel,'08_mat'); %full path to folder to save output [char].
+% % fpath_rkm=fullfile(fpaths.fdir_rkm,'rkm_rijntakken_waal_3km.csv'); %full path to rkm-file to plot along the coverage [char].
+% fpath_rkm=fullfile(fpaths.fdir_rkm,'rkm_rijntakken_ijssel_3km.csv'); %full path to rkm-file to plot along the coverage [char].
+% section.ident=[-3:1:-1,1:1:3]; %indices of the areas to process. From -4 (4 to the left) to 4 (for to the right) [double(1,na)]; na = number of areas.
+% section.name='L3R3'; %tag of the areas to process [char]. This is added to the output filename. 
+% ds=1000; %streamwise distance for mean value [m].
+% rkmi=878; %initial river kilometer [km].
+% rkmf=1006; %end river kilometer [km].
+% br='IJ'; %river branch to process [char].
+% tag_rkm='1km'; %tag of the distance to compute the mean [char]. This is added to the output filename. 
+% do_plot_coverage=0; %plot the figures with coverage [double(1,1)]: 0 = no; 1 = yes; 
 
 function create_mat_measurements_from_shp_01(fpath_shp,fpath_dbf_csv,fdir_out,fpath_rkm,section,rkmi,rkmf,ds,br,tag_rkm,varargin)
 
