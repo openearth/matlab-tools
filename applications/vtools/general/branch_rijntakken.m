@@ -57,6 +57,8 @@ for krkm=1:nrkm
             else
                 br{krkm}='Rhein';
             end
+        case {'IJ','LE','BR','NR','PK','RH'}
+            br{krkm}=track;
         otherwise
             error('Unknown branch %s',track)
     end
