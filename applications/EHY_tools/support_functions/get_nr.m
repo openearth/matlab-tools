@@ -4,7 +4,8 @@ function nr = get_nr(cell_str,str)
 
 nr = [];
 for i_cell = 1: length(cell_str)
-    if strcmpi(cell_str{i_cell}, str)
+    cell_str2 = cell_str{i_cell};
+    if strcmpi(cell_str2(~isspace(cell_str2)),str(~isspace(str)))
         nr = i_cell;
         break
     end
