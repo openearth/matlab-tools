@@ -124,7 +124,7 @@
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).do_vector=0; %add velocity vectors
 % in_plot.(tag).do_axis_equal=0;
-% in_plot.(tag).do_fxw=0; %plot snapped fixed weirs
+% in_plot.(tag).do_fxw=0; %plot snapped fixed weirs: 0=NO; 1=non-snapped; 2=snapped
 % in_plot.(tag).do_plot_along_rkm=0;
 % in_plot.(tag).do_rkm_disp=0;
 % % in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv'); %file to go along specified rkm to plot

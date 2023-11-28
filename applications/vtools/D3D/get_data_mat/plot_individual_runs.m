@@ -100,10 +100,10 @@ if isfield(in_plot,tag_check)==1
     end
 %     if isfield(in_plot_fig,'tim_ave')
     if isfield(in_plot_fig,'tim_ave')
-        if unique(~isnan(in_plot_fig.tim_ave{1,1}))
+%         if unique(~isnan(in_plot_fig.tim_ave{1,1})) %why did I do this?
             in_plot_fig.tag_fig=sprintf('%s_tim_ave',in_plot_fig.tag);
             plot_1D_tim_ave_01(fid_log,in_plot_fig,simdef)
-        end
+%         end
     end
 end
 

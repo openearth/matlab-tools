@@ -49,8 +49,14 @@ messageOut(fid_log,'Fxw mat-file does not exist. Reading.')
 % if iscell(fpath_fxw) %SMT-D3D4
     %I do not think it is needed. 
 % else
-fxw=D3D_io_input('read',fpath_fxw);
-% end
+fxw_aux=D3D_io_input('read',fpath_fxw);
+%we want them all together for easy plotting
+nfxw=numel(fxw_aux);
+a=[];
+for kfxw=1:nfxw
+    a=cat(1,a,[fxw_aux(kfxw).xy(:,1:2);NaN,NaN]);
+end
+fxw.xy=a;
 
 save_check(fpath_mat_fxw,'fxw'); 
 

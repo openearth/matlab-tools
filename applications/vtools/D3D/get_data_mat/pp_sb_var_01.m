@@ -113,7 +113,7 @@ for ksb=1:nsb
                 data_raw=load(fpath_mat_load,'data');
                 val=data_raw.data.val_mean;
 
-                switch var_id
+                switch var_str_save
                     case 'detab_ds'
                         dx=diff(rkm_cen*1000);
                         detab_dx=NaN(size(val));

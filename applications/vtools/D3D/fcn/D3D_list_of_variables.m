@@ -55,7 +55,7 @@ function D3D_list_of_variables
 
 %	47  'ba_mor'        = morphodynamic cell area (cell area only if the total sediment thickness is not 0) [m^2] 
 
-%       'deta_ds'       = slope in streamwise direction (only for <summerbed> analysis)
+%       'detab_ds'      = slope in streamwise direction (only for <summerbed> analysis)
 
     %% his
 

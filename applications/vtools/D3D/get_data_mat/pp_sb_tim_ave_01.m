@@ -105,8 +105,11 @@ for ksb=1:nsb
                 kfn=1;
                 statis=fn_data{kfn};
                 npoints=numel(data.(statis));
-                statshape=shape(data.(statis)); 
-                statidx=length(statshape) + 1; 
+                %only thought for [npoints,1] check below. Someone tried to make it general for
+                statidx=2;
+                %all fractions, but it is not correct.
+%                 statshape=shape(data.(statis)); 
+%                 statidx=length(statshape) + 1; 
                 
                 for kfn=1:nfn
                     statis=fn_data{kfn};
@@ -143,7 +146,7 @@ for ksb=1:nsb
                     end %kfn
                 end %kt
                 
-                val_p.(statis) = reshape(val_p.(statis), [statshape, nt]);
+%                 val_p.(statis) = reshape(val_p.(statis), [statshape, nt]);
                 
                 %compute statistics in time
                 for kfn=1:nfn

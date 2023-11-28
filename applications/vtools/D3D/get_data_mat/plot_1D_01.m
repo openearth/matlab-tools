@@ -82,10 +82,13 @@ flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 
+if isfield(flg_loc,'unit')==0
+    flg_loc.unit=flg_loc.var;
+end
+
 %add B_mor variables to plot
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
-
 
 %% PATHS
 
@@ -198,7 +201,7 @@ for ksb=1:nsb
             clear data_0_loc; %clear is not nice but we cannot preallocate because we do not know the fieldnames in advance and they maybe different between variables    
             for kS=1:nS    
                 fdir_mat=simdef(kS).file.mat.dir;
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
 %                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                 
                 load(fpath_mat_tmp,'data');            
@@ -219,7 +222,7 @@ for ksb=1:nsb
             %reference
             if do_ref
                 fdir_mat=simdef_ref.file.mat.dir;
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
 %                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                 load(fpath_mat_tmp,'data');            
                 data_0_ref=data;
@@ -252,7 +255,7 @@ for ksb=1:nsb
                 clear data_load; 
                 for kS=1:nS
                     fdir_mat=simdef(kS).file.mat.dir;
-                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
 %                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                     load(fpath_mat_tmp,'data');
                     data_load(kS)=data;
@@ -262,7 +265,7 @@ for ksb=1:nsb
                 %reference
                 if do_ref
                     fdir_mat=simdef_ref.file.mat.dir;
-                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+                    fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
 %                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                     load(fpath_mat_tmp,'data');            
                     data_ref=data;

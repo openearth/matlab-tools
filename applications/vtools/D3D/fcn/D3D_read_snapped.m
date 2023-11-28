@@ -28,7 +28,12 @@ xy_only=parin.Results.xy_only;
 
 %% CALC
 
-tok=regexp(simdef.file.shp.(feature_tok),sprintf('(\\w*)_\\d{4}_snapped_%s',feature_tok),'tokens');
+if simdef.file.partitions==1
+    tag_read=sprintf('(\\w*)_snapped_%s',feature_tok);
+else
+    tag_read=sprintf('(\\w*)_\\d{4}_snapped_%s',feature_tok);
+end
+tok=regexp(simdef.file.shp.(feature_tok){1,1},tag_read,'tokens'); %the amount of {} is causing trouble...
 sim_name=tok{1,1}{1,1};
 [ffolder_shp,~,fext_shp]=fileparts(simdef.file.shp.fxw);
 npart=simdef.file.partitions;
@@ -38,7 +43,11 @@ else
     feature_struct=struct('xy',[]);
 end
 for kpart=1:npart
-    fname_shp=fullfile(ffolder_shp,sprintf('%s_%04d_snapped_%s%s',sim_name,kpart-1,feature_tok,fext_shp));
+    if simdef.file.partitions==1
+        fname_shp=fullfile(ffolder_shp,sprintf('%s_snapped_%s%s',sim_name,feature_tok,fext_shp));
+    else
+        fname_shp=fullfile(ffolder_shp,sprintf('%s_%04d_snapped_%s%s',sim_name,kpart-1,feature_tok,fext_shp));
+    end
 
     feature_struct_loc=D3D_io_input('read',fname_shp,'read_val',read_val,'xy_only',xy_only);
 %     feature_struct.xy=cat(1,feature_struct.xy,feature_struct_loc.xy.XY);
