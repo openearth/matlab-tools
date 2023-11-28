@@ -15,7 +15,7 @@ for i_time = 1: no_times
                 bndval(i_time).value(i_point,kmax+1:2*kmax,l) = flip(bndval(i_time).value(i_point,kmax+1:2*kmax,l));
             end
         else
-            if kmax > 1 % ~ismember(lower(bnd.DATA(i_point).bndtype),'zr') % flip() not needed for waterlevel & Riemann. However, flip needed() for 3D velocities
+            if kmax > 1 && ~ismember(lower(bnd.DATA(i_point).bndtype),'z') % flip() not needed for waterlevel & Riemann. However, flip needed() for 3D velocities
                 bndval(i_time).value(i_point,1     :kmax  ) = flip(bndval(i_time).value(i_point,1     :kmax  ));
                 bndval(i_time).value(i_point,kmax+1:2*kmax) = flip(bndval(i_time).value(i_point,kmax+1:2*kmax));
             end
