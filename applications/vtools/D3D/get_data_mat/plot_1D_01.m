@@ -86,6 +86,11 @@ if isfield(flg_loc,'unit')==0
     flg_loc.unit=flg_loc.var;
 end
 
+if isfield(flg_loc,'do_plot_structures')==0
+    flg_loc.do_plot_structures=0;
+end
+
+
 %add B_mor variables to plot
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
@@ -157,9 +162,13 @@ end
 
 %% COMMON
 
-all_struct=D3D_read_structures(simdef(1),'fpath_rkm',flg_loc.fpath_rkm); %check that either it is fine if empty or check emptyness for filling <in_p>
-if ~isempty(all_struct)
-    in_p.all_struct=all_struct;
+if flg_loc.do_plot_structures
+    all_struct=D3D_read_structures(simdef(1),'fpath_rkm',flg_loc.fpath_rkm); %check that either it is fine if empty or check emptyness for filling <in_p>
+    if ~isempty(all_struct)
+        in_p.all_struct=all_struct;
+    end
+else
+    all_struct=struct('name',[],'xy',[],'xy_pli',[],'rkm',[],'type',[]);
 end
 
 %% LOOP
