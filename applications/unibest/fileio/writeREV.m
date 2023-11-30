@@ -131,7 +131,7 @@ if option2==1
             id2 = min(number_of_points,iii*19+1);
             xyNew{jj}    = revetm{ii}(id1:id2,:);
             y_offset2{jj} = repmat(y_offset,[id2-id1+1,1]);
-            if isnumeric(y_offset{ii})
+            if ~ischar(y_offset)
                 if size(y_offset{ii},1)==1
                     y_offset2{jj} = repmat(y_offset{ii},[id2-id1+1,1]);
                 else
@@ -161,7 +161,7 @@ elseif option2==2
         %revetm{ii}=flipud(landboundary('read','walcheren_RD.ldb'));
         %revetm{ii}=landboundary('read',revetment{ii});
         if ischar(revetment{ii})
-            revetm{ii}=readldb(revetment{ii});
+            revetm{ii}=landboundary('read',revetment{ii});
         else
             revetm{ii}=revetment{ii};
         end

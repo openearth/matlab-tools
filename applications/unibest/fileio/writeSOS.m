@@ -99,7 +99,7 @@ if err==0
             fprintf(fid,' %9.1f %9.1f %9.0f %9.3f %9.0f\n',SOSdata(nn).XW(ii),SOSdata(nn).YW(ii),SOSdata(nn).CODE(ii),SOSdata(nn).Qs(ii),SOSdata(nn).COLUMN(ii));
         end
     end
-    fclose(fid);    
+    fclose all;
 else
     fprintf('\n incorrect number of input parameters!\n');
 end

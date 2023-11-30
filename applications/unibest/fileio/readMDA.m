@@ -111,13 +111,13 @@ dist = distXY(MDAdata.X(:),MDAdata.Y(:));
 dist2 = dist(1);
 for ii=2:length(MDAdata.nrgridcells)
     igr = MDAdata.nrgridcells(ii);
-    dx2 = (dist(ii)-dist(ii-1))/igr.*[1:igr]';
-    dist2=[dist2;dist(ii-1)+dx2];
+    dx2 = (dist(ii)-dist(ii-1))/igr.*[1:igr];
+    dist2=[dist2;dist(ii-1)+dx2(:)];
 end
     
-MDAdata.Xi=interp1(dist,MDAdata.X,dist2,'spline');
-MDAdata.Yi=interp1(dist,MDAdata.Y,dist2,'spline');
-MDAdata.Y1i=interp1(dist,MDAdata.Y1,dist2,'spline');
+MDAdata.Xi=interp1(dist,MDAdata.X,dist2,'pchip');
+MDAdata.Yi=interp1(dist,MDAdata.Y,dist2,'pchip');
+MDAdata.Y1i=interp1(dist,MDAdata.Y1,dist2,'pchip');
 MDAdata.Xci = (MDAdata.Xi(1:end-1)+MDAdata.Xi(2:end))/2;
 MDAdata.Yci = (MDAdata.Yi(1:end-1)+MDAdata.Yi(2:end))/2;
 MDAdata.Y1ci = (MDAdata.Y1i(1:end-1)+MDAdata.Y1i(2:end))/2;
