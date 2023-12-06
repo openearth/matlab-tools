@@ -69,6 +69,7 @@ for ipnt = OPT.ipnt
     if isempty(mnnes)
         error = true;
         if add_inf.display==1
+            h = findall(0,'type','figure','tag','TMWWaitbar');
             close(h);
         end
         simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
@@ -188,6 +189,7 @@ for ipnt = OPT.ipnt
             if isempty(mnnes)
                 error = true;
                 if add_inf.display==1
+                    h = findall(0,'type','figure','tag','TMWWaitbar');
                     close(h);
                 end
                 simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
