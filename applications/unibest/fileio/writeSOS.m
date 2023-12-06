@@ -78,8 +78,8 @@ else
     fprintf('\n Number of input parameters is incorrect!\n')
     err=1;
 end
-if ~isfield(SOSdata,'XW')
-    SOSdata.XW=[];
+if ~isfield(SOSdata,'XW') || length(SOSdata)==0
+    SOSdata(1).XW=[];
 end
 
 if err==0
