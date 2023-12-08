@@ -122,6 +122,8 @@ end
 %% Available constituents
 if ~isempty(findstr(tidefile, 'tpxo80'))
     constituents={'M2','S2','N2','K2','K1','O1','P1','Q1','MF','MM','M4','MS4','MN4'};
+elseif ~isempty(findstr(tidefile, 'fes2014'))    
+    constituents={'2N2','EPS2','J1','K1','K2','L2','LA2','M2','M3','M4','M6','M8','MF','MKS2','MM','MN4','MS4','MSF','MSQM','MTM','MU2','N2','N4','NU2','O1','P1','Q1','R2','S1','S2','S4','SA','SSA','T2'};
 else
     cnst=nc_varget(tidefile,'tidal_constituents');
     cnst=upper(cnst);
@@ -141,6 +143,8 @@ end
 
 if ~isempty(findstr(tidefile, 'tpxo80'))
     tidesource='tpxo80';
+elseif ~isempty(findstr(tidefile, 'fes2014'))    
+    tidesource='fes2014';
 else
     tidesource='other';
 end
@@ -155,6 +159,8 @@ for icons=1:ncons
         
         case{'tpxo80'}
             [lon, lat, amp, phi] = read_tide_model_TPXO80(tidefile,xl,yl,cns,tp);
+        case{'fes2014'}
+            [lon, lat, amp, phi] = read_tide_model_FES2014(tidefile,xl,yl,cns,tp);
         otherwise
             [lon, lat, amp, phi] = read_tide_model_other(tidefile,xl,yl,cns,tp);
 

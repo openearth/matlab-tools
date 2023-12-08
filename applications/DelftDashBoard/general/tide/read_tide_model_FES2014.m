@@ -1,4 +1,4 @@
-function [lon, lat, amp, phi] = read_tide_model_other(fname,xl,yl,cns,tp)
+function [lon, lat, amp, phi] = read_tide_model_FES2014(tidefile,xl,yl,cns,tp)
 %READTIDEMODEL  One line description goes here.
 %
 %   More detailed description goes here.
@@ -62,39 +62,44 @@ function [lon, lat, amp, phi] = read_tide_model_other(fname,xl,yl,cns,tp)
 
 %% Start
 
-fname_needed=fname;
+idpath = strfind(tidefile, 'fes2014.nc');
+fname_reduced = tidefile(1:idpath-1); % Path where all files sit
 
 switch tp
     case{'z','h'}
         lonstr='lon';
         latstr='lat';
-        ampstr='tidal_amplitude_h'; phistr='tidal_phase_h';correction_factor=1.000;depth_name='depth';
-    case{'u'}
-        lonstr='lon_u';
-        latstr='lat_u';
-        ampstr='tidal_amplitude_u'; phistr='tidal_phase_u';correction_factor=0.01;depth_name='depth';
-    case{'v'}
-        lonstr='lon_v';
-        latstr='lat_v';
-        ampstr='tidal_amplitude_v'; phistr='tidal_phase_v';correction_factor=0.01;depth_name='depth';
-    case{'U'}
-        lonstr='lon_u';
-        latstr='lat_u';
-        ampstr='tidal_amplitude_U'; phistr='tidal_phase_U';correction_factor=1.00;depth_name='depth';
-    case{'V'}
-        lonstr='lon_v';
-        latstr='lat_v';
-        ampstr='tidal_amplitude_V'; phistr='tidal_phase_V';correction_factor=1.00;depth_name='depth';
+%        real_name = 'hRe'; complex_name = 'hIm';correction_factor=0.001;depth_name='hz';
+        correction_factor=0.01;
+        fname_needed = [fname_reduced lower(cns) '.nc'];
+%     case{'u'}
+%         lonstr='lon_u';
+%         latstr='lat_u';
+%         real_name = 'uRe'; complex_name = 'uIm';correction_factor=1e-4;depth_name='hu';
+%         fname_needed = [fname_reduced 'uv.' lower(cns) '_tpxo8.nc'];
+%     case{'v'}
+%         lonstr='lon_v';
+%         latstr='lat_v';
+%         real_name = 'vRe'; complex_name = 'vIm';correction_factor=1e-4;depth_name='hv';
+%         fname_needed = [fname_reduced 'uv.' lower(cns) '_tpxo8.nc'];
+%     case{'U'}
+%         lonstr='lon_u';
+%         latstr='lat_u';
+%         real_name = 'uRe'; complex_name = 'uIm';correction_factor=1e-4;depth_name='hu';
+%         fname_needed = [fname_reduced 'uv.' lower(cns) '_tpxo8.nc'];
+%     case{'V'}
+%         lonstr='lon_v';
+%         latstr='lat_v';
+%         real_name = 'vRe'; complex_name = 'vIm';correction_factor=1e-4;depth_name='hv';
+%         fname_needed = [fname_reduced 'uv.' lower(cns) '_tpxo8.nc'];
 end
 
-fname_depth=fname;
-
-% Consituents
-cl=nc_varget(fname,'tidal_constituents');
-for i=1:size(cl,1)
-    cons{i}=upper(deblank(cl(i,:)));
-end
-icnst=strmatch(lower(cns),lower(cons),'exact');
+% switch lower(cns)
+%     case{'ms4','mn4','mf','mm'}
+%         fname_depth = [fname_reduced 'grid_tpxo8_atlas6.nc'];
+%     otherwise
+%         fname_depth = [fname_reduced 'grid_tpxo8atlas_30.nc'];
+% end
 
 xmin=xl(1);
 ymin=yl(1);
@@ -106,9 +111,6 @@ ymax=yl(2);
 x=nc_varget(fname_needed,lonstr);
 y=nc_varget(fname_needed,latstr);
 
-if x(2)<x(1) % this happens when e.g. x(1)=-359.875 and x(2)=0.125
-    x(1)=x(1)-360;
-end
 % Y indices
 
 dy=abs(y(2)-y(1));
@@ -121,6 +123,8 @@ if isempty(iy2)
     iy2=length(y);
 end
 
+%     dx=(xmax-xmin)/10;
+%     dx=max(dx,0.5);
 dx=x(2)-x(1);
 iok=0;
 iglob=0;
@@ -231,30 +235,36 @@ if ~iok
     
     % pasting - left
     
-    a =  nc_varget(fname_needed,ampstr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
-    p =  nc_varget(fname_needed,phistr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
-    ampleft(:,:)   = a;
-    phileft(:,:)   = p;
-%     
-%     if getd
-%         dpleft   = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
-%     end
+    real    =  nc_varget(fname_needed,real_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+    complex =  nc_varget(fname_needed,complex_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+    ampleft(:,:)   = abs(real+1i*complex);
+    val   = mod(180*atan2(real,complex)/pi,360) - 90;
+    id = val < 270; val(id) = val(id)+360;
+    id = val > 360; val(id) = val(id)-360;
+    phileft(:,:)   = val;
+    
+    if getd
+        dpleft   = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+    end
     
     % pasting - right
-    a =  nc_varget(fname_needed,ampstr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
-    p =  nc_varget(fname_needed,phistr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
-    ampright(:,:)   = a;
-    phiright(:,:)   = p;
-%     if getd
-%         dpright  = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
-%     end
+    real    =  nc_varget(fname_needed,real_name,[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
+    complex =  nc_varget(fname_needed,complex_name,[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
+    ampright(:,:)   = abs(real+1i*complex);
+    val   = mod(180*atan2(real,complex)/pi,360) - 90;
+    id = val < 270; val(id) = val(id)+360;
+    id = val > 360; val(id) = val(id)-360;
+    phiright(:,:)   = val;
+    if getd
+        dpright  = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+    end
     
     % Now paste
     amp   = permute([permute(ampleft,[2 1 3]) permute(ampright,[2 1 3])],[2 1 3]);
     phi   = permute([permute(phileft,[2 1 3]) permute(phiright,[2 1 3])],[2 1 3]);
-%     if getd
-%         depth = [dpleft' dpright'];
-%     end
+    if getd
+        depth = [dpleft' dpright'];
+    end
     
     lon = [lonleft;lonright];
     lat = y(iy1:iy2);
@@ -263,12 +273,16 @@ else
     
     %% No pasting needed
     % Get values
-    a =  nc_varget(fname_needed,ampstr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
-    p =  nc_varget(fname_needed,phistr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
-    amp   = a;
-    phi   = p;
-%     
-%     % Get depth
+%     real    =  nc_varget(fname_needed,real_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
+%     complex =  nc_varget(fname_needed,complex_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
+    amp   = nc_varget(fname_needed,'amplitude',[iy1-1 ix1-1],[iy2-iy1+1 ix2-ix1+1]);
+%     val   = mod(180*atan2(real,complex)/pi,360) - 90;
+%     id = val < 270; val(id) = val(id)+360;
+%     id = val > 360; val(id) = val(id)-360;
+%     phi   = val;
+    phi   = nc_varget(fname_needed,'phase',[iy1-1 ix1-1],[iy2-iy1+1 ix2-ix1+1]);
+    
+    % Get depth
 %     switch tp
 %         case{'u','v'}
 %             depth = nc_varget(fname_depth,depth_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
@@ -280,7 +294,7 @@ else
     
 end
 
-% % For velocities, divide by depth
+% For velocities, divide by depth
 % switch tp
 %     case{'u','v'}
 %         amp=amp./max(depth,0.1);
@@ -288,78 +302,6 @@ end
 
 % Save in structure
 amp = amp*correction_factor;
-amp=permute(amp,[2 1]);
-phi=permute(phi,[2 1]);
+% amp=permute(amp,[2 1]);
+% phi=permute(phi,[2 1]);
 
-
-
-
-
-% for i=1:length(gt)
-%     
-%     %% If not OK: pasting needed
-%     if ~iok
-%         
-%         % pasting - left
-%         for icnst=1:nrcons
-%             ampleft(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
-%             phileft(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
-%         end
-%         if getd
-%             dpleft   = nc_varget(fname,'depth',[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
-%         end
-%         
-%         % pasting - right
-%         for icnst=1:nrcons
-%             ampright(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
-%             phiright(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
-%         end
-%         if getd
-%             dpright  = nc_varget(fname,'depth',[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
-%         end
-%         
-%         % Now paste
-%         gt(i).amp   = permute([permute(ampleft,[2 1 3]) permute(ampright,[2 1 3])],[2 1 3]);
-%         gt(i).phi   = permute([permute(phileft,[2 1 3]) permute(phiright,[2 1 3])],[2 1 3]);
-%         if getd
-%             depth = [dpleft' dpright'];
-%         end
-%         
-%         % TODO This is still wrong!!! Make distinction between xu, xv and xz!
-%         lonz = [lonleft;lonright];
-%         lonu = [lonleft;lonright];
-%         lonv = [lonleft;lonright];       
-%         latz = y(iy1:iy2);
-%         latu = yu(iy1:iy2);
-%         latv = yv(iy1:iy2);
-%         
-%     else
-%         %% No pasting needed
-%         % Get values
-%         for icnst=1:nrcons
-%             gt(i).amp(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
-%             gt(i).phi(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
-%         end
-%         
-%         % Get depth
-%         if getd
-%             depth = nc_varget(fname,'depth',[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
-%             depth = depth';
-%         end
-%         
-%         % Fix grid
-%         lonz=x(ix1:ix2)+loncor;
-%         latz=y(iy1:iy2);
-%         lonu=xu(ix1:ix2)+loncor;
-%         latu=yu(iy1:iy2);
-%         lonv=xv(ix1:ix2)+loncor;
-%         latv=yv(iy1:iy2);
-%     end
-%     
-%     % Save in structure
-%     gt(i).amp=permute(gt(i).amp,[2 1 3]);
-%     gt(i).phi=permute(gt(i).phi,[2 1 3]);
-%     gt(i).phi(gt(i).amp==0)=NaN;
-%     gt(i).amp(gt(i).amp==0)=NaN;
-% end
-% 

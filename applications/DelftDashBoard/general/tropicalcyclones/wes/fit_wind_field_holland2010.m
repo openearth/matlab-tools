@@ -25,7 +25,7 @@ dxn=0.01;
 dvt=0.5;
 dphia=5;
 
-nrad=2;
+nrad=3;
 
 %vvv=[35 50 65 100];
 
@@ -120,7 +120,7 @@ if nobs>0 && vmax>21
                 break
             end
             
-            if xn<0.3 || xn>1.0
+            if xn<0.3 || xn>2.0
                 break
             end
             
@@ -206,7 +206,7 @@ end
 function [mean_error, rms_error, err]=compute_mean_error(r,w,obs,wrad)
 
 nq=4;
-nrad=1;
+nrad=3;
 
 iq1=[1 10 19 28];
 iq2=[10 19 28 37];
