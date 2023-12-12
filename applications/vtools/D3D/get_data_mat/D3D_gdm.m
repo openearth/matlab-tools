@@ -173,6 +173,7 @@
 % in_plot.(tag).do_diff=1; %difference with initial time
 % in_plot.(tag).do_s=1; %difference with reference simulation
 % in_plot.(tag).do_all=1; %all simulations in same figure
+% in_plot.(tag).do_plot_structures=1; %plot bridge piles and structures: 0=NO; 1=YES
 % in_plot.(tag).tim=NaN; %analysis time [datenum, datetime]. NaN=all, Inf=last.
 % in_plot.(tag).tim_tol=hours(1); 
 % % in_plot.(tag).tim=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)];

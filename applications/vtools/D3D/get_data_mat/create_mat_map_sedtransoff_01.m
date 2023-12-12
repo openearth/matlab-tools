@@ -233,7 +233,7 @@ in_plot_sb.(tag_sb).do_all=flg_loc.do_all;
 in_plot_sb.(tag_sb).do_s_diff=0; %difference with reference and initial time
 in_plot_sb.(tag_sb).tim=flg_loc.tim; %all times
 in_plot_sb.(tag_sb).order_anl=2; %1=normal; 2=random
-in_plot_sb.(tag_sb).tim_ave{1,1}=NaN; 
+in_plot_sb.(tag_sb).tim_ave{1,1}=[]; %NaN = all times. Empty = do not do. 
 % in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
 
 % in_plot_sb.(tag_sb).var=var_sum; %open D3D_list_of_variables

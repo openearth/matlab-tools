@@ -93,10 +93,16 @@ for iChapter = 1:nChapter
          Value   = ValueLine;
          Comment = '';
       else
-        if strcmp(ValueLine(1),'#')
+        if strcmp(ValueLine(1),'#') %V: I do not understand this. If the first character is a comment, the value should be empty. 
             tmp = regexp(ValueLine,'#','split');
+            Value='';
+            Comment='';
+            if numel(tmp)>1
             Value = tmp{2};
+            end
+            if numel(tmp)>2
             Comment = tmp{3};
+            end
         else
             if strcmp(Keyword,'Percentiles')
                 Value=ValueLine;

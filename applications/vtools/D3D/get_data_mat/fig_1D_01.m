@@ -189,6 +189,9 @@ end
 val=squeeze(val);
 if do_area
     ylims=real([0,max(sum(val,2))+eps]);
+    if isnan(ylims(2))
+        ylims(2)=1e-10;
+    end
 end
 
 %% SIZE

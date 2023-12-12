@@ -66,7 +66,7 @@ else
     dire=dir(fdir_output);
     nd=numel(dire)-2;
     if nd~=numel(datetime_obj)
-        error('Number of results time does not match number of objective times')
+        error('Number of results time %d in output folder %s does not match number of objective times %d from input',nd,fdir_output,numel(datetime_obj))
     end
     
     for kd=1:nd
