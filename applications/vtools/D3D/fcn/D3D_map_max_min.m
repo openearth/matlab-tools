@@ -22,14 +22,14 @@ function D3D_map_max_min(fpath_nc,varname,kt)
 
 gridInfo=EHY_getGridInfo(fpath_nc,'XYcen');
 data=EHY_getMapModelData(fpath_nc,'varName',varname,'t',kt);
-[~,idxmax]=max(data.val);
-[~,idxmin]=min(data.val);
+[max_v,idxmax]=max(data.val);
+[min_v,idxmin]=min(data.val);
 xm=gridInfo.Xcen([idxmax,idxmin]);
 ym=gridInfo.Ycen([idxmax,idxmin]);
-fprintf('MAX \n')
+fprintf('MAX = %f \n',max_v)
 fprintf('x = %f \n',xm(1))
 fprintf('y = %f \n',ym(1))
-fprintf('MIN \n')
+fprintf('MIN = %f \n',min_v)
 fprintf('x = %f \n',xm(2))
 fprintf('y = %f \n',ym(2))
 
