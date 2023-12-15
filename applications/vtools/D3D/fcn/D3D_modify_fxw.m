@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18780 $
-%$Date: 2023-03-09 15:28:47 +0100 (do, 09 mrt 2023) $
-%$Author: chavarri $
-%$Id: D3D_adapt_time.m 18780 2023-03-09 14:28:47Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_adapt_time.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Reads a fixed-weirs file and writes new files with only
 %certain fixed weirs and/or a modify geometry.

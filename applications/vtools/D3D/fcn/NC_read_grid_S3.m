@@ -4,11 +4,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18390 $
-%$Date: 2022-09-27 12:07:53 +0200 (di, 27 sep 2022) $
-%$Author: chavarri $
-%$Id: NC_read_grid_1D.m 18390 2022-09-27 10:07:53Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/NC_read_grid_1D.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 
