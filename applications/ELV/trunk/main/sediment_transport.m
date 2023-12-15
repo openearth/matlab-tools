@@ -397,7 +397,7 @@ for ku=1:nu
             rksc = sed_trans_param(3); %bottom roughness height
             
             % bed load transport
-            tbcr = (cnt.rho_s - cnt.rho_w)*cnt.g*dk.*theta_c; %[1,nf]
+            tbcr = (cnt.rho_s - cnt.rho_w)*cnt.g*dk.*theta_c; %[1,nf] %V: ATT! inconsistent input. rho_s has been added as input, but R was already input, which is a function of rho_s! Remove!
             
             rmuc = (log10(12.0.*h/rksc)./log10(12.0.*h/3./d90')).^2; %[nx,1]
             fc = 0.24*(log10(12.0.*h/rksc)).^(-2); %[nx,1]
