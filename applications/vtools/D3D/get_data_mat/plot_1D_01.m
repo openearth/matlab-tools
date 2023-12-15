@@ -78,7 +78,6 @@ end
 
 flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
 
-
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 
@@ -89,7 +88,6 @@ end
 if isfield(flg_loc,'do_plot_structures')==0
     flg_loc.do_plot_structures=0;
 end
-
 
 %add B_mor variables to plot
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
@@ -333,7 +331,7 @@ for ksb=1:nsb
                             end
                         end
                         
-                        for kylim=nylim
+                        for kylim=1:nylim
                             
                             %regular plot
                             if flg_loc.do_p
@@ -351,7 +349,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
+                                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar},kylim);
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -373,7 +371,7 @@ for ksb=1:nsb
                                 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                 mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                fname_noext=fig_name(fdir_fig_loc,tag_fig,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
+                                fname_noext=fig_name(fdir_fig_loc,tag_fig,runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar},kylim);
         %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                 in_p.fname=fname_noext;
@@ -397,7 +395,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
+                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar},kylim);
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -418,7 +416,7 @@ for ksb=1:nsb
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
                                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
+                                    fname_noext=fig_name(fdir_fig_loc,tag_fig,runid_fig,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar},kylim);
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
@@ -484,11 +482,14 @@ for ksb=1:nsb
                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'cum');
                     mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar});
-
-                    in_p.fname=fname_noext;
-
-                    fig_1D_01(in_p);
+                    for kylim=1:nylim
+                        fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,flg_loc.var_idx{kvar},kylim);
+    
+                        in_p.fname=fname_noext;
+                        in_p.ylim=flg_loc.ylims(kylim,:);
+    
+                        fig_1D_01(in_p);
+                    end
                 end
             end
             
@@ -502,7 +503,7 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref,var_idx)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,kref,var_idx,kylim)
 
 % fprintf('fdir_fig: %s \n',fdir_fig);
 % fprintf('tag: %s \n',tag);
@@ -515,9 +516,9 @@ svi=repmat('%02d',1,nvi);
 var_idx_s=sprintf(svi,var_idx);
 
 if isempty(runid)
-    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kref));
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%02d_ylim_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kref,kylim));
 else
-    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kref));
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_%02d_ylim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kref,kylim));
 end
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
@@ -603,7 +604,8 @@ for kS=1:nS
             for kclim=1:nclim
 
                 [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val_1,val_0,'ylims','ylims_diff',var_str_save);
-
+                in_p.clims=in_p.ylims; %the output from `gdm_data_diff` is saved in the variable we call first (`ylims`) and we want it here for `clims`.
+                in_p.ylims=NaN;
         %                         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,'xvt',str_dir); %subfolder maybe not needed
                 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
                 mkdir_check(fdir_fig_loc,NaN,1,0);

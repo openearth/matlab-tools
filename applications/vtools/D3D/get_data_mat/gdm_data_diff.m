@@ -76,10 +76,10 @@ switch kdiff
         in_p.val=data;
         switch flg_loc.clims_type
             case 1
-                in_p.clims=flg_loc.(str_clims)(kclim,:);
+                in_p.(str_clims)=flg_loc.(str_clims)(kclim,:);
             case 2
                 tim_up=max(time_dnum(kt)-flg_loc.clims_type_var,0);
-                in_p.clims=[0,tim_up];
+                in_p.(str_clims)=[0,tim_up];
         end
         tag_ref='val';
         in_p.is_diff=0;
@@ -89,7 +89,7 @@ switch kdiff
     case 2
 %         in_p.val=data-data_ref.data; %why is data in ref under <.data> ?
         in_p.val=data-data_ref; 
-        in_p.clims=flg_loc.(str_clims_diff)(kclim,:);
+        in_p.(str_clims)=flg_loc.(str_clims_diff)(kclim,:);
         tag_ref='diff';
         switch var_str
             case 'clm2'
@@ -107,7 +107,7 @@ switch kdiff
         val=(data-data_ref)./data_ref*100;
         val(bol_0)=NaN;
         in_p.val=val; 
-        in_p.clims=flg_loc.(str_clims_perc)(kclim,:);
+        in_p.(str_clims)=flg_loc.(str_clims_perc)(kclim,:);
         tag_ref='perc';
         in_p.is_diff=0;
         in_p.is_background=0;
@@ -118,7 +118,7 @@ switch kdiff
         val=(data-data_ref)-(data_0-data_ref_0);
         val(bol_0)=NaN;
         in_p.val=val; 
-        in_p.clims=flg_loc.(str_clims_diff_0)(kclim,:);
+        in_p.(str_clims)=flg_loc.(str_clims_diff_0)(kclim,:);
         tag_ref='diff_0';
         in_p.is_diff=0;
         in_p.is_background=0;
