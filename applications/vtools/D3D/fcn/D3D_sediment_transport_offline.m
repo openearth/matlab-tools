@@ -73,6 +73,10 @@
 
 function D3D_sediment_transport_offline(fpath_hydro,fpath_morpho,fpath_out,in_plot_sedtrans,Qseries,MorFac)
 
+%% PARSE
+
+idx_def=1; %quite ad-hoc. Could be made input. 
+
 %% CALC
 
 %% OUTPUT FOLDER
@@ -145,6 +149,13 @@ end
 %```
 ksim=nsim+1;
 idx_save=ksim-1;
+%for the case in which we manually create the SMT-like simulation, there
+%may not be a correct <Qseries.csv> file. In this case, we either manually
+%copy the last simulation or we copy a specific one.
+if isempty(idx_c)
+    idx_c=idx_def;
+    messageOut(NaN,sprintf('There is no index for copying. Copying simulation: %d from %s',idx_c,fpath_hydro));
+end
 copy_hydro_simulation(fpath_hydro,fpath_out,idx_c,idx_save); %using `idx_c` we use the last one
 
 %disp
