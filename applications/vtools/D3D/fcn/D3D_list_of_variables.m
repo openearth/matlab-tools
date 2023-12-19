@@ -49,7 +49,7 @@ function D3D_list_of_variables
 
 %       'umod'          = morphodynamic velocity [m/s]
 %   48                  = total sediment transport at nodes [m^2/s]
-%   44  'stot'          = total bed load transport at nodes [m^2/s] 
+%   44  'stot'          = total bed load transport at nodes [m^2/s]. This is sediment transport per size fraction. To plot as stacked area plot for all fractions, use `do_area=1`.
 %   29                  = sediment transport magnitude at edges m^2/s
 %   30                  = sediment transport magnitude at edges m^3/s
 

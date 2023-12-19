@@ -30,22 +30,24 @@ if flg_loc.write_shp==1
 end
 
 %add velocity vector to variables if needed
-if isfield(flg_loc,'do_vector')==0
-    flg_loc.do_vector=zeros(1,numel(flg_loc.var));
-end
+% if isfield(flg_loc,'do_vector')==0
+%     flg_loc.do_vector=zeros(1,numel(flg_loc.var));
+% end
 
-if isfield(flg_loc,'var_idx')==0
-    flg_loc.var_idx=cell(1,numel(flg_loc.var));
-end
+% if isfield(flg_loc,'var_idx')==0
+%     flg_loc.var_idx=cell(1,numel(flg_loc.var));
+% end
 
-if isfield(flg_loc,'tol')==0
-    flg_loc.tol=1.5e-7;
-end
-tol=flg_loc.tol;
+% if isfield(flg_loc,'tol')==0
+%     flg_loc.tol=1.5e-7;
+% end
 
-if isfield(flg_loc,'sum_var_idx')==0
-    flg_loc.sum_var_idx=zeros(size(flg_loc.var));
-end
+% if isfield(flg_loc,'sum_var_idx')==0
+%     flg_loc.sum_var_idx=zeros(size(flg_loc.var));
+% end
+
+
+flg_loc=gdm_default_flags(flg_loc);
 
 flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
 
@@ -111,7 +113,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar));      
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',flg_loc.tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar));      
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end

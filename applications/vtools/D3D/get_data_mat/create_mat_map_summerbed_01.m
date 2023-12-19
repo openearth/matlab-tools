@@ -28,37 +28,53 @@ if isfield(flg_loc,'sb_pol')==0
     error('You need to specify the summerbed polygon')
 end
 
-if isfield(flg_loc,'do_val_B_mor')==0 %why do we need it here?
-    flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
-end
-if any(flg_loc.do_val_B_mor)
-    flg_loc.var=cat(2,reshape(flg_loc.var,1,numel(flg_loc.var)),'ba_mor');
-    if isfield(flg_loc,'var_idx')==0
-        flg_loc.var_idx=cell(2,numel(flg_loc.var));
-    else
-        flg_loc.var_idx=cat(2,flg_loc.var_idx,{zeros(0,0)});
-    end
-    if isfield(flg_loc,'layer')==1
-        flg_loc.layer=cat(2,flg_loc.layer,{0});
-    end
-end
 
-if isfield(flg_loc,'do_val_B')==0
-    flg_loc.do_val_B=zeros(size(flg_loc.var));
-end
-if any(flg_loc.do_val_B)
-    flg_loc.var=cat(2,reshape(flg_loc.var,1,numel(flg_loc.var)),'ba');
-end
 
-if isfield(flg_loc,'var_idx')==0
-    flg_loc.var_idx=cell(1,numel(flg_loc.var));
-end
+% if isfield(flg_loc,'do_val_B_mor')==0 %why do we need it here?
+%     flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
+% end
 
-if isfield(flg_loc,'sum_var_idx')==0
-    flg_loc.sum_var_idx=zeros(size(flg_loc.var));
-end
+%Added to `gdm_parse_val_B_mor`. Check if everything goes fine and remove.
+% if any(flg_loc.do_val_B_mor)
+%     flg_loc.var=cat(2,reshape(flg_loc.var,1,numel(flg_loc.var)),'ba_mor');
+%     if isfield(flg_loc,'var_idx')==0
+%         flg_loc.var_idx=cell(2,numel(flg_loc.var));
+%     else
+%         flg_loc.var_idx=cat(2,flg_loc.var_idx,{zeros(0,0)});
+%     end
+%     if isfield(flg_loc,'layer')==1
+%         flg_loc.layer=cat(2,flg_loc.layer,{0});
+%     end
+% end
 
-flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
+% if isfield(flg_loc,'do_val_B')==0
+%     flg_loc.do_val_B=zeros(size(flg_loc.var));
+% end
+
+%Added to `gdm_parse_val_B`. Check if everything goes fine and remove.
+% if any(flg_loc.do_val_B)
+%     flg_loc.var=cat(2,reshape(flg_loc.var,1,numel(flg_loc.var)),'ba');
+% end
+
+% if isfield(flg_loc,'var_idx')==0
+%     flg_loc.var_idx=cell(1,numel(flg_loc.var));
+% end
+
+% if isfield(flg_loc,'sum_var_idx')==0
+%     flg_loc.sum_var_idx=zeros(size(flg_loc.var));
+% end
+
+flg_loc=gdm_parse_summerbed(flg_loc,simdef);
+
+% flg_loc=gdm_default_flags(flg_loc);
+% 
+% flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
+% 
+% flg_loc=gdm_parse_stot(flg_loc,simdef);
+% 
+% flg_loc=gdm_parse_val_B_mor(flg_loc,simdef);
+% 
+% flg_loc=gdm_parse_val_B(flg_loc,simdef);
 
 %% PATHS
 

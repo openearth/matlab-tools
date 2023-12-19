@@ -110,6 +110,8 @@ switch varname
         data_var=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     case 'stot'
         data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+    case 'stot_sum'
+        data_var=gdm_read_data_map_stot_sum(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     case {'Fr','fr'}
         data_var=gdm_read_data_map_Fr(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     otherwise 

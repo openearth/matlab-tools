@@ -27,7 +27,6 @@ simdef_ref=parin.Results.simdef_ref;
 do_ref=false;
 if ~isempty(simdef_ref)
     do_ref=true;
-%     flg_loc.tag_fig=sprintf('%s_%s',flg_loc.tag,'diff'); %difference with simulations, we have to loop to do one by one or all together?
 end
 
 %%
@@ -61,33 +60,15 @@ end
 if isfield(flg_loc,'do_xvt')==0
     flg_loc.do_xvt=0;
 end
-    
-%add cumulative variables to plot
-if isfield(flg_loc,'do_cum')==0
-    flg_loc.do_cum=zeros(size(flg_loc.var));
-end
-
-if isfield(flg_loc,'do_area')==0
-    flg_loc.do_area=zeros(size(flg_loc.var));
-end
-
-%add var_idx
-if isfield(flg_loc,'var_idx')==0
-    flg_loc.var_idx=cell(1,numel(flg_loc.var));
-end
-
-flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
-
-flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
-flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
-
-if isfield(flg_loc,'unit')==0
-    flg_loc.unit=flg_loc.var;
-end
 
 if isfield(flg_loc,'do_plot_structures')==0
     flg_loc.do_plot_structures=0;
 end
+
+flg_loc=gdm_parse_summerbed(flg_loc,simdef);
+
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 
 %add B_mor variables to plot
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
@@ -104,15 +85,6 @@ if do_ref
     fdir_mat_ref=simdef_ref.file.mat.dir;
     fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
     fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); 
-    
-    %we always do the reference agaisnt itself
-%     if nS==1
-%         fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
-%         runid=sprintf('%s-%s',simdef.file.runid,simdef_ref.file.runid);
-%     else
-%         fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig,tag_serie);
-%         runid=sprintf('ref_%s',simdef_ref.file.runid);
-%     end
 else
     fdir_mat=simdef(1).file.mat.dir;
     fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
@@ -122,8 +94,6 @@ else
 end
 
 fpath_map=simdef(1).file.map; %assuming same number of layers for all simulations!
-
-% mkdir_check(fdir_fig); %we create it in the loop
 
 %% LOAD
 
@@ -639,20 +609,15 @@ for kvar=1:nvar_tmp
         flg_loc.var=cat(2,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
         flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
         flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});
-        flg_loc.do_cum=cat(2,flg_loc.do_cum,flg_loc.do_cum(kvar));
-        if isfield(flg_loc,'unit')
-            flg_loc.unit=cat(2,flg_loc.unit,sprintf('%s_%s',flg_loc.unit{kvar},str_in));
-        end
-        if isfield(flg_loc,'layer')
-            flg_loc.layer=cat(2,flg_loc.layer,{zeros(0,0)});
-        end
-        if isfield(flg_loc,'var_idx')
-%             flg_loc.var_idx=cat(2,flg_loc.var_idx,{zeros(0,0)});
-            flg_loc.var_idx=cat(2,flg_loc.var_idx,flg_loc.var_idx(kvar));
-        end
-        if isfield(flg_loc,'do_area')
-            flg_loc.do_area=cat(2,flg_loc.do_area,flg_loc.do_area(kvar));
-        end
+
+        %add one more entry with default values
+        flg_loc=gdm_add_flags_plot(flg_loc);
+
+        %modify last entry
+        flg_loc.unit{end}=sprintf('%s_%s',flg_loc.unit{kvar},str_in);
+        flg_loc.var_idx{end}=flg_loc.var_idx{kvar};
+        flg_loc.do_area(end)=flg_loc.do_area(kvar);
+        flg_loc.do_cum(end)=flg_loc.do_cum(kvar);
     end
 end
 

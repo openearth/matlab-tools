@@ -112,8 +112,10 @@ Qseries_input=readmatrix(fpath_Qseries,'FileType','text');
 nsim=size(Qseries,1);
 tim=NaN(1,nsim);
 tim_dtime=NaT(1,nsim+1);
-tim_dtime.TimeZone='+00:00';
-tim_dtime(1)=datetime(2000,01,01,0,0,0,'timezone','+00:00');
+% tim_dtime.TimeZone='+00:00';
+% tim_dtime(1)=datetime(2000,01,01,0,0,0,'timezone','+00:00');
+tim_dtime.TimeZone='+01:00';
+tim_dtime(1)=datetime(2000,01,01,0,0,0,'timezone','+01:00');
 
 %loop in Qseries input
 for ksim=1:nsim
@@ -221,14 +223,26 @@ mkdir_check(fdir_mat);
 
 for ksim=1:nsim+1 %this is the number of times in the SMT hydrograph +1, because of the block approach. 
 
+    nvar=2;
+    varname_v={'lyrfrac','thlyr'};
     for kvar=1:nvar
-        varname=in_plot_hydro_var.(tag).var{kvar};
+%         varname=in_plot_hydro_var.(tag).var{kvar};
+        varname=varname_v{kvar};
         
-        fdir_mat=fullfile(fpath_morpho,'mat');
-        fpath_mat_tmp_in=mat_tmp_name(fdir_mat,'map_2DH_01','tim',tim_hydro,'var',varname);
+%         %2DH
+%         fdir_mat=fullfile(fpath_morpho,'mat');
+%         fpath_mat_tmp_in=mat_tmp_name(fdir_mat,'map_2DH_01','tim',tim_hydro,'var',varname);
+% 
+%         fdir_mat=fullfile(fpath_out,'mat');
+%         fpath_mat_tmp_out=mat_tmp_name(fdir_mat,'map_2DH_01','tim',datenum(tim_dtime(ksim)),'var',varname);
 
-        fdir_mat=fullfile(fpath_out,'mat');
-        fpath_mat_tmp_out=mat_tmp_name(fdir_mat,'map_2DH_01','tim',datenum(tim_dtime(ksim)),'var',varname);
+        %raw
+        fdir_mat=fullfile(fpath_morpho,'mat');
+        fpath_mat_tmp_in=mat_tmp_name(fdir_mat,varname,'tim',tim_hydro);        
+
+        fdir_mat=fullfile(fpath_morpho,'mat');
+        fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname,'tim',datenum(tim_dtime(ksim)));        
+
 
         if isfile(fpath_mat_tmp_out)==0
             copyfile_check(fpath_mat_tmp_in,fpath_mat_tmp_out,1);
