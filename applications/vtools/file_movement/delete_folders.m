@@ -22,6 +22,11 @@
 %OPTIONAL (pair input):
 %   -fpath_sh = full path to the script to submit to the cluster with the erase commands [char]
 %   -size     = limit size of the folder to erase [bytes] [double]. 1 MB = 1e6 bytes. 1 GB = 1e9 bytes.
+%
+%E.G. 
+% fdir='C:\checkouts\oet_matlab\applications\';
+% fpath_sh='C:\delete.sh';
+% delete_folders(fdir,'fpath_sh',fpath_sh,'size',1e6)
 
 function delete_folders(fdir,varargin)
 
@@ -38,6 +43,11 @@ fpath_sh=parin.Results.fpath_sh;
 sz_lim=parin.Results.size;
 
 %% OPEN
+
+[~,~,fext]=fileparts(fpath_sh);
+if ~strcmp(fext,'.sh')
+    warning('The file extension of the file is not .sh, while the commands are Linux: %s',fpath_sh)
+end
 
 fid=fopen(fpath_sh,'w');
 if fid<1
