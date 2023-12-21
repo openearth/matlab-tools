@@ -40,7 +40,7 @@ else
     sz_lim=0;
 end
 
-%%
+%% CALC
 
 dire=dir(fdir);
 nf=numel(dire);
@@ -58,6 +58,8 @@ for kf=1:nf
     end
     sz=sz+sz_loc;
 end %kf
+
+%% WRITE
 
 if ~isnan(fid) && sz>sz_lim
     fprintf(fid,'# folder: %s \r\n',fdir);
