@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19229 $
-%$Date: 2023-11-03 13:13:41 +0100 (Fri, 03 Nov 2023) $
-%$Author: chavarri $
-%$Id: fig_his_sal_01.m 19229 2023-11-03 12:13:41Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_his_sal_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Ad-hoc function to read KNMI data. It should be read in `read_csv_data`. 
 

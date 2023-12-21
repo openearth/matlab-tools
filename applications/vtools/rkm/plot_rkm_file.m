@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19197 $
-%$Date: 2023-10-18 06:59:30 +0200 (Wed, 18 Oct 2023) $
-%$Author: chavarri $
-%$Id: plot_rkm.m 19197 2023-10-18 04:59:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/rkm/plot_rkm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Plot rkm file
 

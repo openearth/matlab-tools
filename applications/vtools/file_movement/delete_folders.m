@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19299 $
-%$Date: 2023-12-12 17:03:24 +0100 (Tue, 12 Dec 2023) $
-%$Author: chavarri $
-%$Id: create_mat_map_sedtransoff_01.m 19299 2023-12-12 16:03:24Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/create_mat_map_sedtransoff_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Creates a sh-file to submit to a cluster the deletion of folders
 %depending on its size. 
