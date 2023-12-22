@@ -397,6 +397,11 @@ if ischar(simdef.mdf.Dpuopt)
             error('here')
     end
 end
+
+if isfield(simdef.mdf,'ExtrBl')==0
+    simdef.mdf.ExtrBl=0;
+end
+
 % if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
 %     error('adjust flow depth file accordingly')
 % end

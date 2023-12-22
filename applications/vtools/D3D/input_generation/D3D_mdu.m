@@ -157,6 +157,8 @@ data{kl,1}=        'Layertype         = 1         '; kl=kl+1;
 data{kl,1}=        'Numtopsig         = 0         '; kl=kl+1;
 data{kl,1}=        'SigmaGrowthFactor = 1         '; kl=kl+1;
 data{kl,1}=sprintf('Removesmalllinkstrsh = %d     ',simdef.mdf.Removesmalllinkstrsh); kl=kl+1; %0.0 = remove no links ,  0.1 = remove links smaller than 0.1 sqrt(ba)
+data{kl,1}=sprintf('Dpuopt = %d     ',simdef.mdf.Dpuopt); kl=kl+1; %# Bed level interpolation at velocity point in case of tile approach bed level: 1 = max (default); 2 = mean
+data{kl,1}=sprintf('ExtrBl = %d     ',simdef.mdf.ExtrBl); kl=kl+1; %# Extrapolation of bed level at boundaries according to the slope: 0 = no extrapolation (default); 1 = extrapolate.
 
 % Kmx                               = 28                  # Maximum number of vertical layers
 % Layertype                         = 2                   # Vertical layer type (1: all sigma, 2: all z, 3: use VertplizFile)
@@ -269,15 +271,15 @@ data{kl,1}=        '                                                 '; kl=kl+1;
 data{kl,1}=        '[time]                                           '; kl=kl+1;
 data{kl,1}=        'RefDate           = 20000101                     '; kl=kl+1;
 data{kl,1}=        'Tzone             = 0                            '; kl=kl+1;
-data{kl,1}=sprintf('DtUser            = %0.7E',Dt); kl=kl+1;
+data{kl,1}=sprintf('DtUser            = %0.14E',Dt); kl=kl+1;
 data{kl,1}=        'DtNodal           =                              '; kl=kl+1;
-data{kl,1}=sprintf('DtMax             = %0.7E',Dt); kl=kl+1;
+data{kl,1}=sprintf('DtMax             = %0.14E',Dt); kl=kl+1;
 data{kl,1}=        'DtInit            = 1                            '; kl=kl+1;
 data{kl,1}=        'Timestepanalysis  = 0                            '; kl=kl+1; %# 0=no, 1=see file *.steps
 % data{kl,1}=        'Autotimestepdiff  = 1                            '; kl=kl+1; %# 0 = no, 1 = yes (Time limitation based on explicit diffusive term)
 data{kl,1}=        'Tunit             = S                            '; kl=kl+1;
 data{kl,1}=        'TStart            = 0                            '; kl=kl+1;
-data{kl,1}=sprintf('TStop             = %d',Tstop); kl=kl+1;
+data{kl,1}=sprintf('TStop             = %0.14E',Tstop); kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 data{kl,1}=        '[restart]                                        '; kl=kl+1;
@@ -317,11 +319,11 @@ data{kl,1}=sprintf('ObsFile           = %s',obs_filename); kl=kl+1;
 end
 data{kl,1}=        'CrsFile           =                              '; kl=kl+1;
 data{kl,1}=        'HisFile           =                              '; kl=kl+1; 
-data{kl,1}=sprintf('HisInterval       = %0.7E',Flhis_dt); kl=kl+1; 
+data{kl,1}=sprintf('HisInterval       = %0.14E',Flhis_dt); kl=kl+1; 
 data{kl,1}=        'XLSInterval       =                              '; kl=kl+1;
 data{kl,1}=        'MapFile           =                              '; kl=kl+1;
-data{kl,1}=sprintf('MapInterval       = %0.7E %0.7E %0.7E',Flmap_dt(2),Flmap_dt(1),Tstop+2*Dt); kl=kl+1;
-data{kl,1}=sprintf('RstInterval       = %0.7E',Flrst_dt); kl=kl+1;
+data{kl,1}=sprintf('MapInterval       = %0.14E %0.14E %0.14E',Flmap_dt(2),Flmap_dt(1),Tstop+2*Dt); kl=kl+1;
+data{kl,1}=sprintf('RstInterval       = %0.14E',Flrst_dt); kl=kl+1;
 data{kl,1}=        'S1incinterval     =                              '; kl=kl+1;
 data{kl,1}=        'MapFormat         = 4                            '; kl=kl+1;
 data{kl,1}=        'Wrihis_balance    = 1                            '; kl=kl+1;
