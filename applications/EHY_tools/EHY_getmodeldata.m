@@ -113,7 +113,7 @@ end
 
 %% return output at specified reference level
 if ~isempty(OPT.z)
-    if strcmpi(OPT.varName,'chl')
+    if strcmpi(varNameInput,'chl')
         OPT.varName = varNameInput; % set back to original requested varName (needed for chl)
     end
     Data = EHY_getmodeldata_z(inputFile,stat_name,modelType,OPT);
