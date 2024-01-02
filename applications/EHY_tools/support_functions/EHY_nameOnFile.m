@@ -81,6 +81,7 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'vel_perp'   ) newName = 'ucx';          end
         if strcmpi(varName,'vel_para'   ) newName = 'ucx';          end
         if strcmpi(varName,'velW'       ) newName = 'ucz';          end
+        if strcmpi(varName,'mag'        ) newName = 'mesh2d_ucmag'; end
     case 'trim' % d3d
         % Get the name of varName as specified on the map file of a simulation
         if strcmpi(varName,'wl'         ) newName = 'S1'         ; end
