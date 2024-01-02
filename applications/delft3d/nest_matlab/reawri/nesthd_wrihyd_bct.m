@@ -13,7 +13,7 @@ OPT.ipnt      = NaN;
 OPT           = setproperty(OPT,varargin);
 bndNr         = OPT.ipnt;
 
-if size(bndval(1).value,2) == 1
+if size(bndval(1).value,2) == 1 
     kmax = 1;
 else
     kmax = size(bndval(1).value,2)/2;
