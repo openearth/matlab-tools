@@ -4,6 +4,8 @@ function [times,mass] = EHY_detMass(fileInp,varargin)
 %  Initialise
 OPT.varName = 'sal';
 OPT.filePol = '';
+OPT.zTop    = NaN;
+OPT.zBot    = NaN;
 OPT         = setproperty(OPT,varargin);
 
 %% load polygon
@@ -51,6 +53,25 @@ for i_time = 1: length(times)
                 
                 % Heights and volumes of computational segments
                 height = Info_z.val(i_time,i_pnt,k+1) - Info_z.val(i_time,i_pnt,k);
+                
+                % Above zTop
+                if ~isnan(OPT.zTop)
+                    if Info_z.val(i_time,i_pnt,k)> OPT.zTop
+                        height = NaN;
+                    elseif  Info_z.val(i_time,i_pnt,k)<= OPT.zTop && Info_z.val(i_time,i_pnt,k+1) > OPT.zTop
+                        height = OPT.zTop -  Info_z.val(i_time,i_pnt,k);
+                    end
+                end
+                
+                % Below zBot
+                if ~isnan(OPT.zBot)
+                    if Info_z.val(i_time,i_pnt,k + 1) < OPT.zBot
+                        height = NaN;
+                    elseif  Info_z.val(i_time,i_pnt,k + 1) >= OPT.zBot && Info_z.val(i_time,i_pnt,k) < OPT.zBot
+                        height = Info_z.val(i_time,i_pnt,k + 1) - OPT.zBot;
+                    end
+                end
+                 
                 vol    = area(i_pnt)*height;
                 
                 % Add to mass
