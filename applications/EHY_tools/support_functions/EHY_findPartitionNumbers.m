@@ -29,6 +29,11 @@ elseif ~isempty(OPT.pli)
 elseif ~isempty(OPT.xrange) && ~isempty(OPT.yrange)
     box = [OPT.xrange(1) OPT.yrange(1); OPT.xrange(2) OPT.yrange(1); ...
         OPT.xrange(2) OPT.yrange(2); OPT.xrange(1) OPT.yrange(2)];
+elseif isempty(OPT.xrange) && isempty(OPT.yrange)
+    % Northing specified; simply return all partitions
+    ncFiles = EHY_getListOfPartitionedNcFiles(inputFile);
+    partitionNrs = 0:1:length(ncFiles) - 1;
+    return
 else
     error('You need to specify either "pliFile", "pli" or "xrange" and "yrange"')
 end
