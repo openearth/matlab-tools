@@ -63,6 +63,7 @@ nu=size(mat_out,1);
 x=cell(nu,1);
 y_mean=cell(nu,1);
 y_std=cell(nu,1);
+y_mean_rel=cell(nu,1);
 for ku=1:nu
     bol_g=ismember(mat_u(:,2:end),mat_out(ku,:),'rows');
     x{ku}=mat_u(bol_g); %fractions vector (all should be the same)

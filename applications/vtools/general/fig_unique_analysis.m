@@ -370,16 +370,14 @@ ns=numel(x);
 for ks=1:ns
     idx_ls=find(mat_out(ks,1)==idx_c1); %first index on linestyle
     idx_color=find(mat_out(ks,2)==idx_c2); %second index on color
-    try
-       if isduration(y_mean{1})
-          han.p(kr,kc,ks)=errorbar(x{ks},seconds(y_mean{ks}),seconds(y_std{ks}),'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
-       else
-          han.p(kr,kc,ks)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
-       end
-    catch
-       han.p(kr,kc,ks)=errorbar(x(ks),y_mean(ks),y_std(ks),'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+    if isduration(y_mean{1})
+        y_mean_p=seconds(y_mean{ks});
+        y_std_p=seconds(y_std{ks});
+    else
+        y_mean_p=y_mean{ks};
+        y_std_p=y_std{ks};
     end
-%     pause
+    han.p(kr,kc,ks)=errorbar(x{ks},y_mean_p,y_std_p,'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
 end
 
 
@@ -389,7 +387,12 @@ for ks = 1:size(mat_u,1)
     idx_ls=find(mat_u(ks,1)==idx_c1); %first index on linestyle
     idx_color=find(mat_u(ks,2)==idx_c2); %second index on color 
     idx_data = find(ismember(mat_out,mat_u(ks,:),'rows'));
-    han.pl(kr,kc,ks)=plot(x(idx_data),y_mean(idx_data),'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+    if isduration(y_mean{1})
+        y_mean_p=seconds(y_mean{idx_data});
+    else
+        y_mean_p=y_mean{idx_data};
+    end
+    han.pl(kr,kc,ks)=plot(x{idx_data},y_mean_p,'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
 end
 
 
@@ -407,7 +410,7 @@ end
 if numel(idx_c2)~=numel(idx_mat{2,1})
     error('dimension of legend does not match')
 end
-str_leg=cell(numel(idx_mat{1,1})+numel(idx_mat{1,2}),1);
+str_leg=cell(numel(idx_mat{1,1})+numel(idx_mat{2,1}),1);
 
 kl=0;
     %first index
@@ -416,22 +419,27 @@ for ks=1:numel(idx_mat{1,1})
     idx_ls=ks;
     str_leg{kl}=idx_mat{1,2}{ks};
     if isduration(y_mean{1})
-       han.pl(kr,kc,kl)=errorbar(x{ks},seconds(y_mean{ks}),seconds(y_std{ks}),'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
+        y_mean_p=seconds(y_mean{ks});
+        y_std_p=seconds(y_std{ks});
     else
-       han.pl(kr,kc,kl)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls}); hold on;
+        y_mean_p=y_mean{ks};
+        y_std_p=y_std{ks};
     end
-
+   han.pleg(kr,kc,kl)=errorbar(x{ks},y_mean_p,y_std_p,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1{idx_ls});
 end
-% %     second index
+    %second index
 for ks=1:numel(idx_mat{2,1})
     kl=kl+1;
     idx_color=ks;
     str_leg{kl}=idx_mat{2,2}{ks};
     if isduration(y_mean{1})
-       han.pl(kr,kc,kl)=errorbar(x{ks},seconds(y_mean{ks}),seconds(y_std{ks}),'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle','-'); 
+        y_mean_p=seconds(y_mean{ks});
+        y_std_p=seconds(y_std{ks});
     else
-       han.pl(kr,kc,kl)=errorbar(x{ks},y_mean{ks},y_std{ks},'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle','-');hold on;
+        y_mean_p=y_mean{ks};
+        y_std_p=y_std{ks};
     end
+    han.pleg(kr,kc,kl)=errorbar(x{ks},y_mean_p,y_std_p,'parent',han.sfig(kr,kc),'color',prop.color(idx_color,:),'linewidth',prop.lw1,'linestyle','-'); 
 end
 
 
@@ -505,7 +513,7 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
-han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.pl(kr,kc,:),1,[]),str_leg,'location','northwest');
+han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.pleg(kr,kc,:),1,[]),str_leg,'location','northwest');
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
 % pos.leg=han.leg(kr,kc).Position;
 % han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
