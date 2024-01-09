@@ -14,6 +14,9 @@
 
 function [folder2sendup_win,folder_last]=folderUp(folder2send_win)
 
+if strcmp(folder2send_win(end),'\')
+    folder2send_win(end)='';
+end
 pathsplit=regexp(folder2send_win,'\','split');
 npath=numel(pathsplit);
 folder2sendup_win=strcat(pathsplit{1,1},'\');

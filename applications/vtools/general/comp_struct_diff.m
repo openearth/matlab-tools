@@ -14,7 +14,7 @@
 %structure. If all elements in both structures are NaN, it considers there 
 %is no difference. It only allows structures with the same fieldnames. 
 
-function [common, d1, d2, d1n]=comp_struct_diff(s1,s2,prt,pse,tol)
+function [common,d1,d2,d1n,d1m,d1ind]=comp_struct_diff(s1,s2,prt,pse,tol)
 
 %% default arguent check
 if nargin < 2
@@ -32,7 +32,7 @@ if pse > prt, pse = prt; end
 
 %%
 
-d1n=check_nans(d1,d2);
+[d1n,d1m,d1ind]=check_nans(d1,d2);
 
 end %function
 
@@ -40,7 +40,7 @@ end %function
 %% FUNCTION
 %%
 
-function dn=check_nans(d1,d2)
+function [dn,dmax,dind]=check_nans(d1,d2)
 
 if isstruct(d1)
     fn1=fieldnames(d1);
@@ -51,16 +51,21 @@ if isstruct(d1)
     
     ne=numel(fn1);
     for k1=1:ne
-        dn.(fn1{k1})=check_nans(d1.(fn1{k1}),d2.(fn1{k1}));
+        [dn.(fn1{k1}),dmax.(fn1{k1}),dind.(fn1{k1})]=check_nans(d1.(fn1{k1}),d2.(fn1{k1}));
         if isempty(dn.(fn1{k1}))
             dn=rmfield(dn,fn1{k1});
+            dmax=rmfield(dmax,fn1{k1});
+            dind=rmfield(dind,fn1{k1});
         end
     end
 else
     if all(isnan(d1)) && all(isnan(d2))
         dn=[];
+        dmax=[];
+        dind=[];
     else
         dn=d1-d2;
+        [dmax,dind]=max(abs(d1-d2));
     end
 end
 

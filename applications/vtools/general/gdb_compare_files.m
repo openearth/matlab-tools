@@ -23,11 +23,11 @@
 %   -d2 = variables which are different in file 2 [struct, double]
 %   -dd = difference between variables in files 1 and 2 [struct, double]
 
-function [eq,d1,d2,dd]=gdb_compare_files(fpath_1,fpath_2)
+function [eq,d1,d2,dd,dm,di]=gdb_compare_files(fpath_1,fpath_2)
 
 data_1=gdb_read_variables_file(fpath_1);
 data_2=gdb_read_variables_file(fpath_2);
 
-[eq,d1,d2,dd]=comp_struct_diff(data_1,data_2);
+[eq,d1,d2,dd,dm,di]=comp_struct_diff(data_1,data_2);
 
 end %function
