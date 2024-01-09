@@ -14,6 +14,15 @@
 
 function simdef=D3D_sedTrans_default(simdef)
 
+%% PARSE
+
+if isfield(simdef,'tra')==0
+    simdef.tra.IFORM=4;
+    simdef.tra.sedTrans=NaN;
+end
+
+%% CALC
+
 nf=numel(simdef.sed.dk);
 
 %make it cell array

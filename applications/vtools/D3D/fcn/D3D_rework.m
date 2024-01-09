@@ -167,6 +167,20 @@ end
 % end
 
 %%
+%% SED
+%%
+
+simdef.sed.dummy=NaN;
+
+if isfield(simdef.file,'sed')==0
+    simdef.file.sed=fullfile(simdef.D3D.dire_sim,'sed.sed');
+end
+
+if isfield(simdef.sed,'dk')==0
+    simdef.sed.dk=[];
+end
+
+%%
 %% TRA
 %%
 
@@ -454,20 +468,6 @@ end
 
 if isfield(simdef.mdf,'Idensform')==0
     simdef.mdf.Idensform=0;
-end
-
-%%
-%% SED
-%%
-
-simdef.sed.dummy=NaN;
-
-if isfield(simdef.file,'sed')==0
-    simdef.file.sed=fullfile(simdef.D3D.dire_sim,'sed.sed');
-end
-
-if isfield(simdef.sed,'dk')==0
-    simdef.sed.dk=[];
 end
 
 %%
