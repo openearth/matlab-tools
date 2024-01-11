@@ -1,8 +1,19 @@
 function [output,status] = urlreadfix(urlChar,method,params,cookies)
 %URLREADFIX Wrapper for URLREAD.
 % Runs URLREAD and if it returns an error, then trying to download file
-% with 'wget' and process as local file. This is a workaround for old
-% Matlab version, which does not support HTTPS.
+% with 'wget' and process as a local file. This is a workaround for old
+% Matlab version, which does not support HTTPS. The function also allows to
+% specify cookies.
+% Run
+%   [output,status] = urlreadfix(urlChar,method,params)
+%   [...] = urlreadfix(...,cookies)
+% where
+%   output  - content of URL
+%   status  - returns 1 if the file downloaded successfully and 0 otherwise
+%   urlChar - URL string
+%   method  - 'get' or 'post'
+%   params  - cell array of param/value pairs
+%   cookies - name of file with cookies
 % 
 % See: URLREAD
 
@@ -67,9 +78,14 @@ catch ME
         tmpFileLog = fullfile(pwd,sprintf('tmp_%s_log.dat',mfilename));
         switch lower(method)
             case 'get'
-                cmd = sprintf('wget %s "%s" -O "%s" -o "%s"',cookiesChar,[urlChar '?' dataChar],tmpFileOut,tmpFileLog);
+                if ~isempty(dataChar)
+                    URL = [urlChar '?' dataChar];
+                else
+                    URL = urlChar;
+                end
+                cmd = sprintf('wget --no-check-certificate -t 1 %s "%s" -O "%s" -o "%s"',cookiesChar,URL,tmpFileOut,tmpFileLog);
             case 'post'
-                cmd = sprintf('wget %s --post-data="%s" "%s" -O "%s" -o "%s"',cookiesChar,dataChar,urlChar,tmpFileOut,tmpFileLog);
+                cmd = sprintf('wget --no-check-certificate -t 1 %s --post-data="%s" "%s" -O "%s" -o "%s"',cookiesChar,dataChar,urlChar,tmpFileOut,tmpFileLog);
         end
         [s,~] = system(cmd);
         if s==0
