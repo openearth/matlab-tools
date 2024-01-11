@@ -81,6 +81,7 @@ end %error
 str_val=tok{1,2};
 
 %remove parenthesis in case of vector
+str_val=strrep(str_val,') (',','); 
 str_val=strrep(str_val,'(',''); 
 str_val=strrep(str_val,')',''); 
 

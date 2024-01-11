@@ -28,6 +28,6 @@ function [eq,d1,d2,dd,dm,di]=gdb_compare_files(fpath_1,fpath_2)
 data_1=gdb_read_variables_file(fpath_1);
 data_2=gdb_read_variables_file(fpath_2);
 
-[eq,d1,d2,dd,dm,di]=comp_struct_diff(data_1,data_2);
+[eq,d1,d2,dd,dm,di]=comp_struct_diff(data_1,data_2,0,0,1e-16);
 
 end %function
