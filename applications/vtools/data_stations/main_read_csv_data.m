@@ -16,13 +16,13 @@ fclose all;
 
 %% ADD OET
 
-path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
+path_add_fcn='C:\checkouts\oet_matlab\applications\vtools\general\';
 addpath(path_add_fcn)
 addOET(path_add_fcn)
 
 %% INPUT
 
-paths_main_folder='C:\Users\chavarri\checkouts\riv\data_stations\';
+paths_main_folder='c:\checkouts\data_stations\';
 
 %%
 load(fullfile(paths_main_folder,'data_stations_index.mat'))
@@ -98,8 +98,9 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% SINGLE FILE 
 
-fpath_data='c:\Users\chavarri\temporal\data\20220829_026.csv';
+fpath_data='c:\Users\chavarri\Downloads\20240112_002.csv';
 data_stations=read_csv_data(fpath_data,'flg_debug',0);
+add_data_stations(paths_main_folder,data_stations)
 
 %%
 % ns=numel(data_stations);

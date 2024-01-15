@@ -195,17 +195,21 @@ in_p.fig_visible=0;
 in_p.data_station=data_station;
 in_p.lan='en';
 % in_p.Lref='+msl';
-in_p.analysis='max';
-% in_p.time_q_year_max=data_station_prob.year.max.tim;
-% in_p.q_year_max=data_station_prob.year.max.val;
-% in_p.q_sort=data_station_prob.year.max.sort.val;
-% in_p.p_q_max=data_station_prob.year.max.sort.p;
-
 in_p.unit=data_station.grootheid;
-in_p.time_q_year_max=data_station_prob.year.min.tim;
-in_p.q_year_max=data_station_prob.year.min.val;
-in_p.q_sort=data_station_prob.year.min.sort.val;
-in_p.p_q_max=data_station_prob.year.min.sort.p;
+
+%max
+in_p.analysis='max';
+in_p.time_q_year_max=data_station_prob.year.max.tim;
+in_p.q_year_max=data_station_prob.year.max.val;
+in_p.q_sort=data_station_prob.year.max.sort.val;
+in_p.p_q_max=data_station_prob.year.max.sort.p;
+
+%min
+% in_p.analysis='min';
+% in_p.time_q_year_max=data_station_prob.year.min.tim;
+% in_p.q_year_max=data_station_prob.year.min.val;
+% in_p.q_sort=data_station_prob.year.min.sort.val;
+% in_p.p_q_max=data_station_prob.year.min.sort.p;
 
 in_p.q_day_u=data_station_prob.day.unique.val;
 in_p.p_q_days=data_station_prob.day.unique.p;

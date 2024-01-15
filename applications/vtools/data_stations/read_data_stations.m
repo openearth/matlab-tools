@@ -55,7 +55,7 @@ for kv=1:nv
     val=varargin{kv*2};
     switch par
         case 'bemonsteringshoogte'
-            if abs(val)<-1e-7
+            if abs(val)>1e-6
                 varargin_clean(kv*2-1:kv*2)='';
                 messageOut(NaN,sprintf('Parameter without meaning removed: %s',par))
             end

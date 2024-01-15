@@ -23,6 +23,8 @@
  
 function add_data_stations(paths_main_folder,data_add,varargin)
 
+%% PARSE 
+
 OPT.ask=1; %0=don't ask; 1=always ask; 2=ask only if new data
 OPT.filter_time=1;
 OPT.tim_diff_thresh=seconds(0.9);
@@ -30,18 +32,28 @@ OPT.combine_type=0;
 
 OPT=setproperty(OPT,varargin);
 
+%% CALC
+
+%paths
 paths=paths_data_stations(paths_main_folder);
 
-%get available data
+%get existing fields in data to add
 fields_add_all=fieldnames(data_add);
-% naddall=numel(fields_add_all);
 
+%get indices of fields to add to `data_stations_index` (i.e., all but `time` and `waarde`)
 idx_add2index=find(~contains(fields_add_all,{'time','waarde'}));
 fields_add2index=fields_add_all(idx_add2index);
 nadd2i=numel(fields_add2index);
 
+%parse for names that refer to same station
+switch data_add.location
+    case {'LOBI'}
+        data_add.location='LOBH';
+end
+
+%if `location_clear` exists, do not check for a match in `location`
 if isfield(data_add,'location_clear')
-    str_no_check={'time','waarde','source','location','epsg','x','y'};
+    str_no_check={'time','waarde','source','location','epsg','x','y'}; 
 else
     str_no_check={'time','waarde','source','epsg','x','y'};
 end
@@ -58,8 +70,9 @@ end
 [data_one_station,idx]=read_data_stations(paths_main_folder,tok_add{:});
 
 ns=numel(idx);
-%%
+
 if ns==0
+    %% new data
     fprintf('\nNew data:\n')
     if isfield(data_add,'location_clear')
         fprintf('    Location clear: %s\n',data_add.location_clear)
@@ -100,8 +113,9 @@ if ns==0
     fname_save=fullfile(paths.separate,sprintf('%06d.mat',ns+1));
     save(fname_save,'data_one_station');
     messageOut(NaN,sprintf('New file written: %s',fname_save)); 
-%%
+
 elseif ns==1
+    %% existing data
     fprintf('\nData already available:\n')
     fprintf('    Location clear: %s\n',data_one_station.location_clear)
     fprintf('    Grootheid: %s\n',data_one_station.grootheid)
@@ -163,8 +177,9 @@ elseif ns==1
     fname=fullfile(paths.separate,sprintf('%06d.mat',idx));
     save(fname,'data_one_station')
     messageOut(NaN,sprintf('data added to file %s',fname));
-%%
+
 elseif ns>1
+    %% mode than one existing data set matches the new data set
     fprintf('Be more precise, there are more than one station with this data:\n')
     for ks=1:ns
         fprintf('Station index: %d \n',idx(ks))
