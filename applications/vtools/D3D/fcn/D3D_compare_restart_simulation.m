@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19340 $
-%$Date: 2024-01-08 15:33:47 +0100 (Mon, 08 Jan 2024) $
-%$Author: chavarri $
-%$Id: gdb_read_variables_file.m 19340 2024-01-08 14:33:47Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/gdb_read_variables_file.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Starting from a reference simulation, it creates a 'main' and 'restart' simulation to
 %compare them running GDB. 

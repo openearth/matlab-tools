@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19085 $
-%$Date: 2023-07-25 15:47:37 +0200 (Tue, 25 Jul 2023) $
-%$Author: chavarri $
-%$Id: D3D_bat.m 19085 2023-07-25 13:47:37Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_bat.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Factor for converting time units. Given an input and
 %optionally an output unit, it provides the factor to
