@@ -110,8 +110,7 @@ else
     TStart_rst=TStart_rst_fact*mdf_rst.time.DtUser/TFact; %[TUnit]
 end
 mdf_rst.time.TStart=TStart_rst; %[TUnit]
-
-mdf_rst.numerics.Tlfsmo=max([0,mdf_main.numerics.Tlfsmo-(TStart_rst-mdf_main.time.TStart)*TFact]); %`Tlfsmo` in [s]
+mdf_rst.time.TStartTlfsmo=mdf_main.time.TStart;
 
 rst_time_dtime=datetime(num2str(mdf_rst.time.RefDate),'InputFormat','yyyyMMdd')+seconds(TStart_rst*TFact); 
 rst_time_str=string(rst_time_dtime,'yyyyMMdd_HHmmSS');
