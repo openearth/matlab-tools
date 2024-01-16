@@ -358,6 +358,8 @@ fprintf(fid,'set pagination off \n');
 fprintf(fid,'set logging file logs/list.log \n');
 fprintf(fid,'set logging on \n');
 fprintf(fid,'info variable m_flow_mp_ \n');
+fprintf(fid,'info variable m_flowtimes_mp_time1_ \n');
+fprintf(fid,'info variable m_flowtimes_mp_time0_ \n');
 % fprintf(fid,'info variable m_flowtimes_mp_ \n');
 % fprintf(fid,'info variable m_flowgeom_mp_ \n');
 
