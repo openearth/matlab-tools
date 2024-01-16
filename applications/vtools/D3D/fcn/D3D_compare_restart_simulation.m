@@ -324,7 +324,7 @@ fprintf(fid,'set logging file logs/create.log \n');
 fprintf(fid,'set logging on \n');
 
 %read
-if isempty(fpath_cmd) || isnan(fpath_cmd)
+if isempty(fpath_cmd) | sum(isnan(fpath_cmd)>0)
     fprintf(fid,'break flow_run_usertimestep.f90:56 \n');
     fprintf(fid,'condition 1 m_flowtimes::time0.eq.m_flowtimes::ti_rst \n');
 elseif ~isfile(fpath_cmd)
