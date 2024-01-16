@@ -324,7 +324,7 @@ fprintf(fid,'set logging file logs/create.log \n');
 fprintf(fid,'set logging on \n');
 
 %read
-if isempty(fpath_cmd) || isnan(fpath_cmd)
+if isempty(fpath_cmd)
     fprintf(fid,'break flow_run_usertimestep.f90:56 \n');
     fprintf(fid,'condition 1 m_flowtimes::time0.eq.m_flowtimes::ti_rst \n');
 elseif ~isfile(fpath_cmd)
@@ -360,6 +360,7 @@ fprintf(fid,'set logging on \n');
 fprintf(fid,'info variable m_flow_mp_ \n');
 fprintf(fid,'info variable m_flowtimes_mp_time1_ \n');
 fprintf(fid,'info variable m_flowtimes_mp_time0_ \n');
+fprintf(fid,'info variable m_cell_geometry_mp_ \n');
 % fprintf(fid,'info variable m_flowtimes_mp_ \n');
 % fprintf(fid,'info variable m_flowgeom_mp_ \n');
 
