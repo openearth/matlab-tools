@@ -111,7 +111,7 @@ else
 end
 mdf_rst.time.TStart=TStart_rst; %[TUnit]
 
-mdf_rst.numerics.Tlfsmo=max([0,(mdf_main.time.TStart-TStart_rst)*TFact]); %`Tlfsmo` in [s]
+mdf_rst.numerics.Tlfsmo=max([0,mdf_main.numerics.Tlfsmo-(TStart_rst-mdf_main.time.TStart)*TFact]); %`Tlfsmo` in [s]
 
 rst_time_dtime=datetime(num2str(mdf_rst.time.RefDate),'InputFormat','yyyyMMdd')+seconds(TStart_rst*TFact); 
 rst_time_str=string(rst_time_dtime,'yyyyMMdd_HHmmSS');
@@ -121,7 +121,7 @@ D3D_io_input('write',simdef_rst.file.mdf,mdf_rst);
 
     %mor-file
 mor=D3D_io_input('read',simdef_rst.file.mor);
-mor.Morphology0.MorStt=max([0,mdf_main.time.TStart-mor.Morphology0.MorStt]); %`MorStt` in [TUnit]
+mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(TStart_rst-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
 D3D_io_input('write',simdef_rst.file.mor,mor);
     
 %     %run reference simulation to create restart files
@@ -324,7 +324,7 @@ fprintf(fid,'set logging file logs/create.log \n');
 fprintf(fid,'set logging on \n');
 
 %read
-if isempty(fpath_cmd) | sum(isnan(fpath_cmd)>0)
+if isempty(fpath_cmd) || isnan(fpath_cmd)
     fprintf(fid,'break flow_run_usertimestep.f90:56 \n');
     fprintf(fid,'condition 1 m_flowtimes::time0.eq.m_flowtimes::ti_rst \n');
 elseif ~isfile(fpath_cmd)
