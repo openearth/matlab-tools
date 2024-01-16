@@ -62,7 +62,7 @@ parse(parin,varargin{:});
 
 DTUser_fact=parin.Results.DTUser_fact;
 % fpath_exe=parin.Results.fpath_exe; 
-fpath_exe=parin.Results.fpath_exe_gdb;
+fpath_exe=parin.Results.fpath_exe;
 TStart_rst_fact=parin.Results.TStart_rst_fact;
 overwrite=parin.Results.overwrite;
 
