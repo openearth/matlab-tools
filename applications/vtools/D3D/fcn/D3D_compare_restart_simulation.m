@@ -360,6 +360,7 @@ fprintf(fid,'info variable m_flow_mp_ \n');
 fprintf(fid,'info variable m_flowtimes_mp_time1_ \n');
 fprintf(fid,'info variable m_flowtimes_mp_time0_ \n');
 fprintf(fid,'info variable m_cell_geometry_mp_ \n');
+fprintf(fid,'info variable m_restart_debug_mp_ \n');
 % fprintf(fid,'info variable m_flowtimes_mp_ \n');
 % fprintf(fid,'info variable m_flowgeom_mp_ \n');
 
