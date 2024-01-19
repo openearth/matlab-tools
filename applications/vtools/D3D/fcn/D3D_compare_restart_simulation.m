@@ -101,7 +101,7 @@ D3D_io_input('write',simdef_main.file.mdf,mdf_main);
 %copy main simulation to restart
 fdirname_rst=sprintf('%s_rst',fdir_last);
 fpath_rst=fullfile(fdir_up,fdirname_rst);
-if ~isfolder(fpath_main) || overwrite
+if ~isfolder(fpath_rst) || overwrite
     copyfile_check(fpath_main,fpath_rst);
 end 
 

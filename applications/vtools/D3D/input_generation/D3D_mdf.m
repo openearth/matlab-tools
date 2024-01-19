@@ -131,6 +131,7 @@ if restart==1
 data{kl,1}=        'Restid  = #trim-restart#'; kl=kl+1;
 end
 data{kl,1}=        'Tzone  = 0'; kl=kl+1;
+data{kl,1}=        'Filtd  = '; kl=kl+1; %thin dams
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
 %Sub1 = #STWI# %'S'alinity, 'T'emperaure, 'I'secondary flow and 'W'ind
 %Sub2 = #PCW#  %'P'articles, 'W'ave, 'C'onstituents

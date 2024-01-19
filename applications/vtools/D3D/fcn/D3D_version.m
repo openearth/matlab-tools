@@ -62,9 +62,16 @@ while ~feof(fid)
                 
                 fline=fgetl(fid);
                 tok=regexp(fline,',','split');
-                version=strrep(tok{1,2},' D-Flow FM Version ','');
-                str_tim=strcat(tok{1,3},tok{1,4});
-                tim_ver=datetime(str_tim,'InputFormat','MMM d yyyy HH:mm:ss');
+                if numel(tok)==1
+                    %GIT
+                    version=strtrim(strrep(tok{1,1},'#',''));
+                    tim_ver=NaT;
+                else
+                    %SVN
+                    version=strrep(tok{1,2},' D-Flow FM Version ','');
+                    str_tim=strcat(tok{1,3},tok{1,4});
+                    tim_ver=datetime(str_tim,'InputFormat','MMM d yyyy HH:mm:ss');
+                end
                 
                 fline=fgetl(fid);
                 source=strrep(fline,'# Source:','');
