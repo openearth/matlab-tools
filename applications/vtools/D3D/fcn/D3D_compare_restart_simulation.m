@@ -312,6 +312,7 @@ fprintf(fid,'echo set logging file logs/print.log >> test_print.gdb \n');
 fprintf(fid,'echo set logging on >> test_print.gdb \n');
 fprintf(fid,'sed -z ''s/\\([a-z0-9_:]*\\)\\ntype = PTR TO -> [\\*:()a-zA-Z0-9 ,]*/echo \\1\\\\n\\nwhatis \\1\\nprint *\\1/g'' logs/type.log >> test_print.gdb \n');
 fprintf(fid,'sed -i -z ''s/\\([a-z0-9_:]*\\)\\ntype = <object is not a[a-z]*ated>\\n//g'' test_print.gdb \n');
+fprintf(fid,'sed -i -z ''s/\\([a-z0-9_:]*\\)\\ntype = void ()\\n//g'' test_print.gdb \n')
 fprintf(fid,'sed -i -z ''s/\\([a-z0-9_:]*\\)\\ntype = [\\*:()a-zA-Z0-9 ,]*/echo \\1\\\\n\\nwhatis \\1\\nprint \\1/g'' test_print.gdb \n');
 fprintf(fid,'gdb --batch --command=test_print.gdb %s core.* > tmp \n',linuxify(fpath_exe));
 
