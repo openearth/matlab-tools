@@ -121,8 +121,8 @@ end
 mdf_rst.time.TStart=mdf_main.time.TStart+TStart_rst; %[TUnit]
 mdf_rst.time.TStartTlfsmo=mdf_main.time.TStart;
 
-rst_time_dtime=datetime(num2str(mdf_rst.time.RefDate),'InputFormat','yyyyMMdd')+seconds(TStart_rst*TFact); 
-rst_time_str=string(rst_time_dtime,'yyyyMMdd_HHmmSS');
+rst_time_dtime=datetime(num2str(mdf_rst.time.RefDate),'InputFormat','yyyyMMdd')+seconds(mdf_rst.time.TStart*TFact); 
+rst_time_str=string(rst_time_dtime,'yyyyMMdd_HHmmss');
 mdf_rst.restart.RestartFile=sprintf('%s_%s_rst.nc',simdef_rst.file.mdfid,rst_time_str); %tst_20140819_120000_rst.nc
 
 D3D_io_input('write',simdef_rst.file.mdf,mdf_rst);
