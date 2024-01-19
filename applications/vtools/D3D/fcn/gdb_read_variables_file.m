@@ -65,10 +65,10 @@ lin=fgetl(fid);
 [var_name,mod_name]=fcn_variable_name(lin);
 
 lin=fgetl(fid); 
-size_array=fcn_size_array(lin);
+[size_array,str_type]=fcn_size_array(lin);
 
 lin=fgetl(fid); 
-tok_num=fcn_variable_values(lin,sep);
+tok_num=fcn_variable_values(lin,sep,str_type,size_array);
 
 tok_num=reshape(tok_num,size_array);
 
@@ -80,7 +80,7 @@ end %function
 %% FUNCTION
 %%
 
-function size_array=fcn_size_array(lin)
+function [size_array,str_type]=fcn_size_array(lin)
 
 tok=regexp(lin,'=','split');
 if numel(tok)~=2
@@ -90,7 +90,8 @@ end %error
 str_aux=tok{1,2};
 tok=regexp(str_aux,'([^\d\s]+\(\d*\))','tokens'); %INTEGER(4)
 if isempty(tok)
-    tok=regexp(str_aux,'([^\d\s]+\*\d*)','tokens'); %character*100 (40)
+    tok=regexp(str_aux,'([^\d\s]+\*\d*)','tokens'); %character*100 (40) -> character*100
+%     tok=regexp(str_aux,'([^\d\(\)\s\*]+)','tokens'); %character*100 (40) -> character
 end
 if isempty(tok)
     error('variable type not captured: %s',lin)
@@ -129,7 +130,7 @@ end %function
 
 %%
 
-function tok_num=fcn_variable_values(lin,sep)
+function tok_num=fcn_variable_values(lin,sep,str_type,size_array)
 
 tok=regexp(lin,'=','split');
 if numel(tok)~=2
@@ -144,15 +145,19 @@ str_val=strrep(str_val,')','');
 
 tok=regexp(str_val,sep,'split');
 %deal with logicals
-if strcmp(tok{1,1},'.FALSE.') 
-    tok_num=false;
+if contains(str_type,'character')
+    tok_num=NaN(size_array); %characters are not yet processed
+elseif contains(str_type,'LOGICAL')
     if numel(tok)>1
         error('Dealing with vector of logicals needs to be added: %s',str_val)
     end
-elseif strcmp(tok{1,1},'.TRUE.')
-    tok_num=true;
-    if numel(tok)>1
-        error('Dealing with vector of logicals needs to be added: %s',str_val)
+    if strcmp(strtrim(tok{1,1}),'.FALSE.') 
+        tok_num=false;
+    elseif strcmp(strtrim(tok{1,1}),'.TRUE.')
+        tok_num=true;
+    else
+        %integer because not alocated
+        tok_num=NaN;
     end
 else
     tok_num=cellfun(@(X)str2double(X),tok);

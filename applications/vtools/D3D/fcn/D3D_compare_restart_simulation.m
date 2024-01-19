@@ -336,7 +336,9 @@ fprintf(fid,'set logging on \n');
 %read
 if isempty(fpath_cmd)
     fprintf(fid,'break flow_run_usertimestep.f90:56 \n');
-    fprintf(fid,'condition 1 m_flowtimes::time0.eq.m_flowtimes::ti_rst \n');
+    fprintf(fid,'condition 1 m_flowtimes::time0.gt.(m_flowtimes::tstart_user+m_flowtimes::ti_rst+0.001) \n');
+%     fprintf(fid,'condition 1 m_flowtimes::time0.eq.m_flowtimes::ti_rst \n');
+%     condition 1 m_flowtimes::time0.ge.(m_flowtimes::tstart_user+m_flowtimes::ti_rst)
 elseif ~isfile(fpath_cmd)
     error('File with commands not found: %s',fpath_cmd);
 else
