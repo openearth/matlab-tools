@@ -128,10 +128,11 @@ mdf_rst.restart.RestartFile=sprintf('%s_%s_rst.nc',simdef_rst.file.mdfid,rst_tim
 D3D_io_input('write',simdef_rst.file.mdf,mdf_rst);
 
     %mor-file
-mor=D3D_io_input('read',simdef_rst.file.mor);
-mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(TStart_rst-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
-D3D_io_input('write',simdef_rst.file.mor,mor);
-    
+if isfield(simdef_rst.file,'mor')
+    mor=D3D_io_input('read',simdef_rst.file.mor);
+    mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(TStart_rst-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
+    D3D_io_input('write',simdef_rst.file.mor,mor);
+end
 %     %run reference simulation to create restart files
 %     run_simulation(simdef_main,fpath_exe);
     
