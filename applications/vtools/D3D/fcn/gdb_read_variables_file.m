@@ -11,15 +11,18 @@
 %$HeadURL$
 %
 %Reads data from a GDB output file. The format of the file is:
-%   -Two lines per variable.
+%   -Three lines per variable.
 %   -First line with variable name. 
 %       -Double colon (::) separates module name from variable name.
-%   -Second with value(s).
+%   -Second line with variable type.
+%       -Last parenthesis has dimensions.
+%   -Third with value(s).
 %       -Dollar symbol and integer for variable number followed by equal sign and values. 
 %       -If multiple values, in parenthesis with comma as separator.
 %
 %E.G.
 %m_flow::voltot
+%type = REAL(8) (40)
 %$312 = (12523863.333103318, 23863.333103317767, -7409.2358047277767, 16237081.164116737, 16205808.595208693, 31272.568908045545, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 function data=gdb_read_variables_file(fpath_in,varargin)
@@ -58,22 +61,76 @@ end %function
 
 function data=read_line(fid,data,sep)
 
-%% PARSE
-
-
-%% CALC
-
-%variable name
 lin=fgetl(fid); 
-tok=regexp(lin,'::','split');
+[var_name,mod_name]=fcn_variable_name(lin);
+
+lin=fgetl(fid); 
+size_array=fcn_size_array(lin);
+
+lin=fgetl(fid); 
+tok_num=fcn_variable_values(lin,sep);
+
+tok_num=reshape(tok_num,size_array);
+
+data.(mod_name).(var_name)=tok_num;
+
+end %function
+
+%%
+%% FUNCTION
+%%
+
+function size_array=fcn_size_array(lin)
+
+tok=regexp(lin,'=','split');
 if numel(tok)~=2
-    error('Two char are expected separated by a double colon (e.g., m_flow::epsmaxlevm) but this is read: %s',lin);
+    error('One and only one equal is expected: %s',lin);
 end %error
-mod_name=tok{1,1};
-var_name=tok{1,2};
+%remove type
+str_aux=tok{1,2};
+tok=regexp(str_aux,'([^\d\s]+\(\d*\))','tokens'); %INTEGER(4)
+if isempty(tok)
+    tok=regexp(str_aux,'([^\d\s]+\*\d*)','tokens'); %character*100 (40)
+end
+if isempty(tok)
+    error('variable type not captured: %s',lin)
+end
+if numel(tok{1,1})~=1
+    error('Only one type is expected: %s',lin)
+end
+str_type=tok{1,1}{1,1};
+str_aux=strrep(str_aux,str_type,'');
+%remove PTR
+str_aux=strrep(str_aux,'PTR TO ->','');
+%remove spaces
+str_size=deblank(str_aux); %I think it is not needed.
+%remove parenthesis
+str_size=strrep(str_size,'(','');
+str_size=strrep(str_size,')','');
+tok=strsplit(str_size,',');
+dim=numel(tok);
+size_array=cellfun(@(X)str2double(X),tok);
+%change 0:1 to 2 (type = REAL(8) (0:1,3920))
+bol_b1=cellfun(@(X)contains(X,':'),tok); 
+size_array_b1=cellfun(@(X)diff(str2double(strsplit(X,':')))+1,tok,'UniformOutput',false); %0:1 -> {0} {1} -> [0,1] -> 2
+size_array(bol_b1)=cell2mat(size_array_b1);
+%get size
+if isempty(str_size)
+    size_array=[1,1];
+elseif dim==1
+    size_array=[size_array,1];
+end
+%check
+if any(isnan(size_array))
+    error('Something needs to be processed')
+end
 
-%variable value
-lin=fgetl(fid); 
+end %function
+
+%%
+
+function tok_num=fcn_variable_values(lin,sep)
+
 tok=regexp(lin,'=','split');
 if numel(tok)~=2
     error('One and only one equal is expected: %s',lin);
@@ -101,12 +158,17 @@ else
     tok_num=cellfun(@(X)str2double(X),tok);
 end
 
-%add
-% fn=fieldnames(data);
-% if ismember(mod_name,fn)
-    data.(mod_name).(var_name)=tok_num;
-% else
-%     data.
-% end
+end %function
+
+%%
+
+function [var_name,mod_name]=fcn_variable_name(lin)
+
+tok=regexp(lin,'::','split');
+if numel(tok)~=2
+    error('Two char are expected separated by a double colon (e.g., m_flow::epsmaxlevm) but this is read: %s',lin);
+end %error
+mod_name=tok{1,1};
+var_name=tok{1,2};
 
 end %function
