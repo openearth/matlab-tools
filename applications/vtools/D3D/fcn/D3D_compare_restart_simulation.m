@@ -82,8 +82,18 @@ end
     %mdf
 simdef_main=D3D_simpath(fpath_main);
 mdf_main=D3D_io_input('read',simdef_main.file.mdf);
+TFact=time_factor(mdf_main.time.Tunit); %TUnit->s
 
+if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
+    DtUser_maxMultiple=(mdf_main.time.TStop*TFact-mdf_main.time.TStart*TFact)/mdf_main.time.DtUser;
+    DtUser_MultipleSecondsCheck = (DTUser_fact:DtUser_maxMultiple);
+    potential_restart_times = mdf_main.time.TStart*TFact+DtUser_MultipleSecondsCheck*DTUser_fact*mdf_main.time.DtUser; 
+    DtUser_SecondsIndex = find(potential_restart_times==round(potential_restart_times),1);
+    DTUser_fact = DtUser_MultipleSecondsCheck(DtUser_SecondsIndex);
+    warning(sprintf('DTUser_fact is updated to %i to ensure restart time is in whole seconds', DTUser_fact));
+end
 mdf_main.output.RstInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
+
 mdf_main.output.Wrirst_bnd=1;
 
 D3D_io_input('write',simdef_main.file.mdf,mdf_main);
@@ -101,7 +111,6 @@ simdef_rst=D3D_simpath(fpath_rst);
 mdf_rst=D3D_io_input('read',simdef_rst.file.mdf);
 
 %`TStart_rst` is the time at which the restarted simulation starts. 
-TFact=time_factor(mdf_rst.time.Tunit); %TUnit->s
 if isnan(TStart_rst_fact)
     %Restart after the first restart file is created. This is useful to set the breakpoint after the first restart file.
     TStart_rst=mdf_main.output.RstInterval/TFact; %[TUnit] 
@@ -109,7 +118,7 @@ else
     %Restart `TStart_rst_fact` times `DtUser`. The user is responsible from setting a break point after the right restart file is created. 
     TStart_rst=TStart_rst_fact*mdf_rst.time.DtUser/TFact; %[TUnit]
 end
-mdf_rst.time.TStart=TStart_rst; %[TUnit]
+mdf_rst.time.TStart=mdf_main.time.TStart+TStart_rst; %[TUnit]
 mdf_rst.time.TStartTlfsmo=mdf_main.time.TStart;
 
 rst_time_dtime=datetime(num2str(mdf_rst.time.RefDate),'InputFormat','yyyyMMdd')+seconds(TStart_rst*TFact); 
