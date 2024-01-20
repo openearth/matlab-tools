@@ -84,6 +84,12 @@ simdef_main=D3D_simpath(fpath_main);
 mdf_main=D3D_io_input('read',simdef_main.file.mdf);
 TFact=time_factor(mdf_main.time.Tunit); %TUnit->s
 
+if isfield(simdef_main.file,'mor')
+    mor=D3D_io_input('read',simdef_main.file.mor);
+    DTUser_fact = ceil(mor.Morphology0.MorStt*TFact/mdf_main.time.DtUser);
+    warning(sprintf('DTUser_fact is updated to %i to ensure restart time starts after MorStt', DTUser_fact));
+end
+
 if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
     DtUser_maxMultiple=(mdf_main.time.TStop*TFact-mdf_main.time.TStart*TFact)/mdf_main.time.DtUser;
     DtUser_MultipleSecondsCheck = (DTUser_fact:DtUser_maxMultiple);
@@ -130,7 +136,7 @@ D3D_io_input('write',simdef_rst.file.mdf,mdf_rst);
     %mor-file
 if isfield(simdef_rst.file,'mor')
     mor=D3D_io_input('read',simdef_rst.file.mor);
-    mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(TStart_rst-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
+    mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
     D3D_io_input('write',simdef_rst.file.mor,mor);
 end
 %     %run reference simulation to create restart files
@@ -156,7 +162,7 @@ create_run_main(fdir_up,fdirname_rst,'rst',fpath_rel_rst);
 create_create_core(fdir_up,fpath_exe);
 create_list_core(fdir_up,fpath_exe);
 create_print_core(fdir_up,fpath_exe);
-create_test_create(fdir_up,fpath_cmd,mdu_filename);
+create_test_create(fdir_up,fpath_cmd,mdu_filename,'BreakTimeCondition',sprintf('m_flowtimes::time0.gt.%.3f', mdf_main.time.TStart*TFact+mdf_main.output.RstInterval+0.001));
 create_test_list(fdir_up);
 create_postprocess_main_and_restart(fdir_up,fdirname_main,fdirname_rst);
 
@@ -322,7 +328,12 @@ end
 
 %%
 
-function create_test_create(fdir,fpath_cmd,mdu_filename)
+function create_test_create(fdir,fpath_cmd,mdu_filename,varargin)
+
+%% PARSE
+parin=inputParser;
+addOptional(parin,'BreakTimeCondition','m_flowtimes::time0.gt.(m_flowtimes::ti_rst+0.001)');
+parse(parin,varargin{:});
 
 fpath=fullfile(fdir,'test_create.gdb');
 fid=fopen(fpath,'w');
@@ -336,9 +347,7 @@ fprintf(fid,'set logging on \n');
 %read
 if isempty(fpath_cmd)
     fprintf(fid,'break flow_run_usertimestep.f90:56 \n');
-    fprintf(fid,'condition 1 m_flowtimes::time0.gt.(m_flowtimes::tstart_user+m_flowtimes::ti_rst+0.001) \n');
-%     fprintf(fid,'condition 1 m_flowtimes::time0.eq.m_flowtimes::ti_rst \n');
-%     condition 1 m_flowtimes::time0.ge.(m_flowtimes::tstart_user+m_flowtimes::ti_rst)
+    fprintf(fid,'condition 1 %s \n',parin.Results.BreakTimeCondition);
 elseif ~isfile(fpath_cmd)
     error('File with commands not found: %s',fpath_cmd);
 else
