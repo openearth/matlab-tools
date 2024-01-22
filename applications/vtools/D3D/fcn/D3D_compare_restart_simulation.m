@@ -87,7 +87,7 @@ TFact=time_factor(mdf_main.time.Tunit); %TUnit->s
 if isfield(simdef_main.file,'mor')
     mor=D3D_io_input('read',simdef_main.file.mor);
     DTUser_fact = ceil(mor.Morphology0.MorStt*TFact/mdf_main.time.DtUser);
-    warning(sprintf('DTUser_fact is updated to %i to ensure restart time starts after MorStt', DTUser_fact));
+    warning('DTUser_fact is updated to %i to ensure restart time starts after MorStt', DTUser_fact);
 end
 
 if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
@@ -96,7 +96,7 @@ if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
     potential_restart_times = mdf_main.time.TStart*TFact+DtUser_MultipleSecondsCheck*DTUser_fact*mdf_main.time.DtUser; 
     DtUser_SecondsIndex = find(potential_restart_times==round(potential_restart_times),1);
     DTUser_fact = DtUser_MultipleSecondsCheck(DtUser_SecondsIndex);
-    warning(sprintf('DTUser_fact is updated to %i to ensure restart time is in whole seconds', DTUser_fact));
+    warning('DTUser_fact is updated to %i to ensure restart time is in whole seconds', DTUser_fact);
 end
 mdf_main.output.RstInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
 
