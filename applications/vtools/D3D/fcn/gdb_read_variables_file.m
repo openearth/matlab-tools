@@ -121,8 +121,12 @@ size_array=cellfun(@(X)str2double(X),tok);
 bol_b1=cellfun(@(X)contains(X,':'),tok); 
 size_array_b1=cellfun(@(X)diff(str2double(strsplit(X,':')))+1,tok,'UniformOutput',false); %0:1 -> {0} {1} -> [0,1] -> 2
 size_array(bol_b1)=cell2mat(size_array_b1);
+%if it is empty, it is read as single NaN. Hence, dimension 1. 
+if size_array==0
+    size_array=1;
+end
 %get size
-if isempty(str_size)
+if isempty(str_size) 
     size_array=[1,1];
 elseif dim==1
     size_array=[size_array,1];
