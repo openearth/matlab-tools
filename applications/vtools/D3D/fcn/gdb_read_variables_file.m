@@ -93,6 +93,12 @@ if isempty(tok)
     tok=regexp(str_aux,'([^\d\s]+\*\d*)','tokens'); %character*100 (40) -> character*100
 %     tok=regexp(str_aux,'([^\d\(\)\s\*]+)','tokens'); %character*100 (40) -> character
 end
+%cycle structures
+% if isempty(tok)
+%     if strcmp(str_aux(2:5),'Type')
+%         lin=fgetl(fid)
+%     end
+% end
 if isempty(tok)
     error('variable type not captured: %s',lin)
 end
