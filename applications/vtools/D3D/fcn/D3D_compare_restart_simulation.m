@@ -163,7 +163,7 @@ create_run_main(fdir_up,fdirname_rst,'rst',fpath_rel_rst);
 create_create_core(fdir_up,fpath_exe);
 create_list_core(fdir_up,fpath_exe);
 create_print_core(fdir_up,fpath_exe);
-create_test_create(fdir_up,fpath_cmd,mdu_filename,'BreakTimeCondition',sprintf('m_flowtimes::time0.gt.%.3f', mdf_main.time.TStart*TFact+seconds(rst_time_s)+0.001));
+create_test_create(fdir_up,fpath_cmd,mdu_filename,'BreakTimeCondition',sprintf('m_flowtimes::time0.gt.%.3f', seconds(rst_time_s)+0.001));
 create_test_list(fdir_up);
 create_postprocess_main_and_restart(fdir_up,fdirname_main,fdirname_rst);
 
