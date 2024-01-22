@@ -127,7 +127,8 @@ end
 mdf_rst.time.TStart=mdf_main.time.TStart+TStart_rst; %[TUnit]
 mdf_rst.time.TStartTlfsmo=mdf_main.time.TStart;
 
-rst_time_dtime=datetime(num2str(mdf_rst.time.RefDate),'InputFormat','yyyyMMdd')+seconds(mdf_rst.time.TStart*TFact); 
+rst_time_s=seconds(mdf_rst.time.TStart*TFact);
+rst_time_dtime=datetime(num2str(mdf_rst.time.RefDate),'InputFormat','yyyyMMdd')+rst_time_s; 
 rst_time_str=string(rst_time_dtime,'yyyyMMdd_HHmmss');
 mdf_rst.restart.RestartFile=sprintf('%s_%s_rst.nc',simdef_rst.file.mdfid,rst_time_str); %tst_20140819_120000_rst.nc
 mdf_rst.restart = rmfield(mdf_rst.restart,'RestartDateTime');
@@ -162,7 +163,7 @@ create_run_main(fdir_up,fdirname_rst,'rst',fpath_rel_rst);
 create_create_core(fdir_up,fpath_exe);
 create_list_core(fdir_up,fpath_exe);
 create_print_core(fdir_up,fpath_exe);
-create_test_create(fdir_up,fpath_cmd,mdu_filename,'BreakTimeCondition',sprintf('m_flowtimes::time0.gt.%.3f', mdf_main.time.TStart*TFact+mdf_main.output.RstInterval+0.001));
+create_test_create(fdir_up,fpath_cmd,mdu_filename,'BreakTimeCondition',sprintf('m_flowtimes::time0.gt.%.3f', mdf_main.time.TStart*TFact+rst_time_s+0.001));
 create_test_list(fdir_up);
 create_postprocess_main_and_restart(fdir_up,fdirname_main,fdirname_rst);
 
@@ -348,6 +349,7 @@ fprintf(fid,'set logging on \n');
 if isempty(fpath_cmd)
     fprintf(fid,'break flow_run_usertimestep.f90:56 \n');
     fprintf(fid,'condition 1 %s \n',parin.Results.BreakTimeCondition);
+%     fprintf(fid,'condition 1 m_flowtimes::time0.gt.(m_flowtimes::tstart_user+m_flowtimes::ti_rst+0.001) \n');
 elseif ~isfile(fpath_cmd)
     error('File with commands not found: %s',fpath_cmd);
 else
