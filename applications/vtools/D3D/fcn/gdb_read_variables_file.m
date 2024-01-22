@@ -109,11 +109,11 @@ str_type=tok{1,1}{1,1};
 str_aux=strrep(str_aux,str_type,'');
 %remove PTR
 str_aux=strrep(str_aux,'PTR TO ->','');
-%remove spaces
-str_size=deblank(str_aux); %I think it is not needed.
 %remove parenthesis
-str_size=strrep(str_size,'(','');
-str_size=strrep(str_size,')','');
+str_aux=strrep(str_aux,'(','');
+str_aux=strrep(str_aux,')','');
+%remove spaces
+str_size=deblank(strtrim(str_aux)); 
 tok=strsplit(str_size,',');
 dim=numel(tok);
 size_array=cellfun(@(X)str2double(X),tok);
