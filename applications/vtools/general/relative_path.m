@@ -39,6 +39,9 @@ while common
         common=strcmp(tok_file{1,kdir},tok_dir{1,kdir});
     end
 end
+if ~common;
+    kdir = kdir-1; % assert(strcmp(relative_path('a\b\c', 'a\b\e'),'../c'))
+end
 idx_comm=kdir;
 idx_up=ndir-idx_comm+1; 
 
