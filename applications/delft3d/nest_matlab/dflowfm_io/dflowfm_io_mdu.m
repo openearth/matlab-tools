@@ -53,13 +53,16 @@ case 'read'
             % Fill mdu structure
             val_raw=tmp.Data{igroup,2}{ipar,2};
             val_num=str2double(val_raw);
+            if isnan(val_num) %try again replacing d for exponent by e
+                val_num=str2double(strrep(val_raw,'d','e'));
+            end    
             if isnan(val_num) %it is a character
                 val=val_raw;
             else %it is a number
                 if strcmp(parnam,'FileVersion') %treat as string
                     val=val_raw;
                 else %treat as number
-                    val = str2double(val_raw);
+                    val = val_num;
                 end
             end
 
