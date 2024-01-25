@@ -1,0 +1,39 @@
+%
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 19009 $
+%$Date: 2023-06-20 07:14:19 +0200 (Tue, 20 Jun 2023) $
+%$Author: chavarri $
+%$Id: test_01.m 19009 2023-06-20 05:14:19Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/call_fortran_from_matlab/matlab/test_01.m $
+%
+%Description
+
+%% PREAMBLE
+
+% dbclear all;
+clear
+clc
+fclose all;
+
+%% PATHS
+
+fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
+fdir_d3d='c:\checkouts\qp\';
+
+% fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
+% fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
+
+%% ADD OET
+ 
+if isunix %we assume that if Linux we are in the p-drive. 
+    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
+end
+run(fpath_add_oet);
+
+%%
+
+lib=loadlibrary('test_01.dll','test_01.h');
+out1=calllib('test_01','mult2',8.5);
+out2=calllib('test_01','mult2_double',8.5);
+unloadlibrary test_01
