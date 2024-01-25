@@ -90,6 +90,11 @@ if isfield(simdef_main.file,'mor')
     warning('DTUser_fact is updated to %i to ensure restart time starts after MorStt', DTUser_fact);
 end
 
+if (DTUser_fact > mdf_main.time.TStop*TFact/mdf_main.time.DtUser) 
+    DTUser_fact = floor(mdf_main.time.TStop*TFact/mdf_main.time.DtUser/2);
+    warning('DTUser_fact is reduced to %i such that restart occurs before TStop/2', DTUser_fact);
+end
+    
 if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
     DtUser_maxMultiple=(mdf_main.time.TStop*TFact-mdf_main.time.TStart*TFact)/mdf_main.time.DtUser;
     DtUser_MultipleSecondsCheck = (DTUser_fact:DtUser_maxMultiple);
@@ -380,13 +385,20 @@ fprintf(fid,'set print repeats 0 \n');
 fprintf(fid,'set pagination off \n');
 fprintf(fid,'set logging file logs/list.log \n');
 fprintf(fid,'set logging on \n');
-fprintf(fid,'info variable m_flow_mp_ \n');
-fprintf(fid,'info variable m_flowtimes_mp_ \n');
-fprintf(fid,'info variable m_cell_geometry_mp_ \n');
-fprintf(fid,'info variable m_restart_debug_mp_ \n');
+% fprintf(fid,'info variable m_flow_mp_ \n');
+% fprintf(fid,'info variable m_flowtimes_mp_ \n');
+% fprintf(fid,'info variable m_cell_geometry_mp_ \n');
+% fprintf(fid,'info variable m_restart_debug_mp_ \n');
+fprintf(fid,'info variable m_flow_mp_s1_ \n'); 
+fprintf(fid,'info variable m_flow_mp_u1_ \n'); 
+fprintf(fid,'info variable m_flow_mp_q1_ \n'); 
+fprintf(fid,'info variable m_flowgeom_mp_bl \n');
+fprintf(fid,'info variable m_flowtimes_mp_time0_ \n');
+fprintf(fid,'info variable m_flowtimes_mp_time1_ \n');
+fprintf(fid,'info variable m_restart_debug_mp_ \n'); 
+% fprintf(fid,'#info variable m_cell_geometry_mp_ \n'); 
 % fprintf(fid,'info variable m_flowtimes_mp_ \n');
 % fprintf(fid,'info variable m_flowgeom_mp_ \n');
-
 fclose(fid);
 
 end
