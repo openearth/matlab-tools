@@ -16,9 +16,11 @@ b=3;
 c=0;
 d=0;
 e=[7,8.2];
+f=true;
+g='a';
 
 %% CALL
 
-lib=loadlibrary('tram2.dll','tram2.h');
-[a2,b2,c2,d2,e2]=calllib('tram2','tram2',a,b,c,d,e);
+[lib,war]=loadlibrary('tram2.dll','tram2.h');
+[a2,b2,c2,d2,e2,f2,g2]=calllib('tram2','tram2',a,b,c,d,e,f,g);
 unloadlibrary tram2
