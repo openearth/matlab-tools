@@ -9,39 +9,16 @@
 %
 %Description
 
-%% PREAMBLE
-
-% dbclear all;
-clear
-clc
-fclose all;
-
-%% PATHS
-
-fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
-fdir_d3d='c:\checkouts\qp\';
-
-% fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
-% fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
-
-%% ADD OET
- 
-if isunix %we assume that if Linux we are in the p-drive. 
-    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
-end
-run(fpath_add_oet);
-
 %% INPUT
 
 a=2;
 b=3;
 c=0;
 d=0;
+e=[7,8.2];
 
-%%
+%% CALL
 
 lib=loadlibrary('tram2.dll','tram2.h');
-[a2,b2,c2,d2]=calllib('tram2','tram2',a,b,c,d);
+[a2,b2,c2,d2,e2]=calllib('tram2','tram2',a,b,c,d,e);
 unloadlibrary tram2
-
-% assert
