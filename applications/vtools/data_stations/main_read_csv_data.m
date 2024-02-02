@@ -10,15 +10,25 @@
 
 %% PREAMBLE
 
+% dbclear all;
 clear
 clc
 fclose all;
 
+%% PATHS
+
+fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
+fdir_d3d='c:\checkouts\qp\';
+
+% fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
+% fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
+
 %% ADD OET
 
-path_add_fcn='C:\checkouts\oet_matlab\applications\vtools\general\';
-addpath(path_add_fcn)
-addOET(path_add_fcn)
+if isunix %we assume that if Linux we are in the p-drive. 
+    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
+end
+run(fpath_add_oet);
 
 %% INPUT
 
@@ -98,8 +108,9 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% SINGLE FILE 
 
-fpath_data='c:\Users\chavarri\Downloads\20240112_002.csv';
+fpath_data='c:\Users\chavarri\Downloads\20240126_073.csv';
 data_stations=read_csv_data(fpath_data,'flg_debug',0);
+data_stations=data_stations(1);
 add_data_stations(paths_main_folder,data_stations)
 
 %%
@@ -188,7 +199,7 @@ add_data_stations(paths_main_folder,data_stations)
 
 %%
 
-% load c:\Users\chavarri\checkouts\riv\data_stations\separate\000411.mat 
+% load c:\Users\chavarri\checkouts\riv\data_stations\separate\00047.mat 
 % %%
 % figure
 % plot(data_one_station.time,data_one_station.waarde)
