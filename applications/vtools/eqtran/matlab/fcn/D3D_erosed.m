@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19299 $
-%$Date: 2023-12-12 17:03:24 +0100 (Tue, 12 Dec 2023) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 19299 2023-12-12 16:03:24Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Parses input to call `eqtran`.
 %

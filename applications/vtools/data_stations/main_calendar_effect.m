@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19354 $
-%$Date: 2024-01-15 14:21:36 +0100 (Mon, 15 Jan 2024) $
-%$Author: chavarri $
-%$Id: main_Q_statistics.m 19354 2024-01-15 13:21:36Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/data_stations/main_Q_statistics.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 %% PREAMBLE
