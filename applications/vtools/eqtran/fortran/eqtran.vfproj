@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectType="typeDynamicLibrary" ProjectCreator="Intel Fortran" Keyword="Dll" Version="11.0" ProjectIdGuid="{7D8B1A1F-8797-44C3-93D3-06A617D0A832}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemWindows" LinkDLL="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" AdditionalIncludeDirectories="./include" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemWindows" LinkDLL="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" SuppressStartupBanner="true" SubSystem="subSystemWindows" LinkDLL="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="./include" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" SuppressStartupBanner="true" SubSystem="subSystemWindows" LinkDLL="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<Filter Name="common">
+		<File RelativePath=".\source\common\mathconsts.f90"/>
+		<File RelativePath=".\source\common\precision.f90"/>
+		<File RelativePath=".\source\common\precision_basics.f90"/></Filter>
+		<Filter Name="data">
+		<File RelativePath=".\source\morphology_data\morphology_data_module.f90"/>
+		<File RelativePath=".\source\morphology_data\sediment_basics_module.f90"/></Filter>
+		<Filter Name="kernel">
+		<File RelativePath=".\source\morphology_kernel\bailtr.f90"/>
+		<File RelativePath=".\source\morphology_kernel\bedbc1993.f90"/>
+		<File RelativePath=".\source\morphology_kernel\bedbc2004.f90"/>
+		<File RelativePath=".\source\morphology_kernel\bedtr1993.f90"/>
+		<File RelativePath=".\source\morphology_kernel\bedtr2004.f90"/>
+		<File RelativePath=".\source\morphology_kernel\calseddf1993.f90"/>
+		<File RelativePath=".\source\morphology_kernel\calseddf2004.f90"/>
+		<File RelativePath=".\source\morphology_kernel\eqtran.f90"/>
+		<File RelativePath=".\source\morphology_kernel\factor3d2d.f90"/>
+		<File RelativePath=".\source\morphology_kernel\fgyint.f90"/>
+		<File RelativePath=".\source\morphology_kernel\osmom.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_abreu.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_bss1.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_bss2.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_bsscurrent.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_core.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_orb.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_ripple.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_rrr12.f90"/>
+		<File RelativePath=".\source\morphology_kernel\santoss_sfltd99.f90"/>
+		<File RelativePath=".\source\morphology_kernel\sed_support_routines.f90"/>
+		<File RelativePath=".\source\morphology_kernel\termfy.f90"/>
+		<File RelativePath=".\source\morphology_kernel\termgy.f90"/>
+		<File RelativePath=".\source\morphology_kernel\trab11.f90"/>
+		<File RelativePath=".\source\morphology_kernel\trab12.f90"/>
+		<File RelativePath=".\source\morphology_kernel\trab14.f90"/>
+		<File RelativePath=".\source\morphology_kernel\trab19.f90"/>
+		<File RelativePath=".\source\morphology_kernel\trab20.f90"/>
+		<File RelativePath=".\source\morphology_kernel\trabg.f90"/>
+		<File RelativePath=".\source\morphology_kernel\trabwc.f90"/>
+		<File RelativePath=".\source\morphology_kernel\trabwc2.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tram1.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tram2.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tran9t.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tranb1.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tranb2.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tranb3.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tranb4.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tranb5.f90"/>
+		<File RelativePath=".\source\morphology_kernel\tranb7.f90"/>
+		<File RelativePath=".\source\morphology_kernel\ua_rvr.f90"/>
+		<File RelativePath=".\source\morphology_kernel\ua_vt.f90"/>
+		<File RelativePath=".\source\morphology_kernel\wave.f90"/>
+		<File RelativePath=".\source\common\wavenr.f90"/></Filter></Filter>
+		<File RelativePath=".\ReadMe.txt"/></Files>
+	<Globals/></VisualStudioProject>

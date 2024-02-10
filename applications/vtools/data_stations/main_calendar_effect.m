@@ -56,9 +56,39 @@ save('tmp.mat','q_sort_all','p_all');
 
 %%
 
+data_station_r=read_data_stations(path_data_stations,'location_clear','Lobith','grootheid','Q');
+
+bol_1=data_station.time<datetime(1950,1,1,'TimeZone','+01:00');
+
+val_p=data_station_r.waarde;
+val_p( bol_1)=val_p( bol_1)*1.05;
+val_p(~bol_1)=val_p(~bol_1)*1.025;
+
+data_station.waarde=val_p;
+data_station_prob=data_station_probability(data_station);
+
+q_sort_un{1}=data_station_prob.year.max.sort.val;
+p_all_un{1}=data_station_prob.year.max.sort.p;
+
+val_n=data_station_r.waarde;
+val_n( bol_1)=val_n( bol_1)*0.95;
+val_n(~bol_1)=val_n(~bol_1)*0.975;
+
+data_station.waarde=val_n;
+data_station_prob=data_station_probability(data_station);
+
+q_sort_un{2}=data_station_prob.year.max.sort.val;
+p_all_un{2}=data_station_prob.year.max.sort.p;
+
+%%
+
 % figure
 % hold on
 % plot(data_station.time,data_station.waarde)
+
+figure
+hold on
+plot(data_station.time,[val_p,val_n]')
 
 %% 
 
@@ -69,6 +99,9 @@ plot(q_sort_all{k},1./p_all{k},'color',[0.8,0.8,0.8])
 end
 k=1;
 plot(q_sort_all{k},1./p_all{k},'color','k')
+for k=1:2
+plot(q_sort_un{k},1./p_all_un{k},'color','r')
+end
 set(gca,'YScale','log')
 xlabel('discharge [m^3/s]')
 title('Lobith')
