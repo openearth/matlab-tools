@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 19428 $
+%$Date: 2024-02-10 10:41:10 +0100 (Sat, 10 Feb 2024) $
+%$Author: chavarri $
+%$Id: D3D_erosed.m 19428 2024-02-10 09:41:10Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/eqtran/matlab/fcn/D3D_erosed.m $
 %
 %Parses input to call `eqtran`.
 %
@@ -16,7 +16,7 @@
 
 function [...
     par,realpar,kmax,ws,dicww,ltur,jawave,ubot,sigmol,lundia,tauadd,scour,eps,npar,numintpar,numrealpar,...
-    numstrpar,dllfunc,dllhandle,intpar,strpar,lsecfl,drho,tetacr,dstar,taucr...
+    numstrpar,dllfunc,dllhandle,intpar,strpar,lsecfl,drho,tetacr,dstar,taucr,chezy...
     ]=D3D_erosed(...
     kmax,i2d3d,lsecfl,ws,dicww,iturbulencemodel,frac,suspfrac,wave,ucxq_mor,ucyq_mor,h1,...
     hrms,tp,teta,rlabda,uorb,kwtur,dzbdt,di50,dss,dstar,d10,d15,d90,mudfrac,hidexp,...
@@ -107,29 +107,17 @@ strpar=repmat('a',numstrpar,256); %character(256), dimension(numstrpar), intent(
 sedd50=di50;
 ee=exp(1);
 vonkar=0.41;
-dzdx      = dzduu;
-dzdy      = dzdvv;
+dzdx=dzduu;
+dzdy=dzdvv;
 sag=sqrt(ag);
 
-%% FRICTION
+%% 
 
-% if (jawave > 0 .and. .not. flowWithoutWaves) then
-%  z0rou = max(epsz0,z0rouk(nm))
-% else ! currents only
-%  z0rou = z0curk(nm)       ! currents+potentially trachy
-% end if
-
-if jawave
-    z0rou=z0rouk;
-else
-    z0rou=z0cur;
-end
-
-chezy=sag*log(h1/ee/z0rou)/vonkar;
+[z0rou,chezy]=D3D_friction(jawave,z0rouk,z0cur,sag,h1,ee,vonkar);
 
 %%
 
-[uuu,vvv,umod,zumod,utot,u,v,ustarc]=D3D_velocity(i2d3d,ucxq_mor,ucyq_mor,zcc,hs_mor,ee,vonkar,z0rou,chezy,ag,bl,eps);
+[uuu,vvv,umod,zumod,utot,u,v,ustarc]=D3D_velocity(i2d3d,ucxq_mor,ucyq_mor,zcc,hs_mor,ee,vonkar,z0rou,chezy,sag,bl,eps);
 
 %% PAR
 
@@ -137,9 +125,7 @@ par=D3D_par(ag,rhowat,rhosol,sedd50,acal,b,cc,rmu,thcr,acals,bs,ccs,rmus,thcrs);
 
 %% realpar
 
-ins=v2struct(utot,u,v,uuu,vvv,umod,zumod,h1,chezy,hrms,tp,teta,rlabda,uorb,kwtur,dzbdt,dzdx,dzdy,di50,dss,dstar,d10,d15,d90,mudfrac,hidexp,wsb,rhosol,rhowat,salinity,ag,vicmol,taub,vonkar,z0cur,z0rou,ustarc,dg,dgsd,sandfrac,numrealpar);
-
-realpar=D3D_realpar(ins);
+realpar=D3D_realpar(utot,u,v,uuu,vvv,umod,zumod,h1,chezy,hrms,tp,teta,rlabda,uorb,kwtur,dzbdt,dzdx,dzdy,di50,dss,dstar,d10,d15,d90,mudfrac,hidexp,wsb,rhosol,rhowat,salinity,ag,vicmol,taub,vonkar,z0cur,z0rou,ustarc,dg,dgsd,sandfrac,numrealpar);
 
 %% sediment parameters
 

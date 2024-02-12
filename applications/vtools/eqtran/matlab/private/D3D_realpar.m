@@ -4,66 +4,15 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 19428 $
+%$Date: 2024-02-10 10:41:10 +0100 (Sat, 10 Feb 2024) $
+%$Author: chavarri $
+%$Id: D3D_realpar.m 19428 2024-02-10 09:41:10Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/eqtran/matlab/fcn/D3D_realpar.m $
 %
 %Builds `realpar` variable to call `eqtran` in Delft3D. 
-%Used is made of `v2struct`. This is expensive. Consider an explicit
-%interface if calling in loop. 
 
-function realpar=D3D_realpar(ins)
-
-%% allocate
-
-%useful for not having to pass all input 
-
-utot     = NaN;
-u        = NaN;
-v        = NaN;
-uuu      = NaN;
-vvv      = NaN;
-umod     = NaN;
-zumod    = NaN;
-h1       = NaN;
-chezy    = NaN;
-hrms     = NaN;
-tp       = NaN;
-teta     = NaN;
-rlabda   = NaN;
-uorb     = NaN;
-kwtur    = NaN;
-dzbdt    = NaN;
-dzdx     = NaN;
-dzdy     = NaN;
-di50     = NaN;
-dss      = NaN;
-dstar    = NaN;
-d10      = NaN;
-d15      = NaN;
-d90      = NaN;
-mudfrac  = NaN;
-hidexp   = NaN;
-wsb      = NaN;
-rhosol   = NaN;
-rhowat   = NaN;
-salinity = NaN;
-ag       = NaN;
-vicmol   = NaN;
-taub     = NaN;
-vonkar   = NaN;
-z0cur    = NaN;
-z0rou    = NaN;
-ustarc   = NaN;
-dg       = NaN;
-dgsd     = NaN;
-sandfrac = NaN;
-
-%% overwrite with input
-
-v2struct(ins);
+function realpar=D3D_realpar(utot,u,v,uuu,vvv,umod,zumod,h1,chezy,hrms,tp,teta,rlabda,uorb,kwtur,dzbdt,dzdx,dzdy,di50,dss,dstar,d10,d15,d90,mudfrac,hidexp,wsb,rhosol,rhowat,salinity,ag,vicmol,taub,vonkar,z0cur,z0rou,ustarc,dg,dgsd,sandfrac,numrealpar)
 
 %% index
 
