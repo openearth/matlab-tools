@@ -85,14 +85,22 @@ mdf_main=D3D_io_input('read',simdef_main.file.mdf);
 TFact=time_factor(mdf_main.time.Tunit); %TUnit->s
 
 if isfield(simdef_main.file,'mor')
-    mor=D3D_io_input('read',simdef_main.file.mor);
-    DTUser_fact = ceil(mor.Morphology0.MorStt*TFact/mdf_main.time.DtUser);
-    warning('DTUser_fact is updated to %i to ensure restart time starts after MorStt', DTUser_fact);
+    if exist(simdef_main.file.mor,'file')==2
+        mor=D3D_io_input('read',simdef_main.file.mor);
+        DTUser_fact_old = DTUser_fact;
+        DTUser_fact = max(DTUser_fact,ceil(mor.Morphology0.MorStt*TFact/mdf_main.time.DtUser));
+        if (DTUser_fact_old ~= DTUser_fact)
+            warning('DTUser_fact is updated to %i to ensure restart time starts after MorStt', DTUser_fact);
+        end
+    end
 end
 
 if (DTUser_fact > mdf_main.time.TStop*TFact/mdf_main.time.DtUser) 
+    DTUser_fact_old = DTUser_fact;
     DTUser_fact = floor(mdf_main.time.TStop*TFact/mdf_main.time.DtUser/2);
-    warning('DTUser_fact is reduced to %i such that restart occurs before TStop/2', DTUser_fact);
+    if (DTUser_fact_old ~= DTUser_fact)
+        warning('DTUser_fact is reduced to %i such that restart occurs before TStop/2', DTUser_fact);
+    end
 end
     
 if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
@@ -141,9 +149,11 @@ D3D_io_input('write',simdef_rst.file.mdf,mdf_rst);
 
     %mor-file
 if isfield(simdef_rst.file,'mor')
-    mor=D3D_io_input('read',simdef_rst.file.mor);
-    mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
-    D3D_io_input('write',simdef_rst.file.mor,mor);
+    if exist(simdef_main.file.mor,'file')==2
+        mor=D3D_io_input('read',simdef_rst.file.mor);
+        mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
+        D3D_io_input('write',simdef_rst.file.mor,mor);
+    end
 end
 %     %run reference simulation to create restart files
 %     run_simulation(simdef_main,fpath_exe);
