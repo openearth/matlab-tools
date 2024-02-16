@@ -53,7 +53,7 @@ function [simdef]=D3D_rework(simdef)
 
 simdef.mdf.vkappa=0.41; %von Karman
 
-
+simdef.file.dummy=NaN;
 
 %%
 %% D3D
@@ -83,11 +83,12 @@ if ~isfield(simdef.file,'runid')
     simdef.file.runid=fullfile(simdef.D3D.dire_sim,'runid');
 end
 
+%default is serial computation in h7
+simdef=D3D_rework_nodes(simdef);
+
 %%
 %% FILE
 %%
-
-simdef.file.dummy=NaN;
 
 %not needed when parameters passed through sed-file?
 % switch simdef.D3D.structure
@@ -213,6 +214,13 @@ else
     simdef.mdf.secflow=0;
 end
 
+%times computed
+if isfield(simdef.mdf,'nparts_res')
+    c=simdef.ini.u+sqrt(simdef.mdf.g*simdef.ini.h);
+    dt_opt=simdef.mdf.CFL*simdef.grd.dx/c; %optimum time step
+    [simdef.mdf.Dt,simdef.mdf.Tstop,simdef.mdf.Flmap_dt,simdef.mor.MorStt]=D3D_adapt_time(dt_opt,simdef.mdf.Tstop,simdef.mor.MorStt,simdef.mor.MorFac,simdef.mdf.nparts_res);
+end
+
 %time units
 if isfield(simdef.mdf,'Tunit')==0
     simdef.mdf.Tunit='S';
@@ -226,12 +234,13 @@ end
 
 %stop time
 if isfield(simdef.mdf,'Tstop')==0
-    simdef.mdf.Tstop=NaN;
+    error('You need to provide Tstop')
 end
 
 %dt
 if isfield(simdef.mdf,'Dt')==0
-    simdef.mdf.Dt=NaN;
+    warning('There was no Dt. It is set to 1. In FM used to round of times.')
+    simdef.mdf.Dt=1;
 end
 if numel(simdef.mdf.Dt)>1
     error('Dimension of <Dt> should be 1')
@@ -250,7 +259,6 @@ end
 %rework stop time
 if rem(simdef.mdf.Tstop,simdef.mdf.Dt)~=0
     simdef.mdf.Tstop=(floor(simdef.mdf.Tstop/simdef.mdf.Dt)+1)*simdef.mdf.Dt; %output in seconds
-    
     warning('Simulation time does not match with time step. I have changed the simulation time.')
 end
 

@@ -20,7 +20,7 @@
 %
 %E.G.:
 
-function [tim_dur,t0,tf,processes,tim_sim,sim_efficiency,num_dt,timervals]=D3D_computation_time(simdef,varargin)
+function [tim_dur,t0,tf,processes,tim_sim,sim_efficiency,num_dt,timervals,timloop_sim]=D3D_computation_time(simdef,varargin)
    OPT.timernames = [];
    OPT = setproperty(OPT,varargin{:});
    
@@ -28,9 +28,9 @@ function [tim_dur,t0,tf,processes,tim_sim,sim_efficiency,num_dt,timervals]=D3D_c
    
    switch structure
       case 1
-         [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals]=D3D_computation_time_D3D4(fpath_dia,OPT.timernames);
+         [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_computation_time_D3D4(fpath_dia,OPT.timernames);
       case 2
-         [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals]=D3D_computation_time_FM(fpath_dia,OPT.timernames);
+         [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_computation_time_FM(fpath_dia,OPT.timernames);
    end
    
    sim_efficiency=tim_sim./(tim_dur*processes);
@@ -41,7 +41,7 @@ end %function
 %% FUNCTIONS
 %%
 
-function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals]=D3D_computation_time_D3D4(fpath_dia,timernames)
+function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_computation_time_D3D4(fpath_dia,timernames)
    timervals=[];
    if ~exist('timernames','var') || isempty(timernames)
       timernames=[];
@@ -84,6 +84,9 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals]=D3D_computation_time
    %simulated time
    tim_sim=NaT-NaT;
    
+   %time in timeloop
+   timloop_sim=NaT-NaT;
+
    %processes
    processes=NaN; %check where it is
    
@@ -103,7 +106,7 @@ end %function
 
 %%
 
-function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals]=D3D_computation_time_FM(fpath_dia,timernames)
+function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_computation_time_FM(fpath_dia,timernames)
    timervals=[];
    if ~exist('timernames','var') || isempty(timernames)
       timernames=[];
@@ -148,12 +151,15 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals]=D3D_computation_time
          for kloop=1:2
             fline=fgetl(fid);
          end
-         tok=regexp(fline,'** INFO   : simulation period      \(h\)  :\s*(\d*).(\d*)','tokens');
-         tim_sim=hours(str2double(tok{1,1}{1,1})+str2double(tok{1,1}{1,2})/10);
+         tok=regexp(fline,'** INFO   : simulation period      \(h\)  :\s*(\d*.\d*)','tokens');
+         tim_sim=hours(str2double(tok{1,1}{1,1}));
+         %time in timeloop
+         fline=fgetl(fid);
+         tok=regexp(fline,'** INFO   : total time in timeloop \(h\)  :\s*(\d*.\d*)','tokens');
+         timloop_sim=hours(str2double(tok{1,1}{1,1}));
+         %MPI 
+         fline=fgetl(fid);
          %processes
-         for kloop=1:2
-            fline=fgetl(fid);
-         end
          tok=regexp(fline,'#processes   : (\d*)','tokens');
          if ~isempty(tok)
             processes=str2double(tok{1,1}{1,1});

@@ -43,12 +43,7 @@ path_input_folder_refmdf='../../01_input';
 path_ref=fullfile(path_folder_sims,sprintf('r%03d',0));
 fcn_adapt=@(X)matrix_variation_01(X);
 
-    %% run file
-call_script='run_cases';
-run_script_lin='run.sh'; 
-run_script_win='run_p_dimr.bat'; 
-
 %% CALL
 
 input_m=D3D_input_variation(path_folder_sims,path_input_folder,path_input_folder_refmdf,fcn_adapt);
-D3D_create_variation_simulations(path_ref,input_m,'run_script_lin',run_script_lin,'run_script_win',run_script_win,'call_script',call_script)
+D3D_create_variation_simulations(path_ref,input_m);

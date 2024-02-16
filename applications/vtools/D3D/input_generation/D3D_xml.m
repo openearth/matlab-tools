@@ -19,10 +19,12 @@ function D3D_xml(fpath_xml,fname_mdu,varargin)
 parin=inputParser;
 
 addOptional(parin,'check_existing',true)
+addOptional(parin,'partitions',1);
 
 parse(parin,varargin{:})
 
 check_existing=parin.Results.check_existing;
+partitions=parin.Results.partitions;
 
 %% FILE
 
@@ -44,6 +46,6 @@ switch structure
     case 1
         D3D_d3d4_config(fpath_xml,fname_mdu)
     case 2
-        D3D_dimr_config(fpath_xml,fname_mdu);
+        D3D_dimr_config(fpath_xml,fname_mdu,partitions);
 end
 

@@ -70,6 +70,7 @@ D3D_write_readme(input_m,'fpath_out',fullfile(fdir_sim_runs,'readme.txt'));
 %structure
 simdef.D3D.dire_sim=path_ref;
 simdef=D3D_simpath(simdef);
+simdef.mdf.dummy=NaN; %there may be no change in mdf. 
 % runid=simdef.file.mdfid; %name of the mdf
 
 %run file

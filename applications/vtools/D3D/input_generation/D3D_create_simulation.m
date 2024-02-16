@@ -179,7 +179,7 @@ if ~only_run_script
     save(fpath_simdef,'simdef')
     
     %run script
-    [strsoft_lin,strsoft_win]=D3D_bat(simdef,simdef.file.software,'check_existing',false);   
+    D3D_bat(simdef,simdef.file.software,'check_existing',false);   
     
 end 
 

@@ -25,6 +25,14 @@ else
 end
 OMP_num=simdef.D3D.OMP_num;
 
+simdef=D3D_rework_nodes(simdef);
+
+nodes=simdef.D3D.nodes;
+tasks_per_node=simdef.D3D.tasks_per_node;
+time_duration=simdef.D3D.time_duration;
+partition=simdef.D3D.partition;
+cluster_str=simdef.D3D.cluster;
+
 %2DO: add option that if <structure> does not exist, it searches in the directory.
 
 % [~,~,ext]=fileparts(fname_mdu);
@@ -48,6 +56,8 @@ end
 fname_mdu=sprintf('%s%s',runid,ext);
 
 %% PARSE
+
+%2DO remove this. The idea is that all parsing occurs in `D3D_rework`
 
 parin=inputParser;
 
@@ -74,10 +84,10 @@ fpath_dimr=fullfile(dire_sim,dimr_str);
 
 %% dimr
 
-D3D_xml(fpath_dimr,fname_mdu,'check_existing',check_existing)
+D3D_xml(fpath_dimr,fname_mdu,'check_existing',check_existing,'partitions',nodes*tasks_per_node)
 
 %% batch
 
-[strsoft_lin,strsoft_win]=D3D_bat_write(dire_sim,fpath_software,dimr_str,structure,OMP_num);
+[strsoft_lin,strsoft_win]=D3D_bat_write(dire_sim,fpath_software,dimr_str,structure,OMP_num,cluster_str,runid,partition,time_duration,tasks_per_node,nodes);
 
 end %function

@@ -12,7 +12,13 @@
 %
 %
 
-function D3D_dimr_config(fpath_xml,fname_mdu)
+function D3D_dimr_config(fpath_xml,fname_mdu,partitions)
+
+%% CALC
+
+partitions_v=0:1:partitions-1;
+str_partitions_v=sprintf('%d ',partitions_v);
+str_partitions_v(end)=''; %remove last space
 
 fid=fopen(fpath_xml,'w');
 
@@ -28,6 +34,8 @@ fprintf(fid,'        <start name="myNameDFlowFM"/>                              
 fprintf(fid,'    </control>                                                                                                                                                                                                                     \r\n');
 fprintf(fid,'    <component name="myNameDFlowFM">                                                                                                                                                                                               \r\n');
 fprintf(fid,'        <library>dflowfm</library>                                                                                                                                                                                                 \r\n');
+fprintf(fid,'        <process>%s</process> \r\n',str_partitions_v);
+fprintf(fid,'        <mpiCommunicator>DFM_COMM_DFMWORLD</mpiCommunicator> \r\n');
 fprintf(fid,'        <workingDir>.</workingDir>                                                                                                                                                                                                 \r\n');
 fprintf(fid,'        <inputFile>%s</inputFile>                                                                                                                                                                                                  \r\n',fname_mdu);
 fprintf(fid,'    </component>                                                                                                                                                                                                                   \r\n');
