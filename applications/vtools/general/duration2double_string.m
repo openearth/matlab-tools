@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17637 $
-%$Date: 2021-12-08 22:21:26 +0100 (wo, 08 dec 2021) $
-%$Author: chavarri $
-%$Id: parse_layout.m 17637 2021-12-08 21:21:26Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/parse_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [str,days_d,hours_d,minutes_d,seconds_d]=duration2double_string(dur)

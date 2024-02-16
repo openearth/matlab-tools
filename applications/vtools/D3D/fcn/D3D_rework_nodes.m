@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18728 $
-%$Date: 2023-02-24 08:43:33 +0100 (vr, 24 feb 2023) $
-%$Author: chavarri $
-%$Id: D3D_create_run_batch.m 18728 2023-02-24 07:43:33Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_create_run_batch.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function simdef=D3D_rework_nodes(simdef)
