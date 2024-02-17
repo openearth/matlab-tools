@@ -393,7 +393,9 @@ end
 
 kr=1; kc=1;   
 for kS=1:nS
-    han.p(kr,kc,1)=scatter(1:1:ns,data(:,kS),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);    
+    for ks=1:ns
+        han.p(kr,kc,1)=scatter(1:1:ns,data{ks,kS},prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);    
+    end
 end
 
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index

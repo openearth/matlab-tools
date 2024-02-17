@@ -83,7 +83,14 @@ if isfield(in_p,'do_title')==0
     in_p.do_title=1;
 end
 if isfield(in_p,'xlims')==0
-    in_p.xlims=[min(in_p.tim),max(in_p.tim)];
+    ns=numel(in_p.tim);
+    aux=NaT;
+    aux.TimeZone='+00:00';
+    for ks=1:ns
+    aux=cat(1,aux,in_p.tim{ks});
+    end
+    in_p.xlims=[min(aux(:)),max(aux(:))];
+
 end
 
 v2struct(in_p)
@@ -418,18 +425,18 @@ end
 %% PLOT
 
 kr=1; kc=1;   
-nS=size(val,2);
-for kS=1:nS
-    han.p(kr,kc,kS)=plot(tim,val(:,kS),'parent',han.sfig(kr,kc),'color',cmap(kS,:),'linewidth',lw,'linestyle',prop.ls1,'marker',prop.m1);
+n_sta=numel(val);
+for k_sta=1:n_sta
+    han.p(kr,kc,k_sta)=plot(tim{k_sta},val{k_sta},'parent',han.sfig(kr,kc),'color',cmap(k_sta,:),'linewidth',lw,'linestyle',prop.ls1,'marker',prop.m1);
     if do_measurements
         %deal better with colors...
-        han.pm(kr,kc,kS)=plot(data_stations(kS).time,data_stations(kS).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea,'linestyle',prop.ls1,'marker',prop.m1);
+        han.pm(kr,kc,k_sta)=plot(data_stations(k_sta).time,data_stations(k_sta).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea,'linestyle',prop.ls1,'marker',prop.m1);
     end
     if do_fil
-        han.pf(kr,kc,kS)=plot(tim_f,val_f(:,kS),'parent',han.sfig(kr,kc),'color',cmap(kS,:),'linewidth',lw_f,'linestyle',prop.ls1,'marker',prop.m1);
+        han.pf(kr,kc,k_sta)=plot(tim_f,val_f(:,k_sta),'parent',han.sfig(kr,kc),'color',cmap(k_sta,:),'linewidth',lw_f,'linestyle',prop.ls1,'marker',prop.m1);
         if do_measurements
             %deal better with colors...
-            han.pm(kr,kc,kS)=plot(data_stations_f(kS).time,data_stations_f(kS).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea_f,'linestyle',prop.ls1,'marker',prop.m1);
+            han.pm(kr,kc,k_sta)=plot(data_stations_f(k_sta).time,data_stations_f(k_sta).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea_f,'linestyle',prop.ls1,'marker',prop.m1);
         end
     end
         
@@ -515,14 +522,14 @@ kr=1; kc=1;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 
 if do_measurements
-    if nS>1
+    if n_sta>1
         error('deal with str_leg')
     else
         leg_str={labels4all('sim',1,lan),labels4all('mea',1,lan)};
         han.leg(kr,kc)=legend(han.sfig(kr,kc),[reshape(han.p(kr,kc,:),1,[]),reshape(han.pm(kr,kc,:),1,[])],leg_str,'location','best');
     end
 else
-    if nS>1
+    if n_sta>1
         han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),strrep(leg_str,'_','\_'),'location','best');
     end
 end

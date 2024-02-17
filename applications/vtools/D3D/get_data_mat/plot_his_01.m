@@ -57,7 +57,7 @@ end
 
 %% PATHS
 
-nS=numel(simdef);
+n_sim=numel(simdef);
 fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
@@ -77,9 +77,7 @@ end
 
 %% TIME
 
-%we are reading only one time
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(1),'results_type',results_type); %force his reading. Needed for SMT.
-[tim_dnum_p,tim_dtime_p]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
+tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,results_type,n_sim);
 
 %% DIMENSIONS
 
@@ -89,8 +87,8 @@ nvar=numel(flg_loc.var);
 %% GRID
 
 %Load here all the grids, which are needed for the layers. 
-for kS=1:nS
-    gridInfo(kS)=gdm_load_grid_simdef(fid_log,simdef(kS)); %not nice to have to load it every time
+for k_sim=1:n_sim
+    gridInfo(k_sim)=gdm_load_grid_simdef(fid_log,simdef(k_sim)); %not nice to have to load it every time
 end
 
 %% FIGURE INI
@@ -107,17 +105,21 @@ in_p.tim=tim_dtime_p;
 
 fext=ext_of_fig(in_p.fig_print);
 
-%ldb
-% if isfield(flg_loc,'fpath_ldb')
-%     in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
-% end
-
 %% CHECKS
 
-if flg_loc.do_all_sta && nS>1
+if flg_loc.do_all_sta && n_sim>1
     %I am now squeezeing `data_all` to pass to the plotting routine. I have to think what I want to do
     %for the case in which we want several stations from several simulations together in the same plot.
     flg_loc.do_all_sta=0;
+end
+
+%allocate to save all data
+if flg_loc.do_all_sta
+    %if we want to plot all stations together, we need to allocate for it. 
+    n_sta=ns; %number of stations that we allocate. 
+else
+    %otherwise, it is a waste of memory.
+    n_sta=1;
 end
 
 %% LOOP
@@ -129,128 +131,56 @@ for kvar=1:nvar
     
     varname=flg_loc.var{kvar};
     var_str=D3D_var_num2str_structure(varname,simdef(1));
-    
-    ksc=0;
-
-    %allocate for convergence
-    if flg_loc.do_convergence
-        data_conv=NaN(ns,nS);
-    end
-    
+        
     nylim=size(flg_loc.ylims_var{kvar},1);
-    fpath_file=cell(ns,nylim);
+    data_all=cell(n_sim,n_sta);
+    data_conv=cell(n_sim,n_sta);
     
-    %allocate to save all data
-    if flg_loc.do_all_sta
-        %if we want to plot all stations together, we need to allocate for it. 
-        Ns=ns; %number of stations that we allocate. 
-    else
-        %otherwise, it is a waste of memory.
-        Ns=1;
-    end
-    data_all=NaN(nt,nS,Ns);
-
     %loop on stations
     for ks=ks_v
-        
-        ksc=ksc+1;
 
-        in_p.station=stations{ks};
-        
         %if we do not want to plot all stations of the same run together, 
         %we always write in first dimension
         if flg_loc.do_all_sta
-            kss=ks; %index of the station in which we save
+            k_sta=ks; %index of the station in which we save
         else
-            kss=1;
+            k_sta=1;
         end
 
-        for kS=1:nS %simulations            
-            fdir_mat=simdef(kS).file.mat.dir;
-            fpath_his=simdef(kS).file.his;
-            
-            switch his_type
-                case 1
-                    layer=gdm_station_layer(flg_loc,gridInfo(kS),fpath_his,stations{ks},var_str); 
-                case 2
-                    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
-            end
-            
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
-            load(fpath_mat_tmp,'data');
-            if size(data,1)~=size(data_all,1)
-                error('Not all simulations have the same output interval.') %
-            end
-            data_all(:,kS,kss)=data;
-        end
-        
-        %save for convergence
-        if flg_loc.do_convergence
-            %simplest form, take last two values
-%             data_conv(ks,:)=diff(data_all(end-1:end,:),1,1)/seconds(diff(time_dtime(end-1:end)));
-            %std of the predifined time
-            [data_conv(ks,:),unit_conv,is_std_conv]=check_convergence(flg_loc,data_all(:,:,kss),tim_dtime_p,var_str);
-        end
-        
-        in_p.val=data_all(:,:,kss);
         in_p.unit=var_str;
         if isfield(flg_loc,'unit')
             if ~isempty(flg_loc.unit{kvar})
                 in_p.unit=flg_loc.unit{kvar};
             end
         end
+
+        stations_loc=stations{ks};
+        in_p.station=stations_loc;
+
+        %% load data
+        [data_all,layer] =load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type);
+        
+        %% convergence
+        [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,var_str,k_sta,data_conv);
         
         %% measurements
-        
-        %2DO move to function
-        if isfield(flg_loc,'measurements')
-            if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
-                [str_sta,str_found]=RWS_location_clear(stations{ks});
-                data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:}); %location maybe better?
-                if isempty(data_mea)
-                    in_p.do_measurements=0;
-                    data_mea=NaN;
-                else
-                    in_p.do_measurements=1;
-                    in_p.data_stations=data_mea;
-                end
-            else
-                error('do reader')
-            end
-        else
-            in_p.do_measurements=0;
-            data_mea=NaN;
-        end
+        [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc);
 
         %% filtered data
-        if flg_loc.do_fil  
-            in_p.do_fil=1;
-            
-            [tim_f,data_f]=filter_1D(time_dtime,data_all(:,:,kss),'method','godin'); 
-            
-            in_p.val_f=data_f;
-            in_p.tim_f=tim_f;
-            
-            if in_p.do_measurements                
-                [tim_f,data_f]=filter_1D(data_mea.time,data_mea.waarde,'method','godin');
-                
-                in_p.data_stations_f.time=tim_f;
-                in_p.data_stations_f.waarde=data_f;
-            end
-        end
+        in_p=add_filter(flg_loc,in_p,data_all,tim_dtime_p,data_mea);
         
-        %% value
+        %% plot value
         
+        in_p.val=data_all(:,k_sta); %we pass all simulations and only one stations
         fdir_fig_var=fullfile(fdir_fig,var_str);
         mkdir_check(fdir_fig_var,NaN,1,0);
         
         for kylim=1:nylim
-            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations{ks},var_str,layer,kylim);
-            fpath_file{ks,kylim}=sprintf('%s%s',fname_noext,fext); %for movie 
+            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations_loc,var_str,layer,kylim); %are you sure simdef(1)?
+%             fpath_file=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;
-            
-            in_p.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,data_all(:,:,kss),data_mea);
+            in_p.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,{reshape(cell2mat(data_all(:,k_sta)),1,[])},data_mea);
 
             fig_his_sal_01(in_p);
         end %kylim
@@ -274,18 +204,24 @@ for kvar=1:nvar
     end
 
     %% all obs in same figure
+
     if flg_loc.do_all_sta
+
+        if n_sim>1
+            continue
+        end
 
         in_p_sta_all=in_p;
 
         fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'allsta');
         
-        in_p_sta_all.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,squeeze(data_all),data_mea);
+        in_p_sta_all.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,{reshape(cell2mat(data_all),1,[])},data_mea);
         in_p_sta_all.fname=fname_noext;
-        in_p_sta_all.val=squeeze(data_all);
+        in_p_sta_all.val=data_all;
         in_p_sta_all.leg_str=stations; 
         in_p_sta_all.do_title=0;
-        
+        in_p_sta_all.tim=repmat({tim_dtime_p{1,1}},1,ns);
+
         fig_his_sal_01(in_p_sta_all)         
        
     end
@@ -313,7 +249,7 @@ function ylims=get_ylims(ylims,do_measurements,data,data_mea)
 
 if isnan(ylims)
     if do_measurements
-        ylims_1=[min(data(:)),max(data(:))];
+        ylims_1=[min([data{:}]),max([data{:}])];
         switch data_mea.eenheid
             case 'mg/l'
                 ylims_2=[min(sal2cl(-1,data_mea.waarde)),sal2cl(-1,max(data_mea.waarde))];
@@ -323,7 +259,7 @@ if isnan(ylims)
 
         ylims=[min(ylims_1(1),ylims_2(1)),max(ylims_1(2),ylims_2(2))];
     else
-        ylims=[min(data(:)),max(data(:))];
+        ylims=[min([data{:}]),max([data{:}])];
     end
 end
 
@@ -364,7 +300,12 @@ end %function
 
 %%
 
-function [data_conv,unit,is_std]=check_convergence(flg_loc,data_all,time_dtime_p,var_str)
+function [data_conv,unit,is_std]=check_convergence(flg_loc,data_all,time_dtime_p,var_str,k_sta,data_conv)
+
+unit='';
+is_std=NaN;
+
+if flg_loc.do_convergence
 
 %% PARSE
 
@@ -376,20 +317,114 @@ if isfield(flg_loc,'convergence_time')==0
 end
 
 %% CALC
+
 switch flg_loc.convergence_type
     case 1 %simplest form, take last two values
-        data_conv(ks,:)=diff(data_all(end-1:end,:),1,1)/seconds(diff(time_dtime_p(end-1:end)));
-        
-        unit=sprintf('%s/t',var_str);
-        is_std=0;
+        error('repair')
+%         data_conv(ks,:)=diff(data_all(end-1:end,:),1,1)/seconds(diff(time_dtime_p(end-1:end)));
+%         
+%         unit=sprintf('%s/t',var_str);
+%         is_std=0;
     case 2 %std over time
-        t0=time_dtime_p(end)-flg_loc.convergence_time;
-        bol_tim=time_dtime_p>t0;
-        data_conv=std(data_all(bol_tim,:));
-        
-        unit=var_str;
-        is_std=1;
+        for k_sim=1:n_sim
+            t0=time_dtime_p{k_sim}(end)-flg_loc.convergence_time;
+            bol_tim=time_dtime_p{k_sim}>t0;
+            data_conv{k_sim,k_sta}=std(data_all{k_sim,k_sta}(bol_tim));
+            
+            unit=var_str;
+            is_std=1;
+        end
+end
+   
 end
 
+end %function
+
+%%
+
+function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type)
+
+for k_sim=1:n_sim %simulations            
+    fdir_mat=simdef(k_sim).file.mat.dir;
+    fpath_his=simdef(k_sim).file.his;
+    
+    %variable
+    switch his_type
+        case 1
+            layer=gdm_station_layer(flg_loc,gridInfo(k_sim),fpath_his,stations_loc,var_str); 
+        case 2
+            layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+    end
+    
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer);
+    load(fpath_mat_tmp,'data');
+    data_all{k_sim,k_sta}=data;
+
+end %k_sim
+
+end %function
+
+%%
+
+function tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,results_type,n_sim)
+
+tim_dtime_p=cell(n_sim,1);
+
+for k_sim=1:n_sim %simulations            
+
+    %time
+    [nt(k_sim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(k_sim),'results_type',results_type); %force his reading. Needed for SMT.
+    [tim_dnum_p,tim_dtime_p{k_sim}]=gdm_time_flow_mor(flg_loc,simdef(k_sim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
+
+end %k_sim
+
+end %function
+
+%% 
+
+function [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc)
+
+if isfield(flg_loc,'measurements')
+    if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
+        [str_sta,str_found]=RWS_location_clear(stations_loc);
+        data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:}); %location maybe better?
+        if isempty(data_mea)
+            in_p.do_measurements=0;
+            data_mea=NaN;
+        else
+            in_p.do_measurements=1;
+            in_p.data_stations=data_mea;
+        end
+    else
+        error('do reader')
+    end
+else
+    in_p.do_measurements=0;
+    data_mea=NaN;
+end
+
+end %function
+
+%%
+
+function in_p=add_filter(flg_loc,in_p,data_all,time_dtime,data_mea,k_sta)
+
+if flg_loc.do_fil  
+    for k_sim=1:n_sim
+        in_p.do_fil=1;
+        
+        [tim_f,data_f]=filter_1D(time_dtime{k_sim},data_all{k_sim,k_sta},'method','godin'); 
+        
+        in_p.val_f{k_sim,k_sta}=data_f;
+        in_p.tim_f{k_sim,k_sta}=tim_f;
+        
+        if in_p.do_measurements                
+            [tim_f,data_f]=filter_1D(data_mea.time,data_mea.waarde,'method','godin');
             
+            in_p.data_stations_f.time=tim_f;
+            in_p.data_stations_f.waarde=data_f;
+        end
+    end
+end
+
 end %function
