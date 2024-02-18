@@ -22,6 +22,10 @@ if isfield(flg_loc,'fig_print')==0
     flg_loc.fig_print=1;
 end
 
+if isfield(flg_loc,'do_plot_pli')==0
+    flg_loc.fig_print=1;
+end
+
 %% DO
 
 ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
@@ -124,6 +128,48 @@ for kt=kt_v
     end %kvar
 end %kt
 
+%% plot pli
+
+if flg_loc.do_plot_pli
+    [sb,wb]=gdm_load_sb_wb(flg_loc,simdef);
+    x=cell(nrkm,3);
+    y=cell(nrkm,3);
+    for krkm=1:nrkm
+        for kpli=1:3 %left centre right
+            pliname=sprintf('%04d_%1d',krkm,idx_v(kpli));
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname);
+            load(fpath_mat_tmp,'data');
+
+            x{krkm,kpli}=data.Xcor;
+            y{krkm,kpli}=data.Ycor;
+        end %kpli
+    end %rkm
+
+    fdir_fig_loc=fullfile(fdir_fig,'pli');
+    mkdir_check(fdir_fig_loc);
+
+    in_p=flg_loc;
+    in_p.fig_visible=0;
+
+    in_p.idx_v=idx_v;
+    in_p.x=x;
+    in_p.y=y;
+    in_p.sb=sb;
+    in_p.wb=wb;
+
+    for krkm=1:nrkm
+
+        in_p.fname=fig_name_pli(fdir_fig_loc,tag,runid,krkm);
+        tol=flg_loc.s_floodplain*2;
+        in_p.lims_x=[mean(x{krkm,2},'omitnan')-tol,mean(x{krkm,2},'omitnan')+tol];
+        in_p.lims_y=[mean(y{krkm,2},'omitnan')-tol,mean(y{krkm,2},'omitnan')+tol];
+    
+        fig_fraction_cs_pli(in_p)
+
+    end
+
+end
+
 end %function
 
 %%
@@ -133,5 +179,13 @@ end %function
 function fpath_fig=fig_name(fdir_fig,tag,varname,runid,time_dnum,var_str)
 
 fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s',tag,varname,runid,datestr(time_dnum,'yyyymmddHHMMSS'),var_str));
+
+end
+
+%%
+
+function fpath_fig=fig_name_pli(fdir_fig,tag,runid,krkm)
+
+fpath_fig=fullfile(fdir_fig,sprintf('%s_pli_%s_%02d',tag,runid,krkm));
 
 end

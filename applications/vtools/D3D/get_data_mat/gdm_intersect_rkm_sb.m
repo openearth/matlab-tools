@@ -23,12 +23,15 @@ function [xy_int_L,xy_int_R]=gdm_intersect_rkm_sb(flg_loc,xy_ext,xy_loc,sb)
 if isfield(flg_loc,'s_floodplain')==0
     flg_loc.s_floodplain=6000; %distance across the rkm-line to intersect with summerbed and winterbed [m]
 end
+if isfield(flg_loc,'intersection_type')==0
+    flg_loc.intersection_type=1; %1=error, 2=take value in `s_floodplain`
+end
 
 %% CALC
 
 [xy_L,xy_R]=perpendicular_polyline(xy_ext,2,flg_loc.s_floodplain); %polyline parallel to the left and right of the rkm polyline
-xy_int_L=intersect_sb_line(xy_loc,xy_L,sb,xy_ext);
-xy_int_R=intersect_sb_line(xy_loc,xy_R,sb,xy_ext);
+xy_int_L=intersect_sb_line(flg_loc,xy_loc,xy_L,sb,xy_ext);
+xy_int_R=intersect_sb_line(flg_loc,xy_loc,xy_R,sb,xy_ext);
 
 %% DEBUG
 
@@ -68,12 +71,22 @@ end %function
 
 %%
 
-function xy_int_L=intersect_sb_line(xy_loc,xy_L,sb,xy_ext)
+function xy_int_L=intersect_sb_line(flg_loc,xy_loc,xy_L,sb,xy_ext)
 
 xy_perp_L=[xy_loc;xy_L(2,:)]; %line perpendicular to the rkm point. At location 2 in `xy_L` and `xy_R` it is the point perpendicular to the `xy_loc`, as this was the second point in `xy_ext`.
-xy_int_L=InterX(xy_perp_L',sb')'; %intersection with the summerbed
-if isempty(xy_int_L)
-    plot_and_error(sb,xy_ext,xy_perp_L,xy_L,xy_int_L)
+switch flg_loc.intersection_type
+    case 3
+        xy_int_L=xy_L(2,:);
+    otherwise
+        xy_int_L=InterX(xy_perp_L',sb')'; %intersection with the summerbed
+        if isempty(xy_int_L)
+            switch flg_loc.intersection_type
+                case 1
+                    plot_and_error(sb,xy_ext,xy_perp_L,xy_L,xy_int_L)
+                case 2
+                    xy_int_L=xy_L(2,:);
+            end
+        end
 end
 xy_int_L=xy_int_L(1,:); %if there are several interverntions we take the first one
 

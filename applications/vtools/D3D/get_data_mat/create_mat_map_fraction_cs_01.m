@@ -30,6 +30,10 @@ if isfield(flg_loc,'drkm')==0
     flg_loc.drkm=0.1; %distance along rkm-line to extend upstream and downstream for computing the angle [km]
 end
 
+if isfield(flg_loc,'intersection_type_sb_wb')==0
+    flg_loc.intersection_type_sb_wb=[1,3]; 
+end
+
 % if isfield(flg_loc,'write_shp')==0
 %     flg_loc.write_shp=0;
 % end
@@ -73,14 +77,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% POLYGONS AND RKM
 
-sb=D3D_io_input('read',flg_loc.fpath_sb,'xy_only',1);
-if isfield(flg_loc,'fpath_wb')
-    wb=D3D_io_input('read',flg_loc.fpath_wb,'xy_only',1);
-elseif isfield(simdef.file,'enc')
-    wb=D3D_io_input('read',simdef.file.enc,'ver',3); %result in array
-else
-    error('There is no definition of winter bed. Provide either an enclosure file or a file directly as input.')
-end
+[sb,wb]=gdm_load_sb_wb(flg_loc,simdef);
 
 %% LOAD TIME
 
@@ -115,8 +112,12 @@ for krkm=1:nrkm %rkm
             error('do')
     end
     
-    %intersection left-right
+    %intersection left
+    flg_loc.intersection_type=flg_loc.intersection_type_sb_wb(1);
     [xy_int_sb_L,xy_int_sb_R]=gdm_intersect_rkm_sb(flg_loc,xy_ext,xy_loc,sb);
+    
+    %interesection right
+    flg_loc.intersection_type=flg_loc.intersection_type_sb_wb(2);
     [xy_int_wb_L,xy_int_wb_R]=gdm_intersect_rkm_sb(flg_loc,xy_ext,xy_loc,wb);
 
     pli(:,:,1)=[xy_int_sb_L;xy_int_wb_L]; %left
@@ -124,17 +125,20 @@ for krkm=1:nrkm %rkm
     pli(:,:,3)=[xy_int_wb_R;xy_int_sb_R]; %right
     
 %     %% BEGIN DEBUG
-% 
+% % 
 %     figure
 %     hold on
 %     axis equal
 %     plot(sb(:,1),sb(:,2),'-k');
 %     plot(xy_ext(:,1),xy_ext(:,2),'or-')
 % 
-%     plot(pli_L(:,1),pli_L(:,2),'b')
-%     plot(pli_C(:,1),pli_C(:,2),'g')
-%     plot(pli_R(:,1),pli_R(:,2),'c')
-%     
+%     plot([xy_int_sb_L(1),xy_int_sb_R(1)],[xy_int_sb_L(2),xy_int_sb_R(2)])
+%     for kpli=1:3
+%         plot(pli(:,1,kpli),pli(:,2,kpli))
+%     end
+% 
+%     plot(data.Xcor,data.Ycor,'g')
+% 
 %     %% END DEBUG
     
     ktc=0;
