@@ -143,7 +143,7 @@ switch varname
                 data_h=gdm_read_data_map_ls(fdir_mat,fpath_map,'wd',varargin{:});
                 data.val=data.val./sqrt(9.81.*data_h.val); %ideally gravity is read from mdu.
         end
-    case {'Q'}
+    case {'Q','qsp'}
         data=gdm_read_data_map_ls_Q(fdir_mat,fpath_map,varname,simdef,varargin{:});
     otherwise
         data=gdm_read_data_map_ls(fdir_mat,fpath_map,varname,varargin{:});

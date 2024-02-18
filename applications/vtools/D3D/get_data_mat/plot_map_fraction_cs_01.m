@@ -62,8 +62,13 @@ nylims=size(flg_loc.ylims,1);
 
 in_p=flg_loc; %attention with unexpected input
 in_p.fig_visible=0;
-
 % fext=ext_of_fig(in_p.fig_print);
+
+%order of plot
+% in_p.str_leg={'left','centre','right'};
+% idx_v=[1,2,3];
+in_p.str_leg={'centre','right','left'};
+idx_v=[2,3,1];
 
 %% LOOP 
 
@@ -80,15 +85,15 @@ for kt=kt_v
         varname=flg_loc.var{kvar};
         [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(varname,simdef);
 
-        val_tot=NaN(nrkm,3); %left centre right
+        val_tot=NaN(nrkm,3); 
         for krkm=1:nrkm
             for kpli=1:3 %left centre right
     
-                pliname=sprintf('%04d_%1d',krkm,kpli);
+                pliname=sprintf('%04d_%1d',krkm,idx_v(kpli));
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname);
                 load(fpath_mat_tmp,'data');
 
-                val_tot(krkm,kpli)=sum(data.val,'omitnan');
+                val_tot(krkm,kpli)=data.val_plot;
             end %kpli
         end %rkm
 
@@ -118,10 +123,6 @@ for kt=kt_v
 %         writematrix([flg_loc.rkm',val_tot./sum(val_tot,2)],'rkm-Qrel.csv')
     end %kvar
 end %kt
-
-for kpli=1:npli %variable
-
-end 
 
 end %function
 

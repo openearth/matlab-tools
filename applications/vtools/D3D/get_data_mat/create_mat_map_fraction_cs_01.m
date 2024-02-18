@@ -74,7 +74,13 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 %% POLYGONS AND RKM
 
 sb=D3D_io_input('read',flg_loc.fpath_sb,'xy_only',1);
-wb=D3D_io_input('read',flg_loc.fpath_wb,'xy_only',1);
+if isfield(flg_loc,'fpath_wb')
+    wb=D3D_io_input('read',flg_loc.fpath_wb,'xy_only',1);
+elseif isfield(simdef.file,'enc')
+    wb=D3D_io_input('read',simdef.file.enc,'ver',3); %result in array
+else
+    error('There is no definition of winter bed. Provide either an enclosure file or a file directly as input.')
+end
 
 %% LOAD TIME
 
@@ -90,18 +96,26 @@ messageOut(fid_log,sprintf('Reading %s krkm %4.2f %% kt %4.2f %% kvar %4.2f %%',
 for krkm=1:nrkm %rkm
     
     switch flg_loc.xy_input_type
-        case 1 %rijntakken branches
+        case {1,2}
             rkm_loc=flg_loc.rkm(krkm); %rkm to take a cross-section
-            br_loc=branch_rijntakken(rkm_loc,flg_loc.br); %branch of the rkm point
-            xy_loc=convert2rkm(flg_loc.fpath_rkm,rkm_loc,{br_loc}); %x-y coordinates of the rkm point to take a cross-section
-            xy_ds=convert2rkm(flg_loc.fpath_rkm,rkm_loc+flg_loc.drkm,{br_loc}); %x-y coordinates of a point slightly dowsntream of the rkm point
-            xy_us=convert2rkm(flg_loc.fpath_rkm,rkm_loc-flg_loc.drkm,{br_loc}); %x-y coordinates of a point slightly upstream of the rkm point
+
+            %branch of the rkm point
+            switch flg_loc.xy_input_type
+                case 1 
+                    br_loc=branch_rijntakken(rkm_loc,flg_loc.br); 
+                case 2 
+                    br_loc=branch_maas(rkm_loc); 
+            end
+
+            xy_loc=convert2rkm(flg_loc.fpath_rkm,rkm_loc,br_loc); %x-y coordinates of the rkm point to take a cross-section
+            xy_ds=convert2rkm(flg_loc.fpath_rkm,rkm_loc+flg_loc.drkm,br_loc); %x-y coordinates of a point slightly dowsntream of the rkm point
+            xy_us=convert2rkm(flg_loc.fpath_rkm,rkm_loc-flg_loc.drkm,br_loc); %x-y coordinates of a point slightly upstream of the rkm point
             xy_ext=[xy_us;xy_loc;xy_ds]; %polyline along rkm 
         otherwise
             error('do')
     end
     
-    %interesction left-right
+    %intersection left-right
     [xy_int_sb_L,xy_int_sb_R]=gdm_intersect_rkm_sb(flg_loc,xy_ext,xy_loc,sb);
     [xy_int_wb_L,xy_int_wb_R]=gdm_intersect_rkm_sb(flg_loc,xy_ext,xy_loc,wb);
 
@@ -110,18 +124,17 @@ for krkm=1:nrkm %rkm
     pli(:,:,3)=[xy_int_wb_R;xy_int_sb_R]; %right
     
 %     %% BEGIN DEBUG
-
+% 
 %     figure
 %     hold on
 %     axis equal
 %     plot(sb(:,1),sb(:,2),'-k');
 %     plot(xy_ext(:,1),xy_ext(:,2),'or-')
-%
+% 
 %     plot(pli_L(:,1),pli_L(:,2),'b')
 %     plot(pli_C(:,1),pli_C(:,2),'g')
 %     plot(pli_R(:,1),pli_R(:,2),'c')
-% 
-% 
+%     
 %     %% END DEBUG
     
     ktc=0;
@@ -148,6 +161,17 @@ for krkm=1:nrkm %rkm
                     data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),'pli',pli(:,:,kpli),'pliname',pliname,'tim',time_dnum(kt));%,'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite); %this overwriting flag should be different than the previous
                     data.rkm=rkm_loc;
                     data.br=br_loc;
+                    
+                    switch var_str_read
+                        case 'Q' 
+                            data.val_plot=sum(data.val,'omitnan');
+                        case 'qsp'
+                            bol_in=~isnan(data.val) & abs(data.val)>1e-12;
+                            data.val_plot=mean(data.val(bol_in));
+                        otherwise
+                            error('add')
+                    end
+
                     save_check(fpath_mat_tmp,'data'); 
                 end                
 

@@ -19,6 +19,8 @@ if ver==1
     stru_out.val={tek.Field.Data};
 elseif ver==2
     stru_out=struct('name',{tek.Field.Name},'xy',{tek.Field.Data});
+elseif ver==3
+    stru_out=tek.Field.Data;
 else 
     error('Unknonw version')
 end

@@ -327,6 +327,28 @@
 % kp=kp+1;
 % in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.fdir_shp,'sb.shp');
 
+%% cross-section along rkm and compute left-centre-right
+
+% tag='fig_map_fraction_cs';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=1; %regular plot
+% in_plot.(tag).var={'Q','qsp'}; 
+% in_plot.(tag).tim=Inf;
+% in_plot.(tag).tim_just_load=true;
+% in_plot.(tag).tim_type=2;
+% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random
+% in_plot.(tag).tol_tim=1.1;
+% in_plot.(tag).ylims=[NaN,NaN];
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).fpath_sb=fullfile(fpaths.fdir_sb,'L3R3.shp');
+% % in_plot.(tag).fpath_wb=fullfile(fpaths.fdir_wb,''); %if commented out, it uses model enclosure
+% in_plot.(tag).fpath_rkm=fullfile(fpaths.fdir_rkm,'rkm_mod.csv'); %river kilometer file. See format: open convert2rkm
+%     rkm_lim=rkm_limits('linne-roermond');
+% in_plot.(tag).rkm=rkm_lim(1)+2:1:rkm_lim(2); %river km vectors to average the data; 
+% in_plot.(tag).xy_input_type=2; %Maas
+% in_plot.(tag).s_floodplain=9000;
+
 %%
 
 function D3D_gdm(in_plot)

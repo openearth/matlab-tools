@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 19243 $
+%$Date: 2023-11-20 11:49:45 +0100 (Mon, 20 Nov 2023) $
+%$Author: chavarri $
+%$Id: branch_rijntakken.m 19243 2023-11-20 10:49:45Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/branch_rijntakken.m $
 %
 %Branch names of the rijntakken for a given track
 %

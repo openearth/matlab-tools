@@ -28,8 +28,8 @@ function D3D_list_of_variables
 %   10  'umag'  = depth averaged velocity [m/s]; call with <layers> to do an average of the selected layers
 %   11  'uv'    = velocity [m/s] 
 
-%   18          = water discharge 
-%   16  'q'     = specific water discharge (as u*h) [m^2/2]
+%   18  'Q'     = water discharge (as u*h*B) [m^3/s]
+%   16  'qsp'   = specific water discharge (as u*h) [m^2/2] -> I think at some point `q` was accepted. It should not. Better not to have case sensitive options. 
 
 %   32  'mesh2d_czs'        = Chezy  [m/s^{1/2}]
 %   43                      = horizontal eddy viscosity [m^2/s]

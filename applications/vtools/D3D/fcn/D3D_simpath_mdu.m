@@ -51,52 +51,22 @@ end
 
 simdef.file.mdf=path_mdu;
 
-%geometry
-simdef.file.grd=fullfile(path_sim,mdu.geometry.NetFile);
-
-if isfield(mdu.geometry,'CrossDefFile') && ~isempty(mdu.geometry.CrossDefFile)
-    simdef.file.csdef=paths_str2cell(path_sim,mdu.geometry.CrossDefFile);
-end
-if isfield(mdu.geometry,'CrossLocFile') && ~isempty(mdu.geometry.CrossLocFile)
-    simdef.file.csloc=paths_str2cell(path_sim,mdu.geometry.CrossLocFile);
-end
-if isfield(mdu.geometry,'PillarFile') && ~isempty(mdu.geometry.PillarFile)
-    simdef.file.pillars=paths_str2cell(path_sim,mdu.geometry.PillarFile);
-end
-if isfield(mdu.geometry,'StructureFile') && ~isempty(mdu.geometry.StructureFile)
-    simdef.file.struct=paths_str2cell(path_sim,mdu.geometry.StructureFile);
-end
-if isfield(mdu.geometry,'FixedWeirFile') && ~isempty(mdu.geometry.FixedWeirFile)
-    simdef.file.fxw=paths_str2cell(path_sim,mdu.geometry.FixedWeirFile);
-else
-    simdef.file.fxw='';
-end
-if isfield(mdu.geometry,'BedlevelFile') && ~isempty(mdu.geometry.BedlevelFile)
-    simdef.file.dep=paths_str2cell(path_sim,mdu.geometry.BedlevelFile);
-end
-if isfield(mdu.geometry,'ThinDamFile') && ~isempty(mdu.geometry.ThinDamFile)
-    simdef.file.thd=paths_str2cell(path_sim,mdu.geometry.ThinDamFile);
-end
-
-%external forcing
-if isfield(mdu.external_forcing,'ExtForceFile') && ~isempty(mdu.external_forcing.ExtForceFile)
-    simdef.file.extforcefile=fullfile(path_sim,mdu.external_forcing.ExtForceFile);
-end
-
-%external forcing
-if isfield(mdu.external_forcing,'ExtForceFileNew') && ~isempty(mdu.external_forcing.ExtForceFileNew)
-    simdef.file.extforcefilenew=fullfile(path_sim,mdu.external_forcing.ExtForceFileNew);
-end
-
-%sediment
-if isfield(mdu,'sediment')
-    if isfield(mdu.sediment,'MorFile') && ~isempty(mdu.sediment.MorFile)
-        simdef.file.mor=fullfile(path_sim,mdu.sediment.MorFile);
-    end
-    if isfield(mdu.sediment,'SedFile') && ~isempty(mdu.sediment.SedFile)
-        simdef.file.sed=fullfile(path_sim,mdu.sediment.SedFile);
-    end
-end
+simdef.file=read_flag(path_sim,simdef.file,mdu,'NetFile','grd');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'GridEnclosureFile','enc');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'CrossDefFile','csdef');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'CrossLocFile','csloc');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'PillarFile','pillars');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'StructureFile','struct');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'FixedWeirFile','fxw');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'BedlevelFile','dep');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'ThinDamFile','thd');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'ExtForceFile','extforcefile');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'ExtForceFileNew','extforcefilenew');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'MorFile','mor');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'SedFile','sed');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'CrsFile','crsfile');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'ObsFile','obsfile');
+simdef.file=read_flag(path_sim,simdef.file,mdu,'SubstanceFile','sub');
 
 %output
 if isfield(mdu,'output')
@@ -113,23 +83,6 @@ if isfield(mdu,'output')
         for kfields=1:nfields
             simdef.file.(fnames{kfields})=file_aux.(fnames{kfields});
         end
-    end
-    
-    %CrsFile
-    if isfield(mdu.output,'CrsFile')
-        simdef.file.crsfile=paths_str2cell(path_sim,mdu.output.CrsFile);
-    end
-    
-    %ObsFile
-    if isfield(mdu.output,'ObsFile')
-        simdef.file.obsfile=paths_str2cell(path_sim,mdu.output.ObsFile);
-    end
-end
-
-%processes
-if isfield(mdu,'processes')
-    if isfield(mdu.processes,'SubstanceFile')
-        simdef.file.sub=paths_str2cell(path_sim,mdu.processes.SubstanceFile);
     end
 end
 
@@ -151,5 +104,24 @@ if ns>1
 else
     c=fullfile(path_sim,s);
 end
+
+end %function
+
+%%
+
+function simdef_file=read_flag(path_sim,simdef_file,mdu,mdu_str,save_str)
+
+fn=fieldnames(mdu);
+nf=numel(fn);
+for kf=1:nf
+    fn_loc=fieldnames(mdu.(fn{kf}));
+    bol_flag=strcmpi(fn_loc,mdu_str);
+    nflags=sum(bol_flag);
+    if nflags>1
+        error('In file %s there is more than one flag with name %s',simdef_file.mdf,mdu_str)
+    elseif nflags==1 && ~isempty(mdu.(fn{kf}).(fn_loc{bol_flag}))
+        simdef_file.(save_str)=paths_str2cell(path_sim,mdu.(fn{kf}).(fn_loc{bol_flag}));
+    end
+end %kf
 
 end %function

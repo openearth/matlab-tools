@@ -259,7 +259,7 @@ kr=1; kc=1;
 % lims.y(kr,kc,1:2)=[-2e-3,2e-3];
 % lims.x(kr,kc,1:2)=lim_A;
 % lims.c(kr,kc,1:2)=clims;
-xlabels{kr,kc}=labels4all('rkm',1,'en');
+xlabels{kr,kc}=labels4all('rkm',1/1000,'en');
 [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel]=labels4all(variable,1,lan);
 switch is_rel
 case 0
@@ -446,7 +446,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),{'flat bed','sloped bed'},'location','best');
-han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),{'left','centre','right'},'location','eastoutside');
+han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),str_leg,'location','eastoutside');
 % pos.leg=han.leg(kr,kc).Position;
 % han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0]
 % han.sfig(kr,kc).Position=pos.sfig;

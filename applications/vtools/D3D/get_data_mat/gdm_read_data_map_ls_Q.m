@@ -43,9 +43,12 @@ data_h=gdm_read_data_map_ls(fdir_mat,fpath_map,'wd',varargin{:});
 data_u=gdm_read_data_map_ls(fdir_mat,fpath_map,'ucx',varargin{:});
 
 ds=diff(data_h.Scor)';
-Q=data_h.val.*data_u.vel_perp.*ds;
+val=data_h.val.*data_u.vel_perp;
+if strcmp(varname,'Q')
+    val=val.*ds;
+end
 data=data_h;
-data.val=Q;
+data.val=val;
 
 %if in the Scor there is a NaN, we take out the previous and itself in Scen
 % bol_nan=isnan(data_h.Scor);
