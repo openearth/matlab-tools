@@ -264,15 +264,16 @@ if strcmp(str,'rst') %if restart file
     fprintf(fid,'rm *_rst.nc \n');
     fprintf(fid,'cp ../%s . \n',fpath_rel_rst);
     fprintf(fid,'module load netcdf \n');
-    fprintf(fid,"ncdump test_20000218_002500_rst.nc -v time | grep 'time = ' > nctime2.txt \n");
-    fprintf(fid,"sed -i -z 's/\ttime = UNLIMITED ; \/\/ (1 currently)\n time = //g' nctime2.txt \n");
+    [~, fname_rst, fname_ext] = fileparts(fpath_rel_rst);
+    fprintf(fid,"ncdump %s%s -v time | grep 'time = ' > nctime2.txt \n", fname_rst, fname_ext);
+    fprintf(fid,"sed -i -z 's/\\ttime = UNLIMITED ; \\/\\/ (1 currently)\\n time = //g' nctime2.txt \n");
     fprintf(fid,"sed -i -z 's/ ;//g' nctime2.txt \n");
     fprintf(fid,'tstarttunit=$(cat nctime2.txt) \n');
     fprintf(fid,'echo $tstarttunit \n');
-    fprintf(fid,"tunits=$(grep -E -i -c 'tunit *= *s' %s) \n",mdu_filename);
-    fprintf(fid,"tunitm=$(grep -E -i -c 'tunit *= *m' %s) \n",mdu_filename);
-    fprintf(fid,"tunith=$(grep -E -i -c 'tunit *= *h' %s) \n",mdu_filename);
-    fprintf(fid,"tunitd=$(grep -E -i -c 'tunit *= *d' %s) \n",mdu_filename);
+    fprintf(fid,"tunits=$(grep -E -i -c 'tunit *= *s' %s) \n",fname_mdu);
+    fprintf(fid,"tunitm=$(grep -E -i -c 'tunit *= *m' %s) \n",fname_mdu);
+    fprintf(fid,"tunith=$(grep -E -i -c 'tunit *= *h' %s) \n",fname_mdu);
+    fprintf(fid,"tunitd=$(grep -E -i -c 'tunit *= *d' %s) \n",fname_mdu);
     fprintf(fid,'if [ $tunits == 1 ]; then \n');
     fprintf(fid,'    echo “seconds” \n');
     fprintf(fid,'	tstart=tstarttunit \n');
@@ -293,7 +294,7 @@ if strcmp(str,'rst') %if restart file
     fprintf(fid,'	tstart=$(echo $tstarttunit/86400.0 | bc -l) \n');
     fprintf(fid,'fi \n');
     fprintf(fid,'echo $tstart \n');
-    fprintf(fid,'sed -i "s/tstart *=.*/TStart = $tstart/I" %s) \n',mdu_filename);
+    fprintf(fid,'sed -i "s/tstart *=.*/TStart = $tstart/I" %s \n',fname_mdu);
     fprintf(fid,'module unload netcdf  \n');   
 end
 fprintf(fid,'./../create_core.sh           \n');
