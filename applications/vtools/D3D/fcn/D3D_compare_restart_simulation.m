@@ -174,7 +174,7 @@ mdu_filename=sprintf('%s%s',fname,fext);
 
 create_run_main_and_restart(fdir_up);
 create_run_main(fdir_up,fdirname_main,'main');
-create_run_main(fdir_up,fdirname_rst,'rst',fpath_rel_rst);
+create_run_main(fdir_up,fdirname_rst,'rst',fpath_rel_rst,mdu_filename);
 create_create_core(fdir_up,fpath_exe);
 create_list_core(fdir_up,fpath_exe);
 create_print_core(fdir_up,fpath_exe);
@@ -253,7 +253,7 @@ end
 
 %%
 
-function create_run_main(fdir,dir_sim,str,fpath_rel_rst)
+function create_run_main(fdir,dir_sim,str,fpath_rel_rst,fname_mdu)
 
 fpath=fullfile(fdir,sprintf('run_%s.sh',str));
 fid=fopen(fpath,'w');
@@ -263,6 +263,38 @@ if strcmp(str,'rst') %if restart file
     %remove restart file from the folder
     fprintf(fid,'rm *_rst.nc \n');
     fprintf(fid,'cp ../%s . \n',fpath_rel_rst);
+    fprintf(fid,'module load netcdf \n');
+    fprintf(fid,"ncdump test_20000218_002500_rst.nc -v time | grep 'time = ' > nctime2.txt \n");
+    fprintf(fid,"sed -i -z 's/\ttime = UNLIMITED ; \/\/ (1 currently)\n time = //g' nctime2.txt \n");
+    fprintf(fid,"sed -i -z 's/ ;//g' nctime2.txt \n");
+    fprintf(fid,'tstarttunit=$(cat nctime2.txt) \n');
+    fprintf(fid,'echo $tstarttunit \n');
+    fprintf(fid,"tunits=$(grep -E -i -c 'tunit *= *s' %s) \n",mdu_filename);
+    fprintf(fid,"tunitm=$(grep -E -i -c 'tunit *= *m' %s) \n",mdu_filename);
+    fprintf(fid,"tunith=$(grep -E -i -c 'tunit *= *h' %s) \n",mdu_filename);
+    fprintf(fid,"tunitd=$(grep -E -i -c 'tunit *= *d' %s) \n",mdu_filename);
+    fprintf(fid,'if [ $tunits == 1 ]; then \n');
+    fprintf(fid,'    echo “seconds” \n');
+    fprintf(fid,'	tstart=tstarttunit \n');
+    fprintf(fid,'fi \n');
+    fprintf(fid,'if [ $tunitm == 1 ]; then \n');
+    fprintf(fid,'    echo “minutes” \n');
+    fprintf(fid,'	tstart=tstarttunit \n');
+    fprintf(fid,'	tstart=$(echo $tstarttunit/60.0 | bc -l) \n');
+    fprintf(fid,'fi \n');
+    fprintf(fid,'if [ $tunith == 1 ]; then \n');
+    fprintf(fid,'    echo “hours” \n');
+    fprintf(fid,'	tstart=tstarttunit \n');
+    fprintf(fid,'	tstart=$(echo $tstarttunit/3600.0 | bc -l) \n');
+    fprintf(fid,'fi \n');
+    fprintf(fid,'if [ $tunitd == 1 ]; then \n');
+    fprintf(fid,'    echo “days” \n');
+    fprintf(fid,'	tstart=tstarttunit \n');
+    fprintf(fid,'	tstart=$(echo $tstarttunit/86400.0 | bc -l) \n');
+    fprintf(fid,'fi \n');
+    fprintf(fid,'echo $tstart \n');
+    fprintf(fid,'sed -i "s/tstart *=.*/TStart = $tstart/I" %s) \n',mdu_filename);
+    fprintf(fid,'module unload netcdf  \n');   
 end
 fprintf(fid,'./../create_core.sh           \n');
 fprintf(fid,'./../list_core.sh             \n');
