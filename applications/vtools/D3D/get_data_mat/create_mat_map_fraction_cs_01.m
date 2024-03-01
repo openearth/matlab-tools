@@ -112,20 +112,34 @@ for krkm=1:nrkm %rkm
             error('do')
     end
     
-    %intersection left
+    %intersection summerbed
     flg_loc.intersection_type=flg_loc.intersection_type_sb_wb(1);
+    flg_loc.idx_closest=1;
     [xy_int_sb_L,xy_int_sb_R]=gdm_intersect_rkm_sb(flg_loc,xy_ext,xy_loc,sb);
     
-    %interesection right
+    %interesection winterbed
     flg_loc.intersection_type=flg_loc.intersection_type_sb_wb(2);
+    flg_loc.idx_closest=1;
     [xy_int_wb_L,xy_int_wb_R]=gdm_intersect_rkm_sb(flg_loc,xy_ext,xy_loc,wb);
 
+    %intersection summerbed second closest point
+    flg_loc.intersection_type=flg_loc.intersection_type_sb_wb(1);
+    flg_loc.idx_closest=2;
+    [xy_int_sb_L_2,xy_int_sb_R_2]=gdm_intersect_rkm_sb(flg_loc,xy_ext,xy_loc,sb);
+
+    %if the second summerbed intersection (due to a sharp bend) is closer
+    %than the winterbed intersection, the second summerbed intersection is
+    %the one to take. 
+    xy_int_wb_L=gdm_summerbed_winterbed_check(xy_int_sb_L,xy_int_sb_L_2,xy_int_wb_L,xy_loc);
+    xy_int_wb_R=gdm_summerbed_winterbed_check(xy_int_sb_R,xy_int_sb_R_2,xy_int_wb_R,xy_loc);
+
+    %combine in pli
     pli(:,:,1)=[xy_int_sb_L;xy_int_wb_L]; %left
     pli(:,:,2)=[xy_int_sb_R;xy_int_sb_L]; %centre
     pli(:,:,3)=[xy_int_wb_R;xy_int_sb_R]; %right
     
-%     %% BEGIN DEBUG
-% % 
+    %% BEGIN DEBUG
+
 %     figure
 %     hold on
 %     axis equal
@@ -136,10 +150,11 @@ for krkm=1:nrkm %rkm
 %     for kpli=1:3
 %         plot(pli(:,1,kpli),pli(:,2,kpli))
 %     end
-% 
+
+%%if loading results
 %     plot(data.Xcor,data.Ycor,'g')
-% 
-%     %% END DEBUG
+
+    %% END DEBUG
     
     ktc=0;
     for kt=kt_v
@@ -197,3 +212,14 @@ end %function
 %% 
 %% FUNCTION
 %%
+
+function xy_wb=gdm_summerbed_winterbed_check(xy_sb,xy_sb_2,xy_wb,xy_loc)
+
+if hypot(xy_sb(1)-xy_sb_2(1),xy_sb(2)-xy_sb_2(2))>1e-10 %if the second closest point is the same as the closest point, there is no double intersection (i.e., no sharp bend)
+    xy_int_wb_sb2=[xy_wb;xy_sb_2];
+    dist=hypot(xy_int_wb_sb2(:,1)-xy_loc(1),xy_int_wb_sb2(:,2)-xy_loc(2));
+    [~,idx]=min(dist);
+    xy_wb=xy_int_wb_sb2(idx,:);
+end
+
+end %function

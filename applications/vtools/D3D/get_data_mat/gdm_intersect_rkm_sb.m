@@ -26,6 +26,9 @@ end
 if isfield(flg_loc,'intersection_type')==0
     flg_loc.intersection_type=1; %1=error, 2=take value in `s_floodplain`
 end
+if isfield(flg_loc,'idx_closest')==0
+    flg_loc.idx_closest=1; %index of the point to take in case there are several intersections. 1 = closest point to the rkm, 2 = second closest point to the rkm, 3 = ...
+end
 
 %% CALC
 
@@ -39,13 +42,13 @@ xy_int_R=intersect_sb_line(flg_loc,xy_loc,xy_R,sb,xy_ext);
 %     hold on
 %     plot(sb(:,1),sb(:,2),'-k');
 %     plot(xy_ext(:,1),xy_ext(:,2),'or-')
-%     plot(xy_perp_L(:,1),xy_perp_L(:,2))
-%     scatter(xy_L(2,1),xy_L(2,2))
+% %     plot(xy_perp_L(:,1),xy_perp_L(:,2))
+% %     scatter(xy_L(2,1),xy_L(2,2))
 %     
 %     axis equal
 %     scatter(xy_int_L(:,1),xy_int_L(:,2))
 %     scatter(xy_int_R(1,1),xy_int_R(1,2))
-% 
+
 
 end %function
 
@@ -88,6 +91,15 @@ switch flg_loc.intersection_type
             end
         end
 end
-xy_int_L=xy_int_L(1,:); %if there are several interverntions we take the first one
+
+%if there are several intersections, we take the index we chose closest to the rkm point
+if size(xy_int_L,1)>1
+    dist=hypot(xy_int_L(:,1)-xy_loc(1),xy_int_L(:,2)-xy_loc(2));
+    [~,idx]=sort(dist);
+    if flg_loc.idx_closest>numel(idx)
+        error('The requested index is larger than the size of the vector.')
+    end
+    xy_int_L=xy_int_L(idx(flg_loc.idx_closest),:); 
+end %size
 
 end %function

@@ -16,7 +16,11 @@ function rkm=rkm_limits(tag)
 
 switch lower(tag)
     case {'linne-roermond','lr'}
-        rkm=[67,84];
+        rkm=[67,79];
+    case {'roermond-belfeld','rb'}
+        rkm=[79,101];
+    case {'grave-lith','gl'}
+        rkm=[175,202];
     otherwise
         error('No known branch %s',tag);
 end %switch

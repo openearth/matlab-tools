@@ -74,6 +74,11 @@ flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
 
+if isfield(flg_loc,'legend_file')
+    legend_adhoc=readcell(flg_loc.legend_file,'delimiter','|||'); %I assume nobody will use ||| in the legend. 
+    do_legend_adhoc=1;
+end
+
 %% PATHS
 
 nS=numel(simdef);
@@ -118,9 +123,6 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 %% FIGURE
 
 in_p=flg_loc;
-in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
-in_p.fig_visible=0;
-in_p.fig_size=[0,0,14.5,12];
 
 % fext=ext_of_fig(in_p.fig_print);
 
@@ -323,6 +325,11 @@ for ksb=1:nsb
             %                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                                     in_p.fname=fname_noext;
+
+                                    if do_legend_adhoc
+                                        in_p.leg_str=legend_adhoc{kt,1};
+                                        in_p.do_leg=1;
+                                    end
 
                                     fig_1D_01(in_p);
                                 end %ks

@@ -32,16 +32,16 @@ function fig_1D_01(in_p)
 %% DEFAULTS
 
 if isfield(in_p,'fig_visible')==0
-    in_p.fig_visible=1;
+    in_p.fig_visible=0;
 end
 if isfield(in_p,'fig_print')==0
-    in_p.fig_print=0;
+    in_p.fig_print=1;
 end
 if isfield(in_p,'fname')==0
     in_p.fname='fig';
 end
 if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,14,14];
+    in_p.fig_size=[0,0,14.5,12];
 end
 if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
     in_p.xlims=[min(in_p.s),max(in_p.s)];
@@ -165,6 +165,9 @@ if isfield(in_p,'ls')==0
 end
 if isfield(in_p,'cmap')==0
     in_p.cmap=NaN;
+end
+if isfield(in_p,'do_leg')==0
+    in_p.do_leg=0;
 end
 
 v2struct(in_p)
@@ -608,7 +611,7 @@ kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
-if plot_mea || nv>1 && ~do_time
+if plot_mea || nv>1 && ~do_time || do_leg
     han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),str_leg,'location',leg_loc);
     pos.leg=han.leg(kr,kc).Position;
 end

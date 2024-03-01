@@ -79,7 +79,7 @@
 
 % tag='fig_grid_01';
 % in_plot.(tag).do=1;
-% in_plot.(tag).fig_print=1;
+% in_plot.(tag).fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 % in_plot.(tag).fig_visible=0;
 % in_plot.(tag).axis_equal=1;
 % in_plot.(tag).do_plot_along_rkm=1;

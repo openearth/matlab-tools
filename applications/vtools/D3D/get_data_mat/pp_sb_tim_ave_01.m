@@ -23,11 +23,6 @@ ret=gdm_do_mat(fid_log,flg_loc,tag_w); if ret; return; end
 
 %% PARSE
 
-tol_tim=1; %tolerance to match objective day with available day
-if isfield(flg_loc,'tol_tim')
-    tol_tim=flg_loc.tol_tim;
-end
-
 if isfield(flg_loc,'overwrite_ave')==0
     flg_loc.overwrite_ave=flg_loc.overwrite;
 end
@@ -78,7 +73,7 @@ for ksb=1:nsb
                 tim_p=time_dnum;
                 flg_loc.tim_ave_type=1; %if we want all times, it does not matter which type of time we request. We match flow time. 
             end
-            if length(tim_p) < 2;
+            if length(tim_p)<2
                 error('tim_ave expects more than a single time')
             end
             tim_p_diff=diff(cen2cor(tim_p));
@@ -90,12 +85,8 @@ for ksb=1:nsb
                 
                 %allocate
                 kt=1;
-                tim_p_loc=tim_p(kt);
-                if flg_loc.tim_ave_type==2
-                    idx_m=absmintol(time_mor_dnum,tim_p_loc,'tol',tol_tim,'dnum',1);
-                    tim_p_loc=time_dnum(idx_m); %flow time associated to the objective morpho time
-                end
-            
+                tim_p_loc=match_objective_time(flg_loc,tim_p(kt),time_dnum,time_mor_dnum);
+
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',tim_p_loc,'pol',pol_name,'var',var_str_save,'sb',sb_pol);
                 load(fpath_mat_tmp,'data');
                 
@@ -125,12 +116,8 @@ for ksb=1:nsb
                 %loop on time
                 for kt=2:nt %time
 
-                    tim_p_loc=tim_p(kt);
-                    if flg_loc.tim_ave_type==2
-                        idx_m=absmintol(time_mor_dnum,tim_p_loc,'tol',tol_tim,'dnum',1);
-                        tim_p_loc=time_dnum(idx_m); %flow time associated to the objective morpho time
-                    end
-                
+                    tim_p_loc=match_objective_time(flg_loc,tim_p(kt),time_dnum,time_mor_dnum);
+                    
                     ktc=ktc+1;
 
                     [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
@@ -163,9 +150,10 @@ for ksb=1:nsb
                     val_std=sqrt(var(val_p.(statis),tim_p_diff,statidx));
                     val_max=max(val_p.(statis),[],statidx);
                     val_min=min(val_p.(statis),[],statidx);
+                    val_dom=(sum(val_p.(statis).^(5/3).*tim_p_diff,statidx)./tim_p_tot).^(3/5);
 
                     %data
-                    data=v2struct(val_mean,val_std,val_max,val_min); %#ok
+                    data=v2struct(val_mean,val_std,val_max,val_min,val_dom); %#ok
 
                     %save
                     save_check(fpath_mat_tmp_w,'data');
@@ -198,3 +186,20 @@ end %function
 %% 
 %% FUNCTION
 %%
+
+function tim_p_loc=match_objective_time(flg_loc,tim_p_loc,time_dnum,time_mor_dnum)
+
+tol_tim=1; %tolerance to match objective day with available day
+if isfield(flg_loc,'tol_tim')
+    tol_tim=flg_loc.tol_tim;
+end
+
+switch flg_loc.tim_ave_type
+    case 1
+        idx_m=absmintol(time_dnum,tim_p_loc,'tol',tol_tim,'dnum',1);
+    case 2
+        idx_m=absmintol(time_mor_dnum,tim_p_loc,'tol',tol_tim,'dnum',1);
+end
+tim_p_loc=time_dnum(idx_m); %actual flow time associated to the objective flow or morpho time
+
+end %function

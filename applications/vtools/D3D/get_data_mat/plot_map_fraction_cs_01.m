@@ -160,7 +160,7 @@ if flg_loc.do_plot_pli
     for krkm=1:nrkm
 
         in_p.fname=fig_name_pli(fdir_fig_loc,tag,runid,krkm);
-        tol=flg_loc.s_floodplain*2;
+        tol=flg_loc.s_floodplain*1.5;
         in_p.lims_x=[mean(x{krkm,2},'omitnan')-tol,mean(x{krkm,2},'omitnan')+tol];
         in_p.lims_y=[mean(y{krkm,2},'omitnan')-tol,mean(y{krkm,2},'omitnan')+tol];
     
