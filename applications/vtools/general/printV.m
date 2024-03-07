@@ -16,6 +16,10 @@ function printV(fig_han,fpath_fig)
 
 %% PARSE
 
+if nargin==1
+    fpath_fig=fullfile(pwd,'fig.png');
+end
+
 %% CALC
 
 [fdir,fname,fext]=fileparts(fpath_fig);

@@ -169,6 +169,9 @@ end
 if isfield(in_p,'do_leg')==0
     in_p.do_leg=0;
 end
+if isfield(in_p,'is_dom')==0
+    in_p.is_dom=0;
+end
 
 v2struct(in_p)
 
@@ -393,11 +396,13 @@ if isempty(ylab)
     if numel(frac)>1
         frac='';
     end
-    [lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(lab_str,1,lan,'Lref',Lref,'frac',frac);
+    [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(lab_str,1,lan,'Lref',Lref,'frac',frac);
     if is_diff
         ylabels{kr,kc}=str_diff;
     elseif is_std
         ylabels{kr,kc}=str_std;
+    elseif is_dom
+        ylabels{kr,kc}=str_dom;
     else
         ylabels{kr,kc}=lab;
     end

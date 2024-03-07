@@ -118,7 +118,7 @@
 %       -'nl': dutch
 %       -'es': spanish
 
-function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc]=labels4all(variable,un,lan,varargin)
+function [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(variable,un,lan,varargin)
 
 %%
 
@@ -1140,6 +1140,17 @@ switch lan
         str_d='diferencia de';
 end
 str_perc=sprintf('%s %s %s',str_d,str_var,'[%]');
+
+%dominant
+switch lan
+case 'en'
+    str_f='dominant';
+case 'nl'
+    str_f='dominant';
+case 'es'
+    str_f='dominante';
+end
+str_dom=sprintf('%s %s %s',str_f,str_var,str_un_nr);
 
 end %function
 

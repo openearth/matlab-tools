@@ -134,6 +134,11 @@ for ksb=1:nsb
                         else
                             in_p.is_std=0;
                         end
+                        if strcmp(statis2,'val_dom')
+                            in_p.is_dom=1;
+                        else
+                            in_p.is_dom=0;
+                        end
                         in_p.val=data.(statis2);
 
                         fname_noext=fig_name(fdir_fig_loc,tag,runid,tim_p(1),tim_p(end),var_str_save,statis,statis2,sb_pol);

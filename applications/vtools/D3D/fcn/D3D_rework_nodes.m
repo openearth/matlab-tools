@@ -26,8 +26,9 @@ if isfield(simdef.D3D,'partition')==0
     simdef.D3D.partition='1vcpu';
 end
 if isfield(simdef.D3D,'time_duration')==0
-    simdef.D3D.time_duration=days(32);
+%     simdef.D3D.time_duration=days(32);
 %     simdef.D3D.time_duration=hours(5);
+    simdef.D3D.time_duration=days(10);
 end
 
 if simdef.D3D.tasks_per_node*simdef.D3D.nodes>1 && strcmp(simdef.D3D.partition,'1vcpu')
