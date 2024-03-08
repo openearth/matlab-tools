@@ -68,9 +68,8 @@ lin=fgetl(fid);
 [size_array,str_type]=fcn_size_array(lin);
 
 lin=fgetl(fid); 
-tok_num=fcn_variable_values(lin,sep,str_type,size_array);
 
-tok_num=reshape(tok_num,size_array);
+tok_num=fcn_variable_values(lin,sep,str_type,size_array);
 
 data.(mod_name).(var_name)=tok_num;
 
@@ -133,7 +132,8 @@ elseif dim==1
 end
 %check
 if any(isnan(size_array))
-    error('Something needs to be processed')
+    size_array = NaN; 
+    warning('fcn_size_array: something needs to be processed')
 end
 
 end %function
@@ -141,6 +141,11 @@ end %function
 %%
 
 function tok_num=fcn_variable_values(lin,sep,str_type,size_array)
+
+if isnan(size_array)
+    tok_num = NaN; 
+    return
+end
 
 tok=regexp(lin,'=','split');
 if numel(tok)~=2
@@ -172,6 +177,8 @@ elseif contains(str_type,'LOGICAL')
 else
     tok_num=cellfun(@(X)str2double(X),tok);
 end
+
+tok_num=reshape(tok_num,size_array);
 
 end %function
 
