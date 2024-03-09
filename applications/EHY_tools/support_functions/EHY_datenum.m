@@ -33,9 +33,11 @@ if strcmpi(date(end),'Z')
 end
 date = strrep(upper(date),'T',' ');
 
-if length(date) == 8
+if length(date) == 8 && all(~(isspace(date)))
     format = 'yyyymmdd';
-elseif length(date) == 10
+elseif length(date) == 10 && all(ismember(date([5 8]),'-'))
+    format = 'yyyy-mm-dd';
+elseif length(date) == 10 && all(~(isspace(date))) %TODO: maybe better to use all(isstrprop(date,'digit')), but not sure if available in matlab 2012 or older
     if all(ismember(date([5 8]),'-'))
         format = 'yyyy-mm-dd'; % '2021-05-30'
     else
