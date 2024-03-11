@@ -74,6 +74,7 @@ flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
 
+do_legend_adhoc=0;
 if isfield(flg_loc,'legend_file')
     legend_adhoc=readcell(flg_loc.legend_file,'delimiter','|||'); %I assume nobody will use ||| in the legend. 
     do_legend_adhoc=1;
