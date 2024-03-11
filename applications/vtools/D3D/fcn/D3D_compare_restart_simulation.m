@@ -92,6 +92,10 @@ if isfield(simdef_main.file,'mor')
         if (DTUser_fact_old ~= DTUser_fact)
             warning('DTUser_fact is updated to %i to ensure restart time starts after MorStt', DTUser_fact);
         end
+        if isfield(mor.Morphology0,'SedTransStt')
+            mor.Morphology0.SedTransStt=mor.Morphology0.MorStt; %`MorStt` in [TUnit]
+            D3D_io_input('write',simdef_main.file.mor,mor);
+        end
     end
 end
 
@@ -153,8 +157,8 @@ if isfield(simdef_rst.file,'mor')
     if exist(simdef_main.file.mor,'file')==2
         mor=D3D_io_input('read',simdef_rst.file.mor);
         mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
-        if isfield(mor.Morphology0,'SedtransStt')
-            mor.Morphology0.SedtransStt=max([0,mor.Morphology0.SedtransStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
+        if isfield(mor.Morphology0,'SedTransStt')
+            mor.Morphology0.SedTransStt=max([0,mor.Morphology0.SedTransStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
         end
         D3D_io_input('write',simdef_rst.file.mor,mor);
     end
