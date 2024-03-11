@@ -99,7 +99,7 @@ if isfield(simdef_main.file,'mor')
     end
 end
 
-if (DTUser_fact > mdf_main.time.TStop*TFact/mdf_main.time.DtUser) 
+if (DTUser_fact >= mdf_main.time.TStop*TFact/mdf_main.time.DtUser) 
     DTUser_fact_old = DTUser_fact;
     DTUser_fact = floor(mdf_main.time.TStop*TFact/mdf_main.time.DtUser/2);
     if (DTUser_fact_old ~= DTUser_fact)
