@@ -116,7 +116,8 @@ if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
     warning('DTUser_fact is updated to %i to ensure restart time is in whole seconds', DTUser_fact);
 end
 mdf_main.output.RstInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
-mdf_main.output.MapInterval=0; %[s]
+mdf_main.output.MapInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
+mdf_main.time.TStop = mdf_main.output.MapInterval/TFact;  %[Tunit]
 
 mdf_main.output.Wrirst_bnd=1;
 mdf_main.geometry.UseCaching=0;
