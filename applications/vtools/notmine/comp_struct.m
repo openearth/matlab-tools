@@ -1,3 +1,17 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+%Original from Exchange. 
+
 function [common, d1, d2] = comp_struct(s1,s2,prt,pse,tol,n1,n2)
 % check two structures for differances - i.e. see if strucutre s1 == structure s2
 % function [common, d1, d2] = comp_struct(s1,s2,prt,pse,tol)
@@ -120,10 +134,17 @@ if ~isequal(s1,s2)
 				% tolerance error?
 				if min(size(s1) == size(s2)) && ...
 						(isa(s1,'single') || isa(s1,'double'))
-					% tolerance match?
-					if numel(find(abs(s1-s2) < tol)) == numel(s1)
-						flag(1) = 0;
-					end
+                    if isequal(s1,0) || isequal(s2,0)
+					    % absolute tolerance match?
+					    if numel(find(abs(s1-s2) < tol)) == numel(s1)
+						    flag(1) = 0;
+                        end
+                    else
+                        %relative tolerance match
+                        if numel(find(abs(s1-s2)/s2 < tol)) == numel(s1)
+                            flag(1) = 0;
+                        end
+                    end
 				else
 					% print and pause?
 					if prt > 1

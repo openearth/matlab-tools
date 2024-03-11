@@ -19,8 +19,14 @@ switch lower(tag)
         rkm=[67,79];
     case {'roermond-belfeld','rb'}
         rkm=[79,101];
+    case {'belfeld-sambeek','bs'}
+        rkm=[101,148];
+    case {'sambeek-grave','sg'}
+        rkm=[145,175];
     case {'grave-lith','gl'}
         rkm=[175,202];
+    case {'lith-keizersveer','lk'}
+        rkm=[200,249];
     otherwise
         error('No known branch %s',tag);
 end %switch

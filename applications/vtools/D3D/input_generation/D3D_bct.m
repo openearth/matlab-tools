@@ -46,6 +46,10 @@ if isfield(simdef.bct,'version_V')==0
     end
 end
 
+%% NOISE
+
+D3D_bct_noise(simdef)
+
 %% FILE
 
 if D3D_structure==1
@@ -62,3 +66,13 @@ else
     D3D_bc_wL(simdef,'check_existing',check_existing);
     D3D_bc_q0(simdef,'check_existing',check_existing);
 end
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function D3D_bct_noise(simdef)
+
+end %function
