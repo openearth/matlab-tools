@@ -152,6 +152,9 @@ if isfield(simdef_rst.file,'mor')
     if exist(simdef_main.file.mor,'file')==2
         mor=D3D_io_input('read',simdef_rst.file.mor);
         mor.Morphology0.MorStt=max([0,mor.Morphology0.MorStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
+        if isfield(mor.Morphology0,'SedtransStt')
+            mor.Morphology0.SedtransStt=max([0,mor.Morphology0.SedtransStt-(mdf_rst.time.TStart-mdf_main.time.TStart)]); %`MorStt` in [TUnit]
+        end
         D3D_io_input('write',simdef_rst.file.mor,mor);
     end
 end
