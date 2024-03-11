@@ -169,7 +169,7 @@ if ~only_run_script
         if exist(simdef.file.obs,'file')~=2
             D3D_obs(simdef,'check_existing',false);
         end
-        if exist(simdef.file.crs,'file')~=2
+        if exist(simdef.file.crs,'file')~=2 && isfield(simdef.mdf,'crs_cord')
             D3D_crs(simdef,'check_existing',false);
         end
     end

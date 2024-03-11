@@ -417,9 +417,9 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
 if do_log
     han.sfig(kr,kc).YScale='log';
+    han.sfig(kr,kc).XScale='log';
 end
 % han.sfig(kr,kc).Title.String='c';
 % han.sfig(kr,kc).XColor='r';

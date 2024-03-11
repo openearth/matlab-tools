@@ -47,6 +47,7 @@ if exist(file_name,'file') && check_existing
     error('You are trying to overwrite a file!')
 end
 
+messageOut(NaN,sprintf('Start writing file: %s',file_name))
 fileID_out=fopen(file_name,'w');
 write_str_x=strcat(num_str,'\n'); %string to write in x
 
@@ -55,5 +56,6 @@ for ky=1:ny
 end
 
 fclose(fileID_out);
+messageOut(NaN,sprintf('Finished writing file: %s',file_name))
 
 end %function

@@ -128,6 +128,10 @@ switch simdef.ini.etab_noise
         x=Xtot;
         y=Ytot;
         noise=etab_max.*exp(-((x-mu(1)).^2/sig^2+(y-mu(2)).^2/sig^2)); %factor 2 missing in the denominator?
+    case 8
+        noise=zeros(size(depths));
+        bol_pol=inpolygon(Xtot,Ytot,simdef.ini.noise_polygon(:,1),simdef.ini.noise_polygon(:,2));
+        noise(bol_pol)=-simdef.ini.noise_amp;
     otherwise
         error('sorry... not implemented!')
 end

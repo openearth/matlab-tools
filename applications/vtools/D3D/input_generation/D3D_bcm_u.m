@@ -19,7 +19,7 @@
 %   -
 
 
-function D3D_bcm_u(simdef)
+function D3D_bcm_u(simdef,varargin)
 %% RENAME
 
 dire_sim=simdef.D3D.dire_sim;

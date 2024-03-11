@@ -38,8 +38,8 @@ upstream_nodes=simdef.mor.upstream_nodes;
 switch IBedCond
     case 2
         eta=simdef.bcm.eta;
-    case {3,7}
-        deta_dt=simdef.bcm.deta_dt;
+    case {3}
+        deta_dt=simdef.bcm.deta_dt; 
     case {4,5}
         transport=simdef.bcm.transport;
         [~,nf]=size(transport);
@@ -83,14 +83,15 @@ switch IBedCond
         data{kl, 1}=       'parameter           ''depth change        '' unit ''[m/s]'''; kl=kl+1;
         data{kl,1}=sprintf('records-in-table     %d',nt); kl=kl+1;
         for kt=1:nt
-            data{kl,1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,+deta_dt(kt)); kl=kl+1; %attention! in D3D it is depth (positive down) while for me it is bed elevation (positive up)
-        end      
-    case 7 %not in D3D4!
-        data{kl, 1}=       'parameter           ''bed level change     '' unit ''[m/s]'''; kl=kl+1;
-        data{kl,1}=sprintf('records-in-table     %d',nt); kl=kl+1;
-        for kt=1:nt
             data{kl,1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,-deta_dt(kt)); kl=kl+1; %attention! in D3D it is depth (positive down) while for me it is bed elevation (positive up)
         end      
+    case 7 %not in D3D4!
+        error('Not in D3D4')
+%         data{kl, 1}=       'parameter           ''bed level change     '' unit ''[m/s]'''; kl=kl+1;
+%         data{kl,1}=sprintf('records-in-table     %d',nt); kl=kl+1;
+%         for kt=1:nt
+%             data{kl,1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,-deta_dt(kt)); kl=kl+1; %attention! in D3D it is depth (positive down) while for me it is bed elevation (positive up)
+%         end      
     case 5
         for kf=1:nf
             data{kl, 1}=sprintf('parameter           ''transport excl pores Sediment%d'' unit ''[m2/s]''',kf); kl=kl+1;

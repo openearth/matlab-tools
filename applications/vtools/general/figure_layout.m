@@ -302,7 +302,7 @@ end
 % OPT.ylim=y_lims;
 % OPT.epsg_in=28992; %WGS'84 / google earth
 % OPT.epsg_out=28992; %Amersfoort
-% OPT.tzl=tzl; %zoom
+% OPT.tzl=tiles_zoom(diff(x_lims)); %zoom
 % OPT.save_tiles=false;
 % OPT.path_save=fullfile(pwd,'earth_tiles');
 % OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 

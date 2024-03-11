@@ -419,6 +419,7 @@ if do_rel
 end
 if do_log
     han.sfig(kr,kc).YScale='log';
+    han.sfig(kr,kc).XScale='log';
 end
 % han.sfig(kr,kc).Title.String='c';
 % han.sfig(kr,kc).XColor='r';
