@@ -114,6 +114,7 @@ end
 mdf_main.output.RstInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
 
 mdf_main.output.Wrirst_bnd=1;
+mdf_main.geometry.UseCaching=0;
 
 D3D_io_input('write',simdef_main.file.mdf,mdf_main);
 
