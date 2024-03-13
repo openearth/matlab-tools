@@ -117,7 +117,7 @@ if mdf_main.time.DtUser*DTUser_fact ~= round(mdf_main.time.DtUser*DTUser_fact)
 end
 mdf_main.output.RstInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
 mdf_main.output.MapInterval=mdf_main.time.DtUser*DTUser_fact; %[s]
-mdf_main.time.TStop = mdf_main.output.MapInterval/TFact;  %[Tunit]
+mdf_main.time.TStop = 2*mdf_main.output.MapInterval/TFact;  %[Tunit]
 
 mdf_main.output.Wrirst_bnd=1;
 mdf_main.geometry.UseCaching=0;
@@ -273,40 +273,39 @@ if strcmp(str,'rst') %if restart file
     %remove restart file from the folder
     fprintf(fid,'rm *_rst.nc \n');
     fprintf(fid,'cp ../%s . \n',fpath_rel_rst);
-% getting time from rst nc commented out until `bc` is installed . 
-%     fprintf(fid,'module load netcdf \n');
-%     [~, fname_rst, fname_ext] = fileparts(fpath_rel_rst);
-%     fprintf(fid,"ncdump %s%s -v time | grep 'time = ' > nctime2.txt \n", fname_rst, fname_ext);
-%     fprintf(fid,"sed -i -z 's/\\ttime = UNLIMITED ; \\/\\/ (1 currently)\\n time = //g' nctime2.txt \n");
-%     fprintf(fid,"sed -i -z 's/ ;//g' nctime2.txt \n");
-%     fprintf(fid,'tstartrstnc=$(< nctime2.txt) \n');
-%     fprintf(fid,'echo $tstartrstnc \n');
-%     fprintf(fid,"tunits=$(grep -E -i -c 'tunit *= *s' %s) \n",fname_mdu);
-%     fprintf(fid,"tunitm=$(grep -E -i -c 'tunit *= *m' %s) \n",fname_mdu);
-%     fprintf(fid,"tunith=$(grep -E -i -c 'tunit *= *h' %s) \n",fname_mdu);
-%     fprintf(fid,"tunitd=$(grep -E -i -c 'tunit *= *d' %s) \n",fname_mdu);
-%     fprintf(fid,'if [ $tunits == 1 ]; then \n');
-%     fprintf(fid,'    echo “seconds” \n');
-%     fprintf(fid,'	tstart=$tstartrstnc \n');
-%     fprintf(fid,'fi \n');
-%     fprintf(fid,'if [ $tunitm == 1 ]; then \n');
-%     fprintf(fid,'    echo “minutes” \n');
-%     fprintf(fid,'	tstart=$tstartrstnc \n');
-%     fprintf(fid,'	tstart=$(echo $tstartrstnc/60.0 | bc -l) \n');
-%     fprintf(fid,'fi \n');
-%     fprintf(fid,'if [ $tunith == 1 ]; then \n');
-%     fprintf(fid,'    echo “hours” \n');
-%     fprintf(fid,'	tstart=$tstartrstnc \n');
-%     fprintf(fid,'	tstart=$(echo $tstartrstnc/3600.0 | bc -l) \n');
-%     fprintf(fid,'fi \n');
-%     fprintf(fid,'if [ $tunitd == 1 ]; then \n');
-%     fprintf(fid,'    echo “days” \n');
-%     fprintf(fid,'	tstart=$tstartrstnc \n');
-%     fprintf(fid,'	tstart=$(echo $tstartrstnc/86400.0 | bc -l) \n');
-%     fprintf(fid,'fi \n');
-%     fprintf(fid,'echo $tstart \n');
-%     fprintf(fid,'sed -i "s/tstart *=.*/TStart = $tstart/I" %s \n',fname_mdu);
-%     fprintf(fid,'module unload netcdf  \n');   
+    fprintf(fid,'module load netcdf \n');
+    [~, fname_rst, fname_ext] = fileparts(fpath_rel_rst);
+    fprintf(fid,"ncdump %s%s -v time | grep 'time = ' > nctime2.txt \n", fname_rst, fname_ext);
+    fprintf(fid,"sed -i -z 's/\\ttime = UNLIMITED ; \\/\\/ (1 currently)\\n time = //g' nctime2.txt \n");
+    fprintf(fid,"sed -i -z 's/ ;//g' nctime2.txt \n");
+    fprintf(fid,'tstartrstnc=$(< nctime2.txt) \n');
+    fprintf(fid,'echo $tstartrstnc \n');
+    fprintf(fid,"tunits=$(grep -E -i -c 'tunit *= *s' %s) \n",fname_mdu);
+    fprintf(fid,"tunitm=$(grep -E -i -c 'tunit *= *m' %s) \n",fname_mdu);
+    fprintf(fid,"tunith=$(grep -E -i -c 'tunit *= *h' %s) \n",fname_mdu);
+    fprintf(fid,"tunitd=$(grep -E -i -c 'tunit *= *d' %s) \n",fname_mdu);
+    fprintf(fid,'if [ $tunits == 1 ]; then \n');
+    fprintf(fid,'    echo “seconds” \n');
+    fprintf(fid,'	tstart=$tstartrstnc \n');
+    fprintf(fid,'fi \n');
+    fprintf(fid,'if [ $tunitm == 1 ]; then \n');
+    fprintf(fid,'    echo “minutes” \n');
+    fprintf(fid,'	tstart=$tstartrstnc \n');
+    fprintf(fid,'	tstart=$(echo $tstartrstnc/60.0 | bc -l) \n');
+    fprintf(fid,'fi \n');
+    fprintf(fid,'if [ $tunith == 1 ]; then \n');
+    fprintf(fid,'    echo “hours” \n');
+    fprintf(fid,'	tstart=$tstartrstnc \n');
+    fprintf(fid,'	tstart=$(echo $tstartrstnc/3600.0 | bc -l) \n');
+    fprintf(fid,'fi \n');
+    fprintf(fid,'if [ $tunitd == 1 ]; then \n');
+    fprintf(fid,'    echo “days” \n');
+    fprintf(fid,'	tstart=$tstartrstnc \n');
+    fprintf(fid,'	tstart=$(echo $tstartrstnc/86400.0 | bc -l) \n');
+    fprintf(fid,'fi \n');
+    fprintf(fid,'echo $tstart \n');
+    fprintf(fid,'sed -i "s/tstart *=.*/TStart = $tstart/I" %s \n',fname_mdu);
+    fprintf(fid,'module unload netcdf  \n');   
 end
 fprintf(fid,'./../create_core.sh           \n');
 fprintf(fid,'./../list_core.sh             \n');
