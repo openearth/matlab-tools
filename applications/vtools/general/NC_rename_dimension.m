@@ -10,7 +10,8 @@
 %$Id: branch_rijntakken.m 19243 2023-11-20 10:49:45Z chavarri $
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/branch_rijntakken.m $
 %
-%
+%Renames a dimension in a netCDF file. My objective is to 
+%remove it, but I did not find a d wa
 
 function NC_rename_dimension(fpath_nc,dimname_in,dimname_out)
 
