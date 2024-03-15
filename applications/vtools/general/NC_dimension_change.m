@@ -4,13 +4,20 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19243 $
-%$Date: 2023-11-20 11:49:45 +0100 (Mon, 20 Nov 2023) $
-%$Author: chavarri $
-%$Id: branch_rijntakken.m 19243 2023-11-20 10:49:45Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/branch_rijntakken.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Copies a netCDF file and changes the dimension. 
+%
+%E.G.:
+%
+% fpath_i='c:\Users\chavarri\Downloads\RIJN_0002_20000101_000000_rst.nc';
+% fpath_o='c:\Users\chavarri\Downloads\RIJN_0002_20000101_000000_mod_rst.nc';
+% dim_name_mod='nSedTot';
+% dim_val_mod=42;
 
 function NC_dimension_change(fpath_i,fpath_o,dim_name_mod,dim_val_mod)
 
