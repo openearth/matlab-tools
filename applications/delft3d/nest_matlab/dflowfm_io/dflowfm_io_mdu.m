@@ -122,7 +122,7 @@ case 'write'
                    line=sprintf('%s ',val{:});
                    line=strrep(line,' \ ',''); %a bar may have been used to seprate input in several lines
                elseif isa(val,'double')
-                   line = num2str(val);
+                   line = sprintf('%0.12E',val);
                else
                     if strcmp(tmp2{ipar,1},'Name') && strcmp(names_clean{igroup},'Sediment')
                         line=sprintf('#%s#',val);
