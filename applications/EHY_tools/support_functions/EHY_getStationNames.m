@@ -6,6 +6,7 @@ function stationNames = EHY_getStationNames(inputFile,modelType,varargin)
 % Example1: 	stationNames=EHY_getStationNames('D:\trih-r01.dat','d3d')
 % Example2: 	stationNames=EHY_getStationNames('D:\r01_his.nc','dflowfm')
 % Example3: 	stationNames=EHY_getStationNames('D:\SDS-run1','simona','varName','uv')
+% Example4: 	stationNames=EHY_getStationNames('D:\r01_his.nc','dflowfm','varName','cross_section')
 %
 % Note that SIMONA models can have different water level vs. velocity stations
 %
