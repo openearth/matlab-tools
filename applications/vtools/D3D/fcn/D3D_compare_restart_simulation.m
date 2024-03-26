@@ -91,7 +91,7 @@ if isfield(simdef_main.file,'mor')
         if isfield(mor.Morphology0,'MorStt')
             mor.Morphology0.BedUpdStt = mor.Morphology0.MorStt;
             mor.Morphology0.CmpUpdStt = mor.Morphology0.MorStt;
-            rmfield(mor.Morphology0, 'MorStt'); 
+            mor.Morphology0=rmfield(mor.Morphology0, 'MorStt'); 
         end
         DTUser_fact = max(DTUser_fact,ceil(mor.Morphology0.BedUpdStt*TFact/mdf_main.time.DtUser));
         if (DTUser_fact_old ~= DTUser_fact)
@@ -99,8 +99,8 @@ if isfield(simdef_main.file,'mor')
         end
         if isfield(mor.Morphology0,'SedTransStt')
             mor.Morphology0.SedTransStt=mor.Morphology0.CmpUpdStt; %`MorStt` in [TUnit]
-            D3D_io_input('write',simdef_main.file.mor,mor);
         end
+        D3D_io_input('write',simdef_main.file.mor,mor);
     end
 end
 
