@@ -211,7 +211,7 @@ data{kl,1}=        'Epshu             = 0.0001     '; kl=kl+1;
 data{kl,1}=        'SobekDFM_umin     = 0          '; kl=kl+1;
 data{kl,1}=sprintf('TransportAutoTimestepdiff = %d         ',simdef.mdf.TransportAutoTimestepdiff); kl=kl+1;
 data{kl,1}=sprintf('filter            = %d         ',filter); kl=kl+1;
-data{kl,1}=sprintf('MinTimestepBreak  = %d         ',0); kl=kl+1;
+data{kl,1}=sprintf('MinTimestepBreak  = %d         ',0); kl=kl+1; 
 data{kl,1}=        ''; kl=kl+1;
 
 %%

@@ -219,6 +219,14 @@ for kf=1:nf
         [~,~,ext]=fileparts(dire(kf).name); %file extension
         switch ext
             case {'.mdu','.mdf','.md1d'}
+                if ischar(mdf_aux)
+                    %There is a subfolder with an mdu file. Hence, the output
+                    %is a char. This throws an error, because there can only
+                    %be one. 
+                    fprintf('%s \n',dire(kf).name)
+                    fprintf('%s \n',mdf_aux)
+                    error('There are several mdu/mdf files in the main and subfolders');
+                end
                 mdf_aux{kmdf}=fpath_loc;
                 kmdf=kmdf+1;
         end

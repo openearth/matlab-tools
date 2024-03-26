@@ -217,6 +217,9 @@ data{kl,1}=sprintf('  UpwindBedload = %d',UpwindBedload); kl=kl+1;
 else
 data{kl,1}=sprintf('  BedloadScheme = #%s#',BedloadScheme); kl=kl+1;
 end
+%   MaximumWaterdepth = true
+%   MaximumWaterdepthFraction = 0.25
+
 % BedloadScheme = #upwsb#  !default upwind
 % BedloadScheme = #central#  !central (old Upwind=false)
 % BedloadScheme = #upwind# !Mart's scheme
