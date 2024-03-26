@@ -122,12 +122,7 @@ case 'write'
                    line=sprintf('%s ',val{:});
                    line=strrep(line,' \ ',''); %a bar may have been used to seprate input in several lines
                elseif isa(val,'double')
-                   switch lower(tmp2{ipar,1})
-                       case {'refdate'}
-                           line = sprintf('%08d',val);
-                       otherwise
-                           line = sprintf('%0.12E',val);
-                   end
+                   line=write_value(tmp2{ipar,1},val);
                else
                     if strcmp(tmp2{ipar,1},'Name') && strcmp(names_clean{igroup},'Sediment')
                         line=sprintf('#%s#',val);
@@ -215,3 +210,32 @@ case 'new'
 
 end
 
+end %function
+
+function line=write_value(flg,val)
+
+%If it is not an integer, `num2str` is not precise enough. E.g.:
+% >> num2str(1.250000411)
+% 
+% ans =
+% 
+%     '1.25'
+
+if mod(val,1)==0 %integer
+    line=num2str(val);
+else
+    line=sprintf('%0.12E',val);
+end
+
+% switch lower(flg)
+%    case {'refdate'}
+%        line=sprintf('%08d',val);
+% %     case {'bedupd','cmpupd','neubcmud','neubcsand','islope','ihidexp','iunderlyr','exchlyr','ttlform'} %integer
+%     case {'bedupd','cmpupd','neubcmud','neubcsand','islope','ihidexp','iunderlyr','exchlyr','ttlform'} %integer
+%        line=sprintf('%1d',val);
+%    otherwise
+%        line=sprintf('%0.12E',val);
+% end
+                           
+
+end 
