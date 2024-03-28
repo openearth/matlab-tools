@@ -581,7 +581,7 @@ while ~feof(fid) && keep_going
     end
     
     %display
-%     fprintf('line %d \n',kl)
+    fprintf('line %d \n',kl)
 end
 fclose(fid);
 

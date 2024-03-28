@@ -27,6 +27,8 @@ end
 switch fext
     case '.png'
         print(fig_han,fpath_fig,'-dpng','-r300')
+    case '.fig'
+        savefig(fig_han,fpath_fig);
     otherwise
         error('Unknown extension %s',fext);
 end

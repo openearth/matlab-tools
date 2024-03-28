@@ -108,10 +108,10 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% SINGLE FILE 
 
-fpath_data='c:\Users\chavarri\Downloads\20240126_073.csv';
-data_stations=read_csv_data(fpath_data,'flg_debug',0);
-data_stations=data_stations(1);
-add_data_stations(paths_main_folder,data_stations)
+% fpath_data='c:\Users\chavarri\Downloads\20240318_058.csv';
+% data_stations=read_csv_data(fpath_data,'flg_debug',0);
+% data_stations=data_stations(2);
+% add_data_stations(paths_main_folder,data_stations)
 
 %%
 % ns=numel(data_stations);
@@ -204,4 +204,10 @@ add_data_stations(paths_main_folder,data_stations)
 % figure
 % plot(data_one_station.time,data_one_station.waarde)
 
+%%
+
+kp=2;
+figure
+hold on
+plot(data_stations(kp).time,data_stations(kp).waarde,'-*')
 
