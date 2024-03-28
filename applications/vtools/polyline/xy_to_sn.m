@@ -118,9 +118,21 @@ dyv = diff(yv);
 xmv = xv(1:end-1) + 0.5*dxv;
 ymv = yv(1:end-1) + 0.5*dyv;
 
-% get distance matrix 
-dist_mat = (xmv-xp).^2 + (ymv-yp).^2; 
-[min_dist, min_idx] = min(dist_mat,[],2);
+batch_size = 10000; 
+
+lenp = length(xp);
+min_dist = NaN*ones(lenp,1);
+min_idx = NaN*ones(lenp,1);
+
+for kstart = 1:batch_size:length(xp)
+    kend = min(kstart+batch_size-1,lenp);
+    % get distance matrix 
+    dist_mat = (xmv-xp(kstart:kend)).^2 + (ymv-yp(kstart:kend)).^2; 
+    [min_dist_local, min_idx_local] = min(dist_mat,[],2);
+    
+    min_dist(kstart:kend) = min_dist_local;
+    min_idx(kstart:kend) = min_idx_local;
+end
 
 % get distance along channel 
 sv = [0,cumsum(sqrt(dxv.^2 + dyv.^2))];
