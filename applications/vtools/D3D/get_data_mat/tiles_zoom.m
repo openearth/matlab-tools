@@ -22,9 +22,9 @@ elseif dx<20e3
 elseif dx<50e3
     tz1=11;
 elseif dx<100e3
-    tz1=9;
+    tz1=10;
 elseif dx<500e3
-    tz1=8;
+    tz1=9;
 else
     tz1=1;
 end

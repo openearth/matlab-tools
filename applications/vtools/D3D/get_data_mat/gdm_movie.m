@@ -17,7 +17,7 @@ function gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum)
 %% PARSE
 
 if isfield(flg_loc,'do_movie')==0
-    flg_loc.do_movie=1;
+    flg_loc.do_movie=0;
 end
 
 if isfield(flg_loc,'tim_movie')==0

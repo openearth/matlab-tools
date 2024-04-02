@@ -109,6 +109,8 @@
 %
 %       -'cel_morpho' : morphodynamic celerities
 %
+%       -'mesh2d_flowelem_domain' : partition number
+%
 %
 %
 %   -un: factor for unit conversion from SI
@@ -1049,6 +1051,16 @@ switch lower(variable)
                 str_var='número de Froude';
          end
          un_type='-';
+    case 'mesh2d_flowelem_domain'
+         switch lan
+            case 'en'
+                str_var='partition number';
+            case 'nl'
+                str_var='partitie nummer';
+            case 'es'
+                str_var='número de partición';
+         end
+         un_type='-';        
     otherwise
         str_var=variable;
         un_type='?';
