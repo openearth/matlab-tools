@@ -50,5 +50,5 @@ data_var.val=sum(data_var.val,idx_f); %I cannot see why do we need to sum over f
 %
 sz = size(data_var.val); 
 data_var.val=reshape(data_var.val,sz(setdiff(1:length(sz),idx_f)));
-data_var.dimensions = strrep(strrep(strrep(strrep(data_var.dimensions,'nSedTot',''),',,',','),'[,', '['),',]', ']')
+data_var.dimensions = strrep(strrep(strrep(strrep(data_var.dimensions,'nSedTot',''),',,',','),'[,', '['),',]', ']');
 end %function
