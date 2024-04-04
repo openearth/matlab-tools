@@ -45,8 +45,10 @@ idx_f=D3D_search_index_fraction(data_var);
 % if isempty(var_idx)
 %     var_idx=1:1:size(data_var.val,idx_f);
 % end
-data_var.val=submatrix(data_var.val,idx_f,var_idx); %take submatrix along dimension
 %sum over sediment dimension
 data_var.val=sum(data_var.val,idx_f); %I cannot see why do we need to sum over fractions. I don't remember for which case did I do this. 
-
+%
+sz = size(data_var.val); 
+data_var.val=reshape(data_var.val,sz(setdiff(1:length(sz),idx_f)));
+data_var.dimensions = strrep(strrep(strrep(strrep(data_var.dimensions,'nSedTot',''),',,',','),'[,', '['),',]', ']')
 end %function
