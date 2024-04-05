@@ -56,6 +56,7 @@
 %       -'s_B_mor'      : sediment transport of a size fraction [m^3/s]
 %       -'s_B_mor_t'    : sediment transport of a size fraction [m^3]
 %       -'stot'         : total sediment transport [m^2/s]
+%       -'stot_sum'     : total sediment transport [m^2/s]
 %       -'stot_B_mor'   : total sediment transport [m^3/s]
 %       -'stot_B_mor_t' : total sediment transport [m^3]
 %
@@ -841,7 +842,7 @@ switch lower(variable)
                 str_var=sprintf('transporte de sedimento de la fracción %d',frac);
          end
          un_type='L3';
-    case 'stot'
+    case {'stot', 'stot_sum'}
          switch lan
             case 'en'
                 str_var='total sediment transport';
