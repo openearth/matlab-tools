@@ -566,6 +566,30 @@ if any(isnan(idx_pol))
 end
 
 ident_pol_str=pol.val{idx_pol(1)}.Val;
+
+%check that data is available
+
+ise=cellfun(@(X)isempty(X),ident_pol_str);
+if any(ise)
+    error('There is empty data in the polygon. For instance, an entry with no value for the polygon name (e.g., `hm_nummer`).')
+end
+
+ise=cellfun(@(X)numel(X)<2,ident_pol_str);
+if any(ise)
+    error('The size of the string identifying each polygon is too short. It is expected that the first two characters identify the branch (e.g., `IJ_881.90`).')
+end
+
+ise=cellfun(@(X)numel(X)<4,ident_pol_str);
+if any(ise)
+    error('The size of the string identifying each polygon is too short. It is expected that the characters starting from the 4th identify the river kilometer (e.g., `IJ_881.90`).')
+end
+
+ise=cellfun(@(X)numel(X)<9,ident_pol_str);
+if any(ise)
+    warning('The size of the string identifying each polygon may be too short. It is expected that the characters starting from the 4th identify the river kilometer (e.g., `IJ_881.90`).')
+end
+
+%process
 rkm_pol_num=cellfun(@(X)str2double(X(4:end)),ident_pol_str);
 
 br_pol_num=cellfun(@(X)branch_rijntakken_str2double(X(1:2)),ident_pol_str);
