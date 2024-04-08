@@ -49,6 +49,7 @@ addOptional(parin,'count','COUNT');
 addOptional(parin,'hm_code','hm_nummer');
 addOptional(parin,'location','Locatie');
 addOptional(parin,'surface','oppervlak_');
+addOptional(parin,'location_sides',[-4:1:-1,1:1:4]); %L4-R4
 
 parse(parin,varargin{:});
 
@@ -68,6 +69,7 @@ count_str=parin.Results.count;
 hm_code_str=parin.Results.hm_code;
 location_str=parin.Results.location;
 surface_str=parin.Results.surface;
+location_sides=parin.Results.location_sides;
 
 %%
 
@@ -152,7 +154,7 @@ fpath_mat_tmp=fullfile(pwd,'rm.mat');
 if ~isfile(fpath_mat_tmp) || ~do_debug
     messageOut(fid_log,'Start computing rolling mean');
     if do_rol_mean
-        etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen,hm_code_str,location_str,surface_str);
+        etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen,hm_code_str,location_str,surface_str,location_sides);
     else
         etab_cen_mod=etab_cen;
     end
@@ -603,16 +605,15 @@ end %function
 
 %%
 
-function etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen,hm_code_str,location_str,surface_str)
+function etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen,hm_code_str,location_str,surface_str,location_sides)
 
 [ident_pol_str,rkm_pol_num,br_pol_num,loc_pol_num,area_cen]=data_pol(pol,hm_code_str,location_str,surface_str);
 
-loc_v=[-4:1:-1,1:1:4]; %L4-R4
 etab_cen_mod=NaN(size(etab_cen));
 pol_d=polygon_ds;
 rkm_q_v=rkmi:pol_d/1000:rkmf; %vector of query rkm. A vector of points to assess irrespective of polygons. Make sure it is smaller than the polygons. 
 nrkm=numel(rkm_q_v);
-nl=numel(loc_v);
+nl=numel(location_sides);
 tol_rkm=1e-10;
 for krkm=1:nrkm
     rkm_q=rkm_q_v(krkm); %query rkm (any) at which to compute the mean
@@ -626,7 +627,7 @@ for krkm=1:nrkm
     bol_br_mod=ismember(br_pol_num,br_mod_num); %boolean branch to modify
     
     for kl=1:nl
-        bol_loc=loc_v(kl)==loc_pol_num;
+        bol_loc=location_sides(kl)==loc_pol_num;
         bol_me =bol_rkm_me  & bol_loc & bol_br_me ;
         bol_mod=bol_rkm_mod & bol_loc & bol_br_mod;
 
@@ -648,7 +649,7 @@ for krkm=1:nrkm
         etab_cen_mod(bol_mod)=sum(etab_cen(bol_me).*area_cen(bol_me))/sum(area_cen(bol_me));
         
         %disp (expensive but useful)
-        fprintf(fid_log,'Location %2d, %s :      %s \n',loc_v(kl),conccellstr(str_mod),conccellstr(str_me));
+        fprintf(fid_log,'Location %2d, %s :      %s \n',location_sides(kl),conccellstr(str_mod),conccellstr(str_me));
         
         %DEBUG
 %         ident_pol_str(bol_me)
