@@ -8,6 +8,9 @@
 %Add function explanation
 
 function write_subdomain_bc(Upstream, Downstream, Case, Case_type, crsfile, obsfile, shapefile, orderflwfile, fpath_project, ncfilepath)
+
+%% PARSE
+
 %% Create upstream and downstream boundary file
 crs_seg = tekal('read', crsfile, 'loaddata');
 linknumbers = shp2struct(shapefile,'read_val',true);
@@ -25,50 +28,11 @@ flownumbers = cell(length(Flowlinknr),2);
 flownumbers(:,1) = ObjectID;
 flownumbers(:,2) = num2cell(Flowlinknr);
 
-% Initialize a new struct to store matching entries
-Qpli = struct('Name', {}, 'Data', {});
-hpli = struct('Name', {}, 'Data', {});
-flowlinkQ = struct('Complete', {}, 'P0000', {}, 'P0001', {}, 'P0002', {},'P0003', {})
-% Select relevant segments
-plifile = crs_seg.Field;
-orderflw= load(orderflwfile);
-order_flw = orderflw.orderflw.Complete;
-order_flw0000 = orderflw.orderflw.P0000;
-order_flw0001 = orderflw.orderflw.P0001;
-order_flw0002 = orderflw.orderflw.P0002;
-order_flw0003 = orderflw.orderflw.P0003;
+%#V: `flownumbers` is not used. ?
 
-for i = 1:numel(plifile)
-    if contains(plifile(i).Name, Upstream) 
-        Qpli(end+1).Name = plifile(i).Name;
-        Qpli(end).Data = plifile(i).Data;
-        %order_flw(i).orderedflownumbers
-        flowlinkQ(end+1).Complete = order_flw(i).Data; 
-        %lowlinkQ(end+1).Complete = Flowlinknr(i); 
+%%
 
-    elseif contains(plifile(i).Name, Downstream)
-        hpli(end+1).Name = plifile(i).Name;
-        hpli(end).Data = plifile(i).Data;
-    end 
-end 
-
-%Upstream boundary files (needs to be seperate files)
-for i = 1 : numel(Qpli)
-    uppli = [fpath_project,'boundary_conditions\',Qpli(i).Name,'.pli'];
-    tekal('write', [uppli], Qpli(i))
-end
-%Downstream boundary files (needs to be seperate files)
-for i = 1:numel(hpli)
-    downpli = [fpath_project,'boundary_conditions\',hpli(i).Name,'.pli'];
-    tekal('write', [downpli], hpli(i))
-end
-
-% uppli = [fpath_project,'boundary_conditions\',Upstream,'.pli'];
-% downpli = [fpath_project,'boundary_conditions\',Downstream,'.pli'];
-%     %uppli = 
-% % Write an upstream and downstream .pli
-% tekal('write', [uppli], hpli);
-% tekal('write', [downpli], hpli);
+write_pli()
 
 %% Read OBS file
 fid = fopen(obsfile)
@@ -331,4 +295,58 @@ for LL = 1:numel(hobs)
                      Case_type,Case, Downstream, Case);
 end
 D3D_io_input('write', fullfile(fpath_project, 'computations','test',Case, ['Maas_',strrep(Upstream,'C_','Q_'),'_',Case,'_bnd.ext']), X);
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function write_pli(crs_seg,orderflwfile,fpath_bc)
+
+% Initialize a new struct to store matching entries
+Qpli = struct('Name', {}, 'Data', {});
+hpli = struct('Name', {}, 'Data', {});
+flowlinkQ = struct('Complete', {}, 'P0000', {}, 'P0001', {}, 'P0002', {},'P0003', {});
+% Select relevant segments
+plifile = crs_seg.Field;
+orderflw= load(orderflwfile);
+order_flw = orderflw.orderflw.Complete;
+order_flw0000 = orderflw.orderflw.P0000;
+order_flw0001 = orderflw.orderflw.P0001;
+order_flw0002 = orderflw.orderflw.P0002;
+order_flw0003 = orderflw.orderflw.P0003;
+
+for i = 1:numel(plifile)
+    if contains(plifile(i).Name, Upstream) 
+        Qpli(end+1).Name = plifile(i).Name;
+        Qpli(end).Data = plifile(i).Data;
+        %order_flw(i).orderedflownumbers
+        flowlinkQ(end+1).Complete = order_flw(i).Data; 
+        %lowlinkQ(end+1).Complete = Flowlinknr(i); 
+
+    elseif contains(plifile(i).Name, Downstream)
+        hpli(end+1).Name = plifile(i).Name;
+        hpli(end).Data = plifile(i).Data;
+    end 
+end 
+
+%Upstream boundary files (needs to be seperate files)
+for i = 1 : numel(Qpli)
+    uppli = fullfile(fpath_bc,sprintf('%s.pli',Qpli(i).Name));
+    tekal('write', [uppli], Qpli(i))
 end
+%Downstream boundary files (needs to be seperate files)
+for i = 1:numel(hpli)
+    downpli = fullfile(fpath_bc,sprintf('%s.pli',hpli(i).Name));
+    tekal('write', [downpli], hpli(i))
+end
+
+% uppli = [fpath_project,'boundary_conditions\',Upstream,'.pli'];
+% downpli = [fpath_project,'boundary_conditions\',Downstream,'.pli'];
+%     %uppli = 
+% % Write an upstream and downstream .pli
+% tekal('write', [uppli], hpli);
+% tekal('write', [downpli], hpli);
+
+end %function
