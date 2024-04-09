@@ -147,13 +147,13 @@ else
     yrounded3 = round(faces0003(1).Y,6);
 end
 
-for i = 1:numel(Qobs)
+for k = 1:numel(Qobs)
     if partition == 0
-        idx = find(xrounded == Qobs(i).X);
+        idx = find(xrounded == Qobs(k).X);
         q1 = q(idx);
-        flownr = flowlinkQ(i).Complete;
+        flownr = flowlinkQ(k).Complete;
     else
-        obsname = Qobs(i).Name(5:end);
+        obsname = Qobs(k).Name(5:end);
         ordered_flw = {order_flw0000, order_flw0001, order_flw0002, order_flw0003};
         q = {q0000, q0001, q0002, q0003};
         xr = {xrounded0, xrounded1, xrounded2, xrounded3};
@@ -171,7 +171,7 @@ for i = 1:numel(Qobs)
                 flownrname = flownrname{1}(3:end);
 
                 if strcmp(flownrname, obsname)
-                    idx = find(xrounded == Qobs(i).X);
+                    idx = find(xrounded == Qobs(k).X);
                     q1 = qpart(idx);
                     shouldbreak = true;
                     flownr = flwlinks(j).Data;
@@ -184,9 +184,9 @@ for i = 1:numel(Qobs)
         end
 
     end
-    if yrounded(idx) == Qobs(i).Y
+    if yrounded(idx) == Qobs(k).Y
         kbc = kbc+1;
-        bc(kbc).name=strrep(deblank(Qobs(i).Name),'O_1_', 'C_');
+        bc(kbc).name=strrep(deblank(Qobs(k).Name),'O_1_', 'C_');
         bc(kbc).function='timeseries';
         bc(kbc).time_interpolation='linear';
         bc(kbc).quantity{1}='time';
@@ -196,7 +196,7 @@ for i = 1:numel(Qobs)
         
         %Check if sign is correct (SHOULD BE TESTED)
         
-        if Qobs(i).X > Qobs2(i).X
+        if Qobs(k).X > Qobs2(k).X
             if flowlink_to_face{1}.X(abs(flownr))< flowlink_to_face{2}.X(abs(flownr))
                 q1 =  -q1;
             end
@@ -221,11 +221,11 @@ fname = sprintf('Maas_%s_%s_bnd.bc', ['H_',Downstream], Case);
 fpath = fullfile(fpath_project, 'boundary_conditions','test',Case_type, 'flow',Case,fname);
 delete(fpath)
 kbc = 0;
-for i = 1:numel(hobs)
-    idx = find(xrounded == hobs(i).X)
-    if yrounded(idx) == hobs(i).Y
+for k = 1:numel(hobs)
+    idx = find(xrounded == hobs(k).X)
+    if yrounded(idx) == hobs(k).Y
         kbc = kbc+1;
-        bc(kbc).name=strrep(deblank(hobs(i).Name),'O_1_', 'C_');
+        bc(kbc).name=strrep(deblank(hobs(k).Name),'O_1_', 'C_');
         bc(kbc).function='timeseries';
         bc(kbc).time_interpolation='linear';
         bc(kbc).quantity{1}='time';
@@ -289,29 +289,29 @@ order_flw0001 = orderflw.orderflw.P0001;
 order_flw0002 = orderflw.orderflw.P0002;
 order_flw0003 = orderflw.orderflw.P0003;
 
-for i = 1:numel(plifile)
-    if contains(plifile(i).Name, Upstream) 
-        Qpli(end+1).Name = plifile(i).Name;
-        Qpli(end).Data = plifile(i).Data;
+for k = 1:numel(plifile)
+    if contains(plifile(k).Name, Upstream) 
+        Qpli(end+1).Name = plifile(k).Name;
+        Qpli(end).Data = plifile(k).Data;
         %order_flw(i).orderedflownumbers
-        flowlinkQ(end+1).Complete = order_flw(i).Data; 
+        flowlinkQ(end+1).Complete = order_flw(k).Data; 
         %lowlinkQ(end+1).Complete = Flowlinknr(i); 
 
-    elseif contains(plifile(i).Name, Downstream)
-        hpli(end+1).Name = plifile(i).Name;
-        hpli(end).Data = plifile(i).Data;
+    elseif contains(plifile(k).Name, Downstream)
+        hpli(end+1).Name = plifile(k).Name;
+        hpli(end).Data = plifile(k).Data;
     end 
 end 
 
 %Upstream boundary files (needs to be seperate files)
-for i = 1 : numel(Qpli)
-    uppli = fullfile(fpath_bc,sprintf('%s.pli',Qpli(i).Name));
-    tekal('write', [uppli], Qpli(i))
+for k = 1 : numel(Qpli)
+    uppli = fullfile(fpath_bc,sprintf('%s.pli',Qpli(k).Name));
+    tekal('write', [uppli], Qpli(k))
 end
 %Downstream boundary files (needs to be seperate files)
-for i = 1:numel(hpli)
-    downpli = fullfile(fpath_bc,sprintf('%s.pli',hpli(i).Name));
-    tekal('write', [downpli], hpli(i))
+for k = 1:numel(hpli)
+    downpli = fullfile(fpath_bc,sprintf('%s.pli',hpli(k).Name));
+    tekal('write', [downpli], hpli(k))
 end
 
 % uppli = [fpath_project,'boundary_conditions\',Upstream,'.pli'];
@@ -331,29 +331,29 @@ fid = fopen(obsfile)
 data = textscan(fid, '%f %f %s', 'Delimiter', '\t');
 NameOBS = data{3};
 %Save relevant observation points for Q boundary
-for i = 1:numel(Qpli)
-    Name = strrep(Qpli(i).Name, 'C_', ''); 
-    Qobs(i).Name = ['O_1_', Name];
-    Qobs2(i).Name = ['O_2_', Name];
+for k = 1:numel(Qpli)
+    Name = strrep(Qpli(k).Name, 'C_', ''); 
+    Qobs(k).Name = ['O_1_', Name];
+    Qobs2(k).Name = ['O_2_', Name];
     for j = 1:length(NameOBS)
-        if strcmp(Qobs(i).Name, NameOBS(j))
-            Qobs(i).X = data{1}(j);
-            Qobs(i).Y = data{2}(j);
+        if strcmp(Qobs(k).Name, NameOBS(j))
+            Qobs(k).X = data{1}(j);
+            Qobs(k).Y = data{2}(j);
         end
-        if strcmp(Qobs2(i).Name, NameOBS(j))
-            Qobs2(i).X = data{1}(j);
-            Qobs2(i).Y = data{2}(j);
+        if strcmp(Qobs2(k).Name, NameOBS(j))
+            Qobs2(k).X = data{1}(j);
+            Qobs2(k).Y = data{2}(j);
         end
     end
 end
 %Save relevant observation points for h boundary
-for i = 1:numel(hpli)
-    Name = strrep(hpli(i).Name, 'C_', ''); 
-    hobs(i).Name = ['O_1_', Name];
+for k = 1:numel(hpli)
+    Name = strrep(hpli(k).Name, 'C_', ''); 
+    hobs(k).Name = ['O_1_', Name];
     for j = 1:length(NameOBS)
-        if strcmp(hobs(i).Name, NameOBS(j))
-            hobs(i).X = data{1}(j);
-            hobs(i).Y = data{2}(j);
+        if strcmp(hobs(k).Name, NameOBS(j))
+            hobs(k).X = data{1}(j);
+            hobs(k).Y = data{2}(j);
         end
     end
 end
