@@ -36,15 +36,19 @@ flownumbers(:,2) = num2cell(Flowlinknr);
 
 %% Read OBS file
 
-read_obs()
+[Qobs,hobs]=read_obs(obsfile,Qpli,hpli);
 
 %% Get info from map file
 %Get locations of faces from complete map file
-compmapfile = 'p:\archivedprojects\11209261-002-maas-mor-v2\C_Work\01_Model_40m\dflowfm2d-maas-j23_6-v1a\computations\test\S1300\results\Maas_map.nc'
+
+%#V: `faces` only used for writing BC?
+%#V: paths should not be in functions
+compmapfile = 'p:\archivedprojects\11209261-002-maas-mor-v2\C_Work\01_Model_40m\dflowfm2d-maas-j23_6-v1a\computations\test\S1300\results\Maas_map.nc';
 d3d_qp('openfile',compmapfile);
 d3d_qp('selectfield', 'Topology data of 2D mesh - face indices');
 faces = d3d_qp('loaddata'); 
 
+%#V: There is input in the function.
 if isfile(fullfile(ncfilepath, 'Maas_map.nc'))
     %Time
     tdata = EHY_getmodeldata(fullfile(ncfilepath, 'Maas_map.nc'),'','dfm','varName','time');
@@ -325,37 +329,51 @@ end %function
 
 %%
 
-function read_obs()
+function [Qobs,hobs]=read_obs(obsfile,Qpli,hpli)
 
-fid = fopen(obsfile)
+%#V: matrixread, cellread
+fid = fopen(obsfile);
 data = textscan(fid, '%f %f %s', 'Delimiter', '\t');
 NameOBS = data{3};
+
 %Save relevant observation points for Q boundary
+Qobs=struct('Name','','X',[],'Y',[]);
 for k = 1:numel(Qpli)
     Name = strrep(Qpli(k).Name, 'C_', ''); 
-    Qobs(k).Name = ['O_1_', Name];
-    Qobs2(k).Name = ['O_2_', Name];
-    for j = 1:length(NameOBS)
-        if strcmp(Qobs(k).Name, NameOBS(j))
-            Qobs(k).X = data{1}(j);
-            Qobs(k).Y = data{2}(j);
-        end
-        if strcmp(Qobs2(k).Name, NameOBS(j))
-            Qobs2(k).X = data{1}(j);
-            Qobs2(k).Y = data{2}(j);
-        end
-    end
-end
+    
+    for kobs=1:2
+        Qobs(k).Name = sprintf('O_%d_%s',kobs,Name);
+        
+        idx_str=find(strcmp(Qobs(k).Name, NameOBS));
+        Qobs(k).X = data{1}(idx_str);
+        Qobs(k).Y = data{2}(idx_str);
+    end %kobs
+%     for j = 1:length(NameOBS)
+%         if strcmp(Qobs(k).Name, NameOBS(j))
+%             Qobs(k).X = data{1}(j);
+%             Qobs(k).Y = data{2}(j);
+%         end
+%         if strcmp(Qobs2(k).Name, NameOBS(j))
+%             Qobs2(k).X = data{1}(j);
+%             Qobs2(k).Y = data{2}(j);
+%         end
+%     end
+end %k
+
 %Save relevant observation points for h boundary
+hobs=struct('Name','','X',[],'Y',[]);
 for k = 1:numel(hpli)
     Name = strrep(hpli(k).Name, 'C_', ''); 
     hobs(k).Name = ['O_1_', Name];
-    for j = 1:length(NameOBS)
-        if strcmp(hobs(k).Name, NameOBS(j))
-            hobs(k).X = data{1}(j);
-            hobs(k).Y = data{2}(j);
-        end
-    end
+    idx_str=find(strcmp(hobs(k).Name, NameOBS));
+    hobs(k).X = data{1}(idx_str);
+    hobs(k).Y = data{2}(idx_str);
+%     for j = 1:length(NameOBS)
+%         if strcmp(hobs(k).Name, NameOBS(j))
+%             hobs(k).X = data{1}(j);
+%             hobs(k).Y = data{2}(j);
+%         end
+%     end
 end
 
 end %function
