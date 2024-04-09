@@ -7,28 +7,60 @@
 %
 %Add function explanation
 
-function write_subdomain_bc(Upstream, Downstream, Case, Case_type, crsfile, obsfile, shapefile, orderflwfile, fpath_project, ncfilepath)
+% function write_subdomain_bc(Upstream, Downstream, Case, Case_type, crsfile, obsfile, shapefile, orderflwfile, fpath_project, ncfilepath)
+function write_subdomain_bc(fpath_map,fpath_pli,varargin)
 
 %% PARSE
 
+% parin=inputParser;
+% 
+% addOptional(parin,'xlsx_range','');
+% 
+% parse(parin,varargin{:});
+% 
+% xlsx_range=parin.Results.xlsx_range;
+
+if isempty(fpath_map) || isfile(fpath_map)~=2
+    error('Please input map file.')
+end
+
 %% CALC
 
-[orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc);
+[idx_cell,idx_link]=get_idx_grid_pli(fpath_map,fpath_pli);
 
-[Qobs,hobs]=read_obs(obsfile,Qpli,hpli);
+[q,s1,bl,times]=extract_map_info(fpath_map,idx_cell,idx_link);
 
-read_map()
+write_info(q,s1,bl,times,fdir_out);
 
-write_q()
+%%
+%%
+% %% CALC
 
-write_h()
-
-write_ext()
+% [orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc);
+% 
+% % [Qobs,hobs]=read_obs(obsfile,Qpli,hpli);
+% 
+% %
+% read_map()
+% 
+% write_q()
+% 
+% write_h()
+% 
+% write_ext()
 
 end %function
 
 %%
 %% FUNCTIONS
+%%
+
+function [idx_cell,idx_link]=get_idx_grid_pli(fpath_map,fpath_pli)
+
+gridInfo=EHY_getGridInfo('p:\archivedprojects\11209261-002-maas-mor-v2\C_Work\01_Model_40m\dflowfm2d-maas-j23_6-v1a\computations\test\S1000\results\Maas_map.nc',{'XYcen','XYuv'});
+
+end %function
+
 %%
 
 function [orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc)
@@ -90,6 +122,7 @@ function [Qobs,hobs]=read_obs(obsfile,Qpli,hpli)
 fid = fopen(obsfile);
 data = textscan(fid, '%f %f %s', 'Delimiter', '\t');
 NameOBS = data{3};
+fclose(fid);
 
 %Save relevant observation points for Q boundary
 Qobs=struct('Name','','X',[],'Y',[]);
@@ -135,6 +168,12 @@ end %function
 
 %%
 
+%OUTPUT:
+%   -time
+%   -q
+%   -s1
+%   -bl
+
 function read_map(fpath_map)
 
 %#V: There is input in the function.
@@ -165,13 +204,14 @@ elseif isfile(fullfile(ncfilepath, 'Maas_0000_map.nc'))
     t = tdata.val.';
     %Discharge2
     qdata = EHY_getmodeldata(fullfile(ncfilepath, 'Maas_0000_map.nc'),'','dfm','varName','mesh2d_q1');
-    q0000 = qdata.val.';
-    qdata = EHY_getmodeldata(fullfile(ncfilepath, 'Maas_0001_map.nc'),'','dfm','varName','mesh2d_q1');
-    q0001 = qdata.val.';
-    qdata = EHY_getmodeldata(fullfile(ncfilepath, 'Maas_0002_map.nc'),'','dfm','varName','mesh2d_q1');
-    q0002 = qdata.val.';
-    qdata = EHY_getmodeldata(fullfile(ncfilepath, 'Maas_0003_map.nc'),'','dfm','varName','mesh2d_q1');
-    q0003 = qdata.val.';
+    q=qdata.val';
+%     q0000 = qdata.val.';
+%     qdata = EHY_getmodeldata(fullfile(ncfilepath, 'Maas_0001_map.nc'),'','dfm','varName','mesh2d_q1');
+%     q0001 = qdata.val.';
+%     qdata = EHY_getmodeldata(fullfile(ncfilepath, 'Maas_0002_map.nc'),'','dfm','varName','mesh2d_q1');
+%     q0002 = qdata.val.';
+%     qdata = EHY_getmodeldata(fullfile(ncfilepath, 'Maas_0003_map.nc'),'','dfm','varName','mesh2d_q1');
+%     q0003 = qdata.val.';
     %water level 
     s1data = EHY_getMapModelData(fullfile(ncfilepath, 'Maas_0000_map.nc'),'varName','mesh2d_s1');
     s1 = s1data.val.';
