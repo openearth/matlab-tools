@@ -1,3 +1,8 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
 %$Revision$
 %$Date$
@@ -5,12 +10,28 @@
 %$Id$
 %$HeadURL$
 %
-%Add function explanation
-
+%Write boundary condition per cell. Based on a map-file and 
+%a cross-section (for links) and observation station (for cell centre)
+%files, it finds the location in the map from which to extract the 
+%information and write the boundary conditions files. 
+%
+%Wout and Willem made a first version. 
+%
+%INPUT:
+%   -obs-file upstream and downstream station from each cell.
+%   -crs-file at each cell.
+%   -map-file
+%
+%OUTPUT:
+%   -BC files
+%
 % function write_subdomain_bc(Upstream, Downstream, Case, Case_type, crsfile, obsfile, shapefile, orderflwfile, fpath_project, ncfilepath)
-function write_subdomain_bc(fpath_map,fpath_pli,varargin)
+function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fdir_out,time_start,is_upstream,varargin)
 
 %% PARSE
+
+%Option select either upstream or downstream water level. 
+%Future: read information from obs-file
 
 % parin=inputParser;
 % 
@@ -20,17 +41,21 @@ function write_subdomain_bc(fpath_map,fpath_pli,varargin)
 % 
 % xlsx_range=parin.Results.xlsx_range;
 
-if isempty(fpath_map) || isfile(fpath_map)~=2
+if isempty(fpath_map) || ~isfile(fpath_map)
     error('Please input map file.')
 end
 
 %% CALC
 
-[idx_cell,idx_link]=get_idx_grid_pli(fpath_map,fpath_pli);
+[obs,crs]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,varargin{:});
+ 
+[obs,crs,time_v]=extract_map_info(fpath_map,obs,crs);
+ 
+write_h_bc(obs,fdir_out,time_start,time_v,is_upstream);
 
-[q,s1,bl,times]=extract_map_info(fpath_map,idx_cell,idx_link);
+write_q_bc(crs,fdir_out,time_start,time_v);
 
-write_info(q,s1,bl,times,fdir_out);
+write_pli(crs,fdir_out)
 
 %%
 %%
@@ -38,7 +63,7 @@ write_info(q,s1,bl,times,fdir_out);
 
 % [orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc);
 % 
-% % [Qobs,hobs]=read_obs(obsfile,Qpli,hpli);
+% [Qobs,hobs]=read_obs(obsfile,Qpli,hpli);
 % 
 % %
 % read_map()
@@ -54,16 +79,268 @@ end %function
 %%
 %% FUNCTIONS
 %%
+% 
+function [obs,crs]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,varargin)
 
-function [idx_cell,idx_link]=get_idx_grid_pli(fpath_map,fpath_pli)
+%% PARSE
 
-gridInfo=EHY_getGridInfo('p:\archivedprojects\11209261-002-maas-mor-v2\C_Work\01_Model_40m\dflowfm2d-maas-j23_6-v1a\computations\test\S1000\results\Maas_map.nc',{'XYcen','XYuv'});
+parin=inputParser;
+
+addOptional(parin,'delimiter','\t');
+
+parse(parin,varargin{:});
+
+delimiter=parin.Results.delimiter;
+
+%% CALC
+
+%read grid
+gridInfo=EHY_getGridInfo(fpath_map,{'XYcen','XYuv'}); 
+obs=D3D_io_input('read',fpath_obs,'delimiter',delimiter,'v',2);
+
+edge_face=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
+edge_face=edge_face.val;
+dom=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_domain');
+dom=dom.val;
+face_x=EHY_getMapModelData(fpath_map,'varName','mesh2d_face_x');
+face_x=face_x.val;
+face_y=EHY_getMapModelData(fpath_map,'varName','mesh2d_face_y');
+face_y=face_y.val;
+edge_x=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_x');
+edge_x=edge_x.val;
+edge_y=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_y');
+edge_y=edge_y.val;
+
+% xcen_v=gridInfo.Xcen;
+% ycen_v=gridInfo.Ycen;
+% 
+% xedg_v=gridInfo.Xu;
+% yedg_v=gridInfo.Yu;
+
+xcen_v=face_x;
+ycen_v=face_y;
+
+xedg_v=edge_x;
+yedg_v=edge_y;
+
+% test=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_x');
+
+% edge_x=ncread(fpath_map,'mesh2d_edge_x');
+% edge_y=ncread(fpath_map,'mesh2d_edge_y');
+
+% edge_faces=ncread(fpath_map,'mesh2d_edge_faces');
+% face_x=ncread(fpath_map,'mesh2d_face_x');
+% face_y=ncread(fpath_map,'mesh2d_face_y');
+
+%%
+
+% figure
+% hold on
+% 
+% scatter(edge_x(l),edge_y(l));
+% scatter(face_x(edge_faces(:,l)),face_y(edge_faces(:,l)))
+% 
+% %%
+% % figure
+% % hold on
+% % l=500000;
+% % scatter(gridInfo.Xu(l),gridInfo.Yu(l))
+% % scatter(gridInfo.Xcen(edge_face(l,:)),gridInfo.Ycen(edge_face(l,:)))
+% 
+% %%
+% 
+% figure
+% hold on
+% l=500000;
+% scatter(edge_x(l),edge_y(l))
+% scatter(face_x(edge_face(l,:)),face_y(edge_face(l,:)))
+
+
+%%
+
+ndom=max(dom)+1; %number of domains
+% faces_local=NaN(size(gridInfo.Xcen));
+faces_local=NaN(size(dom));
+for kdom=1:ndom
+    bol_dom=dom==kdom-1;
+    faces_local(bol_dom)=1:1:sum(bol_dom);
+end
+
+
+%obs
+nobs=numel(obs);
+for kobs=1:nobs
+    x=obs(kobs).xy(1);
+    y=obs(kobs).xy(2);
+    dist=hypot(xcen_v-x,ycen_v-y);
+    [idx,min_v]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
+    obs(kobs).idx=idx;
+end %kobs
+idx_obs=[obs.idx];
+
+%no problem if duplicate stations. There is a 90 degrees turn in the pli. 
+% idx_obs_u=unique(idx_obs);
+% if numel(idx_obs_u)~=numel(idx_obs)
+%     messageOut(NaN,'There are two observation stations associated to the same cell.')
+% end
+
+%crs
+crs=D3D_io_input('read',fpath_crs);
+ncrs=numel(crs);
+for kcrs=1:ncrs
+    x=mean(crs(kcrs).xy(:,1));
+    y=mean(crs(kcrs).xy(:,2));
+    dist=hypot(xedg_v-x,yedg_v-y);
+    [idx_edg,min_v]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
+    crs(kcrs).idx=idx_edg;   
+
+    %direction
+    %`edge_faces` cannot be used because it is a local of every partitioned grid. 
+    %by construction, the closest two stations must be upstream and downstream from the link. 
+    dist=hypot(xcen_v-x,ycen_v-y);
+    [idx,min_v]=absmintol(dist,0,'do_disp_list',0,'tol',40,'do_break',1); %idx of global faces
+
+    idx_faces=edge_face(idx_edg,:); %local faces
+
+    idx_faces_possible=find(faces_local==idx_faces(1));
+
+    x_possible=xcen_v(idx_faces_possible);
+    y_possible=ycen_v(idx_faces_possible);
+
+
+
+%     dom(idx) %domain number
+%     xcen_v(idx)
+% 
+    idx_obs_2=find(idx_obs==idx);
+    idx_obs_2=idx_obs_2(1); %remove duplicate
+%     obs_name=obs(idx_obs_2).name;
+%     obs(idx_obs_2).xy
+    
+end %kcrs
+
+%% DEBUG
+
+xy_obs_all=reshape([obs.xy],2,[])';
+figure
+hold on
+scatter(gridInfo.Xcen,gridInfo.Ycen)
+% scatter(face_x.val,face_y.val,'x')
+scatter(x_possible,y_possible,'x')
+scatter(xy_obs_all(:,1),xy_obs_all(:,2))
+% scatter(xy_obs_all(idx_obs_2,1),xy_obs_all(idx_obs_2,2),'r','s')
+% for kcrs=1:ncrs
+plot(crs(kcrs).xy(:,1),crs(kcrs).xy(:,2),'LineWidth',2,'color','g')
+% scatter(gridInfo.Xu(crs(kcrs).idx),gridInfo.Yu(crs(kcrs).idx),'m','x')
+% scatter(gridInfo.Xu(crs(kcrs).idx),gridInfo.Yu(crs(kcrs).idx),'m','x')
+% face_loc=edge_face(crs(kcrs).idx,:);
+% scatter(gridInfo.Xcen(face_loc),gridInfo.Ycen(face_loc),'r','s')
+% end
+
+axis equal
+
+%%
+end %function
+
+%%
+
+function [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs)
+
+data_q=EHY_getMapModelData(fpath_map,'varName','mesh2d_q1');
+ncrs=numel(crs);
+for kcrs=1:ncrs
+    crs(kcrs).q=data_q.val(:,crs(kcrs).idx);
+end
+
+data_s1=EHY_getMapModelData(fpath_map,'varName','mesh2d_s1');
+data_bl=EHY_getMapModelData(fpath_map,'varName','bl');
+nobs=numel(obs);
+for kobs=1:nobs
+    obs(kobs).s1=data_s1.val(:,obs(kobs).idx);
+    obs(kobs).bl=data_bl.val(obs(kobs).idx);
+end
+
+time_v=data_q.times;
 
 end %function
 
 %%
 
-function [orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc)
+function write_h_bc(obs,fdir_out,time_start,time_v,is_upstream)
+
+nobs=numel(obs);
+ks=0;
+for kobs=1:nobs
+%     bc(kbc).name=strrep(deblank(hobs(k).Name),'O_1_', 'C_');
+    name=deblank(obs(kobs).name);
+    if (strcmp(name(3),'1') && is_upstream) || (strcmp(name(3),'2') && ~is_upstream)
+        continue
+    end
+    ks=ks+1;
+    name(1:4)='';
+    bc(ks).name=name;
+    bc(ks).function='time_series';
+    bc(ks).time_interpolation='linear';
+    bc(ks).quantity{1}='time';
+    bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
+    bc(ks).quantity{2}='waterlevelbnd';
+    bc(ks).unit{2}='m';
+
+    %replace NaN values with bed level values
+    val=obs(kobs).s1;
+    bol_nan=isnan(val);
+    val(bol_nan)=obs(kobs).bl;
+
+    bc(ks).val=[time_v,val];
+end
+
+fpath=fullfile(fdir_out,'h.bc');
+D3D_write_bc(fpath,bc)
+
+end %function
+
+%%
+
+function write_q_bc(crs,fdir_out,time_start,time_v)
+
+ncrs=numel(crs);
+for kcrs=1:ncrs
+%     bc(kcrs).name=strrep(deblank(crs(kcrs).Name),'O_1_', 'C_');
+    
+    bc(kcrs).name=deblank(crs(kcrs).name);
+    bc(kcrs).function='time_veries';
+    bc(kcrs).time_interpolation='linear';
+    bc(kcrs).quantity{1}='time';
+    bc(kcrs).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
+    bc(kcrs).quantity{2}='dischargebnd';
+    bc(kcrs).unit{2}='m3/s';
+
+    bc(kcrs).val=[time_v,crs(kcrs).q];
+end
+
+fpath=fullfile(fdir_out,'q.bc');
+D3D_write_bc(fpath,bc)
+
+end %function
+
+%%
+
+function write_pli(crs,fdir_out)
+
+ncrs=numel(crs);
+for kcrs=1:ncrs
+    name=strrep(crs(kcrs).name,'C_','');
+    pli.name=name;
+    pli.xy=crs(kcrs).xy;
+    fpath=fullfile(fdir_out,sprintf('%s.pli',name));
+    D3D_io_input('write',fpath,pli)
+end %kcrs
+
+end %function
+
+%%
+
+function [orderflw,flowlinkQ]=write_pli_old(crs_seg,orderflwfile,fpath_bc)
 
 crs_seg = tekal('read', crsfile, 'loaddata');
 
@@ -330,7 +607,7 @@ for k = 1:numel(Qobs)
     if yrounded(idx) == Qobs(k).Y
         kbc = kbc+1;
         bc(kbc).name=strrep(deblank(Qobs(k).Name),'O_1_', 'C_');
-        bc(kbc).function='timeseries';
+        bc(kbc).function='time_veries';
         bc(kbc).time_interpolation='linear';
         bc(kbc).quantity{1}='time';
         bc(kbc).unit{1}='minutes since 2035-01-01 00:00:00 +01:00';
@@ -374,7 +651,7 @@ for k = 1:numel(hobs)
     if yrounded(idx) == hobs(k).Y
         kbc = kbc+1;
         bc(kbc).name=strrep(deblank(hobs(k).Name),'O_1_', 'C_');
-        bc(kbc).function='timeseries';
+        bc(kbc).function='time_veries';
         bc(kbc).time_interpolation='linear';
         bc(kbc).quantity{1}='time';
         bc(kbc).unit{1}='minutes since 2035-01-01 00:00:00 +01:00';
