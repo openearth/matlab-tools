@@ -1,4 +1,13 @@
-function write_bc_file(Upstream, Downstream, Case, Case_type, crsfile, obsfile, shapefile, orderflwfile, fpath_project, ncfilepath)
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+%Add function explanation
+
+function write_subdomain_bc(Upstream, Downstream, Case, Case_type, crsfile, obsfile, shapefile, orderflwfile, fpath_project, ncfilepath)
 %% Create upstream and downstream boundary file
 crs_seg = tekal('read', crsfile, 'loaddata');
 linknumbers = shp2struct(shapefile,'read_val',true);
