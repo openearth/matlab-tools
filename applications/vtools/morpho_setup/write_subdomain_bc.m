@@ -32,39 +32,11 @@ flownumbers(:,2) = num2cell(Flowlinknr);
 
 %%
 
-write_pli()
+[orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc);
 
 %% Read OBS file
-fid = fopen(obsfile)
-data = textscan(fid, '%f %f %s', 'Delimiter', '\t');
-NameOBS = data{3};
-%Save relevant observation points for Q boundary
-for i = 1:numel(Qpli)
-    Name = strrep(Qpli(i).Name, 'C_', ''); 
-    Qobs(i).Name = ['O_1_', Name];
-    Qobs2(i).Name = ['O_2_', Name];
-    for j = 1:length(NameOBS)
-        if strcmp(Qobs(i).Name, NameOBS(j))
-            Qobs(i).X = data{1}(j);
-            Qobs(i).Y = data{2}(j);
-        end
-        if strcmp(Qobs2(i).Name, NameOBS(j))
-            Qobs2(i).X = data{1}(j);
-            Qobs2(i).Y = data{2}(j);
-        end
-    end
-end
-%Save relevant observation points for h boundary
-for i = 1:numel(hpli)
-    Name = strrep(hpli(i).Name, 'C_', ''); 
-    hobs(i).Name = ['O_1_', Name];
-    for j = 1:length(NameOBS)
-        if strcmp(hobs(i).Name, NameOBS(j))
-            hobs(i).X = data{1}(j);
-            hobs(i).Y = data{2}(j);
-        end
-    end
-end
+
+read_obs()
 
 %% Get info from map file
 %Get locations of faces from complete map file
@@ -302,7 +274,7 @@ end %function
 %% FUNCTIONS
 %%
 
-function write_pli(crs_seg,orderflwfile,fpath_bc)
+function [orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc)
 
 % Initialize a new struct to store matching entries
 Qpli = struct('Name', {}, 'Data', {});
@@ -311,7 +283,7 @@ flowlinkQ = struct('Complete', {}, 'P0000', {}, 'P0001', {}, 'P0002', {},'P0003'
 % Select relevant segments
 plifile = crs_seg.Field;
 orderflw= load(orderflwfile);
-order_flw = orderflw.orderflw.Complete;
+order_flw = orderflw.orderflw.Complete; %#V: Specific for 4 partitions?
 order_flw0000 = orderflw.orderflw.P0000;
 order_flw0001 = orderflw.orderflw.P0001;
 order_flw0002 = orderflw.orderflw.P0002;
@@ -348,5 +320,42 @@ end
 % % Write an upstream and downstream .pli
 % tekal('write', [uppli], hpli);
 % tekal('write', [downpli], hpli);
+
+end %function
+
+%%
+
+function read_obs()
+
+fid = fopen(obsfile)
+data = textscan(fid, '%f %f %s', 'Delimiter', '\t');
+NameOBS = data{3};
+%Save relevant observation points for Q boundary
+for i = 1:numel(Qpli)
+    Name = strrep(Qpli(i).Name, 'C_', ''); 
+    Qobs(i).Name = ['O_1_', Name];
+    Qobs2(i).Name = ['O_2_', Name];
+    for j = 1:length(NameOBS)
+        if strcmp(Qobs(i).Name, NameOBS(j))
+            Qobs(i).X = data{1}(j);
+            Qobs(i).Y = data{2}(j);
+        end
+        if strcmp(Qobs2(i).Name, NameOBS(j))
+            Qobs2(i).X = data{1}(j);
+            Qobs2(i).Y = data{2}(j);
+        end
+    end
+end
+%Save relevant observation points for h boundary
+for i = 1:numel(hpli)
+    Name = strrep(hpli(i).Name, 'C_', ''); 
+    hobs(i).Name = ['O_1_', Name];
+    for j = 1:length(NameOBS)
+        if strcmp(hobs(i).Name, NameOBS(j))
+            hobs(i).X = data{1}(j);
+            hobs(i).Y = data{2}(j);
+        end
+    end
+end
 
 end %function
