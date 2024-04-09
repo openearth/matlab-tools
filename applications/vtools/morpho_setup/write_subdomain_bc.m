@@ -11,24 +11,7 @@ function write_subdomain_bc(Upstream, Downstream, Case, Case_type, crsfile, obsf
 
 %% PARSE
 
-%% Create upstream and downstream boundary file
-crs_seg = tekal('read', crsfile, 'loaddata');
-linknumbers = shp2struct(shapefile,'read_val',true);
-%get names and flow link numbers
-a = linknumbers.val{1,1};
-b = linknumbers.val{1,2};
-ObjectID = a.Val;
-Flowlinknr = b.Val; 
-%Select only relevant flowlinks
-idx = startsWith (ObjectID, 'P');
-ObjectID = ObjectID(idx);
-Flowlinknr = Flowlinknr(idx);
-%Store relevant flowlinks
-flownumbers = cell(length(Flowlinknr),2);
-flownumbers(:,1) = ObjectID;
-flownumbers(:,2) = num2cell(Flowlinknr);
-
-%#V: `flownumbers` is not used. ?
+%% CALC
 
 [orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc);
 
@@ -37,8 +20,6 @@ flownumbers(:,2) = num2cell(Flowlinknr);
 read_map()
 
 write_q()
-
-%#V: `clear bc` is slow and prone to error. 
 
 write_h()
 
@@ -51,6 +32,8 @@ end %function
 %%
 
 function [orderflw,flowlinkQ]=write_pli(crs_seg,orderflwfile,fpath_bc)
+
+crs_seg = tekal('read', crsfile, 'loaddata');
 
 % Initialize a new struct to store matching entries
 Qpli = struct('Name', {}, 'Data', {});
