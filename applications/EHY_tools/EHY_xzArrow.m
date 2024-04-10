@@ -96,7 +96,7 @@ arrow3_tk([xStart; zStart]', [xEnd; zEnd]','-k0.2',W,H,[],[],[],OPT.vecOrArrow);
 xLegStart = XLim(1) + ((lenX - 1.5)/lenX)*(XLim(2) - XLim(1));
 xLegEnd   = XLim(1) + ((lenX - 0.5)/lenX)*(XLim(2) - XLim(1));
 yLegStart = YLim(1) + (0.1         /lenY)*(YLim(2) - YLim(1));
-arrow3([xLegStart; yLegStart]', [xLegEnd; yLegStart]','-k0.35',0.2/unit,0.3/unit,[],[],[],OPT.vecOrArrow);
+arrow3_tk([xLegStart; yLegStart]', [xLegEnd; yLegStart]','-k0.35',0.2/unit,0.3/unit,[],[],[],OPT.vecOrArrow);
 xTxt      =  XLim(1) + ((lenX - 2.25)/lenX)*(XLim(2) - XLim(1));
 yTxt      = YLim(1) + (0.15          /lenY)*(YLim(2) - YLim(1));
 hText     = text(xTxt,yTxt,[num2str(OPT.scale) ' m/s']);
