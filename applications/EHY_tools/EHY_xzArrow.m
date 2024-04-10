@@ -90,7 +90,7 @@ W    = 0.2*min(lenVec,1)/unit;
 
 %% Finally, plot the arrows
 hold on
-arrow3([xStart; zStart]', [xEnd; zEnd]','-k0.2',W,H,[],[],[],OPT.vecOrArrow);
+arrow3_tk([xStart; zStart]', [xEnd; zEnd]','-k0.2',W,H,[],[],[],OPT.vecOrArrow);
 
 %% Still to do, vector legend 0.5 cm below X axis (had to be above the xaxis otherwise it is simply not plotted; Shame)
 xLegStart = XLim(1) + ((lenX - 1.5)/lenX)*(XLim(2) - XLim(1));
