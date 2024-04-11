@@ -47,15 +47,23 @@ end
 
 %% CALC
 
+messageOut(NaN,'Start getting indices.')
 [obs,crs]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,varargin{:});
- 
+
+messageOut(NaN,'Start getting data.')
 [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs);
- 
+
+messageOut(NaN,'Start writing water level boundary.')
 write_h_bc(obs,fdir_out,time_start,time_v,is_upstream);
 
+messageOut(NaN,'Start writing discharge boundary.')
 write_q_bc(crs,fdir_out,time_start,time_v);
 
+messageOut(NaN,'Start writing polylines.')
 write_pli(crs,fdir_out)
+
+write_ext
+messageOut(NaN,'Done.')
 
 %%
 %%
@@ -96,32 +104,85 @@ delimiter=parin.Results.delimiter;
 
 %read grid
 gridInfo=EHY_getGridInfo(fpath_map,{'XYcen','XYuv'}); 
+xcen_ehy=gridInfo.Xcen;
+ycen_ehy=gridInfo.Ycen;
+xedg_ehy=gridInfo.Xu;
+yedg_ehy=gridInfo.Yu;
+
+[edge_face,xcen_raw,ycen_raw,xedg_raw,yedg_raw,~,faces_local]=D3D_edge_faces(fpath_map);
+
+%% obs
 obs=D3D_io_input('read',fpath_obs,'delimiter',delimiter,'v',2);
+nobs=numel(obs);
+for kobs=1:nobs
+    x=obs(kobs).xy(1);
+    y=obs(kobs).xy(2);
+    dist=hypot(xcen_ehy-x,ycen_ehy-y);
+    [idx,~]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
+    obs(kobs).idx=idx; %EHY index of cell centre
+end %kobs
+xy_obs_all=reshape([obs.xy],2,[])';
 
-edge_face=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
-edge_face=edge_face.val;
-dom=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_domain');
-dom=dom.val;
-face_x=EHY_getMapModelData(fpath_map,'varName','mesh2d_face_x');
-face_x=face_x.val;
-face_y=EHY_getMapModelData(fpath_map,'varName','mesh2d_face_y');
-face_y=face_y.val;
-edge_x=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_x');
-edge_x=edge_x.val;
-edge_y=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_y');
-edge_y=edge_y.val;
+%% crs
+crs=D3D_io_input('read',fpath_crs);
+ncrs=numel(crs);
+for kcrs=1:ncrs
+    x=mean(crs(kcrs).xy(:,1));
+    y=mean(crs(kcrs).xy(:,2));
+    dist=hypot(xedg_ehy-x,yedg_ehy-y);
+    [idx_edg,~]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
+    crs(kcrs).idx=idx_edg; %EHY index of link
 
-% xcen_v=gridInfo.Xcen;
-% ycen_v=gridInfo.Ycen;
-% 
-% xedg_v=gridInfo.Xu;
-% yedg_v=gridInfo.Yu;
+    %direction
+    %`edge_faces` cannot be used because it is a local of every partitioned grid. 
+    %by construction, the closest station must be upstream or downstream from the link. 
+    dist=hypot(xedg_raw-x,yedg_raw-y);
+    [idx_edg_raw,~]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1); %index of the link closest in raw coordinates
 
-xcen_v=face_x;
-ycen_v=face_y;
+    idx_faces=edge_face(idx_edg_raw,:); %index of faces connected by the link in raw coordinates. Because it is a local variable, there are as many possible faces as partitions. 
 
-xedg_v=edge_x;
-yedg_v=edge_y;
+    idx_faces_possible=find(faces_local==idx_faces(1)); %global index of possible origin faces connected by the link
+
+    x_possible=xcen_raw(idx_faces_possible);
+    y_possible=ycen_raw(idx_faces_possible);
+
+    dist=hypot(x_possible-x,y_possible-y); 
+    [idx_obs_1_loc,~]=absmintol(dist,0,'do_disp_list',0,'tol',40,'do_break',1); %index of origin face from the possible ones that is closest to the link in raw coordinates.
+
+    x_obs=x_possible(idx_obs_1_loc); %x coordinate of the observation station that is origin of the link.
+    y_obs=y_possible(idx_obs_1_loc); %y coordinate of the observation station that is origin of the link.
+
+    dist=hypot(xy_obs_all(:,1)-x_obs,xy_obs_all(:,2)-y_obs); 
+    idx_obs=absmintol(dist,0,'do_disp_list',0,'tol',40,'do_break',1); %index of the observation station list associated to the observation station that is origin of the link.
+
+    obs_name=obs(idx_obs).name;
+    bol=str2double(obs_name(3))==1; %true => the observation station has a 1. Hence, the origin face is upstream.
+    dir=1; %link goes from upstream to downstream
+    if ~bol
+        dir=-1; %link goes from downstream to upstream
+    end
+    crs(kcrs).direction=dir;
+
+    %% DEBUG
+
+%     figure
+%     hold on
+%     scatter(xcen_v,ycen_v)
+%     x=xy_obs_all(idx_obs,1);
+%     y=xy_obs_all(idx_obs,2);
+%     scatter(x,y,'r','s')
+%     plot(crs(kcrs).xy(:,1),crs(kcrs).xy(:,2),'LineWidth',2,'color','g')
+%     axis equal
+%     xlim([x-100,x+100])
+%     ylim([y-100,y+100])
+%     title(sprintf('%d',crs(kcrs).direction))
+%     pause(0.5)
+%     close all
+
+end
+    %% DEBUG
+
+%%
 
 % test=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_x');
 
@@ -134,20 +195,6 @@ yedg_v=edge_y;
 
 %%
 
-% figure
-% hold on
-% 
-% scatter(edge_x(l),edge_y(l));
-% scatter(face_x(edge_faces(:,l)),face_y(edge_faces(:,l)))
-% 
-% %%
-% % figure
-% % hold on
-% % l=500000;
-% % scatter(gridInfo.Xu(l),gridInfo.Yu(l))
-% % scatter(gridInfo.Xcen(edge_face(l,:)),gridInfo.Ycen(edge_face(l,:)))
-% 
-% %%
 % 
 % figure
 % hold on
@@ -155,91 +202,33 @@ yedg_v=edge_y;
 % scatter(edge_x(l),edge_y(l))
 % scatter(face_x(edge_face(l,:)),face_y(edge_face(l,:)))
 
-
-%%
-
-ndom=max(dom)+1; %number of domains
-% faces_local=NaN(size(gridInfo.Xcen));
-faces_local=NaN(size(dom));
-for kdom=1:ndom
-    bol_dom=dom==kdom-1;
-    faces_local(bol_dom)=1:1:sum(bol_dom);
-end
-
-
-%obs
-nobs=numel(obs);
-for kobs=1:nobs
-    x=obs(kobs).xy(1);
-    y=obs(kobs).xy(2);
-    dist=hypot(xcen_v-x,ycen_v-y);
-    [idx,min_v]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
-    obs(kobs).idx=idx;
-end %kobs
-idx_obs=[obs.idx];
-
-%no problem if duplicate stations. There is a 90 degrees turn in the pli. 
-% idx_obs_u=unique(idx_obs);
-% if numel(idx_obs_u)~=numel(idx_obs)
-%     messageOut(NaN,'There are two observation stations associated to the same cell.')
-% end
-
-%crs
-crs=D3D_io_input('read',fpath_crs);
-ncrs=numel(crs);
-for kcrs=1:ncrs
-    x=mean(crs(kcrs).xy(:,1));
-    y=mean(crs(kcrs).xy(:,2));
-    dist=hypot(xedg_v-x,yedg_v-y);
-    [idx_edg,min_v]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
-    crs(kcrs).idx=idx_edg;   
-
-    %direction
-    %`edge_faces` cannot be used because it is a local of every partitioned grid. 
-    %by construction, the closest two stations must be upstream and downstream from the link. 
-    dist=hypot(xcen_v-x,ycen_v-y);
-    [idx,min_v]=absmintol(dist,0,'do_disp_list',0,'tol',40,'do_break',1); %idx of global faces
-
-    idx_faces=edge_face(idx_edg,:); %local faces
-
-    idx_faces_possible=find(faces_local==idx_faces(1));
-
-    x_possible=xcen_v(idx_faces_possible);
-    y_possible=ycen_v(idx_faces_possible);
-
-
-
 %     dom(idx) %domain number
 %     xcen_v(idx)
-% 
-    idx_obs_2=find(idx_obs==idx);
-    idx_obs_2=idx_obs_2(1); %remove duplicate
-%     obs_name=obs(idx_obs_2).name;
-%     obs(idx_obs_2).xy
-    
-end %kcrs
 
-%% DEBUG
+% xy_obs_all=reshape([obs.xy],2,[])';
+% figure
+% hold on
+% scatter(xcen_v,ycen_v)
+% % scatter(face_x.val,face_y.val,'x')
+% % scatter(x_possible,y_possible,'x')
+% % scatter(xy_obs_all(:,1),xy_obs_all(:,2))
+% x=xy_obs_all(idx_obs_2,1);
+% y=xy_obs_all(idx_obs_2,2);
+% scatter(x,y,'r','s')
+% % for kcrs=1:ncrs
+% plot(crs(kcrs).xy(:,1),crs(kcrs).xy(:,2),'LineWidth',2,'color','g')
+% % scatter(gridInfo.Xu(crs(kcrs).idx),gridInfo.Yu(crs(kcrs).idx),'m','x')
+% % scatter(gridInfo.Xu(crs(kcrs).idx),gridInfo.Yu(crs(kcrs).idx),'m','x')
+% % face_loc=edge_face(crs(kcrs).idx,:);
+% % scatter(gridInfo.Xcen(face_loc),gridInfo.Ycen(face_loc),'r','s')
+% % end
+% axis equal
+% xlim([x-100,x+100])
+% ylim([y-100,y+100])
+% title(sprintf('%d',crs(kcrs).direction))
+% pause(0.5)
+% close all
 
-xy_obs_all=reshape([obs.xy],2,[])';
-figure
-hold on
-scatter(gridInfo.Xcen,gridInfo.Ycen)
-% scatter(face_x.val,face_y.val,'x')
-scatter(x_possible,y_possible,'x')
-scatter(xy_obs_all(:,1),xy_obs_all(:,2))
-% scatter(xy_obs_all(idx_obs_2,1),xy_obs_all(idx_obs_2,2),'r','s')
-% for kcrs=1:ncrs
-plot(crs(kcrs).xy(:,1),crs(kcrs).xy(:,2),'LineWidth',2,'color','g')
-% scatter(gridInfo.Xu(crs(kcrs).idx),gridInfo.Yu(crs(kcrs).idx),'m','x')
-% scatter(gridInfo.Xu(crs(kcrs).idx),gridInfo.Yu(crs(kcrs).idx),'m','x')
-% face_loc=edge_face(crs(kcrs).idx,:);
-% scatter(gridInfo.Xcen(face_loc),gridInfo.Ycen(face_loc),'r','s')
-% end
-
-axis equal
-
-%%
 end %function
 
 %%
@@ -315,7 +304,9 @@ for kcrs=1:ncrs
     bc(kcrs).quantity{2}='dischargebnd';
     bc(kcrs).unit{2}='m3/s';
 
-    bc(kcrs).val=[time_v,crs(kcrs).q];
+    val=crs(kcrs).direction.*crs(kcrs).q; %if the link goes from downstream to upstream, a negative discharge must be positive.
+
+    bc(kcrs).val=[time_v,val];
 end
 
 fpath=fullfile(fdir_out,'q.bc');
@@ -330,11 +321,17 @@ function write_pli(crs,fdir_out)
 ncrs=numel(crs);
 for kcrs=1:ncrs
     name=strrep(crs(kcrs).name,'C_','');
-    pli.name=name;
-    pli.xy=crs(kcrs).xy;
-    fpath=fullfile(fdir_out,sprintf('%s.pli',name));
-    D3D_io_input('write',fpath,pli)
+    pli(kcrs).name=name;
+    pli(kcrs).xy=crs(kcrs).xy;
+
+    %write in individual files
+%     fpath=fullfile(fdir_out,sprintf('%s.pli',name));
+%     D3D_io_input('write',fpath,pli(kcrs))
 end %kcrs
+
+%write all pli in same file
+fpath=fullfile(fdir_out,'crs.pli');
+D3D_io_input('write',fpath,pli)
 
 end %function
 
@@ -698,3 +695,62 @@ end
 D3D_io_input('write', fullfile(fpath_project, 'computations','test',Case, ['Maas_',strrep(Upstream,'C_','Q_'),'_',Case,'_bnd.ext']), X);
 
 end %function
+
+%% 
+
+function [edge_face_all,face_x_all,face_y_all,edge_x_all,edge_y_all,domain_all,faces_local]=D3D_edge_faces(fpath_map)
+
+edge_face_all=[];
+edge_x_all=[];
+edge_y_all=[];
+face_x_all=[];
+face_y_all=[];
+domain_all=[];
+for k=1:4
+    fpath_map_loc=strrep(fpath_map,'_0000_',sprintf('_%04d_',k-1));
+    edge_face=ncread(fpath_map_loc,'mesh2d_edge_faces');
+    edge_x=ncread(fpath_map_loc,'mesh2d_edge_x');
+    edge_y=ncread(fpath_map_loc,'mesh2d_edge_y');
+    face_x=ncread(fpath_map_loc,'mesh2d_face_x');
+    face_y=ncread(fpath_map_loc,'mesh2d_face_y');
+
+% edge_face=EHY_getMapModelData(fpath_map_loc,'varName','mesh2d_edge_faces');
+% edge_face=edge_face.val;
+
+
+% dom=EHY_getMapModelData(fpath_map,'varName','mesh2d_flowelem_domain');
+% % dom=dom.val;
+% face_x=EHY_getMapModelData(fpath_map,'varName','mesh2d_face_x');
+% face_x=face_x.val;
+% face_y=EHY_getMapModelData(fpath_map,'varName','mesh2d_face_y');
+% face_y=face_y.val;
+% edge_x=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_x');
+% edge_x=edge_x.val;
+% edge_y=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_y');
+% edge_y=edge_y.val;
+
+edge_face_all=cat(1,edge_face_all,edge_face');
+edge_x_all=cat(1,edge_x_all,edge_x);
+edge_y_all=cat(1,edge_y_all,edge_y);
+face_x_all=cat(1,face_x_all,face_x);
+face_y_all=cat(1,face_y_all,face_y);
+domain_all=cat(1,domain_all,(k-1).*ones(size(face_x)));
+end
+
+% edge_face=edge_face_all;
+% xcen_v=face_x_all;
+% ycen_v=face_y_all;
+% 
+% xedg_v=edge_x_all;
+% yedg_v=edge_y_all;
+% 
+% dom=domain_all;
+
+ndom=max(domain_all)+1; %number of domains
+faces_local=NaN(size(domain_all));
+for kdom=1:ndom
+    bol_dom=domain_all==kdom-1;
+    faces_local(bol_dom)=1:1:sum(bol_dom);
+end
+
+end

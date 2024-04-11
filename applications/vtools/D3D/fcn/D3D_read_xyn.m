@@ -18,15 +18,16 @@ function stru_out=D3D_read_xyn(fname,varargin)
 parin=inputParser;
 
 addOptional(parin,'version',1);
+addOptional(parin,'delimiter',' ');
 
 parse(parin,varargin{:});
 
 v=parin.Results.version;
-
+delimiter=parin.Results.delimiter;
 
 %%
-obs_xy=readmatrix(fname,'FileType','text');
-obs_nam=readcell(fname,'FileType','text');
+obs_xy=readmatrix(fname,'FileType','text','delimiter',delimiter);
+obs_nam=readcell(fname,'FileType','text','delimiter',delimiter);
 
 switch v
     case 1
