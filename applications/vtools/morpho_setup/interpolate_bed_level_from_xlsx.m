@@ -617,6 +617,7 @@ nl=numel(location_sides);
 tol_rkm=1e-10;
 for krkm=1:nrkm
     rkm_q=rkm_q_v(krkm); %query rkm (any) at which to compute the mean
+    rkm_q=correct_for_bendcutoff(rkm_q,rkm_q-0.1,br); %the substract makes that we are looking towards downstream, as expected from creating `rkm_q_v`
     rkm_mod=rkm_of_pol(rkm_q,br); %rkm to modify. Along a certain branch closest to the query rkm. 
     [br_mod_str,br_mod_num]=branch_rijntakken(rkm_mod,br,'ni_bo',true); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
     [rkm_me,br_me]=get_pol_along_line(rkm_q,br_mod_str{1},ds); %rkm and branch to compute the mean

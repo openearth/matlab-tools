@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19538 $
-%$Date: 2024-04-11 10:22:11 +0200 (Thu, 11 Apr 2024) $
-%$Author: chavarri $
-%$Id: write_subdomain_bc.m 19538 2024-04-11 08:22:11Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/morpho_setup/write_subdomain_bc.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function fid=fopen_add_header(fname,flg,varargin)

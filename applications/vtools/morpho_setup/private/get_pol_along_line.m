@@ -28,6 +28,7 @@ ns=numel(rkm_s);
 rkm_pol=NaN(ns,1);
 for ks=1:ns
     rkm_pol(ks)=rkm_of_pol(rkm_s(ks),br); %the rkm along a certain branch closest to the query rkm. 
+    rkm_pol(ks)=correct_for_bendcutoff(rkm_pol(ks),rkm,br);
 %     br_l{ks}=branch_rt(br,rkm_pol(ks)); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
 %     str_pol{ks,1}=polygon_str(br_l,rkm_pol);
 %     br_num(ks)=br_str2double(br_l{ks});

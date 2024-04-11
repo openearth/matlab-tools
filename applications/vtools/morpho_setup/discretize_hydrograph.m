@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18606 $
-%$Date: 2022-12-08 08:00:50 +0100 (do, 08 dec 2022) $
-%$Author: chavarri $
-%$Id: interpolate_timetable.m 18606 2022-12-08 07:00:50Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/filter/interpolate_timetable.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Create a set of steady discharges from a hydrograph. Particularly
 %usefull for SMT simulation.

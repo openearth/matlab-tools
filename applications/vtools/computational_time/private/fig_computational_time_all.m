@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19434 $
-%$Date: 2024-02-16 15:11:01 +0100 (Fri, 16 Feb 2024) $
-%$Author: chavarri $
-%$Id: fig_computational_time_multi_node.m 19434 2024-02-16 14:11:01Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/computational_time/private/fig_computational_time_multi_node.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
