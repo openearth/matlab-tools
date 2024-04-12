@@ -42,6 +42,9 @@
 % % fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
 % % fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
 %
+% % fpath_add_oet='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\';
+% % fdir_d3d='p:\studenten-riv\05_OpenEarthTools\02_qp\';
+%
 % % fpath_project='d:\temporal\220517_improve_exner\';
 % fpath_project='p:\11209261-rivierkunde-2023-morerijn';
 % 
