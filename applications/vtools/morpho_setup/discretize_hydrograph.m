@@ -10,11 +10,26 @@
 %Create a set of steady discharges from a hydrograph. Particularly
 %usefull for SMT simulation.
 %
+%INPUT:
+%   - time_limits    = initial and final time to derive the time series [datetime(2,1) with time zone]. 
+%   - Q_steadyMorFac = set of stedy discharges to discretize the time series and associated MorFac [double(nQ,2)].
+%
+%OUTPUT:
+%   - An ASCII file in the format of Qseries for SMT. 
+%
+%PAIR INPUT:
+%   - fpaths_data_stations = path to folder containint <data_stations> [string]
+%   - location_clear       = flag `location_clear` in <data_stations> to read [string].
+%   - power_Q_dom          = power of the dominant discharge for bed slope. It is by default equal to 5/3, which is the analytical value assuming Engelund-Hansen (1967) sediment transport relation. [double(1,1)]
+%   - extend_time_series   = extend the time series in case the last value in the data is for a time before the end time limit. It copies the last value in the time serie to the end time of analysis. 1 = DO; 2 = DON'T DO. [double(1,1)]
+%   - fpath_dir_out        = path to folder to write the output file.
+%   - dt                   = time step for resampling the input time series before matching with the discharges in `Q_steady`. [duration(1,1)]
 
-function discretize_hydrograph(time_limits,dt,Q_steady,MorFac,varargin)
+function discretize_hydrograph(time_limits,Q_steadyMorfac,varargin)
 
 %% PARSE
 
+%parin
 parin=inputParser;
 
 addOptional(parin,'location_clear','')
@@ -22,6 +37,7 @@ addOptional(parin,'fpaths_data_stations','')
 addOptional(parin,'extend_time_series',0)
 addOptional(parin,'power_Q_dom',5/3)
 addOptional(parin,'fpath_dir_out',pwd)
+addOptional(parin,'dt',days(1))
 
 parse(parin,varargin{:})
 
@@ -30,10 +46,21 @@ fpaths_data_stations=parin.Results.fpaths_data_stations;
 extend_time_series=parin.Results.extend_time_series;
 power_Q_dom=parin.Results.power_Q_dom;
 fpath_dir_out=parin.Results.fpath_dir_out;
+dt=parin.Results.dt;
+
+%check
+if size(Q_steadyMorfac,2)~=2
+    error('`Q_steadyMorfac` should be have size [nQ,2], where `nQ` is the number of discharges.')
+end
+
+Q_steady=Q_steadyMorfac(:,1);
+MorFac=Q_steadyMorfac(:,2);
 
 %% CALC
 
 [tim,val]=load_data(location_clear,fpaths_data_stations);
+
+time_limits=parse_time_limits(tim,time_limits);
 
 [tim,val]=extend_series(tim,val,time_limits,extend_time_series);
 
@@ -164,14 +191,22 @@ end %function
 
 function [tim_dt,Q_disc_join]=join_Q(Q_steady,tim,idx,MorFac)
 
-Q_disc=Q_steady(idx);
+%% PARSE
+
+if numel(MorFac)~=numel(Q_steady)
+    error('The size of MorFac should be equal to the size of ')
+end
+
+%% CALC
+
+Q_disc=Q_steady(idx); %[nidx,1]
 bol_tr=diff(Q_disc)~=0; %a 1 at index 5 (i.e., bol_tr(5)=1) implies that there have been 5 days with a constant discharge.
-bol_trt=[false,bol_tr,false];
-tim_cor=cen2cor(tim);
-tim_tr=tim_cor(bol_trt);
-tim_tr=[tim_cor(1),tim_tr,tim_cor(end)];
+bol_trt=[false;bol_tr;false]; %[nidx+1,1]
+tim_cor=cen2cor(tim)'; %[nidx+1,1]. Output of `cen2cor` is [1,nt] no matter the input, we transpose. 
+tim_tr=tim_cor(bol_trt); %[ndisc-2,1]
+tim_tr=[tim_cor(1);tim_tr;tim_cor(end)]; %[ndisc,1]
 tim_dt=diff(tim_tr);
-bol_q=[true,bol_tr];
+bol_q=[true;bol_tr];
 Q_disc_join=Q_disc(bol_q);
 
 %check
@@ -210,5 +245,28 @@ end
 fclose(fid);
 
 messageOut(NaN,sprintf('File written: %s',fpath_out))
+
+end %function
+
+%%
+
+function time_limits=parse_time_limits(tim,time_limits)
+
+if numel(time_limits)>2
+    error('`time_limits` must have a beginning and end time only (size 2).')
+end
+
+if ~isdatetime(time_limits)
+    error('`time_limits` is expected to be datetime.')
+end
+
+if isempty(time_limits.TimeZone)
+    warning('There is no time zone in `time_limits`. The time zone of the time series is assumed: %s',tim.TimeZone)
+    time_limits.TimeZone=tim.TimeZone;
+end
+
+if time_limits(2)<=time_limits(1)
+    error('The final time (position 2) is expected to be after the initial time (position 1) in `time_limits`')
+end
 
 end %function
