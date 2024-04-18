@@ -25,6 +25,7 @@ function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D
 
 %% calc
 [~,fname,ext]=fileparts(fpath_nc);
+ext=deblank(ext);
 
 if strcmp(ext,'.nc') %FM
     

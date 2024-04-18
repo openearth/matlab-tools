@@ -22,24 +22,27 @@
 %   -crs-file at each cell.
 %   -map-file
 %
+%PAIR INPUT:
+%   -only_start_end = only write start and end of time series. 
+%
 %OUTPUT:
 %   -BC files
 %
-
-function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,time_start,is_upstream,varargin)
-
-%% PARSE
-
+%TO DO:
 %Option select either upstream or downstream water level. 
 %Future: read information from obs-file
 
-% parin=inputParser;
-% 
-% addOptional(parin,'xlsx_range','');
-% 
-% parse(parin,varargin{:});
-% 
-% xlsx_range=parin.Results.xlsx_range;
+function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,time_start,is_upstream,boundaries,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'only_start_end',true);
+
+parse(parin,varargin{:});
+
+only_start_end=parin.Results.only_start_end;
 
 if isempty(fpath_map) || ~isfile(fpath_map)
     error('Please input map file.')
@@ -54,16 +57,16 @@ messageOut(NaN,'Start getting data.')
 [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs);
 
 messageOut(NaN,'Start writing water level boundary.')
-bc_h=write_h_bc(obs,fdir_out,time_start,time_v,is_upstream,fname_h);
+bc_h=write_h_bc(obs,fdir_out,time_start,time_v,is_upstream,fname_h,only_start_end);
 
 messageOut(NaN,'Start writing discharge boundary.')
-bc_q=write_q_bc(crs,fdir_out,time_start,time_v,fname_q);
+bc_q=write_q_bc(crs,fdir_out,time_start,time_v,fname_q,only_start_end);
 
 messageOut(NaN,'Start writing polylines.')
 write_pli(crs,fdir_out)
 
 messageOut(NaN,'Start writing external file.')
-write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q)
+write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,boundaries);
 
 messageOut(NaN,'Done.')
 
@@ -189,23 +192,33 @@ for kobs=1:nobs
     obs(kobs).bl=data_bl.val(obs(kobs).idx);
 end
 
-time_v=data_q.times;
+[~,~,~,time_v,~,~]=D3D_results_time(fpath_map,0,[1,Inf]); %time_dtime
 
 end %function
 
 %%
 
-function bc=write_h_bc(obs,fdir_out,time_start,time_v,is_upstream,fname_h)
+function bc_all=write_h_bc(obs,fdir_out,time_start,time_v,is_upstream,fname_h,only_begin_last)
 
 nobs=numel(obs);
+location='';
+bc_all={};
+bc=struct();
 ks=0;
 for kobs=1:nobs
     name=deblank(obs(kobs).name);
     if (strcmp(name(3),'1') && is_upstream) || (strcmp(name(3),'2') && ~is_upstream)
         continue
     end
+   
+    name(1:4)=''; %remove `O_1_`
+    location_new=get_location(name);
+
+    [bc,ks,bc_all]=write_bc_if_new(bc,ks,bc_all,location,location_new,fdir_out,fname_h);
+    
+    location=location_new;
     ks=ks+1;
-    name(1:4)='';
+
     bc(ks).name=name;
     bc(ks).function='time_series';
     bc(ks).time_interpolation='linear';
@@ -219,35 +232,50 @@ for kobs=1:nobs
     bol_nan=isnan(val);
     val(bol_nan)=obs(kobs).bl;
 
-    bc(ks).val=[time_v,val];
+    [time_s,val]=time_and_val(time_v,time_start,val,only_begin_last);
+
+    bc(ks).val=[time_s,val];
 end
 
-fpath=fullfile(fdir_out,sprintf('%s.bc',fname_h));
-D3D_write_bc(fpath,bc)
+[~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,location,'dummy',fdir_out,fname_h);
 
 end %function
 
 %%
 
-function bc=write_q_bc(crs,fdir_out,time_start,time_v,fname_q)
+function bc_all=write_q_bc(crs,fdir_out,time_start,time_v,fname_q,only_start_end)
 
 ncrs=numel(crs);
+location='';
+bc_all={};
+bc=struct();
+ks=0;
 for kcrs=1:ncrs    
-    bc(kcrs).name=deblank(crs(kcrs).name);
-    bc(kcrs).function='time_series';
-    bc(kcrs).time_interpolation='linear';
-    bc(kcrs).quantity{1}='time';
-    bc(kcrs).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
-    bc(kcrs).quantity{2}='dischargebnd';
-    bc(kcrs).unit{2}='m3/s';
+    name=deblank(crs(kcrs).name);
 
-    val=crs(kcrs).direction.*crs(kcrs).q; %if the link goes from downstream to upstream, a negative discharge must be positive.
+    location_new=get_location(name);
+    
+    [bc,ks,bc_all]=write_bc_if_new(bc,ks,bc_all,location,location_new,fdir_out,fname_q);
 
-    bc(kcrs).val=[time_v,val];
+    location=location_new;
+    ks=ks+1;
+
+    bc(ks).name=name;
+    bc(ks).function='time_series';
+    bc(ks).time_interpolation='linear';
+    bc(ks).quantity{1}='time';
+    bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
+    bc(ks).quantity{2}='dischargebnd';
+    bc(ks).unit{2}='m3/s';
+
+    val=crs(ks).direction.*crs(ks).q; %if the link goes from downstream to upstream, a negative discharge must be positive.
+
+    [time_s,val]=time_and_val(time_v,time_start,val,only_start_end);
+
+    bc(ks).val=[time_s,val];
 end
 
-fpath=fullfile(fdir_out,sprintf('%s.bc',fname_q));
-D3D_write_bc(fpath,bc)
+[~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,location,'dummy',fdir_out,fname_q); %`dummy` as input will trigger to write the last output
 
 end %function
 
@@ -270,21 +298,34 @@ end %function
 
 %%
 
-function write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h_bc,fname_q_bc)
+function write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h_bc,fname_q_bc,boundaries)
 
 if ~strcmp(fpathrel_bc(end),'\') && ~strcmp(fpathrel_bc(end),'/')
     fpathrel_bc(end)='/';
 end
 
-ext=D3D_io_input('read',fpath_ext);
-fn=fieldnames(ext);
-kboundary=sum(contains(fn,'boundary'));
+%original external without [boundary]
+ext_o=D3D_io_input('read',fpath_ext);
+fn=fieldnames(ext_o);
+bol=contains(fn,'boundary');
+ext_boundary_o=rmfield(ext_o,fn(~bol));
+ext_o=rmfield(ext_o,fn(bol));
+kboundary_o=sum(~bol); %boundaries which are not [boundary] (e.g., [lateral])
 
-ext=add_ext(ext,kboundary,bc_h,'waterlevelbnd',fpathrel_pli,fpathrel_bc,fname_h_bc); %h
-ext=add_ext(ext,kboundary,bc_q,'dischargebnd',fpathrel_pli,fpathrel_bc,fname_q_bc); %q
+nbc=size(boundaries,1);
+for kbc=1:nbc
+    ext=ext_o;
+    kboundary=kboundary_o;
+    
+    bc=which_bc(boundaries(kbc,1),bc_q(:,2),bc_q,ext_boundary_o);
+    [ext,kboundary]=add_ext(ext,kboundary,bc,'dischargebnd' ,fpathrel_pli,fpathrel_bc,fname_q_bc); %q
 
-fpath=fullfile(fdir_out,'ext.ext');
-D3D_io_input('write',fpath,ext);
+    bc=which_bc(boundaries(kbc,2),bc_h(:,2),bc_h,ext_boundary_o);
+    [ext,kboundary]=add_ext(ext,kboundary,bc,'waterlevelbnd',fpathrel_pli,fpathrel_bc,fname_h_bc); %h
+    
+    fpath=fullfile(fdir_out,sprintf('ext_%s_%s.ext',boundaries{kbc,1},boundaries{kbc,2}));
+    D3D_io_input('write',fpath,ext);
+end %kbc
 
 end %function
 
@@ -333,16 +374,109 @@ end
 
 %%
 
-function ext=add_ext(ext,kboundary,bc_h,str,fpathrel_pli,fpathrel_bc,fname_h_bc)
+function [ext,kboundary]=add_ext(ext,kboundary,bc,str,fpathrel_pli,fpathrel_bc,fname_bc)
 
-nbch=numel(bc_h);
+nbch=numel(bc);
 for kbch=1:nbch
     kboundary=kboundary+1;
 
     fnloc=sprintf('boundary%i',kboundary);
-    ext.(fnloc).quantity=str;
-    ext.(fnloc).locationfile=sprintf('%s%s.pli',fpathrel_pli,bc_h(kbch).name);
-    ext.(fnloc).forcingfile=sprintf('%s%s.bc',fpathrel_bc,fname_h_bc);
+    if ~isfield(bc(kbch),'locationfile') %added from crs and obs
+        location=get_location(bc(kbch).name);
+        fname=fcn_fname_bc(fname_bc,location);
+
+        ext.(fnloc).quantity=str;
+        ext.(fnloc).locationfile=sprintf('%s%s',fpathrel_bc,fname);
+        ext.(fnloc).forcingfile=sprintf('%s%s.pli',fpathrel_pli,bc(kbch).name);
+    else %in the original external file
+        ext.(fnloc)=bc(kbch);
+        if isfield(ext.(fnloc),'name')
+            ext.(fnloc)=rmfield(ext.(fnloc),'name');
+        end
+    end
+
 end %kbch
 
 end %function
+
+%%
+
+function [time_s,val]=time_and_val(time_v,time_start,val,only_start_end)
+
+time_s=seconds(time_v-time_start);
+if only_start_end
+    time_s=time_s([1,end]);
+    val=val([end,end]);
+end
+
+end
+
+%%
+
+function [bc,ks,bc_all]=write_bc_if_new(bc,ks,bc_all,location,location_new,fdir_out,fname_h)
+
+if ~strcmp(location,location_new) %add data to existing
+    if ~isempty(location) %write and save
+        fname=fcn_fname_bc(fname_h,location);
+        fpath=fullfile(fdir_out,fname);
+        D3D_write_bc(fpath,bc)
+        messageOut(NaN,sprintf('bc-file created: %s',fpath));
+        bc_all=cat(1,bc_all,{bc,location});
+    end
+    ks=0;
+    bc=struct();
+end
+
+end
+
+%%
+
+function location=get_location(name)
+
+location=name(1:end-7); %it assumed to be `#name_123456` 
+
+end
+
+%%
+
+function location_bc_o=location_boundary_original(ext_boundary_o)
+
+fn_boundary_o=fieldnames(ext_boundary_o);
+nbo=numel(fn_boundary_o);
+location_bc_o=cell(nbo,1);
+for kbo=1:nbo
+    lf=ext_boundary_o.(fn_boundary_o{kbo}).locationfile;
+    [~,location_bc_o{kbo}]=fileparts(lf);
+end
+
+end
+
+%%
+
+function bc=which_bc(boundaries,bc_q,bc_in,bc_o)
+    
+bol=strcmpi(boundaries,bc_q);
+location_boundary_o=location_boundary_original(bc_o);
+
+if sum(bol)~=1
+    bol=strcmpi(boundaries,location_boundary_o);
+    if sum(bol)~=1
+        error('BC not found in %s',boundaries)
+    else
+        fn=fieldnames(bc_o);
+        bc=bc_o.(fn{bol});
+        bc.name=location_boundary_o{bol};
+    end
+else
+    bc=bc_in{bol,1};
+end
+
+end
+
+%%
+
+function fname=fcn_fname_bc(fname_h,location)
+
+fname=sprintf('%s_%s.bc',fname_h,location);
+
+end
