@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 19511 $
+%$Date: 2024-04-02 12:11:51 +0200 (Tue, 02 Apr 2024) $
+%$Author: chavarri $
+%$Id: labels4all.m 19511 2024-04-02 10:11:51Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/labels4all.m $
 %
 %labels
 %
@@ -56,7 +56,6 @@
 %       -'s_B_mor'      : sediment transport of a size fraction [m^3/s]
 %       -'s_B_mor_t'    : sediment transport of a size fraction [m^3]
 %       -'stot'         : total sediment transport [m^2/s]
-%       -'stot_sum'     : total sediment transport [m^2/s]
 %       -'stot_B_mor'   : total sediment transport [m^3/s]
 %       -'stot_B_mor_t' : total sediment transport [m^3]
 %
@@ -842,7 +841,7 @@ switch lower(variable)
                 str_var=sprintf('transporte de sedimento de la fracción %d',frac);
          end
          un_type='L3';
-    case {'stot', 'stot_sum'}
+    case 'stot'
          switch lan
             case 'en'
                 str_var='total sediment transport';

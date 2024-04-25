@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 16571 $
+%$Date: 2020-09-08 14:39:17 +0200 (di, 08 sep 2020) $
+%$Author: chavarri $
+%$Id: cm2ax.m 16571 2020-09-08 12:39:17Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/cm2ax.m $
 %
 %transforms a position in an axes in centimeters to its value in axes units
 %

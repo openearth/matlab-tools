@@ -18,7 +18,7 @@
 function [rkm_pol,br_num]=get_pol_along_line(rkm,br,dist)
 
 % rkm_pol=rkm_of_pol(rkm,br); %the rkm along a certain branch closest to the query rkm. 
-ds_pol=polygon_ds; 
+ds_pol=polygon_ds(br); 
 rkm_s=rkm-dist/2/1000:ds_pol/1000:rkm+dist/2/1000;
 
 ns=numel(rkm_s);
@@ -34,6 +34,6 @@ for ks=1:ns
 %     br_num(ks)=br_str2double(br_l{ks});
 end
 
-[br_l,br_num]=branch_rijntakken(rkm_pol,br,'ni_bo',true); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
+[br_l,br_num]=branch_str_num(rkm_pol,br,'ni_bo',true); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
 
 end

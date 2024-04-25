@@ -50,6 +50,8 @@ addOptional(parin,'hm_code','hm_nummer');
 addOptional(parin,'location','Locatie');
 addOptional(parin,'surface','oppervlak_');
 addOptional(parin,'location_sides',[-4:1:-1,1:1:4]); %L4-R4
+addOptional(parin,'rkm_plot','');
+addOptional(parin,'tol_fig',3000);
 
 parse(parin,varargin{:});
 
@@ -70,6 +72,8 @@ hm_code_str=parin.Results.hm_code;
 location_str=parin.Results.location;
 surface_str=parin.Results.surface;
 location_sides=parin.Results.location_sides;
+fpath_rkm=parin.Results.rkm_plot;
+tol_fig=parin.Results.tol_fig;
 
 %%
 
@@ -92,6 +96,16 @@ end
 [fdir,fname]=fileparts(fpath_data);
 if isempty(fdir_out)
     fdir_out=fdir;
+end
+
+do_pol_in_bl=1;
+if isempty(fpath_pol_in_bl)
+    do_pol_in_bl=0;
+end
+
+do_plot=1;
+if isempty(fpath_rkm)
+    do_plot=0;
 end
 
 %% dia
@@ -209,7 +223,7 @@ end
 fpath_mat_tmp=fullfile(pwd,'polin_pol.mat');
 if ~isfile(fpath_mat_tmp) || ~do_debug 
     bol_in_pol=true(numel(xpol_cen),1);
-    if do_pol_in
+    if do_pol_in_bl
         messageOut(fid_log,'Start finding points in polygon (bed level)')    
         bol_in_pol=points_in_shp_and_grid(fpath_pol_in_bl,xpol_cen,ypol_cen);
     else
@@ -277,6 +291,8 @@ etab_cengrd_ori=F_ori(xint,yint);
 
 %% write
 
+mkdir_check(fdir_out);
+
 %1) bed level from polygons
 
     %1.1) original on polygon centres
@@ -310,6 +326,12 @@ D3D_io_input('write',fpath_xyz,[gridInfo.Xcor(bol_nn),gridInfo.Ycor(bol_nn),grid
 bol_nn=~isnan(gridInfo.Zcen);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cengrd_original_%s.xyz',now_chr));
 D3D_io_input('write',fpath_xyz,[gridInfo.Xcen(bol_nn),gridInfo.Ycen(bol_nn),gridInfo.Zcen(bol_nn)]);
+
+%% PLOT
+
+if do_plot
+    plot_interpolate_bed_level(fdir_out,gridInfo,pol,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,xint,yint,etab_cengrd_mod,fpath_rkm,tol_fig)
+end
 
 %%
 
@@ -454,27 +476,6 @@ end %function
 
 %%
 
-
-%%
-
-% function pol_lo=pol_double2str(pol_lo_str)
-% 
-% error('do')
-% 
-% if strcmp(pol_lo_str(1),'R')
-%     s=1;
-% elseif strcmp(pol_lo_str(1),'L')
-%     s=-1;
-% else
-%     s=NaN;
-% end
-% 
-% pol_lo=s*str2double(pol_lo_str(2));
-% 
-% end %function
-
-%%
-
 function ld=letter2double(var_c)
 
 ld=NaN;
@@ -534,71 +535,40 @@ end %function
 
 %%
 
-
-
-%%
-
-
-
-%% 
-
-
-%%
-
-% function pstr=polygon_str(rkm_pol,br_l,loc_str)
-% 
-% pstr=sprintf('%s_5.2f',br_l,rkm_pol);
-% 
-% end
-
-
-%%
-
-
-
-%%
-
 function [ident_pol_str,rkm_pol_num,br_pol_num,loc_pol_num,area_cen]=data_pol(pol,hm_code_str,location_str,surface_str)
 
 str_pol={sprintf('polygon:%s',hm_code_str),sprintf('polygon:%s',location_str),sprintf('polygon:%s',surface_str)}; 
 polnames=cellfun(@(X)X.Name,pol.val,'UniformOutput',false);
 idx_pol=find_str_in_cell(polnames,str_pol);
-if any(isnan(idx_pol))
-    error('Could not find variable in shapefile. Maybe the variable name is different.');
+if any(isnan(idx_pol)) || numel(str_pol)~=numel(idx_pol)
+    fprintf('\n')
+    fprintf('Names in polygon:\n')
+    nn=numel(polnames);
+    for kn=1:nn
+        fprintf('%s \n',polnames{kn})
+    end
+    fprintf('\n');
+    fprintf('Names trying to find in polygon (pair input to the function):\n')
+    fprintf('hm_code  = %s\n',hm_code_str)
+    fprintf('location = %s\n',location_str)
+    fprintf('surface  = %s\n',surface_str)
+
+    error('Could not find variable in shapefile. Maybe the variable name is different. Check above.');
 end
 
+%rkm, br
 ident_pol_str=pol.val{idx_pol(1)}.Val;
-
-%check that data is available
-
-ise=cellfun(@(X)isempty(X),ident_pol_str);
-if any(ise)
-    error('There is empty data in the polygon. For instance, an entry with no value for the polygon name (e.g., `hm_nummer`).')
+if iscell(ident_pol_str)
+    [rkm_pol_num,br_pol_num]=rkm_br_from_polygon_cell(ident_pol_str);
+else 
+    error('A cell array is expected with information on branch and river kilometer for polygon flag %s',hm_code_str)
 end
 
-ise=cellfun(@(X)numel(X)<2,ident_pol_str);
-if any(ise)
-    error('The size of the string identifying each polygon is too short. It is expected that the first two characters identify the branch (e.g., `IJ_881.90`).')
-end
-
-ise=cellfun(@(X)numel(X)<4,ident_pol_str);
-if any(ise)
-    error('The size of the string identifying each polygon is too short. It is expected that the characters starting from the 4th identify the river kilometer (e.g., `IJ_881.90`).')
-end
-
-ise=cellfun(@(X)numel(X)<9,ident_pol_str);
-if any(ise)
-    warning('The size of the string identifying each polygon may be too short. It is expected that the characters starting from the 4th identify the river kilometer (e.g., `IJ_881.90`).')
-end
-
-%process
-rkm_pol_num=cellfun(@(X)str2double(X(4:end)),ident_pol_str);
-
-br_pol_num=cellfun(@(X)branch_rijntakken_str2double(X(1:2)),ident_pol_str);
-
+%location
 loc_str=pol.val{idx_pol(2)}.Val;
 loc_pol_num=cellfun(@(X)pol_str2double(X),loc_str);
 
+%area
 area_cen=pol.val{idx_pol(3)}.Val;
 
 end %function
@@ -610,7 +580,7 @@ function etab_cen_mod=rolling_mean(fid_log,pol,ds,rkmi,rkmf,br,etab_cen,hm_code_
 [ident_pol_str,rkm_pol_num,br_pol_num,loc_pol_num,area_cen]=data_pol(pol,hm_code_str,location_str,surface_str);
 
 etab_cen_mod=NaN(size(etab_cen));
-pol_d=polygon_ds;
+pol_d=polygon_ds(br);
 rkm_q_v=rkmi:pol_d/1000:rkmf; %vector of query rkm. A vector of points to assess irrespective of polygons. Make sure it is smaller than the polygons. 
 nrkm=numel(rkm_q_v);
 nl=numel(location_sides);
@@ -619,7 +589,7 @@ for krkm=1:nrkm
     rkm_q=rkm_q_v(krkm); %query rkm (any) at which to compute the mean
     rkm_q=correct_for_bendcutoff(rkm_q,rkm_q-0.1,br); %the substract makes that we are looking towards downstream, as expected from creating `rkm_q_v`
     rkm_mod=rkm_of_pol(rkm_q,br); %rkm to modify. Along a certain branch closest to the query rkm. 
-    [br_mod_str,br_mod_num]=branch_rijntakken(rkm_mod,br,'ni_bo',true); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
+    [br_mod_str,br_mod_num]=branch_str_num(rkm_mod,br,'ni_bo',true); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
     [rkm_me,br_me]=get_pol_along_line(rkm_q,br_mod_str{1},ds); %rkm and branch to compute the mean
     
     bol_rkm_me=ismember_num(rkm_pol_num,rkm_me,tol_rkm); %boolean of the rkm to compute the mean
@@ -643,7 +613,7 @@ for krkm=1:nrkm
         end
         num_pol_min=5;
         if sum(bol_me)<num_pol_min
-            messageOut(fid_log,sprintf('There are less %d polygons (less than threshold %d) to average %s (%s).',sum(bol_me),num_pol_min,str_mod{1},conccellstr(str_me)))
+            messageOut(fid_log,sprintf('There less %d polygons (less than threshold %d) to average %s (%s).',sum(bol_me),num_pol_min,str_mod{1},conccellstr(str_me)))
             error('ups')
         end
 
@@ -663,5 +633,69 @@ for krkm=1:nrkm
     end %kl
     fprintf('Rolling mean %4.2f %% \n',krkm/nrkm*100)
 end %krkm
+
+end %function
+
+%%
+
+function [rkm_pol_num,br_pol_num]=rkm_br_from_polygon_cell(ident_pol_str)
+
+%check that data is available
+ise=cellfun(@(X)isempty(X),ident_pol_str);
+if any(ise)
+    error('There is empty data in the polygon. For instance, an entry with no value for the polygon name (e.g., `hm_nummer`).')
+end
+
+ise=cellfun(@(X)numel(X)<2,ident_pol_str);
+if any(ise)
+    error('The size of the string identifying each polygon is too short. It is expected that the first two characters identify the branch (e.g., `IJ_881.90`).')
+end
+
+ise=cellfun(@(X)numel(X)<4,ident_pol_str);
+if any(ise)
+    error('The size of the string identifying each polygon is too short. It is expected that the characters starting from the 4th identify the river kilometer (e.g., `IJ_881.90`).')
+end
+
+ise=cellfun(@(X)numel(X)<9,ident_pol_str);
+if any(ise)
+    warning('The size of the string identifying each polygon may be too short. It is expected that the characters starting from the 4th identify the river kilometer (e.g., `IJ_881.90`).')
+end
+
+%process
+rkm_pol_num=cellfun(@(X)str2double(X(4:end)),ident_pol_str);
+
+switch which_river(ident_pol_str)
+    case 1
+        messageOut(NaN,'Rijntakken branches identified.')
+        br_pol_num=cellfun(@(X)branch_rijntakken_str2double(X(1:2)),ident_pol_str);
+    case 2
+        messageOut(NaN,'Maas branches identified.')
+        br_pol_num=cellfun(@(X)branch_maas_str2double(X(1:2)),ident_pol_str);
+    otherwise
+        %error is deal in `which_river`.
+end
+
+end %function
+
+%%
+
+function plot_interpolate_bed_level(fdir_out,gridInfo,pol,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,xint,yint,etab_cengrd_mod,fpath_rkm,tol)
+
+pol_xy=polcell2nan(pol.xy.XY);
+in_p=v2struct(gridInfo,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,xint,yint,etab_cengrd_mod,pol_xy);
+
+fdir_fig=fullfile(fdir_out,'figures');
+mkdir_check(fdir_fig);
+
+rkm=readcell(fpath_rkm);
+
+nrkm=size(rkm,1)-1; %first is header
+for krkm=1:nrkm
+    in_p.lims_x=[rkm{krkm+1,1}-tol,rkm{krkm+1,1}+tol];
+    in_p.lims_y=[rkm{krkm+1,2}-tol,rkm{krkm+1,2}+tol];
+    in_p.fname=fullfile(fdir_fig,sprintf('%s',rkm{krkm+1,3}));
+
+    fig_interpolate_bed_level(in_p)
+end
 
 end %function

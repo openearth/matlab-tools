@@ -80,7 +80,7 @@ switch what_do
         if exist(fname,'file')~=2
             error('File does not exist: %s',fname)
         end
-        switch ext
+        switch deblank(ext)
             case '.mdf'
                 stru_out=delft3d_io_mdf('read',fname);
             case {'.mdu','.md1d'}
