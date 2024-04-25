@@ -21,7 +21,15 @@ switch lower(cmd)
 
             %% Cycle over the Chapters
             ListOfChapters = inifile('chapters',Info);
-            if isempty(Info.Data{1,1}) throw(MException()); end    % then we have an old ext file, go to catch
+            if isempty(Info.Data{1,1})
+                ind = strmatch('Forcing',Info.Data(:,1),'exact');
+                if ~isempty(ind) % remove header info (e.g., created by HYDROLIB-core)
+                    Info.Data = Info.Data(ind(1):end,:);
+                    ListOfChapters = ListOfChapters(ind(1):end);
+                else  % then we have an old ext file, go to catch
+                    throw(MException());
+                end
+            end
             for i_chapter = 1: length(ListOfChapters)
                 i_forcing = i_forcing + 1;
                 i_val     = 0;
