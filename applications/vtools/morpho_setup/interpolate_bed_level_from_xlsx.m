@@ -53,6 +53,7 @@ addOptional(parin,'location_sides',[-4:1:-1,1:1:4]); %L4-R4
 addOptional(parin,'rkm_plot','');
 addOptional(parin,'tol_fig',500);
 addOptional(parin,'river_axis','');
+addOptional(parin,'align_s',0);
 
 parse(parin,varargin{:});
 
@@ -76,6 +77,7 @@ location_sides=parin.Results.location_sides;
 fpath_rkm=parin.Results.rkm_plot;
 tol_fig=parin.Results.tol_fig;
 fpath_ra=parin.Results.river_axis;
+do_align=parin.Results.align_s;
 
 %%
 
@@ -112,7 +114,7 @@ end
 
 %% dia
 
-fpath_dia=fullfile(fdir,sprintf('%s.log',fname));
+fpath_dia=fullfile(fdir_out,sprintf('%s.log',fname));
 fid_log=fopen(fpath_dia,'w');
 
 %% read bed level
@@ -287,8 +289,20 @@ else
     load(fpath_mat_tmp,'s_pol_cen','n_pol_cen','s_grd_cen','n_grd_cen')
 end
 
+%% align cross-section
+
+if do_align
+    if isempty(fpath_ra)
+        messageOut(fid_log,'You want to align the s-coordinates, but you have not converted x-y to s-n coordinates. No aligning is done.')
+    else
+        messageOut(fid_log,'Start aligning s coordinates')
+        [s_pol_cen]=align_cross_section(s_pol_cen,pol,hm_code_str,location_str,surface_str);
+    end
+end
+
 %% interpolate polygon bed level at grid centres 
 
+messageOut(fid_log,'Start interpolating')
 bol_n=isnan(etab_cen_mod);
 bol_cen_int=~bol_n & bol_in_pol;
 
@@ -371,7 +385,7 @@ end
 
 if do_plot
     messageOut(fid_log,'Start plotting')  
-    plot_interpolate_bed_level(fdir_out,gridInfo,pol,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,x_grd_cen(bol_grd_int),y_grd_cen(bol_grd_int),etab_cengrd_mod,fpath_rkm,tol_fig)
+    plot_interpolate_bed_level(fdir_out,gridInfo,pol,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,x_grd_cen(bol_grd_int),y_grd_cen(bol_grd_int),etab_cengrd_mod,fpath_rkm,tol_fig,s_pol_cen(bol_cen_int),n_pol_cen(bol_cen_int))
 else
     messageOut(fid_log,'Skip plotting')  
 end
@@ -722,9 +736,11 @@ end %function
 
 %%
 
-function plot_interpolate_bed_level(fdir_out,gridInfo,pol,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,xint,yint,etab_cengrd_mod,fpath_rkm,tol)
+function plot_interpolate_bed_level(fdir_out,gridInfo,pol,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,xint,yint,etab_cengrd_mod,fpath_rkm,tol,s,n)
 
 pol_xy=polcell2nan(pol.xy.XY);
+DT=delaunay(s,n);
+
 in_p=v2struct(gridInfo,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,xint,yint,etab_cengrd_mod,pol_xy);
 
 fdir_fig=fullfile(fdir_out,'figures');
@@ -768,7 +784,32 @@ T=readtable(fpath_ra);
 
 end %function
 
+%%
 
+function [s_pol_cen]=align_cross_section(s_pol_cen,pol,hm_code_str,location_str,surface_str)
+
+[ident_pol_str,rkm_pol_num,br_pol_num,loc_pol_num,area_cen]=data_pol(pol,hm_code_str,location_str,surface_str);
+rkm_u=unique(rkm_pol_num);
+nu=numel(rkm_u);
+for ku=1:nu
+    bol_1=rkm_pol_num==rkm_u(ku);
+    bol_2=loc_pol_num==1 | loc_pol_num==-1;
+    bol_g=bol_1 & bol_2;
+
+    s_g=s_pol_cen(bol_g);
+%     if numel(s_g)~=2
+%         ident_pol_str(bol_g)
+%         error('I expect a mean based on two values.')
+%     end
+    if ~isempty(s_g)
+        s_pol_cen(bol_1)=mean(s_g);
+    end
+    if any(isnan(s_pol_cen(bol_1)))
+        error('It cannot be NaN.')
+    end
+end %ku
+
+end %function
 
 
 
