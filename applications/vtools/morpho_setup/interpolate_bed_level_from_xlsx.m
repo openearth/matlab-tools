@@ -306,7 +306,7 @@ etab_cengrd_ori=F_ori(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 
 %% write
 
-if 0
+if 1
 messageOut(fid_log,'Start writing')  
 mkdir_check(fdir_out);
 
