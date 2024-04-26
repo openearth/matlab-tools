@@ -304,6 +304,27 @@ bol_grd_int=bol_in & ~bol_out;
 etab_cengrd_mod=F_fil(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 etab_cengrd_ori=F_ori(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 
+%% plot Delaunay
+
+% rkm=readcell(fpath_rkm);
+% x_rkm=cell2mat(rkm(2:end,1));
+% y_rkm=cell2mat(rkm(2:end,2));
+% t_rkm=rkm(2:end,3);
+% 
+% [s_rkm,n_rkm]=convert_to_sn(fpath_ra,x_rkm,y_rkm);
+% 
+% x=s_pol_cen(bol_cen_int);
+% y=n_pol_cen(bol_cen_int);
+% DT=delaunay(x,y);
+% 
+% figure
+% hold on
+% triplot(DT,x,y);
+% plot(s_rkm,n_rkm,'-o')
+% for krkm=1:numel(x_rkm)
+%     text(s_rkm(krkm),n_rkm(krkm),strrep(t_rkm{krkm},'_','\_'))
+% end
+
 %% write
 
 if 1
