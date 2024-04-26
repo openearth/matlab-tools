@@ -51,7 +51,8 @@ addOptional(parin,'location','Locatie');
 addOptional(parin,'surface','oppervlak_');
 addOptional(parin,'location_sides',[-4:1:-1,1:1:4]); %L4-R4
 addOptional(parin,'rkm_plot','');
-addOptional(parin,'tol_fig',3000);
+addOptional(parin,'tol_fig',500);
+addOptional(parin,'river_axis','');
 
 parse(parin,varargin{:});
 
@@ -74,6 +75,7 @@ surface_str=parin.Results.surface;
 location_sides=parin.Results.location_sides;
 fpath_rkm=parin.Results.rkm_plot;
 tol_fig=parin.Results.tol_fig;
+fpath_ra=parin.Results.river_axis;
 
 %%
 
@@ -268,29 +270,44 @@ end
 % % 
 % % % END DEBUG
 
+%% convert to s-n domain
+
+x_grd_cen=gridInfo.Xcen;
+y_grd_cen=gridInfo.Ycen;
+
+fpath_mat_tmp=fullfile(pwd,'sn.mat');
+if ~isfile(fpath_mat_tmp) || ~do_debug 
+    [s_pol_cen,n_pol_cen]=convert_to_sn(fpath_ra,xpol_cen,ypol_cen);
+    [s_grd_cen,n_grd_cen]=convert_to_sn(fpath_ra,x_grd_cen,y_grd_cen);
+    if do_debug
+        save(fpath_mat_tmp,'s_pol_cen','n_pol_cen','s_grd_cen','n_grd_cen')
+    end
+else
+    messageOut(fid_log,'Start loading s-n coordinates')   
+    load(fpath_mat_tmp,'s_pol_cen','n_pol_cen','s_grd_cen','n_grd_cen')
+end
 
 %% interpolate polygon bed level at grid centres 
 
 bol_n=isnan(etab_cen_mod);
 bol_cen_int=~bol_n & bol_in_pol;
 
-F_fil=scatteredInterpolant(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),etab_cen_mod(bol_cen_int),'linear','none'); %filtered
+F_fil=scatteredInterpolant(s_pol_cen(bol_cen_int),n_pol_cen(bol_cen_int),etab_cen_mod(bol_cen_int),'linear','none'); %filtered
 
 bol_n=isnan(etab_cen);
 bol_cen_int=~bol_n & bol_in_pol;
 
-F_ori=scatteredInterpolant(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),etab_cen(bol_cen_int),'linear','none'); %original
+F_ori=scatteredInterpolant(s_pol_cen(bol_cen_int),n_pol_cen(bol_cen_int),etab_cen(bol_cen_int),'linear','none'); %original
 
 bol_grd_int=bol_in & ~bol_out;
 
-xint=gridInfo.Xcen(bol_grd_int);
-yint=gridInfo.Ycen(bol_grd_int);
-
-etab_cengrd_mod=F_fil(xint,yint);
-etab_cengrd_ori=F_ori(xint,yint);
+etab_cengrd_mod=F_fil(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
+etab_cengrd_ori=F_ori(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 
 %% write
 
+if 0
+messageOut(fid_log,'Start writing')  
 mkdir_check(fdir_out);
 
 %1) bed level from polygons
@@ -308,12 +325,12 @@ D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen_mod(b
     %1.3) filtered on grid centres 
 bol_nn=~isnan(etab_cengrd_mod);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cengrd_filtered_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[xint(bol_nn),yint(bol_nn),etab_cengrd_mod(bol_nn)]);
+D3D_io_input('write',fpath_xyz,[x_grd_cen(bol_nn),y_grd_cen(bol_nn),etab_cengrd_mod(bol_nn)]);
 
     %1.4) original on grid centres 
 bol_nn=~isnan(etab_cengrd_ori);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cengrd_original_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[xint(bol_nn),yint(bol_nn),etab_cengrd_ori(bol_nn)]);
+D3D_io_input('write',fpath_xyz,[x_grd_cen(bol_nn),y_grd_cen(bol_nn),etab_cengrd_ori(bol_nn)]);
 
 %2) bed level from grid
 
@@ -327,10 +344,15 @@ bol_nn=~isnan(gridInfo.Zcen);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cengrd_original_%s.xyz',now_chr));
 D3D_io_input('write',fpath_xyz,[gridInfo.Xcen(bol_nn),gridInfo.Ycen(bol_nn),gridInfo.Zcen(bol_nn)]);
 
+end
+
 %% PLOT
 
 if do_plot
-    plot_interpolate_bed_level(fdir_out,gridInfo,pol,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,xint,yint,etab_cengrd_mod,fpath_rkm,tol_fig)
+    messageOut(fid_log,'Start plotting')  
+    plot_interpolate_bed_level(fdir_out,gridInfo,pol,xpol_cen,ypol_cen,etab_cen,etab_cen_mod,x_grd_cen(bol_grd_int),y_grd_cen(bol_grd_int),etab_cengrd_mod,fpath_rkm,tol_fig)
+else
+    messageOut(fid_log,'Skip plotting')  
 end
 
 %%
@@ -699,3 +721,42 @@ for krkm=1:nrkm
 end
 
 end %function
+
+%%
+
+function [s,n]=convert_to_sn(fpath_ra,x,y)
+
+%% PARSE
+
+if isempty(fpath_ra)
+    messageOut(NaN,'Not converting to s-n coordinates.')
+    s=x;
+    n=y;
+    return
+end
+messageOut(NaN,'Converting to s-n coordinates.')
+
+if ~isfile(fpath_ra)
+    error('No file with river axis coordinates: %s',fpath_ra)
+end
+
+%% CALC
+
+T=readtable(fpath_ra);
+[s,n]=xy_to_sn(T.X,T.Y,x,y);
+
+end %function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
