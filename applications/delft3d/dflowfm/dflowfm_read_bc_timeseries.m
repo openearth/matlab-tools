@@ -14,7 +14,7 @@ function [BC,status] = dflowfm_read_bc_timeseries(modeldir, varargin)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2019 IHE Delft / Deltares
-%       Dano Roelvink, Johan Reyns
+%       Dano Roelvink, Johan Reyns, Monica Aguilera Chaves
 %
 %       d.roelvink@un-ihe.org
 %
@@ -69,6 +69,7 @@ try
             BC(ibc).seriesName     = getvalue(fid,'Name');
             BC(ibc).seriesFunction = getvalue(fid,'Function');
             BC(ibc).seriesInterp   = getvalue(fid,'Time-interpolation');
+            BC(ibc).seriesOffset   = getvalue(fid,'Offset');
             BC(ibc).seriesTimeQnty = getvalue(fid,'Quantity');
             BC(ibc).seriesTimeUnit = getvalue(fid,'Unit');
             BC(ibc).seriesValQnty  = getvalue(fid,'Quantity');
@@ -87,6 +88,7 @@ try
             v=[1 1];
             ii=0;
             while length(v)==2
+                pos = ftell(fid);
                 try
                     v=str2num(fgetl(fid));
                     ii=ii+1;
@@ -101,7 +103,7 @@ try
             loc= strfind(lower(BC(ibc).seriesTimeUnit),'since')+6;
             reftime=datenum(BC(ibc).seriesTimeUnit(loc:end));
             BC(ibc).t=reftime+BC(ibc).time/60/24;
-           
+            fseek(fid,pos,'bof');
         end
     end
     status = 1
