@@ -24,12 +24,15 @@ num_str_def=repmat('%0.15E*delim*',1,nx);
 addOptional(parin,'num_str',NaN);
 addOptional(parin,'check_existing',1)
 addOptional(parin,'delimiter',' ')
+addOptional(parin,'add_header',0)
+
 
 parse(parin,varargin{:});
 
 num_str=parin.Results.num_str;
 check_existing=parin.Results.check_existing;
 delimiter=parin.Results.delimiter;
+add_header=parin.Results.add_header;
 
 if isnan(num_str)
     num_str=num_str_def;
@@ -48,7 +51,11 @@ if exist(file_name,'file') && check_existing
 end
 
 messageOut(NaN,sprintf('Start writing file: %s',file_name))
-fileID_out=fopen(file_name,'w');
+if add_header
+    fileID_out=fopen_add_header(file_name,'w');
+else
+    fileID_out=fopen(file_name,'w');
+end
 write_str_x=strcat(num_str,'\n'); %string to write in x
 
 for ky=1:ny

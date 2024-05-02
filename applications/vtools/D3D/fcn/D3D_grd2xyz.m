@@ -28,6 +28,7 @@ addOptional(parin,'fpath_out',fullfile(fdir,sprintf('%s.xyz',fname)));
 addOptional(parin,'fpath_exe','c:\Program Files (x86)\Deltares\Delft3D Flexible Mesh Suite HMWQ (2021.03)\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat');
 addOptional(parin,'fpath_map',fullfile(pwd,sprintf('%s_map.nc',fname)));
 addOptional(parin,'fid_log',NaN);
+addOptional(parin,'add_header',0)
 
 parse(parin,varargin{:});
 
@@ -35,6 +36,7 @@ fpath_out=parin.Results.fpath_out;
 % fdir_work=parin.Results.fdir_work;
 fpath_exe=parin.Results.fpath_exe;
 fpath_map=parin.Results.fpath_map;
+add_header=parin.Results.add_header;
 % fid_log=parin.Results.fid_log;
 
 %% READ
@@ -65,7 +67,7 @@ bol_nn=~isnan(zn);
 
 [~,fname_out,fext]=fileparts(fpath_out);
 fpath_out_loc=fullfile(pwd,sprintf('%s%s',fname_out,fext));
-write_2DMatrix(fpath_out_loc,[xn(bol_nn),yn(bol_nn),zn(bol_nn)]);
+write_2DMatrix(fpath_out_loc,[xn(bol_nn),yn(bol_nn),zn(bol_nn)],'add_header',add_header);
 copyfile_check(fpath_out_loc,fpath_out);
 delete(fpath_out_loc)
 % %%
