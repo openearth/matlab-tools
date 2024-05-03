@@ -131,7 +131,7 @@ for iChapter = 1:nChapter
             if isnan(val_num) %it is a character
 %                 Value=val_raw;
             else %it is a number
-                if any(strcmp(Keyword,{'FileVersion','Percentile'})) %treat as string
+                if any(strcmp(lower(Keyword),{'fileversion','percentile'})) %treat as string
 %                     Value=val_raw;
                 else %treat as number
                     Value=val_num;

@@ -59,7 +59,7 @@ case 'read'
             if isnan(val_num) %it is a character
                 val=val_raw;
             else %it is a number
-                if strcmp(parnam,'FileVersion') %treat as string
+                if strcmp(lower(parnam),'fileversion') %treat as string
                     val=val_raw;
                 else %treat as number
                     val = val_num;
