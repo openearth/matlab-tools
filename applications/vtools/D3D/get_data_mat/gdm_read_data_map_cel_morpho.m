@@ -130,7 +130,7 @@ for kx=1:nx
     h=data_h.val(kx);
     Cf=convert_friction('C2Cf',data_C.val(kx));
     La=data_La.val(kx);
-    Fa1=data_Fak.val(1,1:end-1,1,kx);
+    Fa1=data_Fak.val(1,kx,1,1:end-1);
     Fi1=Fa1; %assuming aggradation
     
     %rename
