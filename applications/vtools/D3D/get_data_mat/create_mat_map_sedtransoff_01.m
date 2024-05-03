@@ -160,7 +160,7 @@ for kst=1:nst
         u=data_loc.umag.data'; %[nF,1]
         h=data_loc.h.data'; %[nF,1]
         C=data_loc.mesh2d_czs.data'; %[nF,1]
-        Fak=squeeze(data_loc.Fak.data(:,1,:))'; %[nF,nf] (take active layer)
+        Fak=squeeze(data_loc.Fak.data(:,1,:)); %[nF,nf] (take active layer)
         Ltot=data_loc.Ltot.data'; %[nF,1]
         
         q=u.*h; %[nF,1]
