@@ -220,7 +220,7 @@ for kobs=1:nobs
     ks=ks+1;
 
     bc(ks).name=name;
-    bc(ks).function='time_series';
+    bc(ks).function='timeseries';
     bc(ks).time_interpolation='linear';
     bc(ks).quantity{1}='time';
     bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
@@ -261,7 +261,7 @@ for kcrs=1:ncrs
     ks=ks+1;
 
     bc(ks).name=name;
-    bc(ks).function='time_series';
+    bc(ks).function='timeseries';
     bc(ks).time_interpolation='linear';
     bc(ks).quantity{1}='time';
     bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
