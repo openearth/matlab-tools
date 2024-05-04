@@ -57,13 +57,13 @@ messageOut(NaN,'Start getting data.')
 [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs);
 
 messageOut(NaN,'Start writing water level boundary.')
-bc_h=write_h_bc(obs,fdir_out,time_start,time_v,is_upstream,fname_h,only_start_end);
+bc_h=write_h_bc(obs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,is_upstream,fname_h,only_start_end);
 
 messageOut(NaN,'Start writing discharge boundary.')
-bc_q=write_q_bc(crs,fdir_out,time_start,time_v,fname_q,only_start_end);
+bc_q=write_q_bc(crs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,fname_q,only_start_end);
 
 messageOut(NaN,'Start writing polylines.')
-write_pli(crs,fdir_out)
+write_pli(crs,fullfile(fdir_out,fpathrel_pli))
 
 messageOut(NaN,'Start writing external file.')
 write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,boundaries);
@@ -291,6 +291,9 @@ for kcrs=1:ncrs
 
     %write in individual files
     fpath=fullfile(fdir_out,sprintf('%s.pli',name));
+    if ~exist(fdir_out,'dir')
+        mkdir(fdir_out);
+    end    
     D3D_io_input('write',fpath,pli(kcrs))
 end %kcrs
 
@@ -386,8 +389,8 @@ for kbch=1:nbch
         fname=fcn_fname_bc(fname_bc,location);
 
         ext.(fnloc).quantity=str;
-        ext.(fnloc).locationfile=sprintf('%s%s',fpathrel_bc,fname);
-        ext.(fnloc).forcingfile=sprintf('%s%s.pli',fpathrel_pli,bc(kbch).name);
+        ext.(fnloc).locationfile=sprintf('%s%s.pli',fpathrel_pli,bc(kbch).name);
+        ext.(fnloc).forcingfile=sprintf('%s%s',fpathrel_bc,fname);
     else %in the original external file
         ext.(fnloc)=bc(kbch);
         if isfield(ext.(fnloc),'name')
@@ -419,6 +422,9 @@ if ~strcmp(location,location_new) %add data to existing
     if ~isempty(location) %write and save
         fname=fcn_fname_bc(fname_h,location);
         fpath=fullfile(fdir_out,fname);
+        if ~exist(fdir_out,'dir')
+            mkdir(fdir_out);
+        end
         D3D_write_bc(fpath,bc)
         messageOut(NaN,sprintf('bc-file created: %s',fpath));
         bc_all=cat(1,bc_all,{bc,location});

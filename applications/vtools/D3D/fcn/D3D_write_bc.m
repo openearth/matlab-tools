@@ -43,10 +43,14 @@ for kbc=1:nbc
     if isfield(bc(kbc),'time_interpolation'); 
         fprintf(fid,'Time-interpolation              = %s \n',bc(kbc).time_interpolation);
     end
-    for kq=1:nq
+    for kq=1:nq-1
         fprintf(fid,'Quantity                        = %s \n',bc(kbc).quantity{kq});
         fprintf(fid,'Unit                            = %s \n',bc(kbc).unit{kq});
     end
+    for kq=nq
+        fprintf(fid,'Quantity                        = %s \n',bc(kbc).quantity{kq});
+        fprintf(fid,'Unit                            = %s ',bc(kbc).unit{kq});
+    end    
     fclose(fid);
     writematrix(num2str(bc(kbc).val,'%f'),fpath,'WriteMode','append', 'Filetype', 'text', 'Delimiter', 'space', 'QuoteStrings', false)
     fid=fopen(fpath,'a');
