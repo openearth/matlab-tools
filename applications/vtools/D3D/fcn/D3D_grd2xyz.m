@@ -29,6 +29,8 @@ addOptional(parin,'fpath_exe','c:\Program Files (x86)\Deltares\Delft3D Flexible 
 addOptional(parin,'fpath_map',fullfile(pwd,sprintf('%s_map.nc',fname)));
 addOptional(parin,'fid_log',NaN);
 addOptional(parin,'add_header',0)
+addOptional(parin,'cell_centre',0)
+
 
 parse(parin,varargin{:});
 
@@ -37,6 +39,7 @@ fpath_out=parin.Results.fpath_out;
 fpath_exe=parin.Results.fpath_exe;
 fpath_map=parin.Results.fpath_map;
 add_header=parin.Results.add_header;
+cell_centre=parin.Results.cell_centre; 
 % fid_log=parin.Results.fid_log;
 
 %% READ
@@ -46,9 +49,15 @@ add_header=parin.Results.add_header;
 % gridInfo=EHY_getGridInfo(fpath_map,'XYcen');
 % gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy'});
 
-xn=ncread(fpath_grd,'mesh2d_node_x');
-yn=ncread(fpath_grd,'mesh2d_node_y');
-zn=ncread(fpath_grd,'mesh2d_node_z');
+if cell_centre; 
+    loc_str='mesh2d_face';
+else
+    loc_str='mesh2d_node';
+end
+
+xn=ncread(fpath_grd,[loc_str,'_x']);
+yn=ncread(fpath_grd,[loc_str,'_y']);
+zn=ncread(fpath_grd,[loc_str,'_z']);
 
 %% PLOT
 % map.val(map.val==-5)=NaN; %-5 is the default when calling D3D_grd2map. I should change this I think. 
