@@ -63,7 +63,7 @@ alpha_pmm=NaN;
 %% NODE STATE
 
 if any(flg.anl==1) || any(flg.anl==2) || any(flg.anl==3) || any(flg.anl==4) || any(flg.anl==5) || any(flg.anl==12)
-nodeState=[u,h,Cf,La,Fa1,1-sum(Fa1),Fi1,1-sum(Fi1)]; %1D    
+nodeState=[u,h,Cf,La,Fa1(:).',1-sum(Fa1(:)),Fi1(:).',1-sum(Fi1(:))]; %1D    
     if any(flg.anl==12)
         nodeState=[u,h,Cf,La,Fa1,1-sum(Fa1),Fi1,1-sum(Fi1),Gammak]; %1D 
     end
