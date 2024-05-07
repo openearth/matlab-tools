@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<root>
+  <toolbox>Ocean Models</toolbox>
+  <longname>Ocean Models</longname>
+  <enable>1</enable>
+  <element>
+    <position>40 10 1000 140</position>
+    <style>tabpanel</style>
+    <tab>
+      <tabstring>Download</tabstring>
+      <callback>ddb_OceanModelsToolbox_download</callback>
+      <element>toolbox.oceanmodels.download.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Hydrodynamic Conditions</tabstring>
+      <callback>ddb_OceanModelsToolbox_nestBct</callback>
+      <formodel>delft3dflow</formodel>
+      <element>toolbox.oceanmodels.hydroconditions.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Transport Conditions</tabstring>
+      <callback>ddb_OceanModelsToolbox_nestBcc</callback>
+      <formodel>delft3dflow</formodel>
+      <element>toolbox.oceanmodels.transportconditions.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Initial Conditions</tabstring>
+      <callback>ddb_OceanModelsToolbox_nestIni</callback>
+      <formodel>delft3dflow</formodel>
+      <element>toolbox.oceanmodels.initialconditions.xml</element>
+    </tab>
+  </element>
+</root>

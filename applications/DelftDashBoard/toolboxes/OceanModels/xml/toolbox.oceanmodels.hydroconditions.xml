@@ -1,0 +1,361 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <position>80 105 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Water Level</text>
+    <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+    <tooltipstring>Select an source for water level boundary conditions</tooltipstring>
+    <listtext>Astronomic</listtext>
+    <listtext>File</listtext>
+    <listtext>Astronomic + File</listtext>
+    <listtext>Constant</listtext>
+    <listvalue>1</listvalue>
+    <listvalue>2</listvalue>
+    <listvalue>3</listvalue>
+    <listvalue>4</listvalue>
+  </element>
+  <element>
+    <style>checkbox</style>
+    <position>190 105</position>
+    <text>Automatic</text>
+    <variable>handles.toolbox.oceanmodels.autoWL</variable>
+    <tooltipstring>Automatically generate water levels from tide database</tooltipstring>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>270 105 100 20</position>
+    <tooltipstring>Select tide database for boundary conditions</tooltipstring>
+    <variable>handles.toolbox.oceanmodels.activeTideModelWL</variable>
+    <type>integer</type>
+    <listtext>
+      <variable>handles.tideModels.longNames</variable>
+    </listtext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.autoWL</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>390 105 60 20</position>
+    <tooltipstring>Open astronomic bnd file</tooltipstring>
+    <text>Bnd File</text>
+    <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.bndAstroFile</variable>
+    <extension>*.bnd</extension>
+    <selectiontext>Select bnd file</selectiontext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.autoWL</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>600 105 60 20</position>
+    <tooltipstring>Open astronomic bca file</tooltipstring>
+    <text>Bca File</text>
+    <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.astroFile</variable>
+    <extension>*.bca</extension>
+    <selectiontext>Select bnd file</selectiontext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.autoWL</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <position>850 105 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Correction (m)</text>
+    <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.constant</variable>
+    <tooltipstring>Edit water level correction (m)</tooltipstring>
+  </element>
+  <element>
+    <position>80 80 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Currents</text>
+    <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+    <tooltipstring>Select an source for water level boundary conditions</tooltipstring>
+    <listtext>Astronomic</listtext>
+    <listtext>File</listtext>
+    <listtext>Astronomic + File</listtext>
+    <listtext>Constant</listtext>
+    <listvalue>1</listvalue>
+    <listvalue>2</listvalue>
+    <listvalue>3</listvalue>
+    <listvalue>4</listvalue>
+  </element>
+  <element>
+    <style>checkbox</style>
+    <position>190 80</position>
+    <text>Automatic</text>
+    <variable>handles.toolbox.oceanmodels.autoCur</variable>
+    <tooltipstring>Automatically generate currents from tide database</tooltipstring>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>270 80 100 20</position>
+    <tooltipstring>Select tide database for boundary conditions</tooltipstring>
+    <variable>handles.toolbox.oceanmodels.activeTideModelCur</variable>
+    <type>integer</type>
+    <listtext>
+      <variable>handles.tideModels.longNames</variable>
+    </listtext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.autoCur</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>390 80 60 20</position>
+    <tooltipstring>Open astronomic bnd file</tooltipstring>
+    <text>Bnd File</text>
+    <variable>handles.toolbox.oceanmodels.options.current.BC.bndAstroFile</variable>
+    <extension>*.bnd</extension>
+    <selectiontext>Select bnd file</selectiontext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.autoCur</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>600 80 60 20</position>
+    <tooltipstring>Open astronomic bca file</tooltipstring>
+    <text>Bca File</text>
+    <variable>handles.toolbox.oceanmodels.options.current.BC.astroFile</variable>
+    <extension>*.bca</extension>
+    <selectiontext>Select bnd file</selectiontext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.autoCur</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>80 45 100 20</position>
+    <variable>handles.toolbox.oceanmodels.name</variable>
+    <type>string</type>
+    <text>Data File</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit file name for data files</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>80 20 100 20</position>
+    <variable>handles.toolbox.oceanmodels.folder</variable>
+    <type>string</type>
+    <text>Data Folder</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit folder name for data files</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.waterLevel.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.BC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <position>850 40 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Time Step (min)</text>
+    <variable>handles.toolbox.oceanmodels.options.bctTimeStep</variable>
+    <tooltipstring>Edit time step in bct file (min)</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>850 10 100 20</position>
+    <text>Generate BCT</text>
+    <callback>ddb_OceanModelsToolbox_nestBct</callback>
+    <option1>generatebct</option1>
+    <tooltipstring>Generate *.bct file</tooltipstring>
+  </element>
+</root>

@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+    <model>
+      <name>hycom_Apr2014-present</name>
+      <longname>HYCOM + NCODA Global 1/12 Degree Analysis - Apr 2014 - present</longname>
+      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_91.1</url>
+      <type>hycom</type>
+      <gridcoordinates>hycom.mat</gridcoordinates>
+    </model>
+    <model>
+      <name>hycom_Jan2011-Apr2014</name>
+      <longname>HYCOM + NCODA Global 1/12 Degree Analysis - Jan 2011 - Apr 2014</longname>
+      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_91.0</url>
+      <type>hycom</type>
+      <gridcoordinates>hycom.mat</gridcoordinates>
+    </model>
+    <model>
+      <name>hycom_Jan2011-Aug2013</name>
+      <longname>HYCOM + NCODA Global 1/12 Degree Analysis - Jan 2011 - Aug 2013</longname>
+      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_90.9</url>
+      <type>hycom</type>
+      <gridcoordinates>hycom.mat</gridcoordinates>
+    </model>
+    <model>
+      <name>hycom_May2009-Dec2010</name>
+      <longname>HYCOM + NCODA Global 1/12 Degree Analysis - May 2009 - Dec 2010</longname>
+      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_90.8</url>
+      <type>hycom</type>
+      <gridcoordinates>hycom.mat</gridcoordinates>
+    </model>
+    <model>
+      <name>hycom_Sep2008-May2009</name>
+      <longname>HYCOM + NCODA Global 1/12 Degree Analysis - Sep 2008 - May 2009</longname>
+      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_90.6</url>
+      <type>hycom</type>
+      <gridcoordinates>hycom.mat</gridcoordinates>
+    </model>
+    <model>
+      <name>hycom_Jan2008-Sep2008</name>
+      <longname>HYCOM + NCODA Global 1/12 Degree Analysis - Jan 2008 - Sep 2008</longname>
+      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_90.3/2008</url>           
+      <type>hycom</type>
+      <gridcoordinates>hycom.mat</gridcoordinates>
+    </model>
+    <model>
+      <name>hycom_Jan2005-Dec2005</name>
+      <longname>HYCOM + NCODA Global 1/12 Degree Analysis - Jan 2005 - Dec 2005</longname>
+      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_60.5/2005</url>           
+      <type>hycom</type>
+      <gridcoordinates>hycom.mat</gridcoordinates>
+    </model>
+    <model>
+      <name>hycom_Apr2007-Sept2008</name>
+      <longname>1/12 degree HYCOM + NCODA Global Analysis (expt_90.3; Apr 2007-Sept 2008)</longname>
+      <url>http://tds.hycom.org/thredds/dodsC/glb_903_analysis</url>           
+      <type>hycom</type>
+      <gridcoordinates>hycom.mat</gridcoordinates>
+    </model>
+    <model>
+      <name>ncom_region1</name>
+      <longname>Navy Coastal Ocean Model (NCOM) - Region 1</longname>
+      <url>http://ecowatch.ncddc.noaa.gov/thredds/dodsC/ncom/region1</url>
+      <region>1</region>
+      <type>ncom</type>
+    </model>
+    <model>
+      <name>ncom_region2</name>
+      <longname>Navy Coastal Ocean Model (NCOM) - Region 2</longname>
+      <url>http://ecowatch.ncddc.noaa.gov/thredds/dodsC/ncom/region2</url>
+      <region>2</region>
+      <type>ncom</type>
+    </model>
+    <model>
+      <name>ncom_region5</name>
+      <longname>Navy Coastal Ocean Model (NCOM) - Region 5</longname>
+      <url>http://ecowatch.ncddc.noaa.gov/thredds/dodsC/ncom/region5</url>
+      <region>5</region>
+      <type>ncom</type>
+    </model>
+    <model>
+      <name>ncom_region6</name>
+      <longname>Navy Coastal Ocean Model (NCOM) - Region 6</longname>
+      <url>http://ecowatch.ncddc.noaa.gov/thredds/dodsC/ncom/region6</url>
+      <region>6</region>
+      <type>ncom</type>
+    </model>
+    <model>
+      <name>ncom_region7</name>
+      <longname>Navy Coastal Ocean Model (NCOM) - Region 7</longname>
+      <url>http://ecowatch.ncddc.noaa.gov/thredds/dodsC/ncom/region7</url>
+      <region>7</region>
+      <type>ncom</type>
+    </model>
+    <model>
+      <name>ncom_region10</name>
+      <longname>Navy Coastal Ocean Model (NCOM) - Region 10</longname>
+      <url>http://ecowatch.ncddc.noaa.gov/thredds/dodsC/ncom/region10</url>
+      <region>10</region>
+      <type>ncom</type>
+    </model>    
+</root>

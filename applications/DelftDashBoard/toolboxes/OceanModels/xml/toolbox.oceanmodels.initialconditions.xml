@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <position>110 110 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Water Level</text>
+    <variable>handles.toolbox.oceanmodels.options.waterLevel.IC.source</variable>
+    <tooltipstring>Select an source for water level boundary conditions</tooltipstring>
+    <listtext>Constant</listtext>
+    <listtext>File</listtext>
+    <listvalue>4</listvalue>
+    <listvalue>2</listvalue>
+  </element>
+  <element>
+    <position>330 110 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Correction (m)</text>
+    <variable>handles.toolbox.oceanmodels.options.waterLevel.IC.constant</variable>
+    <tooltipstring>Edit water level correction (m)</tooltipstring>
+  </element>
+  <element>
+    <position>110 85 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Currents</text>
+    <variable>handles.toolbox.oceanmodels.options.current.IC.source</variable>
+    <tooltipstring>Select an source for water level boundary conditions</tooltipstring>
+    <listtext>Constant</listtext>
+    <listtext>File</listtext>
+    <listvalue>4</listvalue>
+    <listvalue>2</listvalue>
+  </element>
+  <element>
+    <position>110 60 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Salinity (ppt)</text>
+    <variable>handles.toolbox.oceanmodels.options.salinity.IC.source</variable>
+    <tooltipstring>Select source for salinity boundary conditions</tooltipstring>
+    <listtext>Constant</listtext>
+    <listtext>File</listtext>
+    <listtext>Profile</listtext>
+    <listvalue>4</listvalue>
+    <listvalue>2</listvalue>
+    <listvalue>5</listvalue>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.delft3dflow.domain(ad).salinity.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <position>330 60 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Salinity (ppt)</text>
+    <variable>handles.toolbox.oceanmodels.options.salinity.IC.constant</variable>
+    <tooltipstring>Edit constant salinity (ppt)</tooltipstring>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.salinity.IC.source</variable>
+        <value>4</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.model.delft3dflow.domain(ad).salinity.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>230 60 100 20</position>
+    <tooltipstring>Select salinity profile file</tooltipstring>
+    <text>Profile File</text>
+    <variable>handles.toolbox.oceanmodels.options.salinity.IC.profileFile</variable>
+    <extension>*.prf</extension>
+    <selectiontext>Select *.prf file</selectiontext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.salinity.IC.source</variable>
+        <value>5</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.model.delft3dflow.domain(ad).salinity.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <position>110 35 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Temperature (degC)</text>
+    <variable>handles.toolbox.oceanmodels.options.temperature.IC.source</variable>
+    <tooltipstring>Select source for temperature boundary conditions</tooltipstring>
+    <listtext>Constant</listtext>
+    <listtext>File</listtext>
+    <listtext>Profile</listtext>
+    <listvalue>4</listvalue>
+    <listvalue>2</listvalue>
+    <listvalue>5</listvalue>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.delft3dflow.domain(ad).temperature.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <position>330 35 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Temperature (degC)</text>
+    <variable>handles.toolbox.oceanmodels.options.temperature.IC.constant</variable>
+    <tooltipstring>Edit constant temperature (degC)</tooltipstring>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.temperature.IC.source</variable>
+        <value>4</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.model.delft3dflow.domain(ad).temperature.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>230 35 100 20</position>
+    <tooltipstring>Select temperature profile file</tooltipstring>
+    <text>Profile File</text>
+    <variable>handles.toolbox.oceanmodels.options.temperature.IC.profileFile</variable>
+    <extension>*.prf</extension>
+    <selectiontext>Select *.prf file</selectiontext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.temperature.IC.source</variable>
+        <value>5</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.model.delft3dflow.domain(ad).temperature.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>110 10 100 20</position>
+    <variable>handles.toolbox.oceanmodels.name</variable>
+    <type>string</type>
+    <text>Data File</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit file name for data files</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.IC.source</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.salinity.IC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.temperature.IC.source</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>330 10 100 20</position>
+    <variable>handles.toolbox.oceanmodels.folder</variable>
+    <type>string</type>
+    <text>Data Folder</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit folder name for data files</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.current.IC.source</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.salinity.IC.source</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.oceanmodels.options.temperature.IC.source</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>850 10 100 20</position>
+    <text>Generate INI</text>
+    <callback>ddb_OceanModelsToolbox_nestIni</callback>
+    <option1>generateini</option1>
+    <tooltipstring>Generate *.ini file</tooltipstring>
+  </element>
+</root>
