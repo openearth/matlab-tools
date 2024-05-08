@@ -290,6 +290,7 @@ for kcrs=1:ncrs
     pli(kcrs).xy=crs(kcrs).xy;
 
     %write in individual files
+    fdir_out = get_full_dir(fullfile(fdir_out));
     fpath=fullfile(fdir_out,sprintf('%s.pli',name));
     if ~exist(fdir_out,'dir')
         mkdir(fdir_out);
@@ -422,9 +423,9 @@ if ~strcmp(location,location_new) %add data to existing
     if ~isempty(location) %write and save
         fname=fcn_fname_bc(fname_h,location);
         fpath=fullfile(fdir_out,fname);
-        d = dir2(fname);
-        if ~isfolder(d(1).pathname)
-            mkdir(d(1).pathname);
+        fdir_out = get_full_dir(fullfile(fdir_out));
+        if ~isfolder(fdir_out)
+            mkdir(fdir_out);
         end
         D3D_write_bc(fpath,bc)
         messageOut(NaN,sprintf('bc-file created: %s',fpath));
