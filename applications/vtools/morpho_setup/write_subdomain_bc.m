@@ -328,6 +328,9 @@ for kbc=1:nbc
     [ext,kboundary]=add_ext(ext,kboundary,bc,'waterlevelbnd',fpathrel_pli,fpathrel_bc,fname_h_bc); %h
     
     fpath=fullfile(fdir_out,sprintf('ext_%s_%s.ext',boundaries{kbc,1},boundaries{kbc,2}));
+    if ~isfolder(fdir_out);
+        mkdir(fdir_out);
+    end
     D3D_io_input('write',fpath,ext);
 end %kbc
 
@@ -422,8 +425,8 @@ function [bc,ks,bc_all]=write_bc_if_new(bc,ks,bc_all,location,location_new,fdir_
 if ~strcmp(location,location_new) %add data to existing
     if ~isempty(location) %write and save
         fname=fcn_fname_bc(fname_h,location);
-        fpath=fullfile(fdir_out,fname);
         fdir_out = get_full_dir(fullfile(fdir_out));
+        fpath=fullfile(fdir_out,fname);
         if ~isfolder(fdir_out)
             mkdir(fdir_out);
         end
