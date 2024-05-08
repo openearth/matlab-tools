@@ -17,7 +17,7 @@ function D3D_write_bc(fpath,bc)
 nbc=numel(bc);
 
 %% CALC
-fid=fopen(fpath,'w');
+fid=fopen_add_header(fpath,'w');
 
 for kbc=1:nbc
     
