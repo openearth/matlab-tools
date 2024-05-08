@@ -422,8 +422,9 @@ if ~strcmp(location,location_new) %add data to existing
     if ~isempty(location) %write and save
         fname=fcn_fname_bc(fname_h,location);
         fpath=fullfile(fdir_out,fname);
-        if ~isfolder(fdir_out)
-            mkdir(fdir_out);
+        d = dir2(fname);
+        if ~isfolder(d(1).pathname)
+            mkdir(d(1).pathname);
         end
         D3D_write_bc(fpath,bc)
         messageOut(NaN,sprintf('bc-file created: %s',fpath));
