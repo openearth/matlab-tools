@@ -118,7 +118,7 @@ dyv = diff(yv);
 xmv = xv(1:end-1) + 0.5*dxv;
 ymv = yv(1:end-1) + 0.5*dyv;
 
-batch_size = 10000; 
+batch_size = 1000; 
 
 lenp = length(xp);
 min_dist = NaN*ones(lenp,1);
