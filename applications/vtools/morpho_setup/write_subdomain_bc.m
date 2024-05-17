@@ -32,7 +32,7 @@
 %Option select either upstream or downstream water level. 
 %Future: read information from obs-file
 
-function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,time_start,is_internal,boundaries,fpath_submodel_enc,varargin)
+function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,time_start,is_internal,boundaries,fpath_submodel_enc,model_case,varargin)
 
 %% PARSE
 
@@ -66,7 +66,7 @@ messageOut(NaN,'Start writing polylines.')
 write_pli(crs,fullfile(fdir_out,fpathrel_pli))
 
 messageOut(NaN,'Start writing external file.')
-write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,boundaries);
+write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,boundaries,model_case);
 
 messageOut(NaN,'Done.')
 
@@ -331,7 +331,7 @@ end %function
 
 %%
 
-function write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h_bc,fname_q_bc,boundaries)
+function write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h_bc,fname_q_bc,boundaries,model_case)
 
 if ~strcmp(fpathrel_bc(end),'\') && ~strcmp(fpathrel_bc(end),'/')
     fpathrel_bc(end)='/';
@@ -356,7 +356,7 @@ for kbc=1:nbc
     bc=which_bc(boundaries(kbc,2),bc_h(:,2),bc_h,ext_boundary_o);
     [ext,kboundary]=add_ext(ext,kboundary,bc,'waterlevelbnd',fpathrel_pli,fpathrel_bc,fname_h_bc); %h
     
-    fpath=fullfile(fdir_out,sprintf('ext_%s_%s.ext',boundaries{kbc,1},boundaries{kbc,2}));
+    fpath=fullfile(fdir_out,sprintf('ext_%s_%s_%s_bnd.ext',boundaries{kbc,1},boundaries{kbc,2}));
     if ~isfolder(fdir_out);
         mkdir(fdir_out);
     end
