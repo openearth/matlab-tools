@@ -12,10 +12,10 @@
 %
 %
 
-function rkm_query_corrected=correct_for_bendcutoff(rkm_query,rkm_centre,br)
+function [rkm_query_corrected,cutoff]=correct_for_bendcutoff(rkm_query,rkm_centre,br)
 
 rkm_query_corrected=rkm_query;
-
+cutoff=false;
 switch br
     case 'IJ'
         rkm_cut=[...         %last rkm existing
@@ -34,5 +34,6 @@ switch br
                 rkm_2=rkm_loc(1);
             end
             rkm_query_corrected=rkm_2+(rkm_query-rkm_1);
+            cutoff=true;
         end
 end
