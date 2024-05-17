@@ -32,7 +32,7 @@
 %Option select either upstream or downstream water level. 
 %Future: read information from obs-file
 
-function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,time_start,is_upstream,boundaries,varargin)
+function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,time_start,is_internal,boundaries,fpath_submodel_enc,varargin)
 
 %% PARSE
 
@@ -51,13 +51,13 @@ end
 %% CALC
 
 messageOut(NaN,'Start getting indices.')
-[obs,crs]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,varargin{:});
+[obs,crs,submodel_enc]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,fpath_submodel_enc,varargin{:});
 
 messageOut(NaN,'Start getting data.')
 [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs);
 
 messageOut(NaN,'Start writing water level boundary.')
-bc_h=write_h_bc(obs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,is_upstream,fname_h,only_start_end);
+bc_h=write_h_bc(obs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,is_internal,fname_h,only_start_end);
 
 messageOut(NaN,'Start writing discharge boundary.')
 bc_q=write_q_bc(crs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,fname_q,only_start_end);
@@ -78,7 +78,7 @@ end %function
 
 %%  
 
-function [obs,crs]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,varargin)
+function [obs,crs,submodel_enc]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,fpath_submodel_enc,varargin)
 
 %% PARSE
 
@@ -109,10 +109,20 @@ for kobs=1:nobs
     x=obs(kobs).xy(1);
     y=obs(kobs).xy(2);
     dist=hypot(xcen_ehy-x,ycen_ehy-y);
-    [idx,~]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
-    obs(kobs).idx=idx; %EHY index of cell centre
+    [idx,min_v,flg_found] = absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break', 0);
+    %[idx,~]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
+    if flg_found
+        obs(kobs).idx=idx; %EHY index of cell centre
+    else
+        obs(kobs).idx=NaN; %not found
+    end
 end %kobs
 xy_obs_all=reshape([obs.xy],2,[])';
+
+
+%% submodel_enc
+submodel_enc=D3D_io_input('read',fpath_submodel_enc);%tekal('read', fpath_submodel_enc, 'loaddata');
+
 
 %% crs
 crs=D3D_io_input('read',fpath_crs);
@@ -121,34 +131,39 @@ for kcrs=1:ncrs
     x=mean(crs(kcrs).xy(:,1));
     y=mean(crs(kcrs).xy(:,2));
     dist=hypot(xedg_ehy-x,yedg_ehy-y);
-    [idx_edg,~]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1);
-    crs(kcrs).idx=idx_edg; %EHY index of link
-
+    [idx_edg,min_v,flg_found] = absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',0);
+    if flg_found
+        crs(kcrs).idx=idx_edg; %EHY index of link
+    else
+        crs(kcrs).idx=NaN; 
+        crs(kcrs).name=strrep(crs(kcrs).name,'C_','');
+        continue
+    end
     %direction
     dist=hypot(xedg_raw-x,yedg_raw-y);
-    [idx_edg_raw,~]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',1); %index of the link closest in raw coordinates
-
-    idx_faces=edge_face(idx_edg_raw,:); %index of faces connected by the link in raw coordinates. Because it is a local variable, there are as many possible faces as partitions. 
-
-    idx_faces_possible=find(faces_local==idx_faces(1)); %global index of possible origin faces connected by the link
-
-    x_possible=xcen_raw(idx_faces_possible);
-    y_possible=ycen_raw(idx_faces_possible);
-
-    dist=hypot(x_possible-x,y_possible-y); 
+    [idx_edg_raw,min_v,flg_found]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',0); %index of the link closest in raw coordinates
+     idx_faces=edge_face(idx_edg_raw,:); %index of faces connected by the link in raw coordinates. Because it is a local variable, there are as many possible faces as partitions. 
+ 
+     idx_faces_possible=find(faces_local==idx_faces(1)); %global index of possible origin faces connected by the link
+ 
+     x_possible=xcen_raw(idx_faces_possible);
+     y_possible=ycen_raw(idx_faces_possible);
+ 
+     dist=hypot(x_possible-x,y_possible-y); 
     [idx_obs_1_loc,~]=absmintol(dist,0,'do_disp_list',0,'tol',40,'do_break',1); %index of origin face from the possible ones that is closest to the link in raw coordinates.
 
     x_obs=x_possible(idx_obs_1_loc); %x coordinate of the observation station that is origin of the link.
     y_obs=y_possible(idx_obs_1_loc); %y coordinate of the observation station that is origin of the link.
 
-    dist=hypot(xy_obs_all(:,1)-x_obs,xy_obs_all(:,2)-y_obs); 
-    idx_obs=absmintol(dist,0,'do_disp_list',0,'tol',40,'do_break',1); %index of the observation station list associated to the observation station that is origin of the link.
+    bol = inpolygon(x_obs,y_obs,submodel_enc.xy(:,1),submodel_enc.xy(:,2));
 
-    obs_name=obs(idx_obs).name;
-    bol=str2double(obs_name(3))==1; %true => the observation station has a 1. Hence, the origin face is upstream.
-    dir=1; %link goes from upstream to downstream
-    if ~bol
-        dir=-1; %link goes from downstream to upstream
+    %If the point is outside the submodel enclosure the flow is as it would
+    %be in the submodel from outside to inside. Hence dir = 1;
+    
+    if bol
+        dir=-1; %link goes from inside to outside 
+    else
+        dir=1; %link goes from outside to inside 
     end
     crs(kcrs).direction=dir;
 
@@ -158,7 +173,7 @@ for kcrs=1:ncrs
 
 %     figure
 %     hold on
-%     scatter(xcen_v,ycen_v)
+%     scatter(xcen_ehy,ycen_ehy)
 %     x=xy_obs_all(idx_obs,1);
 %     y=xy_obs_all(idx_obs,2);
 %     scatter(x,y,'r','s')
@@ -181,15 +196,24 @@ function [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs)
 data_q=EHY_getMapModelData(fpath_map,'varName','mesh2d_q1');
 ncrs=numel(crs);
 for kcrs=1:ncrs
-    crs(kcrs).q=data_q.val(:,crs(kcrs).idx);
+    if isnan(crs(kcrs).idx)
+        crs(kcrs).q=zeros([size(data_q.val,1),1]);
+    else
+        crs(kcrs).q=data_q.val(:,crs(kcrs).idx);
+    end
 end
 
 data_s1=EHY_getMapModelData(fpath_map,'varName','mesh2d_s1');
 data_bl=EHY_getMapModelData(fpath_map,'varName','bl');
 nobs=numel(obs);
 for kobs=1:nobs
-    obs(kobs).s1=data_s1.val(:,obs(kobs).idx);
-    obs(kobs).bl=data_bl.val(obs(kobs).idx);
+    if isnan(obs(kobs).idx)
+        obs(kobs).s1=NaN*ones([size(data_s1.val,1),1]);
+        obs(kobs).bl=-999; % *ones([size(data_s1.val,1),1]);
+    else
+        obs(kobs).s1=data_s1.val(:,obs(kobs).idx);
+        obs(kobs).bl=data_bl.val(obs(kobs).idx);
+    end
 end
 
 [~,~,~,time_v,~,~]=D3D_results_time(fpath_map,0,[1,Inf]); %time_dtime
@@ -198,7 +222,7 @@ end %function
 
 %%
 
-function bc_all=write_h_bc(obs,fdir_out,time_start,time_v,is_upstream,fname_h,only_begin_last)
+function bc_all=write_h_bc(obs,fdir_out,time_start,time_v,is_internal,fname_h,only_begin_last)
 
 nobs=numel(obs);
 location='';
@@ -207,7 +231,7 @@ bc=struct();
 ks=0;
 for kobs=1:nobs
     name=deblank(obs(kobs).name);
-    if (strcmp(name(3),'1') && is_upstream) || (strcmp(name(3),'2') && ~is_upstream)
+    if (strcmp(name(3),'1') && ~is_internal) || (strcmp(name(3),'2') && is_internal)
         continue
     end
    
@@ -234,7 +258,7 @@ for kobs=1:nobs
 
     [time_s,val]=time_and_val(time_v,time_start,val,only_begin_last);
 
-    bc(ks).val=[time_s,val];
+    bc(ks).val=[time_s,val(:)];
 end
 
 [~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,location,'dummy',fdir_out,fname_h);
@@ -268,11 +292,16 @@ for kcrs=1:ncrs
     bc(ks).quantity{2}='dischargebnd';
     bc(ks).unit{2}='m3/s';
 
-    val=crs(ks).direction.*crs(ks).q; %if the link goes from downstream to upstream, a negative discharge must be positive.
-
-    [time_s,val]=time_and_val(time_v,time_start,val,only_start_end);
-
-    bc(ks).val=[time_s,val];
+    if isnan(crs(kcrs).idx) 
+        [time_s,val]=time_and_val(time_v,time_start,zeros(size(time_v)),only_start_end);
+        bc(ks).val=[time_s,val];
+    else
+        val=crs(kcrs).direction.*crs(kcrs).q; %if the link goes from downstream to upstream, a negative discharge must be positive.
+    
+        [time_s,val]=time_and_val(time_v,time_start,val,only_start_end);
+    
+        bc(ks).val=[time_s,val];
+    end
 end
 
 [~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,location,'dummy',fdir_out,fname_q); %`dummy` as input will trigger to write the last output
