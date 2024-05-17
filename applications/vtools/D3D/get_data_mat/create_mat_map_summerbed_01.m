@@ -28,53 +28,7 @@ if isfield(flg_loc,'sb_pol')==0
     error('You need to specify the summerbed polygon')
 end
 
-
-
-% if isfield(flg_loc,'do_val_B_mor')==0 %why do we need it here?
-%     flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
-% end
-
-%Added to `gdm_parse_val_B_mor`. Check if everything goes fine and remove.
-% if any(flg_loc.do_val_B_mor)
-%     flg_loc.var=cat(2,reshape(flg_loc.var,1,numel(flg_loc.var)),'ba_mor');
-%     if isfield(flg_loc,'var_idx')==0
-%         flg_loc.var_idx=cell(2,numel(flg_loc.var));
-%     else
-%         flg_loc.var_idx=cat(2,flg_loc.var_idx,{zeros(0,0)});
-%     end
-%     if isfield(flg_loc,'layer')==1
-%         flg_loc.layer=cat(2,flg_loc.layer,{0});
-%     end
-% end
-
-% if isfield(flg_loc,'do_val_B')==0
-%     flg_loc.do_val_B=zeros(size(flg_loc.var));
-% end
-
-%Added to `gdm_parse_val_B`. Check if everything goes fine and remove.
-% if any(flg_loc.do_val_B)
-%     flg_loc.var=cat(2,reshape(flg_loc.var,1,numel(flg_loc.var)),'ba');
-% end
-
-% if isfield(flg_loc,'var_idx')==0
-%     flg_loc.var_idx=cell(1,numel(flg_loc.var));
-% end
-
-% if isfield(flg_loc,'sum_var_idx')==0
-%     flg_loc.sum_var_idx=zeros(size(flg_loc.var));
-% end
-
 flg_loc=gdm_parse_summerbed(flg_loc,simdef);
-
-% flg_loc=gdm_default_flags(flg_loc);
-% 
-% flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
-% 
-% flg_loc=gdm_parse_stot(flg_loc,simdef);
-% 
-% flg_loc=gdm_parse_val_B_mor(flg_loc,simdef);
-% 
-% flg_loc=gdm_parse_val_B(flg_loc,simdef);
 
 %% PATHS
 
@@ -189,6 +143,7 @@ for ksb=1:nsb
                         %Problem is that it is not a property of the rkmv alone or the sb_def alone. 
 %                         val_width(kpol,:)=sum(data_ba.val(bol_get),1,'omitnan')/(rkmv.rkm_dx(kpol)*1000); 
                     end
+                    plot_bol_in(flg_loc,simdef,bol_get,gridInfo,rkmv,kpol,sb_pol,pol_name,sb_def);
                     %display
 %                     messageOut(NaN,sprintf('Finding mean in polygon %4.2f %%',kpol/npol*100));
 
@@ -241,3 +196,34 @@ end %function
 %% 
 %% FUNCTION
 %%
+
+function plot_bol_in(flg_loc,simdef,bol_get,gridInfo,rkmv,kpol,sb_pol,pol_name,sb_def)
+
+%% PARSE
+
+if isfield(flg_loc,'do_plot_inpoly')==0
+    flg_loc.do_plot_inpoly=0;
+end
+
+if ~flg_loc.do_plot_inpoly
+    return
+end
+
+[tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
+% tag_fig=flg_loc.tag;
+fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie); 
+fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,'inpoly');
+mkdir_check(fdir_fig_loc,NaN,1,0);
+
+%% CALC
+
+in_p=flg_loc;
+in_p.bol_get=bol_get;
+in_p.gridInfo=gridInfo;
+in_p.sb=sb_def.sb;
+in_p.tit=sprintf('rkm = %f ',rkmv.rkm_cen(kpol));
+in_p.fname=fullfile(fdir_fig_loc,sprintf('%03d',kpol));
+
+fig_inpoly(in_p)
+
+end %function

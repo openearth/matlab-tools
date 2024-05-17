@@ -27,6 +27,7 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 rkm_edg=cen2cor(rkm_cen)';
 rkm_dx=diff(rkm_edg);
 %     rkm_edg_br=maas_branches(rkm_edg); %cannot call this function here
+
 rkm_edg_br=cat(1,rkm_cen_br,rkm_cen_br{end}); %this is not good enough. It may be that an edge point falls in a different branch name
 
 rkm_edg_xy=convert2rkm(fpath_rkm,rkm_edg,rkm_edg_br);
