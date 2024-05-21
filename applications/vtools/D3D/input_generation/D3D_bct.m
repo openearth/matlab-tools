@@ -48,7 +48,7 @@ end
 
 %% NOISE
 
-D3D_bct_noise(simdef)
+simdef=D3D_bct_noise(simdef);
 
 %% FILE
 
@@ -73,6 +73,19 @@ end %function
 %% FUNCTIONS
 %%
 
-function D3D_bct_noise(simdef)
+function simdef=D3D_bct_noise(simdef)
+
+switch simdef.bct.noise_Q
+    case 1
+        %currently only possible for version_V=0
+        if numel(simdef.bct.time)~=2 || numel(simdef.bct.Q)~=2
+            error('Generalize function.')
+        end
+        simdef.bct.noise_Q_dt=round(simdef.bct.noise_Q_dt/simdef.mdf.Dt)*simdef.mdf.Dt;
+        simdef.bct.time_Q=simdef.bct.time_Q(1):simdef.bct.noise_Q_dt:simdef.bct.time_Q(end);
+        nt=numel(simdef.bct.time_Q);
+        rng(0);
+        simdef.bct.Q=simdef.bct.Q(1).*ones(nt,simdef.mor.upstream_nodes)+simdef.bct.noise_Q_amp.*rand(nt,simdef.mor.upstream_nodes);
+end
 
 end %function

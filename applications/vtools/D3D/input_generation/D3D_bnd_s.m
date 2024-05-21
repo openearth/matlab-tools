@@ -47,15 +47,15 @@ end
 
 %old
 switch grd_type
-    case 1
-        % data{1,1}=sprintf('Upstream             T T        1     2       1      %d  0.0000000e+000 Uniform',N-1);
-        % data{2,1}=sprintf('Downstream           Z T     %d     2    %d      %d  0.0000000e+000',M,M,N-1);
-        kl=1;
-        for kn=1:upstream_nodes
-        data{kl,1}=sprintf('Upstream_%02d             T T        1     2       1      %d  0.0000000e+000 %s',kn,N-1,str_typeb); kl=kl+1;
-        end
-        data{kl,1}=sprintf('Downstream           Z T     %d     2    %d      %d  0.0000000e+000',M,M,N-1);
-    case 3
+%     case 1
+%         % data{1,1}=sprintf('Upstream             T T        1     2       1      %d  0.0000000e+000 Uniform',N-1);
+%         % data{2,1}=sprintf('Downstream           Z T     %d     2    %d      %d  0.0000000e+000',M,M,N-1);
+%         kl=1;
+%         for kn=1:upstream_nodes
+%         data{kl,1}=sprintf('Upstream_%02d             T T        1     2       1      %d  0.0000000e+000 %s',kn,N-1,str_typeb); kl=kl+1;
+%         end
+%         data{kl,1}=sprintf('Downstream           Z T     %d     2    %d      %d  0.0000000e+000',M,M,N-1);
+    case {1,3}
         kl=1;
         if upstream_nodes>1
             for kn=1:upstream_nodes

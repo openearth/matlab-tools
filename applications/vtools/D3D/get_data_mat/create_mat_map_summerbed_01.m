@@ -82,7 +82,7 @@ for ksb=1:nsb
     %summerbed
     fpath_sb_pol=flg_loc.sb_pol{ksb};
     [~,sb_pol,~]=fileparts(fpath_sb_pol);
-    sb_def=gdm_read_summerbed(fid_log,fdir_mat,fpath_sb_pol,fpath_map);
+    sb_def=gdm_read_summerbed(flg_loc,fid_log,fdir_mat,fpath_sb_pol,fpath_map);
 
     for krkmv=1:nrkmv %rkm polygons
         

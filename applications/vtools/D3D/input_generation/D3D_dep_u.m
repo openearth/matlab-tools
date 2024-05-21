@@ -83,7 +83,8 @@ switch simdef.ini.etab_noise
     case 0
         noise=zeros(size(depths));
 %         noise=zeros(ny,nx);
-%     case 1 %random noise
+    case 1 %random noise
+        error('not implemented?')
 %         noise_amp=simdef.ini.noise_amp;
 %         noise(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
     case 2 %sinusoidal

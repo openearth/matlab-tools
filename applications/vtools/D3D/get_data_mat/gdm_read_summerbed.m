@@ -13,9 +13,19 @@
 %INPUT:
 
 
-function sb_def=gdm_read_summerbed(fid_log,fdir_mat,fpath_sb_pol,fpath_map)
+function sb_def=gdm_read_summerbed(flg_loc,fid_log,fdir_mat,fpath_sb_pol,fpath_map)
 
 messageOut(NaN,'Start reading summer bed polygon')
+
+%% PARSE
+
+if isfield(flg_loc,'do_polygon_boundary')==0
+    flg_loc.do_polygon_boundary=0; %not backward compatible, but safest. 
+end
+
+if isfield(flg_loc,'polygon_boundary_shrink')
+    flg_loc.polygon_boundary_shrink=0.8;
+end
 
 %% PATHS
 
@@ -35,17 +45,18 @@ messageOut(fid_log,sprintf('Mat-file does not exist. Creating.'));
 
 sb_raw=shp2struct(fpath_sb_pol);
 sb=polcell2nan(sb_raw.xy.XY);
-% sb=[];
-% np=numel(sb_raw.xy.XY);
-% for kp=1:np
-%     sb=cat(1,sb,sb_raw.xy.XY{kp,1}(:,1:2));
-% %     sb=cat(1,sb,[NaN,NaN]); %this separates different polygons
-% end
 is_nan_1=isnan(sb(:,1));
 sb(is_nan_1,:)=[];
-messageOut(fid_log,'Start finding boundary summer bed.')
-idx_b=boundary(sb(:,1),sb(:,2),0.8); %shrink value found by trial and error
-sb=sb(idx_b,:);
+
+%boundary
+if flg_loc.do_polygon_boundary
+    messageOut(fid_log,'Start finding boundary summer bed with shrink parameter %f',flg_loc.polygon_boundary_shrink)
+    idx_b=boundary(sb(:,1),sb(:,2),flg_loc.polygon_boundary_shrink); %shrink value found by trial and error
+    sb=sb(idx_b,:);
+else
+    messageOut(fid_log,'Not finding boundary of summerbed polygon. Hence, the polygon must be unique and in order.')
+end
+
 messageOut(fid_log,'Start finding inpolygon summer bed.')
 bol_sb=inpolygon(gridInfo.Xcen(:),gridInfo.Ycen(:),sb(:,1),sb(:,2));
 

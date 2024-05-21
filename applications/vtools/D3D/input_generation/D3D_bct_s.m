@@ -52,11 +52,15 @@ Dt=simdef.mdf.Dt;
 
 upstream_nodes=simdef.mor.upstream_nodes;
 
-%round time
-if time(end)<Tstop
-    time(end)=(floor(Tstop/Dt)+1)*Dt;
-    warning('The end time in bct is smaller than the end time of the simulation (maybe due to rounding issues). I have changed it.')
+%make Q a matrix in case there is noise in it
+if isvector(Q)
+    Q=reshape(Q,[],1);
+    Q=repmat(Q,1,upstream_nodes);
 end
+
+%round time
+time=increase_final_time(time,Tstop,Dt);
+time_Q=increase_final_time(time_Q,Tstop,Dt);
 
 if simdef.grd.K>1
     str_typeb='Logarithmic';
@@ -105,7 +109,7 @@ for kn=1:upstream_nodes
     data{kl, 1}='parameter            ''flux/discharge  (q)  end B''               unit ''[m3/s]'''; kl=kl+1;
     data{kl, 1}=sprintf('records-in-table     %d',nt); kl=kl+1;
     for kt=1:nt
-        data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time_Q(kt)*Tfact,Q(kt)*dy/B,Q(kt)*dy/B); kl=kl+1;
+        data{kl,1}=sprintf(repmat('%0.15E \t',1,3),time_Q(kt)*Tfact,Q(kt,kn)*dy/B,Q(kt,kn)*dy/B); kl=kl+1;
     end
     end
 end %upstream_nodes
@@ -145,3 +149,18 @@ end
 
 file_name=fullfile(dire_sim,'bct.bct');
 writetxt(file_name,data,'check_existing',check_existing);
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function time=increase_final_time(time,Tstop,Dt)
+
+if time(end)<Tstop
+    time(end)=(floor(Tstop/Dt)+1)*Dt;
+    warning('The end time in bct is smaller than the end time of the simulation (maybe due to rounding issues). I have changed it.')
+end
+
+end %function

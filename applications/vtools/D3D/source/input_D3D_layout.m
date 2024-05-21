@@ -169,6 +169,10 @@ simdef.bct.Q=               simdef.ini.h*simdef.ini.u*simdef.grd.B; %Q [m3/s] (v
 simdef.bct.time=            [0;simdef.mdf.Tstop]; %time at which the water levels are specified [s] [double(nt,1)]
 simdef.bct.etaw=            [0.000;0.000]; %water levels at the specified times [m] [double(nt,1)]
 
+simdef.bct.noise_Q=0; %noise added to Q boundary condition: 0=NO; 1=YES [-] [double(1,1)]
+simdef.bct.noise_Q_dt=3600; %time in which the noise is discretized [s] [double(1,1)]
+simdef.bct.noise_Q_amp=simdef.bct.Q/100; %amplitude of the noise [m^3/s] [double(1,1)]
+
 %% sediment data
 simdef.sed.dk=              [0.001]; %characteristic grain sizes [m] [double(nf,1)] 
 

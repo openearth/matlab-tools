@@ -785,10 +785,20 @@ if any(size(simdef.bct.time_Q)-size(simdef.bct.Q))
     error('dimensions of Q boundary condition do not agree')
 end
 
-%add extra time with same value as last in case the last time step gets outside the domain
+    %add extra time with same value as last in case the last time step gets outside the domain
 if simdef.D3D.structure==2
 simdef.bct.Q=cat(1,simdef.bct.Q,simdef.bct.Q(end));
 simdef.bct.time_Q=cat(1,simdef.bct.time_Q,simdef.bct.time_Q(end)*1.1);
+end
+
+    %noise
+if isfield(simdef.bct,'noise_Q')==0
+    simdef.bct.noise_Q=0;
+end
+if simdef.bct.noise_Q==1
+    if simdef.mor.CondPerNode~=1
+        error('Noise in Q needs discharge imposed at every node.')
+    end
 end
 
 %water level
