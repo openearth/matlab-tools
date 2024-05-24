@@ -49,12 +49,14 @@ if isempty(fpath_map) || ~isfile(fpath_map)
 end
 
 %% CALC
-
 messageOut(NaN,'Start getting indices.')
 [obs,crs,submodel_enc]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,fpath_submodel_enc,varargin{:});
 
 messageOut(NaN,'Start getting data.')
 [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs);
+
+messageOut(NaN,'Start writing lateral bc.')
+write_lateral_bc(fpath_ext, fdir_out, time_start, time_v, only_start_end)
 
 messageOut(NaN,'Start writing water level boundary.')
 bc_h=write_h_bc(obs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,is_internal,fname_h,only_start_end);
@@ -289,8 +291,6 @@ for kobs=1:nobs
     
 end
 
-[~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,location,'dummy',fdir_out,fname_h);
-
 end %function
 
 %%
@@ -368,6 +368,60 @@ end %kcrs
 end %function
 
 %%
+function write_lateral_bc(fpath_ext, fdir_out, time_start, time_v, only_start_end)
+
+%original external without [boundary]
+ext_o=D3D_io_input('read',fpath_ext);
+fn=fieldnames(ext_o);
+bol=contains(fn,'lateral');
+
+bc_all={};
+bc=struct();
+
+lat_idx=0;
+fpath_bc_lat = {};
+for klat = find(bol).';
+    lat_idx=lat_idx+1;
+    fpath_lat_orig = fullfile(fileparts(fpath_ext), ext_o.(fn{klat}).discharge);
+    fpath_bc_lat{lat_idx}=ext_o.(fn{klat}).discharge;
+end
+[~, idx] = unique(cell2table(fpath_bc_lat));
+fpath_bc_lat = fpath_bc_lat(idx);
+for kfpath_lat = 1:length(fpath_bc_lat);
+    lat = bct_io('read', fullfile(fileparts(fpath_ext), fpath_bc_lat{kfpath_lat})); 
+    fpath_lat_orig = fullfile(fdir_out, fpath_bc_lat{kfpath_lat});  
+    for ks = 1:length(lat.Table); 
+        bc(ks).name=lat.Table(ks).Location;
+        if ~only_start_end
+            bc(ks).function='timeseries';
+            bc(ks).time_interpolation='linear';
+            bc(ks).quantity{1}='time';
+            bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
+            bc(ks).quantity{2}='lateral_discharge';
+            bc(ks).unit{2}='m3/s';
+        else
+            bc(ks).function='astronomic';
+            bc(ks).quantity{1}='astronomic component';
+            bc(ks).unit{1}='-';
+            bc(ks).quantity{2}='lateral_discharge amplitude';
+            bc(ks).unit{2}='m3/s';
+            bc(ks).quantity{3}='lateral_discharge phase';
+            bc(ks).unit{3}='rad/deg/minutes';
+        end
+        val=lat.Table(ks).Data(:,2);
+        [time_s,val]=time_and_val(time_v,time_start,val,only_start_end);
+        if ~only_start_end
+            bc(ks).val=[time_s,val];
+        else
+            bc(ks).val={'A0',val(end),0.0};
+        end
+    end
+    [fdir_out, fname, ~] = fileparts(fpath_lat_orig); 
+    [~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,'cmp','dummy',fdir_out,fname); %`dummy` as input will trigger to write the last output
+end
+
+end
+
 
 function write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h_bc,fname_q_bc,boundaries,model_case)
 
@@ -382,6 +436,14 @@ bol=contains(fn,'boundary');
 ext_boundary_o=rmfield(ext_o,fn(~bol));
 ext_o=rmfield(ext_o,fn(bol));
 kboundary_o=sum(~bol); %boundaries which are not [boundary] (e.g., [lateral])
+
+fn=fieldnames(ext_o);
+bol=contains(fn,'lateral');
+
+for klat = find(bol).';
+    [fpathlat, fpathname, ~] = fileparts(ext_o.(fn{klat}).discharge);
+    ext_o.(fn{klat}).discharge = fullfile(fpathlat, [fpathname, '_cmp.bc']);
+end
 
 nbc=size(boundaries,1);
 for kbc=1:nbc
