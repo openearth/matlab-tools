@@ -52,7 +52,16 @@ for kbc=1:nbc
         fprintf(fid,'Unit                            = %s ',bc(kbc).unit{kq});
     end    
     fclose(fid);
-    writematrix(num2str(bc(kbc).val,'%f'),fpath,'WriteMode','append', 'Filetype', 'text', 'Delimiter', 'space', 'QuoteStrings', false)
+    if iscell(bc(kbc).val)
+        fid=fopen(fpath,'a');
+        fprintf(fid,'\n'); 
+        for r = 1:size(bc(kbc).val);
+            fprintf(fid,'%s %f %f\n', bc(kbc).val{r,1:end});
+        end
+        fclose(fid);
+    else
+        writematrix(num2str(bc(kbc).val,'%f'),fpath,'WriteMode','append', 'Filetype', 'text', 'Delimiter', 'space', 'QuoteStrings', false)
+    end
     fid=fopen(fpath,'a');
 end %kbc
 

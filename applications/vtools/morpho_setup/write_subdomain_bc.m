@@ -93,15 +93,20 @@ delimiter=parin.Results.delimiter;
 %% CALC
 
 %read grid
-gridInfo=EHY_getGridInfo(fpath_map,{'XYcen','XYuv'}); 
-xcen_ehy=gridInfo.Xcen;
-ycen_ehy=gridInfo.Ycen;
-xedg_ehy=gridInfo.Xu;
-yedg_ehy=gridInfo.Yu;
-
-%`edge_faces` from EHY cannot be used because it is a local of every partitioned grid and there is an inconsistency. 
-[edge_face,xcen_raw,ycen_raw,xedg_raw,yedg_raw,~,faces_local]=D3D_edge_faces(fpath_map);
-
+matfilename = sprintf('%s_grid.mat', num2str(keyHash(fpath_map))); 
+if exist(matfilename)==2; 
+    load(matfilename); 
+else
+    gridInfo=EHY_getGridInfo(fpath_map,{'XYcen','XYuv'}); 
+    xcen_ehy=gridInfo.Xcen;
+    ycen_ehy=gridInfo.Ycen;
+    xedg_ehy=gridInfo.Xu;
+    yedg_ehy=gridInfo.Yu;
+    
+    %`edge_faces` from EHY cannot be used because it is a local of every partitioned grid and there is an inconsistency. 
+    [edge_face,xcen_raw,ycen_raw,xedg_raw,yedg_raw,~,faces_local]=D3D_edge_faces(fpath_map);
+    save(matfilename,'gridInfo','xcen_ehy','ycen_ehy', 'xedg_ehy', 'yedg_ehy', 'edge_face','xcen_raw','ycen_raw','xedg_raw','yedg_raw','faces_local');
+end
 %% obs
 obs=D3D_io_input('read',fpath_obs,'delimiter',delimiter,'v',2);
 nobs=numel(obs);
@@ -192,8 +197,16 @@ end %function
 %%
 
 function [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs)
-
-data_q=EHY_getMapModelData(fpath_map,'varName','mesh2d_q1');
+matfilename = sprintf('%s.mat', num2str(keyHash(fpath_map))); 
+if exist(matfilename)==2; 
+    load(matfilename); 
+else
+    data_q=EHY_getMapModelData(fpath_map,'varName','mesh2d_q1');
+    data_s1=EHY_getMapModelData(fpath_map,'varName','mesh2d_s1');
+    data_bl=EHY_getMapModelData(fpath_map,'varName','bl');
+    [~,~,~,time_v,~,~]=D3D_results_time(fpath_map,0,[1,Inf]); %time_dtime
+    save(matfilename,'data_q','data_s1','data_bl','time_v');
+end
 ncrs=numel(crs);
 for kcrs=1:ncrs
     if isnan(crs(kcrs).idx)
@@ -203,8 +216,6 @@ for kcrs=1:ncrs
     end
 end
 
-data_s1=EHY_getMapModelData(fpath_map,'varName','mesh2d_s1');
-data_bl=EHY_getMapModelData(fpath_map,'varName','bl');
 nobs=numel(obs);
 for kobs=1:nobs
     if isnan(obs(kobs).idx)
@@ -216,7 +227,9 @@ for kobs=1:nobs
     end
 end
 
-[~,~,~,time_v,~,~]=D3D_results_time(fpath_map,0,[1,Inf]); %time_dtime
+
+
+
 
 end %function
 
@@ -244,12 +257,22 @@ for kobs=1:nobs
     ks=ks+1;
 
     bc(ks).name=name;
-    bc(ks).function='timeseries';
-    bc(ks).time_interpolation='linear';
-    bc(ks).quantity{1}='time';
-    bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
-    bc(ks).quantity{2}='waterlevelbnd';
-    bc(ks).unit{2}='m';
+    if ~only_begin_last
+        bc(ks).function='timeseries';
+        bc(ks).time_interpolation='linear';
+        bc(ks).quantity{1}='time';
+        bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
+        bc(ks).quantity{2}='waterlevelbnd';
+        bc(ks).unit{2}='m';
+    else
+        bc(ks).function='astronomic';
+        bc(ks).quantity{1}='astronomic component'; 		
+        bc(ks).unit{1}='-'; 
+        bc(ks).quantity{2}='waterlevelbnd amplitude'; 		
+        bc(ks).unit{2}='m'; 
+        bc(ks).quantity{3}='waterlevelbnd phase'; 		
+        bc(ks).unit{3}='rad/deg/minutes'; 
+    end
 
     %replace NaN values with bed level values
     val=obs(kobs).s1;
@@ -258,7 +281,12 @@ for kobs=1:nobs
 
     [time_s,val]=time_and_val(time_v,time_start,val,only_begin_last);
 
-    bc(ks).val=[time_s,val(:)];
+    if ~only_begin_last
+        bc(ks).val=[time_s,val(:)];
+    else
+        bc(ks).val={'A0',val(end),0.0};
+    end
+    
 end
 
 [~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,location,'dummy',fdir_out,fname_h);
@@ -285,22 +313,32 @@ for kcrs=1:ncrs
     ks=ks+1;
 
     bc(ks).name=name;
-    bc(ks).function='timeseries';
-    bc(ks).time_interpolation='linear';
-    bc(ks).quantity{1}='time';
-    bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
-    bc(ks).quantity{2}='dischargebnd';
-    bc(ks).unit{2}='m3/s';
-
+    if ~only_start_end
+        bc(ks).function='timeseries';
+        bc(ks).time_interpolation='linear';
+        bc(ks).quantity{1}='time';
+        bc(ks).unit{1}=sprintf('seconds since %s %s',string(time_start,'yyyy-MM-dd HH:mm:ss'),time_start.TimeZone);
+        bc(ks).quantity{2}='dischargebnd';
+        bc(ks).unit{2}='m3/s';
+    else
+        bc(ks).function='astronomic';
+        bc(ks).quantity{1}='astronomic component'; 		
+        bc(ks).unit{1}='-'; 
+        bc(ks).quantity{2}='dischargebnd amplitude'; 		
+        bc(ks).unit{2}='m3/s'; 
+        bc(ks).quantity{3}='dischargebnd phase'; 		
+        bc(ks).unit{3}='rad/deg/minutes'; 
+    end
     if isnan(crs(kcrs).idx) 
         [time_s,val]=time_and_val(time_v,time_start,zeros(size(time_v)),only_start_end);
-        bc(ks).val=[time_s,val];
     else
         val=crs(kcrs).direction.*crs(kcrs).q; %if the link goes from downstream to upstream, a negative discharge must be positive.
-    
         [time_s,val]=time_and_val(time_v,time_start,val,only_start_end);
-    
+    end
+    if ~only_start_end
         bc(ks).val=[time_s,val];
+    else
+        bc(ks).val={'A0',val(end),0.0};
     end
 end
 
@@ -356,7 +394,7 @@ for kbc=1:nbc
     bc=which_bc(boundaries(kbc,2),bc_h(:,2),bc_h,ext_boundary_o);
     [ext,kboundary]=add_ext(ext,kboundary,bc,'waterlevelbnd',fpathrel_pli,fpathrel_bc,fname_h_bc); %h
     
-    fpath=fullfile(fdir_out,sprintf('ext_%s_%s_%s_bnd.ext',boundaries{kbc,1},boundaries{kbc,2}));
+    fpath=fullfile(fdir_out,sprintf('ext_%s_%s_%s_bnd.ext',boundaries{kbc,1},boundaries{kbc,2},model_case));
     if ~isfolder(fdir_out);
         mkdir(fdir_out);
     end
