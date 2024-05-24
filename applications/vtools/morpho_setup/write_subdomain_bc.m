@@ -442,7 +442,7 @@ bol=contains(fn,'lateral');
 
 for klat = find(bol).';
     [fpathlat, fpathname, ~] = fileparts(ext_o.(fn{klat}).discharge);
-    ext_o.(fn{klat}).discharge = fullfile(fpathlat, [fpathname, '_cmp.bc']);
+    ext_o.(fn{klat}).discharge = strrep(fullfile(fpathlat, [fpathname, '_cmp.bc'], '\' , '/');
 end
 
 nbc=size(boundaries,1);
