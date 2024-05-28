@@ -108,10 +108,12 @@ load(fullfile(paths_main_folder,'data_stations_index.mat'))
 
 %% SINGLE FILE 
 
-% fpath_data='c:\Users\chavarri\Downloads\20240318_058.csv';
-% data_stations=read_csv_data(fpath_data,'flg_debug',0);
-% data_stations=data_stations(2);
-% add_data_stations(paths_main_folder,data_stations)
+fpath_data='c:\Users\chavarri\Downloads\20240524_031.csv';
+data_stations=read_csv_data(fpath_data,'flg_debug',0);
+data_stations_add=data_stations(1);
+data_stations_add.time=[data_stations_add.time;data_stations(2).time];
+data_stations_add.waarde=[data_stations_add.waarde;data_stations(2).waarde];
+add_data_stations(paths_main_folder,data_stations_add)
 
 %%
 % ns=numel(data_stations);

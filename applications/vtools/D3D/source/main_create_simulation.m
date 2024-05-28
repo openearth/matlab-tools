@@ -21,8 +21,7 @@ fclose all;
 fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
 fdir_d3d='c:\checkouts\qp\';
 
-% fpath_project='c:\02_projects\231005_redolfi';
-fpath_project='p:\dflowfm\users\chavarri\231005_redolfi\';
+fpath_project='c:\02_projects\240524_coriolis\';
 
 %% ADD OET
 

@@ -577,6 +577,21 @@ if isfield(simdef.bcm,'location')==0
     end
 end
         
+if isfield(simdef.bcm,'noise_eta')==0
+    simdef.bcm.noise_eta=0;
+end
+if simdef.bcm.noise_eta==2
+    if ~isequal(size(simdef.bcm.eta),[1,1])
+        warning('Only the first value of the bed level is used when adding noise.')
+        simdef.bcm.eta=simdef.bcm.eta(1);
+    end    
+    if isfield(simdef.bcm,'time')
+        warning('Time vector for bed level boundary condition will not be used.')
+    else
+        simdef.bcm.time=NaN; 
+    end
+end
+
 %% ILL-POSEDNESS
 
 if isfield(simdef.mor,'HiranoCheck')==0

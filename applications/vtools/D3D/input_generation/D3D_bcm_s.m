@@ -38,6 +38,12 @@ upstream_nodes=simdef.mor.upstream_nodes;
 switch IBedCond
     case 2
         eta=simdef.bcm.eta;
+        %make Q a matrix in case there is noise in it
+        if isvector(eta)
+            eta=reshape(eta,[],1);
+            eta=repmat(eta,1,upstream_nodes);
+            [eta,time]=D3D_add_noise_eta(simdef,eta,time);
+        end
     case {3}
         deta_dt=simdef.bcm.deta_dt; 
     case {4,5}
@@ -77,7 +83,7 @@ switch IBedCond
         data{kl, 1}=       'parameter           ''depth         '' unit ''[m]'''; kl=kl+1;
         data{kl,1}=sprintf('records-in-table     %d',nt); kl=kl+1;
         for kt=1:nt
-            data{kl,1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,-eta(kt)); kl=kl+1; %attention! in D3D it is depth (positive down) while for me it is bed elevation (positive up)
+            data{kl,1}=sprintf(repmat('%0.7E \t',1,2),time(kt)*Tfact,-eta(kt,kn)); kl=kl+1; %attention! in D3D it is depth (positive down) while for me it is bed elevation (positive up)
         end        
     case 3 
         data{kl, 1}=       'parameter           ''depth change        '' unit ''[m/s]'''; kl=kl+1;
@@ -116,3 +122,46 @@ end
 
 % file_name=simdef.bcm.fname;
 writetxt(simdef.file.bcm,data,varargin{:})
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function [eta,time]=D3D_add_noise_eta(simdef,eta,time)
+
+switch simdef.bcm.noise_eta
+    case 0
+       return
+    case 2
+
+        dt=round(simdef.bcm.noise_dt/simdef.mdf.Dt)*simdef.mdf.Dt;
+        time=0:dt:simdef.mdf.Tstop+simdef.mdf.Dt;
+        time=time';
+        eta=eta.*ones(numel(time),simdef.mor.upstream_nodes);
+
+        noise_amp=simdef.bcm.noise_amp;
+        grd=D3D_io_input('read',simdef.file.grd);
+        y_in=grd.cen.y(:,1)'; %is this correct?
+        B=simdef.grd.B;
+        Ay=sin(pi*(y_in-B/2)./B);
+        noise_T=simdef.bcm.noise_T;
+        noise=noise_amp.*Ay.*cos(2*pi*time/noise_T-pi/2); %total noise;
+
+        eta=eta+noise;
+
+        %% BEGIN DEBUG
+% 
+%         figure
+%         hold on
+%         surf(eta,'EdgeColor','none')
+
+        %% END DEBUG
+        
+    otherwise
+        error('You want to add a type of noise to the bed level boundary conditions which has not been implemented.')
+end
+
+
+end %function

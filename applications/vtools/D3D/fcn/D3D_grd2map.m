@@ -96,6 +96,7 @@ fprintf(fid,'Tunit                             = S                      \r\n');
 fprintf(fid,'TStart                            = 0                      \r\n');
 fprintf(fid,'TStop                             = 1                      \r\n');
 fprintf(fid,'DtInit                            = 1                      \r\n');
+fprintf(fid,'DtUser                            = 1                      \r\n');
 
 fclose(fid);
 

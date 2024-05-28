@@ -163,6 +163,10 @@ simdef.mor.ICmpCond=        0; %flag for upstream boundary gsd boundary conditio
 % simdef.bcm.transport=       1e-6*[0,7.862;0,7.862]; %(if IBedCond=5)transport = transport excluding pores of each fraction at each time [m^2/s] [double(nt,nf)]
 % simdef.bcm.deta_dt=         -0.00/3600*ones(2,1); %(if IBedCond=3); rate of change of the bed elevation (negative mens degradation) [m/s] [double(nt,1)]
 % simdef.bcm.eta=             [-0.1,-0.2]; %(if IBedCond=2); bed elevation as a function of time [m] [double(nt,1)]
+% simdef.bcm.noise_eta=       0; %0=NO; 2=alternate bars
+% simdef.bcm.noise_amp=       0.30; %(for noise_eta=2) noise amplitude [m] 
+% simdef.bcm.noise_T=         11*24*3600; %(for noise_eta=2) period [s] 
+% simdef.bcm.noise_dt=        simdef.bcm.noise_T/100; %(for noise_eta=2) discretization of the time boundary condition [s]
 
 %% hydrodynamic boundary conditions
 simdef.bct.Q=               simdef.ini.h*simdef.ini.u*simdef.grd.B; %Q [m3/s] (value before width is the value per unit width)
