@@ -332,11 +332,9 @@ etab_cengrd_ori=F_ori(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 % colorbar
 % axis equal
 % 
-% % END DEBUG
+
 
 %% plot Delaunay in s-n coordinate system
-
-if 0
 
 % rkm=readcell(fpath_rkm);
 % x_rkm=cell2mat(rkm(2:end,1));
@@ -371,7 +369,7 @@ if 0
 %     text(s_rkm(krkm),n_rkm(krkm),strrep(t_rkm{krkm},'_','\_'))
 % end
 
-end
+% % END DEBUG
 
 %% write
 
@@ -382,37 +380,36 @@ mkdir_check(fdir_out);
 %1) bed level from polygons
 
     %1.1) original on polygon centres
-bol_nn=~isnan(etab_cen);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cenpol_original_%s.xyz',now_chr));
-% pack_and_check()
-D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen(bol_nn)]);
+out=pack_and_check(xpol_cen,ypol_cen,etab_cen);
+D3D_io_input('write',fpath_xyz,out);
 
     %1.2) filtered on polygon centres
-bol_nn=~isnan(etab_cen_mod);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cenpol_filtered_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen_mod(bol_nn)]);
+out=pack_and_check(xpol_cen,ypol_cen,etab_cen_mod);
+D3D_io_input('write',fpath_xyz,out);
 
     %1.3) filtered on grid centres 
-bol_nn=~isnan(etab_cengrd_mod);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cengrd_filtered_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[x_cengrd_int(bol_nn),y_cengrd_int(bol_nn),etab_cengrd_mod(bol_nn)]);
+out=pack_and_check(x_cengrd_int,y_cengrd_int,etab_cengrd_mod);
+D3D_io_input('write',fpath_xyz,out);
 
     %1.4) original on grid centres 
-bol_nn=~isnan(etab_cengrd_ori);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cengrd_original_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[x_cengrd_int(bol_nn),y_cengrd_int(bol_nn),etab_cengrd_ori(bol_nn)]);
+out=pack_and_check(x_cengrd_int,y_cengrd_int,etab_cengrd_ori);
+D3D_io_input('write',fpath_xyz,out);
 
 %2) bed level from grid
 
     %2.1) original on grid corners
-bol_nn=~isnan(gridInfo.Zcor);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_corgrd_original_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[gridInfo.Xcor(bol_nn),gridInfo.Ycor(bol_nn),gridInfo.Zcor(bol_nn)]);
+out=pack_and_check(gridInfo.Xcor,gridInfo.Ycor,gridInfo.Zcor);
+D3D_io_input('write',fpath_xyz,out);
 
     %2.3) original on grid centres
-bol_nn=~isnan(gridInfo.Zcen);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_grd_cengrd_original_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[gridInfo.Xcen(bol_nn),gridInfo.Ycen(bol_nn),gridInfo.Zcen(bol_nn)]);
+out=pack_and_check(gridInfo.Xcen,gridInfo.Ycen,gridInfo.Zcen);
+D3D_io_input('write',fpath_xyz,out);
 
 end
 
@@ -846,7 +843,18 @@ end %ku
 
 end %function
 
+%% 
 
+function out=pack_and_check(x,y,z)
+
+if ~isequal(size(x),size(y)) || ~isequal(size(x),size(z)) || ~isequal(size(y),size(z)) || size(x,2)~=1
+    error('Matrix dimensions do not agree.')
+end
+
+bol_nn=~isnan(z);
+out=[x(bol_nn),y(bol_nn),z(bol_nn)];
+
+end %function
 
 
 
