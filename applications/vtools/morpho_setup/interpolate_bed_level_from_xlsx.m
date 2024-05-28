@@ -241,37 +241,6 @@ else
     load(fpath_mat_tmp,'bol_in_pol')
 end
 
-%% BEGIN DEBUG
-
-% bol_out_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\04_pol_out\bol.mat');
-% bol_in_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\03_pol_in\bol.mat');
-% 
-% % pol_xy=polcell2nan(pol.xy.XY);
-% % shp=D3D_io_input('read','p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\07_pol_in_bl\waal.shp','xy_only',1);
-% %
-% % tfile=readmatrix("c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\230321_rijntakken_mor\test.xyz",'FileType','text'); 
-% 
-% figure
-% hold on
-% % plot(pol_xy(:,1),pol_xy(:,2),'k')
-% % plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'r')
-% plot(bol_in_aux.x_pol_in,bol_in_aux.y_pol_in,'g')
-% plot(bol_out_aux.x_pol_in,bol_out_aux.y_pol_in,'r')
-% % scatter(xint,yint,10,'xk');
-% % scatter(xint,yint,10,etab_cengrd_mod);
-% scatter(xint(bol_nn),yint(bol_nn),10,'b');
-% % scatter(tfile(:,1),tfile(:,2),10,tfile(:,3))
-% % scatter(gridInfo.Xcor,gridInfo.Ycor,10,gridInfo.Zcor,'filled')
-% % scatter(xpol_cen,ypol_cen,10,etab_cen,'s','filled')
-% % scatter(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),10,etab_cen_mod(bol_cen_int),'x','filled')
-% % plot(shp(:,1),shp(:,2))
-% % scatter(xpol_cen,ypol_cen,20,etab_cen_mod,'s','filled')
-% % scatter(xint,yint,10,zint,'filled')
-% colorbar
-% axis equal
-% % 
-% % % END DEBUG
-
 %% convert to s-n domain
 
 x_grd_cen=gridInfo.Xcen;
@@ -315,10 +284,59 @@ F_ori=scatteredInterpolant(s_pol_cen(bol_cen_int),n_pol_cen(bol_cen_int),etab_ce
 
 bol_grd_int=bol_in & ~bol_out;
 
+x_cengrd_int=x_grd_cen(bol_grd_int);
+y_cengrd_int=y_grd_cen(bol_grd_int);
 etab_cengrd_mod=F_fil(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 etab_cengrd_ori=F_ori(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 
-%% plot Delaunay
+%% BEGIN DEBUG
+
+% bol_out_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\04_pol_out\bol.mat');
+% bol_in_aux=load('p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\03_pol_in\bol.mat');
+
+% pol_xy=polcell2nan(pol.xy.XY);
+% shp=D3D_io_input('read','p:\11209261-rivierkunde-2023-morerijn\05_data\230321_bed_level\07_pol_in_bl\waal.shp','xy_only',1);
+%
+% tfile=readmatrix("c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\230321_rijntakken_mor\test.xyz",'FileType','text'); 
+
+% figure
+% hold on
+% 
+% plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'k')
+% % scatter(gridInfo.Xcen(bol_in),gridInfo.Ycen(bol_in),10,'g','filled')
+% % scatter(gridInfo.Xcen(bol_out),gridInfo.Ycen(bol_out),20,'r')
+% % scatter(xpol_cen,ypol_cen,10,etab_cen,'s','filled')
+% 
+% bol_nn=~isnan(etab_cengrd_mod);
+% scatter(x_grd_cen(bol_nn),y_grd_cen(bol_nn),10,etab_cengrd_mod(bol_nn),'filled');
+% 
+% % plot(pol_xy(:,1),pol_xy(:,2),'k')
+% % plot(gridInfo.Xcen(bol_in),gridInfo.Ycen(bol_in),'g')
+% % plot(bol_in.x_pol_in,bol_in.y_pol_in,'g')
+% % plot(bol_in_aux.x_pol_in,bol_in_aux.y_pol_in,'g')
+% % plot(bol_out_aux.x_pol_in,bol_out_aux.y_pol_in,'r')
+% % scatter(xint,yint,10,'xk');
+% % scatter(xint,yint,10,etab_cengrd_mod);
+% % scatter(xint(bol_nn),yint(bol_nn),10,'b');
+% % scatter(tfile(:,1),tfile(:,2),10,tfile(:,3))
+% % scatter(gridInfo.Xcor,gridInfo.Ycor,10,gridInfo.Zcor,'filled')
+% % bol_n=isnan(etab_cen_mod);
+% % bol_cen_int=~bol_n & bol_in_pol;
+% % 
+% % scatter(xpol_cen(bol_cen_int),ypol_cen(bol_cen_int),10,etab_cen_mod(bol_cen_int),'o','filled')
+% % plot(shp(:,1),shp(:,2))
+% % scatter(xpol_cen,ypol_cen,20,etab_cen_mod,'s','filled')
+% % scatter(xint,yint,10,zint,'filled')
+% 
+% 
+% colorbar
+% axis equal
+% 
+% % END DEBUG
+
+%% plot Delaunay in s-n coordinate system
+
+if 0
 
 % rkm=readcell(fpath_rkm);
 % x_rkm=cell2mat(rkm(2:end,1));
@@ -330,14 +348,30 @@ etab_cengrd_ori=F_ori(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 % x=s_pol_cen(bol_cen_int);
 % y=n_pol_cen(bol_cen_int);
 % DT=delaunay(x,y);
-% 
+
 % figure
 % hold on
+
+%Delaunay
 % triplot(DT,x,y);
+
+%grid points
+% scatter(s_grd_cen,n_grd_cen,10,'g','filled')
+
+%polygon points
+% scatter(s_pol_cen(bol_cen_int),n_pol_cen(bol_cen_int),20,etab_cen_mod(bol_cen_int),'filled')
+
+%points inside grid
+% scatter(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int),10,'k','filled')
+% scatter(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int),10,etab_cengrd_mod,'filled')
+
+%rkm points
 % plot(s_rkm,n_rkm,'-o')
 % for krkm=1:numel(x_rkm)
 %     text(s_rkm(krkm),n_rkm(krkm),strrep(t_rkm{krkm},'_','\_'))
 % end
+
+end
 
 %% write
 
@@ -350,6 +384,7 @@ mkdir_check(fdir_out);
     %1.1) original on polygon centres
 bol_nn=~isnan(etab_cen);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cenpol_original_%s.xyz',now_chr));
+% pack_and_check()
 D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen(bol_nn)]);
 
     %1.2) filtered on polygon centres
@@ -360,12 +395,12 @@ D3D_io_input('write',fpath_xyz,[xpol_cen(bol_nn),ypol_cen(bol_nn),etab_cen_mod(b
     %1.3) filtered on grid centres 
 bol_nn=~isnan(etab_cengrd_mod);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cengrd_filtered_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[x_grd_cen(bol_nn),y_grd_cen(bol_nn),etab_cengrd_mod(bol_nn)]);
+D3D_io_input('write',fpath_xyz,[x_cengrd_int(bol_nn),y_cengrd_int(bol_nn),etab_cengrd_mod(bol_nn)]);
 
     %1.4) original on grid centres 
 bol_nn=~isnan(etab_cengrd_ori);
 fpath_xyz=fullfile(fdir_out,sprintf('etab_pol_cengrd_original_%s.xyz',now_chr));
-D3D_io_input('write',fpath_xyz,[x_grd_cen(bol_nn),y_grd_cen(bol_nn),etab_cengrd_ori(bol_nn)]);
+D3D_io_input('write',fpath_xyz,[x_cengrd_int(bol_nn),y_cengrd_int(bol_nn),etab_cengrd_ori(bol_nn)]);
 
 %2) bed level from grid
 
