@@ -91,6 +91,7 @@ K1x             = cos(SN.D1.phi(2,1));
 K1y             = sin(SN.D1.phi(2,1));
 SN.C1.phi       = atan2(mean([O1y,K1y]),mean([O1x,K1x])); % Mean of angles
 SN.C1.phi(SN.C1.phi<0) = SN.C1.phi + (SN.C1.phi<0)*2*pi; % Convert to 0-2pi
+SN.C1.phi = mod(SN.C1.phi,pi); % To make sure we always start with the same diurnal in-equality (to conserve the relative phasing between multiple point in space)
 SN.C1.omega     = 0.5*SN.D2.omega(1);
 
 %% Scaling procedure

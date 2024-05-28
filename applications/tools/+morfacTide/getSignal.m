@@ -10,7 +10,7 @@ OPT.morTime     = [];
 OPT.morFac      = [];
 OPT.tStart      = datenum(2000,1,1);
 OPT.ampFac      = 1;
-OPT.histScaling = 1;
+OPT.histScaling = 0;
 OPT.plot        = 0;
 
 % User defined
@@ -86,7 +86,7 @@ if ~isempty(OPT.morTime) && ~isempty(OPT.morFac)
         OUT.morTime     = OPT.morTime;
         OUT.morFac      = OPT.morTime/(OPT.nCycles*TdoubleTide);
     elseif strcmp(OPT.type,'springneap')
-        OPT.nCycles = round(tDur/TdoubleTide);
+        OPT.nCycles = round(tDur/TspringNeap);
         OUT.morTime = OPT.morTime;
         OUT.morFac  = OPT.morTime/(OPT.nCycles*TspringNeap);
     end  
@@ -169,7 +169,10 @@ end
 switch OPT.type
     case 'springneap'
         % Output consist of timeseries of a single spring-neap cycle 
-        output = morfacTide.springNeap(const,OPT,IN);        
+        output = morfacTide.springNeap(const,OPT,IN);
+        
+        % Temporary
+        IN.output = output;
     case 'doubletide'
         % Output consist of Mx3 array with [velocty,amplitude,phase]
         output = morfacTide.doubleTide(const,OPT);  
