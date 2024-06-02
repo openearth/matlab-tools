@@ -12,7 +12,11 @@
 %
 %Based on cell-corner bed level, compute the cell-centre bed level.
 
-function D3D_grd_corner2center(fpath_net,fpath_out)
+function D3D_grd_corner2center(fpath_net,varargin)
+
+[fdir,fname,~]=fileparts(fpath_net);
+addOptional(parin,'fpath_out',fullfile(fdir,sprintf('%s.xyz',fname)));
+addOptional(parin,'add_header',0)
 
 %% READ
 
@@ -34,8 +38,11 @@ end
 bol_n=isnan(Zcen);
 
 %% WRITE
-
-D3D_io_input('write',fpath_out,[gridInfo.Xcen(~bol_n),gridInfo.Ycen(~bol_n),Zcen(~bol_n)]);
+[~,fname_out,fext]=fileparts(fpath_out);
+fpath_out_loc=fullfile(pwd,sprintf('%s%s',fname_out,fext));
+write_2DMatrix(fpath_out_loc,[gridInfo.Xcen(~bol_n),gridInfo.Ycen(~bol_n),Zcen(~bol_n)],'add_header',add_header);
+copyfile_check(fpath_out_loc,fpath_out);
+delete(fpath_out_loc)
 
 %% PLOT
 
