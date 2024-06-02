@@ -14,9 +14,21 @@
 
 function D3D_grd_corner2center(fpath_net,varargin)
 
+if exist(fpath_net,'file')~=2
+    error('grid file does not exist: %s',fpath_net)
+end
 [fdir,fname,~]=fileparts(fpath_net);
+
+parin=inputParser;
+
 addOptional(parin,'fpath_out',fullfile(fdir,sprintf('%s.xyz',fname)));
 addOptional(parin,'add_header',0)
+
+parse(parin,varargin{:});
+
+fpath_out=parin.Results.fpath_out;
+add_header=parin.Results.add_header;
+
 
 %% READ
 
