@@ -193,6 +193,8 @@ switch what_do
                     end
                 end
                 fclose(fid);
+            case 'thd'
+                stru_out=delft3d_io_thd('read',fname);
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
@@ -304,6 +306,8 @@ switch what_do
 %                 else
                     D3D_write_tim_2(data_loc,fname,fname_tim_v,ref_date,varargin{3:end})
 %                 end
+            case 'thd'
+                delft3d_io_thd('write',fname,stru_in); %only D3D4 format. Need to be added for FM
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end

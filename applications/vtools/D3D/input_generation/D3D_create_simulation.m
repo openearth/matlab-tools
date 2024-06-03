@@ -65,6 +65,13 @@ if ~only_run_script
 %         D3D_bcm(simdef)
 %     end
 
+    %thin dams
+    [dirloc]=fileparts(simdef.file.thd);
+    mkdir_check(dirloc);
+    if exist(simdef.file.thd,'file')~=2
+        D3D_thd(simdef,'check_existing',false)
+    end
+
     %hydrodynamic boundary conditions 
     [dirloc]=fileparts(simdef.file.bct);
     mkdir_check(dirloc);

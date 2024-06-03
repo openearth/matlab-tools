@@ -912,6 +912,14 @@ if ~isfield(simdef.file,'bnd')
     end
 end
 
+%%
+%% THD
+%%
+
+if ~isfield(simdef.file,'thd')
+    simdef.file.thd='';
+end
+
 %% RENAME OUT
 
 % simdef.grd.M=M;

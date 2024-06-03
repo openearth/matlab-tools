@@ -129,9 +129,10 @@ data{kl,1}=sprintf('Tstop  = %0.12E',Tstop*Tfact); kl=kl+1;
 data{kl,1}=sprintf('Dt     = %0.12E',Dt*Tfact); kl=kl+1;
 if restart==1
 data{kl,1}=        'Restid  = #trim-restart#'; kl=kl+1;
+% data{kl,1}=        'Restid_timeindex  = 1'; kl=kl+1; % Index in the map-file for restarting. Either this or the time must match. 
 end
 data{kl,1}=        'Tzone  = 0'; kl=kl+1;
-data{kl,1}=        'Filtd  = '; kl=kl+1; %thin dams
+data{kl,1}=sprintf('Filtd  = %s',simdef.file.thd); kl=kl+1; %thin dams
 data{kl,1}=        'Commnt =                  '; kl=kl+1;
 %Sub1 = #STWI# %'S'alinity, 'T'emperaure, 'I'secondary flow and 'W'ind
 %Sub2 = #PCW#  %'P'articles, 'W'ave, 'C'onstituents
