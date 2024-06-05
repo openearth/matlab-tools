@@ -10,6 +10,8 @@
 %$Id$
 %$HeadURL$
 %
+%Find a series of points `y` based on their coordinate `x` by 
+%interpolating on a polyline defined by `xv_all` and `yv_all`. 
 
 function [y,idx_1,idx_2]=interp_line_vector(xv_all,yv_all,x,x_thres,varargin)
 

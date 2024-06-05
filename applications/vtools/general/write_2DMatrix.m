@@ -10,6 +10,7 @@
 %$Id$
 %$HeadURL$
 %
+
 function write_2DMatrix(file_name,matrix,varargin)
 
 %% SIZE
@@ -50,6 +51,10 @@ if exist(file_name,'file') && check_existing
     error('You are trying to overwrite a file!')
 end
 
+%first write local
+fname_dest=file_name;
+file_name=fullfile(pwd,now_chr);
+
 messageOut(NaN,sprintf('Start writing file: %s',file_name))
 if add_header
     fileID_out=fopen_add_header(file_name,'w');
@@ -64,5 +69,9 @@ end
 
 fclose(fileID_out);
 messageOut(NaN,sprintf('Finished writing file: %s',file_name))
+
+%copy to destination
+copyfile_check(file_name,fname_dest);
+delete(file_name);
 
 end %function

@@ -10,6 +10,11 @@
 %$Id$
 %$HeadURL$
 %
+%Find y(x) based on linear interpolation.
+%
+%Given a polyline defined by x-points `xv_all` and y-points `yv_all`, 
+%find `y` given a coordinate `x` based on linear interpolation
+%between the values before and after `x`.
 
 function [y,idx_1,idx_2]=interp_line_closest(xv_all,yv_all,x,x_thres,varargin)
 

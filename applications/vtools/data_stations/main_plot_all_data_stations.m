@@ -19,13 +19,19 @@ fclose all;
 
 %% ADD OET
 
-path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\'; %path to this folder in OET
-addpath(path_add_fcn)
-addOET(path_add_fcn) 
+fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
+fdir_d3d='c:\checkouts\qp\';
+
+%% ADD OET
+
+if isunix %we assume that if Linux we are in the p-drive. 
+    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
+end
+run(fpath_add_oet);
 
 %% INPUT
 
-paths_main_folder='C:\Users\chavarri\checkouts\riv\data_stations\'; %path to <data_stations>
+paths_main_folder='c:\checkouts\data_stations\'; %path to <data_stations>
 
 %% PATHS
 
