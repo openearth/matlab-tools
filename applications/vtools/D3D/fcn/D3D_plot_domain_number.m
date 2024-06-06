@@ -12,7 +12,7 @@
 %
 %bnd file creation
 
-function D3D_plot_domain_number(fdir_sim,varargin)
+function [gridInfo]=D3D_plot_domain_number(fdir_sim,varargin)
 
 %% PARSE
 
@@ -39,17 +39,29 @@ fpath_map=simdef.file.map;
 gridInfo=EHY_getGridInfo(fpath_map,{'XYcen','domain_number','face_nodes_xy'});
 
 [domain_u,idx1,idx2]=unique(gridInfo.domain_number);
+nu=numel(domain_u);
+
+%change to random colormap
+cmap=brewermap(9,'set1');
+cmap=repmat(cmap,ceil(nu/9),1);
+%this may not be needed!
+% dn=gridInfo.domain_number;
+% idx_o=rand(nu,1);
+% [~,idx_o]=sort(idx_o);
+% for ku=1:nu
+%     bol_d=idx2==ku;
+%     dn(bol_d)=idx_o(ku);
+% end
 
 %% PLOT
 
 figure
 hold on
-%IMPROVE
-%random colors rather than ordered per domain number will help to differentiate between domains.
 EHY_plotMapModelData(gridInfo,gridInfo.domain_number)
-% scatter(gridInfo.Xcen,gridInfo.Ycen,10,gridInfo.domain_number)
+colormap(cmap)
 axis equal
-nu=numel(domain_u);
+
+%text
 for ku=1:nu
     bol_d=idx2==ku;
     xm=mean(gridInfo.Xcen(bol_d));
@@ -57,6 +69,7 @@ for ku=1:nu
     text(xm,ym,num2str(domain_u(ku)),'color','r')
 end
 
+%ldb
 if ~isempty(ldb)
     ldb=D3D_read_ldb(fpath_ldb);
     nldb=numel(ldb);
