@@ -40,6 +40,7 @@ function output = doubleTide(const,OPT)
         K1y             = sind(D.K1.pha);
         D.C1.pha    = atan2d(mean([O1y,K1y]),mean([O1x,K1x])); % Mean of angles
         D.C1.pha(D.C1.pha<0) = D.C1.pha + (D.C1.pha<0)*360; % Convert to 0-360
+        D.C1.pha    = mod(D.C1.pha,180); % To make sure we always start with the same diurnal in-equality (to conserve the relative phasing between multiple point in space)
         D.C1.freq   = 0.5*D.M2.freq;
         D.C1.cel    = 0.5*D.M2.cel;
         D.C1.vel    = 1/D.C1.cel*360*60;

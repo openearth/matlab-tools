@@ -1,6 +1,11 @@
 function [OUT,OPT,IN] = getSignal(input,lat,varargin)
 % Main function of morfacTide
 
+% To Do:
+% Include an A0 (offset) that follows out of the tidal analysis in the
+% output. Do not include it in the signal itself but provide the value so
+% users kan choose to include it in boundary information or not.
+
 %% Settings
 
 % Default
@@ -12,6 +17,7 @@ OPT.tStart      = datenum(2000,1,1);
 OPT.ampFac      = 1;
 OPT.histScaling = 0;
 OPT.plot        = 0;
+OPT.cycleTimesFile = '';
 
 % User defined
 OPTflds = fieldnames(OPT);
@@ -23,8 +29,6 @@ if nargin > 2
         end
     end
 end
-
-
 
 %% Define and rewrite variables
 
@@ -94,20 +98,53 @@ end
 
 % Time vector for representative signal (days, hours, and seconds)
 if strcmp(OPT.type,'doubletide')
-    tStop = OPT.tStart + OPT.nCycles * TdoubleTide;
+    Tcycle = TdoubleTide;
 elseif strcmp(OPT.type,'springneap')
-    tStop = OPT.tStart + OPT.nCycles * TspringNeap;
+    Tcycle = TspringNeap;
 end
+tStop = OPT.tStart + OPT.nCycles * Tcycle;
 OUT.hydroTime    = tStop-OPT.tStart;
 OUT.datenum      = (OPT.tStart:datenum(0,0,0,0,10,0):tStop)';
 OUT.timeDays     = OUT.datenum-OUT.datenum(1);
 OUT.timeHours    = OUT.timeDays*24;
 OUT.timeSeconds  = OUT.timeDays*24*60*60;
 
+% cycle timings
+cycle = [];
+cycle.n             = cellstr(num2str((0:OPT.nCycles)'));
+cycle.start         = cellstr(datestr(OPT.tStart + (0:OPT.nCycles)'.*Tcycle));
+cycle.datevec       = datevec(OPT.tStart + (0:OPT.nCycles)'.*Tcycle);
+cycle.datevec2      = cycle.datevec(:,5) + cycle.datevec(:,6)/60;
+cycle.datevec(:,5)  = round(cycle.datevec2/10)*10;
+cycle.datevec(:,6)  = 0;
+cycle.startRounded  = cellstr(datestr(cycle.datevec));
+cycle.duration      = cellstr(num2str(datenum(cycle.startRounded)-datenum((cycle.startRounded(2)))));
+cycle.duration{1}   = 'spin-up';
+OUT.cycleTimes      = [cycle.n,cycle.start,cycle.startRounded,cycle.duration];
 
 
-
-
+% Write a text file with the cycle start times for modelling reference
+if ~isempty(OPT.cycleTimesFile)
+    % Check
+    if ~ischar(OPT.cycleTimesFile)
+        error('Please provide a string character array for cycleTimesFile');
+    end
+    [fpath,fname,fext] = fileparts(OPT.cycleTimesFile);
+    ext = '';
+    if isempty(fext)
+        ext = '.txt';
+    end
+    fid = fopen([OPT.cycleTimesFile,ext],'w');
+    % Header
+    fprintf(fid,'%s\t%s\t\t\t%s\t%s\n','Cycle number','TStart (real)','TStart (10-min rounded)','Simulation duration (days)');
+    % Data
+    for i = 1:size(OUT.cycleTimes)-1
+        fprintf(fid,'%s\t\t\t\t%s\t%s\t%s\n',OUT.cycleTimes{i,:});
+%         fprintf(fid,'%s\t\t\t\t%s\t%s\t%s\n',cycleNumber{i},cycleStart{i},cycleStartRounded{i},simDuration{i});
+    end
+    fprintf(fid,'\n%s\t\t%s\t%s\t%s\n','CycleStop',OUT.cycleTimes{i,2:end});
+    fclose(fid);
+end
 
 
 %% Tidal analysis and rewrite tidal constituents
@@ -169,10 +206,7 @@ end
 switch OPT.type
     case 'springneap'
         % Output consist of timeseries of a single spring-neap cycle 
-        output = morfacTide.springNeap(const,OPT,IN);
-        
-        % Temporary
-        IN.output = output;
+        output = morfacTide.springNeap(const,OPT,IN);        
     case 'doubletide'
         % Output consist of Mx3 array with [velocty,amplitude,phase]
         output = morfacTide.doubleTide(const,OPT);  
@@ -204,9 +238,6 @@ switch OPT.type
         end
         
 
-        
-        
-        
         % Method below not possible with scaled amplitudes because
         % amplitude of D2 is not a constant but a timeseries
 %         % Create the signal, equation (1) in Schrijvershof et al. (2023)

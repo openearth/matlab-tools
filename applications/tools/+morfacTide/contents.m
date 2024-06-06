@@ -41,12 +41,13 @@
 % ampFac        0 or 1 (default), only in combination with type = 'doubletide'
 %               Switch to apply a scaling factor on M2 amplitude to
 %               account for a residual flow in the tidal frequencies
-% histScaling   0 or 1 (default), only in combination with type = 'springneap'
+% histScaling   0 or 1 (default 0), only in combination with type = 'springneap'
 %               Switch to scale the amplitudes and phases of the repr.
 %               cycle(s) to histograms of the full tidal signal
 %               Takes about 1.5 minutes!
-% plot          0 or 1 (default 0)
-%
+% plot          0 or 1 (default 0); Create timeseries and histogram plot
+% cycleTimesFile Write the values in OUT.cycleTimes to a specified text
+%               file (e.g. 'D:/cycleTimes.txt')
 %
 % OUTPUT:
 % OUT           representative tidal signal
@@ -64,7 +65,8 @@
 %          'O1',0.09,120;
 %          'K1',0.08,130;
 %          'M4',0.10,50;
-%          'M6',0.05,30};
+%          'M6',0.05,30;
+%          'M8',0.05,30};
 % lat   = 53;
 % OUT = morfacTide.getSignal(input,53,'type','springneap');
 %
