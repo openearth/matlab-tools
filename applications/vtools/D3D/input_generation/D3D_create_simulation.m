@@ -190,4 +190,6 @@ if ~only_run_script
     
 end 
 
+messageOut(NaN,'Done')
+
 end %function

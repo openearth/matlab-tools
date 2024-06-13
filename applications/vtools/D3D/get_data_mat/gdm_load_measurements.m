@@ -34,7 +34,10 @@ tol=parin.Results.tol;
 
 %% CALC
 
-load(fpath_mea);
+if ~isfile(fpath_mea)
+    error('No file with measurements: %s',fpath_mea)
+end
+load(fpath_mea,'data');
 
 if ~isstruct(data); data_out=NaN; return; end
 

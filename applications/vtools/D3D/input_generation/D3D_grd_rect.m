@@ -115,19 +115,22 @@ data{kl  ,1}=' 0 0 0';kl=kl+1;
 
 %% WRITE
 
-file_name=fullfile(dire_sim,'grd.grd');
+writetxt(simdef.file.grd,data)
 
-%check if the file already exists
-if exist(file_name,'file')
-    error('You are trying to overwrite a file!')
-end
 
-fileID_out=fopen(file_name,'w');
-for kl=1:numel(data)
-    fprintf(fileID_out,'%s \n',data{kl,1});
-end
-
-fclose(fileID_out);
+% file_name=fullfile(dire_sim,'grd.grd');
+% 
+% %check if the file already exists
+% if exist(file_name,'file')
+%     error('You are trying to overwrite a file!')
+% end
+% 
+% fileID_out=fopen(file_name,'w');
+% for kl=1:numel(data)
+%     fprintf(fileID_out,'%s \n',data{kl,1});
+% end
+% 
+% fclose(fileID_out);
 
 % %% COPY
 % 

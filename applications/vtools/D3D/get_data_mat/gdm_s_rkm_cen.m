@@ -29,7 +29,7 @@ else
         in_p.s=data.rkm_cen;
     else
         in_p.s=data.Scen;
-        in_p.s_staircase=data.Scor_staircase;
+%         in_p.s_staircase=data.Scor_staircase;
     end
 end
 

@@ -10,8 +10,27 @@
 %$Id$
 %$HeadURL$
 %
-
-%e.g.
+%Obtain data of a surface along a polyline. 
+%
+%Keywords: delaunay, cross-section, interpolation, 
+%
+%np = number of surface points.
+%nc = maximum number of points in an element (3 if triangles with `delaunay`, 4 if quadrilaterals).
+%na = number of points defining the polyline crossing the surface.
+%
+%INPUT:
+%   -nodes = connectivity matrix (from `delaunay` or `meshgridNodes`) [-]; [double(nc,np)]
+%   -xs    = x-coordinate of surface points [m] [double(np,1)]; 
+%   -ys    = y-coordinate of surface points [m] [double(np,1)]; 
+%   -zs    = z-coordinate of surface points [?] [double(np,1)]; 
+%   -xc    = x-coordinate of polyline [m] [double(na,1)];
+%   -yc    = y-coordinate of polyline [m] [double(na,1)];
+%
+%OUTPUT:
+%   -data = structure with values. 
+%
+%E.G.
+%
 % %% sample data
 % 
 % z_n=160*membrane(1,20);
@@ -54,6 +73,10 @@
 
 function Data_xy=arbcross_wrap(nodes,xs,ys,zs,xc,yc)
 
+xs=reshape(xs,[],1);
+ys=reshape(ys,[],1);
+zs=reshape(zs,[],1);
+
 arb=arbcross(nodes,xs,ys,xc,yc);
 if size(nodes,1)==numel(zs)
     data_loc_str='FACE';
@@ -62,6 +85,8 @@ elseif numel(xs)==numel(zs)
 else
     error('Not sure where your data is. It could be edges?')
 end
+
+%why did I remove this? It is checked inside `arbcross`, but I wonder why did I remove it. 
 % val=arbcross(arb,{data_loc_str zs});
 val=arbcross(arb,zs);
 

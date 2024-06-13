@@ -13,8 +13,10 @@
 
 function tz1=tiles_zoom(dx)
 
-if dx<100
-    tz1=16;
+if dx<1000
+    tz1=17;
+elseif dx<5000
+    tz1=15;
 elseif dx<10e3
     tz1=14;
 elseif dx<20e3

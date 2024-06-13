@@ -916,7 +916,11 @@ end
 %% THD
 %%
 
-if ~isfield(simdef.file,'thd')
+if isfield(simdef,'thd')
+    if ~isfield(simdef.file,'thd')
+        simdef.file.thd=fullfile(simdef.D3D.dire_sim,'thd.thd');
+    end
+else
     simdef.file.thd='';
 end
 

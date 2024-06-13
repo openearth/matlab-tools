@@ -91,6 +91,22 @@ switch varname
 %                 data=gdm_read_data_map_ls(fdir_mat,fpath_map,'uv',varargin{:});
 %                 data.val=data.vel_mag;
         end
+    case {'vpara'}
+        switch simdef.D3D.structure
+            case {1,5}
+                error('do')
+            case {2,4}
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'uv',varargin{:});
+                data.val=data.vel_para;
+        end
+    case {'vperp'}
+        switch simdef.D3D.structure
+            case {1,5}
+                error('do')
+            case {2,4}
+                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'uv',varargin{:});
+                data.val=data.vel_perp;
+        end
     case {'bl'}
         switch simdef.D3D.structure
             case {1,5}

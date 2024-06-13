@@ -20,6 +20,11 @@
 %       -shp:
 %           -'read_val' = true: read values; false (default): only read xy.
 %           -'xy_only' = true: only read xy coordinates in matrix form; false (default): only read xy coordinates in cell form.
+%       -ldb:
+%           -'ver' = version. Use 2 in general (default). Use 4 when you want to plot all of them. 
+%               - 1 = ldb [struct(1,1)]   ; ldb.name [cell(1,npol)]; ldb.val [cell(1,npol)]
+%               - 2 = ldb [struct(1,npol)]; ldb(kpol).name [char]  ; ldb(kpol).xy [double(1,np)]
+%               - 3 = ldb [double(npol*npp,2]
 %
 %E.G. Read and write D3D4 grd and dep
 % dep=D3D_io_input('read',fdep,fgrd,'location','cor');

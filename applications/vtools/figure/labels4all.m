@@ -397,7 +397,7 @@ switch lower(variable)
                 str_var='magnitud de la velocidad';
         end
         un_type='L/T';
-    case 'un'
+    case {'un','vperp'}
         switch lan
             case 'en'
                 str_var='cross-wise velocity';
@@ -407,7 +407,7 @@ switch lower(variable)
                 str_var='velocidad transversal';
         end
         un_type='L/T';
-    case 'us'
+    case {'us','vpara'}
         switch lan
             case 'en'
                 str_var='longitudinal velocity';

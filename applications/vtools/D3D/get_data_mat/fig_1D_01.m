@@ -54,9 +54,21 @@ if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
     bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);
     if ~any(bol_p)
         warning('There is nothing to plot. All points are outside domain of interest [%f,%f].',in_p.xlims(1),in_p.xlims(2))
+    else
+        in_p.ylims=[min(min(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan')];
     end
-    in_p.ylims=[min(min(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan')];
 end
+if isfield(in_p,'val_mea')
+    bol_p=in_p.s_mea>=in_p.xlims(1) & in_p.s_mea<=in_p.xlims(2);
+    if ~any(bol_p)
+        warning('There is nothing to plot. All points are outside domain of interest [%f,%f].',in_p.xlims(1),in_p.xlims(2))
+        ylim_mea=[NaN,NaN];
+    else
+        ylim_mea=[min(min(in_p.val_mea(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val_mea(bol_p,:),[],'omitnan'),[],'omitnan')];
+    end    
+    in_p.ylims=[min([in_p.ylims(1),ylim_mea(1)],[],'omitnan'),max([in_p.ylims(2),ylim_mea(2)],[],'omitnan')];
+end
+
 if isnan(in_p.ylims(1))
     in_p.ylims=[0,0];
 end
@@ -546,12 +558,16 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
 if do_title && ~do_time
-    if numel(tim)==1
-        han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
-    elseif numel(tim)==2
-        han.sfig(kr,kc).Title.String=sprintf('%s - %s',datestr(tim(1),'dd-mm-yyyy HH:MM'),datestr(tim(2),'dd-mm-yyyy HH:MM'));
+    if ~isnan(tim)
+        if numel(tim)==1
+            han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+        elseif numel(tim)==2
+            han.sfig(kr,kc).Title.String=sprintf('%s - %s',datestr(tim(1),'dd-mm-yyyy HH:MM'),datestr(tim(2),'dd-mm-yyyy HH:MM'));
+        else
+            error('not sure how more than 2 will look like')
+        end
     else
-        error('not sure how more than 2 will look like')
+        messageOut(NaN,'Time is a NaN, cannot add it to title.')
     end
 end
 % han.sfig(kr,kc).XColor='r';

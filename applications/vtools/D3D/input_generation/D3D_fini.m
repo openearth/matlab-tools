@@ -149,14 +149,15 @@ end
 
 %% WRITE
 
-file_name=fullfile(simdef.file.fini);
+fname_dest=fullfile(simdef.file.fini);
 
 %check if the file already exists
-if exist(file_name,'file')>0 && check_existing 
+if exist(fname_dest,'file')>0 && check_existing 
     error('You are trying to overwrite a file!')
 end
 
-fileID_out=fopen(file_name,'w');
+fname_loc=fullfile(pwd,now_chr);
+fileID_out=fopen(fname_loc,'w');
 write_str_x=strcat(repmat('%0.7E ',1,M),'\n'); %string to write in x
 
 %water level
@@ -191,3 +192,5 @@ for kf=1:nf
 end
 
 fclose(fileID_out);
+
+copyfile_check(fname_loc,fname_dest);

@@ -27,7 +27,7 @@ else %folder is given
     dire=dir(path_folder);
     path_files={};
     for kf=1:numel(dire)
-        fpath_file=fullfile(dire(kfa).folder,dire(kfa).name);
+        fpath_file=fullfile(dire(kf).folder,dire(kf).name);
         if isfolder(fpath_file); continue; end
         path_files=cat(1,path_files,fpath_file);
     end    

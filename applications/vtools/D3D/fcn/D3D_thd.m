@@ -25,9 +25,18 @@
 %HISTORY:
 %   -161110 V. Creation of the grid files itself
 
-function D3D_thd(simdef)
+function D3D_thd(simdef,varargin)
 
 %% PARSE
+
+parin=inputParser;
+
+inp.check_existing.default=true;
+addOptional(parin,'check_existing',inp.check_existing.default)
+
+parse(parin,varargin{:})
+
+check_existing=parin.Results.check_existing;
 
 %% CALC
 
@@ -35,9 +44,15 @@ switch simdef.D3D.structure
     case 1
         %The idea would be to read spatial data and convert to MN coordinates. 
         %see how it is done in `D3D_convert_...`
+
+        %check if the file already exists
+        fname_destiny=simdef.file.thd;
+        if check_existing && exist(fname_destiny,'file')>0
+            error('You are trying to overwrite a file!')
+        end
         fname=fullfile(pwd,now_chr);
-        delft3d_io_thd('write',fname,simdef.thd.DATA);
-        copyfile_check(fname,simdef.file.thd);
+        delft3d_io_thd('write',fname,simdef.thd);
+        copyfile_check(fname,fname_destiny);
     case 2
         error('do')
 end %switch
