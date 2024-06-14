@@ -36,6 +36,9 @@ if flg_loc.do_rkm==1
         error('rkm file does not exist')
     end
 end
+if ~isfield(flg_loc,'TolMinDist')
+    flg_loc.TolMinDist=1000;
+end
 
 if ~isfield(flg_loc,'tol_t')
     flg_loc.tol_t=5/60/24;
@@ -91,8 +94,8 @@ for kt=kt_v
             data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite); %this overwriting flag should be different than the previous one
             
             if flg_loc.do_rkm
-                data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',1000);
-                data.rkm_cen=convert2rkm(flg_loc.fpath_rkm,[data.Xcen,data.Ycen],'TolMinDist',1000);
+                data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',flg_loc.TolMinDist);
+                data.rkm_cen=convert2rkm(flg_loc.fpath_rkm,[data.Xcen,data.Ycen],'TolMinDist',flg_loc.TolMinDist);
             end
             
             save_check(fpath_mat_tmp,'data'); 

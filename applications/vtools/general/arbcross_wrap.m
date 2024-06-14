@@ -94,7 +94,7 @@ val=arbcross(arb,zs);
 Data_xy.Xcor = arb.x;
 Data_xy.Ycor = arb.y;
 Data_xy.Scor=NaN(size(Data_xy.Xcor));
-nonan = ~isnan(Data_xy.Xcor);
+nonan = ~isnan(Data_xy.Xcor) & ~isnan(Data_xy.Ycor);
 Data_xy.Scor(nonan,:) = [0; cumsum(sqrt(diff(Data_xy.Xcor(nonan)).^2+diff(Data_xy.Ycor(nonan)).^2))];
 
 Data_xy.Xcen = (Data_xy.Xcor(1:end-1) + Data_xy.Xcor(2:end)) ./ 2;

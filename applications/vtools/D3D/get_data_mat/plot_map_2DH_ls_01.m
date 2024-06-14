@@ -174,7 +174,7 @@ for kpli=1:npli %variable
             in_p.plot_mea=false;
             if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
                 tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-                data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean','tol',flg_loc.tol);
+                data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean','tol',flg_loc.tol,'do_rkm',flg_loc.do_rkm);
                 if isstruct(data_mea) %there is data
                     in_p.plot_mea=true;
                     in_p.s_mea=data_mea.x;

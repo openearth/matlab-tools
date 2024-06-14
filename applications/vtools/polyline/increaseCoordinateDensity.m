@@ -18,8 +18,9 @@
 %
 %OUTPUT
 %   -c_out: [x,y] coordinates of the polyline with increased density
+%   -idx: index of the interval in to which the refined point pertains
 
-function [c_out]=increaseCoordinateDensity(c_axis,ninc)
+function [c_out,idx]=increaseCoordinateDensity(c_axis,ninc)
 
 c_out=[];
 for kv=1:2
@@ -29,12 +30,17 @@ c_out=cat(1,c_out,reshape(c_loc',1,[]));
 end
 c_out=c_out';
 
+idx=repmat([1:1:size(c_axis,1)-1]',1,ninc+1);
+idx=reshape(idx',1,[])';
+
 %remove equal consecutive points
 %don't do unique because it reorders the points!
 dx=diff(c_out(:,1));
 dy=diff(c_out(:,2));
 dist=hypot(dx,dy);
-c_out(dist<=1e-12,:)=[];
+bol_out=dist<=1e-12;
+c_out(bol_out,:)=[];
+idx(bol_out)=[];
 
 % figure
 % hold on
