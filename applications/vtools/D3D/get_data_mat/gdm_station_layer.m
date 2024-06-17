@@ -12,7 +12,7 @@
 %
 %
 
-function layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations,var_str)
+function layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations,var_str,elevation)
     
 if isfield(flg_loc,'layer')==0
     flg_loc.layer=NaN;
@@ -34,5 +34,10 @@ end
 
 %remove the input if makes no sense. Otherwise the filename has the 'layer'.
 layer=gdm_layer_needed(layer,var_str);
+
+%if there is 'elevation' we load all layers because we need to match with elevation
+if ~isnan(elevation)
+    layer=[];
+end
 
 end %function

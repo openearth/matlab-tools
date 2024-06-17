@@ -43,6 +43,7 @@ end
 if isfield(in_p,'fig_size')==0
     in_p.fig_size=[0,0,14.5,12];
 end
+%We need to make a function out of this and copy to `fig_his_sal_01`
 if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
     in_p.xlims=[min(in_p.s),max(in_p.s)];
 end

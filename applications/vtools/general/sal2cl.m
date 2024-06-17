@@ -15,6 +15,11 @@
 
 function out_val=sal2cl(flg_conv,in_val)
 
+if iscell(in_val)
+    out_val=cellfun(@(X)sal2cl(flg_conv,X),in_val,'UniformOutput',false);
+    return
+end
+
 switch flg_conv
     case 1 %sal2cl
         out_val=in_val./1.80655*1000;

@@ -82,7 +82,8 @@ end
 if isfield(in_p,'do_title')==0
     in_p.do_title=1;
 end
-if isfield(in_p,'xlims')==0
+
+if isfield(in_p,'xlims')==0 
     ns=numel(in_p.tim);
     aux=NaT;
     aux.TimeZone='+00:00';
@@ -91,6 +92,46 @@ if isfield(in_p,'xlims')==0
     end
     in_p.xlims=[min(aux(:)),max(aux(:))];
 
+end
+
+%We need to make a function of this:
+
+% [in_p.xlim,in_p.ylim]=xlim_ylim(in_p.xlim,in_p.ylim,in_p.tim,
+% 
+% if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
+%     in_p.xlims=[min(in_p.s),max(in_p.s)];
+% end
+% if isfield(in_p,'do_area')==0
+%     in_p.do_area=0;
+% end
+% 
+% if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
+%     bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);
+%     if ~any(bol_p)
+%         warning('There is nothing to plot. All points are outside domain of interest [%f,%f].',in_p.xlims(1),in_p.xlims(2))
+%     else
+%         in_p.ylims=[min(min(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan')];
+%     end
+% end
+% if isfield(in_p,'val_mea')
+%     bol_p=in_p.s_mea>=in_p.xlims(1) & in_p.s_mea<=in_p.xlims(2);
+%     if ~any(bol_p)
+%         warning('There is nothing to plot. All points are outside domain of interest [%f,%f].',in_p.xlims(1),in_p.xlims(2))
+%         ylim_mea=[NaN,NaN];
+%     else
+%         ylim_mea=[min(min(in_p.val_mea(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val_mea(bol_p,:),[],'omitnan'),[],'omitnan')];
+%     end    
+%     in_p.ylims=[min([in_p.ylims(1),ylim_mea(1)],[],'omitnan'),max([in_p.ylims(2),ylim_mea(2)],[],'omitnan')];
+% end
+% 
+% if isnan(in_p.ylims(1))
+%     in_p.ylims=[0,0];
+% end
+% in_p.ylims=real(in_p.ylims+[-1,1].*abs(mean(in_p.ylims)/1000)+10.*[-eps,eps]);
+
+%%%
+if ~isfield(in_p,'elevation')
+    in_p.elevation=NaN;
 end
 
 v2struct(in_p)
@@ -430,13 +471,23 @@ for k_sta=1:n_sta
     han.p(kr,kc,k_sta)=plot(tim{k_sta},val{k_sta},'parent',han.sfig(kr,kc),'color',cmap(k_sta,:),'linewidth',lw,'linestyle',prop.ls1,'marker',prop.m1);
     if do_measurements
         %deal better with colors...
-        han.pm(kr,kc,k_sta)=plot(data_stations(k_sta).time,data_stations(k_sta).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea,'linestyle',prop.ls1,'marker',prop.m1);
+        if numel(data_stations)==1 %we assume that there are several simulations with the same measurement data
+            k_sta_mea=1;
+        else
+            k_sta_mea=k_sta;
+        end
+        han.pm(kr,kc,k_sta_mea)=plot(data_stations(k_sta_mea).time,data_stations(k_sta_mea).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea,'linestyle',prop.ls1,'marker',prop.m1);
     end
     if do_fil
         han.pf(kr,kc,k_sta)=plot(tim_f,val_f(:,k_sta),'parent',han.sfig(kr,kc),'color',cmap(k_sta,:),'linewidth',lw_f,'linestyle',prop.ls1,'marker',prop.m1);
         if do_measurements
             %deal better with colors...
-            han.pm(kr,kc,k_sta)=plot(data_stations_f(k_sta).time,data_stations_f(k_sta).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea_f,'linestyle',prop.ls1,'marker',prop.m1);
+        if numel(data_stations)==1 %we assume that there are several simulations with the same measurement data
+            k_sta_mea=1;
+        else
+            k_sta_mea=k_sta;
+        end
+            han.pm(kr,kc,k_sta_mea)=plot(data_stations_f(k_sta_mea).time,data_stations_f(k_sta_mea).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea_f,'linestyle',prop.ls1,'marker',prop.m1);
         end
     end
         
@@ -468,7 +519,13 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
 if do_title
-han.sfig(kr,kc).Title.String=strrep(station,'_','\_');
+    [str_sta,~]=RWS_location_clear(station);    
+    str_sta=strrep(str_sta{:},'_','\_');
+    if ~isnan(elevation)
+        [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all('eta',1,lan);
+        str_sta=sprintf('%s %5.3f%s',str_sta,elevation,str_un);
+    end
+    han.sfig(kr,kc).Title.String=str_sta;
 end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
@@ -522,12 +579,18 @@ kr=1; kc=1;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 
 if do_measurements
+    [~,str_com]=labels4all('sim',1,lan);
+    [~,str_mea]=labels4all('mea',1,lan);
     if n_sta>1
-        error('deal with str_leg')
+        if numel(data_stations)>1
+            error('deal with str_leg')
+        else
+            leg_str={leg_str{:},str_mea};
+        end
     else
-        leg_str={labels4all('sim',1,lan),labels4all('mea',1,lan)};
-        han.leg(kr,kc)=legend(han.sfig(kr,kc),[reshape(han.p(kr,kc,:),1,[]),reshape(han.pm(kr,kc,:),1,[])],leg_str,'location','best');
+        leg_str={str_com,str_mea};
     end
+    han.leg(kr,kc)=legend(han.sfig(kr,kc),[reshape(han.p(kr,kc,:),1,[]),reshape(han.pm(kr,kc,:),1,[])],leg_str,'location','best');
 else
     if n_sta>1
         han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[]),strrep(leg_str,'_','\_'),'location','best');

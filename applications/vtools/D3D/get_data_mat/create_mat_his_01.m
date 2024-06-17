@@ -35,7 +35,7 @@ fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fpath_his=simdef.file.his;
-fpath_map=simdef.file.map;
+% fpath_map=simdef.file.map;
 
 %% OVERWRITE
 
@@ -43,7 +43,8 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% LOAD
 
-gridInfo=gdm_load_grid_simdef(fid_log,simdef);
+gridInfo=EHY_getGridInfo(fpath_his,'no_layers');
+% gridInfo=gdm_load_grid_simdef(fid_log,simdef);
 
 % [nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his,fdir_mat);
 [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
@@ -77,12 +78,7 @@ for ks=ks_v
         
         [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
         
-        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str);
-        
-        %if there is 'elevation' we load all layers because we need to match with elevation
-        if ~isnan(elevation)
-            layer=[];
-        end
+        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str,elevation);
         
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer,'elevation',elevation);
         

@@ -63,7 +63,7 @@ fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
 fpath_his=simdef(1).file.his;
-fpath_map=simdef(1).file.map;
+% fpath_map=simdef(1).file.map;
 mkdir_check(fdir_fig);
 
 %% STATIONS
@@ -88,7 +88,8 @@ nvar=numel(flg_loc.var);
 
 %Load here all the grids, which are needed for the layers. 
 for k_sim=1:n_sim
-    gridInfo(k_sim)=gdm_load_grid_simdef(fid_log,simdef(k_sim)); %not nice to have to load it every time
+    gridInfo(k_sim)=EHY_getGridInfo(fpath_his,'no_layers');
+%     gridInfo(k_sim)=gdm_load_grid_simdef(fid_log,simdef(k_sim)); %not nice to have to load it every time
 end
 
 %% FIGURE INI
@@ -165,13 +166,13 @@ for kvar=1:nvar
         in_p.elevation=elevation;
 
         %% load data
-        [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type);
+        [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation);
         
         %% convergence
         [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,var_str,k_sta,data_conv);
         
         %% measurements
-        [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc,elevation);
+       [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc,elevation);
 
         %% filtered data
         in_p=add_filter(flg_loc,in_p,data_all,tim_dtime_p,data_mea);
@@ -353,7 +354,7 @@ end %function
 
 %%
 
-function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type)
+function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation)
 
 for k_sim=1:n_sim %simulations            
     fdir_mat=simdef(k_sim).file.mat.dir;
@@ -362,12 +363,12 @@ for k_sim=1:n_sim %simulations
     %variable
     switch his_type
         case 1
-            layer=gdm_station_layer(flg_loc,gridInfo(k_sim),fpath_his,stations_loc,var_str); 
+            layer=gdm_station_layer(flg_loc,gridInfo(k_sim),fpath_his,stations_loc,var_str,elevation); 
         case 2
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     end
     
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elevation);
     load(fpath_mat_tmp,'data');
     data_all{k_sim,k_sta}=data;
 
@@ -398,7 +399,7 @@ function [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc,elevation)
 if isfield(flg_loc,'measurements')
     if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
         [str_sta,str_found]=RWS_location_clear(stations_loc);
-        data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:},'bemonsteringhoogte',elevation); %location maybe better?
+        data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:},'bemonsteringshoogte',elevation); %location maybe better?
         if isempty(data_mea)
             in_p.do_measurements=0;
             data_mea=NaN;

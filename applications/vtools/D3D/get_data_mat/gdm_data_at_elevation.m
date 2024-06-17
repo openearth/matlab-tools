@@ -21,12 +21,12 @@ function data=gdm_data_at_elevation(data,data_z,elevation)
 %   -z_mea: measurements elevation [nt,1]
 
 t_sim=data.times;
-z_sim=data_z.val;
-v_sim=data.val;
+z_sim=squeeze(data_z.val);
+v_sim=squeeze(data.val);
 t_mea=data.times;
-z_mea=elevation;
+z_mea=repmat(elevation,numel(t_mea),1);
 
-v_sim_atmea=interpolateSalinity(t_sim,z_sim,v_sim,t_mea,z_mea);
+v_sim_atmea=interpolate_xy_structured(t_sim,z_sim,v_sim,t_mea,z_mea);
 
 data.val=v_sim_atmea;
 
