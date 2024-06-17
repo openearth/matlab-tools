@@ -1,9 +1,26 @@
-%Interpolates simulation 2D (vertical) results at measurement locations.
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
-%200929
 %
-%INPUT
+%$Revision: 19229 $
+%$Date: 2023-11-03 13:13:41 +0100 (Fri, 03 Nov 2023) $
+%$Author: chavarri $
+%$Id: gdm_read_data_his.m 19229 2023-11-03 12:13:41Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_read_data_his.m $
+%
+%Interpolates simulation 2D (vertical) results at measurement locations. It differs
+%from `interpolate_xy` in the sense that the data is structured, meaning it can be
+%store in matrix form rather than cell array. 
+%
+%TO DO:
+%It can be improved by not doing an scattered intepolant with all the elevations but
+%to search for the values of z below and above the measurement one and use a simple
+%`interp1` (three times) to interpolate. This may even be more accurate, as now we
+%depend on the Delaunay triangulation. 
+%
+%INPUT:
 %   -t_sim: simulation time [nT,1]
 %   -z_sim: simulation elevation [nT,nl]
 %   -v_sim: simulation values [nT,nl]
@@ -11,7 +28,7 @@
 %   -z_mea: measurements elevation [nt,1]
 %
 
-function v_sim_atmea=interpolateSalinity(t_sim,z_sim,v_sim,t_mea,z_mea)
+function v_sim_atmea=interpolate_xy_structured(t_sim,z_sim,v_sim,t_mea,z_mea)
 
 nl=size(z_sim,2); %number of flow layers
 x_sim_m=repmat(t_sim,1,nl); %[nt,nl]
@@ -54,8 +71,6 @@ for kt=1:nt
     idx_nnan_2=~isnan(y_ux);
 
     %interpolate
-%     F=scatteredInterpolant([x_lx(idx_nnan_1),x_ux(idx_nnan_2)]',[y_lx(idx_nnan_1),y_ux(idx_nnan_2)]',[v_lx(idx_nnan_1),v_ux(idx_nnan_2)]','linear','linear');
-    
     F=scatteredInterpolant([x_lx(idx_nnan_1),x_ux(idx_nnan_2)]',[y_lx(idx_nnan_1),y_ux(idx_nnan_2)]',[v_lx(idx_nnan_1),v_ux(idx_nnan_2)]','linear','linear');
 
     v_sim_atmea(kt,1)=F(t_mea(kt),z_mea(kt));
