@@ -60,6 +60,10 @@ stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef.D3D.str
 
 ns=numel(stations);
 
+if ~isfield(flg_loc,'elevation')
+    flg_loc.elevation=NaN(ns,1); 
+end
+        
 ks_v=gdm_kt_v(flg_loc,ns);
 
 ksc=0;
@@ -69,11 +73,18 @@ for ks=ks_v
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
+        elevation=flg_loc.elevation(ks);
+        
         [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
         
         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str);
         
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
+        %if there is 'elevation' we load all layers because we need to match with elevation
+        if ~isnan(elevation)
+            layer=[];
+        end
+        
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer,'elevation',elevation);
         
         do_read=1;
         if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
@@ -83,18 +94,10 @@ for ks=ks_v
         if do_read
 
             %% read data
-            %<gdm_read_data_his_simdef>
-
-            %2DO:
-            %   -make a function that reworks the data if necessary
-            %   -load the times as specified in the input! now it is inconsistent. ?? I don;t know what I meant to say anymore.
-
-                %% raw data
-                data_raw=gdm_read_data_his(fdir_mat,fpath_his,var_id,'station',stations{ks},'layer',layer,'tim',time_dnum(1),'tim2',time_dnum(end),'structure',simdef.D3D.structure,'sim_idx',sim_idx);
+            data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,'tim',time_dnum,'layer',layer,'sim_idx',sim_idx,'station',stations{ks},'elevation',elevation);
 
             %% processed data
-
-            data=squeeze(data_raw.val); %#ok
+            data=squeeze(data.val); %#ok
 
             %% save and disp
             save_check(fpath_mat_tmp,'data');
@@ -105,6 +108,8 @@ for ks=ks_v
             %END DEBUG
             
         end %do_read
+        
+        %if `elevation`, interpolate
         
         gdm_export_his_01(fid_log,flg_loc,fpath_mat_tmp,time_dtime)
         

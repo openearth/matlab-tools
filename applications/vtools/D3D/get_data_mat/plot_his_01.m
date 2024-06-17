@@ -122,6 +122,10 @@ else
     n_sta=1;
 end
 
+if ~isfield(flg_loc,'elevation')
+    flg_loc.elevation=NaN(ns,1); 
+end
+
 %% LOOP
 
 ks_v=gdm_kt_v(flg_loc,ns);
@@ -156,15 +160,18 @@ for kvar=1:nvar
 
         stations_loc=stations{ks};
         in_p.station=stations_loc;
+        
+        elevation=flg_loc.elevation(ks);
+        in_p.elevation=elevation;
 
         %% load data
-        [data_all,layer] =load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type);
+        [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type);
         
         %% convergence
         [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,var_str,k_sta,data_conv);
         
         %% measurements
-        [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc);
+        [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc,elevation);
 
         %% filtered data
         in_p=add_filter(flg_loc,in_p,data_all,tim_dtime_p,data_mea);
@@ -176,7 +183,7 @@ for kvar=1:nvar
         mkdir_check(fdir_fig_var,NaN,1,0);
         
         for kylim=1:nylim
-            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations_loc,var_str,layer,kylim); %are you sure simdef(1)?
+            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations_loc,var_str,layer,kylim,elevation); %are you sure simdef(1)?
 %             fpath_file=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;
@@ -276,12 +283,16 @@ end %function
 
 %%
 
-function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim)
+function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elevation)
 
 if ~isempty(layer)
     fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,runid,station,var_str,layer,kylim));
 else
-    fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_ylim_%02d',tag,runid,station,var_str,kylim));
+   if ~isnan(elevation)
+      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_elev_%f_ylim_%02d',tag,runid,station,var_str,elevation,kylim));
+   else
+      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_ylim_%02d',tag,runid,station,var_str,kylim));
+   end
 end
 
 end %function
@@ -382,12 +393,12 @@ end %function
 
 %% 
 
-function [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc)
+function [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc,elevation)
 
 if isfield(flg_loc,'measurements')
     if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
         [str_sta,str_found]=RWS_location_clear(stations_loc);
-        data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:}); %location maybe better?
+        data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:},'bemonsteringhoogte',elevation); %location maybe better?
         if isempty(data_mea)
             in_p.do_measurements=0;
             data_mea=NaN;
