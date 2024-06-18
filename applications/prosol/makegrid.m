@@ -18,8 +18,11 @@ function z = makegrid(J,gridtype,z0,H);
         z(end-xn:end) = -fliplr(exp(x0:xd:x1)) + 1+z0/H;  %WO 23.01.09
     elseif (gridtype ==3)
         J2 = floor(J/3);
-        J3 = J- 2*J2;
+        J3 = J-2*J2;
         z=[z0:z0:(J2-1)*z0, (J2)*z0:(H-2*J2*z0)/J3:H-J2*z0 , H-(J2-1)*z0:z0:H]; %    z0/H:(1-2*z0/H)/J:1-z0/H;
+        if length(z) > floor(H/z0);
+            error('grid cannot be created')
+        end
     elseif (gridtype ==4)
         z = z0/H:(1-2*z0/H)/J:1-z0/H;
         z = cumsum(z.*(1-z));

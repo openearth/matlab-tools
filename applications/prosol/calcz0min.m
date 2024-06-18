@@ -1,4 +1,5 @@
 function [ust,z0] = calcz0min(H,U)
+   % smooth flow condition 
    nu = 1e-6;
    karman = 0.4;
    eps      = 1e-10;
