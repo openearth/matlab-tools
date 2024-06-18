@@ -207,7 +207,7 @@ end
 
 %% dimsInd
 if nargout > 1
-    dimsInd.stations = find(ismember({dims(:).name},{'stations','cross_section','general_structures'}));
+    dimsInd.stations = find(ismember({dims(:).name},{'station','stations','cross_section','general_structure','general_structures'}));
     dimsInd.time = find(ismember({dims(:).name},{'time','nmesh2d_dlwq_time'}));
     dimsInd.layers = find(ismember({dims(:).name},{'layers','laydim','nmesh2d_layer','mesh2d_nLayers','depth','nmesh2d_layer_dlwq'})); % depth is needed for CMEMS
     dimsInd.interfaces = find(ismember({dims(:).name},'interfaces')); % depth is needed for CMEMS

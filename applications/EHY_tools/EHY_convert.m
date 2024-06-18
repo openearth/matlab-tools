@@ -1597,7 +1597,17 @@ if OPT.fromEPSG~=OPT.toEPSG
     switch ext
         case '.grd'
             output=wlgrid('read',inputFile);
+
+            if OPT.toEPSG==3414 % ad-hoc for Singapore
+                warning('Ad-hoc conversion for SVY21, based on WGS84/UTM48N');
+                adhocSingapore = 1;
+                OPT.toEPSG=32648;
+            end
             [output.X,output.Y]=convertCoordinates(output.X,output.Y,'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
+            if exist('adhocSingapore','var') % ad-hoc for Singapore
+                output.X=output.X-342212;
+                output.Y=output.Y-112342;
+            end
             if OPT.saveOutputFile
                 if OPT.toEPSG==4326
                     wlgrid('write',outputFile,output,'CoordinateSystem','Spherical');
