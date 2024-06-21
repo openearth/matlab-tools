@@ -51,6 +51,7 @@ if isfield(in_p,'do_area')==0
     in_p.do_area=0;
 end
 
+%warning('Call `[xlims,ylims]=xlim_ylim(xlims,ylims,x_v,val)`')
 if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
     bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);
     if ~any(bol_p)

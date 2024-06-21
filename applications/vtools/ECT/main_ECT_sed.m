@@ -15,11 +15,20 @@ clc
 fclose all;
 close all
 
+%% PATHS
+
+fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
+fdir_d3d='c:\checkouts\qp\';
+
+% fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
+% fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
+
 %% ADD OET
 
-path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
-addpath(path_add_fcn)
-addOET(path_add_fcn) 
+if isunix %we assume that if Linux we are in the p-drive. 
+    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
+end
+run(fpath_add_oet);
 
     %% input to function
 

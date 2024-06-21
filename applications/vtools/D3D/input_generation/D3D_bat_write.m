@@ -39,7 +39,8 @@ switch structure
         if ~isnan(OMP_num)
             fprintf(fid_bat,'set OMP_NUM_THREADS=%d\r\n',OMP_num);
         end
-        strsoft_win=sprintf('call %s\\x64\\dimr\\scripts\\run_dimr.bat %s',fpath_software,dimr_str);
+%         strsoft_win=sprintf('call %s\\x64\\dimr\\scripts\\run_dimr.bat %s',fpath_software,dimr_str);
+        strsoft_win=sprintf('call %s\\x64\\bin\\run_dimr.bat %s',fpath_software,dimr_str);
 end
 fprintf(fid_bat,'%s \r\n',strsoft_win); 
 fprintf(fid_bat,'exit \r\n');

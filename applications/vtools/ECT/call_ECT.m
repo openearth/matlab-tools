@@ -37,6 +37,7 @@ cnt.g=9.81;
 cnt.rho_s=2650;
 cnt.rho_w=1000;
 cnt.p=0.4; %in ECT sedtrnas uses this porosity
+% cnt.p=0.0; %in ECT sedtrnas uses this porosity
 cnt.k=0.41;
 cnt.nu = 1e-6; %we should compute based on temperature?
 

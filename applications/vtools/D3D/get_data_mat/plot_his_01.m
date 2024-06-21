@@ -55,6 +55,14 @@ if isfield(flg_loc,'do_all_sta')==0
     flg_loc.do_all_sta=0;
 end
 
+if ~isfield(flg_loc,'unit')
+    flg_loc.unit=cell(numel(flg_loc.var),1);
+end
+
+if ~isfield(flg_loc,'measurements')
+    flg_loc.measurements='';
+end
+
 %% PATHS
 
 n_sim=numel(simdef);
@@ -152,13 +160,6 @@ for kvar=1:nvar
             k_sta=1;
         end
 
-        in_p.unit=var_str;
-        if isfield(flg_loc,'unit')
-            if ~isempty(flg_loc.unit{kvar})
-                in_p.unit=flg_loc.unit{kvar};
-            end
-        end
-
         stations_loc=stations{ks};
         in_p.station=stations_loc;
         
@@ -166,13 +167,18 @@ for kvar=1:nvar
         in_p.elevation=elevation;
 
         %% load data
-        [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation);
+        [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation,tim_dtime_p,flg_loc.unit{kvar});
         
+        in_p.unit=unit;
+
         %% convergence
         [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,var_str,k_sta,data_conv);
         
         %% measurements
-       [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc,elevation);
+        [do_measurements,data_mea]=add_measurements(flg_loc.measurements,stations_loc,elevation,unit);
+
+        in_p.do_measurements=do_measurements;
+        in_p.data_stations=data_mea;
 
         %% filtered data
         in_p=add_filter(flg_loc,in_p,data_all,tim_dtime_p,data_mea);
@@ -184,11 +190,11 @@ for kvar=1:nvar
         mkdir_check(fdir_fig_var,NaN,1,0);
         
         for kylim=1:nylim
-            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations_loc,var_str,layer,kylim,elevation); %are you sure simdef(1)?
+            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations_loc,var_str,layer,kylim,elevation,tim_dtime_p{1}(1),tim_dtime_p{1}(end)); %are you sure simdef(1)? what about time for saving?
 %             fpath_file=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;
-            in_p.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,{reshape(cell2mat(data_all(:,k_sta)),1,[])},data_mea);
+            [in_p.xlims,in_p.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all{k_sta},data_mea,tim_dtime_p{k_sta});
 
             fig_his_sal_01(in_p);
         end %kylim
@@ -223,7 +229,8 @@ for kvar=1:nvar
 
         fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'allsta');
         
-        in_p_sta_all.ylims=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),in_p.do_measurements,{reshape(cell2mat(data_all),1,[])},data_mea);
+        [in_p_sta_all.xlims,in_p_sta_all.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all,data_mea,tim_dtime_p);
+
         in_p_sta_all.fname=fname_noext;
         in_p_sta_all.val=data_all;
         in_p_sta_all.leg_str=stations; 
@@ -253,46 +260,55 @@ end %function
 %% FUNCTIONS
 %%
 
-function ylims=get_ylims(ylims,do_measurements,data,data_mea)
+function [xlims,ylims]=get_ylims(ylims,do_measurements,data,data_mea,tim_dtime)
 
-if isnan(ylims)
-    if do_measurements
-        ylims_1=[min([data{:}]),max([data{:}])];
-        switch data_mea.eenheid
-            case 'mg/l'
-                ylims_2=[min(sal2cl(-1,data_mea.waarde)),sal2cl(-1,max(data_mea.waarde))];
-            otherwise
-                ylims_2=[min(data_mea.waarde),max(data_mea.waarde)];
-        end
-
-        ylims=[min(ylims_1(1),ylims_2(1)),max(ylims_1(2),ylims_2(2))];
-    else
-        ylims=[min([data{:}]),max([data{:}])];
-    end
+x_all={tim_dtime};
+val_all=data;
+if do_measurements
+    x_all=cat(1,x_all,{data_mea.time});
+    val_all=cat(1,val_all,{data_mea.waarde});
 end
 
-dy=diff(ylims);
-if dy==0
-    my=mean(ylims);
-    ylims=ylims+abs(my/100)*[-1,1];
-end
-if isnan(ylims)
-    ylims=[-1e-10,1e-10];
-end
+[xlims,ylims]=xlim_ylim([tim_dtime(1),tim_dtime(end)],ylims,x_all,val_all);
+
+% if isnan(ylims)
+%     if do_measurements
+%         ylims_1=[min([data{:}]),max([data{:}])];
+% %         switch data_mea.eenheid
+% %             case 'mg/l'
+% %                 ylims_2=[min(sal2cl(-1,data_mea.waarde)),sal2cl(-1,max(data_mea.waarde))];
+% %             otherwise
+%                 ylims_2=[min(data_mea.waarde),max(data_mea.waarde)];
+% %         end
+% 
+%         ylims=[min(ylims_1(1),ylims_2(1)),max(ylims_1(2),ylims_2(2))];
+%     else
+%         ylims=[min([data{:}]),max([data{:}])];
+%     end
+% end
+% 
+% % dy=diff(ylims);
+% % if dy==0
+% %     my=mean(ylims);
+% %     ylims=ylims+abs(my/100)*[-1,1];
+% % end
+% % if isnan(ylims)
+% %     ylims=[-1e-10,1e-10];
+% % end
 
 end %function
 
 %%
 
-function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elevation)
+function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elevation,tim_0,tim_f)
 
 if ~isempty(layer)
-    fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,runid,station,var_str,layer,kylim));
+    fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_layer_%04d_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),layer,kylim));
 else
    if ~isnan(elevation)
-      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_elev_%f_ylim_%02d',tag,runid,station,var_str,elevation,kylim));
+      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_elev_%f_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),elevation,kylim));
    else
-      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_ylim_%02d',tag,runid,station,var_str,kylim));
+      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),kylim));
    end
 end
 
@@ -301,7 +317,7 @@ end %function
 %%
 
 function fname=fig_name_convergence(fdir_fig_var,tag,runid,var_str,layer,kylim,anl)
-
+%add time!
 if ~isempty(layer)
     fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_layer_%04d_ylim_%02d',tag,anl,runid,var_str,layer,kylim));
 else
@@ -354,7 +370,7 @@ end %function
 
 %%
 
-function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation)
+function [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation,time_dtime,unit)
 
 for k_sim=1:n_sim %simulations            
     fdir_mat=simdef(k_sim).file.mat.dir;
@@ -365,11 +381,23 @@ for k_sim=1:n_sim %simulations
         case 1
             layer=gdm_station_layer(flg_loc,gridInfo(k_sim),fpath_his,stations_loc,var_str,elevation); 
         case 2
+            error('We need to pass `kvar`, but it is not nice. Think and repair.')
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     end
     
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elevation);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime{k_sim}(1),'tim2',time_dtime{k_sim}(end));
     load(fpath_mat_tmp,'data');
+
+    %change units
+    if isempty(unit)
+        unit=var_str;
+    end
+    switch unit
+        case 'cl' %data is in psu and we want it in cl
+            data=sal2cl(1,data);
+    end
+
+    %output
     data_all{k_sim,k_sta}=data;
 
 end %k_sim
@@ -394,26 +422,34 @@ end %function
 
 %% 
 
-function [in_p,data_mea]=add_measurements(flg_loc,in_p,stations_loc,elevation)
+function [do_measurements,data_mea]=add_measurements(measurements,stations_loc,elevation,unit)
 
-if isfield(flg_loc,'measurements')
-    if isfolder(flg_loc.measurements) && exist(fullfile(flg_loc.measurements,'data_stations_index.mat'),'file')
+if ~isempty(measurements)
+    if isfolder(measurements) && exist(fullfile(measurements,'data_stations_index.mat'),'file')
         [str_sta,str_found]=RWS_location_clear(stations_loc);
-        data_mea=read_data_stations(flg_loc.measurements,'location_clear',str_sta{:},'bemonsteringshoogte',elevation); %location maybe better?
+        data_mea=read_data_stations(measurements,'location_clear',str_sta{:},'bemonsteringshoogte',elevation); %location maybe better?
         if isempty(data_mea)
-            in_p.do_measurements=0;
-            data_mea=NaN;
-        else
-            in_p.do_measurements=1;
-            in_p.data_stations=data_mea;
+            data_mea=struct();
         end
     else
         error('do reader')
     end
+
+    %units
+    if ~isempty(data_mea)
+        data_mea.waarde=change_units(data_mea.waarde,unit,data_mea.eenheid);
+    end
+    
 else
-    in_p.do_measurements=0;
-    data_mea=NaN;
+    data_mea=struct();
 end
+
+if isempty(data_mea)
+    do_measurements=0;
+else
+    do_measurements=1;
+end
+
 
 end %function
 
@@ -438,5 +474,28 @@ if flg_loc.do_fil
         end
     end
 end
+
+end %function
+
+%%
+
+function val=change_units(val,unit_out,unit_in)
+
+switch unit_out
+    case 'cl' %we want it in cl
+        switch unit_in
+            case 'mg/l'
+                %it is ok
+            otherwise
+                error('not sure how to convert')
+        end
+    case 'sal' %we want it in psu
+        switch unit_in
+            case 'mg/l'
+                val=sal2cl(-1,val);
+            otherwise
+                error('not sure how to convert')
+        end
+end %unit_out
 
 end %function

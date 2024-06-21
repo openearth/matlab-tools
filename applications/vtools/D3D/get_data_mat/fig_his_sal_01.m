@@ -144,17 +144,18 @@ end
 
 %%
 
-switch unit
-    case {'cl','cl_surf'}
-        ylims=sal2cl(1,ylims);
-        val=sal2cl(1,val);
-        if do_fil
-            val_f=sal2cl(1,val_f);
-        end
-%     case 'sal'
-%     otherwise
-%         error('not sure what to do')
-end
+%we deal with this outside this function
+% switch unit
+%     case {'cl','cl_surf'}
+%         ylims=sal2cl(1,ylims);
+%         val=sal2cl(1,val);
+%         if do_fil
+%             val_f=sal2cl(1,val_f);
+%         end
+% %     case 'sal'
+% %     otherwise
+% %         error('not sure what to do')
+% end
 
 %%
 

@@ -54,7 +54,9 @@ switch simdef.D3D.structure
         delft3d_io_thd('write',fname,simdef.thd);
         copyfile_check(fname,fname_destiny);
     case 2
-        error('do')
+        if ~isempty(simdef.file.thd)
+            error('do')
+        end
 end %switch
 
 end %function

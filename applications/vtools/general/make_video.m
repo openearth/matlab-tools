@@ -68,6 +68,7 @@ if exist(path_video_ext,'file')==2
     if do_over
         messageOut(fid_log,sprintf('Movie exists, overwriting: %s',path_video_ext));
         delete(path_video_ext)
+        pause(5) %we need to wait to be deleted
     else
         messageOut(fid_log,sprintf('Movie exists, not-overwriting: %s',path_video_ext));
         return

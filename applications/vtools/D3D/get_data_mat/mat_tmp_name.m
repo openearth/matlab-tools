@@ -131,7 +131,7 @@ end
 
 %elevation
 if ~isempty(elevation)
-    str_add=sprintf('%s_elev_%s',str_add,elevation);
+    str_add=sprintf('%s_elev_%5.3f',str_add,elevation);
 end
 
 %final

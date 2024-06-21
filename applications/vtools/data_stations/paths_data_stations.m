@@ -18,5 +18,6 @@ paths.data_stations=fullfile(paths.main_folder,'data_stations.mat');
 paths.data_stations_index=fullfile(paths.main_folder,'data_stations_index.mat');
 paths.separate=fullfile(paths.main_folder,'separate');
 paths.figures=fullfile(paths.main_folder,'figures');
+paths.csv=fullfile(paths.main_folder,'csv');
 
 end

@@ -47,9 +47,11 @@ ns=numel(data_stations_index);
 for ks=1:ns
     fname=fullfile(paths.figures,sprintf('%06d',ks));
     fnameext=sprintf('%s.png',fname);
-    if exist(fnameext,'file')~=2
-        load(fullfile(paths.separate,sprintf('%06d.mat',ks)),'data_one_station');
 
+    load(fullfile(paths.separate,sprintf('%06d.mat',ks)),'data_one_station');
+
+    %figure
+    if exist(fnameext,'file')~=2
         in_p.fname=fname;
         in_p.data_station=data_one_station;
         in_p.fig_print=1;
@@ -57,6 +59,13 @@ for ks=1:ns
 
         fig_data_station(in_p)
     end
+
+    %export
+    fpath_csv=fullfile(paths.csv,sprintf('%06d.csv',ks));
+    if exist(fpath_csv,'file')~=2
+        export_data_station(fpath_csv,data_one_station);
+    end
+
     fprintf('done %4.2f %% \n',ks/ns*100)
 end %ks
 
