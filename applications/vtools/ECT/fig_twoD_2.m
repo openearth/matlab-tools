@@ -11,9 +11,7 @@
 %   -FontName if interpreter LaTeX: check post 114116
 %	-When adding text in duration axis, scatter interprets days while surf interprets hours
 
-function fig_twoD(in_2D,eig_r,eig_i,kwx_v,kwy_v)
-
-error('Deprecated. Call `fig_twoD_2`. There is an error in the plot of the matrices. They should be transposed. ')
+function fig_twoD_2(in_2D,max_cl_m,max_gr_m,xm_k,ym_k,xm_l,ym_l)
 
 %% DEFAULT
 
@@ -41,51 +39,55 @@ v2struct(fig)
 
 %%
 
-np1=numel(kwx_v);
-np2=numel(kwy_v);
-[nc,ne]=size(eig_r);
-lwx_v=2*pi./kwx_v;
-lwy_v=2*pi./kwy_v;
+% np1=numel(kwx_v);
+% np2=numel(kwy_v);
+% [nc,ne]=size(eig_r);
+% lwx_v=2*pi./kwx_v;
+% lwy_v=2*pi./kwy_v;
+% 
+%     %%  growth rate
+% % eig_i(eig_i==0)=NaN;
+% eig_i(abs(eig_i)<1e-16)=NaN;
+% max_gr=max(eig_i,[],2,'omitnan');
+% 
+% %positive growth rate
+% gr_p=max_gr>0;
+% max_grp=NaN(nc,1);
+% max_grp(gr_p)=max_gr(gr_p);
+% 
+% %matrix form
+% [xm_k,ym_k]=meshgrid(kwx_v,kwy_v);
+% [xm_l,ym_l]=meshgrid(lwx_v,lwy_v);
+% max_gr_m=reshape(max_gr,np1,np2)';
+% max_grp_m=reshape(max_grp,np1,np2)';
+% % min_cl_m=reshape(min_cl,np,np)';
+% 
+% %qs
+% if qs_anl==1
+% eig_i_qs(eig_i_qs==0)=NaN;
+% max_gr_qs=max(eig_i_qs,[],2,'omitnan');
+% 
+% max_gr_qs_m=reshape(max_gr_qs,np1,np2)';
+% end
+% 
+%     %% celerity
+% %take the celerity of the eigenvalues related to exner-hirano that we identify as the smallest
+% eig_r(abs(eig_r)<1e-16)=NaN;
+% [m_s,p_s]=sort(abs(eig_r),2);
+% eig_r_morph=NaN(size(eig_r,1),ne-3);
+% for kc=1:nc
+%     eig_r_morph(kc,:)=eig_r(kc,p_s(kc,1:ne-3));
+% end
+% 
+% %matrix form
+% max_cl_m=NaN(np1,np2,ne-3);
+% for ke=1:ne-3
+%     max_cl_m(:,:,ke)=reshape(eig_r_morph(:,ke),np1,np2)'./xm_k;
+% end
 
-    %%  growth rate
-% eig_i(eig_i==0)=NaN;
-eig_i(abs(eig_i)<1e-16)=NaN;
-max_gr=max(eig_i,[],2,'omitnan');
+%%
 
-%positive growth rate
-gr_p=max_gr>0;
-max_grp=NaN(nc,1);
-max_grp(gr_p)=max_gr(gr_p);
-
-%matrix form
-[xm_k,ym_k]=meshgrid(kwx_v,kwy_v);
-[xm_l,ym_l]=meshgrid(lwx_v,lwy_v);
-max_gr_m=reshape(max_gr,np1,np2)';
-max_grp_m=reshape(max_grp,np1,np2)';
-% min_cl_m=reshape(min_cl,np,np)';
-
-%qs
-if qs_anl==1
-eig_i_qs(eig_i_qs==0)=NaN;
-max_gr_qs=max(eig_i_qs,[],2,'omitnan');
-
-max_gr_qs_m=reshape(max_gr_qs,np1,np2)';
-end
-
-    %% celerity
-%take the celerity of the eigenvalues related to exner-hirano that we identify as the smallest
-eig_r(abs(eig_r)<1e-16)=NaN;
-[m_s,p_s]=sort(abs(eig_r),2);
-eig_r_morph=NaN(size(eig_r,1),ne-3);
-for kc=1:nc
-    eig_r_morph(kc,:)=eig_r(kc,p_s(kc,1:ne-3));
-end
-
-%matrix form
-max_cl_m=NaN(np1,np2,ne-3);
-for ke=1:ne-3
-    max_cl_m(:,:,ke)=reshape(eig_r_morph(:,ke),np1,np2)'./xm_k;
-end
+ne=size(max_cl_m,3)+3;
 
 %% data rework
 % close all
@@ -96,6 +98,7 @@ end
 
 
 ks=1;
+
 %%
 %figure input
 % prnt.filename=sprintf('dom_%s',str_p{1,ks});
@@ -199,7 +202,7 @@ end
 %     end
 % end
 
-clim_l=max(abs(min(max_gr)),abs(max(max_gr)));
+clim_l=max(abs(min(max_gr_m(:))),abs(max(max_gr_m(:))));
 clim_f=[-clim_l,clim_l];
 
 if exist('f_clim','var')==0
@@ -209,15 +212,15 @@ end
 
 %axes and limits
 kr=1; kc=1;
-lims.x(kr,kc,1:2)=[min(kwx_v),max(kwx_v)];
-lims.y(kr,kc,1:2)=[min(kwy_v),max(kwy_v)];
+lims.x(kr,kc,1:2)=[min(xm_k(:)),max(xm_k(:))];
+lims.y(kr,kc,1:2)=[min(ym_k(:)),max(ym_k(:))];
 lims.c(kr,kc,1:2)=clim_f*f_clim(ks,1);
 xlabels{kr,kc}='k_{wx} [rad/m]';
 ylabels{kr,kc}='k_{wy} [rad/m]';
 
 kr=1; kc=2;
-lims.x(kr,kc,1:2)=[min(lwx_v),max(lwx_v)];
-lims.y(kr,kc,1:2)=[min(lwy_v),max(lwy_v)];
+lims.x(kr,kc,1:2)=[min(xm_l(:)),max(xm_l(:))];
+lims.y(kr,kc,1:2)=[min(ym_l(:)),max(ym_l(:))];
 lims.c(kr,kc,1:2)=clim_f*f_clim(ks,2);
 xlabels{kr,kc}='l_{wx} [m]';
 ylabels{kr,kc}='l_{wy} [m]';

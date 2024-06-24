@@ -27,30 +27,36 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_interpolate_bed_level(in_p)
+function fig_twoD_nondim(in_p,tri,lambda_p,beta_p,max_gr_p,c_morph_p)
 
 %% DEFAULTS
 
 if isfield(in_p,'fig_visible')==0
-    in_p.fig_visible=0;
+    in_p.fig_visible=1;
 end
 if isfield(in_p,'fig_print')==0
-    in_p.fig_print=1;
+    in_p.fig_print=0;
 end
 if isfield(in_p,'fname')==0
     in_p.fname='fig';
 end
 if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,14.5,17]; %(1+sqrt(5)/2)
+    in_p.fig_size=[0,0,14,14]; %(1+sqrt(5)/2)
 end
 if isfield(in_p,'fig_overwrite')==0
-    in_p.fig_overwrite=0;
+    in_p.fig_overwrite=1;
 end
 if isfield(in_p,'fid_log')==0
     in_p.fid_log=NaN;
 end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
+end
+if isfield(in_p,'xlims')==0
+    in_p.xlims=[min(lambda_p(:)),max(lambda_p(:))];
+end
+if isfield(in_p,'ylims')==0
+    in_p.ylims=[min(beta_p(:)),max(beta_p(:))];
 end
 
 v2struct(in_p)
@@ -61,26 +67,11 @@ if ~do_fig
     return
 end
 
-%% filter
-
-[xpol_cen,ypol_cen,etab_cen]=filter_to_figure_limts(in_p.xpol_cen,in_p.ypol_cen,etab_cen,lims_x,lims_y);
-[~,~,etab_cen_mod]=filter_to_figure_limts(in_p.xpol_cen,in_p.ypol_cen,etab_cen_mod,lims_x,lims_y);
-[gridInfo.Xcen,gridInfo.Ycen,gridInfo.Zcen]=filter_to_figure_limts(gridInfo.Xcen,gridInfo.Ycen,gridInfo.Zcen,lims_x,lims_y);
-[xint,yint,etab_cengrd_mod]=filter_to_figure_limts(xint,yint,etab_cengrd_mod,lims_x,lims_y);
-
-% aux=[etab_cen;etab_cen_mod;gridInfo.Zcen;etab_cengrd_mod];
-% aux=[etab_cen];
-aux=[etab_cengrd_mod];
-lims_c=[min(aux(:)),max(aux(:))];
-if isempty(lims_c)
-    lims_c=[-1e-10,1e-10];
-end
-
 %% SIZE
 
 %square option
-npr=2; %number of plot rows
-npc=2; %number of plot columns
+npr=1; %number of plot rows
+npc=1; %number of plot columns
 axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
@@ -93,12 +84,12 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-marg.mt=2.0; %top margin [cm]
+marg.mt=1.0; %top margin [cm]
 marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
-marg.sh=0.5; %horizontal spacing [cm]
-marg.sv=0.5; %vertical spacing [cm]
+marg.sh=1.0; %horizontal spacing [cm]
+marg.sv=0.0; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 
@@ -138,13 +129,13 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
-kr=1; kc=1;
-cbar(kr,kc).displacement=[0.0,0,0,0]; 
-cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label=labels4all('bl',1,lan);
+% kr=1; kc=1;
+% cbar(kr,kc).displacement=[0.0,0,0,0]; 
+% cbar(kr,kc).location='northoutside';
+% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
 
 % brewermap('demo')
-cmap=brewermap(100,'RdYlBu');
+cmap=brewermap(100,'RdYlGn');
 
 %center around 0
 % ncmap=1000;
@@ -269,16 +260,12 @@ cmap=brewermap(100,'RdYlBu');
 % kr=axis_m(ka,1);
 % kc=axis_m(ka,2);
 
-% kr=1; kc=1;
-for ka=1:na
-    kr=axis_m(ka,1);
-    kc=axis_m(ka,2);
-lims.y(kr,kc,1:2)=lims_y;
-lims.x(kr,kc,1:2)=lims_x;
-lims.c(kr,kc,1:2)=lims_c;
-xlabels{kr,kc}=labels4all('x',1,lan);
-ylabels{kr,kc}=labels4all('y',1,lan);
-end
+kr=1; kc=1;
+lims.y(kr,kc,1:2)=ylims;
+lims.x(kr,kc,1:2)=xlims;
+% lims.c(kr,kc,1:2)=lims_c;
+xlabels{kr,kc}='\lambda [-]';
+ylabels{kr,kc}='\beta [-]';
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
@@ -375,25 +362,12 @@ end
 % gridInfo = EHY_getGridInfo(mapFile,{'face_nodes_xy','Z'});
 % EHY_plotMapModelData(gridInfo,Data.val);
 
-
 %% PLOT
 
 kr=1; kc=1;    
-han.p(kr,kc,1)=plot(pol_xy(:,1),pol_xy(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker','none');
-han.s(kr,kc,1)=scatter(xpol_cen,ypol_cen,prop.ms1,etab_cen,'filled','parent',han.sfig(kr,kc));
-
-kr=1; kc=2;    
-han.p(kr,kc,1)=plot(pol_xy(:,1),pol_xy(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker','none');
-han.s(kr,kc,1)=scatter(xpol_cen,ypol_cen,prop.ms1,etab_cen_mod,'filled','parent',han.sfig(kr,kc));
-
-kr=2; kc=1;    
-han.p(kr,kc,1)=plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker','none');
-han.s(kr,kc,1)=scatter(gridInfo.Xcen,gridInfo.Ycen,prop.ms1,gridInfo.Zcen,'filled','parent',han.sfig(kr,kc));
-
-kr=2; kc=2;    
-han.p(kr,kc,1)=plot(gridInfo.grid(:,1),gridInfo.grid(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker','none');
-han.s(kr,kc,1)=scatter(xint,yint,prop.ms1,etab_cengrd_mod,'filled','parent',han.sfig(kr,kc));
-
+han.p(kr,kc,:)=tricontour(tri,lambda_p,beta_p,max_gr_p,[0,0],'k');
+han.a(kr,kc,:)=tricontour(tri,lambda_p,beta_p,c_morph_p,[0,0],'r');
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
@@ -407,47 +381,7 @@ han.s(kr,kc,1)=scatter(xint,yint,prop.ms1,etab_cengrd_mod,'filled','parent',han.
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
-axis(han.sfig(kr,kc),'equal')
-han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-han.sfig(kr,kc).XTickLabel='';
-% han.sfig(kr,kc).YTickLabel='';
-% han.sfig(kr,kc).XTick=[];  
-% han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
-% han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String='polygon original';
-% han.sfig(kr,kc).XColor='r';
-% han.sfig(kr,kc).YColor='k';
-han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
-
-kr=1; kc=2;   
-hold(han.sfig(kr,kc),'on')
-grid(han.sfig(kr,kc),'on')
-axis(han.sfig(kr,kc),'equal')
-han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-han.sfig(kr,kc).XTickLabel='';
-han.sfig(kr,kc).YTickLabel='';
-% han.sfig(kr,kc).XTick=[];  
-% han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
-% han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String='polygon filtered';
-% han.sfig(kr,kc).XColor='r';
-% han.sfig(kr,kc).YColor='k';
-han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
-
-kr=2; kc=1;   
-hold(han.sfig(kr,kc),'on')
-grid(han.sfig(kr,kc),'on')
-axis(han.sfig(kr,kc),'equal')
+% axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
@@ -459,27 +393,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String='grid original';
-% han.sfig(kr,kc).XColor='r';
-% han.sfig(kr,kc).YColor='k';
-han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
-
-kr=2; kc=2;   
-hold(han.sfig(kr,kc),'on')
-grid(han.sfig(kr,kc),'on')
-axis(han.sfig(kr,kc),'equal')
-han.sfig(kr,kc).Box='on';
-han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-% han.sfig(kr,kc).XTickLabel='';
-han.sfig(kr,kc).YTickLabel='';
-% han.sfig(kr,kc).XTick=[];  
-% han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
-% han.sfig(kr,kc).YScale='log';
-han.sfig(kr,kc).Title.String='grid filtered';
+% han.sfig(kr,kc).Title.String='c';
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
@@ -491,15 +405,11 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 
 %colormap
 % kr=1; kc=2;
-for kr=1:npr
-    for kc=1:npc
 % view(han.sfig(kr,kc),[0,90]);
-colormap(han.sfig(kr,kc),cmap);
-if ~isnan(lims.c(kr,kc,1:1))
-caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
-end
-    end
-end
+% colormap(han.sfig(kr,kc),cmap);
+% if ~isnan(lims.c(kr,kc,1:1))
+% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+% end
 
 %% ADD TEXT
 
@@ -543,13 +453,13 @@ end
 
 %% COLORBAR
 
-kr=1; kc=1;
-pos.sfig=han.sfig(kr,kc).Position;
-han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
-pos.cbar=han.cbar.Position;
-han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
-han.sfig(kr,kc).Position=pos.sfig;
-han.cbar.Label.String=cbar(kr,kc).label;
+% kr=1; kc=1;
+% pos.sfig=han.sfig(kr,kc).Position;
+% han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
+% pos.cbar=han.cbar.Position;
+% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+% han.sfig(kr,kc).Position=pos.sfig;
+% han.cbar.Label.String=cbar(kr,kc).label;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
 % v2p=[1,5,11,15,np1];
@@ -589,8 +499,4 @@ close(han.fig);
 end
 
 end %function
-
-%%
-%% FUNCTIONS
-%%
 

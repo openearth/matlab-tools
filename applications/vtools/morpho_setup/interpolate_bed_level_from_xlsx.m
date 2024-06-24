@@ -54,6 +54,7 @@ addOptional(parin,'rkm_plot','');
 addOptional(parin,'tol_fig',500);
 addOptional(parin,'river_axis','');
 addOptional(parin,'align_s',0);
+addOptional(parin,'write',1);
 
 parse(parin,varargin{:});
 
@@ -78,6 +79,7 @@ fpath_rkm=parin.Results.rkm_plot;
 tol_fig=parin.Results.tol_fig;
 fpath_ra=parin.Results.river_axis;
 do_align=parin.Results.align_s;
+do_write=parin.Results.write;
 
 %%
 
@@ -373,7 +375,7 @@ etab_cengrd_ori=F_ori(s_grd_cen(bol_grd_int),n_grd_cen(bol_grd_int));
 
 %% write
 
-if 1
+if do_write
 messageOut(fid_log,'Start writing')  
 mkdir_check(fdir_out);
 

@@ -20,12 +20,18 @@ v2struct(ECT_matrices);
 if isfield(in_2D,'lims_lw')==0
     in_2D.lims_lw=[0.01,200];
 end
+if isfield(in_2D,'lims_lwx')==0
+    in_2D.lims_lwx=in_2D.lims_lw;
+end
+if isfield(in_2D,'lims_lwy')==0
+    in_2D.lims_lwy=in_2D.lims_lw;
+end
 np=250;
 if isfield(in_2D,'kwx_v')==0
-    in_2D.kwx_v=(10.^(linspace(log10(2*pi/in_2D.lims_lw(2)),log10(2*pi/in_2D.lims_lw(1)),np)));
+    in_2D.kwx_v=(10.^(linspace(log10(2*pi/in_2D.lims_lwx(2)),log10(2*pi/in_2D.lims_lwx(1)),np)));
 end
 if isfield(in_2D,'kwy_v')==0
-    in_2D.kwy_v=in_2D.kwx_v;
+    in_2D.kwy_v=(10.^(linspace(log10(2*pi/in_2D.lims_lwy(2)),log10(2*pi/in_2D.lims_lwy(1)),np)));
 end
 if isfield(in_2D,'qs_anl')==0
     in_2D.qs_anl=0;
@@ -42,13 +48,13 @@ v2struct(in_2D)
 
 %%
 % m_in=combvec(kwx_v,kwy_v)';
-m_in=allcomb(kwx_v,kwy_v);
+m_in=allcomb(kwx_v,kwy_v); %do not change, or the reshaping of vecotors into matrices must also be changed afterwards. 
 
-lwx_v=2*pi./kwx_v;
-lwy_v=2*pi./kwy_v;
-
-np1=numel(kwx_v);
-np2=numel(kwy_v);
+% lwx_v=2*pi./kwx_v;
+% lwy_v=2*pi./kwy_v;
+% 
+% np1=numel(kwx_v);
+% np2=numel(kwy_v);
         
 % [Ax_1,Ay_1,Dx_1,Dy_1,B_1,C_1]=rename_matrices(flg,ECT_matrices,alpha_pmm);
 
