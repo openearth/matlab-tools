@@ -67,7 +67,11 @@ beta_v=lwy_v/4/h;
 [kwx_m,kwy_m]=meshgrid(kwx_v,kwy_v);
 [lwx_m,lwy_m]=meshgrid(lwx_v,lwy_v);
 
-tri=delaunay(lambda_p,beta_p);
+try %error due to colinear points
+    tri=delaunay(lambda_p,beta_p);
+catch
+    tri=NaN;
+end
 
 % lambda_m=reshape
 % [lambda_m,beta_m]=meshgrid(lambda_v,beta_v);
@@ -91,7 +95,7 @@ c_morph_p=eig_r_morph_p./kwx_p;
 %matrix form
 c_morph_m=NaN(np1,np2,ne-3);
 for ke=1:ne-3
-    c_morph_m(:,:,ke)=reshape(eig_r_morph_p(:,ke),np1,np2)./kwx_m;
+    c_morph_m(:,:,ke)=reshape(eig_r_morph_p(:,ke),np1,np2)./kwx_m';
 end
 
 end %function

@@ -19,7 +19,19 @@
 %to interpolate the data. Finally, one needs to specify the characteristic grain 
 %sizes of the model in which to interpolate. 
 
-function interpolate_grain_size_on_grid(fpath_gsd,fpath_grd,fpath_sed,fdir_out)
+function interpolate_grain_size_on_grid(fpath_gsd,fpath_grd,fpath_sed,fdir_out,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'method','closest'); %closest prevents fractions largert than 1 or smaller than 0. Use `linear` with care. 
+
+parse(parin,varargin{:});
+
+method=parin.Results.method;
+
+%% CALC
 
 %load model gsd
 ngsd=numel(fpath_gsd);
@@ -65,7 +77,7 @@ end %kg
 
 %% interpolate on grid points
 
-frc=z_interpolated_from_polyline(xy_grd(:,1),xy_grd(:,2),xy_gsd(:,1),xy_gsd(:,2),frac_mod(:,1:end-1),'method','closest');
+frc=z_interpolated_from_polyline(xy_grd(:,1),xy_grd(:,2),xy_gsd(:,1),xy_gsd(:,2),frac_mod(:,1:end-1),'method',method);
 frc=[frc,1-sum(frc,2)];
 frc(frc<1e-12)=0;
 if any(frc(:)<0)

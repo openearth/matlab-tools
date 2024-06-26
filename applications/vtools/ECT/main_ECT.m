@@ -35,13 +35,13 @@ run(fpath_add_oet);
     %% input to function
 
 % path_input='input_ECT_2D.m';
-path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\231015_redolfi\input_ECT_Siviglia13.m';
+path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\240625_test_bar_properties\input_ECT_2D.m';
 
 in_2D.fig.fig_print=0;
-in_2D.fig.fig_name='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\240619_ect\domain';
+in_2D.fig.fig_name='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\240625_test_bar_properties\domain_1';
 
 in_2D_nondim.fig_print=0;
-in_2D_nondim.fig_name='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\240619_ect\domain_nd';
+in_2D_nondim.fig_name='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\240625_test_bar_properties\domain_2';
 
 in_2D.pert_anl=1; 
 
@@ -64,16 +64,16 @@ in_2D.lims_lwx=[10,10000];
 [eig_r,eig_i,kwx_v,kwy_v,kw_m]=twoD_study(ECT_matrices,in_2D);
 [kw_p,kwx_p,kwy_p,kwx_m,kwy_m,lwx_v,lwy_v,lwx_p,lwy_p,lwx_m,lwy_m,lambda_p,beta_p,tri,max_gr_p,max_gr_m,eig_r_p,c_morph_p,c_morph_m]=derived_variables_twoD_study(ECT_input.h,eig_r,eig_i,kwx_v,kwy_v,kw_m);
 fig_twoD_2(in_2D,c_morph_m,max_gr_m,kwx_m,kwy_m,lwx_m,lwy_m); %new
-in_2D_nondim.xlims=[0,1.5];
+in_2D_nondim.xlims=[0,3.5];
 fig_twoD_nondim(in_2D_nondim,tri,lambda_p,beta_p,max_gr_p,c_morph_p);
 
 %%
 
-% figure
-% hold on
-% scatter3(lwx_p,lwy_p,c_morph_p,10,c_morph_p)
-% colorbar
-% clim([-1e-5,1e-5])
+figure
+hold on
+scatter3(lwx_p,lwy_p,c_morph_p,10,c_morph_p)
+colorbar
+clim([-1e-5,1e-5])
 
 %% CFL
 % [c_anl,eig_i_morpho]=ECT_celerity_growth(ECT_matrices,'kwx',2*pi/100);
