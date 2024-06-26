@@ -20,11 +20,16 @@
 
 function simdef=input_D3D(simdef)    
 
+
 %% software
 simdef.D3D.structure=       1; %1=D3D4; 2=FM
-simdef.file.software='p:\dflowfm\projects\2022_improve_exner\08_executables\220517\';
+% simdef.file.software='p:\dflowfm\projects\2022_improve_exner\08_executables\220517\';
+% simdef.file.software='p:\d-hydro\dimrset\weekly\2.27.04.79127\';
+simdef.file.software='p:\d-hydro\dimrset\2024\2024.03\';
+simdef.file.software='p:\d-hydro\delft3d4\Delft3D-FLOW_WAVE\6.04.02.142586\';
 simdef.D3D.OMP_num=NaN; %number of OpenMP threads. NaN: nothing is specified (i.e., maximum is used).
-simdef.file.exe_input='../../../08_executables/01/x64/dimr/scripts/run_dimr.bat'; %path to `run_dimr.bat` location for converting a grid into a map file in Delft3D FM. If relative, it must be one level down of the working Matlab folder because it is called from a temporary folder 
+% simdef.file.exe_input='../../../08_executables/01/x64/dimr/scripts/run_dimr.bat'; %path to `run_dimr.bat` location for converting a grid into a map file in Delft3D FM. If relative, it must be one level down of the working Matlab folder because it is called from a temporary folder 
+simdef.file.exe_input='p:\d-hydro\dimrset\2024\2024.03\x64\bin\run_dimr.bat '; %path to `run_dimr.bat` location for converting a grid into a map file in Delft3D FM. If relative, it must be one level down of the working Matlab folder because it is called from a temporary folder 
 
 %% simulation
 simdef.runid.name='r001';

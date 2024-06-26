@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 
-function D3D_create_simulation_all(flg,input_m,fcn_adapt)
+function D3D_create_simulation_all(flg,input_m,fcn_adapt,fcn_input_D3D)
 
 %% get only all variations component
 
@@ -46,7 +46,8 @@ for ksim=1:nsim
     
     %% adapt input
     
-    simdef=fcn_adapt(input_m_s(ksim));
+%     simdef=fcn_adapt(input_m_s(ksim)); %old
+    simdef=D3D_adapt_input(input_m_s(ksim),fcn_adapt,fcn_input_D3D);
 
     %% create one run
 

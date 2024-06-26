@@ -45,14 +45,17 @@ switch simdef.D3D.structure
         %The idea would be to read spatial data and convert to MN coordinates. 
         %see how it is done in `D3D_convert_...`
 
-        %check if the file already exists
-        fname_destiny=simdef.file.thd;
-        if check_existing && exist(fname_destiny,'file')>0
-            error('You are trying to overwrite a file!')
+        %if it is empty, we do not have thin dams
+        if ~isempty(simdef.file.thd)
+            fname_destiny=simdef.file.thd;
+            %check if the file already exists
+            if check_existing && exist(fname_destiny,'file')>0
+                error('You are trying to overwrite a file!')
+            end
+            fname=fullfile(pwd,now_chr);
+            delft3d_io_thd('write',fname,simdef.thd);
+            copyfile_check(fname,fname_destiny);
         end
-        fname=fullfile(pwd,now_chr);
-        delft3d_io_thd('write',fname,simdef.thd);
-        copyfile_check(fname,fname_destiny);
     case 2
         if ~isempty(simdef.file.thd)
             error('do')
