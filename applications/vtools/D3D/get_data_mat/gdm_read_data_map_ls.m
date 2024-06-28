@@ -38,9 +38,9 @@ pliname=parin.Results.pliname;
 % dchar=parin.Results.dchar;
 
 if isempty(pliname)
-    [~,pliname,~]=fileparts(pli);
-    pliname=strrep(pliname,' ','_');
+    pliname=gdm_pli_name(pli);
 end
+
 
 %%
 

@@ -506,7 +506,11 @@ end %function
 
 function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim,var_idx)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%02d_%s_%s_%02d_clim_%02d',tag,runid,var_str,var_idx,fn,sb_pol,kref,kclim));
+nvi=numel(var_idx);
+svi=repmat('%02d',1,nvi);
+var_idx_s=sprintf(svi,var_idx);
+
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%s_%02d_clim_%02d',tag,runid,var_str,var_idx_s,fn,sb_pol,kref,kclim));
 
 end %function
 

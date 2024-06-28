@@ -187,6 +187,11 @@
 % in_plot.(tag).do_movie=0;
 % % in_plot.(tag).statis_plot={'val_mean'}; %statistics to plot. Comment to have all. 
 % in_plot.(tag).var={'mesh2d_taus'}; % ,'mesh2d_dg'} %,14,27,'mesh2d_dg'}; % ,14,27,44,'mesh2d_dg',47}; %{1,14,27,44,'mesh2d_dg','mesh2d_DXX01','mesh2d_DXX06'}; %can be cell array vector. See <open D3D_list_of_variables> for possible input flags
+%%plot of stacked sediment transport
+% in_plot.(tag).var={'stot'}; % ,'mesh2d_dg'} %,14,27,'mesh2d_dg'}; % ,14,27,44,'mesh2d_dg',47}; %{1,14,27,44,'mesh2d_dg','mesh2d_DXX01','mesh2d_DXX06'}; %can be cell array vector. See <open D3D_list_of_variables> for possible input flags
+% in_plot.(tag).var_idx={1:1:11}; %for 11 size fractions
+% in_plot.(tag).do_area=1;
+%%%
 % in_plot.(tag).rkm={145:1:175}; %river km vectors to average the data; cell(1,nrkm)
 % in_plot.(tag).rkm_name={'1km'}; %name of the river km vector (for saving); cell(1,nrkm)
 %     %construct branches name

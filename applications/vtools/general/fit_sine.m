@@ -41,18 +41,30 @@ function [y_fit,ABCD,y_0,gof]=fit_sine(x,y,varargin)
 
 %% PARSE
 
+parin=inputParser;
+
+addOptional(parin,'ini',NaN)
+
+parse(parin,varargin{:});
+
+ini=parin.Results.ini;
+
 %% CALC
 
 %Initial guess for parameters [A, B, C, D]
-yu=max(y);
-yl=min(y);
-yr=yu-yl; %range of `y`
-yz=y-yu+(yr/2);
-zx=x(yz.*circshift(yz,1)<=0); %zero-crossings
-T=2*mean(diff(zx)); %period
-ym=mean(y); %offset
-
-ABCD_0=[yr/2, 2*pi/T, 0, ym];
+if isnan(ini)
+    yu=max(y);
+    yl=min(y);
+    yr=yu-yl; %range of `y`
+    yz=y-yu+(yr/2);
+    zx=x(yz.*circshift(yz,1)<=0); %zero-crossings
+    T=2*mean(diff(zx)); %period
+    ym=mean(y); %offset
+    
+    ABCD_0=[yr/2, 2*pi/T, pi/4, ym];
+else
+    ABCD_0=ini;
+end
 
 %Sine function to fit
 F_sin=@(p,x)p(1)*sin(p(2)*x+p(3))+p(4);
@@ -61,7 +73,7 @@ F_sin=@(p,x)p(1)*sin(p(2)*x+p(3))+p(4);
 F_obj=@(p)sum((y-F_sin(p, x)).^2);
 
 %optimization using fminsearch
-options=optimset('display','off');
+options=optimset('display','final','TolX',1e-12,'TolFun',1e-12);
 ABCD=fminsearch(F_obj,ABCD_0,options);
 
 %Goodness of fit (maybe change to `statistics_V`)

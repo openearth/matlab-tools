@@ -117,6 +117,7 @@ for ksb=1:nsb
                 ndim_2=ndim_2(2:end); %vector with dimensions which are not faces
                 v_nan=(1:1:numel(ndim_2))+1; %we check the NaN in all dimensions except the first one
                 bol_nan=any(isnan(data_var.val),v_nan); %necessary for multidimensional 
+                bol_inf=any(isinf(data_var.val),v_nan); %necessary for multidimensional. For sediment transport, a 0 Chezy leads to inf Cf. 
 
                 sval=[npol,ndim_2];
                 val_mean=NaN(sval);
@@ -128,7 +129,7 @@ for ksb=1:nsb
                 val_sum_length=NaN(sval);
 %                 val_width=NaN(npol,ndim_2);
                 for kpol=1:npol
-                    bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan;
+                    bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan & ~bol_inf;
                     if any(bol_get)
                         val_mean(kpol,:)=mean(data_var.val(bol_get,:),'omitnan');
                         val_std(kpol,:)=std(data_var.val(bol_get,:),'omitnan');

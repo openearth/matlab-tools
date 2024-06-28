@@ -73,12 +73,11 @@ messageOut(fid_log,sprintf('Reading map_ls_01 pli %4.2f %% kt %4.2f %%',kpli/npl
 for kt=kt_v
     ktc=ktc+1;
     for kpli=1:npli
+
+        %pli name
         fpath_pli=flg_loc.pli{kpli,1};
-        if exist(fpath_pli,'file')~=2
-            error('pli file does not exist: %s',fpath_pli);
-        end
-        [~,pliname,~]=fileparts(fpath_pli);
-        pliname=strrep(pliname,' ','_');
+        pliname=gdm_pli_name(fpath_pli);
+
         for kvar=1:nvar %variable
             if ~ischar(flg_loc.var{kvar})
                 error('cannot read section along variables not from EHY')
@@ -91,7 +90,7 @@ for kt=kt_v
 
             %% read data
             
-            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite); %this overwriting flag should be different than the previous one
+            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite,'pliname',pliname); %this overwriting flag should be different than the previous one
             
             if flg_loc.do_rkm
                 data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',flg_loc.TolMinDist);

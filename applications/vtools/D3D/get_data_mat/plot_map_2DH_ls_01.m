@@ -117,18 +117,22 @@ fpath_file=cell(nt,nylims,npli,nvar,ndiff);
 
 for kpli=1:npli %variable
     fpath_pli=flg_loc.pli{kpli,1};
-    [~,pliname,~]=fileparts(fpath_pli);
-    pliname=strrep(pliname,' ','_');
+    pliname=gdm_pli_name(fpath_pli);
     for kvar=1:nvar %variable
 
         varname=flg_loc.var{kvar};
         [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef(1));
         
         %time 1 for reference
-        if flg_loc.do_diff %difference in time
+        if flg_loc.do_diff || flg_loc.plot_val0 %difference in time
             fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname);
-            data_ref=load(fpath_mat_tmp,'data');                
+            data_ref=load(fpath_mat_tmp,'data');   
+            if flg_loc.do_staircase
+                in_p.val0=data_ref.data.val_staircase;
+            else
+                in_p.val0=data_ref.data.val;
+            end
         end
 
         %preallocate for plotting all times togehter

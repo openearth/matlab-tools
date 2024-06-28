@@ -30,7 +30,7 @@ parse(parin,varargin{:});
 time_dnum=parin.Results.tim;
 var_idx=parin.Results.var_idx;
 % tol=parin.Results.tol;
-layer=parin.Results.layer;
+% layer=parin.Results.layer; %There is no layer in stot!
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
 
@@ -50,8 +50,8 @@ switch structure
         end
 end
 
-data_var_x=gdm_read_data_map(fdir_mat,fpath_map,var_x,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'layer',layer);%,'bed_layers',layer); %we load all layers
-data_var_y=gdm_read_data_map(fdir_mat,fpath_map,var_y,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'layer',layer);%,'bed_layers',layer); %we load all layers
+data_var_x=gdm_read_data_map(fdir_mat,fpath_map,var_x,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); %we load all layers
+data_var_y=gdm_read_data_map(fdir_mat,fpath_map,var_y,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); %we load all layers
 
 data_var=data_var_x;
 data_var.val=hypot(data_var_x.val,data_var_y.val);
