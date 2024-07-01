@@ -34,7 +34,7 @@ switch in_plot.adhoc
         in_plot_fig=gmd_tag(in_plot,tag_check);
         gdm_adhoc_cummulative_energy_loss(fid_log,in_plot_fig,simdef);
     case 3 
-        tag_check='fig_map_2DH_01';
+        tag_check='fig_map_2DH_ls_01';
         in_plot_fig=gmd_tag(in_plot,tag_check);
         gdm_adhoc_infinitesimal_perturbation_propagation(fid_log,in_plot_fig,simdef);
     otherwise

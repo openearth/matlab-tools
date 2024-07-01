@@ -152,7 +152,8 @@ for kst=1:nst
         for kvar=1:nvar %variable
             varname=var_raw{kvar};
             var_str=D3D_var_num2str_structure(varname,simdef);
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,'map_2DH_01','tim',time_dnum(kt),'var',var_str);
+            layer=gdm_layer(flg_loc,NaN,var_str,kvar,varname); %we use <layer> for flow and sediment layers
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,'map_2DH_01','tim',time_dnum(kt),'var',var_str,'layer',layer);
             data_loc.(var_raw{kvar})=load(fpath_mat_tmp,'data');
         end
         
@@ -160,7 +161,8 @@ for kst=1:nst
         u=data_loc.umag.data'; %[nF,1]
         h=data_loc.h.data'; %[nF,1]
         C=data_loc.mesh2d_czs.data'; %[nF,1]
-        Fak=squeeze(data_loc.Fak.data(:,1,:)); %[nF,nf] (take active layer)
+%         Fak=squeeze(data_loc.Fak.data(:,1,:)); %[nF,nf] (take active layer) %OLD, we were reading all the layers
+        Fak=squeeze(data_loc.Fak.data); %[nF,nf] (take active layer) %NEW, we only read the active layer
         Ltot=data_loc.Ltot.data'; %[nF,1]
         
         q=u.*h; %[nF,1]
