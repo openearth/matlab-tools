@@ -45,7 +45,7 @@ cnt.R=(cnt.rho_s-cnt.rho_w)/cnt.rho_w;
 
 Mak=Fa1.*La;
 
-[qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm]=sediment_transport(flg,cnt,h,u*h,Cf,La,Mak,gsd,sedTrans,hiding,1,E_param,vp_param,Gammak);
+[qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm]=sediment_transport(flg,cnt,h,u*h,Cf,La,Mak,gsd,sedTrans,hiding,mor_fac,E_param,vp_param,Gammak);
 qbk_no_pores=qbk.*(1-cnt.p);
 % [~,~,~,~,~,~,~,~,~,~,~,~,~,~,vpk_hdh,~,~,~]=sediment_transport(flg,cnt,h+der,u*h,Cf,La,Mak,gsd,sedTrans,hiding,1,E_param,vp_param,Gammak);
 
@@ -87,7 +87,7 @@ end
   A_ED,K_ED,B_ED,...
   eigen_all_Dm,elliptic_Dm,A_Dm,...
   eigen_all_2Dx_d,eigen_all_2Dy_d,elliptic_2D_d,Ax_d,Ay_d,Dx_d,Dy_d,B_d,C_d...
-  ]=ECT(flg,'gsd',gsd,'nodeState',nodeState,'sedTrans',sedTrans,'hiding',hiding,'ad',u_b,'secflow',[I,1,beta_c,NaN,Dh],'twoD',NaN,'kappa',kappa,'E_param',E_param,'vp_param',vp_param,'gsk_param',gsk_param,'diff_mom',nu_mom,'diff_hir',diff_hir,'cnt',cnt);
+  ]=ECT(flg,'gsd',gsd,'nodeState',nodeState,'sedTrans',sedTrans,'hiding',hiding,'ad',u_b,'secflow',[I,1,beta_c,NaN,Dh],'twoD',NaN,'kappa',kappa,'E_param',E_param,'vp_param',vp_param,'gsk_param',gsk_param,'diff_mom',nu_mom,'diff_hir',diff_hir,'cnt',cnt,'MorFac',mor_fac);
 
 %% RENAME
 

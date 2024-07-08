@@ -336,6 +336,7 @@ data{kl,1}=        'Wrimap_waterlevel_s1= 1                          '; kl=kl+1;
 data{kl,1}=        'Wrimap_velocity_component_u0= 0                  '; kl=kl+1;
 data{kl,1}=        'Wrimap_velocity_component_u1= 1                  '; kl=kl+1;
 data{kl,1}=        'Wrimap_velocity_vector= 1                        '; kl=kl+1;
+data{kl,1}=        'Wrimap_waterdepth_hu= 1                          '; kl=kl+1;
 data{kl,1}=        'Wrimap_upward_velocity_component= 1              '; kl=kl+1;
 data{kl,1}=        'Wrimap_density_rho= 0                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_horizontal_viscosity_viu= 1               '; kl=kl+1;

@@ -379,6 +379,10 @@ switch simdef.D3D.structure
         if isfield(simdef.grd,'K')==0
             simdef.grd.K=1; 
         end
+        if simdef.grd.K==0
+            simdef.grd.K=1;
+            warning('In D3D4 you cannot have 0 layers. 2D is achieved with K=1.')
+        end
     case 2
         if isfield(simdef.grd,'K')==0
             simdef.grd.K=0; 
@@ -423,7 +427,10 @@ end
 if isfield(simdef.mdf,'ExtrBl')==0
     simdef.mdf.ExtrBl=0;
 end
-
+%If, in FM, we have mean bed levels, we need to extrapolate BC to get equilibrium. 
+if simdef.mdf.Dpuopt==2
+    simdef.mdf.ExtrBl=1;
+end
 % if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
 %     error('adjust flow depth file accordingly')
 % end

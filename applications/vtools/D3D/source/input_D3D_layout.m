@@ -38,7 +38,7 @@ simdef.D3D.dire_sim=fullfile('p:\i1000561-riverlab-2021\08_bars_chaos\06_simulat
 %% grid
 simdef.grd.type=            1; %type of domain: 1=rectangular; 2=sine-generated curve; 3=DHL curved flume
 simdef.grd.cell_type=       1; %type of cell: 1=quadrangular; 2=triangular
-simdef.grd.K=               1; %number of vertical layers for flow [-] [double(1,1)] e.g. [2], 0=2D flow
+simdef.grd.K=               0; %number of vertical layers for flow [-] [double(1,1)] e.g. [2], 0=2D flow
 simdef.grd.Thick=           1; %thickness of vertical layers [%] [double(1,K-1)] e.g. [0.5]
     %logarithmic distribution
 %     th_1=5; %percentage of the first layer
@@ -99,14 +99,14 @@ simdef.mor.total_ThUnLyr=   10; %thickness of the entire bed [m] [double(1,1)]
 simdef.mor.IHidExp=         1;  %1: none; 2: Egiazaroff; 3: Ashida & Michiue; 4: Power Law;
 simdef.mor.ASKLHE=          0.8; %Power Law hiding factor (in case simdef.mor.hiding=4). ATTENTION! in ECT is defined with a change of sign!
 simdef.mor.MorStt=          7*3600; %spin-up time [s] [double(1,1)] e.g. [1800]
-simdef.mor.MorFac=          10; %morphological accelerator factor [-] [double(1,1)] e.g. [1]
+simdef.mor.MorFac=          1; %morphological accelerator factor [-] [double(1,1)] e.g. [1]
 simdef.mor.ISlope=          3; %bed slope formulation (integer) 1=NO; 2=Bagnold; 3=Koch and Flokstra; 4=Parker and Andrews
 simdef.mor.AShld=           1; %A parameter in Kock and Flokstra
 simdef.mor.BShld=           0; %B parameter in Kock and Flokstra
 simdef.mor.CShld=           0; %C parameter in Kock and Flokstra
 simdef.mor.DShld=           0; %D parameter in Kock and Flokstra
 simdef.mor.AlfaBs=          0; %streamwise factor for bedslope correction [-]
-simdef.mor.UpwindBedload=   0; %Use upwind bedload (1) or central bedload (0)
+simdef.mor.UpwindBedload=   1; %Use upwind bedload (1) or central bedload (0)
 simdef.mor.SedThr=          2e-2; %Flow depth threshold below which morphodynamics are not computed [m]
 simdef.mor.ThetSD=          0.5; %Factor for erosion of adjacent dry cells [-]
 simdef.mor.HMaxTH=          0; %Max depth for variable THETSD. Set < SEDTHR to use global value only [m]
@@ -128,7 +128,7 @@ simdef.ini.u=               1.0; %initial flow velocity (everywhere) [m] [double
 simdef.ini.etab0_type=      1; %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation; 3=xyz 
 simdef.ini.s=               normal_flow_slope_simplified(simdef.ini.h*simdef.ini.u*simdef.grd.B,simdef.grd.B,simdef.mdf.g/simdef.mdf.C^2,simdef.ini.h,'g',simdef.mdf.g) ; %(if etab0_type=1) initial slope [-] [double(1,1)] | [double(M,1)] e.g. [3e-3] | linspace(0.001,0.0001,simdef.grd.L/simdef.grd.dx+1)]
 simdef.ini.etab=            -simdef.ini.h; %initial downstream bed level [m] [double(1,1)] e.g. [0] ATTENTION! if NaN, the bed level at the downstream end will be at 0; if you want the base level to be at 0, this should be -simdef.ini.h; if you want the bed level to be at 0, this should be 0;
-simdef.ini.etab_noise=      1; %flag for initial noise [double(1,1)] 0=NO; 1=random; 2=alternate bars; 3=random including upstream end; 4 trench
+simdef.ini.etab_noise=      0; %flag for initial noise [double(1,1)] 0=NO; 1=random; 2=alternate bars; 3=random including upstream end; 4 trench
 simdef.ini.noise_amp=       0.01; %noise amplitude (also bar height, trench height) [m] In case of trench, positive is trench and negative is hump.
 simdef.ini.noise_Lb=        0; %(for etab_noise=2) bar length [m]
 simdef.ini.noise_trench_x=  [1,3]; %x-coordinates of the beginning and end of the trench [m] [double(1,2)]; e.g. [1,3]

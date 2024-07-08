@@ -21,13 +21,13 @@ function simdef=D3D_adapt_input(input_m_s,F_adapt,F_input_D3D)
 simdef.dummy=NaN;
 simdef=F_input_D3D(simdef); %reference
 
-%% adapt simdef based on the modifying function
-
-simdef=F_adapt(simdef,input_m_s);
-
 %% adapt simdef based on input_m_s
 
 simdef=D3D_modify_structure(simdef,input_m_s);
+
+%% adapt simdef based on the modifying function
+
+simdef=F_adapt(simdef,input_m_s);
 
 %% time
 

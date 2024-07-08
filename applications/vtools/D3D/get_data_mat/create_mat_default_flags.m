@@ -16,13 +16,9 @@ function in_plot=create_mat_default_flags(in_plot)
 
 %% defaults common to all
 
-if isfield(in_plot,'lan')==0
-    in_plot.lan='nl';
-end
-
-if isfield(in_plot,'tag_serie')==0
-    in_plot.tag_serie='01';
-end
+in_plot=isfield_default(in_plot,'lan','en');
+in_plot=isfield_default(in_plot,'tag_serie','01');
+in_plot=isfield_default(in_plot,'only_adhoc',0);
 
 %% get the items which are not structure
 

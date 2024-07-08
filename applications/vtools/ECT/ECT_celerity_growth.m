@@ -35,7 +35,7 @@ eig_i_morpho=max(eig_i); %!!! ATT I think it is always max, but I should double 
 % gr_anl=diff(max_gr_m_w)./diff(tim_v); 
 
 %celerity
-eig_r(abs(eig_r)<1e-16)=NaN;
+% eig_r(abs(eig_r)<1e-16)=NaN;
 [m_s,p_s]=sort(abs(eig_r),2);
 [nc,ne]=size(eig_r);
 eig_r_morph=NaN(size(eig_r,1),ne-3);

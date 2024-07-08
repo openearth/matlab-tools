@@ -366,6 +366,10 @@ function D3D_gdm(in_plot)
 in_plot=create_mat_default_flags(in_plot);
 fid_log=NaN;
 
+simdef_all=NaN; %for passing to `gdm_adhoc`. 
+
+if in_plot.only_adhoc==0
+
 if ~isfield(in_plot,'fdir_sim')
     error('Specify the simulations to analyse <fdir_sim>')
 end
@@ -373,9 +377,7 @@ ns=numel(in_plot.fdir_sim);
 
 %% CREATE MAT-FILES
 
-messageOut(fid_log,'------------------------------')
-messageOut(fid_log,'---Creating mat-files---------')
-messageOut(fid_log,'------------------------------')
+messageOut(fid_log,'Creating mat-files',3)
 
 for ks=1:ns
 
@@ -401,9 +403,7 @@ end %ks
 
 %% PLOT INDIVIDUAL RUNS
 
-messageOut(fid_log,'------------------------------')
-messageOut(fid_log,'---Plotting individual runs---')
-messageOut(fid_log,'------------------------------')
+messageOut(fid_log,'Plotting individual runs',3)
 
 for ks=1:ns
     
@@ -425,9 +425,7 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref) && ns>1
 
     %% PLOT DIFFERENCES BETWEEN RUNS
 
-    messageOut(fid_log,'---------------------------------------------------')
-    messageOut(fid_log,'---Plotting differences between runs---------------')
-    messageOut(fid_log,'---------------------------------------------------')
+    messageOut(fid_log,'Plotting differences between runs',3)
 
     for ks=1:ns
 
@@ -443,9 +441,7 @@ if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref) && ns>1
 
     %% PLOT DIFFERENCES BETWEEN RUNS IN ONE FIGURE
 
-    messageOut(fid_log,'-----------------------------------------------------')
-    messageOut(fid_log,'---Plotting differences between runs in one figure---')
-    messageOut(fid_log,'-----------------------------------------------------')
+    messageOut(fid_log,'Plotting differences between runs in one figure',3)
 
     %% paths no ref
     ksc=0;
@@ -464,24 +460,27 @@ end %reference run
 
 if ns>1
     
-    messageOut(fid_log,'-------------------------------------')
-    messageOut(fid_log,'---Plotting all runs in one figure---')
-    messageOut(fid_log,'-------------------------------------')
+    messageOut(fid_log,'Plotting all runs in one figure-',3)
 
     %% paths all
+    simdef_all=struct('D3D',NaN,'err',NaN,'file',NaN);
     for ks=1:ns
         [simdef_all(ks),leg_str_all{ks}]=gdm_paths_single_run(fid_log,in_plot,ks,'disp',0);
     end
 
     %% call
     plot_all_runs_one_figure(fid_log,in_plot,simdef_all,leg_str_all)
-
-else
-    simdef_all=NaN; %for passing to `gdm_adhoc`. Best would be to preallocate. 
+    
 end %ns>1
 
 %% AD-HOC
 
+end %only_adhoc
+
 gdm_adhoc(fid_log,in_plot,simdef_all)
+
+%% END
+
+messageOut(fid_log,'Done!!!',3);
 
 end %function

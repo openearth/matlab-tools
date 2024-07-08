@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_sinus(in_p)
+function fig_twoD_nondim_anl_obs(in_p,tri,lambda_p,beta_p,max_gr_p,c_morph_p)
 
 %% DEFAULTS
 
@@ -35,7 +35,7 @@ if isfield(in_p,'fig_visible')==0
     in_p.fig_visible=0;
 end
 if isfield(in_p,'fig_print')==0
-    in_p.fig_print=1;
+    in_p.fig_print=0;
 end
 if isfield(in_p,'fname')==0
     in_p.fname='fig';
@@ -52,6 +52,14 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
+if isfield(in_p,'xlims')==0
+    in_p.xlims=[min(in_p.lambda_p(:)),max(in_p.lambda_p(:))];
+end
+if isfield(in_p,'ylims')==0
+    in_p.ylims=[min(in_p.beta_p(:)),max(in_p.beta_p(:))];
+end
+
+in_p=isfield_default(in_p,'lims_c',absolute_limits(in_p.d_anl));
 
 v2struct(in_p)
 
@@ -65,7 +73,7 @@ end
 
 %square option
 npr=1; %number of plot rows
-npc=1; %number of plot columns
+npc=2; %number of plot columns
 axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
@@ -78,7 +86,7 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-marg.mt=1.0; %top margin [cm]
+marg.mt=2.0; %top margin [cm]
 marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
@@ -123,14 +131,13 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
-% kr=1; kc=1;
-% cbar(kr,kc).displacement=[0.0,0,0,0]; 
-% cbar(kr,kc).location='northoutside';
-% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
+kr=1; kc=1;
+cbar(kr,kc).displacement=[0.0,0,0,0]; 
+cbar(kr,kc).location='northoutside';
+cbar(kr,kc).label=str;
 
 % brewermap('demo')
-nls=numel(ls_data);
-cmap=brewermap(nls,'set1');
+cmap=brewermap(100,'RdYlGn');
 
 %center around 0
 % ncmap=1000;
@@ -256,15 +263,24 @@ cmap=brewermap(nls,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-% lims.y(kr,kc,1:2)=lims_y;
-% lims.x(kr,kc,1:2)=lims_x;
-% lims.c(kr,kc,1:2)=lims_c;
-xlabels{kr,kc}='x';
-ylabels{kr,kc}='y';
+lims.y(kr,kc,1:2)=ylims;
+lims.x(kr,kc,1:2)=xlims;
+lims.c(kr,kc,1:2)=lims_c;
+xlabels{kr,kc}='\lambda [-]';
+ylabels{kr,kc}='\beta [-]';
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
+kr=1; kc=2;
+lims.y(kr,kc,1:2)=ylims;
+lims.x(kr,kc,1:2)=xlims;
+lims.c(kr,kc,1:2)=lims_c;
+xlabels{kr,kc}='\lambda [-]';
+ylabels{kr,kc}='\beta [-]';
+% ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
+% lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
+% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
 %% FIGURE INITIALIZATION
 
@@ -360,18 +376,22 @@ end
 %% PLOT
 
 kr=1; kc=1;    
-for kls=1:nls
-han.p(kls)=plot(ls_data(kls).data.xg,ls_data(kls).data.yg,'color',cmap(kls,:),'LineStyle','-','marker','*','parent',han.sfig(kr,kc));
-han.p2(kls)=plot(ls_data(kls).data.xg,ls_data(kls).data.y_fit,'color',cmap(kls,:),'LineStyle','--','marker','o','parent',han.sfig(kr,kc));
-han.p3(kls)=plot(ls_data(kls).data.xg,ls_data(kls).data.y_0,'color',cmap(kls,:),'LineStyle','-.','marker','s','parent',han.sfig(kr,kc));
-end
+axes(han.sfig(kr,kc));
+han.p(kr,kc,:)=tricontour(tri,lambda_p,beta_p,max_gr_p,[0,0],'k');
+han.a(kr,kc,:)=tricontour(tri,lambda_p,beta_p,c_morph_p,[0,0],'r');
+han.s(kr,kc,1)=scatter(lambda_s,beta_s,prop.ms1,d_anl,'filled','parent',han.sfig(kr,kc));
 
+kr=1; kc=2;    
+axes(han.sfig(kr,kc));
+han.p(kr,kc,:)=tricontour(tri,lambda_p,beta_p,max_gr_p,[0,0],'k');
+han.a(kr,kc,:)=tricontour(tri,lambda_p,beta_p,c_morph_p,[0,0],'r');
+han.s(kr,kc,1)=scatter(lambda_s,beta_s,prop.ms1,d_obs,'filled','parent',han.sfig(kr,kc));
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
-% han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
+
 % surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
 % patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
 
@@ -383,8 +403,8 @@ hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
@@ -396,20 +416,43 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).Title.String='c';
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
-han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
+% han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
+
+kr=1; kc=2;   
+hold(han.sfig(kr,kc),'on')
+grid(han.sfig(kr,kc),'on')
+% axis(han.sfig(kr,kc),'equal')
+han.sfig(kr,kc).Box='on';
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+% han.sfig(kr,kc).XTickLabel='';
+han.sfig(kr,kc).YTickLabel='';
+% han.sfig(kr,kc).XTick=[];  
+% han.sfig(kr,kc).YTick=[];  
+% han.sfig(kr,kc).XScale='log';
+% han.sfig(kr,kc).YScale='log';
+% han.sfig(kr,kc).Title.String='c';
+% han.sfig(kr,kc).XColor='r';
+% han.sfig(kr,kc).YColor='k';
+% han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
+
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
 % han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
-%colormap
-% kr=1; kc=2;
-% view(han.sfig(kr,kc),[0,90]);
-% colormap(han.sfig(kr,kc),cmap);
-% if ~isnan(lims.c(kr,kc,1:1))
-% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
-% end
+% colormap
+kr=1; kc=2;
+for kc=1:npc
+view(han.sfig(kr,kc),[0,90]);
+colormap(han.sfig(kr,kc),cmap);
+if ~isnan(lims.c(kr,kc,1:1))
+caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+end
+end
 
 %% ADD TEXT
 
@@ -442,14 +485,10 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 
 %% LEGEND
 
-kr=1; kc=1;
+% kr=1; kc=1;
 % pos.sfig=han.sfig(kr,kc).Position;
 % %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,[])),{'flat bed','sloped bed'},'location','best');
-handles_p=[han.p(1),han.p(2),han.p2(1),han.p3(1)];
-str_leg=  {    't0',  'tend',    'fit',  'guess'};
-han.leg(kr,kc)=legend(handles_p,str_leg,'location','eastoutside','orientation','vertical');
-
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p1(kr,kc,:),1,[]),{labels4all('simulation',1,lan),labels4all('measurement',1,lan)},'location','eastoutside');
 % pos.leg=han.leg(kr,kc).Position;
 % han.leg(kr,kc).Position=pos.leg+[0,0.3,0,0];
@@ -457,13 +496,13 @@ han.leg(kr,kc)=legend(handles_p,str_leg,'location','eastoutside','orientation','
 
 %% COLORBAR
 
-% kr=1; kc=1;
-% pos.sfig=han.sfig(kr,kc).Position;
-% han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
-% pos.cbar=han.cbar.Position;
-% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
-% han.sfig(kr,kc).Position=pos.sfig;
-% han.cbar.Label.String=cbar(kr,kc).label;
+kr=1; kc=1;
+pos.sfig=han.sfig(kr,kc).Position;
+han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
+pos.cbar=han.cbar.Position;
+han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+han.sfig(kr,kc).Position=pos.sfig;
+han.cbar.Label.String=cbar(kr,kc).label;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
 % v2p=[1,5,11,15,np1];

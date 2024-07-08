@@ -491,16 +491,18 @@ if flg.read==0
     end
 elseif flg.read==1
     sed_trans_param=parin.Results.sedTrans;
-    if flg.sed_trans==1 %MPM48
-        a_mpm=parin.Results.sedTrans(1);
-        b_mpm=parin.Results.sedTrans(2);
-        theta_c=parin.Results.sedTrans(3);
-    elseif flg.sed_trans==2 %EH67
-        m_eh=parin.Results.sedTrans(1);
-        n_eh=parin.Results.sedTrans(2);
-    elseif flg.sed_trans==3 %AM72
-        a_am=parin.Results.sedTrans(1);
-        theta_c=parin.Results.sedTrans(2);
+    if ~iscell(sed_trans_param)
+        if flg.sed_trans==1 %MPM48
+            a_mpm=parin.Results.sedTrans(1);
+            b_mpm=parin.Results.sedTrans(2);
+            theta_c=parin.Results.sedTrans(3);
+        elseif flg.sed_trans==2 %EH67
+            m_eh=parin.Results.sedTrans(1);
+            n_eh=parin.Results.sedTrans(2);
+        elseif flg.sed_trans==3 %AM72
+            a_am=parin.Results.sedTrans(1);
+            theta_c=parin.Results.sedTrans(2);
+        end
     end
 end
 

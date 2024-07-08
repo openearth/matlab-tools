@@ -14,6 +14,7 @@
 
 function [dt,Tstop,Flmap_dt,MorStt_app]=D3D_adapt_time(dt_des,tim_hydro_des,MorStt_des,MorFac,nparts_res)
 
+nparts_res=max(1,round(nparts_res));
 tim_morpho_des=tim_hydro_des/MorFac; %desired morpho time
 Flmap_dt_des=tim_morpho_des/nparts_res; %desired results interval
 % dt_des=round(dt_des,4);

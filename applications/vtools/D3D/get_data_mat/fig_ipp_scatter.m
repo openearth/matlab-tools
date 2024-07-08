@@ -52,7 +52,28 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
+if isfield(in_p,'do_log')==0
+    in_p.do_log=0;
+end
+if isfield(in_p,'xlims')==0
+    in_p.xlims=NaN;
+end
+if isfield(in_p,'ylims')==0
+    in_p.ylims=NaN;
+end
+if isfield(in_p,'do_axis_equal')==0
+    in_p.do_axis_equal=0;
+end
+if isfield(in_p,'do_11_line')==0
+    in_p.do_11_line=0;
+end
+in_p=isfield_default(in_p,'leg_type',1);
 
+[xlims,ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.x,in_p.y);
+%because axis equal below:
+aux=[min([xlims(:);ylims(:)]),max([xlims(:);ylims(:)])];
+in_p.xlims=aux;
+in_p.ylims=aux;
 v2struct(in_p)
 
 %% check if printing
@@ -81,7 +102,7 @@ prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0
 marg.mt=1.0; %top margin [cm]
 marg.mb=1.5; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
-marg.ml=1.5; %left margin [cm]
+marg.ml=2.0; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
 marg.sv=0.0; %vertical spacing [cm]
 
@@ -89,7 +110,7 @@ marg.sv=0.0; %vertical spacing [cm]
 
 prop.ms1=10; 
 prop.mf1='k'; 
-prop.mt1={'o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'}; 
+prop.mt1={'o','+','*','s','x','_','|','.','d','^','v','>','<','p','h'}; 
 prop.lw1=1;
 prop.ls1='-'; %'-','--',':','-.'
 prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'... {'o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'};
@@ -129,8 +150,8 @@ set(groot,'defaultLegendInterpreter','tex');
 % cbar(kr,kc).label='surface fraction content of fine sediment [-]';
 
 % brewermap('demo')
-nls=numel(ls);
-cmap=brewermap(nls,'set1');
+% nls=numel(ls);
+
 
 %center around 0
 % ncmap=1000;
@@ -256,8 +277,8 @@ cmap=brewermap(nls,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-% lims.y(kr,kc,1:2)=lims_y;
-% lims.x(kr,kc,1:2)=lims_x;
+lims.y(kr,kc,1:2)=ylims;
+lims.x(kr,kc,1:2)=xlims;
 % lims.c(kr,kc,1:2)=lims_c;
 xlabels{kr,kc}=x_lab;
 ylabels{kr,kc}=y_lab;
@@ -284,7 +305,7 @@ end
     %if irregular
 % han.sfig(1,1)=subaxis(npr,npc,1,1,1,1,'mt',mt,'mb',mb,'mr',mr,'ml',ml,'sv',sv,'sh',sh);
 
-    %add axis on top
+    %add axison top
 % kr=1; kc=2;
 % % pos.sfig=[0.25,0.6,0.25,0.25]; % position of first axes    
 % pos.sfig=han.sfig(1,1).Position; % position of first axes    
@@ -360,13 +381,25 @@ end
 %% PLOT
 
 kr=1; kc=1;    
+if do_11_line
 han.p(kr,kc,1)=plot(x,x,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle',prop.ls1,'marker','none');
+end
 [z_uni]=unique(z);
 nu=numel(z_uni);
+cmap=brewermap(nu,'RdYlBu');
 for ku=1:nu
 bol_p=z==z_uni(ku);
-han.p(ku)=scatter(x(bol_p),y(bol_p),prop.ms1,prop.mt1{ku},'parent',han.sfig(kr,kc),'markerfacecolor','b');
-str_leg{ku}=sprintf('nx=%d',z_uni(ku));
+% han.p(ku)=scatter(x(bol_p),y(bol_p),prop.ms1,prop.mt1{ku},'parent',han.sfig(kr,kc),'markerfacecolor','b');
+han.p(ku)=scatter(x(bol_p),y(bol_p),prop.ms1,cmap(ku,:),'parent',han.sfig(kr,kc),'Marker',prop.mt1{ku});
+if leg_type==1
+    str_leg{ku}=sprintf('nx=%d',z_uni(ku));
+else
+    if z_uni(ku)==1
+        str_leg{ku}='D3D4';
+    else
+        str_leg{ku}='FM';
+    end
+end
 end
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
@@ -383,19 +416,24 @@ end
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
-% axis(han.sfig(kr,kc),'equal')
+if do_axis_equal
+axis(han.sfig(kr,kc),'equal')
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+end
 han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
 % han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
-% han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String='c';
+if do_log
+han.sfig(kr,kc).XScale='log';
+han.sfig(kr,kc).YScale='log';
+end
+han.sfig(kr,kc).Title.String=tit_str;
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'

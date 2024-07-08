@@ -47,7 +47,11 @@ ECT_input.flg.particle_activity=0;
 ECT_input.flg.cp=0;
 ECT_input.flg.extra=0;
 ECT_input.flg.pmm=0;
-ECT_input.flg.anl=[10];
+if numel(simdef.sed.dk)==1
+    ECT_input.flg.anl=[10];
+else
+    ECT_input.flg.anl=[6];
+end
     % 1 = fully coupled
     % 2 = quasi-steady
     % 3 = variable active layer thickness
@@ -80,7 +84,17 @@ ECT_input.nu_mom=0;
 ECT_input.Dh=ECT_input.nu_mom; %secondary flow diffusivity [m^2/s]
 ECT_input.diff_hir=NaN(size(ECT_input.gsd)); %diffusion hirano
 
-ECT_input.sedTrans=simdef.tra.sedTrans;
+if numel(simdef.sed.dk)==1
+    %case in which we have a single fraction and after D3D_rework it turns into a cell array.
+    if iscell(simdef.tra.sedTrans) && numel(simdef.tra.sedTrans)==1
+        ECT_input.sedTrans=simdef.tra.sedTrans{1,1};
+    else
+        ECT_input.sedTrans=simdef.tra.sedTrans;
+    end
+else
+    ECT_input.sedTrans=simdef.tra.sedTrans;
+end
+
 % ECT_input.sedTrans=[8,1.5,0.03];
 % ECT_input.sedTrans=[8,1.5,0];
 % ECT_input.sedTrans=[17,0.05];
@@ -105,6 +119,8 @@ ECT_input.hiding=-simdef.mor.ASKLHE;
 ECT_input.u_b=NaN;
 ECT_input.kappa=NaN(size(ECT_input.gsd)); %diffusivity of Gammak
 
-ECT_input.dx=10; %space step [m]
+ECT_input.dx=simdef.grd.dx; %space step [m]
+
+ECT_input.mor_fac=simdef.mor.MorFac;
 
 end %function

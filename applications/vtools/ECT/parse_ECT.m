@@ -92,4 +92,8 @@ if isfield(ECT_input,'diff_hir')==0
     ECT_input.diff_hir=0;
 end
 
+if isfield(ECT_input,'mor_fac')==0
+    ECT_input.mor_fac=1;
+end
+
 end %function

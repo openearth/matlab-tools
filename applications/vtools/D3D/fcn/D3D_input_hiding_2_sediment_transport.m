@@ -20,6 +20,8 @@ switch IHidExp
         hiding=0;
     case 2
         hiding=1;
+    case 3
+        hiding=3;
     otherwise
         error('do')
 end %IFORM

@@ -84,7 +84,7 @@ max_gr_m=reshape(max_gr_p,np1,np2);
 
 %% morphodynamic celerity
 
-eig_r_p(abs(eig_r_p)<1e-16)=NaN;
+% eig_r_p(abs(eig_r_p)<1e-16)=NaN; %why?
 [m_s,p_s]=sort(abs(eig_r_p),2);
 eig_r_morph_p=NaN(size(eig_r_p,1),ne-3);
 for kc=1:nc

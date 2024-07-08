@@ -65,10 +65,6 @@ if isfield(flg_loc,'tol')==0
     flg_loc.tol=30;
 end
 
-%% DO
-
-ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
-
 %% PATHS
 
 nS=numel(simdef);
@@ -78,10 +74,16 @@ fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
 runid=simdef(1).file.runid;
-% simdef(1).file.mat.map_ls_01=fullfile(fdir_mat,'map_ls_01.mat');
-% simdef(1).file.mat.map_ls_01_tim=fullfile(fdir_mat,'map_ls_01_tim.mat');
 
-% simdef(1).file.fig.map_ls_01=fullfile(fdir_fig,'map_ls_01');
+%% DO
+
+ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
+
+%we want to skip this in case we are processing for all simulations (i.e., being called by
+%`plot_all_runs_one_figure` and we do not want to do it (i.e., `do_all_s`=0).
+if nS>1 
+    ret=gdm_do_mat(fid_log,flg_loc,tag,'do_all_s'); if ret; return; end
+end
 
 %% TIME
 
@@ -123,7 +125,8 @@ for kpli=1:npli %variable
         varname=flg_loc.var{kvar};
         [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef(1));
         
-        %time 1 for reference
+        %time 1 of simulation 1 for reference
+        %it is up to you to be sure that it is the same for all simulations!
         if flg_loc.do_diff || flg_loc.plot_val0 %difference in time
             fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname);

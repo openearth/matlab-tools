@@ -73,7 +73,7 @@ F_sin=@(p,x)p(1)*sin(p(2)*x+p(3))+p(4);
 F_obj=@(p)sum((y-F_sin(p, x)).^2);
 
 %optimization using fminsearch
-options=optimset('display','final','TolX',1e-12,'TolFun',1e-12);
+options=optimset('display','none','TolX',1e-12,'TolFun',1e-12); %'final'
 ABCD=fminsearch(F_obj,ABCD_0,options);
 
 %Goodness of fit (maybe change to `statistics_V`)

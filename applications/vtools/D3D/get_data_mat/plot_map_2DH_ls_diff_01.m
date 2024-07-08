@@ -117,8 +117,8 @@ for kt=kt_v %time
     for kpli=1:npli %pli
         
         fpath_pli=flg_loc.pli{kpli,1};
-        [~,pliname,~]=fileparts(fpath_pli);
-        pliname=strrep(pliname,' ','_');
+        pliname=gdm_pli_name(fpath_pli);
+
         for kvar=1:nvar %variable
            
             varname=flg_loc.var{kvar};

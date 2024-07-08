@@ -47,7 +47,14 @@ in_2D.pert_anl=1;
 
 %% CALL
 
+%run a script with ECT input
 run(path_input);
+
+%run a function wtih D3D input (preferred)
+simdef=input_D3D_01;
+ECT_input=D3D_input_2_ECT_input(simdef);
+
+
 in_2D.flg=ECT_input.flg;
 
 [ECT_matrices,sed_trans]=call_ECT(ECT_input);

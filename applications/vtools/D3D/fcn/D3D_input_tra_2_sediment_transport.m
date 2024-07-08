@@ -15,11 +15,16 @@
 
 function tra=D3D_input_tra_2_sediment_transport(IFORM)
 
-switch IFORM
-    case 4
-        tra=1;
-    otherwise
-        error('do')
-end %IFORM
+nf=numel(IFORM);
+tra=NaN(size(IFORM));
+
+for kf=1:nf
+    switch IFORM(kf)
+        case 4
+            tra(kf)=1;
+        otherwise
+            error('do')
+    end %IFORM
+end %kf
 
 end %function

@@ -32,7 +32,7 @@
 %   -in_plot_sedtrans = structure with input for sediment transport (see `D3D_gdm`) [struct]
 %   -Qseries      = matrix with input hydrograph [double(nh,2)]:
 %       - (:,1)  = discharge (needs to match `MorFac`)
-%       - (:,2)  = time [min]
+%       - (:,2)  = time [s]
 %   -MorFac      = morphodynamic accelerator factor to apply to the time associated to a discharge [double(nmf,2)] (if NaN, not applied):
 %       - (:,1)  = discharge (needs to match `Qseries`)
 %       - (:,2)  = MorFac [-]
@@ -287,8 +287,7 @@ for ksim=1:nsim
 
     %add time to time-vector
     tim(ksim)=Qseries(ksim,2).*MorFac_val;
-    tim_s=tim(ksim)*60; %conversion to seconds (input is in minutes)
-    tim_dtime(ksim+1)=tim_dtime(ksim)+seconds(tim_s);
+    tim_dtime(ksim+1)=tim_dtime(ksim)+seconds(tim(ksim));
 
     %disp
     messageOut(NaN,sprintf('Copied %4.1f %%',ksim/(nsim+1)*100))
