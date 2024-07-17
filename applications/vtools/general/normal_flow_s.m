@@ -37,7 +37,7 @@ switch hydraulic_radius
     otherwise
         error('Implement.')
 end
-var_out=fzero(F,1);
+var_out=fzero(F,1e-3);
 
 end %function
 

@@ -198,10 +198,12 @@ for kbr=1:nbr %branches
                     in_p.val=data_T(:,:,kt);
                     in_p.is_diff=0;
                     str_dir='val';
+                    in_p.val0=data_0;
                 elseif kdiff==2
                     in_p.val=data_T(:,:,kt)-data_0(:,:);
                     in_p.is_diff=1;
                     str_dir='diff';
+                    in_p.val0=zeros(size(in_p.val));
                 end
 
                 fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);

@@ -18,24 +18,18 @@ function plot_map_2DH_ls_01(fid_log,flg_loc,simdef)
 
 %% PARSE
 
-if isfield(flg_loc,'fig_print')==0
-    flg_loc.fig_print=1;
-end
-if isfield(flg_loc,'do_staircase')==0
-    flg_loc.do_staircase=0;
-end
-if isfield(flg_loc,'do_all_t')==0
-    flg_loc.do_all_t=0;
-end
-if isfield(flg_loc,'do_all_s')==0
-    flg_loc.do_all_s=0;
-end
-if isfield(flg_loc,'do_all_s_2diff')==0 %plot all runs in same figure making the difference between each of 2 simulations
-    flg_loc.do_all_s_2diff=0;
-end
-if isfield(flg_loc,'do_movie')==0 
-    flg_loc.do_movie=0;
-end
+flg_loc=isfield_default(flg_loc,'fig_print',1);
+flg_loc=isfield_default(flg_loc,'do_staircase',0);
+flg_loc=isfield_default(flg_loc,'do_all_t',0);
+flg_loc=isfield_default(flg_loc,'do_all_s',0);
+flg_loc=isfield_default(flg_loc,'do_all_s_2diff',0); %plot all runs in same figure making the difference between each of 2 simulations
+flg_loc=isfield_default(flg_loc,'do_movie',0);
+flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
+flg_loc=isfield_default(flg_loc,'ylims_diff_t',flg_loc.ylims);
+flg_loc=isfield_default(flg_loc,'do_diff',1);
+flg_loc=isfield_default(flg_loc,'tim_type',1);
+flg_loc=isfield_default(flg_loc,'tol',30);
+flg_loc=isfield_default(flg_loc,'plot_val0',0);
 
 if isfield(flg_loc,'do_rkm')==0
     if isfield(flg_loc,'fpath_rkm')
@@ -43,26 +37,6 @@ if isfield(flg_loc,'do_rkm')==0
     else
         flg_loc.do_rkm=0;
     end
-end
-
-if isfield(flg_loc,'ylims')==0
-    flg_loc.ylims=[NaN,NaN];
-    flg_loc.ylims_diff_t=[NaN,NaN];
-end
-if isfield(flg_loc,'ylims_diff_t')==0
-    flg_loc.ylims_diff_t=flg_loc.ylims;
-end
-
-if isfield(flg_loc,'do_diff')==0
-    flg_loc.do_diff=1;
-end
-
-if isfield(flg_loc,'tim_type')==0
-    flg_loc.tim_type=1;
-end
-
-if isfield(flg_loc,'tol')==0
-    flg_loc.tol=30;
 end
 
 %% PATHS
