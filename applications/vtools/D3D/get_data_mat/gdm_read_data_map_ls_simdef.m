@@ -127,9 +127,10 @@ switch varname
 %                 data.val=hypot(data_u.val,data_v.val);
                 data.val=data.vel_mag;
             case {2,4}
-                error('check')
-                data_x=gdm_read_data_map_ls(fdir_mat,fpath_map,'sxtot',varargin{:});
-                data_y=gdm_read_data_map_ls(fdir_mat,fpath_map,'sytot',varargin{:});
+                data_x=gdm_read_data_map_ls(fdir_mat,fpath_map,'sbcx',varargin{:});
+                data_y=gdm_read_data_map_ls(fdir_mat,fpath_map,'sbcy',varargin{:});
+                data=data_x;
+                data.val=hypot(data_x.val,data_y.val);
         end
     case {'lyrfrac'}
         switch simdef.D3D.structure

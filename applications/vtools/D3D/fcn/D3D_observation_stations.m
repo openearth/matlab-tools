@@ -12,6 +12,15 @@
 %
 %Read observation stations name and location
 
+%E.G.:
+%obs=D3D_observation_stations(fpath_his);
+% figure
+% hold on
+% scatter(obs.x,obs.y)
+% for ko=1:numel(obs.name)
+%     text(obs.x(ko),obs.y(ko),obs.name{ko})
+% end
+
 function obs_sta=D3D_observation_stations(path_his,varargin)
 
 % parin=inputParser;

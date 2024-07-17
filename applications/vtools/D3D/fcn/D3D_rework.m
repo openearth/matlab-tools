@@ -837,49 +837,45 @@ end
 %In D3D4 we correct. 
 %In FM with Dpuopt=1 we correct.
 %In FM with Dpuopt=2 it is one full dx, not half. 
-switch simdef.D3D.structure
-    case 1
-        if simdef.mdf.izbndpos==0 
-            simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
-        end
-    case 2
-        if simdef.mdf.izbndpos==0 && simdef.mdf.Dpuopt==1
-            simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
-        elseif simdef.mdf.Dpuopt==2
-            simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx*simdef.ini.s; %displacement of boundary condition to ghost node
-        end
-end
-    %correcting for dpuopt. 
-if simdef.D3D.structure==1
-    %The truth is that I am not sure why I do not need it for FM. 
+if simdef.mdf.izbndpos==0 
+    %This correction only makes sense in idealistic cases (normal flow, sloping case) maybe.
+    switch simdef.D3D.structure
+        case 1
+            if simdef.mdf.Dpuopt==1
+                simdef.bct.etaw=simdef.bct.etaw;
+                %If bed level at velocity points is 'min', we do not correct the dowsntream water level.
+                %In this way:
+                % -The velocity at velocity points is exact.
+                % -The water depth at cell centres is $dh$ larger than exact due to upwinding, being $dh=s*dx/2$.
+                % -The velocity at water level points for morphodynamics is smaller than exact due to incorrect water depth at cell centres. It is $u0/h_wrong$.
+                %there is a shift of half a cell in the water level at velocity points. To start under normal flow, we correct for that shift in the BC. 
     
-    %This correction only makes sense in idealistic cases maybe. If bed level at velocity points is 'min' in an ideal case (normal flow, sloping case),
-    %there is a shift of half a cell in the water level at velocity points. To start under normal flow, we correct for that shift in the BC. 
-    if simdef.mdf.Dpuopt==1
-        warning('correction of BC')
-        simdef.bct.etaw=simdef.bct.etaw+simdef.grd.dx/2*simdef.ini.s;
-
-        %as a consequence, the flow depth at the water level point is larger than it should and the velocity smaller. We correct the sedimen transport rate. 
-        %ACal_corrected=ACal*qb_intended/qb_wrong
-        %qb_wrong: sediment transport with the wrong velocity at water level point
-        for kf=1:nf
-            switch simdef.tra.IFORM(kf)
-                case 4
-                    if simdef.tra.sedTrans{kf}(3)==0
-                        warning('correction ACal')
-                        h_wrong=simdef.ini.h+simdef.ini.s*simdef.grd.dx/2;
-                        u_wrong=simdef.bct.Q(1)/simdef.grd.B/h_wrong;
-                        simdef.tra.sedTrans{kf}(1)=simdef.tra.sedTrans{kf}(1)*(simdef.ini.u/u_wrong)^(simdef.tra.sedTrans{kf}(2)*2);
-                    else
-                        messageOut(NaN,'A correction should be applied to <ACal>')
-                    end
-                otherwise
-                    messageOut(NaN,'A correction should be applied to <ACal>')
+                %ACal_corrected=ACal*qb_intended/qb_wrong
+                %qb_wrong: sediment transport with the wrong velocity at water level point
+                h_wrong=simdef.ini.h+simdef.ini.s*simdef.grd.dx/2;
+                simdef=D3D_correct_Acal(simdef,h_wrong);
+            else
+                simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
             end
-        end
-    end
-end
+            
+        case 2
+            if simdef.mdf.Dpuopt==1
+                simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+            elseif simdef.mdf.Dpuopt==2
+                simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx*simdef.ini.s; %displacement of boundary condition to ghost node
+                %If bed level is "mean", we shift one dx down. As a consequence:
+                % -The velocity at velocity points is exact.
+                % -The water depth at cell centre is $dh$ smaller than exact due to upwinding, being $dh=s*dx/2$.
+                % -The velocity at cell centers is exact because it is the same as the upwind velocity at velocity points.
+                % -The velocity at water level points for morphodynamics is smaller than exact due to incorrect water depth at cell centres. It is $u0/h_wrong$.
 
+                %ACal_corrected=ACal*qb_intended/qb_wrong
+                %qb_wrong: sediment transport with the wrong velocity at water level point
+                h_wrong=simdef.ini.h-simdef.ini.s*simdef.grd.dx/2;
+                simdef=D3D_correct_Acal(simdef,h_wrong);
+            end
+    end
+end %izbndpos
 
 %add extra time with same value as last in case the last time step gets outside the domain
 if simdef.D3D.structure==2
@@ -993,5 +989,27 @@ bcc_tab.Parameter(3).Unit='[kg/m3]';
 %data
 bcc_tab.Data=zeros(2,3);
 bcc_tab.Data(2,1)=simdef.mdf.Tstop;
+
+end
+%%
+
+function simdef=D3D_correct_Acal(simdef,h_wrong)
+
+nf=numel(simdef.sed.dk);
+
+for kf=1:nf
+    switch simdef.tra.IFORM(kf)
+        case 4
+            if simdef.tra.sedTrans{kf}(3)==0
+                warning('correction ACal')
+                u_wrong=simdef.bct.Q(1)/simdef.grd.B/h_wrong;
+                simdef.tra.sedTrans{kf}(1)=simdef.tra.sedTrans{kf}(1)*(simdef.ini.u/u_wrong)^(simdef.tra.sedTrans{kf}(2)*2);
+            else
+                messageOut(NaN,'A correction should be applied to <ACal>')
+            end
+        otherwise
+            messageOut(NaN,'A correction should be applied to <ACal>')
+    end
+end
 
 end
