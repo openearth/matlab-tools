@@ -42,6 +42,9 @@ else
     fid=fopen(path_log,'w');
 end
 
+assert (exist(nc1) == 2,sprintf('Cannot find file: %s',nc1))
+assert (exist(nc2) == 2,sprintf('Cannot find file: %s',nc2))
+
 messageOut(fid,sprintf('File 1: %s',nc1));
 messageOut(fid,sprintf('File 2: %s',nc2));
 
