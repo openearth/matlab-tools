@@ -34,7 +34,7 @@ dX=NaN(1,nx);
 for kx=1:nx
     idx_inf=find(cFak(:,kx)<=dlim_frac,1,'last');
 %     dX(1,kx)=interp1(cFak(idx_inf:idx_inf+1,kx),dint(idx_inf:idx_inf+1),dlim_frac); %slowest thing in the world
-    dX(1,kx)=dint(idx_inf)+diff(dint(idx_inf:idx_inf+1))/diff(cFak(idx_inf:idx_inf+1))*(dlim_frac-cFak(idx_inf));
+    dX(1,kx)=dint(idx_inf)+diff(dint(idx_inf:idx_inf+1))/diff(cFak(idx_inf:idx_inf+1,kx))*(dlim_frac-cFak(idx_inf,kx));
 end
 
 end %function
