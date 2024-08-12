@@ -204,6 +204,8 @@ data.w_obs=w_obs;
 data.nx=simdef_loc.simdef.ini.noise_Lb/simdef_loc.simdef.grd.dx;
 data.software=simdef_loc.simdef.D3D.structure;
 data.noise=simdef_loc.simdef.ini.etab_noise;
+data.Dpuopt=simdef_loc.simdef.mdf.Dpuopt;
+data.UpwindBedload=simdef_loc.simdef.mor.UpwindBedload;
 
 end %function
 
@@ -211,24 +213,8 @@ end %function
 
 function plot_data_all(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p)
 
-bol_pert=[data_all.noise]~=0;
-
-for ksoft=1:2 %D3D4 and FM
-    switch ksoft
-        case 1
-            str_soft='D3D4';
-        case 2
-            str_soft='FM';
-    end
-
-    bol_soft=[data_all.software]==ksoft;
-    bol_get=bol_soft & bol_pert;
-
-    data_get=data_all(bol_get);
-
-    plot_1_software(fdir_fig,data_get,str_soft,in_p,tri,c_morph_p,max_gr_p,lambda_p,beta_p);
-
-end %ksoft
+%for each
+plot_each_case(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p);
 
 %comparison between software
 plot_software(fdir_fig,data_all,in_p);
@@ -350,14 +336,17 @@ nx_v=[data_all.nx];
 nxu=unique(nx_v);
 nu=numel(nxu);
 
-for ku=1:nu
+for ku=1:nu %resolution
+
     bol_nx=nx_v==nxu(ku);
     bol_get=bol_pert & bol_nx;
 
     data_get=data_all(bol_get);
 
-    for kv=1:2
+    for kv=1:2 %growth rate and celerity
         
+        %%% HERE!!!! filter for each software, scheme, and dpuopt
+
         [d_anl,d_obs,str,str_u,str_f]=switch_celerity_growth_rate(kv,data_get);
         str_f=sprintf('%s_soft_nx%02d',str_f,ku);
 
@@ -408,3 +397,49 @@ end
 str_f=strrep(str,' ','_');
 
 end
+
+%%
+
+function plot_each_case(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p)
+
+bol_pert=[data_all.noise]~=0;
+
+for ksoft=1:2 %D3D4 and FM
+    for kscheme=0:1
+        for kdpuopt=1:2
+
+%             data_get=get_data_swith(ksoft,kscheme,kdpuopt)
+            switch ksoft
+                case 1
+                    str_soft='D3D4';
+                case 2
+                    str_soft='FM';
+            end
+            bol_soft=[data_all.software]==ksoft;
+
+            switch kscheme
+                case 0
+                    str_scheme='cen';
+                case 1
+                    str_scheme='upw';
+            end
+            bol_scheme=[data_all.UpwindBedload]==kscheme;
+
+            switch kdpuopt
+                case 1
+                    str_dpuopt='min';
+                case 2
+                    str_dpuopt='mean';
+            end
+            bol_dpuopt=[data_all.Dpuopt]==kdpuopt;
+            
+            str_plot=sprintf('%s_%s_%s',str_soft,str_scheme,str_dpuopt);
+            bol_get=bol_pert & bol_soft & bol_scheme & bol_dpuopt;
+            data_get=data_all(bol_get);
+        
+            plot_1_software(fdir_fig,data_get,str_plot,in_p,tri,c_morph_p,max_gr_p,lambda_p,beta_p);
+        end %kdpuopt
+    end %scheme
+end %ksoft
+
+end %function
