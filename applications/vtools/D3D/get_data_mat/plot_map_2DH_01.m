@@ -212,9 +212,7 @@ for kvar=1:nvar %variable
                         error('It may be a 3D simulation. Work out this case.')
                     end
                     vec_x=squeeze(data_uv.data.vel_x); 
-                    vec_x=reshape(vec_x,[],1); %it is permuted in 'fig_map_sal_01`
                     vec_y=squeeze(data_uv.data.vel_y);
-                    vec_y=reshape(vec_y,[],1); %it is permuted in 'fig_map_sal_01`
                 case {2,4,5}
                     if size(data_uv.data.vel_x,3)>1 %3D simulation, a single direction must be given for arrows
                         %ATTENTION!
@@ -230,6 +228,9 @@ for kvar=1:nvar %variable
                 otherwise
                     error('I do not know how to plot vectors for simulation type %d',simdef.D3D.Structure)
             end
+            %It must be a column vector [1,np]
+            vec_x=reshape(vec_x,1,[]); 
+            vec_y=reshape(vec_y,1,[]); 
             in_p.vec_x=vec_x;
             in_p.vec_y=vec_y;
         end

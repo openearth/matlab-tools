@@ -572,7 +572,7 @@ end
 if plot_vector
     %before it was `gridInfo.Xcen` which was a column vector. Now it is `gridInfo_v.Xcen` which is 
     %a row vector. I hope nothing is broken.
-    quiver(gridInfo_v.Xcen,gridInfo_v.Ycen,vec_x',vec_y',vector_scale,'parent',han.sfig(kr,kc),'color',vector_color)
+    quiver(gridInfo_v.Xcen,gridInfo_v.Ycen,vec_x,vec_y,vector_scale,'parent',han.sfig(kr,kc),'color',vector_color)
 end
 if plot_rkm
     nrkm=numel(rkm{1,1});
