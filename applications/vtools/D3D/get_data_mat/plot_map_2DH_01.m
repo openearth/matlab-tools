@@ -136,9 +136,11 @@ end
 switch flg_loc.do_fxw
     case 1
         in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped
-        
     case 2
         in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef,'fxw');
+end
+if isfield(in_p,'fxw') && ~isstruct(in_p.fxw) && isnan(in_p.fxw)
+    in_p=rmfield(in_p,'fxw');
 end
 
 ktc=0;

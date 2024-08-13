@@ -24,6 +24,14 @@ parse(parin,varargin{:});
 
 do_load=parin.Results.do_load;
 
+%% CHECK
+
+if isfield(simdef.file,'shp')==0
+    data=NaN;
+    messageOut(fid_log,'There is no shp in simdef.file structure');
+    return
+end
+
 %% PATHS
 
 fname_fxw=sprintf('%s_snapped.mat',tag);
