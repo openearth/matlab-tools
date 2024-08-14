@@ -9,7 +9,7 @@ end
 
 %% CMEMS?
 if EHY_isCMEMS(inputFile)
-    [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile,OPT);
+    [Zcen_int,Zcen_cen,wl,bl] = EHY_getMapModelData_construct_zcoordinates_CMEMS(inputFile);
     return
 end
 

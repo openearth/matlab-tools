@@ -11,7 +11,7 @@ if strcmp(ext,'.nc')
     infonc = ncinfo(fname);
     if ~isempty(infonc.Attributes)
         ind = strmatch('institution',{infonc.Attributes.Name},'exact');
-        if ~isempty(ind) && strcmpi('MERCATOR OCEAN',infonc.Attributes(ind).Value)
+        if ~isempty(ind) && ~isempty(findstr(lower('MERCATOR OCEAN'),lower(infonc.Attributes(ind).Value)))
             TF = true;
         end
     end

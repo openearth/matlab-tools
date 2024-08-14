@@ -58,7 +58,6 @@ else
 end
 
 %% get underlayers elevation
-
 if ~isempty(dimsInd.bed_layers) && dims(dimsInd.bed_layers).sizeOut > 1
     [Data.Zint,no_bed_layers]=EHY_getMapModelData_construct_Zint_bed(inputFile,Data.modelType,OPT);   
 else
@@ -113,7 +112,7 @@ if isfield(Data,'face_nodes')
     if isfield(Data,'val')
         switch numel(size(Data.val))
             case 2
-                if numel(Data.val)==numel(Data.Xcen) %data at faces
+                if ismember(numel(Data.Xcen), size(Data.val)) %data at faces
                     val = arbcross(arb,{'FACE' permute(Data.val,[2 1])});
                 else %data at edges
                     val = arbcross(arb,{'EDGE' permute(Data.val,[2 1])});

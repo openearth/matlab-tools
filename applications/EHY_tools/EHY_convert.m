@@ -380,7 +380,7 @@ end
         end
         output = [x y];
         if OPT.saveOutputFile
-            if isfield(OPT,'fromEPSG') & isfield(OPT,'toEPSG') % convert if wanted
+            if isfield(OPT,'fromEPSG') && isfield(OPT,'toEPSG') && ~isempty(OPT.fromEPSG) && ~isempty(OPT.toEPSG)
                 [x,y]=convertCoordinates(x,y,'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
             end
             if isnan(x(1)); x(1)=[];y(1)=[]; end; if isnan(x(end)); x(end)=[];y(end)=[]; end
@@ -1690,7 +1690,7 @@ if OPT.fromEPSG~=OPT.toEPSG
             output=importdata(inputFile);
             [output(:,1),output(:,2)]=convertCoordinates(output(:,1),output(:,2),'CS1.code',OPT.fromEPSG,'CS2.code',OPT.toEPSG);
             if OPT.saveOutputFile
-                dlmwrite(outputFile,output,'delimiter',' ','precision','%20.7f');
+                dlmwrite(outputFile,output,'delimiter',' ','precision','%11.7f');
             end
         case {'.xyn'}
             xyn=delft3d_io_xyn('read',inputFile);
