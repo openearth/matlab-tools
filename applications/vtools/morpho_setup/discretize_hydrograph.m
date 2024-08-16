@@ -25,7 +25,7 @@
 %   - fpath_dir_out        = path to folder to write the output file.
 %   - dt                   = time step for resampling the input time series before matching with the discharges in `Q_steady`. [duration(1,1)]
 
-function discretize_hydrograph(time_limits,Q_steadyMorfac,varargin)
+function [tim_dt,Q_disc_join]=discretize_hydrograph(time_limits,Q_steadyMorfac,varargin)
 
 %% PARSE
 

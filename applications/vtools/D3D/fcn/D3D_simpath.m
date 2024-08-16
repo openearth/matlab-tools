@@ -171,7 +171,7 @@ file.mdfid=file.runid; %runid may be rewriten in `D3D_gdm`
 %% type of simulation
 
 if isfield(simdef.file,'map')
-    [ismor,is1d,str_network1d,issus]=D3D_is(simdef.file.map);
+    [ismor,is1d,str_network1d,issus,~,is3d]=D3D_is(simdef.file.map);
 else
     ismor=NaN;
     is1d=NaN;
@@ -181,6 +181,7 @@ end
 
 simdef.D3D.ismor=ismor;
 simdef.D3D.is1d=is1d;
+simdef.D3D.is3d=is3d;
 simdef.D3D.str_network1d=str_network1d;
 simdef.D3D.issus=issus;
 

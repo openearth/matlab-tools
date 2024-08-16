@@ -39,6 +39,11 @@ if isfield(flg_loc,'do_3D')==0
     flg_loc.do_3D=0;
 end
 
+if isfield(flg_loc,'xlims')==0
+    flg_loc.xlims=[NaN,NaN];
+    flg_loc.ylims=[NaN,NaN];
+end
+
 if isfield(flg_loc,'clims_diff_s')==0
     flg_loc.clims_diff_s=[NaN,NaN];
 end
@@ -90,18 +95,17 @@ nt=numel(time_dnum_ref);
 nclim=size(flg_loc.clims_diff_s,1);
 nvar=numel(flg_loc.var);
 kdiff_v=gdm_kdiff_v(flg_loc);
+nxlim=size(flg_loc.xlims,1);
 
 %%
 
 % max_tot=max(data(:));
-[xlims,ylims]=D3D_gridInfo_lims(gridInfo);
+[xlims_all,ylims_all]=D3D_gridInfo_lims(gridInfo);
 
 %figures
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.xlims=xlims;
-in_p.ylims=ylims;
 in_p.gridInfo=gridInfo_ref;
 in_p=gdm_read_plot_along_rkm(in_p,flg_loc);
 
@@ -151,6 +155,10 @@ for kvar=1:nvar %variable
 
         fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
         data_ref=load(fpath_mat_tmp,'data');
+        if any(simdef.D3D.structure==[2,4]) && sum(size(data_ref.data)==1)==0 || size(data_ref.data,3)>1 %in D3D4 2D data has matrix form
+            messageOut(fid_log,sprintf('Cannot plot variable with more than 1 dimension: %s',var_str))
+            continue
+        end
 
         [val_diff,val,val_ref]=gdm_match_times_diff_val_2D(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref,layer,var_idx{kvar});
         %OUTPUT:
@@ -164,7 +172,17 @@ for kvar=1:nvar %variable
         
         for kdiff=kdiff_v %type of difference
             
-            kxlim=1; %2DO make loop
+            for kxlim=1:nxlim
+                %xlim
+                xlims=flg_loc.xlims(kxlim,:);
+                ylims=flg_loc.ylims(kxlim,:);
+                if isnan(xlims(1))
+                    xlims=xlims_all;
+                    ylims=ylims_all;
+                end
+                in_p.xlims=xlims;
+                in_p.ylims=ylims;
+
             for kclim=1:nclim
 
                 %already passing difference
@@ -211,6 +229,7 @@ for kvar=1:nvar %variable
                 end
 
             end %kclim
+            end %kxlim
         end %kdiff
         
         %% plot along rkm

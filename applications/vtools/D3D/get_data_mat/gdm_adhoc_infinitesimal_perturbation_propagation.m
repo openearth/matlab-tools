@@ -35,11 +35,11 @@ simdef_loc=load(fullfile(fpath_simdef,'simdef.mat'),'simdef');
 ECT_input=D3D_input_2_ECT_input(simdef_loc.simdef); %convert simdef to ECT_input
 [ECT_matrices,sed_trans]=call_ECT(ECT_input);
 
-in_2D.lims_lwy=[1,80];
-in_2D.lims_lwx=[36,1000];
+in_2D.lims_lwy=[10,80];
+in_2D.lims_lwx=[30,1000];
 
 [eig_r,eig_i,kwx_v,kwy_v,kw_m]=twoD_study(ECT_matrices,in_2D);
-[kw_p,kwx_p,kwy_p,kwx_m,kwy_m,lwx_v,lwy_v,lwx_p,lwy_p,lwx_m,lwy_m,lambda_p,beta_p,tri,max_gr_p,max_gr_m,eig_r_p,c_morph_p,c_morph_m]=derived_variables_twoD_study(ECT_input.h,eig_r,eig_i,kwx_v,kwy_v,kw_m);
+[kw_p,kwx_p,kwy_p,kwx_m,kwy_m,lwx_v,lwy_v,lwx_p,lwy_p,lwx_m,lwy_m,lambda_p,beta_p,tri,max_gr_p,max_gr_m,eig_r_p,c_morph_p,c_morph_m,tri_dim]=derived_variables_twoD_study(ECT_input.h,eig_r,eig_i,kwx_v,kwy_v,kw_m);
 
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
@@ -73,7 +73,7 @@ end %ks
 ks=1;
 fdir_fig=fullfile(simdef(ks).file.fig.dir,tag_fig,tag_serie); 
 
-plot_data_all(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p);
+plot_data_all(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p,tri_dim,lwx_p,lwy_p);
 
 end %function
 
@@ -211,38 +211,44 @@ end %function
 
 %%
 
-function plot_data_all(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p)
+function plot_data_all(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p,tri_dim,lwx_p,lwy_p)
 
-%for each
+plot_domain(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p,tri_dim,lwx_p,lwy_p)
+
 plot_each_case(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p);
 
-%comparison between software
 plot_software(fdir_fig,data_all,in_p);
 
 end %function
 
 %% 
 
-function plot_1_software(fdir_fig,data_all,str_soft,in_p,tri,c_morph_p,max_gr_p,lambda_p,beta_p)
+function plot_1_software(fdir_fig,data_all,in_p,tri,c_morph_p,max_gr_p,lambda_p,beta_p)
 
-in_p.tit_str=str_soft;
+[z,tit_str,str_leg]=select_data_write_string(data_all);
+in_p.z=z;
+in_p.tit_str=tit_str;
+in_p.leg_type=NaN;
+in_p.str_leg=str_leg;
 
 for kv=1:2 %celerity and wave growth
 
     [d_anl,d_obs,str,str_u,str_f]=switch_celerity_growth_rate(kv,data_all);
 
-    str_f=sprintf('%s_%s',str_f,str_soft);
+    str_f=sprintf('%s_%s',str_f,clean_str(tit_str));
 
     %%
     in_p.do_11_line=1;
+    in_p.x=d_anl;
+    in_p.y=d_obs;
+    in_p.fig_size=[0,0,14,8];
+    in_p.tolx=[0,0];
+
     for kae=0:1
         in_p.do_axis_equal=kae;
     
         %scatter comparing observed against predicted celerity
         in_p.fname=fullfile(fdir_fig,sprintf('%s_ae%d',str_f,kae));
-        in_p.x=d_anl;
-        in_p.y=d_obs;
-        in_p.z=[data_all.nx];
         in_p.x_lab=sprintf('analytical %s %s',str,str_u);
         in_p.y_lab=sprintf('observed %s %s',str,str_u);
         
@@ -250,62 +256,57 @@ for kv=1:2 %celerity and wave growth
     
     end %kae
 
-    %scatter comparing error between observed and predicted celerity in proportioanal terms as a function of the wavelength
-    in_p.fname=fullfile(fdir_fig,sprintf('%s_error_rel',str_f));
+    in_p.fig_size=[0,0,14,8];
+    in_p.tolx=[-35,100];
     in_p.x=[data_all.Lb];
-    in_p.y=abs((d_obs-d_anl)./d_anl*100);
-    in_p.z=[data_all.nx];
-    in_p.x_lab='wave length [m]';
-    in_p.y_lab=sprintf('error in absolute %s [%%]',str);
     in_p.do_axis_equal=0;
     in_p.do_11_line=0;
+
+    %scatter comparing error between observed and predicted celerity in proportioanal terms as a function of the wavelength
+    in_p.fname=fullfile(fdir_fig,sprintf('%s_error_rel',str_f));
+    in_p.y=abs((d_obs-d_anl)./d_anl*100);
+    in_p.x_lab='wave length [m]';
+    in_p.y_lab=sprintf('error in absolute %s [%%]',str);
     
     fig_ipp_scatter(in_p);
     
     %scatter comparing error between observed and predicted celerity in absolute terms as a function of the wavelength
     in_p.fname=fullfile(fdir_fig,sprintf('%s_error_abs',str_f));
-    in_p.x=[data_all.Lb];
     in_p.y=abs(d_obs-d_anl);
-    in_p.z=[data_all.nx];
     in_p.x_lab='wave length [m]';
     in_p.y_lab=sprintf('error in absolute %s %s',str,str_u);
-    in_p.do_axis_equal=0;
-    in_p.do_11_line=0;
     
     fig_ipp_scatter(in_p);
     
     %scatter comparing the celerity to the wavelength
     in_p.fname=fullfile(fdir_fig,sprintf('%s_Lb',str_f));
-    in_p.x=[data_all.Lb];
     in_p.y=d_obs;
-    in_p.z=[data_all.nx];
     in_p.x_lab='wave length [m]';
     in_p.y_lab=sprintf('observed %s %s',str,str_u);
-    in_p.do_axis_equal=0;
-    in_p.do_11_line=0;
     
     fig_ipp_scatter(in_p);
 
     %scatter comparing lambda-beta-celerity for analytical (left) and observed (right) 
-    beta_obs=[data_all.beta];
-    lambda_obs=[data_all.lambda];
-    nx=[data_all.nx];
-    mnx=max(nx); %maximum resolution results
-    bol_g=nx==mnx;
+%     beta_obs=[data_all.beta];
+%     lambda_obs=[data_all.lambda];
+%     nx=[data_all.nx];
+%     mnx=max(nx); %maximum resolution results
+%     bol_g=nx==mnx;
 
-    in_p.fname=fullfile(fdir_fig,sprintf('%s_domain',str_f));
-    in_p.lambda_p=lambda_p;
-    in_p.beta_p=beta_p;
-    in_p.max_gr_p=max_gr_p;
-    in_p.c_morph_p=c_morph_p;
-    in_p.tri=tri;
-    in_p.beta_s=beta_obs(bol_g);
-    in_p.lambda_s=lambda_obs(bol_g);
-    in_p.d_obs=d_obs(bol_g);
-    in_p.d_anl=d_anl(bol_g);
-    in_p.str=sprintf('%s %s',str,str_u);
-    
-    fig_twoD_nondim_anl_obs(in_p)
+    %domain for each case. Not 
+%     in_p.fname=fullfile(fdir_fig,sprintf('%s_domain',str_f));
+%     in_p.lambda_p=lambda_p;
+%     in_p.beta_p=beta_p;
+%     in_p.max_gr_p=max_gr_p;
+%     in_p.c_morph_p=c_morph_p;
+%     in_p.tri=tri;
+%     in_p.beta_s=beta_obs(bol_g);
+%     in_p.lambda_s=lambda_obs(bol_g);
+%     in_p.d_obs=d_obs(bol_g);
+%     in_p.d_anl=d_anl(bol_g);
+%     in_p.str=sprintf('%s %s',str,str_u);
+%     
+%     fig_twoD_nondim_anl_obs(in_p)
 
     %scatter comparing lx-B-celerity for analytical (left) and observed (right)
 %     in_p.fname=fullfile(fdir_fig,sprintf('%s_domain_dim',str_f));
@@ -330,32 +331,31 @@ end %function
 
 function plot_software(fdir_fig,data_all,in_p)
 
-bol_pert=[data_all.noise]~=0;
+bol_mat=create_bol_mat(data_all);
 
-nx_v=[data_all.nx];
-nxu=unique(nx_v);
-nu=numel(nxu);
+np=size(bol_mat,1);
 
-for ku=1:nu %resolution
-
-    bol_nx=nx_v==nxu(ku);
-    bol_get=bol_pert & bol_nx;
-
-    data_get=data_all(bol_get);
-
+for kp=1:np    
     for kv=1:2 %growth rate and celerity
-        
-        %%% HERE!!!! filter for each software, scheme, and dpuopt
+       
+        %select data
+        data_get=data_all(bol_mat(kp,:));
 
+        [z,tit_str,str_leg]=select_data_write_string(data_get);
+    
         [d_anl,d_obs,str,str_u,str_f]=switch_celerity_growth_rate(kv,data_get);
-        str_f=sprintf('%s_soft_nx%02d',str_f,ku);
+        str_f=sprintf('%s_%02d',str_f,kp);
 
+        %common to figures
+        in_p.z=z;
         in_p.do_axis_equal=0;
         in_p.do_11_line=0;
-        in_p.leg_type=2;
-        in_p.tit_str=sprintf('nx=%d',nxu(ku));
+        in_p.tit_str=tit_str;
+        in_p.str_leg=str_leg;
         in_p.x=[data_get.Lb];
-        in_p.z=[data_get.software];
+        in_p.leg_type=NaN;
+        in_p.fig_size=[0,0,14,8];
+        in_p.tolx=[-35,100];
         in_p.x_lab='wave length [m]';
 
         %scatter comparing error between observed and predicted celerity in proportioanal terms as a function of the wavelength
@@ -371,7 +371,6 @@ for ku=1:nu %resolution
         in_p.y_lab=sprintf('error in absolute %s %s',str,str_u);
 
         fig_ipp_scatter(in_p);
-    
     end %kv
 end %ku
 
@@ -404,42 +403,233 @@ function plot_each_case(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p
 
 bol_pert=[data_all.noise]~=0;
 
+%2DO this could be done using a matrix of booleans and call the same as later for comparing cases.
 for ksoft=1:2 %D3D4 and FM
     for kscheme=0:1
         for kdpuopt=1:2
 
-%             data_get=get_data_swith(ksoft,kscheme,kdpuopt)
-            switch ksoft
-                case 1
-                    str_soft='D3D4';
-                case 2
-                    str_soft='FM';
-            end
             bol_soft=[data_all.software]==ksoft;
-
-            switch kscheme
-                case 0
-                    str_scheme='cen';
-                case 1
-                    str_scheme='upw';
-            end
             bol_scheme=[data_all.UpwindBedload]==kscheme;
-
-            switch kdpuopt
-                case 1
-                    str_dpuopt='min';
-                case 2
-                    str_dpuopt='mean';
-            end
             bol_dpuopt=[data_all.Dpuopt]==kdpuopt;
             
-            str_plot=sprintf('%s_%s_%s',str_soft,str_scheme,str_dpuopt);
             bol_get=bol_pert & bol_soft & bol_scheme & bol_dpuopt;
             data_get=data_all(bol_get);
-        
-            plot_1_software(fdir_fig,data_get,str_plot,in_p,tri,c_morph_p,max_gr_p,lambda_p,beta_p);
+            
+            plot_1_software(fdir_fig,data_get,in_p,tri,c_morph_p,max_gr_p,lambda_p,beta_p);
         end %kdpuopt
     end %scheme
 end %ksoft
+
+end %function
+
+%%
+
+function plot_domain(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p,tri_dim,lwx_p,lwy_p)
+
+%% non-dimensional
+
+in_p_loc=in_p;
+in_p_loc.tri=tri;
+in_p_loc.lambda_p=lambda_p;
+in_p_loc.beta_p=beta_p;
+in_p_loc.max_gr_p=max_gr_p;
+in_p_loc.c_morph_p=c_morph_p;
+in_p_loc.lambda_s=[data_all.lambda];
+in_p_loc.beta_s=[data_all.beta];
+in_p_loc.lims_c1=1e-5*[-1,1];
+in_p_loc.str_x='\lambda [-]';
+in_p_loc.str_y='\beta [-]';
+in_p_loc.fname=fullfile(fdir_fig,'domain_nodim');
+
+fig_twoD_nondim_surf(in_p_loc);
+
+%% dimensional
+
+in_p_loc.tri=tri_dim;
+in_p_loc.lambda_p=lwx_p;
+in_p_loc.beta_p=lwy_p;
+in_p_loc.lambda_s=[data_all.Lb];
+in_p_loc.beta_s=[data_all.B]*2;
+in_p_loc.str_x='L_x [m]';
+in_p_loc.str_y='L_y [m]';
+in_p_loc.fname=fullfile(fdir_fig,'domain_dim');
+
+fig_twoD_nondim_surf(in_p_loc);
+
+end %function
+
+%% 
+
+function [bol_nx,bol_UpwindBedload,bol_soft,bol_Dpuopt]=initialize_bol(bol_pert)
+
+bol_nx=true(size(bol_pert));
+bol_UpwindBedload=true(size(bol_pert));
+bol_soft=true(size(bol_pert));
+bol_Dpuopt=true(size(bol_pert));
+
+end %function
+
+%%
+
+function bol_mat=create_bol_mat(data_all)
+
+bol_pert=[data_all.noise]~=0;
+% bol_fm=[input_m_s.D3D__structure]==2;
+% bol_min=[input_m_s.mdf__Dpuopt]==1;
+% bol_lx400=[input_m_s.ini__noise_Lb]==400;
+% bol_noise=[input_m_s.ini__etab_noise]==2;
+% bol_upw=[input_m_s.mor__UpwindBedload]==1;
+
+nx_v=[data_all.nx];
+nx_u=unique(nx_v);
+nnx=numel(nx_u);
+
+soft_v=[data_all.software];
+soft_u=unique(soft_v);
+nsoft=numel(soft_u);
+
+Dpuopt_v=[data_all.Dpuopt];
+Dpuopt_u=unique(Dpuopt_v);
+nDpuopt=numel(Dpuopt_u);
+
+UpwindBedload_v=[data_all.UpwindBedload];
+UpwindBedload_u=unique(UpwindBedload_v);
+nUpwindBedload=numel(UpwindBedload_u);
+
+bol_mat=false(0,0);
+
+%varying UpwindBedLoad
+[bol_nx,bol_UpwindBedload,bol_soft,bol_Dpuopt]=initialize_bol(bol_pert);
+for knx=1:nnx 
+    bol_nx=nx_v==nx_u(knx);
+    for ksoft=1:nsoft 
+        bol_soft=soft_v==soft_u(ksoft);
+        for kDpuopt=1:nDpuopt
+            bol_Dpuopt=Dpuopt_v==Dpuopt_u(kDpuopt);
+
+            bol_get=bol_pert & bol_nx & bol_soft & bol_Dpuopt & bol_UpwindBedload;
+        
+            bol_mat=cat(1,bol_mat,bol_get);
+        end %dpuopt
+    end %ksoft
+end %ku
+
+%varying Dpuopt
+[bol_nx,bol_UpwindBedload,bol_soft,bol_Dpuopt]=initialize_bol(bol_pert);
+for knx=1:nnx 
+    bol_nx=nx_v==nx_u(knx);
+    for ksoft=1:nsoft 
+        bol_soft=soft_v==soft_u(ksoft);
+        for kUpwindBedload=1:nUpwindBedload
+            bol_UpwindBedload=UpwindBedload_v==UpwindBedload_u(kUpwindBedload);
+
+            bol_get=bol_pert & bol_nx & bol_soft & bol_Dpuopt & bol_UpwindBedload;
+        
+            bol_mat=cat(1,bol_mat,bol_get);
+        end %dpuopt
+    end %ksoft
+end %ku
+
+%varying software
+[bol_nx,bol_UpwindBedload,bol_soft,bol_Dpuopt]=initialize_bol(bol_pert);
+for knx=1:nnx 
+    bol_nx=nx_v==nx_u(knx);
+    for kDpuopt=1:nDpuopt
+        bol_Dpuopt=Dpuopt_v==Dpuopt_u(kDpuopt);
+        for kUpwindBedload=1:nUpwindBedload
+            bol_UpwindBedload=UpwindBedload_v==UpwindBedload_u(kUpwindBedload);
+
+            bol_get=bol_pert & bol_nx & bol_soft & bol_Dpuopt & bol_UpwindBedload;
+        
+            bol_mat=cat(1,bol_mat,bol_get);
+        end %dpuopt
+    end %ksoft
+end %ku
+
+end %function
+
+%%
+
+function [software_str,nx,upwindbedload_str,dpuopt_str]=get_strings(data)
+
+switch data.software
+    case 1
+        software_str='D3D';
+    case 2
+        software_str='FM';
+end
+
+nx=data.nx;
+
+switch data.UpwindBedload
+    case 1
+        upwindbedload_str='upwind';
+    case 0
+        upwindbedload_str='central';
+end
+
+switch data.Dpuopt
+    case 1
+        dpuopt_str='min';
+    case 2
+        dpuopt_str='mean';
+end
+
+end %function
+
+%% 
+
+function [z,tit_str,str_leg]=select_data_write_string(data_get)
+
+m1=[data_get.Dpuopt;data_get.software;data_get.UpwindBedload;data_get.nx]';
+idx_var=find(sum(diff(m1,1,1)~=0,1),1); %index of the column in which there is variation in `m1`
+if size(idx_var)~=1
+    error('Only 1 variation is accepted.')
+end
+z=m1(:,idx_var);
+
+zu=unique(m1(:,idx_var));
+nu=numel(zu);
+str_leg=cell(nu,1);
+switch idx_var
+    case 1
+        for ku=1:nu
+            if zu(ku)==1
+                str_leg{ku}='min';
+            elseif zu(ku)==2
+                str_leg{ku}='mean';
+            end
+        end
+        [software_str,nx,upwindbedload_str,dpuopt_str]=get_strings(data_get(1));
+        tit_str=sprintf('%s, nx=%d, %s',software_str,nx,upwindbedload_str);
+    case 2
+        for ku=1:nu
+            if zu(ku)==1
+                str_leg{ku}='D3D';
+            elseif zu(ku)==2
+                str_leg{ku}='FM';
+            end
+        end
+        [software_str,nx,upwindbedload_str,dpuopt_str]=get_strings(data_get(1));
+        tit_str=sprintf('%s, nx=%d, %s',dpuopt_str,nx,upwindbedload_str);
+    case 3
+        for ku=1:nu
+            if zu(ku)==0
+                str_leg{ku}='central';
+            elseif zu(ku)==1
+                str_leg{ku}='upwind';
+            end
+        end
+        [software_str,nx,upwindbedload_str,dpuopt_str]=get_strings(data_get(1));
+        tit_str=sprintf('%s, nx=%d, %s',dpuopt_str,nx,software_str);
+    case 4
+        for ku=1:nu
+            str_leg{ku}=sprintf('nx=%2d',zu(ku));
+        end
+        [software_str,nx,upwindbedload_str,dpuopt_str]=get_strings(data_get(1));
+        tit_str=sprintf('%s, %s, %s',dpuopt_str,upwindbedload_str,software_str);
+    otherwise
+        error('ups...')
+end
 
 end %function

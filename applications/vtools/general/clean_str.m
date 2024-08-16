@@ -22,5 +22,6 @@ str=strrep(str,'.','_');
 str=strrep(str,'&','_'); 
 str=strrep(str,'(','_'); 
 str=strrep(str,')','_'); 
+str=strrep(str,',','_'); 
 
 end %function

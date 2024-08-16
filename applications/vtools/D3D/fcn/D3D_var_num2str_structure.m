@@ -26,7 +26,7 @@ res_type=parin.Results.res_type;
 
 %%
 
-[var_str_read,var_id,var_str_save]=D3D_var_num2str(varname,'structure',simdef.D3D.structure,'ismor',simdef.D3D.ismor,'is1d',simdef.D3D.is1d,'res_type',res_type);
+[var_str_read,var_id,var_str_save]=D3D_var_num2str(varname,'structure',simdef.D3D.structure,'ismor',simdef.D3D.ismor,'is1d',simdef.D3D.is1d,'res_type',res_type,'is3d',simdef.D3D.is3d);
 
 %not necessary! it is done in <gdm_read_data_map_#>
 % if simdef.D3D.structure==1

@@ -148,6 +148,7 @@ for ksb=1:nsb
     %summerbed
     fpath_sb_pol=flg_loc.sb_pol{ksb};
     [~,sb_pol,~]=fileparts(fpath_sb_pol);
+    sb_def=gdm_read_summerbed(flg_loc,fid_log,fdir_mat,fpath_sb_pol,fpath_map);
 
     for krkmv=1:nrkmv %rkm polygons
 
@@ -160,6 +161,9 @@ for ksb=1:nsb
 
         kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 %         fpath_file=cell(nt,1); %movie
+
+        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,'inpol');
+        plot_summerbed_inpolygon(flg_loc,fdir_fig_loc,rkmv,sb_def,gridInfo);
 
         for kvar=1:nvar %variable
             
@@ -632,5 +636,79 @@ for kvar=1:nvar_tmp
         flg_loc.do_cum(end)=flg_loc.do_cum(kvar);
     end
 end
+
+end %function
+
+%%
+
+function plot_summerbed_inpolygon(flg_loc,fdir_fig_loc,rkmv,sb_def,gridInfo)
+
+%% PARSE
+
+flg_loc=gdm_parse_plot_along_rkm(flg_loc);
+
+in_p=flg_loc;
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fig_visible=0;
+in_p.gridInfo=gridInfo;
+% in_p.gridInfo_v=gridInfo_v;
+in_p=gdm_read_plot_along_rkm(in_p,flg_loc);
+
+%ldb
+if isfield(flg_loc,'fpath_ldb')
+    in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
+end
+
+%fxw
+if isfield(flg_loc,'do_fxw')==0
+    flg_loc.do_fxw=0;
+end
+switch flg_loc.do_fxw
+    case 1
+        in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped
+    case 2
+        in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef,'fxw');
+end
+if isfield(in_p,'fxw') && ~isstruct(in_p.fxw) && isnan(in_p.fxw)
+    in_p=rmfield(in_p,'fxw');
+end
+
+[xlims_all,ylims_all]=D3D_gridInfo_lims(gridInfo);
+
+%% data
+
+data=NaN(size(gridInfo.Xcen));
+npol=numel(rkmv.rkm_cen);
+for kpol=1:npol
+    bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb;
+    data(bol_get)=rkmv.rkm_cen(kpol);
+end %kpol
+in_p.val=data;
+in_p.unit='rkm';
+in_p.clims=NaN;
+in_p.do_title=0;
+
+%% PLOT ALL
+
+mkdir_check(fdir_fig_loc,NaN,1,0);
+in_p.fname=fullfile(fdir_fig_loc,'inpoly');
+in_p.xlims=xlims_all;
+in_p.ylims=ylims_all;
+
+fig_map_sal_01(in_p);
+
+%% PLOT RKM
+
+if flg_loc.do_plot_along_rkm==1
+    for krkm=flg_loc.krkm_v
+        
+        in_p.xlims=flg_loc.rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
+        in_p.ylims=flg_loc.rkm_file{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
+
+        in_p.fname=fullfile(fdir_fig_loc,sprintf('inpoly_%02d',krkm));
+
+        fig_map_sal_01(in_p);
+    end %krkm
+end %do
 
 end %function

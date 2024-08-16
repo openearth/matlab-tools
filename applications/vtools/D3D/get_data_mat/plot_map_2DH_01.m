@@ -219,8 +219,8 @@ for kvar=1:nvar %variable
                         %This only holds for sigma layers. Otherwise, we have to average considering the thickness of
                         %the layers. 
                         %Another improvement is to search for the index of the layers rather than assuming it is 3.
-                        vec_x=mean(data_uv.data.vel_x,3);
-                        vec_y=mean(data_uv.data.vel_y,3);
+                        vec_x=mean(data_uv.data.vel_x,3,'omitnan');
+                        vec_y=mean(data_uv.data.vel_y,3,'omitnan');
                     else
                         vec_x=data_uv.data.vel_x;
                         vec_y=data_uv.data.vel_y;

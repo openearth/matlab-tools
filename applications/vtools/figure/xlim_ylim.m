@@ -16,9 +16,21 @@
 %INPUT:
 %
 
-function [xlims,ylims]=xlim_ylim(xlims,ylims,x_v,val)
+function [xlims,ylims]=xlim_ylim(xlims,ylims,x_v,val,varargin)
 
 %% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'tolx',[0,0])
+addOptional(parin,'toly',[0,0])
+
+parse(parin,varargin{:})
+
+tolx=parin.Results.tolx;
+toly=parin.Results.toly;
+
+%% PREPROCESS
 
 %convert input to cell arrays 
 [val,nv]=convert_to_cell(val,1);
@@ -56,6 +68,11 @@ if dy==0
     my=mean(ylims);
     ylims=ylims+abs(my/100)*[-1,1];
 end
+
+%% TOL
+
+xlims=xlims+tolx;
+ylims=ylims+toly;
 
 %% CHECK
 

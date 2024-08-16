@@ -12,7 +12,7 @@
 %
 %
 
-function [ismor,is1d,str_network1d,issus,structure]=D3D_is(nc_map)
+function [ismor,is1d,str_network1d,issus,structure,is3d]=D3D_is(nc_map)
 
 if iscell(nc_map) %case of SMT-D3D4 
     nc_map=nc_map{1}; %they are all the same
@@ -73,6 +73,18 @@ if strcmp(ext,'.nc') %FM
         is1d=2;
     end
 
+    %3d
+    idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_ucmag'});
+    is3d=0;
+    if any(isnan(idx))
+        messageOut(NaN,'Cannot determine 2D/3D because <mesh2d_ucmag> is not in the output')
+        is3d=0;
+    else
+        if numel(nci.Variables(idx).Size)==3
+            is3d=1;
+        end
+    end
+    
     structure=2;
 elseif strcmp(ext,'.dat')
     NFStruct=vs_use(nc_map,'quiet');

@@ -22,21 +22,23 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-if isfield(flg_loc,'do_val_B_mor')==0
-    flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
-end
-if isfield(flg_loc,'do_val_B')==0
-    flg_loc.do_val_B=zeros(size(flg_loc.var));
-end
-if any(flg_loc.do_val_B_mor & flg_loc.do_val_B)
-    error('either full width or morphodynamic width')
-end
+% if isfield(flg_loc,'do_val_B_mor')==0
+%     flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
+% end
+% if isfield(flg_loc,'do_val_B')==0
+%     flg_loc.do_val_B=zeros(size(flg_loc.var));
+% end
+% if any(flg_loc.do_val_B_mor & flg_loc.do_val_B)
+%     error('either full width or morphodynamic width')
+% end
+% 
+% if isfield(flg_loc,'var_idx')==0
+%     flg_loc.var_idx=cell(1,numel(flg_loc.var));
+% end
+% 
+% flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
 
-if isfield(flg_loc,'var_idx')==0
-    flg_loc.var_idx=cell(1,numel(flg_loc.var));
-end
-
-flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
+flg_loc=gdm_parse_summerbed(flg_loc,simdef);
 
 %% PATHS
 

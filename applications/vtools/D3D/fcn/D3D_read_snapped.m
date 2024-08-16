@@ -46,7 +46,7 @@ for kpart=1:npart
     if simdef.file.partitions==1
         fname_shp=fullfile(ffolder_shp,sprintf('%s_snapped_%s%s',sim_name,feature_tok,fext_shp));
     else
-        fname_shp=fullfile(ffolder_shp,sprintf('%s_%04d_snapped_%s%s',sim_name,kpart-1,feature_tok,fext_shp));
+        fname_shp=fullfile(ffolder_shp{kpart},sprintf('%s_%04d_snapped_%s%s',sim_name,kpart-1,feature_tok,fext_shp{kpart}));
     end
 
     feature_struct_loc=D3D_io_input('read',fname_shp,'read_val',read_val,'xy_only',xy_only);

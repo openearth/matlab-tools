@@ -24,6 +24,7 @@ function [var_str_read,var_id_out,var_str_save]=D3D_var_num2str(var_id,varargin)
 parin=inputParser;
 
 addOptional(parin,'is1d',false);
+addOptional(parin,'is3d',false);
 addOptional(parin,'ismor',false);
 addOptional(parin,'structure',2);
 addOptional(parin,'res_type','map');
@@ -31,6 +32,7 @@ addOptional(parin,'res_type','map');
 parse(parin,varargin{:});
 
 is1d=parin.Results.is1d;
+is3d=parin.Results.is3d;
 ismor=parin.Results.ismor;
 structure=parin.Results.structure;
 res_type=parin.Results.res_type;
@@ -118,7 +120,11 @@ if ischar(var_id)
             if is1d
                 var_id_out='mesh1d_ucmag';
             else
-                var_id_out='mesh2d_ucmag';
+                if is3d
+                    var_id_out='mesh2d_ucmaga';
+                else
+                    var_id_out='mesh2d_ucmag';
+                end
             end
             var_str_read='umag';
             var_str_save=var_str_read;

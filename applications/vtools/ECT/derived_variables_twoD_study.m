@@ -23,7 +23,7 @@
 %   -`_p` size of all points in the analysis (product of the two input vectors for x and y)
 %   -`_m` size of matrix to plot as mesh
 
-function [kw_p,kwx_p,kwy_p,kwx_m,kwy_m,lwx_v,lwy_v,lwx_p,lwy_p,lwx_m,lwy_m,lambda_p,beta_p,tri,max_gr_p,max_gr_m,eig_r_p,c_morph_p,c_morph_m]=derived_variables_twoD_study(h,eig_r_p,eig_i_p,kwx_v,kwy_v,kw_p_input)
+function [kw_p,kwx_p,kwy_p,kwx_m,kwy_m,lwx_v,lwy_v,lwx_p,lwy_p,lwx_m,lwy_m,lambda_p,beta_p,tri,max_gr_p,max_gr_m,eig_r_p,c_morph_p,c_morph_m,tri_dim]=derived_variables_twoD_study(h,eig_r_p,eig_i_p,kwx_v,kwy_v,kw_p_input)
 
 %% sizes
 
@@ -69,6 +69,7 @@ beta_v=lwy_v/4/h;
 
 try %error due to colinear points
     tri=delaunay(lambda_p,beta_p);
+    tri_dim=delaunay(lwx_p,lwy_p);
 catch
     tri=NaN;
 end

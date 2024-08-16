@@ -45,8 +45,10 @@ messageOut(fid_log,sprintf('Mat-file does not exist. Creating.'));
 
 sb_raw=shp2struct(fpath_sb_pol);
 sb=polcell2nan(sb_raw.xy.XY);
-is_nan_1=isnan(sb(:,1));
-sb(is_nan_1,:)=[];
+
+%why did I do this?
+% is_nan_1=isnan(sb(:,1));
+% sb(is_nan_1,:)=[];
 
 %boundary
 if flg_loc.do_polygon_boundary
@@ -60,16 +62,16 @@ end
 messageOut(fid_log,'Start finding inpolygon summer bed.')
 bol_sb=inpolygon(gridInfo.Xcen(:),gridInfo.Ycen(:),sb(:,1),sb(:,2));
 
-% %% DEBUG
-% 
-% figure
-% hold on
-% scatter(gridInfo.Xcen(:),gridInfo.Ycen(:),10,'b')
-% plot(sb(:,1),sb(:,2))
-% scatter(gridInfo.Xcen(bol_sb),gridInfo.Ycen(bol_sb),10,'r')
-% axis equal
-% 
-% %%
+%% DEBUG
+
+figure
+hold on
+scatter(gridInfo.Xcen(:),gridInfo.Ycen(:),10,'b')
+plot(sb(:,1),sb(:,2))
+scatter(gridInfo.Xcen(bol_sb),gridInfo.Ycen(bol_sb),10,'r')
+axis equal
+
+%%
 %% SAVE
 
 sb_def.bol_sb=bol_sb;
