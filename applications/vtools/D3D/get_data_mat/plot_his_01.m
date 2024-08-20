@@ -27,41 +27,12 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 
 %% PARSE
 
-if isfield(flg_loc,'do_fil')==0
-    flg_loc.do_fil=0;
-end
-if isfield(flg_loc,'fil_tim')==0
-    flg_loc.fil_tim=25*3600;
-end
+flg_loc=gdm_parse_his(fid_log,flg_loc,simdef);
 
-flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
-flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
-
-if isfield(flg_loc,'do_convergence')==0
-    flg_loc.do_convergence=0;
-end
-
-%There are two inputs which are handled the same way:
-%   -his-file
-%   -map_2DH_his
-his_type=1; %his-file
-results_type='his';
-if isfield(flg_loc,'obs')
-    his_type=2;
-    results_type='map';
-end
-
-if isfield(flg_loc,'do_all_sta')==0
-    flg_loc.do_all_sta=0;
-end
-
-if ~isfield(flg_loc,'unit')
-    flg_loc.unit=cell(numel(flg_loc.var),1);
-end
-
-if ~isfield(flg_loc,'measurements')
-    flg_loc.measurements='';
-end
+nvar=flg_loc.nvar;
+ns=flg_loc.ns;
+stations=flg_loc.stations;
+his_type=flg_loc.his_type;
 
 %% PATHS
 
@@ -70,32 +41,19 @@ fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-fpath_his=simdef(1).file.his;
+%fpath_his=simdef(1).file.his;
 % fpath_map=simdef(1).file.map;
 mkdir_check(fdir_fig);
 
-%% STATIONS
-
-switch his_type
-    case 1
-        stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.structure);
-    case 2
-        stations={flg_loc.obs.name};
-end
-
 %% TIME
 
-tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,results_type,n_sim);
-
-%% DIMENSIONS
-
-ns=numel(stations);
-nvar=numel(flg_loc.var);
+tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,n_sim);
 
 %% GRID
 
 %Load here all the grids, which are needed for the layers. 
 for k_sim=1:n_sim
+    fpath_his=simdef(k_sim).file.his;
     gridInfo(k_sim)=EHY_getGridInfo(fpath_his,'no_layers');
 %     gridInfo(k_sim)=gdm_load_grid_simdef(fid_log,simdef(k_sim)); %not nice to have to load it every time
 end
@@ -112,7 +70,7 @@ in_p_c.fig_visible=0;
 
 in_p.tim=tim_dtime_p;
 
-fext=ext_of_fig(in_p.fig_print);
+% fext=ext_of_fig(in_p.fig_print);
 
 %% CHECKS
 
@@ -129,10 +87,6 @@ if flg_loc.do_all_sta
 else
     %otherwise, it is a waste of memory.
     n_sta=1;
-end
-
-if ~isfield(flg_loc,'elevation')
-    flg_loc.elevation=NaN(ns,1); 
 end
 
 %% LOOP
@@ -406,14 +360,14 @@ end %function
 
 %%
 
-function tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,results_type,n_sim)
+function tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,n_sim)
 
 tim_dtime_p=cell(n_sim,1);
 
 for k_sim=1:n_sim %simulations            
 
     %time
-    [nt(k_sim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(k_sim),'results_type',results_type); %force his reading. Needed for SMT.
+    [nt(k_sim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(k_sim),'results_type',flg_loc.results_type); %force his reading. Needed for SMT.
     [tim_dnum_p,tim_dtime_p{k_sim}]=gdm_time_flow_mor(flg_loc,simdef(k_sim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
 
 end %k_sim
@@ -444,12 +398,13 @@ else
     data_mea=struct();
 end
 
-if isempty(data_mea)
+fn=fieldnames(data_mea);
+nfn=numel(fn);
+if nfn==0
     do_measurements=0;
 else
     do_measurements=1;
 end
-
 
 end %function
 

@@ -22,12 +22,12 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-switch simdef.D3D.structure
-    case {2,4}
-        model_type_str='dfm';
-    case 3
-        model_type_str='sobek3';
-end
+% switch simdef.D3D.structure
+%     case {2,4}
+%         model_type_str='dfm';
+%     case 3
+%         model_type_str='sobek3';
+% end
 
 %% PATHS
 
@@ -49,22 +49,16 @@ gridInfo=EHY_getGridInfo(fpath_his,'no_layers');
 % [nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his,fdir_mat);
 [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
 
-%% DIMENSIONS
+%% PARSE
 
-nvar=numel(flg_loc.var);
+flg_loc=gdm_parse_his(fid_log,flg_loc,simdef);
 
-%% CONSTANT IN TIME
+nvar=flg_loc.nvar;
+ns=flg_loc.ns;
+stations=flg_loc.stations;
 
 %% LOOP
 
-stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef.D3D.structure);
-
-ns=numel(stations);
-
-if ~isfield(flg_loc,'elevation')
-    flg_loc.elevation=NaN(ns,1); 
-end
-        
 ks_v=gdm_kt_v(flg_loc,ns);
 
 ksc=0;
@@ -78,8 +72,10 @@ for ks=ks_v
         
         [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
         
+        %2DO: if depth_average, it takes all layers and elevation data is ommited. 
         layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str,elevation);
         
+        %2DO: add `depth_average` to the name and move to a function to be called also in plot and plot_diff
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime(1),'tim2',time_dtime(end));
         
         do_read=1;
@@ -105,8 +101,7 @@ for ks=ks_v
             
         end %do_read
         
-        %if `elevation`, interpolate
-        
+        %% export
         gdm_export_his_01(fid_log,flg_loc,fpath_mat_tmp,time_dtime)
         
     end %kvar
