@@ -177,6 +177,7 @@ else
     is1d=NaN;
     str_network1d='';
     issus=NaN;
+    is3d=NaN;
 end
 
 simdef.D3D.ismor=ismor;
