@@ -19,13 +19,15 @@ function plot_coverage(pol,etab_cen,fpath_rkm,fdir_fig,varargin)
 parin=inputParser;
 
 addOptional(parin,'type',1,@isnumeric);
+addOptional(parin,'tol',2000);
 
 parse(parin,varargin{:});
 
 type_plot=parin.Results.type;
+tol=parin.Results.tol;
 
-tol_x=2000;
-tol_y=2000;
+tol_x=tol;
+tol_y=tol;
 
 fid_log=NaN;
 do_debug=1;

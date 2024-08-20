@@ -26,6 +26,7 @@
 % br='IJ'; %river branch to process [char].
 % tag_rkm='1km'; %tag of the distance to compute the mean [char]. This is added to the output filename. 
 % do_plot_coverage=0; %plot the figures with coverage [double(1,1)]: 0 = no; 1 = yes; 
+% tol=2000; %tolerance xlim and ylim in plots 
 
 function create_mat_measurements_from_shp_01(fpath_shp,fpath_dbf_csv,fdir_out,fpath_rkm,section,rkmi,rkmf,ds,br,tag_rkm,varargin)
 
@@ -36,12 +37,14 @@ parin=inputParser;
 addOptional(parin,'coverage',0.99,@isnumeric);
 addOptional(parin,'plot_coverage',true);
 addOptional(parin,'plot_rkm',true);
+addOptional(parin,'tol',2000);
 
 parse(parin,varargin{:});
 
 coverage_th=parin.Results.coverage;
 do_plot_coverage=parin.Results.plot_coverage;
 do_plot_rkm=parin.Results.plot_rkm;
+tol=parin.Results.tol;
 
 fid_log=NaN; %file-log identifier (NaN = print to screen)
 
@@ -96,7 +99,7 @@ for kd=1:nd %dbf-file, time.
         [~,fname_dbf,~]=fileparts(input_struct(kd).dbf);
         fdir_fig=fullfile(fdir_out,'coverage',fname_dbf);
         mkdir_check(fdir_fig);
-        plot_coverage(pol,etab_cen,fpath_rkm,fdir_fig);
+        plot_coverage(pol,etab_cen,fpath_rkm,fdir_fig,'tol',tol);
     end
 
     %sections = sections to process [struct(1,1)]
@@ -111,7 +114,7 @@ for kd=1:nd %dbf-file, time.
         [~,fname_dbf,~]=fileparts(input_struct(kd).dbf);
         fdir_fig=fullfile(fdir_out,'rkm',fname_dbf);
         mkdir_check(fdir_fig);
-        plot_coverage(pol,idx_rkm,fpath_rkm,fdir_fig,'type',2);
+        plot_coverage(pol,idx_rkm,fpath_rkm,fdir_fig,'type',2,'tol',tol);
     end
 
     messageOut(fid_log,sprintf('Processed %4.2f %% files',kd/nd*100));
