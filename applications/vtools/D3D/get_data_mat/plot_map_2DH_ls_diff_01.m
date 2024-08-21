@@ -130,11 +130,10 @@ for kt=kt_v %time
             fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str,'pli',pliname);
             data_ref=load(fpath_mat_tmp,'data');
             
-            if size(data_ref.data.val,3)>1
-                messageOut(fid_log,sprintf('Cannot do differences of 2DV plot for variable %s',var_str));
-                continue
-            end
-            
+            if size(data_ref.data.val,3)>1 %% 2DV
+                fpath_file=plot_2DV_diff(fpath_file,nS,simdef,flg_loc,time_ref,data_ref,tag,var_str,pliname,simdef_ref,fdir_fig_loc,runid,fext,kt,kpli,kvar);
+            else %1D
+                %2DO: move to function first time you debug this!
             nx=numel(data_ref.data.val);
             val=NaN(nx,nS);
             for kS=1:nS %simulations
@@ -188,7 +187,8 @@ for kt=kt_v %time
 
                 fig_1D_01(in_p)
             end
-            
+
+            end %2DV vs 1D
             messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
         end %kvar
     end %kpli
@@ -196,11 +196,13 @@ end %kt
 
 %% movies
 
+% fpath_file{kt,kclim,kpli,kvar}
+[~,nylims,npli,nvar]=size(fpath_file);
 for kvar=1:nvar
     for kpli=1:npli
         for kylim=1:nylims
-            fpath_mov=fpath_file(:,kylim,kpli);
-            gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+            fpath_mov=fpath_file(:,kylim,kpli,kvar);
+            gdm_movie(fid_log,flg_loc,fpath_mov,time_ref_v);   
         end
     end
 end
@@ -264,3 +266,48 @@ else
 end    
 
 end %function
+
+%%
+
+function fpath_file=plot_2DV_diff(fpath_file,nS,simdef,flg_loc,time_ref,data_ref,tag,var_str,pliname,simdef_ref,fdir_fig_loc,runid,fext,kt,kpli,kvar)
+
+flg_loc=isfield_default(flg_loc,'clims_diff_s',[NaN,NaN]);
+
+nclim=size(flg_loc.clims_diff_s,1);
+
+in_p=flg_loc;
+in_p.fig_visible=0;
+in_p.is_diff=1;
+in_p.tim=time_ref;
+
+for kS=1:nS %simulations
+    
+    fdir_mat=simdef(kS).file.mat.dir;
+    fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+    fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); 
+    
+    tim=load(fpath_mat_time,'tim');
+    time_dnum=tim.tim.time_dnum; %time_dnum is the local one
+    time_mor_dnum=tim.tim.time_mor_dnum;
+    
+    %match times
+    val=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,pliname,simdef_ref);
+
+    in_p.data_ls.sal=val;
+    in_p.data_ls.grid=data_ref.data.gridInfo;
+    in_p.unit=var_str;
+    if flg_loc.do_rkm
+        in_p.data_ls.grid.Xcor=data_ref.data.rkm_cor;
+    end
+    for kclim=1:nclim
+        in_p.clims=flg_loc.clims_diff_s(kclim,:);
+        fname_noext=fig_name(fdir_fig_loc,tag,time_ref,var_str,pliname,kclim,runid);     
+        fpath_file{kt,kclim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
+        in_p.fname=fname_noext;
+
+        fig_map_ls_01(in_p)  
+    end
+
+end %kS
+
+end

@@ -74,6 +74,9 @@ end
 xlims=xlims+tolx;
 ylims=ylims+toly;
 
+xlims=check_diff(xlims);
+ylims=check_diff(ylims);
+
 %% CHECK
 
 check_nan(xlim)
@@ -151,6 +154,20 @@ end
 
 if err
     error('Something is wrong.')
+end
+
+end %function
+
+%%
+
+function xlims=check_diff(xlims)
+
+if diff(xlims)==0
+    if isdatetime(xlims(1))
+        xlims=xlims+days([-1,1]);
+    else
+        xlims=real(xlims+[-1,1].*abs(mean(xlims)/1000)+10.*[-eps,eps]);
+    end
 end
 
 end %function

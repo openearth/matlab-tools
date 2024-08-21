@@ -22,7 +22,7 @@ obs=D3D_observation_stations(fpath_his);
 idx=find(contains(obs.name,str));
 nidx=numel(idx);
 for kidx=1:nidx
-    fprintf('%s\n',obs.name(kidx));
+    fprintf('%s\n',obs.name{idx(kidx)});
 end
 out={obs.name(idx)};
 

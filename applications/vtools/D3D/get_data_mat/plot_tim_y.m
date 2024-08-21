@@ -40,9 +40,9 @@ fdir_mat=simdef.file.mat.dir;
 % fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 
 %NO BACKWARD COMPATIBILITY!
-% fpath_mat=fullfile(fdir_mat,sprintf('%s_%s.mat',tag,var_str)); %original
+fpath_mat=fullfile(fdir_mat,sprintf('%s_%s.mat',tag,var_str)); %original
 % fpath_mat=mat_tmp_name(fdir_mat,tag,'var',var_str_read,'var_idx',var_idx{kvar},'layer',layer);
-fpath_mat=mat_tmp_name(fdir_mat,tag,'var',var_str);
+% fpath_mat=mat_tmp_name(fdir_mat,tag,'var',var_str);
 
 fpath_mat_tim=fullfile(fdir_mat,sprintf('%s.mat',tag_tim));
 fpath_mat_time=strrep(fpath_mat_tim,'.mat','_tim.mat');
@@ -73,6 +73,7 @@ in_p.do_title=0;
 in_p.lab_str=data.unit;
 in_p.fname=fname_noext;
 in_p.val=data.val;
+in_p.xlims=[NaN,NaN];
 in_p.s=datetime(time_dnum,'ConvertFrom','datenum');
 in_p.xlab_str='';
         

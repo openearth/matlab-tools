@@ -88,6 +88,7 @@ end
 if isfield(in_p,'frac')==0
     in_p.frac=NaN;
 end
+in_p=isfield_default(in_p,'is_diff',0);
 
 v2struct(in_p)
 
@@ -183,7 +184,14 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label=labels4all(unit,1,lan,'frac',frac);
+[lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(unit,1,lan,'frac',frac);
+if is_diff
+    cbar(kr,kc).label=str_diff;
+    cmap=brewermap(100,'RdYlBu');
+else
+    cbar(kr,kc).label=lab;
+    cmap=turbo(100);
+end
 
 % brewermap('demo')
 % cmap=turbo(100);
