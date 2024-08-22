@@ -91,16 +91,17 @@ switch kdiff
         in_p.val=data-data_ref; 
         in_p.(str_clims)=flg_loc.(str_clims_diff)(kclim,:);
         tag_ref='diff';
-        switch var_str
-            case 'clm2'
-                in_p.is_diff=0;
-                in_p.is_background=1;
-                in_p.is_percentage=0;
-            otherwise
+        %This has to be made input. It may or may not be background.
+%         switch var_str
+%             case 'clm2'
+%                 in_p.is_diff=0;
+%                 in_p.is_background=1;
+%                 in_p.is_percentage=0;
+%             otherwise
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
-        end
+%         end
         in_p.filter_lim=flg_loc.filter_lim.(str_clims_diff);
     case 3
         bol_0=data_ref==0;

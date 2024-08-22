@@ -27,10 +27,8 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 
 %% PARSE
 
-% tol_tim=1; %tolerance to match objective day with available day
-% if isfield(flg_loc,'tol_tim')
-%     tol_tim=flg_loc.tol_tim;
-% end
+flg_loc=isfield_default(flg_loc,'clims_diff_s',[NaN,NaN]);
+flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
 
 if isfield(flg_loc,'tol')==0
     flg_loc.tol=30;
@@ -88,10 +86,8 @@ time_ref_v=gdm_time_dnum_flow_mor(flg_loc,tim_ref.tim.time_dnum,tim_ref.tim.time
 nt=numel(time_dnum_ref); %we loop over reference time and match each simulation
 nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
-if isfield(flg_loc,'ylims')==0
-    flg_loc.ylims=[NaN,NaN];
-end
 nylims=size(flg_loc.ylims,1);
+nclims=size(flg_loc.clims_diff_s,1);
 
 %% figure
 
@@ -101,13 +97,23 @@ in_p.is_diff=1;
 
 fext=ext_of_fig(in_p.fig_print);
 
+what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef_ref,fdir_mat_ref,time_dnum_ref,tag);
+
 %% LOOP TIME
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
 ktc=0; kpli=0;
 messageOut(fid_log,sprintf('Reading %s pli %4.2f %% kt %4.2f %%',tag,kpli/npli*100,ktc/nt*100));
-fpath_file=cell(nt,nylims,npli,nvar);
+
+switch what_is
+    case 1
+        nlim=nclims;
+    case 2
+        nlim=nylims;
+end
+fpath_file=cell(nt,nlim,npli,nvar); 
+
 for kt=kt_v %time
     
     ktc=ktc+1;
@@ -130,63 +136,64 @@ for kt=kt_v %time
             fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(kt),'var',var_str,'pli',pliname);
             data_ref=load(fpath_mat_tmp,'data');
             
-            if size(data_ref.data.val,3)>1 %% 2DV
-                fpath_file=plot_2DV_diff(fpath_file,nS,simdef,flg_loc,time_ref,data_ref,tag,var_str,pliname,simdef_ref,fdir_fig_loc,runid,fext,kt,kpli,kvar);
-            else %1D
-                %2DO: move to function first time you debug this!
-            nx=numel(data_ref.data.val);
-            val=NaN(nx,nS);
-            for kS=1:nS %simulations
-                
-                fdir_mat=simdef(kS).file.mat.dir;
-                fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
-                fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); 
-                
-                tim=load(fpath_mat_time,'tim');
-                time_dnum=tim.tim.time_dnum; %time_dnum is the local one
-                time_mor_dnum=tim.tim.time_mor_dnum;
-                
-                %match times
-                val(:,kS)=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,pliname,simdef_ref);
-                
-            end %kS
-            
-            %initial condition
-                %reference situation
-            fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(1),'var',var_str,'pli',pliname);
-            data_ref_t0=load(fpath_mat_tmp,'data');
-            
-                %we are taking the last simulation (last loaded time). They should all be the same.
-            val0=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref_v(1),data_ref_t0,fdir_mat,tag,var_str,pliname,simdef_ref);
-            
-            in_p=gdm_s_rkm_cen(in_p,flg_loc,data_ref.data);
-            in_p.val=val;
-            in_p.val0=val0;
-            in_p.lab_str=var_str;
-            
-            %measurements                        
-            in_p.plot_mea=false;
-            if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
-%                 tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-                [tim_dnum_p,~]=gdm_time_flow_mor(flg_loc,simdef_ref,tim_ref.tim.time_dnum(kt),tim_ref.tim.time_dtime(kt),tim_ref.tim.time_mor_dnum(kt),tim_ref.tim.time_mor_dtime(kt));
-                data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_dnum_p,'var',var_str,'stat','val_mean','tol',flg_loc.tol);
-                if isstruct(data_mea) %there is data
-                    in_p.plot_mea=true;
-                    in_p.s_mea=data_ref.data.Scen;
-                    in_p.val_mea=D3D_diff_val(data_mea.y,data_ref.data.val,data_mea.x,data_ref.data.Scen);
-                end
-            end
-
-            for kylim=1:nylims
-                in_p.ylims=flg_loc.ylims(kylim,:);
-
-                fname_noext=fig_name(fdir_fig_loc,tag,time_ref,var_str,pliname,kylim,runid);
-                fpath_file{kt,kylim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
-
-                in_p.fname=fname_noext;
-
-                fig_1D_01(in_p)
-            end
+            switch what_is
+                case 1 %2DV
+                    fpath_file=plot_2DV_diff(fpath_file,nS,simdef,flg_loc,time_ref,data_ref,tag,var_str,pliname,simdef_ref,fdir_fig_loc,runid,fext,kt,kpli,kvar);
+                case 2 %1D
+                    %2DO: move to function first time you debug this!
+                    nx=numel(data_ref.data.val);
+                    val=NaN(nx,nS);
+                    for kS=1:nS %simulations
+                        
+                        fdir_mat=simdef(kS).file.mat.dir;
+                        fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+                        fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); 
+                        
+                        tim=load(fpath_mat_time,'tim');
+                        time_dnum=tim.tim.time_dnum; %time_dnum is the local one
+                        time_mor_dnum=tim.tim.time_mor_dnum;
+                        
+                        %match times
+                        val(:,kS)=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref,data_ref,fdir_mat,tag,var_str,pliname,simdef_ref);
+                        
+                    end %kS
+                    
+                    %initial condition
+                        %reference situation
+                    fpath_mat_tmp=mat_tmp_name(fdir_mat_ref,tag,'tim',time_dnum_ref(1),'var',var_str,'pli',pliname);
+                    data_ref_t0=load(fpath_mat_tmp,'data');
+                    
+                        %we are taking the last simulation (last loaded time). They should all be the same.
+                    val0=gdm_match_times_diff_val(flg_loc,time_dnum,time_mor_dnum,time_ref_v(1),data_ref_t0,fdir_mat,tag,var_str,pliname,simdef_ref);
+                    
+                    in_p=gdm_s_rkm_cen(in_p,flg_loc,data_ref.data);
+                    in_p.val=val;
+                    in_p.val0=val0;
+                    in_p.lab_str=var_str;
+                    
+                    %measurements                        
+                    in_p.plot_mea=false;
+                    if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+        %                 tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
+                        [tim_dnum_p,~]=gdm_time_flow_mor(flg_loc,simdef_ref,tim_ref.tim.time_dnum(kt),tim_ref.tim.time_dtime(kt),tim_ref.tim.time_mor_dnum(kt),tim_ref.tim.time_mor_dtime(kt));
+                        data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_dnum_p,'var',var_str,'stat','val_mean','tol',flg_loc.tol);
+                        if isstruct(data_mea) %there is data
+                            in_p.plot_mea=true;
+                            in_p.s_mea=data_ref.data.Scen;
+                            in_p.val_mea=D3D_diff_val(data_mea.y,data_ref.data.val,data_mea.x,data_ref.data.Scen);
+                        end
+                    end
+        
+                    for kylim=1:nylims
+                        in_p.ylims=flg_loc.ylims(kylim,:);
+        
+                        fname_noext=fig_name(fdir_fig_loc,tag,time_ref,var_str,pliname,kylim,runid);
+                        fpath_file{kt,kylim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
+        
+                        in_p.fname=fname_noext;
+        
+                        fig_1D_01(in_p)
+                    end
 
             end %2DV vs 1D
             messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
@@ -271,8 +278,6 @@ end %function
 
 function fpath_file=plot_2DV_diff(fpath_file,nS,simdef,flg_loc,time_ref,data_ref,tag,var_str,pliname,simdef_ref,fdir_fig_loc,runid,fext,kt,kpli,kvar)
 
-flg_loc=isfield_default(flg_loc,'clims_diff_s',[NaN,NaN]);
-
 nclim=size(flg_loc.clims_diff_s,1);
 
 in_p=flg_loc;
@@ -311,3 +316,6 @@ for kS=1:nS %simulations
 end %kS
 
 end
+
+%%
+

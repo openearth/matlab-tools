@@ -26,6 +26,8 @@ flg_loc=isfield_default(flg_loc,'do_all_s_2diff',0); %plot all runs in same figu
 flg_loc=isfield_default(flg_loc,'do_movie',0);
 flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'ylims_diff_t',flg_loc.ylims);
+flg_loc=isfield_default(flg_loc,'clims',[NaN,NaN]);
+flg_loc=isfield_default(flg_loc,'clims_diff_t',flg_loc.clims);
 flg_loc=isfield_default(flg_loc,'do_diff',1);
 flg_loc=isfield_default(flg_loc,'tim_type',1);
 flg_loc=isfield_default(flg_loc,'tol',30);
@@ -70,11 +72,25 @@ nt=numel(time_dnum);
 nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
 nylims=size(flg_loc.ylims,1);
+nclims=size(flg_loc.clims,1);
 
 if flg_loc.do_diff==0
     ndiff=1;
 else 
     ndiff=2;
+end
+
+what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef,fdir_mat,time_dnum,tag);
+
+switch what_is
+    case 1
+        nlims=nclims;
+        lims=flg_loc.clims;
+        lims_diff=flg_loc.clims_diff_t;
+    case 2
+        nlims=nylims;
+        lims=flg_loc.ylims;
+        lims_diff=flg_loc.ylims_diff_t;
 end
 
 %% figure
@@ -89,7 +105,7 @@ kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
 ktc=0; kpli=0; kvar=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
-fpath_file=cell(nt,nylims,npli,nvar,ndiff);
+fpath_file=cell(nt,nlims,npli,nvar,ndiff);
 
 for kpli=1:npli %variable
     fpath_pli=flg_loc.pli{kpli,1};
@@ -125,12 +141,7 @@ for kpli=1:npli %variable
         for kt=kt_v %time
             ktc=ktc+1;
 
-            switch flg_loc.tim_type
-                case 1
-                    in_p.tim=time_dnum(kt);
-                case 2
-                    in_p.tim=time_mor_dnum(kt);
-            end
+            [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum(kt),time_dtime(kt),time_mor_dnum(kt),time_mor_dtime(kt));
    
             for kS=1:nS
                 fdir_mat=simdef(kS).file.mat.dir; %1 used for reference for all. Should be the same. 
@@ -162,16 +173,17 @@ for kpli=1:npli %variable
                 end
             end
                         
-            for kylim=1:nylims %ylim
+            for klim=1:nlims %ylim
                 
                 if isfield(flg_loc,'xlims')
-                    in_p.xlims=flg_loc.xlims(kylim,:);
+                    in_p.xlims=flg_loc.xlims(klim,:);
                 else
                     in_p.xlims=[NaN,NaN];
                 end
                 
                 for kdiff=1:ndiff %diff
                     
+                    %do we need a function for this? There is one for 2DH data...
                     switch kdiff
                         case 1
                             if flg_loc.do_staircase
@@ -179,7 +191,7 @@ for kpli=1:npli %variable
                             else
                                 data_val_p=data.val;
                             end
-                            in_p.ylims=flg_loc.ylims(kylim,:);
+                            lims_loc=lims(klim,:);
                             in_p.is_diff=0;
                             tag_ref='val';
                         case 2
@@ -188,7 +200,7 @@ for kpli=1:npli %variable
                             else
                                 data_val_p=data.val-data_ref.data.val;
                             end
-                            in_p.ylims=flg_loc.ylims_diff_t(kylim,:);
+                            lims_loc=lims_diff(klim,:);
                             in_p.is_diff=1;
                             tag_ref='diff';
                     end
@@ -196,8 +208,8 @@ for kpli=1:npli %variable
                     fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
                     mkdir_check(fdir_fig_loc,NaN,1,0);
 
-                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
-                    fpath_file{kt,kylim,kpli,kvar,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
+                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,klim);
+                    fpath_file{kt,klim,kpli,kvar,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                     in_p.fname=fname_noext;
 
@@ -212,27 +224,27 @@ for kpli=1:npli %variable
                         end
                     end
                     
-                    if size(data.val,3)>1 
+                    switch what_is
+                        case 1
                         %% several vertical layers (patch plot)   
-                          %why?  
-%                         if kdiff==2
-%                             error('not ready')
-%                         end
+
                         in_p.data_ls.sal=data_val_p;
                         in_p.data_ls.grid=data.gridInfo;
                         in_p.unit=var_str_read;
-                        in_p.clims=[NaN,NaN];
                         if flg_loc.do_rkm
                             in_p.data_ls.grid.Xcor=data.rkm_cor;
                         end
+                        in_p.clims=lims_loc;
 
                         fig_map_ls_01(in_p)  
 
-                    else 
+                        case 2
+
                         %% single layer (line plot)
                         in_p.lab_str=var_str_read;
                         in_p=gdm_s_rkm_cen(in_p,flg_loc,data);
-                        
+                        in_p.ylims=lims_loc;
+
                         %The same function is called for several than for 1 simulations. It is not an option
                         %to first load all in `data_all` and then loop to plot because the sizes may be 
                         %different (space and time). It needs to be general and deal with each simulation 
@@ -257,9 +269,11 @@ for kpli=1:npli %variable
     %                             fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
     %                             mkdir_check(fdir_fig_loc,NaN,1,0);
             
-                                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
+                                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,klim);
     
                                 in_p.fname=fname_noext;
+
+                                %we have a function for this... search and plug
                                 switch kdiff
                                     case 1
                                         in_p.val=squeeze(data_all(kt,:,:));
@@ -272,7 +286,7 @@ for kpli=1:npli %variable
 
                             %% ad-hoc differences between runs
                             if flg_loc.do_all_s_2diff
-                                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag)
+                                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,klim,tag)
                             end %do_all_s_2diff
                         end %nS
                     end %type plot
@@ -287,7 +301,7 @@ for kpli=1:npli %variable
         if flg_loc.do_all_t
             in_p_all=in_p;
             
-            for kylim=1:nylims %ylim
+            for klim=1:nylims %ylim
                 
                 for kdiff=1:ndiff %diff
                     
@@ -298,7 +312,7 @@ for kpli=1:npli %variable
                             else
                                 data_val_p=data.val;
                             end
-                            in_p_all.ylims=flg_loc.ylims(kylim,:);
+                            in_p_all.ylims=flg_loc.ylims(klim,:);
                             in_p_all.is_diff=0;
                             tag_ref='val';
                         case 2
@@ -307,13 +321,13 @@ for kpli=1:npli %variable
                             else
                                 data_val_p=data.val_staircase-data_ref.data.val_staircase;
                             end
-                            in_p_all.ylims=flg_loc.ylims_diff_t(kylim,:);
+                            in_p_all.ylims=flg_loc.ylims_diff_t(klim,:);
                             in_p_all.is_diff=1;
                             tag_ref='diff';
                     end
 
                     fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
-                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_all_t',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
+                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_all_t',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,klim);
 
                     in_p_all.fname=fname_noext;
                     in_p_all.val=data_all';
@@ -332,11 +346,12 @@ end %kpli
 
 if flg_loc.do_movie
 
+[~,nylims,npli,nvar,ndiff]=size(fpath_file);
 for kvar=1:nvar
     for kpli=1:npli
-        for kylim=1:nylims
+        for klim=1:nylims
             for kdiff=1:ndiff
-                fpath_mov=fpath_file(:,kylim,kpli,kvar,kdiff);
+                fpath_mov=fpath_file(:,klim,kpli,kvar,kdiff);
                 gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
             end
         end
