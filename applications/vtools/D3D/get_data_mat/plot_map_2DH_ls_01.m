@@ -88,6 +88,11 @@ switch what_is
         nlims=nclims;
         lims=flg_loc.clims;
         lims_diff=flg_loc.clims_diff_t;
+
+        nlims_y=size(flg_loc.ylims);
+        if nlims_y~=nlims
+            ylims=NaN(nlims,2);
+        end
     case 2
         nlims=nylims;
         lims=flg_loc.ylims;
@@ -230,6 +235,7 @@ for kpli=1:npli %variable
                             in_p.data_ls.grid.Xcor=data.rkm_cor;
                         end
                         in_p.clims=lims_loc;
+                        in_p.ylims=flg_loc.ylims(klim,:);
 
                         fig_map_ls_01(in_p)  
 

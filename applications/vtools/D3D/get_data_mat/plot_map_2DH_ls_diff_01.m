@@ -281,6 +281,10 @@ end %function
 function fpath_file=plot_2DV_diff(fpath_file,nS,simdef,flg_loc,time_ref,data_ref,tag,var_str,pliname,simdef_ref,fdir_fig_loc,runid,fext,kt,kpli,kvar)
 
 nclim=size(flg_loc.clims_diff_s,1);
+nylim=size(flg_loc.ylims,1);
+if nylim~=nclim
+    flg_loc.ylims=NaN(nclim,2);
+end
 
 in_p=flg_loc;
 in_p.fig_visible=0;
@@ -308,10 +312,11 @@ for kS=1:nS %simulations
     end
     for kclim=1:nclim
         in_p.clims=flg_loc.clims_diff_s(kclim,:);
+        in_p.ylims=flg_loc.ylims(kclim,:);
         fname_noext=fig_name(fdir_fig_loc,tag,time_ref,var_str,pliname,kclim,runid);     
         fpath_file{kt,kclim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
         in_p.fname=fname_noext;
-
+        
         fig_map_ls_01(in_p)  
     end
 
