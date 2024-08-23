@@ -25,6 +25,7 @@ flg_loc=isfield_default(flg_loc,'do_all_s',0);
 flg_loc=isfield_default(flg_loc,'do_all_s_2diff',0); %plot all runs in same figure making the difference between each of 2 simulations
 flg_loc=isfield_default(flg_loc,'do_movie',0);
 flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
+flg_loc=isfield_default(flg_loc,'xlims',NaN(size(flg_loc.ylims,1),2));
 flg_loc=isfield_default(flg_loc,'ylims_diff_t',flg_loc.ylims);
 flg_loc=isfield_default(flg_loc,'clims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'clims_diff_t',flg_loc.clims);
@@ -80,7 +81,7 @@ else
     ndiff=2;
 end
 
-what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef,fdir_mat,time_dnum,tag);
+what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef(1),fdir_mat,time_dnum,tag);
 
 switch what_is
     case 1
@@ -175,12 +176,6 @@ for kpli=1:npli %variable
                         
             for klim=1:nlims %ylim
                 
-                if isfield(flg_loc,'xlims')
-                    in_p.xlims=flg_loc.xlims(klim,:);
-                else
-                    in_p.xlims=[NaN,NaN];
-                end
-                
                 for kdiff=1:ndiff %diff
                     
                     %do we need a function for this? There is one for 2DH data...
@@ -244,7 +239,8 @@ for kpli=1:npli %variable
                         in_p.lab_str=var_str_read;
                         in_p=gdm_s_rkm_cen(in_p,flg_loc,data);
                         in_p.ylims=lims_loc;
-
+                        in_p.xlims=flg_loc.xlims(klim,:);
+                        
                         %The same function is called for several than for 1 simulations. It is not an option
                         %to first load all in `data_all` and then loop to plot because the sizes may be 
                         %different (space and time). It needs to be general and deal with each simulation 

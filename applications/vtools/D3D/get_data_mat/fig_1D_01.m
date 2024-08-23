@@ -51,7 +51,17 @@ if isfield(in_p,'do_area')==0
     in_p.do_area=0;
 end
 
-[in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.s,in_p.val);
+sv=size(in_p.val);
+if numel(sv)>2
+    sv=sv(2:end);
+    bol_d1=sv==1;
+    if ~any(bol_d1)
+        messageOut(NaN,'I cannot plot more than 2 dimensions')
+        return
+    end
+end
+[in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.s,squeeze(in_p.val)); %`val` can be a [np,1,nv] matrix and it is valid. 
+
 %warning('Call `[xlims,ylims]=xlim_ylim(xlims,ylims,x_v,val)`')
 % if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
 %     bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);

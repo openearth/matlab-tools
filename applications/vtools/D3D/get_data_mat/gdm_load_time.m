@@ -61,6 +61,11 @@ if exist(fpath_mat_time,'file')==2
 
     if isdatetime(flg_loc.tim)
         tim_obj=datenum_tzone(flg_loc.tim);
+        if nt~=nt2
+            %load
+            messageOut(fid_log,'Requested time is different than available time. Overwritting.')
+            do_load=1;
+        end
     else %is double
         ntt=D3D_nt(fpath_map,'res_type',results_type); %inside the NaN check we save computational time
         if any(isnan(flg_loc.tim)) 

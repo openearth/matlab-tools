@@ -202,7 +202,7 @@
 % in_plot.(tag).fpath_rkm=fullfile(fpaths.dir_rkm,'rkm.csv'); %river kilometer file. See format: open convert2rkm
 % 
 % %polygons and measurements associated to it
-% 
+% in_plot.(tag).tol_time_measurements=2;
 % kp=0;
 % 
 % kp=kp+1;

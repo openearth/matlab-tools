@@ -56,9 +56,9 @@ if isnan(idx_stat); data_out=NaN; return; end
 struct_loc=data.(fn{idx_var}).(fn2{idx_stat});
 
 tim_mea=struct_loc.tim_dnum;
-idx_min=absmintol(tim_mea,tim_dnum,'dnum',1,'tol',tol,'do_break',0);
+[idx_min,~,flg_found]=absmintol(tim_mea,tim_dnum,'dnum',1,'tol',tol,'do_break',0);
 
-if isnan(idx_min); data_out=NaN; return; end
+if isnan(idx_min) || ~flg_found; data_out=NaN; return; end
 
 % fprintf('index time match %03d \n',idx_min);
 

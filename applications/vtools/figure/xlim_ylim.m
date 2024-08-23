@@ -32,11 +32,11 @@ toly=parin.Results.toly;
 
 %% PREPROCESS
 
-%convert input to cell arrays 
-[val,nv]=convert_to_cell(val,1);
+[nv,x_v,val]=number_of_values(x_v,val);
+ 
+[val,nv]=convert_to_cell(val,nv);
 [x_v,~ ]=convert_to_cell(x_v,nv);
 
-%check dimensions
 check_dimensions(x_v,val)
 
 %% CALC
@@ -86,6 +86,51 @@ end %function
 
 %%
 %% FUNCTIONS
+%%
+
+function [nv,x_v,val]=number_of_values(x_v,val)
+
+%if matrices or vector, the output is [nx,nv]
+
+if iscell(val)
+    nv=numel(val);
+elseif iscell(x_v)
+    nv=numel(x_v);
+else
+    %val and x_v are both vector or matrices
+    sx=size(x_v);
+    if numel(sx)>2
+        error('It cannot have more than 2 dimensions.')
+    end
+
+    %the number of lines is the size which is not equal to the size of x
+    sv=size(val);
+    if numel(sv)>2
+        error('It cannot have more than 2 dimensions.')
+    end
+    bol_x=sx==sv;
+    if sum(bol_x)==0
+        error('The size of `val` does not match the size of `x`')
+    elseif sum(bol_x)==2 %vectors or matrices which are the same size
+        %check if any dimension is 1
+        bol_1=sv==1;
+        if sum(bol_1)==0 %matrices
+            %we assume it is already correct in [nx,nv]
+            nv=sv(2);
+        else
+            nv=1;
+        end
+    else %vector or matrices of different size. Search for the one which is equal
+        nv=sv(~bol_x);
+    end
+    if bol_x(1)
+        x_v=x_v';
+        val=val';
+    end
+end
+
+end %function
+
 %%
 
 function [x_v,nv]=convert_to_cell(x_v,nv)

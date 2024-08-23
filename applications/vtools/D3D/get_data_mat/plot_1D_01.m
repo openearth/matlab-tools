@@ -65,7 +65,9 @@ if isfield(flg_loc,'do_plot_structures')==0
     flg_loc.do_plot_structures=0;
 end
 
-flg_loc=gdm_parse_summerbed(flg_loc,simdef);
+flg_loc=isfield_default(flg_loc,'tol_time_measurements',1);
+
+flg_loc=gdm_parse_summerbed(flg_loc,simdef(1));
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
@@ -91,6 +93,7 @@ if do_ref
     fdir_mat_ref=simdef_ref.file.mat.dir;
     fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
     fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); 
+    fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig,tag_serie);
 else
     fdir_mat=simdef(1).file.mat.dir;
     fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
@@ -293,7 +296,7 @@ for ksb=1:nsb
                         in_p.plot_mea=false;
                         if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
                             tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-                            data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
+                            data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis,'tol',flg_loc.tol_time_measurements);
                             if isstruct(data_mea) %there is data
                                 in_p.plot_mea=true;
                                 in_p.s_mea=data_mea.x;
@@ -301,7 +304,7 @@ for ksb=1:nsb
                                     in_p.val_mea=data_mea.y;
                                 elseif kdiff==2
                                     tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
-                                    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
+                                    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis,'tol',flg_loc.tol_time_measurements);
                                     in_p.val_mea=data_mea.y-data_mea_0.y;
                                     %we are assuming <s_mea> is the same
                                 end

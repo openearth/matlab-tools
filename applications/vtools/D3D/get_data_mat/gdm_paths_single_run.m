@@ -27,9 +27,12 @@ do_disp=parin.Results.disp;
 %% CALC
 
 fdir_sim=in_plot.fdir_sim{ks};
+if do_disp
+    messageOut(fid_log,sprintf('Finding paths: %s',fdir_sim));
+end
 simdef=simulation_paths(fdir_sim,in_plot);
 if do_disp
-    messageOut(fid_log,sprintf('Simulation: %s',simdef.file.runid))	
+    messageOut(fid_log,sprintf('Simulation: %s',simdef.file.runid),1)	
 end
 if isfield(in_plot,'str_sim')
     leg_str=in_plot.str_sim{ks};

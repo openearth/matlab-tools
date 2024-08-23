@@ -103,6 +103,9 @@ switch simdef.D3D.structure
 
 if simdef.D3D.structure==4 %we take the files from the first one for generic things
     fdir_mdu=fullfile(simdef.D3D.dire_sim,'output','0');
+    if ~isfolder(fdir_mdu)
+        error('This SMT FM simulation does not have output. A folder is expected at: %s',fdir_mdu)
+    end
     dire=dir(fdir_mdu);
 elseif simdef.D3D.structure==5 %we take the files from the first one for generic things
     fdir_output=fullfile(simdef.D3D.dire_sim,'output');

@@ -88,7 +88,9 @@ end
 if isfield(in_p,'frac')==0
     in_p.frac=NaN;
 end
+in_p=isfield_default(in_p,'do_rkm',0);
 in_p=isfield_default(in_p,'is_diff',0);
+in_p=isfield_default(in_p,'fig_reverse',0);
 
 v2struct(in_p)
 
@@ -323,7 +325,11 @@ kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 lims.c(kr,kc,1:2)=clims;
-xlabels{kr,kc}=labels4all('x',1,lan);
+if do_rkm
+    xlabels{kr,kc}=labels4all('rkm',1/1000,lan);
+else
+    xlabels{kr,kc}=labels4all('x',1,lan);
+end
 ylabels{kr,kc}=labels4all('eta',1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
@@ -419,7 +425,12 @@ set(han.fig,'CurrentAxes',han.sfig(kr,kc))
 % data_ls.grid
 val=data_ls.sal(kt,:,:);
 if fig_flip_section
-    data_ls.grid.Xcor=[0;cumsum(flipud(diff(data_ls.grid.Xcor)))];
+%     if do_rkm
+%         x0=data_ls.grid.Xcor(1);
+%     else
+        x0=0;
+%     end
+    data_ls.grid.Xcor=x0+[0;cumsum(flipud(diff(data_ls.grid.Xcor)))];
     data_ls.grid.Ycor=fliplr(data_ls.grid.Ycor);
     val=fliplr(val);
 end
@@ -481,6 +492,9 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
+if fig_reverse
+han.sfig(kr,kc).XAxis.Direction='reverse'; %'reverse'
+end
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')

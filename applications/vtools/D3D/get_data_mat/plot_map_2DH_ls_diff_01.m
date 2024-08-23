@@ -29,6 +29,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 
 flg_loc=isfield_default(flg_loc,'clims_diff_s',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
+flg_loc=isfield_default(flg_loc,'xlims',NaN(size(flg_loc.ylims,1),2));
 
 if isfield(flg_loc,'tol')==0
     flg_loc.tol=30;
@@ -186,6 +187,7 @@ for kt=kt_v %time
         
                     for kylim=1:nylims
                         in_p.ylims=flg_loc.ylims(kylim,:);
+                        in_p.xlims=flg_loc.xlims(kylim,:);
         
                         fname_noext=fig_name(fdir_fig_loc,tag,time_ref,var_str,pliname,kylim,runid);
                         fpath_file{kt,kylim,kpli,kvar}=sprintf('%s%s',fname_noext,fext); %for movie 
