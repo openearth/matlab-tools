@@ -12,7 +12,7 @@
 %
 %
 
-function data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx,varargin)
+function data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx,layer,varargin)
             
 %% CALC
 
@@ -29,7 +29,7 @@ if iscell(fpath_map) %SMTD3D4
     end
     branch=simdef.file.runids{kf};
     varin=cat(2,varargin,'branch',branch);
-    val_loc=gdm_read_data_map_ls_simdef(fdir_mat,simdef_loc,varname,sim_idx,varin{:});
+    val_loc=gdm_read_data_map_ls_simdef(fdir_mat,simdef_loc,varname,sim_idx,layer,varin{:});
     
     xy_cen=[val_loc.Xcen,val_loc.Ycen];
     val=val_loc.val;
@@ -39,7 +39,7 @@ if iscell(fpath_map) %SMTD3D4
         %kf=2
         simdef_loc.file.map=fpath_map{kf};
         branch=simdef.file.runids{kf};
-        val_loc=gdm_read_data_map_ls_simdef(fdir_mat,simdef_loc,varname,sim_idx,varargin{:},'branch',branch);
+        val_loc=gdm_read_data_map_ls_simdef(fdir_mat,simdef_loc,varname,sim_idx,layer,varargin{:},'branch',branch);
         
         xy_cen=cat(1,xy_cen,[val_loc.Xcen,val_loc.Ycen]);
         val=cat(2,val,val_loc.val);
@@ -166,6 +166,23 @@ switch varname
         data=gdm_read_data_map_ls(fdir_mat,fpath_map,varname,varargin{:});
 end
 
+%% layer
 
+if ~isempty(layer)
+    if isinf(layer)
+        np=size(data.val,2);
+        val=NaN(1,np);
+        Ycor=NaN(1,np);
+        for kp=1:np
+            layer_loc=find(~isnan(data.val(1,kp,:)),1,'first');
+            val(1,kp)=data.val(1,kp,layer_loc);
+            Ycor(1,kp)=data.gridInfo.Ycor(1,kp,layer_loc);
+        end
+        data.val=val;
+        data.gridInfo.Ycor=Ycor;
+    else
+        data.val=data.val(:,:,layer);
+    end
+end
 
 end %function

@@ -67,6 +67,10 @@ end
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
+%%
+
+gridInfo=gdm_load_grid(fid_log,fdir_mat,'');
+
 %% DIMENSIONS
 
 nt=numel(time_dnum);
@@ -81,7 +85,7 @@ else
     ndiff=2;
 end
 
-what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef(1),fdir_mat,time_dnum,tag);
+what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef(1),fdir_mat,time_dnum,tag,gridInfo);
 
 switch what_is
     case 1
@@ -98,6 +102,8 @@ switch what_is
         lims=flg_loc.ylims;
         lims_diff=flg_loc.ylims_diff_t;
 end
+
+
 
 %% figure
 in_p=flg_loc; %attention with unexpected input
@@ -121,11 +127,13 @@ for kpli=1:npli %variable
         varname=flg_loc.var{kvar};
         [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef(1));
         
+        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+
         %time 1 of simulation 1 for reference
         %it is up to you to be sure that it is the same for all simulations!
         if flg_loc.do_diff || flg_loc.plot_val0 %difference in time
             fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname);
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname,'layer',layer);
             data_ref=load(fpath_mat_tmp,'data');   
             if flg_loc.do_staircase
                 in_p.val0=data_ref.data.val_staircase;
@@ -151,7 +159,7 @@ for kpli=1:npli %variable
    
             for kS=1:nS
                 fdir_mat=simdef(kS).file.mat.dir; %1 used for reference for all. Should be the same. 
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname);
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname,'layer',layer);
                 load(fpath_mat_tmp,'data');
             
                 %filter data
@@ -208,7 +216,7 @@ for kpli=1:npli %variable
                     fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
                     mkdir_check(fdir_fig_loc,NaN,1,0);
 
-                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,klim);
+                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,klim,layer);
                     fpath_file{kt,klim,kpli,kvar,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
 
                     in_p.fname=fname_noext;
@@ -235,7 +243,7 @@ for kpli=1:npli %variable
                             in_p.data_ls.grid.Xcor=data.rkm_cor;
                         end
                         in_p.clims=lims_loc;
-                        in_p.ylims=flg_loc.ylims(klim,:);
+                        in_p.ylims=ylims(klim,:);
 
                         fig_map_ls_01(in_p)  
 
@@ -271,7 +279,7 @@ for kpli=1:npli %variable
     %                             fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
     %                             mkdir_check(fdir_fig_loc,NaN,1,0);
             
-                                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,klim);
+                                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,klim,layer);
     
                                 in_p.fname=fname_noext;
 
@@ -288,7 +296,7 @@ for kpli=1:npli %variable
 
                             %% ad-hoc differences between runs
                             if flg_loc.do_all_s_2diff
-                                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,klim,tag)
+                                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,klim,tag,layer)
                             end %do_all_s_2diff
                         end %nS
                     end %type plot
@@ -321,7 +329,7 @@ for kpli=1:npli %variable
                             if flg_loc.do_staircase
                                 data_val_p=data.val_staircase;
                             else
-                                data_val_p=data.val_staircase-data_ref.data.val_staircase;
+                                data_val_p=data.val-data_ref.data.val;
                             end
                             in_p_all.ylims=flg_loc.ylims_diff_t(klim,:);
                             in_p_all.is_diff=1;
@@ -329,7 +337,7 @@ for kpli=1:npli %variable
                     end
 
                     fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
-                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_all_t',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,klim);
+                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_all_t',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,klim,layer);
 
                     in_p_all.fname=fname_noext;
                     in_p_all.val=data_all';
@@ -368,15 +376,23 @@ end %function
 %% FUNCTIONS
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,pliname,kdiff,kylim)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,pliname,kdiff,kylim,layer)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_ref_%02d_ylim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMMSS'),var_str,pliname,kdiff,kylim));
+if ~isempty(layer)
+    if isinf(layer)
+        fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_ref_%02d_ylim_%02d_Inf',tag,runid,datestr(time_dnum,'yyyymmddHHMMSS'),var_str,pliname,kdiff,kylim));
+    else
+        fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_ref_%02d_ylim_%02d_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMMSS'),var_str,pliname,kdiff,kylim,layer));
+    end
+else
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_ref_%02d_ylim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMMSS'),var_str,pliname,kdiff,kylim));
+end
 
 end
 
 %% 
 
-function plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag)
+function plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,kylim,tag,layer)
 
 %% PARSE
 
@@ -395,7 +411,7 @@ end
 
 %% CALC
 
-fname_noext=fig_name(fdir_fig_loc,sprintf('%s_s_diff',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim);
+fname_noext=fig_name(fdir_fig_loc,sprintf('%s_s_diff',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,kylim,layer);
 
 in_p.fname=fname_noext;
 switch kdiff

@@ -64,6 +64,11 @@ npli=numel(flg_loc.pli);
 
 [nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
    
+%% GRID
+
+fpath_map=gdm_fpathmap(simdef,sim_idx(1));
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+
 %% LOOP TIME
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
@@ -85,12 +90,14 @@ for kt=kt_v
             varname=flg_loc.var{kvar};
             var_str=D3D_var_num2str_structure(varname,simdef);
             
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname);
+            layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname,'layer',layer);
             if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
             %% read data
             
-            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite,'pliname',pliname); %this overwriting flag should be different than the previous one
+            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),layer,'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite,'pliname',pliname); %this overwriting flag should be different than the previous one
             
             if flg_loc.do_rkm
                 data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',flg_loc.TolMinDist);

@@ -90,7 +90,7 @@ if isfield(in_p,'frac')==0
 end
 in_p=isfield_default(in_p,'do_rkm',0);
 in_p=isfield_default(in_p,'is_diff',0);
-in_p=isfield_default(in_p,'fig_reverse',0);
+in_p=isfield_default(in_p,'xdir','normal');
 
 v2struct(in_p)
 
@@ -492,9 +492,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
-if fig_reverse
-han.sfig(kr,kc).XAxis.Direction='reverse'; %'reverse'
-end
+han.sfig(kr,kc).XAxis.Direction=xdir; %'reverse'
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')

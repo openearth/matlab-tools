@@ -164,6 +164,7 @@
 % in_plot.(tag).markersize=5;
 % in_plot.(tag).do_staircase=1;
 % in_plot.(tag).plot_val0=0; %plot initial
+% % in_plot.(tag).xdir='reverse';
 
 %% summerbed
 

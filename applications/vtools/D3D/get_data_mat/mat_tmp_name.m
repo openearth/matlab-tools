@@ -81,6 +81,7 @@ if ~isempty(layer)
     str_w(end)='';
     str_w2=strcat('%s_layer_',str_w);
     str_add=sprintf(str_w2,str_add,layer);
+    str_add=strrep(str_add,' ','');
     
 %     str_add=sprintf('%s_layer_%04d',str_add,layer);
 end

@@ -90,6 +90,8 @@ npli=numel(flg_loc.pli);
 nylims=size(flg_loc.ylims,1);
 nclims=size(flg_loc.clims_diff_s,1);
 
+gridInfo=gdm_load_grid(fid_log,fdir_mat_ref,'');
+
 %% figure
 
 in_p=flg_loc; %attention with unexpected input
@@ -98,7 +100,7 @@ in_p.is_diff=1;
 
 fext=ext_of_fig(in_p.fig_print);
 
-what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef_ref,fdir_mat_ref,time_dnum_ref,tag);
+what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef_ref,fdir_mat_ref,time_dnum_ref,tag,gridInfo);
 
 %% LOOP TIME
 
