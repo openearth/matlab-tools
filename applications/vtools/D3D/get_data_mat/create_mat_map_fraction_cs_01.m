@@ -177,7 +177,8 @@ for krkm=1:nrkm %rkm
         
                 %% read data
                 if do_read
-                    data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),'pli',pli(:,:,kpli),'pliname',pliname,'tim',time_dnum(kt));%,'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite); %this overwriting flag should be different than the previous
+                    layer=[]; %2DO this should be read
+                    data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname,sim_idx(kt),layer,'pli',pli(:,:,kpli),'pliname',pliname,'tim',time_dnum(kt));%,'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite); %this overwriting flag should be different than the previous
                     data.rkm=rkm_loc;
                     data.br=br_loc;
                     

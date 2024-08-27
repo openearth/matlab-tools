@@ -38,6 +38,7 @@ addOptional(parin,'coverage',0.99,@isnumeric);
 addOptional(parin,'plot_coverage',true);
 addOptional(parin,'plot_rkm',true);
 addOptional(parin,'tol',2000);
+addOptional(parin,'exclude','');
 
 parse(parin,varargin{:});
 
@@ -45,6 +46,7 @@ coverage_th=parin.Results.coverage;
 do_plot_coverage=parin.Results.plot_coverage;
 do_plot_rkm=parin.Results.plot_rkm;
 tol=parin.Results.tol;
+fpath_ex=parin.Results.exclude;
 
 fid_log=NaN; %file-log identifier (NaN = print to screen)
 
@@ -63,6 +65,8 @@ input_struct=create_input_from_shp_01(fpath_shp,fpath_dbf_csv);
 nd=numel(input_struct); %number of dbf-files, time.
 
 rkm=rkmi:ds/1000:rkmf; %rkm vector 
+
+exclude_id=read_exclude(fpath_ex);
 
 %data = measurements data structure [struct(1,1)]
 %   -data.bl.val_mean = bed level mean values
@@ -95,11 +99,14 @@ for kd=1:nd %dbf-file, time.
     %rkm_pol = river kilometer ; [double(np,1)]
     %br_pol_num = branch number ; [double(np,1)]
 
+    %exclude locations
+    bol_ex=compute_exclude_booleans(exclude_id,rkm_pol_num,br_pol_num);
+
     if do_plot_coverage
         [~,fname_dbf,~]=fileparts(input_struct(kd).dbf);
         fdir_fig=fullfile(fdir_out,'coverage',fname_dbf);
         mkdir_check(fdir_fig);
-        plot_coverage(pol,etab_cen,fpath_rkm,fdir_fig,'tol',tol);
+        plot_coverage(pol,etab_cen,fpath_rkm,fdir_fig,'tol',tol,'exclude',bol_ex);
     end
 
     %sections = sections to process [struct(1,1)]
@@ -108,7 +115,7 @@ for kd=1:nd %dbf-file, time.
     %rkm = river kilometer center points [double(nrkm,1 )]
     %br = branch identifier [char]
 
-    [val(:,kd),idx_rkm]=compute_mean(etab_cen,area_cen,loc_pol_num,rkm_pol_num,br_pol_num,section.ident,rkm,br);
+    [val(:,kd),idx_rkm]=compute_mean(etab_cen,area_cen,loc_pol_num,rkm_pol_num,br_pol_num,section.ident,rkm,br,bol_ex);
 
     if do_plot_rkm
         [~,fname_dbf,~]=fileparts(input_struct(kd).dbf);
@@ -139,5 +146,18 @@ in_p.fig_visible=0;
 in_p.data=data.bl.val_mean;
 
 fig_measurments(in_p)
+
+end %function
+
+%%
+
+function exclude_id=read_exclude(fpath_ex)
+
+if isempty(fpath_ex)
+    exclude_id{1,1}='';
+    exclude_id{1,2}=[];
+else
+    exclude_id=readcell(fpath_ex,'FileType','text');
+end
 
 end %function

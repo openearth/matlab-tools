@@ -387,13 +387,7 @@ if ~isempty(measurements)
         end
     else
         error('do reader')
-    end
-
-    %units
-    if ~isempty(data_mea)
-        data_mea.waarde=change_units(data_mea.waarde,unit,data_mea.eenheid);
-    end
-    
+    end    
 else
     data_mea=struct();
 end
@@ -404,6 +398,11 @@ if nfn==0
     do_measurements=0;
 else
     do_measurements=1;
+end
+
+if do_measurements
+    %units
+    data_mea.waarde=change_units(data_mea.waarde,unit,data_mea.eenheid);
 end
 
 end %function

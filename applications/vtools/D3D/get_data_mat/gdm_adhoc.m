@@ -37,6 +37,10 @@ switch in_plot.adhoc
         tag_check='fig_map_2DH_ls_01';
         in_plot_fig=gmd_tag(in_plot,tag_check);
         gdm_adhoc_infinitesimal_perturbation_propagation(fid_log,in_plot_fig,simdef);
+    case 4
+        tag_check='fig_map_2DH_ls_01';
+        in_plot_fig=gmd_tag(in_plot,tag_check);
+        gdm_adhoc_mean_u5(fid_log,in_plot_fig,simdef);
     otherwise
         messageOut(fid_log,sprintf('Adhoc function %d does not exist.',in_plot.adhoc));
 end

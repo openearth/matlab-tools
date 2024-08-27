@@ -79,8 +79,8 @@ ylims=check_diff(ylims);
 
 %% CHECK
 
-check_nan(xlim)
-check_nan(ylim)
+check_nan(xlims);
+check_nan(ylims);
 
 end %function 
 

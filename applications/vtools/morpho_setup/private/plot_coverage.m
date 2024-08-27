@@ -20,11 +20,13 @@ parin=inputParser;
 
 addOptional(parin,'type',1,@isnumeric);
 addOptional(parin,'tol',2000);
+addOptional(parin,'exclude',false(size(etab_cen)));
 
 parse(parin,varargin{:});
 
 type_plot=parin.Results.type;
 tol=parin.Results.tol;
+bol_ex=parin.Results.exclude;
 
 tol_x=tol;
 tol_y=tol;
@@ -64,6 +66,8 @@ switch type_plot
         bol_cov=~isnan(etab_cen);
         scatter(xpol_cen(bol_cov),ypol_cen(bol_cov),10,'g','filled')
         scatter(xpol_cen(~bol_cov),ypol_cen(~bol_cov),10,'r','filled')
+        scatter(xpol_cen(bol_ex),ypol_cen(bol_ex),10,'cyan','x')
+        
     case 2 %index number
         np=max(etab_cen);
         cmap=repmat(brewermap(9,'set1'),ceil(np/9),1);

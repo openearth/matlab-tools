@@ -474,9 +474,9 @@ if ns>1
     
 end %ns>1
 
-%% AD-HOC
-
 end %only_adhoc
+
+%% AD-HOC
 
 gdm_adhoc(fid_log,in_plot,simdef_all)
 

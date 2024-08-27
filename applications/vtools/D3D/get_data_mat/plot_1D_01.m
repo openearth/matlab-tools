@@ -189,8 +189,6 @@ for ksb=1:nsb
             for kS=1:nS    
                 fdir_mat=simdef(kS).file.mat.dir;
                 fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
-%                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
-                
                 load(fpath_mat_tmp,'data');            
                 data_0_loc(kS)=data;
             end
@@ -210,7 +208,6 @@ for ksb=1:nsb
             if do_ref
                 fdir_mat=simdef_ref.file.mat.dir;
                 fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
-%                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                 load(fpath_mat_tmp,'data');            
                 data_0_ref=data;
             end
@@ -243,8 +240,16 @@ for ksb=1:nsb
                 for kS=1:nS
                     fdir_mat=simdef(kS).file.mat.dir;
                     fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
-%                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
-                    load(fpath_mat_tmp,'data');
+                    if isfile(fpath_mat_tmp)
+                        load(fpath_mat_tmp,'data');
+                    else
+                        messageOut(fid_log,sprintf('File does not exist, most probably because the simulated time is shorter than in the reference: %s',fpath_mat_tmp))
+                        fn_data=fieldnames(data_0_loc(1));
+                        nfn=numel(fn_data);
+                        for kfn=1:nfn
+                            data.(fn_data{kfn})=NaN(size(data_0_loc(1).(fn_data{kfn})));
+                        end
+                    end
                     data_load(kS)=data;
                 end
                 data_sim=data_load;
@@ -253,7 +258,6 @@ for ksb=1:nsb
                 if do_ref
                     fdir_mat=simdef_ref.file.mat.dir;
                     fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
-%                     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var',var_str_save,'sb',sb_pol,'layer',layer,'flg_loc.var_idx',flg_loc.var_idx{kvar});
                     load(fpath_mat_tmp,'data');            
                     data_ref=data;
                 end

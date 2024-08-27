@@ -13,7 +13,19 @@
 %Read several gsd files and create a mat-file with dg compatible with `D3D_gdm`
 %
 
-function dg_from_cumulative_gsd(fpath_gsd,tim_dnum)
+function dg_from_cumulative_gsd(fpath_gsd,tim_dnum,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'xlims',[NaN,NaN]);
+
+parse(parin,varargin{:});
+
+xlims=parin.Results.xlims;
+
+%%
 
 ngsd=numel(fpath_gsd);
 
@@ -45,6 +57,7 @@ for kgsd=1:ngsd
 
     %plot
     in_p=struct();
+    in_p.xlims=xlims;
     in_p.data=data;
     in_p.fname=fullfile(fdir,sprintf('%s_dg',fname));
 
@@ -110,6 +123,7 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
+in_p=isfield_default(in_p,'xlims',[NaN,NaN]);
 
 v2struct(in_p)
 
@@ -314,7 +328,7 @@ cmap=brewermap(3,'set1');
 
 kr=1; kc=1;
 % lims.y(kr,kc,1:2)=lims_y;
-% lims.x(kr,kc,1:2)=lims_x;
+lims.x(kr,kc,1:2)=xlims;
 % lims.c(kr,kc,1:2)=lims_c;
 xlabels{kr,kc}=labels4all('rkm',1/1000,lan);
 ylabels{kr,kc}=labels4all('dg',1,lan);
@@ -433,7 +447,9 @@ hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+if ~isnan(xlims(1))
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+end
 % han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};

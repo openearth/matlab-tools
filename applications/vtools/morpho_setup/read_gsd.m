@@ -26,16 +26,18 @@ function read_gsd(fpath,dtype,varargin)
 parin=inputParser;
 
 addOptional(parin,'fdir_out',pwd);
+addOptional(parin,'xlims',[NaN,NaN]);
 
 parse(parin,varargin{:});
 
 fdir_out=parin.Results.fdir_out;
+flg.xlims=parin.Results.xlims;
 
 %% CALC
 
 nf=numel(fpath);
 for kf=1:nf
-    read_gsd_single(fpath{kf},dtype(kf),fdir_out);
+    read_gsd_single(fpath{kf},dtype(kf),fdir_out,flg);
 end %kf
 
 end %function
@@ -44,13 +46,13 @@ end %function
 %% FUNCTIONS
 %%
 
-function read_gsd_single(fpath,dtype,fdir_out)
+function read_gsd_single(fpath,dtype,fdir_out,flg)
 
 switch dtype
     case 1
-        read_gsd_type_1(fpath,fdir_out)
+        read_gsd_type_1(fpath,fdir_out,flg)
     case 2
-        read_gsd_type_2(fpath,fdir_out)
+        read_gsd_type_2(fpath,fdir_out,flg)
     otherwise
         error('Unknown type %d',dtype)
 end %dtype
@@ -59,7 +61,7 @@ end %function
 
 %%
 
-function read_gsd_type_1(fpath_input_gsd,fdir_out)
+function read_gsd_type_1(fpath_input_gsd,fdir_out,flg)
 
 %% INPUT
 
@@ -109,13 +111,13 @@ bol_out=isnan(sum(frac,2));
 
 %% SAVE
 
-print_and_save(x,y,rkm,frac,dk,fdir_out,bol_out,fpath_input_gsd)
+print_and_save(x,y,rkm,frac,dk,fdir_out,bol_out,fpath_input_gsd,flg)
 
 end %function
 
 %%
 
-function fig_gsd(dk,frac,rkm,fpath_out)
+function fig_gsd(dk,frac,rkm,fpath_out,flg)
 
 dk_char=sqrt(dk(1:end-1).*dk(2:end));
 str=cell(numel(dk_char),1);
@@ -140,6 +142,10 @@ for k=1:numel(dk_char)
     han.a(k).FaceColor=cmap(k,:);
 end
 
+if ~isnan(flg.xlims(1))
+    xlim(flg.xlims);
+end
+
 printV(gcf,fpath_out);
 
 end %function
@@ -155,7 +161,7 @@ end %function
 
 %%
 
-function print_and_save(x,y,rkm,frac,dk,fdir_out,bol_out,fpath_input_gsd)
+function print_and_save(x,y,rkm,frac,dk,fdir_out,bol_out,fpath_input_gsd,flg)
 
 [frac,x,y,rkm]=filter_output(frac,x,y,rkm,bol_out);
 
@@ -165,7 +171,7 @@ mkdir_check(fdir_out);
 
 %plot
 fpath_out=fullfile(fdir_out,sprintf('%s.png',fname));
-fig_gsd(dk,frac,rkm,fpath_out)
+fig_gsd(dk,frac,rkm,fpath_out,flg)
 
 %save
 fpath_out=fullfile(fdir_out,sprintf('%s.mat',fname));
@@ -175,7 +181,7 @@ end %function
 
 %%
 
-function read_gsd_type_2(fpath_input_gsd,fdir_out)
+function read_gsd_type_2(fpath_input_gsd,fdir_out,flg)
 
 %fractions sheet
 sheet_frac=2;
@@ -232,7 +238,7 @@ y=rkm_xy(:,2);
 
 %% SAVE
 
-print_and_save(x,y,rkm,frac,dk,fdir_out,bol_out,fpath_input_gsd)
+print_and_save(x,y,rkm,frac,dk,fdir_out,bol_out,fpath_input_gsd,flg)
 
 end %function
 
