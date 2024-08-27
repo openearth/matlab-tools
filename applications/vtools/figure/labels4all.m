@@ -894,7 +894,7 @@ switch lower(variable)
     case 'rkm'
          switch lan
             case 'en'
-                str_var='river kilometer';
+                str_var='river kilometre';
             case 'nl'
                 str_var='rivierkilometer';
             case 'es'
