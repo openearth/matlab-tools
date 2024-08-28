@@ -189,7 +189,7 @@ cbar(kr,kc).location='northoutside';
 [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(unit,1,lan,'frac',frac);
 if is_diff
     cbar(kr,kc).label=str_diff;
-    cmap=brewermap(100,'RdYlBu');
+    cmap=flipud(brewermap(100,'RdYlBu'));
 else
     cbar(kr,kc).label=lab;
     cmap=turbo(100);

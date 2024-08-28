@@ -48,7 +48,8 @@ end
 
 load('simdef_all.mat','simdef_all')
 %ad-hoc! problem with p-drive folder, for now only process second run. 
-simdef=simdef_all(2);
+% simdef=simdef_all(2);
+simdef=simdef_all;
 
 nS=numel(simdef);
 
@@ -70,7 +71,7 @@ npli=numel(flg_loc.pli);
 
 %% LOAD TIME
 
-[nt,time_dnum,tim_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
+[nt,time_dnum,tim_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(1));
    
 %% GRID
 
@@ -96,7 +97,7 @@ for kt=kt_v
                 error('cannot read section along variables not from EHY')
             end
             varname=flg_loc.var{kvar};
-            var_str=D3D_var_num2str_structure(varname,simdef);
+            var_str=D3D_var_num2str_structure(varname,simdef(1));
             
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
 
@@ -130,7 +131,7 @@ mkdir_check(fdir_fig_loc);
 for pw=1:5
 idx=1:1:size(data_all.val,1); %all
 % pw=3;
-val=data_all.val(idx,:).^pw;
+val=data_all.val(idx,:,:).^pw;
 val_m=mean(val,1);
 
 % %%
@@ -140,11 +141,23 @@ val_m=mean(val,1);
 
 %%
 figure
-plot(data_all.rkm,val_m)
+plot(data_all.rkm,squeeze(val_m))
 ylabel(sprintf('mean longitudinal velocity to the power %d [m^%d/s^%d]',pw,pw,pw))
 xlabel(labels4all('rkm',1/1000,'en'));
 title(sprintf('%s  -  %s',datestr(data_all.time_dtime(1)),datestr(data_all.time_dtime(end))));
 fpath_fig=fullfile(fdir_fig_loc,sprintf('ah_p%d.png',pw));
+ha=gca;
+ha.XAxis.Direction='reverse';
+legend(flg_loc.str_sim)
+printV(gcf,fpath_fig);
+
+%%
+figure
+plot(data_all.rkm,val_m(:,:,2)-val_m(:,:,1))
+ylabel(sprintf('difference in mean longitudinal velocity to the power %d [m^%d/s^%d]',pw,pw,pw))
+xlabel(labels4all('rkm',1/1000,'en'));
+title(sprintf('%s  -  %s',datestr(data_all.time_dtime(1)),datestr(data_all.time_dtime(end))));
+fpath_fig=fullfile(fdir_fig_loc,sprintf('ah_d_p%d.png',pw));
 ha=gca;
 ha.XAxis.Direction='reverse';
 printV(gcf,fpath_fig);

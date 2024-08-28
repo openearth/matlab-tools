@@ -93,7 +93,7 @@ switch what_is
         lims=flg_loc.clims;
         lims_diff=flg_loc.clims_diff_t;
 
-        nlims_y=size(flg_loc.ylims);
+        nlims_y=size(flg_loc.ylims,1);
         if nlims_y~=nlims
             flg_loc.ylims=NaN(nlims,2);
         end
