@@ -27,6 +27,7 @@
 % tag_rkm='1km'; %tag of the distance to compute the mean [char]. This is added to the output filename. 
 % do_plot_coverage=0; %plot the figures with coverage [double(1,1)]: 0 = no; 1 = yes; 
 % tol=2000; %tolerance xlim and ylim in plots 
+% fpath_ex=fullfile(fpaths.fdir_data_bedlevel,'10_exclude','bridges_ij.csv'); %full path to file with identifiers to exclude (e.g., bridges) [char]. Format is a column vector with identifyers such as IJ_995.50
 
 function create_mat_measurements_from_shp_01(fpath_shp,fpath_dbf_csv,fdir_out,fpath_rkm,section,rkmi,rkmf,ds,br,tag_rkm,varargin)
 
