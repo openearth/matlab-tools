@@ -121,7 +121,7 @@ for kvar=1:nvar
         in_p.elevation=elevation;
 
         %% load data
-        [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation,tim_dtime_p,flg_loc.unit{kvar});
+        [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation,tim_dtime_p,flg_loc.unit{kvar},kvar);
         
         in_p.unit=unit;
 
@@ -148,7 +148,7 @@ for kvar=1:nvar
 %             fpath_file=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;
-            [in_p.xlims,in_p.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all{k_sta},data_mea,tim_dtime_p{k_sta});
+            [in_p.xlims,in_p.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all{k_sta},data_mea,tim_dtime_p{1});
 
             fig_his_sal_01(in_p);
         end %kylim
@@ -183,7 +183,7 @@ for kvar=1:nvar
 
         fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'allsta');
         
-        [in_p_sta_all.xlims,in_p_sta_all.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all,data_mea,tim_dtime_p);
+        [in_p_sta_all.xlims,in_p_sta_all.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all,data_mea,tim_dtime_p{1});
 
         in_p_sta_all.fname=fname_noext;
         in_p_sta_all.val=data_all;
@@ -216,15 +216,15 @@ end %function
 
 function [xlims,ylims]=get_ylims(ylims,do_measurements,data,data_mea,tim_dtime)
 
-x_all={tim_dtime};
+x_all=tim_dtime;
 val_all=data;
 if do_measurements
     x_all=cat(1,x_all,{data_mea.time});
     val_all=cat(1,val_all,{data_mea.waarde});
 end
 
-[xlims,ylims]=xlim_ylim([tim_dtime(1),tim_dtime(end)],ylims,x_all,val_all);
-
+% [xlims,ylims]=xlim_ylim([tim_dtime(1),tim_dtime(end)],ylims,x_all,val_all);
+[xlims,ylims]=xlim_ylim([NaN,NaN],ylims,x_all,val_all);
 % if isnan(ylims)
 %     if do_measurements
 %         ylims_1=[min([data{:}]),max([data{:}])];
@@ -324,7 +324,7 @@ end %function
 
 %%
 
-function [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation,time_dtime,unit)
+function [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation,time_dtime,unit,kvar)
 
 for k_sim=1:n_sim %simulations            
     fdir_mat=simdef(k_sim).file.mat.dir;
@@ -335,11 +335,10 @@ for k_sim=1:n_sim %simulations
         case 1
             layer=gdm_station_layer(flg_loc,gridInfo(k_sim),fpath_his,stations_loc,var_str,elevation); 
         case 2
-            error('We need to pass `kvar`, but it is not nice. Think and repair.')
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     end
     
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime{k_sim}(1),'tim2',time_dtime{k_sim}(end));
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime{k_sim}(1),'tim2',time_dtime{k_sim}(end),'depth_average',flg_loc.depth_average(kvar));
     load(fpath_mat_tmp,'data');
 
     %change units

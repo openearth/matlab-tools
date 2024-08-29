@@ -52,7 +52,7 @@ if isnan(ylims(1))
         xloc=x_v{kv};
         vloc=val{kv};
 
-        bol=xloc>xlims(1) & xloc<xlims(2);
+        bol=xloc>=xlims(1) & xloc<=xlims(2);
 
         min_max_loc=[min(vloc(bol)),max(vloc(bol))];
 

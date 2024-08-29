@@ -259,6 +259,8 @@
 % in_plot.(tag).stations=NaN; %NaN=all
 % in_plot.(tag).var={'sal'};
 % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all; 
+% in_plot.(tag).elevation=[-6.5,-2.5]; %elevation at which to take the data.
+
 % in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).ylims_diff=[NaN,NaN;-sal2cl(-1,400),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.

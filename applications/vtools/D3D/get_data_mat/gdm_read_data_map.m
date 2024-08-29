@@ -25,6 +25,8 @@ addOptional(parin,'do_load',1);
 addOptional(parin,'tol_t',5/60/24);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
+addOptional(parin,'depth_average',false);
+addOptional(parin,'elevation',[]);
 % addOptional(parin,'bed_layers',[]); We use <layer> for flow and sediment
 
 parse(parin,varargin{:});
@@ -36,6 +38,8 @@ do_load=parin.Results.do_load;
 tol_t=parin.Results.tol_t;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
+depth_average=parin.Results.depth_average;
+elevation=parin.Results.elevation;
 % bed_layers=parin.Results.bed_layers;
 
 %% CALC
@@ -73,24 +77,68 @@ end
 
 %% layer
 
+%layer
 if ~isempty(layer)
-    %maybe better to search for [layer] in the ones coming from EHY?
     idx_f=D3D_search_index_layer(data);
     data.val=submatrix(data.val,idx_f,layer);
-    
-end
-%get desired fractions
-if ~isempty(var_idx)
-%     idx_f=D3D_search_index_in_dimension(data_lyrfrac,'sedimentFraction'); 
-    idx_f=D3D_search_index_fraction(data); 
-    data.val=submatrix(data.val,idx_f,var_idx); %take submatrix along dimension
-    %sum over sediment dimension
-%     data.val=sum(data.val,idx_f); %why? not here. I copied this from another location. 
 end
 
-% if ~isempty(bed_layers)
-%     %maybe better to search for [layer] in the ones coming from EHY?
-%    data.val=data.val(:,:,layer);
-% end
+%get desired fractions
+if ~isempty(var_idx)
+    idx_f=D3D_search_index_fraction(data); 
+    data.val=submatrix(data.val,idx_f,var_idx); %take submatrix along dimension
+end
+
+%depth averaged
+if depth_average
+    data=gdm_depth_average(data,fdir_mat,fpath_map,time_dnum);
+end
+
+%elevation
+if ~isempty(elevation)
+    data_zc=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zc','tim',time_dnum); 
+    
+%   -t_sim: simulation time [nT,1]
+%   -z_sim: simulation elevation [nT,nl]
+%   -v_sim: simulation values [nT,nl]
+%   -t_mea: measurements time [nt,1]
+%   -z_mea: measurements elevation [nt,1]
+
+t_sim=data.times;
+z_sim=squeeze(data_z.val);
+v_sim=squeeze(data.val);
+t_mea=data.times;
+z_mea=repmat(elevation,numel(t_mea),1);
+
+v_sim_atmea=interpolate_xy_structured(t_sim,z_sim,v_sim,t_mea,z_mea);
+
+data.val=v_sim_atmea;
+end
+
+end %function
+
+%%
+
+function  data=gdm_depth_average(data,fdir_mat,fpath_map,time_dnum)
+
+data_zw=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zw','tim',time_dnum); 
+%values
+%     idx_layer=D3D_search_index_layer(data);
+idx_time=D3D_search_index_in_dimension(data,'time');
+val=submatrix(data.val,idx_time,1); 
+%elevation
+%assumption. we should read it, but if 'mesh2d_flowelem_zw' is constructed by hand, I did not add it. 
+idx_layer=3;
+%     idx_face=2; 
+%     idx_time=1;
+thk=diff(data_zw.val,1,idx_layer); %m
+if any(size(thk)~=size(val))
+    %we should first check that `idx_#` of `val` and `zw` match and then permute if necessary.
+    error('Dimensions do not agree. You have to permute them to be correct.')
+end
+thk_tot=sum(thk,idx_layer,'omitnan');
+val_da=sum(val.*thk,idx_layer,'omitnan')./thk_tot;
+data.val=val_da;
+data.dimensions='[time,mesh2d_nFaces]';
 
 end %function

@@ -37,15 +37,21 @@ bed_layers=parin.Results.bed_layers;
 %% reconstruction of unavailable variable
 
 switch varname
-    case 'mesh2d_flowelem_zw'
+    case {'mesh2d_flowelem_zw','mesh2d_flowelem_zc'}
         nci=ncinfo(fpath_map);
         if isnan(find_str_in_cell({nci.Variables.Name},{varname})) %variable you want to read is not there
             OPT.t0=time_dnum;
             OPT.tend=time_dnum;
             OPT.mergePartitions=1;
             OPT.mergePartitionNrs=[];
-            [Zcen_int,~,~,~] = EHY_getMapModelData_construct_zcoordinates(fpath_map,'dfm',OPT);
-            data.val=Zcen_int;
+            [Zcen_int,Zcen_cen,~,~] = EHY_getMapModelData_construct_zcoordinates(fpath_map,'dfm',OPT);
+            data.dimensions='[time,mesh2d_nFaces,mesh2d_nLayers]';
+            switch varname
+                case 'mesh2d_flowelem_zw'
+                    data.val=Zcen_int;
+                case 'mesh2d_flowelem_zc'
+                    data.val=Zcen_cen;
+            end
             return
         end
     otherwise

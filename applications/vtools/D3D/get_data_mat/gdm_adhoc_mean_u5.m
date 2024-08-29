@@ -119,13 +119,15 @@ for kt=kt_v
 end %kt
 
 fdir_mat=simdef(1).file.mat.dir;
-fpath_mat_tmp=fullfile(fdir_mat,'ad_hoc.mat');
+% fpath_mat_tmp=fullfile(fdir_mat,'ad_hoc.mat');
+fpath_mat_tmp=fullfile(fdir_mat,'ad_hoc2.mat');
 save(fpath_mat_tmp,'data_all');
 
 %% power
 
 fdir_fig=simdef(1).file.fig.dir;
-fdir_fig_loc=fullfile(fdir_fig,'mean_u');
+% fdir_fig_loc=fullfile(fdir_fig,'mean_u');
+fdir_fig_loc=fullfile(fdir_fig,'mean_u2');
 mkdir_check(fdir_fig_loc);
 
 for pw=1:5

@@ -47,6 +47,9 @@ if isfield(flg_loc,'sum_var_idx')==0
     flg_loc.sum_var_idx=zeros(size(flg_loc.var));
 end
 
+flg_loc=isfield_default(flg_loc,'depth_average',zeros(size(flg_loc.var)));
+flg_loc=isfield_default(flg_loc,'elevation',NaN(size(flg_loc.var)));
+
 flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
 
 %% PATHS
@@ -92,13 +95,17 @@ for kt=kt_v
 
         %looping on kobs outside of the time loop would seem more logical, but we would load data kvar*kobs more times. 
         for kobs=1:nobs 
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str_read,'var_idx',flg_loc.var_idx{kvar},'layer',layer,'station',flg_loc.obs(kobs).name);
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(kobs).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elevation(kvar),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar));
+%             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str_read,'var_idx',flg_loc.var_idx{kvar},'layer',layer,'station',flg_loc.obs(kobs).name,'depth_average',flg_loc.depth_average(kvar));      
 
             %% read data
             if ~(exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite)
-                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar));      
-                data=squeeze(data_var.val); %#ok
-                data_his(kobs,kt,kvar)=data(:,idx_obs(kobs),:,:); %how do we make sure we get all dimensions?
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar),'depth_average',flg_loc.depth_average(kvar));      
+                [idx_time,dim]=D3D_search_index_in_dimension(data_var,'time');
+                idx_face=D3D_search_index_in_dimension(data_var,'mesh2d_nFaces');
+                data=submatrix(data_var.val,idx_time,1); %remove time
+                data=submatrix(data,idx_face,idx_obs(kobs)); %take station we want
+                data_his(kobs,kt,kvar)=squeeze(data); 
             end
         end %kobs
 
@@ -110,9 +117,14 @@ end %kt
 %% SAVE
 
 for kvar=1:nvar
+    [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
+    
+    layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+
     for kobs=1:nobs
     
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str_read,'var_idx',flg_loc.var_idx{kvar},'layer',layer,'station',flg_loc.obs(kobs).name);
+        %read
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(kobs).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elevation(kvar),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar));
 
     if ~(exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite)
         data=data_his(kobs,:,kvar); %#ok

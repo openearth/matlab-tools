@@ -45,6 +45,7 @@ if ismember('cel_morpho',flg_loc.var)
         nst=1; %there can only be one
     end
 else
+    flg_loc.sediment_transport=NaN;
     return
 end
 
