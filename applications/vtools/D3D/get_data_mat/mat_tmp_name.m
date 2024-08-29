@@ -138,7 +138,7 @@ if ~isempty(elevation) && ~isnan(elevation)
 end
 
 %depth average
-if ~isempty(depth_average)
+if ~isempty(depth_average) && ~isnan(depth_average)
     str_add=sprintf('%s_da',str_add);
 end
 

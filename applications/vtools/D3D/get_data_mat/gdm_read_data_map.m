@@ -95,7 +95,7 @@ if depth_average
 end
 
 %elevation
-if ~isempty(elevation)
+if ~isempty(elevation) && ~isnan(elevation)
     data=gdm_2DH_elevation(data,fdir_mat,fpath_map,time_dnum,elevation);
 end
 
