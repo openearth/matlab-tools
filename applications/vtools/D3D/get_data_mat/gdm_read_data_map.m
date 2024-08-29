@@ -96,23 +96,7 @@ end
 
 %elevation
 if ~isempty(elevation)
-    data_zc=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zc','tim',time_dnum); 
-    
-%   -t_sim: simulation time [nT,1]
-%   -z_sim: simulation elevation [nT,nl]
-%   -v_sim: simulation values [nT,nl]
-%   -t_mea: measurements time [nt,1]
-%   -z_mea: measurements elevation [nt,1]
-
-t_sim=data.times;
-z_sim=squeeze(data_z.val);
-v_sim=squeeze(data.val);
-t_mea=data.times;
-z_mea=repmat(elevation,numel(t_mea),1);
-
-v_sim_atmea=interpolate_xy_structured(t_sim,z_sim,v_sim,t_mea,z_mea);
-
-data.val=v_sim_atmea;
+    data=gdm_2DH_elevation(data,fdir_mat,fpath_map,time_dnum,elevation);
 end
 
 end %function
@@ -139,6 +123,36 @@ end
 thk_tot=sum(thk,idx_layer,'omitnan');
 val_da=sum(val.*thk,idx_layer,'omitnan')./thk_tot;
 data.val=val_da;
+data.dimensions='[time,mesh2d_nFaces]';
+
+end %function
+
+%%
+
+function data=gdm_2DH_elevation(data,fdir_mat,fpath_map,time_dnum,elevation)
+
+data_zc=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zc','tim',time_dnum); 
+    
+%2DO: there should be a thorough check on dimensions and permute if necessary
+idx_faces=D3D_search_index_in_dimension(data,'mesh2d_nFaces');
+
+z_sim=squeeze(data_zc.val);
+v_sim=squeeze(data.val);
+
+np=size(data.val,idx_faces);
+v_sim_atmea=NaN(1,np);
+for kp=1:np
+    x=z_sim(kp,:);
+    y=v_sim(kp,:);
+    bol_n=isnan(x);
+    if ~all(bol_n)
+        z=interp1(x(~bol_n),y(~bol_n),elevation,'linear');
+        v_sim_atmea(1,kp)=z;
+    end
+%     fprintf('%4.2f %% \n',kp/np*100);
+end
+
+data.val=v_sim_atmea;
 data.dimensions='[time,mesh2d_nFaces]';
 
 end %function

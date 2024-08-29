@@ -108,6 +108,7 @@
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
 % % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
+% in_plot.(tag).depth_average=1; %compute depth average quantity [1,nvar]
 % in_plot.(tag).tim_just_load=0;
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
 % in_plot.(tag).tim=NaN; %all times
@@ -359,6 +360,30 @@
 % in_plot.(tag).rkm=rkm_lim(1)+2:1:rkm_lim(2); %river km vectors to average the data; 
 % in_plot.(tag).xy_input_type=2; %Maas
 % in_plot.(tag).s_floodplain=9000;
+
+%% his data out of map data
+
+% tag='fig_map_2DH_his_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_all_sta=1;
+% in_plot.(tag).var={'sal'}; %open D3D_list_of_variables
+% % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
+% in_plot.(tag).tim_type=1; %Type of input time: 1=flow; 2=morpho. 
+% in_plot.(tag).tim=5000:1:5002; 
+% in_plot.(tag).order_anl=1; %1=normal; 2=random
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).depth_average=1; %compute depth average quantity
+% 
+% kobs=0;
+% 
+% kobs=kobs+1;
+% in_plot.(tag).obs(kobs).xy=[73347.5505375,439310.1805045];
+% in_plot.(tag).obs(kobs).name='NW_1023.00_SC';
+% 
+% kobs=kobs+1;
+% in_plot.(tag).obs(kobs).xy=[73480.9609,439515.6563];
+% in_plot.(tag).obs(kobs).name='NW_1023.00';
 
 %%
 
