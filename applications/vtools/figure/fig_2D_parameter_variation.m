@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18311 $
-%$Date: 2022-08-19 06:18:42 +0200 (vr, 19 aug 2022) $
-%$Author: chavarri $
-%$Id: fig_2D_parameter_variation.m 18311 2022-08-19 04:18:42Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/fig_2D_parameter_variation.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Plots a variable as a function of 2 parameters and the contour of 
 %the objective value. Based on <fig_sedtrans_calib>.

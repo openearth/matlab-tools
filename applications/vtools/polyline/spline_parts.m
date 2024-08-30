@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18269 $
-%$Date: 2022-08-01 06:31:19 +0200 (ma, 01 aug 2022) $
-%$Author: chavarri $
-%$Id: increaseCoordinateDensity.m 18269 2022-08-01 04:31:19Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/increaseCoordinateDensity.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Compute spline per parts.
 %

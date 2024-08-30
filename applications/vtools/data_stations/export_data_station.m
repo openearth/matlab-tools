@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19676 $
-%$Date: 2024-06-17 21:37:30 +0200 (Mon, 17 Jun 2024) $
-%$Author: chavarri $
-%$Id: fig_his_sal_01.m 19676 2024-06-17 19:37:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_his_sal_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function export_data_station(fpath_csv,data)

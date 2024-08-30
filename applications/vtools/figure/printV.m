@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19509 $
-%$Date: 2024-03-28 08:59:52 +0100 (Thu, 28 Mar 2024) $
-%$Author: chavarri $
-%$Id: printV.m 19509 2024-03-28 07:59:52Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/printV.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

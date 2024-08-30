@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18342 $
-%$Date: 2022-08-30 11:28:23 +0200 (di, 30 aug 2022) $
-%$Author: chavarri $
-%$Id: check_print_figure.m 18342 2022-08-30 09:28:23Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/check_print_figure.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function do_fig=check_print_figure(in_p)

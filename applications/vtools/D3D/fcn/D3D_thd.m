@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17062 $
-%$Date: 2021-02-12 13:47:20 +0100 (vr, 12 feb 2021) $
-%$Author: chavarri $
-%$Id: D3D_enc.m 17062 2021-02-12 12:47:20Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_enc.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Thin dams file
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18353 $
-%$Date: 2022-09-08 13:39:21 +0200 (do, 08 sep 2022) $
-%$Author: chavarri $
-%$Id: ext_of_fig.m 18353 2022-09-08 11:39:21Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/ext_of_fig.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

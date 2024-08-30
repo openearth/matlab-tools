@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 8 $
-%$Date: 2021-07-08 10:17:44 +0200 (Thu, 08 Jul 2021) $
-%$Author: chavarri $
-%$Id: fig_grid_change.m 8 2021-07-08 08:17:44Z chavarri $
-%$HeadURL: file:///P:/11206813-007-kpp2021_rmm-3d/E_Software_Scripts/00_svn/modify_bed_elevation_grid/fig_grid_change.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error

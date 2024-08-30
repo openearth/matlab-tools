@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19577 $
-%$Date: 2024-05-02 10:34:10 +0200 (Thu, 02 May 2024) $
-%$Author: ottevan $
-%$Id: write_2DMatrix.m 19577 2024-05-02 08:34:10Z ottevan $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/write_2DMatrix.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Interpolate grain size distribution data on a grid. 
 %

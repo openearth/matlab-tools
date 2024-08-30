@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19697 $
-%$Date: 2024-07-08 08:30:24 +0200 (Mon, 08 Jul 2024) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 19697 2024-07-08 06:30:24Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Modify the bed level of a grid file in NC format by setting a constant value
 %at the corners inside a polygon.

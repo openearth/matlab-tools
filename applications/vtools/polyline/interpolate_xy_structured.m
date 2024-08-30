@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19229 $
-%$Date: 2023-11-03 13:13:41 +0100 (Fri, 03 Nov 2023) $
-%$Author: chavarri $
-%$Id: gdm_read_data_his.m 19229 2023-11-03 12:13:41Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_read_data_his.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Interpolates simulation 2D (vertical) results at measurement locations. It differs
 %from `interpolate_xy` in the sense that the data is structured, meaning it can be

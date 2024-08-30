@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19339 $
-%$Date: 2024-01-08 15:33:20 +0100 (Mon, 08 Jan 2024) $
-%$Author: chavarri $
-%$Id: fig_unique_analysis.m 19339 2024-01-08 14:33:20Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/fig_unique_analysis.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error

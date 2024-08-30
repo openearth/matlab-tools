@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18303 $
-%$Date: 2022-08-15 16:11:52 +0200 (ma, 15 aug 2022) $
-%$Author: chavarri $
-%$Id: twoD_study.m 18303 2022-08-15 14:11:52Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/ECT/twoD_study.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Fit a sine to data:
 % y = A*sin(B*x + C) + D

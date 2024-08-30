@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19684 $
-%$Date: 2024-06-21 22:39:59 +0200 (Fri, 21 Jun 2024) $
-%$Author: chavarri $
-%$Id: create_mat_his_01.m 19684 2024-06-21 20:39:59Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/create_mat_his_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

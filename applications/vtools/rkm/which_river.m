@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19540 $
-%$Date: 2024-04-11 16:54:42 +0200 (Thu, 11 Apr 2024) $
-%$Author: chavarri $
-%$Id: get_pol_along_line.m 19540 2024-04-11 14:54:42Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/morpho_setup/private/get_pol_along_line.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function river=which_river(ident_pol_str)
