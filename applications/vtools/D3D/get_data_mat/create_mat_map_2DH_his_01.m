@@ -78,7 +78,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 [idx_obs,nobs]=gdm_get_idx_grd(gridInfo,flg_loc);
 
-flg_loc=isfield_default(flg_loc,'elevation',NaN(1,nobs));
+flg_loc=isfield_default(flg_loc,'elev',NaN(1,nobs));
 
 %% LOOP TIME
 
@@ -96,11 +96,11 @@ for kt=kt_v
 
         %looping on kobs outside of the time loop would seem more logical, but we would load data kvar*kobs more times. 
         for kobs=1:nobs 
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(kobs).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elevation(kobs),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar));
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(kobs).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elev(kobs),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar));
 
             %% read data
             if ~(exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite)
-                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar),'depth_average',flg_loc.depth_average(kvar),'elevation',flg_loc.elevation(kobs));      
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar),'depth_average',flg_loc.depth_average(kvar),'elevation',flg_loc.elev(kobs));      
                 [idx_time,dim]=D3D_search_index_in_dimension(data_var,'time');
                 idx_face=D3D_search_index_in_dimension(data_var,'mesh2d_nFaces');
                 data=submatrix(data_var.val,idx_time,1); %remove time
@@ -124,7 +124,7 @@ for kvar=1:nvar
     for kobs=1:nobs
     
         %read
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(kobs).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elevation(kobs),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar));
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',flg_loc.obs(kobs).name,'var',var_str_read,'layer',layer,'elevation',flg_loc.elev(kobs),'tim',time_dtime(1),'tim2',time_dtime(end),'depth_average',flg_loc.depth_average(kvar));
 
     if ~(exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite)
         data=data_his(kobs,:,kvar); %#ok

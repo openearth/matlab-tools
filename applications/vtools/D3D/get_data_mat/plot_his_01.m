@@ -117,11 +117,11 @@ for kvar=1:nvar
         stations_loc=stations{ks};
         in_p.station=stations_loc;
         
-        elevation=flg_loc.elevation(ks);
-        in_p.elevation=elevation;
+        elev=flg_loc.elev(ks);
+        in_p.elev=elev;
 
         %% load data
-        [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation,tim_dtime_p,flg_loc.unit{kvar},kvar);
+        [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elev,tim_dtime_p,flg_loc.unit{kvar},kvar);
         
         in_p.unit=unit;
 
@@ -129,7 +129,7 @@ for kvar=1:nvar
         [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,var_str,k_sta,data_conv);
         
         %% measurements
-        [do_measurements,data_mea]=add_measurements(flg_loc.measurements,stations_loc,elevation,unit);
+        [do_measurements,data_mea]=add_measurements(flg_loc.measurements,stations_loc,elev,unit);
 
         in_p.do_measurements=do_measurements;
         in_p.data_stations=data_mea;
@@ -144,7 +144,7 @@ for kvar=1:nvar
         mkdir_check(fdir_fig_var,NaN,1,0);
         
         for kylim=1:nylim
-            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations_loc,var_str,layer,kylim,elevation,tim_dtime_p{1}(1),tim_dtime_p{1}(end)); %are you sure simdef(1)? what about time for saving?
+            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end)); %are you sure simdef(1)? what about time for saving?
 %             fpath_file=sprintf('%s%s',fname_noext,fext); %for movie 
 
             in_p.fname=fname_noext;
@@ -254,13 +254,13 @@ end %function
 
 %%
 
-function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elevation,tim_0,tim_f)
+function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elev,tim_0,tim_f)
 
 if ~isempty(layer)
     fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_layer_%04d_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),layer,kylim));
 else
-   if ~isnan(elevation)
-      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_elev_%f_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),elevation,kylim));
+   if ~isnan(elev)
+      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_elev_%f_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),elev,kylim));
    else
       fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),kylim));
    end
@@ -324,7 +324,7 @@ end %function
 
 %%
 
-function [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elevation,time_dtime,unit,kvar)
+function [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elev,time_dtime,unit,kvar)
 
 for k_sim=1:n_sim %simulations            
     fdir_mat=simdef(k_sim).file.mat.dir;
@@ -333,12 +333,12 @@ for k_sim=1:n_sim %simulations
     %variable
     switch his_type
         case 1
-            layer=gdm_station_layer(flg_loc,gridInfo(k_sim),fpath_his,stations_loc,var_str,elevation); 
+            layer=gdm_station_layer(flg_loc,gridInfo(k_sim),fpath_his,stations_loc,var_str,elev); 
         case 2
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     end
     
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime{k_sim}(1),'tim2',time_dtime{k_sim}(end),'depth_average',flg_loc.depth_average(kvar));
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime{k_sim}(1),'tim2',time_dtime{k_sim}(end),'depth_average',flg_loc.depth_average(kvar));
     load(fpath_mat_tmp,'data');
 
     %change units
@@ -375,12 +375,12 @@ end %function
 
 %% 
 
-function [do_measurements,data_mea]=add_measurements(measurements,stations_loc,elevation,unit)
+function [do_measurements,data_mea]=add_measurements(measurements,stations_loc,elev,unit)
 
 if ~isempty(measurements)
     if isfolder(measurements) && exist(fullfile(measurements,'data_stations_index.mat'),'file')
         [str_sta,str_found]=RWS_location_clear(stations_loc);
-        data_mea=read_data_stations(measurements,'location_clear',str_sta{:},'bemonsteringshoogte',elevation); %location maybe better?
+        data_mea=read_data_stations(measurements,'location_clear',str_sta{:},'bemonsteringshoogte',elev); %location maybe better?
         if isempty(data_mea)
             data_mea=struct();
         end

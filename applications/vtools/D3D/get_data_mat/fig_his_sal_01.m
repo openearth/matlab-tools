@@ -94,45 +94,8 @@ if isfield(in_p,'xlims')==0
 
 end
 
-%We need to make a function of this:
+in_p=isfield_default(in_p,'elev',NaN);
 
-% [in_p.xlim,in_p.ylim]=xlim_ylim(in_p.xlim,in_p.ylim,in_p.tim,
-% 
-% if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
-%     in_p.xlims=[min(in_p.s),max(in_p.s)];
-% end
-% if isfield(in_p,'do_area')==0
-%     in_p.do_area=0;
-% end
-% 
-% if isfield(in_p,'ylims')==0 || isnan(in_p.ylims(1))
-%     bol_p=in_p.s>=in_p.xlims(1) & in_p.s<=in_p.xlims(2);
-%     if ~any(bol_p)
-%         warning('There is nothing to plot. All points are outside domain of interest [%f,%f].',in_p.xlims(1),in_p.xlims(2))
-%     else
-%         in_p.ylims=[min(min(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val(bol_p,:),[],'omitnan'),[],'omitnan')];
-%     end
-% end
-% if isfield(in_p,'val_mea')
-%     bol_p=in_p.s_mea>=in_p.xlims(1) & in_p.s_mea<=in_p.xlims(2);
-%     if ~any(bol_p)
-%         warning('There is nothing to plot. All points are outside domain of interest [%f,%f].',in_p.xlims(1),in_p.xlims(2))
-%         ylim_mea=[NaN,NaN];
-%     else
-%         ylim_mea=[min(min(in_p.val_mea(bol_p,:),[],'omitnan'),[],'omitnan'),max(max(in_p.val_mea(bol_p,:),[],'omitnan'),[],'omitnan')];
-%     end    
-%     in_p.ylims=[min([in_p.ylims(1),ylim_mea(1)],[],'omitnan'),max([in_p.ylims(2),ylim_mea(2)],[],'omitnan')];
-% end
-% 
-% if isnan(in_p.ylims(1))
-%     in_p.ylims=[0,0];
-% end
-% in_p.ylims=real(in_p.ylims+[-1,1].*abs(mean(in_p.ylims)/1000)+10.*[-eps,eps]);
-
-%%%
-if ~isfield(in_p,'elevation')
-    in_p.elevation=NaN;
-end
 
 v2struct(in_p)
 
@@ -522,9 +485,9 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 if do_title
     [str_sta,~]=RWS_location_clear(station);    
     str_sta=strrep(str_sta{:},'_','\_');
-    if ~isnan(elevation)
+    if ~isnan(elev)
         [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all('eta',1,lan);
-        str_sta=sprintf('%s %5.3f%s',str_sta,elevation,str_un);
+        str_sta=sprintf('%s %5.3f%s',str_sta,elev,str_un);
     end
     han.sfig(kr,kc).Title.String=str_sta;
 end

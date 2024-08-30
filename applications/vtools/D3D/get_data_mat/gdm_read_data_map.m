@@ -39,7 +39,7 @@ tol_t=parin.Results.tol_t;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
 depth_average=parin.Results.depth_average;
-elevation=parin.Results.elevation;
+elev=parin.Results.elevation;
 % bed_layers=parin.Results.bed_layers;
 
 %% CALC
@@ -95,8 +95,8 @@ if depth_average
 end
 
 %elevation
-if ~isempty(elevation) && ~isnan(elevation)
-    data=gdm_2DH_elevation(data,fdir_mat,fpath_map,time_dnum,elevation);
+if ~isempty(elev) && ~isnan(elev)
+    data=gdm_2DH_elevation(data,fdir_mat,fpath_map,time_dnum,elev);
 end
 
 end %function
@@ -129,7 +129,7 @@ end %function
 
 %%
 
-function data=gdm_2DH_elevation(data,fdir_mat,fpath_map,time_dnum,elevation)
+function data=gdm_2DH_elevation(data,fdir_mat,fpath_map,time_dnum,elev)
 
 data_zc=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zc','tim',time_dnum); 
     
@@ -146,7 +146,7 @@ for kp=1:np
     y=v_sim(kp,:);
     bol_n=isnan(x);
     if ~all(bol_n)
-        z=interp1(x(~bol_n),y(~bol_n),elevation,'linear');
+        z=interp1(x(~bol_n),y(~bol_n),elev,'linear');
         v_sim_atmea(1,kp)=z;
     end
 %     fprintf('%4.2f %% \n',kp/np*100);

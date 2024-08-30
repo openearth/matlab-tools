@@ -51,7 +51,7 @@ flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 
 %% dependent on size
-flg_loc=isfield_default(flg_loc,'elevation',NaN(flg_loc.ns,1));        
+flg_loc=isfield_default(flg_loc,'elev',NaN(flg_loc.ns,1));        
 flg_loc=isfield_default(flg_loc,'depth_average',zeros(flg_loc.nvar,1));        
 flg_loc=isfield_default(flg_loc,'unit',cell(flg_loc.nvar,1));
 

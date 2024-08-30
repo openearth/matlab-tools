@@ -46,7 +46,7 @@ branch=parin.Results.branch;
 % bed_layers=parin.Results.bed_layers;
 sediment_transport=parin.Results.sediment_transport;
 depth_average=parin.Results.depth_average;
-elevation=parin.Results.elevation;
+elev=parin.Results.elevation;
 
 %% CALC
 
@@ -123,7 +123,7 @@ switch varname
         if ischar(varname) && contains(varname,'cel_morpho')
             data_var=gdm_read_data_map_cel_morpho(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'sediment_transport',sediment_transport); 
         else %name directly available in output
-            data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'depth_average',depth_average,'elevation',elevation);%,'bed_layers',layer); 
+            data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'depth_average',depth_average,'elevation',elev);%,'bed_layers',layer); 
         end
 end
 

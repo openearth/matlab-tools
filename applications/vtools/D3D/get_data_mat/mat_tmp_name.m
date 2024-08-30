@@ -48,7 +48,7 @@ time_dnum_2=parin.Results.tim2;
 stat=parin.Results.stat;
 var_idx=parin.Results.var_idx;
 branch=parin.Results.branch;
-elevation=parin.Results.elevation;
+elev=parin.Results.elevation;
 depth_average=parin.Results.depth_average;
 
 %%
@@ -133,8 +133,8 @@ if ~isempty(branch)
 end
 
 %elevation
-if ~isempty(elevation) && ~isnan(elevation)
-    str_add=sprintf('%s_elev_%5.3f',str_add,elevation);
+if ~isempty(elev) && ~isnan(elev)
+    str_add=sprintf('%s_elev_%5.3f',str_add,elev);
 end
 
 %depth average

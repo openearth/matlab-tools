@@ -68,15 +68,15 @@ for ks=ks_v
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
-        elevation=flg_loc.elevation(ks);
+        elev=flg_loc.elev(ks);
         
         [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
         
         %2DO: if depth_average, it takes all layers and elevation data is ommited. 
-        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str,elevation);
+        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str,elev);
         
         %2DO: add `depth_average` to the name and move to a function to be called also in plot and plot_diff
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime(1),'tim2',time_dtime(end));
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime(1),'tim2',time_dtime(end));
         
         do_read=1;
         if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
@@ -86,7 +86,7 @@ for ks=ks_v
         if do_read
 
             %% read data
-            data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,'tim',time_dnum,'layer',layer,'sim_idx',sim_idx,'station',stations{ks},'elevation',elevation);
+            data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,'tim',time_dnum,'layer',layer,'sim_idx',sim_idx,'station',stations{ks},'elevation',elev);
 
             %% processed data
             data=squeeze(data.val); %#ok
