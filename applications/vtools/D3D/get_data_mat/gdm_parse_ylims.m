@@ -30,7 +30,14 @@ if isfield(flg_loc,str_check)==0
         if isfield(flg_loc,str_no_var) 
             flg_loc.(str_check){kvar,1}=flg_loc.(str_no_var);
         else
-            flg_loc.(str_check){kvar,1}=[NaN,NaN];
+            %if we are in `ylims_diff_var`, `ylims_var` already exists and we make the 
+            %default of the former with the same size as the latter.
+            if isfield(flg_loc,'ylims_var')
+                nylim=size(flg_loc.ylims_var{kvar},1);
+            else
+                nylim=1;
+            end
+            flg_loc.(str_check){kvar,1}=NaN(nylim,2);
         end
     end
 end

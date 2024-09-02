@@ -31,6 +31,7 @@ addOptional(parin,'bed_layers',[]);
 addOptional(parin,'sediment_transport',[]);
 addOptional(parin,'depth_average',false);
 addOptional(parin,'elevation',[]);
+addOptional(parin,'depth_average_limits',[-inf,inf]);
 
 parse(parin,varargin{:});
 
@@ -47,6 +48,7 @@ branch=parin.Results.branch;
 sediment_transport=parin.Results.sediment_transport;
 depth_average=parin.Results.depth_average;
 elev=parin.Results.elevation;
+depth_average_limits=parin.Results.depth_average_limits;
 
 %% CALC
 
@@ -123,7 +125,7 @@ switch varname
         if ischar(varname) && contains(varname,'cel_morpho')
             data_var=gdm_read_data_map_cel_morpho(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'sediment_transport',sediment_transport); 
         else %name directly available in output
-            data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'depth_average',depth_average,'elevation',elev);%,'bed_layers',layer); 
+            data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'depth_average',depth_average,'elevation',elev,'depth_average_limits',depth_average_limits);
         end
 end
 

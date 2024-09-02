@@ -54,29 +54,29 @@ gridInfo=EHY_getGridInfo(fpath_his,'no_layers');
 flg_loc=gdm_parse_his(fid_log,flg_loc,simdef);
 
 nvar=flg_loc.nvar;
-ns=flg_loc.ns;
+nobs=flg_loc.nobs;
 stations=flg_loc.stations;
 
 %% LOOP
 
-ks_v=gdm_kt_v(flg_loc,ns);
+kobs_v=gdm_kt_v(flg_loc,nobs);
 
 ksc=0;
-messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
-for ks=ks_v
+messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/nobs*100));
+for kobs=kobs_v
     ksc=ksc+1;
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
-        elev=flg_loc.elev(ks);
+        elev=flg_loc.elev(kobs);
         
         [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
         
         %2DO: if depth_average, it takes all layers and elevation data is ommited. 
-        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str,elev);
+        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{kobs},var_str,elev);
         
         %2DO: add `depth_average` to the name and move to a function to be called also in plot and plot_diff
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime(1),'tim2',time_dtime(end));
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{kobs},'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime(1),'tim2',time_dtime(end));
         
         do_read=1;
         if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
@@ -86,14 +86,14 @@ for ks=ks_v
         if do_read
 
             %% read data
-            data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,'tim',time_dnum,'layer',layer,'sim_idx',sim_idx,'station',stations{ks},'elevation',elev);
+            data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,'tim',time_dnum,'layer',layer,'sim_idx',sim_idx,'station',stations{kobs},'elevation',elev,'angle',flg_loc.projection_angle(kvar));
 
             %% processed data
             data=squeeze(data.val); %#ok
 
             %% save and disp
             save_check(fpath_mat_tmp,'data');
-            messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/ns*100));
+            messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/nobs*100));
 
             %% BEGIN DEBUG
 

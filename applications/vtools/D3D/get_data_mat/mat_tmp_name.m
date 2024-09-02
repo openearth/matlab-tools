@@ -33,6 +33,7 @@ addOptional(parin,'sim_idx',''); %just to be able to pass all varargin
 addOptional(parin,'branch',''); 
 addOptional(parin,'elevation',[]); 
 addOptional(parin,'depth_average',[]); 
+addOptional(parin,'depth_average_limits',[]); 
 
 parse(parin,varargin{:});
 
@@ -50,6 +51,7 @@ var_idx=parin.Results.var_idx;
 branch=parin.Results.branch;
 elev=parin.Results.elevation;
 depth_average=parin.Results.depth_average;
+depth_average_limits=parin.Results.depth_average_limits;
 
 %%
 
@@ -140,6 +142,11 @@ end
 %depth average
 if ~isempty(depth_average) && depth_average==1
     str_add=sprintf('%s_da',str_add);
+end
+
+%depth average limits
+if ~isempty(depth_average_limits) && ~isnan(depth_average_limits(1)) && ~all(isinf(depth_average_limits))
+    str_add=sprintf('%s_%5.3f-%5.3f',str_add,depth_average_limits(1),depth_average_limits(2));
 end
 
 %final

@@ -26,6 +26,8 @@ addOptional(parin,'station','');
 addOptional(parin,'sim_idx','');
 addOptional(parin,'structure',NaN); %no SMT
 addOptional(parin,'do_load',1); 
+addOptional(parin,'depth_average',false); 
+addOptional(parin,'elevation',NaN); 
 % addOptional(parin,'tol_t',5/60/24);
 
 parse(parin,varargin{:});
@@ -37,6 +39,8 @@ station=parin.Results.station;
 sim_idx=parin.Results.sim_idx;
 structure=parin.Results.structure;
 do_load=parin.Results.do_load;
+depth_average=parin.Results.depth_average;
+elev=parin.Results.elevation;
 % tol_t=parin.Results.tol_t;
 
 %% READ
@@ -91,6 +95,19 @@ else
             error('do')
     end
     save_check(fpath_mat,'data');
+end
+
+%%
+
+%find data at a given elevation
+if ~isnan(elev)
+   data_z=gdm_read_data_his(fdir_mat,fpath_his,'zcoordinate_c','station',station,'layer',layer,'tim',tim,'tim2',tim2,'structure',structure,'sim_idx',sim_idx);
+   data=gdm_data_at_elevation(data,data_z,elev);
+end
+
+%depth-average data
+if depth_average
+    error('Do.')
 end
 
 end %function

@@ -251,7 +251,7 @@
 
 % tag='fig_his_01';
 % in_plot.(tag).do=1;
-% in_plot.(tag).do_p=0; %regular plot
+% in_plot.(tag).do_p=1; %do plot
 % % in_plot.(tag).do_diff=1; %difference initial time
 % in_plot.(tag).do_s=0; %difference with reference
 % % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
@@ -261,7 +261,6 @@
 % in_plot.(tag).var={'sal'};
 % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all; 
 % in_plot.(tag).elev=[-6.5,-2.5]; %elevation at which to take the data.
-
 % in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).ylims_diff=[NaN,NaN;-sal2cl(-1,400),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
@@ -486,9 +485,13 @@ end %reference run
 
 %% PLOT ALL RUNS IN ONE FIGURE
 
-if ns>1
+%The idea is that we only call once the plotting routine passing as
+%argument `simdef_all` and inside each plotting routine we first plot
+%each one individually, then difference in time, then difference with 
+%reference, etcetera. Let's see if there are no problems. 
+% if ns>1
     
-    messageOut(fid_log,'Plotting all runs in one figure-',3)
+    messageOut(fid_log,'Plotting all runs in one figure',3)
 
     %% paths all
     simdef_all=struct('D3D',NaN,'err',NaN,'file',NaN);
@@ -499,7 +502,7 @@ if ns>1
     %% call
     plot_all_runs_one_figure(fid_log,in_plot,simdef_all,leg_str_all)
     
-end %ns>1
+% end %ns>1
 
 end %only_adhoc
 

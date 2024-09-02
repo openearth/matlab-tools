@@ -18,11 +18,7 @@ function plot_his_01(fid_log,flg_loc,simdef)
 
 %% DO
 
-if contains(tag_fig,'all')
-    tag_do='do_all';
-else
-    tag_do='do_p';
-end
+tag_do='do_p';
 ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 
 %% PARSE
@@ -30,7 +26,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,tag_do); if ret; return; end
 flg_loc=gdm_parse_his(fid_log,flg_loc,simdef);
 
 nvar=flg_loc.nvar;
-ns=flg_loc.ns;
+nobs=flg_loc.nobs;
 stations=flg_loc.stations;
 his_type=flg_loc.his_type;
 
@@ -41,8 +37,6 @@ fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-%fpath_his=simdef(1).file.his;
-% fpath_map=simdef(1).file.map;
 mkdir_check(fdir_fig);
 
 %% TIME
@@ -83,7 +77,7 @@ end
 %allocate to save all data
 if flg_loc.do_all_sta
     %if we want to plot all stations together, we need to allocate for it. 
-    n_sta=ns; %number of stations that we allocate. 
+    n_sta=nobs; %number of stations that we allocate. 
 else
     %otherwise, it is a waste of memory.
     n_sta=1;
@@ -91,7 +85,7 @@ end
 
 %% LOOP
 
-ks_v=gdm_kt_v(flg_loc,ns);
+ks_v=gdm_kt_v(flg_loc,nobs);
 
 %loop on variables
 for kvar=1:nvar
@@ -123,6 +117,11 @@ for kvar=1:nvar
         %% load data
         [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elev,tim_dtime_p,flg_loc.unit{kvar},kvar);
         
+        if ~isvector(size(data_all{1}))
+            messageOut(fid_log,sprintf('Cannot plot more than 1 dimension. There may be more than 1 layer: %s',varname));
+            continue
+        end
+
         in_p.unit=unit;
 
         %% convergence
@@ -137,21 +136,49 @@ for kvar=1:nvar
         %% filtered data
         in_p=add_filter(flg_loc,in_p,data_all,tim_dtime_p,data_mea);
         
-        %% plot value
+        %% plot each station individually
         
-        in_p.val=data_all(:,k_sta); %we pass all simulations and only one stations
-        fdir_fig_var=fullfile(fdir_fig,var_str);
-        mkdir_check(fdir_fig_var,NaN,1,0);
-        
-        for kylim=1:nylim
-            fname_noext=fig_name(fdir_fig_var,tag,simdef(1).file.runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end)); %are you sure simdef(1)? what about time for saving?
-%             fpath_file=sprintf('%s%s',fname_noext,fext); %for movie 
+        for ksim=1:n_sim
+            runid=simdef(ksim).file.runid;
+            fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
 
-            in_p.fname=fname_noext;
-            [in_p.xlims,in_p.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all{k_sta},data_mea,tim_dtime_p{1});
+            in_p.is_diff=0;
+            val=data_all(ksim,k_sta); %we pass all simulations and only one stations
+            
+            fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,nylim,data_mea,do_measurements);
+        end
 
-            fig_his_sal_01(in_p);
-        end %kylim
+        %% plot all simulations together
+
+        ksim=1;
+        runid=simdef(ksim).file.runid;
+        fdir_fig=fullfile(simdef(ksim).file.fig.dir,sprintf('%s_all',tag_fig),tag_serie);
+
+        val=data_all(:,k_sta); %we pass all simulations and only one stations
+        fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,nylim,data_mea,do_measurements);
+
+        %% difference with reference simulation
+        if flg_loc.do_s && n_sim>1
+            for ksim=1:n_sim
+                if ksim==flg_loc.sim_ref
+                    continue
+                end
+                runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(flg_loc.sim_ref).file.runid);
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,sprintf('%s_diff',tag_fig),tag_serie);
+
+                val=data_all{ksim,k_sta};
+                val_ref=data_all{flg_loc.sim_ref,k_sta};
+                if any(size(val)-size(val_ref))
+                    messageOut(fid_log,'Cannot plot difference when different sizes. Interpolate data for making it possible.')
+                    continue
+                end
+
+                val={val-val_ref};
+                in_p.is_diff=1;
+
+                fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,nylim,data_mea,do_measurements);
+            end
+        end
         
     end %ks
 
@@ -189,13 +216,12 @@ for kvar=1:nvar
         in_p_sta_all.val=data_all;
         in_p_sta_all.leg_str=stations; 
         in_p_sta_all.do_title=0;
-        in_p_sta_all.tim=repmat({tim_dtime_p{1,1}},1,ns);
+        in_p_sta_all.tim=repmat({tim_dtime_p{1,1}},1,nobs);
 
         fig_his_sal_01(in_p_sta_all)         
        
     end
 
-    
 end %kvar
 
 
@@ -223,48 +249,34 @@ if do_measurements
     val_all=cat(1,val_all,{data_mea.waarde});
 end
 
-% [xlims,ylims]=xlim_ylim([tim_dtime(1),tim_dtime(end)],ylims,x_all,val_all);
 [xlims,ylims]=xlim_ylim([NaN,NaN],ylims,x_all,val_all);
-% if isnan(ylims)
-%     if do_measurements
-%         ylims_1=[min([data{:}]),max([data{:}])];
-% %         switch data_mea.eenheid
-% %             case 'mg/l'
-% %                 ylims_2=[min(sal2cl(-1,data_mea.waarde)),sal2cl(-1,max(data_mea.waarde))];
-% %             otherwise
-%                 ylims_2=[min(data_mea.waarde),max(data_mea.waarde)];
-% %         end
-% 
-%         ylims=[min(ylims_1(1),ylims_2(1)),max(ylims_1(2),ylims_2(2))];
-%     else
-%         ylims=[min([data{:}]),max([data{:}])];
-%     end
-% end
-% 
-% % dy=diff(ylims);
-% % if dy==0
-% %     my=mean(ylims);
-% %     ylims=ylims+abs(my/100)*[-1,1];
-% % end
-% % if isnan(ylims)
-% %     ylims=[-1e-10,1e-10];
-% % end
 
 end %function
 
 %%
 
-function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elev,tim_0,tim_f)
+function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elev,tim_0,tim_f,depth_average_limits,depth_average)
+
+%base
+str_b=sprintf('%s_%s_%s_%s_%s-%s_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),kylim);
 
 if ~isempty(layer)
-    fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_layer_%04d_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),layer,kylim));
-else
-   if ~isnan(elev)
-      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_elev_%f_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),elev,kylim));
-   else
-      fname=fullfile(fdir_fig_var,sprintf('%s_%s_%s_%s_%s-%s_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),kylim));
-   end
+    str_b=sprintf('%s_layer_%04d',str_b,layer);
 end
+
+if ~isnan(elev)
+    str_b=sprintf('%s_elev_%5.2f',str_b,elev);
+end
+
+if depth_average
+    str_b=sprintf('%s_da',str_b);
+end
+
+if ~isinf(depth_average_limits(1))
+    str_b=sprintf('%s_%5.2f-%5.2f',str_b,depth_average_limits(1),depth_average_limits(2));
+end
+
+fname=fullfile(fdir_fig_var,str_b);
 
 end %function
 
@@ -337,8 +349,8 @@ for k_sim=1:n_sim %simulations
         case 2
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     end
-    
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime{k_sim}(1),'tim2',time_dtime{k_sim}(end),'depth_average',flg_loc.depth_average(kvar));
+
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime{k_sim}(1),'tim2',time_dtime{k_sim}(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
     load(fpath_mat_tmp,'data');
 
     %change units
@@ -450,5 +462,22 @@ switch unit_out
                 error('not sure how to convert')
         end
 end %unit_out
+
+end %function
+
+%%
+
+function fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,nylim,data_mea,do_measurements)
+                
+in_p.val=val;
+fdir_fig_var=fullfile(fdir_fig,var_str);
+mkdir_check(fdir_fig_var,NaN,1,0);
+for kylim=1:nylim
+    fname_noext=fig_name(fdir_fig_var,tag,runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
+    in_p.fname=fname_noext;
+    [in_p.xlims,in_p.ylims]=get_ylims(flg_loc.ylims_diff_var{kvar}(kylim,:),do_measurements,val,data_mea,tim_dtime_p{1});
+
+    fig_his_sal_01(in_p);
+end %kylim
 
 end %function

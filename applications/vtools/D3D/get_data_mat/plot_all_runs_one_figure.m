@@ -33,7 +33,8 @@ end
 %% his sal 01
 tag_check='fig_his_01';
 if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
+%     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
+    in_plot_fig=gmd_tag(in_plot,tag_check);
     in_plot_fig.leg_str=leg_str;
     plot_his_01(fid_log,in_plot_fig,simdef)
 end

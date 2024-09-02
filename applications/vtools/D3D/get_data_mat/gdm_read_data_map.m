@@ -27,7 +27,7 @@ addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
 addOptional(parin,'depth_average',false);
 addOptional(parin,'elevation',[]);
-% addOptional(parin,'bed_layers',[]); We use <layer> for flow and sediment
+addOptional(parin,'depth_average_limits',[-inf,inf]);
 
 parse(parin,varargin{:});
 
@@ -40,7 +40,7 @@ idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
 depth_average=parin.Results.depth_average;
 elev=parin.Results.elevation;
-% bed_layers=parin.Results.bed_layers;
+depth_average_limits=parin.Results.depth_average_limits;
 
 %% CALC
 
@@ -91,7 +91,7 @@ end
 
 %depth averaged
 if depth_average
-    data=gdm_depth_average(data,fdir_mat,fpath_map,time_dnum);
+    data=gdm_depth_average(data,fdir_mat,fpath_map,time_dnum,depth_average_limits);
 end
 
 %elevation
@@ -103,9 +103,14 @@ end %function
 
 %%
 
-function  data=gdm_depth_average(data,fdir_mat,fpath_map,time_dnum)
+function  data=gdm_depth_average(data,fdir_mat,fpath_map,time_dnum,depth_average_limits)
 
 data_zw=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_zw','tim',time_dnum); 
+
+%make nan of layers below or above limit
+bol_nan=data_zw.val<depth_average_limits(1) | data_zw.val>depth_average_limits(2);
+data_zw.val(bol_nan)=NaN;
+
 %values
 %     idx_layer=D3D_search_index_layer(data);
 idx_time=D3D_search_index_in_dimension(data,'time');

@@ -15,7 +15,7 @@
 function layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations,var_str,elev)
     
 if isfield(flg_loc,'layer')==0
-    flg_loc.layer=NaN;
+    flg_loc.layer=NaN; %default is top? should it be all?
 end
 
 % layer=[];

@@ -68,11 +68,12 @@ if isfield(in_plot,'fig_his_sal_01')==1
 end
 
 %% his 01
-tag_check='fig_his_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    plot_his_01(fid_log,in_plot_fig,simdef)
-end
+%Done when passing `simdef_all`. 
+% tag_check='fig_his_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check);
+%     plot_his_01(fid_log,in_plot_fig,simdef)
+% end
 
 %% map_2DH_his_01
 tag_check='fig_map_2DH_his_01';
@@ -150,7 +151,7 @@ if isfield(in_plot,tag_check)==1
     plot_his_xt_01(fid_log,in_plot_fig,simdef)
 end
 
-%% his xt
+%% fraction in left, centre, right of the channel
 tag_check='fig_map_fraction_cs';
 if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
