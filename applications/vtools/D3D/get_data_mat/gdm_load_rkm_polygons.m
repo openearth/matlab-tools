@@ -41,6 +41,11 @@ else
     parallel_distance=1000;
 end
 
+if numel(varargin)>2
+    ds_pol=varargin{3,1};
+else
+    ds_pol=100;
+end
 
 %% LOAD
 
@@ -60,7 +65,7 @@ rkm_dx=diff(rkm_edg);
 ncen=numel(rkm_cen);
 co=false(ncen,1);
 for kpol=1:ncen
-    [~,co(kpol)]=correct_for_bendcutoff(rkm_cen(kpol),rkm_cen(kpol)-0.1,rkm_cen_br{kpol}); %!!! ATTENTION a negative number implies that the rkm must be increasing. 
+    [~,co(kpol)]=correct_for_bendcutoff(rkm_cen(kpol),rkm_cen(kpol)-0.1,rkm_cen_br{kpol},ds_pol); %!!! ATTENTION a negative number implies that the rkm must be increasing. 
 end
 rkm_cen(co)=[];
 rkm_dx(co)=[];
@@ -71,11 +76,11 @@ ncen=numel(rkm_cen);
 rkm_edg_br=cell(ncen+1,1);
 for kpol=1:ncen
     rkm_edg_br(kpol)=branch_str_num(rkm_edg(kpol),track);
-    rkm_edg(kpol)=correct_for_bendcutoff(rkm_edg(kpol),rkm_cen(kpol),rkm_edg_br{kpol}); 
+    rkm_edg(kpol)=correct_for_bendcutoff(rkm_edg(kpol),rkm_cen(kpol),rkm_edg_br{kpol},ds_pol); 
 end
 %last edge also associated to last rkm
 rkm_edg_br(end)=branch_str_num(rkm_edg(end),track);
-rkm_edg(end)=correct_for_bendcutoff(rkm_edg(end),rkm_cen(end),rkm_edg_br{kpol}); 
+rkm_edg(end)=correct_for_bendcutoff(rkm_edg(end),rkm_cen(end),rkm_edg_br{kpol},ds_pol); 
 
 %%
 

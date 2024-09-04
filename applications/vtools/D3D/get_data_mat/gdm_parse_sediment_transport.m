@@ -14,6 +14,10 @@
 
 function flg_loc=gdm_parse_sediment_transport(flg_loc,simdef)
 
+if ~isfield(flg_loc,'sediment_transport')
+    flg_loc.sediment_transport=gdm_struct_sediment_transport();
+end
+
 %modify variable names or skip
 if ismember('cel_morpho',flg_loc.var)
     if isfield(flg_loc,'sedtrans') %sediment transport offline
@@ -22,8 +26,6 @@ if ismember('cel_morpho',flg_loc.var)
         idx_cm=find_str_in_cell(flg_loc.var,{'cel_morpho'});
 
         flg_loc.var(idx_cm)=[]; %remove 'cel_morpho'
-
-        nv=numel(flg_loc.var);
 
         [vals2add,def_v]=gdm_flags_plot_and_default();
 
@@ -41,12 +43,9 @@ if ismember('cel_morpho',flg_loc.var)
         for kst=1:nst
             flg_loc.var=cat(2,flg_loc.var,{sprintf('cel_morpho_%s',flg_loc.sedtrans_name{kst})}); %add 'cel_morpho_%s'
         end %kst
-    else %read sediment transport parameters from files
-        nst=1; %there can only be one
+%     else %read sediment transport parameters from files
+%         nst=1; %there can only be one
     end
-else
-    flg_loc.sediment_transport=NaN;
-    return
 end
 
 %add sediment transport information
@@ -54,7 +53,8 @@ dk=D3D_read_sed(simdef.file.sed);
 
 if isfield(flg_loc,'sedtrans') %sediment transport offline
     %store sediment transport relation at the location of the variable
-    flg_loc.sediment_transport=gdm_struct_sediment_transport;
+    nst=numel(flg_loc.sedtrans); %number of different sediment transport relations
+    nv=numel(flg_loc.var);
     for kst=1:nst
         flg_loc.sediment_transport(nv+kst).dk                   =dk;
         flg_loc.sediment_transport(nv+kst).sedtrans             =flg_loc.sedtrans{kst};
@@ -75,8 +75,6 @@ if isfield(flg_loc,'sedtrans') %sediment transport offline
             flg_loc.sediment_transport(nv+kst).sedtrans_theta_c     =flg_loc.sedtrans_theta_c(kst);
         end
     end
-else %read sediment transport parameters from files
-    error('do')
 end
 
 end %function 
