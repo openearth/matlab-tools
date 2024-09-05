@@ -250,12 +250,14 @@
 %% HIS
 
 % tag='fig_his_01';
-% in_plot.(tag).do=1;
-% in_plot.(tag).do_p=1; %do plot
+% in_plot.(tag).do=1; %create mat files
+% in_plot.(tag).do_p=1; %pass through plotting routine
+% in_plot.(tag).do_p_single=1; %plot single result
 % % in_plot.(tag).do_diff=1; %difference initial time
 % in_plot.(tag).do_s=0; %difference with reference
 % % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
-% in_plot.(tag).do_all=1; %all figures in same plot
+% in_plot.(tag).do_all_sim=1; %all simulations in same plot
+% flg_loc.do_all_sim
 % in_plot.(tag).tim=NaN; Time to plot. This is not [initial,final] but all the times to consider. E.g., [initial:delta_t:final].
 % in_plot.(tag).stations=NaN; %NaN=all
 % in_plot.(tag).var={'sal'};

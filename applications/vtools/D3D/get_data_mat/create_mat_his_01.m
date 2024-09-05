@@ -57,6 +57,8 @@ nvar=flg_loc.nvar;
 nobs=flg_loc.nobs;
 stations=flg_loc.stations;
 
+obs_all=D3D_observation_stations(fpath_his);
+
 %% LOOP
 
 kobs_v=gdm_kt_v(flg_loc,nobs);
@@ -65,6 +67,13 @@ ksc=0;
 messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/nobs*100));
 for kobs=kobs_v
     ksc=ksc+1;
+
+    %check if observation station exists
+    idx_find=find_str_in_cell(obs_all.name,stations(kobs));
+    if isnan(idx_find)
+        error('station not found: %s',stations{kobs})
+    end
+
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
@@ -73,7 +82,7 @@ for kobs=kobs_v
         [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
         
         %2DO: if depth_average, it takes all layers and elevation data is ommited. 
-        layer=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{kobs},var_str,elev);
+        [layer,elev]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{kobs},var_str,elev);
         
         %2DO: add `depth_average` to the name and move to a function to be called also in plot and plot_diff
         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{kobs},'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime(1),'tim2',time_dtime(end));
@@ -91,16 +100,18 @@ for kobs=kobs_v
             %% processed data
             data=squeeze(data.val); %#ok
 
-            %% save and disp
+            %% save
             save_check(fpath_mat_tmp,'data');
-            messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/nobs*100));
-
+           
             %% BEGIN DEBUG
 
             %END DEBUG
             
         end %do_read
         
+        %% disp
+        messageOut(fid_log,sprintf('Reading %s: station %4.2f %% variable %4.2f %%',tag,ksc/nobs*100,kvar/nvar*100));
+
         %% export
         gdm_export_his_01(fid_log,flg_loc,fpath_mat_tmp,time_dtime)
         

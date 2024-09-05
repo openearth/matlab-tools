@@ -12,11 +12,10 @@
 %INPUT:
 %   -tim_ct: cell array with time of time series
 %   -val_ct: cell array with values of time series
-%   -tim_re: time step to interpolate the time series
+%   -tim_re: time series to interpolate all values [ntimes]
 %
 %OUTPUT:
-%   -tt_tim: common time of all time series
-%   -tt_val: interpolated values of all time series
+%   -val_out: interpolated values of all time series [ntimes,nseries]
 
 function val_out=interpolate_timetable(tim_ct,val_ct,tim_re,varargin)
 
@@ -32,6 +31,9 @@ do_disp=parin.Results.disp;
 
 if ~iscell(tim_ct)
     error('Provide input as cell array')
+end
+if ~isdatetime(tim_re)
+    error('Time serie should be datetime')
 end
 
 %% CALC

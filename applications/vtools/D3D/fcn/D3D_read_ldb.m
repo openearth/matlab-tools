@@ -24,6 +24,7 @@ messageOut(NaN,'Loading ldb-file.')
 
 nd=numel(paths_ldb_in);
 
+xy=[];
 for kd=1:nd
 
     filldb = paths_ldb_in{kd,1};
@@ -33,14 +34,18 @@ for kd=1:nd
     [~,~,ext]=fileparts(filldb);
     switch ext
         case '.ldb'
-            LINE=read_ldb(filldb);
+            ldb=read_ldb(filldb);
         case '.mat'
-            LINE=read_mat(filldb);
+            ldb=read_mat(filldb);
         otherwise
             error('No method for extension %s',ext)
     end
 
+    xy=cat(1,xy,[NaN,NaN;ldb.cord]);
 end %kd
+
+LINE.cord=xy;
+% LINE.xy=xy;
 
 end %function
 
@@ -50,16 +55,21 @@ end %function
 
 function LINE=read_ldb(filldb)
 
-warning('Use D3D_io_input and change `fig_map_sal_01`')
+% warning('Use D3D_io_input and change `fig_map_sal_01`')
 
 LINE   = [];
 ldb=landboundary('read',filldb);
-idx_ldb=cumsum(isnan(ldb(:,1)))+1; %add 1 to start at 1 rather than 0
-nldb=idx_ldb(end); 
 
-for kldb=1:nldb
-    LINE(kldb).cord=ldb(idx_ldb==kldb,:);
-end %kldb
+LINE.cord=ldb;
+
+% idx_ldb=cumsum(isnan(ldb(:,1)))+1; %add 1 to start at 1 rather than 0
+% nldb=idx_ldb(end); 
+% for kldb=1:nldb
+%     LINE(kldb).cord=ldb(idx_ldb==kldb,:);
+% end %kldb
+
+% ldb=D3D_io_input('read',filldb);
+% LINE.cord=ldb.xy;
 
 end %function
 

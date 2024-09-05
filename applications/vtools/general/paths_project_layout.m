@@ -18,10 +18,10 @@ end
 fpaths.fdir_doc=fullfile(fpath_project,'04_documents');
     fpaths.fdir_rep=fullfile(fpaths.fdir_doc,'02_report','co');
 
-fpaths.fdir_data=fullfile(fpath_project,'05_data');
-    fpaths.fdir_rkm=fullfile(fpath_project,'01_rkm');
-    fpaths.fdir_pli=fullfile(fpath_project,'02_pli');
-    fpaths.fdir_shp=fullfile(fpath_project,'03_shp');
+fpaths.fdir_data=fullfile(fpaths.fdir_data,'05_data');
+    fpaths.fdir_rkm=fullfile(fpaths.fdir_data,'01_rkm');
+    fpaths.fdir_pli=fullfile(fpaths.fdir_data,'02_pli');
+    fpaths.fdir_shp=fullfile(fpaths.fdir_data,'03_shp');
 
 fpaths.fdir_sim=fullfile(fpath_project,'06_simulations');
     fpaths.fdir_sim_in=fullfile(fpaths.fdir_sim,'01_input');

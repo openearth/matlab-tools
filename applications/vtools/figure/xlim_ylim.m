@@ -54,7 +54,11 @@ if isnan(ylims(1))
 
         bol=xloc>=xlims(1) & xloc<=xlims(2);
 
-        min_max_loc=[min(vloc(bol)),max(vloc(bol))];
+        if ~any(bol)
+            min_max_loc=[-inf,inf];
+        else
+            min_max_loc=[min(vloc(bol)),max(vloc(bol))];
+        end
 
         ylims=[min([min_max_loc(1),ylims(1)]),max([min_max_loc(2),ylims(2)])];
     end

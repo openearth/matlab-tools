@@ -44,7 +44,7 @@ end
 if numel(varargin)>2
     ds_pol=varargin{3,1};
 else
-    ds_pol=100;
+    ds_pol=0.1;
 end
 
 %% LOAD
@@ -119,5 +119,22 @@ end %kpol
 
 data=v2struct(bol_pol_loc,rkm_cen,rkm_edg,rkm_cen_br,rkm_edg_br,rkm_edg_xy,rkm_cen_xy,rkm_edg_xy_L,rkm_edg_xy_R,rkm_dx);
 save_check(fpath_rkm_pol,'data');
+
+%% PLOT
+
+% faces=NaN(size(gridInfo.Xcen));
+% for kpol=1:ncen
+%     faces(bol_pol_loc{kpol,1})=kpol;
+% end
+% 
+% figure
+% hold on
+% EHY_plotMapModelData(gridInfo,faces)
+% axis equal
+% cmap=brewermap(9,'set1');
+% cmap=repmat(cmap,ncen,1);
+% colormap(cmap);
+
+%%
 
 end %function

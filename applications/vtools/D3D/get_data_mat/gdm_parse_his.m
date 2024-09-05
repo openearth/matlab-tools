@@ -14,9 +14,7 @@
 
 function flg_loc=gdm_parse_his(fid_log,flg_loc,simdef)
 
-%% size
 
-flg_loc.nvar=numel(flg_loc.var);
 
 %% stations
 
@@ -41,10 +39,15 @@ flg_loc.nobs=numel(flg_loc.stations);
 
 %% independent of size
 
+flg_loc=isfield_default(flg_loc,'plot_type',1);        
+flg_loc=isfield_default(flg_loc,'interp_measurements',0);   
+flg_loc=isfield_default(flg_loc,'do_statistics',0);   
 flg_loc=isfield_default(flg_loc,'do_fil',0);        
 flg_loc=isfield_default(flg_loc,'fil_tim',25*3600);        
 flg_loc=isfield_default(flg_loc,'do_convergence',0);        
-flg_loc=isfield_default(flg_loc,'do_all_sta',0);        
+flg_loc=isfield_default(flg_loc,'do_all_sta',0);    
+flg_loc=isfield_default(flg_loc,'do_all_sim',1);    
+flg_loc=isfield_default(flg_loc,'do_p_single',1);       
 flg_loc=isfield_default(flg_loc,'measurements','');
 flg_loc=isfield_default(flg_loc,'tol',1.5e-7);
 flg_loc=isfield_default(flg_loc,'write_shp',0);
@@ -54,6 +57,23 @@ end
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
+
+%% special cases
+
+if flg_loc.do_sal_01
+    flg_loc.var={'sal','wl'};
+    flg_loc.plot_type=2;
+    flg_loc.interp_measurements=1;
+    flg_loc.do_statistics=1;
+    flg_loc.unit={'sal',''};
+    flg_loc.do_s=0;
+    flg_loc.do_all_sim=0;
+%     flg_loc.do_all_sta=0; %we need only one station at each result for the statistics?
+end
+
+%% size
+
+flg_loc.nvar=numel(flg_loc.var);
 
 %% dependent on size
 
@@ -67,6 +87,5 @@ flg_loc=isfield_default(flg_loc,'depth_average_limits',repmat([-inf,inf],flg_loc
 flg_loc=isfield_default(flg_loc,'sum_var_idx',zeros(flg_loc.nvar,1));        
 flg_loc=isfield_default(flg_loc,'var_idx',cell(flg_loc.nvar,1));
 flg_loc=isfield_default(flg_loc,'projection_angle',NaN(flg_loc.nvar,1));
-
 
 end
