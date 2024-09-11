@@ -495,8 +495,14 @@ end %function
 %%
 
 function fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,data_mea,do_measurements)
-                
-nylim=size(flg_loc.ylims_var{kvar},1);
+   
+if in_p.is_diff
+    ylims_loc=flg_loc.ylims_diff_var{kvar};
+else
+    ylims_loc=flg_loc.ylims_var{kvar};
+end
+
+nylim=size(ylims_loc,1);
 
 in_p.val=val;
 
@@ -504,8 +510,9 @@ fdir_fig_var=fullfile(fdir_fig,var_str);
 mkdir_check(fdir_fig_var,NaN,1,0);
 for kylim=1:nylim
 
-    [in_p.xlims,in_p.ylims]=get_ylims(flg_loc.ylims_diff_var{kvar}(kylim,:),do_measurements,val,data_mea,tim_dtime_p(1));
-
+%     [in_p.xlims,in_p.ylims]=get_ylims(ylims_loc(kylim,:),do_measurements,val,data_mea,tim_dtime_p(1));
+    in_p.ylims=ylims_loc(kylim,:);
+%     in_p.xlim
     switch flg_loc.plot_type
         case 1
             fname_noext=fig_name(fdir_fig_var,tag,runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
@@ -514,6 +521,7 @@ for kylim=1:nylim
         case 2
             fname_noext=fig_name(fdir_fig_var,sprintf('%s_2',tag),runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
             in_p.fname=fname_noext;
+            in_p.ylim_sal=in_p.ylims;
             fig_his_sal_02(in_p);
     end
 end %kylim

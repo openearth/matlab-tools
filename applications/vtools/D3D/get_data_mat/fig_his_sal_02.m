@@ -44,6 +44,7 @@ if isfield(in_p,'fid_log')==0
     in_p.fid_log=NaN;
 end
 in_p=isfield_default(in_p,'tol_ldb',10000);
+in_p=isfield_default(in_p,'xlims',[NaN,NaN]);
 in_p=isfield_default(in_p,'ylim_wl',[NaN,NaN]);
 in_p=isfield_default(in_p,'ylim_sal',[NaN,NaN]);
 in_p=isfield_default(in_p,'lan','en');
