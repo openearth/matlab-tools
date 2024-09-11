@@ -55,21 +55,17 @@ end %function
 
 function LINE=read_ldb(filldb)
 
-% warning('Use D3D_io_input and change `fig_map_sal_01`')
+% ldb=landboundary('read',filldb);
 
-LINE   = [];
-ldb=landboundary('read',filldb);
-
+ldb=D3D_io_input('read',filldb,'ver',3);
 LINE.cord=ldb;
 
+%this is to separate them, but it is not necessary!
 % idx_ldb=cumsum(isnan(ldb(:,1)))+1; %add 1 to start at 1 rather than 0
 % nldb=idx_ldb(end); 
 % for kldb=1:nldb
 %     LINE(kldb).cord=ldb(idx_ldb==kldb,:);
 % end %kldb
-
-% ldb=D3D_io_input('read',filldb);
-% LINE.cord=ldb.xy;
 
 end %function
 

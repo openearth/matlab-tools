@@ -19,11 +19,11 @@ if isstruct(fpath_his)
 end
 
 obs=D3D_observation_stations(fpath_his);
-idx=find(contains(obs.name,str));
+idx=find(contains(lower(obs.name),lower(str)));
 nidx=numel(idx);
 for kidx=1:nidx
     fprintf('%s\n',obs.name{idx(kidx)});
 end
-out={obs.name(idx)};
+out=obs.name(idx);
 
 end %function

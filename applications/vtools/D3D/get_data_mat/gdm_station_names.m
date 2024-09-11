@@ -15,7 +15,7 @@
 %From file by providing:
 %   -str_flg_path
 
-function stations=gdm_station_names(fid_log,flg_loc,fpath_his,varargin)
+function flg_loc=gdm_station_names(fid_log,flg_loc,fpath_his,varargin)
 
 %% PARSE
 
@@ -29,8 +29,9 @@ parse(parin,varargin{:});
 obs_type=parin.Results.obs_type;
 model_type=parin.Results.model_type;
 
-%%
+%% TYPE
 
+%model
 switch model_type
     case {1,5}
         model_type_str='d3d';
@@ -40,8 +41,7 @@ switch model_type
         model_type_str='sobek3';
 end
 
-%% CHOSE
-
+%station-crs
 switch obs_type
     case 1
         str_flg='stations';
@@ -52,32 +52,31 @@ switch obs_type
 end
 str_flg_path=sprintf('fpath_%s',str_flg);
 
+%% READ FROM FILE
+
 if ~isfield(flg_loc,str_flg)
     if isfield(flg_loc,str_flg_path)
         messageOut(fid_log,sprintf('Reading stations from file: %s',flg_loc.(str_flg_path)));
         if exist(flg_loc.(str_flg_path),'file')~=2
             error('File with stations does not exist %s',flg_loc.(str_flg_path))
         else
-            stations_raw=readcell(flg_loc.(str_flg_path));
+            stations_raw=readcell(flg_loc.(str_flg_path),'FileType','text','Delimiter',',');
             flg_loc.(str_flg)=stations_raw(:,1)';
+            if size(stations_raw,2)>1
+                flg_loc.elev=cell2mat(stations_raw(:,2)');
+            end
         end
-    else
-        flg_loc.(str_flg)=NaN; 
     end
 end
 
-%% CALC
+%% READ ALL STATIONS (if no input)
 
 if ~iscell(flg_loc.(str_flg))
     if obs_type==1
-        stations=EHY_getStationNames(fpath_his,model_type_str);
+        flg_loc.(str_flg)=EHY_getStationNames(fpath_his,model_type_str);
     elseif obs_type==2
-        stations=EHY_getStationNames(fpath_his,model_type_str,'varName','cross_section_*');
-    else
-        error('')
+        flg_loc.(str_flg)=EHY_getStationNames(fpath_his,model_type_str,'varName','cross_section_*');
     end
-else
-    stations=flg_loc.(str_flg);
 end
 
 end %function

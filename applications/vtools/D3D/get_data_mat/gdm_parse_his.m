@@ -31,7 +31,7 @@ end
 fpath_his=simdef(1).file.his;
 switch flg_loc.his_type
     case 1
-        flg_loc.stations=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.structure);
+        flg_loc=gdm_station_names(fid_log,flg_loc,fpath_his,'model_type',simdef(1).D3D.structure);
     case 2
         flg_loc.stations={flg_loc.obs.name};
 end

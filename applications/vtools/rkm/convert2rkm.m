@@ -96,6 +96,13 @@ if ~isfile(path_rkm)
     error('File for river kilometers does not exists: %s',path_rkm)
 end
 
+% [~,fname,ext]=fileparts(path_rkm);
+path_rkm_mat=strrep(path_rkm,'.csv','.mat');
+is_mat=false;
+if isfile(path_rkm_mat)
+    is_mat=true;
+end
+
 %parser
 parin=inputParser;
 
@@ -123,27 +130,28 @@ disp_progress=parin.Results.disp_progress;
 
 %% READ FILE
 
-fid=fopen(path_rkm,'r');
-rkm_file=textscan(fid,readString,'headerlines',headerlines,'delimiter',delimiter);
-fclose(fid);
-
-nvc=numel(rkm_file{1,XCol});
-
-if rkm2xy
-    var_compare=[rkm_file{1,rkmCol},zeros(nvc,1)];
-    var_out=[rkm_file{1,XCol},rkm_file{1,YCol}];
-
-    %branch
+if ~is_mat
+    fid=fopen(path_rkm,'r');
+    rkm_file=textscan(fid,readString,'headerlines',headerlines,'delimiter',delimiter);
+    fclose(fid);
     
-%     tok=cellfun(@(X)regexp(X,'_','split'),rkm_file{1,branchCol},'UniformOutput',false); %e.g. 850.0_Rhein 
-%     tok=cellfun(@(X)X{1,2},tok,'UniformOutput',false);
-
+    %branch
     sep_idx=strfind(rkm_file{1,branchCol},'_');
     sep_1_idx=cellfun(@(X)X(1),sep_idx,'UniformOutput',false); %first '_'
     tok=cellfun(@(X,Y)X(Y+1:end),rkm_file{1,branchCol},sep_1_idx,'UniformOutput',false);
     
     branch=cellfun(@(X)deblank(lower(X)),tok,'UniformOutput',false);
-    
+
+    %save
+    save(path_rkm_mat,'rkm_file','branch')
+else
+    load(path_rkm_mat,'rkm_file','branch');
+end
+
+nvc=numel(rkm_file{1,XCol});
+if rkm2xy
+    var_compare=[rkm_file{1,rkmCol},zeros(nvc,1)];
+    var_out=[rkm_file{1,XCol},rkm_file{1,YCol}];
 else
     var_compare=[rkm_file{1,XCol},rkm_file{1,YCol}];
     var_out=rkm_file{1,rkmCol};
@@ -153,7 +161,9 @@ end
 
 %loop on points
 var_get=NaN(np,size(var_out,2));
-
+if ~rkm2xy
+    branch_get=cell(np,1);
+end
 for kp=1:np
     if rkm2xy
         %get branch
@@ -162,29 +172,18 @@ for kp=1:np
     var_out_branch=var_out(bol_branch,:);
     var_compare_branch=var_compare(bol_branch,:);
 
-    %search for closest point
-%     dist=sqrt(sum((var_compare_branch-var_in(kp,:)).^2,2));
-%     [min_dist,min_idx]=min(dist);
-%     var_get(kp,:)=var_out_branch(min_idx,:);
-
-    %interpolating
-%     %% begin debug
-%     figure
-%     hold on
-%     plot(var_in(kp,1),var_in(kp,2),'*r');
-%     plot(var_compare_branch(:,1),var_compare_branch(:,2),'ob')
-%     
-%     if kp==66
-%         a=1;
-%     end
-%     %% end debug
-    
+    %search for closest point    
     [min_dist,x_d_min,y_d_min,~,xc,~,~,~,~]=p_poly_dist(var_in(kp,1),var_in(kp,2),var_compare_branch(:,1),var_compare_branch(:,2));
     xc=max([1,xc]);
     dist_p2o=sqrt((x_d_min                   -var_compare_branch(xc,1))^2+(y_d_min                   -var_compare_branch(xc,2))^2);
     dist_p2p=sqrt((var_compare_branch(xc+1,1)-var_compare_branch(xc,1))^2+(var_compare_branch(xc+1,2)-var_compare_branch(xc,2))^2);
     frac=dist_p2o/dist_p2p;
     var_get(kp,:)=var_out_branch(xc,:)+frac*(var_out_branch(xc+1,:)-var_out_branch(xc,:));
+
+    %branch output
+    if ~rkm2xy
+        branch_get{kp}=branch(xc); %`xc` and `xc+1` should be the same
+    end
 
     if min_dist>TolMinDist
         figure 
@@ -208,4 +207,7 @@ end %kp
 %% OUTPUT
 
 varargout{1}=var_get;
+if ~rkm2xy
+    varargout(2)=branch_get;
+end
 

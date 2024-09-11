@@ -14,6 +14,8 @@
 
 function create_mat_his_xt_01(fid_log,flg_loc,simdef)
 
+warning('thorough clean-up needed. I think that reading can be done using `create_mat_his_01`.')
+
 tag=flg_loc.tag;
 
 %% DO

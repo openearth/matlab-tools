@@ -499,6 +499,7 @@ function fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,v
 nylim=size(flg_loc.ylims_var{kvar},1);
 
 in_p.val=val;
+
 fdir_fig_var=fullfile(fdir_fig,var_str);
 mkdir_check(fdir_fig_var,NaN,1,0);
 for kylim=1:nylim
@@ -585,9 +586,14 @@ if ~strcmp(var_str,'sal')
     return
 end
 
+% [data_mea.time,data_mea.waarde]=split_time_threshold(data_mea.time,data_mea.waarde,days(1));
+tim_mea=data_statistics.tim_mea;
+[data_statistics.tim_mea,data_statistics.v_mea]=split_time_threshold(tim_mea,data_statistics.v_mea,days(1));
+[~                      ,data_statistics.verr ]=split_time_threshold(tim_mea,data_statistics.verr ,days(1));
+
 %load water level for that simulation, which is stored in position 2
 kvar=2;
-[data_all_wl,layer,unit]=load_data_all(flg_loc,{},simdef,gridInfo,stations_loc,var_str,tag,1,k_sta,his_type,elev,{tim_dtime_p_sim},flg_loc.unit{kvar},kvar);
+[data_all_wl,layer,unit]=load_data_all(flg_loc,{},simdef,gridInfo,stations_loc,'wl',tag,1,k_sta,his_type,[],{tim_dtime_p_sim},flg_loc.unit{kvar},kvar);
 
 %station
 idx_station=find_str_in_cell(obs_all.name,{stations_loc});

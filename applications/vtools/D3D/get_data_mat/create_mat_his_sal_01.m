@@ -14,6 +14,8 @@
 
 function create_mat_his_sal_01(fid_log,flg_loc,simdef)
 
+error('Deprecated. Call `create_mat_his_01`.')
+
 tag=flg_loc.tag;
 
 %% DO

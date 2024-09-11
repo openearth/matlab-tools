@@ -1,11 +1,15 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 37 $
-%$Date: 2021-10-21 14:26:25 +0200 (Thu, 21 Oct 2021) $
+%$Revision: 19773 $
+%$Date: 2024-09-05 16:20:30 +0200 (Thu, 05 Sep 2024) $
 %$Author: chavarri $
-%$Id: statisticsV.m 37 2021-10-21 12:26:25Z chavarri $
-%$HeadURL: file:///P:/11206813-007-kpp2021_rmm-3d/E_Software_Scripts/00_svn/rmm_plot/statisticsV.m $
+%$Id: plot_his_01.m 19773 2024-09-05 14:20:30Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_his_01.m $
+%
 %
 
 function [verr,vbias,vstd,vrmse,corr_R,corr_P,bias_01,rmsd_01]=statisticsV(v_mea,v_sim_atmea,thr)
@@ -19,9 +23,9 @@ verr=v_sim_atmea-v_mea;
 vbias=nanmean(verr);
 vstd=std(verr,'omitnan');
 vrmse=rmse(v_mea,v_sim_atmea);
-if isnan(vrmse)
-    error('It cannot be NaN!')
-end
+% if isnan(vrmse)
+%     error('It cannot be NaN!') %it can be NaN if no data?
+% end
 
 %Equation (5.1) in <"1209459-000-ZKS-0028-r-Evaluatie van het OSR-model voor zoutindringing in de Rijn-Maasmonding (I).pdf">
 vstd_mea=std(v_mea,'omitnan');
