@@ -11,24 +11,26 @@
 %$HeadURL$
 %
 
-function in_p=gdm_s_rkm_cen(in_p,flg_loc,data)
+function [s,xlab_str,xlab_un]=gdm_s_rkm_cen(flg_loc,data)
 
+    xlab_str='x';
+    xlab_un=1;
 if flg_loc.do_rkm
-    in_p.xlab_str='rkm';
-    in_p.xlab_un=1/1000;
+    xlab_str='rkm';
+    xlab_un=1/1000;
 end
 
 if flg_loc.do_staircase
     if flg_loc.do_rkm
         error('do')
     else
-        in_p.s=data.Scor_staircase;
+        s=data.Scor_staircase;
     end
 else
     if flg_loc.do_rkm
-        in_p.s=data.rkm_cen;
+        s=data.rkm_cen;
     else
-        in_p.s=data.Scen;
+        s=data.Scen;
 %         in_p.s_staircase=data.Scor_staircase;
     end
 end

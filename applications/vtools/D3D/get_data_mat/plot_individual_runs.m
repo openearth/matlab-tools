@@ -29,6 +29,7 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% map_ls_01
+%What is this?
 tag_check='fig_map_ls_01';
 if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
@@ -117,11 +118,12 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% map 2DH ls
-tag_check='fig_map_2DH_ls_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    plot_map_2DH_ls_01(fid_log,in_plot_fig,simdef)
-end
+%Done when passing `simdef_all`
+% tag_check='fig_map_2DH_ls_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check);
+%     plot_map_2DH_ls_01(fid_log,in_plot_fig,simdef)
+% end
 
 %% his sal meteo
 tag_check='fig_his_sal_meteo_01';

@@ -18,17 +18,25 @@ function plot_map_2DH_ls_01(fid_log,flg_loc,simdef)
 
 %% PARSE
 
-flg_loc=isfield_default(flg_loc,'fig_print',1);
-flg_loc=isfield_default(flg_loc,'do_staircase',0);
+flg_loc=isfield_default(flg_loc,'do_p',0);
 flg_loc=isfield_default(flg_loc,'do_all_t',0);
 flg_loc=isfield_default(flg_loc,'do_all_s',0);
+flg_loc=isfield_default(flg_loc,'do_diff_t',0);
+flg_loc=isfield_default(flg_loc,'do_diff_s',0);
+flg_loc=isfield_default(flg_loc,'do_all_s_diff_t',0);
+flg_loc=isfield_default(flg_loc,'do_all_t_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_all_s_2diff',0); %plot all runs in same figure making the difference between each of 2 simulations
+
+flg_loc=isfield_default(flg_loc,'fig_print',1);
+flg_loc=isfield_default(flg_loc,'do_staircase',0);
 flg_loc=isfield_default(flg_loc,'do_movie',0);
 flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'xlims',NaN(size(flg_loc.ylims,1),2));
 flg_loc=isfield_default(flg_loc,'ylims_diff_t',flg_loc.ylims);
+flg_loc=isfield_default(flg_loc,'ylims_diff_s',flg_loc.ylims);
 flg_loc=isfield_default(flg_loc,'clims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'clims_diff_t',flg_loc.clims);
+flg_loc=isfield_default(flg_loc,'clims_diff_s',flg_loc.clims);
 flg_loc=isfield_default(flg_loc,'do_diff',1);
 flg_loc=isfield_default(flg_loc,'tim_type',1);
 flg_loc=isfield_default(flg_loc,'tol',30);
@@ -40,6 +48,12 @@ if isfield(flg_loc,'do_rkm')==0
     else
         flg_loc.do_rkm=0;
     end
+end
+
+if flg_loc.do_staircase
+    str_val='val_staircase';
+else
+    str_val='val';
 end
 
 %% PATHS
@@ -85,13 +99,14 @@ else
     ndiff=2;
 end
 
-what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef(1),fdir_mat,time_dnum,tag,gridInfo);
+flg_loc.what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef(1),fdir_mat,time_dnum,tag,gridInfo);
 
-switch what_is
+switch flg_loc.what_is
     case 1
         nlims=nclims;
         lims=flg_loc.clims;
-        lims_diff=flg_loc.clims_diff_t;
+        lims_diff_t=flg_loc.clims_diff_t;
+        lims_diff_s=flg_loc.clims_diff_s;
 
         nlims_y=size(flg_loc.ylims,1);
         if nlims_y~=nlims
@@ -100,16 +115,15 @@ switch what_is
     case 2
         nlims=nylims;
         lims=flg_loc.ylims;
-        lims_diff=flg_loc.ylims_diff_t;
+        lims_diff_t=flg_loc.ylims_diff_t;
+        lims_diff_s=flg_loc.ylims_diff_s;
 end
-
-
 
 %% figure
 in_p=flg_loc; %attention with unexpected input
 in_p.fig_visible=0;
 
-fext=ext_of_fig(in_p.fig_print);
+flg_loc.fext=ext_of_fig(in_p.fig_print);
 
 %% LOOP 
 
@@ -131,249 +145,216 @@ for kpli=1:npli %variable
 
         %time 1 of simulation 1 for reference
         %it is up to you to be sure that it is the same for all simulations!
-        if flg_loc.do_diff || flg_loc.plot_val0 %difference in time
+%         if flg_loc.do_diff || flg_loc.plot_val0 %difference in time
             fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname,'layer',layer);
             data_ref=load(fpath_mat_tmp,'data');   
-            if flg_loc.do_staircase
-                in_p.val0=data_ref.data.val_staircase;
-            else
-                in_p.val0=data_ref.data.val;
-            end
-        end
+            in_p.val0=data_ref.data.(str_val);
+%         end
 
-        %preallocate for plotting all times togehter
-        if flg_loc.do_all_t
-            if flg_loc.do_staircase
-                data_all=NaN(nt,numel(data_ref.data.val_staircase)); %should have one more dimension?
-            else
-                data_all=NaN(nt,numel(data_ref.data.val));
-            end
-        end
+        %Preallocate for plotting all times/simulation together.
+        %We could consider to only allocate if we actually want to plot it in this way. Otherwise, 
+        %data is saved always in the same index. 
+        data_all=NaN(nt,numel(data_ref.data.(str_val)),nS);
         
+        nplot=5;
+        fpath_file=cell(nplot,nt,nS,nlims);
+
         ktc=0; 
         for kt=kt_v %time
             ktc=ktc+1;
 
             [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum(kt),time_dtime(kt),time_mor_dnum(kt),time_mor_dtime(kt));
    
-            for kS=1:nS
-                fdir_mat=simdef(kS).file.mat.dir; %1 used for reference for all. Should be the same. 
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname,'layer',layer);
-                load(fpath_mat_tmp,'data');
-            
-                %filter data
-                data=filter_1d_data(flg_loc,data);
-
-                %save data for plotting all times togehter. Better not to do it if you don't need it for memory reasons.
-                if flg_loc.do_all_t || flg_loc.do_all_s 
-                    if flg_loc.do_staircase
-                        data_all(kt,:,kS)=data.val_staircase;
-                    else
-                        data_all(kt,:,kS)=data.val;
-                    end
-                end
-
-            end %kS
+            [data_all,gridInfo_ls,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum);
             
             %measurements                        
-            in_p.plot_mea=false;
-            if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
-                tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-                data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean','tol',flg_loc.tol,'do_rkm',flg_loc.do_rkm);
-                if isstruct(data_mea) %there is data
-                    in_p.plot_mea=true;
-                    in_p.s_mea=data_mea.x;
-                end
+            [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,var_str_save);
+
+            in_p.s_mea=data_mea.x;          
+            in_p.s=s;
+            in_p.xlab_str=xlab_str;
+            in_p.xlab_un=xlab_un;
+            in_p.data_ls.grid=gridInfo_ls;
+
+            %% plot single simulation and single time
+            if flg_loc.do_p
+                kplot=1;
+                for kS=1:nS
+                    data_loc=reshape(data_all(kt,:,kS),[],1);
+                    tag_fig=tag;
+                    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                    mkdir_check(fdir_fig);
+                    runid=simdef(kS).file.runid;
+
+                    in_p.val_mea=data_mea.y;
+                    in_p.is_diff=0;
+                    in_p.plot_mea=plot_mea;
+               
+                    fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);     
+                end %kS
             end
-                        
-            for klim=1:nlims %ylim
-                
-                for kdiff=1:ndiff %diff
-                    
-                    %do we need a function for this? There is one for 2DH data...
-                    switch kdiff
-                        case 1
-                            if flg_loc.do_staircase
-                                data_val_p=data.val_staircase;
-                            else
-                                data_val_p=data.val;
-                            end
-                            lims_loc=lims(klim,:);
-                            in_p.is_diff=0;
-                            tag_ref='val';
-                        case 2
-                            if flg_loc.do_staircase
-                                data_val_p=data.val_staircase;
-                            else
-                                data_val_p=data.val-data_ref.data.val;
-                            end
-                            lims_loc=lims_diff(klim,:);
-                            in_p.is_diff=1;
-                            tag_ref='diff';
-                    end
-                    
-                    fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
-                    mkdir_check(fdir_fig_loc,NaN,1,0);
 
-                    fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,klim,layer);
-                    fpath_file{kt,klim,kpli,kvar,kdiff}=sprintf('%s%s',fname_noext,fext); %for movie 
+            %% plot all simulations and single time (if line plot)
+            if flg_loc.do_all_s
+                kplot=2;
+                kS=1;
+                data_loc=squeeze(data_all(kt,:,:));
+                tag_fig=sprintf('%s_all_s',tag);
+                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                mkdir_check(fdir_fig);
+                runid=simdef(kS).file.runid;
 
-                    in_p.fname=fname_noext;
-
-                    %measurements
-                    if in_p.plot_mea
-                        if kdiff==1
-                            in_p.val_mea=data_mea.y;
-                        elseif kdiff==2
-                            tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
-                            data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
-                            in_p.val_mea=data_mea.y-data_mea_0.y;
-                        end
-                    end
-                    
-                    switch what_is
-                        case 1
-                        %% several vertical layers (patch plot)   
-
-                        in_p.data_ls.sal=data_val_p;
-                        in_p.data_ls.grid=data.gridInfo;
-                        in_p.unit=var_str_read;
-                        if flg_loc.do_rkm
-                            in_p.data_ls.grid.Xcor=data.rkm_cor;
-                        end
-                        in_p.clims=lims_loc;
-                        in_p.ylims=flg_loc.ylims(klim,:);
-
-                        fig_map_ls_01(in_p)  
-
-                        case 2
-
-                        %% single layer (line plot)
-                        in_p.lab_str=var_str_read;
-                        in_p=gdm_s_rkm_cen(in_p,flg_loc,data);
-                        in_p.ylims=lims_loc;
-                        in_p.xlims=flg_loc.xlims(klim,:);
-                        
-                        %The same function is called for several than for 1 simulations. It is not an option
-                        %to first load all in `data_all` and then loop to plot because the sizes may be 
-                        %different (space and time). It needs to be general and deal with each simulation 
-                        %independently. We have to discretize between one or more simulations because otherwise
-                        %when calling with several simulations and not overwriting, creating the case for 1
-                        %implies that the figure with all runs is not created. 
-                        if nS==1 
-                            %% single run
-                            in_p.val=data_val_p'; 
+                in_p.val_mea=data_mea.y;
+                in_p.is_diff=0;
+                in_p.plot_mea=plot_mea;
     
-                            fig_1D_01(in_p)
-                        else 
-                            %% all simulations together
+                fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);       
+            end
 
-                            %% regular
-                            if flg_loc.do_all_s
-                            
-                                %Why do we need this? We already change the tag when calling the function.
-                                %
-    %                             tag_fig=sprintf('%s_%s',flg_loc.tag,'all'); 
-    %                             fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-    %                             fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
-    %                             mkdir_check(fdir_fig_loc,NaN,1,0);
-            
-                                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_read,pliname,kdiff,klim,layer);
+            %% plot difference in time
+            if flg_loc.do_diff_t
+                kplot=3;
+                for kS=1:nS
+                    data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(1,:,kS)),[],1);
+                    tag_fig=sprintf('%s_diff_t',tag);
+                    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                    mkdir_check(fdir_fig);
+                    runid=simdef(kS).file.runid;
+
+                    in_p.val_mea=data_mea.y-data_mea_0.y;
+                    in_p.is_diff=1;
+                    in_p.plot_mea=plot_mea;
+
+                    fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);           
+                end %kS
+            end
+
+            %% plot difference with reference simulation
+            if flg_loc.do_diff_s
+                kplot=4;
+                for kS=1:nS
+                    data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(kt,:,1)),[],1);
+                    tag_fig=sprintf('%s_diff_s',tag);
+                    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                    mkdir_check(fdir_fig);
+                    runid=simdef(kS).file.runid;
+
+                    in_p.val_mea=data_mea.y-data_mea_0.y;
+                    in_p.is_diff=1;
+                    in_p.plot_mea=0;
+
+                    fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_s);               
+                end %kS
+            end
     
-                                in_p.fname=fname_noext;
+            %% plot all simulations together, difference in time
+            if flg_loc.do_all_s_diff_t
+                kplot=5;
+                kS=1;
+                data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
+                tag_fig=sprintf('%s_all_s_diff_t',tag);
+                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                mkdir_check(fdir_fig);
+                runid=simdef(kS).file.runid;
 
-                                %we have a function for this... search and plug
-                                switch kdiff
-                                    case 1
-                                        in_p.val=squeeze(data_all(kt,:,:));
-                                    case 2
-                                        in_p.val=squeeze(data_all(kt,:,:))-squeeze(data_all(1,:,:));
-                                end
+                in_p.val_mea=data_mea.y-data_mea_0.y;
+                in_p.is_diff=1;
+                in_p.plot_mea=plot_mea;
     
-                                fig_1D_01(in_p)
-                            end %flg_loc.do_all_s
+                fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
+            end
 
-                            %% ad-hoc differences between runs
-                            if flg_loc.do_all_s_2diff
-                                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,klim,tag,layer)
-                            end %do_all_s_2diff
-                        end %nS
-                    end %type plot
-                end %kdiff
-            end %kylim
-            
+            %% plot all simulation together (special case 2 simulations differences between runs)
+            if flg_loc.do_all_s_2diff
+                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,klim,tag,layer)
+            end %do_all_s_2diff
+
+            %% disp
+
             messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
+
         end %kt
         
-        %% all times together
-        
+        %% plot all times together
+
         if flg_loc.do_all_t
-            in_p_all=in_p;
-            
-            for klim=1:nylims %ylim
-                
-                for kdiff=1:ndiff %diff
-                    
-                    switch kdiff
-                        case 1
-                            if flg_loc.do_staircase
-                                data_val_p=data.val_staircase;
-                            else
-                                data_val_p=data.val;
-                            end
-                            in_p_all.ylims=flg_loc.ylims(klim,:);
-                            in_p_all.is_diff=0;
-                            tag_ref='val';
-                        case 2
-                            if flg_loc.do_staircase
-                                data_val_p=data.val_staircase;
-                            else
-                                data_val_p=data.val-data_ref.data.val;
-                            end
-                            in_p_all.ylims=flg_loc.ylims_diff_t(klim,:);
-                            in_p_all.is_diff=1;
-                            tag_ref='diff';
-                    end
+            for kS=1:nS
+                %2DO: legend is incorrect. It is now about the different simulations;
+                data_loc=data_all(:,:,kS)';
+                tag_fig=sprintf('%s_all_t',tag);
+                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                mkdir_check(fdir_fig);
+                runid=simdef(kS).file.runid;
+    
+                in_p.val_mea=data_mea.y;
+                in_p.is_diff=0;
+                in_p.plot_mea=plot_mea;
+    
+                fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
+            end %kS
+        end
 
-                    fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read,tag_ref);
-                    fname_noext=fig_name(fdir_fig_loc,sprintf('%s_all_t',tag),runid,time_dnum(kt),var_str_read,pliname,kdiff,klim,layer);
-
-                    in_p_all.fname=fname_noext;
-                    in_p_all.val=data_all';
-                    in_p_all.clims=[0,days(time_dtime(end)-time_dtime(1))];
-                    in_p_all.do_time=1;
-
-                    fig_1D_01(in_p_all)
-                end %kdiff
-            end %kylim
-        end %do_all_t
+        %% plot all times together, difference in time
         
+        if flg_loc.do_all_t_diff_t
+            for kS=1:nS
+                %2DO: legend is incorrect. It is now about the different simulations;
+                data_loc=(data_all(:,:,kS)-data_all(1,:,kS))';
+                tag_fig=sprintf('%s_all_t_diff_t',tag);
+                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                mkdir_check(fdir_fig);
+                runid=simdef(kS).file.runid;
+    
+                in_p.val_mea=data_mea.y;
+                in_p.is_diff=1;
+                in_p.plot_mea=plot_mea;
+    
+                fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);               
+            end %kS
+        end
+        
+        %% movies
+        if flg_loc.do_movie
+
+            for kplot=1:nplot
+                for klim=1:nylims
+                    for kS=1:nS
+                        fpath_mov=fpath_file(kplot,:,kS,klim);
+                        gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
+                    end %ks
+                end
+            end %kplo
+
+        end %movie
+
     end %kvar
 end %kpli
-
-%% movies
-
-if flg_loc.do_movie
-
-[~,nylims,npli,nvar,ndiff]=size(fpath_file);
-for kvar=1:nvar
-    for kpli=1:npli
-        for klim=1:nylims
-            for kdiff=1:ndiff
-                fpath_mov=fpath_file(:,klim,kpli,kvar,kdiff);
-                gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
-            end
-        end
-    end
-end
-
-end
 
 end %function
 
 %%
 %% FUNCTIONS
+%%
+
+%%
+
+function fpath_fig=fig_name_single(fdir_fig,tag,runid,time_dnum,var_str,pliname,kylim,layer)
+
+str_b=sprintf('%s_%s_%s_%s_%s_ylim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMMSS'),var_str,pliname,kylim);
+
+if ~isempty(layer)
+    if isinf(layer)
+        str_b=sprintf('%s_Inf',str_b);
+    else
+        str_b=sprintf('%s_%02d',str_b,layer);
+    end
+end
+
+fpath_fig=fullfile(fdir_fig,str_b);
+
+end
+
 %%
 
 function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,pliname,kdiff,kylim,layer)
@@ -474,11 +455,89 @@ end
 
 end %function
 
+%%
 
+function [data_all,gridInfo,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum)
 
+nS=numel(simdef);
 
+for kS=1:nS
+    fdir_mat=simdef(kS).file.mat.dir; 
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname,'layer',layer);
+    load(fpath_mat_tmp,'data');
 
+    %filter data
+    data=filter_1d_data(flg_loc,data);
 
+    %save data for plotting all times togehter. Better not to do it if you don't need it for memory reasons.
+    data_all(kt,:,kS)=data.(str_val);
+end %kS
+
+gridInfo=data.gridInfo;
+[s,xlab_str,xlab_un]=gdm_s_rkm_cen(flg_loc,data);
+
+end %function
+
+%% 
+
+function fpath_file=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag,runid,time_dnum_kt,var_str_read,layer,pliname,data_loc,lims_loc)             
+
+fpath_file=cell(nlims,1);
+for klim=1:nlims %ylim
+                
+    fdir_fig_loc=fullfile(fdir_fig,pliname,var_str_read);
+    mkdir_check(fdir_fig_loc,NaN,1,0);
+    
+    fname_noext=fig_name_single(fdir_fig_loc,tag,runid,time_dnum_kt,var_str_read,pliname,klim,layer);
+    fpath_file{klim}=sprintf('%s%s',fname_noext,flg_loc.fext); %for movie 
+
+    in_p.fname=fname_noext;
+    
+    switch flg_loc.what_is
+        case 1 % several vertical layers (patch plot)      
+            in_p.data_ls.sal=data_loc;
+            in_p.unit=var_str_read;
+            if flg_loc.do_rkm
+                in_p.data_ls.grid.Xcor=data.rkm_cor;
+            end
+            in_p.clims=lims_loc(klim,:);
+            in_p.ylims=flg_loc.ylims(klim,:);
+        
+            fig_map_ls_01(in_p)  
+    
+        case 2 % single layer (line plot)
+            in_p.lab_str=var_str_read;
+            in_p.ylims=lims_loc(klim,:);
+            in_p.xlims=flg_loc.xlims(klim,:);
+            in_p.val=data_loc; 
+        
+            fig_1D_01(in_p)
+    
+    end %type plot
+end %kylim
+
+end %function
+
+%%
+
+function [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,var_str_save)
+
+data_mea.x=NaN;
+data_mea.y=NaN;
+data_mea_0.y=NaN;
+plot_mea=false;
+
+if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+    tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
+    data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean','tol',flg_loc.tol,'do_rkm',flg_loc.do_rkm);
+    tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
+    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean');
+    if isstruct(data_mea) %there is data
+        plot_mea=true;
+    end
+end
+
+end %function
 
 
 
