@@ -33,9 +33,10 @@ OPT.varName = varName0; % change wanted variabele back to original value
 DataAll = EHY_getMapModelData(inputFile,OPT);
 
 %% check
-GI = EHY_getGridInfo(inputFile,'no_layers');
-if GI.no_layers < 2
-    warning('Data at certain z-level requested, but this is a 2D variabele (and/or model). The 2D-data will be used as horizontal slice');
+[~,dimsInd] = EHY_getDimsInfo(inputFile,OPT,modelType);
+
+if isempty(dimsInd.layers)
+    warning(['Data at certain z-level requested, but this is a 2D variabele (' OPT.varName '). The 2D-data will be used as horizontal slice.']);
     Data = DataAll;
     return
 end
