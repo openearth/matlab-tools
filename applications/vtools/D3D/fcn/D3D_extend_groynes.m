@@ -10,18 +10,50 @@
 %$Id: angle_polyline.m 17754 2022-02-11 05:38:51Z chavarri $
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/polyline/angle_polyline.m $
 %
+%Extend the groynes of by a certain distance towards the main channel. 
+%
+%INPUT:
+%   -fpath_fxw = full path to the file with fixed weirs [char]
+%   -fpath_rkm = full path to the file with river kilometers (see format in `convert2rkm`) [char]
+%   -str_mod   = string contained in the fixed weirs to modify [char]. E.g., `'groynes'`.
+%   -rkm_lim   = limits of the river kilometers to modify [double(1,2)]. E.g., `[880,890]`.
+%   -branch    = branch tag to be modified [char]. E.g. `'WA'`.
+%   -groyne_extension = distance of the groyne to be extended [double(1,1)]. E.g., `50`.
+%
+%OUTPUT:
+%   -A new fixed weir file at the same location as the original one with string `_mod` added to the name. 
+%   -A figure in both png and fig format with the original groynes that are modified and the modified ones. 
+%
+%E.G.:
+%
+% fpath_sim=fullfile(fpaths.fdir_sim_runs,'S_1020');
+% fpath_rkm=fullfile(fpaths.fdir_rkm,'rkm_rijntakken_rhein.csv');
+% str_mod='groyne';
+% rkm_lim=[880,890];
+% branch='WA';
+% groyne_extension=50;
+%
+% simdef=D3D_simpath(fpath_sim);
+% fpath_fxw=simdef.file.fxw;
+% 
+% D3D_extend_groynes(fpath_fxw,fpath_rkm,str_mod,rkm_lim,branch,groyne_extension);
 
 function D3D_extend_groynes(fpath_fxw,fpath_rkm,str_mod,rkm_lim,branch,groyne_extension)
 
+%% read
+
+messageOut(NaN,sprintf('Reading input: %s',fpath_fxw));
 fxw=D3D_io_input('read',fpath_fxw);
 fxw_mod=fxw;
 
-%%
+%% proces
+
+messageOut(NaN,sprintf('Processing input: %4.2f %%',0));
 nfxw=numel(fxw);
 bol_get=false(nfxw,1);
 for kfxw=1:nfxw
 
-    fprintf('%4.2f %% \n',kfxw/nfxw*100)
+    fprintf('Processing input: %4.2f %% \n',kfxw/nfxw*100);
     %only process the ones we want (e.g., `groynes`)
     if ~contains(fxw(kfxw).name,str_mod)
         continue
@@ -62,9 +94,16 @@ for kfxw=1:nfxw
     bol_get(kfxw)=true;
 end %kfxw
 
+%% paths
 
-%%
-figure
+[fdir,fname,fext]=fileparts(fpath_fxw);
+fpath_mod=fullfile(fdir,sprintf('%s_mod%s',fname,fext));
+fpath_fig=fullfile(fdir,sprintf('%s_mod%s',fname,'.fig'));
+fpath_png=fullfile(fdir,sprintf('%s_mod%s',fname,'.png'));
+
+%% plot
+
+han_fig=figure('visible','off');
 hold on
 axis equal
 for kfxw=1:nfxw
@@ -73,11 +112,16 @@ for kfxw=1:nfxw
         plot(fxw(kfxw).xy(:,1),fxw(kfxw).xy(:,2),'k')
     end
 end
+printV(han_fig,fpath_fig);
+printV(han_fig,fpath_png);
 
 %% save
 
-[fdir,fname,fext]=fileparts(simdef.file.fxw);
-fpath_mod=fullfile(fdir,sprintf('%s_mod%s',fname,fext));
+messageOut(NaN,sprintf('Writing new file %s:', fpath_mod));
 D3D_io_input('write',fpath_mod,fxw_mod);
+
+%% done
+
+messageOut(NaN,'Done!',3);
 
 end %function
