@@ -57,7 +57,9 @@ nvar=flg_loc.nvar;
 nobs=flg_loc.nobs;
 stations=flg_loc.stations;
 
-obs_all=D3D_observation_stations(fpath_his);
+%Problem 1: `obs_all` must output either observation stations or cross-
+%sections depending on the variable.
+% obs_all=D3D_observation_stations(fpath_his,'simdef',simdef(1));
 
 %% LOOP
 
@@ -69,10 +71,11 @@ for kobs=kobs_v
     ksc=ksc+1;
 
     %check if observation station exists
-    idx_find=find_str_in_cell(obs_all.name,stations(kobs));
-    if isnan(idx_find)
-        error('station not found: %s',stations{kobs})
-    end
+    %See Problem 1
+%     idx_find=find_str_in_cell(obs_all.name,stations(kobs));
+%     if isnan(idx_find)
+%         error('station not found: %s',stations{kobs})
+%     end
 
     for kvar=1:nvar
         
@@ -117,33 +120,6 @@ for kobs=kobs_v
         
     end %kvar
 end    
-
-%% JOIN
-
-% %% first time for allocating
-% 
-% kt=1;
-% fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-% tmp=load(fpath_mat_tmp,'data');
-% 
-% %constant
-% 
-% %time varying
-% nF=size(tmp.data,2);
-% 
-% data=NaN(nt,nF);
-% 
-% %% loop 
-% 
-% for kt=1:nt
-%     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-%     tmp=load(fpath_mat_tmp,'data');
-% 
-%     data(kt,:)=tmp.data;
-% 
-% end
-% 
-% save_check(fpath_mat,'data');
 
 end %function
 

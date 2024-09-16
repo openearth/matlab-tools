@@ -41,7 +41,7 @@ mkdir_check(fdir_fig);
 
 %% TIME
 
-tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,n_sim);
+tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,n_sim); %{nsim,1} datetime
 
 %% GRID
 
@@ -52,7 +52,7 @@ for k_sim=1:n_sim
 %     gridInfo(k_sim)=gdm_load_grid_simdef(fid_log,simdef(k_sim)); %not nice to have to load it every time
 end
 
-obs_all=D3D_observation_stations(fpath_his);
+obs_all=D3D_observation_stations(fpath_his,'simdef',simdef(1));
 
 %% FIGURE INI
 
@@ -60,7 +60,6 @@ obs_all=D3D_observation_stations(fpath_his);
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.tim=tim_dtime_p;
 
 %convergence
 in_p_c=flg_loc;
@@ -155,11 +154,11 @@ for kvar=1:nvar
             fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
 
             in_p.is_diff=0;
-            val=data_all(ksim,k_sta); %we pass all simulations and only one station
+            val=data_all(ksim,k_sta); %we pass one simulation and one station
             
             %% plot each station individually
             if flg_loc.do_p_single
-                fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,data_mea,do_measurements);
+                fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p(ksim),tag,stations_loc,var_str,layer,elev,fdir_fig,data_mea,do_measurements);
             end
 
             %% plot salinity figure (special case)
@@ -505,6 +504,7 @@ end
 nylim=size(ylims_loc,1);
 
 in_p.val=val;
+in_p.tim=tim_dtime_p;
 
 fdir_fig_var=fullfile(fdir_fig,var_str);
 mkdir_check(fdir_fig_var,NaN,1,0);

@@ -48,6 +48,7 @@ flg_loc=isfield_default(flg_loc,'do_convergence',0);
 flg_loc=isfield_default(flg_loc,'do_all_sta',0);    
 flg_loc=isfield_default(flg_loc,'do_all_sim',1);    
 flg_loc=isfield_default(flg_loc,'do_p_single',1);       
+flg_loc=isfield_default(flg_loc,'do_sal_01',0);   
 flg_loc=isfield_default(flg_loc,'measurements','');
 flg_loc=isfield_default(flg_loc,'tol',1.5e-7);
 flg_loc=isfield_default(flg_loc,'write_shp',0);

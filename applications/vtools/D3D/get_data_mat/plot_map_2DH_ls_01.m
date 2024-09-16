@@ -62,19 +62,19 @@ nS=numel(simdef);
 fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-mkdir_check(fdir_fig);
-runid=simdef(1).file.runid;
+% fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+% mkdir_check(fdir_fig);
+% runid=simdef(1).file.runid;
 
 %% DO
 
 ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 
 %we want to skip this in case we are processing for all simulations (i.e., being called by
-%`plot_all_runs_one_figure` and we do not want to do it (i.e., `do_all_s`=0).
-if nS>1 
-    ret=gdm_do_mat(fid_log,flg_loc,tag,'do_all_s'); if ret; return; end
-end
+% %`plot_all_runs_one_figure` and we do not want to do it (i.e., `do_all_s`=0).
+% if nS>1 
+%     ret=gdm_do_mat(fid_log,flg_loc,tag,'do_all_s'); if ret; return; end
+% end
 
 %% TIME
 
@@ -92,12 +92,6 @@ nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
 nylims=size(flg_loc.ylims,1);
 nclims=size(flg_loc.clims,1);
-
-if flg_loc.do_diff==0
-    ndiff=1;
-else 
-    ndiff=2;
-end
 
 flg_loc.what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef(1),fdir_mat,time_dnum,tag,gridInfo);
 
@@ -131,7 +125,6 @@ kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
 ktc=0; kpli=0; kvar=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kpli %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kpli/npli*100,kvar/nvar*100));
-fpath_file=cell(nt,nlims,npli,nvar,ndiff);
 
 for kpli=1:npli %variable
     fpath_pli=flg_loc.pli{kpli,1};
@@ -169,7 +162,7 @@ for kpli=1:npli %variable
             [data_all,gridInfo_ls,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum);
             
             %measurements                        
-            [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,var_str_save);
+            [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,time_mor_dnum,var_str_save,kt,kpli);
 
             in_p.s_mea=data_mea.x;          
             in_p.s=s;
@@ -184,7 +177,7 @@ for kpli=1:npli %variable
                     data_loc=reshape(data_all(kt,:,kS),[],1);
                     tag_fig=tag;
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
-                    mkdir_check(fdir_fig);
+                    mkdir_check(fdir_fig,NaN,1,0);
                     runid=simdef(kS).file.runid;
 
                     in_p.val_mea=data_mea.y;
@@ -202,7 +195,7 @@ for kpli=1:npli %variable
                 data_loc=squeeze(data_all(kt,:,:));
                 tag_fig=sprintf('%s_all_s',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
-                mkdir_check(fdir_fig);
+                mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(kS).file.runid;
 
                 in_p.val_mea=data_mea.y;
@@ -219,7 +212,7 @@ for kpli=1:npli %variable
                     data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(1,:,kS)),[],1);
                     tag_fig=sprintf('%s_diff_t',tag);
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
-                    mkdir_check(fdir_fig);
+                    mkdir_check(fdir_fig,NaN,1,0);
                     runid=simdef(kS).file.runid;
 
                     in_p.val_mea=data_mea.y-data_mea_0.y;
@@ -237,7 +230,7 @@ for kpli=1:npli %variable
                     data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(kt,:,1)),[],1);
                     tag_fig=sprintf('%s_diff_s',tag);
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
-                    mkdir_check(fdir_fig);
+                    mkdir_check(fdir_fig,NaN,1,0);
                     runid=simdef(kS).file.runid;
 
                     in_p.val_mea=data_mea.y-data_mea_0.y;
@@ -255,7 +248,7 @@ for kpli=1:npli %variable
                 data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
                 tag_fig=sprintf('%s_all_s_diff_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
-                mkdir_check(fdir_fig);
+                mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(kS).file.runid;
 
                 in_p.val_mea=data_mea.y-data_mea_0.y;
@@ -284,7 +277,7 @@ for kpli=1:npli %variable
                 data_loc=data_all(:,:,kS)';
                 tag_fig=sprintf('%s_all_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
-                mkdir_check(fdir_fig);
+                mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(kS).file.runid;
     
                 in_p.val_mea=data_mea.y;
@@ -303,7 +296,7 @@ for kpli=1:npli %variable
                 data_loc=(data_all(:,:,kS)-data_all(1,:,kS))';
                 tag_fig=sprintf('%s_all_t_diff_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
-                mkdir_check(fdir_fig);
+                mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(kS).file.runid;
     
                 in_p.val_mea=data_mea.y;
@@ -520,19 +513,20 @@ end %function
 
 %%
 
-function [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,var_str_save)
+function [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,time_mor_dnum,var_str_save,kt,kpli)
 
-data_mea.x=NaN;
-data_mea.y=NaN;
+data_mea.x=[];
+data_mea.y=[];
 data_mea_0.y=NaN;
 plot_mea=false;
 
 if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+%     gdm_time_flow_mor(flg_loc,simdef,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
     tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-    data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean','tol',flg_loc.tol,'do_rkm',flg_loc.do_rkm);
+    data_mea=gdm_load_measurements(NaN,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean','tol',flg_loc.tol,'do_rkm',flg_loc.do_rkm);
     tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
-    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean');
-    if isstruct(data_mea) %there is data
+    data_mea_0=gdm_load_measurements(NaN,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean');
+    if ~isempty(data_mea.x) %there is data
         plot_mea=true;
     end
 end

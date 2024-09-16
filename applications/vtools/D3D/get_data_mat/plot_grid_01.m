@@ -36,6 +36,8 @@ if isfield(flg_loc,'plot_fxw')==0
     flg_loc.plot_fxw=0;
 end
 
+flg_loc=isfield_default(flg_loc,'fig_print',1);
+
 %% PATHS
 
 fdir_mat=simdef.file.mat.dir;

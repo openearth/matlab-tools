@@ -144,9 +144,10 @@
 % tag='fig_map_2DH_ls_01';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
-% in_plot.(tag).do_diff=1; %difference with reference
 % in_plot.(tag).do_all_t=0; %all times together
-% in_plot.(tag).do_all_s=1; %all simulations in the same plot
+% in_plot.(tag).do_all_s=1; %all simulations together
+% in_plot.(tag).do_diff_t=1; %difference of each simulation in time
+% in_plot.(tag).do_diff_s=1; %difference of each simulation with reference simulation
 % in_plot.(tag).var={'bl'}; 
 % in_plot.(tag).tim=NaN;
 % in_plot.(tag).tim_type=2;
@@ -166,6 +167,7 @@
 % in_plot.(tag).do_staircase=1;
 % in_plot.(tag).plot_val0=0; %plot initial
 % % in_plot.(tag).xdir='reverse';
+% in_plot.(tag).leg_mea='Carnott'; %legend of measurements (default is 'measurements [-]')
 
 %% summerbed
 

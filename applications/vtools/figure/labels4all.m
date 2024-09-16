@@ -111,6 +111,8 @@
 %
 %       -'mesh2d_flowelem_domain' : partition number
 %
+%       -'E' : energy head
+%
 %
 %
 %   -un: factor for unit conversion from SI
@@ -1061,6 +1063,16 @@ switch lower(variable)
                 str_var='número de partición';
          end
          un_type='-';        
+    case 'e'
+         switch lan
+            case 'en'
+                str_var='energy head';
+            case 'nl'
+                str_var='energy head';
+            case 'es'
+                str_var='energía';
+         end
+         un_type='L';   
     otherwise
         str_var=variable;
         un_type='?';

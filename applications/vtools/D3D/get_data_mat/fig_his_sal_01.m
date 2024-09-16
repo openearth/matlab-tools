@@ -96,6 +96,7 @@ end
 
 in_p=isfield_default(in_p,'elev',NaN);
 
+[in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.tim,in_p.val);
 
 v2struct(in_p)
 

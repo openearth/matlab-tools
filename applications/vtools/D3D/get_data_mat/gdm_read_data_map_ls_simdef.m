@@ -162,6 +162,8 @@ switch varname
         end
     case {'Q','qsp'}
         data=gdm_read_data_map_ls_Q(fdir_mat,fpath_map,varname,simdef,varargin{:});
+    case {'E'}
+        data=gdm_read_data_map_ls_E(fdir_mat,fpath_map,varname,simdef,varargin{:});
     otherwise
         data=gdm_read_data_map_ls(fdir_mat,fpath_map,varname,varargin{:});
 end
