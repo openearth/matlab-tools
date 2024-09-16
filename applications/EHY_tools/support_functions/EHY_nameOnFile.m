@@ -65,8 +65,6 @@ switch typeOfModelFileDetail
         if strcmpi(varName,'Zint'       ) newName = 'zcoordinate_w'; end
         if strcmpi(varName,'Zcen_cen'   ) newName = 'zcoordinate_c'; end
         if strcmpi(varName,'Zcen_int'   ) newName = 'zcoordinate_w'; end
-        if strcmpi(varName,'vicoww'     ) newName = 'vicww'        ; end
-        
     case {'map_nc','fou_nc'} % dfm
         % Get the name of varName as specified on the map file of a simulation
         if strcmpi(varName,'wl'         ) newName = 's1'         ;  end
