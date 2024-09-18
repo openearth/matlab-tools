@@ -34,14 +34,14 @@ DataAll = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
 no_times = length(DataAll.times);
 no_stat = length(DataAll.requestedStations);
 
-if ismember(OPT0.zRef,{'wl','bed'})
+if ismember(lower(OPT0.zRef),{'wl','bed'})
     OPT.varName = OPT0.zRef;
     Data_zRef = EHY_getmodeldata(inputFile,stat_name,modelType,OPT);
     refLevel = Data_zRef.val;
     if ~isfield(Data_zRef,'times')
         refLevel = reshape(refLevel,1,no_stat);
     end
-elseif isempty(OPT0.zRef) || strcmp(OPT0.zRef, '-') % model reference level
+elseif isempty(OPT0.zRef) || strcmp(OPT0.zRef, '-') || strcmp(OPT0.zRef, 'NAP') % model reference level
     refLevel = 0;
 elseif strcmpi(OPT0.zRef,'middleOfWaterColumn')
     Data_WL = EHY_getmodeldata(inputFile,stat_name,modelType,OPT,'varName','wl');
