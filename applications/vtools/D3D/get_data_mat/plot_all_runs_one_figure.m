@@ -23,12 +23,13 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% his xt
-tag_check='fig_his_xt_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
-    in_plot_fig.leg_str=leg_str;
-    plot_his_xt_01(fid_log,in_plot_fig,simdef)
-end
+%This functionality is moved to `fig_his_01` with `do_xt=1`
+% tag_check='fig_his_xt_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
+%     in_plot_fig.leg_str=leg_str;
+%     plot_his_xt_01(fid_log,in_plot_fig,simdef)
+% end
     
 %% his sal 01
 tag_check='fig_his_01';

@@ -11,6 +11,8 @@
 %$HeadURL$
 %
 %
+%THIS NEEDS A THOROUGH REFACTORING
+%   -there is no loop over kylim for 1D plot
 
 function plot_map_1D_xv_01(fid_log,flg_loc,simdef)
 
@@ -47,6 +49,8 @@ end
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');
 
+flg_loc=isfield_default(flg_loc,'tim_type',1);
+
 %% PATHS
 
 nS=numel(simdef);
@@ -71,13 +75,15 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map_grd,'dim',1);
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
-if flg_loc.tim_type==1
-    time_dnum_v=time_dnum;
-    time_dtime_v=time_dtime;
-elseif flg_loc.tim_type==2
-    time_dnum_v=time_mor_dnum;
-    time_dtime_v=time_mor_dtime;
-end
+[time_dnum_v,time_dtime_v]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
+
+% if flg_loc.tim_type==1
+%     time_dnum_v=time_dnum;
+%     time_dtime_v=time_dtime;
+% elseif flg_loc.tim_type==2
+%     time_dnum_v=time_mor_dnum;
+%     time_dtime_v=time_mor_dtime;
+% end
 
 %% DIMENSION
 

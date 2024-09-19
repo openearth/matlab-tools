@@ -15,6 +15,9 @@
 function flg_loc=gdm_parse_his(fid_log,flg_loc,simdef)
 
 
+%% simulations
+
+flg_loc.n_sim=numel(simdef);
 
 %% stations
 
@@ -46,20 +49,24 @@ flg_loc=isfield_default(flg_loc,'do_fil',0);
 flg_loc=isfield_default(flg_loc,'fil_tim',25*3600);        
 flg_loc=isfield_default(flg_loc,'do_convergence',0);        
 flg_loc=isfield_default(flg_loc,'do_all_sta',0);    
-flg_loc=isfield_default(flg_loc,'do_all_sim',1);    
+flg_loc=isfield_default(flg_loc,'do_all_sim',0);    
 flg_loc=isfield_default(flg_loc,'do_p_single',1);       
 flg_loc=isfield_default(flg_loc,'do_sal_01',0);   
+flg_loc=isfield_default(flg_loc,'do_xt',0);  
 flg_loc=isfield_default(flg_loc,'measurements','');
 flg_loc=isfield_default(flg_loc,'tol',1.5e-7);
 flg_loc=isfield_default(flg_loc,'write_shp',0);
+flg_loc=isfield_default(flg_loc,'measurements_input_type',1);
+flg_loc=isfield_default(flg_loc,'load_all_station',0);
 if flg_loc.write_shp==1
     messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
 end
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'clims_var');
 
-%% special cases
+%% special case
 
 if flg_loc.do_sal_01
     flg_loc.var={'sal','wl'};
@@ -70,6 +77,24 @@ if flg_loc.do_sal_01
     flg_loc.do_s=0;
     flg_loc.do_all_sim=0;
 %     flg_loc.do_all_sta=0; %we need only one station at each result for the statistics?
+end
+
+%% special case
+
+if flg_loc.do_xt
+    flg_loc.load_all_stations=1;
+end
+
+%% special case
+
+if flg_loc.do_all_sta && flg_loc.n_sim>1
+    %I am now squeezeing `data_all` to pass to the plotting routine. I have to think what I want to do
+    %for the case in which we want several stations from several simulations together in the same plot.
+    flg_loc.do_all_sta=0;
+end
+
+if flg_loc.do_all_sta
+    flg_loc.load_all_stations=1;
 end
 
 %% size

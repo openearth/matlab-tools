@@ -32,8 +32,8 @@ if isfield(flg_loc,str_check)==0
         else
             %if we are in `ylims_diff_var`, `ylims_var` already exists and it is not empty.
             %We make the default of the former with the same size as the latter.
-            if isfield(flg_loc,'ylims_var') && ~isempty(flg_loc.ylims_var{kvar})
-                nylim=size(flg_loc.ylims_var{kvar},1);
+            if isfield(flg_loc,str_check) && ~isempty(flg_loc.(str_check){kvar})
+                nylim=size(flg_loc.(str_check){kvar},1);
             else
                 nylim=1;
             end

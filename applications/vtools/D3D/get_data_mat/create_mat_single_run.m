@@ -140,8 +140,9 @@ end
 %% his xt
 tag_check='fig_his_xt_01';
 if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    create_mat_his_xt_01(fid_log,in_plot_fig,simdef)
+    error('This is now done by calling `fig_his_01` with flag `do_xt=1`')
+%     in_plot_fig=gmd_tag(in_plot,tag_check);
+%     create_mat_his_xt_01(fid_log,in_plot_fig,simdef)
 end
 
 %% map sedtransoff

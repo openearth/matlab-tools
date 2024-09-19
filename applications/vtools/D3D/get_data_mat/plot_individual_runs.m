@@ -147,11 +147,11 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% his xt
-tag_check='fig_his_xt_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    plot_his_xt_01(fid_log,in_plot_fig,simdef)
-end
+% tag_check='fig_his_xt_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check);
+%     plot_his_xt_01(fid_log,in_plot_fig,simdef)
+% end
 
 %% fraction in left, centre, right of the channel
 tag_check='fig_map_fraction_cs';

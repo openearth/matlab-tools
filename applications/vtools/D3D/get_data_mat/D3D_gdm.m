@@ -388,6 +388,38 @@
 % in_plot.(tag).obs(kobs).xy=[73480.9609,439515.6563];
 % in_plot.(tag).obs(kobs).name='NW_1023.00';
 
+%% his data in x-t form (i.e., giving an streamwise coordinate to each station)
+
+% tag='fig_his_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=1; %do plot
+% in_plot.(tag).do_s=0; %difference with reference
+% in_plot.(tag).do_all=0; %all figures in same plot
+% in_plot.(tag).do_sal_01=0; %all figures in same plot
+% in_plot.(tag).do_xt=1; %his stations plotted along line
+% in_plot.(tag).tim_just_load=1; %debug flag
+% in_plot.(tag).do_p_single=0; 
+% tim_his=600/24/3600; %his period [days]
+% in_plot.(tag).tim=[datenum(2018,07,20):tim_his:datenum(2018,11,10)];
+% % in_plot.(tag).fpath_stations=fullfile(fpaths.fdir_sta,'stations_01.txt');
+% ns=20;
+% in_plot.(tag).stations=cell(ns,1);
+% in_plot.(tag).elev=NaN(ns,1);
+% for ks=1:ns
+% in_plot.(tag).stations{ks}=sprintf('HY_%4.2f',ks);
+% in_plot.(tag).elev(ks)=-1.5;
+% in_plot.(tag).s(ks)=20e3-ks*1000;
+% end
+% in_plot.(tag).var={'sal'};
+% in_plot.(tag).unit={'cl'};
+% in_plot.(tag).s_fact=1/1000;
+% in_plot.(tag).xlab_str='dist_mouth';
+% in_plot.(tag).clims=[NaN,NaN;sal2cl(-1,100),sal2cl(-1,700)]; %in [psu]
+% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
+% in_plot.(tag).fig_overwrite=1; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).measurements=fpaths.fdir_data_stations;
+
 %%
 
 function D3D_gdm(in_plot)
@@ -493,20 +525,17 @@ end %reference run
 %argument `simdef_all` and inside each plotting routine we first plot
 %each one individually, then difference in time, then difference with 
 %reference, etcetera. Let's see if there are no problems. 
-% if ns>1
     
-    messageOut(fid_log,'Plotting all runs in one figure',3)
+messageOut(fid_log,'Plotting all runs in one figure',3)
 
-    %% paths all
-    simdef_all=struct('D3D',NaN,'err',NaN,'file',NaN);
-    for ks=1:ns
-        [simdef_all(ks),leg_str_all{ks}]=gdm_paths_single_run(fid_log,in_plot,ks,'disp',0);
-    end
+%% paths all
+simdef_all=struct('D3D',NaN,'err',NaN,'file',NaN);
+for ks=1:ns
+    [simdef_all(ks),leg_str_all{ks}]=gdm_paths_single_run(fid_log,in_plot,ks,'disp',0);
+end
 
-    %% call
-    plot_all_runs_one_figure(fid_log,in_plot,simdef_all,leg_str_all)
-    
-% end %ns>1
+%% call
+plot_all_runs_one_figure(fid_log,in_plot,simdef_all,leg_str_all)
 
 end %only_adhoc
 

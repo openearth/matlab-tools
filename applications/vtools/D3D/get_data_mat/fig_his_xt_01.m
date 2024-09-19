@@ -31,36 +31,19 @@ function fig_his_xt_01(in_p)
 
 %% DEFAULTS
 
-if isfield(in_p,'fig_visible')==0
-    in_p.fig_visible=1;
-end
-if isfield(in_p,'fig_print')==0
-    in_p.fig_print=0;
-end
-if isfield(in_p,'fname')==0
-    in_p.fname='fig';
-end
-if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,15,15];
-end
-if isfield(in_p,'fig_overwrite')==0
-    in_p.fig_overwrite=1;
-end
-if isfield(in_p,'fid_log')==0
-    in_p.fid_log=NaN;
-end
-if isfield(in_p,'s_fact')==0
-    in_p.s_fact=1;
-end
-if isfield(in_p,'plot_style')==0
-    in_p.plot_style='surf';
-end
-if isfield(in_p,'do_showtext')==0
-    in_p.plot_style='on';
-end
-if isfield(in_p,'plot_axis')==0
-    in_p.plot_axis='xt';
-end
+in_p=isfield_default(in_p,'fig_visible',0);
+in_p=isfield_default(in_p,'fig_print',0);
+in_p=isfield_default(in_p,'fname','fig');
+in_p=isfield_default(in_p,'fig_size',[0,0,15,15]);
+in_p=isfield_default(in_p,'fig_overwrite',1);
+in_p=isfield_default(in_p,'fid_log',NaN);
+in_p=isfield_default(in_p,'s_fact',1);
+in_p=isfield_default(in_p,'plot_style','surf');
+in_p=isfield_default(in_p,'do_showtext','on');
+in_p=isfield_default(in_p,'plot_axis','xt');
+in_p=isfield_default(in_p,'lim_t',[NaN,NaN]);
+in_p=isfield_default(in_p,'xlab_str','x');
+in_p=isfield_default(in_p,'do_measurements',0);
 
 v2struct(in_p)
 
@@ -81,7 +64,7 @@ end
 switch unit
     case {'cl','cl_surf'}
         clims=sal2cl(1,clims);
-        val_m=sal2cl(1,val_m);
+%         val_m=sal2cl(1,val_m); %it is done when loading the data. It is a bit inconsistent that we don't do it with the limits.
         if exist('levels','var')==1
         levels=sal2cl(1,levels);
         end
@@ -103,10 +86,12 @@ end
 
 %%
 
+t_m_dnum=datenum_tzone(t_m);
+
 if strcmp(plot_axis,'xt')
     x_m=d_m.*s_fact;
     if strcmp(plot_style,'contour')
-        y_m=datenum_tzone(t_m);
+        y_m=t_m_dnum;
     else
         y_m=t_m;    
     end
@@ -114,12 +99,12 @@ if strcmp(plot_axis,'xt')
     
     if do_measurements
         x_mea=d_m_mea.*s_fact;
-        y_m=t_m_mea;
-        v_m=val_m_mea;
+        y_mea=t_m_mea;
+        v_mea=val_m_mea;
     end
-else
+else %'tx'
     if strcmp(plot_style,'contour')
-        x_m=datenum_tzone(t_m);
+        x_m=t_m_dnum;
     else
         x_m=t_m;    
     end
@@ -132,6 +117,16 @@ else
         v_mea=val_m_mea;
     end
 end
+
+
+if isnan(lim_t(1))
+    if strcmp(plot_style,'contour')
+        lim_t=[min(t_m_dnum(:)),max(t_m_dnum(:))];
+    else
+        lim_t=[min(t_m(:)),max(t_m(:))];
+    end
+end
+
 
 %% SIZE
 
@@ -344,27 +339,24 @@ kr=1; kc=1;
 % lims.x(kr,kc,1:2)=lim_t;
 if strcmp(plot_axis,'xt')
     lims.x(kr,kc,1:2)=lim_dist;
-    xlabels{kr,kc}=labels4all('rkm',s_fact,lan);
-    % xlabels{kr,kc}=labels4all('dist_mouth',s_fact,lan);
+    xlabels{kr,kc}=labels4all(xlab_str,s_fact,lan);
     lims_d.y(kr,kc,1:2)=lim_t;
 else
     lims.y(kr,kc,1:2)=lim_dist;
-    ylabels{kr,kc}=labels4all('rkm',s_fact,lan);
+    ylabels{kr,kc}=labels4all(xlab_str,s_fact,lan);
     lims_d.x(kr,kc,1:2)=lim_t;
 end
 lims.c(kr,kc,1:2)=clims;
-% xlabels{kr,kc}=labels4all('dist_mouth',s_fact,lan);
 
 kr=1; kc=2;
 % lims.x(kr,kc,1:2)=lim_t;
 if strcmp(plot_axis,'xt')
     lims.x(kr,kc,1:2)=lim_dist;
-    xlabels{kr,kc}=labels4all('rkm',s_fact,lan);
-    % xlabels{kr,kc}=labels4all('dist_mouth',s_fact,lan);
+    xlabels{kr,kc}=labels4all(xlab_str,s_fact,lan);
     lims_d.y(kr,kc,1:2)=lim_t;
 else
     lims.y(kr,kc,1:2)=lim_dist;
-    ylabels{kr,kc}=labels4all('rkm',s_fact,lan);
+    ylabels{kr,kc}=labels4all(xlab_str,s_fact,lan);
     lims_d.x(kr,kc,1:2)=lim_t;
 end
 lims.c(kr,kc,1:2)=clims;

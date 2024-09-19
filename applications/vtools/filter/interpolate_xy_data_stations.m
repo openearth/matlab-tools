@@ -11,11 +11,25 @@
 %$HeadURL$
 %
 
-function [xm,ym,val_int_s]=interpolate_xy_data_stations(data_stations,x_v,t_v)
+function [xm,ym,val_int_s]=interpolate_xy_data_stations(data_stations,t_v,varargin)
 
-x=[data_stations.raai];
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'order','raai');
+
+parse(parin,varargin{:});
+
+order_str=parin.Results.order;
+
+%% CALC
+
+x=[data_stations.(order_str)];
 [x,idx_s]=sort(x);
 data_stations=data_stations(idx_s);
+
+x_v=x;
 
 nx=numel(x);
 

@@ -29,10 +29,10 @@ nvar=flg_loc.nvar;
 nobs=flg_loc.nobs;
 stations=flg_loc.stations;
 his_type=flg_loc.his_type;
+n_sim=flg_loc.n_sim;
 
 %% PATHS
 
-n_sim=numel(simdef);
 fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
@@ -75,14 +75,8 @@ end
 
 %% CHECKS
 
-if flg_loc.do_all_sta && n_sim>1
-    %I am now squeezeing `data_all` to pass to the plotting routine. I have to think what I want to do
-    %for the case in which we want several stations from several simulations together in the same plot.
-    flg_loc.do_all_sta=0;
-end
-
 %allocate to save all data
-if flg_loc.do_all_sta
+if flg_loc.load_all_stations
     %if we want to plot all stations together, we need to allocate for it. 
     n_sta=nobs; %number of stations that we allocate. 
 else
@@ -108,7 +102,7 @@ for kvar=1:nvar
 
         %if we do not want to plot all stations of the same run together, 
         %we always write in first dimension
-        if flg_loc.do_all_sta
+        if flg_loc.load_all_stations
             k_sta=ks; %index of the station in which we save
         else
             k_sta=1;
@@ -207,6 +201,7 @@ for kvar=1:nvar
     
     if flg_loc.do_convergence
         
+        fdir_fig_var=fullfile(fdir_fig,var_str);
         fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'conv');
         
         in_p_c.fname=fname_noext;
@@ -229,6 +224,7 @@ for kvar=1:nvar
 
         in_p_sta_all=in_p;
 
+        fdir_fig_var=fullfile(fdir_fig,var_str);
         fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'allsta');
         
         [in_p_sta_all.xlims,in_p_sta_all.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all,data_mea,tim_dtime_p{1});
@@ -241,6 +237,22 @@ for kvar=1:nvar
 
         fig_his_sal_01(in_p_sta_all)         
        
+    end
+
+    %% plot xt (special case)
+
+    if flg_loc.do_xt
+
+        for ksim=1:n_sim
+            %leave this outside the function for when you want to make difference between simulations
+            runid=simdef(ksim).file.runid;
+            tag_loc=sprintf('%s_xt',tag_fig);
+            fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_loc,tag_serie);
+            mkdir_check(fdir_fig,NaN,1,0);
+
+            fcn_plot_his_xt(flg_loc,in_p,simdef(ksim),runid,data_all(k_sim,:),tim_dtime_p{ksim},var_str,flg_loc.clims_var{kvar,1},tag_loc,fdir_fig);
+        end
+
     end
 
 end %kvar
@@ -637,7 +649,7 @@ end %function
 function grootheid=unit_to_grootheid(unit)
 
 switch unit
-    case 'sal'
+    case {'sal','cl','cl_surf'}
         grootheid='CONCTTE';
     case 'wl'
         grootheid='WATHTE';
@@ -645,3 +657,61 @@ switch unit
         error('add')
 end
 end
+
+%%
+
+function [data,do_measurements]=load_interpolated_measurements(flg_loc,fpath_mea,time_dtime,unit)
+
+do_measurements=0;
+data=struct('t_m_mea',[],'d_m_mea',[],'val_m_mea',[]);
+if isfile(fpath_mea)
+    do_measurements=1;
+    load(fpath_mea,'data');
+else
+    %rather than taking a measurement for each station, we take measurements ad-hoc
+    grootheid=unit_to_grootheid(unit);
+    data_mea=read_data_stations(flg_loc.measurements,'branch',flg_loc.measurements_branch,'grootheid',grootheid); %location maybe better?
+    if ~isempty_struc(data_mea)
+        do_measurements=1;
+
+        [t_m_mea,d_m_mea,val_m_mea]=interpolate_xy_data_stations(data_mea,time_dtime,'order','dist_mouth');
+        data=v2struct(t_m_mea,d_m_mea,val_m_mea);
+        save_check(fpath_mea,'data')
+    end
+end
+
+end %function
+
+%%
+
+%We pass information of only one simulation
+function fcn_plot_his_xt(flg_loc,in_p,simdef,runid,data_sim,tim_dtime_p_sim,var_str,clims_var,tag_loc,fdir_fig)
+
+if flg_loc.measurements_input_type==2
+    fpath_mea=fullfile(simdef.file.mat.dir,'interpolated_measurements.mat');
+    [data_mea_mat,in_p.do_measurements]=load_interpolated_measurements(flg_loc,fpath_mea,tim_dtime_p_sim,in_p.unit); 
+end
+
+nclim=size(clims_var,1);
+for kclim=1:nclim
+    
+    fdir_fig_var=fullfile(fdir_fig,var_str);
+    mkdir_check(fdir_fig_var,NaN,1,0);
+    fname_noext=fig_name(fdir_fig_var,tag_loc,runid,'',var_str,'',kclim,'',tim_dtime_p_sim(1),tim_dtime_p_sim(end),[-inf,inf],[]);
+
+    data_sim_mat=cell2mat(data_sim); %(nt,nobs) 
+    [nt,ns]=size(data_sim_mat);
+
+    in_p.fname=fname_noext;
+    in_p.clims=clims_var(kclim,:);
+    in_p.val_m=data_sim_mat;
+    in_p.d_m=repmat(flg_loc.s,nt,1);
+    in_p.t_m=repmat(tim_dtime_p_sim,1,ns);
+    in_p.d_m_mea=data_mea_mat.d_m_mea;
+    in_p.t_m_mea=data_mea_mat.t_m_mea;
+    in_p.val_m_mea=data_mea_mat.val_m_mea;
+
+    fig_his_xt_01(in_p);
+end %kclim
+
+end %function
