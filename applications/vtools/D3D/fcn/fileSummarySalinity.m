@@ -1,11 +1,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 37 $
-%$Date: 2021-10-21 14:26:25 +0200 (Thu, 21 Oct 2021) $
-%$Author: chavarri $
-%$Id: fileSummarySalinity.m 37 2021-10-21 12:26:25Z chavarri $
-%$HeadURL: file:///P:/11206813-007-kpp2021_rmm-3d/E_Software_Scripts/00_svn/rmm_plot/fileSummarySalinity.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Write table with salinity data at stations.
 %
