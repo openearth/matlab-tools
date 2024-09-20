@@ -50,6 +50,7 @@ flg_loc=isfield_default(flg_loc,'fil_tim',25*3600);
 flg_loc=isfield_default(flg_loc,'do_convergence',0);        
 flg_loc=isfield_default(flg_loc,'do_all_sta',0);    
 flg_loc=isfield_default(flg_loc,'do_all_sim',0);    
+flg_loc=isfield_default(flg_loc,'do_s',0);   
 flg_loc=isfield_default(flg_loc,'do_p_single',1);       
 flg_loc=isfield_default(flg_loc,'do_sal_01',0);   
 flg_loc=isfield_default(flg_loc,'do_xt',0);  
@@ -57,7 +58,7 @@ flg_loc=isfield_default(flg_loc,'measurements','');
 flg_loc=isfield_default(flg_loc,'tol',1.5e-7);
 flg_loc=isfield_default(flg_loc,'write_shp',0);
 flg_loc=isfield_default(flg_loc,'measurements_input_type',1);
-flg_loc=isfield_default(flg_loc,'load_all_station',0);
+flg_loc=isfield_default(flg_loc,'load_all_stations',0);
 if flg_loc.write_shp==1
     messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
 end

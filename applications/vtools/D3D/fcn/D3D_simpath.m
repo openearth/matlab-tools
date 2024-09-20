@@ -86,7 +86,6 @@ if sum(whatis)==0
         throw_error(do_break,simdef.err)
         return
     else
-%         fdir=fileparts(fpath_mdu);
         simdef=structure_from_ext(simdef,fpath_mdu,false(1,4));
     end
 elseif sum(whatis)>1
@@ -152,7 +151,9 @@ switch simdef.D3D.structure
 end
     %% sobek 3
     case 3
-        simdef_aux=D3D_simpath_md1d(fpath_mdu);        
+        fpath_mdu=search_4_mdu(dire);
+        simdef_aux=D3D_simpath_md1d(fpath_mdu);   
+        simdef_aux=D3D_S3_version_wrap(simdef_aux);
 end %simdef.D3D.structure
 
 file=simdef_aux.file;
@@ -162,14 +163,10 @@ if simdef.D3D.structure~=5
 end
 file.mdfid=file.runid; %runid may be rewriten in `D3D_gdm`
 
-%I don't think this is necessary. For FM and D3D4 there is always <file>
-%and for S3 I think so too because we have already checked that 
+%For FM and D3D4 there is always <file>
+%and for S3 too because we have already checked that 
 %there is an md1d-file
-% if exist('file','var')>0
-    simdef.file=file;
-% else
-%     fprintf('It seems that the folder you have specified has no simulation results: \n %s \n',simdef.D3D.dire_sim);
-% end
+simdef.file=file;
 
 %% type of simulation
 
@@ -346,3 +343,17 @@ for kf=1:nf
 end
 
 end
+
+%% 
+
+function simdef=D3D_S3_version_wrap(simdef)
+
+if ~isfield(simdef.file,'log')
+    simdef.D3D.version_day=datetime(2000,0,0);
+else
+    %There is a difference in variable name between S3 versions. We could read the version here and differentiate
+    %but I have solved it with a try-catch.
+%     simdef.D3D.version_day=D3D_S3_version_day(simdef.file.log);
+end
+
+end %function

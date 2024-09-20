@@ -55,6 +55,21 @@ switch simdef.D3D.structure
         obs_sta.name=Data.stationNames;
         obs_sta.x=Data.location(:,1);
         obs_sta.y=Data.location(:,2);
+    case 3
+        nci=ncinfo(path_his);
+        is_sta=ismember('observation_id',{nci.Variables.Name});
+        if is_sta
+            obs_sta.name=cellstr(ncread(path_his,'observation_id')')';
+            obs_sta.branch=ncread(path_his,'branchid')';
+            obs_sta.chainage=ncread(path_his,'chainage')';
+            %here we should convert to xy also by reading the grid
+            obs_sta.x=[];
+            obs_sta.y=[];
+        else
+            obs_sta.name={''};
+            obs_sta.x=[];
+            obs_sta.y=[];
+        end
     case {2,4}
         nci=ncinfo(path_his);
         is_sta=ismember('station_id',{nci.Variables.Name});

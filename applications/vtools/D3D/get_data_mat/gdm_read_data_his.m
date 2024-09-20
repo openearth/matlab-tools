@@ -28,6 +28,7 @@ addOptional(parin,'structure',NaN); %no SMT
 addOptional(parin,'do_load',1); 
 addOptional(parin,'depth_average',false); 
 addOptional(parin,'elevation',NaN); 
+addOptional(parin,'version_date',NaN); 
 % addOptional(parin,'tol_t',5/60/24);
 
 parse(parin,varargin{:});
@@ -75,7 +76,11 @@ else
         case 2
             data=EHY_getmodeldata(fpath_his,station,'dfm',OPT);
         case 3
-            data=EHY_getmodeldata(fpath_his,station,'sobek3',OPT);
+            try
+                data=EHY_getmodeldata(fpath_his,station,'sobek3',OPT);
+            catch
+                data=EHY_getmodeldata(fpath_his,station,'sobek3_new',OPT);
+            end
         case 4
             his_u=unique(sim_idx);
             nhis=numel(his_u);

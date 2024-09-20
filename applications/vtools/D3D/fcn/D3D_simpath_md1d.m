@@ -70,6 +70,8 @@ for kf1=1:nf
             end
         case '.bc'
             file.bc=fullfile(dire(kf).folder,dire(kf).name);
+        case '.log'
+            file.log=fullfile(dire(kf).folder,dire(kf).name);
     end
     else %it is results directory
         dire_res=dir(fullfile(dire(kf).folder,dire(kf).name));
