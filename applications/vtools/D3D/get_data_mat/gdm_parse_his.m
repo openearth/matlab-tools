@@ -67,6 +67,13 @@ flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'clims_var');
 
+if ~iscell(flg_loc.tim)
+    flg_loc.tim_int{1}=flg_loc.tim;
+else
+    flg_loc.tim_int=flg_loc.tim;
+end
+flg_loc.ntimint=numel(flg_loc.tim_int);
+
 %% special case
 
 if flg_loc.do_sal_01

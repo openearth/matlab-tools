@@ -44,10 +44,6 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 %% LOAD
 
 gridInfo=EHY_getGridInfo(fpath_his,'no_layers');
-% gridInfo=gdm_load_grid_simdef(fid_log,simdef);
-
-% [nt,time_dnum,~]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_his,fdir_mat);
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
 
 %% PARSE
 
@@ -56,10 +52,18 @@ flg_loc=gdm_parse_his(fid_log,flg_loc,simdef);
 nvar=flg_loc.nvar;
 nobs=flg_loc.nobs;
 stations=flg_loc.stations;
-
+ntimint=flg_loc.ntimint;
 %Problem 1: `obs_all` must output either observation stations or cross-
 %sections depending on the variable.
 % obs_all=D3D_observation_stations(fpath_his,'simdef',simdef(1));
+
+%% LOOP ON TIME INTERVAL
+
+for ktimint=1:ntimint
+
+    %2DO: Inside `gdm_load_time_simdef` make possible that, when reading his-file, the first and last time identify the times we want to read.
+flg_loc.tim=flg_loc.tim_int{ktimint};
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
 
 %% LOOP
 
@@ -119,7 +123,9 @@ for kobs=kobs_v
         gdm_export_his_01(fid_log,flg_loc,fpath_mat_tmp,time_dtime)
         
     end %kvar
-end    
+end %kobs    
+
+end %ktimint
 
 end %function
 
