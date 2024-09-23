@@ -49,7 +49,9 @@ if ismember('cel_morpho',flg_loc.var)
 end
 
 %add sediment transport information
+if simdef.D3D.ismor
 dk=D3D_read_sed(simdef.file.sed);
+end
 
 if isfield(flg_loc,'sedtrans') %sediment transport offline
     %store sediment transport relation at the location of the variable

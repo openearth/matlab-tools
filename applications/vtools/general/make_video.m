@@ -60,10 +60,18 @@ if isnan(pos_fig)
     end
 end
     
+%% SHORTEN PATH
+
+path_video_ext=sprintf('%s.mp4',path_video);
+if numel(path_video_ext)>256
+    fname=sprintf('m%d',randi(100));
+    path_video=fullfile(fdir,fname);
+    path_video_ext=sprintf('%s.mp4',path_video);
+    messageOut(fid_log,sprintf('Name of video is too long, shortened to: %s',path_video_ext));
+end
 
 %% SKIP OR DELETE
 
-path_video_ext=sprintf('%s.mp4',path_video);
 if exist(path_video_ext,'file')==2
     if do_over
         messageOut(fid_log,sprintf('Movie exists, overwriting: %s',path_video_ext));

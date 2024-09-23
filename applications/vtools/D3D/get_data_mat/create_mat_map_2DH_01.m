@@ -22,6 +22,12 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
+flg_loc=isfield_default(flg_loc,'do_create_mat',1);
+if ~flg_loc.do_create_mat
+    messageOut(fid_log,'Skipped mat-file creation.')
+    return
+end
+
 if isfield(flg_loc,'write_shp')==0
     flg_loc.write_shp=0;
 end

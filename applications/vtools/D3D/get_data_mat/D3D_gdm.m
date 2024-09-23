@@ -104,6 +104,7 @@
 % in_plot.(tag).do_s=1; %difference with reference
 % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
 % in_plot.(tag).do_s_perc=0; %difference with reference in percentage terms
+% % in_plot.(tag).do_create_mat=1; %debug flag to skip the creation of the files if you are sure they have not changed
 % in_plot.(tag).do_3D=0; %3D plot
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
 % % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
@@ -259,8 +260,7 @@
 % in_plot.(tag).do_s=0; %difference with reference
 % % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
 % in_plot.(tag).do_all_sim=1; %all simulations in same plot
-% flg_loc.do_all_sim
-% in_plot.(tag).tim=NaN; Time to plot. This is not [initial,final] but all the times to consider. E.g., [initial:delta_t:final].
+% in_plot.(tag).tim=NaN; %Time to plot. This is not [initial,final] but all the times to consider. E.g., [initial:delta_t:final].
 % in_plot.(tag).stations=NaN; %NaN=all
 % in_plot.(tag).var={'sal'};
 % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all; 

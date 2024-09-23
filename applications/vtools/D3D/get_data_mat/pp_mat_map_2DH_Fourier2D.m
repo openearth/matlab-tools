@@ -23,8 +23,10 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 %% PARSE
 
 if isfield(flg_loc,'do_Fourier2D')==0
-    flg_loc.do_Fourier2D=zeros(size(flg_loc.var));
+    return
+%     flg_loc.do_Fourier2D=zeros(size(flg_loc.var));
 end
+messageOut(fid_log,'Start ''Fourier 2D''')
 
 if isfield(flg_loc,'var_idx')==0
     flg_loc.var_idx=cell(1,numel(flg_loc.var));

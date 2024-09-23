@@ -16,9 +16,15 @@ function plot_map_2DH_ls_01(fid_log,flg_loc,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
+
+%% DO
+
+flg_loc=isfield_default(flg_loc,'do_p',1);
+ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
+
 %% PARSE
 
-flg_loc=isfield_default(flg_loc,'do_p',0);
+%do flags
 flg_loc=isfield_default(flg_loc,'do_all_t',0);
 flg_loc=isfield_default(flg_loc,'do_all_s',0);
 flg_loc=isfield_default(flg_loc,'do_diff_t',0);
@@ -62,26 +68,13 @@ nS=numel(simdef);
 fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-% fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-% mkdir_check(fdir_fig);
-% runid=simdef(1).file.runid;
-
-%% DO
-
-ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
-
-%we want to skip this in case we are processing for all simulations (i.e., being called by
-% %`plot_all_runs_one_figure` and we do not want to do it (i.e., `do_all_s`=0).
-% if nS>1 
-%     ret=gdm_do_mat(fid_log,flg_loc,tag,'do_all_s'); if ret; return; end
-% end
 
 %% TIME
 
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
-%%
+%% GRID
 
 gridInfo=gdm_load_grid(fid_log,fdir_mat,'');
 
@@ -273,7 +266,6 @@ for kpli=1:npli %variable
 
         if flg_loc.do_all_t
             for kS=1:nS
-                %2DO: legend is incorrect. It is now about the different simulations;
                 data_loc=data_all(:,:,kS)';
                 tag_fig=sprintf('%s_all_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
@@ -283,6 +275,8 @@ for kpli=1:npli %variable
                 in_p.val_mea=data_mea.y;
                 in_p.is_diff=0;
                 in_p.plot_mea=plot_mea;
+                in_p.do_leg=0;
+                in_p.do_time=1;
     
                 fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
             end %kS
@@ -292,7 +286,6 @@ for kpli=1:npli %variable
         
         if flg_loc.do_all_t_diff_t
             for kS=1:nS
-                %2DO: legend is incorrect. It is now about the different simulations;
                 data_loc=(data_all(:,:,kS)-data_all(1,:,kS))';
                 tag_fig=sprintf('%s_all_t_diff_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
@@ -302,6 +295,8 @@ for kpli=1:npli %variable
                 in_p.val_mea=data_mea.y;
                 in_p.is_diff=1;
                 in_p.plot_mea=plot_mea;
+                in_p.do_leg=0;
+                in_p.do_time=1;
     
                 fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);               
             end %kS
