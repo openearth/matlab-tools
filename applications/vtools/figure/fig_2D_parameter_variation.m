@@ -53,6 +53,10 @@ end
 if isfield(in_p,'val_lab')==0
     in_p.val_lab='variable';
 end
+in_p.do_obj=0;
+if isfield(in_p,'obj')
+    in_p.do_obj=1;
+end
 
 v2struct(in_p)
 
@@ -317,7 +321,9 @@ end
 
 kr=1; kc=1;    
 patch('faces',nodes','vertices',[m1(:),m2(:)],'FaceVertexCData',reshape(m,[],1),'FaceColor','flat','edgecolor','none','parent',han.sfig(kr,kc));
+if do_obj
 contour(m1,m2,m,[obj,obj],'color','k','linewidth',2,'parent',han.sfig(kr,kc))
+end
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index

@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_whatever(in_p)
+function figure_layout(in_p)
 
 %% DEFAULTS
 
@@ -52,6 +52,10 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
+in_p=isfield_default(in_p,'x_lan','x');
+in_p=isfield_default(in_p,'y_lan','y');
+in_p=isfield_default(in_p,'XScale','linear');
+in_p=isfield_default(in_p,'marker','none');
 
 v2struct(in_p)
 
@@ -92,7 +96,7 @@ prop.mf1='g';
 prop.mt1='s'; 
 prop.lw1=1;
 prop.ls1='-'; %'-','--',':','-.'
-prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'... {'o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'};
+prop.m1=marker; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'... {'o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'};
 prop.fs=10;
 prop.fn='Helvetica';
 prop.color=[... %>= matlab 2014b default
@@ -258,8 +262,8 @@ kr=1; kc=1;
 % lims.y(kr,kc,1:2)=lims_y;
 % lims.x(kr,kc,1:2)=lims_x;
 % lims.c(kr,kc,1:2)=lims_c;
-xlabels{kr,kc}='x';
-ylabels{kr,kc}='y';
+xlabels{kr,kc}=x_lab;
+ylabels{kr,kc}=y_lab;
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
@@ -360,12 +364,12 @@ end
 
 kr=1; kc=1;    
 han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
-han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
-han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
-han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
-surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
-patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
+% han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
+% han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
+% han.p(kr,kc,1)=scatter(data_2f(data_2f(:,3)==0,1),data_2f(data_2f(:,3)==0,2),prop.ms1,prop.mt1,'filled','parent',han.sfig(kr,kc),'markerfacecolor',prop.mf1);
+% surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
+% patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
 
 %% PROPERTIES
 
@@ -383,7 +387,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTickLabel='';
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
-% han.sfig(kr,kc).XScale='log';
+han.sfig(kr,kc).XScale=XScale;
 % han.sfig(kr,kc).YScale='log';
 % han.sfig(kr,kc).Title.String='c';
 % han.sfig(kr,kc).XColor='r';

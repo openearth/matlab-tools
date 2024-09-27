@@ -45,6 +45,7 @@ end
 if isfield(flg_loc,'do_xvallt')==0
     flg_loc.do_xvallt=0;
 end
+flg_loc=isfield_default(flg_loc,'plot_val0',0);
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');

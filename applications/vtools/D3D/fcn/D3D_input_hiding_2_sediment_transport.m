@@ -16,12 +16,14 @@
 function hiding=D3D_input_hiding_2_sediment_transport(IHidExp)
 
 switch IHidExp
-    case 1
+    case 1 %no hiding
         hiding=0;
-    case 2
+    case 2 %Egiazaroff
         hiding=1;
-    case 3
+    case 3 %Ashida-Michihue
         hiding=3;
+    case 4 %power
+        hiding=2;
     otherwise
         error('do')
 end %IFORM
