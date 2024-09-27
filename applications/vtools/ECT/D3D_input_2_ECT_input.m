@@ -49,6 +49,8 @@ ECT_input.flg.extra=0;
 ECT_input.flg.pmm=0;
 if numel(simdef.sed.dk)==1
     ECT_input.flg.anl=[10];
+elseif ~isnan(simdef.mor.HiranoDiffusion) && simdef.mor.HiranoDiffusion~=0
+    ECT_input.flg.anl=[14];
 else
     ECT_input.flg.anl=[6];
 end
@@ -82,7 +84,7 @@ ECT_input.Fi1=simdef.ini.subs_frac;
 % nu_mom=1/6*0.41*h*sqrt(Cf)*sqrt(u^2+v^2);
 ECT_input.nu_mom=0;
 ECT_input.Dh=ECT_input.nu_mom; %secondary flow diffusivity [m^2/s]
-ECT_input.diff_hir=NaN(size(ECT_input.gsd)); %diffusion hirano
+ECT_input.diff_hir=simdef.mor.HiranoDiffusion.*ones(size(ECT_input.gsd)); %diffusion hirano
 
 if numel(simdef.sed.dk)==1
     %case in which we have a single fraction and after D3D_rework it turns into a cell array.

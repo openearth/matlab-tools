@@ -56,6 +56,9 @@ in_p=isfield_default(in_p,'x_lan','x');
 in_p=isfield_default(in_p,'y_lan','y');
 in_p=isfield_default(in_p,'XScale','linear');
 in_p=isfield_default(in_p,'marker','none');
+in_p=isfield_default(in_p,'lims_x',[NaN,NaN]);
+in_p=isfield_default(in_p,'lims_y',[NaN,NaN]);
+[in_p.lims_x,in_p.lims_y]=xlim_ylim(in_p.lims_x,in_p.lims_y,in_p.x,in_p.y);
 
 v2struct(in_p)
 
@@ -259,7 +262,7 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-% lims.y(kr,kc,1:2)=lims_y;
+lims.y(kr,kc,1:2)=lims_y;
 % lims.x(kr,kc,1:2)=lims_x;
 % lims.c(kr,kc,1:2)=lims_c;
 xlabels{kr,kc}=x_lab;
@@ -380,7 +383,7 @@ grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
 % han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';

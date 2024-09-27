@@ -57,6 +57,7 @@ in_p.do_obj=0;
 if isfield(in_p,'obj')
     in_p.do_obj=1;
 end
+in_p=isfield_default(in_p,'clims',[min(in_p.val_m(:)),max(in_p.val_m(:))]);
 
 v2struct(in_p)
 
@@ -231,7 +232,7 @@ cmap=brewermap(100,'Reds');
 kr=1; kc=1;
 % lims.y(kr,kc,1:2)=[-2e-3,2e-3];
 % lims.x(kr,kc,1:2)=lim_A;
-% lims.c(kr,kc,1:2)=clims;
+lims.c(kr,kc,1:2)=clims;
 xlabels{kr,kc}=x_lab;
 ylabels{kr,kc}=y_lab;
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
@@ -364,7 +365,7 @@ kr=1; kc=1;
 % view(han.sfig(kr,kc),[0,90]);
 colormap(han.sfig(kr,kc),cmap);
 % if ~isnan(lims.c(kr,kc,1:1))
-% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
 
 %% ADD TEXT
