@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19794 $
-%$Date: 2024-09-27 11:19:02 +0200 (Fri, 27 Sep 2024) $
-%$Author: chavarri $
-%$Id: fig_2D_parameter_variation.m 19794 2024-09-27 09:19:02Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/figure/fig_2D_parameter_variation.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Write LaTeX table
 %
