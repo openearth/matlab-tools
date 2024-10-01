@@ -140,6 +140,9 @@ if isfield(in_p,'marg')==0
     in_p.marg.sh=1.0; %horizontal spacing [cm]
     in_p.marg.sv=0.0; %vertical spacing [cm]
 end
+if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
+    [in_p.xlims,in_p.ylims]=D3D_gridInfo_lims(in_p.gridInfo);
+end
 
 v2struct(in_p)
 

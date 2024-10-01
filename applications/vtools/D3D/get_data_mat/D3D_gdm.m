@@ -99,11 +99,12 @@
 
 % tag='fig_map_2DH_01';
 % in_plot.(tag).do=1;
-% in_plot.(tag).do_p=1; %regular plot
-% in_plot.(tag).do_diff=1; %difference initial time
-% in_plot.(tag).do_s=1; %difference with reference
-% in_plot.(tag).do_s_diff=1; %difference with reference and initial time
-% in_plot.(tag).do_s_perc=0; %difference with reference in percentage terms
+% in_plot.(tag).do_p=1; %pass through plotting routine
+% in_plot.(tag).do_p_single=1; %plot single result
+% in_plot.(tag).do_diff_t=1; %difference initial time
+% in_plot.(tag).do_diff_s=1; %difference reference simulation
+% in_plot.(tag).do_diff_s_t=1; %difference reference simulation and initial time
+% in_plot.(tag).do_diff_s_perc=1; %difference reference simulation in percentage terms
 % % in_plot.(tag).do_create_mat=1; %debug flag to skip the creation of the files if you are sure they have not changed
 % in_plot.(tag).do_3D=0; %3D plot
 % in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
@@ -117,9 +118,10 @@
 % in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
 % % in_plot.(tag).clims_type_var=datenum(2018,07,01); %in case of <clims_type>=2
 % in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
-% in_plot.(tag).filter_lim.clims=[998,1000]; %
+% in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
 % in_plot.(tag).clims_diff_t=[NaN,NaN]; %clim of difference with time
 % in_plot.(tag).clims_diff_s=[NaN,NaN]; %clim of difference with simulation
+% in_plot.(tag).filter_lim.clims=[998,1000]; %
 % in_plot.(tag).filter_lim.clims_diff_s=[-1001,-998]; %
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).tim_movie=40; %movie duration [s]

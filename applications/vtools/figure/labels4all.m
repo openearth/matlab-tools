@@ -113,6 +113,9 @@
 %
 %       -'E' : energy head
 %
+%       -'duneheight' : dune height
+%       -'dunelength' : dune length
+%
 %
 %
 %   -un: factor for unit conversion from SI
@@ -1072,7 +1075,27 @@ switch lower(variable)
             case 'es'
                 str_var='energía';
          end
-         un_type='L';   
+         un_type='L';  
+    case {'dunelength','mesh2d_dunelength'}
+         switch lan
+            case 'en'
+                str_var='dune length';
+            case 'nl'
+                str_var='duinlegte';
+            case 'es'
+                str_var='longitud de dunas';
+         end
+         un_type='L';  
+    case {'duneheight','mesh2d_duneheight'}
+         switch lan
+            case 'en'
+                str_var='dune height';
+            case 'nl'
+                str_var='duinhoogte';
+            case 'es'
+                str_var='altura de dunas';
+         end
+         un_type='L';  
     otherwise
         str_var=variable;
         un_type='?';

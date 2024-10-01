@@ -22,6 +22,7 @@ addOptional(parin,'do_load',1);
 addOptional(parin,'dim',2);
 addOptional(parin,'fpath_grd',fullfile(fdir_mat,'grd.mat'));
 addOptional(parin,'simdef',NaN);
+addOptional(parin,'disp',1);
 
 parse(parin,varargin{:});
 
@@ -29,6 +30,7 @@ do_load=parin.Results.do_load;
 dim=parin.Results.dim;
 fpath_grd=parin.Results.fpath_grd;
 simdef=parin.Results.simdef;
+do_disp=parin.Results.disp;
 
 %% check dimensions
 
@@ -48,30 +50,42 @@ end
 
 if is1d==1 && dim==2
     dim=1;
+    if do_disp
     messageOut(fid_log,'The grid seems to be 1D. I read it as such')
+    end
 elseif is1d==3 && dim==2
     dim=1;
+    if do_disp
     messageOut(fid_log,'The grid seems to be 1D Sobek 3. I read it as such')
+    end
 elseif is1d==0 && dim==1
     dim=2;
+    if do_disp
     messageOut(fid_log,'The grid seems to be 2D. I read it as such')
+    end
 end
 
 %% LOAD 
 
 if exist(fpath_grd,'file')==2
     if do_load
+        if do_disp
         messageOut(fid_log,'Grid mat-file exist. Loading.')
+        end
         load(fpath_grd,'gridInfo')
     else
+        if do_disp
         messageOut(fid_log,'Grid mat-file exist.')
+        end
     end
     return
 end
 
 %% READ
 
+if do_disp
 messageOut(fid_log,'Grid mat-file does not exist. Reading.')
+end
 
 if iscell(fpath_map) %SMT-D3D4
     gridInfo=D3D_read_grid_SMTD3D4(fpath_map);   

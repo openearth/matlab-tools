@@ -210,6 +210,14 @@ if ischar(var_id)
             end
             var_str_read='cross_section_discharge';
             var_str_save='cross_section_discharge';
+        case {'duneheight'}
+            var_id_out='mesh2d_duneheight';
+            var_str_read='duneheight';
+            var_str_save='duneheight';
+        case {'dunelength'}
+            var_id_out='mesh2d_dunelength';
+            var_str_read='dunelength';
+            var_str_save='dunelength';
         otherwise
 
     end
