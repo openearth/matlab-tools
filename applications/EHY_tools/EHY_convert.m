@@ -133,7 +133,7 @@ elseif exist('outputFile','var') % outputFile was determined based on coordinate
     % do nothing
 else % replace inputExt by outputExt
     [pathstr, name, ext] = fileparts(inputFile);
-    outputFile=[pathstr filesep name '.' outputExt];
+    outputFile=[name '.' outputExt];
 end
 
 inputFile=strrep(inputFile,[filesep filesep],filesep);
