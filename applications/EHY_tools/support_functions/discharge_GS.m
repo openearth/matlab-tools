@@ -6,6 +6,9 @@ function [Dis,cond,hgGate,hgWeir,upE] = discharge_GS(level1,level2,GH,width,muGa
 %  Water levels should be specified relative to the sill depth (hence water level = water depth)
 %
 %  Initialise
+OPT.forcedCondition = NaN;
+OPT = setproperty(OPT,varargin);
+
 g      = 9.81;
 lambda = g*L/(C*C);
 if level1 > level2 sign = 1.0; else sign = -1.0; end
@@ -17,10 +20,12 @@ if sign == -1; upWl = level2; downWl = level1; end
 
 %  Start with discharge estimated based on water level difference only
 Dis_tmp = muGate*corrGate*width*GH*sqrt(2*g*(upWl - downWl))*sign;
-crit    = Dis_tmp/1e5;
+crit    = Dis_tmp/1e4;
 
 % Iterate
-while diff > crit
+iter = 0;
+while diff > crit && iter < 10000
+    iter   = iter + 1;
     upU    = Dis_tmp/(upWl  *width);
     downU  = Dis_tmp/(downWl*width);
     upE    = upU  ^2/(2*g) + upWl  ;
@@ -31,9 +36,13 @@ while diff > crit
                         corrWeir       , lambda                                         ) ;
     hgGate   = flgsd2fm(width   , width, 0.0, width, 0.0, GH, 0.0, 0.0, upE, downWl, 1.0, ...
                         muGate*corrGate, lambda                                         );
-    hgGate   = compute_hgTK(width,GH,downWl,upE,muGate*corrGate,lambda);
+%    hgGate   = compute_hgTK(width,GH,downWl,upE,muGate*corrGate,lambda);
     
-    cond      = detCond_gs_TRM    (upE,hgWeir,hgGate,GH,muGate);
+    if isnan(OPT.forcedCondition)
+        cond      = detCond_gs_TRM    (upE,hgWeir,hgGate,GH,muGate);
+    else
+        cond      = OPT.forcedCondition;
+    end
     
     if cond == 3 hgWeir = upE*2/3  ; end
     if cond == 1 hgGate = muGate*GH; end
@@ -45,12 +54,26 @@ while diff > crit
         
         %% Discharge weirflow subcritical
     elseif cond == 6
+        % Discharge weirflow subcritical
         Dis = corrWeir*width*hgWeir*sqrt(2*g*(upE - hgWeir))*sign;
+    elseif cond == 3
+        % Discharge weirflow supercritical
+         Dis = corrWeir*width*(2/3)*sqrt((2/3)*g)*upE^(3/2)*sign;
     end
     
     diff       = abs(Dis - Dis_tmp);
-    Dis_tmp    = Dis;
-%    Dis_tmp    = 0.1*Dis + 0.9*Dis_tmp;
+   
+    Dis_tmp    = 0.01*Dis + 0.99*Dis_tmp;
+
+    if iter == 10000
+        
+        % Criterion not met
+        Dis    = NaN;
+        cond   = NaN;
+        hgGate = NaN;
+        hgWeir = NaN;
+        upE    = NaN;
+    end
 end
 
 end
