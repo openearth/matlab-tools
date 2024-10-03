@@ -140,7 +140,7 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
             fouInfo    = EHY_fouInfo(fName,names{i_var});
             if ~isempty(fouInfo)
                 % Type of analysis (mean, max, min)
-                if isfield(fouInfo,'type') && strcmp(fouInfo.type,OPT.fouType)
+                if isfield(fouInfo,'type') & strfind(OPT.fouType,fouInfo.type)
                     
                     % Name of the variables on fou file for requested type and quantity
                     if strcmpi(newName,'sa1') if contains(fouInfo.name,'salt'                ) list{end + 1} = names{i_var}; end; end
