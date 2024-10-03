@@ -129,7 +129,7 @@ case 'write'
        if size(LINE(iline).DATA,2) == 3
 
            % xyz or xy string data
-           if ischar(LINE(iline).DATA{1,3})
+           if ischar(LINE(iline).DATA{1,3}) 
 
                % xy string data (stations for example
                for irow = 1: size(LINE(iline).DATA,1)
