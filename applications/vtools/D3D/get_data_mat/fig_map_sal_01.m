@@ -88,7 +88,7 @@ if isfield(in_p,'zlims')==0
     in_p.zlims=NaN;
 end
 in_p.plot_rkm=0;
-if isfield(in_p,'rkm')==1
+if isfield(in_p,'rkm')==1 && ~isempty(in_p.rkm)
     in_p.plot_rkm=1;
 end
 if isfield(in_p,'views')==0
@@ -113,7 +113,7 @@ if isfield(in_p,'do_title')==0
     in_p.do_title=1;
 end
 in_p.plot_fxw=0;
-if isfield(in_p,'fxw')
+if isfield(in_p,'fxw') && isstruct(in_p.fxw)
     in_p.plot_fxw=1;
 end
 if isfield(in_p,'filter_lim')==0

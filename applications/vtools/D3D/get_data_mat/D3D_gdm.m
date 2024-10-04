@@ -171,6 +171,7 @@
 % in_plot.(tag).plot_val0=0; %plot initial
 % % in_plot.(tag).xdir='reverse';
 % in_plot.(tag).leg_mea='Carnott'; %legend of measurements (default is 'measurements [-]')
+% % in_plot.(tag).xlab_str='whatever you want'
 
 %% summerbed
 

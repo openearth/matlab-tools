@@ -38,6 +38,8 @@ elseif flg_loc.tim_type==2
         tim_dnum_p=time_mor_dnum;
         tim_dtime_p=time_mor_dtime;
     end
+else
+    error('I do not know which type of time (`tim_type`) is %d',flg_loc.tim_type)
 end
 
 end %function

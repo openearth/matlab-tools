@@ -296,6 +296,11 @@ for ksb=1:nsb
                     
                     for kdiff=1:ndiff
                         
+                        %REFACTOR!
+                        %`gdm_data_diff` is cumbersome. Remove loop on `kdiff` and plot for
+                        %regular, diff in time, diff with sim, all sim together...
+                        %Is it possible to use a common routine?
+
                         %measurements                        
                         in_p.plot_mea=false;
                         if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 

@@ -112,7 +112,7 @@ switch varname
         data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); 
     case {'mesh1d_lyrfrac','mesh2d_lyrfrac','LYRFRAC'}
         data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'sum_var_idx',sum_var_idx); 
-    case {'mesh2d_ucmag'} %different case for averaging in case there are several layers
+    case {'umag'} %different case for averaging in case there are several layers
         data_var=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
     case 'stot'
         data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 

@@ -43,11 +43,11 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% map 2DH
-tag_check='fig_map_2DH_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check,'fig','diff');
-    plot_map_2DH_diff_01(fid_log,in_plot_fig,simdef_ref,simdef)
-end
+% tag_check='fig_map_2DH_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','diff');
+%     plot_map_2DH_diff_01(fid_log,in_plot_fig,simdef_ref,simdef)
+% end
 
 %% map 2DH ls
 %Done when passing `simdef_all`

@@ -27,7 +27,7 @@ flg_loc=gdm_parse_his(fid_log,flg_loc,simdef);
 
 nvar=flg_loc.nvar;
 nobs=flg_loc.nobs;
-n_sim=flg_loc.n_sim;
+nsim=flg_loc.n_sim;
 ntimint=flg_loc.ntimint;
 
 stations=flg_loc.stations;
@@ -44,9 +44,9 @@ mkdir_check(fdir_fig);
 %% GRID
 
 %Load here all the grids, which are needed for the layers. 
-for k_sim=1:n_sim
-    fpath_his=simdef(k_sim).file.his;
-    gridInfo(k_sim)=EHY_getGridInfo(fpath_his,'no_layers');
+for ksim=1:nsim
+    fpath_his=simdef(ksim).file.his;
+    gridInfo(ksim)=EHY_getGridInfo(fpath_his,'no_layers');
 %     gridInfo(k_sim)=gdm_load_grid_simdef(fid_log,simdef(k_sim)); %not nice to have to load it every time
 end
 
@@ -86,7 +86,7 @@ for ktimint=1:ntimint
 
     %% TIME
     flg_loc.tim=flg_loc.tim_int{ktimint};
-    tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,n_sim); %{nsim,1} datetime
+    [tim_dtime_p,tim_dtime]=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,nsim); %{nsim,1} datetime
     
     %% LOOP
     
@@ -98,8 +98,8 @@ for ktimint=1:ntimint
         varname=flg_loc.var{kvar};
         var_str=D3D_var_num2str_structure(varname,simdef(1));
             
-        data_all=cell(n_sim,n_sta);
-        data_conv=cell(n_sim,n_sta);
+        data_all=cell(nsim,n_sta);
+        data_conv=cell(nsim,n_sta);
         
         %loop on stations
         for ks=ks_v
@@ -120,7 +120,7 @@ for ktimint=1:ntimint
             in_p.elev=elev;
     
             %% load data
-            [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elev,tim_dtime_p,flg_loc.unit{kvar},kvar);
+            [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elev,tim_dtime,flg_loc.unit{kvar},kvar);
             %dimension: data_all{k_sim,k_sta}
     
             if ~isvector(size(data_all{1}))
@@ -146,7 +146,7 @@ for ktimint=1:ntimint
             in_p=add_filter(flg_loc,in_p,data_all,tim_dtime_p,data_mea);
             
             %% loop on simulations
-            for ksim=1:n_sim
+            for ksim=1:nsim
                 runid=simdef(ksim).file.runid;
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
     
@@ -187,8 +187,8 @@ for ktimint=1:ntimint
             end
     
             %% difference with reference simulation
-            if flg_loc.do_s && n_sim>1
-                for ksim=1:n_sim
+            if flg_loc.do_s && nsim>1
+                for ksim=1:nsim
                     if ksim==flg_loc.sim_ref
                         continue
                     end
@@ -218,40 +218,49 @@ for ktimint=1:ntimint
         if flg_loc.do_convergence
             
             fdir_fig_var=fullfile(fdir_fig,var_str);
-            fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'conv');
             
-            in_p_c.fname=fname_noext;
-            in_p_c.data=data_conv;
-            in_p_c.stations=stations;
-            in_p_c.unit=unit_conv;
-            in_p_c.is_std=unit_conv;
-            
-            fig_his_convergence(in_p_c)
-            
+            ylims_loc=flg_loc.ylims_var{kvar};
+            nylim=size(ylims_loc,1);
+            for kylim=1:nylim
+                fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'conv');
+                
+                in_p_c.fname=fname_noext;
+                in_p_c.data=data_conv;
+                in_p_c.stations=stations;
+                in_p_c.unit=unit_conv;
+                in_p_c.is_std=unit_conv;
+                
+                fig_his_convergence(in_p_c)
+            end 
         end
     
         %% all obs in same figure
     
-        if flg_loc.do_all_sta
+        if flg_loc.do_all_sta && n_sta>1
     
-            if n_sim>1
+            if nsim>1
                 continue
             end
     
             in_p_sta_all=in_p;
     
             fdir_fig_var=fullfile(fdir_fig,var_str);
-            fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'allsta');
-            
-            [in_p_sta_all.xlims,in_p_sta_all.ylims]=get_ylims(flg_loc.ylims_var{kvar}(kylim,:),do_measurements,data_all,data_mea,tim_dtime_p{1});
-    
-            in_p_sta_all.fname=fname_noext;
-            in_p_sta_all.val=data_all;
-            in_p_sta_all.leg_str=stations; 
-            in_p_sta_all.do_title=0;
-            in_p_sta_all.tim=repmat({tim_dtime_p{1,1}},1,nobs);
-    
-            fig_his_sal_01(in_p_sta_all)         
+
+            ylims_loc=flg_loc.ylims_var{kvar};
+            nylim=size(ylims_loc,1);
+            for kylim=1:nylim
+                fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'allsta');
+                
+                [in_p_sta_all.xlims,in_p_sta_all.ylims]=get_ylims(ylims_loc(kylim,:),do_measurements,data_all,data_mea,tim_dtime_p{1});
+        
+                in_p_sta_all.fname=fname_noext;
+                in_p_sta_all.val=data_all;
+                in_p_sta_all.leg_str=stations; 
+                in_p_sta_all.do_title=0;
+                in_p_sta_all.tim=repmat({tim_dtime_p{1,1}},1,nobs);
+        
+                fig_his_sal_01(in_p_sta_all)   
+            end
            
         end
     
@@ -259,14 +268,14 @@ for ktimint=1:ntimint
     
         if flg_loc.do_xt
     
-            for ksim=1:n_sim
+            for ksim=1:nsim
                 %leave this outside the function for when you want to make difference between simulations
                 runid=simdef(ksim).file.runid;
                 tag_loc=sprintf('%s_xt',tag_fig);
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_loc,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
     
-                fcn_plot_his_xt(flg_loc,in_p,simdef(ksim),runid,data_all(k_sim,:),tim_dtime_p{ksim},var_str,flg_loc.clims_var{kvar,1},tag_loc,fdir_fig);
+                fcn_plot_his_xt(flg_loc,in_p,simdef(ksim),runid,data_all(ksim,:),tim_dtime_p{ksim},var_str,flg_loc.clims_var{kvar,1},tag_loc,fdir_fig);
             end
     
         end
@@ -283,10 +292,10 @@ end % ktimeint
 %for the case of `do_sal_01`, which is only possible for one variable.
 
 if flg_loc.do_sal_01
-    for ksim=1:n_sim
+    for ksim=1:nsim
         %`data_statistics_all` should be passed for only one simulation. 
         %check when you have such a case. 
-        if n_sim>1
+        if nsim>1
             error('See comment above')
         end
         fcn_write_table_sal_01(simdef(ksim),stations,data_statistics_all,flg_loc.elev);
@@ -398,21 +407,21 @@ end %function
 
 %%
 
-function [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,n_sim,k_sta,his_type,elev,time_dtime,unit,kvar)
+function [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elev,time_dtime,unit,kvar)
 
-for k_sim=1:n_sim %simulations            
-    fdir_mat=simdef(k_sim).file.mat.dir;
-    fpath_his=simdef(k_sim).file.his;
+for ksim=1:nsim %simulations            
+    fdir_mat=simdef(ksim).file.mat.dir;
+    fpath_his=simdef(ksim).file.his;
     
     %variable
     switch his_type
         case 1
-            layer=gdm_station_layer(flg_loc,gridInfo(k_sim),fpath_his,stations_loc,var_str,elev); 
+            layer=gdm_station_layer(flg_loc,gridInfo(ksim),fpath_his,stations_loc,var_str,elev); 
         case 2
-            layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+            layer=gdm_layer(flg_loc,gridInfo(ksim).no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     end
 
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime{k_sim}(1),'tim2',time_dtime{k_sim}(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime{ksim}(1),'tim2',time_dtime{ksim}(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
     load(fpath_mat_tmp,'data');
 
     %change units
@@ -425,7 +434,7 @@ for k_sim=1:n_sim %simulations
     end
 
     %output
-    data_all{k_sim,k_sta}=data;
+    data_all{ksim,k_sta}=data;
 
 end %k_sim
 
@@ -433,15 +442,20 @@ end %function
 
 %%
 
-function tim_dtime_p=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,n_sim)
+%OUTPUT:
+%   -tim_dtime_p = cell array with the time in datetime format that is used for plotting (can be flow or morpho) in each simulation [cell(nsim,1)]
+%   -tim_dtime   = cell array with the time in datetime format that is used for loading results (it is the flow time) in each simulation [cell(nsim,1)]
+%
+function [tim_dtime_p,tim_dtime]=load_time_all_sim(fid_log,flg_loc,fpath_mat_time,simdef,nsim)
 
-tim_dtime_p=cell(n_sim,1);
+tim_dtime_p=cell(nsim,1);
+tim_dtime=cell(nsim,1);
 
-for k_sim=1:n_sim %simulations            
+for ksim=1:nsim %simulations            
 
     %time
-    [nt(k_sim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(k_sim),'results_type',flg_loc.results_type); %force his reading. Needed for SMT.
-    [tim_dnum_p,tim_dtime_p{k_sim}]=gdm_time_flow_mor(flg_loc,simdef(k_sim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
+    [nt(ksim),tim_dnum,tim_dtime{ksim},tim_mor_dnum,tim_mor_dtime,~]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef(ksim),'results_type',flg_loc.results_type); %force his reading. Needed for SMT.
+    [~,tim_dtime_p{ksim}]=gdm_time_flow_mor(flg_loc,simdef(ksim),tim_dnum,tim_dtime{ksim},tim_mor_dnum,tim_mor_dtime);
 
 end %k_sim
 

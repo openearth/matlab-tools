@@ -55,13 +55,6 @@ if isfield(flg_loc,'fpath_ldb')
     in_p.ldb=D3D_read_ldb(flg_loc.fpath_ldb);
 end
 
-%fxw
-if flg_loc.do_fxw
-%     in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped and in a different structure than when reading snapped
-    fdir_mat=simdef(kref).file.mat.dir;
-    in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef,'fxw');
-end
-
 ktc=0;
 kvar=0;
 ksim=0;
@@ -110,6 +103,13 @@ for kvar=1:nvar %variable
         %grid and time of local simulation
         [gridInfo,time_dnum_loc,time_mor_dnum]=load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
     
+        %fxw of local simulation
+        if flg_loc.do_fxw
+        %     in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped and in a different structure than when reading snapped
+            fdir_mat=simdef(ksim).file.mat.dir;
+            in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef(ksim),'fxw');
+        end
+
         %time0 of local simulation
         kt=1;
         time_plot_loc=time_dnum_plot(kt); %time0 of reference simulation for matching.
@@ -456,9 +456,12 @@ flg_loc=isfield_default(flg_loc,'do_3D',0);
 flg_loc=isfield_default(flg_loc,'do_movie',0);
 flg_loc=isfield_default(flg_loc,'do_fxw',0);
 flg_loc=isfield_default(flg_loc,'tim_type',1);
-flg_loc=isfield_default(flg_loc,'xlims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'var_idx',cell(1,numel(flg_loc.var)));
 flg_loc=isfield_default(flg_loc,'sim_ref',1);
+flg_loc=isfield_default(flg_loc,'xlims',[NaN,NaN]);
+flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
+
+%% clims
 
 flg_loc=isfield_default(flg_loc,'clims_type',1);
 flg_loc=isfield_default(flg_loc,'clims',[NaN,NaN]);
@@ -466,8 +469,6 @@ flg_loc=isfield_default(flg_loc,'clims_diff_t',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'clims_diff_s',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'clims_diff_s_t',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'clims_diff_s_perc',[NaN,NaN]);
-
-flg_loc.nclim_max=max([size(flg_loc.clims,1),size(flg_loc.clims_diff_t,1),size(flg_loc.clims_diff_s,1),size(flg_loc.clims_diff_s_t,1),size(flg_loc.clims_diff_s_perc,1)]);
 
 if isfield(flg_loc,'filter_lim')==0
     flg_loc.filter_lim.clims=[inf,-inf];
@@ -483,11 +484,18 @@ else
     flg_loc.filter_lim=isfield_default(flg_loc.filter_lim,'clims_diff_s_perc',[inf,-inf]);
 end
 
+%%
+
 flg_loc=gdm_parse_plot_along_rkm(flg_loc);
 
+%% dimensions
+
+flg_loc.nclim_max=max([size(flg_loc.clims,1),size(flg_loc.clims_diff_t,1),size(flg_loc.clims_diff_s,1),size(flg_loc.clims_diff_s_t,1),size(flg_loc.clims_diff_s_perc,1)]);
 flg_loc.nsim=numel(simdef);
 flg_loc.nxlim=size(flg_loc.xlims,1);
 flg_loc.nvar=numel(flg_loc.var);
+
+%% 
 
 flg_loc.do_ref=0;
 if flg_loc.nsim>1 && (flg_loc.do_diff_s || flg_loc.do_diff_s_t || flg_loc.do_diff_s_perc)

@@ -37,4 +37,12 @@ switch varname_original
         layer=1;
 end
 
+%throw an error if you need to specify a layer
+switch varname_original
+    case 'umag_layer'
+        if isempty(layer)
+            error('You need to specify a layer in case of variable %s',varname_original)
+        end
+end
+
 end %function

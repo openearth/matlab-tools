@@ -90,7 +90,7 @@
 %
 %       -'La'       : active layer
 %       -'Fak'      : volume fraction content in the active layer
-%       -'mesh2d_taus' : bed shear stress
+%       -{'taub','mesh2d_taus'} : bed shear stress
 %       -'mesh2d_taus_t' : integral bed shear stress with time
 %
 %       -'rkm'      : river kilometer
@@ -392,7 +392,7 @@ switch lower(variable)
                 str_var='cloro';
         end
         un_type='M/L2';
-    case {'umag', 'mesh2d_ucmag','velocity_magnitude','ucmag','umod', 'mesh2d_umod'}
+    case {'umag', 'mesh2d_ucmag','velocity_magnitude','ucmag','umod', 'mesh2d_umod','umag_layer'}
         switch lan
             case 'en'
                 str_var='velocity magnitude';
@@ -776,7 +776,7 @@ switch lower(variable)
          end
          un_type='-';
 
-    case {'mesh2d_taus','taus'}
+    case {'mesh2d_taus','taus','taub'}
          switch lan
             case 'en'
                 str_var='bed shear stress';

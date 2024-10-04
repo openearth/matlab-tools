@@ -95,6 +95,7 @@ if isfield(in_p,'xlims')==0
 end
 
 in_p=isfield_default(in_p,'elev',NaN);
+in_p=isfield_default(in_p,'do_marker',0);
 
 [in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.tim,in_p.val);
 
@@ -106,20 +107,9 @@ if ~print_fig
     return
 end
 
-%%
+%% dimensions
 
-%we deal with this outside this function
-% switch unit
-%     case {'cl','cl_surf'}
-%         ylims=sal2cl(1,ylims);
-%         val=sal2cl(1,val);
-%         if do_fil
-%             val_f=sal2cl(1,val_f);
-%         end
-% %     case 'sal'
-% %     otherwise
-% %         error('not sure what to do')
-% end
+n_sta=numel(val);
 
 %%
 
@@ -162,7 +152,14 @@ prop.mf1='g';
 prop.mt1='s'; 
 prop.lw1=1;
 prop.ls1='-'; %'-','--',':','-.'
-prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'...
+% prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'...
+
+if do_marker
+    mk=repmat({'o','+','*','.','x','s','d','^','v','>','<','p','h'},1,n_sta); %we are for sure safe...
+else
+    mk=repmat({'none'},1,n_sta);
+end
+
 prop.fs=10;
 prop.fn='Helvetica';
 prop.color=[... %>= matlab 2014b default
@@ -211,6 +208,7 @@ cmap=brewermap(9,'set1');
 % cmap=flipud(brewermap(ncmap,'RdBu'));
 % fact=0.1; %percentage of values to remove from the center
 % cmap=[cmap(1:(ncmap-round(fact*ncmap))/2,:);cmap((ncmap+round(fact*ncmap))/2:end,:)];
+
 
 %compressed colormap
 % ncmap=100;
@@ -431,9 +429,8 @@ end
 %% PLOT
 
 kr=1; kc=1;   
-n_sta=numel(val);
 for k_sta=1:n_sta
-    han.p(kr,kc,k_sta)=plot(tim{k_sta},val{k_sta},'parent',han.sfig(kr,kc),'color',cmap(k_sta,:),'linewidth',lw,'linestyle',prop.ls1,'marker',prop.m1);
+    han.p(kr,kc,k_sta)=plot(tim{k_sta},val{k_sta},'parent',han.sfig(kr,kc),'color',cmap(k_sta,:),'linewidth',lw,'linestyle',prop.ls1,'marker',mk{k_sta});
     if do_measurements
         %deal better with colors...
         if numel(data_stations)==1 %we assume that there are several simulations with the same measurement data
@@ -441,10 +438,10 @@ for k_sta=1:n_sta
         else
             k_sta_mea=k_sta;
         end
-        han.pm(kr,kc,k_sta_mea)=plot(data_stations(k_sta_mea).time,data_stations(k_sta_mea).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea,'linestyle',prop.ls1,'marker',prop.m1);
+        han.pm(kr,kc,k_sta_mea)=plot(data_stations(k_sta_mea).time,data_stations(k_sta_mea).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea,'linestyle',prop.ls1,'marker',mk{k_sta});
     end
     if do_fil
-        han.pf(kr,kc,k_sta)=plot(tim_f,val_f(:,k_sta),'parent',han.sfig(kr,kc),'color',cmap(k_sta,:),'linewidth',lw_f,'linestyle',prop.ls1,'marker',prop.m1);
+        han.pf(kr,kc,k_sta)=plot(tim_f,val_f(:,k_sta),'parent',han.sfig(kr,kc),'color',cmap(k_sta,:),'linewidth',lw_f,'linestyle',prop.ls1,'marker',mk{k_sta});
         if do_measurements
             %deal better with colors...
         if numel(data_stations)==1 %we assume that there are several simulations with the same measurement data
@@ -452,7 +449,7 @@ for k_sta=1:n_sta
         else
             k_sta_mea=k_sta;
         end
-            han.pm(kr,kc,k_sta_mea)=plot(data_stations_f(k_sta_mea).time,data_stations_f(k_sta_mea).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea_f,'linestyle',prop.ls1,'marker',prop.m1);
+            han.pm(kr,kc,k_sta_mea)=plot(data_stations_f(k_sta_mea).time,data_stations_f(k_sta_mea).waarde,'parent',han.sfig(kr,kc),'color','k','linewidth',lw_mea_f,'linestyle',prop.ls1,'marker',mk{k_sta});
         end
     end
         

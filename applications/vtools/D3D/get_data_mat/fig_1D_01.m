@@ -108,10 +108,12 @@ if isfield(in_p,'do_title')==0
         in_p.do_title=1;
     end
 end
-if isfield(in_p,'xlab_str')==0
+in_p=isfield_default(in_p,'xlab_str','dist_prof');
+if isempty(in_p.xlab_str)
     in_p.xlab_str='dist_prof';
 end
-if isfield(in_p,'xlab_un')==0
+in_p=isfield_default(in_p,'xlab_un',1);
+if isempty(in_p.xlab_un)
     in_p.xlab_un=1;
 end
 if isfield(in_p,'mt')==0

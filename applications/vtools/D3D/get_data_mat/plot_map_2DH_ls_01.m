@@ -16,7 +16,6 @@ function plot_map_2DH_ls_01(fid_log,flg_loc,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
-
 %% DO
 
 flg_loc=isfield_default(flg_loc,'do_p',1);
@@ -153,7 +152,7 @@ for kpli=1:npli %variable
             [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum(kt),time_dtime(kt),time_mor_dnum(kt),time_mor_dtime(kt));
    
             [data_all,gridInfo_ls,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum);
-            
+
             %measurements                        
             [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,time_mor_dnum,var_str_save,kt,kpli);
 
@@ -463,6 +462,11 @@ end %kS
 
 gridInfo=data.gridInfo;
 [s,xlab_str,xlab_un]=gdm_s_rkm_cen(flg_loc,data);
+
+%xlabel
+if isfield(flg_loc,'xlab_str')
+    xlab_str=flg_loc.xlab_str;
+end
 
 end %function
 

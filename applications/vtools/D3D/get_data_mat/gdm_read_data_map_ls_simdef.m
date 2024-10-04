@@ -87,7 +87,13 @@ switch varname
                 data=gdm_read_data_map_ls(fdir_mat,fpath_map,'U1',varargin{:});
                 data.val=data.vel_mag;
             case {2,4}
-                data=gdm_read_data_map_ls(fdir_mat,fpath_map,'mesh2d_ucmag',varargin{:});
+                if simdef.D3D.is1d
+                    data=gdm_read_data_map_ls(fdir_mat,fpath_map,'mesh1d_ucmag',varargin{:});
+                elseif simdef.D3D.is3d
+                    data=gdm_read_data_map_ls(fdir_mat,fpath_map,'mesh2d_ucmaga',varargin{:});
+                else
+                    data=gdm_read_data_map_ls(fdir_mat,fpath_map,'mesh2d_ucmag',varargin{:});
+                end
 %                 data=gdm_read_data_map_ls(fdir_mat,fpath_map,'uv',varargin{:});
 %                 data.val=data.vel_mag;
         end
@@ -170,21 +176,24 @@ end
 
 %% layer
 
-if ~isempty(layer)
-    if isinf(layer)
-        np=size(data.val,2);
-        val=NaN(1,np);
-        Ycor=NaN(1,np);
-        for kp=1:np
-            layer_loc=find(~isnan(data.val(1,kp,:)),1,'first');
-            val(1,kp)=data.val(1,kp,layer_loc);
-            Ycor(1,kp)=data.gridInfo.Ycor(1,kp,layer_loc);
-        end
-        data.val=val;
-        data.gridInfo.Ycor=Ycor;
-    else
-        data.val=data.val(:,:,layer);
-    end
-end
+data=gdm_get_info_layer(data,layer);
+%The code below has moved to the function, but the functionality has not been tested here. 
+%test and erase. 
+% if ~isempty(layer)
+%     if isinf(layer)
+%         np=size(data.val,2);
+%         val=NaN(1,np);
+%         Ycor=NaN(1,np);
+%         for kp=1:np
+%             layer_loc=find(~isnan(data.val(1,kp,:)),1,'first');
+%             val(1,kp)=data.val(1,kp,layer_loc);
+%             Ycor(1,kp)=data.gridInfo.Ycor(1,kp,layer_loc);
+%         end
+%         data.val=val;
+%         data.gridInfo.Ycor=Ycor;
+%     else
+%         data.val=data.val(:,:,layer);
+%     end
+% end
 
 end %function

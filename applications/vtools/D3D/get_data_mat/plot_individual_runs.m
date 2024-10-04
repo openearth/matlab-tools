@@ -77,11 +77,12 @@ end
 % end
 
 %% map_2DH_his_01
-tag_check='fig_map_2DH_his_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    plot_his_01(fid_log,in_plot_fig,simdef)
-end
+%Done when passing `simdef_all`. 
+% tag_check='fig_map_2DH_his_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check);
+%     plot_his_01(fid_log,in_plot_fig,simdef)
+% end
 
 %% sal 3D
 tag_check='fig_map_sal3D_01';

@@ -25,15 +25,16 @@ function D3D_list_of_variables
 %   2   'wd'    = flow depth (h) [m]
 %   12  'wl'    = water level
 
-%   10  'umag'  = depth averaged velocity [m/s]; call with <layers> to do an average of the selected layers
-%   11  'uv'    = velocity [m/s] 
-%       'vpara' = velocity parallel to a polyline [m/s] 
-%       'vperp' = velocity perpendicular to a polyline [m/s] 
+%   10  'umag'       = depth averaged velocity [m/s]; call with <layers> to do an average of the selected layers
+%       'umag_layer' = velocity magnitude in each layer (for 3D) [m/s]; use in combination with `layer`
+%   11  'uv'         = velocity [m/s] 
+%       'vpara'      = velocity parallel to a polyline [m/s] 
+%       'vperp'      = velocity perpendicular to a polyline [m/s] 
 
 %   18  'Q'     = water discharge (as u*h*B) [m^3/s]
 %   16  'qsp'   = specific water discharge (as u*h) [m^2/2] -> I think at some point `q` was accepted. It should not. Better not to have case sensitive options. 
 
-%   32  'mesh2d_czs'        = Chezy  [m/s^{1/2}]
+%   32  'czs'        = Chezy  [m/s^{1/2}]
 %   43                      = horizontal eddy viscosity [m^2/s]
 %   6                       = secondary flow intensity (I) [m/s]
 %   36  'Fr'                = Froude number [-]
@@ -45,7 +46,7 @@ function D3D_list_of_variables
 %% MORPHODYNAMIC
 
 %   9                   = detrended etab based on etab_0
-%   15  'mesh2d_taus'   = bed shear stress [Pa]
+%   15  'taub'          = bed shear stress [Pa]
 %   17  (plot diff)     = cumulative bed elevation
 %   25                  = total sediment mass (summation of all substrate layers, including active layer)
 

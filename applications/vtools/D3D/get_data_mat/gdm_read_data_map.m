@@ -44,10 +44,11 @@ depth_average_limits=parin.Results.depth_average_limits;
 
 %% CALC
 
-% varname=D3D_var_derived2raw(varname); %I don't think I need it...
-[ismor,is1d]=D3D_is(fpath_map);
-[var_str,varname_changed]=D3D_var_num2str(varname,'is1d',is1d,'ismor',ismor); %in the call in <create_mat_map_2DH_01> we already change the name. Here we only need the save name. Otherwise we need to pass <simdef.D3D.structure>
-% fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'var_idx',var_idx,'branch',branch);
+%I do not see why here we do not use `varname`. It is the most sensible thing to do at this moment.
+% [ismor,is1d]=D3D_is(fpath_map);
+% [var_str,varname_changed]=D3D_var_num2str(varname,'is1d',is1d,'ismor',ismor); %in the call in <create_mat_map_2DH_01> we already change the name. Here we only need the save name. Otherwise we need to pass <simdef.D3D.structure>
+var_str=varname;
+
 fpath_sal=mat_tmp_name(fdir_mat,var_str,'tim',time_dnum,'branch',branch); %`var_idx` cannot be in the name because it is not saved as such. 
 
 if exist(fpath_sal,'file')==2
@@ -64,8 +65,8 @@ else
         if ischar(varname)
             data=gdm_read_data_map_char(fpath_map,varname,'tim',time_dnum,'tol_t',tol_t);%,'bed_layers',bed_layers);
         else
-            %outdated?
-            data=gdm_read_data_map_num(fpath_map,varname,'tim',time_dnum);
+            error('outdated?')
+%             data=gdm_read_data_map_num(fpath_map,varname,'tim',time_dnum);
         end
     else %1D
         [~,~,~,~,~,idx_tim]=D3D_time_dnum(fpath_map,time_dnum,'fdir_mat',fdir_mat);
@@ -75,13 +76,12 @@ else
     save_check(fpath_sal,'data');
 end
 
-%% layer
+%% get partial information
+%There is some inconsistency with `gdm_read_data_map_ls_simdef`, where here it is done at this level
+%while in that case is done at the `simdef` level. 
 
 %layer
-if ~isempty(layer)
-    idx_f=D3D_search_index_layer(data);
-    data.val=submatrix(data.val,idx_f,layer);
-end
+data=gdm_get_info_layer(data,layer);
 
 %get desired fractions
 if ~isempty(var_idx)

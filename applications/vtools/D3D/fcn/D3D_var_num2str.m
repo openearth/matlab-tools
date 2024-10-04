@@ -116,17 +116,21 @@ if ischar(var_id)
             end
             var_str_read='h';
             var_str_save=var_str_read;
-        case 'umag'
+        case {'umag','mesh2d_ucmag','mesh2d_ucmaga','mesh1d_ucmag'} %depth-averaged for 1D, 2D, and 3D
+            %in 3D, `ucmag` is per layer and `ucmaga` is depth averaged.
+            %There is a special function for reading depth-averaged velocity. Hence, here
+            %we only need to pass that it is depth-averaged and the cases (1D, 2D, 3D) are
+            %dealt in that function. 
+            var_str_read='umag';
+            var_str_save=var_str_read;
+        case 'umag_layer' %depth_averaged for 1D and 2D, but per layer in 3D
+            %in 3D, `ucmag` is per layer and `ucmaga` is depth averaged.
             if is1d
                 var_id_out='mesh1d_ucmag';
             else
-                if is3d
-                    var_id_out='mesh2d_ucmaga';
-                else
-                    var_id_out='mesh2d_ucmag';
-                end
+                var_id_out='mesh2d_ucmag';
             end
-            var_str_read='umag';
+            var_str_read='umag_layer'; %I think we can use the same name, because we will always add a layer to the input. Although it can be dangerous.
             var_str_save=var_str_read;
         case 'wl'
             switch structure
@@ -218,6 +222,10 @@ if ischar(var_id)
             var_id_out='mesh2d_dunelength';
             var_str_read='dunelength';
             var_str_save='dunelength';
+        case {'mesh2d_taus','taub'}
+            var_id_out='mesh2d_taus';
+            var_str_read='taub';
+            var_str_save='taub';
         otherwise
 
     end
