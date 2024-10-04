@@ -72,6 +72,14 @@
 % in_plot.tag_serie='01';
 % in_plot.path_tiles='C:\checkouts\earth_tiles\';
 % in_plot.path_tiles='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\earth_tiles';
+% % in_plot.order_anl=1; %order in which data is analyzed: 1=normal; 2=random based on time (ATTENTION!); 3=random based on seed `order_anl_param`
+% %The random generation based on time is not enough when submitting
+% %the same script to the cluster, even when there is a pause statement.
+% %The processing time is sometimes the same.
+% %The solution is to name the file differently and end with a number. The
+% %lines below take that number as the seed number.
+% % fname=mfilename;
+% % in_plot.order_anl_param=str2double(fname(end)); %seed random number in case `order_anl=3`
 
 %% display map times
 
