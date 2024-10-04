@@ -114,7 +114,6 @@
 % in_plot.(tag).tim_just_load=0;
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
 % in_plot.(tag).tim=NaN; %all times
-% in_plot.(tag).order_anl=2; %1=normal; 2=random
 % in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
 % % in_plot.(tag).clims_type_var=datenum(2018,07,01); %in case of <clims_type>=2
 % in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
@@ -154,7 +153,6 @@
 % in_plot.(tag).var={'bl'}; 
 % in_plot.(tag).tim=NaN;
 % in_plot.(tag).tim_type=2;
-% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random
 % in_plot.(tag).tol_tim=1.1;
 % in_plot.(tag).fig_size=[0,0,16,9].*2;
 % in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'y500.pli');
@@ -189,7 +187,6 @@
 % in_plot.(tag).tim_tol=hours(1); 
 % % in_plot.(tag).tim=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)];
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
-% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).do_movie=0;
@@ -242,7 +239,6 @@
 % in_plot.(tag).branch_name{1,1}='c1';
 % in_plot.(tag).tim=NaN;
 % in_plot.(tag).tim_type=1;
-% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random
 % in_plot.(tag).xlims=[NaN,NaN];
 % in_plot.(tag).ylims=[NaN,NaN];
 % % in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
@@ -271,7 +267,6 @@
 % in_plot.(tag).elev=[-6.5,-2.5]; %elevation at which to take the data.
 % in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).ylims_diff=[NaN,NaN;-sal2cl(-1,400),sal2cl(-1,400)]; %in [psu]
-% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
 % in_plot.(tag).fig_overwrite=1; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).unit={'cl_surf'};  %sal, cl
@@ -288,7 +283,6 @@
 % in_plot.(tag).do_all=1; %plot all simulations in same figure
 % in_plot.(tag).tim=[datetime(2000,01,01,0,0,0,'timezone','+00:00'),datetime(2000,03,01,0,0,0,'timezone','+00:00'),datetime(2001,01,01,0,0,0,'timezone','+00:00')];
 % in_plot.(tag).tim_type=1; %1=flow; 2=morpho
-% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % 
@@ -355,7 +349,6 @@
 % in_plot.(tag).tim=Inf;
 % in_plot.(tag).tim_just_load=true;
 % in_plot.(tag).tim_type=2;
-% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random
 % in_plot.(tag).tol_tim=1.1;
 % in_plot.(tag).ylims=[NaN,NaN];
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
@@ -377,7 +370,6 @@
 % % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
 % in_plot.(tag).tim_type=1; %Type of input time: 1=flow; 2=morpho. 
 % in_plot.(tag).tim=5000:1:5002; 
-% in_plot.(tag).order_anl=1; %1=normal; 2=random
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).depth_average=1; %compute depth average quantity
@@ -419,7 +411,6 @@
 % in_plot.(tag).s_fact=1/1000;
 % in_plot.(tag).xlab_str='dist_mouth';
 % in_plot.(tag).clims=[NaN,NaN;sal2cl(-1,100),sal2cl(-1,700)]; %in [psu]
-% in_plot.(tag).order_anl=1; %time processing order: 1=serial, 2=random.
 % in_plot.(tag).fig_overwrite=1; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).measurements=fpaths.fdir_data_stations;

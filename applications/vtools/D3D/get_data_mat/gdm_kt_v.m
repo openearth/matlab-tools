@@ -16,9 +16,8 @@ function kt_v=gdm_kt_v(flg,nt)
 
 %% PARSE
 
-if isfield(flg,'order_anl')==0
-    flg.order_anl=1;
-end
+flg=isfield_default(flg,'order_anl',1);
+flg=isfield_default(flg,'order_anl_param',1);
 
 %% CALC
 
@@ -27,6 +26,9 @@ switch flg.order_anl
         kt_v=1:1:nt;
     case 2
         rng('shuffle')
+        kt_v=randperm(nt);
+    case 3
+        rng(flg.order_anl_param)
         kt_v=randperm(nt);
     otherwise
         error('option does not exist')

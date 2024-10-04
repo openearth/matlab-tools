@@ -19,6 +19,8 @@ function in_plot=create_mat_default_flags(in_plot)
 in_plot=isfield_default(in_plot,'lan','en');
 in_plot=isfield_default(in_plot,'tag_serie','01');
 in_plot=isfield_default(in_plot,'only_adhoc',0);
+in_plot=isfield_default(in_plot,'order_anl',1);
+in_plot=isfield_default(in_plot,'order_anl_param',1);
 
 %% get the items which are not structure
 
