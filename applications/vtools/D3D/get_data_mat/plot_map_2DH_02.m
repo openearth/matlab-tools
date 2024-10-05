@@ -258,8 +258,8 @@ for kvar=1:nvar %variable
     
         if flg_loc.do_movie && nt>1
             for kplot=1:nplot
-                %this needs to be tested. 
-                nclim=sum(~isempty(fpath_file_2D(kplot,1,:,1)));
+                fpath_loc=fpath_file_2D{kplot,1,:,1};
+                nclim=sum(~isempty(fpath_loc));
                 for kclim=1:nclim
                     for kxlim=1:nxlim
                         fpath_mov=fpath_file_2D(kplot,:,kclim,kxlim);
