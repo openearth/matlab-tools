@@ -182,7 +182,7 @@ for kp=1:np
 
     %branch output
     if ~rkm2xy
-        branch_get{kp}=branch(xc); %`xc` and `xc+1` should be the same
+        branch_get{kp}=branch{xc}; %`xc` and `xc+1` should be the same
     end
 
     if min_dist>TolMinDist
@@ -208,6 +208,6 @@ end %kp
 
 varargout{1}=var_get;
 if ~rkm2xy
-    varargout(2)=branch_get;
+    varargout{2}=branch_get;
 end
 

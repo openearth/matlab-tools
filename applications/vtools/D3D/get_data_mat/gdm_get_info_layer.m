@@ -18,11 +18,15 @@ function data=gdm_get_info_layer(data,layer)
 is2dv=false;
 if isfield(data,'gridInfo')
     is2dv=true;
+    idx_faces=2;
+    idx_layer=3;
+else
+    idx_faces=D3D_search_index_faces(data);
+    idx_layer=D3D_search_index_layer(data);
 end
 
 if ~isempty(layer)
     if isinf(layer)
-        idx_faces=D3D_search_index_faces(data);
         np=size(data.val,idx_faces);
         val=NaN(1,np);
         if is2dv
@@ -41,8 +45,7 @@ if ~isempty(layer)
             data.gridInfo.Ycor=Ycor;
         end
     else
-        idx_f=D3D_search_index_layer(data);
-        data.val=submatrix(data.val,idx_f,layer);
+        data.val=submatrix(data.val,idx_layer,layer);
     end
 end
 
