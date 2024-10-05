@@ -14,16 +14,21 @@ clear
 clc
 fclose all;
 
+%% PATHS
+
+fpath_add_oet='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\general\addOET.m';
+fdir_d3d='p:\studenten-riv\05_OpenEarthTools\02_qp\';
+
 %% ADD OET
 
-% path_add_fcn='c:\Users\chavarri\checkouts\openearthtools_matlab\applications\vtools\general\';
-path_add_fcn='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\';
-addpath(path_add_fcn)
-addOET(path_add_fcn)
+if isunix %we assume that if Linux we are in the p-drive. 
+    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
+end
+run(fpath_add_oet);
 
 %% INPUT
 
-fdir_rain='p:\i1000561-riverlab-2021\04_weather\';
+fdir_rain='p:\dflowfm\users\chavarri\02_weather\';
 url_br='https://www.buienradar.nl/weer/delft/nl/2757345/14daagse';
 T_data=3600;
 
@@ -54,7 +59,8 @@ while 1
         
 %         fclose all; %this should not be necessary, but for some reason sometimes the file cannot be deleted
 %         pause(5); %maybe this helps
-        delete(fpath_html);
+%         delete(fpath_html);
+
         rain_one.tim_anl=datetime('now');
         if exist(fname_rain,'file')==2
             load(fname_rain,'rain');
