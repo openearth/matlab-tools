@@ -35,8 +35,8 @@ switch modelType
         % tstart
         if isfield(mdu.time,'TStart')
             tstart = mdu.time.TStart;
-        elseif isfield(mdu.time,'Startdatetime') % yyyymmddHHMMSS
-            tstart = (EHY_datenum(num2str(round(mdu.time.Startdatetime))) - refdate) * timeFactor('d',tunit); % Tunit from refDate
+        elseif isfield(mdu.time,'StartDateTime') % yyyymmddHHMMSS
+            tstart = (EHY_datenum(num2str(round(mdu.time.StartDateTime))) - refdate) * timeFactor('d',tunit); % Tunit from refDate
         else
             error('Could not find TStart or Startdatetime in .mdu')
         end
@@ -44,8 +44,8 @@ switch modelType
         % tstop
         if isfield(mdu.time,'TStop')
             tstop = mdu.time.TStop;
-        elseif isfield(mdu.time,'Stopdatetime') % yyyymmddHHMMSS
-            tstop  = (EHY_datenum(num2str(round(mdu.time.Stopdatetime ))) - refdate) * timeFactor('d',tunit); % Tunit from refDate
+        elseif isfield(mdu.time,'StopDateTime') % yyyymmddHHMMSS
+            tstop  = (EHY_datenum(num2str(round(mdu.time.StopDateTime ))) - refdate) * timeFactor('d',tunit); % Tunit from refDate
         else
             error('Could not find TStop or Stopdatetime in .mdu')
         end
