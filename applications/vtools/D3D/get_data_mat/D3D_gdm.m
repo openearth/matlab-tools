@@ -158,6 +158,7 @@
 % in_plot.(tag).do_all_s=1; %all simulations together
 % in_plot.(tag).do_diff_t=1; %difference of each simulation in time
 % in_plot.(tag).do_diff_s=1; %difference of each simulation with reference simulation
+% in_plot.(tag).do_all_t_diff_t=1; %all times together, difference in time
 % in_plot.(tag).var={'bl'}; 
 % in_plot.(tag).tim=NaN;
 % in_plot.(tag).tim_type=2;

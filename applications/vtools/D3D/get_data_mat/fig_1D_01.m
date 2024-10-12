@@ -116,8 +116,11 @@ in_p=isfield_default(in_p,'xlab_un',1);
 if isempty(in_p.xlab_un)
     in_p.xlab_un=1;
 end
-if isfield(in_p,'mt')==0
-    in_p.mt=1;
+in_p=isfield_default(in_p,'do_time',0);
+if in_p.do_time
+    in_p=isfield_default(in_p,'mt',1.5);
+else
+    in_p=isfield_default(in_p,'mt',1);
 end
 if isfield(in_p,'mb')==0
     in_p.mb=1.5;
@@ -149,9 +152,7 @@ end
 if isfield(in_p,'do_staircase')==0
     in_p.do_staircase=0;
 end
-if isfield(in_p,'do_time')==0
-    in_p.do_time=0;
-end
+
 if isfield(in_p,'Lref')==0
     in_p.Lref='+NAP';
 end
@@ -176,6 +177,7 @@ end
 if isfield(in_p,'is_dom')==0
     in_p.is_dom=0;
 end
+in_p=isfield_default(in_p,'clims',[NaN,NaN]);
 
 v2struct(in_p)
 
@@ -268,7 +270,17 @@ if isnan(cmap(1,1))
     if nv<=9
         cmap=brewermap(nv,'set1');
     else
-        cmap=jet(nv);
+        if do_time
+            nv_tim=100;
+            cmap_tmp=jet(nv_tim+1); 
+            tim_frac=(tim-tim(1))/(tim(end)-tim(1))*nv_tim;
+            cmap=NaN(nv,3);
+            for kcolor=1:3
+                cmap(:,kcolor)=interp_line_vector(0:1:nv_tim,cmap_tmp(:,kcolor),tim_frac,NaN);
+            end
+        else
+            cmap=jet(nv); 
+        end
     end
 else
     if size(cmap,2)~=3
@@ -387,6 +399,9 @@ kr=1; kc=1;
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 if do_time
+    if isnan(clims(1))
+        clims=[tim(1),tim(end)];
+    end
     lims.c(kr,kc,1:2)=clims;
 else
     lims.c(kr,kc,1:2)=NaN;
@@ -471,6 +486,8 @@ end
 % EHY_plotMapModelData(data_map.grid,data_map.val,'t',1); 
 
 %% PLOT
+
+
 
 kr=1; kc=1;  
 if do_area
@@ -643,17 +660,20 @@ pos.cbar=han.cbar.Position;
 han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
 han.sfig(kr,kc).Position=pos.sfig;
 han.cbar.Label.String=cbar(kr,kc).label;
-end
+
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
 % v2p=[1,5,11,15,np1];
+
 % han.cbar.Ticks=v2p;
+v2p=han.cbar.Ticks;
 % aux3=aux2(v2p);
-% aux_str=cell(1,numel(v2p));
-% for ka=1:numel(v2p)
-%     aux_str{ka}=sprintf('%5.3f',aux3(ka));
-% end
-% han.cbar.TickLabels=aux_str;
+aux_str=cell(1,numel(v2p));
+for ka=1:numel(v2p)
+    aux_str{ka}=datestr(v2p(ka));
+end
+han.cbar.TickLabels=aux_str;
+end
 
 %% GENERAL
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)

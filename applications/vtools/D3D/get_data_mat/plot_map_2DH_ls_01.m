@@ -184,7 +184,7 @@ for kpli=1:npli %variable
             if flg_loc.do_all_s
                 kplot=2;
                 kS=1;
-                data_loc=squeeze(data_all(kt,:,:));
+                data_loc=reshape(squeeze(data_all(kt,:,:)),[],1);
                 tag_fig=sprintf('%s_all_s',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
@@ -265,6 +265,7 @@ for kpli=1:npli %variable
 
         if flg_loc.do_all_t
             for kS=1:nS
+                [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
                 data_loc=data_all(:,:,kS)';
                 tag_fig=sprintf('%s_all_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
@@ -302,12 +303,16 @@ for kpli=1:npli %variable
         end
         
         %% movies
-        if flg_loc.do_movie
+
+        if flg_loc.do_movie && nt>1
 
             for kplot=1:nplot
+                fpath_loc=fpath_file{kplot,1,1,:};
+                nylims=sum(~isempty(fpath_loc));
                 for klim=1:nylims
                     for kS=1:nS
                         fpath_mov=fpath_file(kplot,:,kS,klim);
+                        fpath_mov=reshape(fpath_mov,[],1);
                         gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
                     end %ks
                 end
@@ -501,7 +506,7 @@ for klim=1:nlims %ylim
             in_p.lab_str=var_str_read;
             in_p.ylims=lims_loc(klim,:);
             in_p.xlims=flg_loc.xlims(klim,:);
-            in_p.val=data_loc; 
+            in_p.val=data_loc; %[np,1] (same as x)
         
             fig_1D_01(in_p)
     

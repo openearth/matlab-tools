@@ -114,7 +114,7 @@ else
     end
     bol_x=sx==sv;
     if sum(bol_x)==0
-        onerror('The size of `val` does not match the size of `x`')
+        error('The size of `val` does not match the size of `x`')
     elseif sum(bol_x)==2 %vectors or matrices which are the same size
         %check if any dimension is 1
         bol_1=sv==1;

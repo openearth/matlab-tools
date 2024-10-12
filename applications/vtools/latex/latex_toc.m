@@ -40,13 +40,36 @@ while ~feof(fid)
         kc=kc+1;
         toc{kc,1}=tok{1,3}{1,1};
         toc{kc,2}=str2double(tok{1,2}{1,1});
-        lin=fgetl(fid);
-        bol_lab=contains(lin,'\label');
-        if bol_lab
-            tok=regexp(lin,'{(.*?)}','tokens');
-            toc{kc,3}=tok{1,1}{1,1};
-        end %bol_lab
+        toc{kc,3}=search_for_label(fid);
     end %bol_sec
+
+    bol_sec=contains(lin,'\chapter');
+    if bol_sec
+        tok=regexp(lin,'{(.*?)}','tokens');
+        kc=kc+1;
+        toc{kc,1}=tok{1,1}{1,1};
+        toc{kc,2}=1;
+        toc{kc,3}=search_for_label(fid);
+    end
+
+    bol_sec=contains(lin,'\section');
+    if bol_sec
+        tok=regexp(lin,'{(.*?)}','tokens');
+        kc=kc+1;
+        toc{kc,1}=tok{1,1}{1,1};
+        toc{kc,2}=2;
+        toc{kc,3}=search_for_label(fid);
+    end
+
+    bol_sec=contains(lin,'\subsection');
+    if bol_sec
+        tok=regexp(lin,'{(.*?)}','tokens');
+        kc=kc+1;
+        toc{kc,1}=tok{1,1}{1,1};
+        toc{kc,2}=3;
+        toc{kc,3}=search_for_label(fid);
+    end
+
 end %feof
 
 fclose(fid);
@@ -65,3 +88,26 @@ end %kl
 fclose(fid);
 
 end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function lab=search_for_label(fid)
+
+lab='';
+nmax=100;
+kc=0;
+is_label=false;
+while ~is_label && kc<nmax
+    lin=fgetl(fid);
+    bol_lab=contains(lin,'\label');
+    if bol_lab
+        tok=regexp(lin,'{(.*?)}','tokens');
+        lab=tok{1,1}{1,1};
+        is_label=true;
+    end %bol_lab
+    kc=kc+1;
+end
+
+end
