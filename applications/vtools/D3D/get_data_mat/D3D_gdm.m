@@ -166,9 +166,9 @@
 % in_plot.(tag).fig_size=[0,0,16,9].*2;
 % in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'y500.pli');
 % in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
-% in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).tim_movie=40; %movie duration [s]
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).ml=2.5;
 % % in_plot.(tag).filter_lim=[0.992,1.1];

@@ -25,6 +25,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 
 %do flags
 flg_loc=isfield_default(flg_loc,'do_all_t',0);
+flg_loc=isfield_default(flg_loc,'do_all_t_xt',0);
 flg_loc=isfield_default(flg_loc,'do_all_s',0);
 flg_loc=isfield_default(flg_loc,'do_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_diff_s',0);
@@ -82,28 +83,10 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,'');
 nt=numel(time_dnum);
 nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
-nylims=size(flg_loc.ylims,1);
-nclims=size(flg_loc.clims,1);
 
 flg_loc.what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef(1),fdir_mat,time_dnum,tag,gridInfo);
-
-switch flg_loc.what_is
-    case 1
-        nlims=nclims;
-        lims=flg_loc.clims;
-        lims_diff_t=flg_loc.clims_diff_t;
-        lims_diff_s=flg_loc.clims_diff_s;
-
-        nlims_y=size(flg_loc.ylims,1);
-        if nlims_y~=nlims
-            flg_loc.ylims=NaN(nlims,2);
-        end
-    case 2
-        nlims=nylims;
-        lims=flg_loc.ylims;
-        lims_diff_t=flg_loc.ylims_diff_t;
-        lims_diff_s=flg_loc.ylims_diff_s;
-end
+flg_loc.plot_type=flg_loc.what_is;
+[nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
 
 %% figure
 in_p=flg_loc; %attention with unexpected input
@@ -164,6 +147,8 @@ for kpli=1:npli %variable
 
             %% plot single simulation and single time
             if flg_loc.do_p
+                flg_loc.plot_type=flg_loc.what_is;
+                [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=1;
                 for kS=1:nS
                     data_loc=reshape(data_all(kt,:,kS),[],1);
@@ -176,12 +161,14 @@ for kpli=1:npli %variable
                     in_p.is_diff=0;
                     in_p.plot_mea=plot_mea;
                
-                    fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);     
+                    fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);     
                 end %kS
             end
 
             %% plot all simulations and single time (if line plot)
             if flg_loc.do_all_s
+                flg_loc.plot_type=2;
+                [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=2;
                 kS=1;
                 data_loc=reshape(squeeze(data_all(kt,:,:)),[],1);
@@ -194,11 +181,13 @@ for kpli=1:npli %variable
                 in_p.is_diff=0;
                 in_p.plot_mea=plot_mea;
     
-                fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);       
+                fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);       
             end
 
             %% plot difference in time
             if flg_loc.do_diff_t
+                flg_loc.plot_type=flg_loc.what_is;
+                [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=3;
                 for kS=1:nS
                     data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(1,:,kS)),[],1);
@@ -211,12 +200,14 @@ for kpli=1:npli %variable
                     in_p.is_diff=1;
                     in_p.plot_mea=plot_mea;
 
-                    fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);           
+                    fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);           
                 end %kS
             end
 
             %% plot difference with reference simulation
             if flg_loc.do_diff_s
+                flg_loc.plot_type=flg_loc.what_is;
+                [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=4;
                 for kS=1:nS
                     data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(kt,:,1)),[],1);
@@ -229,12 +220,14 @@ for kpli=1:npli %variable
                     in_p.is_diff=1;
                     in_p.plot_mea=0;
 
-                    fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_s);               
+                    fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_s);               
                 end %kS
             end
     
             %% plot all simulations together, difference in time
             if flg_loc.do_all_s_diff_t
+                flg_loc.plot_type=2;
+                [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=5;
                 kS=1;
                 data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
@@ -247,7 +240,7 @@ for kpli=1:npli %variable
                 in_p.is_diff=1;
                 in_p.plot_mea=plot_mea;
     
-                fpath_file(kplot,kt,kS,:)=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
+                fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
             end
 
             %% plot all simulation together (special case 2 simulations differences between runs)
@@ -264,6 +257,8 @@ for kpli=1:npli %variable
         %% plot all times together
 
         if flg_loc.do_all_t
+            flg_loc.plot_type=2;
+            [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
             for kS=1:nS
                 [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
                 data_loc=data_all(:,:,kS)';
@@ -278,13 +273,41 @@ for kpli=1:npli %variable
                 in_p.do_leg=0;
                 in_p.do_time=1;
     
-                fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
+                fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
+            end %kS
+        end
+
+        %% plot all times together xt
+
+        if flg_loc.do_all_t_xt
+            flg_loc.plot_type=3;
+            [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
+            for kS=1:nS
+                [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
+                data_loc=data_all(:,:,kS);
+                tag_fig=sprintf('%s_all_t_xt',tag);
+                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                mkdir_check(fdir_fig,NaN,1,0);
+                runid=simdef(kS).file.runid;
+    
+                [in_p.d_m,in_p.t_m]=meshgrid(s,tim_dtime);
+                in_p.val_m=data_loc;
+                in_p.unit=in_p.var{kvar};
+%                 in_p.t_m
+%                 in_p.is_diff=0;
+%                 in_p.plot_mea=plot_mea;
+%                 in_p.do_leg=0;
+%                 in_p.do_time=1;
+
+    
+                fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
             end %kS
         end
 
         %% plot all times together, difference in time
         
         if flg_loc.do_all_t_diff_t
+            flg_loc.plot_type=2;
             for kS=1:nS
                 data_loc=(data_all(:,:,kS)-data_all(1,:,kS))';
                 tag_fig=sprintf('%s_all_t_diff_t',tag);
@@ -298,7 +321,7 @@ for kpli=1:npli %variable
                 in_p.do_leg=0;
                 in_p.do_time=1;
     
-                fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);               
+                fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);               
             end %kS
         end
         
@@ -477,7 +500,7 @@ end %function
 
 %% 
 
-function fpath_file=fcn_plot_single_time(in_p,flg_loc,nlims,fdir_fig,tag,runid,time_dnum_kt,var_str_read,layer,pliname,data_loc,lims_loc)             
+function fpath_file=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag,runid,time_dnum_kt,var_str_read,layer,pliname,data_loc,lims_loc)             
 
 fpath_file=cell(nlims,1);
 for klim=1:nlims %ylim
@@ -490,7 +513,7 @@ for klim=1:nlims %ylim
 
     in_p.fname=fname_noext;
     
-    switch flg_loc.what_is
+    switch flg_loc.plot_type
         case 1 % several vertical layers (patch plot)      
             in_p.data_ls.sal=data_loc;
             in_p.unit=var_str_read;
@@ -509,7 +532,9 @@ for klim=1:nlims %ylim
             in_p.val=data_loc; %[np,1] (same as x)
         
             fig_1D_01(in_p)
-    
+        case 3 %xt
+            in_p.clims=lims_loc(klim,:);    
+            fig_his_xt_01(in_p)
     end %type plot
 end %kylim
 
@@ -537,8 +562,32 @@ end
 
 end %function
 
+%% 
 
+function [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc)
 
+nylims=size(flg_loc.ylims,1);
+nclims=size(flg_loc.clims,1);
+
+switch flg_loc.plot_type
+    case 1
+        nlims=nclims;
+        lims=flg_loc.clims;
+        lims_diff_t=flg_loc.clims_diff_t;
+        lims_diff_s=flg_loc.clims_diff_s;
+
+        nlims_y=size(flg_loc.ylims,1);
+        if nlims_y~=nlims
+            flg_loc.ylims=NaN(nlims,2);
+        end
+    case {2,3}
+        nlims=nylims;
+        lims=flg_loc.ylims;
+        lims_diff_t=flg_loc.ylims_diff_t;
+        lims_diff_s=flg_loc.ylims_diff_s;
+end
+
+end
 
 
 

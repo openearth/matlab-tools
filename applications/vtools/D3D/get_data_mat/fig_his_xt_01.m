@@ -26,7 +26,12 @@
 % in_p.fig_print=; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 % in_p.fname=;
 % in_p.fig_visible=;
-
+%
+%INPUT:
+% unit
+% t_m
+% d_m
+% val_m
 function fig_his_xt_01(in_p)
 
 %% DEFAULTS
@@ -42,7 +47,7 @@ in_p=isfield_default(in_p,'plot_style','surf');
 in_p=isfield_default(in_p,'do_showtext','on');
 in_p=isfield_default(in_p,'plot_axis','xt');
 in_p=isfield_default(in_p,'lim_t',[NaN,NaN]);
-in_p=isfield_default(in_p,'xlab_str','x');
+in_p=isfield_default(in_p,'xlab_str','dist_prof',true);
 in_p=isfield_default(in_p,'do_measurements',0);
 
 v2struct(in_p)
