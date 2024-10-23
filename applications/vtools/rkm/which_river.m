@@ -13,12 +13,12 @@
 
 function river=which_river(ident_pol_str)
 
-if any(contains(ident_pol_str,{'BR','IJ','LE','NI','NR','PK','RH','WL','WA'}))
+if any(contains(ident_pol_str,{'BR','IJ','LE','NI','NR','PK','RH','WL','WA','NI','BO'}))
     river=1;
 elseif any(contains(ident_pol_str,{'MA'}))
     river=2;
 else
-    error('A cell array is found with information about the name of each polygon. This is expected to contain the information of the branch and the river kilometer. However, the branch is not known.')
+    error('A cell array is found with information about the name of each polygon. This is expected to contain the information of the branch and the river kilometer. However, the branch is not known: %s',ident_pol_str)
 end
 
 end %function
