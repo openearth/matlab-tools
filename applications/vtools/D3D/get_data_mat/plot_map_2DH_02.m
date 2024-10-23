@@ -104,10 +104,12 @@ for kvar=1:nvar %variable
         [gridInfo,time_dnum_loc,time_mor_dnum]=load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
     
         %fxw of local simulation
-        if flg_loc.do_fxw
-        %     in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped and in a different structure than when reading snapped
-            fdir_mat=simdef(ksim).file.mat.dir;
-            in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef(ksim),'fxw');
+        fdir_mat=simdef(ksim).file.mat.dir;
+        switch flg_loc.do_fxw
+            case 1
+                in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped and in a different structure than when reading snapped
+            case 2
+                in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef(ksim),'fxw');
         end
 
         %time0 of local simulation
@@ -154,6 +156,9 @@ for kvar=1:nvar %variable
                 in_p.plot_vector=1;
             end
     
+            %% load tiles
+            in_p=fcn_load_tiles(flg_loc,in_p);
+
             %% regular plot
             if flg_loc.do_p_single    
         
@@ -452,7 +457,8 @@ flg_loc=isfield_default(flg_loc,'do_diff_s_t',0);
 flg_loc=isfield_default(flg_loc,'do_diff_s_perc',0);
 flg_loc=isfield_default(flg_loc,'do_2D',1);
 flg_loc=isfield_default(flg_loc,'do_3D',0);
-
+flg_loc=isfield_default(flg_loc,'plot_tiles',0);
+flg_loc=isfield_default(flg_loc,'fpath_tiles',fullfile(pwd,'tiles.mat'));
 flg_loc=isfield_default(flg_loc,'do_movie',0);
 flg_loc=isfield_default(flg_loc,'do_fxw',0);
 flg_loc=isfield_default(flg_loc,'tim_type',1);
@@ -515,5 +521,20 @@ switch flg_loc.clims_type
         tim_up=max(time_dnum_loc-flg_loc.clims_type_var,0);
         clims=[0,tim_up];
 end
+
+end %function
+
+%%
+
+function in_p=fcn_load_tiles(flg_loc,in_p)
+
+if flg_loc.plot_tiles
+    if ~isfield(in_p,'tiles') || isempty(in_p.tiles)
+        if isfield(flg_loc,'fpath_tiles') && isfile(flg_loc.fpath_tiles)
+            load(flg_loc.fpath_tiles,'tiles')
+            in_p.tiles=tiles;
+        end
+    end
+end %plot_tiles
 
 end %function

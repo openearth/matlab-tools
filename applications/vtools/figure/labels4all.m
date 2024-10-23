@@ -1096,6 +1096,16 @@ switch lower(variable)
                 str_var='altura de dunas';
          end
          un_type='L';  
+    case {'waveheight','mesh2d_hwav'}
+         switch lan
+            case 'en'
+                str_var='RMS wave height';
+            case 'nl'
+                str_var='RMW golfhoogte';
+            case 'es'
+                str_var='RMS altura de ola';
+         end
+         un_type='L';  
     otherwise
         str_var=variable;
         un_type='?';

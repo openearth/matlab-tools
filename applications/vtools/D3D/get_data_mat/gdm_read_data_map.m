@@ -81,7 +81,9 @@ end
 %while in that case is done at the `simdef` level. 
 
 %layer
-data=gdm_get_info_layer(data,layer);
+if ~isempty(layer)
+    data=gdm_get_info_layer(data,layer);
+end
 
 %get desired fractions
 if ~isempty(var_idx)

@@ -143,6 +143,10 @@ end
 if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
     [in_p.xlims,in_p.ylims]=D3D_gridInfo_lims(in_p.gridInfo);
 end
+in_p=isfield_default(in_p,'epsg_in',28992);
+in_p=isfield_default(in_p,'epsg_out',in_p.epsg_in);
+in_p=isfield_default(in_p,'save_tiles',false);
+in_p=isfield_default(in_p,'tiles',{});
 
 v2struct(in_p)
 
@@ -491,16 +495,17 @@ if plot_tiles
     
 OPT.xlim=xlims;
 OPT.ylim=ylims;
-OPT.epsg_in=28992; %WGS'84 / google earth
-OPT.epsg_out=28992; %Amersfoort
+OPT.epsg_in=epsg_in; %WGS'84 / google earth
+OPT.epsg_out=epsg_out; %Amersfoort
 dx=diff(xlims);
 tzl=tiles_zoom(dx);
 OPT.tzl=tzl; %zoom
-OPT.save_tiles=false;
-OPT.path_save=fullfile(pwd,'earth_tiles');
-OPT.path_tiles=in_p.path_tiles; 
+OPT.save_tiles=save_tiles;
+OPT.path_save=fpath_tiles; %mat file to save tiles
+OPT.path_tiles=in_p.path_tiles; %folder with tiles
 OPT.map_type=3;%map type
 OPT.han_ax=han.sfig(kr,kc);
+OPT.tiles=tiles;
 
 plotMapTiles(OPT);
 end

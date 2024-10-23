@@ -49,6 +49,16 @@ in_p=isfield_default(in_p,'plot_axis','xt');
 in_p=isfield_default(in_p,'lim_t',[NaN,NaN]);
 in_p=isfield_default(in_p,'xlab_str','dist_prof',true);
 in_p=isfield_default(in_p,'do_measurements',0);
+if in_p.do_measurements
+    in_p=isfield_default(in_p,'mt',2.5);
+else
+    in_p=isfield_default(in_p,'mt',1.5);
+end
+in_p=isfield_default(in_p,'mb',1.5);
+in_p=isfield_default(in_p,'mr',0.5);
+in_p=isfield_default(in_p,'ml',1.5);
+in_p=isfield_default(in_p,'sh',1.0);
+in_p=isfield_default(in_p,'sv',1.5);
 
 v2struct(in_p)
 
@@ -152,16 +162,12 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-if do_measurements
-marg.mt=2.5; %top margin [cm]
-else
-marg.mt=1.5; %top margin [cm]
-end
-marg.mb=1.5; %bottom margin [cm]
-marg.mr=0.5; %right margin [cm]
-marg.ml=1.5; %left margin [cm]
-marg.sh=1.0; %horizontal spacing [cm]
-marg.sv=1.5; %vertical spacing [cm]
+marg.mt=mt; %top margin [cm]
+marg.mb=mb; %bottom margin [cm]
+marg.mr=mr; %right margin [cm]
+marg.ml=ml; %left margin [cm]
+marg.sh=sh; %horizontal spacing [cm]
+marg.sv=sv; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 

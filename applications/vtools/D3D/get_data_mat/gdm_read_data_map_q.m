@@ -35,7 +35,7 @@ if is1d
     error('make it 1D proof')
 end
 
-[~,varname]=D3D_var_num2str('umag','is1d',is1d,'ismor',ismor);
+[~,varname]=D3D_var_num2str('ucmag','is1d',is1d,'ismor',ismor);
 data_umag=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
 [~,varname]=D3D_var_num2str('h','is1d',is1d,'ismor',ismor);
 data_h=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 

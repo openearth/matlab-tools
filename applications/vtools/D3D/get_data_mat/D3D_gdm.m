@@ -36,7 +36,21 @@
 % 
 % %% PATHS
 % 
+% %Check out SVN repository:
+% %https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/
+% %into a folder (e.g., <dir_checkout>).
+% %`fpath_add_oet` points to <dir_checkout\applications\vtools\general\addOET.m>
 % fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
+%
+% %The source of QuickPlot is now within the source code of Delft3D.
+% %Check it out by:
+% %```
+% % git init
+% % git remote add -f origin https://git.deltares.nl/oss/delft3d
+% % git config core.sparseCheckout true
+% % git sparse-checkout set src/tools_lgpl/matlab/quickplot/progsrc
+% %```
+% %and point here to the folder where it has been checked out.
 % fdir_d3d='c:\checkouts\qp\';
 %
 % % fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
@@ -128,7 +142,7 @@
 % in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
 % in_plot.(tag).clims_diff_t=[NaN,NaN]; %clim of difference with time
 % in_plot.(tag).clims_diff_s=[NaN,NaN]; %clim of difference with simulation
-% in_plot.(tag).filter_lim.clims=[998,1000]; %
+% in_plot.(tag).filter_lim.clims=[998,1000]; %values larger than 1 and smaller than 2 are removed.
 % in_plot.(tag).filter_lim.clims_diff_s=[-1001,-998]; %
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).tim_movie=40; %movie duration [s]
@@ -146,6 +160,7 @@
 % in_plot.(tag).rkm_tol_x=5000;
 % in_plot.(tag).rkm_tol_y=5000;
 % in_plot.(tag).plot_tiles=1; %plot satellite background image
+% % in_plot.(tag).epsg_in=4326; %28992
 % % in_plot.(tag).fig_size=[0,0,37/2,15];
 % % in_plot.(tag).font_size=20;
 

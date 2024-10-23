@@ -94,8 +94,8 @@ function D3D_list_of_variables
 
 %% WAVES
 
-%   41=wave height [m]
-%   42=wave forces [N]
+%   41 'waveheigth' = wave height [m]
+%   42              = wave forces [N]
 
 %% ICE
 

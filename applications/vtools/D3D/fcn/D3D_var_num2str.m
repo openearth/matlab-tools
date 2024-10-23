@@ -226,6 +226,10 @@ if ischar(var_id)
             var_id_out='mesh2d_taus';
             var_str_read='taub';
             var_str_save='taub';
+        case {'waveheight','mesh2d_hwav'}
+            var_id_out='mesh2d_hwav';
+            var_str_read='waveheight';
+            var_str_save='waveheight';
         otherwise
 
     end

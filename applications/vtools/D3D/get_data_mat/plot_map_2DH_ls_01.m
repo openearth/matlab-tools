@@ -293,12 +293,6 @@ for kpli=1:npli %variable
                 [in_p.d_m,in_p.t_m]=meshgrid(s,tim_dtime);
                 in_p.val_m=data_loc;
                 in_p.unit=in_p.var{kvar};
-%                 in_p.t_m
-%                 in_p.is_diff=0;
-%                 in_p.plot_mea=plot_mea;
-%                 in_p.do_leg=0;
-%                 in_p.do_time=1;
-
     
                 fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
             end %kS

@@ -28,10 +28,12 @@ simdef_def.D3D.structure=2;
 parin=inputParser;
 
 addOptional(parin,'simdef',simdef_def);
+addOptional(parin,'sta','obs');
 
 parse(parin,varargin{:});
 
 simdef=parin.Results.simdef;
+sta=parin.Results.sta;
 
 %%
 
@@ -72,9 +74,15 @@ switch simdef.D3D.structure
         end
     case {2,4}
         nci=ncinfo(path_his);
-        is_sta=ismember('station_id',{nci.Variables.Name});
+        switch sta
+            case 'obs'
+                str_r='station_id';
+            case 'cs'
+                str_r='cross_section_name';
+        end
+        is_sta=ismember(str_r,{nci.Variables.Name});
         if is_sta
-            obs_sta.name=cellstr(ncread(path_his,'station_id')')';
+            obs_sta.name=cellstr(ncread(path_his,str_r)')';
             obs_sta.x=ncread(path_his,'station_x_coordinate')';
             obs_sta.y=ncread(path_his,'station_y_coordinate')';
         else
