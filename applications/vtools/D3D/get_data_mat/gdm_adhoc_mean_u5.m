@@ -46,10 +46,10 @@ end
 
 %% PATHS
 
-load('simdef_all.mat','simdef_all')
+%%%load('simdef_all.mat','simdef_all')
 %ad-hoc! problem with p-drive folder, for now only process second run. 
 % simdef=simdef_all(2);
-simdef=simdef_all;
+% simdef=simdef_all;
 
 nS=numel(simdef);
 
@@ -125,21 +125,18 @@ save(fpath_mat_tmp,'data_all');
 
 %% power
 
-fdir_fig=simdef(1).file.fig.dir;
-% fdir_fig_loc=fullfile(fdir_fig,'mean_u');
-fdir_fig_loc=fullfile(fdir_fig,'mean_u2');
-mkdir_check(fdir_fig_loc);
+kref=flg_loc.sim_ref; %better to check 
 
 for pw=1:5
+    
+fdir_fig=simdef(kref).file.fig.dir;
+fdir_fig_loc=fullfile(fdir_fig,'mean_u3');
+mkdir_check(fdir_fig_loc,NaN,1,0); 
+        
 idx=1:1:size(data_all.val,1); %all
 % pw=3;
 val=data_all.val(idx,:,:).^pw;
 val_m=mean(val,1);
-
-% %%
-% figure
-% surf(data_all.val,'EdgeColor','none')
-% colorbar
 
 %%
 figure
@@ -154,8 +151,15 @@ legend(flg_loc.str_sim)
 printV(gcf,fpath_fig);
 
 %%
+
+for kS=1:nS
+    
+fdir_fig=simdef(kS).file.fig.dir;
+fdir_fig_loc=fullfile(fdir_fig,'mean_u3');
+mkdir_check(fdir_fig_loc,NaN,1,0); 
+
 figure
-plot(data_all.rkm,val_m(:,:,2)-val_m(:,:,1))
+plot(data_all.rkm,val_m(:,:,kS)-val_m(:,:,kref))
 ylabel(sprintf('difference in mean longitudinal velocity to the power %d [m^%d/s^%d]',pw,pw,pw))
 xlabel(labels4all('rkm',1/1000,'en'));
 title(sprintf('%s  -  %s',datestr(data_all.time_dtime(1)),datestr(data_all.time_dtime(end))));
@@ -164,6 +168,8 @@ ha=gca;
 ha.XAxis.Direction='reverse';
 printV(gcf,fpath_fig);
 
+end
+    
 end
 
 end %function
