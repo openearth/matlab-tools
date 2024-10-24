@@ -180,12 +180,12 @@ fid          = fopen(filename,'w');
 OS           = 'windows'; % or 'unix'
 
 % edit - 9June'17 - Julien Groenenboom
-%   S.m=S.m';
-%   S.n=S.n';
+S.m=S.m';
+S.n=S.n';
 
 for i=1:size(S.m,1)
 
-   fprintf(fid,'%-20s %.3d %.3d %.3d %.3d',S.DATA(i).name,S.m(i,1),S.n(i,1),S.m(i,2),S.n(i,2));
+   fprintf(fid,'%-20s %3d %3d %3d %3d',S.DATA(i).name,S.m(i,1),S.n(i,1),S.m(i,2),S.n(i,2));
    if     strcmpi(OS(1),'u')
       fprintf(fid,'\n');
    elseif strcmpi(OS(1),'w')
