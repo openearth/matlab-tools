@@ -205,10 +205,10 @@ switch what_do
                 stru_out=delft3d_io_thd('read',fname);
             case '.obs'
                 G=delft3d_io_grd('read',varargin{1});
-                stru_out=delft3d_io_obs('read',fname,G);
+                stru_out=D3D_read_obs(fname,G,varargin{2:end});
             case '.crs'
                 G=delft3d_io_grd('read',varargin{1});
-                stru_out=delft3d_io_crs('read',fname,G);
+                stru_out=D3D_read_crs(fname,G,varargin{2:end});
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
@@ -323,9 +323,9 @@ switch what_do
             case 'thd'
                 delft3d_io_thd('write',fname,stru_in); %only D3D4 format. Need to be added for FM
             case '.obs'
-                delft3d_io_obs('write',fname,stru_in);
+                D3D_write_obs(fname,stru_in,varargin{2:end});
             case '.crs'
-                delft3d_io_crs('write',fname,stru_in);
+                D3D_write_crs(fname,stru_in,varargin{2:end});
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end
