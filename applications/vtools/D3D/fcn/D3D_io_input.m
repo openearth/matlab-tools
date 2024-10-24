@@ -42,7 +42,10 @@
 % 
 % D3D_io_input('write',fpath_dep_out,grd,'location','cor');
 %
-
+%E.G. Delft3D 4 obs and crs files
+% obs=D3D_io_input('read',fobs,fgrd);
+% crs=D3D_io_input('read',fcrs,fgrd);
+%
 function varargout=D3D_io_input(what_do,fname,varargin)
 
 %% cell 
@@ -200,6 +203,12 @@ switch what_do
                 fclose(fid);
             case 'thd'
                 stru_out=delft3d_io_thd('read',fname);
+            case '.obs'
+                G=delft3d_io_grd('read',varargin{1});
+                stru_out=delft3d_io_obs('read',fname,G);
+            case '.crs'
+                G=delft3d_io_grd('read',varargin{1});
+                stru_out=delft3d_io_crs('read',fname,G);
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
@@ -313,6 +322,10 @@ switch what_do
 %                 end
             case 'thd'
                 delft3d_io_thd('write',fname,stru_in); %only D3D4 format. Need to be added for FM
+            case '.obs'
+                delft3d_io_obs('write',fname,stru_in);
+            case '.crs'
+                delft3d_io_crs('write',fname,stru_in);
             otherwise
                 error('Extension %s in file %s not available for writing',ext,fname)
         end
