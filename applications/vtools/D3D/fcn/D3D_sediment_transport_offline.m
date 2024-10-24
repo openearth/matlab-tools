@@ -191,10 +191,7 @@ end %function
 %Read file <Qseries.csv> and output in [Q,time] format
 function Qseries_input=read_Qseries(fpath_hydro)
 
-fpath_Qseries=fullfile(fpath_hydro,'Qseries.csv');
-if ~exist(fpath_Qseries,'file')
-    error('File Qseries does not exist: %s',fpath_Qseries);
-end
+fpath_Qseries=find_Qseries(fpath_hydro);
 Qseries_input=readmatrix(fpath_Qseries,'FileType','text');
 
 %reverse if necessary
@@ -383,5 +380,34 @@ fdir_sed_out=fullfile(fpath_out,'sed');
 if isfolder(fdir_sed_in)
     copyfile_check(fdir_sed_in,fdir_sed_out);
 end
+
+end %function
+
+%% 
+
+function fpath_Qseries=find_Qseries(fpath_hydro)
+
+dire=dir(fpath_hydro);
+nf=numel(dire);
+kf_csv=NaN;
+for kf=1:nf
+    [~,~,ext]=fileparts(dire(kf).name);
+    if strcmp(ext,'.csv')
+        if isnan(kf_csv)
+            kf_csv=kf;
+        else
+            error('There is more than one csv-file in folder. I do not know which one is for the Qseries: %s',fpath_hydro)
+        end
+    end
+end
+if isnan(kf_csv)
+    error('There is no Qseries file in this folder: %s',fpath_hydro)
+end
+fpath_Qseries=fullfile(fpath_hydro,dire(kf_csv).name);
+
+% fpath_Qseries=fullfile(fpath_hydro,'Qseries.csv');
+% if ~exist(fpath_Qseries,'file')
+%     error('File Qseries does not exist: %s',fpath_Qseries);
+% end
 
 end %function
