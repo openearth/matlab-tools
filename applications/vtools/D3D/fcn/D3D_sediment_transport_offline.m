@@ -80,15 +80,15 @@ function D3D_sediment_transport_offline(fpath_hydro,fpath_morpho,fpath_out,in_pl
 
 %% PARSE
 
-idx_def=1; %quite ad-hoc. Could be made input. 
-
 parin=inputParser;
 
 addOptional(parin,'overwrite',0)
+addOptional(parin,'time0',datetime(2000,01,01,0,0,0,'timezone','+00:00'))
 
 parse(parin,varargin{:})
 
 overwrite=parin.Results.overwrite;
+tim_dtime0=parin.Results.time0;
 
 %% CALC
 
@@ -118,7 +118,7 @@ if iscell(fpath_hydro)
     fpath_hydro=create_single_hydro_SMT(fpath_hydro,fpath_out,overwrite);
 end
 
-tim_dtime=copy_all_hydro_simulations(fpath_hydro,fpath_out,Qseries,MorFac,overwrite);
+tim_dtime=copy_all_hydro_simulations(fpath_hydro,fpath_out,Qseries,MorFac,overwrite,tim_dtime0);
 
 %%
 
@@ -246,7 +246,7 @@ end %function
 
 %%
 
-function tim_dtime=copy_all_hydro_simulations(fpath_hydro,fpath_out,Qseries,MorFac,overwrite)
+function tim_dtime=copy_all_hydro_simulations(fpath_hydro,fpath_out,Qseries,MorFac,overwrite,tim_dtime0)
 
 %read <Qseries> (Q,time)
 Qseries_input=read_Qseries(fpath_hydro);
@@ -255,10 +255,8 @@ Qseries_input=read_Qseries(fpath_hydro);
 nsim=size(Qseries,1);
 tim=NaN(1,nsim);
 tim_dtime=NaT(1,nsim+1);
-% tim_dtime.TimeZone='+00:00';
-% tim_dtime(1)=datetime(2000,01,01,0,0,0,'timezone','+00:00');
-tim_dtime.TimeZone='+01:00';
-tim_dtime(1)=datetime(2020,17,01,0,0,0,'timezone','+01:00');
+tim_dtime.TimeZone=tim_dtime0.TimeZone;
+tim_dtime(1)=tim_dtime0;
 
 %loop in Qseries input
 for ksim=1:nsim
@@ -277,6 +275,9 @@ for ksim=1:nsim
     %find MorFac
     if ~isnan(MorFac)
         idx_m=find(MorFac(:,1)==Q);
+        if isempty(idx_m)
+            error('There is no MorFac defined for discharge %f m^3/s',Q)
+        end
         MorFac_val=MorFac(idx_m,2);
     else
         MorFac_val=1;
