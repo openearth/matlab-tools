@@ -103,7 +103,7 @@ for ke=1:ne-3
 end
 
 %maximum morphodynamic growth rate
-max_gr_morph_p=max(gr_morph_p);
+max_gr_morph_p=max(gr_morph_p,2);
 max_gr_morph_m=reshape(max_gr_morph_p,np1,np2);
 
 end %function
