@@ -97,7 +97,8 @@ OPT.epsg_in=4326; %WGS'84 / google earth
 OPT.epsg_out=28992; %Amersfoort
 OPT.tzl = 10; %zoom
 OPT.save_tiles=true;
-OPT.path_save=fullfile(pwd,'earth_tiles');
+OPT.path_save=fullfile(pwd,'tiles'); %changed behaviour. This must be a full path already. 
+OPT.tiles={};
 OPT.path_tiles=fullfile(pwd,'earth_tiles'); 
 OPT.map_type=2;%map type
 OPT.han_ax=[];
@@ -119,6 +120,12 @@ if nargin==0
 end
 
 OPT = setproperty(OPT,varargin);
+
+%% CHECK IF TILES IN MAT EXIST
+if ~isempty(OPT.tiles)
+    fcn_plot(OPT,OPT.tiles)
+    return
+end
 
 %% PATHS
 if exist(OPT.path_tiles,'dir') ~= 7;
@@ -262,35 +269,12 @@ end
 
 
 %% PLOT
-[nx,ny,~]=size(tiles);
 
-if isempty(OPT.han_ax) || ~isaxes(OPT.han_ax)
-    %If axis handle is invalid, create a new figure
-    figure;
-    hold on;
-    ax=gca;
-    axis equal;
-else
-    %Plot to axis handle
-    ax=OPT.han_ax;
-    hold on;
-    axis equal;
-end
-
-for kx=1:nx
-    for ky=1:ny
-         surf(ax,tiles{kx,ky,1},tiles{kx,ky,2},OPT.z_tiles*ones(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none');
-    end
-end
-% switch logs.CS2.type
-%     case 'projected'
-
-%     otherwise
-% end
+fcn_plot(OPT,tiles)
 
 %% SAVE
 if OPT.save_tiles
-    path_full_save=fullfile(OPT.path_save,'tiles');
+    path_full_save=OPT.path_save;
     if exist(path_full_save,'file')
         fprintf(2,'you are trying to overwrite a tiles variable: %s\n',path_full_save);
         yn=input('Overwrite? [yes/no/rename] ','s');
@@ -325,5 +309,31 @@ function [lat_deg,lon_deg] = osm2deg(zoom,xtile,ytile)
     lat_deg = lat_rad * 180.0 ./ pi;
 end
 
+%%
+
+function fcn_plot(OPT,tiles)
+
+[nx,ny,~]=size(tiles);
+
+if isempty(OPT.han_ax) || ~isaxes(OPT.han_ax)
+    %If axis handle is invalid, create a new figure
+    figure;
+    hold on;
+    ax=gca;
+    axis equal;
+else
+    %Plot to axis handle
+    ax=OPT.han_ax;
+    hold(ax,'on');
+    axis(ax,'equal');
+end
+
+for kx=1:nx
+    for ky=1:ny
+         surf(ax,tiles{kx,ky,1},tiles{kx,ky,2},OPT.z_tiles*ones(size(tiles{kx,ky,2})),tiles{kx,ky,3},'EdgeColor','none');
+    end
+end
+
+end %function
 
 %EOF

@@ -59,6 +59,24 @@ function varargout = wavedispersion(varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+%E.G.
+
+% w=readmatrix('TPAR.bnd','FileType','text'); %if you want to compare to data from SWAN
+% 
+% Tp=1:16;
+% L=wavedispersion(0.7.*Tp,30);
+% Hs=L/15;
+% 
+% figure
+% grid on;hold on
+% h(1)=plot(Tp,Hs,'r-','linewidth',2);
+% h(2)=plot(Tp,(Tp/5).^2,'b-','linewidth',2);
+% h(3)=scatter(w(:,3),w(:,2),10,'g'); %id you want to compare to data from SWAN
+% title('Relation between Tp and Hs: windsea conditions')
+% legend(h,{'Max. steepness (1:15), 30 m water depth','Typical windsea conditions (Tp=5*sqrt(Hm0))','data'},'location','NW')
+% ylabel('Hs [m]')
+% xlabel('Tp [s], assumed to be equivalent to Tm/0.7')
+
 OPT.method = 'guo';
 OPT.g      = 9.81;
 
