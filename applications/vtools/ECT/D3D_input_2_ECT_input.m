@@ -82,8 +82,8 @@ ECT_input.Fa1=simdef.ini.actlay_frac;
 ECT_input.Fi1=simdef.ini.subs_frac;
 
 % nu_mom=1/6*0.41*h*sqrt(Cf)*sqrt(u^2+v^2);
-ECT_input.nu_mom=0;
-ECT_input.Dh=ECT_input.nu_mom; %secondary flow diffusivity [m^2/s]
+ECT_input.nu_mom=simdef.mdf.Vicouv;
+ECT_input.Dh=simdef.mdf.Dicou; %secondary flow diffusivity [m^2/s]
 ECT_input.diff_hir=simdef.mor.HiranoDiffusion.*ones(size(ECT_input.gsd)); %diffusion hirano
 
 if numel(simdef.sed.dk)==1
