@@ -214,7 +214,7 @@ if ismember(modelType,{'dfm','SFINCS'}) && strcmp(fName(end-2:end),'.nc')
         
         indVarNames = find(~cellfun(@isempty,strfind(lower(varNames),lower(newName))));
         for ii = 1:length(indVarNames)
-            varNamesNoPrefix = strrep(varNames,'mesh2d_','');
+            varNamesNoPrefix = strrep(lower(varNames),'mesh2d_','');
             if strcmpi(newName,varNamesNoPrefix{indVarNames(ii)})
                 newName = infonc.Variables(indVarNames(ii)).Name; matchFound = 1;
             end
@@ -266,12 +266,12 @@ function fmNames = getFmNames
 
 fmNames={};
 %%% VARIABLE names used within different versions of Delft3D-Flexible Mesh
-fmNames{end+1,1}={'mesh2d_node_x','NetNode_x'}; % x-coordinate of nodes
-fmNames{end+1,1}={'mesh2d_node_y','NetNode_y'}; % y-coordinate of nodes
-fmNames{end+1,1}={'mesh2d_node_z','NetNode_z'}; % z-coordinate of nodes
+fmNames{end+1,1}={'mesh2d_node_x','NetNode_x','Mesh2d_node_x'}; % x-coordinate of nodes
+fmNames{end+1,1}={'mesh2d_node_y','NetNode_y','Mesh2d_node_y'}; % y-coordinate of nodes
+fmNames{end+1,1}={'mesh2d_node_z','NetNode_z','Mesh2d_node_z'}; % z-coordinate of nodes
 
-fmNames{end+1,1}={'FlowElem_xcc','mesh2d_face_x'}; % x-coordinate of faces
-fmNames{end+1,1}={'FlowElem_ycc','mesh2d_face_y'}; % y-coordinate of faces
+fmNames{end+1,1}={'FlowElem_xcc','mesh2d_face_x','Mesh2d_face_x'}; % x-coordinate of faces
+fmNames{end+1,1}={'FlowElem_ycc','mesh2d_face_y','Mesh2d_face_y'}; % y-coordinate of faces
 
 fmNames{end+1,1}={'NetLink_xu','mesh2d_edge_x'}; % x-coordinate of edge
 fmNames{end+1,1}={'NetLink_yu','mesh2d_edge_y'}; % y-coordinate of edge
