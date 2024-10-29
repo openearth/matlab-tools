@@ -28,33 +28,9 @@ if ~flg_loc.do_create_mat
     return
 end
 
-if isfield(flg_loc,'write_shp')==0
-    flg_loc.write_shp=0;
-end
-if flg_loc.write_shp==1
-    messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
-end
+%% DEFAULTS
 
-%add velocity vector to variables if needed
-% if isfield(flg_loc,'do_vector')==0
-%     flg_loc.do_vector=zeros(1,numel(flg_loc.var));
-% end
-
-% if isfield(flg_loc,'var_idx')==0
-%     flg_loc.var_idx=cell(1,numel(flg_loc.var));
-% end
-
-% if isfield(flg_loc,'tol')==0
-%     flg_loc.tol=1.5e-7;
-% end
-
-% if isfield(flg_loc,'sum_var_idx')==0
-%     flg_loc.sum_var_idx=zeros(size(flg_loc.var));
-% end
-
-
-flg_loc=gdm_default_flags(flg_loc);
-
+[flg_loc,simdef]=gdm_parse_map_2DH(fid_log,flg_loc,simdef);
 flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
 
 %% PATHS

@@ -11,6 +11,8 @@
 %$HeadURL$
 %
 %compute normal flow
+%INPUT:
+% hydraulic_radius: 1=considering `B*h/(B+2h)`; 2=considering `h`
 
 function val_out=normal_flow(varargin)
 
@@ -26,6 +28,7 @@ addOptional(parin,'Cf',NaN);
 addOptional(parin,'C',NaN);
 addOptional(parin,'g',9.81);
 addOptional(parin,'hydraulic_radius',1);
+addOptional(parin,'h0',1);
 
 parse(parin,varargin{:});
 
@@ -37,6 +40,7 @@ Cf=parin.Results.Cf;
 C=parin.Results.C;
 g=parin.Results.g;
 hydraulic_radius=parin.Results.hydraulic_radius;
+h0=parin.Results.h0;
 
 %% SELECT
 
@@ -55,10 +59,10 @@ end
 %% CALC
 
 switch idx_do
-%     case 1
-%         normal_flow_Q
+    case 1
+        val_out=normal_flow_Q(h,g/C^2,s,B,'g',g,'hydraulic_radius',hydraulic_radius);
     case 2
-        val_out=normal_flow_h(Q,B,g/C^2,s,'g',g,'hydraulic_radius',hydraulic_radius);
+        val_out=normal_flow_h(Q,B,g/C^2,s,'g',g,'hydraulic_radius',hydraulic_radius,'h0',h0);
     case 4
         val_out=normal_flow_s(Q,B,g/C^2,h,'g',g,'hydraulic_radius',hydraulic_radius);
     case 5

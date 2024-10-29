@@ -19,7 +19,7 @@ function gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map,varargin)
 parin=inputParser;
 
 addOptional(parin,'do_load',1);
-addOptional(parin,'dim',2);
+addOptional(parin,'dim',NaN);
 addOptional(parin,'fpath_grd',fullfile(fdir_mat,'grd.mat'));
 addOptional(parin,'simdef',NaN);
 addOptional(parin,'disp',1);
@@ -48,20 +48,27 @@ else
     [~,is1d,~,~]=D3D_is(fpath_map);
 end
 
-if is1d==1 && dim==2
-    dim=1;
-    if do_disp
-    messageOut(fid_log,'The grid seems to be 1D. I read it as such')
-    end
-elseif is1d==3 && dim==2
-    dim=1;
-    if do_disp
-    messageOut(fid_log,'The grid seems to be 1D Sobek 3. I read it as such')
-    end
-elseif is1d==0 && dim==1
-    dim=2;
-    if do_disp
-    messageOut(fid_log,'The grid seems to be 2D. I read it as such')
+if isnan(dim)
+    if is1d==1 && dim==2
+        dim=1;
+        if do_disp
+        messageOut(fid_log,'The grid seems to be 1D. I read it as such')
+        end
+    elseif is1d==3 && dim==2
+        dim=1;
+        if do_disp
+        messageOut(fid_log,'The grid seems to be 1D Sobek 3. I read it as such')
+        end
+    elseif is1d==0 && dim==1
+        dim=2;
+        if do_disp
+        messageOut(fid_log,'The grid seems to be 2D. I read it as such')
+        end
+    else
+        dim=2;
+        if do_disp
+        messageOut(fid_log,'The grid seems to be 2D. I read it as such')
+        end
     end
 end
 

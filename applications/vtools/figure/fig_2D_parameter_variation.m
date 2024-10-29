@@ -36,7 +36,7 @@ if isfield(in_p,'fig_visible')==0
     in_p.fig_visible=1;
 end
 if isfield(in_p,'fig_print')==0
-    in_p.fig_print=0;
+    in_p.fig_print=1;
 end
 if isfield(in_p,'fname')==0
     in_p.fname='fig';
