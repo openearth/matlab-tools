@@ -23,6 +23,8 @@ switch modelType
             timeVar = 'time';
         elseif nc_isvar(inputFile,'TIME')
             timeVar = 'TIME';
+        elseif nc_isvar(inputFile,'valid_time')
+            timeVar = 'valid_time';
         elseif nc_isvar(inputFile,'nmesh2d_dlwq_time')
             timeVar = 'nmesh2d_dlwq_time';
         end
