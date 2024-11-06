@@ -1,30 +1,38 @@
-function EHY_plotContour(modelFile,Contours,varargin)
+function EHY_plotContour(modelFile,varargin)
 
 %% Function plot countour lines of phases from fourier file);
-OPT.Color     = [0 0 0; 1 0 0; 0 1 0 ];
-OPT.LineStyle = {'-' '--' '-.'};
-OPT.LineWidth = 0.5;
-OPT           = setproperty(OPT,varargin);
+OPT.varContours    = 'bed';
+OPT.valContours    = NaN;
+OPT.colContours    = [0 0 0; 1 0 0; 0 1 0 ];
+OPT.styleContours  = {'-' '--' '-.'};
+OPT.widthContours  = 0.5;
+OPT                = setproperty(OPT,varargin);
 
-%% Read the data
-[newName,varNameInput] = EHY_nameOnFile(modelFile,'bed',OPT);
-FI                     = ncinfo(modelFile);
-list                   = {FI.Variables.Name};
-nrVar                  = get_nr(list,newName);
-longName               = FI.Variables(nrVar).Attributes(7).Value;
-
-%% Read (quickplot style)
-FI       = qpfopen(modelFile);
-DATA     = qpread(FI,FI.NumDomains + 2,longName,'griddata');
-DATA.Val = -1*DATA.Val;
-
-for i_cont = 1: length(Contours)
-    index = mod(i_cont - 1,3) + 1;
+%% Read the data (might be that modelFile already contains the data; noet very elegan.logical nam
+if ~isstruct(modelFile)
+    [newName,varNameInput] = EHY_nameOnFile(modelFile,OPT.varContours,OPT);
+    FI                     = ncinfo(modelFile);
+    list                   = {FI.Variables.Name};
+    nrVar                  = get_nr(list,newName);
+    longName               = FI.Variables(nrVar).Attributes(7).Value;
     
-    %% Plot Contour lines, QUICKPLOT style, from 0 until 360 degrees. To avoid thick 0 degrees phase line file with NAN vulue in between 345 and 15 degrees
+    %% Read (quickplot style)
+    FI       = qpfopen(modelFile);
+    DATA     = qpread(FI,FI.NumDomains + 2,longName,'griddata');
+    if strcmp(OPT.varContours,'bed') DATA.Val = -1*DATA.Val; OPT.valContours = -1*OPT.valContours; end
+else
+    DATA = modelFile;
+end
+
+%% Plot the contours, 1 by 1
+for i_cont = 1: length(OPT.valContours)
+%    if strcmp(OPT.varContours,'ampphas') && valCountours(i_cont) ==360; DATA.val(Data.val <180) = DATA.val(Data.val <180) + 360; end 
+    index = mod(i_cont - 1,length(OPT.styleContours)) + 1;
+    
+    %% Plot Contour lines, QUICKPLOT style
     Ops                      = struct('version'   , 1.4      , 'axestype','X-Y'       ,'presentationtype','contour lines', ...
-                                     'LineParams',{{'linestyle',OPT.LineStyle{index},'color',OPT.Color(index,:) ,'LineWidth',OPT.LineWidth}},                     ...
-                                     'Thresholds',-1*Contours(i_cont)                                                                  );
+                                     'LineParams',{{'linestyle',OPT.styleContours{index},'color',OPT.colContours(index,:) ,'LineWidth',OPT.widthContours}},                     ...
+                                     'Thresholds',OPT.valContours(i_cont)                                                                  );
     Ops                      = qp_state_version(Ops);
     
     qp_scalarfield(gca,[],'contour lines','UGRID',DATA,Ops);
