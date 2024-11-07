@@ -59,6 +59,7 @@
 % % fpath_add_oet='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\general\addOET.m';
 % % fdir_d3d='p:\studenten-riv\05_OpenEarthTools\02_qp\';
 %
+% %Path to folder with project paths. See `paths_project_layout`.
 % % fpath_project='d:\temporal\220517_improve_exner\';
 % fpath_project='p:\11209261-rivierkunde-2023-morerijn';
 % 
@@ -135,7 +136,7 @@
 % in_plot.(tag).depth_average=1; %compute depth average quantity [1,nvar]
 % in_plot.(tag).tim_just_load=0;
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
-% in_plot.(tag).tim=NaN; %all times
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
 % % in_plot.(tag).clims_type_var=datenum(2018,07,01); %in case of <clims_type>=2
 % in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
@@ -174,12 +175,12 @@
 % in_plot.(tag).do_diff_t=1; %difference of each simulation in time
 % in_plot.(tag).do_diff_s=1; %difference of each simulation with reference simulation
 % in_plot.(tag).do_all_t_diff_t=1; %all times together, difference in time
-% in_plot.(tag).var={'bl'}; 
-% in_plot.(tag).tim=NaN;
+% in_plot.(tag).var={'bl'}; %list variables: `open D3D_list_of_variables`
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).tim_type=2;
 % in_plot.(tag).tol_tim=1.1;
 % in_plot.(tag).fig_size=[0,0,16,9].*2;
-% in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'y500.pli');
+% in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'y500.pli'); %polyline to take data [char] (path to file with polyline), [double] (coordinates of points [np,2] (x,y)).
 % in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
@@ -207,17 +208,16 @@
 % in_plot.(tag).do_s=1; %difference with reference simulation
 % in_plot.(tag).do_all=1; %all simulations in same figure
 % in_plot.(tag).do_plot_structures=1; %plot bridge piles and structures: 0=NO; 1=YES
-% in_plot.(tag).tim=NaN; %analysis time [datenum, datetime]. NaN=all, Inf=last.
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).tim_tol=hours(1); 
-% % in_plot.(tag).tim=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)];
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).do_movie=0;
 % % in_plot.(tag).statis_plot={'val_mean'}; %statistics to plot. Comment to have all. 
-% in_plot.(tag).var={'mesh2d_taus'}; % ,'mesh2d_dg'} %,14,27,'mesh2d_dg'}; % ,14,27,44,'mesh2d_dg',47}; %{1,14,27,44,'mesh2d_dg','mesh2d_DXX01','mesh2d_DXX06'}; %can be cell array vector. See <open D3D_list_of_variables> for possible input flags
+% in_plot.(tag).var={'mesh2d_taus'}; %list variables: `open D3D_list_of_variables`
 %%plot of stacked sediment transport
-% in_plot.(tag).var={'stot'}; % ,'mesh2d_dg'} %,14,27,'mesh2d_dg'}; % ,14,27,44,'mesh2d_dg',47}; %{1,14,27,44,'mesh2d_dg','mesh2d_DXX01','mesh2d_DXX06'}; %can be cell array vector. See <open D3D_list_of_variables> for possible input flags
+% in_plot.(tag).var={'stot'};
 % in_plot.(tag).var_idx={1:1:11}; %for 11 size fractions
 % in_plot.(tag).do_area=1;
 %%%
@@ -258,10 +258,10 @@
 % in_plot.(tag).do_xtv=1; %
 % in_plot.(tag).do_diff=1; %regular plot
 % in_plot.(tag).do_s=1; %difference with reference
-% in_plot.(tag).var={'h'}; %<open main_plot_layout>
+% in_plot.(tag).var={'h'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).branch{1,1}={'Channel_1D_1'}; %<open main_plot_layout>
 % in_plot.(tag).branch_name{1,1}='c1';
-% in_plot.(tag).tim=NaN;
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).tim_type=1;
 % in_plot.(tag).xlims=[NaN,NaN];
 % in_plot.(tag).ylims=[NaN,NaN];
@@ -286,7 +286,7 @@
 % in_plot.(tag).do_all_sim=1; %all simulations in same plot
 % in_plot.(tag).tim=NaN; %Time to plot. This is not [initial,final] but all the times to consider. E.g., [initial:delta_t:final].
 % in_plot.(tag).stations=NaN; %NaN=all
-% in_plot.(tag).var={'sal'};
+% in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all; 
 % in_plot.(tag).elev=[-6.5,-2.5]; %elevation at which to take the data.
 % in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
@@ -369,8 +369,8 @@
 % tag='fig_map_fraction_cs';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
-% in_plot.(tag).var={'Q','qsp'}; 
-% in_plot.(tag).tim=Inf;
+% in_plot.(tag).var={'Q','qsp'}; %list variables: `open D3D_list_of_variables`
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).tim_just_load=true;
 % in_plot.(tag).tim_type=2;
 % in_plot.(tag).tol_tim=1.1;
@@ -390,10 +390,10 @@
 % tag='fig_map_2DH_his_01';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_all_sta=1;
-% in_plot.(tag).var={'sal'}; %open D3D_list_of_variables
+% in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`
 % % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
 % in_plot.(tag).tim_type=1; %Type of input time: 1=flow; 2=morpho. 
-% in_plot.(tag).tim=5000:1:5002; 
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).depth_average=1; %compute depth average quantity
@@ -420,7 +420,7 @@
 % in_plot.(tag).tim_just_load=1; %debug flag
 % in_plot.(tag).do_p_single=0; 
 % tim_his=600/24/3600; %his period [days]
-% in_plot.(tag).tim=[datenum(2018,07,20):tim_his:datenum(2018,11,10)];
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % % in_plot.(tag).fpath_stations=fullfile(fpaths.fdir_sta,'stations_01.txt');
 % ns=20;
 % in_plot.(tag).stations=cell(ns,1);
@@ -430,7 +430,7 @@
 % in_plot.(tag).elev(ks)=-1.5;
 % in_plot.(tag).s(ks)=20e3-ks*1000;
 % end
-% in_plot.(tag).var={'sal'};
+% in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).unit={'cl'};
 % in_plot.(tag).s_fact=1/1000;
 % in_plot.(tag).xlab_str='dist_mouth';

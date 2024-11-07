@@ -138,8 +138,6 @@ if ischar(var_id)
                     if is1d
                         var_id_out='mesh1d_s1';
                     end
-                case 3
-                    var_id_out='wl';
             end
             var_str_read='wl';
             var_str_save=var_str_read;
