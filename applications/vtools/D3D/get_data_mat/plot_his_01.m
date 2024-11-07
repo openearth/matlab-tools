@@ -96,7 +96,7 @@ for ktimint=1:ntimint
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
-        var_str=D3D_var_num2str_structure(varname,simdef(1));
+        var_str=D3D_var_num2str_structure(varname,simdef(1),'res_type','his');
             
         data_all=cell(nsim,n_sta);
         data_conv=cell(nsim,n_sta);
