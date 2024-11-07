@@ -133,11 +133,16 @@ if ischar(var_id)
             var_str_read='umag_layer'; %I think we can use the same name, because we will always add a layer to the input. Although it can be dangerous.
             var_str_save=var_str_read;
         case 'wl'
-            switch structure
-                case {1,2,4,5}
-                    if is1d
-                        var_id_out='mesh1d_s1';
+            switch res_type
+                case 'map'
+                    switch structure
+                        case {1,2,4,5}
+                            if is1d
+                                var_id_out='mesh1d_s1';
+                            end
                     end
+                case 'his'
+                    %use `wl`
             end
             var_str_read='wl';
             var_str_save=var_str_read;
