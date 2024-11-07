@@ -267,13 +267,9 @@ for kobs=1:nobs
         bc(ks).quantity{2}='waterlevelbnd';
         bc(ks).unit{2}='m';
     else
-        bc(ks).function='astronomic';
-        bc(ks).quantity{1}='astronomic component'; 		
-        bc(ks).unit{1}='-'; 
-        bc(ks).quantity{2}='waterlevelbnd amplitude'; 		
-        bc(ks).unit{2}='m'; 
-        bc(ks).quantity{3}='waterlevelbnd phase'; 		
-        bc(ks).unit{3}='rad/deg/minutes'; 
+        bc(ks).function='constant';
+        bc(ks).quantity{1}='waterlevelbnd';
+        bc(ks).unit{1}='m'; 
     end
 
     %replace NaN values with bed level values
@@ -286,7 +282,7 @@ for kobs=1:nobs
     if ~only_begin_last
         bc(ks).val=[time_s,val(:)];
     else
-        bc(ks).val={'A0',val(end),0.0};
+        bc(ks).val=val(end);
     end
     
 end
@@ -321,13 +317,9 @@ for kcrs=1:ncrs
         bc(ks).quantity{2}='dischargebnd';
         bc(ks).unit{2}='m3/s';
     else
-        bc(ks).function='astronomic';
-        bc(ks).quantity{1}='astronomic component'; 		
-        bc(ks).unit{1}='-'; 
-        bc(ks).quantity{2}='dischargebnd amplitude'; 		
-        bc(ks).unit{2}='m3/s'; 
-        bc(ks).quantity{3}='dischargebnd phase'; 		
-        bc(ks).unit{3}='rad/deg/minutes'; 
+        bc(ks).function='constant';
+        bc(ks).quantity{1}='dischargebnd';
+        bc(ks).unit{1}='m3/s';        
     end
     if isnan(crs(kcrs).idx) 
         [time_s,val]=time_and_val(time_v,time_start,zeros(size(time_v)),only_start_end);
@@ -338,7 +330,7 @@ for kcrs=1:ncrs
     if ~only_start_end
         bc(ks).val=[time_s,val];
     else
-        bc(ks).val={'A0',val(end),0.0};
+        bc(ks).val=val(end);
     end
 end
 
@@ -400,20 +392,16 @@ for kfpath_lat = 1:length(fpath_bc_lat);
             bc(ks).quantity{2}='lateral_discharge';
             bc(ks).unit{2}='m3/s';
         else
-            bc(ks).function='astronomic';
-            bc(ks).quantity{1}='astronomic component';
-            bc(ks).unit{1}='-';
-            bc(ks).quantity{2}='lateral_discharge amplitude';
-            bc(ks).unit{2}='m3/s';
-            bc(ks).quantity{3}='lateral_discharge phase';
-            bc(ks).unit{3}='rad/deg/minutes';
+            bc(ks).function='constant';
+            bc(ks).quantity{1}='lateral_discharge';
+            bc(ks).unit{1}='m3/s';
         end
         val=lat.Table(ks).Data(:,2);
         [time_s,val]=time_and_val(time_v,time_start,val,only_start_end);
         if ~only_start_end
             bc(ks).val=[time_s,val];
         else
-            bc(ks).val={'A0',val(end),0.0};
+            bc(ks).val=val(end);
         end
     end
     [fdir_out, fname, ~] = fileparts(fpath_lat_orig); 
