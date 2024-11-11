@@ -89,6 +89,7 @@ else
                 sim_idx_loc=his_u(khis);
                 fpath_his=strrep(fpath_his_ori,[filesep,'0',filesep],[filesep,num2str(sim_idx_loc),filesep]); 
                 data_loc=EHY_getmodeldata(fpath_his,station,'dfm',OPT);
+                data_loc.val=reshape(data_loc.val,[],1);
                 if khis==1
                     data=data_loc;
                 else

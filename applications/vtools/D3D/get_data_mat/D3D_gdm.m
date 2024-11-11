@@ -294,6 +294,7 @@
 % in_plot.(tag).fig_overwrite=1; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).unit={'cl_surf'};  %sal, cl
+% in_plot.(tag).do_title=1;
 
 %% sed trans offline
 

@@ -1106,6 +1106,16 @@ switch lower(variable)
                 str_var='RMS altura de ola';
          end
          un_type='L';  
+    case {'timestep'}
+         switch lan
+            case 'en'
+                str_var='time step';
+            case 'nl'
+                str_var='tijdstap';
+            case 'es'
+                str_var='intervalo de tiempo';
+         end
+         un_type='T';  
     otherwise
         str_var=variable;
         un_type='?';
