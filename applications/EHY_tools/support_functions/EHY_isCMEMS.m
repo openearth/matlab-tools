@@ -16,3 +16,12 @@ if strcmp(ext,'.nc')
         end
     end
 end
+
+info = ncinfo(fname);
+AttrValues = {info.Attributes.Value};
+for i = 1:length(AttrValues)
+    if ~isempty(findstr('cmems',lower((AttrValues{i})))); 
+        TF = true;
+        break
+    end
+end

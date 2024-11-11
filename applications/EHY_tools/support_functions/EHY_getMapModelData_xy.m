@@ -44,15 +44,13 @@ if ~isempty(dimsInd.layers) && dims(dimsInd.layers).sizeOut > 1
     if strcmp(Data.modelType,'dfm') && nc_isvar(inputFile,'mesh2d_flowelem_zcc')
         Zint = EHY_getMapModelData(inputFile,OPT(:),'varName','mesh2d_flowelem_zw');
         Data.Zint = Zint.val;
-        Zcen = EHY_getMapModelData(inputFile,OPT(:),'varName','mesh2d_flowelem_zcc');
-        Data.Zcen = Zcen.val;
     else
         disp('The vertical coordinates are not directly available in your model file. You could achieve this by specifying in .mdu''s [output]-block "fullGridOutput = 1" (in FM versions more recent than March 2021)')
         disp('The vertical coordinates will now be reconstructured based on the information available from the model output (and potentially the corresponding .mdu file).')
-        [Data.Zint,Data.Zcen,Data.wl,Data.bed] = EHY_getMapModelData_construct_zcoordinates(inputFile,Data.modelType,OPT);
+        [Data.Zint,~,Data.wl,Data.bed] = EHY_getMapModelData_construct_zcoordinates(inputFile,Data.modelType,OPT);
     end
-    dmy = size(Data.Zcen);
-    no_layers = dmy(end);
+    dmy = size(Data.Zint);
+    no_layers = dmy(end) - 1;
 else
     no_layers = 1;
 end
@@ -118,7 +116,11 @@ if isfield(Data,'face_nodes')
                     val = arbcross(arb,{'EDGE' permute(Data.val,[2 1])});
                 end
             case 3
-                val = arbcross(arb,{'FACE' permute(Data.val,[dimsInd.faces, setdiff([2 3 1], dimsInd.faces,'stable')])});
+                if ismember(numel(Data.Xcen), size(Data.val)) %data at faces
+                    val = arbcross(arb,{'FACE' permute(Data.val,[dimsInd.faces, setdiff([2 3 1], dimsInd.faces,'stable')])});
+                elseif ismember(size(Data.edge_nodes,2), size(Data.val)) %data at edges
+                    val = arbcross(arb,{'EDGE' permute(Data.val,[dimsInd.faces, setdiff([2 3 1], dimsInd.faces,'stable')])});
+                end
             case 4
                 val = arbcross(arb,{'FACE' permute(Data.val,[dimsInd.faces dimsInd.bed_layers dimsInd.sedfrac dimsInd.time])});
             otherwise
