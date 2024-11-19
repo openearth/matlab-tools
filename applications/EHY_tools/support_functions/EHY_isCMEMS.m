@@ -15,13 +15,14 @@ if strcmp(ext,'.nc')
             TF = true;
         end
     end
-end
-
-info = ncinfo(fname);
-AttrValues = {info.Attributes.Value};
-for i = 1:length(AttrValues)
-    if ~isempty(findstr('cmems',lower((AttrValues{i})))); 
-        TF = true;
-        break
+    
+    if isfield(infonc.Attributes, 'Value')
+        AttrValues = {infonc.Attributes.Value};
+        for i = 1:length(AttrValues)
+            if ~isempty(findstr('cmems',lower((AttrValues{i}))))
+                TF = true;
+                break
+            end
+        end
     end
 end
