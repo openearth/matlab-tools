@@ -104,7 +104,7 @@ if ~isempty(numlimdtFiles)
     Xlim = XYZ(:,1);Ylim = XYZ(:,2);NUMLIMDT = XYZ(:,3);
 elseif exist(mapFile)
     disp('Reading numlimdt from *_map.nc ...')
-    disp('To avoid this, set ''Wrimap_numlimdt = 1'' in the mdu-file')
+    disp('To avoid this, set ''Wrixyz_numlimdt = 1'' in the mdu-file')
     disp('and/or wait untill the simulation has finished.')
     time0 = EHY_getmodeldata_getDatenumsFromOutputfile(mapFile);
     time = time0(end);
@@ -130,11 +130,13 @@ if OPT.writeMaxVel || ~exist('Xlim','var')
 end
 
 % sort descending
+xynumlimdt = sortrows(unique([Xlim Ylim NUMLIMDT],'rows'),3,'descend');
+
 [~,I] = sort(NUMLIMDT);
 I = flipud(I);
-Xlim = Xlim(I);
-Ylim = Ylim(I);
-NUMLIMDT = NUMLIMDT(I);
+Xlim = xynumlimdt(:,1);
+Ylim = xynumlimdt(:,2);
+NUMLIMDT = xynumlimdt(:,3);
 
 % export
 disp(['You can find the created files in the directory:' char(10) outputDir])
@@ -153,7 +155,9 @@ if ~isempty(Xlim)
     delft3d_io_xyn('write',strrep(outputFile,'.pol','_obs.xyn'),Xlim,Ylim,cellstr(num2str(NUMLIMDT)))
     top10ind = 1:min([length(Xlim) 10]);
     delft3d_io_xyn('write',strrep(outputFile,'.pol','_top10_obs.xyn'),Xlim(top10ind),Ylim(top10ind),cellstr(num2str(NUMLIMDT(top10ind))))
-    dlmwrite(strrep(outputFile,'.pol','.xyz'),[Xlim Ylim NUMLIMDT],'delimiter',' ','precision','%20.7f')
+    xys = [Xlim Ylim NUMLIMDT];
+    dlmwrite(strrep(outputFile,'.pol','.xyz'),xys,'delimiter',' ','precision','%20.7f')
+    dlmwrite(strrep(outputFile,'.pol','_top10.xyz'),xys(1:min([10 size(xys,1)]), :),'delimiter',' ','precision','%20.7f')
     try % copy network to outputDir
         fullWinPathNetwork = EHY_getFullWinPath(mdu.geometry.NetFile,fileparts(mdFile));
         copyfile(fullWinPathNetwork,outputDir)
