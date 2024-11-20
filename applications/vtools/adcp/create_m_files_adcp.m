@@ -74,7 +74,7 @@ for kd=order_anl
             [~,fnameonly,fext]=fileparts(ffullname);
 
             ffolder_out_mat=strrep(ffolder,dir_data_anl,fdir_mat); %ffolder_out_mat=strrep(ffolder,dir_data,fullfile(dir_out,dir_tag_mat));
-            mkdir_check(ffolder_out_mat)
+            mkdir_check(ffolder_out_mat);
             fsave=fullfile(ffolder_out_mat,sprintf('%s.mat',fnameonly));
             if numel(fnameext)>8
                 tok=fnameext(end-7:end);

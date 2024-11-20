@@ -271,7 +271,7 @@
 % in_plot.(tag).overwrite=1; %overwrite mat-files
 % in_plot.(tag).do_movie=0; %
 % % in_plot.(tag).ml=2.5;
-% in_plot.(tag).plot_markers=1;
+% in_plot.(tag).do_marker=1;
 % in_plot.(tag).plot_val0=0;
 
 %% HIS

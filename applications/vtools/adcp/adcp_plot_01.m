@@ -44,7 +44,7 @@ for kd=order_anl
             [~,fnameonly,fext]=fileparts(ffullname);
 
             ffolder_out_fig=strrep(ffolder,fdir_mat,fdir_fig);
-            mkdir_check(ffolder_out_fig)
+            mkdir_check(ffolder_out_fig);
             
             
             if strcmp(fext,'.mat')
@@ -57,12 +57,12 @@ for kd=order_anl
 
                 if OPT.plot
                     in_p.fname=fname_print{kd,1}{kf,1};
-                    in_p.fig_print=[1,4]; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+                    in_p.fig_print=[1]; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
                     in_p.fig_visible=0;
                     in_p.fig_size=[0,0,14,8];
                     in_p.data_block_processed=data_block_processed;
                     in_p.val='vmag';
-                    in_p.lan='es';
+                    in_p.lan='en';
 
                     fig_adcp_1_v(in_p)
                 end

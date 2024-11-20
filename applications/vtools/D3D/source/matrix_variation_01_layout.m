@@ -62,4 +62,24 @@ variation_str{5}='';
 
 allvari=D3D_apply_variation(allvari,variation_c);
 
+%%
+
+%We want to vary a string but force it to be constant for some variation of another parameter:
+
+variation_c{1}=[0,1,2,3,4,5,6,7];  %we vary this integer
+variation_str{1}='';
+
+variation_str{2}={'generic1d2d3d','implicit1d'}; %all possibilities of the string
+variation_c{2}=1; %we only use this one
+
+allvari=D3D_apply_variation(allvari,variation_c); %we apply the variation
+
+variation_c{1}=[0]; %now this integer is constant
+variation_str{1}='';
+
+variation_str{2}={'generic1d2d3d','implicit1d'};
+variation_c{2}=2; %and we use the other string
+
+allvari=D3D_apply_variation(allvari,variation_c);
+
 end %function

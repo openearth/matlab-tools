@@ -80,14 +80,13 @@ end
 
 nelev_cs=max([cs_def_ori.numLevels]); %number of points to interpolate the new elevation 
 
-% nc_info=ncinfo(path_map_ori);
 mesh1d_node_offset=ncread(path_map_ori,'mesh1d_node_offset');
 mesh1d_node_branch=ncread(path_map_ori,'mesh1d_node_branch');
 mesh1d_flowelem_bl=ncread(path_map_ori,'mesh1d_flowelem_bl');
 mesh1d_edge_nodes=ncread(path_map_ori,'mesh1d_edge_nodes');
-network_edge_length=ncread(path_map_ori,'network_edge_length');
 
 [~,~,str_network1d]=D3D_is(path_map_ori);
+network_edge_length=ncread(path_map_ori,sprintf('%s_edge_length',str_network1d));
 network1d_branch_id=ncread(path_map_ori,sprintf('%s_branch_id',str_network1d))';
 nb=size(network1d_branch_id,1);
 network1d_branch_id_c=cell(nb,1);

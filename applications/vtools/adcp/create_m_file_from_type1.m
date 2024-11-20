@@ -60,6 +60,8 @@ end %function
 
 function data_block=read_block(fid)
 
+val_empty=2147483647;
+
 %% line 2
 %1 ENSEMBLE TIME -Year (at start of ensemble)
 %2 - Month
@@ -236,6 +238,16 @@ for kl=1:nl
         data_block.backscatter(kl,:)=[str2double(tok{1,8}),str2double(tok{1,9}),str2double(tok{1,10}),str2double(tok{1,11})];
         data_block.percentgood(kl,1)=str2double(tok{1,12});
         data_block.discharge(kl,1)  =str2double(tok{1,13});
+
+        %filter
+        if data_block.discharge(kl,1)==val_empty
+            data_block.vmag(kl,1)       =NaN;
+            data_block.vdir(kl,1)       =NaN;
+            data_block.veast(kl,1)      =NaN;
+            data_block.vnorth(kl,1)     =NaN;
+            data_block.vvert(kl,1)      =NaN;
+            data_block.verr(kl,1)       =NaN;
+        end
     end
 
 end

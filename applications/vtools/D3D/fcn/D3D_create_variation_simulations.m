@@ -21,7 +21,20 @@
 %   -
 %
 %E.G.:
-%   see <../source/D3D_main_create_simulations_variation_layout.m>
+%
+%     %% paths
+% path_folder_sims='p:\11209261-004-groynes\06_simulations\04_runs_03\02_runs\';
+% path_input_folder='p:\11209261-004-groynes\06_simulations\04_runs_03\01_input\';
+% path_input_folder_refmdf='../../01_input';
+% 
+%     %% sims
+% path_ref=fullfile(path_folder_sims,sprintf('r%03d',0));
+% fcn_adapt=@(X)matrix_variation_01(X);
+% 
+% %% CALL
+% 
+% input_m=D3D_input_variation(path_folder_sims,path_input_folder,path_input_folder_refmdf,fcn_adapt);
+% D3D_create_variation_simulations(path_ref,input_m);
 
 function D3D_create_variation_simulations(path_ref,input_m,varargin)
 
@@ -128,7 +141,7 @@ for ksim=1:nsim
     D3D_write_sim_folder(simdef.D3D.dire_sim,path_file,mdf_loc);
     
     %run file
-    [strsoft_lin,strsoft_win]=D3D_bat(simdef,fpath_software);    
+    [strsoft_lin,strsoft_win]=D3D_bat(simdef,fpath_software,'check_existing',0);    
     D3D_create_run_batch('add',fdir_sim_runs,fid_lin,fid_win,simdef.runid.name,strsoft_lin,strsoft_win);
 
     %disp

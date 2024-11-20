@@ -41,7 +41,7 @@ file_type=parin.Results.file_type;
 %% FM or SOBEK3
 
 %fcnts = function to apply to the string we get:
-%    1 = get rid of the first string
+%    1 = get the string
 %    2 = convert to double
 %    3 = convert to double and make integer (take only number before .)
 
@@ -54,9 +54,9 @@ switch file_type
         fcnts=[1               ,1               ,2                     ,1               ,2                    ,1               ];
     case 2 %FM cross-section definition zw
         tag_cs='[Definition]';
-        tags ={'id'            ,'type'          ,'thalweg'  ,'numLevels'  ,'levels'   ,'flowWidths'  ,'totalWidths'  ,'leveeCrestLevel'  ,'leveeFlowArea'  ,'leveeTotalArea','leveeBaseLevel','mainWidth','fp1Width','fp2Width','isShared'};            
-        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*',sprintf('%s',str_dec),'\d+'        ,sprintf('%s',str_dec),sprintf('%s',str_dec)   ,sprintf('%s',str_dec)    ,sprintf('%s',str_dec)        ,'\d+.\d+'        ,'\d+.\d+'       ,sprintf('%s',str_dec)     ,'\d+.\d+'  ,'\d+.\d+' ,'\d+.\d+' ,'\d+'     };
-        fcnts=[1               ,1               ,2          ,3            ,2          ,2             ,2              ,2                  ,2                ,2               ,2               ,2          ,2         ,2         ,2         ];
+        tags ={'id'            ,'type'          ,'thalweg'            ,'numLevels'  ,'levels'             ,'flowWidths'         ,'totalWidths'        ,'leveeCrestLevel'    ,'leveeFlowArea'      ,'leveeTotalArea'     ,'leveeBaseLevel'     ,'mainWidth'          ,'fp1Width'           ,'fp2Width'           ,'isShared'};            
+        exprs={'\w+([.-]?\w+)*','\w+([.-]?\w+)*',sprintf('%s',str_dec),'\d+'        ,sprintf('%s',str_dec),sprintf('%s',str_dec),sprintf('%s',str_dec),sprintf('%s',str_dec),sprintf('%s',str_dec),sprintf('%s',str_dec),sprintf('%s',str_dec),sprintf('%s',str_dec),sprintf('%s',str_dec),sprintf('%s',str_dec),'\d+'     };
+        fcnts=[1               ,1               ,2                    ,3            ,2                    ,2                    ,2                    ,2                    ,2                    ,2                    ,2                    ,2                    ,2                    ,2                    ,2         ];
     case 3 %FM cross-section location  
         tag_cs='[CrossSection]';
         tags ={'id'            ,'branchId'      ,'chainage'  ,'shift'    ,'definitionId'    };            
@@ -103,9 +103,14 @@ for kl=1:nlcsin
             if ~isempty(str_aux_r)
                 tag_loc2=str_aux_r{1,1};
                 for ktags=1:ntags
-%                     if strcmp(tag_loc2,tags{1,ktags})
                     if strcmpi(tag_loc2,tags{1,ktags})
-                        str_aux_l3=regexp(str_loc2,exprs{1,ktags},'match');
+                        %take part after the equal
+                        str_aux_split=regexp(str_loc2,'=','split');
+                        if numel(str_aux_split)~=2
+                            error('One equal sign (''='') is expected in: %s',str_loc2)
+                        end
+                        str_value=str_aux_split{2};
+                        str_aux_l3=regexp(str_value,exprs{1,ktags},'match');
                         strconv=rework_str(str_aux_l3,fcnts(ktags));
                         cs(kcs).(tags{ktags})=strconv;
                     end
@@ -136,8 +141,9 @@ end %function
 function strconv=rework_str(str_aux_r,fcnts_loc)
 
 switch fcnts_loc
-    case 1 %get rid of the first string
-        strconv=str_aux_r{1,2};
+    case 1 %get the first string
+%         strconv=str_aux_r{1,2};
+        strconv=str_aux_r{1,1};
     case 2 %convert to double
 %         strconv=str2double(str_aux_r{1,1});
         strconv=str2double(str_aux_r);

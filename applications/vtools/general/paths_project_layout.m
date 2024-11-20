@@ -18,7 +18,7 @@ end
 fpaths.fdir_doc=fullfile(fpath_project,'04_documents');
     fpaths.fdir_rep=fullfile(fpaths.fdir_doc,'02_report','co');
 
-fpaths.fdir_data=fullfile(fpaths.fdir_data,'05_data');
+fpaths.fdir_data=fullfile(fpath_project,'05_data');
     fpaths.fdir_rkm=fullfile(fpaths.fdir_data,'01_rkm');
     fpaths.fdir_pli=fullfile(fpaths.fdir_data,'02_pli');
     fpaths.fdir_shp=fullfile(fpaths.fdir_data,'03_shp');
