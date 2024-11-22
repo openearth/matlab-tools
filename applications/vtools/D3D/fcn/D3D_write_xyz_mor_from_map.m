@@ -48,7 +48,8 @@ data_thlyr=EHY_getMapModelData(simdef.file.map,'varName','mesh2d_thlyr','t0',tim
 
 %rename
 xy_cen=[gridInfo.Xcen,gridInfo.Ycen];
-frac_cen=permute(squeeze(data_lyrfrac.val),[3,2,1]);
+%frac_cen=permute(squeeze(data_lyrfrac.val),[3,2,1]);
+frac_cen= squeeze(data_lyrfrac.val);
 thk_cen=squeeze(data_thlyr.val);
 
 %% WRITE
