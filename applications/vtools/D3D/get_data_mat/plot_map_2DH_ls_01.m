@@ -24,6 +24,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 %% PARSE
 
 %do flags
+flg_loc=isfield_default(flg_loc,'do_p_single',1);
 flg_loc=isfield_default(flg_loc,'do_all_t',0);
 flg_loc=isfield_default(flg_loc,'do_all_t_xt',0);
 flg_loc=isfield_default(flg_loc,'do_all_s',0);
@@ -147,7 +148,7 @@ for kpli=1:npli %variable
             in_p.xlab_un=xlab_un;
             
             %% plot single simulation and single time
-            if flg_loc.do_p
+            if flg_loc.do_p_single
                 flg_loc.plot_type=flg_loc.what_is;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=1;

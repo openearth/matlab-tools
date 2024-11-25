@@ -170,6 +170,7 @@
 % tag='fig_map_2DH_ls_01';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
+% in_plot.(tag).do_p_single=1; %plot single result
 % in_plot.(tag).do_all_t=0; %all times together
 % in_plot.(tag).do_all_s=1; %all simulations together
 % in_plot.(tag).do_diff_t=1; %difference of each simulation in time
