@@ -65,7 +65,12 @@ switch simdef.grd.type
 %                     cords(:,:,kun)=[x0+dy*(kun-1),-L1;x0+dy*kun,-L1];
 %                 end
 %         end
-        grd=wlgrid('read',fullfile(simdef.D3D.dire_sim,'grd.grd'));
+
+        %We can also read the grid and write the coordinates
+%         grd=wlgrid('read',fullfile(simdef.D3D.dire_sim,'grd.grd'));
+
+        grd=D3D_grd_DHL_coordinates(simdef);
+
         switch upstream_nodes
             case 1
                 kun=1;

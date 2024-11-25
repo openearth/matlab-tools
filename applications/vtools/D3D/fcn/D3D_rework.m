@@ -834,6 +834,7 @@ if any(size(simdef.bct.time)-size(simdef.bct.etaw))
     error('dimensions of etaw boundary condition do not agree')
 end
     %correcting for last cell
+if simdef.ini.etab0_type==1 %sloping bed level
 %In D3D4 we correct. 
 %In FM with Dpuopt=1 we correct.
 %In FM with Dpuopt=2 it is one full dx, not half. 
@@ -876,6 +877,7 @@ if simdef.mdf.izbndpos==0
             end
     end
 end %izbndpos
+end
 
 %add extra time with same value as last in case the last time step gets outside the domain
 if simdef.D3D.structure==2

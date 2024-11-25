@@ -42,7 +42,7 @@ check_dimensions(x_v,val)
 %% CALC
 
 %If there is no xlim given, we take the minimum and maximum of available data. 
-if ~isdatetime(xlims(1)) && ~isduration(xlims(1)) && isnan(xlims(1))
+if (~isdatetime(xlims(1)) && ~isduration(xlims(1)) && isnan(xlims(1))) || (isdatetime(xlims(1)) && isnat(xlims(1)))
     xlims=[min([x_v{:}]),max([x_v{:}])];
 end
 

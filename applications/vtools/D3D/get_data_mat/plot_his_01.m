@@ -56,12 +56,10 @@ obs_all=D3D_observation_stations(fpath_his,'simdef',simdef(1));
 
 %regular
 in_p=flg_loc;
-in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
 
 %convergence
 in_p_c=flg_loc;
-in_p_c.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p_c.fig_visible=0;
 
 % fext=ext_of_fig(in_p.fig_print);
@@ -552,8 +550,12 @@ if in_p.is_diff
 else
     ylims_loc=flg_loc.ylims_var{kvar};
 end
+xlims_loc=flg_loc.xlims_var{kvar};
 
 nylim=size(ylims_loc,1);
+if size(xlims_loc,1)<nylim
+    xlims_loc=repmat(xlims_loc,nylim,1);
+end
 
 in_p.val=val;
 in_p.tim=tim_dtime_p;
@@ -561,10 +563,8 @@ in_p.tim=tim_dtime_p;
 fdir_fig_var=fullfile(fdir_fig,var_str);
 mkdir_check(fdir_fig_var,NaN,1,0);
 for kylim=1:nylim
-
-%     [in_p.xlims,in_p.ylims]=get_ylims(ylims_loc(kylim,:),do_measurements,val,data_mea,tim_dtime_p(1));
     in_p.ylims=ylims_loc(kylim,:);
-%     in_p.xlim
+    in_p.xlims=xlims_loc(kylim,:);
     switch flg_loc.plot_type
         case 1
             fname_noext=fig_name(fdir_fig_var,tag,runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?

@@ -57,12 +57,7 @@ grd=D3D_io_input('read',simdef.file.grd);
 M=grd.mmax;
 N=grd.nmax;
 
-slope=simdef.ini.s;
-dx_m=diff(grd.cor.x,1,2);
-dx=dx_m(1,1);
-if ~all(abs(dx_m-dx)<1e-6,'all')
-    error('sorry, this is made for a constant dx. Adjust the code!')
-end
+
 K=simdef.grd.K;
 h=simdef.ini.h;
 % u=simdef.ini.u;
@@ -91,6 +86,15 @@ I_mat=-9.99e2*ones(N,M); %initial secondary flow velocity with dummy values
 
 switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation
     case 1
+
+        slope=simdef.ini.s;
+        
+        %check dx
+        dx_m=diff(grd.cor.x,1,2);
+        dx=dx_m(1,1);
+        if ~all(abs(dx_m-dx)<1e-6,'all')
+            error('sorry, this is made for a constant dx. Adjust the code!')
+        end
 
         if numel(slope)==1
             d0=h+etab; 

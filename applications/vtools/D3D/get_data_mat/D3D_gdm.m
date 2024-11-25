@@ -254,10 +254,13 @@
 
 % tag='fig_map_1D_01';
 % in_plot.(tag).do=1;
-% in_plot.(tag).do_p=0; %regular plot
+% in_plot.(tag).do_p=1; %pass through plotting routine
+% in_plot.(tag).do_p_single=1; %plot single result
+% in_plot.(tag).do_diff_t=1; %difference initial time
+% in_plot.(tag).do_diff_s=1; %difference reference simulation
+% in_plot.(tag).do_diff_s_t=1; %difference reference simulation and initial time
+% in_plot.(tag).do_diff_s_perc=1; %difference reference simulation in percentage terms
 % in_plot.(tag).do_xtv=1; %
-% in_plot.(tag).do_diff=1; %regular plot
-% in_plot.(tag).do_s=1; %difference with reference
 % in_plot.(tag).var={'h'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).branch{1,1}={'Channel_1D_1'}; %<open main_plot_layout>
 % in_plot.(tag).branch_name{1,1}='c1';
@@ -273,6 +276,8 @@
 % % in_plot.(tag).ml=2.5;
 % in_plot.(tag).do_marker=1;
 % in_plot.(tag).plot_val0=0;
+% % in_plot.(tag).str_time='yyyymmddHHMM'; %string for writing the time in the figures [-]
+% % in_plot.(tag).leg_mea='analytical'; %legend of the measurements (default: "measuremts") 
 
 %% HIS
 
@@ -289,6 +294,8 @@
 % in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all; 
 % in_plot.(tag).elev=[-6.5,-2.5]; %elevation at which to take the data.
+% %The number of `ylims` controls the number of figures. For varying `xlim`, 
+% %add `xlims` variable and a matching number of `ylims`.
 % in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).ylims_diff=[NaN,NaN;-sal2cl(-1,400),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).fig_overwrite=1; %overwrite figures

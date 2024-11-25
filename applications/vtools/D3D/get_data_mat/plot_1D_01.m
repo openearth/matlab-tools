@@ -305,15 +305,15 @@ for ksb=1:nsb
                         in_p.plot_mea=false;
                         if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
                             tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-                            data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis,'tol',flg_loc.tol_time_measurements);
-                            if isstruct(data_mea) %there is data
+                            data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis,'tol',flg_loc.tol_time_measurements,'do_rkm',1);
+                            if ~isempty(data_mea.x) %there is data
                                 in_p.plot_mea=true;
                                 in_p.s_mea=data_mea.x;
                                 if kdiff==1
                                     in_p.val_mea=data_mea.y;
                                 elseif kdiff==2
                                     tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
-                                    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis,'tol',flg_loc.tol_time_measurements);
+                                    data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis,'tol',flg_loc.tol_time_measurements,'do_rkm',1);
                                     in_p.val_mea=data_mea.y-data_mea_0.y;
                                     %we are assuming <s_mea> is the same
                                 end
@@ -714,8 +714,8 @@ fig_map_sal_01(in_p);
 if flg_loc.do_plot_along_rkm==1
     for krkm=flg_loc.krkm_v
         
-        in_p.xlims=flg_loc.rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
-        in_p.ylims=flg_loc.rkm_file{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
+        in_p.xlims=in_p.rkm{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
+        in_p.ylims=in_p.rkm{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
 
         in_p.fname=fullfile(fdir_fig_loc,sprintf('inpoly_%02d',krkm));
 

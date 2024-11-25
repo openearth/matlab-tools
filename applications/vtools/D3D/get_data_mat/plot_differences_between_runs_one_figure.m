@@ -34,12 +34,13 @@ end
 % end
 
 %% map 1D
-tag_check='fig_map_1D_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check,'fig',str_fig);
-    in_plot_fig.leg_str=leg_str;
-    plot_map_1D_xv_diff_01(fid_log,in_plot_fig,simdef_ref,simdef);
-end
+%Done when passing `simdef_all`
+% tag_check='fig_map_1D_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check,'fig',str_fig);
+%     in_plot_fig.leg_str=leg_str;
+%     plot_map_1D_xv_diff_01(fid_log,in_plot_fig,simdef_ref,simdef);
+% end
 
 %% map_summerbed
 %treated within the regular plot

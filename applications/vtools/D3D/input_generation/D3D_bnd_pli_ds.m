@@ -38,7 +38,8 @@ switch simdef.grd.type
         data{kl, 1}=sprintf('%0.7E  0     %s_0002',L,fname_pli_d); %kl=kl+1;
     case 3
         kun=1;
-        grd=wlgrid('read',fullfile(simdef.D3D.dire_sim,'grd.grd'));
+        grd=D3D_grd_DHL_coordinates(simdef);
+%         grd=wlgrid('read',fullfile(simdef.D3D.dire_sim,'grd.grd'));
         cords(:,:,kun)=[grd.X(end,1),grd.Y(end,1);grd.X(end,end),grd.Y(end,end)];
 
 %         R=simdef.mdf.R;

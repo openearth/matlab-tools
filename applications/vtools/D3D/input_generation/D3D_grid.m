@@ -56,5 +56,9 @@ switch D3D_structure
         switch simdef.grd.type
             case 1
                 D3D_grd_rect_u(simdef)
+            case 3
+                D3D_grd_DHL_u(simdef)
+            otherwise
+                error('non-existing type')
         end %simdef.grd.type
 end

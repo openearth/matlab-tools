@@ -4,38 +4,14 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 17190 $
+%$Date: 2021-04-15 10:24:15 +0200 (do, 15 apr 2021) $
+%$Author: chavarri $
+%$Id: D3D_grd_DHL.m 17190 2021-04-15 08:24:15Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_grd_DHL.m $
 %
-%grid creation
 
-%INPUT:
-%   -
-%
-%OUTPUT:
-%   -
-
-function D3D_grd_rect_u(simdef)
-
-%% RENAME
-    
-grdfile=simdef.file.grd;
-dx=simdef.grd.dx;
-dy=simdef.grd.dy;
-L=simdef.grd.L;
-B=simdef.grd.B;
-
-%% CALC
-
-xr=0:dx:L;
-yr=0:dy:B;
-
-[x,y]=meshgrid(xr,yr);
-
-write_structured_NC_grid(x,y);
+function write_structured_NC_grid(grdfile,x,y)
 
 [nr,nc]=size(x);
 

@@ -19,6 +19,7 @@
 %   -dx  = space step for discretizing the domain [m].
 %   -hl  = left (high) water depth [m].
 %   -hr  = right (low) water depth [m].
+%   -tv  = time vector [s].
 %
 %OUTPUT:
 %

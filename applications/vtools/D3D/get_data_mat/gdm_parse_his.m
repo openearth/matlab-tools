@@ -59,6 +59,7 @@ flg_loc=isfield_default(flg_loc,'tol',1.5e-7);
 flg_loc=isfield_default(flg_loc,'write_shp',0);
 flg_loc=isfield_default(flg_loc,'measurements_input_type',1);
 flg_loc=isfield_default(flg_loc,'load_all_stations',0);
+flg_loc=isfield_default(flg_loc,'fig_print',1); %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 if flg_loc.write_shp==1
     messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
 end
@@ -66,6 +67,7 @@ end
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'clims_var');
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');
 
 if ~iscell(flg_loc.tim)
     flg_loc.tim_int{1}=flg_loc.tim;

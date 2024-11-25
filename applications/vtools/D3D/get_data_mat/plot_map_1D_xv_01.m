@@ -12,7 +12,9 @@
 %
 %
 %THIS NEEDS A THOROUGH REFACTORING
-%   -there is no loop over kylim for 1D plot
+%   -there is no loop over kylim for 1D plot.
+%   -loop on `kdiff` needs to be removed to clarify.
+%   -one single call with all simulations as input needs to exist that eliminates the need to call `plot_map_1D_xv_diff_01`. 
 
 function plot_map_1D_xv_01(fid_log,flg_loc,simdef)
 
@@ -51,10 +53,12 @@ flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');
 
 flg_loc=isfield_default(flg_loc,'tim_type',1);
+flg_loc=isfield_default(flg_loc,'fig_print',1);
+flg_loc=isfield_default(flg_loc,'str_time','yyyymmddHHMM');
 
 %% PATHS
 
-nS=numel(simdef);
+nsim=numel(simdef);
 fdir_mat=simdef(1).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
@@ -96,17 +100,14 @@ ndiff=gdm_ndiff(flg_loc);
 
 %figures
 in_p=flg_loc;
-in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-% in_p.unit={'qsp','qxsp','qysp'};
-%             in_p.gen_struct=gen_struct;
 in_p.fig_size=[0,0,14.5,12];
 
 % fext=ext_of_fig(in_p.fig_print);
 
-if nS>1
-    in_p.leg_str=flg_loc.leg_str;
-end
+% if nsim>1
+%     in_p.leg_str=flg_loc.leg_str;
+% end
 
 %% LOOP
 for kbr=1:nbr %branches
@@ -136,36 +137,38 @@ for kbr=1:nbr %branches
         
         [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
 
-        %time 0
+        %% time 0
+
         kt=1;
-            %model
-        data_0=NaN(nx,nS);    
-        for kS=1:nS    
-            fdir_mat=simdef(kS).file.mat.dir;
+
+            %% model
+        data_0=NaN(nx,nsim);    
+        for ksim=1:nsim    
+            fdir_mat=simdef(ksim).file.mat.dir;
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
             load(fpath_mat_tmp,'data');            
-            data_0(:,kS)=data;
+            data_0(:,ksim)=data;
         end
 
-        %skip if multidimentional
-%             fn_data=fieldnames(data_0(1));
-%             if size(data_0(1).(fn_data{1}),2)>1
-%                 messageOut(fid_log,sprintf('Skipping variable with multiple dimensions: %s',var_str_save));
-%                 continue
-%             end
+            %% measurements
+        [~,data_mea_0]=add_measurement(flg_loc,fid_log,time_dnum(kt),time_mor_dnum(kt),var_str_save);
+        
+        %% LOOP TIME
 
         ktc=0;
-        data_T=NaN(nx,nS,nt);
+        data_T=NaN(nx,nsim,nt);
         for kt=kt_v %time
             ktc=ktc+1;
 
-            %% load
-            for kS=1:nS
-                fdir_mat=simdef(kS).file.mat.dir;
+            %% load simulations
+            %It is 1D, I suppose it is not a huge amount of data.
+
+            for ksim=1:nsim
+                fdir_mat=simdef(ksim).file.mat.dir;
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
                 if exist(fpath_mat_tmp,'file')==2
                     load(fpath_mat_tmp,'data');
-                    data_T(:,kS,kt)=data;
+                    data_T(:,ksim,kt)=data;
                 else %for the reference time there is no time in this simulation (crashed?)
                     messageOut(fid_log,sprintf('No data for comparison: %s',fpath_mat_tmp));
                 end
@@ -180,49 +183,73 @@ for kbr=1:nbr %branches
             in_p.lab_str=var_str_save;
             in_p.xlims=flg_loc.xlims_var{kvar};
 
-            for kdiff=1:ndiff
+            %% measurements
 
-                %measurements                        
-                in_p.plot_mea=false;
-                if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
-                    tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-                    data_mea=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
-                    if isstruct(data_mea) %there is data
-                        in_p.plot_mea=true;
-                        in_p.s_mea=data_mea.x;
-                        if kdiff==1
-                            in_p.val_mea=data_mea.y;
-                        elseif kdiff==2
-                            tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
-                            data_mea_0=gdm_load_measurements(fid_log,flg_loc.measurements{ksb,1},'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
-                            in_p.val_mea=data_mea.y-data_mea_0.y;
-                            %we are assuming <s_mea> is the same
-                        end
-                    end
-                end
+            [do_measurements,data_mea]=add_measurement(flg_loc,fid_log,time_dnum(kt),time_mor_dnum(kt),var_str_save);
 
-                if kdiff==1
-                    in_p.val=data_T(:,:,kt);
+            %% regular plot
+            if flg_loc.do_p_single    
+
+                for ksim=1:nsim
+                    tag_ref='val';
+                    in_p.val=data_T(:,ksim,kt);
                     in_p.is_diff=0;
-                    str_dir='val';
                     in_p.val0=data_0;
-                elseif kdiff==2
+                    if do_measurements
+                        in_p.plot_mea=true;
+                        in_p.val_mea=data_mea.y;
+                        in_p.s_mea=data_mea.x;
+                    end
+                    if isfield(in_p,'leg_str')
+                        in_p=rmfield(in_p,'leg_str');
+                    end
+    
+                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    runid=simdef(ksim).file.runid;
+    
+                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt))
+                end %ksim
+
+            end
+
+            %% difference with initial time
+            if flg_loc.do_diff_t
+                error('do')
                     in_p.val=data_T(:,:,kt)-data_0(:,:);
                     in_p.is_diff=1;
                     str_dir='diff';
                     in_p.val0=zeros(size(in_p.val));
+                    if do_measurements
+                        in_p.val_mea=data_mea.y-data_mea_0.y;
+                    end
+            end
+
+            %% difference with reference
+            if flg_loc.do_diff_s && ksim~=kref
+                error('do')
+            end
+
+            %% all simulation together
+            if flg_loc.do_all_sim
+                tag_ref='val';
+                in_p.val=data_T(:,:,kt);
+                in_p.is_diff=0;
+                in_p.val0=data_0;
+                if do_measurements
+                    in_p.plot_mea=true;
+                    in_p.val_mea=data_mea.y;
+                    in_p.s_mea=data_mea.x;
                 end
+                in_p.leg_str=flg_loc.leg_str;
 
-                fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
-                mkdir_check(fdir_fig_loc,fid_log,1,0);
+                fdir_fig=fullfile(simdef(1).file.fig.dir,sprintf('%s_all',tag_fig),tag_serie);
+                runid=simdef(1).file.runid;
+                
+                fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt))
+            end
 
-                fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum(kt),var_str_save,branch_name,str_dir);
-%                         fpath_file{kt}=sprintf('%s%s',fname_noext,fext); %for movie 
+            %%
 
-                in_p.fname=fname_noext;
-
-                fig_1D_01(in_p);
-            end %kref
             messageOut(fid_log,sprintf('Done plotting figure %s time %4.2f %% variable %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
 
 
@@ -248,7 +275,7 @@ for kbr=1:nbr %branches
         
         %% all times in same figure xtv
         
-        if flg_loc.do_xtv && nS==1 && nt>1
+        if flg_loc.do_xtv && nsim==1 && nt>1
             [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
             in_p.x_m=x_m;
             in_p.y_m=y_m;
@@ -272,7 +299,7 @@ for kbr=1:nbr %branches
         
         %% all times in same figure xvt
         
-        if flg_loc.do_xvallt && nS==1 && nt>1
+        if flg_loc.do_xvallt && nsim==1 && nt>1
             error('not finished')
                 
             fig_1D_01(in_p);
@@ -287,21 +314,50 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,branch_name,str_dir)
+%%
 
-% fprintf('fdir_fig: %s \n',fdir_fig);
-% fprintf('tag: %s \n',tag);
-% fprintf('runid: %s \n',runid);
-% fprintf('time_dnum: %f \n',time_dnum);
-% fprintf('iso: %s \n',iso);
-                
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,branch_name,str_dir));
+function fpath_fig=fig_name(flg_loc,fdir_fig,tag,runid,time_dnum,var_str,branch_name,str_dir)
 
-% fprintf('fpath_fig: %s \n',fpath_fig);
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s',tag,runid,datestr(time_dnum,flg_loc.str_time),var_str,branch_name,str_dir));
+
 end %function
+
+%%
 
 function fpath_fig=fig_name_all(fdir_fig,tag,runid,var_str,branch_name,str_dir,kclim)
                 
 fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_clim_%d',tag,runid,var_str,branch_name,str_dir,kclim));
+
+end %function
+
+%%
+
+function fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,str_dir,tag,runid,time_dnum)
+
+fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
+mkdir_check(fdir_fig_loc,fid_log,1,0);
+
+fname_noext=fig_name(flg_loc,fdir_fig_loc,tag,runid,time_dnum,var_str_save,branch_name,str_dir);
+
+in_p.fname=fname_noext;
+
+fig_1D_01(in_p);
+
+end %function
+
+%%
+
+function [do_measurements,data_mea]=add_measurement(flg_loc,fid_log,time_dnum,time_mor_dnum,var_str_save)
+
+statis='val_mean'; %we do not loop on several variables
+do_measurements=false;
+data_mea=struct();
+if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+    tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum,time_mor_dnum);
+    data_mea=gdm_load_measurements(fid_log,flg_loc.measurements,'tim',tim_search_in_mea,'var',var_str_save,'stat',statis);
+    if isstruct(data_mea) %there is data
+        do_measurements=true;
+    end
+end
 
 end %function

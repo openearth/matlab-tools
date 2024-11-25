@@ -141,11 +141,12 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% map 1D
-tag_check='fig_map_1D_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    plot_map_1D_xv_01(fid_log,in_plot_fig,simdef);
-end
+%Done when passing `simdef_all`. 
+% tag_check='fig_map_1D_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check);
+%     plot_map_1D_xv_01(fid_log,in_plot_fig,simdef);
+% end
 
 %% his xt
 % tag_check='fig_his_xt_01';

@@ -10,7 +10,12 @@
 %$Id$
 %$HeadURL$
 %
+%Load data from measurements. 
 %
+%Example format:
+% data.h.val_mean.tim_dnum %[1,nt]
+% data.h.val_mean.s %[nx,1]
+% data.h.val_mean.val %[nx,nt]
 
 function data_out=gdm_load_measurements(fid_log,fpath_mea,varargin)
 

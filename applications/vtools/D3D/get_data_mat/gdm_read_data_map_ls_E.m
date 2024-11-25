@@ -16,7 +16,7 @@ function data=gdm_read_data_map_ls_E(fdir_mat,fpath_map,varname,simdef,varargin)
         
 %% PARSE
 
-% parin=inputParser;
+parin=inputParser;
 % 
 % addOptional(parin,'tim',[]);
 % % addOptional(parin,'layer',[]);

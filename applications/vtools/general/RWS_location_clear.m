@@ -22,7 +22,7 @@ ns=numel(stationlist);
 str_sta=cell(1,ns);
 str_found=false(1,ns);
 for ks=1:ns
-[str_sta{ks},str_found(ks)]=waterDictionary(stationlist{ks},NaN,'normal','dict','rwsNames.csv','stationnodot',false);
+[str_sta{ks},str_found(ks)]=waterDictionary(stationlist{ks},NaN,'normal','dict','rwsNames.csv','stationnodot',false,'do_warning',false);
 end
 
 end %function

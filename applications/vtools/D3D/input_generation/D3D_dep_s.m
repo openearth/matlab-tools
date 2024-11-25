@@ -96,13 +96,7 @@ N=grd.nmax;
 % M=size(grd.cor.x,2)+1;
 % N=size(grd.cor.x,1)+1;
 
-slope=simdef.ini.s; %slope (defined positive downwards)
-% dx=simdef.grd.dx;
-dx_m=diff(grd.cor.x,[],2);
-dx=dx_m(1,1);
-if ~all(abs(dx_m-dx)<1e-6,'all')
-    error('sorry, this is made for a constant dx. Adjust the code!')
-end
+
 if simdef.ini.etab_noise==2
 dy=simdef.grd.dy;
 % warning('read from grid?')
@@ -134,6 +128,15 @@ d0=etab; %depth (in D3D) at the downstream end (at x=L, where the water level is
 
 switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation
     case 1 %sloping bed
+
+        %check dx
+        dx_m=diff(grd.cor.x,[],2);
+        dx=dx_m(1,1);
+        if ~all(abs(dx_m-dx)<1e-6,'all')
+            error('sorry, this is made for a constant dx. Adjust the code!')
+        end
+
+        slope=simdef.ini.s; %slope (defined positive downwards)
         ny=ncy+2; %number of depths points in y direction
 
         depths=-9.99e2*ones(ny,nx); %initial depths with dummy values
