@@ -177,6 +177,7 @@
 % in_plot.(tag).do_all_t_diff_t=1; %all times together, difference in time
 % in_plot.(tag).var={'bl'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% in_plot.(tag).use_local_time=0; %use the time of each simulation rather than the time of the reference simulation for comparison
 % in_plot.(tag).tim_type=2;
 % in_plot.(tag).tol_tim=1.1;
 % in_plot.(tag).fig_size=[0,0,16,9].*2;

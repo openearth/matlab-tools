@@ -189,22 +189,39 @@ end
 
 %% check dimensions
 
-sv=size(val);
-if numel(sv)>2
-    sv=sv(2:end);
-    bol_d1=sv==1;
-    if ~any(bol_d1)
-        messageOut(NaN,'I cannot plot more than 2 dimensions')
-        return
+
+
+if ~iscell(val)
+
+    sv=size(val);
+    if numel(sv)>2
+        sv=sv(2:end);
+        bol_d1=sv==1;
+        if ~any(bol_d1)
+            messageOut(NaN,'I cannot plot more than 2 dimensions')
+            return
+        end
     end
-end
-val=squeeze(val);
-if do_area
-    ylims=real([0,max(sum(val,2))+eps]);
-    if isnan(ylims(2))
-        ylims(2)=1e-10;
+    val=squeeze(val);
+    if do_area
+        ylims=real([0,max(sum(val,2))+eps]);
+        if isnan(ylims(2))
+            ylims(2)=1e-10;
+        end
     end
+
+    nv=size(val,2);
+    val_cell=cell(nv,1);
+    s_cell=cell(nv,1);
+    for kv=1:nv
+        val_cell{kv,1}=val(:,kv);
+        s_cell{kv,1}=s(:,kv);
+    end
+    val=val_cell;
+    s=s_cell;
 end
+
+nv=numel(val); 
 
 %% SIZE
 
@@ -265,7 +282,7 @@ cbar(kr,kc).location='northoutside';
 cbar(kr,kc).label=labels4all('t',1/3600/24,lan);
 
 % brewermap('demo')
-nv=size(val,2); 
+
 if isnan(cmap(1,1))
     if nv<=9
         cmap=brewermap(nv,'set1');
@@ -491,7 +508,7 @@ end
 
 kr=1; kc=1;  
 if do_area
-    han.p(kr,kc,:)=area(s,val,'parent',han.sfig(kr,kc));
+    han.p(kr,kc,:)=area(s{1},val{1},'parent',han.sfig(kr,kc));
 %     han_aux=area(s,val,'parent',han.sfig(kr,kc));
     for kv=1:nv
         han.p(kr,kc,kv).FaceColor=cmap(kv,:);
@@ -499,9 +516,9 @@ if do_area
 else
     for kv=1:nv
         if do_staircase
-            han.p(kr,kc,kv)=stairs(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',ls{kv},'marker',mk{kv},'markersize',markersize);
+            han.p(kr,kc,kv)=stairs(s{kv},val{kv},'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',ls{kv},'marker',mk{kv},'markersize',markersize);
         else
-            han.p(kr,kc,kv)=plot(s,val(:,kv),'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',ls{kv},'marker',mk{kv},'markersize',markersize);
+            han.p(kr,kc,kv)=plot(s{kv},val{kv},'parent',han.sfig(kr,kc),'color',cmap(kv,:),'linewidth',prop.lw1,'linestyle',ls{kv},'marker',mk{kv},'markersize',markersize);
         end
     end
 end

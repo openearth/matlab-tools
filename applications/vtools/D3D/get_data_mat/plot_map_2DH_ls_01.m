@@ -33,6 +33,7 @@ flg_loc=isfield_default(flg_loc,'do_all_s_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_all_t_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_all_s_2diff',0); %plot all runs in same figure making the difference between each of 2 simulations
 
+flg_loc=isfield_default(flg_loc,'use_local_time',0); %plot all runs in same figure making the difference between each of 2 simulations
 flg_loc=isfield_default(flg_loc,'fig_print',1);
 flg_loc=isfield_default(flg_loc,'do_staircase',0);
 flg_loc=isfield_default(flg_loc,'do_movie',0);
@@ -65,12 +66,13 @@ end
 %% PATHS
 
 nS=numel(simdef);
-fdir_mat=simdef(1).file.mat.dir;
+fdir_mat=simdef(flg_loc.sim_ref).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 
 %% TIME
 
+%time of reference simulation
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
@@ -123,7 +125,7 @@ for kpli=1:npli %variable
         %Preallocate for plotting all times/simulation together.
         %We could consider to only allocate if we actually want to plot it in this way. Otherwise, 
         %data is saved always in the same index. 
-        data_all=NaN(nt,numel(data_ref.data.(str_val)),nS);
+        data_all=cell(nS,1); %inside -> data_all=NaN(nt,numel(data_ref.data.(str_val)),nS);
         
         nplot=5;
         fpath_file=cell(nplot,nt,nS,nlims);
@@ -140,18 +142,18 @@ for kpli=1:npli %variable
             [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,time_mor_dnum,var_str_save,kt,kpli);
 
             in_p.s_mea=data_mea.x;          
-            in_p.s=s;
+            
             in_p.xlab_str=xlab_str;
             in_p.xlab_un=xlab_un;
-            in_p.data_ls.grid=gridInfo_ls;
-
+            
             %% plot single simulation and single time
             if flg_loc.do_p
                 flg_loc.plot_type=flg_loc.what_is;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=1;
                 for kS=1:nS
-                    data_loc=reshape(data_all(kt,:,kS),[],1);
+%                     data_loc=reshape(data_all(kt,:,kS),[],1);
+                    data_loc=reshape(data_all{kS}(kt,:),[],1);
                     tag_fig=tag;
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
@@ -161,6 +163,9 @@ for kpli=1:npli %variable
                     in_p.is_diff=0;
                     in_p.plot_mea=plot_mea;
                
+                    in_p.data_ls.grid=gridInfo_ls{kS};
+                    in_p.s=s{kS};
+
                     fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);     
                 end %kS
             end
@@ -170,8 +175,14 @@ for kpli=1:npli %variable
                 flg_loc.plot_type=2;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=2;
-                kS=1;
-                data_loc=reshape(squeeze(data_all(kt,:,:)),[],1);
+
+%                 data_loc=reshape(squeeze(data_all(kt,:,:)),[],1);
+                data_loc=cell(nS,1);
+                for kS=1:nS
+                    data_loc{kS}=reshape(data_all{kS}(kt,:),[],1);
+                end
+
+                kS=1;                                
                 tag_fig=sprintf('%s_all_s',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
@@ -181,6 +192,8 @@ for kpli=1:npli %variable
                 in_p.is_diff=0;
                 in_p.plot_mea=plot_mea;
     
+                in_p.s=s;
+
                 fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);       
             end
 
@@ -190,7 +203,8 @@ for kpli=1:npli %variable
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=3;
                 for kS=1:nS
-                    data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(1,:,kS)),[],1);
+%                     data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(1,:,kS)),[],1);
+                    data_loc=reshape(squeeze(data_all{kS}(kt,:)-data_all{kS}(1,:)),[],1);
                     tag_fig=sprintf('%s_diff_t',tag);
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
@@ -199,6 +213,9 @@ for kpli=1:npli %variable
                     in_p.val_mea=data_mea.y-data_mea_0.y;
                     in_p.is_diff=1;
                     in_p.plot_mea=plot_mea;
+
+                    in_p.data_ls.grid=gridInfo_ls{kS};
+                    in_p.s=s{kS};
 
                     fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);           
                 end %kS
@@ -210,7 +227,12 @@ for kpli=1:npli %variable
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=4;
                 for kS=1:nS
-                    data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(kt,:,1)),[],1);
+                    if flg_loc.plot_type
+                        error('I have to change the gridded interpolant by a scatter interpolant.')
+                    end
+                    F=griddedInterpolant(s{kS},data_all{kS}(kt,:));
+                    data_loc_on_ref=F(s{flg_loc.sim_ref});
+                    data_loc=reshape(squeeze(data_loc_on_ref-data_all{flg_loc.sim_ref}(kt,:)),[],1);
                     tag_fig=sprintf('%s_diff_s',tag);
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
@@ -219,6 +241,9 @@ for kpli=1:npli %variable
                     in_p.val_mea=data_mea.y-data_mea_0.y;
                     in_p.is_diff=1;
                     in_p.plot_mea=0;
+
+                    in_p.data_ls.grid=gridInfo_ls{flg_loc.sim_ref};
+                    in_p.s=s{flg_loc.sim_ref};
 
                     fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_s);               
                 end %kS
@@ -229,8 +254,15 @@ for kpli=1:npli %variable
                 flg_loc.plot_type=2;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=5;
+
+                data_loc=cell(nS,1);
+                for kS=1:nS
+                    data_loc{kS}=reshape(data_all{kS}(kt,:)-data_all{kS}(1,:),[],1);
+                end
+
                 kS=1;
-                data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
+
+%                 data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
                 tag_fig=sprintf('%s_all_s_diff_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
@@ -240,6 +272,9 @@ for kpli=1:npli %variable
                 in_p.is_diff=1;
                 in_p.plot_mea=plot_mea;
     
+%                 in_p.data_ls.grid=gridInfo_ls; %not possible?
+                in_p.s=s;
+
                 fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
             end
 
@@ -261,7 +296,8 @@ for kpli=1:npli %variable
             [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
             for kS=1:nS
                 [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
-                data_loc=data_all(:,:,kS)';
+
+                data_loc=data_all{kS}';
                 tag_fig=sprintf('%s_all_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
@@ -273,6 +309,9 @@ for kpli=1:npli %variable
                 in_p.do_leg=0;
                 in_p.do_time=1;
     
+%                 in_p.data_ls.grid=gridInfo_ls{kS}; %not possible?
+                in_p.s=s{kS};
+
                 fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
             end %kS
         end
@@ -466,24 +505,44 @@ end %function
 
 %%
 
+%`s` is needed for 1D plot
+%`gridInfo` for 2DV plot
+%
 function [data_all,gridInfo,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum)
 
 nS=numel(simdef);
+s=cell(nS,1);
+gridInfo=cell(nS,1);
 
 for kS=1:nS
     fdir_mat=simdef(kS).file.mat.dir; 
+    if flg_loc.use_local_time
+        fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
+        fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
+
+        %time of local simulation
+        load(fpath_mat_time,'tim');
+        v2struct(tim); %time_dnum, time_dtime
+    end
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname,'layer',layer);
+    if ~isfile(fpath_mat_tmp)
+        error('File does not exist. This is most probably because the time of the reference does not exist in the local simulation: %s',fpath_mat_tmp)
+    end
     load(fpath_mat_tmp,'data');
 
     %filter data
     data=filter_1d_data(flg_loc,data);
 
     %save data for plotting all times togehter. Better not to do it if you don't need it for memory reasons.
-    data_all(kt,:,kS)=data.(str_val);
-end %kS
+    data_all{kS}(kt,:)=data.(str_val);
 
-gridInfo=data.gridInfo;
-[s,xlab_str,xlab_un]=gdm_s_rkm_cen(flg_loc,data);
+    %we are loading the x data for all times. It is not ideal. The problem with taking it out of here is that the
+    %data may be filtered. Maybe the best is a flag?
+    %save x vector (1D plot only). String and units will be the same.
+    [s{kS},xlab_str,xlab_un]=gdm_s_rkm_cen(flg_loc,data);
+
+    gridInfo{kS}=data.gridInfo; %for now only one (reference) because they will all be the same? Do I have a cas
+end %kS
 
 %xlabel
 if isfield(flg_loc,'xlab_str')
@@ -523,7 +582,7 @@ for klim=1:nlims %ylim
             in_p.lab_str=var_str_read;
             in_p.ylims=lims_loc(klim,:);
             in_p.xlims=flg_loc.xlims(klim,:);
-            in_p.val=data_loc; %[np,1] (same as x)
+            in_p.val=data_loc; %[np,1] (same as x), or cell array!
         
             fig_1D_01(in_p)
         case 3 %xt

@@ -72,7 +72,12 @@ switch varname
     case {'h'}
         switch simdef.D3D.structure
             case {1,5}
-                data_bl=gdm_read_data_map_ls(fdir_mat,fpath_map,'DPS',varargin{:});
+                if simdef.D3D.ismor
+                    var_bl='DPS';
+                else
+                    var_bl='DP0';
+                end
+                data_bl=gdm_read_data_map_ls(fdir_mat,fpath_map,var_bl,varargin{:});
                 data_wl=gdm_read_data_map_ls(fdir_mat,fpath_map,'wl',varargin{:});
 
                 data=data_bl;
