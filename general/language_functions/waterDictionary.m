@@ -17,6 +17,7 @@ string            = id;
 OPT.addUnit       = true;
 OPT.dict          = 'waterDictionary.csv';
 OPT.stationnodot  = true;
+OPT.do_warning    = true;
 OPT               = setproperty(OPT,varargin);
 [pathDict,~,~]    = fileparts(mfilename('fullpath'));
 
@@ -41,7 +42,9 @@ if ~isempty (rowVar)
     string = dictionary{rowVar,colLang}; 
     str_found=true;
 else
-    warning (['Name : ' string ' not found in ' OPT.dict]);
+    if OPT.do_warning
+        warning (['Name : ' string ' not found in ' OPT.dict]);
+    end
     str_found=false;
 end
 
