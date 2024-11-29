@@ -189,8 +189,6 @@ end
 
 %% check dimensions
 
-
-
 if ~iscell(val)
 
     sv=size(val);
@@ -215,7 +213,7 @@ if ~iscell(val)
     s_cell=cell(nv,1);
     for kv=1:nv
         val_cell{kv,1}=val(:,kv);
-        s_cell{kv,1}=s(:,kv);
+        s_cell{kv,1}=s;
     end
     val=val_cell;
     s=s_cell;

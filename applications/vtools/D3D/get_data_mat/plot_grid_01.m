@@ -37,6 +37,8 @@ if isfield(flg_loc,'plot_fxw')==0
 end
 
 flg_loc=isfield_default(flg_loc,'fig_print',1);
+flg_loc=isfield_default(flg_loc,'plot_obs',0);
+flg_loc=isfield_default(flg_loc,'plot_cs',0);
 
 %% PATHS
 
@@ -53,11 +55,8 @@ runid=simdef.file.runid;
 %% LOAD
 
 gridInfo=gdm_load_grid(fid_log,fdir_mat,'');
-[ismor,is1d,str_network1d,issus]=D3D_is(fpath_grd);
+[ismor,is1d,str_network1d,issus]=D3D_is(fpath_grd); %Do not rely on `simdef.D3D.is1d`. If there is no map file, we do not know the type. 
 
-if isfield(simdef.file,'fxw') && ~isempty(simdef.file.fxw) && flg_loc.plot_fxw
-    fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw);
-end
 
 %% DIMENSIONS
 
@@ -94,8 +93,26 @@ if flg_loc.plot_pol
 end
 
 %fxw
-if flg_loc.plot_fxw
-    in_p.fxw=fxw;
+if isfield(simdef.file,'fxw') && ~isempty(simdef.file.fxw) && flg_loc.plot_fxw
+    in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw);
+end
+
+%obs
+if flg_loc.plot_obs
+    if isfield(simdef.file,'his')
+        in_p.obs=D3D_observation_stations(simdef.file.his,'sta','obs');
+    else
+        warning('There is no his-file. Implement reading observations from D3D_io_input')
+    end
+end
+
+%cs
+if flg_loc.plot_cs
+    if isfield(simdef.file,'his')
+        in_p.cs=D3D_observation_stations(simdef.file.his,'sta','cs');
+    else
+        warning('There is no his-file. Implement reading observations from D3D_io_input')
+    end
 end
 
 for kvar=1:nvar %variable

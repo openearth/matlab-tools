@@ -21,7 +21,7 @@ function D3D_grd2map(fpath_grd,varargin)
 parin=inputParser;
 
 addOptional(parin,'fdir_work',fullfile(pwd,'tmp_grd2map'));
-addOptional(parin,'fpath_exe','c:\Program Files (x86)\Deltares\Delft3D Flexible Mesh Suite HMWQ (2021.03)\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat');
+addOptional(parin,'fpath_exe','c:\Program Files\Deltares\Delft3D FM Suite 2024.03 HM\plugins\DeltaShell.Dimr\kernels\x64\bin\run_dimr.bat');
 addOptional(parin,'fpath_map',fullfile(pwd,sprintf('%s_map.nc',fname_grd)));
 
 parse(parin,varargin{:});

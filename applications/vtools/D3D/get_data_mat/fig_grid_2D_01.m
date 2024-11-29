@@ -66,6 +66,14 @@ in_p.plot_pol=0;
 if isfield(in_p,'pol')==1
     in_p.plot_pol=1;
 end
+in_p.plot_obs=0;
+if isfield(in_p,'obs')
+    in_p.plot_obs=1;
+end
+in_p.plot_cs=0;
+if isfield(in_p,'cs')
+    in_p.plot_cs=1;
+end
 
 v2struct(in_p)
 
@@ -271,8 +279,8 @@ kr=1; kc=1;
 lims.x(kr,kc,1:2)=xlims;
 lims.y(kr,kc,1:2)=ylims;
 % lims.c(kr,kc,1:2)=lims_c;
-xlabels{kr,kc}='x';
-ylabels{kr,kc}='y';
+xlabels{kr,kc}=labels4all('x',1,lan);
+ylabels{kr,kc}=labels4all('y',1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
@@ -399,10 +407,27 @@ end
 
 %% fixed weirs
 if plot_fxw
-nfw=numel(fxw);
-for kfxw=1:nfw
-    plot(fxw(kfxw).xy(:,1),fxw(kfxw).xy(:,2),'r');
+    nfw=numel(fxw);
+    for kfxw=1:nfw
+        plot(fxw(kfxw).xy(:,1),fxw(kfxw).xy(:,2),'r');
+    end
 end
+
+%% obs
+if plot_obs
+    scatter(obs.x,obs.y,'parent',han.sfig(kr,kc))
+    for ko=1:numel(obs.name)
+        text(obs.x(ko),obs.y(ko),strrep(obs.name{ko},'_','\_'),'parent',han.sfig(kr,kc))
+    end
+end
+
+%% cs
+if plot_cs
+    ncs=numel(cs);
+    for kcs=1:ncs
+        plot(cs(kcs).xy(:,1),cs(kcs).xy(:,2),'parent',han.sfig(kr,kc),'color','g')
+        text(mean(cs(kcs).xy(:,1)),mean(cs(kcs).xy(:,2)),strrep(cs(kcs).name,'_','\_'),'parent',han.sfig(kr,kc),'color',[0.1,0.1,0.1])
+    end
 end
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);

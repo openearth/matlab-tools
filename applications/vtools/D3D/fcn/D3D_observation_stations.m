@@ -83,8 +83,25 @@ switch simdef.D3D.structure
         is_sta=ismember(str_r,{nci.Variables.Name});
         if is_sta
             obs_sta.name=cellstr(ncread(path_his,str_r)')';
-            obs_sta.x=ncread(path_his,'station_x_coordinate')';
-            obs_sta.y=ncread(path_his,'station_y_coordinate')';
+            switch sta
+                case 'obs'
+                    obs_sta.x=ncread(path_his,'station_x_coordinate')';
+                    obs_sta.y=ncread(path_his,'station_y_coordinate')';
+                case 'cs' %pli [struct(1,npol)]; pli(kpol).name [char]  ; pli(kpol).xy [double(1,np)]
+                    xcs=ncread(path_his,'cross_section_geom_node_coordx');
+                    ycs=ncread(path_his,'cross_section_geom_node_coordy');
+                    nc=ncread(path_his,'cross_section_geom_node_count');
+                    ncs=numel(nc);
+                    cs=struct('name',cell(ncs,1),'xy',cell(ncs,1));
+                    nc_sum=cumsum(nc);
+                    nc_full=[0;nc_sum];
+                    for kcs=1:ncs
+                        cs(kcs).name=obs_sta.name{kcs};
+                        idx_get=nc_full(kcs)+1:1:nc_full(kcs+1);
+                        cs(kcs).xy=[xcs(idx_get),ycs(idx_get)];
+                    end
+                    obs_sta=cs;
+            end
         else
             obs_sta.name={''};
             obs_sta.x=[];
