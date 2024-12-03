@@ -212,7 +212,7 @@ switch lower(variable)
                 str_var='distancia a la desembocadura';
         end
         un_type='L'; 
-    case {'etaw','waterlevel','wathte','mesh2d_s1','wl','waterlevelbnd'}
+    case {'etaw','waterlevel','wathte','mesh2d_s0','mesh2d_s1','wl','waterlevelbnd'}
         switch lan
             case 'en'
                 str_var='water level';

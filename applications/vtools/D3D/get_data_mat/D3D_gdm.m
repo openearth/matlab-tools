@@ -180,7 +180,7 @@
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).use_local_time=0; %use the time of each simulation rather than the time of the reference simulation for comparison
 % in_plot.(tag).tim_type=2;
-% in_plot.(tag).tol_tim=1.1;
+% in_plot.(tag).tim_tol=0.5;
 % in_plot.(tag).fig_size=[0,0,16,9].*2;
 % in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'y500.pli'); %polyline to take data [char] (path to file with polyline), [double] (coordinates of points [np,2] (x,y)).
 % in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
@@ -383,7 +383,7 @@
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).tim_just_load=true;
 % in_plot.(tag).tim_type=2;
-% in_plot.(tag).tol_tim=1.1;
+% in_plot.(tag).tim_tol=0.5;
 % in_plot.(tag).ylims=[NaN,NaN];
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files

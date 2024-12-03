@@ -37,6 +37,14 @@ if flg_loc.write_shp==1
     messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
 end
 
+if flg_loc.plot_tiles && ~isfield(flg_loc,'epsg_in')
+    flg_loc.epsg_in=D3D_epsg(simdef(1).file.grd);
+    if isempty(flg_loc.epsg_in)
+        flg_loc.epsg_in=28992; %assume amersfort
+    end
+end
+flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
+
 %% clims
 
 flg_loc=isfield_default(flg_loc,'clims_type',1);

@@ -228,12 +228,12 @@ for kpli=1:npli %variable
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=4;
                 for kS=1:nS
-                    if flg_loc.plot_type
-                        error('I have to change the gridded interpolant by a scatter interpolant.')
+                    if flg_loc.plot_type==1
+                        error('Patch plot. I have to change the gridded interpolant by a scatter interpolant if the grid is not the same.')
                     end
                     F=griddedInterpolant(s{kS},data_all{kS}(kt,:));
                     data_loc_on_ref=F(s{flg_loc.sim_ref});
-                    data_loc=reshape(squeeze(data_loc_on_ref-data_all{flg_loc.sim_ref}(kt,:)),[],1);
+                    data_loc=reshape(data_loc_on_ref,[],1)-reshape(data_all{flg_loc.sim_ref}(kt,:),[],1);
                     tag_fig=sprintf('%s_diff_s',tag);
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
