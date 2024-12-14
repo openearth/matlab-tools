@@ -506,9 +506,9 @@ end
 
 kr=1; kc=1;  
 if do_area
-    han.p(kr,kc,:)=area(s{1},val{1},'parent',han.sfig(kr,kc));
 %     han_aux=area(s,val,'parent',han.sfig(kr,kc));
     for kv=1:nv
+        han.p(kr,kc,kv)=area(s{kv},val{kv},'parent',han.sfig(kr,kc));
         han.p(kr,kc,kv).FaceColor=cmap(kv,:);
     end
 else

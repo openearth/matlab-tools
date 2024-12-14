@@ -132,6 +132,8 @@ elseif ns==1
     %combine
     tim_add=data_add.time;
     val_add=data_add.waarde;
+
+    val_add(val_add>1e37) = NaN; 
     
     tim_ex=data_one_station.time;
     val_ex=data_one_station.waarde;

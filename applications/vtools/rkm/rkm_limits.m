@@ -15,6 +15,8 @@
 function rkm=rkm_limits(tag)
 
 switch lower(tag)
+    case {'maastricht-linne','mali'}
+        rkm=[3,69];
     case {'borgharen-linne','bl'}
         rkm=[15,69];
     case {'linne-roermond','lr'}
