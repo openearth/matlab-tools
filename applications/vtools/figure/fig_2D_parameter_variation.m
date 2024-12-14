@@ -323,7 +323,11 @@ end
 kr=1; kc=1;    
 patch('faces',nodes','vertices',[m1(:),m2(:)],'FaceVertexCData',reshape(m,[],1),'FaceColor','flat','edgecolor','none','parent',han.sfig(kr,kc));
 if do_obj
-contour(m1,m2,m,[obj,obj],'color','k','linewidth',2,'parent',han.sfig(kr,kc))
+    if length(obj) == 1; 
+        contour(m1,m2,m,[obj,obj],'color','k','linewidth',2,'parent',han.sfig(kr,kc))
+    else
+        contour(m1,m2,m,obj,'color','k','linewidth',2,'parent',han.sfig(kr,kc),'ShowText','on')
+    end        
 end
 
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
