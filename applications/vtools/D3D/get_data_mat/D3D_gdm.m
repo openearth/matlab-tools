@@ -51,7 +51,7 @@
 % % git sparse-checkout set src/tools_lgpl/matlab/quickplot/progsrc
 % %```
 % %and point here to the folder where it has been checked out.
-% fdir_d3d='c:\checkouts\qp\';
+% fdir_d3d='c:\checkouts\sc_fm_trunk\';
 %
 % % fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
 % % fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';

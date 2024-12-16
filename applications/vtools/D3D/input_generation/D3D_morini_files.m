@@ -16,15 +16,19 @@
 %frac(:,1,:) is the active layer. Similarly for the thickness. 
 %
 %INPUT:
+%   -simdef.mor.frac_xy = coordinates [-]; [np,2]
 %   -simdef.mor.frac = volume fraction content [-]; [np,nl,nf]
 %   -simdef.mor.thk = layer thickness [-]; [np,nl]
 
 function D3D_morini_files(simdef,varargin)
 
+%% PARSE
+
 if isfield(simdef.mor,'folder_out')==0
     simdef.mor.folder_out='gsd';
 end
 
+%dir out
 if isfield(simdef,'D3D')
     fdir_out=fullfile(simdef.D3D.dire_sim,simdef.mor.folder_out);
 else
@@ -32,11 +36,12 @@ else
 end
 mkdir_check(fdir_out);
 
+%rename input
 frac=simdef.mor.frac;
 frac_xy=simdef.mor.frac_xy;
 thk=simdef.mor.thk;
 
-
+%size
 nf=size(frac,3);
 nl=size(frac,2);
 
@@ -65,7 +70,7 @@ for kl=1:nl
     end
 end
 
-end
+end %function
 
 %%
 %% FUNCTIONS
@@ -89,4 +94,4 @@ if ~isempty(idx_0)
     warning('Warning: volume fraction content = %0.15e',sum_frac(idx_0))
 end
 
-end
+end %function

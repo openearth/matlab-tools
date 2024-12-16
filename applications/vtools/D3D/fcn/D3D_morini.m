@@ -10,6 +10,8 @@
 %$Id$
 %$HeadURL$
 %
+%Writes initial composition main file <morini.ini>, which points to the
+%initial composition files for every fraction and layer. 
 
 function D3D_morini(simdef)
 
