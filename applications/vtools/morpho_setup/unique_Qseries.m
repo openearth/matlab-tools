@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19849 $
-%$Date: 2024-10-24 17:40:56 +0200 (Thu, 24 Oct 2024) $
-%$Author: chavarri $
-%$Id: D3D_sediment_transport_offline.m 19849 2024-10-24 15:40:56Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_sediment_transport_offline.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function Qseries_u=unique_Qseries(Qseries)

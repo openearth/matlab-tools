@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18967 $
-%$Date: 2023-05-26 12:55:32 +0200 (Fri, 26 May 2023) $
-%$Author: chavarri $
-%$Id: D3D_morini.m 18967 2023-05-26 10:55:32Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_morini.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Writes all the initial composition files. I.e., writes the main file and
 %the files for each layer and fraction. 

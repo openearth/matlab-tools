@@ -2,11 +2,11 @@
 %%%                 VTOOLS                 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
-%$Revision:  $
-%$Date:  $
-%$Author:  $
-%$Id: $
-%$HeadURL:  $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function stru_out=D3D_write_crs(fname, stru_in, varargin)

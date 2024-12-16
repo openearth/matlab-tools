@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19833 $
-%$Date: 2024-10-14 10:49:42 +0200 (Mon, 14 Oct 2024) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 19833 2024-10-14 08:49:42Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Write command to copy folder in linux
 

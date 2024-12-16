@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19773 $
-%$Date: 2024-09-05 16:20:30 +0200 (Thu, 05 Sep 2024) $
-%$Author: chavarri $
-%$Id: paths_project_layout.m 19773 2024-09-05 14:20:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/paths_project_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Analytical solution of Saint-Venant momentum equation when friction 
 %dominated.
