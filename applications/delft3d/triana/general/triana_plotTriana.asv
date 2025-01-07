@@ -36,6 +36,7 @@ for cc = 1:length(s.plot.const)
     
     %% Plotting standard triana plots
     
+    % figure('Position',[50 50 1200 900])
     figure
     hold on
     axis equal
@@ -43,7 +44,15 @@ for cc = 1:length(s.plot.const)
     
     % plot landboundary
     if isfield(s.plot,'ldb')
-        plot(ldb(:,1),ldb(:,2),'Color',[0.3 0.3 0.3])
+        if isfield(s.plot,'flagLdbFilled') && s.plot.flagLdbFilled == 1        
+            if isfield(s.plot,'ldbFillColor')
+                filledLDB(ldb,'k',s.plot.ldbFillColor,[],-10);
+            else
+                filledLDB(ldb,'k',[0.7 0.7 0.7],[],-10);
+            end
+        else
+            plot(ldb(:,1),ldb(:,2),'Color',[0.3 0.3 0.3])
+        end
     end
     % plot measurement and model stations
     plot(meas.X,meas.Y,'rx','Color',[0.6 0.6 0.6])
@@ -52,9 +61,11 @@ for cc = 1:length(s.plot.const)
     % plot triana results for each station
     for ll = 1:length(s.modID)
         
-        % plot search radius circle around model station and plot selected measurement station with a red x
-        hC = circle([s.triana.X(ll),s.triana.Y(ll)],s.selection.searchRadius,1000,'b');
-        set(hC,'Color',[0.8 0.8 0.8])
+        %         plot search radius circle around model station and plot selected measurement station with a red x
+        try
+            hC = circle([s.triana.X(ll),s.triana.Y(ll)],s.selection.searchRadius,1000,'b');
+            set(hC,'Color',[0.8 0.8 0.8])
+        end
         
         if ~isnan(s.measID(ll))
             plot(meas.X(s.measID(ll)),meas.Y(s.measID(ll)),'rx')
@@ -76,6 +87,7 @@ for cc = 1:length(s.plot.const)
         plot([s.triana.X(ll)-txt_dist_hor s.triana.X(ll)+txt_dist_hor],[s.triana.Y(ll) s.triana.Y(ll)],'k')
         plot([s.triana.X(ll) s.triana.X(ll)],[s.triana.Y(ll)-txt_dist_ver s.triana.Y(ll)+txt_dist_ver],'k')
     end
+    
     
     % plot legend
     hTo2(1) = text(X_legend-txt_dist_hor,Y_legend+txt_dist_ver,'Ho');
@@ -100,7 +112,7 @@ for cc = 1:length(s.plot.const)
         xlabel(['Easting [km; ',s.model.epsgTxT,']'])
         ylabel(['Northing [km; ',s.model.epsgTxT,']'])
     end
-    set(gca,'FontSize',7)
+    % set(gca,'FontSize',7)
     print(gcf,'-dpng','-r300',[s.outputDir '\Figures\Triana_',s.plot.const{cc},'_',s.description,'.png'])
     close all
     
@@ -125,6 +137,9 @@ for cc = 1:length(s.plot.const)
     
     if ~isfield(s.plot,'A_ratio_limits') || length(s.plot.A_ratio_limits)~=2
         colorbarLims = [max(1-max(abs(A_ratio-1)),0):max(abs(A_ratio-1))/10:1+max(abs(A_ratio-1))];
+        if isempty(colorbarLims)
+           colorbarLims = [0.95 1.05]; 
+        end
     else
         colorbarLims  = linspace(s.plot.A_ratio_limits(1),s.plot.A_ratio_limits(2),20);
     end
@@ -167,6 +182,9 @@ for cc = 1:length(s.plot.const)
     
     if ~isfield(s.plot,'G_diff_limits') || length(s.plot.G_diff_limits)~=2
         colorbarLims  = [max(abs(G_diff))*-1:max(abs(G_diff))/10:max(abs(G_diff))];
+        if isempty(colorbarLims)
+           colorbarLims = [-5 5]; 
+        end
     else
         colorbarLims  = linspace(s.plot.G_diff_limits(1),s.plot.G_diff_limits(2),20);
         

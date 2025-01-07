@@ -233,7 +233,7 @@ for ii=1:length(sset)
         
         if ~isempty(mid)
             fL=fourF(mid);
-            r=fft(d(1:fourF(mid),5),fL);
+            r=fft(d(1:fourF(mid),5),round(fL));
             %r=r.*conj(r)/fL;
             r=2*abs(r)/fL;
             r=r(1:fL/2+1);

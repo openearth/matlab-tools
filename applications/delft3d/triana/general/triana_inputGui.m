@@ -117,9 +117,9 @@ s.plot.Xmax = axisLims(2);
 s.plot.Ymin = axisLims(3);
 s.plot.Ymax = axisLims(4);
 
-s.plot.txtHorFraq = 110; %fraction of (s.plot.Xmax - s.plot.Xmin) used to horizontally locate the computed and observed amplitude and phase texts
-s.plot.txtVerFraq = 110; %fraction of (s.plot.Ymax - s.plot.Ymin) used to vertically locate the computed and observed amplitude and phase texts
- s.plot.FontSize = 3; % fontsize of amplitudes and phases in triana overview plot
+% s.plot.txtHorFraq = 70; %fraction of (s.plot.Xmax - s.plot.Xmin) used to horizontally locate the computed and observed amplitude and phase texts
+% s.plot.txtVerFraq = 110; %fraction of (s.plot.Ymax - s.plot.Ymin) used to vertically locate the computed and observed amplitude and phase texts
+ % s.plot.FontSize = 3; % fontsize of amplitudes and phases in triana overview plot
  
 % filename containing IHO stations
 s.meas.file = 'p:\delta\svn.oss.deltares.nl\openearthtools\matlab\applications\DelftDashBoard\toolboxes\TideStations\data\iho.nc';

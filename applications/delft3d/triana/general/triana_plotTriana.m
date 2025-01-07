@@ -36,6 +36,7 @@ for cc = 1:length(s.plot.const)
     
     %% Plotting standard triana plots
     
+    % figure('Position',[50 50 1200 900])
     figure
     hold on
     axis equal
@@ -111,7 +112,7 @@ for cc = 1:length(s.plot.const)
         xlabel(['Easting [km; ',s.model.epsgTxT,']'])
         ylabel(['Northing [km; ',s.model.epsgTxT,']'])
     end
-    set(gca,'FontSize',7)
+    % set(gca,'FontSize',7)
     print(gcf,'-dpng','-r300',[s.outputDir '\Figures\Triana_',s.plot.const{cc},'_',s.description,'.png'])
     close all
     
