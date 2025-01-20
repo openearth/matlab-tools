@@ -14,6 +14,7 @@
 
 function plot_1D_01(fid_log,flg_loc,simdef,varargin)
 
+warning('Deprecated. Moved to `plot_summerbed`. Left for safety.')
 %% PARSE
 
 parin=inputParser;

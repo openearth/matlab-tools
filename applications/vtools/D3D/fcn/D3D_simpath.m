@@ -140,8 +140,9 @@ switch simdef.D3D.structure
         for kdd=2:ndd
             simdef_aux_loc=D3D_simpath_mdf(fpath_mdu{kdd});
             for kfn=1:nfn
-                %it will not work if not all fields are in all files. 
-                simdef_aux.file.(fn{kfn})=cat(1,simdef_aux.file.(fn{kfn}),{simdef_aux_loc.file.(fn{kfn})});
+                if isfield(simdef_aux_loc.file,fn{kfn}) %it will not work if not all fields are in all files.
+                    simdef_aux.file.(fn{kfn})=cat(1,simdef_aux.file.(fn{kfn}),{simdef_aux_loc.file.(fn{kfn})});
+                end
             end
             runids=cat(1,runids,{simdef_aux_loc.D3D.runid});
         end
@@ -160,6 +161,8 @@ file=simdef_aux.file;
 simdef.err=simdef_aux.err;
 if simdef.D3D.structure~=5
     [~,file.runid,~]=fileparts(file.mdf);
+else
+    [~,file.runid,~]=fileparts(file.mdf{1}); %not very nice
 end
 file.mdfid=file.runid; %runid may be rewriten in `D3D_gdm`
 

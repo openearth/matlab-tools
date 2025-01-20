@@ -27,7 +27,7 @@ flg_loc=gdm_parse_map_2DH(fid_log,flg_loc,simdef);
 
 %time is based on reference simulation. 
 kref=flg_loc.sim_ref;
-[gridInfo_ref,time_dnum_ref,time_dnum_plot]=load_time_grid(fid_log,flg_loc,simdef(kref),tag);
+[gridInfo_ref,time_dnum_ref,time_dnum_plot]=gdm_load_time_grid(fid_log,flg_loc,simdef(kref),tag);
 
 %% DIMENSIONS AND RENAME
 
@@ -101,7 +101,7 @@ for kvar=1:nvar %variable
         %% load local simulation
 
         %grid and time of local simulation
-        [gridInfo,time_dnum_loc,time_mor_dnum]=load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
+        [gridInfo,time_dnum_loc,time_mor_dnum]=gdm_load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
     
         %fxw of local simulation
         fdir_mat=simdef(ksim).file.mat.dir;
@@ -231,7 +231,7 @@ for kvar=1:nvar %variable
     
             end
     
-            %% difference with reference and initial time in percentage terms
+            %% difference with reference in percentage terms
             if flg_loc.do_diff_s_perc && ksim~=kref
     
                 kplot=5;
@@ -333,25 +333,6 @@ end %function
 
 %%
 
-function [gridInfo,time_dnum,time_dnum_plot,time_mor_dnum]=load_time_grid(fid_log,flg_loc,simdef,tag)
-
-fdir_mat=simdef.file.mat.dir;
-fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
-fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); 
-fpath_map=simdef.file.map;
-
-tim=load(fpath_mat_time,'tim');
-time_dnum=tim.tim.time_dnum; %used to load the data (always flow time)
-time_mor_dnum=tim.tim.time_mor_dnum; %used to match data (can be morpho time)
-
-[time_dnum_plot,~]=gdm_time_flow_mor(flg_loc,simdef,tim.tim.time_dnum,tim.tim.time_dtime,tim.tim.time_mor_dnum,tim.tim.time_mor_dtime); %[nt_ref,1] 
-
-gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map,'disp',0,'dim',2);
-
-end %function
-
-%%
-
 function [vec_x,vec_y]=load_velocity_vector(simdef,time_dnum_loc,var_idx_loc)
 
 fdir_mat=simdef.file.mat.dir;
@@ -443,10 +424,6 @@ for kclim=1:nclim
 end
 
 end %function
-
-%%
-
-
 
 %%
 

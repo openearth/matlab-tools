@@ -66,11 +66,12 @@ end
 % end
 
 %% map_summerbed
+%Done when passing `simdef_all`
 %better is to just call it one, but we have to pass simdef_ref to the regular call
-tag_check='fig_map_summerbed_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check,'fig','diff');
-    plot_1D_01(fid_log,in_plot_fig,simdef,'simdef_ref',simdef_ref);
-end
+% tag_check='fig_map_summerbed_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','diff');
+%     plot_1D_01(fid_log,in_plot_fig,simdef,'simdef_ref',simdef_ref);
+% end
 
 end %function

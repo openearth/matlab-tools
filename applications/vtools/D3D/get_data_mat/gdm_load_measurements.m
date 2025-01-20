@@ -63,7 +63,7 @@ if isnan(idx_stat); return; end
 struct_loc=data.(fn{idx_var}).(fn2{idx_stat});
 
 tim_mea=struct_loc.tim_dnum;
-[idx_min,~,flg_found]=absmintol(tim_mea,tim_dnum,'dnum',1,'tol',tol,'do_break',0);
+[idx_min,~,flg_found]=absmintol(tim_mea,tim_dnum,'dnum',1,'tol',tol,'do_break',0,'do_disp_list',0);
 
 if isnan(idx_min) || ~flg_found; return; end
 

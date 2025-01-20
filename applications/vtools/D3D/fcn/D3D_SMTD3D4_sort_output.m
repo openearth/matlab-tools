@@ -21,6 +21,7 @@ tim_dir=[];
 for kf=1:nf
     if ~dire_out(kf).isdir; continue; end
     if strcmp(dire_out(kf).name,'.') || strcmp(dire_out(kf).name,'..'); continue; end
+    if ~contains(dire_out(kf).name,'.min'); continue; end
     tim_dir=cat(1,tim_dir,str2double(strrep(dire_out(kf).name,'.min','')));
 end
 tim_dir=sort(tim_dir);

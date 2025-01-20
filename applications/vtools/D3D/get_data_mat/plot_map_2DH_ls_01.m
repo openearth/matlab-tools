@@ -47,7 +47,6 @@ flg_loc=isfield_default(flg_loc,'clims_diff_t',flg_loc.clims);
 flg_loc=isfield_default(flg_loc,'clims_diff_s',flg_loc.clims);
 flg_loc=isfield_default(flg_loc,'do_diff',1);
 flg_loc=isfield_default(flg_loc,'tim_type',1);
-flg_loc=isfield_default(flg_loc,'tol',30);
 flg_loc=isfield_default(flg_loc,'plot_val0',0);
 
 if isfield(flg_loc,'do_rkm')==0
@@ -131,6 +130,9 @@ for kpli=1:npli %variable
         nplot=5;
         fpath_file=cell(nplot,nt,nS,nlims);
 
+        %measurements at time 0                        
+        [plot_mea,data_mea_0]=gdm_load_measurements_match_time(flg_loc,in_p.tim(1),var_str_save,kpli,'val_mean');
+
         ktc=0; 
         for kt=kt_v %time
             ktc=ktc+1;
@@ -140,7 +142,7 @@ for kpli=1:npli %variable
             [data_all,gridInfo_ls,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum);
 
             %measurements                        
-            [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,time_mor_dnum,var_str_save,kt,kpli);
+            [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,in_p.tim(kt),var_str_save,kpli,'val_mean');
 
             in_p.s_mea=data_mea.x;          
             
@@ -591,28 +593,6 @@ for klim=1:nlims %ylim
             fig_his_xt_01(in_p)
     end %type plot
 end %kylim
-
-end %function
-
-%%
-
-function [plot_mea,data_mea,data_mea_0]=load_measurements(flg_loc,time_dnum,time_mor_dnum,var_str_save,kt,kpli)
-
-data_mea.x=[];
-data_mea.y=[];
-data_mea_0.y=NaN;
-plot_mea=false;
-
-if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
-%     gdm_time_flow_mor(flg_loc,simdef,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
-    tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(kt),time_mor_dnum(kt));
-    data_mea=gdm_load_measurements(NaN,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean','tol',flg_loc.tol,'do_rkm',flg_loc.do_rkm);
-    tim_search_in_mea=gdm_time_dnum_flow_mor(flg_loc,time_dnum(1),time_mor_dnum(1));
-    data_mea_0=gdm_load_measurements(NaN,flg_loc.measurements{kpli,1},'tim',tim_search_in_mea,'var',var_str_save,'stat','val_mean');
-    if ~isempty(data_mea.x) %there is data
-        plot_mea=true;
-    end
-end
 
 end %function
 

@@ -216,6 +216,8 @@
 % in_plot.(tag).fig_overwrite=0; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).do_movie=0;
+% in_plot.(tag).do_plot_inpolygon=1; %plot coverage of cells inside summerbed polygon
+% in_plot.(tag).do_plot_along_rkm=1; %plot coverage along rkm
 % % in_plot.(tag).statis_plot={'val_mean'}; %statistics to plot. Comment to have all. 
 % in_plot.(tag).var={'mesh2d_taus'}; %list variables: `open D3D_list_of_variables`
 %%plot of stacked sediment transport

@@ -1,0 +1,31 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision: 19930 $
+%$Date: 2024-12-03 09:18:16 +0100 (Tue, 03 Dec 2024) $
+%$Author: chavarri $
+%$Id: plot_map_2DH_ls_01.m 19930 2024-12-03 08:18:16Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_map_2DH_ls_01.m $
+%
+%
+
+function [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,time_dnum_plot,var_str_save,kpli,stat)
+
+flg_loc=isfield_default(flg_loc,'tol_time_measurements',30);
+flg_loc=isfield_default(flg_loc,'do_rkm',0);
+
+data_mea.x=[];
+data_mea.y=[];
+plot_mea=false;
+
+if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+    data_mea=gdm_load_measurements(NaN,flg_loc.measurements{kpli,1},'tim',time_dnum_plot,'var',var_str_save,'stat',stat,'tol',flg_loc.tol_time_measurements,'do_rkm',flg_loc.do_rkm);
+    if ~isempty(data_mea.x)
+        plot_mea=true;
+    end
+end
+
+end %function

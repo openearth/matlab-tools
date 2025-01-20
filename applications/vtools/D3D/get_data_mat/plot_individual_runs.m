@@ -92,22 +92,23 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% map_summerbed
-tag_check='fig_map_summerbed_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    plot_1D_01(fid_log,in_plot_fig,simdef);
-    if isfield(in_plot_fig,'sb_pol_diff')
-        if unique(~isnan(in_plot_fig.sb_pol_diff{1,1}))
-            plot_1D_sb_diff_01(fid_log,in_plot_fig,simdef)
-        end
-    end
-    if isfield(in_plot_fig,'tim_ave')
-        if ~isempty(in_plot_fig.tim_ave{1,1}) 
-            in_plot_fig.tag_fig=sprintf('%s_tim_ave',in_plot_fig.tag);
-            plot_1D_tim_ave_01(fid_log,in_plot_fig,simdef)
-        end
-    end
-end
+%Done when passing `simdef_all`. 
+% tag_check='fig_map_summerbed_01';
+% if isfield(in_plot,tag_check)==1
+%     in_plot_fig=gmd_tag(in_plot,tag_check);
+%     plot_1D_01(fid_log,in_plot_fig,simdef);
+%     if isfield(in_plot_fig,'sb_pol_diff')
+%         if unique(~isnan(in_plot_fig.sb_pol_diff{1,1}))
+%             plot_1D_sb_diff_01(fid_log,in_plot_fig,simdef)
+%         end
+%     end
+%     if isfield(in_plot_fig,'tim_ave')
+%         if ~isempty(in_plot_fig.tim_ave{1,1}) 
+%             in_plot_fig.tag_fig=sprintf('%s_tim_ave',in_plot_fig.tag);
+%             plot_1D_tim_ave_01(fid_log,in_plot_fig,simdef)
+%         end
+%     end
+% end
 
 %% map 2DH
 tag_check='fig_map_2DH_01';

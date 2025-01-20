@@ -1,4 +1,7 @@
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
 %$Revision$
@@ -7,11 +10,9 @@
 %$Id$
 %$HeadURL$
 %
-%Reads summerbed polygons in a shp-file and finds the points of a grid that are
+%%Reads summerbed polygons in a shp-file and finds the points of a grid that are
 %inside the polygon. 
 %
-%INPUT:
-
 
 function sb_def=gdm_read_summerbed(flg_loc,fid_log,fdir_mat,fpath_sb_pol,fpath_map)
 
@@ -64,15 +65,16 @@ bol_sb=inpolygon(gridInfo.Xcen(:),gridInfo.Ycen(:),sb(:,1),sb(:,2));
 
 %% DEBUG
 
-figure
-hold on
-scatter(gridInfo.Xcen(:),gridInfo.Ycen(:),10,'b')
-plot(sb(:,1),sb(:,2))
-scatter(gridInfo.Xcen(bol_sb),gridInfo.Ycen(bol_sb),10,'r')
-axis equal
+% figure
+% hold on
+% scatter(gridInfo.Xcen(:),gridInfo.Ycen(:),10,'b')
+% plot(sb(:,1),sb(:,2))
+% scatter(gridInfo.Xcen(bol_sb),gridInfo.Ycen(bol_sb),10,'r')
+% axis equal
 
 %%
 %% SAVE
+%%
 
 sb_def.bol_sb=bol_sb;
 sb_def.sb=sb;
