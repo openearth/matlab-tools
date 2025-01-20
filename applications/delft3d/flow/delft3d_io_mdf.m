@@ -272,7 +272,7 @@ elseif length(tmp)>0
             
             newline          = fgetl(fid);
             if ~ischar(newline);break, end % -1 when eof
-            if length(deblank2(newline)) > 0;
+            if length(deblank2_copy(newline)) > 0;
                 count.line=count.line+1;
                 
                 %% Keyword
