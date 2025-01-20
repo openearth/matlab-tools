@@ -27,6 +27,7 @@
 %               - 3 = pli [double(npol*npp,2]
 %
 %E.G. Read and write D3D4 grd and dep
+% dep=D3D_io_input('read',fdep,fgrd,'location','cen','dummy',false); %typical in morpho. Althought there are dummy values, set to false and will read all values.
 % dep=D3D_io_input('read',fdep,fgrd,'location','cor');
 % D3D_io_input('write','c:\Users\chavarri\Downloads\trial.dep',dep,'location','cor','dummy',false,'format','%15.13e');
 %
@@ -84,6 +85,9 @@ end
 [~,~,ext]=fileparts(fname);
 
 switch what_do
+    %%
+    %% READ
+    %%
     case 'read'
         if exist(fname,'file')~=2
             error('File does not exist: %s',fname)
@@ -107,33 +111,15 @@ switch what_do
                 OPT.nodatavalue=NaN;
                 stru_out=delft3d_io_grd('read',fname,OPT);
             case '.dep'
-                G=delft3d_io_grd('read',varargin{1});
-                stru_out=delft3d_io_dep('read',fname,G,varargin(2:3));
+                OPT.nodatavalue=NaN;
+                G=delft3d_io_grd('read',varargin{1},OPT);
+                stru_out=delft3d_io_dep('read',fname,G,varargin(2:end));
 %                 G=wlgrid('read',varargin{1});
 %                 stru_out=wldep('read',fname,G);
-            case {'.bct','.bc'}
+            case {'.bct','.bc','.bcm'}
                 stru_out=bct_io('read',fname);
                 for kT=1:stru_out.NTables
-                    idx_tim=find_str_in_cell({stru_out.Table(kT).Parameter.Name},{'time'});
-                    if isnan(idx_tim)
-                        warning('Time not found')
-                        continue
-                    end
-                    str_time=stru_out.Table(kT).Parameter(idx_tim).Unit;
-                    [tim_ref_dtim,units,~,~]=read_str_time(str_time);
-%                     tim_ref=num2str(stru_out.Table(kT).ReferenceTime(1));
-%                     tim_ref_dtim=datetime(str2double(tim_ref(1:4)),str2double(tim_ref(5:6)),str2double(tim_ref(7:8)));
-%                     units=stru_out.Table(kT).TimeUnit;
-                    tim_data=stru_out.Table(kT).Data(:,idx_tim);
-                    switch units
-                        case 'seconds'
-                            tim_un=seconds(tim_data);
-                        case 'minutes'
-                            tim_un=minutes(tim_data);
-                        otherwise
-                            error('add')
-                    end
-                    tim_dtim=tim_ref_dtim+tim_un;
+                    tim_dtim=read_time_from_table(stru_out.Table(kT));
                     stru_out.Table(kT).Time=tim_dtim;
                 end
             case '.xyz'
@@ -207,12 +193,15 @@ switch what_do
                 G=delft3d_io_grd('read',varargin{1});
                 stru_out=D3D_read_obs(fname,G,varargin{2:end});
             case '.crs'
-                G=delft3d_io_grd('read',varargin{1});
+                G=delft3d_io_grd('read',varargin{1},'nodatavalue',NaN);
                 stru_out=D3D_read_crs(fname,G,varargin{2:end});
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
         varargout{1}=stru_out;
+    %%
+    %% WRITE
+    %%
     case 'write'
         stru_in=varargin{1};
         switch ext
@@ -370,4 +359,38 @@ if ~isnan(cstype)
     end
 end
                 
+end %function
+
+%%
+
+function tim_dtim=read_time_from_table(stru_out)
+
+idx_tim=find_str_in_cell({stru_out.Parameter.Name},{'time'});
+if isnan(idx_tim)
+    warning('Time not found')
+    return
+end
+
+%try read time as string
+str_time=stru_out.Parameter(idx_tim).Unit;
+[tim_ref_dtim,units,~,~]=read_str_time(str_time);
+
+%if it fails, try reading directly from table
+if isnat(tim_ref_dtim)
+    tim_ref=num2str(stru_out.ReferenceTime(1));
+    tim_ref_dtim=datetime(str2double(tim_ref(1:4)),str2double(tim_ref(5:6)),str2double(tim_ref(7:8)));
+    units=stru_out.TimeUnit;
+end
+
+tim_data=stru_out.Data(:,idx_tim);
+switch units
+    case 'seconds'
+        tim_un=seconds(tim_data);
+    case 'minutes'
+        tim_un=minutes(tim_data);
+    otherwise
+        error('add')
+end
+tim_dtim=tim_ref_dtim+tim_un;
+
 end %function
