@@ -24,7 +24,7 @@
 %     rkm_br=cat(1,rkm_br,{'BR'});
 %     %along rijntakken
 %     br=branch_rijntakken(rkm_v(krkm),'WA');
-%     rkm_br=cat(1,rkm_br,{br});
+%     rkm_br=cat(1,rkm_br,br);
 % end
 % 
 % rkm_decrease_resolution(fpath_rkm,rkm_v,rkm_br)

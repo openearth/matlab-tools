@@ -57,7 +57,29 @@ for krkm=1:nrkm
             else
                 br{krkm}='Rhein';
             end
-        case {'IJ','LE','BR','NR','PK','RH'}
+        case {'IJ'}
+		    if rkm(krkm)>878.05
+                br{krkm}='IJ';
+            elseif rkm(krkm)>867.05
+                br{krkm}='PK';
+            elseif rkm(krkm)>852.90
+                br{krkm}='BR';
+            else
+                br{krkm}='Rhein';
+            end
+		case {'LE','NR'}
+            if rkm(krkm)>929.35
+                br{krkm}='LE';
+            elseif rkm(krkm)>878.08
+                br{krkm}='NR';
+            elseif rkm(krkm)>867.05
+                br{krkm}='PK';
+            elseif rkm(krkm)>852.90
+                br{krkm}='BR';
+            else
+                br{krkm}='Rhein';
+            end
+        case {'BR','PK','RH'}
             br{krkm}=track;
         otherwise
             error('Unknown branch %s',track)

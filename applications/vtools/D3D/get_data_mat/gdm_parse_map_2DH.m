@@ -15,6 +15,8 @@ function [flg_loc,simdef]=gdm_parse_map_2DH(fid_log,flg_loc,simdef)
 
 flg_loc=gdm_default_flags(flg_loc);
 
+flg_loc=isfield_default(flg_loc,'overwrite',0);
+
 flg_loc=isfield_default(flg_loc,'do_p_single',1);
 flg_loc=isfield_default(flg_loc,'do_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_diff_s',0);

@@ -33,7 +33,7 @@ for kd=1:nd
     end
     [~,~,ext]=fileparts(filldb);
     switch ext
-        case '.ldb'
+        case {'.ldb','.pol'}
             ldb=read_ldb(filldb);
         case '.mat'
             ldb=read_mat(filldb);
