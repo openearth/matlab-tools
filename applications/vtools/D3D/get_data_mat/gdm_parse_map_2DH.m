@@ -49,7 +49,14 @@ flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
 
 %% clims
 
+flg_loc=isfield_default(flg_loc,'cmap',[]);
+flg_loc=isfield_default(flg_loc,'cmap_diff_t',[]);
+flg_loc=isfield_default(flg_loc,'cmap_diff_s',[]);
+flg_loc=isfield_default(flg_loc,'cmap_diff_s_t',[]);
+flg_loc=isfield_default(flg_loc,'cmap_diff_s_perc',[]);
+
 flg_loc=isfield_default(flg_loc,'clims_type',1);
+
 flg_loc=isfield_default(flg_loc,'clims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'clims_diff_t',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'clims_diff_s',[NaN,NaN]);

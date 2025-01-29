@@ -14,13 +14,17 @@
 
 function plot_summerbed(fid_log,flg_loc,simdef)
 
-%%
+%% TAG
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
 %% PARSE
 
 flg_loc=gdm_parse_summerbed(flg_loc,simdef(1));
+
+%% DO
+
+ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 
 %% LOAD REFERENCE DATA
 

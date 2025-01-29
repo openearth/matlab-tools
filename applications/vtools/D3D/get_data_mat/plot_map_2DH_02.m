@@ -164,7 +164,6 @@ for kvar=1:nvar %variable
         
                 kplot=1;
     
-                clims_str='clims';
                 tag_ref='val';
                 in_p.val=val_loc_tt;
                 in_p.is_diff=0;
@@ -173,7 +172,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref,clims_str);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
     
@@ -182,7 +181,6 @@ for kvar=1:nvar %variable
     
                 kplot=2;
     
-                clims_str='clims_diff_t';
                 tag_ref='diff_t';
                 in_p.val=val_loc_tt-val_loc_t0;
                 in_p.is_diff=1;
@@ -191,7 +189,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref,clims_str);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
     
@@ -200,7 +198,6 @@ for kvar=1:nvar %variable
     
                 kplot=3;
                  
-                clims_str='clims_diff_s';
                 tag_ref='diff_s';
                 in_p.val=val_loc_tt-val_ref_tt;
                 in_p.is_diff=1;
@@ -209,7 +206,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref,clims_str);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
     
@@ -218,7 +215,6 @@ for kvar=1:nvar %variable
     
                 kplot=4;
     
-                clims_str='clims_diff_s_t';
                 tag_ref='diff_s_t';
                 in_p.val=(val_loc_tt-val_ref_t0)-(val_ref_tt-val_ref_t0);
                 in_p.is_diff=1;
@@ -227,7 +223,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref,clims_str);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
     
@@ -240,7 +236,6 @@ for kvar=1:nvar %variable
                 bol_0=val_ref_tt_tmp==0;
                 val_ref_tt_tmp(bol_0)=NaN;
     
-                clims_str='clims_diff_s_perc';
                 tag_ref='diff_s_perc';
                 in_p.val=(val_loc_tt-val_ref_tt_tmp)./val_ref_tt_tmp.*100;
                 in_p.is_diff=0;
@@ -249,7 +244,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref,clims_str);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
             
@@ -368,9 +363,15 @@ end
 
 %% 
 
-function [fpath_file_2D,fpath_file_3D]=fcn_plot(in_p,flg_loc,var_str,var_idx_loc,fdir_fig,tag_fig,time_dnum_loc,runid,tag_ref,clims_str)
+function [fpath_file_2D,fpath_file_3D]=fcn_plot(in_p,flg_loc,var_str,var_idx_loc,fdir_fig,tag_fig,time_dnum_loc,runid,tag_ref)
 
+%colormap
+cmap_str=fcn_str_cmap_clim(tag_ref,'cmap'); %string to read from `flg_loc`
+in_p.cmap=flg_loc.(cmap_str);
+
+clims_str=fcn_str_cmap_clim(tag_ref,'clims');
 clims=flg_loc.(clims_str);
+
 clims=fcn_clims_type(flg_loc,clims);
 nclim=size(clims,1);
 
@@ -451,5 +452,20 @@ if flg_loc.plot_tiles
         end
     end
 end %plot_tiles
+
+end %function
+
+%%
+
+%Create string of colormap and colorbar. diff_t -> cmap_diff_t
+function cmap_str=fcn_str_cmap_clim(tag_ref,str_map)
+
+if strcmp(tag_ref,'val')
+    tag_ref='';
+end
+cmap_str=sprintf('%s_%s',str_map,tag_ref);
+if strcmp(cmap_str(1),'_')
+    cmap_str(1)='';
+end
 
 end %function

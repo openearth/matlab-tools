@@ -147,6 +147,8 @@ in_p=isfield_default(in_p,'epsg_in',28992);
 in_p=isfield_default(in_p,'epsg_out',in_p.epsg_in);
 in_p=isfield_default(in_p,'save_tiles',false);
 in_p=isfield_default(in_p,'tiles',{});
+in_p=isfield_default(in_p,'rkm_disp_color','c');
+in_p=isfield_default(in_p,'rkm_disp_size',10);
 
 v2struct(in_p)
 
@@ -587,8 +589,8 @@ if plot_rkm
     for krkm=1:nrkm
         bol_in=rkm{1,1}(krkm)>lims.x(kr,kc,1) && rkm{1,1}(krkm)<lims.x(kr,kc,2) && rkm{1,2}(krkm)>lims.y(kr,kc,1) && rkm{1,2}(krkm)<lims.y(kr,kc,2);
         if ~bol_in; continue; end
-        scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,'c','parent',han.sfig(kr,kc))
-        text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color','c','parent',han.sfig(kr,kc))
+        scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,rkm_disp_color,'parent',han.sfig(kr,kc))
+        text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color',rkm_disp_color,'parent',han.sfig(kr,kc),'FontSize',rkm_disp_size)
     end
 end
 if plot_fxw
@@ -626,7 +628,9 @@ if do_axis_equal
     end
 end
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+han.sfig(kr,kc).XLabel.FontSize=prop.fs;
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+han.sfig(kr,kc).YLabel.FontSize=prop.fs;
 if do_3D
 han.sfig(kr,kc).ZLabel.String=cbar(kr,kc).label;
 end
@@ -707,6 +711,7 @@ han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 % han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
 % han.sfig(kr,kc).Position=pos.sfig;
 han.cbar.Label.String=cbar(kr,kc).label;
+han.cbar.Label.FontSize=prop.fs;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
 % v2p=[1,5,11,15,np1];
@@ -720,8 +725,8 @@ han.cbar.Label.String=cbar(kr,kc).label;
 end
 
 %% GENERAL
-set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
-set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
+% set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
+% set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
 % han.fig.Renderer='painters';
 
 %% PRINT

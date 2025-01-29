@@ -61,6 +61,13 @@ end
 
 in_p=isfield_default(in_p,'lims_c1',absolute_limits(in_p.max_gr_p));
 in_p=isfield_default(in_p,'lims_c2',absolute_limits(in_p.c_morph_p));
+in_p=isfield_default(in_p,'lambda_s',[]);
+in_p=isfield_default(in_p,'beta_s',[]);
+in_p=isfield_default(in_p,'beta_s',[]);
+in_p=isfield_default(in_p,'sh',1.0);
+in_p=isfield_default(in_p,'mt',2.0);
+in_p=isfield_default(in_p,'mb',1.5);
+in_p=isfield_default(in_p,'ml',1.5);
 
 v2struct(in_p)
 
@@ -87,11 +94,11 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-marg.mt=2.0; %top margin [cm]
-marg.mb=1.5; %bottom margin [cm]
+marg.mt=mt; %top margin [cm]
+marg.mb=mb; %bottom margin [cm]
 marg.mr=0.5; %right margin [cm]
-marg.ml=1.5; %left margin [cm]
-marg.sh=1.0; %horizontal spacing [cm]
+marg.ml=ml; %left margin [cm]
+marg.sh=sh; %horizontal spacing [cm]
 marg.sv=0.0; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
@@ -102,7 +109,7 @@ prop.mt1='s';
 prop.lw1=1;
 prop.ls1='-'; %'-','--',':','-.'
 prop.m1='none'; % 'o', '+', '*', '.', 'x','_','|','s','d','^','v','>','<','p','h'... {'o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'};
-prop.fs=10;
+prop.fs=fs;
 prop.fn='Helvetica';
 prop.color=[... %>= matlab 2014b default
  0.0000    0.4470    0.7410;... %blue

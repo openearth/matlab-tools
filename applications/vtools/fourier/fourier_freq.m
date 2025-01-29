@@ -58,7 +58,7 @@ if isempty(y_diff) %1D in y
     dy=Inf;
 else
     dy=y_diff(1);
-    if any(y_diff-dy)
+    if any(abs(y_diff-dy)>1e-10)
         error('space step must be constant.')
     end
 end

@@ -204,11 +204,17 @@
 %and inside a kilometre polygon. 
 
 % tag='fig_map_summerbed_01';
-% in_plot.(tag).do=1;
-% in_plot.(tag).do_xvt=0;
-% in_plot.(tag).do_diff=1; %difference with initial time
-% in_plot.(tag).do_s=1; %difference with reference simulation
-% in_plot.(tag).do_all=1; %all simulations in same figure
+% in_plot.(tag).do=1; %process this tag
+% in_plot.(tag).do_p=1; %pass through plotting routine
+% in_plot.(tag).do_p_single=1; %plot single result
+% in_plot.(tag).do_diff_t=1; %difference initial time
+% in_plot.(tag).do_diff_s=1; %difference reference simulation
+% in_plot.(tag).do_diff_s_t=1; %difference reference simulation and initial time
+% in_plot.(tag).do_diff_s_perc=1; %difference reference simulation in percentage terms
+% in_plot.(tag).do_all_s=0; %all simulations in same figure
+% in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+% in_plot.(tag).do_xvt=0; %x-axis -> x; y-axis-> variable; one line for each time
+% in_plot.(tag).do_cum=0; %cumulative value with time
 % in_plot.(tag).do_plot_structures=1; %plot bridge piles and structures: 0=NO; 1=YES
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).tim_tol=hours(1); 
