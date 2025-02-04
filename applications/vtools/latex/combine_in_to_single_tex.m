@@ -40,3 +40,5 @@ function move_lines_from_files_to_combined(main_file, combined_file, curdir)
     fclose(fileID_main);
     fclose(fileID_combined); 
 end
+
+end
