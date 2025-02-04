@@ -1,5 +1,10 @@
-main_file = 'maas2dmor.tex'
-combined_file = 'maas2dmor_combined.tex'
+function combine_in_to_single_tex(main_file, combined_file) 
+%COMBINE_IN_TO_SINGLE_TEX - combine mulitple tex files into a single one
+
+%Usage: 
+%combine_in_to_single_tex(main_file, combined_file) 
+%   main_file:     top-level file 
+%   combined_file: combined file 
 
 % create an empty file
 fileID_combined = fopen(combined_file,'w');
