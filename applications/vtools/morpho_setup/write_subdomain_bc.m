@@ -32,7 +32,7 @@
 %Option select either upstream or downstream water level. 
 %Future: read information from obs-file
 
-function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,time_start,is_internal,boundaries,fpath_submodel_enc,model_case,varargin)
+function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,fname_ext,time_start,is_internal,boundaries,fpath_submodel_enc,varargin)
 
 %% PARSE
 
@@ -50,13 +50,13 @@ end
 
 %% CALC
 messageOut(NaN,'Start getting indices.')
-[obs,crs,submodel_enc]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,fpath_submodel_enc,varargin{:});
+[obs,crs,~]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,fpath_submodel_enc,varargin{:});
 
 messageOut(NaN,'Start getting data.')
 [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs);
 
 messageOut(NaN,'Start writing lateral bc.')
-write_lateral_bc(fpath_ext, fdir_out, time_start, time_v, only_start_end)
+bc_lat=write_lateral_bc(fpath_ext, fdir_out, time_start, time_v, only_start_end);
 
 messageOut(NaN,'Start writing water level boundary.')
 bc_h=write_h_bc(obs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,is_internal,fname_h,only_start_end);
@@ -68,7 +68,7 @@ messageOut(NaN,'Start writing polylines.')
 write_pli(crs,fullfile(fdir_out,fpathrel_pli))
 
 messageOut(NaN,'Start writing external file.')
-write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,boundaries,model_case);
+write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,boundaries,fname_ext);
 
 messageOut(NaN,'Done.')
 
@@ -92,11 +92,16 @@ parse(parin,varargin{:});
 
 delimiter=parin.Results.delimiter;
 
+do_enc=false;
+if ~isempty(fpath_submodel_enc)
+    do_enc=true;
+end
+
 %% CALC
 
-%read grid
+%% read grid
 matfilename = sprintf('%s_grid.mat', num2str(keyHash(fpath_map))); 
-if exist(matfilename)==2; 
+if exist(matfilename)==2
     load(matfilename); 
 else
     gridInfo=EHY_getGridInfo(fpath_map,{'XYcen','XYuv'}); 
@@ -109,6 +114,7 @@ else
     [edge_face,xcen_raw,ycen_raw,xedg_raw,yedg_raw,~,faces_local]=D3D_edge_faces(fpath_map);
     save(matfilename,'gridInfo','xcen_ehy','ycen_ehy', 'xedg_ehy', 'yedg_ehy', 'edge_face','xcen_raw','ycen_raw','xedg_raw','yedg_raw','faces_local');
 end
+
 %% obs
 obs=D3D_io_input('read',fpath_obs,'delimiter',delimiter,'v',2);
 nobs=numel(obs);
@@ -126,10 +132,10 @@ for kobs=1:nobs
 end %kobs
 xy_obs_all=reshape([obs.xy],2,[])';
 
-
 %% submodel_enc
-submodel_enc=D3D_io_input('read',fpath_submodel_enc);%tekal('read', fpath_submodel_enc, 'loaddata');
-
+if do_enc
+    submodel_enc=D3D_io_input('read',fpath_submodel_enc);%tekal('read', fpath_submodel_enc, 'loaddata');
+end
 
 %% crs
 crs=D3D_io_input('read',fpath_crs);
@@ -149,20 +155,24 @@ for kcrs=1:ncrs
     %direction
     dist=hypot(xedg_raw-x,yedg_raw-y);
     [idx_edg_raw,min_v,flg_found]=absmintol(dist,0,'do_disp_list',0,'tol',12,'do_break',0); %index of the link closest in raw coordinates
-     idx_faces=edge_face(idx_edg_raw,:); %index of faces connected by the link in raw coordinates. Because it is a local variable, there are as many possible faces as partitions. 
+    idx_faces=edge_face(idx_edg_raw,:); %index of faces connected by the link in raw coordinates. Because it is a local variable, there are as many possible faces as partitions. 
  
-     idx_faces_possible=find(faces_local==idx_faces(1)); %global index of possible origin faces connected by the link
+    idx_faces_possible=find(faces_local==idx_faces(1)); %global index of possible origin faces connected by the link
  
-     x_possible=xcen_raw(idx_faces_possible);
-     y_possible=ycen_raw(idx_faces_possible);
+    x_possible=xcen_raw(idx_faces_possible);
+    y_possible=ycen_raw(idx_faces_possible);
  
-     dist=hypot(x_possible-x,y_possible-y); 
-    [idx_obs_1_loc,~]=absmintol(dist,0,'do_disp_list',0,'tol',40,'do_break',1); %index of origin face from the possible ones that is closest to the link in raw coordinates.
+    dist=hypot(x_possible-x,y_possible-y); 
+    [idx_obs_1_loc,~]=absmintol(dist,0,'do_disp_list',0,'tol',40,'do_break',0); %index of origin face from the possible ones that is closest to the link in raw coordinates.
 
     x_obs=x_possible(idx_obs_1_loc); %x coordinate of the observation station that is origin of the link.
     y_obs=y_possible(idx_obs_1_loc); %y coordinate of the observation station that is origin of the link.
 
-    bol = inpolygon(x_obs,y_obs,submodel_enc.xy(:,1),submodel_enc.xy(:,2));
+    if do_enc
+        bol = inpolygon(x_obs,y_obs,submodel_enc.xy(:,1),submodel_enc.xy(:,2));
+    else
+        bol=true(size(x_obs));
+    end
 
     %If the point is outside the submodel enclosure the flow is as it would
     %be in the submodel from outside to inside. Hence dir = 1;
@@ -199,8 +209,9 @@ end %function
 %%
 
 function [obs,crs,time_v]=extract_map_info(fpath_map,obs,crs)
+
 matfilename = sprintf('%s.mat', num2str(keyHash(fpath_map))); 
-if exist(matfilename)==2; 
+if exist(matfilename,'file')==2
     load(matfilename); 
 else
     data_q=EHY_getMapModelData(fpath_map,'varName','mesh2d_q1');
@@ -228,10 +239,6 @@ for kobs=1:nobs
         obs(kobs).bl=data_bl.val(obs(kobs).idx);
     end
 end
-
-
-
-
 
 end %function
 
@@ -360,29 +367,35 @@ end %kcrs
 end %function
 
 %%
-function write_lateral_bc(fpath_ext, fdir_out, time_start, time_v, only_start_end)
+
+function bc=write_lateral_bc(fpath_ext, fdir_out, time_start, time_v, only_start_end)
 
 %original external without [boundary]
 ext_o=D3D_io_input('read',fpath_ext);
 fn=fieldnames(ext_o);
 bol=contains(fn,'lateral');
 
-bc_all={};
+% bc_all={};
 bc=struct();
 
-lat_idx=0;
-fpath_bc_lat = {};
-for klat = find(bol).';
-    lat_idx=lat_idx+1;
-    fpath_lat_orig = fullfile(fileparts(fpath_ext), ext_o.(fn{klat}).discharge);
-    fpath_bc_lat{lat_idx}=ext_o.(fn{klat}).discharge;
+idx_lat=find(bol);
+nlat=numel(idx_lat);
+fpath_rel_lat=cell(nlat,1);
+for klat=1:nlat
+    idx_lat_loc=idx_lat(klat);
+    fpath_rel_lat{klat}=ext_o.(fn{idx_lat_loc}).discharge;
 end
-[~, idx] = unique(cell2table(fpath_bc_lat));
-fpath_bc_lat = fpath_bc_lat(idx);
-for kfpath_lat = 1:length(fpath_bc_lat);
-    lat = bct_io('read', fullfile(fileparts(fpath_ext), fpath_bc_lat{kfpath_lat})); 
-    fpath_lat_orig = fullfile(fdir_out, fpath_bc_lat{kfpath_lat});  
-    for ks = 1:length(lat.Table); 
+
+%take unique
+[~,idx]=unique(cell2table(fpath_rel_lat));
+fpath_rel_lat=fpath_rel_lat(idx);
+nlat=numel(fpath_rel_lat);
+
+for klat=1:nlat
+    fpath_lat_orig=fullfile(fileparts(fpath_ext),fpath_rel_lat{klat});
+    lat=bct_io('read', fpath_lat_orig); 
+    ns=length(lat.Table);
+    for ks=1:ns
         bc(ks).name=lat.Table(ks).Location;
         if ~only_start_end
             bc(ks).function='timeseries';
@@ -404,14 +417,15 @@ for kfpath_lat = 1:length(fpath_bc_lat);
             bc(ks).val=val(end);
         end
     end
-    [fdir_out, fname, ~] = fileparts(fpath_lat_orig); 
-    [~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,'cmp','dummy',fdir_out,fname); %`dummy` as input will trigger to write the last output
+    [fdir_out_bc,fname, ~]=fileparts(fpath_lat_orig); 
+    [~,~,bc_all]=write_bc_if_new(bc,ks,bc_all,'cmp','dummy',fdir_out_bc,fname); %`dummy` as input will trigger to write the last output
 end
 
-end
+end %function
 
+%%
 
-function write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h_bc,fname_q_bc,boundaries,model_case)
+function write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h_bc,fname_q_bc,boundaries,fname_ext)
 
 if ~strcmp(fpathrel_bc(end),'\') && ~strcmp(fpathrel_bc(end),'/')
     fpathrel_bc(end)='/';
@@ -428,7 +442,7 @@ kboundary_o=sum(~bol); %boundaries which are not [boundary] (e.g., [lateral])
 fn=fieldnames(ext_o);
 bol=contains(fn,'lateral');
 
-for klat = find(bol).';
+for klat = find(bol).'
     [fpathlat, fpathname, ~] = fileparts(ext_o.(fn{klat}).discharge);
     ext_o.(fn{klat}).discharge = strrep(fullfile(fpathlat, [fpathname, '_cmp.bc']), '\' , '/');
 end
@@ -444,10 +458,11 @@ for kbc=1:nbc
     bc=which_bc(boundaries(kbc,2),bc_h(:,2),bc_h,ext_boundary_o);
     [ext,kboundary]=add_ext(ext,kboundary,bc,'waterlevelbnd',fpathrel_pli,fpathrel_bc,fname_h_bc); %h
     
-    fpath=fullfile(fdir_out,sprintf('ext_%s_%s_%s_bnd.ext',boundaries{kbc,1},boundaries{kbc,2},model_case));
-    if ~isfolder(fdir_out);
-        mkdir(fdir_out);
-    end
+    %laterals should be added?
+    
+    fpath=fullfile(fdir_out,sprintf('%s_%s_%s.ext',fname_ext,boundaries{kbc,1},boundaries{kbc,2}));
+    mkdri_check(fdir_out);
+
     D3D_io_input('write',fpath,ext);
 end %kbc
 
@@ -494,7 +509,7 @@ for kdom=1:ndom
     faces_local(bol_dom)=1:1:sum(bol_dom);
 end
 
-end
+end %function
 
 %%
 
@@ -533,7 +548,7 @@ if only_start_end
     val=val([end,end]);
 end
 
-end
+end %function
 
 %%
 
@@ -542,11 +557,9 @@ function [bc,ks,bc_all]=write_bc_if_new(bc,ks,bc_all,location,location_new,fdir_
 if ~strcmp(location,location_new) %add data to existing
     if ~isempty(location) %write and save
         fname=fcn_fname_bc(fname_h,location);
-        fdir_out = get_full_dir(fullfile(fdir_out));
+        fdir_out=get_full_dir(fullfile(fdir_out));
         fpath=fullfile(fdir_out,fname);
-        if ~isfolder(fdir_out)
-            mkdir(fdir_out);
-        end
+        mkdir_check(fdir_out,NaN,1,1);
         D3D_write_bc(fpath,bc)
         messageOut(NaN,sprintf('bc-file created: %s',fpath));
         bc_all=cat(1,bc_all,{bc,location});
@@ -555,7 +568,7 @@ if ~strcmp(location,location_new) %add data to existing
     bc=struct();
 end
 
-end
+end %function
 
 %%
 
@@ -563,7 +576,7 @@ function location=get_location(name)
 
 location=name(1:end-7); %it assumed to be `#name_123456` 
 
-end
+end %function
 
 %%
 
@@ -577,7 +590,7 @@ for kbo=1:nbo
     [~,location_bc_o{kbo}]=fileparts(lf);
 end
 
-end
+end %function
 
 %%
 
@@ -599,7 +612,7 @@ else
     bc=bc_in{bol,1};
 end
 
-end
+end %function
 
 %%
 
@@ -607,4 +620,4 @@ function fname=fcn_fname_bc(fname_h,location)
 
 fname=sprintf('%s_%s.bc',fname_h,location);
 
-end
+end %function

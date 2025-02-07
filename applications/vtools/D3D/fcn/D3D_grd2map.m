@@ -45,20 +45,11 @@ mdufile(fpath_mdu);
 
 %create xml file
 fpath_xml=fullfile(fdir_work,'dimr_config.xml');
-xmlfile(fpath_xml);
+D3D_dimr_config(fpath_xml,'tmp.mdu',1)
+% xmlfile(fpath_xml);
 
 %execute
-fdir_now=pwd;
-cd(fdir_work)
-if ~exist(fpath_exe,'file')
-    error('There is no <run_dimr.bat> here: %s',fpath_exe)
-end
-% [status]=system(sprintf('call "%s" "%s"',fpath_exe,fpath_xml));
-[status]=system(sprintf('call "%s"',fpath_exe)); %for some reason the execute does not work when the path has a space, although it did before. If default name is <dimr_config> is used, there is no ptoblem. 
-cd(fdir_now);
-if status~=0
-    error('something went wrong when executing')
-end
+D3D_run_dimr(fdir_work,'fpath_exe',fpath_exe);
 
 %copy map
 fpath_map_loc=fullfile(fdir_work,'DFM_OUTPUT_tmp','tmp_map.nc');
@@ -104,27 +95,27 @@ end %mdufile
 
 %%
 
-function xmlfile(fpath_xml)
-
-fid=fopen(fpath_xml,'w');
-
-fprintf(fid,'<?xml version="1.0" encoding="iso-8859-1"?>                                                                                                                                                                                        \r\n');
-fprintf(fid,'<dimrConfig xmlns="http://schemas.deltares.nl/dimrConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.deltares.nl/dimrConfig http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">\r\n');
-fprintf(fid,'    <documentation>                                                                                                                                                                                                                \r\n');
-fprintf(fid,'        <fileVersion>1.00</fileVersion>                                                                                                                                                                                            \r\n');
-fprintf(fid,'        <createdBy>Deltares, Sobek3 To D-Flow FM converter, version 1.17</createdBy>                                                                                                                                               \r\n');
-fprintf(fid,'        <creationDate>2019-12-03 15:33</creationDate>                                                                                                                                                                              \r\n');
-fprintf(fid,'    </documentation>                                                                                                                                                                                                               \r\n');
-fprintf(fid,'    <control>                                                                                                                                                                                                                      \r\n');
-fprintf(fid,'        <start name="myNameDFlowFM"/>                                                                                                                                                                                              \r\n');
-fprintf(fid,'    </control>                                                                                                                                                                                                                     \r\n');
-fprintf(fid,'    <component name="myNameDFlowFM">                                                                                                                                                                                               \r\n');
-fprintf(fid,'        <library>dflowfm</library>                                                                                                                                                                                                 \r\n');
-fprintf(fid,'        <workingDir>.</workingDir>                                                                                                                                                                                                 \r\n');
-fprintf(fid,'        <inputFile>tmp.mdu</inputFile>                                                                                                                                                                                          \r\n');
-fprintf(fid,'    </component>                                                                                                                                                                                                                   \r\n');
-fprintf(fid,'</dimrConfig>                                                                                                                                                                                                                      \r\n');
-
-fclose(fid);
-
-end %xmlfile
+% function xmlfile(fpath_xml)
+% 
+% fid=fopen(fpath_xml,'w');
+% 
+% fprintf(fid,'<?xml version="1.0" encoding="iso-8859-1"?>                                                                                                                                                                                        \r\n');
+% fprintf(fid,'<dimrConfig xmlns="http://schemas.deltares.nl/dimrConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.deltares.nl/dimrConfig http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">\r\n');
+% fprintf(fid,'    <documentation>                                                                                                                                                                                                                \r\n');
+% fprintf(fid,'        <fileVersion>1.00</fileVersion>                                                                                                                                                                                            \r\n');
+% fprintf(fid,'        <createdBy>Deltares, Sobek3 To D-Flow FM converter, version 1.17</createdBy>                                                                                                                                               \r\n');
+% fprintf(fid,'        <creationDate>2019-12-03 15:33</creationDate>                                                                                                                                                                              \r\n');
+% fprintf(fid,'    </documentation>                                                                                                                                                                                                               \r\n');
+% fprintf(fid,'    <control>                                                                                                                                                                                                                      \r\n');
+% fprintf(fid,'        <start name="myNameDFlowFM"/>                                                                                                                                                                                              \r\n');
+% fprintf(fid,'    </control>                                                                                                                                                                                                                     \r\n');
+% fprintf(fid,'    <component name="myNameDFlowFM">                                                                                                                                                                                               \r\n');
+% fprintf(fid,'        <library>dflowfm</library>                                                                                                                                                                                                 \r\n');
+% fprintf(fid,'        <workingDir>.</workingDir>                                                                                                                                                                                                 \r\n');
+% fprintf(fid,'        <inputFile>tmp.mdu</inputFile>                                                                                                                                                                                          \r\n');
+% fprintf(fid,'    </component>                                                                                                                                                                                                                   \r\n');
+% fprintf(fid,'</dimrConfig>                                                                                                                                                                                                                      \r\n');
+% 
+% fclose(fid);
+% 
+% end %xmlfile

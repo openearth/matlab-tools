@@ -33,6 +33,9 @@ else %folder is given
     end    
 end
 [nf,np]=size(path_files);
+if nf==1 
+    error('It is not possible to make a movie with one frame only.')
+end
 [fdir,fname,~]=fileparts(path_files{1,1});
 
 %varargin

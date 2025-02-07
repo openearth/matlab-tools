@@ -130,22 +130,28 @@ for kpli=1:npli %variable
         nplot=5;
         fpath_file=cell(nplot,nt,nS,nlims);
 
+        %time 0
+        kt=1;
+        [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum(kt),time_dtime(kt),time_mor_dnum(kt),time_mor_dtime(kt)); %output: time_dnum_plot
+
         %measurements at time 0                        
-        [plot_mea,data_mea_0]=gdm_load_measurements_match_time(flg_loc,in_p.tim(1),var_str_save,kpli,'val_mean');
+        [plot_mea,data_mea_0]=gdm_load_measurements_match_time(flg_loc,in_p.tim,var_str_save,kpli,'val_mean');
 
         ktc=0; 
         for kt=kt_v %time
             ktc=ktc+1;
 
-            [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum(kt),time_dtime(kt),time_mor_dnum(kt),time_mor_dtime(kt));
+            %time kt
+            [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum(kt),time_dtime(kt),time_mor_dnum(kt),time_mor_dtime(kt)); %output: time_dnum_plot
    
+            %all data
             [data_all,gridInfo_ls,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum);
 
             %measurements                        
-            [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,in_p.tim(kt),var_str_save,kpli,'val_mean');
+            [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,in_p.tim,var_str_save,kpli,'val_mean');
 
+            %save to plot structure
             in_p.s_mea=data_mea.x;          
-            
             in_p.xlab_str=xlab_str;
             in_p.xlab_un=xlab_un;
             
@@ -366,8 +372,9 @@ for kpli=1:npli %variable
         if flg_loc.do_movie && nt>1
 
             for kplot=1:nplot
-                fpath_loc=fpath_file{kplot,1,1,:};
-                nylims=sum(~isempty(fpath_loc));
+                fpath_loc=squeeze(fpath_file(kplot,1,1,:));
+                bol_ylim=cellfun(@(X)~isempty(X),fpath_loc);
+                nylims=sum(bol_ylim);
                 for klim=1:nylims
                     for kS=1:nS
                         fpath_mov=fpath_file(kplot,:,kS,klim);

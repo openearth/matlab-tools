@@ -258,8 +258,9 @@ for kvar=1:nvar %variable
     
         if flg_loc.do_movie && nt>1
             for kplot=1:nplot
-                fpath_loc=fpath_file_2D{kplot,1,:,1};
-                nclim=sum(~isempty(fpath_loc));
+                fpath_loc=squeeze(fpath_file_2D(kplot,1,:,1));
+                bol_clim=cellfun(@(X)~isempty(X),fpath_loc);
+                nclim=sum(bol_clim);
                 for kclim=1:nclim
                     for kxlim=1:nxlim
                         fpath_mov=fpath_file_2D(kplot,:,kclim,kxlim);
@@ -464,8 +465,8 @@ if strcmp(tag_ref,'val')
     tag_ref='';
 end
 cmap_str=sprintf('%s_%s',str_map,tag_ref);
-if strcmp(cmap_str(1),'_')
-    cmap_str(1)='';
+if strcmp(cmap_str(end),'_')
+    cmap_str(end)='';
 end
 
 end %function

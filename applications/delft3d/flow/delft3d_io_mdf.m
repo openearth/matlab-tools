@@ -300,7 +300,10 @@ elseif length(tmp)>0
                     
                     % remove = sign and leading/trailing blanks
                     equalsignposition = findstr(value,'=');
-                    value             = strtrim(value(equalsignposition+1:end));
+                    % if ~isscalar(equalsignposition)
+                    %     a=1;
+                    % end
+                    value             = strtrim(value(equalsignposition(1)+1:end));
                 else
                     value=strtrim(value);
                 end
