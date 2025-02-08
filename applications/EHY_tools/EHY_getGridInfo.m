@@ -16,6 +16,7 @@ function gridInfo = EHY_getGridInfo(inputFile,varargin)
 %               face_nodes_xy           E.face_nodes_x & E.face_nodes_y
 %               edge_nodes              E.edge_nodes
 %               edge_nodes_xy           E.edge_nodes_x & E.edge_nodes_y
+%               edge_type               E.edge_type (0=internal_closed,1=internal,2=boundary,3=boundary_closed)
 %               area                    E.area
 %               boundary                E.boundary (model domain surrounding polygon)
 %         Zcen (top-view info/depth)    E.Zcen (& E.Zcor)
@@ -523,7 +524,17 @@ switch modelType
                             E.edge_nodes = ncread(inputFile,varName);
                         end
                     end
-                    
+
+                    if ismember('edge_type',wantedOutput)
+                        varName = EHY_nameOnFile(inputFile,'mesh2d_edge_type');
+                        if strcmp(varName,'noMatchFound')
+                            varName='mesh1d_edge_type';
+                        end
+                        if nc_isvar(inputFile,varName)
+                            E.edge_type = ncread(inputFile,varName);
+                        end
+                    end
+
                     if ismember('dimensions',wantedOutput)
                         % no_NetNode
                         dimName = EHY_nameOnFile(inputFile,'mesh2d_nNodes');
