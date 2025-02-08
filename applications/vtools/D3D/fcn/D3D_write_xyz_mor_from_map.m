@@ -41,24 +41,33 @@ function D3D_write_xyz_mor_from_map(fdir_sim,fdir_write,tim)
 
 simdef=D3D_simpath(fdir_sim);
 
-gridInfo=EHY_getGridInfo(simdef.file.map,{'XYcor','XYcen'});
+gridInfo=EHY_getGridInfo(simdef.file.map,{'XYcor','XYcen','boundary'});
 
 data_lyrfrac=EHY_getMapModelData(simdef.file.map,'varName','mesh2d_lyrfrac','t0',tim,'tend',tim);
 data_thlyr=EHY_getMapModelData(simdef.file.map,'varName','mesh2d_thlyr','t0',tim,'tend',tim);
 
+idx_cen = [1:length(gridInfo.Xcen)].'; 
+Fidx = scatteredInterpolant(gridInfo.Xcen,gridInfo.Ycen,idx_cen,'nearest','nearest');
+idx_bnd = Fidx(gridInfo.boundary(:,1),(gridInfo.boundary(:,2)));
+
+idx = [idx_cen; idx_bnd]; 
 %rename
 xy_cen=[gridInfo.Xcen,gridInfo.Ycen];
 %frac_cen=permute(squeeze(data_lyrfrac.val),[3,2,1]);
 frac_cen= squeeze(data_lyrfrac.val);
 thk_cen=squeeze(data_thlyr.val);
 
+xy_cen_bnd = xy_cen(idx,:);
+frac_cen_bnd = frac_cen(idx,:,:);
+thk_cen_bnd = thk_cen(idx,:);
+
 %% WRITE
 
 tag_folder_out='gsd';
 
-cord_write=xy_cen;
-frac_write=frac_cen;
-thk_write=thk_cen;
+cord_write=xy_cen_bnd;
+frac_write=frac_cen_bnd;
+thk_write=thk_cen_bnd;
 
 simdef.mor.frac=frac_write; 
 simdef.mor.frac_xy=cord_write;
