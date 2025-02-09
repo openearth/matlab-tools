@@ -44,16 +44,26 @@ thk=simdef.mor.thk;
 %size
 nf=size(frac,3);
 nl=size(frac,2);
+ng=size(frac,1);
 
 %% round
 
-% check_Fak(frac);
+% [row,col] = find(thk==0);
+% frac(row,col,1) = 1; 
+% frac(row,col,2:nf) = 0; 
+
+%check_Fak(frac);
 
 prec=10;
-frac_rn=round(frac,prec);
-% frac_rn(:,:,end)=1-sum(frac_rn(:,:,1:end-1),3);
-frac_rn(:,:,1)=1-sum(frac_rn(:,:,2:end),3);
-frac_rn(frac_rn<1*10^(-prec))=0;
+
+frac_cum = cumsum(flip(frac,3),3); % get cumulative content (order is flipped such that in case of too little sediment the finest sediment gets it)
+frac_cum(:,:,end) = 1; % set total to 1.
+frac_cum = min(frac_cum,1); % more than 1 is not allowed
+frac_cum = max(frac_cum,0); % less than 0 is not allowed
+frac_cum = round(frac_cum,prec); % round to desired precision
+frac_rn = diff(cat(3,zeros(ng,nl,1),frac_cum),1,3); % get fraction per thickness
+frac_rn = flip(frac_rn,3); %reorder to original order 
+frac_rn = round(frac_rn,prec); % round to desired precision
 
 check_Fak(frac_rn);
 

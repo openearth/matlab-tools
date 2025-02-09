@@ -82,7 +82,7 @@ mkdir_check(fdir_write);
 mkdir(fullfile(fdir_write,simdef.mor.folder_out))
 
 D3D_morini(simdef)
-D3D_morini_files(simdef)
+D3D_morini_files(simdef,'num_str','%0.15E %0.15E %8.10f')
 
 messageOut(NaN,'done writing files')
 
