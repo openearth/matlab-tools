@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19327 $
-%$Date: 2023-12-21 14:04:16 +0100 (Thu, 21 Dec 2023) $
-%$Author: chavarri $
-%$Id: gdm_parse_summerbed.m 19327 2023-12-21 13:04:16Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_parse_summerbed.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Wrap of `D3D_read_structures`
 

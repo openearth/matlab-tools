@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19877 $
-%$Date: 2024-11-07 12:42:34 +0100 (Thu, 07 Nov 2024) $
-%$Author: ottevan $
-%$Id: write_subdomain_bc.m 19877 2024-11-07 11:42:34Z ottevan $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/morpho_setup/write_subdomain_bc.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Replaces the value in an NC variable to the fill value. 
 %

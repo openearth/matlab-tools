@@ -52,11 +52,11 @@ function str = deblank2_copy(str)
 % Created: 27 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id: deblank2.m 7187 2012-09-05 09:49:34Z ormondt $
-% $Date: 2012-09-05 11:49:34 +0200 (Wed, 05 Sep 2012) $
-% $Author: ormondt $
-% $Revision: 7187 $
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/general/misc/deblank2.m $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %% Removes starting and trailing spaces from string

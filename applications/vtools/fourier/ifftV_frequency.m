@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18312 $
-%$Date: 2022-08-19 08:16:54 +0200 (Fri, 19 Aug 2022) $
-%$Author: chavarri $
-%$Id: fourier_eigenvalues.m 18312 2022-08-19 06:16:54Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/fourier/fourier_eigenvalues.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Compute ifft for given frequencies.
 

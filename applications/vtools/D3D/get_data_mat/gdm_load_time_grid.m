@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19811 $
-%$Date: 2024-10-04 14:17:06 +0200 (Fri, 04 Oct 2024) $
-%$Author: chavarri $
-%$Id: gdm_time_flow_mor.m 19811 2024-10-04 12:17:06Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_time_flow_mor.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 
