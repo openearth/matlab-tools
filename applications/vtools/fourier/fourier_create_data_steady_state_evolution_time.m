@@ -4,44 +4,205 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 19687 $
+%$Date: 2024-06-24 17:30:38 +0200 (Mon, 24 Jun 2024) $
+%$Author: chavarri $
+%$Id: twoD_study.m 19687 2024-06-24 15:30:38Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/ECT/twoD_study.m $
 %
-%MATLAB BUGS:
-%   -The command to change font name does not work. It does not give error
-%   but it does not change the font [151102].
-%   -When getting and setting position of ylabels, axis, colorbars,
-%   etcetera, if the figure is open in screensize the result is different
-%   than if it is not. Moreover, you may need to put a pause(1) after getting
-%   positions and setting them [151105].
-%   -When something is out of the axes (the box delimited by 'Position')
-%   (e.g. text outside the axes), the continuous colors (e.g. from a plot
-%   like 'area') have weird lines in .eps.
-%   -FontName if interpreter LaTeX: check post 114116
-%	-When adding text in duration axis, scatter interprets days while surf interprets hours
+%Only loop of eigenvalues in 2D study.
 
-% in_p.fig_print=; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
-% in_p.fname=;
-% in_p.fig_visible=;
+function fourier_create_data_steady_state_evolution_time(fdir_out,noise_Lbx_v,noise_W_v,etab_max,nlength,nmove,nx,ny,nt,ECT_input,dim_ini,varargin)
 
-function figure_layout(in_p)
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'plot',0);
+
+parse(parin,varargin{:});
+
+do_plot=parin.Results.plot;
+
+pert_anl=1; %1=full
+
+%% input variation
+
+input_m_L=allcomb(noise_Lbx_v,noise_W_v);
+nv=size(input_m_L,1);
+data=struct('Lx',cell(nv,1),'Ly',cell(nv,1),'c',cell(nv,1),'w',cell(nv,1));
+
+%% dir
+fdir_nc=fullfile(fdir_out,'nc');
+mkdir_check(fdir_nc);
+
+fdir_fig=fullfile(fdir_out,'fig');
+mkdir_check(fdir_fig);
+
+fdir_mat=fullfile(fdir_out,'mat');
+mkdir_check(fdir_mat);
+
+%% loop
+
+for kv=1:nv
+
+    %% CALC
+    
+    %matrix input rework
+    noise_Lbx=input_m_L(kv,1);
+    noise_W=input_m_L(kv,2); %width of the domain (half the lengthscale for alternate bars)
+    
+    noise_Lby=2*noise_W;
+    
+    %compute matrices
+    [ECT_matrices,~]=call_ECT(ECT_input);
+    
+    %compute celerity
+    [c,w]=compute_celerity(ECT_matrices,noise_Lbx,noise_Lby,pert_anl);
+    
+    %domain
+    [x,y,t,x_in,y_in]=compute_domain(nlength,noise_Lbx,noise_W,nx,ny,nt,c,w,nmove);
+    
+    %initial condition
+    % noise_etab=initial_condition(x_in,y_in,noise_Lbx,noise_Lby,etab_max); %not needed, already in the Fourier modes
+    
+    %specific modes
+    [fx2,fy2,P2]=fourier_modes_alternate_bar(noise_Lbx,noise_Lby,etab_max);
+    
+    %get steady-state flow and compute evolution in time
+    Q_rec=get_steady_state_evolution_in_time(ECT_matrices,fx2,fy2,P2,dim_ini,x_in,y_in,t,pert_anl);
+    
+    %% WRITE
+    
+    fname=sprintf('%06d',kv);
+    
+    filename=fullfile(fdir_nc,sprintf('%s.nc',fname));
+    fourier_write_nc(filename,x,y,t,Q_rec,noise_Lbx,noise_W,etab_max)
+    
+    %% PLOT
+    
+    if do_plot
+        in_p.fname=fullfile(fdir_fig,fname);
+        in_p.Q_rec=Q_rec;
+        in_p.x_in=x_in;
+        in_p.y_in=y_in;
+        in_p.t=t;
+        
+        fig_surf(in_p);
+    end
+
+    %% SAVE TO MAT
+    
+    data(kv).Lx=noise_Lbx;
+    data(kv).Ly=noise_Lby;
+    data(kv).c=c;
+    data(kv).w=w;
+
+    %% disp
+    messageOut(NaN,sprintf('Done %4.2f %%',kv/nv*100));
+
+end %kv
+
+%% SAVE MAT
+
+fname=fullfile(fdir_mat,'index.mat');
+save(fname,'data')
+
+end %function
+
+%%
+%% FUNCTION
+%%
+
+%%
+
+function Q_rec=get_steady_state_evolution_in_time(ECT_matrices,fx2,fy2,P2,dim_ini,x_in,y_in,t,pert_anl)
+
+[R,omega,M]=fourier_eigenvalues_frequency_matrices(ECT_matrices.Dx,ECT_matrices.Dy,ECT_matrices.Ax,ECT_matrices.Ay,ECT_matrices.B,ECT_matrices.C,ECT_matrices.M_pmm,fx2,fy2,pert_anl,0);
+[P2all]=fourier_steady_state_frequency(fx2,fy2,P2,dim_ini,M,R);
+[~,Q_rec]=fourier_evolution_frequency(fx2,fy2,x_in,y_in,t,P2all,R,omega,dim_ini,'full',0,'disp',0);
+
+end
+
+%%
+
+function [c_morph_p,gr]=compute_celerity(ECT_matrices,noise_Lbx,noise_Lby,pert_anl)
+
+kwx=2*pi/noise_Lbx;
+kwy=2*pi/noise_Lby;
+
+[eig_r,eig_i]=twoD_study_eigenvalues(pert_anl,kwx,kwy,ECT_matrices.Dx,ECT_matrices.Dy,ECT_matrices.C,ECT_matrices.Ax,ECT_matrices.Ay,ECT_matrices.B,ECT_matrices.M_pmm);
+[c_morph_p,~,gr]=derived_variables_twoD_study_c_morph_p(eig_r,eig_i,kwx);
+
+end %function
+
+%%
+
+function [x,y,t,x_in,y_in]=compute_domain(nlength,noise_Lbx,noise_W,nx,ny,nt,c,w,nmove)
+
+%space
+Ltrue=nlength*noise_Lbx;
+dx=Ltrue/nx;     
+dy=noise_W/ny; 
+% L=(nx-1)*dx; %domain length
+% W=(ny-1)*dy; %domain width
+x=(0:nx-1)*dx;        
+y=(0:ny-1)*dy;   
+y=y+noise_W/2;
+
+[x_in,y_in]=meshgrid(x,y);
+
+%time
+T_c=abs(nmove*noise_Lbx/c); %time to move fact of lambda
+T_w=abs(1/w*log(nmove)); %time to decrease or increase `nmove` fraction of the original amplitude. $\omega=1/(\Delta t)*ln(A2/A1)$
+T=min([T_c,T_w,365*24*3600]);
+t0=1; %for t=0, the analytical solution of the bed level is 0. 
+tf=t0+T;
+t=linspace(t0,tf,nt); 
+
+end %function
+
+%%
+
+function noise_etab=initial_condition(x_in,y_in,noise_Lbx,noise_Lby,etab_max)
+
+Ay=sin(2*pi*(y_in)./noise_Lby);
+noise_etab=etab_max*Ay.*cos(2*pi*x_in/noise_Lbx-pi/2);
+
+end %function
+
+%%
+
+function [fx2,fy2,P2]=fourier_modes_alternate_bar(noise_Lbx,noise_Lby,etab_max)
+
+fx=1/noise_Lbx; %[1/m]
+fy=1/noise_Lby; %[1/m]
+
+fo_c=etab_max/4; %Fourier coefficients [m]
+
+fx2=[-fx,+fx];
+fy2=[-fy,+fy];
+P2=[-fo_c,+fo_c;+fo_c,-fo_c];
+
+end %function
+
+%%
+
+function fig_surf(in_p)
 
 %% DEFAULTS
 
 if isfield(in_p,'fig_visible')==0
-    in_p.fig_visible=1;
+    in_p.fig_visible=0;
 end
 if isfield(in_p,'fig_print')==0
-    in_p.fig_print=0;
+    in_p.fig_print=1;
 end
 if isfield(in_p,'fname')==0
     in_p.fname='fig';
 end
 if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,14,14]; %(1+sqrt(5)/2)
+    in_p.fig_size=[0,0,14,17]; %(1+sqrt(5)/2)
 end
 if isfield(in_p,'fig_overwrite')==0
     in_p.fig_overwrite=1;
@@ -53,12 +214,13 @@ if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
 in_p=isfield_default(in_p,'x_lab',labels4all('x',1,in_p.lan));
-in_p=isfield_default(in_p,'x_lab',labels4all('y',1,in_p.lan));
+in_p=isfield_default(in_p,'y_lab',labels4all('y',1,in_p.lan));
 in_p=isfield_default(in_p,'XScale','linear');
 in_p=isfield_default(in_p,'marker','none');
 in_p=isfield_default(in_p,'lims_x',[NaN,NaN]);
 in_p=isfield_default(in_p,'lims_y',[NaN,NaN]);
-[in_p.lims_x,in_p.lims_y]=xlim_ylim(in_p.lims_x,in_p.lims_y,in_p.x,in_p.y);
+in_p=isfield_default(in_p,'lims_y',[NaN,NaN]);
+[in_p.lims_x,in_p.lims_y]=xlim_ylim(in_p.lims_x,in_p.lims_y,in_p.x_in,in_p.y_in);
 
 v2struct(in_p)
 
@@ -71,7 +233,7 @@ end
 %% SIZE
 
 %square option
-npr=1; %number of plot rows
+npr=2; %number of plot rows
 npc=1; %number of plot columns
 axis_m=allcomb(1:1:npr,1:1:npc);
 
@@ -87,10 +249,10 @@ prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
 marg.mt=1.0; %top margin [cm]
 marg.mb=1.5; %bottom margin [cm]
-marg.mr=0.5; %right margin [cm]
+marg.mr=1.0; %right margin [cm]
 marg.ml=1.5; %left margin [cm]
 marg.sh=1.0; %horizontal spacing [cm]
-marg.sv=0.0; %vertical spacing [cm]
+marg.sv=1.0; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 
@@ -130,13 +292,19 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
-% kr=1; kc=1;
-% cbar(kr,kc).displacement=[0.0,0,0,0]; 
-% cbar(kr,kc).location='northoutside';
-% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
 
+ke=1; 
+eigen_str={'flow depth','x-discharge','y-discharge','bed level'};
+eigen_unit={'[m]','[m^2/s]','[m^2/s]','bed level [m]'};
+
+kr=1; kc=1;
+for kr=1:npr
+cbar(kr,kc).displacement=[0.0,0,0,0]; 
+cbar(kr,kc).location='northoutside';
+cbar(kr,kc).label=sprintf('perturbation %s %s',eigen_str{ke},eigen_unit{ke});
+end
 % brewermap('demo')
-cmap=brewermap(3,'set1');
+cmap=brewermap(100,'RdYlBu');
 
 %center around 0
 % ncmap=1000;
@@ -262,7 +430,7 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-lims.y(kr,kc,1:2)=lims_y;
+% lims.y(kr,kc,1:2)=lims_y;
 % lims.x(kr,kc,1:2)=lims_x;
 % lims.c(kr,kc,1:2)=lims_c;
 xlabels{kr,kc}=x_lab;
@@ -271,6 +439,15 @@ ylabels{kr,kc}=y_lab;
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
+kr=2; kc=1;
+% lims.y(kr,kc,1:2)=lims_y;
+% lims.x(kr,kc,1:2)=lims_x;
+% lims.c(kr,kc,1:2)=lims_c;
+xlabels{kr,kc}=x_lab;
+ylabels{kr,kc}=y_lab;
+% ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
+% lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
+% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 
 %% FIGURE INITIALIZATION
 
@@ -366,7 +543,13 @@ end
 %% PLOT
 
 kr=1; kc=1;    
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+for kr=1:npr
+    kt=kr;
+    Q_rec_t=squeeze(Q_rec(ke,:,:,kt))';
+    surf(x_in,y_in,Q_rec_t,'edgecolor','none','parent',han.sfig(kr,kc));
+end
+
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
@@ -378,12 +561,14 @@ han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewi
 
     %sub11
 kr=1; kc=1;   
+for kr=1:npr
+    kt=kr;
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
 % han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
@@ -392,7 +577,8 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 han.sfig(kr,kc).XScale=XScale;
 % han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String='c';
+[t_disp,t_str]=time_display(t(kt));
+han.sfig(kr,kc).Title.String=sprintf('time = %3.1f %s',t_disp,t_str);
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
@@ -403,12 +589,14 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-% kr=1; kc=2;
-% view(han.sfig(kr,kc),[0,90]);
-% colormap(han.sfig(kr,kc),cmap);
+% kr=1; kc=1;
+view(han.sfig(kr,kc),[38,62]);
+colormap(han.sfig(kr,kc),cmap);
 % if ~isnan(lims.c(kr,kc,1:1))
 % caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
+
+end
 
 %% ADD TEXT
 
@@ -453,6 +641,7 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 %% COLORBAR
 
 % kr=1; kc=1;
+% for kr=1:npr
 % pos.sfig=han.sfig(kr,kc).Position;
 % han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 % pos.cbar=han.cbar.Position;
@@ -460,15 +649,16 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 % han.sfig(kr,kc).Position=pos.sfig;
 % han.cbar.Label.String=cbar(kr,kc).label;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
-% aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
-% v2p=[1,5,11,15,np1];
-% han.cbar.Ticks=v2p;
-% aux3=aux2(v2p);
-% aux_str=cell(1,numel(v2p));
-% for ka=1:numel(v2p)
-%     aux_str{ka}=sprintf('%5.3f',aux3(ka));
+% % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
+% % v2p=[1,5,11,15,np1];
+% % han.cbar.Ticks=v2p;
+% % aux3=aux2(v2p);
+% % aux_str=cell(1,numel(v2p));
+% % for ka=1:numel(v2p)
+% %     aux_str{ka}=sprintf('%5.3f',aux3(ka));
+% % end
+% % han.cbar.TickLabels=aux_str;
 % end
-% han.cbar.TickLabels=aux_str;
 
 %% GENERAL
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
@@ -499,3 +689,46 @@ end
 
 end %function
 
+%% difference in variable
+
+% ke=4;
+% figure
+% hold on
+% Q_rec_t=squeeze(Q_rec(ke,:,:,end)-Q_rec(ke,:,:,2))';
+% surf(x_in,y_in,Q_rec_t,'edgecolor','none');
+% view([0,90])
+% colorbar
+
+%% plot longitudinal section in time and for all variables
+
+% ky=17;
+% 
+% cmap=turbo(nt);
+% ne=size(R,1);
+% ls={'-','--','-.',':'};
+% 
+% figure
+% hold on
+% % for ke=1:ne
+% for ke=4:ne
+%     for kt=1:nt
+%         plot(x_in(ky,:),Q_rec(ke,:,ky,kt),'Color',cmap(kt,:),'LineStyle',ls{ke});
+%     end
+% end
+
+%% plot longitudinal section for a given time, and add velocity
+
+% qx_ref=ECT_input.u*ECT_input.h;
+% h_ref=ECT_input.h;
+% 
+% u=((qx_ref+Q_rec(2,:,:,:))./(h_ref+Q_rec(1,:,:,:)))-qx_ref/h_ref;
+% kt=2;
+% % ky=17;
+% ky=1;
+% figure
+% hold on
+% for ke=1:ne
+% plot(x_in(ky,:),Q_rec(ke,:,ky,kt))
+% end
+% plot(x_in(ky,:),u(1,:,ky,kt))
+% legend({'h','qx','qy','eta','u'})

@@ -19,10 +19,12 @@ function [Q,Q_rec]=fourier_evolution_frequency(fx2,fy2,x_in,y_in,t,P2,R,omega,di
 parin=inputParser;
 
 addOptional(parin,'full',1);
+addOptional(parin,'disp',1);
 
 parse(parin,varargin{:});
 
 do_full=parin.Results.full;
+do_disp=parin.Results.disp;
 
 %% SIZE
 
@@ -73,7 +75,9 @@ for kmx=1:nmx
             end %ky
         end %kt
     end %kmy
-    fprintf('mode %4.2f %% \n',kmx/nmx*100);
+    if do_disp
+        fprintf('mode %4.2f %% \n',kmx/nmx*100);
+    end
 end %kmx
 
 if do_full
