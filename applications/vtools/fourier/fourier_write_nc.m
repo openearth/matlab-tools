@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20044 $
-%$Date: 2025-02-10 12:08:17 +0100 (Mon, 10 Feb 2025) $
-%$Author: chavarri $
-%$Id: fourier_eigenvalues_frequency.m 20044 2025-02-10 11:08:17Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/fourier/fourier_eigenvalues_frequency.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Write result of steady-state Fourier for alternate bars in NetCDF format.
 

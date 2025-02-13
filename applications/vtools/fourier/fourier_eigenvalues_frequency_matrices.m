@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18313 $
-%$Date: 2022-08-19 08:17:43 +0200 (Fri, 19 Aug 2022) $
-%$Author: chavarri $
-%$Id: ECT_M.m 18313 2022-08-19 06:17:43Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/ECT/ECT_M.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Compute eigenvalues and eigenvector for given frequencies and matrix.
 

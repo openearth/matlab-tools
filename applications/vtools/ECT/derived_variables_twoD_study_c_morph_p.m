@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19858 $
-%$Date: 2024-10-27 16:30:11 +0100 (Sun, 27 Oct 2024) $
-%$Author: chavarri $
-%$Id: derived_variables_twoD_study.m 19858 2024-10-27 15:30:11Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/ECT/derived_variables_twoD_study.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Compute morphodynamic celerity based on eigenvalues.
 %
