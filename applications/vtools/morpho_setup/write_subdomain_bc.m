@@ -35,7 +35,7 @@
 
 %lateral external written at same location as original. 
 
-function write_subdomain_bc(fpath_map,fpath_crs,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,fname_ext,time_start,is_internal,boundaries,fpath_submodel_enc,varargin)
+function write_subdomain_bc(fpath_map,fpath_crs_h,fpath_crs_q,fpath_obs,fpath_ext,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,fname_ext,time_start,is_internal,boundaries,fpath_submodel_enc,varargin)
 
 %% PARSE
 
@@ -53,10 +53,10 @@ end
 
 %% CALC
 messageOut(NaN,'Start getting indices.')
-[obs,crs,~]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,fpath_submodel_enc,varargin{:});
+[obs,crs_h,crs_q,~]=get_idx_grid_pli(fpath_map,fpath_crs_h,fpath_crs_q,fpath_obs,fpath_submodel_enc,varargin{:});
 
 messageOut(NaN,'Start getting data.')
-[obs,crs,time_v]=extract_map_info(fpath_map,obs,crs);
+[obs,crs_q,time_v]=extract_map_info(fpath_map,obs,crs_q);
 
 messageOut(NaN,'Start writing lateral bc.')
 write_lateral_bc(fpath_ext, fdir_out, time_start, time_v, only_start_end);
@@ -68,10 +68,11 @@ messageOut(NaN,'Start writing water level boundary.')
 bc_h=write_h_bc(obs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,is_internal,fname_h,only_start_end);
 
 messageOut(NaN,'Start writing discharge boundary.')
-bc_q=write_q_bc(crs,fullfile(fdir_out,fpathrel_bc),time_start,time_v,fname_q,only_start_end);
+bc_q=write_q_bc(crs_q,fullfile(fdir_out,fpathrel_bc),time_start,time_v,fname_q,only_start_end);
 
 messageOut(NaN,'Start writing polylines.')
-write_pli(crs,fullfile(fdir_out,fpathrel_pli))
+write_pli(crs_q,fullfile(fdir_out,fpathrel_pli))
+write_pli(crs_h,fullfile(fdir_out,fpathrel_pli))
 
 messageOut(NaN,'Start writing external file.')
 write_ext(fpath_ext,bc_h,bc_q,fdir_out,fpathrel_bc,fpathrel_pli,fname_h,fname_q,boundaries,fname_ext);
@@ -86,7 +87,7 @@ end %function
 
 %%  
 
-function [obs,crs,submodel_enc]=get_idx_grid_pli(fpath_map,fpath_crs,fpath_obs,fpath_submodel_enc,varargin)
+function [obs,crs_h,crs_q,submodel_enc]=get_idx_grid_pli(fpath_map,fpath_crs_h,fpath_crs_q,fpath_obs,fpath_submodel_enc,varargin)
 
 %% PARSE
 
@@ -141,81 +142,18 @@ for kobs=1:nobs
         obs(kobs).idx=NaN; %not found
     end
 end %kobs
-xy_obs_all=reshape([obs.xy],2,[])';
+% xy_obs_all=reshape([obs.xy],2,[])';
 
 %% submodel_enc
 if do_enc
     submodel_enc=D3D_io_input('read',fpath_submodel_enc);%tekal('read', fpath_submodel_enc, 'loaddata');
+else
+    submodel_enc=NaN;
 end
 
 %% crs
-crs=D3D_io_input('read',fpath_crs);
-ncrs=numel(crs);
-for kcrs=1:ncrs
-    x=mean(crs(kcrs).xy(:,1));
-    y=mean(crs(kcrs).xy(:,2));
-    dist=hypot(xedg_ehy-x,yedg_ehy-y);
-    [idx_edg,min_v,flg_found] = absmintol(dist,0,'do_disp_list',0,'tol',tol,'do_break',0);
-    if flg_found
-        crs(kcrs).idx=idx_edg; %EHY index of link
-    else
-        crs(kcrs).idx=NaN; 
-        crs(kcrs).name=strrep(crs(kcrs).name,'C_','');
-        continue
-    end
-    %direction
-    dist=hypot(xedg_raw-x,yedg_raw-y);
-    [idx_edg_raw,min_v,flg_found]=absmintol(dist,0,'do_disp_list',0,'tol',tol,'do_break',1); %index of the link closest in raw coordinates
-    idx_faces=edge_face(idx_edg_raw,:); %index of faces connected by the link in raw coordinates. Because it is a local variable, there are as many possible faces as partitions. 
- 
-    idx_faces_possible=find(faces_local==idx_faces(1)); %global index of possible origin faces connected by the link
- 
-    x_possible=xcen_raw(idx_faces_possible);
-    y_possible=ycen_raw(idx_faces_possible);
- 
-    dist=hypot(x_possible-x,y_possible-y); 
-    [idx_obs_1_loc,min_v]=absmintol(dist,0,'do_disp_list',0,'tol',tol*4,'do_break',1); %index of origin face from the possible ones that is closest to the link in raw coordinates.
-
-    x_obs=x_possible(idx_obs_1_loc); %x coordinate of the observation station that is origin of the link.
-    y_obs=y_possible(idx_obs_1_loc); %y coordinate of the observation station that is origin of the link.
-
-    if do_enc
-        bol = inpolygon(x_obs,y_obs,submodel_enc.xy(:,1),submodel_enc.xy(:,2));
-    else
-        bol=true(size(x_obs));
-    end
-
-    %If the point is outside the submodel enclosure the flow is as it would
-    %be in the submodel from outside to inside. Hence dir = 1;
-    
-    if bol
-        dir=-1; %link goes from inside to outside 
-    else
-        dir=1; %link goes from outside to inside 
-    end
-    crs(kcrs).direction=dir;
-
-    crs(kcrs).name=strrep(crs(kcrs).name,'C_','');
-
-    %% DEBUG
-
-    % figure
-    % hold on
-    % % scatter(xcen_ehy,ycen_ehy)
-    % % scatter(xedg_raw,yedg_raw)
-    % scatter(x_possible,y_possible)
-    % % x=xy_obs_all(idx_obs,1);
-    % % y=xy_obs_all(idx_obs,2);
-    % scatter(x,y,'r','s')
-    % % plot(crs(kcrs).xy(:,1),crs(kcrs).xy(:,2),'LineWidth',2,'color','g')
-    % axis equal
-    % % xlim([x-100,x+100])
-    % % ylim([y-100,y+100])
-    % % title(sprintf('%d',crs(kcrs).direction))
-    % % pause(0.5)
-    % % close all
-
-end
+crs_h=get_crs_idx(fpath_crs_h,xedg_ehy,yedg_ehy,xedg_raw,yedg_raw,edge_face,faces_local,xcen_raw,ycen_raw,submodel_enc,tol);
+crs_q=get_crs_idx(fpath_crs_q,xedg_ehy,yedg_ehy,xedg_raw,yedg_raw,edge_face,faces_local,xcen_raw,ycen_raw,submodel_enc,tol);
 
 end %function
 
@@ -643,5 +581,79 @@ end %function
 function fname=fcn_fname_bc(fname_h,location)
 
 fname=sprintf('%s_%s.bc',fname_h,location);
+
+end %function
+
+%%
+
+function crs=get_crs_idx(fpath_crs,xedg_ehy,yedg_ehy,xedg_raw,yedg_raw,edge_face,faces_local,xcen_raw,ycen_raw,submodel_enc,tol)
+
+crs=D3D_io_input('read',fpath_crs);
+ncrs=numel(crs);
+for kcrs=1:ncrs
+    x=mean(crs(kcrs).xy(:,1));
+    y=mean(crs(kcrs).xy(:,2));
+    dist=hypot(xedg_ehy-x,yedg_ehy-y);
+    [idx_edg,min_v,flg_found] = absmintol(dist,0,'do_disp_list',0,'tol',tol,'do_break',0);
+    if flg_found
+        crs(kcrs).idx=idx_edg; %EHY index of link
+    else
+        crs(kcrs).idx=NaN; 
+        crs(kcrs).name=strrep(crs(kcrs).name,'C_','');
+        continue
+    end
+    %direction
+    dist=hypot(xedg_raw-x,yedg_raw-y);
+    [idx_edg_raw,min_v,flg_found]=absmintol(dist,0,'do_disp_list',0,'tol',tol,'do_break',1); %index of the link closest in raw coordinates
+    idx_faces=edge_face(idx_edg_raw,:); %index of faces connected by the link in raw coordinates. Because it is a local variable, there are as many possible faces as partitions. 
+ 
+    idx_faces_possible=find(faces_local==idx_faces(1)); %global index of possible origin faces connected by the link
+ 
+    x_possible=xcen_raw(idx_faces_possible);
+    y_possible=ycen_raw(idx_faces_possible);
+ 
+    dist=hypot(x_possible-x,y_possible-y); 
+    [idx_obs_1_loc,min_v]=absmintol(dist,0,'do_disp_list',0,'tol',tol*4,'do_break',1); %index of origin face from the possible ones that is closest to the link in raw coordinates.
+
+    x_obs=x_possible(idx_obs_1_loc); %x coordinate of the observation station that is origin of the link.
+    y_obs=y_possible(idx_obs_1_loc); %y coordinate of the observation station that is origin of the link.
+
+    if isstruct(submodel_enc)
+        bol = inpolygon(x_obs,y_obs,submodel_enc.xy(:,1),submodel_enc.xy(:,2));
+    else
+        bol=true(size(x_obs));
+    end
+
+    %If the point is outside the submodel enclosure the flow is as it would
+    %be in the submodel from outside to inside. Hence dir = 1;
+    
+    if bol
+        dir=-1; %link goes from inside to outside 
+    else
+        dir=1; %link goes from outside to inside 
+    end
+    crs(kcrs).direction=dir;
+
+    crs(kcrs).name=strrep(crs(kcrs).name,'C_','');
+
+    %% DEBUG
+
+    % figure
+    % hold on
+    % % scatter(xcen_ehy,ycen_ehy)
+    % % scatter(xedg_raw,yedg_raw)
+    % scatter(x_possible,y_possible)
+    % % x=xy_obs_all(idx_obs,1);
+    % % y=xy_obs_all(idx_obs,2);
+    % scatter(x,y,'r','s')
+    % % plot(crs(kcrs).xy(:,1),crs(kcrs).xy(:,2),'LineWidth',2,'color','g')
+    % axis equal
+    % % xlim([x-100,x+100])
+    % % ylim([y-100,y+100])
+    % % title(sprintf('%d',crs(kcrs).direction))
+    % % pause(0.5)
+    % % close all
+
+end
 
 end %function

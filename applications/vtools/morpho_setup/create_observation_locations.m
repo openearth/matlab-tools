@@ -26,7 +26,7 @@
 %This function stems from script `main03_per_cell_obs_crs.m` in
 %<28_get_partition_pli_grave_lith>.
 
-function basename_all=create_observation_locations(fdir,fpath_obs,fpath_crs,fpath_submodel_enc,bc_type)
+function basename_all=create_observation_locations(fdir,fpath_obs,fpath_crs_h,fpath_crs_q,fpath_submodel_enc,bc_type)
 
 %% PARSE
 
@@ -122,7 +122,7 @@ end
 
 %% 
 
-write_files(fpath_obs,fpath_crs,visited,crs_order,basename_all,upstreamx,upstreamy,downstreamx,downstreamy,node1x,node1y,node2x,node2y,bc_type);
+write_files(fpath_obs,fpath_crs_h,fpath_crs_q,visited,crs_order,basename_all,upstreamx,upstreamy,downstreamx,downstreamy,node1x,node1y,node2x,node2y,bc_type);
 
 end %function
 
@@ -130,7 +130,7 @@ end %function
 %% FUNCTION
 %%
 
-function write_files(fpath_obs,fpath_crs,visited,crs_order,basename_all,upstreamx,upstreamy,downstreamx,downstreamy,node1x,node1y,node2x,node2y,bc_type)
+function write_files(fpath_obs,fpath_crs_h,fpath_crs_q,visited,crs_order,basename_all,upstreamx,upstreamy,downstreamx,downstreamy,node1x,node1y,node2x,node2y,bc_type)
 
 fileID = fopen(fpath_obs, 'w');
 % Check if the file was opened successfully
@@ -138,7 +138,9 @@ if fileID == -1
     error('Unable to open the file for writing.');
 end
 
-counter = 0; 
+boundaryfile_h=struct('Field',cell(1,1));
+boundaryfile_q=boundaryfile_h;
+ 
 for icrs = 1:max(visited)
     flowlink_idxs = find(visited == icrs); 
     flowlink_order = crs_order(find(visited == icrs)); 
@@ -151,6 +153,7 @@ for icrs = 1:max(visited)
         % stridx=strfind(name,'_');
         basename=basename_all{icrs};
 
+        pli=[node2x(flowlink_shp), node2y(flowlink_shp); node1x(flowlink_shp), node1y(flowlink_shp)];
         switch bc_type{icrs}
             case 'h'
                 % Write data to the observation file using fprintf
@@ -159,13 +162,10 @@ for icrs = 1:max(visited)
                 fprintf(fileID, '%f\t%f\t%s\n', upstreamx(flowlink_shp), upstreamy(flowlink_shp), nameup);
                 namedown = sprintf('O_2_%s_%06i',basename, idxcounter);
                 fprintf(fileID, '%f\t%f\t%s\n', downstreamx(flowlink_shp), downstreamy(flowlink_shp), namedown);
+                %Write to a crs for later writing the pli file
+                boundaryfile_h=add_crs_data(boundaryfile_h,basename,idxcounter,pli);
             case 'q'
-                counter = counter + 1; 
-                namecrs = sprintf('C_%s_%06i',basename, idxcounter);
-		        % convention for segment-point ordering is right to left, convention for cross-section ordering is left to right
-                boundaryfile.Field(counter).Data = [node2x(flowlink_shp), node2y(flowlink_shp); node1x(flowlink_shp), node1y(flowlink_shp)];  
-	        
-                boundaryfile.Field(counter).Name = namecrs;
+                boundaryfile_q=add_crs_data(boundaryfile_q,basename,idxcounter,pli);
         end
         
     end
@@ -173,7 +173,8 @@ for icrs = 1:max(visited)
 end
 
 %Write the boundary file
-tekal('write', fpath_crs, boundaryfile);
+tekal('write', fpath_crs_h, boundaryfile_h);
+tekal('write', fpath_crs_q, boundaryfile_q);
 
 % Close the file
 fclose(fileID);
@@ -512,5 +513,18 @@ scatter(faces.X,faces.Y,10,'k')
 plot(submodel_enc.xy(:,1),submodel_enc.xy(:,2),'g-*')
 scatter(x_obs,y_obs,10,'r')
 axis equal
+
+end
+
+%%
+
+function boundaryfile=add_crs_data(boundaryfile,basename,idxcounter,pli)
+          
+nc=numel(boundaryfile.Field);
+nl=nc+1; 
+namecrs=sprintf('C_%s_%06i',basename, idxcounter);
+% convention for segment-point ordering is right to left, convention for cross-section ordering is left to right
+boundaryfile.Field(nl).Data=pli;  
+boundaryfile.Field(nl).Name=namecrs;
 
 end
