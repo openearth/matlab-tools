@@ -1,4 +1,4 @@
-function fname_out = D3D_extract2ugrid(fname,varname,tstep)
+function fname_out = D3D_extract2ugrid(fname,varname,varargin)
 %D3D_EXTRACT2UGRID transfers DFLOWFM simulation results at cell faces to netCDF UGRID file.
 %
 %$Revision$
@@ -8,20 +8,57 @@ function fname_out = D3D_extract2ugrid(fname,varname,tstep)
 %$HeadURL$
 %
 % Example usage: 
-% fname_out = extract2ugrid(fname,varname,tstep); 
+% fname_out = extract2ugrid(fname,varname,varargin); 
 %  
 % fname_out: path of output file 
 % fname:     path of input file (a single partition is enough in case of
 %            parallel simulations)
 % varname:   which variable name to extract? e.g. mesh2d_s1  
-% tstep:     output time index in file  
+% varargin:  pairwise selection - default is all 
+%            'time', tstep
 %
 % see also: sim2ugrid
 % 
+disp("Total number of input arguments: " + nargin)
+if mod(nargin,2) == 1; 
+    error("pairs of indices expected, e.g.  'time', 3, ... ")
+end
 Data = EHY_getMapModelData(fname, 'varName', varname, 't0', '', 'tend', '');
 gridInfo = EHY_getGridInfo(fname, 'face_nodes_xy');
-Data.times = Data.times(tstep); 
-Data.val = Data.val(tstep,:); 
+
+Data.dims = strsplit(Data.dimensions(2:end-1),',');
+
+nd = length(size(Data.val)); 
+a = [1,3:nd];
+str_append = ''; 
+errmsg = "fname2 = D3D_extract2ugrid(fname,'mesh2d_msed'"; 
+for k = 1:length(a); 
+    errmsg = sprintf("%s, '%s', %i", errmsg, Data.dims{a(k)}, 1); 
+end 
+errmsg = sprintf('%s)', errmsg); 
+
+
+while nd > 1; 
+    if (sum(strcmp(Data.dims{a(nd-1)}, varargin)) == 0) 
+        error(sprintf("Please provide input: '%s'.\n'", errmsg));
+    end
+    ind = varargin{find(strcmp(Data.dims{a(nd-1)}, varargin))+1}; 
+    switch nd;
+        case 4
+            Data.val = squeeze(Data.val(:,:,:,ind));
+        case 3
+            Data.val = squeeze(Data.val(:,:,ind));
+        case 2    
+            Data.val = squeeze(Data.val(ind,:));
+        otherwise
+            error(sprintf("Please provide input for '%s'.\n'", errmsg));
+    end
+    str_append = sprintf('_%s%02i%s', Data.dims{a(nd-1)}, ind, str_append);
+    nd = nd - 1; 
+end
+    
+%Data.times = Data.times(tstep);
+%Data.val = Data.val(tstep,:); 
 
 %idx = strcmp({a.Variables.Name},'mesh2d_mor_bl')
 xycor_full = [gridInfo.face_nodes_x(:),gridInfo.face_nodes_y(:)]; 
@@ -32,7 +69,7 @@ facenodeidx = reshape(idxcor(ic),mxfn,[]);
 zb_loc = 'face';
 %A = reshape(1:length(xycor_full),mxfn,[])
 
-fname_out = fullfile(fileparts(fname), sprintf('%s_t%i.nc', varname, tstep));
+fname_out = fullfile(fileparts(fname), sprintf('%s_%s.nc', varname, str_append));
 ncid = netcdf.create(fname_out, 'NETCDF4');
 
 total_nnodes = length(ia);
