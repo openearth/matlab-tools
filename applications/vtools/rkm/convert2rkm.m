@@ -137,8 +137,13 @@ if ~is_mat
     
     %branch
     sep_idx=strfind(rkm_file{1,branchCol},'_');
-    sep_1_idx=cellfun(@(X)X(1),sep_idx,'UniformOutput',false); %first '_'
-    tok=cellfun(@(X,Y)X(Y+1:end),rkm_file{1,branchCol},sep_1_idx,'UniformOutput',false);
+    if isempty(sep_idx{1})
+        %there is no separator. Then we expect only the branch name.
+        tok=rkm_file{1,branchCol};
+    else
+        sep_1_idx=cellfun(@(X)X(1),sep_idx,'UniformOutput',false); %first '_'
+        tok=cellfun(@(X,Y)X(Y+1:end),rkm_file{1,branchCol},sep_1_idx,'UniformOutput',false);
+    end
     
     branch=cellfun(@(X)deblank(lower(X)),tok,'UniformOutput',false);
 
