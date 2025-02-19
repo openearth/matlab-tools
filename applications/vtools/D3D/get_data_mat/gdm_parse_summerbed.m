@@ -16,6 +16,7 @@ function flg_loc=gdm_parse_summerbed(flg_loc,simdef)
 
 fid_log=NaN;
 
+flg_loc=isfield_default(flg_loc,'sim_ref',1);
 flg_loc=isfield_default(flg_loc,'do_p',1);
 flg_loc=isfield_default(flg_loc,'do_p_single',1);
 flg_loc=isfield_default(flg_loc,'do_diff_t',0);

@@ -401,9 +401,14 @@
 %     rkm_lim=rkm_limits('linne-roermond');
 % in_plot.(tag).rkm=rkm_lim(1)+2:1:rkm_lim(2); %river km vectors to average the data; 
 % in_plot.(tag).xy_input_type=2; %Maas
-% in_plot.(tag).s_floodplain=9000;
+% in_plot.(tag).s_floodplain=9000; %maximum distance from axis (river km file) to intersect searching for winter bed [m]
 % in_plot.(tag).do_plot_pli=1; %plot cross-sections on map
-% in_plot.(tag).intersection_type_sb_wb = [1,1];
+% %How to choose the
+% % intersection point between a line perpendicular to the river axis and the
+% % summerbed (`intersection_type_sb_wb(1)`) and winterbed
+% % (`intersection_type_sb_wb(2)`. 
+% % 1=If there is no intersection, thrown an error. 
+% in_plot.(tag).intersection_type_sb_wb = [1,1]; 
 
 %% his data out of map data
 

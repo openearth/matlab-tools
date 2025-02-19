@@ -30,7 +30,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 
 %time is based on reference simulation. 
 kref=flg_loc.sim_ref;
-[gridInfo_ref,time_dnum_ref,time_dnum_plot,tim_dtime_plot]=gdm_load_time_grid(fid_log,flg_loc,simdef(kref),tag);
+[gridInfo_ref,time_dnum_ref,time_dnum_plot,~,tim_dtime_plot]=gdm_load_time_grid(fid_log,flg_loc,simdef(kref),tag);
 
 %% DIMENSION
 
@@ -363,7 +363,7 @@ for ksb=1:nsb %summerbed polygons
             multi_dim=check_multi_dimensional(data_0(kref));
 
             if flg_loc.do_xvt && ~multi_dim %skip if multidimentional
-               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,in_p.lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,in_p.all_struct,tag_fig,tag_serie,var_idx,lims)
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims)
             end
             
             %% cumulative
@@ -416,7 +416,7 @@ end %function
 
 %%
 
-function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,lab_str,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,runid,all_struct,tag_fig,tag_serie,var_idx,ylims)
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,ylims)
 
 %% PARSE
 
@@ -449,7 +449,7 @@ in_p.all_struct=all_struct;
 in_p.x_m=x_m;
 in_p.y_m=y_m;
 in_p.ml=2.5;
-in_p.clab_str=lab_str;
+
 in_p.ylab_str='';
 in_p.xlab_str='rkm';
 in_p.xlab_un=1/1000;
@@ -459,7 +459,8 @@ in_p.frac=var_idx;
 for kS=1:nS
 
     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie); 
-    
+    runid=simdef(kS).file.runid;
+
     for kfn=1:nfn
         statis=fn_data{kfn};
 
@@ -473,12 +474,8 @@ for kS=1:nS
         val_1=squeeze(data_xvt.(statis)(:,kS,:))';
         val_0=squeeze(data_xvt0.(statis)(:,kS,:))';
 
-        switch statis
-            case 'val_std'
-                in_p.is_std=true;
-            otherwise
-                in_p.is_std=false;
-        end
+        [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,var_str_save,statis);
+        in_p.clab_str=lab_str;
 
         for kdiff=1:ndiff
             for kclim=1:nclim

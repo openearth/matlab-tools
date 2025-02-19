@@ -18,13 +18,8 @@ function plot_map_fraction_cs_01(fid_log,flg_loc,simdef)
 
 %% PARSE
 
-if isfield(flg_loc,'fig_print')==0
-    flg_loc.fig_print=1;
-end
-
-if isfield(flg_loc,'do_plot_pli')==0
-    flg_loc.fig_print=1;
-end
+flg_loc=isfield_default(flg_loc,'fig_print',1);
+flg_loc=isfield_default(flg_loc,'do_plot_pli',1);
 
 %% DO
 

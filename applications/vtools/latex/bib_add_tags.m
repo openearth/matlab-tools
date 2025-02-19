@@ -74,6 +74,8 @@ while ~bol_end
     lin=fgets(fid_r);
     [bol_end,txt,kl]=fcn_is_end_block(lin,txt,kl);
     if bol_end; continue; end
+    %replace non-asci character
+    lin=latex_nonascii(lin);
     %replace special characters for writing.
     lin=fcn_add_for_sprintf(lin);
     %check if it is closing the tag (i.e., '}') and it has a comma. If 
@@ -84,6 +86,7 @@ while ~bol_end
     lin=fcn_close_text(lin);
     %put all tag in one line
     lin=fcn_only_one_line(lin,fid_r);
+
     %add line to cell for writing.
     kl=kl+1;
     txt{kl,1}=lin;
