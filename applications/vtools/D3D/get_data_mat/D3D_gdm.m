@@ -402,6 +402,8 @@
 % in_plot.(tag).rkm=rkm_lim(1)+2:1:rkm_lim(2); %river km vectors to average the data; 
 % in_plot.(tag).xy_input_type=2; %Maas
 % in_plot.(tag).s_floodplain=9000;
+% in_plot.(tag).do_plot_pli=1; %plot cross-sections on map
+% in_plot.(tag).intersection_type_sb_wb = [1,1];
 
 %% his data out of map data
 
