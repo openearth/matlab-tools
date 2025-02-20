@@ -81,7 +81,8 @@ for kvar=1:nvar_tmp
         [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
         flg_loc.var=cat(2,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
         flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
-        flg_loc.ylims_diff_var=cat(1,flg_loc.ylims_diff_var,flg_loc.ylims_diff_var{kvar,1});
+        flg_loc.ylims_diff_s_var=cat(1,flg_loc.ylims_diff_s_var,flg_loc.ylims_diff_s_var{kvar,1});
+        flg_loc.ylims_diff_t_var=cat(1,flg_loc.ylims_diff_t_var,flg_loc.ylims_diff_t_var{kvar,1});
 
         %add one more entry with default values
         flg_loc=gdm_add_flags_plot(flg_loc);
