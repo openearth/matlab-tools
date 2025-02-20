@@ -404,97 +404,11 @@ end %function
 
 %%
 
-function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim,var_idx)
 
-nvi=numel(var_idx);
-svi=repmat('%02d',1,nvi);
-var_idx_s=sprintf(svi,var_idx);
-
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%s_%02d_clim_%02d',tag,runid,var_str,var_idx_s,fn,sb_pol,kref,kclim));
-
-end %function
 
 %%
 
-function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,ylims)
 
-%% PARSE
-
-if ~flg_loc.do_xvt
-    messageOut(fid_log,'Not doing xvt plot.')
-    return
-end
-
-if numel(tim_dtime_p)<=1
-    messageOut(fid_log,'Insufficient times for xvt plot')
-    return
-end
-
-%% CALC
-
-fn_data=fieldnames(data_xvt);
-nfn=numel(fn_data);
-ndiff=gdm_ndiff(flg_loc);
-nclim=size(ylims,1);
-nS=numel(simdef);
-
-[x_m,y_m]=meshgrid(s,tim_dtime_p);
-
-in_p=flg_loc;
-in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
-in_p.fig_visible=0;
-in_p.fig_size=[0,0,14.5,12];
-
-in_p.all_struct=all_struct;
-in_p.x_m=x_m;
-in_p.y_m=y_m;
-in_p.ml=2.5;
-
-in_p.ylab_str='';
-in_p.xlab_str='rkm';
-in_p.xlab_un=1/1000;
-in_p.frac=var_idx;
-%                 in_p.tit_str=branch_name;
-
-for kS=1:nS
-
-    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie); 
-    runid=simdef(kS).file.runid;
-
-    for kfn=1:nfn
-        statis=fn_data{kfn};
-
-        %skip statistics not in list    
-        if isfield(flg_loc,'statis_plot')
-            if ismember(statis,flg_loc.statis_plot)==0
-                continue
-            end
-        end
-
-        val_1=squeeze(data_xvt.(statis)(:,kS,:))';
-        val_0=squeeze(data_xvt0.(statis)(:,kS,:))';
-
-        [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,var_str_save,statis);
-        in_p.clab_str=lab_str;
-
-        for kdiff=1:ndiff
-            for kclim=1:nclim
-
-                [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val_1,val_0,'ylims','ylims_diff',var_str_save);
-                in_p.clims=in_p.ylims; %the output from `gdm_data_diff` is saved in the variable we call first (`ylims`) and we want it here for `clims`.
-                in_p.ylims=NaN;
-                fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
-                mkdir_check(fdir_fig_loc,NaN,1,0);
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim,var_idx);
-
-                in_p.fname=fname_noext;
-                fig_surf(in_p)
-            end %kclim
-        end %kdiff
-    end %kfn
-end %kS
-
-end %function
 
 %%
 
@@ -647,29 +561,7 @@ end
 
 %%
 
-function [lab_str,is_std]=adjust_label(flg_loc,kvar,var_str_save,statis)
 
-%units (cannot be outside <fn> loop because it can be overwritten)
-if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
-    lab_str=flg_loc.unit{kvar};
-else
-    lab_str=var_str_save;
-end
-
-%adjust depending on statistic
-switch statis
-    case 'val_sum_length'
-        lab_str=sprintf('%s/B',lab_str);
-end
-
-%standard deviation
-is_std=false;
-switch statis
-    case 'val_std'
-        is_std=true;
-end
-
-end %function
 
 %%
 
@@ -729,3 +621,123 @@ for ksim=1:nsim
 end %ksim
 
 end
+
+%%
+
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,ylims)
+
+%% PARSE
+
+if ~flg_loc.do_xvt
+    messageOut(fid_log,'Not doing xvt plot.')
+    return
+end
+
+if numel(tim_dtime_p)<=1
+    messageOut(fid_log,'Insufficient times for xvt plot')
+    return
+end
+
+%% CALC
+
+fn_data=fieldnames(data_xvt);
+nfn=numel(fn_data);
+ndiff=gdm_ndiff(flg_loc);
+nclim=size(ylims,1);
+nS=numel(simdef);
+
+[x_m,y_m]=meshgrid(s,tim_dtime_p);
+
+in_p=flg_loc;
+in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+in_p.fig_visible=0;
+in_p.fig_size=[0,0,14.5,12];
+
+in_p.all_struct=all_struct;
+in_p.x_m=x_m;
+in_p.y_m=y_m;
+in_p.ml=2.5;
+
+in_p.ylab_str='';
+in_p.xlab_str='rkm';
+in_p.xlab_un=1/1000;
+in_p.frac=var_idx;
+%                 in_p.tit_str=branch_name;
+
+for kS=1:nS
+
+    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie); 
+    runid=simdef(kS).file.runid;
+
+    for kfn=1:nfn
+        statis=fn_data{kfn};
+
+        %skip statistics not in list    
+        if isfield(flg_loc,'statis_plot')
+            if ismember(statis,flg_loc.statis_plot)==0
+                continue
+            end
+        end
+
+        val_1=squeeze(data_xvt.(statis)(:,kS,:))';
+        val_0=squeeze(data_xvt0.(statis)(:,kS,:))';
+
+        [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,var_str_save,statis);
+        in_p.clab_str=in_p.lab_str;
+
+        for kdiff=1:ndiff
+            for kclim=1:nclim
+
+                [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val_1,val_0,'ylims','ylims_diff',var_str_save);
+                in_p.clims=in_p.ylims; %the output from `gdm_data_diff` is saved in the variable we call first (`ylims`) and we want it here for `clims`.
+                in_p.ylims=NaN;
+                fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+                mkdir_check(fdir_fig_loc,NaN,1,0);
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim,var_idx);
+
+                in_p.fname=fname_noext;
+                fig_surf(in_p)
+            end %kclim
+        end %kdiff
+    end %kfn
+end %kS
+
+end %function
+
+%%
+
+function [lab_str,is_std]=adjust_label(flg_loc,kvar,var_str_save,statis)
+
+%units (cannot be outside <fn> loop because it can be overwritten)
+if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
+    lab_str=flg_loc.unit{kvar};
+else
+    lab_str=var_str_save;
+end
+
+%adjust depending on statistic
+switch statis
+    case 'val_sum_length'
+        lab_str=sprintf('%s/B',lab_str);
+end
+
+%standard deviation
+is_std=false;
+switch statis
+    case 'val_std'
+        is_std=true;
+end
+
+end %function
+
+%%
+
+function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim,var_idx)
+
+nvi=numel(var_idx);
+svi=repmat('%02d',1,nvi);
+var_idx_s=sprintf(svi,var_idx);
+
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%s_%02d_clim_%02d',tag,runid,var_str,var_idx_s,fn,sb_pol,kref,kclim));
+
+end %function
