@@ -236,8 +236,8 @@ for kf=1:nf
                 kmdf=kmdf+1;
         end
     else %directory
-%         fprintf('searching here %s \n',fpath_loc);
-        if strcmp(fileparts(dire(kf).name),'figures'); continue; end
+%         fprintf('searching here %s \n',fpath_loc); %DEBUG
+        if any(strcmp(dire(kf).name,{'figures','mat'})); continue; end %do not search in these folders. 
         dire_2=dir(fpath_loc);
         mdf_aux_out=search_4_mdu(dire_2);
         if ~isempty(mdf_aux) && ~isempty(mdf_aux_out)

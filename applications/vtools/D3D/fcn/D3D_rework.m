@@ -925,11 +925,14 @@ end
 
 if isfield(simdef,'thd')
     if ~isfield(simdef.file,'thd')
-        simdef.file.thd=fullfile(simdef.D3D.dire_sim,'thd.thd');
+        fname_thd='thd.thd';
+        simdef.file.thd=fullfile(simdef.D3D.dire_sim,fname_thd);
     end
 else
+    fname_thd='';
     simdef.file.thd='';
 end
+simdef.mdf.thd=fname_thd;
 
 %% RENAME OUT
 

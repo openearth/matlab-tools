@@ -183,7 +183,9 @@ if ~only_run_script
 
     %simdef
     fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
-    save(fpath_simdef,'simdef')
+    if exist(fpath_simdef,'file')~=2
+        save(fpath_simdef,'simdef')
+    end
     
     %run script
     D3D_bat(simdef,simdef.file.software,'check_existing',false);   
