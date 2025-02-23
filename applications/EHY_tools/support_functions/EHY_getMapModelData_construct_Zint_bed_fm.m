@@ -14,11 +14,11 @@ function [Zint_bed,no_bed_layers]=EHY_getMapModelData_construct_Zint_bed_fm(inpu
 %data is stored at different indices in thlyr and lyrfrac. We arrange everything in [time,face,bed_layer,sediment];
 OPT_thlyr=OPT;
 OPT_thlyr.varName='mesh2d_thlyr';
-[~,dimsInd_thlyr,~] = EHY_getDimsInfo(inputFile,OPT_thlyr,modelType);
+[~,dimsInd_thlyr,~] = EHY_getDimsInfo(inputFile,OPT_thlyr,'dfm');
 
 OPT_bl=OPT;
 OPT_bl.varName='mesh2d_mor_bl';
-[~,dimsInd_bl,~] = EHY_getDimsInfo(inputFile,OPT_bl,modelType);
+[~,dimsInd_bl,~] = EHY_getDimsInfo(inputFile,OPT_bl,'dfm');
 
 Data_thlyr = EHY_getMapModelData(inputFile,OPT(:),'varName','mesh2d_thlyr');
 Data_bl = EHY_getMapModelData(inputFile,OPT(:),'varName','mesh2d_mor_bl');

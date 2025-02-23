@@ -23,45 +23,7 @@ ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 
 %% PARSE
 
-%do flags
-flg_loc=isfield_default(flg_loc,'do_p_single',1);
-flg_loc=isfield_default(flg_loc,'do_all_t',0);
-flg_loc=isfield_default(flg_loc,'do_all_t_xt',0);
-flg_loc=isfield_default(flg_loc,'do_all_s',0);
-flg_loc=isfield_default(flg_loc,'do_diff_t',0);
-flg_loc=isfield_default(flg_loc,'do_diff_s',0);
-flg_loc=isfield_default(flg_loc,'do_all_s_diff_t',0);
-flg_loc=isfield_default(flg_loc,'do_all_t_diff_t',0);
-flg_loc=isfield_default(flg_loc,'do_all_s_2diff',0); %plot all runs in same figure making the difference between each of 2 simulations
-
-flg_loc=isfield_default(flg_loc,'use_local_time',0); %plot all runs in same figure making the difference between each of 2 simulations
-flg_loc=isfield_default(flg_loc,'fig_print',1);
-flg_loc=isfield_default(flg_loc,'do_staircase',0);
-flg_loc=isfield_default(flg_loc,'do_movie',0);
-flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
-flg_loc=isfield_default(flg_loc,'xlims',NaN(size(flg_loc.ylims,1),2));
-flg_loc=isfield_default(flg_loc,'ylims_diff_t',flg_loc.ylims);
-flg_loc=isfield_default(flg_loc,'ylims_diff_s',flg_loc.ylims);
-flg_loc=isfield_default(flg_loc,'clims',[NaN,NaN]);
-flg_loc=isfield_default(flg_loc,'clims_diff_t',flg_loc.clims);
-flg_loc=isfield_default(flg_loc,'clims_diff_s',flg_loc.clims);
-flg_loc=isfield_default(flg_loc,'do_diff',1);
-flg_loc=isfield_default(flg_loc,'tim_type',1);
-flg_loc=isfield_default(flg_loc,'plot_val0',0);
-
-if isfield(flg_loc,'do_rkm')==0
-    if isfield(flg_loc,'fpath_rkm')
-        flg_loc.do_rkm=1;
-    else
-        flg_loc.do_rkm=0;
-    end
-end
-
-if flg_loc.do_staircase
-    str_val='val_staircase';
-else
-    str_val='val';
-end
+flg_loc=gdm_parse_map_2DH_ls(flg_loc);
 
 %% PATHS
 
@@ -112,14 +74,15 @@ for kpli=1:npli %variable
         [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef(1));
         
         layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+        var_idx=flg_loc.var_idx{kvar};
 
         %time 1 of simulation 1 for reference
         %it is up to you to be sure that it is the same for all simulations!
 %         if flg_loc.do_diff || flg_loc.plot_val0 %difference in time
             fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname,'layer',layer);
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname,'layer',layer,'var_idx',var_idx);
             data_ref=load(fpath_mat_tmp,'data');   
-            in_p.val0=data_ref.data.(str_val);
+            in_p.val0=data_ref.data.(flg_loc.str_val);
 %         end
 
         %Preallocate for plotting all times/simulation together.
@@ -145,7 +108,7 @@ for kpli=1:npli %variable
             [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum(kt),time_dtime(kt),time_mor_dnum(kt),time_mor_dtime(kt)); %output: time_dnum_plot
    
             %all data
-            [data_all,gridInfo_ls,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum);
+            [data_all,gridInfo_ls,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,flg_loc.str_val,tag,time_dnum,var_idx);
 
             %measurements                        
             [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,in_p.tim,var_str_save,kpli,'val_mean');
@@ -518,7 +481,7 @@ end %function
 %`s` is needed for 1D plot
 %`gridInfo` for 2DV plot
 %
-function [data_all,gridInfo,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum)
+function [data_all,gridInfo,s,xlab_str,xlab_un]=load_all_data(data_all,flg_loc,simdef,kt,var_str_read,pliname,layer,str_val,tag,time_dnum,var_idx)
 
 nS=numel(simdef);
 s=cell(nS,1);
@@ -534,7 +497,7 @@ for kS=1:nS
         load(fpath_mat_time,'tim');
         v2struct(tim); %time_dnum, time_dtime
     end
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname,'layer',layer);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname,'layer',layer,'var_idx',var_idx);
     if ~isfile(fpath_mat_tmp)
         error('File does not exist. This is most probably because the time of the reference does not exist in the local simulation: %s',fpath_mat_tmp)
     end
