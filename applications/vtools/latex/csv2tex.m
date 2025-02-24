@@ -2,7 +2,7 @@ function csv2tex(filecsv, filetex, caption, longtable);
 %CSV2TEX transfers DFLOWFM simulation results at cell faces to netCDF UGRID file.
 %
 % Example usage:
-% csv2ugrid(filecsv,filetex);
+% csv2tex(filecsv,filetex, caption, longtable);
 %
 % filecsv: path of input csv
 % filetex: path of output tex
@@ -32,7 +32,7 @@ if ~longtable
     fprintf(fid_tex, '%s\n', '\begin{table}[ht!]');
     fprintf(fid_tex, '%s\n', '  %\tiny');
     fprintf(fid_tex, '%s\n', '  \begin{center}');
-    fprintf(fid_tex, '%s%s%s\n', '  \caption{',caption,'}');
+    fprintf(fid_tex, '%s%s%s\n', '  \caption{',caption,'} \\');
     fprintf(fid_tex, '%s\n', '  \begin{adjustwidth}{-2cm}{-2cm}');
 end
 count = 1;
@@ -52,7 +52,7 @@ while a ~= -1
                 fprintf(fid_tex, '%s%0.1f%s', 'p{', round(11/length(s),1), 'cm}'); 
             end
             fprintf(fid_tex, '%s\n', '}');
-            fprintf(fid_tex, '%s%s%s\n', '  \caption{',caption,'}');
+            fprintf(fid_tex, '%s%s%s\n', '  \caption{',caption,'} \\');
             fprintf(fid_tex, '%s\n', '\toprule');
             add_header_row(fid_tex, s2, s);
             fprintf(fid_tex, '%s\n', '\midrule');
