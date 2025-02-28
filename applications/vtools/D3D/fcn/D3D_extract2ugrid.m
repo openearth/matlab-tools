@@ -74,6 +74,7 @@ ncid = netcdf.create(fname_out, 'NETCDF4');
 
 total_nnodes = length(ia);
 total_nfaces = size(gridInfo.face_nodes_x,2);
+max_facenodes = size(gridInfo.face_nodes_x,1);
 xnode = xycor(:,1);
 ynode = xycor(:,2);
 faces = facenodeidx.';
@@ -85,7 +86,7 @@ Err = [];
 try
     inodes = netcdf.defDim(ncid, 'mesh2d_nnodes', total_nnodes);
     ifaces = netcdf.defDim(ncid, 'mesh2d_nfaces', total_nfaces);
-    imaxfn = netcdf.defDim(ncid, 'mesh2d_nmax_face_nodes', 4);
+    imaxfn = netcdf.defDim(ncid, 'mesh2d_nmax_face_nodes', max_facenodes);
     %itimes = netcdf.defDim(ncid, 'time', netcdf.getConstant('UNLIMITED'));
     
     mesh = netcdf.defVar(ncid, 'mesh2d', 'NC_DOUBLE', []);
