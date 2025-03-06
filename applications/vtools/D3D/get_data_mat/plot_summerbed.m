@@ -363,7 +363,7 @@ for ksb=1:nsb %summerbed polygons
             multi_dim=check_multi_dimensional(data_0(kref));
 
             if flg_loc.do_xvt && ~multi_dim %skip if multidimentional
-               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims)
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s)
             end
             
             %% cumulative
@@ -401,14 +401,6 @@ end
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
 end %function
-
-%%
-
-
-
-%%
-
-
 
 %%
 
@@ -624,7 +616,7 @@ end
 
 %%
 
-function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,ylims)
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s)
 
 %% PARSE
 
@@ -642,9 +634,8 @@ end
 
 fn_data=fieldnames(data_xvt);
 nfn=numel(fn_data);
-ndiff=gdm_ndiff(flg_loc);
-nclim=size(ylims,1);
-nS=numel(simdef);
+nsim=numel(simdef);
+kref=flg_loc.sim_ref;
 
 [x_m,y_m]=meshgrid(s,tim_dtime_p);
 
@@ -664,10 +655,10 @@ in_p.xlab_un=1/1000;
 in_p.frac=var_idx;
 %                 in_p.tit_str=branch_name;
 
-for kS=1:nS
+for ksim=1:nsim
 
-    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie); 
-    runid=simdef(kS).file.runid;
+    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie); 
+    runid=simdef(ksim).file.runid;
 
     for kfn=1:nfn
         statis=fn_data{kfn};
@@ -679,26 +670,65 @@ for kS=1:nS
             end
         end
 
-        val_1=squeeze(data_xvt.(statis)(:,kS,:))';
-        val_0=squeeze(data_xvt0.(statis)(:,kS,:))';
+        val_ks_t=squeeze(data_xvt.(statis)(:,ksim,:))';
+        val_ks_0=squeeze(data_xvt0.(statis)(:,ksim,:))';
+        val_kref_t=squeeze(data_xvt.(statis)(:,kref,:))';
+        val_kref_0=squeeze(data_xvt0.(statis)(:,kref,:))';
 
         [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,var_str_save,statis);
         in_p.clab_str=in_p.lab_str;
 
-        for kdiff=1:ndiff
-            for kclim=1:nclim
+        %val
+        in_p.val=val_ks_t;
+        in_p.ylims=NaN;
+        in_p.is_diff=0;
+        tag_ref='val';
+        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+        mkdir_check(fdir_fig_loc,NaN,1,0);
 
-                [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,val_1,val_0,'ylims','ylims_diff',var_str_save);
-                in_p.clims=in_p.ylims; %the output from `gdm_data_diff` is saved in the variable we call first (`ylims`) and we want it here for `clims`.
-                in_p.ylims=NaN;
-                fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
-                mkdir_check(fdir_fig_loc,NaN,1,0);
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kdiff,kclim,var_idx);
+        nclim=size(lims,1);
+        for kclim=1:nclim
+            in_p.clims=lims(kclim,:); 
+            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx);
+            in_p.fname=fname_noext;
 
-                in_p.fname=fname_noext;
-                fig_surf(in_p)
-            end %kclim
-        end %kdiff
+            fig_surf(in_p)
+        end %kclim
+
+        %diff_t
+        in_p.val=val_ks_t-val_ks_0;
+        in_p.ylims=NaN;
+        in_p.is_diff=1;
+        tag_ref='diff_t';
+        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+        mkdir_check(fdir_fig_loc,NaN,1,0);
+
+        nclim=size(lims_diff_t,1);
+        for kclim=1:nclim
+            in_p.clims=lims_diff_t(kclim,:); 
+            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,2,kclim,var_idx);
+            in_p.fname=fname_noext;
+            
+            fig_surf(in_p)
+        end %kclim
+
+        %diff_s
+        in_p.val=val_ks_t-val_kref_t;
+        in_p.ylims=NaN;
+        in_p.is_diff=1;
+        tag_ref='diff_s';
+        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+        mkdir_check(fdir_fig_loc,NaN,1,0);
+
+        nclim=size(lims_diff_s,1);
+        for kclim=1:nclim
+            in_p.clims=lims_diff_s(kclim,:); 
+            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,3,kclim,var_idx);
+            in_p.fname=fname_noext;
+            
+            fig_surf(in_p)
+        end %kclim
+
     end %kfn
 end %kS
 
