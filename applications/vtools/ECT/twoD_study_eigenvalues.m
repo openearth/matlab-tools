@@ -14,7 +14,7 @@
 
 function [eig_r,eig_i]=twoD_study_eigenvalues(pert_anl,kwx_vi,kwy_vi,Dx,Dy,C,Ax,Ay,B,M_pmm)
 
-nc=numel(kwx_vi,1);
+nc=numel(kwx_vi);
 ne=size(Ax,1);
 
 eig_r=NaN(nc,ne);

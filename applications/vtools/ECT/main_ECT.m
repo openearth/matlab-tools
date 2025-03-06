@@ -7,53 +7,68 @@
 %$Id$
 %$HeadURL$
 %
+%Description
 
 %% PREAMBLE
 
+% dbclear all;
 clear
 clc
 fclose all;
 
 %% PATHS
 
+%Check out SVN repository:
+%https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/
+%into a folder (e.g., <dir_checkout>).
+%`fpath_add_oet` points to <dir_checkout\applications\vtools\general\addOET.m>
 fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
-fdir_d3d='c:\checkouts\qp\';
+
+%The source of QuickPlot is now within the source code of Delft3D.
+%Check it out by:
+%```
+% git init
+% git remote add -f origin https://git.deltares.nl/oss/delft3d
+% git config core.sparseCheckout true
+% git sparse-checkout set src/tools_lgpl/matlab/quickplot/progsrc
+%```
+%and point here to the folder where it has been checked out.
+fdir_d3d='c:\checkouts\sc_fm_trunk\';
 
 % fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
 % fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
 
-% fpath_project='d:\temporal\220517_improve_exner\';
-fpath_project='p:\dflowfm\users\chavarri\231005_redolfi\';
+% fpath_add_oet='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\general\addOET.m';
+% fdir_d3d='p:\studenten-riv\05_OpenEarthTools\02_qp\';
 
-%% ADD OET
-
-if isunix %we assume that if Linux we are in the p-drive. 
-    fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
-end
-run(fpath_add_oet);
+%Path to folder with project paths. See `paths_project_layout`.
+fpath_project='d:\temporal\220517_improve_exner\';
 
     %% input to function
 
-% path_input='input_ECT_2D.m';
-path_input='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\240625_test_bar_properties\input_ECT_2D.m';
+%script with ECT
+% path_input='input_ECT_2D.m'; 
+path_input=@input_D3D_01;
 
-in_2D.fig.fig_print=0;
-in_2D.fig.fig_name='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\240625_test_bar_properties\domain_1';
+in_2D.fig.fig_print=1;
+in_2D.fig.fig_name=fullfile(fpath_project,'domain_1');
 
-in_2D_nondim.fig_print=0;
-in_2D_nondim.fig_name='c:\Users\chavarri\OneDrive - Stichting Deltares\all\projects\00_codes\240625_test_bar_properties\domain_2';
+in_2D_nondim.fig_print=1;
+in_2D_nondim.fig_name=fullfile(fpath_project,'domain_2');
 
 in_2D.pert_anl=1; 
 
 %% CALL
 
+cd(fpath_project) %necessary for getting where the D3D function is
+
 %run a script with ECT input
-run(path_input);
+% run(path_input);
 
-%run a function wtih D3D input (preferred)
-simdef=input_D3D_01;
+%run a function with D3D input (preferred)
+simdef.dummy=NaN;
+simdef=path_input(simdef);
 ECT_input=D3D_input_2_ECT_input(simdef);
-
 
 in_2D.flg=ECT_input.flg;
 

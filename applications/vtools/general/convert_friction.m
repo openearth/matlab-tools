@@ -12,7 +12,7 @@
 %
 %
 
-function Cf=convert_friction(conv,C_in,varargin)
+function C_out=convert_friction(conv,C_in,varargin)
 
 %% PARSE
 
@@ -28,7 +28,9 @@ g=parin.Results.g;
 
 switch conv
     case 'C2Cf'
-        Cf=g./C_in.^2;
+        C_out=g./C_in.^2;
+    case 'Cf2C'
+        C_out=sqrt(g/C_in);
     otherwise
         error('do')
 end
