@@ -21,7 +21,7 @@ data_mea.x=[];
 data_mea.y=[];
 plot_mea=false;
 
-if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) 
+if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) &&  ~isempty(flg_loc.measurements{kpli,1})
     data_mea=gdm_load_measurements(NaN,flg_loc.measurements{kpli,1},'tim',time_dnum_plot,'var',var_str_save,'stat',stat,'tol',flg_loc.tol_time_measurements,'do_rkm',flg_loc.do_rkm);
     if ~isempty(data_mea.x)
         plot_mea=true;

@@ -28,6 +28,13 @@ flg_loc=isfield_default(flg_loc,'do_all_s_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_xvt',0);
 flg_loc=isfield_default(flg_loc,'do_plot_structures',0);
 flg_loc=isfield_default(flg_loc,'do_rkm',1); %the default is to convert to rkm. This is not very general maybe, but it applies to our projects. 
+flg_loc=isfield_default(flg_loc,'tol_time_measurements',1);
+flg_loc=isfield_default(flg_loc,'is_pol_diff',zeros(1,numel(flg_loc.sb_pol)));
+
+flg_loc=isfield_default(flg_loc,'do_diff_pol',0);
+if isfield(flg_loc,'sb_pol_diff')
+    flg_loc.do_diff_pol=1;
+end
 
 flg_loc=isfield_default(flg_loc,'do_legend_adhoc',0);
 if isfield(flg_loc,'legend_file')
@@ -35,7 +42,7 @@ if isfield(flg_loc,'legend_file')
     flg_loc.do_legend_adhoc=1;
 end
 
-flg_loc=isfield_default(flg_loc,'tol_time_measurements',1);
+
 
 %%
 

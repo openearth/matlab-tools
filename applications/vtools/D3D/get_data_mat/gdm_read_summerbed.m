@@ -20,15 +20,20 @@ messageOut(NaN,'Start reading summer bed polygon')
 
 %% PARSE
 
-if isfield(flg_loc,'do_polygon_boundary')==0
-    flg_loc.do_polygon_boundary=0; %not backward compatible, but safest. 
-end
-
-if isfield(flg_loc,'polygon_boundary_shrink')
-    flg_loc.polygon_boundary_shrink=0.8;
-end
+flg_loc=isfield_default(flg_loc,'do_polygon_boundary',0); %not backward compatible, but safest. 
+flg_loc=isfield_default(flg_loc,'polygon_boundary_shrink',0.8);
+flg_loc=isfield_default(flg_loc,'skip_if_not_found',0);
 
 %% PATHS
+
+if exist(fpath_sb_pol,'file')~=2
+    if flg_loc.skip_if_not_found
+        messageOut(fid_log,sprintf('File not found, skip reading: %s',fpath_sb_pol))
+        sb_def=struct();
+        return
+    end
+    error('File not found: %s',fpath_sb_pol)
+end
 
 fpath_sb_mat=fpath_rkm_sb_bol(fdir_mat,fpath_sb_pol);
 

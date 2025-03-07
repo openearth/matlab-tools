@@ -21,12 +21,6 @@ if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
     in_plot_fig.leg_str=leg_str;
     plot_summerbed(fid_log,in_plot_fig,simdef)
-    if isfield(in_plot_fig,'sb_pol_diff')
-        error('The code below needs to be make to work. It used to be called when only one `simdef` was called in `plot_individual_runs`')
-        if unique(~isnan(in_plot_fig.sb_pol_diff{1,1}))
-            plot_1D_sb_diff_01(fid_log,in_plot_fig,simdef)
-        end
-    end
     if isfield(in_plot_fig,'tim_ave')
         error('The code below needs to be make to work. It used to be called when only one `simdef` was called in `plot_individual_runs`')
         if ~isempty(in_plot_fig.tim_ave{1,1}) 

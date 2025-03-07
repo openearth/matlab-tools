@@ -82,6 +82,9 @@ if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
     create_mat_map_summerbed_01(fid_log,in_plot_fig,simdef)
     pp_sb_var_01(fid_log,in_plot_fig,simdef)
+    if isfield(in_plot_fig,'sb_pol_diff')
+        create_mat_map_summerbed_diff(fid_log,in_plot_fig,simdef)
+    end
     if isfield(in_plot_fig,'tim_ave')
         if ~isempty(in_plot_fig.tim_ave{1,1}) 
            pp_sb_tim_ave_01(fid_log,in_plot_fig,simdef)

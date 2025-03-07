@@ -26,6 +26,10 @@ flg_loc=gdm_parse_summerbed(flg_loc,simdef(1));
 
 ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 
+%% ADD DIFF POL
+
+flg_loc=add_sb_pol_diff(flg_loc);
+
 %% LOAD REFERENCE DATA
 
 %time is based on reference simulation. 
@@ -62,6 +66,7 @@ for ksb=1:nsb %summerbed polygons
 
     fpath_sb_pol=flg_loc.sb_pol{ksb};
     [~,sb_pol,~]=fileparts(fpath_sb_pol);
+
     sb_def=gdm_read_summerbed(flg_loc,fid_log,fdir_mat,fpath_sb_pol,fpath_map);
 
     %% LOOP ON RKM POLYGONS
@@ -167,7 +172,7 @@ for ksb=1:nsb %summerbed polygons
                             tag_ref='val';
                             lims_loc=lims;
 
-                            in_p.is_diff=0;
+                            in_p.is_diff=flg_loc.is_pol_diff(ksb);
                             in_p.is_background=0;
                             in_p.is_percentage=0;
                             in_p.val=[data_sim(bol_ks).(statis)];
@@ -410,6 +415,11 @@ function plot_summerbed_inpolygon(flg_loc,fdir_fig_loc,rkmv,sb_def,gridInfo)
 
 flg_loc=isfield_default(flg_loc,'do_plot_inpolygon',1);
 if flg_loc.do_plot_inpolygon==0
+    return
+end
+
+if isempty_struct(sb_def)
+    messageOut(NaN,'The polygon structure is empty.')
     return
 end
 
@@ -769,5 +779,31 @@ svi=repmat('%02d',1,nvi);
 var_idx_s=sprintf(svi,var_idx);
 
 fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%s_%02d_clim_%02d',tag,runid,var_str,var_idx_s,fn,sb_pol,kref,kclim));
+
+end %function
+
+%%
+
+%Trick to deal with difference between polygons. We have created a mat-file
+%with the difference between polygons and saved the mat-file as if it was a
+%new polygon with a name given by `gdm_sb_pol_diff_name`. Here we add the
+%name such that it is processed as any other one. 
+%
+function flg_loc=add_sb_pol_diff(flg_loc)
+
+if flg_loc.do_diff_pol==0; return; end
+
+nsb=numel(flg_loc.sb_pol);
+flg_loc.skip_if_not_found=1; %necessary because there is actually no polygon
+nsb_diff=numel(flg_loc.sb_pol_diff);
+for ksb_diff=1:nsb_diff
+    sb_pol=gdm_sb_pol_diff_name(flg_loc,ksb_diff);
+    fpath_sb_pol=fullfile(pwd,sprintf('%s.shp',sb_pol));
+    flg_loc.sb_pol{nsb+ksb_diff}=fpath_sb_pol;
+    flg_loc.is_pol_diff(nsb+ksb_diff)=1;
+    if isfield(flg_loc,'measurements_diff')
+        flg_loc.measurements{nsb+ksb_diff,1}=flg_loc.measurements_diff{ksb_diff,1};
+    end
+end
 
 end %function
