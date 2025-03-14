@@ -162,7 +162,7 @@ switch lower(variable)
                 str_var='elevación del lecho';
         end
         un_type='Lref';
-    case {'detab'}
+    case {'detab','bl_t'}
         switch lan
             case 'en'
                 str_var='bed elevation change';
@@ -171,7 +171,7 @@ switch lower(variable)
             case 'es'
                 str_var='cambio en la elevación del lecho';
         end
-        un_type='L';
+        un_type='L/T';
     case {'detab_ds'}
         switch lan
             case 'en'
@@ -182,6 +182,16 @@ switch lower(variable)
                 str_var='pendiente del lecho';
         end
         un_type='-';
+    case {'detab_ds_t'}
+        switch lan
+            case 'en'
+                str_var='change in bed slope';
+            case 'nl'
+                str_var='verandering in bodemverhang';
+            case 'es'
+                str_var='cambio en la pendiente del lecho';
+        end
+        un_type='1/T';
     case {'dist','cel_morpho_t'}
         switch lan
             case 'en'
@@ -1284,7 +1294,7 @@ switch un_type
             otherwise
                 error('this factor is missing')
         end
-    case 'T'
+    case {'T','1/T'}
         switch un
             case 1
                 str_un=' [s]';
@@ -1308,6 +1318,9 @@ switch un_type
                 end
             otherwise
                 error('this factor is missing')
+        end
+        if strcmp(un_type,'1/T')
+            str_un=strrep(str_un,']','^-1]');
         end
     case 'L2/T'
         switch un

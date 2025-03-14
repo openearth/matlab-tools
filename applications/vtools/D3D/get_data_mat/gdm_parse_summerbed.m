@@ -42,7 +42,10 @@ if isfield(flg_loc,'legend_file')
     flg_loc.do_legend_adhoc=1;
 end
 
-
+flg_loc=isfield_default(flg_loc,'do_sb_pol_together',0);
+if isfield(flg_loc,'sb_pol_together')
+    flg_loc.do_sb_pol_together=1;
+end
 
 %%
 
