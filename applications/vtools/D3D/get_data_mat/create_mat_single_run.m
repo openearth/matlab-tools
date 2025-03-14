@@ -38,6 +38,7 @@ end
 %% ls 
 tag_check='fig_map_ls_01';
 if isfield(in_plot,tag_check)==1
+    error('Outdated?')
     in_plot_fig=gmd_tag(in_plot,tag_check);
     create_mat_map_ls_01(fid_log,in_plot_fig,simdef)
 end

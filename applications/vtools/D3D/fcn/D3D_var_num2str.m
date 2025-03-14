@@ -10,14 +10,23 @@
 %$Id$
 %$HeadURL$
 %
+%Generate the variable name for saving and reading mat-file. 
+%
+%In most cases, the save and read name is the same. The exception is when
+%there is some postprocessing. E.g., `detab_ds` (streamwise slope). The 
+%variable that needs to be read is the bed level, and this will first need
+%to be saved as bed level. However, when reading it for plotting, we want
+%to load `deta_ds`.
+%
 %INPUT
-%   -var_id = identifies what variable to read [char] or [double]
+%   -varname_input = identifies what variable to read [char] or [double]
 %
 %OUTPUT
-%   -var_str_read = save name of the variable to read [char]
-%   -var_str_save = save name of the processed variable [char]
+%   -varname_save_mat = name of the variable for saving the mat-file associated to variables varname_input [char]
+%   -varname_read_variable = name of the variable for calling the function that will read varname_input [char]
+%   -varname_load_mat = name of the variable for loading the mat-file associated to variables varname_input [char]
 
-function [var_str_read,var_id_out,var_str_save]=D3D_var_num2str(var_id,varargin)
+function [varname_save_mat,varname_read_variable,varname_load_mat]=D3D_var_num2str(varname_input,varargin)
 
 %%
 
@@ -39,22 +48,22 @@ res_type=parin.Results.res_type;
 
 %%
 
-var_id_out=var_id;
-var_str_read=var_id;
-var_str_save=var_id;
+varname_read_variable=varname_input;
+varname_save_mat=varname_input;
+varname_load_mat=varname_input;
 
-if ischar(var_id)
-    switch var_id
+if ischar(varname_input)
+    switch varname_input
         case 'detab_ds'
-            var_str_read='mesh2d_mor_bl';
-            var_str_save=var_id;
-            var_id_out=var_str_read;
+            varname_save_mat='mesh2d_mor_bl';
+            varname_load_mat=varname_input;
+            varname_read_variable=varname_save_mat;
         case 'bl'
             if is1d
                 if ismor
-                    var_id_out='mesh1d_mor_bl';
+                    varname_read_variable='mesh1d_mor_bl';
                 else
-                    var_id_out='mesh1d_flowelem_bl';
+                    varname_read_variable='mesh1d_flowelem_bl';
                 end
             else
                 switch structure
@@ -62,37 +71,37 @@ if ischar(var_id)
                         switch res_type
                             case 'map'
                                 if ismor
-                                    var_id_out='DPS';
+                                    varname_read_variable='DPS';
                                 else
-                                    var_id_out='DP0';
+                                    varname_read_variable='DP0';
                                 end
                             case 'his'
                                 if ismor
-                                    var_id_out='ZDPS';
+                                    varname_read_variable='ZDPS';
                                 else
-                                    var_id_out='DPS';
+                                    varname_read_variable='DPS';
                                 end
                         end
                     case {2,4}
                         if ismor
-                            var_id_out='mesh2d_mor_bl';
+                            varname_read_variable='mesh2d_mor_bl';
                         end
                     otherwise
                         error('ups')
                 end
             end
-            var_str_read='bl';
-            var_str_save=var_str_read;
+            varname_save_mat='bl';
+            varname_load_mat=varname_save_mat;
         case {'h','wd','waterdepth'}
             if is1d==1
-                var_id_out='mesh1d_waterdepth';
+                varname_read_variable='mesh1d_waterdepth';
             else
                 switch structure
                     case {1,5}
 %                         switch res_type
 %                             case 'map'
 %                                 if ismor
-                                    var_id_out='waterdepth'; %read by EHY
+                                    varname_read_variable='waterdepth'; %read by EHY
 %                                 else
 %                                     var_id_out='DP0';
 %                                 end
@@ -104,141 +113,141 @@ if ischar(var_id)
 %                                 end
 %                         end
                     case {2,4}
-                        var_id_out='mesh2d_waterdepth';
+                        varname_read_variable='mesh2d_waterdepth';
 %                         if ismor
 %                             var_id_out='mesh2d_mor_bl';
 %                         end
                     case 3
-                        var_id_out='water_depth';
+                        varname_read_variable='water_depth';
                     otherwise
                         error('ups')
                 end                
             end
-            var_str_read='h';
-            var_str_save=var_str_read;
+            varname_save_mat='h';
+            varname_load_mat=varname_save_mat;
         case {'umag','mesh2d_ucmag','mesh2d_ucmaga','mesh1d_ucmag'} %depth-averaged for 1D, 2D, and 3D
             %in 3D, `ucmag` is per layer and `ucmaga` is depth averaged.
             %There is a special function for reading depth-averaged velocity. Hence, here
             %we only need to pass that it is depth-averaged and the cases (1D, 2D, 3D) are
             %dealt in that function. 
-            var_str_read='umag';
-            var_str_save=var_str_read;
+            varname_save_mat='umag';
+            varname_load_mat=varname_save_mat;
         case 'umag_layer' %depth_averaged for 1D and 2D, but per layer in 3D
             %in 3D, `ucmag` is per layer and `ucmaga` is depth averaged.
             if is1d
-                var_id_out='mesh1d_ucmag';
+                varname_read_variable='mesh1d_ucmag';
             else
-                var_id_out='mesh2d_ucmag';
+                varname_read_variable='mesh2d_ucmag';
             end
-            var_str_read='umag_layer'; %I think we can use the same name, because we will always add a layer to the input. Although it can be dangerous.
-            var_str_save=var_str_read;
+            varname_save_mat='umag_layer'; %I think we can use the same name, because we will always add a layer to the input. Although it can be dangerous.
+            varname_load_mat=varname_save_mat;
         case 'wl'
             switch res_type
                 case 'map'
                     switch structure
                         case {1,2,4,5}
                             if is1d
-                                var_id_out='mesh1d_s1';
+                                varname_read_variable='mesh1d_s1';
                             end
                     end
                 case 'his'
                     %use `wl`
             end
-            var_str_read='wl';
-            var_str_save=var_str_read;
+            varname_save_mat='wl';
+            varname_load_mat=varname_save_mat;
         case {'mesh2d_umod','mesh1d_umod','umod'}
             if is1d
-                var_id_out='mesh1d_umod';
+                varname_read_variable='mesh1d_umod';
             else
-                var_id_out='mesh2d_umod';
+                varname_read_variable='mesh2d_umod';
             end
-            var_str_read='umod';
-            var_str_save=var_str_read;
+            varname_save_mat='umod';
+            varname_load_mat=varname_save_mat;
         case {'mesh2d_dg','mesh1d_dg','dg'}
             if is1d
-                var_id_out='mesh1d_dg';
+                varname_read_variable='mesh1d_dg';
             else
                 switch structure
                     case {1,5}
-                        var_id_out='DG';
+                        varname_read_variable='DG';
                     case {2,4}
-                        var_id_out='mesh2d_dg';
+                        varname_read_variable='mesh2d_dg';
                 end
             end
-            var_str_read='dg';
-            var_str_save=var_str_read;
+            varname_save_mat='dg';
+            varname_load_mat=varname_save_mat;
         case {'mesh2d_czs','mesh1d_czs','czs'}
             if is1d
-                var_id_out='mesh1d_czs';
+                varname_read_variable='mesh1d_czs';
             else
-                var_id_out='mesh2d_czs';
+                varname_read_variable='mesh2d_czs';
             end
-            var_str_read='czs';
-            var_str_save=var_str_read;
+            varname_save_mat='czs';
+            varname_load_mat=varname_save_mat;
         case {'mesh2d_thlyr','mesh1d_thlyr','thlyr','La'}
             if is1d
-                var_id_out='mesh1d_thlyr';
+                varname_read_variable='mesh1d_thlyr';
             else
                 switch structure
                     case {1,5}
-                        var_id_out='thlyr';
+                        varname_read_variable='thlyr';
                     case {2,4}
-                        var_id_out='mesh2d_thlyr';
+                        varname_read_variable='mesh2d_thlyr';
                 end
             end
-            var_str_read='thlyr';
-            var_str_save=var_str_read;
+            varname_save_mat='thlyr';
+            varname_load_mat=varname_save_mat;
         case {'Fak','lyrfrac','mesh2d_lyrfrac','mesh1d_lyrfrac'}
             if is1d
-                var_id_out='mesh1d_lyrfrac';
+                varname_read_variable='mesh1d_lyrfrac';
             else
                 switch structure
                     case {1,5}
-                        var_id_out='LYRFRAC';
+                        varname_read_variable='LYRFRAC';
                     case {2,4}
-                        var_id_out='mesh2d_lyrfrac';
+                        varname_read_variable='mesh2d_lyrfrac';
                 end
             end
-            var_str_read='lyrfrac';
-            var_str_save=var_str_read;
+            varname_save_mat='lyrfrac';
+            varname_load_mat=varname_save_mat;
         case {'ba','mesh2d_flowelem_ba'}
             if is1d
                 error('no idea')
-                var_id_out='mesh1d_lyrfrac';
+                varname_read_variable='mesh1d_lyrfrac';
             else
-                var_id_out='mesh2d_flowelem_ba';
+                varname_read_variable='mesh2d_flowelem_ba';
             end
-            var_str_read='ba';
-            var_str_save='ba';
+            varname_save_mat='ba';
+            varname_load_mat='ba';
         case {'cross_section_discharge'}
             switch structure
                 case 3
-                    var_id_out='water_discharge';
+                    varname_read_variable='water_discharge';
             end
-            var_str_read='cross_section_discharge';
-            var_str_save='cross_section_discharge';
+            varname_save_mat='cross_section_discharge';
+            varname_load_mat='cross_section_discharge';
         case {'duneheight'}
-            var_id_out='mesh2d_duneheight';
-            var_str_read='duneheight';
-            var_str_save='duneheight';
+            varname_read_variable='mesh2d_duneheight';
+            varname_save_mat='duneheight';
+            varname_load_mat='duneheight';
         case {'dunelength'}
-            var_id_out='mesh2d_dunelength';
-            var_str_read='dunelength';
-            var_str_save='dunelength';
+            varname_read_variable='mesh2d_dunelength';
+            varname_save_mat='dunelength';
+            varname_load_mat='dunelength';
         case {'mesh2d_taus','taub'}
-            var_id_out='mesh2d_taus';
-            var_str_read='taub';
-            var_str_save='taub';
+            varname_read_variable='mesh2d_taus';
+            varname_save_mat='taub';
+            varname_load_mat='taub';
         case {'waveheight','mesh2d_hwav'}
-            var_id_out='mesh2d_hwav';
-            var_str_read='waveheight';
-            var_str_save='waveheight';
+            varname_read_variable='mesh2d_hwav';
+            varname_save_mat='waveheight';
+            varname_load_mat='waveheight';
         otherwise
 
     end
 else
-    var_str_read=fcn_num2str(var_id_out);
-    var_str_save=var_str_read;
+    varname_save_mat=fcn_num2str(varname_read_variable);
+    varname_load_mat=varname_save_mat;
 end
 
 end %function

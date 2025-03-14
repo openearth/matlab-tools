@@ -56,7 +56,7 @@ fpath_map_loc=fullfile(fdir_work,'DFM_OUTPUT_tmp','tmp_map.nc');
 copyfile_check(fpath_map_loc,fpath_map,1);
 
 %erase mdu
-if strcmp(fdir_work,fdir_now)==0
+if strcmp(fdir_work,pwd)==0
     erase_directory(fdir_work);
 end
 

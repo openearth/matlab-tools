@@ -24,6 +24,8 @@
 
 function D3D_mini_thk_u(simdef)
 
+error('deprecated. Call `D3D_mini`')
+
 %% RENAME
 
 dire_sim=simdef.D3D.dire_sim; 

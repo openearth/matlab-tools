@@ -35,25 +35,6 @@ yr=0:dy:B;
 
 [x,y]=meshgrid(xr,yr);
 
-write_structured_NC_grid(x,y);
-
-[nr,nc]=size(x);
-
-n=reshape(1:length(x(:)),[nr,nc]);
-
-lnk=[[reshape(n(1:nr-1,:), [(nr-1)*nc, 1]), reshape(n(2:nr,:), [(nr-1)*nc, 1])]; ...
-    [reshape(n(:,1:nc-1), [nr*(nc-1), 1]), reshape(n(:,2:nc), [nr*(nc-1), 1])]];
-
-%rename
-x_v=x(:);
-y_v=y(:);
-lnk_v=lnk.';
-
-% lnk_x=[x_v(lnk(:,1)),x_v(lnk(:,2))];
-% lnk_y=[y_v(lnk(:,1)),y_v(lnk(:,2))];
-
-%% SAVE
-
-dflowfm.writeNet(grdfile,x_v,y_v,lnk_v);
+write_structured_NC_grid(grdfile,x,y);
 
 end %function

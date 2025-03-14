@@ -119,8 +119,10 @@ switch what_do
             case {'.bct','.bc','.bcm'}
                 stru_out=bct_io('read',fname);
                 for kT=1:stru_out.NTables
-                    tim_dtim=read_time_from_table(stru_out.Table(kT));
-                    stru_out.Table(kT).Time=tim_dtim;
+                    if strcmp(stru_out.Table(kT).Contents,'timeseries')
+                        tim_dtim=read_time_from_table(stru_out.Table(kT));
+                        stru_out.Table(kT).Time=tim_dtim;
+                    end
                 end
             case '.xyz'
 %                 stru_out=dflowfm_io_xydata('read',fname); %extremely slow
@@ -367,8 +369,7 @@ function tim_dtim=read_time_from_table(stru_out)
 
 idx_tim=find_str_in_cell({stru_out.Parameter.Name},{'time'});
 if isnan(idx_tim)
-    warning('Time not found')
-    return
+    error('Time not found')
 end
 
 %try read time as string

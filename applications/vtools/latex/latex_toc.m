@@ -34,6 +34,13 @@ toc={}; %better to preallocate
 kc=0;
 while ~feof(fid)
     lin=fgetl(fid);
+    lin=deblank(lin);
+    if numel(lin)==0
+        continue
+    end
+    if strcmp(lin(1),'%')
+        continue
+    end
     bol_sec=contains(lin,'\gensection');
     if bol_sec
         tok=regexp(lin,'{(.*?)}','tokens');

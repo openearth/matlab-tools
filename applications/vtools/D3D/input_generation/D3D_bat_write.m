@@ -55,7 +55,12 @@ switch cluster_str
     case 'h6c7'
         strsoft_lin=D3D_sh_h6c7(fpath_file,OMP_num,structure,fpath_software,dimr_str);
     case 'h7'
-        strsoft_lin=D3D_sh_h7(fpath_file,nodes,tasks_per_node,runid,time_duration,partition,fpath_software,dimr_str);
+        switch structure
+            case 1
+                strsoft_lin=D3D_d3d4_sh_h7(fpath_file,nodes,tasks_per_node,runid,time_duration,partition,fpath_software,dimr_str);
+            case 2
+                strsoft_lin=D3D_fm_sh_h7(fpath_file,nodes,tasks_per_node,runid,time_duration,partition,fpath_software,dimr_str);
+        end
     otherwise
         error('<cluster> cannot be: %s',cluster_str)
 end
@@ -93,7 +98,7 @@ end %function
 
 %%
 
-function strsoft_lin=D3D_sh_h7(fpath_file,nodes,tasks_per_node,runid,time_duration,partition,fpath_software,dimr_str)
+function strsoft_lin=D3D_fm_sh_h7(fpath_file,nodes,tasks_per_node,runid,time_duration,partition,fpath_software,dimr_str)
 
 %%
 
@@ -166,3 +171,51 @@ fclose(fid);
 end %function
 
 %%
+
+function strsoft_lin=D3D_d3d4_sh_h7(fpath_file,nodes,tasks_per_node,runid,time_duration,partition,fpath_software,dimr_str)
+
+%%
+
+strsoft_lin=''; %there is no point in calling in sequential in linux I think. Not sure how to do it. 
+str_time_limit=duration2double_string(time_duration);
+
+%%
+fid=fopen(fpath_file,'w');
+
+fprintf(fid,'#!/bin/bash\r\n');
+fprintf(fid,'#\r\n');
+fprintf(fid,'# This is an h7 specific script for single or multi-node simulations.\r\n');
+fprintf(fid,'#\r\n');
+fprintf(fid,'# Usage:\r\n');
+fprintf(fid,'#   - Copy this script into your working folder, next to the config (and wave) file.\r\n');
+fprintf(fid,'#   - Modify this script where needed (e.g. number of nodes, number of tasks per node).\r\n');
+fprintf(fid,'#	- Start a command line in H7.\r\n');
+fprintf(fid,'#	- Execute: `dos2unix ./run_dflow2d3d_h7.sh`\r\n');
+fprintf(fid,'#   - Execute: `./run_dflow2d3d_h7.sh`\r\n');
+fprintf(fid,'#\r\n');
+fprintf(fid,'\r\n');
+fprintf(fid,'# stop after an error occured:\r\n');
+fprintf(fid,'set -e\r\n');
+fprintf(fid,' \r\n');
+fprintf(fid,'# Set numbers of hosts and cores per host\r\n');
+fprintf(fid,'nNodes=%d\r\n',nodes);
+fprintf(fid,'nProc=%d\r\n',tasks_per_node);
+fprintf(fid,'TIME_LIMIT="%s" \r\n',str_time_limit);
+fprintf(fid,'WAVES=rb_ny_wave_wit4_feiner.mdw\r\n');
+fprintf(fid,'CONFIG=%s \r\n',dimr_str);
+fprintf(fid,'PARTITION="%s" #`scontrol show partition` to see available partitions and time limit\r\n',partition);
+fprintf(fid,'\r\n');
+fprintf(fid,'# set Delft3D4 version to be used\r\n');
+fprintf(fid,'delft3d4dir=%s\r\n',linuxify(fpath_software));
+fprintf(fid,'\r\n');
+fprintf(fid,'export jobName="%s"\r\n',runid);
+fprintf(fid,'\r\n');
+fprintf(fid,'#if FLOW\r\n');
+fprintf(fid,'$delft3d4dir/lnx64/bin/submit_dflow2d3d_AL8.sh -n $nNodes -c $nProc -j $jobName -t $TIME_LIMIT -p $PARTITION -m $CONFIG\r\n');
+fprintf(fid,'\r\n');
+fprintf(fid,'#if FLOW+WAVES\r\n');
+fprintf(fid,'#$delft3d4dir/lnx64/bin/submit_dflow2d3d_AL8.sh -n $nNodes -c $nProc -j $jobName -w $WAVES -t $TIME_LIMIT -p $PARTITION -m $CONFIG\r\n');
+
+fclose(fid);
+
+end %function

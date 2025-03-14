@@ -200,14 +200,25 @@ simdef.tra.SedTyp=3; %sediment (transport) type: 1=mud; 2=sand; 3=bedload [-] [d
 simdef.mdf.Dpsopt='DP'; %bed level interpolation at water level points [string]: DP=position of depth points shifted to water level points; MIN=minimum of the surrounding points; MEAN=mean of the surrounding points; MAX=max of the surrouding points; 
 simdef.mdf.Dpuopt='mean_dps'; %bed level interpolation at velocity    points [string]: MIN=minimum of the surrounding point; MEAN=mean of the surrounding points; UPW=upwind; MOR=for morphodynamics; mean_dps=mean of the surrounding waterlevel points; min_dps=minimum of surrounding waterlevel points
  
-%% 
-%% adapt time
-%%
+%% Sediment Transport
 
-c=simdef.ini.u+sqrt(simdef.mdf.g*simdef.ini.h);
-dt_opt=simdef.mdf.CFL*simdef.grd.dx/c; %optimum time step
+ECT_input=D3D_input_2_ECT_input(simdef);
+v2struct(ECT_input)
 
-[simdef.mdf.Dt,simdef.mdf.Tstop,simdef.mdf.Flmap_dt,simdef.mor.MorStt]=D3D_adapt_time(dt_opt,simdef.mdf.Tstop,simdef.mor.MorStt,simdef.mor.MorFac,simdef.mdf.Tstop/simdef.mdf.Flmap_dt);
+Gammak=NaN(size(gsd));
 
+cnt.g=9.81;
+cnt.rho_s=2650;
+cnt.rho_w=1000;
+cnt.p=0.4; %in ECT sedtrnas uses this porosity
+cnt.k=0.41;
+cnt.nu = 1e-6; %we should compute based on temperature?
+
+cnt.R=(cnt.rho_s-cnt.rho_w)/cnt.rho_w;
+
+Mak=Fa1.*La;
+
+[qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm]=sediment_transport(flg,cnt,h,u*h,Cf,La,Mak,gsd,sedTrans,hiding,mor_fac,E_param,vp_param,Gammak);
+qbk_no_pores=qbk.*(1-cnt.p);
 
 end %function

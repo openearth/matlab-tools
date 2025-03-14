@@ -49,6 +49,8 @@ in_p=isfield_default(in_p,'plot_axis','xt');
 in_p=isfield_default(in_p,'lim_t',[NaN,NaN]);
 in_p=isfield_default(in_p,'xlab_str','dist_prof',true);
 in_p=isfield_default(in_p,'do_measurements',0);
+in_p=isfield_default(in_p,'clims',[NaN,NaN]);
+in_p=isfield_default(in_p,'is_diff',0);
 if in_p.do_measurements
     in_p=isfield_default(in_p,'mt',2.5);
 else
@@ -56,7 +58,7 @@ else
 end
 in_p=isfield_default(in_p,'mb',1.5);
 in_p=isfield_default(in_p,'mr',0.5);
-in_p=isfield_default(in_p,'ml',1.5);
+in_p=isfield_default(in_p,'ml',2.5);
 in_p=isfield_default(in_p,'sh',1.0);
 in_p=isfield_default(in_p,'sv',1.5);
 
@@ -215,9 +217,14 @@ cbar(kr,kc).location='northoutside';
 cbar(kr,kc).label=labels4all(unit,1,lan);
 
 % brewermap('demo')
-cmap=improved_turbo(100);
 if nS>1
     cmap=brewermap(nS,'set1');
+else
+    if is_diff
+        cmap=brewermap(100,'RdYlBu');
+    else
+        cmap=improved_turbo(100);
+    end
 end
 %center around 0
 % ncmap=1000;
@@ -342,7 +349,14 @@ end
 lim_dist=[min(d_m(:)),max(d_m(:))].*s_fact;
 % lim_t=[min(t_m(:)),max(t_m(:))];
 if isnan(clims(1))
-clims=[0,max(val_m(:))];
+    if is_diff
+        clims=absolute_limits(val_m);
+    else
+        clims=[min(val_m(:)),max(val_m(:))];
+        if diff(clims)<eps
+            clims=[-eps,eps];
+        end
+    end
 end
 
 %axes and limits

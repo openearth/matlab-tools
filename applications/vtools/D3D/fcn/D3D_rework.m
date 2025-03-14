@@ -133,13 +133,18 @@ switch simdef.grd.type
     case 1
         simdef.grd.node_number_x=simdef.grd.L/simdef.grd.dx; %number of nodes 
         simdef.grd.node_number_y=simdef.grd.B/simdef.grd.dy; %number of nodes 
-        simdef.grd.M=simdef.grd.node_number_x+2; %M (number of cells in x direction)
-        simdef.grd.N=simdef.grd.node_number_y+2; %N (number of cells in y direction)
 
-
-        if rem(simdef.grd.node_number_x,1) || rem(simdef.grd.node_number_y,1) 
+        %check integers
+        if ~isinteger_precision(simdef.grd.node_number_x) || ~isinteger_precision(simdef.grd.node_number_y) 
             error('Make L and B to be multiples of dx and dy')
         end
+
+        %they are integers up to a precision, but we need them to be exact.
+        simdef.grd.node_number_x=round(simdef.grd.node_number_x);
+        simdef.grd.node_number_y=round(simdef.grd.node_number_y);
+
+        simdef.grd.M=simdef.grd.node_number_x+2; %M (number of cells in x direction)
+        simdef.grd.N=simdef.grd.node_number_y+2; %N (number of cells in y direction)
     case 2
         mmax=round(simdef.grd.lambda_num*simdef.grd.lambda/ds);
         nmax=floor(simdef.grd.B/simdef.grd.dy*2);
@@ -542,6 +547,8 @@ if isfield(simdef.mor,'HMaxTH')==0
 end
 
 if isfield(simdef.file,'mini')==0
+    %in the mor-file, we are writting the filename of this filepath. It is
+    %not completely safe if files are not in the same location.
     simdef.file.mini=fullfile(simdef.D3D.dire_sim,'mini.ini');
 end
 
@@ -596,6 +603,18 @@ if simdef.bcm.noise_eta==2
         warning('Time vector for bed level boundary condition will not be used.')
     else
         simdef.bcm.time=NaN; 
+    end
+end
+
+if isfield(simdef.bcm,'time')
+    if simdef.bcm.time(end)<simdef.mdf.Tstop
+        simdef.bcm.time=[simdef.bcm.time;simdef.mdf.Tstop];
+        if isfield(simdef.bcm,'eta')
+            simdef.bcm.eta=[simdef.bcm.eta,simdef.bcm.eta(end)];
+        end
+        if isfield(simdef.bcm,'deta_dt')
+            simdef.bcm.deta_dt=[simdef.bcm.deta_dt,simdef.bcm.deta_dt(end)];
+        end
     end
 end
 

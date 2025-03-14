@@ -25,6 +25,7 @@
 function D3D_mini_frc_u(simdef)
 %% RENAME
 
+error('deprecated. Call `D3D_mini`')
 dire_sim=simdef.D3D.dire_sim; 
 
 L=simdef.grd.L;

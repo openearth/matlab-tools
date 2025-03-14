@@ -32,8 +32,8 @@ nl=size(frac,2);
 kl=1;
 data{kl,1}='[BedCompositionFileInformation]'; kl=kl+1;
 data{kl,1}='FileVersion     = 01.00'; kl=kl+1;
-data{kl,1}='FileCreatedBy   = V'; kl=kl+1;
-data{kl,1}=sprintf('FileCreationDate= %s',datestr(now)); kl=kl+1;
+data{kl,1}=sprintf('FileCreatedBy   = %s',username); kl=kl+1;
+data{kl,1}=sprintf('FileCreationDate= %s',string(datetime('now'))); kl=kl+1;
 for ksl=1:nl
 data{kl,1}='[Layer]'; kl=kl+1;
 data{kl,1}='Type = volume fraction'; kl=kl+1;
@@ -45,5 +45,5 @@ end %kl
            
 %% WRITE
 
-file_name=fullfile(dire_sim,'morini.ini');
-writetxt(file_name,data)
+% file_name=fullfile(dire_sim,'morini.ini');
+writetxt(simdef.file.mini,data)

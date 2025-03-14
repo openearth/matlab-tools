@@ -239,7 +239,8 @@ data{kl,1}=sprintf('  IUnderLyr = %d       [ - ] Flag for underlayer concept',si
 data{kl,1}=        '                            1 (default): one fully mixed layer'; kl=kl+1;
 data{kl,1}=        '                            2          : graded sediment underlayers'; kl=kl+1;
 if nf>1
-data{kl,1}=        '  IniComp          = mini.ini'; kl=kl+1;
+    [~,fname,fext]=fileparts(simdef.file.mini);
+data{kl,1}=sprintf('  IniComp          = %s%s',fname,fext); kl=kl+1;
 data{kl,1}=        '  ExchLyr = false     [T/F] Switch for exchange layer'; kl=kl+1;
 data{kl,1}=        '  TTLForm = 1         [ - ] Transport layer thickness formulation'; kl=kl+1;
 data{kl,1}=        '                            1 (default): constant (user-specified) thickness'; kl=kl+1;

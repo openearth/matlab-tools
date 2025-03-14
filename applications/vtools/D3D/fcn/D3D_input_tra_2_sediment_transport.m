@@ -22,6 +22,8 @@ for kf=1:nf
     switch IFORM(kf)
         case 4
             tra(kf)=1;
+        case 14
+            tra(kf)=3;
         otherwise
             error('do')
     end %IFORM

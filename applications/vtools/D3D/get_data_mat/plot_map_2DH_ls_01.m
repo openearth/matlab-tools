@@ -80,7 +80,7 @@ for kpli=1:npli %variable
         %it is up to you to be sure that it is the same for all simulations!
 %         if flg_loc.do_diff || flg_loc.plot_val0 %difference in time
             fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(1),'var',var_str_read,'pli',pliname,'layer',layer,'var_idx',var_idx);
+            fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(1),var_str_read,pliname,layer,var_idx);
             data_ref=load(fpath_mat_tmp,'data');   
             in_p.val0=data_ref.data.(flg_loc.str_val);
 %         end
@@ -288,33 +288,12 @@ for kpli=1:npli %variable
             end %kS
         end
 
-        %% plot all times together xt
-
-        if flg_loc.do_all_t_xt
-            flg_loc.plot_type=3;
-            [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
-            for kS=1:nS
-                [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
-                data_loc=data_all(:,:,kS);
-                tag_fig=sprintf('%s_all_t_xt',tag);
-                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
-                mkdir_check(fdir_fig,NaN,1,0);
-                runid=simdef(kS).file.runid;
-    
-                [in_p.d_m,in_p.t_m]=meshgrid(s,tim_dtime);
-                in_p.val_m=data_loc;
-                in_p.unit=in_p.var{kvar};
-    
-                fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
-            end %kS
-        end
-
         %% plot all times together, difference in time
         
         if flg_loc.do_all_t_diff_t
             flg_loc.plot_type=2;
             for kS=1:nS
-                data_loc=(data_all(:,:,kS)-data_all(1,:,kS))';
+                data_loc=data_all{kS}'-data_all{kS}(1,:)';
                 tag_fig=sprintf('%s_all_t_diff_t',tag);
                 fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
@@ -330,6 +309,50 @@ for kpli=1:npli %variable
             end %kS
         end
         
+        %% plot all times together xt
+
+        if flg_loc.do_all_t_xt
+            flg_loc.plot_type=3;
+            [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
+            for kS=1:nS
+                [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
+                data_loc=data_all{kS};
+                tag_fig=sprintf('%s_all_t_xt',tag);
+                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                mkdir_check(fdir_fig,NaN,1,0);
+                runid=simdef(kS).file.runid;
+    
+                [in_p.d_m,in_p.t_m]=meshgrid(s{kS},tim_dtime);
+                in_p.val_m=data_loc;
+                in_p.unit=in_p.var{kvar};
+                in_p.is_diff=0;
+    
+                fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
+            end %kS
+        end
+
+        %% plot all times together xt, difference in time
+
+        if flg_loc.do_all_t_xt_diff_t
+            flg_loc.plot_type=3;
+            [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
+            for kS=1:nS
+                [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
+                data_loc=data_all{kS}-data_all{kS}(1,:);
+                tag_fig=sprintf('%s_all_t_xt_diff_t',tag);
+                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                mkdir_check(fdir_fig,NaN,1,0);
+                runid=simdef(kS).file.runid;
+    
+                [in_p.d_m,in_p.t_m]=meshgrid(s{kS},tim_dtime);
+                in_p.val_m=data_loc;
+                in_p.unit=in_p.var{kvar};
+                in_p.is_diff=1;
+    
+                fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);               
+            end %kS
+        end
+
         %% movies
 
         if flg_loc.do_movie && nt>1
@@ -497,7 +520,7 @@ for kS=1:nS
         load(fpath_mat_time,'tim');
         v2struct(tim); %time_dnum, time_dtime
     end
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'pli',pliname,'layer',layer,'var_idx',var_idx);
+    fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(kt),var_str_read,pliname,layer,var_idx);
     if ~isfile(fpath_mat_tmp)
         error('File does not exist. This is most probably because the time of the reference does not exist in the local simulation: %s',fpath_mat_tmp)
     end
@@ -574,7 +597,7 @@ nylims=size(flg_loc.ylims,1);
 nclims=size(flg_loc.clims,1);
 
 switch flg_loc.plot_type
-    case 1
+    case {1,3}
         nlims=nclims;
         lims=flg_loc.clims;
         lims_diff_t=flg_loc.clims_diff_t;
@@ -584,7 +607,7 @@ switch flg_loc.plot_type
         if nlims_y~=nlims
             flg_loc.ylims=NaN(nlims,2);
         end
-    case {2,3}
+    case {2}
         nlims=nylims;
         lims=flg_loc.ylims;
         lims_diff_t=flg_loc.ylims_diff_t;

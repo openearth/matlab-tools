@@ -68,17 +68,17 @@ for kt=kt_v
                 error('cannot read section along variables not from EHY')
             end
             varname=flg_loc.var{kvar};
-            [var_str_read,~,var_str_save]=D3D_var_num2str_structure(varname,simdef);
+            [varname_save_mat,varname_read_variable,~]=D3D_var_num2str_structure(varname,simdef);
 
-            layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+            layer=gdm_layer(flg_loc,gridInfo.no_layers,varname_read_variable,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
             var_idx=flg_loc.var_idx{kvar};
 
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_save,'pli',pliname,'layer',layer,'var_idx',var_idx);
+            fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(kt),varname_save_mat,pliname,layer,var_idx);
             if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
             %% read data
             
-            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,var_str_read,sim_idx(kt),layer,var_idx,'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite,'pliname',pliname); %this overwriting flag should be different than the previous one
+            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname_read_variable,sim_idx(kt),layer,var_idx,'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite,'pliname',pliname); %this overwriting flag should be different than the previous one
             
             if flg_loc.do_rkm
                 data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',flg_loc.TolMinDist);

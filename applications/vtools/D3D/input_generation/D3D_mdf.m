@@ -130,6 +130,12 @@ data{kl,1}=sprintf('Dt     = %0.12E',Dt*Tfact); kl=kl+1;
 if restart==1
 data{kl,1}=        'Restid  = #trim-restart#'; kl=kl+1;
 % data{kl,1}=        'Restid_timeindex  = 1'; kl=kl+1; % Index in the map-file for restarting. Either this or the time must match. 
+%for restarting from a map-file, set `restid` to the map-file (in the same
+%folder as the new mdf-file) and set the right index with
+%`restid_timeindex`. You also have to set the right time in `Tstart`
+%E.g.:
+% Restid = trim-r036r
+% Restid_timeindex = 41
 end
 data{kl,1}=        'Tzone  = 0'; kl=kl+1;
 data{kl,1}=sprintf('Filtd  = #%s#',simdef.mdf.thd); kl=kl+1; %thin dams
@@ -272,7 +278,6 @@ end
 % if simdef.mor.morphology
 % data{kl,1}=sprintf('TraFrm = #%s#',simdef.mdf.tra); 
 % end
-
 
 %% WRITE
 

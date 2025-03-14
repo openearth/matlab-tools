@@ -19,9 +19,10 @@ kvar=1;
 fpath_pli=flg_loc.pli{kpli,1};
 pliname=gdm_pli_name(fpath_pli);
 varname=flg_loc.var{kvar};
-var_str=D3D_var_num2str_structure(varname,simdef);
+[~,~,var_str]=D3D_var_num2str_structure(varname,simdef);
 layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
-fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname,'layer',layer);
+var_idx=flg_loc.var_idx{1}; %The same applies to all variables. If one is 2DV, all are 2DV. 
+fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(kt),var_str,pliname,layer,var_idx);
 data=load(fpath_mat_tmp,'data');
 if size(data.data.val,3)>1 %% 2DV
     what_is=1;
