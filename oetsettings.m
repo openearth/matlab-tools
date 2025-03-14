@@ -156,7 +156,7 @@ function oetsettings(varargin)
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
 
-   netcdf_settings('quiet',OPT.quiet) % in /io/netcdf/
+   netcdf_settings('quiet',OPT.quiet,'append',OPT.append) % in /io/netcdf/
 
 %% Report
 
