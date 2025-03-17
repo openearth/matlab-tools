@@ -98,18 +98,18 @@ for ksb=1:nsb
             ktc=ktc+1;
                  
             for kvar=1:nvar %variable
-                [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
+                [varname_save_mat,varname_read_variable,varname_load_mat]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
                 
-                layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
+                layer=gdm_layer(flg_loc,gridInfo.no_layers,varname_save_mat,kvar,flg_loc.var{kvar}); 
                 
                 %name of file with new polygon
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
+                fpath_mat_tmp=gdm_map_summerbed_mat_name(varname_load_mat,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
                         
                 %name of first polygon to make difference
-                fpath_mat_1=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol_1,flg_loc.var_idx{kvar},layer);
+                fpath_mat_1=gdm_map_summerbed_mat_name(varname_load_mat,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol_1,flg_loc.var_idx{kvar},layer);
 
                 %name of second polygon to make difference
-                fpath_mat_2=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol_2,flg_loc.var_idx{kvar},layer);
+                fpath_mat_2=gdm_map_summerbed_mat_name(varname_load_mat,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol_2,flg_loc.var_idx{kvar},layer);
 
                 if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 

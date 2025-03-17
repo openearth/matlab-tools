@@ -41,7 +41,7 @@ kref=flg_loc.sim_ref;
 nt=size(time_dnum_plot,1);
 nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
-nsb=numel(flg_loc.sb_pol);
+nsb=size(flg_loc.sb_pol,1);
 nsim=numel(simdef);
 
 %% FIGURE
@@ -64,10 +64,7 @@ for ksb=1:nsb %summerbed polygons
     fpath_map=simdef(kref).file.map;
     fdir_fig=fullfile(simdef(kref).file.fig.dir,tag_fig,tag_serie);
 
-    fpath_sb_pol=flg_loc.sb_pol{ksb};
-    [~,sb_pol,~]=fileparts(fpath_sb_pol);
-
-    sb_def=gdm_read_summerbed(flg_loc,fid_log,fdir_mat,fpath_sb_pol,fpath_map);
+    [sb_pol,sb_def,str_save_sb_pol,npol]=read_summerbed_polygon_all(fid_log,flg_loc,fdir_mat,fpath_map,ksb);    
 
     %% LOOP ON RKM POLYGONS
     for krkmv=1:nrkmv %rkm polygons
@@ -81,7 +78,7 @@ for ksb=1:nsb %summerbed polygons
 
         kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
-        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,'inpol');
+        fdir_fig_loc=fullfile(fdir_fig,str_save_sb_pol,pol_name,'inpol');
         plot_summerbed_inpolygon(flg_loc,fdir_fig_loc,rkmv,sb_def,gridInfo_ref);
 
         %% LOOP ON VARIABLES
@@ -102,7 +99,7 @@ for ksb=1:nsb %summerbed polygons
             fn_data=fieldnames(data_0(1));
             nfn=numel(fn_data);
             [nx,nD]=size(data_0(1).(fn_data{1}));
-            if flg_loc.do_xvt 
+            if flg_loc.do_xvt && npol==1
                 for kfn=1:nfn
                     statis=fn_data{kfn};
                     
@@ -125,20 +122,9 @@ for ksb=1:nsb %summerbed polygons
                 time_plot_loc=time_dnum_plot(kt); 
                 in_p.tim=time_plot_loc; %pass to plot
 
-                %load all simulations at local time
-                for ksim=1:nsim
-                    [gridInfo,time_dnum_loc,time_dnum_plot_loc]=gdm_load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
-                    %We search in the vector-time of a simulation (`ksim`)
-                    %in plot units (`plot`) (can either be flow or morpho) in dnum format = `time_dnum_plot_loc`
-                    %
-                    %We search for a time in the reference-simulation time-vector in plot
-                    %units in dnum format = `time_plot_loc`
-                    %
-                    %If we find it, we will take the flow time of the
-                    %simulation. I.e., an index in `time_dnum_loc`
-                    data_sim(ksim)=load_data_match_time(flg_loc,simdef(ksim),time_dnum_plot_loc,time_plot_loc,time_dnum_loc,data_0(1),gridInfo,var_str_read,var_str_save,tag,pol_name,sb_pol,kvar);
-                end
-                
+                %load all simulations and all polygons at local time
+                data_sim=load_data_match_time_all(fid_log,flg_loc,simdef,time_plot_loc,data_0,var_str_read,var_str_save,tag,pol_name,sb_pol,kvar);
+
                 %ad-hoc legend with string as a function of time
                 if flg_loc.do_legend_adhoc
                     in_p.leg_str=flg_loc.legend_adhoc{kt,1};
@@ -175,16 +161,18 @@ for ksb=1:nsb %summerbed polygons
                             in_p.is_diff=flg_loc.is_pol_diff(ksb);
                             in_p.is_background=0;
                             in_p.is_percentage=0;
-                            in_p.val=[data_sim(bol_ks).(statis)];
-                            in_p.leg_str=flg_loc.leg_str(ksim);
+                            in_p.val=[data_sim(bol_ks,:).(statis)]; 
+                            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},sb_pol);
 
                             in_p.plot_mea=plot_mea;
-                            in_p.s_mea=data_mea.x;
-                            in_p.val_mea=data_mea.y;
+                            if plot_mea
+                                in_p.s_mea=[data_mea.x];
+                                in_p.val_mea=[data_mea.y];
+                            end
 
                             runid=simdef(bol_ks).file.runid;
 
-                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
+                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,str_save_sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
                         end %ks
                     end
 
@@ -200,18 +188,18 @@ for ksb=1:nsb %summerbed polygons
                             in_p.is_diff=1;
                             in_p.is_background=0;
                             in_p.is_percentage=0;
-                            in_p.val=[data_sim(bol_ks).(statis)]-[data_0(bol_ks).(statis)];
-                            in_p.leg_str=flg_loc.leg_str(ksim);
+                            in_p.val=[data_sim(bol_ks,:).(statis)]-[data_0(bol_ks,:).(statis)];
+                            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},sb_pol);
 
                             in_p.plot_mea=plot_mea;
                             if plot_mea
-                                in_p.s_mea=data_mea.x;
-                                in_p.val_mea=data_mea.y-data_mea_0.y;
+                                in_p.s_mea=[data_mea.x];
+                                in_p.val_mea=[data_mea.y]-[data_mea_0.y];
                             end
 
                             runid=simdef(bol_ks).file.runid;
 
-                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
+                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,str_save_sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
                         end %ks
                     end
 
@@ -227,14 +215,14 @@ for ksb=1:nsb %summerbed polygons
                             in_p.is_diff=1;
                             in_p.is_background=0;
                             in_p.is_percentage=0;
-                            in_p.val=[data_sim(bol_ks).(statis)]-[data_sim(kref).(statis)];
-                            in_p.leg_str=flg_loc.leg_str(ksim);
+                            in_p.val=[data_sim(bol_ks,:).(statis)]-[data_sim(kref,:).(statis)];
+                            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},sb_pol);
 
                             in_p.plot_mea=0; %nothing to plot when doing difference between simulations. 
 
                             runid=sprintf('%s-%s',simdef(bol_ks).file.runid,simdef(kref).file.runid);
 
-                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
+                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,str_save_sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
                         end %ks
                     end
 
@@ -250,14 +238,14 @@ for ksb=1:nsb %summerbed polygons
                             in_p.is_diff=1;
                             in_p.is_background=0;
                             in_p.is_percentage=0;
-                            in_p.val=([data_sim(bol_ks).(statis)]-[data_0(kref).(statis)])-([data_sim(kref).(statis)]-[data_0(kref).(statis)]);
-                            in_p.leg_str=flg_loc.leg_str(ksim);
+                            in_p.val=([data_sim(bol_ks,:).(statis)]-[data_0(kref,:).(statis)])-([data_sim(kref,:).(statis)]-[data_0(kref,:).(statis)]);
+                            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},sb_pol);
 
                             in_p.plot_mea=0; %nothing to plot when doing difference between simulations. 
 
                             runid=sprintf('%s-%s',simdef(bol_ks).file.runid,simdef(kref).file.runid);
 
-                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
+                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,str_save_sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
                         end %ks
                     end
 
@@ -274,23 +262,26 @@ for ksb=1:nsb %summerbed polygons
                             in_p.is_background=0;
                             in_p.is_percentage=1;
 
-                            val_ref_tt_tmp=[data_sim(kref).(statis)];
+                            val_ref_tt_tmp=[data_sim(kref,:).(statis)];
                             bol_0=val_ref_tt_tmp==0;
-                            val_ref_tt_tmp(bol_0)=NaN;
+                            val_ref_tt_tmp(bol_0,:)=NaN;
 
-                            in_p.val=([data_sim(bol_ks).(statis)]-val_ref_tt_tmp)./val_ref_tt_tmp*100;
-                            in_p.leg_str=flg_loc.leg_str(ksim);
+                            in_p.val=([data_sim(bol_ks,:).(statis)]-val_ref_tt_tmp)./val_ref_tt_tmp*100;
+                            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},sb_pol);
 
                             in_p.plot_mea=0; %nothing to plot when doing difference between simulations. 
 
                             runid=sprintf('%s-%s',simdef(bol_ks).file.runid,simdef(kref).file.runid);
 
-                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
+                            fcn_plot(flg_loc,in_p,fid_log,simdef(bol_ks),tag_serie,str_save_sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
                         end %ks
                     end
 
                     %% all simulations together
-                    if flg_loc.do_all_s && nsim>1
+                    % We exclude the case in which there is more than one
+                    % polygon. There would be lot's of lines. It should be
+                    % checked how to plot it (linestyles and the like).
+                    if flg_loc.do_all_s && nsim>1 && npol==1
                         bol_ks=true(nsim,1);
 
                         tag_ref='all_s';
@@ -311,11 +302,11 @@ for ksb=1:nsb %summerbed polygons
 
                         runid='';
 
-                        fcn_plot(flg_loc,in_p,fid_log,simdef(kref),tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
+                        fcn_plot(flg_loc,in_p,fid_log,simdef(kref),tag_serie,str_save_sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
                     end
 
                     %% all simulations together difference in time
-                    if flg_loc.do_all_s_diff_t && nsim>1
+                    if flg_loc.do_all_s_diff_t && nsim>1 && npol==1
                         bol_ks=true(nsim,1);
 
                         tag_ref='all_s_diff_t';
@@ -336,7 +327,7 @@ for ksb=1:nsb %summerbed polygons
 
                         runid='';
 
-                        fcn_plot(flg_loc,in_p,fid_log,simdef(kref),tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
+                        fcn_plot(flg_loc,in_p,fid_log,simdef(kref),tag_serie,str_save_sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,lims_loc);
                     end
                     
                     %% SAVE FOR XVT
@@ -367,15 +358,15 @@ for ksb=1:nsb %summerbed polygons
             %% xvt
             multi_dim=check_multi_dimensional(data_0(kref));
 
-            if flg_loc.do_xvt && ~multi_dim %skip if multidimentional
-               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s)
+            if flg_loc.do_xvt && ~multi_dim && npol==1 %skip if multidimentional or if there is more than 1 polygon
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,str_save_sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s)
             end
             
             %% cumulative
             if flg_loc.do_cum(kvar)
-                plot_cum(simdef,time_dnum_plot,nx,nsim,nD,flg_loc.lab_str,data_xvt,sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims);
+                plot_cum(simdef,time_dnum_plot,nx,nsim,nD,flg_loc.lab_str,data_xvt,str_save_sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims);
             end
-            
+
         end %kvar    
     end %nrkmv
 end %ksb
@@ -386,7 +377,7 @@ end %function
 %% FUNCTION
 %%
 
-function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,var_idx,kylim)
+function fpath_fig=fig_name(fdir_fig,tag,runid,time_dnum,var_str,fn,sb_pol,var_idx,kylim,kxlim)
 
 % fprintf('fdir_fig: %s \n',fdir_fig);
 % fprintf('tag: %s \n',tag);
@@ -399,9 +390,9 @@ svi=repmat('%02d',1,nvi);
 var_idx_s=sprintf(svi,var_idx);
 
 if isempty(runid)
-    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_ylim_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kylim));
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_ylim_%02d_xlim_%02d',tag,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kylim,kxlim));
 else
-    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_ylim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kylim));
+    fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_ylim_%02d_xlim_%02d',tag,runid,datestr(time_dnum,'yyyymmddHHMM'),var_str,var_idx_s,fn,sb_pol,kylim,kxlim));
 end
 
 % fprintf('fpath_fig: %s \n',fpath_fig);
@@ -420,6 +411,11 @@ end
 
 if isempty_struct(sb_def)
     messageOut(NaN,'The polygon structure is empty.')
+    return
+end
+
+if numel(sb_def)>1
+    messageOut(NaN,'More than one summerbed. Not plotting inpolygon.')
     return
 end
 
@@ -516,7 +512,7 @@ if ~flg_found
     fn_data=fieldnames(data_ref(1));
     nfn=numel(fn_data);
     for kfn=1:nfn
-        data.(fn_data{kfn})=NaN(size(data_0_loc(1).(fn_data{kfn})));
+        data.(fn_data{kfn})=NaN(size(data_ref(1).(fn_data{kfn})));
     end
 else
     data=load_data(flg_loc,gridInfo,simdef,time_dnum(kt_loc),var_str_read,var_str_save,tag,pol_name,sb_pol,kvar);
@@ -553,13 +549,15 @@ end %function
 function data_0=load_data_0(flg_loc,simdef,var_str_read,var_str_save,tag,pol_name,sb_pol,kvar,nsim)
 
 fid_log=NaN;
+npol=numel(sb_pol);
+for kpol=1:npol
+    for ksim=1:nsim
+        [gridInfo,time_dnum,~]=gdm_load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
+        data_0(ksim,kpol)=load_data(flg_loc,gridInfo,simdef(ksim),time_dnum(1),var_str_read,var_str_save,tag,pol_name,sb_pol{kpol},kvar);
+    end %ksim
+end %kpol
 
-for ksim=1:nsim
-    [gridInfo,time_dnum,~]=gdm_load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
-    data_0(ksim)=load_data(flg_loc,gridInfo,simdef(ksim),time_dnum(1),var_str_read,var_str_save,tag,pol_name,sb_pol,kvar);
-end
-
-end
+end %function
 
 %%
 
@@ -577,14 +575,18 @@ tag_fig_loc=sprintf('%s_%s',tag,tag_ref);
 mkdir_check(fdir_fig_loc,fid_log,1,0);
 
 nylim=size(ylims,1);
+nxlim=size(flg_loc.xlims,1);
 
 for kylim=1:nylim
-    fname_noext=fig_name(fdir_fig_loc,tag_fig_loc,runid,time_plot_loc,var_str_save,statis,sb_pol,var_idx,kylim);
+    for kxlim=1:nxlim
+        fname_noext=fig_name(fdir_fig_loc,tag_fig_loc,runid,time_plot_loc,var_str_save,statis,sb_pol,var_idx,kylim,kxlim);
+    
+        in_p.fname=fname_noext;
+        in_p.ylims=ylims(kylim,:);
+        in_p.xlims=flg_loc.xlims(kxlim,:);
 
-    in_p.fname=fname_noext;
-    in_p.ylims=ylims(kylim,:);
-
-    fig_1D_01(in_p);
+        fig_1D_01(in_p);
+    end
 end
 end %function
 
@@ -604,6 +606,7 @@ for ksim=1:nsim
     in_p.lab_str=sprintf('%s_t',lab_str); %add time
     
     nylim=size(lims,1);
+    % nxlim=size(flg_loc)
     for kt=kt_v
         in_p.tim=time_dnum_plot(kt);
         in_p.val=squeeze(val_cum(:,:,kt,:));
@@ -612,12 +615,14 @@ for ksim=1:nsim
         mkdir_check(fdir_fig_loc,fid_log,1,0);
     
         for kylim=1:nylim
-            fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx,kylim);
-    
-            in_p.fname=fname_noext;
-            in_p.ylim=lims(kylim,:);
-    
-            fig_1D_01(in_p);
+            % for kxlim=1:nxlim
+                fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx,kylim,1);
+        
+                in_p.fname=fname_noext;
+                in_p.ylim=lims(kylim,:);
+        
+                fig_1D_01(in_p);
+            % end
         end
     end
 end %ksim
@@ -663,7 +668,9 @@ in_p.ylab_str='';
 in_p.xlab_str='rkm';
 in_p.xlab_un=1/1000;
 in_p.frac=var_idx;
-%                 in_p.tit_str=branch_name;
+
+in_p.tim=datenum(tim_dtime_p);
+nxlim=size(flg_loc.xlims,1);
 
 for ksim=1:nsim
 
@@ -689,8 +696,7 @@ for ksim=1:nsim
         in_p.clab_str=in_p.lab_str;
 
         %val
-        in_p.val=val_ks_t;
-        in_p.ylims=NaN;
+        val=val_ks_t;
         in_p.is_diff=0;
         tag_ref='val';
         fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
@@ -698,15 +704,31 @@ for ksim=1:nsim
 
         nclim=size(lims,1);
         for kclim=1:nclim
-            in_p.clims=lims(kclim,:); 
-            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx);
-            in_p.fname=fname_noext;
+            for kxlim=1:nxlim
+                in_p.xlims=flg_loc.xlims(kxlim,:);
 
-            fig_surf(in_p)
+                in_p.val=val;
+                in_p.ylims=NaN;
+                in_p.clims=lims(kclim,:); 
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx,'xtv',kxlim);
+                in_p.fname=fname_noext;
+    
+                fig_surf(in_p)
+    
+                in_p.clims=[NaN,NaN]; 
+                in_p.ylims=lims(kclim,:); 
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx,'xvt',kxlim);
+                in_p.fname=fname_noext;
+                in_p.s=s;
+                in_p.val=val';
+                in_p.do_time=1;
+    
+                fig_1D_01(in_p)
+            end
         end %kclim
 
         %diff_t
-        in_p.val=val_ks_t-val_ks_0;
+        val=val_ks_t-val_ks_0;
         in_p.ylims=NaN;
         in_p.is_diff=1;
         tag_ref='diff_t';
@@ -715,15 +737,31 @@ for ksim=1:nsim
 
         nclim=size(lims_diff_t,1);
         for kclim=1:nclim
-            in_p.clims=lims_diff_t(kclim,:); 
-            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,2,kclim,var_idx);
-            in_p.fname=fname_noext;
-            
-            fig_surf(in_p)
+            for kxlim=1:nxlim
+                in_p.xlims=flg_loc.xlims(kxlim,:);
+
+                in_p.val=val;
+                in_p.ylims=NaN;
+                in_p.clims=lims_diff_t(kclim,:); 
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,2,kclim,var_idx,'xtv',kxlim);
+                in_p.fname=fname_noext;
+                
+                fig_surf(in_p)
+    
+                in_p.clims=[NaN,NaN]; 
+                in_p.ylims=lims_diff_t(kclim,:); 
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx,'xvt',kxlim);
+                in_p.fname=fname_noext;
+                in_p.s=s;
+                in_p.val=val';
+                in_p.do_time=1;
+    
+                fig_1D_01(in_p)
+            end
         end %kclim
 
         %diff_s
-        in_p.val=val_ks_t-val_kref_t;
+        val=val_ks_t-val_kref_t;
         in_p.ylims=NaN;
         in_p.is_diff=1;
         tag_ref='diff_s';
@@ -732,11 +770,62 @@ for ksim=1:nsim
 
         nclim=size(lims_diff_s,1);
         for kclim=1:nclim
-            in_p.clims=lims_diff_s(kclim,:); 
-            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,3,kclim,var_idx);
-            in_p.fname=fname_noext;
-            
-            fig_surf(in_p)
+            for kxlim=1:nxlim
+                in_p.xlims=flg_loc.xlims(kxlim,:);
+
+                in_p.val=val;
+                in_p.ylims=NaN;
+                in_p.clims=lims_diff_s(kclim,:); 
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,3,kclim,var_idx,'xtv',kxlim);
+                in_p.fname=fname_noext;
+                
+                fig_surf(in_p)
+    
+                in_p.clims=[NaN,NaN]; 
+                in_p.ylims=lims_diff_s(kclim,:); 
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx,'xvt',kxlim);
+                in_p.fname=fname_noext;
+                in_p.s=s;
+                in_p.val=val';
+                in_p.do_time=1;
+    
+                fig_1D_01(in_p)
+            end
+        end %kclim
+
+        %cel
+        in_p.lab_str=strcat(in_p.lab_str,'_t'); %DANGEROUS! maybe better to set it in all figures
+        
+        val=cat(1,zeros(1,size(val_ks_t,2)),diff(val_ks_t,1,1))./[0;seconds(diff(tim_dtime_p))];
+        in_p.is_diff=0;
+        tag_ref='cel';
+        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+        mkdir_check(fdir_fig_loc,NaN,1,0);
+
+        % nclim=size(lims,1);
+        nclim=1; %only automatic for now
+        for kclim=1:nclim
+            for kxlim=1:nxlim
+                in_p.xlims=flg_loc.xlims(kxlim,:);
+
+                in_p.val=val;
+                in_p.ylims=NaN;
+                in_p.clims=[NaN,NaN]; 
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,strcat(var_str_save,'_t'),statis,sb_pol,1,kclim,var_idx,'xtv',kxlim);
+                in_p.fname=fname_noext;
+    
+                fig_surf(in_p)
+    
+                in_p.clims=[NaN,NaN]; 
+                in_p.ylims=[NaN,NaN]; 
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,strcat(var_str_save,'_t'),statis,sb_pol,1,kclim,var_idx,'xvt',kxlim);
+                in_p.fname=fname_noext;
+                in_p.s=s;
+                in_p.val=val';
+                in_p.do_time=1;
+    
+                fig_1D_01(in_p)
+            end
         end %kclim
 
     end %kfn
@@ -772,13 +861,13 @@ end %function
 
 %%
 
-function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim,var_idx)
+function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim,var_idx,tag_plot_type,kxlim)
 
 nvi=numel(var_idx);
 svi=repmat('%02d',1,nvi);
 var_idx_s=sprintf(svi,var_idx);
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_%s_%02d_clim_%02d',tag,runid,var_str,var_idx_s,fn,sb_pol,kref,kclim));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_%02d_clim_%02d_xlim_%02d',tag,runid,tag_plot_type,var_str,var_idx_s,fn,sb_pol,kref,kclim,kxlim));
 
 end %function
 
@@ -793,13 +882,13 @@ function flg_loc=add_sb_pol_diff(flg_loc)
 
 if flg_loc.do_diff_pol==0; return; end
 
-nsb=numel(flg_loc.sb_pol);
+nsb=size(flg_loc.sb_pol,1);
 flg_loc.skip_if_not_found=1; %necessary because there is actually no polygon
 nsb_diff=numel(flg_loc.sb_pol_diff);
 for ksb_diff=1:nsb_diff
     sb_pol=gdm_sb_pol_diff_name(flg_loc,ksb_diff);
     fpath_sb_pol=fullfile(pwd,sprintf('%s.shp',sb_pol));
-    flg_loc.sb_pol{nsb+ksb_diff}=fpath_sb_pol;
+    flg_loc.sb_pol{nsb+ksb_diff,1}=fpath_sb_pol;
     flg_loc.is_pol_diff(nsb+ksb_diff)=1;
     if isfield(flg_loc,'measurements_diff')
         flg_loc.measurements{nsb+ksb_diff,1}=flg_loc.measurements_diff{ksb_diff,1};
@@ -807,3 +896,70 @@ for ksb_diff=1:nsb_diff
 end
 
 end %function
+
+%%
+
+function leg_str=leg_str_pol(leg_str_sim,sb_pol)
+
+npol=numel(sb_pol);
+
+if npol==1
+    leg_str={leg_str_sim};
+    return
+end
+
+leg_str=cell(1,npol); %only one simulation
+
+for kpol=1:npol
+    leg_str{1,kpol}=sprintf('%s %s',leg_str_sim,sb_pol{kpol});
+end
+
+end %function
+
+%% 
+
+function data_sim=load_data_match_time_all(fid_log,flg_loc,simdef,time_plot_loc,data_0,var_str_read,var_str_save,tag,pol_name,sb_pol,kvar)
+
+npol=numel(sb_pol);
+nsim=numel(simdef);
+
+for kpol=1:npol
+    for ksim=1:nsim
+        [gridInfo,time_dnum_loc,time_dnum_plot_loc]=gdm_load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
+        %We search in the vector-time of a simulation (`ksim`)
+        %in plot units (`plot`) (can either be flow or morpho) in dnum format = `time_dnum_plot_loc`
+        %
+        %We search for a time in the reference-simulation time-vector in plot
+        %units in dnum format = `time_plot_loc`
+        %
+        %If we find it, we will take the flow time of the
+        %simulation. I.e., an index in `time_dnum_loc`
+        data_sim(ksim,kpol)=load_data_match_time(flg_loc,simdef(ksim),time_dnum_plot_loc,time_plot_loc,time_dnum_loc,data_0,gridInfo,var_str_read,var_str_save,tag,pol_name,sb_pol{kpol},kvar);
+    end %ksim
+end %kpol
+
+end %function
+
+%%
+
+function [sb_pol,sb_def,str_save_sb_pol,npol]=read_summerbed_polygon_all(fid_log,flg_loc,fdir_mat,fpath_map,ksb)
+
+sb_pol_loc=flg_loc.sb_pol(ksb,:);
+ispol=cellfun(@(X)~isempty(X),sb_pol_loc);
+npol=sum(ispol);
+sb_pol=cell(npol,1);
+for kpol=1:npol
+    fpath_sb_pol=flg_loc.sb_pol{ksb,kpol};
+    [~,sb_pol{kpol},~]=fileparts(fpath_sb_pol);
+
+    sb_def(kpol)=gdm_read_summerbed(flg_loc,fid_log,fdir_mat,fpath_sb_pol,fpath_map);
+end
+
+%name of string to create folder
+str_save_sb_pol='';
+for kpol=1:npol
+    str_save_sb_pol=strcat(str_save_sb_pol,sb_pol{kpol},'_');
+end
+str_save_sb_pol(end)='';
+
+end

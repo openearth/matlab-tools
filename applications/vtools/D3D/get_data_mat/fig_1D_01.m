@@ -118,7 +118,7 @@ if isempty(in_p.xlab_un)
 end
 in_p=isfield_default(in_p,'do_time',0);
 if in_p.do_time
-    in_p=isfield_default(in_p,'mt',1.5);
+    in_p=isfield_default(in_p,'mt',2.0);
 else
     in_p=isfield_default(in_p,'mt',1);
 end
@@ -324,6 +324,22 @@ else
     error('Do not get which kind of input is this.')
 end
 
+%If there is only one measurement, we print it in black. If there is more
+%than one measurement, we assume there is one measurement for each line,
+%and we plot it with the same colour but different linestyle.
+if plot_mea
+    nmea=size(val_mea,2);
+    if nmea~=nv
+        error('This case should be added.');
+    end
+    if nmea==1
+        cmap_mea=[0,0,0];
+        ls_mea={'-'};
+    else
+        cmap_mea=cmap;
+        ls_mea={'--'};
+    end
+end
 %center around 0
 % ncmap=1000;
 % cmap1=brewermap(ncmap,'RdYlGn');
@@ -543,11 +559,13 @@ end
 if plot_mea
 %     han.p(kr,kc,2)=plot(mea_etab_p.rkm,mea_etab_p.etab,'parent',han.sfig(kr,kc),'color',prop.color(2,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
     nfv=numel(han.p(kr,kc,:));
-    han.p(kr,kc,nfv+1)=plot(s_mea,val_mea,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle','-','marker',prop.m1,'markersize',markersize);
-    if isfield(in_p,'leg_mea')==0
-        str_leg={str_sim{:},labels4all('mea',1,lan)}; %check concatenation is right
-    else
-        str_leg={str_sim{:},in_p.leg_mea};
+    for kmea=1:nmea
+        han.p(kr,kc,nfv+1)=plot(s_mea(:,kmea),val_mea(:,kmea),'parent',han.sfig(kr,kc),'color',cmap_mea(kmea,:),'linewidth',prop.lw1,'linestyle',ls_mea,'marker',prop.m1,'markersize',markersize);
+        if isfield(in_p,'leg_mea')==0
+            str_leg={str_sim{:},labels4all('mea',1,lan)}; %check concatenation is right
+        else
+            str_leg={str_sim{:},in_p.leg_mea};
+        end
     end
 else
     str_leg=str_sim;

@@ -65,7 +65,7 @@ fpath_map=simdef.file.map;
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 nvar=numel(flg_loc.var);
 nrkmv=numel(flg_loc.rkm_name);
-nsb=numel(flg_loc.sb_pol);
+nsb=size(flg_loc.sb_pol,1);
 
 %% GRID
 
@@ -82,6 +82,13 @@ messageOut(fid_log,sprintf('Reading %s sb poly %4.2f %% rkm poly %4.2f %% time %
 for ksb=1:nsb
 
     %summerbed
+    sb_pol_loc=flg_loc.sb_pol(ksb,:);
+    ispol=cellfun(@(X)~isempty(X),sb_pol_loc);
+    npol=sum(ispol);
+    if npol>1
+        %We rely on being processed first independently.
+        continue
+    end
     fpath_sb_pol=flg_loc.sb_pol{ksb};
     [~,sb_pol,~]=fileparts(fpath_sb_pol);
     

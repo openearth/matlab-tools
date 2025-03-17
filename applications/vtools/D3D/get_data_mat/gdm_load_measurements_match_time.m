@@ -22,9 +22,14 @@ data_mea.y=[];
 plot_mea=false;
 
 if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements) &&  ~isempty(flg_loc.measurements{kpli,1})
-    data_mea=gdm_load_measurements(NaN,flg_loc.measurements{kpli,1},'tim',time_dnum_plot,'var',var_str_save,'stat',stat,'tol',flg_loc.tol_time_measurements,'do_rkm',flg_loc.do_rkm);
-    if ~isempty(data_mea.x)
-        plot_mea=true;
+    sb_pol_loc=flg_loc.measurements(kpli,:);
+    ispol=cellfun(@(X)~isempty(X),sb_pol_loc);
+    npol=sum(ispol);
+    for kpol=1:npol
+        data_mea(1,kpol)=gdm_load_measurements(NaN,flg_loc.measurements{kpli,kpol},'tim',time_dnum_plot,'var',var_str_save,'stat',stat,'tol',flg_loc.tol_time_measurements,'do_rkm',flg_loc.do_rkm);
+        if ~isempty(data_mea(kpol).x)
+            plot_mea=true;
+        end
     end
 end
 
