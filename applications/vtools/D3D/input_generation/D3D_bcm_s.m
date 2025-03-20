@@ -134,12 +134,18 @@ function [eta,time]=D3D_add_noise_eta(simdef,eta,time)
 switch simdef.bcm.noise_eta
     case 0
        return
-    case 2
+    case 1 %random noise
 
-        dt=round(simdef.bcm.noise_dt/simdef.mdf.Dt)*simdef.mdf.Dt;
-        time=0:dt:simdef.mdf.Tstop+simdef.mdf.Dt;
-        time=time';
+        time=create_time_vector(simdef);
         eta=eta.*ones(numel(time),simdef.mor.upstream_nodes);
+        
+        noise_amp=simdef.bcm.noise_amp;
+        noise=noise_amp.*rand(size(eta));
+
+    case 2 %alternate bar
+
+        time=create_time_vector(simdef);
+        eta=eta.*ones(numel(time),simdef.mor.upstream_nodes); 
 
         noise_amp=simdef.bcm.noise_amp;
         grd=D3D_io_input('read',simdef.file.grd);
@@ -148,8 +154,6 @@ switch simdef.bcm.noise_eta
         Ay=sin(pi*(y_in-B/2)./B);
         noise_T=simdef.bcm.noise_T;
         noise=noise_amp.*Ay.*cos(2*pi*time/noise_T-pi/2); %total noise;
-
-        eta=eta+noise;
 
         %% BEGIN DEBUG
 % 
@@ -163,5 +167,16 @@ switch simdef.bcm.noise_eta
         error('You want to add a type of noise to the bed level boundary conditions which has not been implemented.')
 end
 
+eta=eta+noise;
+
+end %function
+
+%%
+
+function time=create_time_vector(simdef)
+
+dt=round(simdef.bcm.noise_dt/simdef.mdf.Dt)*simdef.mdf.Dt;
+time=0:dt:simdef.mdf.Tstop+simdef.mdf.Dt;
+time=time';
 
 end %function

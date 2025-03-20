@@ -594,19 +594,19 @@ end
 if isfield(simdef.bcm,'noise_eta')==0
     simdef.bcm.noise_eta=0;
 end
-if simdef.bcm.noise_eta==2
-    if ~isequal(size(simdef.bcm.eta),[1,1])
-        warning('Only the first value of the bed level is used when adding noise.')
-        simdef.bcm.eta=simdef.bcm.eta(1);
-    end    
-    if isfield(simdef.bcm,'time')
-        warning('Time vector for bed level boundary condition will not be used.')
-    else
-        simdef.bcm.time=NaN; 
-    end
+switch simdef.bcm.noise_eta
+    case {1,2}
+        if ~isequal(size(simdef.bcm.eta),[1,1])
+            warning('Only the first value of the bed level is used when adding noise.')
+            simdef.bcm.eta=simdef.bcm.eta(1);
+        end    
+        if isfield(simdef.bcm,'time')
+            warning('Time vector for bed level boundary condition will not be used.')
+        end
+        simdef.bcm.time=NaN; %otherwise `eta` is added below
 end
 
-if isfield(simdef.bcm,'time')
+if isfield(simdef.bcm,'time') && ~isnan(simdef.bcm.time)
     if simdef.bcm.time(end)<simdef.mdf.Tstop
         simdef.bcm.time=[simdef.bcm.time;simdef.mdf.Tstop];
         if isfield(simdef.bcm,'eta')
