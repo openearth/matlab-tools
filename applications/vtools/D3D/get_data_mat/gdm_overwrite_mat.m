@@ -39,7 +39,7 @@ if exist(fpath_mat,'file')==2
     end
     messageOut(fid_log,'Overwriting mat-file.')
 else
-    messageOut(fid_log,'Mat-file does not exist. Reading.')
+    % messageOut(fid_log,'Mat-file does not exist. Reading.')
 end
 
 end %function

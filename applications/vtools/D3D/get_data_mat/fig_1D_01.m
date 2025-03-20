@@ -329,13 +329,13 @@ end
 %and we plot it with the same colour but different linestyle.
 if plot_mea
     nmea=size(val_mea,2);
-    if nmea~=nv
-        error('This case should be added.');
-    end
     if nmea==1
         cmap_mea=[0,0,0];
         ls_mea={'-'};
     else
+        if nmea~=nv
+            error('This case should be added.');
+        end
         cmap_mea=cmap;
         ls_mea={'--'};
     end

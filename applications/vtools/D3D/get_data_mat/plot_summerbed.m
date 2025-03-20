@@ -296,8 +296,8 @@ for ksb=1:nsb %summerbed polygons
 
                         in_p.plot_mea=plot_mea;
                         if plot_mea
-                            in_p.s_mea=data_mea.x;
-                            in_p.val_mea=data_mea.y;
+                            in_p.s_mea=[data_mea.x];
+                            in_p.val_mea=[data_mea.y];
                         end
 
                         runid='';
@@ -321,8 +321,8 @@ for ksb=1:nsb %summerbed polygons
 
                         in_p.plot_mea=plot_mea;
                         if plot_mea
-                            in_p.s_mea=data_mea.x;
-                            in_p.val_mea=data_mea.y-data_mea_0.y;
+                            in_p.s_mea=[data_mea.x];
+                            in_p.val_mea=[data_mea.y-data_mea_0.y];
                         end
 
                         runid='';
@@ -331,7 +331,7 @@ for ksb=1:nsb %summerbed polygons
                     end
                     
                     %% SAVE FOR XVT
-                    if flg_loc.do_xvt
+                    if flg_loc.do_xvt && npol==1
                         %<data_sim> has simulation in the structure.
                         %<data_xvt> has simulation in the second column. 
                         data_xvt.(statis)(:,:,kt,:)=[data_sim.(statis)];
