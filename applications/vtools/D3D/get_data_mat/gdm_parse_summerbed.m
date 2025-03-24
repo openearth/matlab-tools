@@ -42,6 +42,18 @@ if isfield(flg_loc,'legend_file')
     flg_loc.do_legend_adhoc=1;
 end
 
+flg_loc=isfield_default(flg_loc,'do_tv',0);
+if flg_loc.do_tv==1 
+    if ~isfield(flg_loc,'rkm_plot_tv')
+        messageOut(fid_log,'You want to plot `tv` but there is no `rkm_plot_tv`.')
+        flg_loc.do_tv=0;
+    elseif ~iscell(flg_loc.rkm_plot_tv)
+        messageOut(fid_log,'`rkm_plot_tv` must be cell array.')
+        flg_loc.do_tv=0;
+    end
+end
+
+
 % flg_loc=isfield_default(flg_loc,'do_sb_pol_together',0);
 % if isfield(flg_loc,'sb_pol_together')
 %     flg_loc.do_sb_pol_together=1;

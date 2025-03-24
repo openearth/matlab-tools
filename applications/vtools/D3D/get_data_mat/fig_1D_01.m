@@ -60,9 +60,22 @@ if numel(sv)>2
         return
     end
 end
+if isfield(in_p,'plot_mea')==0 
+    if isfield(in_p,'val_mea')
+        in_p.plot_mea=true;
+    else
+        in_p.plot_mea=false;
+    end
+end
 in_p=isfield_default(in_p,'xlims',[NaN,NaN]);
 in_p=isfield_default(in_p,'ylims',[NaN,NaN]);
-[in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.s,squeeze(in_p.val)); %`val` can be a [np,1,nv] matrix and it is valid. 
+in_p=isfield_default(in_p,'do_include_mea_xylims',0);
+if in_p.do_include_mea_xylims 
+    [in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,{in_p.s,in_p.s_mea},{squeeze(in_p.val),squeeze(in_p.val_mea)}); %`val` can be a [np,1,nv] matrix and it is valid. 
+else
+    [in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.s,squeeze(in_p.val)); %`val` can be a [np,1,nv] matrix and it is valid. 
+end
+
 
 if isfield(in_p,'lan')==0
     in_p.lan='en';
@@ -89,13 +102,6 @@ if isfield(in_p,'plot_val0')==0
         in_p.plot_val0=1;
     else
         in_p.plot_val0=0;
-    end
-end
-if isfield(in_p,'plot_mea')==0 
-    if isfield(in_p,'val_mea')
-        in_p.plot_mea=true;
-    else
-        in_p.plot_mea=false;
     end
 end
 if isfield(in_p,'is_std')==0
@@ -178,6 +184,7 @@ if isfield(in_p,'is_dom')==0
     in_p.is_dom=0;
 end
 in_p=isfield_default(in_p,'clims',[NaN,NaN]);
+in_p=isfield_default(in_p,'title_str','');
 
 v2struct(in_p)
 
@@ -437,10 +444,10 @@ if do_time
 else
     lims.c(kr,kc,1:2)=NaN;
 end
-if ~isempty(xlab_str)
-    xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);
-else
+if ~isdatetime(s)
     xlabels{kr,kc}='';
+else
+    xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);xlabels{kr,kc}='';
 end
 if isempty(ylab)
     if numel(frac)>1
@@ -599,7 +606,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
-if do_title && ~do_time
+if do_title && ~do_time && isempty(title_str)
     if ~isnan(tim)
         if numel(tim)==1
             han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
@@ -611,6 +618,8 @@ if do_title && ~do_time
     else
         messageOut(NaN,'Time is a NaN, cannot add it to title.')
     end
+else
+    han.sfig(kr,kc).Title.String=title_str;
 end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';

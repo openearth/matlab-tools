@@ -367,6 +367,11 @@ for ksb=1:nsb %summerbed polygons
                 plot_cum(simdef,time_dnum_plot,nx,nsim,nD,flg_loc.lab_str,data_xvt,str_save_sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims);
             end
 
+            %% tv at single rkm
+            if flg_loc.do_tv && ~multi_dim && npol==1
+                do_tv(fid_log,flg_loc,simdef,rkmv.rkm_cen,flg_loc.rkm_plot_tv{krkmv},data_xvt,tim_dtime_plot,ksb,fdir_fig,str_save_sb_pol,pol_name,var_str_save,var_idx);
+            end %do_tv
+
         end %kvar    
     end %nrkmv
 end %ksb
@@ -873,6 +878,18 @@ end %function
 
 %%
 
+% function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim,var_idx,tag_plot_type,kxlim)
+% 
+% nvi=numel(var_idx);
+% svi=repmat('%02d',1,nvi);
+% var_idx_s=sprintf(svi,var_idx);
+% 
+% fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_%02d_clim_%02d_xlim_%02d',tag,runid,tag_plot_type,var_str,var_idx_s,fn,sb_pol,kref,kclim,kxlim));
+% 
+% end %function
+
+%%
+
 %Trick to deal with difference between polygons. We have created a mat-file
 %with the difference between polygons and saved the mat-file as if it was a
 %new polygon with a name given by `gdm_sb_pol_diff_name`. Here we add the
@@ -963,3 +980,86 @@ end
 str_save_sb_pol(end)='';
 
 end
+
+%%
+
+function do_tv(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,data_xvt,tim_dtime_plot,ksb,fdir_fig,str_save_sb_pol,pol_name,var_str_save,var_idx)
+
+in_p=flg_loc;
+
+in_p.lab_str=var_str_save;
+in_p.xlims=[tim_dtime_plot(1),tim_dtime_plot(end)];
+in_p.s=tim_dtime_plot;
+in_p.do_title=1;
+in_p.do_include_mea_xylims=1;
+
+tag='val';
+
+nsim=numel(simdef);
+
+tol=0.05; %50m
+vec=reshape(rkm_cen,[],1);
+obj=reshape(rkm_plot_tv,1,[]);
+bol_tv=abs(vec-obj)<tol;
+
+fn_data=fieldnames(data_xvt(1));
+nfn=numel(fn_data);
+
+if any(bol_tv(:))
+
+    nrkm_plot=numel(obj);
+    plot_v=sum(bol_tv,1);
+    for krkm_plot=1:nrkm_plot
+        if ~plot_v(krkm_plot)
+            messageOut(fid_log,sprintf('There is no data for this input location: %f',obj(krkm_plot)));
+            continue
+        end
+
+        
+        for ksim=1:nsim 
+            bol_rkm=bol_tv(:,krkm_plot);
+            bol_ks=false(nsim,1);
+            bol_ks(ksim)=true;
+            rkm_loc=vec(bol_rkm);
+            runid=simdef(bol_ks).file.runid;
+            for kfn=1:nfn
+                statis=fn_data{kfn};
+
+                %model
+                val=data_xvt.(statis)(bol_rkm,ksim,:,1);
+    
+                %measurements
+                flg_loc.tol_time_measurements=1000; %1 km tolerance
+                [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,rkm_loc,var_str_save,ksb,statis,'type','x');
+                data_mea.x=datetime(data_mea.x,'ConvertFrom','datenum');
+                data_mea.x.TimeZone=tim_dtime_plot.TimeZone; %CHECK!
+
+                in_p.plot_mea=plot_mea;
+                if plot_mea
+                    in_p.s_mea=[data_mea.x]';
+                    in_p.val_mea=[data_mea.y]';
+                end
+
+                %folder
+                fdir_fig_loc=fullfile(fdir_fig,str_save_sb_pol,pol_name,var_str_save,statis,tag);
+                mkdir_check(fdir_fig_loc,NaN,1,0);
+
+                %name
+                % in_p.clims=[NaN,NaN]; 
+                % in_p.ylims=[NaN]; 
+                kclim=1;
+                kxlim=1;
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,str_save_sb_pol,1,kclim,var_idx,sprintf('tv_%5.2f',rkm_loc),kxlim);
+    
+                in_p.fname=fname_noext;
+                in_p.val=val;
+                in_p.title_str=sprintf('%5.2f',rkm_loc);
+
+                fig_1D_01(in_p);
+            end
+        end %ksim
+    end
+
+end %any(bol_tv) 
+
+end %function
