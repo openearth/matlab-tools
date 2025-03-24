@@ -437,6 +437,8 @@ grid(han.sfig(kr,kc),'on')
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
 if do_axis_equal
 axis(han.sfig(kr,kc),'equal')
+end
+if do_axis_equal || ~isnan(lims.y(kr,kc,1))
 han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 end
 han.sfig(kr,kc).Box='on';

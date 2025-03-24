@@ -22,7 +22,7 @@ if ischar(fpath_pli) %it is a file
     pliname=strrep(pliname,' ','_');
 else %it is a double
     % str=hash_matrix(fpath_pli);
-    DataHash(fpath_pli);
+    str=DataHash(fpath_pli);
     pliname=str(1:6);
 end
 

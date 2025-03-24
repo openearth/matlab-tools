@@ -72,6 +72,7 @@ end %ks
 
 ks=1;
 fdir_fig=fullfile(simdef(ks).file.fig.dir,tag_fig,tag_serie); 
+mkdir_check(fdir_fig,NaN,1,0);
 
 plot_data_all(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p,tri_dim,lwx_p,lwy_p);
 
@@ -243,7 +244,8 @@ for kv=1:2 %celerity and wave growth
     in_p.y=d_obs;
     in_p.fig_size=[0,0,14,8];
     in_p.tolx=[0,0];
-
+    in_p.ylims=NaN;
+    
     for kae=0:1
         in_p.do_axis_equal=kae;
     
@@ -265,6 +267,7 @@ for kv=1:2 %celerity and wave growth
     %scatter comparing error between observed and predicted celerity in proportioanal terms as a function of the wavelength
     in_p.fname=fullfile(fdir_fig,sprintf('%s_error_rel',str_f));
     in_p.y=abs((d_obs-d_anl)./d_anl*100);
+    in_p.ylims=[0,100];
     in_p.x_lab='wave length [m]';
     in_p.y_lab=sprintf('error in absolute %s [%%]',str);
     
@@ -273,6 +276,7 @@ for kv=1:2 %celerity and wave growth
     %scatter comparing error between observed and predicted celerity in absolute terms as a function of the wavelength
     in_p.fname=fullfile(fdir_fig,sprintf('%s_error_abs',str_f));
     in_p.y=abs(d_obs-d_anl);
+    in_p.ylims=NaN;
     in_p.x_lab='wave length [m]';
     in_p.y_lab=sprintf('error in absolute %s %s',str,str_u);
     
@@ -281,6 +285,7 @@ for kv=1:2 %celerity and wave growth
     %scatter comparing the celerity to the wavelength
     in_p.fname=fullfile(fdir_fig,sprintf('%s_Lb',str_f));
     in_p.y=d_obs;
+    in_p.ylims=NaN;
     in_p.x_lab='wave length [m]';
     in_p.y_lab=sprintf('observed %s %s',str,str_u);
     
@@ -361,13 +366,15 @@ for kp=1:np
         %scatter comparing error between observed and predicted celerity in proportioanal terms as a function of the wavelength
         in_p.fname=fullfile(fdir_fig,sprintf('%s_error_rel',str_f));
         in_p.y=abs((d_obs-d_anl)./d_anl*100);
+        in_p.ylims=[0,100];
         in_p.y_lab=sprintf('error in absolute %s [%%]',str);
 
-        fig_ipp_scatter(in_p);
+       fig_ipp_scatter(in_p);
         
         %scatter comparing error between observed and predicted celerity in absolute terms as a function of the wavelength
         in_p.fname=fullfile(fdir_fig,sprintf('%s_error_abs',str_f));
         in_p.y=abs(d_obs-d_anl);
+        in_p.ylims=NaN;
         in_p.y_lab=sprintf('error in absolute %s %s',str,str_u);
 
         fig_ipp_scatter(in_p);
