@@ -1,3 +1,5 @@
+%fopen_add_header - fopen with header information
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                 VTOOLS                 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,7 +17,6 @@
 %information that is being used. 
 
 function fid=fopen_add_header(fname,flg,varargin)
-fopen_add_header - fopen with header information
  
 %% PARSE
 
