@@ -53,6 +53,7 @@ bol_n=isnan(Zcen);
 [~,fname_out,fext]=fileparts(fpath_out);
 fpath_out_loc=fullfile(pwd,sprintf('%s%s',fname_out,fext));
 write_2DMatrix(fpath_out_loc,[gridInfo.Xcen(~bol_n),gridInfo.Ycen(~bol_n),Zcen(~bol_n)],'add_header',add_header);
+%faster is: writematrix([gridInfo.Xcen(~bol_n),gridInfo.Ycen(~bol_n),Zcen(~bol_n)],fpath_out_loc,'FileType','text', 'delimiter', ' ')
 copyfile_check(fpath_out_loc,fpath_out);
 delete(fpath_out_loc)
 
