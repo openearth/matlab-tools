@@ -84,6 +84,14 @@ if ~ischar(fname)
 end
 [~,~,ext]=fileparts(fname);
 
+%% globals 
+global INIFILE_GENERAL INIFILE_CRSDEF INIFILE_CRSLOC
+
+% inifiletype
+INIFILE_GENERAL = 1; 
+INIFILE_CRSDEF = 2; 
+INIFILE_CRSLOC = 3; 
+
 switch what_do
     %%
     %% READ
@@ -103,9 +111,9 @@ switch what_do
                 stru_out=D3D_read_polys(fname,varargin{:});
             case '.ini'
                 stru_out=delft3d_io_sed(fname);
-                cstype=parse_ini(stru_out);
-                if ~isnan(cstype)
-                    [~,stru_out]=S3_read_crosssectiondefinitions(fname,'file_type',cstype);
+                inifiletype=parse_ini(stru_out);
+                if ~isnan(inifiletype) && inifiletype ~= INIFILE_GENERAL
+                    [~,stru_out]=S3_read_crosssectiondefinitions(fname,'file_type',inifiletype);
                 end
             case '.grd'
                 OPT.nodatavalue=NaN;
@@ -209,22 +217,22 @@ switch what_do
         switch ext
             case {'.mdu','.mor','.sed','.ext','.ini'}
                 if strcmp(ext,'.ini')
-                    cstype=NaN;
+                    inifiletype=NaN;
                     if isfield(stru_in,'id') %cross-sectional type of structure. It may not be strong enough.
                         if isfield(stru_in,'chainage')
-                            cstype=3;
+                            inifiletype=INI_CRSLOC;
                         else
-                            cstype=2;
+                            inifiletype=INIFILE_CRSDEF;
                         end
                     end
-                    if ~isnan(cstype)
+                    if ~isnan(inifiletype)
                         [fdir,fname,fext]=fileparts(fname);
                         simdef.D3D.dire_sim=fdir;
-                        switch cstype
-                            case 2 %definition
+                        switch inifiletype
+                            case INIFILE_CRSDEF %definition
                                 simdef.csd=stru_in;
                                 D3D_crosssectiondefinitions(simdef,'fname',sprintf('%s%s',fname,fext),varargin{2:end});
-                            case 3 %location
+                            case INI_CRSLOC %location
                                 simdef.csl=stru_in;
                                 D3D_crosssectionlocation(simdef,'fname',sprintf('%s%s',fname,fext),varargin{2:end});
                         end
@@ -337,27 +345,27 @@ end %function
 
 %%
 
-function cstype=parse_ini(stru_out)
+function inifiletype=parse_ini(stru_out)
+global INIFILE_GENERAL INIFILE_CRSDEF INIFILE_CRSLOC
 
-cstype=NaN;
-if isfield(stru_out,'General') 
-    cstype=1;
-    str_gen='General';
-elseif isfield(stru_out,'general') 
-    cstype=1;
-    str_gen='general';                    
+inifiletype=NaN;
+fns = fieldnames(stru_out);
+idx_gen = find(strcmp(lower(fns),'general')); 
+if ~isempty(idx_gen);
+    inifiletype=INIFILE_GENERAL;
+    str_gen = fns{idx_gen};
 end
-if ~isnan(cstype)
+if ~isnan(inifiletype)
     if isfield(stru_out.(str_gen),'fileType') %maybe also non-capital? we need a general way of dealing with it
         switch stru_out.(str_gen).fileType
             case 'crossDef'
-                cstype=2;
+                inifiletype=INIFILE_CRSDEF;
             case 'crossLoc'
-                cstype=3;
+                inifiletype=INIFILE_CRSLOC;
         end
     else
-        cstype=NaN;
-        messageOut(NaN,'It is an ini-file with [general] block, but I cannot find the <fileType>')
+        inifiletype=NaN;
+        messageOut(NaN,'It is an ini-file, but I cannot find the <fileType>')
     end
 end
                 
