@@ -163,7 +163,9 @@ switch what_do
                 if nargin~=3
                     error('You need to specify the reference date as input')
                 end
-                tim=readmatrix(fname,'filetype','text');
+                %tim=readmatrix(fname,'filetype','text');
+                tim=readmatrix(fname,'filetype','text','NumHeaderLines',0,'ConsecutiveDelimitersRule', 'join'); 
+                tim = tim(~sum(isnan(tim),2),:);
                 stru_out.tim=varargin{1}+minutes(tim(:,1));
                 stru_out.val=tim(:,2:end);
             case '.sub'
