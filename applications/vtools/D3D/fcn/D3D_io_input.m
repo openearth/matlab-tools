@@ -329,6 +329,7 @@ switch what_do
                 error('Extension %s in file %s not available for writing',ext,fname)
         end
         messageOut(NaN,sprintf('File written: %s',fname));
+        varargout{1}=stru_in;
 end
 
 end %function
