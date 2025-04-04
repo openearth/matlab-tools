@@ -1,4 +1,4 @@
-function [dxy, xyz_diff] = diff_samples(xyz1, xyz2); 
+function [dxy, xyz_diff, xyz1_new] = diff_samples(xyz1, xyz2); 
 % diff_samples compares xyz sets 
 %
 % by taking the difference of the nearest sample point 
@@ -10,6 +10,7 @@ assert(size(xyz1,2) == size(xyz2,2),...
 
 Fidx = scatteredInterpolant(xyz1(:,1),xyz1(:,2),[1:size(xyz1,1)].','nearest');
 idx1_new = int32(Fidx(xyz2(:,1),xyz2(:,2))); 
-xyz_diff = xyz2 - xyz1(idx1_new,:); 
-dxy = hypot(xyz2(:,1) - xyz1(idx1_new,1), xyz2(:,2) - xyz1(idx1_new,2)); 
+xyz1_new = xyz1(idx1_new,:);
+xyz_diff = xyz2 - xyz1_new;
+dxy = hypot(xyz2(:,1) - xyz1_new(:,1), xyz2(:,2) - xyz1_new(:,2)); 
 end
