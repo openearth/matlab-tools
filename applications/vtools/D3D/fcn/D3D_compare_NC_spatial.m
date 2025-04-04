@@ -109,7 +109,7 @@ for kv=1:nv
                 assert(coords_1_dat_mat(idx_1(idx),1) == coords_2_dat_mat(idx_2(idx),1));
                 assert(coords_1_dat_mat(idx_1(idx),2) == coords_2_dat_mat(idx_2(idx),2));
                 if var_norm > 0
-                    messageOut(fid,sprintf('    Max. diff. =%e x,y=%f,%f', var_norm, coords_1_dat_mat(idx_1(idx),1), coords_1_dat_mat(idx_1(idx),2) ) );
+                    messageOut(fid,sprintf('    Max. diff. =%e x,y=%f,%f val1:%f val2:%f', var_norm, coords_1_dat_mat(idx_1(idx),1), coords_1_dat_mat(idx_1(idx),2) , var_1(idx_1(idx)), var_2(idx_2(idx)) ) );
                 else
                     messageOut(fid,sprintf('    Max. diff. =%e', var_norm ));
                 end
