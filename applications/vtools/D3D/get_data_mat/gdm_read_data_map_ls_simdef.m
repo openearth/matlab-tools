@@ -69,7 +69,7 @@ ismor=D3D_is(fpath_map);
 switch varname
     case {'d10','d50','d90','dm'}
         data=gdm_read_data_map_ls_grainsize(fdir_mat,fpath_map,varname,simdef,varargin{:});
-    case {'h'}
+    case {'h','mesh2d_waterdepth','dp'}
         switch simdef.D3D.structure
             case {1,5}
                 if simdef.D3D.ismor
@@ -143,7 +143,7 @@ switch varname
                 data=data_x;
                 data.val=hypot(data_x.val,data_y.val);
         end
-    case {'lyrfrac'}
+    case {'lyrfrac','mesh2d_lyrfrac'}
         switch simdef.D3D.structure
             case {1,5}
                 error('do')

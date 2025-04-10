@@ -96,15 +96,8 @@ N=grd.nmax;
 % M=size(grd.cor.x,2)+1;
 % N=size(grd.cor.x,1)+1;
 
-
-if simdef.ini.etab_noise==2
-dy=simdef.grd.dy;
-% warning('read from grid?')
-B=simdef.grd.B;
-end
-% nx=simdef.grd.M;
-% N=simdef.grd.N;
 nx=M;
+ny=N; %number of depths points in y direction
 
 %L from grid
 % L=simdef.grd.L;
@@ -120,6 +113,7 @@ y_in=grd.cend.y;
 
 %other
 ncy=N-2; %number of cells in y direction (N in RFGRID) [-]
+
 d0=etab; %depth (in D3D) at the downstream end (at x=L, where the water level is set)
 
 %varying slope flag
@@ -137,11 +131,10 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
         end
 
         slope=simdef.ini.s; %slope (defined positive downwards)
-        ny=ncy+2; %number of depths points in y direction
-
+       
         depths=-9.99e2*ones(ny,nx); %initial depths with dummy values
 
-        if numel(slope)==1
+        if isscalar(slope)
 %             vd=-(d0+slope*(L+dx/2):-dx*slope:d0+dx/2*slope); %depths vector 
             depths(1:end-1,:)=-(d0+slope*(L-grd.cend.x(1:end-1,:)));
         elseif numel(slope)==nx-1
@@ -155,14 +148,21 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
             error('The input SLOPE can be a single value or a vector with nx+1 components')
         end
 
-        
     case 2 %constant bed elevation
-        ny=ncy+2; %number of depths points in y direction
-
         depths=-etab*ones(ny,nx); 
     case 3
 %         depths=simdef.ini.xyz;
         error('..')
+	case 4
+        depths=-9.99e2*ones(ny,nx); %initial depths with dummy values
+
+        %fill boundary values with correct bed level
+        slope=simdef.ini.s; %slope (defined positive downwards)
+        depths(1:end-1,:)=-(d0+slope*(L-grd.cend.x(1:end-1,:)));
+        
+		load(simdef.ini.mat,'data')
+        data(isnan(data))=+9.99e2; %the sign is changed afterwards
+		depths(2:ny-1,2:nx-1)=-data(1:end-1,1:end-1)';
 end
 
 %add noise
@@ -176,6 +176,8 @@ switch etab_noise
         noise_amp=simdef.ini.noise_amp;
         noise(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
     case 2 %sinusoidal
+        % warning('read from grid?')
+        B=simdef.grd.B;
         %noise parameters
         noise_amp=simdef.ini.noise_amp;
         noise_Lb=simdef.ini.noise_Lb;

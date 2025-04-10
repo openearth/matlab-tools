@@ -301,6 +301,8 @@ if isfield(flg_loc,'tol_tim')
     tol_tim=flg_loc.tol_tim;
 end
 
+fid_log=NaN;
+
 %% CALC
 
 size_data=size(val_ref);

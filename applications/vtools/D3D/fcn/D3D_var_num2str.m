@@ -58,7 +58,7 @@ if ischar(varname_input)
             varname_save_mat='mesh2d_mor_bl';
             varname_load_mat=varname_input;
             varname_read_variable=varname_save_mat;
-        case 'bl'
+        case {'bl','mesh2d_mor_bl'}
             if is1d
                 if ismor
                     varname_read_variable='mesh1d_mor_bl';

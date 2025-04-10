@@ -85,7 +85,7 @@ v_mat=-9.99e2*ones(N,M); %initial v velocity with dummy values
 I_mat=-9.99e2*ones(N,M); %initial secondary flow velocity with dummy values
 
 switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation
-    case 1
+    case {1,4}
 
         slope=simdef.ini.s;
         

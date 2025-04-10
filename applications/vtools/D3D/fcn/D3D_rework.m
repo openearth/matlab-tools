@@ -689,9 +689,16 @@ end
 switch simdef.ini.etab0_type
     case {1,2}
     case 3
+        if simdef.D3D.structure==1
+            error('Not done.')
+        end
         aux_dim=size(simdef.ini.xyz);
         if aux_dim(2)~=3
             error('dimensions do not agree')
+        end
+    case 4
+        if simdef.D3D.structure==2
+            error('Not done.')
         end
     otherwise
         error('etab0_type nonexistent')

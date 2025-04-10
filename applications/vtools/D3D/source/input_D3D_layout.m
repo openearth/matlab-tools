@@ -126,10 +126,11 @@ simdef.ini.h=               1.0; %initial flow depth (everywhere) [m] [double(1,
 simdef.ini.u=               1.0; %initial flow velocity (everywhere) [m] [double(1,1)]
 % simdef.ini.etaw_file='etaw.xyz';
     %etab
-simdef.ini.etab0_type=      1; %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation; 3=xyz 
+simdef.ini.etab0_type=      1; %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation; 3=xyz; 4=read from mat-file
 simdef.ini.s=               normal_flow_slope_simplified(simdef.ini.h*simdef.ini.u*simdef.grd.B,simdef.grd.B,simdef.mdf.g/simdef.mdf.C^2,simdef.ini.h,'g',simdef.mdf.g) ; %(if etab0_type=1) initial slope [-] [double(1,1)] | [double(M,1)] e.g. [3e-3] | linspace(0.001,0.0001,simdef.grd.L/simdef.grd.dx+1)]
 simdef.ini.etab=            -simdef.ini.h; %initial downstream bed level [m] [double(1,1)] e.g. [0] ATTENTION! if NaN, the bed level at the downstream end will be at 0; if you want the base level to be at 0, this should be -simdef.ini.h; if you want the bed level to be at 0, this should be 0;
 simdef.ini.etab_noise=      0; %flag for initial noise [double(1,1)] 0=NO; 1=random; 2=alternate bars; 3=random including upstream end; 4 trench
+simdef.ini.noise_seed=      1; %seed for generating noise [double(1,1)]
 simdef.ini.noise_amp=       0.01; %noise amplitude (also bar height, trench height) [m] In case of trench, positive is trench and negative is hump.
 simdef.ini.noise_Lb=        0; %(for etab_noise=2) bar length [m]
 simdef.ini.noise_trench_x=  [1,3]; %x-coordinates of the beginning and end of the trench [m] [double(1,2)]; e.g. [1,3]

@@ -23,6 +23,18 @@
 
 function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,kt)
 
+%% PARSE
+
+if isscalar(kt)
+    if ~isnan(kt)
+        error('If only one input, it must be NaN')
+    end
+else
+    if numel(kt)~=2
+        error('The size must be 2.')
+    end
+end
+
 %% calc
 [~,fname,ext]=fileparts(fpath_nc);
 ext=deblank(ext);
@@ -60,6 +72,17 @@ elseif strcmp(ext,'.dat') %D3D4
     TUNIT=vs_let(NFStruct,sprintf('%s-const',str_get),'TUNIT','quiet'); %dt unit
     DT=vs_let(NFStruct,sprintf('%s-const',str_get),'DT','quiet'); %dt
     time_r=ITMAPC*DT*TUNIT; %results time vector [s]
+
+    if isnan(kt) %we have already checked it is of size 1
+        time_r=time_r(end);
+    else
+        %replace inf by last time
+        bol_inf=isinf(kt);
+        kt(bol_inf)=numel(time_r);
+
+        time_r=time_r(kt(1):kt(1)+kt(2)-1);
+    end
+
     if ITDATE(2)~=0
         error('modify this!')
     end
