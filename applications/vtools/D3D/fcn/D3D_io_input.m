@@ -222,7 +222,7 @@ switch what_do
                     inifiletype=NaN;
                     if isfield(stru_in,'id') %cross-sectional type of structure. It may not be strong enough.
                         if isfield(stru_in,'chainage')
-                            inifiletype=INI_CRSLOC;
+                            inifiletype=INIFILE_CRSLOC;
                         else
                             inifiletype=INIFILE_CRSDEF;
                         end
@@ -234,7 +234,7 @@ switch what_do
                             case INIFILE_CRSDEF %definition
                                 simdef.csd=stru_in;
                                 D3D_crosssectiondefinitions(simdef,'fname',sprintf('%s%s',fname,fext),varargin{2:end});
-                            case INI_CRSLOC %location
+                            case INIFILE_CRSLOC %location
                                 simdef.csl=stru_in;
                                 D3D_crosssectionlocation(simdef,'fname',sprintf('%s%s',fname,fext),varargin{2:end});
                         end
