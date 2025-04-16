@@ -604,6 +604,8 @@ switch simdef.bcm.noise_eta
             warning('Time vector for bed level boundary condition will not be used.')
         end
         simdef.bcm.time=NaN; %otherwise `eta` is added below
+
+        simdef.bcm=isfield_default(simdef.bcm,'noise_seed',1);
 end
 
 if isfield(simdef.bcm,'time') && ~isnan(simdef.bcm.time)
@@ -617,6 +619,7 @@ if isfield(simdef.bcm,'time') && ~isnan(simdef.bcm.time)
         end
     end
 end
+
 
 %% ILL-POSEDNESS
 

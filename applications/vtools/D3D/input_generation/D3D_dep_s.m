@@ -118,6 +118,10 @@ d0=etab; %depth (in D3D) at the downstream end (at x=L, where the water level is
 
 %varying slope flag
 % if numel(slope)>1; flg_vars=
+
+simdef.ini=isfield_default(simdef.ini,'noise_x',[x_in(1,1),x_in(1,end)]);
+simdef.ini=isfield_default(simdef.ini,'noise_y',[y_in(1,1),y_in(end,1)]);
+
 %% CALCULATIONS
 
 switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed elevation
@@ -167,14 +171,19 @@ end
 
 %add noise
 noise=zeros(ny,nx);
+bol_x_noise=x_in>simdef.ini.noise_x(1) & x_in<simdef.ini.noise_x(2);
+bol_y_noise=y_in>simdef.ini.noise_y(1) & y_in<simdef.ini.noise_y(2);
+bol_noise=bol_x_noise & bol_y_noise;
 rng(simdef.ini.noise_seed)
 switch etab_noise
     case 0
 %         noise=zeros(ny,nx);
     case 1 %random noise
-        warning('Check indeces after changin ny def')
         noise_amp=simdef.ini.noise_amp;
-        noise(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
+        noise_all=noise;
+        % noise_all(1:end-3,3:end-1)=noise_amp.*(rand(ny-3,nx-3)-0.5);
+        noise_all(1:end-1,3:end-1)=noise_amp.*(rand(ny-1,nx-3)-0.5);
+        noise(bol_noise)=noise_all(bol_noise);
     case 2 %sinusoidal
         % warning('read from grid?')
         B=simdef.grd.B;

@@ -66,6 +66,8 @@ for ksb=1:nsb %summerbed polygons
 
     [sb_pol,sb_def,str_save_sb_pol,npol]=read_summerbed_polygon_all(fid_log,flg_loc,fdir_mat,fpath_map,ksb);    
 
+   do_save_xvt=(flg_loc.do_xvt || flg_loc.do_tv) && npol==1;
+
     %% LOOP ON RKM POLYGONS
     for krkmv=1:nrkmv %rkm polygons
 
@@ -99,7 +101,7 @@ for ksb=1:nsb %summerbed polygons
             fn_data=fieldnames(data_0(1));
             nfn=numel(fn_data);
             [nx,nD]=size(data_0(1).(fn_data{1}));
-            if flg_loc.do_xvt && npol==1
+            if do_save_xvt
                 for kfn=1:nfn
                     statis=fn_data{kfn};
                     
@@ -331,7 +333,7 @@ for ksb=1:nsb %summerbed polygons
                     end
                     
                     %% SAVE FOR XVT
-                    if flg_loc.do_xvt && npol==1
+                    if do_save_xvt
                         %<data_sim> has simulation in the structure.
                         %<data_xvt> has simulation in the second column. 
                         data_xvt.(statis)(:,:,kt,:)=[data_sim.(statis)];
@@ -369,7 +371,7 @@ for ksb=1:nsb %summerbed polygons
 
             %% tv at single rkm
             if flg_loc.do_tv && ~multi_dim && npol==1
-                do_tv(fid_log,flg_loc,simdef,rkmv.rkm_cen,flg_loc.rkm_plot_tv{krkmv},data_xvt,tim_dtime_plot,ksb,fdir_fig,str_save_sb_pol,pol_name,var_str_save,var_idx);
+                do_tv(fid_log,flg_loc,simdef,rkmv.rkm_cen,flg_loc.rkm_plot_tv{krkmv},data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx);
             end %do_tv
 
         end %kvar    
@@ -983,7 +985,7 @@ end
 
 %%
 
-function do_tv(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,data_xvt,tim_dtime_plot,ksb,fdir_fig,str_save_sb_pol,pol_name,var_str_save,var_idx)
+function do_tv(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx)
 
 in_p=flg_loc;
 
@@ -993,6 +995,7 @@ in_p.s=tim_dtime_plot;
 in_p.do_title=1;
 in_p.do_include_mea_xylims=1;
 
+tag_fig=flg_loc.tag;
 tag='val';
 
 nsim=numel(simdef);
@@ -1015,15 +1018,26 @@ if any(bol_tv(:))
             continue
         end
 
-        
         for ksim=1:nsim 
             bol_rkm=bol_tv(:,krkm_plot);
             bol_ks=false(nsim,1);
             bol_ks(ksim)=true;
             rkm_loc=vec(bol_rkm);
             runid=simdef(bol_ks).file.runid;
+
+            fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie); 
+
+            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},{str_save_sb_pol});
+
             for kfn=1:nfn
                 statis=fn_data{kfn};
+
+                %skip statistics not in list    
+                if isfield(flg_loc,'statis_plot')
+                    if ismember(statis,flg_loc.statis_plot)==0
+                        continue
+                    end
+                end
 
                 %model
                 val=data_xvt.(statis)(bol_rkm,ksim,:,1);

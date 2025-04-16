@@ -174,6 +174,7 @@ simdef.mor.ICmpCond=        0; %flag for upstream boundary gsd boundary conditio
 % simdef.bcm.noise_amp=       0.30; %(for noise_eta=2) noise amplitude [m] 
 % simdef.bcm.noise_T=         11*24*3600; %(for noise_eta=2) period [s] 
 % simdef.bcm.noise_dt=        simdef.bcm.noise_T/100; %(for noise_eta=2) discretization of the time boundary condition [s]
+% simdef.bcm.noise_seed=      1  %seed for noise [-]
 
 %% hydrodynamic boundary conditions
 simdef.bct.Q=               simdef.ini.h*simdef.ini.u*simdef.grd.B; %Q [m3/s] (value before width is the value per unit width)

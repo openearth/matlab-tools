@@ -29,7 +29,15 @@ function [strsoft_lin,strsoft_win]=D3D_bat_write(dire_sim,fpath_software,dimr_st
 
 %% bat
 
-fid_bat=fopen(fullfile(dire_sim,'run.bat'),'w');
+fpath_file=fullfile(dire_sim,'run.bat');
+
+%% first write local
+fname_dest=fpath_file;
+fpath_file=fullfile(pwd,now_chr);
+
+%% WRITE
+
+fid_bat=fopen(fpath_file,'w');
 fprintf(fid_bat,'@ echo off \r\n');
 switch structure
     case 1 %D3D4
@@ -46,6 +54,10 @@ end
 fprintf(fid_bat,'%s \r\n',strsoft_win); 
 fprintf(fid_bat,'exit \r\n');
 fclose(fid_bat);
+
+%% copy to destination
+copyfile_check(fpath_file,fname_dest);
+delete(fpath_file);
 
 %% sh
 
@@ -65,10 +77,6 @@ switch cluster_str
         error('<cluster> cannot be: %s',cluster_str)
 end
 
-
-%     copyfile_check(fpath_bat_win{simdef.D3D.structure},dire_sim);
-%     copyfile_check(fpath_bat_lin,dire_sim);
-
 end %function
 
 %%
@@ -78,6 +86,12 @@ end %function
 %%
 
 function strsoft_lin=D3D_sh_h6c7(fpath_file,OMP_num,structure,fpath_software,dimr_str)
+
+%% first write local
+fname_dest=fpath_file;
+fpath_file=fullfile(pwd,now_chr);
+
+%% WRITE
 
 fid_bat=fopen(fpath_file,'w');
 switch structure
@@ -94,6 +108,10 @@ end
 fprintf(fid_bat,'%s \r\n',strsoft_lin); 
 fclose(fid_bat);
 
+%% copy to destination
+copyfile_check(fpath_file,fname_dest);
+delete(fpath_file);
+
 end %function
 
 %%
@@ -105,7 +123,12 @@ function strsoft_lin=D3D_fm_sh_h7(fpath_file,nodes,tasks_per_node,runid,time_dur
 strsoft_lin=''; %there is no point in calling in sequential in linux I think. Not sure how to do it. 
 str_time_limit=duration2double_string(time_duration);
 
-%%
+%% first write local
+fname_dest=fpath_file;
+fpath_file=fullfile(pwd,now_chr);
+
+%% WRITE
+
 fid=fopen(fpath_file,'w');
 
 fprintf(fid,'#! /bin/bash \r\n');
@@ -168,6 +191,10 @@ fprintf(fid,'    ${DIMR_FOLDER}/lnx64/bin/submit_dimr_h7.sh -m $DIMR_FILE\r\n');
 
 fclose(fid);
 
+%% copy to destination
+copyfile_check(fpath_file,fname_dest);
+delete(fpath_file);
+
 end %function
 
 %%
@@ -179,7 +206,12 @@ function strsoft_lin=D3D_d3d4_sh_h7(fpath_file,nodes,tasks_per_node,runid,time_d
 strsoft_lin=''; %there is no point in calling in sequential in linux I think. Not sure how to do it. 
 str_time_limit=duration2double_string(time_duration);
 
-%%
+%% first write local
+fname_dest=fpath_file;
+fpath_file=fullfile(pwd,now_chr);
+
+%% WRITE
+
 fid=fopen(fpath_file,'w');
 
 fprintf(fid,'#!/bin/bash\r\n');
@@ -217,5 +249,9 @@ fprintf(fid,'#if FLOW+WAVES\r\n');
 fprintf(fid,'#$delft3d4dir/lnx64/bin/submit_dflow2d3d_AL8.sh -n $nNodes -c $nProc -j $jobName -w $WAVES -t $TIME_LIMIT -p $PARTITION -m $CONFIG\r\n');
 
 fclose(fid);
+
+%% copy to destination
+copyfile_check(fpath_file,fname_dest);
+delete(fpath_file);
 
 end %function

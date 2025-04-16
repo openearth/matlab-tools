@@ -93,7 +93,12 @@ if isa(in_dtime(1),'double')
             end
         end
 
-        if ~all(bol_f) || last_changed %old time file, data is missing. 
+        %It can happen that it has saved a file with no output. Then it
+        %crashes below because of size differences. If there is nothing
+        %inside, we erase. 
+        ntt=numel(data.(fn{1})); 
+
+        if ~all(bol_f) || last_changed || ntt==0 %old time file, data is missing. 
             messageOut(NaN,'Old time file. Erasing and computing again.')
             delete(fpath_tim_all)
             [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,in_dtime,varargin{:});

@@ -25,7 +25,7 @@
 
 function D3D_bcm_s(simdef,varargin)
 
-%[simdef]=D3D_rework(simdef); 
+simdef.bcm=isfield_default(simdef.bcm,'noise_seed',1);
 
 %% RENAME
 
@@ -136,6 +136,7 @@ switch simdef.bcm.noise_eta
        return
     case 1 %random noise
 
+        rng(simdef.bcm.noise_seed)
         time=create_time_vector(simdef);
         eta=eta.*ones(numel(time),simdef.mor.upstream_nodes);
         
