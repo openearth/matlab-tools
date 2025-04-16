@@ -152,7 +152,7 @@ switch lower(variable)
                 str_var='elevación';
         end
         un_type='Lref';
-    case {'etab','mesh2d_mor_bl','dps','bl'}
+    case {'etab','mesh2d_mor_bl','dps','bl','mesh1d_bl_ave'}
         switch lan
             case 'en'
                 str_var='bed elevation';
@@ -222,7 +222,7 @@ switch lower(variable)
                 str_var='distancia a la desembocadura';
         end
         un_type='L'; 
-    case {'etaw','waterlevel','wathte','mesh2d_s0','mesh2d_s1','wl','waterlevelbnd'}
+    case {'etaw','waterlevel','wathte','mesh2d_s0','mesh2d_s1','wl','waterlevelbnd','mesh1d_s1'}
         switch lan
             case 'en'
                 str_var='water level';

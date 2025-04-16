@@ -14,7 +14,6 @@
 %THIS NEEDS A THOROUGH REFACTORING
 %   -there is no loop over kylim for 1D plot.
 %   -loop on `kdiff` needs to be removed to clarify.
-%   -one single call with all simulations as input needs to exist that eliminates the need to call `plot_map_1D_xv_diff_01`. 
 
 function plot_map_1D_xv_01(fid_log,flg_loc,simdef)
 
@@ -56,17 +55,18 @@ flg_loc=isfield_default(flg_loc,'tim_type',1);
 flg_loc=isfield_default(flg_loc,'fig_print',1);
 flg_loc=isfield_default(flg_loc,'str_time','yyyymmddHHMM');
 
-%% PATHS
+%% PATHS REFERENCE
 
+kref=flg_loc.sim_ref;
 nsim=numel(simdef);
-fdir_mat=simdef(1).file.mat.dir;
+fdir_mat=simdef(kref).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
-mkdir_check(fdir_fig); %we create it in the loop
-runid=simdef(1).file.runid;
+% fdir_fig=fullfile(simdef(kref).file.fig.dir,tag_fig,tag_serie);
+% mkdir_check(fdir_fig); %we create it in the loop
+% runid=simdef(kref).file.runid;
 
-fpath_map=gdm_fpathmap(simdef(1),0);
+fpath_map=gdm_fpathmap(simdef(kref),0);
 
 %take coordinates from curved domain (in case the domain is straightened)
 fpath_map_grd=fpath_map; 
@@ -74,7 +74,7 @@ if is_straigth
     fpath_map_grd=flg_loc.fpath_map_curved;
 end
 
-%% LOAD
+%% LOAD REFERENCE
 
 gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map_grd,'dim',1);
 load(fpath_mat_time,'tim');
@@ -194,7 +194,7 @@ for kbr=1:nbr %branches
                     tag_ref='val';
                     in_p.val=data_T(:,ksim,kt);
                     in_p.is_diff=0;
-                    in_p.val0=data_0;
+                    in_p.val0=data_0(:,ksim);
                     if do_measurements
                         in_p.plot_mea=true;
                         in_p.val_mea=data_mea.y;
@@ -214,19 +214,52 @@ for kbr=1:nbr %branches
 
             %% difference with initial time
             if flg_loc.do_diff_t
-                error('do')
-                    in_p.val=data_T(:,:,kt)-data_0(:,:);
+
+                for ksim=1:nsim
+                    tag_ref='diff_t';
+                    in_p.val=data_T(:,:,kt)-data_T(:,:,1);
                     in_p.is_diff=1;
-                    str_dir='diff';
                     in_p.val0=zeros(size(in_p.val));
                     if do_measurements
+                        in_p.plot_mea=true;
                         in_p.val_mea=data_mea.y-data_mea_0.y;
+                        in_p.s_mea=data_mea.x;
                     end
+                    if isfield(in_p,'leg_str')
+                        in_p=rmfield(in_p,'leg_str');
+                    end
+    
+                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    runid=simdef(ksim).file.runid;
+    
+                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt))
+                end %ksim
+
             end
 
             %% difference with reference
             if flg_loc.do_diff_s && ksim~=kref
-                error('do')
+
+                for ksim=1:nsim
+                    tag_ref='diff_s';
+                    in_p.val=data_T(:,ksim,kt)-data_T(:,kref,kt);
+                    in_p.is_diff=1;
+                    in_p.val0=data_T(:,ksim,1)-data_T(:,kref,1);
+                    if do_measurements
+                        in_p.plot_mea=false;
+                        % in_p.val_mea=data_mea.y;
+                        % in_p.s_mea=data_mea.x;
+                    end
+                    if isfield(in_p,'leg_str')
+                        in_p=rmfield(in_p,'leg_str');
+                    end
+    
+                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    runid=simdef(ksim).file.runid;
+    
+                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt))
+                end %ksim
+
             end
 
             %% all simulation together
