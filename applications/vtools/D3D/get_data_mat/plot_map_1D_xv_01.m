@@ -37,18 +37,22 @@ end
 
 flg_loc=isfield_default(flg_loc,'do_p_single',1);
 flg_loc=isfield_default(flg_loc,'do_diff_t',0);
-flg_loc=isfield_default(flg_loc,'do_all_sim',0);
 flg_loc=isfield_default(flg_loc,'do_diff_s',0);
+flg_loc=isfield_default(flg_loc,'do_all_sim',0);
 flg_loc=isfield_default(flg_loc,'do_xtv',0);
 flg_loc=isfield_default(flg_loc,'do_xvallt',0);
 flg_loc=isfield_default(flg_loc,'plot_val0',0);
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_s_var'); 
+flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_t_var'); 
+
 
 flg_loc=isfield_default(flg_loc,'tim_type',1);
 flg_loc=isfield_default(flg_loc,'fig_print',1);
 flg_loc=isfield_default(flg_loc,'str_time','yyyymmddHHMM');
+
 
 %% PATHS REFERENCE
 
@@ -127,8 +131,12 @@ for kbr=1:nbr %branches
 %         fpath_file=cell(nt,1); %movie
 
     for kvar=1:nvar %variable
-        
-        nclim=size(flg_loc.ylims_var{kvar},1);
+    
+        %ylims
+        xlims=flg_loc.xlims_var{kvar,1};
+        lims=flg_loc.ylims_var{kvar,1};
+        lims_diff_t=flg_loc.ylims_diff_t_var{kvar,1};
+        lims_diff_s=flg_loc.ylims_diff_s_var{kvar,1};
         
         [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
 
@@ -185,6 +193,8 @@ for kbr=1:nbr %branches
             %% regular plot
             if flg_loc.do_p_single    
 
+                lims_loc=lims;
+
                 for ksim=1:nsim
                     tag_ref='val';
                     in_p.val=data_T(:,ksim,kt);
@@ -203,13 +213,15 @@ for kbr=1:nbr %branches
                     fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                     runid=simdef(ksim).file.runid;
     
-                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt))
+                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
                 end %ksim
 
             end
 
             %% difference with initial time
             if flg_loc.do_diff_t
+
+                lims_loc=lims_diff_t;
 
                 for ksim=1:nsim
                     tag_ref='diff_t';
@@ -228,13 +240,15 @@ for kbr=1:nbr %branches
                     fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                     runid=simdef(ksim).file.runid;
     
-                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt))
+                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
                 end %ksim
 
             end
 
             %% difference with reference
             if flg_loc.do_diff_s && ksim~=kref
+
+                lims_loc=lims_diff_s;
 
                 for ksim=1:nsim
                     tag_ref='diff_s';
@@ -253,13 +267,15 @@ for kbr=1:nbr %branches
                     fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                     runid=simdef(ksim).file.runid;
     
-                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt))
+                    fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
                 end %ksim
 
             end
 
             %% all simulation together
             if flg_loc.do_all_sim
+                lims_loc=lims;
+
                 tag_ref='val';
                 in_p.val=data_T(:,:,kt);
                 in_p.is_diff=0;
@@ -274,7 +290,7 @@ for kbr=1:nbr %branches
                 fdir_fig=fullfile(simdef(1).file.fig.dir,sprintf('%s_all',tag_fig),tag_serie);
                 runid=simdef(1).file.runid;
                 
-                fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt))
+                fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
             end
 
             %%
@@ -305,6 +321,9 @@ for kbr=1:nbr %branches
         %% all times in same figure xtv
         
         if flg_loc.do_xtv && nsim==1 && nt>1
+
+            nclim=size(flg_loc.ylims_var{kvar},1);
+
             [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
             in_p.x_m=x_m;
             in_p.y_m=y_m;
@@ -345,9 +364,9 @@ end %function
 
 %%
 
-function fpath_fig=fig_name(flg_loc,fdir_fig,tag,runid,time_dnum,var_str,branch_name,str_dir)
+function fpath_fig=fig_name(flg_loc,fdir_fig,tag,runid,time_dnum,var_str,branch_name,str_dir,kxlim,kylim)
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s',tag,runid,datestr(time_dnum,flg_loc.str_time),var_str,branch_name,str_dir));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_ylim_%02d_xlim_%02d',tag,runid,datestr(time_dnum,flg_loc.str_time),var_str,branch_name,str_dir,kylim,kxlim));
 
 end %function
 
@@ -361,16 +380,23 @@ end %function
 
 %%
 
-function fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,str_dir,tag,runid,time_dnum)
+function fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,str_dir,tag,runid,time_dnum,ylims,xlims)
+
+nylim=size(ylims,1);
+nxlim=size(xlims,1);
 
 fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
 mkdir_check(fdir_fig_loc,fid_log,1,0);
 
-fname_noext=fig_name(flg_loc,fdir_fig_loc,tag,runid,time_dnum,var_str_save,branch_name,str_dir);
+for kylim=1:nylim
+    for kxlim=1:nxlim
+        fname_noext=fig_name(flg_loc,fdir_fig_loc,tag,runid,time_dnum,var_str_save,branch_name,str_dir,kxlim,kylim);
+        
+        in_p.fname=fname_noext;
 
-in_p.fname=fname_noext;
-
-fig_1D_01(in_p);
+        fig_1D_01(in_p);
+    end 
+end
 
 end %function
 

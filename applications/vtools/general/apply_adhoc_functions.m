@@ -11,7 +11,7 @@
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_1D_01.m $
 %
 
-function apply_adhoc_functions(han_fig,in_p)
+function apply_adhoc_functions(in_p)
 
 if ~isfield(in_p,'function_handles')
     return
