@@ -21,7 +21,7 @@ function plot_map_1D_xv_01(fid_log,flg_loc,simdef)
 
 %% DO
 
-ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
 
 %% PARSE
 
@@ -35,17 +35,12 @@ if isfield(flg_loc,'fpath_rkm')
     do_rkm=1;
 end
 
-if isfield(flg_loc,'do_xtv')==0
-    flg_loc.do_xtv=1;
-end
-
-if isfield(flg_loc,'do_p')==0
-    flg_loc.do_p=1;
-end
-
-if isfield(flg_loc,'do_xvallt')==0
-    flg_loc.do_xvallt=0;
-end
+flg_loc=isfield_default(flg_loc,'do_p_single',1);
+flg_loc=isfield_default(flg_loc,'do_diff_t',0);
+flg_loc=isfield_default(flg_loc,'do_all_sim',0);
+flg_loc=isfield_default(flg_loc,'do_diff_s',0);
+flg_loc=isfield_default(flg_loc,'do_xtv',0);
+flg_loc=isfield_default(flg_loc,'do_xvallt',0);
 flg_loc=isfield_default(flg_loc,'plot_val0',0);
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
@@ -203,6 +198,7 @@ for kbr=1:nbr %branches
                     if isfield(in_p,'leg_str')
                         in_p=rmfield(in_p,'leg_str');
                     end
+                    in_p.function_handles=flg_loc.p_single_function_handles;
     
                     fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                     runid=simdef(ksim).file.runid;

@@ -729,6 +729,10 @@ end
 % set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, there is a bug in Matlab and this is not enforced. It is necessary to change it in the '.eps' to 'ArialMT' (check in a .pdf)
 % han.fig.Renderer='painters';
 
+%% ADHOC functions
+
+apply_adhoc_functions(in_p);
+
 %% PRINT
 
 if any(fig_print==1)

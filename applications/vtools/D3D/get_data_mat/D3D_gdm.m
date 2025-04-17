@@ -94,6 +94,7 @@
 % %lines below take that number as the seed number.
 % % fname=mfilename;
 % % in_plot.order_anl_param=str2double(fname(end)); %seed random number in case `order_anl=3`
+%in_plot.function_handles={@my_fcn,@my_other_fcn}; %cell array of ad-hoc functions exectued in the plot script
 
 %% display map times
 
@@ -269,6 +270,7 @@
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %pass through plotting routine
 % in_plot.(tag).do_p_single=1; %plot single result
+% in_plot.(tag).p_single_function_handles={@add_weirs,@add_rkm_Maas_10_10_240}; %ad-hoc functions applied to this plot
 % in_plot.(tag).do_diff_t=1; %difference initial time
 % in_plot.(tag).do_diff_s=1; %difference reference simulation
 % in_plot.(tag).do_diff_s_t=1; %difference reference simulation and initial time

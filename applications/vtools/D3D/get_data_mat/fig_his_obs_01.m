@@ -445,6 +445,9 @@ end
 %     text(his_stax(ks)*sfact+tolx,his_stay(ks)*sfact+toly,sprintf('%d',ks),'color',col_loc,'fontsize',6);
 % end
 
+%% ADHOC functions
+
+apply_adhoc_functions(in_p);
 
 %% PRINT
 

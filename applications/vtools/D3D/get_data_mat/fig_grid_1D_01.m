@@ -325,6 +325,10 @@ han.fig.Renderer='painters';
 %return to default
 set(groot,'defaultAxesColorOrder','default') %reset the color order to the default value
 
+%% ADHOC functions
+
+apply_adhoc_functions(in_p);
+
 %% PRINT
 
 if any(fig_print==1)
