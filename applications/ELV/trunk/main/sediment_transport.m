@@ -279,7 +279,7 @@ for ku=1:nu
             switch sed_trans_loc
                 case 1 %MPM48
                     theta_c=sed_trans_param(3);
-                case 2 %AM
+                case 3 %AM
                     theta_c=sed_trans_param(2);
                 case 6 %Parker
                     theta_c = 0.0386;
