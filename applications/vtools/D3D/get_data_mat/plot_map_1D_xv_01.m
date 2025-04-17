@@ -319,9 +319,9 @@ for kbr=1:nbr %branches
                 for kclim=1:nclim
                     [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,squeeze(data_T)',squeeze(data_0)','ylims','ylims_diff',var_str_save);
 
-                    fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,tag_ref);
+                    fdir_fig_loc=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig_loc,fid_log,1,0);
-
+                    runid=simdef(1).file.runid;
                     fname_noext=fig_name_all(fdir_fig_loc,tag,runid,var_str_save,branch_name,tag_ref,kclim);
 
                     in_p.fname=fname_noext;
