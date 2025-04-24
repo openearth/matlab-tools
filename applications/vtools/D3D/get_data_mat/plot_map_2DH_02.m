@@ -393,8 +393,8 @@ if flg_loc.do_3D
     in_p.gridInfo.Zcor=Zcor; %if this is passed, it is more pleasent to the eye since the solution is continuous.
 end
 
-fpath_file_2D=cell(nclim,flg_loc.nxlim);
-fpath_file_3D=cell(nclim,flg_loc.nxlim);
+fpath_file_2D=cell(flg_loc.nclim_max,flg_loc.nxlim);
+fpath_file_3D=cell(flg_loc.nclim_max,flg_loc.nxlim);
 
 for kclim=1:nclim
     in_p.clims=clims(kclim,:);
