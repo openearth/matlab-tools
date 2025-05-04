@@ -386,7 +386,8 @@ switch modelType
             % open data file
             D          = read_sobeknc(inputFile);
             refdate    = ncreadatt(inputFile, 'time','units');
-            Data.times = D.time(time_ind)/1440/60 + datenum(refdate(15:end),'yyyy-mm-dd  HH:MM:SS');
+            Data.times = EHY_getmodeldata_getDatenumsFromOutputfile(inputFile,0);
+            Data.times = Data.times(time_ind);
             % get data
             switch OPT.varName
                 case 'wl'
