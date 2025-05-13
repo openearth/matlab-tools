@@ -40,6 +40,8 @@ flg_loc=isfield_default(flg_loc,'do_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_diff_s',0);
 flg_loc=isfield_default(flg_loc,'do_all_sim',0);
 flg_loc=isfield_default(flg_loc,'do_xtv',0);
+flg_loc=isfield_default(flg_loc,'do_xtv_diff_t',0);
+flg_loc=isfield_default(flg_loc,'do_xtv_diff_s',0);
 flg_loc=isfield_default(flg_loc,'do_xvallt',0);
 flg_loc=isfield_default(flg_loc,'plot_val0',0);
 flg_loc=isfield_default(flg_loc,'p_single_function_handles',{});
@@ -80,15 +82,8 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map_grd,'dim',1);
 load(fpath_mat_time,'tim');
 v2struct(tim); %time_dnum, time_dtime
 
-[time_dnum_v,time_dtime_v]=gdm_time_flow_mor(flg_loc,simdef(1),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
-
-% if flg_loc.tim_type==1
-%     time_dnum_v=time_dnum;
-%     time_dtime_v=time_dtime;
-% elseif flg_loc.tim_type==2
-%     time_dnum_v=time_mor_dnum;
-%     time_dtime_v=time_mor_dtime;
-% end
+%We are assuming we can loop all with the same time!
+[time_dnum_v,time_dtime_v]=gdm_time_flow_mor(flg_loc,simdef(kref),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime);
 
 %% DIMENSION
 
@@ -96,18 +91,12 @@ nt=size(time_dnum,1);
 nvar=numel(flg_loc.var);
 nbr=numel(flg_loc.branch);
 
-ndiff=gdm_ndiff(flg_loc);
-
 %figures
 in_p=flg_loc;
 in_p.fig_visible=0;
 in_p.fig_size=[0,0,14.5,12];
 
 % fext=ext_of_fig(in_p.fig_print);
-
-% if nsim>1
-%     in_p.leg_str=flg_loc.leg_str;
-% end
 
 %% LOOP
 for kbr=1:nbr %branches
@@ -321,29 +310,52 @@ for kbr=1:nbr %branches
         
         %% all times in same figure xtv
         
-        if flg_loc.do_xtv && nsim==1 && nt>1
-
-            nclim=size(flg_loc.ylims_var{kvar},1);
-
+        if (flg_loc.do_xtv || flg_loc.do_xtv_diff_t) && nt>1
+            str_dir='xtv';
+            
             [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
             in_p.x_m=x_m;
             in_p.y_m=y_m;
             in_p.clab_str=var_str_save;
             in_p.ylab_str='';
             in_p.tit_str=branch_name;
-            for kdiff=1:ndiff
-                for kclim=1:nclim
-                    [in_p,tag_ref]=gdm_data_diff(in_p,flg_loc,kdiff,kclim,squeeze(data_T)',squeeze(data_0)','ylims','ylims_diff',var_str_save);
 
-                    fdir_fig_loc=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
-                    mkdir_check(fdir_fig_loc,fid_log,1,0);
-                    runid=simdef(1).file.runid;
-                    fname_noext=fig_name_all(fdir_fig_loc,tag,runid,var_str_save,branch_name,tag_ref,kclim);
+            for ksim=1:nsim
 
-                    in_p.fname=fname_noext;
-                    fig_surf(in_p)
-                end %kclim
-            end %kdiff
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
+                mkdir_check(fdir_fig_loc,fid_log,1,0);
+                runid=simdef(ksim).file.runid;
+
+                %% regular
+                if flg_loc.do_xtv
+                    tag_ref='val';
+                    in_p.val=squeeze(data_T(:,ksim,:))';
+                    in_p.is_diff=0;
+
+                    fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
+                end
+                    
+                %% difference time
+                if flg_loc.do_xtv_diff_t
+                    tag_ref='diff_t';
+                    in_p.val=squeeze(data_T(:,ksim,:)-data_T(:,ksim,1))';
+                    in_p.is_diff=1;
+
+                    fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
+                end
+
+                %% difference with reference
+                if flg_loc.do_xtv_diff_s && ksim~=kref
+                    tag_ref='diff_s';
+                    in_p.val=squeeze(data_T(:,ksim,:)-data_T(:,kref,:))';
+                    in_p.is_diff=1;
+
+                    fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
+                end
+
+            end %ksim
+
         end %do_xtv
         
         %% all times in same figure xvt
@@ -373,9 +385,9 @@ end %function
 
 %%
 
-function fpath_fig=fig_name_all(fdir_fig,tag,runid,var_str,branch_name,str_dir,kclim)
+function fpath_fig=fig_name_all(fdir_fig,tag,runid,var_str,branch_name,str_dir,kclim,kxlim)
                 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_clim_%d',tag,runid,var_str,branch_name,str_dir,kclim));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_allt_%s_%s_%s_clim_%d_xlim_%d',tag,runid,var_str,branch_name,str_dir,kclim,kxlim));
 
 end %function
 
@@ -393,6 +405,8 @@ for kylim=1:nylim
     for kxlim=1:nxlim
         fname_noext=fig_name(flg_loc,fdir_fig_loc,tag,runid,time_dnum,var_str_save,branch_name,str_dir,kxlim,kylim);
         
+        in_p.xlims=xlims(kxlim,:);
+        in_p.ylims=ylims(kylim,:);
         in_p.fname=fname_noext;
 
         fig_1D_01(in_p);
@@ -417,3 +431,25 @@ if isfield(flg_loc,'measurements') && ~isempty(flg_loc.measurements)
 end
 
 end %function
+
+%%
+
+function fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name)
+    
+nclim=size(lims,1);
+nxlim=size(xlims,1);
+for kclim=1:nclim
+    for kxlim=1:nxlim
+
+        fname_noext=fig_name_all(fdir_fig_loc,tag,runid,var_str_save,branch_name,tag_ref,kclim,kxlim);
+
+        in_p.clims=lims(kclim,:);
+        in_p.xlims=xlims(kxlim,:);
+
+        in_p.fname=fname_noext;
+
+        fig_surf(in_p)
+    end
+end
+
+end

@@ -276,6 +276,8 @@
 % in_plot.(tag).do_diff_s_t=1; %difference reference simulation and initial time
 % in_plot.(tag).do_diff_s_perc=1; %difference reference simulation in percentage terms
 % in_plot.(tag).do_xtv=1; %
+% in_plot.(tag).do_xtv_diff_t=1; %
+% in_plot.(tag).do_xtv_diff_s=1; %
 % in_plot.(tag).var={'h'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).branch{1,1}={'Channel_1D_1'}; %<open main_plot_layout>
 % in_plot.(tag).branch_name{1,1}='c1';

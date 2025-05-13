@@ -80,8 +80,9 @@ end
 
 %% maximum growth rate
 
-eig_i_p(abs(eig_i_p)<1e-16)=NaN;
-max_gr_p=max(eig_i_p,[],2,'omitnan');
+eig_i_p_no_zero=eig_i_p;
+eig_i_p_no_zero(abs(eig_i_p_no_zero)<1e-16)=NaN;
+max_gr_p=max(eig_i_p_no_zero,[],2,'omitnan');
 max_gr_m=reshape(max_gr_p,np1,np2);
 
 %% morphodynamic celerity
