@@ -19,7 +19,7 @@ if strcmp(ext,'.nc')
     if isfield(infonc.Attributes, 'Value')
         AttrValues = {infonc.Attributes.Value};
         for i = 1:length(AttrValues)
-            if ~isempty(findstr('cmems',lower((AttrValues{i}))))
+            if contains(lower((AttrValues{i})),'cmems','IgnoreCase', true)
                 TF = true;
                 break
             end
