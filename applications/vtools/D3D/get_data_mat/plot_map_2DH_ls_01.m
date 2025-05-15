@@ -124,8 +124,10 @@ for kpli=1:npli %variable
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=1;
                 for kS=1:nS
-%                     data_loc=reshape(data_all(kt,:,kS),[],1);
-                    data_loc=reshape(data_all{kS}(kt,:),[],1);
+                    data_loc=data_all{kS}(kt,:,:);
+                    if flg_loc.what_is==2
+                        data_loc=reshape(data_loc,[],1);
+                    end
                     tag_fig=tag;
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
@@ -143,7 +145,7 @@ for kpli=1:npli %variable
             end
 
             %% plot all simulations and single time (if line plot)
-            if flg_loc.do_all_s
+            if flg_loc.do_all_s && flg_loc.what_is==2
                 flg_loc.plot_type=2;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=2;
@@ -175,8 +177,10 @@ for kpli=1:npli %variable
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=3;
                 for kS=1:nS
-%                     data_loc=reshape(squeeze(data_all(kt,:,kS)-data_all(1,:,kS)),[],1);
-                    data_loc=reshape(squeeze(data_all{kS}(kt,:)-data_all{kS}(1,:)),[],1);
+                    data_loc=data_all{kS}(kt,:,:)-data_all{kS}(1,:,:);
+                    if flg_loc.what_is==2
+                        data_loc=reshape(squeeze(data_loc),[],1);
+                    end
                     tag_fig=sprintf('%s_diff_t',tag);
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
@@ -222,7 +226,7 @@ for kpli=1:npli %variable
             end
     
             %% plot all simulations together, difference in time
-            if flg_loc.do_all_s_diff_t
+            if flg_loc.do_all_s_diff_t && flg_loc.what_is==2
                 flg_loc.plot_type=2;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=5;
@@ -530,7 +534,7 @@ for kS=1:nS
     data=filter_1d_data(flg_loc,data);
 
     %save data for plotting all times togehter. Better not to do it if you don't need it for memory reasons.
-    data_all{kS}(kt,:)=data.(str_val);
+    data_all{kS}(kt,:,:)=data.(str_val); %needs to be 3D because for a patch plot data is 2D (and first dimension is time). 
 
     %we are loading the x data for all times. It is not ideal. The problem with taking it out of here is that the
     %data may be filtered. Maybe the best is a flag?
