@@ -634,7 +634,7 @@ switch lower(variable)
                 str_var='computado';
          end
          un_type='-';
-    case {'dg','mesh2d_dg','dg_la'}
+    case {'dg','mesh2d_dg','dg_la','mesh1d_dg'}
          switch lan
             case 'en'
                 str_var='geometric mean grain size';
@@ -644,7 +644,7 @@ switch lower(variable)
                 str_var='media geométrica del tamaño de grano';
          end
          un_type='L';
-    case {'dm','mesh2d_dm'}
+    case {'dm','mesh2d_dm','mesh1d_dm'}
          switch lan
             case 'en'
                 str_var='arithmetic mean grain size';
