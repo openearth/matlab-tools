@@ -74,6 +74,7 @@ while a ~= -1
         end
     else  % count > 1;
         %a = strrep(a,'1000', '>1000'); %ad hoc
+        %a = strrep(a,'NaN', ' - '); %ad hoc
         s = strsplit(a,',');
         fprintf(fid_tex, '%s', '                  ');
         for k = 1:length(s)-1;
