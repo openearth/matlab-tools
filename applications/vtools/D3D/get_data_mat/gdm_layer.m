@@ -33,7 +33,7 @@ layer=gdm_layer_needed(layer,var_str);
 
 %add the layer if necessary. 
 switch varname_original
-    case {'La','Fak'} %referring to only active layer (do not add `lyrfrac` or similar, as these are for all layers).
+    case {'La','Fak','Fs'} %referring to only active layer (do not add `lyrfrac` or similar, as these are for all layers).
         layer=1;
 end
 

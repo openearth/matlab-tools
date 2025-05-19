@@ -79,6 +79,7 @@ function D3D_list_of_variables
 %       'd10'   = d10 at the bed surface [m]
 
 %	8   'Fak'   = volume fraction content in the active layer (Fak) [-]
+%	    'Fas'    = volume fraction content of sand in active layer [-]
 %	40          = volume fraction content per layer (including active layer) [-]
 
 %   14  'La'    = active layer thickness [m]

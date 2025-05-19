@@ -77,11 +77,13 @@ messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 for kt=kt_v
     ktc=ktc+1;
     for kvar=1:nvar %variable
-        [var_str_read,var_id]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
+        var_str_original=flg_loc.var{kvar};
+        [varname_save_mat,var_id]=D3D_var_num2str_structure(var_str_original,simdef);
         
-        layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
+        layer=gdm_layer(flg_loc,gridInfo.no_layers,varname_save_mat,kvar,var_str_original); %we use <layer> for flow and sediment layers
+        [var_idx,sum_var_idx]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
 
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'var_idx',flg_loc.var_idx{kvar},'layer',layer);
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',varname_save_mat,'var_idx',var_idx,'layer',layer);
         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
 
         do_read=1;
@@ -95,7 +97,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'layer',layer,'tol',flg_loc.tol,'sum_var_idx',flg_loc.sum_var_idx(kvar),'sediment_transport',flg_loc.sediment_transport(kvar));      
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx,'layer',layer,'tol',flg_loc.tol,'sum_var_idx',sum_var_idx,'sediment_transport',flg_loc.sediment_transport(kvar));      
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end
@@ -112,7 +114,7 @@ for kt=kt_v
         
         %% velocity
         if flg_loc.do_vector(kvar)
-            gdm_read_data_map_simdef(fdir_mat,simdef,'uv','tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',flg_loc.var_idx{kvar},'do_load',0);            
+            gdm_read_data_map_simdef(fdir_mat,simdef,'uv','tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx,'do_load',0);            
         end
         
         %% disp

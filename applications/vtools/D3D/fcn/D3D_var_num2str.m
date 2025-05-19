@@ -25,8 +25,9 @@
 %   -varname_save_mat = name of the variable for saving the mat-file associated to variables varname_input [char]
 %   -varname_read_variable = name of the variable for calling the function that will read varname_input [char]
 %   -varname_load_mat = name of the variable for loading the mat-file associated to variables varname_input [char]
+%   -unit = name of the variable for using in plot (`labels4all`) [char]
 
-function [varname_save_mat,varname_read_variable,varname_load_mat]=D3D_var_num2str(varname_input,varargin)
+function [varname_save_mat,varname_read_variable,varname_load_mat,unit]=D3D_var_num2str(varname_input,varargin)
 
 %%
 
@@ -58,6 +59,7 @@ if ischar(varname_input)
             varname_save_mat='mesh2d_mor_bl';
             varname_load_mat=varname_input;
             varname_read_variable=varname_save_mat;
+            unit=varname_load_mat;
         case {'bl','mesh2d_mor_bl'}
             if is1d
                 if ismor
@@ -92,6 +94,7 @@ if ischar(varname_input)
             end
             varname_save_mat='bl';
             varname_load_mat=varname_save_mat;
+            unit=varname_load_mat;
         case {'h','wd','waterdepth'}
             if is1d==1
                 varname_read_variable='mesh1d_waterdepth';
@@ -125,6 +128,7 @@ if ischar(varname_input)
             end
             varname_save_mat='h';
             varname_load_mat=varname_save_mat;
+            unit=varname_load_mat;
         case {'umag','mesh2d_ucmag','mesh2d_ucmaga','mesh1d_ucmag'} %depth-averaged for 1D, 2D, and 3D
             %in 3D, `ucmag` is per layer and `ucmaga` is depth averaged.
             %There is a special function for reading depth-averaged velocity. Hence, here
@@ -132,6 +136,7 @@ if ischar(varname_input)
             %dealt in that function. 
             varname_save_mat='umag';
             varname_load_mat=varname_save_mat;
+            unit=varname_load_mat;
         case 'umag_layer' %depth_averaged for 1D and 2D, but per layer in 3D
             %in 3D, `ucmag` is per layer and `ucmaga` is depth averaged.
             if is1d
@@ -141,6 +146,7 @@ if ischar(varname_input)
             end
             varname_save_mat='umag_layer'; %I think we can use the same name, because we will always add a layer to the input. Although it can be dangerous.
             varname_load_mat=varname_save_mat;
+            unit=varname_load_mat;
         case 'wl'
             switch res_type
                 case 'map'
@@ -155,6 +161,7 @@ if ischar(varname_input)
             end
             varname_save_mat='wl';
             varname_load_mat=varname_save_mat;
+            unit=varname_load_mat;
         case {'mesh2d_umod','mesh1d_umod','umod'}
             if is1d
                 varname_read_variable='mesh1d_umod';
@@ -163,6 +170,7 @@ if ischar(varname_input)
             end
             varname_save_mat='umod';
             varname_load_mat=varname_save_mat;
+            unit=varname_load_mat;
         case {'mesh2d_dg','mesh1d_dg','dg'}
             if is1d
                 varname_read_variable='mesh1d_dg';
@@ -176,6 +184,7 @@ if ischar(varname_input)
             end
             varname_save_mat='dg';
             varname_load_mat=varname_save_mat;
+            unit=varname_load_mat;
         case {'mesh2d_czs','mesh1d_czs','czs'}
             if is1d
                 varname_read_variable='mesh1d_czs';
@@ -184,6 +193,7 @@ if ischar(varname_input)
             end
             varname_save_mat='czs';
             varname_load_mat=varname_save_mat;
+            unit=varname_load_mat;
         case {'mesh2d_thlyr','mesh1d_thlyr','thlyr','La'}
             if is1d
                 varname_read_variable='mesh1d_thlyr';
@@ -197,7 +207,8 @@ if ischar(varname_input)
             end
             varname_save_mat='thlyr';
             varname_load_mat=varname_save_mat;
-        case {'Fak','lyrfrac','mesh2d_lyrfrac','mesh1d_lyrfrac'}
+            unit=varname_load_mat;
+        case {'Fak','lyrfrac','mesh2d_lyrfrac','mesh1d_lyrfrac','Fs'}
             if is1d
                 varname_read_variable='mesh1d_lyrfrac';
             else
@@ -210,6 +221,12 @@ if ischar(varname_input)
             end
             varname_save_mat='lyrfrac';
             varname_load_mat=varname_save_mat;
+            switch varname_input
+                case 'Fs'
+                    unit=varname_input;
+                otherwise
+                    unit=varname_load_mat;
+            end
         case {'ba','mesh2d_flowelem_ba'}
             if is1d
                 error('no idea')
@@ -219,6 +236,7 @@ if ischar(varname_input)
             end
             varname_save_mat='ba';
             varname_load_mat='ba';
+            unit=varname_load_mat;
         case {'cross_section_discharge'}
             switch structure
                 case 3
@@ -226,28 +244,34 @@ if ischar(varname_input)
             end
             varname_save_mat='cross_section_discharge';
             varname_load_mat='cross_section_discharge';
+            unit=varname_load_mat;
         case {'duneheight'}
             varname_read_variable='mesh2d_duneheight';
             varname_save_mat='duneheight';
             varname_load_mat='duneheight';
+            unit=varname_load_mat;
         case {'dunelength'}
             varname_read_variable='mesh2d_dunelength';
             varname_save_mat='dunelength';
             varname_load_mat='dunelength';
+            unit=varname_load_mat;
         case {'mesh2d_taus','taub'}
             varname_read_variable='mesh2d_taus';
             varname_save_mat='taub';
             varname_load_mat='taub';
+            unit=varname_load_mat;
         case {'waveheight','mesh2d_hwav'}
             varname_read_variable='mesh2d_hwav';
             varname_save_mat='waveheight';
             varname_load_mat='waveheight';
+            unit=varname_load_mat;
         otherwise
 
     end
 else
     varname_save_mat=fcn_num2str(varname_read_variable);
     varname_load_mat=varname_save_mat;
+    unit=varname_load_mat;
 end
 
 end %function

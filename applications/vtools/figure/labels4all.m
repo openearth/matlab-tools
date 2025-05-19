@@ -765,14 +765,35 @@ switch lower(variable)
                     case 'en'
                         str_var='volume fraction content';
                     case 'nl'
-                        error('do')
-        %                 str_var='active laag';
+                        str_var='volumefractiegehalte';
                     case 'es'
                         error('do')
         %                 str_var='capa activa';
                  end         
         end
         un_type='-';
+    case 'fs'
+         switch lan
+            case 'en'
+                str_var='volume fraction content of sand';
+            case 'nl'
+                str_var='volumefractiegehalte van zand';
+            case 'es'
+                error('do')
+%                 str_var='capa activa';
+         end
+         un_type='-';
+    case 'fs_t'
+         switch lan
+            case 'en'
+                str_var='volume fraction content of sand per time';
+            case 'nl'
+                str_var='volumefractiegehalte van zand in tijd';
+            case 'es'
+                error('do')
+%                 str_var='capa activa';
+         end
+         un_type='T';
     case 'fak'
          switch lan
             case 'en'

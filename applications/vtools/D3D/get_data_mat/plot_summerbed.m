@@ -66,7 +66,7 @@ for ksb=1:nsb %summerbed polygons
 
     [sb_pol,sb_def,str_save_sb_pol,npol]=read_summerbed_polygon_all(fid_log,flg_loc,fdir_mat,fpath_map,ksb);    
 
-   do_save_xvt=(flg_loc.do_xvt || flg_loc.do_tv) && npol==1;
+    do_save_xvt=(flg_loc.do_xvt || flg_loc.do_tv) && npol==1;
 
     %% LOOP ON RKM POLYGONS
     for krkmv=1:nrkmv %rkm polygons
@@ -86,12 +86,17 @@ for ksb=1:nsb %summerbed polygons
         %% LOOP ON VARIABLES
         for kvar=1:nvar %variable
             
-            var_idx=flg_loc.var_idx{kvar};
+            var_str_original=flg_loc.var{kvar};
+            
+            %ATTENTION!!! The same `var_idx` is used for all simulations
+            %while it could change if the fractions which are sand change
+            %depending on the simulation.
+            [var_idx,~]=gdm_var_idx(simdef(1),flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
 
             in_p.frac=var_idx;
             in_p.do_area=flg_loc.do_area(kvar);
 
-            [var_str_read,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
+            [var_str_read,~,var_str_save,unit]=D3D_var_num2str_structure(var_str_original,simdef(1));
                        
             %time 0 of all simulations (their time 0, it can be different
             %than the time 0 of the reference simulation).
@@ -144,7 +149,7 @@ for ksb=1:nsb %summerbed polygons
                         end
                     end
                     
-                    [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,var_str_save,statis);
+                    [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,unit,statis);
                     
                     %measurements          
                     [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,time_plot_loc,var_str_save,ksb,statis);
@@ -361,7 +366,7 @@ for ksb=1:nsb %summerbed polygons
             multi_dim=check_multi_dimensional(data_0(kref));
 
             if flg_loc.do_xvt && ~multi_dim && npol==1 %skip if multidimentional or if there is more than 1 polygon
-               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,str_save_sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s)
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,str_save_sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,unit)
             end
             
             %% cumulative
@@ -531,9 +536,11 @@ end %function
 
 function data=load_data(flg_loc,gridInfo,simdef,time_dnum_kt,var_str_read,var_str_save,tag,pol_name,sb_pol,kvar)
 
-layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
+var_str_original=flg_loc.var{kvar};
+layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,var_str_original); 
 fdir_mat=simdef.file.mat.dir;
-fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,flg_loc.var_idx{kvar},layer); %flow time for filename
+[var_idx,~]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
+fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,var_idx,layer); %flow time for filename
 load(fpath_mat_tmp,'data');            
 
 end %function
@@ -638,7 +645,7 @@ end
 
 %%
 
-function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s)
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,unit)
 
 %% PARSE
 
@@ -699,7 +706,7 @@ for ksim=1:nsim
         val_kref_t=squeeze(data_xvt.(statis)(:,kref,:))';
         val_kref_0=squeeze(data_xvt0.(statis)(:,kref,:))';
 
-        [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,var_str_save,statis);
+        [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,unit,statis);
         in_p.clab_str=in_p.lab_str;
 
         %val

@@ -98,7 +98,7 @@ if isfield(in_p,'cmap')==0
     in_p.cmap=[]; %default
 end
 if isfield(in_p,'str_idx')==0
-    in_p.str_idx=1; 
+    in_p.str_idx=NaN; 
 end
 if isfield(in_p,'vector_color')==0
     in_p.vector_color='w'; 

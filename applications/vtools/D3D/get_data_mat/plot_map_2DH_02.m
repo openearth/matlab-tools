@@ -31,7 +31,6 @@ kref=flg_loc.sim_ref;
 
 %% DIMENSIONS AND RENAME
 
-var_idx=flg_loc.var_idx;
 nt=numel(time_dnum_ref);
 nvar=flg_loc.nvar;
 nsim=flg_loc.nsim;
@@ -67,12 +66,11 @@ kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 %% loop on variable
 
 for kvar=1:nvar %variable
-    varname=flg_loc.var{kvar};
-    var_str=D3D_var_num2str_structure(varname,simdef(1));
+    var_str_original=flg_loc.var{kvar};
+    [~,~,varname_load_mat,in_p.unit]=D3D_var_num2str_structure(var_str_original,simdef(1));
     
-    in_p.unit=var_str;
-    
-    layer=gdm_layer(flg_loc,gridInfo_ref.no_layers,var_str,kvar,flg_loc.var{kvar});
+    layer=gdm_layer(flg_loc,gridInfo_ref.no_layers,varname_load_mat,kvar,flg_loc.var{kvar});
+    [var_idx,~]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
 
     %time 0 of reference 
     kt=1;
@@ -80,13 +78,13 @@ for kvar=1:nvar %variable
     %although it is reference, we load it to skip the plot 
     %if the size is not right
     fdir_mat=simdef(kref).file.mat.dir;
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum_ref(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum_ref(kt),'var',varname_load_mat,'var_idx',var_idx,'layer',layer);
     data_ref_t0=load(fpath_mat_tmp,'data');
     val_ref_t0=data_ref_t0.data;
 
     %skip if not the right size
     if any(simdef(kref).D3D.structure==[2,4]) && sum(size(val_ref_t0)==1)==0 || size(val_ref_t0,3)>1 %in D3D4 2D data has matrix form
-        messageOut(fid_log,sprintf('Cannot plot variable with more than 1 dimension: %s',var_str))
+        messageOut(fid_log,sprintf('Cannot plot variable with more than 1 dimension: %s',varname_load_mat))
         continue
     end
 
@@ -118,7 +116,7 @@ for kvar=1:nvar %variable
         val_ref=val_ref_t0; %we pass `val_ref_t0` just to create a NaN of the right size if time is not found. 
 
         fdir_mat=simdef(ksim).file.mat.dir;
-        [~,val_loc_t0,~]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref,layer,var_idx{kvar});
+        [~,val_loc_t0,~]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
 
         ktc=0;
 
@@ -134,14 +132,14 @@ for kvar=1:nvar %variable
             
             %local simulation at local time
             fdir_mat=simdef(ksim).file.mat.dir;
-            [~,val_loc_tt,~]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref,layer,var_idx{kvar});
+            [~,val_loc_tt,~]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
     
             %reference
             %Time loops on the reference time, hence there is no need to check
             %that it is the correct time. It is also not necessary to interpolate.
             if flg_loc.do_ref
                 fdir_mat=simdef(kref).file.mat.dir;
-                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum_ref(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
+                fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum_ref(kt),'var',varname_load_mat,'var_idx',var_idx,'layer',layer);
                 data_ref_tt=load(fpath_mat_tmp,'data');
                 val_ref_tt=data_ref_tt.data;
             end
@@ -150,7 +148,7 @@ for kvar=1:nvar %variable
             %2DO: Should we also plot the vector difference? How to deal with different grids?
             in_p.plot_vector=0;
             if flg_loc.do_vector(kvar)
-                [vec_x,vec_y]=load_velocity_vector(simdef(ksim),time_dnum_loc(kt),var_idx{kvar});
+                [vec_x,vec_y]=load_velocity_vector(simdef(ksim),time_dnum_loc(kt),var_idx);
                 in_p.vec_x=vec_x;
                 in_p.vec_y=vec_y;
                 in_p.plot_vector=1;
@@ -172,7 +170,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
     
@@ -189,7 +187,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
     
@@ -206,7 +204,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
     
@@ -223,7 +221,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
     
@@ -244,7 +242,7 @@ for kvar=1:nvar %variable
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
-                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,var_str,var_idx{kvar},fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
+                [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
             end
             
@@ -380,13 +378,15 @@ nclim=size(clims,1);
 
 in_p.filter_lim=flg_loc.filter_lim.(clims_str);
 
+str_var_idx=fcn_str_var_idx(var_idx_loc);
+
 if flg_loc.do_2D
-    fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx_loc),tag_ref);
+    fdir_fig_var=fullfile(fdir_fig,var_str,str_var_idx,tag_ref);
     mkdir_check(fdir_fig_var,NaN,1,0);
 end
 
 if flg_loc.do_3D
-    fdir_fig_var=fullfile(fdir_fig,var_str,num2str(var_idx_loc),sprintf('%s_3D',tag_ref));
+    fdir_fig_var=fullfile(fdir_fig,var_str,str_var_idx,sprintf('%s_3D',tag_ref));
     mkdir_check(fdir_fig_var,NaN,1,0);
     Zcor=cen2cor_2D(in_p.gridInfo.Xcen,in_p.gridInfo.Ycen,in_p.gridInfo.Xcor,in_p.gridInfo.Ycor,in_p.val);
     %in_p.gridInfo.Zcen=in_p.val;  %if this is passed, the plot is with tiles. This is more correct, but not pleasent to the eye.
@@ -404,7 +404,7 @@ for kclim=1:nclim
 
         %2D
         if flg_loc.do_2D
-            fname_noext=fig_name(fdir_fig_var,tag_fig,time_dnum_loc,runid,kclim,var_str,tag_ref,num2str(var_idx_loc),kxlim);
+            fname_noext=fig_name(fdir_fig_var,tag_fig,time_dnum_loc,runid,kclim,var_str,tag_ref,str_var_idx,kxlim);
             fpath_file_2D{kclim,kxlim}=sprintf('%s%s',fname_noext,flg_loc.fext); %for movie 
     
             in_p.fname=fname_noext;
@@ -415,7 +415,7 @@ for kclim=1:nclim
 
         %3D
         if flg_loc.do_3D
-            fname_noext=fig_name(fdir_fig_var_3d,tag_fig,time_dnum_loc,runid,runid_ref,kclim,var_str,tag_ref_3D,num2str(var_idx_loc),kxlim);
+            fname_noext=fig_name(fdir_fig_var_3d,tag_fig,time_dnum_loc,runid,runid_ref,kclim,var_str,tag_ref_3D,str_var_idx,kxlim);
             fpath_file_3D{kclim,kxlim}=sprintf('%s%s',fname_noext,flg_loc.fext); %for movie 
 
             in_p.fname=fname_noext;
@@ -472,3 +472,13 @@ if strcmp(cmap_str(end),'_')
 end
 
 end %function
+
+%%
+
+function str_var_idx=fcn_str_var_idx(var_idx_loc)
+
+str_var_idx=num2str(var_idx_loc);
+str_var_idx=strrep(str_var_idx,' ','_');
+str_var_idx=strrep(str_var_idx,'__','_');
+
+end

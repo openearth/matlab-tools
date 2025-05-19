@@ -70,7 +70,7 @@ end
 in_p=isfield_default(in_p,'xlims',[NaN,NaN]);
 in_p=isfield_default(in_p,'ylims',[NaN,NaN]);
 in_p=isfield_default(in_p,'do_include_mea_xylims',0);
-if in_p.do_include_mea_xylims 
+if in_p.plot_mea && in_p.do_include_mea_xylims 
     [in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,{in_p.s,in_p.s_mea},{squeeze(in_p.val),squeeze(in_p.val_mea)}); %`val` can be a [np,1,nv] matrix and it is valid. 
 else
     [in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.s,squeeze(in_p.val)); %`val` can be a [np,1,nv] matrix and it is valid. 
