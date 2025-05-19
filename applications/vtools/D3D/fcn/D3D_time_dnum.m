@@ -190,7 +190,7 @@ if ntt==0
 end
 
 %We request an index, and the number of times is smaller than the index.
-if tim_type==3 && ntt<in_dtime
+if tim_type==3 && ntt<in_dtime(end)
     new_all_time_needed=true;
     return    
 end
