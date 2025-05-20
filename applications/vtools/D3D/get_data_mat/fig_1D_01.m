@@ -215,17 +215,24 @@ if ~iscell(val)
         end
     end
 
-    nv=size(val,2);
-    val_cell=cell(nv,1);
-    s_cell=cell(nv,1);
-    for kv=1:nv
-        val_cell{kv,1}=val(:,kv);
-        s_cell{kv,1}=s;
-    end
-    val=val_cell;
-    s=s_cell;
+    % if ~do_area
+        nv=size(val,2);
+        val_cell=cell(nv,1);
+        s_cell=cell(nv,1);
+        for kv=1:nv
+            val_cell{kv,1}=val(:,kv);
+            s_cell{kv,1}=s;
+        end
+        % val=val_cell;
+        % s=s_cell;
+        % nv=numel(val); 
+    % else
+        % nv=size(val,2);
+    % end
 end
 
+s=s_cell;
+val=val_cell;
 nv=numel(val); 
 
 %% SIZE
@@ -447,7 +454,7 @@ end
 if ~isdatetime(s)
     xlabels{kr,kc}='';
 else
-    xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);xlabels{kr,kc}='';
+    xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);
 end
 if isempty(ylab)
     if numel(frac)>1
@@ -529,11 +536,16 @@ end
 
 kr=1; kc=1;  
 if do_area
-%     han_aux=area(s,val,'parent',han.sfig(kr,kc));
+    % han.p(kr,kc,:)=area(s,val,'parent',han.sfig(kr,kc));
+    han.p(kr,kc,:)=area(s{1},val{1},'parent',han.sfig(kr,kc));
     for kv=1:nv
-        han.p(kr,kc,kv)=area(s{kv},val{kv},'parent',han.sfig(kr,kc));
         han.p(kr,kc,kv).FaceColor=cmap(kv,:);
     end
+    %This does not make sense. If area, it needs to be cumulative.
+    % for kv=1:nv
+        % han.p(kr,kc,kv)=area(s{kv},val{kv},'parent',han.sfig(kr,kc));
+        % han.p(kr,kc,kv).FaceColor=cmap(kv,:);
+    % end
 else
     for kv=1:nv
         if do_staircase
@@ -543,7 +555,7 @@ else
         end
     end
 end
-if isfield(in_p,'leg_str')
+if isfield(in_p,'leg_str') && ~do_area
     str_sim=leg_str;
 else
     if nv==1
@@ -575,6 +587,7 @@ if plot_mea
         end
     end
 else
+
     str_leg=str_sim;
 end
 if plot_val0

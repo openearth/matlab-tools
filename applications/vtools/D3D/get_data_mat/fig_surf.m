@@ -51,11 +51,11 @@ do_auto=do_auto_limit(in_p,'ylims');
 if do_auto
     in_p.ylims=[min(in_p.y_m(:)),max(in_p.y_m(:))];
 end
-do_auto=do_auto_limit(in_p,'clims');
-if do_auto
-    in_p.clims=[min(in_p.val(:)),max(in_p.val(:))];
-end
-in_p.clims=in_p.clims+[-1,1].*abs(mean(in_p.clims)/1000)+10.*[-eps,eps];
+% do_auto=do_auto_limit(in_p,'clims');
+% if do_auto
+    % in_p.clims=[min(in_p.val(:)),max(in_p.val(:))];
+% end
+% in_p.clims=in_p.clims+[-1,1].*abs(mean(in_p.clims)/1000)+10.*[-eps,eps];
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
@@ -72,9 +72,6 @@ end
 in_p.plot_all_struct=0;
 if isfield(in_p,'all_struct')
     in_p.plot_all_struct=1;
-end
-if isfield(in_p,'is_diff')==0
-    in_p.is_diff=0;
 end
 in_p.plot_val0=0;
 if isfield(in_p,'val0')
@@ -127,7 +124,7 @@ end
 if isfield(in_p,'frac')==0
     in_p.frac=1;
 end
-in_p=isfield_default(in_p,'cmap',jet(100));
+in_p=isfield_default(in_p,'lab_str','');
 
 v2struct(in_p)
 
@@ -192,16 +189,9 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_background,str_std]=labels4all(clab_str,1,lan,'frac',frac);
-if is_diff
-    cbar(kr,kc).label=str_diff;
-elseif is_std
-    cbar(kr,kc).label=str_std;
-else
-    cbar(kr,kc).label=lab;
-end
 
-
+in_p.variable=lab_str;
+[cmap,cbar(kr,kc).label,clims]=gdm_cmap_and_string(in_p,val);
 
 %center around 0
 % ncmap=1000;

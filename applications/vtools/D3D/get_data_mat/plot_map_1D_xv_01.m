@@ -331,6 +331,7 @@ for kbr=1:nbr %branches
                 if flg_loc.do_xtv
                     tag_ref='val';
                     in_p.val=squeeze(data_T(:,ksim,:))';
+                    in_p=reset_is(in_p);
                     in_p.is_diff=0;
 
                     fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
@@ -340,7 +341,8 @@ for kbr=1:nbr %branches
                 if flg_loc.do_xtv_diff_t
                     tag_ref='diff_t';
                     in_p.val=squeeze(data_T(:,ksim,:)-data_T(:,ksim,1))';
-                    in_p.is_diff=1;
+                    in_p=reset_is(in_p);
+                    in_p.is_diff_t=1;
 
                     fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
                 end
@@ -349,7 +351,8 @@ for kbr=1:nbr %branches
                 if flg_loc.do_xtv_diff_s && ksim~=kref
                     tag_ref='diff_s';
                     in_p.val=squeeze(data_T(:,ksim,:)-data_T(:,kref,:))';
-                    in_p.is_diff=1;
+                    in_p=reset_is(in_p);
+                    in_p.is_diff_s=1;
 
                     fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
                 end
@@ -452,4 +455,14 @@ for kclim=1:nclim
     end
 end
 
-end
+end %function
+
+%%
+
+function in_p=reset_is(in_p)
+
+in_p.is_diff=0;
+in_p.is_diff_t=0;
+in_p.is_diff_s=0;
+
+end %function

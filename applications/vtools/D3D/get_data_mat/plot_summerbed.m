@@ -684,7 +684,9 @@ in_p.xlab_un=1/1000;
 in_p.frac=var_idx;
 
 in_p.tim=datenum(tim_dtime_p);
-nxlim=size(flg_loc.xlims,1);
+in_p.unit=1; %this is the unit for converting variable in `labels4all`
+
+xlims=flg_loc.xlims;
 
 for ksim=1:nsim
 
@@ -710,137 +712,57 @@ for ksim=1:nsim
         in_p.clab_str=in_p.lab_str;
 
         %val
-        val=val_ks_t;
-        in_p.is_diff=0;
-        tag_ref='val';
-        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
-        mkdir_check(fdir_fig_loc,NaN,1,0);
-
-        nclim=size(lims,1);
-        for kclim=1:nclim
-            for kxlim=1:nxlim
-                in_p.xlims=flg_loc.xlims(kxlim,:);
-
-                in_p.val=val;
-                in_p.ylims=NaN;
-                in_p.clims=lims(kclim,:); 
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx,'xtv',kxlim);
-                in_p.fname=fname_noext;
-    
-                fig_surf(in_p)
-    
-                in_p.clims=[NaN,NaN]; 
-                in_p.ylims=lims(kclim,:); 
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx,'xvt',kxlim);
-                in_p.fname=fname_noext;
-                in_p.s=s;
-                in_p.val=val';
-                in_p.do_time=1;
-    
-                fig_1D_01(in_p)
-            end
-        end %kclim
+        if flg_loc.do_xvt_single
+            val=val_ks_t;
+            in_p=reset_in_p(in_p);
+            in_p.is_diff=0;
+            tag_ref='val';
+            fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+            mkdir_check(fdir_fig_loc,NaN,1,0);
+           
+            fnc_plot_xtv_xvt(in_p,xlims,lims,val,s,fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,var_idx);
+        end
 
         %diff_t
-        val=val_ks_t-val_ks_0;
-        in_p.ylims=NaN;
-        in_p.is_diff=1;
-        tag_ref='diff_t';
-        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
-        mkdir_check(fdir_fig_loc,NaN,1,0);
-
-        nclim=size(lims_diff_t,1);
-        for kclim=1:nclim
-            for kxlim=1:nxlim
-                in_p.xlims=flg_loc.xlims(kxlim,:);
-
-                in_p.val=val;
-                in_p.ylims=NaN;
-                in_p.clims=lims_diff_t(kclim,:); 
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,2,kclim,var_idx,'xtv',kxlim);
-                in_p.fname=fname_noext;
-                
-                fig_surf(in_p)
+        if flg_loc.do_xvt_diff_t
+            val=val_ks_t-val_ks_0;
+            in_p.ylims=NaN;
+            in_p=reset_in_p(in_p);
+            in_p.is_diff_t=1;
+            tag_ref='diff_t';
+            fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+            mkdir_check(fdir_fig_loc,NaN,1,0);
     
-                in_p.clims=[NaN,NaN]; 
-                in_p.ylims=lims_diff_t(kclim,:); 
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx,'xvt',kxlim);
-                in_p.fname=fname_noext;
-                in_p.s=s;
-                in_p.val=val';
-                in_p.do_time=1;
-    
-                fig_1D_01(in_p)
-            end
-        end %kclim
+            fnc_plot_xtv_xvt(in_p,xlims,lims_diff_t,val,s,fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,var_idx);
+        end
 
         %diff_s
-        val=val_ks_t-val_kref_t;
-        in_p.ylims=NaN;
-        in_p.is_diff=1;
-        tag_ref='diff_s';
-        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
-        mkdir_check(fdir_fig_loc,NaN,1,0);
-
-        nclim=size(lims_diff_s,1);
-        for kclim=1:nclim
-            for kxlim=1:nxlim
-                in_p.xlims=flg_loc.xlims(kxlim,:);
-
-                in_p.val=val;
-                in_p.ylims=NaN;
-                in_p.clims=lims_diff_s(kclim,:); 
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,3,kclim,var_idx,'xtv',kxlim);
-                in_p.fname=fname_noext;
-                
-                fig_surf(in_p)
+        if flg_loc.do_xvt_diff_s
+            val=val_ks_t-val_kref_t;
+            in_p.ylims=NaN;
+            in_p=reset_in_p(in_p);
+            in_p.is_diff_s=1;
+            tag_ref='diff_s';
+            fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+            mkdir_check(fdir_fig_loc,NaN,1,0);
     
-                in_p.clims=[NaN,NaN]; 
-                in_p.ylims=lims_diff_s(kclim,:); 
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,1,kclim,var_idx,'xvt',kxlim);
-                in_p.fname=fname_noext;
-                in_p.s=s;
-                in_p.val=val';
-                in_p.do_time=1;
-    
-                fig_1D_01(in_p)
-            end
-        end %kclim
+            fnc_plot_xtv_xvt(in_p,xlims,lims_diff_s,val,s,fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,var_idx);
+        end
 
         %cel
-        in_p.lab_str=strcat(in_p.lab_str,'_t'); %DANGEROUS! maybe better to set it in all figures
-        
-        val=cat(1,zeros(1,size(val_ks_t,2)),diff(val_ks_t,1,1))./[0;seconds(diff(tim_dtime_p))];
-        in_p.is_diff=0;
-        tag_ref='cel';
-        fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
-        mkdir_check(fdir_fig_loc,NaN,1,0);
-
-        % nclim=size(lims,1);
-        nclim=1; %only automatic for now
-        for kclim=1:nclim
-            for kxlim=1:nxlim
-                in_p.xlims=flg_loc.xlims(kxlim,:);
-
-                in_p.val=val;
-                in_p.ylims=NaN;
-                in_p.clims=[NaN,NaN]; 
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,strcat(var_str_save,'_t'),statis,sb_pol,1,kclim,var_idx,'xtv',kxlim);
-                in_p.fname=fname_noext;
+        if flg_loc.do_xvt_cel
+            in_p.lab_str=strcat(in_p.lab_str,'_t'); %DANGEROUS! maybe better to set it in all figures
+            
+            val=cat(1,zeros(1,size(val_ks_t,2)),diff(val_ks_t,1,1))./[0;seconds(diff(tim_dtime_p))];
+            in_p=reset_in_p(in_p);
+            in_p.is_diff=0;
+            tag_ref='cel';
+            fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
+            mkdir_check(fdir_fig_loc,NaN,1,0);
     
-                fig_surf(in_p)
-    
-                in_p.clims=[NaN,NaN]; 
-                in_p.ylims=[NaN,NaN]; 
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,strcat(var_str_save,'_t'),statis,sb_pol,1,kclim,var_idx,'xvt',kxlim);
-                in_p.fname=fname_noext;
-                in_p.s=s;
-                in_p.val=val';
-                in_p.do_time=1;
-    
-                fig_1D_01(in_p)
-            end
-        end %kclim
+            %same limits as normal variable
+            fnc_plot_xtv_xvt(in_p,xlims,lims,val,s,fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,var_idx);
+        end
 
     end %kfn
 end %kS
@@ -875,13 +797,13 @@ end %function
 
 %%
 
-function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kref,kclim,var_idx,tag_plot_type,kxlim)
+function fpath_fig=fig_name_xvt(fdir_fig,tag,runid,var_str,fn,sb_pol,kclim,var_idx,tag_plot_type,kxlim)
 
 nvi=numel(var_idx);
 svi=repmat('%02d',1,nvi);
 var_idx_s=sprintf(svi,var_idx);
 
-fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_%02d_clim_%02d_xlim_%02d',tag,runid,tag_plot_type,var_str,var_idx_s,fn,sb_pol,kref,kclim,kxlim));
+fpath_fig=fullfile(fdir_fig,sprintf('%s_%s_%s_%s_%s_%s_%s_clim_%02d_xlim_%02d',tag,runid,tag_plot_type,var_str,var_idx_s,fn,sb_pol,kclim,kxlim));
 
 end %function
 
@@ -1084,3 +1006,43 @@ if any(bol_tv(:))
 end %any(bol_tv) 
 
 end %function
+
+%% 
+
+function fnc_plot_xtv_xvt(in_p,xlims,lims,val,s,fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,var_idx)
+
+nxlim=size(xlims,1);
+nclim=size(lims,1);
+for kclim=1:nclim
+    for kxlim=1:nxlim
+        in_p.xlims=xlims(kxlim,:);
+
+        in_p.val=val;
+        in_p.ylims=NaN;
+        in_p.clims=lims(kclim,:); 
+        fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kclim,var_idx,'xtv',kxlim);
+        in_p.fname=fname_noext;
+
+        fig_surf(in_p)
+
+        in_p.clims=[NaN,NaN]; 
+        in_p.ylims=lims(kclim,:); 
+        fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kclim,var_idx,'xvt',kxlim);
+        in_p.fname=fname_noext;
+        in_p.s=s;
+        in_p.val=val';
+        in_p.do_time=1;
+
+        fig_1D_01(in_p)
+    end
+end %kclim
+
+end %function
+
+%%
+
+function in_p=reset_in_p(in_p)
+in_p.is_diff=0;
+in_p.is_diff_t=0;
+in_p.is_diff_s=0;
+end

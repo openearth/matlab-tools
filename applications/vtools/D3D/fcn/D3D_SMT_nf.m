@@ -19,19 +19,6 @@ dire=dir(fdir_output);
 %structure
 structure=D3D_SMT_structure(fdir_output);
 
-ndir=numel(dire);
-for kdir=1:ndir
-    if strcmp(dire(kdir).name,'.') || strcmp(dire(kdir).name,'..'); continue; end
-    if dire(kdir).isdir==0 %in output folders of SMT there is no file
-        structure=4;
-    elseif strfind(dire(kdir).name,'min')
-        structure=5;
-    else
-        structure=4;
-    end 
-    break
-end
-
 if structure==4
     nf=length(cell2mat(regexp({dire.name}, '[0-9]+')))-1; %already the number of the files, which start at 0
 else

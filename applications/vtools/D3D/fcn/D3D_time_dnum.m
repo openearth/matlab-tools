@@ -81,6 +81,12 @@ idx_g=NaN; %not needed, but we need to output it
 %all
 if any(isnan(in_dtime))  
     %We already have what we want. 
+    time_dnum=time_dnum_all;
+    time_dtime=time_dtime_all;
+    time_mor_dnum=time_mor_dnum_all;
+    time_mor_dtime=time_mor_dtime_all;
+    sim_idx=sim_idx_all;
+    time_idx=time_idx_all;
     return
 end
 

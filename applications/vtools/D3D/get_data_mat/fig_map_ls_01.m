@@ -186,14 +186,8 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(unit,1,lan,'frac',frac);
-if is_diff
-    cbar(kr,kc).label=str_diff;
-    cmap=flipud(brewermap(100,'RdYlBu'));
-else
-    cbar(kr,kc).label=lab;
-    cmap=turbo(100);
-end
+
+[cmap,cbar(kr,kc).label]=gdm_cmap_and_string(in_p);
 
 % brewermap('demo')
 % cmap=turbo(100);
