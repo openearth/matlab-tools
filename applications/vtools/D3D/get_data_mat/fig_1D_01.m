@@ -229,10 +229,10 @@ if ~iscell(val)
     % else
         % nv=size(val,2);
     % end
+    s=s_cell;
+    val=val_cell;
 end
 
-s=s_cell;
-val=val_cell;
 nv=numel(val); 
 
 %% SIZE
