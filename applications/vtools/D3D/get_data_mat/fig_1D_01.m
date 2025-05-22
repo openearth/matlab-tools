@@ -233,6 +233,10 @@ if ~iscell(val)
     val=val_cell;
 end
 
+if ~iscell(s) || ~iscell(val)
+    error('...')
+end
+
 nv=numel(val); 
 
 %% SIZE
@@ -451,7 +455,7 @@ if do_time
 else
     lims.c(kr,kc,1:2)=NaN;
 end
-if ~isdatetime(s)
+if isdatetime(s{1})
     xlabels{kr,kc}='';
 else
     xlabels{kr,kc}=labels4all(xlab_str,xlab_un,lan);
@@ -592,7 +596,7 @@ else
 end
 if plot_val0
     nfv=numel(han.p(kr,kc,:));
-    han.p(kr,kc,nfv+1)=plot(s,val0,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle','--','marker',prop.m1,'markersize',markersize);
+    han.p(kr,kc,nfv+1)=plot(s{1},val0,'parent',han.sfig(kr,kc),'color','k','linewidth',prop.lw1,'linestyle','--','marker',prop.m1,'markersize',markersize);
     str_leg={str_leg{:},'initial'};
 end
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index

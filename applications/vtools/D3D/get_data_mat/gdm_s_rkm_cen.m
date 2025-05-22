@@ -14,8 +14,8 @@
 function [s,xlab_str,xlab_un]=gdm_s_rkm_cen(flg_loc,data)
 
 %better to have default in figure, to be able to overwrite
-    xlab_str='';
-    xlab_un=[];
+    xlab_str='dist_prof';
+    xlab_un=1;
 if flg_loc.do_rkm
     xlab_str='rkm';
     xlab_un=1/1000;

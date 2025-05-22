@@ -27,6 +27,12 @@ if cutoff
     return
 end
 
+if abs(ds_pol-dist)<1e-3
+    rkm_pol=rkm;
+    [br_l,br_num]=branch_str_num(rkm_pol,br,'ni_bo',true); %branch name (e.g., BO) for a given rkm and river branch (e.g. WA). 
+    return
+end
+
 rkm_s=rkm-dist/2/1000:ds_pol/1000:rkm+dist/2/1000-ds_pol/1000/2;
 
 ns=numel(rkm_s);

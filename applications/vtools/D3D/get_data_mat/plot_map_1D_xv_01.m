@@ -35,6 +35,7 @@ if isfield(flg_loc,'fpath_rkm')
     do_rkm=1;
 end
 
+flg_loc=isfield_default(flg_loc,'do_p',1);
 flg_loc=isfield_default(flg_loc,'do_p_single',1);
 flg_loc=isfield_default(flg_loc,'do_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_diff_s',0);

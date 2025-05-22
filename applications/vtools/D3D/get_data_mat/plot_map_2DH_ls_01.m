@@ -78,12 +78,10 @@ for kpli=1:npli %variable
 
         %time 1 of simulation 1 for reference
         %it is up to you to be sure that it is the same for all simulations!
-%         if flg_loc.do_diff || flg_loc.plot_val0 %difference in time
-            fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
-            fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(1),var_str_read,pliname,layer,var_idx);
-            data_ref=load(fpath_mat_tmp,'data');   
-            in_p.val0=data_ref.data.(flg_loc.str_val);
-%         end
+        fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
+        fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(1),var_str_read,pliname,layer,var_idx);
+        data_ref=load(fpath_mat_tmp,'data');   
+        val0=data_ref.data.(flg_loc.str_val)';
 
         %Preallocate for plotting all times/simulation together.
         %We could consider to only allocate if we actually want to plot it in this way. Otherwise, 
@@ -139,6 +137,7 @@ for kpli=1:npli %variable
                
                     in_p.data_ls.grid=gridInfo_ls{kS};
                     in_p.s=s{kS};
+                    in_p.val0=val0;
 
                     fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);     
                 end %kS
@@ -167,6 +166,7 @@ for kpli=1:npli %variable
                 in_p.plot_mea=plot_mea;
     
                 in_p.s=s;
+                in_p.val0=val0;
 
                 fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);       
             end
@@ -192,6 +192,7 @@ for kpli=1:npli %variable
 
                     in_p.data_ls.grid=gridInfo_ls{kS};
                     in_p.s=s{kS};
+                    in_p.val0=0;
 
                     fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);           
                 end %kS
@@ -203,12 +204,17 @@ for kpli=1:npli %variable
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=4;
                 for kS=1:nS
+                    %We cannot skip because then we fail when creating
+                    %movies. I have to think this more carefully. 
+                    % if kS==flg_loc.sim_ref
+                    %     continue
+                    % end
                     if flg_loc.plot_type==1
                         error('Patch plot. I have to change the gridded interpolant by a scatter interpolant if the grid is not the same.')
                     end
-                    F=griddedInterpolant(s{kS},data_all{kS}(kt,:));
+                    F=griddedInterpolant(s{kS},reshape(data_all{kS}(kt,:,:),[],1));
                     data_loc_on_ref=F(s{flg_loc.sim_ref});
-                    data_loc=reshape(data_loc_on_ref,[],1)-reshape(data_all{flg_loc.sim_ref}(kt,:),[],1);
+                    data_loc=reshape(data_loc_on_ref,[],1)-reshape(data_all{flg_loc.sim_ref}(kt,:,:),[],1);
                     tag_fig=sprintf('%s_diff_s',tag);
                     fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
@@ -220,6 +226,13 @@ for kpli=1:npli %variable
 
                     in_p.data_ls.grid=gridInfo_ls{flg_loc.sim_ref};
                     in_p.s=s{flg_loc.sim_ref};
+
+                    if flg_loc.plot_val0
+                        %This could be moved at the beginning?
+                        F=griddedInterpolant(s{kS},reshape(data_all{kS}(1,:,:),[],1));
+                        data_loc_on_ref=F(s{flg_loc.sim_ref});
+                        in_p.val0=data_loc_on_ref-val0;
+                    end
 
                     fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_s);               
                 end %kS

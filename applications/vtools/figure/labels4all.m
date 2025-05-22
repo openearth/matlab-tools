@@ -105,7 +105,7 @@
 %       -'T_da'     :
 %       -'T_max'    :
 %
-%       -'mesh2d_fixed weir energy loss': energy head, energy per unit force kg*(m/s)^2/(kg*m/s^2)=m
+%       -{'mesh2d_fixed weir energy loss','weirgen_structure_head'}: energy head, energy per unit force kg*(m/s)^2/(kg*m/s^2)=m
 %
 %       -'cel_morpho' : morphodynamic celerities
 %
@@ -1057,7 +1057,7 @@ switch lower(variable)
                 str_var='?';
          end
          un_type='L'; 
-    case 'mesh2d_fixed weir energy loss'
+    case {'mesh2d_fixed weir energy loss','weirgen_structure_head'}
         switch lan
             case 'en'
                 str_var='energy head loss';

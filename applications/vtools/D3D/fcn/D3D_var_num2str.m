@@ -49,10 +49,6 @@ res_type=parin.Results.res_type;
 
 %%
 
-varname_read_variable=varname_input;
-varname_save_mat=varname_input;
-varname_load_mat=varname_input;
-
 if ischar(varname_input)
     switch varname_input
         case 'detab_ds'
@@ -266,9 +262,13 @@ if ischar(varname_input)
             varname_load_mat='waveheight';
             unit=varname_load_mat;
         otherwise
-
+        varname_read_variable=varname_input;
+        varname_save_mat=varname_input;
+        varname_load_mat=varname_input;
+        unit=varname_load_mat;
     end
 else
+    varname_read_variable=varname_input;
     varname_save_mat=fcn_num2str(varname_read_variable);
     varname_load_mat=varname_save_mat;
     unit=varname_load_mat;

@@ -21,7 +21,7 @@ function ds=polygon_ds(varargin)
 br=varargin{1,1};
 
 switch br
-    case {'WA','IJ','WL','NI','BO','BR'}
+    case {'WA','IJ','WL','NI','BO','BR','PK'}
         ds=100; 
     case {'MA'}
         ds=250;
