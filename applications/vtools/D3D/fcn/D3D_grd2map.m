@@ -23,12 +23,16 @@ parin=inputParser;
 addOptional(parin,'fdir_work',fullfile(pwd,'tmp_grd2map'));
 addOptional(parin,'fpath_exe','c:\Program Files\Deltares\Delft3D FM Suite 2024.03 HM\plugins\DeltaShell.Dimr\kernels\x64\bin\run_dimr.bat');
 addOptional(parin,'fpath_map',fullfile(pwd,sprintf('%s_map.nc',fname_grd)));
+addOptional(parin,'circumcenter_method','internalNetlinksEdge');
+addOptional(parin,'circumcenter_tolerance',1e-3);
 
 parse(parin,varargin{:});
 
 fdir_work=parin.Results.fdir_work;
 fpath_exe=parin.Results.fpath_exe;
 fpath_map=parin.Results.fpath_map;
+cc_method=parin.Results.circumcenter_method; 
+cc_tol=parin.Results.circumcenter_tolerance;
 
 %% CALC
 
@@ -41,7 +45,7 @@ copyfile_check(fpath_grd,fpath_grd_copy,1);
 
 %create mdu file
 fpath_mdu=fullfile(fdir_work,'tmp.mdu');
-mdufile(fpath_mdu);
+mdufile(fpath_mdu,cc_method,cc_tol);
 
 %create xml file
 fpath_xml=fullfile(fdir_work,'dimr_config.xml');
@@ -66,7 +70,7 @@ end %function
 %% FUNCTIONS
 %%
 
-function mdufile(fpath_mdu)
+function mdufile(fpath_mdu,cc_method,cc_tol);
 
 fid=fopen(fpath_mdu,'w');
 
@@ -80,6 +84,9 @@ fprintf(fid,'                                                           \r\n');
 fprintf(fid,'[geometry]                                                 \r\n');
 fprintf(fid,'NetFile                           = tmp_net.nc             \r\n');  
 fprintf(fid,'Removesmalllinkstrsh              = 0                      \r\n');  %do not remove small flow links. The quality of the grid depends on you.
+fprintf(fid,'Cosphiutrsh                       = 1                      \r\n');  %do not remove small flow links. The quality of the grid depends on you.
+fprintf(fid,'circumcenterMethod                = %s \r\n', cc_method);  
+fprintf(fid,'circumcenterTolerance             = %f \r\n', cc_tol);  
 fprintf(fid,'                                                           \r\n');
 fprintf(fid,'[time]                                                     \r\n');
 fprintf(fid,'RefDate                           = 20000101               \r\n');
