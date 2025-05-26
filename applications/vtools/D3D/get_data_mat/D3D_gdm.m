@@ -216,6 +216,10 @@
 % in_plot.(tag).do_all_s=0; %all simulations in same figure
 % in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
 % in_plot.(tag).do_xvt=0; %x-axis -> x; y-axis-> variable; one line for each time
+% in_plot.(tag).do_xvt_single=0; %x-axis -> x; y-axis-> variable; one line for each time
+% in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
+% in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+% in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
 % in_plot.(tag).do_tv=1; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`
 % in_plot.(tag).do_cum=0; %cumulative value with time
 % in_plot.(tag).do_plot_structures=1; %plot bridge piles and structures: 0=NO; 1=YES

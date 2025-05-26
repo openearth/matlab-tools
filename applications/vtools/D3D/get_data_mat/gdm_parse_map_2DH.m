@@ -33,6 +33,7 @@ flg_loc=isfield_default(flg_loc,'var_idx',cell(1,numel(flg_loc.var)));
 flg_loc=isfield_default(flg_loc,'sim_ref',1);
 flg_loc=isfield_default(flg_loc,'xlims',[NaN,NaN]);
 flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
+flg_loc=isfield_default(flg_loc,'measurements','');
 
 flg_loc=isfield_default(flg_loc,'write_shp',0);
 if flg_loc.write_shp==1
