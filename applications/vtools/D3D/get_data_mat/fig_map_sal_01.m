@@ -143,7 +143,7 @@ if isfield(in_p,'marg')==0
     in_p.marg.mb=1.5; %bottom margin [cm]
     in_p.marg.mr=0.5; %right margin [cm]
     in_p.marg.ml=1.5; %left margin [cm]
-    in_p.marg.sh=1.0; %horizontal spacing [cm]
+    in_p.marg.sh=0.5; %horizontal spacing [cm]
     in_p.marg.sv=0.0; %vertical spacing [cm]
 end
 if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
@@ -163,7 +163,7 @@ else
     in_p=isfield_default(in_p,'do_measurements',1);
 end
 if in_p.do_measurements
-    in_p=isfield_default(in_p,'fig_size',[0,0,28,14]);
+    in_p=isfield_default(in_p,'fig_size',[0,0,25,14]);
 else
     in_p=isfield_default(in_p,'fig_size',[0,0,14,14]);
 end
@@ -303,7 +303,7 @@ set(groot,'defaultLegendInterpreter','tex');
 %% COLORBAR AND COLORMAP
 kr=1; kc=1;
 if do_measurements
-    cbar(kr,kc).displacement=[0.0,0,0,0]; 
+    cbar(kr,kc).displacement=[0.25,0.1,0,0]; 
 else
     cbar(kr,kc).displacement=[0.0,0,0,0]; 
 end
@@ -666,17 +666,24 @@ if do_3D
 end
 if do_axis_equal
 %     axis(han.sfig(kr,kc),'equal')
+if kc==1
     han.dar=get(han.sfig(kr,kc),'DataAspectRatio');
     if han.dar(3)==1
-          set(gca,'DataAspectRatio',[1 1 1/max(han.dar(1:2))])
+        dar=[1 1 1/max(han.dar(1:2))];
     else
-          set(gca,'DataAspectRatio',[1 1 han.dar(3)])
+        dar=[1 1 han.dar(3)];
     end
+    set(han.sfig(kr,kc),'DataAspectRatio',dar)
+else
+    set(han.sfig(kr,kc),'DataAspectRatio',dar)
+end
 end
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).XLabel.FontSize=prop.fs;
 if kc==1
     han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+% else
+    % han.sfig(kr,kc).YLabel.String='';
 end
 han.sfig(kr,kc).YLabel.FontSize=prop.fs;
 han.sfig(kr,kc).YDir='normal';
@@ -684,7 +691,9 @@ if do_3D
 han.sfig(kr,kc).ZLabel.String=cbar(kr,kc).label;
 end
 % han.sfig(kr,kc).XTickLabel='';
-% han.sfig(kr,kc).YTickLabel='';
+if kc~=1
+han.sfig(kr,kc).YTickLabel='';
+end
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
@@ -715,56 +724,6 @@ caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
 end
 
-% %% measurements
-% 
-% kr=1; kc=2;   
-% hold(han.sfig(kr,kc),'on')
-% grid(han.sfig(kr,kc),'on')
-% 
-% han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
-% if do_axis_equal
-% %     axis(han.sfig(kr,kc),'equal')
-%     han.dar=get(han.sfig(kr,kc),'DataAspectRatio');
-%     if han.dar(3)==1
-%           set(gca,'DataAspectRatio',[1 1 1/max(han.dar(1:2))])
-%     else
-%           set(gca,'DataAspectRatio',[1 1 han.dar(3)])
-%     end
-% end
-% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
-% han.sfig(kr,kc).XLabel.FontSize=prop.fs;
-% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-% han.sfig(kr,kc).YLabel.FontSize=prop.fs;
-% % han.sfig(kr,kc).XTickLabel='';
-% % han.sfig(kr,kc).YTickLabel='';
-% % han.sfig(kr,kc).XTick=[];  
-% % han.sfig(kr,kc).YTick=[];  
-% % han.sfig(kr,kc).XScale='log';
-% % han.sfig(kr,kc).YScale='log';
-% if do_title
-% han.sfig(kr,kc).Title.String=datestr(tim_mea,'dd-mm-yyyy HH:MM');
-% end
-% % han.sfig(kr,kc).XColor='r';
-% % han.sfig(kr,kc).YColor='k';
-% 
-% %duration ticks
-% % xtickformat(han.sfig(kr,kc),'hh:mm')
-% % han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
-% % han.sfig(kr,kc).XTick=hours([4,6]);
-% 
-% %colormap
-% if do_3D
-% view(han.sfig(kr,kc),views);
-% end
-% colormap(han.sfig(kr,kc),cmap);
-% % if ~isnan(lims.c(kr,kc,1:1))
-% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
-% % end
-
-% han.sfig(kr,kc).YDir='normal';
-    
 
 %% ADD TEXT
 

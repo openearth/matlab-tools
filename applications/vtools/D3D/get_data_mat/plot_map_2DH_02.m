@@ -407,7 +407,7 @@ for kclim=1:nclim
         in_p.ylims=flg_loc.ylims(kxlim,:);
 
         %measurements
-        [in_p.measurements_images,in_p.tim_mea_dtime_mean]=gdm_load_2D_measurements(in_p,in_p.measurements_structure,in_p.tim,in_p.tim_0,in_p.xlims,in_p.ylims);
+        [in_p.measurements_images,in_p.tim_mea]=gdm_load_2D_measurements(in_p,in_p.measurements_structure,in_p.tim,in_p.tim_0,in_p.xlims,in_p.ylims);
 
         %2D
         if flg_loc.do_2D
