@@ -40,9 +40,6 @@ end
 if isfield(in_p,'fname')==0
     in_p.fname='fig';
 end
-if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,14,14]; %(1+sqrt(5)/2)
-end
 if isfield(in_p,'fig_overwrite')==0
     in_p.fig_overwrite=1;
 end
@@ -109,9 +106,18 @@ end
 if isfield(in_p,'Lref')==0
     in_p.Lref='+NAP';
 end
-if isfield(in_p,'do_title')==0
-    in_p.do_title=1;
+
+in_p=isfield_default(in_p,'tim',NaT(0,0));
+if isempty(in_p.tim)
+    in_p.do_title=0;
+else
+    if ~isdatetime(in_p.tim)
+        in_p.tim=datetime(in_p.tim,'ConvertFrom','datenum');
+    end
+    in_p=isfield_default(in_p,'do_title',1);
 end
+in_p=isfield_default(in_p,'tim_mea',in_p.tim);
+
 in_p.plot_fxw=0;
 if isfield(in_p,'fxw') && isstruct(in_p.fxw)
     in_p.plot_fxw=1;
@@ -133,7 +139,7 @@ if isfield(in_p,'font_size')==0
     in_p.font_size=10;
 end
 if isfield(in_p,'marg')==0
-    in_p.marg.mt=1.0; %top margin [cm]
+    in_p.marg.mt=2.5; %top margin [cm]
     in_p.marg.mb=1.5; %bottom margin [cm]
     in_p.marg.mr=0.5; %right margin [cm]
     in_p.marg.ml=1.5; %left margin [cm]
@@ -149,6 +155,18 @@ in_p=isfield_default(in_p,'save_tiles',false);
 in_p=isfield_default(in_p,'tiles',{});
 in_p=isfield_default(in_p,'rkm_disp_color','c');
 in_p=isfield_default(in_p,'rkm_disp_size',10);
+
+in_p=isfield_default(in_p,'measurements_images',cell(0,0));
+if isempty(in_p.measurements_images)
+    in_p.do_measurements=0;
+else
+    in_p=isfield_default(in_p,'do_measurements',1);
+end
+if in_p.do_measurements
+    in_p=isfield_default(in_p,'fig_size',[0,0,28,14]);
+else
+    in_p=isfield_default(in_p,'fig_size',[0,0,14,14]);
+end
 
 v2struct(in_p)
 
@@ -223,7 +241,11 @@ end
 
 %square option
 npr=1; %number of plot rows
-npc=1; %number of plot columns
+if do_measurements
+    npc=2; %number of plot columns
+else
+    npc=1; %number of plot columns
+end
 axis_m=allcomb(1:1:npr,1:1:npc);
 
 %some of them
@@ -233,7 +255,7 @@ na=size(axis_m,1);
 
 %figure input
 prnt.filename=fname;
-prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
+fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
 % marg.mt=1.0; %top margin [cm]
 % marg.mb=1.5; %bottom margin [cm]
 % marg.mr=0.5; %right margin [cm]
@@ -280,46 +302,56 @@ set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
 kr=1; kc=1;
-cbar(kr,kc).displacement=[0.0,0,0,0]; 
+if do_measurements
+    cbar(kr,kc).displacement=[0.0,0,0,0]; 
+else
+    cbar(kr,kc).displacement=[0.0,0,0,0]; 
+end
 cbar(kr,kc).location='northoutside';
-[lab,str_var,str_un,str_diff,str_back      ,str_std,str_diff_back,str_fil,str_rel,str_diff_perc]=labels4all(unit,fact,lan,'frac',str_idx,'Lref',Lref);
 
-if is_background && ~is_diff
-    cbar(kr,kc).label=str_back;
-elseif is_diff && ~is_background
-    cbar(kr,kc).label=str_diff;
-elseif is_diff && is_background
-    cbar(kr,kc).label=str_diff_back;
-elseif is_percentage
-    cbar(kr,kc).label=str_diff_perc;
-else
-    cbar(kr,kc).label=lab;
-end
+in_p.variable=unit; %this is a mess
+in_p.unit=fact; %this is a mess
+in_p.frac=str_idx;
+[cmap,cbar(kr,kc).label,clims]=gdm_cmap_and_string(in_p,val);
 
-if ~isnan(cmap_cut_edges)
-    fcut=cmap_cut_edges;
-    nc=100/(1-fcut);
-else
-    nc=100;
-end
-
-if isempty(cmap) %default
-    if is_background && ~is_diff
-        cmap=turbo(nc);
-    elseif is_diff && ~is_background
-        cmap=brewermap(nc,'RdBu');
-    elseif is_diff && is_background
-        cmap=brewermap(nc,'RdBu');
-    elseif is_percentage
-        cmap=brewermap(nc,'RdBu');
-    else
-        cmap=turbo(nc);
-    end
-end
-if ~isnan(cmap_cut_edges)
-    cmap=cmap(round(nc*fcut):round(nc*(1-fcut)),:);
-end
-ncolor=size(cmap,1);
+% [lab,str_var,str_un,str_diff,str_back      ,str_std,str_diff_back,str_fil,str_rel,str_diff_perc]=labels4all(unit,fact,lan,'frac',str_idx,'Lref',Lref);
+% 
+% if is_background && ~is_diff
+%     cbar(kr,kc).label=str_back;
+% elseif is_diff && ~is_background
+%     cbar(kr,kc).label=str_diff;
+% elseif is_diff && is_background
+%     cbar(kr,kc).label=str_diff_back;
+% elseif is_percentage
+%     cbar(kr,kc).label=str_diff_perc;
+% else
+%     cbar(kr,kc).label=lab;
+% end
+% 
+% if ~isnan(cmap_cut_edges)
+%     fcut=cmap_cut_edges;
+%     nc=100/(1-fcut);
+% else
+%     nc=100;
+% end
+% 
+% if isempty(cmap) %default
+%     if is_background && ~is_diff
+%         cmap=turbo(nc);
+%     elseif is_diff && ~is_background
+%         cmap=brewermap(nc,'RdBu');
+%     elseif is_diff && is_background
+%         cmap=brewermap(nc,'RdBu');
+%     elseif is_percentage
+%         cmap=brewermap(nc,'RdBu');
+%     else
+%         cmap=turbo(nc);
+%     end
+% end
+% if ~isnan(cmap_cut_edges)
+%     cmap=cmap(round(nc*fcut):round(nc*(1-fcut)),:);
+% end
+% ncolor=size(cmap,1);
 
 % brewermap('demo')
 
@@ -447,7 +479,8 @@ ncolor=size(cmap,1);
 % kr=axis_m(ka,1);
 % kc=axis_m(ka,2);
 
-kr=1; kc=1;
+kr=1; 
+for kc=1:npc
 lims.y(kr,kc,1:2)=ylims;
 lims.x(kr,kc,1:2)=xlims;
 lims.c(kr,kc,1:2)=clims;
@@ -457,12 +490,12 @@ ylabels{kr,kc}=labels4all('y',1,lan);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
-
+end
 
 %% FIGURE INITIALIZATION
 
 han.fig=figure('name',prnt.filename);
-set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',fig_visible)
+set(han.fig,'paperunits','centimeters','paperposition',fig_size,'visible',fig_visible)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 % set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
 [mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
@@ -491,25 +524,25 @@ end
 
 %% MAP TILES
 
-kr=1; kc=1;
-
 if plot_tiles
-    
-OPT.xlim=xlims;
-OPT.ylim=ylims;
-OPT.epsg_in=epsg_in; %WGS'84 / google earth
-OPT.epsg_out=epsg_out; %Amersfoort
-dx=diff(xlims);
-tzl=tiles_zoom(dx);
-OPT.tzl=tzl; %zoom
-OPT.save_tiles=save_tiles;
-OPT.path_save=fpath_tiles; %mat file to save tiles
-OPT.path_tiles=in_p.path_tiles; %folder with tiles
-OPT.map_type=3;%map type
-OPT.han_ax=han.sfig(kr,kc);
-OPT.tiles=tiles;
-
-plotMapTiles(OPT);
+    kr=1;
+    for kc=1:npc    
+        OPT.xlim=xlims;
+        OPT.ylim=ylims;
+        OPT.epsg_in=epsg_in; %WGS'84 / google earth
+        OPT.epsg_out=epsg_out; %Amersfoort
+        dx=diff(xlims);
+        tzl=tiles_zoom(dx);
+        OPT.tzl=tzl; %zoom
+        OPT.save_tiles=save_tiles;
+        OPT.path_save=fpath_tiles; %mat file to save tiles
+        OPT.path_tiles=in_p.path_tiles; %folder with tiles
+        OPT.map_type=3;%map type
+        OPT.han_ax=han.sfig(kr,kc);
+        OPT.tiles=tiles;
+        
+        plotMapTiles(OPT);
+    end
 end
 
 %% EHY
@@ -549,6 +582,8 @@ end
 % plot(data_map.grid.grid(:,1),data_map.grid.grid(:,2),'color','k')
 
 %% PLOT
+
+%% model
 
 kr=1; kc=1;    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
@@ -604,11 +639,22 @@ end
 % surf(x,y,z,c,'parent',han.sfig(kr,kc),'edgecolor','none')
 % patch([data_m.Xcen;nan],[data_m.Ycen;nan],[data_m.Scen;nan]*unit_s,[data_m.Scen;nan]*unit_s,'EdgeColor','interp','FaceColor','none','parent',han.sfig(kr,kc)) %line with color
 
+%% measurements
+
+if do_measurements
+    kc=2;
+    ni=numel(measurements_images);
+    for ki=1:ni
+        han.tmp(ki)=imagesc(measurements_images{ki}.x, measurements_images{ki}.y, measurements_images{ki}.z,'parent',han.sfig(kr,kc));  % x and y are vectors
+        han.tmp(ki).AlphaData=measurements_images{ki}.mask;
+    end
+end
 
 %% PROPERTIES
 
-    %sub11
+%% model 
 kr=1; kc=1;   
+for kc=1:npc
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 
@@ -629,8 +675,11 @@ if do_axis_equal
 end
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).XLabel.FontSize=prop.fs;
-han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+if kc==1
+    han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+end
 han.sfig(kr,kc).YLabel.FontSize=prop.fs;
+han.sfig(kr,kc).YDir='normal';
 if do_3D
 han.sfig(kr,kc).ZLabel.String=cbar(kr,kc).label;
 end
@@ -641,7 +690,11 @@ end
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
 if do_title
-han.sfig(kr,kc).Title.String=datestr(tim,'dd-mm-yyyy HH:MM');
+    if kc==1
+        han.sfig(kr,kc).Title.String=string(tim,'dd-MM-yyyy HH:mm');
+    else
+        han.sfig(kr,kc).Title.String=string(tim_mea,'dd-MM-yyyy HH:mm');
+    end
 end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
@@ -652,7 +705,7 @@ end
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-kr=1; kc=1;
+% kr=1; kc=1;
 if do_3D
 view(han.sfig(kr,kc),views);
 end
@@ -660,6 +713,58 @@ colormap(han.sfig(kr,kc),cmap);
 % if ~isnan(lims.c(kr,kc,1:1))
 caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
 % end
+end
+
+% %% measurements
+% 
+% kr=1; kc=2;   
+% hold(han.sfig(kr,kc),'on')
+% grid(han.sfig(kr,kc),'on')
+% 
+% han.sfig(kr,kc).Box='on';
+% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+% if do_axis_equal
+% %     axis(han.sfig(kr,kc),'equal')
+%     han.dar=get(han.sfig(kr,kc),'DataAspectRatio');
+%     if han.dar(3)==1
+%           set(gca,'DataAspectRatio',[1 1 1/max(han.dar(1:2))])
+%     else
+%           set(gca,'DataAspectRatio',[1 1 han.dar(3)])
+%     end
+% end
+% han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
+% han.sfig(kr,kc).XLabel.FontSize=prop.fs;
+% han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+% han.sfig(kr,kc).YLabel.FontSize=prop.fs;
+% % han.sfig(kr,kc).XTickLabel='';
+% % han.sfig(kr,kc).YTickLabel='';
+% % han.sfig(kr,kc).XTick=[];  
+% % han.sfig(kr,kc).YTick=[];  
+% % han.sfig(kr,kc).XScale='log';
+% % han.sfig(kr,kc).YScale='log';
+% if do_title
+% han.sfig(kr,kc).Title.String=datestr(tim_mea,'dd-mm-yyyy HH:MM');
+% end
+% % han.sfig(kr,kc).XColor='r';
+% % han.sfig(kr,kc).YColor='k';
+% 
+% %duration ticks
+% % xtickformat(han.sfig(kr,kc),'hh:mm')
+% % han.sfig(kr,kc).XLim=lims_d.x(kr,kc,:);
+% % han.sfig(kr,kc).XTick=hours([4,6]);
+% 
+% %colormap
+% if do_3D
+% view(han.sfig(kr,kc),views);
+% end
+% colormap(han.sfig(kr,kc),cmap);
+% % if ~isnan(lims.c(kr,kc,1:1))
+% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+% % end
+
+% han.sfig(kr,kc).YDir='normal';
+    
 
 %% ADD TEXT
 
@@ -707,9 +812,9 @@ if in_p.do_cbar
 kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
-% pos.cbar=han.cbar.Position;
-% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
-% han.sfig(kr,kc).Position=pos.sfig;
+pos.cbar=han.cbar.Position;
+han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+han.sfig(kr,kc).Position=pos.sfig;
 han.cbar.Label.String=cbar(kr,kc).label;
 han.cbar.Label.FontSize=prop.fs;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].

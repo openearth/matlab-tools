@@ -95,6 +95,7 @@ for ksb=1:nsb %summerbed polygons
 
             in_p.frac=var_idx;
             in_p.do_area=flg_loc.do_area(kvar);
+            in_p.tol=flg_loc.tol(kvar);
 
             [var_str_read,~,var_str_save,unit]=D3D_var_num2str_structure(var_str_original,simdef(1));
                        
@@ -682,9 +683,13 @@ in_p.ylab_str='';
 in_p.xlab_str='rkm';
 in_p.xlab_un=1/1000;
 in_p.frac=var_idx;
+in_p.do_area=0;
 
 in_p.tim=datenum(tim_dtime_p);
 in_p.unit=1; %this is the unit for converting variable in `labels4all`
+
+in_p.do_area=flg_loc.do_area(kvar);
+in_p.tol=flg_loc.tol(kvar);
 
 xlims=flg_loc.xlims;
 

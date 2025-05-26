@@ -27,7 +27,7 @@ flg_loc=gdm_parse_map_2DH(fid_log,flg_loc,simdef);
 
 %time is based on reference simulation. 
 kref=flg_loc.sim_ref;
-[gridInfo_ref,time_dnum_ref,time_dnum_plot]=gdm_load_time_grid(fid_log,flg_loc,simdef(kref),tag);
+[gridInfo_ref,time_dnum_ref,time_dnum_plot,~,tim_dtime_plot]=gdm_load_time_grid(fid_log,flg_loc,simdef(kref),tag);
 
 %% DIMENSIONS AND RENAME
 
@@ -60,6 +60,10 @@ ksim=0;
 messageOut(fid_log,sprintf('Plotting %s variable %4.2f, simulation %4.2f, time %4.2f %%',tag_fig,kvar/nvar*100,ksim/nsim*100,ktc/nt*100));
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
+
+%measurements initialization
+in_p=gdm_ini_2D_mea(in_p);
+in_p.tim_0=tim_dtime_plot(1); %pass to make difference of measurements
 
 %% LOOP
 
@@ -128,7 +132,7 @@ for kvar=1:nvar %variable
     
             %local time of reference simulation.
             time_plot_loc=time_dnum_plot(kt); 
-            in_p.tim=time_plot_loc; %pass to plot
+            in_p.tim=tim_dtime_plot(kt); %pass to plot and to match with measurements
             
             %local simulation at local time
             fdir_mat=simdef(ksim).file.mat.dir;
@@ -401,6 +405,9 @@ for kclim=1:nclim
     for kxlim=1:flg_loc.nxlim
         in_p.xlims=flg_loc.xlims(kxlim,:);
         in_p.ylims=flg_loc.ylims(kxlim,:);
+
+        %measurements
+        [in_p.measurements_images,in_p.tim_mea_dtime_mean]=gdm_load_2D_measurements(in_p,in_p.measurements_structure,in_p.tim,in_p.tim_0,in_p.xlims,in_p.ylims);
 
         %2D
         if flg_loc.do_2D
