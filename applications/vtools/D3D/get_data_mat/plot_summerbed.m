@@ -97,7 +97,7 @@ for ksb=1:nsb %summerbed polygons
             in_p.do_area=flg_loc.do_area(kvar);
             in_p.tol=flg_loc.tol(kvar);
 
-            [var_str_read,~,var_str_save,unit]=D3D_var_num2str_structure(var_str_original,simdef(1));
+            [var_str_read,~,var_str_save,varname_label]=D3D_var_num2str_structure(var_str_original,simdef(1));
                        
             %time 0 of all simulations (their time 0, it can be different
             %than the time 0 of the reference simulation).
@@ -150,7 +150,7 @@ for ksb=1:nsb %summerbed polygons
                         end
                     end
                     
-                    [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,unit,statis);
+                    [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,varname_label,statis);
                     
                     %measurements          
                     [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,time_plot_loc,var_str_save,ksb,statis);
@@ -367,7 +367,7 @@ for ksb=1:nsb %summerbed polygons
             multi_dim=check_multi_dimensional(data_0(kref));
 
             if flg_loc.do_xvt && ~multi_dim && npol==1 %skip if multidimentional or if there is more than 1 polygon
-               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,str_save_sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,unit)
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,str_save_sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,varname_label)
             end
             
             %% cumulative
@@ -756,7 +756,7 @@ for ksim=1:nsim
 
         %cel
         if flg_loc.do_xvt_cel
-            in_p.lab_str=strcat(in_p.lab_str,'_t'); %DANGEROUS! maybe better to set it in all figures
+            in_p.lab_str=strcat(in_p.lab_str,'_t'); %DANGEROUS! maybe better to set it in all figures or this must be the last one
             
             val=cat(1,zeros(1,size(val_ks_t,2)),diff(val_ks_t,1,1))./[0;seconds(diff(tim_dtime_p))];
             in_p=reset_in_p(in_p);
@@ -1022,20 +1022,23 @@ for kclim=1:nclim
     for kxlim=1:nxlim
         in_p.xlims=xlims(kxlim,:);
 
+        %xtv
         in_p.val=val;
-        in_p.ylims=NaN;
+        in_p.ylims=[NaN,NaN];
         in_p.clims=lims(kclim,:); 
         fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kclim,var_idx,'xtv',kxlim);
         in_p.fname=fname_noext;
 
         fig_surf(in_p)
 
-        in_p.clims=[NaN,NaN]; 
+        %xvt
+        in_p.val=val';
         in_p.ylims=lims(kclim,:); 
+        in_p.clims=[NaN,NaN]; 
         fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,sb_pol,kclim,var_idx,'xvt',kxlim);
         in_p.fname=fname_noext;
         in_p.s=s;
-        in_p.val=val';
+        
         in_p.do_time=1;
 
         fig_1D_01(in_p)

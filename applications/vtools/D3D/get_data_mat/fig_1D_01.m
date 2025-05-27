@@ -122,17 +122,16 @@ in_p=isfield_default(in_p,'xlab_un',1);
 if isempty(in_p.xlab_un)
     in_p.xlab_un=1;
 end
-in_p=isfield_default(in_p,'do_time',0);
+in_p=isfield_default(in_p,'do_time',0); %add colorbar with time 
 if in_p.do_time
-    in_p=isfield_default(in_p,'mt',2.0);
+    in_p=isfield_default(in_p,'mt',2.5);
+    in_p=isfield_default(in_p,'mr',1.3);
 else
     in_p=isfield_default(in_p,'mt',1);
+    in_p=isfield_default(in_p,'mr',0.5);
 end
 if isfield(in_p,'mb')==0
     in_p.mb=1.5;
-end
-if isfield(in_p,'mr')==0
-    in_p.mr=0.5;
 end
 if isfield(in_p,'ml')==0
     in_p.ml=2.0;
@@ -295,7 +294,8 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label=labels4all('t',1/3600/24,lan);
+% cbar(kr,kc).label=labels4all('t',1/3600/24,lan); %time as a string. Better no label.
+cbar(kr,kc).label='';
 
 % brewermap('demo')
 
@@ -716,7 +716,7 @@ kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 pos.cbar=han.cbar.Position;
-han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
 han.sfig(kr,kc).Position=pos.sfig;
 han.cbar.Label.String=cbar(kr,kc).label;
 
@@ -724,12 +724,19 @@ han.cbar.Label.String=cbar(kr,kc).label;
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
 % v2p=[1,5,11,15,np1];
 
-% han.cbar.Ticks=v2p;
-v2p=han.cbar.Ticks;
+v2p=linspace(tim(1),tim(end),3); %dnum
+if (tim(end)-tim(1))>1 %if more than 1 day
+    tim_format='dd-MMM-yyyy';
+else
+    tim_format='HH:mm';
+end
+han.cbar.Ticks=v2p;
+% v2p=han.cbar.Ticks;
 % aux3=aux2(v2p);
 aux_str=cell(1,numel(v2p));
 for ka=1:numel(v2p)
-    aux_str{ka}=datestr(v2p(ka));
+    tim_dtime_loc=datetime(v2p(ka),'convertfrom','datenum');
+    aux_str{ka}=char(tim_dtime_loc,tim_format);
 end
 han.cbar.TickLabels=aux_str;
 end
