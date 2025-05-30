@@ -83,6 +83,8 @@ if ischar(varname_input)
                     case {2,4}
                         if ismor
                             varname_read_variable='mesh2d_mor_bl';
+                        else
+                            varname_read_variable='bl'; %taken by EHY
                         end
                     otherwise
                         error('ups')

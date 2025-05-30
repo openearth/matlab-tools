@@ -21,6 +21,7 @@ flg_loc=isfield_default(flg_loc,'measurements','');
 %% SKIP
 
 if isempty(flg_loc.measurements)
+    flg_loc.measurements_structure=struct();
     return
 end
 

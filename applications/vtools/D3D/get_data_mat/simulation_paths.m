@@ -37,14 +37,14 @@ end
 
 %% mat and fig
 
-fdir_mat=fullfile(fdir_sim,'mat');
-mkdir_check(fdir_mat);
-simdef.file.mat.dir=fdir_mat;
+in_plot=isfield_default(in_plot,'fdir_mat',fullfile(fdir_sim,'mat'));
+mkdir_check(in_plot.fdir_mat);
+simdef.file.mat.dir=in_plot.fdir_mat;
 
-fdir_fig=fullfile(fdir_sim,'figures');
-simdef.file.fig.dir=fdir_fig;
-mkdir_check(fdir_fig);
+in_plot=isfield_default(in_plot,'fdir_fig',fullfile(fdir_sim,'figures'));
+mkdir_check(in_plot.fdir_fig);
+simdef.file.fig.dir=in_plot.fdir_fig;
 
-simdef.file.mat.grd=fullfile(fdir_mat,'grd.mat'); %moved to <gdm_load_grid>, should be erased here after updated everywhere
+simdef.file.mat.grd=fullfile(in_plot.fdir_mat,'grd.mat'); %moved to <gdm_load_grid>, should be erased here after updated everywhere
 
 end %function

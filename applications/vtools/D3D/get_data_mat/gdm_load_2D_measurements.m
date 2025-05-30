@@ -31,7 +31,8 @@ is_diff=in_p.is_diff;
 %% SKIP
 
 % in_p.do_measurements=0; %better to pass the actual output
-if ~isfield(in_p,'measurements_structure')
+
+if isempty_struct(measurements_structure)
     measurements_images=cell(0,0);
     tim_mea_dtime_mean=NaT;
     return
