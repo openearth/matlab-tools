@@ -115,11 +115,22 @@ else
             end
         case 2
             gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid','edge_nodes','XYuv'},'mergePartitions',1);   
+            
         otherwise
             error('Something is wrong.')
     end    
 
 end
+
+%% Dealaunay
+
+try %error due to colinear points
+    gridInfo.tri=delaunay(gridInfo.Xcen,gridInfo.Ycen);
+catch
+    gridInfo.tri=NaN;
+end
+
+%% SAVE
 
 save_check(fpath_grd,'gridInfo'); 
 

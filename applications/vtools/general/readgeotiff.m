@@ -16,17 +16,26 @@
 %imread. 
 %
 %INPUT
-%   -
+%   - fpath_tif = full path to a tif-file.
 %
 %OUTPUT
-%   -
+%   - I = structure with image information.
+%       - I.x = x-vector
+%       - I.y = y-vector
+%       - I.z = z-matrix
+%       - I.maks = mask for filtering no-data points
+%
+%OPTIONAL (pair input)
+%   - x_limits = lower and uper limit of data to take from tif in x-direction
+%   - y_limits = lower and uper limit of data to take from tif in y-direction
 %
 %TODO:
 %   -
 %
 %E.G.
 %
-% [I,Tinfo]=readgeotiff('p:\archivedprojects_tmp\11210364-003-maas-mor\B_Background\03_processed_data\20240216_bodemdata_2020_2023\01_soundings2belevelmaps\2019_gridcell\691\691.tif');
+% [I,Tinfo]=readgeotiff(fpath_tif);
+% I=readgeotiff(fpath_tif,'x_limits',[1.56e5,1.57e5],'y_limits',[4.258e5,4.26e5]);
 % 
 % figure
 % imagesc(I.x, I.y, I.z);  % x and y are vectors
@@ -34,102 +43,44 @@
 % set(gca().Children, 'AlphaData', I.mask);
 % colorbar
 
-function [I,Tinfo]=readgeotiff(varargin)
+function [I,image_info]=readgeotiff(fname,varargin)
 
-%% START COPY <GEOTIFF_READ>
+%% PARSE
 
-name = varargin{1};
+parin=inputParser;
 
-Tinfo        = imfinfo(name);
-info.samples = Tinfo.Width;
-info.lines   = Tinfo.Height;
-info.imsize  = Tinfo.Offset;
-info.bands   = Tinfo.SamplesPerPixel;
+addOptional(parin,'x_limits',[-inf,inf]);
+addOptional(parin,'y_limits',[-inf,inf]);
 
-sub = [1, info.samples, 1, info.lines];
-%data_type = Tinfo.BitDepth/8;
-data_type = Tinfo.BitsPerSample(1)/8;
-switch data_type
-    case {1}
-        format = 'uint8';
-    case {2}
-        format = 'int16';
-    case{3}
-        format = 'int32';
-    case {4}
-        format = 'single';
-end
+parse(parin,varargin{:});
 
-info.map_info.dx = Tinfo.ModelPixelScaleTag(1);
-info.map_info.dy = Tinfo.ModelPixelScaleTag(2);
-info.map_info.mapx = Tinfo.ModelTiepointTag(4);
-info.map_info.mapy = Tinfo.ModelTiepointTag(5);
-%info.map_info.projection_name = Tinfo.GeoAsciiParamsTag;
-%info.map_info.projection_info = Tinfo.GeoDoubleParamsTag;
+x_limits=parin.Results.x_limits;
+y_limits=parin.Results.y_limits;
 
-minx = info.map_info.mapx;
-maxy = info.map_info.mapy;
-maxx = minx + (info.samples-1).*info.map_info.dx;
-miny = maxy - (info.lines-1  ).*info.map_info.dy;
+%% CALC
 
-%info.CornerMap = [minx miny; maxx miny; maxx maxy; minx maxy; minx miny]; 
+%% get image information
 
-xm = info.map_info.mapx;
-ym = info.map_info.mapy;
-x_ = xm + ((0:info.samples-1).*info.map_info.dx);
-y_ = ym - ((0:info.lines  -1).*info.map_info.dy);
- 
-tmp1=[1 2];
-tmp2=[4 3];
-if nargin == 3
-    
-    if strcmp(varargin{2},'pixel_subset')
-        sub = varargin{3};
-        
-    elseif strcmp(varargin{2},'map_subset')
-        sub  = varargin{3};
-        subx = (sub(tmp1)-info.map_info.mapx  )./info.map_info.dx+1;
-        suby = (info.map_info.mapy - sub(tmp2))./info.map_info.dy+1;
-        subx = round(subx);
-        suby = round(suby);
-        
-        subx(subx < 1) = 1;
-        suby(suby < 1) = 1;
-        subx(subx > info.samples) = info.samples;
-        suby(suby > info.lines  ) = info.lines;
-        sub = [subx,suby];
-    end
-    info.sub.samples = sub(2)-sub(1)+1;
-    info.sub.lines   = sub(4)-sub(3)+1;
-    info.sub.mapx = [ x_(sub(1)) x_(sub(2)) ];
-    info.sub.mapy = [ y_(sub(3)) y_(sub(4)) ];
-    info.sub.pixx = [sub(1) sub(2)];
-    info.sub.pixy = [sub(3) sub(4)];
-end
-       
-I.x = x_(sub(1):sub(2));
-I.y = y_(sub(3):sub(4));
+[image_info,no_data,x_vector,y_vector]=TIF_info(fname);
 
-% END COPY <GEOTIFF_READ>
+%% filter
 
-%% GET EMPTY
+%x-direction is normal
+col_ini=find(x_vector>x_limits(1),1,'first');
+col_fin=find(x_vector<x_limits(2),1,'last');
 
-no_data_string=Tinfo.GDAL_NODATA;
-no_data=str2double(no_data_string);
-switch data_type
-    case {1}
-        no_data=uint8(no_data);
-    case {2}
-        no_data=int16(no_data);
-    case{3}
-        no_data=int32(no_data);
-    case {4}
-        no_data=single(no_data);
-end
+%y-direction is reversed
+row_ini=find(y_vector<y_limits(2),1,'first');
+row_fin=find(y_vector>y_limits(1),1,'last');
+
+%% apply filter to coordinates
+
+I.x=x_vector(col_ini:1:col_fin);
+I.y=y_vector(row_ini:1:row_fin);
 
 %% READ
 
-I.z=imread(name);
+I.z=imread(fname,'PixelRegion',{[row_ini,row_fin],[col_ini,col_fin]});
 
 %% MASK
 

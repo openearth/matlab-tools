@@ -95,6 +95,8 @@
 % % fname=mfilename;
 % % in_plot.order_anl_param=str2double(fname(end)); %seed random number in case `order_anl=3`
 % %in_plot.function_handles={@my_fcn,@my_other_fcn}; %cell array of ad-hoc functions exectued in the plot script
+% % in_plot.fdir_mat=fullfile(pwd,'mat'); %Overwrite the <mat> folder (useful if working with simulation in archived folder).
+% % in_plot.fdir_fig=fullfile(pwd,'fig'); %Overwrite the <figures> folder (useful if working with simulation in archived folder).
 
 %% display map times
 

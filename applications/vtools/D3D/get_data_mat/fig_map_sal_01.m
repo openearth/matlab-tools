@@ -168,6 +168,13 @@ else
     in_p=isfield_default(in_p,'fig_size',[0,0,14,14]);
 end
 
+in_p=isfield_default(in_p,'contour_lines',NaN);
+if ~isnan(in_p.contour_lines)
+    in_p=isfield_default(in_p,'plot_contour',1);
+else
+    in_p=isfield_default(in_p,'plot_contour',0);
+end
+
 v2struct(in_p)
 
 %% check if printing
@@ -631,6 +638,14 @@ end
 if plot_fxw
     plot(fxw.xy(:,1),fxw.xy(:,2),'parent',han.sfig(kr,kc),'color','m');
 end
+
+if plot_contour
+    %the patch plot is at z=0. We plot the tricontour on top of it. The minimum
+    %value must be above 0.
+    bline=abs(min(val));
+    han.p(kr,kc,:)=tricontour(gridInfo.tri,gridInfo.Xcen,gridInfo.Ycen,val+bline,[contour_lines+bline],'k');
+end %plot contour
+
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);

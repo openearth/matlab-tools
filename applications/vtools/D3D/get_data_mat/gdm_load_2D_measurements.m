@@ -78,7 +78,11 @@ tim_mea=NaT(nf,1);
 tim_mea.TimeZone=time_dtime.TimeZone;
 
 for kf=1:nf
-    measurements_images{kf}=readgeotiff(measurements_structure(idx_get(kf)).Filename);
+    %read image
+    measurements_images{kf}=readgeotiff(measurements_structure(idx_get(kf)).Filename,'x_limits',xlims+[-tol_x,+tol_x],'y_limits',ylims+[-tol_y,+tol_y]);
+    %apply factor
+    measurements_images{kf}.z=measurements_images{kf}.z.*measurements_structure(idx_get(kf)).Factor;
+    %save time
     tim_mea(kf)=measurements_structure(idx_get(kf)).Time;
 end %kf
 

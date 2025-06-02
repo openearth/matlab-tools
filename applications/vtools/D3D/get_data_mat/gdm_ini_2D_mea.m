@@ -52,8 +52,8 @@ end %function
 %being in the same coordinate system. 
 function measurements_structure=gdm_ini_2D_mea_csv(fpath_csv)
 
-%debug
-% fpath_csv='p:\11211565-002-maas-mor-2025\C_Work\00_data\12_2D_measurements\2D_measurements_01.csv';
+% time, file, factor
+% 1995-01-01T00:00:00+01:00, p:\archivedprojects\11206792-kpp-rivierkunde-2021\003_maas\04_input_generation\14_export_jmp_to_tif\1995.tif , 0.01
 
 data_index=readtable(fpath_csv,'Delimiter',',');
 var_names=data_index.Properties.VariableNames;
@@ -63,8 +63,11 @@ end
 if ~any(contains(var_names,{'file'}))
     error('`file` could not be read from file: %s',fpath_csv)
 end
-if numel(var_names)~=2
-    error('There seem to be more than 2 variables in file: %s',fpath_csv)
+if ~any(contains(var_names,{'factor'}))
+    error('`factor` could not be read from file: %s',fpath_csv)
+end
+if numel(var_names)~=3
+    error('There seem to be more or less than 3 variables in file: %s',fpath_csv)
 end
 time_vector=data_index.time;
 if iscell(time_vector) %it has not been read as a datetime
@@ -73,8 +76,11 @@ if iscell(time_vector) %it has not been read as a datetime
 end
 
 %This structure must be the same as given by `VRT_bounding_boxes` (or
-%other) plus `Time`. 
-measurements_structure=struct('Filename', {}, 'MinX', {}, 'MaxX', {}, 'MinY', {}, 'MaxY', {},'Time',{});
+%other) plus:
+% `Time`
+% `Factor`
+
+measurements_structure=struct('Filename', {}, 'MinX', {}, 'MaxX', {}, 'MinY', {}, 'MaxY', {},'Time',{},'Factor',{});
 
 nf=size(data_index,1);
 
@@ -84,17 +90,22 @@ for kf=1:nf
     switch fext
         case '.vrt'
             bounding_box=VRT_bounding_boxes(fpath_file);
+            %change the local filename to fullpath. 
+            %ATTENTION! I am assuming the path given is always relative. It could
+            %be checked somehow.
+            fpath_rel_cell={bounding_box.Filename};
+            fpath_full_cell=cellfun(@(X)fullfile(fdir_file,X),fpath_rel_cell,'UniformOutput',false);
+            bounding_box=struct_assign_val(bounding_box,'Filename',fpath_full_cell);
+        case '.tif'
+            bounding_box=TIF_bounding_boxes(fpath_file);
         otherwise
             error('No reader for extension %s',fext)
     end
-    %assign time of the index file to all tiles
+    %assign to all files in a VRT, or a single tif-file
+        %time
     bounding_box=struct_assign_val(bounding_box,'Time',data_index.time(kf));
-    %change the local filename to fullpath. 
-    %ATTENTION! I am assuming the path given is always relative. It could
-    %be checked somehow.
-    fpath_rel_cell={bounding_box.Filename};
-    fpath_full_cell=cellfun(@(X)fullfile(fdir_file,X),fpath_rel_cell,'UniformOutput',false);
-    bounding_box=struct_assign_val(bounding_box,'Filename',fpath_full_cell);
+        %factor
+    bounding_box=struct_assign_val(bounding_box,'Factor',data_index.factor(kf));
 
     %join
     measurements_structure=[measurements_structure,bounding_box];
