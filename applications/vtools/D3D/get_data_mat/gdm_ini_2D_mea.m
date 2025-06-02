@@ -98,6 +98,8 @@ for kf=1:nf
             bounding_box=struct_assign_val(bounding_box,'Filename',fpath_full_cell);
         case '.tif'
             bounding_box=TIF_bounding_boxes(fpath_file);
+        case '.shp'
+            bounding_box=SHP_bounding_boxes(fpath_file);
         otherwise
             error('No reader for extension %s',fext)
     end

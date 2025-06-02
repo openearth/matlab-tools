@@ -218,29 +218,29 @@ end
 
 %% dependent
 
-if isnan(clims(1))
+% if isnan(clims(1))
     if is_faces
         bol_in=gridInfo_v.Xcen>xlims(1) & gridInfo_v.Xcen<xlims(2) & gridInfo_v.Ycen>ylims(1) & gridInfo_v.Ycen<ylims(2);
     else
         bol_in=gridInfo_v.Xu>xlims(1) & gridInfo_v.Xu<xlims(2) & gridInfo_v.Yu>ylims(1) & gridInfo_v.Yu<ylims(2);
     end
-    if any(bol_in(:))
-        clims=[min(val(bol_in),[],'omitnan'),max(val(bol_in),[],'omitnan')];
-    %     clims=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
-        tol=1e-8;
-        if is_diff || is_percentage
-            clims=absolute_limits(clims);
-        else
-            clims=clims+[-tol,+tol];
-        end
-        
-    end
+    % if any(bol_in(:))
+    %     clims=[min(val(bol_in),[],'omitnan'),max(val(bol_in),[],'omitnan')];
+    % %     clims=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
+    %     tol=1e-8;
+    %     if is_diff || is_percentage
+    %         clims=absolute_limits(clims);
+    %     else
+    %         clims=clims+[-tol,+tol];
+    %     end
+    % 
+    % end
     val(~bol_in)=NaN; %do not plot points outside the domain
-end
-if isnan(clims(1)) %still NaN because all are NaN
-    tol=1e-8;
-    clims=[-tol,+tol];
-end
+% end
+% if isnan(clims(1)) %still NaN because all are NaN
+%     tol=1e-8;
+%     clims=[-tol,+tol];
+% end
 
 if isnan(zlims)
     zlims=clims;
@@ -321,6 +321,7 @@ cbar(kr,kc).location='northoutside';
 in_p.variable=unit; %this is a mess
 in_p.unit=fact; %this is a mess
 in_p.frac=str_idx;
+in_p.val=val; %it can be filtered
 [cmap,cbar(kr,kc).label,clims]=gdm_cmap_and_string(in_p,val);
 
 % [lab,str_var,str_un,str_diff,str_back      ,str_std,str_diff_back,str_fil,str_rel,str_diff_perc]=labels4all(unit,fact,lan,'frac',str_idx,'Lref',Lref);
@@ -662,10 +663,18 @@ if do_measurements
     kc=2;
     ni=numel(measurements_images);
     for ki=1:ni
-        han.tmp(ki)=imagesc(measurements_images{ki}.x, measurements_images{ki}.y, measurements_images{ki}.z,'parent',han.sfig(kr,kc));  % x and y are vectors
-        han.tmp(ki).AlphaData=measurements_images{ki}.mask;
-    end
-end
+        measurements_images_loc=measurements_images{ki};
+        if isfield(measurements_images_loc,'pol') %shp
+            npolygons_plot=numel(measurements_images_loc.pol);
+            for kp=1:npolygons_plot
+                fill(measurements_images_loc.pol{kp}(:,1),measurements_images_loc.pol{kp}(:,2),measurements_images_loc.z(kp),'parent',han.sfig(kr,kc));
+            end
+        else %tif
+            han.tmp(ki)=imagesc(measurements_images_loc.x, measurements_images_loc.y, measurements_images_loc.z,'parent',han.sfig(kr,kc));  % x and y are vectors
+            han.tmp(ki).AlphaData=measurements_images_loc.mask;
+        end %image type
+    end %ki
+end %do_measurements
 
 %% PROPERTIES
 

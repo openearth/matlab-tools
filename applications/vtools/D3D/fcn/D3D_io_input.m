@@ -207,6 +207,8 @@ switch what_do
             case '.crs'
                 G=delft3d_io_grd('read',varargin{1},'nodatavalue',NaN);
                 stru_out=D3D_read_crs(fname,G,varargin{2:end});
+            case '.tif'
+                stru_out=readgeotiff(fname,varargin{2:end});
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext
