@@ -100,11 +100,11 @@ for kf=1:nf
         %2DO: we have to deal with the position of the images. 
         if kp==1
             im=imread(path_files{kf,kp});
-            if size(im,1)>3000 || size(im,2)>3000
-                warning('If there is an error, it may be the image is too large')
-            end
         else
             im=cat(2,im,imread(path_files{kf,kp}));
+        end
+        if kf==1 && (size(im,1)>3000 || size(im,2)>3000)
+            warning('If there is an error, it may be the image is too large')
         end
     end
     
