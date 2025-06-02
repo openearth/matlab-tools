@@ -47,7 +47,10 @@ if is_diff
     nf0=numel(measurements_images_0);
     nf=numel(measurements_images);
     if nf0~=nf
-        messageOut('The number of tiles for the reference time is different than for the final time. I cannot substract them.')
+        messageOut(NaN,'The number of tiles for the reference time is different than for the final time. I cannot substract them.')
+        measurements_images=cell(0,0);
+        tim_mea_dtime_mean=NaT;
+        return
     end
     for kf=1:nf
         measurements_images{kf}.z=measurements_images{kf}.z-measurements_images_0{kf}.z;

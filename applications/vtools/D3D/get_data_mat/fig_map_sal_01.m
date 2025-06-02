@@ -175,6 +175,8 @@ else
     in_p=isfield_default(in_p,'plot_contour',0);
 end
 
+in_p=isfield_default(in_p,'color_fxw','m');
+
 v2struct(in_p)
 
 %% check if printing
@@ -636,7 +638,7 @@ if plot_rkm
     end
 end
 if plot_fxw
-    plot(fxw.xy(:,1),fxw.xy(:,2),'parent',han.sfig(kr,kc),'color','m');
+    plot(fxw.xy(:,1),fxw.xy(:,2),'parent',han.sfig(kr,kc),'color',color_fxw);
 end
 
 if plot_contour
