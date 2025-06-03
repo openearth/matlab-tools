@@ -11,7 +11,7 @@
 %$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_sal_01.m $
 %
 
-function [measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements(in_p,measurements_structure,time_dtime,time_dtime_0,xlims,ylims)
+function [measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements(in_p,measurements_structure,time_dtime,time_dtime_0,x_lims,y_lims)
 
 %% PARSE
 
@@ -40,10 +40,10 @@ end
 
 %% CALC
 
-[measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements_single(measurements_structure,time_dtime,xlims,ylims,tim_tol_dur,tol_x,tol_y);   
+[measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements_single(measurements_structure,time_dtime,x_lims,y_lims,tim_tol_dur,tol_x,tol_y);   
 
 if is_diff
-    measurements_images_0=gdm_load_2D_measurements_single(measurements_structure,time_dtime_0,xlims,ylims,tim_tol_dur,tol_x,tol_y);   
+    measurements_images_0=gdm_load_2D_measurements_single(measurements_structure,time_dtime_0,x_lims,y_lims,tim_tol_dur,tol_x,tol_y);   
     nf0=numel(measurements_images_0);
     nf=numel(measurements_images);
     if nf0~=nf
@@ -63,42 +63,84 @@ end %function
 %% FUNCTIONS
 %%
 
-function [measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements_single(measurements_structure,time_dtime,xlims,ylims,tim_tol_dur,tol_x,tol_y)
+function [measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements_single(measurements_structure,time_dtime,x_lims,y_lims,tim_tol_dur,tol_x,tol_y)
 
 if isempty(measurements_structure(1).Time(1).TimeZone)
     error('There is no timezone! This should be dealt when initializing. Not sure how you got here. ')
 end
 
-bol_tim=[measurements_structure.Time]>time_dtime      -tim_tol_dur & [measurements_structure.Time]<time_dtime      +tim_tol_dur;
-bol_x=  [measurements_structure.MaxX]>xlims(1)        -tol_x       & [measurements_structure.MinX]<xlims(2)        +tol_x;
-bol_y=  [measurements_structure.MaxY]>ylims(1)        -tol_y       & [measurements_structure.MinY]<ylims(2)        +tol_y;
+x_limits_tol=x_lims+[-tol_x,+tol_x];
+y_limits_tol=y_lims+[-tol_y,+tol_y];
+
+bol_tim=[measurements_structure.Time]>time_dtime-tim_tol_dur & [measurements_structure.Time]<time_dtime+tim_tol_dur;
+bol_x=  [measurements_structure.MaxX]>x_limits_tol(1)        & [measurements_structure.MinX]<x_limits_tol(2);
+bol_y=  [measurements_structure.MaxY]>y_limits_tol(1)        & [measurements_structure.MinY]<y_limits_tol(2);
 
 idx_get=find(bol_tim & bol_x & bol_y);
-
+measurements_structure_get=measurements_structure(idx_get);
 nf=numel(idx_get);
 measurements_images=cell(nf,1);
-tim_mea=NaT(nf,1);
-tim_mea.TimeZone=time_dtime.TimeZone;
 
-for kf=1:nf
-    fpath=measurements_structure(idx_get(kf)).Filename;
-    [~,~,fext]=fileparts(fpath);
-    switch fext
-        case '.tif'
-            %read image
-            measurements_images{kf}=readgeotiff(fpath,'x_limits',xlims+[-tol_x,+tol_x],'y_limits',ylims+[-tol_y,+tol_y]);
-        case '.shp'
-            measurements_images{kf}=read_shp(fpath,'x_limits',xlims+[-tol_x,+tol_x],'y_limits',ylims+[-tol_y,+tol_y]);
-        otherwise
-            error('Unknown format: %s',fpath)
-    end
-    %apply factor
-    measurements_images{kf}.z=measurements_images{kf}.z.*measurements_structure(idx_get(kf)).Factor;
-    %save time
-    tim_mea(kf)=measurements_structure(idx_get(kf)).Time;
-end %kf
+%get out if nothing
+if nf==0
+    
+    tim_mea_dtime_mean=NaT(nf,1);
+    tim_mea_dtime_mean.TimeZone=time_dtime.TimeZone;
+    return
+end
 
-tim_mea_dtime_mean=mean(tim_mea);
+%all are tif -> single image (allows for differencing)
+fpath=measurements_structure_get(1).Filename;
+[~,~,fext]=fileparts(fpath);
+switch fext
+    case '.tif'
+        [measurements_images,tim_mea_dtime_mean]=read_and_project_tif(measurements_structure_get,x_lims,y_lims,tol_x,tol_y,time_dtime);
+    case '.shp'
+        %move to function?
+        tim_mea=NaT(nf,1);
+        tim_mea.TimeZone=time_dtime.TimeZone;
+        for kf=1:nf
+            fpath=measurements_structure(idx_get(kf)).Filename;
+            [~,~,fext]=fileparts(fpath);
+            switch fext
+                case '.tif'
+                    %read image
+                    measurements_images{kf}=readgeotiff(fpath,'x_limits',x_limits_tol,'y_limits',y_limits_tol);
+                case '.shp'
+                    measurements_images{kf}=read_shp(fpath,'x_limits',x_limits_tol,'y_limits',y_limits_tol);
+                otherwise
+                    error('Unknown format: %s',fpath)
+            end
+            %apply factor
+            measurements_images{kf}.z=measurements_images{kf}.z.*measurements_structure(idx_get(kf)).Factor;
+            %save time
+            tim_mea(kf)=measurements_structure(idx_get(kf)).Time;
+        end %kf
+        
+        tim_mea_dtime_mean=mean(tim_mea);
+end %fext
+
+
+% %possibility of combining tif and shp: just read and save in cell array. 
+% for kf=1:nf
+%     fpath=measurements_structure(idx_get(kf)).Filename;
+%     [~,~,fext]=fileparts(fpath);
+%     switch fext
+%         case '.tif'
+%             %read image
+%             measurements_images{kf}=readgeotiff(fpath,'x_limits',x_limits_tol,'y_limits',y_limits_tol);
+%         case '.shp'
+%             measurements_images{kf}=read_shp(fpath,'x_limits',x_limits_tol,'y_limits',y_limits_tol);
+%         otherwise
+%             error('Unknown format: %s',fpath)
+%     end
+%     %apply factor
+%     measurements_images{kf}.z=measurements_images{kf}.z.*measurements_structure(idx_get(kf)).Factor;
+%     %save time
+%     tim_mea(kf)=measurements_structure(idx_get(kf)).Time;
+% end %kf
+
+% tim_mea_dtime_mean=mean(tim_mea);
 
 end %function
 
@@ -121,7 +163,6 @@ parse(parin,varargin{:});
 x_limits=parin.Results.x_limits;
 y_limits=parin.Results.y_limits;
 variable_tag=parin.Results.variable_tag;
-
 
 %% CALC
 
@@ -146,5 +187,59 @@ bol_get=bol_x & bol_y;
 
 measurements_images.pol=shp.xy.XY(bol_get);
 measurements_images.z=shp.val{1,idx_pol(1)}.Val(bol_get);
+
+end %function
+
+%%
+
+function [measurements_images,tim_mea_dtime_mean]=read_and_project_tif(measurements_structure,x_lims,y_lims,tol_x,tol_y,time_dtime)
+
+nf=numel(measurements_structure);
+dx=1;
+dy=1;
+x_plot=floor(x_lims(1)):dx:ceil(x_lims(2));
+y_plot=floor(y_lims(1)):dy:ceil(y_lims(2));
+nx=numel(x_plot);
+ny=numel(y_plot);
+z_plot=NaN(ny,nx);
+m_plot=NaN(ny,nx);
+
+tim_mea=NaT(nf,1);
+tim_mea.TimeZone=time_dtime.TimeZone;
+
+x_limits_tol=x_lims+[-tol_x,+tol_x];
+y_limits_tol=y_lims+[-tol_y,+tol_y];
+
+for kf=1:nf
+    fpath=measurements_structure(kf).Filename;
+    [~,~,fext]=fileparts(fpath);
+    switch fext
+        case '.tif'
+            %read image
+            measurements_images_loc=readgeotiff(fpath,'x_limits',x_limits_tol,'y_limits',y_limits_tol);
+        otherwise
+            error('If one image is tif, all of them must be tif. Check the option below to combine types: %s',fpath)
+    end %fext
+    %apply factor
+    measurements_images_loc.z=measurements_images_loc.z.*measurements_structure(kf).Factor;
+    %save time
+    tim_mea(kf)=measurements_structure(kf).Time;
+
+    bol_x_plot=ismember(x_plot,measurements_images_loc.x);
+    bol_y_plot=ismember(y_plot,measurements_images_loc.y);
+    bol_x_read=ismember(measurements_images_loc.x,x_plot);
+    bol_y_read=ismember(measurements_images_loc.y,y_plot);
+
+    z_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.z(bol_y_read,bol_x_read);
+    m_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.mask(bol_y_read,bol_x_read);
+
+end %kf
+
+measurements_images{1}.x=x_plot;
+measurements_images{1}.y=y_plot;
+measurements_images{1}.z=z_plot;
+measurements_images{1}.mask=m_plot;
+
+tim_mea_dtime_mean=mean(tim_mea);
 
 end %function
