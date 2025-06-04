@@ -163,7 +163,8 @@ switch lower(cmd)
 
                 fprintf(fid,'[%s]\n',ext_force(i_force).Chapter);
                 for i_key = 1: length(Keyword)
-                    if strcmpi(Keyword{i_key},'offset')
+                    if isnumeric(Value{i_key}) 
+                    if strcmpi(Keyword{i_key},'offset') Value{i_key} = num2str(Value{i_key}); end
                         fprintf (fid,'%-20s = %s\n',Keyword{i_key},num2str(Value{i_key}));
                     else
                         fprintf (fid,'%-20s = %s\n',Keyword{i_key},Value{i_key});
