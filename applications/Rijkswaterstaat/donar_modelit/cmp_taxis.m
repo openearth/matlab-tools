@@ -60,7 +60,7 @@ if strcmp(s.sTydehd,'mnd')
     taxis=taxis(:);
         
 else
-    STAP = (s.iTydstp*duration(s.sTydehd));
+    STAP = (s.iTydstp*duration_donar(s.sTydehd));
 
     taxis=long2datenum(s.lBegdat,s.iBegtyd):...
         STAP:...

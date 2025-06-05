@@ -1,4 +1,4 @@
-function d = duration(timeunit)
+function d = duration_donar(timeunit)
 % Calculate duration of a timeunit in Matlab datenum units.
 % 
 % CALL:

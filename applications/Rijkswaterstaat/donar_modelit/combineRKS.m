@@ -32,8 +32,8 @@ RKS = oldRKS;
 %Kijk nu of er nog een tweede argument is
 if nargin>1        
     %WIJZ KJH20070526 overnemen fijnste tijdstap
-    oldStap = RKS.iTydstp * duration(RKS.sTydehd);
-    newStap = newRKS.iTydstp * duration(newRKS.sTydehd);
+    oldStap = RKS.iTydstp * duration_donar(RKS.sTydehd);
+    newStap = newRKS.iTydstp * duration_donar(newRKS.sTydehd);
     %als nieuwe tijdstap fijner is neem dan over van newRKS
     if newStap < oldStap
         RKS.iTydstp = newRKS.iTydstp;

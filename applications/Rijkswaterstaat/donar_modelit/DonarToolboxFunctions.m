@@ -22,7 +22,7 @@ else
     emptyMUX;
     emptyTPS;
     cmp_taxis;
-    duration;
+    duration_donar;
     splitlongdate;
     bepaal_tijdstap;
     blok_select;
