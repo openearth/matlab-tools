@@ -22,22 +22,6 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PARSE
 
-% if isfield(flg_loc,'do_val_B_mor')==0
-%     flg_loc.do_val_B_mor=zeros(size(flg_loc.var));
-% end
-% if isfield(flg_loc,'do_val_B')==0
-%     flg_loc.do_val_B=zeros(size(flg_loc.var));
-% end
-% if any(flg_loc.do_val_B_mor & flg_loc.do_val_B)
-%     error('either full width or morphodynamic width')
-% end
-% 
-% if isfield(flg_loc,'var_idx')==0
-%     flg_loc.var_idx=cell(1,numel(flg_loc.var));
-% end
-% 
-% flg_loc=gdm_parse_sediment_transport(flg_loc,simdef);
-
 flg_loc=gdm_parse_summerbed(flg_loc,simdef);
 
 %% PATHS
@@ -47,18 +31,9 @@ fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fpath_map=simdef.file.map;
 
-%% MEASUREMENTS
-        
-%% OVERWRITE
-
-% ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat,'overwrite_tim'); if ret; return; end
-
 %% LOAD TIME
 
 [nt,time_dnum,~,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
-
-%% CONSTANT IN TIME
-
 
 %% DIMENSION
 
@@ -102,28 +77,16 @@ for ksb=1:nsb
             ktc=ktc+1;
                  
             for kvar=1:nvar %variable
-                [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
-                
-                layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); 
-                
-                if flg_loc.do_val_B_mor(kvar)
-                    var_str_save_tmp=sprintf('%s_B_mor',var_str_save);
-                elseif flg_loc.do_val_B(kvar)
-                    var_str_save_tmp=sprintf('%s_B',var_str_save);
-                else
-                    var_str_save_tmp=var_str_save; %the variable to save is different than the raw variable name we read
-                end
-                fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save_tmp,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
-                
-                if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite ; continue; end
 
-                fpath_mat_load=gdm_map_summerbed_mat_name(var_str_read,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
-                
-                data_raw=load(fpath_mat_load,'data');
-                val=data_raw.data.val_mean;
+                [fpath_mat,fpath_mat_postprocess]=gdm_map_summerbed_mat_name_build(flg_loc,kvar,simdef,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,gridInfo);
 
+                if exist(fpath_mat_postprocess,'file')==2 && ~flg_loc.overwrite ; continue; end
+                
                 switch var_str_save
                     case 'detab_ds'
+                        data_raw=load(fpath_mat,'data');
+                        val=data_raw.data.val_mean;
+
                         dx=diff(rkm_cen*1000);
                         detab_dx=NaN(size(val));
                         detab_dx(2:end-1)=(val(3:end)-val(1:end-2))./(dx(1:end-1)+dx(2:end));
@@ -131,12 +94,18 @@ for ksb=1:nsb
                         val_mean=detab_dx; 
                     otherwise
                         if flg_loc.do_val_B_mor(kvar) %multiply value by morphodynamic width
-                            fpath_mat_load=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var','ba_mor','sb',sb_pol);
-                            data_ba_mor=load(fpath_mat_load,'data');
+                            data_raw=load(fpath_mat,'data');
+                            val=data_raw.data.val_mean;
+
+                            fpath_mat=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'pol',pol_name,'var','ba_mor','sb',sb_pol);
+                            data_ba_mor=load(fpath_mat,'data');
                             val_mean=val.*data_ba_mor.data.val_sum_length;
                         elseif flg_loc.do_val_B(kvar) %multiply value per width
-                            fpath_mat_load=gdm_map_summerbed_mat_name('ba',fdir_mat,tag,pol_name,time_dnum(kt),sb_pol);
-                            data_ba=load(fpath_mat_load,'data');
+                            data_raw=load(fpath_mat,'data');
+                            val=data_raw.data.val_mean;
+                            
+                            fpath_mat=gdm_map_summerbed_mat_name('ba',fdir_mat,tag,pol_name,time_dnum(kt),sb_pol);
+                            data_ba=load(fpath_mat,'data');
                             val_mean=val.*data_ba.data.val_sum_length;
                         else
                             continue
@@ -147,7 +116,7 @@ for ksb=1:nsb
                 data=v2struct(val_mean); %#ok
 
                 %% save and disp
-                save_check(fpath_mat_tmp,'data');
+                save_check(fpath_mat_postprocess,'data');
                 messageOut(fid_log,sprintf('Reading %s sb poly %4.2f %% rkm poly %4.2f %% time %4.2f %% variable %4.2f %%',tag,ksb/nsb*100,krkmv/nrkmv*100,ktc/nt*100,kvar/nvar*100));
 
             %% BEGIN DEBUG

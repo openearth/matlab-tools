@@ -195,48 +195,21 @@ end
 
 %% check dimensions
 
-if ~iscell(val)
+[s,val]=get_data_into_cell(s,val,do_area);
 
-    sv=size(val);
-    if numel(sv)>2
-        sv=sv(2:end);
-        bol_d1=sv==1;
-        if ~any(bol_d1)
-            messageOut(NaN,'I cannot plot more than 2 dimensions')
-            return
-        end
-    end
-    val=squeeze(val);
-    if do_area
-        ylims=real([0,max(sum(val,2))+eps]);
-        if isnan(ylims(2))
-            ylims(2)=1e-10;
-        end
-    end
+%This should be moved somewhere else
+% if do_area
+%     ylims=real([0,max(sum(val,2))+eps]);
+%     if isnan(ylims(2))
+%         ylims(2)=1e-10;
+%     end
+% end
 
-    % if ~do_area
-        nv=size(val,2);
-        val_cell=cell(nv,1);
-        s_cell=cell(nv,1);
-        for kv=1:nv
-            val_cell{kv,1}=val(:,kv);
-            s_cell{kv,1}=s;
-        end
-        % val=val_cell;
-        % s=s_cell;
-        % nv=numel(val); 
-    % else
-        % nv=size(val,2);
-    % end
-    s=s_cell;
-    val=val_cell;
+if do_area
+    nv=size(val{1},2); 
+else
+    nv=numel(val); 
 end
-
-if ~iscell(s) || ~iscell(val)
-    error('...')
-end
-
-nv=numel(val); 
 
 %% SIZE
 
@@ -774,3 +747,52 @@ end
 
 end %function
 
+%%
+%% FUNCTION
+%%
+
+function [s_cell,val_cell]=get_data_into_cell(s,val,do_area)
+
+if iscell(val) && iscell(s)
+    return
+end
+if ~iscell(val) && iscell(s)
+    error('deal with this')
+end
+if iscell(val) && iscell(s)
+    error('deal with this')
+end
+
+%If we are here, both `s` and `val` are arrays. 
+
+%It is valid to input `val` with size [nx,1,nv]. Here we check that at
+%least one dimension is 1. 
+sv=size(val);
+if numel(sv)>2
+    sv=sv(2:end);
+    bol_d1=sv==1;
+    if ~any(bol_d1)
+        messageOut(NaN,'I cannot plot more than 2 dimensions')
+        evalin('caller', 'return');
+    end
+end
+val=squeeze(val);
+
+if ~do_area
+    %If it is not an area plot, each of the lines goes into a separate
+    %cell. 
+    nv=size(val,2);
+    val_cell=cell(nv,1);
+    s_cell=cell(nv,1);
+    for kv=1:nv
+        val_cell{kv,1}=val(:,kv);
+        s_cell{kv,1}=s;
+    end
+else
+    %If it is an area plot, the variable to plot is `size(val{1})=[np,nv]`.
+    %That is, the matrix is inside the first element of a cell array. 
+    val_cell{1}=val;
+    s_cell{1}=s;
+end
+
+end %function

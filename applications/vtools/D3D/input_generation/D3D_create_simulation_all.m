@@ -70,4 +70,8 @@ end
 
 D3D_create_run_batch('close',fdir_sim_runs,fid_lin,fid_win);
 
+%%
+
+messageOut(NaN,'DONE!!!',3)
+
 end %function

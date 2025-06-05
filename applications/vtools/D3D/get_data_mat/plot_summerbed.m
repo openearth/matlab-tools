@@ -537,12 +537,16 @@ end %function
 
 function data=load_data(flg_loc,gridInfo,simdef,time_dnum_kt,var_str_read,var_str_save,tag,pol_name,sb_pol,kvar)
 
-var_str_original=flg_loc.var{kvar};
-layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,var_str_original); 
 fdir_mat=simdef.file.mat.dir;
-[var_idx,~]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
-fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,var_idx,layer); %flow time for filename
-load(fpath_mat_tmp,'data');            
+[fpath_mat,~,varname_read_variable,layer,var_idx,sum_var_idx]=gdm_map_summerbed_mat_name_build(flg_loc,kvar,simdef,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,gridInfo);
+load(fpath_mat,'data');  
+
+% var_str_original=flg_loc.var{kvar};
+% layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,var_str_original); 
+% fdir_mat=simdef.file.mat.dir;
+% [var_idx,~]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
+% fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,var_idx,layer); %flow time for filename
+% load(fpath_mat_tmp,'data');            
 
 end %function
 
@@ -928,6 +932,7 @@ in_p.xlims=[tim_dtime_plot(1),tim_dtime_plot(end)];
 in_p.s=tim_dtime_plot;
 in_p.do_title=1;
 in_p.do_include_mea_xylims=1;
+in_p.do_area=0;
 
 tag_fig=flg_loc.tag;
 tag='val';
@@ -997,7 +1002,7 @@ if any(bol_tv(:))
                 % in_p.ylims=[NaN]; 
                 kclim=1;
                 kxlim=1;
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,str_save_sb_pol,1,kclim,var_idx,sprintf('tv_%5.2f',rkm_loc),kxlim);
+                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,str_save_sb_pol,kclim,var_idx,sprintf('tv_%5.2f',rkm_loc),kxlim);
     
                 in_p.fname=fname_noext;
                 in_p.val=val;
