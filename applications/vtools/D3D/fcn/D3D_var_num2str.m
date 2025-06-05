@@ -79,6 +79,8 @@ if ischar(varname_input)
                                 else
                                     varname_read_variable='DPS';
                                 end
+                            otherwise
+                                error('Set variable name')
                         end
                     case {2,4}
                         if ismor
@@ -87,7 +89,7 @@ if ischar(varname_input)
                             varname_read_variable='bl'; %taken by EHY
                         end
                     otherwise
-                        error('ups')
+                        error('Set variable name')
                 end
             end
             varname_save_mat='bl';
@@ -121,7 +123,7 @@ if ischar(varname_input)
                     case 3
                         varname_read_variable='water_depth';
                     otherwise
-                        error('ups')
+                        error('Set variable name')
                 end                
             end
             varname_save_mat='h';
@@ -135,6 +137,7 @@ if ischar(varname_input)
             varname_save_mat='umag';
             varname_load_mat=varname_save_mat;
             varname_label=varname_load_mat;
+            varname_read_variable=varname_save_mat;
         case 'umag_layer' %depth_averaged for 1D and 2D, but per layer in 3D
             %in 3D, `ucmag` is per layer and `ucmaga` is depth averaged.
             if is1d
@@ -152,10 +155,14 @@ if ischar(varname_input)
                         case {1,2,4,5}
                             if is1d
                                 varname_read_variable='mesh1d_s1';
+                            else
+                                varname_read_variable='wl'; %dealt within EHY for all cases except 1D
                             end
+                        otherwise
+                            varname_read_variable='wl'; %dealt within EHY for all cases except 1D
                     end
-                case 'his'
-                    %use `wl`
+                otherwise
+                    varname_read_variable='wl'; %dealt within EHY for all cases except 1D
             end
             varname_save_mat='wl';
             varname_load_mat=varname_save_mat;
@@ -178,6 +185,8 @@ if ischar(varname_input)
                         varname_read_variable='DG';
                     case {2,4}
                         varname_read_variable='mesh2d_dg';
+                    otherwise
+                        error('Set variable name')
                 end
             end
             varname_save_mat='dg';
@@ -201,6 +210,8 @@ if ischar(varname_input)
                         varname_read_variable='thlyr';
                     case {2,4}
                         varname_read_variable='mesh2d_thlyr';
+                    otherwise
+                        error('Set variable name')
                 end
             end
             varname_save_mat='thlyr';
@@ -215,6 +226,8 @@ if ischar(varname_input)
                         varname_read_variable='LYRFRAC';
                     case {2,4}
                         varname_read_variable='mesh2d_lyrfrac';
+                    otherwise
+                        error('Set variable name')
                 end
             end
             varname_save_mat='lyrfrac';
@@ -228,7 +241,7 @@ if ischar(varname_input)
         case {'ba','mesh2d_flowelem_ba'}
             if is1d
                 error('no idea')
-                varname_read_variable='mesh1d_lyrfrac';
+                % varname_read_variable='mesh1d_lyrfrac';
             else
                 varname_read_variable='mesh2d_flowelem_ba';
             end
@@ -236,6 +249,7 @@ if ischar(varname_input)
             varname_load_mat='ba';
             varname_label=varname_load_mat;
         case {'cross_section_discharge'}
+            varname_read_variable='cross_section_discharge';
             switch structure
                 case 3
                     varname_read_variable='water_discharge';
@@ -264,12 +278,12 @@ if ischar(varname_input)
             varname_load_mat='waveheight';
             varname_label=varname_load_mat;
         otherwise
-        varname_read_variable=varname_input;
-        varname_save_mat=varname_input;
-        varname_load_mat=varname_input;
-        varname_label=varname_load_mat;
+            varname_read_variable=varname_input;
+            varname_save_mat=varname_input;
+            varname_load_mat=varname_input;
+            varname_label=varname_load_mat;
     end
-else
+else %double
     varname_read_variable=varname_input;
     varname_save_mat=fcn_num2str(varname_read_variable);
     varname_load_mat=varname_save_mat;

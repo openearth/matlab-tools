@@ -179,7 +179,7 @@ for kvar=1:nvar %variable
             end
     
             %% difference with initial time
-            if flg_loc.do_diff_t
+            if flg_loc.do_diff_t && kt~=1
     
                 kplot=2;
     
@@ -213,7 +213,7 @@ for kvar=1:nvar %variable
             end
     
             %% difference with reference and initial time
-            if flg_loc.do_diff_s_t && ksim~=kref
+            if flg_loc.do_diff_s_t && ksim~=kref && kt~=1
     
                 kplot=4;
     
