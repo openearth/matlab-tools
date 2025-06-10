@@ -23,7 +23,9 @@ else
     path_lin=path_win;
 end
 
-end
+clipboard("copy",path_lin);
+
+end %function
 
 %%
 %% FUNCTIONS

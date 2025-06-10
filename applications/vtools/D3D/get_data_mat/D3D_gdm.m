@@ -145,8 +145,9 @@
 % in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
 % in_plot.(tag).clims_diff_t=[NaN,NaN]; %clim of difference with time
 % in_plot.(tag).clims_diff_s=[NaN,NaN]; %clim of difference with simulation
-% in_plot.(tag).filter_lim.clims=[998,1000]; %values larger than 1 and smaller than 2 are removed.
-% in_plot.(tag).filter_lim.clims_diff_s=[-1001,-998]; %
+% in_plot.(tag).filter_lim.clims=[998,1000]; %filter values for regular plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lim.clims_diff_s=[-1001,-998]; %filter values for difference between simulations plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lim.clims_diff_t=[-1001,-998]; %filter values for  difference in time plot. Values larger than the first value and smaller than the second are removed.
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).tim_movie=40; %movie duration [s]
 % in_plot.(tag).fpath_ldb{1,1}=fullfile(fpath_project,'model','postprocessing','mkm-inner.ldb');
@@ -168,6 +169,10 @@
 % % in_plot.(tag).epsg_in=4326; %28992
 % % in_plot.(tag).fig_size=[0,0,37/2,15];
 % % in_plot.(tag).font_size=20;
+% % in_plot.(tag).measurements=fullfile(fpaths.fdir_bl_measurements_2D,'2D_measurements_01.csv'); full path to csv file descriving the measurments:
+% % % time, file, factor
+% % % 1995-01-01T00:00:00+01:00, p:\archivedprojects\11206792-kpp-rivierkunde-2021\003_maas\04_input_generation\14_export_jmp_to_tif\1995.tif , 0.01
+% % in_plot.(tag).measurements_edgecolor='none'; %color of the edge lines of measurements.
 
 %% 2DH ls
 

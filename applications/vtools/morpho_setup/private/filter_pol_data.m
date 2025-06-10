@@ -50,6 +50,9 @@ loc_pol_num=cellfun(@(X)pol_str2double(X),loc_str);
 
 area_cen=pol.val{idx_pol(5)}.Val;
 
+%!!!!!!!!!!!!!!!!!!!
+% CALL SHP_filer_coverage
+
 %% filter
 
 coverage_val=count./area_cen; %there is one point (count) per m^2

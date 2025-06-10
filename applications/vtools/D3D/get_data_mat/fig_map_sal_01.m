@@ -84,10 +84,7 @@ end
 if isfield(in_p,'zlims')==0
     in_p.zlims=NaN;
 end
-in_p.plot_rkm=0;
-if isfield(in_p,'rkm')==1 && ~isempty(in_p.rkm)
-    in_p.plot_rkm=1;
-end
+
 if isfield(in_p,'views')==0
     in_p.views=[45,45];
 end
@@ -118,10 +115,7 @@ else
 end
 in_p=isfield_default(in_p,'tim_mea',in_p.tim);
 
-in_p.plot_fxw=0;
-if isfield(in_p,'fxw') && isstruct(in_p.fxw)
-    in_p.plot_fxw=1;
-end
+
 if isfield(in_p,'filter_lim')==0
     in_p.filter_lim=[inf,-inf];
 end
@@ -153,8 +147,6 @@ in_p=isfield_default(in_p,'epsg_in',28992);
 in_p=isfield_default(in_p,'epsg_out',in_p.epsg_in);
 in_p=isfield_default(in_p,'save_tiles',false);
 in_p=isfield_default(in_p,'tiles',{});
-in_p=isfield_default(in_p,'rkm_disp_color','c');
-in_p=isfield_default(in_p,'rkm_disp_size',10);
 
 in_p=isfield_default(in_p,'measurements_images',cell(0,0));
 if isempty(in_p.measurements_images)
@@ -175,7 +167,6 @@ else
     in_p=isfield_default(in_p,'plot_contour',0);
 end
 
-in_p=isfield_default(in_p,'color_fxw','m');
 
 v2struct(in_p)
 
@@ -629,18 +620,8 @@ if plot_vector
     %a row vector. I hope nothing is broken.
     quiver(gridInfo_v.Xcen,gridInfo_v.Ycen,vec_x,vec_y,vector_scale,'parent',han.sfig(kr,kc),'color',vector_color)
 end
-if plot_rkm
-    nrkm=numel(rkm{1,1});
-    for krkm=1:nrkm
-        bol_in=rkm{1,1}(krkm)>lims.x(kr,kc,1) && rkm{1,1}(krkm)<lims.x(kr,kc,2) && rkm{1,2}(krkm)>lims.y(kr,kc,1) && rkm{1,2}(krkm)<lims.y(kr,kc,2);
-        if ~bol_in; continue; end
-        scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,rkm_disp_color,'parent',han.sfig(kr,kc))
-        text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color',rkm_disp_color,'parent',han.sfig(kr,kc),'FontSize',rkm_disp_size)
-    end
-end
-if plot_fxw
-    plot(fxw.xy(:,1),fxw.xy(:,2),'parent',han.sfig(kr,kc),'color',color_fxw);
-end
+fcn_add_rkm(in_p,han.sfig(kr,kc),lims.x(kr,kc,:),lims.y(kr,kc,:))
+fcn_add_fxw(in_p,han.sfig(kr,kc),lims.x(kr,kc,:),lims.y(kr,kc,:))
 
 if plot_contour
     %the patch plot is at z=0. We plot the tricontour on top of it. The minimum
@@ -659,22 +640,8 @@ end %plot contour
 
 %% measurements
 
-if do_measurements
-    kc=2;
-    ni=numel(measurements_images);
-    for ki=1:ni
-        measurements_images_loc=measurements_images{ki};
-        if isfield(measurements_images_loc,'pol') %shp
-            npolygons_plot=numel(measurements_images_loc.pol);
-            for kp=1:npolygons_plot
-                fill(measurements_images_loc.pol{kp}(:,1),measurements_images_loc.pol{kp}(:,2),measurements_images_loc.z(kp),'parent',han.sfig(kr,kc));
-            end
-        else %tif
-            han.tmp(ki)=imagesc(measurements_images_loc.x, measurements_images_loc.y, measurements_images_loc.z,'parent',han.sfig(kr,kc));  % x and y are vectors
-            han.tmp(ki).AlphaData=measurements_images_loc.mask;
-        end %image type
-    end %ki
-end %do_measurements
+kr=1; kc=2;
+fcn_add_measurements(in_p,han.sfig(kr,kc),lims.x(kr,kc,:),lims.y(kr,kc,:))
 
 %% PROPERTIES
 
@@ -829,3 +796,107 @@ fig_print_close(in_p,han.fig,in_p.fig_print,fname)
 
 end %function
 
+%%
+%% FUNCTIONS
+%%
+
+function fcn_add_fxw(in_p,han_sfig_kr_kc,lims_x,lims_y)
+
+%% PARSE
+
+in_p.plot_fxw=0;
+if isfield(in_p,'fxw') && isstruct(in_p.fxw)
+    in_p.plot_fxw=1;
+end
+
+in_p=isfield_default(in_p,'color_fxw','m');
+
+v2struct(in_p)
+
+%% CALC
+
+if plot_fxw
+    bol_in=fxw.xy(:,1)>lims_x(1) & fxw.xy(:,1)<lims_x(2) & fxw.xy(:,2)>lims_y(1) & fxw.xy(:,2)<lims_y(2);
+    fxw.xy(~bol_in,:)=NaN;
+    plot(fxw.xy(:,1),fxw.xy(:,2),'parent',han_sfig_kr_kc,'color',color_fxw);
+end
+
+end %function
+
+%%
+
+function fcn_add_rkm(in_p,han_sfig_kr_kc,lims_x,lims_y)
+
+%% PARSE
+
+in_p.plot_rkm=0;
+if isfield(in_p,'rkm')==1 && ~isempty(in_p.rkm)
+    in_p.plot_rkm=1;
+end
+
+in_p=isfield_default(in_p,'rkm_disp_color','c');
+in_p=isfield_default(in_p,'rkm_disp_size',10);
+
+v2struct(in_p)
+
+%% CALC
+
+if plot_rkm
+    nrkm=numel(rkm{1,1});
+    for krkm=1:nrkm
+        bol_in=rkm{1,1}(krkm)>lims_x(1) && rkm{1,1}(krkm)<lims_x(2) && rkm{1,2}(krkm)>lims_y(1) && rkm{1,2}(krkm)<lims_y(2);
+        if ~bol_in; continue; end
+        scatter(rkm{1,1}(krkm),rkm{1,2}(krkm),10,rkm_disp_color,'parent',han_sfig_kr_kc)
+        text(rkm{1,1}(krkm),rkm{1,2}(krkm),rkm{1,3}{krkm},'color',rkm_disp_color,'parent',han_sfig_kr_kc,'FontSize',rkm_disp_size)
+    end
+end
+
+end %function
+
+%%
+
+function fcn_add_measurements_data(in_p,han_sfig_kr_kc)
+    
+%% PARSE
+
+in_p=isfield_default(in_p,'measurements_edgecolor','k');
+
+v2struct(in_p)
+
+%% CALC
+
+ni=numel(measurements_images);
+for ki=1:ni
+    measurements_images_loc=measurements_images{ki};
+    if isfield(measurements_images_loc,'pol') %shp
+        npolygons_plot=numel(measurements_images_loc.pol);
+        for kp=1:npolygons_plot
+            fill(measurements_images_loc.pol{kp}(:,1),measurements_images_loc.pol{kp}(:,2),measurements_images_loc.z(kp),'parent',han_sfig_kr_kc,'EdgeColor',measurements_edgecolor);
+        end
+    else %tif
+        han.tmp(ki)=imagesc(measurements_images_loc.x, measurements_images_loc.y, measurements_images_loc.z,'parent',han_sfig_kr_kc);  % x and y are vectors
+        han.tmp(ki).AlphaData=measurements_images_loc.mask;
+    end %image type
+end %ki
+
+end %function
+
+%% 
+
+function fcn_add_measurements(in_p,han_sfig_kr_kc,lims_x,lims_y)
+
+%% PARSE
+
+%parsed globally because it is used for the figure size
+
+v2struct(in_p)
+
+%% CALC
+
+if do_measurements
+    fcn_add_measurements_data(in_p,han_sfig_kr_kc)
+    fcn_add_rkm(in_p,han_sfig_kr_kc,lims_x,lims_y)
+    fcn_add_fxw(in_p,han_sfig_kr_kc,lims_x,lims_y)
+end %do_measurements
+
+end %function
