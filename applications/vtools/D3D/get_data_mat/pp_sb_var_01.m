@@ -82,7 +82,7 @@ for ksb=1:nsb
 
                 if exist(fpath_mat_postprocess,'file')==2 && ~flg_loc.overwrite ; continue; end
                 
-                switch var_str_save
+                switch flg_loc.var{kvar}
                     case 'detab_ds'
                         data_raw=load(fpath_mat,'data');
                         val=data_raw.data.val_mean;
