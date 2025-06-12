@@ -194,14 +194,13 @@ tol_y=in_p.tol_x_measurements;
 %% CALC
 
 nf=numel(measurements_structure);
-dx=1;
-dy=1;
-x_plot=floor(x_lims(1)):dx:ceil(x_lims(2));
-y_plot=fliplr(floor(y_lims(1)):dy:ceil(y_lims(2))); %y is reversed
+
+[x_plot,y_plot]=fcn_vector_plot_tif(measurements_structure,x_lims,y_lims);
+
 nx=numel(x_plot);
 ny=numel(y_plot);
 z_plot=NaN(ny,nx);
-m_plot=NaN(ny,nx);
+m_plot=ones(ny,nx);
 
 tim_mea=NaT(nf,1);
 tim_mea.TimeZone=time_dtime.TimeZone;
@@ -220,7 +219,7 @@ for kf=1:nf
             error('If one image is tif, all of them must be tif. Check the option to combine types: %s',fpath)
     end %fext
     %apply factor
-    measurements_images_loc.z=measurements_images_loc.z.*measurements_structure(kf).Factor;
+    measurements_images_loc.z=double(measurements_images_loc.z).*measurements_structure(kf).Factor;
     %save time
     tim_mea(kf)=measurements_structure(kf).Time;
 
@@ -294,5 +293,34 @@ for kf=1:nf
 end %kf
 
 tim_mea_dtime_mean=mean(tim_mea);
+
+end %function
+
+%%
+
+function y_plot=fcn_vector_plot(y_vector,y_lims)
+
+dy=diff(y_vector(1:2));
+[idx,~]=absmintol(y_vector,y_lims(1),'tol',1);
+yl=y_vector(idx);
+[idx,~]=absmintol(y_vector,y_lims(2),'tol',1);
+yu=y_vector(idx);
+y_plot=yl:abs(dy):yu;
+if sign(dy)<0
+    y_plot=fliplr(y_plot); %y is reversed
+end
+
+end %function
+
+%%
+
+function [x_plot,y_plot]=fcn_vector_plot_tif(measurements_structure,x_lims,y_lims)
+
+fpath=measurements_structure(1).Filename;
+
+[~,~,x_vector,y_vector]=TIF_info(fpath);
+
+y_plot=fcn_vector_plot(y_vector,y_lims);
+x_plot=fcn_vector_plot(x_vector,x_lims);
 
 end %function

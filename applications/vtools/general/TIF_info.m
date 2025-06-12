@@ -26,7 +26,7 @@
 %
 %E.G.
 
-function [image_info,no_data,x_vector,y_vector]=TIF_info(fname)
+function [image_info,no_data,x_vector,y_vector,fcn_data_type]=TIF_info(fname)
 
 image_info=imfinfo(fname);
 
@@ -57,14 +57,16 @@ y0=image_info.ModelTiepointTag(5);
 
 switch data_type
     case {1}
-        no_data=uint8(no_data);
+        fcn_data_type=@(X)uint8(X);
     case {2}
-        no_data=int16(no_data);
+        fcn_data_type=@(X)int16(X);
     case{3}
-        no_data=int32(no_data);
+        fcn_data_type=@(X)int32(X);
     case {4}
-        no_data=single(no_data);
+        fcn_data_type=@(X)single(X);
 end
+
+no_data=fcn_data_type(no_data);
 
 %% coordinates
 

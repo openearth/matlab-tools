@@ -59,7 +59,7 @@ if isstruct(d1)
         end
     end
 else
-    if all(isnan(d1)) && all(isnan(d2))
+    if all(isnan(d1(:))) && all(isnan(d2(:)))
         dn=[];
         dmax=[];
         dind=[];

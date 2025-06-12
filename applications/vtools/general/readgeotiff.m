@@ -43,7 +43,7 @@
 % set(gca().Children, 'AlphaData', I.mask);
 % colorbar
 
-function [I,image_info]=readgeotiff(fname,varargin)
+function [I,image_info,fcn_data_type]=readgeotiff(fname,varargin)
 
 %% PARSE
 
@@ -61,7 +61,7 @@ y_limits=parin.Results.y_limits;
 
 %% get image information
 
-[image_info,no_data,x_vector,y_vector]=TIF_info(fname);
+[image_info,no_data,x_vector,y_vector,fcn_data_type]=TIF_info(fname);
 
 %% filter
 

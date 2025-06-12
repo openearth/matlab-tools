@@ -85,20 +85,20 @@ if min_v>tol
         n=numel(v);
         for k=1:n
             if is_dnum
-                messageOut(fid_log,sprintf('%s %f \n',datestr(v(k),'yyyy-mm-dd HH:MM:SS'),v(k)-o));
+                messageOut(fid_log,sprintf('%s %f \n',datestr(v(k),'yyyy-mm-dd HH:MM:SS'),v(k)-o),0,0);
             elseif is_dtime
-                messageOut(fid_log,sprintf('%s %f s\n',datestr(v(k),'yyyy-mm-dd HH:MM:SS'),seconds(v(k)-o)));
+                messageOut(fid_log,sprintf('%s %f s\n',datestr(v(k),'yyyy-mm-dd HH:MM:SS'),seconds(v(k)-o)),0,0);
             else
-                messageOut(fid_log,sprintf('%f %f \n',v(k),v(k)-o));
+                messageOut(fid_log,sprintf('%f %f \n',v(k),v(k)-o),0,0);
             end
         end
     elseif do_disp_list==2
         if is_dnum
-            messageOut(fid_log,sprintf('%s %f \n',datestr(v(idx),'yyyy-mm-dd HH:MM:SS'),min_v));
+            messageOut(fid_log,sprintf('%s %f \n',datestr(v(idx),'yyyy-mm-dd HH:MM:SS'),min_v),0,0);
         elseif is_dtime
-            messageOut(fid_log,sprintf('%s %f s \n',datestr(v(idx),'yyyy-mm-dd HH:MM:SS'),seconds(min_v)));
+            messageOut(fid_log,sprintf('%s %f s \n',datestr(v(idx),'yyyy-mm-dd HH:MM:SS'),seconds(min_v)),0,0);
         else
-            messageOut(fid_log,sprintf('%f %f \n',v(idx),min_v));
+            messageOut(fid_log,sprintf('%f %f \n',v(idx),min_v),0,0);
         end
     end
     
