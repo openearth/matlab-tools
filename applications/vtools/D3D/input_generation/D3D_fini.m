@@ -198,3 +198,6 @@ end
 fclose(fileID_out);
 
 copyfile_check(fname_loc,fname_dest);
+delete(fname_loc);
+
+end %function

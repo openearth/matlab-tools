@@ -58,13 +58,6 @@ end
 if isfield(in_p,'is_percentage')==0
     in_p.is_percentage=0;
 end
-if isfield(in_p,'_thk')==0
-    in_p.ldb_thk=0.5;
-end
-in_p.plot_ldb=0;
-if isfield(in_p,'ldb')
-    in_p.plot_ldb=1;
-end
 in_p.plot_vector=0;
 if isfield(in_p,'vec_x')
     in_p.plot_vector=1;
@@ -191,9 +184,6 @@ switch unit
     case {'cl','cl_surf'}
         clims=sal2cl(1,clims);
         val=sal2cl(1,val);
-%     case 'sal'
-%     otherwise
-%         error('not sure what to do')
 end
 
 %% filter values
@@ -209,29 +199,13 @@ end
 
 %% dependent
 
-% if isnan(clims(1))
-    if is_faces
-        bol_in=gridInfo_v.Xcen>xlims(1) & gridInfo_v.Xcen<xlims(2) & gridInfo_v.Ycen>ylims(1) & gridInfo_v.Ycen<ylims(2);
-    else
-        bol_in=gridInfo_v.Xu>xlims(1) & gridInfo_v.Xu<xlims(2) & gridInfo_v.Yu>ylims(1) & gridInfo_v.Yu<ylims(2);
-    end
-    % if any(bol_in(:))
-    %     clims=[min(val(bol_in),[],'omitnan'),max(val(bol_in),[],'omitnan')];
-    % %     clims=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
-    %     tol=1e-8;
-    %     if is_diff || is_percentage
-    %         clims=absolute_limits(clims);
-    %     else
-    %         clims=clims+[-tol,+tol];
-    %     end
-    % 
-    % end
-    val(~bol_in)=NaN; %do not plot points outside the domain
-% end
-% if isnan(clims(1)) %still NaN because all are NaN
-%     tol=1e-8;
-%     clims=[-tol,+tol];
-% end
+if is_faces
+    bol_in=gridInfo_v.Xcen>xlims(1) & gridInfo_v.Xcen<xlims(2) & gridInfo_v.Ycen>ylims(1) & gridInfo_v.Ycen<ylims(2);
+else
+    bol_in=gridInfo_v.Xu>xlims(1) & gridInfo_v.Xu<xlims(2) & gridInfo_v.Yu>ylims(1) & gridInfo_v.Yu<ylims(2);
+end
+
+val(~bol_in)=NaN; %do not plot points outside the domain
 
 if isnan(zlims)
     zlims=clims;
@@ -256,12 +230,6 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-% marg.mt=1.0; %top margin [cm]
-% marg.mb=1.5; %bottom margin [cm]
-% marg.mr=0.5; %right margin [cm]
-% marg.ml=1.5; %left margin [cm]
-% marg.sh=1.0; %horizontal spacing [cm]
-% marg.sv=0.0; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 
@@ -301,6 +269,7 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
+
 kr=1; kc=1;
 if do_measurements
     cbar(kr,kc).displacement=[0.25,0.1,0,0]; 
@@ -315,182 +284,19 @@ in_p.frac=str_idx;
 in_p.val=val; %it can be filtered
 [cmap,cbar(kr,kc).label,clims]=gdm_cmap_and_string(in_p,val);
 
-% [lab,str_var,str_un,str_diff,str_back      ,str_std,str_diff_back,str_fil,str_rel,str_diff_perc]=labels4all(unit,fact,lan,'frac',str_idx,'Lref',Lref);
-% 
-% if is_background && ~is_diff
-%     cbar(kr,kc).label=str_back;
-% elseif is_diff && ~is_background
-%     cbar(kr,kc).label=str_diff;
-% elseif is_diff && is_background
-%     cbar(kr,kc).label=str_diff_back;
-% elseif is_percentage
-%     cbar(kr,kc).label=str_diff_perc;
-% else
-%     cbar(kr,kc).label=lab;
-% end
-% 
-% if ~isnan(cmap_cut_edges)
-%     fcut=cmap_cut_edges;
-%     nc=100/(1-fcut);
-% else
-%     nc=100;
-% end
-% 
-% if isempty(cmap) %default
-%     if is_background && ~is_diff
-%         cmap=turbo(nc);
-%     elseif is_diff && ~is_background
-%         cmap=brewermap(nc,'RdBu');
-%     elseif is_diff && is_background
-%         cmap=brewermap(nc,'RdBu');
-%     elseif is_percentage
-%         cmap=brewermap(nc,'RdBu');
-%     else
-%         cmap=turbo(nc);
-%     end
-% end
-% if ~isnan(cmap_cut_edges)
-%     cmap=cmap(round(nc*fcut):round(nc*(1-fcut)),:);
-% end
-% ncolor=size(cmap,1);
-
-% brewermap('demo')
-
-
-%center around 0
-% ncmap=1000;
-% cmap1=brewermap(ncmap,'RdYlGn');
-% cmap=flipud([flipud(cmap1(1:ncmap/2-ncmap*0.05,:));flipud(cmap1(ncmap/2+ncmap*0.05:end,:))]);
-
-%cutted centre colormap
-% ncmap=100;
-% cmap=flipud(brewermap(ncmap,'RdBu'));
-% fact=0.1; %percentage of values to remove from the center
-% cmap=[cmap(1:(ncmap-round(fact*ncmap))/2,:);cmap((ncmap+round(fact*ncmap))/2:end,:)];
-
-%compressed colormap
-% ncmap=100;
-% cmap=flipud(brewermap(ncmap,'RdYlBu'));
-% p1=0.5; %fraction of cmap compressed in p2
-% p2=0.7; %fraction of
-% np1=round(ncmap*p1);
-% np2=round(ncmap*p2);
-% x=1:1:ncmap;
-% x1=1:1:np1; %x vector
-% x2=1:1:ncmap-np1; %x vector
-% y1=cmap(1:np1,:); 
-% y2=cmap(np1+1:end,:); 
-% xq1=linspace(1,np1,np2); %query vector 1
-% xq2=linspace(1,ncmap-np1,ncmap-np2); %query vector 2
-% vq1=interp1(x1,y1,xq1);
-% vq2=interp1(x2,y2,xq2);
-% cmap=[vq1;vq2];
-
-%gauss colormap
-% ncmap=100;
-% cmap=flipud(brewermap(ncmap,'RdYlBu'));
-% x=linspace(0,1,ncmap);
-% xs=normcdf(x,0.5,0.25);
-% plot(x,xs)
-% cmap2=interp1(x,cmap,xs);
-% cmap=cmap2;
-% %merge 2 colormaps at a specific value. cmap1 spans between [clim_l(1),aux_cmap_change] and cmap 2 between [aux_cmap_change,clim_l(2)]
-% ncmap=100; %total number of colors (will be rounded)
-% aux_cmap_change=1; %value in which the colormaps change. 
-% aux_cmap1_n=round(ncmap*(aux_cmap_change-clim_l(1))/(clim_l(2)-clim_l(1)));
-% aux_cmap2_n=round(ncmap*(clim_l(2)-aux_cmap_change)/(clim_l(2)-clim_l(1)));
-% cmap1=flipud(brewermap(aux_cmap1_n,'Reds'));
-% cmap2=brewermap(aux_cmap2_n,'Greens');
-% cmap=[cmap1;cmap2];
-
-%interpolate depending on values
-% c=[200e-6,210e-6,300e-6,420e-6,2e-3,5.6e-3,16e-3,20e-3]*1e3;
-% nc=numel(c);
-% cmap=brewermap(nc-1,'Reds');
-% 
-% F1=griddedInterpolant(c(1:end-1)',cmap(:,1),'linear','nearest');
-% F2=griddedInterpolant(c(1:end-1)',cmap(:,2),'linear','nearest');
-% F3=griddedInterpolant(c(1:end-1)',cmap(:,3),'linear','nearest');
-% 
-% %e.g.
-% ct=[0.1e-3:0.1e-3:24e-3]*1e3; %color-dependent value
-% nct=numel(ct);
-% y=zeros(1,nct); %e.g.
-% x=1:1:nct; %e.g.
-% for kct=1:nct
-% scatter(x(kct),y(kct),20,[F1(ct(kct)),F2(ct(kct)),F3(ct(kct))],'filled')
-% end
-% han.cbar=colorbar;
-% colormap(cmap)
-% clim([1,nc])
-% han.cbar.Ticks=1:1:nc;
-% aux_str=cell(nc,1);
-% for kc=1:nc
-%     if c(kc)<1
-%         aux_str{kc,1}=sprintf('%3.0fe-3',c(kc)*1000);
-%     else
-%         aux_str{kc,1}=sprintf('%3.1f',c(kc));
-%     end
-% end
-% han.cbar.TickLabels=aux_str;
-
-%% TEXT
-
-%     %irregulra
-% kr=1; kc=1;
-% texti.sfig(kr,kc).pos=[0.015,0.5e-3;0.03,-0.5e-3;0.005,-1e-3];
-% texti.sfig(kr,kc).tex={'1','2','a'};
-% texti.sfig(kr,kc).clr={prop.color(1,:),prop.color(2,:),'k'};
-% texti.sfig(kr,kc).ref={'ul'};
-% texti.sfig(kr,kc).fwe={'bold','normal'};
-% texti.sfig(kr,kc).rot=[0,90];
-% 
-%     %regular
-% text_str={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o'};
-% text_str={'a','b';'c','d';'e','f';'g','h'};
-% for kr=1:npr
-%     for kc=1:npc
-% % kr=1; kc=1;
-% texti.sfig(kr,kc).pos=[0.5,0.5];
-% texti.sfig(kr,kc).tex={text_str{kr,kc}}; %#ok
-% texti.sfig(kr,kc).clr={'k'};
-% texti.sfig(kr,kc).ref={'lr'};
-% texti.sfig(kr,kc).fwe={'bold'};
-% texti.sfig(kr,kc).rot=[0,90];
-%     end
-% end
-%     %regular more than one
-% text_str={'Hir.','Hir.','Hir.';'Ia','Ia','Ia';'Ib','Ib','Ib';'IIa','IIa','IIa';'IIb','IIb','IIb';'IIc','IIc','IIc';'IId','IId','IId'};
-% text_str2={'a','b','c';'d','e','f';'g','h','i';'j','k','l';'m','n','o';'p','q','r';'s','t','u'};
-% for kr=1:npr
-%     for kc=1:npc
-% % kr=1; kc=1;
-% texti.sfig(kr,kc).pos=[0.5,0.5;0.5,0.5];
-% texti.sfig(kr,kc).tex={text_str{kr,kc},text_str2{kr,kc}}; %#ok
-% texti.sfig(kr,kc).clr={'k','k'};
-% texti.sfig(kr,kc).ref={'ll','lr'};
-% texti.sfig(kr,kc).fwe={'bold','normal'};
-% texti.sfig(kr,kc).rot=[0,90];
-%     end
-% end
-
 %% LABELS AND LIMITS
-
-% ka=1;
-% kr=axis_m(ka,1);
-% kc=axis_m(ka,2);
 
 kr=1; 
 for kc=1:npc
-lims.y(kr,kc,1:2)=ylims;
-lims.x(kr,kc,1:2)=xlims;
-lims.c(kr,kc,1:2)=clims;
-lims.z(kr,kc,1:2)=zlims;
-xlabels{kr,kc}=labels4all('x',1,lan);
-ylabels{kr,kc}=labels4all('y',1,lan);
-% ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
-% lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
-% lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
+    lims.y(kr,kc,1:2)=ylims;
+    lims.x(kr,kc,1:2)=xlims;
+    lims.c(kr,kc,1:2)=clims;
+    lims.z(kr,kc,1:2)=zlims;
+    xlabels{kr,kc}=labels4all('x',1,lan);
+    ylabels{kr,kc}=labels4all('y',1,lan);
+    % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
+    % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
+    % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time
 end
 
 %% FIGURE INITIALIZATION
@@ -589,12 +395,12 @@ end
 kr=1; kc=1;    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
 if is_faces
-    if do_3D
+    % if do_3D
         EHY_plotMapModelData(gridInfo,val,'t',1);
     %     EHY_plotMapModelData(gridInfo,val,'t',1,'edgecolor',edgecolor,'linestyle',linestyle); 
-    else
+    % else
         EHY_plotMapModelData(gridInfo,val,'t',1); 
-    end
+    % end
 else
     ne=size(val,2);
     for ke=1:ne
@@ -609,19 +415,13 @@ else
     end
 end
 
-if plot_ldb
-    nldb=numel(ldb);
-    for kldb=1:nldb
-        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han.sfig(kr,kc),'color','k','linewidth',ldb_thk,'linestyle','-','marker','none')
-    end
-end
 if plot_vector
     %before it was `gridInfo.Xcen` which was a column vector. Now it is `gridInfo_v.Xcen` which is 
     %a row vector. I hope nothing is broken.
     quiver(gridInfo_v.Xcen,gridInfo_v.Ycen,vec_x,vec_y,vector_scale,'parent',han.sfig(kr,kc),'color',vector_color)
 end
-fcn_add_rkm(in_p,han.sfig(kr,kc),lims.x(kr,kc,:),lims.y(kr,kc,:))
-fcn_add_fxw(in_p,han.sfig(kr,kc),lims.x(kr,kc,:),lims.y(kr,kc,:))
+
+fcn_add_features(in_p,han.sfig(kr,kc),lims.x(kr,kc,:),lims.y(kr,kc,:))
 
 if plot_contour
     %the patch plot is at z=0. We plot the tricontour on top of it. The minimum
@@ -645,9 +445,9 @@ fcn_add_measurements(in_p,han.sfig(kr,kc),lims.x(kr,kc,:),lims.y(kr,kc,:))
 
 %% PROPERTIES
 
-%% model 
-kr=1; kc=1;   
+kr=1; 
 for kc=1:npc
+
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
 
@@ -658,34 +458,37 @@ if do_3D
     han.sfig(kr,kc).ZLim=lims.z(kr,kc,:);
 end
 if do_axis_equal
-%     axis(han.sfig(kr,kc),'equal')
-if kc==1
-    han.dar=get(han.sfig(kr,kc),'DataAspectRatio');
-    if han.dar(3)==1
-        dar=[1 1 1/max(han.dar(1:2))];
+    %     axis(han.sfig(kr,kc),'equal')
+    if kc==1
+        han.dar=get(han.sfig(kr,kc),'DataAspectRatio');
+        if han.dar(3)==1
+            dar=[1 1 1/max(han.dar(1:2))];
+        else
+            dar=[1 1 han.dar(3)];
+        end
+        set(han.sfig(kr,kc),'DataAspectRatio',dar)
     else
-        dar=[1 1 han.dar(3)];
+        set(han.sfig(kr,kc),'DataAspectRatio',dar)
     end
-    set(han.sfig(kr,kc),'DataAspectRatio',dar)
-else
-    set(han.sfig(kr,kc),'DataAspectRatio',dar)
-end
 end
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).XLabel.FontSize=prop.fs;
 if kc==1
     han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
-% else
-    % han.sfig(kr,kc).YLabel.String='';
+else
+    han.sfig(kr,kc).YLabel.String='';
 end
 han.sfig(kr,kc).YLabel.FontSize=prop.fs;
 han.sfig(kr,kc).YDir='normal';
+% if kc==2 && ~isfield(measurements_images,'pol') %there are measurements and are tif
+    % han.sfig(kr,kc).YDir='reverse';
+% end
 if do_3D
-han.sfig(kr,kc).ZLabel.String=cbar(kr,kc).label;
+    han.sfig(kr,kc).ZLabel.String=cbar(kr,kc).label;
 end
 % han.sfig(kr,kc).XTickLabel='';
 if kc~=1
-han.sfig(kr,kc).YTickLabel='';
+    han.sfig(kr,kc).YTickLabel='';
 end
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
@@ -707,15 +510,13 @@ end
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-% kr=1; kc=1;
 if do_3D
-view(han.sfig(kr,kc),views);
+    view(han.sfig(kr,kc),views);
 end
 colormap(han.sfig(kr,kc),cmap);
-% if ~isnan(lims.c(kr,kc,1:1))
-caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
-% end
-end
+clim(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+
+end %kc
 
 
 %% ADD TEXT
@@ -760,7 +561,7 @@ end
 
 %% COLORBAR
 
-if in_p.do_cbar
+if do_cbar
 kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
@@ -894,9 +695,48 @@ v2struct(in_p)
 %% CALC
 
 if do_measurements
-    fcn_add_measurements_data(in_p,han_sfig_kr_kc)
-    fcn_add_rkm(in_p,han_sfig_kr_kc,lims_x,lims_y)
-    fcn_add_fxw(in_p,han_sfig_kr_kc,lims_x,lims_y)
+    fcn_add_measurements_data(in_p,han_sfig_kr_kc);
+    fcn_add_features(in_p,han_sfig_kr_kc,lims_x,lims_y);
 end %do_measurements
+
+end %function
+
+%%
+
+function fcn_add_ldb(in_p,han_sfig_kr_kc,lims_x,lims_y)
+
+%% PARSE
+
+in_p=isfield_default(in_p,'color_ldb','k');
+in_p=isfield_default(in_p,'thk_ldb',0.5);
+
+if isfield(in_p,'ldb')
+    in_p=isfield_default(in_p,'plot_ldb',1);
+else
+    in_p=isfield_default(in_p,'plot_ldb',0);
+end
+
+v2struct(in_p)
+
+%% CALC
+
+if plot_ldb
+    nldb=numel(ldb);
+    for kldb=1:nldb
+        bol_in=ldb(kldb).cord(:,1)>lims_x(1) & ldb(kldb).cord(:,1)<lims_x(2) & ldb(kldb).cord(:,2)>lims_y(1) & ldb(kldb).cord(:,2)<lims_y(2);
+        ldb(kldb).cord(~bol_in,:)=NaN;
+        plot(ldb(kldb).cord(:,1),ldb(kldb).cord(:,2),'parent',han_sfig_kr_kc,'color',color_ldb,'linewidth',thk_ldb,'linestyle','-','marker','none')
+    end
+end
+
+end %function
+
+%% 
+
+function fcn_add_features(in_p,han_sfig_kr_kc,lims_x,lims_y)
+
+fcn_add_rkm(in_p,han_sfig_kr_kc,lims_x,lims_y)
+fcn_add_fxw(in_p,han_sfig_kr_kc,lims_x,lims_y)
+fcn_add_ldb(in_p,han_sfig_kr_kc,lims_x,lims_y)
 
 end %function

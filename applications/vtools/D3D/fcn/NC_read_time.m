@@ -12,7 +12,7 @@
 %
 %read time from NC file
 
-function [time_dtime,units,time_r]=NC_read_time(nc_map,kt,varargin)
+function [time_dtime,units,time_r]=NC_read_time(fpath_nc,kt,varargin)
 
 %% PARSE
 
@@ -26,20 +26,14 @@ tim_type=parin.Results.type;
 
 %% CALC
 
-[t0_dtime,units]=NC_read_time_0(nc_map);
+[t0_dtime,units,~,~,tim_str]=NC_read_time_0(fpath_nc);
 
-[is_wa,tim_str,~,~]=iswaqua(nc_map);
-
-if ~is_wa
-    switch tim_type
-        case 'hydro'
-            tim_str='time';
-        case 'morpho'
-            tim_str='morft';
-    end
+switch tim_type
+    case 'morpho'
+        tim_str='morft';
 end
 
-time_r=ncread(nc_map,tim_str,kt(1),kt(2)); %results time vector [seconds/minutes/hours since start date]
+time_r=ncread(fpath_nc,tim_str,kt(1),kt(2)); %results time vector [seconds/minutes/hours since start date]
 
 switch units
     case 'seconds'
