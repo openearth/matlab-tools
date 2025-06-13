@@ -754,6 +754,8 @@ end %function
 function [s_cell,val_cell]=get_data_into_cell(s,val,do_area)
 
 if iscell(val) && iscell(s)
+    s_cell=s;
+    val_cell=val;
     return
 end
 if ~iscell(val) && iscell(s)

@@ -14,12 +14,14 @@
 
 function plot_all_runs_one_figure(fid_log,in_plot,simdef,leg_str)
 
+nsim=numel(simdef);
+
 %% map_summerbed
 tag_check='fig_map_summerbed_01';
 if isfield(in_plot,tag_check)==1
     % in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
     in_plot_fig=gmd_tag(in_plot,tag_check);
-    in_plot_fig.leg_str=leg_str;
+    in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     plot_summerbed(fid_log,in_plot_fig,simdef)
     if isfield(in_plot_fig,'tim_ave')
         error('The code below needs to be make to work. It used to be called when only one `simdef` was called in `plot_individual_runs`')
@@ -35,7 +37,7 @@ end
 % tag_check='fig_his_xt_01';
 % if isfield(in_plot,tag_check)==1
 %     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
-%     in_plot_fig.leg_str=leg_str;
+%     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
 %     plot_his_xt_01(fid_log,in_plot_fig,simdef)
 % end
     
@@ -44,7 +46,7 @@ tag_check='fig_his_01';
 if isfield(in_plot,tag_check)==1
 %     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
     in_plot_fig=gmd_tag(in_plot,tag_check);
-    in_plot_fig.leg_str=leg_str;
+    in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     plot_his_01(fid_log,in_plot_fig,simdef)
 end
 
@@ -52,7 +54,7 @@ end
 tag_check='fig_map_2DH_his_01';
 if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
-    in_plot_fig.leg_str=leg_str;
+    in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     plot_his_01(fid_log,in_plot_fig,simdef)
 end
 
@@ -60,7 +62,7 @@ end
 tag_check='fig_map_1D_01';
 if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
-    in_plot_fig.leg_str=leg_str;
+    in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     plot_map_1D_xv_01(fid_log,in_plot_fig,simdef)
 end
 
@@ -68,7 +70,7 @@ end
 tag_check='fig_map_2DH_ls_01';
 if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
-    in_plot_fig.leg_str=leg_str;
+    in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     plot_map_2DH_ls_01(fid_log,in_plot_fig,simdef)
 end
 
@@ -76,8 +78,61 @@ end
 tag_check='fig_map_2DH_01';
 if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
-    in_plot_fig.leg_str=leg_str;
+    in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     plot_map_2DH_02(fid_log,in_plot_fig,simdef)
+
+    for ksim=1:nsim
+        plot_map_2DH_cum_01(fid_log,in_plot_fig,simdef(ksim))
+        plot_map_2DH_Fourier2D(fid_log,in_plot_fig,simdef(ksim))
+    end
+
+end
+
+%% grid
+tag_check='fig_grid_01';
+if isfield(in_plot,tag_check)==1
+    in_plot_fig=gmd_tag(in_plot,tag_check);
+
+    for ksim=1:nsim
+        plot_grid_01(fid_log,in_plot_fig,simdef(ksim))
+    end
+end
+
+%% his sal meteo
+tag_check='fig_his_sal_meteo_01';
+if isfield(in_plot,tag_check)==1
+    in_plot_fig=gmd_tag(in_plot,tag_check);
+    for ksim=1:nsim
+        plot_his_sal_meteo_01(fid_log,in_plot_fig,simdef(ksim))
+    end
+end
+
+%% observation stations
+tag_check='fig_his_obs_01';
+if isfield(in_plot,tag_check)==1
+    in_plot_fig=gmd_tag(in_plot,tag_check);
+    for ksim=1:nsim
+        plot_his_obs_01(fid_log,in_plot_fig,simdef(ksim))
+    end
+end
+
+%% fraction in left, centre, right of the channel
+tag_check='fig_map_fraction_cs';
+if isfield(in_plot,tag_check)==1
+    in_plot_fig=gmd_tag(in_plot,tag_check);
+    for ksim=1:nsim
+        plot_map_fraction_cs_01(fid_log,in_plot_fig,simdef(ksim))
+    end
 end
 
 end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function in_plot_fig=gdm_add_legend(in_plot_fig,leg_str)
+
+in_plot_fig=isfield_default(in_plot_fig,'leg_str',leg_str);
+
+end

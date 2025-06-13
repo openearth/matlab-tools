@@ -124,6 +124,7 @@
 
 % tag='fig_map_2DH_01';
 % in_plot.(tag).do=1;
+
 % in_plot.(tag).do_p=1; %pass through plotting routine
 % in_plot.(tag).do_p_single=1; %plot single result
 % in_plot.(tag).do_diff_t=1; %difference initial time
@@ -137,6 +138,7 @@
 % in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
 % in_plot.(tag).depth_average=1; %compute depth average quantity [1,nvar]
 % in_plot.(tag).tim_just_load=0;
+% % in_plot.(tag).do_mat=0; %do the processing of mat-files. If set to 0, it is assumed that it already exists and you can just plot. 
 % % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
@@ -208,6 +210,8 @@
 % % in_plot.(tag).xdir='reverse';
 % in_plot.(tag).leg_mea='Carnott'; %legend of measurements (default is 'measurements [-]')
 % % in_plot.(tag).xlab_str='whatever you want'
+% % in_plot.(tag).cmap=[0,0,0;1,1,1]; %custom colormap for each line in the plot
+% % in_plot.(tag).leg_str={'a','b'}; %custom legend
 
 %% summerbed
 
@@ -493,119 +497,37 @@ function D3D_gdm(in_plot)
 in_plot=create_mat_default_flags(in_plot);
 fid_log=NaN;
 
-simdef_all=NaN; %for passing to `gdm_adhoc`. 
+simdef=NaN; %for passing to `gdm_adhoc`. 
 
-if in_plot.only_adhoc==0
+if ~in_plot.only_adhoc
 
-if ~isfield(in_plot,'fdir_sim')
-    error('Specify the simulations to analyse <fdir_sim>')
-end
-ns=numel(in_plot.fdir_sim);
-
-%% CREATE MAT-FILES
-
-messageOut(fid_log,'Creating mat-files',3)
-
-for ks=1:ns
-
-    %% paths
-    simdef=gdm_paths_single_run(fid_log,in_plot,ks);
-    
-    %% call
-    create_mat_single_run(fid_log,in_plot,simdef);
-    
-end %ks
-
-%%
-
-%2DO Reworking
-%Currently we first plot individual runs, then against a 
-%reference and then together, all calling different runs. 
-%This is idiotic. Here we have to prepare <simdef_ref> and 
-%<simdef> as structure having all simulations. Then, each
-%independent plotting function plots each run individually
-%and compared to a reference. See <plot_1D_01>.
-%An improvement to <plot_1D_01> is not to pass <simdef_ref>
-%but to get it withing the function. Consider it at least. 
-
-%% PLOT INDIVIDUAL RUNS
-
-messageOut(fid_log,'Plotting individual runs',3)
-
-for ks=1:ns
-    
-    %% paths
-    simdef=gdm_paths_single_run(fid_log,in_plot,ks);
-    
-    %% call
-    plot_individual_runs(fid_log,in_plot,simdef);
-    
-end %ks
-
-%% PLOT DIFFERENCES WITH REFERENCE
-
-if isfield(in_plot,'sim_ref') && ~isnan(in_plot.sim_ref) && ns>1
-
-    %% reference paths
-    ks_ref=in_plot.sim_ref;
-    simdef_ref=gdm_paths_single_run(fid_log,in_plot,ks_ref,'disp',0);
-
-    %% PLOT DIFFERENCES BETWEEN RUNS
-
-    messageOut(fid_log,'Plotting differences between runs',3)
-
-    for ks=1:ns
-
-        if ks==ks_ref; continue; end
-
-        %% paths
-        simdef=gdm_paths_single_run(fid_log,in_plot,ks);
-
-        %% call
-        plot_differences_between_runs(fid_log,in_plot,simdef_ref,simdef)
-
-    end %ks
-
-    %% PLOT DIFFERENCES BETWEEN RUNS IN ONE FIGURE
-
-    messageOut(fid_log,'Plotting differences between runs in one figure',3)
-
-    %% paths no ref
-    ksc=0;
-    for ks=1:ns
-        if ks==ks_ref; continue; end
-        ksc=ksc+1;
-        [simdef_no_ref(ksc),leg_str_no_ref{ksc}]=gdm_paths_single_run(fid_log,in_plot,ks,'disp',0);
+    if ~isfield(in_plot,'fdir_sim')
+        error('Specify the simulations to analyse <fdir_sim>')
     end
+    ns=numel(in_plot.fdir_sim);
     
-    %% call
-    plot_differences_between_runs_one_figure(fid_log,in_plot,simdef_ref,simdef_no_ref,leg_str_no_ref)
-
-end %reference run 
-
-%% PLOT ALL RUNS IN ONE FIGURE
-
-%The idea is that we only call once the plotting routine passing as
-%argument `simdef_all` and inside each plotting routine we first plot
-%each one individually, then difference in time, then difference with 
-%reference, etcetera. Let's see if there are no problems. 
+    %% CREATE MAT-FILES
     
-messageOut(fid_log,'Plotting all runs in one figure',3)
-
-%% paths all
-simdef_all=struct('D3D',NaN,'err',NaN,'file',NaN);
-for ks=1:ns
-    [simdef_all(ks),leg_str_all{ks}]=gdm_paths_single_run(fid_log,in_plot,ks,'disp',0);
-end
-
-%% call
-plot_all_runs_one_figure(fid_log,in_plot,simdef_all,leg_str_all)
+    messageOut(fid_log,'Creating mat-files',3)
+    
+    simdef=struct('D3D',NaN,'err',NaN,'file',NaN);
+    legend_str=cell(ns,1);
+    for ks=1:ns
+        [simdef(ks),legend_str{ks}]=gdm_paths_single_run(fid_log,in_plot,ks);
+        create_mat_single_run(fid_log,in_plot,simdef(ks));
+    end %ks
+    
+    %% PLOT
+        
+    messageOut(fid_log,'Plotting',3)
+    
+    plot_all_runs_one_figure(fid_log,in_plot,simdef,legend_str)
 
 end %only_adhoc
 
 %% AD-HOC
 
-gdm_adhoc(fid_log,in_plot,simdef_all)
+gdm_adhoc(fid_log,in_plot,simdef)
 
 %% END
 

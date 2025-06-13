@@ -16,13 +16,9 @@ function ret=gdm_do_mat(fid_log,flg_loc,tag,varargin)
 
 %% PARSE
 
-if isfield(flg_loc,'do')==0
-    flg_loc.do=1;
-end
-
-if isfield(flg_loc,'do_p')==0
-    flg_loc.do_p=1;
-end
+flg_loc=isfield_default(flg_loc,'do',1);
+flg_loc=isfield_default(flg_loc,'do_p',1);
+flg_loc=isfield_default(flg_loc,'do_mat',1);
 
 if numel(varargin)>0
     if isfield(flg_loc,varargin{1,1})

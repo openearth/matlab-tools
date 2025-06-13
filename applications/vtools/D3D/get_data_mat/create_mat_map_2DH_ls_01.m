@@ -18,7 +18,7 @@ tag=flg_loc.tag;
 
 %% DO
 
-ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
+ret=gdm_do_mat(fid_log,flg_loc,tag,'do_mat'); if ret; return; end
 
 %% PARSE
 
