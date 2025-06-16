@@ -440,8 +440,7 @@ end %plot contour
 
 %% measurements
 
-kr=1; kc=2;
-fcn_add_measurements(in_p,han.sfig(kr,kc),lims.x(kr,kc,:),lims.y(kr,kc,:))
+fcn_add_measurements(in_p,han,lims)
 
 %% PROPERTIES
 
@@ -684,7 +683,7 @@ end %function
 
 %% 
 
-function fcn_add_measurements(in_p,han_sfig_kr_kc,lims_x,lims_y)
+function fcn_add_measurements(in_p,han,lims)
 
 %% PARSE
 
@@ -695,6 +694,11 @@ v2struct(in_p)
 %% CALC
 
 if do_measurements
+    kr=1; kc=2;
+    han_sfig_kr_kc=han.sfig(kr,kc);
+    lims_x=lims.x(kr,kc,:);
+    lims_y=lims.y(kr,kc,:);
+    
     fcn_add_measurements_data(in_p,han_sfig_kr_kc);
     fcn_add_features(in_p,han_sfig_kr_kc,lims_x,lims_y);
 end %do_measurements
