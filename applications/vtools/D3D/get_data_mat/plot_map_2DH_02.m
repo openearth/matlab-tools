@@ -258,21 +258,7 @@ for kvar=1:nvar %variable
     
         %% movies
     
-        if flg_loc.do_movie && nt>1
-            for kplot=1:nplot
-                fpath_loc=squeeze(fpath_file_2D(kplot,1,:,1));
-                bol_clim=cellfun(@(X)~isempty(X),fpath_loc);
-                nclim=sum(bol_clim);
-                for kclim=1:nclim
-                    for kxlim=1:nxlim
-                        fpath_mov=fpath_file_2D(kplot,:,kclim,kxlim);
-                        fpath_mov=reshape(fpath_mov,[],1);
-                        gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum_loc);   
-                    end
-                end
-            end
-    
-        end %movie
+        gdm_movie_paths(fid_log,flg_loc,time_dnum_loc,fpath_file_2D);
 
     end %ksim
 end %kvar
@@ -489,3 +475,33 @@ str_var_idx=strrep(str_var_idx,' ','_');
 str_var_idx=strrep(str_var_idx,'__','_');
 
 end
+
+%%
+
+function gdm_movie_paths(fid_log,flg_loc,time_dnum_loc,fpath_file_2D)
+
+[nplot,nt,~,nxlim]=size(fpath_file_2D);
+if flg_loc.do_movie && nt>1
+    
+    for kplot=1:nplot
+        %Do not check on the first time. It is empty for diff_t. 
+        fpath_loc_t=fpath_file_2D(kplot,:,1,1);
+        bol_t=cellfun(@(X)~isempty(X),fpath_loc_t);
+        if any(bol_t)
+            fpath_loc_t_ne=fpath_file_2D(:,bol_t,:,:);    
+            fpath_loc_clim=squeeze(fpath_loc_t_ne(kplot,1,:,1)); %here the first time always exists
+            bol_clim=cellfun(@(X)~isempty(X),fpath_loc_clim);
+            nclim=sum(bol_clim);
+            for kclim=1:nclim
+                for kxlim=1:nxlim
+                    fpath_mov=fpath_loc_t_ne(kplot,:,kclim,kxlim);
+                    fpath_mov=reshape(fpath_mov,[],1);
+                    gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum_loc);   
+                end
+            end
+        end 
+    end %kplot
+
+end %movie
+
+end %function
