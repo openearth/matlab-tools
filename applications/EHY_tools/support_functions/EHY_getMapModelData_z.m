@@ -52,7 +52,10 @@ end
 %  in case of velocities
 try modelSize = size(DataAll.val); catch modelSize = size(DataAll.vel_x); end 
 if length(modelSize) == 4
-    DataAll.val    = reshape(DataAll.val,   [modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 
+    v = intersect(fieldnames(DataAll),{'val','vel_x','vel_y','vel_mag','vel_dir','val_x','val_y'});
+    for vv = 1:length(v)
+        DataAll.(v{vv})    = reshape(DataAll.(v{vv}),   [modelSize(1) prod(modelSize(2:3)) modelSize(4)]);
+    end
     DataZ.Zcen_cen = reshape(DataZ.Zcen_cen,[modelSize(1) prod(modelSize(2:3)) modelSize(4)]); 
     DataZ.Zcen_int = reshape(DataZ.Zcen_int,[modelSize(1) prod(modelSize(2:3)) modelSize(4)+1]); 
     if numel(refLevel)>1
@@ -125,5 +128,7 @@ end
 
 %% cells (like dfm) back to [m,n] (like d3d)
 if length(modelSize) == 4
-    Data.val = reshape(Data.val,modelSize(1:3));
+    for vv = 1:length(v)
+        Data.(v{vv}) = reshape(Data.(v{vv}),modelSize(1:3));
+    end
 end
