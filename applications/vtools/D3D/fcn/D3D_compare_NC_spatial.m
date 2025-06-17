@@ -12,7 +12,9 @@
 %
 %compare netcdf files
 
-function D3D_compare_NC(nc1,nc2,path_log)
+
+function D3D_compare_NC_spatial(nc1,nc2,path_log)
+% findthisplease
 
 %DEBUG
 % clear

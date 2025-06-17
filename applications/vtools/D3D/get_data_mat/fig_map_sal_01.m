@@ -274,7 +274,7 @@ kr=1; kc=1;
 if do_measurements
     cbar(kr,kc).displacement=[0.25,0.1,0,0]; 
 else
-    cbar(kr,kc).displacement=[0.0,0,0,0]; 
+    cbar(kr,kc).displacement=[0.0,0,0,0]; %does not really work well. It changes position. 
 end
 cbar(kr,kc).location='northoutside';
 
@@ -565,8 +565,10 @@ kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 pos.cbar=han.cbar.Position;
+if do_measurements
 han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
 han.sfig(kr,kc).Position=pos.sfig;
+end
 han.cbar.Label.String=cbar(kr,kc).label;
 han.cbar.Label.FontSize=prop.fs;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].

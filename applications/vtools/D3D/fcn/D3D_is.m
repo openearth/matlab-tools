@@ -34,7 +34,7 @@ if strcmp(ext,'.nc') %FM
     end
     
     %is suspended load
-    idx=find_str_in_cell({nci.Variables.Name},{'cross_section_suspended_sediment_transport','mesh2d_sscx'});
+    idx=find_str_in_cell({nci.Variables.Name},{'cross_section_suspended_sediment_transport','mesh2d_sscx','mesh2d_ssn'});
     issus=1;
     if any(isnan(idx))
         issus=0;

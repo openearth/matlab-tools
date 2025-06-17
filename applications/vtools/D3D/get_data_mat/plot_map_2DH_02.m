@@ -42,7 +42,6 @@ nxlim=size(flg_loc.xlims,1);
 in_p=flg_loc;
 in_p.fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 in_p.fig_visible=0;
-in_p.gridInfo=gridInfo_ref;
 in_p.rkm=flg_loc.rkm_file_disp;
 
 flg_loc.fext=ext_of_fig(in_p.fig_print);
@@ -104,7 +103,8 @@ for kvar=1:nvar %variable
 
         %grid and time of local simulation
         [gridInfo,time_dnum_loc,time_mor_dnum]=gdm_load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
-    
+        in_p.gridInfo=gridInfo;
+
         %fxw of local simulation
         fdir_mat=simdef(ksim).file.mat.dir;
         switch flg_loc.do_fxw

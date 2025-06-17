@@ -16,8 +16,7 @@ function [val_diff,val_int,val_ref]=D3D_diff_val(val,val_ref,gridInfo,gridInfo_r
 
 if isstruct(gridInfo)
     if size(val)==size(val_ref)
-        %may not be strong enough and you have to check the grids
-        val_int=val;
+        val_int=val_int_same_size(val,gridInfo_ref.Xcen',gridInfo.Xcen');
     else
         idx_nn=find(~isnan(gridInfo.Xcen));
         x_in=gridInfo.Xcen(idx_nn);
@@ -34,6 +33,8 @@ else
     if size(val)==size(val_ref)
         %may not be strong enough and you have to check the grids
         val_int=val;
+        %consider using:
+        % val_int=val_int_same_size(val,gridInfo_ref,gridInfo);
     else
         bol_nn=~isnan(gridInfo);
         x_in=gridInfo(bol_nn);
@@ -46,3 +47,14 @@ end
 val_diff=val_int-val_ref;
 
 end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function val_int=val_int_same_size(val,x_ref,x)
+
+[~,idx]=reorder_matrix(x_ref,x);
+val_int=val(idx);
+
+end
