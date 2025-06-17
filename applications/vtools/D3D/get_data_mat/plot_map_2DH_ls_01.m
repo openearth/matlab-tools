@@ -27,7 +27,7 @@ flg_loc=gdm_parse_map_2DH_ls(flg_loc);
 
 %% PATHS
 
-nS=numel(simdef);
+nsim=numel(simdef);
 fdir_mat=simdef(flg_loc.sim_ref).file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
@@ -86,10 +86,10 @@ for kpli=1:npli %variable
         %Preallocate for plotting all times/simulation together.
         %We could consider to only allocate if we actually want to plot it in this way. Otherwise, 
         %data is saved always in the same index. 
-        data_all=cell(nS,1); %inside -> data_all=NaN(nt,numel(data_ref.data.(str_val)),nS);
+        data_all=cell(nsim,1); %inside -> data_all=NaN(nt,numel(data_ref.data.(str_val)),nS);
         
         nplot=5;
-        fpath_file=cell(nplot,nt,nS,nlims);
+        fpath_file=cell(nplot,nt,nsim,nlims);
 
         %time 0
         kt=1;
@@ -121,25 +121,25 @@ for kpli=1:npli %variable
                 flg_loc.plot_type=flg_loc.what_is;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=1;
-                for kS=1:nS
-                    data_loc=data_all{kS}(kt,:,:);
+                for ksim=1:nsim
+                    data_loc=data_all{ksim}(kt,:,:);
                     if flg_loc.what_is==2
                         data_loc=reshape(data_loc,[],1);
                     end
                     tag_fig=tag;
-                    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
-                    runid=simdef(kS).file.runid;
+                    runid=simdef(ksim).file.runid;
 
                     in_p.val_mea=data_mea.y;
                     in_p.is_diff=0;
                     in_p.plot_mea=plot_mea;
                
-                    in_p.data_ls.grid=gridInfo_ls{kS};
-                    in_p.s=s{kS};
+                    in_p.data_ls.grid=gridInfo_ls{ksim};
+                    in_p.s=s{ksim};
                     in_p.val0=val0;
 
-                    fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);     
+                    fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);     
                 end %kS
             end
 
@@ -150,16 +150,16 @@ for kpli=1:npli %variable
                 kplot=2;
 
 %                 data_loc=reshape(squeeze(data_all(kt,:,:)),[],1);
-                data_loc=cell(nS,1);
-                for kS=1:nS
-                    data_loc{kS}=reshape(data_all{kS}(kt,:),[],1);
+                data_loc=cell(nsim,1);
+                for ksim=1:nsim
+                    data_loc{ksim}=reshape(data_all{ksim}(kt,:),[],1);
                 end
 
-                kS=1;                                
+                ksim=1;                                
                 tag_fig=sprintf('%s_all_s',tag);
-                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
-                runid=simdef(kS).file.runid;
+                runid=simdef(ksim).file.runid;
 
                 in_p.val_mea=data_mea.y;
                 in_p.is_diff=0;
@@ -168,7 +168,7 @@ for kpli=1:npli %variable
                 in_p.s=s;
                 in_p.val0=val0;
 
-                fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);       
+                fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);       
             end
 
             %% plot difference in time
@@ -176,25 +176,25 @@ for kpli=1:npli %variable
                 flg_loc.plot_type=flg_loc.what_is;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=3;
-                for kS=1:nS
-                    data_loc=data_all{kS}(kt,:,:)-data_all{kS}(1,:,:);
+                for ksim=1:nsim
+                    data_loc=data_all{ksim}(kt,:,:)-data_all{ksim}(1,:,:);
                     if flg_loc.what_is==2
                         data_loc=reshape(squeeze(data_loc),[],1);
                     end
                     tag_fig=sprintf('%s_diff_t',tag);
-                    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
-                    runid=simdef(kS).file.runid;
+                    runid=simdef(ksim).file.runid;
 
                     in_p.val_mea=data_mea.y-data_mea_0.y;
                     in_p.is_diff=1;
                     in_p.plot_mea=plot_mea;
 
-                    in_p.data_ls.grid=gridInfo_ls{kS};
-                    in_p.s=s{kS};
+                    in_p.data_ls.grid=gridInfo_ls{ksim};
+                    in_p.s=s{ksim};
                     in_p.val0=0;
 
-                    fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);           
+                    fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);           
                 end %kS
             end
 
@@ -203,7 +203,7 @@ for kpli=1:npli %variable
                 flg_loc.plot_type=flg_loc.what_is;
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=4;
-                for kS=1:nS
+                for ksim=1:nsim
                     %We cannot skip because then we fail when creating
                     %movies. I have to think this more carefully. 
                     % if kS==flg_loc.sim_ref
@@ -212,13 +212,13 @@ for kpli=1:npli %variable
                     if flg_loc.plot_type==1
                         error('Patch plot. I have to change the gridded interpolant by a scatter interpolant if the grid is not the same.')
                     end
-                    F=griddedInterpolant(s{kS},reshape(data_all{kS}(kt,:,:),[],1));
+                    F=griddedInterpolant(s{ksim},reshape(data_all{ksim}(kt,:,:),[],1));
                     data_loc_on_ref=F(s{flg_loc.sim_ref});
                     data_loc=reshape(data_loc_on_ref,[],1)-reshape(data_all{flg_loc.sim_ref}(kt,:,:),[],1);
                     tag_fig=sprintf('%s_diff_s',tag);
-                    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
-                    runid=simdef(kS).file.runid;
+                    runid=simdef(ksim).file.runid;
 
                     in_p.val_mea=data_mea.y-data_mea_0.y;
                     in_p.is_diff=1;
@@ -229,12 +229,12 @@ for kpli=1:npli %variable
 
                     if flg_loc.plot_val0
                         %This could be moved at the beginning?
-                        F=griddedInterpolant(s{kS},reshape(data_all{kS}(1,:,:),[],1));
+                        F=griddedInterpolant(s{ksim},reshape(data_all{ksim}(1,:,:),[],1));
                         data_loc_on_ref=F(s{flg_loc.sim_ref});
                         in_p.val0=data_loc_on_ref-val0;
                     end
 
-                    fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_s);               
+                    fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_s);               
                 end %kS
             end
     
@@ -244,18 +244,18 @@ for kpli=1:npli %variable
                 [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
                 kplot=5;
 
-                data_loc=cell(nS,1);
-                for kS=1:nS
-                    data_loc{kS}=reshape(data_all{kS}(kt,:)-data_all{kS}(1,:),[],1);
+                data_loc=cell(nsim,1);
+                for ksim=1:nsim
+                    data_loc{ksim}=reshape(data_all{ksim}(kt,:)-data_all{ksim}(1,:),[],1);
                 end
 
-                kS=1;
+                ksim=1;
 
 %                 data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
                 tag_fig=sprintf('%s_all_s_diff_t',tag);
-                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
-                runid=simdef(kS).file.runid;
+                runid=simdef(ksim).file.runid;
 
                 in_p.val_mea=data_mea.y-data_mea_0.y;
                 in_p.is_diff=1;
@@ -264,12 +264,12 @@ for kpli=1:npli %variable
 %                 in_p.data_ls.grid=gridInfo_ls; %not possible?
                 in_p.s=s;
 
-                fpath_file(kplot,kt,kS,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
+                fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
             end
 
             %% plot all simulation together (special case 2 simulations differences between runs)
             if flg_loc.do_all_s_2diff
-                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nS,time_dnum,kt,var_str_read,pliname,kdiff,klim,tag,layer)
+                plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nsim,time_dnum,kt,var_str_read,pliname,kdiff,klim,tag,layer)
             end %do_all_s_2diff
 
             %% disp
@@ -283,14 +283,14 @@ for kpli=1:npli %variable
         if flg_loc.do_all_t
             flg_loc.plot_type=2;
             [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
-            for kS=1:nS
-                [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
+            for ksim=1:nsim
+                [in_p.tim,~]=gdm_time_flow_mor(flg_loc,simdef(ksim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
 
-                data_loc=data_all{kS}';
+                data_loc=data_all{ksim}';
                 tag_fig=sprintf('%s_all_t',tag);
-                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
-                runid=simdef(kS).file.runid;
+                runid=simdef(ksim).file.runid;
     
                 in_p.val_mea=data_mea.y;
                 in_p.is_diff=0;
@@ -299,7 +299,7 @@ for kpli=1:npli %variable
                 in_p.do_time=1;
     
 %                 in_p.data_ls.grid=gridInfo_ls{kS}; %not possible?
-                in_p.s=s{kS};
+                in_p.s=s{ksim};
 
                 fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims);               
             end %kS
@@ -309,12 +309,12 @@ for kpli=1:npli %variable
         
         if flg_loc.do_all_t_diff_t
             flg_loc.plot_type=2;
-            for kS=1:nS
-                data_loc=data_all{kS}'-data_all{kS}(1,:)';
+            for ksim=1:nsim
+                data_loc=data_all{ksim}'-data_all{ksim}(1,:)';
                 tag_fig=sprintf('%s_all_t_diff_t',tag);
-                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
-                runid=simdef(kS).file.runid;
+                runid=simdef(ksim).file.runid;
     
                 in_p.val_mea=data_mea.y;
                 in_p.is_diff=1;
@@ -331,15 +331,15 @@ for kpli=1:npli %variable
         if flg_loc.do_all_t_xt
             flg_loc.plot_type=3;
             [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
-            for kS=1:nS
-                [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
-                data_loc=data_all{kS};
+            for ksim=1:nsim
+                [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(ksim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
+                data_loc=data_all{ksim};
                 tag_fig=sprintf('%s_all_t_xt',tag);
-                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
-                runid=simdef(kS).file.runid;
+                runid=simdef(ksim).file.runid;
     
-                [in_p.d_m,in_p.t_m]=meshgrid(s{kS},tim_dtime);
+                [in_p.d_m,in_p.t_m]=meshgrid(s{ksim},tim_dtime);
                 in_p.val_m=data_loc;
                 in_p.unit=in_p.var{kvar};
                 in_p.is_diff=0;
@@ -353,15 +353,15 @@ for kpli=1:npli %variable
         if flg_loc.do_all_t_xt_diff_t
             flg_loc.plot_type=3;
             [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
-            for kS=1:nS
-                [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(kS),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
-                data_loc=data_all{kS}-data_all{kS}(1,:);
+            for ksim=1:nsim
+                [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(ksim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
+                data_loc=data_all{ksim}-data_all{ksim}(1,:);
                 tag_fig=sprintf('%s_all_t_xt_diff_t',tag);
-                fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
-                runid=simdef(kS).file.runid;
+                runid=simdef(ksim).file.runid;
     
-                [in_p.d_m,in_p.t_m]=meshgrid(s{kS},tim_dtime);
+                [in_p.d_m,in_p.t_m]=meshgrid(s{ksim},tim_dtime);
                 in_p.val_m=data_loc;
                 in_p.unit=in_p.var{kvar};
                 in_p.is_diff=1;
@@ -372,22 +372,7 @@ for kpli=1:npli %variable
 
         %% movies
 
-        if flg_loc.do_movie && nt>1
-
-            for kplot=1:nplot
-                fpath_loc=squeeze(fpath_file(kplot,1,1,:));
-                bol_ylim=cellfun(@(X)~isempty(X),fpath_loc);
-                nylims=sum(bol_ylim);
-                for klim=1:nylims
-                    for kS=1:nS
-                        fpath_mov=fpath_file(kplot,:,kS,klim);
-                        fpath_mov=reshape(fpath_mov,[],1);
-                        gdm_movie(fid_log,flg_loc,fpath_mov,time_dnum);   
-                    end %ks
-                end
-            end %kplo
-
-        end %movie
+        gdm_movie_paths(fid_log,flg_loc,time_dnum,fpath_file);
 
     end %kvar
 end %kpli
