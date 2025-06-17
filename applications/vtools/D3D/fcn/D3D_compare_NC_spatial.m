@@ -14,7 +14,7 @@
 
 
 function D3D_compare_NC_spatial(nc1,nc2,path_log)
-% findthisplease
+% D3D_compare_NC_spatial compare netcdf based on nearby location
 
 %DEBUG
 % clear
@@ -111,7 +111,13 @@ for kv=1:nv
                 assert(coords_1_dat_mat(idx_1(idx),1) == coords_2_dat_mat(idx_2(idx),1));
                 assert(coords_1_dat_mat(idx_1(idx),2) == coords_2_dat_mat(idx_2(idx),2));
                 if var_norm > 0
-                    messageOut(fid,sprintf('    Max. diff. =%e x,y=%f,%f val1:%f val2:%f', var_norm, coords_1_dat_mat(idx_1(idx),1), coords_1_dat_mat(idx_1(idx),2) , var_1(idx_1(idx)), var_2(idx_2(idx)) ) );
+                    messageOut(fid,sprintf('    Max. diff. =%e x=%f;y=%f; val1:%f val2:%f', var_norm, coords_1_dat_mat(idx_1(idx),1), coords_1_dat_mat(idx_1(idx),2) , var_1(idx_1(idx)), var_2(idx_2(idx)) ) );
+                  %  if (var_norm > 1e-10)
+                  %      idx_rev = find(abs(reshape(var_1(idx_1),1,[])-reshape(var_2(idx_2),1,[])) > 1e-10); 
+                  %      [var_norm, idx] = max(abs(reshape(var_1(idx_1(idx_rev)),1,[])+reshape(var_2(idx_2(idx_rev)),1,[])));
+                  %      messageOut(fid,sprintf('    Comparing remaining negated values:'));
+                  %      messageOut(fid,sprintf('    Max. diff. =%e x=%f;y=%f; val1:%f val2:%f', var_norm, coords_1_dat_mat(idx_1(idx_rev(idx)),1), coords_1_dat_mat(idx_1(idx_rev(idx)),2) , var_1(idx_1(idx_rev(idx))), var_2(idx_2(idx_rev(idx))) ));
+                  %  end
                 else
                     messageOut(fid,sprintf('    Max. diff. =%e', var_norm ));
                 end
