@@ -32,6 +32,10 @@ function shp_bounds=SHP_bounding_boxes(fpath_shp)
 
 shp=D3D_io_input('read',fpath_shp);
 
+if isempty(shp.xy.XY)
+    error('The shapefile is empty: %s',fpath_shp)
+end
+
 MinX=cellfun(@(X)min(X(:,1)),shp.xy.XY);
 MinY=cellfun(@(X)min(X(:,2)),shp.xy.XY);
 MaxX=cellfun(@(X)max(X(:,1)),shp.xy.XY);
