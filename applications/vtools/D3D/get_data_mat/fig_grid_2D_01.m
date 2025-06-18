@@ -546,25 +546,7 @@ apply_adhoc_functions(in_p);
 
 %% PRINT
 
-if any(fig_print==1)
-    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
-    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
-end
-if any(fig_print==2)
-    savefig(han.fig,strcat(prnt.filename,'.fig'))
-    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.fig'))) 
-end
-if any(fig_print==3)
-    print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
-    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
-end
-if any(fig_print==4)
-    print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
-    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
-end
-if any(ismember(fig_print,[1,2,3,4]))
-close(han.fig);
-end
+fig_print_close(in_p,han.fig,in_p.fig_print,fname);
 
 end %function
 

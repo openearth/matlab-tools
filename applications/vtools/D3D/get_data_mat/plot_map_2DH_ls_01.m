@@ -76,12 +76,19 @@ for kpli=1:npli %variable
         layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
         var_idx=flg_loc.var_idx{kvar};
 
-        %time 1 of simulation 1 for reference
-        %it is up to you to be sure that it is the same for all simulations!
-        fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
-        fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(1),var_str_read,pliname,layer,var_idx);
-        data_ref=load(fpath_mat_tmp,'data');   
-        val0=data_ref.data.(flg_loc.str_val)';
+        %Time 1 of simulation 1 for reference
+        %It is up to you to be sure that it is the same for all simulations!
+        %It is only necessary when plotting lines, not patches. For
+        %patches, there is no option to add `val0` and it cannot be
+        %transposed.
+        if flg_loc.what_is==2 && flg_loc.plot_val0
+            fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
+            fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(1),var_str_read,pliname,layer,var_idx);
+            data_ref=load(fpath_mat_tmp,'data');   
+            val0=data_ref.data.(flg_loc.str_val)';
+        else
+            val0=NaN;
+        end
 
         %Preallocate for plotting all times/simulation together.
         %We could consider to only allocate if we actually want to plot it in this way. Otherwise, 
@@ -229,6 +236,7 @@ for kpli=1:npli %variable
 
                     if flg_loc.plot_val0
                         %This could be moved at the beginning?
+                        warning('change location')
                         F=griddedInterpolant(s{ksim},reshape(data_all{ksim}(1,:,:),[],1));
                         data_loc_on_ref=F(s{flg_loc.sim_ref});
                         in_p.val0=data_loc_on_ref-val0;

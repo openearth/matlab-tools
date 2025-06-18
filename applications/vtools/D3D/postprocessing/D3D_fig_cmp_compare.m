@@ -507,13 +507,17 @@ set(findall(han.fig,'-property','FontName'),'FontName',prop.fn) %!!! attention, 
 % han.fig.Renderer='painters';
 
 %print
-if fig_prnt
-% print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
-% messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
-print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r300')
-messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
-% print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
-% messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+in_p.fig_print=fig_prnt;
 
-close(han.fig)
-end
+fig_print_close(in_p,han.fig,in_p.fig_print,fname);
+
+%if fig_prnt
+%% print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
+%% messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
+%print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r300')
+%messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
+%% print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
+%% messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
+%
+%close(han.fig)
+%end

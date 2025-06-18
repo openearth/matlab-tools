@@ -15,7 +15,7 @@ function fig_print_close(in_p,han_fig,fig_print,fpath_fig)
 
 %% PARSE
 
-in_p=isfield_default(in_p,'fig_resolution','-r600');
+in_p=isfield_default(in_p,'fig_resolution','-r300');
 
 %% CALC
 
@@ -32,7 +32,7 @@ if any(fig_print==3)
     messageOut(NaN,sprintf('Figure printed: %s',strcat(fpath_fig,'.eps'))) 
 end
 if any(fig_print==4)
-    print(han_fig,strcat(fpath_fig,'.jpg'),'-djpeg','-r300')
+    print(han_fig,strcat(fpath_fig,'.jpg'),'-djpeg',in_p.fig_resolution)
     messageOut(NaN,sprintf('Figure printed: %s',strcat(fpath_fig,'.jpg'))) 
 end
 if any(ismember(fig_print,[1,2,3,4]))

@@ -92,6 +92,12 @@ in_p=isfield_default(in_p,'do_rkm',0);
 in_p=isfield_default(in_p,'is_diff',0);
 in_p=isfield_default(in_p,'xdir','normal');
 
+in_p=isfield_default(in_p,'unit',NaN); %backward compatibility. The right name is `variable`
+in_p=isfield_default(in_p,'variable','');
+if all(~isnan(in_p.unit))
+    in_p.variable=in_p.unit;
+end
+
 v2struct(in_p)
 
 %% check if printing
@@ -102,7 +108,7 @@ end
 
 %% units
 
-switch unit
+switch variable
     case 'cl'
         clims=sal2cl(1,clims);
         data_ls.sal=sal2cl(1,data_ls.sal);
@@ -187,7 +193,7 @@ kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
 
-[cmap,cbar(kr,kc).label]=gdm_cmap_and_string(in_p);
+[cmap,cbar(kr,kc).label]=gdm_cmap_and_string(in_p,clims);
 
 % brewermap('demo')
 % cmap=turbo(100);
@@ -572,25 +578,7 @@ apply_adhoc_functions(in_p);
 
 %% PRINT
 
-if any(fig_print==1)
-    print(han.fig,strcat(prnt.filename,'.png'),'-dpng','-r600');
-    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.png'))) 
-end
-if any(fig_print==2)
-    savefig(han.fig,strcat(prnt.filename,'.fig'))
-    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.fig'))) 
-end
-if any(fig_print==3)
-    print(han.fig,strcat(prnt.filename,'.eps'),'-depsc2','-loose','-cmyk')
-    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.eps'))) 
-end
-if any(fig_print==4)
-    print(han.fig,strcat(prnt.filename,'.jpg'),'-djpeg','-r300')
-    messageOut(NaN,sprintf('Figure printed: %s',strcat(prnt.filename,'.jpg'))) 
-end
-if any(ismember(fig_print,[1,2,3,4]))
-close(han.fig);
-end
+fig_print_close(in_p,han.fig,in_p.fig_print,fname);
 
 end %function
 
