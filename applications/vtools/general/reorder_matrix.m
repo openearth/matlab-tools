@@ -35,7 +35,7 @@ function [y_sorted,idx] = reorder_matrix(x, y, precision)
 %% PARSE
 
 if nargin < 3
-    precision = 1e12;
+    precision = 10^order(x(1));
 end
 
 nan_marker = -999999999;  % Must not exist in rounded data

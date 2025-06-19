@@ -109,7 +109,7 @@ for kvar=1:nvar %variable
         fdir_mat=simdef(ksim).file.mat.dir;
         switch flg_loc.do_fxw
             case 1
-                in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef.file.fxw); %non-snapped and in a different structure than when reading snapped
+                in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef(ksim).file.fxw); %non-snapped and in a different structure than when reading snapped
             case 2
                 in_p.fxw=gdm_load_snapped(fid_log,fdir_mat,simdef(ksim),'fxw');
         end
