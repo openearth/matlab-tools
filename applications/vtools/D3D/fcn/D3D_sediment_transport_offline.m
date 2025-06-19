@@ -179,7 +179,7 @@ function copy_hydro_simulation(fpath_hydro,fpath_out,idx_c,idx_save,overwrite)
 fpaths_i=fullfile(fpath_hydro,'output',sprintf('%d',idx_c));
 fpaths_o=fullfile(fpath_out,'output',sprintf('%d',idx_save));
 if isfolder(fpaths_o)==0 || overwrite==1
-    copyfile_check(fpaths_i,fpaths_o);
+    copyfile_check(fpaths_i,fpaths_o,1);
 else
     messageOut(NaN,sprintf('Folder with hydro output exists, not copying: %s',fpaths_o))
 end
@@ -267,6 +267,10 @@ for ksim=1:nsim
     
     if isempty(idx_c)
         error('There is no match for the desired discharge %f',Q)
+    end
+
+    if numel(idx_c)>1
+        error('There is more than 1 discharge in `QSeries` (%s) that matches the desired discharge %f',fpath_hydro,Q)
     end
 
     %copy hydro simulation
