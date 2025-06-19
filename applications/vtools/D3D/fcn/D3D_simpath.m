@@ -33,10 +33,12 @@ function simdef=D3D_simpath(simdef,varargin)
 parin=inputParser;
 
 addOptional(parin,'break',1);
+addOptional(parin,'overwrite',0);
 
 parse(parin,varargin{:})
 
 do_break=parin.Results.break;
+overwrite=parin.Results.overwrite;
 
 %% MAKE DIR
 
@@ -66,6 +68,17 @@ end
 if strcmp(simdef.D3D.dire_sim(end),filesep)
     simdef.D3D.dire_sim(end)='';
 end
+
+%% check if file exists and use
+
+fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
+if exist(fpath_simdef,'file')==2 && ~overwrite 
+    % messageOut(NaN,'`simdef` file exists. Loading.')
+    load(fpath_simdef,'simdef');
+    return
+end
+
+%%
 
 dire=dir(simdef.D3D.dire_sim);
 nf=numel(dire)-2;
@@ -192,6 +205,11 @@ simdef.D3D.issus=issus;
 %%
 
 throw_error(do_break,simdef.err)
+
+%%
+
+save(fpath_simdef,'simdef');
+% messageOut(NaN,sprintf('`simdef` variable saved: %s',fpath_simdef))
 
 end %function
 

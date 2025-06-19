@@ -28,6 +28,10 @@ if flg_loc.do_movie && nt>1
         fpath_t=fpath_file(kplot,:,1,1);
         bol_t=cellfun(@(X)~isempty(X),fpath_t);
         if any(bol_t)
+            if sum(bol_t)==1
+                messageOut(fid_log,'Cannot make a movie with only one time.')
+                return
+            end
             fpath_t_noempty=fpath_file(:,bol_t,:,:);    
             fpath_lim_1=squeeze(fpath_t_noempty(kplot,1,:,1)); %here the first time always exists
             bol_lim_1=cellfun(@(X)~isempty(X),fpath_lim_1);

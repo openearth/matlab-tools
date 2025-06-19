@@ -24,42 +24,42 @@ end
 [~,~,ext]=fileparts(nc_map);
 
 if strcmp(ext,'.nc') %FM
-    nci=ncinfo(nc_map);
+    [varnames,dimids]=NC_varnames(nc_map);
 
     %ismor
-    idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_mor_bl','mesh1d_mor_bl'});
+    idx=find_str_in_cell(varnames,{'mesh2d_mor_bl','mesh1d_mor_bl'});
     ismor=1;
     if any(isnan(idx))
         ismor=0;
     end
     
     %is suspended load
-    idx=find_str_in_cell({nci.Variables.Name},{'cross_section_suspended_sediment_transport','mesh2d_sscx','mesh2d_ssn'});
+    idx=find_str_in_cell(varnames,{'cross_section_suspended_sediment_transport','mesh2d_sscx','mesh2d_ssn'});
     issus=1;
     if any(isnan(idx))
         issus=0;
     end
 
     %is 1D simulation
-    idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_node_x'});
+    idx=find_str_in_cell(varnames,{'mesh2d_node_x'});
     is1d=0;
     if any(isnan(idx))
         is1d=1;
     end
     
     %old grid formats, not very safe
-    idx=find_str_in_cell({nci.Variables.Name},{'Mesh2D'});
+    idx=find_str_in_cell(varnames,{'Mesh2D'});
     if is1d && ~isnan(idx)
         is1d=0; 
         messageOut(NaN,'This is most probably an old 2D grid. If it is not, modify.')
     end
     
     str_network1d='';
-    idx=find_str_in_cell({nci.Variables.Name},{'network1d_geom_x'});
+    idx=find_str_in_cell(varnames,{'network1d_geom_x'});
     if isnan(idx)
-        idx=find_str_in_cell({nci.Variables.Name},{'network_geom_x'});
+        idx=find_str_in_cell(varnames,{'network_geom_x'});
         if isnan(idx)
-            idx=find_str_in_cell({nci.Variables.Name},{'gridpoint_id'}); %Sobek 3
+            idx=find_str_in_cell(varnames,{'gridpoint_id'}); %Sobek 3
             if ~isnan(idx)
                 is1d=3;
             end
@@ -76,13 +76,15 @@ if strcmp(ext,'.nc') %FM
     end
 
     %3d
-    idx=find_str_in_cell({nci.Variables.Name},{'mesh2d_ucmag'});
+    idx=find_str_in_cell(varnames,{'mesh2d_ucmag'});
     is3d=0;
     if any(isnan(idx))
         messageOut(NaN,'Cannot determine 2D/3D because <mesh2d_ucmag> is not in the output')
         is3d=0;
     else
-        if numel(nci.Variables(idx).Size)==3
+        % if numel(nci.Variables(idx).Size)==3 
+        %It is too expensive to get `nci`. I am not sure it is equivalent. 
+        if numel(dimids{idx})==3    
             is3d=1;
         end
     end

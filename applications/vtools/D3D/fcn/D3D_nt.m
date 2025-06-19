@@ -36,6 +36,7 @@ if isfolder(fpath_res)
         simdef=D3D_simpath(simdef); %very expensive... 
         fpath_nc=simdef.file.(res_type);
         nt=nt+D3D_nt_single(fpath_nc,res_type);
+        fprintf('%d\n',kf)
     end
 else
     nt=D3D_nt_single(fpath_res,res_type);    

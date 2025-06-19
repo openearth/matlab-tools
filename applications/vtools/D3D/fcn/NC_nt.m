@@ -14,8 +14,8 @@
 
 function nt=NC_nt(nc_map)
 
-nci=ncinfo(nc_map);
-idx_t=find_str_in_cell({nci.Dimensions.Name},{'time'});
-nt=nci.Dimensions(idx_t).Length;
+[dimname, dimlen]=NC_dimensions(nc_map);
+idx_t=find_str_in_cell(dimname,{'time'});
+nt=dimlen(idx_t);
         
 end 

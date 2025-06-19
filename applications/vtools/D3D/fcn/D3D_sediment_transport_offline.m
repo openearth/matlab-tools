@@ -341,25 +341,27 @@ mkdir_check(fdir_mat);
 
 for ksim=1:nsim+1 %this is the number of times in the SMT hydrograph +1, because of the block approach. 
 
-    nvar=2;
-    varname_v={'lyrfrac','thlyr'};
-    for kvar=1:nvar
-%         varname=in_plot_hydro_var.(tag).var{kvar};
-        varname=varname_v{kvar};
-        
-%         %2DH
-%         fdir_mat=fullfile(fpath_morpho,'mat');
-%         fpath_mat_tmp_in=mat_tmp_name(fdir_mat,'map_2DH_01','tim',tim_hydro,'var',varname);
-% 
-%         fdir_mat=fullfile(fpath_out,'mat');
-%         fpath_mat_tmp_out=mat_tmp_name(fdir_mat,'map_2DH_01','tim',datenum(tim_dtime(ksim)),'var',varname);
+    varname_v=in_plot_hydro_var.(tag).var;
 
+    nvar=numel(varname_v);
+    for kvar=1:nvar
+
+        varname=varname_v{kvar};
+        [~,varname_read_variable,~,~]=D3D_var_num2str(varname); %This is the name used for saving the raw output
+
+        %But for `Ltot`, the variable which is read in raw is different...
+        %Not the nicest, but this is what it it. 
+        switch varname_read_variable
+            case 'Ltot'
+                varname_read_variable='mesh2d_thlyr';
+        end
+        
         %raw
         fdir_mat=fullfile(fpath_morpho,'mat');
-        fpath_mat_tmp_in=mat_tmp_name(fdir_mat,varname,'tim',tim_hydro);        
+        fpath_mat_tmp_in=mat_tmp_name(fdir_mat,varname_read_variable,'tim',tim_hydro);        
 
         fdir_mat=fullfile(fpath_out,'mat');
-        fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname,'tim',datenum(tim_dtime(ksim)));        
+        fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname_read_variable,'tim',datenum(tim_dtime(ksim)));        
 
         if isfile(fpath_mat_tmp_out)==0 || overwrite
             copyfile_check(fpath_mat_tmp_in,fpath_mat_tmp_out,1);
