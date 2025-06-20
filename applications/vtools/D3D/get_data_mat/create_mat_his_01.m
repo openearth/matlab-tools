@@ -34,6 +34,9 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 fdir_mat=simdef.file.mat.dir;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
+if ~isfield(simdef.file,'his')
+    error('There is no his file in this simulation: %s',simdef.D3D.dire_sim)
+end
 fpath_his=simdef.file.his;
 % fpath_map=simdef.file.map;
 

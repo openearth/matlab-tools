@@ -125,14 +125,7 @@ end
 if isfield(in_p,'font_size')==0
     in_p.font_size=10;
 end
-if isfield(in_p,'marg')==0
-    in_p.marg.mt=2.5; %top margin [cm]
-    in_p.marg.mb=1.5; %bottom margin [cm]
-    in_p.marg.mr=0.5; %right margin [cm]
-    in_p.marg.ml=1.5; %left margin [cm]
-    in_p.marg.sh=0.5; %horizontal spacing [cm]
-    in_p.marg.sv=0.0; %vertical spacing [cm]
-end
+in_p=gdm_parse_fig_margins(in_p);
 if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
     [in_p.xlims,in_p.ylims]=D3D_gridInfo_lims(in_p.gridInfo);
 end
@@ -305,7 +298,7 @@ han.fig=figure('name',prnt.filename);
 set(han.fig,'paperunits','centimeters','paperposition',fig_size,'visible',fig_visible)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 % set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
-[mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
+[mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,fig_margin_top,fig_margin_bottom,fig_margin_right,fig_margin_left,fig_margin_separation_horizontal,fig_margin_separation_vertical);
 
 %subplots initialize
     %if regular

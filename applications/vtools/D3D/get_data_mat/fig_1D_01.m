@@ -124,18 +124,14 @@ if isempty(in_p.xlab_un)
 end
 in_p=isfield_default(in_p,'do_time',0); %add colorbar with time 
 if in_p.do_time
-    in_p=isfield_default(in_p,'mt',2.5);
-    in_p=isfield_default(in_p,'mr',1.3);
+    in_p=isfield_default(in_p,'fig_margin_top',2.5);
+    in_p=isfield_default(in_p,'fig_margin_right',1.3);
 else
-    in_p=isfield_default(in_p,'mt',1);
-    in_p=isfield_default(in_p,'mr',0.5);
+    in_p=isfield_default(in_p,'fig_margin_top',1);
+    in_p=isfield_default(in_p,'fig_margin_right',0.5);
 end
-if isfield(in_p,'mb')==0
-    in_p.mb=1.5;
-end
-if isfield(in_p,'ml')==0
-    in_p.ml=2.0;
-end
+in_p=gdm_parse_fig_margins(in_p);
+
 if isfield(in_p,'do_marker')==0
     in_p.do_marker=0;
 end
@@ -218,12 +214,6 @@ prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
 npr=1; %number of plot rows
 npc=1; %number of plot columns
-marg.mt=mt; %top margin [cm]
-marg.mb=mb; %bottom margin [cm]
-marg.mr=mr; %right margin [cm]
-marg.ml=ml; %left margin [cm]
-marg.sh=1.0; %horizontal spacing [cm]
-marg.sv=0.0; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 
@@ -461,7 +451,7 @@ han.fig=figure('name',prnt.filename);
 set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',fig_visible)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 % set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
-[mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
+[mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,fig_margin_top,fig_margin_bottom,fig_margin_right,fig_margin_left,fig_margin_separation_horizontal,fig_margin_separation_vertical);
 
 %subplots initialize
     %if regular

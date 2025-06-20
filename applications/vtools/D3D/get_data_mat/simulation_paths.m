@@ -20,11 +20,14 @@ function simdef=simulation_paths(fdir_sim,in_plot)
 if fdir_sim(end)==filesep
     fdir_sim(end)='';
 end
+in_plot=isfield_default(in_plot,'simdef_overwrite',0);
+in_plot=isfield_default(in_plot,'fdir_mat',fullfile(fdir_sim,'mat'));
+in_plot=isfield_default(in_plot,'fdir_fig',fullfile(fdir_sim,'figures'));
 
 %% paths
 
 simdef.D3D.dire_sim=fdir_sim;
-simdef=D3D_simpath(simdef,'break',1);
+simdef=D3D_simpath(simdef,'break',1,'overwrite',in_plot.simdef_overwrite);
 
 %the runid is not in the mdu name, but in the folder name
 tok=regexp(fdir_sim,filesep,'split');
@@ -37,11 +40,9 @@ end
 
 %% mat and fig
 
-in_plot=isfield_default(in_plot,'fdir_mat',fullfile(fdir_sim,'mat'));
 mkdir_check(in_plot.fdir_mat);
 simdef.file.mat.dir=in_plot.fdir_mat;
 
-in_plot=isfield_default(in_plot,'fdir_fig',fullfile(fdir_sim,'figures'));
 mkdir_check(in_plot.fdir_fig);
 simdef.file.fig.dir=in_plot.fdir_fig;
 

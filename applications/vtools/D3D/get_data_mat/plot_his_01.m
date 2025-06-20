@@ -175,7 +175,7 @@ for ktimint=1:ntimint
     
             %% plot all simulations together
     
-            if flg_loc.do_all_sim
+            if flg_loc.do_all_s
                 ksim=1;
                 runid=simdef(ksim).file.runid;
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,sprintf('%s_all',tag_fig),tag_serie);
@@ -185,7 +185,7 @@ for ktimint=1:ntimint
             end
     
             %% difference with reference simulation
-            if flg_loc.do_s && nsim>1
+            if flg_loc.do_diff_s && nsim>1
                 for ksim=1:nsim
                     if ksim==flg_loc.sim_ref
                         continue

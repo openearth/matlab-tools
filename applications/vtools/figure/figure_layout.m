@@ -59,6 +59,7 @@ in_p=isfield_default(in_p,'marker','none');
 in_p=isfield_default(in_p,'lims_x',[NaN,NaN]);
 in_p=isfield_default(in_p,'lims_y',[NaN,NaN]);
 [in_p.lims_x,in_p.lims_y]=xlim_ylim(in_p.lims_x,in_p.lims_y,in_p.x,in_p.y);
+in_p=gdm_parse_fig_margins(in_p);
 
 v2struct(in_p)
 
@@ -85,12 +86,6 @@ na=size(axis_m,1);
 %figure input
 prnt.filename=fname;
 prnt.size=fig_size; %slide=[0,0,25.4,19.05]; slide16:9=[0,0,33.867,19.05] tex=[0,0,11.6,..]; deltares=[0,0,14.5,22]
-marg.mt=1.0; %top margin [cm]
-marg.mb=1.5; %bottom margin [cm]
-marg.mr=0.5; %right margin [cm]
-marg.ml=1.5; %left margin [cm]
-marg.sh=1.0; %horizontal spacing [cm]
-marg.sv=0.0; %vertical spacing [cm]
 
 %% PLOT PROPERTIES 
 
@@ -278,7 +273,7 @@ han.fig=figure('name',prnt.filename);
 set(han.fig,'paperunits','centimeters','paperposition',prnt.size,'visible',fig_visible)
 set(han.fig,'units','normalized','outerposition',[0,0,1,1]) %full monitor 1
 % set(han.fig,'units','normalized','outerposition',[-1,0,1,1]) %full monitor 2
-[mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,marg.mt,marg.mb,marg.mr,marg.ml,marg.sh,marg.sv);
+[mt,mb,mr,ml,sh,sv]=pre_subaxis(han.fig,fig_margin_top,fig_margin_bottom,fig_margin_right,fig_margin_left,fig_margin_separation_horizontal,fig_margin_separation_vertical);
 
 %subplots initialize
     %if regular

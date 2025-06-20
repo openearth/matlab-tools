@@ -37,7 +37,7 @@ if flg_loc.do_movie && nt>1
             bol_lim_1=cellfun(@(X)~isempty(X),fpath_lim_1);
             nlim_1=sum(bol_lim_1);
             for klim1=1:nlim_1
-                fpath_lim_2=squeeze(fpath_t_noempty(kplot,1,klim1,1));
+                fpath_lim_2=squeeze(fpath_t_noempty(kplot,1,klim1,:));
                 bol_lim_2=cellfun(@(X)~isempty(X),fpath_lim_2);
                 nlim_2=sum(bol_lim_2);
                 for klim2=1:nlim_2

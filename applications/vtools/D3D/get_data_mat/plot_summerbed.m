@@ -185,7 +185,7 @@ for ksb=1:nsb %summerbed polygons
                     end
 
                     %% difference with initial time
-                    if flg_loc.do_diff_t
+                    if flg_loc.do_diff_t && (kt~=1 || flg_loc.do_diff_t_first_time)
                         for ksim=1:nsim 
                             bol_ks=false(nsim,1);
                             bol_ks(ksim)=true;
@@ -212,7 +212,7 @@ for ksb=1:nsb %summerbed polygons
                     end
 
                     %% difference with reference
-                    if flg_loc.do_diff_s && ksim~=kref
+                    if flg_loc.do_diff_s && (ksim~=kref || flg_loc.do_diff_s_ref_sim)
                         for ksim=1:nsim 
                             bol_ks=false(nsim,1);
                             bol_ks(ksim)=true;
@@ -235,7 +235,7 @@ for ksb=1:nsb %summerbed polygons
                     end
 
                     %% difference with reference and initial time
-                    if flg_loc.do_diff_s_t && ksim~=kref
+                    if flg_loc.do_diff_s_t && (ksim~=kref || flg_loc.do_diff_s_ref_sim)
                         for ksim=1:nsim 
                             bol_ks=false(nsim,1);
                             bol_ks(ksim)=true;
@@ -258,7 +258,7 @@ for ksb=1:nsb %summerbed polygons
                     end
 
                     %% difference with reference in percentage terms
-                    if flg_loc.do_diff_s_perc && ksim~=kref
+                    if flg_loc.do_diff_s_perc && (ksim~=kref || flg_loc.do_diff_s_ref_sim)
                         for ksim=1:nsim 
                             bol_ks=false(nsim,1);
                             bol_ks(ksim)=true;
