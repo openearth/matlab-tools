@@ -1147,6 +1147,16 @@ switch lower(variable)
                 str_var='intervalo de tiempo';
          end
          un_type='T';  
+    case {'temperature'}
+         switch lan
+            case 'en'
+                str_var='temperature';
+            case 'nl'
+                str_var='temperatuur';
+            case 'es'
+                str_var='temperatura';
+         end
+         un_type='degC';  
     otherwise
         str_var=variable;
         un_type='?';
@@ -1410,6 +1420,13 @@ switch un_type
         switch un
             case 1
                 str_un=' [Pa s]';
+            otherwise
+                error('this factor is missing')
+        end
+    case 'degC'
+        switch un
+            case 1
+                str_un=' [deg C]';
             otherwise
                 error('this factor is missing')
         end

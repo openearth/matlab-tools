@@ -29,6 +29,8 @@
 
 function fig_his_sal_01(in_p)
 
+warning('Try to use `fig_1D_01')
+
 %% DEFAULTS
 
 if isfield(in_p,'fig_visible')==0

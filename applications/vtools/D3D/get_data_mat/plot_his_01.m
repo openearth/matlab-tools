@@ -569,7 +569,17 @@ for kylim=1:nylim
         case 1
             fname_noext=fig_name(fdir_fig_var,tag,runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
             in_p.fname=fname_noext;
-            fig_his_sal_01(in_p);
+            if in_p.do_measurements || in_p.do_fil
+                warning('Move functionality to `fig_1D_01`')
+                %once functionality is moved, consider to change the data
+                %structure to not need to rename stuff.
+                fig_his_sal_01(in_p);
+            else
+                in_p.s=in_p.tim;
+                in_p.lab_str=in_p.unit;
+                in_p.title_str=in_p.station;
+                fig_1D_01(in_p);
+            end
         case 2
             fname_noext=fig_name(fdir_fig_var,sprintf('%s_2',tag),runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
             in_p.fname=fname_noext;
