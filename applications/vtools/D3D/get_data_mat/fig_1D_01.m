@@ -509,8 +509,6 @@ end
 
 %% PLOT
 
-
-
 kr=1; kc=1;  
 if do_area
     % han.p(kr,kc,:)=area(s,val,'parent',han.sfig(kr,kc));
@@ -532,7 +530,7 @@ else
         end
     end
 end
-if isfield(in_p,'leg_str') && ~do_area
+if isfield(in_p,'leg_str') && ~isempty(in_p.leg_str) && ~do_area
     str_sim=leg_str;
 else
     if nv==1
@@ -543,6 +541,7 @@ else
         end
     end
 end
+
 if plot_all_struct
 % plot(([[gen_struct.rkm];[gen_struct.rkm]]),repmat(ylims,numel([gen_struct.rkm]),1)','--','color',[0.6,0.6,0.6],'parent',han.sfig(kr,kc))
     %better loop to control color and whether to plot them or not in the future
@@ -564,7 +563,6 @@ if plot_mea
         end
     end
 else
-
     str_leg=str_sim;
 end
 if plot_val0
