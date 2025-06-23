@@ -34,7 +34,7 @@ if flg_loc.do_plot_along_rkm
     flg_loc.krkm_v=gdm_kt_v(flg_loc,nrkm);
 
     flg_loc.xlims=NaN(nrkm,2);
-    flg_loc.ylimss=NaN(nrkm,2);
+    flg_loc.ylims=NaN(nrkm,2);
     for krkm=1:nrkm
         flg_loc.xlims(krkm,:)=rkm_file{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
         flg_loc.ylims(krkm,:)=rkm_file{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];

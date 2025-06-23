@@ -208,8 +208,13 @@ throw_error(do_break,simdef.err)
 
 %%
 
-save(fpath_simdef,'simdef');
-% messageOut(NaN,sprintf('`simdef` variable saved: %s',fpath_simdef))
+try
+    save(fpath_simdef,'simdef');
+    % messageOut(NaN,sprintf('`simdef` variable saved: %s',fpath_simdef))
+catch err
+    messageOut(NaN,'Cannot save `simdef` variable. The folder may be protected.')
+end
+
 
 end %function
 

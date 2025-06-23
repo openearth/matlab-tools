@@ -19,6 +19,8 @@ switch which_river(br)
     case 2
         [br_mod_str,br_mod_num]=branch_maas(rkm_mod); %branch name to modify (e.g., BO) for a given rkm and river branch (e.g. WA). 
     otherwise
+        br_mod_str={br};
+        br_mod_num=NaN;
         %error is deal in `which_river`.
 end
 

@@ -489,8 +489,10 @@ fig_map_sal_01(in_p);
 if flg_loc.do_plot_along_rkm==1
     for krkm=flg_loc.krkm_v
         
-        in_p.xlims=in_p.rkm{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
-        in_p.ylims=in_p.rkm{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
+        in_p.xlims=flg_loc.xlims(krkm,:);
+        in_p.ylims=flg_loc.ylims(krkm,:);
+        % in_p.xlims=in_p.rkm{1,1}(krkm)+[-flg_loc.rkm_tol_x,+flg_loc.rkm_tol_x];
+        % in_p.ylims=in_p.rkm{1,2}(krkm)+[-flg_loc.rkm_tol_y,+flg_loc.rkm_tol_y];
 
         in_p.fname=fullfile(fdir_fig_loc,sprintf('inpoly_%02d',krkm));
 
