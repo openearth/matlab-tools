@@ -83,13 +83,19 @@ end
 switch file_type
     case 0
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug,'file_structure',file_structure);
-    case {1,2,3,4,6,7,8,9,10,11,12,13,14,15} %locations in rows
+    case {1,2,3,4,6,7,8,9,10,11,12,13,14,15,16} %locations in rows
         vardata=read_data_1(file_type,fpath,'flg_debug',flg_debug);
     case {5} %locations in columns
         vardata=read_data_2(file_type,fpath,'flg_debug',flg_debug);       
+    case {17}
+        vardata=read_data_NC(file_type,fpath,'flg_debug',flg_debug);       
     otherwise
         error('Specify file type')
 end
+
+%vardata{kloc,1} = data depending on time (i.e., time, value)
+%vardata{kloc,2} = data constant in time
+%vardata{kloc,3} = optional. If it exists, the time in datetime is already read (e.g., NC file). 
 
 %% SAVE
 
@@ -114,46 +120,13 @@ for kloc=1:nloc
     
     %% convert
     
-    %time zone
-    if isnan(tzone)
-        if isnan(idx_tzone)
-            error('Provide a time zone')
-        else
-            tzone=vardata{kloc,2}{idx_tzone};
-        end
-    end
-    
-    switch tzone
-        case 'CENT'
-            tzone='+01:00';
-    end
-
-    %convert time format 
-    if isnan(idx_time)
-        tim_str=vardata{kloc,1}(:,idx_tijd);
-        switch lower(fmt_tijd)
-            case 'hh'
-                tim_str=cellfun(@(x)sprintf('%s:00',x),tim_str,'UniformOutput',false);
-                fmt_tijd='hh:mm';
-        end
-        time_mea=datetime(vardata{kloc,1}(:,idx_datum),'inputFormat',fmt_datum)+duration(tim_str,'inputFormat',lower(fmt_tijd));
+    if size(vardata,2)==3
+        time_mea=vardata{kloc,3};
     else
-        if contains(fmt_time,{'z','x'})%there is a time zone in the input
-            time_mea=datetime(vardata{kloc,1}(:,idx_time),'InputFormat',fmt_time,'TimeZone',tzone);
-        else
-            time_mea=datetime(vardata{kloc,1}(:,idx_time),'InputFormat',fmt_time);
-        end
+        time_mea=get_time_from_data(vardata(kloc,:),kloc,tzone,idx_tzone,idx_time,fmt_tijd);
     end
 
-    time_mea.TimeZone=tzone;
-
-    %convert variable
-    mea=cellfun(@(x)undutchify(x),vardata{kloc,1}(:,idx_waarheid),'UniformOutput',false);   
-    mea=cell2mat(mea);
-
-    %put in cronological order
-    [time_mea,idx_sort]=sort(time_mea);
-    mea=mea(idx_sort,:);
+    [time_mea,mea]=sort_and_clean_variable(vardata(kloc,:),idx_waarheid,time_mea);
 
     %% variables to save
 
@@ -195,6 +168,11 @@ for kloc=1:nloc
             eenheid=vardata{kloc,2}{idx_eenheid};
         end
     end
+    switch eenheid
+        case 'm s**-1'
+            eenheid='m/s';
+    end
+
         %quantity
     if isnan(grootheid)
         if isnan(idx_grootheid)
@@ -1162,6 +1140,23 @@ switch file_type
         fdelim=';';
         tzone='+00:00'; %?
         headerlines=1;    
+    case 17 %NC
+        idx_time=1; %stored in 3 dimension of `vardata`        
+        idx_waarheid=1; %stored in first dimension of `vardata`
+
+        %stored in second dimentions of `vardata`
+        idx_x=1;
+        idx_y=2;
+        idx_location=3;
+
+        idx_grootheid=4;
+        idx_eenheid=5;
+        epsg=4326;
+
+        % grootheid=''; %assing, as they are not in head
+        % eenheid=''; %assing, as they are not in head
+
+
     otherwise
         error('You are asking for an inexisteng file type')
 
@@ -1172,6 +1167,20 @@ end %get_vars
 %%
 
 function file_type=get_file_type(fpath)
+
+[~,~,fext]=fileparts(fpath);
+switch fext
+    case {'.nc'}
+        file_type=17;
+    otherwise
+        file_type=get_file_type_csv(fpath);
+end
+
+end %function
+
+%%
+
+function file_type=get_file_type_csv(fpath)
 
 %% open and header
 
@@ -1338,3 +1347,170 @@ idx_p=find_str_in_cell(prop(1,:),{'DATUM'});
 hoedanigheid=prop{2,idx_p};
 
 end %read_meta_data_01
+
+%%
+
+function vardata=read_data_NC(file_type,fpath,varargin)
+
+%% parse
+
+parin=inputParser;
+
+flg_debug=0;
+
+addOptional(parin,'flg_debug',flg_debug);
+
+parse(parin,varargin{:});
+
+flg_debug=parin.Results.flg_debug;
+
+%% CALC
+
+[fdelim,var_once,var_time,idx_waarheid,idx_location,idx_x,idx_y,idx_grootheid,idx_eenheid,idx_parameter,tzone,idx_raai,var_loc,grootheid,eenheid,idx_epsg,idx_datum,idx_tijd,idx_time,fmt_time,fmt_datum,fmt_tijd,epsg,idx_hoedanigheid,hoedanigheid,location,parameter,x,y,bemonsteringshoogte,headerlines,idx_var_time,idx_bemonsteringshoogte,idx_tzone,var_hog]=get_file_data(file_type,fpath);
+% [dimname,dimlen]=NC_dimensions(fpath);
+% 
+% bol_lat=ismember(dimname,'latitude');
+% if sum(bol_lat)~=1
+%     error('Only one dimension should be latitude.')
+% end
+% nlat=dimlen(bol_lat);
+% nlon
+% 
+
+lat=ncread(fpath,'latitude');
+nlat=numel(lat);
+lon=ncread(fpath,'longitude');
+nlon=numel(lon);
+
+[varnames,idx_dim,units]=get_var_names_to_read(fpath);
+
+tim=NC_read_time(fpath,[1,Inf]);
+
+nvar=numel(varnames);
+kloc=0;
+nloc=nlat*nlon*nvar;
+vardata=cell(nloc,1);
+for kvar=1:nvar
+    varname=varnames{kvar};
+    variable=ncread(fpath,varname);
+    variable=permute(variable,idx_dim);
+    
+    for klat=1:nlat
+        for klon=1:nlon
+            
+            kloc=kloc+1;
+
+            %variables depending on time
+            vardata{kloc,1}(:,idx_waarheid)=squeeze(variable(klon,klat,:));
+
+            %variables constant with time
+            vardata{kloc,2}{idx_x}=lon(klon);
+            vardata{kloc,2}{idx_y}=lat(klat);
+            vardata{kloc,2}{idx_location}=sprintf('lat %f, lon %f',lat(klat),lon(klon));
+            vardata{kloc,2}{idx_grootheid}=varname;
+            vardata{kloc,2}{idx_eenheid}=units{kvar};
+
+            %time already in datetime format
+            vardata{kloc,3}(:,idx_time)=tim;
+            
+        end %klon
+    end %klat
+end %kvar
+
+end %%
+
+%%
+
+function [varnames,idx_dim,units]=get_var_names_to_read(fpath)
+
+[varname_all,dimids]=NC_varnames(fpath);
+
+%%
+
+str_novar={'number','valid_time','latitude','longitude','expver'}; %strings which are not the variable name
+bol_var=~ismember(varname_all,str_novar);
+varnames=varname_all(bol_var);
+
+%% units
+
+nci=ncinfo(fpath);
+nvar=numel(varnames);
+units=cell(nvar,1);
+idx_var=find(bol_var);
+for kvar=1:nvar
+    idx_loc=idx_var(kvar);
+    bol_unit=ismember({nci.Variables(idx_loc).Attributes.Name},'units');
+    idx_unit=find(bol_unit);
+    units{kvar}=nci.Variables(idx_loc).Attributes(idx_unit).Value;
+end
+
+%%
+bol=ismember(varname_all,'valid_time');
+dim_tim=dimids{bol};
+bol=ismember(varname_all,'latitude');
+dim_lat=dimids{bol};
+bol=ismember(varname_all,'longitude');
+dim_lon=dimids{bol};
+
+dim_var=dimids{bol_var};
+
+[~,idx_dim]=reorder_matrix(dim_var,[dim_lon,dim_lat,dim_tim]);
+
+end %function
+
+%%
+
+function time_mea=get_time_from_data(vardata,tzone,idx_tzone,idx_time,fmt_tijd)
+
+%time zone
+if isnan(tzone)
+    if isnan(idx_tzone)
+        error('Provide a time zone')
+    else
+        tzone=vardata{1,2}{idx_tzone};
+    end
+end
+
+switch tzone
+    case 'CENT'
+        tzone='+01:00';
+end
+
+%convert time format 
+if isnan(idx_time)
+    tim_str=vardata{1,1}(:,idx_tijd);
+    switch lower(fmt_tijd)
+        case 'hh'
+            tim_str=cellfun(@(x)sprintf('%s:00',x),tim_str,'UniformOutput',false);
+            fmt_tijd='hh:mm';
+    end
+    time_mea=datetime(vardata{1,1}(:,idx_datum),'inputFormat',fmt_datum)+duration(tim_str,'inputFormat',lower(fmt_tijd));
+else
+    if contains(fmt_time,{'z','x'})%there is a time zone in the input
+        time_mea=datetime(vardata{1,1}(:,idx_time),'InputFormat',fmt_time,'TimeZone',tzone);
+    else
+        time_mea=datetime(vardata{1,1}(:,idx_time),'InputFormat',fmt_time);
+    end
+end
+
+time_mea.TimeZone=tzone;
+
+end
+
+%%
+
+function [time_mea,mea]=sort_and_clean_variable(vardata,idx_waarheid,time_mea)
+
+%convert variable
+if iscell(vardata{1,1}(:,idx_waarheid))
+    mea=cellfun(@(x)undutchify(x),vardata{1,1}(:,idx_waarheid),'UniformOutput',false);   
+    mea=cell2mat(mea);
+else
+    mea=undutchify(vardata{1,1}(:,idx_waarheid));
+end
+
+%put in cronological order
+[time_mea,idx_sort]=sort(time_mea);
+mea=mea(idx_sort,:);
+
+end 

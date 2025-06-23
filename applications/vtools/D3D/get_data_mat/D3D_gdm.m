@@ -501,8 +501,6 @@ function D3D_gdm(in_plot)
 in_plot=create_mat_default_flags(in_plot);
 fid_log=NaN;
 
-simdef=NaN; %for passing to `gdm_adhoc`. 
-
 if ~in_plot.only_adhoc
 
     if ~isfield(in_plot,'fdir_sim')
@@ -514,7 +512,6 @@ if ~in_plot.only_adhoc
     
     messageOut(fid_log,'Creating mat-files',3)
     
-    simdef=struct('D3D',NaN,'err',NaN,'file',NaN);
     legend_str=cell(ns,1);
     for ks=1:ns
         [simdef(ks),legend_str{ks}]=gdm_paths_single_run(fid_log,in_plot,ks);
@@ -526,7 +523,8 @@ if ~in_plot.only_adhoc
     messageOut(fid_log,'Plotting',3)
     
     plot_all_runs_one_figure(fid_log,in_plot,simdef,legend_str)
-
+else
+    simdef.dummy=NaN; %for passing to `gdm_adhoc`. 
 end %only_adhoc
 
 %% AD-HOC

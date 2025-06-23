@@ -52,6 +52,10 @@ if ~loadidx
     if ~loadbol
         load(paths.data_stations_index,'data_stations_index');
         ns=numel(data_stations_index);
+        if ns==1 && isempty(data_stations_index.x) %empty structure
+            idx=[];
+            return
+        end
         bol=true(1,ns);
         if ~loadall
             for ki=1:ni
