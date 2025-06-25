@@ -604,6 +604,16 @@ switch lower(variable)
                 str_var='dirección del viento';
          end
          un_type='degrees';
+    case {'dir'}
+         switch lan
+            case 'en'
+                str_var='direction';
+            case 'nl'
+                str_var='richting';
+            case 'es'
+                str_var='dirección';
+         end
+         un_type='degrees';
     case {'fh','wind_u'}
          switch lan
             case 'en'
@@ -1135,6 +1145,16 @@ switch lower(variable)
                 str_var='RMW golfhoogte';
             case 'es'
                 str_var='RMS altura de ola';
+         end
+         un_type='L';  
+    case {'swh'}
+         switch lan
+            case 'en'
+                str_var='Significant height of combined wind waves and swell';
+            case 'nl'
+                str_var='ignificante hoogte van gecombineerde windgolven en deining';
+            case 'es'
+                str_var='Altura significativa de la combinación de oleaje de viento y mar de fondo';
          end
          un_type='L';  
     case {'timestep'}

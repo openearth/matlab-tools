@@ -268,7 +268,7 @@ switch what_do
                     stru_in=D3D_table_d3d4_to_FM(stru_in);
                 end
                 D3D_write_bc(fname,stru_in)
-            case '.xyz'
+            case {'.xyz','.xy'}
 %                 D3D_io_input('write',xyz)
 %                 xyz(:,1) = x-coordinate
 %                 xyz(:,2) = y-coordinate

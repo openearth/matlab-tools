@@ -180,6 +180,8 @@ if isfield(in_p,'is_dom')==0
 end
 in_p=isfield_default(in_p,'clims',[NaN,NaN]);
 in_p=isfield_default(in_p,'title_str','');
+in_p=isfield_default(in_p,'lab_str','variable');
+in_p=isfield_default(in_p,'varname',in_p.lab_str);
 
 v2struct(in_p)
 
@@ -427,7 +429,7 @@ if isempty(ylab)
     if numel(frac)>1
         frac='';
     end
-    [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(lab_str,1,lan,'Lref',Lref,'frac',frac);
+    [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(varname,1,lan,'Lref',Lref,'frac',frac);
     if is_diff
         ylabels{kr,kc}=str_diff;
     elseif is_std

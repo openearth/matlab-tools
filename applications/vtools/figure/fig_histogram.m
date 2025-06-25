@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 20212 $
+%$Date: 2025-06-20 09:21:10 +0200 (Fri, 20 Jun 2025) $
+%$Author: chavarri $
+%$Id: figure_layout.m 20212 2025-06-20 07:21:10Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/figure/figure_layout.m $
 %
 %MATLAB BUGS:
 %   -The command to change font name does not work. It does not give error
@@ -27,15 +27,15 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function figure_layout(in_p)
+function fig_histogram(in_p)
 
 %% DEFAULTS
 
 if isfield(in_p,'fig_visible')==0
-    in_p.fig_visible=1;
+    in_p.fig_visible=0;
 end
 if isfield(in_p,'fig_print')==0
-    in_p.fig_print=0;
+    in_p.fig_print=1;
 end
 if isfield(in_p,'fname')==0
     in_p.fname='fig';
@@ -52,13 +52,24 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
-in_p=isfield_default(in_p,'x_lab',labels4all('x',1,in_p.lan));
-in_p=isfield_default(in_p,'y_lab',labels4all('y',1,in_p.lan));
+in_p=isfield_default(in_p,'var_name','variable');
+in_p=isfield_default(in_p,'x_lab',labels4all(in_p.varname,1,in_p.lan));
 in_p=isfield_default(in_p,'XScale','linear');
 in_p=isfield_default(in_p,'marker','none');
-in_p=isfield_default(in_p,'lims_x',[NaN,NaN]);
-in_p=isfield_default(in_p,'lims_y',[NaN,NaN]);
-[in_p.lims_x,in_p.lims_y]=xlim_ylim(in_p.lims_x,in_p.lims_y,in_p.x,in_p.y);
+in_p=isfield_default(in_p,'title_str','');
+% in_p=isfield_default(in_p,'lims_x',[NaN,NaN]);
+% in_p=isfield_default(in_p,'lims_y',[NaN,NaN]);
+in_p=isfield_default(in_p,'normalization','count');
+switch in_p.normalization
+    case 'count'
+        in_p=isfield_default(in_p,'y_lab','count [-]');
+    case 'pdf'
+        in_p=isfield_default(in_p,'y_lab','probability density function [-]');
+    case 'probability'
+        in_p=isfield_default(in_p,'y_lab','probability [-]');
+end
+
+% [in_p.lims_x,in_p.lims_y]=xlim_ylim(in_p.lims_x,in_p.lims_y,in_p.x,in_p.y);
 in_p=gdm_parse_fig_margins(in_p);
 
 v2struct(in_p)
@@ -257,7 +268,7 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-lims.y(kr,kc,1:2)=lims_y;
+% lims.y(kr,kc,1:2)=lims_y;
 % lims.x(kr,kc,1:2)=lims_x;
 % lims.c(kr,kc,1:2)=lims_c;
 xlabels{kr,kc}=x_lab;
@@ -299,8 +310,19 @@ end
 
 %% MAP TILES
 
-kr=1; kc=1;
-fig_add_map_tiles(in_p,han.sfig(kr,kc))
+% kr=1; kc=1;
+% OPT.xlim=x_lims;
+% OPT.ylim=y_lims;
+% OPT.epsg_in=28992; %WGS'84 / google earth
+% OPT.epsg_out=28992; %Amersfoort
+% OPT.tzl=tiles_zoom(diff(x_lims)); %zoom
+% OPT.save_tiles=false;
+% OPT.path_save=fullfile(pwd,'earth_tiles');
+% OPT.path_tiles='C:\Users\chavarri\checkouts\riv\earth_tiles\'; 
+% OPT.map_type=3;%map type
+% OPT.han_ax=han.sfig(kr,kc);
+% 
+% plotMapTiles(OPT);
 
 %% EHY
 
@@ -350,7 +372,8 @@ fig_add_map_tiles(in_p,han.sfig(kr,kc))
 %% PLOT
 
 kr=1; kc=1;    
-han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
+han.p(kr,kc,1)=histogram(val,'parent',han.sfig(kr,kc),'Normalization',normalization);
+% han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
 % han.p(kr,kc,1).Color(4)=0.2; %transparency of plot
@@ -367,7 +390,7 @@ grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
 % han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
@@ -376,7 +399,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).YTick=[];  
 han.sfig(kr,kc).XScale=XScale;
 % han.sfig(kr,kc).YScale='log';
-% han.sfig(kr,kc).Title.String='c';
+han.sfig(kr,kc).Title.String=title_str;
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
 han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
@@ -453,12 +476,6 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 %     aux_str{ka}=sprintf('%5.3f',aux3(ka));
 % end
 % han.cbar.TickLabels=aux_str;
-
-%convert datenum to dateime strings
-% vt=han.cbar.Ticks;
-% ticks_dtime=datetime(vt,'ConvertFrom','datenum');
-% ticks_string=string(ticks_dtime,'yyyy');
-% han.cbar.TickLabels=ticks_string;
 
 %% GENERAL
 set(findall(han.fig,'-property','FontSize'),'FontSize',prop.fs)
