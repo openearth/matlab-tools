@@ -134,7 +134,7 @@ cbar(kr,kc).label='';
 
 % brewermap('demo')
 % cmap=brewermap(3,'set1');
-nl=size(x,2);
+nl=size(O.x,2);
 cmap=brewermap(nl,'Reds');
 
 %center around 0
