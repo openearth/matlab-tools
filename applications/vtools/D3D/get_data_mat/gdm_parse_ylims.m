@@ -50,4 +50,7 @@ if numel(flg_loc.(str_check))~=nvar_tmp
     end
 end
 
+%Reshape as a column. It may not be if it was existing. 
+flg_loc.(str_check)=reshape(flg_loc.(str_check),[],1);
+
 end %function

@@ -147,13 +147,16 @@
 % in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
 % in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
 % % in_plot.(tag).clims_type_var=datenum(2018,07,01); %in case of <clims_type>=2
-% in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
-% in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; 
+% in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; %color limits:
+% % Option 1: matrix [nclims,2] 
+% % Option 1: cell array {nvar,1} containting a matrix for each variable. 
+% % The same applies to `diff_t`, `diff_s`, ...
+% % and for properties `clims`, `filter_lims`, `cmap`
 % in_plot.(tag).clims_diff_t=[NaN,NaN]; %clim of difference with time
 % in_plot.(tag).clims_diff_s=[NaN,NaN]; %clim of difference with simulation
-% in_plot.(tag).filter_lim.clims=[998,1000]; %filter values for regular plot. Values larger than the first value and smaller than the second are removed.
-% in_plot.(tag).filter_lim.clims_diff_s=[-1001,-998]; %filter values for difference between simulations plot. Values larger than the first value and smaller than the second are removed.
-% in_plot.(tag).filter_lim.clims_diff_t=[-1001,-998]; %filter values for  difference in time plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_clims=[998,1000]; %filter values for regular plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_clims_diff_s=[-1001,-998]; %filter values for difference between simulations plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_clims_diff_t=[-1001,-998]; %filter values for  difference in time plot. Values larger than the first value and smaller than the second are removed.
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).tim_movie=40; %movie duration [s]
 % in_plot.(tag).fpath_ldb{1,1}=fullfile(fpath_project,'model','postprocessing','mkm-inner.ldb');

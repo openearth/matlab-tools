@@ -22,8 +22,8 @@ in_p=isfield_default(in_p,'is_diff_t',0);
 in_p=isfield_default(in_p,'is_diff_s',0);
 in_p=isfield_default(in_p,'is_std',0);
 in_p=isfield_default(in_p,'is_percentage',0);
-in_p=isfield_default(in_p,'tol',1e-8);
-in_p=isfield_default(in_p,'clims',[NaN,NaN]);
+in_p=isfield_default(in_p,'tol_clims',1e-8);
+% in_p=isfield_default(in_p,'clims',[NaN,NaN]); %inside do_auto_limit
 in_p=isfield_default(in_p,'unit',1);
 in_p=isfield_default(in_p,'variable','');
 
@@ -39,35 +39,39 @@ end
 
 clims_comp=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
 if isnan(clims_comp(1)) %still NaN because all are NaN
-    clims_comp=[-tol,+tol];
+    clims_comp=[-tol_clims,+tol_clims];
 end
 if diff(clims_comp)<eps
-    clims_comp=clims_comp+[-tol,+tol];
+    clims_comp=clims_comp+[-tol_clims,+tol_clims];
 end
 
 if is_diff_t || is_diff
     cstring=str_diff;
-    cmap=flipud(brewermap(100,'RdYlBu'));
+    cmap_comp=flipud(brewermap(100,'RdYlBu'));
     clims_comp=absolute_limits(clims_comp);
 elseif is_diff_s || is_diff
     cstring=str_diff;
-    cmap=flipud(brewermap(100,'RdYlGn'));
+    cmap_comp=flipud(brewermap(100,'RdYlGn'));
     clims_comp=absolute_limits(clims_comp);
 elseif is_std
     cstring=str_std;
-    cmap=turbo(100);
+    cmap_comp=turbo(100);
     clims_comp=absolute_limits(clims_comp);
 elseif is_percentage
     cstring=str_perc;
-    cmap=turbo(100);
+    cmap_comp=turbo(100);
     clims_comp=absolute_limits(clims_comp);
 else
     cstring=lab;
-    cmap=turbo(100);
+    cmap_comp=turbo(100);
 end
 
 if do_auto_limit(in_p,'clims')
     clims=clims_comp;
+end
+
+if do_auto_limit(in_p,'cmap')
+    cmap=cmap_comp;
 end
 
 end %function

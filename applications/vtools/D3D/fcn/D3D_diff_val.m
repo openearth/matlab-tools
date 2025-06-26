@@ -54,7 +54,13 @@ end %function
 
 function val_int=val_int_same_size(val,x_ref,x)
 
-[~,idx]=reorder_matrix(x_ref,x);
-val_int=val(idx);
+if isvector(val) %fm
+    [~,idx]=reorder_matrix(x_ref,x);
+    val_int=val(idx);
+else %d3d4
+    %we assume it is the same.
+    val_int=val;
+end
+
 
 end

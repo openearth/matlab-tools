@@ -52,32 +52,33 @@ flg_loc=isfield_default(flg_loc,'ylims',[NaN,NaN]);
 
 %% clims
 
-flg_loc=isfield_default(flg_loc,'cmap',[]);
-flg_loc=isfield_default(flg_loc,'cmap_diff_t',[]);
-flg_loc=isfield_default(flg_loc,'cmap_diff_s',[]);
-flg_loc=isfield_default(flg_loc,'cmap_diff_s_t',[]);
-flg_loc=isfield_default(flg_loc,'cmap_diff_s_perc',[]);
-
 flg_loc=isfield_default(flg_loc,'clims_type',1);
 
-flg_loc=isfield_default(flg_loc,'clims',[NaN,NaN]);
-flg_loc=isfield_default(flg_loc,'clims_diff_t',[NaN,NaN]);
-flg_loc=isfield_default(flg_loc,'clims_diff_s',[NaN,NaN]);
-flg_loc=isfield_default(flg_loc,'clims_diff_s_t',[NaN,NaN]);
-flg_loc=isfield_default(flg_loc,'clims_diff_s_perc',[NaN,NaN]);
+plottypes={'','diff_t','diff_s','diff_s_t','diff_s_perc'};
+props={'clims','cmap','filter_lims'};
 
-if isfield(flg_loc,'filter_lim')==0
-    flg_loc.filter_lim.clims=[inf,-inf];
-    flg_loc.filter_lim.clims_diff_t=[inf,-inf];
-    flg_loc.filter_lim.clims_diff_s=[inf,-inf];
-    flg_loc.filter_lim.clims_diff_s_t=[inf,-inf];
-    flg_loc.filter_lim.clims_diff_s_perc=[inf,-inf];
-else
-    flg_loc.filter_lim=isfield_default(flg_loc.filter_lim,'clims',[inf,-inf]);
-    flg_loc.filter_lim=isfield_default(flg_loc.filter_lim,'clims_diff_t',[inf,-inf]);
-    flg_loc.filter_lim=isfield_default(flg_loc.filter_lim,'clims_diff_s',[inf,-inf]);
-    flg_loc.filter_lim=isfield_default(flg_loc.filter_lim,'clims_diff_s_t',[inf,-inf]);
-    flg_loc.filter_lim=isfield_default(flg_loc.filter_lim,'clims_diff_s_perc',[inf,-inf]);
+nplottypes=numel(plottypes); %number of plot types
+nprops=numel(props); %number of properties to adjust
+
+%save
+flg_loc.plottypes=plottypes; 
+flg_loc.props=props; 
+
+% %possible way to move forward in object oriented! :)
+% F=@(clims_str_var,clims_str,flg_loc)gdm_parse_ylims(fid_log,flg_loc,clims_str_var);
+% % %make function of this
+% str_plottypes={'','diff_t','diff_s','diff_s_t','diff_s_perc'};
+% nplottypes=numel(str_plottypes); %number of plot types
+% for kpt=1:nplottypes
+%     [clims_str_var,clims_str]=gmd_str_plot_type_to_str_clims(str_plottypes,kpt,'clims');
+%     flg_loc=F(clims_str_var,clims_str,flg_loc); 
+% end
+
+for kpt=1:nplottypes
+    for kprop=1:nprops
+        clims_str_var=gmd_str_plot_type_to_str_clims(plottypes,kpt,props{kprop});
+        flg_loc=gdm_parse_ylims(fid_log,flg_loc,clims_str_var); 
+    end
 end
 
 %%
@@ -86,10 +87,21 @@ flg_loc=gdm_parse_plot_along_rkm(flg_loc);
 
 %% dimensions
 
-flg_loc.nclim_max=max([size(flg_loc.clims,1),size(flg_loc.clims_diff_t,1),size(flg_loc.clims_diff_s,1),size(flg_loc.clims_diff_s_t,1),size(flg_loc.clims_diff_s_perc,1)]);
+nvar=numel(flg_loc.var);
+clims_max=[];
+for kpt=1:nplottypes
+    clims_str_var=gmd_str_plot_type_to_str_clims(plottypes,kpt,'clims');
+    for kvar=1:nvar
+        clims_max=cat(1,clims_max,size(flg_loc.(clims_str_var){kvar},1));
+    end
+end
+
+flg_loc.nclim_max=max(clims_max);
 flg_loc.nsim=numel(simdef);
 flg_loc.nxlim=size(flg_loc.xlims,1);
-flg_loc.nvar=numel(flg_loc.var);
+flg_loc.nvar=nvar;
+flg_loc.nplottypes=nplottypes;
+flg_loc.nprops=nprops;
 
 %% 
 
@@ -107,3 +119,8 @@ end
  end
 
 end %function
+
+%%
+%% FUNCTIONS
+%%
+

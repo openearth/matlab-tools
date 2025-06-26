@@ -91,6 +91,8 @@ for kvar=1:nvar %variable
         continue
     end
 
+    flg_loc=gdm_add_clims(flg_loc,kvar);
+
     nplot=5;
     fpath_file_2D=cell(nplot,nt,flg_loc.nclim_max,nxlim);
     fpath_file_3D=cell(nplot,nt,flg_loc.nclim_max,nxlim);
@@ -166,11 +168,12 @@ for kvar=1:nvar %variable
         
                 kplot=1;
     
-                tag_ref='val';
+                tag_ref='val'; %these names are in flg_loc.plottypes
                 in_p.val=val_loc_tt;
                 in_p.is_diff=0;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
+                in_p.do_measurements=1;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
@@ -188,6 +191,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
+                in_p.do_measurements=1;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
@@ -205,6 +209,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
+                in_p.do_measurements=0;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
@@ -222,6 +227,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
+                in_p.do_measurements=0;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
@@ -243,6 +249,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=0;
                 in_p.is_background=0;
                 in_p.is_percentage=1;
+                in_p.do_measurements=0;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
@@ -356,17 +363,8 @@ end
 
 function [fpath_file_2D,fpath_file_3D]=fcn_plot(in_p,flg_loc,var_str,var_idx_loc,fdir_fig,tag_fig,time_dnum_loc,runid,tag_ref)
 
-%colormap
-cmap_str=fcn_str_cmap_clim(tag_ref,'cmap'); %string to read from `flg_loc`
-in_p.cmap=flg_loc.(cmap_str);
-
-clims_str=fcn_str_cmap_clim(tag_ref,'clims');
-clims=flg_loc.(clims_str);
-
-clims=fcn_clims_type(flg_loc,clims);
-nclim=size(clims,1);
-
-in_p.filter_lim=flg_loc.filter_lim.(clims_str);
+%properties colormap, clims, filter
+propstru=gdm_move_clims(flg_loc,tag_ref);
 
 str_var_idx=fcn_str_var_idx(var_idx_loc);
 
@@ -386,8 +384,15 @@ end
 fpath_file_2D=cell(flg_loc.nclim_max,flg_loc.nxlim);
 fpath_file_3D=cell(flg_loc.nclim_max,flg_loc.nxlim);
 
+nclim=size(propstru.clims,1);
 for kclim=1:nclim
-    in_p.clims=clims(kclim,:);
+    clims=propstru.clims(kclim,:);
+    clims=fcn_clims_type(flg_loc,clims);
+
+    in_p.clims=clims;
+    in_p.filter_lims=propstru.filter_lims;
+    in_p.cmap=propstru.filter_lims;
+
     for kxlim=1:flg_loc.nxlim
         in_p.xlims=flg_loc.xlims(kxlim,:);
         in_p.ylims=flg_loc.ylims(kxlim,:);
@@ -453,28 +458,52 @@ end %function
 
 %%
 
-%Create string of colormap and colorbar. diff_t -> cmap_diff_t
-function cmap_str=fcn_str_cmap_clim(tag_ref,str_map)
-
-if strcmp(tag_ref,'val')
-    tag_ref='';
-end
-cmap_str=sprintf('%s_%s',str_map,tag_ref);
-if strcmp(cmap_str(end),'_')
-    cmap_str(end)='';
-end
-
-end %function
-
-%%
-
 function str_var_idx=fcn_str_var_idx(var_idx_loc)
 
 str_var_idx=num2str(var_idx_loc);
 str_var_idx=strrep(str_var_idx,' ','_');
 str_var_idx=strrep(str_var_idx,'__','_');
 
-end
+end %function
 
 %%
 
+%Move data from `flg_loc.clims_var` to `flg_loc.clims`
+%
+function flg_loc=gdm_add_clims(flg_loc,kvar)
+
+nplottypes=flg_loc.nplottypes;
+plottypes=flg_loc.plottypes;
+props=flg_loc.props;
+nprops=flg_loc.nprops;
+
+for kpt=1:nplottypes
+    for kprop=1:nprops
+        [clims_str_var,clims_str]=gmd_str_plot_type_to_str_clims(plottypes,kpt,props{kprop});
+        flg_loc.(clims_str)=flg_loc.(clims_str_var){kvar};
+    end
+end
+
+end %function
+
+%%
+
+%Copy data from `flg_loc.clims_diff_t` to `propstru.clims`
+%
+function propstru=gdm_move_clims(flg_loc,tag_ref)
+
+% nplottypes=flg_loc.nplottypes;
+% plottypes=flg_loc.plottypes;
+props=flg_loc.props;
+nprops=flg_loc.nprops;
+
+% for kpt=1:nplottypes
+
+    for kprop=1:nprops
+        prop=props{kprop};
+        cmap_str=gdm_str_cmap_clim(tag_ref,prop); %string to read from `flg_loc`
+        propstru.(prop)=flg_loc.(cmap_str);
+    end
+% end
+
+end %function

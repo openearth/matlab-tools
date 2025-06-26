@@ -80,10 +80,8 @@ end
 
 if isfield(in_p,'views')==0
     in_p.views=[45,45];
-end
-if isfield(in_p,'cmap')==0
-    in_p.cmap=[]; %default
-end
+end   
+
 if isfield(in_p,'str_idx')==0
     in_p.str_idx=NaN; 
 end
@@ -108,10 +106,12 @@ else
 end
 in_p=isfield_default(in_p,'tim_mea',in_p.tim);
 
-
-if isfield(in_p,'filter_lim')==0
-    in_p.filter_lim=[inf,-inf];
+in_p=isfield_default(in_p,'filter_lim',[inf,-inf]);
+in_p=isfield_default(in_p,'filter_lims',in_p.filter_lim);
+if any(isnan(in_p.filter_lims))
+    in_p.filter_lims=[inf,-inf];
 end
+
 if isfield(in_p,'cmap_cut_edges')==0
     in_p.cmap_cut_edges=NaN;
 end
@@ -181,7 +181,7 @@ end
 
 %% filter values
 
-bol_out=val>filter_lim(1) & val<filter_lim(2);
+bol_out=val>filter_lims(1) & val<filter_lims(2);
 val(bol_out)=NaN;
 stot=numel(val);
 sbo=sum(bol_out);
