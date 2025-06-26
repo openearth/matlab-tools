@@ -125,7 +125,15 @@ end
 if isfield(in_p,'font_size')==0
     in_p.font_size=10;
 end
+
+if in_p.do_measurements
+    in_p=isfield_default(in_p,'fig_size',[0,0,25,14]);
+    in_p=isfield_default(in_p,'fig_margin_top',2.5);
+else
+    in_p=isfield_default(in_p,'fig_size',[0,0,14,14]);
+end
 in_p=gdm_parse_fig_margins(in_p);
+
 if isfield(in_p,'xlims')==0 || isnan(in_p.xlims(1))
     [in_p.xlims,in_p.ylims]=D3D_gridInfo_lims(in_p.gridInfo);
 end
@@ -140,11 +148,7 @@ if isempty(in_p.measurements_images)
 else
     in_p=isfield_default(in_p,'do_measurements',1);
 end
-if in_p.do_measurements
-    in_p=isfield_default(in_p,'fig_size',[0,0,25,14]);
-else
-    in_p=isfield_default(in_p,'fig_size',[0,0,14,14]);
-end
+
 
 in_p=isfield_default(in_p,'contour_lines',NaN);
 if ~isnan(in_p.contour_lines)
