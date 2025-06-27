@@ -25,6 +25,9 @@ end
 
 nci=ncinfo(fpath_grd);
 bol_coordinate_system=strcmp({nci.Variables.Name},'projected_coordinate_system');
+if sum(bol_coordinate_system)~=1
+    return
+end
 bol_epsg=strcmp({nci.Variables(bol_coordinate_system).Attributes.Name},'epsg');
 epsg=double(nci.Variables(bol_coordinate_system).Attributes(bol_epsg).Value);
 
