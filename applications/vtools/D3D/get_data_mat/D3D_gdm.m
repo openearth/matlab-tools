@@ -178,6 +178,7 @@
 % % in_plot.(tag).epsg_in=4326; %28992
 % % in_plot.(tag).fig_size=[0,0,37/2,15];
 % % in_plot.(tag).font_size=20;
+% % in_plot.(tag).tol_time_measurements=days(30); %tolerance for matching measurements [durartion]. 
 % % in_plot.(tag).measurements=fullfile(fpaths.fdir_bl_measurements_2D,'2D_measurements_01.csv'); full path to csv file descriving the measurments:
 % % % time, file, factor
 % % % 1995-01-01T00:00:00+01:00, p:\archivedprojects\11206792-kpp-rivierkunde-2021\003_maas\04_input_generation\14_export_jmp_to_tif\1995.tif , 0.01
