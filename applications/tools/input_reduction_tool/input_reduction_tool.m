@@ -128,8 +128,10 @@ end
 
 % It is only possible to open 1 instance of the tool, will be changed in the future: 
 if ishandle(findobj('Tag','IRT','type','figure'))
-    % Run a sub-function call in an existing IRT if this is requested
+    % Run a sub-function call in an existing IRT if this is requested, example:
+	% input_reduction_tool(@run_method,1,1); 'Clicks' the 'Run method' button
     if isa(varargin{1},'function_handle')
+        varargin{1}=eval(['@' char(varargin{1})]); % Localize the link
         feval(varargin{:});
         return
     end
