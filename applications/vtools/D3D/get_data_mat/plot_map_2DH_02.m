@@ -173,7 +173,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=0;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
-                in_p.do_measurements=1;
+                in_p.do_measurements_this_plot=1;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
@@ -191,7 +191,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
-                in_p.do_measurements=1;
+                in_p.do_measurements_this_plot=1;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
@@ -209,7 +209,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
-                in_p.do_measurements=0;
+                in_p.do_measurements_this_plot=0;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
@@ -227,7 +227,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
-                in_p.do_measurements=0;
+                in_p.do_measurements_this_plot=0;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
@@ -249,7 +249,7 @@ for kvar=1:nvar %variable
                 in_p.is_diff=0;
                 in_p.is_background=0;
                 in_p.is_percentage=1;
-                in_p.do_measurements=0;
+                in_p.do_measurements_this_plot=0;
     
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);

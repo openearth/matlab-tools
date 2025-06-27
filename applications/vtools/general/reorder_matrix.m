@@ -28,7 +28,7 @@
 %E.G.:
 %x = [1 NaN 2; 3 4 NaN];
 %y = [2 1 NaN; NaN 3 4];
-%y_sorted = reorder_columns_like(x, y);
+%y_sorted = reorder_matrix(x, y);
 
 function [y_sorted,idx] = reorder_matrix(x, y, precision)
 
@@ -45,6 +45,16 @@ nan_marker = -999999999;  % Must not exist in rounded data
 %Round to specified precision
 xr = round(x * precision);
 yr = round(y * precision);
+
+%Check uniqueness
+nx_u=numel(unique(xr));
+nx=size(x,2);
+if nx_u~=nx
+    y_sorted=y;
+    idx=1:1:nx;
+    fprintf('Cannot reorder matrix, the elements are not unique. \n')
+    return
+end
 
 %Replace NaNs with a unique marker
 xr(isnan(x)) = nan_marker;

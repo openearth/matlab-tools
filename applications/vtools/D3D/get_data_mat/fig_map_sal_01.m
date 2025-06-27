@@ -126,6 +126,7 @@ if isfield(in_p,'font_size')==0
     in_p.font_size=10;
 end
 
+in_p=isfield_default(in_p,'do_measurements',0);
 if in_p.do_measurements
     in_p=isfield_default(in_p,'fig_size',[0,0,25,14]);
     in_p=isfield_default(in_p,'fig_margin_top',2.5);

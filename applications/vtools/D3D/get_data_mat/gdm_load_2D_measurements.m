@@ -19,7 +19,7 @@ is_diff=in_p.is_diff;
 
 %% SKIP
 
-if isempty_struct(measurements_structure) || in_p.do_measurements==0
+if isempty_struct(measurements_structure) || in_p.do_measurements==0 || in_p.do_measurements_this_plot==0
     measurements_images=cell(0,0);
     tim_mea_dtime_mean=NaT;
     return

@@ -55,9 +55,12 @@ end %function
 function val_int=val_int_same_size(val,x_ref,x)
 
 if isvector(val) %fm
-    % [~,idx]=reorder_matrix(x_ref,x);
-    % val_int=val(idx);
-    val_int=val;
+    %There is a problem here. If the coordinates are exactly the same as in
+    %idealized case, then only the first ones are taken. This needs to be
+    %rethough. Maybe with a flag? Check uniqueness? Done inside
+    %`reorder_matrix`
+    [~,idx]=reorder_matrix(x_ref,x);
+    val_int=val(idx);
 else %d3d4
     %we assume it is the same.
     val_int=val;
