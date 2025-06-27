@@ -200,7 +200,7 @@ for kvar=1:nvar %variable
             end
     
             %% difference with reference
-            if flg_loc.do_diff_s && (ksim~=kref || flg_loc.do_diff_s_ref_sim)
+            if flg_loc.do_diff_s && nsim>1 && (ksim~=kref || flg_loc.do_diff_s_ref_sim)
     
                 kplot=3;
                  
@@ -218,7 +218,7 @@ for kvar=1:nvar %variable
             end
     
             %% difference with reference and initial time
-            if flg_loc.do_diff_s_t && (ksim~=kref || flg_loc.do_diff_s_ref_sim) && (kt~=1 || flg_loc.do_diff_t_first_time)
+            if flg_loc.do_diff_s_t && nsim>1 && (ksim~=kref || flg_loc.do_diff_s_ref_sim) && (kt~=1 || flg_loc.do_diff_t_first_time)
     
                 kplot=4;
     
@@ -236,7 +236,7 @@ for kvar=1:nvar %variable
             end
     
             %% difference with reference in percentage terms
-            if flg_loc.do_diff_s_perc && (ksim~=kref || flg_loc.do_diff_s_ref_sim)
+            if flg_loc.do_diff_s_perc && nsim>1 && (ksim~=kref || flg_loc.do_diff_s_ref_sim)
     
                 kplot=5;
     
