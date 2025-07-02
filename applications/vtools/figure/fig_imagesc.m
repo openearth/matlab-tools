@@ -27,7 +27,16 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_histogram(in_p)
+%Possible input
+%1)
+% in_p.counts=counts';
+% in_p.xcenters=xcenters;
+% in_p.ycenters=ycenters;
+%2)
+% in_p.x=data_mag_x;
+% in_p.y=data_mag_y;
+
+function fig_imagesc(in_p)
 
 %% DEFAULTS
 
@@ -52,24 +61,46 @@ end
 if isfield(in_p,'lan')==0
     in_p.lan='en';
 end
+
+%check which one is input
+in_p=isfield_default(in_p,'counts',[]);
+if isempty(in_p.counts)
+    % Compute 2D histogram
+    [counts, xedges, yedges] = histcounts2(in_p.x,in_p.y);
+    
+    % Create grid of bin centers
+    in_p.xcenters = (xedges(1:end-1) + xedges(2:end))/2;
+    in_p.ycenters = (yedges(1:end-1) + yedges(2:end))/2;
+    in_p.counts=counts';
+end
+
 in_p=isfield_default(in_p,'varname','variable');
-in_p=isfield_default(in_p,'x_lab',labels4all(in_p.varname,1,in_p.lan));
+in_p=isfield_default(in_p,'x_lab',labels4all(sprintf('%s_x',in_p.varname),1,in_p.lan));
+in_p=isfield_default(in_p,'y_lab',labels4all(sprintf('%s_y',in_p.varname),1,in_p.lan));
 in_p=isfield_default(in_p,'XScale','linear');
 in_p=isfield_default(in_p,'marker','none');
 in_p=isfield_default(in_p,'title_str','');
-% in_p=isfield_default(in_p,'lims_x',[NaN,NaN]);
-% in_p=isfield_default(in_p,'lims_y',[NaN,NaN]);
+in_p=isfield_default(in_p,'lims_x',[min(in_p.xcenters(:)),max(in_p.xcenters(:))]);
+in_p=isfield_default(in_p,'lims_y',[min(in_p.ycenters(:)),max(in_p.ycenters(:))]);
 in_p=isfield_default(in_p,'normalization','count');
+in_p=isfield_default(in_p,'lims_c',NaN);
+in_p=isfield_default(in_p,'do_axis_equal',0);
 switch in_p.normalization
     case 'count'
-        in_p=isfield_default(in_p,'y_lab','count [-]');
-    case 'pdf'
-        in_p=isfield_default(in_p,'y_lab','probability density function [-]');
-    case 'probability'
-        in_p=isfield_default(in_p,'y_lab','probability [-]');
+        in_p=isfield_default(in_p,'c_lab','count [-]');
+        z=in_p.counts;
+    case 'percentage'
+        in_p=isfield_default(in_p,'c_lab','percentage [%]');
+        z=in_p.counts./sum(in_p.counts(:)).*100;
+    otherwise
+        error('Unknown normalization')
+    % case 'pdf'
+    %     in_p=isfield_default(in_p,'y_lab','probability density function [-]');
+    % case 'probability'
+    %     in_p=isfield_default(in_p,'y_lab','probability [-]');
 end
 
-% [in_p.lims_x,in_p.lims_y]=xlim_ylim(in_p.lims_x,in_p.lims_y,in_p.x,in_p.y);
+% [in_p.lims_x,in_p.lims_y]=xlim_ylim(in_p.lims_x,in_p.lims_y,in_p.xcenters(:),in_p.ycenters(:));
 in_p=gdm_parse_fig_margins(in_p);
 
 v2struct(in_p)
@@ -136,13 +167,14 @@ set(groot,'defaultAxesTickLabelInterpreter','tex');
 set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
-% kr=1; kc=1;
-% cbar(kr,kc).displacement=[0.0,0,0,0]; 
-% cbar(kr,kc).location='northoutside';
-% cbar(kr,kc).label='surface fraction content of fine sediment [-]';
+kr=1; kc=1;
+cbar(kr,kc).displacement=[0.0,0,0,0]; 
+cbar(kr,kc).location='northoutside';
+cbar(kr,kc).label=c_lab;
 
 % brewermap('demo')
-cmap=brewermap(3,'set1');
+% cmap=brewermap(3,'set1');
+cmap=brewermap(100,'YlOrRd');
 
 %center around 0
 % ncmap=1000;
@@ -268,9 +300,9 @@ cmap=brewermap(3,'set1');
 % kc=axis_m(ka,2);
 
 kr=1; kc=1;
-% lims.y(kr,kc,1:2)=lims_y;
-% lims.x(kr,kc,1:2)=lims_x;
-% lims.c(kr,kc,1:2)=lims_c;
+lims.y(kr,kc,1:2)=lims_y;
+lims.x(kr,kc,1:2)=lims_x;
+lims.c(kr,kc,1:2)=lims_c;
 xlabels{kr,kc}=x_lab;
 ylabels{kr,kc}=y_lab;
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
@@ -372,7 +404,7 @@ end
 %% PLOT
 
 kr=1; kc=1;    
-han.p(kr,kc,1)=histogram(val,'parent',han.sfig(kr,kc),'Normalization',normalization);
+han.p(kr,kc,1)=imagesc(xcenters, ycenters, z,'parent',han.sfig(kr,kc));
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1,'linestyle',prop.ls1,'marker',prop.m1);
 % han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 % han.p(kr,kc,1)=plot(x,y,'parent',han.sfig(kr,kc),'color',prop.color(1,:),'linewidth',prop.lw1);
@@ -387,10 +419,12 @@ han.p(kr,kc,1)=histogram(val,'parent',han.sfig(kr,kc),'Normalization',normalizat
 kr=1; kc=1;   
 hold(han.sfig(kr,kc),'on')
 grid(han.sfig(kr,kc),'on')
-% axis(han.sfig(kr,kc),'equal')
+if do_axis_equal
+axis(han.sfig(kr,kc),'equal')
+end
 han.sfig(kr,kc).Box='on';
-% han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
+han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTickLabel='';
@@ -402,7 +436,8 @@ han.sfig(kr,kc).XScale=XScale;
 han.sfig(kr,kc).Title.String=title_str;
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';
-han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
+% han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
+% han.sfig(kr,kc).YAxis.Direction='reverse'; %'reverse'
 
 %duration ticks
 % xtickformat(han.sfig(kr,kc),'hh:mm')
@@ -410,12 +445,12 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 % han.sfig(kr,kc).XTick=hours([4,6]);
 
 %colormap
-% kr=1; kc=2;
-% view(han.sfig(kr,kc),[0,90]);
-% colormap(han.sfig(kr,kc),cmap);
-% if ~isnan(lims.c(kr,kc,1:1))
-% caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
-% end
+kr=1; kc=1;
+view(han.sfig(kr,kc),[0,90]);
+colormap(han.sfig(kr,kc),cmap);
+if ~isnan(lims.c(kr,kc,1:1))
+clim(han.sfig(kr,kc),lims.c(kr,kc,1:2));
+end
 
 %% ADD TEXT
 
@@ -459,13 +494,13 @@ han.sfig(kr,kc).XAxis.Direction='normal'; %'reverse'
 
 %% COLORBAR
 
-% kr=1; kc=1;
-% pos.sfig=han.sfig(kr,kc).Position;
-% han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
+kr=1; kc=1;
+pos.sfig=han.sfig(kr,kc).Position;
+han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
 % pos.cbar=han.cbar.Position;
 % han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
 % han.sfig(kr,kc).Position=pos.sfig;
-% han.cbar.Label.String=cbar(kr,kc).label;
+han.cbar.Label.String=cbar(kr,kc).label;
 % 	%set the marks of the colorbar according to your vector, the number of lines and colors of the colormap is np1 (e.g. 20). The colorbar limit is [1,np1].
 % aux2=fliplr(d1_r./La_v); %we have plotted the colors in the other direction, so here we can flip it
 % v2p=[1,5,11,15,np1];

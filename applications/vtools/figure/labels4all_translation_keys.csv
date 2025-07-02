@@ -1,0 +1,94 @@
+key,en,nl,es,un_type
+elevation,elevation,hoogte,elevación,Lref
+bed_elevation,bed elevation,bodemhoogte,elevación del lecho,Lref
+bed_elevation_change,bed elevation change,bodemverandering,cambio en la elevación del lecho,L/T
+bed_slope,bed slope,bodemverhang,pendiente del lecho,-
+bed_slope_change,change in bed slope,verandering in bodemverhang,cambio en la pendiente del lecho,1/T
+distance,distance,afstand,distancia,L
+distance_section,distance along section,afstand langs gevaren track,distancia a lo largo de la sección,L
+distance_mouth,distance from mouth,afstand van de riviermonding,distancia a la desembocadura,L
+water_level,water level,waterstand,nivel del agua,Lref
+water_level_change,change in water level,waterstandverandering,cambio en el nivel del agua,L/T
+tide,Tide,Getij,Marea,L
+surge,Surge,Opzet,marejada ciclónica,L
+plotted_period,plotted period,weegegeven periode,período trazado,-
+entire_period,entire period,gehele periode,todo el período,-
+depth,depth,diepte,profundidad,L
+depth_velocity_point,depth at velocity point,depth at velocity point,profundidad en punto de velocidad,L
+salinity,salinity,saliniteit,salinidad,-
+chloride,chloride,chloride,cloruro,-
+surface_chloride,surface chloride,chloride aan wateroppervlak,cloruro en la superficie,-
+bottom_chloride,bottom chloride,chloride aan bodem,cloruro en el lecho,-
+salt_m2,salt,zout,sal,M/L2
+salt_mass,salt,zout,sal,M
+chloride_mass,chloride,chloride,cloro,M
+salt_t,salt,zout,sal,M/T
+chloride_t,chloride,chloride,cloro,M/T
+chloride_m2,chloride,chloride,cloro,M/L2
+velocity_magnitude,velocity magnitude,snelheidsgrootte,magnitud de la velocidad,L/T
+cross_velocity,cross-wise velocity,dwarssnelheid,velocidad transversal,L/T
+long_velocity,longitudinal velocity,longitudinale snelheid,velocidad longitudinal,L/T
+vertical_velocity,vertical velocity,verticale snelheid,velocidad vertical,L/T
+x_coord,x-coordinate,x-coordinaat,coordenada x,L
+y_coord,y-coordinate,y-coordinaat,coordenada y,L
+simulation,Simulation,Berekening,Simulación,-
+measurement,Measurement,Meting,Medición,-
+original,original,origineel,original,-
+modified,modified,gewijzigd,modificado,-
+difference,Difference,Verschil,Diferencia,-
+discharge,discharge,afvoer,caudal,L3/T
+salt_density,salt,zout,sal,M/L2
+salt_time,salt,zout,sal,M/T
+chloride_time,chloride,chloride,cloro,M/T
+chloride_density,chloride,chloride,cloro,M/L2
+cumulative_discharge,cumulative discharge,cumulatieve afvoer,caudal acumulado,L3/T
+specific_discharge,specific discharge,specifieke afvoer,caudal específico,L2/T
+x_specific_discharge,x-specific discharge,x-specifieke afvoer,caudal específico x,L2/T
+y_specific_discharge,y-specific discharge,y-specifieke afvoer,caudal específico y,L2/T
+time,time,tijd,tiempo,T
+time_shift,time shift,tijdsverschuiving,diferencia de tiempo,-
+correlation_coefficient,correlation coefficient,correlatiecoëfficiënt,coeficiente de correlación,-
+wind_direction,wind direction,windrichting,dirección del viento,degrees
+direction,direction,richting,dirección,degrees
+wind_speed,wind speed,windsnelheid,velocidad del viento,L/T
+wind_speed_x,wind speed in x direction,windsnelheid in x,velocidad del viento en x,L/T
+wind_speed_y,wind speed in y direction,windsnelheid in y,velocidad del viento en y,L/T
+measured,measured,gemeten,medido,-
+computed,computed,berekend,computado,-
+dg,geometric mean grain size,geometrische gemiddelde korrelgrootte,media geométrica del tamaño de grano,L
+dm,arithmetic mean grain size,rekenkundig gemiddelde korrelgrootte,media aritmética del tamaño de grano,L
+d10,d_{10},d_{10},d_{10},L
+d50,d_{50},d_{50},d_{50},L
+d90,d_{90},d_{90},d_{90},L
+horizontal_viscosity,horizontal eddy viscosity,horizontale viscositeit,viscosidad de turbulencia horizontal,L2/T
+active_layer_thickness,active layer thickness,active laag,capa activa,L
+volume_fraction_content_size_frac,volume fraction content of size fraction %d in active layer,,,-
+volume_fraction_content,volume fraction content,volumefractiegehalte,,-
+volume_fraction_content_sand,volume fraction content of sand,volumefractiegehalte van zand,,-
+volume_fraction_content_sand_per_time,volume fraction content of sand per time,volumefractiegehalte van zand in tijd,,T
+bed_shear_stress,bed shear stress,bed schuifspanning,tensión de fondo,M/T2/L
+bed_shear_stress_time,bed shear stress time,bed schuifspanning tijd,tensión de fondo y tiempo,M/T/L
+sediment_thickness,sediment thickness,sediment laag,capa de sedimento,L
+bedload_sediment_transport,bedload sediment transport,bedload sedimenttransport,transporte de sedimento de fondo,L2/T
+sediment_transport_size_frac_L2T,sediment transport of size fraction %d,totaal sedimenttransport van fractie %d,transporte de sedimento de la fracción %d,L2/T
+sediment_transport_size_frac_L3T,sediment transport of size fraction %d,totaal sedimenttransport van fractie %d,transporte de sedimento de la fracción %d,L3/T
+sediment_transport_size_frac_L3,sediment transport of size fraction %d,totaal sedimenttransport van fractie %d,transporte de sedimento de la fracción %d,L3
+total_sediment_transport_L2T,total sediment transport,totaal sedimenttransport,transporte de sedimento total,L2/T
+total_sediment_transport_L3T,total sediment transport,totaal sedimenttransport,transporte de sedimento total,L3/T
+total_sediment_transport_L3,total sediment transport,totaal sedimenttransport,transporte de sedimento total,L3
+water_volume,water volume,watervolume,volumen de agua,L3
+chezy_friction_coefficient,Chézy friction coefficient,Chézy wrijvingscoëfficiënt,Coeficiente de fricción de Chézy,L1/2/T
+river_kilometre,river kilometre,rivierkilometer,kilómetro del río,L
+morphodynamic_cell_area,morphodynamic cell area,morfodynamisch celgebied,área morfodinámica,L2
+cell_area,cell area,celgebied,área de las celdas,L2
+width,width,breedte,ancho,L
+depth_average_residence_time,depth-average residence time,dieptegemiddelde leeftijd,?,T
+surface_residence_time,surface residence time,oppervlakte leeftijd,?,T
+maximum_residence_time,maximum residence time,maximale leeftijd,?,T
+wavelength_max_amplitude,wavelength of maximum amplitude,,,L
+horizontal_diffusivity,horizontal diffusivity,horizontale diffusie,difusividad horizontal,L2/T
+swh_x,significant height of combined wind waves and swell in x direction,significante hoogte van gecombineerde windgolven en deining in x,altura significativa de la combinación de oleaje de viento y mar de fondo en dirección x,L
+swh_y,significant height of combined wind waves and swell in y direction,significante hoogte van gecombineerde windgolven en deining in y,altura significativa de la combinación de oleaje de viento y mar de fondo en dirección y,L
+pp1d_x,peak wave period in x direction,piekgolfperiode in x,periodo del oleaje pico en x,T
+pp1d_y,peak wave period in y direction,piekgolfperiode in y,periodo del oleaje pico en y,T
+at,at,te,en,-
