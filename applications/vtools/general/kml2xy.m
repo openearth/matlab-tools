@@ -68,6 +68,7 @@ end %function
 
 function mat=read_1_kml(fpath_kml_1,epsg_convert,overwrite)
 
+%call `convert_filetype`
 fpath_xyz=strrep(fpath_kml_1,'.kml','.xyz');
 EHY_convert(fpath_kml_1,'xyz','outputFile',fpath_xyz,'overwrite',overwrite);
 fpath_xyz_c=strrep(fpath_xyz,'.xyz',sprintf('_%d.xyz',epsg_convert));

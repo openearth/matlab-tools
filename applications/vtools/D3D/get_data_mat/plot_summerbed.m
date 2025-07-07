@@ -25,8 +25,8 @@ flg_loc=gdm_parse_summerbed(flg_loc,simdef(1));
 %Add B_mor variables to plot. 
 %This cannot be inside <gdm_parse_summerbed> because it adds variables to
 %be processed which are created in <pp_sb_var_01>, the postprocessing
-%function of summerbed mat creation (<create_mat_map_summerbed_01>). Hence,
-%the file does not exist in <create_mat_map_summerbed_01>.
+%function of summerbed mat creation (<gdm_create_mat_summerbed>). Hence,
+%the file does not exist in <gdm_create_mat_summerbed>.
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
 flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
 
@@ -58,7 +58,8 @@ in_p=flg_loc;
 
 %% COMMON
 
-in_p.all_struct=gdm_read_structures(simdef,flg_loc);
+all_struct=gdm_read_structures(simdef,flg_loc);
+in_p.all_struct=all_struct;
 
 %% LOOP ON SUMMERBED POLYGONS
 for ksb=1:nsb %summerbed polygons
@@ -158,8 +159,9 @@ for ksb=1:nsb %summerbed polygons
                         end
                     end
                     
-                    [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,varname_label,statis);
-                    
+                    [lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,varname_label,statis);
+                    in_p.lab_str=lab_str;
+
                     %measurements          
                     [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,time_plot_loc,var_str_save,ksb,statis);
                     %measurements at time 0. We need the `statis`, so it better be here than outside the loop.                         
@@ -375,12 +377,12 @@ for ksb=1:nsb %summerbed polygons
             multi_dim=check_multi_dimensional(data_0(kref));
 
             if flg_loc.do_xvt && ~multi_dim && npol==1 %skip if multidimentional or if there is more than 1 polygon
-               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,str_save_sb_pol,pol_name,var_str_save,tag,in_p.all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,varname_label)
+               plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,str_save_sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,varname_label)
             end
             
             %% cumulative
             if flg_loc.do_cum(kvar)
-                plot_cum(simdef,time_dnum_plot,nx,nsim,nD,flg_loc.lab_str,data_xvt,str_save_sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims);
+                plot_cum(fid_log,simdef,in_p,time_dnum_plot,tim_dtime_plot,nx,nD,lab_str,data_xvt,str_save_sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims);
             end
 
             %% tv at single rkm
@@ -621,14 +623,18 @@ end %function
 
 %%
 
-function plot_cum(simdef,time_dnum_plot,nx,nsim,nD,lab_str,data_xvt,sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims)
+function plot_cum(fid_log,simdef,in_p,time_dnum_plot,tim_dtime_plot,nx,nD,lab_str,data_xvt,sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims)
+
+nsim=numel(simdef);
+tag=lab_str;
 
 for ksim=1:nsim
 
+    runid=simdef(ksim).file.runid;
     fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
     
     statis='val_mean';
-    diff_tim=seconds(diff(time_dnum_plot));
+    diff_tim=seconds(diff(tim_dtime_plot));
     val_tim=data_xvt.(statis)(:,:,1:end-1,:).*repmat(reshape(diff_tim,1,1,[]),nx,nsim,1,nD); %we do not use the last value. Block approach with variables 1:end-1 with time 1:end
     val_cum=cumsum(cat(3,zeros(nx,nsim,1,nD),val_tim),3);
     
@@ -645,7 +651,7 @@ for ksim=1:nsim
     
         for kylim=1:nylim
             % for kxlim=1:nxlim
-                fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum(kt),var_str_save,statis,sb_pol,kdiff,var_idx,kylim,1);
+                fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum_plot(kt),var_str_save,statis,sb_pol,var_idx,kylim,1);
         
                 in_p.fname=fname_noext;
                 in_p.ylim=lims(kylim,:);

@@ -13,6 +13,9 @@
 %compute normal flow
 %INPUT:
 % hydraulic_radius: 1=considering `B*h/(B+2h)`; 2=considering `h`
+%
+%E.G.
+%slope=normal_flow('Q',1,'B',1,'h',1,'Cf',0.007,'hydraulic_radius',2);
 
 function val_out=normal_flow(varargin)
 

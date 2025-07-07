@@ -116,6 +116,7 @@ s_b_mor_t,sediment_transport_size_frac_L3
 stot,total_sediment_transport_L2T
 stot_b_mor,total_sediment_transport_L3T
 stot_b_mor_t,total_sediment_transport_L3
+stot_t,total_sediment_transport_L3
 q_t,water_volume
 qsp_b_t,water_volume
 mesh2d_czs,chezy_friction_coefficient
@@ -130,3 +131,15 @@ t_max,maximum_residence_time
 fourier_max_length_x,wavelength_max_amplitude
 dicouv,horizontal_diffusivity
 water_dispersion,horizontal_diffusivity
+mesh2d_fixed weir energy loss,energy_loss
+weirgen_structure_head,energy_loss
+mesh2d_flowelem_domain,flowelem_domain
+e,energy_head
+dunelength,dune_length 
+mesh2d_dunelength,dune_length
+duneheight,dune_height
+mesh2d_duneheight,dune_height
+waveheight,wave_height
+mesh2d_hwav,wave_height
+pp1d,peak_wave_period
+mwd,mean_wave_direction

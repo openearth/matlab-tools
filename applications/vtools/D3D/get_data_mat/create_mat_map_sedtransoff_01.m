@@ -231,15 +231,24 @@ in_plot_sb.tag_serie=flg_loc.tag_serie;
 tag_sb='fig_map_summerbed_01';
 in_plot_sb.(tag_sb)=flg_loc;
 in_plot_sb.(tag_sb).do=1;
-in_plot_sb.(tag_sb).do_p=flg_loc.do_sb_p; %regular plot
+in_plot_sb.(tag_sb).do_p_single=flg_loc.do_sb_p; %regular plot
 in_plot_sb.(tag_sb).do_xvt=1; %x-variable with time in color
-in_plot_sb.(tag_sb).do_diff=0; %difference initial time
-in_plot_sb.(tag_sb).do_s=0; %difference with reference
-in_plot_sb.(tag_sb).do_all=flg_loc.do_all; 
-in_plot_sb.(tag_sb).do_s_diff=0; %difference with reference and initial time
+in_plot_sb.(tag_sb).do_diff_t=0; %difference initial time
+in_plot_sb.(tag_sb).do_diff_s=0; %difference with reference
+in_plot_sb.(tag_sb).do_diff_s_t=0; %difference reference simulation and initial time
+in_plot_sb.(tag_sb).do_diff_s_perc=0; %difference reference simulation in percentage terms
+in_plot_sb.(tag_sb).do_all_s=0; %all simulations in same figure
+in_plot_sb.(tag_sb).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+in_plot_sb.(tag_sb).do_xvt=1; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot_sb.(tag_sb).do_xvt_single=1; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot_sb.(tag_sb).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot_sb.(tag_sb).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot_sb.(tag_sb).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot_sb.(tag_sb).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
+% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 in_plot_sb.(tag_sb).tim=flg_loc.tim; %all times
 in_plot_sb.(tag_sb).order_anl=2; %1=normal; 2=random
-in_plot_sb.(tag_sb).tim_ave{1,1}=[]; %NaN = all times. Empty = do not do. 
+% in_plot_sb.(tag_sb).tim_ave{1,1}=[]; %NaN = all times. Empty = do not do. 
 % in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
 
 % in_plot_sb.(tag_sb).var=var_sum; %open D3D_list_of_variables

@@ -87,8 +87,25 @@ surface_residence_time,surface residence time,oppervlakte leeftijd,?,T
 maximum_residence_time,maximum residence time,maximale leeftijd,?,T
 wavelength_max_amplitude,wavelength of maximum amplitude,,,L
 horizontal_diffusivity,horizontal diffusivity,horizontale diffusie,difusividad horizontal,L2/T
+swh,significant height of combined wind waves and swell,significante hoogte van gecombineerde windgolven en deining,altura significativa de la combinación de oleaje de viento y mar de fondo,L
 swh_x,significant height of combined wind waves and swell in x direction,significante hoogte van gecombineerde windgolven en deining in x,altura significativa de la combinación de oleaje de viento y mar de fondo en dirección x,L
 swh_y,significant height of combined wind waves and swell in y direction,significante hoogte van gecombineerde windgolven en deining in y,altura significativa de la combinación de oleaje de viento y mar de fondo en dirección y,L
 pp1d_x,peak wave period in x direction,piekgolfperiode in x,periodo del oleaje pico en x,T
 pp1d_y,peak wave period in y direction,piekgolfperiode in y,periodo del oleaje pico en y,T
+fourier_coeff_abs,maximum Fourier coefficient,?,?,L
+fourier_spectral_power,spectral power,?,?,L2
+amplitude_l,amplitude,?,?,L
+length,length,?,?,L
+energy_loss,energy head loss,energie hoofd verlies,perdida de carga de energía,L
+cel_morpho,morphodynamic celerity,morfodynamische snelheid,celeridad moprhodinámica,L/T
+fr,Froude number,Froude getal,número de Froude,-
+flowelem_domain,partition number,partitie nummer,número de partición,-
+energy_head,energy head,energy head,energía,L
+dune_length,dune length,duinlegte,longitud de dunas,L
+dune_height,dune height,duinhoogte,altura de dunas,L
+wave_height,RMS wave height,RMW golfhoogte,RMS altura de ola,L
+peak_wave_period,Peak wave period,Piekgolfperiode,Periodo del oleaje pico,T
+mean_wave_direction,Mean wave direction,Gemiddelde golfrichting,Dirección media del oleaje,L
+timestep,time step,tijdstap,intervalo de tiempo,T
+temperature,temperature,temperatuur,temperatura,degC
 at,at,te,en,-

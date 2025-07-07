@@ -23,10 +23,10 @@ parin=inputParser;
 
 num_str_def=repmat('%0.15E*delim*',1,nx);
 addOptional(parin,'num_str',NaN);
-addOptional(parin,'check_existing',1)
+addOptional(parin,'check_existing',1) %Old. Keep for backward compatibility.
+addOptional(parin,'overwrite',NaN)
 addOptional(parin,'delimiter',' ')
 addOptional(parin,'add_header',0)
-
 
 parse(parin,varargin{:});
 
@@ -34,6 +34,7 @@ num_str=parin.Results.num_str;
 check_existing=parin.Results.check_existing;
 delimiter=parin.Results.delimiter;
 add_header=parin.Results.add_header;
+overwrite=parin.Results.overwrite;
 
 if isnan(num_str)
     num_str=num_str_def;
@@ -43,6 +44,10 @@ end
 % if isspace(num_str(end))==0
 %     num_str=[num_str,' '];
 % end
+
+if ~isnan(overwrite)
+    check_existing=~overwrite;
+end
 
 %% CALC
 

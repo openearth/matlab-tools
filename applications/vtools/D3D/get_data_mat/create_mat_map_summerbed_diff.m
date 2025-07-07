@@ -7,8 +7,8 @@
 %$Revision: 19692 $
 %$Date: 2024-06-28 17:28:07 +0200 (Fri, 28 Jun 2024) $
 %$Author: chavarri $
-%$Id: create_mat_map_summerbed_01.m 19692 2024-06-28 15:28:07Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/create_mat_map_summerbed_01.m $
+%$Id: gdm_create_mat_summerbed.m 19692 2024-06-28 15:28:07Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_create_mat_summerbed.m $
 %
 %Create a file and add a new polygon name with the difference that can be
 %processed as all other polygons without any difference.

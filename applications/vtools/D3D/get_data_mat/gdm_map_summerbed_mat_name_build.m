@@ -7,8 +7,8 @@
 %$Revision: 20156 $
 %$Date: 2025-05-19 14:16:30 +0200 (Mon, 19 May 2025) $
 %$Author: chavarri $
-%$Id: create_mat_map_summerbed_01.m 20156 2025-05-19 12:16:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/create_mat_map_summerbed_01.m $
+%$Id: gdm_create_mat_summerbed.m 20156 2025-05-19 12:16:30Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_create_mat_summerbed.m $
 %
 %
 

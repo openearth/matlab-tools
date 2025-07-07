@@ -12,9 +12,15 @@
 %
 %
 
-function D3D_d3d4_config(fpath_xml,fname_mdu)
+function D3D_d3d4_config(fpath_file,fname_mdu)
 
-fid=fopen(fpath_xml,'w');
+%% first write local
+fname_dest=fpath_file;
+fpath_file=fullfile(pwd,now_chr);
+
+%%
+
+fid=fopen(fpath_file,'w');
 
 fprintf(fid,'<?xml version="1.0" encoding="iso-8859-1"?>\r\n');
 fprintf(fid,'<deltaresHydro xmlns="http://schemas.deltares.nl/deltaresHydro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.deltares.nl/deltaresHydro http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">\r\n');
@@ -74,5 +80,9 @@ fprintf(fid,'    </delftOnline>\r\n');
 fprintf(fid,'</deltaresHydro>\r\n');                                                                                                                                                                                                                
 
 fclose(fid);
+
+%% copy to destination
+copyfile_check(fpath_file,fname_dest);
+delete(fpath_file);
 
 end %xmlfile

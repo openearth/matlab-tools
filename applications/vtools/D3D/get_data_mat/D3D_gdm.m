@@ -352,9 +352,8 @@
 % % in_plot.(tag).do_2d=1;
 % in_plot.(tag).do_sb=1; %do summerbed
 % in_plot.(tag).do_sb_p=1; %plot summerbed
-% in_plot.(tag).do_diff=0; 
 % in_plot.(tag).smt_last_time=1;
-% in_plot.(tag).do_all=1; %plot all simulations in same figure
+% % in_plot.(tag).do_all=1; %plot all simulations in same figure
 % in_plot.(tag).tim=[datetime(2000,01,01,0,0,0,'timezone','+00:00'),datetime(2000,03,01,0,0,0,'timezone','+00:00'),datetime(2001,01,01,0,0,0,'timezone','+00:00')];
 % in_plot.(tag).tim_type=1; %1=flow; 2=morpho
 % in_plot.(tag).fig_overwrite=0; %overwrite figures

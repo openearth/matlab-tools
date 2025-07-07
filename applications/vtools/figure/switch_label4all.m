@@ -13,6 +13,8 @@
 
 function [str_var, un_type]=switch_label4all(variable,lan,frac)
 
+warning('This should not be called!')
+
 switch lower(variable)
     case 'eta'
         switch lan

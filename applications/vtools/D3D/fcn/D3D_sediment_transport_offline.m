@@ -132,25 +132,26 @@ messageOut(NaN,'Start creating morpho files',1)
 ks=0;
 
 ks=ks+1;
-in_plot_hydro_var.fdir_sim{ks}=fpath_morpho; 
-in_plot_hydro_var.str_sim{ks}='reference';
+in_plot_morpho.fdir_sim{ks}=fpath_morpho; 
+in_plot_morpho.str_sim{ks}='reference';
 
-in_plot_hydro_var.sim_ref=1;
-in_plot_hydro_var.lan='en';
-in_plot_hydro_var.tag_serie='01';
+in_plot_morpho.sim_ref=1;
+in_plot_morpho.lan='en';
+in_plot_morpho.tag_serie='01';
 
 tag='fig_map_2DH_01';
-in_plot_hydro_var.(tag).do=1;
-in_plot_hydro_var.(tag).do_p=0; %regular plot
-in_plot_hydro_var.(tag).var={'Ltot','lyrfrac'}; %open D3D_list_of_variables
-in_plot_hydro_var.(tag).tim=1;
-in_plot_hydro_var.(tag).overwrite=0; %overwrite mat-files
+in_plot_morpho.(tag).do=1;
+in_plot_morpho.(tag).do_p=0; %regular plot
+% in_plot_morpho.(tag).var={'Ltot','lyrfrac'}; 
+in_plot_morpho.(tag).var={'Ltot','Fak'}; 
+in_plot_morpho.(tag).tim=1;
+in_plot_morpho.(tag).overwrite=0; %overwrite mat-files
 
-D3D_gdm(in_plot_hydro_var)
+D3D_gdm(in_plot_morpho)
 
 %% copy moprhodymamic mat-files
 
-copy_morpho_files(in_plot_hydro_var,tag,fpath_morpho,fpath_out,tim_dtime,overwrite);
+copy_morpho_files(in_plot_morpho,tag,fpath_morpho,fpath_out,tim_dtime,overwrite);
 
 %% compute sediment transport offline
 
@@ -326,14 +327,15 @@ end %function
 
 %%
 
-function copy_morpho_files(in_plot_hydro_var,tag,fpath_morpho,fpath_out,tim_dtime,overwrite)
+function copy_morpho_files(in_plot_morpho,tag,fpath_morpho,fpath_out,tim_dtime,overwrite)
 
 messageOut(NaN,'Start copying morpho files',1)
 
 nsim=numel(tim_dtime)-1;
-nvar=numel(in_plot_hydro_var.(tag).var);
+varname_v=in_plot_morpho.(tag).var;
+nvar=numel(varname_v);
 fdir_mat=fullfile(fpath_morpho,'mat');
-in_plot_fig=gmd_tag(in_plot_hydro_var,tag);
+in_plot_fig=gmd_tag(in_plot_morpho,tag);
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',in_plot_fig.tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 load(fpath_mat_time,'tim');
@@ -345,16 +347,13 @@ mkdir_check(fdir_mat);
 
 for ksim=1:nsim+1 %this is the number of times in the SMT hydrograph +1, because of the block approach. 
 
-    varname_v=in_plot_hydro_var.(tag).var;
-
-    nvar=numel(varname_v);
     for kvar=1:nvar
 
         varname=varname_v{kvar};
         [~,varname_read_variable,~,~]=D3D_var_num2str(varname); %This is the name used for saving the raw output
 
         %But for `Ltot`, the variable which is read in raw is different...
-        %Not the nicest, but this is what it it. 
+        %Not the nicest, but this is what it is. 
         switch varname_read_variable
             case 'Ltot'
                 varname_read_variable='mesh2d_thlyr';
@@ -372,9 +371,9 @@ for ksim=1:nsim+1 %this is the number of times in the SMT hydrograph +1, because
         else
             messageOut(NaN,sprintf('File exists, not copying: %s',fpath_mat_tmp_out));
         end
-    end
+    end %kvar
 
-end
+end %ksim
 
 %copy folder with sediment input
 %
