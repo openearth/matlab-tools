@@ -21,6 +21,7 @@ flg_loc=isfield_default(flg_loc,'do_all_s',0);
 flg_loc=isfield_default(flg_loc,'do_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_diff_s',0);
 flg_loc=isfield_default(flg_loc,'do_all_s_diff_t',0);
+flg_loc=isfield_default(flg_loc,'do_all_s_diff_s',0);
 flg_loc=isfield_default(flg_loc,'do_all_t_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_all_t_xt_diff_t',0);
 flg_loc=isfield_default(flg_loc,'do_all_s_2diff',0); %plot all runs in same figure making the difference between each of 2 simulations

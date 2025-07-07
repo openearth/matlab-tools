@@ -95,7 +95,7 @@ for kpli=1:npli %variable
         %data is saved always in the same index. 
         data_all=cell(nsim,1); %inside -> data_all=NaN(nt,numel(data_ref.data.(str_val)),nS);
         
-        nplot=5;
+        nplot=6;
         fpath_file=cell(nplot,nt,nsim,nlims);
 
         %time 0
@@ -275,6 +275,35 @@ for kpli=1:npli %variable
                 fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
             end
 
+            %% plot all simulations together, difference with reference
+            if flg_loc.do_all_s_diff_s && flg_loc.what_is==2
+                flg_loc.plot_type=2;
+                [nlims,lims,lims_diff_t,lims_diff_s]=fcn_lims(flg_loc);
+                kplot=6;
+
+                data_loc=cell(nsim,1);
+                for ksim=1:nsim
+                    data_loc{ksim}=reshape(data_all{ksim}(kt,:)-data_all{flg_loc.sim_ref}(kt,:),[],1);
+                end
+
+                ksim=1;
+
+%                 data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
+                tag_fig=sprintf('%s_all_s_diff_s',tag);
+                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                mkdir_check(fdir_fig,NaN,1,0);
+                runid=simdef(ksim).file.runid;
+
+                in_p.val_mea=data_mea.y-data_mea_0.y;
+                in_p.is_diff=1;
+                in_p.plot_mea=0;
+    
+%                 in_p.data_ls.grid=gridInfo_ls; %not possible?
+                in_p.s=s;
+
+                fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
+            end
+            
             %% plot all simulation together (special case 2 simulations differences between runs)
             if flg_loc.do_all_s_2diff
                 plot_diff_2by2_together(flg_loc,in_p,data_all,data_ref,fdir_fig_loc,runid,nsim,time_dnum,kt,var_str_read,pliname,kdiff,klim,tag,layer)
