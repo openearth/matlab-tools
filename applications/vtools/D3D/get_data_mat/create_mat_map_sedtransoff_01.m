@@ -107,6 +107,12 @@ E_param=NaN;
 vp_param=NaN;
 Gammak=NaN;
 
+%%
+
+%check this!
+[flg_loc_tmp,simdef]=gdm_parse_map_2DH(fid_log,in_plot_2DH.(tag_2DH),simdef);
+
+
 %% CREATE <qbk>
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
@@ -139,6 +145,7 @@ for kst=1:nst
     var_sum{kst}=sprintf('%s_sum',flg_loc.sedtrans_name{kst});
     unit_v{kst}='stot';
     
+    ktc=0;
     for kt=kt_v
         ktc=ktc+1;
         
@@ -150,10 +157,15 @@ for kst=1:nst
         
         %load data
         for kvar=1:nvar %variable
-            varname=var_raw{kvar};
-            var_str=D3D_var_num2str_structure(varname,simdef);
-            layer=gdm_layer(flg_loc,NaN,var_str,kvar,varname); %we use <layer> for flow and sediment layers
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,'map_2DH_01','tim',time_dnum(kt),'var',var_str,'layer',layer);
+            var_str_original=var_raw{kvar};
+            varname_save_mat=D3D_var_num2str_structure(var_str_original,simdef);
+            sum_var_idx=0; %I have to check this!
+            var_idx=flg_loc_tmp.var_idx{kvar};
+        
+            layer=gdm_layer(flg_loc_tmp,NaN,varname_save_mat,kvar,var_str_original); %we use <layer> for flow and sediment layers
+            [var_idx,sum_var_idx]=gdm_var_idx(simdef,flg_loc_tmp,var_idx,sum_var_idx,var_str_original);
+
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,'map_2DH_01','tim',time_dnum(kt),'var',varname_save_mat,'layer',layer,'var_idx',var_idx);
             data_loc.(var_raw{kvar})=load(fpath_mat_tmp,'data');
         end
         
@@ -209,7 +221,7 @@ for kst=1:nst
 %         end
         
         %% disp
-        messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
+        messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %% kst %4.2f %%',tag,ktc/nt*100,kvar/nvar*100,kst/nst*100));
     end %kt
 end %kst
 
