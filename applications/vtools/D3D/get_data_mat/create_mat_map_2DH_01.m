@@ -77,13 +77,9 @@ messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 for kt=kt_v
     ktc=ktc+1;
     for kvar=1:nvar %variable
-        var_str_original=flg_loc.var{kvar};
-        [varname_save_mat,var_id]=D3D_var_num2str_structure(var_str_original,simdef);
         
-        layer=gdm_layer(flg_loc,gridInfo.no_layers,varname_save_mat,kvar,var_str_original); %we use <layer> for flow and sediment layers
-        [var_idx,sum_var_idx]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
+        [fpath_mat_tmp,var_id,layer,var_idx,sum_var_idx]=gdm_get_name_map_2DH(flg_loc,simdef,gridInfo,kvar,tag,time_dnum(kt));
 
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',varname_save_mat,'var_idx',var_idx,'layer',layer);
         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
 
         do_read=1;
@@ -98,7 +94,7 @@ for kt=kt_v
         %% read data
         if do_read
             data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx,'layer',layer,'tol',flg_loc.tol,'sum_var_idx',sum_var_idx,'sediment_transport',flg_loc.sediment_transport(kvar));      
-            data=squeeze(data_var.val); %#ok
+            data=squeeze(data_var.val); 
             save_check(fpath_mat_tmp,'data'); 
         end
 
@@ -119,58 +115,8 @@ for kt=kt_v
         
         %% disp
         messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
-    end
-
+    end %kvar
 end %kt
-
-%% SAVE
-
-% %only dummy for preventing passing through the function if not overwriting
-% data=NaN;
-% save(fpath_mat,'data')
-
-        %% JOIN
-
-        %if creating files in parallel, another instance may have already created it.
-        %
-        %Not a good idea because of the overwriting flag. Maybe best to join it several times.
-        %
-        % if exist(fpath_mat,'file')==2
-        %     messageOut(fid_log,'Finished looping and mat-file already exist, not joining.')
-        %     return
-        % end
-
-        % data=struct();
-
-        %% first time for allocating
-
-%         kt=1;
-%         fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-%         tmp=load(fpath_mat_tmp,'data');
-% 
-%         %constant
-% 
-%         %time varying
-%         nF=size(tmp.data.q_mag,2);
-% 
-%         q_mag=NaN(nt,nF);
-%         q_x=NaN(nt,nF);
-%         q_y=NaN(nt,nF);
-% 
-%         %% loop 
-% 
-%         for kt=1:nt
-%             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt));
-%             tmp=load(fpath_mat_tmp,'data');
-% 
-%             q_mag(kt,:)=tmp.data.q_mag;
-%             q_x(kt,:)=tmp.data.q_x;
-%             q_y(kt,:)=tmp.data.q_y;
-% 
-%         end
-% 
-%         data=v2struct(q_mag,q_x,q_y); %#ok
-%         save_check(fpath_mat,'data');
 
 end %function
 

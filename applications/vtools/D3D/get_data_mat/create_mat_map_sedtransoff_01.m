@@ -45,7 +45,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 %% GRID
 
-% gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
+gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 %% MODIFY TIME OUTPUT
 
@@ -53,21 +53,26 @@ gdm_modify_time_output(fid_log,flg_loc,simdef)
 
 %% GET RAW VARIABLES
 
-% var_raw={'mesh2d_umod','mesh2d_czs','h','Ltot','Fak'}; %do not change order, we use it for loading in loop. 
-var_raw={'umag','mesh2d_czs','h','Ltot','Fak'}; %do not change order, we use it for loading in loop.
+var_raw={'umag','mesh2d_czs','h','Ltot','Fak'};
 tag_2DH='fig_map_2DH_01';
-in_plot_2DH.fdir_sim=flg_loc.fdir_sim;
-in_plot_2DH.(tag_2DH).do=1;
-in_plot_2DH.(tag_2DH).do_p=0; %regular plot
-in_plot_2DH.(tag_2DH).do_diff=0; %difference initial time
-in_plot_2DH.(tag_2DH).do_s=0; %difference with reference
-in_plot_2DH.(tag_2DH).do_s_diff=0; %difference with reference and initial time
-in_plot_2DH.(tag_2DH).overwrite=flg_loc.overwrite;
-in_plot_2DH.(tag_2DH).var=var_raw; %open D3D_list_of_variables
-in_plot_2DH.(tag_2DH).tim=flg_loc.tim; 
-in_plot_2DH.(tag_2DH).order_anl=2; %1=normal; 2=random
 
-D3D_gdm(in_plot_2DH)
+in_plot_get_variables.fdir_sim=flg_loc.fdir_sim;
+in_plot_get_variables.(tag_2DH).do=1;
+in_plot_get_variables.(tag_2DH).do_p=0; %regular plot
+% in_plot_2DH.(tag_2DH).do_diff=0; %difference initial time
+% in_plot_2DH.(tag_2DH).do_s=0; %difference with reference
+% in_plot_2DH.(tag_2DH).do_s_diff=0; %difference with reference and initial time
+in_plot_get_variables.(tag_2DH).overwrite=flg_loc.overwrite;
+in_plot_get_variables.(tag_2DH).var=var_raw; %open D3D_list_of_variables
+in_plot_get_variables.(tag_2DH).tim=flg_loc.tim; 
+in_plot_get_variables.(tag_2DH).order_anl=2; %1=normal; 2=random
+
+D3D_gdm(in_plot_get_variables)
+
+%% 
+
+in_plot_get_variables_2DH=gmd_tag(in_plot_get_variables,tag_2DH);
+[in_plot_get_variables_2DH,simdef]=gdm_parse_map_2DH(fid_log,in_plot_get_variables_2DH,simdef);
 
 %% LOAD TIME
 
@@ -106,12 +111,6 @@ mor_fac=1;
 E_param=NaN;
 vp_param=NaN;
 Gammak=NaN;
-
-%%
-
-%check this!
-[flg_loc_tmp,simdef]=gdm_parse_map_2DH(fid_log,in_plot_2DH.(tag_2DH),simdef);
-
 
 %% CREATE <qbk>
 
@@ -157,15 +156,8 @@ for kst=1:nst
         
         %load data
         for kvar=1:nvar %variable
-            var_str_original=var_raw{kvar};
-            varname_save_mat=D3D_var_num2str_structure(var_str_original,simdef);
-            sum_var_idx=0; %I have to check this!
-            var_idx=flg_loc_tmp.var_idx{kvar};
-        
-            layer=gdm_layer(flg_loc_tmp,NaN,varname_save_mat,kvar,var_str_original); %we use <layer> for flow and sediment layers
-            [var_idx,sum_var_idx]=gdm_var_idx(simdef,flg_loc_tmp,var_idx,sum_var_idx,var_str_original);
+            [fpath_mat_tmp,~,~,~,~]=gdm_get_name_map_2DH(in_plot_get_variables_2DH,simdef,gridInfo,kvar,in_plot_get_variables_2DH.tag,time_dnum(kt));
 
-            fpath_mat_tmp=mat_tmp_name(fdir_mat,'map_2DH_01','tim',time_dnum(kt),'var',varname_save_mat,'layer',layer,'var_idx',var_idx);
             data_loc.(var_raw{kvar})=load(fpath_mat_tmp,'data');
         end
         
@@ -189,9 +181,9 @@ for kst=1:nst
         
         data=struct();
         data.val=val; %we have to save it as structure because we use 'raw' type
-        data.dimensions='[mesh2d_nFaces,sedimentFraction]';
+        data.dimensions='[mesh2d_nFaces,sedimentFraction]'; %ok
 
-        save_check(fpath_mat_st,'data')
+        save_check(fpath_mat_st,'data') 
         
         %% save sum 
         

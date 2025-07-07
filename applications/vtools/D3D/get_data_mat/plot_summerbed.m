@@ -22,6 +22,14 @@ function plot_summerbed(fid_log,flg_loc,simdef)
 
 flg_loc=gdm_parse_summerbed(flg_loc,simdef(1));
 
+%Add B_mor variables to plot. 
+%This cannot be inside <gdm_parse_summerbed> because it adds variables to
+%be processed which are created in <pp_sb_var_01>, the postprocessing
+%function of summerbed mat creation (<create_mat_map_summerbed_01>). Hence,
+%the file does not exist in <create_mat_map_summerbed_01>.
+flg_loc=check_B(fid_log,flg_loc,simdef(1),'B_mor');
+flg_loc=check_B(fid_log,flg_loc,simdef(1),'B');
+
 %% DO
 
 ret=gdm_do_mat(fid_log,flg_loc,tag,'do_p'); if ret; return; end
@@ -1061,3 +1069,37 @@ in_p.is_diff=0;
 in_p.is_diff_t=0;
 in_p.is_diff_s=0;
 end
+
+%%
+
+function flg_loc=check_B(fid_log,flg_loc,simdef,str_in)
+
+flg_loc.var=reshape(flg_loc.var,1,numel(flg_loc.var));
+flg_loc.do_cum=reshape(flg_loc.do_cum,1,numel(flg_loc.do_cum));
+flg_loc.unit=reshape(flg_loc.unit,1,numel(flg_loc.unit));
+
+str_do=sprintf('do_val_%s',str_in);
+if isfield(flg_loc,str_do)==0
+    flg_loc.(str_do)=zeros(size(flg_loc.var));
+end
+nvar_tmp=numel(flg_loc.var);
+for kvar=1:nvar_tmp
+    if flg_loc.(str_do)(kvar)
+        [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
+        flg_loc.var=cat(2,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
+        flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
+        flg_loc.ylims_diff_s_var=cat(1,flg_loc.ylims_diff_s_var,flg_loc.ylims_diff_s_var{kvar,1});
+        flg_loc.ylims_diff_t_var=cat(1,flg_loc.ylims_diff_t_var,flg_loc.ylims_diff_t_var{kvar,1});
+
+        %add one more entry with default values
+        flg_loc=gdm_add_flags_plot(flg_loc);
+
+        %modify last entry
+        flg_loc.unit{end}=sprintf('%s_%s',flg_loc.unit{kvar},str_in);
+        flg_loc.var_idx{end}=flg_loc.var_idx{kvar};
+        flg_loc.do_area(end)=flg_loc.do_area(kvar);
+        flg_loc.do_cum(end)=flg_loc.do_cum(kvar);
+    end
+end
+
+end %function
