@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20161 $
-%$Date: 2025-05-22 17:11:27 +0200 (Thu, 22 May 2025) $
-%$Author: chavarri $
-%$Id: fig_map_sal_01.m 20161 2025-05-22 15:11:27Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_sal_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements(in_p,measurements_structure,time_dtime,time_dtime_0,x_lims,y_lims)

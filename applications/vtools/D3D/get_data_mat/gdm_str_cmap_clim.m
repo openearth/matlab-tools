@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19787 $
-%$Date: 2024-09-19 17:02:24 +0200 (Thu, 19 Sep 2024) $
-%$Author: chavarri $
-%$Id: gdm_parse_ylims.m 19787 2024-09-19 15:02:24Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_parse_ylims.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Create string of colormap and colorbar. diff_t -> cmap_diff_t
 

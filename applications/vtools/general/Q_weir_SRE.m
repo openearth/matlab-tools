@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20047 $
-%$Date: 2025-02-13 09:19:45 +0100 (Thu, 13 Feb 2025) $
-%$Author: chavarri $
-%$Id: figure_layout.m 20047 2025-02-13 08:19:45Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/figure/figure_layout.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Discharge in a General Structure (Section 12.3.5 D-Flow FM User Manual,
 %79968)

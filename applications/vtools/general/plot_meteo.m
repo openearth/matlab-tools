@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20182 $
-%$Date: 2025-06-02 17:47:54 +0200 (Mon, 02 Jun 2025) $
-%$Author: chavarri $
-%$Id: D3D_io_input.m 20182 2025-06-02 15:47:54Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_io_input.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Plot meteorological condition. 
 %

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20156 $
-%$Date: 2025-05-19 14:16:30 +0200 (Mon, 19 May 2025) $
-%$Author: chavarri $
-%$Id: gdm_create_mat_summerbed.m 20156 2025-05-19 12:16:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_create_mat_summerbed.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20156 $
-%$Date: 2025-05-19 14:16:30 +0200 (Mon, 19 May 2025) $
-%$Author: chavarri $
-%$Id: fig_map_sal_01.m 20156 2025-05-19 12:16:30Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_sal_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function fig_print_close(in_p,han_fig,fig_print,fpath_fig)

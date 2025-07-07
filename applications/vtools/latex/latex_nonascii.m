@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19094 $
-%$Date: 2023-07-27 18:08:29 +0200 (Thu, 27 Jul 2023) $
-%$Author: chavarri $
-%$Id: bib_add_tags.m 19094 2023-07-27 16:08:29Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/latex/bib_add_tags.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Replace non-ascii in latex
 

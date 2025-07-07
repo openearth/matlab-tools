@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19958 $
-%$Date: 2024-12-14 05:17:46 +0100 (Sat, 14 Dec 2024) $
-%$Author: ottevan $
-%$Id: add_data_stations.m 19958 2024-12-14 04:17:46Z ottevan $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/data_stations/add_data_stations.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function data_stations_index=data_stations_index_empty

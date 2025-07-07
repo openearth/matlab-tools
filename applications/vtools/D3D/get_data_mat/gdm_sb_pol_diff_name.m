@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20061 $
-%$Date: 2025-02-19 20:58:28 +0100 (Wed, 19 Feb 2025) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 20061 2025-02-19 19:58:28Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Create name of difference polygon
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20132 $
-%$Date: 2025-04-17 10:32:28 +0200 (Thu, 17 Apr 2025) $
-%$Author: chavarri $
-%$Id: fig_map_ls_01.m 20132 2025-04-17 08:32:28Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_ls_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function [cmap,cstring,clims]=gdm_cmap_and_string(in_p,val)

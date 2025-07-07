@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19717 $
-%$Date: 2024-07-31 16:44:38 +0200 (wo, 31 jul 2024) $
-%$Author: ottevan $
-%$Id: D3D_compare_NC.m 19717 2024-07-31 14:44:38Z ottevan $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_compare_NC.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %compare netcdf files
 

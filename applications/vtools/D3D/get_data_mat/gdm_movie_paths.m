@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20161 $
-%$Date: 2025-05-22 17:11:27 +0200 (Thu, 22 May 2025) $
-%$Author: chavarri $
-%$Id: plot_map_2DH_ls_01.m 20161 2025-05-22 15:11:27Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_map_2DH_ls_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

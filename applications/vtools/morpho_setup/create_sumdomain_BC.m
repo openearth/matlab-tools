@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20049 $
-%$Date: 2025-02-15 17:44:52 +0100 (Sat, 15 Feb 2025) $
-%$Author: chavarri $
-%$Id: write_subdomain_bc_dir.m 20049 2025-02-15 16:44:52Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/morpho_setup/write_subdomain_bc_dir.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 %

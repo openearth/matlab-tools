@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19028 $
-%$Date: 2023-07-04 08:38:28 +0200 (Tue, 04 Jul 2023) $
-%$Author: chavarri $
-%$Id: filter_pol_data.m 19028 2023-07-04 06:38:28Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/morpho_setup/private/filter_pol_data.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

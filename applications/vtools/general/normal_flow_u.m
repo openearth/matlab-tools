@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19050 $
-%$Date: 2023-07-14 09:55:51 +0200 (Fri, 14 Jul 2023) $
-%$Author: chavarri $
-%$Id: normal_flow_h.m 19050 2023-07-14 07:55:51Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/normal_flow_h.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %compute normal flow
 

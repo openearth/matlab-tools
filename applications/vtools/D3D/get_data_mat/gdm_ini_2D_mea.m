@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20146 $
-%$Date: 2025-05-13 09:50:14 +0200 (Tue, 13 May 2025) $
-%$Author: chavarri $
-%$Id: D3D_gdm.m 20146 2025-05-13 07:50:14Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/D3D_gdm.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Initialize 2D measurements
 

@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20066 $
-%$Date: 2025-02-23 15:47:47 +0100 (Sun, 23 Feb 2025) $
-%$Author: chavarri $
-%$Id: gdm_layer.m 20066 2025-02-23 14:47:47Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/gdm_layer.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %
 

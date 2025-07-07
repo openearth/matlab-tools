@@ -1,11 +1,11 @@
 %
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20080 $
-%$Date: 2025-03-06 10:26:14 +0100 (Thu, 06 Mar 2025) $
-%$Author: chavarri $
-%$Id: main_ECT.m 20080 2025-03-06 09:26:14Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/ECT/main_ECT.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Description
 

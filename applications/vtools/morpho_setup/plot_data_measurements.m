@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20027 $
-%$Date: 2025-01-20 16:58:11 +0100 (Mon, 20 Jan 2025) $
-%$Author: chavarri $
-%$Id: plot_all_runs_one_figure.m 20027 2025-01-20 15:58:11Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/plot_all_runs_one_figure.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Create a mat-file of the bed level for several years given after
 %processing in QGIS. 

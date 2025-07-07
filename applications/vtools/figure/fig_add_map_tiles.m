@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20212 $
-%$Date: 2025-06-20 09:21:10 +0200 (Fri, 20 Jun 2025) $
-%$Author: chavarri $
-%$Id: fig_map_sal_01.m 20212 2025-06-20 07:21:10Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/get_data_mat/fig_map_sal_01.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function fig_add_map_tiles(in_p,han_sfig_kr_kc)

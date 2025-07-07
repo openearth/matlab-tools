@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18923 $
-%$Date: 2023-04-28 11:11:01 +0200 (Fri, 28 Apr 2023) $
-%$Author: chavarri $
-%$Id: D3D_diff_val.m 18923 2023-04-28 09:11:01Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_diff_val.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Reorders the columns of matrix `y` to match the column order of matrix `x`,
 %assuming they contain the same data (possibly permuted), including handling:

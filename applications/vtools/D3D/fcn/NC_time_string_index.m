@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 18982 $
-%$Date: 2023-06-08 10:31:31 +0200 (Thu, 08 Jun 2023) $
-%$Author: chavarri $
-%$Id: NC_read_time_0.m 18982 2023-06-08 08:31:31Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/NC_read_time_0.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Read time string and index of a NetCDF file
 
