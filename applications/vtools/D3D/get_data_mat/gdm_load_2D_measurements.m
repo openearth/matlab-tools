@@ -15,11 +15,18 @@ function [measurements_images,tim_mea_dtime_mean]=gdm_load_2D_measurements(in_p,
 
 %% PARSE
 
+in_p=isfield_default(in_p,'is_diff',0);
+in_p=isfield_default(in_p,'do_measurements',1); %flag to be passed from input to `D3D_gdm`
+in_p=isfield_default(in_p,'do_measurements_this_plot',1); %flag to be passed when calling `gdm_load_2D_measurements` such that no measurements processing is done in case the plot is a difference between simulation results.
+
+%do not unpack `in_p`. There is a lot inside. 
 is_diff=in_p.is_diff;
+do_measurements=in_p.do_measurements;
+do_measurements_this_plot=in_p.do_measurements_this_plot;
 
 %% SKIP
 
-if isempty_struct(measurements_structure) || in_p.do_measurements==0 || in_p.do_measurements_this_plot==0
+if isempty_struct(measurements_structure) || do_measurements==0 || do_measurements_this_plot==0
     measurements_images=cell(0,0);
     tim_mea_dtime_mean=NaT;
     return
