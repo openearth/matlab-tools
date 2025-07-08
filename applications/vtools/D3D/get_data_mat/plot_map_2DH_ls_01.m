@@ -47,6 +47,7 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,'');
 nt=numel(time_dnum);
 nvar=numel(flg_loc.var);
 npli=numel(flg_loc.pli);
+nplot=6;
 
 flg_loc.what_is=gdm_check_type_of_result_2DH_ls(flg_loc,simdef(1),fdir_mat,time_dnum,tag,gridInfo);
 flg_loc.plot_type=flg_loc.what_is;
@@ -95,7 +96,6 @@ for kpli=1:npli %variable
         %data is saved always in the same index. 
         data_all=cell(nsim,1); %inside -> data_all=NaN(nt,numel(data_ref.data.(str_val)),nS);
         
-        nplot=6;
         fpath_file=cell(nplot,nt,nsim,nlims);
 
         %time 0
@@ -301,7 +301,7 @@ for kpli=1:npli %variable
 %                 in_p.data_ls.grid=gridInfo_ls; %not possible?
                 in_p.s=s;
 
-                fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_t);      
+                fpath_file(kplot,kt,ksim,:)=fcn_plot(in_p,flg_loc,nlims,fdir_fig,tag_fig,runid,time_dnum(kt),var_str_read,layer,pliname,data_loc,lims_diff_s);      
             end
             
             %% plot all simulation together (special case 2 simulations differences between runs)
