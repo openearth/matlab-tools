@@ -348,6 +348,8 @@ else
     found=true;
 end
 
+str_var=char(str_var);
+un_type=char(un_type);
 end %function
 
 %% 
