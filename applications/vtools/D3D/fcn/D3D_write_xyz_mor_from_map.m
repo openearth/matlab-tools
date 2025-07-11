@@ -35,7 +35,17 @@
 % 
 % D3D_write_xyz_mor_from_map(fdir_sim,fdir_write,tim)
 
-function D3D_write_xyz_mor_from_map(fdir_sim,fdir_write,tim)
+function D3D_write_xyz_mor_from_map(fdir_sim,fdir_write,tim,varargin)
+
+%% PARSE
+
+parin=inputParser;
+
+addOptional(parin,'tol_t',1e-8);
+
+parse(parin,varargin{:});
+
+tol_t=parin.Results.tol_t;
 
 %% READ
 
@@ -43,8 +53,8 @@ simdef=D3D_simpath(fdir_sim);
 
 gridInfo=EHY_getGridInfo(simdef.file.map,{'XYcor','XYcen','XYuv','edge_type'});
 
-data_lyrfrac=EHY_getMapModelData(simdef.file.map,'varName','mesh2d_lyrfrac','t0',tim,'tend',tim);
-data_thlyr=EHY_getMapModelData(simdef.file.map,'varName','mesh2d_thlyr','t0',tim,'tend',tim);
+data_lyrfrac=EHY_getMapModelData(simdef.file.map,'varName','mesh2d_lyrfrac','t0',tim,'tend',tim,'tol_t',tol_t);
+data_thlyr=EHY_getMapModelData(simdef.file.map,'varName','mesh2d_thlyr','t0',tim,'tend',tim,'tol_t',tol_t);
 
 idx_cen = [1:length(gridInfo.Xcen)].'; 
 Fidx = scatteredInterpolant(gridInfo.Xcen,gridInfo.Ycen,idx_cen,'nearest','nearest');
@@ -86,3 +96,4 @@ D3D_morini_files(simdef,'num_str','%0.15E %0.15E %8.10f')
 
 messageOut(NaN,'done writing files')
 
+end %function
