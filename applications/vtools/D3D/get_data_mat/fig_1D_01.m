@@ -524,6 +524,9 @@ else
     end
 end
 if isfield(in_p,'leg_str') && ~isempty(in_p.leg_str) && ~do_area
+    if ~iscell(leg_str);
+        error('in_p.leg_str should be a cell array of chars');
+    end
     str_sim=leg_str;
 else
     if nv==1

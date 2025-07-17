@@ -119,7 +119,7 @@ for kfn=1:nfn
                 idx_1=absmintol(y_v,flg.ylims(1),'tol',days(30));
                 idx_2=absmintol(y_v,flg.ylims(2),'tol',days(30));
         in_p.val=data.(fn{kfn}).val_mean.val(:,idx_1:idx_2);
-        in_p.leg_str=datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2));
+        in_p.leg_str=char2cell(datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)));
         in_p.ylims=NaN; %watch out. solve
         in_p.cmap=NaN;
     
@@ -136,7 +136,7 @@ for kfn=1:nfn
                 idx_1=absmintol(y_v,flg.ylims(1),'tol',days(30));
                 idx_2=absmintol(y_v,flg.ylims(2),'tol',days(30));
         in_p.val=data.(fn{kfn}).val_mean.val(:,idx_1:idx_2)-data.(fn{kfn}).val_mean.val(:,idx_1);
-        in_p.leg_str=datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2));
+        in_p.leg_str=char2cell(datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)));
         in_p.ylims=NaN; %watch out. solve
         in_p.cmap=NaN;
 
@@ -158,7 +158,7 @@ for kfn=1:nfn
                 dt=[0,diff(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2))].*3600.*24; %time
                 val=val./dt;
         in_p.val=val;
-        in_p.leg_str=datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2));
+        in_p.leg_str=char2cell(datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)));
         in_p.ylims=NaN; %watch out. solve
         in_p.cmap=NaN;
 
