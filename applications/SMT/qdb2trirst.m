@@ -24,15 +24,18 @@ function qdb2trirst(sourcedir,targetdir)
 %   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-nfsfiles = ls([sourcedir,'\*.dat']);
+nfsfiles = ls(fullfile(sourcedir,'*.dat'));
 for f = 1:size(nfsfiles,1)
     nfsfile = deblank(nfsfiles(f,:));
     dom = nfsfile(5:end-4);
-    NFStruct=vs_use([sourcedir,'\',nfsfile],'quiet');
-    Qlevels = cell2mat(vs_get(NFStruct,'CURDIS','Q','quiet'));
+    NFStruct=vs_use(fullfile(sourcedir,nfsfile),'quiet');
+    Qlevels=vs_get(NFStruct,'CURDIS','Q','quiet');
+    if iscell(Qlevels)
+       Qlevels = cell2mat(Qs);
+    end
     lenQlev = length(Qlevels);
     for q = 1:lenQlev;
-        rst = sprintf('%s%s%s%s%s%i',targetdir,'\','tri-rst.',dom,'_Q',Qlevels(q));
+        rst = fullfile(targetdir,sprintf('%s%s%s%i','tri-rst.',dom,'_Q',Qlevels(q)));
         trim2rst(NFStruct,q,rst);
         disp(sprintf('%s - %i%s%i  %s',dom,q,'/',lenQlev, 'complete'));
     end
