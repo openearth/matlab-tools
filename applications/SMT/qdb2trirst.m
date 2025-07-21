@@ -24,9 +24,9 @@ function qdb2trirst(sourcedir,targetdir)
 %   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-nfsfiles = ls(fullfile(sourcedir,'*.dat'));
-for f = 1:size(nfsfiles,1)
-    nfsfile = deblank(nfsfiles(f,:));
+nfsfiles = dir(fullfile(sourcedir,'*.dat'));
+for f = 1:size(nfsfiles)
+    nfsfile = nfsfiles(f).name;
     dom = nfsfile(5:end-4);
     NFStruct=vs_use(fullfile(sourcedir,nfsfile),'quiet');
     Qlevels=vs_get(NFStruct,'CURDIS','Q','quiet');
