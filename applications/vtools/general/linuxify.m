@@ -23,7 +23,10 @@ else
     path_lin=path_win;
 end
 
-clipboard("copy",path_lin);
+is_gui_mode = usejava('desktop') && usejava('awt');
+if is_gui_mode
+   clipboard("copy",path_lin);
+end
 
 end %function
 
