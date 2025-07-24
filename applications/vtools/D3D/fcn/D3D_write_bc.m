@@ -30,7 +30,6 @@ for kbc=1:nbc
     % Quantity                        = dischargebnd
     % Unit                            = m3/s
     nq=numel(bc(kbc).quantity);
-    nt=size(bc(kbc).val,1);
     
     fprintf(fid,'[forcing] \n');
     if any(contains(bc(kbc).quantity,'lateral'))||any(contains(bc(kbc).quantity,'qhtable')) %at a point
@@ -40,7 +39,7 @@ for kbc=1:nbc
         fprintf(fid,'Name                            = %s_0001 \n',bc(kbc).name);
     end
     fprintf(fid,'Function                        = %s \n',bc(kbc).function);
-    if isfield(bc(kbc),'time_interpolation'); 
+    if isfield(bc(kbc),'time_interpolation') 
         fprintf(fid,'Time-interpolation              = %s \n',bc(kbc).time_interpolation);
     end
     for kq=1:nq-1
@@ -49,20 +48,17 @@ for kbc=1:nbc
     end
     for kq=nq
         fprintf(fid,'Quantity                        = %s \n',bc(kbc).quantity{kq});
-        fprintf(fid,'Unit                            = %s ',bc(kbc).unit{kq});
+        fprintf(fid,'Unit                            = %s \n',bc(kbc).unit{kq});
     end    
-    fclose(fid);
     if iscell(bc(kbc).val)
-        fid=fopen(fpath,'a');
-        fprintf(fid,'\n'); 
-        for r = 1:size(bc(kbc).val);
+        for r = 1:size(bc(kbc).val)
             fprintf(fid,'%s %f %f\n', bc(kbc).val{r,1:end});
         end
-        fclose(fid);
     else
-        writematrix(num2str(bc(kbc).val,'%f'),fpath,'WriteMode','append', 'Filetype', 'text', 'Delimiter', 'space', 'QuoteStrings', false)
+        for rr = 1:size(bc(kbc).val)
+            fprintf(fid, '%.6f %.6f\n', bc(kbc).val(rr,:));
+        end
     end
-    fid=fopen(fpath,'a');
 end %kbc
 
 fclose(fid);
