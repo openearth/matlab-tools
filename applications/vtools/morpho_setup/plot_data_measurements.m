@@ -121,7 +121,8 @@ for kfn=1:nfn
         in_p.val=data.(fn{kfn}).val_mean.val(:,idx_1:idx_2);
         in_p.leg_str=char2cell(datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)));
         in_p.ylims=NaN; %watch out. solve
-        in_p.cmap=NaN;
+        %in_p.cmap=NaN;
+        in_p.cmap=brewermap(length(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)),'RdYlGn');
     
         fig_1D_01(in_p)
     
@@ -138,7 +139,8 @@ for kfn=1:nfn
         in_p.val=data.(fn{kfn}).val_mean.val(:,idx_1:idx_2)-data.(fn{kfn}).val_mean.val(:,idx_1);
         in_p.leg_str=char2cell(datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)));
         in_p.ylims=NaN; %watch out. solve
-        in_p.cmap=NaN;
+        %in_p.cmap=NaN;
+        in_p.cmap=brewermap(length(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)),'RdYlGn');
 
         fig_1D_01(in_p)
 
@@ -160,7 +162,8 @@ for kfn=1:nfn
         in_p.val=val;
         in_p.leg_str=char2cell(datestr(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)));
         in_p.ylims=NaN; %watch out. solve
-        in_p.cmap=NaN;
+        %in_p.cmap=NaN;
+        in_p.cmap=brewermap(length(data.(fn{kfn}).val_mean.tim_dnum(idx_1:idx_2)),'RdYlGn');
 
         fig_1D_01(in_p)
     end %kxlim
