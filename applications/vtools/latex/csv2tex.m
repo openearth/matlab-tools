@@ -32,7 +32,7 @@ if ~longtable
     fprintf(fid_tex, '%s\n', '\begin{table}[ht!]');
     fprintf(fid_tex, '%s\n', '  %\tiny');
     fprintf(fid_tex, '%s\n', '  \begin{center}');
-    fprintf(fid_tex, '%s%s%s\n', '  \caption{',caption,'} \\');
+    fprintf(fid_tex, '%s%s%s\n', '  \caption{',caption,'}');
     fprintf(fid_tex, '%s\n', '  \begin{adjustwidth}{-2cm}{-2cm}');
 end
 count = 1;
