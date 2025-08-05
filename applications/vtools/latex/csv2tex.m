@@ -78,6 +78,9 @@ while a ~= -1
         s = strsplit(a,',');
         fprintf(fid_tex, '%s', '                  ');
         for k = 1:length(s)-1;
+            if (s{k}(1) == '"' & s{k}(end) == '"')
+                s{k} = s{k}(2:end-1);
+            end
             fprintf(fid_tex, '%11s & ', s{k});
         end
         fprintf(fid_tex, '%11s \\\\ \n', s{length(s)});
