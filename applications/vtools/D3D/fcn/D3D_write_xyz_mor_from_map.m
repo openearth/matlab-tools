@@ -85,6 +85,8 @@ simdef.mor.frac_xy=cord_write;
 simdef.mor.thk=thk_write;
 simdef.mor.folder_out=tag_folder_out;
 
+simdef.file.mini=fullfile(fdir_write,'mini.ini');
+
 simdef.D3D.dire_sim=fdir_write;
 simdef.D3D.structure=2;
 

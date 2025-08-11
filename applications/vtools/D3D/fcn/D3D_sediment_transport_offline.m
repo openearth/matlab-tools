@@ -25,6 +25,10 @@
 %intermediate step is done in which one single SMT simulation with the last
 %discharge folder is created.
 %
+%ATTENTION! The timezone of `tim_dtime0` must be the same as in the model
+%results. The problem is complex. When reading data from EHY, the timezone
+%is ignored. 
+%
 %INPUT
 %   -fpath_hydro  = full path to hydrodynamic SMT simulation [char] or to each hydrodynamic SMT with a constant discharge [cell]
 %   -fpath_morpho = full path to morphodynamic SMT simulation [char]  
@@ -364,7 +368,12 @@ for ksim=1:nsim+1 %this is the number of times in the SMT hydrograph +1, because
         fpath_mat_tmp_in=mat_tmp_name(fdir_mat,varname_read_variable,'tim',tim_hydro);        
 
         fdir_mat=fullfile(fpath_out,'mat');
-        fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname_read_variable,'tim',datenum(tim_dtime(ksim)));        
+        %Do not consider the timezone, because it is not considered when
+        %reading the data! See `D3D_results_time` and how it is then used
+        %in EHY.
+        % tim_cmp=datenum_tzone(tim_dtime(ksim));
+        tim_cmp=datenum(tim_dtime(ksim));
+        fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname_read_variable,'tim',tim_cmp);        
 
         if isfile(fpath_mat_tmp_out)==0 || overwrite
             copyfile_check(fpath_mat_tmp_in,fpath_mat_tmp_out,1);

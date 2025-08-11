@@ -77,7 +77,18 @@ else
             fpath_map_loc=fullfile(simdef.file.output,sprintf('%s_%04d_map.nc',simdef.file.mdfid,kpart-1));    
             tim_loc=ncread(fpath_map_loc,'time');
             [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map_loc,0,[1,Inf]);
+            
             [t0_dtime,units,tzone,tzone_num]=NC_read_time_0(fpath_map_loc);
+
+            %We are modifying the time vector in the NetCDF file. The time
+            %is written in seconds starting from a reference time in a
+            %certain time zone. We are not changing the reference time, so
+            %the time we aim for, the objective time, must be in that
+            %timzone. 
+
+            %Actually I think it does not matter because when subtracting
+            %it already does account for timezones.
+            % datetime_obj.TimeZone=tzone;
     
             %time moved to 0 
             datetime_1=datetime(0,0,0,0,0,0,'timezone','+00:00');

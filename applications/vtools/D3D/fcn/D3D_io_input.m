@@ -207,6 +207,8 @@ switch what_do
                 stru_out=D3D_read_crs(fname,G,varargin{2:end});
             case '.tif'
                 stru_out=readgeotiff(fname,varargin{2:end});
+            case '.cfg'
+                stru_out=read_flags(fname);
             otherwise
                 error('Extension %s in file %s not available for reading',ext,fname)
         end %ext

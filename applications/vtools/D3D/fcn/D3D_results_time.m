@@ -109,6 +109,12 @@ elseif strcmp(ext,'.dat') %D3D4
 %     time_dtime=time_dtime(kt(1));
 end
 
+%It cannot consider the timezone because we use this to search using EHY,
+%which used datenum directly. 
+
+% time_dnum=datenum_tzone(time_dtime);
+% time_mor_dnum=datenum_tzone(time_mor_dtime);
+
 time_dnum=datenum(time_dtime);
 time_mor_dnum=datenum(time_mor_dtime);
 

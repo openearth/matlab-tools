@@ -29,11 +29,12 @@ else
     ms=str2double(tok{1,1}{1,3});
 end
 
+%If the time zone is positive, we have to subtract and viceversa!
 switch op
     case '+'
-        tim_dnum=datenum(tim_dtime)+(hs/24+ms/(24/60));
-    case '-'
         tim_dnum=datenum(tim_dtime)-(hs/24+ms/(24/60));
+    case '-'
+        tim_dnum=datenum(tim_dtime)+(hs/24+ms/(24/60));
 end
 
 end %function

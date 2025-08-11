@@ -64,7 +64,14 @@ data{kl,1}=        '[Global]'; kl=kl+1;
 data{kl,1}=sprintf('   leveeTransitionHeight = %5.2f',csd_global.leveeTransitionHeight); kl=kl+1;
 %%
 for kcsd=1:ncsd
-    nlevels=csd(kcsd).numLevels;
+    switch lower(csd(kcsd).type)
+        case 'yz'
+            nlevels=csd(kcsd).yzCount;
+        case 'zwriver'
+            nlevels=csd(kcsd).numLevels;
+        otherwise
+            error('unknown number of levels for type: %s',csd(kcsd).type)
+    end
     
 data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[Definition]'; kl=kl+1;

@@ -19,10 +19,12 @@ function fourier_create_data_steady_state_evolution_time(fdir_out,noise_Lbx_v,no
 parin=inputParser;
 
 addOptional(parin,'plot',0);
+addOptional(parin,'overwrite',0);
 
 parse(parin,varargin{:});
 
 do_plot=parin.Results.plot;
+overwrite=parin.Results.overwrite;
 
 pert_anl=1; %1=full
 
@@ -45,6 +47,18 @@ mkdir_check(fdir_mat);
 %% loop
 
 for kv=1:nv
+
+    %% disp
+    messageOut(NaN,sprintf('Done %4.2f %%',kv/nv*100));
+
+    %% OVERWRITE
+
+    fname=sprintf('%06d',kv);
+    filename=fullfile(fdir_nc,sprintf('%s.nc',fname));
+
+    if exist(filename,'file') && ~overwrite
+        continue
+    end
 
     %% CALC
     
@@ -74,9 +88,6 @@ for kv=1:nv
     
     %% WRITE
     
-    fname=sprintf('%06d',kv);
-    
-    filename=fullfile(fdir_nc,sprintf('%s.nc',fname));
     fourier_write_nc(filename,x,y,t,Q_rec,noise_Lbx,noise_W,etab_max)
     
     %% PLOT
@@ -97,9 +108,6 @@ for kv=1:nv
     data(kv).Ly=noise_Lby;
     data(kv).c=c;
     data(kv).w=w;
-
-    %% disp
-    messageOut(NaN,sprintf('Done %4.2f %%',kv/nv*100));
 
 end %kv
 
