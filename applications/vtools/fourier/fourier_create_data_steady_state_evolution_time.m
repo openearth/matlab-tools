@@ -20,11 +20,13 @@ parin=inputParser;
 
 addOptional(parin,'plot',0);
 addOptional(parin,'overwrite',0);
+addOptional(parin,'order_anl',1);
 
 parse(parin,varargin{:});
 
 do_plot=parin.Results.plot;
 overwrite=parin.Results.overwrite;
+order_anl=parin.Results.order_anl;
 
 pert_anl=1; %1=full
 
@@ -46,10 +48,15 @@ mkdir_check(fdir_mat);
 
 %% loop
 
-for kv=1:nv
+flg.order_anl=order_anl;
+kv_v=gdm_kt_v(flg,nv);
+
+for k=1:nv
+
+    kv=kv_v(k);
 
     %% disp
-    messageOut(NaN,sprintf('Done %4.2f %%',kv/nv*100));
+    messageOut(NaN,sprintf('Done %4.2f %%',k/nv*100));
 
     %% OVERWRITE
 
@@ -57,6 +64,7 @@ for kv=1:nv
     filename=fullfile(fdir_nc,sprintf('%s.nc',fname));
 
     if exist(filename,'file') && ~overwrite
+        messageOut(NaN,sprintf('File exists: %s',filename));
         continue
     end
 
