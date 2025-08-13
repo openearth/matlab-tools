@@ -32,6 +32,7 @@
 % clear
 % clc
 % fclose all;
+% clear mex
 % 
 % %% PATHS
 % 

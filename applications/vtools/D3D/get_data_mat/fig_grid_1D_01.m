@@ -49,6 +49,8 @@ end
 if isfield(in_p,'plot_sat')==0
     in_p.plot_sat=0;
 end
+in_p=isfield_default(in_p,'xlims',[NaN,NaN]);
+in_p=isfield_default(in_p,'ylims',[NaN,NaN]);
 
 v2struct(in_p)
 
@@ -63,8 +65,8 @@ geom_cs=[0;cumsum(gridInfo.node_count_geom)];
 %% default
 
 kr=1; kc=1;
-lims.y(kr,kc,1:2)=ylims;
-lims.x(kr,kc,1:2)=xlims;
+% lims.y(kr,kc,1:2)=ylims;
+% lims.x(kr,kc,1:2)=xlims;
 
 %% FIGURE
 
@@ -155,8 +157,12 @@ han.sfig(kpr,kpc).Box='on';
 if axis_equal
 axis(han.sfig(kpr,kpc),'equal')
 end
-han.sfig(kpr,kpc).XLim=lims.x;
-han.sfig(kpr,kpc).YLim=lims.y;
+if ~isnan(xlims(1))
+han.sfig(kpr,kpc).XLim=xlims;
+end
+if ~isnan(ylims(1))
+han.sfig(kpr,kpc).YLim=ylims;
+end
 % han.sfig(kpr,kpc).ZLim=lims.z;
 han.sfig(kpr,kpc).XLabel.String='x coordinate [m]';
 han.sfig(kpr,kpc).YLabel.String='y coordinate [m]';
