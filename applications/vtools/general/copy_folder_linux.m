@@ -39,14 +39,18 @@ if ~strcmp(fpath_o(end),filesep)
 end
 
 if isempty(exclude{1,1})
-    sprintf('cp -r %s%s %s',linuxify(fpath_o),str_folder,linuxify(fpath_d))
+    str=sprintf('cp -r %s%s %s',linuxify(fpath_o),str_folder,linuxify(fpath_d));
 else
     ne=numel(exclude);
     str_exclude='';
     for ke=1:ne
         str_exclude=cat(2,str_exclude,sprintf('--exclude=''%s'' ',exclude{ke}));
     end
-    sprintf('rsync -av %s %s%s %s',str_exclude,linuxify(fpath_o),str_folder,linuxify(fpath_d))
+    str=sprintf('rsync -av %s %s%s %s',str_exclude,linuxify(fpath_o),str_folder,linuxify(fpath_d));
 end
+
+disp(str)
+
+clipboard("copy",str);
 
 end %function

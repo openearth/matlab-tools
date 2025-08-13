@@ -78,9 +78,11 @@ simdef.mdf.wall_rough=      0; %account for wall friction: 0=NO; 1=partial slip
 simdef.mdf.wall_ks=         0.001; %(if simdef.mdf.wall_rough==1) wall friction length [m]
 simdef.mdf.filter=          0; %filter the 2dx oscillations due to numerical scheme in FM: 0=NO; 1=YES [-] [double(1,1)] e.g. [0]
     %output
-simdef.mdf.nparts_res=10; %number of map results [-] [double(1,1)] e.g. [10]     
+simdef.mdf.nparts_res=      10; %number of map results [-] [double(1,1)] e.g. [10]     
 %simdef.mdf.Flmap_dt=        12*3600; %printing map-file interval time [s] [double(1,1)] e.g. [60]     
 simdef.mdf.Flhis_dt=        3600; %printing his-file interval time [s] [double(1,1)] e.g. [60]   
+simdef.mdf.adapt_time=      1; %adapt simdef.mdf.Dt,simdef.mdf.Tstop,simdef.mdf.Flmap_dt,simdef.mor.MorStt depending on CFL: 0=NO; 1=YES [-] [double(1,1)] e.g. [0]
+
 [x_obs,y_obs]=meshgrid(simdef.grd.L/10:simdef.grd.L/10:simdef.grd.L-simdef.grd.L/10,simdef.grd.B/10:simdef.grd.B/10:simdef.grd.B-simdef.grd.B/10);
 
 simdef.mdf.obs_cord= [x_obs(:),y_obs(:)]; %coordinates of the observations points [x,y] [m] [double(np,2)] e.g. [0,0;1,0.5]    

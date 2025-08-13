@@ -12,11 +12,19 @@
 %
 %Convert Floris to Delft3D FM model. 
 
-function floris=floris_to_fm(fpath_cfg)
+function floris=floris_to_fm(fpath_cfg,varargin)
 
 %% PARSE
 
-fid_log=NaN; %file identifier of log. NaN -> screen
+parin=inputParser;
+
+addOptional(parin,'fid_log',NaN)
+addOptional(parin,'fdir_out',pwd)
+
+parse(parin,varargin{:})
+
+fid_log=parin.Results.fid_log; 
+fdir_out=parin.Results.fdir_out;
 
 %% CALC
 
@@ -33,5 +41,19 @@ fid_log=NaN; %file identifier of log. NaN -> screen
 [floris.csl,floris.network.network_node_id,floris.network.network_node_x,floris.network.network_node_y,floris.network.network_branch_id,floris.network.network_edge_nodes]=floris_to_fm_read_floin(floris.file.floin,floris.csd,floris.csd_add,'fid_log',fid_log);
 
 %% create grid
+
+floris.network=floris_to_fm_create_grid(floris.network,floris.csl,floris.csd_add,'fid_log',fid_log);
+
+%% write files
+
+%cross-section location
+D3D_io_input('write',fullfile(fdir_out,'csl.ini'),floris.csl,'check_existing',false); 
+
+%cross-section definition
+D3D_io_input('write',fullfile(fdir_out,'csd.ini'),floris.csd,'check_existing',false); 
+
+%grid
+filename=fullfile(fdir_out,'grd_net.nc'); 
+NC_create_1D_grid(filename,floris.network,'fid_log',fid_log);
 
 end %function

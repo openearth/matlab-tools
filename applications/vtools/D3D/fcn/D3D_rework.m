@@ -220,7 +220,12 @@ else
 end
 
 %times computed
-if isfield(simdef.mdf,'nparts_res')
+simdef.mdf=isfield_default(simdef.mdf,'adapt_time',0);
+if ~isfield(simdef.mdf,'nparts_res')
+    simdef.mdf.adapt_time=1;
+end
+simdef.mdf=isfield_default(simdef.mdf,'nparts_res',simdef.mdf.Tstop/simdef.mdf.Flmap_dt);
+if simdef.mdf.adapt_time
     c=simdef.ini.u+sqrt(simdef.mdf.g*simdef.ini.h);
     dt_opt=simdef.mdf.CFL*simdef.grd.dx/c; %optimum time step
     [simdef.mdf.Dt,simdef.mdf.Tstop,simdef.mdf.Flmap_dt,simdef.mor.MorStt]=D3D_adapt_time(dt_opt,simdef.mdf.Tstop,simdef.mor.MorStt,simdef.mor.MorFac,simdef.mdf.nparts_res);

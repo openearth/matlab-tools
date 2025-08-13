@@ -29,6 +29,9 @@ while ~feof(fid)
         continue
     end
     tok1=regexp(line,'=','split');
+    if isscalar(tok1)
+        continue
+    end
     var_name=tok1{1,1};
     tok2=regexp(var_name,'\.','split');
     field_1=tok2{1,1};
