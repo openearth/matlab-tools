@@ -51,6 +51,9 @@ if isfield(in_p,'plot_sat')==0
 end
 in_p=isfield_default(in_p,'xlims',[NaN,NaN]);
 in_p=isfield_default(in_p,'ylims',[NaN,NaN]);
+in_p=isfield_default(in_p,'plot_mesh_edge',1);
+in_p=isfield_default(in_p,'plot_mesh_edge_node',1);
+
 
 v2struct(in_p)
 
@@ -223,7 +226,7 @@ han.p=scatter(gridInfo.x_geom,gridInfo.y_geom,20,'r','parent',han.sfig(kr,kc));
 %nodes
 if plot_nodes
 for kn=1:nn
-    han.p=scatter(gridInfo.x_net_node(kn),gridInfo.y_net_node(kn),20,'or','parent',han.sfig(kr,kc));
+    han.p=scatter(gridInfo.x_net_node(kn),gridInfo.y_net_node(kn),20,'*r','parent',han.sfig(kr,kc));
     str_p=strrep(gridInfo.net_node_id(kn,:),'_','\_');
     text(gridInfo.x_net_node(kn),gridInfo.y_net_node(kn),str_p,'Rotation',45,'Fontsize',10,'color','c','parent',han.sfig(kr,kc))    
 end
@@ -239,11 +242,30 @@ for kb=1:nb
 end
 end
 
-%mesh1d
-cmap=jet(nb);
+%mesh1d_node
+cmap=prism(nb);
 for kb=1:nb
     bol_br=gridInfo.branch==kb-1; %starts at 0
-    plot(gridInfo.x_node(bol_br),gridInfo.y_node(bol_br),'*','parent',han.sfig(kr,kc),'color',cmap(kb,:))
+    plot(gridInfo.x_node(bol_br),gridInfo.y_node(bol_br),'o','parent',han.sfig(kr,kc),'color',cmap(kb,:))
+end
+
+%mesh1d_edge
+if plot_mesh_edge
+for kb=1:nb
+    bol_br=gridInfo.branch_edge==kb-1; %starts at 0
+    plot(gridInfo.x_edge(bol_br),gridInfo.y_edge(bol_br),'+','parent',han.sfig(kr,kc),'color',cmap(kb,:))
+end
+end
+
+%mesh1d_edge_node
+if plot_mesh_edge_node
+% for kb=1:nb
+    % bol_br=gridInfo.branch_edge==kb-1; %starts at 0
+    for kl=1:numel(gridInfo.x_edge)
+        kb=gridInfo.branch_edge(kl)+1;
+        plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)+1),gridInfo.y_node(gridInfo.edge_nodes(:,kl)+1),'color',cmap(kb,:))
+    end
+% end
 end
 
 % light

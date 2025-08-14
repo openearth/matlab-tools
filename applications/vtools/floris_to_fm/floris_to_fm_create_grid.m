@@ -138,8 +138,29 @@ end
 %% JOIN BRANCHES
 
 for kb=1:network_nEdges
+
     %connect final mesh1d_node of the current branch to first
     %mesh1d_node of the branch of the destination network_node
+
+    %                                                                  modified branch 2                                               
+    % 
+    %                                               ├──────────────────────────────────────────────────────┤                           
+    % 
+    %            branch 1                                                      branch 2                                                
+    % 
+    % ├────────────────────────────────────────────┤             ├─────────────────────────────────────────┤                           
+    % 
+    % 
+    % 0───│───0───────│───────0─────────│──────────0------|------0───│────0─────│─────0─────────│──────────0                           
+    % 
+    % 
+    % 1       2               3                    3             1        2           3                    4      flow nodes           
+    % 
+    %     1           2                                              1          2               3                 original flow links  
+    % 
+    %                                                     1          2          3                                 modified flow links  
+    % 
+    % 
 
     branch_origin=kb-1; %0-based index of the origin branch
     mesh1d_node_branch_loc_bol=mesh1d_node_branch==branch_origin; %boolean of mesh1d_node of the origin branch
@@ -153,31 +174,42 @@ for kb=1:network_nEdges
 
     %loop through destination branches
     for kdest=1:ndest
-        branch_dest=branch_dest_v(kdest); %0-based index of the destination branch
-        mesh1d_node_branch_loc_bol=mesh1d_node_branch==branch_dest;
-        mesh1d_node_connection_dest_midx=find(mesh1d_node_branch_loc_bol==1,1,'first'); %Matlab index of the mesh1d_node of the destination branch connecting to the origin branch
+        
+        branch_dest_idx=branch_dest_v(kdest); %0-based index of the destination branch
+        branch_dest_midx=branch_dest_idx+1; %Matlab index of the destination branch
 
-        mesh1d_edge_node_loc=[mesh1d_node_connection_origin_midx;mesh1d_node_connection_dest_midx]-1; %0-based index of the mesh1d_node of the origin branch connecting to the destination branch
-        mesh1d_edge_x_loc=mean(mesh1d_node_x(mesh1d_edge_node_loc));
-        mesh1d_edge_y_loc=mean(mesh1d_node_y(mesh1d_edge_node_loc));
+        messageOut(fid_log,sprintf('Modifying branch %02d, %s',branch_dest_idx,network_branch_id{branch_dest_idx+1}))
 
-        mesh1d_edge_nodes=cat(2,mesh1d_edge_nodes,mesh1d_edge_node_loc);
+        mesh1d_node_branch_dest_bol=mesh1d_node_branch==branch_dest_idx; %boolean of the mesh1d_node of the destination branch
+        mesh1d_node_connection_dest_midx=find(mesh1d_node_branch_dest_bol==1,1,'first'); %Matlab index of the mesh1d_node of the destination branch connecting to the origin branch
+
+        mesh1d_edge_node_loc_midx=[mesh1d_node_connection_origin_midx;mesh1d_node_connection_dest_midx]; %Matlab indices of the mesh1d_node connecting origin and destination branch
+        mesh1d_edge_node_loc_idx=mesh1d_edge_node_loc_midx-1; %0-based indices of the mesh1d_node connecting origin and destination branch
+        mesh1d_edge_x_loc=mean(mesh1d_node_x(mesh1d_edge_node_loc_midx));
+        mesh1d_edge_y_loc=mean(mesh1d_node_y(mesh1d_edge_node_loc_midx));
+
+        mesh1d_edge_nodes=cat(2,mesh1d_edge_nodes,mesh1d_edge_node_loc_idx);
         mesh1d_edge_x=cat(1,mesh1d_edge_x,mesh1d_edge_x_loc);
         mesh1d_edge_y=cat(1,mesh1d_edge_y,mesh1d_edge_y_loc);
 
+        %compute distance between final node of origin branch and first
+        %node of destination branch
         mesh1d_node_connection_dist_x=mesh1d_node_x(mesh1d_node_connection_dest_midx)-mesh1d_node_x(mesh1d_node_connection_origin_midx); %`x` distance between mesh1d_nodes at origin and destination of connection
         mesh1d_node_connection_dist_y=mesh1d_node_y(mesh1d_node_connection_dest_midx)-mesh1d_node_y(mesh1d_node_connection_origin_midx); %`y` distance between mesh1d_nodes at origin and destination of connection
         mesh1d_node_connection_dist=hypot(mesh1d_node_connection_dist_x,mesh1d_node_connection_dist_y); %mesh1d_node distance between origin and destination
+
         mesh1d_edge_connection_dist=mesh1d_node_connection_dist/2; %mesh1d_edge is at halfway distance between mesh1d_nodes
 
-        mesh1d_edge_branch_loc_bol=mesh1d_edge_branch==branch_dest_v(kdest); 
-        mesh1d_edge_offset_dest=mesh1d_edge_offset(mesh1d_edge_branch_loc_bol); %original offset of the existing mesh1d_edge at destination branch
-        mesh1d_edge_offset_dest=mesh1d_edge_offset_dest+mesh1d_edge_connection_dist; %new offset of the existing mesh1d_edge at destination branch
-        mesh1d_edge_offset(mesh1d_edge_branch_loc_bol)=mesh1d_edge_offset_dest; %assing new value of existing mesh1d_edge
+        mesh1d_edge_branch_dest_bol=mesh1d_edge_branch==branch_dest_idx; 
+        mesh1d_edge_offset_dest=mesh1d_edge_offset(mesh1d_edge_branch_dest_bol); %original offset of the existing mesh1d_edge at destination branch
+        mesh1d_edge_offset_dest=mesh1d_edge_offset_dest+mesh1d_node_connection_dist; %new offset of the existing mesh1d_edge at destination branch
+        mesh1d_edge_offset(mesh1d_edge_branch_dest_bol)=mesh1d_edge_offset_dest; %assing new value of existing mesh1d_edge
         mesh1d_edge_offset=cat(1,mesh1d_edge_offset,mesh1d_edge_connection_dist); %assign new value of new mesh1d_edge
 
-        mesh1d_edge_branch=cat(1,mesh1d_edge_branch,branch_dest); %added edge pertains to the destination branch
-        
+        mesh1d_edge_branch=cat(1,mesh1d_edge_branch,branch_dest_idx); %added edge pertains to the destination branch
+
+        mesh1d_node_offset(mesh1d_node_branch_dest_bol)=mesh1d_node_offset(mesh1d_node_branch_dest_bol)+mesh1d_node_connection_dist; %adjust offset of mesh1d_node of destination branch   
+        network_edge_length(branch_dest_midx)=network_edge_length(branch_dest_midx)+mesh1d_node_connection_dist; %new length of the destination branch        
     end %ndest
 end %network_nEdges
 

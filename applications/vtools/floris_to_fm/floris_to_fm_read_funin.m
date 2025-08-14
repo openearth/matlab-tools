@@ -102,10 +102,10 @@ while ~feof(fid)
             csd(idx_crs).zCoordinates=[];
             csd(idx_crs).conveyance='lumped'; %segmented, lumped
             csd(idx_crs).sectionCount=1; %number of roughness cross-section
-            csd(idx_crs).frictionPositions=1; 
-            csd(idx_crs).frictionIds=1; 
-            csd(idx_crs).frictionTypes=1;
-            csd(idx_crs).frictionValues=1;
+            % csd(idx_crs).frictionPositions=1; 
+            % csd(idx_crs).frictionIds=1; 
+            % csd(idx_crs).frictionTypes=1;
+            % csd(idx_crs).frictionValues=1;
 
             %other data
             csd_add(idx_crs).rkm=tokens_num(3);

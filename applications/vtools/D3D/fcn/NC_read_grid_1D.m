@@ -32,6 +32,7 @@ net_node_id=ncread(fpath_map,sprintf('%s_node_id',str_network))';
 
 offset_edge=ncread(fpath_map,'mesh1d_edge_offset');
 branch_edge=ncread(fpath_map,'mesh1d_edge_branch');
+edge_nodes=ncread(fpath_map,'mesh1d_edge_nodes');
 
 offset=ncread(fpath_map,'mesh1d_node_offset');
 branch=ncread(fpath_map,'mesh1d_node_branch');
@@ -40,6 +41,6 @@ branch_id=ncread(fpath_map,sprintf('%s_branch_id',str_network))';
 
 no_layers=1;
 
-gridInfo=v2struct(x_node,y_node,x_edge,y_edge,offset_edge,branch_edge,offset,branch,branch_length,branch_id,no_layers,x_geom,y_geom,node_count_geom,net_node_id,x_net_node,y_net_node);
+gridInfo=v2struct(x_node,y_node,x_edge,y_edge,offset_edge,branch_edge,offset,branch,branch_length,branch_id,no_layers,x_geom,y_geom,node_count_geom,net_node_id,x_net_node,y_net_node,edge_nodes);
 
 end %function
