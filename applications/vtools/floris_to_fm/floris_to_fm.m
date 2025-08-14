@@ -44,6 +44,10 @@ fdir_out=parin.Results.fdir_out;
 
 floris.network=floris_to_fm_create_grid(floris.network,floris.csl,floris.csd_add,'fid_log',fid_log);
 
+%% adapt offset of cross-section
+
+floris.csl=floris_to_fm_adapt_offset(floris.network,floris.csl,'fid_log',fid_log);
+
 %% write files
 
 %cross-section location

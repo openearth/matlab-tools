@@ -47,7 +47,7 @@ y_csl=mean([csd_add.y_left;csd_add.y_right],1)';
 
 network_nEdges=numel(network_branch_id); %i.e., number of branches
 % network_nNodes=numel(network_node_id);
-network_nGeometryNodes=numel(network_node_id)*2; %each geometry is defined by just two nodes
+% network_nGeometryNodes=numel(network_node_id)*2; %each geometry is defined by just two nodes
 mesh1d_nNodes=numel(offset_csl);
 mesh1d_nEdges=mesh1d_nNodes-network_nEdges; %first each branch is full
 
@@ -55,7 +55,7 @@ mesh1d_nEdges=mesh1d_nNodes-network_nEdges; %first each branch is full
 
 network_edge_length=NaN(network_nEdges,1);
 network_geom_node_count=NaN(network_nEdges,1);
-network_geom_x=NaN(network_nGeometryNodes,1);
+% network_geom_x=NaN(network_nGeometryNodes,1);
 network_branch_order=NaN(network_nEdges,1);
 network_branch_type=NaN(network_nEdges,1);
 
@@ -72,7 +72,7 @@ mesh1d_edge_nodes=NaN(2,mesh1d_nEdges);
 
 %% CREATE SEPARATE BRANCHES
 
-idx_network_geom_0=1;
+% idx_network_geom_0=1;
 idx_mesh1d_edge_0=1;
 
 %loop on branches
@@ -91,20 +91,20 @@ for kb=1:network_nEdges
     network_edge_length(kb)=max_offset;
 
     %network geometry 
-    node_branch_idx=network_edge_nodes(kb,:)+1; %0-based
-    network_geom_node_count(kb)=2;
-    idx_network_geom_final=idx_network_geom_0+network_geom_node_count(kb)-1;
-
-    node_branch_x=network_node_x(node_branch_idx);
-    network_geom_x(idx_network_geom_0:idx_network_geom_final)=node_branch_x;
-
-    node_branch_y=network_node_y(node_branch_idx);
-    network_geom_y(idx_network_geom_0:idx_network_geom_final)=node_branch_y;
-
-    idx_network_geom_0=idx_network_geom_final+1;
+        %only defined by 2 points
+    % node_branch_idx=network_edge_nodes(kb,:)+1; %0-based
+    % network_geom_node_count(kb)=2;
+    % idx_network_geom_final=idx_network_geom_0+network_geom_node_count(kb)-1;
+    % 
+    % node_branch_x=network_node_x(node_branch_idx);
+    % network_geom_x(idx_network_geom_0:idx_network_geom_final)=node_branch_x;
+    % 
+    % node_branch_y=network_node_y(node_branch_idx);
+    % network_geom_y(idx_network_geom_0:idx_network_geom_final)=node_branch_y;
+    % 
+    % idx_network_geom_0=idx_network_geom_final+1;
 
     network_branch_order(kb)=-1; %!ATTENTION I think this is only for visualization, but we should be careful. 
-
     network_branch_type(kb)=4; %1D
 
     %mesh1d
@@ -241,6 +241,22 @@ mesh1d_edge_offset=mesh1d_edge_offset(idx_order);
 mesh1d_edge_x=mesh1d_edge_x(idx_order);
 mesh1d_edge_y=mesh1d_edge_y(idx_order);
 mesh1d_edge_nodes=mesh1d_edge_nodes(:,idx_order);
+
+%% GEOMETRY NETWORK
+
+%Copy mesh1d_node to network_node
+%loop on branches
+network_geom_x=NaN(size(mesh1d_node_x));
+network_geom_y=network_geom_x;
+
+for kb=1:network_nEdges
+    branch_idx=kb-1; %0-based index of the branch
+    mesh1d_node_branch_loc_bol=mesh1d_node_branch==branch_idx; %boolean of mesh1d_node of the branch
+
+    network_geom_x(mesh1d_node_branch_loc_bol)=mesh1d_node_x(mesh1d_node_branch_loc_bol);
+    network_geom_y(mesh1d_node_branch_loc_bol)=mesh1d_node_y(mesh1d_node_branch_loc_bol);
+    network_geom_node_count(kb)=sum(mesh1d_node_branch_loc_bol);
+end %network_nEdges
 
 %% NAMES
 
