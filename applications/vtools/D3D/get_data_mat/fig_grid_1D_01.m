@@ -243,7 +243,7 @@ end
 end
 
 %mesh1d_node
-cmap=prism(nb);
+cmap=lines(nb);
 for kb=1:nb
     bol_br=gridInfo.branch==kb-1; %starts at 0
     plot(gridInfo.x_node(bol_br),gridInfo.y_node(bol_br),'o','parent',han.sfig(kr,kc),'color',cmap(kb,:))
@@ -264,6 +264,7 @@ if plot_mesh_edge_node
     for kl=1:numel(gridInfo.x_edge)
         kb=gridInfo.branch_edge(kl)+1;
         plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)+1),gridInfo.y_node(gridInfo.edge_nodes(:,kl)+1),'color',cmap(kb,:))
+        % pause
     end
 % end
 end

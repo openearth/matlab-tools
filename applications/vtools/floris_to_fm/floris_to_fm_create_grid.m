@@ -46,7 +46,7 @@ y_csl=mean([csd_add.y_left;csd_add.y_right],1)';
 %% DIMENSIONS
 
 network_nEdges=numel(network_branch_id); %i.e., number of branches
-% network_nNodes=numel(network_node_id);
+network_nNodes=numel(network_node_id);
 % network_nGeometryNodes=numel(network_node_id)*2; %each geometry is defined by just two nodes
 mesh1d_nNodes=numel(offset_csl);
 mesh1d_nEdges=mesh1d_nNodes-network_nEdges; %first each branch is full
@@ -135,9 +135,113 @@ for kb=1:network_nEdges
     idx_mesh1d_edge_0=idx_mesh1d_edge_1+1;
 end
 
-%% JOIN BRANCHES
+%%
+
+for kn=1:network_nNodes
+
+    network_node_idx=kn-1;
+
+    network_edge_nodes_loc_bol=network_edge_nodes==network_node_idx;
+
+    network_nodes_loc_sum=sum(network_edge_nodes_loc_bol,1);
+
+    if any(network_nodes_loc_sum==0)
+        %Node connected to only one branch. Nothing to be done
+        continue
+    elseif isequal(network_nodes_loc_sum,[1,1])
+        %one branch connected to one branch. Does not matter how it is
+        %treated. 
+        is_bifurcation=true;
+    elseif network_nodes_loc_sum(1)==1 && network_nodes_loc_sum(2)>1
+        is_bifurcation=false;
+    elseif network_nodes_loc_sum(1)>1 && network_nodes_loc_sum(2)==1
+        is_bifurcation=true;
+    else 
+        error('Case not considered.')
+    end
+    
+    if is_bifurcation
+        kb=find(network_edge_nodes_loc_bol(:,2));
+        [mesh1d_edge_offset,mesh1d_edge_branch,mesh1d_node_offset,network_edge_length,mesh1d_edge_nodes,mesh1d_edge_x,mesh1d_edge_y]=connect_bifurcation(fid_log,kb,mesh1d_edge_nodes,mesh1d_edge_x,mesh1d_edge_y,mesh1d_node_branch,network_edge_nodes,network_branch_id,mesh1d_node_x,mesh1d_node_y,mesh1d_edge_offset,mesh1d_edge_branch,mesh1d_node_offset,network_edge_length);
+    else
+        kb=find(network_edge_nodes_loc_bol(:,1));
+        [mesh1d_edge_offset,mesh1d_edge_branch,mesh1d_node_offset,network_edge_length,mesh1d_edge_nodes,mesh1d_edge_x,mesh1d_edge_y]=connect_confluence(fid_log,kb,mesh1d_edge_nodes,mesh1d_edge_x,mesh1d_edge_y,mesh1d_node_branch,network_edge_nodes,network_branch_id,mesh1d_node_x,mesh1d_node_y,mesh1d_edge_offset,mesh1d_edge_branch,mesh1d_node_offset,network_edge_length);
+    end
+
+end %network_nNodes
+
+%% REORDER
+
+%In D3D it is assumed that all links of each branch are ordered in offset.
+%We break this when adding the connection ones. Here we reorder them. 
+
+idx_order=NaN(size(mesh1d_edge_offset));
+idx_first=1;
+for kb=1:network_nEdges
+    branch_idx=kb-1; %0-based index of the branch
+    mesh1d_edge_branch_loc_bol=mesh1d_edge_branch==branch_idx;
+    mesh1d_edge_branch_loc_idx=find(mesh1d_edge_branch_loc_bol);
+    [~,idx_sort_loc]=sort(mesh1d_edge_offset(mesh1d_edge_branch_loc_bol));
+    mesh1d_edge_branch_loc_sort=mesh1d_edge_branch_loc_idx(idx_sort_loc);
+
+    nel=numel(idx_sort_loc);
+    idx_order(idx_first:idx_first+nel-1)=mesh1d_edge_branch_loc_sort;
+
+    %update first item
+    idx_first=idx_first+nel;
+
+end %network_nEdges
+
+%reorder
+mesh1d_edge_branch=mesh1d_edge_branch(idx_order);
+mesh1d_edge_offset=mesh1d_edge_offset(idx_order);
+mesh1d_edge_x=mesh1d_edge_x(idx_order);
+mesh1d_edge_y=mesh1d_edge_y(idx_order);
+mesh1d_edge_nodes=mesh1d_edge_nodes(:,idx_order);
+
+%% GEOMETRY NETWORK
+
+%Copy mesh1d_node to network_node
+%loop on branches
+network_geom_x=NaN(size(mesh1d_node_x));
+network_geom_y=network_geom_x;
 
 for kb=1:network_nEdges
+    branch_idx=kb-1; %0-based index of the branch
+    mesh1d_node_branch_loc_bol=mesh1d_node_branch==branch_idx; %boolean of mesh1d_node of the branch
+
+    network_geom_x(mesh1d_node_branch_loc_bol)=mesh1d_node_x(mesh1d_node_branch_loc_bol);
+    network_geom_y(mesh1d_node_branch_loc_bol)=mesh1d_node_y(mesh1d_node_branch_loc_bol);
+    network_geom_node_count(kb)=sum(mesh1d_node_branch_loc_bol);
+end %network_nEdges
+
+%% NAMES
+
+network_node_long_name=network_node_id;
+network_branch_long_name=network_branch_id;
+
+n_mesh1d_node=numel(mesh1d_node_branch);
+mesh1d_node_id=cell(n_mesh1d_node,1);
+for k=1:n_mesh1d_node
+    mesh1d_node_id{k}=sprintf('%02d_%10.5f',mesh1d_node_branch(k),mesh1d_node_offset(k));
+end %n_mesh1d_node
+
+mesh1d_node_long_name=mesh1d_node_id;
+
+%% PACK
+
+network=v2struct(network_edge_nodes,network_branch_id,network_branch_long_name,network_edge_length,network_node_id,network_node_long_name,network_node_x,network_node_y, ...
+                network_geom_node_count,network_geom_x,network_geom_y,network_branch_order,network_branch_type, ...
+                mesh1d_node_branch,mesh1d_node_offset,mesh1d_node_x,mesh1d_node_y,mesh1d_edge_branch,mesh1d_edge_offset,mesh1d_edge_x,mesh1d_edge_y,mesh1d_node_id,mesh1d_node_long_name,mesh1d_edge_nodes ...
+                );
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function [mesh1d_edge_offset,mesh1d_edge_branch,mesh1d_node_offset,network_edge_length,mesh1d_edge_nodes,mesh1d_edge_x,mesh1d_edge_y]=connect_bifurcation(fid_log,kb,mesh1d_edge_nodes,mesh1d_edge_x,mesh1d_edge_y,mesh1d_node_branch,network_edge_nodes,network_branch_id,mesh1d_node_x,mesh1d_node_y,mesh1d_edge_offset,mesh1d_edge_branch,mesh1d_node_offset,network_edge_length)
 
     %connect final mesh1d_node of the current branch to first
     %mesh1d_node of the branch of the destination network_node
@@ -211,71 +315,96 @@ for kb=1:network_nEdges
         mesh1d_node_offset(mesh1d_node_branch_dest_bol)=mesh1d_node_offset(mesh1d_node_branch_dest_bol)+mesh1d_node_connection_dist; %adjust offset of mesh1d_node of destination branch   
         network_edge_length(branch_dest_midx)=network_edge_length(branch_dest_midx)+mesh1d_node_connection_dist; %new length of the destination branch        
     end %ndest
-end %network_nEdges
 
-%% REORDER
+end %function
 
-%In D3D it is assumed that all links of each branch are ordered in offset.
-%We break this when adding the connection ones. Here we reorder them. 
+%%
 
-idx_order=NaN(size(mesh1d_edge_offset));
-idx_first=1;
-for kb=1:network_nEdges
-    branch_idx=kb-1; %0-based index of the branch
-    mesh1d_edge_branch_loc_bol=mesh1d_edge_branch==branch_idx;
-    mesh1d_edge_branch_loc_idx=find(mesh1d_edge_branch_loc_bol);
-    [~,idx_sort_loc]=sort(mesh1d_edge_offset(mesh1d_edge_branch_loc_bol));
-    mesh1d_edge_branch_loc_sort=mesh1d_edge_branch_loc_idx(idx_sort_loc);
+function [mesh1d_edge_offset,mesh1d_edge_branch,mesh1d_node_offset,network_edge_length,mesh1d_edge_nodes,mesh1d_edge_x,mesh1d_edge_y]=connect_confluence(fid_log,kb,mesh1d_edge_nodes,mesh1d_edge_x,mesh1d_edge_y,mesh1d_node_branch,network_edge_nodes,network_branch_id,mesh1d_node_x,mesh1d_node_y,mesh1d_edge_offset,mesh1d_edge_branch,mesh1d_node_offset,network_edge_length)
 
-    nel=numel(idx_sort_loc);
-    idx_order(idx_first:idx_first+nel-1)=mesh1d_edge_branch_loc_sort;
+    %connect final mesh1d_node of the current branch to first
+    %mesh1d_node of the branch of the destination network_node
 
-    %update first item
-    idx_first=idx_first+nel;
+    %                                                                  modified branch 2                                               
+    % 
+    %                                               ├──────────────────────────────────────────────────────┤                           
+    % 
+    %            branch 1                                                      branch 2                                                
+    % 
+    % ├────────────────────────────────────────────┤             ├─────────────────────────────────────────┤                           
+    % 
+    % 
+    % 0───│───0───────│───────0─────────│──────────0------|------0───│────0─────│─────0─────────│──────────0                           
+    % 
+    % 
+    % 1       2               3                    3             1        2           3                    4      flow nodes           
+    % 
+    %     1           2                                              1          2               3                 original flow links  
+    % 
+    %                                                     1          2          3                                 modified flow links  
+    % 
+    % 
 
-end %network_nEdges
+    branch_origin=kb-1; %0-based index of the origin branch
+    mesh1d_node_branch_loc_bol=mesh1d_node_branch==branch_origin; %boolean of mesh1d_node of the origin branch
+    % mesh1d_node_connection_origin_midx=find(mesh1d_node_branch_loc_bol==1,1,'last'); %Matlab index of the mesh1d_node of the origin branch connecting to the destination branch
+    mesh1d_node_connection_origin_midx=find(mesh1d_node_branch_loc_bol==1,1,'first'); %Matlab index of the mesh1d_node of the origin branch connecting to the destination branch
+    
+    network_edge_nodes_loc=network_edge_nodes(kb,:); %origin and destination network_node of the origin branch
+    % network_edge_nodes_dest=network_edge_nodes_loc(2); %destination network_node of the origin branch
+    network_edge_nodes_dest=network_edge_nodes_loc(1); %destination network_node of the origin branch
+    % branch_dest_v=find(network_edge_nodes(:,1)==network_edge_nodes_dest)-1; %0-based index of the destination branches. I.e., branches that have as origin the destination node of the origin branch
+    branch_dest_v=find(network_edge_nodes(:,2)==network_edge_nodes_dest)-1; %0-based index of the destination branches. I.e., branches that have as origin the destination node of the origin branch
 
-%reorder
-mesh1d_edge_branch=mesh1d_edge_branch(idx_order);
-mesh1d_edge_offset=mesh1d_edge_offset(idx_order);
-mesh1d_edge_x=mesh1d_edge_x(idx_order);
-mesh1d_edge_y=mesh1d_edge_y(idx_order);
-mesh1d_edge_nodes=mesh1d_edge_nodes(:,idx_order);
+    ndest=numel(branch_dest_v); %number of destination branches to which the origin branch is connected
 
-%% GEOMETRY NETWORK
+    %loop through destination branches
+    for kdest=1:ndest
+        
+        branch_dest_idx=branch_dest_v(kdest); %0-based index of the destination branch
+        branch_dest_midx=branch_dest_idx+1; %Matlab index of the destination branch
 
-%Copy mesh1d_node to network_node
-%loop on branches
-network_geom_x=NaN(size(mesh1d_node_x));
-network_geom_y=network_geom_x;
+        messageOut(fid_log,sprintf('Modifying branch %02d, %s',branch_dest_idx,network_branch_id{branch_dest_idx+1}))
 
-for kb=1:network_nEdges
-    branch_idx=kb-1; %0-based index of the branch
-    mesh1d_node_branch_loc_bol=mesh1d_node_branch==branch_idx; %boolean of mesh1d_node of the branch
+        mesh1d_node_branch_dest_bol=mesh1d_node_branch==branch_dest_idx; %boolean of the mesh1d_node of the destination branch
+        % mesh1d_node_connection_dest_midx=find(mesh1d_node_branch_dest_bol==1,1,'first'); %Matlab index of the mesh1d_node of the destination branch connecting to the origin branch
+        mesh1d_node_connection_dest_midx=find(mesh1d_node_branch_dest_bol==1,1,'last'); %Matlab index of the mesh1d_node of the destination branch connecting to the origin branch
 
-    network_geom_x(mesh1d_node_branch_loc_bol)=mesh1d_node_x(mesh1d_node_branch_loc_bol);
-    network_geom_y(mesh1d_node_branch_loc_bol)=mesh1d_node_y(mesh1d_node_branch_loc_bol);
-    network_geom_node_count(kb)=sum(mesh1d_node_branch_loc_bol);
-end %network_nEdges
+        % mesh1d_edge_node_loc_midx=[mesh1d_node_connection_origin_midx;mesh1d_node_connection_dest_midx]; %Matlab indices of the mesh1d_node connecting origin and destination branch
+        mesh1d_edge_node_loc_midx=[mesh1d_node_connection_dest_midx;mesh1d_node_connection_origin_midx]; %Matlab indices of the mesh1d_node connecting origin and destination branch
+        mesh1d_edge_node_loc_idx=mesh1d_edge_node_loc_midx-1; %0-based indices of the mesh1d_node connecting origin and destination branch
+        mesh1d_edge_x_loc=mean(mesh1d_node_x(mesh1d_edge_node_loc_midx));
+        mesh1d_edge_y_loc=mean(mesh1d_node_y(mesh1d_edge_node_loc_midx));
 
-%% NAMES
+        mesh1d_edge_nodes=cat(2,mesh1d_edge_nodes,mesh1d_edge_node_loc_idx);
+        mesh1d_edge_x=cat(1,mesh1d_edge_x,mesh1d_edge_x_loc);
+        mesh1d_edge_y=cat(1,mesh1d_edge_y,mesh1d_edge_y_loc);
 
-network_node_long_name=network_node_id;
-network_branch_long_name=network_branch_id;
+        %compute distance between final node of origin branch and first
+        %node of destination branch
+        mesh1d_node_connection_dist_x=mesh1d_node_x(mesh1d_node_connection_dest_midx)-mesh1d_node_x(mesh1d_node_connection_origin_midx); %`x` distance between mesh1d_nodes at origin and destination of connection
+        mesh1d_node_connection_dist_y=mesh1d_node_y(mesh1d_node_connection_dest_midx)-mesh1d_node_y(mesh1d_node_connection_origin_midx); %`y` distance between mesh1d_nodes at origin and destination of connection
+        mesh1d_node_connection_dist=hypot(mesh1d_node_connection_dist_x,mesh1d_node_connection_dist_y); %mesh1d_node distance between origin and destination
 
-n_mesh1d_node=numel(mesh1d_node_branch);
-mesh1d_node_id=cell(n_mesh1d_node,1);
-for k=1:n_mesh1d_node
-    mesh1d_node_id{k}=sprintf('%02d_%10.5f',mesh1d_node_branch(k),mesh1d_node_offset(k));
-end %n_mesh1d_node
+        mesh1d_edge_connection_dist=mesh1d_node_connection_dist/2; %mesh1d_edge is at halfway distance between mesh1d_nodes
 
-mesh1d_node_long_name=mesh1d_node_id;
+        % mesh1d_edge_branch_dest_bol=mesh1d_edge_branch==branch_dest_idx; 
+        % mesh1d_edge_offset_dest=mesh1d_edge_offset(mesh1d_edge_branch_dest_bol); %original offset of the existing mesh1d_edge at destination branch
+        % mesh1d_edge_offset_dest=mesh1d_edge_offset_dest+mesh1d_node_connection_dist; %new offset of the existing mesh1d_edge at destination branch
+        % mesh1d_edge_offset(mesh1d_edge_branch_dest_bol)=mesh1d_edge_offset_dest; %assing new value of existing mesh1d_edge
+        % mesh1d_edge_offset=cat(1,mesh1d_edge_offset,mesh1d_edge_connection_dist); %assign new value of new mesh1d_edge
 
-%% PACK
+        mesh1d_node_offset_dest=mesh1d_node_offset(mesh1d_node_branch_dest_bol);
 
-network=v2struct(network_edge_nodes,network_branch_id,network_branch_long_name,network_edge_length,network_node_id,network_node_long_name,network_node_x,network_node_y, ...
-                network_geom_node_count,network_geom_x,network_geom_y,network_branch_order,network_branch_type, ...
-                mesh1d_node_branch,mesh1d_node_offset,mesh1d_node_x,mesh1d_node_y,mesh1d_edge_branch,mesh1d_edge_offset,mesh1d_edge_x,mesh1d_edge_y,mesh1d_node_id,mesh1d_node_long_name,mesh1d_edge_nodes ...
-                );
+        % mesh1d_edge_offset_new=mesh1d_edge_connection_dist; %bifurcation
+        mesh1d_edge_offset_new=mesh1d_edge_connection_dist+mesh1d_node_offset_dest(end); %confluence
+
+        mesh1d_edge_offset=cat(1,mesh1d_edge_offset,mesh1d_edge_offset_new); %assign new value of new mesh1d_edge
+
+        mesh1d_edge_branch=cat(1,mesh1d_edge_branch,branch_dest_idx); %added edge pertains to the destination branch
+
+        % mesh1d_node_offset(mesh1d_node_branch_dest_bol)=mesh1d_node_offset(mesh1d_node_branch_dest_bol)+mesh1d_node_connection_dist; %adjust offset of mesh1d_node of destination branch   
+        network_edge_length(branch_dest_midx)=network_edge_length(branch_dest_midx)+mesh1d_node_connection_dist; %new length of the destination branch        
+    end %ndest
 
 end %function
