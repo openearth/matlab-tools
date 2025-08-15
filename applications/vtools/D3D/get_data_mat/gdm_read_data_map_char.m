@@ -62,19 +62,15 @@ end
 if isempty(time_dnum)
     data=EHY_getMapModelData(fpath_map,'varName',varname,'mergePartitions',1,'disp',0);
 else
-%     if isempty(layer)
-%         if isempty(pli)
-%             data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'tol_t',tol_t);
-%         else
-%             [data,data.grid]=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pliFile',pli);
-%         end
-%     else
-%         if isempty(pli)
-            data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'tol_t',tol_t);%,'bed_layers',bed_layers);
-%         else
-%             data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'pliFile',pli);
-%         end
-%     end
-end
+    nt=2;
+    while nt>1
+        data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'tol_t',tol_t);%,'bed_layers',bed_layers);
+        nt=numel(data.times);
+        tol_t=tol_t/2;
+        if nt>1
+            messageOut(NaN,sprintf('For this time tolerance, there is more than one output time. To prevent iteration, reduce `tol_t`.'))
+        end
+    end
+end %while
 
 end %function
