@@ -69,8 +69,17 @@ else
         tol_t=tol_t/2;
         if nt>1
             messageOut(NaN,sprintf('For this time tolerance, there is more than one output time. To prevent iteration, reduce `tol_t`.'))
+            %WO has a smarter solution. Once you read it and have more than
+            %one time, you can find the right one without rereading the
+            %data.
+            %
+            % [~, idx_t] = min(abs(data.times - time_dnum))
+            % data.Val = data.Val(idx_t,:)
+            % data.times = data.times(idx_t)
         end
     end
+
+
 end %while
 
 end %function
