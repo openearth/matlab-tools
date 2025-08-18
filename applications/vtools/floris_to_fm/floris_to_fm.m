@@ -50,6 +50,8 @@ floris.csl=floris_to_fm_adapt_offset(floris.network,floris.csl,'fid_log',fid_log
 
 %% write files
 
+mkdir_check(fdir_out,NaN,1,0); %create output folder if it does not exist
+
 %cross-section location
 D3D_io_input('write',fullfile(fdir_out,'csl.ini'),floris.csl,'check_existing',false); 
 

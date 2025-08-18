@@ -47,6 +47,11 @@ inside_block_branches=false;
 idx_branches=0;
 
 inside_block_node=false;
+idx_node=0;
+
+inside_block_qhydrograph=false;
+idx_qhydrograph=0;
+ncolumns_bc=2; %Number of columns in BC for a node. 
 
 inside_block_branch=false;
 idx_branch=0; 
@@ -54,7 +59,8 @@ idx_branch=0;
 npreallocated=1000;
 [network_node_id,network_node_x,network_node_y,~]=allocate_network(npreallocated,{''},[],[]);
 [network_branch_id,network_edge_nodes,~]=allocate_branch(npreallocated,{''},[]);
-[csl,nallocated]=allocate_csl(npreallocated);
+[csl,~]=allocate_csl(npreallocated);
+[bc,nallocated]=allocate_bc(npreallocated);
 
 while ~feof(fid)
     line=strtrim(fgetl(fid)); %get line
@@ -109,6 +115,36 @@ while ~feof(fid)
     if strcmpi(line, 'node')
         inside_block_node=true;
 
+        %get node name
+        line=strtrim(fgetl(fid)); %get line
+        tokens=regexp_string_no_quotes(line);
+        idx_nodeId=strcmpi(network_node_id,tokens);
+        if sum(idx_nodeId)~=1
+            error('Node %s is defined, but it is not defined in aliases.',tokens)
+        end
+        nodeId=tokens{1};
+        idx_node=idx_node+1;
+
+        if idx_node==nallocated
+            [bc,nallocated]=allocate_bc(npreallocated,bc);
+        end
+
+        %check type of boundary condition
+        line=strtrim(fgetl(fid)); %get line
+        tokens=regexp_string_no_quotes(line);
+        switch tokens{1}
+            case 'qhydrograph' %boundary condition on discharge
+                inside_block_qhydrograph=true;
+                bc(idx_node).name=nodeId;
+                bc(idx_node).function='timeseries';
+                bc(idx_node).time_interpolation='linear';
+                bc(idx_node).quantity={'time','dischargebnd'};
+                bc(idx_node).unit={'seconds since 2000-01-01 00:00:00 +00:00','m³/s'};
+
+                [bc(idx_node).val,nallocated_2]=allocate_bc_val(npreallocated,[],ncolumns_bc);    
+                
+            otherwise
+        end
         continue
     end
 
@@ -142,12 +178,18 @@ while ~feof(fid)
             inside_block_branch=false;
         end
 
+        %finalize block qhydrograph
+        !~!!! YOU ARE HERE
+        %cut the bc val
+        
         continue
     end %end
 
     %% PROCESS BLOCK
 
-    if ~inside_block_aliase && ~inside_block_branches && ~inside_block_node && ~inside_block_branch
+    skip_process_block=~any([inside_block_aliase,inside_block_branches,inside_block_node,inside_block_branch,inside_block_qhydrograph]);
+    
+    if skip_process_block
         continue
     end
 
@@ -187,11 +229,26 @@ while ~feof(fid)
     end %inside_block_branches
 
     %block node
-    if inside_block_node
-        % tokens=regexp(line,'''[^'']*''|\S+','match');
-        %DO SOMETHING
+    % if inside_block_node
+    %     tokens=regexp_string_no_quotes(line);
+    % 
+    %     %DO SOMETHING
+    % 
+    % end %inside_block_node
 
-    end %inside_block_node
+    %block qhydrograph
+    if inside_block_qhydrograph
+        val=extractNumbers(line);
+        if ~isequal(size(val),[1,ncolumns_bc])
+            error('It is expected that in this line there is one row of %d values: %s ',ncolumns_bc,line)
+        end
+
+        idx_qhydrograph=idx_qhydrograph+1;
+        if size(bc(idx_node).val,1)==nallocated_2
+            [bc(idx_node).val,nallocated_2]=allocate_bc_val(npreallocated,bc(idx_node).val,ncolumns_bc);
+        end
+        bc(idx_node).val(idx_qhydrograph,:)=val;
+    end
 
     %block branch
     if inside_block_branch
@@ -296,3 +353,57 @@ end
 nallocated=numel(csl);
 
 end %function
+
+%%
+
+function [bc,nallocated]=allocate_bc(npreallocated,bc)
+
+% create a scalar struct with all the fields
+template = struct( ...
+    'name',           '', ...
+    'function',     '', ...
+    'time_interpolation',     '', ...
+    'quantity',      {''}, ...
+    'unit',        {''}, ...
+    'val', 0 );
+
+% replicate the template into a 1×N struct array
+bc_empty(1:npreallocated) = template;
+
+if nargin==1
+    bc=bc_empty;
+else
+    bc=[bc,bc_empty];
+end
+nallocated=numel(bc);
+
+end %function
+
+%%
+
+function [val,nallocated]=allocate_bc_val(npreallocated,val,ncolumns_bc)
+
+
+val=cat(1,val,NaN(npreallocated,ncolumns_bc));
+nallocated=size(val,1);
+
+end
+
+%%
+
+function nums = extractNumbers(str)
+%capture all numbers (although I think there are always 2) before a comment
+%e.g.: str = '-240.  1370.   55.5   -12.3   // FOP - Donau Pg. Achleiten';
+
+% If // is present, cut everything after it
+beforeComment = regexp(str, '^(.*?)//', 'tokens', 'once');
+if isempty(beforeComment)
+    beforeComment = str; % no // found, use whole string
+else
+    beforeComment = beforeComment{1};
+end
+
+% Extract numbers (signed, optional decimals)
+tokens = regexp(beforeComment, '(-?\d+(?:\.\d+)?)', 'match');
+nums = str2double(tokens);
+end
