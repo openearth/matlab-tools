@@ -51,12 +51,14 @@ for kbc=1:nbc
         fprintf(fid,'Unit                            = %s \n',bc(kbc).unit{kq});
     end    
     if iscell(bc(kbc).val)
-        for r = 1:size(bc(kbc).val)
-            fprintf(fid,'%s %f %f\n', bc(kbc).val{r,1:end});
+        for kl = 1:size(bc(kbc).val)
+            fprintf(fid,'%s %f %f\n', bc(kbc).val{kl,1:end});
         end
     else
-        for rr = 1:size(bc(kbc).val)
-            fprintf(fid, '%.6f %.6f\n', bc(kbc).val(rr,:));
+        %`writematrix` was implemented by WO because it is faster, but AK found that it does
+        %not add space delimiter properly when number of digits increases along the column dimension. 
+        for kl = 1:size(bc(kbc).val,1)
+            fprintf(fid, '%.6f %.6f\n', bc(kbc).val(kl,:));
         end
     end
 end %kbc
