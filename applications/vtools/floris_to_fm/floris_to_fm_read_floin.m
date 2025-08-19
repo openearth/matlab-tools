@@ -55,9 +55,11 @@ idx_branches=0;
 
 inside_block_node=false;
 
+inside_block_hqrelation=false;
 inside_block_qhydrograph=false;
-idx_qhydrograph=0;
-idx_val_bc=0;
+
+idx_bc=0;
+idx_bc_val=0;
 ncolumns_bc=2; %Number of columns in BC for a node. 
 
 inside_block_branch=false;
@@ -144,20 +146,37 @@ while ~feof(fid)
             case 'qhydrograph' %boundary condition on discharge
                 inside_block_qhydrograph=true;
 
-                idx_qhydrograph=idx_qhydrograph+1;
+                idx_bc=idx_bc+1;
         
-                if idx_qhydrograph==nallocated
+                if idx_bc==nallocated
                     [bc,nallocated]=allocate_bc(npreallocated,bc);
                 end
 
-                bc(idx_qhydrograph).name=nodeId;
-                bc(idx_qhydrograph).function='timeseries';
-                bc(idx_qhydrograph).time_interpolation='linear';
-                bc(idx_qhydrograph).quantity={'time','dischargebnd'};
-                bc(idx_qhydrograph).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
+                bc(idx_bc).name=nodeId;
+                bc(idx_bc).function='timeseries';
+                bc(idx_bc).time_interpolation='linear';
+                bc(idx_bc).quantity={'time','dischargebnd'};
+                bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
 
-                [bc(idx_qhydrograph).val,nallocated_2]=allocate_bc_val(npreallocated,[],ncolumns_bc);    
+                [bc(idx_bc).val,nallocated_2]=allocate_bc_val(npreallocated,[],ncolumns_bc);  
+
+            case 'hqrelation' %boundary condition on qh-relation
+                inside_block_hqrelation=true;
                 
+                idx_bc=idx_bc+1;
+        
+                if idx_bc==nallocated
+                    [bc,nallocated]=allocate_bc(npreallocated,bc);
+                end
+
+                bc(idx_bc).name=nodeId;
+                bc(idx_bc).function='qhtable';
+                % bc(idx_bc).time_interpolation='linear';
+                bc(idx_bc).quantity={'qhbnd discharge','qhbnd waterlevel'}; %ATTENTION! The order here influences the flip when the data is read.
+                bc(idx_bc).unit={'m³/s','m'};
+
+                [bc(idx_bc).val,nallocated_2]=allocate_bc_val(npreallocated,[],ncolumns_bc);  
+
             otherwise
         end
         continue
@@ -172,7 +191,7 @@ while ~feof(fid)
         csl=csl(1:idx_branch);
 
         %finalize all boundary condition
-        bc=bc(1:idx_qhydrograph);
+        bc=bc(1:idx_bc);
 
         continue
     end
@@ -197,12 +216,15 @@ while ~feof(fid)
             inside_block_branch=false;
         end
 
-        %finalize block qhydrograph
-        if inside_block_qhydrograph
-            bc(idx_qhydrograph).val=bc(idx_qhydrograph).val(1:idx_val_bc,:); %cut the bc val
-            idx_val_bc=0;
+        %finalize block qhydrograph or qh-relation
+        if inside_block_qhydrograph || inside_block_hqrelation
+            bc(idx_bc).val=bc(idx_bc).val(1:idx_bc_val,:); %cut the bc val
+            idx_bc_val=0;
 
+            %I think I can make always all false rather than distinguishing
+            %between cases. 
             inside_block_qhydrograph=false;
+            inside_block_hqrelation=false;
         end 
 
         continue
@@ -259,22 +281,33 @@ while ~feof(fid)
     % 
     % end %inside_block_node
 
-    %block qhydrograph
-    if inside_block_qhydrograph
+    %block qhydrograph or block qh-relation
+    if inside_block_qhydrograph || inside_block_hqrelation
         val=extractNumbers(line);
         if ~isequal(size(val),[1,ncolumns_bc])
             error('It is expected that in this line there is one row of %d values: %s ',ncolumns_bc,line)
         end
 
         %modify time unit
-            %We assume the first columns is time in hours. 
-        val(:,1)=val(:,1).*tim_factor;
+        if inside_block_qhydrograph
+            %Column 1: time [hours]
+            %Column 2: discharge [m^3/s]
 
-        idx_val_bc=idx_val_bc+1;
-        if idx_val_bc==nallocated_2
-            [bc(idx_qhydrograph).val,nallocated_2]=allocate_bc_val(npreallocated,bc(idx_qhydrograph).val,ncolumns_bc);
+            %convert time to whatever time we set as input
+            val(:,1)=val(:,1).*tim_factor;
+        elseif inside_block_hqrelation
+            %Column 1: water level  [mAD]
+            %Column 2: discharge [m^3/s]
+
+            %change order of columns. In D3D it is Q-H.
+            val=fliplr(val);
         end
-        bc(idx_qhydrograph).val(idx_val_bc,:)=val;
+
+        idx_bc_val=idx_bc_val+1;
+        if idx_bc_val==nallocated_2
+            [bc(idx_bc).val,nallocated_2]=allocate_bc_val(npreallocated,bc(idx_bc).val,ncolumns_bc);
+        end
+        bc(idx_bc).val(idx_bc_val,:)=val;
         
     end
 

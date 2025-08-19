@@ -44,7 +44,7 @@ for kbc=1:nbc
         fprintf(fid,'Name                            = %s_0001 \n',bc(kbc).name);
     end
     fprintf(fid,'Function                        = %s \n',bc(kbc).function);
-    if isfield(bc(kbc),'time_interpolation') 
+    if isfield(bc(kbc),'time_interpolation') && ~isempty(bc(kbc).time_interpolation)
         fprintf(fid,'Time-interpolation              = %s \n',bc(kbc).time_interpolation);
     end
     for kq=1:nq-1
