@@ -19,6 +19,8 @@ ns=numel(stru);
 %doubles, cells, and datetimes.
 if isscalar(val) %same value to all structure fields   
     val=repmat(val,ns,1);
+elseif ischar(val) && size(val,1)==1
+    val=repmat({val},ns,1);
 end
 
 ni=numel(val);

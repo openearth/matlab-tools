@@ -26,7 +26,11 @@ parse(parin,varargin{:})
 fid_log=parin.Results.fid_log; 
 fdir_out=parin.Results.fdir_out;
 
+fname_bc='bc.bc';
+
 %% CALC
+
+messageOut(fid_log,'Start conversion',3)
 
 %% cfg
 
@@ -38,7 +42,7 @@ fdir_out=parin.Results.fdir_out;
 
 %% floin
 
-[floris.csl,floris.network.network_node_id,floris.network.network_node_x,floris.network.network_node_y,floris.network.network_branch_id,floris.network.network_edge_nodes]=floris_to_fm_read_floin(floris.file.floin,floris.csd,floris.csd_add,'fid_log',fid_log);
+[floris.csl,floris.bc,floris.network.network_node_id,floris.network.network_node_x,floris.network.network_node_y,floris.network.network_branch_id,floris.network.network_edge_nodes]=floris_to_fm_read_floin(floris.file.floin,floris.csd,floris.csd_add,'fid_log',fid_log);
 
 %% create grid
 
@@ -47,6 +51,12 @@ floris.network=floris_to_fm_create_grid(floris.network,floris.csl,floris.csd_add
 %% adapt offset of cross-section
 
 floris.csl=floris_to_fm_adapt_offset(floris.network,floris.csl,'fid_log',fid_log);
+
+%% external forcing 
+
+floris.bc=struct_assign_val(floris.bc,'forcingfile',fname_bc); %specify the file in which the BC will be written to refer in the external-forcing file
+floris.bc=struct_assign_val(floris.bc,'at_node',1); %as it is a 1D model, the BC is specified at a node and node a pli-file. The trailing `_0001` should not be added. 
+floris.ext=D3D_bc_to_ext(floris.bc);
 
 %% write files
 
@@ -58,8 +68,17 @@ D3D_io_input('write',fullfile(fdir_out,'csl.ini'),floris.csl,'check_existing',fa
 %cross-section definition
 D3D_io_input('write',fullfile(fdir_out,'csd.ini'),floris.csd,'check_existing',false); 
 
+%boundary conditions
+D3D_io_input('write',fullfile(fdir_out,fname_bc),floris.bc,'check_existing',false); 
+
+%external forcing
+D3D_io_input('write',fullfile(fdir_out,'ext.ext'),floris.ext,'check_existing',false); 
+
 %grid
 filename=fullfile(fdir_out,'grd_net.nc'); 
 NC_create_1D_grid(filename,floris.network,'fid_log',fid_log);
 
+%% END
+
+messageOut(fid_log,'Finished conversion',3)
 end %function

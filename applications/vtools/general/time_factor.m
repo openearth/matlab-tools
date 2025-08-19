@@ -52,11 +52,11 @@ end %function
 function fact_1=fcn_tim(str)
 
 switch str
-    case 'S'
+    case {'S','seconds'}
         fact_1=1;
-    case 'M'
+    case {'M','minutes'}
         fact_1=60;
-    case 'H'
+    case {'H','hours'}
         fact_1=3600;
     otherwise
         error('Add')

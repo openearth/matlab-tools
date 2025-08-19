@@ -12,17 +12,24 @@
 %
 %Read FLORIS FLOIN file. 
 
-function [csl,network_node_id,network_node_x,network_node_y,network_branch_id,network_edge_nodes]=floris_to_fm_read_floin(fpath_floin,csd,csd_add,varargin)
+function [csl,bc,network_node_id,network_node_x,network_node_y,network_branch_id,network_edge_nodes]=floris_to_fm_read_floin(fpath_floin,csd,csd_add,varargin)
 
 %% PARSE
 
 parin=inputParser;
 
 addOptional(parin,'fid_log',NaN)
+addOptional(parin,'time_unit','hours')
 
 parse(parin,varargin{:})
 
-fid_log=parin.Results.fid_log; %Not yet used
+fid_log=parin.Results.fid_log;
+time_unit=parin.Results.time_unit; 
+
+if ~any(strcmpi({'seconds','minutes','hours'},time_unit))
+    error('Unknown time unit: %s',time_unit)
+end
+tim_factor=time_factor('hours',time_unit); %the input time is in hours
 
 %% CHECK FILE
 
@@ -47,10 +54,10 @@ inside_block_branches=false;
 idx_branches=0;
 
 inside_block_node=false;
-idx_node=0;
 
 inside_block_qhydrograph=false;
 idx_qhydrograph=0;
+idx_val_bc=0;
 ncolumns_bc=2; %Number of columns in BC for a node. 
 
 inside_block_branch=false;
@@ -63,6 +70,11 @@ npreallocated=1000;
 [bc,nallocated]=allocate_bc(npreallocated);
 
 while ~feof(fid)
+    %First, a line is read. If the line corresponds to the beginning of a
+    %block, the block is initialized. A logical flag indicating the kind of
+    %block is set. If we are inside a block, the line is processed. 
+
+    %% NEW LINE
     line=strtrim(fgetl(fid)); %get line
 
     %skip empty lines and comments
@@ -70,7 +82,7 @@ while ~feof(fid)
         continue
     end
 
-    %% INITIALIZATION
+    %% INITIALIZATION OF BLOCK
 
     %block aliase
     if strcmpi(line, 'aliase')
@@ -123,11 +135,7 @@ while ~feof(fid)
             error('Node %s is defined, but it is not defined in aliases.',tokens)
         end
         nodeId=tokens{1};
-        idx_node=idx_node+1;
 
-        if idx_node==nallocated
-            [bc,nallocated]=allocate_bc(npreallocated,bc);
-        end
 
         %check type of boundary condition
         line=strtrim(fgetl(fid)); %get line
@@ -135,25 +143,36 @@ while ~feof(fid)
         switch tokens{1}
             case 'qhydrograph' %boundary condition on discharge
                 inside_block_qhydrograph=true;
-                bc(idx_node).name=nodeId;
-                bc(idx_node).function='timeseries';
-                bc(idx_node).time_interpolation='linear';
-                bc(idx_node).quantity={'time','dischargebnd'};
-                bc(idx_node).unit={'seconds since 2000-01-01 00:00:00 +00:00','m³/s'};
 
-                [bc(idx_node).val,nallocated_2]=allocate_bc_val(npreallocated,[],ncolumns_bc);    
+                idx_qhydrograph=idx_qhydrograph+1;
+        
+                if idx_qhydrograph==nallocated
+                    [bc,nallocated]=allocate_bc(npreallocated,bc);
+                end
+
+                bc(idx_qhydrograph).name=nodeId;
+                bc(idx_qhydrograph).function='timeseries';
+                bc(idx_qhydrograph).time_interpolation='linear';
+                bc(idx_qhydrograph).quantity={'time','dischargebnd'};
+                bc(idx_qhydrograph).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
+
+                [bc(idx_qhydrograph).val,nallocated_2]=allocate_bc_val(npreallocated,[],ncolumns_bc);    
                 
             otherwise
         end
         continue
     end
 
-    %block compute
+    %block compute (asummed at the end of the definition, used to finalize
+    %all blocks)
     if strcmpi(line, 'compute')
         % inside_block_compute=true;
 
         %finalize all branch
         csl=csl(1:idx_branch);
+
+        %finalize all boundary condition
+        bc=bc(1:idx_qhydrograph);
 
         continue
     end
@@ -179,9 +198,13 @@ while ~feof(fid)
         end
 
         %finalize block qhydrograph
-        !~!!! YOU ARE HERE
-        %cut the bc val
-        
+        if inside_block_qhydrograph
+            bc(idx_qhydrograph).val=bc(idx_qhydrograph).val(1:idx_val_bc,:); %cut the bc val
+            idx_val_bc=0;
+
+            inside_block_qhydrograph=false;
+        end 
+
         continue
     end %end
 
@@ -243,11 +266,16 @@ while ~feof(fid)
             error('It is expected that in this line there is one row of %d values: %s ',ncolumns_bc,line)
         end
 
-        idx_qhydrograph=idx_qhydrograph+1;
-        if size(bc(idx_node).val,1)==nallocated_2
-            [bc(idx_node).val,nallocated_2]=allocate_bc_val(npreallocated,bc(idx_node).val,ncolumns_bc);
+        %modify time unit
+            %We assume the first columns is time in hours. 
+        val(:,1)=val(:,1).*tim_factor;
+
+        idx_val_bc=idx_val_bc+1;
+        if idx_val_bc==nallocated_2
+            [bc(idx_qhydrograph).val,nallocated_2]=allocate_bc_val(npreallocated,bc(idx_qhydrograph).val,ncolumns_bc);
         end
-        bc(idx_node).val(idx_qhydrograph,:)=val;
+        bc(idx_qhydrograph).val(idx_val_bc,:)=val;
+        
     end
 
     %block branch

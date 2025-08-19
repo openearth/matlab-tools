@@ -14,6 +14,8 @@
 
 function stru_out=D3D_read_ext(fpath)
 
+warning('use `D3D_io_input`)
+
 [fdir,fname,fext]=fileparts(fpath);
 fpath_mod=fullfile(fdir,sprintf('%s_mod%s',fname,fext));
 copyfile_check(fpath,fpath_mod);

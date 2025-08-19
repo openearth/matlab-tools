@@ -15,6 +15,9 @@ function D3D_write_bc(fpath,bc)
 %% RENAME
 
 nbc=numel(bc);
+if ~isfield(bc,'at_node')
+    bc=struct_assign_val(bc,'at_node',NaN);
+end
 
 %% CALC
 fid=fopen(fpath,'w');
@@ -29,10 +32,12 @@ for kbc=1:nbc
     % Unit                            = minutes since 2007-01-01 00:00:00 +01:00
     % Quantity                        = dischargebnd
     % Unit                            = m3/s
+
     nq=numel(bc(kbc).quantity);
     
+    fprintf(fid,'\n');
     fprintf(fid,'[forcing] \n');
-    if any(contains(bc(kbc).quantity,'lateral'))||any(contains(bc(kbc).quantity,'qhtable')) %at a point
+    if any(contains(bc(kbc).quantity,'lateral')) || any(contains(bc(kbc).quantity,'qhtable')) || bc(kbc).at_node==1 %at a point
         %ATTENTION! this is not robust enough. I am not sure it works well for all cases.
         fprintf(fid,'Name                            = %s \n',bc(kbc).name);
     else %along pli
