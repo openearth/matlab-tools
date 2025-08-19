@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 17737 $
-%$Date: 2022-02-07 09:06:58 +0100 (Mon, 07 Feb 2022) $
-%$Author: chavarri $
-%$Id: D3D_crosssectionlocation.m 17737 2022-02-07 08:06:58Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/input_generation/D3D_crosssectionlocation.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Convert a cell array with char to a char array of given size.
 

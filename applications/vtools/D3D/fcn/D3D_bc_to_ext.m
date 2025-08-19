@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20282 $
-%$Date: 2025-08-19 06:08:34 +0200 (Tue, 19 Aug 2025) $
-%$Author: chavarri $
-%$Id: D3D_write_bc.m 20282 2025-08-19 04:08:34Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/D3D/fcn/D3D_write_bc.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 
 function ext=D3D_bc_to_ext(bc)

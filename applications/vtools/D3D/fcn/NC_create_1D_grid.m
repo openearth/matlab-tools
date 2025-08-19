@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 19659 $
-%$Date: 2024-06-03 08:02:18 +0200 (Mon, 03 Jun 2024) $
-%$Author: chavarri $
-%$Id: writetxt.m 19659 2024-06-03 06:02:18Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/general/writetxt.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Create NetCDF file of a 1D grid for Delft3D FM.
 
