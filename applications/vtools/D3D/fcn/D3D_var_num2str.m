@@ -277,6 +277,15 @@ if ischar(varname_input)
             varname_save_mat='waveheight';
             varname_load_mat='waveheight';
             varname_label=varname_load_mat;
+        case {'q'}
+            if is1d
+                varname_read_variable='mesh1d_q1';
+            else
+                error('Maybe you want to read `qsp`')
+            end
+            varname_save_mat='q';
+            varname_load_mat=varname_save_mat;
+            varname_label=varname_load_mat;            
         otherwise
             varname_read_variable=varname_input;
             varname_save_mat=varname_input;
