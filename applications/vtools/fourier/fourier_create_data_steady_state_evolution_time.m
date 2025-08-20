@@ -21,12 +21,14 @@ parin=inputParser;
 addOptional(parin,'plot',0);
 addOptional(parin,'overwrite',0);
 addOptional(parin,'order_anl',1);
+addOptional(parin,'do_only_index',false);
 
 parse(parin,varargin{:});
 
 do_plot=parin.Results.plot;
 overwrite=parin.Results.overwrite;
 order_anl=parin.Results.order_anl;
+do_only_index=parin.Results.do_only_index;
 
 pert_anl=1; %1=full
 
@@ -88,6 +90,19 @@ for k=1:nv
     %initial condition
     % noise_etab=initial_condition(x_in,y_in,noise_Lbx,noise_Lby,etab_max); %not needed, already in the Fourier modes
     
+    %% SAVE TO MAT
+
+    data(kv).Lx=noise_Lbx;
+    data(kv).Ly=noise_Lby;
+    data(kv).c=c;
+    data(kv).w=w;
+
+    if do_only_index
+        continue
+    end
+
+    %% RECONSTRUCT
+
     %specific modes
     [fx2,fy2,P2]=fourier_modes_alternate_bar(noise_Lbx,noise_Lby,etab_max);
     
@@ -109,13 +124,6 @@ for k=1:nv
         
         fig_surf(in_p);
     end
-
-    %% SAVE TO MAT
-    
-    data(kv).Lx=noise_Lbx;
-    data(kv).Ly=noise_Lby;
-    data(kv).c=c;
-    data(kv).w=w;
 
 end %kv
 

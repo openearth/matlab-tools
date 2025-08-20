@@ -154,10 +154,6 @@ end
 if isfield(in_p,'do_staircase')==0
     in_p.do_staircase=0;
 end
-
-if isfield(in_p,'Lref')==0
-    in_p.Lref='+NAP';
-end
 if isfield(in_p,'ylab')==0
     in_p.ylab='';
 end

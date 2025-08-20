@@ -26,6 +26,7 @@ in_p=isfield_default(in_p,'tol_clims',1e-8);
 % in_p=isfield_default(in_p,'clims',[NaN,NaN]); %inside do_auto_limit
 in_p=isfield_default(in_p,'unit',1);
 in_p=isfield_default(in_p,'variable','');
+in_p=isfield_default(in_p,'Lref','+NAP');
 
 v2struct(in_p)
 
@@ -35,7 +36,7 @@ end
 
 %%
 
-[lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(variable,unit,lan,'frac',frac);
+[lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(variable,unit,lan,'frac',frac,'Lref',Lref);
 
 clims_comp=[min(val(:),[],'omitnan'),max(val(:),[],'omitnan')];
 if isnan(clims_comp(1)) %still NaN because all are NaN

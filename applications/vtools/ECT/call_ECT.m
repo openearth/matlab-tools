@@ -25,11 +25,8 @@ v2struct(ECT_input)
 
 I=0;
 beta_c=1.0; %0=no secondary flow; 1=secondary flow without calibration !! it is used also in the linear source term
-Dh=0;
-kappa=0;
 
 Gammak=NaN(size(gsd));
-% der=1e-8;
 
 %% Sediment Transport
 
@@ -57,7 +54,6 @@ qbk_no_pores=qbk.*(1-cnt.p);
 % cf_p=1/(6+2.5*log(h/(2.5*gsd(1))))^2
 
 Gammak=Gammak_eq;
-alpha_pmm=NaN;
 % Gammak=[0,0]; 
 % [qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm]=sediment_transport(flg,cnt,repmat(h,1,numel(gsd)),repmat(u*h,1,numel(gsd)),repmat(Cf,1,numel(gsd)),repmat(La,1,numel(gsd)),Mak,gsd,sedTrans,hiding,1,E_param,vp_param,Gammak);
 

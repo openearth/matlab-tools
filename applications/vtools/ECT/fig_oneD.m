@@ -4,14 +4,14 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision: 20047 $
+%$Date: 2025-02-13 09:19:45 +0100 (Thu, 13 Feb 2025) $
+%$Author: chavarri $
+%$Id: twoD_study.m 20047 2025-02-13 08:19:45Z chavarri $
+%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/ECT/twoD_study.m $
 %
 
-function fig_twoD_2(in_2D,max_cl_m,max_gr_m,xm_k,ym_k,xm_l,ym_l)
+function fig_oneD(in_2D,max_cl_m,max_gr_m,xm_k,ym_k,xm_l,ym_l)
 
 %% DEFAULT
 
@@ -32,38 +32,14 @@ if isfield(in_2D.fig,'print_size')==0
     in_2D.fig.print_size=[0,0,17,12];
 end
 in_2D.fig=isfield_default(in_2D.fig,'title_str',repmat({'growth rate [rad/s]'},1,size(max_gr_m,3)));
-in_2D.fig=isfield_default(in_2D.fig,'plot_max',1);
-
-in_2D.fig=isfield_default(in_2D.fig,'contours_l',{});
-if isempty(in_2D.fig.contours_l)
-    in_2D.fig=isfield_default(in_2D.fig,'plot_set_contour_l',0);
-else
-    in_2D.fig=isfield_default(in_2D.fig,'plot_set_contour_l',1);
-end
-
-in_2D.fig=isfield_default(in_2D.fig,'contours_k',{});
-if isempty(in_2D.fig.contours_k)
-    in_2D.fig=isfield_default(in_2D.fig,'plot_set_contour_k',0);
-else
-    in_2D.fig=isfield_default(in_2D.fig,'plot_set_contour_k',1);
-end
 
 v2struct(in_2D) %better to keep structure below
 v2struct(fig)
 
 %% DIMENSIONS
 
-
 ne=size(max_cl_m,3)+3;
 nsim=size(max_gr_m,3); 
-
-%% data rework
-
-%max location
-[max_idx_sc_val,max_idx_sc]=max(max_gr_m(:));
-[max_idx_sc_x,max_idx_sc_y]=ind2sub(size(max_gr_m),max_idx_sc);
-
-ks=1; %to loop over contours?
 
 %%
 %figure input
@@ -123,11 +99,11 @@ set(groot,'defaultTextInterpreter','tex');
 set(groot,'defaultAxesTickLabelInterpreter','tex'); 
 set(groot,'defaultLegendInterpreter','tex');
 
-%colorbar
-kr=1; kc=2;
-cbar(kr,kc).displacement=[0.0,0,0,0]; 
-cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label='minimum diffusion coefficient [m^2/s]';
+% %colorbar
+% kr=1; kc=2;
+% cbar(kr,kc).displacement=[0.0,0,0,0]; 
+% cbar(kr,kc).location='northoutside';
+% cbar(kr,kc).label='minimum diffusion coefficient [m^2/s]';
 
 %text
     %irregulra
@@ -168,29 +144,23 @@ end
 %     end
 % end
 
-clim_l=max(abs(min(max_gr_m(:))),abs(max(max_gr_m(:))));
-clim_f=[-clim_l,clim_l];
-
-if exist('f_clim','var')==0
-    f_clim(1,1:2)=[1,1];
-end
 
 %axes and limits
 for ksim=1:nsim
 
 kr=ksim; kc=1;
 lims.x(kr,kc,1:2)=[min(xm_k(:)),max(xm_k(:))];
-lims.y(kr,kc,1:2)=[min(ym_k(:)),max(ym_k(:))];
-lims.c(kr,kc,1:2)=clim_f*f_clim(ks,1);
+lims.y(kr,kc,1:2)=absolute_limits(max_gr_m(:,:,ksim));
+% lims.c(kr,kc,1:2)=clim_f*f_clim(ks,1);
 xlabels{kr,kc}='k_{wx} [rad/m]';
-ylabels{kr,kc}='k_{wy} [rad/m]';
+ylabels{kr,kc}='growth rate [rad/s]';
 
 kr=ksim; kc=2;
 lims.x(kr,kc,1:2)=[min(xm_l(:)),max(xm_l(:))];
-lims.y(kr,kc,1:2)=[min(ym_l(:)),max(ym_l(:))];
-lims.c(kr,kc,1:2)=clim_f*f_clim(ks,2);
+lims.y(kr,kc,1:2)=absolute_limits(max_gr_m(:,:,ksim));
+% lims.c(kr,kc,1:2)=clim_f*f_clim(ks,2);
 xlabels{kr,kc}='l_{wx} [m]';
-ylabels{kr,kc}='l_{wy} [m]';
+ylabels{kr,kc}='growth rate [rad/s]';
 
 end
 
@@ -222,6 +192,8 @@ end
 % han.sfig(1,2)=axes('units','normalized','Position',pos.sfig+[0  ,0,0,aux_yco],'XAxisLocation','top','YAxisLocation','right','XColor','none','YColor',prop.color(1,:),'Color','none','ylim',[0,1]);
 % han.sfig(1,2).YLabel.String='sediment transport rate (coarse) [g/min]';
 
+%%
+
 for ksim=1:nsim
     kr=ksim;
     for kc=1:npc
@@ -230,18 +202,20 @@ grid(han.sfig(kr,kc),'on')
 % axis(han.sfig(kr,kc),'equal')
 han.sfig(kr,kc).Box='on';
 han.sfig(kr,kc).XLim=lims.x(kr,kc,:);
-han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
+% han.sfig(kr,kc).YLim=lims.y(kr,kc,:);
 if kr==npr
     han.sfig(kr,kc).XLabel.String=xlabels{kr,kc};
 else
     han.sfig(kr,kc).XTickLabel='';
     % han.sfig(kr,kc).XTick=[];  
 end
+if kc==1
 han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
+else
+    han.sfig(kr,kc).YTickLabel='';
+    % han.sfig(kr,kc).YTick=[];  
+end
 
-% han.sfig(kr,kc).YTickLabel='';
-
-% han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
 % han.sfig(kr,kc).YScale='log';
 if kc==1
@@ -252,55 +226,19 @@ end
     end
 end
 
-%plots
-% plot_v1{1,1}=[-1,0,5,10,15,20,25];
-% plot_v2{1,1}=[-1000,-10,-0.01,0];
+%%
 
 for ksim=1:nsim
     kr=ksim;
 kc=1;    
-if plot_set_contour_k
-    han.p1=contourf(xm_k,ym_k,max_gr_m(:,:,ksim),contours_k{kr},'showtext','on','parent',han.sfig(kr,kc));
-else
-    han.p1=contourf(xm_k,ym_k,max_gr_m(:,:,ksim),'showtext','on','parent',han.sfig(kr,kc));
-end
-for ke=1:ne-3
-    [han.p2,aux.p]=contour(xm_k,ym_k,max_cl_m(:,:,ke),[0,0],'showtext','off','parent',han.sfig(kr,kc));
-    aux.p.LineWidth=2;
-    aux.p.Color='k';
-%     han.p2=contour(xm_k,ym_k,max_cl_m(:,:,ke),'showtext','on')
-end
-han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
+plot(xm_k(1,:),max_gr_m(1,:,ksim),'parent',han.sfig(kr,kc));
 
 kc=2;    
-if plot_set_contour_l
-    han.p1=contourf(xm_l,ym_l,max_gr_m(:,:,ksim),contours_l{kr},'showtext','on','parent',han.sfig(kr,kc));
-else
-    han.p1=contourf(xm_l,ym_l,max_gr_m(:,:,ksim),'showtext','on','parent',han.sfig(kr,kc));
-end
-for ke=1:ne-3
-    [han.p2,aux.p]=contour(xm_l,ym_l,max_cl_m(:,:,ke),[0,0],'showtext','off','parent',han.sfig(kr,kc));
-    aux.p.LineWidth=2;
-    aux.p.Color='k';
-%     han.p2=contour(xm_l,ym_l,max_cl_m(:,:,ke),'showtext','on')
-end
-han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
-
-if plot_max
-scatter3(xm_l(max_idx_sc_x,max_idx_sc_y),ym_l(max_idx_sc_x,max_idx_sc_y),max_idx_sc_val,50,'k','parent',han.sfig(kr,kc),'filled');
-end
-
-
-
-%colormap
-for kc=1:npc
-% kr=1; kc=1;
-% view(han.sfig(kr,kc),[0,90]);
-colormap(han.sfig(kr,kc),cmap);
-caxis(han.sfig(kr,kc),lims.c(kr,kc,1:2));
-end
+plot(xm_l(1,:),max_gr_m(1,:,ksim),'parent',han.sfig(kr,kc));
 
 end %ksim
+
+%%
 
 %text
 % kr=1; kc=1;  

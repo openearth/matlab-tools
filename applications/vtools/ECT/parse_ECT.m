@@ -96,4 +96,8 @@ if isfield(ECT_input,'mor_fac')==0
     ECT_input.mor_fac=1;
 end
 
+ECT_input=isfield_default(ECT_input,'alpha_pmm',NaN);
+ECT_input=isfield_default(ECT_input,'Dh',0);
+ECT_input=isfield_default(ECT_input,'kappa',zeros(size(ECT_input.gsd)));
+
 end %function

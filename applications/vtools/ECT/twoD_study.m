@@ -26,12 +26,12 @@ end
 if isfield(in_2D,'lims_lwy')==0
     in_2D.lims_lwy=in_2D.lims_lw;
 end
-np=250;
+in_2D=isfield_default(in_2D,'np',250);
 if isfield(in_2D,'kwx_v')==0
-    in_2D.kwx_v=(10.^(linspace(log10(2*pi/in_2D.lims_lwx(2)),log10(2*pi/in_2D.lims_lwx(1)),np)));
+    in_2D.kwx_v=(10.^(linspace(log10(2*pi/in_2D.lims_lwx(2)),log10(2*pi/in_2D.lims_lwx(1)),in_2D.np)));
 end
 if isfield(in_2D,'kwy_v')==0
-    in_2D.kwy_v=(10.^(linspace(log10(2*pi/in_2D.lims_lwy(2)),log10(2*pi/in_2D.lims_lwy(1)),np)));
+    in_2D.kwy_v=(10.^(linspace(log10(2*pi/in_2D.lims_lwy(2)),log10(2*pi/in_2D.lims_lwy(1)),in_2D.np)));
 end
 if isfield(in_2D,'qs_anl')==0
     in_2D.qs_anl=0;

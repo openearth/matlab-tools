@@ -81,7 +81,8 @@ end
 %% maximum growth rate
 
 eig_i_p_no_zero=eig_i_p;
-eig_i_p_no_zero(abs(eig_i_p_no_zero)<1e-16)=NaN;
+eig_i_p_no_zero(abs(eig_i_p_no_zero)<1e-16)=0;
+% eig_i_p_no_zero(abs(eig_i_p_no_zero)<1e-16)=NaN; %with this, if all are 0, I obtain NaN. 
 max_gr_p=max(eig_i_p_no_zero,[],2,'omitnan');
 max_gr_m=reshape(max_gr_p,np1,np2);
 
