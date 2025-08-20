@@ -181,8 +181,11 @@ if isfield(in_p,'is_dom')==0
 end
 in_p=isfield_default(in_p,'clims',[NaN,NaN]);
 in_p=isfield_default(in_p,'title_str','');
+
+%baclward compatibility. Use `variable`.
 in_p=isfield_default(in_p,'lab_str','variable');
 in_p=isfield_default(in_p,'varname',in_p.lab_str);
+in_p=isfield_default(in_p,'variable',in_p.varname);
 
 v2struct(in_p)
 
@@ -430,16 +433,8 @@ if isempty(ylab)
     if numel(frac)>1
         frac='';
     end
-    [lab,str_var,str_un,str_diff,str_background,str_std,str_diff_back,str_fil,str_rel,str_perc,str_dom]=labels4all(varname,1,lan,'Lref',Lref,'frac',frac);
-    if is_diff
-        ylabels{kr,kc}=str_diff;
-    elseif is_std
-        ylabels{kr,kc}=str_std;
-    elseif is_dom
-        ylabels{kr,kc}=str_dom;
-    else
-        ylabels{kr,kc}=lab;
-    end
+    [~,cstring,~]=gdm_cmap_and_string(in_p,val);
+    ylabels{kr,kc}=cstring;
 else
     ylabels{kr,kc}=ylab;
 end

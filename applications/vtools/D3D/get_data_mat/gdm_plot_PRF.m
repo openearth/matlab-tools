@@ -10,9 +10,9 @@
 %$Id$
 %$HeadURL$
 %
-%
+%Plot PRF (profile)
 
-function plot_map_2DH_ls_01(fid_log,flg_loc,simdef)
+function gdm_plot_PRF(fid_log,flg_loc,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
@@ -76,6 +76,7 @@ for kpli=1:npli %variable
         
         layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
         var_idx=flg_loc.var_idx{kvar};
+        in_p.frac=var_idx;
 
         %Time 1 of simulation 1 for reference
         %It is up to you to be sure that it is the same for all simulations!
@@ -619,7 +620,7 @@ for klim=1:nlims %ylim
             fig_map_ls_01(in_p)  
     
         case 2 % single layer (line plot)
-            in_p.lab_str=var_str_read;
+            in_p.variable=var_str_read;
             in_p.ylims=lims_loc(klim,:);
             in_p.xlims=flg_loc.xlims(klim,:);
             in_p.val=data_loc; %[np,1] (same as x), or cell array!

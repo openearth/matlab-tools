@@ -66,11 +66,11 @@ if isfield(in_plot,tag_check)==1
     plot_map_1D_xv_01(fid_log,in_plot_fig,simdef)
 end
 
-%% map 2DH ls
+%% PRF
 in_plot_fig=gdm_check_tag_PRF(in_plot);
 if in_plot_fig.do
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
-    plot_map_2DH_ls_01(fid_log,in_plot_fig,simdef)
+    gdm_plot_PRF(fid_log,in_plot_fig,simdef)
 end
 
 %% map 2DH

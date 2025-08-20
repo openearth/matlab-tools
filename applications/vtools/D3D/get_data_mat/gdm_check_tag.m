@@ -18,6 +18,8 @@ in_plot=gdm_check_deprecated_tag(in_plot,tag_old,tag_check);
 
 if isfield(in_plot,tag_check)
     in_plot_fig=gmd_tag(in_plot,tag_check); %is this needed? I think it can be simplified and only take the still-relevant parts of it
+else
+    in_plot_fig.do=0;
 end
 
 end %function
