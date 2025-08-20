@@ -67,9 +67,8 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% map 2DH ls
-tag_check='fig_map_2DH_ls_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
+in_plot_fig=gdm_check_tag_PRF(in_plot);
+if in_plot_fig.do
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     plot_map_2DH_ls_01(fid_log,in_plot_fig,simdef)
 end
