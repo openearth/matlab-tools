@@ -51,6 +51,7 @@ in_p=isfield_default(in_p,'xlab_str','dist_prof',true);
 in_p=isfield_default(in_p,'do_measurements',0);
 in_p=isfield_default(in_p,'clims',[NaN,NaN]);
 in_p=isfield_default(in_p,'is_diff',0);
+
 if in_p.do_measurements
     in_p=isfield_default(in_p,'mt',2.5);
 else
@@ -78,26 +79,25 @@ end
 
 %%
 
+if isfield(in_p,'unit')
+    warning('Do not use `unit` for describing the variable. Use `variable`.')
+    %REVISE
 switch unit
     case {'cl','cl_surf'}
         clims=sal2cl(1,clims);
-%         val_m=sal2cl(1,val_m); %it is done when loading the data. It is a bit inconsistent that we don't do it with the limits.
         if exist('levels','var')==1
         levels=sal2cl(1,levels);
         end
-%         if do_fil
-%             val_f=sal2cl(1,val_f);
-%         end
-%     case 'sal'
-%     otherwise
-%         error('not sure what to do')
+end
 end
 
 %%
 
-nS=size(val_m,3);
+%contour allows plotting several simulations on the same x-t plot
+
+nS=size(val_m,3); %number of simulations. 
 if nS>1 && strcmp(plot_style,'contour')==0
-    messageOut('You want something else than a contour plot with more than one simulation at a time, that is not possible. I switch to contour.')
+    messageOut(NaN,'You want something else than a contour plot with more than one simulation at a time, that is not possible. I switch to contour.')
     plot_style='contour';
 end
 
@@ -210,98 +210,20 @@ set(groot,'defaultLegendInterpreter','tex');
 
 %% COLORBAR AND COLORMAP
 
+[cmap,cstring,clims]=gdm_cmap_and_string(in_p,v_m);
+
 %colorbar
 kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0.1,0.46,0]; 
 cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label=labels4all(unit,1,lan);
+cbar(kr,kc).label=cstring;
 
-% brewermap('demo')
+%colormap
 if nS>1
+    %If more than one simulation, the only possibility is a contour plot in
+    %which each simulation has a different colour. 
     cmap=brewermap(nS,'set1');
-else
-    if is_diff
-        cmap=brewermap(100,'RdYlBu');
-    else
-        cmap=improved_turbo(100);
-    end
 end
-%center around 0
-% ncmap=1000;
-% cmap1=brewermap(ncmap,'RdYlGn');
-% cmap=flipud([flipud(cmap1(1:ncmap/2-ncmap*0.05,:));flipud(cmap1(ncmap/2+ncmap*0.05:end,:))]);
-
-%cutted centre colormap
-% ncmap=100;
-% cmap=flipud(brewermap(ncmap,'RdBu'));
-% fact=0.1; %percentage of values to remove from the center
-% cmap=[cmap(1:(ncmap-round(fact*ncmap))/2,:);cmap((ncmap+round(fact*ncmap))/2:end,:)];
-
-%compressed colormap
-% ncmap=100;
-% cmap=flipud(brewermap(ncmap,'RdYlBu'));
-% p1=0.5; %fraction of cmap compressed in p2
-% p2=0.7; %fraction of
-% np1=round(ncmap*p1);
-% np2=round(ncmap*p2);
-% x=1:1:ncmap;
-% x1=1:1:np1; %x vector
-% x2=1:1:ncmap-np1; %x vector
-% y1=cmap(1:np1,:); 
-% y2=cmap(np1+1:end,:); 
-% xq1=linspace(1,np1,np2); %query vector 1
-% xq2=linspace(1,ncmap-np1,ncmap-np2); %query vector 2
-% vq1=interp1(x1,y1,xq1);
-% vq2=interp1(x2,y2,xq2);
-% cmap=[vq1;vq2];
-
-%gauss colormap
-% ncmap=100;
-% cmap=flipud(brewermap(ncmap,'RdYlBu'));
-% x=linspace(0,1,ncmap);
-% xs=normcdf(x,0.5,0.25);
-% plot(x,xs)
-% cmap2=interp1(x,cmap,xs);
-% cmap=cmap2;
-% %merge 2 colormaps at a specific value. cmap1 spans between [clim_l(1),aux_cmap_change] and cmap 2 between [aux_cmap_change,clim_l(2)]
-% ncmap=100; %total number of colors (will be rounded)
-% aux_cmap_change=1; %value in which the colormaps change. 
-% aux_cmap1_n=round(ncmap*(aux_cmap_change-clim_l(1))/(clim_l(2)-clim_l(1)));
-% aux_cmap2_n=round(ncmap*(clim_l(2)-aux_cmap_change)/(clim_l(2)-clim_l(1)));
-% cmap1=flipud(brewermap(aux_cmap1_n,'Reds'));
-% cmap2=brewermap(aux_cmap2_n,'Greens');
-% cmap=[cmap1;cmap2];
-
-%interpolate depending on values
-% c=[200e-6,210e-6,300e-6,420e-6,2e-3,5.6e-3,16e-3,20e-3]*1e3;
-% nc=numel(c);
-% cmap=brewermap(nc-1,'Reds');
-% 
-% F1=griddedInterpolant(c(1:end-1)',cmap(:,1),'linear','nearest');
-% F2=griddedInterpolant(c(1:end-1)',cmap(:,2),'linear','nearest');
-% F3=griddedInterpolant(c(1:end-1)',cmap(:,3),'linear','nearest');
-% 
-% %e.g.
-% ct=[0.1e-3:0.1e-3:24e-3]*1e3; %color-dependent value
-% nct=numel(ct);
-% y=zeros(1,nct); %e.g.
-% x=1:1:nct; %e.g.
-% for kct=1:nct
-% scatter(x(kct),y(kct),20,[F1(ct(kct)),F2(ct(kct)),F3(ct(kct))],'filled')
-% end
-% han.cbar=colorbar;
-% colormap(cmap)
-% clim([1,nc])
-% han.cbar.Ticks=1:1:nc;
-% aux_str=cell(nc,1);
-% for kc=1:nc
-%     if c(kc)<1
-%         aux_str{kc,1}=sprintf('%3.0fe-3',c(kc)*1000);
-%     else
-%         aux_str{kc,1}=sprintf('%3.1f',c(kc));
-%     end
-% end
-% han.cbar.TickLabels=aux_str;
 
 %% TEXT
 
@@ -348,16 +270,16 @@ end
 %data rework
 lim_dist=[min(d_m(:)),max(d_m(:))].*s_fact;
 % lim_t=[min(t_m(:)),max(t_m(:))];
-if isnan(clims(1))
-    if is_diff
-        clims=absolute_limits(val_m);
-    else
-        clims=[min(val_m(:)),max(val_m(:))];
-        if diff(clims)<eps
-            clims=[-eps,eps];
-        end
-    end
-end
+% if isnan(clims(1))
+%     if is_diff
+%         clims=absolute_limits(val_m);
+%     else
+%         clims=[min(val_m(:)),max(val_m(:))];
+%         if diff(clims)<eps
+%             clims=[-eps,eps];
+%         end
+%     end
+% end
 
 %axes and limits
 kr=1; kc=1;
