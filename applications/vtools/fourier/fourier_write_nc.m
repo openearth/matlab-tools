@@ -12,7 +12,7 @@
 %
 %Write result of steady-state Fourier for alternate bars in NetCDF format.
 
-function fourier_write_nc(filename,x,y,t,Q_rec,noise_Lbx,noise_W,etab_max)
+function fourier_write_nc(filename,x,y,t,Q_rec,noise_Lbx,noise_W,etab_max,c,w)
 
 nx=numel(x);
 ny=numel(y);
@@ -64,6 +64,8 @@ netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'),'title','Linear solution alte
 netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'),'wavelength in x-direction [m]',noise_Lbx); 
 netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'),'wavelength in y-direction [m]',noise_W*2); 
 netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'),'initial perturbation in bed level [m]',etab_max); 
+netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'),'celerity [m s-1]',c); 
+netcdf.putAtt(ncid,netcdf.getConstant('NC_GLOBAL'),'growth rate [rad s-1]',w); 
 
 % End define mode
 netcdf.endDef(ncid);

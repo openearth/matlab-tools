@@ -111,7 +111,7 @@ for k=1:nv
     
     %% WRITE
     
-    fourier_write_nc(filename,x,y,t,Q_rec,noise_Lbx,noise_W,etab_max)
+    fourier_write_nc(filename,x,y,t,Q_rec,noise_Lbx,noise_W,etab_max,c,w)
     
     %% PLOT
     
@@ -180,7 +180,8 @@ y=y+noise_W/2;
 T_c=abs(nmove*noise_Lbx/c); %time to move fact of lambda
 T_w=abs(1/w*log(nmove)); %time to decrease or increase `nmove` fraction of the original amplitude. $\omega=1/(\Delta t)*ln(A2/A1)$
 T=min([T_c,T_w,365*24*3600]);
-t0=1; %for t=0, the analytical solution of the bed level is 0. 
+% t0=1; %for t=0, the analytical solution of the bed level is 0. 
+t0=T/2; 
 tf=t0+T;
 t=linspace(t0,tf,nt); 
 
