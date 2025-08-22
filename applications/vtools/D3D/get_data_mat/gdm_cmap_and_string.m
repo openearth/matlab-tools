@@ -16,19 +16,31 @@ function [cmap,cstring,clims]=gdm_cmap_and_string(in_p,val)
 %% PARSE
 
 in_p=isfield_default(in_p,'lan','en');
+lan=in_p.lan;
 in_p=isfield_default(in_p,'frac',NaN);
+frac=in_p.frac;
 in_p=isfield_default(in_p,'is_diff',0);
+is_diff=in_p.is_diff;
 in_p=isfield_default(in_p,'is_diff_t',0);
+is_diff_t=in_p.is_diff_t;
 in_p=isfield_default(in_p,'is_diff_s',0);
+is_diff_s=in_p.is_diff_s;
 in_p=isfield_default(in_p,'is_std',0);
+is_std=in_p.is_std;
 in_p=isfield_default(in_p,'is_percentage',0);
+is_percentage=in_p.is_percentage;
 in_p=isfield_default(in_p,'tol_clims',1e-8);
+tol_clims=in_p.tol_clims;
 % in_p=isfield_default(in_p,'clims',[NaN,NaN]); %inside do_auto_limit
 in_p=isfield_default(in_p,'unit',1);
+unit=in_p.unit;
 in_p=isfield_default(in_p,'variable','');
+variable=in_p.variable;
 in_p=isfield_default(in_p,'Lref','+NAP');
+Lref=in_p.Lref;
 
-v2struct(in_p)
+% v2struct(in_p) %do not use `v2struct` if passing other input. In case
+% there is `val` in `in_p`, it gets overwritten. 
 
 if is_std && is_diff
     error('It cannot be both std and diff.')

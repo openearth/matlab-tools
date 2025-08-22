@@ -18,19 +18,23 @@ function fourier_create_data_steady_state_evolution_time(fdir_out,noise_Lbx_v,no
 
 parin=inputParser;
 
-addOptional(parin,'plot',0);
+addOptional(parin,'plot_1D',0);
+addOptional(parin,'plot_2D',0);
 addOptional(parin,'overwrite',0);
 addOptional(parin,'order_anl',1);
 addOptional(parin,'do_only_index',false);
 
 parse(parin,varargin{:});
 
-do_plot=parin.Results.plot;
+do_plot_1D=parin.Results.plot_1D;
+do_plot_2D=parin.Results.plot_2D;
 overwrite=parin.Results.overwrite;
 order_anl=parin.Results.order_anl;
 do_only_index=parin.Results.do_only_index;
 
 pert_anl=1; %1=full
+
+%% CALC
 
 %% input variation
 
@@ -60,7 +64,7 @@ for k=1:nv
     %% disp
     messageOut(NaN,sprintf('Done %4.2f %%',k/nv*100));
 
-    %% OVERWRITE
+    %% overwrite
 
     fname=sprintf('%06d',kv);
     filename=fullfile(fdir_nc,sprintf('%s.nc',fname));
@@ -70,7 +74,7 @@ for k=1:nv
         continue
     end
 
-    %% CALC
+    %% case parameters
     
     %matrix input rework
     noise_Lbx=input_m_L(kv,1);
@@ -84,13 +88,10 @@ for k=1:nv
     %compute celerity
     [c,w]=compute_celerity(ECT_matrices,noise_Lbx,noise_Lby,pert_anl);
     
-    %domain
-    [x,y,t,x_in,y_in]=compute_domain(nlength,noise_Lbx,noise_W,nx,ny,nt,c,w,nmove);
-    
     %initial condition
     % noise_etab=initial_condition(x_in,y_in,noise_Lbx,noise_Lby,etab_max); %not needed, already in the Fourier modes
-    
-    %% SAVE TO MAT
+   
+    %% save to mat
 
     data(kv).Lx=noise_Lbx;
     data(kv).Ly=noise_Lby;
@@ -101,21 +102,34 @@ for k=1:nv
         continue
     end
 
-    %% RECONSTRUCT
+    %% case reconstruction
 
-    %specific modes
-    [fx2,fy2,P2]=fourier_modes_alternate_bar(noise_Lbx,noise_Lby,etab_max);
-    
-    %get steady-state flow and compute evolution in time
-    Q_rec=get_steady_state_evolution_in_time(ECT_matrices,fx2,fy2,P2,dim_ini,x_in,y_in,t,pert_anl);
-    
+    %domain
+    [x,y,t,x_in,y_in]=compute_domain(nlength,noise_Lbx,noise_W,nx,ny,nt,c,w,nmove);
+
+    %initial Fourier coefficient of bed level
+    [fx2,fy2,P2]=fourier_modes_alternate_bar(noise_Lbx,noise_Lby,etab_max); 
+
+    %matrices
+    [R,omega,M]=fourier_eigenvalues_frequency_matrices(ECT_matrices.Dx,ECT_matrices.Dy,ECT_matrices.Ax,ECT_matrices.Ay,ECT_matrices.B,ECT_matrices.C,ECT_matrices.M_pmm,fx2,fy2,pert_anl,0);
+
+    %initial Fourier coefficient of all equations
+    P2all0=fourier_steady_state_frequency('flat',fx2,fy2,P2,dim_ini,M);
+
+    %compute evolution of Fourier coefficient of bed level with time
+    [~,~,P2allt_bl]=fourier_evolution_frequency(fx2,fy2,x_in,y_in,t,P2all0,R,omega,NaN,'full',0,'disp',0);
+
+    %compute steady state solution with timefor all equations
+    Q_rec=compute_steady_state_in_time(P2allt_bl,fx2,fy2,x_in,y_in,dim_ini,M);
+
     %% WRITE
     
     fourier_write_nc(filename,x,y,t,Q_rec,noise_Lbx,noise_W,etab_max,c,w)
     
     %% PLOT
     
-    if do_plot
+    %% 2D
+    if do_plot_2D
         in_p.fname=fullfile(fdir_fig,fname);
         in_p.Q_rec=Q_rec;
         in_p.x_in=x_in;
@@ -123,6 +137,12 @@ for k=1:nv
         in_p.t=t;
         
         fig_surf(in_p);
+    end
+
+    %% 1D
+
+    if do_plot_1D
+        plot_1D(Q_rec,x_in,t,c,w,fname,fdir_fig);
     end
 
 end %kv
@@ -140,13 +160,98 @@ end %function
 
 %%
 
-function Q_rec=get_steady_state_evolution_in_time(ECT_matrices,fx2,fy2,P2,dim_ini,x_in,y_in,t,pert_anl)
+function  plot_1D(Q_rec,x_in,t,c,w,fname,fdir_fig)
 
-[R,omega,M]=fourier_eigenvalues_frequency_matrices(ECT_matrices.Dx,ECT_matrices.Dy,ECT_matrices.Ax,ECT_matrices.Ay,ECT_matrices.B,ECT_matrices.C,ECT_matrices.M_pmm,fx2,fy2,pert_anl,0);
-[P2all]=fourier_steady_state_frequency(fx2,fy2,P2,dim_ini,M,R);
-[~,Q_rec]=fourier_evolution_frequency(fx2,fy2,x_in,y_in,t,P2all,R,omega,dim_ini,'full',0,'disp',0);
+[ne,nx,ny,nt]=size(Q_rec);
+variable_v={'h','qxsp','qysp','etab'};
 
+for ke=1:ne
+
+kc=0;
+ky=128;
+val={};
+x={};
+
+
+for kt=1:nt
+    kc=kc+1;
+    x{kc}=x_in(ky,:);
+    val{kc}=Q_rec(ke,:,ky,kt);
 end
+
+kt=1;
+[vm0,idx_max]=max(Q_rec(ke,round(nx/4):round(nx*3/4),ky,kt)); %we guarantee the maximum is in the first half
+dt=t(end)-t(1);
+vmT=vm0*exp(w*dt);
+x_0=x_in(ky,idx_max);
+x_f=x_0+c*dt;
+
+kc=kc+1;
+x{kc}=[x_0,x_f];
+val{kc}=[vm0,vmT];
+
+in_p.fname=fullfile(fdir_fig,sprintf('%s_%d',fname,ke));
+in_p.fig_overwrite=1;
+in_p.s=x;
+in_p.val=val';
+in_p.variable=variable_v{ke};
+in_p.do_leg=0;
+
+fig_1D_01(in_p)
+
+end %ke
+
+end %function
+
+%%
+
+function Q_rec=compute_steady_state_in_time(P2allt_bl,fx2,fy2,x_in,y_in,dim_ini,M)
+
+nt=size(P2allt_bl,2);
+ne=size(M,1);
+[ny,nx]=size(x_in);
+nmx=numel(fx2);
+nmy=numel(fy2);
+
+Q_rec=zeros(ne,nx,ny,nt);
+
+%loop through time
+for kt=1:nt
+    %Fourier coefficient of bed level at local time
+    aux=P2allt_bl(dim_ini,kt,:,:); %(ne,nt,nmx,nmy);
+    aux2=squeeze(aux);
+    P2_bl_loc=aux2.'; %ATTENTION!
+
+    %Watch out for transpose (`'`) and dot-transpose (`.'`) with
+    %complex numbers! The below code (what you want) is a
+    %dot-transpose.
+    %
+    % for kmx=1:nmx
+    %     for kmy=1:nmy
+    %         P2_bl_loc(kmy,kmx)=c_bl(dim_ini,kt,kmx,kmy);
+    %     end
+    % end
+
+    %Fourier coefficients of all equations at local time
+    P2all=fourier_steady_state_frequency('steady',fx2,fy2,P2_bl_loc,dim_ini,M);
+    
+    %loop
+    for kmx=1:nmx
+        for kmy=1:nmy
+            kx_fou=2*pi*fx2(kmx);
+            ky_fou=2*pi*fy2(kmy);
+            
+            c=P2all(:,kmy,kmx);
+    
+            for ky=1:ny
+                e=real(c*exp(1i*kx_fou*x_in(ky,:)).*exp(1i*ky_fou*y_in(ky,:)));
+                Q_rec(:,:,ky,kt)=Q_rec(:,:,ky,kt)+e;
+            end %ky
+        end %kmy
+    end %kmx
+end %kt
+
+end %function
 
 %%
 

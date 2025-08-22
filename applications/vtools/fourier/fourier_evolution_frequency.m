@@ -12,7 +12,7 @@
 %
 %Compute evolution of fourier coefficients for given frequencies.
 
-function [Q,Q_rec,co]=fourier_evolution_frequency(fx2,fy2,x_in,y_in,t,P2,R,omega,dim_ini,varargin)
+function [Q,Q_rec,c_save]=fourier_evolution_frequency(fx2,fy2,x_in,y_in,t,P2,R,omega,dim_ini,varargin)
 
 %% PARSE
 
@@ -43,7 +43,8 @@ else
     Q=NaN;
     Q_rec=zeros(ne,nx,ny,nt); %already summing up the modes
 end
-co=NaN(ne,nt,nmx,nmy);
+c_save=NaN(ne,nt,nmx,nmy);
+
 %loop
 for kmx=1:nmx
     for kmy=1:nmy
@@ -53,6 +54,7 @@ for kmx=1:nmx
         if ismatrix(P2)
             d=zeros(ne,1);
             d(dim_ini)=P2(kmy,kmx);
+            error('')
         else
             d=P2(:,kmy,kmx);
         end
@@ -65,7 +67,7 @@ for kmx=1:nmx
                 b(ke)=a(ke)*exp(-1i*omega(ke,kmx,kmy)*t(kt));
             end %ke
             c=R(:,:,kmx,kmy)*b;
-            co(:,kt,kmx,kmy)=c;
+            c_save(:,kt,kmx,kmy)=c;
             for ky=1:ny
                 e=real(c*exp(1i*kx_fou*x_in(ky,:)).*exp(1i*ky_fou*y_in(ky,:)));
                 if do_full
