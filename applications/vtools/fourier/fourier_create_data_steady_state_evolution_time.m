@@ -124,6 +124,13 @@ for k=1:nv
 
     %% WRITE
     
+    %we check again because when running in parallel a file may be created
+    %by another processor when this processor was already working on it.
+    if exist(filename,'file') && ~overwrite
+        messageOut(NaN,sprintf('File exists: %s',filename));
+        continue
+    end
+
     fourier_write_nc(filename,x,y,t,Q_rec,noise_Lbx,noise_W,etab_max,c,w)
     
     %% PLOT
