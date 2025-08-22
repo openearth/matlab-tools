@@ -799,8 +799,8 @@ end %function
 function [lab_str,is_std]=adjust_label(flg_loc,kvar,var_str_save,statis)
 
 %units (cannot be outside <fn> loop because it can be overwritten)
-if isfield(flg_loc,'unit') && ~isempty(flg_loc.unit{kvar})
-    lab_str=flg_loc.unit{kvar};
+if isfield(flg_loc,'var') && ~isempty(flg_loc.var{kvar})
+    lab_str=flg_loc.var{kvar};
 else
     lab_str=var_str_save;
 end
@@ -1082,7 +1082,7 @@ function flg_loc=check_B(fid_log,flg_loc,simdef,str_in)
 
 flg_loc.var=reshape(flg_loc.var,1,numel(flg_loc.var));
 flg_loc.do_cum=reshape(flg_loc.do_cum,1,numel(flg_loc.do_cum));
-flg_loc.unit=reshape(flg_loc.unit,1,numel(flg_loc.unit));
+flg_loc.var_2=reshape(flg_loc.var_2,1,numel(flg_loc.var_2)); %this used to be called `unit`. It is not correct because `unit` is used for conversion factor of `labels4all`.
 
 str_do=sprintf('do_val_%s',str_in);
 if isfield(flg_loc,str_do)==0
@@ -1101,7 +1101,7 @@ for kvar=1:nvar_tmp
         flg_loc=gdm_add_flags_plot(flg_loc);
 
         %modify last entry
-        flg_loc.unit{end}=sprintf('%s_%s',flg_loc.unit{kvar},str_in);
+        flg_loc.var_2{end}=sprintf('%s_%s',flg_loc.var_2{kvar},str_in);
         flg_loc.var_idx{end}=flg_loc.var_idx{kvar};
         flg_loc.do_area(end)=flg_loc.do_area(kvar);
         flg_loc.do_cum(end)=flg_loc.do_cum(kvar);

@@ -49,6 +49,13 @@ parse(parin,varargin{:});
 
 ini=parin.Results.ini;
 
+%check
+y=reshape(y,1,[]);
+x=reshape(x,1,[]);
+if numel(x)~=numel(y)
+    error('Size of x does not match size of y')
+end
+
 %% CALC
 
 %Initial guess for parameters [A, B, C, D]

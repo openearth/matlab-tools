@@ -36,6 +36,10 @@ parse(parin,varargin{:});
 Lref=parin.Results.Lref;
 frac=parin.Results.frac;
 
+if isempty(un)
+    un=1;
+end
+
 %% using files
 
 var2key=readtable('labels4all_variable_to_key.csv','TextType','string');

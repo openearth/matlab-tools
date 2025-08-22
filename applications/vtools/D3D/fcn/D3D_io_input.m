@@ -26,11 +26,13 @@
 %               - 2 = pli [struct(1,npol)]; pli(kpol).name [char]  ; pli(kpol).xy [double(1,np)]
 %               - 3 = pli [double(npol*npp,2]
 %
+%%%%%%%
 %E.G. Read and write D3D4 grd and dep
 % dep=D3D_io_input('read',fdep,fgrd,'location','cen','dummy',false); %typical in morpho. Althought there are dummy values, set to false and will read all values.
 % dep=D3D_io_input('read',fdep,fgrd,'location','cor');
 % D3D_io_input('write','c:\Users\chavarri\Downloads\trial.dep',dep,'location','cor','dummy',false,'format','%15.13e');
 %
+%%%%%%%
 %E.G. Interpolating bed level to D3D4 grid:
 %
 % dep=D3D_io_input('read',fpath_dep);
@@ -43,10 +45,27 @@
 % 
 % D3D_io_input('write',fpath_dep_out,grd,'location','cor');
 %
+%%%%%%%
 %E.G. Delft3D 4 obs and crs files
 % obs=D3D_io_input('read',fobs,fgrd);
 % crs=D3D_io_input('read',fcrs,fgrd);
 %
+%%%%%%%
+%E.G. Reading friction file from D3D4 and writing at links for FM
+% fpath_rgh='n:\Deltabox\Postbox\Goede,de Erik\vanMenno\Delft3D_4_MM\coarse.rgh';
+% fpath_grd_d3d4='n:\Deltabox\Postbox\Goede,de Erik\vanMenno\Delft3D_4_MM\coarse.grd';
+% rgh=D3D_io_input('read',fpath_rgh,fpath_grd_d3d4);
+% 
+% mat_w=[rgh.u_x(:),rgh.u_y(:),rgh.u_val(:);rgh.v_x(:),rgh.v_y(:),rgh.v_val(:)];
+% 
+% bol_999=mat_w(:,3)>-1000 & mat_w(:,3)<-998;
+% bol_nan=isnan(mat_w(:,1)) | isnan(mat_w(:,2));
+% bol_get=~bol_nan & ~bol_999;
+% 
+% mat_g=mat_w(bol_get,:);
+% 
+% D3D_io_input('write','n:\Deltabox\Postbox\Goede,de Erik\vanMenno\D-HYDRO_MM\flow_coarse_rgh_2.xyz',mat_g)
+
 function varargout=D3D_io_input(what_do,fname,varargin)
 
 %% cell 
@@ -116,12 +135,27 @@ switch what_do
             case '.grd'
                 OPT.nodatavalue=NaN;
                 stru_out=delft3d_io_grd('read',fname,OPT);
-            case '.dep'
+            case '.rgh'
+                OPT.nodatavalue=NaN;
+                G1=wlgrid('read',varargin{1});
+                G=delft3d_io_grd('read',varargin{1},OPT);
+                rgh=wldep('read',fname,G1,'multiple');
+                nd=numel(rgh);
+                if nd~=2
+                    error('I expect 2 values: friction at U points and friction at V points.')
+                end
+
+                stru_out.u_val=rgh(1).Data';
+                stru_out.u_x=G.u_full.x;
+                stru_out.u_y=G.u_full.y;
+
+                stru_out.v_val=rgh(2).Data';
+                stru_out.v_x=G.v_full.x;
+                stru_out.v_y=G.v_full.y;
+            case {'.dep'}
                 OPT.nodatavalue=NaN;
                 G=delft3d_io_grd('read',varargin{1},OPT);
                 stru_out=delft3d_io_dep('read',fname,G,varargin(2:end));
-%                 G=wlgrid('read',varargin{1});
-%                 stru_out=wldep('read',fname,G);
             case {'.bct','.bc','.bcm'}
                 stru_out=bct_io('read',fname);
                 for kT=1:stru_out.NTables

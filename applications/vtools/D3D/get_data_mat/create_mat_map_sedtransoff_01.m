@@ -174,6 +174,10 @@ for kst=1:nst
         La=ones(size(q)); %[nF,1]
         Mak=Fak(:,1:end-1); %[nF,nf-1]
 
+        if numel(q) ~= size(Mak,1)
+            error('The number of cells in the hydrodynamic output is different than in the morphodynamic output. Maybe an enclosure file has been used.')
+        end
+
         [qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm]=sediment_transport(flg,cnt,h,q,cf,La,Mak,dk,sed_trans_param,hiding_param,mor_fac,E_param,vp_param,Gammak,fid_log,NaN);
 
         L_all=min(Ltot/Thresh,1);

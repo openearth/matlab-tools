@@ -39,7 +39,7 @@ for kmx=1:nmx
         cx_fou=P2(kmy,kmx);
 
         M_flow=M(dim_steady,dim_steady,kmx,kmy);
-        M_force=M(dim_steady,dim_ini);
+        M_force=M(dim_steady,dim_ini,kmx,kmy);
         b=-M_force.*cx_fou;
         c=M_flow\b;
 
