@@ -96,8 +96,9 @@ for ksb=1:nsb
         rkm_name=flg_loc.rkm_name{krkmv};
         rkm_cen=flg_loc.rkm{krkmv}';
         rkm_cen_br=flg_loc.rkm_br{krkmv,1};
+        rkm_track=flg_loc.rkm_track{krkmv,1};
 
-        rkmv=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,fpath_map,fpath_rkm,rkm_cen,rkm_cen_br,rkm_name);
+        rkmv=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,fpath_map,fpath_rkm,rkm_cen,rkm_cen_br,rkm_name,rkm_track);
         npol=numel(rkmv.rkm_cen);
         pol_name=flg_loc.rkm_name{krkmv};
 

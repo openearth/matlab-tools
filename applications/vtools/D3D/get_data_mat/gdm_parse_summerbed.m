@@ -75,6 +75,38 @@ flg_loc=gdm_parse_val_B_mor(flg_loc,simdef);
 
 flg_loc=gdm_parse_val_B(flg_loc,simdef);
 
+%% rkm
+
+if ~isfield(flg_loc,'rkm_name')
+    error('Provide an rkm-name')
+end
+if ~iscell(flg_loc.rkm_name)
+    error('rkm name must be a cell')
+end
+
+if ~isfield(flg_loc,'rkm')
+    error('Provide an rkm')
+end
+if ~iscell(flg_loc.rkm)
+    error('rkm name must be a cell')
+end
+
+nrkmv=numel(flg_loc.rkm_name);
+
+flg_loc=isfield_default(flg_loc,'rkm_br',cell(nrkmv,1)); %if empty, we will use the track
+for krkm=1:nrkmv
+    if isempty(flg_loc.rkm_br{krkm,1})
+        nx=numel(flg_loc.rkm{krkm});
+        flg_loc.rkm_br{krkm,1}=cell(nx,1);
+    end
+end
+
+flg_loc=isfield_default(flg_loc,'rkm_track',cell(nrkmv,1)); %if empty, we will use the track
+
+if isempty(flg_loc.rkm_br{1,1}) && isempty(flg_loc.rkm_track{1,1})
+    error('Provide either the branch of each rkm or the track of all of them.')
+end
+
 %% Plotting flags
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 

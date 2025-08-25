@@ -31,8 +31,16 @@ end
 
 if numel(varargin)>0
     track=varargin{1,1};
+    if ~isempty(rkm_cen_br{1})
+        warning('You are providing a branch and a track. I am ignoring the branch and using the track instead.')
+    end
+    ncen=numel(rkm_cen);
+    rkm_cen_br=cell(ncen,1);
+    for kpol=1:ncen
+        rkm_cen_br(kpol)=branch_str_num(rkm_cen(kpol),track);
+    end
 else
-    track=rkm_cen_br{1};
+    track=rkm_cen_br{1}; %Not safe. If branches are given and no track, if the first is 'PK' it will be unable to find 'IJ'. 
 end
 
 if numel(varargin)>1

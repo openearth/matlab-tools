@@ -79,7 +79,15 @@ for krkm=1:nrkm
             else
                 br{krkm}='Rhein';
             end
-        case {'BR','PK','RH'}
+        case {'PK'}
+            if rkm(krkm)>878.05
+                error('Branch PK is given, but the river kilometre is larger than the end value of PK (878.05): %f',rkm(krkm))
+            elseif rkm(krkm)<867.05
+                error('Branch PK is given, but the river kilometre is smaller than the begin value of PK (867.05): %f',rkm(krkm))
+            else
+                br{krkm}=track;
+            end
+        case {'BR','RH'}
             br{krkm}=track;
         otherwise
             error('Unknown branch %s',track)
