@@ -159,8 +159,8 @@ for ksb=1:nsb %summerbed polygons
                         end
                     end
                     
-                    [lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,varname_label,statis);
-                    in_p.lab_str=lab_str;
+                    [variable,in_p.is_std]=adjust_label(flg_loc,kvar,varname_label,statis);
+                    in_p.variable=variable;
 
                     %measurements          
                     [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,time_plot_loc,var_str_save,ksb,statis);
@@ -382,7 +382,7 @@ for ksb=1:nsb %summerbed polygons
             
             %% cumulative
             if flg_loc.do_cum(kvar)
-                plot_cum(fid_log,simdef,in_p,time_dnum_plot,tim_dtime_plot,nx,nD,lab_str,data_xvt,str_save_sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims);
+                plot_cum(fid_log,simdef,in_p,time_dnum_plot,tim_dtime_plot,nx,nD,variable,data_xvt,str_save_sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims);
             end
 
             %% tv at single rkm
@@ -623,10 +623,10 @@ end %function
 
 %%
 
-function plot_cum(fid_log,simdef,in_p,time_dnum_plot,tim_dtime_plot,nx,nD,lab_str,data_xvt,sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims)
+function plot_cum(fid_log,simdef,in_p,time_dnum_plot,tim_dtime_plot,nx,nD,variable,data_xvt,sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims)
 
 nsim=numel(simdef);
-tag=lab_str;
+tag=variable;
 
 for ksim=1:nsim
 
@@ -638,7 +638,7 @@ for ksim=1:nsim
     val_tim=data_xvt.(statis)(:,:,1:end-1,:).*repmat(reshape(diff_tim,1,1,[]),nx,nsim,1,nD); %we do not use the last value. Block approach with variables 1:end-1 with time 1:end
     val_cum=cumsum(cat(3,zeros(nx,nsim,1,nD),val_tim),3);
     
-    in_p.lab_str=sprintf('%s_t',lab_str); %add time
+    in_p.variable=sprintf('%s_t',variable); %add time
     
     nylim=size(lims,1);
     % nxlim=size(flg_loc)
@@ -733,8 +733,8 @@ for ksim=1:nsim
         val_kref_t=squeeze(data_xvt.(statis)(:,kref,:))';
         val_kref_0=squeeze(data_xvt0.(statis)(:,kref,:))';
 
-        [in_p.lab_str,in_p.is_std]=adjust_label(flg_loc,kvar,unit,statis);
-        in_p.clab_str=in_p.lab_str;
+        [in_p.variable,in_p.is_std]=adjust_label(flg_loc,kvar,unit,statis);
+        in_p.clab_str=in_p.variable;
 
         %val
         if flg_loc.do_xvt_single
@@ -776,7 +776,7 @@ for ksim=1:nsim
 
         %cel
         if flg_loc.do_xvt_cel
-            in_p.lab_str=strcat(in_p.lab_str,'_t'); %DANGEROUS! maybe better to set it in all figures or this must be the last one
+            in_p.variable=strcat(in_p.variable,'_t'); %DANGEROUS! maybe better to set it in all figures or this must be the last one
             
             val=cat(1,zeros(1,size(val_ks_t,2)),diff(val_ks_t,1,1))./[0;seconds(diff(tim_dtime_p))];
             in_p=reset_in_p(in_p);
@@ -796,19 +796,19 @@ end %function
 
 %%
 
-function [lab_str,is_std]=adjust_label(flg_loc,kvar,var_str_save,statis)
+function [variable,is_std]=adjust_label(flg_loc,kvar,var_str_save,statis)
 
-%units (cannot be outside <fn> loop because it can be overwritten)
-if isfield(flg_loc,'var') && ~isempty(flg_loc.var{kvar})
-    lab_str=flg_loc.var{kvar};
+%`var_2` (cannot be outside <fn> loop because it can be overwritten)
+if isfield(flg_loc,'var_2') && ~isempty(flg_loc.var_2{kvar})
+    variable=flg_loc.var_2{kvar};
 else
-    lab_str=var_str_save;
+    variable=var_str_save;
 end
 
 %adjust depending on statistic
 switch statis
     case 'val_sum_length'
-        lab_str=sprintf('%s/B',lab_str);
+        variable=sprintf('%s/B',variable);
 end
 
 %standard deviation
@@ -943,7 +943,7 @@ function do_tv(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,data_xvt,tim_dtime_plo
 
 in_p=flg_loc;
 
-in_p.lab_str=var_str_save;
+in_p.variable=var_str_save;
 in_p.xlims=[tim_dtime_plot(1),tim_dtime_plot(end)];
 in_p.s=tim_dtime_plot;
 in_p.do_title=1;

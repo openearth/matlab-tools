@@ -124,7 +124,6 @@ end
 if isfield(in_p,'frac')==0
     in_p.frac=1;
 end
-in_p=isfield_default(in_p,'lab_str','');
 
 v2struct(in_p)
 
@@ -190,7 +189,6 @@ kr=1; kc=1;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
 
-in_p.variable=lab_str;
 [cmap,cbar(kr,kc).label,clims]=gdm_cmap_and_string(in_p,val);
 
 %center around 0

@@ -116,7 +116,7 @@ Gammak=NaN;
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 var_sum=cell(1,nst);
-unit_v=cell(1,nst);
+var_2_v=cell(1,nst);
 
 ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
@@ -142,7 +142,7 @@ for kst=1:nst
     end
     
     var_sum{kst}=sprintf('%s_sum',flg_loc.sedtrans_name{kst});
-    unit_v{kst}='stot';
+    var_2_v{kst}='stot'; %the variable name under `var` has the name as input for the sediment transport relation. `var_2` contains the name understood for writing the labels. 
     
     ktc=0;
     for kt=kt_v
@@ -271,8 +271,8 @@ end
 
 in_plot_sb.(tag_sb).do_val_B_mor=[ones(1,nst),[0,0,0,0,zeros(1,nf)]]; %compute value of the variable per unit of morphodynamic width
 
-in_plot_sb.(tag_sb).unit=cell(1,nst+4+nf);
-in_plot_sb.(tag_sb).unit(1:nst)=unit_v;
+in_plot_sb.(tag_sb).var_2=cell(1,nst+4+nf);
+in_plot_sb.(tag_sb).var_2(1:nst)=var_2_v;
 
 in_plot_sb.(tag_sb).do_cum=[ones(1,nst),0,0,0,0,zeros(1,nf)]; 
 
@@ -283,7 +283,7 @@ for kst=1:nst
         in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
         in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{kf});
         in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,1);
-        in_plot_sb.(tag_sb).unit=cat(2,in_plot_sb.(tag_sb).unit,{'s'});
+        in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'s'});
         in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,0);
     end
 end
@@ -295,7 +295,7 @@ for kst=1:nst
     in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
     in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{1:1:nf});
     in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,1);
-    in_plot_sb.(tag_sb).unit=cat(2,in_plot_sb.(tag_sb).unit,{'stot'});
+    in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'stot'});
     in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,1);
     in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,1);
 end
@@ -305,7 +305,7 @@ end
 % in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
 % in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{zeros(0,0)});
 % in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,0);
-% in_plot_sb.(tag_sb).unit=cat(2,in_plot_sb.(tag_sb).unit,{'cel_morpho'});
+% in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'cel_morpho'});
 % in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,1);
 % in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
 
