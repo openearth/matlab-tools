@@ -127,6 +127,17 @@ switch what_do
             case {'.pli','.pliz','.pol','.ldb'}
                 stru_out=D3D_read_polys(fname,varargin{:});
             case '.ini'
+                %ATTENTION!
+                %`delft3d_io_sed` calls `inivalue`. `inivalue` does not
+                %correctly deal with tabs. It is better to use `inifile`
+                %(by Bert Jagers). This allows to directly read only the
+                %information you need. 
+                %E.G.
+                %
+                %
+                % INI=inifile('open','c:\projects\ag\models\r007\structures.ini');
+                % a=inifile('getstringi', INI, 'structure', 'id'); %get all the `id` of the chapters called `structure`
+
                 stru_out=delft3d_io_sed(fname);
                 inifiletype=parse_ini(stru_out,parameters);
                 if ~isnan(inifiletype) && inifiletype ~= parameters.INIFILE_GENERAL
@@ -276,6 +287,8 @@ switch what_do
                         end
                     else
                         dflowfm_io_mdu('write',fname,stru_in);
+                        %consider reading and writing with Bert's format
+                        %`inifile`. 
                     end
                 else
                     dflowfm_io_mdu('write',fname,stru_in);
@@ -395,7 +408,9 @@ inifiletype=NaN;
 fns = fieldnames(stru_out);
 idx_gen = find(strcmpi(fns,'general')); 
 if ~isempty(idx_gen)
-    inifiletype=parameters.INIFILE_GENERAL;
+    %V: I do not get why this was added here. The type is read below.
+    % inifiletype=parameters.INIFILE_GENERAL; 
+
     str_gen = fns{idx_gen};
 end
 if ~isnan(inifiletype)
@@ -405,6 +420,10 @@ if ~isnan(inifiletype)
                 inifiletype=parameters.INIFILE_CRSDEF;
             case 'crossLoc'
                 inifiletype=parameters.INIFILE_CRSLOC;
+            case 'general'
+                inifiletype=parameters.INIFILE_GENERAL;
+            % case 'structure'
+                % inifiletype=parameters.INIFILE_structure;
         end
     else
         inifiletype=NaN;

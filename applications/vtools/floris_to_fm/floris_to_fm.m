@@ -20,11 +20,13 @@ parin=inputParser;
 
 addOptional(parin,'fid_log',NaN)
 addOptional(parin,'fdir_out',pwd)
+addOptional(parin,'write',true)
 
 parse(parin,varargin{:})
 
 fid_log=parin.Results.fid_log; 
 fdir_out=parin.Results.fdir_out;
+do_write=parin.Results.write;
 
 fname_bc='bc.bc';
 
@@ -42,7 +44,7 @@ messageOut(fid_log,'Start conversion',3)
 
 %% floin
 
-[floris.csl,floris.bc,floris.network.network_node_id,floris.network.network_node_x,floris.network.network_node_y,floris.network.network_branch_id,floris.network.network_edge_nodes]=floris_to_fm_read_floin(floris.file.floin,floris.csd,floris.csd_add,'fid_log',fid_log);
+[floris.csl,floris.bc,floris.network.network_node_id,floris.network.network_node_x,floris.network.network_node_y,floris.network.network_branch_id,floris.network.network_edge_nodes,floris.structures_at_node]=floris_to_fm_read_floin(floris.file.floin,floris.csd,floris.csd_add,'fid_log',fid_log);
 
 %% create grid
 
@@ -58,7 +60,13 @@ floris.bc=struct_assign_val(floris.bc,'forcingfile',fname_bc); %specify the file
 floris.bc=struct_assign_val(floris.bc,'at_node',1); %as it is a 1D model, the BC is specified at a node and node a pli-file. The trailing `_0001` should not be added. 
 floris.ext=D3D_bc_to_ext(floris.bc);
 
+%% structures
+
+floris.structures=floris_to_fm_structures(floris.structures_at_node,floris.network);
+
 %% write files
+
+if do_write
 
 mkdir_check(fdir_out,NaN,1,0); %create output folder if it does not exist
 
@@ -74,9 +82,14 @@ D3D_io_input('write',fullfile(fdir_out,fname_bc),floris.bc,'check_existing',fals
 %external forcing
 D3D_io_input('write',fullfile(fdir_out,'ext.ext'),floris.ext,'check_existing',false); 
 
+%structures
+D3D_io_input('write',fullfile(fdir_out,'structures.ini'),floris.structures,'check_existing',false); 
+
 %grid
 filename=fullfile(fdir_out,'grd_net.nc'); 
 NC_create_1D_grid(filename,floris.network,'fid_log',fid_log);
+
+end
 
 %% END
 

@@ -12,7 +12,7 @@
 %
 %Read FLORIS FLOIN file. 
 
-function [csl,bc,network_node_id,network_node_x,network_node_y,network_branch_id,network_edge_nodes]=floris_to_fm_read_floin(fpath_floin,csd,csd_add,varargin)
+function [csl,bc,network_node_id,network_node_x,network_node_y,network_branch_id,network_edge_nodes,structures_at_node]=floris_to_fm_read_floin(fpath_floin,csd,csd_add,varargin)
 
 %% PARSE
 
@@ -54,12 +54,13 @@ inside_block_branches=false;
 idx_branches=0;
 
 inside_block_node=false;
-
-inside_block_hqrelation=false;
-inside_block_qhydrograph=false;
+    %blocks inside block `node`
+    inside_block_hqrelation=false;
+    inside_block_qhydrograph=false;
 
 idx_bc=0;
 idx_bc_val=0;
+idx_structure=0;
 ncolumns_bc=2; %Number of columns in BC for a node. 
 
 inside_block_branch=false;
@@ -68,8 +69,9 @@ idx_branch=0;
 npreallocated=1000;
 [network_node_id,network_node_x,network_node_y,~]=allocate_network(npreallocated,{''},[],[]);
 [network_branch_id,network_edge_nodes,~]=allocate_branch(npreallocated,{''},[]);
-[csl,~]=allocate_csl(npreallocated);
-[bc,nallocated]=allocate_bc(npreallocated);
+[csl,nallocated_csl]=allocate_csl(npreallocated);
+[bc,nallocated_bc]=allocate_bc(npreallocated);
+[structures_at_node,nallocated_structures]=allocate_structures(npreallocated);
 
 while ~feof(fid)
     %First, a line is read. If the line corresponds to the beginning of a
@@ -138,7 +140,6 @@ while ~feof(fid)
         end
         nodeId=tokens{1};
 
-
         %check type of boundary condition
         line=strtrim(fgetl(fid)); %get line
         tokens=regexp_string_no_quotes(line);
@@ -148,8 +149,8 @@ while ~feof(fid)
 
                 idx_bc=idx_bc+1;
         
-                if idx_bc==nallocated
-                    [bc,nallocated]=allocate_bc(npreallocated,bc);
+                if idx_bc==nallocated_bc
+                    [bc,nallocated_bc]=allocate_bc(npreallocated,bc);
                 end
 
                 bc(idx_bc).name=nodeId;
@@ -165,8 +166,8 @@ while ~feof(fid)
                 
                 idx_bc=idx_bc+1;
         
-                if idx_bc==nallocated
-                    [bc,nallocated]=allocate_bc(npreallocated,bc);
+                if idx_bc==nallocated_bc
+                    [bc,nallocated_bc]=allocate_bc(npreallocated,bc);
                 end
 
                 bc(idx_bc).name=nodeId;
@@ -182,6 +183,36 @@ while ~feof(fid)
         continue
     end
 
+    % This is not ideal logic. As is information of a node, it would be
+    % logical it is read inside the block `node`. However, the tag (i.e.,
+    % `weir`, `gate`, ...) is not found immediatly after it. First come the
+    % BC. We read it and add it to the last node we read. 
+    %
+    %It applies to all structures.
+
+    %block weir
+    if any(strcmpi(line, {'weir','gate'}))
+        strcuture_type=line; %type of structure (e.g., `weir`, `gate`, ...)
+        line=strtrim(fgetl(fid)); %get line
+        val=extracNumbers_NaN(line); %values
+        idx_structure=idx_structure+1;
+
+        if idx_structure==nallocated_structures
+            [bc,nallocated_structures]=allocate_structures(npreallocated,structures_at_node);
+        end
+
+        structures_at_node(idx_structure).nodeId=nodeId;
+        structures_at_node(idx_structure).type=strcuture_type;
+        structures_at_node(idx_structure).parameters=val;
+    end
+
+    % %block gate    
+    % if strcmpi(line, 'gate')
+    %     line=strtrim(fgetl(fid)); %get line
+    %     val=extracNumbers_NaN(line);
+    % end
+
+
     %block compute (asummed at the end of the definition, used to finalize
     %all blocks)
     if strcmpi(line, 'compute')
@@ -192,6 +223,9 @@ while ~feof(fid)
 
         %finalize all boundary condition
         bc=bc(1:idx_bc);
+
+        %finalize all structures
+        structures_at_node=structures_at_node(1:idx_structure);
 
         continue
     end
@@ -207,9 +241,11 @@ while ~feof(fid)
         end
 
         %finalize block node
-        if inside_block_node
-            inside_block_node=false;
-        end
+        % Maybe not finalize it. If there are structure, there node
+        % information continues after the end of the BC block. 
+        % if inside_block_node
+        %     inside_block_node=false;
+        % end
 
         %finalize block branch
         if inside_block_branch
@@ -240,12 +276,12 @@ while ~feof(fid)
 
     %block aliase
     if inside_block_aliase
-        tokens=regexp(line,'^(\S+)\s+([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+)','tokens');
+        tokens=regexp(line,'^(\S+)\s+([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+)','tokens'); %It is different than just numbers as it reads a string. We cannot use `extractNumbers`.
 
         idx_network_node=idx_network_node+1;
 
-        if idx_network_node==nallocated
-            [network_node_id,network_node_x,network_node_y,nallocated]=allocate_network(npreallocated,network_node_id,network_node_x,network_node_y);
+        if idx_network_node==nallocated_bc
+            [network_node_id,network_node_x,network_node_y,nallocated_bc]=allocate_network(npreallocated,network_node_id,network_node_x,network_node_y);
         end
 
         network_node_id{idx_network_node}=tokens{1,1}{1,1};
@@ -259,8 +295,8 @@ while ~feof(fid)
 
         idx_branches=idx_branches+1;
 
-        if idx_branches==nallocated
-            [network_branch_id,network_edge_nodes,nallocated]=allocate_branch(npreallocated,network_branch_id,network_edge_nodes);
+        if idx_branches==nallocated_bc
+            [network_branch_id,network_edge_nodes,nallocated_bc]=allocate_branch(npreallocated,network_branch_id,network_edge_nodes);
         end
 
         network_branch_id{idx_branches}=tokens{1};
@@ -318,8 +354,8 @@ while ~feof(fid)
         csl_id=tokens{1};
         idx_branch=idx_branch+1;
 
-        if idx_branch==nallocated
-            [csl,nallocated]=allocate_csl(npreallocated,csl);
+        if idx_branch==nallocated_csl
+            [csl,nallocated_csl]=allocate_csl(npreallocated,csl);
         end
 
         csd_id={csd.id};
@@ -442,19 +478,41 @@ end %function
 
 %%
 
+function [structures,nallocated]=allocate_structures(npreallocated,structures)
+
+% create a scalar struct with all the fields
+template = struct( ...
+    'nodeId',      '', ...
+    'type',        '', ...
+    'parameters',  0);
+
+% replicate the template into a 1×N struct array
+structures_empty(1:npreallocated) = template;
+
+if nargin==1
+    structures=structures_empty;
+else
+    structures=[structures,structures_empty];
+end
+nallocated=numel(structures);
+
+end %function
+
+%%
+
 function [val,nallocated]=allocate_bc_val(npreallocated,val,ncolumns_bc)
 
 
 val=cat(1,val,NaN(npreallocated,ncolumns_bc));
 nallocated=size(val,1);
 
-end
+end %function
 
 %%
 
-function nums = extractNumbers(str)
-%capture all numbers (although I think there are always 2) before a comment
+%capture all numbers before a comment
 %e.g.: str = '-240.  1370.   55.5   -12.3   // FOP - Donau Pg. Achleiten';
+function nums = extractNumbers(str)
 
 % If // is present, cut everything after it
 beforeComment = regexp(str, '^(.*?)//', 'tokens', 'once');
@@ -467,4 +525,46 @@ end
 % Extract numbers (signed, optional decimals)
 tokens = regexp(beforeComment, '(-?\d+(?:\.\d+)?)', 'match');
 nums = str2double(tokens);
+
+end %function
+
+%%
+
+% Parse a line into numbers, using commas as explicit NaN markers.
+% Spaces separate numbers inside a comma-field.
+% Consecutive commas give consecutive NaNs, but if the last comma is followed 
+% by a number, no trailing NaN is inserted.
+%
+function nums = extracNumbers_NaN(line)
+
+if nargin==0 || isempty(line)
+    nums = [];
+    return
 end
+
+% Number pattern (int, decimal, scientific, or quoted number)
+numPat = '[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?';
+
+% 1) Split on commas
+parts = regexp(line, '\s*,\s*', 'split');
+
+nums = [];
+for i = 1:numel(parts)
+    part = strtrim(parts{i});
+    if isempty(part)
+        % empty slot → NaN
+        nums(end+1) = NaN; %#ok<AGROW>
+    else
+        % extract numbers (including those inside quotes)
+        m = regexp(part, numPat, 'match');
+        if ~isempty(m)
+            vals = str2double(m);
+            nums = [nums, vals]; %#ok<AGROW>
+        end
+    end
+end
+
+% Ensure row vector
+nums = reshape(nums, 1, []);
+
+end %function
