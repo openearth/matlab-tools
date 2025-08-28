@@ -73,14 +73,14 @@ while a ~= -1
             fprintf(fid_tex, '%s \n', '\hline');
         end
     else  % count > 1;
-        %a = strrep(a,'1000', '>1000'); %ad hoc
-        %a = strrep(a,'NaN', ' - '); %ad hoc
         s = strsplit(a,',');
         fprintf(fid_tex, '%s', '                  ');
-        for k = 1:length(s)-1;
+        for k = 1:length(s) 
             if (s{k}(1) == '"' & s{k}(end) == '"')
                 s{k} = s{k}(2:end-1);
             end
+        end
+        for k = 1:length(s)-1
             fprintf(fid_tex, '%11s & ', s{k});
         end
         fprintf(fid_tex, '%11s \\\\ \n', s{length(s)});

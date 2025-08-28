@@ -45,5 +45,5 @@ end %kl
            
 %% WRITE
 
-% file_name=fullfile(dire_sim,'morini.ini');
-writetxt(simdef.file.mini,data)
+file_name=fullfile(dire_sim,'morini.ini');
+writetxt(file_name,data)

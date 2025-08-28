@@ -38,6 +38,8 @@ in_p=isfield_default(in_p,'variable','');
 variable=in_p.variable;
 in_p=isfield_default(in_p,'Lref','+NAP');
 Lref=in_p.Lref;
+in_p=isfield_default(in_p,'clims',[NaN,NaN]);
+clims=in_p.clims;
 
 % v2struct(in_p) %do not use `v2struct` if passing other input. In case
 % there is `val` in `in_p`, it gets overwritten. 

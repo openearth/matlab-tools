@@ -64,7 +64,7 @@ rev=svn_info;
 rev=insertBefore(rev,1,comment_symbol);
 rev=strrep(rev,'\','\\');
 rev=regexprep(rev,'\n','\n#');
-rev=[rev,'\n'];
+%rev=[rev,'\n'];
 fprintf(fid,rev);
 
 end %function
