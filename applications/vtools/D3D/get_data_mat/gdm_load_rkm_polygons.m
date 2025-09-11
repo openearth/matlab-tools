@@ -29,7 +29,7 @@ if exist(fpath_rkm_pol,'file')==2 %&& ~flg_loc.overwrite
     return
 end
 
-if numel(varargin)>0
+if numel(varargin)>0 && ~isempty(varargin{1,1})
     track=varargin{1,1};
     if ~isempty(rkm_cen_br{1})
         warning('You are providing a branch and a track. I am ignoring the branch and using the track instead.')

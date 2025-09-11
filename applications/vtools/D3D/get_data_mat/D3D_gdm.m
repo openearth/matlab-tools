@@ -263,6 +263,15 @@
 % in_plot.(tag).rkm={145:1:175}; %river km vectors to average the data; cell(1,nrkm)
 % in_plot.(tag).rkm_plot_tv={[178.5,191.2]}; %river km vectors to average the data; cell(1,nrkm)
 % in_plot.(tag).rkm_name={'1km'}; %name of the river km vector (for saving); cell(1,nrkm)
+%%Two options to specify in which branch the rkm is:
+%%Option 1 (preferred, only for Rijntakken and Maas):
+%%Specify the track. It is the same code as the branches, but only one is
+%%given rather than specifying which branch for each rkm. Depending on the
+%%rkm, the branch is found.
+% in_plot.(tag).rkm_track={'IJ'}; 
+%%%%
+%%Option 2:
+%%Specify the branch for each rkm.
 %     %construct branches name
 %     for kidx=1:numel(in_plot.(tag).rkm)
 %         in_plot.(tag).rkm_br{kidx,1}=maas_branches(in_plot.(tag).rkm{kidx}); %branch name of each rkm point
