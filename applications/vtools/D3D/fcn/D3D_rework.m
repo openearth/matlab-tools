@@ -384,29 +384,33 @@ end
 
 %2D/3D
 
+if isfield(simdef.grd,'K')
+    simdef.mdf.K=simdef.grd.K;
+end
+
 switch simdef.D3D.structure
     case 1
-        if isfield(simdef.grd,'K')==0
-            simdef.grd.K=1; 
+        if isfield(simdef.mdf,'K')==0
+            simdef.mdf.K=1; 
         end
-        if simdef.grd.K==0
-            simdef.grd.K=1;
+        if simdef.mdf.K==0
+            simdef.mdf.K=1;
             warning('In D3D4 you cannot have 0 layers. 2D is achieved with K=1.')
         end
     case 2
-        if isfield(simdef.grd,'K')==0
-            simdef.grd.K=0; 
+        if isfield(simdef.mdf,'K')==0
+            simdef.mdf.K=0; 
         end
-        if simdef.grd.K==1
+        if simdef.mdf.K==1
             warning('You want a 3D computation with one layer')
         end    
-        if isfield(simdef.grd,'Thick') && simdef.grd.K>0 && simdef.D3D.structure==2
+        if isfield(simdef.grd,'Thick') && simdef.mdf.K>0 && simdef.D3D.structure==2
             warning('You want a 3D computation with varying layer thickness. This is not yet possible')
         end
 end
 
 if isfield(simdef.grd,'Thick')==0
-    simdef.grd.Thick=(1./(simdef.grd.K.*ones(1,simdef.grd.K-1)))*100;
+    simdef.grd.Thick=(1./(simdef.mdf.K.*ones(1,simdef.mdf.K-1)))*100;
 end
 
 if isfield(simdef.mdf,'Flrst_dt')==0
@@ -494,6 +498,19 @@ end
 if isfield(simdef.mdf,'Idensform')==0
     simdef.mdf.Idensform=0;
 end
+
+simdef.mdf=isfield_default(simdef.mdf,'StructureFile','');
+simdef.mdf=isfield_default(simdef.mdf,'CrossDefFile','');
+simdef.mdf=isfield_default(simdef.mdf,'CrossLocFile','');
+simdef.mdf=isfield_default(simdef.mdf,'FrictFile','');
+simdef.mdf=isfield_default(simdef.mdf,'IniFieldFile','');
+
+simdef.mdf=isfield_default(simdef.mdf,'Vicouv',1);
+simdef.mdf=isfield_default(simdef.mdf,'Dicouv',1);
+simdef.mdf=isfield_default(simdef.mdf,'Vicoww',5.d-5);
+simdef.mdf=isfield_default(simdef.mdf,'Dicoww',5.d-5);
+simdef.mdf=isfield_default(simdef.mdf,'Smagorinsky',0);
+simdef.mdf=isfield_default(simdef.mdf,'FrictType',0);
 
 %%
 %% MOR
@@ -821,6 +838,8 @@ end
 %% BCT
 %%
 
+if isfield(simdef,'bct')
+
 if ~isfield(simdef.file,'bct')
     switch simdef.D3D.structure
         case 1
@@ -917,6 +936,8 @@ end
 if simdef.D3D.structure==2
 simdef.bct.etaw=cat(1,simdef.bct.etaw,simdef.bct.etaw(end));
 simdef.bct.time=cat(1,simdef.bct.time,simdef.bct.time(end)*1.1);
+end
+
 end
 
 %%

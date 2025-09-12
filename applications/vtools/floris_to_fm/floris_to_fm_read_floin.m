@@ -12,24 +12,17 @@
 %
 %Read FLORIS FLOIN file. 
 
-function [csl,bc,network_node_id,network_node_x,network_node_y,network_branch_id,network_edge_nodes,structures_at_node]=floris_to_fm_read_floin(fpath_floin,csd,csd_add,varargin)
+function [csl,bc,network_node_id,network_node_x,network_node_y,network_branch_id,network_edge_nodes,structures_at_node,mdu]=floris_to_fm_read_floin(fpath_floin,csd,csd_add,time_unit,varargin)
 
 %% PARSE
 
 parin=inputParser;
 
 addOptional(parin,'fid_log',NaN)
-addOptional(parin,'time_unit','hours')
 
 parse(parin,varargin{:})
 
 fid_log=parin.Results.fid_log;
-time_unit=parin.Results.time_unit; 
-
-if ~any(strcmpi({'seconds','minutes','hours'},time_unit))
-    error('Unknown time unit: %s',time_unit)
-end
-tim_factor=time_factor('hours',time_unit); %the input time is in hours
 
 %% CHECK FILE
 
@@ -44,6 +37,8 @@ if ~exist(fpath_floin,'file')==2
 end
 
 %% INITIALIZE
+
+tim_factor=time_factor('hours',time_unit); %the input time is in hours
 
 fid=fopen(fpath_floin,'r');
 
@@ -66,6 +61,9 @@ ncolumns_bc=2; %Number of columns in BC for a node.
 inside_block_branch=false;
 idx_branch=0; 
 
+inside_block_compute=false;
+line_number_block_compute=0;
+
 npreallocated=1000;
 [network_node_id,network_node_x,network_node_y,~]=allocate_network(npreallocated,{''},[],[]);
 [network_branch_id,network_edge_nodes,~]=allocate_branch(npreallocated,{''},[]);
@@ -86,7 +84,9 @@ while ~feof(fid)
         continue
     end
 
+    %%
     %% INITIALIZATION OF BLOCK
+    %%
 
     %block aliase
     if strcmpi(line, 'aliase')
@@ -134,8 +134,8 @@ while ~feof(fid)
         %get node name
         line=strtrim(fgetl(fid)); %get line
         tokens=regexp_string_no_quotes(line);
-        idx_nodeId=strcmpi(network_node_id,tokens);
-        if sum(idx_nodeId)~=1
+        bol_nodeId=strcmpi(network_node_id,tokens);
+        if sum(bol_nodeId)~=1
             error('Node %s is defined, but it is not defined in aliases.',tokens)
         end
         nodeId=tokens{1};
@@ -143,23 +143,45 @@ while ~feof(fid)
         %check type of boundary condition
         line=strtrim(fgetl(fid)); %get line
         tokens=regexp_string_no_quotes(line);
+        is_pump=false;
         switch tokens{1}
             case 'qhydrograph' %boundary condition on discharge
                 inside_block_qhydrograph=true;
 
-                idx_bc=idx_bc+1;
-        
-                if idx_bc==nallocated_bc
-                    [bc,nallocated_bc]=allocate_bc(npreallocated,bc);
+                %In FLORIS, a structure is always found at the end of a
+                %branch. A discharge downstream of the structure can be set
+                %using a `qhydrograph`. In D3D this is a pump. 
+
+                %`network_edge_nodes` must be already populated. I.e, the
+                %block `branches` in <floin> must be above `qhydrograph`.
+
+                %If the node is found at the end and at the beginning of 
+                %a branch, it is not a true Q boundary condition but a pump. 
+
+                idx_nodeId=find(bol_nodeId)-1; %0-based index of the node
+                bol_nodeId_at_branch=network_edge_nodes==idx_nodeId;
+                if any(bol_nodeId_at_branch(:,1)) && any(bol_nodeId_at_branch(:,2))
+                    is_pump=true;
                 end
 
-                bc(idx_bc).name=nodeId;
-                bc(idx_bc).function='timeseries';
-                bc(idx_bc).time_interpolation='linear';
-                bc(idx_bc).quantity={'time','dischargebnd'};
-                bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
+                if is_pump
+                    structure_type='pump';
 
-                [bc(idx_bc).val,nallocated_2]=allocate_bc_val(npreallocated,[],ncolumns_bc);  
+                else %true Q boundary condition
+                    
+    
+                    idx_bc=idx_bc+1;
+            
+                    if idx_bc==nallocated_bc
+                        [bc,nallocated_bc]=allocate_bc(npreallocated,bc);
+                    end
+    
+                    bc(idx_bc).name=nodeId;
+                    bc(idx_bc).function='timeseries';
+                    bc(idx_bc).time_interpolation='linear';
+                    bc(idx_bc).quantity={'time','dischargebnd'};
+                    bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
+                end
 
             case 'hqrelation' %boundary condition on qh-relation
                 inside_block_hqrelation=true;
@@ -175,13 +197,14 @@ while ~feof(fid)
                 % bc(idx_bc).time_interpolation='linear';
                 bc(idx_bc).quantity={'qhbnd discharge','qhbnd waterlevel'}; %ATTENTION! The order here influences the flip when the data is read.
                 bc(idx_bc).unit={'m³/s','m'};
-
-                [bc(idx_bc).val,nallocated_2]=allocate_bc_val(npreallocated,[],ncolumns_bc);  
-
+            case 'waterlevel'
+                %nothing to be done
             otherwise
-        end
+                error('Deal with this case: %s',tokens{1});
+        end %switch
+        [val_time,nallocated_bc_val]=allocate_bc_val(npreallocated,[],ncolumns_bc); %allocate `val_time` to save the time series
         continue
-    end
+    end %node
 
     % This is not ideal logic. As is information of a node, it would be
     % logical it is read inside the block `node`. However, the tag (i.e.,
@@ -192,18 +215,11 @@ while ~feof(fid)
 
     %block weir
     if any(strcmpi(line, {'weir','gate'}))
-        strcuture_type=line; %type of structure (e.g., `weir`, `gate`, ...)
+        structure_type=line; %type of structure (e.g., `weir`, `gate`, ...)
         line=strtrim(fgetl(fid)); %get line
         val=extracNumbers_NaN(line); %values
-        idx_structure=idx_structure+1;
 
-        if idx_structure==nallocated_structures
-            [bc,nallocated_structures]=allocate_structures(npreallocated,structures_at_node);
-        end
-
-        structures_at_node(idx_structure).nodeId=nodeId;
-        structures_at_node(idx_structure).type=strcuture_type;
-        structures_at_node(idx_structure).parameters=val;
+        [structures_at_node,nallocated_structures,idx_structure]=fill_structures_at_node(structures_at_node,nodeId,structure_type,val,nallocated_structures,npreallocated,idx_structure);
     end
 
     % %block gate    
@@ -212,21 +228,8 @@ while ~feof(fid)
     %     val=extracNumbers_NaN(line);
     % end
 
-
-    %block compute (asummed at the end of the definition, used to finalize
-    %all blocks)
     if strcmpi(line, 'compute')
-        % inside_block_compute=true;
-
-        %finalize all branch
-        csl=csl(1:idx_branch);
-
-        %finalize all boundary condition
-        bc=bc(1:idx_bc);
-
-        %finalize all structures
-        structures_at_node=structures_at_node(1:idx_structure);
-
+        inside_block_compute=true;
         continue
     end
 
@@ -254,27 +257,47 @@ while ~feof(fid)
 
         %finalize block qhydrograph or qh-relation
         if inside_block_qhydrograph || inside_block_hqrelation
-            bc(idx_bc).val=bc(idx_bc).val(1:idx_bc_val,:); %cut the bc val
+            if is_pump
+                [structures_at_node,nallocated_structures,idx_structure]=fill_structures_at_node(structures_at_node,nodeId,structure_type,val_time(1:idx_bc_val,:),nallocated_structures,npreallocated,idx_structure);
+            else
+                bc(idx_bc).val=val_time(1:idx_bc_val,:);  %cut the bc val
+            end
             idx_bc_val=0;
-
             %I think I can make always all false rather than distinguishing
             %between cases. 
             inside_block_qhydrograph=false;
-            inside_block_hqrelation=false;
+            inside_block_hqrelation=false; 
         end 
+
+        %finalize block compute
+        %assumed at the end of the definition, used to finalize all blocks
+        if inside_block_compute
+            inside_block_compute=false;
+
+            %finalize all branch
+            csl=csl(1:idx_branch);
+    
+            %finalize all boundary condition
+            bc=bc(1:idx_bc);
+    
+            %finalize all structures
+            structures_at_node=structures_at_node(1:idx_structure);
+        end
 
         continue
     end %end
 
+    %%
     %% PROCESS BLOCK
+    %%
 
-    skip_process_block=~any([inside_block_aliase,inside_block_branches,inside_block_node,inside_block_branch,inside_block_qhydrograph]);
+    skip_process_block=~any([inside_block_aliase,inside_block_branches,inside_block_node,inside_block_branch,inside_block_qhydrograph,inside_block_compute]);
     
     if skip_process_block
         continue
     end
 
-    %block aliase
+    %% block aliase
     if inside_block_aliase
         tokens=regexp(line,'^(\S+)\s+([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+)','tokens'); %It is different than just numbers as it reads a string. We cannot use `extractNumbers`.
 
@@ -289,7 +312,7 @@ while ~feof(fid)
         network_node_y(idx_network_node)=str2double(tokens{1,1}{1,4});
     end %inside_block_aliase
 
-    %block branches
+    %% block branches
     if inside_block_branches
         tokens=regexp_string_no_quotes(line);
 
@@ -317,7 +340,7 @@ while ~feof(fid)
     % 
     % end %inside_block_node
 
-    %block qhydrograph or block qh-relation
+    %% block qhydrograph or block qh-relation
     if inside_block_qhydrograph || inside_block_hqrelation
         val=extractNumbers(line);
         if ~isequal(size(val),[1,ncolumns_bc])
@@ -340,14 +363,20 @@ while ~feof(fid)
         end
 
         idx_bc_val=idx_bc_val+1;
-        if idx_bc_val==nallocated_2
-            [bc(idx_bc).val,nallocated_2]=allocate_bc_val(npreallocated,bc(idx_bc).val,ncolumns_bc);
+        if idx_bc_val==nallocated_bc_val
+            [val_time,nallocated_bc_val]=allocate_bc_val(npreallocated,val_time,ncolumns_bc);
         end
-        bc(idx_bc).val(idx_bc_val,:)=val;
+        val_time(idx_bc_val,:)=val;
+
+            % idx_bc_val=idx_bc_val+1;
+            % if idx_bc_val==nallocated_bc_val
+            %     [bc(idx_bc).val,nallocated_bc_val]=allocate_bc_val(npreallocated,bc(idx_bc).val,ncolumns_bc);
+            % end
+            % bc(idx_bc).val(idx_bc_val,:)=val;
         
     end
 
-    %block branch
+    %% block branch
     if inside_block_branch
         tokens=regexp_string_no_quotes(line);
 
@@ -385,10 +414,23 @@ while ~feof(fid)
 
     end %inside_block_branch
 
+    %% block compute
+    if inside_block_compute
+        line_number_block_compute=line_number_block_compute+1;
+
+        if line_number_block_compute==2
+            val=extractNumbers(line); 
+            mdu.Tstart=val(1)*tim_factor;
+            mdu.Tstop=val(2)*tim_factor;
+        end
+    end
+
 end %while
 
 end %function
 
+%%
+%% FUNCTIONS
 %%
 
 function [network_node_id,network_node_x,network_node_y,nallocated]=allocate_network(npreallocated,network_node_id,network_node_x,network_node_y)
@@ -502,7 +544,6 @@ end %function
 
 function [val,nallocated]=allocate_bc_val(npreallocated,val,ncolumns_bc)
 
-
 val=cat(1,val,NaN(npreallocated,ncolumns_bc));
 nallocated=size(val,1);
 
@@ -566,5 +607,21 @@ end
 
 % Ensure row vector
 nums = reshape(nums, 1, []);
+
+end %function
+
+%%
+
+function [structures_at_node,nallocated_structures,idx_structure]=fill_structures_at_node(structures_at_node,nodeId,strcuture_type,val,nallocated_structures,npreallocated,idx_structure)
+        
+idx_structure=idx_structure+1;
+
+if idx_structure==nallocated_structures
+    [structures_at_node,nallocated_structures]=allocate_structures(npreallocated,structures_at_node);
+end
+
+structures_at_node(idx_structure).nodeId=nodeId;
+structures_at_node(idx_structure).type=strcuture_type;
+structures_at_node(idx_structure).parameters=val;
 
 end %function

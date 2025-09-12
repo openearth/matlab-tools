@@ -14,7 +14,7 @@
 %Delft3D data about structures, which are located at a chainage in a
 %branch.
 
-function structures=floris_to_fm_structures(structures_at_node,network,varargin)
+function structures=floris_to_fm_structures(structures_at_node,network,fname_bc_pump,varargin)
 
 %% PARSE
 
@@ -123,6 +123,8 @@ for ksnu=1:nsnu
                         factor_4=parameters_loc_2(7);
                     end
                 end
+            case 'pump'
+
             otherwise
                 error('Implement')
         end
@@ -142,6 +144,7 @@ for ksnu=1:nsnu
         chainage=network.network_edge_length(idx_branch);
 
         chapter=sprintf('Structure%d',idx_structures);
+        % id=floris_to_fm_structure_name(nodeId_loc_2,type_loc_2,ksl);
         id=sprintf('%s_%s_%d',nodeId_loc_2,type_loc_2,ksl);
 
         structures.(chapter).id=id;
@@ -149,17 +152,25 @@ for ksnu=1:nsnu
         structures.(chapter).branchId=branchId;
         structures.(chapter).chainage=chainage;
         structures.(chapter).type=type_loc_2;
-        structures.(chapter).crestLevel=crestLevel;
         switch type_loc_2
             case 'weir'
                 structures.(chapter).crestWidth=crestWidth;
                 structures.(chapter).allowedFlowDir='both'; 
                 structures.(chapter).corrCoeff=corrCoeff;
+                structures.(chapter).crestLevel=crestLevel;
             case 'gate'
                 structures.(chapter).gateLowerEdgeLevel=gateLowerEdgeLevel;
                 structures.(chapter).gateOpeningWidth=gateOpeningWidth;
                 structures.(chapter).gateHeight=9999; %flow cannot overtop the gate
                 structures.(chapter).gateOpeningHorizontalDirection='symmetric';
+                structures.(chapter).crestLevel=crestLevel;
+            case 'pump'
+                structures.(chapter).capacity=fname_bc_pump;
+                %ATTENTION! `time_series` is not a true parameter in the
+                %block [structures]. We use it here to pass the information
+                %to the place where we write the time series of the pump
+                %capacity.
+                structures.(chapter).time_series=parameters_loc_2; 
             otherwise
                 error('Implement')
         end

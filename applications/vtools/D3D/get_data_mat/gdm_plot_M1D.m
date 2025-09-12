@@ -317,7 +317,7 @@ for kbr=1:nbr %branches
             [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
             in_p.x_m=x_m;
             in_p.y_m=y_m;
-            in_p.clab_str=var_str_save;
+            in_p.variable=var_str_save;
             in_p.ylab_str='';
             in_p.tit_str=branch_name;
 

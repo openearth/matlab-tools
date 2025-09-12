@@ -39,13 +39,8 @@ check_existing=parin.Results.check_existing;
 % runid_serie=simdef.runid.serie;
 % runid_number=simdef.runid.number;
 
-% restart=simdef.mdf.restart;
-Tstart=simdef.mdf.Tstart;
-% Tunit=simdef.mdf.Tunit;
-% Tfact=simdef.mdf.Tfact;
 Tstop=simdef.mdf.Tstop;
 Dt=simdef.mdf.Dt;   
-C=simdef.mdf.C;
 Flmap_dt=simdef.mdf.Flmap_dt;
 g=simdef.mdf.g;
 secflow=simdef.mdf.secflow;
@@ -60,20 +55,16 @@ Smagorinsky=simdef.mdf.Smagorinsky;
 wall_rough=simdef.mdf.wall_rough;
 wall_ks=simdef.mdf.wall_ks;
 
-FrictType=simdef.mdf.FrictType;
-
 obs_filename=simdef.mdf.obs_filename;
-
-etab=simdef.ini.etab;
-
-h=simdef.ini.h;
 
 Flhis_dt=simdef.mdf.Flhis_dt;
 Flrst_dt=simdef.mdf.Flrst_dt;
 
-K=simdef.grd.K;
-
-morphology=simdef.mor.morphology;
+if isfield(simdef,'mor')
+    morphology=simdef.mor.morphology;
+else
+    morphology=false;
+end
 
 filter=simdef.mdf.filter;
 
@@ -81,11 +72,17 @@ filter=simdef.mdf.filter;
 file_name=simdef.file.mdf;
 Idensform=simdef.mdf.Idensform;
 
+if isfield(simdef,'grd') && isfield(simdef.grd,'K')
+    K=simdef.grd.K;
+elseif isfield(simdef.mdf,'K')
+    K=simdef.mdf.K;
+end
+    
 %% FILE
 
 kl=1;
 data{kl,1}=sprintf('# Generated: %s',datestr(datetime('now'))); kl=kl+1;
-data{kl,1}=        '# by Victor Chavarrias'; kl=kl+1;
+data{kl,1}=sprintf('# %s',[getenv("USER"),getenv("USERNAME")]); kl=kl+1;
 data{kl,1}=        ''; kl=kl+1;
 %%
 data{kl,1}=        '[model]'; kl=kl+1;
@@ -111,22 +108,25 @@ if simdef.ini.etaw_type==2
 else
 data{kl,1}=        'WaterLevIniFile   =         '; kl=kl+1;
 end
-% IniFieldFile                              = ../../../q_dependent/inifile_j14_prespinup.ini     # Initial values and parameter fields file
+data{kl,1}=sprintf('IniFieldFile      = %s',simdef.mdf.IniFieldFile); kl=kl+1;
 data{kl,1}=        'LandBoundaryFile  =         '; kl=kl+1;
 data{kl,1}=        'ThinDamFile       =         '; kl=kl+1;
 data{kl,1}=        'FixedWeirFile     =         '; kl=kl+1;
 data{kl,1}=        'PillarFile        =         '; kl=kl+1;
-data{kl,1}=        'StructureFile     =         '; kl=kl+1;
+data{kl,1}=sprintf('StructureFile     = %s',simdef.mdf.StructureFile); kl=kl+1;
 data{kl,1}=        'VertplizFile      =         '; kl=kl+1;
+data{kl,1}=sprintf('CrossDefFile      = %s',simdef.mdf.CrossDefFile); kl=kl+1;
+data{kl,1}=sprintf('CrossLocFile      = %s',simdef.mdf.CrossLocFile); kl=kl+1;
+data{kl,1}=sprintf('FrictFile         = %s',simdef.mdf.FrictFile); kl=kl+1;
 data{kl,1}=        'ProflocFile       =         '; kl=kl+1;
 data{kl,1}=        'ProfdefFile       =         '; kl=kl+1;
 data{kl,1}=        'ProfdefxyzFile    =         '; kl=kl+1;
 data{kl,1}=        'Uniformwidth1D    = 2       '; kl=kl+1;
 data{kl,1}=        'ManholeFile       =         '; kl=kl+1;
-if simdef.ini.etaw_type==1
-data{kl,1}=sprintf('WaterLevIni       = %0.7E',etab+h); kl=kl+1;
+if isfield(simdef,'ini') && isfield(simdef.ini,'etaw') && simdef.ini.etaw_type==1
+data{kl,1}=sprintf('WaterLevIni       = %0.7E',simdef.ini.etab+simdef.ini.h); kl=kl+1;
 else
-data{kl,1}=        'WaterLevIni       = 0    '; kl=kl+1;
+% data{kl,1}=        'WaterLevIni       = 0    '; kl=kl+1;
 end
 % if simdef.ini.etab0_type==2
 % data{kl,1}=sprintf('Bedlevuni         = %0.7E',etab); kl=kl+1;
@@ -216,8 +216,8 @@ data{kl,1}=        ''; kl=kl+1;
 
 %%
 data{kl,1}=        '[physics]                        '; kl=kl+1;
-data{kl,1}=sprintf('UnifFrictCoef     = %0.7E',C); kl=kl+1;
-data{kl,1}=sprintf('UnifFrictType     = %d',FrictType); kl=kl+1;
+data{kl,1}=sprintf('UnifFrictCoef     = %0.7E',simdef.mdf.C); kl=kl+1;
+data{kl,1}=sprintf('UnifFrictType     = %d',simdef.mdf.FrictType); kl=kl+1;
 data{kl,1}=        'UnifFrictCoef1D   = 0.023        '; kl=kl+1;
 data{kl,1}=        'UnifFrictCoefLin  = 0            '; kl=kl+1;
 data{kl,1}=        'Umodlin           = 0            '; kl=kl+1;
@@ -277,7 +277,7 @@ data{kl,1}=sprintf('DtMax             = %0.14E',Dt); kl=kl+1;
 data{kl,1}=        'DtInit            = 1                            '; kl=kl+1;
 data{kl,1}=        'Timestepanalysis  = 0                            '; kl=kl+1; %# 0=no, 1=see file *.steps
 % data{kl,1}=        'Autotimestepdiff  = 1                            '; kl=kl+1; %# 0 = no, 1 = yes (Time limitation based on explicit diffusive term)
-data{kl,1}=        'Tunit             = S                            '; kl=kl+1;
+data{kl,1}=sprintf('Tunit             = %s',simdef.mdf.Tunit)         ; kl=kl+1;
 data{kl,1}=        'TStart            = 0                            '; kl=kl+1;
 data{kl,1}=sprintf('TStop             = %0.14E',Tstop); kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
