@@ -60,23 +60,16 @@ end
 fname_dest=file_name;
 file_name=fullfile(pwd,now_chr);
 
-messageOut(NaN,sprintf('Start writing file: %s',file_name))
+messageOut(NaN,sprintf('Start writing file: %s',fname_dest))
 if add_header
-    fileID_out=fopen_add_header(file_name,'w');
+    fileID_out=fopen_add_header(fname_dest,'w');
+    fclose(fileID_out);
+    writematrix(num2str(matrix,num_str), fname_dest, 'FileType', 'text', 'Delimiter', ' ', 'QuoteStrings', 'none', 'WriteMode','append')
 else
-    fileID_out=fopen(file_name,'w');
-end
-write_str_x=strcat(num_str,'\n'); %string to write in x
-
-for ky=1:ny
-    fprintf(fileID_out,write_str_x,matrix(ky,:));
+    writematrix(num2str(matrix,num_str), fname_dest, 'FileType', 'text', 'Delimiter', ' ', 'QuoteStrings', 'none')
 end
 
-fclose(fileID_out);
-messageOut(NaN,sprintf('Finished writing file: %s',file_name))
+messageOut(NaN,sprintf('Finished writing file: %s',fname_dest))
 
-%copy to destination
-copyfile_check(file_name,fname_dest);
-delete(file_name);
 
 end %function
