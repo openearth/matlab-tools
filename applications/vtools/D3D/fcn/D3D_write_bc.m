@@ -37,7 +37,7 @@ for kbc=1:nbc
     
     fprintf(fid,'\n');
     fprintf(fid,'[forcing] \n');
-    if any(contains(bc(kbc).quantity,'lateral')) || any(contains(bc(kbc).quantity,'qhtable')) || bc(kbc).at_node==1 %at a point
+    if any(contains(bc(kbc).quantity,'lateral')) || any(contains(bc(kbc).quantity,'qhtable')) || any(contains(bc(kbc).quantity,'pump_capacity')) || bc(kbc).at_node==1 %at a point
         %ATTENTION! this is not robust enough. I am not sure it works well for all cases.
         fprintf(fid,'Name                            = %s \n',bc(kbc).name);
     else %along pli

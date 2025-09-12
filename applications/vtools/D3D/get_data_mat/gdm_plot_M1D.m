@@ -15,7 +15,7 @@
 %   -there is no loop over kylim for 1D plot.
 %   -loop on `kdiff` needs to be removed to clarify.
 
-function plot_map_1D_xv_01(fid_log,flg_loc,simdef)
+function gdm_plot_M1D(fid_log,flg_loc,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 

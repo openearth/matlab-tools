@@ -12,7 +12,7 @@
 %
 %
 
-function create_mat_map_1D(fid_log,flg_loc,simdef)
+function gdm_create_mat_M1D(fid_log,flg_loc,simdef)
 
 tag=flg_loc.tag;
 

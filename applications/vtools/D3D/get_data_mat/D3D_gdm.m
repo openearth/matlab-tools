@@ -301,7 +301,7 @@
 
 %% 1D map
 
-% tag='fig_map_1D_01';
+% tag='M1D';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %pass through plotting routine
 % in_plot.(tag).do_p_single=1; %plot single result
