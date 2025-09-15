@@ -63,6 +63,7 @@ OPT.t0           = '';
 OPT.tend         = '';
 OPT.tint         = ''; % in days
 OPT.t            = []; % time index. If OPT.t is specified, OPT.t0, OPT.tend and OPT.tint are not used to find time index
+OPT.tol_t        = 1e-8; % tolerance to match time in datenum 
 OPT.layer        = 0; % all
 OPT.sedimentName = ''; % name of sediment fraction
 
