@@ -12,7 +12,7 @@
 %
 %
 
-function create_mat_his_01(fid_log,flg_loc,simdef)
+function gdm_create_mat_HIS(fid_log,flg_loc,simdef)
 
 tag=flg_loc.tag;
 

@@ -333,7 +333,7 @@
 
 %% HIS
 
-% tag='fig_his_01';
+% tag='HIS';
 % in_plot.(tag).do=1; %create mat files
 % in_plot.(tag).do_p=1; %pass through plotting routine
 % in_plot.(tag).do_p_single=1; %plot single result

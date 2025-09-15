@@ -12,7 +12,7 @@
 %
 %
 
-function plot_his_01(fid_log,flg_loc,simdef)
+function gdm_plot_HIS(fid_log,flg_loc,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 
@@ -94,8 +94,10 @@ for ktimint=1:ntimint
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
-        var_str=D3D_var_num2str_structure(varname,simdef(1),'res_type','his');
+        variable=D3D_var_num2str_structure(varname,simdef(1),'res_type','his');
             
+        in_p.variable=variable;
+
         data_all=cell(nsim,n_sta);
         data_conv=cell(nsim,n_sta);
         
@@ -114,11 +116,11 @@ for ktimint=1:ntimint
             in_p.station=stations_loc;
             
             elev=flg_loc.elev(ks);
-            [layer,elev]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},var_str,elev);
+            [layer,elev]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},variable,elev);
             in_p.elev=elev;
     
             %% load data
-            [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elev,tim_dtime,flg_loc.unit{kvar},kvar);
+            [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,variable,tag,nsim,k_sta,his_type,elev,tim_dtime,kvar);
             %dimension: data_all{k_sim,k_sta}
     
             if ~isvector(size(data_all{1}))
@@ -126,16 +128,14 @@ for ktimint=1:ntimint
                 continue
             end
     
-            in_p.unit=unit;
-    
             %% convergence
-            [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,var_str,k_sta,data_conv);
+            [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,variable,k_sta,data_conv);
             
             %% measurements
-            [do_measurements,data_mea]=add_measurements(flg_loc.measurements,stations_loc,elev,unit);
+            [do_measurements,data_mea]=add_measurements(flg_loc.measurements,stations_loc,elev,variable);
     
             flg_loc.do_measurements=do_measurements;
-            [data_statistics]=gdm_statistics_measurements(flg_loc,simdef,data_mea,tim_dtime_p,data_all,stations_loc,var_str,elev,k_sta);
+            [data_statistics]=gdm_statistics_measurements(flg_loc,simdef,data_mea,tim_dtime_p,data_all,stations_loc,variable,elev,k_sta);
     
             in_p.do_measurements=do_measurements;
             in_p.data_stations=data_mea;
@@ -153,7 +153,7 @@ for ktimint=1:ntimint
                 
                 %% plot each station individually
                 if flg_loc.do_p_single
-                    fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p(ksim),tag,stations_loc,var_str,layer,elev,fdir_fig,data_mea,do_measurements);
+                    fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p(ksim),tag,stations_loc,variable,layer,elev,fdir_fig,data_mea,do_measurements);
                 end
     
                 %% plot salinity figure (special case)
@@ -161,7 +161,7 @@ for ktimint=1:ntimint
                     %We save `data_statistics` for being able to write the table. Only
                     %when the variable is salinity we save it (we also loop in water
                     %level).
-                    if strcmp(var_str,'sal')
+                    if strcmp(variable,'sal')
                         %we remove timeseries to save space
                         data_statistics_no_time_series=data_statistics;
                         data_statistics_no_time_series=rmfield(data_statistics_no_time_series,{'verr','v_mea','v_sim_atmea','tim_mea'});
@@ -169,7 +169,7 @@ for ktimint=1:ntimint
                         data_statistics_all(ks,ktimint)=data_statistics_no_time_series; %This can fail if there is more than one simulation. Test!
                     end
 
-                    fcn_plot_sal_01(flg_loc,in_p,data_all,simdef(ksim),gridInfo(ksim),stations_loc,var_str,tag,k_sta,his_type,elev,tim_dtime_p{ksim},obs_all,data_statistics(ksim),fdir_fig,data_mea);
+                    fcn_plot_sal_01(flg_loc,in_p,data_all,simdef(ksim),gridInfo(ksim),stations_loc,variable,tag,k_sta,his_type,elev,tim_dtime_p{ksim},obs_all,data_statistics(ksim),fdir_fig,data_mea);
                 end
             end %ksim
     
@@ -181,7 +181,7 @@ for ktimint=1:ntimint
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,sprintf('%s_all',tag_fig),tag_serie);
         
                 val=data_all(:,k_sta); %we pass all simulations and only one stations
-                fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,data_mea,do_measurements);
+                fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,variable,layer,elev,fdir_fig,data_mea,do_measurements);
             end
     
             %% difference with reference simulation
@@ -203,7 +203,7 @@ for ktimint=1:ntimint
                     val={val-val_ref};
                     in_p.is_diff=1;
     
-                    fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,data_mea,do_measurements);
+                    fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,variable,layer,elev,fdir_fig,data_mea,do_measurements);
                 end
             end
             
@@ -215,12 +215,12 @@ for ktimint=1:ntimint
         
         if flg_loc.do_convergence
             
-            fdir_fig_var=fullfile(fdir_fig,var_str);
+            fdir_fig_var=fullfile(fdir_fig,variable);
             
             ylims_loc=flg_loc.ylims_var{kvar};
             nylim=size(ylims_loc,1);
             for kylim=1:nylim
-                fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'conv');
+                fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,variable,layer,kylim,'conv');
                 
                 in_p_c.fname=fname_noext;
                 in_p_c.data=data_conv;
@@ -242,12 +242,12 @@ for ktimint=1:ntimint
     
             in_p_sta_all=in_p;
     
-            fdir_fig_var=fullfile(fdir_fig,var_str);
+            fdir_fig_var=fullfile(fdir_fig,variable);
 
             ylims_loc=flg_loc.ylims_var{kvar};
             nylim=size(ylims_loc,1);
             for kylim=1:nylim
-                fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,var_str,layer,kylim,'allsta');
+                fname_noext=fig_name_convergence(fdir_fig_var,tag,simdef(1).file.runid,variable,layer,kylim,'allsta');
                 
                 [in_p_sta_all.xlims,in_p_sta_all.ylims]=get_ylims(ylims_loc(kylim,:),do_measurements,data_all,data_mea,tim_dtime_p{1});
         
@@ -273,7 +273,7 @@ for ktimint=1:ntimint
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_loc,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
     
-                fcn_plot_his_xt(flg_loc,in_p,simdef(ksim),runid,data_all(ksim,:),tim_dtime_p{ksim},var_str,flg_loc.clims_var{kvar,1},tag_loc,fdir_fig);
+                fcn_plot_his_xt(flg_loc,in_p,simdef(ksim),runid,data_all(ksim,:),tim_dtime_p{ksim},variable,flg_loc.clims_var{kvar,1},tag_loc,fdir_fig);
             end
     
         end
@@ -405,7 +405,7 @@ end %function
 
 %%
 
-function [data_all,layer,unit]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elev,time_dtime,unit,kvar)
+function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elev,time_dtime,kvar)
 
 for ksim=1:nsim %simulations            
     fdir_mat=simdef(ksim).file.mat.dir;
@@ -423,10 +423,7 @@ for ksim=1:nsim %simulations
     load(fpath_mat_tmp,'data');
 
     %change units
-    if isempty(unit)
-        unit=var_str;
-    end
-    switch unit
+    switch var_str
         case 'cl' %data is in psu and we want it in cl
             data=sal2cl(1,data);
     end
@@ -576,7 +573,7 @@ for kylim=1:nylim
                 fig_his_sal_01(in_p);
             else
                 in_p.s=in_p.tim;
-                in_p.lab_str=in_p.unit;
+                in_p.variable=var_str;
                 in_p.title_str=in_p.station;
                 fig_1D_01(in_p);
             end

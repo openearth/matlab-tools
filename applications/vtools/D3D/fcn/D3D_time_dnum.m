@@ -73,6 +73,11 @@ function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_i
 
 idx_g=NaN; %not needed, but we need to output it
 
+if strcmp(results_type,'his') && tim_type==2
+    warning('There is no morphodynamic time in history output. It has been switched to hydrodynamic time.')
+    tim_type=1;
+end
+
 %% get all results time
 [~,~,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type);
 

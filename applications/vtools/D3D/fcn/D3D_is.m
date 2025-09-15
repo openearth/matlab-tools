@@ -27,7 +27,7 @@ if strcmp(ext,'.nc') %FM
     [varnames,dimids]=NC_varnames(nc_map);
 
     %ismor
-    idx=find_str_in_cell(varnames,{'mesh2d_mor_bl','mesh1d_mor_bl'});
+    idx=find_str_in_cell(varnames,{'mesh2d_mor_bl','mesh1d_mor_bl','cross_section_bedload_sediment_transport'});
     ismor=1;
     if any(isnan(idx))
         ismor=0;

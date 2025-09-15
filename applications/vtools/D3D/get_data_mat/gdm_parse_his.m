@@ -121,7 +121,7 @@ flg_loc=isfield_default(flg_loc,'elev',NaN(flg_loc.nobs,1));
 
 %var
 flg_loc=isfield_default(flg_loc,'depth_average',zeros(flg_loc.nvar,1));        
-flg_loc=isfield_default(flg_loc,'unit',cell(flg_loc.nvar,1));
+% flg_loc=isfield_default(flg_loc,'unit',cell(flg_loc.nvar,1)); %ATTENTION! this is now the conversion factor of the `variable`
 flg_loc=isfield_default(flg_loc,'depth_average_limits',repmat([-inf,inf],flg_loc.nvar,1));
 flg_loc=isfield_default(flg_loc,'sum_var_idx',zeros(flg_loc.nvar,1));        
 flg_loc=isfield_default(flg_loc,'var_idx',cell(flg_loc.nvar,1));

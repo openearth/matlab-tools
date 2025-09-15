@@ -41,13 +41,11 @@ end
 %     plot_his_xt_01(fid_log,in_plot_fig,simdef)
 % end
     
-%% his sal 01
-tag_check='fig_his_01';
-if isfield(in_plot,tag_check)==1
-%     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
-    in_plot_fig=gmd_tag(in_plot,tag_check);
+%% HIS
+in_plot_fig=gdm_check_tag_HIS(in_plot);
+if in_plot_fig.do
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
-    plot_his_01(fid_log,in_plot_fig,simdef)
+    gdm_plot_HIS(fid_log,in_plot_fig,simdef)
 end
 
 %% map 2DH his
@@ -55,7 +53,7 @@ tag_check='fig_map_2DH_his_01';
 if isfield(in_plot,tag_check)==1
     in_plot_fig=gmd_tag(in_plot,tag_check);
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
-    plot_his_01(fid_log,in_plot_fig,simdef)
+    gdm_plot_HIS(fid_log,in_plot_fig,simdef)
 end
 
 %% map 1D

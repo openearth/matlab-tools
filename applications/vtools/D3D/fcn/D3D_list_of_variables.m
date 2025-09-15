@@ -41,7 +41,7 @@ function D3D_list_of_variables
 %   37                      = CFL [-]
 %   33  'mesh2d_flowelem_ba'= cell area [m^2]
 %   34                      = space step [m]
-%   38                      = time step [s]
+%   38  'timestep'          = time step [s]
 %       'E'                 = piezometric head [m]
 
 %% MORPHODYNAMIC

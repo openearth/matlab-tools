@@ -594,7 +594,7 @@ if do_title && ~do_time && isempty(title_str)
         messageOut(NaN,'Time is a NaN, cannot add it to title.')
     end
 else
-    han.sfig(kr,kc).Title.String=title_str;
+    han.sfig(kr,kc).Title.String=strrep(title_str,'_','\_');
 end
 % han.sfig(kr,kc).XColor='r';
 % han.sfig(kr,kc).YColor='k';

@@ -117,6 +117,29 @@ for kb=1:network_nEdges
     idx_mesh1d_edge_0=idx_mesh1d_edge_1+1;
 end
 
+% %% BEGIN DEBUG
+% 
+% cmap=lines(network_nEdges);
+% figure
+% hold on
+% axis equal
+% for kb=1:network_nEdges
+%     bol_br=mesh1d_node_branch==kb-1; %starts at 0
+%     plot(mesh1d_node_x(bol_br),mesh1d_node_y(bol_br),'o','color',cmap(kb,:))
+% end
+% 
+% for kb=1:network_nEdges
+%     bol_br=mesh1d_edge_branch==kb-1; %starts at 0
+%     plot(mesh1d_edge_x(bol_br),mesh1d_edge_y(bol_br),'+','color',cmap(kb,:))
+% end
+% 
+% for kl=1:numel(mesh1d_edge_x)
+%     kb=mesh1d_edge_branch(kl)+1;
+%     plot(mesh1d_node_x(mesh1d_edge_nodes(:,kl)+1),mesh1d_node_y(mesh1d_edge_nodes(:,kl)+1),'color',cmap(kb,:))
+% end
+% 
+% % END DEBUG
+
 %% JOIN BRANCHES
 
 %loop on network nodes
