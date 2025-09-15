@@ -106,18 +106,7 @@ for kbr=1:nbr %branches
     branch_name=flg_loc.branch_name{kbr};
 
     gridInfo_br=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat,gridInfo,branch,branch_name);
-    nx=numel(gridInfo_br.offset);    
     
-    if do_rkm
-        in_p.s=gridInfo_br.rkm;
-        in_p.xlab_str='rkm';
-        in_p.xlab_un=1/1000;
-    else
-        in_p.s=gridInfo_br.offset;
-        in_p.xlab_str='dist';
-        in_p.xlab_un=1;
-    end
-
     kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 %         fpath_file=cell(nt,1); %movie
 
@@ -130,6 +119,18 @@ for kbr=1:nbr %branches
         lims_diff_s=flg_loc.ylims_diff_s_var{kvar,1};
         
         [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef(1));
+
+        [~,offset,offset_rkm]=gdm_select_edgenode_1D_variable(var_id,gridInfo_br);
+        if do_rkm
+            in_p.s=offset_rkm;
+            in_p.xlab_str='rkm';
+            in_p.xlab_un=1/1000;
+        else
+            in_p.s=offset;
+            in_p.xlab_str='dist';
+            in_p.xlab_un=1;
+        end
+        nx=numel(offset);  
 
         %% time 0
 
@@ -174,7 +175,7 @@ for kbr=1:nbr %branches
             end
             
             in_p.tim=time_dnum_v(kt);
-            in_p.lab_str=var_str_save;
+            in_p.variable=var_str_save;
             in_p.xlims=flg_loc.xlims_var{kvar};
 
             %% measurements

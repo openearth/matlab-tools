@@ -126,7 +126,8 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'idx_branch',gridInfo_br.idx,'branch',branch_name);    
+            branch_idx=gdm_select_edgenode_1D_variable(var_id,gridInfo_br);
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'idx_branch',branch_idx,'branch',branch_name);    
             data=squeeze(data_var.val); %#ok
             save_check(fpath_mat_tmp,'data'); 
         end                

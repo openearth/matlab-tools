@@ -61,8 +61,12 @@ gridInfo=gdm_grd_branch(gridInfo_all,branch);
 if do_rkm
     rkm_br=convert2rkm(flg_loc.fpath_rkm,gridInfo.xy,'TolMinDist',flg_loc.rkm_tol);
     gridInfo.rkm=rkm_br;
+    
+    rkm_br=convert2rkm(flg_loc.fpath_rkm,gridInfo.xy_edge,'TolMinDist',flg_loc.rkm_tol);
+    gridInfo.rkm_edge=rkm_br;
 else
     gridInfo.rkm=NaN;
+    gridInfo.rkm_edge=NaN;
 end
 
 save_check(fpath_grd,'gridInfo'); 
