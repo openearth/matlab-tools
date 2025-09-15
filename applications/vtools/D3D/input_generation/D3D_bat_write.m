@@ -43,13 +43,13 @@ switch structure
     case 1 %D3D4
         % fprintf(fid_bat,'del tri-diag* \r\n'); %If there is no dia-file, it crashes. 
         fpath_software_full=fullfile(fpath_software,'x64','dflow2d3d','scripts','run_dflow2d3d.bat');
-        strsoft_win=sprintf('call %s %s',fpath_software_full,dimr_str);
+        strsoft_win=sprintf('call "%s" %s',fpath_software_full,dimr_str);
     case 2 %FM
         if ~isnan(OMP_num)
             fprintf(fid_bat,'set OMP_NUM_THREADS=%d\r\n',OMP_num);
         end
         fpath_software_full=fullfile(fpath_software,'x64','bin','run_dimr.bat');
-        strsoft_win=sprintf('call %s %s',fpath_software_full,dimr_str);
+        strsoft_win=sprintf('call "%s" %s',fpath_software_full,dimr_str);
 end
 fprintf(fid_bat,'%s \r\n',strsoft_win); 
 fprintf(fid_bat,'exit \r\n');

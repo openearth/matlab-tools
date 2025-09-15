@@ -22,6 +22,11 @@ end
 %% CALC
 fid=fopen(fpath,'w');
 
+%Necessary for GUI
+fprintf(fid,'[General] \n');
+fprintf(fid,'fileVersion           = 1.01                 \n');
+fprintf(fid,'fileType              = boundConds    \n');
+
 for kbc=1:nbc
     
     % [forcing]

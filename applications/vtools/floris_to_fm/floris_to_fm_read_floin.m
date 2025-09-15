@@ -180,7 +180,9 @@ while ~feof(fid)
                     bc(idx_bc).function='timeseries';
                     bc(idx_bc).time_interpolation='linear';
                     bc(idx_bc).quantity={'time','dischargebnd'};
-                    bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
+                    %with timezone is best, but the GUI cannot read it
+                    bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00',time_unit),'m³/s'};
+                    % bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
                 end
 
             case 'hqrelation' %boundary condition on qh-relation

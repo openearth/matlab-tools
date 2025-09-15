@@ -79,8 +79,10 @@ if isfield(simdef.D3D,'OMP_num')==0
     simdef.D3D.OMP_num=NaN; %maximum
 end
 
-if ~isfield(simdef.file,'runid')
-    simdef.file.runid=fullfile(simdef.D3D.dire_sim,'runid');
+if simdef.D3D.structure==1
+    if ~isfield(simdef.file,'runid')
+        simdef.file.runid=fullfile(simdef.D3D.dire_sim,'runid');
+    end
 end
 
 %default is serial computation in h7
@@ -98,12 +100,9 @@ simdef=D3D_rework_nodes(simdef);
 %         end
 % end
 
-if isfield(simdef.file,'exe_input')==0
-    simdef.file.exe_input='c:\Program Files (x86)\Deltares\Delft3D Flexible Mesh Suite HMWQ (2021.03)\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat';
-end
-if isfield(simdef.file,'exe_grd2map')==0
-    simdef.file.exe_grd2map=simdef.file.exe_input;
-end
+simdef.file=isfield_default(simdef.file,'exe_input','c:\Program Files\Deltares\Delft3D FM Suite 2025.01 1D2D\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat');
+simdef.file=isfield_default(simdef.file,'exe_grd2map',simdef.file.exe_input);
+simdef.file=isfield_default(simdef.file,'software','c:\Program Files\Deltares\Delft3D FM Suite 2025.01 1D2D\plugins\DeltaShell.Dimr\kernels\');
 
 %%
 %% GRID
@@ -267,15 +266,18 @@ if simdef.mdf.restart==1
 end
 
 %rework stop time
-if rem(simdef.mdf.Tstop,simdef.mdf.Dt)~=0
+fact=time_factor(simdef.mdf.Tunit,'seconds');
+if rem(simdef.mdf.Tstop*fact,simdef.mdf.Dt)~=0
     simdef.mdf.Tstop=(floor(simdef.mdf.Tstop/simdef.mdf.Dt)+1)*simdef.mdf.Dt; %output in seconds
     warning('Simulation time does not match with time step. I have changed the simulation time.')
 end
 
     %Add one time step in FM such that the output at the N-1 time is at the time we wanted using the output interval for sure
-if simdef.D3D.structure==2
-    simdef.mdf.Tstop=simdef.mdf.Tstop+2*simdef.mdf.Dt;
-end
+%I do not think this is needed anymore because the output is multiple of
+%Dtuser. In case it is needed, modify considering Tunit
+% if simdef.D3D.structure==2
+%     simdef.mdf.Tstop=simdef.mdf.Tstop+2*simdef.mdf.Dt;
+% end
 
 %map time
 if isfield(simdef.mdf,'Flmap_dt')==0
@@ -737,6 +739,8 @@ end
 %% RUNID
 %%
 
+simdef.runid.dummy=NaN;
+
 switch simdef.D3D.structure
     case 1
         ext='mdf';
@@ -744,7 +748,10 @@ switch simdef.D3D.structure
         ext='mdu';
 end
 
-simdef.runid.dummy=NaN;
+if isfield(simdef.file,'mdfid')
+    simdef.runid.name=simdef.file.mdfid;
+end
+
 if isfield(simdef.runid,'name')==0
     if isfield(simdef.runid,'number')
         if isa(simdef.runid.number,'double')
@@ -754,7 +761,6 @@ if isfield(simdef.runid,'name')==0
 %     simdef.runid.name=sprintf('sim_%s%s.%s',simdef.runid.serie,simdef.runid.number,ext);
     simdef.runid.name=sprintf('r%s%s.%s',simdef.runid.serie,simdef.runid.number,ext);
 end
-
 
 if isfield(simdef.file,'mdf')==0
     fname_mdu=sprintf('%s.%s',simdef.runid.name,ext);

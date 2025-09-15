@@ -170,6 +170,7 @@ for ksnu=1:nsnu
                 %block [structures]. We use it here to pass the information
                 %to the place where we write the time series of the pump
                 %capacity.
+                structures.(chapter).controlSide='both';  %Only required/used when numStages >0, necessary for GUI reading
                 structures.(chapter).time_series=parameters_loc_2; 
             otherwise
                 error('Implement')

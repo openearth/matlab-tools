@@ -87,9 +87,9 @@ data{kl,1}=        ''; kl=kl+1;
 %%
 data{kl,1}=        '[model]'; kl=kl+1;
 data{kl,1}=        'Program           = D-Flow FM       '; kl=kl+1;
-data{kl,1}=        'Version           = 1.2.38.63285M   '; kl=kl+1;
+% data{kl,1}=        'Version           = 1.2.38.63285M   '; kl=kl+1;
 data{kl,1}=        'MDUFormatVersion  = 1.02            '; kl=kl+1;
-data{kl,1}=        'GuiVersion        = 1.5.2.42543     '; kl=kl+1;
+% data{kl,1}=        'GuiVersion        = 1.5.2.42543     '; kl=kl+1;
 data{kl,1}=        'AutoStart         = 0               '; kl=kl+1;
 data{kl,1}=        ''; kl=kl+1;
 %% GEOMETRY
@@ -102,26 +102,27 @@ data{kl,1}=sprintf('NetFile           = %s',simdef.mdf.grd); kl=kl+1;
 % end
 data{kl,1}=        'DryPointsFile     =         '; kl=kl+1;
 data{kl,1}=        'GridEnclosureFile =         '; kl=kl+1;
-if simdef.ini.etaw_type==2
+% if simdef.ini.etaw_type==2
 % data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.ini.etaw_file); kl=kl+1;
 % data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.mdf.etaw_file); kl=kl+1;
-else
-data{kl,1}=        'WaterLevIniFile   =         '; kl=kl+1;
-end
+% else
+% data{kl,1}=        'WaterLevIniFile   =         '; kl=kl+1;
+% end
 data{kl,1}=sprintf('IniFieldFile      = %s',simdef.mdf.IniFieldFile); kl=kl+1;
 data{kl,1}=        'LandBoundaryFile  =         '; kl=kl+1;
+data{kl,1}=        'UseCaching        = 0       '; kl=kl+1;
 data{kl,1}=        'ThinDamFile       =         '; kl=kl+1;
 data{kl,1}=        'FixedWeirFile     =         '; kl=kl+1;
 data{kl,1}=        'PillarFile        =         '; kl=kl+1;
 data{kl,1}=sprintf('StructureFile     = %s',simdef.mdf.StructureFile); kl=kl+1;
-data{kl,1}=        'VertplizFile      =         '; kl=kl+1;
+% data{kl,1}=        'VertplizFile      =         '; kl=kl+1;
 data{kl,1}=sprintf('CrossDefFile      = %s',simdef.mdf.CrossDefFile); kl=kl+1;
 data{kl,1}=sprintf('CrossLocFile      = %s',simdef.mdf.CrossLocFile); kl=kl+1;
 data{kl,1}=sprintf('FrictFile         = %s',simdef.mdf.FrictFile); kl=kl+1;
-data{kl,1}=        'ProflocFile       =         '; kl=kl+1;
-data{kl,1}=        'ProfdefFile       =         '; kl=kl+1;
-data{kl,1}=        'ProfdefxyzFile    =         '; kl=kl+1;
-data{kl,1}=        'Uniformwidth1D    = 2       '; kl=kl+1;
+% data{kl,1}=        'ProflocFile       =         '; kl=kl+1;
+% data{kl,1}=        'ProfdefFile       =         '; kl=kl+1;
+% data{kl,1}=        'ProfdefxyzFile    =         '; kl=kl+1;
+% data{kl,1}=        'Uniformwidth1D    = 2       '; kl=kl+1;
 data{kl,1}=        'ManholeFile       =         '; kl=kl+1;
 if isfield(simdef,'ini') && isfield(simdef.ini,'etaw') && simdef.ini.etaw_type==1
 data{kl,1}=sprintf('WaterLevIni       = %0.7E',simdef.ini.etab+simdef.ini.h); kl=kl+1;
@@ -143,7 +144,7 @@ data{kl,1}=        'Blmeanbelow       = -999    '; kl=kl+1;
 data{kl,1}=        'Blminabove        = -999    '; kl=kl+1;
 data{kl,1}=        'PartitionFile     =         '; kl=kl+1;
 data{kl,1}=        'Anglat            =  0        '; kl=kl+1;
-data{kl,1}=        'Grdang            =  0        '; kl=kl+1;
+% data{kl,1}=        'Grdang            =  0        '; kl=kl+1;
 data{kl,1}=        'Conveyance2D      = -1        '; kl=kl+1;
 data{kl,1}=        'Nonlin2D          = 0         '; kl=kl+1;
 data{kl,1}=        'Sillheightmin     = 0         '; kl=kl+1;
@@ -157,8 +158,8 @@ data{kl,1}=        'Layertype         = 1         '; kl=kl+1;
 data{kl,1}=        'Numtopsig         = 0         '; kl=kl+1;
 data{kl,1}=        'SigmaGrowthFactor = 1         '; kl=kl+1;
 data{kl,1}=sprintf('Removesmalllinkstrsh = %d     ',simdef.mdf.Removesmalllinkstrsh); kl=kl+1; %0.0 = remove no links ,  0.1 = remove links smaller than 0.1 sqrt(ba)
-data{kl,1}=sprintf('Dpuopt = %d     ',simdef.mdf.Dpuopt); kl=kl+1; %# Bed level interpolation at velocity point in case of tile approach bed level: 1 = max (default); 2 = mean
-data{kl,1}=sprintf('ExtrBl = %d     ',simdef.mdf.ExtrBl); kl=kl+1; %# Extrapolation of bed level at boundaries according to the slope: 0 = no extrapolation (default); 1 = extrapolate.
+data{kl,1}=sprintf('Dpuopt            = %d     ',simdef.mdf.Dpuopt); kl=kl+1; %# Bed level interpolation at velocity point in case of tile approach bed level: 1 = max (default); 2 = mean
+data{kl,1}=sprintf('ExtrBl            = %d     ',simdef.mdf.ExtrBl); kl=kl+1; %# Extrapolation of bed level at boundaries according to the slope: 0 = no extrapolation (default); 1 = extrapolate.
 
 % Kmx                               = 28                  # Maximum number of vertical layers
 % Layertype                         = 2                   # Vertical layer type (1: all sigma, 2: all z, 3: use VertplizFile)
@@ -196,21 +197,21 @@ data{kl,1}=        'Logprofkepsbndin  = 0          '; kl=kl+1; % inflow: 0=0 kep
 data{kl,1}=        'Slopedrop2D       = 0          '; kl=kl+1;
 data{kl,1}=        'Chkadvd           = 0.1        '; kl=kl+1;
 data{kl,1}=sprintf('Teta0             = %f         ',simdef.mdf.theta); kl=kl+1;
-data{kl,1}=        'Qhrelax           = 0.01       '; kl=kl+1;
+% data{kl,1}=        'Qhrelax           = 0.01       '; kl=kl+1;
 data{kl,1}=        'Jbasqbnddownwindhs= 0          '; kl=kl+1;
 data{kl,1}=        'cstbnd            = 0          '; kl=kl+1;
 data{kl,1}=        'Maxitverticalforestersal= 0    '; kl=kl+1;
 data{kl,1}=        'Maxitverticalforestertem= 0    '; kl=kl+1;
-data{kl,1}=        'Jaorgsethu        = 1          '; kl=kl+1;
+% data{kl,1}=        'Jaorgsethu        = 1          '; kl=kl+1;
 data{kl,1}=        'Turbulencemodel   = 3          '; kl=kl+1;
 data{kl,1}=        'Turbulenceadvection= 3         '; kl=kl+1;
 data{kl,1}=        'AntiCreep         = 0          '; kl=kl+1;
 data{kl,1}=        'Maxwaterleveldiff = 0          '; kl=kl+1;
 data{kl,1}=        'Maxvelocitydiff   = 0          '; kl=kl+1;
 data{kl,1}=        'Epshu             = 0.0001     '; kl=kl+1;
-data{kl,1}=        'SobekDFM_umin     = 0          '; kl=kl+1;
+% data{kl,1}=        'SobekDFM_umin     = 0          '; kl=kl+1;
 data{kl,1}=sprintf('TransportAutoTimestepdiff = %d         ',simdef.mdf.TransportAutoTimestepdiff); kl=kl+1;
-data{kl,1}=sprintf('filter            = %d         ',filter); kl=kl+1;
+% data{kl,1}=sprintf('filter            = %d         ',filter); kl=kl+1;
 data{kl,1}=sprintf('MinTimestepBreak  = %d         ',0); kl=kl+1; 
 data{kl,1}=        ''; kl=kl+1;
 
@@ -234,19 +235,19 @@ data{kl,1}=        'Rhomean           = 1000         '; kl=kl+1;
 data{kl,1}=sprintf('Idensform         = %d',Idensform); kl=kl+1; %# Density calulation (0: uniform, 1: Eckart, 2: Unesco, 3=Unesco83, 13=3+pressure). Setting it to 2 causes computation of baroclinic terms althought there is no salt.
 data{kl,1}=sprintf('Ag                = %0.7E',g)     ; kl=kl+1;
 data{kl,1}=        'TidalForcing      = 0            '; kl=kl+1;
-data{kl,1}=        'Doodsonstart      = 55.565       '; kl=kl+1;
-data{kl,1}=        'Doodsonstop       = 375.575      '; kl=kl+1;
-data{kl,1}=        'Doodsoneps        = 0            '; kl=kl+1;
+% data{kl,1}=        'Doodsonstart      = 55.565       '; kl=kl+1;
+% data{kl,1}=        'Doodsonstop       = 375.575      '; kl=kl+1;
+% data{kl,1}=        'Doodsoneps        = 0            '; kl=kl+1;
 data{kl,1}=        'Salinity          = 0            '; kl=kl+1;
-data{kl,1}=        'InitialSalinity   = 0            '; kl=kl+1;
-data{kl,1}=        'Sal0abovezlev     = -999         '; kl=kl+1;
-data{kl,1}=        'DeltaSalinity     = -999         '; kl=kl+1;
-data{kl,1}=        'Backgroundsalinity= 0            '; kl=kl+1;
-data{kl,1}=        'InitialTemperature= 15           '; kl=kl+1;
-data{kl,1}=        'Secchidepth       = 2            '; kl=kl+1;
-data{kl,1}=        'Stanton           = -1           '; kl=kl+1;
-data{kl,1}=        'Dalton            = -1           '; kl=kl+1;
-data{kl,1}=        'Backgroundwatertemperature= 1    '; kl=kl+1;
+% data{kl,1}=        'InitialSalinity   = 0            '; kl=kl+1;
+% data{kl,1}=        'Sal0abovezlev     = -999         '; kl=kl+1;
+% data{kl,1}=        'DeltaSalinity     = -999         '; kl=kl+1;
+% data{kl,1}=        'Backgroundsalinity= 0            '; kl=kl+1;
+% data{kl,1}=        'InitialTemperature= 15           '; kl=kl+1;
+% data{kl,1}=        'Secchidepth       = 2            '; kl=kl+1;
+% data{kl,1}=        'Stanton           = -1           '; kl=kl+1;
+% data{kl,1}=        'Dalton            = -1           '; kl=kl+1;
+% data{kl,1}=        'Backgroundwatertemperature= 1    '; kl=kl+1;
 data{kl,1}=sprintf('SecondaryFlow     = %d',secflow); kl=kl+1;
 data{kl,1}=sprintf('BetaSpiral        = %d',secflow); kl=kl+1;
 data{kl,1}=        'Temperature       = 0            '; kl=kl+1;
@@ -263,9 +264,9 @@ data{kl,1}=        'PavIni            = 0                   '; kl=kl+1;
 %%
 data{kl,1}=        '[waves]                                          '; kl=kl+1;
 data{kl,1}=        'Wavemodelnr       = 0                            '; kl=kl+1;
-data{kl,1}=        'WaveNikuradse     = 0.01                         '; kl=kl+1;
-data{kl,1}=        'Rouwav            = FR84                         '; kl=kl+1;
-data{kl,1}=        'Gammax            = 1                            '; kl=kl+1;
+% data{kl,1}=        'WaveNikuradse     = 0.01                         '; kl=kl+1;
+% data{kl,1}=        'Rouwav            = FR84                         '; kl=kl+1;
+% data{kl,1}=        'Gammax            = 1                            '; kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
 %% TIME
 data{kl,1}=        '[time]                                           '; kl=kl+1;
@@ -280,11 +281,12 @@ data{kl,1}=        'Timestepanalysis  = 0                            '; kl=kl+1;
 data{kl,1}=sprintf('Tunit             = %s',simdef.mdf.Tunit)         ; kl=kl+1;
 data{kl,1}=        'TStart            = 0                            '; kl=kl+1;
 data{kl,1}=sprintf('TStop             = %0.14E',Tstop); kl=kl+1;
+data{kl,1}=        'AutoTimestepNoStruct = 1                         '; kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 data{kl,1}=        '[restart]                                        '; kl=kl+1;
 data{kl,1}=        'RestartFile       =                              '; kl=kl+1;
-data{kl,1}=        'RestartDateTime   = 20190418                     '; kl=kl+1;
+data{kl,1}=        'RestartDateTime   =                              '; kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 data{kl,1}=        '[external forcing]                               '; kl=kl+1;
@@ -294,9 +296,9 @@ data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 data{kl,1}=        '[trachytopes]                                    '; kl=kl+1;
 data{kl,1}=        'TrtRou            = N                            '; kl=kl+1;
-data{kl,1}=        'TrtDef            =                              '; kl=kl+1;
-data{kl,1}=        'TrtL              =                              '; kl=kl+1;
-data{kl,1}=        'DtTrt             = 60                           '; kl=kl+1;
+% data{kl,1}=        'TrtDef            =                              '; kl=kl+1;
+% data{kl,1}=        'TrtL              =                              '; kl=kl+1;
+% data{kl,1}=        'DtTrt             = 60                           '; kl=kl+1;
 data{kl,1}=        '                                                 '; kl=kl+1;
 %%
 data{kl,1}=        '[output]                                         '; kl=kl+1;
@@ -308,7 +310,7 @@ data{kl,1}=        'Wrishp_thd        = 0                            '; kl=kl+1;
 data{kl,1}=        'Wrishp_obs        = 0                            '; kl=kl+1;
 data{kl,1}=        'Wrishp_emb        = 0                            '; kl=kl+1;
 data{kl,1}=        'Wrishp_dryarea    = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_enc        = 0                            '; kl=kl+1;
+% data{kl,1}=        'Wrishp_enc        = 0                            '; kl=kl+1;
 data{kl,1}=        'Wrishp_src        = 0                            '; kl=kl+1;
 data{kl,1}=        'Wrishp_pump       = 0                            '; kl=kl+1;
 data{kl,1}=        'OutputDir         =                              '; kl=kl+1;
@@ -322,7 +324,7 @@ data{kl,1}=        'HisFile           =                              '; kl=kl+1;
 data{kl,1}=sprintf('HisInterval       = %0.14E',Flhis_dt); kl=kl+1; 
 data{kl,1}=        'XLSInterval       =                              '; kl=kl+1;
 data{kl,1}=        'MapFile           =                              '; kl=kl+1;
-data{kl,1}=sprintf('MapInterval       = %0.14E %0.14E %0.14E',Flmap_dt(2),Flmap_dt(1),Tstop+2*Dt); kl=kl+1;
+data{kl,1}=sprintf('MapInterval       = %0.14E %0.14E %0.14E',Flmap_dt(2),Flmap_dt(1),Tstop*time_factor(simdef.mdf.Tunit,'seconds')); kl=kl+1; %there used to be a +2*dt at the end. I do not think it is needed anymore
 data{kl,1}=sprintf('RstInterval       = %0.14E',Flrst_dt); kl=kl+1;
 data{kl,1}=        'S1incinterval     =                              '; kl=kl+1;
 data{kl,1}=        'MapFormat         = 4                            '; kl=kl+1;
@@ -356,8 +358,8 @@ data{kl,1}=        'MapOutputTimeVector=                             '; kl=kl+1;
 data{kl,1}=        'FullGridOutput    = 0                            '; kl=kl+1;
 data{kl,1}=        'EulerVelocities   = 0                            '; kl=kl+1;
 data{kl,1}=        'ClassMapFile      =                              '; kl=kl+1;
-data{kl,1}=        'WaterlevelClasses = 0.0                          '; kl=kl+1;
-data{kl,1}=        'WaterdepthClasses = 0.0                          '; kl=kl+1;
+% data{kl,1}=        'WaterlevelClasses = 0.0                          '; kl=kl+1;
+% data{kl,1}=        'WaterdepthClasses = 0.0                          '; kl=kl+1;
 data{kl,1}=        'ClassMapInterval  = 0                            '; kl=kl+1;
 data{kl,1}=        'WaqInterval       = 0                            '; kl=kl+1;
 data{kl,1}=        'StatsInterval     = -1                           '; kl=kl+1;

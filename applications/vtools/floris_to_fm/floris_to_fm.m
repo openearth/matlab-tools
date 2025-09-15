@@ -27,10 +27,12 @@ addOptional(parin,'fname_structures','structures.ini')
 addOptional(parin,'fname_extn','extn.ext')
 addOptional(parin,'fname_csl','csl.ini')
 addOptional(parin,'fname_csd','csd.ini')
-addOptional(parin,'fname_FrictFile_Channels','roughness-Channels.ini')
-addOptional(parin,'fname_FrictFile_Main','roughness-Main.ini')
-addOptional(parin,'fname_FrictFile_Sewer','roughness-Sewer.ini')
+addOptional(parin,'fname_frc_channels','roughness-Channels.ini')
+addOptional(parin,'fname_frc_main','roughness-Main.ini')
+addOptional(parin,'fname_frc_sewer','roughness-Sewer.ini')
 addOptional(parin,'fname_ini','initialFields.ini')
+addOptional(parin,'fname_xml','dimr.xml')
+addOptional(parin,'fname_ini_waterdepth','InitialWaterDepth.ini')
 
 addOptional(parin,'time_unit','hours')
 
@@ -45,10 +47,12 @@ fname_structures=parin.Results.fname_structures;
 fname_extn=parin.Results.fname_extn;
 fname_csl=parin.Results.fname_csl;
 fname_csd=parin.Results.fname_csd;
-fname_FrictFile_Channels=parin.Results.fname_FrictFile_Channels;
-fname_FrictFile_Main=parin.Results.fname_FrictFile_Main;
-fname_FrictFile_Sewer=parin.Results.fname_FrictFile_Sewer;
+fname_frc_channels=parin.Results.fname_frc_channels;
+fname_frc_main=parin.Results.fname_frc_main;
+fname_frc_sewer=parin.Results.fname_frc_sewer;
 fname_ini=parin.Results.fname_ini;
+fname_xml=parin.Results.fname_xml;
+fname_ini_waterdepth=parin.Results.fname_ini_waterdepth;
 
 time_unit=parin.Results.time_unit; %time unit in BC timeseries
 if ~any(strcmpi({'seconds','minutes','hours'},time_unit))
@@ -92,11 +96,18 @@ floris.structures=floris_to_fm_structures(floris.structures_at_node,floris.netwo
 
 %% mdu
 
-[floris.mdf,floris.file]=floris_to_fm_mdu(floris.mdf,floris.file,fdir_out,time_unit,fname_structures,fname_extn,fname_csl,fname_csd,fname_FrictFile_Channels,fname_FrictFile_Main,fname_FrictFile_Sewer,fname_ini);
+[floris.mdf,floris.file,floris.D3D]=floris_to_fm_mdu(floris.mdf,floris.file,fdir_out,time_unit,fname_structures,fname_extn,fname_csl,fname_csd,fname_frc_channels,fname_frc_main,fname_frc_sewer,fname_ini);
 
 %% friction
 
+floris.frc_channels=floris_to_fm_frc_channels;
+floris.frc_main=floris_to_fm_frc_main;
+floris.frc_sewer=floris_to_fm_frc_sewer;
+
 %% initial condition
+
+floris.ini=floris_to_fm_ini(fname_ini_waterdepth);
+floris.ini_waterdepth=floris_to_fm_ini_waterdepth;
 
 %% write files
 
@@ -123,11 +134,22 @@ D3D_io_input('write',fullfile(fdir_out,fname_extn),floris.ext,'check_existing',f
 D3D_io_input('write',fullfile(fdir_out,fname_structures),floris.structures,'check_existing',false); 
 
 %friction
+D3D_io_input('write',fullfile(fdir_out,fname_frc_channels),floris.frc_channels,'check_existing',false); 
+D3D_io_input('write',fullfile(fdir_out,fname_frc_main),floris.frc_main,'check_existing',false); 
+D3D_io_input('write',fullfile(fdir_out,fname_frc_sewer),floris.frc_sewer,'check_existing',false); 
 
 %initial condition
+D3D_io_input('write',fullfile(fdir_out,fname_ini),floris.ini,'check_existing',false); 
+D3D_io_input('write',fullfile(fdir_out,fname_ini_waterdepth),floris.ini_waterdepth,'check_existing',false); 
 
 %mdu
-D3D_mdu(floris);
+D3D_mdu(floris,'check_existing',false); 
+
+%dimr
+D3D_dimr_config(fullfile(fdir_out,fname_xml),floris.mdf.fname,1)
+
+%batch
+D3D_bat(floris,floris.file.software,'check_existing',false);   
 
 %grid
 filename=fullfile(fdir_out,'grd_net.nc'); 

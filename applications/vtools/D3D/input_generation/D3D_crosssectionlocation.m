@@ -60,12 +60,13 @@ data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[CrossSection]'; kl=kl+1;
     for kfields=1:nfields
         if ischar(csl(kcsd).(fields_csl{kfields}))
-            switch fields_csl{kfields}
-                case {'id','branchId','definitionId'}
-                    data{kl,1}=sprintf('   %s = #%s# ',fields_csl{kfields},csl(kcsd).(fields_csl{kfields})); kl=kl+1;
-                otherwise
+            %It is not needed anymore to to have # surrounding strings
+            % switch fields_csl{kfields}
+                % case {'id','branchId','definitionId'}
+                    % data{kl,1}=sprintf('   %s = #%s# ',fields_csl{kfields},csl(kcsd).(fields_csl{kfields})); kl=kl+1;
+                % otherwise
                     data{kl,1}=sprintf('   %s = %s ',fields_csl{kfields},csl(kcsd).(fields_csl{kfields})); kl=kl+1;
-            end
+            % end
         else %double
 %             if numel(csl(kcsd).(fields_csl{kfields}))>1
 %                 aux_str=repmat('%f ',1,nlevels);
