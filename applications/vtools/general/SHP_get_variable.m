@@ -22,7 +22,7 @@ str_pol={tag_variable};
 polnames=cellfun(@(X)X.Name,shp.val,'UniformOutput',false);
 idx=find_str_in_cell(polnames,str_pol);
 if any(isnan(idx))
-    tag_variables
+    polnames
     error('Could not find variable in SHP: %s',tag_variable);
 end
 

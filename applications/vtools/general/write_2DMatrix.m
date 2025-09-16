@@ -66,7 +66,7 @@ if add_header
     fclose(fileID_out);
     writematrix(num2str(matrix,num_str), fname_dest, 'FileType', 'text', 'Delimiter', ' ', 'QuoteStrings', 'none', 'WriteMode','append')
 else
-    writematrix(num2str(matrix,num_str), fname_dest, 'FileType', 'text', 'Delimiter', ' ', 'QuoteStrings', 'none')
+    writematrix(num2str(matrix,num_str), fname_dest, 'FileType', 'text', 'Delimiter', ' ', 'QuoteStrings', false)
 end
 
 messageOut(NaN,sprintf('Finished writing file: %s',fname_dest))
