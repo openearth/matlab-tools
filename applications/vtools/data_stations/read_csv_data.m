@@ -123,7 +123,7 @@ for kloc=1:nloc
     if size(vardata,2)==3
         time_mea=vardata{kloc,3};
     else
-        time_mea=get_time_from_data(vardata(kloc,:),kloc,tzone,idx_tzone,idx_time,fmt_tijd);
+        time_mea=get_time_from_data(vardata(kloc,:),kloc,tzone,idx_tzone,idx_time,fmt_tijd,idx_tijd,idx_datum,fmt_datum);
     end
 
     [time_mea,mea]=sort_and_clean_variable(vardata(kloc,:),idx_waarheid,time_mea);
@@ -1460,7 +1460,7 @@ end %function
 
 %%
 
-function time_mea=get_time_from_data(vardata,kloc,tzone,idx_tzone,idx_time,fmt_tijd)
+function time_mea=get_time_from_data(vardata,kloc,tzone,idx_tzone,idx_time,fmt_tijd,idx_tijd,idx_datum,fmt_datum)
 
 %convert time format 
 if isnan(idx_time)
