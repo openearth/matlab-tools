@@ -33,6 +33,8 @@ switch lower(tag)
         rkm=[175,202];
     case {'lith-keizersveer','lk'}
         rkm=[200,249];
+    case {'sambeek-keizersveer','sk'}
+        rkm=[146,249];
     otherwise
         error('No known branch %s',tag);
 end %switch
