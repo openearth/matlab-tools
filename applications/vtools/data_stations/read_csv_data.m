@@ -1460,21 +1460,7 @@ end %function
 
 %%
 
-function time_mea=get_time_from_data(vardata,tzone,idx_tzone,idx_time,fmt_tijd)
-
-%time zone
-if isnan(tzone)
-    if isnan(idx_tzone)
-        error('Provide a time zone')
-    else
-        tzone=vardata{1,2}{idx_tzone};
-    end
-end
-
-switch tzone
-    case 'CENT'
-        tzone='+01:00';
-end
+function time_mea=get_time_from_data(vardata,kloc,tzone,idx_tzone,idx_time,fmt_tijd)
 
 %convert time format 
 if isnan(idx_time)

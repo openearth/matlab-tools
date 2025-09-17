@@ -34,21 +34,17 @@ function basename_all=create_observation_locations(fdir,fpath_obs,fpath_crs_h,fp
 
 simdef=D3D_simpath(fdir);
 
-err=false;
 if ~isfield(simdef.file,'shp')
-    err=true;
+    error('Something went wrong with running the simulation. There are no shapefiles.')
 end
 if ~isfield(simdef.file.shp,'crs')
-    err=true;
+    error('Something went wrong with running the simulation. There are no cross-section shapefiles.')
 end
 if isempty(simdef.file.shp.crs)
-    err=true;
+    error('Something went wrong with running the simulation. There are no cross-section shapefiles.')
 end
 if ~isfile(simdef.file.shp.crs)
-    err=true;
-end
-if err
-    error('Something went wrong with running the simulation. I expect a shp-file in the snapped folder of the output folder of this run: %s',fdir)
+    error('Something went wrong with running the simulation. There are no cross-section shapefiles.')
 end
 fpath_shp=simdef.file.shp.crs{1,1};
 
