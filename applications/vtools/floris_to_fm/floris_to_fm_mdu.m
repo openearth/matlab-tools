@@ -43,6 +43,8 @@ end
 simdef.mdf.Tunit=time_unit_w;
 % simdef.mdf.Tunit='S';
 simdef.mdf.Flmap_dt=Dt;
+simdef.mdf.Flhis_dt=Dt;
+simdef.file.obs='';
 Flmap_dt_Tunit=Dt*time_f;
 simdef.mdf.nparts_res=simdef.mdf.Tstop/Flmap_dt_Tunit;
 simdef.mdf.Dt=Dt;

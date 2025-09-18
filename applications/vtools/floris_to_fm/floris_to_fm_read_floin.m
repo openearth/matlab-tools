@@ -64,6 +64,9 @@ idx_branch=0;
 inside_block_compute=false;
 line_number_block_compute=0;
 
+inside_block_qlateral=false;
+idx_qlateral=0;
+
 npreallocated=1000;
 [network_node_id,network_node_x,network_node_y,~]=allocate_network(npreallocated,{''},[],[]);
 [network_branch_id,network_edge_nodes,~]=allocate_branch(npreallocated,{''},[]);
@@ -88,14 +91,14 @@ while ~feof(fid)
     %% INITIALIZATION OF BLOCK
     %%
 
-    %block aliase
+    %% block aliase
     if strcmpi(line, 'aliase')
         inside_block_aliase=true;
 
         continue
     end %aliase
 
-    %block branches
+    %% block branches
     if strcmpi(line, 'branches')
         inside_block_branches=true;
 
@@ -111,7 +114,7 @@ while ~feof(fid)
         continue
     end %branches
 
-    %block branch
+    %% block branch
     if strcmpi(line, 'branch')
         inside_block_branch=true;
 
@@ -127,7 +130,7 @@ while ~feof(fid)
         continue
     end    
 
-    %block node
+    %% block node
     if strcmpi(line, 'node')
         inside_block_node=true;
 
@@ -166,23 +169,8 @@ while ~feof(fid)
 
                 if is_pump
                     structure_type='pump';
-
                 else %true Q boundary condition
-                    
-    
-                    idx_bc=idx_bc+1;
-            
-                    if idx_bc==nallocated_bc
-                        [bc,nallocated_bc]=allocate_bc(npreallocated,bc);
-                    end
-    
-                    bc(idx_bc).name=nodeId;
-                    bc(idx_bc).function='timeseries';
-                    bc(idx_bc).time_interpolation='linear';
-                    bc(idx_bc).quantity={'time','dischargebnd'};
-                    %with timezone is best, but the GUI cannot read it
-                    bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00',time_unit),'m³/s'};
-                    % bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
+                    [bc,nallocated_bc,idx_bc]=fill_bc_header(bc,nallocated_bc,idx_bc,time_unit,nodeId,'Boundary','',[]);
                 end
 
             case 'hqrelation' %boundary condition on qh-relation
@@ -194,6 +182,7 @@ while ~feof(fid)
                     [bc,nallocated_bc]=allocate_bc(npreallocated,bc);
                 end
 
+                bc(idx_bc).type='Boundary';
                 bc(idx_bc).name=nodeId;
                 bc(idx_bc).function='qhtable';
                 % bc(idx_bc).time_interpolation='linear';
@@ -208,6 +197,8 @@ while ~feof(fid)
         continue
     end %node
 
+    %% block weir
+
     % This is not ideal logic. As is information of a node, it would be
     % logical it is read inside the block `node`. However, the tag (i.e.,
     % `weir`, `gate`, ...) is not found immediatly after it. First come the
@@ -215,7 +206,6 @@ while ~feof(fid)
     %
     %It applies to all structures.
 
-    %block weir
     if any(strcmpi(line, {'weir','gate'}))
         structure_type=line; %type of structure (e.g., `weir`, `gate`, ...)
         line=strtrim(fgetl(fid)); %get line
@@ -230,12 +220,33 @@ while ~feof(fid)
     %     val=extracNumbers_NaN(line);
     % end
 
+    %% block qlateral
+    if strcmpi(line, 'qlateral')
+        inside_block_qlateral=true;
+
+        line=strtrim(fgetl(fid)); %get line
+        val=extractNumbers(line); %cross-section of last processed branch in which the lateral is found
+
+        bol_branch=strcmp({csl.branchId},branchId);
+        csl_branch=csl(bol_branch);
+        chainage=csl_branch(val).chainage;
+
+        name=sprintf('lateral_%s_%f',branchId,chainage); %last branchId processed and chainage of th
+
+        % idx_qlateral=idx_qlateral+1;
+
+        [bc,nallocated_bc,idx_bc]=fill_bc_header(bc,nallocated_bc,idx_bc,time_unit,name,'Lateral',branchId,chainage);
+        
+        continue
+    end
+
+    %% block compute
     if strcmpi(line, 'compute')
         inside_block_compute=true;
         continue
     end
 
-    %end
+    %% end
     if strcmpi(line, 'end')
         %finalize block branches
         if inside_block_branches
@@ -258,7 +269,7 @@ while ~feof(fid)
         end
 
         %finalize block qhydrograph or qh-relation
-        if inside_block_qhydrograph || inside_block_hqrelation
+        if inside_block_qhydrograph || inside_block_hqrelation || inside_block_qlateral
             if is_pump
                 [structures_at_node,nallocated_structures,idx_structure]=fill_structures_at_node(structures_at_node,nodeId,structure_type,val_time(1:idx_bc_val,:),nallocated_structures,npreallocated,idx_structure);
             else
@@ -269,6 +280,7 @@ while ~feof(fid)
             %between cases. 
             inside_block_qhydrograph=false;
             inside_block_hqrelation=false; 
+            inside_block_qlateral=false;
         end 
 
         %finalize block compute
@@ -286,6 +298,11 @@ while ~feof(fid)
             structures_at_node=structures_at_node(1:idx_structure);
         end
 
+        % %finalize block qlateral
+        % if inside_block_qlateral
+        %     inside_block_qlateral=false;
+        % end
+
         continue
     end %end
 
@@ -293,7 +310,7 @@ while ~feof(fid)
     %% PROCESS BLOCK
     %%
 
-    skip_process_block=~any([inside_block_aliase,inside_block_branches,inside_block_node,inside_block_branch,inside_block_qhydrograph,inside_block_compute]);
+    skip_process_block=~any([inside_block_aliase,inside_block_branches,inside_block_node,inside_block_branch,inside_block_qhydrograph,inside_block_compute,inside_block_qlateral]);
     
     if skip_process_block
         continue
@@ -343,7 +360,7 @@ while ~feof(fid)
     % end %inside_block_node
 
     %% block qhydrograph or block qh-relation
-    if inside_block_qhydrograph || inside_block_hqrelation
+    if inside_block_qhydrograph || inside_block_hqrelation || inside_block_qlateral
         val=extractNumbers(line);
         if ~isequal(size(val),[1,ncolumns_bc])
             error('It is expected that in this line there is one row of %d values: %s ',ncolumns_bc,line)
@@ -427,6 +444,11 @@ while ~feof(fid)
         end
     end
 
+    % %% block qlateral
+    % if inside_block_qlateral
+    % 
+    % end
+
 end %while
 
 end %function
@@ -501,12 +523,16 @@ function [bc,nallocated]=allocate_bc(npreallocated,bc)
 
 % create a scalar struct with all the fields
 template = struct( ...
-    'name',           '', ...
-    'function',     '', ...
-    'time_interpolation',     '', ...
-    'quantity',      {''}, ...
-    'unit',        {''}, ...
-    'val', 0 );
+    'type',               '', ...
+    'branchId',           '', ...
+    'chainage',            0, ...
+    'name',               '', ...
+    'function',           '', ...
+    'time_interpolation', '', ...
+    'quantity',          {''}, ...
+    'unit',              {''}, ...
+    'val',               0 ...
+    );
 
 % replicate the template into a 1×N struct array
 bc_empty(1:npreallocated) = template;
@@ -627,3 +653,34 @@ structures_at_node(idx_structure).type=strcuture_type;
 structures_at_node(idx_structure).parameters=val;
 
 end %function
+
+%%
+
+function [bc,nallocated_bc,idx_bc]=fill_bc_header(bc,nallocated_bc,idx_bc,time_unit,name,bc_type,branchId,chainage)
+
+idx_bc=idx_bc+1;
+
+if idx_bc==nallocated_bc
+    [bc,nallocated_bc]=allocate_bc(npreallocated,bc);
+end
+
+
+switch bc_type
+    case {'Boundary','boundary'}
+        quantity_discharge='dischargebnd';
+    case {'Lateral','lateral'}
+        quantity_discharge='lateral_discharge';
+end
+
+bc(idx_bc).type=bc_type;
+bc(idx_bc).name=name;
+bc(idx_bc).function='timeseries';
+bc(idx_bc).time_interpolation='linear';
+bc(idx_bc).quantity={'time',quantity_discharge};
+%with timezone is best, but the GUI cannot read it
+bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00',time_unit),'m³/s'};
+% bc(idx_bc).unit={sprintf('%s since 2000-01-01 00:00:00 +00:00',time_unit),'m³/s'};
+bc(idx_bc).branchId=branchId;
+bc(idx_bc).chainage=chainage;
+
+end
