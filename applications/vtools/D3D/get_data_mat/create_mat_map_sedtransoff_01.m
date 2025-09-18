@@ -66,6 +66,7 @@ in_plot_get_variables.(tag_2DH).overwrite=flg_loc.overwrite;
 in_plot_get_variables.(tag_2DH).var=var_raw; %open D3D_list_of_variables
 in_plot_get_variables.(tag_2DH).tim=flg_loc.tim; 
 in_plot_get_variables.(tag_2DH).order_anl=2; %1=normal; 2=random
+% in_plot_get_variables.(tag_2DH).do_area=[0,0,0,0,1];
 
 D3D_gdm(in_plot_get_variables)
 
@@ -259,7 +260,8 @@ in_plot_sb.(tag_sb).order_anl=2; %1=normal; 2=random
 % in_plot_sb.(tag_sb).do_val_B_mor=ones(size(var_sum)); %compute value of the variable per unit of morphodynamic width
 
     %only var_sum
-in_plot_sb.(tag_sb).var=cat(2,var_sum,{'umag','mesh2d_czs','h','Ltot'},repmat({'Fak'},1,nf)); %open D3D_list_of_variables
+%TO DO: why not plotting only Fak as area for all fractions together?
+in_plot_sb.(tag_sb).var=cat(2,var_sum,{'umag','mesh2d_czs','h','Ltot'},repmat({'Fak'},1,nf)); 
 
 in_plot_sb.(tag_sb).layer=num2cell(cat(2,zeros(size(var_sum)),[0,0,0,0,ones(1,nf)])); %we want the first layer of `Fak` 
 in_plot_sb.(tag_sb).layer{numel(var_sum)+1}=[]; %we do not want to specify any layer in velocity 
@@ -308,6 +310,15 @@ end
 % in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'cel_morpho'});
 % in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,1);
 % in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
+
+%add mean grain size
+in_plot_sb.(tag_sb).var=cat(2,in_plot_sb.(tag_sb).var,'dg'); 
+in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
+in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{[]});
+in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,0);
+in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'dg'});
+in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,0);
+in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
 
 % CALL
 D3D_gdm(in_plot_sb)

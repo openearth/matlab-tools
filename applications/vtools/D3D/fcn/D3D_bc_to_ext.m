@@ -21,7 +21,8 @@ nbc=numel(bc);
 idx_block=-1; %the first one is 0
 for kbc=1:nbc
     idx_block=idx_block+1;
-    str_block=sprintf('Boundary%d',idx_block);
+    bc_type=bc(kbc).type;
+    str_block=sprintf('%s%d',bc_type,idx_block);
 
     switch bc(kbc).function
         case 'timeseries'
@@ -41,9 +42,22 @@ for kbc=1:nbc
     end
   
     %fill `ext`
-    ext.(str_block).quantity=quantity;
-    ext.(str_block).nodeId=bc(kbc).name;
-    ext.(str_block).forcingfile=bc(kbc).forcingfile;
+
+    switch bc_type
+        case {'Boundary','boundary'}
+            ext.(str_block).quantity=quantity;
+            ext.(str_block).nodeId=bc(kbc).name;
+            ext.(str_block).forcingfile=bc(kbc).forcingfile;
+        case {'Lateral','lateral'}
+            ext.(str_block).id=bc(kbc).name;
+            ext.(str_block).name=bc(kbc).name;
+            ext.(str_block).branchId=bc(kbc).branchId;
+            ext.(str_block).chainage=bc(kbc).chainage;
+            ext.(str_block).discharge=bc(kbc).forcingfile;
+        otherwise
+            error('Implement writing external for %s',bc_type)
+    end
+        
 end %nbc
 
 end %function

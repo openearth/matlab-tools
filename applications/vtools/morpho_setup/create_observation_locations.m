@@ -32,7 +32,7 @@ function basename_all=create_observation_locations(fdir,fpath_obs,fpath_crs_h,fp
 
 %% PATHS
 
-simdef=D3D_simpath(fdir);
+simdef=D3D_simpath(fdir,'overwrite',true);
 
 if ~isfield(simdef.file,'shp')
     error('Something went wrong with running the simulation. There are no shapefiles.')
