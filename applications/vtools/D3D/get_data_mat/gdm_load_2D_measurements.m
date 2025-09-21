@@ -47,7 +47,12 @@ if is_diff
         return
     end
     for kf=1:nf
-        measurements_images{kf}.z=measurements_images{kf}.z-measurements_images_0{kf}.z;
+        [~,x_ia,x_ib] = intersect(measurements_images{kf}.x,measurements_images_0{kf}.x);
+        [~,y_ia,y_ib] = intersect(measurements_images{kf}.y,measurements_images_0{kf}.y);
+        measurements_images{kf}.x=measurements_images{kf}.x(x_ia);
+        measurements_images{kf}.y=measurements_images{kf}.y(y_ia);
+        measurements_images{kf}.z=measurements_images{kf}.z(y_ia,x_ia)-measurements_images_0{kf}.z(y_ib,x_ib);
+        measurements_images{kf}.mask=max(cat(3,measurements_images{kf}.mask(y_ia,x_ia),measurements_images_0{kf}.z(y_ib,x_ib)),[],3); 
     end
 end
 
@@ -306,9 +311,9 @@ end %function
 function y_plot=fcn_vector_plot(y_vector,y_lims)
 
 dy=diff(y_vector(1:2));
-[idx,~]=absmintol(y_vector,y_lims(1),'tol',1);
+[idx,~]=absmintol(y_vector,max(y_lims(1),min(y_vector)),'tol',1);
 yl=y_vector(idx);
-[idx,~]=absmintol(y_vector,y_lims(2),'tol',1);
+[idx,~]=absmintol(y_vector,min(y_lims(2),max(y_vector)),'tol',1);
 yu=y_vector(idx);
 y_plot=yl:abs(dy):yu;
 if sign(dy)<0
