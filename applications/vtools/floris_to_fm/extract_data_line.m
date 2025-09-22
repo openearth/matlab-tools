@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20320 $
-%$Date: 2025-09-15 08:29:13 +0200 (Mon, 15 Sep 2025) $
-%$Author: chavarri $
-%$Id: floris_to_fm_read_funin.m 20320 2025-09-15 06:29:13Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/floris_to_fm/floris_to_fm_read_funin.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 % Parse line into numbers and quoted strings in correct order.
 % Commas define slots; empty slots -> NaN / ''

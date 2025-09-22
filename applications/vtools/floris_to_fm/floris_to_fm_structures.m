@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision: 20286 $
-%$Date: 2025-08-19 09:48:40 +0200 (Tue, 19 Aug 2025) $
-%$Author: chavarri $
-%$Id: floris_to_fm_read_floin.m 20286 2025-08-19 07:48:40Z chavarri $
-%$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/vtools/floris_to_fm/floris_to_fm_read_floin.m $
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
 %Convert the FLORIS data about structures, which are located at nodes, to
 %Delft3D data about structures, which are located at a chainage in a
