@@ -209,7 +209,7 @@ while ~feof(fid)
     if any(strcmpi(line, {'weir','gate'}))
         structure_type=line; %type of structure (e.g., `weir`, `gate`, ...)
         line=strtrim(fgetl(fid)); %get line
-        val=extracNumbers_NaN(line); %values
+        val=extract_data_line(line); %values
 
         [structures_at_node,nallocated_structures,idx_structure]=fill_structures_at_node(structures_at_node,nodeId,structure_type,val,nallocated_structures,npreallocated,idx_structure);
     end
@@ -217,7 +217,7 @@ while ~feof(fid)
     % %block gate    
     % if strcmpi(line, 'gate')
     %     line=strtrim(fgetl(fid)); %get line
-    %     val=extracNumbers_NaN(line);
+    %     val=extract_data_line(line);
     % end
 
     %% block qlateral
@@ -225,7 +225,7 @@ while ~feof(fid)
         inside_block_qlateral=true;
 
         line=strtrim(fgetl(fid)); %get line
-        val=extractNumbers(line); %cross-section of last processed branch in which the lateral is found
+        val=extract_data_line(line); %cross-section of last processed branch in which the lateral is found
 
         bol_branch=strcmp({csl.branchId},branchId);
         csl_branch=csl(bol_branch);
@@ -361,7 +361,7 @@ while ~feof(fid)
 
     %% block qhydrograph or block qh-relation
     if inside_block_qhydrograph || inside_block_hqrelation || inside_block_qlateral
-        val=extractNumbers(line);
+        val=extract_data_line(line);
         if ~isequal(size(val),[1,ncolumns_bc])
             error('It is expected that in this line there is one row of %d values: %s ',ncolumns_bc,line)
         end
@@ -438,16 +438,11 @@ while ~feof(fid)
         line_number_block_compute=line_number_block_compute+1;
 
         if line_number_block_compute==2
-            val=extractNumbers(line); 
+            val=extract_data_line(line); 
             mdu.Tstart=val(1)*tim_factor;
             mdu.Tstop=val(2)*tim_factor;
         end
     end
-
-    % %% block qlateral
-    % if inside_block_qlateral
-    % 
-    % end
 
 end %while
 
@@ -574,67 +569,6 @@ function [val,nallocated]=allocate_bc_val(npreallocated,val,ncolumns_bc)
 
 val=cat(1,val,NaN(npreallocated,ncolumns_bc));
 nallocated=size(val,1);
-
-end %function
-
-%%
-
-%capture all numbers before a comment
-%e.g.: str = '-240.  1370.   55.5   -12.3   // FOP - Donau Pg. Achleiten';
-function nums = extractNumbers(str)
-
-% If // is present, cut everything after it
-beforeComment = regexp(str, '^(.*?)//', 'tokens', 'once');
-if isempty(beforeComment)
-    beforeComment = str; % no // found, use whole string
-else
-    beforeComment = beforeComment{1};
-end
-
-% Extract numbers (signed, optional decimals)
-tokens = regexp(beforeComment, '(-?\d+(?:\.\d+)?)', 'match');
-nums = str2double(tokens);
-
-end %function
-
-%%
-
-% Parse a line into numbers, using commas as explicit NaN markers.
-% Spaces separate numbers inside a comma-field.
-% Consecutive commas give consecutive NaNs, but if the last comma is followed 
-% by a number, no trailing NaN is inserted.
-%
-function nums = extracNumbers_NaN(line)
-
-if nargin==0 || isempty(line)
-    nums = [];
-    return
-end
-
-% Number pattern (int, decimal, scientific, or quoted number)
-numPat = '[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?';
-
-% 1) Split on commas
-parts = regexp(line, '\s*,\s*', 'split');
-
-nums = [];
-for i = 1:numel(parts)
-    part = strtrim(parts{i});
-    if isempty(part)
-        % empty slot → NaN
-        nums(end+1) = NaN; %#ok<AGROW>
-    else
-        % extract numbers (including those inside quotes)
-        m = regexp(part, numPat, 'match');
-        if ~isempty(m)
-            vals = str2double(m);
-            nums = [nums, vals]; %#ok<AGROW>
-        end
-    end
-end
-
-% Ensure row vector
-nums = reshape(nums, 1, []);
 
 end %function
 

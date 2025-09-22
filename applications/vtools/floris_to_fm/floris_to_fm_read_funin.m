@@ -70,12 +70,14 @@ while ~feof(fid)
     end
 
     %get first number of the line
-    tokens = regexp(line, '([-+]?\d*\.?\d+)|,', 'match');
-    tokens = cellfun(@(x) strtrim(x), tokens, 'uni', 0);
-    tokens(strcmp(tokens, ',')) = {''};
+    % tokens = regexp(line, '([-+]?\d*\.?\d+)|,', 'match');
+    % tokens = cellfun(@(x) strtrim(x), tokens, 'uni', 0);
+    % tokens(strcmp(tokens, ',')) = {''};
+    [nums,strs]=extract_data_line(line);
 
-    tokens_num=str2double(tokens);
-    num_ident=tokens_num(1); %this identifies the type of line
+    % nums=str2double(tokens);
+    % num_ident=tokens_num(1); %this identifies the type of line
+    num_ident=nums(1);
     switch num_ident
         case 1
             %top definition of friction
@@ -86,11 +88,16 @@ while ~feof(fid)
         case 20
             %cross-section location
             %20 '2223000' -2223.000 0. , , , , 412571.38 520292.5 412799.59 520218.7 /
-            tokens=regexp(line,'''[^'']*''|[-+]?\d*\.?\d+','match');
+            % tokens=regexp(line,'''[^'']*''|[-+]?\d*\.?\d+','match');
+
+            if numel(nums)<11
+                error('The size is expected to be at least 11.')
+            end
 
             idx_crs=idx_crs+1; %new cross-section
 
-            id_token=tokens{2};
+            % id_token=tokens{2};
+            id_token=strs{2};
             id=strrep(id_token,'''','');
             
             %data for d3d cross-sections
@@ -109,18 +116,18 @@ while ~feof(fid)
             % csd(idx_crs).frictionValues=1;
 
             %additional data
-            csd_add(idx_crs).rkm=tokens_num(3);
-            csd_add(idx_crs).x_left=tokens_num(9);
-            csd_add(idx_crs).y_left=tokens_num(10);
-            csd_add(idx_crs).x_right=tokens_num(11);
-            csd_add(idx_crs).y_right=tokens_num(12);
+            csd_add(idx_crs).rkm=nums(3);
+            csd_add(idx_crs).x_left=nums(8);
+            csd_add(idx_crs).y_left=nums(9);
+            csd_add(idx_crs).x_right=nums(10);
+            csd_add(idx_crs).y_right=nums(11);
 
         case 21
             %cross-section definition
             %21 5.910 290.697 /
             csd(idx_crs).yzCount=csd(idx_crs).yzCount+1;
-            csd(idx_crs).yCoordinates=cat(1,csd(idx_crs).yCoordinates,tokens_num(2));
-            csd(idx_crs).zCoordinates=cat(1,csd(idx_crs).zCoordinates,tokens_num(3));
+            csd(idx_crs).yCoordinates=cat(1,csd(idx_crs).yCoordinates,nums(2));
+            csd(idx_crs).zCoordinates=cat(1,csd(idx_crs).zCoordinates,nums(3));
         case 99
             %end of cross-section definition
             inside_crs_block=false;

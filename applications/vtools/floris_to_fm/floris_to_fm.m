@@ -145,9 +145,6 @@ D3D_io_input('write',fullfile(fdir_out,fname_ini_waterdepth),floris.ini_waterdep
 %mdu
 D3D_mdu(floris,'check_existing',false); 
 
-%dimr
-D3D_dimr_config(fullfile(fdir_out,fname_xml),floris.mdf.fname,1)
-
 %batch
 D3D_bat(floris,floris.file.software,'check_existing',false);   
 
