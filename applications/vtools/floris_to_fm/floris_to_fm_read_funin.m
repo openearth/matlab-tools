@@ -69,15 +69,9 @@ while ~feof(fid)
         continue
     end
 
-    %get first number of the line
-    % tokens = regexp(line, '([-+]?\d*\.?\d+)|,', 'match');
-    % tokens = cellfun(@(x) strtrim(x), tokens, 'uni', 0);
-    % tokens(strcmp(tokens, ',')) = {''};
     [nums,strs]=extract_data_line(line);
 
-    % nums=str2double(tokens);
-    % num_ident=tokens_num(1); %this identifies the type of line
-    num_ident=nums(1);
+    num_ident=nums(1); %type of line
     switch num_ident
         case 1
             %top definition of friction
@@ -88,7 +82,8 @@ while ~feof(fid)
         case 20
             %cross-section location
             %20 '2223000' -2223.000 0. , , , , 412571.38 520292.5 412799.59 520218.7 /
-            % tokens=regexp(line,'''[^'']*''|[-+]?\d*\.?\d+','match');
+            %20 ´csname´km refel kks kkf slope x_phpl y_phpl x_phpr y_phpr x_npl y_npl
+            %
 
             if numel(nums)<11
                 error('The size is expected to be at least 11.')
@@ -96,7 +91,6 @@ while ~feof(fid)
 
             idx_crs=idx_crs+1; %new cross-section
 
-            % id_token=tokens{2};
             id_token=strs{2};
             id=strrep(id_token,'''','');
             

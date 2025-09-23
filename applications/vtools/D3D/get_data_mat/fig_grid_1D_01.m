@@ -263,7 +263,11 @@ if plot_mesh_edge_node
     % bol_br=gridInfo.branch_edge==kb-1; %starts at 0
     for kl=1:numel(gridInfo.x_edge)
         kb=gridInfo.branch_edge(kl)+1;
-        plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)+1),gridInfo.y_node(gridInfo.edge_nodes(:,kl)+1),'color',cmap(kb,:))
+        % plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)+1),gridInfo.y_node(gridInfo.edge_nodes(:,kl)+1),'color',cmap(kb,:))
+        % %ATTENTION!! something may not be fine in one of the grids.
+        %gridInfo.edge_nodes  2x100 int32
+        %gridInfo.x_node      101x1 double
+        plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)),gridInfo.y_node(gridInfo.edge_nodes(:,kl)),'color',cmap(kb,:))
         % pause
     end
 % end
