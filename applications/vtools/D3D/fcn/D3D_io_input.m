@@ -277,6 +277,9 @@ switch what_do
                     if ~isnan(inifiletype)
                         [fdir,fname,fext]=fileparts(fname);
                         simdef.D3D.dire_sim=fdir;
+                        %Special cases in which the structure has no
+                        %chapter [crosssection] or [definition], the data
+                        %is directly in the structure.
                         switch inifiletype
                             case parameters.INIFILE_CRSDEF %definition
                                 simdef.csd=stru_in;
@@ -286,7 +289,14 @@ switch what_do
                                 D3D_crosssectionlocation(simdef,'fname',sprintf('%s%s',fname,fext),varargin{2:end});
                         end
                     else
-                        dflowfm_io_mdu('write',fname,stru_in);
+                        %If not a special case, the first level of the
+                        %structure is the chapter. An integer at the end of
+                        %the chapter name is allowed. 
+                        ini_cell=D3D_ini_struct_to_cell(stru_in);
+
+                        inifile('write',fname,ini_cell);
+
+                        % dflowfm_io_mdu('write',fname,stru_in);
                         %consider reading and writing with Bert's format
                         %`inifile`. 
                     end
