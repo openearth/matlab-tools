@@ -370,7 +370,7 @@ function [xn yn zn] = seaward_extend(x, y, z, OPT)
 
 z0 = max(z(:,1));
 dxoff = x(1,2)-x(1,1);
-dn = ceil(max(z0-OPT.zmin,0)/(OPT.slope*dxoff))+OPT.n;
+dn = ceil(max(z0-OPT.zmin,0)/(OPT.slope*abs(dxoff)))+OPT.n;
 zt = NaN*zeros(size(x,1), size(x,2)+OPT.n);
 zt(:,1:OPT.n) = OPT.zmin;
 zt(:,OPT.n+1:end) = z; 
