@@ -12,7 +12,7 @@
 %
 %
 
-function plot_grid_01(fid_log,flg_loc,simdef)
+function gdm_plot_GRD(fid_log,flg_loc,simdef)
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 

@@ -84,13 +84,11 @@ if isfield(in_plot,tag_check)==1
 
 end
 
-%% grid
-tag_check='fig_grid_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-
+%% GRD
+in_plot_fig=gdm_check_tag_GRD(in_plot);
+if in_plot_fig.do
     for ksim=1:nsim
-        plot_grid_01(fid_log,in_plot_fig,simdef(ksim))
+        gdm_plot_GRD(fid_log,in_plot_fig,simdef(ksim))
     end
 end
 

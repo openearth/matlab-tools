@@ -32,12 +32,12 @@ else %pair-value arguments
     parin=inputParser;
 
     addOptional(parin,'check_existing',true);
+    addOptional(parin,'fdir','');
 
     parse(parin,varargin{:});
 
     check_existing=parin.Results.check_existing;
-    
-    fdir_new='';
+    fdir_new=parin.Results.fdir;
 end
 
 %% PATHS

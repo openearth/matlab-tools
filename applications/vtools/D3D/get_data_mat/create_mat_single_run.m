@@ -22,12 +22,10 @@ if isfield(in_plot,tag_check)==1
 end
 
 %% GRD (grid)
-tag_check='fig_grid_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    create_grid_01(fid_log,in_plot_fig,simdef);
+in_plot_fig=gdm_check_tag_GRD(in_plot);
+if in_plot_fig.do
+    gdm_create_mat_GRD(fid_log,in_plot_fig,simdef);
 end
-
 
 %% HIS (history)
 in_plot_fig=gdm_check_tag_HIS(in_plot);

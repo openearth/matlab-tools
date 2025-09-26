@@ -53,7 +53,8 @@ in_p=isfield_default(in_p,'xlims',[NaN,NaN]);
 in_p=isfield_default(in_p,'ylims',[NaN,NaN]);
 in_p=isfield_default(in_p,'plot_mesh_edge',1);
 in_p=isfield_default(in_p,'plot_mesh_edge_node',1);
-
+in_p=isfield_default(in_p,'plot_geometry',1);
+in_p=isfield_default(in_p,'plot_node_offset',0);
 
 v2struct(in_p)
 
@@ -221,7 +222,9 @@ han.sfig(kpr,kpc).YLabel.String='y coordinate [m]';
 if plot_sat
     addTiles(flg.tiles_path)
 end
-han.p=scatter(gridInfo.x_geom,gridInfo.y_geom,20,'r','parent',han.sfig(kr,kc));
+if plot_geometry
+    han.p=scatter(gridInfo.x_geom,gridInfo.y_geom,20,'r','parent',han.sfig(kr,kc));
+end
 
 %nodes
 if plot_nodes
@@ -247,6 +250,23 @@ cmap=lines(nb);
 for kb=1:nb
     bol_br=gridInfo.branch==kb-1; %starts at 0
     plot(gridInfo.x_node(bol_br),gridInfo.y_node(bol_br),'o','parent',han.sfig(kr,kc),'color',cmap(kb,:))
+    % pause
+end
+
+%mesh1d_offset
+if plot_node_offset
+    np=numel(gridInfo.x_node);
+    for kp=1:np
+        text(gridInfo.x_node(kp),gridInfo.y_node(kp),sprintf('%f',gridInfo.offset(kp)))
+    end
+end
+
+%mesh1d_offset
+if plot_node_offset
+    np=numel(gridInfo.x_edge);
+    for kp=1:np
+        text(gridInfo.x_edge(kp),gridInfo.y_edge(kp),sprintf('%f',gridInfo.offset_edge(kp)),'color','c')
+    end
 end
 
 %mesh1d_edge
@@ -263,11 +283,13 @@ if plot_mesh_edge_node
     % bol_br=gridInfo.branch_edge==kb-1; %starts at 0
     for kl=1:numel(gridInfo.x_edge)
         kb=gridInfo.branch_edge(kl)+1;
-        % plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)+1),gridInfo.y_node(gridInfo.edge_nodes(:,kl)+1),'color',cmap(kb,:))
-        % %ATTENTION!! something may not be fine in one of the grids.
-        %gridInfo.edge_nodes  2x100 int32
-        %gridInfo.x_node      101x1 double
-        plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)),gridInfo.y_node(gridInfo.edge_nodes(:,kl)),'color',cmap(kb,:))
+        %very weird thing. In a grid file, `mesh1d_edge_node` starts at 0,
+        %but it starts at 1 in a map file. 
+        if any(gridInfo.edge_nodes==0,'all')
+            plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)+1),gridInfo.y_node(gridInfo.edge_nodes(:,kl)+1),'color',cmap(kb,:))
+        else
+            plot(gridInfo.x_node(gridInfo.edge_nodes(:,kl)),gridInfo.y_node(gridInfo.edge_nodes(:,kl)),'color',cmap(kb,:))
+        end
         % pause
     end
 % end
