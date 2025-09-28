@@ -23,7 +23,7 @@
 %       - I.x = x-vector
 %       - I.y = y-vector
 %       - I.z = z-matrix
-%       - I.maks = mask for filtering no-data points
+%       - I.mask = mask for filtering no-data points
 %
 %OPTIONAL (pair input)
 %   - x_limits = lower and uper limit of data to take from tif in x-direction

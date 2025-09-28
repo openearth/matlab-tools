@@ -97,7 +97,7 @@ nf=numel(measurements_structure_get);
 
 %get out if nothing
 if nf==0
-    measurements_images=cell(nf,1);
+    measurements_images=[];
     tim_mea_dtime_mean=NaT(nf,1);
     tim_mea_dtime_mean.TimeZone=time_dtime.TimeZone;
     return
@@ -247,6 +247,7 @@ measurements_images{1}.x=x_plot;
 measurements_images{1}.y=y_plot;
 measurements_images{1}.z=z_plot;
 measurements_images{1}.mask=m_plot;
+measurements_images{1}.mask(isnan(measurements_images{1}.z))=0;%
 
 tim_mea_dtime_mean=mean(tim_mea);
 
@@ -311,10 +312,13 @@ end %function
 function y_plot=fcn_vector_plot(y_vector,y_lims)
 
 dy=diff(y_vector(1:2));
-[idx,~]=absmintol(y_vector,max(y_lims(1),min(y_vector)),'tol',1);
-yl=y_vector(idx);
-[idx,~]=absmintol(y_vector,min(y_lims(2),max(y_vector)),'tol',1);
-yu=y_vector(idx);
+[y_vector_sort,idx_y] = sort(y_vector);
+idx = (y_lims(1)-y_vector_sort(1))/dy;
+yl=y_vector_sort(1)+idx*dy;
+%yl=y_vector(idx_y(idx));
+idx = (y_lims(2)-y_vector_sort(1))/dy;
+yu=y_vector_sort(1)+idx*dy;
+%yu=y_vector(idx_y(idx));
 y_plot=yl:abs(dy):yu;
 if sign(dy)<0
     y_plot=fliplr(y_plot); %y is reversed
