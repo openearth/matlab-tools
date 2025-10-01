@@ -1,0 +1,3 @@
+[submodule "applications/delft3d_matlab"]
+	path = applications/delft3d_matlab
+	url = https://github.com/Deltares/QUICKPLOT

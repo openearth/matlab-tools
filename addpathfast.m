@@ -40,7 +40,7 @@ function addpathfast(basepath,varargin)
 
 %% Set properties
    OPT.patterns = {[filesep,'.svn']}; % case sensitive
-   OPT.dir_excl = '^\+|^@|^private$|^\.svn$|^\.|^deprecated$';
+   OPT.dir_excl = '^\+|^@|^private$|^\.svn$|^\.|^deprecated$|^fopen_debug$|^third_party_open$';
    OPT.method   = 3; % 1 = via OS system call, 2 = Matlab (used to be slower but not any more), 3 = dir2
    OPT.append   = true; % add new path before or after existing path
    
