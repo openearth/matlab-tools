@@ -4,11 +4,11 @@
 % 
 %Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%$Revision$
-%$Date$
-%$Author$
-%$Id$
-%$HeadURL$
+%$Revision:$
+%$Date:$
+%$Author:$
+%$Id:$
+%$HeadURL:$
 %
 %plot of 1D 
 
@@ -216,14 +216,23 @@ han.sfig(kpr,kpc).YLabel.String='y coordinate [m]';
 %         error('Hard-code the label')
 % end
     
+cmap=lines(nb);
 
 %plots
 % han.p=scatter(in.mesh1d_x_node,in.mesh1d_y_node,10,'k','filled');
 if plot_sat
     addTiles(flg.tiles_path)
 end
+
 if plot_geometry
-    han.p=scatter(gridInfo.x_geom,gridInfo.y_geom,20,'r','parent',han.sfig(kr,kc));
+    idx0=1;
+for kb=1:nb
+    % han.p=scatter(gridInfo.x_geom,gridInfo.y_geom,20,'r','parent',han.sfig(kr,kc));
+    nc=gridInfo.node_count_geom(kb);
+    idx=idx0:1:idx0-1+nc;
+    idx0=idx(end)+1;
+    han.p=plot(gridInfo.x_geom(idx),gridInfo.y_geom(idx),'color',cmap(kb,:),'parent',han.sfig(kr,kc),'LineWidth',2);
+end
 end
 
 %nodes
@@ -246,7 +255,6 @@ end
 end
 
 %mesh1d_node
-cmap=lines(nb);
 for kb=1:nb
     bol_br=gridInfo.branch==kb-1; %starts at 0
     plot(gridInfo.x_node(bol_br),gridInfo.y_node(bol_br),'o','parent',han.sfig(kr,kc),'color',cmap(kb,:))

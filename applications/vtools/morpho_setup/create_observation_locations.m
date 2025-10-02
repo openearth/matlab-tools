@@ -47,11 +47,7 @@ if ~isfile(simdef.file.shp.crs)
     error('Something went wrong with running the simulation. There are no cross-section shapefiles.')
 end
 fpath_shp=simdef.file.shp.crs{1,1};
-
 if ~isfield(simdef.file,'map')
-    err=true;
-end
-if err
     error('Something went wrong with running the simulation. I expect a map-file in the output folder of this run: %s',fdir)
 end
 fpath_map=simdef.file.map;
