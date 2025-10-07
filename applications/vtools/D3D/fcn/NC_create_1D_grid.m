@@ -295,8 +295,8 @@ netcdf.putVar(ncid, var_mesh1d_edge_branch, mesh1d_edge_branch);
 netcdf.putVar(ncid, var_mesh1d_edge_offset, mesh1d_edge_offset);
 netcdf.putVar(ncid, var_mesh1d_edge_x, mesh1d_edge_x);
 netcdf.putVar(ncid, var_mesh1d_edge_y, mesh1d_edge_y);
-netcdf.putVar(ncid, var_mesh1d_node_id, mesh1d_node_id);
-netcdf.putVar(ncid, var_mesh1d_node_long_name, mesh1d_node_long_name);
+netcdf.putVar(ncid, var_mesh1d_node_id, mesh1d_node_id');
+netcdf.putVar(ncid, var_mesh1d_node_long_name, mesh1d_node_long_name');
 netcdf.putVar(ncid, var_mesh1d_edge_nodes, mesh1d_edge_nodes);
 
 %% CLOSE
