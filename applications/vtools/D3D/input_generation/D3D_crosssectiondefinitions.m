@@ -91,7 +91,7 @@ data{kl,1}=        '[Definition]'; kl=kl+1;
                 data{kl,1}=sprintf(aux_str2,csd(kcsd).(fields_csd{kfields})); kl=kl+1;
             else
                 switch fields_csd{kfields}
-                    case 'yzCount'
+                    case {'yzCount','sectionCount'}
                         data{kl,1}=sprintf('   %s = %d ',fields_csd{kfields},csd(kcsd).(fields_csd{kfields})); kl=kl+1;
                     otherwise
                         data{kl,1}=sprintf('   %s = %f ',fields_csd{kfields},csd(kcsd).(fields_csd{kfields})); kl=kl+1;
