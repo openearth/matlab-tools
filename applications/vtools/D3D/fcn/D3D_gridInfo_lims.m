@@ -26,7 +26,7 @@ elseif isfield(gridInfo,'offset')
 end
 
 tol=0.05;
-xlims=xlims+diff(xlims).*[-tol,tol]+10*[-eps,eps];
-ylims=ylims+diff(ylims).*[-tol,tol]+10*[-eps,eps];
+xlims=xlims+diff(xlims).*[-tol,tol]+100*[-eps,eps];
+ylims=ylims+diff(ylims).*[-tol,tol]+100*[-eps,eps];
 
 end %function
