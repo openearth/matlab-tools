@@ -311,14 +311,15 @@ end
 % in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,1);
 % in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
 
-%add mean grain size
-in_plot_sb.(tag_sb).var=cat(2,in_plot_sb.(tag_sb).var,'dg'); 
-in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
-in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{[]});
-in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,0);
-in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'dg'});
-in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,0);
-in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
+%add mean grain size -> should be first requested as output in the
+%simulation!
+% in_plot_sb.(tag_sb).var=cat(2,in_plot_sb.(tag_sb).var,'dg'); 
+% in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
+% in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{[]});
+% in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,0);
+% in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'dg'});
+% in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,0);
+% in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
 
 % CALL
 D3D_gdm(in_plot_sb)
