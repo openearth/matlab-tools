@@ -89,10 +89,9 @@ if in_plot_fig.do
 end
 
 %% STO (sediment transport offline)
-tag_check='fig_map_sedtransoff_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
-    create_mat_map_sedtransoff_01(fid_log,in_plot_fig,simdef)
+in_plot_fig=gdm_check_tag_STO(in_plot);
+if in_plot_fig.do
+    gdm_create_mat_STO(fid_log,in_plot_fig,simdef)
 end
 
 %% FCS (fraction right, centre, left in cross-section)
