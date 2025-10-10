@@ -528,14 +528,14 @@ if ~in_plot.only_adhoc
     legend_str=cell(ns,1);
     for ks=1:ns
         [simdef(ks),legend_str{ks}]=gdm_paths_single_run(fid_log,in_plot,ks);
-        create_mat_single_run(fid_log,in_plot,simdef(ks));
+        gdm_create_mat(fid_log,in_plot,simdef(ks));
     end %ks
     
     %% PLOT
         
     messageOut(fid_log,'Plotting',3)
     
-    plot_all_runs_one_figure(fid_log,in_plot,simdef,legend_str)
+    gdm_plot(fid_log,in_plot,simdef,legend_str)
 else
     simdef.dummy=NaN; %for passing to `gdm_adhoc`. 
 end %only_adhoc
