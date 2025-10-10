@@ -74,7 +74,19 @@ else
         fdir_sim_loc=fullfile(fdir_output,sprintf('%d',numdir));
         simdef=D3D_simpath(fdir_sim_loc);
         for kpart=1:simdef.file.partitions
-            fpath_map_loc=fullfile(simdef.file.output,sprintf('%s_%04d_map.nc',simdef.file.mdfid,kpart-1));    
+            if simdef.file.partitions==1
+                fpath_map_loc=fullfile(simdef.file.output,sprintf('%s_map.nc',simdef.file.mdfid));    
+            else
+                fpath_map_loc=fullfile(simdef.file.output,sprintf('%s_%04d_map.nc',simdef.file.mdfid,kpart-1));    
+            end
+            if isfile(fpath_map_loc)==0
+                messageOut(fid_log,'Error')
+                messageOut(fid_log,sprintf('File not found: %s',fpath_map_loc));
+                messageOut(fid_log,sprintf('The filename is constructed based on the mdu name: %s',simdef.file.mdfid));
+                messageOut(fid_log,sprintf('The filename is constructed considering: %d partitions',simdef.file.partitions));
+                messageOut(fid_log,sprintf('The map output has name: %s',simdef.file.map));
+                error('See above')
+            end
             tim_loc=ncread(fpath_map_loc,'time');
             [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map_loc,0,[1,Inf]);
             
