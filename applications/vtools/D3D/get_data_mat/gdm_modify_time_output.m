@@ -74,7 +74,21 @@ else
         fdir_sim_loc=fullfile(fdir_output,sprintf('%d',numdir));
         simdef=D3D_simpath(fdir_sim_loc);
         for kpart=1:simdef.file.partitions
-            fpath_map_loc=fullfile(simdef.file.output,sprintf('%s_%04d_map.nc',simdef.file.mdfid,kpart-1));    
+            fpath_map_locs{kpart}=fullfile(simdef.file.output,sprintf('%s_%04d_map.nc',simdef.file.mdfid,kpart-1));
+            fpath_map_exist(kpart)= exist(fpath_map_locs{kpart}); 
+        end
+        if ~all(fpath_map_exist == 2) 
+            warning('Partition map-files do not exist, trying single partition output file'); 
+            fpath_map_locs={};
+            fpath_map_locs{1}=fullfile(simdef.file.output,sprintf('%s_map.nc',simdef.file.mdfid));
+            fpath_map_exist= exist(fpath_map_locs{1}); 
+            if fpath_map_exist ~= 2; 
+                error(sprintf('Single partition map file %s not found', fpath_map_locs{1})); 
+            end
+        end
+
+        for kpart=1:length(fpath_map_locs);
+            fpath_map_loc=fpath_map_locs{kpart};    
             tim_loc=ncread(fpath_map_loc,'time');
             [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map_loc,0,[1,Inf]);
             
