@@ -72,6 +72,11 @@ if ~only_run_script
         D3D_thd(simdef,'check_existing',false)
     end
 
+    %pillarfile
+    if exist(simdef.file.PillarFile,'file')==2 
+        copyfile_check(simdef.file.PillarFile,simdef.D3D.dire_sim); %copy to run location
+    end
+
     %hydrodynamic boundary conditions 
     [dirloc]=fileparts(simdef.file.bct);
     mkdir_check(dirloc);

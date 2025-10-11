@@ -113,7 +113,7 @@ data{kl,1}=        'LandBoundaryFile  =         '; kl=kl+1;
 data{kl,1}=        'UseCaching        = 0       '; kl=kl+1;
 data{kl,1}=        'ThinDamFile       =         '; kl=kl+1;
 data{kl,1}=        'FixedWeirFile     =         '; kl=kl+1;
-data{kl,1}=        'PillarFile        =         '; kl=kl+1;
+data{kl,1}=sprintf('PillarFile        = %s',simdef.mdf.PillarFile); kl=kl+1;
 data{kl,1}=sprintf('StructureFile     = %s',simdef.mdf.StructureFile); kl=kl+1;
 % data{kl,1}=        'VertplizFile      =         '; kl=kl+1;
 data{kl,1}=sprintf('CrossDefFile      = %s',simdef.mdf.CrossDefFile); kl=kl+1;
@@ -135,11 +135,7 @@ end
 data{kl,1}=        'Bedlevuni         = -5      '; kl=kl+1;
 % end
 data{kl,1}=        'Bedslope          = 0       '; kl=kl+1;
-% if simdef.mor.morphology || simdef.grd.cell_type
-data{kl,1}=        'BedlevType        = 1       '; kl=kl+1;
-% else
-% data{kl,1}=        'BedlevType        = 3       '; kl=kl+1;
-% end
+data{kl,1}= sprintf('BedlevType        = %i       ', simdef.mdf.BedlevType); kl=kl+1;
 data{kl,1}=        'Blmeanbelow       = -999    '; kl=kl+1;
 data{kl,1}=        'Blminabove        = -999    '; kl=kl+1;
 data{kl,1}=        'PartitionFile     =         '; kl=kl+1;

@@ -515,6 +515,8 @@ simdef.mdf=isfield_default(simdef.mdf,'Dicoww',5.d-5);
 simdef.mdf=isfield_default(simdef.mdf,'Smagorinsky',0);
 simdef.mdf=isfield_default(simdef.mdf,'FrictType',0);
 
+simdef.mdf=isfield_default(simdef.mdf,'BedlevType',3);
+
 %%
 %% MOR
 %%
@@ -523,6 +525,10 @@ simdef.mor.dummy=NaN;
 
 if isfield(simdef.file,'mor')==0
     simdef.file.mor=fullfile(simdef.D3D.dire_sim,'mor.mor');
+end
+
+if simdef.mor.morphology
+    simdef.mdf.BedlevType=1; 
 end
 
 nf=numel(simdef.sed.dk);
@@ -995,6 +1001,14 @@ else
     simdef.file.thd='';
 end
 simdef.mdf.thd=fname_thd;
+
+if isfield(simdef.file,'PillarFile');
+    fname_pf=simdef.file.PillarFile;
+else
+    fname_pf='';
+end
+simdef.mdf.PillarFile=fname_pf;
+
 
 %% RENAME OUT
 
