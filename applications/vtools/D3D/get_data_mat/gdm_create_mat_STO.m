@@ -44,13 +44,52 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 gdm_modify_time_output(fid_log,flg_loc,simdef)
 
+%% LOAD TIME
+
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
+
 %% GET RAW VARIABLES map 2DH
 
 in_plot_get_variables_2DH=gdm_get_mat_2DH_for_STO(fid_log,flg_loc,simdef);
 
-%% LOAD TIME
+%% REORDER INDICES
 
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
+grd_hyd=load(fullfile(fdir_mat,'grd.mat'));
+grd_mor=load(fullfile(fdir_mat,'grd_mor.mat'));
+
+xy_hyd=[grd_hyd.gridInfo.Xcen,grd_hyd.gridInfo.Ycen];
+xy_mor=[grd_mor.gridInfo.Xcen,grd_mor.gridInfo.Ycen];
+
+if ~isequal(size(xy_hyd),size(xy_mor))
+    error('The morphodynamic simulation has a different number of cells than the hydrodynamic simulation.')
+end
+
+tol=1e-2;
+if any(max(abs(xy_hyd-xy_mor))>tol)
+    messageOut(fid_log,sprintf('The grids differ by more than %f m',tol))
+    messageOut(fid_log,'Reordering morphodynamic output.')
+
+    [~,idx] = reorder_matrix(xy_hyd',xy_mor');
+
+    varname=D3D_sediment_transport_offline_variables;
+    nvar=numel(varname);
+    for kvar=1:nvar
+    varname_read_variable=D3D_sediment_transport_offline_variables_read(varname{kvar});
+        for kt=1:nt
+            tim_cmp=time_dnum(kt);
+            fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname_read_variable,'tim',tim_cmp);      
+            load(fpath_mat_tmp_out,'data')
+            data=isfield_default(data,'reordered',false);
+            if data.reordered
+                messageOut(fid_log,sprintf('File already reordered: %s',fpath_mat_tmp_out));
+                continue
+            end
+            data.reordered=true;
+            data.val=data.val(:,idx,:,:,:);
+            save(fpath_mat_tmp_out,'data')
+        end %kt
+    end %kvar
+end %above tol
 
 %% CREATE MAT
 
@@ -128,7 +167,7 @@ in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for eac
 in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
 in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 % in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
-in_plot.(tag).tim=1; %all times
+in_plot.(tag).tim=flg_loc.tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
 in_plot.(tag).order_anl=2; %1=normal; 2=random
 % in_plot_sb.(tag_sb).tim_ave{1,1}=[]; %NaN = all times. Empty = do not do. 
 % in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
@@ -142,12 +181,12 @@ in_plot.(tag).layer=1; %we want the first layer of `Fak`
 
 in_plot.(tag).var_idx{1,1}=1:1:nf;
 
-in_plot.(tag).do_val_B_mor=0; %compute value of the variable per unit of morphodynamic width
+% in_plot.(tag).do_val_B_mor=0; %compute value of the variable per unit of morphodynamic width
 
 % in_plot.(tag).var_2=cell(1,nst+4+nf);
 % in_plot.(tag).var_2(1:nst)=var_2_v;
 
-in_plot.(tag).do_cum=0; 
+% in_plot.(tag).do_cum=0; 
 
 % CALL
 D3D_gdm(in_plot)
@@ -250,7 +289,6 @@ end %function
 function var_2_v=gdm_STO_create_mat(fid_log,flg_loc,simdef,in_plot_get_variables_2DH,time_dnum)
 
 
-nvar=numel(in_plot_get_variables_2DH.var); 
 nst=numel(flg_loc.sedtrans); 
 % nf=numel(dk);
 nt=numel(time_dnum);
@@ -290,7 +328,7 @@ ktc=0;
 messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
 for kst=1:nst
 
-    [flg,hiding_param,sed_trans_param]=gdm_STO_apply_variation_sediment_transport(flg_loc,kst);
+    [flg,hiding_param,sed_trans_param]=gdm_STO_apply_variation_sediment_transport(flg_loc,flg,kst);
 
     var_sum{kst}=sprintf('%s_sum',flg_loc.sedtrans_name{kst});
     var_2_v{kst}='stot'; %the variable name under `var` has the name as input for the sediment transport relation. `var_2` contains the name understood for writing the labels. 
@@ -322,7 +360,7 @@ for kst=1:nst
         save_check(fpath_mat_st,'data')
         
         %% disp
-        messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %% kst %4.2f %%',tag,ktc/nt*100,kvar/nvar*100,kst/nst*100));
+        messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kst %4.2f %%',tag,ktc/nt*100,kst/nst*100));
     end %kt
 end %kst
 
@@ -357,7 +395,7 @@ end %function
 
 %%
 
-function [flg,hiding_param,sed_trans_param]=gdm_STO_apply_variation_sediment_transport(flg_loc,kst)
+function [flg,hiding_param,sed_trans_param]=gdm_STO_apply_variation_sediment_transport(flg_loc,flg,kst)
 
 flg.hiding=flg_loc.sedtrans_hiding(kst);
 hiding_param=flg_loc.sedtrans_hiding_param(kst);
@@ -406,11 +444,14 @@ end %function
 %%
 
 function [u,h,C,Fak,Ltot]=gdm_STO_load_data(in_plot_get_variables_2DH,simdef,gridInfo,time_dnum_loc)
+
+nvar=numel(in_plot_get_variables_2DH.var); 
 %load data
 for kvar=1:nvar %variable
-    [fpath_mat_tmp,var_id,~,~,~]=gdm_get_name_map_2DH(in_plot_get_variables_2DH,simdef,gridInfo,kvar,in_plot_get_variables_2DH.tag,time_dnum_loc);
+    [fpath_mat_tmp,~,~,~,~]=gdm_get_name_map_2DH(in_plot_get_variables_2DH,simdef,gridInfo,kvar,in_plot_get_variables_2DH.tag,time_dnum_loc);
 
-    data_loc.(var_id)=load(fpath_mat_tmp,'data');
+    var_save=in_plot_get_variables_2DH.var{kvar};
+    data_loc.(var_save)=load(fpath_mat_tmp,'data');
 end
 
 
