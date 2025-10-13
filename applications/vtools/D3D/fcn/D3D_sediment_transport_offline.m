@@ -192,7 +192,7 @@ in_plot_morpho.sim_ref=1;
 in_plot_morpho.lan='en';
 in_plot_morpho.tag_serie='01';
 
-tag='fig_map_2DH_01';
+tag='M2D';
 in_plot_morpho.(tag).do=1;
 in_plot_morpho.(tag).do_p=0; %regular plot
 % in_plot_morpho.(tag).var={'Ltot','lyrfrac'}; 

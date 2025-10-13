@@ -70,18 +70,16 @@ if in_plot_fig.do
     gdm_plot_PRF(fid_log,in_plot_fig,simdef)
 end
 
-%% map 2DH
-tag_check='fig_map_2DH_01';
-if isfield(in_plot,tag_check)==1
-    in_plot_fig=gmd_tag(in_plot,tag_check);
+%% M2D
+in_plot_fig=gdm_check_tag_M2D(in_plot);
+if in_plot_fig.do
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
-    plot_map_2DH_02(fid_log,in_plot_fig,simdef)
+    gdm_plot_M2D(fid_log,in_plot_fig,simdef)
 
     for ksim=1:nsim
         plot_map_2DH_cum_01(fid_log,in_plot_fig,simdef(ksim))
         plot_map_2DH_Fourier2D(fid_log,in_plot_fig,simdef(ksim))
     end
-
 end
 
 %% GRD
