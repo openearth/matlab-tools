@@ -108,7 +108,7 @@
 
 %% grid
 
-% tag='fig_grid_01';
+% tag='GRD';
 % in_plot.(tag).do=1;
 % in_plot.(tag).fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
 % in_plot.(tag).fig_visible=0;
@@ -526,7 +526,7 @@ if ~in_plot.only_adhoc
         
     messageOut(fid_log,'Plotting',3)
     gdm_plot(fid_log,in_plot,simdef,legend_str)    
-    
+
 end %only_adhoc
 
 %% AD-HOC
