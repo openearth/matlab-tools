@@ -54,51 +54,16 @@ in_plot_get_variables_2DH=gdm_get_mat_2DH_for_STO(fid_log,flg_loc,simdef);
 
 %% REORDER INDICES
 
-grd_hyd=load(fullfile(fdir_mat,'grd.mat'));
-grd_mor=load(fullfile(fdir_mat,'grd_mor.mat'));
-
-xy_hyd=[grd_hyd.gridInfo.Xcen,grd_hyd.gridInfo.Ycen];
-xy_mor=[grd_mor.gridInfo.Xcen,grd_mor.gridInfo.Ycen];
-
-if ~isequal(size(xy_hyd),size(xy_mor))
-    error('The morphodynamic simulation has a different number of cells than the hydrodynamic simulation.')
-end
-
-tol=1e-2;
-if any(max(abs(xy_hyd-xy_mor))>tol)
-    messageOut(fid_log,sprintf('The grids differ by more than %f m',tol))
-    messageOut(fid_log,'Reordering morphodynamic output.')
-
-    [~,idx] = reorder_matrix(xy_hyd',xy_mor');
-
-    varname=D3D_sediment_transport_offline_variables;
-    nvar=numel(varname);
-    for kvar=1:nvar
-    varname_read_variable=D3D_sediment_transport_offline_variables_read(varname{kvar});
-        for kt=1:nt
-            tim_cmp=time_dnum(kt);
-            fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname_read_variable,'tim',tim_cmp);      
-            load(fpath_mat_tmp_out,'data')
-            data=isfield_default(data,'reordered',false);
-            if data.reordered
-                messageOut(fid_log,sprintf('File already reordered: %s',fpath_mat_tmp_out));
-                continue
-            end
-            data.reordered=true;
-            data.val=data.val(:,idx,:,:,:);
-            save(fpath_mat_tmp_out,'data')
-        end %kt
-    end %kvar
-end %above tol
+gdm_STO_reorder_indices_grd(fid_log,fdir_mat,time_dnum)
 
 %% CREATE MAT
 
 var_2_v=gdm_STO_create_mat(fid_log,flg_loc,simdef,in_plot_get_variables_2DH,time_dnum);
 
-%% SUMMERBED
+%% SUMMERBED PLOT
 
 if flg_loc.do_sb
-    gsm_STO_plot_SMB(fid_log,flg_loc,simdef,var_2_v)
+    gdm_STO_plot_SMB(fid_log,flg_loc,simdef,var_2_v)
 end
 
 end %function
@@ -136,7 +101,7 @@ end %function
 
 %% 
 
-function gsm_STO_plot_SMB(fid_log,flg_loc,simdef,var_2_v)
+function gdm_STO_plot_SMB(fid_log,flg_loc,simdef,var_2_v)
     
 nf=numel(D3D_read_sed(simdef.file.sed)); %we cannot use the size of `qbk` because the loop may be skipped if files exist
 
@@ -149,138 +114,12 @@ tag='SMB';
 in_plot.(tag)=flg_loc;
 in_plot.(tag).do=1;
 
-%% PLOTS OF A SINGLE TIME STEP, AREA
+%% PLOTS
 
-in_plot.(tag).do_p_single=1; %regular plot
-in_plot.(tag).do_xvt=0; %x-variable with time in color
-in_plot.(tag).do_area=1; %x-variable with time in color
-in_plot.(tag).do_diff_t=0; %difference initial time
-in_plot.(tag).do_diff_s=0; %difference with reference
-in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
-in_plot.(tag).do_diff_s_perc=0; %difference reference simulation in percentage terms
-in_plot.(tag).do_all_s=0; %all simulations in same figure
-in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
-in_plot.(tag).do_xvt=0; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_xvt_single=0; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
-% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
-in_plot.(tag).tim=flg_loc.tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
-in_plot.(tag).order_anl=2; %1=normal; 2=random
-% in_plot_sb.(tag_sb).tim_ave{1,1}=[]; %NaN = all times. Empty = do not do. 
-% in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
-
-% in_plot_sb.(tag_sb).var=var_sum; %open D3D_list_of_variables
-% in_plot_sb.(tag_sb).do_val_B_mor=ones(size(var_sum)); %compute value of the variable per unit of morphodynamic width
-
-in_plot.(tag).var={'Fak'}; 
-
-in_plot.(tag).layer=1; %we want the first layer of `Fak` 
-
-in_plot.(tag).var_idx{1,1}=1:1:nf;
-
-% in_plot.(tag).do_val_B_mor=0; %compute value of the variable per unit of morphodynamic width
-
-% in_plot.(tag).var_2=cell(1,nst+4+nf);
-% in_plot.(tag).var_2(1:nst)=var_2_v;
-
-% in_plot.(tag).do_cum=0; 
-
-% CALL
-D3D_gdm(in_plot)
-
-%%
-
-
-in_plot.(tag).do_p_single=flg_loc.do_sb_p; %regular plot
-in_plot.(tag).do_xvt=1; %x-variable with time in color
-in_plot.(tag).do_diff_t=0; %difference initial time
-in_plot.(tag).do_diff_s=0; %difference with reference
-in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
-in_plot.(tag).do_diff_s_perc=0; %difference reference simulation in percentage terms
-in_plot.(tag).do_all_s=0; %all simulations in same figure
-in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
-in_plot.(tag).do_xvt=1; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_xvt_single=1; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
-in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
-% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
-in_plot.(tag).tim=flg_loc.tim; %all times
-in_plot.(tag).order_anl=2; %1=normal; 2=random
-% in_plot_sb.(tag_sb).tim_ave{1,1}=[]; %NaN = all times. Empty = do not do. 
-% in_plot_sb.(tag_sb).ylims_var=flg_loc.ylims_var_sum; %do we need it?
-
-% in_plot_sb.(tag_sb).var=var_sum; %open D3D_list_of_variables
-% in_plot_sb.(tag_sb).do_val_B_mor=ones(size(var_sum)); %compute value of the variable per unit of morphodynamic width
-
-    %only var_sum
-%TO DO: why not plotting only Fak as area for all fractions together?
-in_plot.(tag).var=cat(2,var_sum,{'umag','mesh2d_czs','h','Ltot'},repmat({'Fak'},1,nf)); 
-
-in_plot.(tag).layer=num2cell(cat(2,zeros(size(var_sum)),[0,0,0,0,ones(1,nf)])); %we want the first layer of `Fak` 
-in_plot.(tag).layer{numel(var_sum)+1}=[]; %we do not want to specify any layer in velocity 
-
-in_plot.(tag).var_idx=cell(1,nst+4+nf);
-for kf=1:nf
-    in_plot.(tag).var_idx{1,nst+4+kf}=kf;
-end
-
-in_plot.(tag).do_val_B_mor=[ones(1,nst),[0,0,0,0,zeros(1,nf)]]; %compute value of the variable per unit of morphodynamic width
-
-in_plot.(tag).var_2=cell(1,nst+4+nf);
-in_plot.(tag).var_2(1:nst)=var_2_v;
-
-in_plot.(tag).do_cum=[ones(1,nst),0,0,0,0,zeros(1,nf)]; 
-
-    %add each size fraction
-for kst=1:nst
-    for kf=1:nf
-        in_plot.(tag).var=cat(2,in_plot.(tag).var,flg_loc.sedtrans_name{kst}); 
-        in_plot.(tag).layer=cat(2,in_plot.(tag).layer,{0});
-        in_plot.(tag).var_idx=cat(2,in_plot.(tag).var_idx,{kf});
-        in_plot.(tag).do_val_B_mor=cat(2,in_plot.(tag).do_val_B_mor,1);
-        in_plot.(tag).var_2=cat(2,in_plot.(tag).var_2,{'s'});
-        in_plot.(tag).do_cum=cat(2,in_plot.(tag).do_cum,0);
-    end
-end
-
-    %add transport per size fraction all together
-in_plot.(tag).do_area=zeros(1,numel(in_plot.(tag).var));
-for kst=1:nst
-    in_plot.(tag).var=cat(2,in_plot.(tag).var,flg_loc.sedtrans_name{kst}); 
-    in_plot.(tag).layer=cat(2,in_plot.(tag).layer,{0});
-    in_plot.(tag).var_idx=cat(2,in_plot.(tag).var_idx,{1:1:nf});
-    in_plot.(tag).do_val_B_mor=cat(2,in_plot.(tag).do_val_B_mor,1);
-    in_plot.(tag).var_2=cat(2,in_plot.(tag).var_2,{'stot'});
-    in_plot.(tag).do_cum=cat(2,in_plot.(tag).do_cum,1);
-    in_plot.(tag).do_area=cat(2,in_plot.(tag).do_area,1);
-end
-
-%     %add celerities
-% in_plot_sb.(tag_sb).var=cat(2,in_plot_sb.(tag_sb).var,'cel_morpho'); 
-% in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
-% in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{zeros(0,0)});
-% in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,0);
-% in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'cel_morpho'});
-% in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,1);
-% in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
-
-%add mean grain size -> should be first requested as output in the
-%simulation!
-% in_plot_sb.(tag_sb).var=cat(2,in_plot_sb.(tag_sb).var,'dg'); 
-% in_plot_sb.(tag_sb).layer=cat(2,in_plot_sb.(tag_sb).layer,{0});
-% in_plot_sb.(tag_sb).var_idx=cat(2,in_plot_sb.(tag_sb).var_idx,{[]});
-% in_plot_sb.(tag_sb).do_val_B_mor=cat(2,in_plot_sb.(tag_sb).do_val_B_mor,0);
-% in_plot_sb.(tag_sb).var_2=cat(2,in_plot_sb.(tag_sb).var_2,{'dg'});
-% in_plot_sb.(tag_sb).do_cum=cat(2,in_plot_sb.(tag_sb).do_cum,0);
-% in_plot_sb.(tag_sb).do_area=cat(2,in_plot_sb.(tag_sb).do_area,0);
-
-% CALL
-D3D_gdm(in_plot)
+gdm_plot_single_time_area(in_plot,flg_loc.tim);
+gdm_plot_single_time_line(in_plot,flg_loc.tim);
+gdm_plot_all_times_hydro(in_plot,flg_loc.tim);
+gdm_plot_all_times_qbk_area(in_plot,flg_loc.tim,flg_loc.sedtrans_name,nf);
 
 end %function
 
@@ -454,12 +293,9 @@ for kvar=1:nvar %variable
     data_loc.(var_save)=load(fpath_mat_tmp,'data');
 end
 
-
-%         u=data_loc.mesh2d_umod.data'; %[nF,1]
 u=data_loc.umag.data'; %[nF,1]
 h=data_loc.h.data'; %[nF,1]
 C=data_loc.mesh2d_czs.data'; %[nF,1]
-%         Fak=squeeze(data_loc.Fak.data(:,1,:)); %[nF,nf] (take active layer) %OLD, we were reading all the layers
 Fak=squeeze(data_loc.Fak.data); %[nF,nf] (take active layer) %NEW, we only read the active layer
 Ltot=data_loc.Ltot.data'; %[nF,1]
 
@@ -471,5 +307,193 @@ function data=gdm_STO_compute_qbk_sum(data)
 
 data.val=sum(data.val,2); %we have to save it as structure because we use 'raw' type
 data.dimensions='[mesh2d_nFaces]';
+
+end %function
+
+%%
+
+function gdm_plot_single_time_area(in_plot,tim)
+
+%% INPUT
+
+tag='SMB';
+in_plot.(tag).do_p_single=1; %regular plot
+in_plot.(tag).do_xvt=0; %x-variable with time in color
+in_plot.(tag).do_area=1; %x-variable with time in color
+in_plot.(tag).do_diff_t=0; %difference initial time
+in_plot.(tag).do_diff_s=0; %difference with reference
+in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
+in_plot.(tag).do_diff_s_perc=0; %difference reference simulation in percentage terms
+in_plot.(tag).do_all_s=0; %all simulations in same figure
+in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+in_plot.(tag).do_xvt=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_single=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
+in_plot.(tag).order_anl=2; %1=normal; 2=random
+
+in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
+in_plot.(tag).var={'Fak'}; 
+in_plot.(tag).layer=1; %we want the first layer of `Fak` 
+% in_plot.(tag).var_idx{1,1}=1:1:nf;
+
+%% CALL
+D3D_gdm(in_plot)
+
+end %function
+
+%%
+
+function gdm_plot_single_time_line(in_plot,tim)
+
+%% INPUT
+
+tag='SMB';
+in_plot.(tag).do_p_single=1; %regular plot
+in_plot.(tag).do_xvt=0; %x-variable with time in color
+in_plot.(tag).do_area=0; %x-variable with time in color
+in_plot.(tag).do_diff_t=0; %difference initial time
+in_plot.(tag).do_diff_s=0; %difference with reference
+in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
+in_plot.(tag).do_diff_s_perc=0; %difference reference simulation in percentage terms
+in_plot.(tag).do_all_s=0; %all simulations in same figure
+in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+in_plot.(tag).do_xvt=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_single=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
+in_plot.(tag).order_anl=2; %1=normal; 2=random
+
+in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
+in_plot.(tag).var={'Ltot'}; %It would be nice to add `dg` but we need to make sure it is output in the morpho simulation
+
+%% CALL
+D3D_gdm(in_plot)
+
+end %function
+
+%%
+
+function gdm_plot_all_times_hydro(in_plot,tim)
+
+tag='SMB';
+in_plot.(tag).do_p_single=0; %regular plot
+in_plot.(tag).do_xvt=1; %x-variable with time in color
+in_plot.(tag).do_diff_t=0; %difference initial time
+in_plot.(tag).do_diff_s=0; %difference with reference
+in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
+in_plot.(tag).do_diff_s_perc=0; %difference reference simulation in percentage terms
+in_plot.(tag).do_all_s=0; %all simulations in same figure
+in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+in_plot.(tag).do_xvt=1; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_single=1; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
+in_plot.(tag).order_anl=2; %1=normal; 2=random
+
+in_plot.(tag).tim=tim; %all times
+in_plot.(tag).var={'umag','mesh2d_czs','h'}; 
+
+%% CALL
+D3D_gdm(in_plot)
+
+end %function
+
+%%
+
+function gdm_plot_all_times_qbk_area(in_plot,tim,sedtrans_name,nf)
+
+tag='SMB';
+in_plot.(tag).do_p_single=1; %regular plot
+in_plot.(tag).do_xvt=0; %x-variable with time in color
+in_plot.(tag).do_diff_t=0; %difference initial time
+in_plot.(tag).do_diff_s=0; %difference with reference
+in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
+in_plot.(tag).do_diff_s_perc=0; %difference reference simulation in percentage terms
+in_plot.(tag).do_all_s=0; %all simulations in same figure
+in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+in_plot.(tag).do_xvt=1; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_single=1; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
+in_plot.(tag).order_anl=2; %1=normal; 2=random
+
+in_plot.(tag).tim=tim; %all times
+
+nst=numel(sedtrans_name);
+
+in_plot.(tag).var={};
+in_plot.(tag).layer={};
+in_plot.(tag).var_idx={};
+in_plot.(tag).do_val_B_mor=[];
+in_plot.(tag).var_2={};
+in_plot.(tag).do_cum=[];
+in_plot.(tag).do_area=[];
+for kst=1:nst
+    in_plot.(tag).var=cat(2,in_plot.(tag).var,sedtrans_name{kst}); 
+    in_plot.(tag).layer=cat(2,in_plot.(tag).layer,{0});
+    in_plot.(tag).var_idx=cat(2,in_plot.(tag).var_idx,{1:1:nf});
+    in_plot.(tag).do_val_B_mor=cat(2,in_plot.(tag).do_val_B_mor,1);
+    in_plot.(tag).var_2=cat(2,in_plot.(tag).var_2,{'stot'});
+    in_plot.(tag).do_cum=cat(2,in_plot.(tag).do_cum,1);
+    in_plot.(tag).do_area=cat(2,in_plot.(tag).do_area,1);
+end
+
+%% CALL
+
+D3D_gdm(in_plot);
+
+end %function
+
+%%
+
+function gdm_STO_reorder_indices_grd(fid_log,fdir_mat,time_dnum)
+
+nt=numel(time_dnum);
+
+grd_hyd=load(fullfile(fdir_mat,'grd.mat'));
+grd_mor=load(fullfile(fdir_mat,'grd_mor.mat'));
+
+xy_hyd=[grd_hyd.gridInfo.Xcen,grd_hyd.gridInfo.Ycen];
+xy_mor=[grd_mor.gridInfo.Xcen,grd_mor.gridInfo.Ycen];
+
+if ~isequal(size(xy_hyd),size(xy_mor))
+    error('The morphodynamic simulation has a different number of cells than the hydrodynamic simulation.')
+end
+
+tol=1e-2;
+if any(max(abs(xy_hyd-xy_mor))>tol)
+    messageOut(fid_log,sprintf('The grids differ by more than %f m',tol))
+    messageOut(fid_log,'Reordering morphodynamic output.')
+
+    [~,idx] = reorder_matrix(xy_hyd',xy_mor');
+
+    varname=D3D_sediment_transport_offline_variables;
+    nvar=numel(varname);
+    for kvar=1:nvar
+    varname_read_variable=D3D_sediment_transport_offline_variables_read(varname{kvar});
+        for kt=1:nt
+            tim_cmp=time_dnum(kt);
+            fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname_read_variable,'tim',tim_cmp);      
+            load(fpath_mat_tmp_out,'data')
+            data=isfield_default(data,'reordered',false);
+            if data.reordered
+                messageOut(fid_log,sprintf('File already reordered: %s',fpath_mat_tmp_out));
+                continue
+            end
+            data.reordered=true;
+            data.val=data.val(:,idx,:,:,:);
+            save(fpath_mat_tmp_out,'data')
+        end %kt
+    end %kvar
+end %above tol
 
 end %function
