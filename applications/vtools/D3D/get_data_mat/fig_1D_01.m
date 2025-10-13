@@ -427,7 +427,7 @@ else
 end
 if isempty(ylab)
     if numel(frac)>1
-        frac='';
+        in_p.frac='';
     end
     [~,cstring,~]=gdm_cmap_and_string(in_p,[0,1]);
     ylabels{kr,kc}=cstring;
