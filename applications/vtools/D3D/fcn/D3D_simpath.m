@@ -33,7 +33,7 @@ function simdef=D3D_simpath(simdef,varargin)
 parin=inputParser;
 
 addOptional(parin,'break',1);
-addOptional(parin,'overwrite',0);
+addOptional(parin,'overwrite',1);
 
 parse(parin,varargin{:})
 
@@ -347,9 +347,10 @@ if ~(exist(fi,'file')==2) && ~isfolder(fi)
     idx = strfind(fi,[filesep,'..']);
     fi=[fi(1:idx-1),[filesep,'..'],fi(idx:end)];
     if exist(fi,'file')==2 || isfolder(fi)
-        % if strcmp(fi,'\..')
-            % error('The path is not found: %s',fi_old)
-        % end
+        [~,~,fext]=fileparts(fi_old);
+        if strcmp(fi,'\..') && ~strcmp(fext,'.nc') %we do not check for the grid file. Due to partitioning, the grid may not be found. 
+            error('The path is not found: %s',fi_old)
+        end
         disp('Old style smt.yml simulation found')
     else
         error('File (%s) not found: ',fi)
