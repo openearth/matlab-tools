@@ -515,7 +515,7 @@ simdef.mdf=isfield_default(simdef.mdf,'Dicoww',5.d-5);
 simdef.mdf=isfield_default(simdef.mdf,'Smagorinsky',0);
 simdef.mdf=isfield_default(simdef.mdf,'FrictType',0);
 
-simdef.mdf=isfield_default(simdef.mdf,'BedlevType',3);
+simdef.mdf=isfield_default(simdef.mdf,'BedlevType',1); %ideally
 
 %%
 %% MOR
@@ -523,64 +523,10 @@ simdef.mdf=isfield_default(simdef.mdf,'BedlevType',3);
 
 simdef.mor.dummy=NaN;
 
-if isfield(simdef.file,'mor')==0
-    simdef.file.mor=fullfile(simdef.D3D.dire_sim,'mor.mor');
-end
+simdef.mor=isfield_default(simdef.mor,'morphology',0);
 
 if simdef.mor.morphology
-    simdef.mdf.BedlevType=1; 
-end
-
-nf=numel(simdef.sed.dk);
-if nf==1
-    simdef.mor.IUnderLyr=1;
-else
-    simdef.mor.IUnderLyr=2;
-end
-
-if isfield(simdef.mor,'CondPerNode')==0
-    simdef.mor.CondPerNode=0;
-end
-switch simdef.mor.CondPerNode
-    case 0
-        simdef.mor.upstream_nodes=1;
-    case 1
-%         if simdef.grd.type~=3
-%             error('CondPerNode for another grid wich is not DHL is not implemented')
-%         end
-        simdef.mor.upstream_nodes=simdef.grd.node_number_y;
-        
-end
-
-if isfield(simdef.mor,'IBedCond')==0
-    simdef.mor.IBedCond=NaN;
-end
-
-if isfield(simdef.mor,'UpwindBedload')==0
-    simdef.mor.UpwindBedload=1;
-end
-if isfield(simdef.mor,'BedloadScheme')==1
-    simdef.mor.UpwindBedload=NaN;
-else
-    simdef.mor.BedloadScheme=NaN;
-end
-if isfield(simdef.mor,'SedThr')==0
-    simdef.mor.SedThr=1e-3;
-end
-if isfield(simdef.mor,'AlfaBs')==0
-    simdef.mor.AlfaBs=0;
-end
-if isfield(simdef.mor,'ThetSD')==0
-    simdef.mor.ThetSD=0;
-end
-if isfield(simdef.mor,'HMaxTH')==0
-    simdef.mor.HMaxTH=0;
-end
-
-if isfield(simdef.file,'mini')==0
-    %in the mor-file, we are writting the filename of this filepath. It is
-    %not completely safe if files are not in the same location.
-    simdef.file.mini=fullfile(simdef.D3D.dire_sim,'mini.ini');
+    simdef=D3D_rework_mor(simdef);
 end
 
 %% 
@@ -1094,3 +1040,69 @@ for kf=1:nf
 end
 
 end
+
+%%
+
+function simdef=D3D_rework_mor(simdef)
+
+if isfield(simdef.file,'mor')==0
+    simdef.file.mor=fullfile(simdef.D3D.dire_sim,'mor.mor');
+end
+
+if simdef.mor.morphology
+    simdef.mdf.BedlevType=1; 
+end
+
+nf=numel(simdef.sed.dk);
+if nf==1
+    simdef.mor.IUnderLyr=1;
+else
+    simdef.mor.IUnderLyr=2;
+end
+
+if isfield(simdef.mor,'CondPerNode')==0
+    simdef.mor.CondPerNode=0;
+end
+switch simdef.mor.CondPerNode
+    case 0
+        simdef.mor.upstream_nodes=1;
+    case 1
+%         if simdef.grd.type~=3
+%             error('CondPerNode for another grid wich is not DHL is not implemented')
+%         end
+        simdef.mor.upstream_nodes=simdef.grd.node_number_y;
+        
+end
+
+if isfield(simdef.mor,'IBedCond')==0
+    simdef.mor.IBedCond=NaN;
+end
+
+if isfield(simdef.mor,'UpwindBedload')==0
+    simdef.mor.UpwindBedload=1;
+end
+if isfield(simdef.mor,'BedloadScheme')==1
+    simdef.mor.UpwindBedload=NaN;
+else
+    simdef.mor.BedloadScheme=NaN;
+end
+if isfield(simdef.mor,'SedThr')==0
+    simdef.mor.SedThr=1e-3;
+end
+if isfield(simdef.mor,'AlfaBs')==0
+    simdef.mor.AlfaBs=0;
+end
+if isfield(simdef.mor,'ThetSD')==0
+    simdef.mor.ThetSD=0;
+end
+if isfield(simdef.mor,'HMaxTH')==0
+    simdef.mor.HMaxTH=0;
+end
+
+if isfield(simdef.file,'mini')==0
+    %in the mor-file, we are writting the filename of this filepath. It is
+    %not completely safe if files are not in the same location.
+    simdef.file.mini=fullfile(simdef.D3D.dire_sim,'mini.ini');
+end
+
+end %function
