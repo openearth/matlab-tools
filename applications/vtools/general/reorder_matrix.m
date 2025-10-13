@@ -47,14 +47,14 @@ xr = round(x * precision);
 yr = round(y * precision);
 
 %Check uniqueness
-nx_u=numel(unique(xr));
-nx=size(x,2);
-if nx_u~=nx
-    y_sorted=y;
-    idx=1:1:nx;
-    fprintf('Cannot reorder matrix, the elements are not unique. \n')
-    return
-end
+% nx_u=numel(unique(xr));
+% nx=size(x,2);
+% if nx_u~=nx
+%     y_sorted=y;
+%     idx=1:1:nx;
+%     fprintf('Cannot reorder matrix, the elements are not unique. \n')
+%     return
+% end
 
 %Replace NaNs with a unique marker
 xr(isnan(x)) = nan_marker;
