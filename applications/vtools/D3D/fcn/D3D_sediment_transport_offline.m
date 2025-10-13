@@ -216,7 +216,7 @@ ks=ks+1;
 in_plot_sedtrans.fdir_sim{ks}=fpath_out; 
 in_plot_sedtrans.str_sim{ks}='reference';
 
-tag='fig_map_sedtransoff_01';
+tag='STO';
 in_plot_sedtrans.(tag).tim=tim_dtime;
 
 D3D_gdm(in_plot_sedtrans)
