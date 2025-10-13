@@ -525,9 +525,7 @@ simdef.mor.dummy=NaN;
 
 simdef.mor=isfield_default(simdef.mor,'morphology',0);
 
-if simdef.mor.morphology
-    simdef=D3D_rework_mor(simdef);
-end
+simdef=D3D_rework_mor(simdef);
 
 %% 
 %% BCM
