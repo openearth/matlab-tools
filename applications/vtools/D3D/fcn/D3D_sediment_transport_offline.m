@@ -196,7 +196,7 @@ tag='M2D';
 in_plot_morpho.(tag).do=1;
 in_plot_morpho.(tag).do_p=0; %regular plot
 % in_plot_morpho.(tag).var={'Ltot','lyrfrac'}; 
-in_plot_morpho.(tag).var={'Ltot','Fak'}; 
+in_plot_morpho.(tag).var=D3D_sediment_transport_offline_variables; 
 in_plot_morpho.(tag).tim=1;
 in_plot_morpho.(tag).overwrite=0; %overwrite mat-files
 
@@ -419,19 +419,21 @@ tim_hydro=tim.time_dnum(1);
 fdir_mat=fullfile(fpath_out,'mat');
 mkdir_check(fdir_mat);
 
+%copy grid to check that dimensions agree
+fdir_mat=fullfile(fpath_morpho,'mat');
+fpath_mat_tmp_in=fullfile(fdir_mat,'grd.mat');
+
+fdir_mat=fullfile(fpath_out,'mat');
+fpath_mat_tmp_out=fullfile(fdir_mat,'grd_mor.mat');
+
+copyfile_check(fpath_mat_tmp_in,fpath_mat_tmp_out,1);
+
 for ksim=1:nsim+1 %this is the number of times in the SMT hydrograph +1, because of the block approach. 
 
     for kvar=1:nvar
 
         varname=varname_v{kvar};
-        [~,varname_read_variable,~,~]=D3D_var_num2str(varname); %This is the name used for saving the raw output
-
-        %But for `Ltot`, the variable which is read in raw is different...
-        %Not the nicest, but this is what it is. 
-        switch varname_read_variable
-            case 'Ltot'
-                varname_read_variable='mesh2d_thlyr';
-        end
+        varname_read_variable=D3D_sediment_transport_offline_variables_read(varname);
         
         %raw
         fdir_mat=fullfile(fpath_morpho,'mat');
