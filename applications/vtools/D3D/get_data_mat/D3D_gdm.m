@@ -509,35 +509,24 @@
 
 function D3D_gdm(in_plot)
 
-%% DEFAULT
+%% PARSE
 
 in_plot=create_mat_default_flags(in_plot);
 fid_log=NaN;
+simdef.dummy=NaN; %for passing to `gdm_adhoc`. 
 
 if ~in_plot.only_adhoc
 
-    if ~isfield(in_plot,'fdir_sim')
-        error('Specify the simulations to analyse <fdir_sim>')
-    end
-    ns=numel(in_plot.fdir_sim);
-    
     %% CREATE MAT-FILES
     
     messageOut(fid_log,'Creating mat-files',3)
-    
-    legend_str=cell(ns,1);
-    for ks=1:ns
-        [simdef(ks),legend_str{ks}]=gdm_paths_single_run(fid_log,in_plot,ks);
-        gdm_create_mat(fid_log,in_plot,simdef(ks));
-    end %ks
-    
+    [simdef,legend_str]=gdm_create_mat_all(fid_log,in_plot);
+
     %% PLOT
         
     messageOut(fid_log,'Plotting',3)
+    gdm_plot(fid_log,in_plot,simdef,legend_str)    
     
-    gdm_plot(fid_log,in_plot,simdef,legend_str)
-else
-    simdef.dummy=NaN; %for passing to `gdm_adhoc`. 
 end %only_adhoc
 
 %% AD-HOC
@@ -547,5 +536,28 @@ gdm_adhoc(fid_log,in_plot,simdef)
 %% END
 
 messageOut(fid_log,'Done!!!',3);
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function [simdef,legend_str]=gdm_create_mat_all(fid_log,in_plot)
+
+%% PARSE
+
+if ~isfield(in_plot,'fdir_sim')
+    error('Specify the simulations to analyse <fdir_sim>')
+end
+
+%% CALC
+
+ns=numel(in_plot.fdir_sim);
+legend_str=cell(ns,1);
+for ks=1:ns
+    [simdef(ks),legend_str{ks}]=gdm_paths_single_run(fid_log,in_plot,ks);
+    gdm_create_mat(fid_log,in_plot,simdef(ks));
+end %ks
 
 end %function
