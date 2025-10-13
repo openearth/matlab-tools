@@ -17,12 +17,10 @@ function gdm_plot(fid_log,in_plot,simdef,leg_str)
 nsim=numel(simdef);
 
 %% map_summerbed
-tag_check='fig_map_summerbed_01';
-if isfield(in_plot,tag_check)==1
-    % in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
-    in_plot_fig=gmd_tag(in_plot,tag_check);
+in_plot_fig=gdm_check_tag_SMB(in_plot);
+if in_plot_fig.do
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
-    plot_summerbed(fid_log,in_plot_fig,simdef)
+    gdm_plot_SMB(fid_log,in_plot_fig,simdef)
     if isfield(in_plot_fig,'tim_ave')
         error('The code below needs to be make to work. It used to be called when only one `simdef` was called in `plot_individual_runs`')
         if ~isempty(in_plot_fig.tim_ave{1,1}) 
