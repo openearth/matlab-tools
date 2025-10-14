@@ -42,19 +42,13 @@
 % %`fpath_add_oet` points to <dir_checkout\applications\vtools\general\addOET.m>
 % fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
 %
-% %The source of QuickPlot is now within the source code of Delft3D.
+% %The source of QuickPlot is now in a separate GitHub repository
 % %Check it out by:
 % %```
-% % git init
-% % git remote add -f origin https://git.deltares.nl/oss/delft3d
-% % git config core.sparseCheckout true
-% % git sparse-checkout set src/tools_lgpl/matlab/quickplot/progsrc
+% % git clone https://github.com/Deltares/QUICKPLOT quickplot
 % %```
 % %and point here to the folder where it has been checked out.
-% fdir_d3d='c:\checkouts\sc_fm_trunk\';
-%
-% % fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
-% % fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
+% fdir_d3d='c:\checkouts\quickplot\';
 %
 % % fpath_add_oet='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\general\addOET.m';
 % % fdir_d3d='p:\studenten-riv\05_OpenEarthTools\02_qp\';
