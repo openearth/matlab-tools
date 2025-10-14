@@ -54,7 +54,7 @@ in_plot_get_variables_2DH=gdm_get_mat_2DH_for_STO(fid_log,flg_loc,simdef);
 
 %% REORDER INDICES
 
-gdm_STO_reorder_indices_grd(fid_log,fdir_mat,time_dnum)
+gdm_STO_reorder_indices_grd(fid_log,fdir_mat,time_dnum,in_plot_get_variables_2DH,simdef)
 
 %% CREATE MAT
 
@@ -455,7 +455,7 @@ end %function
 
 %%
 
-function gdm_STO_reorder_indices_grd(fid_log,fdir_mat,time_dnum)
+function gdm_STO_reorder_indices_grd(fid_log,fdir_mat,time_dnum,in_plot_get_variables_2DH,simdef)
 
 nt=numel(time_dnum);
 
@@ -469,6 +469,8 @@ if ~isequal(size(xy_hyd),size(xy_mor))
     error('The morphodynamic simulation has a different number of cells than the hydrodynamic simulation.')
 end
 
+gridInfo=grd_hyd.gridInfo;
+
 tol=1e-2;
 if any(max(abs(xy_hyd-xy_mor))>tol)
     messageOut(fid_log,sprintf('The grids differ by more than %f m',tol))
@@ -477,21 +479,41 @@ if any(max(abs(xy_hyd-xy_mor))>tol)
     [~,idx] = reorder_matrix(xy_hyd',xy_mor');
 
     varname=D3D_sediment_transport_offline_variables;
+    in_plot_get_variables_2DH.var=varname;
     nvar=numel(varname);
     for kvar=1:nvar
-    varname_read_variable=D3D_sediment_transport_offline_variables_read(varname{kvar});
+        %we modify both the raw variable and the M2D one. 
+        varname_read_variable=D3D_sediment_transport_offline_variables_read(varname{kvar});
         for kt=1:nt
-            tim_cmp=time_dnum(kt);
-            fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname_read_variable,'tim',tim_cmp);      
+            time_dnum_loc=time_dnum(kt);
+
+            %raw file
+            fpath_mat_tmp_out=mat_tmp_name(fdir_mat,varname_read_variable,'tim',time_dnum_loc);    
             load(fpath_mat_tmp_out,'data')
             data=isfield_default(data,'reordered',false);
             if data.reordered
                 messageOut(fid_log,sprintf('File already reordered: %s',fpath_mat_tmp_out));
                 continue
             end
+
             data.reordered=true;
             data.val=data.val(:,idx,:,:,:);
             save(fpath_mat_tmp_out,'data')
+
+            %M2D file
+            [fpath_mat_tmp_out,~,~,~,~]=gdm_get_name_map_2DH(in_plot_get_variables_2DH,simdef,gridInfo,kvar,in_plot_get_variables_2DH.tag,time_dnum_loc);
+            load(fpath_mat_tmp_out,'data')
+            sz=size(data);
+            bol_dim_faces=ismember(sz,numel(gridInfo.Xcen));
+            if bol_dim_faces(1)
+                data=data(idx,:,:,:,:);
+            elseif bol_dim_faces(2)
+                data=data(:,idx,:,:,:);
+            else
+                error('Dimensions do not match.')
+            end
+            save(fpath_mat_tmp_out,'data')
+
         end %kt
     end %kvar
 end %above tol
