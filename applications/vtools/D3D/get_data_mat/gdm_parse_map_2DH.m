@@ -114,11 +114,11 @@ end
 
 %In 1D-2D simulations, the simulations is identified as 1D because it has 1D data. We have to force to
 %plot the 2D data if we are in `map_2DH`.
-if simdef(1).D3D.is1d
- messageOut(fid_log,'This seems a 1D-2D simulation, as you want to plot 2D data but there is 1D data in the results. Plotting 2D.')
- simdef(1).D3D.is1d=false;
-end
-
+if isfield(simdef(1).D3D, 'is1d')
+    if simdef(1).D3D.is1d
+        messageOut(fid_log,'This seems a 1D-2D simulation, as you want to plot 2D data but there is 1D data in the results. Plotting 2D.')
+        simdef(1).D3D.is1d=false;
+    end  
 end %function
 
 %%
