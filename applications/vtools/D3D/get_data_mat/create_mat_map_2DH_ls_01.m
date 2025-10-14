@@ -78,7 +78,7 @@ for kt=kt_v
 
             %% read data
             
-            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname_read_variable,sim_idx(kt),layer,var_idx,'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tol_t,'overwrite',flg_loc.overwrite,'pliname',pliname); %this overwriting flag should be different than the previous one
+            data=gdm_read_data_map_ls_simdef(fdir_mat,simdef,varname_read_variable,sim_idx(kt),layer,var_idx,'pli',fpath_pli,'tim',time_dnum(kt),'tol_t',flg_loc.tim_tol,'overwrite',flg_loc.overwrite,'pliname',pliname); %this overwriting flag should be different than the previous one
             
             if flg_loc.do_rkm
                 data.rkm_cor=convert2rkm(flg_loc.fpath_rkm,[data.Xcor,data.Ycor],'TolMinDist',flg_loc.TolMinDist);
