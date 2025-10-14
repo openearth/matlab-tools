@@ -33,11 +33,13 @@ function simdef=D3D_simpath(simdef,varargin)
 parin=inputParser;
 
 addOptional(parin,'break',1);
+addOptional(parin,'break_paths_smt',0);
 addOptional(parin,'overwrite',1);
 
 parse(parin,varargin{:})
 
 do_break=parin.Results.break;
+do_break_paths_smt=parin.Results.break_paths_smt;
 overwrite=parin.Results.overwrite;
 
 %% MAKE DIR
@@ -141,7 +143,7 @@ switch simdef.D3D.structure
     case {2,4}
         simdef_aux=D3D_simpath_mdu(file.mdf);
         if simdef.D3D.structure==4 
-            simdef_aux.file=adapt_paths_smt(simdef_aux.file); %the relative paths are relative to the layout mdu
+            simdef_aux.file=adapt_paths_smt(simdef_aux.file,do_break_paths_smt); %the relative paths are relative to the layout mdu
         end
     case 5
         %get paths for each mdf
@@ -318,19 +320,19 @@ end %function
 
 %%
 
-function simdef_aux_file=adapt_paths_smt(simdef_aux_file)
+function simdef_aux_file=adapt_paths_smt(simdef_aux_file,do_break)
 
 fn=fieldnames(simdef_aux_file);
 nfn=numel(fn);
 for kfn=1:nfn
     fi=simdef_aux_file.(fn{kfn});
     if ischar(fi)
-        simdef_aux_file.(fn{kfn})=adapt_paths_smt_char(fi);
+        simdef_aux_file.(fn{kfn})=adapt_paths_smt_char(fi,do_break);
     elseif iscell(fi)
         nc=numel(fi);
         for kc=1:nc
             fi2=fi{kc};
-            simdef_aux_file.(fn{kfn}){kc}=adapt_paths_smt_char(fi2);
+            simdef_aux_file.(fn{kfn}){kc}=adapt_paths_smt_char(fi2,do_break);
         end
     end
 end
@@ -339,7 +341,7 @@ end %function
 
 %%
 
-function fi=adapt_paths_smt_char(fi)
+function fi=adapt_paths_smt_char(fi,do_break)
 
 fi_old=fi;
 
@@ -349,11 +351,17 @@ if ~(exist(fi,'file')==2) && ~isfolder(fi)
     if exist(fi,'file')==2 || isfolder(fi)
         [~,~,fext]=fileparts(fi_old);
         if strcmp(fi,'\..') && ~strcmp(fext,'.nc') %we do not check for the grid file. Due to partitioning, the grid may not be found. 
-            error('The path is not found: %s',fi_old)
+            fprintf('The path is not found: %s \n',fi_old)
+            if do_break
+                error('See above.')
+            end
         end
-        disp('Old style smt.yml simulation found')
+        fprintf('Old style smt.yml simulation found \n')
     else
-        error('File (%s) not found: ',fi)
+        fprintf('File (%s) not found: \n',fi)
+        if do_break
+            error('See above.')
+        end
     end
 end
 

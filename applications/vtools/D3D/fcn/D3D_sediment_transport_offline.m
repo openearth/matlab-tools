@@ -210,6 +210,8 @@ copy_morpho_files(in_plot_morpho,tag,fpath_morpho,fpath_out,tim_dtime,overwrite)
 
 messageOut(NaN,'Start sediment transport offline computation',1)
 
+in_plot_sedtrans.break_paths_smt=false;
+
 ks=0;
 
 ks=ks+1;

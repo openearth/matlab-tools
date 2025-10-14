@@ -21,13 +21,14 @@ if fdir_sim(end)==filesep
     fdir_sim(end)='';
 end
 in_plot=isfield_default(in_plot,'simdef_overwrite',1);
+in_plot=isfield_default(in_plot,'break_paths_smt',0);
 in_plot=isfield_default(in_plot,'fdir_mat',fullfile(fdir_sim,'mat'));
 in_plot=isfield_default(in_plot,'fdir_fig',fullfile(fdir_sim,'figures'));
 
 %% paths
 
 simdef.D3D.dire_sim=fdir_sim;
-simdef=D3D_simpath(simdef,'break',1,'overwrite',in_plot.simdef_overwrite);
+simdef=D3D_simpath(simdef,'break',1,'overwrite',in_plot.simdef_overwrite,'break_paths_smt',in_plot.break_paths_smt);
 
 %the runid is not in the mdu name, but in the folder name
 tok=regexp(fdir_sim,filesep,'split');
