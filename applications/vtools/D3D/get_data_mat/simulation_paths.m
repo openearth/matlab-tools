@@ -20,7 +20,7 @@ function simdef=simulation_paths(fdir_sim,in_plot)
 if fdir_sim(end)==filesep
     fdir_sim(end)='';
 end
-in_plot=isfield_default(in_plot,'simdef_overwrite',0);
+in_plot=isfield_default(in_plot,'simdef_overwrite',1);
 in_plot=isfield_default(in_plot,'fdir_mat',fullfile(fdir_sim,'mat'));
 in_plot=isfield_default(in_plot,'fdir_fig',fullfile(fdir_sim,'figures'));
 
