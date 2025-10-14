@@ -138,7 +138,7 @@ for kvar=1:nvar %variable
             
             %local simulation at local time
             fdir_mat=simdef(ksim).file.mat.dir;
-            [~,val_loc_tt,~]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
+            [~,val_loc_tt,~,val_no_int]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
     
             %reference
             %Time loops on the reference time, hence there is no need to check
@@ -169,7 +169,7 @@ for kvar=1:nvar %variable
                 kplot=1;
     
                 tag_ref='val'; %these names are in flg_loc.plottypes
-                in_p.val=val_loc_tt;
+                in_p.val=val_no_int; 
                 in_p.is_diff=0;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
@@ -287,7 +287,7 @@ end %function
 %For a certain time, it searches the results that match this time and makes 
 %the difference. The reference data is passed.
 %
-function [val_diff,val,val_ref]=gdm_match_times_diff_val_2D(flg_loc,simdef,time_dnum,time_mor_dnum,time_ref,val_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref,layer,var_idx_loc)
+function [val_diff,val,val_ref,val_no_int]=gdm_match_times_diff_val_2D(flg_loc,simdef,time_dnum,time_mor_dnum,time_ref,val_ref,fdir_mat,tag,var_str,gridInfo,gridInfo_ref,layer,var_idx_loc)
 
 %% PARSE
 
@@ -318,8 +318,8 @@ else
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt_loc),'var',var_str,'var_idx',var_idx_loc,'layer',layer);
     data=load(fpath_mat_tmp,'data');
     
-%     val=data.data;
-    [val_diff,val,val_ref]=D3D_diff_val(data.data,val_ref,gridInfo,gridInfo_ref);
+    val_no_int=data.data;
+    [val_diff,val,val_ref]=D3D_diff_val(val_no_int,val_ref,gridInfo,gridInfo_ref);
 end    
 
 end %function

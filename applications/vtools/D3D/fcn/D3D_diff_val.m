@@ -22,6 +22,11 @@ if isstruct(gridInfo)
         x_in=gridInfo.Xcen(idx_nn);
         y_in=gridInfo.Ycen(idx_nn);
         val_in=val(idx_nn);
+
+        x_in=reshape(x_in,[],1);
+        y_in=reshape(y_in,[],1);
+        val_in=reshape(val_in,[],1);
+
         F=scatteredInterpolant(x_in,y_in,val_in);
         val_int=F(gridInfo_ref.Xcen,gridInfo_ref.Ycen);
     %     val_atref=NaN(size(val_ref));
