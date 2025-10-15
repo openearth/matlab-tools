@@ -153,6 +153,7 @@ data{kl,1}=sprintf('Kmx               = %d',K)     ; kl=kl+1;
 data{kl,1}=        'Layertype         = 1         '; kl=kl+1;
 data{kl,1}=        'Numtopsig         = 0         '; kl=kl+1;
 data{kl,1}=        'SigmaGrowthFactor = 1         '; kl=kl+1;
+data{kl,1}=        'ChangeVelocityAtStructures = 1         '; kl=kl+1;
 data{kl,1}=sprintf('Removesmalllinkstrsh = %d     ',simdef.mdf.Removesmalllinkstrsh); kl=kl+1; %0.0 = remove no links ,  0.1 = remove links smaller than 0.1 sqrt(ba)
 data{kl,1}=sprintf('Dpuopt            = %d     ',simdef.mdf.Dpuopt); kl=kl+1; %# Bed level interpolation at velocity point in case of tile approach bed level: 1 = max (default); 2 = mean
 data{kl,1}=sprintf('ExtrBl            = %d     ',simdef.mdf.ExtrBl); kl=kl+1; %# Extrapolation of bed level at boundaries according to the slope: 0 = no extrapolation (default); 1 = extrapolate.
