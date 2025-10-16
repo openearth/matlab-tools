@@ -105,7 +105,6 @@ for kvar=1:nvar %variable
 
         %grid and time of local simulation
         [gridInfo,time_dnum_loc,time_mor_dnum]=gdm_load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
-        in_p.gridInfo=gridInfo;
 
         %fxw of local simulation
         fdir_mat=simdef(ksim).file.mat.dir;
@@ -117,12 +116,13 @@ for kvar=1:nvar %variable
         end
 
         %time0 of local simulation
+            %`val_loc_t0_no_int` value of local simulation at time `0` not interpolated/reordered
         kt=1;
         time_plot_loc=time_dnum_plot(kt); %time0 of reference simulation for matching.
         val_ref=val_ref_t0; %we pass `val_ref_t0` just to create a NaN of the right size if time is not found. 
 
         fdir_mat=simdef(ksim).file.mat.dir;
-        [~,val_loc_t0,~]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
+        [~,val_loc_t0_int,~,val_loc_t0_no_int]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
 
         ktc=0;
 
@@ -137,8 +137,10 @@ for kvar=1:nvar %variable
             in_p.tim=tim_dtime_plot(kt); %pass to plot and to match with measurements
             
             %local simulation at local time
+                %`val_loc_tt_int`    value of local simulation at time `t` and interpolated/reordered
+                %`val_loc_tt_no_int` value of local simulation at time `t` not interpolated/reordered
             fdir_mat=simdef(ksim).file.mat.dir;
-            [~,val_loc_tt,~,val_no_int]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
+            [~,val_loc_tt_int,~,val_no_int]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
     
             %reference
             %Time loops on the reference time, hence there is no need to check
@@ -169,7 +171,8 @@ for kvar=1:nvar %variable
                 kplot=1;
     
                 tag_ref='val'; %these names are in flg_loc.plottypes
-                in_p.val=val_no_int; 
+                in_p.gridInfo=gridInfo; %its own grid
+                in_p.val=val_no_int; %no interpolation nor reordering
                 in_p.is_diff=0;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
@@ -187,7 +190,8 @@ for kvar=1:nvar %variable
                 kplot=2;
     
                 tag_ref='diff_t';
-                in_p.val=val_loc_tt-val_loc_t0;
+                in_p.gridInfo=gridInfo; %its own grid
+                in_p.val=val_no_int-val_loc_t0_no_int; %yes interpolated/reordered
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
@@ -205,7 +209,8 @@ for kvar=1:nvar %variable
                 kplot=3;
                  
                 tag_ref='diff_s';
-                in_p.val=val_loc_tt-val_ref_tt;
+                in_p.gridInfo=gridInfo_ref; %reference grid
+                in_p.val=val_loc_tt_int-val_ref_tt; %interpolated/reordered
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
@@ -223,7 +228,8 @@ for kvar=1:nvar %variable
                 kplot=4;
     
                 tag_ref='diff_s_t';
-                in_p.val=(val_loc_tt-val_ref_t0)-(val_ref_tt-val_ref_t0);
+                in_p.gridInfo=gridInfo_ref; %reference grid
+                in_p.val=(val_loc_tt_int-val_ref_t0)-(val_ref_tt-val_ref_t0); %interpolated/reordered
                 in_p.is_diff=1;
                 in_p.is_background=0;
                 in_p.is_percentage=0;
@@ -245,7 +251,8 @@ for kvar=1:nvar %variable
                 val_ref_tt_tmp(bol_0)=NaN;
     
                 tag_ref='diff_s_perc';
-                in_p.val=(val_loc_tt-val_ref_tt_tmp)./val_ref_tt_tmp.*100;
+                in_p.gridInfo=gridInfo_ref; %reference grid
+                in_p.val=(val_loc_tt_int-val_ref_tt_tmp)./val_ref_tt_tmp.*100;
                 in_p.is_diff=0;
                 in_p.is_background=0;
                 in_p.is_percentage=1;
