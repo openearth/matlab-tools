@@ -169,11 +169,6 @@ for kbr=1:nbr %branches
                 end
             end
             
-            %skip regular plot (needs to be here to load the data for xtv plot)
-            if ~flg_loc.do_p
-                continue
-            end
-            
             in_p.tim=time_dnum_v(kt);
             in_p.variable=var_str_save;
             in_p.xlims=flg_loc.xlims_var{kvar};
@@ -312,7 +307,7 @@ for kbr=1:nbr %branches
         
         %% all times in same figure xtv
         
-        if (flg_loc.do_xtv || flg_loc.do_xtv_diff_t) && nt>1
+        if (flg_loc.do_xtv || flg_loc.do_xtv_diff_t || do_xtv_diff_s) && nt>1
             str_dir='xtv';
             
             [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
@@ -331,32 +326,35 @@ for kbr=1:nbr %branches
 
                 %% regular
                 if flg_loc.do_xtv
+                    lims_loc=lims;
                     tag_ref='val';
                     in_p.val=squeeze(data_T(:,ksim,:))';
                     in_p=reset_is(in_p);
                     in_p.is_diff=0;
 
-                    fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
+                    fcn_plot_xvt(in_p,tag_ref,lims_loc,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
                 end
                     
                 %% difference time
                 if flg_loc.do_xtv_diff_t
+                    lims_loc=lims_diff_t;
                     tag_ref='diff_t';
                     in_p.val=squeeze(data_T(:,ksim,:)-data_T(:,ksim,1))';
                     in_p=reset_is(in_p);
                     in_p.is_diff_t=1;
 
-                    fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
+                    fcn_plot_xvt(in_p,tag_ref,lims_loc,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
                 end
 
                 %% difference with reference
                 if flg_loc.do_xtv_diff_s && ksim~=kref
+                    lims_loc=lims_diff_s;
                     tag_ref='diff_s';
                     in_p.val=squeeze(data_T(:,ksim,:)-data_T(:,kref,:))';
                     in_p=reset_is(in_p);
                     in_p.is_diff_s=1;
 
-                    fcn_plot_xvt(in_p,tag_ref,lims,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
+                    fcn_plot_xvt(in_p,tag_ref,lims_loc,xlims,fdir_fig_loc,tag,runid,var_str_save,branch_name);
                 end
 
             end %ksim
