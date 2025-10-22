@@ -84,3 +84,4 @@ ECT_input.u_b=NaN;
 ECT_input.kappa=NaN(size(ECT_input.gsd)); %diffusivity of Gammak
 
 ECT_input.dx=10; %space step [m]
+ECT_input.advection=0;

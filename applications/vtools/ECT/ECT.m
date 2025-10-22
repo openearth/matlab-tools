@@ -304,6 +304,9 @@ addOptional(parin,'diff_mom',input.diff_mom.default,@isnumeric);
     %diffusion in momentum
 input.diff_hir.default=[0,0];
 addOptional(parin,'diff_hir',input.diff_hir.default,@isnumeric);
+    %advection term (only in 2DH, EXNER no secondary flow!!)
+input.advection.default=1;
+addOptional(parin,'advection',input.advection.default,@isnumeric);
     %constants
 cnt_default.g=9.81; %gravity [m^2/s]
 cnt_default.rho_s=2650; %sediment density [kg/m^3]
@@ -400,6 +403,9 @@ diff_hir=parin.Results.diff_hir;
 %assign constants
 cnt=parin.Results.cnt; 
 
+%assign advection
+advection=parin.Results.advection;
+
 %% flg
 
 if isfield(flg,'compute_eigenvalues')==0
@@ -461,6 +467,10 @@ elseif (any(flg.anl==6) || any(flg.anl==8) || any(flg.anl==10) || any(flg.anl==1
     && I~=0
     warning('You are entering a value for the secondary flow intensity but it is ovewriten to 0 because you are not asking for secondary flow')
     I=0;
+end
+
+if advection~=1 && flg.anl~=10
+    error('Advection not 1 only for flg.anl=10')
 end
 
 %% Constants
@@ -1818,16 +1828,16 @@ if any(flg.anl==10)
 Ax_SWE=NaN(nA_SWE,nA_SWE);
 
 Ax_SWE(1,1:4)=[0,1,0,0]; 
-Ax_SWE(2,1:4)=[cnt.g*h-(q(1)/h)^2,2*q(1)/h,0,cnt.g*h];
-Ax_SWE(3,1:4)=[-q(1)*q(2)/h^2,q(2)/h,q(1)/h,0];
+Ax_SWE(2,1:4)=[cnt.g*h-advection*(q(1)/h)^2,advection*2*q(1)/h,0,cnt.g*h];
+Ax_SWE(3,1:4)=[advection*-q(1)*q(2)/h^2,advection*q(2)/h,advection*q(1)/h,0];
 Ax_SWE(4,1:4)=[dqbx_dh,dqbx_dqx,dqbx_dqy,0];
 
     %% Ay_sf
 Ay_SWE=NaN(nA_SWE,nA_SWE);
 
 Ay_SWE(1,1:4)=[0,0,1,0]; 
-Ay_SWE(2,1:4)=[-q(1)*q(2)/h^2,q(2)/h,q(1)/h,0];
-Ay_SWE(3,1:4)=[cnt.g*h-(q(2)/h)^2,0,2*q(2)/h,cnt.g*h];
+Ay_SWE(2,1:4)=[advection*-q(1)*q(2)/h^2,advection*q(2)/h,advection*q(1)/h,0];
+Ay_SWE(3,1:4)=[cnt.g*h-advection*(q(2)/h)^2,0,advection*2*q(2)/h,cnt.g*h];
 Ay_SWE(4,1:4)=[dqby_dh,dqby_dqx,dqby_dqy,0];
 
     %% Dx

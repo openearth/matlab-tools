@@ -99,5 +99,6 @@ end
 ECT_input=isfield_default(ECT_input,'alpha_pmm',NaN);
 ECT_input=isfield_default(ECT_input,'Dh',0);
 ECT_input=isfield_default(ECT_input,'kappa',zeros(size(ECT_input.gsd)));
+ECT_input=isfield_default(ECT_input,'advection',1);
 
 end %function

@@ -33,7 +33,7 @@ fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
 % git sparse-checkout set src/tools_lgpl/matlab/quickplot/progsrc
 %```
 %and point here to the folder where it has been checked out.
-fdir_d3d='c:\checkouts\sc_fm_trunk\';
+fdir_d3d='c:\checkouts\quickplot\';
 
 % fpath_add_oet='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\openearthtools_matlab\applications\vtools\general\addOET.m';
 % fdir_d3d='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\qp2';
@@ -42,13 +42,13 @@ fdir_d3d='c:\checkouts\sc_fm_trunk\';
 % fdir_d3d='p:\studenten-riv\05_OpenEarthTools\02_qp\';
 
 %Path to folder with project paths. See `paths_project_layout`.
-fpath_project='d:\temporal\220517_improve_exner\';
+fpath_project=pwd;
 
     %% input to function
 
 %script with ECT
-% path_input='input_ECT_2D.m'; 
-path_input=@input_D3D_01;
+path_input='input_ECT_2D.m'; 
+% path_input=@input_D3D_01;
 
 in_2D.fig.fig_print=1;
 in_2D.fig.fig_name=fullfile(fpath_project,'domain_1');
@@ -63,12 +63,12 @@ in_2D.pert_anl=1;
 cd(fpath_project) %necessary for getting where the D3D function is
 
 %run a script with ECT input
-% run(path_input);
+run(path_input);
 
 %run a function with D3D input (preferred)
-simdef.dummy=NaN;
-simdef=path_input(simdef);
-ECT_input=D3D_input_2_ECT_input(simdef);
+% simdef.dummy=NaN;
+% simdef=path_input(simdef);
+% ECT_input=D3D_input_2_ECT_input(simdef);
 
 in_2D.flg=ECT_input.flg;
 
