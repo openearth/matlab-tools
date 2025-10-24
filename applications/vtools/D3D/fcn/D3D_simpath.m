@@ -34,7 +34,7 @@ parin=inputParser;
 
 addOptional(parin,'break',1);
 addOptional(parin,'break_paths_smt',0);
-addOptional(parin,'overwrite',1);
+addOptional(parin,'overwrite',0);
 
 parse(parin,varargin{:})
 
