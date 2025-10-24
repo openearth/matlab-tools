@@ -17,6 +17,9 @@ function flg_loc=gdm_parse_summerbed(flg_loc,simdef)
 fid_log=NaN;
 
 flg_loc=isfield_default(flg_loc,'sim_ref',1);
+
+%% do flags
+
 flg_loc=isfield_default(flg_loc,'do_p',1);
 flg_loc=isfield_default(flg_loc,'do_p_single',1);
 flg_loc=isfield_default(flg_loc,'do_diff_t',0);
@@ -32,8 +35,6 @@ flg_loc=isfield_default(flg_loc,'do_xvt_diff_s',1);
 flg_loc=isfield_default(flg_loc,'do_xvt_cel',1);
 flg_loc=isfield_default(flg_loc,'do_plot_structures',0);
 flg_loc=isfield_default(flg_loc,'do_rkm',1); %the default is to convert to rkm. This is not very general maybe, but it applies to our projects. 
-flg_loc=isfield_default(flg_loc,'tol_time_measurements',1);
-flg_loc=isfield_default(flg_loc,'is_pol_diff',zeros(1,numel(flg_loc.sb_pol)));
 
 flg_loc=isfield_default(flg_loc,'do_diff_pol',0);
 if isfield(flg_loc,'sb_pol_diff')
@@ -57,11 +58,11 @@ if flg_loc.do_tv==1
     end
 end
 
+%%
 
-% flg_loc=isfield_default(flg_loc,'do_sb_pol_together',0);
-% if isfield(flg_loc,'sb_pol_together')
-%     flg_loc.do_sb_pol_together=1;
-% end
+flg_loc=isfield_default(flg_loc,'tol_time_measurements',1);
+flg_loc=isfield_default(flg_loc,'is_pol_diff',zeros(1,numel(flg_loc.sb_pol)));
+flg_loc=isfield_default(flg_loc,'xlims',[NaN,NaN]);
 
 %%
 
@@ -107,7 +108,7 @@ if isempty(flg_loc.rkm_br{1,1}) && isempty(flg_loc.rkm_track{1,1})
     error('Provide either the branch of each rkm or the track of all of them.')
 end
 
-%% Plotting flags
+%% ylims flags
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var'); 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_diff_s_var'); 
