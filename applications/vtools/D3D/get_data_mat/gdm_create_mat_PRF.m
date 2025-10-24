@@ -12,7 +12,7 @@
 %
 %
 
-function create_mat_map_2DH_ls_01(fid_log,flg_loc,simdef)
+function gdm_create_mat_PRF(fid_log,flg_loc,simdef)
 
 tag=flg_loc.tag;
 

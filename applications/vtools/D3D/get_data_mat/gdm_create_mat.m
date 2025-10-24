@@ -70,7 +70,7 @@ end
 %% PRF (profile) 
 in_plot_fig=gdm_check_tag_PRF(in_plot);
 if in_plot_fig.do
-    create_mat_map_2DH_ls_01(fid_log,in_plot_fig,simdef)
+    gdm_create_mat_PRF(fid_log,in_plot_fig,simdef)
 end
 
 %% OBS (observation stations)
