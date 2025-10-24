@@ -44,6 +44,7 @@ flg_loc=isfield_default(flg_loc,'tim_type',1);
 flg_loc=isfield_default(flg_loc,'plot_val0',0);
 flg_loc=isfield_default(flg_loc,'TolMinDist',1000);
 flg_loc=isfield_default(flg_loc,'tol_t',5/60/24);
+flg_loc=isfield_default(flg_loc,'tim_tol',5/60/24);
 flg_loc=isfield_default(flg_loc,'var_idx',cell(1,numel(flg_loc.var)));
 
 if isfield(flg_loc,'do_rkm')==0
