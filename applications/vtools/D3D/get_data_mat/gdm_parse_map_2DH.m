@@ -44,7 +44,8 @@ end
 
 if flg_loc.plot_tiles && ~isfield(flg_loc,'epsg_in')
     flg_loc.epsg_in=D3D_epsg(simdef(1).file.grd);
-    if isempty(flg_loc.epsg_in)
+    if isempty(flg_loc.epsg_in) || flg_loc.epsg_in==0
+        messageOut(fid_log,'There is no EPSG in the results file. I assume Amersfoort RD new 28992.')
         flg_loc.epsg_in=28992; %assume amersfort
     end
 end
