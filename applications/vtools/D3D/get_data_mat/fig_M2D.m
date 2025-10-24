@@ -27,7 +27,7 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_map_sal_01(in_p)
+function fig_M2D(in_p)
 
 %% DEFAULTS
 

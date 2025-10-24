@@ -492,7 +492,7 @@ in_p.fname=fullfile(fdir_fig_loc,'inpoly');
 in_p.xlims=xlims_all;
 in_p.ylims=ylims_all;
 
-fig_map_sal_01(in_p);
+fig_M2D(in_p);
 
 %% PLOT RKM
 
@@ -506,7 +506,7 @@ if flg_loc.do_plot_along_rkm==1
 
         in_p.fname=fullfile(fdir_fig_loc,sprintf('inpoly_%02d',krkm));
 
-        fig_map_sal_01(in_p);
+        fig_M2D(in_p);
     end %krkm
 end %do
 

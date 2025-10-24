@@ -415,7 +415,7 @@ for kclim=1:nclim
             in_p.fname=fname_noext;
             in_p.do_3D=0;
     
-            fig_map_sal_01(in_p);
+            fig_M2D(in_p);
         end
 
         %3D
@@ -426,7 +426,7 @@ for kclim=1:nclim
             in_p.fname=fname_noext;
             in_p.do_3D=1;  
 
-            fig_map_sal_01(in_p);
+            fig_M2D(in_p);
         end
 
     end
