@@ -119,7 +119,7 @@
 
 %% 2DH
 
-% tag='fig_map_2DH_01';
+% tag='M2D';
 % in_plot.(tag).do=1;
 
 % in_plot.(tag).do_p=1; %pass through plotting routine
@@ -221,7 +221,7 @@
 %computes statistic values (mean, max, min, std) of a variables inside the summerbed 
 %and inside a kilometre polygon. 
 
-% tag='fig_map_summerbed_01';
+% tag='SMB';
 % in_plot.(tag).do=1; %process this tag
 % in_plot.(tag).do_p=1; %pass through plotting routine
 % in_plot.(tag).do_p_single=1; %plot single result
@@ -231,10 +231,12 @@
 % in_plot.(tag).do_diff_s_perc=1; %difference reference simulation in percentage terms
 % in_plot.(tag).do_all_s=0; %all simulations in same figure
 % in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
-% in_plot.(tag).do_xvt=0; %x-axis -> x; y-axis-> variable; one line for each time
-% in_plot.(tag).do_xvt_single=0; %x-axis -> x; y-axis-> variable; one line for each time
-% in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
-% in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+% in_plot.(tag).do_xvt=0; %ATTENTION! This and related flags both for `xvt` and `xtv`. 
+    % %`xvt` = x-axis -> x; y-axis-> variable; one line for each time; 
+    % %`xtv` = x-axis -> x; y-axis-> time; surf plot of variable; 
+% in_plot.(tag).do_xvt_single=0; 
+% in_plot.(tag).do_xvt_diff_t=0; 
+% in_plot.(tag).do_xvt_diff_s=0; 
 % in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
 % in_plot.(tag).do_tv=1; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`
 % in_plot.(tag).do_cum=0; %cumulative value with time
