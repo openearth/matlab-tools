@@ -174,13 +174,21 @@ end
 %There is a file with all result times, but as we request the last one, we have to check that the simulation has not continued.
 last_changed=false;
 if any(isinf(in_dtime)) 
-    if isfolder(fpath_map) %smt
-        [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map,results_type);
-    else
-        is_mor=D3D_is(fpath_map);
-        [~,~,time_dnum_f,~,~,~]=D3D_results_time(fpath_map,is_mor,NaN);
+    % if isfolder(fpath_map) %smt
+    %     [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map,results_type);
+    % else
+    %     is_mor=D3D_is(fpath_map);
+    %     [~,~,time_dnum_f,~,~,~]=D3D_results_time(fpath_map,is_mor,NaN);
+    % end
+    
+    %I think that `_wrap` already deals with SMT.
+    %Also, the default is `results_type` = `map` so it is not needed.
+    [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map);
+    
+    if isempty(time_dnum_f) || isempty(data.time_dnum)
+        error('This should not happen. We should have results.')
     end
-    if abs(time_dnum_f-data.time_dnum)>1/3600/24 %1 s threshold
+    if abs(time_dnum_f(end)-data.time_dnum(end))>1/3600/24 %1 s threshold
         last_changed=true;
     end
 end
