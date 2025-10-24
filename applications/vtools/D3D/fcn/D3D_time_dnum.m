@@ -174,17 +174,18 @@ end
 %There is a file with all result times, but as we request the last one, we have to check that the simulation has not continued.
 last_changed=false;
 if any(isinf(in_dtime)) 
-    % if isfolder(fpath_map) %smt
-    %     [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map,results_type);
-    % else
-    %     is_mor=D3D_is(fpath_map);
-    %     [~,~,time_dnum_f,~,~,~]=D3D_results_time(fpath_map,is_mor,NaN);
-    % end
-    
-    %I think that `_wrap` already deals with SMT.
-    %Also, the default is `results_type` = `map` so it is not needed.
-    [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map);
-    
+    %`fpath_map` can be both a path to a map file or to an SMT simulation.
+    %We want the last time only. If it is just a simulation, we request it.
+    %If it is an SMT, we need all. `D3D_results_time_wrap` can deal with
+    %both SMT and map input, but the input to that function is the folder
+    %always, and not a map file.
+    if isfolder(fpath_map) %smt
+        [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map,results_type);
+    else
+        is_mor=D3D_is(fpath_map);
+        [~,~,time_dnum_f,~,~,~]=D3D_results_time(fpath_map,is_mor,NaN);
+    end
+
     if isempty(time_dnum_f) || isempty(data.time_dnum)
         error('This should not happen. We should have results.')
     end
