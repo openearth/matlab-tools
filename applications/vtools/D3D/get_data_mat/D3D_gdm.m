@@ -149,9 +149,10 @@
 % % and for properties `clims`, `filter_lims`, `cmap`
 % in_plot.(tag).clims_diff_t=[NaN,NaN]; %clim of difference with time
 % in_plot.(tag).clims_diff_s=[NaN,NaN]; %clim of difference with simulation
-% in_plot.(tag).filter_lims_clims=[998,1000]; %filter values for regular plot. Values larger than the first value and smaller than the second are removed.
-% in_plot.(tag).filter_lims_clims_diff_s=[-1001,-998]; %filter values for difference between simulations plot. Values larger than the first value and smaller than the second are removed.
-% in_plot.(tag).filter_lims_clims_diff_t=[-1001,-998]; %filter values for  difference in time plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims=[998,1000]; %filter values for regular plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_diff_s=[-1001,-998]; %filter values for difference between simulations plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_diff_t=[-1001,-998]; %filter values for  difference in time plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_diff_t_var{1}=[-1001,-998]; %filter values for  difference in time plot. Values larger than the first value and smaller than the second are removed.
 % in_plot.(tag).do_movie=0; %
 % in_plot.(tag).tim_movie=40; %movie duration [s]
 % in_plot.(tag).fpath_ldb{1,1}=fullfile(fpath_project,'model','postprocessing','mkm-inner.ldb');

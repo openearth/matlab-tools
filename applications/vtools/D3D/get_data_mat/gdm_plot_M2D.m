@@ -398,7 +398,7 @@ for kclim=1:nclim
 
     in_p.clims=clims;
     in_p.filter_lims=propstru.filter_lims;
-    in_p.cmap=propstru.filter_lims;
+    in_p.cmap=propstru.cmap;
 
     for kxlim=1:flg_loc.nxlim
         in_p.xlims=flg_loc.xlims(kxlim,:);
