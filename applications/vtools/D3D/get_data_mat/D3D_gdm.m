@@ -294,7 +294,7 @@
 % %For computing the mean based on all results between <t1> and <t2>, set these times in <tim> and set NaN in <tim_ave> (i.e., the time in <tim_ave> is the same as that in <tim>). 
 % in_plot.(tag).tim_ave{1,1}=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)]; 
 % in_plot.(tag).tim_ave_type=2; %1=flow; 2=morpho
-% in_plot.(tag).tol_tim=30; %tolerance to match day in period with results
+% in_plot.(tag).tim_tol=30; %tolerance to match day in period with results
 
 %% 1D map
 
