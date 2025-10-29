@@ -32,8 +32,16 @@ if isfield(flg_loc,'overwrite_tim')==1
 end
 
 flg_loc=isfield_default(flg_loc,'tim_type',1);
-flg_loc=isfield_default(flg_loc,'tim_tol',10);
 flg_loc=isfield_default(flg_loc,'tim_just_load',0);
+
+flg_loc=isfield_default(flg_loc,'tol_tim',NaN); %in case somebody makes a mistake
+tim_tol_default=10;
+if ~isnan(flg_loc,'tol_tim')
+    warning('ATTENTION!')
+    messageOut(fid_log,sprintf('You are using flag `tol_tim`. Please use `tim_tol`.'))
+    tim_tol_default=flg_loc.tol_tim;
+end
+flg_loc=isfield_default(flg_loc,'tim_tol',tim_tol_default);
 
 %% CALC
 
