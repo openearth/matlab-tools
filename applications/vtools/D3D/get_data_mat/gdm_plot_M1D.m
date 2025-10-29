@@ -46,6 +46,7 @@ flg_loc=isfield_default(flg_loc,'do_xtv_diff_s',0);
 flg_loc=isfield_default(flg_loc,'do_xvallt',0);
 flg_loc=isfield_default(flg_loc,'plot_val0',0);
 flg_loc=isfield_default(flg_loc,'p_single_function_handles',{});
+flg_loc=isfield_default(flg_loc,'do_diff_t_first_time',1);
 
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'ylims_var');
 flg_loc=gdm_parse_ylims(fid_log,flg_loc,'xlims_var');

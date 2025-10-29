@@ -35,6 +35,7 @@ flg_loc=isfield_default(flg_loc,'do_xvt_diff_s',1);
 flg_loc=isfield_default(flg_loc,'do_xvt_cel',1);
 flg_loc=isfield_default(flg_loc,'do_plot_structures',0);
 flg_loc=isfield_default(flg_loc,'do_rkm',1); %the default is to convert to rkm. This is not very general maybe, but it applies to our projects. 
+flg_loc=isfield_default(flg_loc,'do_diff_t_first_time',1);
 
 flg_loc=isfield_default(flg_loc,'do_diff_pol',0);
 if isfield(flg_loc,'sb_pol_diff')
