@@ -140,7 +140,7 @@ switch what_do
 
                 stru_out=delft3d_io_sed(fname);
                 inifiletype=parse_ini(stru_out,parameters);
-                if ~isnan(inifiletype) && inifiletype ~= parameters.INIFILE_GENERAL
+                if any(inifiletype==[parameters.INIFILE_CRSDEF,parameters.INIFILE_CRSLOC])
                     [~,stru_out]=S3_read_crosssectiondefinitions(fname,'file_type',inifiletype);
                 end
             case '.grd'
@@ -423,7 +423,7 @@ if ~isempty(idx_gen)
 
     str_gen = fns{idx_gen};
 end
-if ~isnan(inifiletype)
+% if ~isnan(inifiletype)
     if isfield(stru_out.(str_gen),'fileType') %maybe also non-capital? we need a general way of dealing with it
         switch stru_out.(str_gen).fileType
             case 'crossDef'
@@ -439,7 +439,7 @@ if ~isnan(inifiletype)
         inifiletype=NaN;
         messageOut(NaN,'It is an ini-file, but I cannot find the <fileType>')
     end
-end
+% end
                 
 end %function
 
