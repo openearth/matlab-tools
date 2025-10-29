@@ -337,7 +337,7 @@ in_plot.(tag).order_anl=2; %1=normal; 2=random
 in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
 in_plot.(tag).var={'Fak'}; 
 in_plot.(tag).layer=1; %we want the first layer of `Fak` 
-% in_plot.(tag).var_idx{1,1}=1:1:nf;
+in_plot.(tag).ylims=[0,1]; %check this is the right input!
 
 %% CALL
 D3D_gdm(in_plot)
