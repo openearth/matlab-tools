@@ -144,7 +144,7 @@ for ksb=1:nsb
                         val_num(kpol,:)=numel(data_var.val(bol_get,:));
                         val_sum(kpol,:)=sum(data_var.val(bol_get,:),1,'omitnan');
                         val_sum_length(kpol,:)=val_sum(kpol,:)./(rkmv.rkm_dx(kpol)*1000);
-                        val_mean_weighted(kpol,:)=mean(data_var.val(bol_get,:).*data_ba.val(bol_get)./sum(data_ba.val(bol_get)),'omitnan');
+                        val_mean_weighted(kpol,:)=sum(data_var.val(bol_get,:).*data_ba.val(bol_get))./sum(data_ba.val(bol_get));
                         
                         %If you want the flow width, ask for the area (or morpho area) and the width is in <val_sum_length>
                         %this is variable independent. It could be done within an outside loop and saved apart.  

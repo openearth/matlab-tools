@@ -75,8 +75,6 @@ for ksb=1:nsb %summerbed polygons
 
     [sb_pol,sb_def,str_save_sb_pol,npol]=read_summerbed_polygon_all(fid_log,flg_loc,fdir_mat,fpath_map,ksb);    
 
-    do_save_xvt=(flg_loc.do_xvt || flg_loc.do_tv) && npol==1;
-
     %% LOOP ON RKM POLYGONS
     for krkmv=1:nrkmv %rkm polygons
 
@@ -95,6 +93,8 @@ for ksb=1:nsb %summerbed polygons
         %% LOOP ON VARIABLES
         for kvar=1:nvar %variable
             
+            do_save_xvt=(flg_loc.do_xvt || flg_loc.do_tv || flg_loc.do_cum(kvar)) && npol==1;
+
             var_str_original=flg_loc.var{kvar};
             
             %ATTENTION!!! The same `var_idx` is used for all simulations
