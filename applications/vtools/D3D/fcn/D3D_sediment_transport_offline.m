@@ -239,6 +239,7 @@ if isfolder(fpaths_o)==0 || overwrite==1
     folder_to_copy=true;
 
     if copy_linux
+        fpaths_o=strcat(fpaths_o,'/'); %it should end with filesep for not copying in inside another folder
         copy_folder_linux(fpaths_i,fpaths_o)
     else
         copyfile_check(fpaths_i,fpaths_o,1);
