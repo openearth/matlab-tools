@@ -103,6 +103,7 @@ simdef=D3D_rework_nodes(simdef);
 simdef.file=isfield_default(simdef.file,'exe_input','c:\Program Files\Deltares\Delft3D FM Suite 2025.01 1D2D\plugins\DeltaShell.Dimr\kernels\x64\dimr\scripts\run_dimr.bat');
 simdef.file=isfield_default(simdef.file,'exe_grd2map',simdef.file.exe_input);
 simdef.file=isfield_default(simdef.file,'software','c:\Program Files\Deltares\Delft3D FM Suite 2025.01 1D2D\plugins\DeltaShell.Dimr\kernels\');
+simdef.file=isfield_default(simdef.file,'PillarFile','');
 
 %%
 %% GRID
@@ -333,7 +334,7 @@ if ~isfield(simdef.file,'crs') && simdef.mdf.Flhis_dt>0
             simdef.file.crs=fullfile(simdef.D3D.dire_sim,'crs.xyn');
     end
 end
-[~,fname,fext]=fileparts(simdef.file.obs);
+[~,fname,fext]=fileparts(simdef.file.crs);
 simdef.mdf.crs_filename=sprintf('%s%s',fname,fext);
 
 if simdef.mdf.Flhis_dt>0 && rem(simdef.mdf.Flhis_dt,simdef.mdf.Dt)~=0 
