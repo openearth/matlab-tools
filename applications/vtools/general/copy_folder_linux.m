@@ -39,7 +39,7 @@ if ~strcmp(fpath_o(end),filesep)
 end
 
 if isempty(exclude{1,1})
-    str=sprintf('cp -r %s%s %s',linuxify(fpath_o),str_folder,linuxify(fpath_d));
+    str=sprintf('rsync -av %s%s %s',linuxify(fpath_o),str_folder,linuxify(fpath_d));
 else
     ne=numel(exclude);
     str_exclude='';
