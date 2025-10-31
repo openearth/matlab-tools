@@ -633,7 +633,7 @@ for ksim=1:nsim
     runid=simdef(ksim).file.runid;
     fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
     
-    statis='val_mean';
+    statis='val_mean_weighted';
     diff_tim=seconds(diff(tim_dtime_plot));
     val_tim=data_xvt.(statis)(:,:,1:end-1,:).*repmat(reshape(diff_tim,1,1,[]),nx,nsim,1,nD); %we do not use the last value. Block approach with variables 1:end-1 with time 1:end
     val_cum=cumsum(cat(3,zeros(nx,nsim,1,nD),val_tim),3);
@@ -1078,6 +1078,8 @@ end
 
 %%
 
+%Change variable name to add `_<str_in>` at the end. 
+%
 function flg_loc=check_B(fid_log,flg_loc,simdef,str_in)
 
 flg_loc.var=reshape(flg_loc.var,1,numel(flg_loc.var));
@@ -1092,19 +1094,26 @@ nvar_tmp=numel(flg_loc.var);
 for kvar=1:nvar_tmp
     if flg_loc.(str_do)(kvar)
         [~,~,var_str_save]=D3D_var_num2str_structure(flg_loc.var{kvar},simdef);
-        flg_loc.var=cat(2,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
-        flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
-        flg_loc.ylims_diff_s_var=cat(1,flg_loc.ylims_diff_s_var,flg_loc.ylims_diff_s_var{kvar,1});
-        flg_loc.ylims_diff_t_var=cat(1,flg_loc.ylims_diff_t_var,flg_loc.ylims_diff_t_var{kvar,1});
 
-        %add one more entry with default values
-        flg_loc=gdm_add_flags_plot(flg_loc);
+        %Functionality change. Rather than being added, it is set in input if you
+        %want it or not. It reduces the number of unwanted variables.
 
-        %modify last entry
-        flg_loc.var_2{end}=sprintf('%s_%s',flg_loc.var_2{kvar},str_in);
-        flg_loc.var_idx{end}=flg_loc.var_idx{kvar};
-        flg_loc.do_area(end)=flg_loc.do_area(kvar);
-        flg_loc.do_cum(end)=flg_loc.do_cum(kvar);
+        % flg_loc.var=cat(2,flg_loc.var,sprintf('%s_%s',var_str_save,str_in));
+        % flg_loc.ylims_var=cat(1,flg_loc.ylims_var,flg_loc.ylims_var{kvar,1});
+        % flg_loc.ylims_diff_s_var=cat(1,flg_loc.ylims_diff_s_var,flg_loc.ylims_diff_s_var{kvar,1});
+        % flg_loc.ylims_diff_t_var=cat(1,flg_loc.ylims_diff_t_var,flg_loc.ylims_diff_t_var{kvar,1});
+        % 
+        % %add one more entry with default values
+        % flg_loc=gdm_add_flags_plot(flg_loc);
+        % 
+        % %modify last entry
+        % flg_loc.var_2{end}=sprintf('%s_%s',flg_loc.var_2{kvar},str_in);
+        % flg_loc.var_idx{end}=flg_loc.var_idx{kvar};
+        % flg_loc.do_area(end)=flg_loc.do_area(kvar);
+        % flg_loc.do_cum(end)=flg_loc.do_cum(kvar);
+
+        flg_loc.var{kvar}=sprintf('%s_%s',var_str_save,str_in);
+        flg_loc.var_2{kvar}=sprintf('%s_%s',flg_loc.var_2{kvar},str_in);
     end
 end
 

@@ -56,7 +56,7 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 %% CONSTANT IN TIME
 
 % gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
-% data_ba=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_ba');
+data_ba=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_ba');
 
 %% DIMENSION
 
@@ -132,7 +132,8 @@ for ksb=1:nsb
                 val_num=NaN(sval);
                 val_sum=NaN(sval);
                 val_sum_length=NaN(sval);
-%                 val_width=NaN(npol,ndim_2);
+                val_mean_weighted=NaN(sval);
+
                 for kpol=1:npol
                     bol_get=rkmv.bol_pol_loc{kpol} & sb_def.bol_sb & ~bol_nan & ~bol_inf;
                     if any(bol_get)
@@ -143,6 +144,7 @@ for ksb=1:nsb
                         val_num(kpol,:)=numel(data_var.val(bol_get,:));
                         val_sum(kpol,:)=sum(data_var.val(bol_get,:),1,'omitnan');
                         val_sum_length(kpol,:)=val_sum(kpol,:)./(rkmv.rkm_dx(kpol)*1000);
+                        val_mean_weighted(kpol,:)=mean(data_var.val(bol_get,:).*data_ba.val(bol_get)./sum(data_ba.val(bol_get)),'omitnan');
                         
                         %If you want the flow width, ask for the area (or morpho area) and the width is in <val_sum_length>
                         %this is variable independent. It could be done within an outside loop and saved apart.  

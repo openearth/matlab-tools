@@ -250,7 +250,7 @@
 % in_plot.(tag).do_movie=0;
 % in_plot.(tag).do_plot_inpolygon=1; %plot coverage of cells inside summerbed polygon
 % in_plot.(tag).do_plot_along_rkm=1; %plot coverage along rkm
-% % in_plot.(tag).statis_plot={'val_mean'}; %statistics to plot. Comment to have all. 
+% % in_plot.(tag).statis_plot={'val_mean','val_mean_weighted'}; %statistics to plot. Comment to have all. 
 % in_plot.(tag).var={'mesh2d_taus'}; %list variables: `open D3D_list_of_variables`
 %%plot of stacked sediment transport
 % in_plot.(tag).var={'stot'};
@@ -405,7 +405,7 @@
 % 
 % %% streamwise polygons
 % 
-% in_plot.(tag).statis_plot={'val_mean'}; %statistics to plot. Comment to have all.
+% in_plot.(tag).statis_plot={'val_mean','val_mean_weighted'}; %statistics to plot. Comment to have all.
 % in_plot.(tag).rkm={872:1:957}; %river km vectors to average the data; cell(1,nrkm)
 % in_plot.(tag).rkm_name={'1km'}; %river km vectors to average the data; cell(1,nrkm)
 %     %construct branches name

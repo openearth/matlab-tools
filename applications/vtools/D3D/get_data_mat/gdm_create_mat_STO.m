@@ -120,6 +120,7 @@ gdm_plot_single_time_area(in_plot,flg_loc.tim);
 gdm_plot_single_time_line(in_plot,flg_loc.tim);
 gdm_plot_all_times_hydro(in_plot,flg_loc.tim);
 gdm_plot_all_times_qbk_area(in_plot,flg_loc.tim,flg_loc.sedtrans_name,nf);
+gdm_plot_all_times_cumQbk_area(in_plot,tim,sedtrans_name,nf)
 
 end %function
 
@@ -318,7 +319,6 @@ function gdm_plot_single_time_area(in_plot,tim)
 
 tag='SMB';
 in_plot.(tag).do_p_single=1; %regular plot
-in_plot.(tag).do_xvt=0; %x-variable with time in color
 in_plot.(tag).do_area=1; %x-variable with time in color
 in_plot.(tag).do_diff_t=0; %difference initial time
 in_plot.(tag).do_diff_s=0; %difference with reference
@@ -352,7 +352,6 @@ function gdm_plot_single_time_line(in_plot,tim)
 
 tag='SMB';
 in_plot.(tag).do_p_single=1; %regular plot
-in_plot.(tag).do_xvt=0; %x-variable with time in color
 in_plot.(tag).do_area=0; %x-variable with time in color
 in_plot.(tag).do_diff_t=0; %difference initial time
 in_plot.(tag).do_diff_s=0; %difference with reference
@@ -382,7 +381,6 @@ function gdm_plot_all_times_hydro(in_plot,tim)
 
 tag='SMB';
 in_plot.(tag).do_p_single=0; %regular plot
-in_plot.(tag).do_xvt=1; %x-variable with time in color
 in_plot.(tag).do_diff_t=0; %difference initial time
 in_plot.(tag).do_diff_s=0; %difference with reference
 in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
@@ -411,7 +409,6 @@ function gdm_plot_all_times_qbk_area(in_plot,tim,sedtrans_name,nf)
 
 tag='SMB';
 in_plot.(tag).do_p_single=1; %regular plot
-in_plot.(tag).do_xvt=0; %x-variable with time in color
 in_plot.(tag).do_diff_t=0; %difference initial time
 in_plot.(tag).do_diff_s=0; %difference with reference
 in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
@@ -437,6 +434,57 @@ in_plot.(tag).do_val_B_mor=[];
 in_plot.(tag).var_2={};
 in_plot.(tag).do_cum=[];
 in_plot.(tag).do_area=[];
+
+%% qbk: regular variable, no cumulative, no B_mor 
+
+for kst=1:nst
+    in_plot.(tag).var=cat(2,in_plot.(tag).var,sedtrans_name{kst}); 
+    in_plot.(tag).layer=cat(2,in_plot.(tag).layer,{0});
+    in_plot.(tag).var_idx=cat(2,in_plot.(tag).var_idx,{1:1:nf});
+    in_plot.(tag).do_val_B_mor=cat(2,in_plot.(tag).do_val_B_mor,0);
+    in_plot.(tag).var_2=cat(2,in_plot.(tag).var_2,{'stot'});
+    in_plot.(tag).do_cum=cat(2,in_plot.(tag).do_cum,0);
+    in_plot.(tag).do_area=cat(2,in_plot.(tag).do_area,1);
+end
+
+%% CALL
+
+D3D_gdm(in_plot);
+
+end %function
+
+function gdm_plot_all_times_cumQbk_area(in_plot,tim,sedtrans_name,nf)
+
+tag='SMB';
+in_plot.(tag).do_p_single=0; %regular plot
+in_plot.(tag).do_diff_t=0; %difference initial time
+in_plot.(tag).do_diff_s=0; %difference with reference
+in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
+in_plot.(tag).do_diff_s_perc=0; %difference reference simulation in percentage terms
+in_plot.(tag).do_all_s=0; %all simulations in same figure
+in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+in_plot.(tag).do_xvt=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_single=1; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
+in_plot.(tag).order_anl=2; %1=normal; 2=random
+
+in_plot.(tag).tim=tim; %all times
+
+nst=numel(sedtrans_name);
+
+in_plot.(tag).var={};
+in_plot.(tag).layer={};
+in_plot.(tag).var_idx={};
+in_plot.(tag).do_val_B_mor=[];
+in_plot.(tag).var_2={};
+in_plot.(tag).do_cum=[];
+in_plot.(tag).do_area=[];
+
+%% sum(Qbk): cumulative of product with width, cumulative, B_mor 
+
 for kst=1:nst
     in_plot.(tag).var=cat(2,in_plot.(tag).var,sedtrans_name{kst}); 
     in_plot.(tag).layer=cat(2,in_plot.(tag).layer,{0});
