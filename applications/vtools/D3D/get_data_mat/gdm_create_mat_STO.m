@@ -120,7 +120,7 @@ gdm_plot_single_time_area(in_plot,flg_loc.tim);
 gdm_plot_single_time_line(in_plot,flg_loc.tim);
 gdm_plot_all_times_hydro(in_plot,flg_loc.tim);
 gdm_plot_all_times_qbk_area(in_plot,flg_loc.tim,flg_loc.sedtrans_name,nf);
-gdm_plot_all_times_cumQbk_area(in_plot,tim,sedtrans_name,nf)
+gdm_plot_all_times_cumQbk_area(in_plot,flg_loc.tim,flg_loc.sedtrans_name,nf);
 
 end %function
 
