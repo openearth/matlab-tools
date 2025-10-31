@@ -37,7 +37,7 @@ end
 in_plot_fig=gdm_check_tag_SMB(in_plot);
 if in_plot_fig.do
     gdm_create_mat_SMB(fid_log,in_plot_fig,simdef)
-    pp_sb_var_01(fid_log,in_plot_fig,simdef)
+    gdm_create_mat_SMB_postprocess(fid_log,in_plot_fig,simdef)
     if isfield(in_plot_fig,'sb_pol_diff')
         create_mat_map_summerbed_diff(fid_log,in_plot_fig,simdef)
     end

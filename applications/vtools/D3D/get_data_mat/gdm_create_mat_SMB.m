@@ -172,7 +172,7 @@ for ksb=1:nsb
                 %% process
 
                 %% data
-                data=v2struct(val_mean,val_std,val_max,val_min,val_num,val_sum,val_sum_length); %#ok
+                data=v2struct(val_mean,val_std,val_max,val_min,val_num,val_sum,val_sum_length,val_mean_weighted); %#ok
 
                 %% save and disp
                 save_check(fpath_mat,'data');
