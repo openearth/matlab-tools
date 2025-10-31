@@ -14,6 +14,32 @@
 %SMT simulation with input, analyzes sediment transport offline for a given
 %hydrograph and sediment transport parameters. 
 %
+% For each time (each stedy discharge) we have:
+% the hydrodynamic variables u(x,y), h(x,y), C(x,y) 
+% the moprhodynamic varibales Fa(x,y), thk(x,y). 
+% Where the dependence on x and y must be understood as "a value for each cell". 
+% I think the notation is clearer than if I use an index for cells. 
+% 
+% With these variables, the sediment transport rate per unit width [m^2/s] 
+% is computed qbk(x,y)=f(u(x,y), h(x,y), ...). Hence, we have a value of 
+% sediment transport at each cell. 
+% 
+% Subsequently, a representative value for each river kilometer inside the 
+% summerbed (it does not need to be 1 km, but simplifies the story) is 
+% computed. This is done weighting by the area of each cell: 
+% qbk(rkm)=sum(qbk(x(rkm),y(rkm)).*a(x(rkm),y(rkm)))/sum(a(x(rkm),y(rkm)))
+% 
+% Where I abuse the notation x(rkm) meaning "those points inside the river 
+% kilometer polygon". 
+% 
+% In a following step, the sediment transport rate [m^3/s] at each river 
+% kilometer is computed as Qbk(rkm)=qbk(rkm).*B(rkm). The morphodynamic 
+% width B is computed as the sum of the area divided by the length of the 
+% polygon (e.g., 1 km): B(rkm)=sum(a(x(rkm),y(rkm)))./delta_x . 
+% 
+% Using this sediment transport rate, the cumulative sediment transport 
+% [m^3] is found by multiplying by the duration of each steady discharge. 
+%
 %The hydrodynamic SMT simulation may have results for a number of discharges
 %different than the desired hydrograph for computing sediment transport 
 %offline. The right hydrodynamic output is copied to the output folder. 

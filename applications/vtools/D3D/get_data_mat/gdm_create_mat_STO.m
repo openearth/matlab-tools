@@ -118,6 +118,7 @@ in_plot.(tag).do=1;
 
 gdm_plot_single_time_area(in_plot,flg_loc.tim);
 gdm_plot_single_time_line(in_plot,flg_loc.tim);
+gdm_plot_single_time_line_val_sum_length(in_plot,flg_loc.tim);
 gdm_plot_all_times_hydro(in_plot,flg_loc.tim);
 gdm_plot_all_times_qbk_area(in_plot,flg_loc.tim,flg_loc.sedtrans_name,nf);
 gdm_plot_all_times_cumQbk_area(in_plot,flg_loc.tim,flg_loc.sedtrans_name,nf);
@@ -369,6 +370,36 @@ in_plot.(tag).order_anl=2; %1=normal; 2=random
 
 in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
 in_plot.(tag).var={'Ltot'}; %It would be nice to add `dg` but we need to make sure it is output in the morpho simulation
+
+%% CALL
+D3D_gdm(in_plot)
+
+end %function
+
+function gdm_plot_single_time_line_val_sum_length(in_plot,tim)
+
+%% INPUT
+
+tag='SMB';
+in_plot.(tag).do_p_single=1; %regular plot
+in_plot.(tag).do_area=0; %x-variable with time in color
+in_plot.(tag).do_diff_t=0; %difference initial time
+in_plot.(tag).do_diff_s=0; %difference with reference
+in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
+in_plot.(tag).do_diff_s_perc=0; %difference reference simulation in percentage terms
+in_plot.(tag).do_all_s=0; %all simulations in same figure
+in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+in_plot.(tag).do_xvt=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_single=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_t=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
+in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
+in_plot.(tag).order_anl=2; %1=normal; 2=random
+in_plot.(tag).statis_plot={'val_sum_length','val_mean'};
+
+in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
+in_plot.(tag).var={'ba_mor'}; %It would be nice to add `dg` but we need to make sure it is output in the morpho simulation
 
 %% CALL
 D3D_gdm(in_plot)
