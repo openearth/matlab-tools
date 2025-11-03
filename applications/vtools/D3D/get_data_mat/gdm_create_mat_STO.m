@@ -505,6 +505,7 @@ in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for eac
 in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
 in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 in_plot.(tag).order_anl=2; %1=normal; 2=random
+in_plot.(tag).statis_plot={'val_mean_weighted'}; %we need for cumulative, which strictly requires this variable. 
 
 in_plot.(tag).tim=tim; %all times
 
