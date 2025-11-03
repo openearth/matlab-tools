@@ -199,55 +199,17 @@ end
 %folder could be used as offline-sediment-transport folder. 
 tim_dtime=copy_all_hydro_simulations(fpath_hydro,fpath_out,Qseries,MorFac,overwrite,copy_linux,tim_dtime0);
 
-%%
-
-% figure
-% plot(tim_dtime,'-*')
-
 %% create morphodynamic mat-files
 
-messageOut(NaN,'Start creating morpho files',1)
+in_plot_morpho=create_morpho_files(fpath_morpho,in_plot_sedtrans);
 
-ks=0;
+%% copy morphodynamic mat-files
 
-ks=ks+1;
-in_plot_morpho.fdir_sim{ks}=fpath_morpho; 
-in_plot_morpho.str_sim{ks}='reference';
-
-in_plot_morpho.sim_ref=1;
-in_plot_morpho.lan='en';
-in_plot_morpho.tag_serie='01';
-
-tag='M2D';
-in_plot_morpho.(tag).do=1;
-in_plot_morpho.(tag).do_p=0; %regular plot
-% in_plot_morpho.(tag).var={'Ltot','lyrfrac'}; 
-in_plot_morpho.(tag).var=D3D_sediment_transport_offline_variables; 
-in_plot_morpho.(tag).tim=1;
-in_plot_morpho.(tag).overwrite=0; %overwrite mat-files
-
-D3D_gdm(in_plot_morpho)
-
-%% copy moprhodymamic mat-files
-
-copy_morpho_files(in_plot_morpho,tag,fpath_morpho,fpath_out,tim_dtime,overwrite);
+copy_morpho_files(in_plot_morpho,fpath_morpho,fpath_out,tim_dtime,overwrite);
 
 %% compute sediment transport offline
 
-messageOut(NaN,'Start sediment transport offline computation',1)
-
-in_plot_sedtrans.break_paths_smt=false;
-
-ks=0;
-
-ks=ks+1;
-in_plot_sedtrans.fdir_sim{ks}=fpath_out; 
-in_plot_sedtrans.str_sim{ks}='reference';
-
-tag='STO';
-in_plot_sedtrans.(tag).tim=tim_dtime;
-
-D3D_gdm(in_plot_sedtrans)
+compute_sediment_transport_offline(fpath_out,in_plot_sedtrans,tim_dtime)
 
 end %function
 
@@ -430,10 +392,11 @@ end %function
 
 %%
 
-function copy_morpho_files(in_plot_morpho,tag,fpath_morpho,fpath_out,tim_dtime,overwrite)
+function copy_morpho_files(in_plot_morpho,fpath_morpho,fpath_out,tim_dtime,overwrite)
 
 messageOut(NaN,'Start copying morpho files',1)
 
+tag='M2D';
 nsim=numel(tim_dtime)-1;
 varname_v=in_plot_morpho.(tag).var;
 nvar=numel(varname_v);
@@ -491,13 +454,22 @@ end %ksim
 %in the <sed> folder. Technically, it could have any name and
 %it could not be used although exists. 
 %
-fdir_sed_in=fullfile(fpath_morpho,'sed');
-fdir_sed_out=fullfile(fpath_out,'sed');
-if isfolder(fdir_sed_in)
-    copyfile_check(fdir_sed_in,fdir_sed_out);
+%fdir_sed_in=fullfile(fpath_morpho,'sed');
+%fdir_sed_out=fullfile(fpath_out,'sed');
+%if isfolder(fdir_sed_in)
+%    copyfile_check(fdir_sed_in,fdir_sed_out);
+%end
+
+%Better: copy <dk.mat>
+fpath_dk_in=fullfile(fpath_morpho,'mat','dk.mat');
+fpath_dk_out=fullfile(fpath_out,'mat','dk.mat');
+if isfile(fpath_dk_out)==0 || overwrite
+    copyfile_check(fpath_dk_in,fpath_dk_out,1);
+else
+    messageOut(NaN,sprintf('File exists, not copying: %s',fpath_dk_out));
 end
 
-end %function
+end %function   
 
 %% 
 
@@ -525,5 +497,57 @@ fpath_Qseries=fullfile(fpath_hydro,dire(kf_csv).name);
 % if ~exist(fpath_Qseries,'file')
 %     error('File Qseries does not exist: %s',fpath_Qseries);
 % end
+
+end %function
+
+%%
+
+function in_plot=create_morpho_files(fpath_morpho,in_plot_sedtrans)
+
+isfield_default(in_plot_sedtrans,'tim_tol',1); %tolerance in days to find the closest time step
+
+messageOut(NaN,'Start creating morpho files',1)
+
+ks=0;
+
+ks=ks+1;
+in_plot.fdir_sim{ks}=fpath_morpho; 
+in_plot.str_sim{ks}='reference';
+
+in_plot.sim_ref=1;
+in_plot.lan='en';
+in_plot.tag_serie='01';
+
+tag='M2D';
+in_plot.(tag).do=1;
+in_plot.(tag).do_p=0; %regular plot
+% in_plot_morpho.(tag).var={'Ltot','lyrfrac'}; 
+in_plot.(tag).var=D3D_sediment_transport_offline_variables; 
+in_plot.(tag).tim=1;
+in_plot.(tag).overwrite=0; %overwrite mat-files
+in_plot.(tag).tim_tol=in_plot_sedtrans.tim_tol;
+
+D3D_gdm(in_plot)
+
+end %function
+
+%%
+
+function compute_sediment_transport_offline(fpath_out,in_plot_sedtrans,tim_dtime)
+
+messageOut(NaN,'Start sediment transport offline computation',1)
+
+in_plot_sedtrans.break_paths_smt=false;
+
+ks=0;
+
+ks=ks+1;
+in_plot_sedtrans.fdir_sim{ks}=fpath_out; 
+in_plot_sedtrans.str_sim{ks}='reference';
+
+tag='STO';
+in_plot_sedtrans.(tag).tim=tim_dtime;
+
+D3D_gdm(in_plot_sedtrans)
 
 end %function
