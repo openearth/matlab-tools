@@ -54,7 +54,7 @@ if isfield(simdef.file,'sed') && ~isempty(simdef.file.sed) %A test on `simdef.D3
     if iscell(simdef.file.sed)
         fpath_sed=simdef.file.sed{1};
     end
-    dk=gdm_read_sed(simdef);
+    dk=gdm_read_dk(simdef);
 end
 
 if isfield(flg_loc,'sedtrans') %sediment transport offline

@@ -68,6 +68,10 @@ ret=gdm_overwrite_mat(fid_log,flg_loc,fpath_mat); if ret; return; end
 
 [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
 
+%% LOAD MOR
+
+gdm_read_mor(simdef); %We do not actually need to load it here, but better to have the mat-file created because it can be requested to be copied in `D3D_sediment_transport_offline.m`
+
 %% LOOP TIME
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector

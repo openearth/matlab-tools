@@ -22,7 +22,7 @@ flg_loc=isfield_default(flg_loc,'sand_limit',0.002);
 
 switch var_str_original
     case 'Fs' %fraction of sand
-        dk=gdm_read_sed(simdef);
+        dk=gdm_read_dk(simdef);
         var_idx=find(dk<flg_loc.sand_limit);
         if isempty(var_idx)
             error('All fractions are above the sand limit of 0.002 m.')
@@ -30,7 +30,7 @@ switch var_str_original
         sum_var_idx=1;
     case 'Fak'
         if isempty(var_idx)
-            dk=gdm_read_sed(simdef);
+            dk=gdm_read_dk(simdef);
             var_idx=1:1:numel(dk);
         end
 end

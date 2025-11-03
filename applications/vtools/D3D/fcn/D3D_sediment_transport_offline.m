@@ -469,6 +469,15 @@ else
     messageOut(NaN,sprintf('File exists, not copying: %s',fpath_dk_out));
 end
 
+%Better: copy <mor.mat>
+fpath_mor_in=fullfile(fpath_morpho,'mat','mor.mat');
+fpath_mor_out=fullfile(fpath_out,'mat','mor.mat');
+if isfile(fpath_mor_out)==0 || overwrite
+    copyfile_check(fpath_mor_in,fpath_mor_out,1);
+else
+    messageOut(NaN,sprintf('File exists, not copying: %s',fpath_mor_out));
+end
+
 end %function   
 
 %% 
@@ -521,7 +530,6 @@ in_plot.tag_serie='01';
 tag='M2D';
 in_plot.(tag).do=1;
 in_plot.(tag).do_p=0; %regular plot
-% in_plot_morpho.(tag).var={'Ltot','lyrfrac'}; 
 in_plot.(tag).var=D3D_sediment_transport_offline_variables; 
 in_plot.(tag).tim=1;
 in_plot.(tag).overwrite=0; %overwrite mat-files

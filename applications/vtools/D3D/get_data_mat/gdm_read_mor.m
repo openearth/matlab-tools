@@ -10,18 +10,21 @@
 %$Id$
 %$HeadURL$
 %
-%GDM_READ_SED reads sediment transport data from D3D sediment transport offline files
+%GDM_READ_MOR reads morphodynamic data from D3D morphodynamic files
 
-function dk=gdm_read_sed(simdef)
+function mor=gdm_read_mor(simdef)
 
 fdir_mat=simdef.file.mat.dir;
-fpath_mat=fullfile(fdir_mat,'dk.mat');
+fpath_mat=fullfile(fdir_mat,'mor.mat');
 if exist(fpath_mat,'file')==2
     messageOut(NaN,sprintf('Loading sediment data from mat-file: %s',fpath_mat));
-    load(fpath_mat,'dk');
+    load(fpath_mat,'mor');
     return
 end
-dk=D3D_read_sed(simdef.file.sed);
-save_check(fpath_mat,'dk');
+if ~isfield(simdef.file,'mor') || isempty(simdef.file.mor)
+    return
+end
+mor=D3D_io_input('read',simdef.file.mor);
+save_check(fpath_mat,'mor');
 
 end %function

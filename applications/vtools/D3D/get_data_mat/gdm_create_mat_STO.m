@@ -107,7 +107,7 @@ end %function
 
 function gdm_STO_plot_SMB(fid_log,flg_loc,simdef,var_2_v)
     
-nf=numel(D3D_read_sed(simdef.file.sed)); %we cannot use the size of `qbk` because the loop may be skipped if files exist
+nf=numel(gdm_read_dk(simdef)); %we cannot use the size of `qbk` because the loop may be skipped if files exist
 
 in_plot.fdir_sim=flg_loc.fdir_sim;
 in_plot.str_sim=flg_loc.str_sim;
@@ -149,9 +149,9 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map);
 
 %% SED MOR
 
-dk=D3D_read_sed(simdef.file.sed);
-        
-mor=D3D_io_input('read',simdef.file.mor);
+dk=gdm_read_dk(simdef);
+mor=gdm_read_mor(simdef);
+
 Thresh=mor.Morphology0.Thresh;
 
 %% COMMON FLAGS
