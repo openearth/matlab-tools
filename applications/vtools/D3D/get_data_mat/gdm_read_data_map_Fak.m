@@ -25,9 +25,11 @@ addOptional(parin,'sum_var_idx',1);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
 addOptional(parin,'layer',[]);
+addOptional(parin,'tol_t',5/60/24);
 
 parse(parin,varargin{:});
 
+tol_t=parin.Results.tol_t;
 time_dnum=parin.Results.tim;
 var_idx=parin.Results.var_idx;
 sum_var_idx=parin.Results.sum_var_idx;
@@ -38,7 +40,7 @@ branch=parin.Results.branch;
 
 %% CALC
     
-data_lyrfrac=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);%,'bed_layers',layer); %we load all layers
+data_lyrfrac=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);%,'bed_layers',layer); %we load all layers
 
 % sum(data_Fak.val,
 % %% BEGIN DEBUG

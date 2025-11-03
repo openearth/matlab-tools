@@ -24,6 +24,7 @@ addOptional(parin,'var_idx',[]);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
 addOptional(parin,'layer',[]);
+addOptional(parin,'tol_t',5/60/24); %tolerance in days to find the closest time step
 
 parse(parin,varargin{:});
 
@@ -33,10 +34,11 @@ var_idx=parin.Results.var_idx;
 layer=parin.Results.layer;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
+tol_t=parin.Results.tol_t;  
 
 %% READ
 
-data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
 
 %get desired fractions
 %     idx_f=D3D_search_index_in_dimension(data_lyrfrac,'sedimentFraction'); 

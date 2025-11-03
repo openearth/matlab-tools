@@ -22,9 +22,11 @@ addOptional(parin,'tim',[]);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
 addOptional(parin,'var_idx',[]);
+addOptional(parin,'tol_t',5/60/24); %tolerance in days to find the closest time step
 
 parse(parin,varargin{:});
 
+tol_t=parin.Results.tol_t;
 time_dnum=parin.Results.tim;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
@@ -40,7 +42,7 @@ if ~isempty(var_idx)
     error('add the given fractions. See the d3d4 version')
 end
 
-data=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_thlyr','tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
+data=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_thlyr','tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t); 
 data.val=sum(data.val,3);
 
 end %function

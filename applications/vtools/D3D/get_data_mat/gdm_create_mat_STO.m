@@ -76,6 +76,7 @@ function in_plot_get_variables_2DH=gdm_get_mat_2DH_for_STO(fid_log,flg_loc,simde
 
 %% INPUT
 
+
 var_raw={'umag','mesh2d_czs','h','Ltot','Fak'};
 
 tag='M2D';
@@ -87,6 +88,9 @@ in_plot.(tag).overwrite=flg_loc.overwrite;
 in_plot.(tag).var=var_raw; %open D3D_list_of_variables
 in_plot.(tag).tim=flg_loc.tim; 
 in_plot.(tag).order_anl=2; %1=normal; 2=random
+
+isfield_default(flg_loc,'tim_tol',1); %tolerance in days to find the closest time step
+in_plot.(tag).tim_tol=flg_loc.tim_tol; 
 
 %% CALL
 

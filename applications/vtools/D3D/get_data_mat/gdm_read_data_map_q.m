@@ -18,12 +18,14 @@ function data=gdm_read_data_map_q(fdir_mat,fpath_map,varargin)
 
 parin=inputParser;
 
+addOptional(parin,'tol_t',5/60/24); %tolerance in days to find the closest time step    
 addOptional(parin,'tim',[]);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
 
 parse(parin,varargin{:});
 
+tol_t=parin.Results.tol_t;
 time_dnum=parin.Results.tim;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
@@ -36,9 +38,9 @@ if is1d
 end
 
 [~,varname]=D3D_var_num2str('ucmag','is1d',is1d,'ismor',ismor);
-data_umag=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
+data_umag=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t); 
 [~,varname]=D3D_var_num2str('h','is1d',is1d,'ismor',ismor);
-data_h=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch); 
+data_h=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t); 
 % data_Ltot=gdm_order_dimensions(NaN,data_Ltot);
 
 data=data_umag;

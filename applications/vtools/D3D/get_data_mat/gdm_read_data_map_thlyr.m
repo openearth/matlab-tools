@@ -44,7 +44,7 @@ branch=parin.Results.branch;
 % if is1d
 %     error('make it 1D proof')
 % end
-data=gdm_read_data_map(fdir_mat,fpath_map,'DP_BEDLYR','tim',time_dnum,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); %we get all layers to make difference
+data=gdm_read_data_map(fdir_mat,fpath_map,'DP_BEDLYR','tim',time_dnum,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t); %we get all layers to make difference
 
 thk=diff(data.val,1,4);
 

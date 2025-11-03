@@ -25,6 +25,7 @@ addOptional(parin,'var_idx',[]);
 % addOptional(parin,'branch','');
 % addOptional(parin,'layer',[]);
 addOptional(parin,'sediment_transport',[]);
+addOptional(parin,'tol_t',5/60/24); %tolerance in days to find the closest time step
 
 parse(parin,varargin{:});
 
@@ -47,11 +48,11 @@ end
 
 %% READ
 
-data_u=gdm_read_data_map(fdir_mat,fpath_map,'ucmag','tim',time_dnum);
-data_h=gdm_read_data_map(fdir_mat,fpath_map,'wd','tim',time_dnum);
-data_La=gdm_read_data_map(fdir_mat,fpath_map,'thlyr','tim',time_dnum,'layer',1);
-data_C=gdm_read_data_map(fdir_mat,fpath_map,'czs','tim',time_dnum);
-data_Fak=gdm_read_data_map(fdir_mat,fpath_map,'Fak','tim',time_dnum,'layer',1);
+data_u=gdm_read_data_map(fdir_mat,fpath_map,'ucmag','tim',time_dnum,'tol_t',tol_t);
+data_h=gdm_read_data_map(fdir_mat,fpath_map,'wd','tim',time_dnum,'tol_t',tol_t);
+data_La=gdm_read_data_map(fdir_mat,fpath_map,'thlyr','tim',time_dnum,'layer',1,'tol_t',tol_t);
+data_C=gdm_read_data_map(fdir_mat,fpath_map,'czs','tim',time_dnum,'tol_t',tol_t);
+data_Fak=gdm_read_data_map(fdir_mat,fpath_map,'Fak','tim',time_dnum,'layer',1,'tol_t',tol_t);
 
 %% take morpho from input files or offline
 

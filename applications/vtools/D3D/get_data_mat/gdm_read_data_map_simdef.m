@@ -19,6 +19,7 @@ function data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname,varargin)
 parin=inputParser;
 
 addOptional(parin,'tim',[]);
+addOptional(parin,'tol_t',5/60/24); %tolerance in days to find the closest time step
 addOptional(parin,'sim_idx',[]);
 addOptional(parin,'var_idx',[]);
 addOptional(parin,'sum_var_idx',1);
@@ -35,6 +36,7 @@ addOptional(parin,'depth_average_limits',[-inf,inf]);
 
 parse(parin,varargin{:});
 
+tol_t=parin.Results.tol_t;
 time_dnum=parin.Results.tim;
 sim_idx=parin.Results.sim_idx;
 var_idx=parin.Results.var_idx;
@@ -75,7 +77,7 @@ end
 
 switch varname
     case 'clm2'
-        data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);
+        data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);
         %'bl' can be read fine in FM and the variable name is switched to 'DPS' for D3D4.
 %     case 'bl'
 %         switch simdef.D3D.structure
@@ -89,45 +91,45 @@ switch varname
         if isempty(var_idx)
             error('Provide the index of the constituent to analyze')
         end
-        data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol,'idx_branch',idx_branch,'branch',branch);
+        data_var=gdm_read_data_map_T_max(fdir_mat,fpath_map,varname,simdef.file.sub,'tim',time_dnum,'var_idx',var_idx,'tol',tol,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);
     case 'Ltot'
         switch simdef.D3D.structure
             case {2,4}
-                data_var=gdm_read_data_map_Ltot(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);       
+                data_var=gdm_read_data_map_Ltot(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'tol_t',tol_t);       
             case {1,5}
-                data_var=gdm_read_data_map_Ltot_d3d4(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);       
+                data_var=gdm_read_data_map_Ltot_d3d4(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'tol_t',tol_t);       
         end
     case 'thlyr'
         switch simdef.D3D.structure
             case {2,4} %THLYR is available in output directly, call default case
-                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); 
+                data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'tol_t',tol_t);%,'bed_layers',layer); 
             case {1,5}
-                data_var=gdm_read_data_map_thlyr(fdir_mat,fpath_map,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); 
+                data_var=gdm_read_data_map_thlyr(fdir_mat,fpath_map,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'tol_t',tol_t);%,'bed_layers',layer); 
         end
     case 'ba_mor'
-        data_var=gdm_read_data_map_ba_mor(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);       
+        data_var=gdm_read_data_map_ba_mor(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);       
     case 'qsp'
-        data_var=gdm_read_data_map_q(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch);      
+        data_var=gdm_read_data_map_q(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);      
     case 'ba' %no time
-        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch); 
+        data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t); 
     case {'mesh1d_lyrfrac','mesh2d_lyrfrac','LYRFRAC'}
-        data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'sum_var_idx',sum_var_idx); 
+        data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'sum_var_idx',sum_var_idx,'tol_t',tol_t); 
     case {'umag'} %different case for averaging in case there are several layers
-        data_var=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+        data_var=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
     case 'stot'
-        data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+        data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
     case 'stot_sum'
-        data_var=gdm_read_data_map_stot_sum(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+        data_var=gdm_read_data_map_stot_sum(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
     case {'Fr','fr'}
-        data_var=gdm_read_data_map_Fr(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+        data_var=gdm_read_data_map_Fr(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
     case {'E'}
-        data_var=gdm_read_data_map_E(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer); 
+        data_var=gdm_read_data_map_E(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
     otherwise 
         %cases in which the variable name contains information on the analysis
         if ischar(varname) && contains(varname,'cel_morpho')
-            data_var=gdm_read_data_map_cel_morpho(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'sediment_transport',sediment_transport); 
+            data_var=gdm_read_data_map_cel_morpho(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'sediment_transport',sediment_transport,'tol_t',tol_t); 
         else %name directly available in output
-            data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'depth_average',depth_average,'elevation',elev,'depth_average_limits',depth_average_limits);
+            data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'layer',layer,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'depth_average',depth_average,'elevation',elev,'depth_average_limits',depth_average_limits,'tol_t',tol_t);
         end
 end
 

@@ -24,9 +24,11 @@ addOptional(parin,'var_idx',[]);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
 addOptional(parin,'layer',[]);
+addOptional(parin,'tol_t',5/60/24); %tolerance in days to find the closest time step
 
 parse(parin,varargin{:});
 
+tol_t=parin.Results.tol_t;
 time_dnum=parin.Results.tim;
 var_idx=parin.Results.var_idx;
 % tol=parin.Results.tol;
@@ -50,8 +52,8 @@ switch structure
         end
 end
 
-data_var_x=gdm_read_data_map(fdir_mat,fpath_map,var_x,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); %we load all layers
-data_var_y=gdm_read_data_map(fdir_mat,fpath_map,var_y,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx);%,'bed_layers',layer); %we load all layers
+data_var_x=gdm_read_data_map(fdir_mat,fpath_map,var_x,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'tol_t',tol_t);%,'bed_layers',layer); %we load all layers
+data_var_y=gdm_read_data_map(fdir_mat,fpath_map,var_y,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'var_idx',var_idx,'tol_t',tol_t);%,'bed_layers',layer); %we load all layers
 
 data_var=data_var_x;
 data_var.val=hypot(data_var_x.val,data_var_y.val);

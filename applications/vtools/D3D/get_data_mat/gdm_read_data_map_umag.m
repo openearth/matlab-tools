@@ -24,6 +24,7 @@ addOptional(parin,'var_idx',[]);
 addOptional(parin,'idx_branch',[]);
 addOptional(parin,'branch','');
 addOptional(parin,'layer',[]);
+addOptional(parin,'tol_t',5/60/24); %tolerance in days to find the closest time step
 
 parse(parin,varargin{:});
 
@@ -33,6 +34,7 @@ var_idx=parin.Results.var_idx;
 layer=parin.Results.layer;
 idx_branch=parin.Results.idx_branch;
 branch=parin.Results.branch;
+tol_t=parin.Results.tol_t;
 
 %% READ
     

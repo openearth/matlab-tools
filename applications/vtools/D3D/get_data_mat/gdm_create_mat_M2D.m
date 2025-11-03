@@ -93,7 +93,7 @@ for kt=kt_v
 
         %% read data
         if do_read
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx,'layer',layer,'tol',flg_loc.tol,'sum_var_idx',sum_var_idx,'sediment_transport',flg_loc.sediment_transport(kvar));      
+            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx,'layer',layer,'tol',flg_loc.tol,'sum_var_idx',sum_var_idx,'sediment_transport',flg_loc.sediment_transport(kvar),'tol_t',flg_loc.tim_tol);      
             data=squeeze(data_var.val); 
             save_check(fpath_mat_tmp,'data'); 
         end
