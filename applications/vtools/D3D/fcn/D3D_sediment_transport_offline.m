@@ -38,7 +38,12 @@
 % polygon (e.g., 1 km): B(rkm)=sum(a(x(rkm),y(rkm)))./delta_x . 
 % 
 % Using this sediment transport rate, the cumulative sediment transport 
-% [m^3] is found by multiplying by the duration of each steady discharge. 
+% [m^3] is found by multiplying by the duration of each steady discharge.
+% 
+% The computed sediment transport rate is without pores. The cumulative 
+% value must be divided by 1/(1-p) for obtaining the sediment transport
+% rate with pores:
+% qb_{with pores} = 1/(1-p) qb_{without pores}
 %
 %The hydrodynamic SMT simulation may have results for a number of discharges
 %different than the desired hydrograph for computing sediment transport 
