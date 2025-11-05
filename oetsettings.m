@@ -163,6 +163,10 @@ function oetsettings(varargin)
    if ~(OPT.quiet)
        disp(' ')
        help oetsettings
+
+       if ~exist('d3d_qp.m','file')
+           warning('The content of the applications/delft3d_matlab folder is missing; some functions will fail. Check the README file for recursive cloning of the repository.')
+       end
    end
    
 %% EOF
