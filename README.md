@@ -9,10 +9,16 @@ Several functions depend on basic functionality implemented in the Delft3D-MATLA
 Since that toolbox is subject to Deltares software quality control, it's maintained in a separate repository.
 This repository is included in this repository as a submodule under applications/delft3d-matlab.
 When cloning this repository, you will not automatically get the code of the Delft3D-MATLAB interface toolbox unless ... you do the following:
-Select the `recursive` option in the cloning dialog, or when using the command line, type:
+
+* select the `recursive` option in the cloning dialog,
+![Clone recursive using TortoiseGit](images/clone_recursive.png)
+* or, when using the command line, type:
 `git clone --recursive https://github.com/openearth/matlab-tools.git`.
+
 If you forgot the recursive flag during the initial clone, you may execute the command
+
 `git submodule update --init --recursive`
+
 in the main folder of the matlab-tools checkout.
 
 # Getting started
