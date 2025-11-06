@@ -231,7 +231,7 @@ cnt.rho_w=1000; %read properly...
 cnt.rho_s=2650; %read properly...
 cnt.nu = 1e-6; %we should compute based on temperature?
 
-mor_fac=1;
+mor_fac=1;  
 E_param=NaN;
 vp_param=NaN;
 Gammak=NaN;
@@ -508,6 +508,9 @@ in_plot.(tag).order_anl=2; %1=normal; 2=random
 in_plot.(tag).statis_plot={'val_mean_weighted'}; %we need for cumulative, which strictly requires this variable. 
 
 in_plot.(tag).tim=tim; %all times
+
+in_plot.(tag)=isfield_default(in_plot.(tag),'ylims_qb_B_mor_cum',[NaN,NaN]);
+in_plot.(tag)=isfield_default(in_plot.(tag),'ylims',in_plot.(tag).ylims_qb_B_mor_cum);
 
 nst=numel(sedtrans_name);
 

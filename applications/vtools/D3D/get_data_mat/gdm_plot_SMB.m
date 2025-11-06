@@ -482,8 +482,13 @@ for kpol=1:npol
 end %kpol
 in_p.val=data;
 in_p.unit='rkm';
+in_p.fact=1/1000; %to km
 in_p.clims=NaN;
 in_p.do_title=0;
+%in_p.cmap=repmat(brewermap(9,'set1'),[ceil(npol/9),1]); %does not work well. The colormap is the same when we focus on a small area.
+
+%% save 
+
 
 %% PLOT ALL
 

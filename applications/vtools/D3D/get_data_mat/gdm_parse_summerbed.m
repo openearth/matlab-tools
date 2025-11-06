@@ -65,6 +65,7 @@ end
 flg_loc=isfield_default(flg_loc,'tol_time_measurements',1);
 flg_loc=isfield_default(flg_loc,'is_pol_diff',zeros(1,numel(flg_loc.sb_pol)));
 flg_loc=isfield_default(flg_loc,'xlims',[NaN,NaN]);
+flg_loc=isfield_default(flg_loc,'tim_tol',1); %1 day to match
 
 %%
 

@@ -518,7 +518,7 @@ end %function
 
 function in_plot=create_morpho_files(fpath_morpho,in_plot_sedtrans)
 
-isfield_default(in_plot_sedtrans,'tim_tol',1); %tolerance in days to find the closest time step
+in_plot_sedtrans=isfield_default(in_plot_sedtrans,'tim_tol',1); %tolerance in days to find the closest time step
 
 messageOut(NaN,'Start creating morpho files',1)
 

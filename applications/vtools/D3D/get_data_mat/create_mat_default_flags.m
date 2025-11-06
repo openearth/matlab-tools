@@ -22,7 +22,6 @@ in_plot=isfield_default(in_plot,'only_adhoc',0);
 in_plot=isfield_default(in_plot,'order_anl',1);
 in_plot=isfield_default(in_plot,'order_anl_param',1);
 in_plot=isfield_default(in_plot,'sim_ref',1);
-in_plot=isfield_default(in_plot,'tim_tol',1); %1 day to match
 
 %% get the items which are not structure
 
