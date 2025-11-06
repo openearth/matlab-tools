@@ -89,7 +89,7 @@ in_plot.(tag).var=var_raw; %open D3D_list_of_variables
 in_plot.(tag).tim=flg_loc.tim; 
 in_plot.(tag).order_anl=2; %1=normal; 2=random
 
-isfield_default(flg_loc,'tim_tol',1); %tolerance in days to find the closest time step
+flg_loc=isfield_default(flg_loc,'tim_tol',1); %tolerance in days to find the closest time step
 in_plot.(tag).tim_tol=flg_loc.tim_tol; 
 
 %% CALL
