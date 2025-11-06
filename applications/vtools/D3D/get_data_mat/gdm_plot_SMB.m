@@ -659,7 +659,7 @@ for ksim=1:nsim
                 fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum_plot(kt),var_str_save,statis,sb_pol,var_idx,kylim,1);
         
                 in_p.fname=fname_noext;
-                in_p.ylim=lims(kylim,:);
+                in_p.ylims=lims(kylim,:);
         
                 fig_1D_01(in_p);
             % end
