@@ -325,6 +325,7 @@ data{kl,1}=sprintf('MapInterval       = %0.14E %0.14E %0.14E',Flmap_dt(2),Flmap_
 data{kl,1}=sprintf('RstInterval       = %0.14E',Flrst_dt); kl=kl+1;
 data{kl,1}=        'S1incinterval     =                              '; kl=kl+1;
 data{kl,1}=        'MapFormat         = 4                            '; kl=kl+1;
+data{kl,1}=sprintf('NcFormat          = %d ', simdef.mdf.NcFormat)    ; kl=kl+1;
 data{kl,1}=        'Wrihis_balance    = 1                            '; kl=kl+1;
 data{kl,1}=        'Wrihis_structure_gen= 1                          '; kl=kl+1;
 data{kl,1}=        'Wrihis_structure_dam= 1                          '; kl=kl+1;
@@ -349,7 +350,7 @@ data{kl,1}=        'Wrimap_chezy      = 1                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_turbulence = 1                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_wind       = 0                            '; kl=kl+1;
 data{kl,1}=        'Wrimap_heat_fluxes= 0                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_every_dt   = 0                            '; kl=kl+1; %# Write output to map file every dt, based on start and stop from MapInterval, 0=no (default), 1=yes 
+data{kl,1}=        'Wrimap_every_dt   = 0                            '; kl=kl+1; %# Write output to map file every dt, based on start and stop from MapInterval, 0=no (default), 1=yesï¿½
 data{kl,1}=        'Wrimap_fixed_weir_energy_loss   = 1              '; kl=kl+1; 
 data{kl,1}=        'MapOutputTimeVector=                             '; kl=kl+1;
 data{kl,1}=        'FullGridOutput    = 0                            '; kl=kl+1;

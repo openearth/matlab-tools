@@ -113,7 +113,7 @@ for ksb=1:nsb
                 if exist(fpath_mat,'file')==2 && ~flg_loc.overwrite ; continue; end
 
                 %% read data
-                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname_read_variable,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'layer',layer,'var_idx',var_idx,'sum_var_idx',sum_var_idx,'sediment_transport',flg_loc.sediment_transport(kvar));      
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,varname_read_variable,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'layer',layer,'var_idx',var_idx,'sum_var_idx',sum_var_idx,'sediment_transport',flg_loc.sediment_transport(kvar),'tol_t',flg_loc.tim_tol);      
 
                 %% calc
                 data_var=gdm_order_dimensions(fid_log,data_var,'structure',simdef.D3D.structure);

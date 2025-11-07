@@ -517,6 +517,7 @@ simdef.mdf=isfield_default(simdef.mdf,'Smagorinsky',0);
 simdef.mdf=isfield_default(simdef.mdf,'FrictType',0);
 
 simdef.mdf=isfield_default(simdef.mdf,'BedlevType',1); %ideally
+simdef.mdf=isfield_default(simdef.mdf,'NcFormat',3); %ideally
 
 %%
 %% MOR
