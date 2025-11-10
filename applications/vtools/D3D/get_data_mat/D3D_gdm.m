@@ -36,22 +36,17 @@
 % 
 % %% PATHS
 % 
-% %Check out SVN repository:
-% %https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/
-% %into a folder (e.g., <dir_checkout>).
-% %`fpath_add_oet` points to <dir_checkout\applications\vtools\general\addOET.m>
+% %Check out GitHub repository of OET Matlab:
+% %https://github.com/openearth/matlab-tools 
+% %into a folder (e.g., <c:\checkouts\oet_matlab\>). 
+% %do recursive checkout to have all submodules (e.g., Quickplot):
+% %```
+% %git clone https://github.com/openearth/matlab-tools oet_matlab --recursive
+% %```
+% %`fpath_add_oet` points to <oet_matlab\applications\vtools\general\addOET.m>
 % fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
-%
-% %The source of QuickPlot is now in a separate GitHub repository
-% %Check it out by:
-% %```
-% % git clone https://github.com/Deltares/QUICKPLOT quickplot
-% %```
-% %and point here to the folder where it has been checked out.
-% fdir_d3d='c:\checkouts\quickplot\';
-%
+%%
 % % fpath_add_oet='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\general\addOET.m';
-% % fdir_d3d='p:\studenten-riv\05_OpenEarthTools\02_qp\';
 %
 % %Path to folder with project paths. See `paths_project_layout`.
 % % fpath_project='d:\temporal\220517_improve_exner\';

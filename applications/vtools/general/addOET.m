@@ -114,8 +114,8 @@ if ~is_qp
     %e.g.: 'c:\checkouts\delft3d\src\tools_lgpl\matlab\quickplot\progsrc\'
     path_qp_src=fullfile(path_d3d_co,'src','tools_lgpl','matlab','quickplot','progsrc');
     if isfolder(path_qp_src)==0
-        warning('Folder with QuickPlot from Delft3D source not available here: %s',path_qp_src);
-        fprintf('Using QuickPlot in OpenEarthTools repository (old).\n')
+        % warning('Folder with QuickPlot from Delft3D source not available here: %s',path_qp_src);
+        % fprintf('Using QuickPlot in OpenEarthTools repository (old).\n')
     else
         addpath(path_qp_src);
         fprintf('Using QuickPlot repository at %s \n',path_d3d_co)
