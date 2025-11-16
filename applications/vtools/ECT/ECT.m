@@ -342,6 +342,7 @@ if any(flg.anl==1) || any(flg.anl==2) || any(flg.anl==3) || any(flg.anl==4) || a
         else
             Gammak=NaN(nf,1);
         end
+        is_1D=true;
 elseif any(flg.anl==6) || any(flg.anl==7) || any(flg.anl==8) || any(flg.anl==9)|| any(flg.anl==10) || any(flg.anl==11) || any(flg.anl==14)
         u=parin.Results.nodeState(1:2); %vector
         h=parin.Results.nodeState(3);
@@ -350,6 +351,7 @@ elseif any(flg.anl==6) || any(flg.anl==7) || any(flg.anl==8) || any(flg.anl==9)|
         Fak=parin.Results.nodeState(6:5+nf);
         Fik=parin.Results.nodeState(6+nf:5+nf*2);  
         Gammak=NaN(nf,1);
+        is_1D=false;
 end
 
 DmI=sum(Fik.*dk); %necessary for Ribberink and approximated values of cp
@@ -2210,149 +2212,173 @@ end
 %%
 
 if flg.cp==1
-    
-cp.Fr=Fr;
-    %definitions
-    %new
-cp.psi=dqb_dq; %double [1,1]
-cp.chi=1/u.*dqb_dMal; %double [nf-1,1]
-cp.c=dqbk_dq(1:nf-1)./cp.psi; %double [nf-1,1]
-cp.gamma=cp.c-Fik(1:nf-1); %double [nf-1,1]
-cp.d=dqbk_dMal(:,1:nf-1)'./repmat(u*cp.chi',nf-1,1); %double [nf-1,nf-1]
-cp.mu=cp.d'-repmat(Fik(1:nf-1),nf-1,1); %double [nf-1,nf-1]
-cp.lb=cp.psi/(1-cp.Fr^2); %double [1,1]
-cp.ls1=cp.chi(1)*cp.mu(1,1); %double [1,1]
-cp.qbk=qbk;
+    if is_1D
+        cp.Fr=Fr;
+            %definitions
+            %new
+        cp.psi=dqb_dq; %double [1,1]
+        cp.chi=1/u.*dqb_dMal; %double [nf-1,1]
+        cp.c=dqbk_dq(1:nf-1)./cp.psi; %double [nf-1,1]
+        cp.gamma=cp.c-Fik(1:nf-1); %double [nf-1,1]
+        cp.d=dqbk_dMal(:,1:nf-1)'./repmat(u*cp.chi',nf-1,1); %double [nf-1,nf-1]
+        cp.mu=cp.d'-repmat(Fik(1:nf-1),nf-1,1); %double [nf-1,nf-1]
+        cp.lb=cp.psi/(1-cp.Fr^2); %double [1,1]
+        cp.ls1=cp.chi(1)*cp.mu(1,1); %double [1,1]
+        cp.qbk=qbk;
+    else
+        % Rx=dqbx_dsx; %double [1,1]
+        % Ry=dqby_dsy; %double [1,1]
+        % rx=1/Rx.*dqbkx_dsx; %double [nf,1]
+        % ry=1/Ry.*dqbky_dsy; %double [nf,1]   
+        % lx=rx-Fik; %double [nf,1]
+        % ly=ry-Fik; %double [nf,1]
+
+        % psi_x=dqbx_dqx; %double [1,1]
+        % psi_y=dqby_dqy; %double [1,1]
+        % cx=1/psi_x.*dqbkx_dqx; %double [nf,1]
+        % cy=1/psi_y.*dqbky_dqy; %double [nf,1]
+        % gammax=cx-Fik; %double [nf,1]
+        % gammay=cy-Fik; %double [nf,1]
+        % chix=1/u.*dqbkx_dMal; %double [nf,1]
+        % chiy=1/v.*dqbky_dMal; %double [nf,1]
+        % dx=1/(u*chix').*dqbkx_dMal'; %double [nf,nf]
+        % dy=1/(v*chiy').*dqbky_dMal'; %double [nf,nf]
+        % mux=dx'-repmat(Fik,1,nf); %double [nf,nf]
+        % muy=dy'-repmat(Fik,1,nf); %double [nf,nf]   
+
+    end
+
+
 
 if length(dk)==2 %two fractions 
-
-    %old
-cp.Qbk=Qbk;
-
-cp.dqbk_dq=dqbk_dq;
-cp.dQbk_dFal=dQbk_dFal;
-cp.dQb_dFal=dQb_dFal;
-cp.dqbk_dMal=dqbk_dMal;
-cp.dqb_dMal=dqb_dMal;
-cp.dqbk_dFal=La.*dqbk_dMal;
-cp.dqb_dFal=sum(cp.dqbk_dFal);
-
-cp.psi=dqb_dq;
-cp.psi_Fr=cp.psi/(1-Fr^2); %obsolete
-cp.DV=cp.psi/(1-Fr^2);
-
-cp.c1=1/cp.psi.*dqbk_dq(1);
-cp.gamma1=cp.c1-Fik(1);
-cp.kappa1=cp.gamma1+cp.c1;
-
-cp.diffQbk=(Qbk(1)-Qbk(2));
-
-cp.kappaQb=Qbk(1)-cp.kappa1*cp.diffQbk;
-cp.FikQb=Qbk(1)-Fik(1)*cp.diffQbk;
-cp.c1Qb=Qbk(1)-cp.c1*cp.diffQbk;
-
-cp.R=1/u*(dqbk_dMal(1,1)-Fik(1)*dqb_dMal(1)); %dimensionless Ribberink celerity without simplification
-cp.R_s=cp.FikQb/(u*La); %dimensionless Ribberink celerity with simplification
-
-% cp.charpoly=charpoly(A(1:end-1,1:end-1)); %eliminate substrate equation
-
-%quasi-steady (non-dimensional characteristic polynomial)
-    %without simplification
-cp.qs_disc=cp.psi_Fr*(cp.psi_Fr-2/u*(cp.dqbk_dMal(1,1)-cp.kappa1*cp.dqb_dMal(1)))+1/u^2*(cp.dqbk_dMal(1,1)-Fik(1)*cp.dqb_dMal(1))^2; %discriminant 
-cp.qs_eigen(1)=1/2*(cp.psi_Fr+1/u*(cp.dqbk_dMal(1,1)-Fik(1)*cp.dqb_dMal(1))+sqrt(cp.qs_disc)); %analytic eigenvalues 
-cp.qs_eigen(2)=1/2*(cp.psi_Fr+1/u*(cp.dqbk_dMal(1,1)-Fik(1)*cp.dqb_dMal(1))-sqrt(cp.qs_disc)); %analytic eigenvalues 
-cp.qs_disc_2=(cp.DV-cp.R)^2+4*cp.DV*cp.gamma1*1/u*cp.dqb_dMal(1);
-cp.qs_eigen_2(1)=1/2*(cp.DV+cp.R+sqrt(cp.qs_disc_2));
-cp.qs_eigen_2(2)=1/2*(cp.DV+cp.R-sqrt(cp.qs_disc_2));
-
-% cp.charpoly_qs=charpoly(A_qs); %characterisic polynomial of A (A_qs does not have the substrate equations)
-        %active layer domain
-cp.qs_disc_1La_ns=-4*cp.gamma1*cp.dqb_dFal*(cp.dqbk_dFal(1)-cp.c1*cp.dqb_dFal); 
-cp.qs_La_lim_ns(1)=1/((u*cp.psi_Fr/(cp.dqbk_dFal(1)-Fik(1)*cp.dqb_dFal)^2)*((cp.dqbk_dFal(1)-cp.kappa1*cp.dqb_dFal)+sqrt(cp.qs_disc_1La_ns)));
-cp.qs_La_lim_ns(2)=1/((u*cp.psi_Fr/(cp.dqbk_dFal(1)-Fik(1)*cp.dqb_dFal)^2)*((cp.dqbk_dFal(1)-cp.kappa1*cp.dqb_dFal)-sqrt(cp.qs_disc_1La_ns)));
-
-        %to check another writting
-cp.qsA2=[u*cp.psi/(1-Fr^2),u*cp.chi(1);u*cp.psi/(1-Fr^2)*cp.gamma(1),u*cp.chi(1)*cp.mu(1,1)]; %dimensional matix
-cp.qs_disc_2=(cp.lb-cp.ls1)^2+4*cp.gamma(1)/cp.mu(1,1)*cp.lb*cp.ls1; %dimensionless discriminant
-cp.qs_disc_22=(cp.ls1*La)^2*(1/La)^2+2*cp.lb*(cp.ls1*La)*(2*cp.gamma(1)/cp.mu(1,1)-1)*(1/La)+cp.lb^2; %dimensionless discriminant for 1/La
-cp.qs_La_lim_ns_2(1)=1/(cp.lb/(cp.ls1*La)*(1-2*cp.gamma(1)/cp.mu(1,1)+sqrt((2*cp.gamma(1)/cp.mu(1,1)-1)^2-1))); %dimensional lower limit of the active layer domain 
-cp.qs_La_lim_ns_2(2)=1/(cp.lb/(cp.ls1*La)*(1-2*cp.gamma(1)/cp.mu(1,1)-sqrt((2*cp.gamma(1)/cp.mu(1,1)-1)^2-1))); %dimensional lower limit of the active layer domain 
-
-% aux.prec=1e-8; %for checking differences
-% if max(abs(cp.qs_disc-cp.qs_disc_2)) > aux.prec; warning('wrong'); end
-% if max(abs(cp.qs_disc-cp.qs_disc_22)) > aux.prec; warning('wrong'); end
-% if max(max(abs(cp.qsA2-A_qs))) > aux.prec; warning('wrong'); end
-% if max(abs(cp.qs_La_lim_ns_2-cp.qs_La_lim_ns)) > aux.prec; warning('wrong'); end
-
-    %simplified dqbk_dMal
-cp.qs_disc_sim=1/La^2*(cp.psi_Fr^2*La^2-2/u*cp.psi_Fr*cp.kappaQb*La+1/u^2*cp.FikQb^2); %discriminant    
-% cp.qs_disc_sim2=1/(u^2*La^2)*cp.diffQbk^2*Fik(1)^2-2/(u*La)*cp.diffQbk*(Qbk(1)/(u*La)+cp.psi_Fr)*Fik(1)+cp.psi_Fr*(cp.psi_Fr+2/(u*La)*(2*cp.c1*cp.diffQbk-Qbk(1)))+1/(u^2*La^2)*Qbk(1)^2; %discriminant (Fi1) (just to check if it is the same as the one above)
-cp.qs_disc_sim_3=(cp.DV-cp.R_s)^2+4*cp.DV*cp.gamma1*1/u*cp.diffQbk/La;
-cp.qs_disc_sim_dLa=1/(a_dL*h^b_dL)^2*(cp.psi_Fr^2*(a_dL*h^b_dL)^2-2/u*cp.psi_Fr*cp.kappaQb*(a_dL*h^b_dL)+1/u^2*cp.FikQb^2); %discriminant with La=(a_dL*h^b_dL)
-        %active layer domain
-cp.qs_disc_La=cp.kappaQb^2-cp.FikQb^2; %discriminant of the active layer domain 
-cp.qs_disc_La2=-4*cp.gamma1*cp.diffQbk*cp.c1Qb; %discriminant of the active layer domain (just to check if it is the same as the one above)
-cp.qs_La_lim(1)=1/u*1/cp.psi_Fr*(cp.kappaQb-sqrt(cp.qs_disc_La)); %lower limit of the active layer domain 
-cp.qs_La_lim(2)=1/u*1/cp.psi_Fr*(cp.kappaQb+sqrt(cp.qs_disc_La)); %upper limit of the active layer domain 
-        %Fik domain
-cp.qs_disc_Fik=4/(u*La)*cp.psi_Fr*cp.c1Qb; %discriminant of the Fi1 domain
-cp.qs_Fik_lim(1)=1/(1/(u*La)*cp.diffQbk)*(Qbk(1)/(u*La)+cp.psi_Fr-sqrt(cp.qs_disc_Fik)); %lower limit of the Fik domain
-cp.qs_Fik_lim(2)=1/(1/(u*La)*cp.diffQbk)*(Qbk(1)/(u*La)+cp.psi_Fr+sqrt(cp.qs_disc_Fik)); %upper limit of the Fik domain
-        %a_dLa domain
-cp.qs_a_La_lim(1)=1/h^b_dL*1/u*1/cp.psi_Fr*(cp.kappaQb-sqrt(cp.qs_disc_La)); %lower limit of the active layer domain 
-cp.qs_a_La_lim(2)=1/h^b_dL*1/u*1/cp.psi_Fr*(cp.kappaQb+sqrt(cp.qs_disc_La)); %upper limit of the active layer domain 
-
-cp.qs_ell_disc=0;
-if cp.qs_disc<0
-    cp.qs_ell_disc=1;
-end
-
-%fully coupled (non-dimensional characteristic polynomial)
-cp.dl=1/La/u*(Qbk(1)-Qbk(2)+sum(Fak.*cp.dQbk_dFal))*cp.gamma1*cp.psi/Fr^2; %slope of d(lambda)
-cp.G_d=[-cp.dl,cp.dl];
-cp.G_sve=[cp.psi/Fr^2,1-1/Fr^2*(1+cp.psi),-2,1];
-cp.G_ls=(Qbk.*(1-Fik)+Fik*Qbk(end))./(u*La); %simplified approximation of sorting eigenvalues for the coupled case [nf,1], only the first nf-1 are valid
-cp.hl=1/La/u*(Fik(2)*Qbk(1)+Fik(1)*Qbk(2)+Fik(2)*Fak(1)*cp.dQbk_dFal(1)-Fik(1)*Fak(2)*cp.dQbk_dFal(2)); %slope of h(lambda) 
-
-cp.dLa_beta=a_dL*b_dL*h^(b_dL-1);
-cp.dLa_svep=cp.dLa_beta*Fak(1)*(Qbk(1)-Qbk(2))/u/La/Fr^2;
-cp.dLa_r1=[-cp.dl,cp.dl];
-cp.dLa_r2r=Fak(1)/Fik(1)*(Qbk(1).*(1-Fik(1))+Fik(1)*Qbk(2))./(u*La); %[1,1]
-cp.dLa_r2s=cp.dLa_beta*Fik(1)*(Qbk(1)-Qbk(2))/u/La/Fr^2;
-cp.dLa_r2=[-cp.dLa_r2r*cp.dLa_r2s,cp.dLa_r2s];
-
-% (cp.gamma(1)*cp.psi+Fak(1)*cp.dLa_beta*cp.G_ls(1))/(cp.gamma(1)*cp.psi+Fik(1)*cp.dLa_beta)
-
-%check
-% cp.dLa_dt_pn=charpoly(A_dLa);
 % 
-% syms l
-% cp.d1=-cnt.g*h*u*cp.gamma(1)*cp.psi+l*cnt.g*h*(cp.gamma(1)*cp.psi+Fik(1)*cp.dLa_beta);
-% cp.d2=l*cp.dLa_beta*cnt.g*h;
-% cp.d3=cp.d2;
-% cp.d4=l^2*(2*u-l)-u*cp.psi*cnt.g*h+l*cp.psi*cnt.g*h+l*u^2*(1/Fr^2-1);
-% cp.dLa_dt_pa=dqb_dMal(1)*(l*cp.d1+(dqbk_dLa(1)-Fik(1)*dqb_dLa)*cp.d2)-(dqbk_dMal(1,1)-Fik(1)*dqb_dMal(1)-l)*(dqb_dLa*cp.d3+l*cp.d4);
+%     %old
+% cp.Qbk=Qbk;
 % 
-% cp.dLa_aux0=-Fak(1)/La*(Qbk(1)*(1-Fik(1))+Fik(1)*Qbk(2));
-% cp.dLa_aux1=(Qbk(1)-Qbk(2))/La*cnt.g*h*(-u*cp.gamma(1)*cp.psi+l*(cp.gamma(1)*cp.psi+Fik(1)*cp.dLa_beta)+cp.dLa_beta*cp.dLa_aux0); %r dim
-% cp.dLa_aux1_n=cp.dLa_aux1./u^4; %r dim
-% cp.dLa_aux2=(Qbk(1)*(1-Fik(1))+Fik(1)*Qbk(2))/La;
-% cp.dLa_aux3=(cp.dLa_aux2-l)*(-Fak(1)/La*(Qbk(1)-Qbk(2))*cp.dLa_beta*cnt.g*h-poly2sym(fliplr(cp.G_sve),l)); %m
-% cp.dLa_aux4=cp.dLa_aux1-cp.dLa_aux3;
-% cp.r2=poly2sym(fliplr(cp.dLa_r2),l);
-% cp.r1=poly2sym(fliplr(cp.dLa_r1),l);
-% cp.m=(l-cp.G_ls(1))*poly2sym(fliplr(cp.G_sve),l);
+% cp.dqbk_dq=dqbk_dq;
+% cp.dQbk_dFal=dQbk_dFal;
+% cp.dQb_dFal=dQb_dFal;
+% cp.dqbk_dMal=dqbk_dMal;
+% cp.dqb_dMal=dqb_dMal;
+% cp.dqbk_dFal=La.*dqbk_dMal;
+% cp.dqb_dFal=sum(cp.dqbk_dFal);
 % 
-% double(coeffs(cp.m))
-% double(coeffs(cp.dLa_aux3))
+% cp.psi=dqb_dq;
+% cp.psi_Fr=cp.psi/(1-Fr^2); %obsolete
+% cp.DV=cp.psi/(1-Fr^2);
 % 
-% double(coeffs(cp.dLa_aux1))-double(coeffs(cp.r1+cp.r2))
-% double(coeffs(cp.dLa_aux1_n))-double(coeffs(cp.r1+cp.r2))
-% norm(fliplr(double(coeffs(-cp.dLa_aux4)))-cp.dLa_dt_pn(1:end-1))
-% sort(eigen_all_dLa(1:end-1))-sort(real(double(roots(fliplr(coeffs(-cp.dLa_aux4))))))
+% cp.c1=1/cp.psi.*dqbk_dq(1);
+% cp.gamma1=cp.c1-Fik(1);
+% cp.kappa1=cp.gamma1+cp.c1;
 % 
-% norm(fliplr(double(coeffs(-cp.dLa_dt_pa)))-cp.dLa_dt_pn(1:end-1))
-% % sort(eigen_all_dLa(1:end-1))-sort(real(double(roots(fliplr(coeffs(-cp.dLa_dt_pa))))))
+% cp.diffQbk=(Qbk(1)-Qbk(2));
+% 
+% cp.kappaQb=Qbk(1)-cp.kappa1*cp.diffQbk;
+% cp.FikQb=Qbk(1)-Fik(1)*cp.diffQbk;
+% cp.c1Qb=Qbk(1)-cp.c1*cp.diffQbk;
+% 
+% cp.R=1/u*(dqbk_dMal(1,1)-Fik(1)*dqb_dMal(1)); %dimensionless Ribberink celerity without simplification
+% cp.R_s=cp.FikQb/(u*La); %dimensionless Ribberink celerity with simplification
+% 
+% % cp.charpoly=charpoly(A(1:end-1,1:end-1)); %eliminate substrate equation
+% 
+% %quasi-steady (non-dimensional characteristic polynomial)
+%     %without simplification
+% cp.qs_disc=cp.psi_Fr*(cp.psi_Fr-2/u*(cp.dqbk_dMal(1,1)-cp.kappa1*cp.dqb_dMal(1)))+1/u^2*(cp.dqbk_dMal(1,1)-Fik(1)*cp.dqb_dMal(1))^2; %discriminant 
+% cp.qs_eigen(1)=1/2*(cp.psi_Fr+1/u*(cp.dqbk_dMal(1,1)-Fik(1)*cp.dqb_dMal(1))+sqrt(cp.qs_disc)); %analytic eigenvalues 
+% cp.qs_eigen(2)=1/2*(cp.psi_Fr+1/u*(cp.dqbk_dMal(1,1)-Fik(1)*cp.dqb_dMal(1))-sqrt(cp.qs_disc)); %analytic eigenvalues 
+% cp.qs_disc_2=(cp.DV-cp.R)^2+4*cp.DV*cp.gamma1*1/u*cp.dqb_dMal(1);
+% cp.qs_eigen_2(1)=1/2*(cp.DV+cp.R+sqrt(cp.qs_disc_2));
+% cp.qs_eigen_2(2)=1/2*(cp.DV+cp.R-sqrt(cp.qs_disc_2));
+% 
+% % cp.charpoly_qs=charpoly(A_qs); %characterisic polynomial of A (A_qs does not have the substrate equations)
+%         %active layer domain
+% cp.qs_disc_1La_ns=-4*cp.gamma1*cp.dqb_dFal*(cp.dqbk_dFal(1)-cp.c1*cp.dqb_dFal); 
+% cp.qs_La_lim_ns(1)=1/((u*cp.psi_Fr/(cp.dqbk_dFal(1)-Fik(1)*cp.dqb_dFal)^2)*((cp.dqbk_dFal(1)-cp.kappa1*cp.dqb_dFal)+sqrt(cp.qs_disc_1La_ns)));
+% cp.qs_La_lim_ns(2)=1/((u*cp.psi_Fr/(cp.dqbk_dFal(1)-Fik(1)*cp.dqb_dFal)^2)*((cp.dqbk_dFal(1)-cp.kappa1*cp.dqb_dFal)-sqrt(cp.qs_disc_1La_ns)));
+% 
+%         %to check another writting
+% cp.qsA2=[u*cp.psi/(1-Fr^2),u*cp.chi(1);u*cp.psi/(1-Fr^2)*cp.gamma(1),u*cp.chi(1)*cp.mu(1,1)]; %dimensional matix
+% cp.qs_disc_2=(cp.lb-cp.ls1)^2+4*cp.gamma(1)/cp.mu(1,1)*cp.lb*cp.ls1; %dimensionless discriminant
+% cp.qs_disc_22=(cp.ls1*La)^2*(1/La)^2+2*cp.lb*(cp.ls1*La)*(2*cp.gamma(1)/cp.mu(1,1)-1)*(1/La)+cp.lb^2; %dimensionless discriminant for 1/La
+% cp.qs_La_lim_ns_2(1)=1/(cp.lb/(cp.ls1*La)*(1-2*cp.gamma(1)/cp.mu(1,1)+sqrt((2*cp.gamma(1)/cp.mu(1,1)-1)^2-1))); %dimensional lower limit of the active layer domain 
+% cp.qs_La_lim_ns_2(2)=1/(cp.lb/(cp.ls1*La)*(1-2*cp.gamma(1)/cp.mu(1,1)-sqrt((2*cp.gamma(1)/cp.mu(1,1)-1)^2-1))); %dimensional lower limit of the active layer domain 
+% 
+% % aux.prec=1e-8; %for checking differences
+% % if max(abs(cp.qs_disc-cp.qs_disc_2)) > aux.prec; warning('wrong'); end
+% % if max(abs(cp.qs_disc-cp.qs_disc_22)) > aux.prec; warning('wrong'); end
+% % if max(max(abs(cp.qsA2-A_qs))) > aux.prec; warning('wrong'); end
+% % if max(abs(cp.qs_La_lim_ns_2-cp.qs_La_lim_ns)) > aux.prec; warning('wrong'); end
+% 
+%     %simplified dqbk_dMal
+% cp.qs_disc_sim=1/La^2*(cp.psi_Fr^2*La^2-2/u*cp.psi_Fr*cp.kappaQb*La+1/u^2*cp.FikQb^2); %discriminant    
+% % cp.qs_disc_sim2=1/(u^2*La^2)*cp.diffQbk^2*Fik(1)^2-2/(u*La)*cp.diffQbk*(Qbk(1)/(u*La)+cp.psi_Fr)*Fik(1)+cp.psi_Fr*(cp.psi_Fr+2/(u*La)*(2*cp.c1*cp.diffQbk-Qbk(1)))+1/(u^2*La^2)*Qbk(1)^2; %discriminant (Fi1) (just to check if it is the same as the one above)
+% cp.qs_disc_sim_3=(cp.DV-cp.R_s)^2+4*cp.DV*cp.gamma1*1/u*cp.diffQbk/La;
+% cp.qs_disc_sim_dLa=1/(a_dL*h^b_dL)^2*(cp.psi_Fr^2*(a_dL*h^b_dL)^2-2/u*cp.psi_Fr*cp.kappaQb*(a_dL*h^b_dL)+1/u^2*cp.FikQb^2); %discriminant with La=(a_dL*h^b_dL)
+%         %active layer domain
+% cp.qs_disc_La=cp.kappaQb^2-cp.FikQb^2; %discriminant of the active layer domain 
+% cp.qs_disc_La2=-4*cp.gamma1*cp.diffQbk*cp.c1Qb; %discriminant of the active layer domain (just to check if it is the same as the one above)
+% cp.qs_La_lim(1)=1/u*1/cp.psi_Fr*(cp.kappaQb-sqrt(cp.qs_disc_La)); %lower limit of the active layer domain 
+% cp.qs_La_lim(2)=1/u*1/cp.psi_Fr*(cp.kappaQb+sqrt(cp.qs_disc_La)); %upper limit of the active layer domain 
+%         %Fik domain
+% cp.qs_disc_Fik=4/(u*La)*cp.psi_Fr*cp.c1Qb; %discriminant of the Fi1 domain
+% cp.qs_Fik_lim(1)=1/(1/(u*La)*cp.diffQbk)*(Qbk(1)/(u*La)+cp.psi_Fr-sqrt(cp.qs_disc_Fik)); %lower limit of the Fik domain
+% cp.qs_Fik_lim(2)=1/(1/(u*La)*cp.diffQbk)*(Qbk(1)/(u*La)+cp.psi_Fr+sqrt(cp.qs_disc_Fik)); %upper limit of the Fik domain
+%         %a_dLa domain
+% cp.qs_a_La_lim(1)=1/h^b_dL*1/u*1/cp.psi_Fr*(cp.kappaQb-sqrt(cp.qs_disc_La)); %lower limit of the active layer domain 
+% cp.qs_a_La_lim(2)=1/h^b_dL*1/u*1/cp.psi_Fr*(cp.kappaQb+sqrt(cp.qs_disc_La)); %upper limit of the active layer domain 
+% 
+% cp.qs_ell_disc=0;
+% if cp.qs_disc<0
+%     cp.qs_ell_disc=1;
+% end
+% 
+% %fully coupled (non-dimensional characteristic polynomial)
+% cp.dl=1/La/u*(Qbk(1)-Qbk(2)+sum(Fak.*cp.dQbk_dFal))*cp.gamma1*cp.psi/Fr^2; %slope of d(lambda)
+% cp.G_d=[-cp.dl,cp.dl];
+% cp.G_sve=[cp.psi/Fr^2,1-1/Fr^2*(1+cp.psi),-2,1];
+% cp.G_ls=(Qbk.*(1-Fik)+Fik*Qbk(end))./(u*La); %simplified approximation of sorting eigenvalues for the coupled case [nf,1], only the first nf-1 are valid
+% cp.hl=1/La/u*(Fik(2)*Qbk(1)+Fik(1)*Qbk(2)+Fik(2)*Fak(1)*cp.dQbk_dFal(1)-Fik(1)*Fak(2)*cp.dQbk_dFal(2)); %slope of h(lambda) 
+% 
+% cp.dLa_beta=a_dL*b_dL*h^(b_dL-1);
+% cp.dLa_svep=cp.dLa_beta*Fak(1)*(Qbk(1)-Qbk(2))/u/La/Fr^2;
+% cp.dLa_r1=[-cp.dl,cp.dl];
+% cp.dLa_r2r=Fak(1)/Fik(1)*(Qbk(1).*(1-Fik(1))+Fik(1)*Qbk(2))./(u*La); %[1,1]
+% cp.dLa_r2s=cp.dLa_beta*Fik(1)*(Qbk(1)-Qbk(2))/u/La/Fr^2;
+% cp.dLa_r2=[-cp.dLa_r2r*cp.dLa_r2s,cp.dLa_r2s];
+% 
+% % (cp.gamma(1)*cp.psi+Fak(1)*cp.dLa_beta*cp.G_ls(1))/(cp.gamma(1)*cp.psi+Fik(1)*cp.dLa_beta)
+% 
+% %check
+% % cp.dLa_dt_pn=charpoly(A_dLa);
+% % 
+% % syms l
+% % cp.d1=-cnt.g*h*u*cp.gamma(1)*cp.psi+l*cnt.g*h*(cp.gamma(1)*cp.psi+Fik(1)*cp.dLa_beta);
+% % cp.d2=l*cp.dLa_beta*cnt.g*h;
+% % cp.d3=cp.d2;
+% % cp.d4=l^2*(2*u-l)-u*cp.psi*cnt.g*h+l*cp.psi*cnt.g*h+l*u^2*(1/Fr^2-1);
+% % cp.dLa_dt_pa=dqb_dMal(1)*(l*cp.d1+(dqbk_dLa(1)-Fik(1)*dqb_dLa)*cp.d2)-(dqbk_dMal(1,1)-Fik(1)*dqb_dMal(1)-l)*(dqb_dLa*cp.d3+l*cp.d4);
+% % 
+% % cp.dLa_aux0=-Fak(1)/La*(Qbk(1)*(1-Fik(1))+Fik(1)*Qbk(2));
+% % cp.dLa_aux1=(Qbk(1)-Qbk(2))/La*cnt.g*h*(-u*cp.gamma(1)*cp.psi+l*(cp.gamma(1)*cp.psi+Fik(1)*cp.dLa_beta)+cp.dLa_beta*cp.dLa_aux0); %r dim
+% % cp.dLa_aux1_n=cp.dLa_aux1./u^4; %r dim
+% % cp.dLa_aux2=(Qbk(1)*(1-Fik(1))+Fik(1)*Qbk(2))/La;
+% % cp.dLa_aux3=(cp.dLa_aux2-l)*(-Fak(1)/La*(Qbk(1)-Qbk(2))*cp.dLa_beta*cnt.g*h-poly2sym(fliplr(cp.G_sve),l)); %m
+% % cp.dLa_aux4=cp.dLa_aux1-cp.dLa_aux3;
+% % cp.r2=poly2sym(fliplr(cp.dLa_r2),l);
+% % cp.r1=poly2sym(fliplr(cp.dLa_r1),l);
+% % cp.m=(l-cp.G_ls(1))*poly2sym(fliplr(cp.G_sve),l);
+% % 
+% % double(coeffs(cp.m))
+% % double(coeffs(cp.dLa_aux3))
+% % 
+% % double(coeffs(cp.dLa_aux1))-double(coeffs(cp.r1+cp.r2))
+% % double(coeffs(cp.dLa_aux1_n))-double(coeffs(cp.r1+cp.r2))
+% % norm(fliplr(double(coeffs(-cp.dLa_aux4)))-cp.dLa_dt_pn(1:end-1))
+% % sort(eigen_all_dLa(1:end-1))-sort(real(double(roots(fliplr(coeffs(-cp.dLa_aux4))))))
+% % 
+% % norm(fliplr(double(coeffs(-cp.dLa_dt_pa)))-cp.dLa_dt_pn(1:end-1))
+% % % sort(eigen_all_dLa(1:end-1))-sort(real(double(roots(fliplr(coeffs(-cp.dLa_dt_pa))))))
     
 elseif length(dk)==3 %three fractions 
 

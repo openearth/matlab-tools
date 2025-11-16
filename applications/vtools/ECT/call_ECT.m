@@ -91,7 +91,7 @@ end
 [eigen_x,eigen_y]=rename_eigenvalues(flg,eigen_all,eigen_all_qs,eigen_all_dLa,eigen_all_ad,eigen_all_2Dx,eigen_all_2Dy,eigen_all_2Dx_sf,eigen_all_2Dy_sf,eigen_all_SWx,eigen_all_SWy,eigen_all_SWx_sf,eigen_all_SWy_sf,eigen_all_SWEx,eigen_all_SWEy,eigen_all_SWEx_sf,eigen_all_SWEy_sf,eigen_all_Dm,eigen_all_2Dx_d,eigen_all_2Dy_d);
 
 % ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm);
-ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm,eigen_x,eigen_y);
+ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm,eigen_x,eigen_y,cp);
 sed_trans=v2struct(qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm,qbk_no_pores);
 
 % ECT_elliptic=v2struct(elliptic,elliptic_qs,elliptic_dLa,elliptic_ad,elliptic_Dm);
