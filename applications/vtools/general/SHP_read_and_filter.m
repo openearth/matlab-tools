@@ -56,5 +56,6 @@ variable(bol_nan)=NaN;
 
 measurements_images.pol=shp.xy.XY(bol_xy);
 measurements_images.z=variable(bol_xy); 
+measurements_images.type='shp'; 
 
 end %function

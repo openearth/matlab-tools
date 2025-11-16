@@ -47,14 +47,21 @@ if is_diff
         return
     end
     for kf=1:nf
-        [~,x_ia,x_ib] = intersect(measurements_images{kf}.x,measurements_images_0{kf}.x);
-        [~,y_ia,y_ib] = intersect(measurements_images{kf}.y,measurements_images_0{kf}.y);
-        measurements_images{kf}.x=measurements_images{kf}.x(x_ia);
-        measurements_images{kf}.y=measurements_images{kf}.y(y_ia);
-        measurements_images{kf}.z=measurements_images{kf}.z(y_ia,x_ia)-measurements_images_0{kf}.z(y_ib,x_ib);
-        measurements_images{kf}.mask=max(cat(3,measurements_images{kf}.mask(y_ia,x_ia),measurements_images_0{kf}.z(y_ib,x_ib)),[],3); 
-    end
-end
+        switch measurements_images{kf}.type
+            case 'tif'
+                [~,x_ia,x_ib] = intersect(measurements_images{kf}.x,measurements_images_0{kf}.x);
+                [~,y_ia,y_ib] = intersect(measurements_images{kf}.y,measurements_images_0{kf}.y);
+                measurements_images{kf}.x=measurements_images{kf}.x(x_ia);
+                measurements_images{kf}.y=measurements_images{kf}.y(y_ia);
+                measurements_images{kf}.z=measurements_images{kf}.z(y_ia,x_ia)-measurements_images_0{kf}.z(y_ib,x_ib);
+                measurements_images{kf}.mask=max(cat(3,measurements_images{kf}.mask(y_ia,x_ia),measurements_images_0{kf}.z(y_ib,x_ib)),[],3); 
+            case 'shp'
+                measurements_images{kf}.z=measurements_images{kf}.z-measurements_images_0{kf}.z;
+            otherwise
+                error('Unknown measurements image type: %s',measurements_images{kf}.type)
+        end %switch
+    end %kf
+end %if
 
 end %function 
 
@@ -248,6 +255,7 @@ measurements_images{1}.y=y_plot;
 measurements_images{1}.z=z_plot;
 measurements_images{1}.mask=m_plot;
 measurements_images{1}.mask(isnan(measurements_images{1}.z))=0;%
+measurements_images{1}.type='tif';
 
 tim_mea_dtime_mean=mean(tim_mea);
 
