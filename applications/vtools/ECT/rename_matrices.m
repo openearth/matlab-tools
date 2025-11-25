@@ -11,7 +11,7 @@
 %$HeadURL$
 %
 
-function [Ax_1,Ay_1,Dx_1,Dy_1,B_1,C_1,M_pmm]=rename_matrices(flg,alpha_pmm,A,A_qs,D_qs,Ax,Ay,Dx,Dy,B,C,Ax_sf,Ay_sf,Dx_sf,Dy_sf,B_sf,C_sf,Ax_SW,Ay_SW,Dx_SW,Dy_SW, B_SW, C_SW,Ax_SW_sf,Ay_SW_sf,Dx_SW_sf,Dy_SW_sf, B_SW_sf, C_SW_sf,Ax_SWE,Ay_SWE,Dx_SWE,Dy_SWE, B_SWE, C_SWE,Ax_SWE_sf,Ay_SWE_sf,Dx_SWE_sf,Dy_SWE_sf, B_SWE_sf, C_SWE_sf,A_ED,K_ED,B_ED,Ax_d,Ay_d,Dx_d,Dy_d, B_d, C_d);
+function [Ax_1,Ay_1,Dx_1,Dy_1,B_1,C_1,M_pmm]=rename_matrices(flg,alpha_pmm,A,D_f,B_f,A_qs,D_qs,Ax,Ay,Dx,Dy,B,C,Ax_sf,Ay_sf,Dx_sf,Dy_sf,B_sf,C_sf,Ax_SW,Ay_SW,Dx_SW,Dy_SW, B_SW, C_SW,Ax_SW_sf,Ay_SW_sf,Dx_SW_sf,Dy_SW_sf, B_SW_sf, C_SW_sf,Ax_SWE,Ay_SWE,Dx_SWE,Dy_SWE, B_SWE, C_SWE,Ax_SWE_sf,Ay_SWE_sf,Dx_SWE_sf,Dy_SWE_sf, B_SWE_sf, C_SWE_sf,A_ED,K_ED,B_ED,Ax_d,Ay_d,Dx_d,Dy_d, B_d, C_d);
 
 % function [Ax_1,Ay_1,Dx_1,Dy_1,B_1,C_1,M_pmm]=rename_matrices(flg,ECT_matrices,alpha_pmm)
 % v2struct(ECT_matrices)
@@ -24,11 +24,11 @@ end
 switch flg.anl
     case 1 
         Ax_1=A;
-        
-        Dx_1=zeros(size(Ax_1));
+        Dx_1=D_f;
+        B_1 =B_f;
+
         Ay_1=zeros(size(Ax_1));
         Dy_1=zeros(size(Ax_1));
-        B_1 =zeros(size(Ax_1));
         C_1 =zeros(size(Ax_1));   
     case 2
         Ax_1=A_qs;
@@ -98,6 +98,8 @@ end
     
 M_pmm=diag(ones(1,size(Ax_1,1)),0);
 switch flg.anl
+    case 1
+        M_pmm(4:end,4:end)=diag(alpha_pmm.*ones(1,size(Ax_1,1)-3),0);
     case 2
         M_pmm(2:end,2:end)=diag(alpha_pmm.*ones(1,size(Ax_1,1)-1),0);
     case {6,14}

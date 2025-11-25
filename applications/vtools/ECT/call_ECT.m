@@ -70,7 +70,7 @@ end
 
 %% ECT
 
- [eigen_all,elliptic,A,cp,Ribb,out,pmm,...
+ [eigen_all,elliptic,A,D_f,B_f,cp,Ribb,out,pmm,...
   eigen_all_qs,elliptic_qs,A_qs,D_qs,...
   eigen_all_dLa,elliptic_dLa,A_dLa,...
   eigen_all_ad,elliptic_ad,A_ad,...
@@ -87,7 +87,7 @@ end
 
 %% RENAME
 
-[Ax,Ay,Dx,Dy,B,C,M_pmm]=rename_matrices(flg,alpha_pmm,A,A_qs,D_qs,Ax,Ay,Dx,Dy,B,C,Ax_sf,Ay_sf,Dx_sf,Dy_sf,B_sf,C_sf,Ax_SW,Ay_SW,Dx_SW,Dy_SW, B_SW, C_SW,Ax_SW_sf,Ay_SW_sf,Dx_SW_sf,Dy_SW_sf, B_SW_sf, C_SW_sf,Ax_SWE,Ay_SWE,Dx_SWE,Dy_SWE, B_SWE, C_SWE,Ax_SWE_sf,Ay_SWE_sf,Dx_SWE_sf,Dy_SWE_sf, B_SWE_sf, C_SWE_sf,A_ED,K_ED,B_ED,Ax_d,Ay_d,Dx_d,Dy_d, B_d, C_d);
+[Ax,Ay,Dx,Dy,B,C,M_pmm]=rename_matrices(flg,alpha_pmm,A,D_f,B_f,A_qs,D_qs,Ax,Ay,Dx,Dy,B,C,Ax_sf,Ay_sf,Dx_sf,Dy_sf,B_sf,C_sf,Ax_SW,Ay_SW,Dx_SW,Dy_SW, B_SW, C_SW,Ax_SW_sf,Ay_SW_sf,Dx_SW_sf,Dy_SW_sf, B_SW_sf, C_SW_sf,Ax_SWE,Ay_SWE,Dx_SWE,Dy_SWE, B_SWE, C_SWE,Ax_SWE_sf,Ay_SWE_sf,Dx_SWE_sf,Dy_SWE_sf, B_SWE_sf, C_SWE_sf,A_ED,K_ED,B_ED,Ax_d,Ay_d,Dx_d,Dy_d, B_d, C_d);
 [eigen_x,eigen_y]=rename_eigenvalues(flg,eigen_all,eigen_all_qs,eigen_all_dLa,eigen_all_ad,eigen_all_2Dx,eigen_all_2Dy,eigen_all_2Dx_sf,eigen_all_2Dy_sf,eigen_all_SWx,eigen_all_SWy,eigen_all_SWx_sf,eigen_all_SWy_sf,eigen_all_SWEx,eigen_all_SWEy,eigen_all_SWEx_sf,eigen_all_SWEy_sf,eigen_all_Dm,eigen_all_2Dx_d,eigen_all_2Dy_d);
 
 % ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm);

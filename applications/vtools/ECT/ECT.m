@@ -225,7 +225,7 @@
 %   -The analytical solutions do not have Morphological Factor
 %   -Ellipticity in the quasi-steady case it is based on the full derivative case, without the approximation for the eigenvalues
 
-function [eigen_all,elliptic,A,cp,Ribb,out,pmm,...
+function [eigen_all,elliptic,A,D_f,B_f,cp,Ribb,out,pmm,...
           eigen_all_qs,elliptic_qs,A_qs,D_qs,...
           eigen_all_dLa,elliptic_dLa,A_dLa,...
           eigen_all_ad,elliptic_ad,A_ad,...
@@ -1166,6 +1166,17 @@ A(3+1:3+nf-1,3+1:3+nf-1)=(dqbk_dMal(1:nf-1,1:nf-1)-dqb_dMal(1:nf-1,1)*Fik(1:nf-1
 %Block (3,3)
 % A(3+nf-1+1:end,3+nf-1+1:end)=zeros(nf-1,nf-1);
 
+    %% B
+Q=norm(q);
+
+B_f=zeros(nA,nA);
+B_f(2,1:2)=[         -(2*Q*cf*q(1))/h^3-cnt.g*sx,                  (Q*cf)/h^2 + (cf*q(1)^2)/(Q*h^2)];
+
+    %% D
+
+D_f=zeros(nA,nA);
+D_f(4:nf+2,4:nf+2)=diag(diff_hir(1)*ones(1,nef),0);
+
 %% Eigenvalues (fully coupled)
 if flg.compute_eigenvalues
     eig_l_all=eig(A);
@@ -1185,6 +1196,8 @@ end
 
 else 
     A=NaN;
+    B_f=NaN;
+    D_f=NaN;
     eigen_all=NaN;
     elliptic=NaN;
 end

@@ -48,6 +48,10 @@ else
     in_2D.fig=isfield_default(in_2D.fig,'plot_set_contour_k',1);
 end
 
+in_2D.fig=isfield_default(in_2D.fig,'do_colorbar',0);
+in_2D.fig=isfield_default(in_2D.fig,'clims_k',NaN);
+in_2D.fig=isfield_default(in_2D.fig,'clims_l',NaN);
+
 v2struct(in_2D) %better to keep structure below
 v2struct(fig)
 
@@ -127,7 +131,7 @@ set(groot,'defaultLegendInterpreter','tex');
 kr=1; kc=2;
 cbar(kr,kc).displacement=[0.0,0,0,0]; 
 cbar(kr,kc).location='northoutside';
-cbar(kr,kc).label='minimum diffusion coefficient [m^2/s]';
+cbar(kr,kc).label='growth rate [rad/s]';
 
 %text
     %irregulra
@@ -181,14 +185,22 @@ for ksim=1:nsim
 kr=ksim; kc=1;
 lims.x(kr,kc,1:2)=[min(xm_k(:)),max(xm_k(:))];
 lims.y(kr,kc,1:2)=[min(ym_k(:)),max(ym_k(:))];
-lims.c(kr,kc,1:2)=clim_f*f_clim(ks,1);
+if isnan(clims_k)
+    lims.c(kr,kc,1:2)=clim_f*f_clim(ks,1);
+else
+    lims.c(kr,kc,1:2)=clims_k(ksim,:);
+end
 xlabels{kr,kc}='k_{wx} [rad/m]';
 ylabels{kr,kc}='k_{wy} [rad/m]';
 
 kr=ksim; kc=2;
 lims.x(kr,kc,1:2)=[min(xm_l(:)),max(xm_l(:))];
 lims.y(kr,kc,1:2)=[min(ym_l(:)),max(ym_l(:))];
-lims.c(kr,kc,1:2)=clim_f*f_clim(ks,2);
+if isnan(clims_l)
+    lims.c(kr,kc,1:2)=clim_f*f_clim(ks,2);
+else
+    lims.c(kr,kc,1:2)=clims_l(ksim,:);
+end
 xlabels{kr,kc}='l_{wx} [m]';
 ylabels{kr,kc}='l_{wy} [m]';
 
@@ -328,13 +340,15 @@ end
 % han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
 
 %colorbar
-% kr=1; kc=2;
-% pos.sfig=han.sfig(kr,kc).Position;
-% han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
-% pos.cbar=han.cbar.Position;
-% han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
-% han.sfig(kr,kc).Position=pos.sfig;
-% han.cbar.Label.String=cbar(kr,kc).label;
+if do_colorbar
+    kr=1; kc=1;
+    pos.sfig=han.sfig(kr,kc).Position;
+    han.cbar=colorbar(han.sfig(kr,kc),'location',cbar(kr,kc).location);
+    pos.cbar=han.cbar.Position;
+    han.cbar.Position=pos.cbar+cbar(kr,kc).displacement;
+    han.sfig(kr,kc).Position=pos.sfig;
+    han.cbar.Label.String=cbar(kr,kc).label;
+end
 
 for ksim=1:nsim
     kr=ksim;
