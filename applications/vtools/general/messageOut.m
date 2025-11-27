@@ -19,15 +19,26 @@ function messageOut(fid,str,varargin)
 if nargin<3
     n_block=0;
     do_time_string=true;
+    do_message=true;
 elseif nargin<4
     n_block=varargin{1};
     do_time_string=true;
+    do_message=true;
+elseif nargin<5
+    n_block=varargin{1};
+    do_time_string=varargin{2};
+    do_message=true;
 else
     n_block=varargin{1};
     do_time_string=varargin{2};
+    do_message=varargin{3};
 end
 
 %% CALC
+
+if ~do_message
+    return
+end
 
 str=strrep(str,'%','%%');
 str=fcn_add_timestamp(str,do_time_string);
