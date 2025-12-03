@@ -13,7 +13,6 @@ function namCon = EHY_getConstituentNames(fname)
 %%
 namCon                     = {};
 modelType                  = EHY_getModelType(fname);
-
 %%
 switch modelType
 
