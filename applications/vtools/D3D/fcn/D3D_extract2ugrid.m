@@ -31,7 +31,7 @@ Data.dims = strsplit(Data.dimensions(2:end-1),',');
 nd = length(size(Data.val)); 
 a = [1,3:nd];
 str_append = ''; 
-errmsg = "fname2 = D3D_extract2ugrid(fname,'mesh2d_msed'"; 
+errmsg = sprintf("fname2 = D3D_extract2ugrid(fname,'%s'",varname); 
 for k = 1:length(a); 
     errmsg = sprintf("%s, '%s', %i", errmsg, Data.dims{a(k)}, 1); 
 end 
