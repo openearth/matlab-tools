@@ -10,14 +10,12 @@ function namCon = EHY_getConstituentNames(fname)
 %
 % support function of the EHY_tools
 % Julien Groenenboom - E: Julien.Groenenboom@deltares.nl
-
 %%
 namCon                     = {};
 modelType                  = EHY_getModelType(fname);
-
 %%
 switch modelType
-    
+
     case 'dfm'
         %% Delft3D FM constituents (determine constituents by elimination of everything NOT a constituent, not very elegant! (and prone to error...))
         param_hyd = {'station_x_coordinate'         , 'station_y_coordinate'              , 'station_id'               , 'station_name'              , 'waterlevel'  , 'bedlevel'   , ...
@@ -47,15 +45,15 @@ switch modelType
             'wind'                         , 'tair'                              , 'rhum'                     , 'clou'                                     ,  ...
             'qsun'                         , 'qeva'                              , 'qcon'                     , 'qlong'                                     ,  ...
             'qfreva'                       , 'qfrcon'                            , 'qtot'                     , 'patm'                                      } ;
-        
+
         more_param_hyd={'flowelem_xcc','flowelem_ycc','flowelem_zcc','flowelem_bac','flowelem_xzw','flowelem_yzw','flowelemcontour_x','flowelemcontour_y','flowelem_bl','elemlink',...
             'flowlink','flowlinktype','flowlink_xu','flowlink_yu','wgs84','flowelemdomain','flowlinkdomain','flowelemglobalnr','station_geom','station_geom_node_count',...
             'station_geom_node_coordx','station_geom_node_coordy','depth-averaged_x_velocity','depth-averaged_y_velocity','projected_coordinate_system','flowlink_lonu','flowlink_latu','taus','rich',...
             'source_sink_geom','source_sink_geom_node_count','source_sink_geom_node_coordx','source_sink_geom_node_coordy',...
-            'velocity_magnitude','discharge_magnitude','tausx','tausy','potential_density','brunt_vaisala_n2'};
+            'velocity_magnitude','discharge_magnitude','tausx','tausy','potential_density','brunt_vaisala_n2','viu','vicwws','vicwwu'};
         param_hyd=cat(2,param_hyd,more_param_hyd);
-         
-        
+
+
         handle  = ncinfo(fname);
         Vars    = lower({handle.Variables.Name});
         no_vars = length(Vars);
@@ -70,7 +68,7 @@ switch modelType
             end
         end
         namCon = Vars(index);
-        
+
     case 'd3d'
         %% Delft3D 4 constituents
         d3d  = vs_use (fname,'quiet');
@@ -78,10 +76,10 @@ switch modelType
         namCon = strtrim(cellstr(vs_get(d3d,grp,'NAMCON','quiet')));
         logi = ~cellfun(@isempty,strfind(lower(namCon),'energy'));
         namCon(logi) = [];
-        
+
     case 'simona'
         %% Simona constituents
         handle = qpfopen(fname);
         namCon = waquaio(handle,'','substances');
-        
+
 end
