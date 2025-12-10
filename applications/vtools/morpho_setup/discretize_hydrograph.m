@@ -35,6 +35,7 @@ parin=inputParser;
 addOptional(parin,'location_clear','')
 addOptional(parin,'fpaths_data_stations','')
 addOptional(parin,'extend_time_series',0)
+addOptional(parin,'compress_below_Q',0);
 addOptional(parin,'power_Q_dom',5/3)
 addOptional(parin,'fpath_dir_out',pwd)
 addOptional(parin,'dt',days(1))
@@ -47,6 +48,7 @@ extend_time_series=parin.Results.extend_time_series;
 power_Q_dom=parin.Results.power_Q_dom;
 fpath_dir_out=parin.Results.fpath_dir_out;
 dt=parin.Results.dt;
+compress_below_Q=parin.Results.compress_below_Q;
 
 %check
 if size(Q_steadyMorfac,2)~=2
@@ -65,16 +67,20 @@ time_limits=parse_time_limits(tim,time_limits);
 [tim,val]=extend_series(tim,val,time_limits,extend_time_series);
 
 [tim,val]=filter_series(tim,val,time_limits,fpath_dir_out,'01');
-
+ 
 [tim,val]=resample_series(tim,val,dt,time_limits,fpath_dir_out);
 
 [tim,val]=filter_series(tim,val,time_limits,fpath_dir_out,'02');
 
 idx=index_steady_discharge(power_Q_dom,Q_steady,val,tim,fpath_dir_out);
 
+plot_cdfs(val,Q_steady, idx, fpath_dir_out);
+
 [tim_dt,Q_disc_join]=join_Q(Q_steady,tim,idx,MorFac);
 
 write_Qseries(tim_dt,Q_disc_join,fpath_dir_out)
+
+[tim_dt,Q_disc_join]=compress_Qseries(tim_dt,Q_disc_join,compress_below_Q,fpath_dir_out)
 
 end %function
 
@@ -187,6 +193,27 @@ printV(gcf,fullfile(fpath_dir_out,'discrete.fig'))
 
 end %function
 
+function plot_cdfs(val,Q_steady, idx, fpath_dir_out )
+edges = [0:1:ceil(max(val))];
+[N_in,edges_in] = histcounts(val, edges, 'Normalization', 'probability');
+[N_out,edges_out] = histcounts(Q_steady(idx),edges, 'Normalization', 'probability');
+figure
+hold on; 
+plot(cumsum(N_in), edges_in(1:end-1)+0.5*diff(edges_in), 'b', 'DisplayName','resampled');
+plot(cumsum(N_out), edges_in(1:end-1)+0.5*diff(edges_in), 'r', 'DisplayName','discrete');
+ylabel(labels4all('Q', 1, 'en'));
+set(gca,'YScale', 'log'	)
+xlabel('cumulative frequency [-]');
+legend('location', 'southeast')
+box on; 
+grid on;
+xlim([0 1])
+ylim([10 10^(ceil(log10(max(val))*2)/2)]);
+printV(gcf,fullfile(fpath_dir_out,'histogram.png'))
+printV(gcf,fullfile(fpath_dir_out,'histogram.fig'))
+end
+
+
 %%
 
 function [tim_dt,Q_disc_join]=join_Q(Q_steady,tim,idx,MorFac)
@@ -268,5 +295,69 @@ end
 if time_limits(2)<=time_limits(1)
     error('The final time (position 2) is expected to be after the initial time (position 1) in `time_limits`')
 end
+end %function
+
+%%
+function [TimeDuration,Discharge] = compress_Qseries(tim_dt,Q_disc_join,compress_below_Q,fpath_dir_out)
+if compress_below_Q > 0;
+    flood_idx = find(Q_disc_join>=compress_below_Q); 
+    Discharge = Q_disc_join(1:flood_idx(1)-1);
+    TimeDuration = tim_dt(1:flood_idx(1)-1);
+    
+    for k = 1:length(flood_idx)-1; 
+        k1 = flood_idx(k);
+        Discharge = [Discharge; Q_disc_join(k1)];
+        TimeDuration = [TimeDuration; tim_dt(k1)];
+        k2 = flood_idx(k+1);
+        if k2 == k1 + 1; 
+            continue;
+        else
+            disp(Q_disc_join(k1+1:k2-1));
+            Qs = Q_disc_join(k1+1:k2-1);
+            Ts = tim_dt(k1+1:k2-1);
+            [~, min_idx] = min(Qs);
+            Qs_before = Qs(1:min_idx-1); 
+            Ts_before = Ts(1:min_idx-1); 
+            Qs_after = Qs(min_idx:end);
+            Ts_after = Ts(min_idx:end);
+            [~, ia_before, ib_before] = unique(Qs_before);
+            [~, ia_after, ib_after] = unique(Qs_after);
+            assert(size(TimeDuration,1)==size(Discharge,1));
+            for j = fliplr(ia_before.');
+                Discharge = [Discharge; Qs_before(j)];
+                TimeDuration = [TimeDuration; sum(Ts_before(Qs_before==Qs_before(j)))];
+                assert(size(TimeDuration,1)==size(Discharge,1))
+            end
+    
+            for j = ia_after.';
+                Discharge = [Discharge; Qs_after(j)];
+                TimeDuration = [TimeDuration; sum(Ts_after(Qs_after==Qs_after(j)))];
+                assert(size(TimeDuration,1)==size(Discharge,1))
+            end
+            assert(sum(TimeDuration) == sum(tim_dt(1:k2-1)));
+        end
+    end
+    Discharge = [Discharge; Q_disc_join(k2:end)];
+    TimeDuration = [TimeDuration; tim_dt(k2:end)];
+
+else
+    Discharge = Q_disc_join;
+    TimeDuration = tim_dt;
+end
+
+figure; 
+hold on;
+stairs(cumsum(days(tim_dt)),Q_disc_join,'b', 'DisplayName','discrete')
+stairs(cumsum(days(TimeDuration)),Discharge,'r', 'DisplayName','compressed')
+ylabel(labels4all('Q', 1, 'en'));
+set(gca,'YScale', 'linear'	)
+xlabel('days');
+legend('location', 'southeast')
+box on; 
+grid on;
+%xlim([0 1])
+%ylim([10 10^(ceil(log10(max(val))*2)/2)]);
+printV(gcf,fullfile(fpath_dir_out,'Qseries_compress.png'))
+printV(gcf,fullfile(fpath_dir_out,'Qseries_compress.fig'))
 
 end %function
