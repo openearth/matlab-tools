@@ -245,8 +245,19 @@ for kf=1:nf
     bol_x_read=ismember(measurements_images_loc.x,x_plot);
     bol_y_read=ismember(measurements_images_loc.y,y_plot);
 
-    z_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.z(bol_y_read,bol_x_read);
-    m_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.mask(bol_y_read,bol_x_read);
+    if (sum(bol_y_read) == 0) || (sum(bol_x_read) == 0)
+        warning('Nearest neighbour interpolation used while reading %s', fpath);
+        [xg,yg] = meshgrid(measurements_images_loc.x,measurements_images_loc.y);
+        Fz = scatteredInterpolant(reshape(xg,[],1),reshape(yg,[],1),reshape(measurements_images_loc.z,[],1), 'nearest', 'none');
+        Fm = scatteredInterpolant(reshape(xg,[],1),reshape(yg,[],1),reshape(measurements_images_loc.mask,[],1), 'nearest', 'none');
+        [xp,yp] = meshgrid(x_plot,y_plot);
+        z_plot = Fz(xp,yp);
+        m_plot = Fm(xp,yp);
+        %pcolor(x_plot,y_plot,z_plot); shading flat
+    else
+        z_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.z(bol_y_read,bol_x_read);
+        m_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.mask(bol_y_read,bol_x_read);
+    end
 
 end %kf
 
