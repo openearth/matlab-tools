@@ -245,19 +245,19 @@ for kf=1:nf
     bol_x_read=ismember(measurements_images_loc.x,x_plot);
     bol_y_read=ismember(measurements_images_loc.y,y_plot);
 
-    if (sum(bol_y_read) == 0) || (sum(bol_x_read) == 0)
-        warning('Nearest neighbour interpolation used while reading %s', fpath);
-        [xg,yg] = meshgrid(measurements_images_loc.x,measurements_images_loc.y);
-        Fz = scatteredInterpolant(reshape(xg,[],1),reshape(yg,[],1),reshape(measurements_images_loc.z,[],1), 'nearest', 'none');
-        Fm = scatteredInterpolant(reshape(xg,[],1),reshape(yg,[],1),reshape(measurements_images_loc.mask,[],1), 'nearest', 'none');
-        [xp,yp] = meshgrid(x_plot,y_plot);
-        z_plot = Fz(xp,yp);
-        m_plot = Fm(xp,yp);
-        %pcolor(x_plot,y_plot,z_plot); shading flat
-    else
-        z_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.z(bol_y_read,bol_x_read);
-        m_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.mask(bol_y_read,bol_x_read);
+    if (sum(bol_x_read) == 0)
+        warning('x-coordinate shifted by 0.5 in %s', fpath);
+        bol_x_plot=ismember(x_plot,measurements_images_loc.x+0.5);
+        bol_x_read=ismember(measurements_images_loc.x+0.5,x_plot);
     end
+    if (sum(bol_y_read) == 0)
+        warning('y-coordinate shifted by 0.5 in %s', fpath);
+        bol_y_plot=ismember(y_plot,measurements_images_loc.y+0.5);
+        bol_y_read=ismember(measurements_images_loc.y+0.5,y_plot);
+    end
+
+    z_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.z(bol_y_read,bol_x_read);
+    m_plot(bol_y_plot,bol_x_plot)=measurements_images_loc.mask(bol_y_read,bol_x_read);
 
 end %kf
 
