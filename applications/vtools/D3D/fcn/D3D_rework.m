@@ -436,7 +436,11 @@ if ischar(simdef.mdf.Dpuopt)
         case 'min_dps'
             simdef.mdf.Dpuopt=1;
         case 'mean_dps'
-            simdef.mdf.Dpuopt=2;
+            if simdef.mor.morphology==0
+                error('mean_dps not supported with morphology - update to min_dps or run morphology simulation with fixed bed')
+            else
+                simdef.mdf.Dpuopt=2;
+            end
         otherwise
             error('here')
     end
@@ -447,7 +451,11 @@ if isfield(simdef.mdf,'ExtrBl')==0
 end
 %If, in FM, we have mean bed levels, we need to extrapolate BC to get equilibrium. 
 if simdef.mdf.Dpuopt==2
-    simdef.mdf.ExtrBl=1;
+    if simdef.mdf.BedlevType == 1 
+        simdef.mdf.ExtrBl=1;
+    else
+        simdef.mdf.ExtrBl=0;
+    end
 end
 % if strcmp(simdef.mdf.Dpsopt,'MEAN')~=1
 %     error('adjust flow depth file accordingly')
@@ -872,20 +880,26 @@ if simdef.mdf.izbndpos==0
             end
             
         case 2
-            if simdef.mdf.Dpuopt==1
-                simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
-            elseif simdef.mdf.Dpuopt==2
-                simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx*simdef.ini.s; %displacement of boundary condition to ghost node
-                %If bed level is "mean", we shift one dx down. As a consequence:
-                % -The velocity at velocity points is exact.
-                % -The water depth at cell centre is $dh$ smaller than exact due to upwinding, being $dh=s*dx/2$.
-                % -The velocity at cell centers is exact because it is the same as the upwind velocity at velocity points.
-                % -The velocity at water level points for morphodynamics is smaller than exact due to incorrect water depth at cell centres. It is $u0/h_wrong$.
-
-                %ACal_corrected=ACal*qb_intended/qb_wrong
-                %qb_wrong: sediment transport with the wrong velocity at water level point
-                h_wrong=simdef.ini.h-simdef.ini.s*simdef.grd.dx/2;
-                simdef=D3D_correct_Acal(simdef,h_wrong);
+            if simdef.mdf.BedlevType==3 
+                if simdef.mdf.Dpuopt==2
+                    simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx*simdef.ini.s; %displacement of boundary condition to ghost node
+                end
+            else
+                if simdef.mdf.Dpuopt==1
+                    simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx/2*simdef.ini.s; %displacement of boundary condition to ghost node
+                elseif simdef.mdf.Dpuopt==2
+                    simdef.bct.etaw=simdef.bct.etaw-simdef.grd.dx*simdef.ini.s; %displacement of boundary condition to ghost node
+                    %If bed level is "mean", we shift one dx down. As a consequence:
+                    % -The velocity at velocity points is exact.
+                    % -The water depth at cell centre is $dh$ smaller than exact due to upwinding, being $dh=s*dx/2$.
+                    % -The velocity at cell centers is exact because it is the same as the upwind velocity at velocity points.
+                    % -The velocity at water level points for morphodynamics is smaller than exact due to incorrect water depth at cell centres. It is $u0/h_wrong$.
+    
+                    %ACal_corrected=ACal*qb_intended/qb_wrong
+                    %qb_wrong: sediment transport with the wrong velocity at water level point
+                    h_wrong=simdef.ini.h-simdef.ini.s*simdef.grd.dx/2;
+                    simdef=D3D_correct_Acal(simdef,h_wrong);
+                end
             end
     end
 end %izbndpos
