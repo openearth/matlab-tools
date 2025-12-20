@@ -11,7 +11,7 @@
 %usefull for SMT simulation.
 %
 %INPUT:
-%   - time_limits    = initial and final time to derive the time series [datetime(2,1) with time zone]. 
+%   - time_limits    = times to derive the time series [datetime(N,1) with time zone]. N>=2
 %   - Q_steadyMorFac = set of stedy discharges to discretize the time series and associated MorFac [double(nQ,2)].
 %
 %OUTPUT:
@@ -24,6 +24,8 @@
 %   - extend_time_series   = extend the time series in case the last value in the data is for a time before the end time limit. It copies the last value in the time serie to the end time of analysis. 1 = DO; 2 = DON'T DO. [double(1,1)]
 %   - fpath_dir_out        = path to folder to write the output file.
 %   - dt                   = time step for resampling the input time series before matching with the discharges in `Q_steady`. [duration(1,1)]
+%   - compress_below_Q     = Q below which discharges are combined [double(1,1)]
+%   - fall_ratio           = distribution of time of discharges for compress_below_Q for falling limb of the discharge wave (between 0 and 1) [double(1,1)]
 
 function [tim_dt,Q_disc_join]=discretize_hydrograph(time_limits,Q_steadyMorfac,varargin)
 
@@ -35,11 +37,11 @@ parin=inputParser;
 addOptional(parin,'location_clear','')
 addOptional(parin,'fpaths_data_stations','')
 addOptional(parin,'extend_time_series',0)
-addOptional(parin,'compress_below_Q',0);
 addOptional(parin,'power_Q_dom',5/3)
 addOptional(parin,'fpath_dir_out',pwd)
 addOptional(parin,'dt',days(1))
-
+addOptional(parin,'compress_below_Q',0);
+addOptional(parin,'fall_ratio',0.75)
 parse(parin,varargin{:})
 
 location_clear=parin.Results.location_clear;
@@ -49,11 +51,15 @@ power_Q_dom=parin.Results.power_Q_dom;
 fpath_dir_out=parin.Results.fpath_dir_out;
 dt=parin.Results.dt;
 compress_below_Q=parin.Results.compress_below_Q;
+fall_ratio=parin.Results.fall_ratio;
 
 %check
-if size(Q_steadyMorfac,2)~=2
-    error('`Q_steadyMorfac` should be have size [nQ,2], where `nQ` is the number of discharges.')
-end
+assert(size(Q_steadyMorfac,2)==2, '`Q_steadyMorfac` should be have size [nQ,2], where `nQ` is the number of discharges.');
+assert(compress_below_Q>=0, 'compress_below_Q is %g should be 0 or larger',compress_below_Q);
+if compress_below_Q > 0
+    assert(fall_ratio<=1,'fall_ratio is %g. It should be less or equal to 1',fall_ratio);
+    assert(fall_ratio>=0,'fall_ratio is %g. It should be larger or equal to 0',fall_ratio);
+end 
 
 Q_steady=Q_steadyMorfac(:,1);
 MorFac=Q_steadyMorfac(:,2);
@@ -61,26 +67,30 @@ MorFac=Q_steadyMorfac(:,2);
 %% CALC
 
 [tim,val]=load_data(location_clear,fpaths_data_stations);
+time_limits_start_end = time_limits([1,end]);
+time_limits_start_end=parse_time_limits(tim,time_limits_start_end);
 
-time_limits=parse_time_limits(tim,time_limits);
+[tim,val]=extend_series(tim,val,time_limits_start_end,extend_time_series);
 
-[tim,val]=extend_series(tim,val,time_limits,extend_time_series);
-
-[tim,val]=filter_series(tim,val,time_limits,fpath_dir_out,'01');
+[tim,val]=filter_series(tim,val,time_limits_start_end,fpath_dir_out,'01');
  
-[tim,val]=resample_series(tim,val,dt,time_limits,fpath_dir_out);
+[tim,val]=resample_series(tim,val,dt,time_limits_start_end,fpath_dir_out);
 
-[tim,val]=filter_series(tim,val,time_limits,fpath_dir_out,'02');
+[tim,val]=filter_series(tim,val,time_limits_start_end,fpath_dir_out,'02');
+
+[tim,val]=add_intermediate_dates(tim,val,time_limits);
 
 idx=index_steady_discharge(power_Q_dom,Q_steady,val,tim,fpath_dir_out);
 
 plot_cdfs(val,Q_steady, idx, fpath_dir_out);
 
-[tim_dt,Q_disc_join]=join_Q(Q_steady,tim,idx,MorFac);
+tim_sep_idx = discretize(tim.', time_limits);
 
-write_Qseries(tim_dt,Q_disc_join,fpath_dir_out)
+[tim_dt,Q_disc_join,tim_join]=join_Q(Q_steady,tim,idx,MorFac,tim_sep_idx);
 
-[tim_dt,Q_disc_join]=compress_Qseries(tim_dt,Q_disc_join,compress_below_Q,fpath_dir_out)
+[tim_dt,Q_disc_join]=compress_Qseries(tim_dt,Q_disc_join,compress_below_Q,tim_join,time_limits,fall_ratio,fpath_dir_out);
+
+write_Qseries(tim_dt,Q_disc_join,fpath_dir_out);
 
 end %function
 
@@ -183,40 +193,40 @@ if any(idx<1) || any(mod(idx,1)) || any(isnan(val)) || any(isnan(idx))
 end
 
 %plot
-figure
+figure;
 hold on; 
 plot(tim,val,'b')
 plot(tim,Q_steady(idx),'r')
 legend({'resampled','discrete'})
-printV(gcf,fullfile(fpath_dir_out,'discrete.png'))
-printV(gcf,fullfile(fpath_dir_out,'discrete.fig'))
+printV(gcf,fullfile(fpath_dir_out,'discrete.png'));
+printV(gcf,fullfile(fpath_dir_out,'discrete.fig'));
 
 end %function
 
 function plot_cdfs(val,Q_steady, idx, fpath_dir_out )
-edges = [0:1:ceil(max(val))];
+edges = 0:1:ceil(max(val));
 [N_in,edges_in] = histcounts(val, edges, 'Normalization', 'probability');
 [N_out,edges_out] = histcounts(Q_steady(idx),edges, 'Normalization', 'probability');
-figure
+figure;
 hold on; 
 plot(cumsum(N_in), edges_in(1:end-1)+0.5*diff(edges_in), 'b', 'DisplayName','resampled');
-plot(cumsum(N_out), edges_in(1:end-1)+0.5*diff(edges_in), 'r', 'DisplayName','discrete');
+plot(cumsum(N_out), edges_out(1:end-1)+0.5*diff(edges_out), 'r', 'DisplayName','discrete');
 ylabel(labels4all('Q', 1, 'en'));
 set(gca,'YScale', 'log'	)
 xlabel('cumulative frequency [-]');
 legend('location', 'southeast')
 box on; 
 grid on;
-xlim([0 1])
+xlim([0 1]);
 ylim([10 10^(ceil(log10(max(val))*2)/2)]);
-printV(gcf,fullfile(fpath_dir_out,'histogram.png'))
-printV(gcf,fullfile(fpath_dir_out,'histogram.fig'))
+printV(gcf,fullfile(fpath_dir_out,'histogram.png'));
+printV(gcf,fullfile(fpath_dir_out,'histogram.fig'));
 end
 
 
 %%
 
-function [tim_dt,Q_disc_join]=join_Q(Q_steady,tim,idx,MorFac)
+function [tim_dt,Q_disc_join,tim_join]=join_Q(Q_steady,tim,idx,MorFac,tim_sep_idx)
 
 %% PARSE
 
@@ -225,25 +235,25 @@ if numel(MorFac)~=numel(Q_steady)
 end
 
 %% CALC
-
+tim=tim(:);
 Q_disc=Q_steady(idx); %[nidx,1]
-bol_tr=diff(Q_disc)~=0; %a 1 at index 5 (i.e., bol_tr(5)=1) implies that there have been 5 days with a constant discharge.
-bol_trt=[false;bol_tr;false]; %[nidx+1,1]
-tim_cor=cen2cor(tim)'; %[nidx+1,1]. Output of `cen2cor` is [1,nt] no matter the input, we transpose. 
-tim_tr=tim_cor(bol_trt); %[ndisc-2,1]
-tim_tr=[tim_cor(1);tim_tr;tim_cor(end)]; %[ndisc,1]
+bol_tr=((diff(Q_disc)~=0) | (diff(tim_sep_idx)~=0)); %a 1 at index 5 (i.e., bol_tr(5)=1) implies that there have been 5 days with a constant discharge or an exact time wanted in the qseries.
+bol_trt=[false;bol_tr]; %[nidx,1]
+%tim_cor=cen2cor(tim)'; %[nidx+1,1]. Output of `cen2cor` is [1,nt] no matter the input, we transpose. 
+tim_tr=union(tim(bol_trt),tim([1,end])); 
+% tim_tr=[~, ia, ib] = union(tim_tr,tim([1,end]));
+% tim_tr=[tim(1),union(tim_tr,tim(end))]; %[ndisc+1,1]
 tim_dt=diff(tim_tr);
+%tim_dt=[tim_dt]; 
 bol_q=[true;bol_tr];
-Q_disc_join=Q_disc(bol_q);
-
+Q_disc_join=interp1(tim, Q_disc, tim_tr(1:end-1)); % Q_disc(bol_q);
+tim_join=[tim(1); tim(1)+cumsum(tim_dt(1:end-1))];
 %check
-if abs(sum(tim_dt)-(tim_cor(end)-tim_cor(1)))>1e-16
-    error('Something went wrong.')
-end
+assert(abs(sum(tim_dt)-(tim(end)-tim(1)))<1e-16 , ...
+    'Something went wrong.')
 
-if abs(sum(Q_disc.*seconds(diff(tim_cor)))-sum(Q_disc_join.*seconds(tim_dt)))>1e-16
-    error('Something went wrong')
-end
+assert(abs(sum(Q_disc(1:end-1).*seconds(diff(tim)))-sum(Q_disc_join.*seconds(tim_dt)))<1e-16, ...
+    'Something went wrong')
 
 tim_dt=apply_MorFac(bol_q,idx,tim_dt,MorFac);
 
@@ -298,66 +308,130 @@ end
 end %function
 
 %%
-function [TimeDuration,Discharge] = compress_Qseries(tim_dt,Q_disc_join,compress_below_Q,fpath_dir_out)
-if compress_below_Q > 0;
-    flood_idx = find(Q_disc_join>=compress_below_Q); 
-    Discharge = Q_disc_join(1:flood_idx(1)-1);
-    TimeDuration = tim_dt(1:flood_idx(1)-1);
-    
-    for k = 1:length(flood_idx)-1; 
-        k1 = flood_idx(k);
-        Discharge = [Discharge; Q_disc_join(k1)];
-        TimeDuration = [TimeDuration; tim_dt(k1)];
-        k2 = flood_idx(k+1);
-        if k2 == k1 + 1; 
-            continue;
-        else
-            disp(Q_disc_join(k1+1:k2-1));
-            Qs = Q_disc_join(k1+1:k2-1);
-            Ts = tim_dt(k1+1:k2-1);
-            [~, min_idx] = min(Qs);
-            Qs_before = Qs(1:min_idx-1); 
-            Ts_before = Ts(1:min_idx-1); 
-            Qs_after = Qs(min_idx:end);
-            Ts_after = Ts(min_idx:end);
-            [~, ia_before, ib_before] = unique(Qs_before);
-            [~, ia_after, ib_after] = unique(Qs_after);
-            assert(size(TimeDuration,1)==size(Discharge,1));
-            for j = fliplr(ia_before.');
-                Discharge = [Discharge; Qs_before(j)];
-                TimeDuration = [TimeDuration; sum(Ts_before(Qs_before==Qs_before(j)))];
-                assert(size(TimeDuration,1)==size(Discharge,1))
-            end
-    
-            for j = ia_after.';
-                Discharge = [Discharge; Qs_after(j)];
-                TimeDuration = [TimeDuration; sum(Ts_after(Qs_after==Qs_after(j)))];
-                assert(size(TimeDuration,1)==size(Discharge,1))
-            end
-            assert(sum(TimeDuration) == sum(tim_dt(1:k2-1)));
-        end
-    end
-    Discharge = [Discharge; Q_disc_join(k2:end)];
-    TimeDuration = [TimeDuration; tim_dt(k2:end)];
+function [TimeDuration,Discharge] = compress_Qseries(tim_dt,Q_disc_join,compress_below_Q,tim_join,time_limits,fall_ratio, fpath_dir_out)
 
+if compress_below_Q > 0
+    % flood_idx = find(Q_disc_join>=compress_below_Q); 
+    % Discharge = Q_disc_join(1:flood_idx(1)-1);
+    % TimeDuration = tim_dt(1:flood_idx(1)-1);
+    tolerance = 1e-10;
+    bol_q = discretize(Q_disc_join,[0,compress_below_Q,Inf]);
+    [~, ia, ~] = intersect(tim_join,time_limits);
+    idx_keep = union(find(bol_q>1),union([1,length(Q_disc_join)],ia)); 
+    idx_start = idx_keep(diff(idx_keep)>3);
+    idx_end = idx_keep(find(diff(idx_keep)>3)+1);
+    % figure
+    % clf; 
+    % hold on; 
+    % plot(tim_join, Q_disc_join)
+    % plot(tim_join(idx_start), Q_disc_join(idx_start), 'bo')
+    % plot(tim_join(idx_end), Q_disc_join(idx_end), 'b*')
+
+    N_dt = length(tim_dt);
+
+    TimeDuration = duration(0,0,zeros(N_dt,1));
+    Discharge = zeros(size(tim_dt));
+
+    N = length(idx_end);
+
+    TimeDuration(1:idx_start(1))=tim_dt(1:idx_start(1));
+    Discharge(1:idx_start(1))=Q_disc_join(1:idx_start(1));
+    for k = 1:N
+        assert(abs(sum(TimeDuration(1:idx_start(k))) - sum(tim_dt(1:idx_start(k))))<tolerance);
+
+        idx_compress = idx_start(k)+1:idx_end(k)-1;
+        tim_dt_compress=tim_dt(idx_compress); 
+        Q_disc_compress=Q_disc_join(idx_compress);
+        Q_first = Q_disc_join(idx_start(k));
+        Q_last = Q_disc_join(idx_end(k));
+    
+        [Qs, ~, ib] = unique(Q_disc_compress);
+    
+        t_combine = duration(0,0,accumarray(ib, seconds(tim_dt_compress))); 
+    
+        t_fall = t_combine(2:end)*fall_ratio;
+        Q_fall = Qs(2:end);
+        t_min = t_combine(1);
+        Q_min = Qs(1); 
+        t_rise  = t_combine(2:end)-t_fall; 
+        Q_rise = Qs(2:end);
+    
+        t_rise(Q_fall >= Q_first) = t_rise(Q_fall >= Q_first) + t_fall(Q_fall >= Q_first); 
+        t_fall(Q_fall >= Q_first) = 0;
+        t_fall(Q_rise >= Q_last) = t_fall(Q_rise >= Q_last) + t_rise(Q_rise >= Q_last); 
+        t_rise(Q_rise >= Q_last) = 0;
+
+        TimeDuration(idx_start(k)+1:idx_start(k)+2*length(Qs)-1) = [flipud(t_fall); t_min; t_rise];
+        Discharge(idx_start(k)+1:idx_start(k)+2*length(Qs)-1) = [flipud(Q_fall); Q_min; Q_rise];
+        assert(abs(sum(TimeDuration(idx_start(k)+1:idx_end(k)-1)) - sum(tim_dt(idx_start(k)+1:idx_end(k)-1)))<1e-10);
+
+        % figure(1); 
+        % clf; 
+        % plot(time_limits(1)+cumsum(TimeDuration(TimeDuration>0)),Discharge(TimeDuration>0));
+        % hold on; 
+        % plot(time_limits(1)+cumsum(tim_dt),Q_disc_join);
+
+        for gg = 1:k 
+            assert(abs(sum(TimeDuration(1:idx_end(gg)-1)) - sum(tim_dt(1:idx_end(gg)-1)))<tolerance);
+        end
+
+        if k < N
+            TimeDuration(idx_end(k):idx_start(k+1)) = tim_dt(idx_end(k):idx_start(k+1));
+            Discharge(idx_end(k):idx_start(k+1)) = Q_disc_join(idx_end(k):idx_start(k+1));
+            assert(abs(sum(TimeDuration(1:idx_start(k+1))) - sum(tim_dt(1:idx_start(k+1))))<tolerance);
+        else
+            TimeDuration(idx_end(k)) = tim_dt(idx_end(k));
+            Discharge(idx_end(k)) = Q_disc_join(idx_end(k));
+        end
+
+    end
+
+    TimeDuration(idx_end(N):N_dt)=tim_dt(idx_end(N):N_dt);
+    Discharge(idx_end(N):N_dt)=Q_disc_join(idx_end(N):N_dt);
+
+    assert(abs(sum(TimeDuration) - sum(tim_dt))<tolerance);
+    
+    Discharge = Discharge(TimeDuration > 0); 
+    TimeDuration = TimeDuration(TimeDuration > 0); 
 else
     Discharge = Q_disc_join;
     TimeDuration = tim_dt;
 end
 
-figure; 
+figure(1); 
+clf
 hold on;
-stairs(cumsum(days(tim_dt)),Q_disc_join,'b', 'DisplayName','discrete')
-stairs(cumsum(days(TimeDuration)),Discharge,'r', 'DisplayName','compressed')
+plot_step(time_limits(1)+[0; cumsum(tim_dt)],[Q_disc_join; NaN ],'b-', 'discrete');
+plot_step(time_limits(1)+[0; cumsum(TimeDuration)],[Discharge; NaN ],'r', 'compressed');
+datetick('x')
 ylabel(labels4all('Q', 1, 'en'));
 set(gca,'YScale', 'linear'	)
-xlabel('days');
-legend('location', 'southeast')
+%xlabel('days');
+legend('location', 'best')
 box on; 
 grid on;
 %xlim([0 1])
 %ylim([10 10^(ceil(log10(max(val))*2)/2)]);
-printV(gcf,fullfile(fpath_dir_out,'Qseries_compress.png'))
-printV(gcf,fullfile(fpath_dir_out,'Qseries_compress.fig'))
+printV(gcf,fullfile(fpath_dir_out,'Qseries_compress.png'));
+printV(gcf,fullfile(fpath_dir_out,'Qseries_compress.fig'));
 
 end %function
+
+function [tim_new,val_new]=add_intermediate_dates(tim,val,time_limits) 
+    tim_new = union(tim, time_limits(time_limits>tim(1) & time_limits<tim(end)));
+    val_new = interp1(tim,val,tim_new);
+end
+
+function p = plot_step(x,y,colstr,dispname) 
+x = x(:);
+y = y(:);
+
+x1 = x(1:end-1); 
+x2 = x(2:end); 
+y1 = y(1:end-1); 
+y2 = y(2:end); 
+
+p = plot([x1 x2 x2].',[y1 y1 y2].',colstr,'DisplayName',dispname, 'HandleVisibility','off'); 
+set(p(1), 'HandleVisibility','on');
+end
+
