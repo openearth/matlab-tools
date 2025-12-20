@@ -61,6 +61,8 @@ if compress_below_Q > 0
     assert(fall_ratio>=0,'fall_ratio is %g. It should be larger or equal to 0',fall_ratio);
 end 
 
+save(fullfile(fpath_dir_out,'input.mat'))
+
 Q_steady=Q_steadyMorfac(:,1);
 MorFac=Q_steadyMorfac(:,2);
 
