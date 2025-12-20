@@ -247,6 +247,7 @@ tim_dt=diff(tim_tr);
 %tim_dt=[tim_dt]; 
 bol_q=[true;bol_tr];
 Q_disc_join=interp1(tim, Q_disc, tim_tr(1:end-1)); % Q_disc(bol_q);
+MorFac_disc_join=interp1(tim, MorFac(idx), tim_tr(1:end-1));
 tim_join=[tim(1); tim(1)+cumsum(tim_dt(1:end-1))];
 %check
 assert(abs(sum(tim_dt)-(tim(end)-tim(1)))<1e-16 , ...
@@ -255,16 +256,14 @@ assert(abs(sum(tim_dt)-(tim(end)-tim(1)))<1e-16 , ...
 assert(abs(sum(Q_disc(1:end-1).*seconds(diff(tim)))-sum(Q_disc_join.*seconds(tim_dt)))<1e-16, ...
     'Something went wrong')
 
-tim_dt=apply_MorFac(bol_q,idx,tim_dt,MorFac);
+tim_dt=apply_MorFac(tim_dt,MorFac_disc_join);
 
 end %function
 
 %%
 
-function tim_dt=apply_MorFac(bol_q,idx,tim_dt,MorFac)
+function tim_dt=apply_MorFac(tim_dt,MorFac_disc_join)
 
-MorFac_disc=MorFac(idx);
-MorFac_disc_join=MorFac_disc(bol_q);
 tim_dt=tim_dt./MorFac_disc_join;
 
 end %function
@@ -316,10 +315,11 @@ if compress_below_Q > 0
     % TimeDuration = tim_dt(1:flood_idx(1)-1);
     tolerance = 1e-10;
     bol_q = discretize(Q_disc_join,[0,compress_below_Q,Inf]);
+    N_Qc = length(unique(Q_disc_join(Q_disc_join<compress_below_Q)));
     [~, ia, ~] = intersect(tim_join,time_limits);
     idx_keep = union(find(bol_q>1),union([1,length(Q_disc_join)],ia)); 
-    idx_start = idx_keep(diff(idx_keep)>3);
-    idx_end = idx_keep(find(diff(idx_keep)>3)+1);
+    idx_start = idx_keep(diff(idx_keep)>(2*N_Qc-1));       % (2*N_Qc-1) required for enough space for assignment - otherwise keep original 
+    idx_end = idx_keep(find(diff(idx_keep)>(2*N_Qc-1))+1);
     % figure
     % clf; 
     % hold on; 
