@@ -89,65 +89,7 @@ for iChapter = 1:nChapter
       ValueLine    = strtrim(ValueLine);
       end
       
-      if any(strcmpi(Chapter,{'SedimentFileInformation','MorphologyFileInformation'}))
-         Value   = ValueLine;
-         Comment = '';
-      else
-        if strcmp(ValueLine(1),'#') %V: I do not understand this. If the first character is a comment, the value should be empty. 
-            tmp = regexp(ValueLine,'#','split');
-            Value='';
-            Comment='';
-            if numel(tmp)>1
-            Value = tmp{2};
-            end
-            if numel(tmp)>2
-            Comment = tmp{3};
-            end
-        else
-            if strcmp(Keyword,'Percentiles')
-                Value=ValueLine;
-            elseif strcmp(Keyword,'Type')
-                Value=ValueLine;
-            else
-                [Value,Comment] = strtok(ValueLine);
-            end
-                
-        end
-         Value = strtrim(Value);
-         
-         if strcmp(Value(1),'#')
-            ind = strfind(Value,'#');
-            if length(ind)==2
-             Value = Value(ind(1)+1:ind(2)-1);
-            else
-             error('string contains not two #')
-            end
-         else
-%             if ~isempty(str2num(Value))
-%               Value = str2num(Value);
-%             end
-%             val_raw=Value;
-            val_num=str2double(Value);
-            if isnan(val_num) %it is a character
-%                 Value=val_raw;
-            else %it is a number
-                if any(strcmp(lower(Keyword),{'fileversion','percentile'})) %treat as string
-%                     Value=val_raw;
-                else %treat as number
-                    Value=val_num;
-                end
-            end
-         end
-      end
-      
-      i0 = strfind(Comment,'[');
-      i1 = strfind(Comment,']');
-     
-         unit    = '';
-      if length(i0)>0 & length(i1)>0 
-         unit    = Comment(i0(1)+1:i1(1)-1);
-         Comment = Comment(i1(1)+1:end);
-      end
+      [Value,Comment,unit]=get_value_comment_unit(Chapter,Keyword,ValueLine);
       
       DATA.(Chapter).(Keyword) = Value;
       UNIT.(Chapter).(Keyword) = unit;
@@ -189,6 +131,82 @@ else
    varargout = {DATA,UNIT,META};
 end
 
+end %   function delft3d_io_sed
+
+%%
+%% FUNCTIONS
+%%
+
+function [Value,Comment,unit]=get_value_comment_unit(Chapter,Keyword,ValueLine)
+
+Value='';
+Comment='';
+unit = '';
+
+if any(strcmpi(Chapter,{'SedimentFileInformation','MorphologyFileInformation'}))
+   Value   = ValueLine;
+   Comment = '';
+else
+   if numel(ValueLine)==0
+      return
+   elseif strcmp(ValueLine(1),'#') %V: I do not understand this. If the first character is a comment, the value should be empty. 
+      tmp = regexp(ValueLine,'#','split');
+      Value='';
+      Comment='';
+      if numel(tmp)>1
+      Value = tmp{2};
+      end
+      if numel(tmp)>2
+      Comment = tmp{3};
+      end
+   else
+      if strcmp(Keyword,'Percentiles')
+            Value=ValueLine;
+      elseif strcmp(Keyword,'Type')
+            Value=ValueLine;
+      else
+            [Value,Comment] = strtok(ValueLine);
+      end
+            
+   end
+   Value = strtrim(Value);
+   
+   if strcmp(Value(1),'#')
+      ind = strfind(Value,'#');
+      if length(ind)==2
+         Value = Value(ind(1)+1:ind(2)-1);
+      else
+         error('string contains not two #')
+      end
+   else
+%             if ~isempty(str2num(Value))
+%               Value = str2num(Value);
+%             end
+%             val_raw=Value;
+      val_num=str2double(Value);
+      if isnan(val_num) %it is a character
+%                 Value=val_raw;
+      else %it is a number
+            if any(strcmp(lower(Keyword),{'fileversion','percentile'})) %treat as string
+%                     Value=val_raw;
+            else %treat as number
+               Value=val_num;
+            end
+      end
+   end
+end
+
+i0 = strfind(Comment,'[');
+i1 = strfind(Comment,']');
+
+if length(i0)>0 & length(i1)>0 
+   unit    = Comment(i0(1)+1:i1(1)-1);
+   Comment = Comment(i1(1)+1:end);
+end
+
+end %end
+
+%% EXAMPLES OF SED FILE CONTENTS
 
 %[SedimentFileInformation]
 %   FileCreatedBy    = Delft3D-FLOW-GUI, Version: 3.41.02         
