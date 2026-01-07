@@ -50,7 +50,7 @@ grd4 = d3drotategrid(grd4,- 90+13+0*270)
 d3dplotgrid(grd4);
 
 try
-   ok=WLGRID('write',file,grd4.X,grd4.Y,enc);
+   ok=wlgrid('write','FileName', file, 'X', grd4.X,'Y', grd4.Y,'Enclosure', enc);
    disp(['Gridfile written to ',file]) 
 catch
    error('Function wlgrid could not be accessed')

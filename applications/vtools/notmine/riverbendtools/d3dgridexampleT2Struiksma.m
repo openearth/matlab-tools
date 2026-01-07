@@ -51,7 +51,7 @@ grd6 = d3dtranslategrid(grd5,-max(grd5.X(:))+L1,-max(grd5.Y(:))+R+W/2)
 d3dplotgrid(grd6);
 
 try
-   ok=wlgrid('write',file,grd6.X,grd6.Y,enc);
+   ok=wlgrid('write','FileName', file, 'X', grd6.X,'Y', grd6.Y,'Enclosure', enc);
    disp(['Gridfile written to ',file]) 
 catch
    error('Function wlgrid could not be accessed')

@@ -48,7 +48,7 @@ d3dplotgrid(grd);
 hold on; plot(x,y,'r.');
 
 try
-   ok=wlgrid('write',filename,grd.X,grd.Y,enc);
+   ok=wlgrid('write','FileName', filename, 'X', grd.X,'Y', grd.Y,'Enclosure', enc);
    disp(['Gridfile written to ',filename])
 catch
    error('Function wlgrid could not be accessed')
