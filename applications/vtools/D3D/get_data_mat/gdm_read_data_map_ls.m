@@ -56,7 +56,38 @@ else
     else %char
         [data,data.gridInfo]=EHY_getMapModelData(fpath_map,'varName',var_str,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'pliFile',pli,'tol_t',tol_t);
     end
+    data=get_only_one_time(data,time_dnum,tol_t);
     save_check(fpath_sal,'data');
 end
+
+
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function data=get_only_one_time(data,time_dnum,tol_t)
+
+nt=numel(data.times);
+if nt==0 
+    error('No time found in data');
+end
+if any(isnan(data.times))
+    error('Cannot select time when NaN times are present');
+end
+if nt==1
+    return; %nothing to do
+end
+
+%from here down, we have more than one time an no NaN
+messageOut(NaN,sprintf('More than one time for tolerance %f days found. Selecting closest.',tol_t));
+
+%find index of time to keep
+[~,kt]=min(abs(data.times-time_dnum));
+data.times=data.times(kt);;
+data.val=data.val(kt,:,:);
+data.val_staircase=data.val_staircase(kt,:,:);
 
 end %function

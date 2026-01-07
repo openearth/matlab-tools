@@ -177,7 +177,7 @@
 
 %% 2DH ls
 
-% tag='fig_map_2DH_ls_01';
+% tag='PRF';
 % in_plot.(tag).do=1;
 % in_plot.(tag).do_p=1; %regular plot
 % in_plot.(tag).do_p_single=1; %plot single result
