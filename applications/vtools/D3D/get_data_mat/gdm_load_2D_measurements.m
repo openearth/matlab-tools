@@ -83,7 +83,7 @@ end
 %`v2struct` is a bit dangerous. 
 tim_tol_dur=in_p.tol_time_measurements; 
 tol_x=in_p.tol_x_measurements;
-tol_y=in_p.tol_x_measurements;
+tol_y=in_p.tol_y_measurements;
 
 %% CALC
 
@@ -206,7 +206,7 @@ in_p=isfield_default(in_p,'tol_y_measurements',1000);
 
 %`v2struct` is a bit dangerous. 
 tol_x=in_p.tol_x_measurements;
-tol_y=in_p.tol_x_measurements;
+tol_y=in_p.tol_y_measurements;
 
 %% CALC
 
@@ -289,7 +289,7 @@ in_p=isfield_default(in_p,'measurements_pol_location',[-3:1:1,1:1:3]);
 
 %`v2struct` is a bit dangerous. 
 tol_x=in_p.tol_x_measurements;
-tol_y=in_p.tol_x_measurements;
+tol_y=in_p.tol_y_measurements;
 tag_variable=in_p.measurements_tag_variable;
 tag_count=in_p.measurements_tag_count;
 tag_area=in_p.measurements_tag_area;
