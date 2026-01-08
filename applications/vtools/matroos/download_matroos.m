@@ -15,8 +15,6 @@
 
 % #!/bin/bash
 % 
-% #matroos source: deltares or rws
-% var_matroos=deltares
 % 
 % #periode1: 20070930 20090101 (niet beschikbaar in deltares matroos hirlam v7.2, periode1+2 niet beschikbaar in rws matroos)
 % #periode2: 20101130 20120101
@@ -37,19 +35,6 @@
 %     var_url="http://matroos.$var_matroos.nl/matroos/scripts/matroos.pl?source=knmi_h11_v70&color=gribvar1_fixed_height,gribvar33,gribvar34&interpolate=count&from=$var_tstartlong&to=$var_tstoplong&z=0&xmin=17000&xmax=165000&ymin=405000&ymax=505000&coords=RD&xn=$var_xn&yn=$var_yn&format=nc&fieldoutput=air_pressure_fixed_height,eastward_wind,northward_wind"
 % fi
 % 
-% echo $var_url
-% 
-% if [ "$var_matroos" = "deltares" ]; then
-%     #Deltares matroos
-%     var_filename=$(printf 'data_knmih11v72_deltares_RD_%s_%s_GMT-v2.nc' "$var_tstart" "$var_tstop")
-%     wget --proxy=off -O $var_filename $var_url
-% elif [ "$var_matroos" = "rws" ]; then
-%     #rws matroos
-%     var_filename=$(printf 'data_knmih11v72_rws_RD_%s_%s_GMT-v2.nc' "$var_tstart" "$var_tstop")
-%     wget --user deltares --password Cae_waiYoh0n --proxy=off -O $var_filename $var_url
-% else
-%     echo var_matroos not valid
-% fi
 
 function download_matroos(path_dir_out,tim_0,tim_f,varargin)
 
@@ -60,7 +45,6 @@ parin=inputParser;
 addOptional(parin,'dt',tim_f-tim_0);
 addOptional(parin,'var_xn',38)
 addOptional(parin,'var_yn',26)
-addOptional(parin,'var_matroos','deltares')
 addOptional(parin,'x_min',17000)
 addOptional(parin,'x_max',165000)
 addOptional(parin,'y_min',405000)
@@ -106,12 +90,7 @@ for kt=1:nt
         var_url=sprintf('http://matroos.%s.nl/matroos/scripts/matroos.pl?source=knmi_h11_v70&color=gribvar1_fixed_height,gribvar33,gribvar34&interpolate=count&from=%s&to=%s&z=0&xmin=%d&xmax=%d&ymin=%d&ymax=%d&coords=%s&xn=%d&yn=%d&format=%s&fieldoutput=air_pressure_fixed_height,eastward_wind,northward_wind',var_matroos,t0_str,tf_str,x_min,x_max,y_min,y_max,coords,var_xn,var_yn,f_format);
     end
 
-    switch var_matroos
-        case 'deltares'
-            fprintf(fid_all,'wget --proxy=off -O %s "%s" \n',file_name,var_url);
-        case 'rws'
-            fprintf(fid_all,'wget --user deltares --password Cae_waiYoh0n --proxy=off -O %s "%s" \n',file_name,var_url);
-    end
+    fprintf(fid_all,'wget --proxy=off -O %s "%s" \n',file_name,var_url);
 
     fprintf('writing file %4.2f %% \n',kt/nt*100);
 end %kt
