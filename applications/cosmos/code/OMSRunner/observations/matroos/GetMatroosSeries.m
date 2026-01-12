@@ -3,7 +3,7 @@ function [ t, values ] = GetMatroosSeries(unit,source,location,tstart,tstop)
 % eg.
 %[t,wl]=get_series('waterlevel','observed','hoekvanholland','200802190000','200802210000');
 
-serverurl='http://deltares:M@TR00$@matroos.deltares.nl/direct/get_series.php?';
+serverurl='http://matroos.deltares.nl/direct/get_series.php?';
 
 %
 % available units, sources and locations 
@@ -106,7 +106,7 @@ fprintf('last time=%s\n',tstop);
 urlChar = sprintf('%sunit=%s&source=%s&loc=%s&tstart=%s&tstop=%s', ...
     serverurl,unit,source,location,tstart,tstop);
 %disp(urlChar);
-%eg temp=geturl('http://svsd:n0v2006@matroos.deltares.nl/direct/get_series.php?loc=hoekvanholland&source=observed&unit=waterlevel&tstart=200802180000&tstop=200802190000')
+%eg temp=geturl('http://matroos.deltares.nl/direct/get_series.php?loc=hoekvanholland&source=observed&unit=waterlevel&tstart=200802180000&tstop=200802190000')
 allLines = geturl_matroos(urlChar);
 
 %
