@@ -91,12 +91,9 @@ end
 in_p=isfield_default(in_p,'do_rkm',0);
 in_p=isfield_default(in_p,'is_diff',0);
 in_p=isfield_default(in_p,'xdir','normal');
-
-in_p=isfield_default(in_p,'unit',NaN); %backward compatibility. The right name is `variable`
-in_p=isfield_default(in_p,'variable','');
-if all(~isnan(in_p.unit))
-    in_p.variable=in_p.unit;
-end
+in_p=isfield_default(in_p,'unit',1); %factor for conversion
+in_p=isfield_default(in_p,'variable',''); %variable name
+in_p=isfield_default(in_p,'Lref','+NAP');
 
 v2struct(in_p)
 
@@ -330,7 +327,7 @@ if do_rkm
 else
     xlabels{kr,kc}=labels4all('x',1,lan);
 end
-ylabels{kr,kc}=labels4all('eta',1,lan);
+ylabels{kr,kc}=labels4all('eta',1,lan,'Lref',Lref);
 % ylabels{kr,kc}=labels4all('dist_mouth',1,lan);
 % lims_d.x(kr,kc,1:2)=seconds([3*3600+20*60,6*3600+40*60]); %duration
 % lims_d.x(kr,kc,1:2)=[datenum(1998,1,1),datenum(2000,01,01)]; %time

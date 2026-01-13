@@ -170,7 +170,7 @@ if isfield(in_p,'cmap')==0
     in_p.cmap=NaN;
 end
 if isfield(in_p,'do_leg')==0
-    in_p.do_leg=1;
+    in_p.do_leg=NaN;
 end
 if isfield(in_p,'is_dom')==0
     in_p.is_dom=0;
@@ -654,11 +654,18 @@ end
 
 %% LEGEND
 
+%legend default
+if isnan(do_leg) %nothing has been specified
+    if nv>1 || plot_mea
+        do_leg=1;
+    else
+        do_leg=0;
+    end
+end
+
 kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
-% %han.leg=legend(han.leg,{'hyperbolic','elliptic'},'location','northoutside','orientation','vertical');
-% %han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,1:2),1,2),{'\tau<1','\tau>1'},'location','south');
-if (plot_mea || nv>1 && ~do_time) && do_leg
+if do_leg
     str_leg=strrep(str_leg,'_','\_');
     han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),str_leg,'location',leg_loc);
     pos.leg=han.leg(kr,kc).Position;
