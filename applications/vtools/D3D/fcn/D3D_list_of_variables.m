@@ -27,9 +27,10 @@ function D3D_list_of_variables
 
 %   10  'umag'       = depth averaged velocity [m/s]; call with <layers> to do an average of the selected layers
 %       'umag_layer' = velocity magnitude in each layer (for 3D) [m/s]; use in combination with `layer`
+%       'mesh2d_ucz  = vertical velocity component at cell centers [m/s]; 
 %   11  'uv'         = velocity [m/s] 
-%       'vpara'      = velocity parallel to a polyline [m/s] 
-%       'vperp'      = velocity perpendicular to a polyline [m/s] 
+%       'vpara'      = velocity parallel to a polyline (also in 3D) [m/s] 
+%       'vperp'      = velocity perpendicular to a polyline (also in 3D) [m/s] 
 
 %   18  'Q'     = water discharge (as u*h*B) [m^3/s]
 %   16  'qsp'   = specific water discharge (as u*h) [m^2/2] -> I think at some point `q` was accepted. It should not. Better not to have case sensitive options. 
