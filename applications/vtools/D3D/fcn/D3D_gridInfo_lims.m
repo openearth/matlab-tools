@@ -23,6 +23,9 @@ elseif isfield(gridInfo,'offset')
 %     error('what to do with rkm')
     xlims=[min(gridInfo.x_node(:)),max(gridInfo.x_node)];
     ylims=[min(gridInfo.y_node(:)),max(gridInfo.y_node)];
+else
+    xlims=[NaN,NaN];
+    ylims=[NaN,NaN];
 end
 
 tol=0.05;

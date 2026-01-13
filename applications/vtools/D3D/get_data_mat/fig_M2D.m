@@ -116,6 +116,11 @@ if isfield(in_p,'cmap_cut_edges')==0
     in_p.cmap_cut_edges=NaN;
 end
 %For D3D4 we need a reshaped version for plotting vectors and dealing with limits. It does nothing to FM. 
+in_p = isfield_default(in_p, 'gridInfo', struct()); 
+% if isempty_struct(in_p.gridInfo)
+%     in_p.gridInfo
+% end
+
 if isfield(in_p,'gridInfo_v')==0
     in_p.gridInfo_v=vectorize_structure(in_p.gridInfo);
 end
@@ -159,7 +164,7 @@ if ~isnan(in_p.contour_lines)
 else
     in_p=isfield_default(in_p,'plot_contour',0);
 end
-
+in_p=isfield_default(in_p,'val',NaN);
 
 v2struct(in_p)
 
@@ -180,11 +185,11 @@ end
 
 %% units
 
-switch unit
-    case {'cl','cl_surf'}
-        clims=sal2cl(1,clims);
-        val=sal2cl(1,val);
-end
+% switch unit
+%     case {'cl','cl_surf'}
+%         clims=sal2cl(1,clims);
+%         val=sal2cl(1,val);
+% end
 
 %% filter values
 
