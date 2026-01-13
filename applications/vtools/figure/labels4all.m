@@ -98,7 +98,7 @@ str_background=sprintf('%s %s%s',str_var,str_b,str_un);
     case 'nl'
         str_s='standaardafwijking';
     case 'es'
-        str_s='desviación estándar';
+        str_s='desviaciï¿½n estï¿½ndar';
  end
 str_std=sprintf('%s %s%s',str_s,str_var,str_un_nr);
 
@@ -167,7 +167,7 @@ switch un_type
             case 1/1000
                 str_un=' [km]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'L'
         switch un
@@ -176,7 +176,7 @@ switch un_type
             case 1/1000
                 str_un=' [km]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'L3/T'
         switch un
@@ -185,7 +185,7 @@ switch un_type
 %             case 1/1000
 %                 str_un=' [km]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'L3'
         switch un
@@ -194,7 +194,7 @@ switch un_type
 %             case 1/1000
 %                 str_un=' [km]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case '-'
         switch lower(val)
@@ -212,7 +212,7 @@ switch un_type
             case 1
                 str_un=' [m/s]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case {'T','1/T'}
         switch un
@@ -237,7 +237,7 @@ switch un_type
                         str_un=' [jaar]';
                 end
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
         if strcmp(un_type,'1/T')
             str_un=strrep(str_un,']','^-1]');
@@ -247,75 +247,75 @@ switch un_type
             case 1
                 str_un=' [m^2/s]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'degrees'
         switch un
             case 1
-                str_un=' [º N]';
+                str_un=' [ï¿½ N]';
             otherwise 
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'M/L2'
         switch un
             case 1
                 str_un=' [kg/m^2]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'M'
         switch un
             case 1
                 str_un=' [kg]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'M/T'
         switch un
             case 1
                 str_un=' [kg/s]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'M/T2/L'
         switch un
             case 1
                 str_un=' [Pa]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'L1/2/T'
         switch un
             case 1
                 str_un=' [m^{1/2}/s]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'L2'
         switch un
             case 1
                 str_un=' [m^2]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'M/T/L'
         switch un
             case 1
                 str_un=' [Pa s]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case 'degC'
         switch un
             case 1
                 str_un=' [deg C]';
             otherwise
-                error('this factor is missing')
+                error('The factor %f is missing for unit %s',un,un_type)
         end
     case '?'
         str_un=' [?]';
     otherwise
-        error('This unit is missing')
+        error('Unit %s missing',un_type)
 end %un_type
 
 end %function

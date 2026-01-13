@@ -31,6 +31,10 @@ function fig_M2D(in_p)
 
 %% DEFAULTS
 
+if nargin==0
+    in_p=struct();
+end
+
 if isfield(in_p,'fig_visible')==0
     in_p.fig_visible=1;
 end
@@ -115,6 +119,15 @@ end
 if isfield(in_p,'cmap_cut_edges')==0
     in_p.cmap_cut_edges=NaN;
 end
+
+in_p = isfield_default(in_p, 'gridInfo', struct()); 
+if isempty_struct(in_p.gridInfo)
+    in_p.gridInfo.face_nodes_x=[0;1;1;0];
+    in_p.gridInfo.face_nodes_y=[0;0;1;1];
+    in_p.gridInfo.Xcen=[0.5];
+    in_p.gridInfo.Ycen=[0.5];
+end
+
 %For D3D4 we need a reshaped version for plotting vectors and dealing with limits. It does nothing to FM. 
 if isfield(in_p,'gridInfo_v')==0
     in_p.gridInfo_v=vectorize_structure(in_p.gridInfo);
@@ -159,7 +172,8 @@ if ~isnan(in_p.contour_lines)
 else
     in_p=isfield_default(in_p,'plot_contour',0);
 end
-
+in_p=isfield_default(in_p,'val',NaN);
+in_p=isfield_default(in_p,'variable','');
 
 v2struct(in_p)
 
@@ -180,7 +194,7 @@ end
 
 %% units
 
-switch unit
+switch variable
     case {'cl','cl_surf'}
         clims=sal2cl(1,clims);
         val=sal2cl(1,val);
@@ -207,9 +221,7 @@ end
 
 val(~bol_in)=NaN; %do not plot points outside the domain
 
-if isnan(zlims)
-    zlims=clims;
-end
+
 
 %% SIZE
 
@@ -278,11 +290,13 @@ else
 end
 cbar(kr,kc).location='northoutside';
 
-in_p.variable=unit; %this is a mess
-in_p.unit=fact; %this is a mess
 in_p.frac=str_idx;
 in_p.val=val; %it can be filtered
 [cmap,cbar(kr,kc).label,clims]=gdm_cmap_and_string(in_p,val);
+
+if isnan(zlims)
+    zlims=clims;
+end
 
 %% LABELS AND LIMITS
 
@@ -396,7 +410,7 @@ kr=1; kc=1;
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
 if is_faces
     % if do_3D
-        EHY_plotMapModelData(gridInfo,val,'t',1);
+        % EHY_plotMapModelData(gridInfo,val,'t',1);
     %     EHY_plotMapModelData(gridInfo,val,'t',1,'edgecolor',edgecolor,'linestyle',linestyle); 
     % else
         EHY_plotMapModelData(gridInfo,val,'t',1); 

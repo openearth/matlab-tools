@@ -26,13 +26,31 @@ function [y0,y1,y2,y0m] = sgolayirreg(x,y,degree,halfwindowsize);
 % You should have received a copy of the GNU General Public License
 % along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+% temporarily set to error such that it can be caught
+s = warning('error', 'MATLAB:polyfit:RepeatedPointsOrRescale');
+
+
 nmax =length(x);
 xe = [x(1)+[-halfwindowsize:-1]*(x(2)-x(1)),x,x(end)+[1:halfwindowsize]*(x(end)-x(end-1))];
 ye = [y(1)+[-halfwindowsize:-1]*(y(2)-y(1)),y,y(end)+[1:halfwindowsize]*(y(end)-y(end-1))];
-for k = 1+halfwindowsize:nmax+halfwindowsize;
+for k = 1+halfwindowsize:nmax+halfwindowsize
     nl = k-halfwindowsize;%max(1,k-halfwin);
     nr = k+halfwindowsize;%min(nmax+halfwin,k+halfwin);
-    p = polyfit(xe(nl:nr),ye(nl:nr),degree);
+    succes = false; 
+    d=degree; 
+    while ~succes
+        try
+            p = polyfit(xe(nl:nr),ye(nl:nr),d);
+            succes = true;
+        catch
+            d = d-1; 
+        end
+    end
+    % d = degree; 
+    % while (strcmp(lastwarn, 'Polynomial is badly conditioned. Add points with distinct X values, reduce the degree of the polynomial, or try centering and scaling as described in HELP POLYFIT.') & d>0)
+    %     d = d-1; 
+    %     p = polyfit(xe(nl:nr),ye(nl:nr),d);
+    % end
     y0(k-halfwindowsize) = polyval(p,xe(k));
     p1 = polyder(p);
     p2 = polyder(p1);
@@ -53,3 +71,5 @@ y0m=0.5*(y0L(2:nmax)+y0R(1:nmax-1));
 % xmm = 0.5*xm(1:end-1)+0.5*xm(2:end);
 % plot(xmm,diff(diff(y)./diff(x))./diff(xm),x,ps2,'r-')
 
+%reset to warning
+warning(s);
