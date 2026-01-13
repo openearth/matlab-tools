@@ -70,7 +70,7 @@ in_p.tim_0=tim_dtime_plot(1); %pass to make difference of measurements
 
 for kvar=1:nvar %variable
     var_str_original=flg_loc.var{kvar};
-    [~,~,varname_load_mat,in_p.unit]=D3D_var_num2str_structure(var_str_original,simdef(1));
+    [~,~,varname_load_mat,in_p.variable]=D3D_var_num2str_structure(var_str_original,simdef(1));
     
     layer=gdm_layer(flg_loc,gridInfo_ref.no_layers,varname_load_mat,kvar,flg_loc.var{kvar});
     [var_idx,~]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);

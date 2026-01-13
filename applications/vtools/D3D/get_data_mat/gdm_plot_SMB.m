@@ -481,8 +481,8 @@ for kpol=1:npol
     data(bol_get)=rkmv.rkm_cen(kpol);
 end %kpol
 in_p.val=data;
-in_p.unit='rkm';
-in_p.fact=1/1000; %to km
+in_p.variable='rkm';
+in_p.unit=1/1000; %to km
 in_p.clims=NaN;
 in_p.do_title=0;
 %in_p.cmap=repmat(brewermap(9,'set1'),[ceil(npol/9),1]); %does not work well. The colormap is the same when we focus on a small area.
@@ -671,7 +671,7 @@ end
 
 %%
 
-function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,unit)
+function plot_xvt(fid_log,flg_loc,s,tim_dtime_p,kvar,data_xvt,data_xvt0,simdef,sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,variable)
 
 %% PARSE
 
@@ -738,7 +738,7 @@ for ksim=1:nsim
         val_kref_t=squeeze(data_xvt.(statis)(:,kref,:))';
         val_kref_0=squeeze(data_xvt0.(statis)(:,kref,:))';
 
-        [in_p.variable,in_p.is_std]=adjust_label(flg_loc,kvar,unit,statis);
+        [in_p.variable,in_p.is_std]=adjust_label(flg_loc,kvar,variable,statis);
         in_p.clab_str=in_p.variable;
 
         %val
