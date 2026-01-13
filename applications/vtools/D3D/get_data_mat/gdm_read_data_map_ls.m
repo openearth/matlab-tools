@@ -82,7 +82,12 @@ if nt==1
 end
 
 %from here down, we have more than one time an no NaN
-messageOut(NaN,sprintf('More than one time for tolerance %f days found. Selecting closest.',tol_t));
+if isduration(tol_t)
+    tol_t_num=days(tol_t);
+else
+    tol_t_num=tol_t;
+end
+messageOut(NaN,sprintf('More than one time for tolerance %f days found. Selecting closest.',tol_t_num));
 
 %find index of time to keep
 [~,kt]=min(abs(data.times-time_dnum));
