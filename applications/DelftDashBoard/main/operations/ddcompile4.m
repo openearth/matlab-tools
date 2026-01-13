@@ -64,13 +64,13 @@ function ddcompile4
 % FOR THIS SCRIPT TO RUN, YOUR WORKING FOLDER MUST BE THE MAIN DELFT
 % DASHBOARD SOURCE FOLDER (e.g. d:\checkouts\OET\trunk\matlab\applications\DelftDashBoard\)
 
-compilefolder='d:/delftdashboardsetup/'; % Folder where executable and data will be created
+compilefolder='c:/work/temp/delftdashboardsetup/'; % Folder where executable and data will be created
 
 % addpath(genpath('d:\checkouts\ShorelineS\trunk\'));
 
 include_additional_toolboxes=0;
 include_additional_models=0;
-revisionnumber='18219';
+revisionnumber='88888';
 
 if ~exist(compilefolder,'dir')
     mkdir(compilefolder);

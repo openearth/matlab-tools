@@ -90,7 +90,8 @@ end
 fname_depth=fname;
 
 % Consituents
-cl=nc_varget(fname,'tidal_constituents');
+%cl=nc_varget(fname,'tidal_constituents');
+cl=ncread(fname,'tidal_constituents')';
 for i=1:size(cl,1)
     cons{i}=upper(deblank(cl(i,:)));
 end
@@ -103,8 +104,10 @@ ymax=yl(2);
 
 % Get dimensions
 
-x=nc_varget(fname_needed,lonstr);
-y=nc_varget(fname_needed,latstr);
+% x=nc_varget(fname_needed,lonstr);
+% y=nc_varget(fname_needed,latstr);
+x=ncread(fname_needed,lonstr);
+y=ncread(fname_needed,latstr);
 
 if x(2)<x(1) % this happens when e.g. x(1)=-359.875 and x(2)=0.125
     x(1)=x(1)-360;
@@ -231,27 +234,33 @@ if ~iok
     
     % pasting - left
     
-    a =  nc_varget(fname_needed,ampstr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
-    p =  nc_varget(fname_needed,phistr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
-    ampleft(:,:)   = a;
-    phileft(:,:)   = p;
+    % a =  nc_varget(fname_needed,ampstr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
+    % p =  nc_varget(fname_needed,phistr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
+    a =  ncread(fname_needed,ampstr,[icnst iy1 ix1left],[1 iy2-iy1+1 ix2left-ix1left+1]);
+    p =  ncread(fname_needed,phistr,[icnst iy1 ix1left],[1 iy2-iy1+1 ix2left-ix1left+1]);
+    ampleft(:,:)   = squeeze(a);
+    phileft(:,:)   = squeeze(p);
 %     
 %     if getd
 %         dpleft   = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
 %     end
     
     % pasting - right
-    a =  nc_varget(fname_needed,ampstr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
-    p =  nc_varget(fname_needed,phistr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
-    ampright(:,:)   = a;
-    phiright(:,:)   = p;
+    % a =  nc_varget(fname_needed,ampstr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
+    % p =  nc_varget(fname_needed,phistr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
+    a =  ncread(fname_needed,ampstr,[icnst iy1 ix1right],[1 iy2-iy1+1 ix2right-ix1right+1]);
+    p =  ncread(fname_needed,phistr,[icnst iy1 ix1right],[1 iy2-iy1+1 ix2right-ix1right+1]);
+    ampright(:,:)   = squeeze(a);
+    phiright(:,:)   = squeeze(p);
 %     if getd
 %         dpright  = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
 %     end
     
     % Now paste
-    amp   = permute([permute(ampleft,[2 1 3]) permute(ampright,[2 1 3])],[2 1 3]);
-    phi   = permute([permute(phileft,[2 1 3]) permute(phiright,[2 1 3])],[2 1 3]);
+    % amp   = permute([permute(ampleft,[2 1 3]) permute(ampright,[2 1 3])],[2 1 3]);
+    % phi   = permute([permute(phileft,[2 1 3]) permute(phiright,[2 1 3])],[2 1 3]);
+    amp   = [ampleft ampright];
+    phi   = [phileft phiright];
 %     if getd
 %         depth = [dpleft' dpright'];
 %     end
@@ -263,10 +272,14 @@ else
     
     %% No pasting needed
     % Get values
-    a =  nc_varget(fname_needed,ampstr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
-    p =  nc_varget(fname_needed,phistr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
-    amp   = a;
-    phi   = p;
+    % a =  nc_varget(fname_needed,ampstr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
+    % p =  nc_varget(fname_needed,phistr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
+    a =  ncread(fname_needed,ampstr,[icnst iy1 ix1],[1 iy2-iy1+1 ix2-ix1+1]);
+    p =  ncread(fname_needed,phistr,[icnst iy1 ix1],[1 iy2-iy1+1 ix2-ix1+1]);
+    % amp   = a;
+    % phi   = p;
+    amp   = squeeze(a);
+    phi   = squeeze(p);
 %     
 %     % Get depth
 %     switch tp
@@ -288,8 +301,8 @@ end
 
 % Save in structure
 amp = amp*correction_factor;
-amp=permute(amp,[2 1]);
-phi=permute(phi,[2 1]);
+% amp=permute(amp,[2 1]);
+% phi=permute(phi,[2 1]);
 
 
 

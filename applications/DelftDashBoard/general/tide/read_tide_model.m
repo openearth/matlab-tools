@@ -125,7 +125,8 @@ if ~isempty(findstr(tidefile, 'tpxo80'))
 elseif ~isempty(findstr(tidefile, 'fes2014'))    
     constituents={'2N2','EPS2','J1','K1','K2','L2','LA2','M2','M3','M4','M6','M8','MF','MKS2','MM','MN4','MS4','MSF','MSQM','MTM','MU2','N2','N4','NU2','O1','P1','Q1','R2','S1','S2','S4','SA','SSA','T2'};
 else
-    cnst=nc_varget(tidefile,'tidal_constituents');
+    % cnst=nc_varget(tidefile,'tidal_constituents');
+    cnst=ncread(tidefile,'tidal_constituents')';
     cnst=upper(cnst);
     for ic=1:size(cnst,1)
         constituents{ic}=deblank(cnst(ic,:));

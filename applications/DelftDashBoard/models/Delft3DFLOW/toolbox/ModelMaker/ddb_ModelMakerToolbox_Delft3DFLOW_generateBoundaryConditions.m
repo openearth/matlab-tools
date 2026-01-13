@@ -121,7 +121,8 @@ try
     if igetwl
         
       % Get waterlevels
-      cnst=nc_varget(tidefile,'tidal_constituents');
+      % cnst=nc_varget(tidefile,'tidal_constituents');
+      cnst=ncread(tidefile,'tidal_constituents')';
       handles.toolbox.tidedatabase.constituentList = cellstr(cnst);
 %      [lon,lat, gt, depth, conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
       [gt, conList] = read_tide_model(tidefile,'type','h','x',xx,'y',yy,'constituent','all');

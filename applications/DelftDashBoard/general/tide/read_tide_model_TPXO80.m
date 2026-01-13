@@ -107,8 +107,10 @@ ymax=yl(2);
 
 % Get dimensions
 
-x=nc_varget(fname_needed,lonstr);
-y=nc_varget(fname_needed,latstr);
+% x=nc_varget(fname_needed,lonstr);
+% y=nc_varget(fname_needed,latstr);
+x=ncread(fname_needed,lonstr);
+y=ncread(fname_needed,latstr);
 
 % Y indices
 
@@ -234,35 +236,57 @@ if ~iok
     
     % pasting - left
     
-    real    =  nc_varget(fname_needed,real_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
-    complex =  nc_varget(fname_needed,complex_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+    % real    =  nc_varget(fname_needed,real_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+    % complex =  nc_varget(fname_needed,complex_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+    real    =  ncread(fname_needed,real_name,[iy1 ix1left],[ iy2-iy1+1 ix2left-ix1left+1]);
+    complex =  ncread(fname_needed,complex_name,[iy1 ix1left],[iy2-iy1+1 ix2left-ix1left+1]);
+    real    = double(real);
+    complex = double(complex);
+
     ampleft(:,:)   = abs(real+1i*complex);
     val   = mod(180*atan2(real,complex)/pi,360) - 90;
     id = val < 270; val(id) = val(id)+360;
     id = val > 360; val(id) = val(id)-360;
     phileft(:,:)   = val;
     
-    if getd
-        dpleft   = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+    switch tp
+        case{'u','v'}
+        % dpleft   = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+        dpleft   = ncread(fname_depth,depth_name,[iy1 ix1left],[ iy2-iy1+1 ix2left-ix1left+1]);
     end
     
     % pasting - right
-    real    =  nc_varget(fname_needed,real_name,[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
-    complex =  nc_varget(fname_needed,complex_name,[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
+    % real    =  nc_varget(fname_needed,real_name,[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
+    % complex =  nc_varget(fname_needed,complex_name,[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
+    real    =  ncread(fname_needed,real_name,[iy1 ix1right],[ iy2-iy1+1 ix2right-ix1right+1]);
+    complex =  ncread(fname_needed,complex_name,[iy1 ix1right],[iy2-iy1+1 ix2right-ix1right+1]);
+    real    = double(real);
+    complex = double(complex);
+
     ampright(:,:)   = abs(real+1i*complex);
     val   = mod(180*atan2(real,complex)/pi,360) - 90;
     id = val < 270; val(id) = val(id)+360;
     id = val > 360; val(id) = val(id)-360;
     phiright(:,:)   = val;
-    if getd
-        dpright  = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+
+    switch tp
+        case{'u','v'}
+        % dpright  = nc_varget(fname_depth,depth_name,[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
+        dpright   = ncread(fname_depth,depth_name,[iy1 ix1right],[ iy2-iy1+1 ix2right-ix1right+1]);
     end
     
     % Now paste
-    amp   = permute([permute(ampleft,[2 1 3]) permute(ampright,[2 1 3])],[2 1 3]);
-    phi   = permute([permute(phileft,[2 1 3]) permute(phiright,[2 1 3])],[2 1 3]);
-    if getd
-        depth = [dpleft' dpright'];
+    % amp   = permute([permute(ampleft,[2 1 3]) permute(ampright,[2 1 3])],[2 1 3]);
+    % phi   = permute([permute(phileft,[2 1 3]) permute(phiright,[2 1 3])],[2 1 3]);
+    % if getd
+    %     depth = [dpleft' dpright'];
+    % end
+    amp = [ampleft ampright];
+    phi = [phileft phiright];
+
+    switch tp
+        case{'u','v'}
+        depth = [dpleft dpright];
     end
     
     lon = [lonleft;lonright];
@@ -272,8 +296,13 @@ else
     
     %% No pasting needed
     % Get values
-    real    =  nc_varget(fname_needed,real_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
-    complex =  nc_varget(fname_needed,complex_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
+    % real    =  nc_varget(fname_needed,real_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
+    % complex =  nc_varget(fname_needed,complex_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
+    real    =  ncread(fname_needed,real_name,[iy1 ix1],[ iy2-iy1+1 ix2-ix1+1]);
+    complex =  ncread(fname_needed,complex_name,[iy1 ix1],[iy2-iy1+1 ix2-ix1+1]);
+    real    = double(real);
+    complex = double(complex);
+
     amp   = abs(real+1i*complex);
     val   = mod(180*atan2(real,complex)/pi,360) - 90;
     id = val < 270; val(id) = val(id)+360;
@@ -283,7 +312,8 @@ else
     % Get depth
     switch tp
         case{'u','v'}
-            depth = nc_varget(fname_depth,depth_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
+            % depth = nc_varget(fname_depth,depth_name,[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
+            depth = ncread(fname_depth,depth_name,[iy1 ix1],[ iy2-iy1+1 ix2-ix1+1]);
     end
     
     % Fix grid
@@ -300,6 +330,6 @@ end
 
 % Save in structure
 amp = amp*correction_factor;
-amp=permute(amp,[2 1]);
-phi=permute(phi,[2 1]);
+% amp=permute(amp,[2 1]);
+% phi=permute(phi,[2 1]);
 
