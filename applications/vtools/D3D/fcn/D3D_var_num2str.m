@@ -148,7 +148,7 @@ if ischar(varname_input)
             varname_save_mat='umag_layer'; %I think we can use the same name, because we will always add a layer to the input. Although it can be dangerous.
             varname_load_mat=varname_save_mat;
             varname_label=varname_load_mat;
-        case 'wl'
+        case {'wl','mesh2d_s1'}
             switch res_type
                 case 'map'
                     switch structure
