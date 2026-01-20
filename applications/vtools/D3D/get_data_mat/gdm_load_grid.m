@@ -132,7 +132,8 @@ end
 
 %% edge connectivity for vorticity
 
-[gridInfo.edge_length,gridInfo.face_edges,gridInfo.face_edge_sign] = D3D_build_face_edge_connectivity(mesh2d_node_x, mesh2d_node_y,mesh2d_edge_nodes,mesh2d_edge_faces);
+data.edge_faces=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
+[gridInfo.edge_length,gridInfo.face_edges,gridInfo.face_edge_sign] = D3D_build_face_edge_connectivity(gridInfo.Xcor, gridInfo.Ycor,gridInfo.edge_nodes,data.edge_faces.val.');
 
 %% SAVE
 
