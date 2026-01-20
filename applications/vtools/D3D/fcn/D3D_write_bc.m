@@ -65,10 +65,13 @@ for kbc=1:nbc
             fprintf(fid,'%s %f %f\n', bc(kbc).val{kl,1:end});
         end
     else
+        [nl,nc]=size(bc(kbc).val);
+        str_write=repmat('%.6f ',1,nc);
+        str_write=str_write(1:end-1); %remove last space
         %`writematrix` was implemented by WO because it is faster, but AK found that it does
         %not add space delimiter properly when number of digits increases along the column dimension. 
-        for kl = 1:size(bc(kbc).val,1)
-            fprintf(fid, '%.6f %.6f\n', bc(kbc).val(kl,:));
+        for kl = 1:nl
+            fprintf(fid, [str_write '\n'], bc(kbc).val(kl,:));
         end
     end
 end %kbc

@@ -431,7 +431,7 @@ in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm sp
 in_plot.(tag).order_anl=2; %1=normal; 2=random
 
 in_plot.(tag).tim=tim; %all times
-in_plot.(tag).var={'umag','mesh2d_czs','h'}; 
+in_plot.(tag).var={'umag','mesh2d_czs','h','Fr','ShieldsD'}; 
 
 %% CALL
 D3D_gdm(in_plot)

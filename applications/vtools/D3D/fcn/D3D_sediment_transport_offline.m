@@ -283,6 +283,7 @@ messageOut(NaN,'A set of hydrodynamic SMT simulations have been identified. Copy
 fpath_out_hydro=strcat(fpath_out,'_hydro');
 mkdir_check(fpath_out_hydro);
 fdir_out=fullfile(fpath_out_hydro,'output');
+mkdir_check(fdir_out);
 
 %Qseries of new SMT folder with all hydro results
 fpath_Qseries=fullfile(fpath_out_hydro,'Qseries.csv');

@@ -62,27 +62,12 @@ end
 if isempty(time_dnum)
     data=EHY_getMapModelData(fpath_map,'varName',varname,'mergePartitions',1,'disp',0);
 else
-    nt=2;
-    while nt>1
-        data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'tol_t',tol_t);%,'bed_layers',bed_layers);
-        if ~isfield(data,'times')
-            break
-        end
-        nt=numel(data.times);
-        tol_t=tol_t/2;
-        if nt>1
-            messageOut(NaN,sprintf('For this time tolerance, there is more than one output time. To prevent iteration, reduce `tol_t`.'))
-            %WO has a smarter solution. Once you read it and have more than
-            %one time, you can find the right one without rereading the
-            %data.
-            %
-            % [~, idx_t] = min(abs(data.times - time_dnum))
-            % data.Val = data.Val(idx_t,:)
-            % data.times = data.times(idx_t)
-        end
+    data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'tol_t',tol_t);%,'bed_layers',bed_layers);
+    if ~isfield(data,'times')
+        error('No time field found in data structure returned by EHY_getMapModelData');
     end
-
-
-end %while
+    fn={'val','times'};
+    data=gdm_get_only_one_time(data,time_dnum,tol_t,fn);
+end
 
 end %function
