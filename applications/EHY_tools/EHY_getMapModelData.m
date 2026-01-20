@@ -201,20 +201,22 @@ if ~exist('Data','var')
             
             % deal with deleted leading/trailing singleton dimensions
             valueIndex = {dims.index};
-            while all(valueIndex{1}==1)
-                valueIndex(1) = [];
-            end
-            while all(valueIndex{end}==1)
-                valueIndex(end) = [];
-            end
-            if exist('value','var')
-                while size(value,1) == 1
-                    value = permute(value,[2:ndims(value) 1]);
+            if numel(valueIndex) > 1
+                while all(valueIndex{1}==1) 
+                    valueIndex(1) = [];
                 end
-            elseif exist('value_x','var')
-                while size(value_x,1) == 1
-                    value_x = permute(value_x,[2:ndims(value_x) 1]);
-                    value_y = permute(value_y,[2:ndims(value_y) 1]);
+                while all(valueIndex{end}==1)
+                    valueIndex(end) = [];
+                end
+                if exist('value','var')
+                    while size(value,1) == 1
+                        value = permute(value,[2:ndims(value) 1]);
+                    end
+                elseif exist('value_x','var')
+                    while size(value_x,1) == 1
+                        value_x = permute(value_x,[2:ndims(value_x) 1]);
+                        value_y = permute(value_y,[2:ndims(value_y) 1]);
+                    end
                 end
             end
             
