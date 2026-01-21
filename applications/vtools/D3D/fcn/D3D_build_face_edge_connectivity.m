@@ -1,4 +1,4 @@
-function [edgeLength,faceEdges,faceEdgeSign] = D3D_build_face_edge_connectivity(mesh2d_node_x, mesh2d_node_y,mesh2d_edge_nodes,mesh2d_edge_faces)
+function [faceEdges,faceEdgeSign] = D3D_build_face_edge_connectivity(mesh2d_edge_faces)
 
 %BUILD_FACE_EDGE_CONNECTIVITY Geometry + sign prep for vorticity
 %
@@ -9,15 +9,7 @@ function [edgeLength,faceEdges,faceEdgeSign] = D3D_build_face_edge_connectivity(
 %
 
 nFaces = max(mesh2d_edge_faces(:));
-nEdges = size(mesh2d_edge_nodes,2);
-
-% --- Edge lengths
-dx = mesh2d_node_x(mesh2d_edge_nodes(2,:)) - ...
-     mesh2d_node_x(mesh2d_edge_nodes(1,:));
-dy = mesh2d_node_y(mesh2d_edge_nodes(2,:)) - ...
-     mesh2d_node_y(mesh2d_edge_nodes(1,:));
-
-edgeLength = hypot(dx,dy);
+nEdges = size(mesh2d_edge_faces,2);
 
 % --- Face-edge lists
 faceEdges     = cell(nFaces,1);

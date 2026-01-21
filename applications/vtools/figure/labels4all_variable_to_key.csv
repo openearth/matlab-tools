@@ -81,6 +81,7 @@ corr,correlation_coefficient
 dd,wind_direction
 wind_dir,wind_direction
 dir,direction
+udir,direction
 fh,wind_speed
 wind_u,wind_speed
 wind_mag,wind_speed

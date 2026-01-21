@@ -111,4 +111,7 @@ temperature,temperature,temperatuur,temperatura,degC
 at,at,te,en,-
 ShieldsD,Shields'' stress * D, Shields'' schuifspanning * D,Tensión de fondo * D,L
 dzetadt,change in water level with time,verandering van het waterpeil in de loop van de tijd,cambio del nivel del agua con el tiempo,L/T
-vorticity,werveling,vorticidad,1/T
+vorticity,vorticity,werveling,vorticidad,1/T
+streamfunction,stream function,stroomfunctie,función de corriente,L2/T
+transport_streamfunction,transport stream function,transpoortstroomfunctie,función de transporte de corriente,L3/T
+age,age,leeftijd,edad,T

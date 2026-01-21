@@ -78,15 +78,6 @@ end
 switch varname
     case 'clm2'
         data_var=gdm_read_data_map_sal_mass(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);
-        %'bl' can be read fine in FM and the variable name is switched to 'DPS' for D3D4.
-%     case 'bl'
-%         switch simdef.D3D.structure
-%             case 1
-%                 error('change the name of the variable to read in <D3D_var_num2str>')
-%                 data_var=gdm_read_data_map(fdir_mat,fpath_map,'DPS','tim',time_dnum); 
-%             case {2,4}
-%                 data_var=gdm_read_data_map(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch); 
-%         end
     case {'T_max','T_da','T_surf'}         
         if isempty(var_idx)
             error('Provide the index of the constituent to analyze')
@@ -116,6 +107,8 @@ switch varname
         data_var=gdm_read_data_map_Fak(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'sum_var_idx',sum_var_idx,'tol_t',tol_t); 
     case {'umag'} %different case for averaging in case there are several layers
         data_var=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
+    case {'udir'}
+        data_var=gdm_read_data_map_udir(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
     case 'stot'
         data_var=gdm_read_data_map_stot(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
     case 'stot_sum'
@@ -130,6 +123,8 @@ switch varname
         data_var=gdm_read_data_map_dzetadt(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t,'do_load',do_load); 
     case {'vorticity'}
         data_var=gdm_read_data_map_vorticity(fdir_mat,fpath_map,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t,'do_load',do_load); 
+    case{'streamfunction','transport_streamfunction'}
+        data_var=gdm_read_data_map_streamfunction(fdir_mat,fpath_map,varname,'tim',time_dnum,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t,'do_load',do_load);
     otherwise 
         %cases in which the variable name contains information on the analysis
         if ischar(varname) && contains(varname,'cel_morpho')

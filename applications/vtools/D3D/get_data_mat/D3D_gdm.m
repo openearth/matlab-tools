@@ -153,6 +153,8 @@
 % in_plot.(tag).fpath_ldb{1,1}=fullfile(fpath_project,'model','postprocessing','mkm-inner.ldb');
 % in_plot.(tag).fpath_ldb{2,1}=fullfile(fpath_project,'model','postprocessing','mkm-outer.ldb');
 % in_plot.(tag).fig_overwrite=1; %overwrite figures
+% % in_plot.(tag).fig_variable='age'; %overwrite variable name for figure
+% % in_plot.(tag).fig_unit=1/3600/24; %overwrite unit for figure
 % in_plot.(tag).overwrite=0; %overwrite mat-files
 % in_plot.(tag).do_vector=0; %add velocity vectors
 % in_plot.(tag).do_axis_equal=0;

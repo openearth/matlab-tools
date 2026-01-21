@@ -32,16 +32,28 @@ is_percentage=in_p.is_percentage;
 in_p=isfield_default(in_p,'tol_clims',1e-8);
 tol_clims=in_p.tol_clims;
 % in_p=isfield_default(in_p,'clims',[NaN,NaN]); %inside do_auto_limit
-in_p=isfield_default(in_p,'unit',1);
-unit=in_p.unit;
-in_p=isfield_default(in_p,'variable','');
-variable=in_p.variable;
 in_p=isfield_default(in_p,'Lref','+NAP');
 Lref=in_p.Lref;
 in_p=isfield_default(in_p,'clims',[NaN,NaN]);
 clims=in_p.clims;
 in_p=isfield_default(in_p,'cmap',jet(100));
 cmap=in_p.cmap;
+
+in_p=isfield_default(in_p,'fig_variable','');
+fig_variable=in_p.fig_variable; %forced from input
+in_p=isfield_default(in_p,'variable',''); 
+variable=in_p.variable; %variable name in postprocessing
+if ~isempty(fig_variable)
+    variable=fig_variable; %override
+end
+
+in_p=isfield_default(in_p,'fig_unit',NaN);
+fig_unit=in_p.fig_unit;
+in_p=isfield_default(in_p,'unit',1);
+unit=in_p.unit;
+if ~isnan(fig_unit)
+    unit=fig_unit; %override
+end
 
 % v2struct(in_p) %do not use `v2struct` if passing other input. In case
 % there is `val` in `in_p`, it gets overwritten. 
@@ -79,8 +91,15 @@ elseif is_percentage
     cmap_comp=turbo(100);
     clims_comp=absolute_limits(clims_comp);
 else
-    cstring=lab;
-    cmap_comp=turbo(100);
+    switch variable
+        case 'udir'
+            cstring=lab;
+            cmap_comp=cmap_direction(360);
+            clims_comp=[0,360];
+        otherwise
+            cstring=lab;
+            cmap_comp=turbo(100);
+    end
 end
 
 if do_auto_limit(in_p,'clims')

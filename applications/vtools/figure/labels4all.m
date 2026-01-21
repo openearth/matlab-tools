@@ -240,7 +240,7 @@ switch un_type
                 error('The factor %f is missing for unit %s',un,un_type)
         end
         if strcmp(un_type,'1/T')
-            str_un=strrep(str_un,']','^-1]');
+            str_un=strrep(str_un,']','^{-1}]');
         end
     case 'L2/T'
         switch un
@@ -252,7 +252,7 @@ switch un_type
     case 'degrees'
         switch un
             case 1
-                str_un=' [� N]';
+                str_un=' [deg N]';
             otherwise 
                 error('The factor %f is missing for unit %s',un,un_type)
         end

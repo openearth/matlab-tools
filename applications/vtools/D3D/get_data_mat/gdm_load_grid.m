@@ -23,6 +23,8 @@ addOptional(parin,'dim',NaN); %Dimension. We can force what it is.
 addOptional(parin,'fpath_grd',fullfile(fdir_mat,'grd.mat'));
 addOptional(parin,'simdef',NaN);
 addOptional(parin,'disp',1);
+addOptional(parin,'vorticity',false);
+addOptional(parin,'laplacian',false);
 
 parse(parin,varargin{:});
 
@@ -31,6 +33,8 @@ dim=parin.Results.dim;
 fpath_grd=parin.Results.fpath_grd;
 simdef=parin.Results.simdef;
 do_disp=parin.Results.disp;
+vorticity=parin.Results.vorticity;
+laplacian=parin.Results.laplacian;
 
 %% check dimensions
 
@@ -89,6 +93,20 @@ if exist(fpath_grd,'file')==2
             messageOut(fid_log,'Grid mat-file exist. Loading.')
         end
         load(fpath_grd,'gridInfo')
+        if vorticity && ~isfield(gridInfo,'face_edges') %we need edge connectivity
+            if do_disp
+                messageOut(fid_log,'Grid mat-file does not contain edge connectivity for vorticity. Reading grid again.')
+            end
+            [gridInfo.face_edges,gridInfo.face_edge_sign]=D3D_build_face_edge_connectivity(gridInfo.edge_faces);
+            save_check(fpath_grd,'gridInfo'); 
+        end
+        if laplacian && ~isfield(gridInfo,'laplacian') %we need edge connectivity
+            if do_disp
+                messageOut(fid_log,'Grid mat-file does not contain edge connectivity for laplacian. Reading grid again.')
+            end
+            gridInfo.laplacian=D3D_compute_streamfunction_Laplacian(gridInfo.edge_faces,gridInfo.Xcen,gridInfo.Ycen,gridInfo.edge_length);
+            save_check(fpath_grd,'gridInfo'); 
+        end
     else
         if do_disp
             messageOut(fid_log,'Grid mat-file exist.')
@@ -115,7 +133,8 @@ else
             end
         case 2
             gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid','edge_nodes','XYuv'},'mergePartitions',1);   
-            
+            data_edge_faces=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
+            gridInfo.edge_faces=data_edge_faces.val.';
         otherwise
             error('Something is wrong.')
     end    
@@ -130,10 +149,21 @@ catch
     gridInfo.tri=NaN;
 end
 
+%% edge length
+
+gridInfo.edge_length=D3D_edge_length(gridInfo.Xcor,gridInfo.Ycor,gridInfo.edge_nodes);
+
 %% edge connectivity for vorticity
 
-data.edge_faces=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
-[gridInfo.edge_length,gridInfo.face_edges,gridInfo.face_edge_sign] = D3D_build_face_edge_connectivity(gridInfo.Xcor, gridInfo.Ycor,gridInfo.edge_nodes,data.edge_faces.val.');
+if vorticity
+    [gridInfo.face_edges,gridInfo.face_edge_sign]=D3D_build_face_edge_connectivity(gridInfo.edge_faces);
+end
+
+%% laplacian
+
+if laplacian
+    gridInfo.laplacian=D3D_compute_streamfunction_Laplacian(gridInfo.edge_faces,gridInfo.Xcen,gridInfo.Ycen,gridInfo.edge_length);
+end
 
 %% SAVE
 

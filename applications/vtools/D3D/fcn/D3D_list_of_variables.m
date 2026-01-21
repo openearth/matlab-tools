@@ -121,6 +121,12 @@ function D3D_list_of_variables
 %   'T_max'     = residence based on maximum time in the water column
 %   'T_da'      = residence time based on depth-averaged concentration
 %   'T_surf'    = residence time at the surface
+%   '
+
+%% 
+%   'vorticity'
+%   'streamfunction'
+%   'transport_streamfunction'
 
 %% OTHER
 

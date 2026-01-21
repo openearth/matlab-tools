@@ -12,7 +12,7 @@
 %
 %
 
-function data_var=gdm_read_data_map_vorticity(fdir_mat,fpath_map,varargin)
+function data_var=gdm_read_data_map_streamfunction(fdir_mat,fpath_map,varname,varargin)
 
 %% PARSE
 
@@ -38,11 +38,17 @@ tol_t=parin.Results.tol_t;
 
 %% READ
 
-data_ba=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_flowelem_ba','do_load',do_load,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);
-gridInfo=gdm_load_grid(NaN,fdir_mat,fpath_map,'vorticity',true);
+gridInfo=gdm_load_grid(NaN,fdir_mat,fpath_map,'laplacian',true);
 data_var=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_u1','tim',time_dnum,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);
-omega=D3D_vorticity_from_u1(data_var.val', gridInfo.edge_length,gridInfo.face_edges,gridInfo.face_edge_sign,data_ba.val);
+val=data_var.val';
+switch varname 
+    case 'transport_streamfunction'
+        data_var_h=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_hu','tim',time_dnum,'do_load',do_load,'idx_branch',idx_branch,'branch',branch,'tol_t',tol_t);
+        data_var_h.val(isnan(data_var_h.val))=0; %set NaNs to zero for transport calculation
+        val=data_var_h.val.'.*data_var.val.';
+end
+psi=D3D_compute_streamfunction(gridInfo.laplacian,gridInfo.edge_length,gridInfo.edge_faces,val);
 
-data_var.val=omega;
+data_var.val=psi;
 
 end %function
