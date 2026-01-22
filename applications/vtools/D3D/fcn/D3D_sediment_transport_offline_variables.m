@@ -13,6 +13,6 @@
 
 function var=D3D_sediment_transport_offline_variables
 
-var={'Ltot','Fak'};
+var={'Ltot','Fak','dg'};
 
 end

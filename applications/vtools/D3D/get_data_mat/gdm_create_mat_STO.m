@@ -182,6 +182,8 @@ for kst=1:nst
     for kt=kt_v
         ktc=ktc+1;
         
+        %% qbk and hidexp
+
         fpath_mat_st=mat_tmp_name(fdir_mat,flg_loc.sedtrans_name{kst},'tim',time_dnum(kt)); %we save it as 'raw' to be able to read in <gdm_read_data_map_simdef>
         if exist(fpath_mat_st,'file')==2 && ~flg_loc.overwrite
             continue
@@ -189,11 +191,16 @@ for kst=1:nst
         
         [u,h,C,Fak,Ltot]=gdm_STO_load_data(in_plot_get_variables_2DH,simdef,gridInfo,time_dnum(kt));
         
-        data=gdm_STO_compute_qbk(u,h,C,Fak,Ltot,Thresh,dk,flg,cnt,sed_trans_param,hiding_param,mor_fac,E_param,vp_param,Gammak,fid_log);
+        [data_qbk,data_hidexp]=gdm_STO_compute_qbk(u,h,C,Fak,Ltot,Thresh,dk,flg,cnt,sed_trans_param,hiding_param,mor_fac,E_param,vp_param,Gammak,fid_log);
 
+        data=data_qbk;
         save_check(fpath_mat_st,'data') 
         
-        %% save sum 
+        %in case we want to save it, although the naming will be confusing. We have to add the variable to be read. 
+        % data=data_hidexp;
+        % save_check(fpath_mat_st,'data') 
+
+        %% qbk sum
         
         fpath_mat_st=mat_tmp_name(fdir_mat,var_sum{kst},'tim',time_dnum(kt)); %we save it as 'raw' to be able to read in <gdm_read_data_map_simdef>
         if exist(fpath_mat_st,'file')==2 && ~flg_loc.overwrite
@@ -264,7 +271,7 @@ end
 
 %%
 
-function data=gdm_STO_compute_qbk(u,h,C,Fak,Ltot,Thresh,dk,flg,cnt,sed_trans_param,hiding_param,mor_fac,E_param,vp_param,Gammak,fid_log)
+function [data_qbk,data_hidexp]=gdm_STO_compute_qbk(u,h,C,Fak,Ltot,Thresh,dk,flg,cnt,sed_trans_param,hiding_param,mor_fac,E_param,vp_param,Gammak,fid_log)
 
 q=u.*h; %[nF,1]
 cf=cnt.g./C.^2; %[nF,1]
@@ -280,9 +287,13 @@ end
 L_all=min(Ltot/Thresh,1);
 val=L_all.*qbk;
 
-data=struct();
-data.val=val; %we have to save it as structure because we use 'raw' type
-data.dimensions='[mesh2d_nFaces,sedimentFraction]'; %ok
+data_qbk=struct();
+data_qbk.val=val; %we have to save it as structure because we use 'raw' type
+data_qbk.dimensions='[mesh2d_nFaces,sedimentFraction]'; %ok
+
+data_hidexp=struct();
+data_hidexp.val=xik; %we have to save it as structure because we use 'raw' type
+data_hidexp.dimensions='[mesh2d_nFaces,sedimentFraction]'; %ok
 
 end %function
 
@@ -338,6 +349,7 @@ in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for eac
 in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
 in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 in_plot.(tag).order_anl=2; %1=normal; 2=random
+in_plot.(tag).tim_just_load=0; %if at the top script it is set to 1, we override it here to 0 to be able to plot only one time
 
 in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
 in_plot.(tag).var={'Fak'}; 
@@ -357,7 +369,7 @@ function gdm_plot_single_time_line(in_plot,tim)
 
 tag='SMB';
 in_plot.(tag).do_p_single=1; %regular plot
-in_plot.(tag).do_area=0; %x-variable with time in color
+in_plot.(tag).do_area=[0,0]; %x-variable with time in color
 in_plot.(tag).do_diff_t=0; %difference initial time
 in_plot.(tag).do_diff_s=0; %difference with reference
 in_plot.(tag).do_diff_s_t=0; %difference reference simulation and initial time
@@ -371,9 +383,10 @@ in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for eac
 in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
 in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 in_plot.(tag).order_anl=2; %1=normal; 2=random
+in_plot.(tag).tim_just_load=0; %if at the top script it is set to 1, we override it here to 0 to be able to plot only one time
 
 in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
-in_plot.(tag).var={'Ltot'}; %It would be nice to add `dg` but we need to make sure it is output in the morpho simulation
+in_plot.(tag).var={'Ltot','dg'}; %%`dg` needs to be available in output. If it is not, add in `gdm_read_data_map_simdef` the computation based on `lyrfrac` It would be nice to add `dg` but we need to make sure it is output in the morpho simulation
 
 %% CALL
 D3D_gdm(in_plot)
@@ -401,9 +414,10 @@ in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each t
 in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 in_plot.(tag).order_anl=2; %1=normal; 2=random
 in_plot.(tag).statis_plot={'val_sum_length','val_mean'};
+in_plot.(tag).tim_just_load=0; %if at the top script it is set to 1, we override it here to 0 to be able to plot only one time
 
 in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! The time vector does not make sense. 
-in_plot.(tag).var={'ba_mor'}; %It would be nice to add `dg` but we need to make sure it is output in the morpho simulation
+in_plot.(tag).var={'ba_mor'}; 
 
 %% CALL
 D3D_gdm(in_plot)
@@ -429,7 +443,8 @@ in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for eac
 in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
 in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 in_plot.(tag).order_anl=2; %1=normal; 2=random
-
+in_plot.(tag).tim_just_load=0; %if at the top script it is set to 1, we override it here to 0 to be able to plot only one time
+    
 in_plot.(tag).tim=tim; %all times
 in_plot.(tag).var={'umag','mesh2d_czs','h','Fr','ShieldsD'}; 
 
@@ -457,6 +472,7 @@ in_plot.(tag).do_xvt_diff_s=0; %x-axis -> x; y-axis-> variable; one line for eac
 in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
 in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 in_plot.(tag).order_anl=2; %1=normal; 2=random
+in_plot.(tag).tim_just_load=0; %if at the top script it is set to 1, we override it here to 0 to be able to plot only one time
 
 in_plot.(tag).tim=tim; %all times
 
@@ -506,6 +522,7 @@ in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each t
 in_plot.(tag).do_tv=0; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`% in_plot_sb.(tag_sb).do_all_s=flg_loc.do_all; %I do not understand what is this. All variables together may make sense, but not all simulations?
 in_plot.(tag).order_anl=2; %1=normal; 2=random
 in_plot.(tag).statis_plot={'val_mean_weighted'}; %we need for cumulative, which strictly requires this variable. 
+in_plot.(tag).tim_just_load=0; %if at the top script it is set to 1, we override it here to 0 to be able to plot only one time
 
 in_plot.(tag).tim=tim; %all times
 
