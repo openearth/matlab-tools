@@ -656,7 +656,7 @@ end
 
 %legend default
 if isnan(do_leg) %nothing has been specified
-    if nv>1 || plot_mea
+    if (nv>1 || plot_mea) && ~do_time %if we `do_time`, we are adding a colorbar with the information of the legend
         do_leg=1;
     else
         do_leg=0;
