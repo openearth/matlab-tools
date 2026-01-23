@@ -154,9 +154,14 @@ for kvar=1:nvar %variable
     
             %velocity vector
             %2DO: Should we also plot the vector difference? How to deal with different grids?
-            in_p.plot_vector=0;
-            if flg_loc.do_vector(kvar)
+            in_p.plot_vector=0; %flag inside `fig_M2D`
+            if flg_loc.do_vector(kvar)~=0
                 [vec_x,vec_y]=load_velocity_vector(simdef(ksim),time_dnum_loc(kt),var_idx);
+                if flg_loc.do_vector(kvar)==2 %normalized arrows
+                    vec_mag=hypot(vec_x,vec_y);
+                    vec_x=vec_x./vec_mag;
+                    vec_y=vec_y./vec_mag;
+                end
                 in_p.vec_x=vec_x;
                 in_p.vec_y=vec_y;
                 in_p.plot_vector=1;

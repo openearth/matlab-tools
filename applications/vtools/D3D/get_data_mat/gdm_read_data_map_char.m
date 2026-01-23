@@ -64,7 +64,12 @@ if isempty(time_dnum)
 else
     data=EHY_getMapModelData(fpath_map,'varName',varname,'t0',time_dnum,'tend',time_dnum,'mergePartitions',1,'disp',0,'layer',layer,'tol_t',tol_t);%,'bed_layers',bed_layers);
     if isfield(data,'times')
-        fn={'val','times'};
+        switch varname
+            case {'uv'}
+                fn={'times','vel_x','vel_y','vel_mag','vel_dir'};
+            otherwise
+                fn={'times','val'};
+        end
         data=gdm_get_only_one_time(data,time_dnum,tol_t,fn);
     end
 end

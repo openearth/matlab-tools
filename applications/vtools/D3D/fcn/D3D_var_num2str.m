@@ -285,7 +285,23 @@ if ischar(varname_input)
             end
             varname_save_mat='q';
             varname_load_mat=varname_save_mat;
-            varname_label=varname_load_mat;            
+            varname_label=varname_load_mat;   
+        case {'hidexp','mesh2d_hidexp'}         
+            if is1d
+                varname_read_variable='mesh1d_hidexp';
+            else
+                switch structure
+                    case {1,5}
+                        error('Set variable name')
+                    case {2,4}
+                        varname_read_variable='mesh2d_hidexp';
+                    otherwise
+                        error('Set variable name')
+                end
+            end
+            varname_save_mat='hidexp';
+            varname_load_mat=varname_save_mat;
+            varname_label=varname_load_mat;
         otherwise
             varname_read_variable=varname_input;
             varname_save_mat=varname_input;
