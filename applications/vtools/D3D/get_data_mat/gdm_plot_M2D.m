@@ -74,6 +74,7 @@ for kvar=1:nvar %variable
     
     layer=gdm_layer(flg_loc,gridInfo_ref.no_layers,varname_load_mat,kvar,flg_loc.var{kvar});
     [var_idx,~]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
+    in_p.str_idx=var_idx; %for label in figure
 
     %time 0 of reference 
     kt=1;

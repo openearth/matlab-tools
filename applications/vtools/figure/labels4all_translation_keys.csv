@@ -115,3 +115,4 @@ vorticity,vorticity,werveling,vorticidad,1/T
 streamfunction,stream function,stroomfunctie,función de corriente,L2/T
 transport_streamfunction,transport stream function,transpoortstroomfunctie,función de transporte de corriente,L3/T
 age,age,leeftijd,edad,T
+hidexp,hiding-exposure factor for fraction %d,verbergings-blootstellingsfactor voor fractie %d,factor de ocultación-exposición en fracción %d,-
