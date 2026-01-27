@@ -1,62 +1,58 @@
-%sediment_transport_2D computes the sediment transport rate in x and y
-%direction.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
 %
-%% INPUT
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
 %
-    % flg = flags ; structure
-        % flg.sed_trans = sediment transport relation
-            % 1 = Meyer-Peter, Muller (1948)    
-            % 2 = Engelund-Hansen (1967)
-            % 3 = Ashida-Michiue (1972)
-            % 4 = Wilcock-Crowe (2003)
-        % flg.friction_closure = friction closure relation
-            % 1 = Chezy | Darcy-Weisbach
-            % 2 = Manning 
-        % flg.hiding = hiding-exposure effects
-            % 0 = no hiding-exposure 
-            % 1 = Egiazaroff (1965)
-            % 2 = Power law
-            % 3 = Ashida-Michiue (1972)
-        % flg.Dm = mean grain size
-            % 1 = geometric
-            % 2 = arithmetic 
-    % cnt = constans ; structure
-        % cnt.g         = gravity [m^2/s] ; double [1,1]
-        % cnt.rho_s     = sediment density [kg/m^3] ; double [1,1]
-        % cnt.rho_w     = water density [kg/m^3] ; double [1,1]
-        % cnt.p         = porosity [-] ; double [1,1]
-        % cnt.k         = Von Karman constant [-] ; double [1,1]
-    % h               = flow depth [m] ; double [nx,1] | double [1,nx] ; e.g. [0.5,0.1,0.6];
-    % q               = specific water discharge [m^2/s] ; double [nx,1] | double [1,nx] ; e.g. [5;2;2];
-    % cf              = dimensionless friction coefficient (u_{*}^{2}=cf*u^2) [-] ; double [nx,1] | double [1,nx] ; e.g. [0.011,0.011,0.011];
-    % La              = active layer thickness [m] ; double [nx,1] | double [1,nx] ; e.g. [0.01,0.015,0.017];
-    % Mak             = effective mass matrix ; double [nx,nf-1] ; e.g. [0.2,0.3;0.8,0.1;0.9,0] ;
-    % dk              = characteristic grain sizes [m] ; double [1,nf] | double [nf,1] ; e.g. [0.003,0.005]
-    % sed_trans_param = parameters of the sediment transport relation choosen 
-            % MPM48    = [a_mpm,b_mpm,theta_c] [-,-,-] ; double [3,1] | double [1,3]; original = [8,1.5,0.047]
-            % EH67     = [m_eh,n_eh] ; [s^4/m^3,-] ; double [2,1] | double [1,2] ; original = [0.05,5]
-            % AM72     = [a_am,theta_c] [-,-] ; double [2,1] | double [1,2] ; original = [17,0.05]
-    % hiding_param    = parameter of the power law hiding function [-] ; double [1,1] ; e.g. [-0.8]
-    % mor_fac         = morphological acceleration factor [-] ; double [1,1] ; e.g. [10]
-    % I               = secondary flow intensity [m/s] ; double [1,1] ; e.g. [??]
-    % E_s             = calibration parameter of the secondary flow [-] ; double [1,1] ; e.g. [??]
-%        
-%% OUTPUT
-    % qbk = sediment transport per grain size and node including pores and morphodynamic acceleration factor [m^2/s] ; double [nx,nf]
-    % Qbk = sediment transport capacity per grain size and node including pores and morphodynamic acceleration factor [m^2/s] ; double [nx,nf]
-
-%Symbols used in the size definition:
-    %-nx is the number of points in streamwise directions
-    %-nf is the number of size fractions
+% SEDIMENT_TRANSPORT_2D - Calculates 2D sediment transport with secondary flow and slope effects
+%
+% This function computes two-dimensional sediment transport by first calculating
+% the magnitude-based transport using sediment_transport, then adjusting for
+% secondary flow and transverse slope effects, and finally correcting for
+% longitudinal slope effects.
+%
+% Syntax: [qbkx,qbky,Qbkx,Qbky,thetak,qbkx_trans,qbky_trans,Qbkx_trans,Qbky_trans] = 
+%         sediment_transport_2D(flg,cnt,h,q,cf,La,Mak,dk,sed_trans_param,hiding_param,
+%                               mor_fac,I,E_s,sx,sy,E_param,vp_param,Gammak,gsk_param)
+%
+% Inputs:
+%   flg              - Flags structure
+%   cnt              - Constant structure
+%   h                - Water depth [m]
+%   q                - Specific water discharge vector [m^2/s]
+%   cf               - Friction coefficient [-]
+%   La               - Active layer thickness [m]
+%   Mak              - Mass of size fraction k in active layer
+%   dk               - Grain size diameter [m]
+%   sed_trans_param  - Sediment transport parameters
+%   hiding_param     - Hiding/exposure parameters
+%   mor_fac          - Morphological acceleration factor
+%   I                - Secondary flow intensity
+%   E_s              - Secondary flow intensity parameter
+%   sx               - Slope in x-direction [-]
+%   sy               - Slope in y-direction [-]
+%   E_param          - Entrainment parameters
+%   vp_param         - Particle velocity parameters
+%   Gammak           - Particle activity parameters
+%   gsk_param        - Gravitational slope parameters
+%
+% Outputs:
+%   qbkx, qbky       - Sediment transport components in x and y directions [m^2/s]
+%   Qbkx, Qbky       - Sediment transport capacity components in x and y directions [m^2/s]
+%   thetak           - Shields parameter [-]
+%   qbkx_trans, qbky_trans - Transport with transverse adjustments only [m^2/s]
+%   Qbkx_trans, Qbky_trans - Sediment transport capacity with transverse adjustments only [m^2/s]
 
 %% HISTORY
 %   -161024 V created it
 
-function [qbkx,qbky,Qbkx,Qbky,thetak]=sediment_transport_2D(flg,cnt,h,q,cf,La,Mak,dk,sed_trans_param,hiding_param,mor_fac,I,E_s,sx,sy,E_param,vp_param,Gammak,gsk_param)
-
-%% RENAME
-
-calib_s=flg.calib_s; %to desactivate bed slope effects
+function [qbkx,qbky,Qbkx,Qbky,thetak,qbkx_trans,qbky_trans,Qbkx_trans,Qbky_trans]=sediment_transport_2D(flg,cnt,h,q,cf,La,Mak,dk,sed_trans_param,hiding_param,mor_fac,I,E_s,sx,sy,E_param,vp_param,Gammak,gsk_param)
 
 %% MODULE
 
@@ -64,8 +60,19 @@ q_m=norm(q); %module of the specific water discharge [m^2/s]
 
 [qbk,Qbk,thetak,~,~,~,~,~,~,~,~,~,~,~,~,~,~,Dm]=sediment_transport(flg,cnt,h,q_m,cf,La,Mak,dk,sed_trans_param,hiding_param,mor_fac,E_param,vp_param,Gammak);
 
-%% DIRECTION
+[qbkx_trans,qbky_trans,Qbkx_trans,Qbky_trans,varphi_tot]=adjust_for_secondary_flow_transverse_slope(flg,cnt,h,q,q_m,cf,dk,I,E_s,sy,sx,gsk_param,thetak,Dm,qbk,Qbk);
 
+[qbkx,qbky,Qbkx,Qbky]=adjust_for_longitudinal_slope(flg,sx,sy,qbkx_trans,qbky_trans,Qbkx_trans,Qbky_trans,varphi_tot);
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function [qbkx_trans,qbky_trans,Qbkx_trans,Qbky_trans,varphi_tot]=adjust_for_secondary_flow_transverse_slope(flg,cnt,h,q,q_m,cf,dk,I,E_s,sy,sx,gsk_param,thetak,Dm,qbk,Qbk)
+
+calib_s=isfield_default(flg,'calib_s',1.0,'output','array'); %calibration factor for bed slope effects
 
 % alpha_I=2/cnt.k^2*E_s*(1-sqrt(cf)/(2*cnt.k)); %D3D (error?) contant [-]
 alpha_I=2/cnt.k^2*E_s*(1-sqrt(cf)/(1*cnt.k)); % contant [-]
@@ -87,11 +94,11 @@ varphi_sk=atan2(sin(varphi_tau)-calib_s./gsk*sy,cos(varphi_tau)-calib_s./gsk*sx)
 varphi_tot=varphi_sk; %D3D
 % varphi_tot=varphi_tau+varphi_sk; %Siviglia13
 
-qbkx=qbk.*cos(varphi_tot);
-qbky=qbk.*sin(varphi_tot);
+qbkx_trans=qbk.*cos(varphi_tot);
+qbky_trans=qbk.*sin(varphi_tot);
 
-Qbkx=Qbk.*cos(varphi_tot);
-Qbky=Qbk.*sin(varphi_tot);
+Qbkx_trans=Qbk.*cos(varphi_tot);
+Qbky_trans=Qbk.*sin(varphi_tot);
 
 %without secondary flow
 % qbkx=qbk*q(1)/q_m;
@@ -100,4 +107,33 @@ Qbky=Qbk.*sin(varphi_tot);
 % Qbkx=Qbk*q(1)/q_m;
 % Qbky=Qbk*q(2)/q_m;
 
+end %function
+
+%%
+
+function [qbkx,qbky,Qbkx,Qbky]=adjust_for_longitudinal_slope(flg,sx,sy,qbkx_trans,qbky_trans,Qbkx_trans,Qbky_trans,varphi_tot)
+
+longitudinal_slope_model=isfield_default(flg,'longitudinal_slope_model','none','output','array'); %model for longitudinal slope effects
+alpha_bs=isfield_default(flg,'alpha_bs',1.0,'output','array'); %streamwise bed slope correction factor. Note: default is 1.0 (correction), but default model is 'none' (no correction).
+phi=isfield_default(flg,'phi',30,'output','array'); 
+
+switch longitudinal_slope_model
+    case 'none'
+        alpha_s=1.0; %no correction
+    case 'bagnold'
+        % Placeholder for Bagnold model
+        error('Bagnold model not implemented yet');
+    case 'kock_and_flokstra'
+        deta_ds=sx.*cos(varphi_tot)+sy.*sin(varphi_tot); %longitudinal bed slope [-]
+        alpha_s=min(1-alpha_bs*deta_ds,0.9*tan(phi*2*pi/360)); %slope correction factor [-]
+    otherwise
+        error('Unknown longitudinal slope model %s',longitudinal_slope_model);
 end
+
+qbkx=qbkx_trans.*alpha_s;
+qbky=qbky_trans.*alpha_s;
+
+Qbkx=Qbkx_trans.*alpha_s;
+Qbky=Qbky_trans.*alpha_s;
+
+end %function
