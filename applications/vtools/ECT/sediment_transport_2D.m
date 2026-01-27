@@ -125,7 +125,8 @@ switch longitudinal_slope_model
         error('Bagnold model not implemented yet');
     case 'kock_and_flokstra'
         deta_ds=sx.*cos(varphi_tot)+sy.*sin(varphi_tot); %longitudinal bed slope [-]
-        alpha_s=min(1-alpha_bs*deta_ds,0.9*tan(phi*2*pi/360)); %slope correction factor [-]
+        deta_ds=min(deta_ds,0.9*tan(phi*2*pi/360)); 
+        alpha_s=1-alpha_bs*deta_ds; %slope correction factor [-]
     otherwise
         error('Unknown longitudinal slope model %s',longitudinal_slope_model);
 end
