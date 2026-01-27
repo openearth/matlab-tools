@@ -205,6 +205,7 @@
 % in_plot.(tag).ml=2.5;
 % % in_plot.(tag).filter_lim=[0.992,1.1];
 % in_plot.(tag).do_marker=1;
+% in_plot.(tag).do_replace_underscore=1; %replace underscore in legend
 % in_plot.(tag).markersize=5;
 % in_plot.(tag).do_staircase=1;
 % in_plot.(tag).plot_val0=0; %plot initial

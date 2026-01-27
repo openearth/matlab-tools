@@ -31,18 +31,9 @@ function fig_1D_01(in_p)
 
 %% DEFAULTS
 
-if isfield(in_p,'fig_visible')==0
-    in_p.fig_visible=0;
-end
-if isfield(in_p,'fig_print')==0
-    in_p.fig_print=1;
-end
-if isfield(in_p,'fname')==0
-    in_p.fname='fig';
-end
-if isfield(in_p,'fig_size')==0
-    in_p.fig_size=[0,0,14.5,12];
-end
+in_p=isfield_default(in_p,'val',NaN);
+
+%already return if we cannot plot
 sv=size(in_p.val);
 if numel(sv)>2
     sv=sv(2:end);
@@ -52,6 +43,13 @@ if numel(sv)>2
         return
     end
 end
+
+in_p=isfield_default(in_p,'fig_visible',0);
+in_p=isfield_default(in_p,'fig_print',1);
+in_p=isfield_default(in_p,'fname','fig');
+in_p=isfield_default(in_p,'fig_size',[0,0,14.5,12]);
+
+
 if isfield(in_p,'plot_mea')==0 
     if isfield(in_p,'val_mea')
         in_p.plot_mea=true;
@@ -182,6 +180,7 @@ in_p=isfield_default(in_p,'title_str','');
 in_p=isfield_default(in_p,'lab_str','variable');
 in_p=isfield_default(in_p,'varname',in_p.lab_str);
 in_p=isfield_default(in_p,'variable',in_p.varname);
+in_p=isfield_default(in_p,'do_replace_underscore',1);
 
 v2struct(in_p)
 
@@ -666,7 +665,9 @@ end
 kr=1; kc=1;
 pos.sfig=han.sfig(kr,kc).Position;
 if do_leg
-    str_leg=strrep(str_leg,'_','\_');
+    if do_replace_underscore
+        str_leg=strrep(str_leg,'_','\_');
+    end
     han.leg(kr,kc)=legend(han.sfig(kr,kc),reshape(han.p(kr,kc,:),1,numel(han.p(kr,kc,:))),str_leg,'location',leg_loc);
     pos.leg=han.leg(kr,kc).Position;
 end
