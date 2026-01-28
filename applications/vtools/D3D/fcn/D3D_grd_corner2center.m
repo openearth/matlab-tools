@@ -1,3 +1,6 @@
+function D3D_grd_corner2center(fpath_net,varargin)
+%D3D_grd_corner2center Based on cell-corner bed level, compute the cell-centre bed level
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                 VTOOLS                 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,10 +13,6 @@
 %$Id$
 %$HeadURL$
 %
-%Based on cell-corner bed level, compute the cell-centre bed level.
-
-function D3D_grd_corner2center(fpath_net,varargin)
-
 if exist(fpath_net,'file')~=2
     error('grid file does not exist: %s',fpath_net)
 end
@@ -54,9 +53,10 @@ bol_n=isnan(Zcen);
 fpath_out_loc=fullfile(pwd,sprintf('%s%s',fname_out,fext));
 write_2DMatrix(fpath_out_loc,[gridInfo.Xcen(~bol_n),gridInfo.Ycen(~bol_n),Zcen(~bol_n)],'add_header',add_header);
 %faster is: writematrix([gridInfo.Xcen(~bol_n),gridInfo.Ycen(~bol_n),Zcen(~bol_n)],fpath_out_loc,'FileType','text', 'delimiter', ' ')
-copyfile_check(fpath_out_loc,fpath_out);
-delete(fpath_out_loc)
-
+if ~strcmp(fpath_out_loc, fpath_out)
+    copyfile_check(fpath_out_loc,fpath_out);
+    delete(fpath_out_loc)
+end
 %% PLOT
 
 % figure
