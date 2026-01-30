@@ -61,9 +61,13 @@ if compress_below_Q > 0
     assert(fall_ratio>=0,'fall_ratio is %g. It should be larger or equal to 0',fall_ratio);
 end 
 
-mf_max = max(seconds(Q_steadyMorfac(:,2))); 
+mf_max = lcm(Q_steadyMorfac(1,2),Q_steadyMorfac(1,2)); 
+for j = 3:length(Q_steadyMorfac)
+    mf_max = lcm(mf_max,Q_steadyMorfac(j,2)); 
+end 
+
 seconds_since_start = seconds(time_limits-time_limits(1)); 
-seconds_since_start_test_div_mf = seconds_since_start/seconds(mf_max);
+seconds_since_start_test_div_mf = seconds_since_start/double(mf_max);
 seconds_since_start_test = seconds_since_start_test_div_mf - floor(seconds_since_start_test_div_mf); 
 
 if max(seconds_since_start_test)>0 
