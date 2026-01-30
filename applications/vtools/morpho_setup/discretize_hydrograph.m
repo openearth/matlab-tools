@@ -61,17 +61,14 @@ if compress_below_Q > 0
     assert(fall_ratio>=0,'fall_ratio is %g. It should be larger or equal to 0',fall_ratio);
 end 
 
-mf_max = lcm(Q_steadyMorfac(1,2),Q_steadyMorfac(1,2)); 
-for j = 3:length(Q_steadyMorfac)
-    mf_max = lcm(mf_max,Q_steadyMorfac(j,2)); 
-end 
+mf_max = lcm_vector(Q_steadyMorfac(:,2));
 
 seconds_since_start = seconds(time_limits-time_limits(1)); 
 seconds_since_start_test_div_mf = seconds_since_start/double(mf_max);
 seconds_since_start_test = seconds_since_start_test_div_mf - floor(seconds_since_start_test_div_mf); 
 
 if max(seconds_since_start_test)>0 
-    new_time_limits = time_limits(1)+round(seconds_since_start_test_div_mf)*mf_max;
+    new_time_limits = time_limits(1)+round(seconds_since_start_test_div_mf)*double(mf_max);
     T = table(time_limits(:), seconds_since_start(:), seconds_since_start_test_div_mf(:), new_time_limits(:), 'VariableNames',{'Time Limits', 'Seconds Since Start', 'Multiple of Morfac', 'Corrected time limits?'}); 
     disp(T(seconds_since_start_test>0,:));
     assert(max(seconds_since_start_test) == 0, sprintf('Morfac does not match with time limits. T_n - T_1 should be a mulitple of %f. \n This can be caused by day light savings time, please adjust datetime according to table above.', seconds(mf_max))); 
