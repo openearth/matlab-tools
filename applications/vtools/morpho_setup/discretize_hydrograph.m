@@ -61,6 +61,19 @@ if compress_below_Q > 0
     assert(fall_ratio>=0,'fall_ratio is %g. It should be larger or equal to 0',fall_ratio);
 end 
 
+mf_max = max(seconds(Q_steadyMorfac(:,2))); 
+seconds_since_start = seconds(time_limits-time_limits(1)); 
+seconds_since_start_test_div_mf = seconds_since_start/seconds(mf_max);
+seconds_since_start_test = seconds_since_start_test_div_mf - floor(seconds_since_start_test_div_mf); 
+
+if max(seconds_since_start_test)>0 
+    new_time_limits = time_limits(1)+round(seconds_since_start_test_div_mf)*mf_max;
+    T = table(time_limits(:), seconds_since_start(:), seconds_since_start_test_div_mf(:), new_time_limits(:), 'VariableNames',{'Time Limits', 'Seconds Since Start', 'Multiple of Morfac', 'Corrected time limits?'}); 
+    disp(T(seconds_since_start_test>0,:));
+    assert(max(seconds_since_start_test) == 0, sprintf('Morfac does not match with time limits. T_n - T_1 should be a mulitple of %f. \n This can be caused by day light savings time, please adjust datetime according to table above.', seconds(mf_max))); 
+end
+
+
 save(fullfile(fpath_dir_out,'input.mat'))
 
 Q_steady=Q_steadyMorfac(:,1);
@@ -71,16 +84,20 @@ MorFac=Q_steadyMorfac(:,2);
 [tim,val]=load_data(location_clear,fpaths_data_stations);
 time_limits_start_end = time_limits([1,end]);
 time_limits_start_end=parse_time_limits(tim,time_limits_start_end);
+assert(sum(isnan(val))==0)
 
 [tim,val]=extend_series(tim,val,time_limits_start_end,extend_time_series);
+assert(sum(isnan(val))==0)
 
-[tim,val]=filter_series(tim,val,time_limits_start_end,fpath_dir_out,'01');
- 
-[tim,val]=resample_series(tim,val,dt,time_limits_start_end,fpath_dir_out);
+[tim,val]=filter_series(tim,val,time_limits_start_end,dt,fpath_dir_out,'01');
+assert(sum(isnan(val))==0)
 
-[tim,val]=filter_series(tim,val,time_limits_start_end,fpath_dir_out,'02');
+[tim,val]=resample_series(tim,val,dt,time_limits,fpath_dir_out);
+assert(length(intersect(tim,time_limits))==length(time_limits))
+assert(sum(isnan(val))==0)
 
-[tim,val]=add_intermediate_dates(tim,val,time_limits);
+[tim,val]=filter_series(tim,val,time_limits_start_end,dt,fpath_dir_out,'02');
+assert(length(intersect(tim,time_limits))==length(time_limits))
 
 idx=index_steady_discharge(power_Q_dom,Q_steady,val,tim,fpath_dir_out);
 
@@ -89,6 +106,7 @@ plot_cdfs(val,Q_steady, idx, fpath_dir_out);
 tim_sep_idx = discretize(tim.', time_limits);
 
 [tim_dt,Q_disc_join,tim_join]=join_Q(Q_steady,tim,idx,MorFac,tim_sep_idx);
+assert(length(intersect(tim_join,time_limits))==length(time_limits))
 
 [tim_dt,Q_disc_join]=compress_Qseries(tim_dt,Q_disc_join,compress_below_Q,tim_join,time_limits,fall_ratio,fpath_dir_out);
 
@@ -133,9 +151,10 @@ end %function
 
 %%
 
-function [tim,val]=filter_series(tim_in,val_in,time_limits,fpath_dir_out,str_add)
+function [tim,val]=filter_series(tim_in,val_in,time_limits,dt,fpath_dir_out,str_add)
 
-bol_tim=tim_in>=time_limits(1) & tim_in<=time_limits(2);
+bol_tim=tim_in>=(time_limits(1)-dt) & tim_in<=(time_limits(2)+dt);
+
 tim=tim_in(bol_tim);
 val=val_in(bol_tim);
 
@@ -157,7 +176,7 @@ end
 figure
 hold on
 plot(tim_in,val_in,'b')
-plot(tim_in,val_in,'r')
+plot(tim,val,'r')
 legend('original','filtered')
 printV(gcf,fullfile(fpath_dir_out,sprintf('filter_%s.png',str_add)))
 printV(gcf,fullfile(fpath_dir_out,sprintf('filter_%s.fig',str_add)))
@@ -168,9 +187,9 @@ end %function
 
 function [tim,val]=resample_series(tim_in,val_in,dt,time_limits,fpath_dir_out)
 
-tim=time_limits(1)+dt/2:dt:time_limits(2)-dt/2;
-
-val=interpolate_timetable({tim_in},{val_in},tim);
+tim=sort(union(time_limits(1):dt:time_limits(end),time_limits));
+val=interp1(tim_in, val_in, tim); 
+%val=interpolate_timetable({tim_in},{val_in},tim);
 
 %plot
 figure
@@ -247,18 +266,20 @@ tim_tr=union(tim(bol_trt),tim([1,end]));
 % tim_tr=[tim(1),union(tim_tr,tim(end))]; %[ndisc+1,1]
 tim_dt=diff(tim_tr);
 %tim_dt=[tim_dt]; 
-bol_q=[true;bol_tr];
+%bol_q=[true;bol_tr];
 Q_disc_join=interp1(tim, Q_disc, tim_tr(1:end-1)); % Q_disc(bol_q);
 MorFac_disc_join=interp1(tim, MorFac(idx), tim_tr(1:end-1));
-tim_join=[tim(1); tim(1)+cumsum(tim_dt(1:end-1))];
+tim_join=[tim(1); tim(1)+cumsum(tim_dt(1:end))];
 %check
-assert(abs(sum(tim_dt)-(tim(end)-tim(1)))<1e-16 , ...
+assert(abs(sum(tim_dt)-(tim_join(end)-tim_join(1)))<1e-16 , ...
     'Something went wrong.')
 
 assert(abs(sum(Q_disc(1:end-1).*seconds(diff(tim)))-sum(Q_disc_join.*seconds(tim_dt)))<1e-16, ...
     'Something went wrong')
 
 tim_dt=apply_MorFac(tim_dt,MorFac_disc_join);
+assert(abs(sum(tim_dt.*MorFac_disc_join)-(tim(end)-tim(1)))<1e-16 , ...
+    'Something went wrong.')
 
 end %function
 
@@ -306,6 +327,15 @@ end
 if time_limits(2)<=time_limits(1)
     error('The final time (position 2) is expected to be after the initial time (position 1) in `time_limits`')
 end
+
+if time_limits(1)<tim(1)
+    error('The first time requested time  `time_limits` prececeeds the available range `tim`')
+end
+
+if time_limits(2)>tim(end)
+    error('The final time requested time  `time_limits` exceeds the available range `tim`')
+end
+
 end %function
 
 %%
