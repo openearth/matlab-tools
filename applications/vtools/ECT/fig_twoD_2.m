@@ -48,6 +48,7 @@ else
     in_2D.fig=isfield_default(in_2D.fig,'plot_set_contour_k',1);
 end
 
+in_2D.fig=isfield_default(in_2D.fig,'plot_max_morph_celerity',1);
 in_2D.fig=isfield_default(in_2D.fig,'do_colorbar',0);
 in_2D.fig=isfield_default(in_2D.fig,'clims_k',NaN);
 in_2D.fig=isfield_default(in_2D.fig,'clims_l',NaN);
@@ -276,11 +277,13 @@ if plot_set_contour_k
 else
     han.p1=contourf(xm_k,ym_k,max_gr_m(:,:,ksim),'showtext','on','parent',han.sfig(kr,kc));
 end
-for ke=1:ne-3
-    [han.p2,aux.p]=contour(xm_k,ym_k,max_cl_m(:,:,ke),[0,0],'showtext','off','parent',han.sfig(kr,kc));
-    aux.p.LineWidth=2;
-    aux.p.Color='k';
-%     han.p2=contour(xm_k,ym_k,max_cl_m(:,:,ke),'showtext','on')
+if plot_max_morph_celerity
+    for ke=1:ne-3
+        [han.p2,aux.p]=contour(xm_k,ym_k,max_cl_m(:,:,ke),[0,0],'showtext','off','parent',han.sfig(kr,kc));
+        aux.p.LineWidth=2;
+        aux.p.Color='k';
+    %     han.p2=contour(xm_k,ym_k,max_cl_m(:,:,ke),'showtext','on')
+    end
 end
 han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 
@@ -290,11 +293,13 @@ if plot_set_contour_l
 else
     han.p1=contourf(xm_l,ym_l,max_gr_m(:,:,ksim),'showtext','on','parent',han.sfig(kr,kc));
 end
-for ke=1:ne-3
-    [han.p2,aux.p]=contour(xm_l,ym_l,max_cl_m(:,:,ke),[0,0],'showtext','off','parent',han.sfig(kr,kc));
-    aux.p.LineWidth=2;
-    aux.p.Color='k';
-%     han.p2=contour(xm_l,ym_l,max_cl_m(:,:,ke),'showtext','on')
+if plot_max_morph_celerity
+    for ke=1:ne-3
+        [han.p2,aux.p]=contour(xm_l,ym_l,max_cl_m(:,:,ke),[0,0],'showtext','off','parent',han.sfig(kr,kc));
+        aux.p.LineWidth=2;
+        aux.p.Color='k';
+    %     han.p2=contour(xm_l,ym_l,max_cl_m(:,:,ke),'showtext','on')
+    end
 end
 han.sfig(kr,kc).ColorOrderIndex=1; %reset color index
 

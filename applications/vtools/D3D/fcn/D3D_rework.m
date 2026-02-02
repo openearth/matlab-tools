@@ -208,6 +208,9 @@ end
 
 simdef.mdf.dummy=NaN;
 
+simdef.mdf=isfield_default(simdef.mdf,'BedlevType',1); %ideally
+simdef.mdf=isfield_default(simdef.mdf,'NcFormat',3); %ideally
+
 %grd
 [~,fname,fext]=fileparts(simdef.file.grd); %should always be in simulation folder
 simdef.mdf.grd=sprintf('%s%s',fname,fext);
@@ -523,9 +526,6 @@ simdef.mdf=isfield_default(simdef.mdf,'Vicoww',5.d-5);
 simdef.mdf=isfield_default(simdef.mdf,'Dicoww',5.d-5);
 simdef.mdf=isfield_default(simdef.mdf,'Smagorinsky',0);
 simdef.mdf=isfield_default(simdef.mdf,'FrictType',0);
-
-simdef.mdf=isfield_default(simdef.mdf,'BedlevType',1); %ideally
-simdef.mdf=isfield_default(simdef.mdf,'NcFormat',3); %ideally
 
 %%
 %% MOR

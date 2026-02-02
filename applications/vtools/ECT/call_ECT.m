@@ -94,6 +94,9 @@ end
 ECT_matrices=v2struct(Ax,Ay,Dx,Dy,B,C,M_pmm,eigen_x,eigen_y,cp);
 sed_trans=v2struct(qbk,Qbk,thetak,qbk_st,Wk_st,u_st,xik,Qbk_st,Ek,Ek_st,Ek_g,Dk,Dk_st,Dk_g,vpk,vpk_st,Gammak_eq,Dm,qbk_no_pores);
 
+omega_i2_lim=-cp.gamma(1).*cp.psi.*cp.chi.*u^2/diff_hir(1)/(1-cp.Fr^2);
+disp(omega_i2_lim);
+
 % ECT_elliptic=v2struct(elliptic,elliptic_qs,elliptic_dLa,elliptic_ad,elliptic_Dm);
 % ECT_matrices=v2struct(A_qs,D_qs,Ax,Ay,Dx,Dy,B,C,Ax_sf,Ay_sf,Dx_sf,Dy_sf,B_sf,C_sf,Ax_SW,Ay_SW,Dx_SW,Dy_SW, B_SW, C_SW,Ax_SW_sf,Ay_SW_sf,Dx_SW_sf,Dy_SW_sf, B_SW_sf, C_SW_sf,Ax_SWE,Ay_SWE,Dx_SWE,Dy_SWE, B_SWE, C_SWE,Ax_SWE_sf,Ay_SWE_sf,Dx_SWE_sf,Dy_SWE_sf, B_SWE_sf, C_SWE_sf,A_ED,K_ED,B_ED,Ax_d,Ay_d,Dx_d,Dy_d, B_d, C_d);
 % [Ax_1,Ay_1,Dx_1,Dy_1,B_1,C_1,M_pmm]=rename_matrices(flg,ECT_matrices,alpha_pmm);
