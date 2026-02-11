@@ -12,37 +12,21 @@
 %
 %
 
-function data=gdm_read_data_his(fdir_mat,fpath_his,varname,varargin)
+function data=gdm_read_data_his(fdir_mat,fpath_his,varname,flags)
 
 %% PARSE
 
-parin=inputParser;
 
-addOptional(parin,'tim',[]);
-addOptional(parin,'tim2',[]);
-% addOptional(parin,'layer',[]);
-addOptional(parin,'layer',NaN);
-addOptional(parin,'station','');
-addOptional(parin,'sim_idx','');
-addOptional(parin,'structure',NaN); %no SMT
-addOptional(parin,'do_load',1); 
-addOptional(parin,'depth_average',false); 
-addOptional(parin,'elevation',NaN); 
-addOptional(parin,'version_date',NaN); 
-% addOptional(parin,'tol_t',5/60/24);
-
-parse(parin,varargin{:});
-
-tim=parin.Results.tim;
-tim2=parin.Results.tim2;
-layer=parin.Results.layer;
-station=parin.Results.station;
-sim_idx=parin.Results.sim_idx;
-structure=parin.Results.structure;
-do_load=parin.Results.do_load;
-depth_average=parin.Results.depth_average;
-elev=parin.Results.elevation;
-% tol_t=parin.Results.tol_t;
+tim=isfield_default(flags,'tim',[],'output','array');
+tim2=isfield_default(flags,'tim2',[],'output','array');
+layer=isfield_default(flags,'layer',NaN,'output','array');
+station=isfield_default(flags,'station','','output','array');
+sim_idx=isfield_default(flags,'sim_idx','','output','array');
+structure=isfield_default(flags,'structure',NaN,'output','array');
+do_load=isfield_default(flags,'do_load',1,'output','array');
+depth_average=isfield_default(flags,'depth_average',false,'output','array');
+elev=isfield_default(flags,'elevation',NaN,'output','array');
+mat_raw_overwrite=isfield_default(flags,'mat_raw_overwrite',false,'output','array');
 
 %% READ
     
@@ -54,7 +38,7 @@ if ~ischar(layer)
 else
     fpath_mat=mat_tmp_name(fdir_mat,varname,'station',station,'tim',tim,'tim2',tim2);
 end
-if exist(fpath_mat,'file')==2
+if exist(fpath_mat,'file')==2 && ~mat_raw_overwrite
     if do_load
         messageOut(NaN,sprintf('Loading mat-file with raw data: %s',fpath_mat));
         load(fpath_mat,'data')
@@ -107,7 +91,7 @@ end
 
 %find data at a given elevation
 if ~isnan(elev)
-   data_z=gdm_read_data_his(fdir_mat,fpath_his,'zcoordinate_c','station',station,'layer',layer,'tim',tim,'tim2',tim2,'structure',structure,'sim_idx',sim_idx);
+   data_z=gdm_read_data_his(fdir_mat,fpath_his,'zcoordinate_c',flags);
    data=gdm_data_at_elevation(data,data_z,elev);
 end
 

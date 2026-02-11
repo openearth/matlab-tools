@@ -341,13 +341,14 @@
 % in_plot.(tag).stations=NaN; %NaN=all
 % in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`
 % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all; 
-% in_plot.(tag).elev=[-6.5,-2.5]; %elevation at which to take the data.
+% in_plot.(tag).elevation=[-6.5,-2.5]; %elevation at which to take the data.
 % %The number of `ylims` controls the number of figures. For varying `xlim`, 
 % %add `xlims` variable and a matching number of `ylims`.
 % in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).ylims_diff=[NaN,NaN;-sal2cl(-1,400),sal2cl(-1,400)]; %in [psu]
 % in_plot.(tag).fig_overwrite=1; %overwrite figures
 % in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).mat_raw_overwrite=1; %overwrite mat-files with raw data (before processing)
 % in_plot.(tag).unit={'cl_surf'};  %sal, cl
 % in_plot.(tag).do_title=1;
 
@@ -486,10 +487,10 @@
 % % in_plot.(tag).fpath_stations=fullfile(fpaths.fdir_sta,'stations_01.txt');
 % ns=20;
 % in_plot.(tag).stations=cell(ns,1);
-% in_plot.(tag).elev=NaN(ns,1);
+% in_plot.(tag).elevation=NaN(ns,1);
 % for ks=1:ns
 % in_plot.(tag).stations{ks}=sprintf('HY_%4.2f',ks);
-% in_plot.(tag).elev(ks)=-1.5;
+% in_plot.(tag).elevation(ks)=-1.5;
 % in_plot.(tag).s(ks)=20e3-ks*1000;
 % end
 % in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`

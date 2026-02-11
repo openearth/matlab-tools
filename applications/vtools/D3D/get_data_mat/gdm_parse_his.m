@@ -117,7 +117,10 @@ flg_loc.nvar=numel(flg_loc.var);
 %% dependent on size
 
 %obs
+% elev -> elevation
 flg_loc=isfield_default(flg_loc,'elev',NaN(flg_loc.nobs,1));     
+flg_loc.elevation=flg_loc.elev; 
+flg_loc=rmfield(flg_loc,'elev');
 
 %var
 flg_loc=isfield_default(flg_loc,'depth_average',zeros(flg_loc.nvar,1));        

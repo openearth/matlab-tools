@@ -115,12 +115,12 @@ for ktimint=1:ntimint
             stations_loc=stations{ks};
             in_p.station=stations_loc;
             
-            elev=flg_loc.elev(ks);
-            [layer,elev]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},variable,elev);
-            in_p.elev=elev;
+            elevation=flg_loc.elevation(ks);
+            [layer,elevation]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{ks},variable,elevation);
+            in_p.elevation=elevation;
     
             %% load data
-            [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,variable,tag,nsim,k_sta,his_type,elev,tim_dtime,kvar);
+            [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,variable,tag,nsim,k_sta,his_type,elevation,tim_dtime,kvar);
             %dimension: data_all{k_sim,k_sta}
     
             if ~isvector(size(data_all{1}))
@@ -132,10 +132,10 @@ for ktimint=1:ntimint
             [data_conv,unit_conv,~]=check_convergence(flg_loc,data_all,tim_dtime_p,variable,k_sta,data_conv);
             
             %% measurements
-            [do_measurements,data_mea]=add_measurements(flg_loc.measurements,stations_loc,elev,variable);
+            [do_measurements,data_mea]=add_measurements(flg_loc.measurements,stations_loc,elevation,variable);
     
             flg_loc.do_measurements=do_measurements;
-            [data_statistics]=gdm_statistics_measurements(flg_loc,simdef,data_mea,tim_dtime_p,data_all,stations_loc,variable,elev,k_sta);
+            [data_statistics]=gdm_statistics_measurements(flg_loc,simdef,data_mea,tim_dtime_p,data_all,stations_loc,variable,elevation,k_sta);
     
             in_p.do_measurements=do_measurements;
             in_p.data_stations=data_mea;
@@ -169,7 +169,7 @@ for ktimint=1:ntimint
                         data_statistics_all(ks,ktimint)=data_statistics_no_time_series; %This can fail if there is more than one simulation. Test!
                     end
 
-                    fcn_plot_sal_01(flg_loc,in_p,data_all,simdef(ksim),gridInfo(ksim),stations_loc,variable,tag,k_sta,his_type,elev,tim_dtime_p{ksim},obs_all,data_statistics(ksim),fdir_fig,data_mea);
+                    fcn_plot_sal_01(flg_loc,in_p,data_all,simdef(ksim),gridInfo(ksim),stations_loc,variable,tag,k_sta,his_type,elevation,tim_dtime_p{ksim},obs_all,data_statistics(ksim),fdir_fig,data_mea);
                 end
             end %ksim
     
@@ -181,7 +181,7 @@ for ktimint=1:ntimint
                 fdir_fig=fullfile(simdef(ksim).file.fig.dir,sprintf('%s_all',tag_fig),tag_serie);
         
                 val=data_all(:,k_sta); %we pass all simulations and only one stations
-                fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,variable,layer,elev,fdir_fig,data_mea,do_measurements);
+                fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,variable,layer,elevation,fdir_fig,data_mea,do_measurements);
             end
     
             %% difference with reference simulation
@@ -203,7 +203,7 @@ for ktimint=1:ntimint
                     val={val-val_ref};
                     in_p.is_diff=1;
     
-                    fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,variable,layer,elev,fdir_fig,data_mea,do_measurements);
+                    fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,variable,layer,elevation,fdir_fig,data_mea,do_measurements);
                 end
             end
             
@@ -227,6 +227,7 @@ for ktimint=1:ntimint
                 in_p_c.stations=stations;
                 in_p_c.unit=unit_conv;
                 in_p_c.is_std=unit_conv;
+                in_p_c.elevation=elevation;
                 
                 fig_his_convergence(in_p_c)
             end 
@@ -296,7 +297,7 @@ if flg_loc.do_sal_01
         if nsim>1
             error('See comment above')
         end
-        fcn_write_table_sal_01(simdef(ksim),stations,data_statistics_all,flg_loc.elev);
+        fcn_write_table_sal_01(simdef(ksim),stations,data_statistics_all,flg_loc.elevation);
     end %ksim
 end
 
@@ -324,7 +325,7 @@ end %function
 
 %%
 
-function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elev,tim_0,tim_f,depth_average_limits,depth_average)
+function fname=fig_name(fdir_fig_var,tag,runid,station,var_str,layer,kylim,elevation,tim_0,tim_f,depth_average_limits,depth_average)
 
 %base
 str_b=sprintf('%s_%s_%s_%s_%s-%s_ylim_%02d',tag,runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'),kylim);
@@ -333,8 +334,8 @@ if ~isempty(layer)
     str_b=sprintf('%s_layer_%04d',str_b,layer);
 end
 
-if ~isnan(elev)
-    str_b=sprintf('%s_elev_%5.2f',str_b,elev);
+if ~isnan(elevation)
+    str_b=sprintf('%s_elev_%5.2f',str_b,elevation);
 end
 
 if depth_average
@@ -405,7 +406,7 @@ end %function
 
 %%
 
-function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elev,time_dtime,kvar)
+function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elevation,time_dtime,kvar)
 
 for ksim=1:nsim %simulations            
     fdir_mat=simdef(ksim).file.mat.dir;
@@ -414,12 +415,12 @@ for ksim=1:nsim %simulations
     %variable
     switch his_type
         case 1
-            layer=gdm_station_layer(flg_loc,gridInfo(ksim),fpath_his,stations_loc,var_str,elev); 
+            layer=gdm_station_layer(flg_loc,gridInfo(ksim),fpath_his,stations_loc,var_str,elevation); 
         case 2
             layer=gdm_layer(flg_loc,gridInfo(ksim).no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
     end
 
-    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime{ksim}(1),'tim2',time_dtime{ksim}(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
+    fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations_loc,'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime{ksim}(1),'tim2',time_dtime{ksim}(end),'depth_average',flg_loc.depth_average(kvar),'depth_average_limits',flg_loc.depth_average_limits(kvar,:));
     load(fpath_mat_tmp,'data');
 
     %change units
@@ -458,13 +459,13 @@ end %function
 
 %% 
 
-function [do_measurements,data_mea]=add_measurements(measurements,stations_loc,elev,unit)
+function [do_measurements,data_mea]=add_measurements(measurements,stations_loc,elevation,unit)
 
 if ~isempty(measurements)
     if isfolder(measurements) && exist(fullfile(measurements,'data_stations_index.mat'),'file')
         [str_sta,str_found]=RWS_location_clear(stations_loc);
         grootheid=unit_to_grootheid(unit);
-        data_mea=read_data_stations(measurements,'location_clear',str_sta{:},'bemonsteringshoogte',elev,'grootheid',grootheid); %location maybe better?
+        data_mea=read_data_stations(measurements,'location_clear',str_sta{:},'bemonsteringshoogte',elevation,'grootheid',grootheid); %location maybe better?
         if isempty(data_mea)
             data_mea=struct();
         end
@@ -540,7 +541,7 @@ end %function
 
 %%
 
-function fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elev,fdir_fig,data_mea,do_measurements)
+function fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,var_str,layer,elevation,fdir_fig,data_mea,do_measurements)
    
 if in_p.is_diff
     ylims_loc=flg_loc.ylims_diff_var{kvar};
@@ -564,7 +565,7 @@ for kylim=1:nylim
     in_p.xlims=xlims_loc(kylim,:);
     switch flg_loc.plot_type
         case 1
-            fname_noext=fig_name(fdir_fig_var,tag,runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
+            fname_noext=fig_name(fdir_fig_var,tag,runid,stations_loc,var_str,layer,kylim,elevation,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
             in_p.fname=fname_noext;
             if in_p.do_measurements || in_p.do_fil
                 warning('Move functionality to `fig_1D_01`')
@@ -578,7 +579,7 @@ for kylim=1:nylim
                 fig_1D_01(in_p);
             end
         case 2
-            fname_noext=fig_name(fdir_fig_var,sprintf('%s_2',tag),runid,stations_loc,var_str,layer,kylim,elev,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
+            fname_noext=fig_name(fdir_fig_var,sprintf('%s_2',tag),runid,stations_loc,var_str,layer,kylim,elevation,tim_dtime_p{1}(1),tim_dtime_p{1}(end),flg_loc.depth_average_limits(kvar,:),flg_loc.depth_average(kvar)); %are you sure simdef(1)? what about time for saving?
             in_p.fname=fname_noext;
             in_p.ylim_sal=in_p.ylims;
             fig_his_sal_02(in_p);
@@ -631,13 +632,13 @@ end %function
 
 %%
 
-function fname=fname_stat(fdir,runid,station,var_str,tim_0,tim_f,elev)
+function fname=fname_stat(fdir,runid,station,var_str,tim_0,tim_f,elevation)
 
 %base
 str_b=sprintf('stat_%s_%s_%s_%s-%s_ylim_%02d',runid,station,var_str,datestr(tim_0,'yyyymmddHHMMSS'),datestr(tim_f,'yyyymmddHHMMSS'));
 
-if ~isnan(elev)
-    str_b=sprintf('%s_elev_%5.2f',str_b,elev);
+if ~isnan(elevation)
+    str_b=sprintf('%s_elev_%5.2f',str_b,elevation);
 end
 
 fname=fullfile(fdir,sprintf('%s.mat',str_b));
@@ -646,7 +647,7 @@ end %function
 
 %%
 
-function fcn_plot_sal_01(flg_loc,in_p,data_all,simdef,gridInfo,stations_loc,var_str,tag,k_sta,his_type,elev,tim_dtime_p_sim,obs_all,data_statistics,fdir_fig,data_mea)
+function fcn_plot_sal_01(flg_loc,in_p,data_all,simdef,gridInfo,stations_loc,var_str,tag,k_sta,his_type,elevation,tim_dtime_p_sim,obs_all,data_statistics,fdir_fig,data_mea)
 
 if ~strcmp(var_str,'sal')
     %we only plot when it is salinity, as we will also be here when water level (both need to be read)
@@ -686,7 +687,7 @@ in_p.v_sim=data_all{1,k_sta};
 runid=simdef.file.runid;
 kvar=1; %sal
 do_measurements=1;
-fcn_plot_his(flg_loc,in_p,data_all(1,k_sta),runid,kvar,{tim_dtime_p_sim},tag,stations_loc,var_str,layer,elev,fdir_fig,data_mea,do_measurements);
+fcn_plot_his(flg_loc,in_p,data_all(1,k_sta),runid,kvar,{tim_dtime_p_sim},tag,stations_loc,var_str,layer,elevation,fdir_fig,data_mea,do_measurements);
 
 
 end %function
@@ -765,7 +766,7 @@ end %function
 
 %%
 
-function fcn_write_table_sal_01(simdef,stations,data_statistics_all,elev)
+function fcn_write_table_sal_01(simdef,stations,data_statistics_all,elevation)
 
 %The function for writing salinity data requires input organized for all simulations, 
 %(i.e., a cell on `ksim`), but it is not used. It should be cleaned.
@@ -786,11 +787,11 @@ for ks=1:n_sim_u
 
     bol_sta=idx_u2==ks;
     ds_sta=data_statistics_all(bol_sta);
-    elev_sta=elev(bol_sta);
-    nelev=numel(elev_sta);
+    elevation_sta=elevation(bol_sta);
+    nelev=numel(elevation_sta);
 
     for km=1:nelev
-        z_mea_s_1{ksim,1}{ks,1}{km,1}=elev_sta(km);
+        z_mea_s_1{ksim,1}{ks,1}{km,1}=elevation_sta(km);
         for klim=1:ntimint
             sal_bias_s{ksim,1}{ks,1}{km,1}{klim,1}=ds_sta(km).vbias;
             sal_std_s{ksim,1}{ks,1}{km,1}{klim,1}=ds_sta(km).vstd;

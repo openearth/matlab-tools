@@ -87,15 +87,15 @@ for kobs=kobs_v
     for kvar=1:nvar
         
         varname=flg_loc.var{kvar};
-        elev=flg_loc.elev(kobs);
+        elevation=flg_loc.elevation(kobs);
         
         [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
         
         %2DO: if depth_average, it takes all layers and elevation data is ommited. 
-        [layer,elev]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{kobs},var_str,elev);
+        [layer,elevation]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{kobs},var_str,elevation);
         
         %2DO: add `depth_average` to the name and move to a function to be called also in plot and plot_diff
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{kobs},'var',var_str,'layer',layer,'elevation',elev,'tim',time_dtime(1),'tim2',time_dtime(end));
+        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{kobs},'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime(1),'tim2',time_dtime(end));
         
         do_read=1;
         if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
@@ -104,8 +104,21 @@ for kobs=kobs_v
         
         if do_read
 
+            %% group data in structure
+
+            flags=flg_loc; %copy all input flags
+
+            flags.tim=time_dnum(1);
+            flags.tim2=time_dnum(end);
+            flags.layer=layer;
+            flags.sim_idx=sim_idx;
+            flags.station=stations{kobs};
+            flags.elevation=elevation;
+            flags.projection_angle=flg_loc.projection_angle(kvar);
+            flags.structure=simdef.D3D.structure;
+
             %% read data
-            data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,'tim',time_dnum,'layer',layer,'sim_idx',sim_idx,'station',stations{kobs},'elevation',elev,'angle',flg_loc.projection_angle(kvar));
+            data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,flags);
 
             %% processed data
             data=squeeze(data.val); %#ok
