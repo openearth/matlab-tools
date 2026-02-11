@@ -140,7 +140,14 @@ switch lower(cmd)
                     names = fieldnames(OPT.ext_force(i_force));
                     for i_name = 1: length(names)
                         if ~isempty(OPT.ext_force(i_force).(names{i_name}))
-                            fprintf(fid,'%-24s =%-12s \n', upper(names{i_name}),num2str(OPT.ext_force(i_force).(names{i_name})));
+                            if isfield(OPT.ext_force(i_force).(names{i_name}),'Value')
+                                for iVal = 1: length(OPT.ext_force(i_force).(names{i_name}).Value)
+                                    if isnumeric(OPT.ext_force(i_force).(names{i_name}).Value{iVal})
+                                        OPT.ext_force(i_force).(names{i_name}).Value{iVal} = num2str(OPT.ext_force(i_force).(names{i_name}).Value{iVal});
+                                    end
+                                end
+                            end
+                            fprintf(fid,'%-24s =%-12s \n', upper(names{i_name}),OPT.ext_force(i_force).(names{i_name}));
                             % Keywords are (FY) case sensitive!
                             % fprintf(fid,'%-24s =%-12s \n', names{i_name},num2str(OPT.ext_force(i_force).(names{i_name})));
                         end
