@@ -29,7 +29,7 @@ if isempty(path); path = '.'; end
 if ~isfield(add_inf,'timeZone'); add_inf.timeZone = 0; end
 
 %% Switch orientation if overall model is delft3D or Waqua (not for fixed layer Delft3D!)
-if ~strcmpi(nfs_inf.from,'dfm') && strcmpi(ndf_inf.layer_model,'sigma-model')
+if ~strcmpi(nfs_inf.from,'dfm') && strcmpi(nsf_inf.layer_model,'sigma-model')
     [bndval,thick] = nesthd_flipori(bndval,thick);
 end
 
