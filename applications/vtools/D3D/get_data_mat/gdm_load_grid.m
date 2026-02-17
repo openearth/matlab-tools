@@ -49,7 +49,7 @@ if isempty(fpath_map) %grid file must already exist
         is1d=false;
     end
 else    
-    [~,is1d,~,~]=D3D_is(fpath_map);
+    [ismor,is1d,str_network1d,issus,structure,is3d]=D3D_is(fpath_map);
 end
 
 if ~isnan(dim) %If we are forcing what it is, but does not match expectations:
@@ -133,8 +133,13 @@ else
             end
         case 2
             gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid','edge_nodes','XYuv'},'mergePartitions',1);   
-            data_edge_faces=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
-            gridInfo.edge_faces=data_edge_faces.val.';
+            if structure==2
+                data_edge_faces=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
+                gridInfo.edge_faces=data_edge_faces.val.';
+            else
+                gridInfo.edge_faces=NaN;
+                gridInfo.edge_nodes=NaN;
+            end
         otherwise
             error('Something is wrong.')
     end    
@@ -151,7 +156,11 @@ end
 
 %% edge length
 
-gridInfo.edge_length=D3D_edge_length(gridInfo.Xcor,gridInfo.Ycor,gridInfo.edge_nodes);
+if ~isnan(gridInfo.edge_nodes)
+    gridInfo.edge_length=D3D_edge_length(gridInfo.Xcor,gridInfo.Ycor,gridInfo.edge_nodes);
+else
+    gridInfo.edge_length=NaN;
+end
 
 %% edge connectivity for vorticity
 
