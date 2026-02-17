@@ -52,7 +52,7 @@ if nargin==0 %we assume it is called with `run` (i.e., no variables can be passe
     if evalin('caller', 'exist(''fdir_d3d'',''var'')')
         path_d3d_co=evalin('caller','fdir_d3d');
     else
-        path_d3d_co='';
+        path_d3d_co='   ';
     end
 end
 
