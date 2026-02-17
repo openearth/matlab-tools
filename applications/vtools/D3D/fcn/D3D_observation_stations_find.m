@@ -12,7 +12,7 @@
 %
 %Find name of observation stations that contains a string.
 
-function out=D3D_observation_stations_find(fpath_his,str,varargin)
+function [out,idx]=D3D_observation_stations_find(fpath_his,str,varargin)
 
 parin=inputParser;
 
@@ -29,11 +29,11 @@ if isstruct(fpath_his)
 end
 
 obs=D3D_observation_stations(fpath_his,'sta',sta);
-idx=find(contains(lower(obs.name),lower(str)));
+idx=find(contains(lower({obs.name}),lower(str)));
 nidx=numel(idx);
 for kidx=1:nidx
-    fprintf('%s\n',obs.name{idx(kidx)});
+    fprintf('%s, idx=%d\n',obs(idx(kidx)).name, idx(kidx));
 end
-out=obs.name(idx);
+out={obs(idx).name};
 
 end %function
