@@ -513,7 +513,9 @@ in_plot_original=gdm_read_input(in_plot_original);
 %% PARSE
 
 in_plot=create_mat_default_flags(in_plot_original);
-fid_log=NaN;
+
+[fid_log,fpath_log]=open_log_file(pwd);
+
 simdef.dummy=NaN; %for passing to `gdm_adhoc`. 
 
 if ~in_plot.only_adhoc
@@ -542,6 +544,10 @@ gdm_save_json(fid_log,in_plot_original,simdef);
 %% END
 
 messageOut(fid_log,'Done!!!',3);
+
+%% COPY LOG
+
+gdm_copy_log(fid_log,fpath_log,in_plot,simdef);
 
 end %function
 
@@ -582,5 +588,32 @@ elseif ischar(in_plot)
         error('Unknown format of input <in_plot>. It should be a structure or a json file.')
     end
 end
+
+end %function
+
+%%
+
+function [fid_log,fpath_log] = open_log_file(fdir_log)
+
+fpath_log = fullfile(fdir_log,sprintf('D3D_plot_%s.log',now_chr()));
+fid_log = fopen(fpath_log,'w');
+
+if fid_log == -1
+    warning('D3D_plot:LogOpenFailed', 'Could not open log file for writing: %s', fpath_log);
+end
+
+end
+
+%%
+
+function gdm_copy_log(fid_log,fpath_log,in_plot,simdef)
+
+fclose(fid_log);
+[~,fname,fext]=fileparts(fpath_log);
+fdir_logs=fullfile(simdef(in_plot.sim_ref).D3D.dire_sim,'logs');
+mkdir_check(fdir_logs);
+fpath_dest=fullfile(fdir_logs, [fname,fext]);
+copyfile_check(fpath_log,fpath_dest,0,0);
+delete(fpath_log);
 
 end %function
