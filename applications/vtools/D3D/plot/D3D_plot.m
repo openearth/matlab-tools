@@ -504,7 +504,7 @@
 
 %%
 
-function D3D_gdm(in_plot)
+function D3D_plot(in_plot)
 
 %% PARSE
 
