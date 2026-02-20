@@ -12,11 +12,11 @@
 %
 %
 
-function D3D_plot_test(fdir_sim_runs,fdir_scrips)
+function D3D_plot_test(fdir_sim_runs,fdir_scrips,fdir_log)
 
 %% TESTBENCH - LOG FILE
 
-[fid_log,fpath_log] = open_log_file(fdir_sim_runs);
+[fid_log,fpath_log] = open_log_file(fdir_log);
 cleanupLog = onCleanup(@() close_log_file(fid_log)); %#ok<NASGU>
 
 log_message(fid_log,'D3D_plot_test started: %s\n',datestr(now,'yyyy-mm-dd HH:MM:SS'));
@@ -145,9 +145,8 @@ function folderPaths = find_target_folders_recursive(rootDir,targetFolders)
     folderPaths = unique(folderPaths);
 end
 
-function [fid_log,fpath_log] = open_log_file(fdir_sim_runs)
+function [fid_log,fpath_log] = open_log_file(fdir_log)
 
-    fdir_log = fullfile(fdir_sim_runs,'testbench_logs');
     if ~isfolder(fdir_log)
         mkdir(fdir_log);
     end
