@@ -1,0 +1,560 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                 VTOOLS                 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%Victor Chavarrias (victor.chavarrias@deltares.nl)
+%
+%$Revision$
+%$Date$
+%$Author$
+%$Id$
+%$HeadURL$
+%
+%variables: open D3D_list_of_variables
+
+%%
+%% CALLING 
+%%
+% %
+% %Victor Chavarrias (victor.chavarrias@deltares.nl)
+% %
+% %$Revision$
+% %$Date$
+% %$Author$
+% %$Id$
+% %$HeadURL$
+% %
+% %Description
+% 
+% %% PREAMBLE
+% 
+% % dbclear all;
+% clear
+% clc
+% fclose all;
+% clear mex
+% 
+% %% PATHS
+% 
+% %Check out GitHub repository of OET Matlab:
+% %https://github.com/openearth/matlab-tools 
+% %into a folder (e.g., <c:\checkouts\oet_matlab\>). 
+% %do recursive checkout to have all submodules (e.g., Quickplot):
+% %```
+% %git clone https://github.com/openearth/matlab-tools oet_matlab --recursive
+% %```
+% %`fpath_add_oet` points to <oet_matlab\applications\vtools\general\addOET.m>
+% fpath_add_oet='c:\checkouts\oet_matlab\applications\vtools\general\addOET.m';
+%%
+% % fpath_add_oet='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\general\addOET.m';
+%
+% %Path to folder with project paths. See `paths_project_layout`.
+% % fpath_project='d:\temporal\220517_improve_exner\';
+% fpath_project='p:\11209261-rivierkunde-2023-morerijn';
+% 
+% %% ADD OET
+%
+% if isunix %we assume that if Linux we are in the p-drive. 
+%     fpath_add_oet=strrep(strrep(strcat('/',strrep(fpath_add_oet,'P:','p:')),':',''),'\','/');
+% end
+% run(fpath_add_oet);
+% 
+% %% PATHS
+% 
+% fpaths=paths_project(fpath_project);
+% 
+% %% simulation
+% 
+% ks=0;
+% 
+% ks=ks+1;
+% in_plot.fdir_sim{ks}=fullfile(fpaths.fdir_sim_runs,'r002'); 
+% in_plot.str_sim{ks}='reference';
+% 
+% in_plot.sim_ref=1;
+% in_plot.lan='en';
+% in_plot.tag_serie='01';
+% in_plot.path_tiles='C:\checkouts\earth_tiles\';
+% in_plot.path_tiles='p:\dflowfm\projects\2020_d-morphology\modellen\checkout\earth_tiles';
+% % in_plot.order_anl=1; %order in which data is analyzed: 1=normal; 2=random based on time (ATTENTION!); 3=random based on seed `order_anl_param`
+% %The random generation based on time is not enough when submitting
+% %the same script to the cluster, even when there is a pause statement.
+% %The processing time is sometimes the same.
+% %The solution is to name the file differently and end with a number. The
+% %lines below take that number as the seed number.
+% % fname=mfilename;
+% % in_plot.order_anl_param=str2double(fname(end)); %seed random number in case `order_anl=3`
+% %in_plot.function_handles={@my_fcn,@my_other_fcn}; %cell array of ad-hoc functions exectued in the plot script
+% % in_plot.fdir_mat=fullfile(pwd,'mat'); %Overwrite the <mat> folder (useful if working with simulation in archived folder).
+% % in_plot.fdir_fig=fullfile(pwd,'fig'); %Overwrite the <figures> folder (useful if working with simulation in archived folder).
+% % in_plot.fig_resolution='r300'; %Resolution of PNG and JPG figures.
+% % in_plot.simdef_overwrite=0; %Overwrite `simdef` mat-file created at mdu/mdf level. 
+
+%% display map times
+
+% tag='disp_time_map';
+% in_plot.(tag).do=1;
+
+%% grid
+
+% tag='GRD';
+% in_plot.(tag).do=1;
+% in_plot.(tag).fig_print=1; %0=NO; 1=png; 2=fig; 3=eps; 4=jpg; (accepts vector)
+% in_plot.(tag).fig_visible=0;
+% in_plot.(tag).axis_equal=1;
+% in_plot.(tag).do_plot_along_rkm=1;
+% in_plot.(tag).do_rkm_disp=1;
+% in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv');
+% in_plot.(tag).fpath_rkm_disp=fullfile(fpaths.dir_rkm,'rkm.csv');
+% in_plot.(tag).rkm_tol_x=5000;
+% in_plot.(tag).rkm_tol_y=5000;
+% in_plot.(tag).plot_tiles=1;
+% in_plot.(tag).plot_fxw=1; %plot fixed weirs (from input, not snapped)
+% in_plot.(tag).pol{1,1}=fullfile(fpaths.fdir_pol,'summerbed.shp');
+
+%% 2DH
+
+% tag='M2D';
+% in_plot.(tag).do=1;
+
+% in_plot.(tag).do_p=1; %pass through plotting routine
+% in_plot.(tag).do_p_single=1; %plot single result
+% in_plot.(tag).do_diff_t=1; %difference initial time
+% % in_plot.(tag).do_diff_t_first_time=1; %plot the first difference in time (by definition 0)
+% in_plot.(tag).do_diff_s=1; %difference reference simulation
+% % in_plot.(tag).do_diff_s_ref_sim=0; %plot the difference bertween reference and itself  (by definition 0)
+% in_plot.(tag).do_diff_s_t=1; %difference reference simulation and initial time
+% in_plot.(tag).do_diff_s_perc=1; %difference reference simulation in percentage terms
+% % in_plot.(tag).do_create_mat=1; %debug flag to skip the creation of the files if you are sure they have not changed
+% in_plot.(tag).do_3D=0; %3D plot
+% in_plot.(tag).var={'T_max','T_da','T_surf'}; %open D3D_list_of_variables
+% % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
+% in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
+% in_plot.(tag).depth_average=1; %compute depth average quantity [1,nvar]
+% in_plot.(tag).tim_just_load=0;
+% % in_plot.(tag).do_mat=0; %do the processing of mat-files. If set to 0, it is assumed that it already exists and you can just plot. 
+% % in_plot.(tag).var_idx={1,1,1}; %index of a variable with several indices: {'T_max','T_da','T_surf'}.
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% in_plot.(tag).clims_type=1; %1=regular; 2=upper limit is number of days since <clims_type_var>
+% % in_plot.(tag).clims_type_var=datenum(2018,07,01); %in case of <clims_type>=2
+% in_plot.(tag).clims=[NaN,NaN;-6.0,4.5]; %color limits:
+% % Option 1: matrix [nclims,2] 
+% % Option 1: cell array {nvar,1} containting a matrix for each variable. 
+% % The same applies to `diff_t`, `diff_s`, ...
+% % and for properties `clims`, `filter_lims`, `cmap`
+% in_plot.(tag).clims_diff_t=[NaN,NaN]; %clim of difference with time
+% in_plot.(tag).clims_diff_s=[NaN,NaN]; %clim of difference with simulation
+% in_plot.(tag).filter_lims=[998,1000]; %filter values for regular plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_diff_s=[-1001,-998]; %filter values for difference between simulations plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_diff_t=[-1001,-998]; %filter values for  difference in time plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).filter_lims_diff_t_var{1}=[-1001,-998]; %filter values for  difference in time plot. Values larger than the first value and smaller than the second are removed.
+% in_plot.(tag).do_movie=0; %
+% in_plot.(tag).tim_movie=40; %movie duration [s]
+% in_plot.(tag).fpath_ldb{1,1}=fullfile(fpath_project,'model','postprocessing','mkm-inner.ldb');
+% in_plot.(tag).fpath_ldb{2,1}=fullfile(fpath_project,'model','postprocessing','mkm-outer.ldb');
+% in_plot.(tag).fig_overwrite=1; %overwrite figures
+% % in_plot.(tag).fig_variable='age'; %overwrite variable name for figure
+% % in_plot.(tag).fig_unit=1/3600/24; %overwrite unit for figure
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).do_vector=0; %add velocity vectors
+% in_plot.(tag).do_axis_equal=0;
+% in_plot.(tag).do_fxw=0; %plot snapped fixed weirs: 0=NO; 1=non-snapped; 2=snapped
+% % in_plot.(tag).color_fxw='k'; %color of the fixed weirs (if plotted).
+% in_plot.(tag).do_plot_along_rkm=0;
+% in_plot.(tag).do_rkm_disp=0;
+% % in_plot.(tag).rkm_disp_color='c'; %color of the river kilometers
+% % in_plot.(tag).fpath_rkm_plot_along=fullfile(fpaths.dir_rkm,'rkm_5km.csv'); %file to go along specified rkm to plot
+% % in_plot.(tag).fpath_rkm_disp=fullfile(fpaths.dir_rkm,'rkm.csv'); %file to display rkm
+% in_plot.(tag).rkm_tol_x=5000;
+% in_plot.(tag).rkm_tol_y=5000;
+% in_plot.(tag).plot_tiles=1; %plot satellite background image
+% % in_plot.(tag).epsg_in=4326; %28992
+% % in_plot.(tag).fig_size=[0,0,37/2,15];
+% % in_plot.(tag).font_size=20;
+% % in_plot.(tag).tol_time_measurements=days(30); %tolerance for matching measurements [durartion]. 
+% % in_plot.(tag).measurements=fullfile(fpaths.fdir_bl_measurements_2D,'2D_measurements_01.csv'); full path to csv file descriving the measurments:
+% % % time, file, factor
+% % % 1995-01-01T00:00:00+01:00, p:\archivedprojects\11206792-kpp-rivierkunde-2021\003_maas\04_input_generation\14_export_jmp_to_tif\1995.tif , 0.01
+% % in_plot.(tag).measurements_edgecolor='none'; %color of the edge lines of measurements.
+
+%% 2DH ls
+
+% tag='PRF';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=1; %regular plot
+% in_plot.(tag).do_p_single=1; %plot single result
+% in_plot.(tag).do_all_t=0; %all times together
+% in_plot.(tag).do_all_s=1; %all simulations together
+% in_plot.(tag).do_diff_t=1; %difference of each simulation in time
+% in_plot.(tag).do_diff_s=1; %difference of each simulation with reference simulation
+% in_plot.(tag).do_all_t_diff_t=1; %all times together, difference in time
+% in_plot.(tag).do_all_t_xt=1; %all times together xt
+% in_plot.(tag).do_all_t_xt_diff_t=1; %all times together xt, difference in time
+% in_plot.(tag).var={'bl'}; %list variables: `open D3D_list_of_variables`
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% in_plot.(tag).use_local_time=0; %use the time of each simulation rather than the time of the reference simulation for comparison
+% in_plot.(tag).tim_type=2;
+% in_plot.(tag).tim_tol=0.5;
+% in_plot.(tag).fig_size=[0,0,16,9].*2;
+% in_plot.(tag).pli{1,1}=fullfile(fpaths.fdir_pli,'y500.pli'); %polyline to take data [char] (path to file with polyline), [double] (coordinates of points [np,2] (x,y)).
+% in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).tim_movie=40; %movie duration [s]
+% in_plot.(tag).do_movie=0; %
+% in_plot.(tag).ml=2.5;
+% % in_plot.(tag).filter_lim=[0.992,1.1];
+% in_plot.(tag).do_marker=1;
+% in_plot.(tag).do_replace_underscore=1; %replace underscore in legend
+% in_plot.(tag).markersize=5;
+% in_plot.(tag).do_staircase=1;
+% in_plot.(tag).plot_val0=0; %plot initial
+% % in_plot.(tag).xdir='reverse';
+% in_plot.(tag).leg_mea='Carnott'; %legend of measurements (default is 'measurements [-]')
+% % in_plot.(tag).xlab_str='whatever you want'
+% % in_plot.(tag).cmap=[0,0,0;1,1,1]; %custom colormap for each line in the plot
+% % in_plot.(tag).leg_str={'a','b'}; %custom legend
+
+%% summerbed
+
+%computes statistic values (mean, max, min, std) of a variables inside the summerbed 
+%and inside a kilometre polygon. 
+
+% tag='SMB';
+% in_plot.(tag).do=1; %process this tag
+% in_plot.(tag).do_p=1; %pass through plotting routine
+% in_plot.(tag).do_p_single=1; %plot single result
+% in_plot.(tag).do_diff_t=1; %difference initial time
+% in_plot.(tag).do_diff_s=1; %difference reference simulation
+% in_plot.(tag).do_diff_s_t=1; %difference reference simulation and initial time
+% in_plot.(tag).do_diff_s_perc=1; %difference reference simulation in percentage terms
+% in_plot.(tag).do_all_s=0; %all simulations in same figure
+% in_plot.(tag).do_all_s_diff_t=0; %all simulations in same figure, difference with time
+% in_plot.(tag).do_xvt=0; %ATTENTION! This and related flags both for `xvt` and `xtv`. 
+    % %`xvt` = x-axis -> x; y-axis-> variable; one line for each time; 
+    % %`xtv` = x-axis -> x; y-axis-> time; surf plot of variable; 
+% in_plot.(tag).do_xvt_single=0; 
+% in_plot.(tag).do_xvt_diff_t=0; 
+% in_plot.(tag).do_xvt_diff_s=0; 
+% in_plot.(tag).do_xvt_cel=0; %x-axis -> x; y-axis-> variable; one line for each time
+% in_plot.(tag).do_tv=1; %x-axis -> time; y-axis -> variable; for a certain rkm specified in `rkm_plot_tv`
+% in_plot.(tag).do_cum=0; %cumulative value with time
+% in_plot.(tag).do_plot_structures=1; %plot bridge piles and structures: 0=NO; 1=YES
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% in_plot.(tag).tim_tol=hours(1); 
+% in_plot.(tag).tim_type=2; %Type of input time: 1=flow; 2=morpho. 
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).do_movie=0;
+% in_plot.(tag).do_plot_inpolygon=1; %plot coverage of cells inside summerbed polygon
+% in_plot.(tag).do_plot_along_rkm=1; %plot coverage along rkm
+% % in_plot.(tag).statis_plot={'val_mean','val_mean_weighted'}; %statistics to plot. Comment to have all. 
+% in_plot.(tag).var={'mesh2d_taus'}; %list variables: `open D3D_list_of_variables`
+%%plot of stacked sediment transport
+% in_plot.(tag).var={'stot'};
+% in_plot.(tag).var_idx={1:1:11}; %for 11 size fractions
+% in_plot.(tag).do_area=1;
+%%%
+% in_plot.(tag).rkm={145:1:175}; %river km vectors to average the data; cell(1,nrkm)
+% in_plot.(tag).rkm_plot_tv={[178.5,191.2]}; %river km vectors to average the data; cell(1,nrkm)
+% in_plot.(tag).rkm_name={'1km'}; %name of the river km vector (for saving); cell(1,nrkm)
+%%Two options to specify in which branch the rkm is:
+%%Option 1 (preferred, only for Rijntakken and Maas):
+%%Specify the track. It is the same code as the branches, but only one is
+%%given rather than specifying which branch for each rkm. Depending on the
+%%rkm, the branch is found.
+% in_plot.(tag).rkm_track={'IJ'}; 
+%%%%
+%%Option 2:
+%%Specify the branch for each rkm.
+%     %construct branches name
+%     for kidx=1:numel(in_plot.(tag).rkm)
+%         in_plot.(tag).rkm_br{kidx,1}=maas_branches(in_plot.(tag).rkm{kidx}); %branch name of each rkm point
+%     end
+% in_plot.(tag).xlims=[145,175]; %x limits for plotting [nxlims,2]
+% in_plot.(tag).fpath_rkm=fullfile(fpaths.dir_rkm,'rkm.csv'); %river kilometer file. See format: open convert2rkm
+% 
+% %polygons and measurements associated to it
+% in_plot.(tag).tol_time_measurements=2;
+% kp=0;
+% 
+% kp=kp+1;
+% in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.dir_rkm,'L3R3.shp');
+% in_plot.(tag).measurements{kp,1}=fullfile(fpaths.dir_data,'20220415_van_Arjan_1d_calibratie_parameters','L3R3_measured.mat'); 
+%
+% %time average
+%
+% %Computes the statistics (mean, max, min, std) for each statistic of a variable over a period of time. E.g., 
+% %the std of the bed elevation between <t1> and <t2>.
+%
+% in_plot.(tag).overwrite_ave=1; %overwrite mat-files
+% %Times taken to compute the statistics in time. [<t3>,<t4>] means e.g. that the mean is based on the results at <t3> and <t4>. 
+% %For computing the mean based on all results between <t1> and <t2>, set these times in <tim> and set NaN in <tim_ave> (i.e., the time in <tim_ave> is the same as that in <tim>). 
+% in_plot.(tag).tim_ave{1,1}=[datenum(2014,06,01),datenum(2015,06,01),datenum(2016,06,01),datenum(2017,06,01),datenum(2018,06,01)]; 
+% in_plot.(tag).tim_ave_type=2; %1=flow; 2=morpho
+% in_plot.(tag).tim_tol=30; %tolerance to match day in period with results
+
+%% 1D map
+
+% tag='M1D';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=1; %pass through plotting routine
+% in_plot.(tag).do_p_single=1; %plot single result
+% in_plot.(tag).do_all_sim=1; %all simulations together
+% in_plot.(tag).p_single_function_handles={@add_weirs,@add_rkm_Maas_10_10_240}; %ad-hoc functions applied to this plot
+% in_plot.(tag).do_diff_t=1; %difference initial time
+% in_plot.(tag).do_diff_s=1; %difference reference simulation
+% in_plot.(tag).do_diff_s_t=1; %difference reference simulation and initial time
+% in_plot.(tag).do_diff_s_perc=1; %difference reference simulation in percentage terms
+% in_plot.(tag).do_xtv=1; %
+% in_plot.(tag).do_xtv_diff_t=1; %
+% in_plot.(tag).do_xtv_diff_s=1; %
+% in_plot.(tag).var={'h'}; %list variables: `open D3D_list_of_variables`
+% in_plot.(tag).branch{1,1}={'Channel_1D_1'}; %<open main_plot_layout>
+% in_plot.(tag).branch_name{1,1}='c1';
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% in_plot.(tag).tim_type=1;
+% in_plot.(tag).xlims=[NaN,NaN];
+% in_plot.(tag).ylims=[NaN,NaN];
+% % in_plot.(tag).ylims=[NaN,NaN;-0.2e-3,1.2e-3];
+% % in_plot.(tag).rat=3*24*3600; %[s] we want <rat> model seconds in each movie second
+% in_plot.(tag).fig_overwrite=1; %overwrite figures
+% in_plot.(tag).overwrite=1; %overwrite mat-files
+% in_plot.(tag).do_movie=0; %
+% % in_plot.(tag).ml=2.5;
+% in_plot.(tag).do_marker=1;
+% in_plot.(tag).plot_val0=0;
+% % in_plot.(tag).str_time='yyyymmddHHMM'; %string for writing the time in the figures [-]
+% % in_plot.(tag).leg_mea='analytical'; %legend of the measurements (default: "measuremts") 
+
+%% HIS
+
+% tag='HIS';
+% in_plot.(tag).do=1; %create mat files
+% in_plot.(tag).do_p=1; %pass through plotting routine
+% in_plot.(tag).do_p_single=1; %plot single result
+% % in_plot.(tag).do_diff=1; %difference initial time
+% in_plot.(tag).do_diff_s=0; %difference with reference
+% % in_plot.(tag).do_s_diff=1; %difference with reference and initial time
+% in_plot.(tag).do_all_s=1; %all simulations in same plot
+% in_plot.(tag).tim=NaN; %Time to plot. This is not [initial,final] but all the times to consider. E.g., [initial:delta_t:final].
+% in_plot.(tag).stations=NaN; %NaN=all
+% in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`
+% in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all; 
+% in_plot.(tag).elevation=[-6.5,-2.5]; %elevation at which to take the data.
+% %The number of `ylims` controls the number of figures. For varying `xlim`, 
+% %add `xlims` variable and a matching number of `ylims`.
+% in_plot.(tag).ylims=[NaN,NaN;sal2cl(-1,110),sal2cl(-1,400)]; %in [psu]
+% in_plot.(tag).ylims_diff=[NaN,NaN;-sal2cl(-1,400),sal2cl(-1,400)]; %in [psu]
+% in_plot.(tag).fig_overwrite=1; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).mat_raw_overwrite=1; %overwrite mat-files with raw data (before processing)
+% in_plot.(tag).unit={'cl_surf'};  %sal, cl
+% in_plot.(tag).do_title=1;
+
+%% sed trans offline
+
+% tag='fig_map_sedtransoff_01';
+% in_plot.(tag).do=1;
+% % in_plot.(tag).do_2d=1;
+% in_plot.(tag).do_sb=1; %do summerbed
+% in_plot.(tag).do_sb_p=1; %plot summerbed
+% in_plot.(tag).smt_last_time=1;
+% % in_plot.(tag).do_all=1; %plot all simulations in same figure
+% in_plot.(tag).tim=[datetime(2000,01,01,0,0,0,'timezone','+00:00'),datetime(2000,03,01,0,0,0,'timezone','+00:00'),datetime(2001,01,01,0,0,0,'timezone','+00:00')];
+% in_plot.(tag).tim_type=1; %1=flow; 2=morpho
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% 
+% %% sediment transport variations
+% 
+% kst=0;
+% 
+% kst=kst+1;
+% in_plot.(tag).sedtrans_name{kst}='EH';
+% in_plot.(tag).sedtrans{kst}=2;
+% in_plot.(tag).sedtrans_param{kst,1}=[0.05,5];
+% in_plot.(tag).sedtrans_hiding(kst,1)=0;
+% in_plot.(tag).sedtrans_hiding_param(kst,1)=NaN;
+% in_plot.(tag).sedtrans_mu(kst,1)=0;
+% in_plot.(tag).sedtrans_mu_param(kst,1)=NaN;
+% % in_plot.(tag).ylims_var{kst,1}=[NaN,NaN;0,1e-2;0,1e-1]; 
+% % in_plot.(tag).ylims_var{kst,1}=[NaN,NaN]; 
+% 
+% kst=kst+1;
+% in_plot.(tag).sedtrans_name{kst}='MPM01';
+% in_plot.(tag).sedtrans{kst}=1;
+% in_plot.(tag).sedtrans_param{kst,1}=[8,1.5,0.047];
+% in_plot.(tag).sedtrans_hiding(kst,1)=1;
+% in_plot.(tag).sedtrans_hiding_param(kst,1)=-0.8;
+% in_plot.(tag).sedtrans_mu(kst,1)=0;
+% in_plot.(tag).sedtrans_mu_param(kst,1)=NaN;
+% % in_plot.(tag).ylims_var{kst,1}=[NaN,NaN;0,1e-2;0,1e-1]; 
+% 
+% kst=kst+1;
+% in_plot.(tag).sedtrans_name{kst}='EHMPM01';
+% in_plot.(tag).sedtrans{kst}=[2,1];
+% in_plot.(tag).sedtrans_param{kst,1}{1}=[0.05,5];
+% in_plot.(tag).sedtrans_param{kst,1}{2}=[8,1.5,0.047];
+% in_plot.(tag).sedtrans_hiding(kst,1)=1;
+% in_plot.(tag).sedtrans_hiding_param(kst,1)=-0.8;
+% in_plot.(tag).sedtrans_mu(kst,1)=0;
+% in_plot.(tag).sedtrans_mu_param(kst,1)=NaN;
+% % in_plot.(tag).ylims_var{kst,1}=[NaN,NaN;0,1e-2;0,1e-1]; 
+% 
+% %% streamwise polygons
+% 
+% in_plot.(tag).statis_plot={'val_mean','val_mean_weighted'}; %statistics to plot. Comment to have all.
+% in_plot.(tag).rkm={872:1:957}; %river km vectors to average the data; cell(1,nrkm)
+% in_plot.(tag).rkm_name={'1km'}; %river km vectors to average the data; cell(1,nrkm)
+%     %construct branches name
+%     for kidx=1:numel(in_plot.(tag).rkm)
+%         in_plot.(tag).rkm_br{kidx,1}=branch_rijntakken(in_plot.(tag).rkm{kidx},'WA');
+%     end
+% in_plot.(tag).xlims=[872,957]; %x limits for plotting [nxlims,2]
+% in_plot.(tag).fpath_rkm=fullfile(fpaths.fdir_rkm,'rkm_rijntakken_rhein.csv');
+% 
+% %% summerbed polygons
+% kp=0;
+% 
+% kp=kp+1;
+% in_plot.(tag).sb_pol{kp,1}=fullfile(fpaths.fdir_shp,'sb.shp');
+
+%% cross-section along rkm and compute left-centre-right
+
+% tag='fig_map_fraction_cs';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=1; %regular plot
+% in_plot.(tag).var={'Q','qsp'}; %list variables: `open D3D_list_of_variables`
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% in_plot.(tag).tim_just_load=true;
+% in_plot.(tag).tim_type=2;
+% in_plot.(tag).tim_tol=0.5;
+% in_plot.(tag).ylims=[NaN,NaN];
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).fpath_sb=fullfile(fpaths.fdir_sb,'L3R3.shp');
+% % in_plot.(tag).fpath_wb=fullfile(fpaths.fdir_wb,''); %if commented out, it uses model enclosure
+% in_plot.(tag).fpath_rkm=fullfile(fpaths.fdir_rkm,'rkm_mod.csv'); %river kilometer file. See format: open convert2rkm
+%     rkm_lim=rkm_limits('linne-roermond');
+% in_plot.(tag).rkm=rkm_lim(1)+2:1:rkm_lim(2); %river km vectors to average the data; 
+% in_plot.(tag).xy_input_type=2; %Maas
+% in_plot.(tag).s_floodplain=9000; %maximum distance from axis (river km file) to intersect searching for winter bed [m]
+% in_plot.(tag).do_plot_pli=1; %plot cross-sections on map
+% %How to choose the
+% % intersection point between a line perpendicular to the river axis and the
+% % summerbed (`intersection_type_sb_wb(1)`) and winterbed
+% % (`intersection_type_sb_wb(2)`. 
+% % 1=If there is no intersection, thrown an error. 
+% in_plot.(tag).intersection_type_sb_wb = [1,1]; 
+
+%% his data out of map data
+
+% tag='fig_map_2DH_his_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_all_sta=1;
+% in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`
+% % in_plot.(tag).layer=NaN; %NaN=top layer; Inf=first layer above bed; []=all
+% in_plot.(tag).tim_type=1; %Type of input time: 1=flow; 2=morpho. 
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% in_plot.(tag).fig_overwrite=0; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).depth_average=1; %compute depth average quantity
+% 
+% kobs=0;
+% 
+% kobs=kobs+1;
+% in_plot.(tag).obs(kobs).xy=[73347.5505375,439310.1805045];
+% in_plot.(tag).obs(kobs).name='NW_1023.00_SC';
+% 
+% kobs=kobs+1;
+% in_plot.(tag).obs(kobs).xy=[73480.9609,439515.6563];
+% in_plot.(tag).obs(kobs).name='NW_1023.00';
+
+%% his data in x-t form (i.e., giving an streamwise coordinate to each station)
+
+% tag='fig_his_01';
+% in_plot.(tag).do=1;
+% in_plot.(tag).do_p=1; %do plot
+% in_plot.(tag).do_s=0; %difference with reference
+% in_plot.(tag).do_all=0; %all figures in same plot
+% in_plot.(tag).do_sal_01=0; %all figures in same plot
+% in_plot.(tag).do_xt=1; %his stations plotted along line
+% in_plot.(tag).tim_just_load=1; %debug flag
+% in_plot.(tag).do_p_single=0; 
+% tim_his=600/24/3600; %his period [days]
+% in_plot.(tag).tim=NaN; %times analyzed [datenum(1,nt)], [datetime(1,nt)], or [index(1,nt)]. NaN=all, Inf=last.
+% % in_plot.(tag).fpath_stations=fullfile(fpaths.fdir_sta,'stations_01.txt');
+% ns=20;
+% in_plot.(tag).stations=cell(ns,1);
+% in_plot.(tag).elevation=NaN(ns,1);
+% for ks=1:ns
+% in_plot.(tag).stations{ks}=sprintf('HY_%4.2f',ks);
+% in_plot.(tag).elevation(ks)=-1.5;
+% in_plot.(tag).s(ks)=20e3-ks*1000;
+% end
+% in_plot.(tag).var={'sal'}; %list variables: `open D3D_list_of_variables`
+% in_plot.(tag).unit={'cl'};
+% in_plot.(tag).s_fact=1/1000;
+% in_plot.(tag).xlab_str='dist_mouth';
+% in_plot.(tag).clims=[NaN,NaN;sal2cl(-1,100),sal2cl(-1,700)]; %in [psu]
+% in_plot.(tag).fig_overwrite=1; %overwrite figures
+% in_plot.(tag).overwrite=0; %overwrite mat-files
+% in_plot.(tag).measurements=fpaths.fdir_data_stations;
+
+%%
+
+function D3D_gdm(in_plot)
+
+%% PARSE
+
+in_plot=create_mat_default_flags(in_plot);
+fid_log=NaN;
+simdef.dummy=NaN; %for passing to `gdm_adhoc`. 
+
+if ~in_plot.only_adhoc
+
+    %% CREATE MAT-FILES
+    
+    messageOut(fid_log,'Creating mat-files',3)
+    [simdef,legend_str]=gdm_create_mat_all(fid_log,in_plot);
+
+    %% PLOT
+        
+    messageOut(fid_log,'Plotting',3)
+    gdm_plot(fid_log,in_plot,simdef,legend_str)    
+
+end %only_adhoc
+
+%% AD-HOC
+
+gdm_adhoc(fid_log,in_plot,simdef)
+
+%% END
+
+messageOut(fid_log,'Done!!!',3);
+
+end %function
+
+%%
+%% FUNCTIONS
+%%
+
+function [simdef,legend_str]=gdm_create_mat_all(fid_log,in_plot)
+
+%% PARSE
+
+if ~isfield(in_plot,'fdir_sim')
+    error('Specify the simulations to analyse <fdir_sim>')
+end
+
+%% CALC
+
+ns=numel(in_plot.fdir_sim);
+legend_str=cell(ns,1);
+for ks=1:ns
+    [simdef(ks),legend_str{ks}]=gdm_paths_single_run(fid_log,in_plot,ks);
+    gdm_create_mat(fid_log,in_plot,simdef(ks));
+end %ks
+
+end %function
