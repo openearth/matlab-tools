@@ -504,11 +504,15 @@
 
 %%
 
-function D3D_plot(in_plot)
+function D3D_plot(in_plot_original)
+
+%% READ STRUCTURE
+
+in_plot_original=gdm_read_input(in_plot_original);
 
 %% PARSE
 
-in_plot=create_mat_default_flags(in_plot);
+in_plot=create_mat_default_flags(in_plot_original);
 fid_log=NaN;
 simdef.dummy=NaN; %for passing to `gdm_adhoc`. 
 
@@ -529,6 +533,11 @@ end %only_adhoc
 %% AD-HOC
 
 gdm_adhoc(fid_log,in_plot,simdef)
+
+%% SAVE JSON
+
+%We save after it has worked to avoid saving a json file with wrong paths if it fails. Also, the simulation paths need to exist. 
+gdm_save_json(fid_log,in_plot_original,simdef);
 
 %% END
 
@@ -556,5 +565,22 @@ for ks=1:ns
     [simdef(ks),legend_str{ks}]=gdm_paths_single_run(fid_log,in_plot,ks);
     gdm_create_mat(fid_log,in_plot,simdef(ks));
 end %ks
+
+end %function
+
+%%
+
+function in_plot=gdm_read_input(in_plot)
+
+if isstruct(in_plot)
+    %do nothing
+elseif ischar(in_plot)
+    [~,~,ext]=fileparts(in_plot);
+    if strcmpi(ext,'.json')
+        in_plot=gdm_read_json(in_plot);
+    else
+        error('Unknown format of input <in_plot>. It should be a structure or a json file.')
+    end
+end
 
 end %function
