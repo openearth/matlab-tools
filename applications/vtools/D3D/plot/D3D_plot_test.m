@@ -45,7 +45,7 @@ for i = 1:numel(scripts)
     log_message(fid_log,'Running script: %s\n',scriptPath);
 
     try
-        run(scriptPath);
+        run_script(scriptPath);
 
         % Stub for future checks (e.g. file equality vs reference)
         verify_outputs_stub(scriptPath,fdir_sim_runs);
@@ -84,7 +84,7 @@ function cleanup_sim_runs(rootDir,fid_log)
         return;
     end
 
-    targetFolders = {'json','mat','csv','figures'};
+    targetFolders = {'json','mat','csv','figures','logs'};
 
     folderPaths = find_target_folders_recursive(rootDir,targetFolders);
 
@@ -173,3 +173,9 @@ function log_message(fid_log,varargin)
     end
 end
 
+%%
+
+%In this way, the input arguments are not visible in the workspace, which is cleaner and avoids accidental modifications. Also, it allows to easily add future arguments without changing the function signature.
+function run_script(scriptPath)
+    run(scriptPath);
+end
