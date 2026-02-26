@@ -38,29 +38,34 @@ parse(parin,varargin{:})
 
 check_existing=parin.Results.check_existing;
 
+%% CHECK
+if isempty(simdef.file.thd)
+    fprintf('No thin dams file provided, skipping \n')
+    return
+end
+
+fname_destiny=simdef.file.thd;
+%check if the file already exists
+if check_existing && exist(fname_destiny,'file')>0
+    error('You are trying to overwrite a file!')
+end
+fname=fullfile(pwd,now_chr);
+
 %% CALC
 
 switch simdef.D3D.structure
     case 1
         %The idea would be to read spatial data and convert to MN coordinates. 
         %see how it is done in `D3D_convert_...`
-
-        %if it is empty, we do not have thin dams
-        if ~isempty(simdef.file.thd)
-            fname_destiny=simdef.file.thd;
-            %check if the file already exists
-            if check_existing && exist(fname_destiny,'file')>0
-                error('You are trying to overwrite a file!')
-            end
-            fname=fullfile(pwd,now_chr);
-            delft3d_io_thd('write',fname,simdef.thd);
-            copyfile_check(fname,fname_destiny);
-        end
+        delft3d_io_thd('write',fname,simdef.thd);
     case 2
         if ~isempty(simdef.file.thd)
             error('do')
         end
 end %switch
+
+copyfile_check(fname,fname_destiny);
+delete(fname);
 
 end %function
 
