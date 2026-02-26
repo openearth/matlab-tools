@@ -358,6 +358,9 @@ debug = 0;
    byte = 8*bit;
    kB   = 1024 * byte;
    
+   %% Area
+   ha             = 1e4;                    % hectare
+
 %% Find conversion factor 
    if debug
       disp(['InUnits  ', InUnits0 ,' beautified to ',InUnits , ' = ',num2str(eval(InUnits) )])
