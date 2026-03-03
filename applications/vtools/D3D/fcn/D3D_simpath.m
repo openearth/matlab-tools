@@ -77,8 +77,10 @@ fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
 if exist(fpath_simdef,'file')==2 && ~overwrite 
     messageOut(NaN,sprintf('`simdef` file exists. Loading: %s', fpath_simdef));
     load(fpath_simdef,'simdef');
-    fprintf('DEBUG: simdef.D3D.dire_sim: %s \n', simdef.D3D.dire_sim);
-    fprintf('DEBUG: simdef.file.map: %s \n', simdef.file.map);
+    %We may have written the file in Windows and run in Linux or viceversa.
+    simdef.file=adapt_paths_smt(simdef.file,0,@adapt_path_local_machine);
+    % fprintf('DEBUG: simdef.D3D.dire_sim: %s \n', simdef.D3D.dire_sim);
+    % fprintf('DEBUG: simdef.file.map: %s \n', simdef.file.map);
     return
 end
 
@@ -145,7 +147,7 @@ switch simdef.D3D.structure
     case {2,4}
         simdef_aux=D3D_simpath_mdu(file.mdf);
         if simdef.D3D.structure==4 
-            simdef_aux.file=adapt_paths_smt(simdef_aux.file,do_break_paths_smt); %the relative paths are relative to the layout mdu
+            simdef_aux.file=adapt_paths_smt(simdef_aux.file,do_break_paths_smt,@adapt_paths_smt_char); %the relative paths are relative to the layout mdu
         end
     case 5
         %get paths for each mdf
@@ -322,20 +324,20 @@ end %function
 
 %%
 
-function simdef_aux_file=adapt_paths_smt(simdef_aux_file,do_break)
+function simdef_aux_file=adapt_paths_smt(simdef_aux_file,do_break,adapt_func)
 
 fn=fieldnames(simdef_aux_file);
 nfn=numel(fn);
 for kfn=1:nfn
     fi=simdef_aux_file.(fn{kfn});
     if ischar(fi)
-            fprintf('DEBUG: adapting path file %s \n',fi);
-        simdef_aux_file.(fn{kfn})=adapt_paths_smt_char(fi,do_break);
+            % fprintf('DEBUG: adapting path file %s \n',fi);
+        simdef_aux_file.(fn{kfn})=adapt_func(fi,do_break);
     elseif iscell(fi)
         nc=numel(fi);
         for kc=1:nc
             fi2=fi{kc};
-            simdef_aux_file.(fn{kfn}){kc}=adapt_paths_smt_char(fi2,do_break);
+            simdef_aux_file.(fn{kfn}){kc}=adapt_func(fi2,do_break);
         end
     end
 end
@@ -344,7 +346,13 @@ end %function
 
 %%
 
-function fi=adapt_paths_smt_char(fi,do_break)
+function fi=adapt_paths_smt_char(fi,varargin)
+
+if nargin>1
+    do_break=varargin{1};
+else
+    do_break=0;
+end
 
 fi_old=fi;
 
