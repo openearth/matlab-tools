@@ -75,7 +75,7 @@ end
 
 fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
 if exist(fpath_simdef,'file')==2 && ~overwrite 
-    % messageOut(NaN,'`simdef` file exists. Loading.')
+    messageOut(NaN,'`simdef` file exists. Loading.')
     load(fpath_simdef,'simdef');
     return
 end
@@ -327,6 +327,7 @@ nfn=numel(fn);
 for kfn=1:nfn
     fi=simdef_aux_file.(fn{kfn});
     if ischar(fi)
+            fprintf('DEBUG: adapting path file %s \n',fi);
         simdef_aux_file.(fn{kfn})=adapt_paths_smt_char(fi,do_break);
     elseif iscell(fi)
         nc=numel(fi);
