@@ -70,12 +70,14 @@ for kv=1:nv
         isvar_1=true;
         var_1_full=ncread(nc1,var_u{1,kv});
         vinfo = ncinfo(nc1,var_u{1,kv}); 
-        if length(vinfo)>0
+        if isempty(vinfo)
             var_1 = var_1_full;
-        else
+        elseif isempty(vinfo.Dimensions)
+            var_1 = var_1_full;
+        else            
             tidx = find(strcmp({vinfo.Dimensions(:).Name},'time')); 
             vsize = size(var_1_full);
-            if length(tidx) == 0
+            if isempty(tidx)
                 var_1 = var_1_full;
             else
                 idx = repmat({':'}, 1, ndims(var_1_full));
@@ -93,21 +95,22 @@ for kv=1:nv
         isvar_2=true;
         var_2_full=ncread(nc2,var_u{1,kv});
         vinfo = ncinfo(nc2,var_u{1,kv}); 
-        if length(vinfo)>0
+        if isempty(vinfo)
             var_2 = var_2_full;
-        else
+        elseif isempty(vinfo.Dimensions)
+            var_2 = var_2_full;
+        else            
             tidx = find(strcmp({vinfo.Dimensions(:).Name},'time')); 
             vsize = size(var_2_full);
-            if length(tidx) == 0
+            if isempty(tidx)
                 var_2 = var_2_full;
             else
                 idx = repmat({':'}, 1, ndims(var_2_full));
                 idx{tidx} = 1;
                 var_2 = var_2_full(idx{:});
-            end        
+            end
         end
-    end
-    
+    end    
     %compare
     if isvar_1 && isvar_2
         if isinteger(var_1)
