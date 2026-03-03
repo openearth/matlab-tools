@@ -36,7 +36,7 @@ if isfolder(fpath_res)
         fdir_loc=D3D_SMT_dir_output_loc(fdir_output,kf);       
             % fprintf('DEBUG: fdir_loc %s \n',fdir_loc)
         simdef.D3D.dire_sim=fdir_loc;
-        simdef=D3D_simpath(simdef,'overwrite',1); %very expensive... 
+        simdef=D3D_simpath(simdef,'overwrite',0); 
         fpath_nc=simdef.file.(res_type);
             % fprintf('DEBUG: Processing %s \n',fpath_nc)
         nt=nt+D3D_nt_single(fpath_nc,res_type);
