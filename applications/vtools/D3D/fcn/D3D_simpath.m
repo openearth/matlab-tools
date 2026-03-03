@@ -75,8 +75,10 @@ end
 
 fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
 if exist(fpath_simdef,'file')==2 && ~overwrite 
-    messageOut(NaN,'`simdef` file exists. Loading.')
+    messageOut(NaN,sprintf('`simdef` file exists. Loading: %s', fpath_simdef));
     load(fpath_simdef,'simdef');
+    fprintf('DEBUG: simdef.D3D.dire_sim: %s \n', simdef.D3D.dire_sim);
+    fprintf('DEBUG: simdef.file.map: %s \n', simdef.file.map);
     return
 end
 
