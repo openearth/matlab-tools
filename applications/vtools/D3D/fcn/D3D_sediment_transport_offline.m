@@ -106,7 +106,7 @@
 %   -fpath_hydro  = full path to hydrodynamic SMT simulation [char] or to each hydrodynamic SMT with a constant discharge [cell]
 %   -fpath_morpho = full path to morphodynamic SMT simulation [char]  
 %   -fpath_out    = full path to output folder [char]
-%   -in_plot_sedtrans = structure with input for sediment transport (see `D3D_gdm`) [struct]
+%   -in_plot_sedtrans = structure with input for sediment transport (see `D3D_plot`) [struct]
 %   -Qseries      = matrix with input hydrograph [double(nh,2)]:
 %       - (:,1)  = discharge (needs to match `MorFac`)
 %       - (:,2)  = time [s]
@@ -541,7 +541,7 @@ in_plot.(tag).tim=1;
 in_plot.(tag).overwrite=0; %overwrite mat-files
 in_plot.(tag).tim_tol=in_plot_sedtrans.tim_tol;
 
-D3D_gdm(in_plot)
+D3D_plot(in_plot)
 
 end %function
 
@@ -562,6 +562,6 @@ in_plot_sedtrans.str_sim{ks}='reference';
 tag='STO';
 in_plot_sedtrans.(tag).tim=tim_dtime;
 
-D3D_gdm(in_plot_sedtrans)
+D3D_plot(in_plot_sedtrans)
 
 end %function
