@@ -67,7 +67,7 @@ if exist(fpath_mat_time,'file')==2
             do_load=1;
         end
     else %is double
-        messageOut(fid_log,'Checking number of times in existing time file.')
+        messageOut(fid_log,sprintf('Checking number of times in existing time file: %s', fpath_map));
         ntt=D3D_nt(fpath_map,'res_type',results_type); %inside the NaN check we save computational time, but we need it below.
         if any(isnan(flg_loc.tim)) 
             if ntt==nt
