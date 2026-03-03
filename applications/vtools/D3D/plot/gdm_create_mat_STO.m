@@ -94,7 +94,7 @@ in_plot.(tag).tim_tol=flg_loc.tim_tol;
 
 %% CALL
 
-D3D_gdm(in_plot)
+D3D_plot(in_plot)
 
 %% PROCESS VARIABLE NAMES
 
@@ -357,7 +357,7 @@ in_plot.(tag).layer=1; %we want the first layer of `Fak`
 in_plot.(tag).ylims=[0,1]; %check this is the right input!
 
 %% CALL
-D3D_gdm(in_plot)
+D3D_plot(in_plot)
 
 end %function
 
@@ -389,7 +389,7 @@ in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! Th
 in_plot.(tag).var={'Ltot','dg'}; %%`dg` needs to be available in output. If it is not, add in `gdm_read_data_map_simdef` the computation based on `lyrfrac` It would be nice to add `dg` but we need to make sure it is output in the morpho simulation
 
 %% CALL
-D3D_gdm(in_plot)
+D3D_plot(in_plot)
 
 end %function
 
@@ -420,7 +420,7 @@ in_plot.(tag).tim=tim(1); %one time of the analysis. Do not use integer here! Th
 in_plot.(tag).var={'ba_mor'}; 
 
 %% CALL
-D3D_gdm(in_plot)
+D3D_plot(in_plot)
 
 end %function
 
@@ -449,7 +449,7 @@ in_plot.(tag).tim=tim; %all times
 in_plot.(tag).var={'umag','mesh2d_czs','h','Fr','ShieldsD'}; 
 
 %% CALL
-D3D_gdm(in_plot)
+D3D_plot(in_plot)
 
 end %function
 
@@ -500,7 +500,7 @@ end
 
 %% CALL
 
-D3D_gdm(in_plot);
+D3D_plot(in_plot);
 
 end %function
 
@@ -553,7 +553,7 @@ end
 
 %% CALL
 
-D3D_gdm(in_plot);
+D3D_plot(in_plot);
 
 end %function
 
