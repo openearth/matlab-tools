@@ -16,7 +16,7 @@ function gdm_plot(fid_log,in_plot,simdef,leg_str)
 
 nsim=numel(simdef);
 
-%% map_summerbed
+%% SMB
 in_plot_fig=gdm_check_tag_SMB(in_plot);
 if in_plot_fig.do
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
@@ -29,21 +29,19 @@ if in_plot_fig.do
         end
     end
 end
-
-%% his xt
-%This functionality is moved to `fig_his_01` with `do_xt=1`
-% tag_check='fig_his_xt_01';
-% if isfield(in_plot,tag_check)==1
-%     in_plot_fig=gmd_tag(in_plot,tag_check,'fig','all');
-%     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
-%     plot_his_xt_01(fid_log,in_plot_fig,simdef)
-% end
     
 %% HIS
 in_plot_fig=gdm_check_tag_HIS(in_plot);
 if in_plot_fig.do
     in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
     gdm_plot_HIS(fid_log,in_plot_fig,simdef)
+end
+
+%% STO
+in_plot_fig=gdm_check_tag_STO(in_plot);
+if in_plot_fig.do
+    in_plot_fig=gdm_add_legend(in_plot_fig,leg_str);
+    gdm_plot_STO(fid_log,in_plot_fig,simdef)
 end
 
 %% map 2DH his

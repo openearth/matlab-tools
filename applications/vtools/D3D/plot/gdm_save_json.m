@@ -118,6 +118,17 @@ function s = encode_json_value(v,level,indentUnit)
             s = encode_vector_values(rows,level,indentUnit);
         end
 
+    elseif isduration(v)
+
+        if isempty(v)
+            s = '[]';
+        elseif isscalar(v)
+            s = jsonencode(['__duration__:' char(v)]);
+        else
+            s = encode_by_shape(size(v), @(idx) jsonencode(['__duration__:' char(v(idx))]), ...
+                level,indentUnit);
+        end
+
     else
 
         s = jsonencode(v);
@@ -236,6 +247,15 @@ function out = encode_special_numbers_recursive(in)
             for i = 1:numel(in)
                 out{i} = encode_special_numbers_recursive(in{i});
             end
+        end
+
+    elseif isduration(in)
+
+        % Convert duration values to marked character strings
+        if isscalar(in)
+            out = ['__duration__:' char(in)];
+        else
+            out = arrayfun(@(x) ['__duration__:' char(x)], in, 'UniformOutput', false);
         end
 
     else

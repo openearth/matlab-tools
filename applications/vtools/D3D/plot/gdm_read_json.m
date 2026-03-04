@@ -113,7 +113,13 @@ function out = decode_special_token(in)
         case '__-Inf__'
             out = -Inf;
         otherwise
-            out = in;
+            % Check for duration marker
+            if startsWith(s, '__duration__:')
+                durationStr = s(14:end); % Remove '__duration__:' prefix
+                out = duration(durationStr);
+            else
+                out = in;
+            end
     end
 end
 
@@ -128,6 +134,12 @@ function out = restore_array_shape(in)
     % Case 1: vector of scalar numerics/logicals -> numeric vector
     if isvector(in) && all(cellfun(@(x) isnumeric(x) && isscalar(x), in(:)))
         out = cell2mat(in(:).');
+        return;
+    end
+
+    % Case 1b: vector of scalar durations -> duration vector
+    if isvector(in) && all(cellfun(@(x) isduration(x) && isscalar(x), in(:)))
+        out = [in{:}];
         return;
     end
 
@@ -189,6 +201,11 @@ function out = restore_array_shape(in)
     % Case 4: 2D cell matrix of scalar numerics -> numeric matrix
     if ismatrix(in) && all(cellfun(@(x) isnumeric(x) && isscalar(x), in(:)))
         out = cell2mat(in);
+    end
+
+    % Case 5: 2D cell matrix of scalar durations -> duration matrix
+    if ismatrix(in) && all(cellfun(@(x) isduration(x) && isscalar(x), in(:)))
+        out = reshape([in{:}], size(in));
     end
 end
 
