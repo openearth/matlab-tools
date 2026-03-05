@@ -12,7 +12,7 @@
 %
 %
 
-function gdm_STO_plot_SMB(fid_log,flg_loc,simdef,var_2_v)
+function gdm_STO_plot_SMB(fid_log,flg_loc,simdef)
     
 nf=numel(gdm_read_dk(simdef)); %we cannot use the size of `qbk` because the loop may be skipped if files exist
 
@@ -21,7 +21,7 @@ in_plot.str_sim=flg_loc.str_sim;
 in_plot.lan=flg_loc.lan;
 in_plot.tag_serie=flg_loc.tag_serie;
 
-tag='SMB';
+tag='SMB'; %Note that `in_plot.(tag).tag='STO'`. Hence, this is the tag used for saving time variables and display.
 in_plot.(tag)=flg_loc;
 in_plot.(tag).do=1;
 
