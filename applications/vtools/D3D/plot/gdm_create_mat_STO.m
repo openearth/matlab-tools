@@ -97,10 +97,6 @@ in_plot_get_variables_2DH=gmd_tag(in_plot,tag);
 
 end %function
 
-%% 
-
-
-
 %%
 
 function var_2_v=gdm_STO_create_mat(fid_log,flg_loc,simdef,in_plot_get_variables_2DH,time_dnum)

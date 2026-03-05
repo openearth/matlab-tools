@@ -44,12 +44,15 @@ end %function
 
 function gdm_plot_STO_all(fid_log,flg_loc,simdef)
 
+tag='STO'; %It needs to be this tag because we read variables created with this tag.
+tag_fig=tag;
 
-tag='STO';
 in_plot.(tag)=flg_loc;
 in_plot.(tag).tag=tag;
 
-%%
+in_plot.(tag).do_p_single=0;
+
+%% allocate
 
 nf=numel(gdm_read_dk(simdef)); %we cannot use the size of `qbk` because the loop may be skipped if files exist
 nst=numel(flg_loc.sedtrans_name);
@@ -74,54 +77,43 @@ for kst=1:nst
     in_plot.(tag).do_area=cat(2,in_plot.(tag).do_area,1);
 end
 
-%%
 
-in_plot.(tag).do_p_single=0;
+%% PATHS
 
-% flg_loc=isfield_default(flg_loc,'do_p',1);
-% flg_loc=isfield_default(flg_loc,'do_p_single',1);
-% flg_loc=isfield_default(flg_loc,'do_diff_t',0);
-% flg_loc=isfield_default(flg_loc,'do_diff_s',0);
-% flg_loc=isfield_default(flg_loc,'do_diff_s_t',0);
-% flg_loc=isfield_default(flg_loc,'do_diff_s_perc',0);
-% flg_loc=isfield_default(flg_loc,'do_all_s',1);
-% flg_loc=isfield_default(flg_loc,'do_all_s_diff_t',0);
-% flg_loc=isfield_default(flg_loc,'do_xvt',0);
-% flg_loc=isfield_default(flg_loc,'do_xvt_single',1);
-% flg_loc=isfield_default(flg_loc,'do_xvt_diff_t',1);
-% flg_loc=isfield_default(flg_loc,'do_xvt_diff_s',1);
-% flg_loc=isfield_default(flg_loc,'do_xvt_cel',1);
-% flg_loc=isfield_default(flg_loc,'do_plot_structures',0);
-% flg_loc=isfield_default(flg_loc,'do_rkm',1); %the default is to convert to rkm. This is not very general maybe, but it applies to our projects. 
-% flg_loc=isfield_default(flg_loc,'do_diff_t_first_time',1); 
-% flg_loc=isfield_default(flg_loc,'do_diff_s_ref_sim',1); 
-
-% in_plot.(tag).do_output_xvt=1;
-
-%%
 kref=flg_loc.sim_ref;
+
 fdir_mat=simdef(kref).file.mat.dir;
 fpath_map=simdef(kref).file.map;
 fdir_fig=fullfile(simdef(kref).file.fig.dir,tag_fig,tag_serie);
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 
+%% TIME
 
+%create time vector
 [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
+
+%take the one for plotting
+%
+%Rather than calling the function, we know it is morpho. 
 % [gridInfo_ref,time_dnum_ref,time_dnum_plot,~,tim_dtime_plot]=gdm_load_time_grid(fid_log,flg_loc,simdef(kref),tag);
 tim_dtime_plot=time_mor_dtime;
 time_dnum_plot=time_mor_dnum;
 
+%% DATA
+
 [data_xvt_all,data_xvt0_all]=gdm_plot_SMB(fid_log,in_plot.(tag),simdef);
 
-% [data_xvt_all,data_xvt0_all,tim_dtime_plot]=gdm_plot_SMB_get_data(fid_log,in_plot.(tag),simdef,tim_dtime_plot);
-
+%% CUMULATIVE
 
 statis='val_mean_weighted';
-val_cum=cell(nst,1);
+
+%We could loop over the following variables. For now we keep it simple. 
 kt=nt;
 krkmv=1;
 ksb=1;
+
+val_cum=cell(nst,1);
 runid=simdef(kref).file.runid;
 for kst=1:nst
     val_cum{kst}=gdm_compute_cumulative(data_xvt_all{1,1,kst},statis,tim_dtime_plot);
@@ -129,30 +121,31 @@ for kst=1:nst
     val_cum_sum_kt{kst}=squeeze(val_cum_sum{kst}(:,:,kt));
 end
 
+%% PLOT
+
+%x-vector
 pol_name=flg_loc.rkm_name{krkmv};
 rkmv=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,'','','','',pol_name);
 
+%names for filenames
 [sb_pol,sb_def,str_save_sb_pol,npol]=gdm_read_summerbed_polygon_all(fid_log,flg_loc,fdir_mat,fpath_map,ksb);    
 
 fdir_fig_loc=fullfile(fdir_fig,str_save_sb_pol,pol_name,'cumulative_all');
 mkdir_check(fdir_fig_loc);
 
-fname_noext=fig_name(fdir_fig_loc,tag,runid,time_dnum_plot(kt),'sedtrans_all',statis,sb_pol,'',kylim,1);
+fname_noext=fullfile(fdir_fig_loc,sprintf('%s_all_%s_%s_%s_%s',tag,runid,datestr(time_dnum_plot(kt),'yyyymmdd_HHMMSS'),statis,sb_pol{ksb}));
+
+%plot
 
 in_p=flg_loc;
-in_p.val=squeeze(val_cum(:,:,kt,:));
+in_p.val=cell2mat(val_cum_sum_kt);
 in_p.tim=time_dnum_plot(kt);
 in_p.variable='stot';
-
-
 in_p.fname=fname_noext;
-
-
-        in_p.s=rkmv.rkm_cen;
-        in_p.xlab_str='rkm';
-        in_p.xlab_un=1/1000;
+in_p.s=rkmv.rkm_cen;
+in_p.xlab_str='rkm';
+in_p.xlab_un=1/1000;
 
 fig_1D_01(in_p);
 
-
-end
+end %function

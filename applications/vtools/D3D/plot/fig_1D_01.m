@@ -175,6 +175,7 @@ if isfield(in_p,'is_dom')==0
 end
 in_p=isfield_default(in_p,'clims',[NaN,NaN]);
 in_p=isfield_default(in_p,'title_str','');
+in_p=isfield_default(in_p,'y_scale','linear');
 
 %baclward compatibility. Use `variable`.
 in_p=isfield_default(in_p,'lab_str','variable');
@@ -579,7 +580,7 @@ han.sfig(kr,kc).YLabel.String=ylabels{kr,kc};
 % han.sfig(kr,kc).XTick=[];  
 % han.sfig(kr,kc).YTick=[];  
 % han.sfig(kr,kc).XScale='log';
-% han.sfig(kr,kc).YScale='log';
+han.sfig(kr,kc).YScale=y_scale;
 if do_title && ~do_time && isempty(title_str)
     if ~isnan(tim)
         if numel(tim)==1
