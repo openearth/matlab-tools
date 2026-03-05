@@ -12,7 +12,7 @@
 %
 %
 
-function gdm_plot_SMB(fid_log,flg_loc,simdef)
+function varargout = gdm_plot_SMB(fid_log,flg_loc,simdef)
 
 %% TAG
 
@@ -93,7 +93,7 @@ for ksb=1:nsb %summerbed polygons
         %% LOOP ON VARIABLES
         for kvar=1:nvar %variable
             
-            do_save_xvt=(flg_loc.do_xvt || flg_loc.do_tv || flg_loc.do_cum(kvar)) && npol==1;
+            do_save_xvt=(flg_loc.do_xvt || flg_loc.do_tv || flg_loc.do_cum(kvar) || nargin>0) && npol==1;
 
             var_str_original=flg_loc.var{kvar};
             
@@ -373,6 +373,13 @@ for ksb=1:nsb %summerbed polygons
 
             end %kt
             
+            %% save xvt for all
+            if nargout>0
+                %do not save with variable names as fieldnames of structure because they can have invalid characters.
+                data_xvt_all{ksb,krkmv,kvar}=data_xvt;
+                data_xvt0_all{ksb,krkmv,kvar}=data_xvt0;
+            end
+
             %% xvt
             multi_dim=check_multi_dimensional(data_0(kref));
 
@@ -393,6 +400,14 @@ for ksb=1:nsb %summerbed polygons
         end %kvar    
     end %nrkmv
 end %ksb
+
+%% OUTPUT
+
+if nargout>0
+    varargout{1}=data_xvt_all;
+    varargout{2}=data_xvt0_all;
+    varargout{3}=tim_dtime_plot;
+end
 
 end %function
 
@@ -639,9 +654,7 @@ for ksim=1:nsim
     fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
     
     statis='val_mean_weighted';
-    diff_tim=seconds(diff(tim_dtime_plot));
-    val_tim=data_xvt.(statis)(:,:,1:end-1,:).*repmat(reshape(diff_tim,1,1,[]),nx,nsim,1,nD); %we do not use the last value. Block approach with variables 1:end-1 with time 1:end
-    val_cum=cumsum(cat(3,zeros(nx,nsim,1,nD),val_tim),3);
+    val_cum=gdm_compute_cumulative(data_xvt,statis,tim_dtime_plot);
     
     in_p.variable=sprintf('%s_t',variable); %add time
     
