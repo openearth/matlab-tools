@@ -97,8 +97,8 @@ fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 %
 %Rather than calling the function, we know it is morpho. 
 % [gridInfo_ref,time_dnum_ref,time_dnum_plot,~,tim_dtime_plot]=gdm_load_time_grid(fid_log,flg_loc,simdef(kref),tag);
-tim_dtime_plot=time_mor_dtime;
-time_dnum_plot=time_mor_dnum;
+tim_dtime_plot=time_dtime;
+time_dnum_plot=time_dnum;
 
 %% DATA
 
@@ -138,13 +138,20 @@ fname_noext=fullfile(fdir_fig_loc,sprintf('%s_all_%s_%s_%s_%s',tag,runid,datestr
 %plot
 
 in_p=flg_loc;
+
+in_p.leg_str=in_plot.(tag).var;
 in_p.val=cell2mat(val_cum_sum_kt);
 in_p.tim=time_dnum_plot(kt);
-in_p.variable='stot';
+in_p.variable='stot_t';
 in_p.fname=fname_noext;
 in_p.s=rkmv.rkm_cen;
 in_p.xlab_str='rkm';
 in_p.xlab_un=1/1000;
+% in_p.leg_loc='northoutside';
+% in_p.fig_size=[0,0,14.5,20];
+in_p.leg_loc='eastoutside';
+in_p.fig_size=[0,0,27,15];
+in_p.y_scale='log';
 
 fig_1D_01(in_p);
 
