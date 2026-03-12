@@ -136,14 +136,18 @@ else
             if structure==2
                 data_edge_faces=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
                 gridInfo.edge_faces=data_edge_faces.val.';
-            else
-                gridInfo.edge_faces=NaN;
-                gridInfo.edge_nodes=NaN;
             end
         otherwise
             error('Something is wrong.')
     end    
 
+end
+
+if ~isfield(gridInfo,'edge_faces')
+    gridInfo.edge_faces=NaN;
+end
+if ~isfield(gridInfo,'edge_nodes')
+    gridInfo.edge_nodes=NaN;
 end
 
 %% Dealaunay
