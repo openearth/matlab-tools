@@ -24,12 +24,12 @@ parse(parin,varargin{:});
 
 results_type=parin.Results.results_type;
 
-if isfield(simdef,'file') && isfield(simdef.file,'mat') && isfield(simdef.file.mat,'dir')
+if isfield(simdef,'file') && isfield(simdef.file,'fdir_mat')
     fdir_mat=simdef.file.fdir_mat;
 else
     fdir_mat='';
 end
-if isfield(simdef,'file') && isfield(simdef.file,'csv') && isfield(simdef.file.csv,'dir')
+if isfield(simdef,'file') && isfield(simdef.file,'fdir_csv')
     fdir_csv=simdef.file.fdir_csv;
 else
     fdir_csv='';

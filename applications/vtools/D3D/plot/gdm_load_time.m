@@ -12,7 +12,7 @@
 %
 %Create and or load the time of this postprocessing type. 
 
-function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map,fdir_mat,varargin)
+function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_map,fdir_mat,fdir_csv,varargin)
 
 %% PARSE
 
