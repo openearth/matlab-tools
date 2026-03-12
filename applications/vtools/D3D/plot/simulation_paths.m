@@ -12,18 +12,17 @@
 %
 %
 
-function simdef=simulation_paths(fdir_sim,in_plot)
+function simdef=simulation_paths(fid_log,in_plot,ks)
 
 %% PARSE
 
+fdir_sim=in_plot.fdir_sim{ks};
 %remove the last bar because we use it later to split the name and find <runid>
 if fdir_sim(end)==filesep
     fdir_sim(end)='';
 end
 in_plot=isfield_default(in_plot,'simdef_overwrite',1);
 in_plot=isfield_default(in_plot,'break_paths_smt',0);
-in_plot=isfield_default(in_plot,'fdir_mat',fullfile(fdir_sim,'mat'));
-in_plot=isfield_default(in_plot,'fdir_fig',fullfile(fdir_sim,'figures'));
 
 %% paths
 
@@ -55,14 +54,24 @@ switch simdef.D3D.structure
         simdef.file.runid=tok{1,end};
 end
 
-%% mat and fig
+%% folders
 
-mkdir_check(in_plot.fdir_mat);
-simdef.file.mat.dir=in_plot.fdir_mat;
-
-mkdir_check(in_plot.fdir_fig);
-simdef.file.fig.dir=in_plot.fdir_fig;
-
-simdef.file.mat.grd=fullfile(in_plot.fdir_mat,'grd.mat'); %moved to <gdm_load_grid>, should be erased here after updated everywhere
+in_plot=isfield_default(in_plot,'fdir_postprocess',in_plot.fdir_sim); %cell array of postprocess folders. 
+npf=numel(in_plot.fdir_postprocess); 
+if ks>npf
+    %we have provide posprocess folder for some simulations, but not for all. 
+    in_plot.fdir_postprocess{ks}=in_plot.fdir_sim{ks}; %if there is no postprocess folder for this simulation, we use the simulation folder.
+end
+if ~isfolder(in_plot.fdir_postprocess{ks})
+    error('Postprocess folder does not exist: %s',in_plot.fdir_postprocess{ks})
+end
+fdirs={'fdir_mat','fdir_fig','fdir_csv','fdir_json'};
+for kfdir=1:numel(fdirs)
+    fdir_name=fdirs{kfdir};
+    fdir_name_create=fdir_name(6:end);
+    fdir=fullfile(in_plot.fdir_postprocess{ks},fdir_name_create);
+    mkdir_check(fdir);
+    simdef.file.(fdir_name)=fdir;
+end
 
 end %function

@@ -30,7 +30,7 @@ fdir_sim=in_plot.fdir_sim{ks};
 if do_disp
     messageOut(fid_log,sprintf('Finding paths: %s',fdir_sim));
 end
-simdef=simulation_paths(fdir_sim,in_plot);
+simdef=simulation_paths(fid_log,in_plot,ks);
 if do_disp
     messageOut(fid_log,sprintf('Simulation: %s',simdef.file.runid),1)	
 end
