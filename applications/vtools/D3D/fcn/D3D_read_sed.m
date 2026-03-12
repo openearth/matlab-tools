@@ -14,6 +14,14 @@
 
 function [dchar,sedtype]=D3D_read_sed(file_sed)
 
+%% PARSE
+
+if ~ischar(file_sed)
+    error('Input should be a string with the path to the sediment file.');
+end
+
+%% CALC
+
 sed=delft3d_io_sed(file_sed);
 sed_fields=fieldnames(sed);
 nfields=numel(sed_fields);
