@@ -99,7 +99,10 @@ data{kl,1}=        '   FileVersion      = 02.00'; kl=kl+1;
 data{kl,1}=        ''; kl=kl+1;
 data{kl,1}=        '[Morphology]'; kl=kl+1;
 data{kl,1}=sprintf('   MorFac           =  %0.12E               [-]      Morphological scale factor',MorFac); kl=kl+1;
-data{kl,1}=sprintf('   MorStt           =  %0.12E               [s]      Spin-up interval from TStart till start of morphological changes',MorStt); kl=kl+1;
+% data{kl,1}=sprintf('   MorStt           =  %0.12E               [s]      Spin-up interval from TStart till start of morphological changes',MorStt); kl=kl+1;
+data{kl,1}=sprintf('   BedUpdStt        =  %0.12E               [s]      Spin-up interval from TStart till start of bed level changes',MorStt); kl=kl+1;
+data{kl,1}=sprintf('   CmpUpdStt        =  %0.12E               [s]      Spin-up interval from TStart till start of composition changes',MorStt); kl=kl+1;
+data{kl,1}=sprintf('   SedTransStt      =  %0.12E               [s]      Spin-up interval from TStart till start of sediment transport',0); kl=kl+1;
 data{kl,1}=        '   Thresh           =  1.0000000e-003      [m]      Threshold sediment thickness for transport and erosion reduction'; kl=kl+1;
 data{kl,1}=sprintf('   BedUpd           = %i                            Update bed levels during FLOW simulation',BedUpd); kl=kl+1;
 data{kl,1}=sprintf('   CmpUpd           = %i                            Update bed composition during flow run',CmpUpd); kl=kl+1;
@@ -200,7 +203,7 @@ data{kl,1}=        '  Bedslope = 1'; kl=kl+1;
 % data{kl,1}=sprintf('  Derivatives = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 % data{kl,1}=sprintf('  fIk = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
 % data{kl,1}=sprintf('  RegularizationLocations = %d',0); kl=kl+1; %if we test for ill-posedness, we save the variable `hirano_illposed`
-data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get “mesh1d_umod�?
+data{kl,1}=        '  VelocMagAtZeta = 1'; kl=kl+1; %to get “mesh1d_umod�?
 data{kl,1}=        '  RawTransportAtZeta = 1'; kl=kl+1; 
 data{kl,1}=        '  SourceSinkTerms = 1'; kl=kl+1; 
 

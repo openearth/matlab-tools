@@ -206,6 +206,7 @@ data{kl,1}=        'AntiCreep         = 0          '; kl=kl+1;
 data{kl,1}=        'Maxwaterleveldiff = 0          '; kl=kl+1;
 data{kl,1}=        'Maxvelocitydiff   = 0          '; kl=kl+1;
 data{kl,1}=        'Epshu             = 0.0001     '; kl=kl+1;
+data{kl,1}=        'Epsz0             = 0.0        '; kl=kl+1;
 % data{kl,1}=        'SobekDFM_umin     = 0          '; kl=kl+1;
 data{kl,1}=sprintf('TransportAutoTimestepdiff = %d         ',simdef.mdf.TransportAutoTimestepdiff); kl=kl+1;
 % data{kl,1}=sprintf('filter            = %d         ',filter); kl=kl+1;
@@ -269,9 +270,9 @@ data{kl,1}=        '                                                 '; kl=kl+1;
 data{kl,1}=        '[time]                                           '; kl=kl+1;
 data{kl,1}=        'RefDate           = 20000101                     '; kl=kl+1;
 data{kl,1}=        'Tzone             = 0                            '; kl=kl+1;
-data{kl,1}=sprintf('DtUser            = %0.14E',Dt); kl=kl+1;
+data{kl,1}=sprintf('DtUser            = %0.14E',simdef.mdf.DtUser); kl=kl+1;
 data{kl,1}=        'DtNodal           =                              '; kl=kl+1;
-data{kl,1}=sprintf('DtMax             = %0.14E',Dt); kl=kl+1;
+data{kl,1}=sprintf('DtMax             = %0.14E',simdef.mdf.DtMax); kl=kl+1;
 data{kl,1}=        'DtInit            = 1                            '; kl=kl+1;
 data{kl,1}=        'Timestepanalysis  = 0                            '; kl=kl+1; %# 0=no, 1=see file *.steps
 % data{kl,1}=        'Autotimestepdiff  = 1                            '; kl=kl+1; %# 0 = no, 1 = yes (Time limitation based on explicit diffusive term)
