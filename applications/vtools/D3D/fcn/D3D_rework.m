@@ -259,6 +259,10 @@ if numel(simdef.mdf.Dt)>1
     error('Dimension of <Dt> should be 1')
 end
 
+DtUser=max([simdef.mdf.Dt,simdef.mdf.Flmap_dt,simdef.mdf.Flhis_dt]); 
+simdef.mdf=isfield_default(simdef.mdf,'DtUser',DtUser);
+simdef.mdf=isfield_default(simdef.mdf,'DtMax',DtUser);
+
 %restart
 if isfield(simdef.mdf,'restart')==0
     simdef.mdf.restart=0;
