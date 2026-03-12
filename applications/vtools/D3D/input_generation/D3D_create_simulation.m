@@ -108,8 +108,12 @@ if ~only_run_script
         mkdir_check(dirloc);
         if exist(simdef_c.file.dep,'file')~=2
             simdef_c.ini.etab=simdef_c.ini.etab+simdef_c.ini.h; %changed here to missuse the creation of dep file for water level
-            simdef_c.ini.noise_amp=-simdef_c.ini.noise_amp;
-            simdef_c.ini.etab_noise=simdef_c.ini.etaw_noise;
+            if isfield(simdef_c.ini,'noise_amp')
+                simdef_c.ini.noise_amp=-simdef_c.ini.noise_amp;
+            end
+            if isfield(simdef_c.ini,'etaw_noise')
+                simdef_c.ini.etab_noise=simdef_c.ini.etaw_noise;
+            end
             D3D_dep(simdef_c)
         end
         if exist(simdef.file.ini_vx,'file')~=2
