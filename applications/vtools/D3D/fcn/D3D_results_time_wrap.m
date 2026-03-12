@@ -44,11 +44,11 @@ simdef=D3D_simpath(simdef);
 
 switch simdef.D3D.structure
     case {1,2,3}
-        sim_idx=NaN;
         fpath_nc=simdef.file.(nc_type);
         ismor=D3D_is(fpath_nc);
         [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
         time_idx=(1:1:numel(time_r))';
+        sim_idx=ones(size(time_idx));
     case {4,5}
         fdir_output=fullfile(sim_path,'output');
         nf=D3D_SMT_nf(fdir_output);
@@ -85,39 +85,6 @@ switch simdef.D3D.structure
                 
             messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
         end
-        
-        %write CSV
-        write_csv_01(sim_path,fpath_map,time_r,time_mor_r,time_dnum,time_mor_dnum,sim_idx);
 end
-
-end %function
-
-%%
-%% FUNCTIONS
-%%
-
-function write_csv_01(sim_path,fpath_map,time_r,time_mor_r,time_dnum,time_mor_dnum,sim_idx)
-
-%remove NaN to prevent cases in writing
-
-bol_nan=isnan(time_mor_dnum);
-time_mor_dnum(bol_nan)=0;
-
-bol_nan=isnan(time_mor_dnum);
-time_mor_dnum(bol_nan)=0;
-
-nt=numel(time_r);
-fdir_csv=fullfile(sim_path,'csv');
-mkdir_check(fdir_csv);
-fpath_tim_csv=fullfile(fdir_csv,'tim.csv');
-%better to always create in case tim file is overwritten
-%         if exist(fpath_tim_csv,'file')~=2
-fid=fopen(fpath_tim_csv,'w');
-fprintf(fid,'time index, sim number, flow time since start [s], morpho time since start [s], flow date [datenum], morpho date [datenum], flow date [yyyy-mm-dd HH:MM:SS], morpho date [yyyy-mm-dd HH:MM:SS], map path \r\n');
-for kt=1:nt
-    fprintf(fid,'%04d, %03d, %10.1f, %10.1f, %15.7f, %15.7f, %s, %s, %s \r\n',kt,sim_idx(kt),time_r(kt),time_mor_r(kt),time_dnum(kt),time_mor_dnum(kt),datestr(time_dnum(kt),'yyyy-mm-dd HH:MM:SS'),datestr(time_mor_dnum(kt),'yyyy-mm-dd HH:MM:SS'),fpath_map{kt});
-end %kt
-fclose(fid);
-%         end
 
 end %function

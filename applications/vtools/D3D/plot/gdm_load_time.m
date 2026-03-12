@@ -109,7 +109,7 @@ if exist(fpath_mat_time,'file')==2
     
     %turn inf into last value
     if any(isinf(tim_obj))
-        [time_dnum_f,~,time_mor_dnum_f,~,~,~,time_idx_f]=D3D_time_dnum(fpath_map,Inf,'fdir_mat',fdir_mat);
+        [time_dnum_f,~,time_mor_dnum_f,~,~,~,time_idx_f]=D3D_time_dnum(fpath_map,Inf,'fdir_mat',fdir_mat,'fdir_csv',fdir_csv);
         switch flg_loc.tim_type
             case 1
                 tim_obj(isinf(tim_obj))=time_dnum_f;
@@ -136,7 +136,7 @@ end
 %load
 if do_load==1
 
-    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,flg_loc.tim,'tim_type',flg_loc.tim_type,'tol',flg_loc.tim_tol,'fdir_mat',fdir_mat,'results_type',results_type);
+    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,flg_loc.tim,'tim_type',flg_loc.tim_type,'tol',flg_loc.tim_tol,'fdir_mat',fdir_mat,'results_type',results_type,'fdir_csv',fdir_csv);
     tim=v2struct(time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx); %#ok
     
     save_check(fpath_mat_time,'tim');
