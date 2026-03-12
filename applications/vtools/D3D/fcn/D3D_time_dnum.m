@@ -24,8 +24,9 @@ parin=inputParser;
 
 addOptional(parin,'tim_type',1);
 addOptional(parin,'tol',1);
-addOptional(parin,'fdir_mat','');
+addOptional(parin,'fdir_mat',fullfile(fpath_map,'..','mat'));
 addOptional(parin,'results_type','map');
+addOptional(parin,'fdir_csv',fullfile(fpath_map,'..','csv'));
 
 parse(parin,varargin{:});
 
@@ -33,6 +34,7 @@ tim_type=parin.Results.tim_type;
 tol=parin.Results.tol;
 fdir_mat=parin.Results.fdir_mat;
 results_type=parin.Results.results_type;
+fdir_csv=parin.Results.fdir_csv;
 
 %check if his or map
     %not robust enough I think for when dealing with SMT and D3D4
@@ -54,7 +56,7 @@ fpath_tim_all=fullfile(fdir_mat,sprintf('tim%s.mat',str_tim));
 %%
 
 if isa(in_dtime(1),'double') 
-    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol);
+    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol,fdir_csv);
 elseif isa(in_dtime(1),'datetime') %datetime
     tim_cmp=datenum_tzone(in_dtime);
     [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,tim_cmp,varargin{:});
@@ -69,7 +71,7 @@ end %function
 %% FUNCTIONS
 %%
 
-function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol)
+function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol,fdir_csv)
 
 idx_g=NaN; %not needed, but we need to output it
 
@@ -79,7 +81,7 @@ if strcmp(results_type,'his') && tim_type==2
 end
 
 %% get all results time
-[~,~,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type);
+[~,~,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,fdir_csv);
 
 %% get the requested ones
 
@@ -140,7 +142,7 @@ end %function
 
 %%
 
-function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type,fdir_csv)
 
 if isfolder(fpath_map) %SMT
     [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_results_time_wrap(fpath_map,results_type);
@@ -152,6 +154,10 @@ else
 end
 data=v2struct(time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx);
 save_check(fpath_tim_all,'data')
+
+%% write CSV
+%we do it here because it is the point at which we know we need all the times and these have been read. It is also for both SMT and regular. 
+write_csv_01(fdir_csv,fpath_map,time_r,time_mor_r,time_dnum,time_mor_dnum,sim_idx);
 
 end %function
 
@@ -219,7 +225,7 @@ end %function
 
 %%
 
-function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,fdir_csv)
 
 if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2
     messageOut(NaN,sprintf('Mat-file with all times not available. Reading.'))
@@ -241,10 +247,36 @@ else
 end
 
 if new_all_time_needed
-    [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type);
+    [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type,fdir_csv);
 else
     messageOut(NaN,'Mat-file with all times is usable.')
     v2struct(data);
 end
+
+end %function
+
+function write_csv_01(fdir_csv,fpath_map,time_r,time_mor_r,time_dnum,time_mor_dnum,sim_idx)
+
+%remove NaN to prevent cases in writing
+
+bol_nan=isnan(time_mor_dnum);
+time_mor_dnum(bol_nan)=0;
+
+bol_nan=isnan(time_mor_dnum);
+time_mor_dnum(bol_nan)=0;
+
+nt=numel(time_r);
+% fdir_csv=fullfile(sim_path,'csv');
+mkdir_check(fdir_csv);
+fpath_tim_csv=fullfile(fdir_csv,'tim.csv');
+%better to always create in case tim file is overwritten
+%         if exist(fpath_tim_csv,'file')~=2
+fid=fopen(fpath_tim_csv,'w');
+fprintf(fid,'time index, sim number, flow time since start [s], morpho time since start [s], flow date [datenum], morpho date [datenum], flow date [yyyy-mm-dd HH:MM:SS], morpho date [yyyy-mm-dd HH:MM:SS], map path \r\n');
+for kt=1:nt
+    fprintf(fid,'%04d, %03d, %10.1f, %10.1f, %15.7f, %15.7f, %s, %s, %s \r\n',kt,sim_idx(kt),time_r(kt),time_mor_r(kt),time_dnum(kt),time_mor_dnum(kt),datestr(time_dnum(kt),'yyyy-mm-dd HH:MM:SS'),datestr(time_mor_dnum(kt),'yyyy-mm-dd HH:MM:SS'),fpath_map{kt});
+end %kt
+fclose(fid);
+%         end
 
 end %function

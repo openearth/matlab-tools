@@ -22,7 +22,8 @@ jsonStr=jsonencode_preserve_shape(in_plot);
 
 % Write JSON string to file
 ksave=1; %You would like it to be `in_plot.sim_ref` but it may have not been defined.
-fdir_json=fullfile(simdef(ksave).D3D.dire_sim,'json');
+% fdir_json=fullfile(simdef(ksave).D3D.dire_sim,'json');
+fdir_json=simdef(ksave).file.fdir_json;
 mkdir_check(fdir_json);
 fname_json=sprintf('D3D_plot_config_%s.json',now_chr());
 fpath_json=fullfile(fdir_json,fname_json);

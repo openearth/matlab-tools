@@ -29,7 +29,12 @@ if isfield(simdef,'file') && isfield(simdef.file,'mat') && isfield(simdef.file.m
 else
     fdir_mat='';
 end
-
+if isfield(simdef,'file') && isfield(simdef.file,'csv') && isfield(simdef.file.csv,'dir')
+    fdir_csv=simdef.file.fdir_csv;
+else
+    fdir_csv='';
+end
+    
 %% CALC
 
 switch simdef.D3D.structure
@@ -45,6 +50,6 @@ switch simdef.D3D.structure
 end
 
 messageOut(fid_log,sprintf('Passing path to process time: %s',fpath_pass));
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass,fdir_mat,'results_type',results_type);
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass,fdir_mat,fdir_csv,'results_type',results_type);
 
 end %function
