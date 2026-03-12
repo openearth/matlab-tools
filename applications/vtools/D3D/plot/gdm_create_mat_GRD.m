@@ -31,7 +31,7 @@ end
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_grd_mat=fullfile(fdir_mat,'grd.mat');
 
 %% get map from grid

@@ -33,7 +33,7 @@ end
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 
 %% DIMENSIONS

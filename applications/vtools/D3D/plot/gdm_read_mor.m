@@ -14,7 +14,7 @@
 
 function mor=gdm_read_mor(simdef)
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,'mor.mat');
 if exist(fpath_mat,'file')==2
     messageOut(NaN,sprintf('Loading sediment data from mat-file: %s',fpath_mat));

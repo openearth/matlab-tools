@@ -24,10 +24,10 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PATHS
 
-% fdir_mat=simdef.file.mat.dir;
+% fdir_mat=simdef.file.fdir_mat;
 % fpath_map=gdm_fpathmap(simdef,0);
 % fpath_mat_time='';
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 

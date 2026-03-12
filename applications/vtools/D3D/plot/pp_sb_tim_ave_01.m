@@ -29,11 +29,11 @@ end
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_loc=fullfile(fdir_mat,sprintf('%s.mat',tag_w));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-% fdir_fig=fullfile(simdef.file.fig.dir,tag);
+% fdir_fig=fullfile(simdef.file.fdir_fig,tag);
 % mkdir_check(fdir_fig); %we create it in the loop
 % runid=simdef.file.runid;
 

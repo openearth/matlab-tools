@@ -13,7 +13,7 @@
 
 function gridInfo=gdm_load_grid_simdef(fid_log,simdef,varargin)
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_map=simdef.file.map;
 
 if simdef.D3D.structure~=3 && simdef.D3D.is1d~=2

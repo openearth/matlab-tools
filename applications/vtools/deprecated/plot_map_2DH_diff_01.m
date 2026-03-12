@@ -61,12 +61,12 @@ end
 %% PATHS
 
 fdir_mat_ref=simdef_ref.file.mat.dir;
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
-fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef.file.fdir_fig,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
 fpath_map_ref=simdef_ref.file.map;
 fpath_map=simdef_ref.file.map;

@@ -137,7 +137,7 @@ end %function
 
 function [c,w,ls]=gdm_compute_observed_wave_propagation(flg_loc,simdef,time_dnum)
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 tag=flg_loc.tag;
 
 %pli name
@@ -164,7 +164,7 @@ end %function
 
 function data=process_simulation(fpath_mat,fid_log,flg_loc,simdef,ECT_input,ECT_matrices,tag_fig,tag_serie,in_p)
 
-fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie); 
+fdir_fig=fullfile(simdef.file.fdir_fig,tag_fig,tag_serie); 
 
 %load time
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');

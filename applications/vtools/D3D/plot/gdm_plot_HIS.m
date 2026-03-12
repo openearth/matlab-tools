@@ -736,7 +736,7 @@ end %function
 function fcn_plot_his_xt(flg_loc,in_p,simdef,runid,data_sim,tim_dtime_p_sim,var_str,clims_var,tag_loc,fdir_fig)
 
 if flg_loc.measurements_input_type==2
-    fpath_mea=fullfile(simdef.file.mat.dir,'interpolated_measurements.mat');
+    fpath_mea=fullfile(simdef.file.fdir_mat,'interpolated_measurements.mat');
     [data_mea_mat,in_p.do_measurements]=load_interpolated_measurements(flg_loc,fpath_mea,tim_dtime_p_sim,in_p.unit); 
 end
 
@@ -774,7 +774,7 @@ ksim=1;
 
 ntimint=size(data_statistics_all,2);
 
-fdir_tab=fullfile(fullfile(simdef.file.fig.dir),'sal_table');
+fdir_tab=fullfile(fullfile(simdef.file.fdir_fig),'sal_table');
 mkdir_check(fdir_tab,NaN,1,0);
 path_f_sal_cmp=fullfile(fdir_tab,'sal_table.txt');
 

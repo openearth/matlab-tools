@@ -569,13 +569,13 @@ end %function
 
 function data=load_data(flg_loc,gridInfo,simdef,time_dnum_kt,var_str_read,var_str_save,tag,pol_name,sb_pol,kvar)
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 [fpath_mat,~,varname_read_variable,layer,var_idx,sum_var_idx]=gdm_map_summerbed_mat_name_build(flg_loc,kvar,simdef,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,gridInfo);
 load(fpath_mat,'data');  
 
 % var_str_original=flg_loc.var{kvar};
 % layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str_read,kvar,var_str_original); 
-% fdir_mat=simdef.file.mat.dir;
+% fdir_mat=simdef.file.fdir_mat;
 % [var_idx,~]=gdm_var_idx(simdef,flg_loc,flg_loc.var_idx{kvar},flg_loc.sum_var_idx(kvar),var_str_original);
 % fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum_kt,sb_pol,var_idx,layer); %flow time for filename
 % load(fpath_mat_tmp,'data');            
@@ -619,7 +619,7 @@ end %function
 function fcn_plot(flg_loc,in_p,fid_log,simdef,tag_serie,sb_pol,pol_name,var_str_save,statis,tag,tag_ref,time_plot_loc,var_idx,runid,ylims)
 
 tag_fig=flg_loc.tag;
-fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie); 
+fdir_fig=fullfile(simdef.file.fdir_fig,tag_fig,tag_serie); 
 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,tag_ref);
 tag_fig_loc=sprintf('%s_%s',tag,tag_ref);
 

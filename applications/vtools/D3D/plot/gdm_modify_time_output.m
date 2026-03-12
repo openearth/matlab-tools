@@ -33,7 +33,7 @@ else
     datetime_obj=flg_loc.tim;
 
     %% check if it has been modified
-    fdir_mat=simdef.file.mat.dir;
+    fdir_mat=simdef.file.fdir_mat;
     fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
     fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
     fpath_mat_tim=fullfile(fdir_mat,'tim.mat');

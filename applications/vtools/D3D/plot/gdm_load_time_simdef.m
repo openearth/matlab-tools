@@ -25,7 +25,7 @@ parse(parin,varargin{:});
 results_type=parin.Results.results_type;
 
 if isfield(simdef,'file') && isfield(simdef.file,'mat') && isfield(simdef.file.mat,'dir')
-    fdir_mat=simdef.file.mat.dir;
+    fdir_mat=simdef.file.fdir_mat;
 else
     fdir_mat='';
 end

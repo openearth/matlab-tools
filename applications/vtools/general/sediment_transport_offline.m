@@ -26,7 +26,7 @@ tag=flg_loc.tag;
 fdir_mat=fullfile(fpath_sim,'mat');
 simdef.D3D.dire_sim=fpath_sim;
 simdef=D3D_simpath(simdef);
-simdef.file.mat.dir=fdir_mat;
+simdef.file.fdir_mat=fdir_mat;
 
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');

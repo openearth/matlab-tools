@@ -22,7 +22,7 @@ end
 
 %% CALC
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 
 [pol,pol_name]=gdm_read_pol(fpath_pol);
 fpath_bol=mat_tmp_name(fdir_mat,'bol_grd','pol',pol_name);

@@ -32,7 +32,7 @@ fpath_his=simdef_ref.file.his;
 fpath_map=simdef_ref.file.map;
 
 if nS==1
-    fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+    fdir_fig=fullfile(simdef.file.fdir_fig,tag_fig,tag_serie);
 else
     fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig,tag_serie);
 end

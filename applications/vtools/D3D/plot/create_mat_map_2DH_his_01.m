@@ -29,7 +29,7 @@ nobs=flg_loc.nobs;
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 fpath_map=gdm_fpathmap(simdef,0);

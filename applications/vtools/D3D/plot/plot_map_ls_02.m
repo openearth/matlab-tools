@@ -23,10 +23,10 @@ ret=gdm_do_mat(fid_log,flg_loc,tag); if ret; return; end
 
 %% PATHS
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef.file.fdir_fig,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
 
 % simdef.file.mat.map_ls_01=fullfile(fdir_mat,'map_ls_01.mat');
@@ -38,7 +38,7 @@ mkdir_check(fdir_fig);
 
 % %% BEGIN DEBUG
 % 
-% % load(fullfile(simdef.file.mat.dir,'map_ls_tmp_pli_01_kt_70.mat'));
+% % load(fullfile(simdef.file.fdir_mat,'map_ls_tmp_pli_01_kt_70.mat'));
 % 
 % %% END DEBUG
 

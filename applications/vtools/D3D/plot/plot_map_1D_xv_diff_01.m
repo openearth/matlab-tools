@@ -66,7 +66,7 @@ fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
 fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); 
 
 if nS==1
-    fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+    fdir_fig=fullfile(simdef.file.fdir_fig,tag_fig,tag_serie);
     runid=sprintf('%s-%s',simdef.file.runid,simdef_ref.file.runid);
 else
     fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig,tag_serie);
@@ -80,7 +80,7 @@ fdir_mat=simdef(1).file.mat.dir; %assuming same grid!
 % fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 % fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
 % fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
-% fdir_fig=fullfile(simdef.file.fig.dir,tag_fig,tag_serie);
+% fdir_fig=fullfile(simdef.file.fdir_fig,tag_fig,tag_serie);
 % mkdir_check(fdir_fig);
 % fpath_map_ref=simdef_ref.file.map;
 % fpath_map=simdef_ref.file.map;

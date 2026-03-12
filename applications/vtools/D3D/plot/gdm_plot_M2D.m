@@ -341,7 +341,7 @@ end %function
 
 function [vec_x,vec_y]=load_velocity_vector(simdef,time_dnum_loc,var_idx_loc)
 
-fdir_mat=simdef.file.mat.dir;
+fdir_mat=simdef.file.fdir_mat;
 fpath_mat_tmp=mat_tmp_name(fdir_mat,'uv','tim',time_dnum_loc,'var_idx',var_idx_loc);
 data_uv=load(fpath_mat_tmp,'data');
 switch simdef.D3D.structure
