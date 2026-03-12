@@ -167,6 +167,9 @@ switch etab0_type %type of initial bed elevation: 1=sloping bed; 2=constant bed 
 		load(simdef.ini.mat,'data')
         data(isnan(data))=+9.99e2; %the sign is changed afterwards
 		depths(2:ny-1,2:nx-1)=-data(1:end-1,1:end-1)';
+    case {9,'conical_dune'}
+        error('not implemented yet')
+
 end
 
 %add noise

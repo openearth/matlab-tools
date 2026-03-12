@@ -133,6 +133,17 @@ switch simdef.ini.etab_noise
         noise=zeros(size(depths));
         bol_pol=inpolygon(Xtot,Ytot,simdef.ini.noise_polygon(:,1),simdef.ini.noise_polygon(:,2));
         noise(bol_pol)=-simdef.ini.noise_amp;
+    case {9,'conical_dune'}
+        noise=zeros(size(depths));
+        x0=simdef.ini.noise_x0(1);
+        y0=simdef.ini.noise_x0(2);
+        Lbx=simdef.ini.noise_Lb(1);
+        Lby=simdef.ini.noise_Lb(2);
+        xi=x0-Lbx/2;
+        yi=y0-Lby/2;
+
+        bol_in=Xtot>=xi & Xtot<=xi+Lbx & Ytot>=yi & Ytot<=yi+Lby;
+        noise(bol_in)=sin(pi*(Xtot(bol_in)-xi)/Lbx).^2.*sin(pi*(Ytot(bol_in)-yi)/Lby).^2;
     otherwise
         error('sorry... not implemented!')
 end
