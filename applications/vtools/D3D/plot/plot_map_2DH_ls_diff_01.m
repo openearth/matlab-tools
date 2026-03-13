@@ -148,7 +148,7 @@ for kt=kt_v %time
                     val=NaN(nx,nS);
                     for kS=1:nS %simulations
                         
-                        fdir_mat=simdef(kS).file.mat.dir;
+                        fdir_mat=simdef(kS).file.fdir_mat;
                         fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
                         fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); 
                         
@@ -295,7 +295,7 @@ in_p.tim=time_ref;
 
 for kS=1:nS %simulations
     
-    fdir_mat=simdef(kS).file.mat.dir;
+    fdir_mat=simdef(kS).file.fdir_mat;
     fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
     fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat'); 
     

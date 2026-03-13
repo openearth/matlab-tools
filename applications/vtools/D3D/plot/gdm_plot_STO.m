@@ -82,9 +82,9 @@ end
 
 kref=flg_loc.sim_ref;
 
-fdir_mat=simdef(kref).file.mat.dir;
+fdir_mat=simdef(kref).file.fdir_mat;
 fpath_map=simdef(kref).file.map;
-fdir_fig=fullfile(simdef(kref).file.fig.dir,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef(kref).file.fdir_fig,tag_fig,tag_serie);
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 

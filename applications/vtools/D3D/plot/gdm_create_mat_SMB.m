@@ -219,7 +219,7 @@ end
 
 [tag,tag_fig,tag_serie]=gdm_tag_fig(flg_loc);
 % tag_fig=flg_loc.tag;
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie); 
+fdir_fig=fullfile(simdef(1).file.fdir_fig,tag_fig,tag_serie); 
 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,'inpoly');
 mkdir_check(fdir_fig_loc,NaN,1,0);
 

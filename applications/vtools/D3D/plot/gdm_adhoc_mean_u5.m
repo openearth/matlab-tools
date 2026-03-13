@@ -55,7 +55,7 @@ nS=numel(simdef);
 
 %%
 
-fdir_mat=simdef(1).file.mat.dir;
+fdir_mat=simdef(1).file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 % fpath_map=simdef.file.map;
@@ -102,7 +102,7 @@ for kt=kt_v
             layer=gdm_layer(flg_loc,gridInfo.no_layers,var_str,kvar,flg_loc.var{kvar}); %we use <layer> for flow and sediment layers
 
             for kS=1:nS
-                fdir_mat=simdef(kS).file.mat.dir;
+                fdir_mat=simdef(kS).file.fdir_mat;
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'pli',pliname,'layer',layer);
                 load(fpath_mat_tmp,'data')
                 data_all.val(kt,:,kS)=data.val;
@@ -118,7 +118,7 @@ for kt=kt_v
     end
 end %kt
 
-fdir_mat=simdef(1).file.mat.dir;
+fdir_mat=simdef(1).file.fdir_mat;
 % fpath_mat_tmp=fullfile(fdir_mat,'ad_hoc.mat');
 fpath_mat_tmp=fullfile(fdir_mat,'ad_hoc2.mat');
 save(fpath_mat_tmp,'data_all');
@@ -129,7 +129,7 @@ kref=flg_loc.sim_ref; %better to check
 
 for pw=1:5
     
-fdir_fig=simdef(kref).file.fig.dir;
+fdir_fig=simdef(kref).file.fdir_fig;
 fdir_fig_loc=fullfile(fdir_fig,'mean_u3');
 mkdir_check(fdir_fig_loc,NaN,1,0); 
         
@@ -154,7 +154,7 @@ printV(gcf,fpath_fig);
 
 for kS=1:nS
     
-fdir_fig=simdef(kS).file.fig.dir;
+fdir_fig=simdef(kS).file.fdir_fig;
 fdir_fig_loc=fullfile(fdir_fig,'mean_u3');
 mkdir_check(fdir_fig_loc,NaN,1,0); 
 

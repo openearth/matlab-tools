@@ -69,9 +69,9 @@ for ksb=1:nsb %summerbed polygons
     %used for all simulations. It is supposed that when running with
     %several simulations they are all the same. 
 
-    fdir_mat=simdef(kref).file.mat.dir;
+    fdir_mat=simdef(kref).file.fdir_mat;
     fpath_map=simdef(kref).file.map;
-    fdir_fig=fullfile(simdef(kref).file.fig.dir,tag_fig,tag_serie);
+    fdir_fig=fullfile(simdef(kref).file.fdir_fig,tag_fig,tag_serie);
 
     [sb_pol,sb_def,str_save_sb_pol,npol]=gdm_read_summerbed_polygon_all(fid_log,flg_loc,fdir_mat,fpath_map,ksb);    
 
@@ -651,7 +651,7 @@ tag=variable;
 for ksim=1:nsim
 
     runid=simdef(ksim).file.runid;
-    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
     
     statis='val_mean_weighted';
     val_cum=gdm_compute_cumulative(data_xvt,statis,tim_dtime_plot);
@@ -733,7 +733,7 @@ xlims=flg_loc.xlims;
 
 for ksim=1:nsim
 
-    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie); 
+    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie); 
     runid=simdef(ksim).file.runid;
 
     for kfn=1:nfn
@@ -974,7 +974,7 @@ if any(bol_tv(:))
             rkm_loc=vec(bol_rkm);
             runid=simdef(bol_ks).file.runid;
 
-            fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie); 
+            fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie); 
 
             in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},{str_save_sb_pol});
 

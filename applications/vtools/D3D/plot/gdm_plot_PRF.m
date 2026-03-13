@@ -28,7 +28,7 @@ flg_loc=gdm_parse_map_2DH_ls(flg_loc);
 %% PATHS
 
 nsim=numel(simdef);
-fdir_mat=simdef(flg_loc.sim_ref).file.mat.dir;
+fdir_mat=simdef(flg_loc.sim_ref).file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 
@@ -84,7 +84,7 @@ for kpli=1:npli %variable
         %patches, there is no option to add `val0` and it cannot be
         %transposed.
         if flg_loc.what_is==2 && flg_loc.plot_val0
-            fdir_mat=simdef(1).file.mat.dir; %1 used for reference for all. Should be the same. 
+            fdir_mat=simdef(1).file.fdir_mat; %1 used for reference for all. Should be the same. 
             fpath_mat_tmp=gdm_map_2DH_ls_mat_name(fdir_mat,tag,time_dnum(1),var_str_read,pliname,layer,var_idx);
             data_ref=load(fpath_mat_tmp,'data');   
             val0=data_ref.data.(flg_loc.str_val)';
@@ -135,7 +135,7 @@ for kpli=1:npli %variable
                         data_loc=reshape(data_loc,[],1);
                     end
                     tag_fig=tag;
-                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
                     runid=simdef(ksim).file.runid;
 
@@ -165,7 +165,7 @@ for kpli=1:npli %variable
 
                 ksim=1;                                
                 tag_fig=sprintf('%s_all_s',tag);
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(ksim).file.runid;
 
@@ -193,7 +193,7 @@ for kpli=1:npli %variable
                         data_loc=reshape(squeeze(data_loc),[],1);
                     end
                     tag_fig=sprintf('%s_diff_t',tag);
-                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
                     runid=simdef(ksim).file.runid;
 
@@ -226,7 +226,7 @@ for kpli=1:npli %variable
                     data_loc_on_ref=F(s{flg_loc.sim_ref});
                     data_loc=reshape(data_loc_on_ref,[],1)-reshape(data_all{flg_loc.sim_ref}(kt,:,:),[],1);
                     tag_fig=sprintf('%s_diff_s',tag);
-                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                     mkdir_check(fdir_fig,NaN,1,0);
                     runid=simdef(ksim).file.runid;
 
@@ -267,7 +267,7 @@ for kpli=1:npli %variable
 
 %                 data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
                 tag_fig=sprintf('%s_all_s_diff_t',tag);
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(ksim).file.runid;
 
@@ -296,7 +296,7 @@ for kpli=1:npli %variable
 
 %                 data_loc=squeeze(data_all(kt,:,:)-data_all(1,:,:));
                 tag_fig=sprintf('%s_all_s_diff_s',tag);
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(ksim).file.runid;
 
@@ -331,7 +331,7 @@ for kpli=1:npli %variable
 
                 data_loc=squeeze(data_all{ksim}(:,1,:))'; %[time,1,x] -> [x,t]
                 tag_fig=sprintf('%s_all_t',tag);
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(ksim).file.runid;
     
@@ -355,7 +355,7 @@ for kpli=1:npli %variable
             for ksim=1:nsim
                 data_loc=squeeze(data_all{ksim}(:,1,:))'-squeeze(data_all{ksim}(1,1,:)); %do not transpose the second, because the squeeze already puts x in first dimension
                 tag_fig=sprintf('%s_all_t_diff_t',tag);
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(ksim).file.runid;
     
@@ -378,7 +378,7 @@ for kpli=1:npli %variable
                 [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(ksim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
                 data_loc=squeeze(data_all{ksim});
                 tag_fig=sprintf('%s_all_t_xt',tag);
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(ksim).file.runid;
     
@@ -400,7 +400,7 @@ for kpli=1:npli %variable
                 [~,tim_dtime]=gdm_time_flow_mor(flg_loc,simdef(ksim),time_dnum,time_dtime,time_mor_dnum,time_mor_dtime); %all times
                 data_loc=squeeze(data_all{ksim})-squeeze(data_all{ksim}(1,:));
                 tag_fig=sprintf('%s_all_t_xt_diff_t',tag);
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
                 runid=simdef(ksim).file.runid;
     
@@ -556,7 +556,7 @@ s=cell(nS,1);
 gridInfo=cell(nS,1);
 
 for kS=1:nS
-    fdir_mat=simdef(kS).file.mat.dir; 
+    fdir_mat=simdef(kS).file.fdir_mat; 
     if flg_loc.use_local_time
         fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
         fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');

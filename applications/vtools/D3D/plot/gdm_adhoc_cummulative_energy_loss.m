@@ -28,10 +28,10 @@ var_idx=flg_loc.var_idx;
 %%
 
 nS=numel(simdef);
-fdir_mat=simdef(1).file.mat.dir;
+fdir_mat=simdef(1).file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef(1).file.fdir_fig,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
 runid=simdef(1).file.runid;
 
@@ -72,7 +72,7 @@ for kvar=1:nvar %variable
     
     for kt=kt_v
         for kS=1:nS
-            fdir_mat=simdef(kS).file.mat.dir;
+            fdir_mat=simdef(kS).file.fdir_mat;
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str,'var_idx',var_idx{kvar},'layer',layer);
             load(fpath_mat_tmp,'data');
             data_all(:,kS)=data;

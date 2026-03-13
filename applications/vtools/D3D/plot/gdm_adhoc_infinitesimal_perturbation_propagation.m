@@ -25,7 +25,7 @@ else
 end
 
 %path to mat file with results from all simulations
-% fdir_mat=simdef(1).file.mat.dir;
+% fdir_mat=simdef(1).file.fdir_mat;
 % fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 
 %assume same matrices for all cases, we load only once
@@ -49,7 +49,7 @@ in_p.fig_overwrite=1;
 
 ns=numel(simdef);
 for ks=1:ns
-    fdir_mat=simdef(ks).file.mat.dir;
+    fdir_mat=simdef(ks).file.fdir_mat;
     fpath_mat=fullfile(fdir_mat,'ipp.mat');
 
     %if exists file, skip loop
@@ -71,7 +71,7 @@ end %ks
 %% plot
 
 ks=1;
-fdir_fig=fullfile(simdef(ks).file.fig.dir,tag_fig,tag_serie); 
+fdir_fig=fullfile(simdef(ks).file.fdir_fig,tag_fig,tag_serie); 
 mkdir_check(fdir_fig,NaN,1,0);
 
 plot_data_all(fdir_fig,data_all,tri,c_morph_p,max_gr_p,lambda_p,beta_p,in_p,tri_dim,lwx_p,lwy_p);

@@ -75,7 +75,7 @@ end
 mkdir_check(fdir_fig);
 
 % fdir_mat_ref=simdef_ref.file.mat.dir;
-fdir_mat=simdef(1).file.mat.dir; %assuming same grid!
+fdir_mat=simdef(1).file.fdir_mat; %assuming same grid!
 % fpath_mat_ref=fullfile(fdir_mat_ref,sprintf('%s.mat',tag));
 % fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 % fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); %shuld be the same for reference and non-reference
@@ -88,10 +88,10 @@ fdir_mat=simdef(1).file.mat.dir; %assuming same grid!
 % runid=simdef.file.runid;
 
 % nS=numel(simdef);
-% fdir_mat=simdef(1).file.mat.dir;
+% fdir_mat=simdef(1).file.fdir_mat;
 % fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 % fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-% fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+% fdir_fig=fullfile(simdef(1).file.fdir_fig,tag_fig,tag_serie);
 % mkdir_check(fdir_fig); %we create it in the loop
 % runid=simdef(1).file.runid;
 
@@ -183,7 +183,7 @@ for kbr=1:nbr %branches
             %cases
         data_0=NaN(nx,nS);    
         for kS=1:nS    
-            fdir_mat=simdef(kS).file.mat.dir;
+            fdir_mat=simdef(kS).file.fdir_mat;
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
             load(fpath_mat_tmp,'data');            
             data_0(:,kS)=data;
@@ -211,7 +211,7 @@ for kbr=1:nbr %branches
             
             %cases
             for kS=1:nS
-                fdir_mat=simdef(kS).file.mat.dir;
+                fdir_mat=simdef(kS).file.fdir_mat;
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
                 if exist(fpath_mat_tmp,'file')==2
                     load(fpath_mat_tmp,'data');
@@ -316,7 +316,7 @@ for kbr=1:nbr %branches
         
         if flg_loc.do_xtv && nt>1
             for kS=1:nS
-                fdir_fig_s=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig_s=fullfile(simdef(kS).file.fdir_fig,tag_fig,tag_serie);
                 
                 [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);
                 in_p.ylims=NaN;

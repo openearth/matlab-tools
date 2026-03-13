@@ -35,10 +35,10 @@ his_type=flg_loc.his_type;
 
 %% PATHS
 
-fdir_mat=simdef(1).file.mat.dir;
+fdir_mat=simdef(1).file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef(1).file.fdir_fig,tag_fig,tag_serie);
 mkdir_check(fdir_fig);
 
 %% GRID
@@ -146,7 +146,7 @@ for ktimint=1:ntimint
             %% loop on simulations
             for ksim=1:nsim
                 runid=simdef(ksim).file.runid;
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
     
                 in_p.is_diff=0;
                 val=data_all(ksim,k_sta); %we pass one simulation and one station
@@ -178,7 +178,7 @@ for ktimint=1:ntimint
             if flg_loc.do_all_s
                 ksim=1;
                 runid=simdef(ksim).file.runid;
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,sprintf('%s_all',tag_fig),tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,sprintf('%s_all',tag_fig),tag_serie);
         
                 val=data_all(:,k_sta); %we pass all simulations and only one stations
                 fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p,tag,stations_loc,variable,layer,elevation,fdir_fig,data_mea,do_measurements);
@@ -191,7 +191,7 @@ for ktimint=1:ntimint
                         continue
                     end
                     runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(flg_loc.sim_ref).file.runid);
-                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,sprintf('%s_diff',tag_fig),tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,sprintf('%s_diff',tag_fig),tag_serie);
     
                     val=data_all{ksim,k_sta};
                     val_ref=data_all{flg_loc.sim_ref,k_sta};
@@ -271,7 +271,7 @@ for ktimint=1:ntimint
                 %leave this outside the function for when you want to make difference between simulations
                 runid=simdef(ksim).file.runid;
                 tag_loc=sprintf('%s_xt',tag_fig);
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_loc,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_loc,tag_serie);
                 mkdir_check(fdir_fig,NaN,1,0);
     
                 fcn_plot_his_xt(flg_loc,in_p,simdef(ksim),runid,data_all(ksim,:),tim_dtime_p{ksim},variable,flg_loc.clims_var{kvar,1},tag_loc,fdir_fig);
@@ -409,7 +409,7 @@ end %function
 function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elevation,time_dtime,kvar)
 
 for ksim=1:nsim %simulations            
-    fdir_mat=simdef(ksim).file.mat.dir;
+    fdir_mat=simdef(ksim).file.fdir_mat;
     fpath_his=simdef(ksim).file.his;
     
     %variable
@@ -607,7 +607,7 @@ if flg_loc.interp_measurements
         v_mea=data_mea.waarde;
 
         for ksim=1:numel(data_all)
-            fdir_mat=simdef(ksim).file.mat.dir;
+            fdir_mat=simdef(ksim).file.fdir_mat;
             runid=simdef(ksim).file.runid;
             v_sim_atmea=data_all_at_mea(:,ksim);
             tim_0=tim_dtime_p{ksim}(1);

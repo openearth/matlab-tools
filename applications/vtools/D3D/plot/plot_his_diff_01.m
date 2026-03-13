@@ -93,7 +93,7 @@ for kvar=1:nvar
         val_scenario=NaN(numel(data_ref.data),nS);
         
         for kS=1:nS %simulations
-            fdir_mat=simdef(kS).file.mat.dir;
+            fdir_mat=simdef(kS).file.fdir_mat;
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{ks},'var',var_str,'layer',layer);
             data=load(fpath_mat_tmp    ,'data');
             

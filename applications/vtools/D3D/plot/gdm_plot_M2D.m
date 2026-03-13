@@ -81,7 +81,7 @@ for kvar=1:nvar %variable
     
     %although it is reference, we load it to skip the plot 
     %if the size is not right
-    fdir_mat=simdef(kref).file.mat.dir;
+    fdir_mat=simdef(kref).file.fdir_mat;
     fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum_ref(kt),'var',varname_load_mat,'var_idx',var_idx,'layer',layer);
     data_ref_t0=load(fpath_mat_tmp,'data');
     val_ref_t0=data_ref_t0.data;
@@ -108,7 +108,7 @@ for kvar=1:nvar %variable
         [gridInfo,time_dnum_loc,time_mor_dnum]=gdm_load_time_grid(fid_log,flg_loc,simdef(ksim),tag);
 
         %fxw of local simulation
-        fdir_mat=simdef(ksim).file.mat.dir;
+        fdir_mat=simdef(ksim).file.fdir_mat;
         switch flg_loc.do_fxw
             case 1
                 in_p.fxw=gdm_load_fxw(fid_log,fdir_mat,'fpath_fxw',simdef(ksim).file.fxw); %non-snapped and in a different structure than when reading snapped
@@ -122,7 +122,7 @@ for kvar=1:nvar %variable
         time_plot_loc=time_dnum_plot(kt); %time0 of reference simulation for matching.
         val_ref=val_ref_t0; %we pass `val_ref_t0` just to create a NaN of the right size if time is not found. 
 
-        fdir_mat=simdef(ksim).file.mat.dir;
+        fdir_mat=simdef(ksim).file.fdir_mat;
         [~,val_loc_t0_int,~,val_loc_t0_no_int]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
 
         ktc=0;
@@ -140,14 +140,14 @@ for kvar=1:nvar %variable
             %local simulation at local time
                 %`val_loc_tt_int`    value of local simulation at time `t` and interpolated/reordered
                 %`val_loc_tt_no_int` value of local simulation at time `t` not interpolated/reordered
-            fdir_mat=simdef(ksim).file.mat.dir;
+            fdir_mat=simdef(ksim).file.fdir_mat;
             [~,val_loc_tt_int,~,val_no_int]=gdm_match_times_diff_val_2D(flg_loc,simdef(ksim),time_dnum_loc,time_mor_dnum,time_plot_loc,val_ref,fdir_mat,tag,varname_load_mat,gridInfo,gridInfo_ref,layer,var_idx);
     
             %reference
             %Time loops on the reference time, hence there is no need to check
             %that it is the correct time. It is also not necessary to interpolate.
             if flg_loc.do_ref
-                fdir_mat=simdef(kref).file.mat.dir;
+                fdir_mat=simdef(kref).file.fdir_mat;
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum_ref(kt),'var',varname_load_mat,'var_idx',var_idx,'layer',layer);
                 data_ref_tt=load(fpath_mat_tmp,'data');
                 val_ref_tt=data_ref_tt.data;
@@ -184,7 +184,7 @@ for kvar=1:nvar %variable
                 in_p.is_percentage=0;
                 in_p.do_measurements_this_plot=1;
     
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
                 [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
@@ -203,7 +203,7 @@ for kvar=1:nvar %variable
                 in_p.is_percentage=0;
                 in_p.do_measurements_this_plot=1;
     
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 runid=simdef(ksim).file.runid;
                 [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
@@ -222,7 +222,7 @@ for kvar=1:nvar %variable
                 in_p.is_percentage=0;
                 in_p.do_measurements_this_plot=0;
     
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
                 [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
@@ -241,7 +241,7 @@ for kvar=1:nvar %variable
                 in_p.is_percentage=0;
                 in_p.do_measurements_this_plot=0;
     
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
                 [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     
@@ -264,7 +264,7 @@ for kvar=1:nvar %variable
                 in_p.is_percentage=1;
                 in_p.do_measurements_this_plot=0;
     
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 runid=sprintf('%s-%s',simdef(ksim).file.runid,simdef(kref).file.runid);
                 [fpath_file_2D(kplot,kt,:,:),fpath_file_3D(kplot,kt,:,:)]=fcn_plot(in_p,flg_loc,varname_load_mat,var_idx,fdir_fig,tag_fig,time_dnum_loc(kt),runid,tag_ref);
     

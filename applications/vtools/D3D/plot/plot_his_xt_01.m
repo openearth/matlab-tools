@@ -42,10 +42,10 @@ end
 %% PATHS
 
 
-fdir_mat=simdef(1).file.mat.dir;
+fdir_mat=simdef(1).file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef(1).file.fdir_fig,tag_fig,tag_serie);
 fpath_his=simdef(1).file.his;
 mkdir_check(fdir_fig);
 
@@ -106,7 +106,7 @@ for ktr=1:ntr
         
         data_all=[];
         for kS=1:nS
-            fdir_mat=simdef(kS).file.mat.dir;
+            fdir_mat=simdef(kS).file.fdir_mat;
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'var',var_str,'layer',layer,'station',flg_loc.stations_track_name{ktr});
             load(fpath_mat_tmp,'data');
             data_all=cat(3,data_all,data);

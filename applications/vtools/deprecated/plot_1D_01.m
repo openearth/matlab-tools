@@ -86,7 +86,7 @@ end
 %% PATHS
 
 nS=numel(simdef);
-fdir_mat=simdef(1).file.mat.dir;
+fdir_mat=simdef(1).file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 
@@ -96,9 +96,9 @@ if do_ref
     fpath_mat_time_ref=strrep(fpath_mat_ref,'.mat','_tim.mat'); 
     fdir_fig=fullfile(simdef_ref.file.fig.dir,tag_fig,tag_serie);
 else
-    fdir_mat=simdef(1).file.mat.dir;
+    fdir_mat=simdef(1).file.fdir_mat;
     fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
-    fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie);
+    fdir_fig=fullfile(simdef(1).file.fdir_fig,tag_fig,tag_serie);
     runid=simdef(1).file.runid;
     fpath_mat_time_ref=strrep(fpath_mat,'.mat','_tim.mat'); 
 end
@@ -188,7 +188,7 @@ for ksb=1:nsb
                 %model
             clear data_0_loc; %clear is not nice but we cannot preallocate because we do not know the fieldnames in advance and they maybe different between variables    
             for kS=1:nS    
-                fdir_mat=simdef(kS).file.mat.dir;
+                fdir_mat=simdef(kS).file.fdir_mat;
                 fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
                 load(fpath_mat_tmp,'data');            
                 data_0_loc(kS)=data;
@@ -239,7 +239,7 @@ for ksb=1:nsb
                 %% load
                 clear data_load; 
                 for kS=1:nS
-                    fdir_mat=simdef(kS).file.mat.dir;
+                    fdir_mat=simdef(kS).file.fdir_mat;
                     fpath_mat_tmp=gdm_map_summerbed_mat_name(var_str_save,fdir_mat,tag,pol_name,time_dnum(kt),sb_pol,flg_loc.var_idx{kvar},layer);
                     if isfile(fpath_mat_tmp)
                         load(fpath_mat_tmp,'data');
@@ -333,7 +333,7 @@ for ksb=1:nsb
                                     [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(bol_ks).(statis)],[data_0(bol_ks).(statis)],'ylims','ylims_diff',var_str_save);
 
                                     tag_fig=flg_loc.tag;
-                                    fdir_fig=fullfile(simdef(bol_ks).file.fig.dir,tag_fig,tag_serie); 
+                                    fdir_fig=fullfile(simdef(bol_ks).file.fdir_fig,tag_fig,tag_serie); 
                                     runid=simdef(bol_ks).file.runid;
 
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
@@ -360,7 +360,7 @@ for ksb=1:nsb
                                 [in_p,str_dir]=gdm_data_diff(in_p,flg_loc,kdiff,kylim,[data_sim(bol_ks).(statis)],[data_0(bol_ks).(statis)],'ylims','ylims_diff',var_str_save);
 
                                 tag_fig=sprintf('%s_%s',flg_loc.tag,'all');
-                                fdir_fig=fullfile(simdef(1).file.fig.dir,tag_fig,tag_serie); 
+                                fdir_fig=fullfile(simdef(1).file.fdir_fig,tag_fig,tag_serie); 
                                 runid='';
 
                                 fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
@@ -384,7 +384,7 @@ for ksb=1:nsb
                                     in_p.is_diff=1; %overwrite because it is difference between simulations
                                     
                                     tag_fig=sprintf('%s_%s',flg_loc.tag,'diff'); 
-                                    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie);
+                                    fdir_fig=fullfile(simdef(kS).file.fdir_fig,tag_fig,tag_serie);
                                     runid_fig=sprintf('%s-%s',simdef(kS).file.runid,simdef_ref.file.runid);
                                     
                                     fdir_fig_loc=fullfile(fdir_fig,sb_pol,pol_name,var_str_save,statis,str_dir);
@@ -575,7 +575,7 @@ in_p.frac=var_idx;
 
 for kS=1:nS
 
-    fdir_fig=fullfile(simdef(kS).file.fig.dir,tag_fig,tag_serie); 
+    fdir_fig=fullfile(simdef(kS).file.fdir_fig,tag_fig,tag_serie); 
     
     for kfn=1:nfn
         statis=fn_data{kfn};

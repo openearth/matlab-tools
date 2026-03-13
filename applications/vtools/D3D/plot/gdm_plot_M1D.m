@@ -63,10 +63,10 @@ flg_loc=isfield_default(flg_loc,'str_time','yyyymmddHHMM');
 
 kref=flg_loc.sim_ref;
 nsim=numel(simdef);
-fdir_mat=simdef(kref).file.mat.dir;
+fdir_mat=simdef(kref).file.fdir_mat;
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
-% fdir_fig=fullfile(simdef(kref).file.fig.dir,tag_fig,tag_serie);
+% fdir_fig=fullfile(simdef(kref).file.fdir_fig,tag_fig,tag_serie);
 % mkdir_check(fdir_fig); %we create it in the loop
 % runid=simdef(kref).file.runid;
 
@@ -140,7 +140,7 @@ for kbr=1:nbr %branches
             %% model
         data_0=NaN(nx,nsim);    
         for ksim=1:nsim    
-            fdir_mat=simdef(ksim).file.mat.dir;
+            fdir_mat=simdef(ksim).file.fdir_mat;
             fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
             load(fpath_mat_tmp,'data');            
             data_0(:,ksim)=data;
@@ -160,7 +160,7 @@ for kbr=1:nbr %branches
             %It is 1D, I suppose it is not a huge amount of data.
 
             for ksim=1:nsim
-                fdir_mat=simdef(ksim).file.mat.dir;
+                fdir_mat=simdef(ksim).file.fdir_mat;
                 fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
                 if exist(fpath_mat_tmp,'file')==2
                     load(fpath_mat_tmp,'data');
@@ -198,7 +198,7 @@ for kbr=1:nbr %branches
                     end
                     in_p.function_handles=flg_loc.p_single_function_handles;
     
-                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                     runid=simdef(ksim).file.runid;
     
                     fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
@@ -225,7 +225,7 @@ for kbr=1:nbr %branches
                         in_p=rmfield(in_p,'leg_str');
                     end
     
-                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                     runid=simdef(ksim).file.runid;
     
                     fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
@@ -252,7 +252,7 @@ for kbr=1:nbr %branches
                         in_p=rmfield(in_p,'leg_str');
                     end
     
-                    fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                     runid=simdef(ksim).file.runid;
     
                     fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
@@ -275,7 +275,7 @@ for kbr=1:nbr %branches
                 end
                 in_p.leg_str=flg_loc.leg_str;
 
-                fdir_fig=fullfile(simdef(1).file.fig.dir,sprintf('%s_all',tag_fig),tag_serie);
+                fdir_fig=fullfile(simdef(1).file.fdir_fig,sprintf('%s_all',tag_fig),tag_serie);
                 runid=simdef(1).file.runid;
                 
                 fcn_plot(in_p,flg_loc,fid_log,fdir_fig,branch_name,var_str_save,tag_ref,tag,runid,time_dnum(kt),lims_loc,xlims)
@@ -320,7 +320,7 @@ for kbr=1:nbr %branches
 
             for ksim=1:nsim
 
-                fdir_fig=fullfile(simdef(ksim).file.fig.dir,tag_fig,tag_serie);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
                 fdir_fig_loc=fullfile(fdir_fig,branch_name,var_str_save,str_dir);
                 mkdir_check(fdir_fig_loc,fid_log,1,0);
                 runid=simdef(ksim).file.runid;
