@@ -24,9 +24,9 @@ parin=inputParser;
 
 addOptional(parin,'tim_type',1);
 addOptional(parin,'tol',1);
-addOptional(parin,'fdir_mat',fullfile(fpath_map,'..','mat'));
+addOptional(parin,'fdir_mat',fullfile(fpath_map,'../','mat'));
 addOptional(parin,'results_type','map');
-addOptional(parin,'fdir_csv',fullfile(fpath_map,'..','csv'));
+addOptional(parin,'fdir_csv',fullfile(fpath_map,'../','csv'));
 
 parse(parin,varargin{:});
 
@@ -73,6 +73,7 @@ end %function
 
 function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol,fdir_csv)
 
+%% PARSE
 idx_g=NaN; %not needed, but we need to output it
 
 if strcmp(results_type,'his') && tim_type==2
@@ -84,59 +85,7 @@ end
 [~,~,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,fdir_csv);
 
 %% get the requested ones
-
-%all
-if any(isnan(in_dtime))  
-    %We already have what we want. 
-    time_dnum=time_dnum_all;
-    time_dtime=time_dtime_all;
-    time_mor_dnum=time_mor_dnum_all;
-    time_mor_dtime=time_mor_dtime_all;
-    sim_idx=sim_idx_all;
-    time_idx=time_idx_all;
-    return
-end
-
-%match each one
-ntt=numel(time_dnum_all);
-nt=numel(in_dtime);
-time_dnum=NaN(nt,1);
-time_dtime=NaT(nt,1);
-time_dtime.TimeZone='+00:00';
-time_mor_dnum=NaN(nt,1);
-time_mor_dtime=NaT(nt,1);
-time_mor_dtime.TimeZone='+00:00';
-sim_idx=NaN(nt,1);
-time_idx=NaN(nt,1);
-for kt=1:nt
-    if isinf(in_dtime(kt)) %last
-        idx_g=ntt;
-    elseif mod(in_dtime(kt),1)==0 && in_dtime(kt)<=ntt %if integer and smaller than total number of results, you are specifying index
-        idx_g=in_dtime(kt);
-        if ntt>datenum(1687,07,05) %if there are more than 
-            messageOut(NaN,'I supposed the input was an index but the number of results is huge, so maybe you want datenum?') %create a flag to force datenum
-        end
-    else %datenum
-        if tim_type==1 %hydro time
-            tim_cmp=time_dnum_all;
-        elseif tim_type==2 %morpho time
-            tim_cmp=time_mor_dnum_all;
-        else
-            error('You should not reach this point.')
-        end
-        if isnan(tim_cmp)
-            error('Problem with time') %wanted morpho time?
-        end
-        idx_g=absmintol(tim_cmp,in_dtime(kt),'tol',tol,'dnum',1);
-    end
-
-    time_dnum(kt,1)=time_dnum_all(idx_g);
-    time_dtime(kt,1)=time_dtime_all(idx_g);
-    time_mor_dnum(kt,1)=time_mor_dnum_all(idx_g);
-    time_mor_dtime(kt,1)=time_mor_dtime_all(idx_g);
-    sim_idx(kt,1)=sim_idx_all(idx_g);
-    time_idx(kt,1)=time_idx_all(idx_g);
-end %kt
+[time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_get_requested_time(in_dtime,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all,tol,tim_type);
 
 end %function
 
@@ -144,20 +93,16 @@ end %function
 
 function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type,fdir_csv)
 
-if isfolder(fpath_map) %SMT
-    [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_results_time_wrap(fpath_map,results_type);
-else
-    is_mor=D3D_is(fpath_map);
-    [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_map,is_mor,[1,Inf]);
-    sim_idx=NaN(size(time_r));
-    time_idx=(1:1:numel(time_r))';
-end
+%% get time, both SMT and regular
+[time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx,fpath_map_all]=D3D_results_time_wrap(fpath_map,results_type);
+
+%% save
 data=v2struct(time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx);
 save_check(fpath_tim_all,'data')
 
 %% write CSV
 %we do it here because it is the point at which we know we need all the times and these have been read. It is also for both SMT and regular. 
-write_csv_01(fdir_csv,fpath_map,time_r,time_mor_r,time_dnum,time_mor_dnum,sim_idx);
+write_csv_01(fdir_csv,fpath_map_all,time_r,time_mor_r,time_dnum,time_mor_dnum,sim_idx);
 
 end %function
 
@@ -255,6 +200,8 @@ end
 
 end %function
 
+%%
+
 function write_csv_01(fdir_csv,fpath_map,time_r,time_mor_r,time_dnum,time_mor_dnum,sim_idx)
 
 %remove NaN to prevent cases in writing
@@ -278,5 +225,137 @@ for kt=1:nt
 end %kt
 fclose(fid);
 %         end
+
+end %function
+
+%%
+
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx,fpath_map]=D3D_results_time_wrap(sim_path,varargin)
+
+%% PARSE
+
+switch numel(varargin)
+    case 0
+        nc_type='map'; 
+        write_csv=1;
+    case 1
+        nc_type=varargin{1};
+        write_csv=1;
+    case 2
+        nc_type=varargin{1};
+        write_csv=varargin{2};
+end
+
+%% CALC
+
+simdef.D3D.dire_sim=sim_path;
+simdef=D3D_simpath(simdef);
+
+switch simdef.D3D.structure
+    case {1,2,3}
+        fpath_nc=simdef.file.(nc_type);
+        ismor=D3D_is(fpath_nc);
+        [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
+        time_idx=(1:1:numel(time_r))';
+        sim_idx=ones(size(time_idx));
+        fpath_map=repmat({fpath_nc},numel(time_idx),1);
+    case {4,5}
+        fdir_output=fullfile(sim_path,'output');
+        nf=D3D_SMT_nf(fdir_output);
+        time_r=[];
+        time_mor_r=[];
+        time_dnum=[];
+        time_dtime=[];
+        time_mor_dnum=[];
+        time_mor_dtime=[];
+        sim_idx=[];
+        fpath_map={};
+        time_idx=[];
+        for kf=0:1:nf
+            fdir_loc=D3D_SMT_dir_output_loc(fdir_output,kf);
+            simdef.D3D.dire_sim=fdir_loc;
+            simdef=D3D_simpath(simdef);
+            fpath_nc=simdef.file.(nc_type);
+            ismor=D3D_is(fpath_nc);
+            [time_r_loc,time_mor_r_loc,time_dnum_loc,time_dtime_loc,time_mor_dnum_loc,time_mor_dtime_loc]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
+            
+            time_r=cat(1,time_r,time_r_loc);
+            time_mor_r=cat(1,time_mor_r,time_mor_r_loc);
+            time_dnum=cat(1,time_dnum,time_dnum_loc);
+            time_dtime=cat(1,time_dtime,time_dtime_loc);
+            time_mor_dnum=cat(1,time_mor_dnum,time_mor_dnum_loc);
+            time_mor_dtime=cat(1,time_mor_dtime,time_mor_dtime_loc);
+            sim_idx=cat(1,sim_idx,kf.*ones(size(time_mor_dtime_loc)));
+            fpath_map=cat(1,fpath_map,repmat({fpath_nc},numel(time_mor_dtime_loc),1));
+            if isempty(time_idx)
+                time_idx=(1:1:numel(time_r_loc))';
+            else
+                time_idx=cat(1,time_idx,(time_idx(end)+1:1:time_idx(end)+1+numel(time_r_loc))');
+            end
+                
+            messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
+        end
+end
+
+end %function
+
+%%
+
+function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_get_requested_time(in_dtime,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all,tol,tim_type)
+
+idx_g=NaN;
+
+%all
+if any(isnan(in_dtime))  
+    %We already have what we want. 
+    time_dnum=time_dnum_all;
+    time_dtime=time_dtime_all;
+    time_mor_dnum=time_mor_dnum_all;
+    time_mor_dtime=time_mor_dtime_all;
+    sim_idx=sim_idx_all;
+    time_idx=time_idx_all;
+    return
+end
+
+%match each one
+ntt=numel(time_dnum_all);
+nt=numel(in_dtime);
+time_dnum=NaN(nt,1);
+time_dtime=NaT(nt,1);
+time_dtime.TimeZone='+00:00';
+time_mor_dnum=NaN(nt,1);
+time_mor_dtime=NaT(nt,1);
+time_mor_dtime.TimeZone='+00:00';
+sim_idx=NaN(nt,1);
+time_idx=NaN(nt,1);
+for kt=1:nt
+    if isinf(in_dtime(kt)) %last
+        idx_g=ntt;
+    elseif mod(in_dtime(kt),1)==0 && in_dtime(kt)<=ntt %if integer and smaller than total number of results, you are specifying index
+        idx_g=in_dtime(kt);
+        if ntt>datenum(1687,07,05) %if there are more than 
+            messageOut(NaN,'I supposed the input was an index but the number of results is huge, so maybe you want datenum?') %create a flag to force datenum
+        end
+    else %datenum
+        if tim_type==1 %hydro time
+            tim_cmp=time_dnum_all;
+        elseif tim_type==2 %morpho time
+            tim_cmp=time_mor_dnum_all;
+        else
+            error('You should not reach this point.')
+        end
+        if isnan(tim_cmp)
+            error('Problem with time') %wanted morpho time?
+        end
+        idx_g=absmintol(tim_cmp,in_dtime(kt),'tol',tol,'dnum',1);
+    end
+
+    time_dnum(kt,1)=time_dnum_all(idx_g);
+    time_dtime(kt,1)=time_dtime_all(idx_g);
+    time_mor_dnum(kt,1)=time_mor_dnum_all(idx_g);
+    time_mor_dtime(kt,1)=time_mor_dtime_all(idx_g);
+    sim_idx(kt,1)=sim_idx_all(idx_g);
+    time_idx(kt,1)=time_idx_all(idx_g);
+end %kt
 
 end %function
