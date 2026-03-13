@@ -24,7 +24,13 @@ end
 if ~isfield(simdef.file,'mor') || isempty(simdef.file.mor)
     return
 end
-mor=D3D_io_input('read',simdef.file.mor);
+if iscell(simdef.file.mor)
+    %We assume it is an SMT simulation and the same morphodynamic file is used for all simulations. We take the first one.
+    fpath_mor=simdef.file.mor{1,1};
+else
+    fpath_mor=simdef.file.mor;
+end
+mor=D3D_io_input('read',fpath_mor);
 save_check(fpath_mat,'mor');
 
 end %function
