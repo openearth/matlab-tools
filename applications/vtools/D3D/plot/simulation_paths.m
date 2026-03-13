@@ -65,7 +65,7 @@ end
 if ~isfolder(in_plot.fdir_postprocess{ks})
     error('Postprocess folder does not exist: %s',in_plot.fdir_postprocess{ks})
 end
-fdirs={'fdir_mat','fdir_fig','fdir_csv','fdir_json'};
+fdirs={'fdir_mat','fdir_fig','fdir_csv','fdir_json','fdir_log'};
 for kfdir=1:numel(fdirs)
     fdir_name=fdirs{kfdir};
     fdir_name_create=fdir_name(6:end);

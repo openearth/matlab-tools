@@ -609,9 +609,8 @@ function gdm_copy_log(fid_log,fpath_log,in_plot,simdef)
 
 fclose(fid_log);
 [~,fname,fext]=fileparts(fpath_log);
-fdir_logs=fullfile(simdef(in_plot.sim_ref).D3D.dire_sim,'logs');
-mkdir_check(fdir_logs);
-fpath_dest=fullfile(fdir_logs, [fname,fext]);
+fdir_log=simdef(in_plot.sim_ref).file.fdir_log; %it is already created
+fpath_dest=fullfile(fdir_log, [fname,fext]);
 copyfile_check(fpath_log,fpath_dest,0,0);
 delete(fpath_log);
 
