@@ -71,11 +71,11 @@ end
 ECT_input.u=simdef.ini.u;
 ECT_input.v=0;
 ECT_input.h=simdef.ini.h;
-if numel(simdef.sed.dk)==1
-    ECT_input.gsd=[simdef.sed.dk,10];
-else
+% if numel(simdef.sed.dk)==1
+%     ECT_input.gsd=[simdef.sed.dk,10];
+% else
     ECT_input.gsd=simdef.sed.dk;
-end
+% end
 ECT_input.Cf=simdef.mdf.g/simdef.mdf.C^2;
 ECT_input.La=simdef.mor.ThTrLyr;
 ECT_input.Fa1=simdef.ini.actlay_frac;
