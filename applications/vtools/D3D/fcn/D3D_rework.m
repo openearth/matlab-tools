@@ -259,10 +259,6 @@ if numel(simdef.mdf.Dt)>1
     error('Dimension of <Dt> should be 1')
 end
 
-DtUser=max([simdef.mdf.Dt,simdef.mdf.Flmap_dt,simdef.mdf.Flhis_dt]); 
-simdef.mdf=isfield_default(simdef.mdf,'DtUser',DtUser);
-simdef.mdf=isfield_default(simdef.mdf,'DtMax',DtUser);
-
 %restart
 if isfield(simdef.mdf,'restart')==0
     simdef.mdf.restart=0;
@@ -348,6 +344,10 @@ if simdef.mdf.Flhis_dt>0 && rem(simdef.mdf.Flhis_dt,simdef.mdf.Dt)~=0
     warning('History results time is not multiple of time step. I am rewring the history results time.')
     simdef.mdf.Flhis_dt=(floor(simdef.mdf.Flhis_dt/simdef.mdf.Dt)+1)*simdef.mdf.Dt;
 end
+
+DtUser=max([simdef.mdf.Flmap_dt,simdef.mdf.Flhis_dt]); 
+simdef.mdf=isfield_default(simdef.mdf,'DtUser',DtUser);
+simdef.mdf=isfield_default(simdef.mdf,'DtMax',DtUser);
 
 %gravity
 if isfield(simdef.mdf,'g')==0
