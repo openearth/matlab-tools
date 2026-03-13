@@ -22,6 +22,7 @@
 
 function [tim_dur,t0,tf,processes,tim_sim,sim_efficiency,num_dt,timervals,timloop_sim]=D3D_computation_time(simdef,varargin)
    OPT.timernames = [];
+   OPT.display = false;
    OPT = setproperty(OPT,varargin{:});
    
    [fpath_dia,structure]=D3D_simdef_2_dia(simdef);
@@ -35,6 +36,22 @@ function [tim_dur,t0,tf,processes,tim_sim,sim_efficiency,num_dt,timervals,timloo
    
    sim_efficiency=tim_sim./(tim_dur*processes);
    
+   %% display
+
+   if OPT.display
+      fprintf('Computation time: %s\n',string(tim_dur));
+      fprintf('Start time: %s\n',string(t0));
+      fprintf('End time: %s\n',string(tf));
+      fprintf('Number of processes: %d\n',processes);
+      fprintf('Simulated time: %s\n',string(tim_sim));
+      fprintf('Time in timeloop: %s\n',string(timloop_sim));
+      fprintf('Number of time steps: %d\n',num_dt);
+      fprintf('Average time step: %f s\n',seconds(tim_sim/num_dt));
+      for ii=1:length(OPT.timernames)
+         fprintf('Timer %s: %f s, %4.2f %%\n',OPT.timernames{ii},timervals(ii),timervals(ii)/seconds(tim_dur)*100);
+      end
+   end
+
 end %function
 
 %%
@@ -171,20 +188,49 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_comp
       %             kl=search_text_ascii(simdef.file.dia,'** INFO   : Computation finished at:',1);
    end %while
    
+   %timers
+% ** INFO   : time inistep           (s)  :          1040.4329617023
+% ** INFO   : time setumod           (s)  :           417.5179953575
+% ** INFO   : time furu              (s)  :            65.6280305386
+% ** INFO   : time solve             (s)  :           936.3839931488
+% ** INFO   : time gausselimination  (s)  :            54.5190000003
+% ** INFO   : time gausssubstitution (s)  :            12.3190000000
+% ** INFO   : time totalsolve        (s)  :           936.9830000001
+% ** INFO   : time setexternalforc.  (s)  :             0.0000000000
+% ** INFO   : time setext.forc.fetch (s)  :             0.0000000000
+% ** INFO   : time setexternalfbnd.  (s)  :             2.9349970818
+% ** INFO   : time steps             (s)  :          4715.7439985275
+% ** INFO   : time transport         (s)  :            36.9600000000
+% ** INFO   : time debug             (s)  :             0.0000000000
+% ** INFO   : time erosed            (s)  :          1691.4059999999
+
    %extra timers
    for ii=1:length(timernames)
       [kl_s,fline]=search_text_ascii(fpath_dia,['** INFO   : extra timer:' timernames{ii}],1);
+      if ~isempty(kl_s)
+%       '** INFO   : extra timer:Erosed_call                                        194.0309901237'
+         tok=regexp(fline{end},['** INFO   : extra timer:' regexptranslate('escape',timernames{ii}) '\s*([0-9eEdD\+\-\.]*)'],'tokens');
+         if ~isempty(tok)
+            timervals(ii,:) = str2double(tok{1}{1});
+            continue
+         end
+      end
+
+      % Standard FM timers, e.g.:
+      % ** INFO   : time inistep           (s)  :          1040.4329617023
+      [kl_s,fline]=search_text_ascii(fpath_dia,['** INFO   : time ' timernames{ii}],1);
       if isempty(kl_s)
          timervals(ii,:) = zeros(1,1);
          continue
       end
-%       '** INFO   : extra timer:Erosed_call                                        194.0309901237'
-      tok=regexp(fline{end},['** INFO   : extra timer:' timernames{ii} '\s*(\d+\.?\d*)'],'tokens');
-%       if isempty(tok)
-%          continue
-%       end
-      tok_num=str2double([tok{1}]);
-      timervals(ii,:) = tok_num;
+
+      tok=regexp(fline{end},['\*\* INFO\s*:\s*time\s+' regexptranslate('escape',timernames{ii}) '\s*\(s\)\s*:\s*([0-9eEdD\+\-\.]*)'],'tokens');
+      if isempty(tok)
+         timervals(ii,:) = zeros(1,1);
+         continue
+      end
+
+      timervals(ii,:) = str2double(tok{1}{1});
    end
    
    fclose(fid);

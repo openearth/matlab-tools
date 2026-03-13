@@ -44,7 +44,7 @@ fprintf('Characteristic grain size = %.4f m = %.4e m \n',simdef.sed.dk, simdef.s
 fprintf('Froude number = %.2f \n',simdef.ini.u/sqrt(simdef.ini.h*simdef.mdf.g));
 fprintf('Shear velocity = %.3f m/s \n',sqrt(simdef.mdf.g)/simdef.mdf.C*simdef.ini.u);
 fprintf('Shield''s stress = %.3f \n',(sqrt(simdef.mdf.g)/simdef.mdf.C*simdef.ini.u)^2/(simdef.mdf.g*1.65*simdef.sed.dk));
-fprintf('Bed shear stress = %.3f \n',cnt.rho_w*convert_friction('C2Cf',simdef.mdf.C)*simdef.ini.u^2);
+fprintf('Bed shear stress = %.3f Pa \n',cnt.rho_w*convert_friction('C2Cf',simdef.mdf.C)*simdef.ini.u^2);
 
 fprintf('Sediment transport relation: A=%0.2f, B=%0.2f, theta_c=%0.4f \n',simdef.tra.sedTrans(1), simdef.tra.sedTrans(2), simdef.tra.sedTrans(3));
 fprintf('Sediment transport rate with pores = %.4e m^2/s \n',qbk);
