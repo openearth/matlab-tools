@@ -230,71 +230,70 @@ end %function
 
 %%
 
-function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx,fpath_map]=D3D_results_time_wrap(sim_path,varargin)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx,fpath_map]=D3D_results_time_wrap(sim_or_map_path,varargin)
 
 %% PARSE
 
 switch numel(varargin)
     case 0
         nc_type='map'; 
-        write_csv=1;
     case 1
         nc_type=varargin{1};
-        write_csv=1;
     case 2
         nc_type=varargin{1};
-        write_csv=varargin{2};
 end
 
 %% CALC
 
-simdef.D3D.dire_sim=sim_path;
-simdef=D3D_simpath(simdef);
+if isfolder(sim_or_map_path) %SMT
+    is_SMT=true;
+else
+    is_SMT=false;
+end
 
-switch simdef.D3D.structure
-    case {1,2,3}
+if ~is_SMT
+    fpath_nc=sim_or_map_path;
+    ismor=D3D_is(fpath_nc);
+    [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
+    time_idx=(1:1:numel(time_r))';
+    sim_idx=ones(size(time_idx));
+    fpath_map=repmat({fpath_nc},numel(time_idx),1);
+else
+    fdir_output=fullfile(sim_or_map_path,'output');
+    nf=D3D_SMT_nf(fdir_output);
+    time_r=[];
+    time_mor_r=[];
+    time_dnum=[];
+    time_dtime=[];
+    time_mor_dnum=[];
+    time_mor_dtime=[];
+    sim_idx=[];
+    fpath_map={};
+    time_idx=[];
+    for kf=0:1:nf
+        fdir_loc=D3D_SMT_dir_output_loc(fdir_output,kf);
+        simdef.D3D.dire_sim=fdir_loc;
+        simdef=D3D_simpath(simdef);
         fpath_nc=simdef.file.(nc_type);
         ismor=D3D_is(fpath_nc);
-        [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
-        time_idx=(1:1:numel(time_r))';
-        sim_idx=ones(size(time_idx));
-        fpath_map=repmat({fpath_nc},numel(time_idx),1);
-    case {4,5}
-        fdir_output=fullfile(sim_path,'output');
-        nf=D3D_SMT_nf(fdir_output);
-        time_r=[];
-        time_mor_r=[];
-        time_dnum=[];
-        time_dtime=[];
-        time_mor_dnum=[];
-        time_mor_dtime=[];
-        sim_idx=[];
-        fpath_map={};
-        time_idx=[];
-        for kf=0:1:nf
-            fdir_loc=D3D_SMT_dir_output_loc(fdir_output,kf);
-            simdef.D3D.dire_sim=fdir_loc;
-            simdef=D3D_simpath(simdef);
-            fpath_nc=simdef.file.(nc_type);
-            ismor=D3D_is(fpath_nc);
-            [time_r_loc,time_mor_r_loc,time_dnum_loc,time_dtime_loc,time_mor_dnum_loc,time_mor_dtime_loc]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
-            
-            time_r=cat(1,time_r,time_r_loc);
-            time_mor_r=cat(1,time_mor_r,time_mor_r_loc);
-            time_dnum=cat(1,time_dnum,time_dnum_loc);
-            time_dtime=cat(1,time_dtime,time_dtime_loc);
-            time_mor_dnum=cat(1,time_mor_dnum,time_mor_dnum_loc);
-            time_mor_dtime=cat(1,time_mor_dtime,time_mor_dtime_loc);
-            sim_idx=cat(1,sim_idx,kf.*ones(size(time_mor_dtime_loc)));
-            fpath_map=cat(1,fpath_map,repmat({fpath_nc},numel(time_mor_dtime_loc),1));
-            if isempty(time_idx)
-                time_idx=(1:1:numel(time_r_loc))';
-            else
-                time_idx=cat(1,time_idx,(time_idx(end)+1:1:time_idx(end)+1+numel(time_r_loc))');
-            end
-                
-            messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
+        [time_r_loc,time_mor_r_loc,time_dnum_loc,time_dtime_loc,time_mor_dnum_loc,time_mor_dtime_loc]=D3D_results_time(fpath_nc,ismor,[1,Inf]);
+        
+        time_r=cat(1,time_r,time_r_loc);
+        time_mor_r=cat(1,time_mor_r,time_mor_r_loc);
+        time_dnum=cat(1,time_dnum,time_dnum_loc);
+        time_dtime=cat(1,time_dtime,time_dtime_loc);
+        time_mor_dnum=cat(1,time_mor_dnum,time_mor_dnum_loc);
+        time_mor_dtime=cat(1,time_mor_dtime,time_mor_dtime_loc);
+        sim_idx=cat(1,sim_idx,kf.*ones(size(time_mor_dtime_loc)));
+        fpath_map=cat(1,fpath_map,repmat({fpath_nc},numel(time_mor_dtime_loc),1));
+        if isempty(time_idx)
+            time_idx=(1:1:numel(time_r_loc))';
+        else
+            time_idx=cat(1,time_idx,(time_idx(end)+1:1:time_idx(end)+1+numel(time_r_loc))');
         end
+            
+        messageOut(NaN,sprintf('Joined time %4.2f %%',kf/nf*100));
+    end
 end
 
 end %function
