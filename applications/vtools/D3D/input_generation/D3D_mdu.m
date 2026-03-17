@@ -34,11 +34,6 @@ check_existing=parin.Results.check_existing;
 
 %% RENAME
 
-% dire_sim=simdef.D3D.dire_sim;
-
-% runid_serie=simdef.runid.serie;
-% runid_number=simdef.runid.number;
-
 Tstop=simdef.mdf.Tstop;
 Dt=simdef.mdf.Dt;   
 Flmap_dt=simdef.mdf.Flmap_dt;
@@ -66,97 +61,97 @@ else
     morphology=false;
 end
 
-filter=simdef.mdf.filter;
-
-% file_name=simdef.runid.name;
 file_name=simdef.file.mdf;
 Idensform=simdef.mdf.Idensform;
+K=simdef.mdf.K;
 
-if isfield(simdef,'grd') && isfield(simdef.grd,'K')
-    K=simdef.grd.K;
-elseif isfield(simdef.mdf,'K')
-    K=simdef.mdf.K;
-end
     
-%% FILE
+%% OPEN
 
-kl=1;
-data{kl,1}=sprintf('# Generated: %s',datestr(datetime('now'))); kl=kl+1;
-data{kl,1}=sprintf('# %s',[getenv("USER"),getenv("USERNAME")]); kl=kl+1;
-data{kl,1}=        ''; kl=kl+1;
-%%
-data{kl,1}=        '[model]'; kl=kl+1;
-data{kl,1}=        'Program           = D-Flow FM       '; kl=kl+1;
+[fid,fname_local]=write_local_and_copy('open',file_name,'overwrite',~check_existing);
+
+%% WRITE
+
+%% header
+
+fprintf(fid,'# Generated: %s\r\n',datestr(datetime('now')));
+fprintf(fid,'# %s\r\n',[getenv("USER"),getenv("USERNAME")]);
+fprintf(fid,'\r\n');
+
+%% model
+
+fprintf(fid,'[model]\r\n');
+fprintf(fid,'Program           = D-Flow FM       \r\n');
 % data{kl,1}=        'Version           = 1.2.38.63285M   '; kl=kl+1;
-data{kl,1}=        'MDUFormatVersion  = 1.02            '; kl=kl+1;
+fprintf(fid,'MDUFormatVersion  = 1.02            \r\n');
 % data{kl,1}=        'GuiVersion        = 1.5.2.42543     '; kl=kl+1;
-data{kl,1}=        'AutoStart         = 0               '; kl=kl+1;
-data{kl,1}=        ''; kl=kl+1;
+fprintf(fid,'AutoStart         = 0               \r\n');
+fprintf(fid,'\r\n');
 %% GEOMETRY
-data{kl,1}=        '[geometry]'; kl=kl+1;
-data{kl,1}=sprintf('NetFile           = %s',simdef.mdf.grd); kl=kl+1;
+fprintf(fid,'[geometry]\r\n');
+fprintf(fid,'NetFile           = %s\r\n',simdef.mdf.grd);
 % if simdef.mor.morphology || simdef.grd.cell_type
 % data{kl,1}=sprintf('BathymetryFile    = %s',simdef.mdf.dep); kl=kl+1;
 % else
 % data{kl,1}=        'BathymetryFile    =         ' ; kl=kl+1;
 % end
-data{kl,1}=        'DryPointsFile     =         '; kl=kl+1;
-data{kl,1}=        'GridEnclosureFile =         '; kl=kl+1;
+fprintf(fid,'DryPointsFile     =         \r\n');
+fprintf(fid,'GridEnclosureFile =         \r\n');
 % if simdef.ini.etaw_type==2
 % data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.ini.etaw_file); kl=kl+1;
 % data{kl,1}=sprintf('WaterLevIniFile   = %s      ',simdef.mdf.etaw_file); kl=kl+1;
 % else
 % data{kl,1}=        'WaterLevIniFile   =         '; kl=kl+1;
 % end
-data{kl,1}=sprintf('IniFieldFile      = %s',simdef.mdf.IniFieldFile); kl=kl+1;
-data{kl,1}=        'LandBoundaryFile  =         '; kl=kl+1;
-data{kl,1}=        'UseCaching        = 0       '; kl=kl+1;
-data{kl,1}=        'ThinDamFile       =         '; kl=kl+1;
-data{kl,1}=        'FixedWeirFile     =         '; kl=kl+1;
-data{kl,1}=sprintf('PillarFile        = %s',simdef.mdf.PillarFile); kl=kl+1;
-data{kl,1}=sprintf('StructureFile     = %s',simdef.mdf.StructureFile); kl=kl+1;
+fprintf(fid,'IniFieldFile      = %s\r\n',simdef.mdf.IniFieldFile);
+fprintf(fid,'LandBoundaryFile  =         \r\n');
+fprintf(fid,'UseCaching        = 0       \r\n');
+fprintf(fid,'ThinDamFile       =         \r\n');
+fprintf(fid,'FixedWeirFile     =         \r\n');
+fprintf(fid,'PillarFile        = %s\r\n',simdef.mdf.PillarFile);
+fprintf(fid,'StructureFile     = %s\r\n',simdef.mdf.StructureFile);
 % data{kl,1}=        'VertplizFile      =         '; kl=kl+1;
-data{kl,1}=sprintf('CrossDefFile      = %s',simdef.mdf.CrossDefFile); kl=kl+1;
-data{kl,1}=sprintf('CrossLocFile      = %s',simdef.mdf.CrossLocFile); kl=kl+1;
-data{kl,1}=sprintf('FrictFile         = %s',simdef.mdf.FrictFile); kl=kl+1;
+fprintf(fid,'CrossDefFile      = %s\r\n',simdef.mdf.CrossDefFile);
+fprintf(fid,'CrossLocFile      = %s\r\n',simdef.mdf.CrossLocFile);
+fprintf(fid,'FrictFile         = %s\r\n',simdef.mdf.FrictFile);
 % data{kl,1}=        'ProflocFile       =         '; kl=kl+1;
 % data{kl,1}=        'ProfdefFile       =         '; kl=kl+1;
 % data{kl,1}=        'ProfdefxyzFile    =         '; kl=kl+1;
 % data{kl,1}=        'Uniformwidth1D    = 2       '; kl=kl+1;
-data{kl,1}=        'ManholeFile       =         '; kl=kl+1;
+fprintf(fid,'ManholeFile       =         \r\n');
 if isfield(simdef,'ini') && isfield(simdef.ini,'etaw') && simdef.ini.etaw_type==1
-data{kl,1}=sprintf('WaterLevIni       = %0.7E',simdef.ini.etab+simdef.ini.h); kl=kl+1;
+fprintf(fid,'WaterLevIni       = %0.7E\r\n',simdef.ini.etab+simdef.ini.h);
 else
 % data{kl,1}=        'WaterLevIni       = 0    '; kl=kl+1;
 end
 % if simdef.ini.etab0_type==2
 % data{kl,1}=sprintf('Bedlevuni         = %0.7E',etab); kl=kl+1;
 % else
-data{kl,1}=        'Bedlevuni         = -5      '; kl=kl+1;
+fprintf(fid,'Bedlevuni         = -5      \r\n');
 % end
-data{kl,1}=        'Bedslope          = 0       '; kl=kl+1;
-data{kl,1}= sprintf('BedlevType        = %i       ', simdef.mdf.BedlevType); kl=kl+1;
-data{kl,1}=        'Blmeanbelow       = -999    '; kl=kl+1;
-data{kl,1}=        'Blminabove        = -999    '; kl=kl+1;
-data{kl,1}=        'PartitionFile     =         '; kl=kl+1;
-data{kl,1}=        'Anglat            =  0        '; kl=kl+1;
+fprintf(fid,'Bedslope          = 0       \r\n');
+fprintf(fid,'BedlevType        = %i       \r\n', simdef.mdf.BedlevType);
+fprintf(fid,'Blmeanbelow       = -999    \r\n');
+fprintf(fid,'Blminabove        = -999    \r\n');
+fprintf(fid,'PartitionFile     =         \r\n');
+fprintf(fid,'Anglat            =  0        \r\n');
 % data{kl,1}=        'Grdang            =  0        '; kl=kl+1;
-data{kl,1}=        'Conveyance2D      = -1        '; kl=kl+1;
-data{kl,1}=        'Nonlin2D          = 0         '; kl=kl+1;
-data{kl,1}=        'Sillheightmin     = 0         '; kl=kl+1;
-data{kl,1}=        'Makeorthocenters  = 0         '; kl=kl+1;
-data{kl,1}=        'Dcenterinside     = 1         '; kl=kl+1;
-data{kl,1}=        'Bamin             = 1E-06     '; kl=kl+1;
-data{kl,1}=        'OpenBoundaryTolerance= 3      '; kl=kl+1;
-data{kl,1}=        'RenumberFlowNodes = 1         '; kl=kl+1;
-data{kl,1}=sprintf('Kmx               = %d',K)     ; kl=kl+1;
-data{kl,1}=        'Layertype         = 1         '; kl=kl+1;
-data{kl,1}=        'Numtopsig         = 0         '; kl=kl+1;
-data{kl,1}=        'SigmaGrowthFactor = 1         '; kl=kl+1;
-data{kl,1}=        'ChangeVelocityAtStructures = 1         '; kl=kl+1;
-data{kl,1}=sprintf('Removesmalllinkstrsh = %d     ',simdef.mdf.Removesmalllinkstrsh); kl=kl+1; %0.0 = remove no links ,  0.1 = remove links smaller than 0.1 sqrt(ba)
-data{kl,1}=sprintf('Dpuopt            = %d     ',simdef.mdf.Dpuopt); kl=kl+1; %# Bed level interpolation at velocity point in case of tile approach bed level: 1 = max (default); 2 = mean
-data{kl,1}=sprintf('ExtrBl            = %d     ',simdef.mdf.ExtrBl); kl=kl+1; %# Extrapolation of bed level at boundaries according to the slope: 0 = no extrapolation (default); 1 = extrapolate.
+fprintf(fid,'Conveyance2D      = -1        \r\n');
+fprintf(fid,'Nonlin2D          = 0         \r\n');
+fprintf(fid,'Sillheightmin     = 0         \r\n');
+fprintf(fid,'Makeorthocenters  = 0         \r\n');
+fprintf(fid,'Dcenterinside     = 1         \r\n');
+fprintf(fid,'Bamin             = 1E-06     \r\n');
+fprintf(fid,'OpenBoundaryTolerance= 3      \r\n');
+fprintf(fid,'RenumberFlowNodes = 1         \r\n');
+fprintf(fid,'Kmx               = %d\r\n',K)     ;
+fprintf(fid,'Layertype         = 1         \r\n');
+fprintf(fid,'Numtopsig         = 0         \r\n');
+fprintf(fid,'SigmaGrowthFactor = 1         \r\n');
+fprintf(fid,'ChangeVelocityAtStructures = 1         \r\n');
+fprintf(fid,'Removesmalllinkstrsh = %d     \r\n',simdef.mdf.Removesmalllinkstrsh); %0.0 = remove no links ,  0.1 = remove links smaller than 0.1 sqrt(ba)
+fprintf(fid,'Dpuopt            = %d     \r\n',simdef.mdf.Dpuopt); %# Bed level interpolation at velocity point in case of tile approach bed level: 1 = max (default); 2 = mean
+fprintf(fid,'ExtrBl            = %d     \r\n',simdef.mdf.ExtrBl); %# Extrapolation of bed level at boundaries according to the slope: 0 = no extrapolation (default); 1 = extrapolate.
 
 % Kmx                               = 28                  # Maximum number of vertical layers
 % Layertype                         = 2                   # Vertical layer type (1: all sigma, 2: all z, 3: use VertplizFile)
@@ -167,76 +162,75 @@ data{kl,1}=sprintf('ExtrBl            = %d     ',simdef.mdf.ExtrBl); kl=kl+1; %#
 % ZlayBot                           = -42.                # level of bottom layer in z-layers
 % ZlayTop                           = 0.                  # level of top layer in z-layers
 
-data{kl,1}=        ''; kl=kl+1;
+fprintf(fid,'\r\n');
 %% NUMERICS
-data{kl,1}=        '[numerics]'; kl=kl+1;
-data{kl,1}=sprintf('CFLMax            = %f         ',simdef.mdf.CFLMax); kl=kl+1;
-data{kl,1}=        'AdvecType         = 33         '; kl=kl+1;
-data{kl,1}=        'TimeStepType      = 2          '; kl=kl+1;
-data{kl,1}=        'Limtyphu          = 0          '; kl=kl+1;
-data{kl,1}=        'Limtypmom         = 4          '; kl=kl+1;
-data{kl,1}=        'Limtypsa          = 4          '; kl=kl+1;
+fprintf(fid,'[numerics]\r\n');
+fprintf(fid,'CFLMax            = %f         \r\n',simdef.mdf.CFLMax);
+fprintf(fid,'AdvecType         = 33         \r\n');
+fprintf(fid,'TimeStepType      = 2          \r\n');
+fprintf(fid,'Limtyphu          = 0          \r\n');
+fprintf(fid,'Limtypmom         = 4          \r\n');
+fprintf(fid,'Limtypsa          = 4          \r\n');
 %data{kl,1}=        'TransportMethod   = 1          '; kl=kl+1;
-data{kl,1}=        'Vertadvtypmom     = 6          '; kl=kl+1; %vertical advection for u1: 0: No, 3: Upwind implicit, 4: Central implicit, 5: QUICKEST implicit., 6: centerbased upwind expl
-data{kl,1}=        'Vertadvtypsal     = 6          '; kl=kl+1;
-data{kl,1}=        'Icgsolver         = 4          '; kl=kl+1;
-data{kl,1}=        'Maxdegree         = 6          '; kl=kl+1;
-data{kl,1}=        'FixedWeirScheme   = 6          '; kl=kl+1;
-data{kl,1}=        'FixedWeirContraction= 1        '; kl=kl+1;
-data{kl,1}=        'FixedWeirfrictscheme= 1        '; kl=kl+1;
-data{kl,1}=        'Fixedweirtopwidth = 3          '; kl=kl+1;
-data{kl,1}=        'Fixedweirtopfrictcoef= -999    '; kl=kl+1;
-data{kl,1}=        'Fixedweirtalud    = 4          '; kl=kl+1;
-data{kl,1}=sprintf('Izbndpos          = %d         ',simdef.mdf.izbndpos); kl=kl+1;
-data{kl,1}=        'Tlfsmo            = 0          '; kl=kl+1;
-data{kl,1}=        'Logprofatubndin   = 1          '; kl=kl+1; % ubnds inflow: 0=uniform U1, 1 = log U1, 2 = user3D
-data{kl,1}=        'Logprofkepsbndin  = 0          '; kl=kl+1; % inflow: 0=0 keps, 1 = log keps inflow, 2 = log keps in and outflow
-data{kl,1}=        'Slopedrop2D       = 0          '; kl=kl+1;
-data{kl,1}=        'Chkadvd           = 0.1        '; kl=kl+1;
-data{kl,1}=sprintf('Teta0             = %f         ',simdef.mdf.theta); kl=kl+1;
+fprintf(fid,'Vertadvtypmom     = 6          \r\n'); %vertical advection for u1: 0: No, 3: Upwind implicit, 4: Central implicit, 5: QUICKEST implicit., 6: centerbased upwind expl
+fprintf(fid,'Vertadvtypsal     = 6          \r\n');
+fprintf(fid,'Icgsolver         = 4          \r\n');
+fprintf(fid,'Maxdegree         = 6          \r\n');
+fprintf(fid,'FixedWeirScheme   = 6          \r\n');
+fprintf(fid,'FixedWeirContraction= 1        \r\n');
+fprintf(fid,'FixedWeirfrictscheme= 1        \r\n');
+fprintf(fid,'Fixedweirtopwidth = 3          \r\n');
+fprintf(fid,'Fixedweirtopfrictcoef= -999    \r\n');
+fprintf(fid,'Fixedweirtalud    = 4          \r\n');
+fprintf(fid,'Izbndpos          = %d         \r\n',simdef.mdf.izbndpos);
+fprintf(fid,'Tlfsmo            = 0          \r\n');
+fprintf(fid,'Logprofatubndin   = 1          \r\n'); % ubnds inflow: 0=uniform U1, 1 = log U1, 2 = user3D
+fprintf(fid,'Logprofkepsbndin  = 0          \r\n'); % inflow: 0=0 keps, 1 = log keps inflow, 2 = log keps in and outflow
+fprintf(fid,'Slopedrop2D       = 0          \r\n');
+fprintf(fid,'Chkadvd           = 0.1        \r\n');
+fprintf(fid,'Teta0             = %f         \r\n',simdef.mdf.theta);
 % data{kl,1}=        'Qhrelax           = 0.01       '; kl=kl+1;
-data{kl,1}=        'Jbasqbnddownwindhs= 0          '; kl=kl+1;
-data{kl,1}=        'cstbnd            = 0          '; kl=kl+1;
-data{kl,1}=        'Maxitverticalforestersal= 0    '; kl=kl+1;
-data{kl,1}=        'Maxitverticalforestertem= 0    '; kl=kl+1;
+fprintf(fid,'Jbasqbnddownwindhs= 0          \r\n');
+fprintf(fid,'cstbnd            = 0          \r\n');
+fprintf(fid,'Maxitverticalforestersal= 0    \r\n');
+fprintf(fid,'Maxitverticalforestertem= 0    \r\n');
 % data{kl,1}=        'Jaorgsethu        = 1          '; kl=kl+1;
-data{kl,1}=        'Turbulencemodel   = 3          '; kl=kl+1;
-data{kl,1}=        'Turbulenceadvection= 3         '; kl=kl+1;
-data{kl,1}=        'AntiCreep         = 0          '; kl=kl+1;
-data{kl,1}=        'Maxwaterleveldiff = 0          '; kl=kl+1;
-data{kl,1}=        'Maxvelocitydiff   = 0          '; kl=kl+1;
-data{kl,1}=        'Epshu             = 0.0001     '; kl=kl+1;
-data{kl,1}=        'Epsz0             = 0.0        '; kl=kl+1;
+fprintf(fid,'Turbulencemodel   = 3          \r\n');
+fprintf(fid,'Turbulenceadvection= 3         \r\n');
+fprintf(fid,'AntiCreep         = 0          \r\n');
+fprintf(fid,'Maxwaterleveldiff = 0          \r\n');
+fprintf(fid,'Maxvelocitydiff   = 0          \r\n');
+fprintf(fid,'Epshu             = 0.0001     \r\n');
+fprintf(fid,'Epsz0             = %f        \r\n',simdef.mdf.epsz0);
 % data{kl,1}=        'SobekDFM_umin     = 0          '; kl=kl+1;
-data{kl,1}=sprintf('TransportAutoTimestepdiff = %d         ',simdef.mdf.TransportAutoTimestepdiff); kl=kl+1;
+fprintf(fid,'TransportAutoTimestepdiff = %d         \r\n',simdef.mdf.TransportAutoTimestepdiff);
 % data{kl,1}=sprintf('filter            = %d         ',filter); kl=kl+1;
-data{kl,1}=sprintf('MinTimestepBreak  = %d         ',0); kl=kl+1; 
-data{kl,1}=        ''; kl=kl+1;
-
+fprintf(fid,'MinTimestepBreak  = %d         \r\n',0);
+fprintf(fid,'\r\n');
 %%
-data{kl,1}=        '[physics]                        '; kl=kl+1;
-data{kl,1}=sprintf('UnifFrictCoef     = %0.7E',simdef.mdf.C); kl=kl+1;
-data{kl,1}=sprintf('UnifFrictType     = %d',simdef.mdf.FrictType); kl=kl+1;
-data{kl,1}=        'UnifFrictCoef1D   = 0.023        '; kl=kl+1;
-data{kl,1}=        'UnifFrictCoefLin  = 0            '; kl=kl+1;
-data{kl,1}=        'Umodlin           = 0            '; kl=kl+1;
-data{kl,1}=sprintf('Vicouv            = %0.7E',Vicouv); kl=kl+1;
-data{kl,1}=sprintf('Dicouv            = %0.7E',Dicouv); kl=kl+1;
-data{kl,1}=sprintf('Vicoww            = %0.7E',Vicoww); kl=kl+1;
-data{kl,1}=sprintf('Dicoww            = %0.7E',Dicoww); kl=kl+1;
-data{kl,1}=        'Vicwminb          = 0            '; kl=kl+1;
-data{kl,1}=sprintf('Smagorinsky       = %0.7E',Smagorinsky); kl=kl+1; %Add Smagorinsky horizontal turbulence : vicu = vicu + ( (Smagorinsky*dx)**2)*S, e.g. 0.1
-data{kl,1}=        'Elder             = 0            '; kl=kl+1; %Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0
-data{kl,1}=sprintf('Irov              = %d',wall_rough); kl=kl+1;
-data{kl,1}=sprintf('wall_ks           = %0.7E',wall_ks); kl=kl+1; %Nikuradse roughness for side walls, wall_z0=wall_ks/30
-data{kl,1}=        'Rhomean           = 1000         '; kl=kl+1;
-data{kl,1}=sprintf('Idensform         = %d',Idensform); kl=kl+1; %# Density calulation (0: uniform, 1: Eckart, 2: Unesco, 3=Unesco83, 13=3+pressure). Setting it to 2 causes computation of baroclinic terms althought there is no salt.
-data{kl,1}=sprintf('Ag                = %0.7E',g)     ; kl=kl+1;
-data{kl,1}=        'TidalForcing      = 0            '; kl=kl+1;
+fprintf(fid,'[physics]                        \r\n');
+fprintf(fid,'UnifFrictCoef     = %0.7E\r\n',simdef.mdf.C);
+fprintf(fid,'UnifFrictType     = %d\r\n',simdef.mdf.FrictType);
+fprintf(fid,'UnifFrictCoef1D   = 0.023        \r\n');
+fprintf(fid,'UnifFrictCoefLin  = 0            \r\n');
+fprintf(fid,'Umodlin           = 0            \r\n');
+fprintf(fid,'Vicouv            = %0.7E\r\n',Vicouv);
+fprintf(fid,'Dicouv            = %0.7E\r\n',Dicouv);
+fprintf(fid,'Vicoww            = %0.7E\r\n',Vicoww);
+fprintf(fid,'Dicoww            = %0.7E\r\n',Dicoww);
+fprintf(fid,'Vicwminb          = 0            \r\n');
+fprintf(fid,'Smagorinsky       = %0.7E\r\n',Smagorinsky); %Add Smagorinsky horizontal turbulence : vicu = vicu + ( (Smagorinsky*dx)**2)*S, e.g. 0.1
+fprintf(fid,'Elder             = 0            \r\n'); %Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0
+fprintf(fid,'Irov              = %d\r\n',wall_rough);
+fprintf(fid,'wall_ks           = %0.7E\r\n',wall_ks); %Nikuradse roughness for side walls, wall_z0=wall_ks/30
+fprintf(fid,'Rhomean           = 1000         \r\n');
+fprintf(fid,'Idensform         = %d\r\n',Idensform); %# Density calulation (0: uniform, 1: Eckart, 2: Unesco, 3=Unesco83, 13=3+pressure). Setting it to 2 causes computation of baroclinic terms althought there is no salt.
+fprintf(fid,'Ag                = %0.7E\r\n',g)     ;
+fprintf(fid,'TidalForcing      = 0            \r\n');
 % data{kl,1}=        'Doodsonstart      = 55.565       '; kl=kl+1;
 % data{kl,1}=        'Doodsonstop       = 375.575      '; kl=kl+1;
 % data{kl,1}=        'Doodsoneps        = 0            '; kl=kl+1;
-data{kl,1}=        'Salinity          = 0            '; kl=kl+1;
+fprintf(fid,'Salinity          = 0            \r\n');
 % data{kl,1}=        'InitialSalinity   = 0            '; kl=kl+1;
 % data{kl,1}=        'Sal0abovezlev     = -999         '; kl=kl+1;
 % data{kl,1}=        'DeltaSalinity     = -999         '; kl=kl+1;
@@ -246,250 +240,136 @@ data{kl,1}=        'Salinity          = 0            '; kl=kl+1;
 % data{kl,1}=        'Stanton           = -1           '; kl=kl+1;
 % data{kl,1}=        'Dalton            = -1           '; kl=kl+1;
 % data{kl,1}=        'Backgroundwatertemperature= 1    '; kl=kl+1;
-data{kl,1}=sprintf('SecondaryFlow     = %d',secflow); kl=kl+1;
-data{kl,1}=sprintf('BetaSpiral        = %d',secflow); kl=kl+1;
-data{kl,1}=        'Temperature       = 0            '; kl=kl+1;
-data{kl,1}=        '                                                 '; kl=kl+1;
-
+fprintf(fid,'SecondaryFlow     = %d\r\n',secflow);
+fprintf(fid,'BetaSpiral        = %d\r\n',secflow);
+fprintf(fid,'Temperature       = 0            \r\n');
+fprintf(fid,'                                                 \r\n');
 %%
-data{kl,1}=        '[wind]                                  '; kl=kl+1;
-data{kl,1}=        'ICdtyp            = 2                   '; kl=kl+1;
-data{kl,1}=        'Cdbreakpoints     = 0.00063 0.00723     '; kl=kl+1;
-data{kl,1}=        'Windspeedbreakpoints= 0 100             '; kl=kl+1;
-data{kl,1}=        'Rhoair            = 1.205               '; kl=kl+1;
-data{kl,1}=        'PavBnd            = 0                   '; kl=kl+1;
-data{kl,1}=        'PavIni            = 0                   '; kl=kl+1;
+fprintf(fid,'[wind]                                  \r\n');
+fprintf(fid,'ICdtyp            = 2                   \r\n');
+fprintf(fid,'Cdbreakpoints     = 0.00063 0.00723     \r\n');
+fprintf(fid,'Windspeedbreakpoints= 0 100             \r\n');
+fprintf(fid,'Rhoair            = 1.205               \r\n');
+fprintf(fid,'PavBnd            = 0                   \r\n');
+fprintf(fid,'PavIni            = 0                   \r\n');
 %%
-data{kl,1}=        '[waves]                                          '; kl=kl+1;
-data{kl,1}=        'Wavemodelnr       = 0                            '; kl=kl+1;
+fprintf(fid,'[waves]                                          \r\n');
+fprintf(fid,'Wavemodelnr       = 0                            \r\n');
 % data{kl,1}=        'WaveNikuradse     = 0.01                         '; kl=kl+1;
 % data{kl,1}=        'Rouwav            = FR84                         '; kl=kl+1;
 % data{kl,1}=        'Gammax            = 1                            '; kl=kl+1;
-data{kl,1}=        '                                                 '; kl=kl+1;
+fprintf(fid,'                                                 \r\n');
 %% TIME
-data{kl,1}=        '[time]                                           '; kl=kl+1;
-data{kl,1}=        'RefDate           = 20000101                     '; kl=kl+1;
-data{kl,1}=        'Tzone             = 0                            '; kl=kl+1;
-data{kl,1}=sprintf('DtUser            = %0.14E',simdef.mdf.DtUser); kl=kl+1;
-data{kl,1}=        'DtNodal           =                              '; kl=kl+1;
-data{kl,1}=sprintf('DtMax             = %0.14E',simdef.mdf.DtMax); kl=kl+1;
-data{kl,1}=        'DtInit            = 1                            '; kl=kl+1;
-data{kl,1}=        'Timestepanalysis  = 0                            '; kl=kl+1; %# 0=no, 1=see file *.steps
+fprintf(fid,'[time]                                           \r\n');
+fprintf(fid,'RefDate           = 20000101                     \r\n');
+fprintf(fid,'Tzone             = 0                            \r\n');
+fprintf(fid,'DtUser            = %0.14E\r\n',simdef.mdf.DtUser);
+fprintf(fid,'DtNodal           =                              \r\n');
+fprintf(fid,'DtMax             = %0.14E\r\n',simdef.mdf.DtMax);
+fprintf(fid,'DtInit            = 1                            \r\n');
+fprintf(fid,'Timestepanalysis  = 0                            \r\n'); %# 0=no, 1=see file *.steps
 % data{kl,1}=        'Autotimestepdiff  = 1                            '; kl=kl+1; %# 0 = no, 1 = yes (Time limitation based on explicit diffusive term)
-data{kl,1}=sprintf('Tunit             = %s',simdef.mdf.Tunit)         ; kl=kl+1;
-data{kl,1}=        'TStart            = 0                            '; kl=kl+1;
-data{kl,1}=sprintf('TStop             = %0.14E',Tstop); kl=kl+1;
-data{kl,1}=        'AutoTimestepNoStruct = 1                         '; kl=kl+1;
-data{kl,1}=        '                                                 '; kl=kl+1;
+fprintf(fid,'Tunit             = %s\r\n',simdef.mdf.Tunit)         ;
+fprintf(fid,'TStart            = 0                            \r\n');
+fprintf(fid,'TStop             = %0.14E\r\n',Tstop);
+fprintf(fid,'AutoTimestepNoStruct = 1                         \r\n');
+fprintf(fid,'                                                 \r\n');
 %%
-data{kl,1}=        '[restart]                                        '; kl=kl+1;
-data{kl,1}=        'RestartFile       =                              '; kl=kl+1;
-data{kl,1}=        'RestartDateTime   =                              '; kl=kl+1;
-data{kl,1}=        '                                                 '; kl=kl+1;
+fprintf(fid,'[restart]                                        \r\n');
+fprintf(fid,'RestartFile       =                              \r\n');
+fprintf(fid,'RestartDateTime   =                              \r\n');
+fprintf(fid,'                                                 \r\n');
 %%
-data{kl,1}=        '[external forcing]                               '; kl=kl+1;
-data{kl,1}=sprintf('ExtForceFile      = %s',simdef.mdf.ext)           ; kl=kl+1;
-data{kl,1}=sprintf('ExtForceFileNew   = %s',simdef.mdf.extn)          ; kl=kl+1;
-data{kl,1}=        '                                                 '; kl=kl+1;
+fprintf(fid,'[external forcing]                               \r\n');
+fprintf(fid,'ExtForceFile      = %s\r\n',simdef.mdf.ext)           ;
+fprintf(fid,'ExtForceFileNew   = %s\r\n',simdef.mdf.extn)          ;
+fprintf(fid,'                                                 \r\n');
 %%
-data{kl,1}=        '[trachytopes]                                    '; kl=kl+1;
-data{kl,1}=        'TrtRou            = N                            '; kl=kl+1;
+fprintf(fid,'[trachytopes]                                    \r\n');
+fprintf(fid,'TrtRou            = N                            \r\n');
 % data{kl,1}=        'TrtDef            =                              '; kl=kl+1;
 % data{kl,1}=        'TrtL              =                              '; kl=kl+1;
 % data{kl,1}=        'DtTrt             = 60                           '; kl=kl+1;
-data{kl,1}=        '                                                 '; kl=kl+1;
+fprintf(fid,'                                                 \r\n');
 %%
-data{kl,1}=        '[output]                                         '; kl=kl+1;
-data{kl,1}=        'Wrishp_crs        = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_weir       = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_gate       = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_fxw        = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_thd        = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_obs        = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_emb        = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_dryarea    = 0                            '; kl=kl+1;
+fprintf(fid,'[output]                                         \r\n');
+fprintf(fid,'Wrishp_crs        = 0                            \r\n');
+fprintf(fid,'Wrishp_weir       = 0                            \r\n');
+fprintf(fid,'Wrishp_gate       = 0                            \r\n');
+fprintf(fid,'Wrishp_fxw        = 0                            \r\n');
+fprintf(fid,'Wrishp_thd        = 0                            \r\n');
+fprintf(fid,'Wrishp_obs        = 0                            \r\n');
+fprintf(fid,'Wrishp_emb        = 0                            \r\n');
+fprintf(fid,'Wrishp_dryarea    = 0                            \r\n');
 % data{kl,1}=        'Wrishp_enc        = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_src        = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrishp_pump       = 0                            '; kl=kl+1;
-data{kl,1}=        'OutputDir         =                              '; kl=kl+1;
-data{kl,1}=        'WAQOutputDir      =                              '; kl=kl+1;
-data{kl,1}=        'FlowGeomFile      =                              '; kl=kl+1;
+fprintf(fid,'Wrishp_src        = 0                            \r\n');
+fprintf(fid,'Wrishp_pump       = 0                            \r\n');
+fprintf(fid,'OutputDir         =                              \r\n');
+fprintf(fid,'WAQOutputDir      =                              \r\n');
+fprintf(fid,'FlowGeomFile      =                              \r\n');
 if Flhis_dt>0
-data{kl,1}=sprintf('ObsFile           = %s',obs_filename); kl=kl+1; 
+fprintf(fid,'ObsFile           = %s\r\n',obs_filename);
 end
-data{kl,1}=        'CrsFile           =                              '; kl=kl+1;
-data{kl,1}=        'HisFile           =                              '; kl=kl+1; 
-data{kl,1}=sprintf('HisInterval       = %0.14E',Flhis_dt); kl=kl+1; 
-data{kl,1}=        'XLSInterval       =                              '; kl=kl+1;
-data{kl,1}=        'MapFile           =                              '; kl=kl+1;
-data{kl,1}=sprintf('MapInterval       = %0.14E %0.14E %0.14E',Flmap_dt(2),Flmap_dt(1),Tstop*time_factor(simdef.mdf.Tunit,'seconds')); kl=kl+1; %there used to be a +2*dt at the end. I do not think it is needed anymore
-data{kl,1}=sprintf('RstInterval       = %0.14E',Flrst_dt); kl=kl+1;
-data{kl,1}=        'S1incinterval     =                              '; kl=kl+1;
-data{kl,1}=        'MapFormat         = 4                            '; kl=kl+1;
-data{kl,1}=sprintf('NcFormat          = %d ', simdef.mdf.NcFormat)    ; kl=kl+1;
-data{kl,1}=        'Wrihis_balance    = 1                            '; kl=kl+1;
-data{kl,1}=        'Wrihis_structure_gen= 1                          '; kl=kl+1;
-data{kl,1}=        'Wrihis_structure_dam= 1                          '; kl=kl+1;
-data{kl,1}=        'Wrihis_structure_pump= 1                         '; kl=kl+1;
-data{kl,1}=        'Wrihis_structure_gate= 1                         '; kl=kl+1;
-data{kl,1}=        'Wrimap_waterlevel_s0= 0                          '; kl=kl+1;
-data{kl,1}=        'Wrimap_waterlevel_s1= 1                          '; kl=kl+1;
-data{kl,1}=        'Wrimap_velocity_component_u0= 0                  '; kl=kl+1;
-data{kl,1}=        'Wrimap_velocity_component_u1= 1                  '; kl=kl+1;
-data{kl,1}=        'Wrimap_velocity_vector= 1                        '; kl=kl+1;
-data{kl,1}=        'Wrimap_waterdepth_hu= 1                          '; kl=kl+1;
-data{kl,1}=        'Wrimap_upward_velocity_component= 1              '; kl=kl+1;
-data{kl,1}=        'Wrimap_density_rho= 0                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_horizontal_viscosity_viu= 1               '; kl=kl+1;
-data{kl,1}=        'Wrimap_horizontal_diffusivity_diu= 1             '; kl=kl+1;
-data{kl,1}=        'Wrimap_flow_flux_q1= 1                           '; kl=kl+1;
-data{kl,1}=        'Wrimap_flow_flux_q1_main= 1                      '; kl=kl+1; %mesh1d_q1_main = main channel flow dicharge per unit width
-data{kl,1}=        'Wrimap_spiral_flow= 1                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_numlimdt   = 1                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_taucurrent = 1                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_chezy      = 1                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_turbulence = 1                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_wind       = 0                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_heat_fluxes= 0                            '; kl=kl+1;
-data{kl,1}=        'Wrimap_every_dt   = 0                            '; kl=kl+1; %# Write output to map file every dt, based on start and stop from MapInterval, 0=no (default), 1=yes�
-data{kl,1}=        'Wrimap_fixed_weir_energy_loss   = 1              '; kl=kl+1; 
-data{kl,1}=        'MapOutputTimeVector=                             '; kl=kl+1;
-data{kl,1}=        'FullGridOutput    = 0                            '; kl=kl+1;
-data{kl,1}=        'EulerVelocities   = 0                            '; kl=kl+1;
-data{kl,1}=        'ClassMapFile      =                              '; kl=kl+1;
+fprintf(fid,'CrsFile           =                              \r\n');
+fprintf(fid,'HisFile           =                              \r\n');
+fprintf(fid,'HisInterval       = %0.14E\r\n',Flhis_dt);
+fprintf(fid,'XLSInterval       =                              \r\n');
+fprintf(fid,'MapFile           =                              \r\n');
+fprintf(fid,'MapInterval       = %0.14E %0.14E %0.14E\r\n',Flmap_dt(2),Flmap_dt(1),Tstop*time_factor(simdef.mdf.Tunit,'seconds')); %there used to be a +2*dt at the end. I do not think it is needed anymore
+fprintf(fid,'RstInterval       = %0.14E\r\n',Flrst_dt);
+fprintf(fid,'S1incinterval     =                              \r\n');
+fprintf(fid,'MapFormat         = 4                            \r\n');
+fprintf(fid,'NcFormat          = %d \r\n', simdef.mdf.NcFormat)    ;
+fprintf(fid,'Wrihis_balance    = 1                            \r\n');
+fprintf(fid,'Wrihis_structure_gen= 1                          \r\n');
+fprintf(fid,'Wrihis_structure_dam= 1                          \r\n');
+fprintf(fid,'Wrihis_structure_pump= 1                         \r\n');
+fprintf(fid,'Wrihis_structure_gate= 1                         \r\n');
+fprintf(fid,'Wrimap_waterlevel_s0= 0                          \r\n');
+fprintf(fid,'Wrimap_waterlevel_s1= 1                          \r\n');
+fprintf(fid,'Wrimap_velocity_component_u0= 0                  \r\n');
+fprintf(fid,'Wrimap_velocity_component_u1= 1                  \r\n');
+fprintf(fid,'Wrimap_velocity_vector= 1                        \r\n');
+fprintf(fid,'Wrimap_waterdepth_hu= 1                          \r\n');
+fprintf(fid,'Wrimap_upward_velocity_component= 1              \r\n');
+fprintf(fid,'Wrimap_density_rho= 0                            \r\n');
+fprintf(fid,'Wrimap_horizontal_viscosity_viu= 1               \r\n');
+fprintf(fid,'Wrimap_horizontal_diffusivity_diu= 1             \r\n');
+fprintf(fid,'Wrimap_flow_flux_q1= 1                           \r\n');
+fprintf(fid,'Wrimap_flow_flux_q1_main= 1                      \r\n'); %mesh1d_q1_main = main channel flow dicharge per unit width
+fprintf(fid,'Wrimap_spiral_flow= 1                            \r\n');
+fprintf(fid,'Wrimap_numlimdt   = 1                            \r\n');
+fprintf(fid,'Wrimap_taucurrent = 1                            \r\n');
+fprintf(fid,'Wrimap_chezy      = 1                            \r\n');
+fprintf(fid,'Wrimap_turbulence = 1                            \r\n');
+fprintf(fid,'Wrimap_wind       = 0                            \r\n');
+fprintf(fid,'Wrimap_heat_fluxes= 0                            \r\n');
+fprintf(fid,'Wrimap_every_dt   = 0                            \r\n'); %# Write output to map file every dt, based on start and stop from MapInterval, 0=no (default), 1=yesÃƒÂ¯Ã‚Â¿Ã‚Â½
+fprintf(fid,'Wrimap_fixed_weir_energy_loss   = 1              \r\n');
+fprintf(fid,'MapOutputTimeVector=                             \r\n');
+fprintf(fid,'FullGridOutput    = 0                            \r\n');
+fprintf(fid,'EulerVelocities   = 0                            \r\n');
+fprintf(fid,'ClassMapFile      =                              \r\n');
 % data{kl,1}=        'WaterlevelClasses = 0.0                          '; kl=kl+1;
 % data{kl,1}=        'WaterdepthClasses = 0.0                          '; kl=kl+1;
-data{kl,1}=        'ClassMapInterval  = 0                            '; kl=kl+1;
-data{kl,1}=        'WaqInterval       = 0                            '; kl=kl+1;
-data{kl,1}=        'StatsInterval     = -1                           '; kl=kl+1;
+fprintf(fid,'ClassMapInterval  = 0                            \r\n');
+fprintf(fid,'WaqInterval       = 0                            \r\n');
+fprintf(fid,'StatsInterval     = -1                           \r\n');
 %data{kl,1}=        'Writebalancefile  = 0                            '; kl=kl+1;
-data{kl,1}=        'TimingsInterval   =                              '; kl=kl+1;
-data{kl,1}=        'Richardsononoutput= 0                            '; kl=kl+1;
-data{kl,1}=        '                                                 '; kl=kl+1;
-%%
-if morphology
-data{kl,1}=        '[sediment]                                       '; kl=kl+1;
-data{kl,1}=sprintf('MorFile           = %s                      ',simdef.mdf.mor); kl=kl+1;
-data{kl,1}=sprintf('SedFile           = %s                      ',simdef.mdf.sed); kl=kl+1;
-data{kl,1}=        'Sedimentmodelnr   = 4                            '; kl=kl+1;
-data{kl,1}=        'MorCFL            = 0                            '; kl=kl+1; %Use morphological time step restriction (1, default) or not (0)
+fprintf(fid,'TimingsInterval   =                              \r\n');
+fprintf(fid,'Richardsononoutput= 0                            \r\n');
+fprintf(fid,'                                                 \r\n');
 
-end
-%% WRITE
+%% morphology
 
-% file_name=fullfile(dire_sim,sprintf('sim_%s%s.mdu',runid_serie,runid_number));
-writetxt(file_name,data,'check_existing',check_existing);
+fprintf(fid,'[sediment]                                       \r\n');
+fprintf(fid,'MorFile           = %s                      \r\n',simdef.mdf.mor);
+fprintf(fid,'SedFile           = %s                      \r\n',simdef.mdf.sed);
+fprintf(fid,'Sedimentmodelnr   = 4                            \r\n');
+fprintf(fid,'MorCFL            = 0                            \r\n'); %Use morphological time step restriction (1, default) or not (0)
 
-%%
+%% CLOSE
 
-%
-%[model]
-%Program                      = D-Flow FM
-%Version                      = 1.1.99.34297M
-%AutoStart                    = 0                   # Autostart simulation after loading MDU or not (0=no, 1=autostart, 2=autostartstop).
-%
-%[geometry]
-%NetFile                      = t01_net.nc          # *_net.nc
-%BathymetryFile               = bathymetry.xyb      # *.xyb
-%WaterLevIniFile              =                     # Initial water levels sample file *.xyz
-%LandBoundaryFile             =                     # Only for plotting
-%ThinDamFile                  =                     # *_thd.pli, Polyline(s) for tracing thin dams.
-%ThindykeFile                 =                     # *_tdk.pli, Polyline(s) x,y,z, z = thin dyke top levels
-%VertplizFile                 =                     # *_vlay.pliz), = pliz with x,y, Z, first Z =nr of layers, second Z = laytyp
-%ProflocFile                  =                     # *_proflocation.xyz)    x,y,z, z = profile refnumber
-%ProfdefFile                  =                     # *_profdefinition.def) definition for all profile nrs
-%ProfdefxyzFile               =                     # *_profdefinition.def) definition for all profile nrs
-%Uniformwidth1D               = 2.                  # Uniform width for 1D profiles not specified bij profloc
-%ManholeFile                  =                     # *...
-%WaterLevIni                  = 0.                  # Initial water level
-%Bedlevuni                    = -5.                 # Uniform bottom level, (only if bedlevtype>=3, used at missing z values in netfile
-%BedlevType                   = 1                   # 1 : Bottom levels at waterlevel cells (=flow nodes), like tiles xz, yz, bl , bob = max(bl left, bl right)
-%                                                   # 2 : Bottom levels at velocity points  (=flow links),            xu, yu, blu, bob = blu,    bl = lowest connected link
-%                                                   # 3 : Bottom levels at velocity points  (=flow links), using mean network levels xk, yk, zk  bl = lowest connected link
-%                                                   # 4 : Bottom levels at velocity points  (=flow links), using min  network levels xk, yk, zk  bl = lowest connected link
-%                                                   # 5 : Bottom levels at velocity points  (=flow links), using max  network levels xk, yk, zk  bl = lowest connected link
-%PartitionFile                =                     # *_part.pol, polyline(s) x,y
-%AngLat                       = 0.                  # Angle of latitude  S-N (deg), 0=no Coriolis
-%AngLon                       = 0.                  # Angle of longitude E-W (deg), 0=Greenwich
-%Conveyance2D                 = -1                   # -1:R=HU,0:R=H, 1:R=A/P, 2:K=analytic-1D conv, 3:K=analytic-2D conv
-%Nonlin2D                     = 0                   # Non-linear 2D volumes, only icm ibedlevtype = 3
-%Makeorthocenters             = 0                   # 1=yes, 0=no switch from circumcentres to orthocentres in geominit
-%Dcenterinside                = 1.                  # limit cell center; 1.0:in cell <-> 0.0:on c/g
-%
-%[numerics]
-%CFLMax                       = 0.7                 # Max. Courant nr.
-%AdvecType                    = 33                   # Adv type, 0=no, 1= Wenneker, qu-udzt, 2=1, q(uio-u), 3=Perot q(uio-u), 4=Perot q(ui-u), 5=Perot q(ui-u) without itself
-%TimeStepType                 = 2                   #  0=only transport, 1=transport + velocity update, 2=full implicit step_reduce, 3=step_jacobi, 4=explicit
-%Limtypmom                    = 4                   # Limiter type for cell center advection velocity, 0=no, 1=minmod,2=vanLeer,3=Kooren,4=Monotone Central
-%Limtypsa                     = 0                   # Limiter type for salinity transport,           0=no, 1=minmod,2=vanLeer,3=Kooren,4=Monotone Central
-%Icgsolver                    = 4                   # Solver type , 1 = sobekGS_OMP, 2 = sobekGS_OMPthreadsafe, 3 = sobekGS, 4 = sobekGS + Saadilud, 5 = parallel/global Saad, 6 = parallel/Petsc, 7 = parallel/GS
-%Tlfsmo                       = 0.                  # Fourier smoothing time on waterlevel boundaries (s)
-%Slopedrop2D                  = 0.3                 # Apply droplosses only if local bottom slope > Slopedrop2D, <=0 =no droplosses
-%cstbnd                       = 0                   # Delft-3D type velocity treatment near boundaries for small coastal models (1) or not (0)
-%
-%[physics]
-%UnifFrictCoef                = 2.5d-2              # Uniform friction coefficient, 0=no friction
-%UnifFrictType                = 2                   # 0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc
-%UnifFrictCoef1D              =                     # Uniform friction coefficient in 1D links, 0=no friction
-%UnifFrictCoefLin             = 0.                  # Uniform linear friction coefficient for ocean models (m/s), 0=no
-%Vicouv                       = 1e-6                  # Uniform horizontal eddy viscosity (m2/s)
-%Dicouv                       = 1.                  # Uniform horizontal eddy diffusivity (m2/s)
-%Smagorinsky                  = 0.                  # Add Smagorinsky horizontal turbulence : vicu = vicu + ( (Smagorinsky*dx)**2)*S, e.g. 0.1
-%Elder                        = 0.                  # Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0
-%irov                         = 0                   # 0=free slip, 1 = partial slip using wall_ks
-%wall_ks                      = 0.                  # Nikuradse roughness for side walls, wall_z0=wall_ks/30
-%Rhomean                      = 1000.               #  Average water density (kg/m3)
-%Ag                           = 9.81                #  Gravitational acceleration
-%TidalForcing                 = 1                   # Tidal forcing (0=no, 1=yes) (only for jsferic == 1)
-%Salinity                     = 0                   # Include salinity, (0=no, 1=yes)
-%Temperature                  = 0                   # Include temperature, (0=no, 1=only transport, 5=heat flux model (5) of D3D)
-%Backgroundwatertemperature   = 20.
-%Backgroundsalinity           = 0.
-%
-%[sediment]
-%Sedimentmodelnr              = 4                   # Sediment model nr, (0=no, 1=Krone, 2=SvR2007)
-%SedFile                      = t01.sed             # Sediment characteristics file (*.sed)
-%MorFile                      = t01.mor             # Morphology settings file (*.mor)
-%DredgeFile                   = Nourishment.dad            # dredging
-%
-%[wind]
-%ICdtyp                       = 2                   # ( ),1=const, 2=S&B 2 breakpoints, 3= S&B 3 breakpoints, 4=Charnock constant
-%Cdbreakpoints                = 2.5d-3 2.5d-3       # ( ),   e.g. 0.00063  0.00723
-%Windspeedbreakpoints         = 0. 100.             # (m/s), e.g. 0.0      100.0
-%
-%[time]
-%RefDate                      = 20160803            # Reference date (yyyymmdd)
-%Tzone                        = 0.                  # Data Sources in GMT are interrogated with time in minutes since refdat-Tzone*60
-%Tunit                        = M                   # Time units in MDU (H, M or S)
-%DtUser                       = 0.05                # User timestep in seconds (interval for external forcing update & his/map output)
-%DtMax                        = 0.05                # Max timestep in seconds
-%DtInit                       = 1.                  # Initial timestep in seconds
-%AutoTimestep                 = 0.                   # Use CFL timestep limit or not (1/0)
-%TStart                       = 0.               # Start time w.r.t. RefDate (in TUnit)
-%TStop                        = 20      # Stop  time w.r.t. RefDate (in TUnit)
-%
-%[restart]
-%RestartFile                  =                     # Restart file, only from netcdf-file, hence: either *_rst.nc or *_map.nc
-%RestartDateTime              = 20000218000000      # Restart time (YYYYMMDDHHMMSS), only relevant in case of restart from *_map.nc
-%
-%[external forcing]
-%ExtForceFile                 = t01.ext             # *.ext
-%
-%[output]
-%OutputDir                    = dflowfmoutput       # Output directory of map-, his-, rst-, dat- and timings-files, default: DFM_OUTPUT_<modelname>. Set to . for no dir/current dir.
-%ObsFile                      = t01_obs.xyn         # *.xyn Coords+name of observation stations.
-%CrsFile                      =          # *_crs.pli Polyline(s) definining cross section(s).
-%HisInterval                  = 1.                 # History output, given as "interval" "start period" "end period" (s)
-%XLSInterval                  = 0.                  # Interval (s) between XLS history
-%FlowGeomFile                 =                     # *_flowgeom.nc Flow geometry file in NetCDF format.
-%MapInterval                  = 3                 # Map file output, given as "interval" "start period" "end period" (s)
-%MapFormat                    = 4                   # Map file format, 1: netCDF, 2: Tecplot, 3: netCFD and Tecplot
-%Richardsononoutput           = 0                   # 1=yes,0=no
-%RstInterval                  = 0.                  # Restart file output, given as "interval" "start period" "end period" (s)
-%WaqInterval                  = 0.                  # Interval (in s) between Delwaq file outputs
-%StatsInterval                = 0.                  # Interval (in s) between simulation statistics output.
-%TimingsInterval              = 0.                  # Timings output interval
-%TimeSplitInterval            = 0X                  # Time splitting interval, after which a new output file is started. value+unit, e.g. '1 M', valid units: Y,M,D,h,m,s.
-%MapOutputTimeVector          =                     # File (.mpt) containing fixed map output times (s) w.r.t. RefDate
-%FullGridOutput               = 0                   # 0:compact, 1:full time-varying grid data
+write_local_and_copy('close',fid,fname_local,file_name)
 
+end %function

@@ -53,15 +53,16 @@ nfields=numel(fields_csd);
 
 %% FILE
 
-kl=1;
-%%
-data{kl,1}=        '[General]'; kl=kl+1;
-data{kl,1}=        '   fileVersion           = 3.00'; kl=kl+1;
-data{kl,1}=        '   fileType              = crossDef'; kl=kl+1;
-%% 
-data{kl,1}=        ''; kl=kl+1;
-data{kl,1}=        '[Global]'; kl=kl+1;
-data{kl,1}=sprintf('   leveeTransitionHeight = %5.2f',csd_global.leveeTransitionHeight); kl=kl+1;
+fname_destiny=fullfile(dire_sim,fname);
+[fid,fname_local]=write_local_and_copy('open',fname_destiny,'overwrite',~check_existing);
+
+fprintf(fid,'%s\r\n','[General]');
+fprintf(fid,'%s\r\n','   fileVersion           = 3.00');
+fprintf(fid,'%s\r\n','   fileType              = crossDef');
+fprintf(fid,'%s\r\n','');
+fprintf(fid,'%s\r\n','[Global]');
+fprintf(fid,'   leveeTransitionHeight = %5.2f\r\n',csd_global.leveeTransitionHeight);
+
 %%
 for kcsd=1:ncsd
     switch lower(csd(kcsd).type)
@@ -73,37 +74,30 @@ for kcsd=1:ncsd
             error('unknown number of levels for type: %s',csd(kcsd).type)
     end
     
-data{kl,1}=        ''; kl=kl+1;
-data{kl,1}=        '[Definition]'; kl=kl+1;
+    fprintf(fid,'%s\r\n','');
+    fprintf(fid,'%s\r\n','[Definition]');
     for kfields=1:nfields
+        if isempty(csd(kcsd).(fields_csd{kfields}))
+            continue
+        end
         if ischar(csd(kcsd).(fields_csd{kfields}))
-            %It is not needed anymore to have # surrounding the string
-            % switch fields_csd{kfields}
-                % case 'id'
-                    % data{kl,1}=sprintf('   %s = #%s# ',fields_csd{kfields},csd(kcsd).(fields_csd{kfields})); kl=kl+1;
-                % otherwise
-                    data{kl,1}=sprintf('   %s = %s ',fields_csd{kfields},csd(kcsd).(fields_csd{kfields})); kl=kl+1;
-            % end
+            fprintf(fid,'   %s = %s \r\n',fields_csd{kfields},csd(kcsd).(fields_csd{kfields}));
         else %double
             if numel(csd(kcsd).(fields_csd{kfields}))>1
                 aux_str=repmat('%f ',1,nlevels);
-                aux_str2=sprintf('   %s = %s ',fields_csd{kfields},aux_str);
-                data{kl,1}=sprintf(aux_str2,csd(kcsd).(fields_csd{kfields})); kl=kl+1;
+                aux_str2=sprintf('   %s = %s\r\n',fields_csd{kfields},aux_str);
+                fprintf(fid,aux_str2,csd(kcsd).(fields_csd{kfields}));  
             else
-                switch fields_csd{kfields}
-                    case {'yzCount','sectionCount'}
-                        data{kl,1}=sprintf('   %s = %d ',fields_csd{kfields},csd(kcsd).(fields_csd{kfields})); kl=kl+1;
-                    otherwise
-                        data{kl,1}=sprintf('   %s = %f ',fields_csd{kfields},csd(kcsd).(fields_csd{kfields})); kl=kl+1;
-                end
-                
+                if isinteger_precision(csd(kcsd).(fields_csd{kfields})) %case {'yzCount','sectionCount'}
+                    fprintf(fid,'   %s = %d \r\n',fields_csd{kfields},csd(kcsd).(fields_csd{kfields}));
+                else
+                    fprintf(fid,'   %s = %f \r\n',fields_csd{kfields},csd(kcsd).(fields_csd{kfields}));
+                end                
             end
-            
         end
     end
 end
 
-%% WRITE
+write_local_and_copy('close',fid,fname_local,fname_destiny)
 
-file_name=fullfile(dire_sim,fname);
-writetxt(file_name,data,'check_existing',check_existing)
+end %function

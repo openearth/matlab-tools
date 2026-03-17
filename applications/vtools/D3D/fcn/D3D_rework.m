@@ -173,23 +173,11 @@ end
 % end
 
 %%
-%% SED
+%% MORPHODYNAMICS
 %%
 
-simdef.sed.dummy=NaN;
-
-if isfield(simdef.file,'sed')==0
-    simdef.file.sed=fullfile(simdef.D3D.dire_sim,'sed.sed');
-end
-
-if isfield(simdef.sed,'dk')==0
-    simdef.sed.dk=[];
-end
-
-%%
-%% TRA
-%%
-
+simdef=D3D_rework_sed(simdef);
+simdef=D3D_rework_mor(simdef);
 simdef=D3D_sedTrans_default(simdef);
 simdef=D3D_sedTyp_default(simdef);
 
@@ -200,6 +188,11 @@ for kf=1:nf
         warning('With Partheniades-Krone the sediment type must be mud. It has been changed.')
         simdef.tra.SedTyp(kf)=1;
     end
+end
+
+if ~simdef.mor.morphology %this really deactivates morphodynamics
+    simdef.mdf.mor='';
+    simdef.mdf.sed='';
 end
 
 %%
@@ -476,14 +469,6 @@ if isfield(simdef.mdf,'extn')==0
     simdef.mdf.extn='bnd.ext';
 end
 
-if isfield(simdef.mdf,'mor')==0
-    simdef.mdf.mor='mor.mor';
-end
-
-if isfield(simdef.mdf,'sed')==0
-    simdef.mdf.sed='sed.sed';
-end
-
 if simdef.D3D.structure==1
 if isfield(simdef.mdf,'tra')==0
     simdef.mdf.tra='tra.tra';
@@ -531,15 +516,10 @@ simdef.mdf=isfield_default(simdef.mdf,'Dicoww',5.d-5);
 simdef.mdf=isfield_default(simdef.mdf,'Smagorinsky',0);
 simdef.mdf=isfield_default(simdef.mdf,'FrictType',0);
 
-%%
-%% MOR
-%%
-
-simdef.mor.dummy=NaN;
-
-simdef.mor=isfield_default(simdef.mor,'morphology',0);
-
-simdef=D3D_rework_mor(simdef);
+simdef.mdf=isfield_default(simdef.mdf,'epsz0',1e-5); %default value
+if simdef.mdf.C>70
+    simdef.mdf.epsz0=0; %otherwise, the threshold for the friction is too high
+end
 
 %% 
 %% BCM
@@ -1063,9 +1043,11 @@ end
 
 function simdef=D3D_rework_mor(simdef)
 
-if isfield(simdef.file,'mor')==0
-    simdef.file.mor=fullfile(simdef.D3D.dire_sim,'mor.mor');
-end
+simdef.mor.dummy=NaN;
+
+simdef.mor=isfield_default(simdef.mor,'morphology',0);
+
+simdef=parse_file_name(simdef,'mor','mor.mor');
 
 if simdef.mor.morphology
     simdef.mdf.BedlevType=1; 
@@ -1121,6 +1103,36 @@ if isfield(simdef.file,'mini')==0
     %in the mor-file, we are writting the filename of this filepath. It is
     %not completely safe if files are not in the same location.
     simdef.file.mini=fullfile(simdef.D3D.dire_sim,'mini.ini');
+end
+
+end %function
+
+%%
+
+function simdef=parse_file_name(simdef,field_name,default_name)
+
+if isfield(simdef.file,field_name)==0
+    if isfield(simdef.mdf,field_name)==0
+        simdef.mdf.(field_name)=default_name;
+    end
+    simdef.file.(field_name)=fullfile(simdef.D3D.dire_sim,simdef.mdf.(field_name));
+else
+    [~,fname,fext]=fileparts(simdef.file.(field_name));
+    simdef.mdf.(field_name)=sprintf('%s%s',fname,fext);
+end
+
+end
+
+%%
+
+function simdef=D3D_rework_sed(simdef)
+
+simdef.sed.dummy=NaN;
+
+simdef=parse_file_name(simdef,'sed','sed.sed');
+
+if isfield(simdef.sed,'dk')==0
+    simdef.sed.dk=[];
 end
 
 end %function
