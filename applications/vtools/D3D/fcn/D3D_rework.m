@@ -1051,6 +1051,9 @@ simdef=parse_file_name(simdef,'mor','mor.mor');
 
 if simdef.mor.morphology
     simdef.mdf.BedlevType=1; 
+    simdef.mdf.sedimentmodelnr=1;
+else
+    simdef.mdf.sedimentmodelnr=0;
 end
 
 nf=numel(simdef.sed.dk);

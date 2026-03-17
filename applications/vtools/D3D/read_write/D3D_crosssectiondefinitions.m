@@ -70,6 +70,8 @@ for kcsd=1:ncsd
             nlevels=csd(kcsd).yzCount;
         case 'zwriver'
             nlevels=csd(kcsd).numLevels;
+        case 'circle'
+            nlevels=1;
         otherwise
             error('unknown number of levels for type: %s',csd(kcsd).type)
     end
