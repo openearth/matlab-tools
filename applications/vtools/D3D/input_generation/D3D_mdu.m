@@ -365,7 +365,7 @@ fprintf(fid,'                                                 \r\n');
 fprintf(fid,'[sediment]                                       \r\n');
 fprintf(fid,'MorFile           = %s                      \r\n',simdef.mdf.mor);
 fprintf(fid,'SedFile           = %s                      \r\n',simdef.mdf.sed);
-fprintf(fid,'Sedimentmodelnr   = 4                            \r\n');
+fprintf(fid,'Sedimentmodelnr   = %d                            \r\n',simdef.mdf.sedimentmodelnr);
 fprintf(fid,'MorCFL            = 0                            \r\n'); %Use morphological time step restriction (1, default) or not (0)
 
 %% CLOSE
