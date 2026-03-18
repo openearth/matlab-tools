@@ -77,14 +77,13 @@ for kst=1:nst
     in_plot.(tag).do_area=cat(2,in_plot.(tag).do_area,1);
 end
 
-
 %% PATHS
 
 kref=flg_loc.sim_ref;
 
 fdir_mat=simdef(kref).file.fdir_mat;
 fpath_map=simdef(kref).file.map;
-fdir_fig=fullfile(simdef(kref).file.fdir_fig,tag_fig,tag_serie);
+fdir_fig=fullfile(simdef(kref).file.fdir_fig,tag_fig,in_plot.(tag).tag_serie);
 fpath_mat=fullfile(fdir_mat,sprintf('%s.mat',tag));
 fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 
@@ -148,9 +147,9 @@ in_p.s=rkmv.rkm_cen;
 in_p.xlab_str='rkm';
 in_p.xlab_un=1/1000;
 % in_p.leg_loc='northoutside';
-% in_p.fig_size=[0,0,14.5,20];
+in_p.fig_size=[0,0,14.5,10];
 in_p.leg_loc='eastoutside';
-in_p.fig_size=[0,0,27,15];
+% in_p.fig_size=[0,0,27,15];
 in_p.y_scale='log';
 
 fig_1D_01(in_p);

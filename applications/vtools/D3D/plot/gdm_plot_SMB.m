@@ -643,23 +643,26 @@ end %function
 
 %%
 
-function plot_cum(fid_log,simdef,in_p,time_dnum_plot,tim_dtime_plot,nx,nD,variable,data_xvt,sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims)
+function plot_cum(fid_log,simdef,in_p_in,time_dnum_plot,tim_dtime_plot,nx,nD,variable,data_xvt,sb_pol,pol_name,var_str_save,var_idx,kt_v,tag_fig,tag_serie,lims)
 
-nsim=numel(simdef);
+in_p=in_p_in;
+
 tag=variable;
+
+in_p.variable=sprintf('%s_t',variable); %add time
+
+statis='val_mean_weighted';
+val_cum=gdm_compute_cumulative(data_xvt,statis,tim_dtime_plot);
+
+nylim=size(lims,1);
+nxlim=size(in_p_in.xlims,1);
+nsim=numel(simdef);
 
 for ksim=1:nsim
 
     runid=simdef(ksim).file.runid;
     fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie);
     
-    statis='val_mean_weighted';
-    val_cum=gdm_compute_cumulative(data_xvt,statis,tim_dtime_plot);
-    
-    in_p.variable=sprintf('%s_t',variable); %add time
-    
-    nylim=size(lims,1);
-    % nxlim=size(flg_loc)
     for kt=kt_v
         in_p.tim=time_dnum_plot(kt);
         in_p.val=squeeze(val_cum(:,:,kt,:));
@@ -668,14 +671,15 @@ for ksim=1:nsim
         mkdir_check(fdir_fig_loc,fid_log,1,0);
     
         for kylim=1:nylim
-            % for kxlim=1:nxlim
-                fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum_plot(kt),var_str_save,statis,sb_pol,var_idx,kylim,1);
+            for kxlim=1:nxlim
+                fname_noext=fig_name(fdir_fig_loc,sprintf('%s_cum',tag),runid,time_dnum_plot(kt),var_str_save,statis,sb_pol,var_idx,kylim,kxlim);
         
                 in_p.fname=fname_noext;
                 in_p.ylims=lims(kylim,:);
+                in_p.xlims=in_p_in.xlims(kxlim,:);
         
                 fig_1D_01(in_p);
-            % end
+            end
         end
     end
 end %ksim
