@@ -310,8 +310,10 @@ switch ext
         if strcmp(fname,'smt') %could it be another yml? too strong?
             simdef.D3D.structure=4;
             whatis(4)=true;
+        elseif strcmp(fname, 'qsh') 
+            % ignore special yml to deal with restart after crash
         else
-            fprintf('Warning! There is a yml-file but not called smt: %s',fpath_file)
+            fprintf('Warning! There is a yml-file but not called smt.yml: %s',fpath_file)
         end
     case ''
         if strcmp(fname,'Qseries') 
