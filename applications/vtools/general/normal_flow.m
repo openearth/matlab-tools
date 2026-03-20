@@ -12,10 +12,10 @@
 %
 %compute normal flow
 %INPUT:
-% hydraulic_radius: 1=considering `B*h/(B+2h)`; 2=considering `h`
+% hydraulic_radius: 'rectangular'=considering `B*h/(B+2h)`; 'infinite_width'=considering `h`
 %
 %E.G.
-%slope=normal_flow('Q',1,'B',1,'h',1,'Cf',0.007,'hydraulic_radius',2);
+%slope=normal_flow('Q',1,'B',1,'h',1,'Cf',0.007,'hydraulic_radius','infinite_width');
 
 function val_out=normal_flow(varargin)
 
@@ -30,7 +30,7 @@ addOptional(parin,'s',NaN);
 addOptional(parin,'Cf',NaN);
 addOptional(parin,'C',NaN);
 addOptional(parin,'g',9.81);
-addOptional(parin,'hydraulic_radius',1);
+addOptional(parin,'hydraulic_radius','infinite_width');
 addOptional(parin,'h0',1);
 
 parse(parin,varargin{:});
@@ -43,6 +43,17 @@ Cf=parin.Results.Cf;
 C=parin.Results.C;
 g=parin.Results.g;
 hydraulic_radius=parin.Results.hydraulic_radius;
+%backwards compatibility
+if isnumeric(hydraulic_radius)
+    switch hydraulic_radius
+        case 1
+            hydraulic_radius='rectangular';
+        case 2
+            hydraulic_radius='infinite_width';
+        otherwise
+            error('Implement.')
+    end
+end
 h0=parin.Results.h0;
 
 %% SELECT

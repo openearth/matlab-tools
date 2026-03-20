@@ -20,7 +20,7 @@ parin=inputParser;
 
 addOptional(parin,'g',9.81);
 addOptional(parin,'h0',1);
-addOptional(parin,'hydraulic_radius',1);
+addOptional(parin,'hydraulic_radius','infinite_width');
 
 parse(parin,varargin{:});
 
@@ -32,9 +32,9 @@ hydraulic_radius=parin.Results.hydraulic_radius;
 
 C=sqrt(g/cf);
 switch hydraulic_radius
-    case 1
+    case 'rectangular'
         F=@(h)Q/B/h-C*sqrt(B*h/(B+2*h)*slope);
-    case 2
+    case 'infinite_width'
         F=@(h)Q/B/h-C*sqrt(h*slope);
     otherwise
         error('Implement.')
