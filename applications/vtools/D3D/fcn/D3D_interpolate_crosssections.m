@@ -32,12 +32,18 @@ else %pair-value arguments
     parin=inputParser;
 
     addOptional(parin,'check_existing',true);
+    addOptional(parin,'overwrite',NaN);
     addOptional(parin,'fdir','');
 
     parse(parin,varargin{:});
 
     check_existing=parin.Results.check_existing;
+    overwrite=parin.Results.overwrite;
     fdir_new=parin.Results.fdir;
+    
+    if ~isnan(overwrite)
+        check_existing=~overwrite;
+    end
 end
 
 %% PATHS
