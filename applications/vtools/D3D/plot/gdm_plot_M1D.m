@@ -308,7 +308,7 @@ for kbr=1:nbr %branches
         
         %% all times in same figure xtv
         
-        if (flg_loc.do_xtv || flg_loc.do_xtv_diff_t || do_xtv_diff_s) && nt>1
+        if (flg_loc.do_xtv || flg_loc.do_xtv_diff_t || flg_loc.do_xtv_diff_s) && nt>1
             str_dir='xtv';
             
             [x_m,y_m]=meshgrid(in_p.s,time_dtime_v);

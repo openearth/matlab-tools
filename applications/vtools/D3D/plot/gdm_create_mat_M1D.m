@@ -27,28 +27,6 @@ if isfield(flg_loc,'fpath_map_curved')
     is_straigth=1;
 end
 
-% if isfield(flg_loc,'write_shp')==0
-%     flg_loc.write_shp=0;
-% end
-% if flg_loc.write_shp==1
-%     messageOut(fid_log,'You want to write shp files. Be aware it is quite expensive.')
-% end
-
-% %add velocity vector to variables if needed
-% if isfield(flg_loc,'do_vector')==0
-%     flg_loc.do_vector=zeros(1,numel(flg_loc.var));
-% end
-% 
-% if isfield(flg_loc,'var_idx')==0
-%     flg_loc.var_idx=cell(1,numel(flg_loc.var));
-% end
-% var_idx=flg_loc.var_idx;
-% 
-% if isfield(flg_loc,'tol')==0
-%     flg_loc.tol=1.5e-7;
-% end
-% tol=flg_loc.tol;
-
 %% PATHS
 
 fdir_mat=simdef.file.fdir_mat;
@@ -61,18 +39,6 @@ fpath_map_grd=fpath_map;
 if is_straigth
     fpath_map_grd=flg_loc.fpath_map_curved;
 end
-
-%% SHP
-
-% if flg_loc.write_shp
-%     fpath_poly=fullfile(fdir_mat,'grd_polygons.mat');
-%     if exist(fpath_poly,'file')==2
-%         load(fpath_poly,'polygons')
-%     else        
-%         polygons=D3D_grid_polygons(fpath_map);
-%         save_check(fpath_poly,'polygons');
-%     end
-% end
 
 %% DIMENSIONS
 
@@ -91,74 +57,55 @@ gridInfo=gdm_load_grid(fid_log,fdir_mat,fpath_map_grd,'dim',1,'simdef',simdef);
 
 [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef);
 
-%% LOOP TIME
+%% LOOP
 
 kt_v=gdm_kt_v(flg_loc,nt); %time index vector
 
+kbr=0;
 ktc=0;
-messageOut(fid_log,sprintf('Reading %s kt %4.2f %%',tag,ktc/nt*100));
+kvar=0;
+messageOut(fid_log,sprintf('Reading %s branch %4.2f time %4.2f %% variable %4.2f %%',tag,kbr/nbr*100,ktc/nt*100,kvar/nvar*100));
+
+%% branches
 for kbr=1:nbr %branches
-    
+    ktc=0;
+
     branch=flg_loc.branch{kbr};
     branch_name=flg_loc.branch_name{kbr};
 
     gridInfo_br=gdm_load_grid_branch(fid_log,flg_loc,fdir_mat,gridInfo,branch,branch_name);
     
-for kt=kt_v
-    ktc=ktc+1;
-    for kvar=1:nvar %variable
-        
+    %% time
+    for kt=kt_v 
+        ktc=ktc+1;
+
+        %% variables
+        for kvar=1:nvar 
             
-        varname=flg_loc.var{kvar};
-        [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(varname,simdef);
-        
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
-%         fpath_shp_tmp=strrep(fpath_mat_tmp,'.mat','.shp');
+            varname=flg_loc.var{kvar};
+            [var_str_read,var_id,var_str_save]=D3D_var_num2str_structure(varname,simdef);
+            
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'tim',time_dnum(kt),'var',var_str_read,'branch',branch_name);
 
-        do_read=1;
-        if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
-            do_read=0;
-        end
-%         do_shp=0;
-%         if flg_loc.write_shp && (exist(fpath_shp_tmp,'file')~=2 || do_read==1)
-%             do_shp=1;
-%         end
+            do_read=1;
+            if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
+                do_read=0;
+            end
 
-        %% read data
-        if do_read
-            branch_idx=gdm_select_edgenode_1D_variable(var_id,gridInfo_br);
-            data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'idx_branch',branch_idx,'branch',branch_name);    
-            data=squeeze(data_var.val); %#ok
-            save_check(fpath_mat_tmp,'data'); 
-        end                
-                
-        %% shp
-%         if do_shp
-%             if ~do_read
-%                 load(fpath_mat_tmp,'data')
-%             end
-%             messageOut(fid_log,sprintf('Starting to write shp: %s',fpath_shp_tmp));
-%             shapewrite(fpath_shp_tmp,'polygon',polygons,reshape(data,[],1));
-% %             messageOut(fid_log,sprintf('Finished to write shp: %s',fpath_shp_tmp)); %next message is sufficient
-%         end
-        
-        %% velocity
-%         if flg_loc.do_vector(kvar)
-%             gdm_read_data_map_simdef(fdir_mat,simdef,'uv','tim',time_dnum(kt),'sim_idx',sim_idx(kt),'var_idx',var_idx{kvar},'do_load',0);         
-%         end
-        
-        %% disp
-        messageOut(fid_log,sprintf('Reading %s kt %4.2f %% kvar %4.2f %%',tag,ktc/nt*100,kvar/nvar*100));
-        
-    end %var
-end %kt
+            %% read data
+            if do_read
+                branch_idx=gdm_select_edgenode_1D_variable(var_id,gridInfo_br);
+                data_var=gdm_read_data_map_simdef(fdir_mat,simdef,var_id,'tim',time_dnum(kt),'sim_idx',sim_idx(kt),'idx_branch',branch_idx,'branch',branch_name);    
+                data=squeeze(data_var.val); %#ok
+                save_check(fpath_mat_tmp,'data'); 
+            end                
+            
+            %% disp
+            messageOut(fid_log,sprintf('Reading %s branch %4.2f time %4.2f %% variable %4.2f %%',tag,kbr/nbr*100,ktc/nt*100,kvar/nvar*100));
+            
+        end %var
+    end %kt
 end %br
-
-%% SAVE
-
-% %only dummy for preventing passing through the function if not overwriting
-% data=NaN;
-% save(fpath_mat,'data')
 
 end %function
 
