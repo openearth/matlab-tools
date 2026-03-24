@@ -160,7 +160,7 @@ end
 
 %% edge length
 
-if ~isnan(gridInfo.edge_nodes)
+if ~any(isnan(gridInfo.edge_nodes(:))) && isfield(gridInfo,'Xcor') && isfield(gridInfo,'Ycor') % in 1D cases we do not have `Xcor` and `Ycor`
     gridInfo.edge_length=D3D_edge_length(gridInfo.Xcor,gridInfo.Ycor,gridInfo.edge_nodes);
 else
     gridInfo.edge_length=NaN;

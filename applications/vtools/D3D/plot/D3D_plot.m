@@ -49,7 +49,6 @@
 % % fpath_add_oet='p:\studenten-riv\05_OpenEarthTools\01_matlab\applications\vtools\general\addOET.m';
 %
 % %Path to folder with project paths. See `paths_project_layout`.
-% % fpath_project='d:\temporal\220517_improve_exner\';
 % fpath_project='p:\11209261-rivierkunde-2023-morerijn';
 % 
 % %% ADD OET
