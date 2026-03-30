@@ -101,6 +101,13 @@ for ktimint=1:ntimint
         data_all=cell(nsim,n_sta);
         data_conv=cell(nsim,n_sta);
         
+        [flg_loc,in_p]=gdm_group_idx('initialize',fid_log,flg_loc,simdef,varname,in_p);
+
+        flg_loc.do_xval=false;
+        if strcmp(varname,'scum')
+            flg_loc.do_xval=true;
+        end
+
         %loop on stations
         for ks=ks_v
     
@@ -120,9 +127,10 @@ for ktimint=1:ntimint
             in_p.elevation=elevation;
     
             %% load data
-            [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,variable,tag,nsim,k_sta,his_type,elevation,tim_dtime,kvar);
+            [data_all,layer]=load_data_all(fid_log,flg_loc,data_all,simdef,gridInfo,stations_loc,variable,tag,nsim,k_sta,his_type,elevation,tim_dtime,kvar);
             %dimension: data_all{k_sim,k_sta}
     
+            %I am not sure this is correct. This does not prevent {1,1}[100,5] to pass. 
             if ~isvector(size(data_all{1}))
                 messageOut(fid_log,sprintf('Cannot plot more than 1 dimension. There may be more than 1 layer: %s',varname));
                 continue
@@ -153,7 +161,7 @@ for ktimint=1:ntimint
                 
                 %% plot each station individually
                 if flg_loc.do_p_single
-                    fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p(ksim),tag,stations_loc,variable,layer,elev,fdir_fig,data_mea,do_measurements);
+                    fcn_plot_his(flg_loc,in_p,val,runid,kvar,tim_dtime_p(ksim),tag,stations_loc,variable,layer,elevation,fdir_fig,data_mea,do_measurements);
                 end
     
                 %% plot salinity figure (special case)
@@ -275,6 +283,22 @@ for ktimint=1:ntimint
                 mkdir_check(fdir_fig,NaN,1,0);
     
                 fcn_plot_his_xt(flg_loc,in_p,simdef(ksim),runid,data_all(ksim,:),tim_dtime_p{ksim},variable,flg_loc.clims_var{kvar,1},tag_loc,fdir_fig);
+            end
+    
+        end
+
+        %% plot x-val (area plot for when several indices, such as fractions)
+
+        if flg_loc.do_xval
+    
+            for ksim=1:nsim
+                %leave this outside the function for when you want to make difference between simulations
+                runid=simdef(ksim).file.runid;
+                tag_loc=sprintf('%s_xval',tag_fig);
+                fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_loc,tag_serie);
+                mkdir_check(fdir_fig,NaN,1,0);
+    
+                fcn_plot_his_xval(flg_loc,in_p,simdef(ksim),runid,data_all(ksim,:),tim_dtime_p{ksim},variable,flg_loc.clims_var{kvar,1},tag_loc,fdir_fig);
             end
     
         end
@@ -406,7 +430,7 @@ end %function
 
 %%
 
-function [data_all,layer]=load_data_all(flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elevation,time_dtime,kvar)
+function [data_all,layer]=load_data_all(fid_log,flg_loc,data_all,simdef,gridInfo,stations_loc,var_str,tag,nsim,k_sta,his_type,elevation,time_dtime,kvar)
 
 for ksim=1:nsim %simulations            
     fdir_mat=simdef(ksim).file.fdir_mat;
@@ -428,6 +452,9 @@ for ksim=1:nsim %simulations
         case 'cl' %data is in psu and we want it in cl
             data=sal2cl(1,data);
     end
+
+    %group data
+    data=gdm_group_idx('group',fid_log,flg_loc,simdef,data);
 
     %output
     data_all{ksim,k_sta}=data;
@@ -555,6 +582,7 @@ if size(xlims_loc,1)<nylim
     xlims_loc=repmat(xlims_loc,nylim,1);
 end
 
+%case in which 
 in_p.val=val;
 in_p.tim=tim_dtime_p;
 
@@ -805,3 +833,38 @@ end %ksu
 fileSummarySalinity(path_f_sal_cmp,station_s,z_mea_s_1,sal_bias_s,sal_std_s,sal_rmse_s,sal_corr_R_s,ksim,x_lims_v,NaN);
 
 end
+
+%%
+
+%We pass information of only one simulation
+%data_sim -> {1,ns}(time,fractions)
+function fcn_plot_his_xval(flg_loc,in_p,simdef,runid,data_sim,tim_dtime_p_sim,var_str,clims_var,tag_loc,fdir_fig)
+
+nclim=size(clims_var,1);
+ns=size(data_sim,2);
+%data at final time step for each station for all indices (e.g., fractions)
+[nt,nf]=size(data_sim{1,1});
+val=NaN(ns,nf);
+for ks=1:ns
+    val(ks,:)=data_sim{1,ks}(nt,:);
+end
+
+for kclim=1:nclim
+    
+    fdir_fig_var=fullfile(fdir_fig,var_str);
+    mkdir_check(fdir_fig_var,NaN,1,0);
+
+    fname_noext=fig_name(fdir_fig_var,tag_loc,runid,'',var_str,'',kclim,'',tim_dtime_p_sim(1),tim_dtime_p_sim(end),[-inf,inf],[]);
+
+    [s,xlab_str]=gdm_extract_numbers_from_strings(in_p.stations);
+    in_p.fname=fname_noext;
+    in_p.clims=clims_var(kclim,:);
+    in_p.s=s;
+    in_p.val=val;
+    in_p.xlab_str=xlab_str;
+    in_p.xlab_un=1/1000;
+
+    fig_1D_01(in_p);
+end %kclim
+
+end %function

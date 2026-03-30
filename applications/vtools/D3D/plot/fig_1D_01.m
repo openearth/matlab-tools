@@ -27,14 +27,27 @@
 % in_p.fname=;
 % in_p.fig_visible=;
 
-function fig_1D_01(in_p)
+function varargout=fig_1D_01(in_p)
+
+% Run parser self-tests when called without inputs.
+if nargin==0
+    fig_1D_01_test_get_data_into_cell;
+    fig_1D_01_test_plot_parsing_to_handles;
+    return
+end
 
 %% DEFAULTS
 
-in_p=isfield_default(in_p,'val',NaN);
+% Parse inputs explicitly (no v2struct side effects).
+val=isfield_default(in_p,'val',NaN,'output','array');
+s=isfield_default(in_p,'s',NaN,'output','array');
+s_mea=isfield_default(in_p,'s_mea',NaN,'output','array');
+val_mea=isfield_default(in_p,'val_mea',NaN,'output','array');
+val0=isfield_default(in_p,'val0',NaN,'output','array');
+tim=isfield_default(in_p,'tim',NaN,'output','array');
 
 %already return if we cannot plot
-sv=size(in_p.val);
+sv=size(val);
 if numel(sv)>2
     sv=sv(2:end);
     bol_d1=sv==1;
@@ -44,149 +57,107 @@ if numel(sv)>2
     end
 end
 
-in_p=isfield_default(in_p,'fig_visible',0);
-in_p=isfield_default(in_p,'fig_print',1);
-in_p=isfield_default(in_p,'fname','fig');
-in_p=isfield_default(in_p,'fig_size',[0,0,14.5,12]);
+fig_visible=isfield_default(in_p,'fig_visible',0,'output','array');
+fig_print=isfield_default(in_p,'fig_print',1,'output','array');
+fname=isfield_default(in_p,'fname','fig','output','array');
+fig_size=isfield_default(in_p,'fig_size',[0,0,14.5,12],'output','array');
 
 
-if isfield(in_p,'plot_mea')==0 
-    if isfield(in_p,'val_mea')
-        in_p.plot_mea=true;
-    else
-        in_p.plot_mea=false;
-    end
-end
-in_p=isfield_default(in_p,'xlims',[NaN,NaN]);
-in_p=isfield_default(in_p,'ylims',[NaN,NaN]);
-in_p=isfield_default(in_p,'do_include_mea_xylims',0);
+plot_mea_default=isfield(in_p,'val_mea');
+plot_mea=isfield_default(in_p,'plot_mea',plot_mea_default,'output','array');
+xlims=isfield_default(in_p,'xlims',[NaN,NaN],'output','array');
+ylims=isfield_default(in_p,'ylims',[NaN,NaN],'output','array');
+do_include_mea_xylims=isfield_default(in_p,'do_include_mea_xylims',0,'output','array');
+do_area=isfield_default(in_p,'do_area',0,'output','array');
 
-in_p=isfield_default(in_p,'do_area',0);
-
-val_ylim_check=squeeze(in_p.val);
-if in_p.do_area
-    %the ylimits are on the sum of the lines
-    val_ylim_check=sum(val_ylim_check,2);
-end
-
-if in_p.plot_mea && in_p.do_include_mea_xylims 
-    [in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,{in_p.s,in_p.s_mea},{val_ylim_check,squeeze(in_p.val_mea)}); %`val` can be a [np,1,nv] matrix and it is valid. 
-else
-    [in_p.xlims,in_p.ylims]=xlim_ylim(in_p.xlims,in_p.ylims,in_p.s,val_ylim_check); %`val` can be a [np,1,nv] matrix and it is valid. 
-end
-
-
-if isfield(in_p,'lan')==0
-    in_p.lan='en';
-end
-if isfield(in_p,'fid_log')==0
-    in_p.fid_log=NaN;
-end
-in_p.plot_gen_struct=0;
+lan=isfield_default(in_p,'lan','en','output','array');
+fid_log=isfield_default(in_p,'fid_log',NaN,'output','array'); %#ok<NASGU>
+plot_gen_struct=0; %#ok<NASGU>
+plot_all_struct=0;
+all_struct=isfield_default(in_p,'all_struct',[],'output','array');
 if isfield(in_p,'gen_struct')
-%     in_p.plot_gen_struct=1;
-    in_p.plot_all_struct=1;
-    in_p.all_struct=in_p.gen_struct;
-    in_p.all_struct=struct_assign_val(in_p.all_struct,'type',1);
+%     plot_gen_struct=1;
+    plot_all_struct=1;
+    all_struct=in_p.gen_struct;
+    all_struct=struct_assign_val(all_struct,'type',1);
 end
-in_p.plot_all_struct=0;
 if isfield(in_p,'all_struct')
-    in_p.plot_all_struct=1;
+    plot_all_struct=1;
 end
-if isfield(in_p,'is_diff')==0
-    in_p.is_diff=0;
-end
-if isfield(in_p,'plot_val0')==0
-    if isfield(in_p,'val0')
-        in_p.plot_val0=1;
-    else
-        in_p.plot_val0=0;
-    end
-end
-if isfield(in_p,'is_std')==0
-    in_p.is_std=0;
-end
+is_diff=isfield_default(in_p,'is_diff',0,'output','array'); %#ok<NASGU>
+
+plot_val0_default=isfield(in_p,'val0');
+plot_val0=isfield_default(in_p,'plot_val0',plot_val0_default,'output','array');
+is_std=isfield_default(in_p,'is_std',0,'output','array'); %#ok<NASGU>
 if isfield(in_p,'do_title')==0
     if isfield(in_p,'tim')==0
-        in_p.do_title=0;
+        do_title=0;
     else
-        in_p.do_title=1;
+        do_title=1;
     end
-end
-in_p=isfield_default(in_p,'xlab_str','dist_prof');
-if isempty(in_p.xlab_str)
-    in_p.xlab_str='dist_prof';
-end
-in_p=isfield_default(in_p,'xlab_un',1);
-if isempty(in_p.xlab_un)
-    in_p.xlab_un=1;
-end
-in_p=isfield_default(in_p,'do_time',0); %add colorbar with time 
-if in_p.do_time
-    in_p=isfield_default(in_p,'fig_margin_top',2.5);
-    in_p=isfield_default(in_p,'fig_margin_right',1.3);
 else
-    in_p=isfield_default(in_p,'fig_margin_top',1);
-    in_p=isfield_default(in_p,'fig_margin_right',0.5);
+    do_title=in_p.do_title;
 end
-in_p=gdm_parse_fig_margins(in_p);
 
-if isfield(in_p,'do_marker')==0
-    in_p.do_marker=0;
+xlab_str=isfield_default(in_p,'xlab_str','dist_prof','output','array');
+if isempty(xlab_str)
+    xlab_str='dist_prof';
 end
-if isfield(in_p,'leg_loc')==0
-    in_p.leg_loc='eastoutside';
+xlab_un=isfield_default(in_p,'xlab_un',1,'output','array');
+if isempty(xlab_un)
+    xlab_un=1;
 end
-if isfield(in_p,'fig_fs')==0
-    in_p.fig_fs=10;
+do_time=isfield_default(in_p,'do_time',0,'output','array'); %add colorbar with time
+if do_time
+    fig_margin_top=isfield_default(in_p,'fig_margin_top',2.5,'output','array');
+    fig_margin_right=isfield_default(in_p,'fig_margin_right',1.3,'output','array');
+else
+    fig_margin_top=isfield_default(in_p,'fig_margin_top',1,'output','array');
+    fig_margin_right=isfield_default(in_p,'fig_margin_right',0.5,'output','array');
 end
-if isfield(in_p,'leg_move')==0
-    in_p.leg_move=NaN;
-end
-if isfield(in_p,'markersize')==0
-    in_p.markersize=10;
-end
-if isfield(in_p,'plot_pillars_name')==0
-    in_p.plot_pillars_name=0;
-end
-if isfield(in_p,'do_staircase')==0
-    in_p.do_staircase=0;
-end
-if isfield(in_p,'ylab')==0
-    in_p.ylab='';
-end
-if isfield(in_p,'xdir')==0
-    in_p.xdir='normal';
-end
-if isfield(in_p,'frac')==0
-    in_p.frac='';
-end
-if isfield(in_p,'ls')==0
-    in_p.ls=NaN;
-end
-if isfield(in_p,'cmap')==0
-    in_p.cmap=NaN;
-end
-if isfield(in_p,'do_leg')==0
-    in_p.do_leg=NaN;
-end
-if isfield(in_p,'is_dom')==0
-    in_p.is_dom=0;
-end
-in_p=isfield_default(in_p,'clims',[NaN,NaN]);
-in_p=isfield_default(in_p,'title_str','');
-in_p=isfield_default(in_p,'y_scale','linear');
+in_p.fig_margin_top=fig_margin_top;
+in_p.fig_margin_right=fig_margin_right;
+in_p=gdm_parse_fig_margins(in_p);
+fig_margin_top=in_p.fig_margin_top;
+fig_margin_bottom=in_p.fig_margin_bottom;
+fig_margin_right=in_p.fig_margin_right;
+fig_margin_left=in_p.fig_margin_left;
+fig_margin_separation_horizontal=in_p.fig_margin_separation_horizontal;
+fig_margin_separation_vertical=in_p.fig_margin_separation_vertical;
+
+do_marker=isfield_default(in_p,'do_marker',0,'output','array');
+leg_loc=isfield_default(in_p,'leg_loc','eastoutside','output','array');
+fig_fs=isfield_default(in_p,'fig_fs',10,'output','array');
+leg_move=isfield_default(in_p,'leg_move',NaN,'output','array');
+markersize=isfield_default(in_p,'markersize',10,'output','array');
+plot_pillars_name=isfield_default(in_p,'plot_pillars_name',0,'output','array');
+do_staircase=isfield_default(in_p,'do_staircase',0,'output','array');
+ylab=isfield_default(in_p,'ylab','','output','array');
+xdir=isfield_default(in_p,'xdir','normal','output','array');
+frac=isfield_default(in_p,'frac','','output','array');
+ls=isfield_default(in_p,'ls',NaN,'output','array');
+cmap=isfield_default(in_p,'cmap',NaN,'output','array');
+do_leg=isfield_default(in_p,'do_leg',NaN,'output','array');
+is_dom=isfield_default(in_p,'is_dom',0,'output','array'); %#ok<NASGU>
+clims=isfield_default(in_p,'clims',[NaN,NaN],'output','array');
+title_str=isfield_default(in_p,'title_str','','output','array');
+y_scale=isfield_default(in_p,'y_scale','linear','output','array');
 
 %baclward compatibility. Use `variable`.
-in_p=isfield_default(in_p,'lab_str','variable');
-in_p=isfield_default(in_p,'varname',in_p.lab_str);
-in_p=isfield_default(in_p,'variable',in_p.varname);
-in_p=isfield_default(in_p,'do_replace_underscore',1);
-
-v2struct(in_p)
+lab_str=isfield_default(in_p,'lab_str','variable','output','array');
+varname=isfield_default(in_p,'varname',lab_str,'output','array');
+variable=isfield_default(in_p,'variable',varname,'output','array');
+do_replace_underscore=isfield_default(in_p,'do_replace_underscore',1,'output','array');
+leg_str=isfield_default(in_p,'leg_str',[],'output','array');
+has_leg_mea=isfield(in_p,'leg_mea');
+leg_mea=isfield_default(in_p,'leg_mea',[],'output','array');
 
 %% check if printing
-print_fig=check_print_figure(in_p);
+in_p_check=in_p;
+in_p_check.fig_print=fig_print;
+in_p_check.fname=fname;
+in_p_check.fid_log=fid_log;
+print_fig=check_print_figure(in_p_check);
 if ~print_fig
     return
 end
@@ -195,19 +166,25 @@ end
 
 [s,val]=get_data_into_cell(s,val,do_area);
 
-%This should be moved somewhere else
-% if do_area
-%     ylims=real([0,max(sum(val,2))+eps]);
-%     if isnan(ylims(2))
-%         ylims(2)=1e-10;
-%     end
-% end
-
 if do_area
     nv=size(val{1},2); 
 else
     nv=numel(val); 
 end
+
+%% get limits
+val_ylim_check=squeeze(val);
+if do_area
+    %the ylimits are on the sum of the lines
+    val_ylim_check=sum(val_ylim_check{1,1},2);
+end
+
+if plot_mea && do_include_mea_xylims
+    [xlims,ylims]=xlim_ylim(xlims,ylims,{s,s_mea},{val_ylim_check,squeeze(val_mea)}); %`val` can be a [np,1,nv] matrix and it is valid.
+else
+    [xlims,ylims]=xlim_ylim(xlims,ylims,s,val_ylim_check); %`val` can be a [np,1,nv] matrix and it is valid.
+end
+
 
 %% SIZE
 
@@ -427,9 +404,15 @@ else
 end
 if isempty(ylab)
     if numel(frac)>1
-        in_p.frac='';
+        frac='';
     end
-    [~,cstring,~]=gdm_cmap_and_string(in_p,[0,1]);
+    in_p_cmap=in_p;
+    in_p_cmap.frac=frac;
+    in_p_cmap.variable=variable;
+    in_p_cmap.lan=lan;
+    in_p_cmap.is_diff=is_diff;
+    in_p_cmap.is_std=is_std;
+    [~,cstring,~]=gdm_cmap_and_string(in_p_cmap,[0,1]);
     ylabels{kr,kc}=cstring;
 else
     ylabels{kr,kc}=ylab;
@@ -514,11 +497,23 @@ else
         end
     end
 end
-if isfield(in_p,'leg_str') && ~isempty(in_p.leg_str) && ~do_area
-    if ~iscell(leg_str);
-        error('in_p.leg_str should be a cell array of chars');
+if ~isempty(leg_str)
+    if ~do_area
+        if ~iscell(leg_str);
+            error('in_p.leg_str should be a cell array of chars');
+        end
+        str_sim=leg_str;
+    else
+        %area and we provide a cell array of strings of the same size. We assume it is correct.
+        if numel(leg_str)==nv
+            str_sim=leg_str;
+        else
+            for kv=1:nv
+                str_sim{kv}=sprintf('%d',kv); %change to runid?
+            end
+        end
     end
-    str_sim=leg_str;
+
 else
     if nv==1
         str_sim={labels4all('sim',1,lan)};
@@ -543,10 +538,10 @@ if plot_mea
     nfv=numel(han.p(kr,kc,:));
     for kmea=1:nmea
         han.p(kr,kc,nfv+1)=plot(s_mea(:,kmea),val_mea(:,kmea),'parent',han.sfig(kr,kc),'color',cmap_mea(kmea,:),'linewidth',prop.lw1,'linestyle',ls_mea,'marker',prop.m1,'markersize',markersize);
-        if isfield(in_p,'leg_mea')==0
+        if ~has_leg_mea
             str_leg={str_sim{:},labels4all('mea',1,lan)}; %check concatenation is right
         else
-            str_leg={str_sim{:},in_p.leg_mea};
+            str_leg={str_sim{:},leg_mea};
         end
     end
 else
@@ -720,7 +715,11 @@ apply_adhoc_functions(in_p);
 
 %% PRINT
 
-fig_print_close(in_p,han.fig,in_p.fig_print,fname);
+fig_print_close(in_p,han.fig,fig_print,fname);
+
+if nargout>0
+    varargout{1}=han;
+end
 
 end %function
 
@@ -773,5 +772,198 @@ else
     val_cell{1}=val;
     s_cell{1}=s;
 end
+
+end %function
+
+function fig_1D_01_test_get_data_into_cell()
+
+% Case 1: array input [nx,1] -> one line in one cell.
+s=(1:5)';
+val=[10;11;12;13;14];
+[s_cell,val_cell]=get_data_into_cell(s,val,false);
+assert(iscell(s_cell) && iscell(val_cell),'Output should be cell arrays.');
+assert(numel(s_cell)==1 && numel(val_cell)==1,'Single-line input should produce one cell.');
+assert(isequal(s_cell{1},s),'Unexpected x-data for single-line case.');
+assert(isequal(val_cell{1},val),'Unexpected y-data for single-line case.');
+
+% Case 2: array input [nx,nv] -> one cell per line/column.
+val=[1 10;2 20;3 30;4 40;5 50];
+[s_cell,val_cell]=get_data_into_cell(s,val,false);
+assert(numel(s_cell)==2 && numel(val_cell)==2,'Two-line input should produce two cells.');
+assert(isequal(val_cell{1},val(:,1)),'First line was not parsed correctly.');
+assert(isequal(val_cell{2},val(:,2)),'Second line was not parsed correctly.');
+assert(isequal(s_cell{1},s) && isequal(s_cell{2},s),'x-data should be repeated for every line.');
+
+% Case 3: array input [nx,1,nv] -> squeeze and one cell per line.
+val3=reshape(1:10,[5,1,2]);
+[s_cell,val_cell]=get_data_into_cell(s,val3,false);
+assert(numel(val_cell)==2,'3D [nx,1,nv] input should produce nv cells.');
+assert(isequal(val_cell{1},val3(:,1,1)),'First squeezed line was not parsed correctly.');
+assert(isequal(val_cell{2},val3(:,1,2)),'Second squeezed line was not parsed correctly.');
+assert(isequal(s_cell{1},s) && isequal(s_cell{2},s),'x-data should be repeated for squeezed 3D input.');
+
+% Case 4: cell input -> passthrough.
+s_in={s,s+100};
+val_in={val3(:,1,1),val3(:,1,2)};
+[s_cell,val_cell]=get_data_into_cell(s_in,val_in,false);
+assert(isequal(s_cell,s_in),'Cell x-input should pass through unchanged.');
+assert(isequal(val_cell,val_in),'Cell y-input should pass through unchanged.');
+
+% Case 5: do_area=true -> one cell containing full matrix.
+val_area=[1 2 3;4 5 6;7 8 9;10 11 12;13 14 15];
+[s_cell,val_cell]=get_data_into_cell(s,val_area,true);
+assert(numel(s_cell)==1 && numel(val_cell)==1,'Area input should produce one cell.');
+assert(isequal(s_cell{1},s),'Area x-data was not parsed correctly.');
+assert(isequal(val_cell{1},val_area),'Area y-data matrix should be preserved.');
+
+% Case 6: mixed cell/array inputs should error.
+did_error=false;
+try
+    get_data_into_cell({s,s},val_area,false);
+catch
+    did_error=true;
+end
+assert(did_error,'Expected error for mixed cell/array input (s as cell, val as array).');
+
+did_error=false;
+try
+    get_data_into_cell(s,{val_area},false);
+catch
+    did_error=true;
+end
+assert(did_error,'Expected error for mixed cell/array input (s as array, val as cell).');
+
+fprintf('fig_1D_01 get_data_into_cell tests passed.\n');
+
+end %function
+
+function fig_1D_01_test_plot_parsing_to_handles()
+
+% Try to bootstrap the local repository path for batch/non-interactive runs.
+try
+    this_dir=fileparts(mfilename('fullpath'));
+    repo_root=this_dir;
+    for kup=1:4
+        repo_root=fileparts(repo_root);
+    end
+    if exist(repo_root,'dir')~=0
+        addpath(genpath(repo_root));
+    end
+catch
+    % Ignore bootstrap issues; dependency checks below will report missing items.
+end
+
+required_funs={...
+    'isfield_default',...
+    'gdm_parse_fig_margins',...
+    'v2struct',...
+    'check_print_figure',...
+    'xlim_ylim',...
+    'pre_subaxis',...
+    'subaxis',...
+    'labels4all',...
+    'gdm_cmap_and_string',...
+    'brewermap',...
+    'apply_adhoc_functions',...
+    'fig_print_close'};
+missing_funs={};
+for kfun=1:numel(required_funs)
+    if exist(required_funs{kfun},'file')==0 && exist(required_funs{kfun},'builtin')==0
+        missing_funs{end+1}=required_funs{kfun}; %#ok<AGROW>
+    end
+end
+if ~isempty(missing_funs)
+    fprintf('fig_1D_01 plot parsing tests skipped (missing dependencies on MATLAB path): %s\n',strjoin(missing_funs,', '));
+    return
+end
+
+% Case 1: numeric [nx,nv] input should produce one line object per column.
+s=(1:6)';
+val=[1 10;2 20;3 30;4 40;5 50;6 60];
+in_p=fig_1D_01_test_base_input(s,val);
+in_p.do_leg=0;
+han=fig_1D_01(in_p);
+assert(numel(han.p(1,1,:))==2,'Expected two plotted lines for two-column input.');
+assert(isequal(han.p(1,1,1).XData(:),s),'Unexpected XData for first plotted line.');
+assert(isequal(han.p(1,1,2).XData(:),s),'Unexpected XData for second plotted line.');
+assert(isequal(han.p(1,1,1).YData(:),val(:,1)),'Unexpected YData for first plotted line.');
+assert(isequal(han.p(1,1,2).YData(:),val(:,2)),'Unexpected YData for second plotted line.');
+close(han.fig);
+
+% Case 2: numeric [nx,1,nv] input should be squeezed and plotted as nv lines.
+val3=reshape(1:12,[6,1,2]);
+in_p=fig_1D_01_test_base_input(s,val3);
+in_p.do_leg=0;
+han=fig_1D_01(in_p);
+assert(numel(han.p(1,1,:))==2,'Expected two plotted lines for [nx,1,nv] input.');
+assert(isequal(han.p(1,1,1).YData(:),val3(:,1,1)),'Unexpected YData for first squeezed line.');
+assert(isequal(han.p(1,1,2).YData(:),val3(:,1,2)),'Unexpected YData for second squeezed line.');
+close(han.fig);
+
+% Case 3: cell input with different x-vectors should preserve per-line x-data.
+s_cell={s,s+100};
+val_cell={val3(:,1,1),val3(:,1,2)};
+in_p=fig_1D_01_test_base_input(s_cell,val_cell);
+in_p.do_leg=0;
+han=fig_1D_01(in_p);
+assert(numel(han.p(1,1,:))==2,'Expected two plotted lines for cell input.');
+assert(isequal(han.p(1,1,1).XData(:),s_cell{1}(:)),'Cell input first XData not preserved.');
+assert(isequal(han.p(1,1,2).XData(:),s_cell{2}(:)),'Cell input second XData not preserved.');
+assert(isequal(han.p(1,1,1).YData(:),val_cell{1}(:)),'Cell input first YData not preserved.');
+assert(isequal(han.p(1,1,2).YData(:),val_cell{2}(:)),'Cell input second YData not preserved.');
+close(han.fig);
+
+% Case 4: area mode should create area objects and preserve matrix values.
+val_area=[1 2 3;2 3 4;3 4 5;4 5 6;5 6 7;6 7 8];
+in_p=fig_1D_01_test_base_input({s},{val_area});
+in_p.do_area=1;
+in_p.do_leg=0;
+han=fig_1D_01(in_p);
+assert(numel(han.p(1,1,:))==3,'Expected three area patches for three columns.');
+assert(all(arrayfun(@(h) isa(h,'matlab.graphics.chart.primitive.Area'),reshape(han.p(1,1,:),[],1))),...
+    'Expected area objects in do_area mode.');
+assert(isequal(han.p(1,1,1).YData(:),val_area(:,1)),'Area first YData not preserved.');
+assert(isequal(han.p(1,1,2).YData(:),val_area(:,2)),'Area second YData not preserved.');
+assert(isequal(han.p(1,1,3).YData(:),val_area(:,3)),'Area third YData not preserved.');
+close(han.fig);
+
+% Case 5: staircase mode should create stair objects.
+in_p=fig_1D_01_test_base_input(s,val);
+in_p.do_staircase=1;
+in_p.do_leg=0;
+han=fig_1D_01(in_p);
+assert(numel(han.p(1,1,:))==2,'Expected two staircase objects.');
+assert(all(arrayfun(@(h) isa(h,'matlab.graphics.chart.primitive.Stair'),reshape(han.p(1,1,:),[],1))),...
+    'Expected stair objects in do_staircase mode.');
+close(han.fig);
+
+% Case 6: measurement and val0 inputs should append extra plotted objects.
+in_p=fig_1D_01_test_base_input(s,val(:,1));
+in_p.s_mea=s;
+in_p.val_mea=val(:,1)+100;
+in_p.plot_mea=1;
+in_p.val0=val(:,1)-100;
+in_p.plot_val0=1;
+in_p.do_leg=0;
+han=fig_1D_01(in_p);
+assert(numel(han.p(1,1,:))==3,'Expected simulation + measurement + val0 plotted objects.');
+assert(isequal(han.p(1,1,1).YData(:),val(:,1)),'Simulation YData not preserved.');
+assert(isequal(han.p(1,1,2).YData(:),in_p.val_mea(:)),'Measurement YData not preserved.');
+assert(isequal(han.p(1,1,3).YData(:),in_p.val0(:)),'Initial condition YData not preserved.');
+close(han.fig);
+
+fprintf('fig_1D_01 plot parsing tests passed.\n');
+
+end %function
+
+function in_p=fig_1D_01_test_base_input(s,val)
+
+% Keep tests deterministic and side-effect free.
+in_p.s=s;
+in_p.val=val;
+in_p.fig_print=0;
+in_p.fig_visible=0;
+in_p.fname='fig_1D_01_unit_test';
+in_p.variable='test_var';
 
 end %function

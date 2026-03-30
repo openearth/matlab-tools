@@ -110,6 +110,10 @@ if flg_loc.do_all_sta
     flg_loc.load_all_stations=1;
 end
 
+if contains(flg_loc.var,'scum') 
+    flg_loc.load_all_stations=1;
+end
+
 %% size
 
 flg_loc.nvar=numel(flg_loc.var);

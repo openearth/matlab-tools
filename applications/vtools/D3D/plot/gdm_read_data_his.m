@@ -11,6 +11,7 @@
 %$HeadURL$
 %
 %
+%Output is a structure with fields `val` and `times`. 
 
 function data=gdm_read_data_his(fdir_mat,fpath_his,varname,flags)
 
@@ -27,6 +28,7 @@ do_load=isfield_default(flags,'do_load',1,'output','array');
 depth_average=isfield_default(flags,'depth_average',false,'output','array');
 elev=isfield_default(flags,'elevation',NaN,'output','array');
 mat_raw_overwrite=isfield_default(flags,'mat_raw_overwrite',false,'output','array');
+cumulative=isfield_default(flags,'cumulative',false,'output','array');
 
 %% READ
     
@@ -77,7 +79,11 @@ else
                 if khis==1
                     data=data_loc;
                 else
-                    data.val=cat(1,data.val,data_loc.val);
+                    if ~cumulative
+                        data.val=cat(1,data.val,data_loc.val);
+                    else
+                        data.val=cat(1,data.val,data.val(end)+data_loc.val);
+                    end
                     data.times=cat(1,data.times,data_loc.times);
                 end
             end

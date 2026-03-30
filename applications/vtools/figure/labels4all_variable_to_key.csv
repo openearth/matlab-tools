@@ -118,6 +118,7 @@ stot,total_sediment_transport_L2T
 stot_b_mor,total_sediment_transport_L3T
 stot_b_mor_t,total_sediment_transport_L3
 stot_t,total_sediment_transport_L3
+scum,total_sediment_transport_M
 q_t,water_volume
 qsp_b_t,water_volume
 mesh2d_czs,chezy_friction_coefficient

@@ -64,82 +64,82 @@ ntimint=flg_loc.ntimint;
 
 for ktimint=1:ntimint
 
-    %2DO: Inside `gdm_load_time_simdef` make possible that, when reading his-file, the first and last time identify the times we want to read.
-flg_loc.tim=flg_loc.tim_int{ktimint};
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
+        %2DO: Inside `gdm_load_time_simdef` make possible that, when reading his-file, the first and last time identify the times we want to read.
+    flg_loc.tim=flg_loc.tim_int{ktimint};
+    [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','his'); %force his reading. Needed for SMT.
 
-%% LOOP
+    %% LOOP
 
-kobs_v=gdm_kt_v(flg_loc,nobs);
+    kobs_v=gdm_kt_v(flg_loc,nobs);
 
-ksc=0;
-messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/nobs*100));
-for kobs=kobs_v
-    ksc=ksc+1;
+    ksc=0;
+    messageOut(fid_log,sprintf('Reading %s ks %4.2f %%',tag,ksc/nobs*100));
+    for kobs=kobs_v
+        ksc=ksc+1;
 
-    %check if observation station exists
-    %See Problem 1
-%     idx_find=find_str_in_cell(obs_all.name,stations(kobs));
-%     if isnan(idx_find)
-%         error('station not found: %s',stations{kobs})
-%     end
+        %check if observation station exists
+        %See Problem 1
+    %     idx_find=find_str_in_cell(obs_all.name,stations(kobs));
+    %     if isnan(idx_find)
+    %         error('station not found: %s',stations{kobs})
+    %     end
 
-    for kvar=1:nvar
-        
-        varname=flg_loc.var{kvar};
-        elevation=flg_loc.elevation(kobs);
-        
-        [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
-        
-        %2DO: if depth_average, it takes all layers and elevation data is ommited. 
-        [layer,elevation]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{kobs},var_str,elevation);
-        
-        %2DO: add `depth_average` to the name and move to a function to be called also in plot and plot_diff
-        fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{kobs},'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime(1),'tim2',time_dtime(end));
-        
-        do_read=1;
-        if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
-            do_read=0;
-        end
-        
-        if do_read
-
-            %% group data in structure
-
-            flags=flg_loc; %copy all input flags
-
-            flags.tim=time_dnum(1);
-            flags.tim2=time_dnum(end);
-            flags.layer=layer;
-            flags.sim_idx=sim_idx;
-            flags.station=stations{kobs};
-            flags.elevation=elevation;
-            flags.projection_angle=flg_loc.projection_angle(kvar);
-            flags.structure=simdef.D3D.structure;
-
-            %% read data
-            data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,flags);
-
-            %% processed data
-            data=squeeze(data.val); %#ok
-
-            %% save
-            save_check(fpath_mat_tmp,'data');
-           
-            %% BEGIN DEBUG
-
-            %END DEBUG
+        for kvar=1:nvar
             
-        end %do_read
-        
-        %% disp
-        messageOut(fid_log,sprintf('Reading %s: station %4.2f %% variable %4.2f %%',tag,ksc/nobs*100,kvar/nvar*100));
+            varname=flg_loc.var{kvar};
+            elevation=flg_loc.elevation(kobs);
+            
+            [var_str,var_id]=D3D_var_num2str_structure(varname,simdef,'res_type','his');
+            
+            %2DO: if depth_average, it takes all layers and elevation data is ommited. 
+            [layer,elevation]=gdm_station_layer(flg_loc,gridInfo,fpath_his,stations{kobs},var_str,elevation);
+            
+            %2DO: add `depth_average` to the name and move to a function to be called also in plot and plot_diff
+            fpath_mat_tmp=mat_tmp_name(fdir_mat,tag,'station',stations{kobs},'var',var_str,'layer',layer,'elevation',elevation,'tim',time_dtime(1),'tim2',time_dtime(end));
+            
+            do_read=1;
+            if exist(fpath_mat_tmp,'file')==2 && ~flg_loc.overwrite 
+                do_read=0;
+            end
+            
+            if do_read
 
-        %% export
-        gdm_export_his_01(fid_log,flg_loc,fpath_mat_tmp,time_dtime)
-        
-    end %kvar
-end %kobs    
+                %% group data in structure
+
+                flags=flg_loc; %copy all input flags
+
+                flags.tim=time_dnum(1);
+                flags.tim2=time_dnum(end);
+                flags.layer=layer;
+                flags.sim_idx=sim_idx;
+                flags.station=stations{kobs};
+                flags.elevation=elevation;
+                flags.projection_angle=flg_loc.projection_angle(kvar);
+                flags.structure=simdef.D3D.structure;
+
+                %% read data
+                data=gdm_read_data_his_simdef(fdir_mat,simdef,var_id,flags);
+
+                %% processed data
+                data=squeeze(data.val); %#ok
+
+                %% save
+                save_check(fpath_mat_tmp,'data');
+            
+                %% BEGIN DEBUG
+
+                %END DEBUG
+                
+            end %do_read
+            
+            %% disp
+            messageOut(fid_log,sprintf('Reading %s: station %4.2f %% variable %4.2f %%',tag,ksc/nobs*100,kvar/nvar*100));
+
+            %% export
+            gdm_export_his_01(fid_log,flg_loc,fpath_mat_tmp,time_dtime)
+            
+        end %kvar
+    end %kobs    
 
 end %ktimint
 
