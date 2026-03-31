@@ -95,7 +95,7 @@ switch flg_loc.group_idx
         
         % Store class indices (only non-empty classes)
         class_idx_all={idx_sand,idx_fine_gravel,idx_coarse_gravel,idx_very_coarse_gravel,idx_cobbles,idx_boulders};
-        class_names_all={'sand','fine_gravel','coarse_gravel','very_coarse_gravel','cobbles','boulders'};
+        class_names_all={'sand','fine gravel','coarse gravel','very coarse gravel','cobbles','boulders'};
         
         % Keep only classes with fractions
         class_idx={};

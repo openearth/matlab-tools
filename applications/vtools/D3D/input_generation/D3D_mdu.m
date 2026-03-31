@@ -301,6 +301,7 @@ fprintf(fid,'Wrishp_thd        = 0                            \r\n');
 fprintf(fid,'Wrishp_obs        = 0                            \r\n');
 fprintf(fid,'Wrishp_emb        = 0                            \r\n');
 fprintf(fid,'Wrishp_dryarea    = 0                            \r\n');
+fprintf(fid,'Wrishp_genstruc   = 0                            \r\n');
 % data{kl,1}=        'Wrishp_enc        = 0                            '; kl=kl+1;
 fprintf(fid,'Wrishp_src        = 0                            \r\n');
 fprintf(fid,'Wrishp_pump       = 0                            \r\n');
