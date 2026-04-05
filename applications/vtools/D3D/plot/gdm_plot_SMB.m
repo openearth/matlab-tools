@@ -381,7 +381,7 @@ for ksb=1:nsb %summerbed polygons
             end
 
             %% xvt
-            multi_dim=check_multi_dimensional(data_0(kref));
+            multi_dim=check_multi_dimensional(fid_log,data_0(kref));
 
             if flg_loc.do_xvt && ~multi_dim && npol==1 %skip if multidimentional or if there is more than 1 polygon
                plot_xvt(fid_log,flg_loc,rkmv.rkm_cen,tim_dtime_plot,kvar,data_xvt,data_xvt0,simdef,str_save_sb_pol,pol_name,var_str_save,tag,all_struct,tag_fig,tag_serie,var_idx,lims,lims_diff_t,lims_diff_s,varname_label)
@@ -584,13 +584,14 @@ end %function
 
 %%
 
-function multi_dim=check_multi_dimensional(data)
+function multi_dim=check_multi_dimensional(fid_log,data)
 
 fn_data=fieldnames(data);
 sval=size(data.(fn_data{1}));
 multi_dim=false;
 if sval(2)>1 || numel(sval(2:end))>1
     multi_dim=true;
+	messageOut(fid_log,'Multidimensional data found.')
 end
 
 end %function
