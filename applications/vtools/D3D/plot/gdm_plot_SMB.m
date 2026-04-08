@@ -155,6 +155,7 @@ for ksb=1:nsb %summerbed polygons
                     %skip statistics not in list    
                     if isfield(flg_loc,'statis_plot')
                         if ismember(statis,flg_loc.statis_plot)==0
+                            messageOut(fid_log,sprintf('Skipping statistic because not in list: %s',statis))
                             continue
                         end
                     end
@@ -393,7 +394,7 @@ for ksb=1:nsb %summerbed polygons
             end
 
             %% tv at single rkm
-            if flg_loc.do_tv && ~multi_dim && npol==1
+            if flg_loc.do_tv && npol==1
                 do_tv(fid_log,flg_loc,simdef,rkmv.rkm_cen,flg_loc.rkm_plot_tv{krkmv},data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx);
             end %do_tv
 
@@ -940,6 +941,14 @@ end %function
 
 function do_tv(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx)
 
+%% PARAMETERS
+REGULAR_PLOT=1;
+FRACTION_PLOT=2;
+
+%% INITIALIZATION
+
+plot_type=REGULAR_PLOT;
+
 in_p=flg_loc;
 
 in_p.variable=var_str_save;
@@ -949,10 +958,22 @@ in_p.do_title=1;
 in_p.do_include_mea_xylims=1;
 in_p.do_area=0;
 
+
+%If the variable is fractions and there are more than one, you want an area plot.
+if strcmp(var_str_save,'lyrfrac') && numel(var_idx)>1
+    plot_type=FRACTION_PLOT;
+end    
+
+if plot_type==FRACTION_PLOT
+    in_p.do_area=1;
+end
+
 tag_fig=flg_loc.tag;
 tag='val';
 
 nsim=numel(simdef);
+
+%% GET INDEX OF RKM TO PLOT
 
 tol=0.05; %50m
 vec=reshape(rkm_cen,[],1);
@@ -962,73 +983,78 @@ bol_tv=abs(vec-obj)<tol;
 fn_data=fieldnames(data_xvt(1));
 nfn=numel(fn_data);
 
-if any(bol_tv(:))
+if ~any(bol_tv(:))
+    return
+end
 
-    nrkm_plot=numel(obj);
-    plot_v=sum(bol_tv,1);
-    for krkm_plot=1:nrkm_plot
-        if ~plot_v(krkm_plot)
-            messageOut(fid_log,sprintf('There is no data for this input location: %f',obj(krkm_plot)));
-            continue
-        end
-
-        for ksim=1:nsim 
-            bol_rkm=bol_tv(:,krkm_plot);
-            bol_ks=false(nsim,1);
-            bol_ks(ksim)=true;
-            rkm_loc=vec(bol_rkm);
-            runid=simdef(bol_ks).file.runid;
-
-            fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie); 
-
-            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},{str_save_sb_pol});
-
-            for kfn=1:nfn
-                statis=fn_data{kfn};
-
-                %skip statistics not in list    
-                if isfield(flg_loc,'statis_plot')
-                    if ismember(statis,flg_loc.statis_plot)==0
-                        continue
-                    end
-                end
-
-                %model
-                val=data_xvt.(statis)(bol_rkm,ksim,:,1);
-    
-                %measurements
-                flg_loc.tol_time_measurements=1000; %1 km tolerance
-                [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,rkm_loc,var_str_save,ksb,statis,'type','x');
-                data_mea.x=datetime(data_mea.x,'ConvertFrom','datenum');
-                data_mea.x.TimeZone=tim_dtime_plot.TimeZone; %CHECK!
-
-                in_p.plot_mea=plot_mea;
-                if plot_mea
-                    in_p.s_mea=[data_mea.x]';
-                    in_p.val_mea=[data_mea.y]';
-                end
-
-                %folder
-                fdir_fig_loc=fullfile(fdir_fig,str_save_sb_pol,pol_name,var_str_save,statis,tag);
-                mkdir_check(fdir_fig_loc,NaN,1,0);
-
-                %name
-                % in_p.clims=[NaN,NaN]; 
-                % in_p.ylims=[NaN]; 
-                kclim=1;
-                kxlim=1;
-                fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,str_save_sb_pol,kclim,var_idx,sprintf('tv_%5.2f',rkm_loc),kxlim);
-    
-                in_p.fname=fname_noext;
-                in_p.val=val;
-                in_p.title_str=sprintf('%5.2f',rkm_loc);
-
-                fig_1D_01(in_p);
-            end
-        end %ksim
+%% LOOP ON RKM TO PLOT
+nrkm_plot=numel(obj);
+plot_v=sum(bol_tv,1);
+for krkm_plot=1:nrkm_plot
+    if ~plot_v(krkm_plot)
+        messageOut(fid_log,sprintf('There is no data for this input location: %f',obj(krkm_plot)));
+        continue
     end
 
-end %any(bol_tv) 
+    %% LOOP ON SIMULATIONS
+    for ksim=1:nsim 
+        bol_rkm=bol_tv(:,krkm_plot);
+        bol_ks=false(nsim,1);
+        bol_ks(ksim)=true;
+        rkm_loc=vec(bol_rkm);
+        runid=simdef(bol_ks).file.runid;
+
+        fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie); 
+
+        if plot_type==REGULAR_PLOT
+            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},{str_save_sb_pol});
+        end
+
+        %% LOOP ON STATISTICS
+        for kfn=1:nfn
+            statis=fn_data{kfn};
+
+            %skip statistics not in list    
+            if isfield(flg_loc,'statis_plot')
+                if ismember(statis,flg_loc.statis_plot)==0
+                    continue
+                end
+            end
+
+            %model
+            val=data_xvt.(statis)(bol_rkm,ksim,:,:);
+
+            %measurements
+            flg_loc.tol_time_measurements=1000; %1 km tolerance
+            [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,rkm_loc,var_str_save,ksb,statis,'type','x');
+            data_mea.x=datetime(data_mea.x,'ConvertFrom','datenum');
+            data_mea.x.TimeZone=tim_dtime_plot.TimeZone; %CHECK!
+
+            in_p.plot_mea=plot_mea;
+            if plot_mea
+                in_p.s_mea=[data_mea.x]';
+                in_p.val_mea=[data_mea.y]';
+            end
+
+            %folder
+            fdir_fig_loc=fullfile(fdir_fig,str_save_sb_pol,pol_name,var_str_save,statis,tag);
+            mkdir_check(fdir_fig_loc,NaN,1,0);
+
+            %name
+            % in_p.clims=[NaN,NaN]; 
+            % in_p.ylims=[NaN]; 
+            kclim=1;
+            kxlim=1;
+            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,str_save_sb_pol,kclim,var_idx,sprintf('tv_%5.2f',rkm_loc),kxlim);
+
+            in_p.fname=fname_noext;
+            in_p.val=val;
+            in_p.title_str=sprintf('%5.2f',rkm_loc);
+
+            fig_1D_01(in_p);
+        end
+    end %ksim
+end
 
 end %function
 

@@ -175,8 +175,11 @@ end
 %% get limits
 val_ylim_check=squeeze(val);
 if do_area
-    %the ylimits are on the sum of the lines
+    %the max ylimit is on the sum of the lines
     val_ylim_check=sum(val_ylim_check{1,1},2);
+    %the minimum is 0
+    [~,min_idx]=min(val_ylim_check);
+    val_ylim_check(min_idx)=0;
 end
 
 if plot_mea && do_include_mea_xylims
