@@ -387,10 +387,11 @@ if flg_loc.do_2D
 end
 
 if flg_loc.do_3D
-    fdir_fig_var=fullfile(fdir_fig,var_str,str_var_idx,sprintf('%s_3D',tag_ref));
-    mkdir_check(fdir_fig_var,NaN,1,0);
+    tag_ref_3D=sprintf('%s_3D',tag_ref);
+    fdir_fig_var_3d=fullfile(fdir_fig,var_str,str_var_idx,tag_ref_3D);
+    mkdir_check(fdir_fig_var_3d,NaN,1,0);
     Zcor=cen2cor_2D(in_p.gridInfo.Xcen,in_p.gridInfo.Ycen,in_p.gridInfo.Xcor,in_p.gridInfo.Ycor,in_p.val);
-    %in_p.gridInfo.Zcen=in_p.val;  %if this is passed, the plot is with tiles. This is more correct, but not pleasent to the eye.
+    in_p.gridInfo.Zcen=in_p.val;  %if this is passed, the plot is with tiles. This is more correct, but not pleasent to the eye.
     in_p.gridInfo.Zcor=Zcor; %if this is passed, it is more pleasent to the eye since the solution is continuous.
 end
 
@@ -426,7 +427,7 @@ for kclim=1:nclim
 
         %3D
         if flg_loc.do_3D
-            fname_noext=fig_name(fdir_fig_var_3d,tag_fig,time_dnum_loc,runid,runid_ref,kclim,var_str,tag_ref_3D,str_var_idx,kxlim);
+            fname_noext=fig_name(fdir_fig_var_3d,tag_fig,time_dnum_loc,runid,kclim,var_str,tag_ref_3D,str_var_idx,kxlim);
             fpath_file_3D{kclim,kxlim}=sprintf('%s%s',fname_noext,flg_loc.fext); %for movie 
 
             in_p.fname=fname_noext;

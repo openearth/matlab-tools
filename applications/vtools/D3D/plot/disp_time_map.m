@@ -36,8 +36,6 @@ fpath_mat_time=strrep(fpath_mat,'.mat','_tim.mat');
 flg_loc.tim=NaN;
 [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=gdm_load_time_simdef(fid_log,flg_loc,fpath_mat_time,simdef,'results_type','map'); %force his reading. Needed for SMT.
 
-% [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx]=D3D_time_dnum(fpath_map,flg_loc.tim,'fdir_mat',fdir_mat);
-
 % nt=numel(time_dnum);
 for kt=1:nt
     if ~isnat(time_mor_dtime(kt))

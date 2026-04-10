@@ -27,6 +27,7 @@ addOptional(parin,'tol',1);
 addOptional(parin,'fdir_mat',fullfile(fpath_map,'../','mat'));
 addOptional(parin,'results_type','map');
 addOptional(parin,'fdir_csv',fullfile(fpath_map,'../','csv'));
+addOptional(parin,'status',2); %running
 
 parse(parin,varargin{:});
 
@@ -35,6 +36,7 @@ tol=parin.Results.tol;
 fdir_mat=parin.Results.fdir_mat;
 results_type=parin.Results.results_type;
 fdir_csv=parin.Results.fdir_csv;
+status=parin.Results.status;
 
 %check if his or map
     %not robust enough I think for when dealing with SMT and D3D4
@@ -56,7 +58,7 @@ fpath_tim_all=fullfile(fdir_mat,sprintf('tim%s.mat',str_tim));
 %%
 
 if isa(in_dtime(1),'double') 
-    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol,fdir_csv);
+    [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol,fdir_csv,status);
 elseif isa(in_dtime(1),'datetime') %datetime
     tim_cmp=datenum_tzone(in_dtime);
     [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,tim_cmp,varargin{:});
@@ -71,7 +73,7 @@ end %function
 %% FUNCTIONS
 %%
 
-function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol,fdir_csv)
+function [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_double(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,tol,fdir_csv,status)
 
 %% PARSE
 idx_g=NaN; %not needed, but we need to output it
@@ -82,7 +84,7 @@ if strcmp(results_type,'his') && tim_type==2
 end
 
 %% get all results time
-[~,~,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,fdir_csv);
+[~,~,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,fdir_csv,status);
 
 %% get the requested ones
 [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_get_requested_time(in_dtime,time_dnum_all,time_dtime_all,time_mor_dnum_all,time_mor_dtime_all,sim_idx_all,time_idx_all,tol,tim_type);
@@ -170,15 +172,21 @@ end %function
 
 %%
 
-function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,fdir_csv)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_all(fdir_mat,fpath_tim_all,in_dtime,fpath_map,results_type,tim_type,fdir_csv,status)
 
 if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2
     messageOut(NaN,sprintf('Mat-file with all times not available. Reading.'))
     new_all_time_needed=true;
 elseif any(isnan(in_dtime)) 
     %if it is NaN we read it anyhow because we do not reach this point in case it is NaN and it is the same size as the one we have already.
-    messageOut(NaN,sprintf('Mat-file with all times available but you want all times and we need to check it is updated. Reading.'))
-    new_all_time_needed=true;
+    if status>2 %simulation finished, so we can trust the existing file. 
+        messageOut(NaN,sprintf('Mat-file with all times available and simulation is finished. Loading: %s',fpath_tim_all))
+        load(fpath_tim_all,'data')
+        new_all_time_needed=false;
+    else
+        messageOut(NaN,sprintf('Mat-file with all times available and simulation is running. Reading.'))
+        new_all_time_needed=true;
+    end
 else
     messageOut(NaN,sprintf('Mat-file with all times available. Loading: %s',fpath_tim_all))
     load(fpath_tim_all,'data')

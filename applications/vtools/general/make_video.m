@@ -47,6 +47,7 @@ addOptional(parin,'path_video',fullfile(fdir,fname));
 addOptional(parin,'overwrite',1);
 addOptional(parin,'fid_log',NaN);
 addOptional(parin,'position',NaN);
+addOptional(parin,'cat_columns',1);
 
 parse(parin,varargin{:});
 
@@ -56,6 +57,7 @@ path_video=parin.Results.path_video;
 do_over=parin.Results.overwrite;
 fid_log=parin.Results.fid_log;
 pos_fig=parin.Results.position;
+cat_columns=parin.Results.cat_columns;
 if isnan(pos_fig)
     pos_fig=cell(1,np);
     for kp=1:np
@@ -101,7 +103,11 @@ for kf=1:nf
         if kp==1
             im=imread(path_files{kf,kp});
         else
-            im=cat(2,im,imread(path_files{kf,kp}));
+            if cat_columns
+                im=cat(2,im,imread(path_files{kf,kp}));
+            else
+                im=cat(1,im,imread(path_files{kf,kp}));
+            end
         end
         if kf==1 && (size(im,1)>3000 || size(im,2)>3000)
             warning('If there is an error, it may be the image is too large')

@@ -37,6 +37,8 @@ end
     
 %% CALC
 
+%% path to pass
+
 switch simdef.D3D.structure
     case {4,5}
         fpath_pass=simdef.D3D.dire_sim;
@@ -50,6 +52,13 @@ switch simdef.D3D.structure
 end
 
 messageOut(fid_log,sprintf('Passing path to process time: %s',fpath_pass));
-[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass,fdir_mat,fdir_csv,'results_type',results_type);
+
+%% status
+
+status=D3D_status(simdef);
+
+%% call
+
+[nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=gdm_load_time(fid_log,flg_loc,fpath_mat_time,fpath_pass,fdir_mat,fdir_csv,'results_type',results_type,'status',status);
 
 end %function

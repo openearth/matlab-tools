@@ -409,12 +409,12 @@ end
 kr=1; kc=1;    
 set(han.fig,'CurrentAxes',han.sfig(kr,kc))
 if is_faces
-    % if do_3D
-        % EHY_plotMapModelData(gridInfo,val,'t',1);
-    %     EHY_plotMapModelData(gridInfo,val,'t',1,'edgecolor',edgecolor,'linestyle',linestyle); 
-    % else
+    if do_3D
+        patch('Faces', gridInfo.face_nodes', 'Vertices', [gridInfo.Xcor(:), gridInfo.Ycor(:), gridInfo.Zcor(:)], ...
+            'FaceVertexCData', gridInfo.Zcor(:), 'FaceColor', 'interp', 'EdgeColor', 'k', 'EdgeAlpha', 0.3,'Parent',han.sfig(kr,kc));
+    else
         EHY_plotMapModelData(gridInfo,val,'t',1); 
-    % end
+    end
 else
     ne=size(val,2);
     for ke=1:ne

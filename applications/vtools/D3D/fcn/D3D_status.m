@@ -82,6 +82,23 @@ if isfield(simdef.file,'map')==0 && isfield(simdef.file,'his')==0
     return
 end
 
+if ismember(simdef.D3D.structure,[4,5]) %SMT
+    fdir_output=fullfile(simdef.D3D.dire_sim,'output');
+    if ~isfolder(fdir_output)
+        sta=1; 
+        return
+    end
+    dire=dir(fdir_output);
+    if any(ismember({dire.name},{'work'}))
+        sta=2; 
+        return
+    else
+        sta=3; 
+        % [time_comp,~,~,processes]=D3D_computation_time(simdef.file.dia);
+        return
+    end
+end
+
 is_inter=D3D_is_interrupt(simdef,varargin);
 if is_inter
     sta=4;

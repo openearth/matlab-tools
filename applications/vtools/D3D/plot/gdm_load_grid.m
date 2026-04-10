@@ -132,7 +132,7 @@ else
                 gridInfo=NC_read_grid_1D(fpath_map);
             end
         case 2
-            gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes_xy','XYcen','XYcor','no_layers','grid','edge_nodes','XYuv'},'mergePartitions',1);   
+            gridInfo=EHY_getGridInfo(fpath_map,{'face_nodes','face_nodes_xy','XYcen','XYcor','no_layers','grid','edge_nodes','XYuv'},'mergePartitions',1);   
             if structure==2
                 data_edge_faces=EHY_getMapModelData(fpath_map,'varName','mesh2d_edge_faces');
                 gridInfo.edge_faces=data_edge_faces.val.';
