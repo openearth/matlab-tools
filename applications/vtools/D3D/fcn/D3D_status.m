@@ -24,7 +24,15 @@
 function [sta,time_comp,tgen,version,tim_ver,source,processes]=D3D_status(simdef,varargin)
 
 %% PARSE
-fprintf('Checking simulation status...\n')
+
+parin=inputParser;
+
+addOptional(parin,'fid_log',NaN);
+
+parse(parin,varargin{:});
+
+fid_log=parin.Results.fid_log;
+
 %% case input is cell array
 
 if iscell(simdef)
@@ -55,8 +63,10 @@ fdir_mat=fullfile(simdef.D3D.dire_sim,'mat');
 fpath_status=fullfile(fdir_mat,'status.mat');
 if isfolder(fdir_mat)
     if exist(fpath_status,'file')==2
+        messageOut(fid_log,sprintf('Loading status from file: %s',fpath_status));
         load(fpath_status,'status');
         if status.sta>2
+            messageOut(fid_log,'Simulation finished.')
             v2struct(status);
             return
         end
@@ -84,6 +94,7 @@ simdef=D3D_simpath(simdef);
 %this can be improved seeing whether a map and his file are requested
 if isfield(simdef.file,'map')==0 && isfield(simdef.file,'his')==0
     sta=1; 
+    messageOut(fid_log,'Simulation has not started.')
     return
 end
 
@@ -93,15 +104,22 @@ if ismember(simdef.D3D.structure,[4,5]) %SMT
     fdir_output=fullfile(simdef.D3D.dire_sim,'output');
     if ~isfolder(fdir_output)
         sta=1; 
+        messageOut(fid_log,'Simulation has not started.')
         return
     end
     dire=dir(fdir_output);
     if any(ismember({dire.name},{'work'}))
         sta=2; 
+        messageOut(fid_log,'Simulation is running.')
         return
     else
         sta=3; 
+        %modify function below to compute simulation time of SMT and make function to compute time, pack, and save. 
         % [time_comp,~,~,processes]=D3D_computation_time(simdef.file.dia);
+        %save if simulation has finished
+        status=v2struct(sta,time_comp,tgen,version,tim_ver,source,processes);
+        save_check(fpath_status,'status');
+        messageOut(fid_log,'Simulation finished.')
         return
     end
 end
@@ -115,6 +133,7 @@ if is_inter
         time_comp=D3D_computation_time(simdef.file.dia);
         [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
     end
+    messageOut(fid_log,'Simulation is interrupted.')
     return 
 end
 
@@ -131,6 +150,7 @@ if is_done
     %save if simulation has finished
     status=v2struct(sta,time_comp,tgen,version,tim_ver,source,processes);
     save_check(fpath_status,'status');
+    messageOut(fid_log,'Simulation finished.')
     return 
 end
 
@@ -138,5 +158,6 @@ end
     
 sta=2; 
 [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
+messageOut(fid_log,'Simulation is running.')
 
 end %function

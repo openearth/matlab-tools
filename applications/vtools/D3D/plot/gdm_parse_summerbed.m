@@ -59,6 +59,15 @@ if flg_loc.do_tv==1
         flg_loc.do_tv=0;
     end
 end
+if flg_loc.do_tv==1
+    default_tv_single=1;
+    default_tv_all_s=1;
+else
+    default_tv_single=0;
+    default_tv_all_s=0;
+end
+flg_loc=isfield_default(flg_loc,'do_tv_single',default_tv_single);
+flg_loc=isfield_default(flg_loc,'do_tv_all_s',default_tv_all_s);
 
 %%
 

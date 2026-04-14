@@ -27,7 +27,7 @@ addOptional(parin,'tol',1);
 addOptional(parin,'fdir_mat',fullfile(fpath_map,'../','mat'));
 addOptional(parin,'results_type','map');
 addOptional(parin,'fdir_csv',fullfile(fpath_map,'../','csv'));
-addOptional(parin,'status',2); %running
+addOptional(parin,'status',0); %unchecked
 
 parse(parin,varargin{:});
 
@@ -93,13 +93,13 @@ end %function
 
 %%
 
-function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type,fdir_csv)
+function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type,fdir_csv,status)
 
 %% get time, both SMT and regular
 [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx,fpath_map_all]=D3D_results_time_wrap(fpath_map,results_type);
 
 %% save
-data=v2struct(time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx);
+data=v2struct(time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx,status); %#ok
 save_check(fpath_tim_all,'data')
 
 %% write CSV
@@ -116,47 +116,60 @@ new_all_time_needed=false;
 
 %check all fields exist
 fn=fieldnames(data);
-fn_check={'time_dnum','time_dtime','time_mor_dnum','time_mor_dtime','sim_idx','time_idx'}; %fieldnames that must be present
+fn_check={'time_dnum','time_dtime','time_mor_dnum','time_mor_dtime','sim_idx','time_idx','status'}; %fieldnames that must be present
 [~,bol_f]=find_str_in_cell(fn_check,fn);
 
+%a field is missing, we need to compute all times again.
 if ~all(bol_f)
     new_all_time_needed=true;
     return
 end
-
-%There is a file with all result times, but as we request the last one, we have to check that the simulation has not continued.
-last_changed=false;
-if any(isinf(in_dtime)) 
-    %`fpath_map` can be both a path to a map file or to an SMT simulation.
-    %We want the last time only. If it is just a simulation, we request it.
-    %If it is an SMT, we need all. `D3D_results_time_wrap` can deal with
-    %both SMT and map input, but the input to that function is the folder
-    %always, and not a map file.
-    if isfolder(fpath_map) %smt
-        [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map,results_type);
-    else
-        is_mor=D3D_is(fpath_map);
-        [~,~,time_dnum_f,~,~,~]=D3D_results_time(fpath_map,is_mor,NaN);
-    end
-
-    if isempty(time_dnum_f) || isempty(data.time_dnum)
-        error('This should not happen. We should have results.')
-    end
-    if abs(time_dnum_f(end)-data.time_dnum(end))>1/3600/24 %1 s threshold
-        last_changed=true;
-    end
+    
+%simulation finished, so we can trust the existing file. 
+if data.status>2 
+    messageOut(NaN,sprintf('Mat-file with all times available and simulation is finished. Loading: %s',fpath_tim_all))
+    new_all_time_needed=false;
+    return
 end
 
-if last_changed
+%we want the last one or all times and the simulation is running, we need to compute all times again.
+if any(isinf(in_dtime)) || any(isnan(in_dtime))
     new_all_time_needed=true;
     return
 end
+
+% %There is a file with all result times, but as we request the last one, we have to check that the simulation has not continued.
+% last_changed=false;
+% if any(isinf(in_dtime)) 
+%     %`fpath_map` can be both a path to a map file or to an SMT simulation.
+%     %We want the last time only. If it is just a simulation, we request it.
+%     %If it is an SMT, we need all. `D3D_results_time_wrap` can deal with
+%     %both SMT and map input, but the input to that function is the folder
+%     %always, and not a map file.
+%     if isfolder(fpath_map) %smt
+%         [~,~,time_dnum_f,~,~,~,~,~]=D3D_results_time_wrap(fpath_map,results_type);
+%     else
+%         is_mor=D3D_is(fpath_map);
+%         [~,~,time_dnum_f,~,~,~]=D3D_results_time(fpath_map,is_mor,NaN);
+%     end
+
+%     if isempty(time_dnum_f) || isempty(data.time_dnum)
+%         error('This should not happen. We should have results.')
+%     end
+%     if abs(time_dnum_f(end)-data.time_dnum(end))>1/3600/24 %1 s threshold
+%         last_changed=true;
+%     end
+% end
+
+% if last_changed
+%     new_all_time_needed=true;
+%     return
+% end
 
 %It can happen that it has saved a file with no output. Then it
 %crashes below because of size differences. If there is nothing
 %inside, we erase. 
 ntt=numel(data.(fn{1})); 
-
 if ntt==0
     new_all_time_needed=true;
     return
@@ -177,20 +190,20 @@ function [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,si
 if isempty(fdir_mat) || exist(fpath_tim_all,'file')~=2
     messageOut(NaN,sprintf('Mat-file with all times not available. Reading.'))
     new_all_time_needed=true;
-elseif any(isnan(in_dtime)) 
-    %if it is NaN we read it anyhow because we do not reach this point in case it is NaN and it is the same size as the one we have already.
-    if status>2 %simulation finished, so we can trust the existing file. 
-        messageOut(NaN,sprintf('Mat-file with all times available and simulation is finished. Loading: %s',fpath_tim_all))
-        load(fpath_tim_all,'data')
-        new_all_time_needed=false;
-    else
-        messageOut(NaN,sprintf('Mat-file with all times available and simulation is running. Reading.'))
-        new_all_time_needed=true;
-    end
+% elseif any(isnan(in_dtime)) 
+%     %if it is NaN we read it anyhow because we do not reach this point in case it is NaN and it is the same size as the one we have already.
+%     if status>2 %simulation finished, so we can trust the existing file. 
+%         messageOut(NaN,sprintf('Mat-file with all times available and simulation is finished. Loading: %s',fpath_tim_all))
+%         load(fpath_tim_all,'data')
+%         new_all_time_needed=false;
+%     else
+%         messageOut(NaN,sprintf('Mat-file with all times available and simulation is running. Reading.'))
+%         new_all_time_needed=true;
+%     end
 else
     messageOut(NaN,sprintf('Mat-file with all times available. Loading: %s',fpath_tim_all))
     load(fpath_tim_all,'data')
-    
+
     new_all_time_needed=D3D_time_check_if_new_all_time_needed_data(data,in_dtime,fpath_map,results_type,tim_type);
 
     if new_all_time_needed  %old time file, data is missing. 
@@ -200,7 +213,7 @@ else
 end
 
 if new_all_time_needed
-    [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type,fdir_csv);
+    [time_r,time_mor_r,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx]=D3D_time_get_all_results(fpath_tim_all,fpath_map,results_type,fdir_csv,status);
 else
     messageOut(NaN,'Mat-file with all times is usable.')
     v2struct(data);

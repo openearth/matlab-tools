@@ -55,7 +55,7 @@ messageOut(fid_log,sprintf('Passing path to process time: %s',fpath_pass));
 
 %% status
 
-status=D3D_status(simdef);
+status=D3D_status(simdef,'fid_log',fid_log);
 
 %% call
 

@@ -19,7 +19,7 @@ function [nt,time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,do_load]=
 parin=inputParser;
 
 addOptional(parin,'results_type','map'); %1=map
-addOptional(parin,'status',2); %running
+addOptional(parin,'status',0); %unchecked
 
 parse(parin,varargin{:});
 
@@ -70,6 +70,7 @@ if exist(fpath_mat_time,'file')==2
         end
     else %is double
         messageOut(fid_log,sprintf('Checking number of times in existing time file: %s', fpath_map));
+        %ATT! this is a bottleneck. We always find the total number of time steps in the results, which can be costly. 
         ntt=D3D_nt(fpath_map,'res_type',results_type); %inside the NaN check we save computational time, but we need it below.
         if any(isnan(flg_loc.tim)) 
             if ntt==nt
@@ -86,7 +87,8 @@ if exist(fpath_mat_time,'file')==2
             do_load=1;
         end
         
-        if any(isinf(flg_loc.tim)) || (all(mod(flg_loc.tim,1)==0) && max(flg_loc.tim)<=ntt) %if integer and smaller than total number of results, you are specifying index    
+        %if integer and smaller than total number of results, you are specifying index    
+        if any(isinf(flg_loc.tim)) || (all(mod(flg_loc.tim,1)==0) && max(flg_loc.tim)<=ntt) 
             flg_loc.tim_type=3; %index comparison
         end
         
@@ -111,7 +113,7 @@ if exist(fpath_mat_time,'file')==2
     
     %turn inf into last value
     if any(isinf(tim_obj))
-        [time_dnum_f,~,time_mor_dnum_f,~,~,~,time_idx_f]=D3D_time_dnum(fpath_map,Inf,'fdir_mat',fdir_mat,'fdir_csv',fdir_csv);
+        [time_dnum_f,~,time_mor_dnum_f,~,~,~,time_idx_f]=D3D_time_dnum(fpath_map,Inf,'fdir_mat',fdir_mat,'fdir_csv',fdir_csv,'status',status);
         switch flg_loc.tim_type
             case 1
                 tim_obj(isinf(tim_obj))=time_dnum_f;
@@ -139,7 +141,7 @@ end
 if do_load==1
 
     [time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,idx_g,time_idx]=D3D_time_dnum(fpath_map,flg_loc.tim,'tim_type',flg_loc.tim_type,'tol',flg_loc.tim_tol,'fdir_mat',fdir_mat,'results_type',results_type,'fdir_csv',fdir_csv,'status',status);
-    tim=v2struct(time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx); %#ok
+    tim=v2struct(time_dnum,time_dtime,time_mor_dnum,time_mor_dtime,sim_idx,time_idx,status); %#ok
     
     save_check(fpath_mat_time,'tim');
     

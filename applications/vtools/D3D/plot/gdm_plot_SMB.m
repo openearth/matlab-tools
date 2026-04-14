@@ -942,12 +942,12 @@ end %function
 function do_tv(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx)
 
 %% PARAMETERS
-REGULAR_PLOT=1;
-FRACTION_PLOT=2;
+param.REGULAR_PLOT=1;
+param.FRACTION_PLOT=2;
 
 %% INITIALIZATION
 
-plot_type=REGULAR_PLOT;
+plot_type=param.REGULAR_PLOT;
 
 in_p=flg_loc;
 
@@ -961,17 +961,14 @@ in_p.do_area=0;
 
 %If the variable is fractions and there are more than one, you want an area plot.
 if strcmp(var_str_save,'lyrfrac') && numel(var_idx)>1
-    plot_type=FRACTION_PLOT;
+    plot_type=param.FRACTION_PLOT;
 end    
 
-if plot_type==FRACTION_PLOT
+if plot_type==param.FRACTION_PLOT
     in_p.do_area=1;
 end
 
 tag_fig=flg_loc.tag;
-tag='val';
-
-nsim=numel(simdef);
 
 %% GET INDEX OF RKM TO PLOT
 
@@ -981,7 +978,6 @@ obj=reshape(rkm_plot_tv,1,[]);
 bol_tv=abs(vec-obj)<tol;
 
 fn_data=fieldnames(data_xvt(1));
-nfn=numel(fn_data);
 
 if ~any(bol_tv(:))
     return
@@ -996,65 +992,147 @@ for krkm_plot=1:nrkm_plot
         continue
     end
 
-    %% LOOP ON SIMULATIONS
-    for ksim=1:nsim 
-        bol_rkm=bol_tv(:,krkm_plot);
-        bol_ks=false(nsim,1);
-        bol_ks(ksim)=true;
-        rkm_loc=vec(bol_rkm);
-        runid=simdef(bol_ks).file.runid;
+    if flg_loc.do_tv_single
+        messageOut(fid_log,sprintf('Plotting tv at rkm %5.2f',obj(krkm_plot)));
+        fnc_plot_tv_single_sim(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,krkm_plot,data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx,tag_fig,in_p,bol_tv,fn_data,plot_type,param);
+    end 
 
-        fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie); 
-
-        if plot_type==REGULAR_PLOT
-            in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},{str_save_sb_pol});
-        end
-
-        %% LOOP ON STATISTICS
-        for kfn=1:nfn
-            statis=fn_data{kfn};
-
-            %skip statistics not in list    
-            if isfield(flg_loc,'statis_plot')
-                if ismember(statis,flg_loc.statis_plot)==0
-                    continue
-                end
-            end
-
-            %model
-            val=data_xvt.(statis)(bol_rkm,ksim,:,:);
-
-            %measurements
-            flg_loc.tol_time_measurements=1000; %1 km tolerance
-            [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,rkm_loc,var_str_save,ksb,statis,'type','x');
-            data_mea.x=datetime(data_mea.x,'ConvertFrom','datenum');
-            data_mea.x.TimeZone=tim_dtime_plot.TimeZone; %CHECK!
-
-            in_p.plot_mea=plot_mea;
-            if plot_mea
-                in_p.s_mea=[data_mea.x]';
-                in_p.val_mea=[data_mea.y]';
-            end
-
-            %folder
-            fdir_fig_loc=fullfile(fdir_fig,str_save_sb_pol,pol_name,var_str_save,statis,tag);
-            mkdir_check(fdir_fig_loc,NaN,1,0);
-
-            %name
-            % in_p.clims=[NaN,NaN]; 
-            % in_p.ylims=[NaN]; 
-            kclim=1;
-            kxlim=1;
-            fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,str_save_sb_pol,kclim,var_idx,sprintf('tv_%5.2f',rkm_loc),kxlim);
-
-            in_p.fname=fname_noext;
-            in_p.val=val;
-            in_p.title_str=sprintf('%5.2f',rkm_loc);
-
-            fig_1D_01(in_p);
-        end
-    end %ksim
+    if flg_loc.do_tv_all_s
+        messageOut(fid_log,sprintf('Plotting tv (all simulations) at rkm %5.2f',obj(krkm_plot)));
+        fnc_plot_tv_all_sim(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,krkm_plot,data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx,tag_fig,in_p,bol_tv,fn_data,plot_type,param);
+    end
 end
+
+end %function
+
+%%
+
+function fnc_plot_tv_statistics_loop(fid_log,flg_loc,simdef,ksim_indices,rkm_loc,data_xvt,tim_dtime_plot,ksb,str_save_sb_pol,pol_name,var_str_save,var_idx,tag_fig,tag_serie,bol_rkm,in_p,fn_data,fdir_fig,tag,varargin)
+
+%% LOOP ON STATISTICS
+
+for kfn=1:numel(fn_data)
+    statis=fn_data{kfn};
+
+    %skip statistics not in list    
+    if isfield(flg_loc,'statis_plot')
+        if ismember(statis,flg_loc.statis_plot)==0
+            continue
+        end
+    end
+
+    %model
+    %For single simulation (ksim_indices is scalar), index directly
+    %For multiple simulations (ksim_indices is vector), concatenate across simulations
+    if isscalar(ksim_indices)
+        val=data_xvt.(statis)(bol_rkm,ksim_indices,:,:);
+    else
+        %Multi-sim: concatenate data from all simulations in ksim_indices
+        val_tmp=[];
+        for ksim_loc=ksim_indices
+            val_tmp=cat(4,val_tmp,data_xvt.(statis)(bol_rkm,ksim_loc,:,:));
+        end
+        val=val_tmp;
+    end
+
+    %measurements
+    flg_loc.tol_time_measurements=1000; %1 km tolerance
+    [plot_mea,data_mea]=gdm_load_measurements_match_time(flg_loc,rkm_loc,var_str_save,ksb,statis,'type','x');
+    data_mea.x=datetime(data_mea.x,'ConvertFrom','datenum');
+    data_mea.x.TimeZone=tim_dtime_plot.TimeZone; %CHECK!
+
+    in_p.plot_mea=plot_mea;
+    if plot_mea
+        in_p.s_mea=[data_mea.x]';
+        in_p.val_mea=[data_mea.y]';
+    end
+
+    %folder
+    fdir_fig_loc=fullfile(fdir_fig,str_save_sb_pol,pol_name,var_str_save,statis,tag);
+    mkdir_check(fdir_fig_loc,NaN,1,0);
+
+    %name
+    kclim=1;
+    kxlim=1;
+    %Get runid from first simulation in the set
+    if isscalar(ksim_indices)
+        bol_ks=false(numel(simdef),1);
+        bol_ks(ksim_indices)=true;
+        runid=simdef(bol_ks).file.runid;
+    else
+        % bol_ks=false(numel(simdef),1);
+        % bol_ks(ksim_indices(1))=true;
+        runid='';
+    end
+    
+    fname_noext=fig_name_xvt(fdir_fig_loc,tag,runid,var_str_save,statis,str_save_sb_pol,kclim,var_idx,sprintf('tv_%5.2f',rkm_loc),kxlim);
+
+    in_p.fname=fname_noext;
+    in_p.val=val;
+    in_p.title_str=sprintf('%5.2f',rkm_loc);
+
+    fig_1D_01(in_p);
+end
+
+end %function
+
+%%
+
+function fnc_plot_tv_single_sim(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,krkm_plot,data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx,tag_fig,in_p,bol_tv,fn_data,plot_type,param)
+
+tag='val';
+
+nsim=numel(simdef);
+tol=0.05; %50m
+vec=reshape(rkm_cen,[],1);
+obj=reshape(rkm_plot_tv,1,[]);
+bol_tv_local=abs(vec-obj)<tol;
+
+%% LOOP ON SIMULATIONS
+for ksim=1:nsim 
+    bol_rkm=bol_tv_local(:,krkm_plot);
+    rkm_loc=vec(bol_rkm);
+
+    fdir_fig=fullfile(simdef(ksim).file.fdir_fig,tag_fig,tag_serie); 
+
+    if plot_type==param.REGULAR_PLOT
+        in_p.leg_str=leg_str_pol(flg_loc.leg_str{ksim},{str_save_sb_pol});
+    end
+
+    %Call helper to loop on statistics
+    fnc_plot_tv_statistics_loop(fid_log,flg_loc,simdef,ksim,rkm_loc,data_xvt,tim_dtime_plot,ksb,str_save_sb_pol,pol_name,var_str_save,var_idx,tag_fig,tag_serie,bol_rkm,in_p,fn_data,fdir_fig,tag);
+end %ksim
+
+end %function
+
+%%
+
+function fnc_plot_tv_all_sim(fid_log,flg_loc,simdef,rkm_cen,rkm_plot_tv,krkm_plot,data_xvt,tim_dtime_plot,ksb,tag_serie,str_save_sb_pol,pol_name,var_str_save,var_idx,tag_fig,in_p,bol_tv,fn_data,plot_type,param)
+
+tag='val_all_s';
+
+%Check for FRACTION_PLOT: if yes, warn and skip
+if plot_type==param.FRACTION_PLOT
+    messageOut(fid_log,sprintf('FRACTION_PLOT is not supported for multiple simulations. Skipping variable %s.',var_str_save));
+    return
+end
+
+nsim=numel(simdef);
+tol=0.05; %50m
+vec=reshape(rkm_cen,[],1);
+obj=reshape(rkm_plot_tv,1,[]);
+bol_tv_local=abs(vec-obj)<tol;
+
+%Setup fdir_fig (from first simulation)
+fdir_fig=fullfile(simdef(1).file.fdir_fig,tag_fig,tag_serie); 
+
+%% LOOP ON RKM
+bol_rkm=bol_tv_local(:,krkm_plot);
+rkm_loc=vec(bol_rkm);
+
+%Call helper to loop on statistics with all simulations
+ksim_indices=1:nsim;
+fnc_plot_tv_statistics_loop(fid_log,flg_loc,simdef,ksim_indices,rkm_loc,data_xvt,tim_dtime_plot,ksb,str_save_sb_pol,pol_name,var_str_save,var_idx,tag_fig,tag_serie,bol_rkm,in_p,fn_data,fdir_fig,tag);
 
 end %function
 
