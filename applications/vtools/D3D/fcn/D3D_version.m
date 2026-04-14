@@ -25,7 +25,7 @@ source='';
 switch structure
     case 1
         % *** Deltares, FLOW2D3D Version 6.04.01.141160M, May 17 2022, 10:52:54
-        [kl_ver,fline_ver]=D3D_search_dia(fpath_dia,'*** deltares, flow2d3d version',1);
+        [kl_ver,fline_ver]=D3D_search_dia(fpath_dia,'*** Deltares, flow2d3d  ',1);
         if isnan(kl_ver)
            [kl_ver,fline_ver]=D3D_search_dia(fpath_dia,'*** Deltares, FLOW2D3D Version',1); 
         end
