@@ -77,6 +77,7 @@ fpath_simdef=fullfile(simdef.D3D.dire_sim,'simdef.mat');
 if exist(fpath_simdef,'file')==2 && ~overwrite 
     messageOut(NaN,sprintf('`simdef` file exists. Loading: %s', fpath_simdef));
     load(fpath_simdef,'simdef');
+    simdef.D3D.dire_sim=adapt_path_local_machine(simdef.D3D.dire_sim);
     %We may have written the file in Windows and run in Linux or viceversa.
     simdef.file=adapt_paths_smt(simdef.file,0,@adapt_path_local_machine);
     % fprintf('DEBUG: simdef.D3D.dire_sim: %s \n', simdef.D3D.dire_sim);

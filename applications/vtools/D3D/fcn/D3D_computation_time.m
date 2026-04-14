@@ -66,8 +66,8 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_comp
    
    %t0
    % ***           date,time  : 2022-07-27, 16:41:07
-   [kl_s,fline]=search_text_ascii(fpath_dia,'***           date,time  :',1);
-   if isempty(kl_s)
+   [kl_s,fline]=D3D_search_dia(fpath_dia,'***           date,time  :',1);
+   if isnan(kl_s)
       error('No start time found in simulation: %s',fpath_dia)
    end
    if numel(kl_s)>1
@@ -79,13 +79,16 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_comp
    t0=datetime(tok_num(1),tok_num(2),tok_num(3),tok_num(4),tok_num(5),tok_num(6));
    
    %number of time steps
-   [kl_g,fline]=search_text_ascii(fpath_dia,'|   TimeSteps   :',kl_s);
+   [kl_g,fline]=D3D_search_dia(fpath_dia,'|   TimeSteps   :',kl_s);
+   if isnan(kl_g)
+      error('No time steps found in simulation: %s',fpath_dia)
+   end
    tok=regexp(fline{end},'|   TimeSteps   :\s*(\d*)','tokens');
    num_dt=str2double(tok{1,1})*2; % model reports number of whole timesteps, but all calcs are perofrmed twice
    
    %tf
-   [kl_g,fline]=search_text_ascii(fpath_dia,'***             date, time :',kl_s); %attention, different number of spaces than t0
-   if isempty(kl_g)
+   [kl_g,fline]=D3D_search_dia(fpath_dia,'***             date, time :',kl_s); %attention, different number of spaces than t0
+   if isnan(kl_g)
       error('I could not find the end time')
    end
    if numel(kl_g)>1
@@ -109,8 +112,8 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_comp
    
    %extra timers
    for ii=1:length(timernames)
-      [kl_s,fline]=search_text_ascii(fpath_dia,['|' timernames{ii}],1);
-      if isempty(kl_s)
+      [kl_s,fline]=D3D_search_dia(fpath_dia,['|' timernames{ii}],1);
+      if isnan(kl_s)
          timervals(ii,:) = zeros(1,1);
          continue
       end
@@ -131,7 +134,10 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_comp
    %number of time steps
    % ** INFO   : nr of timesteps        ( )  :            22.0000000000
    % ** INFO   : nr of timesteps        ( )  :          5365.0000000000
-   [kl_g,fline]=search_text_ascii(fpath_dia,'** INFO   : nr of timesteps        ( )  :',1);
+   [kl_g,fline]=D3D_search_dia(fpath_dia,'** INFO   : nr of timesteps        ( )  :',1);
+   if isnan(kl_g)
+      error('No number of time steps found in simulation: %s',fpath_dia)
+   end
    % tok=regexp(fline{end},'** INFO   : nr of timesteps        ( )  :\s*(\d*)','tokens'); %I do not know why this is not captured.
    tok=regexp(fline{end},'(\d*)','tokens');
    num_dt=str2double(tok{1,1}{1,1});
@@ -185,7 +191,7 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_comp
          end
          break
       end
-      %             kl=search_text_ascii(simdef.file.dia,'** INFO   : Computation finished at:',1);
+      %             computation finished marker handled above.
    end %while
    
    %timers
@@ -206,8 +212,8 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_comp
 
    %extra timers
    for ii=1:length(timernames)
-      [kl_s,fline]=search_text_ascii(fpath_dia,['** INFO   : extra timer:' timernames{ii}],1);
-      if ~isempty(kl_s)
+      [kl_s,fline]=D3D_search_dia(fpath_dia,['** INFO   : extra timer:' timernames{ii}],1);
+      if ~isnan(kl_s)
 %       '** INFO   : extra timer:Erosed_call                                        194.0309901237'
          tok=regexp(fline{end},['** INFO   : extra timer:' regexptranslate('escape',timernames{ii}) '\s*([0-9eEdD\+\-\.]*)'],'tokens');
          if ~isempty(tok)
@@ -218,8 +224,8 @@ function [tim_dur,t0,tf,processes,tim_sim,num_dt,timervals,timloop_sim]=D3D_comp
 
       % Standard FM timers, e.g.:
       % ** INFO   : time inistep           (s)  :          1040.4329617023
-      [kl_s,fline]=search_text_ascii(fpath_dia,['** INFO   : time ' timernames{ii}],1);
-      if isempty(kl_s)
+      [kl_s,fline]=D3D_search_dia(fpath_dia,['** INFO   : time ' timernames{ii}],1);
+      if isnan(kl_s)
          timervals(ii,:) = zeros(1,1);
          continue
       end

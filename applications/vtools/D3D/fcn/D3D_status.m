@@ -24,8 +24,8 @@
 function [sta,time_comp,tgen,version,tim_ver,source,processes]=D3D_status(simdef,varargin)
 
 %% PARSE
-
-%% CASE
+fprintf('Checking simulation status...\n')
+%% case input is cell array
 
 if iscell(simdef)
     ns=numel(simdef);
@@ -47,9 +47,10 @@ if iscell(simdef)
     return
 end
 
-%% CALC
+%% case input is structure
 
-%% check if existing
+    %% check if file with status exists
+
 fdir_mat=fullfile(simdef.D3D.dire_sim,'mat');
 fpath_status=fullfile(fdir_mat,'status.mat');
 if isfolder(fdir_mat)
@@ -64,8 +65,9 @@ else
     mkdir_check(fdir_mat);
 end
 
-%% does not exist or it has not finished
+    %% file with status does not exist or simulation has not finished
 
+%allocate
 sta=NaN;
 time_comp=NaT-datetime(2000,1,1); %duration
 tgen=NaT;
@@ -74,13 +76,18 @@ tim_ver=NaT;
 source='';
 processes=NaN;
 
+%get paths
 simdef=D3D_simpath(simdef);
+
+    %% check if simulation has started
 
 %this can be improved seeing whether a map and his file are requested
 if isfield(simdef.file,'map')==0 && isfield(simdef.file,'his')==0
     sta=1; 
     return
 end
+
+    %% Simulation Management Tool (SMT) structure
 
 if ismember(simdef.D3D.structure,[4,5]) %SMT
     fdir_output=fullfile(simdef.D3D.dire_sim,'output');
@@ -99,6 +106,8 @@ if ismember(simdef.D3D.structure,[4,5]) %SMT
     end
 end
 
+    %% check if simulation is interrupted
+
 is_inter=D3D_is_interrupt(simdef,varargin);
 if is_inter
     sta=4;
@@ -109,7 +118,11 @@ if is_inter
     return 
 end
 
+    %% check if simulation is done
+
 is_done=D3D_is_done(simdef,varargin);
+
+    %% compute time and version if done, and save status
 
 if is_done
     sta=3;
@@ -121,6 +134,8 @@ if is_done
     return 
 end
 
+    %% if not interrupted and not done, then is running
+    
 sta=2; 
 [tgen,version,tim_ver,source]=D3D_version(simdef,varargin);
 
