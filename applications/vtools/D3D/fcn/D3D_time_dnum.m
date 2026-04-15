@@ -127,7 +127,7 @@ end
     
 %simulation finished, so we can trust the existing file. 
 if data.status>2 
-    messageOut(NaN,sprintf('Mat-file with all times available and simulation is finished. Loading: %s',fpath_tim_all))
+    messageOut(NaN,'Mat-file with all times available and simulation is finished. Using.')
     new_all_time_needed=false;
     return
 end
