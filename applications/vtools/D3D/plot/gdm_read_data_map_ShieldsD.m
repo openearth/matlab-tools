@@ -49,10 +49,10 @@ if any(ismember(varnames,'mesh2d_taus'))
 else
     data_u=gdm_read_data_map_umag(fdir_mat,fpath_map,varname,'tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
     data_C=gdm_read_data_map(fdir_mat,fpath_map,'mesh2d_czs','tim',time_dnum,'var_idx',var_idx,'idx_branch',idx_branch,'branch',branch,'layer',layer,'tol_t',tol_t); 
-    Cf=g/data_C.val.^2;
-    data_taus.val=rho*Cf.*data_u.val.^2;
+    Cf=g./data_C.val.^2;
+    data_taus.val=rho.*Cf.*data_u.val.^2;
 end
 
-data_var.val=data_taus.val./g/rho/R; %ideally gravity, water density, and specific sediment density are read from mdu and sed files
+data_var.val=data_taus.val./g./rho./R; %ideally gravity, water density, and specific sediment density are read from mdu and sed files
 
 end %function

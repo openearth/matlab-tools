@@ -48,14 +48,9 @@ if ismember('cel_morpho',flg_loc.var)
     end
 end
 
-%add sediment transport information
-if isfield(simdef.file,'sed') && ~isempty(simdef.file.sed) %A test on `simdef.D3D.ismor` is not strong, because it can be used for sediment transport offline.
-    fpath_sed=simdef.file.sed;
-    if iscell(simdef.file.sed)
-        fpath_sed=simdef.file.sed{1};
-    end
-    dk=gdm_read_dk(simdef);
-end
+%% add sediment transport information
+
+dk=gdm_read_dk(simdef); %sediment size
 
 if isfield(flg_loc,'sedtrans') %sediment transport offline
     %store sediment transport relation at the location of the variable
