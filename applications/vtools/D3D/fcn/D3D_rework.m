@@ -1108,6 +1108,17 @@ if isfield(simdef.file,'mini')==0
     simdef.file.mini=fullfile(simdef.D3D.dire_sim,'mini.ini');
 end
 
+simdef.mor=isfield_default(simdef.mor,'MxNULyr',round(simdef.mor.total_ThUnLyr/simdef.mor.ThUnLyr));
+
+if simdef.mor.MorStt==0
+    warning('MorStt=0 gives some issues with the boundary conditions')
+end
+
+simdef.mor=isfield_default(simdef.mor,'ICmpCond',0);
+if simdef.mor.ICmpCond~=0
+    warning('There may be a problem with the upstream boundary condition. ICmpCond overwrites IBedCond')
+end
+
 end %function
 
 %%
