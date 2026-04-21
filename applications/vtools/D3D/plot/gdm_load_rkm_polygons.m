@@ -25,6 +25,7 @@ function data=gdm_load_rkm_polygons(fid_log,tag,fdir_mat,fpath_map,fpath_rkm,rkm
 
 fpath_rkm_pol=mat_tmp_name(fdir_mat,tag,'pol',rkm_name);
 if exist(fpath_rkm_pol,'file')==2 %&& ~flg_loc.overwrite 
+    messageOut(fid_log,sprintf('Loading summerbed polygons from file %s',fpath_rkm_pol));
     load(fpath_rkm_pol,'data')
     return
 end
