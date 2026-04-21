@@ -361,7 +361,11 @@ fi_old=fi;
 
 if ~(exist(fi,'file')==2) && ~isfolder(fi)
     idx = strfind(fi,[filesep,'..']);
-    fi=[fi(1:idx-1),[filesep,'..'],fi(idx:end)];
+    if isempty(idx)
+        fi=fi_old;
+    else
+        fi=[fi(1:idx(1)-1),[filesep,'..'],fi(idx(1):end)];
+    end
     if exist(fi,'file')==2 || isfolder(fi)
         [~,~,fext]=fileparts(fi_old);
         if strcmp(fi,'\..') && ~strcmp(fext,'.nc') %we do not check for the grid file. Due to partitioning, the grid may not be found. 
