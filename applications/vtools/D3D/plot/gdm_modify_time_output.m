@@ -50,7 +50,7 @@ else
     if isfile(fpath_mat_time)
         tim_data=load(fpath_mat_time);
         tim_data.tim.time_dtime;
-        if reshape(tim_data.tim.time_dtime,1,[])==reshape(flg_loc.tim,1,[])
+        if numel(tim_data.tim.time_dtime) == numel(flg_loc.tim) && all(reshape(tim_data.tim.time_dtime,1,[])==reshape(flg_loc.tim,1,[]))
             do_load=0;
         end
     end
