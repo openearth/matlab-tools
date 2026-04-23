@@ -35,7 +35,7 @@ addOptional(parin,'tol',30);
 parse(parin,varargin{:});
 
 tim=parin.Results.tim;
-var_nam=parin.Results.var;
+input_variable_name=parin.Results.var;
 stat=parin.Results.stat;
 do_rkm=parin.Results.do_rkm;
 tol=parin.Results.tol;
@@ -53,25 +53,39 @@ end
 data_out=struct('x',[],'y',[]);
 
 if ~isfile(fpath_mea)
-    error('No file with measurements: %s',fpath_mea)
+    messageOut(fid_log,sprintf('No file with measurements: %s',fpath_mea));
+    return;
 end
+messageOut(fid_log,sprintf('Loading measurements from file: %s',fpath_mea));
 load(fpath_mea,'data');
 
-if ~isstruct(data); return; end
+if ~isstruct(data);
+    messageOut(fid_log,sprintf('No data struct found in file: %s',fpath_mea));
+    return;
+end
 
-fn=fieldnames(data);
-var_nam_accepted=gdm_var_name_accepted(var_nam);
-idx_var=find_str_in_cell(fn,var_nam_accepted);
+variables_in_measurements=fieldnames(data);
+accepted_variable_name=gdm_var_name_accepted(input_variable_name);
+idx_var=find_str_in_cell(variables_in_measurements,accepted_variable_name);
 
-if isnan(idx_var); return; end
+if isnan(idx_var)
+    messageOut(fid_log,sprintf('No variable found in measurements: %s',input_variable_name));
+    return;
+end
 
-fn2=fieldnames(data.(fn{idx_var}));
+statistics_in_measurements=fieldnames(data.(variables_in_measurements{idx_var})); %
 
-idx_stat=find_str_in_cell(fn2,{stat});
+accepted_statistics_name=gdm_stat_name_accepted(stat);
+idx_stat=find_str_in_cell(statistics_in_measurements,accepted_statistics_name);
+idx_stat=gdm_stat_idx_accepted(statistics_in_measurements,idx_stat,stat);
 
-if isnan(idx_stat); return; end
+if isnan(idx_stat)
+    messageOut(fid_log,sprintf('No statistic found for variable %s: %s',variables_in_measurements{idx_var},stat));
+    return;
+end
+messageOut(fid_log,sprintf('Statistic found for variable %s: %s',variables_in_measurements{idx_var},statistics_in_measurements{idx_stat}));
 
-struct_loc=data.(fn{idx_var}).(fn2{idx_stat});
+struct_loc=data.(variables_in_measurements{idx_var}).(statistics_in_measurements{idx_stat});
 
 if do_time
     vec=struct_loc.tim_dnum;
@@ -91,7 +105,7 @@ end
 
 if isnan(idx_min) || ~flg_found; return; end
 
-% fprintf('index time match %03d \n',idx_min);
+messageOut(fid_log,sprintf('Measurement found %s for variable %s at index %d',statistics_in_measurements{idx_stat},variables_in_measurements{idx_var},idx_min));
 
 if do_time
     if do_rkm || ~isfield(struct_loc,'s')
@@ -116,6 +130,36 @@ switch var_name
     otherwise
         var_nam_accepted={var_name};
 
+end
+
+end %function
+
+function stat_nam_accepted=gdm_stat_name_accepted(stat_name)
+
+switch stat_name
+    case {'val_mean','val_mean_weighted'}
+        stat_nam_accepted={'val_mean','val_mean_weighted'};
+    otherwise
+        stat_nam_accepted={stat_name};
+
+end
+
+end %function
+
+function idx_stat_out=gdm_stat_idx_accepted(statistics_in_measurements,idx_stat_in,stat_name)
+
+idx_stat_out=idx_stat_in;
+
+if isnan(idx_stat_in)
+    return;
+end
+
+switch stat_name
+    case {'val_mean','val_mean_weighted'}
+        idx_val_mean=find(strcmp(statistics_in_measurements,'val_mean'));
+        if ~isempty(idx_val_mean)
+            idx_stat_out=idx_val_mean(1);
+        end
 end
 
 end %function
