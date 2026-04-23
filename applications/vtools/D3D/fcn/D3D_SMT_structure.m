@@ -18,9 +18,9 @@ dire=dir(fdir_output);
 ndir=numel(dire);
 for kdir=1:ndir
     if strcmp(dire(kdir).name,'.') || strcmp(dire(kdir).name,'..'); continue; end
-    if dire(kdir).isdir==0 %in output folders of SMT there is no file
-        structure=4;
-    elseif strfind(dire(kdir).name,'min')
+    % if dire(kdir).isdir==0 %in output folders of SMT there is no file -> V: I do not get this. What was I trying to do?
+    %     structure=4;
+    if strfind(dire(kdir).name,'min')
         structure=5;
     else
         structure=4;
