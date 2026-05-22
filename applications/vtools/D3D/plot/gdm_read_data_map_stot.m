@@ -41,7 +41,8 @@ branch=parin.Results.branch;
 [ismor,is1d,str_network1d,issus,structure]=D3D_is(fpath_map);
 switch structure
     case 1
-        error('do')
+        var_x='SBCU';
+        var_y='SBCV';
     case 2
         if is1d
             var_x='mesh1d_sxtot';

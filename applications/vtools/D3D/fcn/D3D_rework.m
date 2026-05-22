@@ -1046,6 +1046,9 @@ function simdef=D3D_rework_mor(simdef)
 simdef.mor.dummy=NaN;
 
 simdef.mor=isfield_default(simdef.mor,'morphology',0);
+% if simdef.mor.morphology==0
+%     return
+% end
 
 simdef=parse_file_name(simdef,'mor','mor.mor');
 
@@ -1108,8 +1111,10 @@ if isfield(simdef.file,'mini')==0
     simdef.file.mini=fullfile(simdef.D3D.dire_sim,'mini.ini');
 end
 
+simdef.mor=isfield_default(simdef.mor,'ThUnLyr',0.5);
+simdef.mor=isfield_default(simdef.mor,'total_ThUnLyr',5);
 simdef.mor=isfield_default(simdef.mor,'MxNULyr',round(simdef.mor.total_ThUnLyr/simdef.mor.ThUnLyr));
-
+simdef.mor=isfield_default(simdef.mor,'MorStt',0);
 if simdef.mor.MorStt==0
     warning('MorStt=0 gives some issues with the boundary conditions')
 end
