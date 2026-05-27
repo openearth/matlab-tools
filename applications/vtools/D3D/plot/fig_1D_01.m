@@ -183,7 +183,7 @@ if do_area
 end
 
 if plot_mea && do_include_mea_xylims
-    [xlims,ylims]=xlim_ylim(xlims,ylims,{s,s_mea},{val_ylim_check,squeeze(val_mea)}); %`val` can be a [np,1,nv] matrix and it is valid.
+    [xlims,ylims]=xlim_ylim(xlims,ylims,{s{:},s_mea},{val_ylim_check{:},squeeze(val_mea)}); %`val` can be a [np,1,nv] matrix and it is valid.
 else
     [xlims,ylims]=xlim_ylim(xlims,ylims,s,val_ylim_check); %`val` can be a [np,1,nv] matrix and it is valid.
 end
