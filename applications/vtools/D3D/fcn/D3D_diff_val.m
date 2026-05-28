@@ -28,7 +28,7 @@ if isstruct(gridInfo)
         val_in=reshape(val_in,[],1);
 
         F=scatteredInterpolant(x_in,y_in,val_in);
-        val_int=F(gridInfo_ref.Xcen,gridInfo_ref.Ycen);
+        val_int=F(gridInfo_ref.Xcen,gridInfo_ref.Ycen)';
     %     val_atref=NaN(size(val_ref));
     %     val_atref(idx_int)=val_int;
     %     val_diff=val_atref-val_ref;
